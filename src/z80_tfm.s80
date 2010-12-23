@@ -1,0 +1,375 @@
+;Driver code by Shiru, some things looked in MVSTracker MD and Zyrinx players
+
+;On initialize M68K writes 4-byte addr. of music data in #1ffc..#1fff of Z80 RAM
+;If addr value is zero, only initialize part called (to switch off FM channels)
+;Player works always on 50hz
+
+;11.04.07
+
+
+    MACRO WaitStatus
+.wait
+    bit 7,(iy)
+    jr nz,.wait
+    ENDM
+ 
+ 
+ 
+    org #0000
+ 
+    di              ;we don't use interrupts, no interrupt handler at #0038
+
+    ld sp,#1ffc
+    ld ix,#4000     ;base addr. for YM2612 (changes between #4000 and #4002)
+    ld iy,#4000     ;for status read (fixed)
+    pop de
+    pop bc          ;addr. of music data in BC:DE, stack on top of RAM
+ 
+    ld a,b
+    or c
+    jr nz,setBank
+    ld a,d
+    or e
+    jr nz,setBank
+    jr init2612
+
+setBank
+    ld hl,#6000     ;set bank
+    ld a,d
+    rlca
+    ld (hl),a
+    ld a,c
+    ld b,8
+sendA16A23
+    ld (hl),a
+    rrca
+    djnz sendA16A23
+ 
+    set 7,d         ;de=offset for music data
+    push de
+    ld a,1
+ 
+init2612
+
+    ld de,#2200     ;switch off LFO
+    call wrYmPortA
+    ld de,#2b00     ;switch off DAC
+    call wrYmPortA
+
+    pop hl          ;player init
+    push af
+    call tfmInit
+    pop af
+    or a
+    jr nz,mainLoop
+    halt            ;stop program
+
+mainLoop
+    ld de,#270a
+    call wrYmPortA  ;reset overflow flag
+ 
+    WaitStatus
+
+.wait
+    bit 1,(iy)      ;wait for timer B overflow
+    jr z,.wait
+ 
+    call tfmPlay
+ 
+    ld de,#26bb     ;timer B reinit
+    call wrYmPortA
+    ld de,#272a
+    call wrYmPortA
+ 
+    jr mainLoop
+
+
+ 
+;write word to YM2612 port A
+
+wrYmPortA
+    WaitStatus
+    ld (iy),d
+    WaitStatus
+    ld (iy+1),e
+    ret
+ 
+
+
+;------------------------------------------------------------------------------
+;TFC player code itself (by Alone Coder, adapted for SMD by Shiru)
+;------------------------------------------------------------------------------
+
+ 
+tfmInit
+    ex de,hl
+    ld hl,10
+    add hl,de
+
+    ld ix,addrA
+    ld b,6
+tfmini0
+    ld a,(hl)
+    inc hl
+    push hl
+    ld h,(hl)
+    ld l,a
+    add hl,de
+    ld (ix),l
+    inc ix
+    ld (ix),h
+    inc ix
+    pop hl
+    inc hl
+    djnz tfmini0
+
+    ld bc,#06ff ;hl=skipA
+tfminiSk
+    ld (hl),c
+    inc hl
+    djnz tfminiSk
+ 
+tfmshut
+    ld de,#2f00
+    call wrYmPortA
+    ld d,#2d
+    call wrYmPortA
+ 
+    ld ix,#4000     ;sel. bank #0
+    CALL tfminiPP
+    ld ix,#4002     ;sel. bank #1
+    call tfminiPP
+
+    ld bc,#0700      ;keyoff's
+    ld a,3
+tfmShK0
+    cp c
+    call nz,keyOff
+    inc c
+    djnz tfmShK0
+    ret
+ 
+
+tfminiPP
+    ld bc,#1000
+    ld de,#3000
+    call ymWrPortFL ;dt1,mul=#00
+    ld e,#7f
+    ld b,#10
+    call ymWrPortFL ;tl=#7f
+    ld e,c
+    ld b,#30
+    call ymWrPortFL ;rs,ar,am,d1r,d2r=#00
+    ld e,#0f
+    ld b,#10
+    call ymWrPortFL ;d1l,rr=#0f
+    ld e,c
+    ld b,#28        ;all other regs=#00
+
+ymWrPortFL
+    WaitStatus
+    ld (ix),d
+    inc d
+    WaitStatus
+    ld (ix),e
+    djnz ymWrPortFL
+    ret
+ 
+
+
+
+tfmPlay
+    ld ix,#4000 ;sel. bank #0
+    CALL tfmA
+    CALL tfmB
+    CALL tfmC
+    ld ix,#4002 ;sel. bank #1
+    CALL tfmD
+    CALL tfmE
+    JP   tfmF       ;call:ret
+ 
+ 
+ 
+keyOff
+    WaitStatus
+    ld (iy),#28
+    WaitStatus
+    ld (iy+1),c
+    ret
+ 
+ 
+
+keyOn
+    WaitStatus
+    ld (iy),#28
+    WaitStatus
+    ld (iy+1),a
+    ret
+
+
+outRegs
+    AND #1F
+    ret z
+regsX
+    ld b,(hl)
+    inc hl
+    WaitStatus
+    ld (ix),b
+    ld b,(hl)
+    inc hl
+    WaitStatus
+    ld (ix+1),b
+    DEC A
+    jr nz,regsX
+    RET
+
+
+ 
+    MACRO processChannel _chn,_kchn,_skip,_addr
+
+    LD A,(_skip)
+    INC A
+    jp nz,.skiperA
+    LD HL,(_addr)
+.blkcntA=$+1
+    OR 0
+    jr z,.tfmframeA
+    DEC A
+    LD (.blkcntA),A
+    jr nz,.tfmframeA
+.blkretaddrA=$+1
+    LD HL,0
+.tfmframeA
+    LD A,(HL)
+    INC HL
+    CP %01111110
+    jr z,.beginA
+    CP %01111111
+    jr z,.endA
+    CP #bf
+    jr nc,.HLskiperA
+    ld c,#00+_kchn
+    call m,keyOff
+    OR A
+    PUSH AF
+ 
+    RRA
+    jr nc,.nofrqXA
+    ex af,af
+    WaitStatus
+    ld (ix),#A4+_chn
+    LD A,(HL)
+    INC HL
+    LD (.tfmhighA),A
+    WaitStatus
+    ld (ix+1),a
+    WaitStatus
+    ld (ix),#A0+_chn
+    LD A,(HL)
+    INC HL
+    LD (.tfmlowA),A
+    WaitStatus
+    ld (ix+1),a
+    ex af,af
+.nofrqXA
+ 
+    call outRegs
+    LD (_addr),HL
+    POP AF
+    RET P
+    ld a,#f0+_kchn
+    jp keyOn    ;call:ret
+ 
+.beginA
+    LD (.loopaddrA),HL
+    jr .tfmframeA
+.endA
+.loopaddrA=$+1
+    LD HL,0
+    jr .tfmframeA
+
+.blockA
+    LD A,(HL)
+    INC HL
+    LD (.blkcntA),A
+    LD B,(HL)
+    INC HL
+    LD C,(HL)
+    INC HL
+    LD (.blkretaddrA),HL
+    ADD HL,BC
+    JP .tfmframeA
+.OLDfarA
+    LD B,(HL)
+    INC HL
+.OLDnearA
+    LD C,(HL)
+    INC HL
+    PUSH HL
+    ADD HL,BC
+    CALL .tfmframeA
+    POP HL
+    LD (_addr),HL
+    RET
+.HLskiperA
+    jr z,.OLDfarA
+    CP %11100000
+    jr c,.slideA
+    LD B,A
+    CP #FF
+    jr z,.OLDnearA
+    LD (_addr),HL
+.skiperA
+    LD (_skip),A
+    RET
+.slideA
+    ADD A,48
+    jr z,.blockA
+.tfmlowA=$+1
+    ADD A,0
+    LD (.tfmlowA),A
+    LD (_addr),HL
+
+    WaitStatus
+    ld (ix),#A4+_chn
+    WaitStatus
+.tfmhighA=$+3
+    ld (ix+1),0
+    WaitStatus
+    ld (ix),#A0+_chn
+    WaitStatus
+    ld (ix+1),a
+    RET
+
+    ENDM
+ 
+ 
+tfmA    processChannel 0,0,skipA,addrA
+tfmB    processChannel 1,1,skipB,addrB
+tfmC    processChannel 2,2,skipC,addrC
+tfmD    processChannel 0,4,skipD,addrD
+tfmE    processChannel 1,5,skipE,addrE
+tfmF    processChannel 2,6,skipF,addrF
+
+addrA   DW 0
+addrB   DW 0
+addrC   DW 0
+addrD   DW 0
+addrE   DW 0
+addrF   DW 0
+
+skipA   DB -1
+skipB   DB -1
+skipC   DB -1
+skipD   DB -1
+skipE   DB -1
+skipF   DB -1
+
+
+tfminitab
+    DW addrA
+    DW addrB
+    DW addrC
+    DW addrD
+    DW addrE
+    DW addrF

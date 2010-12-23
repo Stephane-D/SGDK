@@ -1,0 +1,96 @@
+BIN= $(GDK)/bin
+LIB= $(GDK)/lib
+
+SRC= $(GDK)/src
+RES= $(GDK)/res
+INCLUDE= $(GDK)/include
+
+SHELL=$(BIN)/sh
+AR= $(BIN)/ar
+CC= $(BIN)/gcc
+OBJCPY= $(BIN)/objcopy
+ASMZ80= $(BIN)/sjasm
+MACCER= $(BIN)/mac68k
+SIZEBND= $(BIN)/sizebnd
+BINTOC= $(BIN)/bintoc
+BINTOS= $(BIN)/bintos
+WAVTORAW= $(BIN)/wavtoraw
+GENRES= $(BIN)/genres
+NM= $(BIN)/nm
+NM2WCH= $(BIN)/nm2wch
+RM= $(BIN)/rm
+
+
+OPTION=
+
+SRC_C= $(wildcard $(SRC)/*.c)
+SRC_S= $(wildcard $(SRC)/*.s)
+SRC_SZ80= $(wildcard $(SRC)/*.s80)
+RES_BMP= $(wildcard $(RES)/*.bmp)
+RES_RAW= $(wildcard $(RES)/*.raw)
+RES_PCM= $(wildcard $(RES)/*.pcm)
+RES_WAV= $(wildcard $(RES)/*.wav)
+RES_RC= $(wildcard $(RES)/*.rc)
+RES_ASM= $(wildcard $(RES)/*.asm)
+
+OBJ= $(RES_BMP:.bmp=.o)
+OBJ+= $(RES_WAV:.wav=.o)
+OBJ+= $(RES_RC:.rc=.o)
+OBJ+= $(RES_ASM:.asm=.o)
+OBJ+= $(RES_RAW:.raw=.o)
+OBJ+= $(RES_PCM:.pcm=.o)
+OBJ+= $(SRC_SZ80:.s80=.o)
+OBJ+= $(SRC_S:.s=.o)
+OBJ+= $(SRC_C:.c=.o)
+
+INCS= -I$(INCLUDE)
+FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGSZ80= -i$(SRC) -i$(INCLUDE)
+
+all: $(LIB)/libgendev.a $(LIB)/sega.o
+
+default: all
+
+.PHONY: clean
+
+clean:
+	$(RM) -f $(LIB)/libgendev.a $(LIB)/sega.o $(OBJ) out.lst
+
+cleanobj:
+	$(RM) -f $(OBJ) out.lst
+
+$(LIB)/libgendev.a: $(OBJ)
+	$(AR) rs $(LIB)/libgendev.a $(OBJ)
+
+$(LIB)/sega.o: $(SRC)/boot/sega.s
+	$(CC) $(FLAGS) -c $(SRC)/boot/sega.s -o $@
+
+%.asm: %.rc
+	$(GENRES) $< $@
+
+%.s: %.asm
+	$(MACCER) -o $@ $<
+
+%.s: %.bmp
+	$(BINTOS) -bmp $<
+
+%.raw: %.wav
+	$(WAVTORAW) $<
+
+%.s: %.raw
+	$(BINTOS) -align 256 -sizealign 256 $<
+
+%.s: %.pcm
+	$(BINTOS) -align 256 -sizealign 256 $<
+
+%.o80: %.s80
+	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
+
+%.c: %.o80
+	$(BINTOC) $<
+
+%.o: %.c
+	$(CC) $(FLAGS) -c $< -o $@
+
+%.o: %.s
+	$(CC) $(FLAGS) -c $< -o $@

@@ -1,0 +1,623 @@
+; ############################     macro     ##############################
+
+; setBankFast
+; -----------
+; A    -> bit 21-15 of rom address to set in the bank register
+; HL  <-  BANKREG
+;
+; set the bank register for ROM area
+; = 97 cycles
+
+            macro   setBankFast
+
+            LD  HL, BANKREG         ; HL = BANKREG              ' 10
+            LD  (HL), A             ; #1 (bit 15)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #2 (bit 16)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #3 (bit 17)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #4 (bit 18)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #5 (bit 19)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #6 (bit 20)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #7 (bit 21)               ' 7
+            LD  (HL), L             ; #8 (bit 22 = 0)           ' 7
+            LD  (HL), L             ; #9 (bit 23 = 0)           ' 7
+
+            endm                    ;                           ' 97
+
+
+; writeYM
+; -------
+; HL   -> YM port where to write
+; D    -> address
+; E    -> value
+;
+; write to YM2612
+
+            macro   writeYM
+
+.wait0
+            BIT     7, (HL)         ; test YM not busy
+            JR      NZ, .wait0
+            LD      (HL), D         ; write address
+.wait1
+            BIT     7, (HL)         ; test YM not busy
+            JR      NZ, .wait1
+            INC     L
+            LD      (HL), E         ; write value
+
+            endm
+
+
+; getPlayCommand
+; --------------
+; HL  <-  point to COMMAND
+; zf  <-  channel 'ch' play command
+;
+; Z flag reset if play command for channel 'ch'
+; = 22 cycles
+
+            macro   getPlayCommand ch
+
+            LD      HL, COMMAND             ;                   ' 10
+            BIT     COMPLAY_SFT+ch, (HL)    ; play command ?    ' 12
+
+            endm                            ;                   ' 22
+
+
+; getStopCommand
+; --------------
+; HL  <-  point to COMMAND
+; zf  <-  channel 'ch' stop command
+;
+; Z flag reset if stop command for channel 'ch'
+; = 22 cycles
+
+            macro   getStopCommand ch
+
+            LD      HL, COMMAND             ;                   ' 10
+            BIT     COMSTOP_SFT+ch, (HL)    ; stop command ?    ' 12
+
+            endm                            ;                   ' 22
+
+
+; setPlayCommand
+; ----------------
+; HL  <-  point to COMMAND
+;
+; set the play command for channel 'ch'
+; = 25 cycles
+
+            macro   setPlayCommand ch
+
+            LD      HL, COMMAND             ;                   ' 10
+            SET     COMPLAY_SFT+ch, (HL)    ; set command       ' 15
+
+            endm                            ;                   ' 25
+
+
+; setStopCommand
+; ----------------
+; HL  <-  point to COMMAND
+;
+; set the stop command for channel 'ch'
+; = 25 cycles
+
+            macro   setStopCommand ch
+
+            LD      HL, COMMAND             ;                   ' 10
+            SET     COMSTOP_SFT+ch, (HL)    ; set command       ' 15
+
+            endm                            ;                   ' 25
+
+
+; clearPlayCommand
+; ----------------
+; HL  <-  point to COMMAND
+;
+; clear the play command for channel 'ch'
+; = 25 cycles
+
+            macro   clearPlayCommand ch
+
+            LD      HL, COMMAND             ;                   ' 10
+            RES     COMPLAY_SFT+ch, (HL)    ; clear command     ' 15
+
+            endm                            ;                   ' 25
+
+
+; clearStopCommand
+; ----------------
+; HL  <-  point to COMMAND
+;
+; clear the stop command for channel 'ch'
+; = 25 cycles
+
+            macro   clearStopCommand ch
+
+            LD      HL, COMMAND             ;                   ' 10
+            RES     COMSTOP_SFT+ch, (HL)    ; clear command     ' 15
+
+            endm                            ;                   ' 25
+
+
+; getPlayStatus
+; -------------
+; HL  <- point to STATUS
+; zf  <-  channel 'ch' is playing
+;
+; Z flag reset if play status for channel 'ch'
+; = 22 cycles
+
+            macro   getPlayStatus ch
+
+            LD      HL, STATUS              ;                   ' 10
+            BIT     STATPLAY_SFT+ch, (HL)   ; get status        ' 12
+
+            endm                            ;                   ' 22
+
+
+; setPlayStatus
+; -------------
+; HL  <- point to STATUS
+;
+; set the play status for channel 'ch'
+; = 25 cycles
+
+            macro   setPlayStatus ch
+
+            LD      HL, STATUS              ;                   ' 10
+            SET     STATPLAY_SFT+ch, (HL)   ; set status        ' 15
+
+            endm                            ;                   ' 25
+
+
+; clearPlayStatus
+; -----------
+; HL  <- point to STATUS
+;
+; clear play status for channel 'ch'
+; = 25 cycles
+
+            macro   clearPlayStatus ch
+
+            LD      HL, STATUS              ;                   ' 10
+            RES     STATPLAY_SFT+ch, (HL)   ; clear status      ' 15
+
+            endm                            ;                   ' 25
+
+
+; getLoopStatus
+; -------------
+; HL  <- point to STATUS+1
+; zf  <-  channel 'ch' is playing
+;
+; Z flag reset if loop status for channel 'ch'
+; = 22 cycles
+
+            macro   getLoopStatus ch
+
+            LD      HL, STATUS+1            ;                   ' 10
+            BIT     STATPLAY_SFT+ch, (HL)   ; get status        ' 12
+
+            endm                            ;                   ' 22
+
+
+; setLoopStatus
+; -------------
+; HL  <- point to STATUS+1
+;
+; set the loop status for channel 'ch'
+; = 25 cycles
+
+            macro   setLoopStatus ch
+
+            LD      HL, STATUS+1            ;                   ' 10
+            SET     STATPLAY_SFT+ch, (HL)   ; set status        ' 15
+
+            endm                            ;                   ' 25
+
+
+; clearLoopStatus
+; -----------
+; HL  <- point to STATUS+1
+;
+; clear loop status for channel 'ch'
+; = 25 cycles
+
+            macro   clearLoopStatus ch
+
+            LD      HL, STATUS+1            ;                   ' 10
+            RES     STATPLAY_SFT+ch, (HL)   ; clear status      ' 15
+
+            endm                            ;                   ' 25
+
+
+; ############################  macro wait macro  ##############################
+
+; wait14x7
+; --------
+; wait for ((w * 14) + 7) cycles
+;
+            macro   wait14x7 w
+
+            LD      A, w            ; 7
+.loop
+            DEC     A               ; 4
+            JP      NZ, .loop       ; 10
+
+            endm
+
+
+            macro   wait4
+            NOP
+            endm
+
+            macro   wait6
+            INC     DE
+            endm
+
+            macro   wait7
+            OR      $0
+            endm
+
+            macro   wait8
+            wait4
+            wait4
+            endm
+
+            macro   wait9
+            LD      A, R
+            endm
+
+            macro   wait10
+            INC     IY
+            endm
+
+            macro   wait11
+            wait7
+            wait4
+            endm
+
+            macro   wait12
+            wait8
+            wait4
+            endm
+
+            macro   wait13
+            wait9
+            wait4
+            endm
+
+            macro   wait14
+            wait10
+            wait4
+            endm
+
+            macro   wait15
+            wait8
+            wait7
+            endm
+
+            macro   wait16
+            wait12
+            wait4
+            endm
+
+            macro   wait17
+            wait10
+            wait7
+            endm
+
+            macro   wait18
+            wait14
+            wait4
+            endm
+
+            macro   wait19
+            wait12
+            wait7
+            endm
+
+            macro   wait20
+            wait16
+            wait4
+            endm
+
+            macro   wait21
+            wait14x7 1
+            endm
+
+            macro   wait22
+            wait18
+            wait4
+            endm
+
+            macro   wait23
+            wait16
+            wait7
+            endm
+
+            macro   wait24
+            wait20
+            wait4
+            endm
+
+            macro   wait25
+            wait21
+            wait4
+            endm
+
+            macro   wait26
+            wait22
+            wait4
+            endm
+
+            macro   wait27
+            wait20
+            wait7
+            endm
+
+            macro   wait30
+            wait22
+            wait8
+            endm
+
+            macro   wait31
+            wait21
+            wait10
+            endm
+
+            macro   wait35
+            wait14x7 2
+            endm
+
+            macro   wait37
+            wait21
+            wait16
+            endm
+
+            macro   wait38
+            wait21
+            wait17
+            endm
+
+            macro   wait40
+            wait21
+            wait19
+            endm
+
+            macro   wait41
+            wait21
+            wait20
+            endm
+
+            macro   wait46
+            wait35
+            wait11
+            endm
+
+            macro   wait47
+            wait35
+            wait12
+            endm
+
+            macro   wait49
+            wait14x7 3
+            endm
+
+            macro   wait51
+            wait35
+            wait16
+            endm
+
+            macro   wait53
+            wait49
+            wait4
+            endm
+
+            macro   wait56
+            wait49
+            wait7
+            endm
+
+            macro   wait57
+            wait49
+            wait8
+            endm
+
+            macro   wait59
+            wait49
+            wait10
+            endm
+
+            macro   wait60
+            wait49
+            wait11
+            endm
+
+            macro   wait62
+            wait49
+            wait13
+            endm
+
+            macro   wait63
+            wait14x7 4
+            endm
+
+            macro   wait64
+            wait49
+            wait15
+            endm
+
+            macro   wait66
+            wait49
+            wait17
+            endm
+
+            macro   wait72
+            wait63
+            wait9
+            endm
+
+            macro   wait75
+            wait63
+            wait12
+            endm
+
+            macro   wait77
+            wait14x7 5
+            endm
+
+            macro   wait79
+            wait63
+            wait16
+            endm
+
+            macro   wait81
+            wait77
+            wait4
+            endm
+
+            macro   wait82
+            wait63
+            wait19
+            endm
+
+            macro   wait83
+            wait63
+            wait20
+            endm
+
+            macro   wait85
+            wait77
+            wait8
+            endm
+
+            macro   wait86
+            wait77
+            wait9
+            endm
+
+            macro   wait91
+            wait14x7 6
+            endm
+
+            macro   wait92
+            wait77
+            wait15
+            endm
+
+            macro   wait96
+            wait77
+            wait19
+            endm
+
+            macro   wait100
+            wait91
+            wait9
+            endm
+
+            macro   wait104
+            wait91
+            wait13
+            endm
+
+            macro   wait105
+            wait14x7 7
+            endm
+
+            macro   wait106
+            wait91
+            wait15
+            endm
+
+            macro   wait107
+            wait91
+            wait16
+            endm
+
+            macro   wait111
+            wait91
+            wait20
+            endm
+
+            macro   wait116
+            wait105
+            wait11
+            endm
+
+            macro   wait117
+            wait105
+            wait12
+            endm
+
+            macro   wait119
+            wait14x7 8
+            endm
+
+            macro   wait121
+            wait117
+            wait4
+            endm
+
+            macro   wait123
+            wait119
+            wait4
+            endm
+
+            macro   wait132
+            wait119
+            wait13
+            endm
+
+            macro   wait133
+            wait14x7 9
+            endm
+
+            macro   wait136
+            wait119
+            wait17
+            endm
+
+            macro   wait141
+            wait133
+            wait8
+            endm
+
+            macro   wait175
+            wait14x7 12
+            endm
+
+            macro   wait182
+            wait175
+            wait7
+            endm
+
+            macro   wait183
+            wait175
+            wait8
+            endm
+
+            macro   wait187
+            wait175
+            wait12
+            endm
+
+            macro   wait189
+            wait14x7 13
+            endm
+
+            macro   wait193
+            wait189
+            wait4
+            endm
+
+            macro   wait197
+            wait189
+            wait8
+            endm

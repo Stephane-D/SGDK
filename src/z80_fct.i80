@@ -1,0 +1,33 @@
+; ########################### function #############################
+
+; initDAC
+; -----------
+; HL <-  YMPORT0
+; DE <-  $2A80
+;
+; prepare DAC for output
+
+initDAC
+            LD      DE, $2B80
+            CALL    writeYM0        ; enable DAC
+            LD      DE, $2A80
+            CALL    writeYM0        ; DAC data to silent
+            RET
+
+; writeYM0 / writeYM1
+; -------------------
+; D   -> address
+; E   -> value
+; HL <-  YMPORT0 / YMPORT2
+;
+; write to YM2612
+
+writeYM0
+            LD      HL, YMPORT0
+            writeYM
+            RET
+writeYM1
+            LD      HL, YMPORT2
+            writeYM
+            RET
+
