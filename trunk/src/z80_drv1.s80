@@ -1,0 +1,237 @@
+; variable rate sample player Z80 driver
+; it can play a sample (8 bit unsigned) from 4 Khz up to 52 Khz rate
+; Stéphane Dallongeville @2007
+
+; ###########################      define      ##############################
+
+            INCLUDE "z80_def.i80"   ; basic definitions
+
+
+; ###########################       var        ##############################
+
+WAVADDRL    EQU     PARAMS+$00      ; sample address L
+WAVADDRM    EQU     PARAMS+$01      ; sample address M
+WAVADDRH    EQU     PARAMS+$02      ; sample address H
+
+WAVLENL     EQU     PARAMS+$04      ; sample lenght L
+WAVLENM     EQU     PARAMS+$05      ; sample lenght M
+WAVLENH     EQU     PARAMS+$06      ; sample lenght H
+
+WAITVAL     EQU     PARAMS+$08      ; wait val for desired rate
+PAN         EQU     PARAMS+$09      ; panning
+
+CACHEDBANK0 EQU     PARAMS+$0A      ; cached bank 0 bit
+
+
+; ###########################      macro       ##############################
+
+            INCLUDE "z80_mac.i80"  ; basic macros
+
+
+; ###########################       init       ##############################
+
+            ORG     $0000
+
+init
+            DI                      ; disable ints
+            LD      SP, $2000       ; setup stack
+            IM      $01             ; set int mode 1
+            XOR     A
+            LD      (STATUS), A     ; driver not ready
+            LD      (COMMAND), A    ; command cleared
+            JP      start           ; jump to start
+
+
+; ###########################     interrupt    ##############################
+
+            ORG     $0038
+
+interrupt                           ; do nothing in this program
+            RETI
+
+
+; ###########################       main       ##############################
+
+            ORG     $0200
+
+start
+            LD      B, $0A
+            XOR     A
+            LD      HL, WAVADDRL
+
+init_loop
+            LD      (HL), A         ; init variable to 0
+            INC     HL
+            DJNZ    init_loop
+
+            LD      IY, YMPORT0
+            LD      (IY+2), $B6     ; point to channel 6 pan register
+
+            LD      HL, YMPORT0
+            LD      BC, YMPORT1
+            LD      A, $80
+            LD      (HL), $2B
+            LD      (BC), A         ; enable DAC
+            LD      (HL), $2A
+            LD      (BC), A         ; DAC data to silent
+
+            LD      A, STATREADY
+            LD      (STATUS), A     ; driver ready
+
+idle
+            LD      A, (COMMAND)    ; load command in A
+
+            RRA                     ; test for "start play" command
+            JR      C, start_play_com
+            RRA                     ; test for "end play" command
+            JR      C, end_play_com
+
+            JP      idle
+
+
+start_play_com
+            LD      A, (COMMAND)
+            AND     $FE             ; we clear the "start play" command
+            LD      (COMMAND), A
+
+            LD      HL, (WAVADDRL)
+            LD      A, H
+            LD      E, L
+            OR      $80
+            LD      D, A            ; DE = sample address (low 15 bits | $8000)
+
+            LD      A, (WAVADDRH)
+            LD      IXH, A          ; IXH = sample address (high 8 bits)
+
+            LD      A, H                ; A = bits 8-15 of sample address
+            LD      (CACHEDBANK0), A    ; store it
+            CALL    set_bank            ; set the bank
+
+            LD      HL, (WAVLENL)   ; HL = sample len (low 16 bits)
+            DEC     HL
+            INC     H
+            INC     L
+            LD      B, L
+            LD      C, H            ; CB = sample len (low 16 bits) & ajusted
+
+            LD      A, (WAVLENH)
+            LD      IXL, A          ; IXL = sample len (high 8 bits)
+
+            LD      A, $80
+            LD      (YMPORT1), A    ; set silent to DAC
+            LD      A, (PAN)
+            LD      (IY+3), A       ; set pan
+
+            LD      A, (STATUS)
+            OR      STATPLAY        ; set status to "playing"
+            LD      (STATUS), A
+            JP      process
+
+end_play_com
+            LD      A, $80
+            LD      (YMPORT1), A    ; set silent to DAC
+
+            LD      A, (COMMAND)
+            AND     $FD             ; we clear the end play command
+            LD      (COMMAND), A
+
+completed
+            LD      A, (STATUS)
+            AND     $FE             ; clear the "playing" flag from status
+            LD      (STATUS), A
+            JP      idle
+
+
+check_command
+            LD      A, (COMMAND)    ; load command in A
+
+            RRA                     ; test for "start play" command
+            JR      C, start_play_com
+            RRA                     ; test for "end play" command
+            JR      C, end_play_com
+
+process
+            LD      HL, YMPORT1     ; HL point to DAC
+
+process_HL_cached
+            LD      A, (DE)         ; get sample data
+            LD      (HL), A         ; set sample to DAC
+
+            LD      A, (WAITVAL)    ; wait loop for sound rate variation
+wait_loop
+            DEC     A
+            JR      NZ, wait_loop
+
+            INC     E               ; increment sample address
+            JR      Z, addr_Ecarry
+
+adjust_len_c
+            DJNZ    process_HL_cached   ; continu fast
+
+            DEC     C
+            JP      NZ, check_command   ; continu with check command
+
+            LD      A, IXL
+            OR      A
+            JR      Z, completed    ; sample completed
+
+            DEC     IXL
+            JP      check_command   ; continu with check command
+
+addr_Ecarry
+            INC     D                   ; increment sample address (8-14 bits | $80)
+            JP      M, adjust_len_c     ; still minus, no need to reset bank
+
+            LD      A, (CACHEDBANK0)
+            XOR     $80                 ; we change bit 15 of sample address
+            JP      M, no_addr_Dcarry
+
+            INC     IXH             ; increment sample address 16-24
+
+no_addr_Dcarry
+            LD      (CACHEDBANK0), A
+            CALL    set_bank
+
+            SET     7, D            ; DE = sample address (low 15 bits | $8000)
+
+            DJNZ    process         ; continu with uncached HL
+
+            DEC     C
+            JP      NZ, check_command   ; continu with check command
+
+            LD      A, IXL
+            OR      A
+            JR      Z, completed    ; sample completed
+
+            DEC     IXL
+            JP      check_command   ; continu with check command
+
+
+; ##############################  functions  ################################
+
+            INCLUDE "z80_fct.i80"   ; basic functions
+
+set_bank
+            LD      HL, BANKREG     ; HL = BANKREG and A = sample address bits 8-15
+
+            RLCA
+            LD      (HL), A         ; #1 (bit 15)
+
+            LD      A, IXH          ; A = sample address bits 16-23
+
+            LD      (HL), A         ; #2 (bit 16)
+            RRCA
+            LD      (HL), A         ; #3 (bit 17)
+            RRCA
+            LD      (HL), A         ; #4 (bit 18)
+            RRCA
+            LD      (HL), A         ; #5 (bit 19)
+            RRCA
+            LD      (HL), A         ; #6 (bit 20)
+            RRCA
+            LD      (HL), A         ; #7 (bit 21)
+            RRCA
+            LD      (HL), A         ; #8 (bit 22)
+            RRCA
+            LD      (HL), A         ; #9 (bit 23)
+            RET

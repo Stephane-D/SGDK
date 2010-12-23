@@ -1,0 +1,612 @@
+; 4 channels sample player Z80 driver
+; it can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate
+; address and size of samples have to be 256 bytes boundary
+; the driver does support "cutoff" when mixing so you can use true 8 bits samples :)
+; Stéphane Dallongeville @2008
+;
+; we have to do 223 cycles per sample output which consist of :
+; - read 4 samples from the rom and mix them in output buffer (~177 cycles)
+; - output the obtained sample to the DAC (26 cycles)
+; - handle loop (18 cycles)
+;
+; register usage :
+; SP  = sample source (in ROM)
+; HL  = mix buffer
+; BC  = $7F00 (used for mix overflow stuff)
+; HL' = YMPORT0
+; BC' = read buffer
+
+
+; ###########################      define      ##############################
+
+            INCLUDE "z80_def.i80"   ; basic definitions
+
+
+; ###########################       var        ##############################
+
+WAVADR      EQU     PARAMS+$00      ; WAV address (bit 8 --> bit 23)
+WAVLEN      EQU     PARAMS+$02      ; WAV lenght (bit 8 --> bit 23)
+IWAVADR     EQU     PARAMS+$10      ; internal WAV address (bit 8 --> bit 23)
+IWAVLEN     EQU     PARAMS+$12      ; internal WAV lenght (bit 8 --> bit 23)
+
+NULLWAVADR  EQU     PARAMS+$20      ; silent WAV adr
+NULLWAVLEN  EQU     PARAMS+$22      ; silent WAV len
+
+WRITEBUF    EQU     PARAMS+$24
+READBUF     EQU     PARAMS+$26
+
+WAVBUFFER0  EQU     $1E00           ; WAV buffer 0
+WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
+
+
+; ###########################      macro       ##############################
+
+            INCLUDE "z80_mac.i80"  ; basic macros
+
+
+; copyChannelParams
+; -----------------
+; copy channel parameters to internal structure
+; = 64 cycles
+
+            macro copyChannelParams ch
+
+            LD      HL, (WAVADR+(ch*4))     ;                   ' 16
+            LD      (IWAVADR+(ch*4)), HL    ;                   ' 16
+            LD      HL, (WAVLEN+(ch*4))     ;                   ' 16
+            LD      (IWAVLEN+(ch*4)), HL    ;                   ' 16
+
+            endm                            ;                   ' 64
+
+; stopChannel
+; -----------
+; set null sample play for channel 'ch'
+; = 114 cycles
+
+            macro stopChannel ch
+
+            LD      HL, (NULLWAVADR)        ;                   ' 16
+            LD      (IWAVADR+(ch*4)), HL    ;                   ' 16
+            LD      HL, (NULLWAVLEN)        ;                   ' 16
+            LD      (IWAVLEN+(ch*4)), HL    ;                   ' 16
+            clearPlayStatus ch              ; clear play status ' 25
+            clearLoopStatus ch              ; clear loop status ' 25
+
+            endm                            ;                   ' 114
+
+
+; handlePlayCommand
+; -----------------
+; HL  <-  ?
+; DE  <-  ?
+;
+; handle play command for channel 'ch'
+; = 146 cycles
+
+            macro handlePlayCommand ch
+
+            getPlayCommand ch           ; play command ?        ' 22
+            JP      NZ, .do_command     ;                       ' 10    (32)
+
+            wait104                     ;                       ' 104   (136)
+            JP      .end                ;                       ' 10    (146)
+
+.do_command
+            clearPlayCommand ch         ; clear play command    ' 25    (57)
+            copyChannelParams ch        ; copy params           ' 64
+            setPlayStatus ch            ; set play status       ' 25
+
+.end
+            endm                        ;                       ' 146
+
+
+; prepareChannel
+; --------------
+; SP  <-  point to the sample source
+; HL  <-  point to write buffer
+; A   <-  ?
+; E   <-  ?
+;
+; set bank and prepare registers to play channel 'ch'
+; = 182 cycles
+
+            macro prepareChannel ch
+
+            LD      HL, IWAVADR+(ch*4)  ; point to sample adr   ' 10
+            LD      E, (HL)             ; B = bit 8-15          ' 7
+            LD      A, E                ; A = bit 8-15          ' 4
+            INC     L                   ;                       ' 4
+            RLA                         ; C flag = bit 15       ' 4
+            LD      A, (HL)             ; A = bit 16-23         ' 7
+            RLA                         ; A = bit 15-22         ' 4     (40)
+            setBankFast                 ; set bank              ' 97    (137)
+
+            LD      A, E                ; A = bit 8-15          ' 4
+            OR      $80                 ; A = $80 | bit 8-14    ' 7
+            LD      H, A                ;                       ' 4
+            XOR     A                   ;                       ' 4
+            LD      L, A                ; L = $00               ' 4
+            LD      SP, HL              ; SP = sample src       ' 6
+            LD      HL, (WRITEBUF)      ;                       ' 16    (182)
+
+            endm                        ;                       ' 182
+
+
+; updateChannelData
+; -----------------
+; HL  <-  ?
+;
+; update sample address and sample lenght
+; = 76 cycles
+
+            macro updateChannelData ch
+
+            LD      HL, (IWAVADR+(ch*4))    ; increment address ' 16
+            INC     HL                      ;                   ' 6
+            LD      (IWAVADR+(ch*4)), HL    ;                   ' 16    (38)
+
+            LD      HL, (IWAVLEN+(ch*4))    ; decrement lenght  ' 16
+            DEC     HL                      ;                   ' 6
+            LD      (IWAVLEN+(ch*4)), HL    ;                   ' 16    (76)
+
+            endm
+
+; checkChannelEnd
+; ---------------
+; HL  <-  ?
+; A   <-  ?
+;
+; check is sample is done, restart it if needed
+; = 180 cycles
+
+            macro checkChannelEnd ch
+
+            LD      HL, (IWAVLEN+(ch*4))    ; get sample lenght ' 16
+            LD      A, H                    ;                   ' 4
+            OR      L                       ;                   ' 4
+            JP      Z, .done                ; sample done ?     ' 10    (34)
+
+            wait136                         ;                   ' 136   (170)
+            JP      .end                    ;                   ' 10    (180)
+
+.done
+            getLoopStatus ch            ; loop play ?           ' 22    (56)
+            JP      Z, .stop            ;                       ' 10    (66)
+
+            copyChannelParams ch        ; copy params           ' 64    (130)
+            wait40                      ;                       ' 40
+            JP      .end                ;                       ' 10    (180)
+
+.stop
+            stopChannel ch              ;                       ' 114   (180)
+
+.end
+            endm                        ;                       ' 180
+
+
+; swapBuffer
+; ----------
+; HL  <-  point to new write buffer
+; DE  <-  point to new read buffer
+;
+; switch read and write buffer
+; = 72 cycles
+
+            macro swapBuffer
+
+            LD      HL, (WRITEBUF)      ;                       ' 16
+            LD      DE, (READBUF)       ;                       ' 20
+            LD      (WRITEBUF), DE      ;                       ' 20
+            LD      (READBUF), HL       ;                       ' 16
+
+            endm                        ;                       ' 72
+
+
+; sampleOutput
+; ------------
+; HL'  -> YMPORT1
+; BC' <-> point to play output buffer
+; D    -> $80
+;
+; output a sample to the DAC
+; = 30 cycles
+
+            macro sampleOutput
+
+            EXX                     ;                           ' 4
+            LD      A, (BC)         ; read sample from buffer   ' 7
+            ADD     D               ; unsign                    ' 4
+            INC     C               ; increment with looping    ' 4
+            LD      (HL), A         ; play sample               ' 7
+            EXX                     ;                           ' 4
+
+            endm                    ;                           ' 30
+
+
+; readAndClear2
+; -------------
+; SP  <-> point to the sample source (ROM)
+; HL  <-> point to the write output buffer
+; DE  <-  ?
+;
+; read 2 samples and write them in output buffer
+; = 34 cycles
+
+            macro readAndClear2
+
+            POP     DE              ; read 2 samples from ROM   ' 10+2 (rom access latency)
+            LD      (HL), E         ;                           ' 7
+            INC     L               ;                           ' 4
+            LD      (HL), D         ;                           ' 7
+            INC     L               ;                           ' 4
+
+            endm                    ;                           ' 34
+
+
+; readAndMix2
+; -----------
+; SP  <-> point to the sample source (ROM)
+; HL  <-> point to the write output buffer
+; DE  <-  ?
+; A   <-  ?
+;
+; read 2 samples and mix them in output buffer
+; = 76 --> 92 cycles
+
+            macro readAndMix2
+
+            POP     DE              ; read 2 samples from ROM   ' 10+2
+
+            LD      A, E            ; first sample              ' 4     (16)
+            ADD     (HL)            ; mix                       ' 7
+            JP      PO, .ok1        ; check overflow            ' 10    (33)
+
+            LD      A, B            ; fix overflow              ' 4     |
+            ADC     C               ; A = $7F/$80               ' 4     | +8
+
+.ok1
+            LD      (HL), A         ; write sample in buffer    ' 7     (40)
+            INC     L               ; next                      ' 4
+
+            LD      A, D            ; second sample             ' 4
+            ADD     (HL)            ; mix                       ' 7
+            JP      PO, .ok2        ; check overflow            ' 10    (65)
+
+            LD      A, B            ; fix overflow              ' 4     |
+            ADC     C               ; A = $7F/$80               ' 4     | +8
+
+.ok2
+            LD      (HL), A         ; write sample in buffer    ' 7     (72)
+            INC     L               ;                           ' 4     (76)
+
+            endm                    ;                           ' 76 (+8/16)
+
+
+; readAndMix10WhilePlay2
+; ----------------------
+; SP  <-> point to the sample source (ROM)
+; HL  <-> point to the write output buffer
+; DE  <-  ?
+; A   <-  ?
+;
+; read 10 samples and mix them in output buffer
+; = 440 --> 520 cycles
+
+            macro readAndMix10WhilePlay2
+
+            sampleOutput            ;                           ' 30
+
+            ; 1 --------------------
+            readAndMix2             ;                           ' 76 (106)
+
+            ; 2 --------------------
+            readAndMix2             ;                           ' 76 (182)
+
+            ; 3 --------------------
+            POP     DE              ; read 2 samples from ROM   ' 10+2 (194)
+
+            LD      A, E            ; first sample              ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (215)
+            JP      PO, .ok1       ; check overflow            ' 10    |
+
+            LD      A, B            ; fix overflow              ' 4     | +8
+            ADC     C               ; A = $7F/$80               ' 4     |
+
+.ok1
+            LD      (HL), A         ; write sample in buffer    ' 7     | --> 223-1 (bit soon)
+            sampleOutput            ;                           ' 30    | 41 (256)
+            INC     L               ; next                      ' 4     |
+
+            LD      A, D            ; second sample             ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (277)
+            JP      PO, .ok2      ; check overflow            ' 10    |
+
+            LD      A, B            ; fix overflow              ' 4     | +8
+            ADC     C               ; A = $7F/$80               ' 4     |
+
+.ok2
+            LD      (HL), A         ; write sample in buffer    ' 7     | 11 (288)
+            INC     L               ;                           ' 4     |
+
+            ; 4 --------------------
+            readAndMix2             ;                           ' 76 (364)
+
+            ; 5 --------------------
+            readAndMix2             ;                           ' 76 (440)
+
+            endm                    ;                           ' 440 (+80)
+
+
+; ###########################       init       ##############################
+
+            ORG     $0000
+
+init
+            DI                      ; disable ints
+            LD      SP, $2000       ; setup stack
+            IM      $01             ; set int mode 1
+            XOR     A
+            LD      (STATUS), A     ; driver not ready
+            LD      (COMMAND), A    ; command cleared
+            JP      start           ; jump to start
+
+
+; ###########################     interrupt    ##############################
+
+            ORG     $0038
+
+interrupt                           ; do nothing in this program
+            RETI
+
+
+; ###########################       main       ##############################
+
+            ORG     $0200
+
+start
+            LD      HL, PARAMS
+            LD      A, $00
+            LD      B, $20
+
+cp_loop
+            LD      (HL), A         ; clear sample parameters
+            INC     HL
+            DJNZ    cp_loop
+
+            LD      HL, WAVBUFFER0
+            LD      A, $00
+            LD      B, $00          ; for 256 * 2 bytes to clear
+
+cb_loop
+            LD      (HL), A         ; initialise buffers to silent
+            INC     HL
+            LD      (HL), A
+            INC     HL
+            DJNZ    cb_loop
+
+            CALL    initDAC         ; prepare DAC for output
+
+            LD      HL, WAVBUFFER0  ; initialise write and read buffer
+            LD      (WRITEBUF), HL
+            LD      HL, WAVBUFFER1
+            LD      (READBUF), HL
+
+            LD      BC, HL          ; BC' point to read buffer
+            LD      D, $80          ; D' = $80 (fast unsign)
+            LD      HL, YMPORT1     ; HL' point to YMPORT1
+            EXX
+
+wait_nullwav
+            LD      HL, (NULLWAVADR)
+            LD      A, H
+            OR      L
+            JP      Z, wait_nullwav ; wait for null wav address being initialised
+            LD      HL, (NULLWAVLEN)
+            LD      A, H
+            OR      L
+            JP      Z, wait_nullwav ; wait for null wav len being initialised
+
+            stopChannel 0           ; stop all channels
+            stopChannel 1
+            stopChannel 2
+            stopChannel 3
+
+            LD      A, STATREADY
+            LD      (STATUS), A     ; driver ready
+
+main_loop
+
+; channel 0
+; ---------
+
+; $00
+            sampleOutput                ;                       ' 30    |
+            handlePlayCommand 0         ;                       ' 146   | 223
+            wait47                      ;                       ' 47    |
+
+; $01
+            sampleOutput                ;                       ' 30    |
+            prepareChannel 0            ;                       ' 182   | 223
+            LD      B, 25               ; prepare loop counter  ' 7     |
+            wait4                       ;                       ' 4     |
+
+; $02-$1A
+loop_ch0
+            sampleOutput                ;                       ' 30    |
+            readAndClear2               ; process 10 samples    ' 34    |
+            readAndClear2               ;                       ' 34    |
+            readAndClear2               ;                       ' 34    |
+            readAndClear2               ;                       ' 34    | 223
+            readAndClear2               ;                       ' 34    |
+            wait9                       ;                       ' 9     |
+            DEC     B                   ;                       ' 4     |
+            JP      NZ, loop_ch0        ;                       ' 10    |
+
+; $1B
+            sampleOutput                ;                       ' 30    |
+            readAndClear2               ; process 6 samples     ' 34    |
+            readAndClear2               ;                       ' 34    | 223
+            readAndClear2               ;                       ' 34    |
+            updateChannelData 0         ; update channel data   ' 76    |
+            wait15                      ;                       ' 15    |
+
+; $1C
+            sampleOutput                ;                       ' 30    |
+            checkChannelEnd 0           ;                       ' 180   | 223
+            wait13                      ;                       ' 13    |
+
+; channel 1
+; ---------
+
+; $1D
+            sampleOutput                ;                       ' 30    |
+            handlePlayCommand 1         ;                       ' 146   | 223
+            LD      BC, $7F00           ; cache for overflow    ' 10    |
+            wait37                      ;                       ' 37    |
+
+; $1E
+            sampleOutput                ;                       ' 30    |
+            prepareChannel 1            ;                       ' 182   | 223
+            LD      IXL, 18             ; prepare loop          ' 11    |
+
+; $1F-$54
+loop_ch1
+            readAndMix10WhilePlay2      ;                       ' 440   | (223 * 2)+1
+            wait7                       ;                       ' 7     |
+
+            sampleOutput                ;                       ' 30    |
+            readAndMix2                 ;                       ' 76    |
+            readAndMix2                 ; 14 samples per loop   ' 76    |
+            wait22                      ;                       ' 22    | 223-1
+            DEC     IXL                 ;                       ' 8     |
+            JP      NZ, loop_ch1        ;                       ' 10    |
+
+; $55
+            sampleOutput                ;                       ' 30    |
+            readAndMix2                 ;                       ' 76    | 223
+            readAndMix2                 ; 4 samples per loop    ' 76    |
+            wait41                      ;                       ' 41    |
+
+; $56
+            sampleOutput                ;                       ' 30    |
+            updateChannelData 1         ;                       ' 76    | 223
+            wait117                     ;                       ' 117   |
+
+; $57
+            sampleOutput                ;                       ' 30    |
+            checkChannelEnd 1           ;                       ' 180   | 223
+            wait13                      ;                       ' 13    |
+
+; channel 2
+; ---------
+
+; $58
+            sampleOutput                ;                       ' 30    |
+            handlePlayCommand 2         ;                       ' 146   | 223
+            LD      BC, $7F00           ; cache for overflow    ' 10    |
+            wait37                      ;                       ' 37    |
+
+; $59
+            sampleOutput                ;                       ' 30    |
+            prepareChannel 2            ;                       ' 182   | 223
+            LD      IXL, 18             ; prepare loop          ' 11    |
+
+; $5A-$8F
+loop_ch2
+            readAndMix10WhilePlay2      ;                       ' 440   | (223 * 2)+1
+            wait7                       ;                       ' 7     |
+
+            sampleOutput                ;                       ' 30    |
+            readAndMix2                 ;                       ' 76    |
+            readAndMix2                 ; 14 samples per loop   ' 76    |
+            wait22                      ;                       ' 22    | 223-1
+            DEC     IXL                 ;                       ' 8     |
+            JP      NZ, loop_ch2        ;                       ' 10    |
+
+; $90
+            sampleOutput                ;                       ' 30    |
+            readAndMix2                 ;                       ' 76    | 223
+            readAndMix2                 ; 4 samples per loop    ' 76    |
+            wait41                      ;                       ' 41    |
+
+; $91
+            sampleOutput                ;                       ' 30    |
+            updateChannelData 2         ;                       ' 76    | 223
+            wait117                     ;                       ' 117   |
+
+; $92
+            sampleOutput                ;                       ' 30    |
+            checkChannelEnd 2           ;                       ' 180   | 223
+            wait13                      ;                       ' 13    |
+
+; channel 3
+; ---------
+
+; $93
+            sampleOutput                ;                       ' 30    |
+            handlePlayCommand 3         ;                       ' 146   | 223
+            LD      BC, $7F00           ; cache for overflow    ' 10    |
+            wait37                      ;                       ' 37    |
+
+; $94
+            sampleOutput                ;                       ' 30    |
+            prepareChannel 3            ;                       ' 182   | 223
+            LD      IXL, 18             ; prepare loop          ' 11    |
+
+; $95-$CA
+loop_ch3
+            readAndMix10WhilePlay2      ;                       ' 440   | (223 * 2)+1
+            wait7                       ;                       ' 7     |
+
+            sampleOutput                ;                       ' 30    |
+            readAndMix2                 ;                       ' 76    |
+            readAndMix2                 ; 14 samples per loop   ' 76    |
+            wait22                      ;                       ' 22    | 223-1
+            DEC     IXL                 ;                       ' 8     |
+            JP      NZ, loop_ch3        ;                       ' 10    |
+
+; $CB
+            sampleOutput                ;                       ' 30    |
+            readAndMix2                 ;                       ' 76    | 223
+            readAndMix2                 ; 4 samples per loop    ' 76    |
+            wait41                      ;                       ' 41    |
+
+; $CC
+            sampleOutput                ;                       ' 30    |
+            updateChannelData 3         ;                       ' 76    | 223
+            wait117                     ;                       ' 117   |
+
+; $CD
+            sampleOutput                ;                       ' 30    |
+            checkChannelEnd 3           ;                       ' 180   | 223
+            wait13                      ;                       ' 13    |
+
+; free time here
+; --------------
+
+; $CE
+            sampleOutput                ;                       ' 30    |
+            LD      IXL, $30            ; prepare loop          ' 11    |
+            wait182                     ;                       ' 182   |
+
+; $CF-FE
+loop_freetime
+            sampleOutput                ;                       ' 30    |
+            wait175                     ;                       ' 175   | 223
+            DEC     IXL                 ;                       ' 8     |
+            JP      NZ, loop_freetime   ;                       ' 10    |
+
+; $FF
+            sampleOutput                ;                       ' 30    |
+            swapBuffer                  ; swap buffers          ' 72    |
+            EXX                         ;                       ' 4     |
+            LD      BC, (READBUF)       ; read buffer           ' 20    | 223
+            EXX                         ;                       ' 4     |
+            wait83                      ;                       ' 83    |
+            JP      main_loop           ;                       ' 10    |
+
+
+; ##############################  functions  ################################
+
+            INCLUDE "z80_fct.i80"   ; basic functions
+

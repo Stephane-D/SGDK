@@ -1,0 +1,1 @@
+%GDK_WIN%\bin\bintos -align 256 -sizealign 256 %1
