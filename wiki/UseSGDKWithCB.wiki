@@ -1,4 +1,4 @@
-#summary Integrate SGDK inCode::Blocks
+#summary Integrate SGDK in Code::Blocks
 
 *Here's how to use the devkit with Code::Blocks IDE*
 
