@@ -1,0 +1,24 @@
+#summary How to use SGDK from command line.
+
+*Here's how to use the devkit from command line in windows environment*
+
+ * Define "GDK" environment variable to your installation path in unix path format (example D:/apps/gendev).
+ * Define "GDK_WIN" which still point to your installation path but in windows format (exemple D:\apps\gendev).
+ * Add the "bin" directory of devkit (%GDK_WIN%\bin) to your PATH variable. Be careful, if you have another GCC installation you can have some conflicts when cc1 command will be called...
+ * Now you can compile the library by using
+{{{
+%GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen
+}}}
+ * When the library is compiled you should obtain the following files
+{{{
+%GDK%/lib/sega.o
+%GDK%/lib/libgendev.a
+}}}
+ * Then to compile your own project you need to use the following command directly from your project directory :
+{{{
+%GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen
+}}}
+
+Normally you should obtain a rom.bin file in the out directory.
+
+Then test it with an emulator (or directly on the hardware if you are a lucky owner of a flash cart).
