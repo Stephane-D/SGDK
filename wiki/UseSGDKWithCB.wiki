@@ -45,7 +45,7 @@ http://www.gens.me/images/temp/gendevcb_06.jpg
 http://www.gens.me/images/temp/gendevcb_07.jpg
 
 
- * Choose the genesis compiler you just set up ("Sega Genesis Compiler" here). Uncheck the "Debug" configuration which is useless here and rename the "Release" configuration to "default" as this is the only used here, then click on finish.
+ * Choose the genesis compiler you just set up ("Sega Genesis Compiler" here). Uncheck the "Debug" configuration which is useless here and rename the "Release" configuration to "default" as this is the only used here. Change the outputs directory to "out\" then click on finish.
 
 http://www.gens.me/images/temp/gendevcb_08.jpg
 
