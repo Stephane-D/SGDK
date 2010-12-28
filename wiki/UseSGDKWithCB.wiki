@@ -1,6 +1,6 @@
-#summary How to use SGDK with Code::Blocks
+#summary Integrate SGDK inCode::Blocks
 
-*Here's how to use the devkit from Code::Blocks IDE*
+*Here's how to use the devkit with Code::Blocks IDE*
 
  * Define "GDK" environment variable to your installation path in unix path format (example D:/apps/gendev).
 
