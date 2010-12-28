@@ -14,11 +14,19 @@
 %GDK%/lib/sega.o
 %GDK%/lib/libgendev.a
 }}}
- * Then to compile your own project you need to use the following command directly from your project directory :
+ * Before compiling your own project you first need to respect the following constraint in your project source tree :
+{{{
+sources files (C, S) : root directory or "src" directory
+includes files (H, INC) : root directory or "include" directory
+resources files (S, ASM, TFC, TFD, PCM, RAW, WAV, BIN, BMP, RC) : root directory or "res" directory 
+}}}
+ * Then to compile your project you need to use the following command directly from your project directory :
 {{{
 %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen
 }}}
 
+
 Normally you should obtain a rom.bin file in the out directory.
 
 Then test it with an emulator (or directly on the hardware if you are a lucky owner of a flash cart).
+
