@@ -23,19 +23,13 @@ static u16 currentDriver;
 
 void Z80_init()
 {
-    // request bus
+    // request Z80 bus
     Z80_requestBus(1);
-    // clear Z80 RAM
-    memset((u8 *) Z80_RAM, 0, 0x2000);
     // set bank to 0
     Z80_setBank(0);
-    // request bus
-    Z80_releaseBus();
 
+    // no loaded driver
     currentDriver = Z80_DRIVER_NULL;
-
-    // load default Z80 driver
-    Z80_loadDriver(Z80_DRIVER_DEFAULT, 0);
 }
 
 
@@ -167,12 +161,12 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             len = sizeof(z80_drv4);
             break;
 
-        case Z80_DRIVER_MVSTRACKER:
+        case Z80_DRIVER_MVS:
             drv = z80_mvst;
             len = sizeof(z80_mvst);
             break;
 
-        case Z80_DRIVER_TFMTRACKER:
+        case Z80_DRIVER_TFM:
             drv = z80_tfm;
             len = sizeof(z80_tfm);
             break;

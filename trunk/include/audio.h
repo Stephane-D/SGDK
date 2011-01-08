@@ -47,13 +47,13 @@ void stopPlay_4PCM_VOL(const u16 channel);
 void setVolume_4PCM_VOL(const u16 channel, const u8 volume);
 u8   getVolume_4PCM_VOL(const u16 channel);
 
-// Z80_DRIVER_MVSTRACKER
-u8   isPlaying_MVSTRACKER();
-void stopPlay_MVSTRACKER();
-void startPlay_MVSTRACKER(const u8 *song, const u8 cmd);
+// Z80_DRIVER_MVS
+u8   isPlaying_MVS();
+void stopPlay_MVS();
+void startPlay_MVS(const u8 *song, const u8 cmd);
 
-// Z80_DRIVER_TFMTRACKER
-void startPlay_TFMTRACKER(const u8 *song);
+// Z80_DRIVER_TFM
+void startPlay_TFM(const u8 *song);
 
 
 #endif // _AUDIO_H_
