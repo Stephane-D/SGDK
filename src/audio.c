@@ -552,16 +552,16 @@ u8 getVolume_4PCM_VOL(const u16 channel)
 }
 
 
-// Z80_DRIVER_MVSTRACKER
+// Z80_DRIVER_MVS
 // MVS Tracker driver
 ///////////////////////////////////////////////////////////////
-u8 isPlaying_MVSTRACKER()
+u8 isPlaying_MVS()
 {
     vu8 *pb;
     u8 ret;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_MVSTRACKER, 0);
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(1);
 
@@ -577,13 +577,13 @@ u8 isPlaying_MVSTRACKER()
     return ret;
 }
 
-void startPlay_MVSTRACKER(const u8 *song, const u8 cmd)
+void startPlay_MVS(const u8 *song, const u8 cmd)
 {
     vu8 *pb;
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_MVSTRACKER, 0);
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(1);
 
@@ -603,12 +603,12 @@ void startPlay_MVSTRACKER(const u8 *song, const u8 cmd)
     Z80_releaseBus();
 }
 
-void stopPlay_MVSTRACKER()
+void stopPlay_MVS()
 {
     vu8 *pb;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_MVSTRACKER, 0);
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(1);
 
@@ -620,10 +620,10 @@ void stopPlay_MVSTRACKER()
     Z80_releaseBus();
 }
 
-// Z80_DRIVER_TFCTRACKER
-// MVS Tracker driver
+// Z80_DRIVER_TFM
+// TFM Tracker driver
 ///////////////////////////////////////////////////////////////
-void startPlay_TFMTRACKER(const u8 *song)
+void startPlay_TFM(const u8 *song)
 {
     vu8 *pb;
     u32 addr;
@@ -644,7 +644,7 @@ void startPlay_TFMTRACKER(const u8 *song)
     Z80_releaseBus();
 
     // load the driver efter we set the song adress
-    Z80_loadDriver(Z80_DRIVER_TFMTRACKER, 0);
+    Z80_loadDriver(Z80_DRIVER_TFM, 0);
 
     // reset Z80 (in case driver was already loaded)
     Z80_startReset();

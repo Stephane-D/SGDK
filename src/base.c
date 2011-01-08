@@ -262,12 +262,18 @@ static void internal_reset()
     Z80_init();
 }
 
+// assert reset
+void assert_reset()
+{
+    asm("reset\n\t");
+}
+
 // soft reset
 void reset()
 {
     asm("move   #0x2700,%sr\n\t"
         "move.l (0),%a7\n\t"
-        "move.l 4,%a0\n\t"
+        "move.l (4),%a0\n\t"
         "jmp    (%a0)");
 }
 

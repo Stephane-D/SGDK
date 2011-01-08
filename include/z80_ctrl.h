@@ -52,9 +52,9 @@
 // and handle volume (16 levels) for each channel
 #define Z80_DRIVER_4PCM_VOL             4
 // MVS tracker Z80 driver
-#define Z80_DRIVER_MVSTRACKER           5
+#define Z80_DRIVER_MVS                  5
 // TFM tracker Z80 driver
-#define Z80_DRIVER_TFMTRACKER           6
+#define Z80_DRIVER_TFM                  6
 
 #define Z80_DRIVER_DEFAULT              Z80_DRIVER_PCM
 

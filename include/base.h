@@ -6,6 +6,8 @@
 #define PROCESS_BITMAP_TASK         (1 << 1)
 
 
+// assert reset
+void assert_reset();
 // soft reset
 void reset();
 
