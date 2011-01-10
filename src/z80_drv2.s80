@@ -631,7 +631,7 @@ init
 
 ; ###########################     interrupt    ##############################
 
-            ORG     $0038
+            BLOCK   $0038-$
 
 interrupt                           ; do nothing in this program
             RETI
@@ -639,7 +639,7 @@ interrupt                           ; do nothing in this program
 
 ; ###########################       main       ##############################
 
-            ORG     $0200
+            BLOCK   $0200-$
 
 start
             LD      HL, PARAMS
@@ -886,3 +886,6 @@ DELTATAB_E  DB      -34, -21, -13, -8, -5, -3, -2, -1
             DB      0, 1, 2, 3, 5, 8, 13, 21
 DELTATAB_F  DB      -34, -21, -13, -8, -5, -3, -2, -1
             DB      0, 1, 2, 3, 5, 8, 13, 21
+
+
+            END

@@ -50,13 +50,18 @@ void Z80_requestBus(u16 wait)
     // request bus (need to end reset)
     pw_bus = (u16 *) Z80_HALT_PORT;
     pw_reset = (u16 *) Z80_RESET_PORT;
-    *pw_bus = 0x0100;
-    *pw_reset = 0x0100;
 
-    if (wait)
+    // bus not yet taken ?
+    if (*pw_bus & 0x100)
     {
-        // wait for bus taken
-        while (*pw_bus & 0x0100);
+        *pw_bus = 0x0100;
+        *pw_reset = 0x0100;
+
+        if (wait)
+        {
+            // wait for bus taken
+            while (*pw_bus & 0x0100);
+        }
     }
 }
 

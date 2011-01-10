@@ -44,7 +44,7 @@ init
 
 ; ###########################     interrupt    ##############################
 
-            ORG     $0038
+            BLOCK     $0038-$
 
 interrupt                           ; do nothing in this program
             RETI
@@ -52,7 +52,7 @@ interrupt                           ; do nothing in this program
 
 ; ###########################       main       ##############################
 
-            ORG     $0200
+            BLOCK     $0200-$
 
 start
             LD      B, $0A
@@ -235,3 +235,6 @@ set_bank
             RRCA
             LD      (HL), A         ; #9 (bit 23)
             RET
+
+
+            END
