@@ -353,7 +353,7 @@ init
 
 ; ###########################     interrupt    ##############################
 
-            ORG     $0038
+            BLOCK   $0038-$
 
 interrupt                           ; do nothing in this program
             RETI
@@ -361,7 +361,7 @@ interrupt                           ; do nothing in this program
 
 ; ###########################       main       ##############################
 
-            ORG     $0200
+            BLOCK   $0200-$
 
 start
             LD      HL, PARAMS
@@ -610,3 +610,5 @@ loop_freetime
 
             INCLUDE "z80_fct.i80"   ; basic functions
 
+
+            END
