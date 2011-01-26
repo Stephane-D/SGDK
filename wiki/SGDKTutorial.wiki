@@ -1,4 +1,4 @@
-#summary Tutorials TOC
+#summary Basic tutorials for SGDK API
 
 == Table of Content ==
  # *[#Introduction Introduction]*
@@ -126,7 +126,7 @@ int main()
 }}}
 Congratulations! You're now ready to make a little more!
 
-Download : [files/tut1_HelloWorld.zip Sample Hello World project]
+Download : [http://sgdk.googlecode.com/svn/wiki/files/tut1_HelloWorld.zip Sample Hello World project]
 
 ----
 
@@ -177,7 +177,7 @@ int main( )
 }
 }}}
 
-Download : [files/tut2_Input.zip Basic input project]
+Download : [http://sgdk.googlecode.com/svn/wiki/files/tut2_Input.zip Basic input project]
 
 <wiki:comment>
 === Multipad ===
