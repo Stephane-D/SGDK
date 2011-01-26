@@ -1,0 +1,328 @@
+#summary Tutorials TOC
+
+== Table of Content ==
+ # *[#Introduction Introduction]*
+ # *[#Hello_World Hello World !]*
+ # *[#Input Read the joypad]*
+ # _*Tiles*_ add a background to your game
+ # _*Sprites*_ _(coming soon)_
+ # _more_
+ # *[#History History and changes]*
+ 
+----
+ 
+== Introduction ==
+These several basic tutorials aim to give you the basis to start developing on the Sega Genesis / Megadrive using SGDK.
+
+Written in C language (ASM is out of scope), you'll be able to fully understand them if you already have basic knowledge on how the Genny works.
+
+So, before you start reading the tutorials, be sure to check and read these others documents:
+ * [http://emudocs.org/Genesis/sega2f.htm Genesis Technical Overview] by Sega
+ * [http://cgfm2.emuviews.com/txt/genvdp.txt Sega Genesis VDP documentation] by Charles !MacDonald
+ * [http://cgfm2.emuviews.com/txt/gen-hw.txt Sega Genesis hardware notes] by Charles !MacDonald
+ * Sega Genesis I/O Chip and Peripherals by Charles !MacDonald (_dead link_)
+
+----
+ 
+== Hello World ==
+
+Whenever you use [UseSGDKWithCB Code::Block], [UseSGDKWithEclipse Eclipse], [HowToUseSGDK Notepad] or any other souce code editor, you need your `main` function.
+
+{{{
+int main( )
+{
+	return (0);
+}
+}}}
+
+
+This function is your starting point and is automatically called on start up.
+
+Before that, SGDK initializes several things for you  :
+ * set default values for each [http://info.sonicretro.org/SCHG:VDP_Documentation/General/Registers VDP register]
+ * clean Video RAM
+ * load 4 default palettes : grey, red, green and blue
+ * load a default font for your text print need
+ * init input handling
+ * reset sound and music
+ * load a default sound driver ("2 channels PCM sample" driver in SGDK 0.7)
+
+so, for basic stuff and testing, everything is ready to use!
+It's so easy to call VDP, input or sprites stuff right on your main function....if you don't forget to include the `genesis.h` header!
+
+
+For now, let's see how to print the infamous _*Hello World*_.
+
+Printing on screen is a VDP task so you need to call `VDP_drawText(<your_text>, <x>, <y>)`.
+
+Remember, x and y are in tile unit, not pixel unit with 1 tile = 8 pixels.
+
+Ex:
+{{{
+#include <genesis.h>
+
+int main()
+{
+	VDP_drawText("Hello World!", 10, 13);
+	return (0);
+}
+}}}
+
+This code is correct but not Genesis friendly : do you think we can return (and stop) a program ?
+
+Video games repeatly update the TV screen, and it's up to you to handle things before or while a refresh.
+
+So a more Genny Hello World is more like this :
+{{{
+#include <genesis.h>
+
+int main()
+{
+	VDP_drawText("Hello Genny World!", 10, 13);
+
+	while(1)
+	{
+		//read input
+		//move sprite
+		//update score
+		//draw current screen (logo, start screen, settings, game, gameover, credits...)
+	}
+	return (0);
+}
+}}}
+
+This code is correct, even if `return(0)` will never be reached.
+
+The code inside the while loop will execute in full speed...great! but do you think the Genesis will handle so much ?
+
+The TV screen is updated 50 (PAL) or 60 (NTSC) times per second...you have to be sync with this.
+
+An usefull way is to wait for screen update, or vertical synchronisation.
+
+SGDK is here to help you with the `VDP_waitVSync` func.
+
+So, this time, you could write your first Genesis fully compliant demo.
+
+Ex:
+{{{
+#include <genesis.h>
+
+int main()
+{
+	VDP_drawText("Hello Genny World!", 10, 13);
+
+	while(1)
+	{
+		//read input
+		//move sprite
+		//update score
+		//draw current screen (logo, start screen, settings, game, gameover, credits...)
+
+		//wait for screen refresh
+		VDP_waitVSync();
+	}
+	return (0);
+}
+}}}
+Congratulations! You're now ready to make a little more!
+
+Download : [files/tut1_HelloWorld.zip Sample Hello World project]
+
+----
+
+== Input ==
+
+=== Basic ===
+You'll now learn how to handle input from controllers
+
+The first thing to do is to call `JOY_init()`, this will reset the handler and read informations about the connected controllers.
+
+SGDK uses a call back function to handle input.
+
+This way, you don't need to poll each loop the data port but to wait for you callback function to be ... calle everytime the input change (button A released, left pad pressed, ...).
+
+Using `JOY_setEventHandler`, you had to register this callback function to be called.
+
+It's very important to define your callback function with this signature : `void myJoyHandler( u16 joy, u16 changed, u16 state)`.
+
+It's also good practice to always use SGDK defined constants.
+
+Ex:
+{{{
+void myJoyHandler( u16 joy, u16 changed, u16 state)
+{
+	if (joy == JOY_1)
+	{
+		if (state & BUTTON_START)
+		{
+			//player 1 press START button
+		}
+		else if (changed & BUTTON_START)
+		{
+			//player 1 released START button	
+		}
+	}	
+}
+
+int main( )
+{
+	JOY_init();
+	JOY_setEventHandler( &myJoyHandler );
+
+	while(1)
+	{
+		VDP_waitVSync();
+	}
+	return 0;
+}
+}}}
+
+Download : [files/tut2_Input.zip Basic input project]
+
+<wiki:comment>
+=== Multipad ===
+
+This will work for up to 4 players using a [http://www.segaretro.org/4_Way_Play EA4Way] and up to 8 players using 2 [http://www.segaretro.org/Team_Player Sega TeamPlayer].
+
+If you plan to support multiplayers, remember to use the correct joy IDs : JOY_1/JOY_1A, JOY_1B, JOY_1C, JOY_1D, JOY2/JOY_2A, JOY_2B, JOY_2C, JOY_2D.
+
+Of course, you must be able to detect if there is a !TeamPlayer or a EAWay connected.
+
+There are actually 2 ways to know this :
+ # throught the port (PORT_1 or PORT_2) using `JOY_isMultipad( port )`.
+ {{{
+This will return 0 if it's not a multiplayer mode, JOY_SUPPORT_EA4WAY for an EA4Way and JOY_SUPPORT_TEAMPLAY for... a Sega TeamPlay
+}}}
+ # throught the joypad itself using `JOY_getJoyID( joy )`
+{{{
+This will return the ID of the joy.
+If (ID & JOY_SUPPORT_EA4WAY), the joypad is connected to a EA4Way
+If (ID & JOY_SUPPORT_TEAMPLAY), the joypad is connected to a SegaTeam play
+}}}
+
+
+Ex:
+{{{
+void myJoyHandler( u16 joy, u16 changed, u16 state)
+{
+	if (joy == JOY_1B) //2nd player on multitap
+	{
+		if (state & BUTTON_START)
+		{
+			//player 3 press START button
+		}
+		else if (changed & BUTTON_START)
+		{
+			//player 3 released START button	
+		}
+	}	
+}
+
+int main( )
+{
+	JOY_init();
+	JOY_setEventHandler( &myJoyHandler );
+
+	while(1)
+	{
+		VDP_waitVSync();
+	}
+	return 0;
+}
+}}}
+
+
+`JOY_getJoyID` gives you ever more information about the current joypad.
+
+Actually, SGDK is able to give you the ID of
+ * 3 buttons joypad (ID & *JOY_SUPPORT_3BTN*)
+ * 6 buttons joypad (ID & *JOY_SUPPORT_6BTN*)
+ * Sega !TeamPlayer (ID & *JOY_SUPPORT_TEAMPLAY*)
+ * EA 4Way or !TeamPlayer in Extra mode (ID & *JOY_SUPPORT_EA4WAY*)
+ * Sega Mouse (ID & *JOY_SUPPORT_MOUSE*)
+ * Konami Justifier (ID & *JOY_SUPPORT_JUSTIFIER*)
+
+The informations are defined on `JOY_init()` and after at least one refresh.
+
+Ex:
+{{{
+int main( )
+{
+	JOY_init();
+	VDP_waitVSync();
+	
+	if (JOY_getJoyID(JOY_1) & JOY_SUPPORT_JUSTIFIER)
+	{
+		VDP_drawText("JUSTIFIER NOT YET SUPPORTED", 10, 10);
+	}
+
+	while(1)
+	{
+		VDP_waitVSync();
+	}
+	return 0;
+}
+}}}
+
+Yes, SGDK doesn't handle Justifier yet, we're working on it but it handles mouse!
+
+=== Mouse ===
+
+Mouse support is almost the same as joypad but you had to register another function to handle mouse move with `JOY_setMouseEventHandler`.
+
+Similary, the signature of your callback function must be `void myMouseHandler( u16 joy, s8 xDelta, s8 yDelta, u16 buttonState)`.
+
+Ex:
+{{{
+s16 mouseX=0, mouseY=0;
+void myMouseHandler( u16 joy, s8 xDelta, s8 yDelta, u16 buttonState)
+{
+	char str[4];
+	u8 mouseState;
+
+	//move only if left pressed
+	if ( buttonState & MOUSE_LEFT )
+	{
+		mouseX+= xDelta;
+		if (mouseX<0)	mouseX = 0;
+
+		mouseY+= yDelta;
+		if (mouseY<0)	mouseY = 0;
+	}
+}
+int main( )
+{
+	JOY_init();
+	JOY_setEventHandler( &myJoyHandler ); //mouse button pressed is handled like a joypad, mainly to handle start
+	JOY_setMouseEventHandler( &myMouseHandler );
+
+	while(1)
+	{
+		VDP_waitVSync();
+	}
+	return 0;
+}
+}}}
+</wiki:comment>
+==== Misc ====
+
+Some others usefull functions are available:
+ * `JOY_update()` refreshes joypad status (called every screen refresh so don't call it yourself unless you really need it)
+ * `JOY_readJoypad( joy )` gives you the joy1 status whenever you need it
+ * `JOY_waitPressBtn()` waits for any buttons to be pressed (not directions)
+ * `JOY_waitPress(joy, BUTTON_A | BUTTON_UP)` waits for wanted buttons to be pressed on specific joypad
+
+ 
+ 
+_Note for advanced developer :_
+
+if you ever made you're own VBlankCallback, `JOY_update()` is always called whatever you do.
+
+----
+
+== History ==
+
+26 January 2011 - Initial release
+ * Introduction
+ * Hello world sample
+ * Basic input
