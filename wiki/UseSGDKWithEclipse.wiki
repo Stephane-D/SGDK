@@ -36,7 +36,7 @@ In _C/C++ > Build > Build Variables_, add a new variable :
  this will define $GDK needed by sdk/makefile.gen
 }}}
 
-<<insert Clipboard01.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse01.jpg
 
 In _C/C++ > Build > Environnement_, add a new variable
  * Name : GDK
@@ -46,7 +46,7 @@ In _C/C++ > Build > Environnement_, add a new variable
  this will define a var used on Eclipse IDE
 }}}
 
-<<insert Clipboard02.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse02.jpg
 
 In _C/C++ > New CDT Project Wizard > Makefile Project_
  * select _*Use default build command*_ in _Builder Settings_ tab
@@ -56,7 +56,7 @@ In _C/C++ > New CDT Project Wizard > Makefile Project_
  this will define  sdk/makefile.gen as the default makefile of any project
 }}}
 
-<<insert Clipboard03.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse03.jpg
 
 == Setup Project ==
 You could now create a new project (_File > New > C Project_).
@@ -68,11 +68,11 @@ In _C/C++ General > Paths and Symbols_, add a new directory in _Includes_ tab
  * Add to all configurations
  * Add to all languages
  
-<<insert Clipboard05.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse05.jpg
 
 Click _Apply_ and rebuild the index
 
-<<insert Clipboard06.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse06.jpg
 {{{
 this will make available the headers on <parent folder>/sdk/include to your project
 }}}
@@ -82,7 +82,7 @@ On _Make Target_ view, create a new target for your project.
  * give it a name
  * unselect _*Same as the target name*_
  * empty _Make target_ field
-<<insert Clipboard07.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse07.jpg
 {{{
  double click on this target to generate a out/rom.bin according your project's file, sdk/makefile.gen and sgdk library
 }}}
@@ -92,7 +92,7 @@ If you want to launch the rom on Gens from Eclipse
  * Right click on the generated out/rom.bin.
  * Select _Open With > Others..._
  * Browse for _gens.exe_ on _External programs_ tab
-<<insert Clipboard08.jpg>>
+http://sgdk.googlecode.com/svn/wiki/pictures/eclipse08.jpg
 
 == Common error ==
 If you have an error on build like *`main() not found`*, be sure to click _*Apply*_ on project properties's _C/C++ General > Paths and Symbols_.
