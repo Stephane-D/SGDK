@@ -43,7 +43,7 @@ _Vecteurs_68K:
 _Console:
         .ascii  "SEGA MEGA DRIVE "                                  /* Console Name (16) */
 _Copyright:
-        .ascii  "(C)FLEMTEAM 2010"                                  /* Copyright Information (16) */
+        .ascii  "(C)FLEMTEAM 2011"                                  /* Copyright Information (16) */
 _Title_Local:
         .ascii  "SAMPLE PROGRAM                                  "  /* Domestic Name (48) */
 _Title_Int:
