@@ -501,6 +501,16 @@ wait_nullwav
             stopChannel 2
             stopChannel 3
 
+            LD      HL, WAVVOL      ; init all channels to max volume
+            LD      A, $0F
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+
             LD      A, STATREADY
             LD      (STATUS), A     ; driver ready
 

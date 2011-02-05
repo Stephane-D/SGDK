@@ -23,18 +23,20 @@
 #define APLAN                   0xC000
 #define BPLAN                   0xE000
 
+#define TILE_SIZE               32
+
 #define TILE_SPACE              0xB000
 
-#define TILE_MAXNUM             (TILE_SPACE / 32)
+#define TILE_MAXNUM             (TILE_SPACE / TILE_SIZE)
 #define TILE_MAXINDEX           (TILE_MAXNUM - 1)
 #define TILE_SYSTEMINDEX        0x0000
 #define TILE_SYSTEMLENGHT       0x10
 #define TILE_USERINDEX          (TILE_SYSTEMINDEX + TILE_SYSTEMLENGHT)
 #define TILE_FONTINDEX          (TILE_MAXNUM - FONT_LEN)
 #define TILE_USERLENGHT         (TILE_FONTINDEX - TILE_USERINDEX)
-#define TILE_SYSTEM             (TILE_SYSTEMINDEX * 32)
-#define TILE_USER               (TILE_USERINDEX * 32)
-#define TILE_FONT               (TILE_FONTINDEX * 32)
+#define TILE_SYSTEM             (TILE_SYSTEMINDEX * TILE_SIZE)
+#define TILE_USER               (TILE_USERINDEX * TILE_SIZE)
+#define TILE_FONT               (TILE_FONTINDEX * TILE_SIZE)
 
 #define PAL0                    0
 #define PAL1                    1

@@ -191,6 +191,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
         u32 addr;
 
         case Z80_DRIVER_2ADPCM:
+        case Z80_DRIVER_4PCM:
             // misc parameters initialisation
             Z80_requestBus(1);
             // point to Z80 null sample parameters
@@ -229,8 +230,11 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
     // wait driver for being ready ?
     if (waitReady)
     {
+        Z80_releaseBus();
+
         // just wait for it
-        while (!Z80_isDriverReady()) waitSubTick(1);
+        while (!Z80_isDriverReady())
+            waitSubTick(1);
     }
 
     // new driver set

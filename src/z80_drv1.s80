@@ -1,5 +1,5 @@
 ; variable rate sample player Z80 driver
-; it can play a sample (8 bit unsigned) from 4 Khz up to 52 Khz rate
+; it can play a sample (8 bit signed) from 4 Khz up to 52 Khz rate
 ; Stéphane Dallongeville @2007
 
 ; ###########################      define      ##############################
@@ -155,6 +155,7 @@ process
 
 process_HL_cached
             LD      A, (DE)         ; get sample data
+            ADD     $80             ; unsign
             LD      (HL), A         ; set sample to DAC
 
             LD      A, (WAITVAL)    ; wait loop for sound rate variation
