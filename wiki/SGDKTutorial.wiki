@@ -533,11 +533,79 @@ This function draw FROM the tile index in argument to the last needed to fill th
 
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut3_TilesBitmap.zip Bitmap tiles project]
 
+=== GenRes's BITMAP support ===
+
+SGDK comes with another way to load tiles: using _*GenRes*_.
+
+GenRes is a tool which, actually, converts bitmap, animation & map for Genny development.
+
+For this part of the tutorial, we'll only talk about the `BITMAP` mode.
+
+GenRes relies on a resource declaration file when each line defines the convert type, the output name, the file and some parameters.
+
+In our case, we'll use the `BITMAP` convert type following this way :
+
+{{{
+	BITMAP output_var_name "directory/file.bmp" 0
+	; always finish with a blank line or comment
+}}}
+
+If you write it down in a `resource.rc`, SGDK will call GenRes to compile this to a linked `resource.o`.
+
+For version up to 0.7d, GenRes output format is undefined, so you have to write your own format structure like this :
+
+{{{
+	struct genresTiles
+	{
+			u16 *pal; 		//pointer to pal data
+			u32 *tiles;		//pointer to tiles data
+			u16 width;		//width in tiles
+			u16 height;		//height in tiles
+			u16 compressedSize; //0
+	};
+}}}
+
+Unlike SGDK's bitmap support, it doesn't generate a header file but you could access the data using your `output_var_name`.
+{{{
+	extern struct genresTiles output_var_name;
+}}}
+
+
+`VDP_loadBMPTileData` is dedicated to BMP. Since GenRes converts a bitmap to tiles data, you need to use another VDP function, dedicated to tiles : `VDP_loadTileData`.
+
+{{{
+	// load tiles in VRAM
+	//  arg0 = tiles data
+	//  arg1 = index for first destination tile
+	//  arg2 = number of tiles to load
+	//  arg3 = use DMA (1) or not (0)
+	VDP_loadTileData(moon.tiles, TILE1, moon.width*moon.height, 0);
+}}}
+
+For pal loading and drawing, you still need `VDP_setPalette` and `VDP_fillTileMapRectInc`.
+
+And so, you could draw our moon this way :
+
+{{{
+	VDP_setPalette(PAL1, moon.pal);
+	VDP_loadTileData(moon.tiles, TILE1, moon.width*moon.height, 0);
+	VDP_fillTileMapRectInc(BPLAN, TILE_ATTR_FULL(PAL1, 0, 0, 0, TILE1), 12, 12, moon.width, moon.height);
+}}}
+
+
+To the question _"SGDK native bitmap support or GenRes ?"_, it's only a matter of personal taste !
+
+
+Download : [http://sgdk.googlecode.com/svn/wiki/files/tut3_TilesGenRes.zip Genres tiles project]
+
+
 === Compression ===
 
 If you use a large amount of tiles, we strongly suggest you to compress them (using RLE, huffman, ...).
 
 SGDK doesn't include (yet?) a method to load compressed bitmap data so it's up to you to make your own (de)compression algorithm.
+
+GenRes BITMAP could use a RLE-based compression. _more details soon_
 
 Check if the tool you use could export compressed data too.
 
@@ -552,6 +620,9 @@ http://sgdk.googlecode.com/svn/wiki/pictures/tutTile_Kmod.jpg
 ----
 
 == History ==
+
+21 February 2011 - Tiles Part
+ * Tiles with GenRes
 
 31 January 2011 - Tiles part
  * Basic tiles
