@@ -637,7 +637,7 @@ If you read documents linked on [#Introduction first part], you should know the 
  
 It's why we can't use the same methods to draw sprites than to draw plane tiles.
 
-The good news is that is the way to DRAW which is different, not the way to load it.
+The good news is that it is the way to DRAW which is different, not the way to load it.
 
 Planes and Sprites uses tiles loaded on the VRAM.
 
@@ -651,19 +651,20 @@ Some other data you should know about sprites
  * any sprite outside this display area is so not visible
  * sprite position "rolls" : ex (300, 812) is the same as (300, 300)
  * you can control the order to draw the sprites using a _link_ property
- * max 80 sprites could be defined
- * max 20 sprites could be draw on a same line
+ * max 80 sprites could be defined in PAL mode
+ * max 20 sprites could be draw on a same line in PAL mode
  * sprites are made of 1x1 to 4x4 tiles (so *big* sprites are in fact multi sprites)
  
 So, the steps to draw a sprite on screen are
  # load the tiles on VRAM
  # load its pal (if not already loaded)
  # define it
- # ask for draw
+ # (define the other ones)
+ # ask for drawing
  
-Like with the tiles, we will first define the tiles in pure C Array.
+Like before, we will first define the tiles in pure C Array.
 
-We want a 2x2 sprites so we need 4 tiles :
+We want a 2x2 sprite so we need 4 tiles :
 
 {{{
 const u32 spriteTiles[4*8]=
@@ -688,7 +689,7 @@ const u32 spriteTiles[4*8]=
 
 }}}
 
-This sprite is the same shape we used in tile basic tutorial.
+This sprite has the same shape we used in tile basic tutorial.
 
 Now, just follow the steps
 
@@ -706,7 +707,7 @@ Now, just follow the steps
 	// arg1 : x
 	// arg2 : y
 	// arg3 : size (from 1x1 to 4x4 tiles)
-	// arg4 : tiles properties
+	// arg4 : tile(s) attributes
 	// arg5 : link property (more on this later)
 	VDP_setSprite(0, 40, 40, SPRITE_SIZE(2,2), TILE_ATTR_FULL(PAL0,1,0,0,1), 0);
  
@@ -725,14 +726,14 @@ Now, just follow the steps
 }}}
 
 Important things to note
- * you could define as much sprites (80 max) as you need before ask for draw
- * x,y is based on the display area not the sprite plane, which means (0,0) is (0,0) on screen and, so, (128,128) on sprite plane
+ * you could define as much sprites (80 max) as you need before ask for drawing
+ * using SGDK, sprite position is based on the display area not the sprite plane, which means x=0 & y=0 mean (0,0) on screen and (128,128) on sprite plane
  * SPRITE_SIZE is needed to pass the usefull value (0000b for 1x1, 0101b for  2x2, etc...)
  * TILE_ATTR_FULL is the same macro you use with tiles
  
 A sprite is mainly used for moving object, so you will mostly update the x,y of the sprites.
 
-Using the `VDP_setSprite` is so making thing difficult : you have to re-set the sprite each times.
+Using the `VDP_setSprite` is making thing difficult : you have to re-set the sprite each times.
 
 A useful way is to use a structure to maintain the sprite properties, change what need to be changed and update sprites.
 
@@ -740,6 +741,8 @@ This could be done using `VDP_setSpriteP` and a `_spritedef` type object.
 
 {{{
 	// ... code
+	
+	_spritedef mySprite;
 	
 	mySprite.posx = 0;
 	mySprite.posy = 0;
@@ -751,7 +754,7 @@ This could be done using `VDP_setSpriteP` and a `_spritedef` type object.
 	// ... code
 }}}
 
-and, to make it move
+and, to make it move,
 
 {{{
 
@@ -765,18 +768,22 @@ and, to make it move
 		VDP_updateSprites();
 
 		VDP_waitVSync();
-		// ... code
 	}
 
 }}}
 
-Of course, you could use `VDP_setSprite` or `VDP_setSpriteP`, it doesn't matter.
+Of course, you could use `VDP_setSprite` or `VDP_setSpriteP`, it doesn't matter. SDGK gives you `VDP_setSpriteP` to make it easiest.
 
-Beware, we didn't talk about _link_ property yet and, unless you understand its use, you won't able to draw more than 1 sprite.
+For now, we didn't talk about _link_ property yet and, unless you understand its use, you won't be able to draw more than 1 sprite.
 
-The _link_ property contains the index of the next sprite to draw with the last one uses the index of the first one.
+The _link_ property contains the index of the next sprite to draw (with last one getting back to sprite 0).
 
-This means that if you keep our first test, you will only draw sprite 0 (since its link property is 0).
+This means that, using our first test, you will only draw sprite 0 (since its link property is 0).
+
+{{{
+mySprite.link  = 0;
+}}
+
 
 To draw 2 sprites (sprite 0 then sprite 1), you should use
 
@@ -818,16 +825,15 @@ You could easily define a sprite but not drawn it like this
 
 Of course, you can't avoid sprite 0.
 
-*BEWARE* one of the main reason of bugs using sprite is related to _link_ property. 3 things to check:
+*BEWARE*: a misuse of the _link_ property is the main reason of bugs. 3 things to check:
  # each one of you sprite link to another one
  # there is no cycling link (for ex : 1->2, 2->3, 3->1 ...)
  # the last sprite links back to sprite 0
 
 The full use of linking is useful only on very special case (like the dragon boss on Space Harrier for ex).
 
-So you should avoid problems and always link to next sprite and 0 at the end.
- 
- 
+So, for now, you should avoid problems and always link to next sprite and get back to sprite 0.
+
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpritesBasic.zip Basic sprites project]
  
 ----
