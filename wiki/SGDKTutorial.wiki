@@ -782,7 +782,7 @@ This means that, using our first test, you will only draw sprite 0 (since its li
 
 {{{
 mySprite.link  = 0;
-}}
+}}}
 
 
 To draw 2 sprites (sprite 0 then sprite 1), you should use
