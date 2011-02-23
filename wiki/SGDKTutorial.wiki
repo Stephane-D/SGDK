@@ -5,7 +5,7 @@
  # *[#Hello_World Hello World !]*
  # *[#Input Read the joypad]*
  # *[#Tiles Tiles]*
- # _*Sprites*_ _(coming soon)_
+ # *[#Sprites Sprites]*
  # _more_
  # *[#History History and changes]*
  
@@ -326,6 +326,7 @@ If you read documents linked on [#Introduction first part], you should know how 
  * the Genny redraws 2 planes on refresh (+ a third one for the sprites)
  * each plane is filled with 8x8 pixel tile
  * each plane could be 32x32 to 128x128 tiles in memory (only up to 40x28 is visible on screen)
+ * each plane is filled from left to right and top to bottom
  * each tile could be used several times in any plane, with the same pal or not
  * each tile could be used with any of the 4 pal available
  * each tile could be drawn flipped, w/o more memory
@@ -341,7 +342,7 @@ Some other data you should know :
  * a tile on screen isn't removed on refresh (ie no need to draw it each refresh!)
  * a pal is 16 colors wide
 
-So, the step to draw a tile on screen are the following
+So, the steps to draw a tile on screen are the following
  # load the tile on VRAM (we don't bother about DMA yet)
  # load its pal (if not already loaded)
  # plot it on the selected plane, at (x,y) with the wanted pal
@@ -628,7 +629,230 @@ http://sgdk.googlecode.com/svn/wiki/pictures/tutTile_Kmod.jpg
 
 ----
 
+== Sprites ==
+
+If you read documents linked on [#Introduction first part], you should know the main difference between tiles for sprites and tiles for planes :
+ * the plane draws the tiles from left to right THEN top to bottom (ie row order)
+ * the sprite draws the tiles from top to bottom THEN left to right (ie column order)
+ 
+It's why we can't use the same methods to draw sprites than to draw plane tiles.
+
+The good news is that is the way to DRAW which is different, not the way to load it.
+
+Planes and Sprites uses tiles loaded on the VRAM.
+
+So yes, you could use tiles for planes, sprites or the two at the same time !
+ 
+=== Basic ===
+
+Some other data you should know about sprites
+ * the sprite "plane" is, unlike the 2 others playfield, not scrollable and fixed size (512x512 in common case)
+ * it means only a part of the sprite plane is visible, this part starts at (128,128)
+ * any sprite outside this display area is so not visible
+ * sprite position "rolls" : ex (300, 812) is the same as (300, 300)
+ * you can control the order to draw the sprites using a _link_ property
+ * max 80 sprites could be defined
+ * max 20 sprites could be draw on a same line
+ * sprites are made of 1x1 to 4x4 tiles (so *big* sprites are in fact multi sprites)
+ 
+So, the steps to draw a sprite on screen are
+ # load the tiles on VRAM
+ # load its pal (if not already loaded)
+ # define it
+ # ask for draw
+ 
+Like with the tiles, we will first define the tiles in pure C Array.
+
+We want a 2x2 sprites so we need 4 tiles :
+
+{{{
+const u32 spriteTiles[4*8]=
+{
+		0x00001111, //Tile Top Left
+		0x00001111,
+		// ...
+
+		0x11112222, //Tile Bottom Left
+		0x11112222,
+		// ...
+
+		0x11110000, //Tile Top Right
+		0x11110000,
+		// ...
+
+		0x22221111, //Tile Bottom Right
+		0x22221111,
+		// ...
+
+};
+
+}}}
+
+This sprite is the same shape we used in tile basic tutorial.
+
+Now, just follow the steps
+
+{{{
+	// ... code
+	
+	//load the tiles on VRAM
+	VDP_loadTileData( (const u32 *)spriteTiles, 1, 4, 0); 
+	
+	//load its pal (if not already loaded)
+	//we'll use one of the pre-loaded pal for now
+	
+	//define it
+	// arg0 : sprite idx (from 0 to 79)
+	// arg1 : x
+	// arg2 : y
+	// arg3 : size (from 1x1 to 4x4 tiles)
+	// arg4 : tiles properties
+	// arg5 : link property (more on this later)
+	VDP_setSprite(0, 40, 40, SPRITE_SIZE(2,2), TILE_ATTR_FULL(PAL0,1,0,0,1), 0);
+ 
+	// ask for draw
+	VDP_updateSprites()
+	
+	// ... code
+	
+	while(1)
+	{
+		// ... code
+		VDP_waitVSync();
+	}
+	
+	// ... code
+}}}
+
+Important things to note
+ * you could define as much sprites (80 max) as you need before ask for draw
+ * x,y is based on the display area not the sprite plane, which means (0,0) is (0,0) on screen and, so, (128,128) on sprite plane
+ * SPRITE_SIZE is needed to pass the usefull value (0000b for 1x1, 0101b for  2x2, etc...)
+ * TILE_ATTR_FULL is the same macro you use with tiles
+ 
+A sprite is mainly used for moving object, so you will mostly update the x,y of the sprites.
+
+Using the `VDP_setSprite` is so making thing difficult : you have to re-set the sprite each times.
+
+A useful way is to use a structure to maintain the sprite properties, change what need to be changed and update sprites.
+
+This could be done using `VDP_setSpriteP` and a `_spritedef` type object.
+
+{{{
+	// ... code
+	
+	mySprite.posx = 0;
+	mySprite.posy = 0;
+	mySprite.size = SPRITE_SIZE(2,2);
+	mySprite.tile_attr = TILE_ATTR_FULL(PAL0,1,0,0,TILE1);
+	mySprite.link  = 0;
+	VDP_setSpriteP(0, &mySprite);
+	
+	// ... code
+}}}
+
+and, to make it move
+
+{{{
+
+	// ... code
+	while(1)
+	{
+		mySprite.posx++;
+		mySprite.posy++;
+		VDP_setSpriteP(0, &mySprite);
+
+		VDP_updateSprites();
+
+		VDP_waitVSync();
+		// ... code
+	}
+
+}}}
+
+Of course, you could use `VDP_setSprite` or `VDP_setSpriteP`, it doesn't matter.
+
+Beware, we didn't talk about _link_ property yet and, unless you understand its use, you won't able to draw more than 1 sprite.
+
+The _link_ property contains the index of the next sprite to draw with the last one uses the index of the first one.
+
+This means that if you keep our first test, you will only draw sprite 0 (since its link property is 0).
+
+To draw 2 sprites (sprite 0 then sprite 1), you should use
+
+{{{
+	// ... code
+	
+	mySprite.link  = 1; //link to next sprite
+	VDP_setSpriteP(0, &mySprite);
+
+	// ... code
+	mySprite2.link  = 0; //mySprite2 is the last one so loop back to sprite 0
+	VDP_setSpriteP(1, &mySprite2);
+	
+	// ... code
+}}}
+
+The _link_ property is so also used to define the order to draw sprites : the first one will be below the next one.
+
+It so lets you control which and when a sprite could be drawn.
+
+You could easily define a sprite but not drawn it like this
+
+{{{
+	// ... code
+	
+	mySprite.link  = 2; //link to sprite index 2
+	VDP_setSpriteP(0, &mySprite);
+
+	// ... code
+	mySprite2.link  = 2; // 
+	VDP_setSpriteP(1, &mySprite2);
+	
+	// ... code
+	mySprite3.link  = 0; // back to sprite 0 so sprite 1 won't be drawn
+	VDP_setSpriteP(2, &mySprite3);
+	
+	// ... code
+}}}
+
+Of course, you can't avoid sprite 0.
+
+*BEWARE* one of the main reason of bugs using sprite is related to _link_ property. 3 things to check:
+ # each one of you sprite link to another one
+ # there is no cycling link (for ex : 1->2, 2->3, 3->1 ...)
+ # the last sprite links back to sprite 0
+
+The full use of linking is useful only on very special case (like the dragon boss on Space Harrier for ex).
+
+So you should avoid problems and always link to next sprite and 0 at the end.
+ 
+ 
+Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpritesBasic.zip Basic sprites project]
+ 
+----
+
+=== Misc ===
+
+One useful way to test your sprite engine is throught [http://gendev.spritesmind.net/page-gensK.html Gens KMod].
+
+You could explore the sprite list and trace any issue.
+
+http://sgdk.googlecode.com/svn/wiki/pictures/tutSprite_Kmod.jpg
+
+
+<wiki:comment>
+----
+Remember, we can't use VDP_loadBMPTileData
+</wiki:comment>
+
+----
+	
 == History ==
+
+23 February 2001 - Sprites
+ * Basic sprites
+ * added missing info in Basic tiles
 
 21 February 2011 - Tiles Part
  * Tiles with GenRes
