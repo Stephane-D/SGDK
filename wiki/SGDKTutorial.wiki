@@ -837,6 +837,156 @@ So, for now, you should avoid problems and always link to next sprite and get ba
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpritesBasic.zip Basic sprites project]
  
 ----
+=== GenRes's SPRITE support ===
+
+Unlike tiles for plane, SGDK doesn't come with a native sprite bitmap support but you could use _*GenRes*_.
+
+We will talk about the `SPRITE` mode this time.
+
+As you know, GenRes relies on a resource declaration file where each line defines the convert mode, the output name, the file and some parameters.
+
+With `SPRITE`, it could be done this way :
+
+{{{
+	SPRITE output_var_name "directory/file.bmp" <sprite_width> <sprite_height>
+	; always finish with a blank line or comment
+}}}
+
+If you write it down in a `resource.rc`, SGDK will call GenRes to compile `directory/file.bmp` to a linked `resource.o`.
+
+For version up to 0.7d, GenRes output format is undefined in SGDK, so you have to write your own format structure like this :
+
+{{{
+	struct genresSprites
+	{
+			u16 *pal; 		//pointer to pal data
+			u32 **sprites;		//pointer to sprites data
+			u16 count;		//nb sprites
+			u16 width;		//width of each sprite in pixels (not tiles!)
+			u16 height;		//height of each sprite in pixels (not tiles!)
+			u16 size; 		//since we use width/height in pixel, useful info on sprite size
+							//TODO : size is not SGDK compliant, you need to use size>>8
+							//		will be fixed in coming release
+	};
+}}}
+
+You could then access the data using your `output_var_name`.
+{{{
+	extern struct genresSprites output_var_name;
+}}}
+
+
+That should ring a bell if you read this tutorial is the `sprites`.
+
+It's not `u32 *sprites` but `u32 **sprites`.
+
+In fact, it's because GenRes converts sprites sheet, not unique sprite (even if a sprites sheet with a unique sprite is valid).
+
+What is a sprites sheet ? a sheet with several sprites in correct position.
+
+If you have 3 sprites of 16x32, the first one will be at (0,0), the 2nd at (16,0) and the 3rd at (32,0) or (0,32).
+
+http://sgdk.googlecode.com/svn/wiki/pictures/tutSprite_sonic.png
+
+This one is valid. The black grid is Photoshop's one, it should not be drawn on the bitmap.
+
+So, with this sheet, using sonic.sprites[6] will give you the data of sprite 6 : Red Sonic.
+
+This data is standard tile data . You could so load it using `VDP_loadTileData` with a valid 3rd argumement (number of tiles).
+
+{{{
+	// .... code
+	
+	// each sprite is height/8 *  width/8 (since it's pixel size, not tile size)
+	u16 nbTiles = (sonic.height>>3) * (sonic.width>>3);
+	
+	VDP_loadTileData( sonic.sprites[0], 1, nbTiles, 0);
+
+	// load in PAL1
+	VDP_setPalette(PAL1, sonic.pal);
+
+	VDP_resetSprites();
+	VDP_setSprite(0, 0, 0, sonic.size>>8, TILE_ATTR_FULL(PAL1,1,0,0,1), 0);
+	VDP_updateSprites();
+	// .... code
+
+}}}
+
+*Beware* : there is actual a problem the `size` property. It should be resolved in a future release. Just always use `size>>8`.
+
+Now that the sprite tile is loaded, you could use it anyway you want.
+
+Genny supports horizontal and vertical flipping (but no zoom or rotation).
+
+{{{
+	// .... code
+	
+	// flipped sonic
+	VDP_setSprite(0, 0, 0, sonic.size>>8, TILE_ATTR_FULL(PAL1,1,0,1,1), 0);
+
+	// .... code
+}}}
+
+But Sonic isn't Sonic if he doesn't run. So how to we make him run ?
+
+You know how to move it (using `_spritedef`) but you miss something : sprite animation.
+
+There are 2 (basic) ways to make sprite animation
+ # load each frame and define the sprite each refresh with the correct first tile.
+ # define a sprite and load each refresh the frame data onto first tile.
+ 
+The first one need a lot of VRAM.
+
+The second one make a lot of loading and, so, could slow down.
+
+Let's try the way I (KanedaFr) use the most : frame update, the seconde one.
+
+The steps to follow are simple
+ * define the sprite (using `VDP_setSprite`)
+ * each refresh, load frame tile data (using `VDP_loadTileData`)
+ 
+So make Sonic runs! You noticed you need the tile data of 3 sprites : sprite 1, 2 & 3.
+
+
+{{{
+	// .... code
+
+	u8 frame = 0;
+	
+	// define the sprite (using a _spritedef to easily make Sonic move later)
+	mySprite.posx = 40;
+	mySprite.posy = 40;
+	mySprite.size = sonic.size>>8;
+	mySprite.tile_attr = TILE_ATTR_FULL(PAL1,1,0,0,1);
+	mySprite.link  = 0;
+	VDP_setSpriteP(0, &mySprite);
+
+	// .... code
+	while(1)
+	{
+		// we still use nbTiles since ALL sprite are of the size in a sprite sheet
+		VDP_loadTileData( sonic.sprites[frame + 1], 1, nbTiles, 0);
+		frame++; // next frame
+		frame%=3; // we only need 3 frames, so roll back
+
+
+		//make it move!
+		mySprite.posx+=10;
+		VDP_setSpriteP(0, &mySprite);
+		
+		//flush
+		VDP_updateSprites();
+		
+		// .... code
+		
+		VDP_waitVSync();
+	}
+}}}
+
+Easy no ?
+
+Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpriteGenRes.zip Sprites animation using GenRes]
+----
 
 === Misc ===
 
@@ -846,16 +996,14 @@ You could explore the sprite list and trace any issue.
 
 http://sgdk.googlecode.com/svn/wiki/pictures/tutSprite_Kmod.jpg
 
-
-<wiki:comment>
-----
-Remember, we can't use VDP_loadBMPTileData
-</wiki:comment>
-
 ----
 	
 == History ==
 
+23 February 2001 - Sprites
+ * Sprites with GenRes
+ * Sprites animation
+ 
 23 February 2001 - Sprites
  * Basic sprites
  * added missing info in Basic tiles
