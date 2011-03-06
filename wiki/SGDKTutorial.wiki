@@ -985,7 +985,7 @@ So make Sonic runs! You noticed you need the tile data of 3 sprites : sprite 1, 
 
 Easy no ?
 
-Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpriteGenRes.zip Sprites animation using GenRes]
+Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpritesGenRes.zip Sprites animation using GenRes]
 ----
 
 === Misc ===
