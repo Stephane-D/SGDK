@@ -15,6 +15,18 @@ typedef struct
     u8 link;
 } _spritedef;
 
+typedef struct
+{
+    u16 *pal;               //pointer to pal data
+    u32 **sprites;          //pointer to sprites data
+    u16 count;              //nb sprites
+    u16 width;              //width of each sprite in pixels (not tiles!)
+    u16 height;             //height of each sprite in pixels (not tiles!)
+    u16 size;               //since we use width/height in pixel, useful info on sprite size
+                                //TODO : size is not SGDK compliant, you need to use size>>8
+                                //              will be fixed in coming release
+} _genresSprites;
+
 
 extern _spritedef spriteDefCache[MAX_SPRITE];
 

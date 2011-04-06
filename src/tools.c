@@ -325,8 +325,8 @@ void showFPS()
 
     // display FPS
     intToStr(getFPS(), str, 1);
-    VDP_clearTextBG(APLAN, 1, 1, 3);
-    VDP_drawTextBG(APLAN, str, 0x8000, 1, 1);
+    VDP_clearText(1, 1, 3);
+    VDP_drawText(str, 1, 1);
 }
 
 

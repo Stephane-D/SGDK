@@ -2,11 +2,13 @@
 ; it can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate
 ; address and size of samples have to be 256 bytes boundary
 ; the driver does support "cutoff" when mixing so you can use true 8 bits samples :)
-; Stéphane Dallongeville @2008
+; Stéphane Dallongeville @2011
+;
+; Z80 clock is 3.547 Mhz on PAL and 3.575 on NTSC
 ;
 ; we have to do 223 cycles per sample output which consist of :
-; - read 4 samples from the rom and mix them in output buffer (~177 cycles)
-; - output the obtained sample to the DAC (26 cycles)
+; - read 4 samples from the rom and mix them in output buffer (~173 cycles)
+; - output the obtained sample to the DAC (30 cycles)
 ; - handle loop (18 cycles)
 ;
 ; register usage :
@@ -15,6 +17,7 @@
 ; BC  = $7F00 (used for mix overflow stuff)
 ; HL' = YMPORT0
 ; BC' = read buffer
+; D'  = $80 (used for sample unsign)
 
 
 ; ###########################      define      ##############################
@@ -206,7 +209,7 @@ WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
 ; ------------
 ; HL'  -> YMPORT1
 ; BC' <-> point to play output buffer
-; D    -> $80
+; D'   -> $80
 ;
 ; output a sample to the DAC
 ; = 30 cycles
@@ -307,7 +310,7 @@ WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
 
             LD      A, E            ; first sample              ' 4     |
             ADD     (HL)            ; mix                       ' 7     | 21 (215)
-            JP      PO, .ok1       ; check overflow            ' 10    |
+            JP      PO, .ok1        ; check overflow            ' 10    |
 
             LD      A, B            ; fix overflow              ' 4     | +8
             ADC     C               ; A = $7F/$80               ' 4     |
@@ -319,7 +322,7 @@ WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
 
             LD      A, D            ; second sample             ' 4     |
             ADD     (HL)            ; mix                       ' 7     | 21 (277)
-            JP      PO, .ok2      ; check overflow            ' 10    |
+            JP      PO, .ok2        ; check overflow            ' 10    |
 
             LD      A, B            ; fix overflow              ' 4     | +8
             ADC     C               ; A = $7F/$80               ' 4     |

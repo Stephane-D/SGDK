@@ -16,6 +16,7 @@
 
 #include "tab_vol.h"
 #include "smp_null.h"
+#include "smp_null_pcm.h"
 
 
 static u16 currentDriver;
@@ -161,7 +162,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             len = sizeof(z80_drv3);
             break;
 
-        case Z80_DRIVER_4PCM_VOL:
+        case Z80_DRIVER_4PCM_ENV:
             drv = z80_drv4;
             len = sizeof(z80_drv4);
             break;
@@ -191,6 +192,22 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
         u32 addr;
 
         case Z80_DRIVER_2ADPCM:
+            // misc parameters initialisation
+            Z80_requestBus(1);
+            // point to Z80 null sample parameters
+            pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
+
+            addr = (u32) smp_null_pcm;
+            // null sample address (128 bytes aligned)
+            pb[0] = addr >> 7;
+            pb[1] = addr >> 15;
+            // null sample length (128 bytes aligned)
+            pb[2] = sizeof(smp_null_pcm) >> 7;
+            pb[3] = sizeof(smp_null_pcm) >> 15;
+            Z80_releaseBus();
+            break;
+
+        case Z80_DRIVER_PCM:
         case Z80_DRIVER_4PCM:
             // misc parameters initialisation
             Z80_requestBus(1);
@@ -198,16 +215,16 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
 
             addr = (u32) smp_null;
-            // null sample address (128 bytes aligned)
-            pb[0] = addr >> 7;
-            pb[1] = addr >> 15;
-            // null sample length (128 bytes aligned)
-            pb[2] = sizeof(smp_null) >> 7;
-            pb[3] = sizeof(smp_null) >> 15;
+            // null sample address (256 bytes aligned)
+            pb[0] = addr >> 8;
+            pb[1] = addr >> 16;
+            // null sample length (256 bytes aligned)
+            pb[2] = sizeof(smp_null) >> 8;
+            pb[3] = sizeof(smp_null) >> 16;
             Z80_releaseBus();
             break;
 
-        case Z80_DRIVER_4PCM_VOL:
+        case Z80_DRIVER_4PCM_ENV:
             // load volume table
             Z80_upload(0x1000, tab_vol, 0x1000, 0);
 

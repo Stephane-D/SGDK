@@ -1,0 +1,71 @@
+Genres 0.1
+25 Jan 08
+http://gendev.spritesmind.net
+
+
+GenRes helps you to compile resource without any external convertor.
+genres source.rc dest.asm
+
+This release includes 4 plugins
+- BITMAP plugin
+- SPRITE plugin
+- MAP plugin
+- ANI plugin
+
+Also included an incomplete sample, full source isn't available because it's a mess.
+But you can see what I was able to do with GenRes ;)
+Use button A to change sample and arrow keys on Map and Ani samples.
+
+
+
+BITMAP plugin allows you to include 16colors bitmap as Genny tiles and pal
+It's a port of B2T code
+Usage :
+BITMAP id file [comp [tr_idx [first_tile]]]
+		id			tiles and pal prefix
+		file		the 16colors bitmap to convert
+[options]
+		comp		compression algorithm
+						0:none (default)
+						1:Charles' RLE packer
+		tr_idx	color index used for transparency, will switch with 0
+		first_tile
+						first number used for suffix tile name (if comp=0)
+						
+						
+SPRITE plugin allows you to include 16 colors sprites from a single bitmap file
+It's also a port of B2T code
+Usage :
+SPRITE id file [width height [comp [tr_idx [first_tile]]]]
+		id			tiles and pal prefix
+		file		the 16colors bitmap to convert
+[options]
+		width		width of an unique sprite (8,16,24,32)
+		height	height of an unique sprite (8,16,24,32), mandatory with width
+		comp		compression algorithm
+						0:none (default)
+		tr_idx	color index used for transparency, will switch with 0
+		first_tile
+						first number used for suffix tile name (if comp=0)
+						
+						
+MAP plugin allows to include a 8 bit Mappy file including tiles, pal and layers data
+Usage :
+MAP id file [comp]
+		id			layer, tiles and pal prefix
+		file		the 8bit Mappy FMP file to include
+[options]
+		comp		compression algorithm for tiles
+						0:none (default)
+						1:Charles' RLE packer
+						
+
+ANI plugin allows to include ANI file (animated icon)
+ANI file must be in 16 colors and its size must be 8 rounded (8, 16, 24, 32, .....)
+Usage :
+ANI id file
+		id			tiles and pal prefix
+		file		the ANI file to include
+		
+		
+Next release will include DAC plugin (sound import)

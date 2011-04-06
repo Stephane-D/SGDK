@@ -13,6 +13,7 @@
 
 
 static u8 regValues[0x13];
+u16 textBasetile;
 
 
 void VDP_init()
@@ -68,6 +69,9 @@ void VDP_init()
 
     /* reset sprite struct */
     VDP_resetSprites();
+
+    /* default base tile attribut for draw text method */
+    textBasetile = TILE_ATTR(0, 1, 0, 0);
 }
 
 
@@ -269,15 +273,15 @@ void VDP_waitVSync()
 
 void VDP_resetScreen()
 {
-    VDP_setPalette(PAL0, palette_grey);
-    VDP_setPalette(PAL1, palette_red);
-    VDP_setPalette(PAL2, palette_green);
-    VDP_setPalette(PAL3, palette_blue);
-
     VDP_clearPlan(APLAN, 1);
     VDP_waitDMACompletion();
     VDP_clearPlan(BPLAN, 1);
     VDP_waitDMACompletion();
+
+    VDP_setPalette(PAL0, palette_grey);
+    VDP_setPalette(PAL1, palette_red);
+    VDP_setPalette(PAL2, palette_green);
+    VDP_setPalette(PAL3, palette_blue);
 }
 
 void VDP_blit()

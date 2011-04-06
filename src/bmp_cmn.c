@@ -13,12 +13,19 @@
 #ifdef ENABLE_BMP
 
 
+// don't want to share it
+extern u16 textBasetile;
+
 
 u8 *bmp_buffer_read;
 u8 *bmp_buffer_write;
 
 u16 bmp_flags;
 u16 bmp_state;
+
+
+// forward
+static u16 _bmp_getYOffset();
 
 
 u16 BMP_getFlags()
@@ -57,6 +64,28 @@ void BMP_waitAsyncFlipComplete()
     pw = &bmp_state;
 
     while (*pw & BMP_STAT_FLIPWAITING);
+}
+
+
+void BMP_drawText(const char *str, u16 x, u16 y)
+{
+    const u16 adjy = y + _bmp_getYOffset();
+
+    VDP_drawTextBG(BMP_PLAN, str, textBasetile, x, adjy);
+}
+
+void BMP_clearText(u16 x, u16 y, u16 w)
+{
+    const u16 adjy = y + _bmp_getYOffset();
+
+    VDP_clearTextBG(BMP_PLAN, x, adjy, w);
+}
+
+void BMP_clearTextLine(u16 y)
+{
+    const u16 adjy = y + _bmp_getYOffset();
+
+    VDP_clearTextLineBG(BMP_PLAN, adjy);
 }
 
 
@@ -110,6 +139,18 @@ u16 BMP_doBlankProcess()
     if (bmp_state & BMP_STAT_FLIPWAITING) _bmp_doFlip();
 
     return 1;
+}
+
+
+static u16 _bmp_getYOffset()
+{
+    u16 res;
+
+    if HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK) res = 3;
+    else res = 0;
+    if READ_IS_FB1 res += BMP_PLANHEIGHT / 2;
+
+    return res;
 }
 
 

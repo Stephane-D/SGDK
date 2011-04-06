@@ -12,6 +12,10 @@
 #include "tab_vram.h"
 
 
+// don't want to share it
+extern u16 textBasetile;
+
+
 void VDP_setHorizontalScroll(u16 plan, u16 line, u16 value)
 {
     vu16 *pw;
@@ -84,6 +88,27 @@ void VDP_clearPlan(u16 plan, u8 use_dma)
     }
 }
 
+void VDP_setTextPalette(u16 pal)
+{
+    textBasetile &= ~(3 << 13);
+    textBasetile |= (pal & 3) << 13;
+}
+
+void VDP_setTextPriority(u16 prio)
+{
+    textBasetile &= ~(1 << 15);
+    textBasetile |= (prio & 1) << 15;
+}
+
+u16 VDP_getTextPalette()
+{
+    return (textBasetile >> 13) & 3;
+}
+
+u16 VDP_getTextPriority()
+{
+    return (textBasetile >> 15) & 1;
+}
 
 void VDP_drawTextBG(u16 plan, const char *str, u16 basetile, u16 x, u16 y)
 {
@@ -115,7 +140,7 @@ void VDP_clearTextLineBG(u16 plan, u16 y)
 void VDP_drawText(const char *str, u16 x, u16 y)
 {
     // use A plan & high priority by default
-    VDP_drawTextBG(APLAN, str, 0x8000, x, y);
+    VDP_drawTextBG(APLAN, str, textBasetile, x, y);
 }
 
 void VDP_clearText(u16 x, u16 y, u16 w)

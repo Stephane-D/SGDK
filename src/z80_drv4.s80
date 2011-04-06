@@ -3,7 +3,7 @@
 ; with volume support (16 levels du to memory limitation)
 ; address and size of samples have to be 256 bytes boundary
 ; the driver does support "cutoff" when mixing so you can use true 8 bits samples :)
-; Stéphane Dallongeville @2008
+; Stéphane Dallongeville @2011
 ;
 ; we have to do 223 cycles per sample output which consist of :
 ; - read 4 samples from the rom and mix them in output buffer (~177 cycles)

@@ -18,6 +18,7 @@ SIZEBND= $(BIN)/sizebnd
 BINTOC= $(BIN)/bintoc
 BINTOS= $(BIN)/bintos
 WAVTORAW= $(BIN)/wavtoraw
+PCMTORAW= $(BIN)/pcmtoraw
 GENRES= $(BIN)/genres
 TFMCOM= $(BIN)/tfmcom
 NM= $(BIN)/nm
@@ -103,6 +104,9 @@ out/rom.out: $(LIB)/sega.o $(OBJ) $(LIB)/libgendev.a
 %.raw: %.wav
 	$(WAVTORAW) $<
 
+%.rawpcm: %.pcm
+	$(PCMTORAW) $< $@
+
 %.tfc: %.tfd
 	$(TFMCOM) $<
 
@@ -112,8 +116,8 @@ out/rom.out: $(LIB)/sega.o $(OBJ) $(LIB)/libgendev.a
 %.s: %.raw
 	$(BINTOS) -align 256 -sizealign 256 $<
 
-%.s: %.pcm
-	$(BINTOS) -align 256 -sizealign 256 $<
+%.s: %.rawpcm
+	$(BINTOS) -align 128 -sizealign 128 -nullfill 136 $<
 
 %.o80: %.s80
 	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst

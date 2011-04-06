@@ -226,7 +226,7 @@ void transform3D(const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
     camview_trans.z = fix16Mul(FIX16(1), matInv.c.z);
 }
 
-void project3DFixed(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv, u16 w, u16 h)
+void project3D_f16(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv, u16 w, u16 h)
 {
     const Vect3D_f16 *s;
     Vect2D_f16 *d;
@@ -260,7 +260,7 @@ void project3DFixed(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv, u16 w, u1
     }
 }
 
-void project3DInt(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv, u16 w, u16 h)
+void project3D_s16(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv, u16 w, u16 h)
 {
     const Vect3D_f16 *s;
     Vect2D_s16 *d;
