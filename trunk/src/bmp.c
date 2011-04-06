@@ -36,7 +36,6 @@ static void initTilemap(u16 num);
 static u16 doBlitNorm();
 static u16 doBlitBlank();
 static u16 doBlitBlankExt();
-static void doBufferFlip();
 
 static void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
 static void drawLine(u32 offset, s16 dx, s16 dy, u32 step_x, u32 step_y, u8 col);
@@ -108,6 +107,65 @@ void BMP_setFlags(u16 value)
     }
 }
 
+void BMP_enableWaitVSync()
+{
+    if (!(bmp_flags & BMP_ENABLE_WAITVSYNC))
+        BMP_setFlags(bmp_flags | BMP_ENABLE_WAITVSYNC);
+}
+
+void BMP_disableWaitVSync()
+{
+    if (bmp_flags & BMP_ENABLE_WAITVSYNC)
+        BMP_setFlags(bmp_flags & ~BMP_ENABLE_WAITVSYNC);
+}
+
+void BMP_enableASyncFlip()
+{
+    if (!(bmp_flags & BMP_ENABLE_ASYNCFLIP))
+        BMP_setFlags(bmp_flags | BMP_ENABLE_ASYNCFLIP);
+}
+
+void BMP_disableASyncFlip()
+{
+    if (bmp_flags & BMP_ENABLE_ASYNCFLIP)
+        BMP_setFlags(bmp_flags & ~BMP_ENABLE_ASYNCFLIP);
+}
+
+void BMP_enableFPSDisplay()
+{
+    if (!(bmp_flags & BMP_ENABLE_FPSDISPLAY))
+        BMP_setFlags(bmp_flags | BMP_ENABLE_FPSDISPLAY);
+}
+
+void BMP_disableFPSDisplay()
+{
+    if (bmp_flags & BMP_ENABLE_FPSDISPLAY)
+        BMP_setFlags(bmp_flags & ~BMP_ENABLE_FPSDISPLAY);
+}
+
+void BMP_enableBlitOnBlank()
+{
+    if (!(bmp_flags & BMP_ENABLE_BLITONBLANK))
+        BMP_setFlags(bmp_flags | BMP_ENABLE_BLITONBLANK);
+}
+
+void BMP_disableBlitOnBlank()
+{
+    if (bmp_flags & BMP_ENABLE_BLITONBLANK)
+        BMP_setFlags(bmp_flags & ~BMP_ENABLE_BLITONBLANK);
+}
+
+void BMP_enableExtendedBlank()
+{
+    if (!(bmp_flags & BMP_ENABLE_EXTENDEDBLANK))
+        BMP_setFlags(bmp_flags | BMP_ENABLE_EXTENDEDBLANK);
+}
+
+void BMP_disableExtendedBlank()
+{
+    if (bmp_flags & BMP_ENABLE_EXTENDEDBLANK)
+        BMP_setFlags(bmp_flags & ~BMP_ENABLE_EXTENDEDBLANK);
+}
 
 void BMP_flip()
 {
@@ -120,7 +178,7 @@ void BMP_flip()
             // wait for previous async flip to complete
             BMP_waitAsyncFlipComplete();
             // flip bitmap buffer
-            doBufferFlip();
+            BMP_internalBufferFlip();
             // request a flip (will be processed in blank period --> BMP_doBlankProcess)
             bmp_state |= BMP_STAT_FLIPWAITING;
         }
@@ -128,7 +186,7 @@ void BMP_flip()
         {
             VDP_waitVSync();
             // flip bitmap buffer
-            doBufferFlip();
+            BMP_internalBufferFlip();
             // blit buffer to VRAM and flip vdp display
             _bmp_doFlip();
         }
@@ -136,9 +194,23 @@ void BMP_flip()
     else
     {
          // flip bitmap buffer
-         doBufferFlip();
+         BMP_internalBufferFlip();
          // blit buffer to VRAM and flip vdp display
          _bmp_doFlip();
+    }
+}
+
+void BMP_internalBufferFlip()
+{
+    if READ_IS_FB0
+    {
+        bmp_buffer_read = bmp_buffer_1;
+        bmp_buffer_write = bmp_buffer_0;
+    }
+    else
+    {
+        bmp_buffer_read = bmp_buffer_0;
+        bmp_buffer_write = bmp_buffer_1;
     }
 }
 
@@ -459,21 +531,6 @@ static u16 doBlitBlankExt()
 }
 
 
-static void doBufferFlip()
-{
-    if READ_IS_FB0
-    {
-        bmp_buffer_read = bmp_buffer_1;
-        bmp_buffer_write = bmp_buffer_0;
-    }
-    else
-    {
-        bmp_buffer_read = bmp_buffer_0;
-        bmp_buffer_write = bmp_buffer_1;
-    }
-}
-
-
 // graphic drawing functions
 ////////////////////////////
 
@@ -514,7 +571,7 @@ void BMP_setPixel(u32 x, u32 y, u8 col)
         bmp_buffer_write[(y * BMP_PITCH) + x] = col;
 }
 
-void BMP_setPixelsV2D(const Vect2D_u16 *crd, u8 col, u16 num)
+void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
 {
     const u8 c = col;
     const Vect2D_u16 *v;

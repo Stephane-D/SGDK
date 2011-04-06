@@ -37,7 +37,6 @@ static u16 basetile_ind;
 static u16 doBlitNorm_FF();
 static u16 doBlitBlank_FF();
 static u16 doBlitBlankExt_FF();
-static void doBufferFlip_FF();
 
 static void changeToUserTile(u32 offset);
 static void drawLineFF(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
@@ -82,15 +81,8 @@ void BMP_FF_setFlags(u16 value)
 {
     if (bmp_flags == value) return;
 
-    bmp_flags = value;
-
-    // flag dependancies
-    if (bmp_flags & BMP_ENABLE_EXTENDEDBLANK) bmp_flags |= BMP_ENABLE_BLITONBLANK;
-    if (bmp_flags & BMP_ENABLE_BLITONBLANK) bmp_flags |= BMP_ENABLE_ASYNCFLIP;
-    if (bmp_flags & BMP_ENABLE_ASYNCFLIP) bmp_flags |= BMP_ENABLE_WAITVSYNC;
-
-    // clear pending task
-    bmp_state &= ~(BMP_STAT_FLIPWAITING | BMP_STAT_BLITTING);
+    // common setFlags tasks
+    _bmp_setFlags(value);
 
     // extended blank mode ?
     if HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK)
@@ -117,6 +109,66 @@ void BMP_FF_setFlags(u16 value)
     }
 }
 
+void BMP_FF_enableWaitVSync()
+{
+    if (!(bmp_flags & BMP_ENABLE_WAITVSYNC))
+        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_WAITVSYNC);
+}
+
+void BMP_FF_disableWaitVSync()
+{
+    if (bmp_flags & BMP_ENABLE_WAITVSYNC)
+        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_WAITVSYNC);
+}
+
+void BMP_FF_enableASyncFlip()
+{
+    if (!(bmp_flags & BMP_ENABLE_ASYNCFLIP))
+        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_ASYNCFLIP);
+}
+
+void BMP_FF_disableASyncFlip()
+{
+    if (bmp_flags & BMP_ENABLE_ASYNCFLIP)
+        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_ASYNCFLIP);
+}
+
+void BMP_FF_enableFPSDisplay()
+{
+    if (!(bmp_flags & BMP_ENABLE_FPSDISPLAY))
+        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_FPSDISPLAY);
+}
+
+void BMP_FF_disableFPSDisplay()
+{
+    if (bmp_flags & BMP_ENABLE_FPSDISPLAY)
+        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_FPSDISPLAY);
+}
+
+void BMP_FF_enableBlitOnBlank()
+{
+    if (!(bmp_flags & BMP_ENABLE_BLITONBLANK))
+        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_BLITONBLANK);
+}
+
+void BMP_FF_disableBlitOnBlank()
+{
+    if (bmp_flags & BMP_ENABLE_BLITONBLANK)
+        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_BLITONBLANK);
+}
+
+void BMP_FF_enableExtendedBlank()
+{
+    if (!(bmp_flags & BMP_ENABLE_EXTENDEDBLANK))
+        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_EXTENDEDBLANK);
+}
+
+void BMP_FF_disableExtendedBlank()
+{
+    if (bmp_flags & BMP_ENABLE_EXTENDEDBLANK)
+        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_EXTENDEDBLANK);
+}
+
 
 void BMP_FF_flip()
 {
@@ -129,7 +181,7 @@ void BMP_FF_flip()
             // wait for previous async flip to complete
             BMP_waitAsyncFlipComplete();
             // flip bitmap buffer
-            doBufferFlip_FF();
+            BMP_FF_internalBufferFlip();
             // request a flip (will be processed in blank period --> BMP_doBlankProcess)
             bmp_state |= BMP_STAT_FLIPWAITING;
         }
@@ -137,7 +189,7 @@ void BMP_FF_flip()
         {
             VDP_waitVSync();
             // flip bitmap buffer
-            doBufferFlip_FF();
+            BMP_FF_internalBufferFlip();
             // blit buffer to VRAM and flip vdp display
             _bmp_doFlip();
         }
@@ -145,9 +197,29 @@ void BMP_FF_flip()
     else
     {
          // flip bitmap buffer
-         doBufferFlip_FF();
+         BMP_FF_internalBufferFlip();
          // blit buffer to VRAM and flip vdp display
          _bmp_doFlip();
+    }
+}
+
+void BMP_FF_internalBufferFlip()
+{
+    if READ_IS_FB0
+    {
+        bmp_tilemap_read = bmp_tilemap_1;
+        bmp_buffer_read = bmp_buffer_1;
+        bmp_tilemap_write = bmp_tilemap_0;
+        bmp_buffer_write = bmp_buffer_0;
+        basetile_ind = BMP_FB0TILEINDEX;
+    }
+    else
+    {
+        bmp_tilemap_read = bmp_tilemap_0;
+        bmp_buffer_read = bmp_buffer_0;
+        bmp_tilemap_write = bmp_tilemap_1;
+        bmp_buffer_write = bmp_buffer_1;
+        basetile_ind = BMP_FB1TILEINDEX;
     }
 }
 
@@ -560,26 +632,6 @@ static u16 doBlitBlankExt_FF()
     bmp_state &= ~BMP_STAT_BLITTING;
 
     return 1;
-}
-
-static void doBufferFlip_FF()
-{
-    if READ_IS_FB0
-    {
-        bmp_tilemap_read = bmp_tilemap_1;
-        bmp_buffer_read = bmp_buffer_1;
-        bmp_tilemap_write = bmp_tilemap_0;
-        bmp_buffer_write = bmp_buffer_0;
-        basetile_ind = BMP_FB0TILEINDEX;
-    }
-    else
-    {
-        bmp_tilemap_read = bmp_tilemap_0;
-        bmp_buffer_read = bmp_buffer_0;
-        bmp_tilemap_write = bmp_tilemap_1;
-        bmp_buffer_write = bmp_buffer_1;
-        basetile_ind = BMP_FB1TILEINDEX;
-    }
 }
 
 

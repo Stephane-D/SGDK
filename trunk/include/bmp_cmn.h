@@ -90,6 +90,10 @@ void BMP_waitBlitComplete();
 u16  BMP_hasFlipWaiting();
 void BMP_waitAsyncFlipComplete();
 
+void BMP_drawText(const char *str, u16 x, u16 y);
+void BMP_clearText(u16 x, u16 y, u16 w);
+void BMP_clearTextLine(u16 y);
+
 void BMP_showFPS();
 
 u8   BMP_clipLine(Line *l);

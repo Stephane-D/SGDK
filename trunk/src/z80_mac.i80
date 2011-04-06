@@ -362,6 +362,11 @@
             wait7
             endm
 
+            macro   wait28
+            wait21
+            wait7
+            endm
+
             macro   wait30
             wait22
             wait8
@@ -372,13 +377,38 @@
             wait10
             endm
 
+            macro   wait32
+            wait20
+            wait12
+            endm
+
+            macro   wait33
+            wait21
+            wait12
+            endm
+
+            macro   wait34
+            wait22
+            wait12
+            endm
+
             macro   wait35
             wait14x7 2
+            endm
+
+            macro   wait36
+            wait32
+            wait4
             endm
 
             macro   wait37
             wait21
             wait16
+            endm
+
+            macro   wait39
+            wait35
+            wait4
             endm
 
             macro   wait38
@@ -396,6 +426,16 @@
             wait20
             endm
 
+            macro   wait42
+            wait35
+            wait7
+            endm
+
+            macro   wait43
+            wait35
+            wait8
+            endm
+
             macro   wait46
             wait35
             wait11
@@ -404,6 +444,11 @@
             macro   wait47
             wait35
             wait12
+            endm
+
+            macro   wait48
+            wait40
+            wait8
             endm
 
             macro   wait49
@@ -415,8 +460,18 @@
             wait16
             endm
 
+            macro   wait52
+            wait36
+            wait16
+            endm
+
             macro   wait53
             wait49
+            wait4
+            endm
+
+            macro   wait55
+            wait51
             wait4
             endm
 
@@ -452,6 +507,11 @@
             macro   wait64
             wait49
             wait15
+            endm
+
+            macro   wait65
+            wait49
+            wait16
             endm
 
             macro   wait66
@@ -493,6 +553,11 @@
             wait20
             endm
 
+            macro   wait84
+            wait77
+            wait7
+            endm
+
             macro   wait85
             wait77
             wait8
@@ -501,6 +566,11 @@
             macro   wait86
             wait77
             wait9
+            endm
+
+            macro   wait89
+            wait77
+            wait12
             endm
 
             macro   wait91
@@ -515,6 +585,16 @@
             macro   wait96
             wait77
             wait19
+            endm
+
+            macro   wait97
+            wait77
+            wait20
+            endm
+
+            macro   wait99
+            wait91
+            wait8
             endm
 
             macro   wait100
@@ -565,9 +645,19 @@
             wait4
             endm
 
+            macro   wait122
+            wait111
+            wait11
+            endm
+
             macro   wait123
             wait119
             wait4
+            endm
+
+            macro   wait131
+            wait119
+            wait12
             endm
 
             macro   wait132

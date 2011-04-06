@@ -1,17 +1,21 @@
 ; 2 channels ADCPM sample player Z80 driver
-; it can mix up to 2 ADCPM samples at a fixed 22 Khz rate
+; it can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate
 ; address and size of samples have to be 256 bytes boundary
-; Stéphane Dallongeville @2008
+; Stéphane Dallongeville @2011
 ;
-; we have to do 162 cycles per sample output which consist of :
-; - read 2 ADCPM compressed samples from the rom, unpack and mix them in output buffer (122 cycles)
+; Z80 clock is 3.547 Mhz on PAL and 3.575 on NTSC
+
+; we round to 161 cycles (pessimist case) per sample output which consist of :
+; - read 2 ADCPM compressed samples from the rom, unpack and mix them in output buffer (121 cycles)
 ; - output the obtained sample to the DAC (30 cycles)
 ; - about 10 cycles for loop and synchro
 ;
 ; register usage :
 ; SP  = sample source (in ROM)
 ; HL  = mix buffer
-; BC  = $7F00 (used for mix overflow stuff)
+; DE  = write buffer
+; B  = $7F (used for mix overflow stuff) or $05 (used for adpcm decoding)
+; C  = 00 (used for mix overflow stuff) or ?
 ; HL' = YMPORT0
 ; BC' = read buffer
 
@@ -34,9 +38,11 @@ NULLWAVLEN  EQU     PARAMS+$22      ; silent WAV len
 WRITEBUF    EQU     PARAMS+$24
 READBUF     EQU     PARAMS+$26
 
-TMPBUFFER   EQU     $0D00           ; tmp buffer for channel 1 decoding
-WAVBUFFER0  EQU     $0E00           ; WAV buffer 0
-WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
+SAVSMP      EQU     PARAMS+$28
+
+TMPBUFFER   EQU     $1D00           ; tmp buffer for channel 1 decoding
+WAVBUFFER0  EQU     $1E00           ; WAV buffer 0
+WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
 
 
 ; ###########################      macro       ##############################
@@ -46,7 +52,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 
 ; copyChannelParams
 ; -----------------
-; copy channel parameters to internal structure
+; copy channel parameters to internal structure for channel 'ch'
 ; = 64 cycles
 
             macro copyChannelParams ch
@@ -58,10 +64,11 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 
             endm                            ;                   ' 64
 
+
 ; stopChannel
 ; -----------
 ; set null sample play for channel 'ch'
-; = 114 cycles
+; = 131 cycles
 
             macro stopChannel ch
 
@@ -71,39 +78,83 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             LD      (IWAVLEN+(ch*4)), HL    ;                   ' 16
             clearPlayStatus ch              ; clear play status ' 25
             clearLoopStatus ch              ; clear loop status ' 25
+            initSample ch                   ; init sample value ' 17
 
-            endm                            ;                   ' 114
+            endm                            ;                   ' 131
+
+
+; saveSample
+; ----------
+; A    -> sample value
+;
+; save sample for channel 'ch'
+; = 13 cycles
+
+            macro saveSample ch
+
+            LD      (SAVSMP+(ch)), A        ;                   ' 13
+
+            endm                            ;                   ' 13
+
+
+; restoreSample
+; ----------
+; A   <- sample value
+;
+; restore sample for channel 'ch'
+; = 13 cycles
+
+            macro restoreSample ch
+
+            LD      A, (SAVSMP+(ch))        ;                   ' 13
+
+            endm                            ;                   ' 13
+
+
+; initSample
+; ----------
+; A   <- 0
+;
+; init sample for channel 'ch'
+; = 17 cycles
+
+            macro initSample ch
+
+            XOR     A                       ;                   ' 4
+            saveSample ch                   ;                   ' 13
+
+            endm                            ;                   ' 17
 
 
 ; handlePlayCommandWhilePlay2
 ; ---------------------------
 ; HL  <-  ?
-; DE  <-  ?
 ;
 ; handle play command for channel 'ch'
-; = 217 cycles
+; = 233 cycles
 
             macro handlePlayCommandWhilePlay2 ch
 
-            sampleOutput                ;                       ' 30
+            sampleOutput                ;                       ' 30 (30)
 
             getPlayCommand ch           ; play command ?        ' 22    | 32 (62)
-            JP      NZ, .do_command     ;                       ' 10    |
+            JP      NZ, .play           ;                       ' 10    |
 
-            wait100                     ; synchro               ' 100   | 130 (192)
-            sampleOutput                ; (1*162) (perfect)     ' 30    |
+            wait99                      ; synchro               ' 99    | 129 (191)
+            sampleOutput                ; (1*161) (perfect)     ' 30    |
 
-            wait15                      ;                       ' 15    | 25 (217)
+            wait15                      ;                       ' 15    | 25 (216)
             JP      .end                ;                       ' 10    |
 
-.do_command
+.play
             clearPlayCommand ch         ; clear play command    ' 25    | 89 (151)
             copyChannelParams ch        ; copy params           ' 64    |
 
-            wait11                      ; synchro               ' 11    | 41 (192)
-            sampleOutput                ; (1*162) (perfect)     ' 30    |
+            wait10                      ; synchro               ' 10    | 40 (191)
+            sampleOutput                ; (1*161) (perfect)     ' 30    |
 
-            setPlayStatus ch            ; set play status       ' 25 (217)
+            initSample ch               ; init sample value     ' 17 (208)
+            setPlayStatus ch            ; set play status       ' 25 (233)
 
 .end
             endm
@@ -112,15 +163,16 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 ; prepareChannelWhilePlay2
 ; ------------------------
 ; SP  <-  point to the sample source
-; HL  <-  point to write buffer
+; HL  <-  ?
 ; A   <-  ?
+; E   <-  ?
 ;
 ; set bank and prepare registers to play channel 'ch'
-; = 222 cycles
+; = 229 cycles
 
             macro prepareChannelWhilePlay2 ch
 
-            sampleOutput                ;                       ' 30
+            sampleOutput                ;                       ' 30 (30)
 
             LD      HL, IWAVADR+(ch*4)  ; point to sample adr   ' 10    |
             LD      E, (HL)             ; E = bit 7-14          ' 7     |
@@ -129,14 +181,15 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             setBankFast                 ; set bank              ' 97    |
 
             wait7                       ; synchro               ' 7     | 37 (192)
-            sampleOutput                ; (1*162) (perfect)     ' 30    |
+            sampleOutput                ; (1*161)+1 (bit late)  ' 30    |
 
             LD      A, E                ; A = bit 7-14          ' 4     |
             SCF                         ;                       ' 4     |
             RRA                         ; A = $80 | bit 8-14    ' 4     |
-            LD      H, A                ;                       ' 4     | 30 (222)
-            XOR     A                   ;                       ' 4     |
-            LD      L, A                ; L = $00               ' 4     |
+            LD      H, A                ;                       ' 4     | 37 (229)
+            RRA                         ; A = bit 7 + ???       ' 4     |
+            AND     $80                 ; A = bit 7 only        ' 7     |
+            LD      L, A                ; L = bit 7 only        ' 4     |
             LD      SP, HL              ; SP = sample src       ' 6     |
 
             endm
@@ -167,19 +220,22 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 ; A   <-  ?
 ;
 ; check is sample is done, restart it if needed
-; = 306 cycles
+; = 322 cycles
 
             macro checkChannelEndWhilePlay2 ch
 
-            sampleOutput                ;                       ' 30
+            sampleOutput                ;                       ' 30 (30)
 
             LD      HL, (IWAVLEN+(ch*4))    ; get sample lenght ' 16    |
             LD      A, H                    ;                   ' 4     | 34 (64)
             OR      L                       ;                   ' 4     |
-            JP      Z, .done                ; sample done ?     ' 10    [
+            JP      Z, .done                ; sample done ?     ' 10    |
 
-            wait116                     ;                       ' 136   | 126 (190)
-            JP      .playsample         ;                       ' 10    |
+            wait97                      ; synchro               ' 97    | 127 (191)
+            sampleOutput                ; (1*161) (perfect)     ' 30    |
+
+            wait121                     ;                       ' 121   | 131 (322)
+            JP      .end                ;                       ' 10    |
 
 .done
             getLoopStatus ch            ; loop play ?           ' 22    | 32 (96)
@@ -188,17 +244,17 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 .restart
             copyChannelParams ch        ; copy params           ' 64 (160)
 
-.playsample
-            sampleOutput                ; (1*162)-2 (bit soon)  ' 30 (190)
+            sampleOutput                ; (1*161)-1 (bit soon)  ' 30 (190)
 
-            wait106                     ;                       ' 106   | 116 (306)
+            initSample ch               ; init sample value     ' 17    | 132 (322)
+            wait105                     ;                       ' 105   |
             JP      .end                ;                       ' 10    |
 
 .stop
-            wait66                      ; synchro               ' 66    | 96 (192)
-            sampleOutput                ; (1*162) (perfect)     ' 30    |
+            wait65                      ; synchro               ' 65    | 95 (191)
+            sampleOutput                ; (1*161) (perfect)     ' 30    |
 
-            stopChannel ch              ;                       ' 114 (306)
+            stopChannel ch              ;                       ' 131 (322)
 
 .end
             endm
@@ -305,7 +361,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             macro doMix
 
             ADD     (HL)            ; mix                       ' 7     | 17
-            JP      PO, .ok        ; check overflow            ' 10    |
+            JP      PO, .ok         ; check overflow            ' 10    |
 
             LD      A, B            ; fix overflow              ' 4     | +8
             ADC     C               ; A = $7F/$80               ' 4     |
@@ -331,7 +387,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 
             macro mixSecond
 
-            LD      A, D            ; first sample              ' 4     | 32
+            LD      A, D            ; second sample             ' 4     | 32
             doMix                   ; mix                       ' 28    |
 
             endm
@@ -373,12 +429,12 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 ; HL  <-  ?
 ; A'  <-  current sample level
 ; A   <-  ?
-; B    -> DELTATAB >> 8
+; B    -> DELTATAB >> 1
 ; C   <-  ?
 ;
 ; read 16 adpcm samples and write them in output buffer
 ; while playing 5 samples
-; = 750 cycles
+; = 746 cycles
 
             macro decode16WhilePlay5
 
@@ -395,7 +451,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 
             ADD     (HL)            ; decode                    ' 7 (157)
 
-            protectedSampleOutput   ; --> (1*162)-1 (bit soon)  ' 38 (195)
+            protectedSampleOutput   ; --> (1*161) (perfect)     ' 38 (195)
 
             INC     L               ; next delta                ' 4     | 15 (210)
             LD      (DE), A         ; write sample in buffer    ' 7     |
@@ -411,8 +467,8 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             ADD     (HL)            ; decode                    ' 7     |
             INC     L               ; next delta                ' 4     | 11 (315)
 
-            wait4                   ; synchro                   ' 4 (319)
-            protectedSampleOutput   ; --> (2*162)-1 (bit soon)  ' 38 (357)
+            NOP                     ; synchro                   ' 4 (319)
+            protectedSampleOutput   ; --> (2*161)+1 (bit late)  ' 38 (357)
 
             LD      (DE), A         ; write sample in buffer    ' 7     | 11 (368)
             INC     E               ;                           ' 4     |
@@ -426,7 +482,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             decodeAndWriteSample2   ;                           ' 44 (465)
             getSecondOffset         ;                           ' 19 (484)
 
-            protectedSampleOutput   ; --> (3*162)+2 (bit late)  ' 38 (522)
+            protectedSampleOutput   ; --> (3*161)+5 (late !)    ' 38 (522)
 
             decodeAndWriteSample2   ;                           ' 44 (566)
 
@@ -436,15 +492,14 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             getFirstOffset          ;                           ' 19 (597)
             decodeAndWriteSample2   ;                           ' 44 (641)
 
-            NOP                     ; synchro                   ' 4 (645)
-            protectedSampleOutput   ; --> (4*162)+1 (bit late)  ' 38 (683)
+            protectedSampleOutput   ; --> (4*161)+1 (bit late)  ' 38 (679)
 
-            getSecondOffset         ;                           ' 19 (702)
-            decodeAndWriteSample2   ;                           ' 44 (746)
+            getSecondOffset         ;                           ' 19 (698)
+            decodeAndWriteSample2   ;                           ' 44 (742)
 
-            EX      AF, AF'         ; save current level        ' 4
+            EX      AF, AF'         ; save current level        ' 4  (746)
 
-            endm                    ;                           ' 750
+            endm                    ;                           ' 746
 
 
 ; decode20WhilePlay6
@@ -454,12 +509,12 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 ; HL  <-  ?
 ; A'  <-  current sample level
 ; A   <-  ?
-; B    -> DELTATAB >> 8
+; B    -> DELTATAB >> 1
 ; C   <-  ?
 ;
 ; read 20 adpcm samples and write them in output buffer
 ; while playing 6 samples
-; = 930 cycles
+; = 926 cycles
 
             macro decode20WhilePlay6
 
@@ -476,7 +531,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 
             ADD     (HL)            ; decode                    ' 7 (157)
 
-            protectedSampleOutput   ; --> (1*162)-1 (bit soon)  ' 38 (195)
+            protectedSampleOutput   ; --> (1*161) (perfect)     ' 38 (195)
 
             INC     L               ; next delta                ' 4     | 15 (210)
             LD      (DE), A         ; write sample in buffer    ' 7     |
@@ -492,8 +547,8 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             ADD     (HL)            ; decode                    ' 7     |
             INC     L               ; next delta                ' 4     | 11 (315)
 
-            wait4                   ; synchro                   ' 4 (319)
-            protectedSampleOutput   ; --> (2*162)-1 (bit soon)  ' 38 (357)
+            NOP                     ; synchro                   ' 4 (319)
+            protectedSampleOutput   ; --> (2*161)+1 (bit late)  ' 38 (357)
 
             LD      (DE), A         ; write sample in buffer    ' 7     | 11 (368)
             INC     E               ;                           ' 4     |
@@ -507,7 +562,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             decodeAndWriteSample2   ;                           ' 44 (465)
             getSecondOffset         ;                           ' 19 (484)
 
-            protectedSampleOutput   ; --> (3*162)+2 (bit late)  ' 38 (522)
+            protectedSampleOutput   ; --> (3*161)+5 (late !)    ' 38 (522)
 
             decodeAndWriteSample2   ;                           ' 44 (566)
 
@@ -517,32 +572,31 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             getFirstOffset          ;                           ' 19 (597)
             decodeAndWriteSample2   ;                           ' 44 (641)
 
-            NOP                     ; synchro                   ' 4 (645)
-            protectedSampleOutput   ; --> (4*162)+1 (bit late)  ' 38 (683)
+            protectedSampleOutput   ; --> (4*161)+1 (bit late)  ' 38 (679)
 
-            getSecondOffset         ;                           ' 19 (702)
-            decodeAndWriteSample2   ;                           ' 44 (746)
+            getSecondOffset         ;                           ' 19 (698)
+            decodeAndWriteSample2   ;                           ' 44 (742)
 
             ; 5 --------------------
-            POP     HL              ; read 4 ADPCM samples      ' 10+2  (758)
+            POP     HL              ; read 4 ADPCM samples      ' 10+2  (754)
 
-            getFirstOffset          ;                           ' 19 (777)
-            decodeAndWriteSample    ;                           ' 22 (799)
+            getFirstOffset          ;                           ' 19 (773)
+            decodeAndWriteSample    ;                           ' 22 (795)
 
-            ADD     (HL)            ; decode                    ' 7 (806)
+            ADD     (HL)            ; decode                    ' 7 (802)
 
-            protectedSampleOutput   ; --> (5*162) (perfect)     ' 38 (844)
+            protectedSampleOutput   ; --> (5*162)+1 (bit late)  ' 38 (840)
 
             INC     L               ; next delta                ' 4     |
-            LD      (DE), A         ; write sample in buffer    ' 7     | 19 (863)
+            LD      (DE), A         ; write sample in buffer    ' 7     | 19 (859)
             INC     E               ;                           ' 4     |
 
-            getSecondOffset         ;                           ' 19 (882)
-            decodeAndWriteSample2   ;                           ' 44 (926)
+            getSecondOffset         ;                           ' 19 (878)
+            decodeAndWriteSample2   ;                           ' 44 (922)
 
-            EX      AF, AF'         ; save current level        ' 4
+            EX      AF, AF'         ; save current level        ' 4 (926)
 
-            endm                    ;                           ' 930
+            endm                    ;                           ' 926
 
 
 ; mix6WhilePlay2
@@ -554,7 +608,7 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 ; A   <-  ?
 ;
 ; mix 6 samples and mix them with output buffer
-; = 278 --> 326 cycles
+; = 290 --> 338 cycles
 
             macro mix6WhilePlay2
 
@@ -567,20 +621,22 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
             read                    ;                           ' 10    | 42 (146)
             mixFirst                ;                           ' 32    |
 
-            ADD     (HL)            ; mix                       ' 7     | 17 (163)
-            JP      PO, .ok         ; check overflow            ' 10    |
+            LD      A, D            ; get second sample         ' 4     | 11 (157)
+            ADD     (HL)            ; mix                       ' 7     |
+
+            protectedSampleOutput   ; --> (1*161) (perfect)     ' 38 (195)
+
+            JP      PO, .ok         ; check overflow            ' 10 (205)
 
             LD      A, B            ; fix overflow              ' 4     | +8
             ADC     C               ; A = $7F/$80               ' 4     |
 
 .ok
-            sampleOutput            ; (1*162)+1 (bit late)      ' 30 (193)
-
-            LD      (HL), A         ; write sample in buffer    ' 7     | 11 (204)
+            LD      (HL), A         ; write sample in buffer    ' 7     | 11 (216)
             INC     L               ; next                      ' 4     |
 
             ; 3 --------------------
-            readAndMix2             ;                           ' 74 (278)
+            readAndMix2             ;                           ' 74 (290)
 
             endm
 
@@ -594,23 +650,89 @@ WAVBUFFER1  EQU     $0F00           ; WAV buffer 1
 ; A   <-  ?
 ;
 ; mix 10 samples and mix them with output buffer
-; = 460 --> 540 cycles
+; = 476 --> 556 cycles
 
             macro mix10WhilePlay3
 
-            mix6WhilePlay2          ;                           ' 278
+            mix6WhilePlay2          ;                           ' 290
 
             ; 4 --------------------
-            read                    ;                           ' 10    | 42 (320)
-            mixFirst                ;                           ' 32    |
+            read                    ;                           ' 10 (300)
 
-            wait4                   ; synchro                   ' 4     | 34 (354)
-            sampleOutput            ; (2*162) (perfect)         ' 30    |
+            LD      A, E            ; get first sample          ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (321)
+            JP      PO, .ok         ; check overflow            ' 10    |
 
-            mixSecond               ;                           ' 32 (386)
+            LD      A, B            ; fix overflow              ' 4     | +8
+            ADC     C               ; A = $7F/$80               ' 4     |
+
+.ok
+            protectedSampleOutput   ; --> (2*161)+3 (late !)    ' 38 (359)
+
+            LD      (HL), A         ; write sample in buffer    ' 7     | 11 (370)
+            INC     L               ; next                      ' 4     |
+
+            mixSecond               ;                           ' 32 (402)
 
             ; 5 --------------------
-            readAndMix2             ;                           ' 74 (460)
+            readAndMix2             ;                           ' 74 (476)
+
+            endm
+
+
+; mix20WhilePlay6
+; ---------------
+; SP  <-> point to the sample source
+; HL  <-> point to write output buffer
+; BC   -> BC = $7F00
+; DE  <-  ?
+; A   <-  ?
+;
+; mix 20 samples and mix them with output buffer
+; = 944 --> 1104 cycles
+
+            macro mix20WhilePlay6
+
+            mix10WhilePlay3         ;                           ' 476 --> 556
+
+            ; 6 --------------------
+            read                    ;                           ' 10 (486)
+
+            sampleOutput            ; --> (3*161)+3 (late !)    ' 30 (516)
+
+            mixFirst                ;                           ' 32    | 64 (580)
+            mixSecond               ;                           ' 32    |
+
+            ; 7 --------------------
+            read                    ;                           ' 10    | 42 (622)
+            mixFirst                ;                           ' 32    |
+
+            LD      A, D            ; get second sample         ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (643)
+            JP      PO, .ok         ; check overflow            ' 10    |
+
+            LD      A, B            ; fix overflow              ' 4     | +8
+            ADC     C               ; A = $7F/$80               ' 4     |
+
+.ok
+            protectedSampleOutput   ; --> (4*161)+3 (late !)    ' 38 (681)
+
+            LD      (HL), A         ; write sample in buffer    ' 7     | 11 (692)
+            INC     L               ; next                      ' 4     |
+
+            ; 8 --------------------
+            readAndMix2             ;                           ' 74 (766)
+
+            ; 9 --------------------
+            read                    ;                           ' 10    | 42 (808)
+            mixFirst                ;                           ' 32    |
+
+            sampleOutput            ; --> (5*161)+3 (late !)    ' 30 (838)
+
+            mixSecond               ;                           ' 32 (870)
+
+            ; 10 --------------------
+            readAndMix2             ;                           ' 74 (944)
 
             endm
 
@@ -639,7 +761,7 @@ interrupt                           ; do nothing in this program
 
 ; ###########################       main       ##############################
 
-            BLOCK   $0200-$
+            BLOCK   $01A0-$
 
 start
             LD      HL, PARAMS
@@ -687,6 +809,8 @@ wait_nullwav
             stopChannel 0           ; stop all channels
             stopChannel 1
 
+            LD      B, $05          ; DELTATAB >> 9
+
             LD      A, STATREADY
             LD      (STATUS), A     ; driver ready
 
@@ -696,151 +820,148 @@ main_loop
 ; ---------
 
 ; $00-$01
-            handlePlayCommandWhilePlay2 0   ;                   ' 217   | (2*162) = 324
-            wait107                         ;                   ' 107   |
+            handlePlayCommandWhilePlay2 0   ;                   ' 233   | (2*161) = 322
+            wait89                          ;                   ' 89    |
 
 ; $02-$03
-            prepareChannelWhilePlay2 0  ;                       ' 222   |
-            wait75                      ;                       ' 75    | (2*162) = 324
-            LD      HL, (WRITEBUF)      ; HL point to write buf ' 16    |
+            prepareChannelWhilePlay2 0  ; SP point to src       ' 229   |
+            wait49                      ;                       ' 49    | (2*161) = 322
+            LD      DE, (WRITEBUF)      ; DE point to write buf ' 16    |
             LD      IXL, 12             ; prepare loop counter  ' 11    |
+            restoreSample 0             ; restore current level ' 13    |
+            EX      AF, AF'             ; A' = current level    ' 4     |
 
 ; $04-$4B
 loop_ch0
-            decode20WhilePlay6          ;                       ' 930   |
-            wait24                      ;                       ' 24    | (6*162) = 972
+            decode20WhilePlay6          ; decode                ' 926   |
+            wait22                      ; SP = src, DE = dst    ' 22    | (6*161) = 966
             DEC     IXL                 ;                       ' 8     |
             JP      NZ, loop_ch0        ;                       ' 10    |
 
 ; $4C-$50
-            decode16WhilePlay5          ;                       ' 750   | (5*162) = 810
-            wait60                      ;                       ' 60    |
+            decode16WhilePlay5          ;                       ' 746   | (5*161) = 805
+            EX      AF, AF'             ; A = current level     ' 4     |
+            saveSample 0                ; save current level    ' 13    |
+            wait42                      ;                       ' 42    |
 
 ; $51
             sampleOutput                ;                       ' 30    |
-            updateChannelData 0         ; update channel data   ' 76    | 162
-            wait56                      ;                       ' 56    |
+            updateChannelData 0         ; update channel data   ' 76    | 161
+            wait55                      ;                       ' 55    |
 
 ; $52-$53
-            checkChannelEndWhilePlay2 0 ;                       ' 306   | (2*162) = 324
-            wait18                      ;                       ' 18    |
+            checkChannelEndWhilePlay2 0 ;                       ' 322   | (2*161) = 322
 
 ; channel 1
 ; ---------
 
 ; $54-$55
-            handlePlayCommandWhilePlay2 1   ;                   ' 217   | (2*162) = 324
-            wait107                         ;                   ' 107   |
+            handlePlayCommandWhilePlay2 1   ;                   ' 233   | (2*161) = 322
+            wait89                          ;                   ' 89    |
 
 ; $56-$57
-            prepareChannelWhilePlay2 1  ;                       ' 222   |
-            wait81                      ;                       ' 81    | (2*162) = 324
-            LD      HL, TMPBUFFER       ; HL point to temp buf  ' 10    |
+            prepareChannelWhilePlay2 1  ; SP point to src       ' 229   |
+            wait55                      ;                       ' 55    | (2*161) = 322
+            LD      DE, TMPBUFFER       ; DE point to temp buf  ' 10    |
             LD      IXL, 12             ; prepare loop counter  ' 11    |
+            restoreSample 1             ; restore current level ' 13    |
+            EX      AF, AF'             ; A' = current level    ' 4     |
 
 ; $58-$9F
 loop_ch1
-            decode20WhilePlay6          ;                       ' 930   |
-            wait24                      ;                       ' 24    | (6*162) = 972
+            decode20WhilePlay6          ; decode                ' 926   |
+            wait22                      ; SP = src, DE = dst    ' 22    | (6*161) = 966
             DEC     IXL                 ;                       ' 8     |
             JP      NZ, loop_ch1        ;                       ' 10    |
 
-; $A0-$A1
-            decode16WhilePlay5          ;                       ' 750   | (5*162) = 810
-            wait60                      ;                       ' 60    |
+; $A0-$A4
+            decode16WhilePlay5          ;                       ' 746   | (5*161) = 805
+            EX      AF, AF'             ; A = current level     ' 4     |
+            saveSample 1                ; save current level    ' 13    |
+            wait42                      ;                       ' 42    |
 
-; $A2
+; $A5
             sampleOutput                ;                       ' 30    |
-            updateChannelData 1         ; update channel data   ' 76    | 162
-            wait56                      ;                       ' 56    |
+            updateChannelData 1         ; update channel data   ' 76    | 161
+            wait55                      ;                       ' 55    |
 
-; $A3-$A4
-            checkChannelEndWhilePlay2 1 ;                       ' 306   | (2*162) = 324
-            wait18                      ;                       ' 18    |
+; $A6-$A7
+            checkChannelEndWhilePlay2 1 ;                       ' 322   | (2*161) = 322
 
 ; mix time
 ; --------
 
-; $A5
+; $A8
             sampleOutput                ;                       ' 30    |
-            wait85                      ;                       ' 85    |
-            LD      SP, TMPBUFFER       ; sample src            ' 10    | 162
-            LD      HL, (WRITEBUF)      ; output buffer         ' 16    |
+            wait84                      ;                       ' 84    |
+            LD      SP, TMPBUFFER       ; SP = sample src       ' 10    | 161
+            LD      HL, (WRITEBUF)      ; HL = output buffer    ' 16    |
             LD      BC, $7F00           ; help for fast mix     ' 10    |
-            LD      IXL, 25             ; init loop             ' 11    |
+            LD      IXL, 12             ; init loop             ' 11    |
 
-; $A6-$F0
-            mix10WhilePlay3             ;                       ' 460   |
-            wait8                       ;                       ' 8     | (3*162) = 486
+; $A9-$F0
+loop_mix
+            mix20WhilePlay6             ;                       ' 944   |
+            wait4                       ;                       ' 4     | (6*161) = 966
             DEC     IXL                 ;                       ' 8     |
-            JP      NZ, loop_ch1        ;                       ' 10    |
+            JP      NZ, loop_mix        ;                       ' 10    |
 
-; $F1
-            mix6WhilePlay2              ;                       ' 278   | (2*162) = 324
-            wait46                      ;                       ' 46    |
+
+; $F1-F3
+            mix10WhilePlay3             ;                       ' 476   | (3*161) = 483
+            wait7                       ;                       ' 7     |
+
+; $F4-F5
+            mix6WhilePlay2              ;                       ' 290   | (2*161) = 322
+            wait32                      ;                       ' 32    |
 
 ; free time here
 ; --------------
 
-; $F2
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
-
-; $F3
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
-
-; $F4
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
-
-; $F5
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
-
 ; $F6
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $F7
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $F8
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $F9
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $FA
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $FB
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $FC
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $FD
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $FE
-            sampleOutput                ;                       ' 30    | 162
-            wait132                     ;                       ' 132   |
+            sampleOutput                ;                       ' 30    | 161
+            wait131                     ;                       ' 131   |
 
 ; $FF
             sampleOutput                ;                       ' 30    |
             swapBuffer                  ; swap buffers          ' 72    |
             EXX                         ;                       ' 4     |
-            LD      BC, (READBUF)       ; read buffer           ' 20    | 162
+            LD      BC, (READBUF)       ; read buffer           ' 20    | 161
             EXX                         ;                       ' 4     |
-            wait22                      ;                       ' 22    |
+            LD      B, $05              ; DELTATAB >> 9         ' 7     |
+            wait14                      ;                       ' 14    |
             JP      main_loop           ;                       ' 10    |
 
 
@@ -851,41 +972,41 @@ loop_ch1
 
 ; ##############################    tables   ################################
 
-            ALIGN   256
+            BLOCK   $0A00-$
 
 DELTATAB
-DELTATAB_0  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_1  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_2  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_3  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_4  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_5  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_6  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_7  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_8  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_9  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_A  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_B  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_C  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_D  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_E  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
-DELTATAB_F  DB      -34, -21, -13, -8, -5, -3, -2, -1
-            DB      0, 1, 2, 3, 5, 8, 13, 21
+DELTATAB_0  DB      -34, -34, -21, -34, -13, -34, -8, -34, -5, -34, -3, -34, -2, -34, -1, -34
+            DB      0, -34, 1, -34, 2, -34, 3, -34, 5, -34, 8, -34, 13, -34, 21, -34
+DELTATAB_1  DB      -34, -21, -21, -21, -13, -21, -8, -21, -5, -21, -3, -21, -2, -21, -1, -21
+            DB      0, -21, 1, -21, 2, -21, 3, -21, 5, -21, 8, -21, 13, -21, 21, -21
+DELTATAB_2  DB      -34, -13, -21, -13, -13, -13, -8, -13, -5, -13, -3, -13, -2, -13, -1, -13
+            DB      0, -13, 1, -13, 2, -13, 3, -13, 5, -13, 8, -13, 13, -13, 21, -13
+DELTATAB_3  DB      -34, -8, -21, -8, -13, -8, -8, -8, -5, -8, -3, -8, -2, -8, -1, -8
+            DB      0, -8, 1, -8, 2, -8, 3, -8, 5, -8, 8, -8, 13, -8, 21, -8
+DELTATAB_4  DB      -34, -5, -21, -5, -13, -5, -8, -5, -5, -5, -3, -5, -2, -5, -1, -5
+            DB      0, -5, 1, -5, 2, -5, 3, -5, 5, -5, 8, -5, 13, -5, 21, -5
+DELTATAB_5  DB      -34, -3, -21, -3, -13, -3, -8, -3, -5, -3, -3, -3, -2, -3, -1, -3
+            DB      0, -3, 1, -3, 2, -3, 3, -3, 5, -3, 8, -3, 13, -3, 21, -3
+DELTATAB_6  DB      -34, -2, -21, -2, -13, -2, -8, -2, -5, -2, -3, -2, -2, -2, -1, -2
+            DB      0, -2, 1, -2, 2, -2, 3, -2, 5, -2, 8, -2, 13, -2, 21, -2
+DELTATAB_7  DB      -34, -1, -21, -1, -13, -1, -8, -1, -5, -1, -3, -1, -2, -1, -1, -1
+            DB      0, -1, 1, -1, 2, -1, 3, -1, 5, -1, 8, -1, 13, -1, 21, -1
+DELTATAB_8  DB      -34, 0, -21, 0, -13, 0, -8, 0, -5, 0, -3, 0, -2, 0, -1, 0
+            DB      0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 8, 0, 13, 0, 21, 0
+DELTATAB_9  DB      -34, 1, -21, 1, -13, 1, -8, 1, -5, 1, -3, 1, -2, 1, -1, 1
+            DB      0, 1, 1, 1, 2, 1, 3, 1, 5, 1, 8, 1, 13, 1, 21, 1
+DELTATAB_A  DB      -34, 2, -21, 2, -13, 2, -8, 2, -5, 2, -3, 2, -2, 2, -1, 2
+            DB      0, 2, 1, 2, 2, 2, 3, 2, 5, 2, 8, 2, 13, 2, 21, 2
+DELTATAB_B  DB      -34, 3, -21, 3, -13, 3, -8, 3, -5, 3, -3, 3, -2, 3, -1, 3
+            DB      0, 3, 1, 3, 2, 3, 3, 3, 5, 3, 8, 3, 13, 3, 21, 3
+DELTATAB_C  DB      -34, 5, -21, 5, -13, 5, -8, 5, -5, 5, -3, 5, -2, 5, -1, 5
+            DB      0, 5, 1, 5, 2, 5, 3, 5, 5, 5, 8, 5, 13, 5, 21, 5
+DELTATAB_D  DB      -34, 8, -21, 8, -13, 8, -8, 8, -5, 8, -3, 8, -2, 8, -1, 8
+            DB      0, 8, 1, 8, 2, 8, 3, 8, 5, 8, 8, 8, 13, 8, 21, 8
+DELTATAB_E  DB      -34, 13, -21, 13, -13, 13, -8, 13, -5, 13, -3, 13, -2, 13, -1, 13
+            DB      0, 13, 1, 13, 2, 13, 3, 13, 5, 13, 8, 13, 13, 13, 21, 13
+DELTATAB_F  DB      -34, 21, -21, 21, -13, 21, -8, 21, -5, 21, -3, 21, -2, 21, -1, 21
+            DB      0, 21, 1, 21, 2, 21, 3, 21, 5, 21, 8, 21, 13, 21, 21, 21
 
 
             END

@@ -12,7 +12,19 @@ void BMP_reset();
 
 void BMP_setFlags(u16 value);
 
+void BMP_enableWaitVSync();
+void BMP_disableWaitVSync();
+void BMP_enableASyncFlip();
+void BMP_disableASyncFlip();
+void BMP_enableFPSDisplay();
+void BMP_disableFPSDisplay();
+void BMP_enableBlitOnBlank();
+void BMP_disableBlitOnBlank();
+void BMP_enableExtendedBlank();
+void BMP_disableExtendedBlank();
+
 void BMP_flip();
+void BMP_internalBufferFlip();
 
 void BMP_clear();
 

@@ -47,10 +47,10 @@
 // 4 channels sample player Z80 driver
 // it can mix 4 samples (8 bit signed) at a fixed 16 Khz rate.
 #define Z80_DRIVER_4PCM                 3
-// 4 channels sample player Z80 driver with volume control
+// 4 channels sample player Z80 driver with envelop control
 // it can mix 4 samples (8 bit signed) at a fixed 16 Khz rate
 // and handle volume (16 levels) for each channel
-#define Z80_DRIVER_4PCM_VOL             4
+#define Z80_DRIVER_4PCM_ENV             4
 // MVS tracker Z80 driver
 #define Z80_DRIVER_MVS                  5
 // TFM tracker Z80 driver
