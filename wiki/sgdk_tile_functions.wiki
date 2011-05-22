@@ -6,8 +6,9 @@ It is defined as:
 VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma);
 }}}
 Code example:
-This code will display a 16 color reduced version of this image:
+This code will display a 16 color reduced version of this image:<br>
 http://imageshack.us/m/864/6267/p1010667fixed.png
+<br>
 To compile you will need to download P1010667_pal.h and P1010667_tile.h
 http://www.mediafire.com/?xqv6v4luudl4axz
 {{{
@@ -48,5 +49,5 @@ int main()
     }
 }
 }}}
-Once you have compiled the example you should get something like this:
+Once you have compiled the example you should get something like this:<br>
 http://img813.imageshack.us/img813/8813/kegafusionpicture.png
