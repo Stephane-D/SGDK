@@ -1,5 +1,6 @@
 This page will (At some point) cover all the tile functions in sgdk
 
+==VDP_loadTileData==
 VDP_loadTileData is a function to load a tile usually from a c array.
 It is defined as:
 {{{
