@@ -1,0 +1,50 @@
+This page will (At some point) cover all the tile functions in sgdk
+
+VDP_loadTileData is a function to load a tile usually from a c array.
+It is defined as:
+{{{
+VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma);
+}}}
+Code example:
+This code will display a 16 color reduced version of this image:
+http://imageshack.us/m/864/6267/p1010667fixed.png
+To compile you will need to download P1010667_pal.h and P1010667_tile.h
+http://www.mediafire.com/?xqv6v4luudl4axz
+{{{
+#include "genesis.h"
+#include "P1010667_pal.h"
+#include "P1010667_tile.h"
+int main()
+{
+    //set up the screen
+    VDP_setScreenWidth320();
+    VDP_setHInterrupt(0);
+    VDP_setHilightShadow(0);
+    //Now display the picture
+    	//load a pallete in the cram
+	// arg0 the pallete line
+	// arg1 the pallete data
+
+    VDP_setPalette(PAL0, (const u16 *)P1010667_pal);
+
+        // load tiles in VRAM
+        //  arg0 = tiles data
+        //  arg1 = The first tile that is gonna be loaded
+        //  arg2 = number of tiles to load
+        //  arg3 = use DMA (1) or not (0)
+    VDP_loadTileData( (const u32 *)P1010667_tile, 1, 1120, 1);
+    //Fill the screen with the proper tiles by incremeting by one each tile
+    //arg0 which plane defined as "APLAN" and "BPLAN"
+    //arg1 start tile
+    //arg2 x
+    //arg3 y
+    //arg4 width
+    //arg5 height
+    VDP_fillTileMapRectInc(APLAN, 1, 0, 0, 40, 28);
+
+    while (1)
+    {
+     VDP_waitVSync();
+    }
+}
+}}}
