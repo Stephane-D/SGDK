@@ -48,3 +48,5 @@ int main()
     }
 }
 }}}
+Once you have compiled the example you should get something like this:
+http://img813.imageshack.us/img813/8813/kegafusionpicture.png
