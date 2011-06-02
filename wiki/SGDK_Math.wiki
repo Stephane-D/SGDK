@@ -73,11 +73,15 @@ You can declare fix16 or fix32 variables this way :
 
   // addition f1 + f2
   f = fix16Add(f1, f2);
+  // usual way does work too but is discouraged
+  f = f1 + f2; 
 
   // subtraction f1 - f2
   f = fix16Sub(f1, f2);
+  // usual way does work too but is discouraged
+  f = f1 - f2; 
 
-  // multiplication f1 * f2
+  // multiplication f1 * f2 
   f = fix16Mul(f1, f2);
 
   // division f1 / f2
@@ -96,23 +100,23 @@ You can declare fix16 or fix32 variables this way :
   i = fix16ToRoundedInt(f1);
 }}}
 
-Note here than all methods also exists for fix32.
-Warning : Multiplication and division operations are a lot faster on fix16 than fix32 so try to use fix16 when possible.
+Note here than all methods also exists for fix32.<br>
+*Warning* : Multiplication and division operations are a lot faster on fix16 than fix32 so try to use fix16 when possible.
 
 === Advanced math operations ===
 
 {{{
-// f1 Log2
+// Log2
 f = fix16Log2(f1);
 
-// f1 Log10
+// Log10
 f = fix16Log10(f1);
 
-// f1 Sqrt
+// Sqrt
 f = fix16Sqrt(f1); 
 }}}
 
-These methods are available only for fix16 as they use tables and this would requires 16 GB for fix32 :p
+These methods are available only for fix16 as they use tables and this would requires 16 GB for fix32 :p<br>
 I plan to implement "software" methods for fix32 later but that would be pretty slow compared to fix16 tables !
 
 === Trigonometry ===
