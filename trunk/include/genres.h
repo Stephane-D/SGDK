@@ -55,4 +55,11 @@ struct genresAnimation {
 	u16	*sprite_data;
 };
 
+//PAL
+//typedef u16	genresPal[16];
+struct genresPal {
+	u16 color[16];
+};
+
+
 #endif /* GENRES_H_ */
