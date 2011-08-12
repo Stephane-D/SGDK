@@ -1,3 +1,12 @@
+/**
+ * \file bmp_cmn.c
+ * \brief Software bitmap engine (common methods)
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides common methods for bitmap engines.
+ */
+
 #include "config.h"
 #include "types.h"
 
@@ -9,13 +18,18 @@
 #include "vdp_bg.h"
 
 #include "tools.h"
-
-#ifdef ENABLE_BMP
+#include "string.h"
 
 
 // don't want to share it
 extern u16 textBasetile;
 
+extern s16 *LeftPoly;
+extern s16 *RightPoly;
+
+// used for polygone drawing
+s16 minY;
+s16 maxY;
 
 u8 *bmp_buffer_read;
 u8 *bmp_buffer_write;
@@ -89,18 +103,23 @@ void BMP_clearTextLine(u16 y)
 }
 
 
-void BMP_showFPS()
+void BMP_showFPS(u16 float_display)
 {
     char str[16];
-    u16 y;
+    const u16 y = _bmp_getYOffset() + 1;
 
-    if HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK) y = 4;
-    else y = 1;
-    if READ_IS_FB1 y += BMP_PLANHEIGHT / 2;
+    if (float_display)
+    {
+        fix32ToStr(getFPS_f(), str, 1);
+        VDP_clearTextBG(BMP_PLAN, 2, y, 5);
+    }
+    else
+    {
+        uintToStr(getFPS(), str, 1);
+        VDP_clearTextBG(BMP_PLAN, 2, y, 2);
+    }
 
     // display FPS
-    intToStr(getFPS(), str, 1);
-    VDP_clearTextBG(BMP_PLAN, 1, y, 3);
     VDP_drawTextBG(BMP_PLAN, str, 0x8000, 1, y);
 }
 
@@ -108,21 +127,18 @@ void BMP_showFPS()
 u16 BMP_doBlankProcess()
 {
     // use extended blank ?
-    if HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK)
+    if (HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK))
     {
         const u16 vcnt = GET_VCOUNTER;
+        const u16 scrh = VDP_getScreenHeight();
 
         // first part of screen
-        if (vcnt < 160)
+        if (vcnt < (scrh >> 1))
         {
             // enable VDP
             VDP_setEnable(1);
-            // prepare hint to disable VDP
-            {
-                const u16 scrh = VDP_getScreenHeight();
-                VDP_setHIntCounter(scrh - (VDP_getHIntCounter() + vcnt + ((scrh - BMP_HEIGHT) >> 1) + 3));
-            }
-
+            // prepare hint to disable VDP and doing blit process
+            VDP_setHIntCounter(scrh - (VDP_getHIntCounter() + vcnt + ((scrh - BMP_HEIGHT) >> 1) + 3));
             // nothing more to do here
             return 1;
         }
@@ -131,7 +147,7 @@ u16 BMP_doBlankProcess()
             // disable VDP
             VDP_setEnable(0);
             // prepare hint to re-enable VDP
-            VDP_setHIntCounter(((VDP_getScreenHeight() - BMP_HEIGHT) >> 1) - 1);
+            VDP_setHIntCounter(((scrh - BMP_HEIGHT) >> 1) - 1);
         }
     }
 
@@ -146,9 +162,10 @@ static u16 _bmp_getYOffset()
 {
     u16 res;
 
-    if HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK) res = 3;
+    if (HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK)) res = 4;
     else res = 0;
-    if READ_IS_FB1 res += BMP_PLANHEIGHT / 2;
+
+    if (READ_IS_FB1) res += BMP_PLANHEIGHT / 2;
 
     return res;
 }
@@ -157,7 +174,8 @@ static u16 _bmp_getYOffset()
 // graphic drawing/helping functions
 ////////////////////////////
 
-u8 BMP_clipLine(Line *l)
+// replaced by ASM function (see bmp_cmn_a.s file)
+u8 BMP_clipLine_old(Line *l)
 {
     s16 x1, y1, x2, y2;
 
@@ -169,13 +187,13 @@ u8 BMP_clipLine(Line *l)
 
     // trivial accept ?
     if (((u16) x1 < BMP_WIDTH) && ((u16) x2 < BMP_WIDTH) &&
-        ((u16) y1 < BMP_HEIGHT) && ((u16) y2 < BMP_HEIGHT)) return 1;
+            ((u16) y1 < BMP_HEIGHT) && ((u16) y2 < BMP_HEIGHT)) return 1;
 
     // trivial reject ?
     if (((x1 < 0) && (x2 < 0)) ||
-        ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-        ((y1 < 0) && (y2 < 0)) ||
-        ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT))) return 0;
+            ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
+            ((y1 < 0) && (y2 < 0)) ||
+            ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT))) return 0;
 
     // iterate until trivial accept or reject
     while(1)
@@ -187,7 +205,7 @@ u8 BMP_clipLine(Line *l)
         // limit x
         if (x1 < 0)
         {
-            y1 += ((0 - x1) * dy) / dx;
+            y1 -= (x1 * dy) / dx;
             x1 = 0;
         }
         else if (x1 >= BMP_WIDTH)
@@ -195,9 +213,10 @@ u8 BMP_clipLine(Line *l)
             y1 += (((BMP_WIDTH - 1) - x1) * dy) / dx;
             x1 = BMP_WIDTH - 1;
         }
+
         if (x2 < 0)
         {
-            y2 += ((0 - x2) * dy) / dx;
+            y2 -= (x2 * dy) / dx;
             x2 = 0;
         }
         else if (x2 >= BMP_WIDTH)
@@ -205,10 +224,11 @@ u8 BMP_clipLine(Line *l)
             y2 += (((BMP_WIDTH - 1) - x2) * dy) / dx;
             x2 = BMP_WIDTH - 1;
         }
+
         // limit y
         if (y1 < 0)
         {
-            x1 += ((0 - y1) * dx) / dy;
+            x1 -= (y1 * dx) / dy;
             y1 = 0;
         }
         else if (y1 >= BMP_HEIGHT)
@@ -216,9 +236,10 @@ u8 BMP_clipLine(Line *l)
             x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
             y1 = BMP_HEIGHT - 1;
         }
+
         if (y2 < 0)
         {
-            x2 += ((0 - y2) * dx) / dy;
+            x2 -= (y2 * dx) / dy;
             y2 = 0;
         }
         else if (y2 >= BMP_HEIGHT)
@@ -229,7 +250,7 @@ u8 BMP_clipLine(Line *l)
 
         // trivial accept ?
         if (((u16) x1 < BMP_WIDTH) && ((u16) x2 < BMP_WIDTH) &&
-            ((u16) y1 < BMP_HEIGHT) && ((u16) y2 < BMP_HEIGHT))
+                ((u16) y1 < BMP_HEIGHT) && ((u16) y2 < BMP_HEIGHT))
         {
             // save back new crd
             l->pt1.x = x1;
@@ -242,9 +263,9 @@ u8 BMP_clipLine(Line *l)
 
         // trivial reject ?
         if (((x1 < 0) && (x2 < 0)) ||
-            ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-            ((y1 < 0) && (y2 < 0)) ||
-            ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
+                ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
+                ((y1 < 0) && (y2 < 0)) ||
+                ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
         {
             // rejected, no need to save back calculated coordinates
             return 0;
@@ -252,12 +273,112 @@ u8 BMP_clipLine(Line *l)
     }
 }
 
-
-#else // ENABLE_BMP
-
-u16 BMP_doBlankProcess()
+// replaced by ASM function (see bmp_cmn_a.s file)
+void calculatePolyEdge_old(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise)
 {
-    return 0;
-}
+    s16 dx, dy;
+    s16 x1 = pt1->x;
+    s16 y1 = pt1->y;
+    s16 x2 = pt2->x;
+    s16 y2 = pt2->y;
 
-#endif // ENABLE_BMP
+    // outside screen ? --> exit
+    if (((x1 < 0) && (x2 < 0)) ||
+        ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
+        ((y1 < 0) && (y2 < 0)) ||
+        ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT))) return;
+
+    dy = y2 - y1;
+    // nothing to do
+    if (dy == 0) return;
+
+    dx = x2 - x1;
+
+    // clip on y window
+    if (y1 < 0)
+    {
+        x1 -= (y1 * dx) / dy;
+        y1 = 0;
+    }
+    else if (y1 >= BMP_HEIGHT)
+    {
+        x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
+        y1 = BMP_HEIGHT - 1;
+    }
+    if (y2 < 0)
+    {
+        x2 -= (y2 * dx) / dy;
+        y2 = 0;
+    }
+    else if (y2 >= BMP_HEIGHT)
+    {
+        x2 += (((BMP_HEIGHT - 1) - y2) * dx) / dy;
+        y2 = BMP_HEIGHT - 1;
+    }
+
+    // outside screen ? --> exit
+    if (((x1 < 0) && (x2 < 0)) ||
+        ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
+        ((y1 < 0) && (y2 < 0)) ||
+        ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT))) return;
+
+    // nothing to do
+    if (y2 == y1) return;
+
+    s16 *src;
+    fix16 step;
+    fix16 x;
+    s16 len8;
+    s16 len;
+
+    if ((y2 > y1) ^ (clockwise))
+    {
+        // left side
+        dx = x2 - x1;
+        len = y2 - y1;
+        if (y1 < minY) minY = y1;
+        if (y2 > maxY) maxY = y2;
+        src = &LeftPoly[y1];
+        x = intToFix16(x1);
+    }
+    else
+    {
+        // right side
+        dx = x1 - x2;
+        len = y1 - y2;
+        if (y2 < minY) minY = y2;
+        if (y1 > maxY) maxY = y1;
+        src = &RightPoly[y2];
+        x = intToFix16(x2);
+    }
+
+    step = fix16Div(intToFix16(dx), intToFix16(len));
+    x += step >> 1;
+    len8 = len >> 3;
+    len &= 7;
+
+    while(len8--)
+    {
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+        *src++ = fix16ToInt(x);
+        x += step;
+    }
+    while(len--)
+    {
+        *src++ = fix16ToInt(x);
+        x += step;
+    }
+}

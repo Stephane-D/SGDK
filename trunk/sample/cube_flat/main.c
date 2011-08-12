@@ -1,8 +1,12 @@
 #include "genesis.h"
 #include "meshs.h"
 
-
+//#define FASTFILL
 #define MAX_POINTS  8
+
+
+Vect3D_f16 pts_3D[MAX_POINTS];
+Vect2D_s16 pts_2D[MAX_POINTS];
 
 
 extern Mat3D_f16 MatInv;
@@ -25,9 +29,6 @@ void drawPoints(u16 num, u8 col);
 void doActionJoy(u8 numjoy, u16 value);
 void handleJoyEvent(u16 joy, u16 changed, u16 state);
 
-static void VBlank_Function();
-static void HBlank_Function();
-
 void showDebugInfos();
 void showVector(u16 posX, u16 posY, u8 col, Vect3D_f16 *vect);
 
@@ -40,9 +41,16 @@ int main()
 
     JOY_setEventHandler(handleJoyEvent);
 
-    setVBlankCallback(VBlank_Function);
-    setHBlankCallback(HBlank_Function);
-
+#ifdef FASTFILL
+    BMP_FF_init(0 |
+//             BMP_ENABLE_WAITVSYNC |
+//             BMP_ENABLE_ASYNCFLIP |
+//             BMP_ENABLE_BLITONBLANK |
+                BMP_ENABLE_EXTENDEDBLANK |
+                BMP_ENABLE_FPSDISPLAY |
+//             BMP_ENABLE_BFCULLING |
+                0);
+#else
     BMP_init(0 |
 //             BMP_ENABLE_WAITVSYNC |
 //             BMP_ENABLE_ASYNCFLIP |
@@ -51,25 +59,32 @@ int main()
              BMP_ENABLE_FPSDISPLAY |
              BMP_ENABLE_BFCULLING |
              0);
+#endif
 
-    reset3D();
+    M3D_reset();
+    M3D_setViewport(BMP_WIDTH, BMP_HEIGHT);
+    M3D_setLightEnabled(1);
+    M3D_setLightXYZ3D(FIX16(0.9), FIX16(0.9), FIX16(-0.9));
 
-    trans.x = intToFix16(0);
-    trans.y = intToFix16(0);
-    trans.z = intToFix16(30);
+    trans.x = FIX16(0);
+    trans.y = FIX16(0);
+    trans.z = FIX16(8);
+    rot.x = FIX16(0);
+    rot.y = FIX16(0);
+    rot.z = FIX16(0);
+    rotstep.x = FIX16(0);
+    rotstep.y = FIX16(0);
+    rotstep.z = FIX16(0);
 
-    rot.x = intToFix16(0);
-    rot.y = intToFix16(0);
-    rot.z = intToFix16(0);
-    rotstep.x = intToFix16(0);
-    rotstep.y = intToFix16(0);
-    rotstep.z = intToFix16(0);
-
-    flatDrawing = 1;
+    flatDrawing = 0;
 
     while (1)
     {
+#ifdef FASTFILL
+        BMP_FF_clear();
+#else
         BMP_clear();
+#endif
 
         doActionJoy(JOY_1, JOY_readJoypad(JOY_1));
         doActionJoy(JOY_2, JOY_readJoypad(JOY_2));
@@ -79,63 +94,92 @@ int main()
         rot.y += rotstep.y;
         rot.z += rotstep.z;
 
-        setTransMat3D(&trans);
-        setRotMat3D(&rot);
+        M3D_setTransMat3D(&trans);
+        M3D_setRotMat3D(&rot);
 
         updatePointsPos(MAX_POINTS);
 
         drawPoints(MAX_POINTS, 0xFF);
 
+#ifdef FASTFILL
+        BMP_FF_flip();
+#else
         BMP_flip();
+#endif
     }
 }
 
 void updatePointsPos(u16 num)
 {
     // transform 3D point
-    transform3D(cube_coord, pts_3D, 8);
+    M3D_transform3D(cube_coord, pts_3D, 8);
     // project 3D point (f16) to 2D point (s16)
-    project3D_s16(pts_3D, pts_2D, 8, BMP_WIDTH, BMP_HEIGHT);
+    M3D_project3D_s16(pts_3D, pts_2D, 8);
 }
 
 #define draw_flat
 
 void drawPoints(u16 num, u8 col)
 {
-    Vect2D_s16 v[4];
-    Line l;
-    u16 i;
+    char str[16];
 
     if (flatDrawing)
     {
+        Vect2D_s16 v[4];
+        const Vect3D_f16 *norm;
+        const u16 *poly_ind;
+        u16 i;
+
+        norm = cube_face_norm;
+        poly_ind = cube_poly_ind;
+
         i = 6;
+
         while (i--)
         {
+            Vect2D_s16 *pt_dst = v;
+            fix16 dp;
+            u8 col = 2;
 
-            v[0].x = pts_2D[cube_poly_ind[i][0]].x;
-            v[0].y = pts_2D[cube_poly_ind[i][0]].y;
-            v[1].x = pts_2D[cube_poly_ind[i][1]].x;
-            v[1].y = pts_2D[cube_poly_ind[i][1]].y;
-            v[2].x = pts_2D[cube_poly_ind[i][2]].x;
-            v[2].y = pts_2D[cube_poly_ind[i][2]].y;
-            v[3].x = pts_2D[cube_poly_ind[i][3]].x;
-            v[3].y = pts_2D[cube_poly_ind[i][3]].y;
+            *pt_dst++ = pts_2D[*poly_ind++];
+            *pt_dst++ = pts_2D[*poly_ind++];
+            *pt_dst++ = pts_2D[*poly_ind++];
+            *pt_dst = pts_2D[*poly_ind++];
 
-            BMP_drawPolygone(v, 4, i + 1);
+            dp = fix16Mul(light_trans.x, norm->x) + fix16Mul(light_trans.y, norm->y) + fix16Mul(light_trans.z, norm->z);
+            norm++;
+
+            if (dp > 0) col += (dp >> (FIX16_FRAC_BITS - 2));
+
+#ifdef FASTFILL
+//            BMP_FF_drawPolygone(v, 4, i + 1);
+#else
+//            BMP_drawPolygone(v, 4, i + 1);
+            BMP_drawPolygone(v, 4, col);
+#endif
         }
     }
     else
     {
+        Line l;
+        const u16 *line_ind;
+        u16 i;
+
+        l.col = col;
+        line_ind = cube_line_ind;
+
         i = 12;
+
         while (i--)
         {
-            l.pt1.x = pts_2D[cube_line_ind[i][0]].x;
-            l.pt1.y = pts_2D[cube_line_ind[i][0]].y;
-            l.pt2.x = pts_2D[cube_line_ind[i][1]].x;
-            l.pt2.y = pts_2D[cube_line_ind[i][1]].y;
-            l.col = col;
+            l.pt1 = pts_2D[*line_ind++];
+            l.pt2 = pts_2D[*line_ind++];
 
+#ifdef FASTFILL
+            BMP_FF_drawLine(&l);
+#else
             BMP_drawLine(&l);
+#endif
         }
     }
 }
@@ -149,14 +193,17 @@ void doActionJoy(u8 numjoy, u16 value)
         {
             rotstep.x += intToFix16(1);
         }
+
         if (value & BUTTON_DOWN)
         {
             rotstep.x -= intToFix16(1);
         }
+
         if (value & BUTTON_LEFT)
         {
             rotstep.y += intToFix16(1);
         }
+
         if (value & BUTTON_RIGHT)
         {
             rotstep.y -= intToFix16(1);
@@ -167,14 +214,17 @@ void doActionJoy(u8 numjoy, u16 value)
             rotstep.x = intToFix16(0);
             rotstep.y = intToFix16(0);
         }
+
         if (value & BUTTON_B)
         {
             trans.z += intToFix16(1);
         }
+
         if (value & BUTTON_C)
         {
             trans.z -= intToFix16(1);
         }
+
         if (value & BUTTON_START)
         {
 
@@ -191,14 +241,4 @@ void handleJoyEvent(u16 joy, u16 changed, u16 state)
             flatDrawing = 1 - flatDrawing;
         }
     }
-}
-
-static void VBlank_Function()
-{
-
-}
-
-static void HBlank_Function()
-{
-
 }

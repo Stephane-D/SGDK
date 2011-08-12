@@ -1,7 +1,4 @@
-#include "config.h"
 #include "types.h"
-
-#ifdef FAST_WRITE_VRAM_ADDR
 
 const u32 vramwrite_tab[0x10000] =
 {
@@ -8198,5 +8195,3 @@ const u32 vramwrite_tab[0x10000] =
     0x7FF00003, 0x7FF10003, 0x7FF20003, 0x7FF30003, 0x7FF40003, 0x7FF50003, 0x7FF60003, 0x7FF70003,
     0x7FF80003, 0x7FF90003, 0x7FFA0003, 0x7FFB0003, 0x7FFC0003, 0x7FFD0003, 0x7FFE0003, 0x7FFF0003
 };
-
-#endif  // FAST_WRITE_VRAM_ADDR

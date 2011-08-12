@@ -84,5 +84,10 @@ typedef unsigned int size_t;
 typedef void _voidCallback();
 
 
+u8  getZeroU8();
+u16 getZeroU16();
+u32 getZeroU32();
+
+
 #endif // _TYPES_H_
 

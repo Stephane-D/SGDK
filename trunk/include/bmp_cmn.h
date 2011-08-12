@@ -3,8 +3,6 @@
 
 #include "maths.h"
 
-#ifdef ENABLE_BMP
-
 
 #define BMP_PLAN                    APLAN
 
@@ -94,11 +92,9 @@ void BMP_drawText(const char *str, u16 x, u16 y);
 void BMP_clearText(u16 x, u16 y, u16 w);
 void BMP_clearTextLine(u16 y);
 
-void BMP_showFPS();
+void BMP_showFPS(u16 float_display);
 
-u8   BMP_clipLine(Line *l);
+u8   BMP_clipLine_old(Line *l);
 
-
-#endif // ENABLE_BMP
 
 #endif // _BMP_CMN_H_

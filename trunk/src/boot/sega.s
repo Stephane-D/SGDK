@@ -40,32 +40,7 @@ _Vecteurs_68K:
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
 
-_Console:
-        .ascii  "SEGA MEGA DRIVE "                                  /* Console Name (16) */
-_Copyright:
-        .ascii  "(C)FLEMTEAM 2011"                                  /* Copyright Information (16) */
-_Title_Local:
-        .ascii  "SAMPLE PROGRAM                                  "  /* Domestic Name (48) */
-_Title_Int:
-        .ascii  "SAMPLE PROGRAM                                  "  /* Overseas Name (48) */
-_Serial:
-        .ascii  "GM 00000000-00"                                    /* Serial Number (2, 14) */
-_Checksum:
-        dc.w    0x0000                                              /* Checksum (2) */
-        .ascii  "JD              "                                  /* I/O Support (16) */
-_Rom_Start_Loc:
-        dc.l    _Start_Of_Rom                                       /* ROM Start Address (4) */
-_Rom_End_Loc:
-        dc.l    0x00020000                                          /* ROM End Address (4) */
-_Ram_Start_Loc:
-        dc.l    0x00FF0000                                          /* Start of Backup RAM (4) */
-_Ram_End_Loc:
-        dc.l    0x00FFFFFF                                          /* End of Backup RAM (4) */
-        .ascii  "                        "                          /* Modem Support (12) */
-_Notes:
-        .ascii  "DEMONSTRATION PROGRAM                   "          /* Memo (40) */
-_Region:
-        .ascii  "JUE             "                                  /* Country Support (16) */
+        .incbin "out/rom_head.bin", 0x10, 0x100
 
 _Entry_Point:
         tst.l   0xa10008
@@ -106,10 +81,24 @@ Continue:
         lea     0xff0000,%a0
         moveq   #0,%d0
         move.w  #0x3FFF,%d1
-clrram:
-        move.l  %d0,(%a0)+
-        dbra    %d1,clrram
 
+ClearRam:
+        move.l  %d0,(%a0)+
+        dbra    %d1,ClearRam
+
+* copy initialized variables from ROM to Work RAM
+        lea     _stext,%a0
+        lea     0xFF0000,%a1
+        move.l  #_sdata,%d0
+        lsr.l   #1,%d0
+        beq     NoCopy
+
+        subq.w  #1,%d0
+CopyVar:
+        move.w  (%a0)+,(%a1)+
+        dbra    %d0,CopyVar
+
+NoCopy:
         move.w  #0,%a7
         move.w  #0x2300,%sr
 
@@ -123,9 +112,6 @@ clrram:
 *       interrupt functions
 *
 *------------------------------------------------
-
-.text
-
 
 _Bus_Error:
         movem.l %d0-%d1/%a0-%a1,-(%sp)

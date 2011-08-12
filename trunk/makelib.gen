@@ -8,6 +8,7 @@ INCLUDE= $(GDK)/include
 SHELL=$(BIN)/sh
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
+LD= $(BIN)/ld
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
@@ -48,23 +49,20 @@ INCS= -I$(INCLUDE)
 FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
-all: $(LIB)/libgendev.a $(LIB)/sega.o
+all: $(LIB)/libgendev.a
 
 default: all
 
 .PHONY: clean
 
 clean:
-	$(RM) -f $(LIB)/libgendev.a $(LIB)/sega.o $(OBJ) out.lst
+	$(RM) -f $(LIB)/libgendev.a $(OBJ) out.lst
 
 cleanobj:
 	$(RM) -f $(OBJ) out.lst
 
 $(LIB)/libgendev.a: $(OBJ)
 	$(AR) rs $(LIB)/libgendev.a $(OBJ)
-
-$(LIB)/sega.o: $(SRC)/boot/sega.s
-	$(CC) $(FLAGS) -c $(SRC)/boot/sega.s -o $@
 
 %.asm: %.rc
 	$(GENRES) $< $@

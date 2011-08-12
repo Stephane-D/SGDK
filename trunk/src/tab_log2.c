@@ -3,10 +3,8 @@
 
 #include "maths.h"
 
-#ifdef MATHS_BIG_TABLE
-
 // only for positives values
-const fix16 log2tab16[65536] =
+const fix16 log2tab16[0x10000] =
 {
     0, -384, -320, -282, -256, -235, -218, -204,
     -192, -181, -171, -162, -154, -147, -140, -133,
@@ -8201,5 +8199,3 @@ const fix16 log2tab16[65536] =
     639, 639, 639, 639, 639, 639, 639, 639,
     639, 639, 639, 639, 639, 639, 639, 639
 };
-
-#endif  // MATHS_BIG_TABLE

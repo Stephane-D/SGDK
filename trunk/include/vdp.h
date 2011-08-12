@@ -24,6 +24,7 @@
 #define BPLAN                   0xE000
 
 #define TILE_SIZE               32
+#define TILE_INDEX_MASK         (0xFFFF / TILE_SIZE)
 
 #define TILE_SPACE              0xB000
 
@@ -47,11 +48,7 @@
 #define GFX_READ_CRAM_ADDR(adr)     ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x20)
 #define GFX_READ_VSRAM_ADDR(adr)    ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x10)
 
-#ifdef FAST_WRITE_VRAM_ADDR
 #define GFX_WRITE_VRAM_ADDR(adr)    vramwrite_tab[adr]
-#else
-#define GFX_WRITE_VRAM_ADDR(adr)    ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
-#endif
 #define GFX_WRITE_CRAM_ADDR(adr)    ((0xC000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
 #define GFX_WRITE_VSRAM_ADDR(adr)   ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x10)
 

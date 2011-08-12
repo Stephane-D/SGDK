@@ -1,8 +1,17 @@
+/**
+ * \file joy.c
+ * \brief Joypad support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to read Joypad state.
+ */
+
 #include "config.h"
 #include "types.h"
 
 #include "sega.h"
-#include "tools.h"
+#include "memory.h"
 
 #include "joy.h"
 #include "base.h"
@@ -30,7 +39,7 @@ void JOY_init()
     pb += 2;
     *pb = 0x40;
 
-    fastmemset(joyState, 0, sizeof(joyState));
+    memset(joyState, 0, sizeof(joyState));
 
     portSupport[PORT_1] = JOY_SUPPORT_3BTN;
     portSupport[PORT_2] = JOY_SUPPORT_3BTN;

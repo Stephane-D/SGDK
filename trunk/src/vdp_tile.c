@@ -1,3 +1,15 @@
+/**
+ * \file vdp_tile.c
+ * \brief VDP General Tile / Tilemap operations
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to manipulate VDP tiles and tilemap :
+ * - upload tiles to VDP memory
+ * - upload tiles from BMP to VDP memory
+ * - clear / fill / set tile map data
+ */
+
 #include "config.h"
 #include "types.h"
 

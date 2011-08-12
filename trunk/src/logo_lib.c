@@ -1,3 +1,10 @@
+/**
+ * \file logo_lib.c
+ * \brief SGDK Library logo
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ */
+
 #include "config.h"
 #include "types.h"
 

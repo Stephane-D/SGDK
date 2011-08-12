@@ -14,6 +14,10 @@ __DYNAMIC  =  0;
  * |        ctor list   | the ctor and dtor lists are for
  * |        dtor list   | C++ support
  * +--------------------+
+ * .                    .
+ * .                    .
+ * .                    .
+ * +--------------------+ <- 0x00FF0000
  * | .data              | initialized data goes here
  * |        _data       | 
  * |        _edata      |
@@ -21,46 +25,32 @@ __DYNAMIC  =  0;
  * | .bss               |
  * |        _bstart     | start of bss, cleared by crt0
  * |        _bend       | start of heap, used by sbrk()
- * |        __bss_start | start of bss, cleared by crt0
- * |        _end        | start of heap, used by sbrk()
  * +--------------------+
  * .                    .
  * .                    .
  * .                    .
  * |        __stack     | top of stack
- * +--------------------+
+ * +--------------------+ <- 0x01000000
  */
 MEMORY
 {
 	rom : ORIGIN = 0x00000000, LENGTH = 0x00400000
-	ram : ORIGIN = 0x00ff0000, LENGTH = 0x00010000
-  }
+	ram : ORIGIN = 0x00FF0000, LENGTH = 0x00010000
+}
 
 /*
  * allocate the stack to be at the top of memory, since the stack
  * grows down
  */
 
-PROVIDE (__stack = 0x00fffff0);
+PROVIDE (__stack = 0x01000000);
 
-/*
- * Initalize some symbols to be zero so we can reference them in the
- * crt0 without core dumping. These functions are all optional, but
- * we do this so we can have our crt0 always use them if they exist.
- * This is so BSPs work better when using the crt0 installed with gcc.
- * We have to initalize them twice, so we cover a.out (which prepends
- * an underscore) and coff object file formats.
- */
-PROVIDE (hardware_init_hook = 0);
-PROVIDE (_hardware_init_hook = 0);
-PROVIDE (software_init_hook = 0);
-PROVIDE (_software_init_hook = 0);
 
 SECTIONS
 {
   .text 0x00000000:
   {
-    *(.text)
+    *(.text .text.*)
     . = ALIGN(0x4);
      __CTOR_LIST__ = .;
     LONG((__CTOR_END__ - __CTOR_LIST__) / 4 - 2)
@@ -72,38 +62,40 @@ SECTIONS
     *(.dtors)
      LONG(0)
     __DTOR_END__ = .;
-    *(.rodata*)
-    *(.gcc_except_table)
+    *(.rodata .rodata.*)
+    *(.gcc_except_table .gcc_except_table.*)
 
+    . = ALIGN(0x4);
     __INIT_SECTION__ = . ;
     *(.init)
-    SHORT (0x4e75)	/* rts */
+    SHORT (0x4E75)	/* rts */
 
     __FINI_SECTION__ = . ;
     *(.fini)
-    SHORT (0x4e75)	/* rts */
+    SHORT (0x4E75)	/* rts */
 
     _etext = .;
     *(.lit)
   } > rom
+  _stext = SIZEOF (.text); 
 
-  .data BLOCK (0x4) :
+  .data 0xFF0000 :
+  AT ( ADDR (.text) + SIZEOF (.text) )
   {
+    *(.got.plt) *(.got) 
     *(.shdata)
-    *(.data)
+    *(.data .data.*)
     _edata = .;
   } > ram
+  _sdata = SIZEOF (.data); 
 
-  .bss 0xff0000 :
+  .bss 0xFF0000 + SIZEOF (.data) :
   {
-    __bss_start = . ;
+    _start = . ;
     *(.shbss)
-    *(.bss)
+    *(.bss .bss.*)
     *(COMMON)
-    *(.eh_fram)
-    *(.eh_frame)
-    _end =  ALIGN (0x8);
-    __end = _end;
+    _bend = . ;
   } > ram
 
   .stab 0 (NOLOAD) :
@@ -115,4 +107,9 @@ SECTIONS
   {
     *(.stabstr)
   }
+
+  .eh_frame 0 (NOLOAD) :
+  {
+    *(.eh_frame)
+  } 
 }

@@ -1,3 +1,12 @@
+/**
+ * \file fat16.c
+ * \brief FAT16 file system support
+ * \author Krikzz
+ * \date XX/20XX
+ *
+ * This unit provides basic FAT16 file system support through everdrive flash cart hardware
+ */
+
 #include "types.h"
 
 #include "fat16.h"

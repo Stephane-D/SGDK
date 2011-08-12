@@ -11,6 +11,7 @@
 #include "loop3_16k.h"
 #include "loop4_pcm_22k.h"
 #include "music_tfd.h"
+#include "music_mvs.h"
 #include "piano1_16k.h"
 #include "sound1_16k.h"
 #include "violon1_16k.h"

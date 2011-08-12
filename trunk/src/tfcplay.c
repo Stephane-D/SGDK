@@ -1,3 +1,12 @@
+/**
+ * \file tfcplay.c
+ * \brief TFC music player (68000)
+ * \author Shiru
+ * \date XX/20XX
+ *
+ * This unit provides TFM music player through the 68000 CPU.
+ */
+
 /* TFM Music Maker compiled data player */
 /* C version for SMD                    */
 /* by Alone Coder and Shiru, 20.10.07   */

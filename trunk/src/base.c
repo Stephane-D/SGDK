@@ -1,8 +1,18 @@
+/**
+ * \file base.c
+ * \brief Entry point unit / Interrupt callback
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit contains SGDK initialization routines, resets methods and IRQ callbacks
+ */
+
 #include "config.h"
 #include "types.h"
 
 #include "base.h"
 
+#include "memory.h"
 #include "vdp.h"
 #include "vdp_pal.h"
 #include "psg.h"
@@ -41,6 +51,7 @@ void _buserror_callback()
 {
     VDP_init();
     VDP_drawText("BUS ERROR !", 10, 10);
+
     while(1);
 }
 
@@ -48,6 +59,7 @@ void _addresserror_callback()
 {
     VDP_init();
     VDP_drawText("ADDRESS ERROR !", 10, 10);
+
     while(1);
 }
 
@@ -55,6 +67,7 @@ void _illegalinst_callback()
 {
     VDP_init();
     VDP_drawText("ILLEGAL INSTRUCTION !", 5, 10);
+
     while(1);
 }
 
@@ -62,6 +75,7 @@ void _zerodivide_callback()
 {
     VDP_init();
     VDP_drawText("DIVIDE BY ZERO !", 10, 10);
+
     while(1);
 }
 
@@ -79,6 +93,7 @@ void _privilegeviolation_callback()
 {
     VDP_init();
     VDP_drawText("PRIVILEGE VIOLATION !", 5, 10);
+
     while(1);
 }
 
@@ -96,6 +111,7 @@ void _errorexception_callback()
 {
     VDP_init();
     VDP_drawText("EXCEPTION ERROR !", 5, 10);
+
     while(1);
 }
 
@@ -113,22 +129,19 @@ void _vblank_callback()
     // joy state refresh
     JOY_update();
 
-    // specials VBlank processing
-    if (VBlankProcess)
+    // palette fading processing
+    if (VBlankProcess & PROCESS_PALETTE_FADING)
     {
-        // palette fading
-        if (VBlankProcess & PROCESS_PALETTE_FADING)
-        {
-            if (!VDP_doStepFading()) VBlankProcess &= ~PROCESS_PALETTE_FADING;
-        }
-        // bitmap process
-        if (VBlankProcess & PROCESS_BITMAP_TASK)
-        {
-            if (!BMP_doBlankProcess()) VBlankProcess &= ~PROCESS_BITMAP_TASK;
-        }
-
-        // ...
+        if (!VDP_doStepFading()) VBlankProcess &= ~PROCESS_PALETTE_FADING;
     }
+
+    // bitmap process
+//        if (VBlankProcess & PROCESS_BITMAP_TASK)
+//        {
+//            if (!BMP_doBlankProcess()) VBlankProcess &= ~PROCESS_BITMAP_TASK;
+//        }
+
+    // ...
 
     // then call user's callback
     if (VBlankCB) VBlankCB();
@@ -137,16 +150,13 @@ void _vblank_callback()
 // HBlank Callback
 void _hblank_callback()
 {
-    // special HBlank processing
-    if (HBlankProcess)
+    // bitmap processing
+    if (HBlankProcess & PROCESS_BITMAP_TASK)
     {
-        // bitmap process
-        if (HBlankProcess & PROCESS_BITMAP_TASK)
-        {
-            if (!BMP_doBlankProcess()) HBlankProcess &= ~PROCESS_BITMAP_TASK;
-        }
-        // ...
+        if (!BMP_doBlankProcess()) HBlankProcess &= ~PROCESS_BITMAP_TASK;
     }
+
+    // ...
 
     // then call user's callback
     if (HBlankCB) HBlankCB();
@@ -174,10 +184,12 @@ void _start_entry()
 
         // init fade in to 30 step
         u16 step_fade = 30;
+
         if (VDP_initFading(0, 15, palette_black, tmp_pal, step_fade))
         {
             // prepare zoom
             u16 size = 128;
+
             // while zoom not completed
             while(size > 0)
             {
@@ -191,6 +203,7 @@ void _start_entry()
 
                 // adjust palette for fade
                 if (step_fade-- > 0) VDP_doStepFading();
+
                 // zoom logo
                 BMP_loadAndScaleGenBmp16(logo_lib, 32 + ((128 - w) >> 2), (128 - w) >> 1, w >> 1, w, 0xFF);
                 // flip to screen
@@ -255,6 +268,7 @@ static void internal_reset()
     HBlankProcess = 0;
 
     // init part
+    MEM_init();
     VDP_init();
     PSG_init();
     JOY_init();

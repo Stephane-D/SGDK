@@ -1,11 +1,25 @@
+/**
+ * \file maths3D.c
+ * \brief 3D math engine
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides 3D transformations methods :
+ * - translation X, Y, Z
+ * - rotation X, Y, Z
+ * - one directionnal light
+ * - 2D projection
+ *
+ * Can transform about ~7000 vertex / seconde
+ */
+
 #include "config.h"
 #include "types.h"
 
 #include "maths.h"
 #include "maths3D.h"
 
-//#include "vdp.h"
-//#include "bmp.h"
+#include "bmp.h"
 
 
 #define MATOBJ      1
@@ -14,42 +28,73 @@
 #define MATTRANS    8
 
 
-Vect3D_f16 pts_3D[MAT3D_MAXPOINTS];
-Vect2D_s16 pts_2D[MAT3D_MAXPOINTS];
-//u16 face_index[MAT3D_MAXFACE];
-
 static Vect3D_f16 light;
 
 Vect3D_f16 light_trans;
-Vect3D_f16 camview_trans;
+//static Vect3D_f16 camview_trans;
 
 static Trans3D_f16 trans;
 static Mat3D_f16 mat;
 static Mat3D_f16 matInv;
 
-static fix16 camDist;
+Vect2D_u16 viewport;
+Vect2D_f16 viewport_f16;
+
+fix16 camDist;
 
 static u16 rebuildMat;
+static u16 light_enabled;
 
 
-void reset3D()
+void M3D_reset()
 {
-    camDist = FIX16(30);
+    light_enabled = 0;
+
+    // we assume default viewport for BMP drawing
+    M3D_setViewport(BMP_WIDTH, BMP_HEIGHT);
+
+    camDist = FIX16(256);
 
     light.x = FIX16(1);
     light.y = FIX16(0);
     light.z = FIX16(0);
 
-    resetMat3D();
+    M3D_resetMat3D();
 }
 
 
-void setCamDist3D(fix16 value)
+void M3D_setLightEnabled(u16 enabled)
+{
+    light_enabled = enabled;
+}
+
+u16 M3D_getLightEnabled()
+{
+    return light_enabled;
+}
+
+
+void M3D_setViewport(u16 w, u16 h)
+{
+    viewport.x = w;
+    viewport.y = h;
+    viewport_f16.x = intToFix16(w);
+    viewport_f16.y = intToFix16(h);
+}
+
+void M3D_setCamDist3D(fix16 value)
 {
     camDist = FIX16(value);
 }
 
-void setLight3D(Vect3D_f16 *value)
+void M3D_setLightXYZ3D(fix16 x, fix16 y, fix16 z)
+{
+    light.x = x;
+    light.y = y;
+    light.z = z;
+}
+
+void M3D_setLight3D(Vect3D_f16 *value)
 {
     light.x = value->x;
     light.y = value->y;
@@ -57,7 +102,7 @@ void setLight3D(Vect3D_f16 *value)
 }
 
 
-void resetMat3D()
+void M3D_resetMat3D()
 {
     trans.Tx = 0;
     trans.Ty = 0;
@@ -70,28 +115,28 @@ void resetMat3D()
 }
 
 
-void setTXMat3D(fix16 tx)
+void M3D_setTXMat3D(fix16 tx)
 {
     trans.Tx = tx;
 
     rebuildMat = 1;
 }
 
-void setTYMat3D(fix16 ty)
+void M3D_setTYMat3D(fix16 ty)
 {
     trans.Ty = ty;
 
     rebuildMat = 1;
 }
 
-void setTZMat3D(fix16 tz)
+void M3D_setTZMat3D(fix16 tz)
 {
     trans.Tz = tz;
 
     rebuildMat = 1;
 }
 
-void setTXYZMat3D(fix16 tx, fix16 ty, fix16 tz)
+void M3D_setTXYZMat3D(fix16 tx, fix16 ty, fix16 tz)
 {
     trans.Tx = tx;
     trans.Ty = ty;
@@ -100,7 +145,7 @@ void setTXYZMat3D(fix16 tx, fix16 ty, fix16 tz)
     rebuildMat = 1;
 }
 
-void setTransMat3D(Vect3D_f16 *t)
+void M3D_setTransMat3D(Vect3D_f16 *t)
 {
     trans.Tx = t->x;
     trans.Ty = t->y;
@@ -110,28 +155,28 @@ void setTransMat3D(Vect3D_f16 *t)
 }
 
 
-void setRXMat3D(fix16 rx)
+void M3D_setRXMat3D(fix16 rx)
 {
     trans.Rx = rx;
 
     rebuildMat = 1;
 }
 
-void setRYMat3D(fix16 ry)
+void M3D_setRYMat3D(fix16 ry)
 {
     trans.Ry = ry;
 
     rebuildMat = 1;
 }
 
-void setRZMat3D(fix16 rz)
+void M3D_setRZMat3D(fix16 rz)
 {
     trans.Rz = rz;
 
     rebuildMat = 1;
 }
 
-void setRXYZMat3D(fix16 rx, fix16 ry, fix16 rz)
+void M3D_setRXYZMat3D(fix16 rx, fix16 ry, fix16 rz)
 {
     trans.Rx = rx;
     trans.Ry = ry;
@@ -140,7 +185,7 @@ void setRXYZMat3D(fix16 rx, fix16 ry, fix16 rz)
     rebuildMat = 1;
 }
 
-void setRotMat3D(Vect3D_f16 *rot)
+void M3D_setRotMat3D(Vect3D_f16 *rot)
 {
     trans.Rx = rot->x;
     trans.Ry = rot->y;
@@ -156,12 +201,12 @@ static void buildMat3D()
     fix16 cx, cy, cz;
     fix16 sxsy, cxsy;
 
-    sx = fix16Sin(fix16ToInt(trans.Rx));
-    sy = fix16Sin(fix16ToInt(trans.Ry));
-    sz = fix16Sin(fix16ToInt(trans.Rz));
-    cx = fix16Cos(fix16ToInt(trans.Rx));
-    cy = fix16Cos(fix16ToInt(trans.Ry));
-    cz = fix16Cos(fix16ToInt(trans.Rz));
+    sx = sinFix16(fix16ToInt(trans.Rx));
+    sy = sinFix16(fix16ToInt(trans.Ry));
+    sz = sinFix16(fix16ToInt(trans.Rz));
+    cx = cosFix16(fix16ToInt(trans.Rx));
+    cy = cosFix16(fix16ToInt(trans.Ry));
+    cz = cosFix16(fix16ToInt(trans.Rz));
 
     sxsy = fix16Mul(sx, sy);
     cxsy = fix16Mul(cx, sy);
@@ -194,7 +239,7 @@ static void buildMat3D()
 }
 
 
-void transform3D(const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
+void M3D_transform3D(const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
 {
     const Vect3D_f16 *s;
     Vect3D_f16 *d;
@@ -205,6 +250,7 @@ void transform3D(const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
     s = src;
     d = dest;
     i = numv;
+
     while (i--)
     {
         d->x = fix16Mul(s->x, mat.a.x) + fix16Mul(s->y, mat.a.y) + fix16Mul(s->z, mat.a.z) + trans.Tx;
@@ -216,17 +262,20 @@ void transform3D(const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
     }
 
     // transform light vector
-    light_trans.x = fix16Mul(light.x, matInv.a.x) + fix16Mul(light.y, matInv.a.y) + fix16Mul(light.z, matInv.a.z);
-    light_trans.y = fix16Mul(light.x, matInv.b.x) + fix16Mul(light.y, matInv.b.y) + fix16Mul(light.z, matInv.b.z);
-    light_trans.z = fix16Mul(light.x, matInv.c.x) + fix16Mul(light.y, matInv.c.y) + fix16Mul(light.z, matInv.c.z);
+    if (light_enabled)
+    {
+        light_trans.x = fix16Mul(light.x, matInv.a.x) + fix16Mul(light.y, matInv.a.y) + fix16Mul(light.z, matInv.a.z);
+        light_trans.y = fix16Mul(light.x, matInv.b.x) + fix16Mul(light.y, matInv.b.y) + fix16Mul(light.z, matInv.b.z);
+        light_trans.z = fix16Mul(light.x, matInv.c.x) + fix16Mul(light.y, matInv.c.y) + fix16Mul(light.z, matInv.c.z);
+    }
 
     // transform camview vector (0, 0, 1)
-    camview_trans.x = fix16Mul(FIX16(1), matInv.a.z);
-    camview_trans.y = fix16Mul(FIX16(1), matInv.b.z);
-    camview_trans.z = fix16Mul(FIX16(1), matInv.c.z);
+//    camview_trans.x = fix16Mul(FIX16(1), matInv.a.z);
+//    camview_trans.y = fix16Mul(FIX16(1), matInv.b.z);
+//    camview_trans.z = fix16Mul(FIX16(1), matInv.c.z);
 }
 
-void project3D_f16(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv, u16 w, u16 h)
+void M3D_project3D_f16_old(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv)
 {
     const Vect3D_f16 *s;
     Vect2D_f16 *d;
@@ -234,19 +283,18 @@ void project3D_f16(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv, u16 w, u16
     fix16 wi, hi;
     u16 i;
 
-//    wi = intToFix16(BMP_PIXWIDTH / 2);
-//    hi = intToFix16(BMP_PIXHEIGHT / 2);
-    wi = intToFix16(w / 2);
-    hi = intToFix16(h / 2);
+    wi = viewport_f16.x >> 1;
+    hi = viewport_f16.y >> 1;
     s = src;
     d = dest;
     i = numv;
+
     while (i--)
     {
-        if (s->z >> 3)
+        if ((zi = s->z))
         {
-            zi = fix16Div(camDist, s->z >> 3);
-            d->x = wi + fix16Mul(s->x / 2, zi);
+            zi = fix16Div(camDist, zi);
+            d->x = wi + fix16Mul(s->x >> 1, zi);
             d->y = hi - fix16Mul(s->y, zi);
         }
         else
@@ -260,7 +308,7 @@ void project3D_f16(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv, u16 w, u16
     }
 }
 
-void project3D_s16(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv, u16 w, u16 h)
+void M3D_project3D_s16_old(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv)
 {
     const Vect3D_f16 *s;
     Vect2D_s16 *d;
@@ -268,19 +316,18 @@ void project3D_s16(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv, u16 w, u16
     u16 wi, hi;
     u16 i;
 
-//    wi = BMP_PIXWIDTH / 2;
-//    hi = PMP_PIXHEIGHT / 2;
-    wi = w / 2;
-    hi = h / 2;
+    wi = viewport.x >> 1;
+    hi = viewport.y >> 1;
     s = src;
     d = dest;
     i = numv;
+
     while (i--)
     {
-        if (s->z)
+        if ((zi = s->z))
         {
-            zi = fix16Div(camDist, s->z >> 3);
-            d->x = wi + fix16ToInt(fix16Mul(s->x / 2, zi));
+            zi = fix16Div(camDist, zi);
+            d->x = wi + fix16ToInt(fix16Mul(s->x >> 1, zi));
             d->y = hi - fix16ToInt(fix16Mul(s->y, zi));
         }
         else

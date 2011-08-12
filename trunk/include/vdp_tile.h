@@ -6,6 +6,17 @@
 #define TILE_ATTR_FULL(pal, pri, flipV, flipH, index)   (((flipH) << 11) + ((flipV) << 12) + ((pal) << 13) + ((pri) << 15) + (index))
 
 
+// GenRes support
+typedef struct
+{
+    u16 *pal;               // pointer to pal data
+    u32 *tiles;             // pointer to tiles data
+    u16 width;              // width in tiles
+    u16 height;             // height in tiles
+    u16 compressedSize;     // 0
+} GenResTiles;
+
+
 void VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma);
 void VDP_loadFont(const u32 *font, u8 use_dma);
 void VDP_loadBMPTileData(const u32 *data, u16 index, u16 w, u16 h, u16 bmp_w);

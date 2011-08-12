@@ -1,3 +1,14 @@
+/**
+ * \file vdp_pal.c
+ * \brief VDP Palette support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to manipulate the VDP Color Palettes.
+ * The Sega Genesis VDP has 4 palettes of 16 colors.
+ * Color is defined with 3 bits for each component : 0RRR00GGG00BBB00
+ */
+
 #include "config.h"
 #include "types.h"
 
@@ -121,7 +132,7 @@ const u16 palette_blue[16] =
 };
 
 
-// used for palette fading
+// used for palette fading (need 774 bytes of memory)
 static s16 fading_palR[64];
 static s16 fading_palG[64];
 static s16 fading_palB[64];
