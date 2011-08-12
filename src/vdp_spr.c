@@ -1,18 +1,27 @@
+/**
+ * \file vdp_spr.c
+ * \brief VDP Sprite support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to manipulate the VDP Sprites.
+ * The Sega Genesis VDP can handle up to 80 simultanous sprites of 4x4 tiles (32x32 pixels).
+ */
+
 #include "config.h"
 #include "types.h"
 
 #include "vdp.h"
 #include "vdp_spr.h"
 
-
-#include "tools.h"
+#include "memory.h"
 #include "vdp_dma.h"
 #include "vdp_tile.h"
 
 #include "tab_vram.h"
 
 // no static so it can be read
-_spritedef spriteDefCache[MAX_SPRITE];
+SpriteDef spriteDefCache[MAX_SPRITE];
 
 static u16 spriteNum;
 
@@ -32,6 +41,8 @@ void VDP_setSpriteDirect(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 lin
     vu32 *plctrl;
     vu16 *pwdata;
     u32 addr;
+
+    if (index >= MAX_SPRITE) return;
 
     VDP_setAutoInc(2);
 
@@ -53,11 +64,13 @@ void VDP_setSpriteDirect(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 lin
     *pwdata = 0X80 + x;
 }
 
-void VDP_setSpriteDirectP(u16 index, const _spritedef *sprite)
+void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite)
 {
     vu32 *plctrl;
     vu16 *pwdata;
     u32 addr;
+
+    if (index >= MAX_SPRITE) return;
 
     VDP_setAutoInc(2);
 
@@ -82,7 +95,9 @@ void VDP_setSpriteDirectP(u16 index, const _spritedef *sprite)
 
 void VDP_setSprite(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link)
 {
-    _spritedef *sprite;
+    SpriteDef *sprite;
+
+    if (index >= MAX_SPRITE) return;
 
     if (index >= spriteNum) spriteNum = index + 1;
 
@@ -95,9 +110,11 @@ void VDP_setSprite(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link)
     sprite->link = link;
 }
 
-void VDP_setSpriteP(u16 index, const _spritedef *sprite)
+void VDP_setSpriteP(u16 index, const SpriteDef *sprite)
 {
-    _spritedef *spriteDst;
+    SpriteDef *spriteDst;
+
+    if (index >= MAX_SPRITE) return;
 
     if (index >= spriteNum) spriteNum = index + 1;
 
@@ -110,16 +127,25 @@ void VDP_setSpriteP(u16 index, const _spritedef *sprite)
     spriteDst->link = sprite->link;
 }
 
-void VDP_setSprites(u16 index, const _spritedef *sprites, u16 num)
+void VDP_setSprites(u16 index, const SpriteDef *sprites, u16 num)
 {
-    if ((index + num) > spriteNum) spriteNum = index + num;
+    u16 adjNum;
 
-    fastmemcpy(&spriteDefCache[index], sprites, sizeof(_spritedef) * num);
+    if (index >= MAX_SPRITE) return;
+
+    if ((index + num) > MAX_SPRITE) adjNum = MAX_SPRITE - index;
+    else adjNum = num;
+
+    if ((index + adjNum) > spriteNum) spriteNum = index + adjNum;
+
+    fastMemcpy(&spriteDefCache[index], sprites, sizeof(SpriteDef) * adjNum);
 }
 
 void VDP_setSpritePosition(u16 index, u16 x, u16 y)
 {
-    _spritedef *sprite;
+    SpriteDef *sprite;
+
+    if (index >= MAX_SPRITE) return;
 
     if (index >= spriteNum) spriteNum = index + 1;
 
@@ -146,7 +172,7 @@ void VDP_updateSprites()
     *plctrl = GFX_WRITE_VRAM_ADDR(SLIST);
 
     {
-        _spritedef *sprite;
+        SpriteDef *sprite;
         u16 i;
 
         sprite = &spriteDefCache[0];

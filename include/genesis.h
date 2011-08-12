@@ -7,13 +7,17 @@
 #include "types.h"
 
 #include "sega.h"
-#include "tools.h"
 #include "base.h"
 
+#include "memory.h"
+#include "tools.h"
+
 #include "font.h"
+#include "string.h"
 
 #include "maths.h"
 #include "maths3D.h"
+#include "maths3D_a.h"
 
 #include "vdp.h"
 #include "vdp_bg.h"
@@ -26,7 +30,7 @@
 #include "bmp.h"
 #include "bmp_ff.h"
 
-#include "audio.h"
+#include "sound.h"
 #include "z80_ctrl.h"
 #include "ym2612.h"
 #include "psg.h"

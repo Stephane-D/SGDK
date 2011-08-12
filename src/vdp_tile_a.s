@@ -1,3 +1,4 @@
+	.align	2
 	.globl	VDP_loadBMPTileData_A
 	.type	VDP_loadBMPTileData_A, @function
 VDP_loadBMPTileData_A:

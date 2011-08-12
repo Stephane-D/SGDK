@@ -1,12 +1,9 @@
-#include "config.h"
 #include "types.h"
 
 #include "maths.h"
 
-#ifdef MATHS_BIG_TABLE
-
 // only for positives values
-const fix16 sqrttab16[65536] =
+const fix16 sqrttab16[0x10000] =
 {
     0, 8, 11, 13, 16, 17, 19, 21,
     22, 24, 25, 26, 27, 28, 29, 30,
@@ -8201,5 +8198,3 @@ const fix16 sqrttab16[65536] =
     2047, 2047, 2047, 2047, 2047, 2047, 2047, 2047,
     2047, 2047, 2047, 2047, 2047, 2047, 2047, 2047
 };
-
-#endif  // MATHS_BIG_TABLE

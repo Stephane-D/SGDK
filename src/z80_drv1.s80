@@ -194,16 +194,23 @@ WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
 
             sampleOutputAndWait     ; (2*110)+1 --> bit late    ' 48 (269)
 
-            setPlayStatus 0         ; set play status           ' 25    | 61 (330)
-            wait36                  ; synchro                   ' 36    |
-
-            sampleOutputAndWait     ; (3*110)+0 --> perfect     ' 48 (378)
-
+            setPlayStatus 0         ; set play status           ' 25    |
             LD      A, (RATE)       ; get rate value            ' 13    |
-            LD      B, A            ; store it in B             ' 4     |
-            LD      A, (PAN)        ; set pan value             ' 13    | 62 (440)
-            wait19                  ; wait a bit                ' 19    |
-            LD      (YMPORT3), A    ;                           ' 13    |
+            LD      B, A            ; store in B                ' 4     | 59 (328)
+            LD      A, (PAN)        ; set pan value             ' 13    |
+            LD      C, A            ; store in C                ' 4     |
+
+            sampleOutputAndWait     ; (3*110)-2 --> soon        ' 48 (376)
+
+            LD      HL, YMPORT2     ; prepare panning           ' 10    |
+            LD      (HL), $B6       ;                           ' 10    |
+            INC     L               ;                           ' 4     |
+            wait11                  ;                           ' 11    |
+            LD      (HL), C         ; set pan value             ' 7     | 64 (440)
+            DEC     L               ;                           ' 4     |
+            DEC     L               ;                           ' 4     |
+            DEC     L               ;                           ' 4     |
+            LD      (HL), $2A       ; prepare DAC out           ' 10    |
 
 .end
             endm                    ;                           ' 440
@@ -489,7 +496,7 @@ cp_loop
             LD      B, $00          ; for 256 * 2 bytes to clear
 
 cb_loop
-            LD      (HL), A         ; initialise buffers to silent
+            LD      (HL), A         ; initialize buffers to silent
             INC     HL
             LD      (HL), A
             INC     HL
@@ -497,7 +504,7 @@ cb_loop
 
             CALL    initDAC         ; prepare DAC for output
 
-            LD      HL, WAVBUFFER0  ; initialise write and read buffer
+            LD      HL, WAVBUFFER0  ; initialize write and read buffer
             LD      (WRITEBUF), HL
             LD      HL, WAVBUFFER1
             LD      (READBUF), HL
@@ -518,9 +525,6 @@ wait_nullwav
             JP      Z, wait_nullwav ; wait for null wav len being initialised
 
             stopChannel             ; stop channel
-
-            LD      A, $B6          ; prepare panning
-            LD      (YMPORT2), A
 
             LD      A, STATREADY
             LD      (STATUS), A     ; driver ready

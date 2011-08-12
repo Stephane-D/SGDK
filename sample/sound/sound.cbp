@@ -44,6 +44,7 @@
 		<Unit filename="res\loop2_16k.h" />
 		<Unit filename="res\loop3_16k.h" />
 		<Unit filename="res\loop4_pcm_22k.h" />
+		<Unit filename="res\music_mvs.h" />
 		<Unit filename="res\music_tfd.h" />
 		<Unit filename="res\piano1_16k.h" />
 		<Unit filename="res\sound1_16k.h" />

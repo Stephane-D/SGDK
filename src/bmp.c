@@ -1,12 +1,22 @@
+/**
+ * \file bmp.c
+ * \brief Software bitmap engine
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to simulate bitmap mode on SEGA genesis.
+ */
+
 #include "config.h"
 #include "types.h"
 
 #include "bmp_cmn.h"
+#include "bmp_cmn_a.h"
 #include "bmp_intr.h"
 #include "bmp.h"
 
 #include "base.h"
-#include "tools.h"
+#include "memory.h"
 #include "maths3D.h"
 
 #include "vdp.h"
@@ -16,34 +26,32 @@
 
 #include "tab_vram.h"
 
-#ifdef ENABLE_BMP
-
 
 // we don't want to share them
 extern u32 VBlankProcess;
 extern u32 HBlankProcess;
 
-
-// used for polygone drawing
-static s16 LeftPoly[BMP_HEIGHT * 2];
-static s16 RightPoly[BMP_HEIGHT * 2];
-static s16 minY;
-static s16 maxY;
+extern s16 *LeftPoly;
+extern s16 *RightPoly;
+extern s16 minY;
+extern s16 maxY;
 
 
 // forward
+extern void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
+extern void calculatePolyEdge_old(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
+
 static void initTilemap(u16 num);
 static u16 doBlitNorm();
 static u16 doBlitBlank();
 static u16 doBlitBlankExt();
-
-static void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
-static void drawLine(u32 offset, s16 dx, s16 dy, u32 step_x, u32 step_y, u8 col);
+static void clearBuffer(u8 *bmp_buffer);
+static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
 
 
 void BMP_init(u16 flags)
 {
-    // common bmp init tasks
+    // common bmp init tasks and memory allocation
     _bmp_init();
 
     // do some init process
@@ -67,6 +75,9 @@ void BMP_end()
 {
     // end some stuff
     BMP_setFlags(0);
+
+    // release others stuff
+    _bmp_end();
 }
 
 void BMP_reset()
@@ -77,103 +88,117 @@ void BMP_reset()
 
 void BMP_setFlags(u16 value)
 {
-    if (bmp_flags == value) return;
+    const u16 oldf = bmp_flags;
 
-    // common setFlags tasks
+    // common setFlags tasks (also handle flags constraints)
     _bmp_setFlags(value);
 
-    // extended blank mode ?
-    if HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK)
+    // if internals flags hasn't changed --> exit
+    if (bmp_flags == oldf) return;
+
+    // re enabled VDP if it was disabled because of extended blank
+    if (oldf & BMP_ENABLE_EXTENDEDBLANK)
+        VDP_setEnable(1);
+
+    // async blit (H Int processing)
+    if (HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
     {
-        // enable process on hint
+        const u16 scrh = VDP_getScreenHeight();
+
+        if (HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK))
+        {
+            VDP_setHIntCounter(scrh - (((scrh - BMP_HEIGHT) >> 1) + 1));
+            // blit method
+            doBlit = &doBlitBlankExt;
+        }
+        else
+        {
+            VDP_setHIntCounter(scrh - 1);
+            // blit method
+            if (HAS_FLAG(BMP_ENABLE_BLITONBLANK)) doBlit = &doBlitBlank;
+            else doBlit = &doBlitNorm;
+        }
+        // enabled bitmap H Int processing
         HBlankProcess |= PROCESS_BITMAP_TASK;
         VDP_setHInterrupt(1);
-        // disable process on vhint
-        VBlankProcess &= ~PROCESS_BITMAP_TASK;
-        // define blit function
-        doBlit = &doBlitBlankExt;
     }
     else
     {
-        // disable process on hint
-        HBlankProcess &= ~PROCESS_BITMAP_TASK;
+        // normal blit
+        doBlit = &doBlitNorm;
+        // disabled bitmap H Int processing
         VDP_setHInterrupt(0);
-        // enable process on vint if needed
-        if HAS_FLAG(BMP_ENABLE_ASYNCFLIP) VBlankProcess |= PROCESS_BITMAP_TASK;
-        else VBlankProcess &= ~PROCESS_BITMAP_TASK;
-        // define blit function
-        if HAS_FLAG(BMP_ENABLE_BLITONBLANK) doBlit = &doBlitBlank;
-        else doBlit = &doBlitNorm;
+        HBlankProcess &= ~PROCESS_BITMAP_TASK;
     }
 }
 
 void BMP_enableWaitVSync()
 {
-    if (!(bmp_flags & BMP_ENABLE_WAITVSYNC))
+    if (!HAS_FLAG(BMP_ENABLE_WAITVSYNC))
         BMP_setFlags(bmp_flags | BMP_ENABLE_WAITVSYNC);
 }
 
 void BMP_disableWaitVSync()
 {
-    if (bmp_flags & BMP_ENABLE_WAITVSYNC)
+    if (HAS_FLAG(BMP_ENABLE_WAITVSYNC))
         BMP_setFlags(bmp_flags & ~BMP_ENABLE_WAITVSYNC);
 }
 
 void BMP_enableASyncFlip()
 {
-    if (!(bmp_flags & BMP_ENABLE_ASYNCFLIP))
+    if (!HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
         BMP_setFlags(bmp_flags | BMP_ENABLE_ASYNCFLIP);
 }
 
 void BMP_disableASyncFlip()
 {
-    if (bmp_flags & BMP_ENABLE_ASYNCFLIP)
+    if (HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
         BMP_setFlags(bmp_flags & ~BMP_ENABLE_ASYNCFLIP);
 }
 
 void BMP_enableFPSDisplay()
 {
-    if (!(bmp_flags & BMP_ENABLE_FPSDISPLAY))
+    if (!HAS_FLAG(BMP_ENABLE_FPSDISPLAY))
         BMP_setFlags(bmp_flags | BMP_ENABLE_FPSDISPLAY);
 }
 
 void BMP_disableFPSDisplay()
 {
-    if (bmp_flags & BMP_ENABLE_FPSDISPLAY)
+    if (HAS_FLAG(BMP_ENABLE_FPSDISPLAY))
         BMP_setFlags(bmp_flags & ~BMP_ENABLE_FPSDISPLAY);
 }
 
 void BMP_enableBlitOnBlank()
 {
-    if (!(bmp_flags & BMP_ENABLE_BLITONBLANK))
+    if (!HAS_FLAG(BMP_ENABLE_BLITONBLANK))
         BMP_setFlags(bmp_flags | BMP_ENABLE_BLITONBLANK);
 }
 
 void BMP_disableBlitOnBlank()
 {
-    if (bmp_flags & BMP_ENABLE_BLITONBLANK)
+    if (HAS_FLAG(BMP_ENABLE_BLITONBLANK))
         BMP_setFlags(bmp_flags & ~BMP_ENABLE_BLITONBLANK);
 }
 
 void BMP_enableExtendedBlank()
 {
-    if (!(bmp_flags & BMP_ENABLE_EXTENDEDBLANK))
+    if (!HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK))
         BMP_setFlags(bmp_flags | BMP_ENABLE_EXTENDEDBLANK);
 }
 
 void BMP_disableExtendedBlank()
 {
-    if (bmp_flags & BMP_ENABLE_EXTENDEDBLANK)
+    if (HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK))
         BMP_setFlags(bmp_flags & ~BMP_ENABLE_EXTENDEDBLANK);
 }
 
 void BMP_flip()
 {
     // wait for vsync ?
-    if HAS_FLAG(BMP_ENABLE_WAITVSYNC)
+    if (HAS_FLAG(BMP_ENABLE_WAITVSYNC))
     {
         // async flip ?
-        if HAS_FLAG(BMP_ENABLE_ASYNCFLIP)
+        if (HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
         {
             // wait for previous async flip to complete
             BMP_waitAsyncFlipComplete();
@@ -202,7 +227,7 @@ void BMP_flip()
 
 void BMP_internalBufferFlip()
 {
-    if READ_IS_FB0
+    if (READ_IS_FB0)
     {
         bmp_buffer_read = bmp_buffer_1;
         bmp_buffer_write = bmp_buffer_0;
@@ -225,14 +250,17 @@ static void initTilemap(u16 num)
 
     VDP_setAutoInc(2);
 
+    // calculated
+    const u32 offset = BMP_FBTILEMAP_OFFSET;
+
     if (num == 0)
     {
-        addr_tilemap = BMP_FB0TILEMAP_ADJ;
+        addr_tilemap = BMP_FB0TILEMAP_BASE + offset;
         tile_ind = BMP_FB0TILEINDEX;
     }
     else
     {
-        addr_tilemap = BMP_FB1TILEMAP_ADJ;
+        addr_tilemap = BMP_FB1TILEMAP_BASE + offset;
         tile_ind = BMP_FB1TILEINDEX;
     }
 
@@ -247,7 +275,7 @@ static void initTilemap(u16 num)
         *plctrl = GFX_WRITE_VRAM_ADDR(addr_tilemap);
 
         // write tilemap line to VDP
-        j = (BMP_CELLWIDTH >> 3);
+        j = BMP_CELLWIDTH >> 3;
         while(j--)
         {
             *pwdata = tile_ind++;
@@ -280,7 +308,7 @@ static u16 doBlitNorm()
     pldata = (u32 *) GFX_DATA_PORT;
 
     // set destination address for tile
-    if READ_IS_FB0
+    if (READ_IS_FB0)
         *plctrl = GFX_WRITE_VRAM_ADDR(BMP_FB0TILE);
     else
         *plctrl = GFX_WRITE_VRAM_ADDR(BMP_FB1TILE);
@@ -324,7 +352,7 @@ static u16 doBlitBlank()
 
     src = (u32 *) bmp_buffer_read;
 
-    if READ_IS_FB0
+    if (READ_IS_FB0)
         addr_tile = BMP_FB0TILE;
     else
         addr_tile = BMP_FB1TILE;
@@ -421,7 +449,6 @@ static u16 doBlitBlankExt()
 {
     vu32 *plctrl;
     vu32 *pldata;
-    vu16 *pwhvcnt;
     u32 *src;
     u32 addr_tile;
     u16 i, j;
@@ -432,7 +459,7 @@ static u16 doBlitBlankExt()
 
     src = (u32 *) bmp_buffer_read;
 
-    if READ_IS_FB0
+    if (READ_IS_FB0)
         addr_tile = BMP_FB0TILE;
     else
         addr_tile = BMP_FB1TILE;
@@ -488,19 +515,20 @@ static u16 doBlitBlankExt()
         *plctrl = GFX_WRITE_VRAM_ADDR(addr_tile);
     }
 
-    // point to HV counter
-    pwhvcnt = (u16 *) GFX_HVCOUNTER_PORT;
+    // point to V counter
+    vu8 *pbvcnt = (u8 *) GFX_HVCOUNTER_PORT;
+    // scanline where we have to stop blit (end of H Blank)
+    const u8 startLine = ((VDP_getScreenHeight() - BMP_HEIGHT) >> 1) - 2;
 
     while(i--)
     {
         j = BMP_CELLWIDTH;
         while(j--)
         {
-            // test if we are out of time
-            const u16 vcnt = *pwhvcnt;
+            // (! this loop have to take less than 488 cycles else we can miss the check !)
 
-            // blank period almost finish ?
-            if ((vcnt <= (32 << 8)) && (vcnt >= (30 << 8)))
+            // blank period is finish ?
+            if (*pbvcnt == startLine)
             {
                 // save current position and exit
                 save_i = i + 1;
@@ -530,45 +558,81 @@ static u16 doBlitBlankExt()
     return 1;
 }
 
+static void clearBuffer(u8 *bmp_buffer)
+{
+    u32 *src;
+    u16 i;
+    // prevent compiler to use slow CLR instruction
+    const u32 v = getZeroU32();
+
+
+    src = (u32*) bmp_buffer;
+
+    i = (BMP_WIDTH * BMP_HEIGHT) / (4 * 8);
+    while(i--)
+    {
+        *src++ = v;
+        *src++ = v;
+        *src++ = v;
+        *src++ = v;
+        *src++ = v;
+        *src++ = v;
+        *src++ = v;
+        *src++ = v;
+    }
+}
+
 
 // graphic drawing functions
 ////////////////////////////
 
 void BMP_clear()
 {
-    fastmemset(bmp_buffer_write, 0, sizeof(bmp_buffer_0));
+    clearBuffer(bmp_buffer_write);
 }
 
 
-u8* BMP_getWritePointer(u32 x, u32 y)
+u8* BMP_getWritePointer(u16 x, u16 y)
 {
-    // return read address
-    return &bmp_buffer_write[(y * BMP_PITCH) + x];
+    const u16 off = (y * BMP_PITCH) + x;
+
+    // return write address
+    return &bmp_buffer_write[off];
 }
 
-u8* BMP_getReadPointer(u32 x, u32 y)
+u8* BMP_getReadPointer(u16 x, u16 y)
 {
+    const u16 off = (y * BMP_PITCH) + x;
+
     // return read address
-    return &bmp_buffer_read[(y * BMP_PITCH) + x];
+    return &bmp_buffer_read[off];
 }
 
 
-u8 BMP_getPixel(u32 x, u32 y)
+u8 BMP_getPixel(u16 x, u16 y)
 {
     // pixel in screen ?
     if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
+    {
+        const u16 off = (y * BMP_PITCH) + x;
+
         // read pixel
-        return bmp_buffer_write[(y * BMP_PITCH) + x];
+        return bmp_buffer_write[off];
+    }
 
     return 0;
 }
 
-void BMP_setPixel(u32 x, u32 y, u8 col)
+void BMP_setPixel(u16 x, u16 y, u8 col)
 {
     // pixel in screen ?
     if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
+    {
+        const u16 off = (y * BMP_PITCH) + x;
+
         // write pixel
-        bmp_buffer_write[(y * BMP_PITCH) + x] = col;
+        bmp_buffer_write[off] = col;
+    }
 }
 
 void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
@@ -586,8 +650,12 @@ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
 
         // pixel inside screen ?
         if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
+        {
+            const u16 off = (y * BMP_PITCH) + x;
+
             // write pixel
-            bmp_buffer_write[(y * BMP_PITCH) + x] = c;
+            bmp_buffer_write[off] = c;
+        }
 
         // next pixel
         v++;
@@ -608,13 +676,18 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 
         // pixel inside screen ?
         if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
+        {
+            const u16 off = (y * BMP_PITCH) + x;
+
             // write pixel
-            bmp_buffer_write[(y * BMP_PITCH) + x] = p->col;
+            bmp_buffer_write[off] = p->col;
+        }
 
         // next pixel
         p++;
     }
 }
+
 
 void BMP_drawLine(Line *l)
 {
@@ -627,13 +700,11 @@ void BMP_drawLine(Line *l)
 
         const s16 x1 = l->pt1.x;
         const s16 y1 = l->pt1.y;
-
         // calcul new deltas
         dx = l->pt2.x - x1;
         dy = l->pt2.y - y1;
-
         // prepare offset
-        const s16 offset = x1 + (y1 * BMP_WIDTH);
+        const u16 offset = x1 + (y1 * BMP_WIDTH);
 
         if (dx < 0)
         {
@@ -719,7 +790,7 @@ void BMP_drawPolygone(const Vect2D_s16 *pts, u16 num, u8 col)
             if (x2 >= BMP_WIDTH) x2 = BMP_WIDTH - 1;
 
             dst = &buf[x1];
-            cnt = (x2 - x1) + 1;
+            cnt = (x2 - x1);
 
             // draw horizontal line
             while(cnt--) *dst++ = c;
@@ -757,7 +828,7 @@ void BMP_drawPolygone(const Vect2D_s16 *pts, u16 num, u8 col)
 }
 
 
-void BMP_loadBitmap(const u8 *data, u32 x, u32 y, u16 w, u16 h, u32 pitch)
+void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
     // pixel out screen ?
     if ((x >= BMP_WIDTH) || (y >= BMP_HEIGHT))
@@ -779,15 +850,15 @@ void BMP_loadBitmap(const u8 *data, u32 x, u32 y, u16 w, u16 h, u32 pitch)
 
     while(adj_h--)
     {
-        fastmemcpy(dst, src, adj_w);
+        fastMemcpy(dst, src, adj_w);
         src += pitch;
         dst += BMP_WIDTH;
     }
 }
 
-void BMP_loadGenBmp16(const u16 *genbmp16, u32 x, u32 y, u16 numpal)
+void BMP_loadGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 numpal)
 {
-    u32 w, h;
+    u16 w, h;
 
     // get the image width
     w = genbmp16[0];
@@ -800,7 +871,7 @@ void BMP_loadGenBmp16(const u16 *genbmp16, u32 x, u32 y, u16 numpal)
     BMP_loadBitmap((u8*) &genbmp16[18], x, y, w / 2, h, w / 2);
 }
 
-void BMP_loadAndScaleGenBmp16(const u16 *genbmp16, u32 x, u32 y, u16 w, u16 h, u16 numpal)
+void BMP_loadAndScaleGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 w, u16 h, u16 numpal)
 {
     u16 bmp_w, bmp_h;
 
@@ -878,88 +949,12 @@ void BMP_scale(const u8 *src_buf, u16 src_w, u16 src_h, u16 src_pitch, u8 *dst_b
 }
 
 
-static void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise)
-{
-    s16 dx, dy;
-    s16 x1 = pt1->x;
-    s16 y1 = pt1->y;
-    s16 x2 = pt2->x;
-    s16 y2 = pt2->y;
-
-    // calcul deltas
-    dx = x2 - x1;
-    dy = y2 - y1;
-
-    // nothing to do
-    if (dy == 0) return;
-
-    // clip on y window
-    if (y1 < 0)
-    {
-        x1 += ((0 - y1) * dx) / dy;
-        y1 = 0;
-    }
-    else if (y1 >= BMP_HEIGHT)
-    {
-        x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
-        y1 = BMP_HEIGHT - 1;
-    }
-    if (y2 < 0)
-    {
-        x2 += ((0 - y2) * dx) / dy;
-        y2 = 0;
-    }
-    else if (y2 >= BMP_HEIGHT)
-    {
-        x2 += (((BMP_HEIGHT - 1) - y2) * dx) / dy;
-        y2 = BMP_HEIGHT - 1;
-    }
-
-    // outside screen ? --> exit
-    if (((x1 < 0) && (x2 < 0)) ||
-        ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-        ((y1 < 0) && (y2 < 0)) ||
-        ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT))) return;
-
-    s16 *src;
-    fix16 step;
-    s16 len;
-    fix16 x;
-
-    if ((y2 > y1) ^ (clockwise))
-    {
-        // left side
-        len = y2 - y1;
-        step = fix16Div(intToFix16(x2 - x1), intToFix16(len));
-        if (y1 < minY) minY = y1;
-        if (y2 > maxY) maxY = y2;
-        src = &LeftPoly[y1];
-        x = intToFix16(x1);
-    }
-    else
-    {
-        // right side
-        len = y1 - y2;
-        step = fix16Div(intToFix16(x1 - x2), intToFix16(len));
-        if (y2 < minY) minY = y2;
-        if (y1 > maxY) maxY = y1;
-        src = &RightPoly[y2];
-        x = intToFix16(x2);
-    }
-
-    while(len--)
-    {
-        *src++ = fix16ToInt(x);
-        x += step;
-    }
-}
-
-static void drawLine(u32 offset, s16 dx, s16 dy, u32 step_x, u32 step_y, u8 col)
+static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
 {
     const u8 c = col;
     u8 *dst = &bmp_buffer_write[offset];
-    s16 delta = dx;
-    s16 cnt = dx;
+    s16 delta = dx >> 1;
+    s16 cnt = dx + 1;
 
     while(cnt--)
     {
@@ -976,5 +971,3 @@ static void drawLine(u32 offset, s16 dx, s16 dy, u32 step_x, u32 step_y, u8 col)
     }
 }
 
-
-#endif // ENABLE_BMP

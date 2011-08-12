@@ -3,8 +3,6 @@
 
 #include "bmp_cmn.h"
 
-#ifdef ENABLE_BMP
-
 
 extern u16 *bmp_tilemap_read;
 extern u16 *bmp_tilemap_write;
@@ -32,10 +30,13 @@ void BMP_FF_internalBufferFlip();
 
 void BMP_FF_clear();
 
+u8   BMP_FF_getPixel(u16 x, u16 y);
+void BMP_FF_setPixel(u16 x, u16 y, u8 col);
+void BMP_FF_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
+void BMP_FF_setPixels(const Pixel *pixels, u16 num);
+
 void BMP_FF_drawLine(Line *l);
 
-
-#endif // ENABLE_BMP
 
 #endif // _BMP_FF_H_
 

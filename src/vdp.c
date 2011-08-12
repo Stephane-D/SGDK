@@ -1,3 +1,16 @@
+/**
+ * \file vdp.c
+ * \brief VDP main
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides general VDP methods :
+ * - initialisation
+ * - get / set register
+ * - get / set resolution
+ * - enable / disable VDP features
+ */
+
 #include "config.h"
 #include "types.h"
 

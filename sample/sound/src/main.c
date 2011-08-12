@@ -67,8 +67,8 @@ static const driver_def drivers[NUM_DRIVER] =
         3,
         {
             {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}},
-            {"PAN ", 3, {{"center ", AUDIO_PAN_CENTER}, {"left ", AUDIO_PAN_LEFT}, {"right ", AUDIO_PAN_RIGHT}}},
-            {"RATE ", 6, {{"8000 ", AUDIO_RATE_8000}, {"11025 ", AUDIO_RATE_11025}, {"13400 ", AUDIO_RATE_13400}, {"16000 ", AUDIO_RATE_16000}, {"22050 ", AUDIO_RATE_22050}, {"32k", AUDIO_RATE_32000}}}
+            {"PAN ", 3, {{"center ", SOUND_PAN_CENTER}, {"left ", SOUND_PAN_LEFT}, {"right ", SOUND_PAN_RIGHT}}},
+            {"RATE ", 6, {{"8000 ", SOUND_RATE_8000}, {"11025 ", SOUND_RATE_11025}, {"13400 ", SOUND_RATE_13400}, {"16000 ", SOUND_RATE_16000}, {"22050 ", SOUND_RATE_22050}, {"32k", SOUND_RATE_32000}}}
         }
     },
     {
@@ -136,12 +136,6 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
-    // init volume to 0 for driver 4PCM_ENV
-    setVolume_4PCM_ENV(AUDIO_PCM_CH1, 0);
-    setVolume_4PCM_ENV(AUDIO_PCM_CH2, 0);
-    setVolume_4PCM_ENV(AUDIO_PCM_CH3, 0);
-    setVolume_4PCM_ENV(AUDIO_PCM_CH4, 0);
-
     // point to first driver
     driver = drivers;
     cmd = NULL;
@@ -150,7 +144,7 @@ int main()
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
             params_value[i][j] = cur_cmd->params;
 
-    VDP_setPaletteColor(1, 15, 0x0888);
+    VDP_setPaletteColor(PAL1, 15, 0x0888);
 
     VDP_setTextPalette(0);
     VDP_drawText("Current Z80 driver", 10, 1);
@@ -266,7 +260,7 @@ static void refreshDriverCmd()
             break;
 
         case Z80_DRIVER_TFM:
-            VDP_drawText("press A to start/end play", 1, 12);
+            VDP_drawText("press A to start play", 1, 12);
             break;
     }
 }
@@ -409,9 +403,6 @@ static void handleInput()
 
 static void joyEvent(u16 joy, u16 changed, u16 state)
 {
-    const u16 driver_ind = getCurrentDriverIndex();
-    const u16 loop = params_value[driver_ind][0]->value;
-
     // LEFT button state changed
     if (changed & state & BUTTON_LEFT)
     {
@@ -426,17 +417,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             const param_def *param = getCurrentParam();
 
             if (param > &cmd->params[0])
-            {
                 setCurrentParam(param - 1);
-
-                if (driver->id == Z80_DRIVER_4PCM_ENV)
-                {
-                    const u16 cmd_index = getCurrentCmdIndex();
-
-                    if (cmd_index > 0)
-                        setVolume_4PCM_ENV(cmd_index - 1, getParamIndex(param - 1));
-                }
-            }
         }
     }
     // RIGHT button state changed
@@ -453,17 +434,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             const param_def *param = getCurrentParam();
 
             if (param < &cmd->params[cmd->num_param - 1])
-            {
                 setCurrentParam(param + 1);
-
-                if (driver->id == Z80_DRIVER_4PCM_ENV)
-                {
-                    const u16 cmd_index = getCurrentCmdIndex();
-
-                    if (cmd_index > 0)
-                        setVolume_4PCM_ENV(cmd_index - 1, getParamIndex(param + 1));
-                }
-            }
         }
     }
 
@@ -487,6 +458,9 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         else if (cmd < &driver->cmds[driver->num_cmd - 1]) cmd++;
     }
 
+    const u16 driver_ind = getCurrentDriverIndex();
+    const u16 loop = params_value[driver_ind][0]->value;
+
     // driver commands
     switch(driver->id)
     {
@@ -496,35 +470,35 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 
             if (changed & state & BUTTON_A)
             {
-                if (isPlaying_PCM())
-                    stopPlay_PCM();
+                if (SND_isPlaying_PCM())
+                    SND_stopPlay_PCM();
                 else
                 {
                     // RATE parameter value
                     switch(params_value[driver_ind][2]->value)
                     {
-                        case AUDIO_RATE_8000:
-                            startPlay_PCM(india_8k, sizeof(india_8k), AUDIO_RATE_8000, pan, loop);
+                        case SOUND_RATE_8000:
+                            SND_startPlay_PCM(india_8k, sizeof(india_8k), SOUND_RATE_8000, pan, loop);
                             break;
 
-                        case AUDIO_RATE_11025:
-                            startPlay_PCM(india_11k, sizeof(india_11k), AUDIO_RATE_11025, pan, loop);
+                        case SOUND_RATE_11025:
+                            SND_startPlay_PCM(india_11k, sizeof(india_11k), SOUND_RATE_11025, pan, loop);
                             break;
 
-                        case AUDIO_RATE_13400:
-                            startPlay_PCM(india_13k, sizeof(india_13k), AUDIO_RATE_13400, pan, loop);
+                        case SOUND_RATE_13400:
+                            SND_startPlay_PCM(india_13k, sizeof(india_13k), SOUND_RATE_13400, pan, loop);
                             break;
 
-                        case AUDIO_RATE_16000:
-                            startPlay_PCM(india_16k, sizeof(india_16k), AUDIO_RATE_16000, pan, loop);
+                        case SOUND_RATE_16000:
+                            SND_startPlay_PCM(india_16k, sizeof(india_16k), SOUND_RATE_16000, pan, loop);
                             break;
 
-                        case AUDIO_RATE_22050:
-                            startPlay_PCM(india_22k, sizeof(india_22k), AUDIO_RATE_22050, pan, loop);
+                        case SOUND_RATE_22050:
+                            SND_startPlay_PCM(india_22k, sizeof(india_22k), SOUND_RATE_22050, pan, loop);
                             break;
 
-                        case AUDIO_RATE_32000:
-                            startPlay_PCM(india_32k, sizeof(india_32k), AUDIO_RATE_32000, pan, loop);
+                        case SOUND_RATE_32000:
+                            SND_startPlay_PCM(india_32k, sizeof(india_32k), SOUND_RATE_32000, pan, loop);
                             break;
                     }
                 }
@@ -537,18 +511,18 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         {
             if (changed & state & BUTTON_A)
             {
-                if (isPlaying_2ADPCM(AUDIO_PCM_CH1_MSK))
-                    stopPlay_2ADPCM(AUDIO_PCM_CH1);
+                if (SND_isPlaying_2ADPCM(SOUND_PCM_CH1_MSK))
+                    SND_stopPlay_2ADPCM(SOUND_PCM_CH1);
                 else
-                    startPlay_2ADPCM(india_pcm_22k, sizeof(india_pcm_22k), AUDIO_PCM_CH1, loop);
+                    SND_startPlay_2ADPCM(india_pcm_22k, sizeof(india_pcm_22k), SOUND_PCM_CH1, loop);
             }
 
             if (changed & state & BUTTON_B)
             {
-                if (isPlaying_2ADPCM(AUDIO_PCM_CH2_MSK))
-                    stopPlay_2ADPCM(AUDIO_PCM_CH2);
+                if (SND_isPlaying_2ADPCM(SOUND_PCM_CH2_MSK))
+                    SND_stopPlay_2ADPCM(SOUND_PCM_CH2);
                 else
-                    startPlay_2ADPCM(loop4_pcm_22k, sizeof(loop4_pcm_22k), AUDIO_PCM_CH2, loop);
+                    SND_startPlay_2ADPCM(loop4_pcm_22k, sizeof(loop4_pcm_22k), SOUND_PCM_CH2, loop);
             }
 
             break;
@@ -558,34 +532,34 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         {
             if (changed & state & BUTTON_START)
             {
-                if (isPlaying_4PCM(AUDIO_PCM_CH4_MSK))
-                    stopPlay_4PCM(AUDIO_PCM_CH4);
+                if (SND_isPlaying_4PCM(SOUND_PCM_CH4_MSK))
+                    SND_stopPlay_4PCM(SOUND_PCM_CH4);
                 else
-                    startPlay_4PCM(sound1_16k, sizeof(sound1_16k), AUDIO_PCM_CH4, loop);
+                    SND_startPlay_4PCM(sound1_16k, sizeof(sound1_16k), SOUND_PCM_CH4, loop);
             }
 
             if (changed & state & BUTTON_A)
             {
-                if (isPlaying_4PCM(AUDIO_PCM_CH1_MSK))
-                    stopPlay_4PCM(AUDIO_PCM_CH1);
+                if (SND_isPlaying_4PCM(SOUND_PCM_CH1_MSK))
+                    SND_stopPlay_4PCM(SOUND_PCM_CH1);
                 else
-                    startPlay_4PCM(loop1_16k, sizeof(loop1_16k), AUDIO_PCM_CH1, loop);
+                    SND_startPlay_4PCM(loop1_16k, sizeof(loop1_16k), SOUND_PCM_CH1, loop);
             }
 
             if (changed & state & BUTTON_B)
             {
-                if (isPlaying_4PCM(AUDIO_PCM_CH2_MSK))
-                    stopPlay_4PCM(AUDIO_PCM_CH2);
+                if (SND_isPlaying_4PCM(SOUND_PCM_CH2_MSK))
+                    SND_stopPlay_4PCM(SOUND_PCM_CH2);
                 else
-                    startPlay_4PCM(loop3_16k, sizeof(loop3_16k), AUDIO_PCM_CH2, loop);
+                    SND_startPlay_4PCM(loop3_16k, sizeof(loop3_16k), SOUND_PCM_CH2, loop);
             }
 
             if (changed & state & BUTTON_C)
             {
-                if (isPlaying_4PCM(AUDIO_PCM_CH3_MSK))
-                    stopPlay_4PCM(AUDIO_PCM_CH3);
+                if (SND_isPlaying_4PCM(SOUND_PCM_CH3_MSK))
+                    SND_stopPlay_4PCM(SOUND_PCM_CH3);
                 else
-                    startPlay_4PCM(violon1_16k, sizeof(violon1_16k), AUDIO_PCM_CH3, loop);
+                    SND_startPlay_4PCM(violon1_16k, sizeof(violon1_16k), SOUND_PCM_CH3, loop);
             }
 
             break;
@@ -593,36 +567,42 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 
         case Z80_DRIVER_4PCM_ENV:
         {
+            // set volume values for driver 4PCM_ENV
+            SND_setVolume_4PCM_ENV(SOUND_PCM_CH1, params_value[driver_ind][1]->value);
+            SND_setVolume_4PCM_ENV(SOUND_PCM_CH2, params_value[driver_ind][2]->value);
+            SND_setVolume_4PCM_ENV(SOUND_PCM_CH3, params_value[driver_ind][3]->value);
+            SND_setVolume_4PCM_ENV(SOUND_PCM_CH4, params_value[driver_ind][4]->value);
+
             if (changed & state & BUTTON_START)
             {
-                if (isPlaying_4PCM_ENV(AUDIO_PCM_CH4_MSK))
-                    stopPlay_4PCM_ENV(AUDIO_PCM_CH4);
+                if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH4_MSK))
+                    SND_stopPlay_4PCM_ENV(SOUND_PCM_CH4);
                 else
-                    startPlay_4PCM_ENV(loop2_16k, sizeof(loop2_16k), AUDIO_PCM_CH4, loop);
+                    SND_startPlay_4PCM_ENV(loop2_16k, sizeof(loop2_16k), SOUND_PCM_CH4, loop);
             }
 
             if (changed & state & BUTTON_A)
             {
-                if (isPlaying_4PCM_ENV(AUDIO_PCM_CH1_MSK))
-                    stopPlay_4PCM_ENV(AUDIO_PCM_CH1);
+                if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH1_MSK))
+                    SND_stopPlay_4PCM_ENV(SOUND_PCM_CH1);
                 else
-                    startPlay_4PCM_ENV(piano1_16k, sizeof(piano1_16k), AUDIO_PCM_CH1, loop);
+                    SND_startPlay_4PCM_ENV(piano1_16k, sizeof(piano1_16k), SOUND_PCM_CH1, loop);
             }
 
             if (changed & state & BUTTON_B)
             {
-                if (isPlaying_4PCM_ENV(AUDIO_PCM_CH2_MSK))
-                    stopPlay_4PCM_ENV(AUDIO_PCM_CH2);
+                if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH2_MSK))
+                    SND_stopPlay_4PCM_ENV(SOUND_PCM_CH2);
                 else
-                    startPlay_4PCM_ENV(violon2_16k, sizeof(violon2_16k), AUDIO_PCM_CH2, loop);
+                    SND_startPlay_4PCM_ENV(violon2_16k, sizeof(violon2_16k), SOUND_PCM_CH2, loop);
             }
 
             if (changed & state & BUTTON_C)
             {
-                if (isPlaying_4PCM_ENV(AUDIO_PCM_CH3_MSK))
-                    stopPlay_4PCM_ENV(AUDIO_PCM_CH3);
+                if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH3_MSK))
+                    SND_stopPlay_4PCM_ENV(SOUND_PCM_CH3);
                 else
-                    startPlay_4PCM_ENV(beat1_16k, sizeof(beat1_16k), AUDIO_PCM_CH3, loop);
+                    SND_startPlay_4PCM_ENV(beat1_16k, sizeof(beat1_16k), SOUND_PCM_CH3, loop);
             }
 
             break;
@@ -632,14 +612,14 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         {
             if (changed & state & BUTTON_A)
             {
-                if (isPlaying_MVS())
-                    stopPlay_MVS();
+                if (SND_isPlaying_MVS())
+                    SND_stopPlay_MVS();
                 else
                 {
-//                    if (loop)
-//                        startPlay_MVS(music_mvs, AUDIO_MVS_LOOP);
-//                    else
-//                        startPlay_MVS(music_mvs, AUDIO_MVS_ONCE);
+                    if (loop)
+                        SND_startPlay_MVS(music_mvs, SOUND_MVS_LOOP);
+                    else
+                        SND_startPlay_MVS(music_mvs, SOUND_MVS_ONCE);
                 }
             }
 
@@ -650,7 +630,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         {
             if (changed & state & BUTTON_A)
             {
-                startPlay_TFM(music_tfd);
+                SND_startPlay_TFM(music_tfd);
             }
             break;
         }

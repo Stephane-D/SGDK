@@ -1,3 +1,15 @@
+/**
+ * \file vdp_bg.c
+ * \brief VDP background plan support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides plan A & plan B facilities :
+ * - set scrolling
+ * - clear plan
+ * - draw text in plan
+ */
+
 #include "config.h"
 #include "types.h"
 
@@ -6,6 +18,7 @@
 #include "vdp_bg.h"
 
 #include "tools.h"
+#include "string.h"
 #include "vdp_dma.h"
 #include "vdp_tile.h"
 

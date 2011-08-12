@@ -3,10 +3,8 @@
 
 #include "maths.h"
 
-#ifdef MATHS_BIG_TABLE
-
 // only for positives values
-const fix16 log10tab16[65536] =
+const fix16 log10tab16[0x10000] =
 {
     0, -115, -96, -85, -77, -70, -65, -61,
     -57, -54, -51, -48, -46, -44, -42, -40,
@@ -8201,5 +8199,3 @@ const fix16 log10tab16[65536] =
     192, 192, 192, 192, 192, 192, 192, 192,
     192, 192, 192, 192, 192, 192, 192, 192
 };
-
-#endif  // MATHS_BIG_TABLE

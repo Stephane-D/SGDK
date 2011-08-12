@@ -1,9 +1,23 @@
+/**
+ * \file z80_ctrl.c
+ * \brief Z80 control
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides Z80 access from the YM2612 :
+ * - enable / disable Z80
+ * - request / release Z80 BUS
+ * - upload / download data to / from Z80 memory
+ * - set Z80 external Bank
+ * - Z80 driver handling
+ */
+
 #include "config.h"
 #include "types.h"
 
 #include "z80_ctrl.h"
 
-#include "tools.h"
+#include "memory.h"
 #include "timer.h"
 
 // Z80 drivers
@@ -242,6 +256,19 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             pb[7] = sizeof(smp_null) >> 16;
             Z80_releaseBus();
             break;
+
+        case Z80_DRIVER_MVS:
+            // put driver in stop state
+            Z80_requestBus(1);
+
+            // point to Z80 command for MVS
+            pb = (u8 *) 0xA0151D;
+            // stop command for MVS
+            *pb = 0;
+
+            Z80_releaseBus();
+            break;
+
     }
 
     // wait driver for being ready ?
