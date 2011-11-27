@@ -2,8 +2,8 @@
 
 *Here's how to use the devkit from command line in windows environment*
 
- * Define "GDK" environment variable to your installation path in unix path format (example D:/apps/gendev).
- * Define "GDK_WIN" which still point to your installation path but in windows format (exemple D:\apps\gendev).
+ * Define "GDK" environment variable to your installation path in unix path format (example D:/sgdk).
+ * Define "GDK_WIN" which still point to your installation path but in windows format (exemple D:\sgdk).
  * Add the "bin" directory of devkit (%GDK_WIN%\bin) to your PATH variable. Be careful, if you have another GCC installation you can have some conflicts when cc1 command will be called...
  * Now you can compile the library by using
 {{{
@@ -29,4 +29,3 @@ resources files (S, ASM, TFC, TFD, PCM, RAW, WAV, BIN, BMP, RC) : root directory
 Normally you should obtain a rom.bin file in the out directory.
 
 Then test it with an emulator (or directly on the hardware if you are a lucky owner of a flash cart).
-
