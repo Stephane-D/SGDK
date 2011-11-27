@@ -1,6 +1,4 @@
-#summary How to use SGDK from command line.
-
-*Here's how to use the devkit from command line in windows environment*
+#summary How to use SGDK from command line (Windows OS only).
 
  * Define "GDK" environment variable to your installation path in unix path format (example D:/sgdk).
  * Define "GDK_WIN" which still point to your installation path but in windows format (exemple D:\sgdk).
