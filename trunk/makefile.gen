@@ -9,6 +9,7 @@ RES= res
 INCLUDE= include
 
 SHELL=$(BIN)/sh
+RM= $(BIN)/rm
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
@@ -23,10 +24,10 @@ PCMTORAW= $(BIN)/pcmtoraw
 GENRES= $(BIN)/genres
 TFMCOM= $(BIN)/tfmcom
 NM= $(BIN)/nm
-RM= $(BIN)/rm
 MKDIR= $(BIN)/mkdir
 NM2WCH= $(BIN)/nm2wch
-
+ADDR2LINE=$(BIN)/addr2line
+OUT2GSRC=$(BIN)/out2gsrc
 
 OPTION=
 
@@ -71,7 +72,7 @@ OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
 INCS= -I$(LIBINCLUDE) -I$(INCLUDE) -I$(RES)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(LIBSRC) -i$(LIBINCLUDE) -i$(SRC) -i$(INCLUDE) -i$(RES)
 
 all: out/rom.bin
@@ -91,6 +92,10 @@ out/rom.bin: out/rom.out
 	$(NM2WCH) out/rom.nm out/rom.wch
 	$(OBJCPY) -O binary out/rom.out out/rom.bin
 	$(SIZEBND) out/rom.bin -sizealign 131072
+
+out/tmp:
+	$(OUT2GSRC) i out/rom.bin out/rom.addr
+	$(ADDR2LINE) -e out/rom.out < out/rom.addr > out/rom.gsrc
 
 out/rom.out: out/sega.o $(OBJ) $(LIB)/libgendev.a
 	$(MKDIR) -p out

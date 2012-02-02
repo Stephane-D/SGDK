@@ -1,19 +1,10 @@
-/**
- * \file fat16.c
- * \brief FAT16 file system support
- * \author Krikzz
- * \date XX/20XX
- *
- * This unit provides basic FAT16 file system support through everdrive flash cart hardware
- */
-
 #include "types.h"
 
 #include "fat16.h"
 #include "everdrive.h"
 
 
-#ifdef FAT16_SUPPORT
+#if (FAT16_SUPPORT != 0)
 
 void fat16loadRecord(Fat16Record *record, u8 *data);
 u8 fat16LoadFatTableSector(u32 sector_idx);
@@ -616,4 +607,4 @@ u8 fat16SetNextReadSector(Fat16File *file, u32 *addr) {
     return 0;
 }
 
-#endif
+#endif  /* FAT16_SUPPORT */

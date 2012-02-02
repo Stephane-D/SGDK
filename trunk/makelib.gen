@@ -6,6 +6,7 @@ RES= $(GDK)/res
 INCLUDE= $(GDK)/include
 
 SHELL=$(BIN)/sh
+RM= $(BIN)/rm
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
@@ -20,8 +21,6 @@ PCMTORAW= $(BIN)/pcmtoraw
 GENRES= $(BIN)/genres
 NM= $(BIN)/nm
 NM2WCH= $(BIN)/nm2wch
-RM= $(BIN)/rm
-
 
 OPTION=
 
@@ -46,7 +45,7 @@ OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
 INCS= -I$(INCLUDE)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
 all: $(LIB)/libgendev.a

@@ -1,3 +1,12 @@
+/**
+ * \file kdebug.h
+ * \brief Gens KMod debug methods
+ * \author Kaneda
+ * \date XX/20XX
+ *
+ * This unit provides Gens KMod debug methods support.
+ */
+
 #ifndef _KDEBUG_H_
 #define _KDEBUG_H_
 

@@ -1,16 +1,3 @@
-/**
- * \file vdp.c
- * \brief VDP main
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides general VDP methods :
- * - initialisation
- * - get / set register
- * - get / set resolution
- * - enable / disable VDP features
- */
-
 #include "config.h"
 #include "types.h"
 
@@ -24,6 +11,9 @@
 
 #include "font.h"
 
+#include "tools.h"
+#include "string.h"
+
 
 static u8 regValues[0x13];
 u16 textBasetile;
@@ -33,6 +23,9 @@ void VDP_init()
 {
     vu16 *pw;
     u16 i;
+
+    /* wait for DMA completion */
+    VDP_waitDMACompletion();
 
     regValues[0x00] = 0x04; /* reg. 0 - Disable HBL */
     regValues[0x01] = 0x74; /* reg. 1 - Enable display, VBL, DMA + VCell size */
@@ -301,4 +294,23 @@ void VDP_blit()
 {
     // do all update operation
     VDP_updateSprites();
+}
+
+void VDP_showFPS(u16 float_display)
+{
+    char str[16];
+
+    if (float_display)
+    {
+        fix32ToStr(getFPS_f(), str, 1);
+        VDP_clearText(2, 1, 5);
+    }
+    else
+    {
+        uintToStr(getFPS(), str, 1);
+        VDP_clearText(2, 1, 2);
+    }
+
+    // display FPS
+    VDP_drawText(str, 1, 1);
 }

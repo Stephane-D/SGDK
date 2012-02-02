@@ -1,12 +1,3 @@
-/**
- * \file maths.c
- * \brief Math methods
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides basic maths methods.
- */
-
 #include "config.h"
 #include "types.h"
 

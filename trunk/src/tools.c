@@ -1,21 +1,10 @@
-/**
- * \file tools.c
- * \brief Misc tools methods
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides some misc tools methods as getFPS()
- */
-
 #include "config.h"
 #include "types.h"
 
 #include "tools.h"
 
-#include "maths.h"
-#include "string.h"
 #include "timer.h"
-#include "vdp_bg.h"
+#include "maths.h"
 
 
 static u32 framecnt;
@@ -62,24 +51,4 @@ fix32 getFPS_f()
 	else framecnt += 76800;
 
 	return result;
-}
-
-
-void showFPS(u16 float_display)
-{
-    char str[16];
-
-    if (float_display)
-    {
-        fix32ToStr(getFPS_f(), str, 1);
-        VDP_clearText(2, 1, 5);
-    }
-    else
-    {
-        uintToStr(getFPS(), str, 1);
-        VDP_clearText(2, 1, 2);
-    }
-
-    // display FPS
-    VDP_drawText(str, 1, 1);
 }

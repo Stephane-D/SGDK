@@ -1,3 +1,12 @@
+/**
+ * \file psg.h
+ * \brief PSG support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides access to the PSG through the 68000 CPU
+ */
+
 #ifndef _PSG_H_
 #define _PSG_H_
 

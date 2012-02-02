@@ -1,18 +1,3 @@
-/**
- * \file maths3D.c
- * \brief 3D math engine
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides 3D transformations methods :
- * - translation X, Y, Z
- * - rotation X, Y, Z
- * - one directionnal light
- * - 2D projection
- *
- * Can transform about ~7000 vertex / seconde
- */
-
 #include "config.h"
 #include "types.h"
 
@@ -33,7 +18,14 @@ static Vect3D_f16 light;
 Vect3D_f16 light_trans;
 //static Vect3D_f16 camview_trans;
 
-static Trans3D_f16 trans;
+// tranformation parameters
+static fix16 Tx;
+static fix16 Ty;
+static fix16 Tz;
+static fix16 Rx;
+static fix16 Ry;
+static fix16 Rz;
+
 static Mat3D_f16 mat;
 static Mat3D_f16 matInv;
 
@@ -104,12 +96,12 @@ void M3D_setLight3D(Vect3D_f16 *value)
 
 void M3D_resetMat3D()
 {
-    trans.Tx = 0;
-    trans.Ty = 0;
-    trans.Tz = 0;
-    trans.Rx = 0;
-    trans.Ry = 0;
-    trans.Rz = 0;
+    Tx = 0;
+    Ty = 0;
+    Tz = 0;
+    Rx = 0;
+    Ry = 0;
+    Rz = 0;
 
     rebuildMat = 1;
 }
@@ -117,39 +109,39 @@ void M3D_resetMat3D()
 
 void M3D_setTXMat3D(fix16 tx)
 {
-    trans.Tx = tx;
+    Tx = tx;
 
     rebuildMat = 1;
 }
 
 void M3D_setTYMat3D(fix16 ty)
 {
-    trans.Ty = ty;
+    Ty = ty;
 
     rebuildMat = 1;
 }
 
 void M3D_setTZMat3D(fix16 tz)
 {
-    trans.Tz = tz;
+    Tz = tz;
 
     rebuildMat = 1;
 }
 
 void M3D_setTXYZMat3D(fix16 tx, fix16 ty, fix16 tz)
 {
-    trans.Tx = tx;
-    trans.Ty = ty;
-    trans.Tz = tz;
+    Tx = tx;
+    Ty = ty;
+    Tz = tz;
 
     rebuildMat = 1;
 }
 
 void M3D_setTransMat3D(Vect3D_f16 *t)
 {
-    trans.Tx = t->x;
-    trans.Ty = t->y;
-    trans.Tz = t->z;
+    Tx = t->x;
+    Ty = t->y;
+    Tz = t->z;
 
     rebuildMat = 1;
 }
@@ -157,39 +149,39 @@ void M3D_setTransMat3D(Vect3D_f16 *t)
 
 void M3D_setRXMat3D(fix16 rx)
 {
-    trans.Rx = rx;
+    Rx = rx;
 
     rebuildMat = 1;
 }
 
 void M3D_setRYMat3D(fix16 ry)
 {
-    trans.Ry = ry;
+    Ry = ry;
 
     rebuildMat = 1;
 }
 
 void M3D_setRZMat3D(fix16 rz)
 {
-    trans.Rz = rz;
+    Rz = rz;
 
     rebuildMat = 1;
 }
 
 void M3D_setRXYZMat3D(fix16 rx, fix16 ry, fix16 rz)
 {
-    trans.Rx = rx;
-    trans.Ry = ry;
-    trans.Rz = rz;
+    Rx = rx;
+    Ry = ry;
+    Rz = rz;
 
     rebuildMat = 1;
 }
 
 void M3D_setRotMat3D(Vect3D_f16 *rot)
 {
-    trans.Rx = rot->x;
-    trans.Ry = rot->y;
-    trans.Rz = rot->z;
+    Rx = rot->x;
+    Ry = rot->y;
+    Rz = rot->z;
 
     rebuildMat = 1;
 }
@@ -201,12 +193,12 @@ static void buildMat3D()
     fix16 cx, cy, cz;
     fix16 sxsy, cxsy;
 
-    sx = sinFix16(fix16ToInt(trans.Rx));
-    sy = sinFix16(fix16ToInt(trans.Ry));
-    sz = sinFix16(fix16ToInt(trans.Rz));
-    cx = cosFix16(fix16ToInt(trans.Rx));
-    cy = cosFix16(fix16ToInt(trans.Ry));
-    cz = cosFix16(fix16ToInt(trans.Rz));
+    sx = sinFix16(fix16ToInt(Rx));
+    sy = sinFix16(fix16ToInt(Ry));
+    sz = sinFix16(fix16ToInt(Rz));
+    cx = cosFix16(fix16ToInt(Rx));
+    cy = cosFix16(fix16ToInt(Ry));
+    cz = cosFix16(fix16ToInt(Rz));
 
     sxsy = fix16Mul(sx, sy);
     cxsy = fix16Mul(cx, sy);
@@ -253,9 +245,9 @@ void M3D_transform3D(const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
 
     while (i--)
     {
-        d->x = fix16Mul(s->x, mat.a.x) + fix16Mul(s->y, mat.a.y) + fix16Mul(s->z, mat.a.z) + trans.Tx;
-        d->y = fix16Mul(s->x, mat.b.x) + fix16Mul(s->y, mat.b.y) + fix16Mul(s->z, mat.b.z) + trans.Ty;
-        d->z = fix16Mul(s->x, mat.c.x) + fix16Mul(s->y, mat.c.y) + fix16Mul(s->z, mat.c.z) + trans.Tz;
+        d->x = fix16Mul(s->x, mat.a.x) + fix16Mul(s->y, mat.a.y) + fix16Mul(s->z, mat.a.z) + Tx;
+        d->y = fix16Mul(s->x, mat.b.x) + fix16Mul(s->y, mat.b.y) + fix16Mul(s->z, mat.b.z) + Ty;
+        d->z = fix16Mul(s->x, mat.c.x) + fix16Mul(s->y, mat.c.y) + fix16Mul(s->z, mat.c.z) + Tz;
 
         s++;
         d++;

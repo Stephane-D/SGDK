@@ -1,18 +1,7 @@
-/**
- * \file bmp_ff.c
- * \brief Software bitmap engine (Fast Fill optimized)
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides methods to simulate a bitmap mode on SEGA genesis.
- * This engine is optimized for Fast Fill (uses plains tiles when possible)
- */
-
 #include "config.h"
 #include "types.h"
 
 #include "bmp_cmn.h"
-#include "bmp_cmn_a.h"
 #include "bmp_intr.h"
 #include "bmp_ff.h"
 
@@ -53,7 +42,7 @@ u16 basetile_ind;
 
 // ASM procedures (defined in bmp_ff_a.s)
 extern void blitTileMap();
-static u16 getTile(u16 offset);
+extern u16 getTile(u16 offset);
 extern u8 isUserTile(u16 offset);
 extern void setUserTile(u16 offset);
 extern void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
@@ -65,6 +54,7 @@ extern void calculatePolyEdge_old(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, 
 static u16 doBlitNorm();
 static u16 doBlitBlank();
 static u16 doBlitBlankExt();
+static void internalBufferFlip();
 // replaced by ASM version (see bmp_ff_a.s file)
 static void blitTileMap_old();
 static u16 getTile_old(u16 offset);
@@ -252,7 +242,7 @@ void BMP_FF_flip()
             // wait for previous async flip to complete
             BMP_waitAsyncFlipComplete();
             // flip bitmap buffer
-            BMP_FF_internalBufferFlip();
+            internalBufferFlip();
             // request a flip (will be processed in blank period --> BMP_doBlankProcess)
             bmp_state |= BMP_STAT_FLIPWAITING;
         }
@@ -260,7 +250,7 @@ void BMP_FF_flip()
         {
             VDP_waitVSync();
             // flip bitmap buffer
-            BMP_FF_internalBufferFlip();
+            internalBufferFlip();
             // blit buffer to VRAM and flip vdp display
             _bmp_doFlip();
         }
@@ -268,13 +258,13 @@ void BMP_FF_flip()
     else
     {
         // flip bitmap buffer
-        BMP_FF_internalBufferFlip();
+        internalBufferFlip();
         // blit buffer to VRAM and flip vdp display
         _bmp_doFlip();
     }
 }
 
-void BMP_FF_internalBufferFlip()
+static void internalBufferFlip()
 {
     if (READ_IS_FB0)
     {

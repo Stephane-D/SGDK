@@ -1,3 +1,12 @@
+/**
+ * \file bmp_intr.h
+ * \brief Software bitmap engine (interface)
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides common interfaces for bitmap engines.
+ */
+
 #ifndef _BMP_INTR_H_
 #define _BMP_INTR_H_
 

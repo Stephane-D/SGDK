@@ -1,17 +1,7 @@
-/**
- * \file bmp.c
- * \brief Software bitmap engine
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides methods to simulate bitmap mode on SEGA genesis.
- */
-
 #include "config.h"
 #include "types.h"
 
 #include "bmp_cmn.h"
-#include "bmp_cmn_a.h"
 #include "bmp_intr.h"
 #include "bmp.h"
 
@@ -41,6 +31,7 @@ extern s16 maxY;
 extern void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
 extern void calculatePolyEdge_old(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
 
+static void internalBufferFlip();
 static void initTilemap(u16 num);
 static u16 doBlitNorm();
 static u16 doBlitBlank();
@@ -203,7 +194,7 @@ void BMP_flip()
             // wait for previous async flip to complete
             BMP_waitAsyncFlipComplete();
             // flip bitmap buffer
-            BMP_internalBufferFlip();
+            internalBufferFlip();
             // request a flip (will be processed in blank period --> BMP_doBlankProcess)
             bmp_state |= BMP_STAT_FLIPWAITING;
         }
@@ -211,7 +202,7 @@ void BMP_flip()
         {
             VDP_waitVSync();
             // flip bitmap buffer
-            BMP_internalBufferFlip();
+            internalBufferFlip();
             // blit buffer to VRAM and flip vdp display
             _bmp_doFlip();
         }
@@ -219,13 +210,13 @@ void BMP_flip()
     else
     {
          // flip bitmap buffer
-         BMP_internalBufferFlip();
+         internalBufferFlip();
          // blit buffer to VRAM and flip vdp display
          _bmp_doFlip();
     }
 }
 
-void BMP_internalBufferFlip()
+static void internalBufferFlip()
 {
     if (READ_IS_FB0)
     {
@@ -730,7 +721,7 @@ void BMP_drawLine(Line *l)
     }
 }
 
-void BMP_drawPolygone(const Vect2D_s16 *pts, u16 num, u8 col)
+void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col)
 {
     // calculate polygone "direction"
     const u8 clockwise = ((pts[2].x - pts[0].x) * (pts[1].y - pts[0].y)) > ((pts[2].y - pts[0].y) * (pts[1].x - pts[0].x));
@@ -861,14 +852,14 @@ void BMP_loadGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 numpal)
     u16 w, h;
 
     // get the image width
-    w = genbmp16[0];
+    w = BMP_GENBMP16_WIDTH(genbmp16) >> 1;
     // get the image height
-    h = genbmp16[1];
+    h = BMP_GENBMP16_HEIGHT(genbmp16);
 
     // load the palette
-    if (numpal < 4) VDP_setPalette(numpal, &genbmp16[2]);
+    if (numpal < 4) VDP_setPalette(numpal, BMP_GENBMP16_PALETTE(genbmp16));
 
-    BMP_loadBitmap((u8*) &genbmp16[18], x, y, w / 2, h, w / 2);
+    BMP_loadBitmap((u8*) BMP_GENBMP16_IMAGE(genbmp16), x, y, w, h, w);
 }
 
 void BMP_loadAndScaleGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 w, u16 h, u16 numpal)
@@ -876,14 +867,14 @@ void BMP_loadAndScaleGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 w, u16 h, u
     u16 bmp_w, bmp_h;
 
     // get the image width / 2
-    bmp_w = genbmp16[0] >> 1;
+    bmp_w = BMP_GENBMP16_WIDTH(genbmp16) >> 1;
     // get the image height
-    bmp_h = genbmp16[1];
+    bmp_h = BMP_GENBMP16_HEIGHT(genbmp16);
 
     // load the palette
-    if (numpal < 4) VDP_setPalette(numpal, &genbmp16[2]);
+    if (numpal < 4) VDP_setPalette(numpal, BMP_GENBMP16_PALETTE(genbmp16));
 
-    BMP_scale((u8*) &genbmp16[18], bmp_w, bmp_h, bmp_w, BMP_getWritePointer(x, y), w, h, BMP_WIDTH);
+    BMP_scale((u8*) BMP_GENBMP16_IMAGE(genbmp16), bmp_w, bmp_h, bmp_w, BMP_getWritePointer(x, y), w, h, BMP_WIDTH);
 }
 
 void BMP_getGenBmp16Palette(const u16 *genbmp16, u16 *pal)
@@ -892,7 +883,7 @@ void BMP_getGenBmp16Palette(const u16 *genbmp16, u16 *pal)
     const u16 *src;
     u16 *dst;
 
-    src = &genbmp16[2];
+    src = BMP_GENBMP16_PALETTE(genbmp16);
     dst = pal;
     i = 16;
     while(i--) *dst++ = *src++;

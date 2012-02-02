@@ -1,17 +1,3 @@
-/**
- * \file z80_ctrl.c
- * \brief Z80 control
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides Z80 access from the YM2612 :
- * - enable / disable Z80
- * - request / release Z80 BUS
- * - upload / download data to / from Z80 memory
- * - set Z80 external Bank
- * - Z80 driver handling
- */
-
 #include "config.h"
 #include "types.h"
 

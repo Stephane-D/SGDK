@@ -1,3 +1,12 @@
+/**
+ * \file types.h
+ * \brief Types definition
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * SGDK Types definition.
+ */
+
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
@@ -70,7 +79,6 @@
 
 //#define fix16   s16
 //#define fix32   s32
-
 typedef s16 fix16;
 typedef s32 fix32;
 
