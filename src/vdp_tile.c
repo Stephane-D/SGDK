@@ -1,15 +1,3 @@
-/**
- * \file vdp_tile.c
- * \brief VDP General Tile / Tilemap operations
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides methods to manipulate VDP tiles and tilemap :
- * - upload tiles to VDP memory
- * - upload tiles from BMP to VDP memory
- * - clear / fill / set tile map data
- */
-
 #include "config.h"
 #include "types.h"
 
@@ -23,9 +11,7 @@
 #include "tab_vram.h"
 
 
-// ~76 bytes per scanline in software (during blanking)
-// ~190 bytes per scanline in hardware (during blanking)
-void VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma)
+void VDP_loadTileData_old(const u32 *data, u16 index, u16 num, u8 use_dma)
 {
     const u16 addr = index * 32;
 
@@ -73,7 +59,7 @@ void VDP_loadFont(const u32 *font, u8 use_dma)
     VDP_loadTileData(font, TILE_FONTINDEX, FONT_LEN, use_dma);
 }
 
-void VDP_loadBMPTileData(const u32 *data, u16 index, u16 w, u16 h, u16 bmp_w)
+void VDP_loadBMPTileData_old(const u32 *data, u16 index, u16 w, u16 h, u16 bmp_w)
 {
     vu32 *plctrl;
     vu32 *pldata;
@@ -253,7 +239,7 @@ void VDP_fillTileMapRectInc(u16 plan, u16 basetile, u16 x, u16 y, u16 w, u16 h)
 	}
 }
 
-void VDP_setTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h)
+void VDP_setTileMapRect(u16 plan, const u16 *data, u16 index, u16 flags, u16 x, u16 y, u16 w, u16 h)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -278,7 +264,7 @@ void VDP_setTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u
 	    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
         j = w;
-        while (j--) *pwdata = basetile | *src++;
+        while (j--) *pwdata = flags | (*src++ + index);
 
 		addr += planwidth * 2;
 	}

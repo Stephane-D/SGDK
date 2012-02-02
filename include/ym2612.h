@@ -1,3 +1,12 @@
+/**
+ * \file ym2612.h
+ * \brief YM2612 support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides access to the YM2612 through the 68000 CPU
+ */
+
 #ifndef _YM2612_H_
 #define _YM2612_H_
 

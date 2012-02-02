@@ -1,12 +1,3 @@
-/**
- * \file psg.c
- * \brief PSG support
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides access to the PSG through the 68000 CPU
- */
-
 #include "config.h"
 #include "types.h"
 

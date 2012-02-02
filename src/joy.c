@@ -1,12 +1,3 @@
-/**
- * \file joy.c
- * \brief Joypad support
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides methods to read Joypad state.
- */
-
 #include "config.h"
 #include "types.h"
 

@@ -2,17 +2,26 @@
 #define _CONFIG_
 
 
-// uncomment if you want to use FAT16 methods provided by Krik
-// this cost a bit than more 1 KB of RAM
-//#define FAT16_SUPPORT
+/**
+ *  \def FAT16_SUPPORT
+ *      Set it to 1 if you want to use FAT16 methods provided by Krik.<br>
+ *      This cost a bit than more 1 KB of RAM.
+ */
+#define FAT16_SUPPORT       0
 
-// uncomment if you want to have the kit intro logo (require software bitmap engine)
-//#define ENABLE_LOGO
+/**
+ *  \def ENABLE_LOGO
+ *      Set it to 1 if you want to have the kit intro logo
+ */
+#define ENABLE_LOGO         0
 
-#ifdef ENABLE_LOGO
+#if (ENABLE_LOGO != 0)
 
-// uncomment if you want zoom intro logo effect instead of classic fading
-//#define ZOOMING_LOGO
+/**
+ *  \def ENABLE_LOGO
+ *      Set it to 1 if you want zoom intro logo effect instead of classic fading
+ */
+#define ZOOMING_LOGO        0
 
 #endif // ENABLE_LOGO
 

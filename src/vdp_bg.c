@@ -1,15 +1,3 @@
-/**
- * \file vdp_bg.c
- * \brief VDP background plan support
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides plan A & plan B facilities :
- * - set scrolling
- * - clear plan
- * - draw text in plan
- */
-
 #include "config.h"
 #include "types.h"
 
@@ -123,10 +111,10 @@ u16 VDP_getTextPriority()
     return (textBasetile >> 15) & 1;
 }
 
-void VDP_drawTextBG(u16 plan, const char *str, u16 basetile, u16 x, u16 y)
+void VDP_drawTextBG(u16 plan, const char *str, u16 flags, u16 x, u16 y)
 {
     u32 len;
-    u16 data[40];
+    u16 data[128];
     u16 i;
 
     // get the horizontal plan size (in cell)
@@ -137,7 +125,7 @@ void VDP_drawTextBG(u16 plan, const char *str, u16 basetile, u16 x, u16 y)
     if (len > (i - x)) len = i - x;
 
     for (i = 0; i < len; i++) data[i] = TILE_FONTINDEX + (str[i] - 32);
-    VDP_setTileMapRect(plan, data, basetile, x, y, len, 1);
+    VDP_setTileMapRect(plan, data, 0, flags, x, y, len, 1);
 }
 
 void VDP_clearTextBG(u16 plan, u16 x, u16 y, u16 w)

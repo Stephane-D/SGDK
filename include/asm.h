@@ -1,3 +1,12 @@
+/**
+ * \file asm.h
+ * \brief Assembly helper
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to deal with ASM.
+ */
+
 #ifndef _ASM_H_
 #define _ASM_H_
 

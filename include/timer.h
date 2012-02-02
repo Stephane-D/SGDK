@@ -1,3 +1,12 @@
+/**
+ * \file timer.h
+ * \brief Timer support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides basic timer functions (usefull for profiling)
+ */
+
 #ifndef _TIMER_H_
 #define _TIMER_H_
 

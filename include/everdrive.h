@@ -1,3 +1,12 @@
+/**
+ * \file everdrive.h
+ * \brief Everdrive support
+ * \author Krikzz
+ * \date XX/20XX
+ *
+ * This unit provides support for everdrive flash cart
+ */
+
 #ifndef _EVERDRIVE
 #define _EVERDRIVE
 

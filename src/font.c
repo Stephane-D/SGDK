@@ -1,12 +1,3 @@
-/**
- * \file font.c
- * \brief SGDK system Font
- * \author Krikzz
- * \date XX/20XX
- *
- * This unit contains basic SGDK system font
- */
-
 #include "config.h"
 #include "types.h"
 

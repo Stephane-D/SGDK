@@ -3,7 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="cube_flat" />
-		<Option makefile="D:\apps\GenDev\makefile.gen" />
+		<Option makefile="C:\apps\SGDK\makefile.gen" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="0" />
 		<Option compiler="sega_genesis_compiler" />

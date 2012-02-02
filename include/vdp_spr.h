@@ -1,3 +1,13 @@
+/**
+ * \file vdp_spr.h
+ * \brief VDP Sprite support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to manipulate the VDP Sprites.
+ * The Sega Genesis VDP can handle up to 80 simultanous sprites of 4x4 tiles (32x32 pixels).
+ */
+
 #ifndef _VDP_SPR_H_
 #define _VDP_SPR_H_
 

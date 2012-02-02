@@ -1,3 +1,16 @@
+/**
+ * \file vdp.h
+ * \brief VDP main
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides general VDP methods :
+ * - initialisation
+ * - get / set register
+ * - get / set resolution
+ * - enable / disable VDP features
+ */
+
 #ifndef _VDP_H_
 #define _VDP_H_
 
@@ -22,6 +35,13 @@
 #define SLIST                   0xBC00
 #define APLAN                   0xC000
 #define BPLAN                   0xE000
+
+#define VDP_PLAN_WINDOW         WPLAN
+#define VDP_SCROLL_H            HSCRL
+#define VDP_SPRITE_LIST         SLIST
+#define VDP_PLAN_A              APLAN
+#define VDP_PLAN_B              BPLAN
+
 
 #define TILE_SIZE               32
 #define TILE_INDEX_MASK         (0xFFFF / TILE_SIZE)
@@ -103,6 +123,8 @@ void VDP_waitVSync();
 
 void VDP_resetScreen();
 void VDP_blit();
+
+void VDP_showFPS(u16 float_display);
 
 
 #endif // _VDP_H_

@@ -1,12 +1,3 @@
-/**
- * \file types.c
- * \brief Types definition
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * SGDK Types definition.
- */
-
 #include "types.h"
 
 

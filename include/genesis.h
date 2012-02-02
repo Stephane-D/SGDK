@@ -17,7 +17,6 @@
 
 #include "maths.h"
 #include "maths3D.h"
-#include "maths3D_a.h"
 
 #include "vdp.h"
 #include "vdp_bg.h"
@@ -25,7 +24,6 @@
 #include "vdp_pal.h"
 #include "vdp_spr.h"
 #include "vdp_tile.h"
-#include "vdp_tile_a.h"
 
 #include "bmp.h"
 #include "bmp_ff.h"

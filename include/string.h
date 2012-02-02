@@ -1,3 +1,12 @@
+/**
+ * \file string.h
+ * \brief String manipulations
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides basic string operations and type conversions.
+ */
+
 #ifndef _STRING_H_
 #define _STRING_H_
 

@@ -1,3 +1,10 @@
+/**
+ * \file logo_lib.h
+ * \brief SGDK Library logo
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ */
+
 #ifndef _LOGO_LIB_H_
 #define _LOGO_LIB_H_
 

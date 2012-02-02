@@ -1,3 +1,12 @@
+/**
+ * \file vdp_dma.h
+ * \brief VDP DMA support
+ * \author Stephane Dallongeville
+ * \date 08/2011
+ *
+ * This unit provides methods to use the VDP DMA capabilities.
+ */
+
 #ifndef _VDP_DMA_H_
 #define _VDP_DMA_H_
 

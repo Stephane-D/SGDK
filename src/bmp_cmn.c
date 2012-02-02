@@ -1,12 +1,3 @@
-/**
- * \file bmp_cmn.c
- * \brief Software bitmap engine (common methods)
- * \author Stephane Dallongeville
- * \date 08/2011
- *
- * This unit provides common methods for bitmap engines.
- */
-
 #include "config.h"
 #include "types.h"
 

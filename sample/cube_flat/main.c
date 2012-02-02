@@ -152,10 +152,10 @@ void drawPoints(u16 num, u8 col)
             if (dp > 0) col += (dp >> (FIX16_FRAC_BITS - 2));
 
 #ifdef FASTFILL
-//            BMP_FF_drawPolygone(v, 4, i + 1);
+//            BMP_FF_drawPolygon(v, 4, i + 1);
 #else
-//            BMP_drawPolygone(v, 4, i + 1);
-            BMP_drawPolygone(v, 4, col);
+//            BMP_drawPolygon(v, 4, i + 1);
+            BMP_drawPolygon(v, 4, col);
 #endif
         }
     }
