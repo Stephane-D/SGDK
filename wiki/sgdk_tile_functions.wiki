@@ -36,7 +36,7 @@ int main()
         //  arg3 = use DMA (1) or not (0)
     VDP_loadTileData( (const u32 *)P1010667_tile, 1, 1120, 1);
     //Fill the screen with the proper tiles by incremeting by one each tile
-    //arg0 which plane defined as "APLAN" and "BPLAN"
+    /*arg0 are we drawing on plane a or plane b defined as APLAN and BPLAN*/
     //arg1 start tile
     //arg2 x
     //arg3 y
@@ -52,3 +52,26 @@ int main()
 }}}
 Once you have compiled the example you should get something like this:<br>
 http://img813.imageshack.us/img813/8813/kegafusionpicture.png
+==VDP_drawText==
+Sgdk supports drawing text using the VDP_drawText function and it is very easy to use however because c puts a null terminator at the end of every char array you must have an odd number of characters so it is recommended that you use a character counter like the one found here: http://www.javascriptkit.com/script/script2/charcount.shtml
+the reason for this is because the code needed to be even aligned
+so I am going to modify my last example to include text
+since VDP_drawText draws on the a plane I will change it so that the tiles are draw on the b plane so change
+{{{
+VDP_fillTileMapRectInc(APLAN, 1, 0, 0, 40, 28);
+}}}
+to
+{{{
+VDP_fillTileMapRectInc(BPLAN, 1, 0, 0, 40, 28);
+}}}
+and before
+{{{
+VDP_fillTileMapRectInc(BPLAN, 1, 0, 0, 40, 28);
+}}}
+add
+{{{
+VDP_drawText("the text ",0,0);
+}}}
+notice how I used a space after "the text" this is because "the text" has an even amount of characters
+once you build it you should get something like this
+http://s7.postimage.org/9uffgdopl/the_text.png
