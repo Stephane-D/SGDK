@@ -73,5 +73,19 @@ add
 VDP_drawText("the text ",0,0);
 }}}
 notice how I used a space after "the text" this is because "the text" has an even amount of characters
-once you build it you should get something like this
+once you build it you should get something like this<br>
 http://s7.postimage.org/9uffgdopl/the_text.png
+the text displayed but it was hard to see so how do we change that brings us to the next part of the tutorial
+==VDP_setTextPalette==
+so right now we have 4 palette lines to chose from (0-3) so which one will show up on a blue background the best well here are our current choices:<br>
+http://s18.postimage.org/euxvh8lc7/color_choices.png
+the text will be draw using the last color in the row so I think that the bright green will show up best and that is on row 2 (counting from zero) so before
+{{{
+VDP_drawText("the text ",0,0);
+}}}
+I will add
+{{{
+VDP_setTextPalette(2);
+}}}
+I ended up with<br>
+http://s14.postimage.org/d8ib6v4yn/green_text.png
