@@ -11,7 +11,7 @@ This code will display a 16 color reduced version of this image:<br>
 http://imageshack.us/m/864/6267/p1010667fixed.png
 <br>
 To compile you will need to download P1010667_pal.h and P1010667_tile.h
-http://www.mediafire.com/?xqv6v4luudl4axz
+http://www.mediafire.com/?0m1d7hy26zomtud
 {{{
 #include "genesis.h"
 #include "P1010667_pal.h"
