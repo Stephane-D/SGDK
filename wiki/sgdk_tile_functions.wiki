@@ -74,7 +74,7 @@ VDP_drawText("the text ",0,0);
 }}}
 notice how I used a space after "the text" this is because "the text" has an even amount of characters
 once you build it you should get something like this<br>
-http://s7.postimage.org/9uffgdopl/the_text.png
+http://s7.postimage.org/94wn40o61/the_text.png
 the text displayed but it was hard to see so how do we change that brings us to the next part of the tutorial
 ==VDP_setTextPalette==
 so right now we have 4 palette lines to chose from (0-3) so which one will show up on a blue background the best well here are our current choices:<br>
@@ -88,4 +88,4 @@ I will add
 VDP_setTextPalette(2);
 }}}
 I ended up with<br>
-http://s14.postimage.org/d8ib6v4yn/green_text.png
+http://s14.postimage.org/hueff7qhr/green_text.png
