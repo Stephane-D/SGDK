@@ -21,6 +21,8 @@
 #define DEFAULT_TILE_DATA       TILE_ATTR_FULL(0, 0, 0, 0, TILE_SYSTEMINDEX)
 
 
+#if ((BMP_TABLES != 0) && (VRAM_TABLE != 0))
+
 // we don't want to share them
 extern u32 VBlankProcess;
 extern u32 HBlankProcess;
@@ -924,3 +926,5 @@ static void drawLine_old(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 
         }
     }
 }
+
+#endif

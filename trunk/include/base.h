@@ -17,6 +17,106 @@
 
 /**
  * \brief
+ *      Bus error interrupt callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *busErrorCB;
+/**
+ * \brief
+ *      Address error interrupt callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *addressErrorCB;
+/**
+ * \brief
+ *      Illegal instruction exception callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *illegalInstCB;
+/**
+ * \brief
+ *      Division by zero exception callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *zeroDivideCB;
+/**
+ * \brief
+ *      CHK instruction interrupt callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *chkInstCB;
+/**
+ * \brief
+ *      TRAPV instruction interrupt callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *trapvInstCB;
+/**
+ * \brief
+ *      Privilege violation exception callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *privilegeViolationCB;
+/**
+ * \brief
+ *      Trace interrupt callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *traceCB;
+/**
+ * \brief
+ *      Line 1x1x exception callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *line1x1xCB;
+/**
+ * \brief
+ *      Error exception callback.
+ *
+ * You can modify it to use your own callback (for debug purpose).
+ */
+_voidCallback *errorExceptionCB;
+/**
+ * \brief
+ *      Level interrupt callback.
+ *
+ * You can modify it to use your own callback.
+ */
+_voidCallback *intCB;
+/**
+ * \brief
+ *      Internal VBlank interrupt callback.
+ *
+ * You can modify it to use your own callback.<br/>
+ * Be careful: by doing that you disable SGDK default VBlank code !<br/>
+ * You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
+ * In all others cases you would use the setVBlankCallback() method.
+ */
+_voidCallback *internalVBlankCB;
+/**
+ * \brief
+ *      Internal HBlank interrupt callback.
+ *
+ * You can modify it to use your own callback.<br/>
+ * Be careful: by doing that you disable SGDK default HBlank code !<br/>
+ * You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
+ * In all others cases you would use the setHBlankCallback() method.
+ */
+_voidCallback *internalHBlankCB;
+
+
+
+/**
+ * \brief
  *      Assert reset
  *
  * Assert reset pin on the 68000 CPU.

@@ -11,14 +11,42 @@
 #define _MEMORY_H_
 
 
+/**
+ *  \def GET_DWORDFROMPBYTE
+ *      Get u32 from u8 array (BigEndian order).
+ */
 #define GET_DWORDFROMPBYTE(src)     ((src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3] << 0))
+/**
+ *  \def GET_DWORDFROMPBYTE_LI
+ *      Get u32 from u8 array (LittleEndian order).
+ */
 #define GET_DWORDFROMPBYTE_LI(src)  ((src[0] << 0) | (src[1] << 8) | (src[2] << 16) | (src[3] << 24))
+/**
+ *  \def GET_WORDFROMPBYTE
+ *      Get u16 from u8 array (BigEndian order).
+ */
 #define GET_WORDFROMPBYTE(src)      ((src[0] << 8) | (src[1] << 0))
+/**
+ *  \def GET_WORDFROMPBYTE_LI
+ *      Get u16 from u8 array (LittleEndian order).
+ */
 #define GET_WORDFROMPBYTE_LI(src)   ((src[0] << 0) | (src[1] << 8))
+/**
+ *  \def GET_DWORDFROMPWORD
+ *      Get u32 from u16 array (BigEndian order).
+ */
 #define GET_DWORDFROMPWORD(src)     ((src[0] << 16) | (src[1] << 0))
+/**
+ *  \def GET_DWORDFROMPWORD_LI
+ *      Get u32 from u16 array (LittleEndian order).
+ */
 #define GET_DWORDFROMPWORD_LI(src)  ((src[0] << 0) | (src[1] << 16))
 
 
+/**
+ *  \def SWAP_u8
+ *      Exchange value of specified u8 variables.
+ */
 #define SWAP_u8(x, y)       \
 {                           \
     u8 swp;                 \
@@ -28,6 +56,10 @@
     y = swp;                \
 }
 
+/**
+ *  \def SWAP_s8
+ *      Exchange value of specified s8 variables.
+ */
 #define SWAP_s8(x, y)       \
 {                           \
     s8 swp;                 \
@@ -37,6 +69,10 @@
     y = swp;                \
 }
 
+/**
+ *  \def SWAP_u16
+ *      Exchange value of specified u16 variables.
+ */
 #define SWAP_u16(x, y)      \
 {                           \
     u16 swp;                \
@@ -46,6 +82,10 @@
     y = swp;                \
 }
 
+/**
+ *  \def SWAP_s16
+ *      Exchange value of specified s16 variables.
+ */
 #define SWAP_s16(x, y)      \
 {                           \
     s16 swp;                \
@@ -55,6 +95,10 @@
     y = swp;                \
 }
 
+/**
+ *  \def SWAP_u32
+ *      Exchange value of specified u32 variables.
+ */
 #define SWAP_u32(x, y)      \
 {                           \
     u32 swp;                \
@@ -64,6 +108,10 @@
     y = swp;                \
 }
 
+/**
+ *  \def SWAP_S32
+ *      Exchange value of specified s32 variables.
+ */
 #define SWAP_s32(x, y)      \
 {                           \
     s32 swp;                \

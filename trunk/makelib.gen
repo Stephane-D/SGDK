@@ -45,23 +45,25 @@ OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
 INCS= -I$(INCLUDE)
-FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
-all: $(LIB)/libgendev.a
+all: $(LIB)/libmd.a
 
 default: all
 
 .PHONY: clean
 
 clean:
-	$(RM) -f $(LIB)/libgendev.a $(OBJ) out.lst
+	$(RM) -f $(LIB)/libmd.a $(OBJ) out.lst
 
 cleanobj:
 	$(RM) -f $(OBJ) out.lst
 
-$(LIB)/libgendev.a: $(OBJ)
-	$(AR) rs $(LIB)/libgendev.a $(OBJ)
+$(LIB)/libmd.a: $(OBJ)
+	$(AR) rs $(LIB)/libmd.a $(OBJ)
 
 %.asm: %.rc
 	$(GENRES) $< $@

@@ -49,6 +49,21 @@ char* strcpy(char *to, const char *from)
 //	return to;
 //}
 
+char* strcat(char *to, const char *from)
+{
+    const char *src;
+    char *dst;
+
+    src = from;
+    dst = to;
+
+    while (*dst++);
+    --dst;
+    while ((*dst++ = *src++));
+
+    return to;
+}
+
 
 void intToStr(s32 value, char *str, s16 minsize)
 {
@@ -87,9 +102,9 @@ static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize)
     while (res)
     {
         *--src = '0' + (res % 10);
-        res /= 10;
         cnt++;
         left--;
+        res /= 10;
     }
     while (left > 0)
     {
@@ -166,6 +181,46 @@ static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize)
     return strlen(str);
 }
 */
+
+void intToHex(u32 value, char *str, s16 minsize)
+{
+    u32 res;
+    s16 cnt;
+    s16 left;
+    char data[16];
+    char *src;
+    char *dst;
+    const s16 maxsize = 16;
+
+    src = &data[16];
+    res = value;
+    left = minsize;
+
+    cnt = 0;
+    while (res)
+    {
+        u8 c;
+
+        c = res & 0xF;
+        if (c >= 10) c += ('A' - 10);
+        else c += '0';
+        *--src = c;
+        cnt++;
+        left--;
+        res >>= 4;
+    }
+    while (left > 0)
+    {
+        *--src = '0';
+        cnt++;
+        left--;
+    }
+    if (cnt > maxsize) cnt = maxsize;
+
+    dst = str;
+    while(cnt--) *dst++ = *src++;
+    *dst = 0;
+}
 
 void fix32ToStr(fix32 value, char *str, s16 numdec)
 {

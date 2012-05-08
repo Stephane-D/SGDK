@@ -4,6 +4,7 @@
 #include "sound.h"
 
 #include "z80_ctrl.h"
+#include "z80_mvsc.h"
 #include "smp_null.h"
 #include "smp_null_pcm.h"
 
@@ -477,7 +478,7 @@ u8 SND_getVolume_4PCM_ENV(const u16 channel)
 
 
 // Z80_DRIVER_MVS
-// MVS Tracker driver
+// MVS Tracker driver (Kaneda version)
 ///////////////////////////////////////////////////////////////
 
 u8 SND_isPlaying_MVS()
@@ -490,11 +491,11 @@ u8 SND_isPlaying_MVS()
 
     Z80_requestBus(1);
 
-    // point to Z80 play status for MVS
-    pb = (u8 *) 0xA0151D;
+    // point to Z80 FM command
+    pb = (u8 *) MVS_FM_CMD;
 
     // status
-    // 0 :silence 1: loop play 2: play once
+    // 0 :silence   1: play once   2: loop play
     ret = *pb & 3;
 
     Z80_releaseBus();
@@ -502,7 +503,7 @@ u8 SND_isPlaying_MVS()
     return ret;
 }
 
-void SND_startPlay_MVS(const u8 *song, const u8 loop)
+void SND_startPlay_MVS(const u8 *music, const u8 loop)
 {
     vu8 *pb;
     u32 addr;
@@ -512,21 +513,26 @@ void SND_startPlay_MVS(const u8 *song, const u8 loop)
 
     Z80_requestBus(1);
 
-    addr = (u32) song;
+    addr = (u32) music;
 
-    // point to Z80 base parameters for MVS
-    pb = (u8 *) 0xA0151A;
+    // point to Z80 FM address
+    pb = (u8 *) MVS_FM_ADR;
 
-    // song address
-    pb[0x00] = addr >> 0;
-    pb[0x01] = addr >> 8;
-    pb[0x02] = addr >> 16;
+    // set song address
+    *pb++ = addr >> 0;
+    *pb++ = addr >> 8;
+    *pb = addr >> 16;
+
+    // point to Z80 FM command
+    pb = (u8 *) MVS_FM_CMD;
 
     // command
     if (loop)
-        pb[0x03] = SOUND_MVS_LOOP;
+        *pb++ = MVS_FM_LOOP;
     else
-        pb[0x03] = SOUND_MVS_ONCE;
+        *pb++ = MVS_FM_ONCE;
+    // reset previous command
+    *pb = MVS_FM_RESET;
 
     Z80_releaseBus();
 }
@@ -540,13 +546,195 @@ void SND_stopPlay_MVS()
 
     Z80_requestBus(1);
 
-    // point to Z80 command for MVS
-    pb = (u8 *) 0xA0151D;
-    // stop command for MVS
-    *pb = SOUND_MVS_SILENCE;
+    // point to Z80 FM command
+    pb = (u8 *) MVS_FM_CMD;
+
+    // command
+    *pb++ = MVS_FM_STOP;
+    // reset previous command
+    *pb = MVS_FM_RESET;
 
     Z80_releaseBus();
 }
+
+void SND_setTempo_MVS(u8 tempo)
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    // point to Z80 FM tempo
+    pb = (u8 *) MVS_FM_TEMPO;
+
+    // set tempo
+    *pb = tempo;
+
+    Z80_releaseBus();
+}
+
+
+void SND_startDAC_MVS(const u8 *sample, u16 size)
+{
+    vu8 *pb;
+    u32 addr;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    addr = (u32) sample;
+
+    // point to Z80 DAC address
+    pb = (u8 *) MVS_DAC_ADR;
+
+    // set sample address
+    *pb++ = addr >> 0;
+    *pb++ = addr >> 8;
+    *pb = addr >> 16;
+
+    // point to Z80 DAC command
+    pb = (u8 *) MVS_DAC_CMD;
+
+    // command
+    *pb = MVS_DAC_PLAY;
+
+    // point to Z80 DAC size
+    pb = (u8 *) MVS_DAC_SIZE;
+
+    *pb++ = size >> 0;
+    *pb = size >> 8;
+
+    Z80_releaseBus();
+}
+
+void SND_stopDAC_MVS()
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    // point to Z80 DAC command
+    pb = (u8 *) MVS_DAC_CMD;
+
+    // command
+    *pb = MVS_DAC_STOP;
+
+    Z80_releaseBus();
+}
+
+
+u8 SND_isPlayingPSG_MVS()
+{
+    vu8 *pb;
+    u8 ret;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    // point to Z80 PSG status
+    pb = (u8 *) MVS_PSG_STAT;
+
+    // status
+    // 0 :silence   1: playing
+    ret = *pb;
+
+    Z80_releaseBus();
+
+    return ret;
+}
+
+void SND_startPSG_MVS(const u8 *music)
+{
+    vu8 *pb;
+    u32 addr;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    addr = (u32) music;
+
+    // point to Z80 PSG address
+    pb = (u8 *) MVS_PSG_ADR;
+
+    // set music address
+    *pb++ = addr >> 0;
+    *pb++ = addr >> 8;
+    *pb = addr >> 16;
+
+    // point to Z80 PSG command
+    pb = (u8 *) MVS_PSG_CMD;
+
+    // command
+    *pb = MVS_PSG_PLAY;
+
+    Z80_releaseBus();
+}
+
+void SND_stopPSG_MVS()
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    // point to Z80 PSG command
+    pb = (u8 *) MVS_PSG_CMD;
+
+    // command
+    *pb = MVS_PSG_STOP;
+
+    Z80_releaseBus();
+}
+
+void SND_enablePSG_MVS(u8 chan)
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    // point to Z80 PSG channel
+    pb = (u8 *) MVS_PSG_CHAN;
+
+    // enable channel
+    *pb |= 1 << chan;
+
+    Z80_releaseBus();
+}
+
+void SND_disablePSG_MVS(u8 chan)
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_MVS, 0);
+
+    Z80_requestBus(1);
+
+    // point to Z80 PSG channel
+    pb = (u8 *) MVS_PSG_CHAN;
+
+    // disable channel
+    *pb &= ~(1 << chan);
+
+    Z80_releaseBus();
+}
+
 
 // Z80_DRIVER_TFM
 // TFM Tracker driver

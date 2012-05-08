@@ -14,6 +14,8 @@
 #include "bmp_cmn.h"
 
 
+#if ((BMP_TABLES != 0) && (VRAM_TABLE != 0))
+
 /**
  * \brief
  *      Initialize the Fast Fill optimized software bitmap engine.<br>
@@ -172,6 +174,8 @@ void BMP_FF_setPixels(const Pixel *pixels, u16 num);
  *      Line to draw.
  */
 void BMP_FF_drawLine(Line *l);
+
+#endif
 
 
 #endif // _BMP_FF_H_

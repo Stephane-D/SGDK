@@ -10,12 +10,24 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+/**
+ *  \def FALSE
+ *      FALSE define (equivalent to 0).
+ */
 #ifndef FALSE
 #define FALSE   0
 #endif
+/**
+ *  \def TRUE
+ *      TRUE define (equivalent to 1).
+ */
 #ifndef TRUE
 #define TRUE    1
 #endif
+/**
+ *  \def NULL
+ *      NULL define (equivalent to 0).
+ */
 #ifndef NULL
 #define NULL    0
 #endif
@@ -60,26 +72,80 @@
 #endif
 
 
+/**
+ *  \def s8
+ *      8 bits signed integer (equivalent to char).
+ */
 #define s8      char
+/**
+ *  \def s16
+ *      16 bits signed integer (equivalent to short).
+ */
 #define s16     short
+/**
+ *  \def s32
+ *      32 bits signed integer (equivalent to long).
+ */
 #define s32     long
 
+/**
+ *  \def u8
+ *      8 bits unsigned integer (equivalent to unsigned char).
+ */
 #define u8      unsigned char
+/**
+ *  \def u16
+ *      16 bits unsigned integer (equivalent to unsigned short).
+ */
 #define u16     unsigned short
+/**
+ *  \def u32
+ *      32 bits unsigned integer (equivalent to unsigned long).
+ */
 #define u32     unsigned long
 
+/**
+ *  \def vs8
+ *      volatile 8 bits signed integer.
+ */
 #define vs8     volatile s8
+/**
+ *  \def vs16
+ *      volatile 16 bits signed integer.
+ */
 #define vs16    volatile s16
+/**
+ *  \def vs32
+ *      volatile 32 bits signed integer.
+ */
 #define vs32    volatile s32
 
+/**
+ *  \def vu8
+ *      volatile 8 bits unsigned integer.
+ */
 #define vu8     volatile u8
+/**
+ *  \def vu16
+ *      volatile 16 bits unsigned integer.
+ */
 #define vu16    volatile u16
+/**
+ *  \def vu32
+ *      volatile 32 bits unsigned integer.
+ */
 #define vu32    volatile u32
 
 
-//#define fix16   s16
-//#define fix32   s32
+/**
+ *  \typedef fix16
+ *      16 bits fixed floting point type.
+ */
 typedef s16 fix16;
+/**
+ *  \typedef fix32
+ *      32 bits fixed floating point type.
+ */
 typedef s32 fix32;
 
 // used for memcpy and memset ISO C method

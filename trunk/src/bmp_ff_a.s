@@ -11,7 +11,7 @@ blitTileMap:
 	move.l %d1,%a0
 	lea (-20,%a0),%a0
 	move.l %a0,%d2
-	jbpl .L53
+	jpl .L53
 	addq.l #1,%d2
 .L53:
 	asr.l #1,%d2
@@ -22,7 +22,7 @@ blitTileMap:
 	move.w #-32,%a0
 	add.l %d0,%a0
 	move.l %a0,%d0
-	jbpl .L54
+	jpl .L54
 	addq.l #1,%d0
 .L54:
 	asr.l #1,%d0
@@ -31,13 +31,13 @@ blitTileMap:
 	add.l %a0,%a0
 	move.l bmp_buffer_0,%d1
 	cmp.l bmp_buffer_read,%d1
-	jbne .L41
+	jne .L41
 
 	move.l %a0,%d0
 	lsl.l #2,%d0
 	move.l %d0,%a2
 	add.l #vramwrite_tab+196608,%a2
-	jbra .L42
+	jra .L42
 
 	.align	2
 .L41:
@@ -110,7 +110,7 @@ drawLine:
 .L140:                          | {
 	eor.w %d1,%d2               |   if ((prev_off ^ off) & off_msk)
 	and.w %d5,%d2               |   {
-	jbeq .L137                  |
+	jeq .L137                   |
 
 	moveq #0,%d0                |
 	move.w %d1,%d0              |
@@ -122,7 +122,7 @@ drawLine:
 	move.l %d0,%a0              |
 	add.l bmp_tilemap_write,%a0 |       a0 = tile = &bmp_tilemap_write[tile_ind]
 	cmp.w (%a0),%d2             |       if (*tile != usr_tile)
-	jbeq .L137                  |       {
+	jeq .L137                   |       {
 
 	move.w %d2,(%a0)            |           *tile = usr_tile;
 	move.w %d1,%d0              |
@@ -147,7 +147,7 @@ drawLine:
 	move.w %d1,%d2              |   prev_off = off;
 	add.w %d7,%d1               |   off += step_x;
 	sub.w %a2,%d3               |   if ((delta -= dy) < 0)
-	jbpl .L135                  |   {
+	jpl .L135                   |   {
 
 	add.w %a4,%d1               |       off += step_y;
 	add.w %a5,%d3               |       delta += dx;
@@ -213,7 +213,7 @@ setUserTile:
 	add.w basetile_ind,%d0          | d0 = usr_tile = tile_ind + basetile_ind
 
 	cmp.w (%a0),%d0                 | if (*tile != usr_tile)
-	jbeq .L152                      | {
+	jeq .L152                       | {
 
 	move.w %d0,(%a0)                |   *tile = usr_tile;
 

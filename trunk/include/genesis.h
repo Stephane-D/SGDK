@@ -35,8 +35,5 @@
 #include "joy.h"
 #include "timer.h"
 
-// Z80 drivers
-#include "z80_mvst.h"
-
 
 #endif // _GENESIS_H_

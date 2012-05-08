@@ -62,10 +62,6 @@
 #define SOUND_PAN_RIGHT     0x40
 #define SOUND_PAN_CENTER    0xC0
 
-#define SOUND_MVS_SILENCE   0x00
-#define SOUND_MVS_ONCE      0x01
-#define SOUND_MVS_LOOP      0x02
-
 
 // Z80_DRIVER_PCM
 
@@ -315,28 +311,88 @@ u8   SND_getVolume_4PCM_ENV(const u16 channel);
 
 /**
  * \brief
- *      Return play status (MVS music player driver).
+ *      Return play status for FM (MVS music player driver).
  *
  * \return
- *      Return non zero if MVS player is currently playing.
+ *      Return non zero if FM is currently playing.
  */
-u8   SND_isPlaying_MVS();
+u8 SND_isPlaying_MVS();
 /**
  * \brief
- *      Start playing the specified MVS track (MVS music player driver).
+ *      Start playing the specified FM track (MVS music player driver).
  *
- * \param song
- *      MVS track address.
+ * \param music
+ *      FM track address.
  * \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
  */
-void SND_startPlay_MVS(const u8 *song, const u8 loop);
+void SND_startPlay_MVS(const u8 *music, const u8 loop);
 /**
  * \brief
- *      Stop playing music (MVS music player driver).
+ *      Stop playing FM music (MVS music player driver).
  */
 void SND_stopPlay_MVS();
+/**
+ * \brief
+ *      Set the FM music tempo (MVS music player driver).
+ */
+void SND_setTempo_MVS(u8 tempo);
+
+/**
+ * \brief
+ *      Start playing the specified DAC sample (MVS music player driver).
+ *
+ * \param sample
+ *      DAC sample address.
+ * \param size
+ *      Sample size.<br>
+ *      Maximum sample size is 65536 byte.
+ */
+void SND_startDAC_MVS(const u8 *sample, u16 size);
+/**
+ * \brief
+ *      Stop playing DAC sample (MVS music player driver).
+ */
+void SND_stopDAC_MVS();
+
+/**
+ * \brief
+ *      Return play status for PSG (MVS music player driver).
+ *
+ * \return
+ *      Return non zero if PSG is currently playing.
+ */
+u8 SND_isPlayingPSG_MVS();
+/**
+ * \brief
+ *      Start playing the specified PSG music (MVS music player driver).
+ *
+ * \param music
+ *      PSG music address.
+ */
+void SND_startPSG_MVS(const u8 *music);
+/**
+ * \brief
+ *      Stop playing PSG music.
+ */
+void SND_stopPSG_MVS();
+/**
+ * \brief
+ *      Enable the specified PSG channel.
+ *
+ * \param chan
+ *      PSG channel to enable.
+ */
+void SND_enablePSG_MVS(u8 chan);
+/**
+ * \brief
+ *      Disable the specified PSG channel.
+ *
+ * \param chan
+ *      PSG channel to disable.
+ */
+void SND_disablePSG_MVS(u8 chan);
 
 
 // Z80_DRIVER_TFM

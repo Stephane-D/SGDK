@@ -5,6 +5,8 @@
 #include "tab_bmp.h"
 
 
+#if (BMP_TABLES != 0)
+
 const u16 offset2tile[BMP_WIDTH * BMP_HEIGHT] =
 {
     0, 0, 0, 0, 1, 1, 1, 1,
@@ -2652,3 +2654,11 @@ const u16 tile2offset[BMP_CELLWIDTH * BMP_CELLHEIGHT] =
     19520, 19524, 19528, 19532, 19536, 19540, 19544, 19548,
     19552, 19556, 19560, 19564, 19568, 19572, 19576, 19580
 };
+
+#else
+
+// used to fake asm code
+const u16 tile2offset[1] = {0};
+const u16 offset2tile[1] = {0};
+
+#endif

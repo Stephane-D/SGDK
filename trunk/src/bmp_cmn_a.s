@@ -1,3 +1,5 @@
+.text
+
 	.align	2
 	.globl	BMP_clipLine
 	.type	BMP_clipLine, @function
@@ -14,13 +16,13 @@ BMP_clipLine:
 	move.w #159,%d1             | d1 = BMP_HEIGHT - 1
 
 	cmp.w %d0,%d2               | if (((u16) x1 < BMP_WIDTH) &&
-	jbhi .L30
+	jhi .L30
 	cmp.w %d0,%d4               |     ((u16) x2 < BMP_WIDTH) &&
-	jbhi .L30
+	jhi .L30
 	cmp.w %d1,%d3               |     ((u16) y1 < BMP_HEIGHT) &&
-	jbhi .L30
+	jhi .L30
 	cmp.w %d1,%d5               |     ((u16) y2 < BMP_HEIGHT))
-	jbhi .L30
+	jhi .L30
 
 	moveq #1,%d0                |   return 1;
 	movm.l (%sp)+,#0x0fc
@@ -28,27 +30,27 @@ BMP_clipLine:
 
 .L30:
 	tst.w %d2                   | if (((x1 < 0) && (x2 < 0)) ||
-	jbge .L33
+	jge .L33
 	tst.w %d4
-	jblt .L32
+	jlt .L32
 
 .L33:
 	cmp.w %d0,%d2               |     ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-	jble .L34
+	jle .L34
 	cmp.w %d0,%d4
-	jbgt .L32
+	jgt .L32
 
 .L34:
 	tst.w %d3                   |     ((y1 < 0) && (y2 < 0)) ||
-	jbge .L35
+	jge .L35
 	tst.w %d5
-	jblt .L32
+	jlt .L32
 
 .L35:
 	cmp.w %d1,%d3               |     ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
-	jble .L60
+	jle .L60
 	cmp.w %d1,%d5
-	jble .L60
+	jle .L60
 
 .L32:
 	moveq #0,%d0                |   return 0;
@@ -62,18 +64,18 @@ BMP_clipLine:
 	sub.w %d3,%d7               | d7 = dy = y2 - y1;
 
 	tst.w %d2                   | if (x1 < 0)
-	jbge .L38                   | {
+	jge .L38                    | {
 
 	muls.w %d7,%d2              |   y1 -= (x1 * dy) / dx;
 	divs.w %d6,%d2
 	sub.w %d2,%d3
 	moveq #0,%d2                |   x1 = 0;
-	jbra .L39                   | }
+	jra .L39                    | }
 
 	.align	2
 .L38:
 	cmp.w %d0,%d2               | else if (x1 >= BMP_WIDTH)
-	jble .L39                   | {
+	jle .L39                    | {
 
     sub.w %d2,%d0
 	muls.w %d7,%d0              |   y1 += (((BMP_WIDTH - 1) - x1) * dy) / dx;
@@ -84,17 +86,17 @@ BMP_clipLine:
                                 | }
 .L39:
 	tst.w %d4                   | if (x2 < 0)
-	jbge .L41                   | {
+	jge .L41                    | {
 
 	muls.w %d7,%d4              |   y2 -= (x2 * dy) / dx;
 	divs.w %d6,%d4
 	sub.w %d4,%d5
 	moveq #0,%d4                |   x2 = 0;
-	jbra .L42                   | }
+	jra .L42                    | }
 
 .L41:
 	cmp.w %d0,%d4               | else if (x2 >= BMP_WIDTH)
-	jble .L42                   | {
+	jle .L42                    | {
 
     sub.w %d4,%d0
 	muls.w %d7,%d0              |   y2 += (((BMP_WIDTH - 1) - x2) * dy) / dx;
@@ -105,17 +107,17 @@ BMP_clipLine:
                                 | }
 .L42:
 	tst.w %d3                   | if (y1 < 0)
-	jbge .L44                   | {
+	jge .L44                    | {
 
 	muls.w %d6,%d3              |   x1 -= (y1 * dx) / dy;
 	divs.w %d7,%d3
 	sub.w %d3,%d2
 	moveq #0,%d3                |   y1 = 0;
-	jbra .L45                   | }
+	jra .L45                    | }
 
 .L44:
 	cmp.w %d1,%d3               | else if (y1 >= BMP_HEIGHT)
-	jble .L45                   | {
+	jle .L45                    | {
 
     sub.w %d3,%d1
 	muls.w %d6,%d1              |   x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
@@ -127,17 +129,17 @@ BMP_clipLine:
 
 .L45:	                        | }
 	tst.w %d5                   | if (y2 < 0)
-	jbge .L47                   | {
+	jge .L47                    | {
 
 	muls.w %d6,%d5              |   x2 -= (y2 * dx) / dy;
 	divs.w %d7,%d5
 	sub.w %d5,%d4
 	moveq #0,%d5                |   y2 = 0;
-	jbra .L48                   | }
+	jra .L48                    | }
 
 .L47:
 	cmp.w %d1,%d5               | else if (y2 >= BMP_HEIGHT)
-	jble .L48                   | {
+	jle .L48                    | {
 
     sub.w %d5,%d1
 	muls.w %d6,%d1              |   x2 += (((BMP_HEIGHT - 1) - y2) * dx) / dy;
@@ -149,13 +151,13 @@ BMP_clipLine:
 
 .L48:
 	cmp.w %d0,%d2               | if (((u16) x1 < BMP_WIDTH) &&
-	jbhi .L50
+	jhi .L50
 	cmp.w %d0,%d4               |     ((u16) x2 < BMP_WIDTH) &&
-	jbhi .L50
+	jhi .L50
 	cmp.w %d1,%d3               |     ((u16) y1 < BMP_HEIGHT) &&
-	jbhi .L50
+	jhi .L50
 	cmp.w %d1,%d5               |     ((u16) y2 < BMP_HEIGHT))
-	jbhi .L50                   | {
+	jhi .L50                    | {
 
 	move.w %d2,(%a0)            |   l->pt1.x = x1;
 	move.w %d3,2(%a0)           |   l->pt1.y = y1;
@@ -167,27 +169,27 @@ BMP_clipLine:
 
 .L50:
 	tst.w %d2                   | if (((x1 < 0) && (x2 < 0)) ||
-	jbge .L53
+	jge .L53
 	tst.w %d4
-	jblt .L52
+	jlt .L52
 
 .L53:
 	cmp.w %d0,%d2               |     ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-	jble .L54
+	jle .L54
 	cmp.w %d0,%d4
-	jbgt .L52
+	jgt .L52
 
 .L54:
 	tst.w %d3                   |     ((y1 < 0) && (y2 < 0)) ||
-	jbge .L55
+	jge .L55
 	tst.w %d5
-	jblt .L52
+	jlt .L52
 
 .L55:
 	cmp.w %d1,%d3               |     ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
-	jble .L60
+	jle .L60
 	cmp.w %d1,%d5
-	jble .L60
+	jle .L60
 
 .L52:
 	moveq #0,%d0                |   return 0;
@@ -213,48 +215,48 @@ calculatePolyEdge:
 	move.w #159,%d1             | d1 = BMP_HEIGHT - 1
 
 	tst.w %d2                   | if (((x1 < 0) && (x2 < 0)) ||
-	jbge .L64
+	jge .L64
 	tst.w %d4
-	jblt .L61
+	jlt .L61
 
 .L64:
 	cmp.w %d0,%d2               |     ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-	jble .L65
+	jle .L65
 	cmp.w %d0,%d4
-	jbgt .L61
+	jgt .L61
 
 .L65:
 	tst.w %d3                   |     ((y1 < 0) && (y2 < 0)) ||
-	jbge .L66
+	jge .L66
 	tst.w %d5
-	jblt .L61
+	jlt .L61
 
 .L66:
 	cmp.w %d1,%d3               |     ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
-	jble .L62
+	jle .L62
 	cmp.w %d1,%d5
-	jbgt .L61                   |       return;
+	jgt .L61                    |       return;
 
 .L62:
 	move.w %d5,%d7              | d7 = dy = y2 - y1;
 	sub.w %d3,%d7
-	jbeq .L61                   | if (dy == 0) return;
+	jeq .L61                    | if (dy == 0) return;
 
 	move.w %d4,%d6
 	sub.w %d2,%d6               | d6 = dx = x2 - x1;
 
 	tst.w %d3                   | if (y1 < 0)
-	jbge .L68                   | {
+	jge .L68                    | {
 
 	muls.w %d6,%d3              |   x1 -= (y1 * dx) / dy;
 	divs.w %d7,%d3
 	sub.w %d3,%d2
 	moveq #0,%d3                |   y1 = 0;
-	jbra .L69                   | }
+	jra .L69                    | }
 
 .L68:
 	cmp.w %d1,%d3               | else if (y1 >= BMP_HEIGHT)
-	jble .L69                   | {
+	jle .L69                    | {
 
     sub.w %d3,%d1
 	muls.w %d6,%d1              |   x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
@@ -265,17 +267,17 @@ calculatePolyEdge:
 
 .L69:	                        | }
 	tst.w %d5                   | if (y2 < 0)
-	jbge .L71                   | {
+	jge .L71                    | {
 
 	muls.w %d6,%d5              |   x2 -= (y2 * dx) / dy;
 	divs.w %d7,%d5
 	sub.w %d5,%d4
 	moveq #0,%d5                |   y2 = 0;
-	jbra .L72                   | }
+	jra .L72                    | }
 
 .L71:
 	cmp.w %d1,%d5               | else if (y2 >= BMP_HEIGHT)
-	jble .L72                   | {
+	jle .L72                    | {
 
     sub.w %d5,%d1
 	muls.w %d6,%d1              |   x2 += (((BMP_HEIGHT - 1) - y2) * dx) / dy;
@@ -287,39 +289,39 @@ calculatePolyEdge:
 
 .L72:
 	tst.w %d2                   | if (((x1 < 0) && (x2 < 0)) ||
-	jbge .L76
+	jge .L76
 	tst.w %d4
-	jblt .L61
+	jlt .L61
 
 .L76:
 	cmp.w %d0,%d2               |     ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-	jble .L77
+	jle .L77
 	cmp.w %d0,%d4
-	jbgt .L61
+	jgt .L61
 
 .L77:
 	tst.w %d3                   |     ((y1 < 0) && (y2 < 0)) ||
-	jbge .L78
+	jge .L78
 	tst.w %d5
-	jblt .L61
+	jlt .L61
 
 .L78:
 	cmp.w %d1,%d3               |     ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
-	jble .L74
+	jle .L74
 	cmp.w %d1,%d5
-	jbgt .L61                   |       return;
+	jgt .L61                    |       return;
 
 .L74:
 	cmp.w %d5,%d3               | if (y1 == y2) return;
-	jbeq .L61
+	jeq .L61
 
-    jbge .L81                   | if ((y2 > y1) ^ (clockwise))
+    jge .L81                    | if ((y2 > y1) ^ (clockwise))
 	tst.b 39(%sp)               | {
-	jbeq .L82
-	jbra .L80
+	jeq .L82
+	jra .L80
 .L81:
 	tst.b 39(%sp)
-	jbeq .L80
+	jeq .L80
 
 .L82:
 	move.w %d4,%d6
@@ -328,13 +330,13 @@ calculatePolyEdge:
 	sub.w %d3,%d7               |   d7 = len = y2 - y1;
 
 	cmp.w minY.l,%d3            |   if (y1 < minY)
-	jbge .L83
+	jge .L83
 
 	move.w %d3,minY             |       minY = y1;
 
 .L83:
 	cmp.w maxY.l,%d5            |   if (y2 > maxY)
-	jble .L84
+	jle .L84
 
 	move.w %d5,maxY             |       maxY = y2;
 
@@ -344,7 +346,7 @@ calculatePolyEdge:
     add.l LeftPoly,%d3
     move.l %d3,%a0              |   a0 = src = &LeftPoly[y1];
     move.w %d2,%d0              |   d0 = x = x1
-	jbra .L85                   | }
+	jra .L85                    | }
                                 | else
 .L80:                           | {
 	move.w %d2,%d6
@@ -353,13 +355,13 @@ calculatePolyEdge:
 	sub.w %d5,%d7               |   d7 = len = y1 - y2;
 
 	cmp.w minY.l,%d5            |   if (y2 < minY)
-	jbge .L86
+	jge .L86
 
 	move.w %d5,minY             |       minY = y2;
 
 .L86:
 	cmp.w maxY.l,%d3            |   if (y1 > maxY)
-	jble .L87
+	jle .L87
 
 	move.w %d3,maxY             |       maxY = y1;
 

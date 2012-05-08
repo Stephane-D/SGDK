@@ -11,37 +11,115 @@
 #define _TIMER_H_
 
 
+/**
+ *  \def SUBTICKPERSECOND
+ *      Number of subtick per second.
+ */
 #define SUBTICKPERSECOND    76800
+/**
+ *  \def TICKPERSECOND
+ *      Number of tick per second.
+ */
 #define TICKPERSECOND       300
+/**
+ *  \def TIMEPERSECOND
+ *      Time sub division per second.
+ */
 #define TIMEPERSECOND       256
 
+/**
+ *  \def MAXTIMER
+ *      Maximum number of timer.
+ */
 #define MAXTIMER            16
 
 extern u32 vtimer;
 
 
-// return elapsed subticks from console reset (1/76800 second based)
-// WARNING : this function isn't accurate because of the VCounter rollback
+/**
+ * \brief
+ *      Returns elapsed subticks from console reset.
+ *
+ * Returns elapsed subticks from console reset (1/76800 second based).<br>
+ * WARNING: this function isn't accurate because of the VCounter rollback.
+ */
 u32  getSubTick();
-// return elapsed ticks from console reset (1/300 second based)
+/**
+ * \brief
+ *      Returns elapsed ticks from console reset.
+ *
+ * Returns elapsed ticks from console reset (1/300 second based).
+ */
 u32  getTick();
-// return elapsed time from console reset (1/256 second based)
+
+/**
+ * \brief
+ *      Returns elapsed time from console reset.
+ *
+ * \param fromTick
+ *      Choose tick or sub tick (more accurate) calculation.
+ *
+ * Returns elapsed time from console reset (1/256 second based).
+ */
 u32  getTime(u16 fromTick);
-// return elapsed time from console reset as fix32 number (in second)
+/**
+ * \brief
+ *      Returns elapsed time in second from console reset.
+ *
+ * \param fromTick
+ *      Choose tick or sub tick (more accurate) calculation.
+ *
+ * Returns elapsed time in second from console reset.<br>
+ * Value is returned as fix32.
+ */
 fix32 getTimeAsFix32(u16 fromTick);
 
-// start internal timer (0 <= numtimer < MAXTIMER)
+/**
+ * \brief
+ *      Start internal timer. (0 <= numtimer < MAXTIMER)
+ *
+ * \param numTimer
+ *      Timer number (0-MAXTIMER)
+ */
 void startTimer(u16 numTimer);
-// get elapsed subticks from last startTimer(numTimer)
+/**
+ * \brief
+ *      Get elapsed subticks for specified timer.
+ *
+ * \param numTimer
+ *      Timer number (0-MAXTIMER)
+ *
+ * Returns elapsed subticks from last call to startTimer(numTimer).
+ */
 u32  getTimer(u16 numTimer, u16 restart);
 
-// wait for a certain amount of subticks
-// WARNING : this function isn't accurate because of the VCounter rollback
+/**
+ * \brief
+ *      Wait for a certain amount of subticks.
+ *
+ * \param subTick
+ *      Number of subtick to wait for.
+ *
+ * WARNING: this function isn't accurate because of the VCounter rollback.
+ */
 void waitSubTick(u32 subtick);
-// wait for a certain amount of ticks
+/**
+ * \brief
+ *      Wait for a certain amount of ticks.
+ *
+ * \param tick
+ *      Number of tick to wait for.
+ */
 void waitTick(u32 tick);
-// wait for a certain amount of millisecond
-// WARNING : ~3.33 ms based timer so use 4 ms at least
+/**
+ * \brief
+ *      Wait for a certain amount of millisecond.
+ *
+ * \param ms
+ *      Number of millisecond to wait for.
+ *
+ * WARNING : ~3.33 ms based timer so use 4 ms as minimum wait value.
+ */
 void waitMs(u32 ms);
 
 

@@ -31,7 +31,22 @@ extern int main(u16 hard);
 
 static void internal_reset();
 
+// interrrupt callback
+_voidCallback *busErrorCB;
+_voidCallback *addressErrorCB;
+_voidCallback *illegalInstCB;
+_voidCallback *zeroDivideCB;
+_voidCallback *chkInstCB;
+_voidCallback *trapvInstCB;
+_voidCallback *privilegeViolationCB;
+_voidCallback *traceCB;
+_voidCallback *line1x1xCB;
+_voidCallback *errorExceptionCB;
+_voidCallback *intCB;
+_voidCallback *internalVBlankCB;
+_voidCallback *internalHBlankCB;
 
+// user VBlank & HBlank callback
 static _voidCallback *VBlankCB;
 static _voidCallback *HBlankCB;
 
@@ -39,6 +54,7 @@ u32 VBlankProcess;
 u32 HBlankProcess;
 
 
+// bus error default callback
 void _buserror_callback()
 {
     VDP_init();
@@ -47,6 +63,7 @@ void _buserror_callback()
     while(1);
 }
 
+// address error default callback
 void _addresserror_callback()
 {
     VDP_init();
@@ -55,6 +72,7 @@ void _addresserror_callback()
     while(1);
 }
 
+// illegal instruction exception default callback
 void _illegalinst_callback()
 {
     VDP_init();
@@ -63,6 +81,7 @@ void _illegalinst_callback()
     while(1);
 }
 
+// division by zero exception default callback
 void _zerodivide_callback()
 {
     VDP_init();
@@ -71,16 +90,19 @@ void _zerodivide_callback()
     while(1);
 }
 
+// CHK instruction default callback
 void _chkinst_callback()
 {
 
 }
 
+// TRAPV instruction default callback
 void _trapvinst_callback()
 {
 
 }
 
+// privilege violation exception default callback
 void _privilegeviolation_callback()
 {
     VDP_init();
@@ -89,16 +111,19 @@ void _privilegeviolation_callback()
     while(1);
 }
 
+// trace default callback
 void _trace_callback()
 {
 
 }
 
+// line 1x1x exception default callback
 void _line1x1x_callback()
 {
 
 }
 
+// error exception default callback
 void _errorexception_callback()
 {
     VDP_init();
@@ -107,6 +132,7 @@ void _errorexception_callback()
     while(1);
 }
 
+// level interrupt default callback
 void _int_callback()
 {
 
@@ -160,6 +186,21 @@ void _start_entry()
     // initiate random number generator
     randbase = 0xD94B;
     vtimer = 0;
+
+    // default interrupt callback
+    busErrorCB = _buserror_callback;
+    addressErrorCB = _addresserror_callback;
+    illegalInstCB = _illegalinst_callback;
+    zeroDivideCB = _zerodivide_callback;
+    chkInstCB = _chkinst_callback;
+    trapvInstCB = _trapvinst_callback;
+    privilegeViolationCB = _privilegeviolation_callback;
+    traceCB = _trace_callback;
+    line1x1xCB = _line1x1x_callback;
+    errorExceptionCB = _errorexception_callback;
+    intCB = _int_callback;
+    internalVBlankCB = _vblank_callback;
+    internalHBlankCB = _hblank_callback;
 
     internal_reset();
 

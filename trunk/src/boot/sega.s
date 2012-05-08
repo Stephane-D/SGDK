@@ -115,79 +115,92 @@ NoCopy:
 
 _Bus_Error:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _buserror_callback
+        move.l  busErrorCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Address_Error:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _addresserror_callback
+        move.l  addressErrorCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Illegal_Instruction:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _illegalinst_callback
+        move.l  illegalInstCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Zero_Divide:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _zerodivide_callback
+        move.l  zeroDivideCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Chk_Instruction:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _chkinst_callback
+        move.l  chkInstCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Trapv_Instruction:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _trapvinst_callback
+        move.l  trapvInstCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Privilege_Violation:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _privilegeviolation_callback
+        move.l  privilegeViolationCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Trace:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _trace_callback
+        move.l  traceCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Line_1010_Emulation:
 _Line_1111_Emulation:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr     _line1x1x_callback
+        move.l  line1x1xCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _Error_Exception:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr    _errorexception_callback
+        move.l  errorExceptionCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _INT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr    _int_callback
+        move.l  intCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 _HBL:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr    _hblank_callback
+        move.l  internalHBlankCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _VBL:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr    _vblank_callback
+        move.l  internalVBlankCB, %a0
+        jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
