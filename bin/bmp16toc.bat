@@ -1,1 +1,0 @@
-%GDK_WIN%\bin\bintoc -bmp %1
