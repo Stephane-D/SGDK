@@ -1,1 +1,0 @@
-%GDK_WIN%\bin\bintoc -s16 %1
