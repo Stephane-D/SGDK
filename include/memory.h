@@ -109,7 +109,7 @@
 }
 
 /**
- *  \def SWAP_S32
+ *  \def SWAP_s32
  *      Exchange value of specified s32 variables.
  */
 #define SWAP_s32(x, y)      \

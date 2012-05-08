@@ -223,8 +223,8 @@ void VDP_clearTileMapRect(u16 plan, u16 x, u16 y, u16 w, u16 h);
  *      Accepted values are:<br/>
  *      - VDP_PLAN_A<br/>
  *      - VDP_PLAN_B<br/>
- *  \param tile
- *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param basetile
+ *      Base tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param x
  *      Region X start position (in tile).
  *  \param y

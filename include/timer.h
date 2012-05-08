@@ -88,6 +88,8 @@ void startTimer(u16 numTimer);
  *
  * \param numTimer
  *      Timer number (0-MAXTIMER)
+ * \param restart
+ *      Restart timer if TRUE
  *
  * Returns elapsed subticks from last call to startTimer(numTimer).
  */
@@ -97,7 +99,7 @@ u32  getTimer(u16 numTimer, u16 restart);
  * \brief
  *      Wait for a certain amount of subticks.
  *
- * \param subTick
+ * \param subtick
  *      Number of subtick to wait for.
  *
  * WARNING: this function isn't accurate because of the VCounter rollback.

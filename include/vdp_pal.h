@@ -194,7 +194,7 @@ void VDP_fadeIn(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async);
  *  \brief
  *      Do palette fade effect.
  *
- *  \param numPal
+ *  \param numpal
  *      Palette number to use for fade effect.
  *  \param palsrc
  *      Fade departure palette.
@@ -214,7 +214,7 @@ void VDP_fadePal(u16 numpal, const u16 *palsrc, const u16 *paldst, u16 numframe,
  *  \brief
  *      Fade current palette to specified one.
  *
- *  \param numPal
+ *  \param numpal
  *      Palette to fade.
  *  \param pal
  *      Fade arrival palette.
@@ -231,7 +231,7 @@ void VDP_fadePalTo(u16 numpal, const u16 *pal, u16 numframe, u8 async);
  *  \brief
  *      Fade out (current color to black) effect.
  *
- *  \param numPal
+ *  \param numpal
  *      Palette to fade.
  *  \param numframe
  *      Duration of palette fading in number of frame.
@@ -246,7 +246,7 @@ void VDP_fadePalOut(u16 numpal, u16 numframe, u8 async);
  *  \brief
  *      Fade in (black to specified color) effect.
  *
- *  \param numPal
+ *  \param numpal
  *      Palette to fade.
  *  \param pal
  *      Fade arrival palette.
