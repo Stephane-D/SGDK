@@ -617,9 +617,9 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
                 else
                 {
                     if (loop)
-                        SND_startPlay_MVS(music_mvs, SOUND_MVS_LOOP);
+                        SND_startPlay_MVS(music_mvs, 1);
                     else
-                        SND_startPlay_MVS(music_mvs, SOUND_MVS_ONCE);
+                        SND_startPlay_MVS(music_mvs, 0);
                 }
             }
 

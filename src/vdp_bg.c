@@ -122,10 +122,13 @@ void VDP_drawTextBG(u16 plan, const char *str, u16 flags, u16 x, u16 y)
     len = strlen(str);
 
     // if string don't fit in plan, we cut it
-    if (len > (i - x)) len = i - x;
+    if (len > (i - x))
+        len = i - x;
 
-    for (i = 0; i < len; i++) data[i] = TILE_FONTINDEX + (str[i] - 32);
-    VDP_setTileMapRect(plan, data, 0, flags, x, y, len, 1);
+    for (i = 0; i < len; i++)
+        data[i] = TILE_FONTINDEX + (str[i] - 32);
+
+    VDP_setTileMapRectEx(plan, data, 0, flags, x, y, len, 1);
 }
 
 void VDP_clearTextBG(u16 plan, u16 x, u16 y, u16 w)

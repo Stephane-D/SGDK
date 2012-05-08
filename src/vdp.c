@@ -267,13 +267,11 @@ void VDP_waitFIFOEmpty()
 void VDP_waitVSync()
 {
     vu16 *pw;
-    u16 vdp_state;
 
-    vdp_state = VDP_VBLANK_FLAG;
     pw = (u16 *) GFX_CTRL_PORT;
 
-    while (vdp_state & VDP_VBLANK_FLAG) vdp_state = *pw;
-    while (!(vdp_state & VDP_VBLANK_FLAG)) vdp_state = *pw;
+    while (*pw & VDP_VBLANK_FLAG);
+    while (!(*pw & VDP_VBLANK_FLAG));
 }
 
 
@@ -290,11 +288,6 @@ void VDP_resetScreen()
     VDP_setPalette(PAL3, palette_blue);
 }
 
-void VDP_blit()
-{
-    // do all update operation
-    VDP_updateSprites();
-}
 
 void VDP_showFPS(u16 float_display)
 {

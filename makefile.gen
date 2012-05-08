@@ -37,9 +37,12 @@ SRC_S= $(wildcard *.s)
 SRC_S+= $(wildcard $(SRC)/*.s)
 SRC_SZ80= $(wildcard *.s80)
 SRC_SZ80+= $(wildcard $(SRC)/*.s80)
+
 RES_S= $(wildcard $(RES)/*.s)
 RES_BMP= $(wildcard *.bmp)
 RES_BMP+= $(wildcard $(RES)/*.bmp)
+RES_DAT= $(wildcard *.dat)
+RES_DAT+= $(wildcard $(RES)/*.dat)
 RES_RAW= $(wildcard *.raw)
 RES_RAW+= $(wildcard $(RES)/*.raw)
 RES_PCM= $(wildcard *.pcm)
@@ -61,6 +64,7 @@ OBJ= $(RES_BMP:.bmp=.o)
 OBJ+= $(RES_WAV:.wav=.o)
 OBJ+= $(RES_RC:.rc=.o)
 OBJ+= $(RES_ASM:.asm=.o)
+OBJ+= $(RES_DAT:.dat=.o)
 OBJ+= $(RES_RAW:.raw=.o)
 OBJ+= $(RES_PCM:.pcm=.o)
 OBJ+= $(RES_TFD:.tfd=.o)
@@ -71,8 +75,12 @@ OBJ+= $(SRC_SZ80:.s80=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
-INCS= -I$(LIBINCLUDE) -I$(INCLUDE) -I$(RES)
-FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+OBJS = $(addprefix out/, $(OBJ))
+
+INCS= -I$(LIBINCLUDE) -I$(INCLUDE) -I$(SRC) -I$(RES)
+#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -S -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(LIBSRC) -i$(LIBINCLUDE) -i$(SRC) -i$(INCLUDE) -i$(RES)
 
 all: out/rom.bin
@@ -82,10 +90,10 @@ default: all
 .PHONY: clean
 
 clean:
-	$(RM) -f $(OBJ) out.lst out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
+	$(RM) -f $(OBJS) out.lst out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
 
 cleanobj:
-	$(RM) -f $(OBJ) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
+	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
 
 out/rom.bin: out/rom.out
 	$(NM) -n -S -t x out/rom.out >out/rom.nm
@@ -97,9 +105,9 @@ out/tmp:
 	$(OUT2GSRC) i out/rom.bin out/rom.addr
 	$(ADDR2LINE) -e out/rom.out < out/rom.addr > out/rom.gsrc
 
-out/rom.out: out/sega.o $(OBJ) $(LIB)/libgendev.a
+out/rom.out: out/sega.o $(OBJS) $(LIB)/libmd.a
 	$(MKDIR) -p out
-	$(CC) -T $(GDK)/md.ld -nostdlib out/sega.o $(OBJ) $(LIB)/libgendev.a $(LIB)/libgcc.a -o out/rom.out
+	$(CC) -T $(GDK)/md.ld -nostdlib out/sega.o $(OBJS) $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
 
 out/sega.o: $(LIBSRC)/boot/sega.s out/rom_head.bin
 	$(MKDIR) -p out
@@ -111,6 +119,19 @@ out/rom_head.bin: out/rom_head.o
 
 out/rom_head.o: $(LIBSRC)/boot/rom_head.c
 	$(MKDIR) -p out
+	$(CC) $(FLAGS) -c $< -o $@
+
+
+out/%.o: %.c
+	$(MKDIR) -p out
+	$(MKDIR) -p out/src
+	$(MKDIR) -p out/res
+	$(CC) $(FLAGS) -c $< -o $@
+
+out/%.o: %.s
+	$(MKDIR) -p out
+	$(MKDIR) -p out/src
+	$(MKDIR) -p out/res
 	$(CC) $(FLAGS) -c $< -o $@
 
 
@@ -132,6 +153,9 @@ out/rom_head.o: $(LIBSRC)/boot/rom_head.c
 %.tfc: %.tfd
 	$(TFMCOM) $<
 
+%.o80: %.s80
+	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
+
 %.s: %.tfc
 	$(BINTOS) -align 32768 $<
 
@@ -144,14 +168,8 @@ out/rom_head.o: $(LIBSRC)/boot/rom_head.c
 %.s: %.rawpcm
 	$(BINTOS) -align 128 -sizealign 128 -nullfill 136 $<
 
-%.o80: %.s80
-	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
+%.s: %.dat
+	$(BINTOS) -align 256 -sizealign 256 $<
 
-%.c: %.o80
-	$(BINTOC) $<
-
-%.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
-
-%.o: %.s
-	$(CC) $(FLAGS) -c $< -o $@
+%.s: %.o80
+	$(BINTOS) $<

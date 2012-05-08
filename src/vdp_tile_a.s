@@ -5,20 +5,16 @@ VDP_loadTileData:
 	movm.l #0x3e00,-(%sp)
 	move.l 24(%sp),%d6
 	move.l 32(%sp),%d3
-	move.w 30(%sp),%d0
+	movq  #0,%d2
+	move.w 30(%sp),%d2              | d2 = ind
+	lsl.w #5,%d2                    | d2 = ind * 32 (address)
 
-	lsl.l #5,%d0
-	move.l %d0,%d2
-	and.l #2097120,%d2
 	tst.b 39(%sp)
 	jbeq .L2
 
 	jbsr VDP_waitDMACompletion
-	move.l %d3,%d0
-	lsl.l #5,%d0
-	and.l #65504,%d0
-	move.l %d0,-(%sp)
-	and.l #65504,%d2
+	lsl.w #5,%d3
+	move.l %d3,-(%sp)
 	move.l %d2,-(%sp)
 	move.l %d6,-(%sp)
 	clr.l -(%sp)
@@ -31,11 +27,22 @@ VDP_loadTileData:
 	pea 2.w
 	jbsr VDP_setAutoInc
 	move.l #12582912,%a1
+
+|	move.l %d2,%d0
+|	lsl.l #2,%d0
+|	and.l #262016,%d0
+|	lea vramwrite_tab,%a0
+|	move.l (%a0,%d0.l),0xC00004
+
 	move.l %d2,%d0
+	andi.w #0x3FFF,%d2
+	ori.w #0x4000,%d2
 	lsl.l #2,%d0
-	and.l #262016,%d0
-	lea vramwrite_tab,%a0
-	move.l (%a0,%d0.l),12582916
+	swap %d0
+	swap %d2
+	move.w %d0,%d2                      | d2 = formated VRAM address for VDP command write
+	move.l %d2,0xC00004                 | set destination address in VDP Ctrl command
+
 	move.l %d6,%a0
 	addq.l #4,%sp
 	move.w %d3,%d1
@@ -76,12 +83,22 @@ VDP_loadBMPTileData:
 
 	move.l #0xC00000,%a1                | VDP data port
 
-	movq  #0, %d0
-	move.w 26(%sp),%d0                  | d0 = index
-	andi.w #0x7FF, %d0
-	lsl.l #7,%d0
-	lea vramwrite_tab,%a0
-	move.l (%a0,%d0.l),0xC00004         | set destination address in VDP Ctrl command
+	movq  #0, %d1
+	move.w 26(%sp),%d1                  | d1 = index
+
+|	andi.w #0x7FF, %d1
+|	lsl.l #7,%d1
+|	lea vramwrite_tab,%a0
+|	move.l (%a0,%d0.l),0xC00004         | set destination address in VDP Ctrl command
+
+	move.l %d1,%d0
+	andi.w #0x3FFF,%d1
+	ori.w #0x4000,%d1
+	lsl.l #2,%d0
+	swap %d0
+	swap %d1
+	move.w %d0,%d1                      | d1 = formated VRAM address for VDP command write
+	move.l %d1,0xC00004                 | set destination address in VDP Ctrl command
 
     moveq #0,%d5
 	move.w 38(%sp),%d5                  | d5 = bmp_w

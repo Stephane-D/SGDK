@@ -239,7 +239,7 @@ void VDP_fillTileMapRectInc(u16 plan, u16 basetile, u16 x, u16 y, u16 w, u16 h)
 	}
 }
 
-void VDP_setTileMapRect(u16 plan, const u16 *data, u16 index, u16 flags, u16 x, u16 y, u16 w, u16 h)
+void VDP_setTileMapRect(u16 plan, const u16 *data, u16 x, u16 y, u16 w, u16 h)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -264,7 +264,38 @@ void VDP_setTileMapRect(u16 plan, const u16 *data, u16 index, u16 flags, u16 x, 
 	    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
         j = w;
-        while (j--) *pwdata = flags | (*src++ + index);
+        while (j--) *pwdata = *src++;
+
+		addr += planwidth * 2;
+	}
+}
+
+void VDP_setTileMapRectEx(u16 plan, const u16 *data, u16 baseindex, u16 baseflags, u16 x, u16 y, u16 w, u16 h)
+{
+    vu32 *plctrl;
+    vu16 *pwdata;
+    const u16 *src;
+    u32 addr;
+    u32 planwidth;
+    u16 i, j;
+
+    VDP_setAutoInc(2);
+
+    /* point to vdp port */
+    plctrl = (u32 *) GFX_CTRL_PORT;
+    pwdata = (u16 *) GFX_DATA_PORT;
+
+    planwidth = VDP_getPlanWidth();
+    addr = plan + (2 * (x + (planwidth * y)));
+    src = data;
+
+    i = h;
+    while (i--)
+    {
+	    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
+
+        j = w;
+        while (j--) *pwdata = baseflags | (*src++ + baseindex);
 
 		addr += planwidth * 2;
 	}

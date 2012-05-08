@@ -11,7 +11,21 @@
 #define _TOOLS_H_
 
 
+/**
+ * \brief
+ *      Returns number of Frame Per Second.
+ *
+ * This function actually returns the number of time it was called in the last second.<br>
+ * i.e: for benchmarking you should call this method only once per frame update.
+ */
 u32 getFPS();
+/**
+ * \brief
+ *      Returns number of Frame Per Second (fix32 form).
+ *
+ * This function actually returns the number of time it was called in the last second.<br>
+ * i.e: for benchmarking you should call this method only once per frame update.
+ */
 fix32 getFPS_f();
 
 

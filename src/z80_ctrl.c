@@ -3,6 +3,7 @@
 
 #include "z80_ctrl.h"
 
+
 #include "memory.h"
 #include "timer.h"
 
@@ -11,7 +12,8 @@
 #include "z80_drv2.h"
 #include "z80_drv3.h"
 #include "z80_drv4.h"
-#include "z80_mvst.h"
+#include "z80_mvs.h"
+#include "z80_mvsc.h"
 #include "z80_tfm.h"
 
 #include "tab_vol.h"
@@ -168,8 +170,8 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             break;
 
         case Z80_DRIVER_MVS:
-            drv = z80_mvst;
-            len = sizeof(z80_mvst);
+            drv = z80_mvs;
+            len = sizeof(z80_mvs);
             break;
 
         case Z80_DRIVER_TFM:
@@ -247,10 +249,21 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             // put driver in stop state
             Z80_requestBus(1);
 
-            // point to Z80 command for MVS
-            pb = (u8 *) 0xA0151D;
-            // stop command for MVS
-            *pb = 0;
+            // point to Z80 FM command
+            pb = (u8 *) MVS_FM_CMD;
+            // stop command for FM
+            *pb++ = MVS_FM_STOP;
+            *pb = MVS_FM_RESET;
+
+            // point to Z80 DACcommand
+            pb = (u8 *) MVS_DAC_CMD;
+            // stop command for DAC
+            *pb = MVS_DAC_STOP;
+
+            // point to Z80 PSG command
+            pb = (u8 *) MVS_PSG_CMD;
+            // stop command for PSG
+            *pb = MVS_PSG_STOP;
 
             Z80_releaseBus();
             break;

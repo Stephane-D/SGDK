@@ -21,11 +21,11 @@ M3D_project3D_f16:
 	move.w #-64,%d6                         | d6 = (FIX16(-1) << 16) | FIX16(-1)
 
 	subq.w #1,%d2
-	jbmi .L34                               | while(i--)
+	jmi .L34                                | while(i--)
 
 .L32:                                       | {
 	move.w 4(%a0),%d0                       |   if ((zi = s->z))
-	jbeq .L30                               |   {
+	jeq .L30                                |   {
 
     move.l %d5,%d1
     divs.w %d0,%d1                          |       d1 = zi = fix16Div(camDist, zi);
@@ -82,11 +82,11 @@ M3D_project3D_s16:
 	move.w #-1,%d6                          | d6 = (-1 << 16) | -1
 
 	subq.w #1,%d2
-	jbmi .L42
+	jmi .L42
 
 .L40:
 	move.w 4(%a0),%d0                       |   if ((zi = s->z))
-	jbeq .L38
+	jeq .L38
 
     move.l %d5,%d1
     divs.w %d0,%d1                          |       d1 = zi = fix16Div(camDist, zi);
