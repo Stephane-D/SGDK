@@ -1,74 +1,173 @@
+
 #include "config.h"
 #include "types.h"
 
 #include "memory.h"
 
 #include "tab_cnv.h"
+#include "kdebug.h"
 
 
 #define USED        1
-#define MEMORY_HIGH 0xFFFE00
+#define MEMORY_HIGH 0xFFFC00
 
 
 // end of bss segment --> start of heap
 extern u32 _bend;
 
 /*
- *  Before allocation                ---->     After allocation of $100 bytes
+ * When memory is initialized HEAP point to first bloc as well than FREE.
  *
- *  FREE = HEAP = $FF0100                     FREE = HEAP + ($100+2) = $FF0202
- *  +--------------------+                   +--------------------------------+
- *  | size = $1000 bytes |                   | size = $1000 - ($100+2) = $EFE |
- *  +--------------------+                   +--------------------------------+
+ *  memory start = HEAP     +-----------+
+ *  HEAP+$0                 | size = ?? |
+ *  HEAP+$2                 |           |
+ *                          |           |
+ *                          |           |
+ *                          |           |
+ *  HEAP+size = FREE        +-----------+
+ *  FREE+$0                 | size = 0  |
+ *  memory end              +-----------+
  *
- *  HEAP = $FF0100; *HEAP = $1000         HEAP = $FF0100; *HEAP = $1001 (bit 0 = 1 --> used)
- *  FREE = $FF0100; *FREE = $1000         FREE = $FF0202; *FREE = $EFE  (bit 0 = 0 --> free)
+ *
+ *  1. Before allocation
+ *
+ *  FREE = HEAP = $FF0100
+ *  +-------------------+
+ *  | size = $1000      |
+ *  +-------------------+
+ *
+ *  HEAP = $FF0100; *HEAP = $1000
+ *  FREE = $FF0100; *FREE = $1000
+ *  END  = $FF1100; *END  = $0      --> end memory
+ *
+ *
+ *  2. After allocation of $100 bytes
+ *
+ *  FREE = $FF0100 + ($100+2) = $FF0202
+ *  +--------------------------------+
+ *  | size = $1000 - ($100+2) = $EFE |
+ *  +--------------------------------+
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (bit 0 = 1 --> used)
+ *  FREE = $FF0202; *FREE = $EFE+0 (bit 0 = 0 --> free)
+ *  END  = $FF1100; *END  = $0
+ *
+ *
+ *  3. After allocation of $250 bytes
+ *
+ *  FREE = $FF0202 + ($250+2) = $FF0454
+ *  +--------------------------------+
+ *  | size = $EFE - ($250+2) = $CAC  |
+ *  +--------------------------------+
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  ---- = $FF0202; *---- = $252+1 (used)
+ *  FREE = $FF0454; *FREE = $CAC+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
+ *
+ *  4. After allocation of $200, $150 and $730 bytes
+ *
+ *  FREE = $FF0454 + ($200+2) = $FF0656
+ *  FREE = $FF0656 + ($150+2) = $FF07A8
+ *  FREE = $FF07A8 + ($730+2) = $FF0EDA
+ *  +--------------------------------+
+ *  | size = $CAC - ($200+2) = $AAA  |
+ *  | size = $AAA - ($150+2) = $958  |
+ *  | size = $958 - ($730+2) = $226  |
+ *  +--------------------------------+
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  ---- = $FF0202; *---- = $252+1 (used)
+ *  ---- = $FF0454; *---- = $202+1 (used)
+ *  ---- = $FF0656; *---- = $152+1 (used)
+ *  ---- = $FF07A8; *---- = $732+1 (used)
+ *  FREE = $FF0EDA; *FREE = $226+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
+ *
+ *  5. After release of $FF0204-2
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  ---- = $FF0202; *---- = $252+0 (free)
+ *  ---- = $FF0454; *---- = $202+1 (used)
+ *  ---- = $FF0656; *---- = $152+1 (used)
+ *  ---- = $FF07A8; *---- = $732+1 (used)
+ *  FREE = $FF0EDA; *FREE = $226+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
+ *
+ *  6. After release of $FF0456-2
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  ---- = $FF0202; *---- = $252+0 (free)
+ *  ---- = $FF0454; *---- = $202+1 (free)
+ *  ---- = $FF0656; *---- = $152+1 (used)
+ *  ---- = $FF07A8; *---- = $732+1 (used)
+ *  FREE = $FF0EDA; *FREE = $226+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
+ *
+ *  7. After allocation of $400 bytes
+ *
+ *  *FREE = $226 < $400  --> packing
+ *
+ *  Starting from HEAP, find contiguous free block and collapse them.
+ *  FREE becomes the first collaped block with size >= $400
+ *
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  FREE = $FF0202; *FREE = $454+0 (free)
+ *  ---- = $FF0656; *---- = $152+1 (used)
+ *  ---- = $FF07A8; *---- = $732+1 (used)
+ *  ---- = $FF0EDA; *---- = $226+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
  */
 
-typedef struct
+
+static u16* free;
+static u16* heap;
+
+/*
+ * Pack free block and return first matching free block.
+ */
+static u16* pack(u16 nsize)
 {
-    u32 size;
-} Block;
-
-static Block* free;
-static Block* heap;
-
-
-static Block* pack(u32 nsize)
-{
-    u32 bsize, psize;
-    Block *b;
-    Block *best;
+    u16 bsize, psize;
+    u16 *b;
+    u16 *best;
 
     b = heap;
     best = b;
     bsize = 0;
 
-    while ((psize = b->size))
+    while ((psize = *b))
     {
         if (psize & USED)
         {
             if (bsize != 0)
             {
-                best->size = bsize;
+                *best = bsize;
 
                 if (bsize >= nsize)
                     return best;
             }
 
             bsize = 0;
-            best = b = (Block*) ((u32)b + (psize & ~USED));
+            b += psize >> 1;
+            best = b;
         }
         else
         {
             bsize += psize;
-            b = (Block*) ((u32)b + psize);
+            b += psize >> 1;
         }
     }
 
     if (bsize != 0)
     {
-        best->size = bsize;
+        *best = bsize;
 
         if (bsize >= nsize)
             return best;
@@ -84,44 +183,43 @@ void MEM_init()
 
     // point to end of bss (start of heap)
     h = (u32)&_bend;
-    // 4 bytes aligned
-    h += 3;
-    h >>= 2;
-    h <<= 2;
-    // define available memory (sizeof(u32) is the memory reserved to indicate heap end)
-    len = MEMORY_HIGH - (h + sizeof(u32));
+    // 2 bytes aligned
+    h += 1;
+    h >>= 1;
+    h <<= 1;
+
+    // define available memory (sizeof(u16) is the memory reserved to indicate heap end)
+    len = MEMORY_HIGH - (h + sizeof(u16));
 
     // define heap
-    heap = (Block*) h;
+    heap = (u16*) h;
     // and its size
-    heap->size = len;
+    *heap = len;
 
     // free memory : whole heap
     free = heap;
 
     // mark end of heap memory
-    *(u32*)((u8*)h + len) = 0;
+    heap[len >> 1] = 0;
 }
 
-u32 MEM_getFree()
+u16 MEM_getFree()
 {
-    Block *b;
-    u32 res;
-    u32 bsize;
+    u16* b;
+    u16 res;
+    u16 bsize;
 
     b = heap;
     res = 0;
 
-    while ((bsize = b->size))
+    while ((bsize = *b))
     {
-        if (bsize & USED)
-            b = (Block*) ((u32)b + (bsize & ~USED));
-        else
-        {
-            // memory block not used, add real available size to result
-            res += bsize - sizeof(u32);
-            b = (Block*) ((u32)b + bsize);
-        }
+        // memory block not used --> add available size to result
+        if (!(bsize & USED))
+            res += bsize - sizeof(u16);
+
+        // pass to next block
+        b += bsize >> 1;
     }
 
     return res;
@@ -129,52 +227,46 @@ u32 MEM_getFree()
 
 void MEM_free(void *ptr)
 {
+    // valid block --> mark block as no more used
     if (ptr)
-    {
-        // get block address from pointer
-        Block *p = (Block*)((u32)ptr - sizeof(u32));
-        // mark block as no more used
-        p->size &= ~USED;
-    }
+        ((u16*)ptr)[-1] &= ~USED;
 }
 
-void* MEM_alloc(u32 size)
+void* MEM_alloc(u16 size)
 {
-    u32 fsize;
-    Block *p;
+    u16* p;
+    u16 adjsize;
 
-    if (size == 0) return 0;
+    if (size == 0)
+        return 0;
 
-    // 4 bytes aligned
-    size += 3 + sizeof(u32);
-    size >>= 2;
-    size <<= 2;
+    // 2 bytes aligned
+    adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
 
-    if ((free == 0) || (size > free->size))
+    if (adjsize > *free)
     {
-        free = pack(size);
+        p = pack(adjsize);
 
         // no enough memory
-        if (free == 0) return NULL;
-    }
+        if (p == NULL)
+            return NULL;
 
-    p = free;
-    fsize = free->size;
-
-    if (fsize >= (size + sizeof(u32)))
-    {
-        free = (Block*)((u32)p + size);
-        free->size = fsize - size;
+        free = p;
     }
     else
-    {
-        free = 0;
-        size = fsize;
-    }
+        // at this point we can allocate memory
+        p = free;
 
-    p->size = size | USED;
+    // set free to next free block
+    free += adjsize >> 1;
+    // set remaining free space (old - allocated)
+    *free = *p - adjsize;
 
-    return (void*)((u32)p + sizeof(u32));
+    // set block size, mark as used and point to free region
+    *p++ = adjsize | USED;
+
+    // return block
+    return p;
 }
 
 
@@ -512,5 +604,4 @@ void memcpyU32(u32 *to, const u32 *from, u32 len)
 
     while(cnt--) *dst++ = *src++;
 }
-
 

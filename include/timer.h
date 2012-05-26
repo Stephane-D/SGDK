@@ -4,7 +4,7 @@
  * \author Stephane Dallongeville
  * \date 08/2011
  *
- * This unit provides basic timer functions (usefull for profiling)
+ * This unit provides basic timer functions (useful for profiling)
  */
 
 #ifndef _TIMER_H_
@@ -41,7 +41,7 @@ extern u32 vtimer;
  *      Returns elapsed subticks from console reset.
  *
  * Returns elapsed subticks from console reset (1/76800 second based).<br>
- * WARNING: this function isn't accurate because of the VCounter rollback.
+ * <b>WARNING:</b> this function isn't accurate because of the VCounter rollback.
  */
 u32  getSubTick();
 /**
@@ -102,7 +102,8 @@ u32  getTimer(u16 numTimer, u16 restart);
  * \param subtick
  *      Number of subtick to wait for.
  *
- * WARNING: this function isn't accurate because of the VCounter rollback.
+ * <b>WARNING:</b> this function isn't accurate because of the VCounter rollback.<br>
+ * Also you cannot use this method from the V-Int callback (the method will return immediatly).
  */
 void waitSubTick(u32 subtick);
 /**
@@ -111,6 +112,9 @@ void waitSubTick(u32 subtick);
  *
  * \param tick
  *      Number of tick to wait for.
+ *
+ * <b>WARNING:</b> 5/6 (PAL/NTSC) ticks based timer so use 5/6 ticks as minimum wait value.<br>
+ * Also you cannot use this method from the V-Int callback (the method will return immediatly).
  */
 void waitTick(u32 tick);
 /**
@@ -120,7 +124,8 @@ void waitTick(u32 tick);
  * \param ms
  *      Number of millisecond to wait for.
  *
- * WARNING : ~3.33 ms based timer so use 4 ms as minimum wait value.
+ * <b>WARNING:</b> ~3.33 ms based timer so use 4 ms as minimum wait value.<br>
+ * Also you cannot use this method from the V-Int callback (the method will return immediatly).
  */
 void waitMs(u32 ms);
 

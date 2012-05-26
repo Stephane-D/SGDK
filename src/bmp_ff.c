@@ -5,7 +5,7 @@
 #include "bmp_intr.h"
 #include "bmp_ff.h"
 
-#include "base.h"
+#include "sys.h"
 #include "memory.h"
 #include "tools.h"
 #include "maths3D.h"
@@ -24,8 +24,8 @@
 #if ((BMP_TABLES != 0) && (VRAM_TABLE != 0))
 
 // we don't want to share them
-extern u32 VBlankProcess;
-extern u32 HBlankProcess;
+extern u32 VIntProcess;
+extern u32 HIntProcess;
 
 extern s16 *LeftPoly;
 extern s16 *RightPoly;
@@ -159,7 +159,7 @@ void BMP_FF_setFlags(u16 value)
         }
 
         // enabled bitmap H Int processing
-        HBlankProcess |= PROCESS_BITMAP_TASK;
+        HIntProcess |= PROCESS_BITMAP_TASK;
         VDP_setHInterrupt(1);
     }
     else
@@ -168,7 +168,7 @@ void BMP_FF_setFlags(u16 value)
         doBlit = &doBlitNorm;
         // disabled bitmap H Int processing
         VDP_setHInterrupt(0);
-        HBlankProcess &= ~PROCESS_BITMAP_TASK;
+        HIntProcess &= ~PROCESS_BITMAP_TASK;
     }
 }
 

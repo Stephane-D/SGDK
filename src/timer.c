@@ -73,6 +73,9 @@ void waitSubTick(u32 subtick)
     u32 start;
     u32 current;
 
+    // waitSubTick(...) can not be called from V-Int callback
+    if (SYS_isInVIntCallback()) return;
+
     start = getSubTick();
     // wait until we reached subtick
     do
@@ -87,6 +90,9 @@ void waitSubTick(u32 subtick)
 void waitTick(u32 tick)
 {
     u32 start;
+
+    // waitTick(...) can not be called from V-Int callback
+    if (SYS_isInVIntCallback()) return;
 
     start = getTick();
     // wait until we reached tick

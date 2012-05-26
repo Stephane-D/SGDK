@@ -4,7 +4,17 @@
  * \author Stephane Dallongeville
  * \date 08/2011
  *
- * This unit provides basic memory operations and dynamic memory allocation.
+ * This unit provides basic memory operations and dynamic memory allocation.<br/>
+ *<br/>
+ * <b>Memory organization :</b><br/>
+ *<br/>
+ * Memory is composed of bloc, the first 2 bytes of a bloc define its size and its state:<br/>
+ * b15-b1 = size in number of word (2 bytes)<br/>
+ * b0 = used state (1=used, 0=free)
+ *<br/>
+ * To reach the next bloc you just need to do:<br/>
+ * <code>next_bloc_address = bloc_addres + bloc_size</code>
+ * The end of memory is defined with a 0 sized bloc.<br/>
  */
 
 #ifndef _MEMORY_H_
@@ -131,7 +141,7 @@ void MEM_init();
  * \brief
  *      Return available memory in bytes
  */
-u32  MEM_getFree();
+u16  MEM_getFree();
 /**
  * \brief
  *      Deallocate space in memory
@@ -158,7 +168,7 @@ void MEM_free(void *ptr);
  * Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
  * The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
  */
-void* MEM_alloc(u32 size);
+void* MEM_alloc(u16 size);
 
 
 /**

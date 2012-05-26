@@ -3,6 +3,7 @@
 	.type	VDP_loadTileData, @function
 VDP_loadTileData:
 	movm.l #0x3e00,-(%sp)
+
 	move.l 24(%sp),%d6
 	move.l 32(%sp),%d3
 	movq  #0,%d2
@@ -66,12 +67,13 @@ VDP_loadTileData:
 	movm.l (%sp)+,#0x7c
 	rts
 
+
 	.align	2
 	.globl	VDP_loadBMPTileData
 	.type	VDP_loadBMPTileData, @function
 VDP_loadBMPTileData:
-
 	movm.l #0x3c00,-(%sp)
+
 	move.w 34(%sp),%d3                  | d3 = h
 	jbeq .L17
 	move.w 30(%sp),%d4                  | d4 = w

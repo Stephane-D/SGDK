@@ -1,7 +1,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "base.h"
+#include "sys.h"
 
 #include "memory.h"
 #include "vdp.h"
@@ -16,6 +16,11 @@
 #include "timer.h"
 #include "vdp.h"
 #include "vdp_bg.h"
+
+
+#define IN_VINT         1
+#define IN_HINT         2
+#define IN_EXTINT       4
 
 
 // we don't want to share them
@@ -43,15 +48,19 @@ _voidCallback *traceCB;
 _voidCallback *line1x1xCB;
 _voidCallback *errorExceptionCB;
 _voidCallback *intCB;
-_voidCallback *internalVBlankCB;
-_voidCallback *internalHBlankCB;
+_voidCallback *internalVIntCB;
+_voidCallback *internalHIntCB;
+_voidCallback *internalExtIntCB;
 
-// user VBlank & HBlank callback
-static _voidCallback *VBlankCB;
-static _voidCallback *HBlankCB;
+// user V-Int, H-Int and Ext-Int callback
+static _voidCallback *VIntCB;
+static _voidCallback *HIntCB;
+static _voidCallback *ExtIntCB;
 
-u32 VBlankProcess;
-u32 HBlankProcess;
+u16 intTrace;
+u32 VIntProcess;
+u32 HIntProcess;
+u32 ExtIntProcess;
 
 
 // bus error default callback
@@ -139,45 +148,58 @@ void _int_callback()
 }
 
 
-// VBlank Callback
-void _vblank_callback()
+// V-Int Callback
+void _vint_callback()
 {
     vtimer++;
 
     // palette fading processing
-    if (VBlankProcess & PROCESS_PALETTE_FADING)
+    if (VIntProcess & PROCESS_PALETTE_FADING)
     {
-        if (!VDP_doStepFading()) VBlankProcess &= ~PROCESS_PALETTE_FADING;
+        if (!VDP_doStepFading()) VIntProcess &= ~PROCESS_PALETTE_FADING;
     }
 
     // bitmap process
-//        if (VBlankProcess & PROCESS_BITMAP_TASK)
+//        if (VIntProcess & PROCESS_BITMAP_TASK)
 //        {
-//            if (!BMP_doBlankProcess()) VBlankProcess &= ~PROCESS_BITMAP_TASK;
+//            if (!BMP_doBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
 //        }
 
     // ...
 
     // then call user's callback
-    if (VBlankCB) VBlankCB();
+    if (VIntCB) VIntCB();
 
     // joy state refresh (better to do it after user's callback as it can eat some time)
     JOY_update();
 }
 
-// HBlank Callback
-void _hblank_callback()
+// H-Int Callback
+void _hint_callback()
 {
     // bitmap processing
-    if (HBlankProcess & PROCESS_BITMAP_TASK)
+    if (HIntProcess & PROCESS_BITMAP_TASK)
     {
-        if (!BMP_doBlankProcess()) HBlankProcess &= ~PROCESS_BITMAP_TASK;
+        if (!BMP_doBlankProcess()) HIntProcess &= ~PROCESS_BITMAP_TASK;
     }
 
     // ...
 
     // then call user's callback
-    if (HBlankCB) HBlankCB();
+    if (HIntCB) HIntCB();
+}
+
+// Ext-Int Callback
+void _extint_callback()
+{
+    // processing
+//    if (ExtIntProcess & ...)
+//    {
+//      ...
+//    }
+
+    // then call user's callback
+    if (ExtIntCB) ExtIntCB();
 }
 
 
@@ -199,8 +221,9 @@ void _start_entry()
     line1x1xCB = _line1x1x_callback;
     errorExceptionCB = _errorexception_callback;
     intCB = _int_callback;
-    internalVBlankCB = _vblank_callback;
-    internalHBlankCB = _hblank_callback;
+    internalVIntCB = _vint_callback;
+    internalHIntCB = _hint_callback;
+    internalExtIntCB = _extint_callback;
 
     internal_reset();
 
@@ -302,10 +325,12 @@ void _reset_entry()
 
 static void internal_reset()
 {
-    VBlankCB = NULL;
-    HBlankCB = NULL;
-    VBlankProcess = 0;
-    HBlankProcess = 0;
+    VIntCB = NULL;
+    HIntCB = NULL;
+    VIntProcess = 0;
+    HIntProcess = 0;
+    ExtIntProcess = 0;
+    intTrace = 0;
 
     // init part
     MEM_init();
@@ -316,28 +341,34 @@ static void internal_reset()
     Z80_init();
 }
 
-// assert reset
-void assert_reset()
+
+void SYS_setVIntCallback(_voidCallback *CB)
 {
-    asm("reset\n\t");
+    VIntCB = CB;
 }
 
-// soft reset
-void reset()
+void SYS_setHIntCallback(_voidCallback *CB)
 {
-    asm("move   #0x2700,%sr\n\t"
-        "move.l (0),%a7\n\t"
-        "move.l (4),%a0\n\t"
-        "jmp    (%a0)");
+    HIntCB = CB;
 }
 
-void setVBlankCallback(_voidCallback *CB)
+void SYS_setExtIntCallback(_voidCallback *CB)
 {
-    VBlankCB = CB;
+    ExtIntCB = CB;
 }
 
-void setHBlankCallback(_voidCallback *CB)
+u16 SYS_isInVIntCallback()
 {
-    HBlankCB = CB;
+    return intTrace & IN_VINT;
+}
+
+u16 SYS_isInHIntCallback()
+{
+    return intTrace & IN_HINT;
+}
+
+u16 SYS_isInExtIntCallback()
+{
+    return intTrace & IN_EXTINT;
 }
 
