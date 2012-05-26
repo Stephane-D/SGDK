@@ -1,10 +1,16 @@
 /**
  * \file joy.h
- * \brief Joypad support
- * \author Stephane Dallongeville
- * \date 08/2011
+ * \brief General controller support.
+ * \author Chilly Willy & Stephane Dallongeville
+ * \date 05/2012
  *
- * This unit provides methods to read Joypad state.
+ * This unit provides methods to read controller state.<br/>
+ *<br/>
+ * Here is the list of supported controller device:<br/>
+ * - 3 buttons joypad<br/>
+ * - 6 buttons joypad<br/>
+ * - Sega Mouse<br/>
+ * - team player adapter<br/>
  */
 
 #ifndef _JOY_H_
@@ -35,16 +41,32 @@
 #define BUTTON_B        0x0010
 #define BUTTON_C        0x0020
 #define BUTTON_START    0x0080
-#define BUTTON_X        0x0100
+#define BUTTON_X        0x0400
 #define BUTTON_Y        0x0200
-#define BUTTON_Z        0x0400
+#define BUTTON_Z        0x0100
 #define BUTTON_MODE     0x0800
+
+#define BUTTON_LMB      0x0010
+#define BUTTON_MMB      0x0040
+#define BUTTON_RMB      0x0020
 
 #define BUTTON_DIR      0x000F
 #define BUTTON_BTN      0x0FF0
 #define BUTTON_ALL      0x0FFF
 
+#define JOY_TYPE_PAD3           0x00
+#define JOY_TYPE_PAD6           0x01
+#define JOY_TYPE_MOUSE          0x02
+#define JOY_TYPE_UNKNOWN        0x0F
+#define JOY_TYPE_SHIFT          12
+#define JOY_TYPE_MASK           0xF000
 
+#define PORT_TYPE_MOUSE         0x03
+#define PORT_TYPE_TEAMPLAY      0x07
+#define PORT_TYPE_PAD           0x0D
+#define PORT_TYPE_UKNOWN        0x0F
+
+#define JOY_SUPPORT_OFF         0x00
 #define JOY_SUPPORT_3BTN        0x01
 #define JOY_SUPPORT_6BTN        0x02
 #define JOY_SUPPORT_MOUSE       0x04
@@ -98,11 +120,11 @@ void JOY_setEventHandler(_joyEventCallback *CB);
  *      Peripheral support.<br>
  *      <b>JOY_SUPPORT_3BTN</b>         = 3 buttons joypad<br>
  *      <b>JOY_SUPPORT_6BTN</b>         = 6 buttons joypad<br>
- *      <b>JOY_SUPPORT_MOUSE</b>        = sega mouse<br>
- *      <b>JOY_SUPPORT_TEAMPLAY</b>     = Sega TeamPlay or EA 4-Way<br>
- *      <b>JOY_SUPPORT_MENACER</b>      = Sega Menacer<br>
- *      <b>JOY_SUPPORT_ANALOGJOY</b>    = Sega nalog joypad<br>
- *      <b>JOY_SUPPORT_KEYBOARD</b>     = Sega keyboard<br>
+ *      <b>JOY_SUPPORT_MOUSE</b>        = Sega mouse<br>
+ *      <b>JOY_SUPPORT_TEAMPLAY</b>     = Sega TeamPlay<br>
+ *      <b>JOY_SUPPORT_MENACER</b>      = Sega Menacer (not yet supported)<br>
+ *      <b>JOY_SUPPORT_ANALOGJOY</b>    = Sega analog joypad (not yet supported)<br>
+ *      <b>JOY_SUPPORT_KEYBOARD</b>     = Sega keyboard (not yet supported)<br>
  *<br>
  *      Ex : enabled support for 3 and 6 buttons joypad on first port :<br>
  *      JOY_setSupport(PORT_1, JOY_SUPPORT_3BTN | JOY_SUPPORT_6BTN);<br>
@@ -120,6 +142,7 @@ void JOY_setSupport(u16 port, u16 support);
  *      <b>JOY_2</b>    = joypad 2<br>
  *      <b>...  </b>    = ...<br>
  *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ *      <b>JOY_ALL</b>  = joypad 1 | joypad 2 | ... | joypad 8<br>
  * \return joypad state.<br>
  *      <b>BUTTON_UP</b>    = UP button<br>
  *      <b>BUTTON_DOWN</b>  = DOWN button<br>
@@ -139,6 +162,46 @@ void JOY_setSupport(u16 port, u16 support);
  *<br>
  */
 u16  JOY_readJoypad(u16 joy);
+
+/**
+ * \brief
+ *      Get joypad X axis.
+ *
+ * \param joy
+ *      Joypad we query state.<br>
+ *      <b>JOY_1</b>    = joypad 1<br>
+ *      <b>JOY_2</b>    = joypad 2<br>
+ *      <b>...  </b>    = ...<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ * \return joypad X axis.<br>
+ *      Currently, only a mouse returns axis data. This is a delta value indicating movement<br>
+ *      to the right for positive values, or left for negative values.<br>
+ *<br>
+ *      Ex : Get X axis of joypad 2 :<br>
+ *      deltaX = JOY_readJoypadX(JOY_2);<br>
+ *<br>
+ */
+u16  JOY_readJoypadX(u16 joy);
+
+/**
+ * \brief
+ *      Get joypad Y axis.
+ *
+ * \param joy
+ *      Joypad we query state.<br>
+ *      <b>JOY_1</b>    = joypad 1<br>
+ *      <b>JOY_2</b>    = joypad 2<br>
+ *      <b>...  </b>    = ...<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ * \return joypad Y axis.<br>
+ *      Currently, only a mouse returns axis data. This is a delta value indicating movement<br>
+ *      upwards for positive values, or downwards for negative values.<br>
+ *<br>
+ *      Ex : Get Y axis of joypad 2 :<br>
+ *      deltaY = JOY_readJoypadY(JOY_2);<br>
+ *<br>
+ */
+u16  JOY_readJoypadY(u16 joy);
 
 /**
  * \brief

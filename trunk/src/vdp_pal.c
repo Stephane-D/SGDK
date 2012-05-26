@@ -4,15 +4,15 @@
 #include "vdp.h"
 #include "vdp_pal.h"
 
-#include "base.h"
+#include "sys.h"
 
 
 #define PALETTEFADE_FRACBITS    8
 
 
 // we don't want to share them
-extern u32 VBlankProcess;
-extern u32 HBlankProcess;
+extern u32 VIntProcess;
+extern u32 HIntProcess;
 
 
 const u16 palette_black[16] =
@@ -287,7 +287,7 @@ void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 
     if (!VDP_initFading(fromcol, tocol, palsrc, paldst, numframe)) return;
 
     // process asynchrone fading
-    if (async) VBlankProcess |= PROCESS_PALETTE_FADING;
+    if (async) VIntProcess |= PROCESS_PALETTE_FADING;
     // process fading immediatly
     else while (VDP_doStepFading()) VDP_waitVSync();
 }
@@ -361,9 +361,9 @@ void VDP_waitFadeCompletion()
 {
     vu32 *processing;
 
-    // temporary reference VBlankProcess as volatile
+    // temporary reference VIntProcess as volatile
     // to avoid dead lock compiler optimisation
-    processing = &VBlankProcess;
+    processing = &VIntProcess;
 
     while (*processing & PROCESS_PALETTE_FADING);
 }

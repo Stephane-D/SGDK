@@ -61,14 +61,14 @@ extern const fix16 sqrttab16[0x10000];
  *      Round the specified value to nearest integer (fix32).
  */
 #define fix32Round(value)           \
-(fix32Frac(value) > FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value)
+    (fix32Frac(value) > FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value)
 
 /**
  *  \def fix32ToRoundedInt
  *      Round and convert the specified fix32 value to integer.
  */
 #define fix32ToRoundedInt(value)    \
-(fix32Frac(value) > FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value)
+    (fix32Frac(value) > FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value)
 
 /**
  *  \def fix32Frac
@@ -139,14 +139,14 @@ extern const fix16 sqrttab16[0x10000];
  *      Round the specified value to nearest integer (fix16).
  */
 #define fix16Round(value)           \
-(fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value)
+    (fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value)
 
 /**
  *  \def fix16ToRoundedInt
  *      Round and convert the specified fix16 value to integer.
  */
 #define fix16ToRoundedInt(value)    \
-(fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value)
+    (fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value)
 
 /**
  *  \def fix16Frac

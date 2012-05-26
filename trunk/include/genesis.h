@@ -7,7 +7,7 @@
 #include "types.h"
 
 #include "sega.h"
-#include "base.h"
+#include "sys.h"
 
 #include "memory.h"
 #include "tools.h"

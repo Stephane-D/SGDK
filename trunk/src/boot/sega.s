@@ -30,10 +30,10 @@ _Vecteurs_68K:
         dc.l     _Error_Exception, _Error_Exception, _Error_Exception, _Error_Exception
         dc.l     _Error_Exception, _Error_Exception, _Error_Exception, _Error_Exception
         dc.l     _Error_Exception, _Error_Exception, _Error_Exception, _Error_Exception
-        dc.l    _Error_Exception, _INT, _INT, _INT
-        dc.l    _HBL
+        dc.l    _Error_Exception, _INT, _EXTINT, _INT
+        dc.l    _HINT
         dc.l    _INT
-        dc.l    _VBL
+        dc.l    _VINT
         dc.l    _INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
@@ -190,16 +190,24 @@ _INT:
         jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
-_HBL:
+
+_EXTINT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  internalHBlankCB, %a0
+        move.l  internalExtIntCB, %a0
         jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
-_VBL:
+_HINT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  internalVBlankCB, %a0
+        move.l  internalHIntCB, %a0
+        jsr    (%a0)
+        movem.l (%sp)+,%d0-%d1/%a0-%a1
+        rte
+
+_VINT:
+        movem.l %d0-%d1/%a0-%a1,-(%sp)
+        move.l  internalVIntCB, %a0
         jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
@@ -409,3 +417,4 @@ ltuns:
         move.l  %d3,%d0
         move.l  %a2,%d3           /* restore d3 */
         rts
+
