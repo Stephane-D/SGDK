@@ -15,6 +15,81 @@ extern u32 VIntProcess;
 extern u32 HIntProcess;
 
 
+const u16 palette_black_all[64] =
+{
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+};
+
 const u16 palette_black[16] =
 {
     0x0000,
@@ -306,12 +381,12 @@ void VDP_fadeTo(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async)
 
 void VDP_fadeOut(u16 fromcol, u16 tocol, u16 numframe, u8 async)
 {
-    VDP_fadeTo(fromcol, tocol, palette_black, numframe, async);
+    VDP_fadeTo(fromcol, tocol, palette_black_all, numframe, async);
 }
 
 void VDP_fadeIn(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async)
 {
-    VDP_fade(fromcol, tocol, palette_black, pal, numframe, async);
+    VDP_fade(fromcol, tocol, palette_black_all, pal, numframe, async);
 }
 
 
@@ -348,12 +423,12 @@ void VDP_fadeAllTo(const u16 *pal, u16 numframe, u8 async)
 
 void VDP_fadeOutAll(u16 numframe, u8 async)
 {
-    VDP_fadeTo(0, 63, palette_black, numframe, async);
+    VDP_fadeTo(0, 63, palette_black_all, numframe, async);
 }
 
 void VDP_fadeInAll(const u16 *pal, u16 numframe, u8 async)
 {
-    VDP_fade(0, 63, palette_black, pal, numframe, async);
+    VDP_fade(0, 63, palette_black_all, pal, numframe, async);
 }
 
 

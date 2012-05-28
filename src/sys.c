@@ -151,6 +151,8 @@ void _int_callback()
 // V-Int Callback
 void _vint_callback()
 {
+    intTrace |= IN_VINT;
+
     vtimer++;
 
     // palette fading processing
@@ -172,11 +174,15 @@ void _vint_callback()
 
     // joy state refresh (better to do it after user's callback as it can eat some time)
     JOY_update();
+
+    intTrace &= ~IN_VINT;
 }
 
 // H-Int Callback
 void _hint_callback()
 {
+    intTrace |= IN_HINT;
+
     // bitmap processing
     if (HIntProcess & PROCESS_BITMAP_TASK)
     {
@@ -187,11 +193,15 @@ void _hint_callback()
 
     // then call user's callback
     if (HIntCB) HIntCB();
+
+    intTrace &= ~IN_HINT;
 }
 
 // Ext-Int Callback
 void _extint_callback()
 {
+    intTrace |= IN_EXTINT;
+
     // processing
 //    if (ExtIntProcess & ...)
 //    {
@@ -200,6 +210,8 @@ void _extint_callback()
 
     // then call user's callback
     if (ExtIntCB) ExtIntCB();
+
+    intTrace &= ~IN_EXTINT;
 }
 
 

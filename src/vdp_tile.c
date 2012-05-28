@@ -20,7 +20,7 @@ void VDP_loadTileData_old(const u32 *data, u16 index, u16 num, u8 use_dma)
         // wait for previous DMA completion
         VDP_waitDMACompletion();
         // then do DMA
-        VDP_doVRamDMA((u32) data, addr, num * 32);
+        VDP_doVRamDMA((u32) data, addr, num * 16);
     }
     else
     {

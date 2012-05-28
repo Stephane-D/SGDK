@@ -5,7 +5,7 @@ VDP_loadTileData:
 	movm.l #0x3e00,-(%sp)
 
 	move.l 24(%sp),%d6
-	move.l 32(%sp),%d3
+	move.l 32(%sp),%d3              | d3 = num
 	movq  #0,%d2
 	move.w 30(%sp),%d2              | d2 = ind
 	lsl.w #5,%d2                    | d2 = ind * 32 (address)
@@ -14,7 +14,7 @@ VDP_loadTileData:
 	jbeq .L2
 
 	jbsr VDP_waitDMACompletion
-	lsl.w #5,%d3
+	lsl.w #4,%d3                    | d3 = num * 16 (size of DMA in word)
 	move.l %d3,-(%sp)
 	move.l %d2,-(%sp)
 	move.l %d6,-(%sp)
