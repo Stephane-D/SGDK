@@ -445,7 +445,7 @@ u8   VDP_getHIntCounter();
  *  \brief
  *      Set Horizontal interrupt counter value.
  *
- *  When Horizontal interrupt is enabled, setting 5 here means that H int will occurs each 5+1 scanline.<br/>
+ *  When Horizontal interrupt is enabled, setting 5 here means that H int will occurs each (5+1) scanline.<br/>
  *  Set value 0 to get H int at each scanline.
  */
 void VDP_setHIntCounter(u8 value);

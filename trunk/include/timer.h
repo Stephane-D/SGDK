@@ -4,7 +4,8 @@
  * \author Stephane Dallongeville
  * \date 08/2011
  *
- * This unit provides basic timer functions (useful for profiling)
+ * This unit provides basic timer functions (useful for profiling).<br>
+ * This unit uses V-Int to count frame so disabling V-Int will make timer methods to not work anymore.
  */
 
 #ifndef _TIMER_H_
