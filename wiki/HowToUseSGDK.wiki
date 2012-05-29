@@ -9,8 +9,7 @@
 }}}
  * When the library is compiled you should obtain the following files
 {{{
-%GDK%/lib/sega.o
-%GDK%/lib/libgendev.a
+%GDK%/lib/libmd.a
 }}}
  * Before compiling your own project you first need to respect the following constraint in your project source tree :
 {{{
