@@ -46,8 +46,8 @@
 #define BUTTON_Z        0x0100
 #define BUTTON_MODE     0x0800
 
-#define BUTTON_LMB      0x0010
-#define BUTTON_MMB      0x0040
+#define BUTTON_LMB      0x0040
+#define BUTTON_MMB      0x0010
 #define BUTTON_RMB      0x0020
 
 #define BUTTON_DIR      0x000F
@@ -57,23 +57,33 @@
 #define JOY_TYPE_PAD3           0x00
 #define JOY_TYPE_PAD6           0x01
 #define JOY_TYPE_MOUSE          0x02
+#define JOY_TYPE_TRACKBALL      0x03
+#define JOY_TYPE_MENACER        0x04
+#define JOY_TYPE_JUSTIFIER      0x05
 #define JOY_TYPE_UNKNOWN        0x0F
 #define JOY_TYPE_SHIFT          12
 #define JOY_TYPE_MASK           0xF000
 
+#define PORT_TYPE_MENACER       0x00
+#define PORT_TYPE_JUSTIFIER     0x01
 #define PORT_TYPE_MOUSE         0x03
-#define PORT_TYPE_TEAMPLAY      0x07
+#define PORT_TYPE_TEAMPLAYER    0x07
 #define PORT_TYPE_PAD           0x0D
 #define PORT_TYPE_UKNOWN        0x0F
+#define PORT_TYPE_EA4WAYPLAY    0x10
 
-#define JOY_SUPPORT_OFF         0x00
-#define JOY_SUPPORT_3BTN        0x01
-#define JOY_SUPPORT_6BTN        0x02
-#define JOY_SUPPORT_MOUSE       0x04
-#define JOY_SUPPORT_TEAMPLAY    0x08
-#define JOY_SUPPORT_MENACER     0x10
-#define JOY_SUPPORT_ANALOGJOY   0x20
-#define JOY_SUPPORT_KEYBOARD    0x40
+#define JOY_SUPPORT_OFF             0x00
+#define JOY_SUPPORT_3BTN            0x01
+#define JOY_SUPPORT_6BTN            0x02
+#define JOY_SUPPORT_MOUSE           0x03
+#define JOY_SUPPORT_TRACKBALL       0x04
+#define JOY_SUPPORT_TEAMPLAYER      0x05
+#define JOY_SUPPORT_EA4WAYPLAY      0x06
+#define JOY_SUPPORT_MENACER         0x07
+#define JOY_SUPPORT_JUSTIFIER_BLUE  0x08
+#define JOY_SUPPORT_JUSTIFIER_BOTH  0x09
+#define JOY_SUPPORT_ANALOGJOY       0x0A
+#define JOY_SUPPORT_KEYBOARD        0x0B
 
 
 typedef void _joyEventCallback(u16 joy, u16 changed, u16 state);
@@ -110,27 +120,61 @@ void JOY_setEventHandler(_joyEventCallback *CB);
  * \brief
  *      Set peripheral support for the specified port.<br>
  *<br>
- *      By default ports are configured to only support 3 buttons joypad.
- *
+ *      By default ports are configured to only enable support for joypads, unless<br>
+ *      a pad is not detected. In that case, a multitap or mouse is enabled if<br>
+ *      present.<br>
+ *<br>
  * \param port
  *      Port we want to set support.<br>
  *      <b>PORT_1</b>   = port 1<br>
- *      <b>PORT_2</b>   = port 2
+ *      <b>PORT_2</b>   = port 2<br>
  * \param support
  *      Peripheral support.<br>
- *      <b>JOY_SUPPORT_3BTN</b>         = 3 buttons joypad<br>
- *      <b>JOY_SUPPORT_6BTN</b>         = 6 buttons joypad<br>
- *      <b>JOY_SUPPORT_MOUSE</b>        = Sega mouse<br>
- *      <b>JOY_SUPPORT_TEAMPLAY</b>     = Sega TeamPlay<br>
- *      <b>JOY_SUPPORT_MENACER</b>      = Sega Menacer (not yet supported)<br>
- *      <b>JOY_SUPPORT_ANALOGJOY</b>    = Sega analog joypad (not yet supported)<br>
- *      <b>JOY_SUPPORT_KEYBOARD</b>     = Sega keyboard (not yet supported)<br>
+ *      <b>JOY_SUPPORT_3BTN</b>           = 3 button joypad<br>
+ *      <b>JOY_SUPPORT_6BTN</b>           = 6 button joypad<br>
+ *      <b>JOY_SUPPORT_TRACKBALL</b>      = Sega Sports Pad (SMS trackball)<br>
+ *      <b>JOY_SUPPORT_MOUSE</b>          = Sega MegaMouse<br>
+ *      <b>JOY_SUPPORT_TEAMPLAYER</b>     = Sega TeamPlayer<br>
+ *      <b>JOY_SUPPORT_EA4WAYPLAY</b>     = EA 4-Way Play<br>
+ *      <b>JOY_SUPPORT_MENACER</b>        = Sega Menacer<br>
+ *      <b>JOY_SUPPORT_JUSTIFIER_BLUE</b> = Konami Justifier (blue gun only)<br>
+ *      <b>JOY_SUPPORT_JUSTIFIER_BOTH</b> = Konami Justifier (both guns)<br>
+ *      <b>JOY_SUPPORT_ANALOGJOY</b>      = Sega analog joypad (not yet supported)<br>
+ *      <b>JOY_SUPPORT_KEYBOARD</b>       = Sega keyboard (not yet supported)<br>
  *<br>
- *      Ex : enabled support for 3 and 6 buttons joypad on first port :<br>
- *      JOY_setSupport(PORT_1, JOY_SUPPORT_3BTN | JOY_SUPPORT_6BTN);<br>
+ *      Ex : enable support for MegaMouse on second port :<br>
+ *      JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);<br>
  *<br>
  */
 void JOY_setSupport(u16 port, u16 support);
+
+/**
+ * \brief
+ *      Get peripheral type for the specified port.<br>
+ *<br>
+ *      The peripheral type for each port is automatically detected during JOY_init().<br>
+ *      This function returns that type to help decide how the port support should be set.<br>
+ *      Types greater than 15 are not derived via Sega's controller ID method.<br>
+ *<br>
+ * \param port
+ *      Port we want to get the peripheral type.<br>
+ *      <b>PORT_1</b>   = port 1<br>
+ *      <b>PORT_2</b>   = port 2<br>
+ * \return type
+ *      Peripheral type.<br>
+ *      <b>PORT_TYPE_MENACER</b>        = Sega Menacer<br>
+ *      <b>PORT_TYPE_JUSTIFIER</b>      = Konami Justifier<br>
+ *      <b>PORT_TYPE_MOUSE</b>          = Sega MegaMouse<br>
+ *      <b>PORT_TYPE_TEAMPLAYER</b>     = Sega TeamPlayer<br>
+ *      <b>PORT_TYPE_PAD</b>            = Sega joypad<br>
+ *      <b>PORT_TYPE_UNKNOWN</b>        = unidentified or no peripheral<br>
+ *      <b>PORT_TYPE_EA4WAYPLAY</b>     = EA 4-Way Play<br>
+ *<br>
+ *      Ex : get peripheral type in port 1 :<br>
+ *      type = JOY_getPortType(PORT_1);<br>
+ *<br>
+ */
+u8 JOY_getPortType(u16 port);
 
 /**
  * \brief
@@ -157,6 +201,10 @@ void JOY_setSupport(u16 port, u16 support);
  *      <b>BUTTON_Z</b>     = Z button<br>
  *      <b>BUTTON_MODE</b>  = MODE button<br>
  *<br>
+ *      <b>BUTTON_LMB</b>   = Alias for A button for mouse<br>
+ *      <b>BUTTON_MMB</b>   = Alias for B button for mouse<br>
+ *      <b>BUTTON_RMC</b>   = Alias for C button for mouse<br>
+ *<br>
  *      Ex : Test if button START or A is pressed on joypad 1 :<br>
  *      if (JOY_readJoypad(JOY_1) & (BUTTON_START | BUTTON_A))<br>
  *<br>
@@ -174,11 +222,15 @@ u16  JOY_readJoypad(u16 joy);
  *      <b>...  </b>    = ...<br>
  *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
  * \return joypad X axis.<br>
- *      Currently, only a mouse returns axis data. This is a delta value indicating movement<br>
- *      to the right for positive values, or left for negative values.<br>
+ *      A mouse returns signed axis data. The change in this value indicates movement -<br>
+ *      to the right for positive changes, or left for negative changes.<br>
  *<br>
- *      Ex : Get X axis of joypad 2 :<br>
- *      deltaX = JOY_readJoypadX(JOY_2);<br>
+ *      A light gun returns the unsigned screen X coordinate. This is not calibrated;<br>
+ *      Calibration is left to the game to handle. The value is -1 if the gun is not<br>
+ *      pointed at the screen, or the screen is too dim to detect.<br>
+ *<br>
+ *      Ex : Get X axis of pad 2 :<br>
+ *      countX = JOY_readJoypadX(JOY_2);<br>
  *<br>
  */
 u16  JOY_readJoypadX(u16 joy);
@@ -194,11 +246,15 @@ u16  JOY_readJoypadX(u16 joy);
  *      <b>...  </b>    = ...<br>
  *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
  * \return joypad Y axis.<br>
- *      Currently, only a mouse returns axis data. This is a delta value indicating movement<br>
- *      upwards for positive values, or downwards for negative values.<br>
+ *      A mouse returns signed axis data. The change in this value indicates movement -<br>
+ *      upwards for positive changes, or downwards for negative changes.<br>
  *<br>
- *      Ex : Get Y axis of joypad 2 :<br>
- *      deltaY = JOY_readJoypadY(JOY_2);<br>
+ *      A light gun returns the unsigned screen Y coordinate. This is not calibrated;<br>
+ *      Calibration is left to the game to handle. The value is -1 if the gun is not<br>
+ *      pointed at the screen, or the screen is too dim to detect.<br>
+ *<br>
+ *      Ex : Get Y axis of pad 2 :<br>
+ *      countY = JOY_readJoypadY(JOY_2);<br>
  *<br>
  */
 u16  JOY_readJoypadY(u16 joy);
@@ -233,6 +289,10 @@ void JOY_waitPressBtn();
  *      <b>BUTTON_BTN</b>   = Any of the non direction buttons (A, B, C, START, X, Y, Z, MODE)<br>
  *      <b>BUTTON_ALL</b>   = Any of all buttons<br>
  *<br>
+ *      <b>BUTTON_LMB</b>   = Alias for A button for mouse<br>
+ *      <b>BUTTON_MMB</b>   = Alias for B button for mouse<br>
+ *      <b>BUTTON_RMC</b>   = Alias for C button for mouse<br>
+ *<br>
  *      Ex : if we want to wait any of direction buttons or button A is pressed on joypad 1 :<br>
  *      JOY_waitJoypad(JOY_1, BUTTON_DIR | BUTTON_A);<br>
  */
@@ -244,7 +304,7 @@ void JOY_waitPress(u16 joy, u16 btn);
  *      Manual update joypad state.<br>
  *<br>
  *      By default the library update joypad state on V interrupt process.<br>
- *      Calling this method will force to update joypad state now.
+ *      Calling this method will force to update joypad state now.<br>
  */
 void JOY_update();
 
