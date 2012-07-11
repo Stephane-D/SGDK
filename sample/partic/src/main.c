@@ -71,7 +71,6 @@ int main()
 
             // calculates particules physic
             updatePartic(partics, numpartic);
-
             // draw particules
             drawPartic(partics, numpartic, col);
 

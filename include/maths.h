@@ -269,6 +269,26 @@ typedef struct
 } Vect2D_s16;
 
 /**
+ *  \struct Vect2D_u32
+ *      2D Vector structure - u32 type.
+ */
+typedef struct
+{
+    u32 x;
+    u32 y;
+} Vect2D_u32;
+
+/**
+ *  \struct Vect2D_s32
+ *      2D Vector structure - s32 type.
+ */
+typedef struct
+{
+    s32 x;
+    s32 y;
+} Vect2D_s32;
+
+/**
  *  \struct Vect2D_f16
  *      2D Vector structure - f16 (fix16) type.
  */
@@ -321,6 +341,19 @@ u16 random();
  *      Value to convert.
  */
 u32 intToBCD(u32 value);
+
+/**
+ *  \brief
+ *      Return euclidean distance approximation for specified vector.<br>
+ *      The returned distance is not 100% perfect but calculation is fast.
+ *
+ *  \param dx
+ *      delta X.
+ *  \param dy
+ *      delta Y.
+ */
+u32 distance_approx(s32 dx, s32 dy);
+
 
 /**
  *  \brief

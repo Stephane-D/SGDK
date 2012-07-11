@@ -13,6 +13,7 @@ RM= $(BIN)/rm
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
+ECHO=echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
@@ -41,6 +42,8 @@ SRC_SZ80+= $(wildcard $(SRC)/*.s80)
 RES_S= $(wildcard $(RES)/*.s)
 RES_BMP= $(wildcard *.bmp)
 RES_BMP+= $(wildcard $(RES)/*.bmp)
+RES_WAV= $(wildcard *.wav)
+RES_WAV+= $(wildcard $(RES)/*.wav)
 RES_DAT= $(wildcard *.dat)
 RES_DAT+= $(wildcard $(RES)/*.dat)
 RES_RAW= $(wildcard *.raw)
@@ -53,8 +56,10 @@ RES_TFC= $(wildcard *.tfc)
 RES_TFC+= $(wildcard $(RES)/*.tfc)
 RES_MVS= $(wildcard *.mvs)
 RES_MVS+= $(wildcard $(RES)/*.mvs)
-RES_WAV= $(wildcard *.wav)
-RES_WAV+= $(wildcard $(RES)/*.wav)
+RES_EIF= $(wildcard *.eif)
+RES_EIF+= $(wildcard $(RES)/*.eif)
+RES_ESF= $(wildcard *.esf)
+RES_ESF+= $(wildcard $(RES)/*.esf)
 RES_RC= $(wildcard *.rc)
 RES_RC+= $(wildcard $(RES)/*.rc)
 RES_ASM= $(wildcard *.asm)
@@ -70,6 +75,8 @@ OBJ+= $(RES_PCM:.pcm=.o)
 OBJ+= $(RES_TFD:.tfd=.o)
 OBJ+= $(RES_TFC:.tfc=.o)
 OBJ+= $(RES_MVS:.mvs=.o)
+OBJ+= $(RES_EIF:.eif=.o)
+OBJ+= $(RES_ESF:.esf=.o)
 OBJ+= $(RES_S:.s=.o)
 OBJ+= $(SRC_SZ80:.s80=.o)
 OBJ+= $(SRC_S:.s=.o)
@@ -78,9 +85,9 @@ OBJ+= $(SRC_C:.c=.o)
 OBJS = $(addprefix out/, $(OBJ))
 
 INCS= -I$(LIBINCLUDE) -I$(INCLUDE) -I$(SRC) -I$(RES)
-#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -S -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-#FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(LIBSRC) -i$(LIBINCLUDE) -i$(SRC) -i$(INCLUDE) -i$(RES)
 
 all: out/rom.bin
@@ -90,7 +97,7 @@ default: all
 .PHONY: clean
 
 clean:
-	$(RM) -f $(OBJS) out.lst out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
+	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
 
 cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
@@ -105,16 +112,18 @@ out/tmp:
 	$(OUT2GSRC) i out/rom.bin out/rom.addr
 	$(ADDR2LINE) -e out/rom.out < out/rom.addr > out/rom.gsrc
 
-out/rom.out: out/sega.o $(OBJS) $(LIB)/libmd.a
-	$(MKDIR) -p out
-	$(CC) -T $(GDK)/md.ld -nostdlib out/sega.o $(OBJS) $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
+out/rom.out: out/sega.o out/cmd_ $(LIB)/libmd.a
+	$(CC) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
+	$(RM) out/cmd_
+
+out/cmd_: $(OBJS)
+	$(ECHO) "$(OBJS)" > out/cmd_
 
 out/sega.o: $(LIBSRC)/boot/sega.s out/rom_head.bin
 	$(MKDIR) -p out
 	$(CC) $(FLAGS) -c $(LIBSRC)/boot/sega.s -o $@
 
 out/rom_head.bin: out/rom_head.o
-	$(MKDIR) -p out
 	$(LD) -T $(GDK)/md.ld -nostdlib --oformat binary -o $@ $<
 
 out/rom_head.o: $(LIBSRC)/boot/rom_head.c
@@ -160,6 +169,12 @@ out/%.o: %.s
 	$(BINTOS) -align 32768 $<
 
 %.s: %.mvs
+	$(BINTOS) -align 256 $<
+
+%.s: %.esf
+	$(BINTOS) -align 32768 $<
+
+%.s: %.eif
 	$(BINTOS) -align 256 $<
 
 %.s: %.raw
