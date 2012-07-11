@@ -5,6 +5,22 @@
 
 #include "maths.h"
 #include "vdp.h"
+#include "sys.h"
+
+
+// TODO : use H counter for more accurate timer
+//
+// H Counter values
+//
+// Description            32-cell         40-cell
+// ----------------------------------------------------------------------------
+// Range                  00-93, E9-FF    00-B6, E4-FF
+// Display area           00-7F           00-9F
+// V counter increment    84, 85          A4, A5
+// V-blanking in          86, 87          A7, A8
+// V-blanking out         86, 87          A7, A8
+// H-blanking in          93, E9          B2, E4
+// H-blanking out         06, 07          06, 07
 
 
 u32 vtimer;

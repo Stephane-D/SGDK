@@ -137,6 +137,14 @@
 #define vu32    volatile u32
 
 
+#define uint8_t     u8
+#define uint16_t    u16
+#define uint32_t    u32
+#define int8_t      s8
+#define int16_t     s16
+#define int32_t     s32
+
+
 /**
  *  \typedef fix16
  *      16 bits fixed floting point type.

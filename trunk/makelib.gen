@@ -10,6 +10,7 @@ RM= $(BIN)/rm
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
+ECHO=echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
@@ -46,8 +47,8 @@ OBJ+= $(SRC_C:.c=.o)
 
 INCS= -I$(INCLUDE)
 #FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-#FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
 all: $(LIB)/libmd.a
@@ -57,13 +58,19 @@ default: all
 .PHONY: clean
 
 clean:
-	$(RM) -f $(LIB)/libmd.a $(OBJ) out.lst
+	$(RM) -f $(LIB)/libmd.a $(OBJ) out.lst cmd_
 
 cleanobj:
 	$(RM) -f $(OBJ) out.lst
 
-$(LIB)/libmd.a: $(OBJ)
-	$(AR) rs $(LIB)/libmd.a $(OBJ)
+
+$(LIB)/libmd.a: cmd_
+	$(AR) rs $(LIB)/libmd.a @cmd_
+	$(RM) cmd_
+
+cmd_: $(OBJ)
+	$(ECHO) "$(OBJ)" > cmd_
+
 
 %.asm: %.rc
 	$(GENRES) $< $@

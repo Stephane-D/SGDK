@@ -15,6 +15,8 @@
 #include "font.h"
 #include "string.h"
 
+#include "tab_cnv.h"
+
 #include "maths.h"
 #include "maths3D.h"
 

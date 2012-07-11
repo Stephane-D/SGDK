@@ -266,7 +266,7 @@ void _start_entry()
                 else if (size > 5) size -= 5;
                 else size = 0;
 
-                // get new lo
+                // get new size
                 const u32 w = 128 - size;
 
                 // adjust palette for fade

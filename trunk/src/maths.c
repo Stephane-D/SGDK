@@ -22,6 +22,7 @@ u16 random()
 u32 intToBCD(u32 value)
 {
     if (value > 99999999) return 0x99999999;
+
     if (value < 100) return cnv_bcd_tab[value];
 
     u32 v;
@@ -33,6 +34,7 @@ u32 intToBCD(u32 value)
     res = 0;
     carry = 0;
     cnt = 4;
+
     while(cnt--)
     {
         u16 bcd = (v & 0xFF) + carry;
@@ -59,39 +61,59 @@ u32 intToBCD(u32 value)
     return res;
 }
 
+u32 distance_approx(s32 dx, s32 dy)
+{
+    u32 min, max;
 
-#define QSORT(type)                                 \
-void QSort_##type(type *data, u16 left, u16 right)  \
-{                                                   \
-    u16 i, j;                                       \
-    type val;                                       \
-                                                    \
-    do                                              \
-    {                                               \
-        i = left;                                   \
-        j = right;                                  \
-        val = data[(left + right) / 2];             \
-                                                    \
-        do                                          \
-        {                                           \
-            while (data[i] < val) i++;              \
-            while (data[j] > val) j--;              \
-            if (i <= j)                             \
-            {                                       \
-                u16 tmp;                            \
-                                                    \
-                tmp = data[i];                      \
-                data[i] = data[j];                  \
-                data[j] = tmp;                      \
-                i++;                                \
-                j--;                                \
-            }                                       \
-        } while(i <= j);                            \
-                                                    \
-        if (left < j) QSort_##type(data, left, j);  \
-        left = i;                                   \
-    } while (i >= right);                           \
+    if (dx < 0) dx = -dx;
+    if (dy < 0) dy = -dy;
+
+    if (dx < dy )
+    {
+        min = dx;
+        max = dy;
+    }
+    else
+    {
+        min = dy;
+        max = dx;
+    }
+
+    // coefficients equivalent to ( 123/128 * max ) and ( 51/128 * min )
+    return ((max << 8) + (max << 3) - (max << 4) - (max << 1) +
+             (min << 7) - (min << 5) + (min << 3) - (min << 1)) >> 8;
 }
+
+
+#define QSORT(type)                                     \
+    void QSort_##type(type *data, u16 left, u16 right)  \
+    {                                                   \
+        u16 i, j;                                       \
+        type val;                                       \
+                                                        \
+        i = left;                                       \
+        j = right;                                      \
+        val = data[(left + right) / 2];                 \
+                                                        \
+        while(i <= j)                                   \
+        {                                               \
+            while (data[i] < val) i++;                  \
+            while (data[j] > val) j--;                  \
+            if (i <= j)                                 \
+            {                                           \
+                type tmp;                               \
+                                                        \
+                tmp = data[i];                          \
+                data[i] = data[j];                      \
+                data[j] = tmp;                          \
+                i++;                                    \
+                j--;                                    \
+            }                                           \
+        }                                               \
+                                                        \
+        if (left < j) QSort_##type(data, left, j);      \
+        if (i < right) QSort_##type(data, i, right);    \
+    }
 
 QSORT(u8)
 QSORT(s8)

@@ -86,7 +86,7 @@ M3D_project3D_s16:
 
 .L40:
 	move.w 4(%a0),%d0                       |   if ((zi = s->z))
-	jeq .L38
+	jeq .L38                                |   {
 
     move.l %d5,%d1
     divs.w %d0,%d1                          |       d1 = zi = fix16Div(camDist, zi);
@@ -112,7 +112,7 @@ M3D_project3D_s16:
 	movm.l (%sp)+,#0x07c
 	rts                                     |   }
                                             |   else
-.L38:
+.L38:                                       |   {
 	move.l %d6,(%a1)+                       |       d->x = FIX16(-1);
                                             |       d->y = FIX16(-1);
 	addq.l #6,%a0                           |   }
