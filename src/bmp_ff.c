@@ -39,7 +39,7 @@ static u16 *bmp_tilemap_1 = NULL;
 u16 *bmp_tilemap_read;
 u16 *bmp_tilemap_write;
 
-u16 basetile_ind;
+static u16 basetile_ind;
 
 
 // ASM procedures (defined in bmp_ff_a.s)
