@@ -18,7 +18,6 @@ OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
 SIZEBND= $(BIN)/sizebnd
-BINTOC= $(BIN)/bintoc
 BINTOS= $(BIN)/bintos
 WAVTORAW= $(BIN)/wavtoraw
 PCMTORAW= $(BIN)/pcmtoraw

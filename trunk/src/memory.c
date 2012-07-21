@@ -216,7 +216,7 @@ u16 MEM_getFree()
     {
         // memory block not used --> add available size to result
         if (!(bsize & USED))
-            res += bsize - sizeof(u16);
+            res += bsize;
 
         // pass to next block
         b += bsize >> 1;
