@@ -6,20 +6,16 @@
 #include <inttypes.h>
 #include <ctype.h>
 
-const char delta_tab[16] =
+const static int delta_tab[16] =
     { -34,-21,-13,-8,-5,-3,-2,-1,0,1,2,3,5,8,13,21 };
 
-int sample_over;
-int sample_loss;
-
-static int GetBestDelta(int pWantedLevel, int pCurLevel)
+static int GetBestDeltaIndex(int pWantedLevel, int pCurLevel)
 {
     int i;
     int ind;
     int diff;
     int mindiff;
     int wdelta;
-    char result;
 
     wdelta = pWantedLevel - pCurLevel;
     ind = 0;
@@ -35,21 +31,15 @@ static int GetBestDelta(int pWantedLevel, int pCurLevel)
         }
     }
 
-    if (mindiff)
-    {
-        sample_over++;
-        sample_loss += mindiff;
-    }
+    int newLevel = delta_tab[ind] + pCurLevel;
 
-    // check for overflow
-    if ((delta_tab[ind] + pCurLevel) > 127)
-        result = ind - 1;
-    else if ((delta_tab[ind] + pCurLevel) < -128)
-        result = ind + 1;
-    else
-        result = ind;
+    // check for overflow (8 bits signed)
+    if (newLevel > 127)
+        return ind - 1;
+    if (newLevel < -128)
+        return ind + 1;
 
-    return result;
+    return ind;
 }
 
 //static char *getFilename(char *pathname)
@@ -73,11 +63,10 @@ int main(int argc, char **argv)
 {
     int ii;
     int size;
-    int diff_ind;
-    char curlevel;
-    char data_sb;
-    char diff_sb;
-    char out_sb;
+    int ind;
+    int curlevel;
+    int in;
+    int out;
     char *FileName;
     char *FileNameOut;
     FILE *FileInput;
@@ -112,7 +101,7 @@ int main(int argc, char **argv)
         strcat(FileNameOut, ".raw");
     }
 
-    FileOutput = fopen(FileNameOut, "w");
+    FileOutput = fopen(FileNameOut, "wb");
 
     if (!FileOutput)
     {
@@ -121,10 +110,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    FileOutputLoss = fopen("loss", "w");
-
-    sample_over = 0;
-    sample_loss = 0;
+    FileOutputLoss = fopen("loss", "wb");
 
     ii = 0;
     curlevel = 0;
@@ -132,28 +118,30 @@ int main(int argc, char **argv)
     size = ftell(FileInput);
     fseek(FileInput, 0, SEEK_SET);
 
+
     while (ii < size)
     {
-        data_sb = fgetc(FileInput);
-        diff_ind = GetBestDelta(data_sb, curlevel);
-        diff_sb = delta_tab[diff_ind];
-        curlevel = curlevel + diff_sb;
+        // input is 8 bits signed
+        in = (char) fgetc(FileInput);
+        ind = GetBestDeltaIndex(in, curlevel);
+        curlevel += delta_tab[ind];
         fputc(curlevel, FileOutputLoss);
 
-        out_sb = diff_ind;
+        out = ind;
 
-        data_sb = fgetc(FileInput);
-        diff_ind = GetBestDelta(data_sb, curlevel);
-        diff_sb = delta_tab[diff_ind];
-        curlevel = curlevel + diff_sb;
+        // input is 8 bits signed
+        in = (char) fgetc(FileInput);
+        ind = GetBestDeltaIndex(in, curlevel);
+        curlevel += delta_tab[ind];
         fputc(curlevel, FileOutputLoss);
 
-        out_sb = out_sb | (diff_ind << 4);
+        out |= (ind << 4);
 
-        fputc(out_sb, FileOutput);
+        fputc(out, FileOutput);
 
         ii += 2;
     }
+
 
     fclose(FileOutputLoss);
     fclose(FileOutput);
