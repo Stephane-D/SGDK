@@ -10,11 +10,11 @@
 
  * Launch Code::Blocks and go to the Setting --> Compiler and debugger menu
 
-http://www.hiboox.fr/go/images/informatique/gendevcb-01,d49cb27f03f5a9df1337362a0a8ff535.jpg.html
+http://www.hiboox.fr/go/images/informatique/gendevcb-01,d49cb27f03f5a9df1337362a0a8ff535.jpg
 
  * Create a new compiler configuration by doing a copy of the basic GNU GCC Compiler. Name it as you want ("Sega Genesis Compiler" here).
 
-http://www.hiboox.fr/go/images/informatique/gendevcb-02,949cf50241179bee327fcae850f2d6f6.jpg.html
+http://www.hiboox.fr/go/images/informatique/gendevcb-02,949cf50241179bee327fcae850f2d6f6.jpg
 
  * "Toolchain executables" tab, enter the mini dev kit path (as you set in GDK_WIN) in the "Compiler's installation directory". Unfortunately it does not accept variable name so you have to enter it to its own. Then set the executable filename as on the picture :
 
