@@ -10,15 +10,15 @@
 
  * Launch Code::Blocks and go to the Setting --> Compiler and debugger menu
 
-http://www.gens.me/images/temp/gendevcb_01.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-01,d49cb27f03f5a9df1337362a0a8ff535.jpg.html
 
  * Create a new compiler configuration by doing a copy of the basic GNU GCC Compiler. Name it as you want ("Sega Genesis Compiler" here).
 
-http://www.gens.me/images/temp/gendevcb_02.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-02,949cf50241179bee327fcae850f2d6f6.jpg.html
 
  * "Toolchain executables" tab, enter the mini dev kit path (as you set in GDK_WIN) in the "Compiler's installation directory". Unfortunately it does not accept variable name so you have to enter it to its own. Then set the executable filename as on the picture :
 
-http://www.gens.me/images/temp/gendevcb_03.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-03,a0417e09abf34ae159950dea7e745810.jpg.html
 
 
 *At this point we already finished the compiler configuration :)*
@@ -27,41 +27,41 @@ http://www.gens.me/images/temp/gendevcb_03.jpg
 
  * Do a new project
 
-http://www.gens.me/images/temp/gendevcb_04.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-04,11fbbaea4627f2a380aa8c99611a1a8b.jpg.html
 
 
  * Choose a empty project type and click on "Go" button
 
-http://www.gens.me/images/temp/gendevcb_05.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-05,a1f6dacd14386bbdae09186f982731a1.jpg.html
 
 
  * Click on Next...
 
-http://www.gens.me/images/temp/gendevcb_06.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-06,c6d3a8aff6015cb505cfec59a949c01f.jpg.html
 
 
  * Choose a name and a directory for your project, others box are automatically filled but you can modify them if you want, then click on Next.
 
-http://www.gens.me/images/temp/gendevcb_07.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-07,bb175fa7708a1a5d71df9c062aa1b3ff.jpg.html
 
 
  * Choose the genesis compiler you just set up ("Sega Genesis Compiler" here). Uncheck the "Debug" configuration which is useless here and rename the "Release" configuration to "default" as this is the only used here. Change the outputs directory to "out\" then click on finish.
 
-http://www.gens.me/images/temp/gendevcb_08.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-08,6e1bb70d33c98fb2839286428d56d101.jpg.html
 
 
  * Open the contextual menu on the project and choose "Properties..."
 
-http://www.gens.me/images/temp/gendevcb_09.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-09,4cefa2f431f8c5d508eac39cdf57854c.jpg.html
 
 
  * Use the provided makefile.gen file in the devkit as the project makefile. Don't forget to check the "This is a custom Makefile" checkbox. Then click to the "Project's build options" button.
 
-http://www.gens.me/images/temp/gendevcb_10.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-10,d7ec7a2db131390f472b75c7ccdfb8ea.jpg.html
 
  * Select the "default" configuration in left column, check if the Selected compiler is the good one (Sega Genesis Compiler here) and go to the last tab "Make". Then modify the make commands as here :
 
-http://www.gens.me/images/temp/gendevcb_11.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-11,ccdb685ad1d8f19183694988f67f408c.jpg.html
 
  * Validate your changes and now you can add files to your project, your files should be localized in your project directory as following :
 {{{
@@ -70,7 +70,7 @@ includes files (H, INC) : root directory or "include" directory
 resources files (S, ASM, TFC, TFD, PCM, RAW, WAV, BIN, BMP, RC) : root directory or "res" directory
 }}}
 
-http://www.gens.me/images/temp/gendevcb_12.jpg
+http://www.hiboox.fr/go/images/informatique/gendevcb-12,21bbc58aa42ccfa344fff974c733fa21.jpg.html
 
 
  * Compile your project in the "Build" menu, "Build" command or press Ctrl+F9 keys. If all is correctly setup you should obtain a rom.bin file in the out directory of your project directory :)
