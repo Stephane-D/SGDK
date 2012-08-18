@@ -10,7 +10,7 @@
 
  * Launch Code::Blocks and go to the Setting --> Compiler and debugger menu
 
-http://www.hiboox.fr/go/images/informatique/gendevcb-01,d49cb27f03f5a9df1337362a0a8ff535.jpg
+http://images4.hiboox.com/images/3312/d49cb27f03f5a9df1337362a0a8ff535.jpg
 
  * Create a new compiler configuration by doing a copy of the basic GNU GCC Compiler. Name it as you want ("Sega Genesis Compiler" here).
 
