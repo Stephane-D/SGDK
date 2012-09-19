@@ -534,15 +534,15 @@ This function draw FROM the tile index in argument to the last needed to fill th
 
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut3_TilesBitmap.zip Bitmap tiles project]
 
-=== GenRes's BITMAP support ===
+=== !GenRes's BITMAP support ===
 
 SGDK comes with another way to load tiles: using _*GenRes*_.
 
-GenRes is a tool which, actually, converts bitmap, animation & map for Genny development.
+!GenRes is a tool which, actually, converts bitmap, animation & map for Genny development.
 
 For this part of the tutorial, we will only talk about the `BITMAP` mode.
 
-GenRes relies on a resource declaration file where each line defines the convert mode, the output name, the file and some parameters.
+!GenRes relies on a resource declaration file where each line defines the convert mode, the output name, the file and some parameters.
 
 In your case, you will use the `BITMAP` convert mode this way :
 
@@ -551,9 +551,9 @@ In your case, you will use the `BITMAP` convert mode this way :
 	; always finish with a blank line or comment
 }}}
 
-If you write it down in a `resource.rc`, SGDK will call GenRes to compile `directory/file.bmp` to a linked `resource.o`.
+If you write it down in a `resource.rc`, SGDK will call !GenRes to compile `directory/file.bmp` to a linked `resource.o`.
 
-For version up to 0.7d, GenRes output format is undefined in SGDK, so you have to write your own format structure like this :
+For version up to 0.7d, !GenRes output format is undefined in SGDK, so you have to write your own format structure like this :
 
 {{{
 	struct genresTiles
@@ -572,7 +572,7 @@ Unlike SGDK's native bitmap support, it doesn't generate a header file but you c
 }}}
 
 
-`VDP_loadBMPTileData` is dedicated to BMP. Since GenRes converts a bitmap to tiles data, you need to use another VDP function, dedicated to tiles : `VDP_loadTileData`.
+`VDP_loadBMPTileData` is dedicated to BMP. Since !GenRes converts a bitmap to tiles data, you need to use another VDP function, dedicated to tiles : `VDP_loadTileData`.
 
 {{{
 	// .... code
@@ -615,7 +615,7 @@ If you use a large amount of tiles, we strongly suggest you to compress them (us
 
 SGDK doesn't include (yet?) a method to load compressed bitmap data so it's up to you to make your own (de)compression algorithm.
 
-GenRes BITMAP could use a RLE-based compression. _more details soon_
+!GenRes BITMAP could use a RLE-based compression. _more details soon_
 
 Check if the tool you use could export compressed data too.
 
@@ -837,13 +837,13 @@ So, for now, you should avoid problems and always link to next sprite and get ba
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut4_SpritesBasic.zip Basic sprites project]
  
 ----
-=== GenRes's SPRITE support ===
+=== !GenRes's SPRITE support ===
 
-Unlike tiles for plane, SGDK doesn't come with a native sprite 16 colors bitmap support but you could use _*GenRes*_.
+Unlike tiles for plane, SGDK doesn't come with a native sprite 16 colors bitmap support but you could use _*!GenRes*_.
 
 We will talk about the `SPRITE` mode this time.
 
-As you know, GenRes relies on a resource declaration file where each line defines the convert mode, the output name, the file and some parameters.
+As you know, !GenRes relies on a resource declaration file where each line defines the convert mode, the output name, the file and some parameters.
 
 With `SPRITE`, it could be done this way :
 
@@ -852,9 +852,9 @@ With `SPRITE`, it could be done this way :
 	; always finish with a blank line or comment
 }}}
 
-If you write it down in a `resource.rc`, SGDK will call GenRes to compile `directory/file.bmp` to a linked `resource.o`.
+If you write it down in a `resource.rc`, SGDK will call !GenRes to compile `directory/file.bmp` to a linked `resource.o`.
 
-For version up to 0.7d, GenRes output format is undefined in SGDK, so you have to write your own format structure like this :
+For version up to 0.7d, !GenRes output format is undefined in SGDK, so you have to write your own format structure like this :
 
 {{{
 	struct genresSprites
@@ -880,7 +880,7 @@ That should ring a bell if you read this tutorial is the `sprites` property.
 
 It's not `u32 *sprites` but `u32 **sprites`.
 
-In fact, it's because GenRes converts sprites sheet, not unique sprite (even if a sprites sheet with a unique sprite is valid).
+In fact, it's because !GenRes converts sprites sheet, not unique sprite (even if a sprites sheet with a unique sprite is valid).
 
 What is a sprites sheet ? a sheet with several sprites in correct position.
 
@@ -1001,7 +1001,7 @@ http://sgdk.googlecode.com/svn/wiki/pictures/tutSprite_Kmod.jpg
 == History ==
 
 23 February 2001 - Sprites
- * Sprites with GenRes
+ * Sprites with !GenRes
  * Sprites animation
  
 23 February 2001 - Sprites
@@ -1009,7 +1009,7 @@ http://sgdk.googlecode.com/svn/wiki/pictures/tutSprite_Kmod.jpg
  * added missing info in Basic tiles
 
 21 February 2011 - Tiles Part
- * Tiles with GenRes
+ * Tiles with !GenRes
 
 31 January 2011 - Tiles part
  * Basic tiles
