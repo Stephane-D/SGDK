@@ -49,7 +49,7 @@ In _C/C++ > Build > Environnement_, add a new variable
 http://sgdk.googlecode.com/svn/wiki/pictures/eclipse02.jpg
 
 In _C/C++ > New CDT Project Wizard > Makefile Project_
- * select _*Use default build command*_ in _Builder Settings_ tab
+ * unselect _*Use default build command*_ in _Builder Settings_ tab
  * set, as _Build command_,  `${GDK}\bin\make -f ${GDK}\makefile`
 
 {{{
