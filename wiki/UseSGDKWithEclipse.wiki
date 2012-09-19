@@ -18,6 +18,9 @@ In the end, you have
 }}}
 
 == Setup Eclipse ==
+
+*IMPORTANT : Be sure to use slash "/" to define any folder else make will fail *
+
 Launch Eclipse and select _<parent folder>/projects_ as workspace folder
 {{{
  each new project will be added to this folder by Eclipse 
