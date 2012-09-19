@@ -18,8 +18,11 @@ In the end, you have
 	->projects folder
 }}}
 
-Don't forget to add SGDK's bin folder in your Windows PATH 
+
+Don't forget to add SGDK's bin folder in your Windows PATH
+
 For XP, see tutorial at http://roy.vanegas.org/teaching/c/modifying_windows_path_for_gcc.html
+
 For 7, open control panel > system, select advanded system parameters and jump to step 4 of above tutorial
 
 == Setup Eclipse ==
