@@ -9,6 +9,7 @@ Download Eclipse CDT at http://www.eclipse.org/cdt/downloads.php
  * Unzip EclipseCDT and SGDK there
  * Rename SGDK's one as "_sdk_" 
  * Create an other directory called "_projects_".
+
 In the end, you have
 {{{
 <parent folder>
@@ -16,6 +17,10 @@ In the end, you have
 	->sdk folder
 	->projects folder
 }}}
+
+Don't forget to add SGDK's bin folder in your Windows PATH 
+For XP, see tutorial at http://roy.vanegas.org/teaching/c/modifying_windows_path_for_gcc.html
+For 7, open control panel > system, select advanded system parameters and jump to step 4 of above tutorial
 
 == Setup Eclipse ==
 
@@ -53,7 +58,7 @@ http://sgdk.googlecode.com/svn/wiki/pictures/eclipse02.jpg
 
 In _C/C++ > New CDT Project Wizard > Makefile Project_
  * unselect _*Use default build command*_ in _Builder Settings_ tab
- * set, as _Build command_,  `${GDK}\bin\make -f ${GDK}\makefile`
+ * set, as _Build command_,  `${GDK}\bin\make -f ${GDK}/makefile.gen`
 
 {{{
  this will define  sdk/makefile.gen as the default makefile of any project
@@ -101,3 +106,5 @@ http://sgdk.googlecode.com/svn/wiki/pictures/eclipse08.jpg
 If you have an error on build like *`main() not found`*, be sure to click _*Apply*_ on project properties's _C/C++ General > Paths and Symbols_.
 
 Another source of problem : be sure to un-mark _Project>Build automatically_
+
+And be sure to use slash "/" !!
