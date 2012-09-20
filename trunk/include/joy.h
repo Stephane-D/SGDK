@@ -61,8 +61,6 @@
 #define JOY_TYPE_MENACER        0x04
 #define JOY_TYPE_JUSTIFIER      0x05
 #define JOY_TYPE_UNKNOWN        0x0F
-#define JOY_TYPE_SHIFT          12
-#define JOY_TYPE_MASK           0xF000
 
 #define PORT_TYPE_MENACER       0x00
 #define PORT_TYPE_JUSTIFIER     0x01
@@ -175,6 +173,27 @@ void JOY_setSupport(u16 port, u16 support);
  *<br>
  */
 u8 JOY_getPortType(u16 port);
+
+/**
+ * \brief
+ *      Get joypad type.
+ *
+ * \param joy
+ *      Joypad we query type.<br>
+ *      <b>JOY_1</b>    = joypad 1<br>
+ *      <b>JOY_2</b>    = joypad 2<br>
+ *      <b>...  </b>    = ...<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ * \return joypad type.<br>
+ *      <b>JOY_TYPE_PAD3</b>        = 3 buttons joypad<br>
+ *      <b>JOY_TYPE_PAD6</b>        = 6 buttons joypad<br>
+ *      <b>JOY_TYPE_MOUSE</b>       = Sega Mouse<br>
+ *      <b>JOY_TYPE_TRACKBALL</b>   = Sega trackball<br>
+ *      <b>JOY_TYPE_MENACER</b>     = Sega Menacer gun<br>
+ *      <b>JOY_TYPE_JUSTIFIER</b>   = Sega Justifier gun<br>
+ *      <b>JOY_TYPE_UNKNOWN</b>     = Unknow adaptater or not connected<br>
+ */
+u8 JOY_getJoypadType(u16 joy);
 
 /**
  * \brief
