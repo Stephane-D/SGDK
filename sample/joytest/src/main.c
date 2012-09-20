@@ -51,7 +51,7 @@ static void printWord(u16 val, u16 state)
 
 static void showPortState()
 {
-    u16 i, value;
+    u16 i, typ, state;
 
     posY = 5;
     for(i=JOY_1; i<JOY_NUM; i++)
@@ -60,8 +60,9 @@ static void showPortState()
         printChar(hex[i+1], 0);
         posX -= 1;
         printChar(':', 0);
-        value = JOY_readJoypad(i);
-        switch (value >> JOY_TYPE_SHIFT)
+        typ = JOY_getJoypadType(i);
+        state = JOY_readJoypad(i);
+        switch (typ)
         {
             case JOY_TYPE_PAD3:
                 VDP_drawText("3 button ", posX, posY);
@@ -80,22 +81,22 @@ static void showPortState()
                 posX += 10;
                 break;
         }
-        printChar('U', value & BUTTON_UP);
-        printChar('D', value & BUTTON_DOWN);
-        printChar('L', value & BUTTON_LEFT);
-        printChar('R', value & BUTTON_RIGHT);
-        printChar('A', value & BUTTON_A);
-        printChar('B', value & BUTTON_B);
-        printChar('C', value & BUTTON_C);
-        printChar('S', value & BUTTON_START);
-        if ((value >> JOY_TYPE_SHIFT) == JOY_TYPE_PAD6)
+        printChar('U', state & BUTTON_UP);
+        printChar('D', state & BUTTON_DOWN);
+        printChar('L', state & BUTTON_LEFT);
+        printChar('R', state & BUTTON_RIGHT);
+        printChar('A', state & BUTTON_A);
+        printChar('B', state & BUTTON_B);
+        printChar('C', state & BUTTON_C);
+        printChar('S', state & BUTTON_START);
+        if (typ == JOY_TYPE_PAD6)
         {
-            printChar('X', value & BUTTON_X);
-            printChar('Y', value & BUTTON_Y);
-            printChar('Z', value & BUTTON_Z);
-            printChar('M', value & BUTTON_MODE);
+            printChar('X', state & BUTTON_X);
+            printChar('Y', state & BUTTON_Y);
+            printChar('Z', state & BUTTON_Z);
+            printChar('M', state & BUTTON_MODE);
         }
-        else if ((value >> JOY_TYPE_SHIFT) == JOY_TYPE_MOUSE)
+        else if (typ == JOY_TYPE_MOUSE)
         {
             posY++;
             posX = 15;

@@ -9,6 +9,10 @@
 #include "vdp.h"
 
 
+#define JOY_TYPE_SHIFT          12
+
+
+static u8 joyType[8];
 static u16 joyState[8];
 static s16 joyAxisX[8];
 static s16 joyAxisY[8];
@@ -60,9 +64,11 @@ void JOY_init()
         portType[PORT_2] = PORT_TYPE_EA4WAYPLAY;
         portSupport[PORT_1] = JOY_SUPPORT_EA4WAYPLAY;
         portSupport[PORT_2] = JOY_SUPPORT_OFF;
+
         for (i=JOY_1; i<JOY_NUM; i++)
         {
-            joyState[i] = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT); /* default to unknown */
+            joyType[i] = JOY_TYPE_UNKNOWN; /* default to unknown */
+            joyState[i] = 0;
             joyAxisX[i] = 0;
             joyAxisY[i] = 0;
         }
@@ -129,9 +135,11 @@ void JOY_init()
 
     portSupport[PORT_1] = JOY_SUPPORT_OFF; /* default to off */
     portSupport[PORT_2] = JOY_SUPPORT_OFF; /* default to off */
+
     for (i=JOY_1; i<JOY_NUM; i++)
     {
-        joyState[i] = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT); /* default to unknown */
+        joyType[i] = JOY_TYPE_UNKNOWN; /* default to unknown */
+        joyState[i] = 0;
         joyAxisX[i] = 0;
         joyAxisY[i] = 0;
     }
@@ -206,10 +214,10 @@ void JOY_init()
 
     /* now update pads to reflect true type (3 or 6 button) */
     if (portType[PORT_1] == PORT_TYPE_PAD)
-        if ((joyState[JOY_1] >> JOY_TYPE_SHIFT) == JOY_TYPE_PAD3)
+        if (joyType[JOY_1] == JOY_TYPE_PAD3)
             portSupport[PORT_1] = JOY_SUPPORT_3BTN;
     if (portType[PORT_2] == PORT_TYPE_PAD)
-        if ((joyState[JOY_2] >> JOY_TYPE_SHIFT) == JOY_TYPE_PAD3)
+        if (joyType[JOY_2] == JOY_TYPE_PAD3)
             portSupport[PORT_2] = JOY_SUPPORT_3BTN;
 }
 
@@ -265,7 +273,8 @@ void JOY_setSupport(u16 port, u16 support)
             {
                 SYS_setInterruptMaskLevel(7);   /* disable ints */
                 /* OBVIOUSLY blue gun or menacer is present due to portType ID */
-                joyState[port] = (((support == JOY_SUPPORT_MENACER) ? JOY_TYPE_MENACER : JOY_TYPE_JUSTIFIER) << JOY_TYPE_SHIFT);
+                joyType[port] = (support == JOY_SUPPORT_MENACER) ? JOY_TYPE_MENACER : JOY_TYPE_JUSTIFIER;
+                joyState[port] = 0;
                 joyAxisX[port] = -1;
                 joyAxisY[port] = -1;
                 gun = 0;
@@ -273,7 +282,8 @@ void JOY_setSupport(u16 port, u16 support)
                 gport = port;
                 if (support == JOY_SUPPORT_JUSTIFIER_BOTH)
                 {
-                    joyState[port ? JOY_6 : JOY_3] = (JOY_TYPE_JUSTIFIER << JOY_TYPE_SHIFT); /* allow red gun */
+                    joyType[port ? JOY_6 : JOY_3] = JOY_TYPE_JUSTIFIER; /* allow red gun */
+                    joyState[port ? JOY_6 : JOY_3] = 0;
                     joyAxisX[port ? JOY_6 : JOY_3] = -1;
                     joyAxisY[port ? JOY_6 : JOY_3] = -1;
                 }
@@ -307,13 +317,17 @@ void JOY_setSupport(u16 port, u16 support)
 
                 if (port == PORT_1)
                 {
-                    joyState[JOY_1] = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT);
-                    joyState[JOY_3] = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT);
+                    joyType[JOY_1] = JOY_TYPE_UNKNOWN;
+                    joyType[JOY_3] = JOY_TYPE_UNKNOWN;
+                    joyState[JOY_1] = 0;
+                    joyState[JOY_3] = 0;
                 }
                 else
                 {
-                    joyState[JOY_2] = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT);
-                    joyState[JOY_6] = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT);
+                    joyType[JOY_2] = JOY_TYPE_UNKNOWN;
+                    joyType[JOY_6] = JOY_TYPE_UNKNOWN;
+                    joyState[JOY_2] = 0;
+                    joyState[JOY_6] = 0;
                 }
                 gport = 0xFFFF;
                 SYS_setInterruptMaskLevel(3);       /* External int disallowed */
@@ -347,6 +361,13 @@ u8 JOY_getPortType(u16 port)
     return portType[port];
 }
 
+u8 JOY_getJoypadType(u16 joy)
+{
+    if (joy < JOY_NUM)
+        return joyType[joy];
+
+    return JOY_TYPE_UNKNOWN;
+}
 
 u16 JOY_readJoypad(u16 joy)
 {
@@ -364,7 +385,7 @@ u16 JOY_readJoypad(u16 joy)
     else if (joy < JOY_NUM)
         return joyState[joy];
 
-    return JOY_TYPE_UNKNOWN;
+    return 0;
 }
 
 
@@ -446,7 +467,7 @@ static u16 read3Btn(u16 port)
     val = ((val & 0x3000) >> 6) | (val & 0x003F); /* 0 0 0 0 0 0 0 0 s a c b r l d u */
     val ^= 0x00FF;                                /* 0 0 0 0 0 0 0 0 S A C B R L D U */
 
-    return val;
+    return val | (JOY_TYPE_PAD3 << JOY_TYPE_SHIFT);
 }
 
 
@@ -462,7 +483,7 @@ static u16 read6Btn(u16 port)
     v2 = TH_CONTROL_PHASE(pb);                    /* - 0 s a 0 0 0 0 - 1 c b m x y z */
     val = TH_CONTROL_PHASE(pb);                   /* - 0 s a 1 1 1 1 - 1 c b r l d u */
 
-    if ((val & 0x0F00) != 0x0F00) v2 = 0x0F00;                          /* three button pad */
+    if ((val & 0x0F00) != 0x0F00) v2 = (JOY_TYPE_PAD3 << JOY_TYPE_SHIFT) | 0x0F00; /* three button pad */
     else v2 = (JOY_TYPE_PAD6 << JOY_TYPE_SHIFT) | ((v2 & 0x000F) << 8); /* six button pad */
 
     val = ((v1 & 0x3000) >> 6) | (v1 & 0x003F);   /* 0 0 0 0 0 0 0 0 s a c b r l d u  */
@@ -592,8 +613,8 @@ static void readTeamPlayer(u16 port)
     };
 
     vu8 *pb;
-    u16 newstate, change;
-    u16 val = 0, v1, v2, v3, mx, my, i, j;
+    u16 change;
+    u16 val = 0, v1, v2, v3, mx, my, typ = JOY_TYPE_UNKNOWN, i, j;
     s16 sts;
     u8 hdr[8], md[6];
     const u16 *xlt_port = xlt_all[port];
@@ -615,7 +636,8 @@ static void readTeamPlayer(u16 port)
             switch(hdr[4+j])
             {
                 case JOY_TYPE_UNKNOWN:
-                    val = (JOY_TYPE_UNKNOWN << JOY_TYPE_SHIFT);
+                    val = 0;
+                    typ = JOY_TYPE_UNKNOWN;
                     break;
                 case JOY_TYPE_PAD3:
                     v1 = THREELINE_HANDSHAKE(pb, phase); /* r l d u */
@@ -628,6 +650,7 @@ static void readTeamPlayer(u16 port)
                         break; /* timeout */
                     val = (v2 << 4) | v1;
                     val ^= 0x00FF; /* 0 0 0 0 0 0 0 0 S A C B R L D U */
+                    typ = JOY_TYPE_PAD3;
                     break;
                 case JOY_TYPE_PAD6:
                     v1 = THREELINE_HANDSHAKE(pb, phase); /* r l d u */
@@ -642,11 +665,11 @@ static void readTeamPlayer(u16 port)
                     phase ^= 0x20;
                     if (!retry)
                         break; /* timeout */
-                    val = (JOY_TYPE_PAD6 << JOY_TYPE_SHIFT) | (v3 << 8) | (v2 << 4) | v1;
+                    val = (v3 << 8) | (v2 << 4) | v1;
                     val ^= 0x0FFF; /* 0 0 0 1 M X Y Z S A C B R L D U */
+                    typ = JOY_TYPE_PAD6;
                     break;
                 case JOY_TYPE_MOUSE:
-                    val = (JOY_TYPE_MOUSE << JOY_TYPE_SHIFT);
                     for (i=0; i<6; i++)
                     {
                         md[i] = THREELINE_HANDSHAKE(pb, phase);
@@ -654,42 +677,45 @@ static void readTeamPlayer(u16 port)
                         if (!retry)
                             break; /* timeout */
                     }
-                    if (i == 6)
-                    {
-                        if (md[0] & 0x04)
-                            mx = 256; /* x overflow */
-                        else
-                            mx = md[2]<<4 | md[3];
-                        if (md[0] & 0x01)
-                            mx |= 0xFF00; /* x sign extend */
-                        if (md[0] & 0x08)
-                            my = 256; /* y overflow */
-                        else
-                            my = md[4]<<4 | md[5];
-                        if (md[0] & 0x02)
-                            my |= 0xFF00; /* y sign extend */
-                        joyAxisX[xlt] += (s16)mx;
-                        joyAxisY[xlt] += (s16)my;
+                    if (!retry)
+                        break;
 
-                        if (md[1] & 8) val |= BUTTON_START;
-                        if (md[1] & 4) val |= BUTTON_MMB;
-                        if (md[1] & 2) val |= BUTTON_RMB;
-                        if (md[1] & 1) val |= BUTTON_LMB;
+                    val = 0;
+                    if (md[0] & 0x04)
+                        mx = 256; /* x overflow */
+                    else
+                        mx = (md[2] << 4) | md[3];
+                    if (md[0] & 0x01)
+                        mx |= 0xFF00; /* x sign extend */
+                    if (md[0] & 0x08)
+                        my = 256; /* y overflow */
+                    else
+                        my = (md[4] << 4) | md[5];
+                    if (md[0] & 0x02)
+                        my |= 0xFF00; /* y sign extend */
+                    joyAxisX[xlt] += (s16)mx;
+                    joyAxisY[xlt] += (s16)my;
 
-                        if ((s16)mx < -2) val |= BUTTON_LEFT;
-                        else if ((s16)mx > 2) val |= BUTTON_RIGHT;
-                        if ((s16)my < -2) val |= BUTTON_DOWN;
-                        else if ((s16)my > 2) val |= BUTTON_UP;
-                    }
+                    if (md[1] & 8) val |= BUTTON_START;
+                    if (md[1] & 4) val |= BUTTON_MMB;
+                    if (md[1] & 2) val |= BUTTON_RMB;
+                    if (md[1] & 1) val |= BUTTON_LMB;
+
+                    if ((s16)mx < -2) val |= BUTTON_LEFT;
+                    else if ((s16)mx > 2) val |= BUTTON_RIGHT;
+                    if ((s16)my < -2) val |= BUTTON_DOWN;
+                    else if ((s16)my > 2) val |= BUTTON_UP;
+
+                    typ = JOY_TYPE_MOUSE;
                     break;
             }
             if (!retry)
                 break; /* timeout */
 
-            newstate = val;
-            change = (joyState[xlt] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
-            joyState[xlt] = newstate;
-            if ((joyEventCB) && (change)) joyEventCB(xlt, change, newstate);
+            change = joyState[xlt] ^ val;
+            joyType[xlt] = typ;
+            joyState[xlt] = val;
+            if ((joyEventCB) && (change)) joyEventCB(xlt, change, val);
         }
     }
     *pb = 0x60; /* end request */
@@ -701,8 +727,8 @@ static void readEa4WayPlay()
     static const u16 xlt[4] = { JOY_1, JOY_3, JOY_4, JOY_5 };
 
     vu8 *pb;
-    u16 newstate, change;
-    u16 val, v1, v2, i;
+    u16 change;
+    u16 val, v1, v2, typ, ind, i;
 
     for (i=0; i<4; i++)
     {
@@ -720,17 +746,27 @@ static void readEa4WayPlay()
         pb = (vu8 *)0xa10005;
         *pb = 0x7C;                                   /* deselect port */
 
-        if ((val & 0x0F00) != 0x0F00) v2 = 0x0F00;                          /* three button pad */
-        else v2 = (JOY_TYPE_PAD6 << JOY_TYPE_SHIFT) | ((v2 & 0x000F) << 8); /* six button pad */
+        if ((val & 0x0F00) != 0x0F00)
+        {
+            typ = JOY_TYPE_PAD3;                      /* three button pad */
+            v2 = 0x0F00;
+        }
+        else
+        {
+            typ = JOY_TYPE_PAD6;                      /* six button pad */
+            v2 = (v2 & 0x000F) << 8;
+        }
 
         val = ((v1 & 0x3000) >> 6) | (v1 & 0x003F);   /* 0 0 0 0 0 0 0 0 s a c b r l d u  */
         val |= v2;                                    /* 0 0 0 1 m x y z s a c b r l d u  or  0 0 0 0 1 1 1 1 s a c b r l d u */
         val ^= 0x0FFF;                                /* 0 0 0 1 M X Y Z S A C B R L D U  or  0 0 0 0 0 0 0 0 S A C B R L D U */
 
-        newstate = val;
-        change = (joyState[xlt[i]] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
-        joyState[xlt[i]] = newstate;
-        if ((joyEventCB) && (change)) joyEventCB(xlt[i], change, newstate);
+        ind = xlt[i];
+
+        change = joyState[ind] ^ val;
+        joyType[ind] = typ;
+        joyState[ind] = val;
+        if ((joyEventCB) && (change)) joyEventCB(ind, change, val);
     }
 }
 
@@ -795,12 +831,14 @@ static void readLightgun(u16 port)
         asm volatile ("nop");
         *pb = 0xCF;                         /* assert RST short - clear counter */
 
-        newstate = (JOY_TYPE_MENACER << JOY_TYPE_SHIFT);
+        newstate = 0;
         if (val & 8) newstate |= BUTTON_START;
         if (val & 4) newstate |= BUTTON_C;
         if (val & 2) newstate |= BUTTON_A;
         if (val & 1) newstate |= BUTTON_B;
-        change = (joyState[port] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+
+        change = joyState[port] ^ newstate;
+        joyType[port] = JOY_TYPE_MENACER;
         joyState[port] = newstate;
         if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
     }
@@ -811,24 +849,28 @@ static void readLightgun(u16 port)
         val = *pb;                          /* read twice... probably a setup delay thing */
         *pb = 0x10;                         /* deselect blue gun */
 
-        newstate = (JOY_TYPE_JUSTIFIER << JOY_TYPE_SHIFT);
+        newstate = 0;
         if (~val & 2) newstate |= BUTTON_START;
         if (~val & 1) newstate |= BUTTON_A;
-        change = (joyState[port] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+
+        change = joyState[port] ^ newstate;
+        joyType[port] = JOY_TYPE_JUSTIFIER;
         joyState[port] = newstate;
         if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
 
-        if ((joyState[port ? JOY_6 : JOY_3] & JOY_TYPE_MASK) == (JOY_TYPE_JUSTIFIER << JOY_TYPE_SHIFT))
+        if (joyType[port ? JOY_6 : JOY_3] == JOY_TYPE_JUSTIFIER)
         {
             *pb = 0x20;                     /* select red gun */
             val = *pb;
             val = *pb;                      /* read twice... probably a setup delay thing */
             *pb = 0x30;                     /* deselect red gun */
 
-            newstate = (JOY_TYPE_JUSTIFIER << JOY_TYPE_SHIFT);
+            newstate = 0;
             if (~val & 2) newstate |= BUTTON_START;
             if (~val & 1) newstate |= BUTTON_A;
-            change = (joyState[port ? JOY_6 : JOY_3] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+
+            change = joyState[port ? JOY_6 : JOY_3] ^ newstate;
+            joyType[port ? JOY_6 : JOY_3] = JOY_TYPE_JUSTIFIER;
             joyState[port ? JOY_6 : JOY_3] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(port ? JOY_6 : JOY_3, change, newstate);
 
@@ -910,6 +952,7 @@ static u16 readTrackball(u16 port)
 
 void JOY_update()
 {
+    u16 val;
     u16 newstate;
     u16 change;
 
@@ -918,26 +961,34 @@ void JOY_update()
         case JOY_SUPPORT_OFF:
             break;
         case JOY_SUPPORT_3BTN:
-            newstate = read3Btn(PORT_1);
+            val = read3Btn(PORT_1);
+            newstate = val & BUTTON_ALL;
             change = joyState[JOY_1] ^ newstate;
+            joyType[JOY_1] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
         case JOY_SUPPORT_6BTN:
-            newstate = read6Btn(PORT_1);
-            change = (joyState[JOY_1] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+            val = read6Btn(PORT_1);
+            newstate = val & BUTTON_ALL;
+            change = joyState[JOY_1] ^ newstate;
+            joyType[JOY_1] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
         case JOY_SUPPORT_MOUSE:
-            newstate = readMouse(PORT_1);
-            change = (joyState[JOY_1] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+            val = readMouse(PORT_1);
+            newstate = val & BUTTON_ALL;
+            change = joyState[JOY_1] ^ newstate;
+            joyType[JOY_1] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
         case JOY_SUPPORT_TRACKBALL:
-            newstate = readTrackball(PORT_1);
-            change = (joyState[JOY_1] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+            val = readTrackball(PORT_1);
+            newstate = val & BUTTON_ALL;
+            change = joyState[JOY_1] ^ newstate;
+            joyType[JOY_1] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
@@ -960,26 +1011,34 @@ void JOY_update()
         case JOY_SUPPORT_OFF:
             break;
         case JOY_SUPPORT_3BTN:
-            newstate = read3Btn(PORT_2);
+            val = read3Btn(PORT_2);
+            newstate = val & BUTTON_ALL;
             change = joyState[JOY_2] ^ newstate;
+            joyType[JOY_2] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
         case JOY_SUPPORT_6BTN:
-            newstate = read6Btn(PORT_2);
-            change = (joyState[JOY_2] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+            val = read6Btn(PORT_2);
+            newstate = val & BUTTON_ALL;
+            change = joyState[JOY_2] ^ newstate;
+            joyType[JOY_2] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
         case JOY_SUPPORT_MOUSE:
-            newstate = readMouse(PORT_2);
-            change = (joyState[JOY_2] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+            val = readMouse(PORT_2);
+            newstate = val & BUTTON_ALL;
+            change = joyState[JOY_2] ^ newstate;
+            joyType[JOY_2] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
         case JOY_SUPPORT_TRACKBALL:
-            newstate = readTrackball(PORT_2);
-            change = (joyState[JOY_2] & BUTTON_ALL) ^ (newstate & BUTTON_ALL);
+            val = readTrackball(PORT_2);
+            newstate = val & BUTTON_ALL;
+            change = joyState[JOY_2] ^ newstate;
+            joyType[JOY_2] = val >> JOY_TYPE_SHIFT;
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
