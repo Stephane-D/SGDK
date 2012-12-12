@@ -33,6 +33,11 @@
  *<br>
  * <b>Z80_DRIVER_TFM</b><br>
  * TFM music player driver.<br>
+ *<br>
+ * <b>Z80_DRIVER_VGM</b><br>
+ * VGM music player driver.<br>
+ * Support PCM playback up to 8 Khz.<br>
+ * Written by Sigflup and kubilus1.
  */
 
 #ifndef _SOUND_H_
