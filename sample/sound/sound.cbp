@@ -40,6 +40,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="res\bad_apple.h" />
+		<Unit filename="res\bad_apple.vgm" />
 		<Unit filename="res\beat1_16k.h" />
 		<Unit filename="res\india_11k.h" />
 		<Unit filename="res\india_13k.h" />
@@ -61,6 +63,14 @@
 		<Unit filename="src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src\music1_vgm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\music1_vgm.h" />
+		<Unit filename="src\music2_vgm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\music2_vgm.h" />
 		<Unit filename="src\sounds.h" />
 		<Extensions>
 			<code_completion />

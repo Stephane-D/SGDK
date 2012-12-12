@@ -7,6 +7,7 @@
 #include "z80_mvsc.h"
 #include "smp_null.h"
 #include "smp_null_pcm.h"
+#include "timer.h"
 
 
 // Z80_DRIVER_PCM
@@ -756,14 +757,67 @@ void SND_startPlay_TFM(const u8 *song)
     pb[0x00] = addr >> 0;
     pb[0x01] = addr >> 8;
     pb[0x02] = addr >> 16;
-    pb[0x00] = addr >> 24;
+    pb[0x03] = addr >> 24;
 
     Z80_releaseBus();
 
-    // load the driver efter we set the song adress
+    // load the driver after we set the song adress
     Z80_loadDriver(Z80_DRIVER_TFM, 0);
 
     // reset Z80 (in case driver was already loaded)
     Z80_startReset();
     Z80_endReset();
+}
+
+
+// Z80_DRIVER_VGM
+// VGM driver
+///////////////////////////////////////////////////////////////
+
+void SND_startPlay_VGM(const u8 *song)
+{
+    vu8 *pb;
+    u32 addr;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+
+    Z80_requestBus(1);
+
+    addr = (u32) song;
+
+    // point to Z80 VGM address parameter
+    pb = (u8 *) 0xA00FFF;
+
+    // song address
+    pb[0x00] = addr >> 0;
+    pb[0x01] = addr >> 8;
+    pb[0x02] = addr >> 16;
+    pb[0x03] = addr >> 24;
+
+    // point to Z80 VGM init parameter
+    pb = (u8 *) 0xA01003;
+    *pb = 0x01;
+   // point to Z80 VGM play parameter
+    pb = (u8 *) 0xA01004;
+    *pb = 0x01;
+
+    Z80_releaseBus();
+}
+
+
+void SND_stopPlay_VGM()
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+
+    Z80_requestBus(1);
+
+    // point to Z80 VGM play parameter
+    pb = (u8 *) 0xA01004;
+    *pb = 0x00;
+
+    Z80_releaseBus();
 }

@@ -2,7 +2,7 @@
 #include "sounds.h"
 
 
-#define NUM_DRIVER      7
+#define NUM_DRIVER      8
 #define MAX_CMD         8
 #define MAX_PARAM       16
 
@@ -110,6 +110,14 @@ static const driver_def drivers[NUM_DRIVER] =
     {
         Z80_DRIVER_TFM,
         "TFM tracker driver",
+        1,
+        {
+            {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
+        }
+    },
+    {
+        Z80_DRIVER_VGM,
+        "VGM driver",
         1,
         {
             {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
@@ -261,6 +269,13 @@ static void refreshDriverCmd()
 
         case Z80_DRIVER_TFM:
             VDP_drawText("press A to start play", 1, 12);
+            break;
+
+        case Z80_DRIVER_VGM:
+            VDP_drawText("press A to start VGM1 play", 1, 12);
+            VDP_drawText("press B to start VGM2 play", 1, 13);
+            VDP_drawText("press C to start VGM3 play", 1, 14);
+            VDP_drawText("press Start to stop play", 1, 15);
             break;
     }
 }
@@ -631,6 +646,27 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             if (changed & state & BUTTON_A)
             {
                 SND_startPlay_TFM(music_tfd);
+            }
+            break;
+        }
+
+        case Z80_DRIVER_VGM:
+        {
+            if (changed & state & BUTTON_A)
+            {
+                SND_startPlay_VGM(music1_vgm);
+            }
+            if (changed & state & BUTTON_B)
+            {
+                SND_startPlay_VGM(music2_vgm);
+            }
+            if (changed & state & BUTTON_C)
+            {
+                SND_startPlay_VGM(bad_apple);
+            }
+            if (changed & state & BUTTON_START)
+            {
+                SND_stopPlay_VGM();
             }
             break;
         }

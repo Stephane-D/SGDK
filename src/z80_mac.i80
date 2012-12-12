@@ -1,5 +1,36 @@
 ; ############################     macro     ##############################
 
+; setBank
+; -------
+; A    -> bit 22-15 of rom address to set in the bank register
+; HL  <-  BANKREG
+;
+; set the bank register for ROM area
+; = 101 cycles
+
+            macro   setBank
+
+            LD  HL, BANKREG         ; HL = BANKREG              ' 10
+            LD  (HL), A             ; #1 (bit 15)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #2 (bit 16)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #3 (bit 17)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #4 (bit 18)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #5 (bit 19)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #6 (bit 20)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #7 (bit 21)               ' 7
+            RRA                     ;                           ' 4
+            LD  (HL), A             ; #8 (bit 22)               ' 7
+            LD  (HL), L             ; #9 (bit 23 = 0)           ' 7
+
+            endm                    ;                           ' 101
+
+
 ; setBankFast
 ; -----------
 ; A    -> bit 21-15 of rom address to set in the bank register
@@ -177,7 +208,7 @@
 
 
 ; clearPlayStatus
-; -----------
+; ---------------
 ; HL  <- point to STATUS
 ;
 ; clear play status for channel 'ch'
@@ -223,7 +254,7 @@
 
 
 ; clearLoopStatus
-; -----------
+; ---------------
 ; HL  <- point to STATUS+1
 ;
 ; clear loop status for channel 'ch'
@@ -235,6 +266,21 @@
             RES     STATPLAY_SFT+ch, (HL)   ; clear status      ' 15
 
             endm                            ;                   ' 25
+
+
+; clearAllStatus
+; --------------
+; HL  <- 0
+;
+; clear play and loop status for all channel
+; = 26 cycles
+
+            macro   clearAllStatus
+
+            LD      HL, $00                 ;                   ' 10
+            LD      (STATUS), HL            ; clear status      ' 16
+
+            endm                            ;                   ' 26
 
 
 ; ############################  macro wait macro  ##############################
@@ -275,7 +321,8 @@
             endm
 
             macro   wait10
-            INC     IY
+            JP      Z, .loop
+.loop
             endm
 
             macro   wait11
@@ -367,6 +414,11 @@
             wait7
             endm
 
+            macro   wait29
+            wait21
+            wait8
+            endm
+
             macro   wait30
             wait22
             wait8
@@ -406,14 +458,14 @@
             wait16
             endm
 
-            macro   wait39
-            wait35
-            wait4
-            endm
-
             macro   wait38
             wait21
             wait17
+            endm
+
+            macro   wait39
+            wait35
+            wait4
             endm
 
             macro   wait40
@@ -602,6 +654,11 @@
             wait9
             endm
 
+            macro   wait103
+            wait91
+            wait12
+            endm
+
             macro   wait104
             wait91
             wait13
@@ -626,6 +683,11 @@
             wait20
             endm
 
+            macro   wait112
+            wait105
+            wait7
+            endm
+
             macro   wait116
             wait105
             wait11
@@ -638,6 +700,11 @@
 
             macro   wait119
             wait14x7 8
+            endm
+
+            macro   wait120
+            wait105
+            wait15
             endm
 
             macro   wait121
@@ -679,8 +746,51 @@
             wait8
             endm
 
+            macro   wait147
+            wait14x7 10
+            endm
+
+            macro   wait161
+            wait14x7 11
+            endm
+
+            macro   wait164
+            wait147
+            wait17
+            endm
+
+            macro   wait166
+            wait147
+            wait19
+            endm
+
+            macro   wait172
+            wait161
+            wait11
+            endm
+
+            macro   wait174
+            wait161
+            wait13
+            endm
+
             macro   wait175
             wait14x7 12
+            endm
+
+            macro   wait176
+            wait161
+            wait15
+            endm
+
+            macro   wait178
+            wait161
+            wait17
+            endm
+
+            macro   wait180
+            wait161
+            wait19
             endm
 
             macro   wait182
@@ -702,9 +812,19 @@
             wait14x7 13
             endm
 
+            macro   wait192
+            wait175
+            wait17
+            endm
+
             macro   wait193
             wait189
             wait4
+            endm
+
+            macro   wait194
+            wait175
+            wait19
             endm
 
             macro   wait197

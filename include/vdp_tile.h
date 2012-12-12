@@ -148,12 +148,27 @@ void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 
  *  \param num
  *      Number of tile to fill.
  *  \param use_dma
- *      Use DMA transfert (faster).
+ *      Use DMA transfert (faster and so recommended).
  *
  *  This function is generally used to clear tile data in VRAM.
  */
 void VDP_fillTileData(u8 value, u16 index, u16 num, u8 use_dma);
 
+/**
+ *  \brief
+ *      Set tilemap data at single position.
+ *
+ *  \param plan
+ *      Plan where we want to set tilemap data.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ *  \param tile
+ *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param ind
+ *      tile index.
+ */
+void VDP_setTileMapByIndex(u16 plan, u16 tile, u16 ind);
 /**
  *  \brief
  *      Set tilemap data at single position.
@@ -171,6 +186,26 @@ void VDP_fillTileData(u8 value, u16 index, u16 num, u8 use_dma);
  *      y position (in tile).
  */
 void VDP_setTileMap(u16 plan, u16 tile, u16 x, u16 y);
+/**
+ *  \brief
+ *      Fill tilemap data.
+ *
+ *  \param plan
+ *      Plan where we want to fill tilemap data.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ *  \param tile
+ *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param ind
+ *      tile index where to start fill.
+ *  \param num
+ *      Number of tile to fill.
+ *
+ *  \see VDP_fillTileMapRect()
+ *  \see VDP_fillTileMapRectIncByIndex()
+ */
+void VDP_fillTileMapRectByIndex(u16 plan, u16 tile, u16 ind, u16 num);
 /**
  *  \brief
  *      Fill tilemap data at specified region.
@@ -192,9 +227,28 @@ void VDP_setTileMap(u16 plan, u16 tile, u16 x, u16 y);
  *      Region Heigh (in tile).
  *
  *  Fill the specified tilemap region with specified tile attributes values.<br/>
- *  See also VDP_fillTileMapRectInc().
+ *
+ *  \see VDP_fillTileMapRectByIndex() (faster method)
+ *  \see VDP_fillTileMapRectInc()
  */
 void VDP_fillTileMapRect(u16 plan, u16 tile, u16 x, u16 y, u16 w, u16 h);
+/**
+ *  \brief
+ *      Clear tilemap data.
+ *
+ *  \param plan
+ *      Plan where we want to clear tilemap region.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ *  \param ind
+ *      Tile index where to start fill.
+ *  \param num
+ *      Number of tile to fill.
+ *  \param use_dma
+ *      Use DMA transfert (faster and so recommended).
+ */
+void VDP_clearTileMapRectByIndex(u16 plan, u16 ind, u16 num, u8 use_dma);
 /**
  *  \brief
  *      Clear tilemap data at specified region.
@@ -216,7 +270,33 @@ void VDP_fillTileMapRect(u16 plan, u16 tile, u16 x, u16 y, u16 w, u16 h);
 void VDP_clearTileMapRect(u16 plan, u16 x, u16 y, u16 w, u16 h);
 /**
  *  \brief
- *      Fill tilemap data with index auto increment at specified region .
+ *      Fill tilemap data with index auto increment.
+ *
+ *  \param plan
+ *      Plan where we want to fill tilemap region.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ *  \param basetile
+ *      Base tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param ind
+ *      tile index where to start fill.
+ *  \param num
+ *      Number of tile to fill.
+ *
+ *  Set the specified tilemap with specified tile attributes values.<br/>
+ *  The function auto increments tile index in tile attribute :<br/>
+ *  tilemap at index : basetile, basetile+1, basetile+2, basetile+3, ...<br/>
+ *  ...<br/>
+ *  So this function is pratical to display image.<br/>
+ *
+ *  \see also VDP_fillTileMapRectByIndex()
+ *  \see also VDP_fillTileMapRectInc()
+ */
+void VDP_fillTileMapRectIncByIndex(u16 plan, u16 basetile, u16 ind, u16 num);
+/**
+ *  \brief
+ *      Fill tilemap data with index auto increment at specified region.
  *
  *  \param plan
  *      Plan where we want to fill tilemap region.<br/>
@@ -235,14 +315,43 @@ void VDP_clearTileMapRect(u16 plan, u16 x, u16 y, u16 w, u16 h);
  *      Region Heigh (in tile).
  *
  *  Set the specified tilemap region with specified tile attributes values.<br/>
- *  The function auto increments tile index :<br/>
- *  tilemap line 0 : index, index+1, index+2, index+3, ...<br/>
- *  tilemap line 1 : index+w, index+w+1, index+w+2, ...<br/>
+ *  The function auto increments tile index in tile attribute :<br/>
+ *  tilemap line 0 : basetile, basetile+1, basetile+2, basetile+3, ...<br/>
+ *  tilemap line 1 : basetile+w, basetile+w+1, basetile+w+2, ...<br/>
  *  ...<br/>
  *  So this function is pratical to display image.<br/>
- *  See also VDP_fillTileMapRect().
+ *
+ *  \see also VDP_fillTileMapRectIncByIndex()
+ *  \see also VDP_fillTileMapRect()
  */
 void VDP_fillTileMapRectInc(u16 plan, u16 basetile, u16 x, u16 y, u16 w, u16 h);
+/**
+ *  \brief
+ *      Load tilemap data at specified index.
+ *
+ *  \param plan
+ *      Plan where we want to load tilemap data.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ *  \param data
+ *      Tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param ind
+ *      Tile index where to start to set tilemap.
+ *  \param num
+ *      Number of tile to set.
+ *  \param use_dma
+ *      Use DMA transfert (faster but can lock Z80 execution).
+ *
+ *  Set the specified tilemap with specified tile attributes values.<br/>
+ *  Transfert rate:<br/>
+ *  ~90 bytes per scanline in software (during blanking)<br/>
+ *  ~190 bytes per scanline in hardware (during blanking)
+ *
+ *  \see VDP_setTileMapRectExByIndex().
+ *  \see VDP_setTileMapRect().
+ */
+void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma);
 /**
  *  \brief
  *      Load tilemap data at specified region.
@@ -264,9 +373,38 @@ void VDP_fillTileMapRectInc(u16 plan, u16 basetile, u16 x, u16 y, u16 w, u16 h);
  *      Region Heigh (in tile).
  *
  *  Set the specified tilemap region with specified tile attributes values.<br/>
- *  See also VDP_setTileMapRectEx().
+ *
+ *  \see VDP_setTileMapRectEx().
+ *  \see VDP_setTileMapRectByIndex().
  */
 void VDP_setTileMapRect(u16 plan, const u16 *data, u16 x, u16 y, u16 w, u16 h);
+/**
+ *  \brief
+ *      Load tilemap data at specified index (extended version).
+ *
+ *  \param plan
+ *      Plan where we want to load tilemap data.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ *  \param data
+ *      tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param baseindex
+ *      Base index for tile attributes.
+ *  \param baseflags
+ *      Base flags for tile attributes.
+ *  \param ind
+ *      Tile index where to start to set tilemap.
+ *  \param num
+ *      Number of tile to set.
+ *
+ *  Set the specified tilemap with specified tile attributes values.<br/>
+ *  Values written in tilemap are calculated this way: <code>*tilemap = baseflags | (*data + baseindex);</code><br/>
+ *
+ *  \see VDP_setTileMapRectByIndex()
+ *  \see VDP_setTileMapRectEx()
+ */
+void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 baseflags, u16 ind, u16 num);
 /**
  *  \brief
  *      Load tilemap data at specified region (extended version).
@@ -279,8 +417,7 @@ void VDP_setTileMapRect(u16 plan, const u16 *data, u16 x, u16 y, u16 w, u16 h);
  *  \param data
  *      tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param baseindex
- *      Base index for tile attributes.<br/>
- *      Base index for tile attributes.<br/>
+ *      Base index for tile attributes.
  *  \param baseflags
  *      Base flags for tile attributes.
  *  \param x
@@ -295,7 +432,8 @@ void VDP_setTileMapRect(u16 plan, const u16 *data, u16 x, u16 y, u16 w, u16 h);
  *  Set the specified tilemap region with specified tile attributes values.<br/>
  *  Values written in tilemap are calculated this way: <code>*tilemap = baseflags | (*data + baseindex);</code><br/>
  *
- *  See also VDP_setTileMapRect().
+ *  \see VDP_setTileMapRect()
+ *  \see VDP_setTileMapRectExByIndex()
  */
 void VDP_setTileMapRectEx(u16 plan, const u16 *data, u16 baseindex, u16 baseflags, u16 x, u16 y, u16 w, u16 h);
 

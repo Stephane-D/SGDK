@@ -31,9 +31,6 @@ static void ym2612wr(u8 reg,u8 val,u8 bank);
 
 void TFC_init(const u8 *data)
 {
-    Z80_requestBus(1);
-    Z80_releaseBus();
-
 	TFCP.data=(u8*)data;
 	TFC_play(FALSE);
 }

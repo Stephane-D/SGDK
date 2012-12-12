@@ -17,11 +17,54 @@
 extern u16 textBasetile;
 
 
-void VDP_setHorizontalScroll(u16 plan, u16 line, u16 value)
+void VDP_setHorizontalScroll(u16 plan, u16 value)
 {
     vu16 *pw;
     vu32 *pl;
     u16 addr;
+
+    /* Point to vdp port */
+    pw = (u16 *) GFX_DATA_PORT;
+    pl = (u32 *) GFX_CTRL_PORT;
+
+    addr = HSCRL;
+    if (plan == BPLAN) addr += 2;
+
+    *pl = GFX_WRITE_VRAM_ADDR(addr);
+    *pw = value;
+}
+
+void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len)
+{
+    vu16 *pw;
+    vu32 *pl;
+    u16 addr;
+    u16 *src;
+    u16 i;
+
+    /* Point to vdp port */
+    pw = (u16 *) GFX_DATA_PORT;
+    pl = (u32 *) GFX_CTRL_PORT;
+
+    addr = HSCRL + ((tile & 0x1F) * (4 * 8));
+    if (plan == BPLAN) addr += 2;
+
+    VDP_setAutoInc(4 * 8);
+    *pl = GFX_WRITE_VRAM_ADDR(addr);
+
+    src = values;
+
+    i = len;
+    while(i--) *pw = *src++;
+}
+
+void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len)
+{
+    vu16 *pw;
+    vu32 *pl;
+    u16 addr;
+    u16 *src;
+    u16 i;
 
     /* Point to vdp port */
     pw = (u16 *) GFX_DATA_PORT;
@@ -30,11 +73,16 @@ void VDP_setHorizontalScroll(u16 plan, u16 line, u16 value)
     addr = HSCRL + ((line & 0xFF) * 4);
     if (plan == BPLAN) addr += 2;
 
+    VDP_setAutoInc(4);
     *pl = GFX_WRITE_VRAM_ADDR(addr);
-    *pw = value;
+
+    src = values;
+
+    i = len;
+    while(i--) *pw = *src++;
 }
 
-void VDP_setVerticalScroll(u16 plan, u16 cell, u16 value)
+void VDP_setVerticalScroll(u16 plan, u16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -44,11 +92,35 @@ void VDP_setVerticalScroll(u16 plan, u16 cell, u16 value)
     pw = (u16 *) GFX_DATA_PORT;
     pl = (u32 *) GFX_CTRL_PORT;
 
-    addr = (cell & 0x1F) * 4;
-    if (plan == BPLAN) addr += 2;
+    if (plan == APLAN) addr = 0;
+    else addr = 2;
 
     *pl = GFX_WRITE_VSRAM_ADDR(addr);
     *pw = value;
+}
+
+void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len)
+{
+    vu16 *pw;
+    vu32 *pl;
+    u16 addr;
+    u16 *src;
+    u16 i;
+
+    /* Point to vdp port */
+    pw = (u16 *) GFX_DATA_PORT;
+    pl = (u32 *) GFX_CTRL_PORT;
+
+    addr = (tile & 0x1F) * 4;
+    if (plan == BPLAN) addr += 2;
+
+    VDP_setAutoInc(4);
+    *pl = GFX_WRITE_VSRAM_ADDR(addr);
+
+    src = values;
+
+    i = len;
+    while(i--) *pw = *src++;
 }
 
 

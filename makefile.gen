@@ -59,6 +59,8 @@ RES_EIF= $(wildcard *.eif)
 RES_EIF+= $(wildcard $(RES)/*.eif)
 RES_ESF= $(wildcard *.esf)
 RES_ESF+= $(wildcard $(RES)/*.esf)
+RES_VGM= $(wildcard *.vgm)
+RES_VGM+= $(wildcard $(RES)/*.vgm)
 RES_RC= $(wildcard *.rc)
 RES_RC+= $(wildcard $(RES)/*.rc)
 RES_ASM= $(wildcard *.asm)
@@ -74,6 +76,7 @@ OBJ+= $(RES_PCM:.pcm=.o)
 OBJ+= $(RES_TFD:.tfd=.o)
 OBJ+= $(RES_TFC:.tfc=.o)
 OBJ+= $(RES_MVS:.mvs=.o)
+OBJ+= $(RES_VGM:.vgm=.o)
 OBJ+= $(RES_EIF:.eif=.o)
 OBJ+= $(RES_ESF:.esf=.o)
 OBJ+= $(RES_S:.s=.o)
@@ -89,7 +92,12 @@ FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno
 #FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(LIBSRC) -i$(LIBINCLUDE) -i$(SRC) -i$(INCLUDE) -i$(RES)
 
-all: out/rom.bin
+
+release: out/rom.bin
+debug: out/rom.bin out/rom.wch
+debugall: out/rom.bin out/rom.wch out/rom.gsrc
+
+all: release
 
 default: all
 
@@ -102,12 +110,14 @@ cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
 
 out/rom.bin: out/rom.out
-	$(NM) -n -S -t x out/rom.out >out/rom.nm
-	$(NM2WCH) out/rom.nm out/rom.wch
 	$(OBJCPY) -O binary out/rom.out out/rom.bin
 	$(SIZEBND) out/rom.bin -sizealign 131072
 
-out/tmp:
+out/rom.wch: out/rom.out
+	$(NM) -n -S -t x out/rom.out >out/rom.nm
+	$(NM2WCH) out/rom.nm out/rom.wch
+
+out/rom.gsrc: out/rom.bin
 	$(OUT2GSRC) i out/rom.bin out/rom.addr
 	$(ADDR2LINE) -e out/rom.out < out/rom.addr > out/rom.gsrc
 
@@ -174,6 +184,9 @@ out/%.o: %.s
 	$(BINTOS) -align 32768 $<
 
 %.s: %.eif
+	$(BINTOS) -align 256 $<
+
+%.s: %.vgm
 	$(BINTOS) -align 256 $<
 
 %.s: %.raw

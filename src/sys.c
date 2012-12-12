@@ -331,6 +331,7 @@ void _start_entry()
 void _reset_entry()
 {
     internal_reset();
+
     main(0);
 }
 
@@ -351,6 +352,9 @@ static void internal_reset()
     JOY_init();
     // reseting z80 also reset the ym2612
     Z80_init();
+
+    // enable interrupts
+    SYS_setInterruptMaskLevel(3);
 }
 
 
@@ -383,4 +387,3 @@ u16 SYS_isInExtIntCallback()
 {
     return intTrace & IN_EXTINT;
 }
-

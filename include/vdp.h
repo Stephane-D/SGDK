@@ -83,6 +83,7 @@
  */
 #define VDP_PALMODE_FLAG        (1 << 0)
 
+//#define WPLAN                   0xA900
 #define WPLAN                   0xB000
 #define HSCRL                   0xB800
 #define SLIST                   0xBC00
@@ -115,6 +116,33 @@
  */
 #define VDP_PLAN_B              BPLAN
 
+/**
+ *  \def HSCROLL_PLANE
+ *      Definition to set horizontal scroll to mode plan.
+ */
+#define HSCROLL_PLANE           0
+/**
+ *  \def HSCROLL_TILE
+ *      Definition to set horizontal scroll to mode tile.
+ */
+#define HSCROLL_TILE            2
+/**
+ *  \def HSCROLL_LINE
+ *      Definition to set horizontal scroll to mode line.
+ */
+#define HSCROLL_LINE            3
+
+/**
+ *  \def VSCROLL_PLANE
+ *      Definition to set vertical scroll to mode plan.
+ */
+#define VSCROLL_PLANE           0
+/**
+ *  \def VSCROLL_2TILE
+ *      Definition to set vertical scroll to mode 2 tile.
+ */
+#define VSCROLL_2TILE           1
+
 
 /**
  *  \def TILE_SIZE
@@ -127,7 +155,7 @@
  *  \def TILE_SPACE
  *      Space in byte for tile in VRAM.
  */
-#define TILE_SPACE              0xB000
+#define TILE_SPACE              WPLAN
 
 /**
  *  \def TILE_MAXNUM
@@ -408,8 +436,47 @@ u16  VDP_getPlanHeight();
  *      height in tile.<br/>
  *      Possible values are 32, 64 or 128.
  */
-
 void VDP_setPlanSize(u16 w, u16 h);
+
+/**
+ *  \brief
+ *      Returns plan horizontal scrolling mode.
+ *
+ *  Possible values are: HSCROLL_PLANE, HSCROLL_TILE, HSCROLL_LINE
+ *
+ *  \see VDP_setScrollingMode for more informations about scrolling mode.
+ */
+u8 VDP_getHorizontalScrollingMode();
+/**
+ *  \brief
+ *      Returns plan vertical scrolling mode.
+ *
+ *  Possible values are: VSCROLL_PLANE, VSCROLL_2TILE
+ *
+ *  \see VDP_setScrollingMode for more informations about scrolling mode.
+ */
+u8 VDP_getVerticalScrollingMode();
+/**
+ *  \brief
+ *      Set plan scrolling mode.
+ *
+ * \param hscroll
+ *      Horizontal scrolling mode :<br>
+ *      <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
+ *      <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granulity (8 pixels bloc).<br/>
+ *      <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granulity (1 pixel).<br/>
+ * \param vscroll
+ *      Vertical scrolling mode :<br>
+ *      <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
+ *      <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granulity (16 pixels bloc).<br/>
+ *
+ * \see VDP_setHorizontalScroll() to set horizontal scroll offset in mode plane.<br/>
+ * \see VDP_setHorizontalScrollTile() to set horizontal scroll offset(s) in mode tile.<br/>
+ * \see VDP_setHorizontalScrollLine() to set horizontal scroll offset(s) in mode line.<br/>
+ * \see VDP_setVerticalScroll() to set vertical scroll offset in mode plane.<br/>
+ * \see VDP_setVerticalScrollTile() to set vertical scroll offset(s) in mode 2-tile.<br/>
+ */
+void VDP_setScrollingMode(u16 hscroll, u16 vscroll);
 
 /**
  *  \brief

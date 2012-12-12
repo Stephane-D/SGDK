@@ -1,5 +1,3 @@
-.text
-
 	.align	2
 	.globl	BMP_clipLine
 	.type	BMP_clipLine, @function

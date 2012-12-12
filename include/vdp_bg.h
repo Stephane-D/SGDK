@@ -16,7 +16,53 @@
 
 /**
  * \brief
- *      Set plan horizontal scroll.
+ *      Set plan horizontal scroll (plain scroll mode).<br/>
+ *      3 horizontal scroll modes are supported:<br/>
+ *      - Plain (whole plan)<br/>
+ *      - Tile (8 pixels bloc)<br/>
+ *      - Line (per pixel scroll)<br/>
+ *
+ * \param plan
+ *      Plan we want to set the horizontal scroll.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ * \param value
+ *      H scroll offset.
+ *
+ * \see VDP_setScrollingMode() function to change scroll mode.
+ */
+void VDP_setHorizontalScroll(u16 plan, u16 value);
+/**
+ * \brief
+ *      Set plan horizontal scroll (tile scroll mode).<br/>
+ *      3 horizontal scroll modes are supported:<br/>
+ *      - Plain (whole plan)<br/>
+ *      - Tile (8 pixels bloc)<br/>
+ *      - Line (per pixel scroll)<br/>
+ *
+ * \param plan
+ *      Plan we want to set the horizontal scroll.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ * \param tile
+ *      First tile we want to set the horizontal scroll.
+ * \param values
+ *      H scroll offsets.
+ * \param len
+ *      Number of tile to set.
+ *
+ * \see VDP_setScrollingMode() function to change scroll mode.
+ */
+void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len);
+/**
+ * \brief
+ *      Set plan horizontal scroll (line scroll mode).<br/>
+ *      3 horizontal scroll modes are supported:<br/>
+ *      - Plain (whole plan)<br/>
+ *      - Tile (8 pixels bloc)<br/>
+ *      - Line (per pixel scroll)<br/>
  *
  * \param plan
  *      Plan we want to set the horizontal scroll.<br/>
@@ -24,37 +70,57 @@
  *      - VDP_PLAN_A<br/>
  *      - VDP_PLAN_B<br/>
  * \param line
- *      Line (scanline) we want to set the horizontal scroll if current scroll mode supports it.<br/>
- *      3 horizontal scroll modes are supported:<br/>
- *      - Plain (whole plan)<br/>
- *      - Tile (bloc of 8 pixels)<br/>
- *      - Scanline (per pixel scroll)<br/>
- * \param value
- *      H scroll offset.
+ *      First line we want to set the horizontal scroll.
+ * \param values
+ *      H scroll offsets.
+ * \param len
+ *      Number of line to set.
  *
- *  See VDP_setReg() function to change scroll mode.
+ * \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScroll(u16 plan, u16 line, u16 value);
+void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len);
+
+
 /**
  * \brief
- *      Set plan vertical scroll.
+ *      Set plan vertical scroll (plain scroll mode).
+ *      2 vertical scroll modes are supported:<br/>
+ *      - Plain (whole plan)<br/>
+ *      - 2-Tiles (16 pixels bloc)<br/>
  *
  * \param plan
  *      Plan we want to set the vertical scroll.<br/>
  *      Accepted values are:<br/>
  *      - VDP_PLAN_A<br/>
  *      - VDP_PLAN_B<br/>
- * \param cell
- *      Cell we want to set the vertical scroll if current scroll mode supports it.
- *      2 vertical scroll modes are supported:<br/>
- *      - Plain (whole plan)<br/>
- *      - Cell (bloc of 16 pixels)<br/>
  * \param value
  *      V scroll offset.
  *
- *  See VDP_setReg() function to change scroll mode.
+ * \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setVerticalScroll(u16 plan, u16 cell, u16 value);
+void VDP_setVerticalScroll(u16 plan, u16 value);
+/**
+ * \brief
+ *      Set plan vertical scroll (2-Tiles scroll mode).
+ *      2 vertical scroll modes are supported:<br/>
+ *      - Plain (whole plan)<br/>
+ *      - 2-Tiles (16 pixels bloc)<br/>
+ *
+ * \param plan
+ *      Plan we want to set the vertical scroll.<br/>
+ *      Accepted values are:<br/>
+ *      - VDP_PLAN_A<br/>
+ *      - VDP_PLAN_B<br/>
+ * \param tile
+ *      First tile we want to set the vertical scroll.
+ * \param values
+ *      V scroll offsets.
+ * \param len
+ *      Number of tile to set.
+ *
+ * \see VDP_setScrollingMode() function to change scroll mode.
+ */
+void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len);
 
 /**
  * \brief

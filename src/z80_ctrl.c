@@ -15,13 +15,14 @@
 #include "z80_mvs.h"
 #include "z80_mvsc.h"
 #include "z80_tfm.h"
+#include "z80_vgm.h"
 
 #include "tab_vol.h"
 #include "smp_null.h"
 #include "smp_null_pcm.h"
 
 
-static u16 currentDriver;
+static s16 currentDriver;
 
 
 void Z80_init()
@@ -111,24 +112,34 @@ void Z80_setBank(const u16 bank)
 }
 
 
-void Z80_upload(const u16 dest, const u8 *data, const u16 size, const u16 resetz80)
+void Z80_upload(const u16 to, const u8 *from, const u16 size, const u16 resetz80)
 {
     Z80_requestBus(1);
 
-    // copy data to Z80 RAM
-    memcpy((u8 *) (Z80_RAM + dest), data, size);
+    // copy data to Z80 RAM (need to use byte copy here)
+    u8* src = (u8*) from;
+    u8* dst = (u8*) (Z80_RAM + to);
+    u16 len = size;
+
+    while(len--) *dst++ = *src++;
 
     if (resetz80) Z80_startReset();
     Z80_releaseBus();
+    // wait bus released
+    while(Z80_isBusTaken());
     if (resetz80) Z80_endReset();
 }
 
-void Z80_download(const u16 from, u8 *dest, const u16 size)
+void Z80_download(const u16 from, u8 *to, const u16 size)
 {
     Z80_requestBus(1);
 
-    // copy data from Z80 RAM
-    memcpy(dest, (u8 *) (Z80_RAM + from), size);
+    // copy data from Z80 RAM (need to use byte copy here)
+    u8* src = (u8*) (Z80_RAM + from);
+    u8* dst = (u8*) to;
+    u16 len = size;
+
+    while(len--) *dst++ = *src++;
 
     Z80_releaseBus();
 }
@@ -177,6 +188,11 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
         case Z80_DRIVER_TFM:
             drv = z80_tfm;
             len = sizeof(z80_tfm);
+            break;
+
+        case Z80_DRIVER_VGM:
+            drv = z80_vgm;
+            len = sizeof(z80_vgm);
             break;
 
         default:
@@ -270,18 +286,38 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
 
     }
 
-    // wait driver for being ready ?
+    // wait driver for being ready
     if (waitReady)
     {
-        Z80_releaseBus();
+        // drivers supporting ready status
+        if (driver < Z80_DRIVER_MVS)
+        {
+            Z80_releaseBus();
+            // wait bus released
+            while(Z80_isBusTaken());
 
-        // just wait for it
-        while (!Z80_isDriverReady())
-            waitSubTick(1);
+            // just wait for it
+            while(!Z80_isDriverReady())
+                while(Z80_isBusTaken());
+        }
+        else
+        {
+            // just wait a bit of time
+            waitMs(100);
+        }
     }
 
     // new driver set
     currentDriver = driver;
+}
+
+void Z80_loadCustomDriver(const u8 *drv, u16 size)
+{
+    // upload Z80 driver and reset Z80
+    Z80_upload(0, drv, size, 1);
+
+    // custom driver set
+    currentDriver = Z80_DRIVER_CUSTOM;
 }
 
 
@@ -306,3 +342,5 @@ u16 Z80_isDriverReady()
 
     return ret;
 }
+
+

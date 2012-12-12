@@ -173,98 +173,6 @@ void* MEM_alloc(u16 size);
 
 /**
  * \brief
- *      Fast fill block of memory
- *
- * \param to
- *      Pointer to the block of memory to fill.
- * \param value
- *      Value to be set.
- * \param len
- *      Number of u8 (byte) to be set to the value.
- *
- * Sets the first num bytes of the block of memory pointed by to with the specified value.
- * This method is optimized for large block fill, use memset for small block fill.
- */
-void fastMemset(void *to, u8 value, u32 len);
-/**
- * \brief
- *      Fast fill block of memory (optimized for u16)
- *
- * \param to
- *      Pointer to the block of memory to fill.
- * \param value
- *      Value to be set.
- * \param len
- *      Number of u16 (short) to be set to the value.
- *
- * Sets the first num shorts of the block of memory pointed by to with the specified value.
- * This method is optimized for large block fill, use memset for small block fill.
- */
-void fastMemsetU16(u16 *to, u16 value, u32 len);
-/**
- * \brief
- *      Fast fill block of memory (optimized for u32)
- *
- * \param to
- *      Pointer to the block of memory to fill.
- * \param value
- *      Value to be set.
- * \param len
- *      Number of u32 (long) to be set to the value.
- *
- * Sets the first num longs of the block of memory pointed by to with the specified value.
- * This method is optimized for large block fill, use memset for small block fill.
- */
-void fastMemsetU32(u32 *to, u32 value, u32 len);
-/**
- * \brief
- *      Fast copy block of memory
- *
- * \param to
- *      Pointer to the destination array where the content is to be copied, type-casted to a pointer of type void*.
- * \param from
- *      Pointer to the source of data to be copied, type-casted to a pointer of type void*.
- * \param len
- *      Number of bytes to copy.
- *
- * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
- * The underlying type of the objects pointed by both the source and destination pointers are irrelevant for this function; The result is a binary copy of the data.
- * This method is optimized for large block copy, use memcpy for small block copy.
- */
-void fastMemcpy(void *to, const void *from, u32 len);
-/**
- * \brief
- *      Fast copy block of memory (optimized for u16 type)
- *
- * \param to
- *      Pointer to the destination u16 array where the content is to be copied
- * \param from
- *      Pointer to the source u16 array to be copied
- * \param len
- *      Number of u16 element (short) to copy.
- *
- * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
- * This method is optimized for large block copy, use memcpyU16 for small block copy.
- */
-void fastMemcpyU16(u16 *to, const u16 *from, u32 len);
-/**
- * \brief
- *      Fast copy block of memory (optimized for u32 type)
- *
- * \param to
- *      Pointer to the destination u32 array where the content is to be copied
- * \param from
- *      Pointer to the source u32 array to be copied
- * \param len
- *      Number of u32 element (long) to copy.
- *
- * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
- * This method is optimized for large block copy, use memcpyU32 for small block copy.
- */
-void fastMemcpyU32(u32 *to, const u32 *from, u32 len);
-
-/**
- * \brief
  *      Fill block of memory
  *
  * \param to
@@ -276,7 +184,7 @@ void fastMemcpyU32(u32 *to, const u32 *from, u32 len);
  *
  * Sets the first num bytes of the block of memory pointed by to with the specified value.
  */
-void memset(void *to, u8 value, u32 len);
+void memset(void *to, u8 value, u16 len);
 /**
  * \brief
  *      Fill block of memory (optimized for u16)
@@ -290,7 +198,7 @@ void memset(void *to, u8 value, u32 len);
  *
  * Sets the first num shorts of the block of memory pointed by to with the specified value.
  */
-void memsetU16(u16 *to, u16 value, u32 len);
+void memsetU16(u16 *to, u16 value, u16 len);
 /**
  * \brief
  *      Fill block of memory (optimized for u32)
@@ -304,7 +212,7 @@ void memsetU16(u16 *to, u16 value, u32 len);
  *
  * Sets the first num longs of the block of memory pointed by to with the specified value.
  */
-void memsetU32(u32 *to, u32 value, u32 len);
+void memsetU32(u32 *to, u32 value, u16 len);
 /**
  * \brief
  *      Copy block of memory
@@ -319,35 +227,40 @@ void memsetU32(u32 *to, u32 value, u32 len);
  * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
  * The underlying type of the objects pointed by both the source and destination pointers are irrelevant for this function; The result is a binary copy of the data.
  */
-void memcpy(void *to, const void *from, u32 len);
+void memcpy(void *to, const void *from, u16 len);
 /**
- * \brief
- *      Copy block of memory (optimized for u16 type)
- *
- * \param to
- *      Pointer to the destination u16 array where the content is to be copied
- * \param from
- *      Pointer to the source u16 array to be copied
- * \param len
- *      Number of u16 element (short) to copy.
- *
- * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
+ * \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void memcpyU16(u16 *to, const u16 *from, u32 len);
+void memcpyU16(u16 *to, const u16 *from, u16 len);
 /**
- * \brief
- *      Copy block of memory (optimized for u32 type)
- *
- * \param to
- *      Pointer to the destination u32 array where the content is to be copied
- * \param from
- *      Pointer to the source u32 array to be copied
- * \param len
- *      Number of u32 element (long) to copy.
- *
- * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
+ * \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void memcpyU32(u32 *to, const u32 *from, u32 len);
+void memcpyU32(u32 *to, const u32 *from, u16 len);
+
+/**
+ * \deprecated Uses memset(void *to, u8 value, u16 len) instead.
+ */
+void fastMemset(void *to, u8 value, u16 len);
+/**
+ * \deprecated Uses memsetU16(void *to, u16 value, u16 len) instead.
+ */
+void fastMemsetU16(u16 *to, u16 value, u16 len);
+/**
+ * \deprecated Uses memsetU32(void *to, u32 value, u16 len) instead.
+ */
+void fastMemsetU32(u32 *to, u32 value, u16 len);
+/**
+ * \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
+ */
+void fastMemcpy(void *to, const void *from, u16 len);
+/**
+ * \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
+ */
+void fastMemcpyU16(u16 *to, const u16 *from, u16 len);
+/**
+ * \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
+ */
+void fastMemcpyU32(u32 *to, const u32 *from, u16 len);
 
 
 #endif // _MEMORY_H_

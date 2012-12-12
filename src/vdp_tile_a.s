@@ -20,7 +20,7 @@ VDP_loadTileData:
 	move.l %d6,-(%sp)
 	move.l %d2,-(%sp)
 	clr.l -(%sp)
-	jbsr VDP_waitDMACompletion
+	jsr VDP_waitDMACompletion
 	jsr VDP_doDMA
 	lea (16,%sp),%sp
 	jra .L1

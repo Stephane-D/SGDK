@@ -1,5 +1,5 @@
 ; 2 channels ADCPM sample player Z80 driver
-; it can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate
+; it can mix up to 2 ADCPM samples at a fixed 22050 Hz rate
 ; address and size of samples have to be 256 bytes boundary
 ; Stéphane Dallongeville @2011
 ;
@@ -14,7 +14,7 @@
 ; SP  = sample source (in ROM)
 ; HL  = mix buffer
 ; DE  = write buffer
-; B  = $7F (used for mix overflow stuff) or $05 (used for adpcm decoding)
+; B  = $7F (used for mix overflow stuff) or $06 (used for adpcm decoding)
 ; C  = 00 (used for mix overflow stuff) or ?
 ; HL' = YMPORT0
 ; BC' = read buffer
@@ -295,6 +295,7 @@ WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
             INC     C               ; increment with looping    ' 4
             LD      (HL), A         ; play sample               ' 7
             EXX                     ;                           ' 4
+
 
             endm                    ;                           ' 30
 
@@ -743,7 +744,7 @@ WAVBUFFER1  EQU     $1F00           ; WAV buffer 1
 
 init
             DI                      ; disable ints
-            LD      SP, $0D00       ; setup stack
+            LD      SP, $1D00       ; setup stack
             IM      $01             ; set int mode 1
             XOR     A
             LD      (STATUS), A     ; driver not ready
@@ -761,7 +762,7 @@ interrupt                           ; do nothing in this program
 
 ; ###########################       main       ##############################
 
-            BLOCK   $01A0-$
+            BLOCK   $0200-$
 
 start
             LD      HL, PARAMS
@@ -809,7 +810,7 @@ wait_nullwav
             stopChannel 0           ; stop all channels
             stopChannel 1
 
-            LD      B, $05          ; DELTATAB >> 9
+            LD      B, $06          ; DELTATAB >> 9
 
             LD      A, STATREADY
             LD      (STATUS), A     ; driver ready
@@ -913,46 +914,18 @@ loop_mix
 
 ; $F4-F5
             mix6WhilePlay2              ;                       ' 290   | (2*161) = 322
-            wait32                      ;                       ' 32    |
+            wait21                      ;                       ' 21    |
+            LD      IXL, 9              ; init free time loop   ' 11    |
 
 ; free time here
 ; --------------
+loop_free
+; $F6-$FE
 
-; $F6
             sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $F7
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $F8
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $F9
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $FA
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $FB
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $FC
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $FD
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
-
-; $FE
-            sampleOutput                ;                       ' 30    | 161
-            wait131                     ;                       ' 131   |
+            wait131                     ;                       ' 113   |
+            DEC     IXL                 ;                       ' 8     |
+            JP      NZ, loop_free       ;                       ' 10    |
 
 ; $FF
             sampleOutput                ;                       ' 30    |
@@ -960,7 +933,7 @@ loop_mix
             EXX                         ;                       ' 4     |
             LD      BC, (READBUF)       ; read buffer           ' 20    | 161
             EXX                         ;                       ' 4     |
-            LD      B, $05              ; DELTATAB >> 9         ' 7     |
+            LD      B, $06              ; DELTATAB >> 9         ' 7     |
             wait14                      ;                       ' 14    |
             JP      main_loop           ;                       ' 10    |
 
@@ -972,7 +945,7 @@ loop_mix
 
 ; ##############################    tables   ################################
 
-            BLOCK   $0A00-$
+            BLOCK   $0C00-$
 
 DELTATAB
 DELTATAB_0  DB      -34, -34, -21, -34, -13, -34, -8, -34, -5, -34, -3, -34, -2, -34, -1, -34
@@ -1007,6 +980,5 @@ DELTATAB_E  DB      -34, 13, -21, 13, -13, 13, -8, 13, -5, 13, -3, 13, -2, 13, -
             DB      0, 13, 1, 13, 2, 13, 3, 13, 5, 13, 8, 13, 13, 13, 21, 13
 DELTATAB_F  DB      -34, 21, -21, 21, -13, 21, -8, 21, -5, 21, -3, 21, -2, 21, -1, 21
             DB      0, 21, 1, 21, 2, 21, 3, 21, 5, 21, 8, 21, 13, 21, 21, 21
-
 
             END

@@ -176,15 +176,17 @@ u8 JOY_getPortType(u16 port);
 
 /**
  * \brief
- *      Get joypad type.
+ *      Get joypad peripheral type connected to the specified joypad port.<br>
+ *      Prefer this method over JOY_getPortType(..) when you need to get information<br>
+ *      about peripheral connected to multi joypad adapter (as the Sega TeamPlayer).
  *
  * \param joy
- *      Joypad we query type.<br>
+ *      Joypad port we query type.<br>
  *      <b>JOY_1</b>    = joypad 1<br>
  *      <b>JOY_2</b>    = joypad 2<br>
  *      <b>...  </b>    = ...<br>
- *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
- * \return joypad type.<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 TeamPlayer connected)<br>
+ * \return joypad peripheral type.<br>
  *      <b>JOY_TYPE_PAD3</b>        = 3 buttons joypad<br>
  *      <b>JOY_TYPE_PAD6</b>        = 6 buttons joypad<br>
  *      <b>JOY_TYPE_MOUSE</b>       = Sega Mouse<br>
