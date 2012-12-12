@@ -6,8 +6,8 @@
 *       Translated from:
 *       Sega startup code for the Sozobon C compiler
 *       Written by Paul W. Lee
-*       Modified from Charles Coty's code
-*       Modified from Stephane Dallongeville's code
+*       Modified by Charles Coty
+*       Modified by Stephane Dallongeville
 *
 *-------------------------------------------------------
 
@@ -43,13 +43,13 @@ _Vecteurs_68K:
         .incbin "out/rom_head.bin", 0x10, 0x100
 
 _Entry_Point:
+        move    #0x2700,%sr
         tst.l   0xa10008
         bne.s   SkipJoyDetect
         tst.w   0xa1000c
 SkipJoyDetect:
         bne.s   SkipSetup
 
-        move    #0x2700,%sr
         lea     Table,%a5
         movem.w (%a5)+,%d5-%d7
         movem.l (%a5)+,%a0-%a4
@@ -64,6 +64,8 @@ WrongVersion:
         moveq   #0x00,%d0
         movea.l %d0,%a6
         move    %a6,%usp
+        move.w  %d7,(%a1)
+        move.w  %d7,(%a2)
         jmp     Continue
 
 Table:
@@ -72,7 +74,6 @@ Table:
 
 SkipSetup:
         move.w  #0,%a7
-        move.w  #0x2300,%sr
         jmp     _reset_entry
 
 Continue:
@@ -99,11 +100,10 @@ CopyVar:
         dbra    %d0,CopyVar
 
 NoCopy:
-        move.w  #0,%a7
-        move.w  #0x2300,%sr
 
 * Jump to initialisation process...
 
+        move.w  #0,%a7
         jmp     _start_entry
 
 

@@ -19,7 +19,7 @@ __DYNAMIC  =  0;
  * .                    .
  * +--------------------+ <- 0x00FF0000
  * | .data              | initialized data goes here
- * |        _data       | 
+ * |        _data       |
  * |        _edata      |
  * +--------------------+
  * | .bss               |
@@ -34,7 +34,7 @@ __DYNAMIC  =  0;
  */
 MEMORY
 {
-	rom : ORIGIN = 0x00000000, LENGTH = 0x00400000
+	rom : ORIGIN = 0x00000000, LENGTH = 0x00A00000
 	ram : ORIGIN = 0x00FF0000, LENGTH = 0x00010000
 }
 
@@ -77,17 +77,17 @@ SECTIONS
     _etext = .;
     *(.lit)
   } > rom
-  _stext = SIZEOF (.text); 
+  _stext = SIZEOF (.text);
 
   .data 0xFF0000 :
   AT ( ADDR (.text) + SIZEOF (.text) )
   {
-    *(.got.plt) *(.got) 
+    *(.got.plt) *(.got)
     *(.shdata)
     *(.data .data.*)
     _edata = .;
   } > ram
-  _sdata = SIZEOF (.data); 
+  _sdata = SIZEOF (.data);
 
   .bss 0xFF0000 + SIZEOF (.data) :
   {
@@ -111,5 +111,5 @@ SECTIONS
   .eh_frame 0 (NOLOAD) :
   {
     *(.eh_frame)
-  } 
+  }
 }

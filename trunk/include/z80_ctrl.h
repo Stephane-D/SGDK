@@ -167,6 +167,18 @@
  *  TFM tracker Z80 driver.
  */
 #define Z80_DRIVER_TFM                  6
+/**
+ *  \def Z80_DRIVER_VGM
+ *
+ *  VGM Z80 driver.
+ */
+#define Z80_DRIVER_VGM                  7
+/**
+ *  \def Z80_DRIVER_CUSTOM
+ *
+ * CUSTOM Z80 driver.
+ */
+#define Z80_DRIVER_CUSTOM               -1
 
 #define Z80_DRIVER_DEFAULT              Z80_DRIVER_PCM
 
@@ -254,6 +266,7 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  - Z80_DRIVER_4PCM_ENV<br/>
  *  - Z80_DRIVER_MVS<br/>
  *  - Z80_DRIVER_TFM<br/>
+ *  - Z80_DRIVER_CUSTOM<br/>
  */
 u16  Z80_getLoadedDriver();
 /**
@@ -273,10 +286,20 @@ u16  Z80_getLoadedDriver();
  *      Wait for driver to be ready.
  */
 void Z80_loadDriver(const u16 driver, const u16 waitReady);
+/**
+ *  \brief
+ *      Load a custom Z80 driver.
+ *
+ *  \param drv
+ *      Pointer to the driver binary to load.
+ *  \param size
+ *      Size (in bytes) of the driver binary.
+ */
+void Z80_loadCustomDriver(const u8 *drv, u16 size);
 
 /**
  *  \brief
- *      Return driver ready state.
+ *      Return driver ready state (only for non custom driver).
  */
 u16  Z80_isDriverReady();
 

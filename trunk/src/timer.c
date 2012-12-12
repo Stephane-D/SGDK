@@ -36,9 +36,11 @@ u32 getSubTick()
 
     vcnt = GET_VCOUNTER;
     const u32 scrh = VDP_getScreenHeight();
+
     // as VCounter roolback in blank area we use a "medium" value
     if (vcnt >= scrh) vcnt = 16;
     else vcnt += (256 - scrh);
+
     const u32 current = (vtimer << 8) + vcnt;
 
     if (IS_PALSYSTEM) return current * 6;
@@ -76,8 +78,12 @@ void startTimer(u16 numTimer)
 
 u32 getTimer(u16 numTimer, u16 restart)
 {
-    const u32 res = getSubTick() - timer[numTimer & (MAXTIMER - 1)];
-    if (restart) startTimer(numTimer);
+    const u32 t = getSubTick();
+    u32* time = &timer[numTimer & (MAXTIMER - 1)];
+    const u32 res = t - *time;
+
+    if (restart) *time = t;
+
     return res;
 }
 
@@ -88,29 +94,56 @@ void waitSubTick(u32 subtick)
 {
     u32 start;
     u32 current;
+    u32 i;
 
     // waitSubTick(...) can not be called from V-Int callback
-    if (SYS_isInVIntCallback()) return;
+    if (SYS_isInVIntCallback())
+    {
+        i = subtick;
+
+        // TODO: use cycle accurate wait loop in asm
+        while(i--)
+        {
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+        }
+
+        return;
+    }
 
     start = getSubTick();
+
     // wait until we reached subtick
     do
     {
         current = getSubTick();
+
         // error du to the VCounter roolback, ignore...
         if (current < start) current = start;
-    } while ((current - start) < subtick);
+    }
+    while ((current - start) < subtick);
 }
 
 // wait for a certain amount of tick
 void waitTick(u32 tick)
 {
     u32 start;
+    u32 i;
 
     // waitTick(...) can not be called from V-Int callback
-    if (SYS_isInVIntCallback()) return;
+    if (SYS_isInVIntCallback())
+    {
+        i = tick;
+
+        while(i--) waitSubTick(256);
+
+        return;
+    }
 
     start = getTick();
+
     // wait until we reached tick
     while ((getTick() - start) < tick);
 }

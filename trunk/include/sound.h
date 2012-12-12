@@ -4,8 +4,8 @@
  * \author Stephane Dallongeville
  * \date 08/2011
  *
- * This unit provides advanced sound playback methods through differents Z80 drivers.
- *
+ * This unit provides advanced sound playback methods through differents Z80 drivers.<br>
+ *<br>
  * <b>Z80_DRIVER_PCM</b><br>
  * Single channel 8 bits signed sample driver.<br>
  * It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.<br>
@@ -405,6 +405,24 @@ void SND_disablePSG_MVS(u8 chan);
  *      TFM track address.
  */
 void SND_startPlay_TFM(const u8 *song);
+
+
+// Z80_DRIVER_VGM
+
+/**
+ * \brief
+ *      Start playing the specified VGM track (VGM music player driver).
+ *
+ * \param song
+ *      VGM track address.
+ */
+void SND_startPlay_VGM(const u8 *song);
+
+/**
+ * \brief
+ *      Stop playing music (VGM music player driver).
+ */
+void SND_stopPlay_VGM();
 
 
 #endif // _SOUND_H_

@@ -224,7 +224,7 @@ u16 VDP_getPaletteColor(u16 numpal, u16 numcol)
     return *pw;
 }
 
-void VDP_getPalette(u16 num, u16 *pal)
+void VDP_getPalette_old(u16 num, u16 *pal)
 {
     vu16 *pw;
     vu32 *pl;
@@ -263,26 +263,31 @@ void VDP_setPaletteColor(u16 numpal, u16 numcol, u16 value)
     *pw = value;
 }
 
-void VDP_setPalette(u16 num, const u16 *pal)
+void VDP_setPalette_old(u16 num, const u16 *pal)
 {
-    vu16 *pw;
-    vu32 *pl;
-    const u16 *src;
-    u16 i;
+    vu32 *pldata;
+    vu32 *plctrl;
+    u32 *src;
     u16 addr;
 
     VDP_setAutoInc(2);
 
     /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
+    pldata = (u32 *) GFX_DATA_PORT;
+    plctrl = (u32 *) GFX_CTRL_PORT;
 
-    src = pal;
+    src = (u32*) pal;
     addr = num * 32;
-    *pl = GFX_WRITE_CRAM_ADDR(addr);
+    *plctrl = GFX_WRITE_CRAM_ADDR(addr);
 
-    i = 16;
-    while(i--) *pw = *src++;
+    *pldata = *src++;
+    *pldata = *src++;
+    *pldata = *src++;
+    *pldata = *src++;
+    *pldata = *src++;
+    *pldata = *src++;
+    *pldata = *src++;
+    *pldata = *src;
 }
 
 

@@ -15,7 +15,7 @@
 
 /**
  *      \def BMP_PLAN
- *          Plan used to draw bitmap.
+ *          Plan used to draw bitmap (plan A).
  */
 #define BMP_PLAN                    APLAN
 

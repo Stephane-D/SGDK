@@ -27,25 +27,25 @@ void VDP_init()
     /* wait for DMA completion */
     VDP_waitDMACompletion();
 
-    regValues[0x00] = 0x04; /* reg. 0 - Disable HBL */
-    regValues[0x01] = 0x74; /* reg. 1 - Enable display, VBL, DMA + VCell size */
-    regValues[0x02] = 0x30; /* reg. 2 - Plane A =$30*$400=$C000 */
-    regValues[0x03] = 0x2C; /* reg. 3 - Window  =$2C*$400=$B000 */
-    regValues[0x04] = 0x07; /* reg. 4 - Plane B =$7*$2000=$E000 */
-    regValues[0x05] = 0x5E; /* reg. 5 - sprite table begins at $BC00=$5E*$200 */
-    regValues[0x06] = 0x00; /* reg. 6 - not used */
-    regValues[0x07] = 0x00; /* reg. 7 - Background Color number*/
-    regValues[0x08] = 0x00; /* reg. 8 - not used */
-    regValues[0x09] = 0x00; /* reg. 9 - not used */
-    regValues[0x0A] = 0x01; /* reg 10 - HInterrupt timing */
-    regValues[0x0B] = 0x00; /* reg 11 - $0000abcd a=extr.int b=vscr cd=hscr */
-    regValues[0x0C] = 0x81; /* reg 12 - hcell mode + shadow/highight + interlaced mode (40 cell, no shadow, no interlace) */
-    regValues[0x0D] = 0x2E; /* reg 13 - HScroll Table = $B800 */
-    regValues[0x0E] = 0x00; /* reg 14 - not used */
-    regValues[0x0F] = 0x02; /* reg 15 - auto increment data */
-    regValues[0x10] = 0x11; /* reg 16 - scrl screen v&h size (64x64) */
-    regValues[0x11] = 0x00; /* reg 17 - window hpos */
-    regValues[0x12] = 0x00; /* reg 18 - window vpos */
+    regValues[0x00] = 0x04;             /* reg. 0 - Disable HBL */
+    regValues[0x01] = 0x74;             /* reg. 1 - Enable display, VBL, DMA + VCell size */
+    regValues[0x02] = APLAN / 0x400;    /* reg. 2 - Plane A =$30*$400=$C000 */
+    regValues[0x03] = WPLAN / 0x400;    /* reg. 3 - Window  =$2C*$400=$B000 */
+    regValues[0x04] = BPLAN / 0x2000;   /* reg. 4 - Plane B =$7*$2000=$E000 */
+    regValues[0x05] = SLIST / 0x200;    /* reg. 5 - sprite table begins at $BC00=$5E*$200 */
+    regValues[0x06] = 0x00;             /* reg. 6 - not used */
+    regValues[0x07] = 0x00;             /* reg. 7 - Background Color number*/
+    regValues[0x08] = 0x00;             /* reg. 8 - not used */
+    regValues[0x09] = 0x00;             /* reg. 9 - not used */
+    regValues[0x0A] = 0x01;             /* reg 10 - HInterrupt timing */
+    regValues[0x0B] = 0x00;             /* reg 11 - $0000abcd a=extr.int b=vscr cd=hscr */
+    regValues[0x0C] = 0x81;             /* reg 12 - hcell mode + shadow/highight + interlaced mode (40 cell, no shadow, no interlace) */
+    regValues[0x0D] = HSCRL / 0x400;    /* reg 13 - HScroll Table =$2E*$400=$B800 */
+    regValues[0x0E] = 0x00;             /* reg 14 - not used */
+    regValues[0x0F] = 0x02;             /* reg 15 - auto increment data */
+    regValues[0x10] = 0x11;             /* reg 16 - scrl screen v&h size (64x64) */
+    regValues[0x11] = 0x00;             /* reg 17 - window hpos */
+    regValues[0x12] = 0x00;             /* reg 18 - window vpos */
 
     /* set registers */
     pw = (u16 *) GFX_CTRL_PORT;
@@ -60,8 +60,8 @@ void VDP_init()
     i = 16;
     while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, 0);
 
-    /* load default font */
-    VDP_loadFont(font_base, 1);
+    /* load default font (don't use DMA for > 4MB rom) */
+    VDP_loadFont(font_base, 0);
 
     /* load defaults palettes */
     VDP_setPalette(PAL0, palette_grey);
@@ -70,8 +70,8 @@ void VDP_init()
     VDP_setPalette(PAL3, palette_blue);
 
     /* reset vertical scroll for plan A & B*/
-    VDP_setVerticalScroll(APLAN, 0, 0);
-    VDP_setVerticalScroll(BPLAN, 0, 0);
+    VDP_setVerticalScroll(APLAN,  0);
+    VDP_setVerticalScroll(BPLAN,  0);
 
     /* reset sprite struct */
     VDP_resetSprites();
@@ -195,6 +195,27 @@ void VDP_setPlanSize(u16 w, u16 h)
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x9000 | regValues[0x10];
+}
+
+
+u8 VDP_getVerticalScrollingMode()
+{
+    return (regValues[0x0B] >> 2) & 1;
+}
+
+u8 VDP_getHorizontalScrollingMode()
+{
+    return regValues[0x0B] & 3;
+}
+
+void VDP_setScrollingMode(u16 hscroll, u16 vscroll)
+{
+    vu16 *pw;
+
+    regValues[0x0B] |= ((vscroll & 1) << 2) | (hscroll & 3);
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8B00 | regValues[0x0B];
 }
 
 

@@ -113,7 +113,7 @@ void _bmp_doFlip()
         if (READ_IS_FB0) vscr = ((BMP_PLANHEIGHT * BMP_YPIXPERTILE) * 0) / 2;
         else vscr = ((BMP_PLANHEIGHT * BMP_YPIXPERTILE) * 1) / 2;
 
-        VDP_setVerticalScroll(BMP_PLAN, 0, vscr);
+        VDP_setVerticalScroll(BMP_PLAN, vscr);
 
         // flip done
         bmp_state &= ~BMP_STAT_FLIPWAITING;

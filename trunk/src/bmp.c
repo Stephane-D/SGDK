@@ -764,8 +764,6 @@ void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col)
     while (len--)
     {
         s16 x1, x2;
-        u8 *dst;
-        u16 cnt;
 
         x1 = *left++;
         x2 = *right++;
@@ -780,38 +778,8 @@ void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col)
             if (x1 < 0) x1 = 0;
             if (x2 >= BMP_WIDTH) x2 = BMP_WIDTH - 1;
 
-            dst = &buf[x1];
-            cnt = (x2 - x1);
-
             // draw horizontal line
-            while(cnt--) *dst++ = c;
-
-//                    u8 *dst8;
-//                    u16 *dst16;
-//                    u16 cnt;
-//                    u16 cnt2;
-//                    u16 c16;
-//
-//                    dst8 = &buf[x1];
-//                    cnt = (x2 - x1) + 1;
-//
-//                    if ((u32) (dst8) & 1)
-//                    {
-//                        *dst8++ = c;
-//                        cnt--;
-//                    }
-//
-//                    c16 = c + (c << 8);
-//                    dst16 = (u16 *) dst8;
-//                    cnt2 = cnt >> 1;
-//
-//                    while (cnt2--) *dst16++ = c16;
-//
-//                    if (cnt & 1)
-//                    {
-//                        dst8 = (u8 *) dst16;
-//                        *dst8 = c;
-//                    }
+            memset(&buf[x1], c, x2 - x1);
         }
 
         buf += BMP_PITCH;

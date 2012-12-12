@@ -150,6 +150,8 @@ void VDP_updateSprites()
 {
     vu32 *plctrl;
     vu16 *pwdata;
+    SpriteDef *sprite;
+    u16 i;
 
     if (spriteNum == 0) return;
 
@@ -161,26 +163,21 @@ void VDP_updateSprites()
 
     *plctrl = GFX_WRITE_VRAM_ADDR(SLIST);
 
+    sprite = &spriteDefCache[0];
+    i = spriteNum;
+    while(i--)
     {
-        SpriteDef *sprite;
-        u16 i;
+        // y position
+        *pwdata = 0x80 + sprite->posy;
+        // size & link
+        *pwdata = (sprite->size << 8) | sprite->link;
+        // tile attribut
+        *pwdata = sprite->tile_attr;
+        // x position
+        *pwdata = 0X80 + sprite->posx;
 
-        sprite = &spriteDefCache[0];
-        i = spriteNum;
-        while(i--)
-        {
-            // y position
-            *pwdata = 0x80 + sprite->posy;
-            // size & link
-            *pwdata = (sprite->size << 8) | sprite->link;
-            // tile attribut
-            *pwdata = sprite->tile_attr;
-            // x position
-            *pwdata = 0X80 + sprite->posx;
-
-            // next sprite
-            sprite++;
-        }
+        // next sprite
+        sprite++;
     }
 
     // we won't upload unmodified sprite

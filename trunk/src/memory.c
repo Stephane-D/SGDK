@@ -270,338 +270,43 @@ void* MEM_alloc(u16 size)
 }
 
 
-void fastMemset(void *to, u8 value, u32 len)
+void memcpyU16(u16 *to, const u16 *from, u16 len)
 {
-    u8 *dst8;
-    u32 *dst32;
-    u32 value32;
-    u32 cnt;
-
-    // small data set --> use standard memset
-    if (len < 16)
-    {
-        memset(to, value, len);
-        return;
-    }
-
-    dst8 = (u8 *) to;
-
-    // align to dword
-    while ((u32) dst8 & 3)
-    {
-        *dst8++ = value;
-        len--;
-    }
-
-    value32 = cnv_8to32_tab[value];
-    dst32 = (u32 *) dst8;
-
-    cnt = len >> 5;
-
-    while (cnt--)
-    {
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-    }
-
-    cnt = (len >> 2) & 7;
-
-    while (cnt--) *dst32++ = value32;
-
-    dst8 = (u8 *) dst32;
-
-    cnt = len & 3;
-
-    while (cnt--) *dst8++ = value;
+    memcpy(to, from, len);
 }
 
-void fastMemsetU16(u16 *to, u16 value, u32 len)
+void memcpyU32(u32 *to, const u32 *from, u16 len)
 {
-    u16 *dst16;
-    u32 *dst32;
-    u32 value32;
-    u32 cnt;
-
-    // small data set --> use standard memset
-    if (len < 16)
-    {
-        memsetU16(to, value, len);
-        return;
-    }
-
-    dst16 = to;
-
-    // align to dword
-    if ((u32) dst16 & 2)
-    {
-        *dst16++ = value;
-        len--;
-    }
-
-    value32 = cnv_8to32_tab[value];
-    dst32 = (u32 *) dst16;
-
-    cnt = len >> 4;
-
-    while (cnt--)
-    {
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-        *dst32++ = value32;
-    }
-
-    cnt = (len >> 1) & 7;
-
-    while (cnt--) *dst32++ = value32;
-
-    // last word set
-    if (len & 1) *((u16 *) dst32) = value;
+    memcpy(to, from, len);
 }
 
-void fastMemsetU32(u32 *to, u32 value, u32 len)
+void fastMemset(void *to, u8 value, u16 len)
 {
-    u32 *dst;
-    u32 cnt;
-
-    dst = to;
-    cnt = len >> 3;
-
-    while (cnt--)
-    {
-        *dst++ = value;
-        *dst++ = value;
-        *dst++ = value;
-        *dst++ = value;
-        *dst++ = value;
-        *dst++ = value;
-        *dst++ = value;
-        *dst++ = value;
-    }
-
-    cnt = len & 7;
-
-    while (cnt--) *dst++ = value;
+    memset(to, value, len);
 }
 
-
-void fastMemcpy(void *to, const void *from, u32 len)
+void fastMemsetU16(u16 *to, u16 value, u16 len)
 {
-    const u8 *src8;
-    const u32 *src32;
-    u8 *dst8;
-    u32 *dst32;
-    u32 cnt;
-
-    // small transfert or misalignement --> use standard memcpy
-    if ((len < 16) || (((u32) to & 3) != ((u32) from & 3)))
-    {
-        memcpy(to, from, len);
-        return;
-    }
-
-    dst8 = (u8 *) to;
-    src8 = (u8 *) from;
-
-    // align to dword
-    while ((u32) dst8 & 3)
-    {
-        *dst8++ = *src8++;
-        len--;
-    }
-
-    dst32 = (u32 *) dst8;
-    src32 = (u32 *) src8;
-
-    cnt = len >> 5;
-
-    while (cnt--)
-    {
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-    }
-
-    cnt = (len >> 2) & 7;
-
-    while (cnt--) *dst32++ = *src32++;
-
-    dst8 = (u8 *) dst32;
-    src8 = (u8 *) src32;
-
-    cnt = len & 3;
-
-    while (cnt--) *dst8++ = *src8++;
+    memsetU16(to, value, len);
 }
 
-void fastMemcpyU16(u16 *to, const u16 *from, u32 len)
+void fastMemsetU32(u32 *to, u32 value, u16 len)
 {
-    const u16 *src16;
-    const u32 *src32;
-    u16 *dst16;
-    u32 *dst32;
-    u32 cnt;
-
-    // small transfert or misalignement --> use standard memcpy
-    if ((len < 16) || (((u32) to & 2) != ((u32) from & 2)))
-    {
-        memcpyU16(to, from, len);
-        return;
-    }
-
-    dst16 = to;
-    src16 = from;
-
-    // align to dword
-    if ((u32) dst16 & 2)
-    {
-        *dst16++ = *src16++;
-        len--;
-    }
-
-    dst32 = (u32 *) dst16;
-    src32 = (u32 *) src16;
-
-    cnt = len >> 4;
-
-    while (cnt--)
-    {
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-        *dst32++ = *src32++;
-    }
-
-    cnt = (len >> 1) & 7;
-
-    while (cnt--) *dst32++ = *src32++;
-
-    // last word copy
-    if (len & 1) *((u16 *) dst32) = *((u16 *) src32);
+    memsetU32(to, value, len);
 }
 
-void fastMemcpyU32(u32 *to, const u32 *from, u32 len)
+void fastMemcpy(void *to, const void *from, u16 len)
 {
-    const u32 *src;
-    u32 *dst;
-    u32 cnt;
-
-    // small transfert --> use standard memcpy
-    if (len < 16)
-    {
-        memcpyU32(to, from, len);
-        return;
-    }
-
-    dst = to;
-    src = from;
-    cnt = len >> 3;
-
-    while (cnt--)
-    {
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-    }
-
-    cnt = len & 7;
-
-    while (cnt--) *dst++ = *src++;
+    memcpy(to, from, len);
 }
 
-void memset(void *to, u8 value, u32 len)
+void fastMemcpyU16(u16 *to, const u16 *from, u16 len)
 {
-    u8 *dst;
-    u32 cnt;
-
-    dst = (u8 *) to;
-    cnt = len;
-
-    while(cnt--) *dst++ = value;
+    memcpy(to, from, len);
 }
 
-void memsetU16(u16 *to, u16 value, u32 len)
+void fastMemcpyU32(u32 *to, const u32 *from, u16 len)
 {
-    u16 *dst;
-    u32 cnt;
-
-    dst = to;
-    cnt = len;
-
-    while(cnt--) *dst++ = value;
-}
-
-void memsetU32(u32 *to, u32 value, u32 len)
-{
-    u32 *dst;
-    u32 cnt;
-
-    dst = to;
-    cnt = len;
-
-    while(cnt--) *dst++ = value;
-}
-
-void memcpy(void *to, const void *from, u32 len)
-{
-    u8 *dst;
-    const u8 *src;
-    u32 cnt;
-
-    dst = (u8 *) to;
-    src = (const u8 *) from;
-    cnt = len;
-
-    while(cnt--) *dst++ = *src++;
-}
-
-void memcpyU16(u16 *to, const u16 *from, u32 len)
-{
-    u16 *dst;
-    const u16 *src;
-    u32 cnt;
-
-    dst = to;
-    src = from;
-    cnt = len;
-
-    while(cnt--) *dst++ = *src++;
-}
-
-void memcpyU32(u32 *to, const u32 *from, u32 len)
-{
-    u32 *dst;
-    const u32 *src;
-    u32 cnt;
-
-    dst = to;
-    src = from;
-    cnt = len;
-
-    while(cnt--) *dst++ = *src++;
+    memcpy(to, from, len);
 }
 
