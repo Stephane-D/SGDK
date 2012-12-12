@@ -46,11 +46,14 @@ int main(int argc, char **argv)
     {
         // file exists, close and reopen for appending
         fclose(FileInput);
-        fopen(FileName, "ab");
+        FileInput = fopen(FileName, "ab");
     }
 
+    // go to end of file
+    fseek(FileInput, 0, SEEK_END);
     // calculate how many extra byte are needed
     needed = ftell(FileInput) & (sizealign - 1);
+
     if (needed)
     {
         unsigned char *mem;
