@@ -272,12 +272,12 @@ void* MEM_alloc(u16 size)
 
 void memcpyU16(u16 *to, const u16 *from, u16 len)
 {
-    memcpy(to, from, len);
+    memcpy(to, from, len * 2);
 }
 
 void memcpyU32(u32 *to, const u32 *from, u16 len)
 {
-    memcpy(to, from, len);
+    memcpy(to, from, len * 4);
 }
 
 void fastMemset(void *to, u8 value, u16 len)
@@ -302,11 +302,11 @@ void fastMemcpy(void *to, const void *from, u16 len)
 
 void fastMemcpyU16(u16 *to, const u16 *from, u16 len)
 {
-    memcpy(to, from, len);
+    memcpy(to, from, len * 2);
 }
 
 void fastMemcpyU32(u32 *to, const u32 *from, u16 len)
 {
-    memcpy(to, from, len);
+    memcpy(to, from, len * 4);
 }
 
