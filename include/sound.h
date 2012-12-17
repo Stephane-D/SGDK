@@ -44,27 +44,103 @@
 #define _SOUND_H_
 
 
+/**
+ *  \def SOUND_PCM_CH_AUTO
+ *      Auto select PCM channel to use.
+ */
 #define SOUND_PCM_CH_AUTO   0x00
 
+/**
+ *  \def SOUND_PCM_CH1
+ *      PCM channel 1.
+ */
 #define SOUND_PCM_CH1       Z80_DRV_CH0_SFT
+/**
+ *  \def SOUND_PCM_CH2
+ *      PCM channel 2.
+ */
 #define SOUND_PCM_CH2       Z80_DRV_CH1_SFT
+/**
+ *  \def SOUND_PCM_CH3
+ *      PCM channel 3.
+ */
 #define SOUND_PCM_CH3       Z80_DRV_CH2_SFT
+/**
+ *  \def SOUND_PCM_CH4
+ *      PCM channel 4.
+ */
 #define SOUND_PCM_CH4       Z80_DRV_CH3_SFT
 
+/**
+ *  \def SOUND_PCM_CH1_MSK
+ *      PCM channel 1 selection mask.
+ */
 #define SOUND_PCM_CH1_MSK   Z80_DRV_CH0
+/**
+ *  \def SOUND_PCM_CH2_MSK
+ *      PCM channel 2 selection mask.
+ */
 #define SOUND_PCM_CH2_MSK   Z80_DRV_CH1
+/**
+ *  \def SOUND_PCM_CH3_MSK
+ *      PCM channel 3 selection mask.
+ */
 #define SOUND_PCM_CH3_MSK   Z80_DRV_CH2
+/**
+ *  \def SOUND_PCM_CH4_MSK
+ *      PCM channel 4 selection mask.
+ */
 #define SOUND_PCM_CH4_MSK   Z80_DRV_CH3
 
+/**
+ *  \def SOUND_RATE_32000
+ *      PCM sample rate set to 32 Khz.<br>
+ *      Best quality but take lot of rom space.
+ */
 #define SOUND_RATE_32000    0
+/**
+ *  \def SOUND_RATE_22050
+ *      PCM sample rate set to 22050 Hz.<br>
+ *      Best quality but take lot of rom space.
+ */
 #define SOUND_RATE_22050    1
+/**
+ *  \def SOUND_RATE_16000
+ *      PCM sample rate set to 16 Khz.<br>
+ */
 #define SOUND_RATE_16000    2
+/**
+ *  \def SOUND_RATE_13400
+ *      PCM sample rate set to 13400 Hz.<br>
+ *      Good compromise for rom space and quality.
+ */
 #define SOUND_RATE_13400    3
+/**
+ *  \def SOUND_RATE_11025
+ *      PCM sample rate set to 11025 Hz.<br>
+ */
 #define SOUND_RATE_11025    4
+/**
+ *  \def SOUND_RATE_8000
+ *      PCM sample rate set to 8 Khz.<br>
+ *      Worst quality but take less rom place.
+ */
 #define SOUND_RATE_8000     5
 
+/**
+ *  \def SOUND_PAN_LEFT
+ *      Left speaker panning.
+ */
 #define SOUND_PAN_LEFT      0x80
+/**
+ *  \def SOUND_PAN_RIGHT
+ *      Right speaker panning.
+ */
 #define SOUND_PAN_RIGHT     0x40
+/**
+ *  \def SOUND_PAN_CENTER
+ *      Center (laft and right) speaker panning.
+ */
 #define SOUND_PAN_CENTER    0xC0
 
 
@@ -91,17 +167,17 @@ u8   SND_isPlaying_PCM();
  *      SGDK automatically adjust resource size as needed
  * \param rate
  *      Playback rate :<br>
- *      <b>SOUND_RATE_32000</b> = 32 Khz (best quality but take lot of rom space)<br>
- *      <b>SOUND_RATE_22050</b> = 22 Khz<br>
- *      <b>SOUND_RATE_16000</b> = 16 Khz<br>
- *      <b>SOUND_RATE_13400</b> = 13.4 Khz<br>
- *      <b>SOUND_RATE_11025</b> = 11 Khz<br>
- *      <b>SOUND_RATE_8000</b>  = 8 Khz (worst quality but take less rom place)<br>
+ *      #SOUND_RATE_32000 = 32 Khz (best quality but take lot of rom space)<br>
+ *      #SOUND_RATE_22050 = 22 Khz<br>
+ *      #SOUND_RATE_16000 = 16 Khz<br>
+ *      #SOUND_RATE_13400 = 13.4 Khz<br>
+ *      #SOUND_RATE_11025 = 11 Khz<br>
+ *      #SOUND_RATE_8000  = 8 Khz (worst quality but take less rom place)<br>
  * \param pan
  *      Panning :<br>
- *      <b>SOUND_PAN_LEFT</b>   = play on left speaker<br>
- *      <b>SOUND_PAN_RIGHT</b>  = play on right speaker<br>
- *      <b>SOUND_PAN_CENTER</b> = play on both speaker<br>
+ *      #SOUND_PAN_LEFT   = play on left speaker<br>
+ *      #SOUND_PAN_RIGHT  = play on right speaker<br>
+ *      #SOUND_PAN_CENTER = play on both speaker<br>
  * \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
@@ -123,8 +199,8 @@ void SND_stopPlay_PCM();
  *
  * \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      <b>SOUND_PCM_CH1_MSK</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2_MSK</b>    = channel 2<br>
+ *      #SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      #SOUND_PCM_CH2_MSK    = channel 2<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>isPlaying_2ADPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -147,8 +223,8 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  * \param channel
  *      Channel where we want to play sample.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
  * \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
@@ -161,8 +237,8 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
  *
  * \param channel
  *      Channel we want to stop.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
  */
 void SND_stopPlay_2ADPCM(const u16 channel);
 
@@ -175,10 +251,10 @@ void SND_stopPlay_2ADPCM(const u16 channel);
  *
  * \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      <b>SOUND_PCM_CH1_MSK</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2_MSK</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3_MSK</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4_MSK</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      #SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      #SOUND_PCM_CH3_MSK    = channel 3<br>
+ *      #SOUND_PCM_CH4_MSK    = channel 4<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>isPlaying_2ADPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -201,10 +277,10 @@ u8   SND_isPlaying_4PCM(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  * \param channel
  *      Channel where we want to play sample.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
  * \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
@@ -217,10 +293,10 @@ void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, cons
  *
  * \param channel
  *      Channel we want to stop.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
  */
 void SND_stopPlay_4PCM(const u16 channel);
 
@@ -233,10 +309,10 @@ void SND_stopPlay_4PCM(const u16 channel);
  *
  * \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      <b>SOUND_PCM_CH1_MSK</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2_MSK</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3_MSK</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4_MSK</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      #SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      #SOUND_PCM_CH3_MSK    = channel 3<br>
+ *      #SOUND_PCM_CH4_MSK    = channel 4<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>isPlaying_2ADPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -259,10 +335,10 @@ u8   SND_isPlaying_4PCM_ENV(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  * \param channel
  *      Channel where we want to play sample.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
  * \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
@@ -275,10 +351,10 @@ void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, 
  *
  * \param channel
  *      Channel we want to stop.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
  */
 void SND_stopPlay_4PCM_ENV(const u16 channel);
 /**
@@ -287,10 +363,10 @@ void SND_stopPlay_4PCM_ENV(const u16 channel);
  *
  * \param channel
  *      Channel we want to set envelop.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
  * \param volume
  *      Volume to set : 16 possible level from 0 (minimum) to 15 (maximum).
  */
@@ -301,10 +377,10 @@ void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume);
  *
  * \param channel
  *      Channel we want to retrieve envelop level.<br>
- *      <b>SOUND_PCM_CH1</b>    = channel 1<br>
- *      <b>SOUND_PCM_CH2</b>    = channel 2<br>
- *      <b>SOUND_PCM_CH3</b>    = channel 3<br>
- *      <b>SOUND_PCM_CH4</b>    = channel 4<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
  * \return
  *      Envelop of specified channel.<br>
  *      The returned value is comprised between 0 (quiet) to 15 (loud).

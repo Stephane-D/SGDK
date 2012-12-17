@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
-#include <malloc.h>
 
 int main(int argc, char **argv)
 {
