@@ -12,106 +12,16 @@
 #include "tab_vram.h"
 
 
-void VDP_loadTileData_old(const u32 *data, u16 index, u16 num, u8 use_dma)
-{
-    const u16 addr = index * 32;
-
-    if (use_dma)
-    {
-        // wait for previous DMA completion
-        VDP_waitDMACompletion();
-        // then do DMA
-        VDP_doVRamDMA((u32) data, addr, num * 16);
-    }
-    else
-    {
-        vu32 *plctrl;
-        vu32 *pldata;
-        const u32 *src;
-        u16 i;
-
-        VDP_setAutoInc(2);
-
-        /* point to vdp port */
-        plctrl = (u32 *) GFX_CTRL_PORT;
-        pldata = (u32 *) GFX_DATA_PORT;
-
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-        src = data;
-
-        i = num;
-        while(i--)
-        {
-            *pldata = *src++;
-            *pldata = *src++;
-            *pldata = *src++;
-            *pldata = *src++;
-            *pldata = *src++;
-            *pldata = *src++;
-            *pldata = *src++;
-            *pldata = *src++;
-        }
-    }
-}
-
 void VDP_loadFont(const u32 *font, u8 use_dma)
 {
     VDP_loadTileData(font, TILE_FONTINDEX, FONT_LEN, use_dma);
-}
-
-void VDP_loadBMPTileData_old(const u32 *data, u16 index, u16 w, u16 h, u16 bmp_w)
-{
-    vu32 *plctrl;
-    vu32 *pldata;
-    const u32 *src;
-    u16 i, j;
-
-    VDP_setAutoInc(2);
-
-    /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
-
-    const u16 addr = index * 32;
-    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-    src = data;
-
-    i = h;
-    while(i--)
-    {
-        j = w;
-        while(j--)
-        {
-            // send it to VRAM
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-            src += bmp_w;
-            *pldata = *src;
-
-            src -= (bmp_w * 7) - 1;
-        }
-
-        src += (bmp_w * 7) + (bmp_w - w);
-    }
 }
 
 void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 h, u16 bmp_w)
 {
     VDP_loadBMPTileData(&data[x + (y * bmp_w)], index, w, h, bmp_w);
 }
+
 
 void VDP_fillTileData(u8 value, u16 index, u16 num, u8 use_dma)
 {

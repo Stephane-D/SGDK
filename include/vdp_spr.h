@@ -162,6 +162,7 @@ void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite);
  */
 void VDP_setSpritePosition(u16 index, u16 x, u16 y);
 
+
 /**
  *  \brief
  *      Set severals sprites (use sprite list cache).
@@ -172,8 +173,24 @@ void VDP_setSpritePosition(u16 index, u16 x, u16 y);
  *      Sprite definitions.
  *  \param num
  *      Number of sprite to set.
+ *
+ * See VDP_setSpritesDirect().
  */
 void VDP_setSprites(u16 index, const SpriteDef *sprites, u16 num);
+/**
+ *  \brief
+ *      Set severals sprites (direct send to VDP).
+ *
+ *  \param index
+ *      Index of first sprite to set.
+ *  \param sprites
+ *      Sprite definitions.
+ *  \param num
+ *      Number of sprite to set.
+ *
+ * See VDP_setSprites().
+ */
+void VDP_setSpritesDirect(u16 index, const SpriteDef *sprites, u16 num);
 
 /**
  *  \brief

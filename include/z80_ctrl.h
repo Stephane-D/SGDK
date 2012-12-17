@@ -130,7 +130,7 @@
  *  \def Z80_DRIVER_PCM
  *
  *  Variable rate sample player Z80 driver.<br/>
- *  It can play a sample (8 bit unsigned) from 4 Khz up to 52 Khz rate.
+ *  It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
  */
 #define Z80_DRIVER_PCM                  1
 /**

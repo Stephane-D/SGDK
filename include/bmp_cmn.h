@@ -162,6 +162,25 @@
  */
 #define BMP_ENABLE_BFCULLING     (1 << 5)
 
+/**
+ *      \struct Bitmap
+ *          Genesis 4bpp Bitmap structure definition.<br>
+ *      \param w
+ *          Width in pixel.
+ *      \param h
+ *          Height in pixel.
+ *      \param palette
+ *          Palette.
+ *      \param image
+ *          Image data, array size = (w * h / 2).
+ */
+typedef struct
+{
+    u16 w;
+    u16 h;
+    u16 palette[16];
+    u8 image[0];
+} Bitmap;
 
 /**
  *      \struct Pixel

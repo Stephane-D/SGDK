@@ -43,6 +43,8 @@ RES_BMP= $(wildcard *.bmp)
 RES_BMP+= $(wildcard $(RES)/*.bmp)
 RES_WAV= $(wildcard *.wav)
 RES_WAV+= $(wildcard $(RES)/*.wav)
+RES_WAVPCM= $(wildcard *.wavpcm)
+RES_WAVPCM+= $(wildcard $(RES)/*.wavpcm)
 RES_DAT= $(wildcard *.dat)
 RES_DAT+= $(wildcard $(RES)/*.dat)
 RES_RAW= $(wildcard *.raw)
@@ -68,6 +70,7 @@ RES_ASM+= $(wildcard $(RES)/*.asm)
 
 OBJ= $(RES_BMP:.bmp=.o)
 OBJ+= $(RES_WAV:.wav=.o)
+OBJ+= $(RES_WAVPCM:.wavpcm=.o)
 OBJ+= $(RES_RC:.rc=.o)
 OBJ+= $(RES_ASM:.asm=.o)
 OBJ+= $(RES_DAT:.dat=.o)
@@ -163,7 +166,10 @@ out/%.o: %.s
 	$(BINTOS) -bmp $<
 
 %.raw: %.wav
-	$(WAVTORAW) $<
+	$(WAVTORAW) $< $@ 16000
+
+%.pcm: %.wavpcm
+	$(WAVTORAW) $< $@ 22050
 
 %.rawpcm: %.pcm
 	$(PCMTORAW) $< $@

@@ -195,12 +195,20 @@ int main(int argc, char **argv)
 
         // process palette (assumes 16 color image)
         fread(temp, 4, 16, FileInput); // read palette
+
         fprintf(FileOutput, "    dc.w    ");
-
-        for (ii = 0; ii < 16; ii++)
+        for (ii = 0; ii < 7; ii++)
             fprintf(FileOutput, "0x%04X, ", vdpcolor(temp[ii*4+0], temp[ii*4+1], temp[ii*4+2]));
+        fprintf(FileOutput, "0x%04X", vdpcolor(temp[7*4+0], temp[7*4+1], temp[7*4+2]));
+        fprintf(FileOutput, "\n");
 
-        fprintf(FileOutput, "\n\n");
+        fprintf(FileOutput, "    dc.w    ");
+        for (ii = 8; ii < 15; ii++)
+            fprintf(FileOutput, "0x%04X, ", vdpcolor(temp[ii*4+0], temp[ii*4+1], temp[ii*4+2]));
+        fprintf(FileOutput, "0x%04X", vdpcolor(temp[15*4+0], temp[15*4+1], temp[15*4+2]));
+        fprintf(FileOutput, "\n");
+
+        fprintf(FileOutput, "\n");
         total += 32;
 
         // process bitmap data (assumes 16 color image)

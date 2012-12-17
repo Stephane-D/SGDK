@@ -241,19 +241,16 @@ void _start_entry()
 
 #if (ENABLE_LOGO != 0)
     {
-        u16 tmp_pal[16];
+        const Bitmap* logo = (Bitmap*) logo_lib;
 
         // display logo (BMP mode use 128x160 resolution with doubled X pixel)
         BMP_init(BMP_ENABLE_WAITVSYNC | BMP_ENABLE_EXTENDEDBLANK);
 
 #if (ZOOMING_LOGO != 0)
-        // get the bitmap palette
-        BMP_getGenBmp16Palette(logo_lib, tmp_pal);
-
         // init fade in to 30 step
         u16 step_fade = 30;
 
-        if (VDP_initFading(0, 15, palette_black, tmp_pal, step_fade))
+        if (VDP_initFading(0, 15, palette_black, logo->palette, step_fade))
         {
             // prepare zoom
             u16 size = 128;
@@ -273,7 +270,7 @@ void _start_entry()
                 if (step_fade-- > 0) VDP_doStepFading();
 
                 // zoom logo
-                BMP_loadAndScaleGenBmp16(logo_lib, 32 + ((128 - w) >> 2), (128 - w) >> 1, w >> 1, w, 0xFF);
+                BMP_loadAndScaleGenBitmap(logo, 32 + ((128 - w) >> 2), (128 - w) >> 1, w >> 1, w, 0xFF);
                 // flip to screen
                 BMP_flip();
             }
@@ -291,22 +288,14 @@ void _start_entry()
 #else
         // set palette 0 to black
         VDP_setPalette(0, palette_black);
-        // get the bitmap palette
-        BMP_getGenBmp16Palette(logo_lib, tmp_pal);
 
         // don't load the palette immediatly
-        BMP_loadGenBmp16(logo_lib, 32, 0, 0xFF);
+        BMP_loadGenBitmap(logo_lib, 32, 0, 0xFF);
         // flip
         BMP_flip();
 
-//        u16 logo_w = BMP_GENBMP16_WIDTH(logo_lib) >> 3;
-//        u16 logo_h = BMP_GENBMP16_HEIGHT(logo_lib) >> 3;
-//
-//        VDP_loadBMPTileData((u32*) BMP_GENBMP16_IMAGE(logo_lib), 100, logo_w, logo_h, logo_w);
-//        VDP_fillTileMapRectInc(VDP_PLAN_A, 100, 5, 5, logo_w, logo_h);
-
         // fade in logo
-        VDP_fadePalIn(0, tmp_pal, 30, 0);
+        VDP_fadePalIn(0, logo->palette, 30, 0);
 
         // wait 1.5 second
         waitTick(TICKPERSECOND * 1.5);
