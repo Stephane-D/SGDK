@@ -809,49 +809,49 @@ void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 
     while(adj_h--)
     {
-        fastMemcpy(dst, src, adj_w);
+        memcpy(dst, src, adj_w);
         src += pitch;
         dst += BMP_WIDTH;
     }
 }
 
-void BMP_loadGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 numpal)
+void BMP_loadGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal)
 {
     u16 w, h;
 
-    // get the image width
-    w = BMP_GENBMP16_WIDTH(genbmp16) >> 1;
+    // get the image width (bitmap size / 2 as we double X resolution)
+    w = bitmap->w >> 1;
     // get the image height
-    h = BMP_GENBMP16_HEIGHT(genbmp16);
+    h = bitmap->h;
 
     // load the palette
-    if (numpal < 4) VDP_setPalette(numpal, BMP_GENBMP16_PALETTE(genbmp16));
+    if (numpal < 4) VDP_setPalette(numpal, bitmap->palette);
 
-    BMP_loadBitmap((u8*) BMP_GENBMP16_IMAGE(genbmp16), x, y, w, h, w);
+    BMP_loadBitmap((u8*) bitmap->image, x, y, w, h, w);
 }
 
-void BMP_loadAndScaleGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 w, u16 h, u16 numpal)
+void BMP_loadAndScaleGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal)
 {
     u16 bmp_w, bmp_h;
 
-    // get the image width / 2
-    bmp_w = BMP_GENBMP16_WIDTH(genbmp16) >> 1;
+    // get the image width (bitmap size / 2 as we double X resolution)
+    bmp_w = bitmap->w >> 1;
     // get the image height
-    bmp_h = BMP_GENBMP16_HEIGHT(genbmp16);
+    bmp_h = bitmap->h;
 
     // load the palette
-    if (numpal < 4) VDP_setPalette(numpal, BMP_GENBMP16_PALETTE(genbmp16));
+    if (numpal < 4) VDP_setPalette(numpal, bitmap->palette);
 
-    BMP_scale((u8*) BMP_GENBMP16_IMAGE(genbmp16), bmp_w, bmp_h, bmp_w, BMP_getWritePointer(x, y), w, h, BMP_WIDTH);
+    BMP_scale((u8*) bitmap->image, bmp_w, bmp_h, bmp_w, BMP_getWritePointer(x, y), w, h, BMP_WIDTH);
 }
 
-void BMP_getGenBmp16Palette(const u16 *genbmp16, u16 *pal)
+void BMP_getGenBitmapPalette(const Bitmap *bitmap, u16 *pal)
 {
     u16 i;
     const u16 *src;
     u16 *dst;
 
-    src = BMP_GENBMP16_PALETTE(genbmp16);
+    src = bitmap->palette;
     dst = pal;
     i = 16;
     while(i--) *dst++ = *src++;

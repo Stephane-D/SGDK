@@ -87,8 +87,8 @@
 #define WPLAN                   0xB000
 #define HSCRL                   0xB800
 #define SLIST                   0xBC00
-#define APLAN                   0xC000
-#define BPLAN                   0xE000
+#define APLAN                   0xE000
+#define BPLAN                   0xC000
 
 /**
  *  \def VDP_PLAN_WINDOW
@@ -516,6 +516,74 @@ u8   VDP_getHIntCounter();
  *  Set value 0 to get H int at each scanline.
  */
 void VDP_setHIntCounter(u8 value);
+
+
+/**
+ *  \brief
+ *      Get VRAM address (location) of Plan A.
+ */
+u16 VDP_getAPlanAddress();
+/**
+ *  \brief
+ *      Get VRAM address (location) of Plan B.
+ */
+u16 VDP_getBPlanAddress();
+/**
+ *  \brief
+ *      Get VRAM address (location) of Window Plan.
+ */
+u16 VDP_getWindowPlanAddress();
+/**
+ *  \brief
+ *      Get VRAM address (location) of Sprite list.
+ */
+u16 VDP_getSpriteListAddress();
+/**
+ *  \brief
+ *      Get VRAM address (location) of H SCroll table.
+ */
+u16 VDP_getHScrollTableAddress();
+
+/**
+ *  \brief
+ *      Set VRAM address (location) of Plan A.
+ *
+ *  Ex: VDP_setAPlanAddress(0xC000)<br/>
+ *  Will set the Plan A to at address 0xC000 in VRAM.
+ */
+void VDP_setAPlanAddress(u16 value);
+/**
+ *  \brief
+ *      Set VRAM address (location) of Window plan.
+ *
+ *  Ex: VDP_setWindowPlanAddress(0xBC00)<br/>
+ *  Will set the Window plan to at address 0xBC00 in VRAM.
+ */
+void VDP_setWindowPlanAddress(u16 value);
+/**
+ *  \brief
+ *      Set VRAM address (location) of Plan A.
+ *
+ *  Ex: VDP_setAPlanAddress(0xE000)<br/>
+ *  Will set the Plan B to at address 0xE000 in VRAM.
+ */
+void VDP_setBPlanAddress(u16 value);
+/**
+ *  \brief
+ *      Set VRAM address (location) of Sprite list.
+ *
+ *  Ex: VDP_setSpriteListAddress(0xB800)<br/>
+ *  Will set the Sprite list to at address 0xB800 in VRAM.
+ */
+void VDP_setSpriteListAddress(u16 value);
+/**
+ *  \brief
+ *      Set VRAM address (location) of H Scroll table.
+ *
+ *  Ex: VDP_setSpriteListAddress(0xB400)<br/>
+ *  Will set the HScroll table to at address 0xB400 in VRAM.
+ */
+void VDP_setHScrollTableAddress(u16 value);
 
 /**
  *  \brief

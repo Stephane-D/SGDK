@@ -274,6 +274,93 @@ void VDP_setHIntCounter(u8 value)
 }
 
 
+u16 VDP_getAPlanAddress()
+{
+    return regValues[0x02] * 0x400;
+}
+
+u16 VDP_getBPlanAddress()
+{
+    return regValues[0x04] * 0x2000;
+}
+
+u16 VDP_getWindowPlanAddress()
+{
+    return regValues[0x03] * 0x400;
+}
+
+u16 VDP_getSpriteListAddress()
+{
+    return regValues[0x05] * 0x200;
+}
+
+u16 VDP_getHScrollTableAddress()
+{
+    return regValues[0x0D] * 0x400;
+}
+
+
+void VDP_setAPlanAddress(u16 value)
+{
+    vu16 *pw;
+
+    regValues[0x02] = (value / 0x400) & 0x38;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8200 | regValues[0x02];
+}
+
+void VDP_setWindowPlanAddress(u16 value)
+{
+    vu16 *pw;
+
+    if (regValues[0x0C] & 0x81)
+        // 40H mode
+        regValues[0x03] = (value / 0x400) & 0x3C;
+    else
+        // 32H mode
+        regValues[0x03] = (value / 0x400) & 0x3E;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8300 | regValues[0x03];
+}
+
+void VDP_setBPlanAddress(u16 value)
+{
+    vu16 *pw;
+
+    regValues[0x04] = (value / 0x2000) & 0x07;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8400 | regValues[0x04];
+}
+
+void VDP_setSpriteListAddress(u16 value)
+{
+    vu16 *pw;
+
+    if (regValues[0x0C] & 0x81)
+        // 40H mode
+        regValues[0x05] = (value / 0x200) & 0x7E;
+    else
+        // 32H mode
+        regValues[0x05] = (value / 0x200) & 0x7F;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8500 | regValues[0x05];
+}
+
+void VDP_setHScrollTableAddress(u16 value)
+{
+    vu16 *pw;
+
+    regValues[0x0D] = (value / 0x400) & 0x3F;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8D00 | regValues[0x0D];
+}
+
+
 void VDP_waitDMACompletion()
 {
     while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));

@@ -242,8 +242,8 @@ void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
  *      A Genesis bitmap is a 4 bpp bitmap which has been converted via the bintos tool.<br>
  *      The resulting file contains bitmap size info and 16 colors palette.
  *
- * \param genbmp16
- *      Genesis bitmap data buffer.
+ * \param bitmap
+ *      Genesis bitmap.
  * \param x
  *      X coordinate.
  * \param y
@@ -251,7 +251,7 @@ void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
  * \param numpal
  *      Palette (index) to use to load the bitmap palette information.
  */
-void BMP_loadGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 numpal);
+void BMP_loadGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal);
 /**
  * \brief
  *      Load and draw a Genesis 4 BPP bitmap with specified dimension.<br>
@@ -260,8 +260,8 @@ void BMP_loadGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 numpal);
  *      The resulting file contains bitmap size info and 16 colors palette.<br>
  *      The bitmap is scaled to the specified dimension.
  *
- * \param genbmp16
- *      Genesis bitmap data buffer.
+ * \param bitmap
+ *      Genesis bitmap.
  * \param x
  *      X coordinate.
  * \param y
@@ -273,17 +273,12 @@ void BMP_loadGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 numpal);
  * \param numpal
  *      Palette (index) to use to load the bitmap palette information.
  */
-void BMP_loadAndScaleGenBmp16(const u16 *genbmp16, u16 x, u16 y, u16 w, u16 h, u16 numpal);
+void BMP_loadAndScaleGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal);
 /**
- * \brief
- *      Get the color palette of specified Genesis 4 BPP bitmap.<br>
- *
- * \param genbmp16
- *      Genesis bitmap data buffer.
- * \param pal
- *      Palette buffer where we want to store the bitmap palette.
+ * \deprecated
+ *      Uses bitmap->palette instead.
  */
-void BMP_getGenBmp16Palette(const u16 *genbmp16, u16 *pal);
+void BMP_getGenBitmapPalette(const Bitmap *bitmap, u16 *pal);
 
 /**
  * \brief
