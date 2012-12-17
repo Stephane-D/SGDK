@@ -65,3 +65,11 @@ void PSG_setFrequency(u8 channel, u16 value)
 
     PSG_setTone(channel, data);
 }
+
+void PSG_setNoise(u8 type, u8 frequency)
+{
+    vu8 *pb;
+
+    pb = (u8 *) PSG_PORT;
+    *pb = 0xE0 | ((type & 1) << 2) | (frequency & 0x3);
+}

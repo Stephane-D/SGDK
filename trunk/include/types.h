@@ -137,12 +137,24 @@
 #define vu32    volatile u32
 
 
+#ifndef uint8_t
 #define uint8_t     u8
+#endif
+#ifndef uint16_t
 #define uint16_t    u16
+#endif
+#ifndef uint32_t
 #define uint32_t    u32
+#endif
+#ifndef int8_t
 #define int8_t      s8
+#endif
+#ifndef int16_t
 #define int16_t     s16
+#endif
+#ifndef int32_t
 #define int32_t     s32
+#endif
 
 
 /**
@@ -155,9 +167,6 @@ typedef s16 fix16;
  *      32 bits fixed floating point type.
  */
 typedef s32 fix32;
-
-// used for memcpy and memset ISO C method
-typedef unsigned int size_t;
 
 
 #define FASTCALL
