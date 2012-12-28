@@ -1,7 +1,6 @@
 #include "genesis.h"
 #include "meshs.h"
 
-#define FASTFILL
 #define MAX_POINTS  8
 
 
@@ -45,11 +44,7 @@ int main()
 
     JOY_setEventHandler(handleJoyEvent);
 
-#ifdef FASTFILL
-    BMP_FF_init();
-#else
     BMP_init();
-#endif
 
     M3D_reset();
     M3D_setViewport(BMP_WIDTH, BMP_HEIGHT);
@@ -84,21 +79,12 @@ int main()
 
         // ensure previous flip buffer request has been started
         BMP_waitWhileFlipRequestPending();
+        BMP_showFPS(0);
 
-#ifdef FASTFILL
-        BMP_FF_clear();
-#else
         BMP_clear();
-#endif
-
         drawPoints(MAX_POINTS, 0xFF);
 
-#ifdef FASTFILL
-        BMP_FF_flip();
-#else
         BMP_flip();
-#endif
-        BMP_showFPS(0);
     }
 }
 
@@ -140,12 +126,8 @@ void drawPoints(u16 num, u8 col)
 
             if (dp > 0) col += (dp >> (FIX16_FRAC_BITS - 2));
 
-#ifdef FASTFILL
-//            BMP_FF_drawPolygon(v, 4, i + 1);
-#else
 //            BMP_drawPolygon(v, 4, i + 1);
             BMP_drawPolygon(v, 4, col, 1);
-#endif
         }
     }
     else
@@ -164,11 +146,7 @@ void drawPoints(u16 num, u8 col)
             l.pt1 = pts_2D[*line_ind++];
             l.pt2 = pts_2D[*line_ind++];
 
-#ifdef FASTFILL
-            BMP_FF_drawLine(&l);
-#else
             BMP_drawLine(&l);
-#endif
         }
     }
 }

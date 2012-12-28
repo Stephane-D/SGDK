@@ -28,7 +28,6 @@
 #include "vdp_tile.h"
 
 #include "bmp.h"
-#include "bmp_ff.h"
 
 #include "sound.h"
 #include "z80_ctrl.h"

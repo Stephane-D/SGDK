@@ -427,4 +427,3 @@ calculatePolyEdge:
 .L61:
 	movm.l (%sp)+,#0x0fc
 	rts
-

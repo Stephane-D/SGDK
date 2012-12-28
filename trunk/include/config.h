@@ -8,14 +8,7 @@
  *      This table permits faster VRAM address set to the VDP (256 KB of ROM).
  *      BMP FastFill (FF) mode needs this table too.
  */
-#define VRAM_TABLE          0
-
-/**
- *  \def BMP_TABLES
- *      Set it to 1 to enable the BMP FastFill lookup tables.<br>
- *      BMP FastFill (FF) mode needs these tables (~42 KB of ROM).
- */
-#define BMP_TABLES          0
+#define VRAM_TABLE          1
 
 /**
  *  \def MATH_BIG_TABLES
