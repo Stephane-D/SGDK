@@ -4,7 +4,20 @@
  * \author Stephane Dallongeville
  * \date 08/2011
  *
- * This unit provides methods to simulate bitmap mode on SEGA genesis.
+ * This unit provides methods to simulate bitmap mode on SEGA genesis.<br>
+ *<br>
+ * The software bitmap engine permits to simulate a 128x160 pixels bitmap screen with doubled X resolution.<br>
+ * It uses a double buffer so you can draw to buffer while other buffer is being sent to video memory.<br>
+ * Bitmap buffer requires ~41 KB of memory which is dynamically allocated.<br>
+ * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period<br>
+ * is very short so it takes approximately 10 frames to blit an entire buffer.<br>
+ * To improve transfer performance the blank area is extended to fit bitmap resolution:<br>
+ * 0-31 = blank<br>
+ * 32-191 = active<br>
+ * 192-262/312 = blank<br>
+ * <br>
+ * With extended blank bitmap can be transfered to VRAM 20 times per second in NTSC<br>
+ * and 25 time per second in PAL.
  */
 
 #ifndef _BMP_H_
@@ -15,16 +28,13 @@
 
 /**
  * \brief
- *      Initialize the software bitmap engine.<br>
- *
- * \param flags
- *      Bitmap engine flags, see BMP_setFlags() for description.
+ *      Initialize the software bitmap engine.
  *
  * The software bitmap engine permit to simulate a 128x160 pixels bitmap screen with doubled X resolution.<br>
- * It uses a double buffer so you can draw to buffer while other buffer is currently blitting in video memory.<br>
+ * It uses a double buffer so you can draw to buffer while other buffer is being sent to video memory.<br>
  * Requires ~41 KB of memory which is dynamically allocated.
  */
-void BMP_init(u16 flags);
+void BMP_init();
 /**
  * \brief
  *      End the software bitmap engine.
@@ -42,87 +52,26 @@ void BMP_reset();
 
 /**
  * \brief
- *      Set bitmap engine flags.
- *
- * \param value
- *      BITMAP engine flags :<br>
- *      <b>BMP_ENABLE_WAITVSYNC</b> = wait VBlank before doing flip operation (see BMP_flip).<br>
- *      <b>BMP_ENABLE_ASYNCFLIP</b> = Asynch flip operation.<br>
- *         When this flag is enabled BMP_flip() will return immediatly even if flip wait for VBlank.<br>
- *         Note that this flag automatically enable BMP_ENABLE_WAITVSYNC.<br>
- *      <b>BMP_ENABLE_BLITONBLANK</b> = Process blit only during VDP blanking.<br>
- *         VRAM access is faster during blanking so this permit to optimize blit processing on best period<br>
- *         and keep the rest of time available for others processing.<br>
- *         By default on NTSC system the blanking period is very short so it takes approximately 15 frames<br>
- *         to blit the entire bitmap screen (blit is done in software).<br>
- *         Note that this flag automatically enable BMP_ENABLE_ASYNCFLIP.<br>
- *      <b>BMP_ENABLE_EXTENDEDBLANK</b> = Extend blanking period to fit bitmap height resolution (160 pixels).<br>
- *         This permit to improve blit process time (reduce 15 frames to approximately 4 frames on NTSC system).<br>
- *         Note that this flag automatically enable BMP_ENABLE_BLITONBLANK.<br>
- *      <b>BMP_ENABLE_FPSDISPLAY</b> = Display frame rate (number of bitmap flip per second).<br>
- *      <b>BMP_ENABLE_BFCULLING</b> = Enabled culling (used only for polygon drawing).<br>
- */
-void BMP_setFlags(u16 value);
-
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_WAITVSYNC</b> flag (see BMP_setFlags() method).
- */
-void BMP_enableWaitVSync();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_WAITVSYNC</b> flag (see BMP_setFlags() method).
- */
-void BMP_disableWaitVSync();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_ASYNCFLIP</b> flag (see BMP_setFlags() method).
- */
-void BMP_enableASyncFlip();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_ASYNCFLIP</b> flag (see BMP_setFlags() method).
- */
-void BMP_disableASyncFlip();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_FPSDISPLAY</b> flag (see BMP_setFlags() method).
- */
-void BMP_enableFPSDisplay();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_FPSDISPLAY</b> flag (see BMP_setFlags() method).
- */
-void BMP_disableFPSDisplay();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_BLITONBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_enableBlitOnBlank();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_BLITONBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_disableBlitOnBlank();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_EXTENDEDBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_enableExtendedBlank();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_EXTENDEDBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_disableExtendedBlank();
-
-/**
- * \brief
  *      Flip bitmap buffer to screen.
  *
- * Blit the current bitmap back buffer to the screen then flip buffers<br>
- * so back buffer becomes front buffer and vice versa.
+ * Blit the current bitmap back buffer to the screen then flip buffers
+ * so back buffer becomes front buffer and vice versa.<br>
+ * Bitmap buffer is sent to video memory asynchronously during blank period
+ * so the function return immediatly.<br>
+ * If a flip is already in process then flip request is marked as pending
+ * and will be processed as soon the current one complete.<br>
+ * Take care of that before writing to bitmap buffer, you can use the
+ * #BMP_waitWhileFlipRequestPending() method to ensure no more flip request are pending.<br>
+ * If a flip request is already pending the function wait until no more request are pending.
+ *
+ * \return
+ *   0 if the flip request has be marked as pending as another flip is already in process.<br>
+ *   1 if the flip request has be initiated.
+ *
+ * \see #BMP_hasFlipRequestPending()
+ * \see #BMP_waitWhileFlipRequestPending()
  */
-void BMP_flip();
+u16 BMP_flip();
 
 /**
  * \brief
@@ -214,8 +163,10 @@ void BMP_drawLine(Line *l);
  *      number of point (lenght of points buffer).
  * \param col
  *      fill color.
+ * \param culling
+ *      Enabled backface culling (back faced polygon are not drawn).
  */
-void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col);
+void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col, u8 culling);
 
 /**
  * \brief

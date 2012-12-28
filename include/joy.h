@@ -128,6 +128,7 @@ void JOY_setEventHandler(_joyEventCallback *CB);
  *      <b>PORT_2</b>   = port 2<br>
  * \param support
  *      Peripheral support.<br>
+ *      <b>JOY_SUPPORT_OFF</b>            = No peripheral support<br>
  *      <b>JOY_SUPPORT_3BTN</b>           = 3 button joypad<br>
  *      <b>JOY_SUPPORT_6BTN</b>           = 6 button joypad<br>
  *      <b>JOY_SUPPORT_TRACKBALL</b>      = Sega Sports Pad (SMS trackball)<br>

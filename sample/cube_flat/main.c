@@ -1,7 +1,7 @@
 #include "genesis.h"
 #include "meshs.h"
 
-//#define FASTFILL
+#define FASTFILL
 #define MAX_POINTS  8
 
 
@@ -39,26 +39,16 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
+    // speed up controller checking
+    JOY_setSupport(PORT_1, JOY_SUPPORT_3BTN);
+    JOY_setSupport(PORT_2, JOY_SUPPORT_OFF);
+
     JOY_setEventHandler(handleJoyEvent);
 
 #ifdef FASTFILL
-    BMP_FF_init(0 |
-//             BMP_ENABLE_WAITVSYNC |
-//             BMP_ENABLE_ASYNCFLIP |
-//             BMP_ENABLE_BLITONBLANK |
-                BMP_ENABLE_EXTENDEDBLANK |
-                BMP_ENABLE_FPSDISPLAY |
-//             BMP_ENABLE_BFCULLING |
-                0);
+    BMP_FF_init();
 #else
-    BMP_init(0 |
-//             BMP_ENABLE_WAITVSYNC |
-//             BMP_ENABLE_ASYNCFLIP |
-//             BMP_ENABLE_BLITONBLANK |
-             BMP_ENABLE_EXTENDEDBLANK |
-             BMP_ENABLE_FPSDISPLAY |
-             BMP_ENABLE_BFCULLING |
-             0);
+    BMP_init();
 #endif
 
     M3D_reset();
@@ -80,14 +70,7 @@ int main()
 
     while (1)
     {
-#ifdef FASTFILL
-        BMP_FF_clear();
-#else
-        BMP_clear();
-#endif
-
         doActionJoy(JOY_1, JOY_readJoypad(JOY_1));
-        doActionJoy(JOY_2, JOY_readJoypad(JOY_2));
 
         // do work here
         rot.x += rotstep.x;
@@ -99,6 +82,15 @@ int main()
 
         updatePointsPos(MAX_POINTS);
 
+        // ensure previous flip buffer request has been started
+        BMP_waitWhileFlipRequestPending();
+
+#ifdef FASTFILL
+        BMP_FF_clear();
+#else
+        BMP_clear();
+#endif
+
         drawPoints(MAX_POINTS, 0xFF);
 
 #ifdef FASTFILL
@@ -106,6 +98,7 @@ int main()
 #else
         BMP_flip();
 #endif
+        BMP_showFPS(0);
     }
 }
 
@@ -117,12 +110,8 @@ void updatePointsPos(u16 num)
     M3D_project3D_s16(pts_3D, pts_2D, 8);
 }
 
-#define draw_flat
-
 void drawPoints(u16 num, u8 col)
 {
-    char str[16];
-
     if (flatDrawing)
     {
         Vect2D_s16 v[4];
@@ -155,7 +144,7 @@ void drawPoints(u16 num, u8 col)
 //            BMP_FF_drawPolygon(v, 4, i + 1);
 #else
 //            BMP_drawPolygon(v, 4, i + 1);
-            BMP_drawPolygon(v, 4, col);
+            BMP_drawPolygon(v, 4, col, 1);
 #endif
         }
     }

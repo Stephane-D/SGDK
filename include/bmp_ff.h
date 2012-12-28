@@ -24,12 +24,19 @@
  *      Bitmap engine flags, see BMP_setFlags() for description.
  *
  * The Fast Fill optimized software bitmap engine permit to simulate a 128x160 pixels bitmap screen with doubled X resolution.<br>
- * It uses a double buffer so you can draw to buffer while other buffer is currently blitting in video memory.<br>
  * It uses the hardware tile to perform fast filling when possible (fast clear, fast polygon fill...).<br>
  * Take note that this mode is not optimized for no fill processing (line or pixel draw) and will perform slowly in this case.<br>
- * Requires ~44 KB of memory which is dynamically allocated.
+ * <br>
+ * It uses a double buffer so you can draw to buffer while other buffer is currently blitting in video memory.<br>
+ * Bitmap buffer requires ~41 KB of memory which is dynamically allocated.<br>
+ * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period<br>
+ * is very short so it takes approximately 10 frames to blit an entire buffer.<br>
+ * To improve transfer performance the blank area is extended to fit bitmap resolution:<br>
+ * 0-31 = blank<br>
+ * 32-191 = active<br>
+ * 192-262/312 = blank
  */
-void BMP_FF_init(u16 flags);
+void BMP_FF_init();
 /**
  * \brief
  *      End the Fast Fill optimized software bitmap engine.
@@ -47,73 +54,37 @@ void BMP_FF_reset();
 
 /**
  * \brief
- *      Set Fast Fill bitmap engine flags.
- *
- * \param value
- *      Bitmap engine flags, see BMP_setFlags() for description.
- */
-void BMP_FF_setFlags(u16 value);
-
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_WAITVSYNC</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_enableWaitVSync();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_WAITVSYNC</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_disableWaitVSync();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_ASYNCFLIP</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_enableASyncFlip();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_ASYNCFLIP</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_disableASyncFlip();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_FPSDISPLAY</b> flag (see BMP_setFlags() method).
+ *      Enable frame rate display (usesul for profiling).
  */
 void BMP_FF_enableFPSDisplay();
 /**
  * \brief
- *      Disable <b>BMP_ENABLE_FPSDISPLAY</b> flag (see BMP_setFlags() method).
+ *      Disable frame rate display (usesul for profiling).
  */
 void BMP_FF_disableFPSDisplay();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_BLITONBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_enableBlitOnBlank();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_BLITONBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_disableBlitOnBlank();
-/**
- * \brief
- *      Enable <b>BMP_ENABLE_EXTENDEDBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_enableExtendedBlank();
-/**
- * \brief
- *      Disable <b>BMP_ENABLE_EXTENDEDBLANK</b> flag (see BMP_setFlags() method).
- */
-void BMP_FF_disableExtendedBlank();
 
 /**
  * \brief
  *      Flip bitmap buffer to screen.
  *
- * Blit the current bitmap back buffer to the screen then flip buffers<br>
- * so back buffer becomes front buffer and vice versa.
+ * Blit the current bitmap back buffer to the screen then flip buffers
+ * so back buffer becomes front buffer and vice versa.<br>
+ * Bitmap buffer is sent to video memory asynchronously during blank period
+ * so the function return immediatly.<br>
+ * If a flip is already in process then flip request is marked as pending
+ * and will be processed as soon the current one complete.<br>
+ * Take care of that before writing to bitmap buffer, you can use the
+ * #BMP_waitWhileFlipRequestPending() method to ensure no more flip request are pending.<br>
+ * If a flip request is already pending the function wait until no more request are pending.
+ *
+ * \return
+ *   0 if the flip request has be marked as pending as another flip is already in process.<br>
+ *   1 if the flip request has be initiated.
+ *
+ * \see #BMP_hasFlipRequestPending()
+ * \see #BMP_waitWhileFlipRequestPending()
  */
-void BMP_FF_flip();
-//void BMP_FF_internalBufferFlip();
+u16 BMP_FF_flip();
 
 /**
  * \brief

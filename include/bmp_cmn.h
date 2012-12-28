@@ -4,7 +4,7 @@
  * \author Stephane Dallongeville
  * \date 08/2011
  *
- * This unit provides common methods for bitmap engines.
+ * This unit provides common methods and definitions for bitmap engines.<br>
  */
 
 #ifndef _BMP_CMN_H_
@@ -122,45 +122,7 @@
 #define BMP_GENBMP16_IMAGE(genbmp16)    (&((genbmp16)[18]))
 
 
-/**
- *      \def BMP_ENABLE_WAITVSYNC
- *          wait VBlank before doing flip operation (see BMP_flip()).
- */
-#define BMP_ENABLE_WAITVSYNC     (1 << 0)
-/**
- *      \def BMP_ENABLE_ASYNCFLIP
- *          Asynch flip operation.<br>
- *          When this flag is enabled BMP_flip() will return immediatly even if flip wait for VBlank.<br>
- *          Note that this flag automatically enable BMP_ENABLE_WAITVSYNC.
- */
-#define BMP_ENABLE_ASYNCFLIP     (1 << 1)
-/**
- *      \def BMP_ENABLE_BLITONBLANK
- *          Process blit only during VDP blanking.<br>
- *          VRAM access is faster during blanking so this permit to optimize blit processing on best period<br>
- *          and keep the rest of time available for others processing.<br>
- *          By default on NTSC system the blanking period is very short so it takes approximately 15 frames<br>
- *          to blit the entire bitmap screen (blit is done in software).<br>
- *          Note that this flag automatically enable BMP_ENABLE_ASYNCFLIP.
- */
-#define BMP_ENABLE_BLITONBLANK   (1 << 2)
-/**
- *      \def BMP_ENABLE_EXTENDEDBLANK
- *          Extend blanking period to fit bitmap height resolution (160 pixels).<br>
- *          This permit to improve blit process time (reduce 15 frames to approximately 4 frames on NTSC system).<br>
- *          Note that this flag automatically enable BMP_ENABLE_BLITONBLANK.
- */
-#define BMP_ENABLE_EXTENDEDBLANK (1 << 3)
-/**
- *      \def BMP_ENABLE_FPSDISPLAY
- *          Display frame rate (number of bitmap flip per second).
- */
-#define BMP_ENABLE_FPSDISPLAY    (1 << 4)
-/**
- *      \def BMP_ENABLE_BFCULLING
- *          Enabled culling (used only for polygon drawing, see BMP_setFlags()).
- */
-#define BMP_ENABLE_BFCULLING     (1 << 5)
+#define BMP_ENABLE_FPSDISPLAY    (1 << 0)
 
 /**
  *      \struct Bitmap
@@ -244,37 +206,30 @@ extern u8 *bmp_buffer_read;
  */
 extern u8 *bmp_buffer_write;
 
-extern u16 bmp_flags;
 extern u16 bmp_state;
 
 
 /**
  * \brief
- *      Get bitmap engine flags.
+ *      Return true (!= 0) if a flip request is pending.
  */
-u16  BMP_getFlags();
-
+u16  BMP_hasFlipRequestPending();
 /**
  * \brief
- *      Return true (!= 0) if a blit operation is in progress.
+ *      Wait until no more flip request is pending.
  */
-u16  BMP_hasBlitInProgress();
+void BMP_waitWhileFlipRequestPending();
 /**
  * \brief
- *      Wait for blit to complete.<br>
- *      Return immediately if no blit is currently in progress.
+ *      Return true (!= 0) if a flip operation is in progress.
  */
-void BMP_waitBlitComplete();
+u16  BMP_hasFlipInProgess();
 /**
  * \brief
- *      Return true (!= 0) if a flip operation is pending.
+ *      Wait until the asynchronous flip operation is completed.<br>
+ *      Blit operation is the bitmap buffer transfer to VRAM.<br>
  */
-u16  BMP_hasFlipWaiting();
-/**
- * \brief
- *      Wait until the asynchronous flip operation is completed.
- */
-void BMP_waitAsyncFlipComplete();
+void BMP_waitFlipComplete();
 
 /**
  * \brief
@@ -319,7 +274,6 @@ void BMP_clearTextLine(u16 y);
 void BMP_showFPS(u16 float_display);
 
 
-u8   BMP_clipLine_old(Line *l);
 /**
  * \brief
  *      Clip the specified line so it fit in bitmap screen (0, 0, BMP_WIDTH, BMP_HEIGHT)

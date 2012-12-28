@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 double nextSample(FILE* file, int sampleSize, int numChan);
@@ -24,8 +25,10 @@ int main(int argc, char *argv[ ])
     if (argc < 3)
     {
         printf("Usage: wav2raw sourceWavFile destRawFile <outRate>\n");
-        printf("Accepted output rate : 8000, 11025, 13400, 16000, 22050, 32000.\n");
+        printf("Output rate is given in Hand should be <= to the input sample sample.\n");
         printf("Success returns errorlevel 0. Error return greater than zero.\n");
+        printf("\n");
+        printf("Ex: wav2raw input.wav output.raw 11025\n");
         exit(1);
     }
 
@@ -43,29 +46,10 @@ int main(int argc, char *argv[ ])
         exit(3);
     }
 
-    nOutputSamplesPerSecond = 0;
-
     if (argc > 3)
-    {
-        if (!strcmp(argv[3], "8000"))
-            nOutputSamplesPerSecond = 8000;
-        else if (!strcmp(argv[3], "11025"))
-            nOutputSamplesPerSecond = 11025;
-        else if (!strcmp(argv[3], "13400"))
-            nOutputSamplesPerSecond = 13400;
-        else if (!strcmp(argv[3], "16000"))
-            nOutputSamplesPerSecond = 16000;
-        else if (!strcmp(argv[3], "22050"))
-            nOutputSamplesPerSecond = 22050;
-        else if (!strcmp(argv[3], "32000"))
-            nOutputSamplesPerSecond = 32000;
-        else
-        {
-            printf("Incorrect output rate value\n");
-            printf("Accepted values are: 8000, 11025, 13400, 16000, 22050, 32000.\n");
-            exit(4);
-        }
-    }
+        sscanf(argv[3], "%ld", &nOutputSamplesPerSecond);
+    else
+        nOutputSamplesPerSecond = 0;
 
     /* Read the header bytes. */
     fscanf( infile, "%4s", prefix );
@@ -89,7 +73,7 @@ int main(int argc, char *argv[ ])
     {
         printf("Output rate (%ld) cannot be above input rate (%ld)\n", nOutputSamplesPerSecond, nSamplesPerSecond);
         printf("Use lower output rate value or higher input rate file\n");
-        exit(5);
+        exit(4);
     }
 
     int nBytesPerSample = nBitsPerSample / 8;
@@ -104,7 +88,6 @@ int main(int argc, char *argv[ ])
     value = 0;
     lastSample = 0;
 
-    /* Scan and convert the bytes. */
     for(offset = 0; offset < size; offset += step)
     {
         char byte;
@@ -127,7 +110,7 @@ int main(int argc, char *argv[ ])
         }
 
         sample /= step;
-        byte = sample;
+        byte = round(sample);
 
         fwrite(&byte, 1, 1, outfile);
     }

@@ -27,8 +27,9 @@
 //#define BMP_FB0TILEMAP_ADJ      (BMP_FB0TILEMAP + BMP_FBTILEMAPOFFSET)
 //#define BMP_FB1TILEMAP_ADJ      (BMP_FB1TILEMAP + BMP_FBTILEMAPOFFSET)
 
-#define BMP_STAT_FLIPWAITING    (1 << 0)
+#define BMP_STAT_FLIPPING       (1 << 0)
 #define BMP_STAT_BLITTING       (1 << 1)
+#define BMP_STAT_FLIPWAITING    (1 << 2)
 
 #define HAS_FLAG(f)             (bmp_flags & (f))
 #define HAS_FLAGS(f)            ((bmp_flags & (f)) == (f))
@@ -39,17 +40,16 @@
 #define WRITE_IS_FB1            (bmp_buffer_write == bmp_buffer_1)
 
 
-//extern u8 bmp_buffer_0[BMP_WIDTH * BMP_HEIGHT];
-//extern u8 bmp_buffer_1[BMP_WIDTH * BMP_HEIGHT];
 extern u8 *bmp_buffer_0;
 extern u8 *bmp_buffer_1;
 
 extern u16 (*doBlit)();
+extern void (*doFlip)();
 
 
 void _bmp_init();
 void _bmp_end();
-void _bmp_setFlags(u16 value);
+
 void _bmp_doFlip();
 
 
