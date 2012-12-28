@@ -12,7 +12,6 @@ typedef struct
 } _particule;
 
 _particule partics[MAX_PARTIC];
-//Vect2D_u16 partics[MAX_PARTIC];
 
 s16 numpartic;
 
