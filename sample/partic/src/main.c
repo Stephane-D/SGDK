@@ -60,29 +60,37 @@ int main()
 
         if (!paused)
         {
-            // clear bitmap
-            BMP_clear();
-
             // calculates particules physic
             updatePartic(partics, numpartic);
+
+            // ensure previous flip buffer request has been started
+            BMP_waitWhileFlipRequestPending();
+
+            // can now draw text
+            BMP_showFPS(0);
+
+            // display particul number
+            intToStr(numpartic, str, 1);
+            BMP_clearText(1, 3, 4);
+            BMP_drawText(str, 1, 3);
+
+            // display gravity
+            fix16ToStr(gravity, str, 2);
+            BMP_clearText(1, 4, 5);
+            BMP_drawText(str, 1, 4);
+
+            // clear bitmap
+            BMP_clear();
             // draw particules
             drawPartic(partics, numpartic, col);
 
             // swap buffer
             BMP_flip();
-            BMP_showFPS(0);
         }
-
-        // display particul number
-        intToStr(numpartic, str, 1);
-        BMP_clearText(1, 3, 4);
-        BMP_drawText(str, 1, 3);
-
-        // display gravity
-        fix16ToStr(gravity, str, 2);
-        BMP_clearText(1, 4, 5);
-        if (paused) BMP_drawText("PAUSE", 1, 4);
-        else BMP_drawText(str, 1, 4);
+        else
+        {
+            BMP_drawText("PAUSE", 1, 4);
+        }
     }
 }
 
