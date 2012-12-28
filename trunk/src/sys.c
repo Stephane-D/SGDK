@@ -28,7 +28,8 @@ extern u16 randbase;
 
 // extern library callback function (we don't want to share them)
 extern u16 VDP_doStepFading();
-extern u16 BMP_doBlankProcess();
+extern u16 BMP_doHBlankProcess();
+extern u16 BMP_doVBlankProcess();
 
 
 // main function
@@ -160,12 +161,11 @@ void _vint_callback()
     {
         if (!VDP_doStepFading()) VIntProcess &= ~PROCESS_PALETTE_FADING;
     }
-
-    // bitmap process
-//        if (VIntProcess & PROCESS_BITMAP_TASK)
-//        {
-//            if (!BMP_doBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
-//        }
+    // bitmap processing
+    if (VIntProcess & PROCESS_BITMAP_TASK)
+    {
+        if (!BMP_doVBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
+    }
 
     // ...
 
@@ -186,7 +186,7 @@ void _hint_callback()
     // bitmap processing
     if (HIntProcess & PROCESS_BITMAP_TASK)
     {
-        if (!BMP_doBlankProcess()) HIntProcess &= ~PROCESS_BITMAP_TASK;
+        if (!BMP_doHBlankProcess()) HIntProcess &= ~PROCESS_BITMAP_TASK;
     }
 
     // ...

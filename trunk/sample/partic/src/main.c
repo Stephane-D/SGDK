@@ -39,13 +39,7 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
-    BMP_init(0 |
-//             BMP_ENABLE_WAITVSYNC |
-//             BMP_ENABLE_ASYNCFLIP |
-//             BMP_ENABLE_BLITONBLANK |
-             BMP_ENABLE_EXTENDEDBLANK |
-             BMP_ENABLE_FPSDISPLAY |
-             0);
+    BMP_init();
 
     paused = 0;
     col = 0xFF;
@@ -76,6 +70,7 @@ int main()
 
             // swap buffer
             BMP_flip();
+            BMP_showFPS(0);
         }
 
         // display particul number
@@ -180,9 +175,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         // C button pressed ?
         if (state & BUTTON_C)
         {
-            // toggle vsync
-            if (BMP_getFlags() & BMP_ENABLE_WAITVSYNC) BMP_disableWaitVSync();
-            else BMP_enableWaitVSync();
+
         }
     }
 }

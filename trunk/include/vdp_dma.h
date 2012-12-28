@@ -85,6 +85,26 @@
  *      Destination address.
  * \param len
  *      Number of word to transfert.
+ * \param setVRamStep
+ *      If TRUE then VRAM step is set to 2 (else it is unchanged).
+ */
+void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, u16 setVRamStep);
+/**
+ * \brief
+ *      Do DMA transfert operation.
+ *
+ * \param location
+ *      Destination location.<br/>
+ *      Accepted values:<br/>
+ *      - VDP_DMA_VRAM (for VRAM transfert).<br/>
+ *      - VDP_DMA_CRAM (for CRAM transfert).<br/>
+ *      - VDP_DMA_VSRAM (for VSRAM transfert).<br/>
+ * \param from
+ *      Source address.
+ * \param to
+ *      Destination address.
+ * \param len
+ *      Number of word to transfert.
  */
 void VDP_doDMA(u8 location, u32 from, u16 to, u16 len);
 /**

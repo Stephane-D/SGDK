@@ -39,7 +39,7 @@ static u16 *bmp_tilemap_1 = NULL;
 u16 *bmp_tilemap_read;
 u16 *bmp_tilemap_write;
 
-static u16 basetile_ind;
+u16 basetile_ind;
 
 
 // ASM procedures (defined in bmp_ff_a.s)
@@ -53,10 +53,9 @@ extern void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
 extern void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
 extern void calculatePolyEdge_old(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
 
-static u16 doBlitNorm();
-static u16 doBlitBlank();
-static u16 doBlitBlankExt();
-static void internalBufferFlip();
+static u16 doBlitInternal();
+static void doFlipInternal();
+
 // replaced by ASM version (see bmp_ff_a.s file)
 static void blitTileMap_old();
 static u16 getTile_old(u16 offset);
@@ -65,7 +64,7 @@ static void setUserTile_old(u16 offset);
 static void drawLine_old(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
 
 
-void BMP_FF_init(u16 flags)
+void BMP_FF_init()
 {
     // common bmp init tasks and memory allocation
     _bmp_init();
@@ -83,9 +82,6 @@ void BMP_FF_init(u16 flags)
     bmp_tilemap_write = bmp_tilemap_1;
     basetile_ind = BMP_FB1TILEINDEX;
 
-    // do some init process
-    BMP_FF_setFlags(0);
-
     // first init, clear and flip
     BMP_FF_clear();
     BMP_FF_flip();
@@ -93,13 +89,30 @@ void BMP_FF_init(u16 flags)
     BMP_FF_clear();
     BMP_FF_flip();
 
-    BMP_FF_setFlags(flags);
+    // flip method
+    doFlip = &doFlipInternal;
+    // blit method
+    doBlit = &doBlitInternal;
+
+    const u16 vcnt = GET_VCOUNTER;
+    const u16 scrh = VDP_getScreenHeight();
+
+    // modify HIntCounter for extended blank blit
+    VDP_setHIntCounter(scrh - (VDP_getHIntCounter() + vcnt + ((scrh - BMP_HEIGHT) >> 1) + 3));
+    // enabled bitmap Int processing
+    HIntProcess |= PROCESS_BITMAP_TASK;
+    VIntProcess |= PROCESS_BITMAP_TASK;
+    VDP_setHInterrupt(1);
 }
 
 void BMP_FF_end()
 {
-    // end some stuff
-    BMP_FF_setFlags(0);
+    // re enabled VDP if it was disabled because of extended blank
+    VDP_setEnable(1);
+    // disabled bitmap Int processing
+    VDP_setHInterrupt(0);
+    HIntProcess &= ~PROCESS_BITMAP_TASK;
+    VIntProcess &= ~PROCESS_BITMAP_TASK;
 
     // release tile map
     if (bmp_tilemap_0)
@@ -120,153 +133,32 @@ void BMP_FF_end()
 
 void BMP_FF_reset()
 {
-    BMP_FF_init(bmp_flags);
+    BMP_FF_init();
 }
 
 
-void BMP_FF_setFlags(u16 value)
+u16 BMP_FF_flip()
 {
-    const u16 oldf = bmp_flags;
+    // wait until pending flip is processed
+    BMP_waitWhileFlipRequestPending();
 
-    // common setFlags tasks (also handle flags constraints)
-    _bmp_setFlags(value);
-
-    // if internals flags hasn't changed --> exit
-    if (bmp_flags == oldf) return;
-
-    // re enabled VDP if it was disabled because of extended blank
-    if (oldf & BMP_ENABLE_EXTENDEDBLANK)
-        VDP_setEnable(1);
-
-    // async blit (H Int processing)
-    if (HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
+    // currently flipping ?
+    if (bmp_state & BMP_STAT_FLIPPING)
     {
-        const u16 scrh = VDP_getScreenHeight();
-
-        if (HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK))
-        {
-            VDP_setHIntCounter(scrh - (((scrh - BMP_HEIGHT) >> 1) + 1));
-            // blit method
-            doBlit = &doBlitBlankExt;
-        }
-        else
-        {
-            VDP_setHIntCounter(scrh - 1);
-
-            // blit method
-            if (HAS_FLAG(BMP_ENABLE_BLITONBLANK)) doBlit = &doBlitBlank;
-            else doBlit = &doBlitNorm;
-        }
-
-        // enabled bitmap H Int processing
-        HIntProcess |= PROCESS_BITMAP_TASK;
-        VDP_setHInterrupt(1);
+        // set a pending flip
+        bmp_state |= BMP_STAT_FLIPWAITING;
+        return 1;
     }
-    else
-    {
-        // normal blit
-        doBlit = &doBlitNorm;
-        // disabled bitmap H Int processing
-        VDP_setHInterrupt(0);
-        HIntProcess &= ~PROCESS_BITMAP_TASK;
-    }
+
+    // flip bitmap buffer
+    doFlipInternal();
+    // flip started (will be processed in blank period --> BMP_doBlankProcess)
+    bmp_state |= BMP_STAT_FLIPPING;
+
+    return 0;
 }
 
-void BMP_FF_enableWaitVSync()
-{
-    if (!HAS_FLAG(BMP_ENABLE_WAITVSYNC))
-        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_WAITVSYNC);
-}
-
-void BMP_FF_disableWaitVSync()
-{
-    if (HAS_FLAG(BMP_ENABLE_WAITVSYNC))
-        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_WAITVSYNC);
-}
-
-void BMP_FF_enableASyncFlip()
-{
-    if (!HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
-        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_ASYNCFLIP);
-}
-
-void BMP_FF_disableASyncFlip()
-{
-    if (HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
-        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_ASYNCFLIP);
-}
-
-void BMP_FF_enableFPSDisplay()
-{
-    if (!HAS_FLAG(BMP_ENABLE_FPSDISPLAY))
-        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_FPSDISPLAY);
-}
-
-void BMP_FF_disableFPSDisplay()
-{
-    if (HAS_FLAG(BMP_ENABLE_FPSDISPLAY))
-        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_FPSDISPLAY);
-}
-
-void BMP_FF_enableBlitOnBlank()
-{
-    if (!HAS_FLAG(BMP_ENABLE_BLITONBLANK))
-        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_BLITONBLANK);
-}
-
-void BMP_FF_disableBlitOnBlank()
-{
-    if (HAS_FLAG(BMP_ENABLE_BLITONBLANK))
-        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_BLITONBLANK);
-}
-
-void BMP_FF_enableExtendedBlank()
-{
-    if (!HAS_FLAG(BMP_ENABLE_EXTENDEDBLANK))
-        BMP_FF_setFlags(bmp_flags | BMP_ENABLE_EXTENDEDBLANK);
-}
-
-void BMP_FF_disableExtendedBlank()
-{
-    if (bmp_flags & BMP_ENABLE_EXTENDEDBLANK)
-        BMP_FF_setFlags(bmp_flags & ~BMP_ENABLE_EXTENDEDBLANK);
-}
-
-
-void BMP_FF_flip()
-{
-    // wait for vsync ?
-    if (HAS_FLAG(BMP_ENABLE_WAITVSYNC))
-    {
-        // async flip ?
-        if (HAS_FLAG(BMP_ENABLE_ASYNCFLIP))
-        {
-            // wait for previous async flip to complete
-            BMP_waitAsyncFlipComplete();
-            // flip bitmap buffer
-            internalBufferFlip();
-            // request a flip (will be processed in blank period --> BMP_doBlankProcess)
-            bmp_state |= BMP_STAT_FLIPWAITING;
-        }
-        else
-        {
-            VDP_waitVSync();
-            // flip bitmap buffer
-            internalBufferFlip();
-            // blit buffer to VRAM and flip vdp display
-            _bmp_doFlip();
-        }
-    }
-    else
-    {
-        // flip bitmap buffer
-        internalBufferFlip();
-        // blit buffer to VRAM and flip vdp display
-        _bmp_doFlip();
-    }
-}
-
-static void internalBufferFlip()
+static void doFlipInternal()
 {
     if (READ_IS_FB0)
     {
@@ -337,196 +229,7 @@ static void blitTileMap_old()
 }
 
 
-static u16 doBlitNorm()
-{
-    vu32 *plctrl;
-    vu32 *pldata;
-    u32 *src;
-    u16 *srcmap;
-    const u32 *vramwrite_addr;
-    u16 i, j;
-
-    VDP_setAutoInc(2);
-
-    // copy tilemap
-    blitTileMap();
-
-    if (READ_IS_FB0)
-        vramwrite_addr = &vramwrite_tab[BMP_FB0TILE];
-    else
-        vramwrite_addr = &vramwrite_tab[BMP_FB1TILE];
-
-    // point to vdp port
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
-
-    src = (u32 *) bmp_buffer_read;
-    srcmap = bmp_tilemap_read;
-
-    i = BMP_CELLHEIGHT;
-
-    while(i--)
-    {
-        j = BMP_CELLWIDTH;
-
-        while(j--)
-        {
-            // are we using a user tile ?
-            if (*srcmap++ >= BMP_BASETILEINDEX)
-            {
-                // force set destination address for tile
-                *plctrl = *vramwrite_addr;
-
-                // send it to VRAM
-                *pldata = src[(BMP_PITCH * 0) / 4];
-                *pldata = src[(BMP_PITCH * 1) / 4];
-                *pldata = src[(BMP_PITCH * 2) / 4];
-                *pldata = src[(BMP_PITCH * 3) / 4];
-                *pldata = src[(BMP_PITCH * 4) / 4];
-                *pldata = src[(BMP_PITCH * 5) / 4];
-                *pldata = src[(BMP_PITCH * 6) / 4];
-                *pldata = src[(BMP_PITCH * 7) / 4];
-            }
-
-            vramwrite_addr += 32;
-            src++;
-        }
-
-        src += (7 * BMP_PITCH) / 4;
-    }
-
-    return 1;
-}
-
-static u16 doBlitBlank()
-{
-    vu32 *plctrl;
-    vu32 *pldata;
-    u32 *src;
-    u16 *srcmap;
-    const u32 *vramwrite_addr;
-    u16 i, j;
-
-    static u16 save_i, save_j;
-
-    VDP_setAutoInc(2);
-
-    if (READ_IS_FB0)
-        vramwrite_addr = &vramwrite_tab[BMP_FB0TILE];
-    else
-        vramwrite_addr = &vramwrite_tab[BMP_FB1TILE];
-
-    // point to vdp port
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
-
-    src = (u32 *) bmp_buffer_read;
-    srcmap = bmp_tilemap_read;
-
-    // previous blit not completed ?
-    if (bmp_state & BMP_STAT_BLITTING)
-    {
-        const u16 done_i = BMP_CELLHEIGHT - save_i;
-        const u16 done_j = BMP_CELLWIDTH - save_j;
-
-        // adjust src pointer
-        src += (done_i * (BMP_YPIXPERTILE * (BMP_PITCH / 4))) + done_j;
-
-        const u16 off = (done_i * BMP_CELLWIDTH) + done_j;
-
-        // adjust tile address
-        vramwrite_addr += off * 32;
-        // adjust srcmap pointer
-        srcmap += off;
-
-        // restore j position
-        j = save_j;
-
-        while(j--)
-        {
-            // are we using a user tile ?
-            if (*srcmap++ >= BMP_BASETILEINDEX)
-            {
-                // force set destination address for tile
-                *plctrl = *vramwrite_addr;
-
-                // send it to VRAM
-                *pldata = src[(BMP_PITCH * 0) / 4];
-                *pldata = src[(BMP_PITCH * 1) / 4];
-                *pldata = src[(BMP_PITCH * 2) / 4];
-                *pldata = src[(BMP_PITCH * 3) / 4];
-                *pldata = src[(BMP_PITCH * 4) / 4];
-                *pldata = src[(BMP_PITCH * 5) / 4];
-                *pldata = src[(BMP_PITCH * 6) / 4];
-                *pldata = src[(BMP_PITCH * 7) / 4];
-            }
-
-            vramwrite_addr += 32;
-            src++;
-        }
-
-        src += (7 * (BMP_PITCH / 4));
-
-        // restore i position
-        i = save_i - 1;
-    }
-    else
-    {
-        // start blit
-        bmp_state |= BMP_STAT_BLITTING;
-
-        // copy tilemap
-        blitTileMap();
-
-        i = BMP_CELLHEIGHT;
-    }
-
-    while(i--)
-    {
-        j = BMP_CELLWIDTH;
-
-        while(j--)
-        {
-            // blank period finished ?
-            if (!GET_VDPSTATUS(VDP_VBLANK_FLAG))
-            {
-                // save current position and exit
-                save_i = i + 1;
-                save_j = j + 1;
-                return 0;
-            }
-
-            // are we using a user tile ?
-            if (*srcmap++ >= BMP_BASETILEINDEX)
-            {
-                // force set destination address for tile
-                *plctrl = *vramwrite_addr;
-
-                // send it to VRAM
-                *pldata = src[(BMP_PITCH * 0) / 4];
-                *pldata = src[(BMP_PITCH * 1) / 4];
-                *pldata = src[(BMP_PITCH * 2) / 4];
-                *pldata = src[(BMP_PITCH * 3) / 4];
-                *pldata = src[(BMP_PITCH * 4) / 4];
-                *pldata = src[(BMP_PITCH * 5) / 4];
-                *pldata = src[(BMP_PITCH * 6) / 4];
-                *pldata = src[(BMP_PITCH * 7) / 4];
-            }
-
-            vramwrite_addr += 32;
-            src++;
-        }
-
-        src += (7 * BMP_PITCH) / 4;
-    }
-
-    // blit done
-    bmp_state &= ~BMP_STAT_BLITTING;
-
-    return 1;
-}
-
-static u16 doBlitBlankExt()
+static u16 doBlitInternal()
 {
     vu32 *plctrl;
     vu32 *pldata;
