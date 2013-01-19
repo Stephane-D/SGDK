@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Genitile" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="out\genitile" prefix_auto="1" extension_auto="1" />
+				<Option object_output="out\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="Nemesis.h" />
+		<Unit filename="lz77.cpp" />
+		<Unit filename="lz77.h" />
+		<Unit filename="mdtt.cpp" />
+		<Unit filename="mdttSDK.h" />
+		<Unit filename="tgApp.cpp" />
+		<Unit filename="tgApp.h" />
+		<Unit filename="tgImgPlugin.cpp" />
+		<Unit filename="tgImgPlugin.h" />
+		<Unit filename="tgList.h" />
+		<Unit filename="tgOutputPlugin.cpp" />
+		<Unit filename="tgOutputPlugin.h" />
+		<Unit filename="tgPlugin.cpp" />
+		<Unit filename="tgPlugin.h" />
+		<Unit filename="tgPluginsList.h" />
+		<Unit filename="tgTools.cpp" />
+		<Unit filename="tgTools.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
