@@ -39,7 +39,7 @@ class tgPlugin
 	typedef char* (*fctGetContactInfo)(void);
 
 	char	m_FileName[256];
-	HINSTANCE		m_Library;	
+	HINSTANCE		m_Library;
 	fctGetDescription	m_fctGetDescription;
 	fctGetAuthor		m_fctGetAuthor;
 	fctGetVersion		m_fctGetVersion;
@@ -50,7 +50,7 @@ class tgPlugin
 	///////////////////////////////////////////////////////////////////////////
 	private:
 	////////
-		
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////

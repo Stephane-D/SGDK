@@ -12,7 +12,7 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -22,7 +22,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="..\..\mdttSDK.h" />
 		<Unit filename="img_bmp.cpp" />
 		<Extensions>
 			<code_completion />

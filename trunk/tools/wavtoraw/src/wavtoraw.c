@@ -21,6 +21,7 @@ int main(int argc, char *argv[ ])
     unsigned long nOutputSamplesPerSecond;
     short int nBlockAlign;
     short int nBitsPerSample;
+    int i, j;
 
     if (argc < 3)
     {
@@ -34,6 +35,7 @@ int main(int argc, char *argv[ ])
 
     /* Open source for binary read (will fail if file does not exist) */
     if ((infile = fopen( argv[1], "rb" )) == NULL)
+//    if ((infile = fopen( "test.wav", "rb" )) == NULL)
     {
         printf("The source file %s was not opened\n", argv[1]);
         exit(2);
@@ -41,6 +43,7 @@ int main(int argc, char *argv[ ])
 
     /* Open output for write */
     if( (outfile = fopen( argv[2], "w" )) == NULL )
+//    if( (outfile = fopen( "out.raw", "w" )) == NULL )
     {
         printf("The output file %s was not opened\n", argv[2]);
         exit(3);
@@ -63,6 +66,11 @@ int main(int argc, char *argv[ ])
     fscanf( infile, "%4c", &nBytesPerSecond );
     fscanf( infile, "%2c", &nBlockAlign );
     fscanf( infile, "%2c", &nBitsPerSample );
+
+    // pass extra bytes in bloc
+    for(i = 0; i < nChunkSize - 0x10; i++)
+        fscanf( infile, "%1c", &j);
+
     fscanf( infile, "%4c", ckID );
     fscanf( infile, "%4c", &nChunkSize );
 

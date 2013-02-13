@@ -34,19 +34,19 @@ class tgOutputPlugin:public tgPlugin
 	///////////////////////////////////////////////////////////////////////////
 	protected:
 	//////////
-	
+
 	typedef	char* (*fctGetID)(void);
 	typedef	char* (*fctGetExt)(void);
 	typedef int	(*fctGetOutputType)(void);
 	typedef	int (*fctOutputData)(const char *filename,const char *name,int type,uint8* data,int size);
 	typedef int (*fctOutputPicture)(const char *filename,tgPictureInfo *info,uint8* pixels,tgColor *pal);
-	
+
 	fctGetID			m_fctGetID;
 	fctGetExt			m_fctGetExt;
 	fctOutputData		m_fctOutputData;
 	fctGetOutputType	m_fctGetOutputType;
 	fctOutputPicture	m_fctOutputPicture;
-		
+
 	///////////////////////////////////////////////////////////////////////////
 	private:
 	///////

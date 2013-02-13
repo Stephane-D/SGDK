@@ -36,9 +36,9 @@ template<class T> class tgPluginsList
 	char			m_Wildcard[256];
 	char			m_Path[256];
 	tgList<T>		*m_List;
-	
+
 	void Load(void);
-		
+
 	///////////////////////////////////////////////////////////////////////////
 	private:
 	////////
@@ -47,7 +47,7 @@ template<class T> class tgPluginsList
 ///////////////////////////////////////////////////////////////////////////////
 // Constructor
 
-template<class T> 
+template<class T>
 tgPluginsList<T>::tgPluginsList(const char* path,
 								const char* wildcard)
 {
@@ -55,11 +55,11 @@ tgPluginsList<T>::tgPluginsList(const char* path,
 	strcpy(m_Path,path);
 	strcat(m_Path,"\\");
 	strcpy(m_Wildcard,wildcard);
-	
-	m_List=new tgList<T>;		
+
+	m_List=new tgList<T>;
 
 	if(strlen(m_Path)>0 && strlen(m_Wildcard)>0)
-		Load();		
+		Load();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ tgPluginsList<T>::~tgPluginsList(void)
 {
 	tgPlugin	*p;
 	while( (p=m_List->PopBack())!=NULL)
-	{	delete(p);}	
+	{	delete(p);}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,20 +92,20 @@ void tgPluginsList<T>::Load(void)
 	HANDLE hFirst;
 
 	char path[256]={""};
-		
+
 	strcpy(path,m_Path);
 	strcat(path,m_Wildcard);
-	
-	if ( (hFirst = FindFirstFile (path, &FindData)) != INVALID_HANDLE_VALUE) 
+
+	if ( (hFirst = FindFirstFile (path, &FindData)) != INVALID_HANDLE_VALUE)
 	{
 		do
-		{	char pFile[256]={""};			
+		{	char pFile[256]={""};
 
 			strcpy(pFile,m_Path);
-			strcat(pFile,FindData.cFileName);			
+			strcat(pFile,FindData.cFileName);
 
-			m_List->PushBack(new T(pFile));		
-			
+			m_List->PushBack(new T(pFile));
+
 
 		}while ( FindNextFile (hFirst, &FindData));
 	}

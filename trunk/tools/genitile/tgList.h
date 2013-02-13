@@ -12,13 +12,13 @@
 // Class definition : tgNODE
 //////////////////////////////////////////////////////////////////////////////
 
-template<class T> 
+template<class T>
 class tgListNode
 {
-	public:	
+	public:
 	T*	object;
-	int index;		
-	
+	int index;
+
 	tgListNode<T> *prev,*next;
 	tgListNode();
 };
@@ -27,9 +27,9 @@ class tgListNode
 // Class definition : tgLIST
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T> 
+template <class T>
 class tgList
-{	
+{
 	///////////////////////////////////////////////////////////////////////////
 	public:
 	///////
@@ -53,14 +53,14 @@ class tgList
 
 	T*	Item(int index);
 	int	GetCount(void);
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	private:
 	////////
 
 	void RecomputeNodeIndex(tgListNode<T>*,int);
 	tgListNode<T> head,tail;
-	tgListNode<T>* last_node;	
+	tgListNode<T>* last_node;
 	int Count;
 };
 
@@ -107,21 +107,21 @@ template<class T> tgList<T>::~tgList(void)
 
 template<class T> int tgList<T>::PushBack(T* obj)
 {
-	int Index = Id;	
+	int Index = Id;
 	tgListNode<T>	*node;
 
 	if(obj!=NULL)
-	{	
+	{
 		node=new tgListNode<T>;
 
 		node->next=&tail;
 		node->prev=tail.prev;
 		node->object=obj;
 		node->index = Count;
-		
+
 		Id ++;
 		Count ++;
-		
+
 		(tail.prev)->next=node;
 		tail.prev=node;
 	}
@@ -150,8 +150,8 @@ template<class T> int tgList<T>::Insert(int index,T* obj)
 		(new_node->prev)->next = new_node;
 
 		RecomputeNodeIndex(node,index+1);
-			
-		Count ++;	
+
+		Count ++;
 
 		return index;
 	}
@@ -177,9 +177,9 @@ template<class T> T* tgList<T>::PopBack(void)
 		delete(node);
 
 		Count--;
-					
-		return obj;		
-	}	
+
+		return obj;
+	}
 	else
 	{
 		return NULL;
@@ -210,10 +210,10 @@ template<class T> tgListNode<T>*  tgList<T>::MoveNext(tgListNode<T>* node)
 }
 
 template<class T> tgListNode<T>* tgList<T>::MoveNext(tgListNode<T>* node,int i)
-{	
+{
 	while(node->next!= &tail && i>0)
 	{	node=node->next;
-	}		
+	}
 	return node;
 }
 
@@ -246,21 +246,21 @@ template<class T> T*  tgList<T>::Remove(tgListNode<T>* node)
 {
 	T* obj=NULL;
 
-	if(node!=NULL) 
-		obj = node->object;		
+	if(node!=NULL)
+		obj = node->object;
 	else
 	{	return NULL;}
 	Count--;
 
 	RecomputeNodeIndex( (node->next),node->index);
-	
+
 	(node->prev)->next = node->next;
 	(node->next)->prev = node->prev;
 	node->next=NULL;
 	node->prev=NULL;
-	
+
 	delete(node);
-				
+
 	return obj;
 }
 
@@ -268,8 +268,8 @@ template<class T> T*  tgList<T>::Remove(int index)
 {
 	T* obj=NULL;
 	tgListNode<T>* node = GetNode(index);
-				
-	return Remove(node);	
+
+	return Remove(node);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -303,23 +303,23 @@ template<class T> T*  tgList<T>::Item(int index)
 
 template<class T> tgListNode<T>*  tgList<T>::GetNode(int index)
 {
-	int loop=1;	
+	int loop=1;
 	tgListNode<T>* ptr=NULL;
-		
+
 	if(last_node!=NULL)
-	{	if(last_node->index<index)		
-			ptr=last_node;			
+	{	if(last_node->index<index)
+			ptr=last_node;
 		else
-			ptr=MoveFirst();			
-	}	
+			ptr=MoveFirst();
+	}
 	else
 	{	ptr=MoveFirst();}
-	
+
 	if(index>(Count-1))
 		return NULL;
-	
+
 	while(ptr!=NULL && loop==1)
-	{	
+	{
 		if(ptr->index==index)
 		{
 			loop=0;

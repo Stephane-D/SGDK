@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // tgPlugin.cpp
-//  
 //
-// 
+//
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 tgPlugin::tgPlugin(const char* filename)
 {
 	m_Library = LoadLibrary(filename);
-	
+
 	strcpy(m_FileName,filename);
 	m_fctGetAuthor=NULL;
 	m_fctGetDescription=NULL;
@@ -41,20 +41,20 @@ tgPlugin::~tgPlugin(void)
 // Get all the symbols from the plugins
 
 void tgPlugin::GetSymbols(void)
-{	
+{
 	if(m_Library!=NULL)
-	{			
-		m_fctGetDescription=	(fctGetDescription) 
+	{
+		m_fctGetDescription=	(fctGetDescription)
 								GetProcAddress((HMODULE)m_Library,"GetDescription");
-								
-		m_fctGetContactInfo=	(fctGetContactInfo) 
+
+		m_fctGetContactInfo=	(fctGetContactInfo)
 								GetProcAddress((HMODULE)m_Library,"GetContactInfo");
-								
-		m_fctGetAuthor=	(fctGetAuthor) 
-						GetProcAddress((HMODULE)m_Library,"GetAuthor");								
+
+		m_fctGetAuthor=	(fctGetAuthor)
+						GetProcAddress((HMODULE)m_Library,"GetAuthor");
 
 		m_fctGetVersion=(fctGetVersion)
-						GetProcAddress((HMODULE)m_Library,"GetBuildVersion");						
+						GetProcAddress((HMODULE)m_Library,"GetBuildVersion");
 	}
 }
 
@@ -62,11 +62,11 @@ void tgPlugin::GetSymbols(void)
 // Get Description of the plugins
 
 char* tgPlugin::GetDescription(void)
-{		
+{
 	if(m_Library!=NULL)
-	{			
+	{
 		if(m_fctGetDescription)
-		{	return (m_fctGetDescription());	}		
+		{	return (m_fctGetDescription());	}
 	}
 
 	return NULL;
@@ -78,12 +78,12 @@ char* tgPlugin::GetDescription(void)
 char* tgPlugin::GetAuthor(void)
 {
 	if(m_Library!=NULL)
-	{			
+	{
 		if(m_fctGetAuthor)
-		{	return(m_fctGetAuthor());}		
+		{	return(m_fctGetAuthor());}
 	}
 
-	return NULL;	
+	return NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,11 +92,11 @@ char* tgPlugin::GetAuthor(void)
 char* tgPlugin::GetVersion(void)
 {
 	if(m_Library!=NULL)
-	{			
+	{
 		if(m_fctGetVersion)
 		{	return (m_fctGetVersion());}
 	}
-	
+
 	return NULL;
 }
 
@@ -106,11 +106,11 @@ char* tgPlugin::GetVersion(void)
 char* tgPlugin::GetContactInfo(void)
 {
 	if(m_Library!=NULL)
-	{			
+	{
 		if(m_fctGetContactInfo)
 		{	return (m_fctGetContactInfo());}
 	}
-	
+
 	return NULL;
 }
 
