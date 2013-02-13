@@ -18,13 +18,13 @@
 #define N		4096	/* Size of dictonary */
 #define F		17	/* Upper limit for match length */
 #define THRESHOLD	2	/* Encode strings longer than this */
-							 
+
 #define NIL		N	/* Index for root of binary search trees */
 
 unsigned long int textsize = 0,	/* Text size counter */
 		  codesize = 0;	/* Code size counter */
-	
-unsigned char text_buf[N+F-1];	/* Ring buffer for string comparison */ 
+
+unsigned char text_buf[N+F-1];	/* Ring buffer for string comparison */
 
 int match_position, match_length;	/* Set by the InsertNode() procedure. */
 int lson[N+1],rson[N+257], dad[N+1];	/* Left & right children & parents (binary search trees) */
@@ -66,9 +66,9 @@ void InsertNode(int r)
 {
 	int  i, p, cmp;
 	unsigned char	*key;
-	
+
 	if (r > ftell(infile)) { return; }
-	
+
 	cmp = 1;
 	key = &text_buf[r];
 	p = N+1+key[0];
@@ -174,7 +174,7 @@ void Progress(void)
 
 	//printf("%c\b",progress[a++]);
 	a &= 3;
-	
+
 	return;
 }
 
@@ -191,7 +191,7 @@ void Encode(void)
 {
 	int  i,c,len,r,s,last_match_length,code_buf_ptr;
 	unsigned char	code_buf[17], mask;
-	
+
 	/* Determine inputfile length, there must me more elegant ways, though */
 	unsigned long fl=0;
 	while (getc(infile) != EOF) fl++;
@@ -209,7 +209,7 @@ void Encode(void)
 
 	code_buf_ptr = 1;
 	mask = 0x80;	/* Headerbit to be masked out in case of a literal string */
-	
+
 	s = 0;
 	r = N - F;
 	for (i = s; (i < r) && (c = getc(infile)) != EOF; i++) text_buf[i] = c^0xff; /* Clear the buffer */
@@ -217,25 +217,25 @@ void Encode(void)
 	/* Read F bytes into the last F bytes of the buffer */
 	rewind(infile);
 	for (len = 0; (len < F) && (c = getc(infile)) != EOF; len++) text_buf[r + len] = c;
-			
+
 	if ((textsize = len) == 0)
 		return;
 
 	for (i = 1; i <= F; i++)
 		InsertNode(r - i);	/* Insert the F strings into the tree */
 		InsertNode(r);		/* Finally, insert the whole string. */
-	
-	/* Encoding loop */	
+
+	/* Encoding loop */
 	do {
 		if (match_length > len)
 			match_length = len;
-			
+
 		/* match is too short or exceeds file entry */
 		if ((match_length <= THRESHOLD) ||((ftell(outfile)&0xfff) <= match_position)) {
 			match_length = 1;
 			code_buf[0] -= mask;  			/* Mask out headerbit */
 			code_buf[code_buf_ptr++] = text_buf[r]; /* Send literally */
-			
+
 		/* otherwise we found a match, so encode it */
 		} else {
 
@@ -244,28 +244,28 @@ void Encode(void)
 				| (match_length - THRESHOLD));  /* Send index/length pair */
    			code_buf[code_buf_ptr++] = (unsigned char) match_position;
 		}
-		
+
 		if ((mask >>= 1) == 0) {  /* Shift mask right one bit. */
-		
+
 			for (i = 0; i < code_buf_ptr; i++)	/* Send at most 8 units */
 				putc(code_buf[i], outfile);
-				
+
 			codesize += code_buf_ptr;		/* Reset encoding variables */
 			code_buf[0] = 0xff;
 			code_buf_ptr = 1;
 			mask = 0x80;
 		}
-		
+
 		last_match_length = match_length;
-		
+
 		for (i = 0; i < last_match_length && ((c = getc(infile)) != EOF); i++) {
-		
+
 			DeleteNode(s);			/* Delete old strings and */
 			text_buf[s] = c;		/* read on */
-			
+
 			if (s < F - 1) text_buf[s + N] = c;	/* Speedup for strings near the
 								end of the input */
-								
+
 			s = (s+1)&(N-1);	/* Keep the ringbuffer's range */
 			r = (r+1)&(N-1);
 
@@ -274,27 +274,27 @@ void Encode(void)
 
 		textsize += i;
 		Progress();
-		
+
 		while (i++ < last_match_length) {	/* Handle segments after the end of */
 			DeleteNode(s);			/* the input */
 			s = (s+1)&(N-1);
 			r = (r+1)&(N-1);
 			if (--len) InsertNode(r);
 		}
-		
+
 	} while (len > 0);
-	
+
 	if (code_buf_ptr > 1) {		/* Send remaining code. */
    		for (i = 0; i < code_buf_ptr; i++) putc(code_buf[i], outfile);
 		codesize += code_buf_ptr;
-    }	
+    }
 
 	if (mask == 0x80) {		/* Write the EOF flag *bugfix 2004*/
 		c = 0x80; putc(c,outfile);
 	}
 	c = 0x00; putc(c,outfile);
 
-	printf("\AChIeVeD rAtIo  : %.2f%%\n", (float)codesize*100 / textsize); 
+	printf("AChIeVeD rAtIo  : %.2f%%\n", (float)codesize*100 / textsize);
 }
 
 
@@ -315,28 +315,28 @@ void Decode(void)
 	fseek(infile,4,0); /* Skip original size */
 
  	r = N - F;
- 	
+
 	for (;;) {
 	tag = getc(infile);		/* Load command header */
 
 	for (loop1=0;loop1<8;loop1++) {
-	
+
 	/* Decode packed string segment */
 	if (tag & 0x80) {
-	
-		 /* End of input stream? */	
+
+		 /* End of input stream? */
 		if ((j = getc(infile)) == 0) {
 			printf("ok.\n");
 			return;
 		}
 
 		i = getc(infile);
-		   	
+
 		i |= (j<<4)&0xf00;	/* Compute position & length of string */
 		j &= 0x0f;
-		
+
 		i = (r-i)&(N-1);
-		   
+
 		while(j!=-2) {
 		   	c = text_buf[(i++)&(N-1)]; /* Copy from dictonary */
 	       		putc(c, outfile);
@@ -344,8 +344,8 @@ void Decode(void)
 			j--;
 			Progress();
 		}
-	
-	/* Restore literal units */	
+
+	/* Restore literal units */
 	} else {
 		c=getc(infile);
 		putc(c, outfile);
@@ -364,15 +364,15 @@ int LZ77_Encode(char *src,char *dst)
 	char *s;
 
 	//printf("LZ77 packer  v1.3\n\n");
-		
+
 	if ((s = src, (infile  = fopen(s, "rb")) == NULL)||
 	    (s = dst, (outfile = fopen(s, "wb")) == NULL)) {
 		return 0;
 	}
-	
+
 	//printf("PaCkIng...");
-	Encode(); 
-		
+	Encode();
+
 	fclose(infile);fclose(outfile);
 	return 1;
 }

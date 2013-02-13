@@ -33,7 +33,7 @@ class tgApp
 	int GetPictureData(uint8* Data,tgColor* Palette);
 
 	tgOutputPlugin* GetOutputWriter(void);
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	protected:
 	//////////

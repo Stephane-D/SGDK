@@ -32,15 +32,15 @@ class tgImgPlugin:public tgPlugin
 	///////////////////////////////////////////////////////////////////////////
 	protected:
 	//////////
-	
+
 	typedef	int (*fctGetPictureInfo)(const char*,tgPictureInfo*);
 	typedef	int (*fctGetPictureData)(uint8*,tgColor*);
 	typedef char* (*fctGetSupportedExt)(void);
-	
+
 	fctGetPictureInfo	m_fctGetPictureInfo;
 	fctGetPictureData	m_fctGetPictureData;
 	fctGetSupportedExt	m_fctGetSupportedExt;
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	private:
 	///////

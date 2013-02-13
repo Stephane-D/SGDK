@@ -12,9 +12,9 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-O" />
 					<Add option="-Wall" />
 					<Add option="-DBUILD_DLL" />
-					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -22,7 +22,6 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="..\..\mdttSDK.h" />
 		<Unit filename="out_asgcc.cpp" />
 		<Extensions>
 			<code_completion />
