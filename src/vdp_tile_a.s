@@ -36,13 +36,13 @@ VDP_loadTileData:
 	andi.w #0x3FFF,%d6
 	ori.w #0x4000,%d6
 	swap %d6                            | d6 = formated VRAM address for VDP command write
+
 	move.l %d6,0xC00004                 | set destination address in VDP Ctrl command
 
 	move.l %d2,%a0                      | a0 = data
 	move.l #0xC00000,%a1
 	subq.w #1,%d3
 
-	.align	2
 .L6:
 	move.l (%a0)+,(%a1)
 	move.l (%a0)+,(%a1)

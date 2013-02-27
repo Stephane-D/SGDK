@@ -251,12 +251,7 @@
  *  \def GFX_WRITE_VRAM_ADDR
  *      Set VDP command to write at specified VRAM address.
  */
-#if (VRAM_TABLE != 0)
-#define GFX_WRITE_VRAM_ADDR(adr)    vramwrite_tab[adr]
-#else
 #define GFX_WRITE_VRAM_ADDR(adr)    ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
-#endif
-
 /**
  *  \def GFX_WRITE_CRAM_ADDR
  *      Set VDP command to write at specified CRAM address.

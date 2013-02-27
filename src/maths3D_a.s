@@ -1,7 +1,7 @@
 	.extern	viewport
-	.globl	M3D_project3D_f16
-	.type	M3D_project3D_f16, @function
-M3D_project3D_f16:
+	.globl	M3D_project_f16
+	.type	M3D_project_f16, @function
+M3D_project_f16:
 	movm.l #0x3e00,-(%sp)
 
 	move.w viewport_f16,%d4
@@ -31,11 +31,10 @@ M3D_project3D_f16:
     divs.w %d0,%d1                          |       d1 = zi = fix16Div(camDist, zi);
 
 	move.w (%a0),%d0
-	asr.w #1,%d0
 	muls.w %d1,%d0
-	asr.l #6,%d0                            |       d0 = fix16Mul(s->x >> 1, zi)
+	asr.l #6,%d0                            |       d0 = fix16Mul(s->x, zi)
 	add.w %d4,%d0                           |
-	move.w %d0,(%a1)+                       |       d->x = wi + fix16Mul(s->x >> 1, zi);
+	move.w %d0,(%a1)+                       |       d->x = wi + fix16Mul(s->x, zi);
 
 	muls.w 2(%a0),%d1
 	asr.l #6,%d1                            |       d1 = fix16Mul(s->y, zi)
@@ -60,9 +59,9 @@ M3D_project3D_f16:
 	rts
 
 
-	.globl	M3D_project3D_s16
-	.type	M3D_project3D_s16, @function
-M3D_project3D_s16:
+	.globl	M3D_project_s16
+	.type	M3D_project_s16, @function
+M3D_project_s16:
 	movm.l #0x3e00,-(%sp)
 
 	move.w viewport,%d4
@@ -77,9 +76,7 @@ M3D_project3D_s16:
 	ext.l %d5
 	lsl.l #6,%d5                            | d5 = camDist << 6
 
-	moveq #-1,%d6
-	swap %d6
-	move.w #-1,%d6                          | d6 = (-1 << 16) | -1
+	moveq #-1,%d6                           | d6 = (-1 << 16) | -1
 
 	subq.w #1,%d2
 	jmi .L42
@@ -92,12 +89,11 @@ M3D_project3D_s16:
     divs.w %d0,%d1                          |       d1 = zi = fix16Div(camDist, zi);
 
 	move.w (%a0),%d0
-	asr.w #1,%d0
 	muls.w %d1,%d0
 	swap %d0
-	rol.l #4,%d0                            |       d0 = fix16ToInt(fix16Mul(s->x >> 1, zi))
+	rol.l #4,%d0                            |       d0 = fix16ToInt(fix16Mul(s->x, zi))
 	add.w %d4,%d0                           |
-	move.w %d0,(%a1)+                       |       d->x = wi + fix16ToInt(fix16Mul(s->x >> 1, zi))
+	move.w %d0,(%a1)+                       |       d->x = wi + fix16ToInt(fix16Mul(s->x, zi))
 
 	muls.w 2(%a0),%d1
 	swap %d1

@@ -61,38 +61,46 @@ extern const u16 palette_blue[16];
 
 /**
  *  \brief
- *      Returns RGB color intensity.
- *
- *  \param numpal
- *      Palette number (0-3).
- *  \param numcol
- *      Color index (0-15).
- *  \return RGB intensity for the specified palette and color index.
+ *      Returns RGB color of specified palette entry.
+
+ *  \param index
+ *      Color index (0-63).
+ *  \return RGB intensity for the specified palette color index.
  */
-u16  VDP_getPaletteColor(u16 numpal, u16 numcol);
+u16  VDP_getPaletteColor(u16 index);
 /**
  *  \brief
  *      Get palette.
  *
- *  \param num
- *      Palette number (0-3).
+ *  \param index
+ *      Palette index (0-3).
  *  \param pal
  *      Destination where to copy palette (should be 16 words long at least)
  */
-void VDP_getPalette(u16 num, u16 *pal);
+void VDP_getPalette(u16 index, u16 *pal);
 
 /**
  *  \brief
- *      Set RGB color intensity.
+ *      Set RGB color to specified palette entry.
  *
- *  \param numpal
- *      Palette number (0-3).
- *  \param numcol
- *      Color index (0-15).
+ *  \param index
+ *      Palette color index (0-63).
  *  \param value
- *      RGB intensity to set in the specified palette and color index.
+ *      RGB intensity to set in the specified palette color index.
  */
-void VDP_setPaletteColor(u16 numpal, u16 numcol, u16 value);
+void VDP_setPaletteColor(u16 index, u16 value);
+/**
+ *  \brief
+ *      Set RGB colors to specified palette entries.
+ *
+ *  \param index
+ *      Color index (0-63).
+ *  \param values
+ *      RGB intensities to set starting at specified palette color index.
+ *  \param count
+ *      Number of color to set.
+ */
+void VDP_setPaletteColors(u16 index, u16* values, u16 count);
 /**
  *  \brief
  *      Set palette.

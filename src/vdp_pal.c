@@ -208,7 +208,7 @@ static u16 fading_to;
 static u16 fading_cnt;
 
 
-u16 VDP_getPaletteColor(u16 numpal, u16 numcol)
+u16 VDP_getPaletteColor(u16 index)
 {
     vu16 *pw;
     vu32 *pl;
@@ -218,36 +218,13 @@ u16 VDP_getPaletteColor(u16 numpal, u16 numcol)
     pw = (u16 *) GFX_DATA_PORT;
     pl = (u32 *) GFX_CTRL_PORT;
 
-    addr = (numpal * 32) + (numcol * 2);
+    addr = index * 2;
     *pl = GFX_READ_CRAM_ADDR(addr);
 
     return *pw;
 }
 
-void VDP_getPalette_old(u16 num, u16 *pal)
-{
-    vu16 *pw;
-    vu32 *pl;
-    u16 *dest;
-    u16 i;
-    u16 addr;
-
-    VDP_setAutoInc(2);
-
-    /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
-
-    dest = pal;
-    addr = num * 32;
-    *pl = GFX_READ_CRAM_ADDR(addr);
-
-    i = 16;
-    while(i--) *dest++ = *pw;
-}
-
-
-void VDP_setPaletteColor(u16 numpal, u16 numcol, u16 value)
+void VDP_setPaletteColor(u16 index, u16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -257,39 +234,11 @@ void VDP_setPaletteColor(u16 numpal, u16 numcol, u16 value)
     pw = (u16 *) GFX_DATA_PORT;
     pl = (u32 *) GFX_CTRL_PORT;
 
-    addr = (numpal * 32) + (numcol * 2);
+    addr = index * 2;
     *pl = GFX_WRITE_CRAM_ADDR(addr);
 
     *pw = value;
 }
-
-void VDP_setPalette_old(u16 num, const u16 *pal)
-{
-    vu32 *pldata;
-    vu32 *plctrl;
-    u32 *src;
-    u16 addr;
-
-    VDP_setAutoInc(2);
-
-    /* Point to vdp port */
-    pldata = (u32 *) GFX_DATA_PORT;
-    plctrl = (u32 *) GFX_CTRL_PORT;
-
-    src = (u32*) pal;
-    addr = num * 32;
-    *plctrl = GFX_WRITE_CRAM_ADDR(addr);
-
-    *pldata = *src++;
-    *pldata = *src++;
-    *pldata = *src++;
-    *pldata = *src++;
-    *pldata = *src++;
-    *pldata = *src++;
-    *pldata = *src++;
-    *pldata = *src;
-}
-
 
 u16 VDP_doStepFading()
 {

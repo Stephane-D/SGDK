@@ -6,7 +6,9 @@
  *
  * This unit provides methods to simulate bitmap mode on SEGA genesis.<br>
  *<br>
- * The software bitmap engine permits to simulate a 128x160 pixels bitmap screen with doubled X resolution.<br>
+ * The software bitmap engine permit to simulate a 256x160 pixels bitmap screen.<br>
+ * Almost methods as #BMP_setPixel and #BMP_drawLine however use doubled X pixel so you can
+ * consider resolution to be 128x160 in this case.<br>
  * It uses a double buffer so you can draw to buffer while other buffer is being sent to video memory.<br>
  * Bitmap buffer requires ~41 KB of memory which is dynamically allocated.<br>
  * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period<br>
@@ -61,11 +63,11 @@
 #define BMP_CELLXOFFSET             (((VDP_getScreenWidth() >> 3) - BMP_CELLWIDTH) / 2)
 #define BMP_CELLYOFFSET             (((VDP_getScreenHeight() >> 3) - BMP_CELLHEIGHT) / 2)
 
-#define BMP_XPIXPERTILE_SFT         2
+#define BMP_XPIXPERTILE_SFT         3
 #define BMP_YPIXPERTILE_SFT         3
 /**
  *      \def BMP_XPIXPERTILE
- *          Number of X pixel per tile : 4 pixels per tile (1 soft pixel = 2 hard pixels).
+ *          Number of X pixel per tile : 8 pixels per tile.
  */
 #define BMP_XPIXPERTILE             (1 << BMP_XPIXPERTILE_SFT)
 /**
@@ -79,7 +81,7 @@
 #define BMP_WIDTH_SFT               (BMP_CELLWIDTH_SFT + BMP_XPIXPERTILE_SFT)
 /**
  *      \def BMP_WIDTH
- *          Bitmap width (in pixel) : 128
+ *          Bitmap width (in pixel) : 256
  */
 #define BMP_WIDTH                   (1 << BMP_WIDTH_SFT)
 /**
@@ -96,22 +98,6 @@
  */
 #define BMP_PITCH                   (1 << BMP_PITCH_SFT)
 #define BMP_PITCH_MASK              (BMP_PITCH - 1)
-
-/**
- *      \def BMP_GET_TILE
- *          Get bitmap tile index from specified tile coordinates.
- */
-#define BMP_GET_TILE(x, y)           ((BMP_CELLWIDTH * (y)) + (x))
-/**
- *      \def BMP_GET_TILEFROMPIX
- *          Get bitmap tile index from specified pixel coordinates.
- */
-#define BMP_GET_TILEFROMPIX(x, y)    BMP_GETTILE((x) >> BMP_XPIXPERTILE_SFT, (y) >> BMP_YPIXPERTILE_SFT)
-/**
- *      \def BMP_GET_PIXINTILE
- *          Get pixel offset in tile from specified pixel coordinates (0 <= x <=3 and 0 <= y <= 7).
- */
-#define BMP_GET_PIXINTILE(x, y)      ((((y) & BMP_YPIXPERTILEMASK) << BMP_XPIXPERTILE_SFT) + ((x) & BMP_XPIXPERTILEMASK))
 
 /**
  *      \def BMP_GENBMP16_WIDTH
@@ -134,8 +120,53 @@
  */
 #define BMP_GENBMP16_IMAGE(genbmp16)    (&((genbmp16)[18]))
 
+/**
+ *      \def BMP_GETPIXEL
+ *          Return pixel value at specified location.
+ *      \param x
+ *          X coordinate.
+ *      \param y
+ *          Y coordinate.
+ *
+ * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_GETPIXEL(0,0) will actually returns same value as BMP_GETPIXEL((1,0)<br>
+ * Be careful this function does not check for retrieving pixel outside bitmap buffer.
+ */
+#define BMP_GETPIXEL(x, y)          bmp_buffer_write[((y) * BMP_PITCH) + ((x) >> 1)]
 
-#define BMP_ENABLE_FPSDISPLAY    (1 << 0)
+/**
+ *      \def BMP_SETPIXEL
+ *          Set pixel value at specified position.
+ *
+ *      \param x
+ *          X pixel coordinate.
+ *      \param y
+ *          Y pixel coordinate.
+ *      \param col
+ *          pixel color.
+ *
+ * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_SETPIXEL(0,0,..) will actually set same pixel as BMP_SETPIXEL(1,0,..).
+ * Be careful this function does not check for retrieving pixel outside bitmap buffer.
+ */
+#define BMP_SETPIXEL(x, y, col)     bmp_buffer_write[((y) * BMP_PITCH) + ((x) >> 1)] = col;
+
+
+#define BMP_BASETILEINDEX       TILE_USERINDEX
+
+#define BMP_FB0TILEINDEX        BMP_BASETILEINDEX
+#define BMP_FB1TILEINDEX        (BMP_BASETILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
+
+#define BMP_FB0ENDTILEINDEX     (BMP_FB0TILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
+#define BMP_FB1ENDTILEINDEX     (BMP_FB1TILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
+
+#define BMP_BASETILE            (BMP_BASETILEINDEX * 32)
+#define BMP_FB0TILE             (BMP_FB0TILEINDEX * 32)
+#define BMP_FB1TILE             (BMP_FB1TILEINDEX * 32)
+
+#define BMP_FB0TILEMAP_BASE     BMP_PLAN
+#define BMP_FB1TILEMAP_BASE     (BMP_PLAN + ((BMP_PLANWIDTH * (BMP_PLANHEIGHT / 2)) * 2))
+#define BMP_FBTILEMAP_OFFSET    (((BMP_PLANWIDTH * BMP_CELLYOFFSET) + BMP_CELLXOFFSET) * 2)
 
 
 /**
@@ -154,8 +185,8 @@ typedef struct
 {
     u16 w;
     u16 h;
-    u16 palette[16];
-    u8 image[0];
+    const u16 *palette;
+    const u8 *image;
 } Bitmap;
 
 /**
@@ -224,11 +255,21 @@ extern u8 *bmp_buffer_write;
  * \brief
  *      Initialize the software bitmap engine.
  *
- * The software bitmap engine permit to simulate a 128x160 pixels bitmap screen with doubled X resolution.<br>
- * It uses a double buffer so you can draw to buffer while other buffer is being sent to video memory.<br>
+ * \param double_buffer
+ *      Enabled VRAM double buffer.<br>
+ *      VRAM Double buffer permit to avoid image tearing because of partial screen refresh.<br>
+ *      It requires almost all VRAM tiles space (~41 KB) so enable it only if you don't need other plan or sprites.
+ * \param palette
+ *      Palette index to use to rendre the bitmap plan.<br>
+ *      Set it to 0 if unsure.
+ * \param priority
+ *      Set the priority of bitmap plan.<br>
+ *      0 = low priority (default).<br>
+ *      1 = high priority.
+ *
  * Requires ~41 KB of memory which is dynamically allocated.
  */
-void BMP_init();
+void BMP_init(u16 double_buffer, u16 palette, u16 priority);
 /**
  * \brief
  *      End the software bitmap engine.
@@ -250,22 +291,25 @@ void BMP_reset();
  *
  * Blit the current bitmap back buffer to the screen then flip buffers
  * so back buffer becomes front buffer and vice versa.<br>
- * Bitmap buffer is sent to video memory asynchronously during blank period
- * so the function return immediatly.<br>
+ * If you use async flag the Bitmap buffer will be sent to video memory asynchronously
+ * during blank period and the function return immediatly.<br>
  * If a flip is already in process then flip request is marked as pending
  * and will be processed as soon the current one complete.<br>
- * Take care of that before writing to bitmap buffer, you can use the
- * #BMP_waitWhileFlipRequestPending() method to ensure no more flip request are pending.<br>
+ * You can use #BMP_waitWhileFlipRequestPending() method to ensure no more flip request are pending
+ * before writing to bitmap buffer.<br>
  * If a flip request is already pending the function wait until no more request are pending.
  *
+ * \param async
+ *      Asynchronous flip operation flag.
  * \return
+ *   Only meaningful for async operation:<br>
  *   0 if the flip request has be marked as pending as another flip is already in process.<br>
  *   1 if the flip request has be initiated.
  *
  * \see #BMP_hasFlipRequestPending()
  * \see #BMP_waitWhileFlipRequestPending()
  */
-u16 BMP_flip();
+u16 BMP_flip(u16 async);
 
 /**
  * \brief
@@ -281,6 +325,9 @@ void BMP_clear();
  *      X pixel coordinate.
  * \param y
  *      Y pixel coordinate.
+ *
+ * As coordinates are expressed for 4bpp pixel BMP_getWritePointer(0,0)
+ * and BMP_getWritePointer(1,0) actually returns the same address.
  */
 u8*  BMP_getWritePointer(u16 x, u16 y);
 /**
@@ -291,6 +338,9 @@ u8*  BMP_getWritePointer(u16 x, u16 y);
  *      X pixel coordinate.
  * \param y
  *      Y pixel coordinate.
+ *
+ * As coordinates are expressed for 4bpp pixel BMP_getReadPointer(0,0)
+ * and BMP_getReadPointer(1,0) actually returns the same address.
  */
 u8*  BMP_getReadPointer(u16 x, u16 y);
 
@@ -362,17 +412,22 @@ void BMP_showFPS(u16 float_display);
 
 /**
  * \brief
- *      Get pixel.
+ *      Get pixel at specified position.
  *
  * \param x
  *      X coordinate.
  * \param y
  *      Y coordinate.
+ *
+ * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_getPixel(0,0) will actually returns same value as BMP_getPixel(1,0).
+ *
+ * \see #BMP_GETPIXEL (faster but not as safe)
  */
 u8   BMP_getPixel(u16 x, u16 y);
 /**
  * \brief
- *      Set pixel.
+ *      Set pixel at specified position.
  *
  * \param x
  *      X pixel coordinate.
@@ -380,6 +435,11 @@ u8   BMP_getPixel(u16 x, u16 y);
  *      Y pixel coordinate.
  * \param col
  *      pixel color.
+ *
+ * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_setPixel(0,0,..) will actually set same pixel as BMP_setPixel(1,0,..).
+ *
+ * \see #BMP_SETPIXEL (faster but not as safe)
  */
 void BMP_setPixel(u16 x, u16 y, u8 col);
 /**
@@ -392,6 +452,9 @@ void BMP_setPixel(u16 x, u16 y, u8 col);
  *      pixels color.
  * \param num
  *      number of pixel to draw (lenght of coordinates buffer).
+ *
+ * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_setPixel(0,0,..) will actually set same pixel as BMP_setPixel(1,0,..).
  */
 void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
 /**
@@ -402,6 +465,9 @@ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
  *      Pixels buffer.
  * \param num
  *      number of pixel to draw (lenght of pixels buffer).
+ *
+ * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_setPixel(0,0,..) will actually set same pixel as BMP_setPixel(1,0,..).
  */
 void BMP_setPixels(const Pixel *pixels, u16 num);
 
@@ -422,11 +488,16 @@ u8   BMP_clipLine(Line *l);
  *
  * \param l
  *      Line to draw.
+ *
+ * Lines are rendereded with X doubled resolution (byte operation) for performance reason.<br>
+ * So BMP_drawLine(0,0,0,159) will actually draw same line as BMP_drawLine(1,0,1,159).
  */
 void BMP_drawLine(Line *l);
 /**
  * \brief
- *      Draw a polygon.
+ *      Draw a polygon.<br>
+ *      The polygon points should be defined in clockwise order as we use the polygon face
+ *      orientation to detect back faced polygon and quickly eliminate them for 3D rendering.
  *
  * \param pts
  *      Polygon points buffer.
@@ -434,10 +505,9 @@ void BMP_drawLine(Line *l);
  *      number of point (lenght of points buffer).
  * \param col
  *      fill color.
- * \param culling
- *      Enabled backface culling (back faced polygon are not drawn).
+ * \return 1 if polygon was eliminated by culling (and so not drawn) and 0 otherwise.<br>
  */
-void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col, u8 culling);
+u16 BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col);
 
 /**
  * \brief
@@ -446,17 +516,20 @@ void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col, u8 culling);
  * \param data
  *      bitmap data buffer.
  * \param x
- *      X coordinate.
+ *      X coordinate (should be an even value).
  * \param y
  *      y coordinate.
  * \param w
- *      width (expected to be relative to bitmap resolution : 1 pixel = 1 byte).
+ *      width (should be an even value).
  * \param h
  *      height.
  * \param pitch
  *      bitmap pitch (number of bytes per bitmap scanline).
+ *
+ * X coordinate as Width are aligned to even value for performance reason.<br>
+ * So BMP_loadBitmapData(data,0,0,w,h,w) will produce same result as BMP_loadBitmapData(data,1,0,w,h,w)
  */
-void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
+void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
 /**
  * \brief
  *      Load and draw a Genesis 4 BPP bitmap.<br>
@@ -467,13 +540,16 @@ void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
  * \param bitmap
  *      Genesis bitmap.
  * \param x
- *      X coordinate.
+ *      X coordinate (should be an even value).
  * \param y
  *      y coordinate.
  * \param numpal
  *      Palette (index) to use to load the bitmap palette information.
+ *
+ * X coordinate is aligned to even value for performance reason.<br>
+ * So BMP_loadBitmap(bitmap,0,0,pal) will produce same result as BMP_loadBitmap(bitmap,1,0,pal)
  */
-void BMP_loadGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal);
+void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal);
 /**
  * \brief
  *      Load and draw a Genesis 4 BPP bitmap with specified dimension.<br>
@@ -489,18 +565,21 @@ void BMP_loadGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal);
  * \param y
  *      y coordinate.
  * \param w
- *      width (expected to be relative to bitmap resolution : 1 pixel = 1 byte).
+ *      width.
  * \param h
  *      height.
  * \param numpal
  *      Palette (index) to use to load the bitmap palette information.
+ *
+ * X coordinate as Width are aligned to even values for performance reason.<br>
+ * So BMP_loadAndScaleBitmap(bitmap,0,0,w,h,pal) will produce same result as BMP_loadAndScaleBitmap(bitmap,1,0,w,h,pal)
  */
-void BMP_loadAndScaleGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal);
+void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal);
 /**
  * \deprecated
  *      Uses bitmap->palette instead.
  */
-void BMP_getGenBitmapPalette(const Bitmap *bitmap, u16 *pal);
+void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *pal);
 
 /**
  * \brief
@@ -511,22 +590,22 @@ void BMP_getGenBitmapPalette(const Bitmap *bitmap, u16 *pal);
  *
  * \param src_buf
  *      source bitmap buffer.
- * \param src_w
- *      source width (expected to be relative to bitmap resolution : 1 pixel = 1 byte).
+ * \param src_wb
+ *      source width in byte.
  * \param src_h
  *      source height.
  * \param src_pitch
  *      source pitch (number of bytes per scanline).
  * \param dst_buf
  *      destination bitmap buffer.
- * \param dst_w
- *      destination width (expected to be relative to bitmap resolution : 1 pixel = 1 byte).
+ * \param dst_wb
+ *      destination width in byte.
  * \param dst_h
  *      destination height.
  * \param dst_pitch
  *      destination pitch (number of bytes per scanline).
  */
-void BMP_scale(const u8 *src_buf, u16 src_w, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_w, u16 dst_h, u16 dst_pitch);
+void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_wb, u16 dst_h, u16 dst_pitch);
 
 
 #endif // _BMP_H_

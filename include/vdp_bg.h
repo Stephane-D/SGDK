@@ -52,10 +52,12 @@ void VDP_setHorizontalScroll(u16 plan, u16 value);
  *      H scroll offsets.
  * \param len
  *      Number of tile to set.
+ * \param use_dma
+ *      Use DMA flag (faster for large transfer).
  *
  * \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len);
+void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 use_dma);
 /**
  * \brief
  *      Set plan horizontal scroll (line scroll mode).<br/>
@@ -75,10 +77,12 @@ void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len);
  *      H scroll offsets.
  * \param len
  *      Number of line to set.
+ * \param use_dma
+ *      Use DMA flag (faster for large transfer).
  *
  * \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len);
+void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len, u16 use_dma);
 
 
 /**
@@ -117,10 +121,12 @@ void VDP_setVerticalScroll(u16 plan, u16 value);
  *      V scroll offsets.
  * \param len
  *      Number of tile to set.
+ * \param use_dma
+ *      Use DMA flag (faster for large transfer).
  *
  * \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len);
+void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 use_dma);
 
 /**
  * \brief

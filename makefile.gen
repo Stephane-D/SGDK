@@ -38,6 +38,7 @@ SRC_S+= $(wildcard $(SRC)/*.s)
 SRC_SZ80= $(wildcard *.s80)
 SRC_SZ80+= $(wildcard $(SRC)/*.s80)
 
+RES_C= $(wildcard $(RES)/*.c)
 RES_S= $(wildcard $(RES)/*.s)
 RES_BMP= $(wildcard *.bmp)
 RES_BMP+= $(wildcard $(RES)/*.bmp)
@@ -83,6 +84,7 @@ OBJ+= $(RES_VGM:.vgm=.o)
 OBJ+= $(RES_EIF:.eif=.o)
 OBJ+= $(RES_ESF:.esf=.o)
 OBJ+= $(RES_S:.s=.o)
+OBJ+= $(RES_C:.c=.o)
 OBJ+= $(SRC_SZ80:.s80=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
@@ -101,8 +103,7 @@ debug: out/rom.bin out/rom.wch
 debugall: out/rom.bin out/rom.wch out/rom.gsrc
 
 all: release
-
-default: all
+default: release
 
 .PHONY: clean
 

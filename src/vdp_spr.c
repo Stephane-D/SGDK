@@ -8,7 +8,6 @@
 #include "vdp_dma.h"
 #include "vdp_tile.h"
 
-#include "tab_vram.h"
 
 // no static so it can be read
 SpriteDef spriteDefCache[MAX_SPRITE];

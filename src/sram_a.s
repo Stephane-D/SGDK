@@ -2,7 +2,7 @@
 	.type	SRAM_readWord, @function
     | extern u16 SRAM_readWord(u32 offset);
 SRAM_readWord:
-    move.l  4(%sp),d1
+    move.l  4(%sp),%d1
     add.l   %d1,%d1
     lea     0x200001,%a0
     lea     (%a0,%d1.l),%a0
