@@ -152,7 +152,7 @@ int main()
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
             params_value[i][j] = cur_cmd->params;
 
-    VDP_setPaletteColor(PAL1, 15, 0x0888);
+    VDP_setPaletteColor(16+15, 0x0888);
 
     VDP_setTextPalette(0);
     VDP_drawText("Current Z80 driver", 10, 1);
