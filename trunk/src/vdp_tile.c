@@ -9,7 +9,6 @@
 #include "vdp_dma.h"
 
 #include "tab_cnv.h"
-#include "tab_vram.h"
 
 
 void VDP_loadFont(const u32 *font, u8 use_dma)

@@ -298,6 +298,17 @@ typedef struct
     fix16 y;
 } Vect2D_f16;
 
+/**
+ *  \struct Mat2D_f16
+ *      2x2 Matrice structure - f16 (fix16) type.<br>
+ *      Internally uses 2 2D vectors.
+ */
+typedef struct
+{
+	Vect2D_f16 a;
+	Vect2D_f16 b;
+} Mat2D_f16;
+
 
 // 3D STUFF
 
@@ -312,6 +323,19 @@ typedef struct
     fix16 z;
 } Vect3D_f16;
 
+/**
+ *  \struct Mat3D_f16
+ *      3x3 Matrice structure - f16 (fix16) type.<br>
+ *      Internally uses 3 3D vectors.
+ */
+typedef struct
+{
+	Vect3D_f16 a;
+	Vect3D_f16 b;
+	Vect3D_f16 c;
+} Mat3D_f16;
+
+
 // 4D STUFF
 
 /**
@@ -325,6 +349,20 @@ typedef struct
     fix16 z;
     fix16 w;
 } Vect4D_f16;
+
+/**
+ *  \struct Mat4D_f16
+ *      4x4 Matrice structure - f16 (fix16) type.<br>
+ *      Internally uses 4 4D vectors.
+ */
+typedef struct
+{
+	Vect4D_f16 a;
+	Vect4D_f16 b;
+	Vect4D_f16 c;
+	Vect4D_f16 d;
+} Mat4D_f16;
+
 
 
 /**

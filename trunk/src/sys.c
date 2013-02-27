@@ -12,10 +12,13 @@
 #include "z80_ctrl.h"
 #include "maths.h"
 #include "bmp.h"
-#include "logo_lib.h"
 #include "timer.h"
 #include "vdp.h"
 #include "vdp_bg.h"
+
+#if (ENABLE_LOGO != 0)
+#include "logo_lib.h"
+#endif
 
 
 #define IN_VINT         1
@@ -241,19 +244,17 @@ void _start_entry()
 
 #if (ENABLE_LOGO != 0)
     {
-        const Bitmap* logo = (Bitmap*) logo_lib;
-
-        // display logo (BMP mode use 128x160 resolution with doubled X pixel)
-        BMP_init(BMP_ENABLE_WAITVSYNC | BMP_ENABLE_EXTENDEDBLANK);
+        // display logo (use BMP mode for that)
+        BMP_init(1, 0, 0);
 
 #if (ZOOMING_LOGO != 0)
         // init fade in to 30 step
         u16 step_fade = 30;
 
-        if (VDP_initFading(0, 15, palette_black, logo->palette, step_fade))
+        if (VDP_initFading(0, 15, palette_black, logo_lib.palette, step_fade))
         {
             // prepare zoom
-            u16 size = 128;
+            u16 size = 256;
 
             // while zoom not completed
             while(size > 0)
@@ -264,15 +265,15 @@ void _start_entry()
                 else size = 0;
 
                 // get new size
-                const u32 w = 128 - size;
+                const u32 w = 256 - size;
 
                 // adjust palette for fade
                 if (step_fade-- > 0) VDP_doStepFading();
 
                 // zoom logo
-                BMP_loadAndScaleGenBitmap(logo, 32 + ((128 - w) >> 2), (128 - w) >> 1, w >> 1, w, 0xFF);
+                BMP_loadAndScaleBitmap(&logo_lib, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, 0xFF);
                 // flip to screen
-                BMP_flip();
+                BMP_flip(0);
             }
 
             // while fade not completed
@@ -290,12 +291,12 @@ void _start_entry()
         VDP_setPalette(0, palette_black);
 
         // don't load the palette immediatly
-        BMP_loadGenBitmap(logo_lib, 32, 0, 0xFF);
+        BMP_loadBitmap(&logo_lib, 64, 0, 0xFF);
         // flip
-        BMP_flip();
+        BMP_flip(0);
 
         // fade in logo
-        VDP_fadePalIn(0, logo->palette, 30, 0);
+        VDP_fadePalIn(0, logo_lib.palette, 30, 0);
 
         // wait 1.5 second
         waitTick(TICKPERSECOND * 1.5);

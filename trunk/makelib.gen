@@ -27,6 +27,9 @@ OPTION=
 SRC_C= $(wildcard $(SRC)/*.c)
 SRC_S= $(wildcard $(SRC)/*.s)
 SRC_SZ80= $(wildcard $(SRC)/*.s80)
+
+RES_C= $(wildcard $(RES)/*.c)
+RES_S= $(wildcard $(RES)/*.s)
 RES_BMP= $(wildcard $(RES)/*.bmp)
 RES_RAW= $(wildcard $(RES)/*.raw)
 RES_PCM= $(wildcard $(RES)/*.pcm)
@@ -42,19 +45,23 @@ OBJ+= $(RES_RC:.rc=.o)
 OBJ+= $(RES_ASM:.asm=.o)
 OBJ+= $(RES_RAW:.raw=.o)
 OBJ+= $(RES_PCM:.pcm=.o)
+OBJ+= $(RES_S:.s=.o)
+OBJ+= $(RES_C:.c=.o)
 OBJ+= $(SRC_SZ80:.s80=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
-INCS= -I$(INCLUDE)
+INCS= -I$(INCLUDE) -I$(SRC) -I$(RES)
 #FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 #FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
-all: $(LIB)/libmd.a
 
-default: all
+lib: $(LIB)/libmd.a
+
+all: lib
+default: lib
 
 .PHONY: clean
 

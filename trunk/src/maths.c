@@ -86,34 +86,42 @@ u32 distance_approx(s32 dx, s32 dy)
 
 
 #define QSORT(type)                                     \
-    void QSort_##type(type *data, u16 left, u16 right)  \
+    u16 Partition_##type(type *data, u16 p, u16 r)      \
     {                                                   \
-        u16 i, j;                                       \
-        type val;                                       \
+        type x = data[p];                               \
+        u16 i = p - 1;                                  \
+        u16 j = r + 1;                                  \
                                                         \
-        i = left;                                       \
-        j = right;                                      \
-        val = data[(left + right) / 2];                 \
-                                                        \
-        while(i <= j)                                   \
+        while (TRUE)                                    \
         {                                               \
-            while (data[i] < val) i++;                  \
-            while (data[j] > val) j--;                  \
-            if (i <= j)                                 \
+            i++;                                        \
+            while ((i < r) && (data[i] < x)) i++;       \
+            j--;                                        \
+            while ((j > p) && (data[j] > x)) j--;       \
+                                                        \
+            if (i < j)                                  \
             {                                           \
                 type tmp;                               \
                                                         \
                 tmp = data[i];                          \
                 data[i] = data[j];                      \
                 data[j] = tmp;                          \
-                i++;                                    \
-                j--;                                    \
             }                                           \
+            else                                        \
+                return j;                               \
         }                                               \
+    }                                                   \
                                                         \
-        if (left < j) QSort_##type(data, left, j);      \
-        if (i < right) QSort_##type(data, i, right);    \
+    void QSort_##type(type *data, u16 p, u16 r)         \
+    {                                                   \
+        if (p < r)                                      \
+        {                                               \
+            u16 q = Partition_##type(data, p, r);       \
+            QSort_##type(data, p, q);                   \
+            QSort_##type(data, q + 1, r);               \
+        }                                               \
     }
+
 
 QSORT(u8)
 QSORT(s8)

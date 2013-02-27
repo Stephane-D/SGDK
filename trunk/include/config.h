@@ -3,13 +3,6 @@
 
 
 /**
- *  \def VRAM_TABLE
- *      Set it to 1 to enable the big VRAM lookup table.<br>
- *      This table permits faster VRAM address set to the VDP (256 KB of ROM).
- */
-#define VRAM_TABLE          0
-
-/**
  *  \def MATH_BIG_TABLES
  *      Set it to 1 to enable the big Math lookup tables.<br>
  *      This table permits Log2, Log10 and Sqrt operation for fix16 type (128*3 KB of rom).

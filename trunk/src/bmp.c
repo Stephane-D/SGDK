@@ -15,40 +15,26 @@
 #include "memory.h"
 #include "tools.h"
 #include "string.h"
-#include "tab_vram.h"
 
 
-#define BMP_BASETILEINDEX       TILE_USERINDEX
-
-#define BMP_FB0TILEINDEX        BMP_BASETILEINDEX
-#define BMP_FB1TILEINDEX        (BMP_BASETILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
-
-#define BMP_SYSTEMTILE          (BMP_SYSTEMTILEINDEX * 32)
-#define BMP_BASETILE            (BMP_BASETILEINDEX * 32)
-#define BMP_FB0TILE             (BMP_FB0TILEINDEX * 32)
-#define BMP_FB1TILE             (BMP_FB1TILEINDEX * 32)
-
-#define BMP_FB0TILEMAP_BASE     BMP_PLAN
-#define BMP_FB1TILEMAP_BASE     (BMP_PLAN + ((BMP_PLANWIDTH * (BMP_PLANHEIGHT / 2)) * 2))
-#define BMP_FBTILEMAP_OFFSET    (((BMP_PLANWIDTH * BMP_CELLYOFFSET) + BMP_CELLXOFFSET) * 2)
-//#define BMP_FB0TILEMAP_ADJ      (BMP_FB0TILEMAP + BMP_FBTILEMAPOFFSET)
-//#define BMP_FB1TILEMAP_ADJ      (BMP_FB1TILEMAP + BMP_FBTILEMAPOFFSET)
+#define BMP_FLAG_DOUBLEBUFFER   (1 << 0)
 
 #define BMP_STAT_FLIPPING       (1 << 0)
 #define BMP_STAT_BLITTING       (1 << 1)
 #define BMP_STAT_FLIPWAITING    (1 << 2)
 
-#define HAS_FLAG(f)             (bmp_flags & (f))
-#define HAS_FLAGS(f)            ((bmp_flags & (f)) == (f))
+#define HAS_DOUBLEBUFFER        (flag & BMP_FLAG_DOUBLEBUFFER)
 
 #define READ_IS_FB0             (bmp_buffer_read == bmp_buffer_0)
 #define READ_IS_FB1             (bmp_buffer_read == bmp_buffer_1)
 #define WRITE_IS_FB0            (bmp_buffer_write == bmp_buffer_0)
 #define WRITE_IS_FB1            (bmp_buffer_write == bmp_buffer_1)
 
+#define GET_YOFFSET             ((HAS_DOUBLEBUFFER && READ_IS_FB1)?((BMP_PLANHEIGHT / 2) + 4):4)
 
-#define NTSC_TILES_BW       7
-#define PAL_TILES_BW        10
+
+#define NTSC_TILES_BW           7
+#define PAL_TILES_BW            10
 
 
 // we don't want to share them
@@ -57,8 +43,8 @@ extern u32 HIntProcess;
 extern u16 textBasetile;
 
 
-u8 *bmp_buffer_0 = NULL;
-u8 *bmp_buffer_1 = NULL;
+static u8 *bmp_buffer_0 = NULL;
+static u8 *bmp_buffer_1 = NULL;
 
 u8 *bmp_buffer_read;
 u8 *bmp_buffer_write;
@@ -67,74 +53,43 @@ u8 *bmp_buffer_write;
 s16 *LeftPoly = NULL;
 s16 *RightPoly = NULL;
 
+s16 minYL;
+s16 maxYL;
+s16 minYR;
+s16 maxYR;
 s16 minY;
 s16 maxY;
 
 // internals
-u16 bmp_state;
-u16 phase;
+static u16 flag;
+static u16 pal;
+static u16 prio;
+static u16 state;
+static u16 phase;
 
 
 // forward
-extern void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2, u8 clockwise);
+extern void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2);
+extern void clearBitmapBuffer(u8 *bmp_buffer);
+extern void drawPolygon(u8 color);
 
-static u16 getYOffset();
+
 static void doFlip();
 static void flipBuffer();
 static void initTilemap(u16 num);
 static u16 doBlit();
-static void clearBuffer(u8 *bmp_buffer);
 static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
+//static void drawPolygon_old(u8 color);
+//static void logEdges();
 
 
-void BMP_init()
+void BMP_init(u16 double_buffer, u16 palette, u16 priority)
 {
-    // release buffers if needed
-    if (bmp_buffer_0) MEM_free(bmp_buffer_0);
-    if (bmp_buffer_1) MEM_free(bmp_buffer_1);
-    if (LeftPoly) MEM_free(LeftPoly);
-    if (RightPoly) MEM_free(RightPoly);
+    flag = (double_buffer)?BMP_FLAG_DOUBLEBUFFER:0;
+    pal = palette;
+    prio = priority;
 
-    // tile map allocation
-    bmp_buffer_0 = MEM_alloc(BMP_WIDTH * BMP_HEIGHT * sizeof(u8));
-    bmp_buffer_1 = MEM_alloc(BMP_WIDTH * BMP_HEIGHT * sizeof(u8));
-    // polygon edge buffer allocation
-    LeftPoly = MEM_alloc(BMP_HEIGHT * sizeof(s16));
-    RightPoly = MEM_alloc(BMP_HEIGHT * sizeof(s16));
-
-    // need 64x64 cells sized plan
-    VDP_setPlanSize(BMP_PLANWIDTH, BMP_PLANHEIGHT);
-
-    // clear plan (complete tilemap)
-    VDP_clearPlan(BMP_PLAN, 1);
-    VDP_waitDMACompletion();
-
-    bmp_state = 0;
-
-    // default
-    bmp_buffer_read = bmp_buffer_0;
-    bmp_buffer_write = bmp_buffer_1;
-
-    // prepare tilemap
-    initTilemap(0);
-    initTilemap(1);
-
-    // first init, clear and flip
-    BMP_clear();
-    BMP_flip();
-    // second init, clear and flip for correct init (double buffer)
-    BMP_clear();
-    BMP_flip();
-
-    const u16 vcnt = GET_VCOUNTER;
-    const u16 scrh = VDP_getScreenHeight();
-
-    // modify HIntCounter for extended blank blit
-    VDP_setHIntCounter(scrh - (VDP_getHIntCounter() + vcnt + ((scrh - BMP_HEIGHT) >> 1) + 3));
-    // enabled bitmap Int processing
-    HIntProcess |= PROCESS_BITMAP_TASK;
-    VIntProcess |= PROCESS_BITMAP_TASK;
-    VDP_setHInterrupt(1);
+    BMP_reset();
 }
 
 void BMP_end()
@@ -171,56 +126,109 @@ void BMP_end()
 
 void BMP_reset()
 {
-    BMP_init();
+    // release buffers if needed
+    if (bmp_buffer_0) MEM_free(bmp_buffer_0);
+    if (bmp_buffer_1) MEM_free(bmp_buffer_1);
+    if (LeftPoly) MEM_free(LeftPoly);
+    if (RightPoly) MEM_free(RightPoly);
+
+    // tile map allocation
+    bmp_buffer_0 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
+    bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
+    // polygon edge buffer allocation
+    LeftPoly = MEM_alloc(BMP_HEIGHT * sizeof(s16));
+    RightPoly = MEM_alloc(BMP_HEIGHT * sizeof(s16));
+
+    // need 64x64 cells sized plan
+    VDP_setPlanSize(BMP_PLANWIDTH, BMP_PLANHEIGHT);
+
+    // clear plan (complete tilemap)
+    VDP_clearPlan(BMP_PLAN, 1);
+    VDP_waitDMACompletion();
+
+    state = 0;
+    phase = 0;
+
+    // default
+    bmp_buffer_read = bmp_buffer_0;
+    bmp_buffer_write = bmp_buffer_1;
+
+    // prepare tilemap
+    initTilemap(0);
+    if (HAS_DOUBLEBUFFER)
+        initTilemap(1);
+
+    VDP_setVerticalScroll(BMP_PLAN, 0);
+
+    // prepare hint for extended blank on next frame
+    VDP_setHIntCounter(((VDP_getScreenHeight() - BMP_HEIGHT) >> 1) - 1);
+    // enabled bitmap Int processing
+    HIntProcess |= PROCESS_BITMAP_TASK;
+    VIntProcess |= PROCESS_BITMAP_TASK;
+    VDP_setHInterrupt(1);
+
+    // first init, clear and flip
+    BMP_clear();
+    BMP_flip(0);
+    // second init, clear and flip for correct init (double buffer)
+    BMP_clear();
+    BMP_flip(0);
 }
 
 
 u16 BMP_hasFlipRequestPending()
 {
-    if (bmp_state & BMP_STAT_FLIPWAITING) return 1;
+    if (state & BMP_STAT_FLIPWAITING) return 1;
 
     return 0;
 }
 
 void BMP_waitWhileFlipRequestPending()
 {
-    vu16* pw = &bmp_state;
+    vu16* pw = &state;
 
     while (*pw & BMP_STAT_FLIPWAITING);
 }
 
 u16 BMP_hasFlipInProgess()
 {
-    if (bmp_state & BMP_STAT_FLIPPING) return 1;
+    if (state & BMP_STAT_FLIPPING) return 1;
 
     return 0;
 }
 
 void BMP_waitFlipComplete()
 {
-    vu16* pw = &bmp_state;
+    vu16* pw = &state;
 
     while (*pw & BMP_STAT_FLIPPING);
 }
 
 
-u16 BMP_flip()
+u16 BMP_flip(u16 async)
 {
     // wait until pending flip is processed
     BMP_waitWhileFlipRequestPending();
 
     // currently flipping ?
-    if (bmp_state & BMP_STAT_FLIPPING)
+    if (state & BMP_STAT_FLIPPING)
     {
         // set a pending flip
-        bmp_state |= BMP_STAT_FLIPWAITING;
+        state |= BMP_STAT_FLIPWAITING;
+
+        // wait completion
+        if (!async) BMP_waitFlipComplete();
+
         return 1;
     }
 
     // flip bitmap buffer
     flipBuffer();
     // flip started (will be processed in blank period --> BMP_doBlankProcess)
-    bmp_state |= BMP_STAT_FLIPPING;
+    state |= BMP_STAT_FLIPPING;
+
+    // wait completion
+    if (!async) BMP_waitFlipComplete();
 
     return 0;
 }
@@ -228,30 +236,24 @@ u16 BMP_flip()
 
 void BMP_drawText(const char *str, u16 x, u16 y)
 {
-    const u16 adjy = y + getYOffset();
-
-    VDP_drawTextBG(BMP_PLAN, str, textBasetile, x, adjy);
+    VDP_drawTextBG(BMP_PLAN, str, textBasetile, x, y + GET_YOFFSET);
 }
 
 void BMP_clearText(u16 x, u16 y, u16 w)
 {
-    const u16 adjy = y + getYOffset();
-
-    VDP_clearTextBG(BMP_PLAN, x, adjy, w);
+    VDP_clearTextBG(BMP_PLAN, x, y + GET_YOFFSET, w);
 }
 
 void BMP_clearTextLine(u16 y)
 {
-    const u16 adjy = y + getYOffset();
-
-    VDP_clearTextLineBG(BMP_PLAN, adjy);
+    VDP_clearTextLineBG(BMP_PLAN, y + GET_YOFFSET);
 }
 
 
 void BMP_showFPS(u16 float_display)
 {
     char str[16];
-    const u16 y = getYOffset() + 1;
+    const u16 y = GET_YOFFSET + 1;
 
     if (float_display)
     {
@@ -274,13 +276,13 @@ void BMP_showFPS(u16 float_display)
 
 void BMP_clear()
 {
-    clearBuffer(bmp_buffer_write);
+    clearBitmapBuffer(bmp_buffer_write);
 }
 
 
 u8* BMP_getWritePointer(u16 x, u16 y)
 {
-    const u16 off = (y * BMP_PITCH) + x;
+    const u16 off = (y * BMP_PITCH) + (x >> 1);
 
     // return write address
     return &bmp_buffer_write[off];
@@ -288,7 +290,7 @@ u8* BMP_getWritePointer(u16 x, u16 y)
 
 u8* BMP_getReadPointer(u16 x, u16 y)
 {
-    const u16 off = (y * BMP_PITCH) + x;
+    const u16 off = (y * BMP_PITCH) + (x >> 1);
 
     // return read address
     return &bmp_buffer_read[off];
@@ -300,7 +302,7 @@ u8 BMP_getPixel(u16 x, u16 y)
     // pixel in screen ?
     if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
     {
-        const u16 off = (y * BMP_PITCH) + x;
+        const u16 off = (y * BMP_PITCH) + (x >> 1);
 
         // read pixel
         return bmp_buffer_write[off];
@@ -314,7 +316,7 @@ void BMP_setPixel(u16 x, u16 y, u8 col)
     // pixel in screen ?
     if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
     {
-        const u16 off = (y * BMP_PITCH) + x;
+        const u16 off = (y * BMP_PITCH) + (x >> 1);
 
         // write pixel
         bmp_buffer_write[off] = col;
@@ -337,7 +339,7 @@ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
         // pixel inside screen ?
         if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
         {
-            const u16 off = (y * BMP_PITCH) + x;
+            const u16 off = (y * BMP_PITCH) + (x >> 1);
 
             // write pixel
             bmp_buffer_write[off] = c;
@@ -363,7 +365,7 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
         // pixel inside screen ?
         if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
         {
-            const u16 off = (y * BMP_PITCH) + x;
+            const u16 off = (y * BMP_PITCH) + (x >> 1);
 
             // write pixel
             bmp_buffer_write[off] = p->col;
@@ -384,13 +386,13 @@ void BMP_drawLine(Line *l)
         s16 step_x;
         s16 step_y;
 
-        const s16 x1 = l->pt1.x;
+        const s16 x1 = l->pt1.x >> 1;
         const s16 y1 = l->pt1.y;
         // calcul new deltas
-        dx = l->pt2.x - x1;
+        dx = (l->pt2.x >> 1) - x1;
         dy = l->pt2.y - y1;
         // prepare offset
-        const u16 offset = x1 + (y1 * BMP_WIDTH);
+        const u16 offset = x1 + (y1 * BMP_PITCH);
 
         if (dx < 0)
         {
@@ -403,10 +405,10 @@ void BMP_drawLine(Line *l)
         if (dy < 0)
         {
             dy = -dy;
-            step_y = -BMP_WIDTH;
+            step_y = -BMP_PITCH;
         }
         else
-            step_y = BMP_WIDTH;
+            step_y = BMP_PITCH;
 
         // reverse X and Y on deltas and steps
         if (dx < dy)
@@ -416,16 +418,17 @@ void BMP_drawLine(Line *l)
     }
 }
 
-void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col, u8 culling)
+u16 BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col)
 {
-    // calculate polygon "direction"
-    const u8 clockwise = ((pts[2].x - pts[0].x) * (pts[1].y - pts[0].y)) > ((pts[2].y - pts[0].y) * (pts[1].x - pts[0].x));
-    // backface culling enabled and clockwised polygon ? --> exit
-    if ((culling) && (clockwise)) return;
+    // counter-clockwised polygon --> exit
+    if (((pts[2].x - pts[0].x) * (pts[1].y - pts[0].y)) > ((pts[2].y - pts[0].y) * (pts[1].x - pts[0].x)))
+        return 1;
 
     // prepare polygon edge calculation
-    minY = BMP_HEIGHT;
-    maxY = 0;
+    minYL = BMP_HEIGHT;
+    minYR = BMP_HEIGHT;
+    maxYL = 0;
+    maxYR = 0;
 
     const Vect2D_s16 *curpts;
     u16 i;
@@ -434,55 +437,67 @@ void BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col, u8 culling)
     i = num - 1;
     while(i--)
     {
-        calculatePolyEdge(curpts, curpts + 1, clockwise);
+        calculatePolyEdge(curpts, curpts + 1);
         curpts++;
     }
 
     // last line
-    calculatePolyEdge(curpts, pts, clockwise);
+    calculatePolyEdge(curpts, pts);
 
-    // number of scanline to draw
-    s16 len = maxY - minY;
-    // nothing to draw
-    if (len <= 0) return;
+    // get min and max Y
+    minY = (minYL > minYR)?minYL:minYR;
+    maxY = (maxYL < maxYR)?maxYL:maxYR;
 
-    s16 *left;
-    s16 *right;
-    u8 *buf;
-    u8 c;
+//    logEdges();
 
-    left = &LeftPoly[minY];
-    right = &RightPoly[minY];
-    buf = &bmp_buffer_write[minY * BMP_PITCH];
-    c = col | (col << 4);
+    // can draw polygon now
+//    drawPolygon_old(col);
+    drawPolygon(col);
 
-    while (len--)
-    {
-        s16 x1, x2;
-
-        x1 = *left++;
-        x2 = *right++;
-
-        // backface ?
-        if (x1 > x2) SWAP_s16(x1, x2)
-
-        // something to draw ?
-        if ((x1 < BMP_WIDTH) && (x2 >= 0))
-        {
-            // clip x
-            if (x1 < 0) x1 = 0;
-            if (x2 >= BMP_WIDTH) x2 = BMP_WIDTH - 1;
-
-            // draw horizontal line
-            memset(&buf[x1], c, x2 - x1);
-        }
-
-        buf += BMP_PITCH;
-    }
+    return 0;
 }
 
+//static void logEdges()
+//{
+//    char str1[128];
+//    char str2[128];
+//    s16 *left;
+//    s16 *right;
+//    s16 y;
+//
+//    left = &LeftPoly[minY];
+//    right = &RightPoly[minY];
+//
+//    strcpy(str1, "edges ymin=");
+//    intToStr(minY, str2, 1);
+//    strcat(str1, str2);
+//    strcat(str1, " ymax=");
+//    intToStr(maxY, str2, 1);
+//    strcat(str1, str2);
+//    KDebug_Alert(str1);
+//
+//    for(y = minY; y < maxY; y++)
+//    {
+//        strcpy(str1, "y=");
+//        intToStr(y, str2, 1);
+//        strcat(str1, str2);
+//        strcat(str1, " x1=");
+//        intToStr(*left, str2, 1);
+//        strcat(str1, str2);
+//        strcat(str1, " x2=");
+//        intToStr(*right, str2, 1);
+//        strcat(str1, str2);
+//
+//        if (*left > *right)
+//            KDebug_Alert(str1);
+//
+//        left++;
+//        right++;
+//    }
+//}
 
-void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
+
+void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
     // pixel out screen ?
     if ((x >= BMP_WIDTH) || (y >= BMP_HEIGHT))
@@ -493,8 +508,8 @@ void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     u8 *dst;
 
     // limit bitmap size if larger than bitmap screen
-    if ((w + x) > BMP_WIDTH) adj_w = BMP_WIDTH - (w + x);
-    else adj_w = w;
+    if ((w + x) > BMP_WIDTH) adj_w = (BMP_WIDTH - (w + x)) >> 1;
+    else adj_w = w >> 1;
     if ((h + y) > BMP_HEIGHT) adj_h = BMP_HEIGHT - (h + y);
     else adj_h = h;
 
@@ -506,63 +521,56 @@ void BMP_loadBitmap(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     {
         memcpy(dst, src, adj_w);
         src += pitch;
-        dst += BMP_WIDTH;
+        dst += BMP_PITCH;
     }
 }
 
-void BMP_loadGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal)
+void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal)
 {
     u16 w, h;
 
-    // get the image width (bitmap size / 2 as we double X resolution)
-    w = bitmap->w >> 1;
+    // get the image width
+    w = bitmap->w;
     // get the image height
     h = bitmap->h;
 
     // load the palette
     if (numpal < 4) VDP_setPalette(numpal, bitmap->palette);
 
-    BMP_loadBitmap((u8*) bitmap->image, x, y, w, h, w);
+    BMP_loadBitmapData(bitmap->image, x, y, w, h, w >> 1);
 }
 
-void BMP_loadAndScaleGenBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal)
+void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal)
 {
-    u16 bmp_w, bmp_h;
+    u16 bmp_wb, bmp_h;
 
-    // get the image width (bitmap size / 2 as we double X resolution)
-    bmp_w = bitmap->w >> 1;
+    // get the image width in byte
+    bmp_wb = bitmap->w >> 1;
     // get the image height
     bmp_h = bitmap->h;
 
     // load the palette
     if (numpal < 4) VDP_setPalette(numpal, bitmap->palette);
 
-    BMP_scale((u8*) bitmap->image, bmp_w, bmp_h, bmp_w, BMP_getWritePointer(x, y), w, h, BMP_WIDTH);
+    BMP_scale(bitmap->image, bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
 }
 
-void BMP_getGenBitmapPalette(const Bitmap *bitmap, u16 *pal)
+void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *pal)
 {
-    u16 i;
-    const u16 *src;
-    u16 *dst;
-
-    src = bitmap->palette;
-    dst = pal;
-    i = 16;
-    while(i--) *dst++ = *src++;
+    memcpy(pal, bitmap->palette, 16 * 2);
 }
 
 
 // works only for 8 bits image (x doubled)
-void BMP_scale(const u8 *src_buf, u16 src_w, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_w, u16 dst_h, u16 dst_pitch)
+void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_wb, u16 dst_h, u16 dst_pitch)
 {
-    const s32 yd = ((src_h / dst_h) * src_w) - src_w;
+    const s32 yd = ((src_h / dst_h) * src_wb) - src_wb;
     const u16 yr = src_h % dst_h;
-    const s32 xd = src_w / dst_w;
-    const u16 xr = src_w % dst_w;
+    const s32 xd = src_wb / dst_wb;
+    const u16 xr = src_wb % dst_wb;
 
-    const u32 adj_src = src_pitch - src_w;
-    const u32 adj_dst = dst_pitch - dst_w;
+    const u32 adj_src = src_pitch - src_wb;
+    const u32 adj_dst = dst_pitch - dst_wb;
 
     const u8 *src = src_buf;
     u8 *dst = dst_buf;
@@ -572,7 +580,7 @@ void BMP_scale(const u8 *src_buf, u16 src_w, u16 src_h, u16 src_pitch, u8 *dst_b
 
     while(y--)
     {
-        u16 x = dst_w;
+        u16 x = dst_wb;
         s16 xe = 0;
 
         while(x--)
@@ -582,9 +590,9 @@ void BMP_scale(const u8 *src_buf, u16 src_w, u16 src_h, u16 src_pitch, u8 *dst_b
 
             // adjust offset
             src += xd;
-            if ((xe += xr) >= (s16) dst_w)
+            if ((xe += xr) >= (s16) dst_wb)
             {
-                xe -= dst_w;
+                xe -= dst_wb;
                 src++;
             }
         }
@@ -597,7 +605,7 @@ void BMP_scale(const u8 *src_buf, u16 src_w, u16 src_h, u16 src_pitch, u8 *dst_b
         if ((ye += yr) >= (s16) dst_h)
         {
             ye -= dst_h;
-            src += src_w;
+            src += src_wb;
         }
     }
 }
@@ -645,7 +653,7 @@ u16 BMP_doHBlankProcess()
         // update phase
         phase = 3;
         // flip requested or not complete ? --> start / continu flip
-        if (bmp_state & BMP_STAT_FLIPPING) doFlip();
+        if (state & BMP_STAT_FLIPPING) doFlip();
     }
 
     return 1;
@@ -654,16 +662,6 @@ u16 BMP_doHBlankProcess()
 
 // internals helper methods
 ///////////////////////////
-
-static u16 getYOffset()
-{
-    u16 res;
-
-    res = 4;
-    if (READ_IS_FB1) res += BMP_PLANHEIGHT / 2;
-
-    return res;
-}
 
 static void initTilemap(u16 num)
 {
@@ -681,12 +679,12 @@ static void initTilemap(u16 num)
     if (num == 0)
     {
         addr_tilemap = BMP_FB0TILEMAP_BASE + offset;
-        tile_ind = BMP_FB0TILEINDEX;
+        tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB0TILEINDEX);
     }
     else
     {
         addr_tilemap = BMP_FB1TILEMAP_BASE + offset;
-        tile_ind = BMP_FB1TILEINDEX;
+        tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB1TILEINDEX);
     }
 
     // point to vdp port
@@ -717,30 +715,6 @@ static void initTilemap(u16 num)
     }
 }
 
-static void clearBuffer(u8 *bmp_buffer)
-{
-    u32 *src;
-    u16 i;
-
-    // prevent compiler to use slow CLR instruction
-    const u32 v = getZeroU32();
-
-    src = (u32*) bmp_buffer;
-
-    i = (BMP_WIDTH * BMP_HEIGHT) / (4 * 8);
-    while(i--)
-    {
-        *src++ = v;
-        *src++ = v;
-        *src++ = v;
-        *src++ = v;
-        *src++ = v;
-        *src++ = v;
-        *src++ = v;
-        *src++ = v;
-    }
-}
-
 static void flipBuffer()
 {
     if (READ_IS_FB0)
@@ -763,31 +737,34 @@ static void doFlip()
     // copy tile buffer to VRAM
     if (doBlit())
     {
-        u16 vscr;
+        if (HAS_DOUBLEBUFFER)
+        {
+            u16 vscr;
 
-        // switch displayed buffer
-        if (READ_IS_FB0) vscr = ((BMP_PLANHEIGHT * BMP_YPIXPERTILE) * 0) / 2;
-        else vscr = ((BMP_PLANHEIGHT * BMP_YPIXPERTILE) * 1) / 2;
+            // switch displayed buffer
+            if (READ_IS_FB0) vscr = ((BMP_PLANHEIGHT * 8) * 0) / 2;
+            else vscr = ((BMP_PLANHEIGHT * 8) * 1) / 2;
 
-        VDP_setVerticalScroll(BMP_PLAN, vscr);
+            VDP_setVerticalScroll(BMP_PLAN, vscr);
+        }
 
         // get bitmap state
-        u16 state = bmp_state;
+        u16 s = state;
 
         // flip pending ?
-        if (state & BMP_STAT_FLIPWAITING)
+        if (s & BMP_STAT_FLIPWAITING)
         {
             // flip buffers
             flipBuffer();
             // clear pending flag
-            state &= ~BMP_STAT_FLIPWAITING;
+            s &= ~BMP_STAT_FLIPWAITING;
         }
         else
             // flip done
-            state &= ~BMP_STAT_FLIPPING;
+            s &= ~BMP_STAT_FLIPPING;
 
         // save back bitmap state
-        bmp_state = state;
+        state = s;
     }
 }
 
@@ -824,16 +801,16 @@ static u16 doBlit()
 
     src = (u32 *) bmp_buffer_read;
 
-    if (READ_IS_FB0)
-        addr_tile = BMP_FB0TILE;
-    else
+    if (HAS_DOUBLEBUFFER && READ_IS_FB1)
         addr_tile = BMP_FB1TILE;
+    else
+        addr_tile = BMP_FB0TILE;
 
     /* point to vdp ctrl port */
     plctrl = (u32 *) GFX_CTRL_PORT;
 
     // previous blit not completed ?
-    if (bmp_state & BMP_STAT_BLITTING)
+    if (state & BMP_STAT_BLITTING)
     {
         // adjust tile address
         addr_tile += pos_i * BMP_CELLWIDTH * 32;
@@ -846,7 +823,7 @@ static u16 doBlit()
     else
     {
         // start blit
-        bmp_state |= BMP_STAT_BLITTING;
+        state |= BMP_STAT_BLITTING;
         pos_i = 0;
 
         // set destination address for tile
@@ -887,7 +864,7 @@ static u16 doBlit()
     if (pos_i < BMP_CELLHEIGHT) return 0;
 
     // blit done
-    bmp_state &= ~BMP_STAT_BLITTING;
+    state &= ~BMP_STAT_BLITTING;
 
     return 1;
 }
@@ -913,3 +890,53 @@ static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
         }
     }
 }
+
+//static void drawPolygon_old(u8 color)
+//{
+//    // number of scanline to draw
+//    s16 len = maxY - minY;
+//    // nothing to draw
+//    if (len <= 0) return;
+//
+//    s16 *left;
+//    s16 *right;
+//    u8 *buf;
+//
+//    left = &LeftPoly[minY];
+//    right = &RightPoly[minY];
+//    buf = &bmp_buffer_write[minY * BMP_PITCH];
+//
+//    while (len--)
+//    {
+//        s16 x1, x2;
+//
+//        x1 = *left++;
+//        x2 = *right++;
+//
+//        // something to draw ?
+//        if ((x1 <= x2) && (x1 < BMP_WIDTH) && (x2 >= 0))
+//        {
+//            // clip x
+//            if (x1 < 0) x1 = 0;
+//            if (x2 >= BMP_WIDTH) x2 = BMP_WIDTH - 1;
+//
+//            if (x1 & 1)
+//            {
+//                buf[x1 >> 1] = (buf[x1 >> 1] & 0xF0) | (color & 0x0F);
+//                x1++;
+//            }
+//            if (!(x2 & 1))
+//            {
+//                buf[x2 >> 1] = (buf[x2 >> 1] & 0x0F) | (color & 0xF0);
+//                x2--;
+//            }
+//
+//            x1 >>= 1;
+//            x2 >>= 1;
+//
+//            memset(&buf[x1], color, (x2 - x1) + 1);
+//        }
+//
+//        buf += BMP_PITCH;
+//    }
+//}

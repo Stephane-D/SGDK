@@ -23,12 +23,12 @@ memset:
 
     move.b %d1,%d2
     lsl.w #8,%d1
-    or.b %d2,%d1
+    move.b %d2,%d1
     move.w %d1,%d2
     swap %d1
     move.w %d2,%d1              | d1 = value | (value << 8) | (value << 16) | (value << 24)
 
-	move.w %a1,%d2
+	move.w %a0,%d2
 	btst #0,%d2                 | dst & 1 ?
 	jeq .L34
 
@@ -36,11 +36,11 @@ memset:
 	subq.w #1,%d0
 
 .L34:
-	btst #1,%d2                 | dst & 2
-	jeq .L34b
+|	btst #1,%d2                 | dst & 2
+|	jeq .L34b
 
-	move.w %d1,(%a0)+           | align to dword
-	subq.w #2,%d0
+|	move.w %d1,(%a0)+           | align to dword
+|	subq.w #2,%d0
 
 .L34b:
     move.w %d0,%d2
@@ -114,12 +114,12 @@ memsetU16:
     swap %d1
     move.w %d2,%d1              | d1 = value | (value << 16)
 
-	move.w %a1,%d2
-	btst #1,%d2                 | dst & 2 ?
-	jeq .L52b
+|	move.w %a0,%d2
+|	btst #1,%d2                 | dst & 2 ?
+|	jeq .L52b
 
-	move.w %d1,(%a0)+           | align to dword
-	subq.w #1,%d0
+|	move.w %d1,(%a0)+           | align to dword
+|	subq.w #1,%d0
 
 .L52b:
 	btst #0,%d0                 | len & 1 ?
@@ -267,83 +267,83 @@ memcpy:
 	rts
 
 .L84_W:
-	btst #1,%d2                 | same word alignment on src and dst ?
-	jeq .L84                    | go to dword routine
-
-	btst #0,%d1                 | byte align ?
-	jbeq .L91_W
-
-	move.b (%a0)+,(%a1)+        | align to word
-	subq.w #1,%d0
-
+|	btst #1,%d2                 | same word alignment on src and dst ?
+|	jeq .L84                    | go to dword routine
+|
+|	btst #0,%d1                 | byte align ?
+|	jbeq .L91_W
+|
+|	move.b (%a0)+,(%a1)+        | align to word
+|	subq.w #1,%d0
+|
 .L91_W:
-	move.w %d0,%d2
-	lsr.w #5,%d2                | d2 = len >> 5
-	jeq .L108_W
-
-	subq.w #1,%d2
-
+|	move.w %d0,%d2
+|	lsr.w #5,%d2                | d2 = len >> 5
+|	jeq .L108_W
+|
+|	subq.w #1,%d2
+|
 .L94_W:
-	move.w (%a0)+,(%a1)+        | fast copy
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	dbra %d2,.L94_W
-
+|	move.w (%a0)+,(%a1)+        | fast copy
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	dbra %d2,.L94_W
+|
 .L108_W:
-    move.w %d0,%d2
-	lsr.w #2,%d2
-	andi.w #7,%d2               | d2 = (len >> 2) & 7
-	jeq .L110_W
-
-	subq.w #1,%d2
-
+|    move.w %d0,%d2
+|	lsr.w #2,%d2
+|	andi.w #7,%d2               | d2 = (len >> 2) & 7
+|	jeq .L110_W
+|
+|	subq.w #1,%d2
+|
 .L97_W:
-	move.w (%a0)+,(%a1)+
-	move.w (%a0)+,(%a1)+
-	dbra %d2,.L97_W
-
+|	move.w (%a0)+,(%a1)+
+|	move.w (%a0)+,(%a1)+
+|	dbra %d2,.L97_W
+|
 .L110_W:
-	andi.w #3,%d0               | d0 = len & 3
-	jeq .L79_W
-
-	subq.w #1,%d0
-
+|	andi.w #3,%d0               | d0 = len & 3
+|	jeq .L79_W
+|
+|	subq.w #1,%d0
+|
 .L100_W:
-	move.b (%a0)+,(%a1)+
-	dbra %d0,.L100_W
-
+|	move.b (%a0)+,(%a1)+
+|	dbra %d0,.L100_W
+|
 .L79_W:
-	move.w (%sp)+,%d2
-	rts
-
+|	move.w (%sp)+,%d2
+|	rts
+|
 
 .L84:
-	btst #0,%d1                 | byte align ?
+	btst #0,%d1                 | src address byte aligned ?
 	jbeq .L91
 
 	move.b (%a0)+,(%a1)+        | align to word
 	subq.w #1,%d0
 
 .L91:
-	btst #1,%d1                 | word align ?
-	jbeq .L91b
-
-	move.w (%a0)+,(%a1)+        | align to dword
-	subq.w #2,%d0
-
+|	btst #1,%d1                 | word align ?
+|	jbeq .L91b
+|
+|	move.w (%a0)+,(%a1)+        | align to dword
+|	subq.w #2,%d0
+|
 .L91b:
 	move.w %d0,%d2
 	lsr.w #5,%d2                | d2 = len >> 5

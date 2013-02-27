@@ -10,8 +10,6 @@
 #include "vdp_dma.h"
 #include "vdp_tile.h"
 
-#include "tab_vram.h"
-
 
 // don't want to share it
 extern u16 textBasetile;
@@ -34,52 +32,64 @@ void VDP_setHorizontalScroll(u16 plan, u16 value)
     *pw = value;
 }
 
-void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len)
+void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 use_dma)
 {
-    vu16 *pw;
-    vu32 *pl;
     u16 addr;
-    u16 *src;
-    u16 i;
-
-    /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
 
     addr = HSCRL + ((tile & 0x1F) * (4 * 8));
     if (plan == BPLAN) addr += 2;
 
     VDP_setAutoInc(4 * 8);
-    *pl = GFX_WRITE_VRAM_ADDR(addr);
 
-    src = values;
+    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, 0);
+    else
+    {
+        vu16 *pw;
+        vu32 *pl;
+        u16 *src;
+        u16 i;
 
-    i = len;
-    while(i--) *pw = *src++;
+        /* Point to vdp port */
+        pw = (u16 *) GFX_DATA_PORT;
+        pl = (u32 *) GFX_CTRL_PORT;
+
+        *pl = GFX_WRITE_VRAM_ADDR(addr);
+
+        src = values;
+
+        i = len;
+        while(i--) *pw = *src++;
+    }
 }
 
-void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len)
+void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len, u16 use_dma)
 {
-    vu16 *pw;
-    vu32 *pl;
     u16 addr;
-    u16 *src;
-    u16 i;
-
-    /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
 
     addr = HSCRL + ((line & 0xFF) * 4);
     if (plan == BPLAN) addr += 2;
 
     VDP_setAutoInc(4);
-    *pl = GFX_WRITE_VRAM_ADDR(addr);
 
-    src = values;
+    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, 0);
+    else
+    {
+        vu16 *pw;
+        vu32 *pl;
+        u16 *src;
+        u16 i;
 
-    i = len;
-    while(i--) *pw = *src++;
+        /* Point to vdp port */
+        pw = (u16 *) GFX_DATA_PORT;
+        pl = (u32 *) GFX_CTRL_PORT;
+
+        *pl = GFX_WRITE_VRAM_ADDR(addr);
+
+        src = values;
+
+        i = len;
+        while(i--) *pw = *src++;
+    }
 }
 
 void VDP_setVerticalScroll(u16 plan, u16 value)
@@ -99,28 +109,34 @@ void VDP_setVerticalScroll(u16 plan, u16 value)
     *pw = value;
 }
 
-void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len)
+void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 use_dma)
 {
-    vu16 *pw;
-    vu32 *pl;
     u16 addr;
-    u16 *src;
-    u16 i;
-
-    /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
 
     addr = (tile & 0x1F) * 4;
     if (plan == BPLAN) addr += 2;
 
     VDP_setAutoInc(4);
-    *pl = GFX_WRITE_VSRAM_ADDR(addr);
 
-    src = values;
+    if (use_dma) VDP_doDMAEx(VDP_DMA_VSRAM, (u32) values, addr, len, 0);
+    else
+    {
+        vu16 *pw;
+        vu32 *pl;
+        u16 *src;
+        u16 i;
 
-    i = len;
-    while(i--) *pw = *src++;
+        /* Point to vdp port */
+        pw = (u16 *) GFX_DATA_PORT;
+        pl = (u32 *) GFX_CTRL_PORT;
+
+        *pl = GFX_WRITE_VSRAM_ADDR(addr);
+
+        src = values;
+
+        i = len;
+        while(i--) *pw = *src++;
+    }
 }
 
 

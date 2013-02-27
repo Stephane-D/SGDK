@@ -176,9 +176,6 @@ int main(int argc, char **argv)
     }
 
     fprintf(FileOutput, ".text\n\n");
-    fprintf(FileOutput, "    .align  %d\n\n", align);
-    fprintf(FileOutput, "    .global %s\n", shortname);
-    fprintf(FileOutput, "%s:\n", shortname);
 
     if (bitmap)
     {
@@ -189,8 +186,8 @@ int main(int argc, char **argv)
         w = (unsigned char)temp[18] | (temp[19] << 8); // only need two bytes, but is really four byte LE
         h = (unsigned char)temp[22] | (temp[23] << 8); // only need two bytes, but is really four byte LE
 
-        fprintf(FileOutput, "    dc.w    %d, %d\n\n", w, h);
-        total += 4;
+        fprintf(FileOutput, "    .align  %d\n\n", align);
+        fprintf(FileOutput, "%s_pal:\n", shortname);
 
         // process palette (assumes 16 color image)
         fread(temp, 4, 16, FileInput); // read palette
@@ -205,18 +202,15 @@ int main(int argc, char **argv)
         for (ii = 8; ii < 15; ii++)
             fprintf(FileOutput, "0x%04X, ", vdpcolor(temp[ii*4+0], temp[ii*4+1], temp[ii*4+2]));
         fprintf(FileOutput, "0x%04X", vdpcolor(temp[15*4+0], temp[15*4+1], temp[15*4+2]));
-        fprintf(FileOutput, "\n");
+        fprintf(FileOutput, "\n\n");
 
-        fprintf(FileOutput, "\n");
-        total += 32;
+        fprintf(FileOutput, "%s_data:\n", shortname);
 
         // process bitmap data (assumes 16 color image)
         mem = malloc(w * h / 2);
 
         for (ii = 0; ii < h; ii++)
             fread(&mem[(h-ii-1)*w/2], 1, w / 2, FileInput); // fill from bitmap backwards (BMP is bottom up)
-
-        total += w * h / 2;
 
         for (jj = 0; jj < h; jj++)
         {
@@ -242,18 +236,30 @@ int main(int argc, char **argv)
                 ll += ii;
                 len -= ii;
             }
+
         }
 
         free(mem);
 
         fprintf(FileOutput, "\n");
+
+        fprintf(FileOutput, "    .global %s\n", shortname);
+        fprintf(FileOutput, "%s:\n", shortname);
+
+        fprintf(FileOutput, "    dc.w    %d, %d\n", w, h);
+        fprintf(FileOutput, "    dc.l    %s_pal\n", shortname);
+        fprintf(FileOutput, "    dc.l    %s_data\n\n", shortname);
+
         fclose(FileOutput);
         fclose(FileInput);
     }
     else
     {
-        // non-BMP is dumped as straight data
+        fprintf(FileOutput, "    .align  %d\n\n", align);
+        fprintf(FileOutput, "    .global %s\n", shortname);
+        fprintf(FileOutput, "%s:\n", shortname);
 
+        // non-BMP is dumped as straight data
         memset(temp, nullfill, sizeof(temp));
 
         while (1)
@@ -307,9 +313,11 @@ int main(int argc, char **argv)
         temp[ii] = toupper(shortname[ii]);
 
     temp[ii] = 0;
+
     fprintf(FileOutput, "#ifndef _%s_H_\n", temp);
     fprintf(FileOutput, "#define _%s_H_\n\n", temp);
-    fprintf(FileOutput, "extern const %s%s[0x%X];\n\n", format, shortname, total / formatint);
+    if (bitmap) fprintf(FileOutput, "extern const Bitmap %s;\n\n", shortname);
+    else fprintf(FileOutput, "extern const %s%s[0x%X];\n\n", format, shortname, total / formatint);
     fprintf(FileOutput, "#endif // _%s_H_\n", temp);
 
     fclose(FileOutput);
