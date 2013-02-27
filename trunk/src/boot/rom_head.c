@@ -7,7 +7,7 @@ const struct
     char copyright[16];             /* Copyright Information (16) */
     char title_local[48];           /* Domestic Name (48) */
     char title_int[48];             /* Overseas Name (48) */
-    char serial[16];                /* Serial Number (2, 14) */
+    char serial[14];                /* Serial Number (2, 12) */
     u16 checksum;                   /* Checksum (2) */
     char IOSupport[16];             /* I/O Support (16) */
     u32 rom_start;                  /* ROM Start Address (4) */
@@ -23,7 +23,7 @@ const struct
     char region[16];                /* Country Support (16) */
 } rom_header = {
     "SEGA MEGA DRIVE ",
-    "(C)FLEMTEAM 2011",
+    "(C)FLEMTEAM 2013",
     "SAMPLE PROGRAM                                  ",
     "SAMPLE PROGRAM                                  ",
     "GM 00000000-00",

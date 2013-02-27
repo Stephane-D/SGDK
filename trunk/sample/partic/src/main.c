@@ -38,7 +38,7 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
-    BMP_init();
+    BMP_init(1, 0, 0);
 
     paused = 0;
     col = 0xFF;
@@ -84,7 +84,7 @@ int main()
             drawPartic(partics, numpartic, col);
 
             // swap buffer
-            BMP_flip();
+            BMP_flip(1);
         }
         else
         {
