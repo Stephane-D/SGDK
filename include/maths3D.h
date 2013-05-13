@@ -10,7 +10,7 @@
  * - one directionnal light<br>
  * - 2D projection<br>
  *<br>
- * Can transform (including 2D projection) about ~8200 vertices / seconde.
+ * Can transform (including 2D projection) about ~10000 vertices / seconde.
  */
 
 #ifndef _MATHS3D_H_

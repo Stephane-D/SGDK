@@ -69,7 +69,7 @@ static u16 phase;
 
 
 // forward
-extern void calculatePolyEdge(const Vect2D_s16 *pt1, const Vect2D_s16 *pt2);
+extern void calculatePolyEdge(const Vect2D_s16 *pts);
 extern void clearBitmapBuffer(u8 *bmp_buffer);
 extern void drawPolygon(u8 color);
 
@@ -78,7 +78,7 @@ static void doFlip();
 static void flipBuffer();
 static void initTilemap(u16 num);
 static u16 doBlit();
-static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
+//static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
 //static void drawPolygon_old(u8 color);
 //static void logEdges();
 
@@ -377,85 +377,85 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 }
 
 
-void BMP_drawLine(Line *l)
-{
-    // process clipping (exit if outside screen)
-    if (BMP_clipLine(l))
-    {
-        s16 dx, dy;
-        s16 step_x;
-        s16 step_y;
+//void BMP_drawLine_old(Line *l)
+//{
+//    // process clipping (exit if outside screen)
+//    if (BMP_clipLine(l))
+//    {
+//        s16 dx, dy;
+//        s16 step_x;
+//        s16 step_y;
+//
+//        const s16 x1 = l->pt1.x >> 1;
+//        const s16 y1 = l->pt1.y;
+//        // calcul new deltas
+//        dx = (l->pt2.x >> 1) - x1;
+//        dy = l->pt2.y - y1;
+//        // prepare offset
+//        const u16 offset = x1 + (y1 * BMP_PITCH);
+//
+//        if (dx < 0)
+//        {
+//            dx = -dx;
+//            step_x = -1;
+//        }
+//        else
+//            step_x = 1;
+//
+//        if (dy < 0)
+//        {
+//            dy = -dy;
+//            step_y = -BMP_PITCH;
+//        }
+//        else
+//            step_y = BMP_PITCH;
+//
+//        // reverse X and Y on deltas and steps
+//        if (dx < dy)
+//            drawLine(offset, dy, dx, step_y, step_x, l->col);
+//        else
+//            drawLine(offset, dx, dy, step_x, step_y, l->col);
+//    }
+//}
 
-        const s16 x1 = l->pt1.x >> 1;
-        const s16 y1 = l->pt1.y;
-        // calcul new deltas
-        dx = (l->pt2.x >> 1) - x1;
-        dy = l->pt2.y - y1;
-        // prepare offset
-        const u16 offset = x1 + (y1 * BMP_PITCH);
-
-        if (dx < 0)
-        {
-            dx = -dx;
-            step_x = -1;
-        }
-        else
-            step_x = 1;
-
-        if (dy < 0)
-        {
-            dy = -dy;
-            step_y = -BMP_PITCH;
-        }
-        else
-            step_y = BMP_PITCH;
-
-        // reverse X and Y on deltas and steps
-        if (dx < dy)
-            drawLine(offset, dy, dx, step_y, step_x, l->col);
-        else
-            drawLine(offset, dx, dy, step_x, step_y, l->col);
-    }
-}
-
-u16 BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col)
-{
-    // counter-clockwised polygon --> exit
-    if (((pts[2].x - pts[0].x) * (pts[1].y - pts[0].y)) > ((pts[2].y - pts[0].y) * (pts[1].x - pts[0].x)))
-        return 1;
-
-    // prepare polygon edge calculation
-    minYL = BMP_HEIGHT;
-    minYR = BMP_HEIGHT;
-    maxYL = 0;
-    maxYR = 0;
-
-    const Vect2D_s16 *curpts;
-    u16 i;
-
-    curpts = pts;
-    i = num - 1;
-    while(i--)
-    {
-        calculatePolyEdge(curpts, curpts + 1);
-        curpts++;
-    }
-
-    // last line
-    calculatePolyEdge(curpts, pts);
-
-    // get min and max Y
-    minY = (minYL > minYR)?minYL:minYR;
-    maxY = (maxYL < maxYR)?maxYL:maxYR;
-
-//    logEdges();
-
-    // can draw polygon now
-//    drawPolygon_old(col);
-    drawPolygon(col);
-
-    return 0;
-}
+//u16 BMP_drawPolygon_old(const Vect2D_s16 *pts, u16 num, u8 col)
+//{
+//    // counter-clockwised polygon --> exit
+//    if (((pts[2].x - pts[0].x) * (pts[1].y - pts[0].y)) > ((pts[2].y - pts[0].y) * (pts[1].x - pts[0].x)))
+//        return 1;
+//
+//    // prepare polygon edge calculation
+//    minYL = BMP_HEIGHT;
+//    minYR = BMP_HEIGHT;
+//    maxYL = 0;
+//    maxYR = 0;
+//
+//    const Vect2D_s16 *curpts;
+//    u16 i;
+//
+//    curpts = pts;
+//    i = num - 1;
+//    while(i--)
+//        calculatePolyEdge(curpts++);
+//
+//    Vect2D_s16 lastpts[2];
+//    lastpts[0] = *curpts;
+//    lastpts[1] = *pts;
+//    // last line
+//    calculatePolyEdge(lastpts);
+//
+//    // get min and max Y
+//    minY = (minYL > minYR)?minYL:minYR;
+//    maxY = (maxYL < maxYR)?maxYL:maxYR;
+//
+////    logEdges();
+//
+//    // can draw polygon now
+////    drawPolygon_old(col);
+//    drawPolygon(col);
+//
+//    return 0;
+//}
 
 //static void logEdges()
 //{
@@ -869,27 +869,27 @@ static u16 doBlit()
     return 1;
 }
 
-static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
-{
-    const u8 c = col;
-    u8 *dst = &bmp_buffer_write[offset];
-    s16 delta = dx >> 1;
-    s16 cnt = dx + 1;
-
-    while(cnt--)
-    {
-        // write pixel
-        *dst = c;
-
-        // adjust offset
-        dst += step_x;
-        if ((delta -= dy) < 0)
-        {
-            dst += step_y;
-            delta += dx;
-        }
-    }
-}
+//static void drawLine_old(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
+//{
+//    const u8 c = col;
+//    u8 *dst = &bmp_buffer_write[offset];
+//    s16 delta = dx >> 1;
+//    s16 cnt = dx + 1;
+//
+//    while(cnt--)
+//    {
+//        // write pixel
+//        *dst = c;
+//        // adjust offset
+//        dst += step_x;
+//
+//        if ((delta -= dy) < 0)
+//        {
+//            dst += step_y;
+//            delta += dx;
+//        }
+//    }
+//}
 
 //static void drawPolygon_old(u8 color)
 //{
