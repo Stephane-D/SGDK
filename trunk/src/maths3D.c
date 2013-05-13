@@ -175,20 +175,20 @@ void M3D_combineTransform(Transformation3D *left, Transformation3D *right, Trans
     Translation3D *tRes = result->translation;
 
     // compute matrix product (36 multiplications + 27 additions... outch !!!)
-    matRes->a.x = fix16Mul(mat1->a.x, mat2->a.x) + fix16Mul(mat1->a.y, mat2->b.x) + fix16Mul(mat1->a.z, mat2->c.x);
-    matRes->a.y = fix16Mul(mat1->a.x, mat2->a.y) + fix16Mul(mat1->a.y, mat2->b.y) + fix16Mul(mat1->a.z, mat2->c.y);
-    matRes->a.z = fix16Mul(mat1->a.x, mat2->a.z) + fix16Mul(mat1->a.y, mat2->b.z) + fix16Mul(mat1->a.z, mat2->c.z);
-    tRes->x = fix16Mul(mat1->a.x, t2->x) + fix16Mul(mat1->a.y, t2->y) + fix16Mul(mat1->a.z, t2->z) + t1->x;
+    matRes->a.x = ((mat1->a.x * mat2->a.x) + (mat1->a.y * mat2->b.x) + (mat1->a.z * mat2->c.x)) >> FIX16_FRAC_BITS;
+    matRes->a.y = ((mat1->a.x * mat2->a.y) + (mat1->a.y * mat2->b.y) + (mat1->a.z * mat2->c.y)) >> FIX16_FRAC_BITS;
+    matRes->a.z = ((mat1->a.x * mat2->a.z) + (mat1->a.y * mat2->b.z) + (mat1->a.z * mat2->c.z)) >> FIX16_FRAC_BITS;
+    tRes->x = (((mat1->a.x * t2->x) + (mat1->a.y * t2->y) + (mat1->a.z * t2->z)) >> FIX16_FRAC_BITS) + t1->x;
 
-    matRes->b.x = fix16Mul(mat1->b.x, mat2->a.x) + fix16Mul(mat1->b.y, mat2->b.x) + fix16Mul(mat1->b.z, mat2->c.x);
-    matRes->b.y = fix16Mul(mat1->b.x, mat2->a.y) + fix16Mul(mat1->b.y, mat2->b.y) + fix16Mul(mat1->b.z, mat2->c.y);
-    matRes->b.z = fix16Mul(mat1->b.x, mat2->a.z) + fix16Mul(mat1->b.y, mat2->b.z) + fix16Mul(mat1->b.z, mat2->c.z);
-    tRes->y = fix16Mul(mat1->b.x, t2->x) + fix16Mul(mat1->b.y, t2->y) + fix16Mul(mat1->b.z, t2->z) + t1->y;
+    matRes->b.x = ((mat1->b.x * mat2->a.x) + (mat1->b.y * mat2->b.x) + (mat1->b.z * mat2->c.x)) >> FIX16_FRAC_BITS;
+    matRes->b.y = ((mat1->b.x * mat2->a.y) + (mat1->b.y * mat2->b.y) + (mat1->b.z * mat2->c.y)) >> FIX16_FRAC_BITS;
+    matRes->b.z = ((mat1->b.x * mat2->a.z) + (mat1->b.y * mat2->b.z) + (mat1->b.z * mat2->c.z)) >> FIX16_FRAC_BITS;
+    tRes->y = (((mat1->b.x * t2->x) + (mat1->b.y * t2->y) + (mat1->b.z * t2->z)) >> FIX16_FRAC_BITS) + t1->y;
 
-    matRes->c.x = fix16Mul(mat1->c.x, mat2->a.x) + fix16Mul(mat1->c.y, mat2->b.x) + fix16Mul(mat1->c.z, mat2->c.x);
-    matRes->c.y = fix16Mul(mat1->c.x, mat2->a.y) + fix16Mul(mat1->c.y, mat2->b.y) + fix16Mul(mat1->c.z, mat2->c.y);
-    matRes->c.z = fix16Mul(mat1->c.x, mat2->a.z) + fix16Mul(mat1->c.y, mat2->b.z) + fix16Mul(mat1->c.z, mat2->c.z);
-    tRes->z = fix16Mul(mat1->c.x, t2->x) + fix16Mul(mat1->c.y, t2->y) + fix16Mul(mat1->c.z, t2->z) + t1->z;
+    matRes->c.x = ((mat1->c.x * mat2->a.x) + (mat1->c.y * mat2->b.x) + (mat1->c.z * mat2->c.x)) >> FIX16_FRAC_BITS;
+    matRes->c.y = ((mat1->c.x * mat2->a.y) + (mat1->c.y * mat2->b.y) + (mat1->c.z * mat2->c.y)) >> FIX16_FRAC_BITS;
+    matRes->c.z = ((mat1->c.x * mat2->a.z) + (mat1->c.y * mat2->b.z) + (mat1->c.z * mat2->c.z)) >> FIX16_FRAC_BITS;
+    tRes->z = (((mat1->c.x * t2->x) + (mat1->c.y * t2->y) + (mat1->c.z * t2->z)) >> FIX16_FRAC_BITS) + t1->z;
 
     // rebuild matrix cached infos
     M3D_buildMat3DExtras(result);
@@ -252,9 +252,9 @@ void M3D_combineTranslationRight(Transformation3D *left, Translation3D *right, T
     Translation3D *tRes = result->translation;
 
     // only need to modify translation object (9 multiplications + 6 additions... ok :) )
-    tRes->x = fix16Mul(mat1->a.x, t2->x) + fix16Mul(mat1->a.y, t2->y) + fix16Mul(mat1->a.z, t2->z) + t1->x;
-    tRes->y = fix16Mul(mat1->b.x, t2->x) + fix16Mul(mat1->b.y, t2->y) + fix16Mul(mat1->b.z, t2->z) + t1->y;
-    tRes->z = fix16Mul(mat1->c.x, t2->x) + fix16Mul(mat1->c.y, t2->y) + fix16Mul(mat1->c.z, t2->z) + t1->z;
+    tRes->x = (((mat1->a.x * t2->x) + (mat1->a.y * t2->y) + (mat1->a.z * t2->z)) >> FIX16_FRAC_BITS) + t1->x;
+    tRes->y = (((mat1->b.x * t2->x) + (mat1->b.y * t2->y) + (mat1->b.z * t2->z)) >> FIX16_FRAC_BITS) + t1->y;
+    tRes->z = (((mat1->c.x * t2->x) + (mat1->c.y * t2->y) + (mat1->c.z * t2->z)) >> FIX16_FRAC_BITS) + t1->z;
 }
 
 
@@ -283,19 +283,18 @@ void M3D_buildMat3DOnly(Transformation3D *t)
     cy = cosFix16(cy);
     cz = cosFix16(cz);
 
-    sxsy = fix16Mul(sx, sy);
-    cxsy = fix16Mul(cx, sy);
-
     t->mat.a.x = fix16Mul(cy, cz);
     t->mat.b.x = -fix16Mul(cy, sz);
     t->mat.c.x = sy;
 
-    t->mat.a.y = fix16Mul(sxsy, cz) + fix16Mul(cx, sz);
-    t->mat.b.y = fix16Mul(cx, cz) - fix16Mul(sxsy, sz);
+    sxsy = fix16Mul(sx, sy);
+    t->mat.a.y = ((sxsy * cz) + (cx * sz)) >> FIX16_FRAC_BITS;
+    t->mat.b.y = ((cx * cz) - (sxsy * sz)) >> FIX16_FRAC_BITS;
     t->mat.c.y = -fix16Mul(sx, cy);
 
-    t->mat.a.z = fix16Mul(sx, sz) - fix16Mul(cxsy, cz);
-    t->mat.b.z = fix16Mul(cxsy, sz) + fix16Mul(sx, cz);
+    cxsy = fix16Mul(cx, sy);
+    t->mat.a.z = ((sx * sz) - (cxsy * cz)) >> FIX16_FRAC_BITS;
+    t->mat.b.z = ((cxsy * sz) + (sx * cz)) >> FIX16_FRAC_BITS;
     t->mat.c.z = fix16Mul(cx, cy);
 
     // matrix built
@@ -366,9 +365,9 @@ void M3D_rotate(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u1
         const fix16 sy = *s++;
         const fix16 sz = *s++;
 
-        *d++ = fix16Mul(sx, t->mat.a.x) + fix16Mul(sy, t->mat.a.y) + fix16Mul(sz, t->mat.a.z);
-        *d++ = fix16Mul(sx, t->mat.b.x) + fix16Mul(sy, t->mat.b.y) + fix16Mul(sz, t->mat.b.z);
-        *d++ = fix16Mul(sx, t->mat.c.x) + fix16Mul(sy, t->mat.c.y) + fix16Mul(sz, t->mat.c.z);
+        *d++ = ((sx * t->mat.a.x) + (sy * t->mat.a.y) + (sz * t->mat.a.z)) >> FIX16_FRAC_BITS;
+        *d++ = ((sx * t->mat.b.x) + (sy * t->mat.b.y) + (sz * t->mat.b.z)) >> FIX16_FRAC_BITS;
+        *d++ = ((sx * t->mat.c.x) + (sy * t->mat.c.y) + (sz * t->mat.c.z)) >> FIX16_FRAC_BITS;
     }
 }
 
@@ -380,12 +379,12 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
     const fix16 sy = src->y;
     const fix16 sz = src->z;
 
-    dest->x = fix16Mul(sx, t->matInv.a.x) + fix16Mul(sy, t->matInv.a.y) + fix16Mul(sz, t->matInv.a.z);
-    dest->y = fix16Mul(sx, t->matInv.b.x) + fix16Mul(sy, t->matInv.b.y) + fix16Mul(sz, t->matInv.b.z);
-    dest->z = fix16Mul(sx, t->matInv.c.x) + fix16Mul(sy, t->matInv.c.y) + fix16Mul(sz, t->matInv.c.z);
+    dest->x = ((sx * t->matInv.a.x) + (sy * t->matInv.a.y) + (sz * t->matInv.a.z)) >> FIX16_FRAC_BITS;
+    dest->y = ((sx * t->matInv.b.x) + (sy * t->matInv.b.y) + (sz * t->matInv.b.z)) >> FIX16_FRAC_BITS;
+    dest->z = ((sx * t->matInv.c.x) + (sy * t->matInv.c.y) + (sz * t->matInv.c.z)) >> FIX16_FRAC_BITS;
 }
 
-void M3D_transform(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
+void M3D_transform_old(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
 {
     fix16 *s;
     fix16 *d;
@@ -414,7 +413,6 @@ void M3D_transform(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest,
         *d++ = fix16Mul(sx, t->mat.c.x) + fix16Mul(sy, t->mat.c.y) + fix16Mul(sz, t->mat.c.z) + tz;
     }
 }
-
 
 void M3D_project_f16_old(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv)
 {

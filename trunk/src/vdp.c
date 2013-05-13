@@ -212,7 +212,7 @@ void VDP_setScrollingMode(u16 hscroll, u16 vscroll)
 {
     vu16 *pw;
 
-    regValues[0x0B] |= ((vscroll & 1) << 2) | (hscroll & 3);
+    regValues[0x0B] = ((vscroll & 1) << 2) | (hscroll & 3);
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8B00 | regValues[0x0B];

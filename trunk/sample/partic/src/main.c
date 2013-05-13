@@ -135,19 +135,19 @@ static void handleInput()
     {
         if (value & BUTTON_UP)
         {
-            if (baseposy < intToFix16(BMP_HEIGHT - 10)) baseposy += FIX16(2.0);
+            if (baseposy < intToFix16(BMP_HEIGHT - 10)) baseposy += FIX16(5.0);
         }
         if (value & BUTTON_DOWN)
         {
-            if (baseposy > intToFix16(10)) baseposy -= FIX16(2.0);
+            if (baseposy > intToFix16(10)) baseposy -= FIX16(5.0);
         }
         if (value & BUTTON_LEFT)
         {
-            if (baseposx > intToFix16(10)) baseposx -= FIX16(1.5);
+            if (baseposx > intToFix16(10)) baseposx -= FIX16(3.5);
         }
         if (value & BUTTON_RIGHT)
         {
-            if (baseposx < intToFix16(BMP_WIDTH - 10)) baseposx += FIX16(1.5);
+            if (baseposx < intToFix16(BMP_WIDTH - 10)) baseposx += FIX16(3.5);
         }
     }
 }

@@ -1,4 +1,3 @@
-	.align	2
 	.globl	clearBitmapBuffer
 	.type	clearBitmapBuffer, @function
 clearBitmapBuffer:
@@ -45,61 +44,38 @@ clearBitmapBuffer:
 	rts
 
 
-	.align	2
-	.globl	BMP_clipLine
-	.type	BMP_clipLine, @function
-BMP_clipLine:
-	movm.l #0x3f00,-(%sp)
-
-	move.l 28(%sp),%a0          | a0 = line
-	move.w (%a0),%d2            | d2 = x1
-	move.w 2(%a0),%d3           | d3 = y1
-	move.w 4(%a0),%d4           | d4 = x2
-	move.w 6(%a0),%d5           | d5 = y2
+    | internal use only
+    | -----------------
+    | IN:
+    | d2 = x1
+    | d3 = y1
+    | d4 = x2
+    | d5 = y2
+    |
+    | OUT:
+    | d0 = ZFLAG = 0 if outside screen
+    |              1 if inside screen
+    | d1 = BMP_HEIGHT - 1
+    | d2 = x1
+    | d3 = y1
+    | d4 = x2
+    | d5 = y2
+    | d6-d7 = ??
+clipLine:
 
 	move.w #255,%d0             | d0 = BMP_WIDTH - 1
 	move.w #159,%d1             | d1 = BMP_HEIGHT - 1
 
 	cmp.w %d0,%d2               | if (((u16) x1 < BMP_WIDTH) &&
-	jhi .L30
+	jhi .L50
 	cmp.w %d0,%d4               |     ((u16) x2 < BMP_WIDTH) &&
-	jhi .L30
+	jhi .L50
 	cmp.w %d1,%d3               |     ((u16) y1 < BMP_HEIGHT) &&
-	jhi .L30
+	jhi .L50
 	cmp.w %d1,%d5               |     ((u16) y2 < BMP_HEIGHT))
-	jhi .L30
+	jhi .L50
 
 	moveq #1,%d0                |   return 1;
-	movm.l (%sp)+,#0x0fc
-	rts
-
-.L30:
-	tst.w %d2                   | if (((x1 < 0) && (x2 < 0)) ||
-	jge .L33
-	tst.w %d4
-	jlt .L32
-
-.L33:
-	cmp.w %d0,%d2               |     ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH)) ||
-	jle .L34
-	cmp.w %d0,%d4
-	jgt .L32
-
-.L34:
-	tst.w %d3                   |     ((y1 < 0) && (y2 < 0)) ||
-	jge .L35
-	tst.w %d5
-	jlt .L32
-
-.L35:
-	cmp.w %d1,%d3               |     ((y1 >= BMP_HEIGHT) && (y2 >= BMP_HEIGHT)))
-	jle .L60
-	cmp.w %d1,%d5
-	jle .L60
-
-.L32:
-	moveq #0,%d0                |   return 0;
-	movm.l (%sp)+,#0x0fc
 	rts
 
 .L60:
@@ -117,17 +93,15 @@ BMP_clipLine:
 	moveq #0,%d2                |   x1 = 0;
 	jra .L39                    | }
 
-	.align	2
 .L38:
 	cmp.w %d0,%d2               | else if (x1 >= BMP_WIDTH)
 	jle .L39                    | {
 
-    sub.w %d2,%d0
-	muls.w %d7,%d0              |   y1 += (((BMP_WIDTH - 1) - x1) * dy) / dx;
-	divs.w %d6,%d0
-	add.w %d0,%d3
-	move.w #255,%d2             |   x1 = BMP_WIDTH - 1;
-	move.w %d2,%d0              |   d0 = BMP_WIDTH - 1
+    sub.w %d0,%d2
+	muls.w %d7,%d2              |   y1 -= ((x1 - (BMP_WIDTH - 1)) * dy) / dx;
+	divs.w %d6,%d2
+	sub.w %d2,%d3
+	move.w %d0,%d2              |   x1 = BMP_WIDTH - 1;
                                 | }
 .L39:
 	tst.w %d4                   | if (x2 < 0)
@@ -143,12 +117,11 @@ BMP_clipLine:
 	cmp.w %d0,%d4               | else if (x2 >= BMP_WIDTH)
 	jle .L42                    | {
 
-    sub.w %d4,%d0
-	muls.w %d7,%d0              |   y2 += (((BMP_WIDTH - 1) - x2) * dy) / dx;
-	divs.w %d6,%d0
-	add.w %d0,%d5
-	move.w #255,%d4             |   x2 = BMP_WIDTH - 1;
-	move.w %d4,%d0              |   d0 = BMP_WIDTH - 1
+    sub.w %d0,%d4
+	muls.w %d7,%d4              |   y2 -= ((x2 - (BMP_WIDTH - 1)) * dy) / dx;
+	divs.w %d6,%d4
+	sub.w %d4,%d5
+	move.w %d0,%d4              |   x2 = BMP_WIDTH - 1;
                                 | }
 .L42:
 	tst.w %d3                   | if (y1 < 0)
@@ -164,13 +137,11 @@ BMP_clipLine:
 	cmp.w %d1,%d3               | else if (y1 >= BMP_HEIGHT)
 	jle .L45                    | {
 
-    sub.w %d3,%d1
-	muls.w %d6,%d1              |   x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
-	divs.w %d7,%d1
-	add.w %d1,%d2
-	move.w #159,%d3             |   y1 = BMP_HEIGHT - 1;
-	move.w %d3,%d1              |   d1 = BMP_HEIGHT - 1
-
+    sub.w %d1,%d3
+	muls.w %d6,%d3              |   x1 -= ((y1 - (BMP_HEIGHT - 1)) * dx) / dy;
+	divs.w %d7,%d3
+	sub.w %d3,%d2
+	move.w %d1,%d3              |   y1 = BMP_HEIGHT - 1;
 
 .L45:	                        | }
 	tst.w %d5                   | if (y2 < 0)
@@ -186,14 +157,12 @@ BMP_clipLine:
 	cmp.w %d1,%d5               | else if (y2 >= BMP_HEIGHT)
 	jle .L48                    | {
 
-    sub.w %d5,%d1
-	muls.w %d6,%d1              |   x2 += (((BMP_HEIGHT - 1) - y2) * dx) / dy;
-	divs.w %d7,%d1
-	add.w %d1,%d4
-	move.w #159,%d5             |   y2 = BMP_HEIGHT - 1;
-	move.w %d5,%d1              |   d1 = BMP_HEIGHT - 1
+    sub.w %d1,%d5
+	muls.w %d6,%d5              |   x2 -= ((y2 - (BMP_HEIGHT - 1)) * dx) / dy;
+	divs.w %d7,%d5
+	sub.w %d5,%d4
+	move.w %d1,%d5              |   y2 = BMP_HEIGHT - 1;
                                 | }
-
 .L48:
 	cmp.w %d0,%d2               | if (((u16) x1 < BMP_WIDTH) &&
 	jhi .L50
@@ -204,12 +173,7 @@ BMP_clipLine:
 	cmp.w %d1,%d5               |     ((u16) y2 < BMP_HEIGHT))
 	jhi .L50                    | {
 
-	move.w %d2,(%a0)            |   l->pt1.x = x1;
-	move.w %d3,2(%a0)           |   l->pt1.y = y1;
-	move.w %d4,4(%a0)           |   l->pt2.x = x2;
-	move.w %d5,6(%a0)           |   l->pt2.y = y2;
 	moveq #1,%d0
-	movm.l (%sp)+,#0x0fc        |   return 1;
 	rts                         | }
 
 .L50:
@@ -238,163 +202,473 @@ BMP_clipLine:
 
 .L52:
 	moveq #0,%d0                |   return 0;
-	movm.l (%sp)+,#0x0fc        | }
 	rts
 
 
-	.align	2
-	.globl	calculatePolyEdge
-	.type	calculatePolyEdge, @function
+	.globl	BMP_clipLine
+	.type	BMP_clipLine, @function
+BMP_clipLine:
+	movm.l %d2-%d7,-(%sp)
+
+	move.l 28(%sp),%a0          | a0 = &line
+	movm.w (%a0),%d2-%d5        | d2 = x1, d3 = y1, d4 = x2, d5 = y2
+
+    jsr clipLine
+	jeq .L10
+
+	movm.w %d2-%d5,(%a0)        |   update line
+
+.L10:
+	movm.l (%sp)+,%d2-%d7
+	rts
+
+
+	.globl	BMP_drawLine
+	.type	BMP_drawLine, @function
+BMP_drawLine:
+	movm.l %d2-%d7,-(%sp)
+
+	move.l 28(%sp),%a0      | a0 = &line
+	movem.w (%a0)+,%d2-%d5  | d2 = x1, d3 = y1, d4 = x2, d5 = y2
+
+	jsr clipLine
+	jeq .L105
+
+	move.b (%a0),%d6        | d6 = col
+
+	asr.w #1,%d2            | d2 = x1 adjusted
+	asr.w #1,%d4            | d4 = x2 adjusted
+
+	sub.w %d2,%d4           | d4 = deltax
+	sub.w %d3,%d5           | d5 = deltay
+
+	lsl.w #7,%d3
+	add.w %d2,%d3               | d3.l = offset = (y1 * BMP_PITCH) + x1
+    ext.l %d3
+	add.l bmp_buffer_write,%d3  | d3 = &bmp_buffer_write[offset];
+	move.l %d3,%a0              | a0 = *dst = &bmp_buffer_write[offset];
+
+	moveq #1,%d0            | d0 = stepx = 1
+
+	tst.w %d4               | if (deltax < 0)
+	jge .L100               | {
+
+	neg.w %d4               |     deltax = -deltax;
+	neg.w %d0               |     stepx = -stepx;
+                            | }
+.L100:
+	move.w #128,%d1         | d1 = stepy = BMP_PITCH;
+
+	tst.w %d5               | if (deltay < 0)
+	jge .L101               | {
+
+	neg.w %d5               |     deltay = -deltay;
+	neg.w %d1               |     stepy = -stepy;
+                            | }
+.L101:                      |
+	cmp.w %d4,%d5           | if (deltax < deltay)
+	jle .L102               | {
+
+    exg %d4,%d5             |     swap(deltax, deltay);
+    exg %d0,%d1             |     swap(stepx, stey);
+                            | }
+.L102:                      |
+	move.w %d4,%d2
+	asr.w #1,%d2            | d2 = delta = dx >> 1
+	move.w %d4,%d3          | d3 = cnt
+	add.w %d0,%d1           | d1 = stepx + stepy
+
+.L103:                      | while(cnt--)
+                            | {
+	move.b %d6,(%a0)        |     *dst = col;
+
+	sub.w %d5,%d2           |     if ((delta -= dy) < 0)
+	jpl .L104               |     {
+
+	add.w %d1,%a0           |         dst += stepx + stepy; (can be 16 bits as dst is in RAM)
+	add.w %d4,%d2           |         delta += dx;
+                            |     }
+	dbra %d3,.L103          |     else
+
+	movm.l (%sp)+,%d2-%d7
+	rts
+
+.L104:                      |
+	add.w %d0,%a0           |         dst += stepx; (can be 16 bits as dst is in RAM)
+	dbra %d3,.L103          | }
+
+.L105:
+	movm.l (%sp)+,%d2-%d7
+	rts
+
+
+	.globl	BMP_isPolygonCulled
+	.type	BMP_isPolygonCulled, @function
+BMP_isPolygonCulled:
+	movm.l %d2-%d5,-(%sp)
+
+	move.l 20(%sp),%a1          | a1 = pts
+    movm.w (%a1),%d0-%d5        | d0 = pts[0].x, d1 = pts[0].y, d2 = pts[1].x, d3 = pts[1].y, d4 = pts[2].x, d5 = pts[2].y
+
+    sub.w %d0,%d4               | d4 = x2 - x0
+    sub.w %d1,%d3               | d3 = y1 - y0
+    muls.w %d4,%d3
+
+    sub.w %d0,%d2               | d2 = x1 - x0
+    sub.w %d1,%d5               | d5 = y2 - y0
+    muls.w %d5,%d2
+
+    cmp.l %d3,%d2               | culling test
+	jge .L11                    | if (d4 * d3 < d5 * d2)
+
+	moveq #1,%d0                |     return 1;
+	movm.l (%sp)+,%d2-%d5
+	rts
+
+.L11:
+	moveq #0,%d0                |     return 0;
+	movm.l (%sp)+,%d2-%d5
+	rts
+
+
+    | internal use only
+    | -----------------
+    | a1 = pts
+    | a2 = &minYL
+    | a3 = &minYR
+    | a4 = LeftPoly
+    | a5 = RightPoly
 calculatePolyEdge:
-	movm.l #0x3f00,-(%sp)
 
-	move.l 28(%sp),%a0          | a0 = pt1
-	move.l 32(%sp),%a1          | a1 = pt2
-
-	move.w (%a0),%d2            | d2 = x1
-	move.w 2(%a0),%d3           | d3 = y1
-	move.w (%a1),%d4            | d4 = x2
-	move.w 2(%a1),%d5           | d5 = y2
-
-    move.w #255,%d0             | d0 = BMP_WIDTH - 1
-	move.w #159,%d1             | d1 = BMP_HEIGHT - 1
+	movem.w (%a1),%d2-%d5       | d2 = x1, d3 = y1, d4 = x2, d5 = y2
 
 	move.w %d5,%d7              | d7 = dy = y2 - y1;
 	sub.w %d3,%d7
-|	jeq .L61                    | if (dy == 0) return;
+	jeq .L61                    | if (dy == 0) return;
+
+	tst.w %d3                   | if (y1 < 0)
+	jpl .L68                    | {
+
+	tst.w %d5                   |     if (y2 < 0)
+	jmi .L61                    |         return;
 
 	move.w %d4,%d6
-	sub.w %d2,%d6               | d6 = dx = x2 - x1;
+	sub.w %d2,%d6               |     d6 = dx = x2 - x1;
+	move.w %d6,%d1              |     d1 = dx (save)
 
-.L62:
-	tst.w %d3                   | if (y1 < 0)
-	jge .L68                    | {
-	tst.w %d5                   |     if (y2 < 0)
-	jlt .L61                    |         return;
+    ext.l %d6
+    asl.l #6,%d6
+    divs.w %d7,%d6              |     d6 = stepx;           // fix16 format
 
-	muls.w %d6,%d3              |     x1 -= (y1 * dx) / dy;
-	divs.w %d7,%d3
-	sub.w %d3,%d2
+	move.w #159,%d0             |     d0 = BMP_HEIGHT - 1
+
+	muls.w %d6,%d3
+    asr.l #6,%d3
+	sub.w %d3,%d2               |     x1 -= y1 * stepx;
 	moveq #0,%d3                |     y1 = 0;
 	jra .L71                    |     goto L71;
                                 | }
 .L68:
-	cmp.w %d1,%d3               | if (y1 >= BMP_HEIGHT)
+	move.w %d4,%d6
+	sub.w %d2,%d6               | d6 = dx = x2 - x1;
+	move.w %d6,%d1              | d1 = dx (save)
+
+    ext.l %d6
+    asl.l #6,%d6
+    divs.w %d7,%d6              | d6 = stepx;           // fix16 format
+
+	move.w #159,%d0             | d0 = BMP_HEIGHT - 1
+
+	cmp.w %d0,%d3               | if (y1 >= BMP_HEIGHT)
 	jle .L69                    | {
-	cmp.w %d1,%d5               |     if (y2 >= BMP_HEIGHT)
+
+	cmp.w %d0,%d5               |     if (y2 >= BMP_HEIGHT)
 	jgt .L61                    |         return;
 
-    sub.w %d3,%d1
-	muls.w %d6,%d1              |     x1 += (((BMP_HEIGHT - 1) - y1) * dx) / dy;
-	divs.w %d7,%d1
-	add.w %d1,%d2
-	move.w #159,%d3             |     y1 = BMP_HEIGHT - 1;
-	move.w %d3,%d1              |     d1 = BMP_HEIGHT - 1;
+    sub.w %d0,%d3
+	muls.w %d6,%d3
+    asr.l #6,%d3
+	sub.w %d3,%d2               |     x1 -= (y1 - (BMP_HEIGHT - 1)) * stepx;
+	move.w %d0,%d3              |     y1 = BMP_HEIGHT - 1;
 
 	tst.w %d5                   |     if (y2 < 0)
-	jge .L72                    |     {
+	jpl .L72                    |     {
 
-	muls.w %d6,%d5              |         x2 -= (y2 * dx) / dy;
-	divs.w %d7,%d5
-	sub.w %d5,%d4
+	muls.w %d6,%d5
+    asr.l #6,%d5
+	sub.w %d5,%d4               |         x2 -= y2 * stepx;
 	moveq #0,%d5                |         y2 = 0;
 	jra .L72                    |     }
                                 |     goto L72;
 .L69:	                        | }
 	tst.w %d5                   | if (y2 < 0)
-	jge .L71                    | {
+	jpl .L71                    | {
 
-	muls.w %d6,%d5              |     x2 -= (y2 * dx) / dy;
-	divs.w %d7,%d5
-	sub.w %d5,%d4
+	muls.w %d6,%d5
+    asr.l #6,%d5
+	sub.w %d5,%d4               |     x2 -= y2 * stepx;
 	moveq #0,%d5                |     y2 = 0;
 	jra .L72                    |     goto L72;
                                 | }
 .L71:
-	cmp.w %d1,%d5               | if (y2 >= BMP_HEIGHT)
+	cmp.w %d0,%d5               | if (y2 >= BMP_HEIGHT)
 	jle .L72                    | {
 
-    sub.w %d5,%d1
-	muls.w %d6,%d1              |     x2 += (((BMP_HEIGHT - 1) - y2) * dx) / dy;
-	divs.w %d7,%d1
-	add.w %d1,%d4
-	move.w #159,%d5             |     y2 = BMP_HEIGHT - 1;
-	move.w %d5,%d1              |     d1 = BMP_HEIGHT - 1
+    sub.w %d0,%d5
+	muls.w %d6,%d5
+    asr.l #6,%d5
+	sub.w %d5,%d4               |     x2 -= (y2 - (BMP_HEIGHT - 1)) * stepx;
+	move.w %d0,%d5              |     y2 = BMP_HEIGHT - 1;
                                 | }
-
 .L72:
 	cmp.w %d5,%d3               | if (y1 == y2) return;
 	jeq .L61
 
-    jge .L80                    | if (y2 > y1)      // right edge
-
+    jgt .L80                    | if (y2 > y1)     // right edge (clockwise order)
 .L82:                           | {
-	tst.w %d2                   |     if (((x1 < 0) && (x2 < 0))
-	jpl .L77                    |         return;
-	tst.w %d4
-	jmi .L61
+	tst.w %d2                   |     if (x1 < 0)
+	jpl .L77_0                  |     {
 
+	tst.w %d4                   |         if (x2 < 0)
+	jmi .L61                    |             return;
+
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |         d7 = stepy;   // fix16 format
+
+	muls.w %d7,%d2
+    asr.l #6,%d2                |
+    sub.w %d2,%d3               |         y1 -= x1 * stepy
+    moveq #0,%d0                |         d0 = pre fill len = 0
+    moveq #0,%d2                |         x1 = 0
+
+    move.w #255,%d1             |         d1 = BMP_WIDTH - 1
+
+	cmp.w %d1,%d4               |         if (x2 >= BMP_WIDTH)
+	jle .L77_4                  |         {
+
+    sub.w %d1,%d4
+	muls.w %d7,%d4
+    asr.l #6,%d4                |             d1 = post fill len = (x2 - (BMP_WIDTH - 1)) * stepy
+    exg %d1,%d4                 |             x2 = BMP_WIDTH - 1
+    jra .L77                    |         }
+
+.L77_0:                         |     }
+    move.w #255,%d0
+
+	cmp.w %d0,%d2               |     else if (x1 >= BMP_WIDTH)
+	jle .L77_1                  |     {
+
+	cmp.w %d0,%d4               |         if (x2 >= BMP_WIDTH)
+	jle .L77_0_1                |         {
+
+	move.w %d0,%d2              |             x1 = BMP_WIDTH - 1
+	move.w %d5,%d0
+	sub.w %d3,%d0               |             d0 = pre fill len = y2 - y1
+	moveq #0,%d1                |             d1 = post fill len = 0
+	jra .L77                    |         }
+                                |         else
+.L77_0_1:                       |         {
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |             d7 = stepy;   // fix16 format
+
+    sub.w %d0,%d2
+	muls.w %d7,%d2
+    asr.l #6,%d2                |             d0 = pre fill len = (x1 - (BMP_WIDTH - 1)) * stepy
+    exg %d0,%d2                 |             x1 = BMP_WIDTH - 1
+
+	tst.w %d4                   |             if  (x2 < 0)
+	jpl .L77_4                  |             {
+
+	muls.w %d7,%d4
+    asr.l #6,%d4
+    add.w %d4,%d5               |                 y2 += x2 * stepy
+    moveq #0,%d1                |                 d1 = post fill len = 0
+    moveq #0,%d4                |                 x2 = 0
+    jra .L77                    |             }
+                                |         }
+.L77_1:                         |     }
+	tst.w %d4                   |     else if (x2 < 0)
+	jpl .L77_2                  |     {
+
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |         d7 = stepy;   // fix16 format
+
+	muls.w %d7,%d4
+    asr.l #6,%d4
+    add.w %d4,%d5               |         y2 += x2 * stepy
+    moveq #0,%d0                |         d0 = pre fill len = 0
+    moveq #0,%d1                |         d1 = post fill len = 0
+    moveq #0,%d4                |         x2 = 0
+    jra .L77                    |     }
+
+.L77_2:
+	cmp.w %d0,%d4               |     else if (x2 >= BMP_WIDTH)
+	jle .L77_3                  |     {
+
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |         d7 = stepy;   // fix16 format
+
+    sub.w %d0,%d4
+	muls.w %d7,%d4
+    asr.l #6,%d4                |         d4 = post fill len = (x2 - (BMP_WIDTH - 1)) * stepy
+    move.w %d4,%d1              |         d1 = post fill len
+    move.w %d0,%d4              |         x2 = BMP_WIDTH - 1
+    moveq #0,%d0                |         d0 = pre fill len = 0
+    jra .L77                    |     }
+                                |     else
+.L77_3:                         |     {
+    moveq #0,%d0                |         d0 = pre fill len = 0
+.L77_4:
+    moveq #0,%d1                |         d1 = post fill len = 0
+                                |     }
 .L77:
-	move.w %d4,%d6
-	sub.w %d2,%d6               |     d6 = dx = x2 - x1;
 	move.w %d5,%d7
 	sub.w %d3,%d7               |     d7 = len = y2 - y1;
 
-	cmp.w minYR.l,%d3           |     if (y1 < minYR)
+	cmp.w (%a3),%d3             |     if (y1 < minYR)
 	jge .L83
 
-	move.w %d3,minYR            |         minYR = y1;
+	move.w %d3,(%a3)            |         minYR = y1;
 
 .L83:
-	cmp.w maxYR.l,%d5           |     if (y2 > maxYR)
+	cmp.w 2(%a3),%d5            |     if (y2 > maxYR)
 	jle .L84
 
-	move.w %d5,maxYR            |         maxYR = y2;
+	move.w %d5,2(%a3)           |         maxYR = y2;
 
 .L84:
-    ext.l %d3
     add.w %d3,%d3
-    add.l RightPoly,%d3
-    move.l %d3,%a0              |     a0 = src = &RightPoly[y1];
+    lea (%a5,%d3.w),%a0         |     a0 = src = &RightPoly[y1];
     move.w %d2,%d0              |     d0 = x = x1
 	jra .L85                    | }
                                 | else      // left edge
 .L80:                           | {
-	cmp.w %d0,%d2               |     ((x1 >= BMP_WIDTH) && (x2 >= BMP_WIDTH))
-	jle .L76                    |         return;
-	cmp.w %d0,%d4
-	jgt .L61
+    move.w #255,%d0             |     d0 = BMP_WIDTH - 1
 
+	cmp.w %d0,%d2               |     if (x1 >= BMP_WIDTH)
+	jle .L76_0                  |     {
+
+	cmp.w %d0,%d4               |         if (x2 >= BMP_WIDTH))
+	jgt .L61                    |             return;
+
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |         d7 = stepy;   // fix16 format
+
+    sub.w %d0,%d2
+	muls.w %d7,%d2
+    asr.l #6,%d2                |         d2 = (x1 - (BMP_WIDTH - 1)) * stepy
+    add.w %d2,%d3               |         y1 += (x1 - (BMP_WIDTH - 1)) * stepy
+    move.w %d0,%d2              |         x1 = BMP_WIDTH - 1
+    moveq #0,%d1                |         d1 = post fill len
+    moveq #0,%d0                |         d0 = pre fill len = 0
+
+	tst.w %d4                   |         if  (x2 < 0)
+	jpl .L76                    |         {
+
+	muls.w %d7,%d4
+    asr.l #6,%d4                |             d0 = pre fill len = x2 * stepy
+    exg %d4,%d0                 |             x2 = 0
+    jra .L76                    |         }
+
+.L76_0:                         |     }
+	tst.w %d2                   |     else if (x1 < 0)
+	jpl .L76_1                  |     {
+
+	tst.w %d4                   |         if  (x2 < 0)
+	jpl .L76_0_1                |         {
+
+	move.w %d3,%d0
+	sub.w %d5,%d0               |             d0 = pre fill len = y1 - y2
+	moveq #0,%d1                |             d1 = post fill len = 0
+	moveq #0,%d4                |             x2 = 0
+	jra .L76                    |         }
+                                |         else
+.L76_0_1:                       |         {
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |             d7 = stepy;   // fix16 format
+
+	muls.w %d7,%d2
+    asr.l #6,%d2                |             d2 = post fill len = x1 * stepy
+    move.w %d2,%d1              |             d1 = post fill len
+    moveq #0,%d2                |             x1 = 0
+
+	cmp.w %d0,%d4               |             if (x2 >= BMP_WIDTH)
+	jle .L76_4                  |             {
+
+    sub.w %d0,%d4
+	muls.w %d7,%d4
+    asr.l #6,%d4                |                 d4 = (x2 - (BMP_WIDTH - 1)) * stepy
+    sub.w %d4,%d5               |                 y2 -= (x2 - (BMP_WIDTH - 1)) * stepy
+    move.w %d0,%d4              |                 x2 = BMP_WIDTH - 1
+    moveq #0,%d0                |                 d0 = pre fill len = 0
+    jra .L76                    |             }
+                                |         }
+.L76_1:                         |     }
+	tst.w %d4                   |     else if (x2 < 0)
+	jpl .L76_2                  |     {
+
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |         d7 = stepy;   // fix16 format
+
+	muls.w %d7,%d4
+    asr.l #6,%d4                |         d4 = pre fill len = x2 * stepy
+    move.w %d4,%d0              |         d0 = pre fill len
+    moveq #0,%d1                |         d1 = post fill len = 0
+    moveq #0,%d4                |         x2 = 0
+    jra .L76                    |     }
+
+.L76_2:
+	cmp.w %d0,%d4               |     else if (x2 >= BMP_WIDTH)
+	jle .L76_3                  |     {
+
+    ext.l %d7
+    asl.l #6,%d7
+    divs.w %d1,%d7              |         d7 = stepy;   // fix16 format
+
+    sub.w %d0,%d4
+	muls.w %d7,%d4
+    asr.l #6,%d4                |         d4 = (x2 - (BMP_WIDTH - 1)) * stepy
+    sub.w %d4,%d5               |         y2 -= (x2 - (BMP_WIDTH - 1)) * stepy
+    move.w %d0,%d4              |         x2 = BMP_WIDTH - 1
+    moveq #0,%d0                |         d0 = pre fill len = 0
+    moveq #0,%d1                |         d1 = post fill len = 0
+    jra .L76                    |     }
+                                |     else
+.L76_3:                         |     {
+    moveq #0,%d1                |         d1 = post fill len = 0
+.L76_4:
+    moveq #0,%d0                |         d0 = pre fill len = 0
+                                |     }
 .L76:
-	move.w %d2,%d6
-	sub.w %d4,%d6               |     d6 = dx = x1 - x2;
+	cmp.w (%a2),%d5             |     if (y2 < minYL)
+	jge .L86
+
+	move.w %d5,(%a2)            |         minYL = y2;
+
+.L86:
+	cmp.w 2(%a2),%d3            |     if (y1 > maxYL)
+	jle .L87
+
+	move.w %d3,2(%a2)           |         maxYL = y1;
+
+.L87:
 	move.w %d3,%d7
 	sub.w %d5,%d7               |     d7 = len = y1 - y2;
 
-	cmp.w minYL.l,%d5           |     if (y2 < minYL)
-	jge .L86
-
-	move.w %d5,minYL            |         minYL = y2;
-
-.L86:
-	cmp.w maxYL.l,%d3           |     if (y1 > maxYL)
-	jle .L87
-
-	move.w %d3,maxYL            |         maxYL = y1;
-
-.L87:
-    ext.l %d5
     add.w %d5,%d5
-    add.l LeftPoly,%d5
-    move.l %d5,%a0              |     a0 = src = &LeftPoly[y2];
+    lea (%a4,%d5.w),%a0         |     a0 = src = &LeftPoly[y2];
     move.w %d4,%d0              |     d0 = x = x2
                                 | }
-
 .L85:
 	ext.l %d6
-	lsl.l #7,%d6                | d6 = dx << 7
-	divs.w %d7,%d6              | d6 = (dx << 7) / len
-	ext.l %d6                   | d6 = step << 7
+    add.l %d6,%d6               | d6 = step << 7
 	ror.l #8,%d6                | d6 = step >> 1 (32 bits fixed point)
 	ext.l %d0                   | d0 = x (32 bits fixed point)
 	add.l %d6,%d0               | d0 = x + (step >> 1)
@@ -405,9 +679,9 @@ calculatePolyEdge:
 	asr.w #3,%d1                | d1 = len8 = len >> 3
 	and.w #7,%d7                | d7 = len = len & 7
 	subq.w #1,%d1
-	jbmi .L95
+	jmi .L95
 
-	move %d2,%ccr               | restore X flag
+	move %d2,%ccr               | clear X flag
 
 .L90:                           | while(len8--)
 	move.w %d0,(%a0)+           | {
@@ -427,13 +701,13 @@ calculatePolyEdge:
 	move.w %d0,(%a0)+
 	addx.l %d6,%d0
 
-	dbra.W %d1,.L90             | }
+	dbra.w %d1,.L90             | }
 
 	move %sr,%d2                | save X flag
 
 .L95:
 	subq.w #1,%d7
-	jbmi .L61
+	jmi .L61
 
 	move %d2,%ccr               | restore X flag
 
@@ -442,26 +716,134 @@ calculatePolyEdge:
 	addx.l %d6,%d0              |     *src++ = fix16ToInt(x);
 	dbra.W %d7,.L93             |     x += step;
                                 | }
-
 .L61:
-	movm.l (%sp)+,#0x0fc
 	rts
 
 
-	.globl	drawPolygon
-	.type	drawPolygon, @function
-drawPolygon:
-	move.w maxY,%d1
-	move.w minY,%d0             | d0 = minY
-	sub.w %d0,%d1               | d1 = len
-	jgt .L169
+	.globl	BMP_drawPolygon
+	.type	BMP_drawPolygon, @function
+BMP_drawPolygon:
+	movm.l %d2-%d5,-(%sp)
 
+	move.l 20(%sp),%a1          | a1 = pts
+    movm.w (%a1),%d0-%d5        | d0 = pts[0].x, d1 = pts[0].y, d2 = pts[1].x, d3 = pts[1].y, d4 = pts[2].x, d5 = pts[2].y
+
+    sub.w %d0,%d4               | d4 = pts[2].x - pts[0].x
+    sub.w %d1,%d3               | d3 = pts[1].y - pts[0].y
+    muls.w %d4,%d3
+
+    sub.w %d0,%d2               | d2 = pts[1].x - pts[0].x
+    sub.w %d1,%d5               | d5 = pts[2].y - pts[0].y
+    muls.w %d5,%d2
+
+    cmp.l %d3,%d2               | culling test
+	jge .L110                   | if (d4 * d3 < d5 * d2)
+
+	moveq #1,%d0                |     return 1;
+	movm.l (%sp)+,%d2-%d5
+	rts
+
+.L110:
+    movm.l %d6-%d7/%a2-%a6,-(%sp)
+
+    move.l #0x00A00000,%d0
+    move.l %d0,-(%sp)           | minYL = BMP_HEIGHT; maxYL = 0
+    move %sp,%a2                | a2 = &(minYL/maxYL)
+    move.l %d0,-(%sp)           | minYR = BMP_HEIGHT; maxYR = 0
+    move %sp,%a3                | a3 = &(minYR/maxYR)
+
+.loop4:
+  |  jmp .loop4
+
+    move.l LeftPoly,%a4         | a4 = LeftPoly
+    move.l RightPoly,%a5        | a5 = RightPoly
+
+	move.l (%a1),-(%sp)         | save first point
+	move.l %d0,-(%sp)           | reserve space for last point
+
+	move.w 70(%sp),%d0          | d0 = num vertex
+	add.w  %d0,%d0
+	add.w  %d0,%d0              | d0 = num vertex * 4
+
+.vertex_base:
+    move.l (.vertex_table-.vertex_base)-2(%pc,%d0.w),%a0
+    jmp (%a0)
+
+    .align 4
+.vertex_table:
+    .long .vertex_0
+    .long .vertex_1
+    .long .vertex_2
+    .long .vertex_3
+    .long .vertex_4
+    .long .vertex_5
+    .long .vertex_6
+    .long .vertex_7
+    .long .vertex_8
+
+.vertex_8:
+	jsr calculatePolyEdge
+	addq.l #4,%a1
+
+.vertex_7:
+	jsr calculatePolyEdge
+	addq.l #4,%a1
+
+.vertex_6:
+	jsr calculatePolyEdge
+	addq.l #4,%a1
+
+.vertex_5:
+	jsr calculatePolyEdge
+	addq.l #4,%a1
+
+.vertex_4:
+	jsr calculatePolyEdge
+	addq.l #4,%a1
+
+.vertex_3:
+.vertex_2:          | cannot have less than 3 vertex
+.vertex_1:
+.vertex_0:
+	jsr calculatePolyEdge
+	addq.l #4,%a1
+	jsr calculatePolyEdge
+
+	move.l 4(%a1),(%sp)        | save last point
+	move.l %sp,%a1
+	jsr calculatePolyEdge
+
+.loo2:
+ |    jmp .loo2
+
+	move.w (%a2)+,%d1           | d1 = minYL
+	move.w (%a3)+,%d0           | d0 = minYR
+	cmp.w %d0,%d1
+	jle .L112
+
+	move.w %d1,%d0              | d0 = minY
+
+.L112:
+	move.w (%a2),%d1            | d1 = maxYL
+	move.w (%a3),%d2            | d2 = maxYR
+	cmp.w %d1,%d2
+	jge .L113
+
+	move.w %d2,%d1              | d1 = maxY
+
+.L113:
+    lea 16(%sp),%sp             | free reserved space
+	move.b 59(%sp),%d5          | d5 = col
+
+	sub.w %d0,%d1               | d1 = len = maxY - minY
+	jge .L169
+
+    moveq #0,%d0
+	movm.l (%sp)+,%d6-%d7/%a2-%a6
+	movm.l (%sp)+,%d2-%d5
 	rts
 
 .L169:
-	movm.l %d2-%d7/%a2-%a6,-(%sp)
-	move.b 51(%sp),%d5          | d5 = col
-
     moveq  #15,%d6              | d6 = col low nibble mask
     moveq  #-16,%d7             | d7 = col high nibble mask
 
@@ -472,31 +854,28 @@ drawPolygon:
     swap   %d5
     move.w %d4,%d5              | d5 = col extended to 32 bits
 
-    move.l %d5,%a5              | a5 = col extended to 32 bits (save)
+    move.l %d5,%a3              | a3 = col extended to 32 bits (save)
     rol.l  #4,%d5               | d5 = col with exchanged nibble
     btst   #0,%d0               | odd line ?
     jeq    .L168
 
-    exg    %d5,%a5              | use according color scheme
+    exg    %d5,%a3              | use according color scheme
 
 .L168:
-    add.w  %d0,%d0
-    ext.l  %d0                  | d0.l = 2 * minY
+    add.w  %d0,%d0              | d0 = 2 * minY
 
-	move.l LeftPoly,%a2
-	add.l  %d0,%a2              | a2 = left = &LeftPoly[minY]
-	move.l RightPoly,%a3
-	add.l  %d0,%a3              | a3 = right = &RightPoly[minY]
-	move.l bmp_buffer_write,%a4
-	lsl.l  #6,%d0
-	add.l  %d0,%a4              | a4 = buf = &bmp_buffer_write[minY * BMP_PITCH]
+	add.w  %d0,%a4              | a4 = left = &LeftPoly[minY]       (16 bits is ok as LeftPoly is in ram)
+	add.w  %d0,%a5              | a5 = right = &RightPoly[minY]     (16 bits is ok as RightPoly is in ram)
+	move.l bmp_buffer_write,%a2
+	lsl.w  #6,%d0
+	add.w  %d0,%a2              | a2 = buf = &bmp_buffer_write[minY * BMP_PITCH]    (16 bits is ok as bmp_buffer_write is in ram)
 
 	move.w #255,%a6             | a6 = BMP_WIDTH - 1
 	subq.w #1,%d1               | d1 = remaining y
 
 .L180:
-	move.w (%a2)+,%d2           | d2 = x1 = *left++
-	move.w (%a3)+,%d3           | d3 = x2 = *rigth++
+	move.w (%a4)+,%d2           | d2 = x1 = *left++
+	move.w (%a5)+,%d3           | d3 = x2 = *rigth++
 
 	cmp.w  %d2,%d3              | if ((x1 <= x2) && (x1 < BMP_WIDTH) && (x2 >= 0))
 	jlt    .L175                | {
@@ -520,17 +899,17 @@ drawPolygon:
 	asr.w  #1,%d3               |   if (!(x2 & 1))
 	jcs    .L179                |   {
 
-	move.b (%a4,%d3.w),%d0
+	move.b (%a2,%d3.w),%d0
 	and.b  %d6,%d0
 	move.b %d5,%d4
 	and.b  %d7,%d4
 	or.b   %d4,%d0
-	move.b %d0,(%a4,%d3.w)      |     buf[x2 >> 1] = (buf[x2 >> 1] & 0x0F) | (color & 0xF0)
+	move.b %d0,(%a2,%d3.w)      |     buf[x2 >> 1] = (buf[x2 >> 1] & 0x0F) | (color & 0xF0)
 	subq.w #1,%d3               |     x2--;
                                 |   }
 .L179:
 	asr.w  #1,%d2               |   a1 = dst = &buf[x1 >> 1]
-    lea    (%a4,%d2.w),%a1      |   if (x1 & 1)
+    lea    (%a2,%d2.w),%a1      |   if (x1 & 1)
 	jcc    .L178                |   {
 
 	move.b (%a1),%d0
@@ -758,10 +1137,14 @@ drawPolygon:
 .fill_04:
 	move.l %d5,(%a1)
 
-	lea 128(%a4),%a4
-	exg %d5,%a5                 | exchange color nibble
+	lea 128(%a2),%a2
+	exg %d5,%a3                 | exchange color nibble
 	dbra %d1,.L180
-	jra .L171
+
+    moveq #0,%d0
+	movm.l (%sp)+,%d6-%d7/%a2-%a6
+	movm.l (%sp)+,%d2-%d5
+	rts
 
 .fill_126:
 	move.l %d5,(%a1)+
@@ -828,10 +1211,14 @@ drawPolygon:
 .fill_02:
 	move.w %d5,(%a1)
 
-	lea 128(%a4),%a4
-	exg %d5,%a5                 | exchange color nibble
+	lea 128(%a2),%a2
+	exg %d5,%a3                 | exchange color nibble
 	dbra %d1,.L180
-	jra .L171
+
+    moveq #0,%d0
+	movm.l (%sp)+,%d6-%d7/%a2-%a6
+	movm.l (%sp)+,%d2-%d5
+	rts
 
 .fill_125:
 	move.l %d5,(%a1)+
@@ -897,10 +1284,14 @@ drawPolygon:
 	move.l %d5,(%a1)+
 	move.b %d5,(%a1)
 
-	lea 128(%a4),%a4
-	exg %d5,%a5                 | exchange color nibble
+	lea 128(%a2),%a2
+	exg %d5,%a3                 | exchange color nibble
 	dbra %d1,.L180
-	jra .L171
+
+    moveq #0,%d0
+	movm.l (%sp)+,%d6-%d7/%a2-%a6
+	movm.l (%sp)+,%d2-%d5
+	rts
 
 .fill_127:
 	move.l %d5,(%a1)+
@@ -970,12 +1361,11 @@ drawPolygon:
 	move.b %d5,(%a1)
 
 .L175:
-	lea 128(%a4),%a4
-	exg %d5,%a5                 | exchange color nibble
+	lea 128(%a2),%a2
+	exg %d5,%a3                 | exchange color nibble
 	dbra %d1,.L180
 
-.L171:
-	movm.l (%sp)+,%d2-%d7/%a2-%a6
-
-.L170:
+    moveq #0,%d0
+	movm.l (%sp)+,%d6-%d7/%a2-%a6
+	movm.l (%sp)+,%d2-%d5
 	rts
