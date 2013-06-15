@@ -93,10 +93,10 @@ You can declare fix16 or fix32 variables this way :
   // get integer part of f1
   f = fix16Int(f1);
 
-  // round to nearest integer with fix16 output (available in SGDK 0.82 or later)
+  // round to nearest integer with fix16 output
   f = fix16Round(f1);
 
-  // round to nearest integer with int output (available in SGDK 0.82 or later)
+  // round to nearest integer with int output
   i = fix16ToRoundedInt(f1);
 }}}
 
@@ -121,28 +121,27 @@ I plan to implement "software" methods for fix32 later but that would be pretty 
 
 === Trigonometry ===
 
-Current cosinus and sinus methods are misspelled in SGDK (version 0.81) as it looks like they take fix16 or fix32 value in entry but *that is not* the case, only the output is fix16 or fix32 typed.
-So entry value is an integer defined as 0 --> 1024 range equivalent to 0 --> 2*PI :
+SGDK has basic cosinus and sinus methods:
 
 {{{
-fix16Sin(0) = FIX16(0)
-fix16Sin(1024 / 4) = FIX16(1);
-fix16Sin(1024 / 2) = FIX16(0);
-....
-
-fix32Sin(0) = FIX32(0)
-fix32Sin(1024 / 4) = FIX32(1);
-fix32Sin(1024 / 2) = FIX32(0); 
-}}}
-
-In SGDK 0.82 or above methods changes to
-
-{{{
-// sin & cos input : 0 --> 2PI  =  0 --> 1024
 sinFix16(v)
 cosFix16(v)
 sinFix32(v)
 cosFix32(v)
 }}}
+
+The input value is an integer where 0 --> 1024 range represents 0 --> 2*PI radian range and output value is fix16/fix32 type:
+
+{{{
+sinFix16(0) = FIX16(0)
+sinFix16(1024 / 4) = FIX16(1);
+sinFix16(1024 / 2) = FIX16(0);
+....
+
+sinFix32(0) = FIX32(0)
+sinFix32(1024 / 4) = FIX32(1);
+sinFix32(1024 / 2) = FIX32(0); 
+}}}
+
 
 All the basic mathematical stuff is defined in "maths" unit (maths.h and maths.c files).
