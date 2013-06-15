@@ -8,7 +8,7 @@ SGDK has very basic fixed point float support with *fix16* and *fix32*.
 They are virtual types which internally use s16 (short) and s32 (long) to simulate fixed point float numbers.
 
 
-|| *Type* || *Sign bit* || *Integer bits* || *Float bits* || *Range* || *Unsigned range* ||
+|| *Type* || *Sign bit* || *Integer bits* || *Float bits* || *Range* ||
 || fix32 || 1 || 21 || 10 || -2097152.000 --> 2097151.000 ||
 || fix16 || 1 || 9 || 6 || -512.00 --> 511.00 ||
 
