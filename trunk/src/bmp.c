@@ -50,15 +50,13 @@ u8 *bmp_buffer_read;
 u8 *bmp_buffer_write;
 
 // used for polygon drawing
-s16 *LeftPoly = NULL;
-s16 *RightPoly = NULL;
+s16 *leftEdge = NULL;
+s16 *rightEdge = NULL;
 
 s16 minYL;
 s16 maxYL;
 s16 minYR;
 s16 maxYR;
-s16 minY;
-s16 maxY;
 
 // internals
 static u16 flag;
@@ -69,25 +67,20 @@ static u16 phase;
 
 
 // forward
-extern void calculatePolyEdge(const Vect2D_s16 *pts);
 extern void clearBitmapBuffer(u8 *bmp_buffer);
-extern void drawPolygon(u8 color);
-
 
 static void doFlip();
 static void flipBuffer();
 static void initTilemap(u16 num);
 static u16 doBlit();
 //static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
-//static void drawPolygon_old(u8 color);
-//static void logEdges();
 
 
 void BMP_init(u16 double_buffer, u16 palette, u16 priority)
 {
-    flag = (double_buffer)?BMP_FLAG_DOUBLEBUFFER:0;
-    pal = palette;
-    prio = priority;
+    flag = (double_buffer) ? BMP_FLAG_DOUBLEBUFFER : 0;
+    pal = palette & 3;
+    prio = priority & 1;
 
     BMP_reset();
 }
@@ -112,15 +105,15 @@ void BMP_end()
         MEM_free(bmp_buffer_1);
         bmp_buffer_1 = NULL;
     }
-    if (LeftPoly)
+    if (leftEdge)
     {
-        MEM_free(LeftPoly);
-        LeftPoly = NULL;
+        MEM_free(leftEdge);
+        leftEdge = NULL;
     }
-    if (RightPoly)
+    if (rightEdge)
     {
-        MEM_free(RightPoly);
-        RightPoly = NULL;
+        MEM_free(rightEdge);
+        rightEdge = NULL;
     }
 }
 
@@ -129,15 +122,15 @@ void BMP_reset()
     // release buffers if needed
     if (bmp_buffer_0) MEM_free(bmp_buffer_0);
     if (bmp_buffer_1) MEM_free(bmp_buffer_1);
-    if (LeftPoly) MEM_free(LeftPoly);
-    if (RightPoly) MEM_free(RightPoly);
+    if (leftEdge) MEM_free(leftEdge);
+    if (rightEdge) MEM_free(rightEdge);
 
     // tile map allocation
     bmp_buffer_0 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
     bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
     // polygon edge buffer allocation
-    LeftPoly = MEM_alloc(BMP_HEIGHT * sizeof(s16));
-    RightPoly = MEM_alloc(BMP_HEIGHT * sizeof(s16));
+    leftEdge = MEM_alloc(BMP_HEIGHT * sizeof(s16));
+    rightEdge = MEM_alloc(BMP_HEIGHT * sizeof(s16));
 
     // need 64x64 cells sized plan
     VDP_setPlanSize(BMP_PLANWIDTH, BMP_PLANHEIGHT);
@@ -155,6 +148,7 @@ void BMP_reset()
 
     // prepare tilemap
     initTilemap(0);
+
     if (HAS_DOUBLEBUFFER)
         initTilemap(1);
 
@@ -331,6 +325,7 @@ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
 
     v = crd;
     i = num;
+
     while (i--)
     {
         const u16 x = v->x;
@@ -357,6 +352,7 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 
     p = pixels;
     i = num;
+
     while (i--)
     {
         const u16 x = p->pt.x;
@@ -375,7 +371,6 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
         p++;
     }
 }
-
 
 //void BMP_drawLine_old(Line *l)
 //{
@@ -418,84 +413,6 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 //    }
 //}
 
-//u16 BMP_drawPolygon_old(const Vect2D_s16 *pts, u16 num, u8 col)
-//{
-//    // counter-clockwised polygon --> exit
-//    if (((pts[2].x - pts[0].x) * (pts[1].y - pts[0].y)) > ((pts[2].y - pts[0].y) * (pts[1].x - pts[0].x)))
-//        return 1;
-//
-//    // prepare polygon edge calculation
-//    minYL = BMP_HEIGHT;
-//    minYR = BMP_HEIGHT;
-//    maxYL = 0;
-//    maxYR = 0;
-//
-//    const Vect2D_s16 *curpts;
-//    u16 i;
-//
-//    curpts = pts;
-//    i = num - 1;
-//    while(i--)
-//        calculatePolyEdge(curpts++);
-//
-//    Vect2D_s16 lastpts[2];
-//    lastpts[0] = *curpts;
-//    lastpts[1] = *pts;
-//    // last line
-//    calculatePolyEdge(lastpts);
-//
-//    // get min and max Y
-//    minY = (minYL > minYR)?minYL:minYR;
-//    maxY = (maxYL < maxYR)?maxYL:maxYR;
-//
-////    logEdges();
-//
-//    // can draw polygon now
-////    drawPolygon_old(col);
-//    drawPolygon(col);
-//
-//    return 0;
-//}
-
-//static void logEdges()
-//{
-//    char str1[128];
-//    char str2[128];
-//    s16 *left;
-//    s16 *right;
-//    s16 y;
-//
-//    left = &LeftPoly[minY];
-//    right = &RightPoly[minY];
-//
-//    strcpy(str1, "edges ymin=");
-//    intToStr(minY, str2, 1);
-//    strcat(str1, str2);
-//    strcat(str1, " ymax=");
-//    intToStr(maxY, str2, 1);
-//    strcat(str1, str2);
-//    KDebug_Alert(str1);
-//
-//    for(y = minY; y < maxY; y++)
-//    {
-//        strcpy(str1, "y=");
-//        intToStr(y, str2, 1);
-//        strcat(str1, str2);
-//        strcat(str1, " x1=");
-//        intToStr(*left, str2, 1);
-//        strcat(str1, str2);
-//        strcat(str1, " x2=");
-//        intToStr(*right, str2, 1);
-//        strcat(str1, str2);
-//
-//        if (*left > *right)
-//            KDebug_Alert(str1);
-//
-//        left++;
-//        right++;
-//    }
-//}
-
 
 void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
@@ -510,6 +427,7 @@ void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     // limit bitmap size if larger than bitmap screen
     if ((w + x) > BMP_WIDTH) adj_w = (BMP_WIDTH - (w + x)) >> 1;
     else adj_w = w >> 1;
+
     if ((h + y) > BMP_HEIGHT) adj_h = BMP_HEIGHT - (h + y);
     else adj_h = h;
 
@@ -525,7 +443,7 @@ void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     }
 }
 
-void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal)
+void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
 {
     u16 w, h;
 
@@ -535,12 +453,12 @@ void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal)
     h = bitmap->h;
 
     // load the palette
-    if (numpal < 4) VDP_setPalette(numpal, bitmap->palette);
+    if (loadpal) VDP_setPalette(pal, bitmap->palette);
 
     BMP_loadBitmapData(bitmap->image, x, y, w, h, w >> 1);
 }
 
-void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal)
+void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
 {
     u16 bmp_wb, bmp_h;
 
@@ -550,7 +468,7 @@ void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u1
     bmp_h = bitmap->h;
 
     // load the palette
-    if (numpal < 4) VDP_setPalette(numpal, bitmap->palette);
+    if (loadpal) VDP_setPalette(pal, bitmap->palette);
 
     BMP_scale(bitmap->image, bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
 }
@@ -590,6 +508,7 @@ void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_
 
             // adjust offset
             src += xd;
+
             if ((xe += xr) >= (s16) dst_wb)
             {
                 xe -= dst_wb;
@@ -602,6 +521,7 @@ void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_
 
         // adjust offset
         src += yd;
+
         if ((ye += yr) >= (s16) dst_h)
         {
             ye -= dst_h;
@@ -652,6 +572,7 @@ u16 BMP_doHBlankProcess()
         VDP_setHIntCounter(((VDP_getScreenHeight() - BMP_HEIGHT) >> 1) - 1);
         // update phase
         phase = 3;
+
         // flip requested or not complete ? --> start / continu flip
         if (state & BMP_STAT_FLIPPING) doFlip();
     }
@@ -692,6 +613,7 @@ static void initTilemap(u16 num)
     pwdata = (u16 *) GFX_DATA_PORT;
 
     i = BMP_CELLHEIGHT;
+
     while(i--)
     {
         // set destination address for tilemap
@@ -699,6 +621,7 @@ static void initTilemap(u16 num)
 
         // write tilemap line to VDP
         j = BMP_CELLWIDTH >> 3;
+
         while(j--)
         {
             *pwdata = tile_ind++;
@@ -769,24 +692,24 @@ static void doFlip()
 }
 
 #define TRANSFER(x)                                     \
-            *pldata = src[((BMP_PITCH * 0) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 1) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 2) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 3) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 4) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 5) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 6) / 4) + (x)]; \
-            *pldata = src[((BMP_PITCH * 7) / 4) + (x)];
+    *pldata = src[((BMP_PITCH * 0) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 1) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 2) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 3) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 4) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 5) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 6) / 4) + (x)]; \
+    *pldata = src[((BMP_PITCH * 7) / 4) + (x)];
 
 #define TRANSFER8(x)                \
-            TRANSFER((8 * x) + 0)   \
-            TRANSFER((8 * x) + 1)   \
-            TRANSFER((8 * x) + 2)   \
-            TRANSFER((8 * x) + 3)   \
-            TRANSFER((8 * x) + 4)   \
-            TRANSFER((8 * x) + 5)   \
-            TRANSFER((8 * x) + 6)   \
-            TRANSFER((8 * x) + 7)
+    TRANSFER((8 * x) + 0)   \
+    TRANSFER((8 * x) + 1)   \
+    TRANSFER((8 * x) + 2)   \
+    TRANSFER((8 * x) + 3)   \
+    TRANSFER((8 * x) + 4)   \
+    TRANSFER((8 * x) + 5)   \
+    TRANSFER((8 * x) + 6)   \
+    TRANSFER((8 * x) + 7)
 
 static u16 doBlit()
 {
@@ -888,55 +811,5 @@ static u16 doBlit()
 //            dst += step_y;
 //            delta += dx;
 //        }
-//    }
-//}
-
-//static void drawPolygon_old(u8 color)
-//{
-//    // number of scanline to draw
-//    s16 len = maxY - minY;
-//    // nothing to draw
-//    if (len <= 0) return;
-//
-//    s16 *left;
-//    s16 *right;
-//    u8 *buf;
-//
-//    left = &LeftPoly[minY];
-//    right = &RightPoly[minY];
-//    buf = &bmp_buffer_write[minY * BMP_PITCH];
-//
-//    while (len--)
-//    {
-//        s16 x1, x2;
-//
-//        x1 = *left++;
-//        x2 = *right++;
-//
-//        // something to draw ?
-//        if ((x1 <= x2) && (x1 < BMP_WIDTH) && (x2 >= 0))
-//        {
-//            // clip x
-//            if (x1 < 0) x1 = 0;
-//            if (x2 >= BMP_WIDTH) x2 = BMP_WIDTH - 1;
-//
-//            if (x1 & 1)
-//            {
-//                buf[x1 >> 1] = (buf[x1 >> 1] & 0xF0) | (color & 0x0F);
-//                x1++;
-//            }
-//            if (!(x2 & 1))
-//            {
-//                buf[x2 >> 1] = (buf[x2 >> 1] & 0x0F) | (color & 0xF0);
-//                x2--;
-//            }
-//
-//            x1 >>= 1;
-//            x2 >>= 1;
-//
-//            memset(&buf[x1], color, (x2 - x1) + 1);
-//        }
-//
-//        buf += BMP_PITCH;
 //    }
 //}

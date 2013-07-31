@@ -487,6 +487,12 @@ void SND_disablePSG_MVS(u8 chan);
  */
 void SND_startPlay_TFM(const u8 *song);
 
+/**
+ * \brief
+ *      Stop playing music (TFM music player driver).
+ */
+void SND_stopPlay_TFM();
+
 
 // Z80_DRIVER_VGM
 

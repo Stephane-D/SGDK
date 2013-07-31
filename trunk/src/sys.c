@@ -13,6 +13,7 @@
 #include "maths.h"
 #include "bmp.h"
 #include "timer.h"
+#include "string.h"
 #include "vdp.h"
 #include "vdp_bg.h"
 
@@ -61,17 +62,206 @@ static _voidCallback *VIntCB;
 static _voidCallback *HIntCB;
 static _voidCallback *ExtIntCB;
 
-u16 intTrace;
+u32 registerState[8+8];
+u32 pcState;
+u32 addrState;
+u16 ext1State;
+u16 ext2State;
+u16 srState;
+
+
 u32 VIntProcess;
 u32 HIntProcess;
 u32 ExtIntProcess;
+u16 intTrace;
+
+
+static void addValueU8(char *dst, char *str, u8 value)
+{
+    char v[16];
+
+    strcat(dst, str);
+    intToHex(value, v, 2);
+    strcat(dst, v);
+}
+
+static void addValueU16(char *dst, char *str, u16 value)
+{
+    char v[16];
+
+    strcat(dst, str);
+    intToHex(value, v, 4);
+    strcat(dst, v);
+}
+
+static void addValueU32(char *dst, char *str, u32 value)
+{
+    char v[16];
+
+    strcat(dst, str);
+    intToHex(value, v, 8);
+    strcat(dst, v);
+}
+
+static u16 showValueU32U16(char *str1, u32 value1, char *str2, u16 value2, u16 pos)
+{
+    char s[64];
+
+    strclr(s);
+    addValueU32(s, str1, value1);
+    addValueU16(s, str2, value2);
+
+    VDP_drawText(s, 0, pos);
+
+    return pos + 1;
+}
+
+static u16 showValueU16U32U16(char *str1, u16 value1, char *str2, u32 value2, char *str3, u16 value3, u16 pos)
+{
+    char s[64];
+
+    strclr(s);
+    addValueU16(s, str1, value1);
+    addValueU32(s, str2, value2);
+    addValueU16(s, str3, value3);
+
+    VDP_drawText(s, 0, pos);
+
+    return pos + 1;
+}
+
+static u16 showValueU32U16U16(char *str1, u32 value1, char *str2, u16 value2, char *str3, u16 value3, u16 pos)
+{
+    char s[64];
+
+    strclr(s);
+    addValueU32(s, str1, value1);
+    addValueU16(s, str2, value2);
+    addValueU16(s, str3, value3);
+
+    VDP_drawText(s, 0, pos);
+
+    return pos + 1;
+}
+
+static u16 showValueU32U32(char *str1, u32 value1, char *str2, u32 value2, u16 pos)
+{
+    char s[64];
+
+    strclr(s);
+    addValueU32(s, str1, value1);
+    addValueU32(s, str2, value2);
+
+    VDP_drawText(s, 0, pos);
+
+    return pos + 1;
+}
+
+static u16 showValueU32U32U32(char *str1, u32 value1, char *str2, u32 value2, char *str3, u32 value3, u16 pos)
+{
+    char s[64];
+
+    strclr(s);
+    addValueU32(s, str1, value1);
+    addValueU32(s, str2, value2);
+    addValueU32(s, str3, value3);
+
+    VDP_drawText(s, 0, pos);
+
+    return pos + 1;
+}
+
+//static u16 showValueU32U32U32U32(char *str1, u32 value1, char *str2, u32 value2, char *str3, u32 value3, char *str4, u32 value4, u16 pos)
+//{
+//    char s[64];
+//
+//    strclr(s);
+//    addValueU32(s, str1, value1);
+//    addValueU32(s, str2, value2);
+//    addValueU32(s, str3, value3);
+//    addValueU32(s, str4, value4);
+//
+//    VDP_drawText(s, 0, pos);
+//
+//    return pos + 1;
+//}
+
+static u16 showRegisterState(u16 pos)
+{
+    u16 y = pos;
+
+    y = showValueU32U32U32("D0=", registerState[0], " D1=", registerState[1], " D2=", registerState[2], y);
+    y = showValueU32U32U32("D3=", registerState[3], " D4=", registerState[4], " D5=", registerState[5], y);
+    y = showValueU32U32("D6=", registerState[6], " D7=", registerState[7], y);
+    y = showValueU32U32U32("A0=", registerState[8], " A1=", registerState[9], " A2=", registerState[10], y);
+    y = showValueU32U32U32("A3=", registerState[11], " A4=", registerState[12], " A5=", registerState[13], y);
+    y = showValueU32U32("A6=", registerState[14], " A7=", registerState[15], y);
+
+    return y;
+}
+
+static u16 showStackState(u16 pos)
+{
+    char s[64];
+    u16 y = pos;
+    u32 *sp = (u32*) registerState[15];
+
+    u16 i = 0;
+    while(i < 24)
+    {
+        strclr(s);
+        addValueU8(s, "SP+", i);
+        strcat(s, " ");
+        y = showValueU32U32(s, *(sp + (i + 0)), " ", *(sp + (i + 1)), y);
+        i += 2;
+    }
+
+    return y;
+}
+
+static u16 showExceptionDump(u16 pos)
+{
+    u16 y = pos;
+
+    y = showValueU32U16("PC=", pcState, " SR=", srState, y) + 1;
+    y = showRegisterState(y) + 1;
+    y = showStackState(y);
+
+    return y;
+}
+
+static u16 showException4WDump(u16 pos)
+{
+    u16 y = pos;
+
+    y = showValueU32U16U16("PC=", pcState, " SR=", srState, " VO=", ext1State, y) + 1;
+    y = showRegisterState(y) + 1;
+    y = showStackState(y);
+
+    return y;
+}
+
+static u16 showBusAddressErrorDump(u16 pos)
+{
+    u16 y = pos;
+
+    y = showValueU16U32U16("FUNC=", ext1State, " ADDR=", addrState, " INST=", ext2State, y);
+    y = showValueU32U16("PC=", pcState, " SR=", srState, y) + 1;
+    y = showRegisterState(y) + 1;
+    y = showStackState(y);
+
+    return y;
+}
+
 
 
 // bus error default callback
 void _buserror_callback()
 {
     VDP_init();
-    VDP_drawText("BUS ERROR !", 10, 10);
+    VDP_drawText("BUS ERROR !", 10, 3);
+
+    showBusAddressErrorDump(5);
 
     while(1);
 }
@@ -80,7 +270,9 @@ void _buserror_callback()
 void _addresserror_callback()
 {
     VDP_init();
-    VDP_drawText("ADDRESS ERROR !", 10, 10);
+    VDP_drawText("ADDRESS ERROR !", 10, 3);
+
+    showBusAddressErrorDump(5);
 
     while(1);
 }
@@ -89,7 +281,9 @@ void _addresserror_callback()
 void _illegalinst_callback()
 {
     VDP_init();
-    VDP_drawText("ILLEGAL INSTRUCTION !", 5, 10);
+    VDP_drawText("ILLEGAL INSTRUCTION !", 7, 3);
+
+    showException4WDump(5);
 
     while(1);
 }
@@ -98,7 +292,9 @@ void _illegalinst_callback()
 void _zerodivide_callback()
 {
     VDP_init();
-    VDP_drawText("DIVIDE BY ZERO !", 10, 10);
+    VDP_drawText("DIVIDE BY ZERO !", 10, 3);
+
+    showExceptionDump(5);
 
     while(1);
 }
@@ -106,20 +302,32 @@ void _zerodivide_callback()
 // CHK instruction default callback
 void _chkinst_callback()
 {
+    VDP_init();
+    VDP_drawText("CHK INSTRUCTION EXCEPTION !", 5, 10);
 
+    showException4WDump(12);
+
+    while(1);
 }
 
 // TRAPV instruction default callback
 void _trapvinst_callback()
 {
+    VDP_init();
+    VDP_drawText("TRAPV INSTRUCTION EXCEPTION !", 5, 3);
 
+    showException4WDump(5);
+
+    while(1);
 }
 
 // privilege violation exception default callback
 void _privilegeviolation_callback()
 {
     VDP_init();
-    VDP_drawText("PRIVILEGE VIOLATION !", 5, 10);
+    VDP_drawText("PRIVILEGE VIOLATION !", 5, 3);
+
+    showExceptionDump(5);
 
     while(1);
 }
@@ -140,7 +348,9 @@ void _line1x1x_callback()
 void _errorexception_callback()
 {
     VDP_init();
-    VDP_drawText("EXCEPTION ERROR !", 5, 10);
+    VDP_drawText("EXCEPTION ERROR !", 5, 3);
+
+    showExceptionDump(5);
 
     while(1);
 }
@@ -221,7 +431,7 @@ void _extint_callback()
 void _start_entry()
 {
     // initiate random number generator
-    randbase = 0xD94B;
+    randbase = 0xD94B ^ GET_HVCOUNTER;
     vtimer = 0;
 
     // default interrupt callback
@@ -245,7 +455,7 @@ void _start_entry()
 #if (ENABLE_LOGO != 0)
     {
         // display logo (use BMP mode for that)
-        BMP_init(1, 0, 0);
+        BMP_init(1, PAL0, 0);
 
 #if (ZOOMING_LOGO != 0)
         // init fade in to 30 step
@@ -271,7 +481,7 @@ void _start_entry()
                 if (step_fade-- > 0) VDP_doStepFading();
 
                 // zoom logo
-                BMP_loadAndScaleBitmap(&logo_lib, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, 0xFF);
+                BMP_loadAndScaleBitmap(&logo_lib, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, FALSE);
                 // flip to screen
                 BMP_flip(0);
             }
@@ -288,22 +498,22 @@ void _start_entry()
         waitTick(TICKPERSECOND * 1);
 #else
         // set palette 0 to black
-        VDP_setPalette(0, palette_black);
+        VDP_setPalette(PAL0, palette_black);
 
         // don't load the palette immediatly
-        BMP_loadBitmap(&logo_lib, 64, 0, 0xFF);
+        BMP_loadBitmap(&logo_lib, 64, 0, FALSE);
         // flip
         BMP_flip(0);
 
         // fade in logo
-        VDP_fadePalIn(0, logo_lib.palette, 30, 0);
+        VDP_fadePalIn(PAL0, logo_lib.palette, 30, 0);
 
         // wait 1.5 second
         waitTick(TICKPERSECOND * 1.5);
 #endif
 
         // fade out logo
-        VDP_fadePalOut(0, 20, 0);
+        VDP_fadePalOut(PAL0, 20, 0);
         // wait 0.5 second
         waitTick(TICKPERSECOND * 0.5);
 

@@ -13,7 +13,7 @@ int main()
     VDP_setScreenWidth320();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
-    VDP_setPaletteColor(PAL1, 15, 0x0888);
+    VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
     VDP_setTextPalette(0);
 
     while(1)

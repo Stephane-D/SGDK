@@ -112,6 +112,23 @@ void Z80_setBank(const u16 bank)
 }
 
 
+void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
+{
+    Z80_requestBus(1);
+
+    const u8 zero = getZeroU8();
+    u8* dst = (u8*) (Z80_RAM + to);
+    u16 len = size;
+
+    while(len--) *dst++ = zero;
+
+    if (resetz80) Z80_startReset();
+    Z80_releaseBus();
+    // wait bus released
+    while(Z80_isBusTaken());
+    if (resetz80) Z80_endReset();
+}
+
 void Z80_upload(const u16 to, const u8 *from, const u16 size, const u16 resetz80)
 {
     Z80_requestBus(1);
@@ -148,6 +165,17 @@ void Z80_download(const u16 from, u8 *to, const u16 size)
 u16 Z80_getLoadedDriver()
 {
     return currentDriver;
+}
+
+void Z80_unloadDriver()
+{
+    // already unloaded
+    if (currentDriver == Z80_DRIVER_NULL) return;
+
+    // clear Z80 RAM
+    Z80_clear(0, Z80_RAM_LEN, TRUE);
+
+    currentDriver = Z80_DRIVER_NULL;
 }
 
 void Z80_loadDriver(const u16 driver, const u16 waitReady)

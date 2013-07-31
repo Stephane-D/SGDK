@@ -15,7 +15,7 @@
 extern u16 textBasetile;
 
 
-void VDP_setHorizontalScroll(u16 plan, u16 value)
+void VDP_setHorizontalScroll(u16 plan, s16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -32,7 +32,7 @@ void VDP_setHorizontalScroll(u16 plan, u16 value)
     *pw = value;
 }
 
-void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 use_dma)
+void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use_dma)
 {
     u16 addr;
 
@@ -62,7 +62,7 @@ void VDP_setHorizontalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 u
     }
 }
 
-void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len, u16 use_dma)
+void VDP_setHorizontalScrollLine(u16 plan, u16 line, s16* values, u16 len, u16 use_dma)
 {
     u16 addr;
 
@@ -92,7 +92,7 @@ void VDP_setHorizontalScrollLine(u16 plan, u16 line, u16* values, u16 len, u16 u
     }
 }
 
-void VDP_setVerticalScroll(u16 plan, u16 value)
+void VDP_setVerticalScroll(u16 plan, s16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -109,7 +109,7 @@ void VDP_setVerticalScroll(u16 plan, u16 value)
     *pw = value;
 }
 
-void VDP_setVerticalScrollTile(u16 plan, u16 tile, u16* values, u16 len, u16 use_dma)
+void VDP_setVerticalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use_dma)
 {
     u16 addr;
 

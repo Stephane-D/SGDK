@@ -153,7 +153,7 @@
 
 /**
  *  \def TILE_SPACE
- *      Space in byte for tile in VRAM.
+ *      Space in byte for tile in VRAM (tile space ends where window tilemap starts)
  */
 #define TILE_SPACE              WPLAN
 
@@ -177,6 +177,9 @@
  *      Number of system tile.
  */
 #define TILE_SYSTEMLENGTH       0x10
+/**
+ *  \deprecated Use TILE_SYSTEMLENGTH instead.
+ */
 #define TILE_SYSTEMLENGHT       TILE_SYSTEMLENGTH
 /**
  *  \def TILE_USERINDEX
@@ -189,10 +192,14 @@
  */
 #define TILE_FONTINDEX          (TILE_MAXNUM - FONT_LEN)
 /**
- *  \def TILE_USERLENGHT
+ *  \def TILE_USERLENGTH
  *      Number of available user tile.
  */
-#define TILE_USERLENGHT         (TILE_FONTINDEX - TILE_USERINDEX)
+#define TILE_USERLENGTH         (TILE_FONTINDEX - TILE_USERINDEX)
+/**
+ *  \deprecated Use TILE_USERLENGTH instead.
+ */
+#define TILE_USERLENGHT         TILE_USERLENGTH
 
 /**
  *  \def TILE_SYSTEM

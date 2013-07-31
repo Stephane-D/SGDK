@@ -20,11 +20,29 @@
 #define Z80_RESET_PORT                  0xA11200
 
 /**
+ *  \def Z80_RAM_START
+ *
+ * Z80 RAM start address.
+ */
+#define Z80_RAM_START                   0xA00000
+/**
+ *  \def Z80_RAM_END
+ *
+ * Z80 RAM end address.
+ */
+#define Z80_RAM_END                     0xA01FFF
+/**
  *  \def Z80_RAM
  *
  * Z80 RAM address.
  */
-#define Z80_RAM                         0xA00000
+#define Z80_RAM                         Z80_RAM_START
+/**
+ *  \def Z80_RAM_LEN
+ *
+ * Z80 RAM length in byte.
+ */
+#define Z80_RAM_LEN                     ((Z80_RAM_END - Z80_RAM_START) + 1)
 /**
  *  \def Z80_YM2612
  *
@@ -230,6 +248,17 @@ void Z80_setBank(const u16 bank);
 
 /**
  *  \brief
+ *      Clear Z80 memory.
+ *  \param dest
+ *      Destination address (Z80 memory).
+ *  \param size
+ *      Size in byte of region to clear.
+ *  \param resetz80
+ *      Reset Z80 if set to TRUE.
+ */
+void Z80_clear(const u16 dest, const u16 size, const u16 resetz80);
+/**
+ *  \brief
  *      Upload data in Z80 memory.
  *  \param dest
  *      Destination address (Z80 memory).
@@ -269,6 +298,11 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  - Z80_DRIVER_CUSTOM<br/>
  */
 u16  Z80_getLoadedDriver();
+/**
+ *  \brief
+ *      Unload Z80 driver (actually clear Z80 ram).
+ */
+void Z80_unloadDriver();
 /**
  *  \brief
  *      Load a Z80 driver.

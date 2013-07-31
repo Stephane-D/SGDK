@@ -62,12 +62,24 @@ extern const u16 palette_blue[16];
 /**
  *  \brief
  *      Returns RGB color of specified palette entry.
-
+ *
  *  \param index
  *      Color index (0-63).
- *  \return RGB intensity for the specified palette color index.
+ *  \return RGB intensity for the specified color index.
  */
 u16  VDP_getPaletteColor(u16 index);
+/**
+ *  \brief
+ *      Read count RGB colors from specified index and store them in specified palette.
+ *
+ *  \param index
+ *      Color index where start to read (0-63).
+ *  \param dest
+ *      Destination palette where to write read RGB intensities.
+ *  \param count
+ *      Number of color to get.
+ */
+void  VDP_getPaletteColors(u16 index, u16* dest, u16 count);
 /**
  *  \brief
  *      Get palette.
@@ -84,9 +96,9 @@ void VDP_getPalette(u16 index, u16 *pal);
  *      Set RGB color to specified palette entry.
  *
  *  \param index
- *      Palette color index (0-63).
+ *      Color index to set (0-63).
  *  \param value
- *      RGB intensity to set in the specified palette color index.
+ *      RGB intensity to set in the specified color index.
  */
 void VDP_setPaletteColor(u16 index, u16 value);
 /**
@@ -94,9 +106,9 @@ void VDP_setPaletteColor(u16 index, u16 value);
  *      Set RGB colors to specified palette entries.
  *
  *  \param index
- *      Color index (0-63).
+ *      Color index where to start to write (0-63).
  *  \param values
- *      RGB intensities to set starting at specified palette color index.
+ *      RGB intensities to set.
  *  \param count
  *      Number of color to set.
  */

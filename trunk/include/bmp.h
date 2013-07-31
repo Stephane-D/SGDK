@@ -260,7 +260,7 @@ extern u8 *bmp_buffer_write;
  *      VRAM Double buffer permit to avoid image tearing because of partial screen refresh.<br>
  *      It requires almost all VRAM tiles space (~41 KB) so enable it only if you don't need other plan or sprites.
  * \param palette
- *      Palette index to use to rendre the bitmap plan.<br>
+ *      Palette index to use to render the bitmap plan.<br>
  *      Set it to 0 if unsure.
  * \param priority
  *      Set the priority of bitmap plan.<br>
@@ -495,9 +495,22 @@ u8   BMP_clipLine(Line *l);
 void BMP_drawLine(Line *l);
 /**
  * \brief
+ *      Determine if the specified polygon is culled.<br>
+ *      The polygon points should be defined in clockwise order.<br>
+ *      The method returns 1 if the polygon is back faced and should be eliminated for 3D rendering.
+ *
+ * \param pts
+ *      Polygon points buffer.
+ * \param num
+ *      number of point (lenght of points buffer).
+ * \return 1 if polygon is culled (should not be draw) and 0 otherwise.<br>
+ */
+u16 BMP_isPolygonCulled(const Vect2D_s16 *pts, u16 num);
+/**
+ * \brief
  *      Draw a polygon.<br>
- *      The polygon points should be defined in clockwise order as we use the polygon face
- *      orientation to detect back faced polygon and quickly eliminate them for 3D rendering.
+ *      The polygon points should be defined in clockwise order.<br>
+ *      Use the BMP_isPolygonCulled(..) method to test if polygon should be draw or not.
  *
  * \param pts
  *      Polygon points buffer.
@@ -505,13 +518,13 @@ void BMP_drawLine(Line *l);
  *      number of point (lenght of points buffer).
  * \param col
  *      fill color.
- * \return 1 if polygon was eliminated by culling (and so not drawn) and 0 otherwise.<br>
+ * \return 0 if polygon was not drawn (outside screen or whatever).
  */
 u16 BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col);
 
 /**
  * \brief
- *      Load and draw the specified bitmap (should be 4 BPP).
+ *      Load and draw the specified bitmap data (should be 4 BPP).
  *
  * \param data
  *      bitmap data buffer.
@@ -532,7 +545,7 @@ u16 BMP_drawPolygon(const Vect2D_s16 *pts, u16 num, u8 col);
 void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
 /**
  * \brief
- *      Load and draw a Genesis 4 BPP bitmap.<br>
+ *      Load and draw a Genesis Bitmap.<br>
  *
  *      A Genesis bitmap is a 4 bpp bitmap which has been converted via the bintos tool.<br>
  *      The resulting file contains bitmap size info and 16 colors palette.
@@ -543,16 +556,16 @@ void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
  *      X coordinate (should be an even value).
  * \param y
  *      y coordinate.
- * \param numpal
- *      Palette (index) to use to load the bitmap palette information.
+ * \param loadpal
+ *      Load the bitmap palette information when non zero.
  *
  * X coordinate is aligned to even value for performance reason.<br>
- * So BMP_loadBitmap(bitmap,0,0,pal) will produce same result as BMP_loadBitmap(bitmap,1,0,pal)
+ * So BMP_loadBitmap(bitmap,0,0,TRUE) will produce same result as BMP_loadBitmap(bitmap,1,0,TRUE)
  */
-void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal);
+void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal);
 /**
  * \brief
- *      Load and draw a Genesis 4 BPP bitmap with specified dimension.<br>
+ *      Load and draw a Genesis Bitmap with specified dimension.<br>
  *
  *      A Genesis bitmap is a 4 bpp bitmap which has been converted via the bintos tool.<br>
  *      The resulting file contains bitmap size info and 16 colors palette.<br>
@@ -565,16 +578,16 @@ void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 numpal);
  * \param y
  *      y coordinate.
  * \param w
- *      width.
+ *      final width.
  * \param h
- *      height.
- * \param numpal
- *      Palette (index) to use to load the bitmap palette information.
+ *      final height.
+ * \param loadpal
+ *      Load the bitmap palette information when non zero.
  *
- * X coordinate as Width are aligned to even values for performance reason.<br>
+ * X coordinate as width are aligned to even values for performance reason.<br>
  * So BMP_loadAndScaleBitmap(bitmap,0,0,w,h,pal) will produce same result as BMP_loadAndScaleBitmap(bitmap,1,0,w,h,pal)
  */
-void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 numpal);
+void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal);
 /**
  * \deprecated
  *      Uses bitmap->palette instead.

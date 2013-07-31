@@ -746,6 +746,9 @@ void SND_startPlay_TFM(const u8 *song)
     vu8 *pb;
     u32 addr;
 
+    // start by unloading driver (actually clear Z80 ram)
+    Z80_unloadDriver();
+
     Z80_requestBus(1);
 
     addr = (u32) song;
@@ -767,6 +770,12 @@ void SND_startPlay_TFM(const u8 *song)
     // reset Z80 (in case driver was already loaded)
     Z80_startReset();
     Z80_endReset();
+}
+
+void SND_stopPlay_TFM()
+{
+    // just unload driver
+    Z80_unloadDriver();
 }
 
 

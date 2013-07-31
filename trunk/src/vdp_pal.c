@@ -240,6 +240,7 @@ void VDP_setPaletteColor(u16 index, u16 value)
     *pw = value;
 }
 
+
 u16 VDP_doStepFading()
 {
     vu16 *pw;
@@ -293,7 +294,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 
     src = palsrc;
     dst = paldst;
-    for(i = fading_from; i <= fading_to; i++)
+    for(i = fromcol; i <= tocol; i++)
     {
         fading_palR[i] = ((*src & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS;
         fading_palG[i] = ((*src & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS;
@@ -325,10 +326,9 @@ void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 
 void VDP_fadeTo(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async)
 {
     u16 tmp_pal[64];
-    u16 i;
 
-    for (i = 0; i < 4; i++) VDP_getPalette(i, &tmp_pal[i << 4]);
-
+    // read current palette
+    VDP_getPaletteColors(fromcol, tmp_pal, (tocol - fromcol) + 1);
     // do the fade
     VDP_fade(fromcol, tocol, tmp_pal, pal, numframe, async);
 }

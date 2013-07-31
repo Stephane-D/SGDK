@@ -113,7 +113,47 @@ NoCopy:
 *
 *------------------------------------------------
 
+registersDump:
+        move.l %d0,registerState+0
+        move.l %d1,registerState+4
+        move.l %d2,registerState+8
+        move.l %d3,registerState+12
+        move.l %d4,registerState+16
+        move.l %d5,registerState+20
+        move.l %d6,registerState+24
+        move.l %d7,registerState+28
+        move.l %a0,registerState+32
+        move.l %a1,registerState+36
+        move.l %a2,registerState+40
+        move.l %a3,registerState+44
+        move.l %a4,registerState+48
+        move.l %a5,registerState+52
+        move.l %a6,registerState+56
+        move.l %a7,registerState+60
+        rts
+
+busAddressErrorDump:
+        move.w 4(%sp),ext1State
+        move.l 6(%sp),addrState
+        move.w 10(%sp),ext2State
+        move.w 12(%sp),srState
+        move.l 14(%sp),pcState
+        jmp registersDump
+
+exception4WDump:
+        move.w 4(%sp),srState
+        move.l 6(%sp),pcState
+        move.w 10(%sp),ext1State
+        jmp registersDump
+
+exceptionDump:
+        move.w 4(%sp),srState
+        move.l 6(%sp),pcState
+        jmp registersDump
+
+
 _Bus_Error:
+        jsr busAddressErrorDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  busErrorCB, %a0
         jsr    (%a0)
@@ -121,6 +161,7 @@ _Bus_Error:
         rte
 
 _Address_Error:
+        jsr busAddressErrorDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  addressErrorCB, %a0
         jsr    (%a0)
@@ -128,6 +169,7 @@ _Address_Error:
         rte
 
 _Illegal_Instruction:
+        jsr exception4WDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  illegalInstCB, %a0
         jsr    (%a0)
@@ -135,6 +177,7 @@ _Illegal_Instruction:
         rte
 
 _Zero_Divide:
+        jsr exceptionDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  zeroDivideCB, %a0
         jsr    (%a0)
@@ -142,6 +185,7 @@ _Zero_Divide:
         rte
 
 _Chk_Instruction:
+        jsr exception4WDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  chkInstCB, %a0
         jsr    (%a0)
@@ -149,6 +193,7 @@ _Chk_Instruction:
         rte
 
 _Trapv_Instruction:
+        jsr exception4WDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  trapvInstCB, %a0
         jsr    (%a0)
@@ -156,6 +201,7 @@ _Trapv_Instruction:
         rte
 
 _Privilege_Violation:
+        jsr exceptionDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  privilegeViolationCB, %a0
         jsr    (%a0)
@@ -163,6 +209,7 @@ _Privilege_Violation:
         rte
 
 _Trace:
+        jsr exceptionDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  traceCB, %a0
         jsr    (%a0)
@@ -171,6 +218,7 @@ _Trace:
 
 _Line_1010_Emulation:
 _Line_1111_Emulation:
+        jsr exceptionDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  line1x1xCB, %a0
         jsr    (%a0)
@@ -178,6 +226,7 @@ _Line_1111_Emulation:
         rte
 
 _Error_Exception:
+        jsr exceptionDump
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  errorExceptionCB, %a0
         jsr    (%a0)
