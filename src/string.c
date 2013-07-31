@@ -22,6 +22,13 @@ u32 strlen(const char *str)
     return (src - str) - 1;
 }
 
+char* strclr(char *str)
+{
+    str[0] = 0;
+
+    return str;
+}
+
 char* strcpy(char *to, const char *from)
 {
     const char *src;

@@ -24,6 +24,17 @@
 u32 strlen(const char *str);
 /**
  * \brief
+ *      Clear a string.
+ *
+ * \param dest
+ *      string to clear.
+ * \return pointer on the given string.
+ *
+ * Clear the specified string.
+ */
+char* strclr(char *str);
+/**
+ * \brief
  *      Copy a string.
  *
  * \param dest
