@@ -14,13 +14,13 @@ int main(int argc, char *argv[ ])
     char fileFormat[4];
     char ckID[4];
     unsigned long nChunkSize;
-    short int wFormatTag;
-    short int nChannels;
+    short wFormatTag;
+    short nChannels;
     unsigned long nSamplesPerSecond;
     unsigned long nBytesPerSecond;
     unsigned long nOutputSamplesPerSecond;
-    short int nBlockAlign;
-    short int nBitsPerSample;
+    short nBlockAlign;
+    short nBitsPerSample;
     int i, j;
 
     if (argc < 3)
@@ -41,16 +41,8 @@ int main(int argc, char *argv[ ])
         exit(2);
     }
 
-    /* Open output for write */
-    if( (outfile = fopen( argv[2], "w" )) == NULL )
-//    if( (outfile = fopen( "out.raw", "w" )) == NULL )
-    {
-        printf("The output file %s was not opened\n", argv[2]);
-        exit(3);
-    }
-
     if (argc > 3)
-        sscanf(argv[3], "%ld", &nOutputSamplesPerSecond);
+        nOutputSamplesPerSecond = atoi(argv[3]);
     else
         nOutputSamplesPerSecond = 0;
 
@@ -82,6 +74,14 @@ int main(int argc, char *argv[ ])
         printf("Output rate (%ld) cannot be above input rate (%ld)\n", nOutputSamplesPerSecond, nSamplesPerSecond);
         printf("Use lower output rate value or higher input rate file\n");
         exit(4);
+    }
+
+        /* Open output for write */
+    if( (outfile = fopen( argv[2], "w" )) == NULL )
+//    if( (outfile = fopen( "out.raw", "w" )) == NULL )
+    {
+        printf("The output file %s was not opened\n", argv[2]);
+        exit(3);
     }
 
     int nBytesPerSample = nBitsPerSample / 8;
