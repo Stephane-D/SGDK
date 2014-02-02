@@ -1,6 +1,6 @@
 #include "genesis.h"
-#include "sounds.h"
 
+#include "resources.h"
 
 #define NUM_DRIVER      8
 #define MAX_CMD         8
@@ -152,9 +152,9 @@ int main()
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
             params_value[i][j] = cur_cmd->params;
 
-    VDP_setPaletteColor(16+15, 0x0888);
-
-    VDP_setTextPalette(0);
+    VDP_setPalette(PAL0, font_pal_lib.data);
+    VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
+    VDP_setTextPalette(PAL0);
     VDP_drawText("Current Z80 driver", 10, 1);
 
     refreshDriverInfos();
@@ -169,8 +169,8 @@ int main()
 
 static void setTextPalette(u16 selected)
 {
-    if (selected) VDP_setTextPalette(0);
-    else VDP_setTextPalette(1);
+    if (selected) VDP_setTextPalette(PAL0);
+    else VDP_setTextPalette(PAL1);
 }
 
 
@@ -197,7 +197,7 @@ static void refreshDriverParams()
 
     setTextPalette(driver != &drivers[0]);
     VDP_drawText("<", start - 2, 3);
-    VDP_setTextPalette(0);
+    VDP_setTextPalette(PAL0);
     VDP_drawText(str, start, 3);
     setTextPalette(driver != &drivers[NUM_DRIVER - 1]);
     VDP_drawText(">", start + len + 1, 3);
@@ -210,7 +210,7 @@ static void refreshDriverParams()
         u16 posX = 2;
 
         str = cur_cmd->name;
-        VDP_setTextPalette(0);
+        VDP_setTextPalette(PAL0);
         VDP_drawText(str, posX, posY);
         posX += strlen(str);
 
@@ -227,7 +227,7 @@ static void refreshDriverParams()
         posY++;
     }
 
-    VDP_setTextPalette(0);
+    VDP_setTextPalette(PAL0);
 
     if (cmd == NULL) VDP_drawText("*", 0, 3);
     else VDP_drawText("*", 0, 5 + getCurrentCmdIndex());
@@ -269,6 +269,7 @@ static void refreshDriverCmd()
 
         case Z80_DRIVER_TFM:
             VDP_drawText("press A to start play", 1, 12);
+            VDP_drawText("press START to stop play", 1, 13);
             break;
 
         case Z80_DRIVER_VGM:
@@ -647,18 +648,26 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             {
                 SND_startPlay_TFM(music_tfd);
             }
+            if (changed & state & BUTTON_START)
+            {
+                SND_stopPlay_TFM();
+            }
             break;
         }
 
         case Z80_DRIVER_VGM:
         {
+            if (changed & state & BUTTON_DOWN)
+            {
+                SND_playSfx_VGM((u32) india_u8k, sizeof(india_u8k));
+            }
             if (changed & state & BUTTON_A)
             {
-                SND_startPlay_VGM(music1_vgm);
+                SND_startPlay_VGM(sonic1);
             }
             if (changed & state & BUTTON_B)
             {
-                SND_startPlay_VGM(music2_vgm);
+                SND_startPlay_VGM(roadrash);
             }
             if (changed & state & BUTTON_C)
             {

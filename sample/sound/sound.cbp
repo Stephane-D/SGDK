@@ -3,7 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="sound" />
-		<Option makefile="C:\apps\SGDK\makefile.gen" />
+		<Option makefile="D:\apps\SGDK\makefile.gen" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="sega_genesis_compiler" />
@@ -40,38 +40,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="res\bad_apple.h" />
-		<Unit filename="res\bad_apple.vgm" />
-		<Unit filename="res\beat1_16k.h" />
-		<Unit filename="res\india_11k.h" />
-		<Unit filename="res\india_13k.h" />
-		<Unit filename="res\india_16k.h" />
-		<Unit filename="res\india_22k.h" />
-		<Unit filename="res\india_32k.h" />
-		<Unit filename="res\india_8k.h" />
-		<Unit filename="res\india_pcm_22k.h" />
-		<Unit filename="res\loop1_16k.h" />
-		<Unit filename="res\loop2_16k.h" />
-		<Unit filename="res\loop3_16k.h" />
-		<Unit filename="res\loop4_pcm_22k.h" />
-		<Unit filename="res\music_mvs.h" />
-		<Unit filename="res\music_tfd.h" />
-		<Unit filename="res\piano1_16k.h" />
-		<Unit filename="res\sound1_16k.h" />
-		<Unit filename="res\violon1_16k.h" />
-		<Unit filename="res\violon2_16k.h" />
+		<Unit filename="res\resources.h" />
+		<Unit filename="res\resources.res" />
 		<Unit filename="src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\music1_vgm.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src\music1_vgm.h" />
-		<Unit filename="src\music2_vgm.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src\music2_vgm.h" />
-		<Unit filename="src\sounds.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
