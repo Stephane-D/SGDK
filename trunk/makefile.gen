@@ -2,32 +2,32 @@ BIN= $(GDK)/bin
 LIB= $(GDK)/lib
 
 LIBSRC= $(GDK)/src
-LIBINCLUDE= $(GDK)/include
+LIBRES= $(GDK)/res
+LIBINCLUDE= $(GDK)/inc
 
 SRC= src
 RES= res
-INCLUDE= include
+INCLUDE= inc
 
-SHELL=$(BIN)/sh
+SHELL= $(BIN)/sh
 RM= $(BIN)/rm
+CP= $(BIN)/cp
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
-ECHO=echo
+ECHO= echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
 SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
-WAVTORAW= $(BIN)/wavtoraw
-PCMTORAW= $(BIN)/pcmtoraw
 GENRES= $(BIN)/genres
-TFMCOM= $(BIN)/tfmcom
+RESCOMP= $(BIN)/rescomp
 NM= $(BIN)/nm
 MKDIR= $(BIN)/mkdir
 NM2WCH= $(BIN)/nm2wch
-ADDR2LINE=$(BIN)/addr2line
-OUT2GSRC=$(BIN)/out2gsrc
+ADDR2LINE= $(BIN)/addr2line
+OUT2GSRC= $(BIN)/out2gsrc
 
 OPTION=
 
@@ -35,67 +35,34 @@ SRC_C= $(wildcard *.c)
 SRC_C+= $(wildcard $(SRC)/*.c)
 SRC_S= $(wildcard *.s)
 SRC_S+= $(wildcard $(SRC)/*.s)
-SRC_SZ80= $(wildcard *.s80)
-SRC_SZ80+= $(wildcard $(SRC)/*.s80)
+SRC_ASM= $(wildcard *.asm)
+SRC_ASM+= $(wildcard $(SRC)/*.asm)
+SRC_S80= $(wildcard *.s80)
+SRC_S80+= $(wildcard $(SRC)/*.s80)
 
 RES_C= $(wildcard $(RES)/*.c)
 RES_S= $(wildcard $(RES)/*.s)
-RES_BMP= $(wildcard *.bmp)
-RES_BMP+= $(wildcard $(RES)/*.bmp)
-RES_WAV= $(wildcard *.wav)
-RES_WAV+= $(wildcard $(RES)/*.wav)
-RES_WAVPCM= $(wildcard *.wavpcm)
-RES_WAVPCM+= $(wildcard $(RES)/*.wavpcm)
-RES_DAT= $(wildcard *.dat)
-RES_DAT+= $(wildcard $(RES)/*.dat)
-RES_RAW= $(wildcard *.raw)
-RES_RAW+= $(wildcard $(RES)/*.raw)
-RES_PCM= $(wildcard *.pcm)
-RES_PCM+= $(wildcard $(RES)/*.pcm)
-RES_TFD= $(wildcard *.tfd)
-RES_TFD+= $(wildcard $(RES)/*.tfd)
-RES_TFC= $(wildcard *.tfc)
-RES_TFC+= $(wildcard $(RES)/*.tfc)
-RES_MVS= $(wildcard *.mvs)
-RES_MVS+= $(wildcard $(RES)/*.mvs)
-RES_EIF= $(wildcard *.eif)
-RES_EIF+= $(wildcard $(RES)/*.eif)
-RES_ESF= $(wildcard *.esf)
-RES_ESF+= $(wildcard $(RES)/*.esf)
-RES_VGM= $(wildcard *.vgm)
-RES_VGM+= $(wildcard $(RES)/*.vgm)
 RES_RC= $(wildcard *.rc)
 RES_RC+= $(wildcard $(RES)/*.rc)
-RES_ASM= $(wildcard *.asm)
-RES_ASM+= $(wildcard $(RES)/*.asm)
+RES_RES= $(wildcard *.res)
+RES_RES+= $(wildcard $(RES)/*.res)
 
-OBJ= $(RES_BMP:.bmp=.o)
-OBJ+= $(RES_WAV:.wav=.o)
-OBJ+= $(RES_WAVPCM:.wavpcm=.o)
+OBJ= $(RES_RES:.res=.o)
 OBJ+= $(RES_RC:.rc=.o)
-OBJ+= $(RES_ASM:.asm=.o)
-OBJ+= $(RES_DAT:.dat=.o)
-OBJ+= $(RES_RAW:.raw=.o)
-OBJ+= $(RES_PCM:.pcm=.o)
-OBJ+= $(RES_TFD:.tfd=.o)
-OBJ+= $(RES_TFC:.tfc=.o)
-OBJ+= $(RES_MVS:.mvs=.o)
-OBJ+= $(RES_VGM:.vgm=.o)
-OBJ+= $(RES_EIF:.eif=.o)
-OBJ+= $(RES_ESF:.esf=.o)
 OBJ+= $(RES_S:.s=.o)
 OBJ+= $(RES_C:.c=.o)
-OBJ+= $(SRC_SZ80:.s80=.o)
+OBJ+= $(SRC_S80:.s80=.o)
+OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
 OBJS = $(addprefix out/, $(OBJ))
 
-INCS= -I$(LIBINCLUDE) -I$(INCLUDE) -I$(SRC) -I$(RES)
+INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
 #FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS) -B$(BIN)
 #FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-FLAGSZ80= -i$(LIBSRC) -i$(LIBINCLUDE) -i$(SRC) -i$(INCLUDE) -i$(RES)
+FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
 release: out/rom.bin
@@ -126,7 +93,7 @@ out/rom.gsrc: out/rom.bin
 	$(ADDR2LINE) -e out/rom.out < out/rom.addr > out/rom.gsrc
 
 out/rom.out: out/sega.o out/cmd_ $(LIB)/libmd.a
-	$(CC) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
+	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
 	$(RM) out/cmd_
 
 out/cmd_: $(OBJS)
@@ -156,6 +123,8 @@ out/%.o: %.s
 	$(MKDIR) -p out/res
 	$(CC) $(FLAGS) -c $< -o $@
 
+%.s: %.res
+	$(RESCOMP) $< $@
 
 %.asm: %.rc
 	$(GENRES) $< $@
@@ -163,47 +132,8 @@ out/%.o: %.s
 %.s: %.asm
 	$(MACCER) -o $@ $<
 
-%.s: %.bmp
-	$(BINTOS) -bmp $<
-
-%.raw: %.wav
-	$(WAVTORAW) $< $@ 16000
-
-%.pcm: %.wavpcm
-	$(WAVTORAW) $< $@ 22050
-
-%.rawpcm: %.pcm
-	$(PCMTORAW) $< $@
-
-%.tfc: %.tfd
-	$(TFMCOM) $<
-
 %.o80: %.s80
 	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
-
-%.s: %.tfc
-	$(BINTOS) -align 32768 $<
-
-%.s: %.mvs
-	$(BINTOS) -align 256 $<
-
-%.s: %.esf
-	$(BINTOS) -align 32768 $<
-
-%.s: %.eif
-	$(BINTOS) -align 256 $<
-
-%.s: %.vgm
-	$(BINTOS) -align 256 $<
-
-%.s: %.raw
-	$(BINTOS) -align 256 -sizealign 256 $<
-
-%.s: %.rawpcm
-	$(BINTOS) -align 128 -sizealign 128 -nullfill 136 $<
-
-%.s: %.dat
-	$(BINTOS) -align 256 -sizealign 256 $<
 
 %.s: %.o80
 	$(BINTOS) $<
