@@ -13,8 +13,9 @@ int main()
     VDP_setScreenWidth320();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
-    VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
-    VDP_setTextPalette(0);
+    VDP_setPalette(PAL0, font_lib.palette);
+    VDP_setPaletteColor((PAL1 * 16) + 1, 0x0888);
+    VDP_setTextPalette(PAL0);
 
     while(1)
     {
@@ -29,7 +30,7 @@ static void printChar(char c, u16 state)
     char temp[2];
     temp[0] = c;
     temp[1] = 0;
-    VDP_setTextPalette(state ? 1 : 0);
+    VDP_setTextPalette(state ? PAL1 : PAL0);
     VDP_drawText(temp, posX, posY);
     posX += 2;
 }
@@ -44,7 +45,7 @@ static void printWord(u16 val, u16 state)
     temp[4] = hex[(val >> 4) & 15];
     temp[5] = hex[val & 15];
     temp[6] = 0;
-    VDP_setTextPalette(state ? 1 : 0);
+    VDP_setTextPalette(state ? PAL1 : PAL0);
     VDP_drawText(temp, posX, posY);
     posX += 8;
 }
