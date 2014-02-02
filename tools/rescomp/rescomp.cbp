@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="rescomp" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="debug">
+				<Option output="out\rescomp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="out\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="release">
+				<Option output="out\rescomp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="out\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="inc\bin.h" />
+		<Unit filename="inc\bitmap.h" />
+		<Unit filename="inc\image.h" />
+		<Unit filename="inc\img_tools.h" />
+		<Unit filename="inc\libpng.h" />
+		<Unit filename="inc\map.h" />
+		<Unit filename="inc\palette.h" />
+		<Unit filename="inc\pcm.h" />
+		<Unit filename="inc\plugin.h" />
+		<Unit filename="inc\rescomp.h" />
+		<Unit filename="inc\snd_tools.h" />
+		<Unit filename="inc\spr_tools.h" />
+		<Unit filename="inc\sprite.h" />
+		<Unit filename="inc\tfmmusic.h" />
+		<Unit filename="inc\tile_tools.h" />
+		<Unit filename="inc\tileset.h" />
+		<Unit filename="inc\tools.h" />
+		<Unit filename="inc\vgmmusic.h" />
+		<Unit filename="inc\wav.h" />
+		<Unit filename="rescomp.txt" />
+		<Unit filename="src\bin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\bitmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\image.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\img_tools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\libpng.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\palette.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\pcm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\rescomp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\snd_tools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\spr_tools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\sprite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\tfmmusic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\tile_tools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\tileset.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\tools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\vgmmusic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\wav.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
