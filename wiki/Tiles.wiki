@@ -1,4 +1,4 @@
-#summary How to draw stuff on screen: introduction to tile and tilemap.
+#summary How to display stuff on screen (tile and tilemap concept).
 #labels Phase-Implementation
 
 == Tiles ==
