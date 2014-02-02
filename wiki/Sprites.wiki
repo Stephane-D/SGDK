@@ -1,4 +1,4 @@
-#summary How to deal with Sprite with SGDK.
+#summary How to display and handle sprites with SGDK.
 #labels Phase-Implementation
 
 == Sprites ==
