@@ -2,9 +2,9 @@
 
 = Installation =
 
- # *[HowToUseSGDK Installation and basic use]*
- # *[UseSGDKWithEclipse Use SGDK with Eclipse]*
- # *[UseSGDKWithCB Use SGDK with Code::blocks]*
+ # *[HowToUseSGDK Installation & basic use]*
+ # *[UseSGDKWithEclipse SGDK with Eclipse]*
+ # *[UseSGDKWithCB SGDK with Code::blocks]*
 
 = Programming =
 
