@@ -14,6 +14,7 @@
 %GDK%/lib/libmd.a
 }}}
  * Before compiling your own project you first need to respect the following constraint in your project source tree :
+ ** sources files (C, S, ASM, S80) : root directory or "src" directory
 {{{
 sources files (C, S, ASM, S80) : root directory or "src" directory
 includes files (H, INC) : root directory or "include" directory
