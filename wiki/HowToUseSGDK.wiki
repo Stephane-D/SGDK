@@ -13,10 +13,9 @@
 {{{
 %GDK%/lib/libmd.a
 }}}
- * Before compiling your own project you first need to respect the following constraint in your project source tree :
- ** sources files (C, S, ASM, S80) : root directory or "src" directory
-{{{
-sources files (C, S, ASM, S80) : root directory or "src" directory
+ * Before compiling your own project you first need to respect the following constraint in your project source tree:
+   * sources files (C, S, ASM, S80)
+     root directory or "src" directory
 includes files (H, INC) : root directory or "include" directory
 primary resource files (C, S, RC, RES) : root directory or "res" directory 
 others resources files (TFC, TFD, PCM, RAW, WAV, BIN, BMP, PNG) : can be wherever you want while you are referring them correctly in your resource definition files
