@@ -30,9 +30,6 @@ void drawPoints(u8 col);
 void doActionJoy(u8 numjoy, u16 value);
 void handleJoyEvent(u16 joy, u16 changed, u16 state);
 
-void showDebugInfos();
-void showVector(u16 posX, u16 posY, u8 col, Vect3D_f16 *vect);
-
 
 int main()
 {
@@ -41,7 +38,7 @@ int main()
     VDP_setHilightShadow(0);
 
     // speed up controller checking
-    JOY_setSupport(PORT_1, JOY_SUPPORT_3BTN);
+    JOY_setSupport(PORT_1, JOY_SUPPORT_6BTN);
     JOY_setSupport(PORT_2, JOY_SUPPORT_OFF);
 
     JOY_setEventHandler(handleJoyEvent);
@@ -56,6 +53,7 @@ int main()
     // allocate translation and rotation structure
     M3D_setTransform(&transformation, &translation, &rotation);
 
+//    M3D_setTranslation(&transformation, FIX16(0), FIX16(0), FIX16(15));
     M3D_setTranslation(&transformation, FIX16(0), FIX16(0), FIX16(5));
     M3D_setRotation(&transformation, FIX16(0), FIX16(0), FIX16(0));
 
@@ -63,8 +61,6 @@ int main()
 
     while (1)
     {
-        int i;
-
         doActionJoy(JOY_1, JOY_readJoypad(JOY_1));
 
         // do work here
@@ -158,25 +154,29 @@ void doActionJoy(u8 numjoy, u16 value)
     {
         if (value & BUTTON_UP)
         {
-            rotstep.x += FIX16(0.05);
+            if (value & BUTTON_A) translation.y += FIX16(0.2);
+            else rotstep.x += FIX16(0.05);
         }
 
         if (value & BUTTON_DOWN)
         {
-            rotstep.x -= FIX16(0.05);
+            if (value & BUTTON_A) translation.y -= FIX16(0.2);
+            else rotstep.x -= FIX16(0.05);
         }
 
         if (value & BUTTON_LEFT)
         {
-            rotstep.y += FIX16(0.05);
+            if (value & BUTTON_A) translation.x -= FIX16(0.2);
+            else rotstep.y += FIX16(0.05);
         }
 
         if (value & BUTTON_RIGHT)
         {
-            rotstep.y -= FIX16(0.05);
+            if (value & BUTTON_A) translation.x += FIX16(0.2);
+            else rotstep.y -= FIX16(0.05);
         }
 
-        if (value & BUTTON_A)
+        if (value & BUTTON_X)
         {
             rotstep.x = FIX16(0.0);
             rotstep.y = FIX16(0.0);
@@ -184,17 +184,18 @@ void doActionJoy(u8 numjoy, u16 value)
 
         if (value & BUTTON_B)
         {
-            translation.z += FIX16(0.1);
+            if (value & BUTTON_A) translation.z += FIX16(1);
+            else translation.z += FIX16(0.1);
         }
 
         if (value & BUTTON_C)
         {
-            translation.z -= FIX16(0.1);
+            if (value & BUTTON_A) translation.z -= FIX16(1);
+            else translation.z -= FIX16(0.1);
         }
 
         if (value & BUTTON_START)
         {
-
         }
     }
 }
