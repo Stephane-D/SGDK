@@ -12,7 +12,7 @@ This wiki aims to help you in using SGDK. It goes from the installation and to t
 
 = Programming =
 
- # *[#HelloWorld Start with the simple Hello World example !]*
+ # *[#HelloWorld Start with the simple Hello World example]*
  # *[#Input How to read and handle controllers]*
  # *[#Tiles How to display stuff on screen (tile and tilemap concept)]*
  # *[#sgdk_tile_functions Another quick introduction to tile and tilemap]*
