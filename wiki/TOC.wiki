@@ -1,0 +1,17 @@
+#summary Table of content
+
+= Installation =
+
+ # *[#HowToUseSGDK Installation and basic usage]*
+ # *[#UseSGDKWithEclipse Use SGDK with the Eclipse IDE]*
+ # *[#UseSGDKWithCB Use SGDK with the Code::blocks IDE]*
+
+= Programming =
+
+ # *[#HelloWorld Start with the simple Hello World example]*
+ # *[#Input How to read and handle controllers]*
+ # *[#Tiles How to display stuff on screen (tile and tilemap concept)]*
+ # *[#sgdk_tile_functions Another quick introduction to tile and tilemap]*
+ # *[#Sprites How to display and handle sprites]*
+ # *[#SGDK_Math SDGK and maths]*
+ # *more to come soon...* 
