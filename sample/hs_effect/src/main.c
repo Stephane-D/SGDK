@@ -54,10 +54,10 @@ const u16 background_palette[16] = {
     for(row = 0; row < NUM_ROWS; row += 2) \
     for(column = 0; column < NUM_COLUMNS; column += 2) \
     { \
-       VDP_setTileMap( BPLAN, VRAM_POS_BRICK_A, column,   row); \
-       VDP_setTileMap( BPLAN, VRAM_POS_BRICK_B, column+1, row); \
-       VDP_setTileMap( BPLAN, VRAM_POS_BRICK_B, column,   row+1); \
-       VDP_setTileMap( BPLAN, VRAM_POS_BRICK_A, column+1, row+1); \
+       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_A, column,   row); \
+       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_B, column+1, row); \
+       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_B, column,   row+1); \
+       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_A, column+1, row+1); \
     }
 
 #define DrawSpotlights(); \
@@ -65,7 +65,7 @@ const u16 background_palette[16] = {
     for(column = 0; column < NUM_SPOTLIGHTS; column++) \
     for(tile_spotlight = 0; tile_spotlight < SPOTLIGHT_WIDTH; tile_spotlight++) \
     { \
-       VDP_setTileMap( APLAN, TILE_ATTR_FULL(PAL0, column%2, 0, 0, VRAM_POS_TILE_VOID), \
+       VDP_setTileMapXY( APLAN, TILE_ATTR_FULL(PAL0, column%2, 0, 0, VRAM_POS_TILE_VOID), \
           (column * SPOTLIGHT_WIDTH) + tile_spotlight, row); \
     }
 
