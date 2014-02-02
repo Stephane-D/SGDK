@@ -40,7 +40,7 @@
 // we don't want to share them
 extern u32 VIntProcess;
 extern u32 HIntProcess;
-extern u16 textBasetile;
+extern u16 text_basetile;
 
 
 static u8 *bmp_buffer_0 = NULL;
@@ -155,7 +155,7 @@ void BMP_reset()
     VDP_setVerticalScroll(BMP_PLAN, 0);
 
     // prepare hint for extended blank on next frame
-    VDP_setHIntCounter(((VDP_getScreenHeight() - BMP_HEIGHT) >> 1) - 1);
+    VDP_setHIntCounter(((screenHeight - BMP_HEIGHT) >> 1) - 1);
     // enabled bitmap Int processing
     HIntProcess |= PROCESS_BITMAP_TASK;
     VIntProcess |= PROCESS_BITMAP_TASK;
@@ -230,7 +230,7 @@ u16 BMP_flip(u16 async)
 
 void BMP_drawText(const char *str, u16 x, u16 y)
 {
-    VDP_drawTextBG(BMP_PLAN, str, textBasetile, x, y + GET_YOFFSET);
+    VDP_drawTextBG(BMP_PLAN, str, text_basetile, x, y + GET_YOFFSET);
 }
 
 void BMP_clearText(u16 x, u16 y, u16 w)
@@ -414,7 +414,7 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 //}
 
 
-void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
+void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
     // pixel out screen ?
     if ((x >= BMP_WIDTH) || (y >= BMP_HEIGHT))
@@ -432,7 +432,7 @@ void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     else adj_h = h;
 
     // prepare source and destination
-    src = data;
+    src = image;
     dst = BMP_getWritePointer(x, y);
 
     while(adj_h--)
@@ -443,39 +443,82 @@ void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     }
 }
 
-void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
+u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
 {
     u16 w, h;
+    const Palette *palette = bitmap->palette;
 
     // get the image width
     w = bitmap->w;
     // get the image height
     h = bitmap->h;
 
-    // load the palette
-    if (loadpal) VDP_setPalette(pal, bitmap->palette);
+    // compressed bitmap ?
+    if (bitmap->compression != COMPRESSION_NONE)
+    {
+        Bitmap *b = unpackBitmap(bitmap, NULL);
 
-    BMP_loadBitmapData(bitmap->image, x, y, w, h, w >> 1);
+        if (b == NULL) return FALSE;
+
+        BMP_drawBitmapData(b->image, x, y, w, h, w >> 1);
+        MEM_free(b);
+    }
+    else
+        BMP_drawBitmapData(bitmap->image, x, y, w, h, w >> 1);
+
+    // load the palette
+    if (loadpal) VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+
+    return TRUE;
 }
 
-void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
+u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
 {
     u16 bmp_wb, bmp_h;
+    const Palette *palette = bitmap->palette;
 
     // get the image width in byte
     bmp_wb = bitmap->w >> 1;
     // get the image height
     bmp_h = bitmap->h;
 
-    // load the palette
-    if (loadpal) VDP_setPalette(pal, bitmap->palette);
+    // compressed bitmap ?
+    if (bitmap->compression != COMPRESSION_NONE)
+    {
+        Bitmap *b = unpackBitmap(bitmap, NULL);
 
-    BMP_scale(bitmap->image, bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
+        if (b == NULL) return FALSE;
+
+        BMP_scale(b->image, bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
+        MEM_free(b);
+    }
+    else
+        BMP_scale(bitmap->image, bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
+
+    // load the palette
+    if (loadpal) VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+
+    return TRUE;
 }
 
-void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *pal)
+void BMP_loadBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
-    memcpy(pal, bitmap->palette, 16 * 2);
+    BMP_drawBitmapData(image, x, y, w, h, pitch);
+}
+
+void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
+{
+    BMP_drawBitmap(bitmap, x, y, loadpal);
+}
+
+void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
+{
+    BMP_drawBitmapScaled(bitmap, x, y, w, h, loadpal);
+}
+
+void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *dest)
+{
+    memcpy(dest, bitmap->palette, 16 * 2);
 }
 
 
@@ -548,7 +591,7 @@ u16 BMP_doHBlankProcess()
     if (phase == 0)
     {
         const u16 vcnt = GET_VCOUNTER;
-        const u16 scrh = VDP_getScreenHeight();
+        const u16 scrh = screenHeight;
         const u16 vborder = (scrh - BMP_HEIGHT) >> 1;
 
         // enable VDP
@@ -569,7 +612,7 @@ u16 BMP_doHBlankProcess()
         // disable VDP
         VDP_setEnable(0);
         // prepare hint to re enable VDP
-        VDP_setHIntCounter(((VDP_getScreenHeight() - BMP_HEIGHT) >> 1) - 1);
+        VDP_setHIntCounter(((screenHeight - BMP_HEIGHT) >> 1) - 1);
         // update phase
         phase = 3;
 

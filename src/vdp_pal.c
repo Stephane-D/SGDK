@@ -90,26 +90,7 @@ const u16 palette_black_all[64] =
     0x0000,
 };
 
-const u16 palette_black[16] =
-{
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-    0x0000,
-};
+const u16* const palette_black = palette_black_all;
 
 const u16 palette_grey[16] =
 {
@@ -205,7 +186,11 @@ static s16 fading_stepG[64];
 static s16 fading_stepB[64];
 static u16 fading_from;
 static u16 fading_to;
-static u16 fading_cnt;
+static s16 fading_cnt;
+
+
+// forward
+static void setFadePalette();
 
 
 u16 VDP_getPaletteColor(u16 index)
@@ -241,17 +226,19 @@ void VDP_setPaletteColor(u16 index, u16 value)
 }
 
 
-u16 VDP_doStepFading()
+static void setFadePalette()
 {
+    s16 *palR;
+    s16 *palG;
+    s16 *palB;
     vu16 *pw;
     vu32 *pl;
     u16 addr;
     u16 i;
 
-    // end fading ?
-    if (fading_cnt == 0) return 0;
-
-    VDP_setAutoInc(2);
+    // lazy optimization
+    if (VDP_getAutoInc() != 2)
+        VDP_setAutoInc(2);
 
     /* point to vdp port */
     pw = (u16 *) GFX_DATA_PORT;
@@ -260,30 +247,72 @@ u16 VDP_doStepFading()
     addr = fading_from * 2;
     *pl = GFX_WRITE_CRAM_ADDR(addr);
 
-    for(i = fading_from; i <= fading_to; i++)
+    i = fading_from;
+
+    palR = fading_palR + i;
+    palG = fading_palG + i;
+    palB = fading_palB + i;
+
+    i = (fading_to - fading_from) + 1;
+    while(i--)
     {
         u16 col;
 
-        fading_palR[i] += fading_stepR[i];
-        fading_palG[i] += fading_stepG[i];
-        fading_palB[i] += fading_stepB[i];
+        col = ((*palR++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
+        col |= ((*palG++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
+        col |= ((*palB++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
 
-        col = ((fading_palR[i] >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
-        col |= ((fading_palG[i] >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
-        col |= ((fading_palB[i] >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
         *pw = col;
     }
+}
 
-    fading_cnt--;
+u16 VDP_doStepFading()
+{
+    s16 *palR;
+    s16 *palG;
+    s16 *palB;
+    s16 *stepR;
+    s16 *stepG;
+    s16 *stepB;
+    u16 i;
+
+    i = fading_from;
+
+    palR = fading_palR + i;
+    palG = fading_palG + i;
+    palB = fading_palB + i;
+    stepR = fading_stepR + i;
+    stepG = fading_stepG + i;
+    stepB = fading_stepB + i;
+
+    i = (fading_to - fading_from) + 1;
+    while(i--)
+    {
+        *palR++ += *stepR++;
+        *palG++ += *stepG++;
+        *palB++ += *stepB++;
+    }
+
+    // set current fade palette
+    setFadePalette();
+
+    // one step less
+    if (--fading_cnt <= 0) return 0;
 
     return 1;
 }
 
 u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe)
 {
-    u16 i;
     const u16 *src;
     const u16 *dst;
+    s16 *palR;
+    s16 *palG;
+    s16 *palB;
+    s16 *stepR;
+    s16 *stepG;
+    s16 *stepB;
+    u16 i;
 
     // can't do a fade on 0 frame !
     if (numframe == 0) return 0;
@@ -294,18 +323,34 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 
     src = palsrc;
     dst = paldst;
-    for(i = fromcol; i <= tocol; i++)
-    {
-        fading_palR[i] = ((*src & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS;
-        fading_palG[i] = ((*src & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS;
-        fading_palB[i] = ((*src & VDPPALETTE_BLUEMASK) >> VDPPALETTE_BLUESFT) << PALETTEFADE_FRACBITS;
-        src++;
+    palR = fading_palR + fromcol;
+    palG = fading_palG + fromcol;
+    palB = fading_palB + fromcol;
+    stepR = fading_stepR + fromcol;
+    stepG = fading_stepG + fromcol;
+    stepB = fading_stepB + fromcol;
 
-        fading_stepR[i] = ((((*dst & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS) - fading_palR[i]) / numframe;
-        fading_stepG[i] = ((((*dst & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS) - fading_palG[i]) / numframe;
-        fading_stepB[i] = ((((*dst & VDPPALETTE_BLUEMASK) >> VDPPALETTE_BLUESFT) << PALETTEFADE_FRACBITS) - fading_palB[i]) / numframe;
-        dst++;
+    i = (tocol - fromcol) + 1;
+    while(i--)
+    {
+        const u16 s = *src++;
+        const u16 d = *dst++;
+
+        const s16 R = ((s & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS;
+        const s16 G = ((s & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS;
+        const s16 B = ((s & VDPPALETTE_BLUEMASK) >> VDPPALETTE_BLUESFT) << PALETTEFADE_FRACBITS;
+
+        *stepR++ = ((((d & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS) - R) / numframe;
+        *stepG++ = ((((d & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS) - G) / numframe;
+        *stepB++ = ((((d & VDPPALETTE_BLUEMASK) >> VDPPALETTE_BLUESFT) << PALETTEFADE_FRACBITS) - B) / numframe;
+
+        *palR++ = R;
+        *palG++ = G;
+        *palB++ = B;
     }
+
+    // set current fade palette
+    setFadePalette();
 
     return 1;
 }
@@ -385,6 +430,11 @@ void VDP_fadeInAll(const u16 *pal, u16 numframe, u8 async)
     VDP_fade(0, 63, palette_black_all, pal, numframe, async);
 }
 
+
+u16 VDP_isDoingFade()
+{
+    return (VIntProcess & PROCESS_PALETTE_FADING)?TRUE:FALSE;
+}
 
 void VDP_waitFadeCompletion()
 {

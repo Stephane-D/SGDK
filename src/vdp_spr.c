@@ -10,15 +10,15 @@
 
 
 // no static so it can be read
-SpriteDef spriteDefCache[MAX_SPRITE];
+SpriteDef vdpSpriteCache[MAX_SPRITE];
 
 static u16 spriteNum;
 
 
 void VDP_resetSprites()
 {
-    spriteDefCache[0].posx = -0x80;
-    spriteDefCache[0].link = 0;
+    vdpSpriteCache[0].posx = -0x80;
+    vdpSpriteCache[0].link = 0;
 
     // needed to send the null sprite to the VDP
     spriteNum = 1;
@@ -33,7 +33,7 @@ void VDP_setSprite(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link)
 
     if (index >= spriteNum) spriteNum = index + 1;
 
-    sprite = &spriteDefCache[index];
+    sprite = &vdpSpriteCache[index];
 
     sprite->posx = x;
     sprite->posy = y;
@@ -50,7 +50,7 @@ void VDP_setSpriteP(u16 index, const SpriteDef *sprite)
 
     if (index >= spriteNum) spriteNum = index + 1;
 
-    spriteDst = &spriteDefCache[index];
+    spriteDst = &vdpSpriteCache[index];
 
     spriteDst->posx = sprite->posx;
     spriteDst->posy = sprite->posy;
@@ -125,7 +125,7 @@ void VDP_setSpritePosition(u16 index, u16 x, u16 y)
 
     if (index >= spriteNum) spriteNum = index + 1;
 
-    sprite = &spriteDefCache[index];
+    sprite = &vdpSpriteCache[index];
 
     sprite->posx = x;
     sprite->posy = y;
@@ -182,7 +182,7 @@ void VDP_setSprites(u16 index, const SpriteDef *sprites, u16 num)
 
     if ((index + adjNum) > spriteNum) spriteNum = index + adjNum;
 
-    memcpy(&spriteDefCache[index], sprites, sizeof(SpriteDef) * adjNum);
+    memcpy(&vdpSpriteCache[index], sprites, sizeof(SpriteDef) * adjNum);
 }
 
 
@@ -203,7 +203,7 @@ void VDP_updateSprites()
 
     *plctrl = GFX_WRITE_VRAM_ADDR(SLIST);
 
-    sprite = &spriteDefCache[0];
+    sprite = &vdpSpriteCache[0];
     i = spriteNum;
     while(i--)
     {

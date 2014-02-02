@@ -565,7 +565,8 @@ loop_ch
 ; $8E
             sampleOutputAndWait         ;                       ' 48    |
             LD      C, $6F              ; prepare loop          ' 7     | 110
-            wait55                      ;                       ' 55    |
+            LD      HL, YMPORT0         ; and DAC set           ' 10    |
+            wait45                      ;                       ' 45    |
 
 ; $8F-FD
 loop_freetime

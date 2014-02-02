@@ -40,3 +40,21 @@ SYS_setInterruptMaskLevel:
 	lsl.w   #8,%d0
 	move.w  %d0,%sr
 	rts
+
+
+	.align	2
+	.globl	SYS_getAndSetInterruptMaskLevel
+	.type	SYS_getAndSetInterruptMaskLevel, @function
+SYS_getAndSetInterruptMaskLevel:
+
+	move.w  6(%sp),%d1                      | d1 = value
+	andi.w  #0x07,%d1
+	ori.w   #0x20,%d1
+	lsl.w   #8,%d1
+
+	move.w  %sr,%d0                         | d0 = previous SR value
+	move.w  %d1,%sr                         | SR = d1 (these 2 instructions should be canonical)
+
+    lsr.w   #8,%d0
+	andi.w  #0x07,%d0                       | d0 = previous interrupt mask
+	rts

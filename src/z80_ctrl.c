@@ -3,7 +3,8 @@
 
 #include "z80_ctrl.h"
 
-
+#include "ym2612.h"
+#include "psg.h"
 #include "memory.h"
 #include "timer.h"
 
@@ -228,6 +229,8 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             return;
     }
 
+    // clear z80 memory
+    Z80_clear(0, Z80_RAM_LEN, FALSE);
     // upload Z80 driver and reset Z80
     Z80_upload(0, drv, len, 1);
 
@@ -312,6 +315,11 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             Z80_releaseBus();
             break;
 
+        case Z80_DRIVER_VGM:
+            // just reset sound chips
+            YM2612_reset();
+            PSG_init();
+            break;
     }
 
     // wait driver for being ready
@@ -370,5 +378,3 @@ u16 Z80_isDriverReady()
 
     return ret;
 }
-
-

@@ -7,6 +7,8 @@
 #include "z80_mvsc.h"
 #include "smp_null.h"
 #include "smp_null_pcm.h"
+#include "ym2612.h"
+#include "psg.h"
 #include "timer.h"
 
 
@@ -746,8 +748,9 @@ void SND_startPlay_TFM(const u8 *song)
     vu8 *pb;
     u32 addr;
 
-    // start by unloading driver (actually clear Z80 ram)
+    // force driver reload to clear memory
     Z80_unloadDriver();
+    Z80_loadDriver(Z80_DRIVER_TFM, 0);
 
     Z80_requestBus(1);
 
@@ -762,13 +765,11 @@ void SND_startPlay_TFM(const u8 *song)
     pb[0x02] = addr >> 16;
     pb[0x03] = addr >> 24;
 
-    Z80_releaseBus();
-
-    // load the driver after we set the song adress
-    Z80_loadDriver(Z80_DRIVER_TFM, 0);
-
-    // reset Z80 (in case driver was already loaded)
+    // release BUS & reset Z80
     Z80_startReset();
+    Z80_releaseBus();
+    // wait bus released
+    while(Z80_isBusTaken());
     Z80_endReset();
 }
 
@@ -790,6 +791,13 @@ void SND_startPlay_VGM(const u8 *song)
 
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_VGM, 1);
+
+    // stop current music
+    if (SND_isPlaying_VGM())
+    {
+        SND_stopPlay_VGM();
+        waitMs(10);
+    }
 
     Z80_requestBus(1);
 
@@ -814,7 +822,6 @@ void SND_startPlay_VGM(const u8 *song)
     Z80_releaseBus();
 }
 
-
 void SND_stopPlay_VGM()
 {
     vu8 *pb;
@@ -828,5 +835,66 @@ void SND_stopPlay_VGM()
     pb = (u8 *) 0xA01004;
     *pb = 0x00;
 
+    Z80_releaseBus();
+}
+
+void SND_resumePlay_VGM()
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+
+    Z80_requestBus(1);
+
+    // point to Z80 VGM play parameter
+    pb = (u8 *) 0xA01004;
+    *pb = 0x01;
+
+    Z80_releaseBus();
+}
+
+u8 SND_isPlaying_VGM()
+{
+    u8 result;
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+
+    Z80_requestBus(1);
+
+    // point to Z80 VGM play parameter
+    pb = (u8 *) 0xA01004;
+    result = *pb;
+
+    Z80_releaseBus();
+
+    return result;
+}
+
+void SND_playSfx_VGM(unsigned int addr, u16 len)
+{
+    vu8 *pb;
+    u16 z80addr;
+    u8 z80bank;
+    z80bank = ((addr & 0xFF8000) >> 15);
+    z80addr = ((addr & ~0xFF8000) + 0x8000);
+
+    char *p = (char *) 0xA01027;
+    char *q = (char *)&z80addr;
+    char *r = (char *) 0xA01029;
+    char *s = (char *)&len;
+    char *t = (char *) 0xA01026;
+    char *u = (char *)&z80bank;
+
+    Z80_requestBus(1);
+    p[0] = q[1];
+    p[1] = q[0];
+    r[0] = s[1];
+    r[1] = s[0];
+    t[0] = u[0];
+    pb = (u8 *) 0xA01025;
+    *pb = 0x01;
     Z80_releaseBus();
 }

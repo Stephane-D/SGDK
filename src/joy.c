@@ -1,7 +1,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "sega.h"
+#include "timer.h"
 #include "memory.h"
 
 #include "joy.h"
@@ -409,17 +409,40 @@ u16 JOY_readJoypadY(u16 joy)
 
 void JOY_waitPressBtn()
 {
-    JOY_waitPress(JOY_ALL, BUTTON_BTN);
+    JOY_waitPressTime(JOY_ALL, BUTTON_BTN, 0);
 }
 
-
-void JOY_waitPress(u16 joy, u16 btn)
+u16 JOY_waitPressBtnTime(u16 time)
 {
-    while(1)
+    return JOY_waitPressTime(JOY_ALL, BUTTON_BTN, time);
+}
+
+u16 JOY_waitPress(u16 joy, u16 btn)
+{
+    return JOY_waitPressTime(joy, btn, 0);
+}
+
+u16 JOY_waitPressTime(u16 joy, u16 btn, u16 time)
+{
+    u32 maxtime;
+    u32 current;
+
+    // (getTime() << 2) give a good estimation of time in ms
+    current = (getTime(TRUE) << 2);
+
+    // time == 0 --> wait indefinitely
+    if (time) maxtime = current + time;
+    else maxtime = 0xFFFFFFFF;
+
+    while(current < maxtime)
     {
+        u16 state;
+
         VDP_waitVSync();
+
+        /* vblank int won't occur - do JOY_update() manually */
         if (SYS_getInterruptMaskLevel() >= 6)
-            JOY_update(); /* vblank int won't occur - do JOY_update() */
+            JOY_update();
 
         if (joy == JOY_ALL)
         {
@@ -428,14 +451,25 @@ void JOY_waitPress(u16 joy, u16 btn)
             i = JOY_NUM;
             while(i--)
             {
-                if (joyState[i] & btn) return;
+                state = joyState[i] & btn;
+
+                if (state)
+                    return state;
             }
         }
         else
         {
-            if (joyState[joy] & btn) return;
+            state = joyState[joy] & btn;
+
+            if (state)
+                return state;
         }
+
+        // (getTime() << 2) give a good estimation of time in ms
+        current = (getTime(TRUE) << 2);
     }
+
+    return FALSE;
 }
 
 

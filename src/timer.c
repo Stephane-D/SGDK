@@ -35,7 +35,7 @@ u32 getSubTick()
     u32 vcnt;
 
     vcnt = GET_VCOUNTER;
-    const u32 scrh = VDP_getScreenHeight();
+    const u32 scrh = screenHeight;
 
     // as VCounter roolback in blank area we use a "medium" value
     if (vcnt >= scrh) vcnt = 16;
@@ -96,8 +96,8 @@ void waitSubTick(u32 subtick)
     u32 current;
     u32 i;
 
-    // waitSubTick(...) can not be called from V-Int callback
-    if (SYS_isInVIntCallback())
+    // waitSubTick(...) can not be called from V-Int callback or when V-Int is disabled
+    if (SYS_getInterruptMaskLevel() >= 6)
     {
         i = subtick;
 
@@ -132,8 +132,8 @@ void waitTick(u32 tick)
     u32 start;
     u32 i;
 
-    // waitTick(...) can not be called from V-Int callback
-    if (SYS_isInVIntCallback())
+    // waitTick(...) can not be called from V-Int callback or when V-Int is disabled
+    if (SYS_getInterruptMaskLevel() >= 6)
     {
         i = tick;
 

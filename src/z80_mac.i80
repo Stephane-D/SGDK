@@ -488,6 +488,11 @@
             wait8
             endm
 
+            macro   wait45
+            wait35
+            wait10
+            endm
+
             macro   wait46
             wait35
             wait11

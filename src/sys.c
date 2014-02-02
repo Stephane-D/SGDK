@@ -17,8 +17,10 @@
 #include "vdp.h"
 #include "vdp_bg.h"
 
+#include "tools.h"
+
 #if (ENABLE_LOGO != 0)
-#include "logo_lib.h"
+#include "libres.h"
 #endif
 
 
@@ -34,6 +36,8 @@ extern u16 randbase;
 extern u16 VDP_doStepFading();
 extern u16 BMP_doHBlankProcess();
 extern u16 BMP_doVBlankProcess();
+extern u16 TC_doVBlankProcess();
+extern u16 SPR_doVBlankProcess();
 
 
 // main function
@@ -74,6 +78,9 @@ u32 VIntProcess;
 u32 HIntProcess;
 u32 ExtIntProcess;
 u16 intTrace;
+
+static u16 intLevelSave;
+static s16 disableIntStack;
 
 
 static void addValueU8(char *dst, char *str, u8 value)
@@ -254,7 +261,6 @@ static u16 showBusAddressErrorDump(u16 pos)
 }
 
 
-
 // bus error default callback
 void _buserror_callback()
 {
@@ -369,15 +375,25 @@ void _vint_callback()
 
     vtimer++;
 
-    // palette fading processing
-    if (VIntProcess & PROCESS_PALETTE_FADING)
+    // tile cache processing
+    if (VIntProcess & PROCESS_TILECACHE_TASK)
     {
-        if (!VDP_doStepFading()) VIntProcess &= ~PROCESS_PALETTE_FADING;
+        if (!TC_doVBlankProcess()) VIntProcess &= ~PROCESS_TILECACHE_TASK;
+    }
+    // tile cache processing
+    if (VIntProcess & PROCESS_SPRITEENGINE_TASK)
+    {
+        if (!SPR_doVBlankProcess()) VIntProcess &= ~PROCESS_SPRITEENGINE_TASK;
     }
     // bitmap processing
     if (VIntProcess & PROCESS_BITMAP_TASK)
     {
         if (!BMP_doVBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
+    }
+    // palette fading processing
+    if (VIntProcess & PROCESS_PALETTE_FADING)
+    {
+        if (!VDP_doStepFading()) VIntProcess &= ~PROCESS_PALETTE_FADING;
     }
 
     // ...
@@ -433,6 +449,8 @@ void _start_entry()
     // initiate random number generator
     randbase = 0xD94B ^ GET_HVCOUNTER;
     vtimer = 0;
+    intLevelSave = 0;
+    disableIntStack = 0;
 
     // default interrupt callback
     busErrorCB = _buserror_callback;
@@ -454,73 +472,83 @@ void _start_entry()
 
 #if (ENABLE_LOGO != 0)
     {
-        // display logo (use BMP mode for that)
-        BMP_init(1, PAL0, 0);
+        Bitmap *logo = unpackBitmap(&logo_lib, NULL);
 
-#if (ZOOMING_LOGO != 0)
-        // init fade in to 30 step
-        u16 step_fade = 30;
-
-        if (VDP_initFading(0, 15, palette_black, logo_lib.palette, step_fade))
+        // correctly unpacked
+        if (logo)
         {
-            // prepare zoom
-            u16 size = 256;
+            const Palette *logo_pal = logo->palette;
 
-            // while zoom not completed
-            while(size > 0)
+            // display logo (use BMP mode for that)
+            BMP_init(TRUE, PAL0, FALSE);
+
+    #if (ZOOMING_LOGO != 0)
+            // init fade in to 30 step
+            u16 step_fade = 30;
+
+            if (VDP_initFading(logo_pal->index, logo_pal->index + (logo_pal->length - 1), palette_black, logo_pal->data, step_fade))
             {
-                // sort of log decrease
-                if (size > 20) size = size - (size / 6);
-                else if (size > 5) size -= 5;
-                else size = 0;
+                // prepare zoom
+                u16 size = 256;
 
-                // get new size
-                const u32 w = 256 - size;
+                // while zoom not completed
+                while(size > 0)
+                {
+                    // sort of log decrease
+                    if (size > 20) size = size - (size / 6);
+                    else if (size > 5) size -= 5;
+                    else size = 0;
 
-                // adjust palette for fade
-                if (step_fade-- > 0) VDP_doStepFading();
+                    // get new size
+                    const u32 w = 256 - size;
 
-                // zoom logo
-                BMP_loadAndScaleBitmap(&logo_lib, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, FALSE);
-                // flip to screen
-                BMP_flip(0);
+                    // adjust palette for fade
+                    if (step_fade-- > 0) VDP_doStepFading();
+
+                    // zoom logo
+                    BMP_loadAndScaleBitmap(logo, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, FALSE);
+                    // flip to screen
+                    BMP_flip(0);
+                }
+
+                // while fade not completed
+                while(step_fade--)
+                {
+                    VDP_waitVSync();
+                    VDP_doStepFading();
+                }
             }
 
-            // while fade not completed
-            while(step_fade--)
-            {
-                VDP_waitVSync();
-                VDP_doStepFading();
-            }
+            // wait 1 second
+            waitTick(TICKPERSECOND * 1);
+    #else
+            // set palette 0 to black
+            VDP_setPalette(PAL0, palette_black);
+
+            // don't load the palette immediatly
+            BMP_loadBitmap(logo, 64, 0, FALSE);
+            // flip
+            BMP_flip(0);
+
+            // fade in logo
+            VDP_fade((PAL0 << 4) + logo_pal->index, (PAL0 << 4) + (logo_pal->index + (logo_pal->length - 1)), palette_black, logo_pal->data, 30, FALSE);
+
+            // wait 1.5 second
+            waitTick(TICKPERSECOND * 1.5);
+    #endif
+
+            // fade out logo
+            VDP_fadePalOut(PAL0, 20, 0);
+            // wait 0.5 second
+            waitTick(TICKPERSECOND * 0.5);
+
+            // shut down bmp mode
+            BMP_end();
+            // release bitmap memory
+            MEM_free(logo);
+            // reinit vdp before program execution
+            VDP_init();
         }
-
-        // wait 1 second
-        waitTick(TICKPERSECOND * 1);
-#else
-        // set palette 0 to black
-        VDP_setPalette(PAL0, palette_black);
-
-        // don't load the palette immediatly
-        BMP_loadBitmap(&logo_lib, 64, 0, FALSE);
-        // flip
-        BMP_flip(0);
-
-        // fade in logo
-        VDP_fadePalIn(PAL0, logo_lib.palette, 30, 0);
-
-        // wait 1.5 second
-        waitTick(TICKPERSECOND * 1.5);
-#endif
-
-        // fade out logo
-        VDP_fadePalOut(PAL0, 20, 0);
-        // wait 0.5 second
-        waitTick(TICKPERSECOND * 0.5);
-
-        // shut down bmp mode
-        BMP_end();
-        // reinit vdp before program execution
-        VDP_init();
     }
 #endif
 
@@ -557,6 +585,46 @@ static void internal_reset()
     SYS_setInterruptMaskLevel(3);
 }
 
+void SYS_disableInts()
+{
+    // in interrupt --> return
+    if (intTrace != 0)
+    {
+        if (LIB_DEBUG)
+            KDebug_Alert("SYS_disableInts() fails: call during interrupt");
+
+        return;
+    }
+
+    // disable interrupts
+    if (disableIntStack++ == 0)
+        intLevelSave = SYS_getAndSetInterruptMaskLevel(7);
+    else if (LIB_DEBUG)
+        KDebug_Alert("SYS_disableInts() info: inner call");
+}
+
+void SYS_enableInts()
+{
+    // in interrupt --> return
+    if (intTrace != 0)
+    {
+        if (LIB_DEBUG)
+            KDebug_Alert("SYS_enableInts() fails: call during interrupt");
+
+        return;
+    }
+
+    // reenable interrupts
+    if (--disableIntStack == 0)
+        SYS_setInterruptMaskLevel(intLevelSave);
+    else if (LIB_DEBUG)
+    {
+        if (disableIntStack < 0)
+            KDebug_Alert("SYS_enableInts() fails: already enabled");
+        else
+            KDebug_Alert("SYS_enableInts() info: inner call");
+    }
+}
 
 void SYS_setVIntCallback(_voidCallback *CB)
 {
@@ -586,4 +654,20 @@ u16 SYS_isInHIntCallback()
 u16 SYS_isInExtIntCallback()
 {
     return intTrace & IN_EXTINT;
+}
+
+u16 SYS_isInInterrupt()
+{
+    return intTrace;
+}
+
+
+void SYS_die(char *err)
+{
+    VDP_init();
+    VDP_drawText("A fatal error occured !", 2, 2);
+    VDP_drawText("cannot continue...", 4, 3);
+    if (err) VDP_drawText(err, 0, 5);
+
+    while(1);
 }
