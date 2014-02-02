@@ -1,4 +1,6 @@
+#summary How to read and handle controllers.
 #labels Phase-Implementation
+
 == Input ==
 
 You'll now learn how to handle input from controllers
