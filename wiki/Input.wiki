@@ -1,6 +1,4 @@
 #labels Phase-Implementation
-== Input ==
-
 === Basic ===
 You'll now learn how to handle input from controllers
 
