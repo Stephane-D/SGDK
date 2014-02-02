@@ -1,6 +1,6 @@
 #summary Maths with SGDK
 
-= Math in SGDK =
+= Maths with SGDK =
 
 Unlike modern systems the 68000 heart genesis CPU doesn't have native support for float number (and so float operation). GCC can emulate it but this is really slow.
 
