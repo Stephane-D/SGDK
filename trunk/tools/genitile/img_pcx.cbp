@@ -22,7 +22,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="img_pcx.cpp" />
+		<Unit filename="src\plugins\img_pcx.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

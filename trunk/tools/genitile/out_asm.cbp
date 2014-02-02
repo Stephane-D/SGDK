@@ -22,7 +22,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="out_asm.cpp" />
+		<Unit filename="src\plugins\out_asm.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

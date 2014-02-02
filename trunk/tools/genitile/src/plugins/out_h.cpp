@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Output binary plugins for mdtt
-// 
+// Output h plugins for mdtt
+//
 //
 //
 //
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "../../mdttSDK.h"
+#include "../mdttSDK.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Local variables
@@ -26,7 +26,7 @@
 
 DLLEXPORT char* GetDescription(void)
 {
-	return "Binary Output";
+	return "Header file output";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ DLLEXPORT char* GetBuildVersion(void)
 
 DLLEXPORT char* GetID(void)
 {
-	return"bin";
+	return"h";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ DLLEXPORT char* GetID(void)
 
 DLLEXPORT char* GetExt(void)
 {
-	return"bin";
+	return"h";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,14 +84,82 @@ DLLEXPORT int OutputData(const char *filename,const char *name,int type,uint8* d
 {
 	FILE *out_file=NULL;
 
-	out_file=fopen(filename,"wb");
+	out_file=fopen(filename,"wt");
 	if(!out_file)
 	{	return tgERR_SAVINGFILE;}
 
-	fwrite(data,size,1,out_file);	
+	switch(type)
+	{
+		case OUTPUT_TILES:
+		{
+			fprintf(out_file,"\nconst unsigned char %s[%d]={\n",name,size);
+			for(int i=0;i<size/4;i++)
+			{
+				for(int j=0;j<4;j++)
+					fprintf(out_file,"0x%.2x,",data[(i*4)+j]);
+				fprintf(out_file,"\n");
+			}
+			fprintf(out_file,"\n};\n");
+
+		}break;
+
+		case OUTPUT_PAL:
+		{
+			fprintf(out_file,"\nconst unsigned short %s[%d]={\n",name,size/2);
+			uint16 *d16=(uint16*) data;
+
+			for(int i=0;i<size/2/16;i++)
+			{	for(int j=0;j<16;j++)
+					fprintf(out_file,"0x%.4x,",d16[(i*16)+j]);
+				fprintf(out_file,"\n");
+			}
+			fprintf(out_file,"\n};\n");
+
+		}break;
+
+		case OUTPUT_MAP:
+		{
+			fprintf(out_file,"\nconst unsigned short %s[%d]={\n",name,size/2);
+			uint16 *d16=(uint16*) data;
+
+			int i=0;
+			int b=0;
+
+			while(i<(size/2))
+			{
+				if(b>15)
+				{	b=0;
+					fprintf(out_file,"\n");
+				}
+				fprintf(out_file,"0x%.4x,",d16[i]);
+				b++;
+				i++;
+			}
+
+
+			/*uint16 *d16=(uint16*) data;
+			for(int i=0;i<size/2;i++)
+			{
+				fprintf(out_file,"\tdc.w $%.4x\n",d16[i]);
+			}*/
+
+			fprintf(out_file,"\n};\n");
+
+		}break;
+
+		default:
+		{/*
+			for(int i=0;i<size;i++)
+			{	fprintf(out_file,"\tdc.b $%.2x\n",data[i]);
+			}
+		*/
+		}break;
+
+
+	}
 
 	fclose(out_file);
-	
+
 	return tgOK;
 }
 

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Output asm plugins for mdtt
-// 
+//
 //
 //
 //
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "../../mdttSDK.h"
+#include "../mdttSDK.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Local variables
@@ -104,49 +104,49 @@ DLLEXPORT int OutputData(const char *filename,const char *name,int type,uint8* d
 			{	if((i&7)==0)
 					fprintf(out_file,"\n* ---------------------------\n");
 
-				fprintf(out_file,"\tdc.l $%.8x\n",d32[i]);		
-			}		
-		
+				fprintf(out_file,"\tdc.l $%.8x\n",d32[i]);
+			}
+
 		}break;
-	
+
 		case OUTPUT_PAL:
 		{
 			uint16 *d16=(uint16*) data;
-			for(int i=0;i<size/2;i++)		
-			{	
+			for(int i=0;i<size/2;i++)
+			{
 				if((i&15)==0)
 					fprintf(out_file,"\n* ---------------------------\n");
 
-				fprintf(out_file,"\tdc.w $%.4x\n",d16[i]);		
-			}		
-		
+				fprintf(out_file,"\tdc.w $%.4x\n",d16[i]);
+			}
+
 		}break;
 
 		case OUTPUT_MAP:
 		{
 			uint16 *d16=(uint16*) data;
-			for(int i=0;i<size/2;i++)		
-			{					
-				fprintf(out_file,"\tdc.w $%.4x\n",d16[i]);		
-			}		
-		
+			for(int i=0;i<size/2;i++)
+			{
+				fprintf(out_file,"\tdc.w $%.4x\n",d16[i]);
+			}
+
 		}break;
 
 		default:
 		{
 			for(int i=0;i<size;i++)
-			{	fprintf(out_file,"\tdc.b $%.2x\n",data[i]);		
+			{	fprintf(out_file,"\tdc.b $%.2x\n",data[i]);
 			}
-		
+
 		}break;
-	
-	
+
+
 	}
 
-	
+
 
 	fclose(out_file);
-	
+
 	return tgOK;
 }
 

@@ -22,7 +22,7 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="out_asgcc.cpp" />
+		<Unit filename="src\plugins\out_asgcc.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

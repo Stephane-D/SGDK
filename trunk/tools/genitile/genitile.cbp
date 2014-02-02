@@ -22,23 +22,23 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="Nemesis.h" />
-		<Unit filename="lz77.cpp" />
-		<Unit filename="lz77.h" />
-		<Unit filename="mdtt.cpp" />
-		<Unit filename="mdttSDK.h" />
-		<Unit filename="tgApp.cpp" />
-		<Unit filename="tgApp.h" />
-		<Unit filename="tgImgPlugin.cpp" />
-		<Unit filename="tgImgPlugin.h" />
-		<Unit filename="tgList.h" />
-		<Unit filename="tgOutputPlugin.cpp" />
-		<Unit filename="tgOutputPlugin.h" />
-		<Unit filename="tgPlugin.cpp" />
-		<Unit filename="tgPlugin.h" />
-		<Unit filename="tgPluginsList.h" />
-		<Unit filename="tgTools.cpp" />
-		<Unit filename="tgTools.h" />
+		<Unit filename="src\Nemesis.h" />
+		<Unit filename="src\lz77.cpp" />
+		<Unit filename="src\lz77.h" />
+		<Unit filename="src\mdtt.cpp" />
+		<Unit filename="src\mdttSDK.h" />
+		<Unit filename="src\tgApp.cpp" />
+		<Unit filename="src\tgApp.h" />
+		<Unit filename="src\tgImgPlugin.cpp" />
+		<Unit filename="src\tgImgPlugin.h" />
+		<Unit filename="src\tgList.h" />
+		<Unit filename="src\tgOutputPlugin.cpp" />
+		<Unit filename="src\tgOutputPlugin.h" />
+		<Unit filename="src\tgPlugin.cpp" />
+		<Unit filename="src\tgPlugin.h" />
+		<Unit filename="src\tgPluginsList.h" />
+		<Unit filename="src\tgTools.cpp" />
+		<Unit filename="src\tgTools.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
