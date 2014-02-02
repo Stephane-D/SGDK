@@ -1,4 +1,6 @@
+#summary Basic hello world example.
 #labels Phase-Implementation
+
 == Hello World ==
 
 Whenever you use [UseSGDKWithCB Code::Block], [UseSGDKWithEclipse Eclipse], [HowToUseSGDK Notepad] or any other souce code editor, you need your `main` function.
