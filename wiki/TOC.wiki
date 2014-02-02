@@ -1,4 +1,5 @@
 #summary Table of content
+#sidebar null
 
 = Installation =
 
