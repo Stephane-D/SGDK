@@ -1,4 +1,6 @@
+#summary How to deal with Sprite with SGDK.
 #labels Phase-Implementation
+
 == Sprites ==
 
 If you read documents linked on [#Introduction first part], you should know the main difference between tiles for sprites and tiles for planes :
