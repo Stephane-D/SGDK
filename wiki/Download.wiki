@@ -11,10 +11,10 @@ Get the last version: [https://www.dropbox.com/s/e0vsn8wff2ioiew/sgdk095.7z SGDK
 
 *COMPILER:*
  * Major change on resource compilation:
-  A new resource compiler tool (rescomp) is used to compile all resource files.
-  It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM..
-  Read the rescomp.txt file to have more informations about it and look in the 'sound' and 'sprite' sample example.
-  You can also convert your old project by using the "rescomp -convert" command on the project folder to convert.
+ A new resource compiler tool (rescomp) is used to compile all resource files.
+ It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM..
+ Read the rescomp.txt file to have more informations about it and look in the 'sound' and 'sprite' sample example.
+ You can also convert your old project by using the "rescomp -convert" command on the project folder to convert.
  * added appack tool.
  * minor fix in wavtoraw tool.
 
@@ -57,9 +57,3 @@ Get the last version: [https://www.dropbox.com/s/e0vsn8wff2ioiew/sgdk095.7z SGDK
  * added some logs for easier debugging (KDebug message).
  * many others smalls improvements.
  * lot of refactoring.
-
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
