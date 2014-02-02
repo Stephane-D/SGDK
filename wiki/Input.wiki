@@ -1,5 +1,6 @@
 #labels Phase-Implementation
-=== Basic ===
+== Input ==
+
 You'll now learn how to handle input from controllers
 
 The first thing to do is to call `JOY_init()`, this will reset the handler and read informations about the connected controllers.
