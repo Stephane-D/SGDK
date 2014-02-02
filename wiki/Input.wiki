@@ -47,9 +47,8 @@ int main( )
 
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut2_Input.zip Basic input project]
 
-SGDK also supports Multipad, Justifier and Mouse, wiki about how use these adapters will come in future...
 
- <wiki:comment>
+<wiki:comment>
 === Multipad ===
 
 This will work for up to 4 players using a [http://www.segaretro.org/4_Way_Play EA4Way] and up to 8 players using 2 [http://www.segaretro.org/Team_Player Sega TeamPlayer].
@@ -174,6 +173,7 @@ int main( )
 }
 }}}
 </wiki:comment>
+
 ==== Misc ====
 
 Some others usefull functions are available:
@@ -183,7 +183,8 @@ Some others usefull functions are available:
  * `JOY_waitPress(joy, BUTTON_A | BUTTON_UP)` waits for wanted buttons to be pressed on specific joypad
 
  
- 
 _Note for advanced developer :_
 
 if you ever made you're own VBlankCallback, `JOY_update()` is always called whatever you do.
+
+SGDK also supports Multipad, Justifier and Mouse, wiki about how use these adapters will come in future...
