@@ -1,4 +1,6 @@
+#summary How to draw stuff on screen: introduction to tile and tilemap.
 #labels Phase-Implementation
+
 == Tiles ==
 
 If you read documents linked on [#Introduction first part], you should know how to write more than 'Hello World' on screen :
