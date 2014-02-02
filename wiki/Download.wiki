@@ -11,48 +11,48 @@ Get the last version: [https://www.dropbox.com/s/e0vsn8wff2ioiew/sgdk095.7z SGDK
 
 *COMPILER:*
  * Major change on resource compilation:
- `A new resource compiler tool (rescomp) is used to compile all resource files.`
+ A new resource compiler tool (rescomp) is used to compile all resource files.
  It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM..
- Read the rescomp.txt file to have more informations about it and look in the 'sound' and 'sprite' sample example.
- You can also convert your old project by using the "rescomp -convert" command on the project folder to convert.
+ Read the `rescomp.txt` file to have more informations about it and look in the `sound` and `sprite` sample example.
+ You can also convert your old project by using the `rescomp -convert` command on the project folder to convert.
  * added appack tool.
  * minor fix in wavtoraw tool.
 
 *LIBRARY:*
  * added GFX compression support (see tools.h file for doxygen documentation).
  * VDP:
-  * added VDP_getBackgroundColor() and VDP_setBackgroundColor(..) methods.
-  * added VDP_get/setTextPlan(), VDP_get/setTextPalette() and VDP_get/setTextPriority() methods to change text drawing properties.
-  * added VDP_drawBitmap(..) and VDP_drawBitmapEx(..) methods to draw Bitmap resource.
-  * added VDP_drawImage(..) and VDP_drawImageEx(..) methods to draw Image resources.
-  * added VDP_loadTileSet(..) method to load TileSet resource.
-  * added VDP_setMap(..) and VDP_setMapEx(..) methods to load Map resources.
-  * lot of refactoring in the setTileMap methods...
+  * added `VDP_getBackgroundColor()` and `VDP_setBackgroundColor(..)` methods.
+  * added `VDP_get/setTextPlan(), VDP_get/setTextPalette()` and `VDP_get/setTextPriority()` methods to change text drawing properties.
+  * added `VDP_drawBitmap(..)` and `VDP_drawBitmapEx(..)` methods to draw `Bitmap` resource.
+  * added `VDP_drawImage(..)` and `VDP_drawImageEx(..)` methods to draw `Image` resources.
+  * added `VDP_loadTileSet(..)` method to load `TileSet` resource.
+  * added `VDP_setMap(..)` and `VDP_setMapEx(..)` methods to load `Map` resources.
+  * lot of refactoring in the `setTileMapXX` methods...
   * some tweaks.
  * TILE:
   * added new tile cache engine for easier tile allocation in VRAM.
-   See the tile_cache.h file for doxygen documentation.
+   See the `tile_cache.h` file for doxygen documentation.
  * SPRITE:
   * added sprite engine for easier sprite manipulation.
-   See the sprite_eng.h file for doxygen documentation and the included "sprite" sample for an example.
+   See the `sprite_eng.h` file for doxygen documentation and the included `sprite` sample for an example.
  * SOUND:
-  * added TFC_isPlaying() command for the 68k TFM driver.
+  * added `TFC_isPlaying()` command for the 68k TFM driver.
   * fixed issue with consecutive play command on TFM Z80 driver.
   * Improved VGM driver (thanks to kubilus1 and sigflup).
    You can now pause, resume music and even better play PCM SFX !
   * now clear Z80 memory on driver loading to avoid any problems with var initialization.
  * DMA:
-  * minor change to VDP_doDMAEx(..) method, be careful if you use this method, the last parameter changed.
+  * minor change to `VDP_doDMAEx(..)` method, be careful if you use this method, the last parameter changed.
  * JOY:
-  * added JOY_waitPressTime() and JOY_waitPressBtnTime() methods.
-  * JOY_waitPressBtn() and JOY_waitPress() now return button pressed info.
+  * added `JOY_waitPressTime()` and `JOY_waitPressBtnTime()` methods.
+  * `JOY_waitPressBtn()` and `JOY_waitPress()` now return button pressed info.
  * MEMORY:
-  * fixed a minor buf with dynamic memory allocation.
+  * fixed a minor bug with dynamic memory allocation.
  * SYSTEM:
-  * added SYS_disableInts() and SYS_enableInts() methods.
-  * added SYS_isInInterrupt() to detect if we are in an interrupt callback.
-  * added SYS_getAndSetInterruptMaskLevel(..) method to "atomically" get and set interrupt mask level.
-  * added SYS_die(..) for fatal error handling.
+  * added `SYS_disableInts()` and `SYS_enableInts()` methods.
+  * added `SYS_isInInterrupt()` to detect if we are in an interrupt callback.
+  * added `SYS_getAndSetInterruptMaskLevel(..)` method to _atomically_ get and set interrupt mask level.
+  * added `SYS_die(..)` for fatal error handling.
  * library font is now included as an image.
  * added some logs for easier debugging (KDebug message).
  * many others smalls improvements.
