@@ -1,18 +1,21 @@
 #include "config.h"
 #include "types.h"
 
-#include "font.h"
 #include "vdp.h"
 #include "vdp_bg.h"
 
 #include "tools.h"
 #include "string.h"
 #include "vdp_dma.h"
+#include "vdp_pal.h"
 #include "vdp_tile.h"
 
+#include "font.h"
+#include "memory.h"
 
-// don't want to share it
-extern u16 textBasetile;
+
+u16 text_plan;
+u16 text_basetile;
 
 
 void VDP_setHorizontalScroll(u16 plan, s16 value)
@@ -41,7 +44,7 @@ void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 u
 
     VDP_setAutoInc(4 * 8);
 
-    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, 0);
+    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, -1);
     else
     {
         vu16 *pw;
@@ -71,7 +74,7 @@ void VDP_setHorizontalScrollLine(u16 plan, u16 line, s16* values, u16 len, u16 u
 
     VDP_setAutoInc(4);
 
-    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, 0);
+    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, -1);
     else
     {
         vu16 *pw;
@@ -118,7 +121,7 @@ void VDP_setVerticalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use
 
     VDP_setAutoInc(4);
 
-    if (use_dma) VDP_doDMAEx(VDP_DMA_VSRAM, (u32) values, addr, len, 0);
+    if (use_dma) VDP_doDMAEx(VDP_DMA_VSRAM, (u32) values, addr, len, -1);
     else
     {
         vu16 *pw;
@@ -177,26 +180,36 @@ void VDP_clearPlan(u16 plan, u8 use_dma)
     }
 }
 
-void VDP_setTextPalette(u16 pal)
+u16 VDP_getTextPlan()
 {
-    textBasetile &= ~(3 << 13);
-    textBasetile |= (pal & 3) << 13;
-}
-
-void VDP_setTextPriority(u16 prio)
-{
-    textBasetile &= ~(1 << 15);
-    textBasetile |= (prio & 1) << 15;
+    return text_plan;
 }
 
 u16 VDP_getTextPalette()
 {
-    return (textBasetile >> 13) & 3;
+    return (text_basetile >> 13) & 3;
 }
 
 u16 VDP_getTextPriority()
 {
-    return (textBasetile >> 15) & 1;
+    return (text_basetile >> 15) & 1;
+}
+
+void VDP_setTextPlan(u16 plan)
+{
+    text_plan = plan;
+}
+
+void VDP_setTextPalette(u16 pal)
+{
+    text_basetile &= ~(3 << 13);
+    text_basetile |= (pal & 3) << 13;
+}
+
+void VDP_setTextPriority(u16 prio)
+{
+    text_basetile &= ~(1 << 15);
+    text_basetile |= (prio & 1) << 15;
 }
 
 void VDP_drawTextBG(u16 plan, const char *str, u16 flags, u16 x, u16 y)
@@ -216,7 +229,7 @@ void VDP_drawTextBG(u16 plan, const char *str, u16 flags, u16 x, u16 y)
     for (i = 0; i < len; i++)
         data[i] = TILE_FONTINDEX + (str[i] - 32);
 
-    VDP_setTileMapRectEx(plan, data, 0, flags, x, y, len, 1);
+    VDP_setTileMapDataRectEx(plan, data, flags, x, y, len, 1, len);
 }
 
 void VDP_clearTextBG(u16 plan, u16 x, u16 y, u16 w)
@@ -231,18 +244,76 @@ void VDP_clearTextLineBG(u16 plan, u16 y)
 
 void VDP_drawText(const char *str, u16 x, u16 y)
 {
-    // use A plan & high priority by default
-    VDP_drawTextBG(APLAN, str, textBasetile, x, y);
+    // use A plan by default
+    VDP_drawTextBG(text_plan, str, text_basetile, x, y);
 }
 
 void VDP_clearText(u16 x, u16 y, u16 w)
 {
     // use A plan by default
-    VDP_clearTextBG(APLAN, x, y, w);
+    VDP_clearTextBG(text_plan, x, y, w);
 }
 
 void VDP_clearTextLine(u16 y)
 {
     // use A plan by default
-    VDP_clearTextLineBG(APLAN, y);
+    VDP_clearTextLineBG(text_plan, y);
+}
+
+
+u16 VDP_drawBitmap(u16 plan, const Bitmap *bitmap, u16 x, u16 y)
+{
+    return VDP_drawBitmapEx(plan, bitmap, TILE_ATTR_FULL(PAL0, 0, 0, 0, TILE_USERINDEX), x, y, TRUE);
+}
+
+u16 VDP_drawBitmapEx(u16 plan, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)
+{
+    const int wt = bitmap->w / 8;
+    const int ht = bitmap->h / 8;
+    const Palette *palette = bitmap->palette;
+
+    // compressed bitmap ?
+    if (bitmap->compression != COMPRESSION_NONE)
+    {
+        Bitmap *b = unpackBitmap(bitmap, NULL);
+
+        if (b == NULL) return FALSE;
+
+        // tiles
+        VDP_loadBMPTileData((u32*) b->image, basetile & TILE_INDEX_MASK, wt, ht, wt);
+        MEM_free(b);
+    }
+    else
+        // tiles
+        VDP_loadBMPTileData((u32*) bitmap->image, basetile & TILE_INDEX_MASK, wt, ht, wt);
+
+    // tilemap
+    VDP_fillTileMapRectInc(plan, basetile, x, y, wt, ht);
+    // palette
+    if (loadpal) VDP_setPaletteColors(((basetile >> 9) & 0x30) + (palette->index & 0xF), palette->data, palette->length);
+
+    return TRUE;
+}
+
+u16 VDP_drawImage(u16 plan, const Image *image, u16 x, u16 y)
+{
+    return VDP_drawImageEx(plan, image, TILE_ATTR_FULL(PAL0, 0, 0, 0, TILE_USERINDEX), x, y, TRUE, TRUE);
+}
+
+u16 VDP_drawImageEx(u16 plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, u16 use_dma)
+{
+    Palette *palette;
+
+    if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, use_dma))
+        return FALSE;
+
+    if (!VDP_setMap(plan, image->map, basetile, x, y))
+        return FALSE;
+
+    palette = image->palette;
+
+    // palette
+    if (loadpal) VDP_setPaletteColors(((basetile >> 9) & 0x30) + (palette->index & 0xF), palette->data, palette->length);
+
+    return TRUE;
 }

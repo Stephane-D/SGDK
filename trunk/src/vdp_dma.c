@@ -7,7 +7,7 @@
 #include "z80_ctrl.h"
 
 
-void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, u16 setVRamStep)
+void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
 {
     vu16 *pw;
     vu32 *pl;
@@ -28,8 +28,8 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, u16 setVRamStep)
     // ok, use normal len
     else newlen = len;
 
-    if (setVRamStep)
-        VDP_setAutoInc(2);
+    if (vramStep != -1)
+        VDP_setAutoInc(vramStep);
 
     pw = (u16 *) GFX_CTRL_PORT;
 
@@ -71,7 +71,7 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, u16 setVRamStep)
 
 void VDP_doDMA(u8 location, u32 from, u16 to, u16 len)
 {
-    VDP_doDMAEx(location, from, to, len, 1);
+    VDP_doDMAEx(location, from, to, len, 2);
 }
 
 void VDP_doVRamDMAFill(u16 to, u16 len, u8 value)

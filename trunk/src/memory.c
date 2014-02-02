@@ -1,15 +1,14 @@
-
 #include "config.h"
 #include "types.h"
 
 #include "memory.h"
 
 #include "tab_cnv.h"
+#include "sys.h"
 #include "kdebug.h"
 
 
 #define USED        1
-#define MEMORY_HIGH 0xFFFC00
 
 
 // end of bss segment --> start of heap
@@ -115,7 +114,6 @@ extern u32 _bend;
  *  Starting from HEAP, find contiguous free block and collapse them.
  *  FREE becomes the first collaped block with size >= $400
  *
- *
  *  HEAP = $FF0100; *HEAP = $102+1 (used)
  *  FREE = $FF0202; *FREE = $454+0 (free)
  *  ---- = $FF0656; *---- = $152+1 (used)
@@ -123,20 +121,156 @@ extern u32 _bend;
  *  ---- = $FF0EDA; *---- = $226+0 (free)
  *  END  = $FF1100; *END  = $0
  *
+ *  then
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  ---- = $FF0202; *---- = $402+1 (used)
+ *  FREE = $FF0604; *FREE = $052+0 (free)
+ *  ---- = $FF0656; *---- = $152+1 (used)
+ *  ---- = $FF07A8; *---- = $732+1 (used)
+ *  ---- = $FF0EDA; *---- = $226+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
+ *
+ *  8. After allocation of $52 bytes
+ *
+ *  HEAP = $FF0100; *HEAP = $102+1 (used)
+ *  ---- = $FF0202; *---- = $402+1 (used)
+ *  ---- = $FF0604; *---- = $052+1 (used)
+ *  ---- = $FF0656; *---- = $152+1 (used)
+ *  ---- = $FF07A8; *---- = $732+1 (used)
+ *  FREE = $FF0EDA; *FREE = $226+0 (free)
+ *  END  = $FF1100; *END  = $0
+ *
  */
 
+ // forward
+static u16* pack(u16 nsize);
+//static void dump();
 
 static u16* free;
 static u16* heap;
+
+void MEM_init()
+{
+    u32 h;
+    u32 len;
+
+    // point to end of bss (start of heap)
+    h = (u32)&_bend;
+    // 2 bytes aligned
+    h += 1;
+    h >>= 1;
+    h <<= 1;
+
+    // define available memory (sizeof(u16) is the memory reserved to indicate heap end)
+    len = MEMORY_HIGH - (h + sizeof(u16));
+
+    // define heap
+    heap = (u16*) h;
+    // and its size
+    *heap = len;
+
+    // free memory : whole heap
+    free = heap;
+
+    // mark end of heap memory
+    heap[len >> 1] = 0;
+}
+
+u16 MEM_getFree()
+{
+    u16* b;
+    u16 bsize;
+    u16 res;
+
+    b = heap;
+    res = 0;
+
+    while ((bsize = *b))
+    {
+        // memory block not used --> add available size to result
+        if (!(bsize & USED))
+            res += bsize;
+
+        // pass to next block
+        b += bsize >> 1;
+    }
+
+    return res;
+}
+
+void MEM_free(void *ptr)
+{
+    // valid block --> mark block as no more used
+    if (ptr)
+        ((u16*)ptr)[-1] &= ~USED;
+}
+
+void* MEM_alloc(u16 size)
+{
+    u16* p;
+    u16 adjsize;
+    u16 remaining;
+
+    if (size == 0)
+        return 0;
+
+    // 2 bytes aligned
+    adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
+
+    if (adjsize > *free)
+    {
+        p = pack(adjsize);
+
+        // no enough memory
+        if (p == NULL)
+        {
+            if (LIB_DEBUG) KDebug_Alert("MEM_alloc failed: no enough memory !");
+            return NULL;
+        }
+
+        free = p;
+    }
+    else
+        // at this point we can allocate memory
+        p = free;
+
+    // set free to next free block
+    free += adjsize >> 1;
+
+    // get remaining (old - allocated)
+    remaining = *p - adjsize;
+    // adjust remaining free space
+    if (remaining > 0) *free = remaining;
+    else
+    {
+        // no more space in bloc so we have to find the next free bloc
+        u16 *newfree = free;
+        u16 bloc;
+
+        while((bloc = *newfree) & USED)
+            newfree += bloc >> 1;
+
+        free = newfree;
+    }
+
+    // set block size, mark as used and point to free region
+    *p++ = adjsize | USED;
+
+    // return block
+    return p;
+}
+
 
 /*
  * Pack free block and return first matching free block.
  */
 static u16* pack(u16 nsize)
 {
-    u16 bsize, psize;
     u16 *b;
     u16 *best;
+    u16 bsize, psize;
 
     b = heap;
     best = b;
@@ -176,98 +310,47 @@ static u16* pack(u16 nsize)
     return NULL;
 }
 
-void MEM_init()
-{
-    u32 h;
-    u32 len;
-
-    // point to end of bss (start of heap)
-    h = (u32)&_bend;
-    // 2 bytes aligned
-    h += 1;
-    h >>= 1;
-    h <<= 1;
-
-    // define available memory (sizeof(u16) is the memory reserved to indicate heap end)
-    len = MEMORY_HIGH - (h + sizeof(u16));
-
-    // define heap
-    heap = (u16*) h;
-    // and its size
-    *heap = len;
-
-    // free memory : whole heap
-    free = heap;
-
-    // mark end of heap memory
-    heap[len >> 1] = 0;
-}
-
-u16 MEM_getFree()
-{
-    u16* b;
-    u16 res;
-    u16 bsize;
-
-    b = heap;
-    res = 0;
-
-    while ((bsize = *b))
-    {
-        // memory block not used --> add available size to result
-        if (!(bsize & USED))
-            res += bsize;
-
-        // pass to next block
-        b += bsize >> 1;
-    }
-
-    return res;
-}
-
-void MEM_free(void *ptr)
-{
-    // valid block --> mark block as no more used
-    if (ptr)
-        ((u16*)ptr)[-1] &= ~USED;
-}
-
-void* MEM_alloc(u16 size)
-{
-    u16* p;
-    u16 adjsize;
-
-    if (size == 0)
-        return 0;
-
-    // 2 bytes aligned
-    adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
-
-    if (adjsize > *free)
-    {
-        p = pack(adjsize);
-
-        // no enough memory
-        if (p == NULL)
-            return NULL;
-
-        free = p;
-    }
-    else
-        // at this point we can allocate memory
-        p = free;
-
-    // set free to next free block
-    free += adjsize >> 1;
-    // set remaining free space (old - allocated)
-    *free = *p - adjsize;
-
-    // set block size, mark as used and point to free region
-    *p++ = adjsize | USED;
-
-    // return block
-    return p;
-}
+//static void dump()
+//{
+//    u16 *b;
+//    u16 psize;
+//    u16 memused;
+//    u16 memfree;
+//
+//    KDebug_Alert("Memory dump:");
+//
+//    b = heap;
+//    memused = 0;
+//    memfree = 0;
+//
+//    while ((psize = *b))
+//    {
+//        if (psize & USED)
+//        {
+//            KDebug_Alert("Used bloc at:");
+//            KDebug_AlertNumber(b);
+//            KDebug_Alert("  size:");
+//            KDebug_AlertNumber(psize & 0xFFFE);
+//            memused += psize & 0xFFFE;
+//        }
+//        else
+//        {
+//            KDebug_Alert("Free bloc at:");
+//            KDebug_AlertNumber(b);
+//            KDebug_Alert("  size:");
+//            KDebug_AlertNumber(psize & 0xFFFE);
+//            memfree += psize & 0xFFFE;
+//        }
+//
+//        b += psize >> 1;
+//        KDebug_Alert("");
+//    }
+//
+//    KDebug_Alert("Total used:");
+//    KDebug_AlertNumber(memused);
+//    KDebug_Alert("Total free:");
+//    KDebug_AlertNumber(memfree);
+//}
 
 
 void memcpyU16(u16 *to, const u16 *from, u16 len)

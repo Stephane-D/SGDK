@@ -10,7 +10,9 @@
 #include "tfcplay.h"
 
 #include "ym2612.h"
-#include "z80_ctrl.h"
+
+
+#define ym2612wr(reg, val, bank)    YM2612_writeRegSafe(bank, reg, val)
 
 
 static struct {
@@ -24,19 +26,20 @@ static struct {
 		u16 loopadr;
 		u16 rep;
 	} chn[6];
-} TFCP;
+} TFCP = {
+    NULL,
+    FALSE,
+    {}
+};
 
-static void ym2612wr(u8 reg,u8 val,u8 bank);
 
-
-void TFC_init(const u8 *data)
+void TFC_init(const u8 *music)
 {
-	TFCP.data=(u8*)data;
+	TFCP.data=(u8*)music;
 	TFC_play(FALSE);
 }
 
-
-void TFC_frame(void)
+void TFC_frame()
 {
 	u16 aa,chn,rchn,bank,key,tag,off,freq,frameptr,getptr;
 
@@ -75,14 +78,17 @@ void TFC_frame(void)
 		while(1)
 		{
 			tag=TFCP.data[TFCP.chn[chn].ptr++];
+
 			switch(tag)
 			{
 			case 0x7e:/*01111110 begin*/
 				TFCP.chn[chn].loopadr=TFCP.chn[chn].ptr;
 				continue;
+
 			case 0x7f:/*01111111 end*/
 				TFCP.chn[chn].ptr=TFCP.chn[chn].loopadr;
 				continue;
+
 			case 0xd0:/*11010000 repeat block*/
 				TFCP.chn[chn].rep=TFCP.data[TFCP.chn[chn].ptr++];
 				off=TFCP.data[TFCP.chn[chn].ptr++]<<8;
@@ -90,17 +96,20 @@ void TFC_frame(void)
 				TFCP.chn[chn].retblk=TFCP.chn[chn].ptr;
 				TFCP.chn[chn].ptr+=(s16)off;
 				continue;
+
 			case 0xbf:/*10111111 use old frame data disp16*/
 				off=TFCP.data[TFCP.chn[chn].ptr++]<<8;
 				off+=TFCP.data[TFCP.chn[chn].ptr++];
 				frameptr=TFCP.chn[chn].ptr+(s16)off;
 				tag=TFCP.data[frameptr++];
 				break;
+
 			case 0xff:/*11111111 use old frame data disp8*/
 				off=TFCP.data[TFCP.chn[chn].ptr++]-256;
 				frameptr=TFCP.chn[chn].ptr+(s16)off;
 				tag=TFCP.data[frameptr++];
 				break;
+
 			default:
 				if(tag>=0xe0)/*skip 32..2 frames*/
 				{
@@ -133,7 +142,7 @@ void TFC_frame(void)
 				}
 				for(aa=0;aa<((tag>>1)&0x1f);aa++)/*0..30 regs*/
 				{
-					ym2612wr(TFCP.data[frameptr],TFCP.data[frameptr+1],bank);
+                    ym2612wr(TFCP.data[frameptr],TFCP.data[frameptr+1],bank);
 					frameptr+=2;
 				}
 				if(tag&0x80) ym2612wr(0x28,0xf0|key,0);/*keyon*/
@@ -152,9 +161,16 @@ void TFC_frame(void)
 }
 
 
+u16 TFC_isPlaying()
+{
+    return TFCP.play;
+}
+
 void TFC_play(u16 play)
 {
 	s16 aa,bb,cc,pp;
+
+    if (TFCP.play == play) return;
 
 	TFCP.play=play;
 
@@ -166,6 +182,7 @@ void TFC_play(u16 play)
 		ym2612wr(0x2b,0,0); /* DAC off */
 		ym2612wr(0x27,0,0); /* CH3 normal mode */
 		ym2612wr(0x27,0,1); /* CH3 normal mode */
+
 		for(cc=0;cc<2;cc++)
 		{
 			for(aa=0;aa<3;aa++)
@@ -195,11 +212,4 @@ void TFC_play(u16 play)
 			pp+=2;
 		}
 	}
-}
-
-static void ym2612wr(u8 reg,u8 val,u8 bank)
-{
-	Z80_requestBus(1);
-	YM2612_writeRegSafe(bank, reg, val);
-    Z80_releaseBus();
 }
