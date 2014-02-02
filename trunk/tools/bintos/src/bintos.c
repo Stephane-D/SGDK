@@ -6,20 +6,22 @@
 #include <ctype.h>
 
 
-static int min(int x, int y)
-{
-    return (x < y) ? x : y;
-}
 
-static int vdpcolor(char b, char g, char r)
-{
-    // genesis only define on 3 bits (but shifted to 1 left)
-    r = (r >> 4) & 0xE;
-    g = (g >> 4) & 0xE;
-    b = (b >> 4) & 0xE;
 
-    return (r << 0) | (g << 4) | (b << 8);
-}
+//static int min(int x, int y)
+//{
+//    return (x < y) ? x : y;
+//}
+//
+//static int vdpcolor(char b, char g, char r)
+//{
+//    // genesis only define on 3 bits (but shifted to 1 left)
+//    r = (r >> 4) & 0xE;
+//    g = (g >> 4) & 0xE;
+//    b = (b >> 4) & 0xE;
+//
+//    return (r << 0) | (g << 4) | (b << 8);
+//}
 
 static char *getFilename(char *pathname)
 {
@@ -30,6 +32,15 @@ static char *getFilename(char *pathname)
     return pathname;
 }
 
+static char *getFileExtension(char *pathname)
+{
+    char* fname = strrchr(pathname, '.');
+
+    if (fname) return fname + 1;
+
+    return "";
+}
+
 static void removeExtension(char *pathname)
 {
     char* fname = strrchr(pathname, '.');
@@ -37,12 +48,23 @@ static void removeExtension(char *pathname)
     if (fname) *fname = 0;
 }
 
+//static unsigned int getFileSize(char *file)
+//{
+//    unsigned int len;
+//    FILE * f;
+//
+//    f = fopen(file, "r");
+//    fseek(f, 0, SEEK_END);
+//    len = (unsigned long)ftell(f);
+//    fclose(f);
+//
+//    return len;
+//}
+
 
 int main(int argc, char **argv)
 {
-    int bitmap;
-    int ii, jj, kk, ll;
-    int w, h;
+    int ii, jj;
     int len;
     int total;
     int align;
@@ -52,21 +74,21 @@ int main(int argc, char **argv)
     char *format;
     char *formatasm;
     char *shortname;
+    char *ext;
     char *FileName;
     char *FileNameOut;
     FILE *FileInput;
     FILE *FileOutput;
-    char temp[512];
+    char temp[32 * 1024];
 
     // default
-    bitmap = 0;
     FileName = "";
     FileNameOut = "";
     format = "u8 ";
     formatasm = "b";
     formatint = 1;
     total = 0;
-    align = 4;
+    align = 2;
     sizealign = 1;
     nullfill = 0;
 
@@ -109,13 +131,6 @@ int main(int argc, char **argv)
             formatasm = "l";
             formatint = 4;
         }
-        else if (!strcmp(argv[ii], "-bmp"))
-        {
-            bitmap = 1;
-            format = "u16 ";
-            formatasm = "w";
-            formatint = 2;
-        }
         else if (!strcmp(argv[ii], "-align"))
         {
             ii++;
@@ -139,16 +154,9 @@ int main(int argc, char **argv)
         else if (!FileNameOut[0]) FileNameOut = argv[ii];
     }
 
-    if (!FileNameOut[0]) FileNameOut = FileName;
+    if (!FileNameOut[0]) FileNameOut = strdup(FileName);
 
-    if (!strcasecmp(&FileName[strlen(FileName)-4], ".bmp"))
-    {
-        bitmap = 1;
-        format = "u16 ";
-        formatasm = "w";
-        formatint = 2;
-        align = 16;
-    }
+    ext = getFileExtension(FileName);
 
     FileInput = fopen(FileName, "rb");
 
@@ -177,126 +185,47 @@ int main(int argc, char **argv)
 
     fprintf(FileOutput, ".text\n\n");
 
-    if (bitmap)
+    fprintf(FileOutput, "    .align  %d\n\n", align);
+    fprintf(FileOutput, "    .global %s\n", shortname);
+    fprintf(FileOutput, "%s:\n", shortname);
+
+    // start by setting buffer to nullfill
+    memset(temp, nullfill, sizeof(temp));
+
+    while (1)
     {
-        char *mem;
+        len = fread(temp, 1, 16, FileInput);
+        len = (len + (formatint - 1)) & ~(formatint - 1); // align length for size of units
 
-        // process header
-        fread(temp, 1, 0x36, FileInput); // read header
-        w = (unsigned char)temp[18] | (temp[19] << 8); // only need two bytes, but is really four byte LE
-        h = (unsigned char)temp[22] | (temp[23] << 8); // only need two bytes, but is really four byte LE
-
-        fprintf(FileOutput, "    .align  %d\n\n", align);
-        fprintf(FileOutput, "%s_pal:\n", shortname);
-
-        // process palette (assumes 16 color image)
-        fread(temp, 4, 16, FileInput); // read palette
-
-        fprintf(FileOutput, "    dc.w    ");
-        for (ii = 0; ii < 7; ii++)
-            fprintf(FileOutput, "0x%04X, ", vdpcolor(temp[ii*4+0], temp[ii*4+1], temp[ii*4+2]));
-        fprintf(FileOutput, "0x%04X", vdpcolor(temp[7*4+0], temp[7*4+1], temp[7*4+2]));
-        fprintf(FileOutput, "\n");
-
-        fprintf(FileOutput, "    dc.w    ");
-        for (ii = 8; ii < 15; ii++)
-            fprintf(FileOutput, "0x%04X, ", vdpcolor(temp[ii*4+0], temp[ii*4+1], temp[ii*4+2]));
-        fprintf(FileOutput, "0x%04X", vdpcolor(temp[15*4+0], temp[15*4+1], temp[15*4+2]));
-        fprintf(FileOutput, "\n\n");
-
-        fprintf(FileOutput, "%s_data:\n", shortname);
-
-        // process bitmap data (assumes 16 color image)
-        mem = malloc(w * h / 2);
-
-        for (ii = 0; ii < h; ii++)
-            fread(&mem[(h-ii-1)*w/2], 1, w / 2, FileInput); // fill from bitmap backwards (BMP is bottom up)
-
-        for (jj = 0; jj < h; jj++)
+        if (len)
         {
-            len = w / 2 / formatint;
-            ll = 0;
+            fprintf(FileOutput, "    dc.%s    ", formatasm);
 
-            while (len > 0)
+            for (ii = 0; ii < (len / formatint); ii++)
             {
-                fprintf(FileOutput, "    dc.%s    ", formatasm);
+                if (ii)
+                    fprintf(FileOutput, ",");
 
-                for (ii = 0; ii < min(16 / formatint, len); ii++)
-                {
-                    if (ii)
-                        fprintf(FileOutput, ", ");
+                fprintf(FileOutput, "0x");
 
-                    fprintf(FileOutput, "0x");
-
-                    for (kk = 0; kk < formatint; kk++)
-                        fprintf(FileOutput, "%02X", (unsigned char)mem[jj*w/2 + (ii + ll)*formatint + kk]);
-                }
-
-                fprintf(FileOutput, "\n");
-                ll += ii;
-                len -= ii;
+                for (jj = 0; jj < formatint; jj++)
+                    fprintf(FileOutput, "%02X", (unsigned char)temp[ii*formatint + jj]);
             }
 
+            fprintf(FileOutput, "\n");
         }
 
-        free(mem);
+        total += len;
 
-        fprintf(FileOutput, "\n");
+        if (len < 16)
+            break;
 
-        fprintf(FileOutput, "    .global %s\n", shortname);
-        fprintf(FileOutput, "%s:\n", shortname);
-
-        fprintf(FileOutput, "    dc.w    %d, %d\n", w, h);
-        fprintf(FileOutput, "    dc.l    %s_pal\n", shortname);
-        fprintf(FileOutput, "    dc.l    %s_data\n\n", shortname);
-
-        fclose(FileOutput);
-        fclose(FileInput);
-    }
-    else
-    {
-        fprintf(FileOutput, "    .align  %d\n\n", align);
-        fprintf(FileOutput, "    .global %s\n", shortname);
-        fprintf(FileOutput, "%s:\n", shortname);
-
-        // non-BMP is dumped as straight data
         memset(temp, nullfill, sizeof(temp));
-
-        while (1)
-        {
-            len = fread(temp, 1, 16, FileInput);
-            len = (len + (formatint - 1)) & ~(formatint - 1); // align length for size of units
-
-            if (len)
-            {
-                fprintf(FileOutput, "    dc.%s    ", formatasm);
-
-                for (ii = 0; ii < (len / formatint); ii++)
-                {
-                    if (ii)
-                        fprintf(FileOutput, ",");
-
-                    fprintf(FileOutput, "0x");
-
-                    for (jj = 0; jj < formatint; jj++)
-                        fprintf(FileOutput, "%02X", (unsigned char)temp[ii*formatint + jj]);
-                }
-
-                fprintf(FileOutput, "\n");
-            }
-
-            total += len;
-
-            if (len < 16)
-                break;
-
-            memset(temp, nullfill, sizeof(temp));
-        }
-
-        fprintf(FileOutput, "\n");
-        fclose(FileOutput);
-        fclose(FileInput);
     }
+
+    fprintf(FileOutput, "\n");
+    fclose(FileOutput);
+    fclose(FileInput);
 
     // now make .h file
     strcpy(temp, FileNameOut);
@@ -316,8 +245,7 @@ int main(int argc, char **argv)
 
     fprintf(FileOutput, "#ifndef _%s_H_\n", temp);
     fprintf(FileOutput, "#define _%s_H_\n\n", temp);
-    if (bitmap) fprintf(FileOutput, "extern const Bitmap %s;\n\n", shortname);
-    else fprintf(FileOutput, "extern const %s%s[0x%X];\n\n", format, shortname, total / formatint);
+    fprintf(FileOutput, "extern const %s%s[0x%X];\n\n", format, shortname, total / formatint);
     fprintf(FileOutput, "#endif // _%s_H_\n", temp);
 
     fclose(FileOutput);
