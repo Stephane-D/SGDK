@@ -15,13 +15,13 @@
 }}}
  * Before compiling your own project you first need to respect the following constraint in your project source tree:
   * sources files (C, S, ASM, S80):
-   root directory or "src" directory
+ root directory or "src" directory
   * includes files (H, INC):
-   root directory or "include" directory
+  root directory or "include" directory
   * primary resource files (C, S, RC, RES):
-   root directory or "res" directory 
+  root directory or "res" directory 
   * others resources files (TFC, TFD, PCM, RAW, WAV, BIN, BMP, PNG):
-   can be wherever you want while you are referring them correctly in your resource definition files
+  can be wherever you want while you are referring them correctly in your resource definition files
  * Then to compile your project you need to use the following command directly from your project directory :
 {{{
 %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen
