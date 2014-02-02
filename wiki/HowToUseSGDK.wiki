@@ -1,4 +1,5 @@
 #summary How to use SGDK from command line (Windows OS only).
+#labels Phase-Deploy
 
  * Download the SGDK archive from the [http://code.google.com/p/sgdk/downloads/list Download page] and unzip it where it suits to you (for instance D:/sgdk).
  * Define "GDK" environment variable to your installation path in unix path format (example D:/sgdk).
