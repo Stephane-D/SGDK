@@ -1,4 +1,4 @@
-#summary Math in SGDK
+#summary Maths with SGDK
 
 = Math in SGDK =
 
