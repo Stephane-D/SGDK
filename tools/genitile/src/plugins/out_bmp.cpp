@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Output bmp plugins for mdtt
-// 
+//
 //
 //
 //
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "../../mdttSDK.h"
+#include "../mdttSDK.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
@@ -102,8 +102,8 @@ DLLEXPORT int OutputPicture(const char *filename,tgPictureInfo *info,uint8* pixe
         return tgERR_SAVINGFILE;
 
 	off=(sizeof(RGBQUAD)*256)+sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
-	size=(gInfoHeader.biWidth*abs(gInfoHeader.biHeight)*(gInfoHeader.biBitCount>>3));	
-	
+	size=(gInfoHeader.biWidth*abs(gInfoHeader.biHeight)*(gInfoHeader.biBitCount>>3));
+
 	// init headers
 	gFileHeader.bfType=19778;
 	gFileHeader.bfSize=size+off;
@@ -119,21 +119,21 @@ DLLEXPORT int OutputPicture(const char *filename,tgPictureInfo *info,uint8* pixe
 	gInfoHeader.biYPelsPerMeter=0;
 	gInfoHeader.biClrUsed=0;
 	gInfoHeader.biClrImportant=0;
-	
+
 	fwrite(&gFileHeader,sizeof(gFileHeader),1,fp);
 	fwrite(&gInfoHeader,sizeof(gInfoHeader),1,fp);
 
 	for(int i=0;i<256;i++)
 	{	gRgbSquad[i].rgbBlue=pal[i].Blue;
 		gRgbSquad[i].rgbRed=pal[i].Red;
-		gRgbSquad[i].rgbGreen=pal[i].Green;	
+		gRgbSquad[i].rgbGreen=pal[i].Green;
 	}
 
 
 	if(gInfoHeader.biBitCount==8)
 	{	fwrite(&gRgbSquad,sizeof(RGBQUAD)*256,1,fp);
 	}
-	
+
 	// flip
 	if(gInfoHeader.biHeight>0)
 	{
@@ -144,9 +144,9 @@ DLLEXPORT int OutputPicture(const char *filename,tgPictureInfo *info,uint8* pixe
 	}
 	else
 	{	fwrite(pixels,size,1,fp);	}
-		
+
 	fclose(fp);
 
-	return tgOK;	
+	return tgOK;
 }
 

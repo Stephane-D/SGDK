@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Pcx picture plugins for tilegt
-// 
+//
 //
 //
 //
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "../../mdttSDK.h"
+#include "../mdttSDK.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header for pcx
@@ -44,7 +44,7 @@ typedef struct
 
 tgPictureInfo	Info;
 tgColor			Colors[tgMAX_COLORS];
-uint8			*Pixels;		
+uint8			*Pixels;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Get the description of the plugins
@@ -99,29 +99,29 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 	int			numbytes,runlen,cnt,size;
 	int			x,xx,y,po;
 	int			bytes_per_line=0;
-	
-	// check if a pcx 
+
+	// check if a pcx
 	if (stricmp(strrchr(pFileName, '.'), ".pcx") != 0)
 	{	return tgERR_UNSUPPORTED;}
 
 	// Get the length of the file
-	if (stat(pFileName, &statbuf) != 0) 
+	if (stat(pFileName, &statbuf) != 0)
 	{	return(tgERR_OPENINGFILE);}
 	size= statbuf.st_size;
 
 	// open file
 	in_file=fopen(pFileName,"rb");
-	if(in_file==NULL) 
-	{	return tgERR_OPENINGFILE;	
+	if(in_file==NULL)
+	{	return tgERR_OPENINGFILE;
 	}
 
 	// read header
 	pcx=(unsigned char*)malloc(size);
-	if(!pcx) 
+	if(!pcx)
 	{	return tgERR_OUTMEMORY;
 	}
 	fread(pcx,1,size,in_file);
-	
+
 	pcx_header=(pcx_hdr*)pcx;
 
 	// check of attributes
@@ -141,14 +141,14 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 	numbytes= (Info.Width * Info.Height * Info.BytesPerPixel);
 
 	Pixels=(unsigned char*)malloc(numbytes);
-	if(!Pixels) 
+	if(!Pixels)
 	{	return tgERR_OUTMEMORY;
 	}
-		
+
 	// skip header
 	pcx= pcx+ sizeof(pcx_hdr);
 
-	// Do RLE Decoding	
+	// Do RLE Decoding
     for(y=0;y<Info.Height;y++)
     {   x=xx=0;
         po = 0;
@@ -176,7 +176,7 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 	 	        {
                     if (xx < Info.Width)
                     {
-						Pixels[(y*Info.Width)+(xx)+po] = byte;                        
+						Pixels[(y*Info.Width)+(xx)+po] = byte;
                     }
 
         	        x++;
@@ -194,28 +194,28 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 	                    else
 		  	                xx++;
                     }
-                } 
+                }
 	        }
         }
     }
 
 	// if paletized
 	if(pcx_header->ClrPlanes ==1)
-	{		
+	{
 		pcx++;
-		
+
 		for (cnt=0; cnt<256; cnt++)
-		{	
+		{
 			Colors[cnt].Red	=	pcx[cnt*3+0];
 			Colors[cnt].Green = pcx[cnt*3+1];
-			Colors[cnt].Blue=	pcx[cnt*3+2];				
-		}	
+			Colors[cnt].Blue=	pcx[cnt*3+2];
+		}
 	}
-	
+
 	// close the pcx
 	fclose(in_file);
 
-	return tgOK;	
+	return tgOK;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,6 +231,6 @@ DLLEXPORT int GetPictureData(uint8* Data,tgColor* Palette)
 		memcpy(Palette,Colors,tgMAX_COLORS * sizeof(tgColor));
 	else
 		Palette=NULL;
-			
+
 	return tgOK;
 }

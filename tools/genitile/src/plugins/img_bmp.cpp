@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Pcx picture plugins for tilegt
-// 
+//
 //
 //
 //
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "../../mdttSDK.h"
+#include "../mdttSDK.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
@@ -25,11 +25,11 @@
 
 tgPictureInfo	Info;
 tgColor			Colors[tgMAX_COLORS];
-uint8			*Pixels;	
+uint8			*Pixels;
 
 RGBQUAD	gRgbSquad[256];
 BITMAPFILEHEADER gFileHeader;
-BITMAPINFOHEADER gInfoHeader;	
+BITMAPINFOHEADER gInfoHeader;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Get the description of the plugins
@@ -81,7 +81,7 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 	int size=0;
 	struct	stat statbuf;
 	unsigned char* data_inc=NULL;
-	
+
 	// check if bmp
 	if (stricmp(strrchr(pFileName, '.'), ".bmp") != 0)
 	{	return tgERR_UNSUPPORTED;}
@@ -98,7 +98,7 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 	// read
 	fp=fopen(pFileName,"rb");
 	if(fp==NULL) return tgERR_OPENINGFILE;
-		
+
 	if(fread(data,size,1,fp)!=1)
 		return tgERR_OPENINGFILE;
 
@@ -134,11 +134,11 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 
 	// load the pixels
 	data_inc=data + gFileHeader.bfOffBits;
-		
+
 	Pixels=(uint8*)malloc(gInfoHeader.biWidth*abs(gInfoHeader.biHeight)*gInfoHeader.biBitCount>>3);
 	if(!Pixels)
 		return tgERR_OUTMEMORY;
-	
+
 	// flip ?
 	if(gInfoHeader.biHeight>0)
 	{
@@ -147,7 +147,7 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 
 		for(int i=gInfoHeader.biHeight-1;i>=0;i--)
 		{	memcpy(&Pixels[row_pitch*cnt],&data_inc[row_pitch*i],row_pitch);
-			cnt++;		
+			cnt++;
 		}
 
 	}
@@ -160,14 +160,14 @@ DLLEXPORT int GetPictureInfo(const char* pFileName,tgPictureInfo* pInfo)
 		Colors[i].Blue = gRgbSquad[i].rgbBlue;
 		Colors[i].Green = gRgbSquad[i].rgbGreen;
 	}
-	
+
 	// clear the readed data
 	if(data)
 		free(data);
 
 	fclose(fp);
-	
-	return tgOK;	
+
+	return tgOK;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -183,6 +183,6 @@ DLLEXPORT int GetPictureData(uint8* Data,tgColor* Palette)
 		memcpy(Palette,Colors,tgMAX_COLORS * sizeof(tgColor));
 	else
 		Palette=NULL;
-			
+
 	return tgOK;
 }

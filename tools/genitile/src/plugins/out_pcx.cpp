@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Output pcx plugins for mdtt
-// 
+//
 //
 //
 //
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#include "../../mdttSDK.h"
+#include "../mdttSDK.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header for pcx
@@ -36,7 +36,7 @@ typedef struct
 	unsigned short	Bpl;               /* bytes per line, 80 in mode 0x13   */
 	unsigned short	plType;            /* Grey or Color palette flag        */
 	unsigned short	Hscreensize;	   /* hscreen siz 						*/
-	unsigned short  Vscreensize;	   /*									*/		
+	unsigned short  Vscreensize;	   /*									*/
 	char			Filler[54];        /* Zsoft wanted a 128 byte header    */
 
 }pcx_hdr;
@@ -106,7 +106,7 @@ DLLEXPORT int GetOutputType(void)
 
 DLLEXPORT int OutputPicture(const char *filename,tgPictureInfo *info,uint8* pixels,tgColor *pal)
 {
-	
+
 	FILE		*out_file;
 	pcx_hdr		pcx_header;
     int         planes=1;
