@@ -47,7 +47,9 @@ int main( )
 
 Download : [http://sgdk.googlecode.com/svn/wiki/files/tut2_Input.zip Basic input project]
 
-<wiki:comment>
+SGDK also supports Multipad, Justifier and Mouse, wiki about how use these adapters will come in future...
+
+ <wiki:comment>
 === Multipad ===
 
 This will work for up to 4 players using a [http://www.segaretro.org/4_Way_Play EA4Way] and up to 8 players using 2 [http://www.segaretro.org/Team_Player Sega TeamPlayer].
