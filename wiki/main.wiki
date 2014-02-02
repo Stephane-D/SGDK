@@ -14,5 +14,5 @@ This wiki aims to help you in using SGDK. It goes from the installation and to t
 
  # *[#SGDKTutorial Complete tutorial from Kaneda to get quickly in]*
  # *[#sgdk_tile_functions Specific tutorial about how deal with tiles]*
- # *[#SGDK_Math SDGK and maths stuff]*
+ # *[#SGDK_Math SDGK and maths]*
  # *more to come soon...* 
