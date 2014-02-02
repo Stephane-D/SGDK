@@ -1,0 +1,18 @@
+#summary Sega Genesis Development Kit (SGDK) Wiki
+
+= Introduction =
+
+This wiki aims to help you in using SGDK. It goes from the installation and to the library itself.
+
+= Installation =
+
+ # *[#HowToUseSGDK Installation and basic usage]*
+ # *[#UseSGDKWithEclipse Use SGDK with the Eclipse IDE]*
+ # *[#UseSGDKWithCB Use SGDK with the Code::blocks IDE]*
+
+= Programming =
+
+ # *[#SGDKTutorial Complete tutorial from Kaneda to get quickly in]*
+ # *[#sgdk_tile_functions Specific tutorial about how deal with tiles]*
+ # *[#SGDK_Math SDGK and maths stuff]*
+ # *more to come soon...* 
