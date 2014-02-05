@@ -175,7 +175,7 @@ int main( )
 	// get the image height (in pixel)  ==> should be 8px aligned
 	u16 h = moon.h;
 
-	// get the palette at moon[2 to 17]
+	// get the palette data of moon
 	VDP_setPalette(PAL1, moon.palette->data);
 
 	
