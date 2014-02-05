@@ -155,19 +155,13 @@ http://sgdk.googlecode.com/svn/wiki/pictures/tutTile-blue-moon.jpg
 
 2 important things to check before to continue
  # the bitmap size should be 8 pixel aligned (ie : 64x32 is good where 67x31 isn't)
- # the bitmap sould be a 16 colors, 4 bits/pixel BMP... be careful about this, some image editor save 256 colors BMP with only the first 16 colors filled
+ # the bitmap should be 4bpp or 8bpp and respect megadrive color constraints (16 colors per tile and no more than 64 colors at max)... 
  
-SGDK is able to handle several raw files if they are copied in a `res/` subfolder.
+SGDK is able to handle many type of resources file (PNG file are also accepted), you just need to define them in a .res file and rescomp will compile them (see rescomp.txt to see how to define your resources) and generate a 'name_of_res_file.h` and a `name_of_res_file.o`
 
-*WARNING* : you need at least SGDK v0.7b since there is a bug on pal support in previous versions
+`name_of_res_file.o` is the object form of your compiled resources.
 
-_Don't be afraid by the warning messages, it's a little bug on the extractor_
-
-If you copy your bitmap on this folder, SGDK will produce a `name_of_bmp_file.h` and a `name_of_bmp_file.o`
-
-`name_of_bmp_file.o` is the object form of your bitmap.
-
-`name_of_bmp_file.h` let you access the bitmap raw data.
+`name_of_res_file.h` contains the resource declarations and let you access, for instance, your bitmap image as a Bitmap data structure.
 
 so, including `name_of_bmp_file.h`, you could load the bitmap on VRAM this way
 
@@ -177,20 +171,20 @@ so, including `name_of_bmp_file.h`, you could load the bitmap on VRAM this way
 int main( )
 {
 	// get the image width (in pixel) ==> should be 8pix aligned
-	u16 w = moon[0];
+	u16 w = moon.w;
 	// get the image height (in pixel)  ==> should be 8px aligned
-	u16 h = moon[1];
+	u16 h = moon.h;
 
 	// get the palette at moon[2 to 17]
-	VDP_setPalette(PAL1, &moon[2]);
+	VDP_setPalette(PAL1, moon.palette->data);
 
 	
-	// load bitmap data at moon[18....] in VRAM
+	// load bitmap data of moon in VRAM
 	// w/8 = width in tiles we want to load
 	// h/8 = height in tile we want to load
 	// w/8 = width in tiles of the bitamp
 	// the 3rd arg is needed because you could load only a part of the bitmap if you want but SGDK needs the width as reference
-	VDP_loadBMPTileData((u32*) &moon[18], 1, w / 8, h / 8, w/8 );
+	VDP_loadBMPTileData(moon.image, 1, w / 8, h / 8, w/8 );
 
 
 	while(1)
