@@ -91,4 +91,3 @@ int wavToRawEx(char* fin, char* fout, int outRate)
 
     return TRUE;
 }
-

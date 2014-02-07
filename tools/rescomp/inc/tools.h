@@ -39,11 +39,15 @@ unsigned char swapNibble8(unsigned char value);
 
 unsigned short toVDPColor(unsigned char b, unsigned char g, unsigned char r);
 
+int isAbsolutePathSystem(char *path);
 int isAbsolutePath(char *path);
+char* getDirectorySystem(char* path);
 char* getDirectory(char* path);
+char* getFilenameSystem(char* path);
 char* getFilename(char* path);
 char* getFileExtension(char* path);
 void removeExtension(char* path);
+void adjustPathSystem(char *dir, char* path, char* dst);
 void adjustPath(char *dir, char* path, char* dst);
 unsigned int getFileSize(char* file);
 unsigned char* readFile(char *fileName, int *size);

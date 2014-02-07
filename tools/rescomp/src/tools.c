@@ -7,6 +7,20 @@
 #include "../inc/img_tools.h"
 
 
+#ifdef _WIN32
+#define FILE_SEPARATOR              "\\"
+#define FILE_SEPARATOR_CHAR         '\\'
+#else
+    #ifdef _WIN64
+    #define FILE_SEPARATOR          "\\"
+    #define FILE_SEPARATOR_CHAR     '\\'
+    #else
+    #define FILE_SEPARATOR          "/"
+    #define FILE_SEPARATOR_CHAR     '/'
+    #endif
+#endif
+
+
 // forward
 static int appack(char* fin, char* fout);
 //static int lzknpack(char* fin, char* fout);
@@ -40,6 +54,24 @@ unsigned short toVDPColor(unsigned char b, unsigned char g, unsigned char r)
 }
 
 
+int isAbsolutePathSystem(char* path)
+{
+    int len = strlen(path);
+
+    if (len > 0)
+    {
+        if (path[0] == FILE_SEPARATOR_CHAR) return TRUE;
+
+        if (len > 2)
+        {
+            // windows
+            if ((path[1] == ':') && (path[2] == FILE_SEPARATOR_CHAR))  return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 int isAbsolutePath(char* path)
 {
     int len = strlen(path);
@@ -66,6 +98,24 @@ int isAbsolutePath(char* path)
     return FALSE;
 }
 
+char* getDirectorySystem(char* path)
+{
+    char* result = strdup(path);
+    char* fdir = strrchr(result, FILE_SEPARATOR_CHAR);
+
+    if (fdir) *fdir = 0;
+    else
+    {
+        fdir = strrchr(result, ':');
+
+        if (fdir) fdir[1] = 0;
+        // no directory
+        else return strdup("");
+    }
+
+    return result;
+}
+
 char* getDirectory(char* path)
 {
     char* result = strdup(path);
@@ -88,6 +138,21 @@ char* getDirectory(char* path)
     }
 
     return result;
+}
+
+char* getFilenameSystem(char* path)
+{
+    char* fname = strrchr(path, FILE_SEPARATOR_CHAR);
+
+    if (fname) return fname + 1;
+    else
+    {
+        fname = strrchr(path, ':');
+
+        if (fname) return fname + 1;
+    }
+
+    return path;
 }
 
 char* getFilename(char* path)
@@ -126,6 +191,21 @@ void removeExtension(char* path)
     char* fext = strrchr(path, '.');
 
     if (fext) *fext = 0;
+}
+
+void adjustPathSystem(char* dir, char* path, char* dst)
+{
+    if (isAbsolutePathSystem(path)) strcpy(dst, path);
+    else
+    {
+        if (strlen(dir) > 0)
+        {
+            strcpy(dst, dir);
+            strcat(dst, FILE_SEPARATOR);
+            strcat(dst, path);
+        }
+        else strcpy(dst, path);
+    }
 }
 
 void adjustPath(char* dir, char* path, char* dst)
@@ -616,7 +696,7 @@ int maccer(char* fin, char* fout)
     remove(fout);
 
     // command
-    adjustPath(currentDir, "mac68k", cmd);
+    adjustPathSystem(currentDirSystem, "mac68k", cmd);
 
     // arguments
     strcat(cmd, " -o \"");
@@ -648,7 +728,7 @@ int tfmcom(char* fin, char* fout)
     remove(fout);
 
     // command
-    adjustPath(currentDir, "tfmcom", cmd);
+    adjustPathSystem(currentDirSystem, "tfmcom", cmd);
 
     // arguments
     strcat(cmd, " \"");
@@ -730,7 +810,7 @@ static int appack(char* fin, char* fout)
     remove(fout);
 
     // command
-    adjustPath(currentDir, "appack", cmd);
+    adjustPathSystem(currentDirSystem, "appack", cmd);
 
     // arguments
     strcat(cmd, " c \"");
@@ -762,7 +842,7 @@ static int appack(char* fin, char* fout)
 //    remove(fout);
 //
 //    // command
-//    adjustPath(currentDir, "lzknpack", cmd);
+//    adjustPathSystem(currentDirSystem, "lzknpack", cmd);
 //
 //    // arguments
 //    strcat(cmd, " \"");
