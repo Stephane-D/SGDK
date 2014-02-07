@@ -1,4 +1,4 @@
-ResComp 1.0 (oct 2013)
+ResComp 1.1 (feb 2014)
 Stephane Dallongeville
 https://code.google.com/p/sgdk/
 
