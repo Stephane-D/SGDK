@@ -29,7 +29,9 @@ static int execute(char *info, FILE *fs, FILE *fh);
 
 
 // shared directory informations
+char *currentDirSystem;
 char *currentDir;
+char *resDirSystem;
 char *resDir;
 
 // add your plugin declaration here
@@ -65,6 +67,7 @@ int main(int argc, char **argv)
     fileNameOut[0] = 0;
 
     // save rescomp directory
+    currentDirSystem = getDirectorySystem(argv[0]);
     currentDir = getDirectory(argv[0]);
 
     // parse parmeters
@@ -80,7 +83,7 @@ int main(int argc, char **argv)
 
 //    strcpy(fileName, "resources.res");
 
-    printf("rescomp v1.0\n");
+    printf("rescomp v1.1\n");
 
     if (!fileName[0])
     {
@@ -240,6 +243,7 @@ static int doComp(char *fileName, char *fileNameOut, int header)
     tempName[0] = 0;
 
     // save input file directory
+    resDirSystem = getDirectorySystem(fileName);
     resDir = getDirectory(fileName);
 
     if (!fileNameOut[0]) strcpy(fileNameOut, fileName);
