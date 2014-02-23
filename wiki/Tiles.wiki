@@ -30,7 +30,7 @@ So, the steps to draw a tile on screen are the following
 
 But first, we need a tile !
 
-Several tools were made by the communauty ([http://www.pascalorama.com/article.php?news=28&cat=21 Genitile], [http://gendev.spritesmind.net/page-b2t.html B2T], [http://gendev.spritesmind.net/page-genres.html GenRes], [http://uberleethackerforce.deepgeek.us/prods.html Mega-Happy-Sprite]
+Rescomp and others tools made by the community ([http://www.pascalorama.com/article.php?news=28&cat=21 Genitile], [http://gendev.spritesmind.net/page-b2t.html B2T], [http://gendev.spritesmind.net/page-genres.html GenRes], [http://uberleethackerforce.deepgeek.us/prods.html Mega-Happy-Sprite]
 ...) let you convert a 16 color bitmap in Genny's tile and pal.
 
 But, to learn, we'll first make it the hard way : pure C Array !
@@ -62,7 +62,7 @@ Now, just follow the steps
 	//we'll use one of the pre-loaded pal for now
 	
 	//write our tile 1 on plane A at (5,5) with pal 0
-	VDP_setTileMap(APLAN, 1, 5, 5);
+	VDP_setTileMapXY(APLAN, 1, 5, 5);
 	
 	// ... code
 	
@@ -76,7 +76,7 @@ Now, just follow the steps
 
 The tile is so drawn on screen using some fade of grey...but what about flipping and pal ?
 
-The 2nd argument of `VDP_setTileMap` func could be more than only the tile index.
+The 2nd argument of `VDP_setTileMapXY` func could be more than only the tile index.
 
 It is, in fact, the tile properties : pal index, priority, vflipping, hflipping and tile index.
 
@@ -90,7 +90,7 @@ So, to write it flipped green on B plane, you could write
 	// 1 = vflip
 	// 0 = no hflip
 	// 1 = tile 1
-	VDP_setTileMap(BPLAN, TILE_ATTR_FULL(PAL2, 0, 1, 0, 1), 6, 5);
+	VDP_setTileMapXY(BPLAN, TILE_ATTR_FULL(PAL2, 0, 1, 0, 1), 6, 5);
 	
 	// ... code
 }}}
@@ -100,7 +100,7 @@ It's now time to talk about the priority flag.
 
 This flag tell which plane is behind the others (even more complex if you add sprites !).
 
-A powerful feature of the Genny is to let the developper define the planes order at the tile level.
+A powerful feature of the Genny is to let the developer define the planes order at the tile level.
 
 It means a tile on A plane could be in front of a tile on B plane at (x,y) and inverse the priority at (n,m).
 
@@ -110,10 +110,10 @@ You could easily see the power of this when scrolling planes at different speed 
 	// ... code
 	
 	// the same tile is drawn on the 2 plane but with different pal and priority...which one is in front ?
-	VDP_setTileMap(APLAN, TILE_ATTR_FULL(PAL1, 1, 0, 0, 1), 7, 7);
-	VDP_setTileMap(BPLAN, TILE_ATTR_FULL(PAL2, 0, 0, 0, 1), 7, 7);
-	VDP_setTileMap(APLAN, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 8, 7);
-	VDP_setTileMap(BPLAN, TILE_ATTR_FULL(PAL2, 1, 0, 0, 1), 8, 7);
+	VDP_setTileMapXY(APLAN, TILE_ATTR_FULL(PAL1, 1, 0, 0, 1), 7, 7);
+	VDP_setTileMapXY(BPLAN, TILE_ATTR_FULL(PAL2, 0, 0, 0, 1), 7, 7);
+	VDP_setTileMapXY(APLAN, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 8, 7);
+	VDP_setTileMapXY(BPLAN, TILE_ATTR_FULL(PAL2, 1, 0, 0, 1), 8, 7);
 	
 	// ... code
 }}}
@@ -197,7 +197,7 @@ int main( )
 
 For this moon, you have 8x8 tiles loaded.
 
-You could draw them by hand using `VDP_setTileMap` but it's boring and, as usual when it's a boring process, SGDK has a magical function for it : `VDP_fillTileMapRectInc`.
+You could draw them by hand using `VDP_setTileMapXY` but it's boring and, as usual when it's a boring process, SGDK has a magical function for it : `VDP_fillTileMapRectInc`.
 
 This function draw FROM the tile index in argument to the last needed to fill the rect wanted.
 
