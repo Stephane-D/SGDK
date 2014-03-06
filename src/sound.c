@@ -873,11 +873,13 @@ u8 SND_isPlaying_VGM()
     return result;
 }
 
-void SND_playSfx_VGM(unsigned int addr, u16 len)
+void SND_playSfx_VGM(const u8 *sfx, u16 len)
 {
     vu8 *pb;
     u16 z80addr;
     u8 z80bank;
+    u32 addr = (u32) sfx;
+
     z80bank = ((addr & 0xFF8000) >> 15);
     z80addr = ((addr & ~0xFF8000) + 0x8000);
 

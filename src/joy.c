@@ -25,7 +25,7 @@ static u8 phase;
 
 static u8 gun;
 static u8 extSet;
-static u16 gport = 0xFFFF;
+static u16 gport;
 
 
 static _joyEventCallback *joyEventCB;
@@ -36,13 +36,12 @@ void JOY_init()
     vu8 *pb;
     u8  a, id;
     u16 i;
-    u16 saveint;
 
     joyEventCB = NULL;
+    gport = 0xFFFF;
 
     // disable ints
-    saveint = SYS_getInterruptMaskLevel();
-    SYS_setInterruptMaskLevel(7);
+    SYS_disableInts();
 
     /* check for EA 4-Way Play */
     pb = (vu8 *)0xa10009;
@@ -57,6 +56,7 @@ void JOY_init()
     *pb = 0x7C;
     pb = (vu8 *)0xa10003;
     a = *pb & 3;
+
     if (a == 0)
     {
         /* EA 4-Way Play detected */
@@ -74,7 +74,7 @@ void JOY_init()
         }
 
         // restore ints
-        SYS_setInterruptMaskLevel(saveint);
+        SYS_enableInts();
 
         /* wait a few vblanks for JOY_update() to get valid data */
         VDP_waitVSync();
@@ -205,7 +205,7 @@ void JOY_init()
     }
 
     // restore ints
-    SYS_setInterruptMaskLevel(saveint);
+    SYS_enableInts();
 
     /* wait a few vblanks for JOY_update() to get valid data */
     VDP_waitVSync();
@@ -233,7 +233,7 @@ static void externalIntCB()
     vu8 *pb;
     u16 hv;
 
-    hv = *(vu16 *)0xc00008;                 /* read HV counter */
+    hv = GET_HVCOUNTER;                  /* read HV counter */
 
     if (extSet || (gport == 0xFFFF)) return;
 
@@ -388,7 +388,6 @@ u16 JOY_readJoypad(u16 joy)
     return 0;
 }
 
-
 u16 JOY_readJoypadX(u16 joy)
 {
     if (joy < JOY_NUM)
@@ -396,7 +395,6 @@ u16 JOY_readJoypadX(u16 joy)
 
     return 0;
 }
-
 
 u16 JOY_readJoypadY(u16 joy)
 {
@@ -915,6 +913,7 @@ static void readLightgun(u16 port)
         *pb = gun | 0x10;                   /* deselect gun */
         *pb = gun;                          /* leave gun selected to get light sense input */
     }
+
     extSet = 0;                             /* clear light sensed flag */
 }
 
@@ -994,6 +993,7 @@ void JOY_update()
     {
         case JOY_SUPPORT_OFF:
             break;
+
         case JOY_SUPPORT_3BTN:
             val = read3Btn(PORT_1);
             newstate = val & BUTTON_ALL;
@@ -1002,6 +1002,7 @@ void JOY_update()
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
+
         case JOY_SUPPORT_6BTN:
             val = read6Btn(PORT_1);
             newstate = val & BUTTON_ALL;
@@ -1010,6 +1011,7 @@ void JOY_update()
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
+
         case JOY_SUPPORT_MOUSE:
             val = readMouse(PORT_1);
             newstate = val & BUTTON_ALL;
@@ -1018,6 +1020,7 @@ void JOY_update()
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
+
         case JOY_SUPPORT_TRACKBALL:
             val = readTrackball(PORT_1);
             newstate = val & BUTTON_ALL;
@@ -1026,24 +1029,30 @@ void JOY_update()
             joyState[JOY_1] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
             break;
+
         case JOY_SUPPORT_TEAMPLAYER:
             readTeamPlayer(PORT_1);
             break;
+
         case JOY_SUPPORT_EA4WAYPLAY:
             readEa4WayPlay();
             break;
+
         case JOY_SUPPORT_MENACER:
         case JOY_SUPPORT_JUSTIFIER_BLUE:
         case JOY_SUPPORT_JUSTIFIER_BOTH:
             readLightgun(PORT_1);
             break;
+
         default:
             break;
     }
+
     switch (portSupport[PORT_2])
     {
         case JOY_SUPPORT_OFF:
             break;
+
         case JOY_SUPPORT_3BTN:
             val = read3Btn(PORT_2);
             newstate = val & BUTTON_ALL;
@@ -1052,6 +1061,7 @@ void JOY_update()
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
+
         case JOY_SUPPORT_6BTN:
             val = read6Btn(PORT_2);
             newstate = val & BUTTON_ALL;
@@ -1060,6 +1070,7 @@ void JOY_update()
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
+
         case JOY_SUPPORT_MOUSE:
             val = readMouse(PORT_2);
             newstate = val & BUTTON_ALL;
@@ -1068,6 +1079,7 @@ void JOY_update()
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
+
         case JOY_SUPPORT_TRACKBALL:
             val = readTrackball(PORT_2);
             newstate = val & BUTTON_ALL;
@@ -1076,14 +1088,17 @@ void JOY_update()
             joyState[JOY_2] = newstate;
             if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
             break;
+
         case JOY_SUPPORT_TEAMPLAYER:
             readTeamPlayer(PORT_2);
             break;
+
         case JOY_SUPPORT_MENACER:
         case JOY_SUPPORT_JUSTIFIER_BLUE:
         case JOY_SUPPORT_JUSTIFIER_BOTH:
             readLightgun(PORT_2);
             break;
+
         default:
             break;
     }

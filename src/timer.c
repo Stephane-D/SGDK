@@ -57,8 +57,12 @@ u32 getTick()
 // return elapsed time from console reset (1/256 second based)
 u32 getTime(u16 fromTick)
 {
-    if (fromTick) return (getTick() * TICKPERSECOND) >> 8;
-    else return getSubTick() / TICKPERSECOND;
+    u32 result;
+
+    if (fromTick) result = getTick() << 8;
+    else result = getSubTick();
+
+    return result / TICKPERSECOND;
 }
 
 fix32 getTimeAsFix32(u16 fromTick)

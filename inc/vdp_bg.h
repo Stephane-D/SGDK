@@ -14,6 +14,7 @@
 #define _VDP_BG_H_
 
 #include "bmp.h"
+#include "vdp.h"
 #include "vdp_tile.h"
 
 
@@ -48,8 +49,8 @@ typedef struct
  *  \param plan
  *      Plan we want to set the horizontal scroll.<br/>
  *      Accepted values are:<br/>
- *      - VDP_PLAN_A<br/>
- *      - VDP_PLAN_B<br/>
+ *      - PLAN_A<br/>
+ *      - PLAN_B<br/>
  *  \param value
  *      H scroll offset.<br/>
  *      Negative value will move the plan to the left while positive
@@ -57,7 +58,7 @@ typedef struct
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScroll(u16 plan, s16 value);
+void VDP_setHorizontalScroll(VDPPlan plan, s16 value);
 /**
  *  \brief
  *      Set plan horizontal scroll (tile scroll mode).<br/>
@@ -69,8 +70,8 @@ void VDP_setHorizontalScroll(u16 plan, s16 value);
  *  \param plan
  *      Plan we want to set the horizontal scroll.<br/>
  *      Accepted values are:<br/>
- *      - VDP_PLAN_A<br/>
- *      - VDP_PLAN_B<br/>
+ *      - PLAN_A<br/>
+ *      - PLAN_B<br/>
  *  \param tile
  *      First tile we want to set the horizontal scroll.
  *  \param values
@@ -84,7 +85,7 @@ void VDP_setHorizontalScroll(u16 plan, s16 value);
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use_dma);
+void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma);
 /**
  *  \brief
  *      Set plan horizontal scroll (line scroll mode).<br/>
@@ -96,8 +97,8 @@ void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 u
  *  \param plan
  *      Plan we want to set the horizontal scroll.<br/>
  *      Accepted values are:<br/>
- *      - VDP_PLAN_A<br/>
- *      - VDP_PLAN_B<br/>
+ *      - PLAN_A<br/>
+ *      - PLAN_B<br/>
  *  \param line
  *      First line we want to set the horizontal scroll.
  *  \param values
@@ -111,7 +112,7 @@ void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 u
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScrollLine(u16 plan, u16 line, s16* values, u16 len, u16 use_dma);
+void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u16 use_dma);
 
 /**
  *  \brief
@@ -123,15 +124,15 @@ void VDP_setHorizontalScrollLine(u16 plan, u16 line, s16* values, u16 len, u16 u
  *  \param plan
  *      Plan we want to set the vertical scroll.<br/>
  *      Accepted values are:<br/>
- *      - VDP_PLAN_A<br/>
- *      - VDP_PLAN_B<br/>
+ *      - PLAN_A<br/>
+ *      - PLAN_B<br/>
  *  \param value
  *      V scroll offset.<br/>
  *      Negative value will move the plan down while positive value will move it up.
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setVerticalScroll(u16 plan, s16 value);
+void VDP_setVerticalScroll(VDPPlan plan, s16 value);
 /**
  *  \brief
  *      Set plan vertical scroll (2-Tiles scroll mode).
@@ -142,8 +143,8 @@ void VDP_setVerticalScroll(u16 plan, s16 value);
  *  \param plan
  *      Plan we want to set the vertical scroll.<br/>
  *      Accepted values are:<br/>
- *      - VDP_PLAN_A<br/>
- *      - VDP_PLAN_B<br/>
+ *      - PLAN_A<br/>
+ *      - PLAN_B<br/>
  *  \param tile
  *      First tile we want to set the vertical scroll.
  *  \param values
@@ -156,7 +157,7 @@ void VDP_setVerticalScroll(u16 plan, s16 value);
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setVerticalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use_dma);
+void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma);
 
 /**
  *  \brief
@@ -178,12 +179,12 @@ void VDP_clearPlan(u16 plan, u8 use_dma);
  *  \brief
  *      Returns the plan used to display text.
  *
- *  Returned value should be either BPLAN or APLAN.
+ *  Returned value should be either PLAN_A or PLAN_B.
  *
  * @see VDP_drawText(..)
  * @see VDP_clearText(..)
  */
-u16 VDP_getTextPlan();
+VDPPlan VDP_getTextPlan();
 /**
  *  \brief
  *      Returns the palette number used to display text.
@@ -208,13 +209,13 @@ u16 VDP_getTextPriority();
  *  \param plan
  *      Plan where to display text.<br/>
  *      Accepted values are:<br/>
- *      <b>APLAN</b> or <b>VDP_PLAN_A</b><br/>
- *      <b>BPLAN</b> or <b>VDP_PLAN_B</b><br/>
+ *      <b>PLAN_A</b><br/>
+ *      <b>PLAN_B</b><br/>
  *
  * @see VDP_drawText(..)
  * @see VDP_clearText(..)
  */
-void VDP_setTextPlan(u16 plan);
+void VDP_setTextPlan(VDPPlan plan);
 /**
  *  \brief
  *      Define the palette to use to display text.

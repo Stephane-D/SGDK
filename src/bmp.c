@@ -43,15 +43,15 @@ extern u32 HIntProcess;
 extern u16 text_basetile;
 
 
-static u8 *bmp_buffer_0 = NULL;
-static u8 *bmp_buffer_1 = NULL;
+static u8 *bmp_buffer_0;
+static u8 *bmp_buffer_1;
 
 u8 *bmp_buffer_read;
 u8 *bmp_buffer_write;
 
 // used for polygon drawing
-s16 *leftEdge = NULL;
-s16 *rightEdge = NULL;
+s16 *leftEdge;
+s16 *rightEdge;
 
 s16 minYL;
 s16 maxYL;
@@ -81,6 +81,11 @@ void BMP_init(u16 double_buffer, u16 palette, u16 priority)
     flag = (double_buffer) ? BMP_FLAG_DOUBLEBUFFER : 0;
     pal = palette & 3;
     prio = priority & 1;
+
+    bmp_buffer_0 = NULL;
+    bmp_buffer_1 = NULL;
+    leftEdge = NULL;
+    rightEdge = NULL;
 
     BMP_reset();
 }
@@ -152,7 +157,7 @@ void BMP_reset()
     if (HAS_DOUBLEBUFFER)
         initTilemap(1);
 
-    VDP_setVerticalScroll(BMP_PLAN, 0);
+    VDP_setVerticalScroll(BMP_PLAN_ENUM, 0);
 
     // prepare hint for extended blank on next frame
     VDP_setHIntCounter(((screenHeight - BMP_HEIGHT) >> 1) - 1);
@@ -711,7 +716,7 @@ static void doFlip()
             if (READ_IS_FB0) vscr = ((BMP_PLANHEIGHT * 8) * 0) / 2;
             else vscr = ((BMP_PLANHEIGHT * 8) * 1) / 2;
 
-            VDP_setVerticalScroll(BMP_PLAN, vscr);
+            VDP_setVerticalScroll(BMP_PLAN_ENUM, vscr);
         }
 
         // get bitmap state

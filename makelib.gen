@@ -34,9 +34,9 @@ OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
 INCS= -I$(INCLUDE) -I$(SRC) -I$(RES)
-#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS) -B$(BIN)
-#FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
+#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin $(INCS)
+FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin $(INCS) -B$(BIN)
+#FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin $(INCS)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
 

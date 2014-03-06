@@ -25,6 +25,9 @@
 
 static u8 regValues[0x13];
 
+const VDPPlan PLAN_B = { 0 };
+const VDPPlan PLAN_A = { 1 };
+
 u16 window_adr;
 u16 aplan_adr;
 u16 bplan_adr;
@@ -36,7 +39,7 @@ u16 screenHeight;
 
 // don't want to share it
 extern u16 text_basetile;
-extern u16 text_plan;
+extern u16 *text_plan;
 
 
 void VDP_init()
@@ -113,14 +116,14 @@ void VDP_init()
 //    VDP_setPaletteColors((PAL0 * 16) + 8, (u16*) palette_grey, 8);
 
     // reset vertical scroll for plan A & B
-    VDP_setVerticalScroll(APLAN,  0);
-    VDP_setVerticalScroll(BPLAN,  0);
+    VDP_setVerticalScroll(PLAN_A,  0);
+    VDP_setVerticalScroll(PLAN_B,  0);
 
     // reset sprite struct
     VDP_resetSprites();
 
     // default plan and base tile attribut for draw text method
-    text_plan = APLAN;
+    text_plan = &aplan_adr;
     text_basetile = TILE_ATTR(PAL0, TRUE, FALSE, FALSE);
 }
 
@@ -157,7 +160,6 @@ void VDP_setReg(u16 reg, u8 value)
         case 0x02:
             v = value & 0x38;
             // update text plan address
-            if (text_plan == aplan_adr) text_plan = v * 0x400;
             aplan_adr = v * 0x400;
             break;
 
@@ -172,7 +174,6 @@ void VDP_setReg(u16 reg, u8 value)
         case 0x04:
             v = value & 0x7;
             // update text plan address
-            if (text_plan == bplan_adr) text_plan = v * 0x2000;
             bplan_adr = v * 0x2000;
             break;
 

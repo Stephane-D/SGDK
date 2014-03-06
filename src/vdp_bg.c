@@ -14,11 +14,11 @@
 #include "memory.h"
 
 
-u16 text_plan;
+u16 *text_plan;
 u16 text_basetile;
 
 
-void VDP_setHorizontalScroll(u16 plan, s16 value)
+void VDP_setHorizontalScroll(VDPPlan plan, s16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -29,18 +29,18 @@ void VDP_setHorizontalScroll(u16 plan, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = HSCRL;
-    if (plan == BPLAN) addr += 2;
+    if (plan.v == PLAN_B.v) addr += 2;
 
     *pl = GFX_WRITE_VRAM_ADDR(addr);
     *pw = value;
 }
 
-void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use_dma)
+void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma)
 {
     u16 addr;
 
     addr = HSCRL + ((tile & 0x1F) * (4 * 8));
-    if (plan == BPLAN) addr += 2;
+    if (plan.v == PLAN_B.v) addr += 2;
 
     VDP_setAutoInc(4 * 8);
 
@@ -65,12 +65,12 @@ void VDP_setHorizontalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 u
     }
 }
 
-void VDP_setHorizontalScrollLine(u16 plan, u16 line, s16* values, u16 len, u16 use_dma)
+void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u16 use_dma)
 {
     u16 addr;
 
     addr = HSCRL + ((line & 0xFF) * 4);
-    if (plan == BPLAN) addr += 2;
+    if (plan.v == PLAN_B.v) addr += 2;
 
     VDP_setAutoInc(4);
 
@@ -95,7 +95,7 @@ void VDP_setHorizontalScrollLine(u16 plan, u16 line, s16* values, u16 len, u16 u
     }
 }
 
-void VDP_setVerticalScroll(u16 plan, s16 value)
+void VDP_setVerticalScroll(VDPPlan plan, s16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -105,19 +105,19 @@ void VDP_setVerticalScroll(u16 plan, s16 value)
     pw = (u16 *) GFX_DATA_PORT;
     pl = (u32 *) GFX_CTRL_PORT;
 
-    if (plan == APLAN) addr = 0;
-    else addr = 2;
+    addr = 0;
+    if (plan.v == PLAN_B.v) addr += 2;
 
     *pl = GFX_WRITE_VSRAM_ADDR(addr);
     *pw = value;
 }
 
-void VDP_setVerticalScrollTile(u16 plan, u16 tile, s16* values, u16 len, u16 use_dma)
+void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma)
 {
     u16 addr;
 
     addr = (tile & 0x1F) * 4;
-    if (plan == BPLAN) addr += 2;
+    if (plan.v == PLAN_B.v) addr += 2;
 
     VDP_setAutoInc(4);
 
@@ -180,9 +180,10 @@ void VDP_clearPlan(u16 plan, u8 use_dma)
     }
 }
 
-u16 VDP_getTextPlan()
+VDPPlan VDP_getTextPlan()
 {
-    return text_plan;
+    if (text_plan == &aplan_adr) return PLAN_A;
+    else return PLAN_B;
 }
 
 u16 VDP_getTextPalette()
@@ -195,9 +196,10 @@ u16 VDP_getTextPriority()
     return (text_basetile >> 15) & 1;
 }
 
-void VDP_setTextPlan(u16 plan)
+void VDP_setTextPlan(VDPPlan plan)
 {
-    text_plan = plan;
+    if (plan.v == PLAN_B.v) text_plan = &bplan_adr;
+    else text_plan = &aplan_adr;
 }
 
 void VDP_setTextPalette(u16 pal)
@@ -244,20 +246,17 @@ void VDP_clearTextLineBG(u16 plan, u16 y)
 
 void VDP_drawText(const char *str, u16 x, u16 y)
 {
-    // use A plan by default
-    VDP_drawTextBG(text_plan, str, text_basetile, x, y);
+    VDP_drawTextBG(*text_plan, str, text_basetile, x, y);
 }
 
 void VDP_clearText(u16 x, u16 y, u16 w)
 {
-    // use A plan by default
-    VDP_clearTextBG(text_plan, x, y, w);
+    VDP_clearTextBG(*text_plan, x, y, w);
 }
 
 void VDP_clearTextLine(u16 y)
 {
-    // use A plan by default
-    VDP_clearTextLineBG(text_plan, y);
+    VDP_clearTextLineBG(*text_plan, y);
 }
 
 

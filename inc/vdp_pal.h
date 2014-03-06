@@ -145,8 +145,8 @@ void VDP_setPalette(u16 num, const u16 *pal);
 
 // these functions should be private as they are called by VDP_fadeXXX functions internally
 // but they can be useful sometime for better control on the fading processus
-u16  VDP_doStepFading();
-u16  VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe);
+u16  VDP_doStepFading(u16 waitVSync);
+u16  VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u16 waitVSync);
 
 
 /**

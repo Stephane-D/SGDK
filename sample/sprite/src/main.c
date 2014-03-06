@@ -27,9 +27,6 @@
 
 
 // forward
-static void disableInts();
-static void enableInts();
-
 static void handleInput();
 static void joyEvent(u16 joy, u16 changed, u16 state);
 
@@ -53,10 +50,11 @@ int main()
     u16 palette[64];
     u16 ind;
 
+    // disable interrupt when accessing VDP
+    SYS_disableInts();
+
     // initialization
     VDP_setScreenWidth320();
-
-    JOY_setEventHandler(joyEvent);
 
     // start music
     SND_startPlay_VGM(sonic_music);
@@ -64,7 +62,7 @@ int main()
     // init sprites engine
     SPR_init(256);
 
-    // set all palettes to black
+    // set all palette to black
     VDP_setPaletteColors(0, palette_black, 64);
 
     // load background
@@ -73,6 +71,9 @@ int main()
     ind += bgb_image.tileset->numTile;
     VDP_drawImageEx(APLAN, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
     ind += bga_image.tileset->numTile;
+
+    // VDP process done, we can re enable interrupts
+    SYS_enableInts();
 
     camposx = FIX16(0);
     camposy = FIX16(0);
@@ -87,13 +88,17 @@ int main()
     SPR_initSprite(&sprite, &sonic_sprite, fix16ToInt(posx), fix16ToInt(posy), TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
     SPR_update(&sprite, 1);
 
-    // prepare palette
+    // prepare palettes
     memcpy(&palette[0], bgb_image.palette->data, 16 * 2);
     memcpy(&palette[16], bga_image.palette->data, 16 * 2);
     memcpy(&palette[32], sonic_sprite.palette->data, 16 * 2);
 
-    // fade in
+    // fade in (disable interrupts because of the passive fade in)
+    SYS_disableInts();
     VDP_fadeIn(0, (3 * 16) - 1, palette, 20, FALSE);
+    SYS_enableInts();
+
+    JOY_setEventHandler(joyEvent);
 
     while(TRUE)
     {
@@ -103,9 +108,7 @@ int main()
         updateAnim();
 
         // update sprite
-        disableInts();
         SPR_update(&sprite, 1);
-        enableInts();
 
         VDP_waitVSync();
     }
@@ -200,17 +203,6 @@ static void updateAnim()
 }
 
 
-static void disableInts()
-{
-    if (!SYS_isInInterrupt()) SYS_disableInts();
-}
-
-static void enableInts()
-{
-    if (!SYS_isInInterrupt()) SYS_enableInts();
-}
-
-
 static void handleInput()
 {
     u16 value = JOY_readJoypad(JOY_1);
@@ -223,7 +215,6 @@ static void handleInput()
     else if (value & BUTTON_RIGHT) xorder = +1;
     else xorder = 0;
 }
-
 
 static void joyEvent(u16 joy, u16 changed, u16 state)
 {

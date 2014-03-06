@@ -272,7 +272,7 @@ void VDP_fillTileData(u8 value, u16 index, u16 num, u8 use_dma);
  *  \param tile
  *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param ind
- *      tile index.
+ *      position in tilemap.
  */
 void VDP_setTileMap(u16 plan, u16 tile, u16 ind);
 /**

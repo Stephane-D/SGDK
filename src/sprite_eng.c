@@ -11,6 +11,11 @@
 #include "memory.h"
 
 
+#define VISIBILITY_ALWAYS_FLAG  0x40000000
+#define VISIBILITY_ALWAYS_ON    (VISIBILITY_ALWAYS_FLAG | 0x3FFFFFFF)
+#define VISIBILITY_ALWAYS_OFF   VISIBILITY_ALWAYS_FLAG
+
+
 // we don't want to share it
 extern u32 VIntProcess;
 
@@ -21,7 +26,7 @@ static void allocTileSet(AnimationFrame *frame, u16 position);
 
 
 // no static so it can be read
-VDPSprite *VDPSpriteCache = NULL;
+VDPSprite *VDPSpriteCache;
 
 static TileCache tcSprite;
 static u16 toUpload;
@@ -119,7 +124,8 @@ void SPR_setPosition(Sprite *sprite, s16 x, s16 y)
         sprite->y = fy;
 
         // need to recompute visibility
-        sprite->visibility = -1;
+        if (!(sprite->visibility & VISIBILITY_ALWAYS_FLAG))
+            sprite->visibility = -1;
     }
 }
 
@@ -130,7 +136,8 @@ void SPR_setAttribut(Sprite *sprite, u16 attribut)
         sprite->attribut = attribut;
 
         // need to recompute visibility
-        sprite->visibility = -1;
+        if (!(sprite->visibility & VISIBILITY_ALWAYS_FLAG))
+            sprite->visibility = -1;
     }
 }
 
@@ -212,6 +219,30 @@ void SPR_setVRAMTileIndex(Sprite *sprite, s16 index)
     };
 }
 
+void SPR_setAlwaysVisible(Sprite *sprite, u16 value)
+{
+    if (value)
+        sprite->visibility = VISIBILITY_ALWAYS_ON;
+    else
+    {
+        // change it so we will recompute visibility
+        if (sprite->visibility == VISIBILITY_ALWAYS_ON)
+            sprite->visibility = -1;
+    }
+}
+
+void SPR_setNeverVisible(Sprite *sprite, u16 value)
+{
+    if (value)
+        sprite->visibility = VISIBILITY_ALWAYS_OFF;
+    else
+    {
+        // change it so we will recompute visibility
+        if (sprite->visibility == VISIBILITY_ALWAYS_OFF)
+            sprite->visibility = -1;
+    }
+}
+
 //void SPR_checkAllocation(Sprite *sprite)
 //{
 //    // ensure sprite tileset is still allocated in VRAM (only for automatic allocation)
@@ -258,7 +289,7 @@ void SPR_update(Sprite *sprites, u16 num)
             visibility = sprite->visibility;
 
             // need update ?
-            if (visibility < 0)
+            if (visibility == -1)
             {
                 computeVisibility(sprite);
                 visibility = sprite->visibility;
@@ -277,7 +308,6 @@ void SPR_update(Sprite *sprites, u16 num)
 
         sprite++;
     }
-
 
     cache = VDPSpriteCache;
 
@@ -310,7 +340,7 @@ void SPR_update(Sprite *sprites, u16 num)
         visibility = sprite->visibility;
 
         // need update ?
-        if (visibility < 0)
+        if (visibility == -1)
         {
             computeVisibility(sprite);
             visibility = sprite->visibility;
@@ -325,7 +355,7 @@ void SPR_update(Sprite *sprites, u16 num)
         if (vramInd == -1)
         {
             // auto allocation
-            while(j--)
+            while(visibility && j--)
             {
                 FrameSprite* frameSprite = *frameSprites++;
 
@@ -361,7 +391,7 @@ void SPR_update(Sprite *sprites, u16 num)
         else
         {
             // fixed allocation
-            while(j--)
+            while(visibility && j--)
             {
                 FrameSprite* frameSprite = *frameSprites++;
 
@@ -513,7 +543,8 @@ static void setFrame(Sprite *sprite, AnimationFrame* frame)
         sprite->timer++;
 
     // need to recompute visibility
-    sprite->visibility = -1;
+    if (!(sprite->visibility & VISIBILITY_ALWAYS_FLAG))
+        sprite->visibility = -1;
 }
 
 static void allocTileSet(AnimationFrame *frame, u16 position)

@@ -34,6 +34,7 @@
  *          Plan used to draw bitmap (plan A).
  */
 #define BMP_PLAN                    APLAN
+#define BMP_PLAN_ENUM               PLAN_A
 
 #define BMP_PLANWIDTH_SFT           6
 #define BMP_PLANHEIGHT_SFT          6

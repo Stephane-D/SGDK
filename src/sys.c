@@ -16,6 +16,8 @@
 #include "string.h"
 #include "vdp.h"
 #include "vdp_bg.h"
+#include "vdp_pal.h"
+#include "tile_cache.h"
 
 #include "tools.h"
 
@@ -31,14 +33,13 @@
 
 // we don't want to share them
 extern u16 randbase;
+extern TCBloc *uploads;
 
 // extern library callback function (we don't want to share them)
-extern u16 VDP_doStepFading();
 extern u16 BMP_doHBlankProcess();
 extern u16 BMP_doVBlankProcess();
 extern u16 TC_doVBlankProcess();
 extern u16 SPR_doVBlankProcess();
-
 
 // main function
 extern int main(u16 hard);
@@ -393,7 +394,7 @@ void _vint_callback()
     // palette fading processing
     if (VIntProcess & PROCESS_PALETTE_FADING)
     {
-        if (!VDP_doStepFading()) VIntProcess &= ~PROCESS_PALETTE_FADING;
+        if (!VDP_doStepFading(FALSE)) VIntProcess &= ~PROCESS_PALETTE_FADING;
     }
 
     // ...
@@ -449,8 +450,6 @@ void _start_entry()
     // initiate random number generator
     randbase = 0xD94B ^ GET_HVCOUNTER;
     vtimer = 0;
-    intLevelSave = 0;
-    disableIntStack = 0;
 
     // default interrupt callback
     busErrorCB = _buserror_callback;
@@ -503,7 +502,7 @@ void _start_entry()
                     const u32 w = 256 - size;
 
                     // adjust palette for fade
-                    if (step_fade-- > 0) VDP_doStepFading();
+                    if (step_fade-- > 0) VDP_doStepFading(FALSE);
 
                     // zoom logo
                     BMP_loadAndScaleBitmap(logo, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, FALSE);
@@ -512,11 +511,7 @@ void _start_entry()
                 }
 
                 // while fade not completed
-                while(step_fade--)
-                {
-                    VDP_waitVSync();
-                    VDP_doStepFading();
-                }
+                while(step_fade--) VDP_doStepFading(TRUE);
             }
 
             // wait 1 second
@@ -572,6 +567,11 @@ static void internal_reset()
     HIntProcess = 0;
     ExtIntProcess = 0;
     intTrace = 0;
+    intLevelSave = 0;
+    disableIntStack = 0;
+
+    // reset variables which own engine initialization state
+    uploads = NULL;
 
     // init part
     MEM_init();
