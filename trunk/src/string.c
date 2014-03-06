@@ -22,6 +22,22 @@ u32 strlen(const char *str)
     return (src - str) - 1;
 }
 
+u16 strcmp(const char *str1, const char *str2)
+{
+    const u8 *p1 = (const u8*) str1;
+    const u8 *p2 = (const u8*) str2;
+    u8 c1, c2;
+
+    do
+    {
+        c1 = *p1++;
+        c2 = *p2++;
+    }
+    while (c1 && (c1 == c2));
+
+    return c1 - c2;
+}
+
 char* strclr(char *str)
 {
     str[0] = 0;

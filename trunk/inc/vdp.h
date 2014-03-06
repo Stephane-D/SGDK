@@ -360,6 +360,20 @@
 #define GET_VCOUNTER                (GET_HVCOUNTER >> 8)
 
 
+/**
+ *  \struct VDPPlan
+ *      Type used to define on which plan to work (only used in some methods).
+ */
+typedef struct
+{
+    u16 v;
+} VDPPlan;
+
+
+extern const VDPPlan PLAN_B;
+extern const VDPPlan PLAN_A;
+
+
 // used by define
 extern u16 window_adr;
 extern u16 aplan_adr;

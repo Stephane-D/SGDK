@@ -175,7 +175,7 @@ int main()
         VDP_waitVSync();
 
         // Set Horizontal Scroll and update sprites during blank period
-        VDP_setHorizontalScrollLine(APLAN, 0, aux, NUM_LINES, 1);
+        VDP_setHorizontalScrollLine(PLAN_A, 0, aux, NUM_LINES, 1);
         VDP_updateSprites();
 
     } // end main loop

@@ -162,11 +162,12 @@ static TCBloc* getBloc(TileCache *cache, TileSet* tileset);
 static u16 findFreeRegion(TileCache *cache, u16 size);
 static u16 getConflictRegion(TileCache *cache, u16 start, u16 end);
 static void releaseFlushable(TileCache *cache, u16 start, u16 end);
-
+static void addToUploadQueue(TileSet *tileset, u16 index);
 
 // upload cache structure
-static TCBloc *uploads = NULL;
+TCBloc *uploads;            // this variable is specifically cleared in SYS reset method
 static u16 uploadIndex;
+static u16 uploadDone;
 
 
 void TC_init()
@@ -178,6 +179,7 @@ void TC_init()
         uploads = MEM_alloc(MAX_UPLOAD * sizeof(TCBloc));
         // init upload
         uploadIndex = 0;
+        uploadDone = FALSE;
 
         // enabled tile cache Int processing
         VIntProcess |= PROCESS_TILECACHE_TASK;
@@ -195,6 +197,25 @@ void TC_end()
         // release cache structures memory
         MEM_free(uploads);
         uploads = NULL;
+
+        // release the last uploaded tileset(s)
+        if (uploadDone)
+        {
+            TCBloc *bloc = uploads;
+            u16 i = uploadIndex;
+
+            while(i--)
+            {
+                TileSet* tileset = bloc->tileset;
+
+                // released the tileset if we unpacked it here
+                if (tileset->compression != COMPRESSION_NONE)
+                    MEM_free(tileset);
+
+                // next bloc to check
+                bloc++;
+            }
+        }
     }
 }
 
@@ -276,7 +297,6 @@ s16 TC_alloc(TileCache *cache, TileSet *tileset, TCUpload upload)
     // bloc not found --> alloc
     else
     {
-        TileSet *unpacked;
         u16 index, size, lim;
         u16 nextFlush;
 
@@ -295,46 +315,43 @@ s16 TC_alloc(TileCache *cache, TileSet *tileset, TCUpload upload)
         if ((s16) index == -1)
             return index;
 
-        // unpack tileset if needed
+        // process VDP upload if required
         if (upload != NO_UPLOAD)
         {
-            if (tileset->compression == COMPRESSION_NONE) unpacked = tileset;
+            // no compression
+            if (tileset->compression == COMPRESSION_NONE)
+            {
+                // upload the tileset to VRAM now
+                if (upload == UPLOAD_NOW) VDP_loadTileData(tileset->tiles, index, size, TRUE);
+                // upload at VINT
+                else addToUploadQueue(tileset, index);
+            }
             else
             {
-                unpacked = unpackTileSet(tileset, NULL);
+                // unpack tileset
+                TileSet *unpacked = unpackTileSet(tileset, NULL);
 
                 // error while unpacking tileset
                 if (unpacked == NULL)
                     return -1;
 
-                // we will use that to release automatically the TileSet after upload
-                unpacked->compression = COMPRESSION_APLIB;
+                // upload the tileset to VRAM now ?
+                if (upload == UPLOAD_NOW)
+                {
+                    // upload
+                     VDP_loadTileData(unpacked->tiles, index, size, TRUE);
+                     // and release memory
+                     MEM_free(unpacked);
+                }
+                // upload at VINT
+                else
+                {
+                    // we will use that to release automatically the TileSet after upload
+                    unpacked->compression = COMPRESSION_APLIB;
+                    // put in upload queue
+                    addToUploadQueue(unpacked, index);
+                }
             }
-
-            // error while unpacking tileset
-            if (unpacked == NULL)
-                return -1;
-        }
-
-        // take care of tileset upload
-        switch(upload)
-        {
-            case UPLOAD_NOW:
-                // upload the tileset to VRAM now
-                VDP_loadTileData(unpacked->tiles, index, size, TRUE);
-                break;
-
-            case UPLOAD_VINT:
-                // set bloc in upload list
-                bloc = &uploads[uploadIndex++];
-                // set upload bloc info
-                bloc->tileset = unpacked;
-                bloc->index = index;
-                break;
-
-            case NO_UPLOAD:
-                // nothing to do
-                break;
         }
 
         lim = index + size;
@@ -448,7 +465,6 @@ s16 TC_getTileIndex(TileCache *cache, TileSet *tileset)
 void TC_uploadAtVBlank(TileSet *tileset, u16 index)
 {
     TileSet *unpacked;
-    TCBloc *bloc;
 
     if (tileset->compression == COMPRESSION_NONE) unpacked = tileset;
     else
@@ -463,49 +479,8 @@ void TC_uploadAtVBlank(TileSet *tileset, u16 index)
         unpacked->compression = COMPRESSION_APLIB;
     }
 
-    // error while unpacking tileset
-    if (unpacked == NULL)
-        return;
-
-    // set bloc in upload list
-    bloc = &uploads[uploadIndex++];
-    // set upload bloc info
-    bloc->tileset = unpacked;
-    bloc->index = index;
-}
-
-
-// VInt processing
-u16 TC_doVBlankProcess()
-{
-    TCBloc *src;
-    u16 i;
-
-    i = uploadIndex;
-    src = uploads;
-    while(i--)
-    {
-        TileSet* tileset = src->tileset;
-
-        // upload the tileset to VRAM (data is already unpacked)
-        VDP_loadTileData(tileset->tiles, src->index, tileset->numTile, TRUE);
-
-        // the tileset is marked as packed if we unpacked it here
-        if (tileset->compression != COMPRESSION_NONE)
-        {
-            // be careful to protect memory allocation when you use the tile cache
-            // as we do MEM_free(..) on VBlank
-            MEM_free(tileset);
-        }
-
-        // next tileset to upload
-        src++;
-    }
-
-    // uploads done !
-    uploadIndex = 0;
-
-    return TRUE;
+    // add to upload queue
+    addToUploadQueue(unpacked, index);
 }
 
 
@@ -651,4 +626,67 @@ static void releaseFlushable(TileCache *cache, u16 start, u16 end)
 
     // update first flushable bloc index
     cache->nextFlush = lastFlushInd;
+}
+
+static void addToUploadQueue(TileSet *tileset, u16 index)
+{
+    TCBloc *bloc;
+    u16 i;
+
+    // need to clear to queue ?
+    if (uploadDone)
+    {
+        i = uploadIndex;
+        bloc = uploads;
+        while(i--)
+        {
+            TileSet* tileset = bloc->tileset;
+
+            // released the tileset if we unpacked it here
+            if (tileset->compression != COMPRESSION_NONE)
+                MEM_free(tileset);
+
+            // next bloc to check
+            bloc++;
+        }
+
+        // prepare for new upload
+        uploadDone = FALSE;
+        uploadIndex = 0;
+    }
+
+    // get bloc
+    bloc = &uploads[uploadIndex++];
+    // set upload bloc info
+    bloc->tileset = tileset;
+    bloc->index = index;
+}
+
+
+// VInt processing
+u16 TC_doVBlankProcess()
+{
+    TCBloc *src;
+    u16 i;
+
+    if (!uploadDone && uploadIndex)
+    {
+        i = uploadIndex;
+        src = uploads;
+        while(i--)
+        {
+            TileSet* tileset = src->tileset;
+
+            // upload the tileset to VRAM (data is already unpacked)
+            VDP_loadTileData(tileset->tiles, src->index, tileset->numTile, TRUE);
+
+            // next tileset to upload
+            src++;
+        }
+
+        // uploads done !
+        uploadDone = TRUE;
+    }
+
+    return TRUE;
 }

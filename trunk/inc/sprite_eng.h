@@ -23,12 +23,6 @@
  */
 #define SPRITE_CACHE_SIZE           128
 
-
-//#define SPRITE_NEED_POS_UPDATE      0x0001
-//#define SPRITE_NEED_TILE_UPDATE     0x0002
-//#define SPRITE_NEED_SPR_UPDATE      0x0001
-
-
 /**
  *  \def COLLISION_TYPE_NONE
  *      No collision tpye
@@ -341,6 +335,34 @@ void SPR_nextFrame(Sprite *sprite);
  *      Set to <b>-1</b> for automatic allocation (default).
  */
 void SPR_setVRAMTileIndex(Sprite *sprite, s16 index);
+/**
+ *  \brief
+ *      Set the <i>always visible</i> flag this sprite.<br>
+ *      By setting it to TRUE the sprite is considered as always visible<br>
+ *      and won't require any visibility computation.
+ *
+ *  \param sprite
+ *      Sprite to set the <i>always visible</i> flag
+ *  \param value
+ *      The always visible flag value (<i>TRUE</i> or <i>FALSE</i>)
+ *
+ *  \see SPR_setNeverVisible(..)
+ */
+void SPR_setAlwaysVisible(Sprite *sprite, u16 value);
+/**
+ *  \brief
+ *      Set the <i>never visible</i> flag this sprite.<br>
+ *      By setting it to TRUE the sprite is considered as always hidden<br>
+ *      and won't be displayed.
+ *
+ *  \param sprite
+ *      Sprite to set the <i>never visible</i> flag
+ *  \param value
+ *      The never visible flag value (<i>TRUE</i> or <i>FALSE</i>)
+ *
+ *  \see SPR_setAlwaysVisible(..)
+ */
+void SPR_setNeverVisible(Sprite *sprite, u16 value);
 
 /**
  *  \brief

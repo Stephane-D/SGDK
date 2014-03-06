@@ -12,7 +12,7 @@
 #include "ym2612.h"
 
 
-#define ym2612wr(reg, val, bank)    YM2612_writeRegSafe(bank, reg, val)
+#define ym2612wr(reg, val, bank)    YM2612_writeReg(bank, reg, val)
 
 
 static struct {

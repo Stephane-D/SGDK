@@ -190,7 +190,7 @@ static s16 fading_cnt;
 
 
 // forward
-static void setFadePalette();
+static void setFadePalette(u16 waitVSync);
 
 
 u16 VDP_getPaletteColor(u16 index)
@@ -226,7 +226,7 @@ void VDP_setPaletteColor(u16 index, u16 value)
 }
 
 
-static void setFadePalette()
+static void setFadePalette(u16 waitVSync)
 {
     s16 *palR;
     s16 *palG;
@@ -253,6 +253,9 @@ static void setFadePalette()
     palG = fading_palG + i;
     palB = fading_palB + i;
 
+    // wait for VSync
+    if (waitVSync) VDP_waitVSync();
+
     i = (fading_to - fading_from) + 1;
     while(i--)
     {
@@ -266,7 +269,7 @@ static void setFadePalette()
     }
 }
 
-u16 VDP_doStepFading()
+u16 VDP_doStepFading(u16 waitVSync)
 {
     s16 *palR;
     s16 *palG;
@@ -294,7 +297,7 @@ u16 VDP_doStepFading()
     }
 
     // set current fade palette
-    setFadePalette();
+    setFadePalette(waitVSync);
 
     // one step less
     if (--fading_cnt <= 0) return 0;
@@ -302,7 +305,7 @@ u16 VDP_doStepFading()
     return 1;
 }
 
-u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe)
+u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u16 waitVSync)
 {
     const u16 *src;
     const u16 *dst;
@@ -350,7 +353,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
     }
 
     // set current fade palette
-    setFadePalette();
+    setFadePalette(waitVSync);
 
     return 1;
 }
@@ -359,12 +362,12 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async)
 {
     // error during fading initialisation, exit !
-    if (!VDP_initFading(fromcol, tocol, palsrc, paldst, numframe)) return;
+    if (!VDP_initFading(fromcol, tocol, palsrc, paldst, numframe, TRUE)) return;
 
     // process asynchrone fading
     if (async) VIntProcess |= PROCESS_PALETTE_FADING;
     // process fading immediatly
-    else while (VDP_doStepFading()) VDP_waitVSync();
+    else while (VDP_doStepFading(TRUE));
 }
 
 

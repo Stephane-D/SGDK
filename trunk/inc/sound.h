@@ -527,7 +527,7 @@ u8 SND_isPlaying_VGM();
  * \brief
  *      Play a PCM sound effect while a VGM track is playing.
  */
-void SND_playSfx_VGM(unsigned int addr, u16 len);
+void SND_playSfx_VGM(const u8 *sfx, u16 len);
 
 
 #endif // _SOUND_H_
