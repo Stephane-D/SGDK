@@ -39,7 +39,7 @@ u32 strlen(const char *str);
  * If they are equal to each other, it continues with the following pairs until
  * the characters differ or until a terminating null-character is reached.
  */
-u16 strcmp(const char *str1, const char *str2);
+s16 strcmp(const char *str1, const char *str2);
 
 /**
  *  \brief

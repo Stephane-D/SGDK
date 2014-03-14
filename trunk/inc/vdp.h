@@ -235,7 +235,11 @@
  *  \deprecated Use TILE_USERLENGTH instead.
  */
 #define TILE_USERLENGHT         TILE_USERLENGTH
-
+/**
+ *  \def TILE_USERMAXINDEX
+ *      Maximum tile index in VRAM for user.
+ */
+#define TILE_USERMAXINDEX       (TILE_USERINDEX + TILE_USERLENGTH - 1)
 /**
  *  \def TILE_SYSTEM
  *      System tile address in VRAM.

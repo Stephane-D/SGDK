@@ -13,7 +13,7 @@
 
 #define VISIBILITY_ALWAYS_FLAG  0x40000000
 #define VISIBILITY_ALWAYS_ON    (VISIBILITY_ALWAYS_FLAG | 0x3FFFFFFF)
-#define VISIBILITY_ALWAYS_OFF   VISIBILITY_ALWAYS_FLAG
+#define VISIBILITY_ALWAYS_OFF   (VISIBILITY_ALWAYS_FLAG | 0x00000000)
 
 
 // we don't want to share it
@@ -108,6 +108,7 @@ void SPR_initSprite(Sprite *sprite, SpriteDefinition *spriteDef, s16 x, s16 y, u
     sprite->timer = 0;
     sprite->fixedIndex = -1;
     sprite->data = 0;
+    sprite->visibility = -1;
 
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
