@@ -22,7 +22,7 @@ u32 strlen(const char *str)
     return (src - str) - 1;
 }
 
-u16 strcmp(const char *str1, const char *str2)
+s16 strcmp(const char *str1, const char *str2)
 {
     const u8 *p1 = (const u8*) str1;
     const u8 *p2 = (const u8*) str2;

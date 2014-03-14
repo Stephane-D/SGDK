@@ -9,10 +9,11 @@
 #include "vdp_tile.h"
 
 
-// no static so it can be read
-SpriteDef vdpSpriteCache[MAX_SPRITE];
+// TODO: replace SpriteDef by VDPSprite structure for optimized VRAM copy
 
-static u16 spriteNum;
+// no static so they can be read
+SpriteDef vdpSpriteCache[MAX_SPRITE];
+u16 spriteNum;
 
 
 void VDP_resetSprites()
