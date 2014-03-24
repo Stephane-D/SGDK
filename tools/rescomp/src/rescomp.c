@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 
 //    strcpy(fileName, "resources.res");
 
-    printf("rescomp v1.1\n");
+    printf("rescomp v1.12\n");
 
     if (!fileName[0])
     {
@@ -284,7 +284,8 @@ static int doComp(char *fileName, char *fileNameOut, int header)
         return 1;
     }
 
-    fprintf(fileOutputS, ".text\n\n");
+    fprintf(fileOutputS, ".section .rodata\n\n");
+//    fprintf(fileOutputS, ".text\n\n");
 
     // get file name in uppercase
     strcpy(tempName, getFilename(fileNameOut));

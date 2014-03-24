@@ -272,7 +272,7 @@ void removeEmptyFrame(spriteDefinition_ *spriteDef)
         animFrames = animation->frames;
 
         j = animation->numFrame - 1;
-        while(isEmptyFrame(animFrames[j]) && (j >= 0)) j--;
+        while((j >= 0) && isEmptyFrame(animFrames[j])) j--;
 
         // adjust number of frame
         animation->numFrame = j + 1;
