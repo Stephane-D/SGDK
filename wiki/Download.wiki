@@ -10,7 +10,7 @@ Get the last version: [https://www.dropbox.com/s/12af7ky3fe9813o/sgdk095.7z SGDK
 == Changelog ==
 
 *COMPILER:*
- * Major change on resource compilation: a new resource compiler tool (rescomp) is used to compile all resource files. It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM.. Read the `rescomp.txt` file to have more informations about it and look in the `sound` and `sprite` sample example. You can also convert your old project by using the `rescomp -convert` command on the project folder to convert.
+ * Major change on resource compilation: a new resource compiler tool (rescomp) is used to compile all resource files. It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM.. Read the `rescomp.txt` file to have more informations about it and look in the `sound` and `sprite` sample example. You can also convert your old project by using the `rescomp -convert` command on the project folder to convert it.
  * added appack tool.
  * minor fix in wavtoraw tool.
 
@@ -28,7 +28,7 @@ Get the last version: [https://www.dropbox.com/s/12af7ky3fe9813o/sgdk095.7z SGDK
  * TILE:
   * added new tile cache engine for easier tile allocation in VRAM. See the `tile_cache.h` file for doxygen documentation.
  * SPRITE:
-  * added sprite engine for easier sprite manipulation. See the `sprite_eng.h` file for doxygen documentation and the included `sprite` sample for an example.
+  * added sprite engine for easier sprite manipulation. See the `sprite_eng.h` file and its attached doxygen documentation and the included `sprite` sample for an example.
  * SOUND:
   * added `TFC_isPlaying()` command for the 68k TFM driver.
   * fixed issue with consecutive play command on TFM Z80 driver.
