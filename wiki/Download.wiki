@@ -38,7 +38,7 @@ Get the last version: [https://www.dropbox.com/s/vhgjf6eybwjdbb5/sgdk096.7z SGDK
  * DMA
   * fixed VRam Copy DMA.
  * MATH
-  * fixed 2D projection calculation in `M3D_project_xxx(..)` methods.  Now the camera distance is correctly taken in account for the final projection (adding a minor impact on performance).
+  * fixed 2D projection calculation in `M3D_project_xxx(..)` methods. Now the camera distance is correctly taken in account for the final projection (adding a minor impact on performance).
  * SYSTEM
   * fixed soft reset issues.
  * TIMER
