@@ -1,7 +1,58 @@
+SGDK 0.96 (may 2014):
+---------------------
+
+COMPILER
+* Rescomp:
+ - improved BMP image support.
+ - byte data are now output in word format to avoid the GCC bug (compilation with "-g" flag fails when byte data is encountered).
+ - fixed issue on empty sprite animation detection.
+ - fixed path separator issue on old windows system.
+ - fixed compilation issues on unix system.
+* Makefile:
+ - Added "release" and "debug" target to makefile (default is "release").
+  "debug" target allow you to use GDB interactive debugger through emulator supporting it.
+* added appack tool sources code (compatibility for linux system).
+* some cleanup in bintos tool (removed the useless sizealign command done by sizebnd tool).
+
+LIBRARY
+* VDP:
+ - fixed palette fading methods where the last frame colors weren't always correct.
+ - VDP_drawImage(..) and VDP_drawBitmap(..) now use dynamic VRAM tile index so they does not erase anymore the previous drawn image.
+   'curTileInd' variable which contains the VRAM tile index where next tile will be uploaded is public.
+* TILE:
+ - fixed somes bugs in the tile cache engine.
+ - removed the MEM_free(..) call from the VInt callback (tile cache engine).
+   So we don't need anymore to disable interrupts at each memory allocation operation for safety ;)
+* SPRITE:
+ - fixed somes bugs in the sprite engine. 
+ - added SPR_setAlwaysVisible(..) and SPR_setNeverVisible(..) to force (not) visibility on sprite (sprite engine)
+* BITMAP:
+ - minor performance improvement on the BMP_drawPolygon(..) method.
+* SOUND:
+ - fixed YM2612 write methods (can have issue on MD2 system).
+* DMA:
+ - fixed VRam Copy DMA.
+* MATH:
+- fixed 2D projection calculation in M3D_project_xxx(..) methods.
+  Now the camera distance is correctly taken in account for the final projection (adding a minor impact on performance).
+* SYSTEM:
+ - fixed soft reset issues.
+* TIMER:
+ - fixed a minor issue with getTime(..) method.
+ - waitSubTick(..) is now more accurate when called from V-Interrupt code.
+* SAMPLE:
+ - minors changes and improvements on the Sonic Sprite sample.
+ - minors changes to 3D cube flat sample.
+* DEBUG:
+ - added some KDebug log methods (KLog, KLog_Uxx, KLog_Sxx...)
+* added strcmp(..) method.
+* others changes and improvements.
+
+
 SGDK 0.95 (feb 2014):
 ---------------------
 
-COMPILER:
+COMPILER
 * Major change on resource compilation:
   A new resource compiler tool (rescomp) is used to compile all resource files.
   It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM..
@@ -10,7 +61,7 @@ COMPILER:
 - added appack tool.
 - minor fix in wavtoraw tool.
 
-LIBRARY:
+LIBRARY
 * added GFX compression support (see tools.h file for doxygen documentation).
 * VDP:
  - added VDP_getBackgroundColor() and VDP_setBackgroundColor(..) methods.
