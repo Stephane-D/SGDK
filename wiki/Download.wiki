@@ -26,10 +26,10 @@ Get the last version: [https://www.dropbox.com/s/vhgjf6eybwjdbb5/sgdk096.7z SGDK
   * fixed palette fading methods where the last frame colors weren't always correct.
   * `VDP_drawImage(..)` and `VDP_drawBitmap(..)` now use dynamic VRAM tile index so they does not erase anymore the previous drawn image. `curTileInd` variable which contains the VRAM tile index where next tile will be uploaded is public.
  * TILE
-  * fixed somes bugs in the tile cache engine.
-  * removed the MEM_free(..) call from the VInt callback (tile cache engine). We don't need anymore to disable interrupts at each memory allocation operation for safety ;)
+  * fixed some bugs in the tile cache engine.
+  * removed the`MEM_free(..)` call from the VInt callback (tile cache engine). We don't need anymore to disable interrupts at each memory allocation operation for safety ;)
  * SPRITE
-  * fixed somes bugs in the sprite engine. 
+  * fixed some bugs in the sprite engine. 
   * added `SPR_setAlwaysVisible(..)` and `SPR_setNeverVisible(..)` to force (not) visibility on sprite (sprite engine)
  * BITMAP
   * minor performance improvement on the `BMP_drawPolygon(..)` method.
