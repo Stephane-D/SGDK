@@ -17,8 +17,7 @@ Get the last version: [https://www.dropbox.com/s/vhgjf6eybwjdbb5/sgdk096.7z SGDK
   * fixed path separator issue on old windows system.
   * fixed compilation issues on unix system.
  * Makefile
-  * Added "release" and "debug" target to makefile (default is "release").
-  `debug` target allow you to use GDB interactive debugger through emulator supporting it.
+  * Added `release` and `debug` targets to makefile (default target is `release`, `debug` target allow you to use GDB interactive debugger through emulator supporting it).
  * added `appack` tool sources code (compatibility for linux system).
  * some cleanup in `bintos` tool (removed the useless `-sizealign` command done by `sizebnd` tool).
 
