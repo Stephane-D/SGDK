@@ -4,49 +4,52 @@
 
 == Download ==
 
-Get the last version: [https://www.dropbox.com/s/12af7ky3fe9813o/sgdk095.7z SGDK 0.95]
+Get the last version: [https://www.dropbox.com/s/vhgjf6eybwjdbb5/sgdk096.7z SGDK 0.96]
 
 
 == Changelog ==
 
-*COMPILER:*
- * Major change on resource compilation: a new resource compiler tool (rescomp) is used to compile all resource files. It support many type of resources as BMP, PNG, WAV, PCM, VGM, TFM.. Read the `rescomp.txt` file to have more informations about it and look in the `sound` and `sprite` sample example. You can also convert your old project by using the `rescomp -convert` command on the project folder to convert it.
- * added appack tool.
- * minor fix in wavtoraw tool.
+*COMPILER*
+ * Rescomp
+  * improved BMP image support.
+  * byte data are now output in word format to avoid the GCC bug (compilation with `-g` flag fails when byte data is encountered).
+  * fixed issue on empty sprite animation detection.
+  * fixed path separator issue on old windows system.
+  * fixed compilation issues on unix system.
+ * Makefile
+  * Added "release" and "debug" target to makefile (default is "release").
+  `debug` target allow you to use GDB interactive debugger through emulator supporting it.
+ * added `appack` tool sources code (compatibility for linux system).
+ * some cleanup in `bintos` tool (removed the useless `-sizealign` command done by `sizebnd` tool).
 
-*LIBRARY:*
- * added GFX compression support (see tools.h file for doxygen documentation).
- * VDP:
-  * added `VDP_getBackgroundColor()` and `VDP_setBackgroundColor(..)` methods.
-  * added `VDP_get/setTextPlan(), VDP_get/setTextPalette()` and `VDP_get/setTextPriority()` methods to change text drawing properties.
-  * added `VDP_drawBitmap(..)` and `VDP_drawBitmapEx(..)` methods to draw `Bitmap` resource.
-  * added `VDP_drawImage(..)` and `VDP_drawImageEx(..)` methods to draw `Image` resources.
-  * added `VDP_loadTileSet(..)` method to load `TileSet` resource.
-  * added `VDP_setMap(..)` and `VDP_setMapEx(..)` methods to load `Map` resources.
-  * lot of refactoring in the `setTileMapXX` methods...
-  * some tweaks.
- * TILE:
-  * added new tile cache engine for easier tile allocation in VRAM. See the `tile_cache.h` file for doxygen documentation.
- * SPRITE:
-  * added sprite engine for easier sprite manipulation. See the `sprite_eng.h` file and its attached doxygen documentation and the included `sprite` sample for an example.
- * SOUND:
-  * added `TFC_isPlaying()` command for the 68k TFM driver.
-  * fixed issue with consecutive play command on TFM Z80 driver.
-  * Improved VGM driver (thanks to kubilus1 and sigflup). You can now pause, resume music and even better play PCM SFX !
-  * now clear Z80 memory on driver loading to avoid any problems with var initialization.
- * DMA:
-  * minor change to `VDP_doDMAEx(..)` method, be careful if you use this method, the last parameter changed.
- * JOY:
-  * added `JOY_waitPressTime()` and `JOY_waitPressBtnTime()` methods.
-  * `JOY_waitPressBtn()` and `JOY_waitPress()` now return button pressed info.
- * MEMORY:
-  * fixed a minor bug with dynamic memory allocation.
- * SYSTEM:
-  * added `SYS_disableInts()` and `SYS_enableInts()` methods.
-  * added `SYS_isInInterrupt()` to detect if we are in an interrupt callback.
-  * added `SYS_getAndSetInterruptMaskLevel(..)` method to _atomically_ get and set interrupt mask level.
-  * added `SYS_die(..)` for fatal error handling.
- * library font is now included as an image.
- * added some logs for easier debugging (KDebug message).
- * many others smalls improvements.
- * lot of refactoring.
+*LIBRARY*
+ * VDP
+  * fixed palette fading methods where the last frame colors weren't always correct.
+  * `VDP_drawImage(..)` and `VDP_drawBitmap(..)` now use dynamic VRAM tile index so they does not erase anymore the previous drawn image. `curTileInd` variable which contains the VRAM tile index where next tile will be uploaded is public.
+ * TILE
+  * fixed somes bugs in the tile cache engine.
+  * removed the MEM_free(..) call from the VInt callback (tile cache engine). We don't need anymore to disable interrupts at each memory allocation operation for safety ;)
+ * SPRITE
+  * fixed somes bugs in the sprite engine. 
+  * added `SPR_setAlwaysVisible(..)` and `SPR_setNeverVisible(..)` to force (not) visibility on sprite (sprite engine)
+ * BITMAP
+  * minor performance improvement on the `BMP_drawPolygon(..)` method.
+ * SOUND
+  * fixed YM2612 write methods (can have issue on Megadrive 2 system).
+ * DMA
+  * fixed VRam Copy DMA.
+ * MATH
+  * fixed 2D projection calculation in `M3D_project_xxx(..)` methods.
+  Now the camera distance is correctly taken in account for the final projection (adding a minor impact on performance).
+ * SYSTEM
+  * fixed soft reset issues.
+ * TIMER
+  * fixed a minor issue with `getTime(..)` method.
+  * `waitSubTick(..)` is now more accurate when called from V-Interrupt code.
+ * SAMPLE
+  * minors changes and improvements on the Sonic Sprite sample.
+  * minors changes to 3D cube flat sample.
+ * DEBUG
+  * added some KDebug log methods (`KLog, KLog_Uxx, KLog_Sxx...`)
+ * added `strcmp(..)` method.
+ * others changes and improvements.
