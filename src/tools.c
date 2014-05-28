@@ -3,6 +3,8 @@
 
 #include "tools.h"
 
+#include "string.h"
+#include "kdebug.h"
 #include "timer.h"
 #include "maths.h"
 #include "memory.h"
@@ -62,6 +64,542 @@ fix32 getFPS_f()
 	else framecnt += 76800;
 
 	return result;
+}
+
+void KLog(char* text)
+{
+    if (*text == 0)
+        KDebug_Alert(" ");
+    else
+        KDebug_Alert(text);
+}
+
+void KLog_U1(char* t1, u32 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U2(char* t1, u32 v1, char* t2, u32 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t2);
+    uintToStr(v2, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U3(char* t1, u32 v1, char* t2, u32 v2, char* t3, u32 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t2);
+    uintToStr(v2, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t3);
+    uintToStr(v3, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U4(char* t1, u32 v1, char* t2, u32 v2, char* t3, u32 v3, char* t4, u32 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t2);
+    uintToStr(v2, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t3);
+    uintToStr(v3, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t4);
+    uintToStr(v4, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U1x(u16 minSize, char* t1, u32 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U2x(u16 minSize, char* t1, u32 v1, char* t2, u32 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t2);
+    uintToStr(v2, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U3x(u16 minSize, char* t1, u32 v1, char* t2, u32 v2, char* t3, u32 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t2);
+    uintToStr(v2, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t3);
+    uintToStr(v3, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_U4x(u16 minSize, char* t1, u32 v1, char* t2, u32 v2, char* t3, u32 v3, char* t4, u32 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    uintToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t2);
+    uintToStr(v2, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t3);
+    uintToStr(v3, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t4);
+    uintToStr(v4, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S1(char* t1, s32 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S2(char* t1, s32 v1, char* t2, s32 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t2);
+    intToStr(v2, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S3(char* t1, s32 v1, char* t2, s32 v2, char* t3, s32 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t2);
+    intToStr(v2, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t3);
+    intToStr(v3, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S4(char* t1, s32 v1, char* t2, s32 v2, char* t3, s32 v3, char* t4, s32 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t2);
+    intToStr(v2, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t3);
+    intToStr(v3, tmp, 1);
+    strcat(str, tmp);
+    strcat(str, t4);
+    intToStr(v4, tmp, 1);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S1x(u16 minSize, char* t1, s32 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S2x(u16 minSize, char* t1, s32 v1, char* t2, s32 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t2);
+    intToStr(v2, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S3x(u16 minSize, char* t1, s32 v1, char* t2, s32 v2, char* t3, s32 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t2);
+    intToStr(v2, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t3);
+    intToStr(v3, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_S4x(u16 minSize, char* t1, s32 v1, char* t2, s32 v2, char* t3, s32 v3, char* t4, s32 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    intToStr(v1, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t2);
+    intToStr(v2, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t3);
+    intToStr(v3, tmp, minSize);
+    strcat(str, tmp);
+    strcat(str, t4);
+    intToStr(v4, tmp, minSize);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f1(char* t1, fix16 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f2(char* t1, fix16 v1, char* t2, fix16 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix16ToStr(v2, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f3(char* t1, fix16 v1, char* t2, fix16 v2, char* t3, fix16 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix16ToStr(v2, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix16ToStr(v3, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f4(char* t1, fix16 v1, char* t2, fix16 v2, char* t3, fix16 v3, char* t4, fix16 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix16ToStr(v2, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix16ToStr(v3, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t4);
+    fix16ToStr(v4, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f1x(s16 numDec, char* t1, fix16 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f2x(s16 numDec, char* t1, fix16 v1, char* t2, fix16 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix16ToStr(v2, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f3x(s16 numDec, char* t1, fix16 v1, char* t2, fix16 v2, char* t3, fix16 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix16ToStr(v2, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix16ToStr(v3, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_f4x(s16 numDec, char* t1, fix16 v1, char* t2, fix16 v2, char* t3, fix16 v3, char* t4, fix16 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix16ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix16ToStr(v2, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix16ToStr(v3, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t4);
+    fix16ToStr(v4, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F1(char* t1, fix32 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F2(char* t1, fix32 v1, char* t2, fix32 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix32ToStr(v2, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F3(char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix32 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix32ToStr(v2, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix32ToStr(v3, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F4(char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix32 v3, char* t4, fix32 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix32ToStr(v2, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix32ToStr(v3, tmp, 2);
+    strcat(str, tmp);
+    strcat(str, t4);
+    fix32ToStr(v4, tmp, 2);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F1x(s16 numDec, char* t1, fix32 v1)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F2x(s16 numDec, char* t1, fix32 v1, char* t2, fix32 v2)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix32ToStr(v2, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F3x(s16 numDec, char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix32 v3)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix32ToStr(v2, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix32ToStr(v3, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
+}
+
+void KLog_F4x(s16 numDec, char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix32 v3, char* t4, fix32 v4)
+{
+    char str[256];
+    char tmp[12];
+
+    strcpy(str, t1);
+    fix32ToStr(v1, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t2);
+    fix32ToStr(v2, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t3);
+    fix32ToStr(v3, tmp, numDec);
+    strcat(str, tmp);
+    strcat(str, t4);
+    fix32ToStr(v4, tmp, numDec);
+    strcat(str, tmp);
+
+    KDebug_Alert(str);
 }
 
 

@@ -39,6 +39,8 @@ unsigned char swapNibble8(unsigned char value);
 
 unsigned short toVDPColor(unsigned char b, unsigned char g, unsigned char r);
 
+char* strupper(char* text);
+
 int isAbsolutePathSystem(char *path);
 int isAbsolutePath(char *path);
 char* getDirectorySystem(char* path);
@@ -65,8 +67,6 @@ int outEx(unsigned char* data, int inOffset, int size, int intSize, int swap, FI
 void decl(FILE* fs, FILE* fh, char* type, char* name, int align, int global);
 void declArray(FILE* fs, FILE* fh, char* type, char* name, int size, int align, int global);
 void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize);
-//void outSNibble(unsigned char* data, int inOffset, int size, FILE* fout, int intSize, int swapNibble);
-void outSValue(unsigned char value, int size, FILE* fout);
 
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method);
 unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int swap, int *outSize, int *method);

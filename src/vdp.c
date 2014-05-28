@@ -38,8 +38,8 @@ u16 screenWidth;
 u16 screenHeight;
 
 // don't want to share it
-extern u16 text_basetile;
 extern u16 *text_plan;
+extern u16 text_basetile;
 
 
 void VDP_init()
@@ -125,6 +125,7 @@ void VDP_init()
     // default plan and base tile attribut for draw text method
     text_plan = &aplan_adr;
     text_basetile = TILE_ATTR(PAL0, TRUE, FALSE, FALSE);
+    curTileInd = TILE_USERINDEX;
 }
 
 

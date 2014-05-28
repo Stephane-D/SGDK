@@ -46,8 +46,8 @@ int Img_getInfos(char* fileName, int *w, int *h, int *bpp)
 
     fileExt = getFileExtension(fileName);
 
-    if (!stricmp(fileExt, "PNG")) return Png_getInfos(fileName, w, h, bpp);
-    if (!stricmp(fileExt, "BMP")) return Bmp_getInfos(fileName, w, h, bpp);
+    if (!strcasecmp(fileExt, "PNG")) return Png_getInfos(fileName, w, h, bpp);
+    if (!strcasecmp(fileExt, "BMP")) return Bmp_getInfos(fileName, w, h, bpp);
 
     printf("Unsupported image file %s\n", fileName);
 
@@ -60,8 +60,8 @@ unsigned short *Img_getPalette(char* fileName, int *size)
 
     fileExt = getFileExtension(fileName);
 
-    if (!stricmp(fileExt, "PNG")) return Png_getPalette(fileName, size);
-    if (!stricmp(fileExt, "BMP")) return Bmp_getPalette(fileName, size);
+    if (!strcasecmp(fileExt, "PNG")) return Png_getPalette(fileName, size);
+    if (!strcasecmp(fileExt, "BMP")) return Bmp_getPalette(fileName, size);
 
     printf("Unsupported image file %s\n", fileName);
 
@@ -76,8 +76,8 @@ unsigned char *Img_getData(char* fileName, int *size, int wAlign, int hAlign)
 
     fileExt = getFileExtension(fileName);
 
-    if (!stricmp(fileExt, "PNG")) result = Png_getData(fileName, size, wAlign, hAlign);
-    else if (!stricmp(fileExt, "BMP")) result = Bmp_getData(fileName, size, wAlign, hAlign);
+    if (!strcasecmp(fileExt, "PNG")) result = Png_getData(fileName, size, wAlign, hAlign);
+    else if (!strcasecmp(fileExt, "BMP")) result = Bmp_getData(fileName, size, wAlign, hAlign);
     else
     {
         printf("Unsupported image file %s\n", fileName);

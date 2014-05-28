@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "../inc/rescomp.h"
 #include "../inc/tools.h"
@@ -53,6 +54,19 @@ unsigned short toVDPColor(unsigned char b, unsigned char g, unsigned char r)
     return (r << 0) | (g << 4) | (b << 8);
 }
 
+char* strupper(char* text)
+{
+    char* c;
+
+    c = text;
+    while(*c)
+    {
+        *c = toupper(*c);
+        c++;
+    }
+
+    return text;
+}
 
 int isAbsolutePathSystem(char* path)
 {
@@ -422,7 +436,7 @@ int outEx(unsigned char* data, int inOffset, int size, int intSize, int swap, FI
 void decl(FILE* fs, FILE* fh, char* type, char* name, int align, int global)
 {
     // asm declaration
-    fprintf(fs, "    .align  %d\n", align);
+    fprintf(fs, "    .align %d\n", (align < 2)?2:align);
 
     if (global)
         fprintf(fs, "    .global %s\n", name);
@@ -437,7 +451,7 @@ void decl(FILE* fs, FILE* fh, char* type, char* name, int align, int global)
 void declArray(FILE* fs, FILE* fh, char* type, char* name, int size, int align, int global)
 {
     // asm declaration
-    fprintf(fs, "    .align  %d\n", align);
+    fprintf(fs, "    .align  %d\n", (align < 2)?2:align);
 
     if (global)
         fprintf(fs, "    .global %s\n", name);
@@ -456,95 +470,45 @@ void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize)
 
     int ii, jj;
     int offset = inOffset;
-    int remain = size;
+    // align remain on word
+    int remain = ((size + 1) / 2) * 2;
+    int adjIntSize = (intSize < 2)?2:intSize;
 
     while (remain > 0)
     {
-        fprintf(fout, "    dc.%s    ", formatAsm[intSize]);
+        fprintf(fout, "    dc.%s    ", formatAsm[adjIntSize]);
 
-        for (ii = 0; ii < MIN(16, remain) / intSize; ii++)
+        for (ii = 0; ii < MIN(16, remain) / adjIntSize; ii++)
         {
             if (ii) fprintf(fout, ", ");
 
             fprintf(fout, "0x");
 
-            offset += intSize;
+            if (intSize == 1)
+            {
+                // we cannot use byte data because of GCC bugs with -G parameter
+                fprintf(fout, "%02X", data[offset + 0]);
 
-            for (jj = 0; jj < intSize; jj++)
-                fprintf(fout, "%02X", data[offset - (jj + 1)]);
+                if ((offset - inOffset) > (size + 1))
+                    fprintf(fout, "00");
+                else
+                    fprintf(fout, "%02X", data[offset + 1]);
+
+                offset += adjIntSize;
+            }
+            else
+            {
+                offset += adjIntSize;
+
+                for (jj = 0; jj < adjIntSize; jj++)
+                    fprintf(fout, "%02X", data[offset - (jj + 1)]);
+            }
         }
 
         fprintf(fout, "\n");
         remain -= 16;
     }
 }
-
-//void outSNibble(unsigned char* data, int inOffset, int size, FILE* fout, int intSize, int swapNibble)
-//{
-//    char* const formatAsm[] = {"b", "b", "w", "w", "d"};
-//
-//    int ii, jj;
-//    int offset = 0;
-//    int remain = size;
-//
-//    while (remain > 0)
-//    {
-//        fprintf(fout, "    dc.%s    ", formatAsm[intSize]);
-//
-//        for (ii = 0; ii < MIN(16, remain) / intSize; ii++)
-//        {
-//            if (ii) fprintf(fout, ", ");
-//
-//            fprintf(fout, "0x");
-//
-//            offset += intSize;
-//
-//            for (jj = 0; jj < intSize; jj++)
-//            {
-//                int value;
-//                int invOff = offset - (jj + 1);
-//
-//                if (swapNibble)
-//                {
-//                    value = (data[inOffset + (invOff * 2) + 0] & 0x0F) << 4;
-//                    value |= (data[inOffset + (invOff * 2) + 1] & 0x0F) << 0;
-//                }
-//                else
-//                {
-//                    value = (data[inOffset + (invOff * 2) + 0] & 0x0F) << 0;
-//                    value |= (data[inOffset + (invOff * 2) + 1] & 0x0F) << 4;
-//                }
-//
-//                fprintf(fout, "%02X", value);
-//            }
-//        }
-//
-//        fprintf(fout, "\n");
-//        remain -= 16;
-//    }
-//}
-
-void outSValue(unsigned char value, int size, FILE* fout)
-{
-    int ii;
-    int remain = size;
-
-    while (remain > 0)
-    {
-        fprintf(fout, "    dc.b    ");
-
-        for (ii = 0; ii < MIN(16, remain); ii++)
-        {
-            if (ii) fprintf(fout, ", ");
-
-            fprintf(fout, "0x%02X", value);
-        }
-
-        fprintf(fout, "\n");
-        remain -= 16;
-    }
-}
-
 
 
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method)
@@ -724,7 +688,7 @@ int tfmcom(char* fin, char* fout)
     char cmd[MAX_PATH_LEN * 2];
     FILE *f;
 
-    // better to remove output file for appack
+    // better to remove output file for tfmcom
     remove(fout);
 
     // command
@@ -818,6 +782,7 @@ static int appack(char* fin, char* fout)
     strcat(cmd, "\" \"");
     strcat(cmd, fout);
     strcat(cmd, "\"");
+    strcat(cmd, " -s");
 
     printf("Executing %s\n", cmd);
 

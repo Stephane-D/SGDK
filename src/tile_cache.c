@@ -154,7 +154,7 @@
 
 
 // we don't want to share it
-extern u32 VIntProcess;
+extern vu32 VIntProcess;
 
 // forward
 static TCBloc* getFixedBloc(TileCache *cache, TileSet *tileset);

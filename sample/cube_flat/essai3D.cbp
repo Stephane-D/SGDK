@@ -3,7 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="cube_flat" />
-		<Option makefile="D:\apps\SGDK\makefile.gen" />
+		<Option makefile="D:/apps/SGDK/makefile.gen" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="0" />
 		<Option compiler="sega_genesis_compiler" />
@@ -17,7 +17,23 @@
 		</MakeCommands>
 		<Build>
 			<Target title="default">
-				<Option output="D:\Stef\dev\work\genesis\essai3D\essai3D.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="D:/Stef/dev/work/genesis/essai3D/essai3D.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="." />
+				<Option deps_output="." />
+				<Option type="1" />
+				<Option compiler="sega_genesis_compiler" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -s -f $makefile $target" />
+				</MakeCommands>
+			</Target>
+			<Target title="release">
+				<Option output="D:/Stef/dev/work/genesis/essai3D/essai3D.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="." />
 				<Option deps_output="." />
 				<Option type="1" />

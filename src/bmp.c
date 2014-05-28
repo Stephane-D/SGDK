@@ -38,8 +38,8 @@
 
 
 // we don't want to share them
-extern u32 VIntProcess;
-extern u32 HIntProcess;
+extern vu32 VIntProcess;
+extern vu32 HIntProcess;
 extern u16 text_basetile;
 
 
@@ -48,15 +48,6 @@ static u8 *bmp_buffer_1;
 
 u8 *bmp_buffer_read;
 u8 *bmp_buffer_write;
-
-// used for polygon drawing
-s16 *leftEdge;
-s16 *rightEdge;
-
-s16 minYL;
-s16 maxYL;
-s16 minYR;
-s16 maxYR;
 
 // internals
 static u16 flag;
@@ -84,8 +75,6 @@ void BMP_init(u16 double_buffer, u16 palette, u16 priority)
 
     bmp_buffer_0 = NULL;
     bmp_buffer_1 = NULL;
-    leftEdge = NULL;
-    rightEdge = NULL;
 
     BMP_reset();
 }
@@ -110,16 +99,6 @@ void BMP_end()
         MEM_free(bmp_buffer_1);
         bmp_buffer_1 = NULL;
     }
-    if (leftEdge)
-    {
-        MEM_free(leftEdge);
-        leftEdge = NULL;
-    }
-    if (rightEdge)
-    {
-        MEM_free(rightEdge);
-        rightEdge = NULL;
-    }
 }
 
 void BMP_reset()
@@ -127,15 +106,10 @@ void BMP_reset()
     // release buffers if needed
     if (bmp_buffer_0) MEM_free(bmp_buffer_0);
     if (bmp_buffer_1) MEM_free(bmp_buffer_1);
-    if (leftEdge) MEM_free(leftEdge);
-    if (rightEdge) MEM_free(rightEdge);
 
     // tile map allocation
     bmp_buffer_0 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
     bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
-    // polygon edge buffer allocation
-    leftEdge = MEM_alloc(BMP_HEIGHT * sizeof(s16));
-    rightEdge = MEM_alloc(BMP_HEIGHT * sizeof(s16));
 
     // need 64x64 cells sized plan
     VDP_setPlanSize(BMP_PLANWIDTH, BMP_PLANHEIGHT);
@@ -417,6 +391,7 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 //            drawLine(offset, dx, dy, step_x, step_y, l->col);
 //    }
 //}
+
 
 
 void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)

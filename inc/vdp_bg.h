@@ -39,6 +39,15 @@ typedef struct
 
 
 /**
+ *  \var curTileIndex
+ *      Contains current VRAM tile position where we will upload next tile data.
+ *
+ *  \see VDP_drawBitmap()
+ *  \see VDP_drawImage()
+ */
+extern u16 curTileInd;
+
+/**
  *  \brief
  *      Set plan horizontal scroll (plain scroll mode).<br/>
  *      3 horizontal scroll modes are supported:<br/>
@@ -110,7 +119,7 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
  *  \param use_dma
  *      Use DMA flag (faster for large transfer).
  *
- *  \see VDP_setScrollingMode() function to change scroll mode.
+ *  \see VDP_setScrollingMode()
  */
 void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u16 use_dma);
 
@@ -130,7 +139,7 @@ void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u
  *      V scroll offset.<br/>
  *      Negative value will move the plan down while positive value will move it up.
  *
- *  \see VDP_setScrollingMode() function to change scroll mode.
+ *  \see VDP_setScrollingMode()
  */
 void VDP_setVerticalScroll(VDPPlan plan, s16 value);
 /**
@@ -155,7 +164,7 @@ void VDP_setVerticalScroll(VDPPlan plan, s16 value);
  *  \param use_dma
  *      Use DMA flag (faster for large transfer).
  *
- *  \see VDP_setScrollingMode() function to change scroll mode.
+ *  \see VDP_setScrollingMode()
  */
 void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma);
 
@@ -442,7 +451,7 @@ u16 VDP_drawImage(u16 plan, const Image *image, u16 x, u16 y);
  *
  *  Load the image tiles data in VRAM and display it at specified tilemap region.
  *
- *  \see VDP_drawImage().
+ *  \see VDP_drawImage()
  */
 u16 VDP_drawImageEx(u16 plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, u16 use_dma);
 

@@ -17,6 +17,9 @@
 u16 *text_plan;
 u16 text_basetile;
 
+// current VRAM upload tile position
+u16 curTileInd;
+
 
 void VDP_setHorizontalScroll(VDPPlan plan, s16 value)
 {
@@ -262,7 +265,19 @@ void VDP_clearTextLine(u16 y)
 
 u16 VDP_drawBitmap(u16 plan, const Bitmap *bitmap, u16 x, u16 y)
 {
-    return VDP_drawBitmapEx(plan, bitmap, TILE_ATTR_FULL(PAL0, 0, 0, 0, TILE_USERINDEX), x, y, TRUE);
+    u16 numTile;
+    u16 result;
+
+    numTile = ((bitmap->h + 7) >> 3) * ((bitmap->w + 7) >> 3);
+    // not enough tiles to display the image, get back to first user index
+    if ((curTileInd + numTile) > TILE_USERMAXINDEX)
+        curTileInd = TILE_USERINDEX;
+
+    result = VDP_drawBitmapEx(plan, bitmap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE);
+
+    curTileInd += numTile;
+
+    return result;
 }
 
 u16 VDP_drawBitmapEx(u16 plan, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)
@@ -296,7 +311,19 @@ u16 VDP_drawBitmapEx(u16 plan, const Bitmap *bitmap, u16 basetile, u16 x, u16 y,
 
 u16 VDP_drawImage(u16 plan, const Image *image, u16 x, u16 y)
 {
-    return VDP_drawImageEx(plan, image, TILE_ATTR_FULL(PAL0, 0, 0, 0, TILE_USERINDEX), x, y, TRUE, TRUE);
+    u16 numTile;
+    u16 result;
+
+    numTile = image->tileset->numTile;
+    // not enough tiles to display the image, get back to first user index
+    if ((curTileInd + numTile) > TILE_USERMAXINDEX)
+        curTileInd = TILE_USERINDEX;
+
+    result = VDP_drawImageEx(plan, image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE, TRUE);
+
+    curTileInd += numTile;
+
+    return result;
 }
 
 u16 VDP_drawImageEx(u16 plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, u16 use_dma)

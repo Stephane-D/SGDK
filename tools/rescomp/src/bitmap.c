@@ -20,7 +20,7 @@ Plugin bitmap = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "BITMAP")) return 1;
+    if (!strcasecmp(type, "BITMAP")) return 1;
 
     return 0;
 }

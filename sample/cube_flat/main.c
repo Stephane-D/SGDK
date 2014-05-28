@@ -22,6 +22,8 @@ Transformation3D transformation;
 
 Vect3D_f16 rotstep;
 
+fix16 camdist;
+
 u16 flatDrawing;
 
 
@@ -33,6 +35,8 @@ void handleJoyEvent(u16 joy, u16 changed, u16 state);
 
 int main()
 {
+    char str[16];
+
     VDP_setScreenWidth256();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
@@ -43,18 +47,18 @@ int main()
 
     JOY_setEventHandler(handleJoyEvent);
 
-    BMP_init(1, 0, 0);
+    BMP_init(TRUE, PAL0, FALSE);
+
+    camdist = FIX16(15);
 
     M3D_reset();
-    M3D_setViewport(BMP_WIDTH, BMP_HEIGHT);
+    M3D_setCamDistance(camdist);
     M3D_setLightEnabled(1);
     M3D_setLightXYZ(FIX16(0.9), FIX16(0.9), FIX16(-0.9));
 
     // allocate translation and rotation structure
     M3D_setTransform(&transformation, &translation, &rotation);
-
-//    M3D_setTranslation(&transformation, FIX16(0), FIX16(0), FIX16(15));
-    M3D_setTranslation(&transformation, FIX16(0), FIX16(0), FIX16(5));
+    M3D_setTranslation(&transformation, FIX16(0), FIX16(0), FIX16(20));
     M3D_setRotation(&transformation, FIX16(0), FIX16(0), FIX16(0));
 
     flatDrawing = 0;
@@ -62,6 +66,8 @@ int main()
     while (1)
     {
         doActionJoy(JOY_1, JOY_readJoypad(JOY_1));
+
+        M3D_setCamDistance(camdist);
 
         // do work here
         rotation.x += rotstep.x;
@@ -78,6 +84,13 @@ int main()
         BMP_clear();
 
         drawPoints(0xFF);
+
+        BMP_drawText("trans z:", 0, 2);
+        fix16ToStr(translation.z, str, 2);
+        BMP_drawText(str, 10, 2);
+        BMP_drawText("cam dist:", 0, 3);
+        fix16ToStr(camdist, str, 2);
+        BMP_drawText(str, 11, 3);
 
         BMP_flip(1);
     }
@@ -123,7 +136,8 @@ void drawPoints(u8 col)
 
             if (dp > 0) col += (dp >> (FIX16_FRAC_BITS - 2));
 
-            BMP_drawPolygon(v, 4, col);
+            if (!BMP_isPolygonCulled(v, 4))
+                BMP_drawPolygon(v, 4, col);
         }
     }
     else
@@ -176,10 +190,16 @@ void doActionJoy(u8 numjoy, u16 value)
             else rotstep.y -= FIX16(0.05);
         }
 
-        if (value & BUTTON_X)
+        if (value & BUTTON_Y)
         {
-            rotstep.x = FIX16(0.0);
-            rotstep.y = FIX16(0.0);
+            if (value & BUTTON_X) camdist += FIX16(1.0);
+            else camdist += FIX16(0.1);
+        }
+
+        if (value & BUTTON_Z)
+        {
+            if (value & BUTTON_X) camdist -= FIX16(1.0);
+            else camdist -= FIX16(0.1);
         }
 
         if (value & BUTTON_B)
@@ -196,6 +216,8 @@ void doActionJoy(u8 numjoy, u16 value)
 
         if (value & BUTTON_START)
         {
+            rotstep.x = FIX16(0.0);
+            rotstep.y = FIX16(0.0);
         }
     }
 }

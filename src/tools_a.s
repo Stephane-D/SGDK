@@ -137,8 +137,6 @@ aplib_decrunch:
 
     .global lzkn_unpack
 
-
-
 # disable for legal issue
 #
 # u32 lzkn_unpack(u8 *src, u8 *dest);

@@ -6,23 +6,6 @@
 #include <ctype.h>
 
 
-
-
-//static int min(int x, int y)
-//{
-//    return (x < y) ? x : y;
-//}
-//
-//static int vdpcolor(char b, char g, char r)
-//{
-//    // genesis only define on 3 bits (but shifted to 1 left)
-//    r = (r >> 4) & 0xE;
-//    g = (g >> 4) & 0xE;
-//    b = (b >> 4) & 0xE;
-//
-//    return (r << 0) | (g << 4) | (b << 8);
-//}
-
 static char *getFilename(char *pathname)
 {
     char* fname = strrchr(pathname, '/');
@@ -48,19 +31,6 @@ static void removeExtension(char *pathname)
     if (fname) *fname = 0;
 }
 
-//static unsigned int getFileSize(char *file)
-//{
-//    unsigned int len;
-//    FILE * f;
-//
-//    f = fopen(file, "r");
-//    fseek(f, 0, SEEK_END);
-//    len = (unsigned long)ftell(f);
-//    fclose(f);
-//
-//    return len;
-//}
-
 
 int main(int argc, char **argv)
 {
@@ -68,8 +38,8 @@ int main(int argc, char **argv)
     int len;
     int total;
     int align;
-    int sizealign;
     int formatint;
+    int formatintasm;
     int nullfill;
     char *format;
     char *formatasm;
@@ -79,17 +49,18 @@ int main(int argc, char **argv)
     char *FileNameOut;
     FILE *FileInput;
     FILE *FileOutput;
-    char temp[32 * 1024];
+    char path[4096];
+    unsigned char temp[16];
 
     // default
     FileName = "";
     FileNameOut = "";
-    format = "u8 ";
-    formatasm = "b";
+    format = "u8";
     formatint = 1;
+    formatasm = "w";
+    formatintasm = 2;
     total = 0;
     align = 2;
-    sizealign = 1;
     nullfill = 0;
 
     // parse parmeters
@@ -97,53 +68,52 @@ int main(int argc, char **argv)
     {
         if (!strcmp(argv[ii], "-u8"))
         {
-            format = "u8 ";
-            formatasm = "b";
+            format = "u8";
             formatint = 1;
+            formatasm = "w";
+            formatintasm = 2;
         }
         else if (!strcmp(argv[ii], "-s8"))
         {
-            format = "s8 ";
-            formatasm = "b";
+            format = "s8";
             formatint = 1;
+            formatasm = "w";
+            formatintasm = 2;
         }
         else if (!strcmp(argv[ii], "-u16"))
         {
-            format = "u16 ";
-            formatasm = "w";
+            format = "u16";
             formatint = 2;
+            formatasm = "w";
+            formatintasm = 2;
         }
         else if (!strcmp(argv[ii], "-s16"))
         {
-            format = "s16 ";
-            formatasm = "w";
+            format = "s16";
             formatint = 2;
+            formatasm = "w";
+            formatintasm = 2;
         }
         else if (!strcmp(argv[ii], "-u32"))
         {
-            format = "u32 ";
-            formatasm = "l";
+            format = "u32";
             formatint = 4;
+            formatasm = "l";
+            formatintasm = 4;
         }
         else if (!strcmp(argv[ii], "-s32"))
         {
-            format = "s32 ";
-            formatasm = "l";
+            format = "s32";
             formatint = 4;
+            formatasm = "l";
+            formatintasm = 4;
         }
         else if (!strcmp(argv[ii], "-align"))
         {
             ii++;
             align = strtoimax(argv[ii], NULL, 0);
 
-            if (!align) align = 4;
-        }
-        else if (!strcmp(argv[ii], "-sizealign"))
-        {
-            ii++;
-            sizealign = strtoimax(argv[ii], NULL, 0);
-
-            if (!sizealign) sizealign = 1;
+            if (!align) align = 2;
         }
         else if (!strcmp(argv[ii], "-nullfill"))
         {
@@ -172,16 +142,19 @@ int main(int argc, char **argv)
     shortname = getFilename(FileNameOut);
 
     // build output .s file
-    strcpy(temp, FileNameOut);
-    strcat(temp, ".s");
-    FileOutput = fopen(temp, "w");
+    strcpy(path, FileNameOut);
+    strcat(path, ".s");
+    FileOutput = fopen(path, "w");
 
     if (!FileOutput)
     {
         fclose(FileInput);
-        printf("Couldn't open output file %s\n", temp);
+        printf("Couldn't open output file %s\n", path);
         return 1;
     }
+
+    // force align on 2
+    if (align < 2) align = 2;
 
     fprintf(FileOutput, ".text\n\n");
 
@@ -189,38 +162,37 @@ int main(int argc, char **argv)
     fprintf(FileOutput, "    .global %s\n", shortname);
     fprintf(FileOutput, "%s:\n", shortname);
 
-    // start by setting buffer to nullfill
-    memset(temp, nullfill, sizeof(temp));
-
     while (1)
     {
-        len = fread(temp, 1, 16, FileInput);
-        len = (len + (formatint - 1)) & ~(formatint - 1); // align length for size of units
+        // start by setting buffer to nullfill
+        memset(temp, nullfill, sizeof(temp));
+
+        len = fread(temp, 1, sizeof(temp), FileInput);
+        total += len;
+
+         // align length for size of units
+        len = (len + (formatintasm - 1)) & ~(formatintasm - 1);
 
         if (len)
         {
             fprintf(FileOutput, "    dc.%s    ", formatasm);
 
-            for (ii = 0; ii < (len / formatint); ii++)
+            for (ii = 0; ii < (len / formatintasm); ii++)
             {
                 if (ii)
                     fprintf(FileOutput, ",");
 
                 fprintf(FileOutput, "0x");
 
-                for (jj = 0; jj < formatint; jj++)
-                    fprintf(FileOutput, "%02X", (unsigned char)temp[ii*formatint + jj]);
+                for (jj = 0; jj < formatintasm; jj++)
+                    fprintf(FileOutput, "%02X", temp[(ii * formatintasm) + jj]);
             }
 
             fprintf(FileOutput, "\n");
         }
 
-        total += len;
-
         if (len < 16)
             break;
-
-        memset(temp, nullfill, sizeof(temp));
     }
 
     fprintf(FileOutput, "\n");
@@ -245,7 +217,7 @@ int main(int argc, char **argv)
 
     fprintf(FileOutput, "#ifndef _%s_H_\n", temp);
     fprintf(FileOutput, "#define _%s_H_\n\n", temp);
-    fprintf(FileOutput, "extern const %s%s[0x%X];\n\n", format, shortname, total / formatint);
+    fprintf(FileOutput, "extern const %s %s[0x%X];\n\n", format, shortname, total / formatint);
     fprintf(FileOutput, "#endif // _%s_H_\n", temp);
 
     fclose(FileOutput);

@@ -1,0 +1,192 @@
+/*
+   'A Hint of Blue'  --  Style Sheet for Documentation (rev 2004.09.27)
+
+   Copyright (c) 2004 Joergen Ibsen
+   All Rights Reserved
+
+   http://www.ibsensoftware.com/
+*/
+
+/* -- general -- */
+
+body {
+   color : black;
+   background-color : #E0E0E4;
+   font-family : Arial, Helvetica, sans-serif;
+   font-size : 13px;
+}
+
+* { font-size : inherit; }
+table p { font-size : inherit; }
+table dl { font-size : inherit; }
+table dl td { font-size : inherit; }
+
+img { border : 0 none; }
+
+hr.divider { display : none; }
+
+/* -- links -- */
+
+a { text-decoration : none; color : #3030B0; background-color : inherit; }
+a:hover { color : #303070; background-color : inherit; }
+a:visited { color : #303070; background-color : inherit; }
+
+/* -- header -- */
+
+/* -- main -- */
+
+table.ismain {
+   color : inherit;
+   background-color : #E0E0E4;
+   border : 0 none;
+   width : 100%;
+}
+
+/* -- main.description -- */
+
+td.isdesc {
+   vertical-align : top;
+   padding : 0.6em;
+   width : 80%;
+}
+td.isdesc p { text-align : justify; }
+
+div.logo {
+   color : inherit;
+   background-color : #F8F8FC;
+   font-size : 28px;
+   font-weight : bold;
+   border-top : 2px solid black;
+   border-bottom : 2px solid black;
+   border-left : 2px solid #F0F0F4;
+   border-right : 2px solid #F0F0F4;
+   text-align : center;
+   vertical-align : middle;
+   margin-top : 0.7em;
+   margin-bottom : 1.5em;
+   padding : 0.3em 0.5em;
+}
+
+div.title {
+   font-size : 17px;
+   font-weight : bold;
+   border-bottom : 1px solid black;
+   margin-bottom : 1.5em;
+}
+
+td.isdesc h3 {
+   font-size : 17px;
+   border-bottom : 1px solid black;
+   margin-bottom : 1.5em;
+}
+td.isdesc h3:first-child { margin-top : 0; }
+/* crappy ie fix -- td.isdesc h3 + p { margin-top : 0; } */
+
+td.isdesc h4 { font-size : 16px; margin-bottom : 0.3em; }
+/* crappy ie fix -- td.isdesc h4 + p { margin-top : 0; } */
+
+td.isdesc p.first { margin-top : 0; }
+
+ol li { margin-right : 1.0em; text-align : justify; }
+
+dl.changes dt { font-weight : bold; }
+
+dl.headerlist { font-family : "Courier New", Courier, monospace; }
+dl.funclist dt { font-style : italic; }
+dl.funclist dd { font-family : "Courier New", Courier, monospace; }
+dl.statuslist dt { font-style : italic; }
+dl.filelist dt {
+   font-family : "Courier New", Courier, monospace;
+   margin-top : 0.5em;
+   margin-bottom : 0.5em;
+}
+
+div.function {
+   color : inherit;
+   background-color : #F0F0F4;
+   border : 1px solid #909094;
+   padding : 0em;
+   margin : 1.0em 2.0em;
+}
+
+pre.declaration {
+   color : inherit;
+   background-color : #E8E8EC;
+   padding : 1.0em 1.0em;
+   margin : 0em;
+}
+
+div.description {
+   padding : 0.5em 1.0em;
+   margin : 0em;
+}
+
+div.description dt { font-weight : bold; margin-top : 0.5em; }
+
+span.func {
+   font-family : "Courier New", Courier, monospace;
+   font-weight : bold;
+}
+
+/* vs style syntax highlighting */
+span.ckeyw { color : #2020C0; background-color : inherit; }
+span.ctype { color : #2020C0; background-color : inherit; }
+span.ccomment { color : #108010; background-color : inherit; }
+span.cfunc { }
+span.cvar { }
+span.cprep { color : #2020C0; background-color : inherit; }
+span.cstr { color : #801080; background-color : inherit; }
+
+/* emacs style syntax highlighting
+span.ckeyw { color : #8020D0; background-color : inherit; }
+span.ctype { color : #208020; background-color : inherit; }
+span.ccomment { color : #B02020; background-color : inherit; }
+span.cfunc { color : #2020B0; background-color : inherit; }
+span.cvar { color : #A07000; background-color : inherit; }
+span.cprep { color : #C080C0; background-color : inherit; }
+span.cstr { color : #B08080; background-color : inherit; }
+*/
+
+h3.boxedbar {
+   color : inherit;
+   background-color : #C0C0C4;
+   border : 1px solid black;
+   padding-left : 0.2em;
+   margin-bottom : 0.3em;
+}
+
+div.topnav {
+   font-size : 10px;
+   text-align : right;
+   vertical-align : middle;
+   padding : 0.2em 0.5em;
+}
+
+div.botnav {
+   color : inherit;
+   background-color : #C8C8CC;
+   border-top : 1px solid black;
+   border-bottom : 1px solid #D8D8DC;
+   font-size : 10px;
+   text-align : center;
+   vertical-align : middle;
+   padding : 0.2em 0.5em;
+}
+
+span.disabled {
+   color : #606060;
+   background-color : inherit;
+}
+
+div.smallprint {
+   color : inherit;
+   background-color : #C8C8CC;
+   border-top : 1px solid black;
+   border-bottom : 1px solid #D8D8DC;
+   font-size : 10px;
+   text-align : center;
+   vertical-align : middle;
+   padding : 0.2em 0.5em;
+}
+
+/* -- footer -- */

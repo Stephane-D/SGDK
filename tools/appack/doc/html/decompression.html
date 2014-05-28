@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <title>aPLib - Decompression</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link href="ahob.css" title="A Hint of Blue" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+
+    <table class="ismain">
+      <tr>
+        <td class="isdesc">
+
+<div class="topnav">
+ <a href="compression.html">&lt;&lt;&nbsp;prev</a> |
+ <a href="index.html">home</a> |
+ <a href="acknowledgements.html">next&nbsp;&gt;&gt;</a>
+</div>
+
+<div class="title">Decompression</div>
+
+<p class="first">The following is a description of the aPLib decompression
+functionality.</p>
+
+<h4>Decompression Functions</h4>
+
+<a name="aP_depack"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_depack</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                  <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Decompresses the compressed data from <code>source[]</code>
+  into <code>destination[]</code>.
+
+  <p>The <code>destination[]</code> buffer must be large enough to
+  hold the decompressed data.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the compressed data.<br />
+    <code>destination</code> - pointer to where the decompressed data
+     should be stored.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+   <dt>Note:</dt>
+   <dd>
+    This function is not included in the libraries, but is available in
+    <code>src/c/depack.c</code>.
+    <a href="#aP_depack_asm_fast">aP_depack_asm_fast</a> can be used
+    instead.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_depack_safe"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_depack_safe</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                       <span class="ctype">size_t</span>&nbsp;<span class="cvar">srclen</span>,
+                       <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span>,
+                       <span class="ctype">size_t</span>&nbsp;<span class="cvar">dstlen</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Decompresses the compressed data from <code>source[]</code>
+  into <code>destination[]</code>.
+
+  <p>This function reads at most <code>srclen</code> bytes from
+  <code>source[]</code>, and writes at most <code>dstlen</code>
+  bytes to <code>destination[]</code>. If there is not enough
+  source or destination space, or a decoding error occurs,
+  the function returns <code>APLIB_ERROR</code>.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the compressed data.<br />
+    <code>srclen</code> - the size of the source buffer in bytes.<br />
+    <code>destination</code> - pointer to where the decompressed data
+     should be stored.<br />
+    <code>dstlen</code> - the size of the destination buffer in bytes.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+   <dt>Note:</dt>
+   <dd>
+    This function is not included in the libraries, but is available in
+    <code>src/c/depacks.c</code>.
+    <a href="#aP_depack_asm_safe">aP_depack_asm_safe</a> can be used
+    instead.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_depack_asm"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_depack_asm</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                      <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Decompresses the compressed data from <code>source[]</code>
+  into <code>destination[]</code>.
+
+  <p>The <code>destination[]</code> buffer must be large enough to
+  hold the decompressed data.</p>
+
+  <p>Optimised for size.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the compressed data.<br />
+    <code>destination</code> - pointer to where the decompressed data
+     should be stored.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_depack_asm_fast"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_depack_asm_fast</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                           <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Decompresses the compressed data from <code>source[]</code>
+  into <code>destination[]</code>.
+
+  <p>The <code>destination[]</code> buffer must be large enough to
+  hold the decompressed data.</p>
+
+  <p>Optimised for speed.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the compressed data.<br />
+    <code>destination</code> - pointer to where the decompressed data
+     should be stored.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_depack_asm_safe"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_depack_asm_safe</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                           <span class="ctype">size_t</span>&nbsp;<span class="cvar">srclen</span>,
+                           <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span>,
+                           <span class="ctype">size_t</span>&nbsp;<span class="cvar">dstlen</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Decompresses the compressed data from <code>source[]</code>
+  into <code>destination[]</code>.
+
+  <p>This function reads at most <code>srclen</code> bytes from
+  <code>source[]</code>, and writes at most <code>dstlen</code>
+  bytes to <code>destination[]</code>. If there is not enough
+  source or destination space, or a decoding error occurs,
+  the function returns <code>APLIB_ERROR</code>.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the compressed data.<br />
+    <code>srclen</code> - the size of the source buffer in bytes.<br />
+    <code>destination</code> - pointer to where the decompressed data
+     should be stored.<br />
+    <code>dstlen</code> - the size of the destination buffer in bytes.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+   <dt>See Also:</dt>
+   <dd>
+    <a href="#aPsafe_depack"><code>aPsafe_depack</code></a>
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_crc32"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">unsigned int</span> <span class="cfunc">aP_crc32</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                       <span class="ctype">size_t</span>&nbsp;<span class="cvar">length</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Computes the CRC32 value of <code>length</code> bytes of data
+  from <code>source[]</code>.
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the data to process.<br />
+    <code>length</code> - the size in bytes of the data.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the CRC32 value.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<h4>Safe Wrapper Functions</h4>
+
+<a name="aPsafe_check"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aPsafe_check</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Computes the CRC32 of the compressed data in
+  <code>source[]</code> and checks it agains the value in the
+  header. Returns the length of the decompressed data stored in the
+  header..</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - the compressed data to process.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aPsafe_get_orig_size"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aPsafe_get_orig_size</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Returns the length of the decompressed data stored in the
+  header of the compressed data in <code>source[]</code>.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - the compressed data to process.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aPsafe_depack"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aPsafe_depack</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                      <span class="ctype">size_t</span>&nbsp;<span class="cvar">srclen</span>,
+                      <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span>,
+                      <span class="ctype">size_t</span>&nbsp;<span class="cvar">dstlen</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Wrapper function for
+  <a href="#aP_depack_asm_safe"><code>aP_depack_asm_safe</code></a>,
+  which checks the CRC32 of the compressed data, decompresses, and
+  checks the CRC32 of the decompressed data.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the compressed data.<br />
+    <code>srclen</code> - the size of the source buffer in bytes.<br />
+    <code>destination</code> - pointer to where the decompressed data
+     should be stored.<br />
+    <code>dstlen</code> - the size of the destination buffer in bytes.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the decompressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+   <dt>See Also:</dt>
+   <dd>
+    <a href="#aP_depack_asm_safe"><code>aP_depack_asm_safe</code></a>
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<h4>Example</h4>
+
+<pre>
+   <span class="ccomment">/* get original size */</span>
+   <span class="ctype">size_t</span> <span class="cvar">orig_size</span> = <a href="#aPsafe_get_orig_size">aPsafe_get_orig_size</a>(compressed);
+
+   <span class="ccomment">/* allocate memory for decompressed data */</span>
+   <span class="ctype">char</span> *<span class="cvar">data</span> = malloc(orig_size);
+
+   <span class="ccomment">/* decompress compressed[] to data[] */</span>
+   <span class="ctype">size_t</span> <span class="cvar">outlength</span> = <a href="#aPsafe_depack">aPsafe_depack</a>(compressed, compressed_size, data, orig_size);
+
+   <span class="ccomment">/* check decompressed length */</span>
+   <span class="ckeyw">if</span> (outlength != orig_size) {
+      printf(<span class="cstr">&quot;An error occured!\n&quot;</span>);
+   }
+   <span class="ckeyw">else</span> {
+      printf(<span class="cstr">&quot;Decompressed %u bytes\n&quot;</span>, outlength);
+   }
+</pre>
+
+&nbsp;<br />
+
+<div class="botnav">
+ <a href="compression.html">&lt;&lt;&nbsp;prev</a> |
+ <a href="index.html">home</a> |
+ <a href="acknowledgements.html">next&nbsp;&gt;&gt;</a>
+</div>
+
+        </td>
+      </tr>
+    </table>
+
+  </body>
+
+</html>

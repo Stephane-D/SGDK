@@ -3,195 +3,207 @@
 	.globl	M3D_transform
 	.type	M3D_transform, @function
 M3D_transform:
-	movm.l #0x3f30,-(%sp)
+	movm.l %d2-%d5/%a2-%a5,-(%sp)
 
-	move.l 36(%sp),%a2              | a2 = transform
-	move.w 50(%sp),%d5              | d5 = numv
+	move.l 36(%sp),%a2              | a2 = &transform
 
 	tst.w (%a2)
 	jeq .L45
 
 	move.l %a2,-(%sp)
-	jbsr M3D_buildMat3D
+	jsr M3D_buildMat3D
 	addq.l #4,%sp
 
 .L45:
-	move.l 2(%a2),%a0               | a0 = translation
-	move.w (%a0),%a3                | a3 = translation.x
-	move.w 2(%a0),%d7               | d7 = translation.y
-	move.w 4(%a0),%d6               | d6 = translation.z
+	move.l 2(%a2),%a0               | a0 = &translation
+	movem.w (%a0)+,%a3-%a5          | a3 = translation.x   a4 = translation.y   a5 = translation.z
 
-	move.l 40(%sp),%a1              | a1 = src
-	move.l 44(%sp),%a0              | a0 = dest
+	move.l 40(%sp),%a0              | a0 = src
+	move.l 44(%sp),%a1              | a1 = dest
 	lea    10(%a2),%a2              | a2 = &(transform.mat)
+	move.w 50(%sp),%d5              | d5 = numv
 
 	subq.w #1,%d5
 	jmi    .L50
 
 .L48:
-	move.w (%a1)+,%d2               | d2 = sx
-	move.w (%a1)+,%d3               | d3 = sy
-	move.w (%a1)+,%d4               | d4 = sz
+	movem.w (%a0)+,%d2-%d4          | d2 = sx        d3 = sy        d4 = sz
 
-	move.w (%a2)+,%d1               | d1 = mat.a.x
-	muls.w %d2,%d1                  | d1 = (mat.a.x * sx)
-	move.w (%a2)+,%d0               | d0 = mat.a.y
-	muls.w %d3,%d0                  | d0 = mat.a.y * sy
-	add.l %d0,%d1                   | d1 = (mat.a.x * sx) + (mat.a.y * sy)
-	move.w (%a2)+,%d0               | d0 = mat.a.z
-	muls.w %d4,%d0                  | d0 = mat.a.z * sz
-	add.l %d0,%d1                   | d1 = (mat.a.x * sx) + (mat.a.y * sy) + (mat.a.z * sz)
-	asr.l #6,%d1
-	add.w %a3,%d1                   | d1 = (mat.a.x * sx) + (mat.a.y * sy) + (mat.a.z * sz) + translation.x
-	move.w %d1,(%a0)+               | dest++ = (mat.a.x * sx) + (mat.a.y * sy) + (mat.a.z * sz) + translation.x
+	move.w (%a2)+,%d0               | d0 = mat.a.x
+	muls.w %d2,%d0                  | d0 = mat.a.x * sx
+	move.w (%a2)+,%d1               | d1 = mat.a.y
+	muls.w %d3,%d1                  | d1 = mat.a.y * sy
+	add.l %d1,%d0                   | d0 = (mat.a.x * sx) + (mat.a.y * sy)
+	move.w (%a2)+,%d1               | d1 = mat.a.z
+	muls.w %d4,%d1                  | d1 = mat.a.z * sz
+	add.l %d1,%d0                   | d0 = (mat.a.x * sx) + (mat.a.y * sy) + (mat.a.z * sz)
+	asr.l #6,%d0
+	add.w %a3,%d0                   | d0 = (mat.a.x * sx) + (mat.a.y * sy) + (mat.a.z * sz) + translation.x
+	move.w %d0,(%a1)+               | dest++ = (mat.a.x * sx) + (mat.a.y * sy) + (mat.a.z * sz) + translation.x
 
-	move.w (%a2)+,%d1               | d1 = mat.b.x
-	muls.w %d2,%d1                  | d1 = (mat.b.x * sx)
-	move.w (%a2)+,%d0               | d0 = mat.b.y
-	muls.w %d3,%d0                  | d0 = mat.b.y * sy
-	add.l %d0,%d1                   | d1 = (mat.b.x * sx) + (mat.b.y * sy)
-	move.w (%a2)+,%d0               | d0 = mat.b.z
-	muls.w %d4,%d0                  | d0 = mat.b.z * sz
-	add.l %d0,%d1                   | d1 = (mat.b.x * sx) + (mat.b.y * sy) + (mat.b.z * sz)
-	asr.l #6,%d1
-	add.w %d7,%d1                   | d1 = (mat.b.x * sx) + (mat.b.y * sy) + (mat.b.z * sz) + translation.y
-	move.w %d1,(%a0)+               | dest++ = (mat.b.x * sx) + (mat.b.y * sy) + (mat.b.z * sz) + translation.y
+	move.w (%a2)+,%d0               | d0 = mat.b.x
+	muls.w %d2,%d0                  | d0 = mat.b.x * sx
+	move.w (%a2)+,%d1               | d1 = mat.b.y
+	muls.w %d3,%d1                  | d1 = mat.b.y * sy
+	add.l %d1,%d0                   | d0 = (mat.b.x * sx) + (mat.b.y * sy)
+	move.w (%a2)+,%d1               | d1 = mat.b.z
+	muls.w %d4,%d1                  | d1 = mat.b.z * sz
+	add.l %d1,%d0                   | d0 = (mat.b.x * sx) + (mat.b.y * sy) + (mat.b.z * sz)
+	asr.l #6,%d0
+	add.w %a4,%d0                   | d0 = (mat.b.x * sx) + (mat.b.y * sy) + (mat.b.z * sz) + translation.y
+	move.w %d0,(%a1)+               | dest++ = (mat.b.x * sx) + (mat.b.y * sy) + (mat.b.z * sz) + translation.y
 
 	muls.w (%a2)+,%d2               | d2 = mat.c.x * sx
 	muls.w (%a2)+,%d3               | d3 = mat.c.y * sy
 	add.l %d3,%d2                   | d2 = (mat.c.x * sx) + (mat.c.y * sy)
-	muls.w (%a2),%d4                | d4 = mat.c.z * sz
+	muls.w (%a2)+,%d4               | d4 = mat.c.z * sz
 	add.l %d4,%d2                   | d2 = (mat.c.x * sx) + (mat.c.y * sy) + (mat.c.z * sz)
 	asr.l #6,%d2
-	add.w %d6,%d2                   | d2 = (mat.c.x * sx) + (mat.c.y * sy) + (mat.c.z * sz) + translation.z
-	move.w %d2,(%a0)+               | dest++ = (mat.c.x * sx) + (mat.c.y * sy) + (mat.c.z * sz) + translation.z
+	add.w %a5,%d2                   | d2 = (mat.c.x * sx) + (mat.c.y * sy) + (mat.c.z * sz) + translation.z
+	move.w %d2,(%a1)+               | dest++ = (mat.c.x * sx) + (mat.c.y * sy) + (mat.c.z * sz) + translation.z
 
-    lea -16(%a2),%a2                | a2 = &(transform.mat)
+    lea -18(%a2),%a2                | a2 = &(transform.mat)
 	dbra %d5,.L48
 
 .L50:
-	movm.l (%sp)+,#0xcfc
+	movem.l (%sp)+,%d2-%d5/%a2-%a5
 	rts
 
 
 	.globl	M3D_project_f16
 	.type	M3D_project_f16, @function
 M3D_project_f16:
-	movm.l #0x3e00,-(%sp)
+	movem.l %d2-%d7/%a2-%a3,-(%sp)
 
-	move.l 24(%sp),%a0                      | a0 = s = src
-	move.l 28(%sp),%a1                      | a1 = d = dst
-	move.w 34(%sp),%d2                      | d2 = i = numv
+	move.l 36(%sp),%a0                      | a0 = s = src
+	move.l 40(%sp),%a1                      | a1 = d = dst
+	move.w 46(%sp),%d7                      | d7 = i = numv
 
-	move.w viewport_f16,%d4
-	asr.w #1,%d4                            | d4 = wi = viewport_f16.x >> 1;
-	move.w viewport_f16+2,%d3
-	asr.w #1,%d3                            | d3 = hi = viewport_f16.y >> 1;
-	move.w camDist,%d5
-	ext.l %d5
-	lsl.l #6,%d5                            | d5 = camDist << 6
+	subq.w #1,%d7
+	jmi .L42
 
-	moveq #-64,%d6
-	swap %d6
-	move.w #-64,%d6                         | d6 = (FIX16(-1) << 16) | FIX16(-1)
+    lea context3D,%a2
 
-	subq.w #1,%d2
-	jmi .L34                                | while(i--)
+    move.w (%a2)+,%d5
+	lsl.w #5,%d5                            | d5 = centerX = intToFix16(viewport.x / 2)
+    move.w (%a2)+,%d6
+	lsl.w #5,%d6                            | d6 = centerY = intToFix16(viewport.y / 2)
+    moveq #0,%d4
+    move.w (%a2),%d4                        | d4 = camDist
+
+	move.w %d5,%d0
+	swap %d0
+	move.w %d6,%d0
+	move.l %d0,%a2                          | a2 = (centerX << 16) | centerY
+
+    move.w %d4,%d0
+    ext.l %d0
+    asl.l #6,%d0
+    move.l %d0,%a3                          | a3 = camDist << 6
 
 .L32:                                       | {
-	move.w 4(%a0),%d0                       |   if ((zi = s->z))
-	jeq .L30                                |   {
+	movem.w (%a0)+,%d0-%d2                  |   d0 = x = s->x, d1 = y = s->y, d2 = z = s->z
 
-    move.l %d5,%d1
-    divs.w %d0,%d1                          |       d1 = zi = fix16Div(camDist, zi);
+    add.w %d4,%d2                           |   if ((zi = (camDist + z)) > 0)
+	jle .L30                                |   {
 
-	move.w (%a0),%d0
-	muls.w %d1,%d0
-	asr.l #6,%d0                            |       d0 = fix16Mul(s->x, zi)
-	add.w %d4,%d0                           |
-	move.w %d0,(%a1)+                       |       d->x = wi + fix16Mul(s->x, zi);
+    move.l %a3,%d3
+    divs.w %d2,%d3                          |       d3 = scale = fix16Div(camDist, camDist + z)
 
-	muls.w 2(%a0),%d1
-	asr.l #6,%d1                            |       d1 = fix16Mul(s->y, zi)
-	move.w %d3,%d0
+	muls.w %d3,%d0
+	asr.l #6,%d0
+	add.w %d5,%d0
+	move.w %d0,(%a1)+                       |       d->x = centerX + (scale * x)
+
+	muls.w %d3,%d1
+	asr.l #6,%d1
+	move.w %d6,%d0
 	sub.w %d1,%d0
-	move.w %d0,(%a1)+                       |       d->y = hi - fix16Mul(s->y, zi);
+	move.w %d0,(%a1)+                       |       d->y = centerY - (scale * y)
 
-	addq.l #6,%a0
-	dbra %d2,.L32
+	dbra %d7,.L32
 
-	movm.l (%sp)+,#0x07c
+	movem.l (%sp)+,%d2-%d7/%a2-%a3
 	rts                                     |   }
                                             |   else
 .L30:                                       |   {
-	move.l %d6,(%a1)+                       |       d->x = FIX16(-1);
-                                            |       d->y = FIX16(-1);
-	addq.l #6,%a0                           |   }
-	dbra %d2,.L32                           | }
+	move.l %a2,(%a1)+                       |       d->x = centerX
+                                            |       d->y = centerY
+                                            |   }
+	dbra %d7,.L32                           | }
 
 .L34:
-	movm.l (%sp)+,#0x07c
+	movem.l (%sp)+,%d2-%d7/%a2-%a3
 	rts
 
 
 	.globl	M3D_project_s16
 	.type	M3D_project_s16, @function
 M3D_project_s16:
-	movm.l %d2-%d5/%a2-%a4,-(%sp)
+	movem.l %d2-%d7/%a2-%a3,-(%sp)
 
-	move.l 32(%sp),%a0                      | a0 = s = src
-	move.l 36(%sp),%a1                      | a1 = d = dst
-	move.w 42(%sp),%d4                      | d4 = i = numv
+	move.l 36(%sp),%a0                      | a0 = s = src
+	move.l 40(%sp),%a1                      | a1 = d = dst
+	move.w 46(%sp),%d7                      | d7 = i = numv
 
-	move.w camDist,%d0
-	ext.l %d0
-	lsl.l #6,%d0
-	move.l %d0,%a2                          | a2 = camDist << 6
-	move.w viewport,%d0
-	lsr.w #1,%d0                            | a3 = wi = viewport.x >> 1;
-	move.w %d0,%a3
-	move.w viewport+2,%d0
-	lsr.w #1,%d0                            | a4 = hi = viewport.y >> 1;
-	move.w %d0,%a4
-	moveq #-1,%d5                           | d5 = (-1 << 16) | -1
-
-	subq.w #1,%d4
+	subq.w #1,%d7
 	jmi .L42
 
-.L40:
-	move.w (%a0)+,%d1                       |   d1 = s->x
-	move.w (%a0)+,%d2                       |   d2 = s->y
-	move.w (%a0)+,%d0                       |   if ((zi = s->z))
-	jeq .L38                                |   {
+    lea context3D,%a2
 
-    move.l %a2,%d3
-    divs.w %d0,%d3                          |       d3 = zi = fix16Div(camDist, zi);
+    move.w (%a2)+,%d5
+	lsr.w #1,%d5                            | d5 = centerX = viewport.x / 2
+    move.w (%a2)+,%d6
+	lsr.w #1,%d6                            | d6 = centerY = viewport.y / 2
+    moveq #0,%d4
+    move.w (%a2),%d4                        | d4 = camDist
+
+	move.w %d5,%d0
+	swap %d0
+	move.w %d6,%d0
+	move.l %d0,%a2                          | a2 = (centerX << 16) | centerY
+
+    move.w %d4,%d0
+    ext.l %d0
+    swap %d0
+    asr.l #6,%d0
+    move.l %d0,%a3                          | a3 = camDist << (6 + 4)
+                                            | 6 to prepare for division
+                                            | 4 for *16 ratio
+
+.L40:                                       | while(i--) {
+	movem.w (%a0)+,%d0-%d2                  |   d0 = x = s->x, d1 = y = s->y, d2 = z = s->z
+
+    add.w %d4,%d2                           |   if ((zi = (camDist + z)) > 0)
+	jle .L38                                |   {
+
+    move.l %a3,%d3
+    divs.w %d2,%d3                          |       d3 = scale = fix16Div((camDist << (4 + 2)), camDist + z)
+
+	muls.w %d3,%d0
+	swap %d0
+	rol.l #4,%d0
+	add.w %d5,%d0
+	move.w %d0,(%a1)+                       |       d->x = centerX + (scale * x)
 
 	muls.w %d3,%d1
 	swap %d1
-	rol.l #4,%d1                            |       d1 = fix16ToInt(fix16Mul(s->x, zi))
-	add.w %a3,%d1                           |
-	move.w %d1,(%a1)+                       |       d->x = wi + fix16ToInt(fix16Mul(s->x, zi))
+	rol.l #4,%d1
+	move.w %d6,%d0
+	sub.w %d1,%d0
+	move.w %d0,(%a1)+                       |       d->y = centerY - (scale * y)
 
-	muls.w %d3,%d2
-	swap %d2
-	rol.l #4,%d2                            |       d2 = fix16ToInt(fix16Mul(s->y, zi))
-	move.w %a4,%d0
-	sub.w %d2,%d0
-	move.w %d0,(%a1)+                       |       d->y = hi - fix16ToInt(fix16Mul(s->y, zi))
+	dbra %d7,.L40
 
-	dbra %d4,.L40
-
-	movm.l (%sp)+,%d2-%d5/%a2-%a4
+	movem.l (%sp)+,%d2-%d7/%a2-%a3
 	rts                                     |   }
                                             |   else
 .L38:                                       |   {
-	move.l %d5,(%a1)+                       |       d->x = FIX16(-1);
-                                            |       d->y = FIX16(-1);
+	move.l %a2,(%a1)+                       |       d->x = centerX
+                                            |       d->y = centerY
                                             |   }
-	dbra %d4,.L40                           | }
+	dbra %d7,.L40                           | }
 
 .L42:
-	movm.l (%sp)+,%d2-%d5/%a2-%a4
+	movem.l (%sp)+,%d2-%d7/%a2-%a3
 	rts
-

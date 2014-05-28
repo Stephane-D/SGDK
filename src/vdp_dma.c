@@ -15,6 +15,9 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
     u32 banklimitb;
     u32 banklimitw;
 
+    if (vramStep != -1)
+        VDP_setAutoInc(vramStep);
+
     // DMA works on 64 KW bank
     banklimitb = 0x20000 - (from & 0x1FFFF);
     banklimitw = banklimitb >> 1;
@@ -22,14 +25,11 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
     if (len > banklimitw)
     {
         // we first do the second bank transfert
-        VDP_doDMA(location, from + banklimitb, to + banklimitb, len - banklimitw);
+        VDP_doDMAEx(location, from + banklimitb, to + banklimitb, len - banklimitw, -1);
         newlen = banklimitw;
     }
     // ok, use normal len
     else newlen = len;
-
-    if (vramStep != -1)
-        VDP_setAutoInc(vramStep);
 
     pw = (u16 *) GFX_CTRL_PORT;
 
@@ -92,7 +92,7 @@ void VDP_doVRamDMAFill(u16 to, u16 len, u8 value)
 
     // Write VRam DMA destination address
     pl = (u32 *) GFX_CTRL_PORT;
-   *pl = GFX_DMA_VRAM_ADDR(to);
+    *pl = GFX_DMA_VRAM_ADDR(to);
 
     // set up value to fill (need to be 16 bits extended)
     pw = (u16 *) GFX_DATA_PORT;
@@ -121,5 +121,5 @@ void VDP_doVRamDMACopy(u16 from, u16 to, u16 len)
 
     // Write VRam DMA destination address (start DMA copy operation)
     pl = (u32 *) GFX_CTRL_PORT;
-    *pl = GFX_DMA_VRAM_ADDR(to);
+    *pl = GFX_DMA_VRAMCOPY_ADDR(to);
 }

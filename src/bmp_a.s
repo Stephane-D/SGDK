@@ -334,35 +334,36 @@ BMP_isPolygonCulled:
     | internal use only
     | -----------------
     | IN:
-    | d2 = x (32 bits extended)
-    | d4 = dx
-    | d5 = dy
+    | d0 = dx
+    | d1 = dy
+    | d7 = x
     | a1 = dst
     |
     | OUT:
-    | d2 = x updated
-    | d4 = ?
-    | d5 = dy * 4
+    | d0 = ?
+    | d1 = dy * 4
+    | d7 = ?
     | a1 = dst (updated)
     | a6 = ?
 fillEdge:
-    ext.l %d4
-    asl.l #7,%d4            | d4 = dx << 7
-    divs.w %d5,%d4          | d4 = (dx << 7) / dy
-	ext.l %d4
+    ext.l %d0               | if (dx == 0)
+    jeq fillEdgeFast        |   goto fillEdgeFast
 
-|	ror.l #7,%d4            | d4 = step = (dx << 16) / dy (swapped)
+    asl.l #7,%d0            | d0 = dx << 7
+    divs.w %d1,%d0          | d0 = (dx << 7) / dy
+	ext.l %d0
+	ror.l #7,%d0            | d0 = step x
 
-	ror.l #8,%d4            | d4 = step >> 1 (32 bits fixed point)
-	add.l %d4,%d2           | d2 = x + (step >> 1)
-	rol.l #1,%d4            | d4 = step (32 bits fixed point)
+    swap %d7
+    move.w #0x8000, %d7
+    swap %d7                | d7 = x 32 bits extended
 
-    add.w %d5,%d5
-    add.w %d5,%d5           | for jump table
+    add.w %d1,%d1
+    add.w %d1,%d1           | d1 = dy * 4 (for jump table)
 	andi #0,%ccr            | clear X flag
 
 .fe_fill_base2:
-    move.l (.fe_fill_table-.fe_fill_base2)-2(%pc,%d5.w),%a6
+    move.l (.fe_fill_table-.fe_fill_base2)-2(%pc,%d1.w),%a6
     jmp (%a6)
 
     .align 4
@@ -530,484 +531,484 @@ fillEdge:
     .long .fe_fill_160
 
 .fe_fill_160:
-	move.w %d2,(%a1)+           | *src++ = fix16ToInt(x);
-	addx.l %d4,%d2              |  x += step;
+	move.w %d7,(%a1)+           | *src++ = fix16ToInt(x);
+	addx.l %d0,%d7              |  x += step;
 .fe_fill_159:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_158:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_157:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_156:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_155:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_154:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_153:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_152:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_151:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_150:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_149:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_148:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_147:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_146:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_145:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_144:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_143:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_142:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_141:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_140:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_139:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_138:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_137:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_136:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_135:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_134:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_133:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_132:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_131:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_130:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_129:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_128:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_127:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_126:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_125:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_124:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_123:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_122:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_121:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_120:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_119:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_118:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_117:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_116:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_115:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_114:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_113:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_112:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_111:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_110:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_109:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_108:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_107:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_106:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_105:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_104:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_103:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_102:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_101:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_100:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_99:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_98:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_97:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_96:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_95:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_94:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_93:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_92:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_91:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_90:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_89:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_88:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_87:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_86:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_85:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_84:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_83:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_82:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_81:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_80:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_79:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_78:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_77:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_76:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_75:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_74:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_73:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_72:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_71:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_70:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_69:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_68:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_67:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_66:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_65:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_64:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_63:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_62:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_61:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_60:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_59:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_58:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_57:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_56:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_55:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_54:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_53:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_52:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_51:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_50:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_49:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_48:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_47:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_46:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_45:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_44:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_43:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_42:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_41:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_40:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_39:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_38:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_37:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_36:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_35:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_34:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_33:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_32:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_31:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_30:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_29:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_28:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_27:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_26:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_25:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_24:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_23:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_22:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_21:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_20:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_19:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_18:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_17:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_16:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_15:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_14:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_13:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_12:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_11:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_10:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_9:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_8:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_7:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_6:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_5:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_4:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_3:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_2:
-	move.w %d2,(%a1)+
-	addx.l %d4,%d2
+	move.w %d7,(%a1)+
+	addx.l %d0,%d7
 .fe_fill_1:
-	move.w %d2,(%a1)+
+	move.w %d7,(%a1)+
 .fe_fill_0:
     rts
 
@@ -1015,16 +1016,20 @@ fillEdge:
     | internal use only
     | -----------------
     | IN:
-    | d1 = len
-    | d2 = (x << 16) | (x << 0)
+    | d7 = x
+    | d1 = dy
     | a1 = dst
     |
     | OUT:
-    | d1 = len * 4
-    | d2 = (x << 16) | (x << 0)
+    | d7 = ?
+    | d1 = dy * 4
     | a1 = dst (updated)
     | a6 = ?
 fillEdgeFast:
+    move.w %d7,%a6
+    swap %d7
+    move.w %a6,%d7              | d7 = x = (x1 << 16) | x1
+
     add.w %d1,%d1
     add.w %d1,%d1               | for jump table
 
@@ -1197,349 +1202,353 @@ fillEdgeFast:
     .long .fef_fill_160
 
 .fef_fill_160:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_158:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_156:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_154:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_152:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_150:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_148:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_146:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_144:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_142:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_140:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_138:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_136:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_134:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_132:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_130:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_128:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_126:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_124:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_122:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_120:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_118:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_116:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_114:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_112:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_110:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_108:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_106:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_104:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_102:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_100:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_98:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_96:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_94:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_92:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_90:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_88:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_86:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_84:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_82:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_80:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_78:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_76:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_74:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_72:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_70:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_68:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_66:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_64:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_62:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_60:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_58:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_56:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_54:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_52:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_50:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_48:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_46:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_44:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_42:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_40:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_38:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_36:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_34:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_32:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_30:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_28:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_26:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_24:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_22:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_20:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_18:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_16:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_14:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_12:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_10:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_8:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_6:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_4:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_2:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_0:
     rts
 
 .fef_fill_159:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_157:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_155:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_153:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_151:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_149:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_147:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_145:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_143:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_141:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_139:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_137:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_135:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_133:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_131:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_129:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_127:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_125:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_123:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_121:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_119:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_117:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_115:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_113:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_111:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_109:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_107:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_105:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_103:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_101:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_99:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_97:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_95:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_93:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_91:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_89:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_87:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_85:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_83:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_81:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_79:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_77:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_75:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_73:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_71:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_69:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_67:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_65:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_63:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_61:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_59:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_57:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_55:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_53:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_51:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_49:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_47:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_45:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_43:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_41:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_39:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_37:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_35:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_33:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_31:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_29:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_27:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_25:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_23:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_21:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_19:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_17:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_15:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_13:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_11:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_9:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_7:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_5:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_3:
-	move.l %d2,(%a1)+
+	move.l %d7,(%a1)+
 .fef_fill_1:
-	move.w %d2,(%a1)+
+	move.w %d7,(%a1)+
     rts
 
 
     | edges calculation
     | -----------------
     |
-    | d0 = dx
-    | d1 = dy
-    | d2 = yMin & x0
-    | d3 = yMax & y0
-    | d4 = x1
-    | d5 = y1
-    | d6 = BMP_HEIGHT-1
-    | d7 = BMP_WIDTH-1
+    | d0 = dx / free use
+    | d1 = dy / free use
+    | d2 = yMin / x0
+    | d3 = yMax / y0
+    | d4 = xMin / x1
+    | d5 = xMax / y1
+    | d6 = BMP_HEIGHT-1/ymax
+    | d7 = x / free use
     | a0 = pt / pt1
     | a1 = edge / pt0
     | a2 = ptYMin
-    | a3 = ptYMax
+    | a3 = BMP_WIDTH-1
     | a4 = ptFirst
     | a5 = ptLast
     | a6 = free use
+    | 0(sp) = left edge
+    | 320(sp) = right edge
+    | 640(sp) = left Ymin
+    | 642(sp) = right Ymin
     |
     | polygon drawing
     | ---------------
@@ -1569,161 +1578,167 @@ BMP_drawPolygon:
 	add.w %d0,%d0
 	add.w %d0,%d0           | d0 = num * 4
 	move.l %a0,%a4          | a4 = ptFirt
-	lea -4(%a0,%d0.w),%a5   | a5 = ptLast
+	lea (%a0,%d0.w),%a5     | a5 = ptLast
 
 	move.l (%a0)+,%d0       | d0.w = y = pt->y; pt++;
 
 	move.l %a0,%a2          | a2 = ptYMin = &pts[1]
-	move.l %a0,%a3          | a3 = ptYMax = &pts[1]
 	move.w %d0,%d2          | d2.w = yMin = y
 	move.w %d0,%d3          | d3.W = yMax = y
+	swap %d0
+	move.w %d0,%d4          | d4.w = xMin = x
+	move.w %d0,%d5          | d5.W = xMax = x
 
 	subq.w #2,%d1           | d1 = cnt = num - 2
 
-.cen_157:                   | while (cnt--) {
-	move.l (%a0)+,%d0       |   y = pt->y; py++;
+.DP_pts_loop:               | while (cnt--) {
+	move.l (%a0)+,%d0       |   y = pt->y; pt++;
 
 	cmp.w %d2,%d0           |   if (y < yMin)
-	jge .cen_154            |   {
+	jge .DP_find_ymax       |   {
 
     move.w %d0,%d2          |     yMin = y
     move.l %a0,%a2          |     ptYMin = pt + 1
-	dbra %d1,.cen_157       |   }
 
-	jra .cen_156            | done
+    swap %d0                |     d0 = x
 
-.cen_154:
+    cmp.w %d4,%d0           |     if (x < xMin)
+	jge .DP_find_xmax       |     {
+
+    move.w %d0,%d4          |       xMin = x
+	dbra %d1,.DP_pts_loop   |       continue
+	jra .DP_pts_loop_done   |     }
+                            |   }
+.DP_find_ymax:
 	cmp.w %d3,%d0           |   if (y > yMax)
-	jle .cen_155            |   {
+	jle .DP_find_xmin       |   {
 
     move.w %d0,%d3          |     yMax = y
-    move.l %a0,%a3          |     ptYMax = pt + 1
+                            |   }
+.DP_find_xmin:
+    swap %d0                |   d0 = x
 
-.cen_155:                   |   }
-	dbra %d1,.cen_157       | }
+    cmp.w %d4,%d0           |   if (x < xMin)
+	jge .DP_find_xmax       |   {
 
-.cen_156:
+    move.w %d0,%d4          |     xMin = x
+	dbra %d1,.DP_pts_loop   |     continue
+	jra .DP_pts_loop_done   |   }
+
+.DP_find_xmax:
+    cmp.w %d5,%d0           |   if (x > xMax)
+	jle .DP_pts_loop_next   |   {
+
+    move.w %d0,%d5          |       xMax = x
+                            |
+.DP_pts_loop_next:          |   }
+	dbra %d1,.DP_pts_loop   | }
+
+.DP_pts_loop_done:
 	subq.l #4,%a2           | fix ptYMin
-	subq.l #4,%a3           | fix ptYMax
 
-	tst.w %d3               | if (yMax < 0)
-	jlt .cen_end0           |   return 0
+	tst.w %d3               | if (yMax <= 0)        // we use <= as it is simpler to ignore case where ymax = 0 here
+	jle .DP_end0            |   return 0
+	tst.w %d5               | if (xMax < 0)
+	jlt .DP_end0            |   return 0
 
-    moveq #0,%d6
-	move.w #159,%d6         | d6 = BMP_HEIGHT-1
+	move.l #159,%d6         | d6 = BMP_HEIGHT-1
 
 	cmp.w %d6,%d2           | if (yMin > BMP_HEIGHT)
-	jgt .cen_end0           |   return 0
+	jgt .DP_end0            |   return 0
 
-    moveq #0,%d7
-	move.w #255,%d7         | d7 = BMP_WIDTH-1
+	move.l #255,%a3         | a3 = BMP_WIDTH-1
+
+	cmp.w %a3,%d4           | if (xMin > BMP_WIDTH)
+	jgt .DP_end0            |   return 0
+
+    lea -644(%sp),%sp       | reserve memory for edge table and others
 
 	cmp.w %d3,%d2           | if (yMin == yMax)
-	jne .cen_160            | {
+	jne .DP_no_single_line  | {
 
-    move.w (%a2),%d4        |   d4 = x0 = ptYMin->x
-    move.w (%a3),%d5        |   d5 = x1 = ptYMax->x
+	tst.w %d4               |   if (xmin < 0)
+	jge .DP_sl_xmin_ok
 
-    cmp.w %d5,%d4           |   if (x0 > x1)
-    jle .cen_161
+	moveq #0,%d4            |     xmin = 0
 
-	exg %d4,%d5             |      SWAP(x0, x1)
+.DP_sl_xmin_ok:
+	cmp.w %a3,%d5           |   if (xmax >= BMP_WIDTH)
+	jle .DP_sl_xmax_ok
 
-.cen_161:
-	tst.w %d5               |   if (x1 < 0)
-	jlt .cen_end0           |     return 0
-	cmp.w %d7,%d4           |   if (x0 >= BMP_WIDTH)
-	jgt .cen_end0           |     return 0
+	move.w %a3,%d5          |     xmax = BMP_WIDTH - 1
 
-	tst.w %d4               |   if (x0 < 0)
-	jge .cen_162
-
-	moveq #0,%d4            |     x0 = 0
-
-.cen_162:
-	cmp.w %d7,%d5           |   if (x1 >= BMP_WIDTH)
-	jle .cen_163
-
-	move.w %d7,%d5          |     x1 = BMP_WIDTH - 1
-
-.cen_163:
+.DP_sl_xmax_ok:
     move.w %d3,%d6          |   d6 = maxY
 
 	add.w %d3,%d3
+	lea 0(%sp,%d3.w),%a0
 
-    move.l leftEdge,%a0
-	move.w %d4,(%a0,%d3)    |   leftEdge[yMin] = x0
-    move.l rightEdge,%a0
-	move.w %d5,(%a0,%d3)    |   rightEdge[yMin] = x1
+	move.w %d4,(%a0)        |   leftEdge[yMin] = xmin
+	move.w %d5,320(%a0)     |   rightEdge[yMin] = xmax
 
-	jra .drawPolygon        |   draw polygon now (d2 = minY and d6 = maxY)
+	jra .drawPolygon_SL     |   draw polygon now (d2 = minY and d6 = maxY)
                             | }
 
-    | LEFT
-    | ----
+.DP_end0:
+	moveq #0,%d0
+	movm.l (%sp)+,%d2-%d7/%a2-%a6
+	rts
 
-.cen_160:
-    move.l %a2,%a1          | a1 = pt0 = ptYMin
-    lea -4(%a2),%a0         | a0 = pt1 = ptYMin-1
-    cmp.l %a4,%a0           | if (pt1 < ptFirst)
-    jcc .cen_166
 
-    move.l %a5,%a0          |   pt1 = ptLast
+.DP_no_single_line:
+    cmp.w %d6,%d3           | if (ymax < BMP_HEIGHT)
+    jge .DP_ymax_ok
 
-.cen_166:
-	tst.w 2(%a0)            | while (pt1->y <= 0)
-	jgt .cen_250            | {
+    move.w %d3,%d6          |   d6 = ymax
 
-.cen_171:
-	cmp.l %a3,%a0           |   if (pt1 == ptYMax)
-	jeq .cen_end0           |     return 0
+.DP_ymax_ok:
+    tst.w %d4               | if (xmin < 0)
+    jlt .DP_XClip           |   goto XClip
+	cmp.w %a3,%d5           | if (xmax >= BMP_WIDTH)
+    jgt .DP_XClip           |   goto XClip
 
-	move.l %a0,%a1          |   pt0 = pt1
-	subq.l #4,%a0           |   pt1--
-    cmp.l %a4,%a0           |   if (pt1 < ptFirst)
-    jcc .cen_167
 
-    move.l %a5,%a0          |     pt1 = ptLast
+    | LEFT NO X CLIP
+    | --------------
 
-.cen_167:
-	tst.w 2(%a0)            | }
-	jle .cen_171
+    move.l %a2,%a0          | a0 = pt = ptYMin
 
-.cen_250:
-	cmp.w (%a1),%d7         | while ((pt0->x >= BMP_WIDTH) && (pt1->x >= BMP_WIDTH))
-	jge .cen_173            | {
-	cmp.w (%a0),%d7
-	jge .cen_173
+	move.l (%a0),%d2        | d2.wl = y0   d2.wh = x0
+    cmp.l %a4,%a0           | if (pt == ptFirst)
+    jne .DP_lnc_first
 
-.cen_177:
-	move.w (%a1),%d0
-	cmp.w (%a0),%d0         |   if (pt0->x <= pt1->x)
-	jle .cen_end0           |     return 0;
+    move.l %a5,%a0          |   pt = ptLast
 
-	cmp.l %a3,%a0           |   if (pt1 == ptYMax)
-	jeq .cen_end0           |     return 0
+.DP_lnc_first:
+	move.l -(%a0),%d4       | d4.wl = y1   d4.wh = x1
 
-	move.l %a0,%a1          |   pt0 = pt1
-	subq.l #4,%a0           |   pt1--
-    cmp.l %a4,%a0           |   if (pt1 < ptFirst)
-    jcc .cen_172
+    tst.w %d4               | while (y1 <= 0)
+	jgt .DP_lnc_y1l_ok      | {
 
-    move.l %a5,%a0          |     pt1 = ptLast
+.DP_lnc_y1l_loop:
+	move.l %d4,%d2          |   d2.wl = y0   d2.wh = x0
+    cmp.l %a4,%a0           |   if (pt == ptFirst)
+    jne .DP_lnc_y1l_next
 
-.cen_172:
-	cmp.w (%a0),%d7         | }
-	jlt .cen_177
+    move.l %a5,%a0          |     pt = ptLast
 
-.cen_173:
-	move.w (%a0),%d4        | x1 = pt->x
-	move.w 2(%a0),%d5       | y1 = pt->y
-	move.w (%a1)+,%d2       | x0 = pt0->x
-	move.w (%a1),%d3        | y0 = pt0->y
+.DP_lnc_y1l_next:
+	move.l -(%a0),%d4       |   d4.wl = y1   d4.wh = x1
+	tst.w %d4               | }
+	jle .DP_lnc_y1l_loop
+
+.DP_lnc_y1l_ok:
+    move.w %d2,%d3          | d3 = y0
+    swap %d2                | d2 = x0
+    move.w %d4,%d5          | d5 = y1
+    swap %d4                | d4 = x1
 
     | Clip Y0
 
-	jge .cen_178            | if (y0 < 0)
-                            | {
+    tst.w %d3               | if (y0 < 0)
+	jge .DP_lnc_y0_ok       | {
+
     move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
     move.w %d5,%d1
@@ -1734,330 +1749,118 @@ BMP_drawPolygon:
     sub.w %d0,%d2           |   x0 -= adj
 	moveq #0,%d3            |   y0 = 0
                             | }
-.cen_178:
-	move.w %d3,minYL        | minYL = y0
-	move.l leftEdge,%d0
+.DP_lnc_y0_ok:
+	move.w %d3,640(%sp)     | minYL = y0
+	move.l %sp,%d0
 	add.w %d3,%d0
 	add.w %d3,%d0
 	move.l %d0,%a1          | a1 = edge = &leftEdge[minYL]
 
+.DP_lnc_loop:
 
-.cen_loopL:
+    | Clip Y1
 
-    | Clip Y1 against BMP_HEIGHT
+	cmp.w %d6,%d5           | if (y1 >= ymax)
+	jlt .DP_lnc_y1h_ok      | {
+                            |   if (y1 > ymax)
+	jeq .DP_lnc_y1h_nc      |   {
 
-	cmp.w %d6,%d5           | if (y1 >= BMP_HEIGHT)
-	jle .cen_180            | {
-
-    move.w %d4,%d0
-	sub.w %d2,%d0           |   d0 = dx
     move.w %d5,%d1
-	sub.w %d3,%d1           |   d1 = dy
+	sub.w %d3,%d1           |     d1 = dy
+    move.w %d4,%d0
+	sub.w %d2,%d0           |     d0 = dx
 
 	sub.w %d6,%d5
 	muls.w %d5,%d0
-	divs.w %d1,%d0          |   d0 = adj = ((y1 - (BMP_HEIGHT - 1)) * dx) / dy
-    sub.w %d0,%d4           |   x1 -= adj
-	move.w %d6,%d5          |   y1 = BMP_HEIGHT - 1
-	move.l %a3,%a0          |   pt = ptYMax
-                            | }
-
-    | clip X0
-
-.cen_180:
-	cmp.w %d7,%d2           | if (x0 >= BMP_WIDTH)
-	jls .cenl_x0_ok         | {
-	jle .cenl_x0_neg
-
-.cenl_x0_sup:
-	cmp.w %d7,%d4           |   if (x1 >= BMP_WIDTH)
-	jle .cen_182            |   {
-
-	cmp.w %d4,%d2           |     if (x0 <= x1)
-	jle .cen_endL           |       goto endL
-
-	jra .cen_nextL          |     goto nextL
+	divs.w %d1,%d0          |     d0 = adj = ((y1 - ymax) * dx) / dy
+    sub.w %d0,%d4           |     x1 -= adj
+	move.w %d6,%d5          |     y1 = ymax
                             |   }
-.cen_182:
+.DP_lnc_y1h_nc:
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+	jeq .DP_lnc_done
+
     move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
-    move.w %d5,%d1
-	sub.w %d3,%d1           |   d1 = dy
+    move.w %d2,%d7          |   d7 = x
 
-	sub.w %d7,%d2
-	muls.w %d2,%d1
-	divs.w %d0,%d1          |   d1 = adj = ((x0 - (BMP_WIDTH - 1)) * dy) / dx
-    sub.w %d1,%d3           |   y0 -= adj
-
-    | from here we assume d2 = x0 = d7 = BMP_WIDTH - 1
-
-	move.w %d3,minYL        |   minYL = y0
-	move.l leftEdge,%d0
-	add.w %d3,%d0
-	add.w %d3,%d0
-	move.l %d0,%a1          |   a1 = edge = &leftEdge[minYL]
-
-    move.w %d4,%d0          |   if (x1 < 0)
-	jge .cen_186            |   {
-
-	sub.w %d7,%d0           |     d0 = dx = x1 - (BMP_WIDTH - 1)
-    move.w %d5,%d1
-	sub.w %d3,%d1           |     d1 = dy
-
-    muls.w %d4,%d1
-    divs.w %d0,%d1          |     d1 = adj = (x1 * dy) / dx
-    sub.w %d1,%d5           |     y1 -= adj
-    moveq #0,%d4            |     x1 = 0
-
-	sub.w %d7,%d4           |     d4 = dx = (0 - (BMP_WIDTH - 1))
-	sub.w %d3,%d5           |     d5 = dy
-
-    jlt .cen_end0           |     if (dy < 0) return 0
-    jeq .cen_187            |     if (dy)
-                            |     {
-	move.l %d7,%d2          |       d4 = dx; d5 = dy; d2 = x0 = BMP_WIDTH - 1 (32 bit extended)
-
-	jsr fillEdge            |       fillEdge
-                            |     }
-.cen_187:
-	tst.w %d1               |     if (adj < 0) return 0
-    jlt .cen_end0           |
-	jeq .cen_nextL          |     if (adj)
-                            |     {
-    moveq #0,%d2            |       d2 = (x << 16) | (x << 0)
-    pea .cen_nextL          |       d1 = len
-	jra fillEdgeFast        |       fillEdgeFast
-                            |     }
-                            |   }
-
-.cen_186:
-	sub.w %d7,%d4           |   d4 = dx = x1 - (BMP_WIDTH - 1)
-	sub.w %d3,%d5           |   d5 = dy
-
-    jlt .cen_end0           |   if (dy < 0) return 0
-	jeq .cen_nextL          |   if (dy)
-                            |   {
-	move.l %d7,%d2          |     d4 = dx; d5 = dy; d2 = x0 = BMP_WIDTH - 1 (32 bit extended)
-
-    pea .cen_nextL
-	jra fillEdge            |     fillEdge
-                            |   }
+    pea .DP_lnc_done        |   fillEdge        //; d7.w = x; d0 = dx; d1 = dy
+	jra fillEdge            |   goto lnc_done
                             | }
 
-.cenl_x0_neg:               | if (x0 < 0)
+.DP_lnc_end0:
+    lea 644(%sp),%sp        | release memory for edge table and others
+	moveq #0,%d0
+	movm.l (%sp)+,%d2-%d7/%a2-%a6
+	rts
+
+.DP_lnc_y1h_ok:
+    move.w %d5,%d1
+	sub.w %d3,%d1           | d1 = dy
+    jlt .DP_lnc_end0        | if (dy < 0) return 0
+    jeq .DP_lnc_next        | if (dy)
                             | {
-    move.w %d4,%d0          |   if (x1 < 0)
-	jge .cen_191            |   {
-
-    sub.w %d3,%d5           |     d5 = dy
-
-    jlt .cen_end0           |     if (dy < 0) return 0
-	jeq .cen_nextL          |     if (dy)
-                            |     {
-    moveq #0,%d2            |       d2 = (x << 16) | (x << 0)
-    move.w %d5,%d1          |       d1 = len
-    pea .cen_nextL
-	jra fillEdgeFast        |       fillEdgeFast
-                            |     }
-                            |   }
-.cen_191:
+    move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
-    move.w %d5,%d1
-	sub.w %d3,%d1           |   d1 = dy
-
-	neg.w %d2
-	muls.w %d2,%d1
-    moveq #0,%d2            |   d1 = adj = (-x0 * dy) / dx
-	divs.w %d0,%d1          |   x0 = 0
-
-    jlt .cen_end0           |   if (adj < 0) return 0
-	jeq .cen_193            |   if (adj)
-                            |   {
-    add.w %d1,%d3           |       y0 += adj
-
-                            |       d2 = (x0 << 16) | (x0 << 0); d1 = len
-
-	jsr fillEdgeFast        |       fillEdgeFast
-                            |   }
-.cen_193:
-	cmp.w %d7,%d4           |   if (x1 >= BMP_WIDTH)
-	jle .cen_194            |   {
-
-    move.w %d4,%d0          |     d0 = dx = x1
-    move.w %d5,%d1
-	sub.w %d3,%d1           |     d1 = dy
-
-    sub.w %d7,%d4
-    muls.w %d1,%d4
-    divs.w %d0,%d4          |     adj = ((x1 - (BMP_WIDTH - 1)) * dy) / dx
-    sub.w %d4,%d5           |     y1 -= adj
-    move.w %d7,%d4          |     x1 = BMP_WIDTH - 1
-                            |   }
-.cen_194:
-	sub.w %d3,%d5           |   d4 = dx, d5 = dy
-
-    jlt .cen_end0           |   if (dy < 0) return 0
-	jeq .cen_nextL          |   if (dy)
-                            |   {
-                            |     d4 = dx; d5 = dy; d2 = x0 (32 bit extended)
-    pea .cen_nextL
-	jra fillEdge            |     fillEdge
-                            |   }
+    move.w %d2,%d7          |   d7 = x
+	jsr fillEdge            |   fillEdge        //; d7.w = x; d0 = dx; d1 = dy
                             | }
+.DP_lnc_next:
+	move.w %d4,%d2          | x0 = x1
+	move.w %d5,%d3          | y0 = y1
+    cmp.l %a4,%a0           | if (pt == ptFirst)
+    jne .DP_lnc_next_ok
 
-    | Clip X1
+    move.l %a5,%a0          |   pt = ptLast
 
-.cenl_x0_ok:
-	cmp.w %d7,%d4           | if (x1 < 0)
-	jls .cenl_x1_ok         | {
-	jgt .cenl_x1_sup
+.DP_lnc_next_ok:
+	move.w -(%a0),%d5       | y1 = pt->y
+	move.w -(%a0),%d4       | x1 = pt->x
+	jra .DP_lnc_loop
 
-.cenl_x1_neg:
-	move.w %d4,%d0
-	sub.w %d2,%d0           |   d0 = dx
-    move.w %d5,%d1
-	sub.w %d3,%d1           |   d1 = dy
+.DP_lnc_done:
 
-	muls.w %d4,%d1
-	divs.w %d0,%d1          |   adj = (x1 * dy) / dx
-	sub.w %d1,%d5           |   y1 -= adj
-	moveq #0,%d4            |   x1 = 0
+    | RIGHT NO X CLIP
+    | ---------------
 
-	sub.w %d2,%d4           |   d4 = dx
-	sub.w %d3,%d5           |   d5 = dy
+    move.l %a2,%a0          | a0 = pt = ptYMin
 
-    jlt .cen_end0           |   if (dy < 0) return 0
-	jeq .cen_197            |   if (dy)
-                            |   {
-    ext.l %d2               |     d4 = dx; d5 = dy; d2 = x0 (32 bit extended)
+	move.l (%a0)+,%d2       | d2.wl = y0   d2.wh = x0
+    cmp.l %a5,%a0           | if (pt == ptLast)
+    jne .DP_rnc_first
 
-	jsr fillEdge            |     fillEdge
-                            |   }
-.cen_197:
-	tst.w %d1               |
-    jlt .cen_end0           |   if (adj < 0) return 0
-	jeq .cen_nextL          |   if (adj)
-                            |   {
-    moveq #0,%d2            |     d2 = (x1 << 16) | (x1 << 0); d1 = len
-    pea .cen_nextL
-	jra fillEdgeFast        |     fillEdgeFast
-                            |   }
-                            | }
+    move.l %a4,%a0          |   pt = ptFirst
 
-    | clip x1 against BMP_WIDTH
+.DP_rnc_first:
+	move.l (%a0)+,%d4       | d4.wl = y1   d4.wh = x1
 
-.cenl_x1_sup:               | if (x1 >= BMP_WIDTH)
-	move.w %d4,%d0          | {
-	sub.w %d2,%d0           |   d0 = dx
-    move.w %d5,%d1
-	sub.w %d3,%d1           |   d1 = dy
+    tst.w %d4               | while (y1 <= 0)
+	jgt .DP_rnc_y1l_ok      | {
 
-    sub.w %d7,%d4
-    muls.w %d4,%d1
-    divs.w %d0,%d1          |   d1 = adj = ((x1 - (BMP_WIDTH - 1)) * dy) / dx
-    sub.w %d1,%d5           |   y1 -= adj
-    move.w %d7,%d4          |   d4 = x1 = BMP_WIDTH - 1;
-                            | }
+.DP_rnc_y1l_loop:
+	move.l %d4,%d2          |   d2.wl = y0   d2.wh = x0
+    cmp.l %a5,%a0           |   if (pt == ptLast)
+    jne .DP_rnc_y1l_next
 
-.cenl_x1_ok:
-	sub.w %d2,%d4           | d4 = dx
-	sub.w %d3,%d5           | d5 = dy
+    move.l %a4,%a0          |     pt = ptFirst
 
-    jlt .cen_end0           | if (dy < 0) return 0
-    jeq .cen_nextL          | if (dy)
-                            | {
-    ext.l %d2               |   d4 = dx; d5 = dy; d2 = x (32 bit extended)
+.DP_rnc_y1l_next:
+	move.l (%a0)+,%d4       |   d4.wl = y1   d4.wh = x1
+	tst.w %d4               | }
+	jle .DP_rnc_y1l_loop
 
-	jsr fillEdge            |   fillEdge
-                            | }
-
-.cen_nextL:
-	cmp.l %a3,%a0           | if (pt == ptYMax)
-	jeq .cen_endL           |   goto endL
-
-	move.w (%a0)+,%d2       | x0 = pt->x
-	move.w (%a0),%d3        | y0 = pt->y
-
-	subq.l #6,%a0           | pt--
-	cmp.l %a4,%a0
-	jcc .cen_202            | if (pt < ptFirst)
-
-	move.l %a5,%a0          |   pt = ptLast
-
-.cen_202:
-	move.w (%a0),%d4        | x1 = pt->x
-	move.w 2(%a0),%d5       | y1 = pt->y
-	jra .cen_loopL
-
-.cen_endL:
-    sub.l leftEdge,%a1      | a1 = maxYL * 2
-    move.w %a1,maxYL        | save
-
-
-    | RIGHT
-    | ----
-
-    move.l %a2,%a1          | a1 = pt0 = ptYMin
-    lea 4(%a2),%a0          | a0 = pt1 = ptYMin+1
-    cmp.l %a5,%a0           | if (pt1 > ptLast)
-    jls .cen_203
-
-    move.l %a4,%a0          |   pt1 = ptFirst
-
-.cen_203:
-	tst.w 2(%a0)            | while (pt1->y <= 0)
-	jgt .cen_253            | {
-
-.cen_208:
-	cmp.l %a3,%a0           |   if (pt1 == ptYMax)
-	jeq .cen_end0           |     return 0
-
-	move.l %a0,%a1          |   pt0 = pt1
-	addq.l #4,%a0           |   pt1++
-    cmp.l %a5,%a0           |   if (pt1 > ptLast)
-    jls .cen_204
-
-    move.l %a4,%a0          |   pt1 = ptFirst
-
-.cen_204:
-	tst.w 2(%a0)            | }
-	jle .cen_208
-
-.cen_253:
-	tst.w (%a1)             | while ((pt0->x < 0) && (pt1->x < 0))
-	jge .cen_210            | {
-	tst.w (%a0)
-	jge .cen_210
-
-.cen_214:
-	move.w (%a1),%d0
-	cmp.w (%a0),%d0         |   if (pt0->x >= pt1->x)
-	jge .cen_end0           |     return 0;
-
-	cmp.l %a3,%a0           |   if (pt1 == ptYMax)
-	jeq .cen_end0           |     return 0
-
-	move.l %a0,%a1          |   pt0 = pt1
-	addq.l #4,%a0           |   pt1++
-    cmp.l %a5,%a0           |   if (pt1 > ptLast)
-    jls .cen_209
-
-    move.l %a4,%a0          |   pt1 = ptFirst
-
-.cen_209:
-	tst.w (%a0)             | }
-	jlt .cen_214
-
-.cen_210:
-	move.w (%a0),%d4        | x1 = pt->x
-	move.w 2(%a0),%d5       | y1 = pt->y
-	move.w (%a1)+,%d2       | x0 = pt0->x
-	move.w (%a1),%d3        | y0 = pt0->y
+.DP_rnc_y1l_ok:
+    move.w %d2,%d3          | d3 = y0
+    swap %d2                | d2 = x0
+    move.w %d4,%d5          | d5 = y1
+    swap %d4                | d4 = x1
 
     | Clip Y0
 
-	jge .cen_215            | if (y0 < 0)
-                            | {
+    tst.w %d3               | if (y0 < 0)
+	jge .DP_rnc_y0_ok       | {
+
     move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
     move.w %d5,%d1
@@ -2068,18 +1871,198 @@ BMP_drawPolygon:
     sub.w %d0,%d2           |   x0 -= adj
 	moveq #0,%d3            |   y0 = 0
                             | }
-.cen_215:
-	move.w %d3,minYR        | minYR = y0
-	move.l rightEdge,%d0
+.DP_rnc_y0_ok:
+	move.w %d3,642(%sp)     | minYR = y0
+	lea 320(%sp),%a1        | a1 = &rightEdge[0]
+	add.w %d3,%a1
+	add.w %d3,%a1           | a1 = edge = &rightEdge[minYR]
+
+.DP_rnc_loop:
+
+    | Clip Y1
+
+	cmp.w %d6,%d5           | if (y1 >= ymax)
+	jlt .DP_rnc_y1h_ok      | {
+                            |   if (y1 > ymax)
+	jeq .DP_rnc_y1h_nc      |   {
+
+    move.w %d4,%d0
+	sub.w %d2,%d0           |     d0 = dx
+    move.w %d5,%d1
+	sub.w %d3,%d1           |     d1 = dy
+
+	sub.w %d6,%d5
+	muls.w %d5,%d0
+	divs.w %d1,%d0          |     d0 = adj = ((y1 - ymax) * dx) / dy
+    sub.w %d0,%d4           |     x1 -= adj
+	move.w %d6,%d5          |     y1 = ymax
+                            |   }
+.DP_rnc_y1h_nc:
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+	jeq .DP_rnc_done
+
+    move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+    move.w %d2,%d7          |   d7 = x
+
+    pea .DP_rnc_done        |   fillEdge        //; d7.w = x; d0 = dx; d1 = dy
+	jra fillEdge            |   goto rnc_done
+                            | }
+
+.DP_rnc_end0:
+    lea 644(%sp),%sp        | release memory for edge table and others
+	moveq #0,%d0
+	movm.l (%sp)+,%d2-%d7/%a2-%a6
+	rts
+
+.DP_rnc_y1h_ok:
+    move.w %d5,%d1
+	sub.w %d3,%d1           | d1 = dy
+
+    jlt .DP_rnc_end0        | if (dy < 0) return 0
+    jeq .DP_rnc_next        | if (dy)
+                            | {
+    move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+    move.w %d2,%d7          |   d7 = x
+	jsr fillEdge            |   fillEdge        //; d7.w = x; d0 = dx; d1 = dy
+                            | }
+.DP_rnc_next:
+	move.w %d4,%d2          | x0 = x1
+	move.w %d5,%d3          | y0 = y1
+    cmp.l %a5,%a0           | if (pt == ptLast)
+    jne .DP_rnc_next_ok
+
+    move.l %a4,%a0          |   pt = ptFirst
+
+.DP_rnc_next_ok:
+	move.w (%a0)+,%d4       | x1 = pt->x
+	move.w (%a0)+,%d5       | y1 = pt->y
+	jra .DP_rnc_loop
+
+.DP_rnc_done:
+	move.w 642(%sp),%d2     | d2 = minYR, d6 = maxY
+	move.w 640(%sp),%d3     | d3 = minYL
+
+	cmp.w %d2,%d3           | if (minYL > minYR)
+	jle .drawPolygon
+
+	move.w %d3,%d2          | d2 = minYL
+	jra .drawPolygon
+
+
+
+.DP_XClip:
+
+    | LEFT WITH X CLIP
+    | ----------------
+
+    move.l %a2,%a0          | a0 = pt = ptYMin
+
+	move.l (%a0),%d2        | d2.wl = y0   d2.wh = x0
+    cmp.l %a4,%a0           | if (pt == ptFirst)
+    jne .DP_l_first
+
+    move.l %a5,%a0          |   pt = ptLast
+
+.DP_l_first:
+	move.l -(%a0),%d4       | d4.wl = y1   d4.wh = x1
+
+    tst.w %d4               | while (y1 <= 0)
+	jgt .DP_l_y1l_ok        | {
+
+.DP_l_y1l_loop:
+	move.l %d4,%d2          |   d2.wl = y0   d2.wh = x0
+    cmp.l %a4,%a0           |   if (pt == ptFirst)
+    jne .DP_l_y1l_next
+
+    move.l %a5,%a0          |     pt = ptLast
+
+.DP_l_y1l_next:
+	move.l -(%a0),%d4       |   d4.wl = y1   d4.wh = x1
+	tst.w %d4               | }
+	jle .DP_l_y1l_loop
+
+.DP_l_y1l_ok:
+    move.w %d4,%d5          | d5 = y1
+    swap %d4                | d4 = x1
+    move.w %d2,%d3          | d3 = y0
+    swap %d2                | d2 = x0
+
+    | Clip Y0
+
+    tst.w %d3               | if (y0 < 0)
+	jge .DP_l_y0_ok         | {
+
+    move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+
+    muls.w %d3,%d0
+    divs.w %d1,%d0          |   d0 = adj = (y0 * dx) / dy
+    sub.w %d0,%d2           |   x0 -= adj
+	moveq #0,%d3            |   y0 = 0
+                            | }
+.DP_l_y0_ok:
+
+    | Clip X BEFORE
+
+	cmp.w %a3,%d2           | if (x0 >= BMP_WIDTH)
+	jle .DP_l_xl_ok         | {
+	cmp.w %a3,%d4           |   while (x1 >= BMP_WIDTH)
+	jle .DP_l_x0_clip       |   {
+
+.DP_l_xl_loop:
+	cmp.w %d4,%d2           |     if (x0 < x1)
+	jlt .DP_l_end0          |       return 0
+	cmp.w %d6,%d5           |     if (y1 >= ymax)
+	jge .DP_l_end0          |       return 0
+
+	move.w %d4,%d2          |     x0 = x1
+	move.w %d5,%d3          |     y0 = y1
+    cmp.l %a4,%a0           |     if (pt == ptFirst)
+    jne .DP_l_xl_next
+
+    move.l %a5,%a0          |       pt = ptLast
+
+.DP_l_xl_next:
+	move.w -(%a0),%d5       |     y1 = pt->y
+	move.w -(%a0),%d4       |     x1 = pt->x
+	cmp.w %a3,%d4           |
+	jgt .DP_l_xl_loop       |   }
+
+.DP_l_x0_clip:
+    move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+
+	sub.w %a3,%d2
+	muls.w %d2,%d1
+	divs.w %d0,%d1          |   d1 = adj = ((x0 - (BMP_WIDTH - 1)) * dy) / dx
+    sub.w %d1,%d3           |   y0 -= adj
+
+	cmp.w %d6,%d3           |   if (y0 > ymax)
+	jgt .DP_l_end0          |     return 0
+
+    move.w %a3,%d2          |   x0 = BMP_WIDTH - 1
+                            | }
+
+.DP_l_xl_ok:
+	move.w %d3,640(%sp)     | minYL = y0
+	move.l %sp,%d0
 	add.w %d3,%d0
 	add.w %d3,%d0
-	move.l %d0,%a1          | a1 = edge = &rightEdge[minYR]
+	move.l %d0,%a1          | a1 = edge = &leftEdge[minYL]
 
-    | LoopR:
+.DP_l_loop:
 
-.cen_loopR:
-	cmp.w %d6,%d5           | if (y1 >= BMP_HEIGHT)
-	jle .cen_217            | {
+    | Clip Y1 against ymax
+
+	cmp.w %d6,%d5           | if (y1 > ymax)
+	jle .DP_l_y1_ok         | {
 
     move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
@@ -2088,29 +2071,247 @@ BMP_drawPolygon:
 
 	sub.w %d6,%d5
 	muls.w %d5,%d0
-	divs.w %d1,%d0          |   d0 = adj = ((y1 - (BMP_HEIGHT - 1)) * dx) / dy
+	divs.w %d1,%d0          |   d0 = adj = ((y1 - ymax) * dx) / dy
     sub.w %d0,%d4           |   x1 -= adj
-	move.w %d6,%d5          |   y1 = BMP_HEIGHT - 1
-	move.l %a3,%a0          |   pt = ptYMax
+	move.w %d6,%d5          |   y1 = ymax
                             | }
 
-    | clip X0 against 0
+    | clip X0 < 0
 
-.cen_217:
-	cmp.w %d7,%d2           | if (x0 < 0)
-	jls .cenr_x0_ok         | {
-	jgt .cenr_x0_sup
+.DP_l_y1_ok:
+    tst.w %d2               | if (x0 < 0)
+	jge .DP_l_x0p           | {
+    move.w %d4,%d0          |   if (x1 < 0)
+	jge .DP_l_x0n_x1p       |   {
 
-.cenr_x0_neg:
-	move.w %d4,%d0          |   if (x1 < 0)
-	jge .cen_219            |   {
+    move.w %d5,%d1
+	sub.w %d3,%d1           |     d1 = dy = len
+    jlt .DP_l_end0          |     if (dy < 0) return 0
 
-    cmp.w %d4,%d2           |     if (x0 >= x1) goto endR
-    jge .cen_endR
+	jeq .DP_l_next          |     if (dy)
+                            |     {
+    moveq #0,%d7            |       d7 = x
+    pea .DP_l_next          |       fillEdgeFast
+	jra fillEdgeFast        |     }
 
-    jra .cen_nextR          |     goto nextR
+                            |     goto next
                             |   }
-.cen_219:
+.DP_l_x0n_x1p:
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+    jlt .DP_l_end0          |   if (dy < 0) return 0
+
+	sub.w %d2,%d0           |   d0 = dx
+
+	muls.w %d2,%d1
+    moveq #0,%d2            |   d1 = adj = (x0 * dy) / dx
+	divs.w %d0,%d1          |   x0 = 0
+
+	jeq .DP_l_test_x1p      |   if (adj)
+                            |   {
+    sub.w %d1,%d3           |     y0 -= adj
+    neg.w %d1               |     d1 = -adj = len
+    moveq #0,%d7            |     d7 = x
+
+    pea .DP_l_test_x1p      |     fillEdgeFast
+	jra fillEdgeFast        |   }
+
+                            |   goto test X1 >= BMP_WIDTH
+                            | }
+
+.DP_l_end0:
+    lea 644(%sp),%sp        | release memory for edge table and others
+	moveq #0,%d0
+	movm.l (%sp)+,%d2-%d7/%a2-%a6
+	rts
+
+
+    | clip X1 < 0
+
+.DP_l_x0p:
+	cmp.w %a3,%d4           | if (x1 < 0)
+	jls .DP_l_x1_ok         | {
+	jgt .DP_l_x1p
+
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+    jlt .DP_l_end0          |   if (dy < 0) return 0
+
+	move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+
+    move.w %d1,%d3
+	muls.w %d4,%d3
+	divs.w %d0,%d3          |   d3 = adj = (x1 * dy) / dx
+
+	sub.w %d3,%d1           |   dy -= adj
+	jeq .DP_l_x1n_1         |   if (dy)
+                            |   {
+	moveq #0,%d0
+	sub.w %d2,%d0           |     d0 = new dx
+    move.w %d2,%d7          |     d7 = x
+
+	jsr fillEdge            |     fillEdge
+                            |   }
+.DP_l_x1n_1:
+	tst.w %d3               |
+	jeq .DP_l_next          |   if (adj)
+                            |   {
+	move.w %d3,%d1          |     d1 = dy
+    moveq #0,%d7            |     d7 = x
+
+    pea .DP_l_next          |     fillEdgeFast
+	jra fillEdgeFast        |   }
+
+                            |   goto next
+                            | }
+
+   | clip x1 >= BMP_WIDTH
+
+.DP_l_test_x1p:
+	cmp.w %a3,%d4           | if (x1 >= BMP_WIDTH)
+	jle .DP_l_x1_ok         | {
+
+.DP_l_x1p:
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+    jlt .DP_l_end0          |   if (dy < 0) return 0
+
+	move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+
+    sub.w %a3,%d4
+    muls.w %d1,%d4
+    divs.w %d0,%d4          |   d4 = adj = ((x1 - (BMP_WIDTH - 1)) * dy) / dx
+
+    sub.w %d4,%d5           |   y1 -= adj
+    move.w %d5,%d6          |   ymax = y1
+
+    sub.w %d4,%d1           |   d1 = dy = (dy - adj)
+    jeq .DP_l_done          |   if (dy)
+                            |   {
+	move.w %a3,%d0
+	sub.w %d2,%d0           |     d0 = dx
+    move.w %d2,%d7          |     d7 = x
+                            |
+    pea .DP_l_done          |     fillEdge        //; d7.w = x; d0 = dx; d1 = dy
+	jra fillEdge            |   }
+
+                            |   goto done
+                            | }
+
+.DP_l_x1_ok:
+    move.w %d5,%d1
+	sub.w %d3,%d1           | d1 = dy
+    jlt .DP_l_end0          | if (dy < 0) return 0
+
+    jeq .DP_l_next          | if (dy)
+                            | {
+    move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+    move.w %d2,%d7          |   d7 = x
+
+	jsr fillEdge            |   fillEdge        //; d7.w = x; d0 = dx; d1 = dy
+                            | }
+.DP_l_next:
+    cmp.w %d6,%d5           | if (y1 >= ymax)
+    jge .DP_l_done          |   goto DP_l_done
+
+	move.w %d4,%d2          | x0 = x1
+	move.w %d5,%d3          | y0 = y1
+    cmp.l %a4,%a0           | if (pt == ptFirst)
+    jne .DP_l_next_ok
+
+    move.l %a5,%a0          |   pt = ptLast
+
+.DP_l_next_ok:
+	move.w -(%a0),%d5       | y1 = pt->y
+	move.w -(%a0),%d4       | x1 = pt->x
+	jra .DP_l_loop
+
+
+.DP_l_done:
+
+    | RIGHT WITH X CLIP
+    | -----------------
+
+    move.l %a2,%a0          | a0 = pt = ptYMin
+
+	move.l (%a0)+,%d2       | d2.wl = y0   d2.wh = x0
+    cmp.l %a5,%a0           | if (pt == ptLast)
+    jne .DP_r_first
+
+    move.l %a4,%a0          |   pt = ptFirst
+
+.DP_r_first:
+	move.l (%a0)+,%d4       | d4.wl = y1   d4.wh = x1
+
+    tst.w %d4               | while (y1 <= 0)
+	jgt .DP_r_y1l_ok        | {
+
+.DP_r_y1l_loop:
+	move.l %d4,%d2          |   d2.wl = y0   d2.wh = x0
+    cmp.l %a5,%a0           |   if (pt == ptLast)
+    jne .DP_r_y1l_next
+
+    move.l %a4,%a0          |     pt = ptFirst
+
+.DP_r_y1l_next:
+	move.l (%a0)+,%d4       |   d4.wl = y1   d4.wh = x1
+	tst.w %d4               | }
+	jle .DP_r_y1l_loop
+
+.DP_r_y1l_ok:
+    move.w %d2,%d3          | d3 = y0
+    swap %d2                | d2 = x0
+    move.w %d4,%d5          | d5 = y1
+    swap %d4                | d4 = x1
+
+    | Clip Y0
+
+    tst.w %d3               | if (y0 < 0)
+	jge .DP_r_y0_ok         | {
+
+    move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+
+    muls.w %d3,%d0
+    divs.w %d1,%d0          |   d0 = adj = (y0 * dx) / dy
+    sub.w %d0,%d2           |   x0 -= adj
+	moveq #0,%d3            |   y0 = 0
+                            | }
+.DP_r_y0_ok:
+
+    | Clip X BEFORE
+
+	tst.w %d2               | if (x0 < 0)
+	jge .DP_r_xl_ok         | {
+	tst.w %d4               |   while (x1 < 0)
+	jge .DP_r_x0_clip       |   {
+
+.DP_r_xl_loop:
+	cmp.w %d4,%d2           |     if (x0 > x1)
+	jgt .DP_r_end0          |       return 0
+	cmp.w %d6,%d5           |     if (y1 >= ymax)
+	jge .DP_r_end0          |       return 0
+
+	move.w %d4,%d2          |     x0 = x1
+	move.w %d5,%d3          |     y0 = y1
+    cmp.l %a5,%a0           |     if (pt == ptLast)
+    jne .DP_r_xl_next
+
+    move.l %a4,%a0          |     pt = ptFirst
+
+.DP_r_xl_next:
+	move.w (%a0)+,%d4       |     x1 = pt->x
+	move.w (%a0)+,%d5       |     y1 = pt->y
+	tst.w %d4
+	jlt .DP_r_xl_loop       |   }
+
+.DP_r_x0_clip:
+    move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
     move.w %d5,%d1
 	sub.w %d3,%d1           |   d1 = dy
@@ -2118,264 +2319,238 @@ BMP_drawPolygon:
     muls.w %d2,%d1
     divs.w %d0,%d1          |   d1 = adj = (x0 * dy) / dx
     sub.w %d1,%d3           |   y0 -= adj
+
+	cmp.w %d6,%d3           |   if (y0 > ymax)
+	jgt .DP_r_end0          |     return 0
+
 	moveq #0,%d2            |   x0 = 0
-
-	move.w %d3,minYR        |   minYR = y0
-    move.l rightEdge,%d0
-	add.w %d3,%d0
-	add.w %d3,%d0
-	move.l %d0,%a1          |   a1 = edge = &rightEdge[minYR]
-
-	cmp.w %d7,%d4           |   if (x1 >= BMP_WIDTH)
-	jle .cen_223            |   {
-
-    move.w %d4,%d0          |     d0 = dx (don't forget x0 = 0 here)
-    move.w %d5,%d1
-	sub.w %d3,%d1           |     d1 = dy
-
-    sub.w %d7,%d4
-    muls.w %d4,%d1
-    divs.w %d0,%d1          |     d1 = adj = ((x1 - (BMP_WIDTH - 1)) * dy) / dx
-    sub.w %d1,%d5           |     y1 -= adj
-
-    move.w %d7,%d4          |     d4 = dx = d7 = BMP_WIDTH - 1 (x0 = 0 and x1 = BMP_WIDTH - 1)
-	sub.w %d3,%d5           |     d5 = dy
-
-    jlt .cen_end0           |     if (dy < 0) return 0
-	jeq .cen_224            |     if (dy)
-                            |     {
-                            |       d4 = dx; d5 = dy; d2 = x0 (32 bit extended)
-
-	jsr fillEdge            |       fillEdge
-                            |     }
-.cen_224:
-	tst.w %d1               |
-    jlt .cen_end0           |     if (adj < 0) return 0
-	jeq .cen_nextR          |     if (adj)
-                            |     {
-    move.w %d7,%d2
-    swap %d2
-    move.w %d7,%d2          |       d2 = (x1 << 16) | (x1 << 0); d1 = len
-
-    pea .cen_nextR
-	jra fillEdgeFast        |       fillEdgeFast
-                            |     }
-                            |   }
-
-.cen_223:                   |   d4 = x1 = dx (x0 = 0 here)
-	sub.w %d3,%d5           |   d5 = dy
-
-    jlt .cen_end0           |   if (dy < 0) return 0
-	jeq .cen_nextR          |   if (dy)
-                            |   {
-                            |     d4 = dx; d5 = dy; d2 = x0 (32 bit extended)
-    pea .cen_nextR
-	jra fillEdge            |     fillEdge
-                            |   }
                             | }
 
-    | clip x0
+.DP_r_xl_ok:
+	move.w %d3,642(%sp)     | minYR = y0
+	lea 320(%sp),%a1        | a1 = &rightEdge[0]
+	add.w %d3,%a1
+	add.w %d3,%a1           | a1 = edge = &rightEdge[minYR]
 
-.cenr_x0_sup:               | if (x0 >= BMP_WIDTH)
-                            | {
-	cmp.w %d7,%d4           |   if (x1 >= BMP_WIDTH)
-	jle .cen_228            |   {
+.DP_r_loop:
 
-	sub.w %d3,%d5           |     d5 = dy
+    | Clip Y1 against ymax
 
-    jlt .cen_end0           |     if (dy < 0) return 0
-	jeq .cen_nextR          |     if (dy)
-                            |     {
-    move.w %d7,%d2
-    swap %d2
-    move.w %d7,%d2          |       d2 = (x0 << 16) | (x0 << 0)
-    move.w %d5,%d1          |       d1 = len
+	cmp.w %d6,%d5           | if (y1 > ymax)
+	jle .DP_r_y1_ok         | {
 
-    pea .cen_nextR
-	jra fillEdgeFast        |       fillEdgeFast
-                            |     }
-                            |   }
-.cen_228:
     move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
     move.w %d5,%d1
 	sub.w %d3,%d1           |   d1 = dy
 
-    sub.w %d7,%d2           |   d0 = x0 - (BMP_WIDTH - 1)
-    neg.w %d2               |   d2 = (BMP_WIDTH - 1) - x0
-    muls.w %d2,%d1
-    divs.w %d0,%d1          |   d1 = adj = (((BMP_WIDTH - 1) - x0) * dy) / dx;
+	sub.w %d6,%d5
+	muls.w %d5,%d0
+	divs.w %d1,%d0          |   d0 = adj = ((y1 - ymax) * dx) / dy
+    sub.w %d0,%d4           |   x1 -= adj
+	move.w %d6,%d5          |   y1 = ymax
+                            | }
 
-    jlt .cen_end0           |   if (adj < 0) return 0
-    jeq .cen_230            |   if (adj)
+    | clip X0 >= BMP_WIDTH
+
+.DP_r_y1_ok:
+    cmp.w %a3,%d2           | if (x0 >= BMP_WIDTH)
+	jle .DP_r_x0p           | {
+	cmp.w %a3,%d4           |   if (x1 >= BMP_WIDTH)
+	jle .DP_r_x0n_x1p       |   {
+
+    move.w %d5,%d1
+	sub.w %d3,%d1           |     d1 = dy = len
+    jlt .DP_r_end0          |     if (dy < 0) return 0
+
+	jeq .DP_r_next          |     if (dy)
+                            |     {
+    move.w %a3,%d7          |       d7 = x
+    pea .DP_r_next          |       fillEdgeFast
+	jra fillEdgeFast        |     }
+
+                            |     goto next
+                            |   }
+.DP_r_x0n_x1p:
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+    jlt .DP_r_end0          |   if (dy < 0) return 0
+
+    move.w %d2,%d0
+	sub.w %d4,%d0           |   d0 = -dx
+
+    sub.w %a3,%d2           |   d2 = x0 - (BMP_WIDTH - 1)
+	muls.w %d2,%d1
+	move.w %a3,%d2          |   d1 = adj = (((BMP_WIDTH - 1) - x0) * dy) / dx
+	divs.w %d0,%d1          |   x0 = BMP_WIDTH - 1
+
+	jeq .DP_r_test_x1p      |   if (adj)
                             |   {
     add.w %d1,%d3           |     y0 += adj
+    move.w %a3,%d7          |     d7 = x
 
-    move.w %d7,%d2
-    swap %d2                |     d2 = (x0 << 16) | (x0 << 0)
-    move.w %d7,%d2          |     d1 = len
+    pea .DP_r_test_x1p      |     fillEdgeFast
+	jra fillEdgeFast        |   }
 
-	jsr fillEdgeFast        |     fillEdgeFast
-                            |   }
-
-.cen_230:
-    move.w %d4,%d0          |   if (x1 < 0)
-	jge .cen_231            |   {
-
-	sub.w %d7,%d0           |     d0 = dx
-    move.w %d5,%d1
-	sub.w %d3,%d1           |     d1 = dy
-
-	muls.w %d4,%d1
-	divs.w %d0,%d1          |     adj = (x1 * dy) / dx
-    sub.w %d1,%d5           |     y1 -= adj
-    moveq #0,%d4            |     d4 = x1 = 0
-                            |   }
-.cen_231:
-	sub.w %d7,%d4           |   d0 = dx
-	sub.w %d3,%d5           |   d5 = dy
-
-    jlt .cen_end0           |   if (dy < 0) return 0
-	jeq .cen_nextR          |   if (dy)
-                            |   {
-    move.l %d7,%d2          |     d4 = dx; d5 = dy; d2 = x (32 bit extended);
-
-    pea .cen_nextR
-	jra fillEdge            |     fillEdge
-                            |   }
+                            |   goto test X1 >= BMP_WIDTH
                             | }
 
-    | clip x1
+.DP_r_end0:
+    lea 644(%sp),%sp        | release memory for edge table and others
+	moveq #0,%d0
+	movm.l (%sp)+,%d2-%d7/%a2-%a6
+	rts
 
-.cenr_x0_ok:
-	cmp.w %d7,%d4           | if (x1 >= BMP_WIDTH)
-	jls .cenr_x1_ok         | {
-	jle .cenr_x1_neg
 
-    move.w %d4,%d0
-	sub.w %d2,%d0           |   d0 = dx
+    | clip X1 >= BMP_WIDTH
+
+.DP_r_x0p:
+	cmp.w %a3,%d4           | if (x1 >= BMP_WIDTH)
+	jls .DP_r_x1_ok         | {
+	jle .DP_r_x1p
+
     move.w %d5,%d1
 	sub.w %d3,%d1           |   d1 = dy
+    jlt .DP_r_end0          |   if (dy < 0) return 0
 
-    sub.w %d7,%d4
-    muls.w %d4,%d1
-    divs.w %d0,%d1          |   d1 = adj = ((x1 - (BMP_WIDTH - 1)) * dy) / dx
-    sub.w %d1,%d5           |   y1 -= adj
-    move.w %d7,%d4          |   d4 = x1 = BMP_WIDTH - 1
+	move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
 
-	sub.w %d2,%d4           |   d4 = dx
-	sub.w %d3,%d5           |   d5 = dy
+	move.w %d4,%d7
+	sub.w %a3,%d7           |   d7 = x1 - (BMP_WIDTH - 1)
+    move.w %d1,%d3          |   d3 = dy
 
-    jlt .cen_end0           |   if (dy < 0) return 0
-	jeq .cen_234            |   if (dy)
+	muls.w %d7,%d3
+	divs.w %d0,%d3          |   d3 = adj = ((x1 - (BMP_WIDTH - 1)) * dy) / dx
+
+	sub.w %d3,%d1           |   dy -= adj
+	jeq .DP_r_x1n_1         |   if (dy)
                             |   {
-	ext.l %d2               |     d4 = dx; d5 = dy; d2 = x (32 bit extended)
+    move.w %a3,%d0
+    sub.w %d2,%d0           |     d0 = new dx
+    move.w %d2,%d7          |     d7 = x
 
 	jsr fillEdge            |     fillEdge
                             |   }
-.cen_234:
-	tst.w %d1               |
-    jlt .cen_end0           |   if (adj < 0) return 0
-	jeq .cen_nextR          |   if (adj)
+.DP_r_x1n_1:
+	tst.w %d3               |
+	jeq .DP_r_next          |   if (adj)
                             |   {
-    move.w %d7,%d2
-    swap %d2
-    move.w %d7,%d2          |     d2 = (x1 << 16) | (x1 << 0)
-                            |     d1 = len
-    pea .cen_nextR
-	jra fillEdgeFast        |     fillEdgeFast
-                            |   }
+	move.w %d3,%d1          |     d1 = dy
+    move.w %a3,%d7          |     d7 = x
+
+    pea .DP_r_next          |     fillEdgeFast
+	jra fillEdgeFast        |   }
+
+                            |   goto next
                             | }
 
-.cenr_x1_neg:               | if (x1 < 0)
+   | clip x1 < 0
+
+.DP_r_test_x1p:
+	tst.w %d4               | if (x1 < 0)
+	jge .DP_r_x1_ok         | {
+
+.DP_r_x1p:
+    move.w %d5,%d1
+	sub.w %d3,%d1           |   d1 = dy
+    jlt .DP_r_end0          |   if (dy < 0) return 0
+
+	move.w %d4,%d0
+	sub.w %d2,%d0           |   d0 = dx
+
+    muls.w %d1,%d4
+    divs.w %d0,%d4          |   d4 = adj = (x1 * dy) / dx
+
+    sub.w %d4,%d5           |   y1 -= adj
+    cmp.w %d6,%d5           |   if (y1 < ymax)
+    jge .DP_r_ymax_ok
+
+    move.w %d5,%d6          |     ymax = y1
+
+.DP_r_ymax_ok:
+    sub.w %d4,%d1           |   d1 = dy = (dy - adj)
+	jeq .DP_r_done          |   if (dy)
+                            |   {
+    moveq #0,%d0
+    sub.w %d2,%d0           |     d0 = dx
+    move.w %d2,%d7          |     d7 = x
+
+    pea .DP_r_done          |     fillEdge        //; d7.w = x; d0 = dx; d1 = dy
+	jra fillEdge            |   }
+
+                            |   goto done
+                            | }
+
+.DP_r_x1_ok:
+    move.w %d5,%d1
+	sub.w %d3,%d1           | d1 = dy
+    jlt .DP_r_end0          | if (dy < 0) return 0
+
+    jeq .DP_r_next          | if (dy)
                             | {
     move.w %d4,%d0
 	sub.w %d2,%d0           |   d0 = dx
-    move.w %d5,%d1
-	sub.w %d3,%d1           |   d1 = dy
+    move.w %d2,%d7          |   d7 = x
 
-    muls.w %d4,%d1
-    divs.w %d0,%d1          |   d1 = adj = (x1 * dy) / dx
-    sub.w %d1,%d5           |   y1 -= adj
-    moveq #0,%d4            |   d4 = x1 = 0
+	jsr fillEdge            |   fillEdge        //; d7.w = x; d0 = dx; d1 = dy
                             | }
+.DP_r_next:
+    cmp.w %d6,%d5           | if (y1 >= ymax)
+    jge .DP_r_done          |   goto DP_r_done
 
-.cenr_x1_ok:
-	sub.w %d2,%d4           | d4 = dx
-	sub.w %d3,%d5           | d5 = dy
+	move.w %d4,%d2          | x0 = x1
+	move.w %d5,%d3          | y0 = y1
+    cmp.l %a5,%a0           | if (pt == ptLast)
+    jne .DP_r_next_ok
 
-    jlt .cen_end0           | if (dy < 0) return 0
-	jeq .cen_nextR          | if (dy)
-                            | {
-	ext.l %d2               |   d4 = dx; d5 = dy; d2 = x0 (32 bit extended)
+    move.l %a4,%a0          |     pt = ptFirst
 
-    pea .cen_nextR
-	jra fillEdge            |   fillEdge
-                            | }
-.cen_nextR:
-	cmp.l %a3,%a0           | if (pt == ptYMax)
-	jeq .cen_endR           |   goto endR
+.DP_r_next_ok:
+	move.w (%a0)+,%d4       | x1 = pt->x
+	move.w (%a0)+,%d5       | y1 = pt->y
+	jra .DP_r_loop
 
-	move.w (%a0)+,%d2       | x0 = pt->x
-	move.w (%a0)+,%d3       | y0 = pt->y
 
-    cmp.l %a5,%a0           | if (pt1 > ptLast)
-    jls .cen_239            |
-
-	move.l %a4,%a0          |   pt = ptFirst
-
-.cen_239:
-	move.w (%a0),%d4        | x1 = pt->x
-	move.w 2(%a0),%d5       | y1 = pt->y
-	jra .cen_loopR
-
-.cen_endR:
-    sub.l rightEdge,%a1     | a1 = 2 * maxYR = edge - rightEdge
-    move.w maxYL,%d6        | d6 = 2 * maxYL
-
-	cmp.w %a1,%d6           | if (maxYL > maxYR)
-	jle .cen_240
-
-	move.w %a1,%d6          |   d6 = maxYR
-
-.cen_240:
-    lsr.w #1,%d6
-    subq.w #1,%d6           | d6 = maxY
-
-    move.w minYR,%d2        | d2 = minYR
-    move.w minYL,%d3        | d3 = minYL
+.DP_r_done:
+	move.w 642(%sp),%d2     | d2 = minYR, d6 = maxY
+	move.w 640(%sp),%d3     | d3 = minYL
 
 	cmp.w %d2,%d3           | if (minYL > minYR)
 	jle .drawPolygon
 
-	move.w %d3,%d2          |   d2 = minYL
+	move.w %d3,%d2          | d2 = minYL
 
     | polygon drawing
     | ---------------
 
 .drawPolygon:
+    subq.w #1,%d6               | we do not draw the last line (simpler)
+
+.drawPolygon_SL:
     sub.w %d2,%d6               | d6 = len = maxY - minY
-    jlt .cen_end0               | < 0 = nothing to draw --> exit
+    jlt .dp_end0                | < 0 = nothing to draw --> exit
 
-	move.w 58(%sp),%d0          | d0.w = col
-	add.w %d0,%d0
-	add.w %d0,%d0
-    lea cnv_8to32_tab,%a0
-    move.l (%a0,%d0.w),%d0      | d0 = col extended to 32 bits
+    move.b 644+59(%sp),%d1     | d1 = col
 
-    move.l %d0,%d1              | d1 = odd line col extended to 32 bits
+    move.b %d1,-(%sp)
+    move.w (%sp)+,%d0           | d0 = d1 << 8
+    move.b %d1,%d0              | d0 = col word extended
+    move.w %d0,%d1              | d1 = col word extended
+    swap %d1
+    move.w %d0,%d1              | d1 = odd line col extended to 32 bits
+
+    move.l %d1,%d0
     rol.l  #4,%d0               | d0 = even line col exchanged to 32 bits
     btst   #0,%d2               | odd line ?
-    jeq    .dp_1
+    jeq    .dp_odd_line
 
     exg    %d0,%d1              | change to odd color scheme
 
-.dp_1:
-    move.l leftEdge,%a2         | a2 = &leftEdge
-    move.l rightEdge,%a3        | a3 = &rightEdge
+.dp_odd_line:
     add.w %d2,%d2               | d2 = minY * 2
-    add.w %d2,%a2               | a2 = edgeL = &leftEdge[minY]
-    add.w %d2,%a3               | a3 = edgeR = &rightEdge[minY]
+	lea 0(%sp,%d2.w),%a2        | a2 = edgeL = &leftEdge[minY]
+	lea 320(%a2),%a3            | a3 = edgeR = &rightEdge[minY]
 
 	move.l bmp_buffer_write,%a0
 	lsl.w  #6,%d2
@@ -2428,8 +2603,8 @@ BMP_drawPolygon:
 	sub.w  %d2,%d3              |   d3 = width
 	jlt    .dp_175
 
-    btst   #0,%d2               |   dst is byte aligned ?
-	jeq    .dp_163
+    asr.w  #1,%d2               |   dst is byte aligned ?
+	jcc    .dp_163
 
 	move.b %d0,(%a1)+           |   align dst to word
 	subq.w #1,%d3
@@ -2442,10 +2617,17 @@ BMP_drawPolygon:
     move.l (.dp_fill_table-.dp_fill_base)-2(%pc,%d3.w),%a4
     jmp (%a4)
 
+.dp_end0:
+    lea 644(%sp),%sp            | release memory for edge table and others
+	moveq #0,%d0
+	movm.l (%sp)+,%d2-%d7/%a2-%a6
+	rts
+
     .align 4
     .long .dp_175
     .long .dp_175
     .long .dp_175
+
 .dp_fill_table:
     .long .dp_fill_01
     .long .dp_fill_02
@@ -2650,6 +2832,7 @@ BMP_drawPolygon:
 	exg %d0,%d1                 |   exchange color scheme
 	dbra %d6,.dp_293            | }
 
+    lea 644(%sp),%sp            | release memory for edge table and others
 	moveq #1,%d0
 	movm.l (%sp)+,%d2-%d7/%a2-%a6
 	rts
@@ -2723,6 +2906,7 @@ BMP_drawPolygon:
 	exg %d0,%d1                 |   exchange color scheme
 	dbra %d6,.dp_293            | }
 
+    lea 644(%sp),%sp            | release memory for edge table and others
 	moveq #1,%d0
 	movm.l (%sp)+,%d2-%d7/%a2-%a6
 	rts
@@ -2797,6 +2981,7 @@ BMP_drawPolygon:
 	exg %d0,%d1                 |   exchange color scheme
 	dbra %d6,.dp_293            | }
 
+    lea 644(%sp),%sp            | release memory for edge table and others
 	moveq #1,%d0
 	movm.l (%sp)+,%d2-%d7/%a2-%a6
 	rts
@@ -2872,11 +3057,7 @@ BMP_drawPolygon:
 	exg %d0,%d1                 |   exchange color scheme
 	dbra %d6,.dp_293            | }
 
+    lea 644(%sp),%sp            | release memory for edge table and others
 	moveq #1,%d0
-	movm.l (%sp)+,%d2-%d7/%a2-%a6
-	rts
-
-.cen_end0:
-	moveq #0,%d0
 	movm.l (%sp)+,%d2-%d7/%a2-%a6
 	rts

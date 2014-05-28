@@ -21,7 +21,7 @@ Plugin pcm = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "PCM")) return 1;
+    if (!strcasecmp(type, "PCM")) return 1;
 
     return 0;
 }

@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <title>aPLib - Compression</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link href="ahob.css" title="A Hint of Blue" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+
+    <table class="ismain">
+      <tr>
+        <td class="isdesc">
+
+<div class="topnav">
+ <a href="general.html">&lt;&lt;&nbsp;prev</a> |
+ <a href="index.html">home</a> |
+ <a href="decompression.html">next&nbsp;&gt;&gt;</a>
+</div>
+
+<div class="title">Compression</div>
+
+<p class="first">The following is a description of the aPLib compression
+functionality.</p>
+
+<h4>Compression Functions</h4>
+
+<a name="aP_pack"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_pack</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span>,
+                <span class="ctype">size_t</span>&nbsp;<span class="cvar">length</span>,
+                <span class="ctype">void</span>&nbsp;*<span class="cvar">workmem</span>,
+                <span class="ctype">int</span>&nbsp;(*<span class="cvar">callback</span>)(<span class="ctype">size_t</span>,&nbsp;<span class="ctype">size_t</span>,&nbsp;<span class="ctype">size_t</span>,&nbsp;<span class="ctype">void</span>&nbsp;*),
+                <span class="ctype">void</span>&nbsp;*<span class="cvar">cbparam</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Compresses <code>length</code> bytes of data from
+  <code>source[]</code> into <code>destination[]</code>, using
+  <code>workmem[]</code> for temporary storage.</p>
+
+  <p>The <code>destination[]</code> buffer should be large enough to hold
+  <code><a href="#aP_max_packed_size">aP_max_packed_size</a>(length)</code>
+  bytes.</p>
+
+  <p>The <code>workmem[]</code> buffer should be
+  <code><a href="#aP_workmem_size">aP_workmem_size</a>(length)</code> bytes
+  large.</p>
+
+  <p>The callback function, <code>callback</code>, must take four
+  parameters. The first is <code>length</code>, the second is the number
+  of input bytes that has been compressed, the third is how many output
+  bytes they have been compressed to, and the fourth is
+  <code>cbparam</code>. If you do not have a callback, use <code>NULL</code>
+  instead. If the callback returns a non-zero value then <code>aP_pack</code>
+  will continue compressing -- if it returns zero, <code>aP_pack</code> will
+  stop and return <code>APLIB_ERROR</code>.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the data to be compressed.<br />
+    <code>destination</code> - pointer to where the compressed data
+     should be stored.<br />
+    <code>length</code> - the length of the uncompressed data in
+     bytes.<br />
+    <code>workmem</code> - pointer to the work memory which is used
+     during compression.<br />
+    <code>callback</code> - pointer to the callback function (or
+     <code>NULL</code>).<br />
+    <code>cbparam</code> - callback argument.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the compressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_workmem_size"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_workmem_size</span>( <span class="ctype">size_t</span>&nbsp;<span class="cvar">input_size</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Computes the required size of the <code>workmem[]</code> buffer used
+  by <code><a href="#aP_pack">aP_pack</a></code> for compressing
+  <code>input_size</code> bytes of data.</p>
+
+  <p>The current code always returns 640k (640*1024).</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>input_size</code> - the length of the uncompressed data in
+     bytes.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the required length of the work buffer.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<a name="aP_max_packed_size"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aP_max_packed_size</span>( <span class="ctype">size_t</span>&nbsp;<span class="cvar">input_size</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Computes the maximum possible compressed size possible when
+  compressing <code>input_size</code> bytes of incompressible data.</p>
+
+  <p>The current code returns
+  <code>(input_size + (input_size / 8) + 64)</code>.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>input_size</code> - the length of the uncompressed data in
+     bytes.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the maximum possible size of the compressed data.
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<h4>Safe Wrapper Functions</h4>
+
+<a name="aPsafe_pack"></a>
+<div class="function">
+
+<pre class="declaration">
+<span class="ctype">size_t</span> <span class="cfunc">aPsafe_pack</span>( <span class="ckeyw">const</span>&nbsp;<span class="ctype">void</span>&nbsp;*<span class="cvar">source</span>,
+                    <span class="ctype">void</span>&nbsp;*<span class="cvar">destination</span>,
+                    <span class="ctype">size_t</span>&nbsp;<span class="cvar">length</span>,
+                    <span class="ctype">void</span>&nbsp;*<span class="cvar">workmem</span>,
+                    <span class="ctype">int</span>&nbsp;(*<span class="cvar">callback</span>)(<span class="ctype">size_t</span>,&nbsp;<span class="ctype">size_t</span>,&nbsp;<span class="ctype">size_t</span>,&nbsp;<span class="ctype">void</span>&nbsp;*),
+                    <span class="ctype">void</span>&nbsp;*<span class="cvar">cbparam</span> );
+</pre>
+
+ <div class="description">
+
+  <p>Wrapper function for
+  <a href="#aP_pack"><code>aP_pack</code></a>, which adds a header to
+  the compressed data containing the length of the original data,
+  and CRC32 checksums of the original and compressed data.</p>
+
+  <dl>
+   <dt>Parameters:</dt>
+   <dd>
+    <code>source</code> - pointer to the data to be compressed.<br />
+    <code>destination</code> - pointer to where the compressed data
+     should be stored.<br />
+    <code>length</code> - the length of the uncompressed data in
+     bytes.<br />
+    <code>workmem</code> - pointer to the work memory which is used
+     during compression.<br />
+    <code>callback</code> - pointer to the callback function (or
+     <code>NULL</code>).<br />
+    <code>cbparam</code> - callback argument.<br />
+   </dd>
+   <dt>Returns:</dt>
+   <dd>
+    the length of the compressed data, or <code>APLIB_ERROR</code> on
+    error.
+   </dd>
+   <dt>See Also:</dt>
+   <dd>
+    <a href="#aP_pack"><code>aP_pack</code></a>
+   </dd>
+  </dl>
+
+ </div>
+</div>
+
+&nbsp;<br />
+
+<h4>Example</h4>
+
+<pre>
+   <span class="ccomment">/* allocate workmem and destination memory */</span>
+   <span class="ctype">char</span> *<span class="cvar">workmem</span>    = malloc(<a href="#aP_workmem_size">aP_workmem_size</a>(length));
+   <span class="ctype">char</span> *<span class="cvar">compressed</span> = malloc(<a href="#aP_max_packed_size">aP_max_packed_size</a>(length));
+
+   <span class="ccomment">/* compress data[] to compressed[] */</span>
+   <span class="ctype">size_t</span> <span class="cvar">outlength</span> = <span class="cfunc"><a href="#aPsafe_pack">aPsafe_pack</a></span>(data, compressed, length, workmem, NULL, NULL);
+
+   <span class="ccomment">/* if APLIB_ERROR is returned, and error occured */</span>
+   <span class="ckeyw">if</span> (outlength == APLIB_ERROR) {
+      printf(<span class="cstr">&quot;An error occured!\n&quot;</span>);
+   }
+   <span class="ckeyw">else</span> {
+      printf(<span class="cstr">&quot;Compressed %u bytes to %u bytes\n&quot;</span>, length, outlength);
+   }
+</pre>
+
+&nbsp;<br />
+
+<div class="botnav">
+ <a href="general.html">&lt;&lt;&nbsp;prev</a> |
+ <a href="index.html">home</a> |
+ <a href="decompression.html">next&nbsp;&gt;&gt;</a>
+</div>
+
+        </td>
+      </tr>
+    </table>
+
+  </body>
+
+</html>

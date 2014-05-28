@@ -13,8 +13,7 @@ int main()
     VDP_setScreenWidth320();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
-    VDP_setPalette(PAL0, font_lib.palette);
-    VDP_setPaletteColor((PAL1 * 16) + 1, 0x0888);
+    VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
     VDP_setTextPalette(PAL0);
 
     while(1)

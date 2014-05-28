@@ -18,6 +18,19 @@
 
 
 /**
+ *  \struct Context3D
+ *      Structure hosting settings / context for the 3D transform engine.
+ */
+typedef struct
+{
+    Vect2D_u16 viewport;
+    fix16 camDist;
+    Vect3D_f16 light;
+    u16 lightEnabled;
+} Context3D;
+
+
+/**
  *  \struct Translation3D
  *      3D translation informations object - f16 (fix16) type.
  */

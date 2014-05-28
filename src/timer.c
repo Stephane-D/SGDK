@@ -105,13 +105,14 @@ void waitSubTick(u32 subtick)
     {
         i = subtick;
 
-        // TODO: use cycle accurate wait loop in asm
         while(i--)
         {
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
+            u16 j;
+
+            // TODO: use cycle accurate wait loop in asm
+            // about 100 cycles for 1 subtick
+            j = 6;
+            while(j--) asm("nop");
         }
 
         return;
@@ -123,7 +124,6 @@ void waitSubTick(u32 subtick)
     do
     {
         current = getSubTick();
-
         // error du to the VCounter roolback, ignore...
         if (current < start) current = start;
     }
@@ -147,7 +147,6 @@ void waitTick(u32 tick)
     }
 
     start = getTick();
-
     // wait until we reached tick
     while ((getTick() - start) < tick);
 }

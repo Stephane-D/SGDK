@@ -7,67 +7,58 @@
 #include "bmp.h"
 
 
-Vect3D_f16 light;
-Vect2D_u16 viewport;
-Vect2D_f16 viewport_f16;
-
-fix16 camDist;
-
-u16 light_enabled;
+Context3D context3D;
 
 
 void M3D_reset()
 {
-    light_enabled = 0;
+    context3D.lightEnabled = FALSE;
 
     // we assume default viewport for BMP drawing
     M3D_setViewport(BMP_WIDTH, BMP_HEIGHT);
+    // default camera distance
+    context3D.camDist = FIX16(20);
 
-    // should be a high value as 200
-    camDist = FIX16(200);
-
-    light.x = FIX16(1);
-    light.y = FIX16(0);
-    light.z = FIX16(0);
+    context3D.light.x = FIX16(1);
+    context3D.light.y = FIX16(0);
+    context3D.light.z = FIX16(0);
 }
 
 
 void M3D_setLightEnabled(u16 enabled)
 {
-    light_enabled = enabled;
+    context3D.lightEnabled = enabled;
 }
 
 u16 M3D_getLightEnabled()
 {
-    return light_enabled;
+    return context3D.lightEnabled;
 }
 
 
 void M3D_setViewport(u16 w, u16 h)
 {
-    viewport.x = w;
-    viewport.y = h;
-    viewport_f16.x = intToFix16(w);
-    viewport_f16.y = intToFix16(h);
+    context3D.viewport.x = w;
+    context3D.viewport.y = h;
 }
 
 void M3D_setCamDistance(fix16 value)
 {
-    camDist = FIX16(value);
+    context3D.camDist = value;
 }
 
 void M3D_setLightXYZ(fix16 x, fix16 y, fix16 z)
 {
-    light.x = x;
-    light.y = y;
-    light.z = z;
+    context3D.light.x = x;
+    context3D.light.y = y;
+    context3D.light.z = z;
 }
 
 void M3D_setLight(Vect3D_f16 *value)
 {
-    light.x = value->x;
-    light.y = value->y;
-    light.z = value->z;
+    context3D.light.x = value->x;
+    context3D.light.y = value->y;
+    context3D.light.z = value->z;
 }
 
 
@@ -115,8 +106,8 @@ void M3D_resetTransform(Transformation3D *t)
     t->rebuildMat = 0;
 
     // transform light vector (after rebuiltMat set to 0)
-    if (light_enabled)
-        M3D_rotateInv(t, &light, &(t->lightInv));
+    if (context3D.lightEnabled)
+        M3D_rotateInv(t, &(context3D.light), &(t->lightInv));
 }
 
 void M3D_setTransform(Transformation3D *tr, Translation3D *t, Rotation3D *r)
@@ -321,8 +312,8 @@ void M3D_buildMat3DExtras(Transformation3D *t)
     t->cameraInv.z = t->matInv.c.z;
 
     // transform light vector (after rebuiltMat set to 0)
-    if (light_enabled)
-        M3D_rotateInv(t, &light, &(t->lightInv));
+    if (context3D.lightEnabled)
+        M3D_rotateInv(t, &(context3D.light), &(t->lightInv));
 }
 
 
@@ -384,98 +375,98 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
     dest->z = ((sx * t->matInv.c.x) + (sy * t->matInv.c.y) + (sz * t->matInv.c.z)) >> FIX16_FRAC_BITS;
 }
 
-void M3D_transform_old(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
-{
-    fix16 *s;
-    fix16 *d;
-    u16 i;
-
-    if (t->rebuildMat) M3D_buildMat3D(t);
-
-    Translation3D *trans = t->translation;
-
-    const fix16 tx = trans->x;
-    const fix16 ty = trans->y;
-    const fix16 tz = trans->z;
-
-    s = (fix16*) src;
-    d = (fix16*) dest;
-    i = numv;
-
-    while (i--)
-    {
-        const fix16 sx = *s++;
-        const fix16 sy = *s++;
-        const fix16 sz = *s++;
-
-        *d++ = fix16Mul(sx, t->mat.a.x) + fix16Mul(sy, t->mat.a.y) + fix16Mul(sz, t->mat.a.z) + tx;
-        *d++ = fix16Mul(sx, t->mat.b.x) + fix16Mul(sy, t->mat.b.y) + fix16Mul(sz, t->mat.b.z) + ty;
-        *d++ = fix16Mul(sx, t->mat.c.x) + fix16Mul(sy, t->mat.c.y) + fix16Mul(sz, t->mat.c.z) + tz;
-    }
-}
-
-void M3D_project_f16_old(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv)
-{
-    const Vect3D_f16 *s;
-    Vect2D_f16 *d;
-    fix16 zi;
-    fix16 wi, hi;
-    u16 i;
-
-    wi = viewport_f16.x >> 1;
-    hi = viewport_f16.y >> 1;
-    s = src;
-    d = dest;
-    i = numv;
-
-    while (i--)
-    {
-        if ((zi = s->z))
-        {
-            zi = fix16Div(camDist, zi);
-            d->x = wi + fix16Mul(s->x >> 1, zi);
-            d->y = hi - fix16Mul(s->y, zi);
-        }
-        else
-        {
-            d->x = FIX16(-1);
-            d->y = FIX16(-1);
-        }
-
-        s++;
-        d++;
-    }
-}
-
-void M3D_project_s16_old(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv)
-{
-    const Vect3D_f16 *s;
-    Vect2D_s16 *d;
-    fix16 zi;
-    u16 wi, hi;
-    u16 i;
-
-    wi = viewport.x >> 1;
-    hi = viewport.y >> 1;
-    s = src;
-    d = dest;
-    i = numv;
-
-    while (i--)
-    {
-        if ((zi = s->z))
-        {
-            zi = fix16Div(camDist, zi);
-            d->x = wi + fix16ToInt(fix16Mul(s->x >> 1, zi));
-            d->y = hi - fix16ToInt(fix16Mul(s->y, zi));
-        }
-        else
-        {
-            d->x = -1;
-            d->y = -1;
-        }
-
-        s++;
-        d++;
-    }
-}
+//void M3D_transform_old(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
+//{
+//    fix16 *s;
+//    fix16 *d;
+//    u16 i;
+//
+//    if (t->rebuildMat) M3D_buildMat3D(t);
+//
+//    Translation3D *trans = t->translation;
+//
+//    const fix16 tx = trans->x;
+//    const fix16 ty = trans->y;
+//    const fix16 tz = trans->z;
+//
+//    s = (fix16*) src;
+//    d = (fix16*) dest;
+//    i = numv;
+//
+//    while (i--)
+//    {
+//        const fix16 sx = *s++;
+//        const fix16 sy = *s++;
+//        const fix16 sz = *s++;
+//
+//        *d++ = fix16Mul(sx, t->mat.a.x) + fix16Mul(sy, t->mat.a.y) + fix16Mul(sz, t->mat.a.z) + tx;
+//        *d++ = fix16Mul(sx, t->mat.b.x) + fix16Mul(sy, t->mat.b.y) + fix16Mul(sz, t->mat.b.z) + ty;
+//        *d++ = fix16Mul(sx, t->mat.c.x) + fix16Mul(sy, t->mat.c.y) + fix16Mul(sz, t->mat.c.z) + tz;
+//    }
+//}
+//
+//void M3D_project_f16_old(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv)
+//{
+//    const Vect3D_f16 *s;
+//    Vect2D_f16 *d;
+//    fix16 zi;
+//    fix16 wi, hi;
+//    u16 i;
+//
+//    wi = viewport.x << 5;
+//    hi = viewport.y << 5;
+//    s = src;
+//    d = dest;
+//    i = numv;
+//
+//    while (i--)
+//    {
+//        if ((zi = (s->z + camDist)) >= 0)
+//        {
+//            zi = fix16Div(camDist, zi);
+//            d->x = wi + fix16Mul(s->x >> 1, zi);
+//            d->y = hi - fix16Mul(s->y, zi);
+//        }
+//        else
+//        {
+//            d->x = wi;
+//            d->y = hi;
+//        }
+//
+//        s++;
+//        d++;
+//    }
+//}
+//
+//void M3D_project_s16_old(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv)
+//{
+//    const Vect3D_f16 *s;
+//    Vect2D_s16 *d;
+//    fix16 zi;
+//    u16 wi, hi;
+//    u16 i;
+//
+//    wi = viewport.x >> 1;
+//    hi = viewport.y >> 1;
+//    s = src;
+//    d = dest;
+//    i = numv;
+//
+//    while (i--)
+//    {
+//        if ((zi = (s->z + camDist)) >= 0)
+//        {
+//            zi = fix16Div(camDist, zi);
+//            d->x = wi + fix16ToInt(fix16Mul(s->x >> 1, zi));
+//            d->y = hi - fix16ToInt(fix16Mul(s->y, zi));
+//        }
+//        else
+//        {
+//            d->x = wi;
+//            d->y = hi;
+//        }
+//
+//        s++;
+//        d++;
+//    }
+//}

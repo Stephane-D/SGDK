@@ -20,7 +20,7 @@ Plugin vgm = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "VGM")) return 1;
+    if (!strcasecmp(type, "VGM")) return 1;
 
     return 0;
 }

@@ -22,7 +22,7 @@ Plugin sprite = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "SPRITE")) return 1;
+    if (!strcasecmp(type, "SPRITE")) return 1;
 
     return 0;
 }
@@ -66,8 +66,8 @@ static int execute(char *info, FILE *fs, FILE *fh)
         return FALSE;
     }
 
-    if (!stricmp(collision, "CIRCLE")) collid = COLLISION_CIRCLE;
-    else if (!stricmp(collision, "BOX")) collid = COLLISION_BOX;
+    if (!strcasecmp(collision, "CIRCLE")) collid = COLLISION_CIRCLE;
+    else if (!strcasecmp(collision, "BOX")) collid = COLLISION_BOX;
     else collid = COLLISION_NONE;
 
     // adjust input file path

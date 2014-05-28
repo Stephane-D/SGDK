@@ -326,6 +326,12 @@
 #define GFX_DMA_VSRAM_ADDR(adr)     ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x90)
 
 /**
+ *  \def GFX_DMA_VRAMCOPY_ADDR
+ *      Set VDP command to issue a DMA VRAM copy to specified VRAM address.
+ */
+#define GFX_DMA_VRAMCOPY_ADDR(adr)  ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0xC0)
+
+/**
  *  \def GFX_VERT_SCROLL
  *      Helper to write in vertical scroll table (same as GFX_WRITE_VSRAM_ADDR).
  */
@@ -366,7 +372,11 @@
 
 /**
  *  \struct VDPPlan
- *      Type used to define on which plan to work (only used in some methods).
+ *      Type used to define on which plan to work (only used in some methods).</br>
+ *      You should use the <b>PLAN_A</b> and <b>PLAN_B</b> constants.
+ *
+ *   \see PLAN_A
+ *   \see PLAN_B
  */
 typedef struct
 {
