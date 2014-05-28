@@ -20,7 +20,7 @@ Plugin tileset = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "TILESET")) return 1;
+    if (!strcasecmp(type, "TILESET")) return 1;
 
     return 0;
 }

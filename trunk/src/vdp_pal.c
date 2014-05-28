@@ -11,8 +11,8 @@
 
 
 // we don't want to share them
-extern u32 VIntProcess;
-extern u32 HIntProcess;
+extern vu32 VIntProcess;
+extern vu32 HIntProcess;
 
 
 const u16 palette_black_all[64] =
@@ -177,7 +177,8 @@ const u16 palette_blue[16] =
 };
 
 
-// used for palette fading (need 774 bytes of memory)
+// used for palette fading (need 902 bytes of memory)
+static s16 final_pal[64];
 static s16 fading_palR[64];
 static s16 fading_palG[64];
 static s16 fading_palB[64];
@@ -271,6 +272,16 @@ static void setFadePalette(u16 waitVSync)
 
 u16 VDP_doStepFading(u16 waitVSync)
 {
+    // one step less
+    if (--fading_cnt <= 0)
+    {
+        // last step --> just recopy the final palette
+        if (waitVSync) VDP_waitVSync();
+        VDP_setPaletteColors(fading_from, final_pal + fading_from, (fading_to - fading_from) + 1);
+
+        return 0;
+    }
+
     s16 *palR;
     s16 *palG;
     s16 *palB;
@@ -299,9 +310,7 @@ u16 VDP_doStepFading(u16 waitVSync)
     // set current fade palette
     setFadePalette(waitVSync);
 
-    // one step less
-    if (--fading_cnt <= 0) return 0;
-
+//    if (--fading_cnt <= 0) return 0;
     return 1;
 }
 
@@ -309,6 +318,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 {
     const u16 *src;
     const u16 *dst;
+    u16 *save;
     s16 *palR;
     s16 *palG;
     s16 *palB;
@@ -326,6 +336,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 
     src = palsrc;
     dst = paldst;
+    save = final_pal + fromcol;
     palR = fading_palR + fromcol;
     palG = fading_palG + fromcol;
     palB = fading_palB + fromcol;
@@ -342,6 +353,9 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
         const s16 R = ((s & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS;
         const s16 G = ((s & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS;
         const s16 B = ((s & VDPPALETTE_BLUEMASK) >> VDPPALETTE_BLUESFT) << PALETTEFADE_FRACBITS;
+
+        // fix detination palette
+        *save++ = d;
 
         *stepR++ = ((((d & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS) - R) / numframe;
         *stepG++ = ((((d & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS) - G) / numframe;
@@ -441,11 +455,5 @@ u16 VDP_isDoingFade()
 
 void VDP_waitFadeCompletion()
 {
-    vu32 *processing;
-
-    // temporary reference VIntProcess as volatile
-    // to avoid dead lock compiler optimisation
-    processing = &VIntProcess;
-
-    while (*processing & PROCESS_PALETTE_FADING);
+    while (VIntProcess & PROCESS_PALETTE_FADING);
 }

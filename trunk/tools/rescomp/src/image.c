@@ -23,7 +23,7 @@ Plugin image = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "IMAGE")) return 1;
+    if (!strcasecmp(type, "IMAGE")) return 1;
 
     return 0;
 }

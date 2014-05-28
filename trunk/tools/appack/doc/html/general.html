@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <title>aPLib - General Information</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link href="ahob.css" title="A Hint of Blue" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+
+    <table class="ismain">
+      <tr>
+        <td class="isdesc">
+
+<div class="topnav">
+ <a href="license.html">&lt;&lt;&nbsp;prev</a> |
+ <a href="index.html">home</a> |
+ <a href="compression.html">next&nbsp;&gt;&gt;</a>
+</div>
+
+<div class="title">General Information</div>
+
+<h4>Introduction</h4>
+
+<p>aPLib is a compression library based on the algorithm used in aPACK (my
+16-bit executable packer). aPLib is an easy-to-use alternative to many of the
+heavy-weight compression libraries available.</p>
+
+<p>The compression ratios achieved by aPLib combined with the speed
+and tiny footprint of the decompressors (as low as 169 bytes!) makes it
+the ideal choice for many products.</p>
+
+<p>Since the first public release in 1998, aPLib has been one of the
+top pure LZ-based compression libraries available. It is used in a
+wide range of products including executable compression and protection
+software, archivers, games, embedded systems, and handheld
+devices.</p>
+
+<h4>Compatibility</h4>
+
+<p>The aPLib package includes pre-compiled libraries in a number of
+formats (COFF, ELF, OMF).</p>
+
+<p>No standard library functions are used, so the libraries can work with
+most x86/x64 compilers, as long as the name decoration and calling
+conventions match.</p>
+
+<p>The ELF folders contain a version of aPLib which uses PIC to allow it
+to be linked into shared libraries on linux.</p>
+
+<h4>Thread-safety</h4>
+
+<p>All compression and decompression functions are thread-safe.</p>
+
+<h4>Using aPLib</h4>
+
+<p>For C/C++ you simply include <code>aplib.h</code> and link with the
+appropriate library for your compiler. If you only need to decompress data,
+or if you modify the decompression code, you can compile and link with one
+of the decompression implementations in the <code>src</code> folder.</p>
+
+<p>For other languages you can either check if there is a useable example,
+or use the DLL version. Most linkers allow calling C functions in an
+external library, so usually there is a way to use one of the libraries.</p>
+
+<p>aPLib performs memory-to-memory compression and decompression, so getting
+data into an input buffer and allocating an output buffer is your
+responsibility.</p>
+
+<p>All functions return <code>APLIB_ERROR</code> (which is <code>-1</code>)
+if an error occurs.</p>
+
+<p>Attempting to compress incompressible data can lead to expansion. You can
+get the maximum possible coded size by passing the size of the input to the
+function <code><a href="compression.html#aP_max_packed_size">aP_max_packed_size</a></code>.</p>
+
+<p>When calling
+<code><a href="compression.html#aP_pack">aP_pack</a></code> you have to
+supply a work buffer. You can get the required size of this buffer by
+passing the size of the input to the function
+<code><a href="compression.html#aP_workmem_size">aP_workmem_size</a></code>
+(in the current version this function always returns 640k).</p>
+
+<p>If you do not have a callback for
+<code><a href="compression.html#aP_pack">aP_pack</a></code>, you can pass
+<code>NULL</code> (i.e. <code>0</code>) instead. The callback functionality
+allows your program to keep track of the compression progress, and if
+required to stop the compression.</p>
+
+<p><code><a href="compression.html#aP_depack">aP_depack</a></code>,
+<code><a href="compression.html#aP_depack_asm">aP_depack_asm</a></code> and
+<code><a href="compression.html#aP_depack_asm_fast">aP_depack_asm_fast</a></code>
+assume that they are given valid compressed data -- if not they will most
+likely crash. This is to ensure that the basic decompression code is as
+small, fast and easy to understand as possible. You can use
+<code><a href="compression.html#aP_depack_safe">aP_depack_safe</a></code> or
+<code><a href="compression.html#aP_depack_asm_safe">aP_depack_asm_safe</a></code>
+if you need to catch decompression errors. Also the safe wrapper functions
+provide a nice interface that helps prevent potential crashes.</p>
+
+<h4>Safe Wrapper Functions</h4>
+
+<p>Starting with aPLib v0.34, there are additional functions included
+which provide a better way of handling the compressed data in the
+example, and also serve as an example of how to add functionality
+through function wrappers.</p>
+
+<p>The <code><a href="compression.html#aPsafe_pack">aPsafe_pack</a></code>
+and <code><a href="decompression.html#aPsafe_depack">aPsafe_depack</a></code>
+functions are wrappers for their regular <code>aP_</code> counterparts, which
+add a header to the compressed data.  This header includes a tag, information
+about the compressed and decompressed size of the data, and CRC32 values for
+the compressed and decompressed data.</p>
+
+<p>The <code>example</code> folder contains a simple command line packer that
+uses aPLib to compress and decompress data. The <code>aPsafe_</code> functions
+are used in this example, because they provide extra functionality like
+retrieving the original size of compressed data.</p>
+
+<h4>Contact Information</h4>
+
+<p>If you have any questions, suggestions or bug-reports about aPLib,
+please feel free to contact me by e-mail at:</p>
+
+<center><a href="mailto:contact@ibsensoftware.com?subject=aPLib">contact@ibsensoftware.com</a></center>
+
+<p>You can get the latest version of aPLib and my other software at:</p>
+
+<center><a href="http://www.ibsensoftware.com/">http://www.ibsensoftware.com/</a></center>
+
+&nbsp;<br />
+
+<div class="botnav">
+ <a href="license.html">&lt;&lt;&nbsp;prev</a> |
+ <a href="index.html">home</a> |
+ <a href="compression.html">next&nbsp;&gt;&gt;</a>
+</div>
+
+        </td>
+      </tr>
+    </table>
+
+  </body>
+
+</html>

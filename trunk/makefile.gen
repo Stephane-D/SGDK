@@ -15,6 +15,7 @@ CP= $(BIN)/cp
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
+NM= $(BIN)/nm
 ECHO= echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
@@ -23,13 +24,7 @@ SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
 GENRES= $(BIN)/genres
 RESCOMP= $(BIN)/rescomp
-NM= $(BIN)/nm
 MKDIR= $(BIN)/mkdir
-NM2WCH= $(BIN)/nm2wch
-ADDR2LINE= $(BIN)/addr2line
-OUT2GSRC= $(BIN)/out2gsrc
-
-OPTION=
 
 SRC_C= $(wildcard *.c)
 SRC_C+= $(wildcard $(SRC)/*.c)
@@ -59,20 +54,23 @@ OBJ+= $(SRC_C:.c=.o)
 OBJS = $(addprefix out/, $(OBJ))
 
 INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
-#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin $(INCS)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin $(INCS) -B$(BIN)
-#FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin $(INCS)
+DEFAULT_FLAGS= -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
+#release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
 release: out/rom.bin
-debug: out/rom.bin out/rom.wch
-debugall: out/rom.bin out/rom.wch out/rom.gsrc
+
+debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
+debug: out/rom.bin out/rom.out out/symbol.txt
+
 
 all: release
 default: release
 
 .PHONY: clean
+
 
 clean:
 	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
@@ -84,13 +82,8 @@ out/rom.bin: out/rom.out
 	$(OBJCPY) -O binary out/rom.out out/rom.bin
 	$(SIZEBND) out/rom.bin -sizealign 131072
 
-out/rom.wch: out/rom.out
-	$(NM) -n -S -t x out/rom.out >out/rom.nm
-	$(NM2WCH) out/rom.nm out/rom.wch
-
-out/rom.gsrc: out/rom.bin
-	$(OUT2GSRC) i out/rom.bin out/rom.addr
-	$(ADDR2LINE) -e out/rom.out < out/rom.addr > out/rom.gsrc
+out/symbol.txt: out/rom.out
+	$(NM) out/rom.out > out/symbol.txt
 
 out/rom.out: out/sega.o out/cmd_ $(LIB)/libmd.a
 	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out

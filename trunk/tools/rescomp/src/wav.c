@@ -21,7 +21,7 @@ Plugin wav = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "WAV")) return 1;
+    if (!strcasecmp(type, "WAV")) return 1;
 
     return 0;
 }

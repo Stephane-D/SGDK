@@ -20,7 +20,7 @@ Plugin tfm = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "TFM")) return 1;
+    if (!strcasecmp(type, "TFM")) return 1;
 
     return 0;
 }
@@ -56,7 +56,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     strcpy(temp, fileIn);
 
     // need conversion to TFC ?
-    if (stricmp(getFileExtension(fileIn), "tfc"))
+    if (strcasecmp(getFileExtension(fileIn), "tfc"))
     {
         // change extension of output file name to .tfc
         removeExtension(temp);

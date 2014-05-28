@@ -162,62 +162,62 @@ static int doConvert(char *dirName, char *fileNameOut)
         id = getFilename(name);
         removeExtension(id);
 
-        if (!stricmp(ext, "bmp"))
+        if (!strcasecmp(ext, "bmp"))
         {
             // BMP resource
             fprintf(fileOutput, "BITMAP %s %s\n", id, filename);
         }
-        else if (!stricmp(ext, "wav"))
+        else if (!strcasecmp(ext, "wav"))
         {
             // WAV resource
             fprintf(fileOutput, "WAV %s %s 0 16000\n", id, filename);
         }
-        else if (!stricmp(ext, "wavpcm"))
+        else if (!strcasecmp(ext, "wavpcm"))
         {
             // ADPCM resource
             fprintf(fileOutput, "WAV %s %s 1\n", id, name);
         }
-        else if (!stricmp(ext, "pcm"))
+        else if (!strcasecmp(ext, "pcm"))
         {
             // ADPCM resource
             fprintf(fileOutput, "PCM %s %s 1\n", id, filename);
         }
-        else if (!stricmp(ext, "tfd"))
+        else if (!strcasecmp(ext, "tfd"))
         {
             // TFD resource
             fprintf(fileOutput, "TFM %s %s 1\n", id, filename);
         }
-        else if (!stricmp(ext, "tfc"))
+        else if (!strcasecmp(ext, "tfc"))
         {
             // TFC resource
             fprintf(fileOutput, "TFM %s %s 1\n", id, filename);
         }
-        else if (!stricmp(ext, "mvs"))
+        else if (!strcasecmp(ext, "mvs"))
         {
             // MVS resource
             fprintf(fileOutput, "BIN %s %s 256\n", id, filename);
         }
-        else if (!stricmp(ext, "vgm"))
+        else if (!strcasecmp(ext, "vgm"))
         {
             // VGM resource
             fprintf(fileOutput, "VGM %s %s\n", id, filename);
         }
-        else if (!stricmp(ext, "eif"))
+        else if (!strcasecmp(ext, "eif"))
         {
             // EIF resource
             fprintf(fileOutput, "BIN %s %s 256\n", id, filename);
         }
-        else if (!stricmp(ext, "esf"))
+        else if (!strcasecmp(ext, "esf"))
         {
             // ESF resource
             fprintf(fileOutput, "BIN %s %s 32768\n", id, filename);
         }
-        else if (!stricmp(ext, "dat"))
+        else if (!strcasecmp(ext, "dat"))
         {
             // DAT resource
             fprintf(fileOutput, "BIN %s %s 256 256\n", id, filename);
         }
-        else if (!stricmp(ext, "raw"))
+        else if (!strcasecmp(ext, "raw"))
         {
             // RAW resource
             fprintf(fileOutput, "BIN %s %s 256 256\n", id, filename);
@@ -289,7 +289,7 @@ static int doComp(char *fileName, char *fileNameOut, int header)
 
     // get file name in uppercase
     strcpy(tempName, getFilename(fileNameOut));
-    strupr(tempName);
+    strupper(tempName);
 
     fprintf(fileOutputH, "#ifndef _%s_H_\n", tempName);
     fprintf(fileOutputH, "#define _%s_H_\n\n", tempName);
@@ -336,9 +336,9 @@ static int execute(char *info, FILE *fs, FILE *fh)
     if (sscanf(info, "%s", type) < 1)
         return TRUE;
     // pass comment
-    if (!strnicmp(type, "//", 2))
+    if (!strncasecmp(type, "//", 2))
         return TRUE;
-    if (!strnicmp(type, "#", 1))
+    if (!strncasecmp(type, "#", 1))
         return TRUE;
 
     plugin = plugins;

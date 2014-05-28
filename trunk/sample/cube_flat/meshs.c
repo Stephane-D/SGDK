@@ -13,14 +13,14 @@
 
 const Vect3D_f16 cube_coord[8] =
 {
-    {FIX16(-1), FIX16(-1), FIX16(-1)},
-    {FIX16(1), FIX16(-1), FIX16(-1)},
-    {FIX16(-1), FIX16(1), FIX16(-1)},
-    {FIX16(-1), FIX16(-1), FIX16(1)},
-    {FIX16(1), FIX16(1), FIX16(-1)},
-    {FIX16(1), FIX16(-1), FIX16(1)},
-    {FIX16(-1), FIX16(1), FIX16(1)},
-    {FIX16(1), FIX16(1), FIX16(1)}
+    {FIX16(-5), FIX16(-5), FIX16(-5)},
+    {FIX16(5), FIX16(-5), FIX16(-5)},
+    {FIX16(-5), FIX16(5), FIX16(-5)},
+    {FIX16(-5), FIX16(-5), FIX16(5)},
+    {FIX16(5), FIX16(5), FIX16(-5)},
+    {FIX16(5), FIX16(-5), FIX16(5)},
+    {FIX16(-5), FIX16(5), FIX16(5)},
+    {FIX16(5), FIX16(5), FIX16(5)}
 };
 
 const u16 cube_poly_ind[6 * 4] =

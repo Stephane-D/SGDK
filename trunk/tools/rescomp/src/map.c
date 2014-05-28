@@ -18,7 +18,7 @@ Plugin map = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "MAP")) return 1;
+    if (!strcasecmp(type, "MAP")) return 1;
 
     return 0;
 }

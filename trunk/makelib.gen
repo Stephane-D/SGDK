@@ -10,17 +10,12 @@ RM= $(BIN)/rm
 CP= $(BIN)/cp
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
-LD= $(BIN)/ld
 ECHO= echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
 RESCOMP= $(BIN)/rescomp
-NM= $(BIN)/nm
-NM2WCH= $(BIN)/nm2wch
-
-OPTION=
 
 SRC_C= $(wildcard $(SRC)/*.c)
 SRC_S= $(wildcard $(SRC)/*.s)
@@ -34,18 +29,23 @@ OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
 INCS= -I$(INCLUDE) -I$(SRC) -I$(RES)
-#FLAGS= $(OPTION) -g3 -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin $(INCS)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin $(INCS) -B$(BIN)
-#FLAGS= $(OPTION) -m68000 -Wall -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -fno-builtin $(INCS)
+DEFAULT_FLAGS= -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE)
 
 
-lib: $(LIB)/libmd.a
+#release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
+release: $(LIB)/libmd.a
 
-all: lib
-default: lib
+debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
+debug: $(LIB)/libmd.a
+
+
+all: release
+default: release
 
 .PHONY: clean
+
 
 clean:
 	$(RM) -f $(LIB)/libmd.a $(OBJ) out.lst cmd_

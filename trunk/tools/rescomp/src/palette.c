@@ -20,7 +20,7 @@ Plugin palette = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "PALETTE")) return 1;
+    if (!strcasecmp(type, "PALETTE")) return 1;
 
     return 0;
 }
@@ -53,7 +53,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     adjustPath(resDir, temp, fileIn);
 
     // PAL file ?
-    if (!stricmp(getFileExtension(fileIn), "pal"))
+    if (!strcasecmp(getFileExtension(fileIn), "pal"))
     {
         // get palette data
         palette = (unsigned short*) readFile(fileIn, &size);

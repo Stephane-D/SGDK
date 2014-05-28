@@ -75,10 +75,10 @@ u16 ext2State;
 u16 srState;
 
 
-u32 VIntProcess;
-u32 HIntProcess;
-u32 ExtIntProcess;
-u16 intTrace;
+vu32 VIntProcess;
+vu32 HIntProcess;
+vu32 ExtIntProcess;
+vu16 intTrace;
 
 static u16 intLevelSave;
 static s16 disableIntStack;

@@ -20,7 +20,7 @@ Plugin bin = { isSupported, execute };
 
 static int isSupported(char *type)
 {
-    if (!stricmp(type, "BIN")) return 1;
+    if (!strcasecmp(type, "BIN")) return 1;
 
     return 0;
 }
