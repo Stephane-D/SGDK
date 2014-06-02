@@ -28,6 +28,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char temp[MAX_PATH_LEN];
     char id[50];
     char fileIn[MAX_PATH_LEN];
+    char packedStr[256];
     int w, h;
     int packed;
     int transInd;
@@ -37,7 +38,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     packed = 0;
     transInd = 0;
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %d", temp, id, temp, &w, &h, &packed);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %s", temp, id, temp, &w, &h, packedStr);
 
     if (nbElem < 5)
     {
@@ -47,13 +48,15 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("  file\tthe map file to convert to Map structure (.map Mappy file)\n");
         printf("  width\tthe map width\n");
         printf("  height\tthe map height\n");
-        printf("  packed\tset to 1 to pack the Map data (0 by default).\n");
+        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE, 4 = RLEMAP (default = NONE).\n\n");
 
         return FALSE;
     }
 
     // adjust input file path
     adjustPath(resDir, temp, fileIn);
+    // get packed value
+    packed = getCompression(packedStr);
 
     printf("MAP resource not yet supported !\n");
 

@@ -372,7 +372,7 @@
 
 /**
  *  \struct VDPPlan
- *      Type used to define on which plan to work (only used in some methods).</br>
+ *      Type used to define on which plan to work (only used in some methods).<br/>
  *      You should use the <b>PLAN_A</b> and <b>PLAN_B</b> constants.
  *
  *   \see PLAN_A
@@ -547,12 +547,12 @@ u8 VDP_getVerticalScrollingMode();
  *  \param hscroll
  *      Horizontal scrolling mode :<br>
  *      <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
- *      <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granulity (8 pixels bloc).<br/>
- *      <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granulity (1 pixel).<br/>
+ *      <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granularity (8 pixels bloc).<br/>
+ *      <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granularity (1 pixel).<br/>
  *  \param vscroll
  *      Vertical scrolling mode :<br>
  *      <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
- *      <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granulity (16 pixels bloc).<br/>
+ *      <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granularity (16 pixels bloc).<br/>
  *
  *  \see VDP_setHorizontalScroll() to set horizontal scroll offset in mode plane.<br/>
  *  \see VDP_setHorizontalScrollTile() to set horizontal scroll offset(s) in mode tile.<br/>

@@ -32,6 +32,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char temp[MAX_PATH_LEN];
     char id[50];
     char fileIn[MAX_PATH_LEN];
+    char packedStr[256];
     int w, h, bpp;
     int wf, hf;
     int wt, ht;
@@ -49,7 +50,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     time = 0;
     strcpy(collision, "NONE");
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %d %d %s", temp, id, temp, &wf, &hf, &packed, &time, collision);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %s %d %s", temp, id, temp, &wf, &hf, packedStr, &time, collision);
 
     if (nbElem < 5)
     {
@@ -59,9 +60,9 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("  file\tthe image file to convert to SpriteDefinition structure (should be a 8bpp .bmp or .png)\n");
         printf("  width\twidth of a single sprite frame in tile\n");
         printf("  height\theigth of a single sprite frame in tile\n");
-        printf("  packed\tset to 1 to pack the Sprite data (0 by default).\n");
+        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n");
         printf("  time\tdisplay frame time in 1/60 of second (time between each animation frame).\n");
-        printf("  collision\tcollision type: CIRCLE, BOX or NONE (BOX by default).\n");
+        printf("  collision\tcollision type: CIRCLE, BOX or NONE (BOX by default).\n\n");
 
         return FALSE;
     }
@@ -72,6 +73,8 @@ static int execute(char *info, FILE *fs, FILE *fh)
 
     // adjust input file path
     adjustPath(resDir, temp, fileIn);
+    // get packed value
+    packed = getCompression(packedStr);
 
     // retrieve basic infos about the image
     if (!Img_getInfos(fileIn, &w, &h, &bpp)) return FALSE;

@@ -30,12 +30,12 @@ u32 strlen(const char *str);
  *      The string we want to compare.
  *  \param str2
  *      The string we want to compare.
- *  \return an integral value indicating the relationship between the strings:</br>
- *      A zero value indicates that both strings are equal.</br>
- *      A value greater than zero indicates that the first character that does not match has a greater value in str1 than in str2</br>
+ *  \return an integral value indicating the relationship between the strings:<br/>
+ *      A zero value indicates that both strings are equal.<br/>
+ *      A value greater than zero indicates that the first character that does not match has a greater value in str1 than in str2<br/>
  *      A value less than zero indicates the opposite.
  *
- * This function starts comparing the first character of each string.</br>
+ * This function starts comparing the first character of each string.<br/>
  * If they are equal to each other, it continues with the following pairs until
  * the characters differ or until a terminating null-character is reached.
  */

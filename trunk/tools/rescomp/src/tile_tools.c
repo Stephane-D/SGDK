@@ -159,9 +159,16 @@ void freeTiledImage(tileimg_ *image)
 int packTileSet(tileset_* tileset, int *method)
 {
     int size;
+    unsigned int* tiles;
 
-    tileset->tiles = (unsigned int*) pack((unsigned char*) tileset->tiles, 0, tileset->num * 32, &size, method);
-    if (!tileset->tiles) return FALSE;
+    tiles = (unsigned int*) pack((unsigned char*) tileset->tiles, 0, tileset->num * 32, &size, method);
+    if (!tiles) return FALSE;
+
+    if (tiles != tileset->tiles)
+    {
+        free(tileset->tiles);
+        tileset->tiles = tiles;
+    }
 
     tileset->packed = *method;
     tileset->packedSize = size;
@@ -172,9 +179,16 @@ int packTileSet(tileset_* tileset, int *method)
 int packMap(tilemap_* map, int *method)
 {
     int size;
+    unsigned short *data;
 
-    map->data = (unsigned short*) packEx((unsigned char*) map->data, 0, map->w * map->h * 2, 2, TRUE, &size, method);
-    if (!map->data) return FALSE;
+    data = (unsigned short*) packEx((unsigned char*) map->data, 0, map->w * map->h * 2, 2, TRUE, &size, method);
+    if (!data) return FALSE;
+
+    if (data != map->data)
+    {
+        free(map->data);
+        map->data = data;
+    }
 
     map->packed = *method;
     map->packedSize = size;

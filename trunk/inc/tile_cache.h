@@ -73,8 +73,10 @@ void TC_end();
 
 /**
  *  \brief
- *      Create the given TileSet cache structure.
+ *      Initialize a new TileSet cache structure.
  *
+ *  \param cache
+ *      Cache to initialize.
  *  \param startIndex
  *      Tile start index in VRAM for the cache.
  *  \param size
@@ -85,8 +87,10 @@ void TC_end();
 void TC_createCache(TileCache *cache, u16 startIndex, u16 size);
 /**
  *  \brief
- *      Create the given TileSet cache structure.
+ *      Initialize a new TileSet cache structure.
  *
+ *  \param cache
+ *      Cache to initialize.
  *  \param startIndex
  *      Tile start index in VRAM for the cache.
  *  \param size
@@ -101,18 +105,27 @@ void TC_createCacheEx(TileCache *cache, u16 startIndex, u16 size, u16 numBloc);
  *  \brief
  *      Release the TileSet cache structure.
  *
+ *  \param cache
+ *      Cache we want to release.
+ *
  * Release memory used by TileSet cache structure (~1 KB).
  */
 void TC_releaseCache(TileCache *cache);
 /**
  *  \brief
  *      Clear the specified TileSet cache.
+ *
+ *  \param cache
+ *      Cache we want to clear.
  */
 void TC_clearCache(TileCache *cache);
 /**
  *  \brief
  *      Flush the specified TileSet cache.
  *
+ *  \param cache
+ *      Cache we want to flush.
+
  * This is not exactly the same as the clear operation:<br/>
  * Allocated tileset remains in cache but they can be erased with newly allocated tileset.
  */
