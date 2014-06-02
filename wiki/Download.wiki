@@ -4,10 +4,21 @@
 
 == Download ==
 
-Get the last version: [https://www.dropbox.com/s/vhgjf6eybwjdbb5/sgdk096.7z SGDK 0.96]
+Get the last version: [https://www.dropbox.com/s/l5gjyr0pqo6owwy/sgdk096c.7z SGDK 0.96c]
 
 
-== Changelog ==
+== Changelog 0.96c ==
+
+*COMPILER*
+ * Rescomp
+  * fixed some issues on compression.
+  * now accept string to define which compression to use (AUTO, APLIB, RLE) in resource definition.
+
+*LIBRARY*
+ * minors changes to Doxygen documentation.
+
+
+== Changelog 0.96 ==
 
 *COMPILER*
  * Rescomp
