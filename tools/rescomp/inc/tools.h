@@ -68,6 +68,8 @@ void decl(FILE* fs, FILE* fh, char* type, char* name, int align, int global);
 void declArray(FILE* fs, FILE* fh, char* type, char* name, int size, int align, int global);
 void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize);
 
+int getCompression(char *str);
+
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method);
 unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int swap, int *outSize, int *method);
 

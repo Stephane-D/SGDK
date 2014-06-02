@@ -510,6 +510,18 @@ void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize)
     }
 }
 
+int getCompression(char *str)
+{
+    char *upstr = strupper(str);
+
+    if (!strcmp(upstr, "AUTO") || !strcmp(upstr, "-1")) return PACK_AUTO;
+    if (!strcmp(upstr, "APLIB") || !strcmp(upstr, "1")) return PACK_APLIB;
+//    if (!strcmp(upstr, "LZKN") || !strcmp(upstr, "2")) return PACK_LZKN;
+    if (!strcmp(upstr, "RLE") || !strcmp(upstr, "3")) return PACK_RLE;
+    if (!strcmp(upstr, "RLEMAP") || !strcmp(upstr, "4")) return PACK_MAP_RLE;
+
+    return 0;
+}
 
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method)
 {
@@ -536,7 +548,7 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
         return NULL;
     }
 
-    // get source data arranger if needed
+    // get source data arranged if needed
     src = in("pack.in", &size1);
     if (src == NULL)
     {
@@ -573,7 +585,8 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
             minSize = MIN(minSize, size2);
     }
 
-    if (autoSelect || (*method == PACK_MAP_RLE))
+    // allow RLE compression to also try the RLE MAP compression
+    if (autoSelect || (*method == PACK_RLE) || (*method == PACK_MAP_RLE))
     {
         result3 = rlemappack(src, size, &size3);
         if (result3 != NULL)
@@ -589,11 +602,13 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
 //        }
 //    }
 
+    // don't need it anymore
+    free(src);
+
     if (minSize == size1)
     {
         *method = PACK_APLIB;
         result = result1;
-        free(src);
         if (result2) free(result2);
         if (result3) free(result3);
         if (result4) free(result4);
@@ -603,7 +618,6 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
     {
         *method = PACK_RLE;
         result = result2;
-        free(src);
         if (result1) free(result1);
         if (result3) free(result3);
         if (result4) free(result4);
@@ -613,7 +627,6 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
     {
         *method = PACK_MAP_RLE;
         result = result3;
-        free(src);
         if (result1) free(result1);
         if (result2) free(result2);
         if (result4) free(result4);
@@ -623,7 +636,6 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
 //    {
 //        *method = PACK_LZKN;
 //        result = result4;
-//        free(src);
 //        if (result1) free(result1);
 //        if (result2) free(result2);
 //        if (result3) free(result3);
@@ -632,7 +644,7 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
     else
     {
         *method = PACK_NONE;
-        result = src;
+        result = data;
         if (result1) free(result1);
         if (result2) free(result2);
         if (result3) free(result3);
@@ -876,7 +888,7 @@ static unsigned char *rlepack(unsigned char *src, int inSize, int *outSize)
             // Data has changed, write run and start new one
             if (data != nib[i])
             {
-                result[offset++] = ((rle << 4) | data);
+                result[offset++] = (rle << 4) | data;
                 bloc_num++;
                 data = nib[i];
                 rle = 0;
@@ -886,7 +898,7 @@ static unsigned char *rlepack(unsigned char *src, int inSize, int *outSize)
                 // Max run length reached, write run and stop
                 if (++rle == 0x0F)
                 {
-                    result[offset++] = (rle << 4 | data);
+                    result[offset++] = (rle << 4) | data;
                     bloc_num++;
                     in_run = 0;
                 }
@@ -904,14 +916,14 @@ static unsigned char *rlepack(unsigned char *src, int inSize, int *outSize)
     // If still in a run, write it result
     if (in_run)
     {
-        result[offset++] = (rle << 4 | data);
+        result[offset++] = (rle << 4) | data;
         bloc_num++;
     }
 
     // bloc number > 64KB
     if (bloc_num >= 0x10000)
     {
-        printf("rlemappack failed: more than 2^16 bloc (%d)\n", bloc_num);
+        printf("rlemap failed: more than 2^16 bloc (%d)\n", bloc_num);
         free(result);
         return NULL;
     }

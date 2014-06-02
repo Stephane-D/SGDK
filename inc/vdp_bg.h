@@ -39,8 +39,7 @@ typedef struct
 
 
 /**
- *  \var curTileIndex
- *      Contains current VRAM tile position where we will upload next tile data.
+ *  Contains current VRAM tile position where we will upload next tile data.
  *
  *  \see VDP_drawBitmap()
  *  \see VDP_drawImage()

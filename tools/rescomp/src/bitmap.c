@@ -30,6 +30,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char temp[MAX_PATH_LEN];
     char id[50];
     char fileIn[MAX_PATH_LEN];
+    char packedStr[256];
     int w, h, bpp;
     int isize, psize;
     int packed;
@@ -42,7 +43,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     packed = 0;
     transInd = 0;
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d", temp, id, temp, &packed, &transInd);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %d", temp, id, temp, packedStr, &transInd);
 
     if (nbElem < 3)
     {
@@ -50,13 +51,15 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("BITMAP name \"file\" [packed]\n");
         printf("  name\t\tBitmap variable name\n");
         printf("  file\tthe image to convert to Bitmap structure (should be a 8bpp .bmp or .png)\n");
-        printf("  packed\tset to 1 to pack the Bitmap data, by default 0 is assumed.\n\n");
+        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n\n");
 
         return FALSE;
     }
 
     // adjust input file path
     adjustPath(resDir, temp, fileIn);
+    // get packed value
+    packed = getCompression(packedStr);
 
     // retrieve basic infos about the image
     if (!Img_getInfos(fileIn, &w, &h, &bpp)) return FALSE;

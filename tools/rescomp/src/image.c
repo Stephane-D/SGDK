@@ -33,6 +33,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char temp[MAX_PATH_LEN];
     char id[50];
     char fileIn[MAX_PATH_LEN];
+    char packedStr[256];
     int w, h, bpp;
     int wt, ht;
     int size, psize;
@@ -46,7 +47,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     packed = 0;
     mapBase = 0;
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d", temp, id, temp, &packed, &mapBase);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %d", temp, id, temp, packedStr, &mapBase);
 
     if (nbElem < 3)
     {
@@ -54,7 +55,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("IMAGE name \"file\" [packed [mapbase]]\n");
         printf("  name\t\tImage variable name\n");
         printf("  file\tthe image to convert to Image structure (should be a 8bpp .bmp or .png)\n");
-        printf("  packed\tset to 1 to pack the Image data (Image), by default 0 is assumed.\n");
+        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n");
         printf("  mapbase\tdefine the base tilemap value, useful to set the priority, default palette and base tile index.\n\n");
 
         return FALSE;
@@ -62,6 +63,8 @@ static int execute(char *info, FILE *fs, FILE *fh)
 
     // adjust input file path
     adjustPath(resDir, temp, fileIn);
+    // get packed value
+    packed = getCompression(packedStr);
 
     // retrieve basic infos about the image
     if (!Img_getInfos(fileIn, &w, &h, &bpp)) return FALSE;

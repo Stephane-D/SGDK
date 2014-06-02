@@ -1,4 +1,4 @@
-ResComp 1.2 (may 2014)
+ResComp 1.21 (june 2014)
 Stephane Dallongeville
 https://code.google.com/p/sgdk/
 
@@ -17,11 +17,11 @@ Supported resource type:
 - MAP       map type resource (tilemap data).
 - IMAGE     image type resource, internally contains Palette, Tileset and Map data and can be used to draw a complete background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine..
-- TFM       TFM music type resource (.tfd or .tfc file only), used to play music.
-- VGM       VGM music type resource (.vgm file only), used to play music.
-- WAV       WAV sound type resource (.wav file only), used to play sample sound data.
-- PCM       PCM sound type resource (.pcm file only), used to play sample sound data.
-- BIN       any binary data file which do not need any specific any conversion or processing.
+- TFM       TFM music type resource (.tfd or .tfc file), used to play music.
+- VGM       VGM music type resource (.vgm file), used to play music.
+- WAV       WAV sound type resource (.wav file), used to play sample sound data.
+- PCM       PCM sound type resource (.pcm file), used to play sample sound data.
+- BIN       any binary data file which do not need any specific conversion or processing.
 
 
 PALETTE
@@ -87,7 +87,7 @@ Map is used to define background plan tilemap data.
 Syntax:
 MAP name map_file width height [compression]
 
-    name          name of the output Mapt structure
+    name          name of the output Map structure
     map_file      path of the input map file (not yet defined, mappy ?)
     width         width of the map in tile
     heigth        heigth of the map in tile
@@ -186,11 +186,11 @@ WAV name file [driver [outrate]]
 
     name        variable name
     file        path of the .wav file (will be converted to 8 bits signed PCM)
-    driver      specify the Z80 driver we will use to play the WAV file:
+    driver      specify the Z80 driver to use:
                 0 (default) = Z80_DRIVER_PCM
                   Single channel 8 bits signed sample driver.
                   It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
-                  <b>Input:</b> Any WAV at 8000 / 11025 / 13400 / 16000 / 22050 / 32000 Hz
+                  <b>Input:</b> any WAV at 8000 / 11025 / 13400 / 16000 / 22050 / 32000 Hz
                   Method to use: SND_startPlay_PCM(..)
                 1 = Z80_DRIVER_2ADPCM
                   2 channels 4 bits ADPCM sample driver.
@@ -226,7 +226,7 @@ PCM name file [driver]
     name        variable name
     file        path of the PCM data file
                 Should be 8 bits PCM signed data and size need to be aligned to 256 for correct loop operation
-    driver      specify the Z80 driver we will use to play the PCM:
+    driver      specify the Z80 driver to use:
                 0 (default) = Z80_DRIVER_PCM
                   Single channel 8 bits signed sample driver.
                   It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
