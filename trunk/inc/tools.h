@@ -286,17 +286,5 @@ void rlemap_unpack(u8 *src, u8 *dest);
  *      VRAM destination address where to store unpacked dat.
  */
 void rle4b_unpackVRam(u8 *src, u16 dest);
-/**
- *  \brief
- *      Unpack (RLE MAP packer) the specified source data buffer directly in VRAM.
- *
- *  \param src
- *      Source data buffer containing the packed data (RLE MAP packer) to unpack.
- *  \param dest
- *      VRAM destination address where to store unpacked dat.
- *  \param basetile
- *      Base tile index and flags for tile attributes in the map (see TILE_ATTR_FULL() macro).
- */
-void rlemap_unpackVRam(u8 *src, u16 dest, u16 basetile);
 
 #endif // _TOOLS_H_

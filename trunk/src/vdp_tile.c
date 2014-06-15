@@ -491,16 +491,6 @@ void VDP_setTileMapDataRectEx(u16 plan, const u16 *data, u16 basetile, u16 x, u1
 
 u16 VDP_setMap(u16 plan, const Map *map, u16 basetile, u16 x, u16 y)
 {
-    // MAP RLE compression ?
-    if (map->compression == COMPRESSION_MAP_RLE)
-    {
-        u16 addr = plan + (2 * (x + (VDP_getPlanWidth() * y)));
-        // direct unpack tilemap in vram
-        rlemap_unpackVRam((u8*) map->tilemap, addr, basetile);
-
-        return TRUE;
-    }
-
     return VDP_setMapEx(plan, map, basetile, x, y, 0, 0, map->w, map->h);
 }
 
