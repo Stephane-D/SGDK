@@ -1,3 +1,22 @@
+SGDK 0.96d (june 2014):
+-----------------------
+
+LIBRARY
+* removed direct VRam Map data unpacking as it was buggy.
+
+
+SGDK 0.96c (june 2014):
+-----------------------
+
+COMPILER
+* Rescomp:
+ - fixed some issues on compression.
+ - now accept string to define which compression to use (AUTO, APLIB, RLE) in resource definition. 
+
+LIBRARY
+* minors changes to Doxygen documentation. 
+
+
 SGDK 0.96 (may 2014):
 ---------------------
 
