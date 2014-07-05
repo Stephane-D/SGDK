@@ -151,6 +151,12 @@ u16  VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst
 
 /**
  *  \brief
+ *      Interrupt any asynchronous palette fading effect.
+ */
+void VDP_interruptFade();
+
+/**
+ *  \brief
  *      General palette fading effect.
  *
  *  \param fromcol

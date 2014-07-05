@@ -85,26 +85,15 @@ u16 SPR_isInitialized()
 
 void SPR_initSprite(Sprite *sprite, SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut)
 {
-    // definition changed ?
-    if (sprite->definition != spriteDef)
-    {
-        sprite->definition = spriteDef;
-        sprite->x = x + 0x80;
-        sprite->y = y + 0x80;
-        sprite->animInd = -1;
-        sprite->frameInd = -1;
-        sprite->seqInd = -1;
-        sprite->frame = NULL;
-        sprite->attribut = attribut;
-    }
-    else
-    {
-        // update position and attribut
-        SPR_setPosition(sprite, x, y);
-        SPR_setAttribut(sprite, attribut);
-    }
+    sprite->definition = spriteDef;
+    sprite->x = x + 0x80;
+    sprite->y = y + 0x80;
+    sprite->animInd = -1;
+    sprite->frameInd = -1;
+    sprite->seqInd = -1;
+    sprite->frame = NULL;
+    sprite->attribut = attribut;
 
-    // alays reset these informations
     sprite->timer = 0;
     sprite->fixedIndex = -1;
     sprite->data = 0;

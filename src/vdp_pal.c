@@ -373,6 +373,11 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 }
 
 
+void VDP_interruptFade()
+{
+    VIntProcess &= ~PROCESS_PALETTE_FADING;
+}
+
 void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async)
 {
     // error during fading initialisation, exit !

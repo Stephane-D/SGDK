@@ -276,5 +276,3 @@ void fastMemcpyU32(u32 *to, const u32 *from, u16 len);
 
 
 #endif // _MEMORY_H_
-
-
