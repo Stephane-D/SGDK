@@ -1,7 +1,7 @@
 #summary Installation and use of SGDK from command line (Windows OS only).
 #labels Phase-Deploy
 
- # Download the SGDK archive from the [http://code.google.com/p/sgdk/downloads/list Download page] and unzip it where it suits to you (for instance D:/sgdk).
+ # Download the SGDK archive from the [https://code.google.com/p/sgdk/wiki/Download?tm=2 Download page] and unzip it where it suits to you (for instance D:/sgdk).
  # Define _GDK_ environment variable to your installation path in unix path format (example D:/sgdk).
  # Define _GDK_WIN_ which still point to your installation path but in windows format (exemple D:\sgdk).
  # Add the _bin_ directory of devkit (%GDK_WIN%\bin) to your PATH variable. Be careful, if you have another GCC installation you can have some conflicts when cc1 command will be called...
