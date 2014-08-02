@@ -92,16 +92,24 @@ out/rom.out: out/sega.o out/cmd_ $(LIB)/libmd.a
 out/cmd_: $(OBJS)
 	$(ECHO) "$(OBJS)" > out/cmd_
 
-out/sega.o: $(LIBSRC)/boot/sega.s out/rom_head.bin
+out/sega.o: $(SRC)/boot/sega.s out/rom_head.bin
 	$(MKDIR) -p out
-	$(CC) $(FLAGS) -c $(LIBSRC)/boot/sega.s -o $@
+	$(CC) $(FLAGS) -c $(SRC)/boot/sega.s -o $@
 
 out/rom_head.bin: out/rom_head.o
 	$(LD) -T $(GDK)/md.ld -nostdlib --oformat binary -o $@ $<
 
-out/rom_head.o: $(LIBSRC)/boot/rom_head.c
+out/rom_head.o: $(SRC)/boot/rom_head.c
 	$(MKDIR) -p out
 	$(CC) $(FLAGS) -c $< -o $@
+
+$(SRC)/boot/sega.s: $(LIBSRC)/boot/sega.s
+	$(MKDIR) -p $(SRC)/boot
+	$(CP) $< $@
+
+$(SRC)/boot/rom_head.c: $(LIBSRC)/boot/rom_head.c
+	$(MKDIR) -p $(SRC)/boot
+	$(CP) $< $@
 
 
 out/%.o: %.c

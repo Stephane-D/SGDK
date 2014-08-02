@@ -349,6 +349,8 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
 
 void Z80_loadCustomDriver(const u8 *drv, u16 size)
 {
+    // clear z80 memory
+    Z80_clear(0, Z80_RAM_LEN, FALSE);
     // upload Z80 driver and reset Z80
     Z80_upload(0, drv, size, 1);
 
