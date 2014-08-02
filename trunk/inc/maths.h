@@ -26,13 +26,13 @@ extern const fix16 sqrttab16[0x10000];
  *  \def min
  *      Returns te lowest value between X an Y.
  */
-#define min(X, Y) (X < Y)?X:Y
+#define min(X, Y) ((X) < (Y))?(X):(Y)
 
 /**
  *  \def max
  *      Returns te highest value between X an Y.
  */
-#define max(X, Y) (X > Y)?X:Y
+#define max(X, Y) ((X) > (Y))?(X):(Y)
 
 
 #ifndef PI
