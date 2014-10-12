@@ -178,6 +178,24 @@
  */
 #define VSCROLL_2TILE           1
 
+/**
+ *  \def INTERLACED_NONE
+ *      Interlaced scanning mode disabled.<br/>
+ *      That is the default mode for the VDP.
+ */
+#define INTERLACED_NONE         0
+/**
+ *  \def INTERLACED_MODE1
+ *      Interlaced Scanning Mode 1 - 8x8 dots per cell (normal vertical resolution)<br/>
+ *      In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.
+ */
+#define INTERLACED_MODE1        1
+/**
+ *  \def INTERLACED_MODE2
+ *      Interlaced Scanning Mode 2 - 8x16 dots per cell (double vertical resolution)<br/>
+ *      In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.
+ */
+#define INTERLACED_MODE2        2
 
 /**
  *  \def TILE_SIZE
@@ -589,8 +607,7 @@ void VDP_setAutoInc(u8 value);
  *  \brief
  *      Enable or Disable Horizontal interrupt.
  *
- *  When Horizontal interrupt is enabled, setting 5 here means that H int will occurs each 5+1 scanline.<br/>
- *  Set value 0 to get H int at each scanline.
+ *  \see VDP_setHIntCounter()
  */
 void VDP_setHInterrupt(u8 value);
 /**
@@ -654,7 +671,7 @@ u16 VDP_getHScrollTableAddress();
  *      | window plan<br/>
  *      v others (plan a, plan b, ...)<br/>
  *      <br/>
- *      The the window tilemap address is used internally to calculated how much space is available for tiles.
+ *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
  *  Ex: VDP_setAPlanAddress(0xC000)<br/>
  *  Will set the Plan A to at address 0xC000 in VRAM.
@@ -670,7 +687,7 @@ void VDP_setAPlanAddress(u16 value);
  *      | window plan<br/>
  *      v others (plan a, plan b, ...)<br/>
  *      <br/>
- *      The the window tilemap address is used internally to calculated how much space is available for tiles.
+ *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
  *  Ex: VDP_setWindowAddress(0xA000)<br/>
  *  Will set the Window tilemap to at address 0xA000 in VRAM.
@@ -691,7 +708,7 @@ void VDP_setWindowPlanAddress(u16 value);
  *      | window plan<br/>
  *      v others (plan a, plan b, ...)<br/>
  *      <br/>
- *      The the window tilemap address is used internally to calculated how much space is available for tiles.
+ *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
  *  Ex: VDP_setAPlanAddress(0xE000)<br/>
  *  Will set the Plan B to at address 0xE000 in VRAM.
@@ -707,7 +724,7 @@ void VDP_setBPlanAddress(u16 value);
  *      | window plan<br/>
  *      v others (plan a, plan b, ...)<br/>
  *      <br/>
- *      The the window tilemap address is used internally to calculated how much space is available for tiles.
+ *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
  *  Ex: VDP_setSpriteListAddress(0xB800)<br/>
  *  Will set the Sprite list to at address 0xB800 in VRAM.
@@ -729,6 +746,20 @@ void VDP_setSpriteListAddress(u16 value);
  *  Will set the HScroll table to at address 0xB400 in VRAM.
  */
 void VDP_setHScrollTableAddress(u16 value);
+
+/**
+ *  \brief
+ *      Sets the scan mode of the display.
+ *
+ *  \param mode
+ *      Accepted values : #INTERLACED_NONE, #INTERLACED_MODE1, #INTERLACED_MODE2
+ *
+ * This function changes the scanning mode on the next display blanking period.</br>
+ * In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.</br>
+ * In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.</br>
+ * The number of cells on the screen stays the same regardless of which scanning mode is active.
+ */
+void VDP_setScanMode(u16 mode);
 
 /**
  *  \brief

@@ -26,7 +26,7 @@ void VDP_resetSprites()
 }
 
 
-void VDP_setSprite(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link)
+void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link)
 {
     SpriteDef *sprite;
 
@@ -61,7 +61,7 @@ void VDP_setSpriteP(u16 index, const SpriteDef *sprite)
 }
 
 
-void VDP_setSpriteDirect(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link)
+void VDP_setSpriteDirect(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -118,7 +118,7 @@ void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite)
 }
 
 
-void VDP_setSpritePosition(u16 index, u16 x, u16 y)
+void VDP_setSpritePosition(u16 index, s16 x, s16 y)
 {
     SpriteDef *sprite;
 

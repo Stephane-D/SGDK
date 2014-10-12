@@ -501,6 +501,23 @@ void VDP_setHScrollTableAddress(u16 value)
     *pw = 0x8D00 | regValues[0x0D];
 }
 
+void VDP_setScanMode(u16 value)
+{
+    vu16 *pw;
+
+	if (value == 0)
+        // non-interlaced
+		regValues[0x0C] &= ~0x06;
+	else if (value == 1)
+        // interlace mode 1
+		regValues[0x0C] = (regValues[0x0C] & ~0x04) | 0x02;
+	else
+        // interlace mode 2
+		regValues[0x0C] |= 0x06;
+
+	pw = (u16 *) GFX_CTRL_PORT;
+	*pw = 0x8C00 | regValues[0x0C];
+}
 
 void VDP_waitDMACompletion()
 {

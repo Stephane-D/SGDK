@@ -85,7 +85,7 @@ void VDP_resetSprites();
  *  \param link
  *      Sprite link (index of next sprite, 0 for end).
  */
-void VDP_setSprite(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link);
+void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link);
 /**
  *  \brief
  *      Set a sprite (use sprite list cache).
@@ -117,7 +117,7 @@ void VDP_setSpriteP(u16 index, const SpriteDef *sprite);
  *
  * See VDP_setSprite().
  */
-void VDP_setSpriteDirect(u16 index, u16 x, u16 y, u8 size, u16 tile_attr, u8 link);
+void VDP_setSpriteDirect(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link);
 /**
  *  \brief
  *      Set a sprite (direct send to VDP).
@@ -144,7 +144,7 @@ void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite);
  *
  * See VDP_setSprite().
  */
-void VDP_setSpritePosition(u16 index, u16 x, u16 y);
+void VDP_setSpritePosition(u16 index, s16 x, s16 y);
 
 
 /**

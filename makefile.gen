@@ -75,6 +75,12 @@ default: release
 clean:
 	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
 
+cleanrelease:
+	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
+
+cleandebug:
+	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin out/symbol.txt
+
 cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
 
