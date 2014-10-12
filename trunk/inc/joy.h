@@ -255,7 +255,7 @@ u16  JOY_readJoypad(u16 joy);
  *      countX = JOY_readJoypadX(JOY_2);<br>
  *<br>
  */
-u16  JOY_readJoypadX(u16 joy);
+s16  JOY_readJoypadX(u16 joy);
 
 /**
  *  \brief
@@ -279,7 +279,7 @@ u16  JOY_readJoypadX(u16 joy);
  *      countY = JOY_readJoypadY(JOY_2);<br>
  *<br>
  */
-u16  JOY_readJoypadY(u16 joy);
+s16  JOY_readJoypadY(u16 joy);
 
 /**
  *  \brief

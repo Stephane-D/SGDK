@@ -112,6 +112,16 @@ void Z80_setBank(const u16 bank)
     }
 }
 
+u8 Z80_read(const u16 addr)
+{
+    return ((u8*) Z80_RAM)[addr];
+}
+
+void Z80_write(const u16 addr, const u8 value)
+{
+    ((u8*) Z80_RAM)[addr] = value;
+}
+
 
 void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
 {

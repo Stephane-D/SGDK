@@ -380,7 +380,7 @@ void VDP_interruptFade()
 
 void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async)
 {
-    // error during fading initialisation, exit !
+    // error during fading initialization --> exit
     if (!VDP_initFading(fromcol, tocol, palsrc, paldst, numframe, TRUE)) return;
 
     // process asynchrone fading
