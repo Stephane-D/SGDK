@@ -4,7 +4,52 @@
 
 == Download ==
 
-Get the last version: [https://www.dropbox.com/s/a4oqp7i7hizivsd/sgdk096d.7z SGDK 0.96d]
+Get the last version: [https://www.dropbox.com/s/o056nj6zgxa6k4j/sgdk100.7z SGDK 1.00]
+
+
+== Changelog 1.00 ==
+
+A big addition for SGDK 1.00, the new XGM sound driver !
+You canf ind more informations about it in the [https://www.dropbox.com/s/bu348hu29ttl6la/xgm.txt XGM driver specifications].
+
+*COMPILER*
+ * Rescomp
+  * added support to XGM resource in rescomp.
+ * added xgmtool to convert VGM into XGM and compile XGM file.
+ * removed Genitile tool sources.
+ * updated wavtoraw to support sample interpolation.
+
+*LIBRARY*
+ * VDP
+  * added VDP_setScanMode(u16 mode) method to change the interlaced mode.
+  * added VDP_interruptFade() method to interrupt async palette fading.
+ * SPRITE
+  * fixed a bug with SPR_init(..) method when using same definition, sometime timer could be not reseted and then animation is not working anymore.
+  * fixed declaration of VDP_setSprite(..) / VDP_setSpriteDirect(..) / VDP_setSpritePosition(..) methods.
+ * SOUND
+  * Z80 memory is cleared before loading a custom driver.
+  * added Z80_read(..) and Z80_write(..) methods for simple Z80 RAM read/write operations.
+  * added XGM driver methods:
+    u8 SND_isPlaying_XGM();
+    void SND_startPlay_XGM(const u8 *song);
+    void SND_stopPlay_XGM();
+    void SND_resumePlay_XGM();
+    u8 SND_isPlayingPCM_XGM(const u16 channel_mask);
+    void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len);
+    void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len);
+    void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);
+    void SND_stopPlayPCM_XGM(const u16 channel);
+ * MATH
+  * minor fix in min/max defines.
+ * CONTROLLER
+  * fixed declaration of JOY_readJoypadX/Y(..) methods (they should return s16 and not u16)
+ * SYSTEM
+  * sega.s and rom_head.c files are now copied into the 'src/boot' project folder so they can easily be customized per project.
+ * SAMPLE
+  * modified sound sample to add XGM driver example.
+ * some fixes in the doxygen documentation.
+ * others changes and improvements.
+
 
 
 == Changelog 0.96d ==
