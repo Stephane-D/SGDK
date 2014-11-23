@@ -5,6 +5,7 @@
 int dpcmPack(char* fin, char* fout);
 int wavToRaw(char* fin, char* fout);
 int wavToRawEx(char* fin, char* fout, int outRate);
+int xgmtool(char* fin, char* fout);
 
 
 #endif // _SND_TOOLS_H_

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="xgmtool" />
+		<Option pch_mode="2" />
+		<Option default_target="debug" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="release">
+				<Option output="out/xgmtool" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="out/" />
+				<Option object_output="out/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="sor_origin.vgm sor2.bin -s" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-Os" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="debug">
+				<Option output="out/xgmtool" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="out/" />
+				<Option object_output="out/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="sor2.xgm sor2.xgc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="inc/psg.h" />
+		<Unit filename="inc/samplebank.h" />
+		<Unit filename="inc/util.h" />
+		<Unit filename="inc/vgm.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="inc/vgmcom.h" />
+		<Unit filename="inc/xgc.h" />
+		<Unit filename="inc/xgccom.h" />
+		<Unit filename="inc/xgm.h" />
+		<Unit filename="inc/xgmcom.h" />
+		<Unit filename="inc/xgmsmp.h" />
+		<Unit filename="inc/xgmtool.h" />
+		<Unit filename="inc/ym2612.h" />
+		<Unit filename="src/psg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/samplebank.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/util.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/vgm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/vgmcom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xgc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xgccom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xgm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xgmcom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xgmsmp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xgmtool.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ym2612.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

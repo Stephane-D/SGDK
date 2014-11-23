@@ -45,7 +45,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("PCM name file [driver]\n");
         printf("  name    variable name\n");
         printf("  file    path of the PCM data file\n");
-        printf("          Should be 8 bits PCM signed data and size need to be aligned to 256 for correct loop operation for drive supporting it.\n");
+        printf("          Should be 8 bits PCM signed data and size need to be aligned to 256 for correct loop operation for driver supporting it.\n");
         printf("  driver  specify the Z80 driver we will use to play the PCM (allow conversion if needed):\n");
         printf("          0 (default) = Z80_DRIVER_PCM\n");
         printf("            Single channel 8 bits signed sample driver.\n");
@@ -65,9 +65,13 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("            with volume support (16 levels du to memory limitation).\n");
         printf("            <b>Input:</b> 8 bits signed PCM at 16000 Hz\n");
         printf("          4 = Z80_DRIVER_VGM\n");
-        printf("            VGM music driver.\n");
-        printf("            It supports PCM SFX (8 bit unsigned) at a fixed 8 Khz rate.\n");
+        printf("            VGM music driver with 8 bits PCM SFX support.\n");
+        printf("            It can play a single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
         printf("            <b>Input:</b> 8 bits signed PCM at 8000 Hz\n");
+        printf("          5 = Z80_DRIVER_XGM\n");
+        printf("            XGM music with 4 channels 8 bits samples driver.\n");
+        printf("            It can play 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
+        printf("            <b>Input:</b> 8 bits signed PCM at 14000 Hz\n");
 
         return FALSE;
     }

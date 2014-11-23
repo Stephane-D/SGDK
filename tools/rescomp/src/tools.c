@@ -242,7 +242,7 @@ unsigned int getFileSize(char* file)
     unsigned int len;
     FILE * f;
 
-    f = fopen(file, "r");
+    f = fopen(file, "rb");
     fseek(f, 0, SEEK_END);
     len = (unsigned long)ftell(f);
     fclose(f);
@@ -280,6 +280,10 @@ unsigned char *readFile(char *fileName, int *size)
     return data;
 }
 
+int writeFile(char* filename, unsigned char* data, int size)
+{
+    return out(data, 0, size, 1, FALSE, filename);
+}
 
 void unsign8b(unsigned char* data, int size)
 {

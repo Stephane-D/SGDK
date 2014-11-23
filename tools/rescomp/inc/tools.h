@@ -53,6 +53,7 @@ void adjustPathSystem(char *dir, char* path, char* dst);
 void adjustPath(char *dir, char* path, char* dst);
 unsigned int getFileSize(char* file);
 unsigned char* readFile(char *fileName, int *size);
+int writeFile(char* filename, unsigned char* data, int size);
 
 void unsign8b(unsigned char* data, int size);
 unsigned char* sizeAlign(unsigned char* data, int size, int align, unsigned char fill, int *outSize);

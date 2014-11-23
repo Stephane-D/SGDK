@@ -688,9 +688,24 @@
             wait9
             endm
 
+            macro   wait73
+            wait63
+            wait10
+            endm
+
+            macro   wait74
+            wait63
+            wait11
+            endm
+
             macro   wait75
             wait63
             wait12
+            endm
+
+            macro   wait76
+            wait63
+            wait13
             endm
 
             macro   wait77
@@ -835,6 +850,11 @@
             wait16
             endm
 
+            macro   wait108
+            wait91
+            wait17
+            endm
+
             macro   wait109
             wait105
             wait4
@@ -873,6 +893,11 @@
             macro   wait117
             wait105
             wait12
+            endm
+
+            macro   wait118
+            wait105
+            wait13
             endm
 
             macro   wait119
@@ -924,6 +949,11 @@
             wait9
             endm
 
+            macro   wait129
+            wait119
+            wait10
+            endm
+
             macro   wait130
             wait119
             wait11
@@ -941,6 +971,16 @@
 
             macro   wait133
             wait14x7 9
+            endm
+
+            macro   wait134
+            wait119
+            wait15
+            endm
+
+            macro   wait135
+            wait119
+            wait16
             endm
 
             macro   wait136
@@ -968,6 +1008,11 @@
             wait8
             endm
 
+            macro   wait144
+            wait133
+            wait11
+            endm
+
             macro   wait145
             wait133
             wait12
@@ -992,9 +1037,39 @@
             wait8
             endm
 
+            macro   wait150
+            wait141
+            wait9
+            endm
+
+            macro   wait154
+            wait147
+            wait7
+            endm
+
             macro   wait155
             wait147
             wait8
+            endm
+
+            macro   wait156
+            wait147
+            wait9
+            endm
+
+            macro   wait157
+            wait147
+            wait10
+            endm
+
+            macro   wait158
+            wait147
+            wait11
+            endm
+
+            macro   wait160
+            wait147
+            wait13
             endm
 
             macro   wait161

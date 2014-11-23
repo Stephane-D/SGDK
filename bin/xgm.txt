@@ -1,0 +1,86 @@
+XGM Driver
+----------
+The XGM name stands for "eXtended Genesis Music", the XGM driver is a music driver developed specifically for the Sega Megadrive/Genesis system.
+
+It runs at 100% on the Z80 CPU and left the 68000 free for others tasks.
+It has been designed to minimize CPU decoding resource and keep reasonable data size (should be smaller than VGM file).
+It supports both FM and PSG chip and allow up to 4 PCM channels (8 bits signed at 14 Khz) to be played at once. PCM samples can be >32KB, the only restriction is that they should have their address and size aligned to 256 bytes. These 4 PCM channels are obtained by software mixing in the FM DAC in replacement of the 6th FM channel (so at best you can have 5FM + 4PCM + 4PSG = 13 channels)
+The driver supports playing SFX in PCM format with 16 priority levels, eventually you can reserve some PSG channel to play SFX from the 68000 side.
+
+The driver has been designed and developed for SGDK (https://code.google.com/p/sgdk/) by Stephane dallongeville (2014).
+
+XGM file format specifications v1.00
+------------------------------------
+Any tracker supporting the export in XGM music file format should use this document as reference.
+The produced XGM file can be compiled by the 'xgmtool' software (which is a part of SGDK) into a binary file (.bin or .xgc) ready to be played by the Z80 XGM driver.
+The normal file extension for XGM file is .xgm but it can eventually be compressed (gzip compression) and use the .xgz extension instead.
+
+File format (multi bytes value are in little endian format)
+-----------------------------------------------------------
+Address    Size    Description
+$0000         4    XGM file ident, should be "XGM "
+$0004       252    Sample id table.
+                     This table contain the address and the size for all sample (maximum = 63 samples)
+                     Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
+                       entry+$0: sample address / 256
+                       entry+$2: sample size / 256
+                     We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
+                     The sample address is relative to the start of the "Sample Data Bloc" (field $104).
+                     An empty entry should have its address set to $FFFF and size set to $0001.
+$0100         2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
+                     We will reference the value of this field as SLEN.
+$0102         1    Version information (0 currently)                 
+$0103         1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
+                     This field is used to determine how interpret the frame wait command.
+                     In NTSC mode a frame wait command is equivalent to 1/60 of second.
+                     In PAL mode a frame wait command is equivalent to 1/50 of second.
+                   bit #1 - bit #7: reserved for future use
+$0104      SLEN    Sample data bloc, contains all sample data (8 bits signed format)
+                     The size of this bloc is variable and is determined by the field $100.
+                     If field $100 contains $0000 the bloc is empty and the field is ignored.
+                     As explained in the 'Sample id table' field, sample size is aligned on 256 bytes.
+$0104+SLEN    4    Music data bloc size.
+                     We will reference the value of this field as MLEN.
+                     This fields may be used later to quickly browse multi track XGM file.
+$0108+SLEN MLEN    Music data bloc. It contains the XGM music data (see the XGM command description below).
+
+
+XGM command description
+-----------------------
+Value       Size    Description
+$00            1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
+$1X data     1+X    PSG register write:
+                      X = number of byte to write - 1
+                      data = byte data to write to PSG port ($4011)
+$2X data    1+2X    YM2612 port 0 register write:
+                      X = number of register write - 1
+                      data = data to write to YM2612 port 0 ($4000 and $4001)
+                        entry+$00: register number
+                        entry+$01: register value
+$3X data    1+2X    YM2612 port 1 register write:
+                      X = number of register write - 1
+                      data = data to write to YM2612 port 1 ($4002 and $4003)
+                        entry+$00: register number
+                        entry+$01: register value
+$4X data     1+X    YM2612 key off/on ($28) command write:
+                      X = number of key register write - 1
+                      data = data to write to YM2612 key register
+$5X id         2    PCM play command:
+                      X = priority (X & 0xC) and channel number (X & 0x3)
+                        Channel number varie from 0 to 3 as the driver allow to play up to 4 PCM at same time.
+                        Priority level varie from 0 to 12 (in step of 4), higher value mean higher priority.
+                        Ex: We have a sample playing on channel 0 with a priority of 5 (SFX).
+                          - We receive a PCM play command with a priority of 4
+                            --> command ignored
+                          - We receive a PCM play command with a priority of 8
+                            --> command is accepted and new sample replace old one, channel priority is changed to 8
+                      id = sample id (should be < 64). Reference the sample id table to get address and size of sample.
+                        sample address = (sampleIdTable[((id-1)*4) + 0] << 8) + (sampleIdTable[((id-1)*4) + 1] << 16)
+                        sample size = (sampleIdTable[((id-1)*4) + 2] << 8) + (sampleIdTable[((id-1)*4) + 3] << 16)
+                        Note that we use (id-1) as value 0 is a special value used to stop a PCM channel.
+$7E dddddd     4    Loop command, used for music looping sequence:
+                      dddddd = address where to loop relative to the start of music data bloc.
+$7F            1    End command (end of music data).
+
+
+Command $6X and $80-$FF are reserved for internal use and should not be used.

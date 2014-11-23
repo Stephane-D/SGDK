@@ -15,6 +15,7 @@
 #include "../inc/map.h"
 #include "../inc/image.h"
 #include "../inc/sprite.h"
+#include "../inc/xgmmusic.h"
 #include "../inc/tfmmusic.h"
 #include "../inc/vgmmusic.h"
 #include "../inc/pcm.h"
@@ -43,6 +44,7 @@ Plugin *plugins[] =
     &map,
     &image,
     &sprite,
+    &xgm,
     &tfm,
     &vgm,
     &pcm,
@@ -83,7 +85,7 @@ int main(int argc, char **argv)
 
 //    strcpy(fileName, "resources.res");
 
-    printf("rescomp v1.21\n");
+    printf("rescomp v1.3\n");
 
     if (!fileName[0])
     {

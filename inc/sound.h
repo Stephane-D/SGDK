@@ -36,8 +36,14 @@
  *<br>
  * <b>Z80_DRIVER_VGM</b><br>
  * VGM music player driver.<br>
- * Support PCM playback up to 8 Khz.<br>
+ * It supports 1 PCM channel at a fixed 8 Khz and allows to play SFX through the named PCM channel.<br>
  * Written by Sigflup and kubilus1.
+ *<br>
+ * <b>Z80_DRIVER_XGM</b><br>
+ * eXtended VGM music player driver.<br>
+ * This driver takes VGM (or XGM) file as input to play music.<br>
+ * It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br>
+ * The driver is designed to avoid DMA contention when possible (depending CPU load).
  */
 
 #ifndef _SOUND_H_
@@ -486,7 +492,6 @@ void SND_disablePSG_MVS(u8 chan);
  *      TFM track address.
  */
 void SND_startPlay_TFM(const u8 *song);
-
 /**
  *  \brief
  *      Stop playing music (TFM music player driver).
@@ -497,6 +502,11 @@ void SND_stopPlay_TFM();
 // Z80_DRIVER_VGM
 
 /**
+ * \brief
+ *      Return play state of VGM driver.
+ */
+u8 SND_isPlaying_VGM();
+/**
  *  \brief
  *      Start playing the specified VGM track (VGM music player driver).
  *
@@ -504,13 +514,11 @@ void SND_stopPlay_TFM();
  *      VGM track address.
  */
 void SND_startPlay_VGM(const u8 *song);
-
 /**
  *  \brief
  *      Stop playing music (VGM music player driver).
  */
 void SND_stopPlay_VGM();
-
 /**
  * \brief
  *      Resume playing music after stopping with SND_stopPlay_VGM.
@@ -519,15 +527,123 @@ void SND_resumePlay_VGM();
 
 /**
  * \brief
- *      Return play state of VGM driver..
- */
-u8 SND_isPlaying_VGM();
-
-/**
- * \brief
  *      Play a PCM sound effect while a VGM track is playing.
  */
 void SND_playSfx_VGM(const u8 *sfx, u16 len);
 
+
+// Z80_DRIVER_XGM
+
+/**
+ * \brief
+ *      Returns play music state (XGM music player driver).
+ */
+u8 SND_isPlaying_XGM();
+/**
+ *  \brief
+ *      Start playing the specified XGM track (XGM music player driver).
+ *
+ *  \param song
+ *      XGM track address.
+ */
+void SND_startPlay_XGM(const u8 *song);
+/**
+ *  \brief
+ *      Stop playing music (XGM music player driver).
+ */
+void SND_stopPlay_XGM();
+/**
+ * \brief
+ *      Resume playing music after stopping with SND_stopPlay_XGM (XGM music player driver).
+ */
+void SND_resumePlay_XGM();
+
+/**
+ *  \brief
+ *      Return play status of specified PCM channel (XGM music player driver).
+ *
+ *  \param channel_mask
+ *      Channel(s) we want to retrieve play state.<br>
+ *      #SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      #SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      #SOUND_PCM_CH3_MSK    = channel 3<br>
+ *      #SOUND_PCM_CH4_MSK    = channel 4<br>
+ *      <br>
+ *      You can combine mask to retrieve state of severals channels at once:<br>
+ *      <code>isPlayingPCM_XGM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
+ *      will actually return play state for channel 1 and channel 2.
+ *
+ *  \return
+ *      Return non zero if specified channel(s) is(are) playing.
+ */
+u8 SND_isPlayingPCM_XGM(const u16 channel_mask);
+/**
+ *  \brief
+ *      Declare a new PCM sample (maximum = 255) for the XGM music player driver.<br/>
+ *      Sample id < 64 are reserved for music while others are used for SFX
+ *      so if you want to declare a new SFX PCM sample use an id >= 64
+ *
+ *  \param id
+ *      Sample id:<br/>
+ *      value 0 is not allowed<br/>
+ *      values from 1 to 63 are used for music
+ *      values from 64 to 255 are used for SFX
+ *  \param sample
+ *      Sample address, should be 256 bytes boundary aligned<br>
+ *      SGDK automatically align sample resource as needed
+ *  \param len
+ *      Size of sample in bytes, should be a multiple of 256<br>
+ *      SGDK automatically adjust resource size as needed
+ */
+void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len);
+/**
+ *  \brief
+ *      Same as #SND_setPCM_XGM but fast version.<br/>
+ *      This method assume that XGM driver is loaded and that 68000 has access to Z80 bus
+ *
+ *  \param id
+ *      Sample id:<br/>
+ *      value 0 is not allowed<br/>
+ *      values from 1 to 63 are used for music
+ *      values from 64 to 255 are used for SFX
+ *  \param sample
+ *      Sample address, should be 256 bytes boundary aligned<br>
+ *      SGDK automatically align sample resource as needed
+ *  \param len
+ *      Size of sample in bytes, should be a multiple of 256<br>
+ *      SGDK automatically adjust resource size as needed
+ */
+void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len);
+/**
+ *  \brief
+ *      Play a PCM sample on specified channel (XGM music player driver).<br>
+ *      If a sample was currently playing on this channel then priority of the newer sample should be are compared tthen it's stopped and the new sample is played instead.
+ *
+ *  \param id
+ *      Sample id (set #SND_setSample_XGM method)
+ *  \param priority
+ *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br/>
+ *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
+ *  \param channel
+ *      Channel where we want to play sample.<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
+ */
+void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);
+/**
+ *  \brief
+ *      Stop play PCM on specified channel (XGM music player driver).<br>
+ *      No effect if no sample was currently playing on this channel.
+ *
+ *  \param channel
+ *      Channel we want to stop.<br>
+ *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH3    = channel 3<br>
+ *      #SOUND_PCM_CH4    = channel 4<br>
+ */
+void SND_stopPlayPCM_XGM(const u16 channel);
 
 #endif // _SOUND_H_
