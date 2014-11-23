@@ -30,15 +30,15 @@ You canf ind more informations about it in the [https://www.dropbox.com/s/bu348h
   * Z80 memory is cleared before loading a custom driver.
   * added Z80_read(..) and Z80_write(..) methods for simple Z80 RAM read/write operations.
   * added XGM driver methods:
-    u8 SND_isPlaying_XGM();
-    void SND_startPlay_XGM(const u8 *song);
-    void SND_stopPlay_XGM();
-    void SND_resumePlay_XGM();
-    u8 SND_isPlayingPCM_XGM(const u16 channel_mask);
-    void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len);
-    void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len);
-    void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);
-    void SND_stopPlayPCM_XGM(const u16 channel);
+    `u8 SND_isPlaying_XGM();`
+    `void SND_startPlay_XGM(const u8 *song);`
+    `void SND_stopPlay_XGM();`
+    `void SND_resumePlay_XGM();`
+    `u8 SND_isPlayingPCM_XGM(const u16 channel_mask);`
+    `void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len);`
+    `void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len);`
+    `void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);`
+    `void SND_stopPlayPCM_XGM(const u16 channel);`
  * MATH
   * minor fix in min/max defines.
  * CONTROLLER
