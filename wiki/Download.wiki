@@ -10,7 +10,7 @@ Get the last version: [https://drive.google.com/file/d/0BztTfEamf-d9WXRnVkprZ1RW
 == Changelog 1.00 ==
 
 A big addition for SGDK 1.00, the new XGM sound driver !
-You canf ind more informations about it in the [https://drive.google.com/file/d/0BztTfEamf-d9MjVsOGN1MXEwdk0/view?usp=sharing XGM driver specifications].
+You can find more informations about it in the [https://drive.google.com/file/d/0BztTfEamf-d9MjVsOGN1MXEwdk0/view?usp=sharing XGM driver specifications].
 
 *COMPILER*
  * Rescomp
