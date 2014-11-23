@@ -17,6 +17,7 @@
 #include "z80_mvsc.h"
 #include "z80_tfm.h"
 #include "z80_vgm.h"
+#include "z80_xgm.h"
 
 #include "tab_vol.h"
 #include "smp_null.h"
@@ -234,6 +235,11 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             len = sizeof(z80_vgm);
             break;
 
+        case Z80_DRIVER_XGM:
+            drv = z80_xgm;
+            len = sizeof(z80_xgm);
+            break;
+
         default:
             // no valid driver to load
             return;
@@ -330,26 +336,55 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             YM2612_reset();
             PSG_init();
             break;
+
+        case Z80_DRIVER_XGM:
+            // reset sound chips
+            YM2612_reset();
+            PSG_init();
+
+            // misc parameters initialisation
+            Z80_requestBus(1);
+            // point to Z80 sample id table (first entry = silent sample)
+            pb = (u8 *) (0xA01C00);
+
+            addr = (u32) smp_null;
+            // null sample address (256 bytes aligned)
+            pb[0] = addr >> 8;
+            pb[1] = addr >> 16;
+            // null sample length (256 bytes aligned)
+            pb[2] = sizeof(smp_null) >> 8;
+            pb[3] = sizeof(smp_null) >> 16;
+            Z80_releaseBus();
+            break;
     }
 
     // wait driver for being ready
     if (waitReady)
     {
-        // drivers supporting ready status
-        if (driver < Z80_DRIVER_MVS)
+        switch(driver)
         {
-            Z80_releaseBus();
-            // wait bus released
-            while(Z80_isBusTaken());
-
-            // just wait for it
-            while(!Z80_isDriverReady())
+            // drivers supporting ready status
+            case Z80_DRIVER_2ADPCM:
+            case Z80_DRIVER_PCM:
+            case Z80_DRIVER_4PCM:
+            case Z80_DRIVER_4PCM_ENV:
+            case Z80_DRIVER_XGM:
+                Z80_releaseBus();
+                // wait bus released
                 while(Z80_isBusTaken());
-        }
-        else
-        {
-            // just wait a bit of time
-            waitMs(100);
+
+                // just wait for it
+                while(!Z80_isDriverReady())
+                    while(Z80_isBusTaken());
+                break;
+
+            // others drivers
+            case Z80_DRIVER_TFM:
+            case Z80_DRIVER_MVS:
+            case Z80_DRIVER_VGM:
+                // just wait a bit of time
+                waitMs(100);
+                break;
         }
     }
 

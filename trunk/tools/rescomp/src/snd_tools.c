@@ -91,3 +91,36 @@ int wavToRawEx(char* fin, char* fout, int outRate)
 
     return TRUE;
 }
+
+int xgmtool(char* fin, char* fout)
+{
+    char cmd[MAX_PATH_LEN * 2];
+    FILE *f;
+
+    // better to remove output file
+    remove(fout);
+
+    // command
+    adjustPath(currentDir, "xgmtool", cmd);
+
+    // arguments
+    strcat(cmd, " \"");
+    strcat(cmd, fin);
+    strcat(cmd, "\" \"");
+    strcat(cmd, fout);
+    strcat(cmd, "\"");
+    strcat(cmd, " -s");
+
+    printf("Executing %s\n", cmd);
+
+    system(cmd);
+
+    // we test for the out file existence
+    f = fopen(fout, "rb");
+    fclose(f);
+
+    // file don't exist --> error
+    if (f == NULL) return FALSE;
+
+    return TRUE;
+}

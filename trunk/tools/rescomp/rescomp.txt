@@ -16,8 +16,9 @@ Supported resource type:
 - TILESET   tileset type resource, contains tiles data which are used by Image or Sprite resource.
 - MAP       map type resource (tilemap data).
 - IMAGE     image type resource, internally contains Palette, Tileset and Map data and can be used to draw a complete background.
-- SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine..
+- SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
 - TFM       TFM music type resource (.tfd or .tfc file), used to play music.
+- XGM       XGM music type resource (.vgm or .xgm file), used to play music.
 - VGM       VGM music type resource (.vgm file), used to play music.
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
 - PCM       PCM sound type resource (.pcm file), used to play sample sound data.
@@ -152,6 +153,18 @@ Some informations about how SpriteDefinition is generated from the input image:
 - collision bounds are calculated by using 75% of the original sprite frame.
 - In future rescomp could detect empty tiles in a frame to optimize the internal VDP sprite usage (and also improve the collision box).
 That may be a nice future addition :)
+
+
+XGM
+---
+Take a .vgm or .xgm music file as input and transform it in binary format usable with the SGDK SND_startPlay_XGM(..) methods.
+The XGM driver supports music play along 4 PCM channels mixing (100% running on Z80 cpu).
+
+Syntax:
+XGM name file
+
+    name        XGM music variable name
+    file        path of the .vgm or .xgm music file to convert to binary data array
 
 
 TFM

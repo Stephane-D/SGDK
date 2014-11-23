@@ -22,9 +22,9 @@ u8 SND_isPlaying_PCM()
     u8 ret;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM, 1);
+    Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -42,9 +42,9 @@ void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM, 1);
+    Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 base parameters
     pb = (u8 *) Z80_DRV_PARAMS;
@@ -82,9 +82,9 @@ void SND_stopPlay_PCM()
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM, 1);
+    Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 internal parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x10);
@@ -117,9 +117,9 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask)
     u8 ret;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_2ADPCM, 1);
+    Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -139,9 +139,9 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_2ADPCM, 1);
+    Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -194,9 +194,9 @@ void SND_stopPlay_2ADPCM(const u16 channel)
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_2ADPCM, 1);
+    Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 internal parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x10 + (channel * 4));
@@ -229,9 +229,9 @@ u8 SND_isPlaying_4PCM(const u16 channel_mask)
     u8 ret;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -251,9 +251,9 @@ void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, cons
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -306,9 +306,9 @@ void SND_stopPlay_4PCM(const u16 channel)
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 internal parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x10 + (channel * 4));
@@ -341,9 +341,9 @@ u8 SND_isPlaying_4PCM_ENV(const u16 channel_mask)
     u8 ret;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -363,9 +363,9 @@ void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, 
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -418,9 +418,9 @@ void SND_stopPlay_4PCM_ENV(const u16 channel)
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 internal parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x10 + (channel * 4));
@@ -447,9 +447,9 @@ void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume)
     vu8 *pb;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 volume parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x20) + channel;
@@ -465,9 +465,9 @@ u8 SND_getVolume_4PCM_ENV(const u16 channel)
     u8 volume;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, 1);
+    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 volume parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x20) + channel;
@@ -492,7 +492,7 @@ u8 SND_isPlaying_MVS()
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 FM command
     pb = (u8 *) MVS_FM_CMD;
@@ -514,7 +514,7 @@ void SND_startPlay_MVS(const u8 *music, const u8 loop)
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     addr = (u32) music;
 
@@ -547,7 +547,7 @@ void SND_stopPlay_MVS()
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 FM command
     pb = (u8 *) MVS_FM_CMD;
@@ -567,7 +567,7 @@ void SND_setTempo_MVS(u8 tempo)
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 FM tempo
     pb = (u8 *) MVS_FM_TEMPO;
@@ -587,7 +587,7 @@ void SND_startDAC_MVS(const u8 *sample, u16 size)
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     addr = (u32) sample;
 
@@ -621,7 +621,7 @@ void SND_stopDAC_MVS()
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 DAC command
     pb = (u8 *) MVS_DAC_CMD;
@@ -641,7 +641,7 @@ u8 SND_isPlayingPSG_MVS()
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 PSG status
     pb = (u8 *) MVS_PSG_STAT;
@@ -663,7 +663,7 @@ void SND_startPSG_MVS(const u8 *music)
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     addr = (u32) music;
 
@@ -691,7 +691,7 @@ void SND_stopPSG_MVS()
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 PSG command
     pb = (u8 *) MVS_PSG_CMD;
@@ -709,7 +709,7 @@ void SND_enablePSG_MVS(u8 chan)
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 PSG channel
     pb = (u8 *) MVS_PSG_CHAN;
@@ -727,7 +727,7 @@ void SND_disablePSG_MVS(u8 chan)
     // load the appropried driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 PSG channel
     pb = (u8 *) MVS_PSG_CHAN;
@@ -752,7 +752,7 @@ void SND_startPlay_TFM(const u8 *song)
     Z80_unloadDriver();
     Z80_loadDriver(Z80_DRIVER_TFM, 0);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     addr = (u32) song;
 
@@ -790,7 +790,7 @@ void SND_startPlay_VGM(const u8 *song)
     u32 addr;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+    Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
     // stop current music
     if (SND_isPlaying_VGM())
@@ -799,7 +799,7 @@ void SND_startPlay_VGM(const u8 *song)
         waitMs(10);
     }
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     addr = (u32) song;
 
@@ -827,9 +827,9 @@ void SND_stopPlay_VGM()
     vu8 *pb;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+    Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 VGM play parameter
     pb = (u8 *) 0xA01004;
@@ -843,9 +843,9 @@ void SND_resumePlay_VGM()
     vu8 *pb;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+    Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 VGM play parameter
     pb = (u8 *) 0xA01004;
@@ -860,9 +860,9 @@ u8 SND_isPlaying_VGM()
     vu8 *pb;
 
     // load the appropried driver if not already done
-    Z80_loadDriver(Z80_DRIVER_VGM, 1);
+    Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // point to Z80 VGM play parameter
     pb = (u8 *) 0xA01004;
@@ -890,7 +890,7 @@ void SND_playSfx_VGM(const u8 *sfx, u16 len)
     char *t = (char *) 0xA01026;
     char *u = (char *)&z80bank;
 
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
     p[0] = q[1];
     p[1] = q[0];
     r[0] = s[1];
@@ -898,5 +898,224 @@ void SND_playSfx_VGM(const u8 *sfx, u16 len)
     t[0] = u[0];
     pb = (u8 *) 0xA01025;
     *pb = 0x01;
+    Z80_releaseBus();
+}
+
+
+// Z80_DRIVER_XGM
+// XGM driver
+///////////////////////////////////////////////////////////////
+
+u8 SND_isPlaying_XGM()
+{
+    vu8 *pb;
+    u8 ret;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 status
+    pb = (u8 *) Z80_DRV_STATUS;
+    // play status
+    ret = *pb & (1 << 6);
+
+    Z80_releaseBus();
+
+    return ret;
+}
+
+void SND_startPlay_XGM(const u8 *song)
+{
+    u8 ids[0x100-4];
+    u32 addr;
+    u16 i;
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // prepare sample id table
+    for(i = 0; i < 0x3F; i++)
+    {
+        // sample address in sample bank data
+        addr = song[(i * 4) + 0] << 8;
+        addr |= song[(i * 4) + 1] << 16;
+
+        // silent sample ? use null sample address
+        if (addr == 0xFFFF00) addr = (u32) smp_null;
+        // adjust sample address (make it absolute)
+        else addr += ((u32) song) + 0x100;
+
+        // write adjusted addr
+        ids[(i * 4) + 0] = addr >> 8;
+        ids[(i * 4) + 1] = addr >> 16;
+        // and recopy len
+        ids[(i * 4) + 2] = song[(i * 4) + 2];
+        ids[(i * 4) + 3] = song[(i * 4) + 3];
+    }
+
+    // upload sample id table (first entry is silent sample, we don't transfer it)
+    Z80_upload(0x1C00 + 4, ids, 0x100 - 4, FALSE);
+
+    // Z80 upload release bus after operation
+    Z80_requestBus(TRUE);
+
+    // point to Z80 XGM address parameter
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x00);
+
+    // get song address and bypass sample id table
+    addr = ((u32) song) + 0x100;
+
+    // bypass sample data (use the sample data size)
+    addr += song[0xFC] << 8;
+    addr += song[0xFD] << 16;
+
+    // and bypass the music data size field
+    addr += 4;
+
+    // set XGM music data address
+    pb[0x00] = addr >> 0;
+    pb[0x01] = addr >> 8;
+    pb[0x02] = addr >> 16;
+    pb[0x03] = addr >> 24;
+
+    // point to Z80 command
+    pb = (u8 *) Z80_DRV_COMMAND;
+    // set play XGM command
+    *pb |= (1 << 6);
+
+    Z80_releaseBus();
+}
+
+void SND_stopPlay_XGM()
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 command
+    pb = (u8 *) Z80_DRV_COMMAND;
+
+    // set stop XGM command
+    *pb |= (1 << 4);
+
+    Z80_releaseBus();
+}
+
+void SND_resumePlay_XGM()
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 command
+    pb = (u8 *) Z80_DRV_COMMAND;
+    // set resume XGM command
+    *pb |= (1 << 5);
+
+    Z80_releaseBus();
+}
+
+u8 SND_isPlayingPCM_XGM(const u16 channel_mask)
+{
+    vu8 *pb;
+    u8 ret;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 status
+    pb = (u8 *) Z80_DRV_STATUS;
+    // play status
+    ret = *pb & (channel_mask << Z80_DRV_STAT_PLAYING_SFT);
+
+    Z80_releaseBus();
+
+    return ret;
+}
+
+void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len)
+{
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    SND_setPCMFast_XGM(id, sample, len);
+
+    Z80_releaseBus();
+}
+
+void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len)
+{
+    vu8 *pb;
+
+    // point to sample id table
+    pb = (u8 *) (0xA01C00 + (id * 4));
+
+    // write sample addr
+    pb[0x00] = ((u32) sample) >> 8;
+    pb[0x01] = ((u32) sample) >> 16;
+    pb[0x02] = len >> 8;
+    pb[0x03] = len >> 16;
+}
+
+void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel)
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 PCM parameters
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x04 + (channel * 2));
+
+    // set PCM priority and id
+    pb[0x00] = priority & 0xF;
+    pb[0x01] = id;
+
+    // point to Z80 command
+    pb = (u8 *) Z80_DRV_COMMAND;
+    // set play PCM channel command
+    *pb |= (Z80_DRV_COM_PLAY << channel);
+
+    Z80_releaseBus();
+}
+
+void SND_stopPlayPCM_XGM(const u16 channel)
+{
+    vu8 *pb;
+
+    // load the appropried driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 PCM parameters
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x04 + (channel * 2));
+
+    // use silent PCM (id = 0) with minimum priority
+    pb[0x00] = 0;
+    pb[0x01] = 0;
+
+    // point to Z80 command
+    pb = (u8 *) Z80_DRV_COMMAND;
+    // set play PCM channel command
+    *pb |= (Z80_DRV_COM_PLAY << channel);
+
     Z80_releaseBus();
 }

@@ -443,6 +443,10 @@ u16 VDP_drawImage(u16 plan, const Image *image, u16 x, u16 y);
  *      Plan Y position (in tile).
  *  \param loadpal
  *      Load the bitmap palette information when non zero.
+ *      Accepted values are:<br/>
+ *      0 = don't load palette.<br/>
+ *      1 = HIGH PRIORITY TILE.<br/>
+ *      0:
  *  \param use_dma
  *      Use DMA transfert (faster but can lock Z80 execution).
  *  \return

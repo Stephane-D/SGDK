@@ -2,7 +2,7 @@
 
 #include "resources.h"
 
-#define NUM_DRIVER      8
+#define NUM_DRIVER      9
 #define MAX_CMD         8
 #define MAX_PARAM       16
 
@@ -118,6 +118,14 @@ static const driver_def drivers[NUM_DRIVER] =
     {
         Z80_DRIVER_VGM,
         "VGM driver",
+        1,
+        {
+            {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
+        }
+    },
+    {
+        Z80_DRIVER_XGM,
+        "XGM driver",
         1,
         {
             {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
@@ -245,22 +253,22 @@ static void refreshDriverCmd()
             break;
 
         case Z80_DRIVER_2ADPCM:
-            VDP_drawText("press A to start/end channel 1 play", 1, 12);
-            VDP_drawText("press B to start/end channel 2 play", 1, 13);
+            VDP_drawText("press A to start/end channel 1", 1, 12);
+            VDP_drawText("press B to start/end channel 2", 1, 13);
             break;
 
         case Z80_DRIVER_4PCM:
-            VDP_drawText("press A to start/end channel 1 play", 1, 12);
-            VDP_drawText("press B to start/end channel 2 play", 1, 13);
-            VDP_drawText("press C to start/end channel 3 play", 1, 14);
-            VDP_drawText("press START to start/end channel 4 play", 1, 15);
+            VDP_drawText("press A to start/end channel 1", 1, 12);
+            VDP_drawText("press B to start/end channel 2", 1, 13);
+            VDP_drawText("press C to start/end channel 3", 1, 14);
+            VDP_drawText("press START to start/end channel 4", 1, 15);
             break;
 
         case Z80_DRIVER_4PCM_ENV:
-            VDP_drawText("press A to start/end channel 1 play", 1, 12);
-            VDP_drawText("press B to start/end channel 2 play", 1, 13);
-            VDP_drawText("press C to start/end channel 3 play", 1, 14);
-            VDP_drawText("press START to start/end channel 4 play", 1, 15);
+            VDP_drawText("press A to start/end channel 1", 1, 12);
+            VDP_drawText("press B to start/end channel 2", 1, 13);
+            VDP_drawText("press C to start/end channel 3", 1, 14);
+            VDP_drawText("press START to start/end channel 4", 1, 15);
             break;
 
         case Z80_DRIVER_MVS:
@@ -273,10 +281,23 @@ static void refreshDriverCmd()
             break;
 
         case Z80_DRIVER_VGM:
-            VDP_drawText("press A to start VGM1 play", 1, 12);
-            VDP_drawText("press B to start VGM2 play", 1, 13);
-            VDP_drawText("press C to start VGM3 play", 1, 14);
-            VDP_drawText("press Start to stop play", 1, 15);
+            VDP_drawText("press A to play Sonic 1 VGM", 1, 12);
+            VDP_drawText("press B to play RoadRash VGM", 1, 13);
+            VDP_drawText("press C to play Bad Apple VGM", 1, 14);
+            VDP_drawText("press Start to stop/resume VGM", 1, 15);
+
+            VDP_drawText("press X to play PCM SFX", 1, 17);
+            break;
+
+        case Z80_DRIVER_XGM:
+            VDP_drawText("press A to play Streets Of Rage 2 XGM", 1, 12);
+            VDP_drawText("press B to play Bad Apple (PCM) XGM", 1, 13);
+            VDP_drawText("press C to play Midnight Resistance XGM", 1, 14);
+            VDP_drawText("press START to pause/resume XGM music", 1, 15);
+
+            VDP_drawText("press X to start/end PCM ch 2", 1, 17);
+            VDP_drawText("press Y to start/end PCM ch 3", 1, 18);
+            VDP_drawText("press Z to start/end PCM ch 4", 1, 19);
             break;
     }
 }
@@ -538,7 +559,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
                 if (SND_isPlaying_2ADPCM(SOUND_PCM_CH2_MSK))
                     SND_stopPlay_2ADPCM(SOUND_PCM_CH2);
                 else
-                    SND_startPlay_2ADPCM(loop4_pcm_22k, sizeof(loop4_pcm_22k), SOUND_PCM_CH2, loop);
+                    SND_startPlay_2ADPCM(loop3_pcm_22k, sizeof(loop3_pcm_22k), SOUND_PCM_CH2, loop);
             }
 
             break;
@@ -548,34 +569,34 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         {
             if (changed & state & BUTTON_START)
             {
-                if (SND_isPlaying_4PCM(SOUND_PCM_CH4_MSK))
-                    SND_stopPlay_4PCM(SOUND_PCM_CH4);
-                else
-                    SND_startPlay_4PCM(sound1_16k, sizeof(sound1_16k), SOUND_PCM_CH4, loop);
-            }
-
-            if (changed & state & BUTTON_A)
-            {
                 if (SND_isPlaying_4PCM(SOUND_PCM_CH1_MSK))
                     SND_stopPlay_4PCM(SOUND_PCM_CH1);
                 else
                     SND_startPlay_4PCM(loop1_16k, sizeof(loop1_16k), SOUND_PCM_CH1, loop);
             }
 
-            if (changed & state & BUTTON_B)
+            if (changed & state & BUTTON_A)
             {
-                if (SND_isPlaying_4PCM(SOUND_PCM_CH2_MSK))
-                    SND_stopPlay_4PCM(SOUND_PCM_CH2);
+                if (SND_isPlaying_4PCM(SOUND_PCM_CH4_MSK))
+                    SND_stopPlay_4PCM(SOUND_PCM_CH4);
                 else
-                    SND_startPlay_4PCM(loop3_16k, sizeof(loop3_16k), SOUND_PCM_CH2, loop);
+                    SND_startPlay_4PCM(explode_16k, sizeof(explode_16k), SOUND_PCM_CH4, loop);
             }
 
-            if (changed & state & BUTTON_C)
+            if (changed & state & BUTTON_B)
             {
                 if (SND_isPlaying_4PCM(SOUND_PCM_CH3_MSK))
                     SND_stopPlay_4PCM(SOUND_PCM_CH3);
                 else
-                    SND_startPlay_4PCM(violon1_16k, sizeof(violon1_16k), SOUND_PCM_CH3, loop);
+                    SND_startPlay_4PCM(snare1_16k, sizeof(snare1_16k), SOUND_PCM_CH3, loop);
+            }
+
+            if (changed & state & BUTTON_C)
+            {
+                if (SND_isPlaying_4PCM(SOUND_PCM_CH2_MSK))
+                    SND_stopPlay_4PCM(SOUND_PCM_CH2);
+                else
+                    SND_startPlay_4PCM(hat2_16k, sizeof(hat2_16k), SOUND_PCM_CH2, loop);
             }
 
             break;
@@ -602,7 +623,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
                 if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH1_MSK))
                     SND_stopPlay_4PCM_ENV(SOUND_PCM_CH1);
                 else
-                    SND_startPlay_4PCM_ENV(piano1_16k, sizeof(piano1_16k), SOUND_PCM_CH1, loop);
+                    SND_startPlay_4PCM_ENV(hat2_16k, sizeof(hat2_16k), SOUND_PCM_CH1, loop);
             }
 
             if (changed & state & BUTTON_B)
@@ -610,7 +631,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
                 if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH2_MSK))
                     SND_stopPlay_4PCM_ENV(SOUND_PCM_CH2);
                 else
-                    SND_startPlay_4PCM_ENV(violon2_16k, sizeof(violon2_16k), SOUND_PCM_CH2, loop);
+                    SND_startPlay_4PCM_ENV(snare2_16k, sizeof(snare2_16k), SOUND_PCM_CH2, loop);
             }
 
             if (changed & state & BUTTON_C)
@@ -618,7 +639,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
                 if (SND_isPlaying_4PCM_ENV(SOUND_PCM_CH3_MSK))
                     SND_stopPlay_4PCM_ENV(SOUND_PCM_CH3);
                 else
-                    SND_startPlay_4PCM_ENV(beat1_16k, sizeof(beat1_16k), SOUND_PCM_CH3, loop);
+                    SND_startPlay_4PCM_ENV(hat1_16k, sizeof(hat1_16k), SOUND_PCM_CH3, loop);
             }
 
             break;
@@ -657,9 +678,9 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 
         case Z80_DRIVER_VGM:
         {
-            if (changed & state & BUTTON_DOWN)
+            if (changed & state & BUTTON_X)
             {
-                SND_playSfx_VGM((u32) india_u8k, sizeof(india_u8k));
+                SND_playSfx_VGM(explode_u8k, sizeof(explode_u8k));
             }
             if (changed & state & BUTTON_A)
             {
@@ -671,12 +692,70 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             }
             if (changed & state & BUTTON_C)
             {
-                SND_startPlay_VGM(bad_apple);
+                SND_startPlay_VGM(bapcm_vgm);
             }
             if (changed & state & BUTTON_START)
             {
-                SND_stopPlay_VGM();
+                if (SND_isPlaying_VGM())
+                    SND_stopPlay_VGM();
+                else
+                    SND_resumePlay_VGM();
             }
+            break;
+        }
+
+        case Z80_DRIVER_XGM:
+        {
+            if (changed & state & BUTTON_X)
+            {
+                SND_setPCM_XGM(64, snare1_14k, sizeof(snare1_14k));
+
+                if (SND_isPlayingPCM_XGM(SOUND_PCM_CH2_MSK))
+                    SND_stopPlayPCM_XGM(SOUND_PCM_CH2);
+                else
+                    SND_startPlayPCM_XGM(64, 10, SOUND_PCM_CH2);
+            }
+            if (changed & state & BUTTON_Y)
+            {
+                SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
+
+                if (SND_isPlayingPCM_XGM(SOUND_PCM_CH3_MSK))
+                    SND_stopPlayPCM_XGM(SOUND_PCM_CH3);
+                else
+                    SND_startPlayPCM_XGM(65, 10, SOUND_PCM_CH3);
+            }
+            if (changed & state & BUTTON_Z)
+            {
+                SND_setPCM_XGM(66, loop1_14k, sizeof(loop1_14k));
+
+                if (SND_isPlayingPCM_XGM(SOUND_PCM_CH4_MSK))
+                    SND_stopPlayPCM_XGM(SOUND_PCM_CH4);
+                else
+                    SND_startPlayPCM_XGM(66, 10, SOUND_PCM_CH4);
+            }
+
+            if (changed & state & BUTTON_A)
+            {
+                SND_startPlay_XGM(sor2_xgm);
+            }
+            if (changed & state & BUTTON_B)
+            {
+                SND_startPlay_XGM(bapcm_xgm);
+            }
+            if (changed & state & BUTTON_C)
+            {
+//                SND_startPlay_XGM(toystory);
+                SND_startPlay_XGM(midnight);
+            }
+
+            if (changed & state & BUTTON_START)
+            {
+                if (SND_isPlaying_XGM())
+                    SND_stopPlay_XGM();
+                else
+                    SND_resumePlay_XGM();
+            }
+
             break;
         }
     }

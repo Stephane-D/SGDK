@@ -4,7 +4,9 @@
 #include <math.h>
 
 
-double nextSample(FILE* file, int sampleSize, int numChan);
+const char* version = "1.1";
+
+double *readSample(FILE* file, int chunkSize, int sampleSize, int numChan);
 
 
 int main(int argc, char *argv[ ])
@@ -25,8 +27,10 @@ int main(int argc, char *argv[ ])
 
     if (argc < 3)
     {
-        printf("Usage: wav2raw sourceWavFile destRawFile <outRate>\n");
-        printf("Output rate is given in Hand should be <= to the input sample sample.\n");
+        printf("WavToRaw %s - Stephane Dallongeville - copyright 2014\n", version);
+        printf("\n");
+        printf("Usage: wav2raw sourceFile destFile <outRate>\n");
+        printf("Output rate is given in Hz.\n");
         printf("Success returns errorlevel 0. Error return greater than zero.\n");
         printf("\n");
         printf("Ex: wav2raw input.wav output.raw 11025\n");
@@ -69,12 +73,12 @@ int main(int argc, char *argv[ ])
     if (nOutputSamplesPerSecond == 0)
         nOutputSamplesPerSecond = nSamplesPerSecond;
 
-    if(nSamplesPerSecond < nOutputSamplesPerSecond)
-    {
-        printf("Output rate (%ld) cannot be above input rate (%ld)\n", nOutputSamplesPerSecond, nSamplesPerSecond);
-        printf("Use lower output rate value or higher input rate file\n");
-        exit(4);
-    }
+//    if(nSamplesPerSecond < nOutputSamplesPerSecond)
+//    {
+//        printf("Output rate (%ld) cannot be above input rate (%ld)\n", nOutputSamplesPerSecond, nSamplesPerSecond);
+//        printf("Use lower output rate value or higher input rate file\n");
+//        exit(4);
+//    }
 
         /* Open output for write */
     if( (outfile = fopen( argv[2], "w" )) == NULL )
@@ -86,6 +90,8 @@ int main(int argc, char *argv[ ])
 
     int nBytesPerSample = nBitsPerSample / 8;
     int size = nChunkSize / (nChannels * nBytesPerSample);
+    const double *data = readSample(infile, nChunkSize, nBytesPerSample, nChannels);
+    int iOffset;
     double offset;
     double step;
     double value;
@@ -95,31 +101,50 @@ int main(int argc, char *argv[ ])
     step /= nOutputSamplesPerSecond;
     value = 0;
     lastSample = 0;
+    iOffset = 0;
 
     for(offset = 0; offset < size; offset += step)
     {
         char byte;
         double sample = 0;
 
-        if (value < 0) sample += lastSample * -value;
-
-        value += step;
-
-        while(value > 0)
+        // extrapolation
+        if (step >= 1)
         {
-            lastSample = nextSample(infile, nBytesPerSample, nChannels);
+            if (value < 0) sample += lastSample * -value;
 
-            if (value >= 1)
-                sample += lastSample;
+            value += step;
+
+            while(value > 0)
+            {
+                lastSample = data[iOffset++];
+
+                if (value >= 1)
+                    sample += lastSample;
+                else
+                    sample += lastSample * value;
+
+                value--;
+            }
+
+            sample /= step;
+        }
+        // interpolation
+        else
+        {
+            if (floor(offset) == offset)
+                sample = data[(int) offset];
             else
-                sample += lastSample * value;
+            {
+                double sample0 = data[(int) floor(offset)];
+                double sample1 = data[(int) ceil(offset)];
 
-            value--;
+                sample += sample0 * (ceil(offset) - offset);
+                sample += sample1 * (offset - floor(offset));
+            }
         }
 
-        sample /= step;
         byte = round(sample);
-
         fwrite(&byte, 1, 1, outfile);
     }
 
@@ -165,4 +190,20 @@ double nextSample(FILE* file, int sampleSize, int numChan)
     }
 
     return res / numChan;
+}
+
+double *readSample(FILE* file, int chunkSize, int sampleSize, int numChan)
+{
+    double *result;
+    double *dst;
+    int i, size;
+
+    size = chunkSize / (numChan * sampleSize);
+    result = malloc(size * sizeof(double));
+
+    dst = result;
+    for(i = 0; i < size; i++)
+        *dst++ = nextSample(file, sampleSize, numChan);
+
+    return result;
 }
