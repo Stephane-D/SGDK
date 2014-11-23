@@ -4,13 +4,13 @@
 
 == Download ==
 
-Get the last version: [https://www.dropbox.com/s/o056nj6zgxa6k4j/sgdk100.7z SGDK 1.00]
+Get the last version: [https://drive.google.com/file/d/0BztTfEamf-d9WXRnVkprZ1RWd2M/view?usp=sharing SGDK 1.00]
 
 
 == Changelog 1.00 ==
 
 A big addition for SGDK 1.00, the new XGM sound driver !
-You canf ind more informations about it in the [https://www.dropbox.com/s/bu348hu29ttl6la/xgm.txt XGM driver specifications].
+You canf ind more informations about it in the [https://drive.google.com/file/d/0BztTfEamf-d9MjVsOGN1MXEwdk0/view?usp=sharing XGM driver specifications].
 
 *COMPILER*
  * Rescomp
