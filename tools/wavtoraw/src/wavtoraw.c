@@ -39,7 +39,6 @@ int main(int argc, char *argv[ ])
 
     /* Open source for binary read (will fail if file does not exist) */
     if ((infile = fopen( argv[1], "rb" )) == NULL)
-//    if ((infile = fopen( "test.wav", "rb" )) == NULL)
     {
         printf("The source file %s was not opened\n", argv[1]);
         exit(2);
@@ -73,16 +72,8 @@ int main(int argc, char *argv[ ])
     if (nOutputSamplesPerSecond == 0)
         nOutputSamplesPerSecond = nSamplesPerSecond;
 
-//    if(nSamplesPerSecond < nOutputSamplesPerSecond)
-//    {
-//        printf("Output rate (%ld) cannot be above input rate (%ld)\n", nOutputSamplesPerSecond, nSamplesPerSecond);
-//        printf("Use lower output rate value or higher input rate file\n");
-//        exit(4);
-//    }
-
-        /* Open output for write */
-    if( (outfile = fopen( argv[2], "w" )) == NULL )
-//    if( (outfile = fopen( "out.raw", "w" )) == NULL )
+    /* Open output for write */
+    if( (outfile = fopen( argv[2], "wb" )) == NULL )
     {
         printf("The output file %s was not opened\n", argv[2]);
         exit(3);
@@ -109,7 +100,7 @@ int main(int argc, char *argv[ ])
         double sample = 0;
 
         // extrapolation
-        if (step >= 1)
+        if (step > 1.0)
         {
             if (value < 0) sample += lastSample * -value;
 

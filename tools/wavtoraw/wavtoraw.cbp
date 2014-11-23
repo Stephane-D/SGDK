@@ -25,7 +25,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="sample_22k.wav out.wav 22050" />
+				<Option parameters="india_22k.wav out.raw 22050" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
