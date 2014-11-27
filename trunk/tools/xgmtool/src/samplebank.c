@@ -59,6 +59,7 @@ void SampleBank_addBlock(SampleBank* bank, VGMCommand* command)
 
     // set new data and len
     bank->data = newData;
+    bank->offset = 0;
     bank->len = newLen;
 }
 
@@ -96,12 +97,18 @@ List* SampleBank_getDeclarationCommands(SampleBank* bank)
 Sample* SampleBank_getSampleByOffset(SampleBank* bank, int dataOffset)
 {
     int i;
+    int minOffset;
+    int maxOffset;
+
+    minOffset = max(0, dataOffset - 50);
+    maxOffset = dataOffset + 50;
 
     for (i = 0; i < bank->samples->size; i++)
     {
         Sample* sample = getFromList(bank->samples, i);
 
-        if (sample->dataOffset == dataOffset)
+        // allow a small margin
+        if ((sample->dataOffset >= minOffset) && (sample->dataOffset <= maxOffset))
             return sample;
     }
 
@@ -131,27 +138,20 @@ Sample* SampleBank_addSample(SampleBank* bank, int dataOffset, int len, int rate
     if (result == NULL)
     {
         if (verbose)
-            printf("Sample added %6X  len: %6X   rate: %d Hz\n", dataOffset, len, rate);
+            printf("Sample added [%6X]  len: %6X   rate: %d Hz\n", dataOffset, len, rate);
 
         result = Sample_create(bank->samples->size, dataOffset, len, rate);
         addToList(bank->samples, result);
     }
     else
     {
-        if (result->rate == 0)
+        // confirmation of sample or adjust sample length info
+        if ((result->rate == 0) || (result->len < len))
         {
             if (verbose)
-                printf("Sample modified   len: %6X --> %6X   rate: %d --> %d Hz\n", result->len, len, result->rate, rate);
+                printf("Sample modified [%6X]  len: %6X --> %6X   rate: %d --> %d Hz\n", dataOffset, result->len, len, result->rate, rate);
 
             result->rate = rate;
-            result->len = len;
-        }
-        // adjust sample info
-        else if (result->len < len)
-        {
-            if (verbose)
-                printf("Sample modified   len: %6X --> %6X\n", result->len, len);
-
             result->len = len;
         }
     }

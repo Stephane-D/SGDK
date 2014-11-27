@@ -441,6 +441,10 @@ static void VGM_buildSamples(VGM* vgm, bool convert)
                     Sample_setRate(sample, sampleIdFrequencies[VGMCommand_getStreamId(command)]);
                 else
                     printf("Warning: sample id %2X not found !\n", sampleId);
+
+                // convert to long command as we use single data block
+                if (convert)
+                    setToList(vgm->commands, ind, Sample_getStartLongCommandEx(bank, sample, sample->len));
             }
         }
 
@@ -502,11 +506,12 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
         if (wait != -1)
         {
             delta = wait - endPlayWait;
+
             // delta > 200 samples --> sample ended
             if (delta > 200)
             {
                 // found a sample --> add it
-                if ((len > 0) && (startPlayInd != endPlayInd))
+                if ((len > 0) && (endPlayWait > 0) && (startPlayInd != endPlayInd))
                 {
                     if (vgm->sampleBanks->size > 0)
                     {
@@ -518,7 +523,7 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
                         if (convert)
                         {
                             // insert stream play command
-                            addToListEx(vgm->commands, startPlayInd + 0, Sample_getSetRateCommand(bank, sample, rate));
+                            addToListEx(vgm->commands, startPlayInd + 0, Sample_getSetRateCommand(bank, sample, sample->rate));
                             addToListEx(vgm->commands, startPlayInd + 1, Sample_getStartLongCommandEx(bank, sample, len));
 
                             // remove seek command
@@ -531,6 +536,14 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
                             }
                             else
                                 ind += 2;
+
+                            // sample stopped before end ?
+                            if (sample->len != len)
+                            {
+                                // insert stream stop command
+                                addToListEx(vgm->commands, ind, Sample_getStopCommand(bank, sample));
+                                ind++;
+                            }
                         }
                     }
                 }
@@ -556,7 +569,8 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
                 startPlayInd = ind;
             }
 
-            if (len > 0)
+            // need a minimal length before applying correction
+            if ((len > 100) && (wait > 200))
             {
                 int mean = wait / len;
 
@@ -582,7 +596,7 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
     }
 
     // found a sample --> add it
-    if ((len > 0) && (startPlayInd != endPlayInd))
+    if ((len > 0) && (endPlayWait > 0) && (startPlayInd != endPlayInd))
     {
         if (vgm->sampleBanks->size > 0)
         {
@@ -594,7 +608,7 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
             if (convert)
             {
                 // insert stream play command
-                addToListEx(vgm->commands, startPlayInd + 0, Sample_getSetRateCommand(bank, sample, rate));
+                addToListEx(vgm->commands, startPlayInd + 0, Sample_getSetRateCommand(bank, sample, sample->rate));
                 addToListEx(vgm->commands, startPlayInd + 1, Sample_getStartLongCommandEx(bank, sample, len));
 
                 // remove seek command
@@ -607,6 +621,10 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
                 }
                 else
                     ind += 2;
+
+                // insert stream stop command
+                addToListEx(vgm->commands, ind, Sample_getStopCommand(bank, sample));
+                ind++;
             }
         }
     }
