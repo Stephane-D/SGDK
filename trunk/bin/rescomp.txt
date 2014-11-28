@@ -198,36 +198,36 @@ Syntax:
 WAV name file [driver [outrate]]
 
     name        variable name
-    file        path of the .wav file (will be converted to 8 bits signed PCM)
+    file        path of the .wav file (will be automatically converted to 8 bits signed PCM at needed rate)
     driver      specify the Z80 driver to use:
                 0 (default) = Z80_DRIVER_PCM
                   Single channel 8 bits signed sample driver.
                   It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
-                  <b>Input:</b> any WAV at 8000 / 11025 / 13400 / 16000 / 22050 / 32000 Hz
                   Method to use: SND_startPlay_PCM(..)
                 1 = Z80_DRIVER_2ADPCM
                   2 channels 4 bits ADPCM sample driver.
                   It can mix up to 2 ADCPM samples at a fixed 22050 Hz rate.
-                  <b>Input:</b> best to use WAV file at 22 Khz.
                   Method to use: SND_startPlay_2ADPCM(..)
                 2 = Z80_DRIVER_4PCM
                   4 channels 8 bits signed sample driver.
                   It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.
-                  <b>Input:</b> best to use WAV file at 16 Khz.
                   Method to use: SND_startPlay_4PCM(..)
                 3 = Z80_DRIVER_4PCM_ENV
                   4 channels 8 bits signed sample driver with volume support.
                   It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.
                   with volume support (16 levels du to memory limitation).
-                  <b>Input:</b> best to use WAV file at 16 Khz.
                   Method to use: SND_startPlay_4PCM_ENV(..)
                 4 = Z80_DRIVER_VGM
-                  VGM music driver.
-                  It supports PCM SFX (8 bit unsigned) at a fixed 8 Khz rate.
-                  <b>Input:</b> 8 bits signed PCM at 8000 Hz
+                  VGM music driver with 8 bits PCM SFX support.
+                  It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.
                   Method to use: SND_playSfx_VGM(..)
+                5 = Z80_DRIVER_XGM
+                  XGM music with 4 channels 8 bits samples driver.
+                  It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
+                  Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
     outrate     output PCM rate (only used for Z80_DRIVER_PCM driver)
                   By default the default WAV output rate is used.
+
 
 PCM
 ---
@@ -262,10 +262,14 @@ PCM name file [driver]
                   <b>Input:</b> 8 bits signed PCM at 16000 Hz
                   Method to use: SND_startPlay_4PCM_ENV(..)
                 4 = Z80_DRIVER_VGM
-                  VGM music driver.
-                  It supports PCM SFX (8 bit unsigned) at a fixed 8 Khz rate.
+                  VGM music driver with 8 bits PCM SFX support.
+                  It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.
                   <b>Input:</b> 8 bits signed PCM at 8000 Hz
                   Method to use: SND_playSfx_VGM(..)
+                5 = Z80_DRIVER_XGM
+                  XGM music with 4 channels 8 bits samples driver.
+                  It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
+                  Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
 
 
 BIN
