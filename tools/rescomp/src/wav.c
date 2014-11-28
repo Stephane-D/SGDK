@@ -66,10 +66,10 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("              with volume support (16 levels du to memory limitation).\n");
         printf("            4 = Z80_DRIVER_VGM\n");
         printf("              VGM music driver with 8 bits PCM SFX support.\n");
-        printf("              It can play a single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
+        printf("              It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
         printf("            5 = Z80_DRIVER_XGM\n");
         printf("              XGM music with 4 channels 8 bits samples driver.\n");
-        printf("              It can play 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
+        printf("              It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
         printf("  out_rate  output PCM rate (only used for Z80_DRIVER_PCM driver)\n");
         printf("            By default the default WAV output rate is used.\n");
 
