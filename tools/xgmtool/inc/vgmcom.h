@@ -48,6 +48,8 @@ bool VGMCommand_isEnd(VGMCommand* source);
 bool VGMCommand_isLoop(VGMCommand* source);
 bool VGMCommand_isPCM(VGMCommand* source);
 bool VGMCommand_isWait(VGMCommand* source);
+bool VGMCommand_isWaitNTSC(VGMCommand* source);
+bool VGMCommand_isWaitPAL(VGMCommand* source);
 bool VGMCommand_isShortWait(VGMCommand* source);
 int VGMCommand_getWaitValue(VGMCommand* source);
 int VGMCommand_computeSize(VGMCommand* source);

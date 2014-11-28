@@ -28,7 +28,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="sor2.xgm sor2.xgc" />
+				<Option parameters="sonic1.vgm out.vgm -v" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
