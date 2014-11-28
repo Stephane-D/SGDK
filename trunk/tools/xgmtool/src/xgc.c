@@ -307,8 +307,8 @@ void XGC_shiftSamples(XGM* source, int sft)
             // add sample command to this frame
             while (sampleCommands[frameWrite]->size > 0)
             {
-                // get last and remove
-                XGMCommand* sampleCommand = removeFromList(sampleCommands[frameWrite], sampleCommands[frameWrite]->size - 1);
+                // get first and remove
+                XGMCommand* sampleCommand = removeFromList(sampleCommands[frameWrite], 0);
 
                 // add sample command to previous frame
                 addToListEx(source->commands, max(1, index), sampleCommand);
@@ -326,7 +326,7 @@ void XGC_shiftSamples(XGM* source, int sft)
     // add last remaining samples
     for (i = 0; i < sft; i++)
         while (sampleCommands[i]->size > 0)
-            addToListEx(source->commands, i + 1, removeFromList(sampleCommands[i], sampleCommands[i]->size - 1));
+            addToListEx(source->commands, i + 1, removeFromList(sampleCommands[i], 0));
 
     // avoid end or loop command
     index = source->commands->size - 2;
@@ -340,7 +340,7 @@ void XGC_shiftSamples(XGM* source, int sft)
             // add sample command to previous frame
             while (loopSampleCommands[loopFrameIndex]->size > 0)
             {
-                XGMCommand* sampleCommand = removeFromList(loopSampleCommands[loopFrameIndex], loopSampleCommands[loopFrameIndex]->size - 1);
+                XGMCommand* sampleCommand = removeFromList(loopSampleCommands[loopFrameIndex], 0);
 
                 // add sample command to current frame
                 addToListEx(source->commands, index + 1, sampleCommand);

@@ -1010,7 +1010,7 @@ void VGM_shiftSamples(VGM* vgm, int sft)
 
             // add sample command to this frame
             while (sampleCommands[frameWrite]->size > 0)
-                addToListEx(vgm->commands, index, removeFromList(sampleCommands[frameWrite], sampleCommands[frameWrite]->size - 1));
+                addToListEx(vgm->commands, index, removeFromList(sampleCommands[frameWrite], 0));
         }
 
         index--;
@@ -1019,7 +1019,7 @@ void VGM_shiftSamples(VGM* vgm, int sft)
     // add last remaining samples
     for (i = 0; i < sft; i++)
         while (sampleCommands[i]-> size > 0)
-            addToListEx(vgm->commands, 0, removeFromList(sampleCommands[i], sampleCommands[i]->size - 1));
+            addToListEx(vgm->commands, 0, removeFromList(sampleCommands[i], 0));
 }
 
 static int VGM_getSampleDataSize(VGM* vgm)
@@ -1141,7 +1141,7 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
     fwrite(&byte, 1, 1, f);
     fwrite(&byte, 1, 1, f);
     // 24: rate (50 or 60 Hz)
-    byte = 0x3C;
+    byte = vgm->rate;
     fwrite(&byte, 1, 1, f);
     byte = 0x00;
     fwrite(&byte, 1, 1, f);

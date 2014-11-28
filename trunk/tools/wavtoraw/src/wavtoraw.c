@@ -4,7 +4,7 @@
 #include <math.h>
 
 
-const char* version = "1.1";
+const char* version = "1.2";
 
 double *readSample(FILE* file, int chunkSize, int sampleSize, int numChan);
 
@@ -123,16 +123,16 @@ int main(int argc, char *argv[ ])
         // interpolation
         else
         {
-            if (floor(offset) == offset)
+//            if (floor(offset) == offset)
                 sample = data[(int) offset];
-            else
-            {
-                double sample0 = data[(int) floor(offset)];
-                double sample1 = data[(int) ceil(offset)];
-
-                sample += sample0 * (ceil(offset) - offset);
-                sample += sample1 * (offset - floor(offset));
-            }
+//            else
+//            {
+//                double sample0 = data[(int) floor(offset)];
+//                double sample1 = data[(int) ceil(offset)];
+//
+//                sample += sample0 * (ceil(offset) - offset);
+//                sample += sample1 * (offset - floor(offset));
+//            }
         }
 
         byte = round(sample);

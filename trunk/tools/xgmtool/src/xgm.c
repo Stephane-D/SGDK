@@ -21,6 +21,7 @@ XGM* XGM_create()
 
     result->samples = createList();
     result->commands = createList();
+    result->pal = -1;
 
     return result;
 }
@@ -58,7 +59,9 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
 
     // calculate music data offset (sample block size + 0x104)
     int offset = (getInt16(data, 0x100) << 8) + 0x104;
-//    int version = data[0x102];
+    // int version = data[0x102];
+    result->pal = data[0x103] & 1;
+
     // get music data length
     int len = getInt(data, offset);
 
@@ -83,6 +86,13 @@ XGM* XGM_createFromVGM(VGM* vgm)
 
     if (!silent)
         printf("Converting VGM to XGM...\n");
+
+    if (vgm->rate == 60)
+        result->pal = 0;
+    else if (vgm->rate == 50)
+        result->pal = 1;
+    else
+        result->pal = -1;
 
     // extract samples from VGM
     XGM_extractSamples(result, vgm);
@@ -174,7 +184,21 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
             if (VGMCommand_isDataBlock(command))
                 continue;
             // stop here
-            if (VGMCommand_isWait(command) || VGMCommand_isEnd(command))
+            if (VGMCommand_isWait(command))
+            {
+                // set PAL flag if not already set
+                if (xgm->pal == -1)
+                {
+                    if (VGMCommand_isWaitPAL(command))
+                        xgm->pal = 1;
+                    else if (VGMCommand_isWaitNTSC(command))
+                        xgm->pal = 0;
+                }
+
+                break;
+            }
+
+            if (VGMCommand_isEnd(command))
                 break;
 
             // add command
@@ -581,11 +605,15 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
     byte = offset >> 16;
     fwrite(&byte, 1, 1, f);
 
+    // init PAL flag if needed (default is NTSC)
+    if (xgm->pal == -1)
+        xgm->pal = 0;
+
     // 0102: XGM version
     byte = 0x00;
     fwrite(&byte, 1, 1, f);
-    // 0103: reserved
-    byte = 0x00;
+    // 0103: b0=NTSC/PAL others=reserved
+    byte = xgm->pal & 1;
     fwrite(&byte, 1, 1, f);
 
     // 0104-XXXX: sample data

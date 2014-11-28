@@ -458,16 +458,16 @@ unsigned char* resample(unsigned char* data, int offset, int len, int inputRate,
         }
         else
         {
-            if (floor(dOff) == dOff)
+//            if (floor(dOff) == dOff)
                 sample = (data[(int) dOff + offset] & 0xFF) - 0x80;
-            else
-            {
-                double sample0 = (data[(int) floor(dOff) + offset] & 0xFF) - 0x80;
-                double sample1 = (data[(int) ceil(dOff) + offset] & 0xFF) - 0x80;
-
-                sample += sample0 * (ceil(dOff) - dOff);
-                sample += sample1 * (dOff - floor(dOff));
-            }
+//            else
+//            {
+//                double sample0 = (data[(int) floor(dOff) + offset] & 0xFF) - 0x80;
+//                double sample1 = (data[(int) ceil(dOff) + offset] & 0xFF) - 0x80;
+//
+//                sample += sample0 * (ceil(dOff) - dOff);
+//                sample += sample1 * (dOff - floor(dOff));
+//            }
         }
 
         byte = round(sample);

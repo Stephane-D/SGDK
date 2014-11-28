@@ -8,6 +8,7 @@ typedef struct
 {
     List* samples;
     List* commands;
+    int pal;
 } XGM;
 
 

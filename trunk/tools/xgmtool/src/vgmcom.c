@@ -87,6 +87,16 @@ bool VGMCommand_isWait(VGMCommand* source)
     return ((source->command >= 0x61) && (source->command <= 0x63));
 }
 
+bool VGMCommand_isWaitNTSC(VGMCommand* source)
+{
+    return (source->command == 0x62);
+}
+
+bool VGMCommand_isWaitPAL(VGMCommand* source)
+{
+    return (source->command == 0x63);
+}
+
 bool VGMCommand_isShortWait(VGMCommand* source)
 {
     return (source->command & 0xF0) == 0x70;
