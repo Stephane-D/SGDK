@@ -621,10 +621,6 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
                 }
                 else
                     ind += 2;
-
-                // insert stream stop command
-                addToListEx(vgm->commands, ind, Sample_getStopCommand(bank, sample));
-                ind++;
             }
         }
     }
