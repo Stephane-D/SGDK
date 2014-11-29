@@ -1,5 +1,14 @@
-SGDK 1.00 (November 2014):
---------------------------
+SGDK 1.01 (November 2014)
+-------------------------
+
+COMPILER
+* fixed bugs in XGMTool.
+* removed linear interpolation when converting WAV file.
+* others minors changes.
+
+
+SGDK 1.00 (November 2014)
+-------------------------
 
 COMPILER
 * Rescomp:
@@ -40,15 +49,15 @@ LIBRARY
 * others changes and improvements.
 
 
-SGDK 0.96d (june 2014):
------------------------
+SGDK 0.96d (june 2014)
+----------------------
 
 LIBRARY
 * removed direct VRam Map data unpacking as it was buggy.
 
 
-SGDK 0.96c (june 2014):
------------------------
+SGDK 0.96c (june 2014)
+----------------------
 
 COMPILER
 * Rescomp:
@@ -59,8 +68,8 @@ LIBRARY
 * minors changes to Doxygen documentation. 
 
 
-SGDK 0.96 (may 2014):
----------------------
+SGDK 0.96 (may 2014)
+--------------------
 
 COMPILER
 * Rescomp:
@@ -110,8 +119,8 @@ LIBRARY
 * others changes and improvements.
 
 
-SGDK 0.95 (feb 2014):
----------------------
+SGDK 0.95 (feb 2014)
+--------------------
 
 COMPILER
 * Major change on resource compilation:
