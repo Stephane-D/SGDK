@@ -295,9 +295,9 @@ static void refreshDriverCmd()
             VDP_drawText("press C to play Midnight Resistance XGM", 1, 14);
             VDP_drawText("press START to pause/resume XGM music", 1, 15);
 
-            VDP_drawText("press X to start/end PCM ch 2", 1, 17);
-            VDP_drawText("press Y to start/end PCM ch 3", 1, 18);
-            VDP_drawText("press Z to start/end PCM ch 4", 1, 19);
+            VDP_drawText("press X to play PCM SFX ch 2", 1, 17);
+            VDP_drawText("press Y to play PCM SFX ch 3", 1, 18);
+            VDP_drawText("press Z to play PCM SFX ch 4", 1, 19);
             break;
     }
 }
@@ -709,29 +709,17 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             if (changed & state & BUTTON_X)
             {
                 SND_setPCM_XGM(64, snare1_14k, sizeof(snare1_14k));
-
-                if (SND_isPlayingPCM_XGM(SOUND_PCM_CH2_MSK))
-                    SND_stopPlayPCM_XGM(SOUND_PCM_CH2);
-                else
-                    SND_startPlayPCM_XGM(64, 10, SOUND_PCM_CH2);
+                SND_startPlayPCM_XGM(64, 10, SOUND_PCM_CH2);
             }
             if (changed & state & BUTTON_Y)
             {
                 SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
-
-                if (SND_isPlayingPCM_XGM(SOUND_PCM_CH3_MSK))
-                    SND_stopPlayPCM_XGM(SOUND_PCM_CH3);
-                else
-                    SND_startPlayPCM_XGM(65, 10, SOUND_PCM_CH3);
+                SND_startPlayPCM_XGM(65, 10, SOUND_PCM_CH3);
             }
             if (changed & state & BUTTON_Z)
             {
                 SND_setPCM_XGM(66, loop1_14k, sizeof(loop1_14k));
-
-                if (SND_isPlayingPCM_XGM(SOUND_PCM_CH4_MSK))
-                    SND_stopPlayPCM_XGM(SOUND_PCM_CH4);
-                else
-                    SND_startPlayPCM_XGM(66, 10, SOUND_PCM_CH4);
+                SND_startPlayPCM_XGM(66, 10, SOUND_PCM_CH4);
             }
 
             if (changed & state & BUTTON_A)
