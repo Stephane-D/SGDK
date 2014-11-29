@@ -4,7 +4,20 @@
 
 == Download ==
 
-Get the last version: [https://drive.google.com/file/d/0BztTfEamf-d9WXRnVkprZ1RWd2M/view?usp=sharing SGDK 1.00]
+Get the last version: [https://www.dropbox.com/s/059zcf44176r9z9/sgdk101.7z?dl=0 SGDK 1.01]
+
+Old versions:
+[https://www.dropbox.com/s/o056nj6zgxa6k4j/sgdk100.7z?dl=0 SGDK 1.00]
+[https://www.dropbox.com/s/a4oqp7i7hizivsd/sgdk096d.7z?dl=0 SGDK 0.96d]
+
+
+== Changelog 1.01 ==
+
+*COMPILER*
+ * fixed bugs in XGMTool.
+ * removed linear interpolation when converting WAV file.
+ * others minors changes.
+
 
 
 == Changelog 1.00 ==
