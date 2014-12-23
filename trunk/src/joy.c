@@ -233,7 +233,7 @@ static void externalIntCB()
     vu8 *pb;
     u16 hv;
 
-    hv = GET_HVCOUNTER;                  /* read HV counter */
+    hv = GET_HVCOUNTER;                     /* read HV counter */
 
     if (extSet || (gport == 0xFFFF)) return;
 
@@ -243,7 +243,7 @@ static void externalIntCB()
 
     if (!gun)
     {
-        /* blue gun or menacer */
+        /* blue gun or menacer or phaser */
         joyAxisX[gport] = hv & 0x00FF;
         joyAxisY[gport] = hv >> 8;
     }
@@ -347,6 +347,68 @@ void JOY_setSupport(u16 port, u16 support)
             pb = (vu8 *)0xa10003 + port*2;
             *pb = 0x40;
             portSupport[port] = support;
+        }
+    }
+    else if ((support == JOY_SUPPORT_PHASER) || (support == JOY_SUPPORT_OFF))
+    {
+        vu8 *pb;
+        u8 val;
+
+        if (support == JOY_SUPPORT_PHASER)
+        {
+            /* enable lightgun support if support currently off */
+            if (portSupport[port] == JOY_SUPPORT_OFF)
+            {
+                SYS_setInterruptMaskLevel(7);   /* disable ints */
+                joyType[port] = JOY_TYPE_PHASER;
+                joyState[port] = 0;
+                joyAxisX[port] = -1;
+                joyAxisY[port] = -1;
+                gun = 0;
+                extSet = 0;
+                gport = port;
+
+                SYS_setExtIntCallback(externalIntCB);
+                pb = (vu8 *)0xa10009 + port*2;
+                *pb = 0x80;                     /* enable TH->HL */
+                val = VDP_getReg(0);
+                VDP_setReg(0, val | 0x02);      /* set M3, enable HV counter latch */
+                val = VDP_getReg(11);
+                VDP_setReg(11, val | 0x08);     /* set IE2, enable external int */
+                SYS_setInterruptMaskLevel(1);   /* External int allowed */
+
+                /* set last since this starts the vblank handling of the gun(s) */
+                portSupport[port] = support;
+            }
+        }
+        else if (support == JOY_SUPPORT_OFF)
+        {
+            /* disable lightgun support if was on */
+            if (portSupport[port] == JOY_SUPPORT_PHASER)
+            {
+                SYS_setInterruptMaskLevel(7);       /* disable ints */
+                pb = (vu8 *)0xa10009 + port*2;
+                *pb = 0x40;                         /* disable TH->HL */
+                val = VDP_getReg(0);
+                VDP_setReg(0, val & ~0x02);         /* clear M3, disable HV counter latch */
+                val = VDP_getReg(11);
+                VDP_setReg(11, val & ~0x08);        /* clear IE2, disable external int */
+                SYS_setExtIntCallback(NULL);
+
+                if (port == PORT_1)
+                {
+                    joyType[JOY_1] = JOY_TYPE_UNKNOWN;
+                    joyState[JOY_1] = 0;
+                }
+                else
+                {
+                    joyType[JOY_2] = JOY_TYPE_UNKNOWN;
+                    joyState[JOY_2] = 0;
+                }
+                gport = 0xFFFF;
+                SYS_setInterruptMaskLevel(3);       /* External int disallowed */
+            }
+            portSupport[port] = JOY_SUPPORT_OFF;
         }
     }
     else
@@ -610,13 +672,13 @@ static u16 readMouse(u16 port)
             else
                 mx = md[2]<<4 | md[3];
             if (md[0] & 0x01)
-                mx |= 0xFF00; /* x sign extend */
+                mx |= mx ? 0xFF00 : 0xFFFF; /* x sign extend */
             if (md[0] & 0x08)
                 my = 256; /* y overflow */
             else
                 my = md[4]<<4 | md[5];
             if (md[0] & 0x02)
-                my |= 0xFF00; /* y sign extend */
+                my |= mx ? 0xFF00 : 0xFFFF; /* y sign extend */
             joyAxisX[port] += (s16)mx;
             joyAxisY[port] += (s16)my;
 
@@ -819,7 +881,7 @@ static void readLightgun(u16 port)
         /* no light sense => gun not pointed at screen */
         if (!gun)
         {
-            /* blue gun */
+            /* blue gun or menacer or phaser*/
             joyAxisX[port] = -1;
             joyAxisY[port] = -1;
         }
@@ -874,7 +936,7 @@ static void readLightgun(u16 port)
         joyState[port] = newstate;
         if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
     }
-    else
+    else if (portType[port] == PORT_TYPE_JUSTIFIER)
     {
         *pb = 0x00;                         /* select blue gun */
         val = *pb;
@@ -912,6 +974,18 @@ static void readLightgun(u16 port)
 
         *pb = gun | 0x10;                   /* deselect gun */
         *pb = gun;                          /* leave gun selected to get light sense input */
+    }
+    else
+    {
+        /* check Phaser trigger */
+        val = *pb;                          /* - - - t - - - - */
+        newstate = 0;
+        if (~val & 0x10) newstate = BUTTON_A;
+
+        change = joyState[port] ^ newstate;
+        joyType[port] = JOY_TYPE_PHASER;
+        joyState[port] = newstate;
+        if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
     }
 
     extSet = 0;                             /* clear light sensed flag */
@@ -1041,6 +1115,7 @@ void JOY_update()
         case JOY_SUPPORT_MENACER:
         case JOY_SUPPORT_JUSTIFIER_BLUE:
         case JOY_SUPPORT_JUSTIFIER_BOTH:
+        case JOY_SUPPORT_PHASER:
             readLightgun(PORT_1);
             break;
 
@@ -1096,6 +1171,7 @@ void JOY_update()
         case JOY_SUPPORT_MENACER:
         case JOY_SUPPORT_JUSTIFIER_BLUE:
         case JOY_SUPPORT_JUSTIFIER_BOTH:
+        case JOY_SUPPORT_PHASER:
             readLightgun(PORT_2);
             break;
 

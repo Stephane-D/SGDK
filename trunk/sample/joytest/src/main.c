@@ -10,16 +10,63 @@ static char *hex = "0123456789ABCDEF";
 
 int main()
 {
+    u8 value;
+
     VDP_setScreenWidth320();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
-    VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
-    VDP_setTextPalette(PAL0);
+    VDP_setPaletteColor(15+16, 0x0222);
+    VDP_setTextPalette(0);
+    VDP_setPaletteColor(0, 0x0882);
+
+    value = JOY_getPortType(PORT_1);
+    switch (value)
+    {
+        case PORT_TYPE_MENACER:
+            JOY_setSupport(PORT_1, JOY_SUPPORT_MENACER);
+            break;
+        case PORT_TYPE_JUSTIFIER:
+            JOY_setSupport(PORT_1, JOY_SUPPORT_JUSTIFIER_BOTH);
+            break;
+        case PORT_TYPE_MOUSE:
+            JOY_setSupport(PORT_1, JOY_SUPPORT_MOUSE);
+            break;
+        case PORT_TYPE_TEAMPLAYER:
+            JOY_setSupport(PORT_1, JOY_SUPPORT_TEAMPLAYER);
+            break;
+    }
+
+#if 0
+    JOY_setSupport(PORT_2, JOY_SUPPORT_TRACKBALL);
+#endif
+
+#if 1
+    JOY_setSupport(PORT_2, JOY_SUPPORT_PHASER);
+#endif
+
+#if 0
+    value = JOY_getPortType(PORT_2);
+    switch (value)
+    {
+        case PORT_TYPE_MENACER:
+            JOY_setSupport(PORT_2, JOY_SUPPORT_MENACER);
+            break;
+        case PORT_TYPE_JUSTIFIER:
+            JOY_setSupport(PORT_2, JOY_SUPPORT_JUSTIFIER_BOTH);
+            break;
+        case PORT_TYPE_MOUSE:
+            JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);
+            break;
+        case PORT_TYPE_TEAMPLAYER:
+            JOY_setSupport(PORT_2, JOY_SUPPORT_TEAMPLAYER);
+            break;
+    }
+#endif
 
     while(1)
     {
-        showPortState();
         VDP_waitVSync();
+        showPortState();
     }
 }
 
@@ -29,7 +76,7 @@ static void printChar(char c, u16 state)
     char temp[2];
     temp[0] = c;
     temp[1] = 0;
-    VDP_setTextPalette(state ? PAL1 : PAL0);
+    VDP_setTextPalette(state ? 1 : 0);
     VDP_drawText(temp, posX, posY);
     posX += 2;
 }
@@ -44,14 +91,53 @@ static void printWord(u16 val, u16 state)
     temp[4] = hex[(val >> 4) & 15];
     temp[5] = hex[val & 15];
     temp[6] = 0;
-    VDP_setTextPalette(state ? PAL1 : PAL0);
+    VDP_setTextPalette(state ? 1 : 0);
     VDP_drawText(temp, posX, posY);
     posX += 8;
 }
 
 static void showPortState()
 {
-    u16 i, typ, state;
+    u16 i, value, type;
+
+    posY = 2;
+    for(i=0; i<2; i++)
+    {
+        posX = 2;
+        printChar(hex[i+1], 0);
+        posX -= 1;
+        printChar(':', 0);
+        value = JOY_getPortType(i);
+        printChar(hex[value & 15], 0);
+        switch (value)
+        {
+            case PORT_TYPE_MENACER:
+                VDP_drawText("Menacer   ", posX, posY);
+                break;
+            case PORT_TYPE_JUSTIFIER:
+                VDP_drawText("Justifier ", posX, posY);
+                break;
+            case PORT_TYPE_MOUSE:
+                VDP_drawText("Mouse     ", posX, posY);
+                break;
+            case PORT_TYPE_TEAMPLAYER:
+                VDP_drawText("TeamPlayer", posX, posY);
+                break;
+            case PORT_TYPE_PAD:
+                VDP_drawText("Pad       ", posX, posY);
+                break;
+            case PORT_TYPE_UKNOWN:
+                VDP_drawText("Unknown   ", posX, posY);
+                break;
+            case PORT_TYPE_EA4WAYPLAY:
+                VDP_drawText("EA 4-Way  ", posX, posY);
+                break;
+            default:
+                VDP_drawText("Unknown   ", posX, posY);
+                break;
+        }
+        posY++;
+    }
 
     posY = 5;
     for(i=JOY_1; i<JOY_NUM; i++)
@@ -60,9 +146,9 @@ static void showPortState()
         printChar(hex[i+1], 0);
         posX -= 1;
         printChar(':', 0);
-        typ = JOY_getJoypadType(i);
-        state = JOY_readJoypad(i);
-        switch (typ)
+        value = JOY_readJoypad(i);
+        type = JOY_getJoypadType(i);
+        switch (type)
         {
             case JOY_TYPE_PAD3:
                 VDP_drawText("3 button ", posX, posY);
@@ -72,8 +158,24 @@ static void showPortState()
                 VDP_drawText("6 button ", posX, posY);
                 posX += 10;
                 break;
+            case JOY_TYPE_TRACKBALL:
+                VDP_drawText("trackball", posX, posY);
+                posX += 10;
+                break;
             case JOY_TYPE_MOUSE:
                 VDP_drawText("megamouse", posX, posY);
+                posX += 10;
+                break;
+            case JOY_TYPE_MENACER:
+                VDP_drawText("menacer  ", posX, posY);
+                posX += 10;
+                break;
+            case JOY_TYPE_JUSTIFIER:
+                VDP_drawText("justifier", posX, posY);
+                posX += 10;
+                break;
+            case JOY_TYPE_PHASER:
+                VDP_drawText("phaser", posX, posY);
                 posX += 10;
                 break;
             default:
@@ -81,22 +183,26 @@ static void showPortState()
                 posX += 10;
                 break;
         }
-        printChar('U', state & BUTTON_UP);
-        printChar('D', state & BUTTON_DOWN);
-        printChar('L', state & BUTTON_LEFT);
-        printChar('R', state & BUTTON_RIGHT);
-        printChar('A', state & BUTTON_A);
-        printChar('B', state & BUTTON_B);
-        printChar('C', state & BUTTON_C);
-        printChar('S', state & BUTTON_START);
-        if (typ == JOY_TYPE_PAD6)
+        printChar('U', value & BUTTON_UP);
+        printChar('D', value & BUTTON_DOWN);
+        printChar('L', value & BUTTON_LEFT);
+        printChar('R', value & BUTTON_RIGHT);
+        printChar('A', value & BUTTON_A);
+        printChar('B', value & BUTTON_B);
+        printChar('C', value & BUTTON_C);
+        printChar('S', value & BUTTON_START);
+        if (type == JOY_TYPE_PAD6)
         {
-            printChar('X', state & BUTTON_X);
-            printChar('Y', state & BUTTON_Y);
-            printChar('Z', state & BUTTON_Z);
-            printChar('M', state & BUTTON_MODE);
+            printChar('X', value & BUTTON_X);
+            printChar('Y', value & BUTTON_Y);
+            printChar('Z', value & BUTTON_Z);
+            printChar('M', value & BUTTON_MODE);
         }
-        else if (typ == JOY_TYPE_MOUSE)
+        else if ((type == JOY_TYPE_TRACKBALL) ||
+                 (type == JOY_TYPE_MOUSE) ||
+                 (type == JOY_TYPE_MENACER) ||
+                 (type == JOY_TYPE_JUSTIFIER) ||
+                 (type == JOY_TYPE_PHASER))
         {
             posY++;
             posX = 15;

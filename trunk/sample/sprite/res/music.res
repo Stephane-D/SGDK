@@ -1,1 +1,1 @@
-VGM sonic_music "sonic1.vgm"
+XGM sonic_music "sonic1.vgm"

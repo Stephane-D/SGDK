@@ -57,7 +57,7 @@ int main()
     VDP_setScreenWidth320();
 
     // start music
-    SND_startPlay_VGM(sonic_music);
+    SND_startPlay_XGM(sonic_music);
 
     // init sprites engine
     SPR_init(256);
@@ -96,10 +96,8 @@ int main()
     memcpy(&palette[16], bga_image.palette->data, 16 * 2);
     memcpy(&palette[32], sonic_sprite.palette->data, 16 * 2);
 
-    // fade in (disable interrupts because of the passive fade in)
-    SYS_disableInts();
+    // fade in
     VDP_fadeIn(0, (3 * 16) - 1, palette, 20, FALSE);
-    SYS_enableInts();
 
     JOY_setEventHandler(joyEvent);
 

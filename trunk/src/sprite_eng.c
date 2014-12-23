@@ -269,30 +269,34 @@ void SPR_update(Sprite *sprites, u16 num)
          // auto allocation
         if (sprite->fixedIndex == -1)
         {
-            AnimationFrame *frame;
-            FrameSprite **frameSprites;
-            s32 visibility;
+            s32 visibility = sprite->visibility;
 
-            frame = sprite->frame;
-            j = frame->numSprite;
-            frameSprites = frame->frameSprites;
-            visibility = sprite->visibility;
-
-            // need update ?
-            if (visibility == -1)
+            // don't run for disabled sprite
+            if (visibility != VISIBILITY_ALWAYS_OFF)
             {
-                computeVisibility(sprite);
-                visibility = sprite->visibility;
-            }
+                AnimationFrame *frame;
+                FrameSprite **frameSprites;
 
-            while(j--)
-            {
-                // sprite visible --> try fast re alloc
-                if (visibility & 1)
-                    TC_reAlloc(&tcSprite, (*frameSprites)->tileset);
+                frame = sprite->frame;
+                j = frame->numSprite;
+                frameSprites = frame->frameSprites;
 
-                frameSprites++;
-                visibility >>= 1;
+                // need update ?
+                if (visibility == -1)
+                {
+                    computeVisibility(sprite);
+                    visibility = sprite->visibility;
+                }
+
+                while(j--)
+                {
+                    // sprite visible --> try fast re alloc
+                    if (visibility & 1)
+                        TC_reAlloc(&tcSprite, (*frameSprites)->tileset);
+
+                    frameSprites++;
+                    visibility >>= 1;
+                }
             }
         }
 
@@ -306,12 +310,7 @@ void SPR_update(Sprite *sprites, u16 num)
     i = num;
     while(i--)
     {
-        AnimationFrame *frame;
-        FrameSprite **frameSprites;
         u16 timer;
-        u16 attr;
-        s16 fw, fh;
-        s16 vramInd;
         s32 visibility;
 
         timer = sprite->timer;
@@ -324,97 +323,105 @@ void SPR_update(Sprite *sprites, u16 num)
             else sprite->timer = timer;
         }
 
-        frame = sprite->frame;
-        attr = sprite->attribut;
-        vramInd = sprite->fixedIndex;
         visibility = sprite->visibility;
 
-        // need update ?
-        if (visibility == -1)
+        // don't run for disabled sprite
+        if (visibility != VISIBILITY_ALWAYS_OFF)
         {
-            computeVisibility(sprite);
-            visibility = sprite->visibility;
-        }
+            AnimationFrame *frame;
+            FrameSprite **frameSprites;
+            u16 attr;
+            s16 fw, fh;
+            s16 vramInd;
 
-        fw = frame->w;
-        fh = frame->h;
-
-        j = frame->numSprite;
-        frameSprites = frame->frameSprites;
-
-        if (vramInd == -1)
-        {
-            // auto allocation
-            while(visibility && j--)
+            // need update ?
+            if (visibility == -1)
             {
-                FrameSprite* frameSprite = *frameSprites++;
+                computeVisibility(sprite);
+                visibility = sprite->visibility;
+            }
 
-                // sprite visible ?
-                if (visibility & 1)
+            frame = sprite->frame;
+            attr = sprite->attribut;
+            vramInd = sprite->fixedIndex;
+            j = frame->numSprite;
+            frameSprites = frame->frameSprites;
+            fw = frame->w;
+            fh = frame->h;
+
+            if (vramInd == -1)
+            {
+                // auto allocation
+                while(visibility && j--)
                 {
-                    if (attr & TILE_ATTR_VFLIP_MASK)
+                    FrameSprite* frameSprite = *frameSprites++;
+
+                    // sprite visible ?
+                    if (visibility & 1)
                     {
-                        s16 sh = ((frameSprite->vdpSprite.size_link & 0x0300) >> 5) + 8;
-                        cache->y = sprite->y + (fh - (frameSprite->vdpSprite.y + sh));
+                        if (attr & TILE_ATTR_VFLIP_MASK)
+                        {
+                            s16 sh = ((frameSprite->vdpSprite.size_link & 0x0300) >> 5) + 8;
+                            cache->y = sprite->y + (fh - (frameSprite->vdpSprite.y + sh));
+                        }
+                        else
+                            cache->y = sprite->y + frameSprite->vdpSprite.y;
+
+                        cache->size_link = frameSprite->vdpSprite.size_link | ++ind;
+                        cache->attr = (frameSprite->vdpSprite.attr ^ attr) +
+                            TC_alloc(&tcSprite, frameSprite->tileset, UPLOAD_VINT);
+
+                        if (attr & TILE_ATTR_HFLIP_MASK)
+                        {
+                            s16 sw = ((frameSprite->vdpSprite.size_link & 0x0C00) >> 7) + 8;
+                            cache->x = sprite->x + (fw - (frameSprite->vdpSprite.x + sw));
+                        }
+                        else
+                            cache->x = sprite->x + frameSprite->vdpSprite.x;
+
+                        cache++;
                     }
-                    else
-                        cache->y = sprite->y + frameSprite->vdpSprite.y;
 
-                    cache->size_link = frameSprite->vdpSprite.size_link | ++ind;
-                    cache->attr = (frameSprite->vdpSprite.attr ^ attr) +
-                        TC_alloc(&tcSprite, frameSprite->tileset, UPLOAD_VINT);
-
-                    if (attr & TILE_ATTR_HFLIP_MASK)
-                    {
-                        s16 sw = ((frameSprite->vdpSprite.size_link & 0x0C00) >> 7) + 8;
-                        cache->x = sprite->x + (fw - (frameSprite->vdpSprite.x + sw));
-                    }
-                    else
-                        cache->x = sprite->x + frameSprite->vdpSprite.x;
-
-                    cache++;
+                    visibility >>= 1;
                 }
+            }
+            else
+            {
+                // fixed allocation
+                while(visibility && j--)
+                {
+                    FrameSprite* frameSprite = *frameSprites++;
 
-                visibility >>= 1;
+                    // sprite visible ?
+                    if (visibility & 1)
+                    {
+                        if (attr & TILE_ATTR_VFLIP_MASK)
+                        {
+                            s16 sh = ((frameSprite->vdpSprite.size_link & 0x0300) >> 5) + 8;
+                            cache->y = sprite->y + (fh - (frameSprite->vdpSprite.y + sh));
+                        }
+                        else
+                            cache->y = sprite->y + frameSprite->vdpSprite.y;
+
+                        cache->size_link = frameSprite->vdpSprite.size_link | ++ind;
+                        cache->attr = (frameSprite->vdpSprite.attr ^ attr) + vramInd;
+
+                        if (attr & TILE_ATTR_HFLIP_MASK)
+                        {
+                            s16 sw = ((frameSprite->vdpSprite.size_link & 0x0C00) >> 7) + 8;
+                            cache->x = sprite->x + (fw - (frameSprite->vdpSprite.x + sw));
+                        }
+                        else
+                            cache->x = sprite->x + frameSprite->vdpSprite.x;
+
+                        cache++;
+                    }
+
+                    visibility >>= 1;
+                    vramInd += frameSprite->tileset->numTile;
+                }
             }
         }
-        else
-        {
-            // fixed allocation
-            while(visibility && j--)
-            {
-                FrameSprite* frameSprite = *frameSprites++;
-
-                // sprite visible ?
-                if (visibility & 1)
-                {
-                    if (attr & TILE_ATTR_VFLIP_MASK)
-                    {
-                        s16 sh = ((frameSprite->vdpSprite.size_link & 0x0300) >> 5) + 8;
-                        cache->y = sprite->y + (fh - (frameSprite->vdpSprite.y + sh));
-                    }
-                    else
-                        cache->y = sprite->y + frameSprite->vdpSprite.y;
-
-                    cache->size_link = frameSprite->vdpSprite.size_link | ++ind;
-                    cache->attr = (frameSprite->vdpSprite.attr ^ attr) + vramInd;
-
-                    if (attr & TILE_ATTR_HFLIP_MASK)
-                    {
-                        s16 sw = ((frameSprite->vdpSprite.size_link & 0x0C00) >> 7) + 8;
-                        cache->x = sprite->x + (fw - (frameSprite->vdpSprite.x + sw));
-                    }
-                    else
-                        cache->x = sprite->x + frameSprite->vdpSprite.x;
-
-                    cache++;
-                }
-
-                visibility >>= 1;
-                vramInd += frameSprite->tileset->numTile;
-            }
-        }
-
 
         sprite++;
     }
@@ -537,6 +544,9 @@ static void setFrame(Sprite *sprite, AnimationFrame* frame)
         sprite->visibility = -1;
 }
 
+/**
+ * Fixed allocation here
+ */
 static void allocTileSet(AnimationFrame *frame, u16 position)
 {
     FrameSprite **frameSprites = frame->frameSprites;

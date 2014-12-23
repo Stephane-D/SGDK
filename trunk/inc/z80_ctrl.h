@@ -159,13 +159,6 @@
  */
 #define Z80_DRIVER_2ADPCM               2
 /**
- *  \def Z80_DRIVER_4PCM
- *
- *  4 channels sample player Z80 driver.<br/>
- *  It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate.
- */
-#define Z80_DRIVER_4PCM                 3
-/**
  *  \def Z80_DRIVER_4PCM_ENV
  *
  *  4 channels sample player Z80 driver with envelop control.<br/>
