@@ -20,7 +20,7 @@ Get the last version: [https://www.dropbox.com/s/ng7ga5reyay51p6/sgdk110.7z?dl=0
  * XGMTool
   * removed DAC enabled command (automatically handle by the XGM driver).
   * added DAC enabled state (XGM driver uses it when no PCM are playing).
-  * now uses the VGM 1.60 'stream id' information to allow multi PCM channel for XGM conversion (note that each channel has its own priority as VGM music does not contains PCM priority information).
+  * now uses the VGM 1.60 _stream id_ information to allow multi PCM channel for XGM conversion (note that each channel has its own priority as VGM music does not contains PCM priority information).
 
 *LIBRARY*
  * VDP
