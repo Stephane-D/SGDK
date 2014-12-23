@@ -386,7 +386,13 @@ void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 
     // process asynchrone fading
     if (async) VIntProcess |= PROCESS_PALETTE_FADING;
     // process fading immediatly
-    else while (VDP_doStepFading(TRUE));
+    else
+    {
+        // disable interrupts to avoid VDP accesses conflict
+        SYS_disableInts();
+        while (VDP_doStepFading(TRUE));
+        SYS_enableInts();
+    }
 }
 
 

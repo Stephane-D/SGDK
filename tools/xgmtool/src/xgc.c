@@ -182,7 +182,9 @@ static void XGC_extractMusic(XGM* source, XGM* xgm)
                         YM2612_set(ymState, 1, command->data[(j * 2) + 1] & 0xFF, command->data[(j * 2) + 2] & 0xFF);
                 }
 
-                addToList(ymCommands, command);
+                // remove all $2B register writes (DAC enable is done automatically)
+                if (XGMCommand_removeYM2612RegWrite(command, 0, 0x2B))
+                    addToList(ymCommands, command);
             }
             else
                 addToList(otherCommands, command);
@@ -371,8 +373,9 @@ List* XGC_getStateChange(XGM* source, YM2612* current, YM2612* old)
 {
     int port;
     List* result = createList();
+    int addr;
 
-    int addr = 0x44;
+    addr = 0x44;
     // ym2612
     for (port = 0; port < 2; port++)
     {
@@ -394,6 +397,14 @@ List* XGC_getStateChange(XGM* source, YM2612* current, YM2612* old)
             else
                 reg++;
         }
+    }
+
+    // DAC Enable change
+    if (YM2612_isDiff(current, old, 0, 0x2B))
+    {
+        // write state for current register
+        addToList(result, (void*) 0x44 + 0x1C);
+        addToList(result, (void*) YM2612_get(current, 0, 0x2B));
     }
 
     return result;

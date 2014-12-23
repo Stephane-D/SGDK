@@ -185,6 +185,61 @@ void XGMCommand_setOffset(XGMCommand* source, int value)
 }
 
 
+bool XGMCommand_removeYM2612RegWrite(XGMCommand* source, int port, int reg)
+{
+    switch(port)
+    {
+        case -1:
+            if (!XGMCommand_isYM2612Write(source)) return true;
+            break;
+
+        case 0:
+            if (!XGMCommand_isYM2612Port0Write(source)) return true;
+            break;
+
+        case 1:
+            if (!XGMCommand_isYM2612Port1Write(source)) return true;
+            break;
+
+        default:
+            return true;
+    }
+
+    const int size = XGMCommand_getYM2612WriteCount(source);
+    unsigned char* data = malloc((size * 2) + 1);
+    int i, off;
+
+    off = 1;
+    for (i = 0; i < size; i++)
+    {
+        // register accepted ?
+        if (source->data[(i * 2) + 1] != reg)
+        {
+            data[off++] = source->data[(i * 2) + 1];
+            data[off++] = source->data[(i * 2) + 2];
+        }
+    }
+
+    const int newSize = off / 2;
+
+    // changed ?
+    if (newSize != size)
+    {
+        // no more command !
+        if (newSize == 0) return false;
+
+        // set command and size
+        data[0] = (source->data[0] & 0xF0) | (newSize - 1);
+        // replace data and size
+        source->data = data;
+        source->size = (newSize * 2) + 1;
+    }
+    else free(data);
+
+    return true;
+}
+
+
 XGMCommand* XGMCommand_createYMKeyCommand(List* commands, int* offset, int max)
 {
     const int size = min(max, commands->size - *offset);
@@ -271,16 +326,24 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGMCommand* command, in
 {
     unsigned char* data = malloc(2);
     XGMSample* sample;
+    unsigned char prio;
 
-    data[0] = XGM_PCM | (channel & 0x3);
+    data[0] = XGM_PCM;
+    prio = 0;
 
     if (VGMCommand_isStreamStartLong(command))
+    {
+        // use stream id as priority
+        prio = 3 - (VGMCommand_getStreamId(command) & 0x3);
         sample = XGM_getSampleByAddress(xgm, VGMCommand_getStreamSampleAddress(command));
+    }
     else if (VGMCommand_isStreamStart(command))
     {
+        // use stream id as priority
+        prio = 3 - (VGMCommand_getStreamId(command) & 0x3);
         sample = XGM_getSampleById(xgm, VGMCommand_getStreamBlockId(command) + 1);
         if (sample == NULL)
-            sample = XGM_getSampleById(xgm, VGMCommand_getStreamId(command) + 1);
+            sample = XGM_getSampleById(xgm, prio + 1);
     }
     else
     {
@@ -297,6 +360,14 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGMCommand* command, in
     }
     else
         data[1] = sample->id;
+
+    // channel == -1 --> we use inverse of priority for channel
+    if (channel == -1)
+        data[0] |= 3 - prio;
+    else
+        data[0] |= (channel & 0x3);
+    // set prio
+    data[0] |= prio << 2;
 
     return XGMCommand_create(data, 2);
 }
@@ -375,7 +446,7 @@ List* XGMCommand_createPCMCommands(XGM* xgm, List* commands)
         VGMCommand* command = getFromList(commands, i);
 
         if (VGMCommand_isStreamStartLong(command) || VGMCommand_isStreamStart(command) || VGMCommand_isStreamStop(command))
-            addToList(result, XGMCommand_createPCMCommand(xgm, command, 0));
+            addToList(result, XGMCommand_createPCMCommand(xgm, command, -1));
     }
 
     return result;

@@ -6,7 +6,7 @@
  *  \def LIB_DEBUG
  *      Set it to 1 to enable KDebug logging (Gens KMod) for some errors (as memory allocation).
  */
-#define LIB_DEBUG           1
+#define LIB_DEBUG           0
 
 /**
  *  \def MATH_BIG_TABLES

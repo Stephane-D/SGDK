@@ -12,7 +12,6 @@
 #include "z80_drv1.h"
 #include "z80_drv2.h"
 #include "z80_drv3.h"
-#include "z80_drv4.h"
 #include "z80_mvs.h"
 #include "z80_mvsc.h"
 #include "z80_tfm.h"
@@ -210,14 +209,9 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             len = sizeof(z80_drv2);
             break;
 
-        case Z80_DRIVER_4PCM:
+        case Z80_DRIVER_4PCM_ENV:
             drv = z80_drv3;
             len = sizeof(z80_drv3);
-            break;
-
-        case Z80_DRIVER_4PCM_ENV:
-            drv = z80_drv4;
-            len = sizeof(z80_drv4);
             break;
 
         case Z80_DRIVER_MVS:
@@ -273,7 +267,6 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             break;
 
         case Z80_DRIVER_PCM:
-        case Z80_DRIVER_4PCM:
             // misc parameters initialisation
             Z80_requestBus(1);
             // point to Z80 null sample parameters
@@ -366,7 +359,6 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             // drivers supporting ready status
             case Z80_DRIVER_2ADPCM:
             case Z80_DRIVER_PCM:
-            case Z80_DRIVER_4PCM:
             case Z80_DRIVER_4PCM_ENV:
             case Z80_DRIVER_XGM:
                 Z80_releaseBus();

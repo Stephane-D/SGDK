@@ -60,6 +60,7 @@
 #define JOY_TYPE_TRACKBALL      0x03
 #define JOY_TYPE_MENACER        0x04
 #define JOY_TYPE_JUSTIFIER      0x05
+#define JOY_TYPE_PHASER         0x06
 #define JOY_TYPE_UNKNOWN        0x0F
 
 #define PORT_TYPE_MENACER       0x00
@@ -80,8 +81,9 @@
 #define JOY_SUPPORT_MENACER         0x07
 #define JOY_SUPPORT_JUSTIFIER_BLUE  0x08
 #define JOY_SUPPORT_JUSTIFIER_BOTH  0x09
-#define JOY_SUPPORT_ANALOGJOY       0x0A
-#define JOY_SUPPORT_KEYBOARD        0x0B
+#define JOY_SUPPORT_PHASER          0x0A
+#define JOY_SUPPORT_ANALOGJOY       0x0B
+#define JOY_SUPPORT_KEYBOARD        0x0C
 
 
 typedef void _joyEventCallback(u16 joy, u16 changed, u16 state);

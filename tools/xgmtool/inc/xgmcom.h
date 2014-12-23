@@ -46,6 +46,8 @@ int XGMCommand_getYM2612WriteCount(XGMCommand* source);
 bool XGMCommand_isYM2612RegKeyWrite(XGMCommand* source);
 void XGMCommand_setOffset(XGMCommand* source, int value);
 
+bool XGMCommand_removeYM2612RegWrite(XGMCommand* source, int port, int reg);
+
 #include "vgmcom.h"
 #include "util.h"
 

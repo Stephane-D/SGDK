@@ -2,7 +2,7 @@
 
 #include "resources.h"
 
-#define NUM_DRIVER      9
+#define NUM_DRIVER      8
 #define MAX_CMD         8
 #define MAX_PARAM       16
 
@@ -33,7 +33,6 @@ typedef struct
 } driver_def;
 
 
-static void handleInput();
 static void joyEvent(u16 joy, u16 changed, u16 state);
 
 static void setTextPalette(u16 selected);
@@ -74,14 +73,6 @@ static const driver_def drivers[NUM_DRIVER] =
     {
         Z80_DRIVER_2ADPCM,
         "2 channels ADPCM driver",
-        1,
-        {
-            {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}},
-        }
-    },
-    {
-        Z80_DRIVER_4PCM,
-        "4 channels PCM driver",
         1,
         {
             {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}},
@@ -169,7 +160,6 @@ int main()
 
     while(1)
     {
-        handleInput();
         VDP_waitVSync();
     }
 }
@@ -257,13 +247,6 @@ static void refreshDriverCmd()
             VDP_drawText("press B to start/end channel 2", 1, 13);
             break;
 
-        case Z80_DRIVER_4PCM:
-            VDP_drawText("press A to start/end channel 1", 1, 12);
-            VDP_drawText("press B to start/end channel 2", 1, 13);
-            VDP_drawText("press C to start/end channel 3", 1, 14);
-            VDP_drawText("press START to start/end channel 4", 1, 15);
-            break;
-
         case Z80_DRIVER_4PCM_ENV:
             VDP_drawText("press A to start/end channel 1", 1, 12);
             VDP_drawText("press B to start/end channel 2", 1, 13);
@@ -272,7 +255,8 @@ static void refreshDriverCmd()
             break;
 
         case Z80_DRIVER_MVS:
-            VDP_drawText("press A to start/end play", 1, 12);
+            VDP_drawText("press A to start/end play MVS music", 1, 12);
+            VDP_drawText("press B to play PCM SFX", 1, 13);
             break;
 
         case Z80_DRIVER_TFM:
@@ -381,62 +365,6 @@ static void setCurrentParam(const param_def *param)
     if ((driver_ind != -1) && (cmd_ind != -1))
         params_value[driver_ind][cmd_ind] = param;
 }
-
-
-static void handleInput()
-{
-    u16 value;
-
-    value = JOY_readJoypad(JOY_1);
-
-    if (value & BUTTON_A)
-    {
-        if (value & BUTTON_UP)
-        {
-
-        }
-
-        if (value & BUTTON_DOWN)
-        {
-
-        }
-    }
-    else if (value & BUTTON_B)
-    {
-        if (value & BUTTON_UP)
-        {
-
-        }
-
-        if (value & BUTTON_DOWN)
-        {
-
-        }
-    }
-    else
-    {
-        if (value & BUTTON_UP)
-        {
-
-        }
-
-        if (value & BUTTON_DOWN)
-        {
-
-        }
-
-        if (value & BUTTON_LEFT)
-        {
-
-        }
-
-        if (value & BUTTON_RIGHT)
-        {
-
-        }
-    }
-}
-
 
 static void joyEvent(u16 joy, u16 changed, u16 state)
 {
@@ -565,43 +493,6 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             break;
         }
 
-        case Z80_DRIVER_4PCM:
-        {
-            if (changed & state & BUTTON_START)
-            {
-                if (SND_isPlaying_4PCM(SOUND_PCM_CH1_MSK))
-                    SND_stopPlay_4PCM(SOUND_PCM_CH1);
-                else
-                    SND_startPlay_4PCM(loop1_16k, sizeof(loop1_16k), SOUND_PCM_CH1, loop);
-            }
-
-            if (changed & state & BUTTON_A)
-            {
-                if (SND_isPlaying_4PCM(SOUND_PCM_CH4_MSK))
-                    SND_stopPlay_4PCM(SOUND_PCM_CH4);
-                else
-                    SND_startPlay_4PCM(explode_16k, sizeof(explode_16k), SOUND_PCM_CH4, loop);
-            }
-
-            if (changed & state & BUTTON_B)
-            {
-                if (SND_isPlaying_4PCM(SOUND_PCM_CH3_MSK))
-                    SND_stopPlay_4PCM(SOUND_PCM_CH3);
-                else
-                    SND_startPlay_4PCM(snare1_16k, sizeof(snare1_16k), SOUND_PCM_CH3, loop);
-            }
-
-            if (changed & state & BUTTON_C)
-            {
-                if (SND_isPlaying_4PCM(SOUND_PCM_CH2_MSK))
-                    SND_stopPlay_4PCM(SOUND_PCM_CH2);
-                else
-                    SND_startPlay_4PCM(hat2_16k, sizeof(hat2_16k), SOUND_PCM_CH2, loop);
-            }
-
-            break;
-        }
-
         case Z80_DRIVER_4PCM_ENV:
         {
             // set volume values for driver 4PCM_ENV
@@ -658,6 +549,11 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
                     else
                         SND_startPlay_MVS(music_mvs, 0);
                 }
+            }
+
+            if (changed & state & BUTTON_B)
+            {
+                SND_startDAC_MVS(explode_u8k, sizeof(explode_u8k));
             }
 
             break;

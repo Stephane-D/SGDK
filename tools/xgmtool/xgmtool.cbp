@@ -13,7 +13,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="bug.vgm sor2.vgm" />
+				<Option parameters="bug.vgm out.vgm" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-Os" />
@@ -28,7 +28,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="bug.vgm sor2.xgm -v" />
+				<Option parameters="sor2.xgm out.xgc -v" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />

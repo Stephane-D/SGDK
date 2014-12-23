@@ -15,12 +15,6 @@
  * It can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate.<br>
  * Address and size of samples have to be 256 bytes boundary.<br>
  *<br>
- * <b>Z80_DRIVER_4PCM</b><br>
- * 4 channels 8 bits signed sample driver.<br>
- * It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.<br>
- * Address and size of samples have to be 256 bytes boundary.<br>
- * The driver does support "cutoff" when mixing so you can use true 8 bits samples :)<br>
- *<br>
  * <b>Z80_DRIVER_4PCM_ENV</b><br>
  * 4 channels 8 bits signed sample driver with volume support.<br>
  * It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.<br>
@@ -247,64 +241,6 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
  *      #SOUND_PCM_CH2    = channel 2<br>
  */
 void SND_stopPlay_2ADPCM(const u16 channel);
-
-
-// Z80_DRIVER_4PCM
-
-/**
- *  \brief
- *      Return play status of specified channel (4 channels PCM player driver).
- *
- *  \param channel_mask
- *      Channel(s) we want to retrieve play state.<br>
- *      #SOUND_PCM_CH1_MSK    = channel 1<br>
- *      #SOUND_PCM_CH2_MSK    = channel 2<br>
- *      #SOUND_PCM_CH3_MSK    = channel 3<br>
- *      #SOUND_PCM_CH4_MSK    = channel 4<br>
- *      <br>
- *      You can combine mask to retrieve state of severals channels at once:<br>
- *      <code>isPlaying_2ADPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
- *      will actually return play state for channel 1 and channel 2.
- *
- *  \return
- *      Return non zero if specified channel(s) is(are) playing.
- */
-u8   SND_isPlaying_4PCM(const u16 channel_mask);
-/**
- *  \brief
- *      Start playing a sample on specified channel (4 channels PCM player driver).<br>
- *      If a sample was currently playing on this channel then it's stopped and the new sample is played instead.
- *
- *  \param sample
- *      Sample address, should be 256 bytes boundary aligned<br>
- *      SGDK automatically align resource as needed
- *  \param len
- *      Size of sample in bytes, should be a multiple of 256<br>
- *      SGDK automatically adjust resource size as needed
- *  \param channel
- *      Channel where we want to play sample.<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
- *  \param loop
- *      Loop flag.<br>
- *      If non zero then the sample will be played in loop (else sample is played only once).
- */
-void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop);
-/**
- *  \brief
- *      Stop playing the specified channel (4 channels PCM player driver).<br>
- *      No effect if no sample was currently playing on this channel.
- *
- *  \param channel
- *      Channel we want to stop.<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
- */
-void SND_stopPlay_4PCM(const u16 channel);
 
 
 // Z80_DRIVER_4PCM_ENV
