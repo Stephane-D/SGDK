@@ -1,3 +1,32 @@
+SGDK 1.10 (December 2014)
+-------------------------
+
+COMPILER
+* XGMTool:
+ - removed DAC enabled command (automatically handle by the XGM driver).
+ - added DAC enabled state (XGM driver uses it when no PCM are playing).
+ - now uses the VGM 1.60 'stream id' information to allow multi PCM channel for XGM conversion.
+   Note that each channel has its own priority as VGM music does not contains PCM priority information.
+
+LIBRARY
+* VDP:
+ - VDP_fade(..) method now automatically disables interrupts if needed.
+* SPRITE:
+ - minor optimization in the Sprite Engine to quickly discard disabled sprites (visibility forced to off).
+* SOUND:
+ - added automatic DAC enabled control (XGM driver).
+ - fixed issue with music pause operation on real hardware (XGM driver).
+ - minor tweak to reduce a bit the size of the Z80 drivers.
+ - removed Z80_DRIVER_4PCM which is useless (use Z80_DRIVER_4PCM_ENV driver instead).
+* CONTROLLER:
+ - added Sega Phaser support (Chilly Willy).
+* SYSTEM:
+ - disable library debug info.
+* SAMPLE:
+ - updated 'Joy' sample to add Phaser test (Chilly Willy).
+ - updated 'Sound' sample to remove Z80_DRIVER_4PCM test and add an example of the MVS driver PCM SFX.
+
+
 SGDK 1.01 (November 2014)
 -------------------------
 
