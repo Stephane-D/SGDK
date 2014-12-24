@@ -1,3 +1,10 @@
+SGDK 1.11 (December 2014)
+-------------------------
+
+* Fixed small issue in joystick code (Chilly Willy).
+* added Z80 CPU load information in XGM driver (experimental).
+
+
 SGDK 1.10 (December 2014)
 -------------------------
 
