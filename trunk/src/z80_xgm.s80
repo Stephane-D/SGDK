@@ -90,6 +90,9 @@ PSG_ENV_OFF EQU     PARAMS+$78      ; PSG env off (4 channels)
 YM_2B_PT    EQU     PARAMS+$5D      ; YM register $2B save buffer pointer
 YM_2B_BUF   EQU     PARAMS+$7C      ; YM register $2B save buffer
 
+VINT_OVER   EQU     PARAMS+$5E      ; contains number of vint to process (just for info)
+IDLE_LOOP   EQU     PARAMS+$5F      ; idle loop counter (just for info)
+
 JUMP_TABLE  EQU     $1600           ; XGM command jump table (size = $100)
 XGM_BUFFER  EQU     $1700           ; XGM music data buffer (size = $100)
 
@@ -780,17 +783,18 @@ set_DAC_enabled
 ; $B6
             sampleOutputSafe            ; sample output         ' 46    | 46
 
+            wait160                     ; sync                  ' 160   | 206
+
             LD      A, IYL              ;                       ' 8     |
-            OR      A                   ; vint happened ?       ' 4     | 22 (68)
+            OR      A                   ; vint happened ?       ' 4     | 22 (228)
             JP      Z, .no_vint         ; no --> sync rd and wr ' 10    |
 
 .vint_to_do
-            wait176                     ; sync                  ' 176   | 186 (254)
+            wait16                      ; sync                  ' 16    | 26 (254)
             JP      prepare_xgm         ; go prepare XGM data   ' 10    |
 
-.no_vint                                ;                       ' 68
-            wait160                     ; sync                  ' 160   |
-            compareReadWrite            ; write buf != read buf ' 16    | 186 (254)
+.no_vint                                ;                       ' 228
+            compareReadWrite            ; write buf != read buf ' 16    | 26 (254)
             JP      NZ, main_loop       ; continu to fill write ' 10    |
 
 
@@ -824,7 +828,7 @@ has_xgm
             LD      C, (HL)             ; BC = bytes to process ' 7     |
             LD      H, A                ; restore H             ' 4     |
 
-; $B8
+; $B7+X
             sampleOutput                ;                       ' 36    | (36-1)
 
             LD      A, L                ; A = addr low          ' 4     |
@@ -884,7 +888,7 @@ has_xgm
             JP      NC, .first_part_end ; go to last bytes      ' 10    |
 
 .first_part
-; $B9
+; $B7+X
             sampleOutput                ;                       ' 36    | 36
 
             LDI                         ; fill XGM buffer       ' 16+1  |
@@ -905,7 +909,7 @@ has_xgm
             JP      C, .first_part      ; continu block fill    ' 10    |
 
 .first_part_end
-; $BA+X
+; $B7+X
             sampleOutput                ;                       ' 36    | 36
 
             LDI                         ; fill XGM buffer       ' 16+1  |
@@ -923,7 +927,7 @@ has_xgm
 
             wait56                      ; sync                  ' 56    | (254)
 
-; $BB+X
+; $B7+X
             sampleOutput                ;                       ' 36    | 36
 
             LDI                         ; fill XGM buffer       ' 16+1  |
@@ -960,7 +964,7 @@ has_xgm
 
             wait17                      ; sync                  ' 17    | 254
 
-; $BC+X
+; $B7+X
             sampleOutput                ;                       ' 36    | 36
 
             LD      HL, (XGM_ADDR)      ; XGM addr (b0-b15)     ' 16    |
@@ -981,7 +985,7 @@ has_xgm
             CP      C                   ; C < block size        ' 4     |
             JP      NC, .sec_part_end   ; go to last bytes      ' 10    |
 
-; $BD+X
+; $B7+X
 .sec_part_loop
             sampleOutput                ;                       ' 36    | 36
 
@@ -1003,7 +1007,7 @@ has_xgm
             JP      C, .sec_part_loop   ; continu block fill    ' 10    |
 
 .sec_part_end
-; $BE+X
+; $B7+X
             sampleOutput                ;                       ' 36    | 36
 
             LDI                         ; fill XGM buffer       ' 16+1  |
@@ -1021,7 +1025,7 @@ has_xgm
 
             wait56                      ; sync                  ' 56    | (254)
 
-; $BF+X
+; $B7+X
             sampleOutput                ;                       ' 36    | 36
 
             LDI                         ; fill XGM buffer       ' 16+1  |
@@ -1059,11 +1063,15 @@ end_prep_xgm                            ;                       ' 237
 ; free time + frame synchro
 ; -------------------------
 
-; $C0+X
+; $B8+X
 loop_synchro
             sampleOutput                ;                       ' 36    | (36)
 
-            wait186                     ; sync                  ' 186   | 222
+            wait156                     ; sync                  ' 156   | 192
+
+            LD      A, (IDLE_LOOP)      ;                       ' 13    |
+            INC     A                   ; increment idle loop   ' 4     | 30 (222)
+            LD      (IDLE_LOOP), A      ;                       ' 13    |
 
             LD      A, IYL              ; A = vint flag         ' 8     |
             OR      A                   ; vint happened ?       ' 4     | 22 (244)
@@ -1078,7 +1086,7 @@ pre_exec_xgm                            ;                       ' 244
 ; execute XGM command
 ; -------------------
 
-; $C1+X
+; $B9+X
 execute_xgm
             sampleOutput                ;                       ' 36    | (36)
 
@@ -2151,13 +2159,7 @@ com_end                                 ; FF                    ' 80
             wait139                     ; sync                  ' 139   |
             JP      execute_xgm         ;                       ' 10    | 149 (254)
 
-
-
-; frame done (we should be <= 0xE8 to respect frame time here)
-; So median (X+Y+Z) should be <= 0x27 (< 40) else we are running out of time !
-; ----------------------------------------------------------------------------
-
-; $C1+X+Y
+; $B9+X+Y
 xgm_done                            ;                       ' 90
             DEC     IYL             ; no more vint to do ?  ' 8     |
             JP      Z, external_com ; execute extern com    ' 10    | 18 (108)
@@ -2170,7 +2172,7 @@ xgm_done                            ;                       ' 90
 ; execute external command
 ; ------------------------
 
-; $C1+X+Y
+; $B9+X+Y
 external_com                            ;                           ' 108
             LD      HL, COMMAND         ; HL point on COMMAND       ' 10    | (118)
 
@@ -2269,7 +2271,7 @@ external_com                            ;                           ' 108
             LD      HL, COMMAND         ; restore HL                ' 10    |
             wait60                      ; sync                      ' 70    | 254
 
-; $C2+X+Y
+; $BA+X+Y
 external_com_pcm
             sampleOutput                ; *** sample output ****    ' 36    | (36)
 
@@ -2330,55 +2332,61 @@ external_com_pcm
 
 
 ; frame done (we should be <= 0xE8 to respect frame time here)
-; So median (X+Y+Z) should be <= 0x26 (<= 38) else we are running out of time !
+; So median (X+Y+Z) should be <= 0x2E (<= 46) else we are running out of time !
 ; ----------------------------------------------------------------------------
 
-; $C2+X+Y+Z
+; $BA+X+Y+Z
 frame_end                               ;                       ' 124
+
+            wait39                      ; sync                  ' 39    | (163)
+
             LD      A, IYL              ;                       ' 8     |
-            OR      A                   ; vint happened ?       ' 4     | 22 (146)
+            LD      (VINT_OVER), A      ; keep trace of it      ' 13    |
+            OR      A                   ; vint happened ?       ' 4     | 35 (198)
             JP      NZ, .vint_happened  ; go to ext command     ' 10    |
 
             LD      DE, (WRITEBUF)      ; DE = write buf        ' 20    |
-            compareReadWrite            ;                       ' 16    | 46 (192)
+            compareReadWrite            ;                       ' 16    | 46 (244)
             JP      Z, .wait            ; wait until wb != rb   ' 10    |
 
-            wait52                      ; sync                  ' 52    |
-            JP      main_loop           ; process next frame    ' 10    | 62 (254)
+            JP      main_loop           ; process next frame    ' 10    | (254)
 
 .wait
-            wait52                      ; sync                  ' 52    |
-            JP      free_time           ; we have free time     ' 10    | 62 (254)
+            JP      free_time           ; we have free time     ' 10    | (254)
 
-.vint_happened
-            wait98                      ; sync                  ' 98    |
-            JP      prepare_xgm         ; continue xgm process  ' 10    | 108 (254)
+.vint_happened                          ;                       ' 198
+            wait46                      ; sync                  ' 46    |
+            JP      prepare_xgm         ; continue xgm process  ' 10    | 56 (254)
 
 
 ; free time here
 ; --------------
-; $C2+X+Y+Z
+; $BB+X+Y+Z
 free_time
             sampleOutput                ; *** sample output *** ' 36    | (36)
 
+            wait110                     ; sync                  ' 110   | (146)
+
+            LD      A, (IDLE_LOOP)      ;                       ' 13    |
+            INC     A                   ; increment idle loop   ' 4     | 30 (176)
+            LD      (IDLE_LOOP), A      ;                       ' 13    |
+
             LD      A, IYL              ;                       ' 8     |
-            OR      A                   ; vint happened ?       ' 4     | 22 (58)
+            OR      A                   ; vint happened ?       ' 4     | 22 (198)
             JP      NZ, .vint_happened  ; go to ext command     ' 10    |
 
             LD      DE, (WRITEBUF)      ; DE = write buf        ' 20    |
-            compareReadWrite            ;                       ' 16    | 46 (104)
+            compareReadWrite            ;                       ' 16    | 46 (244)
             JP      Z, .wait            ; wait until wb != rb   ' 10    |
 
-            wait140                     ; sync                  ' 140   |
-            JP      main_loop           ; process next frame    ' 10    | 150 (254)
+            JP      main_loop           ; process next frame    ' 10    | (254)
 
 .wait
-            wait140                     ; sync                  ' 140   |
-            JP      free_time           ; we have free time     ' 10    | 150 (254)
+            JP      free_time           ; we have free time     ' 10    | (254)
 
-.vint_happened
-            wait186                     ; sync                  ' 186   |
-            JP      prepare_xgm         ; continue xgm process  ' 10    | 196 (254)
+.vint_happened                          ;                       ' 198
+            wait46                      ; sync                  ' 46    |
+            JP      prepare_xgm         ; continue xgm process  ' 10    | 56 (254)
 
 
 

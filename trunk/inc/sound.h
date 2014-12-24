@@ -581,5 +581,13 @@ void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);
  *      #SOUND_PCM_CH4    = channel 4<br>
  */
 void SND_stopPlayPCM_XGM(const u16 channel);
+/**
+ *  \brief
+ *      Returns an estimation of the Z80 CPU load (XGM driver).<br>
+ *      It returns value between ~80% (minimum value) to >100% (if we have some frames late).<br>
+ *      WARNING: You should call this method at each frame to get meaningful value !
+ */
+u16 SND_getCPULoad_XGM();
+
 
 #endif // _SOUND_H_

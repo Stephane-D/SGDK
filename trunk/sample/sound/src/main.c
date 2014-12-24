@@ -133,7 +133,9 @@ static const param_def *params_value[NUM_DRIVER][MAX_CMD];
 
 int main()
 {
+    char str[8];
     u16 i, j;
+    u16 cpuload;
     const driver_def *cur_driver;
     const cmd_def *cur_cmd;
 
@@ -146,6 +148,7 @@ int main()
     // point to first driver
     driver = drivers;
     cmd = NULL;
+    cpuload = 80;
 
     for(i = 0, cur_driver = drivers; i < NUM_DRIVER; i++, cur_driver++)
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
@@ -161,6 +164,19 @@ int main()
     while(1)
     {
         VDP_waitVSync();
+
+        SYS_disableInts();
+        if (driver->id == Z80_DRIVER_XGM)
+        {
+            // calculate mean on 8 frames
+            cpuload = ((7 * cpuload) + SND_getCPULoad_XGM()) / 8;
+
+            uintToStr(cpuload, str, 3);
+            strcat(str, " %");
+            VDP_clearText(16, 21, 10);
+            VDP_drawText(str, 16, 21);
+        }
+        SYS_enableInts();
     }
 }
 
@@ -282,6 +298,8 @@ static void refreshDriverCmd()
             VDP_drawText("press X to play PCM SFX ch 2", 1, 17);
             VDP_drawText("press Y to play PCM SFX ch 3", 1, 18);
             VDP_drawText("press Z to play PCM SFX ch 4", 1, 19);
+
+            VDP_drawText("Z80 CPU load:", 1, 21);
             break;
     }
 }

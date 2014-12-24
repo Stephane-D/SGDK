@@ -21,7 +21,7 @@ u8 SND_isPlaying_PCM()
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -41,7 +41,7 @@ void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -81,7 +81,7 @@ void SND_stopPlay_PCM()
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -116,7 +116,7 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask)
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -138,7 +138,7 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
     u16 ch;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -193,7 +193,7 @@ void SND_stopPlay_2ADPCM(const u16 channel)
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -228,7 +228,7 @@ u8 SND_isPlaying_4PCM_ENV(const u16 channel_mask)
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
     Z80_requestBus(TRUE);
@@ -250,7 +250,7 @@ void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, 
     u16 ch;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
     Z80_requestBus(TRUE);
@@ -305,7 +305,7 @@ void SND_stopPlay_4PCM_ENV(const u16 channel)
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
     Z80_requestBus(TRUE);
@@ -334,7 +334,7 @@ void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume)
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
     Z80_requestBus(TRUE);
@@ -352,7 +352,7 @@ u8 SND_getVolume_4PCM_ENV(const u16 channel)
     vu8 *pb;
     u8 volume;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
 
     Z80_requestBus(TRUE);
@@ -377,7 +377,7 @@ u8 SND_isPlaying_MVS()
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -399,7 +399,7 @@ void SND_startPlay_MVS(const u8 *music, const u8 loop)
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -432,7 +432,7 @@ void SND_stopPlay_MVS()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -452,7 +452,7 @@ void SND_setTempo_MVS(u8 tempo)
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -472,7 +472,7 @@ void SND_startDAC_MVS(const u8 *sample, u16 size)
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -506,7 +506,7 @@ void SND_stopDAC_MVS()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -526,7 +526,7 @@ u8 SND_isPlayingPSG_MVS()
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -548,7 +548,7 @@ void SND_startPSG_MVS(const u8 *music)
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -576,7 +576,7 @@ void SND_stopPSG_MVS()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -594,7 +594,7 @@ void SND_enablePSG_MVS(u8 chan)
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -612,7 +612,7 @@ void SND_disablePSG_MVS(u8 chan)
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_MVS, 0);
 
     Z80_requestBus(TRUE);
@@ -677,7 +677,7 @@ void SND_startPlay_VGM(const u8 *song)
     vu8 *pb;
     u32 addr;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
     // stop current music
@@ -714,7 +714,7 @@ void SND_stopPlay_VGM()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -730,7 +730,7 @@ void SND_resumePlay_VGM()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -747,7 +747,7 @@ u8 SND_isPlaying_VGM()
     u8 result;
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_VGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -799,7 +799,7 @@ u8 SND_isPlaying_XGM()
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -821,7 +821,7 @@ void SND_startPlay_XGM(const u8 *song)
     u16 i;
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -883,7 +883,7 @@ void SND_stopPlay_XGM()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -901,7 +901,7 @@ void SND_resumePlay_XGM()
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -919,7 +919,7 @@ u8 SND_isPlayingPCM_XGM(const u16 channel_mask)
     vu8 *pb;
     u8 ret;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -936,7 +936,7 @@ u8 SND_isPlayingPCM_XGM(const u16 channel_mask)
 
 void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len)
 {
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -964,7 +964,7 @@ void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel)
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -988,7 +988,7 @@ void SND_stopPlayPCM_XGM(const u16 channel)
 {
     vu8 *pb;
 
-    // load the appropried driver if not already done
+    // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
@@ -1007,3 +1007,35 @@ void SND_stopPlayPCM_XGM(const u16 channel)
 
     Z80_releaseBus();
 }
+
+u16 SND_getCPULoad_XGM()
+{
+    vu8 *pb;
+    u8 fl;
+    u8 idle;
+
+    // load the appropriate driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    // point to Z80 'late frame' value
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x5E);
+    fl = *pb;
+
+    // point to Z80 'idle loop' value
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x5F);
+    idle = *pb;
+    // reset it
+    *pb = 0;
+
+    Z80_releaseBus();
+
+    // some frame late --> load >100%
+    if (fl > 1) return 100 + (fl * 10);
+    // single frame late --> load ~100%
+    if (fl == 1) return 110 - (idle / 8);
+    // waiting for frame --> load <100%
+    return 100 - (idle / 4);
+}
+

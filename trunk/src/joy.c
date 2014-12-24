@@ -678,7 +678,7 @@ static u16 readMouse(u16 port)
             else
                 my = md[4]<<4 | md[5];
             if (md[0] & 0x02)
-                my |= mx ? 0xFF00 : 0xFFFF; /* y sign extend */
+                my |= my ? 0xFF00 : 0xFFFF; /* y sign extend */
             joyAxisX[port] += (s16)mx;
             joyAxisY[port] += (s16)my;
 
