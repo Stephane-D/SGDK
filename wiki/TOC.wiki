@@ -7,7 +7,7 @@
  # *[HowToUseSGDK Installation & basic use]*
  # *[UseSGDKWithEclipse SGDK with Eclipse]*
  # *[UseSGDKWithCB SGDK with Code::blocks]*
- # *[UseSGDKWithQtCreator SGDK with QtCreator]*
+ # *[https://github.com/AbigailBuccaneer/sgdk/wiki/sgdk-with-qtcreator SGDK with QtCreator]*
 
 = Programming =
 
