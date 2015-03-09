@@ -43,6 +43,7 @@ int VGM_getCommandIndexAtTime(VGM* vgm, int time);
 VGMCommand* VGM_getCommandAtTime(VGM* vgm, int time);
 void VGM_cleanCommands(VGM* vgm);
 void VGM_cleanSamples(VGM* vgm);
+//Sample* VGM_getSample(VGM* vgm, int sampleOffset, int len);
 Sample* VGM_getSample(VGM* vgm, int sampleOffset);
 void VGM_convertWaits(VGM* vgm);
 void VGM_shiftSamples(VGM* vgm, int sft);

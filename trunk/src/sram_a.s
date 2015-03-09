@@ -1,5 +1,5 @@
-	.globl	SRAM_readWord
-	.type	SRAM_readWord, @function
+    .globl  SRAM_readWord
+    .type   SRAM_readWord, @function
     | extern u16 SRAM_readWord(u32 offset);
 SRAM_readWord:
     move.l  4(%sp),%d1
@@ -10,8 +10,8 @@ SRAM_readWord:
     movep.w 0(%a0),%d0
     rts
 
-	.globl	SRAM_readLong
-	.type	SRAM_readLong, @function
+    .globl	SRAM_readLong
+    .type   SRAM_readLong, @function
     | extern u32 SRAM_readLong(u32 offset);
 SRAM_readLong:
     move.l  4(%sp),%d1
@@ -21,8 +21,8 @@ SRAM_readLong:
     movep.l 0(%a0),%d0
     rts
 
-	.globl	SRAM_writeWord
-	.type	SRAM_writeWord, @function
+    .globl  SRAM_writeWord
+    .type   SRAM_writeWord, @function
     | extern void SRAM_writeWord(u32 offset, u16 val);
 SRAM_writeWord:
     move.l  4(%sp),%d1
@@ -33,8 +33,8 @@ SRAM_writeWord:
     movep.w %d0,0(%a0)
     rts
 
-	.globl	SRAM_writeLong
-	.type	SRAM_writeLong, @function
+    .globl  SRAM_writeLong
+    .type   SRAM_writeLong, @function
     | extern void SRAM_writeLong(u32 offset, u32 val);
 SRAM_writeLong:
     move.l  4(%sp),%d1

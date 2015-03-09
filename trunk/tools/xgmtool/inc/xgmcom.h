@@ -59,7 +59,7 @@ List* XGMCommand_createPSGCommands(List* commands);
 
 #include "xgm.h"
 
-List* XGMCommand_createPCMCommands(XGM* xgm, List* commands);
+List* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, List* commands);
 
 
 #endif // XGMCOM_H_

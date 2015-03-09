@@ -318,8 +318,8 @@ typedef struct
  */
 typedef struct
 {
-	Vect2D_f16 a;
-	Vect2D_f16 b;
+    Vect2D_f16 a;
+    Vect2D_f16 b;
 } Mat2D_f16;
 
 
@@ -343,9 +343,9 @@ typedef struct
  */
 typedef struct
 {
-	Vect3D_f16 a;
-	Vect3D_f16 b;
-	Vect3D_f16 c;
+    Vect3D_f16 a;
+    Vect3D_f16 b;
+    Vect3D_f16 c;
 } Mat3D_f16;
 
 
@@ -370,10 +370,10 @@ typedef struct
  */
 typedef struct
 {
-	Vect4D_f16 a;
-	Vect4D_f16 b;
-	Vect4D_f16 c;
-	Vect4D_f16 d;
+    Vect4D_f16 a;
+    Vect4D_f16 b;
+    Vect4D_f16 c;
+    Vect4D_f16 d;
 } Mat4D_f16;
 
 

@@ -322,10 +322,10 @@ static XGMCommand* XGMCommand_createPSGCommand(List* commands, int* offset)
     return XGMCommand_create(data, size + 1);
 }
 
-static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGMCommand* command, int channel)
+static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* command, int channel)
 {
     unsigned char* data = malloc(2);
-    XGMSample* sample;
+    XGMSample* xgmSample;
     unsigned char prio;
 
     data[0] = XGM_PCM;
@@ -333,33 +333,58 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGMCommand* command, in
 
     if (VGMCommand_isStreamStartLong(command))
     {
+        int address;
+        Sample* vgmSample;
+
+        address = VGMCommand_getStreamSampleAddress(command);
+        vgmSample = VGM_getSample(vgm, address);
+
         // use stream id as priority
         prio = 3 - (VGMCommand_getStreamId(command) & 0x3);
-        sample = XGM_getSampleByAddress(xgm, VGMCommand_getStreamSampleAddress(command));
+        xgmSample = XGM_getSampleByAddress(xgm, address);
+
+        if (vgmSample != NULL)
+        {
+            double len;
+            int lenInFrame;
+
+            len = VGMCommand_getStreamSampleSize(command);
+            lenInFrame = ceil(len / ((double) vgmSample->rate / (double) vgm->rate));
+        }
+        else
+            printf("Warning: can't find original VGM sample for VGM command at offset %6X\n", command->offset);
     }
     else if (VGMCommand_isStreamStart(command))
     {
         // use stream id as priority
         prio = 3 - (VGMCommand_getStreamId(command) & 0x3);
-        sample = XGM_getSampleById(xgm, VGMCommand_getStreamBlockId(command) + 1);
-        if (sample == NULL)
-            sample = XGM_getSampleById(xgm, prio + 1);
+        xgmSample = XGM_getSampleByIndex(xgm, VGMCommand_getStreamBlockId(command) + 1);
+        if (xgmSample == NULL)
+            xgmSample = XGM_getSampleByIndex(xgm, prio + 1);
+    }
+    else if (VGMCommand_isStreamStop(command))
+    {
+        // use stream id as priority
+        prio = 3 - (VGMCommand_getStreamId(command) & 0x3);
+        // stop command
+        data[1] = 0;
+        return XGMCommand_create(data, 2);
     }
     else
     {
-        // stop command
+        // assume stop command by default
         data[1] = 0;
         return XGMCommand_create(data, 2);
     }
 
     // no sample found --> use empty sample
-    if (sample == NULL)
+    if (xgmSample == NULL)
     {
         printf("Warning: no corresponding sample found for VGM command at offset %6X in XGM\n", command->offset);
         data[1] = 0;
     }
     else
-        data[1] = sample->id;
+        data[1] = xgmSample->index;
 
     // channel == -1 --> we use inverse of priority for channel
     if (channel == -1)
@@ -433,7 +458,7 @@ List* XGMCommand_createPSGCommands(List* commands)
     return result;
 }
 
-List* XGMCommand_createPCMCommands(XGM* xgm, List* commands)
+List* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, List* commands)
 {
     List* result;
     int i;
@@ -446,7 +471,7 @@ List* XGMCommand_createPCMCommands(XGM* xgm, List* commands)
         VGMCommand* command = getFromList(commands, i);
 
         if (VGMCommand_isStreamStartLong(command) || VGMCommand_isStreamStart(command) || VGMCommand_isStreamStop(command))
-            addToList(result, XGMCommand_createPCMCommand(xgm, command, -1));
+            addToList(result, XGMCommand_createPCMCommand(xgm, vgm, command, -1));
     }
 
     return result;

@@ -94,6 +94,31 @@ List* SampleBank_getDeclarationCommands(SampleBank* bank)
     return result;
 }
 
+//Sample* SampleBank_getSampleByOffsetAndLen(SampleBank* bank, int dataOffset, int len)
+//{
+//    int i;
+//    int minOffset;
+//    int maxOffset;
+//    int minLen;
+//    int maxLen;
+//
+//    minOffset = max(0, dataOffset - 50);
+//    maxOffset = dataOffset + 50;
+//    minLen = max(0, len - 50);
+//    maxLen = len + 50;
+//
+//    for (i = 0; i < bank->samples->size; i++)
+//    {
+//        Sample* sample = getFromList(bank->samples, i);
+//
+//        // allow a small margin
+//        if ((sample->dataOffset >= minOffset) && (sample->dataOffset <= maxOffset) && (sample->len >= minLen) && (sample->len <= maxLen))
+//            return sample;
+//    }
+//
+//    return NULL;
+//}
+
 Sample* SampleBank_getSampleByOffset(SampleBank* bank, int dataOffset)
 {
     int i;
@@ -132,6 +157,7 @@ Sample* SampleBank_getSampleById(SampleBank* bank, int id)
 
 Sample* SampleBank_addSample(SampleBank* bank, int dataOffset, int len, int rate)
 {
+//    Sample* result = SampleBank_getSampleByOffsetAndLen(bank, dataOffset, len);
     Sample* result = SampleBank_getSampleByOffset(bank, dataOffset);
 
     // not found --> create new sample
@@ -145,13 +171,21 @@ Sample* SampleBank_addSample(SampleBank* bank, int dataOffset, int len, int rate
     }
     else
     {
-        // confirmation of sample or adjust sample length info
-        if ((result->rate == 0) || (result->len < len))
+        // confirmation of sample
+        if (result->rate == 0)
         {
             if (verbose)
-                printf("Sample modified [%6X]  len: %6X --> %6X   rate: %d --> %d Hz\n", dataOffset, result->len, len, result->rate, rate);
+                printf("Sample confirmation [%6X]  len: %6X --> %6X   rate: %d --> %d Hz\n", dataOffset, result->len, len, result->rate, rate);
 
             result->rate = rate;
+            result->len = len;
+        }
+        // adjust sample length if needed
+        else if (result->len < len)
+        {
+            if (verbose)
+                printf("Sample modified [%6X]  len: %6X --> %6X\n", dataOffset, result->len, len);
+
             result->len = len;
         }
     }

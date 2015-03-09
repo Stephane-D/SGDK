@@ -53,7 +53,7 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
             len <<= 8;
 
             // add sample
-            addToList(result->samples, XGMSample_create(s, offset, data + (offset + 0x104), len));
+            addToList(result->samples, XGMSample_create(s, data + (offset + 0x104), len, offset));
         }
     }
 
@@ -145,7 +145,17 @@ static void XGM_extractSamples(XGM* xgm, VGM* vgm)
         SampleBank* sampleBank = getFromList(vgm->sampleBanks, b);
 
         for(s = 0; s < sampleBank->samples->size; s++)
-            addToList(xgm->samples, XGMSample_createFromVGMSample(sampleBank, getFromList(sampleBank->samples, s)));
+        {
+            XGMSample* sample = XGMSample_createFromVGMSample(sampleBank, getFromList(sampleBank->samples, s));
+
+            // valid sample
+            if (sample != NULL)
+            {
+                // index should be equal to current size + 1
+                sample->index = xgm->samples->size + 1;
+                addToList(xgm->samples, sample);
+            }
+        }
     }
 }
 
@@ -267,7 +277,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
                         addAllToList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
                     // and finally PCM commands
                     if (sampleCommands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createPCMCommands(xgm, sampleCommands));
+                        addAllToList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
 
                     clearList(ymKeyOffCommands);
                     clearList(ymKeyOtherCommands);
@@ -306,7 +316,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
             addAllToList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
         // and finally PCM commands
         if (sampleCommands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createPCMCommands(xgm, sampleCommands));
+            addAllToList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
 
         // last frame ?
         if (index >= vgm->commands->size)
@@ -496,22 +506,35 @@ XGMCommand* XGM_getCommandAtTime(XGM* xgm, int time)
     return getFromList(xgm->commands, XGM_getCommandIndexAtTime(xgm, time));
 }
 
-XGMSample* XGM_getSampleById(XGM* xgm, int id)
+XGMSample* XGM_getSampleByIndex(XGM* xgm, int index)
 {
-    int i;
+    if ((index < 1) || (index > xgm->samples->size))
+        return NULL;
 
-    for (i = 0; i < xgm->samples->size; i++)
-    {
-        XGMSample* sample = getFromList(xgm->samples, i);
-
-        if (sample->id == id)
-            return sample;
-    }
-
-    return NULL;
+    return getFromList(xgm->samples, index);
 }
 
-XGMSample* XGM_getSampleByAddress(XGM* xgm, int addr)
+//XGMSample* XGM_getSampleByAddressAndLen(XGM* xgm, int addr, int len)
+//{
+//    int i;
+//    int minLen;
+//    int maxLen;
+//
+//    minLen = max(0, len - 50);
+//    maxLen = len + 50;
+//
+//    for (i = 0; i < xgm->samples->size; i++)
+//    {
+//        XGMSample* sample = getFromList(xgm->samples, i);
+//
+//        if ((sample->originAddr == addr) && (sample->originSize >= minLen) && (sample->originSize <= maxLen))
+//            return sample;
+//    }
+//
+//    return NULL;
+//}
+
+XGMSample* XGM_getSampleByAddress(XGM* xgm, int originAddr)
 {
     int i;
 
@@ -519,7 +542,7 @@ XGMSample* XGM_getSampleByAddress(XGM* xgm, int addr)
     {
         XGMSample* sample = getFromList(xgm->samples, i);
 
-        if (sample->addr == addr)
+        if (sample->originAddr == originAddr)
             return sample;
     }
 

@@ -10,7 +10,7 @@
 #include "../inc/xgc.h"
 
 
-const char* version = "1.31";
+const char* version = "1.32";
 bool silent;
 bool verbose;
 
