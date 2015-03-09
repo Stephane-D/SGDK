@@ -54,8 +54,8 @@
  */
 typedef struct
 {
-	s16 y;
-	u16 size_link;
+    s16 y;
+    u16 size_link;
     u16 attr;
     s16 x;
 }  VDPSprite;
@@ -79,7 +79,7 @@ typedef struct
 typedef struct
 {
     VDPSprite vdpSprite;
-	TileSet *tileset;
+    TileSet *tileset;
 }  FrameSprite;
 
 /**
@@ -108,14 +108,14 @@ typedef struct
  */
 typedef struct
 {
-	u16 numSprite;
-	FrameSprite **frameSprites;
-	u16 numCollision;
-	void **collisions;
-	s16 w;
-	s16 h;
-	u8 tc;
-	u8 timer;
+    u16 numSprite;
+    FrameSprite **frameSprites;
+    u16 numCollision;
+    void **collisions;
+    s16 w;
+    s16 h;
+    u8 tc;
+    u8 timer;
 } AnimationFrame;
 
 /**
@@ -131,17 +131,15 @@ typedef struct
  *  \param sequence
  *      frame sequence animation (for instance: 0-1-2-2-1-2-3-4..)
  *  \param loop
- *      frame sequence index for loop (-1 if no loop).
- *  \param timer
- *      active time for this frame (in 1/60 of second)
+ *      frame sequence index for loop (last index if no loop)
  */
 typedef struct
 {
-	u16 numFrame;
-	AnimationFrame **frames;
-	u16 length;
-	u8 *sequence;
-	s16 loop;
+    u16 numFrame;
+    AnimationFrame **frames;
+    u16 length;
+    u8 *sequence;
+    s16 loop;
 } Animation;
 
 /**
@@ -158,9 +156,9 @@ typedef struct
  */
 typedef struct
 {
-	Palette *palette;
-	u16 numAnimation;
-	Animation **animations;
+    Palette *palette;
+    u16 numAnimation;
+    Animation **animations;
 } SpriteDefinition;
 
 /**
@@ -197,19 +195,19 @@ typedef struct
  */
 typedef struct
 {
-	SpriteDefinition *definition;
-	Animation *animation;
-	AnimationFrame *frame;
-	s16 x;
-	s16 y;
-	s16 animInd;
-	s16 frameInd;
-	s16 seqInd;
-	u16 timer;
-	u16 attribut;
-	s16 fixedIndex;
-	u32 data;
-	s32 visibility;
+    SpriteDefinition *definition;
+    Animation *animation;
+    AnimationFrame *frame;
+    s16 x;
+    s16 y;
+    s16 animInd;
+    s16 frameInd;
+    s16 seqInd;
+    u16 timer;
+    u16 attribut;
+    s16 fixedIndex;
+    u32 data;
+    s32 visibility;
 } Sprite;
 
 

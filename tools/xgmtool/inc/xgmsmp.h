@@ -4,17 +4,17 @@
 
 typedef struct
 {
-    int id;
-    int addr;
+    int index;
     unsigned char* data;
     int dataSize;
+    int originAddr;
 } XGMSample;
 
 
 #include "samplebank.h"
 
 
-XGMSample* XGMSample_create(int id, int addr, unsigned char* data, int dataSize);
+XGMSample* XGMSample_create(int index, unsigned char* data, int dataSize, int originAddr);
 XGMSample* XGMSample_createFromVGMSample(SampleBank* bank, Sample* sample);
 
 

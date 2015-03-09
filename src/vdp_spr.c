@@ -25,6 +25,23 @@ void VDP_resetSprites()
     spriteNum = 1;
 }
 
+void VDP_resetSpritesDirect()
+{
+    vu32 *plctrl;
+    vu32 *pldata;
+
+    VDP_setAutoInc(2);
+
+    /* Point to vdp port */
+    plctrl = (u32 *) GFX_CTRL_PORT;
+    pldata = (u32 *) GFX_DATA_PORT;
+
+    *plctrl = GFX_WRITE_VRAM_ADDR(SLIST + 2);
+
+    // size & link / X position
+    *pldata = 0;
+}
+
 
 void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link)
 {
@@ -59,7 +76,6 @@ void VDP_setSpriteP(u16 index, const SpriteDef *sprite)
     spriteDst->size = sprite->size;
     spriteDst->link = sprite->link;
 }
-
 
 void VDP_setSpriteDirect(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link)
 {

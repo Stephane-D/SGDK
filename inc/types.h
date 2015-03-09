@@ -186,10 +186,10 @@ typedef s32 fix32;
  */
 typedef struct
 {
-	u16 x;
-	u16 y;
-	u16 w;
-	u16 h;
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
 } Box;
 
 /**
@@ -205,9 +205,9 @@ typedef struct
  */
 typedef struct
 {
-	u16 x;
-	u16 y;
-	u16 ray;
+    u16 x;
+    u16 y;
+    u16 ray;
 } Circle;
 
 

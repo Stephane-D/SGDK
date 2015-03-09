@@ -33,8 +33,9 @@ XGMCommand* XGM_getCommandAtTime(XGM* xgm, int time);
 
 #include "xgmsmp.h"
 
-XGMSample* XGM_getSampleById(XGM* xgm, int id);
-XGMSample* XGM_getSampleByAddress(XGM* xgm, int addr);
+XGMSample* XGM_getSampleByIndex(XGM* xgm, int index);
+//XGMSample* XGM_getSampleByAddressAndLen(XGM* xgm, int originAddr, int originSize);
+XGMSample* XGM_getSampleByAddress(XGM* xgm, int originAddr);
 unsigned char* XGM_asByteArray(XGM* xgm, int *outSize);
 int XGM_getSampleDataSize(XGM* xgm);
 int XGM_getMusicDataSize(XGM* xgm);

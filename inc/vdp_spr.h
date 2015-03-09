@@ -67,6 +67,13 @@ extern SpriteDef vdpSpriteCache[MAX_SPRITE];
  *  Clear the sprite list.
  */
 void VDP_resetSprites();
+/**
+ *  \brief
+ *      Reset all sprites (direct send to VDP)
+ *
+ *  Clear the sprite list.
+ */
+void VDP_resetSpritesDirect();
 
 /**
  *  \brief
@@ -145,7 +152,6 @@ void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite);
  * See VDP_setSprite().
  */
 void VDP_setSpritePosition(u16 index, s16 x, s16 y);
-
 
 /**
  *  \brief

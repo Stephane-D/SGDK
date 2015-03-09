@@ -30,16 +30,16 @@ u32 getFPS()
     const u32 current = getSubTick();
     const u32 delta = current - last;
 
-	if (delta > 19200)
+    if (delta > 19200)
     {
         result = framecnt / delta;
         if (result > 999) result = 999;
         last = current;
         framecnt = 76800;
     }
-	else framecnt += 76800;
+    else framecnt += 76800;
 
-	return result;
+    return result;
 }
 
 fix32 getFPS_f()
@@ -49,7 +49,7 @@ fix32 getFPS_f()
     const u32 current = getSubTick();
     const u32 delta = current - last;
 
-	if (delta > 19200)
+    if (delta > 19200)
     {
         if (framecnt > (250 * 76800)) result = FIX32(999);
         else
@@ -61,9 +61,9 @@ fix32 getFPS_f()
         last = current;
         framecnt = 76800;
     }
-	else framecnt += 76800;
+    else framecnt += 76800;
 
-	return result;
+    return result;
 }
 
 void KLog(char* text)

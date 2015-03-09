@@ -15,7 +15,6 @@ typedef struct
 typedef struct
 {
     List* samples;
-    int numSample;
     unsigned char* data;
     int offset;
     int len;
@@ -29,6 +28,7 @@ SampleBank* SampleBank_create(VGMCommand* command);
 void SampleBank_addBlock(SampleBank* bank, VGMCommand* command);
 VGMCommand* SampleBank_getDataBlockCommand(SampleBank* bank);
 List* SampleBank_getDeclarationCommands(SampleBank* bank);
+//Sample* SampleBank_getSampleByOffsetAndLen(SampleBank* bank, int dataOffset, int len);
 Sample* SampleBank_getSampleByOffset(SampleBank* bank, int dataOffset);
 Sample* SampleBank_getSampleById(SampleBank* bank, int id);
 Sample* SampleBank_addSample(SampleBank* bank, int dataOffset, int len, int rate);

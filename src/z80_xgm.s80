@@ -38,8 +38,9 @@ XGM_STOP_SFT    EQU     4           ; XGM music stop command bit
                                     ; COMMAND b1 = play PCM1   STATUS b1 = PCM1 playing
                                     ; COMMAND b2 = play PCM2   STATUS b2 = PCM2 playing
                                     ; COMMAND b3 = play PCM3   STATUS b3 = PCM3 playing
-                                    ; COMMAND b6 = stop XGM
-                                    ; COMMAND b7 = play XGM    STATUS b7 = XGM playing
+                                    ; COMMAND b4 = stop XGM
+                                    ; COMMAND b5 = resume XGM
+                                    ; COMMAND b6 = play XGM    STATUS b6 = XGM playing
 
 XGM_ARG_A   EQU     PARAMS+$00      ; XGM address (bit 0 --> bit 23)
 
@@ -83,12 +84,10 @@ READBUF     EQU     PARAMS+$36      ; PCM read buffer pointer (bit8 --> bit9)
 YM_RR_SAV   EQU     PARAMS+$40      ; YM RR save (4 slots * 6 channels)
 PSG_ENV_SAV EQU     PARAMS+$58      ; PSG env save (4 channels)
 YM_2B_SAV   EQU     PARAMS+$5C      ; YM register $2B last write save
+YM_2B_CNT   EQU     PARAMS+$5D      ; YM register $2B ON expiration
 
 YM_RR_OFF   EQU     PARAMS+$60      ; YM RR off (4 slots * 6 channels)
 PSG_ENV_OFF EQU     PARAMS+$78      ; PSG env off (4 channels)
-
-YM_2B_PT    EQU     PARAMS+$5D      ; YM register $2B save buffer pointer
-YM_2B_BUF   EQU     PARAMS+$7C      ; YM register $2B save buffer
 
 VINT_OVER   EQU     PARAMS+$5E      ; contains number of vint to process (just for info)
 IDLE_LOOP   EQU     PARAMS+$5F      ; idle loop counter (just for info)
@@ -546,16 +545,8 @@ cb_loop
 
             LD      HL, YM_2B_SAV
             LD      (HL), A         ; DAC disabled by default
-            LD      HL, YM_2B_BUF
-            LD      (YM_2B_PT), HL  ; YM_2B_PT = YM_2B_BUF
-
-            LD      HL, YM_2B_BUF
-            LD      B, 4
-
-buf2b_loop
-            LD      (HL), A         ; reg $2B buffer = DAC disabled
-            INC     HL
-            DJNZ    buf2b_loop
+            LD      HL, YM_2B_CNT
+            LD      (HL), A         ; DAC disabled by default
 
             CALL    initDAC         ; prepare DAC for output
 
@@ -754,30 +745,36 @@ next_write_buf
 
 set_DAC_enabled
             LD      A, (STATUS)         ; A = (STATUS)          ' 13    |
-            AND     $0F                 ; PCM is playing ?      ' 7     | 30 (98)
-            JP      Z, .no_pcm          ;                       ' 10    |
-
-            LD      A, $80              ; DAC enabled           ' 7     |
-            JP      .set_2B             ;                       ' 10    | 17 (115)
-
-.no_pcm
-            LD      A, (YM_2B_SAV)      ; use last 2B write     ' 13    |
-            NOP                         ; sync                  ' 4     | 17 (115)
-
-.set_2B
             LD      HL, YMPORT0         ; HL point on YM port0  ' 10    |
-            LD      (HL), $2B           ; register = DAC enable ' 10    | 20 (135)
+            LD      (HL), $2B           ; register = DAC enable ' 10    | 50 (118)
+            AND     $0F                 ; PCM is playing ?      ' 7     |
+            JP      NZ, .still_pcm      ;                       ' 10    |
 
-            LD      HL, (YM_2B_PT)      ; HL point to write sav ' 16    |
-            LD      (HL), A             ; set DAC enabled       ' 7     |
-            INC     L                   ; HL point to read sav  ' 4     |
-            RES     2, L                ;                       ' 8     | 58 (193)
-            LD      A, (HL)             ; A = current DAC enab  ' 7     |
-            LD      (YM_2B_PT), HL      ; save new write sav    ' 16    |
+            LD      A, (YM_2B_CNT)      ;                       ' 13    |
+            OR      A                   ;                       ' 4     | 27 (145)
+            JP      Z, .no_pcm          ; DAC enabled expired ? ' 10    |
 
-            LD      HL, YMPORT1         ; HL point on YM port1  ' 10    |
+            DEC     A                   ; decrement expiration  ' 4     |
+            LD      (YM_2B_CNT), A      ;                       ' 13    |
+            LD      A, $80              ; DAC enabled           ' 7     | 34 (179)
+            JP      .set_dac            ; assume still PCM      ' 10    |
+
+.still_pcm                              ;                       ' 118
+            LD      A, 4                ; set DAC ON expiration ' 7     |
+            LD      (YM_2B_CNT), A      ; 4 frames to expire    ' 13    | 27 (145)
+
+            wait17                      ; sync                  ' 17    |
+            LD      A, $80              ; DAC enabled           ' 7     | 34 (179)
+            JP      .set_dac            ; assume still PCM      ' 10    |
+
+.no_pcm                                 ;                       ' 145
+            wait21                      ; sync                  ' 21    |
+            LD      A, (YM_2B_SAV)      ; use current DAC on    ' 13    | 34  (179)
+
+.set_dac                                ;                       ' 179
+            INC     L                   ; HL point on YM port1  ' 4     |
             LD      (HL), A             ; set DAC enabled       ' 7     |
-            wait22                      ; sync                  ' 22    | 61 (254)
+            wait42                      ; sync                  ' 42    | 75 (254)
             waitYMReady                 ; wait YM to be ready   ' 22    |
 
 ; $B6

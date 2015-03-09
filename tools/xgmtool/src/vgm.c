@@ -20,6 +20,7 @@ static void VGM_cleanSeekCommands(VGM* vgm);
 static void VGM_removePlayPCMCommands(VGM* vgm);
 static int VGM_getSampleDataSize(VGM* vgm);
 static int VGM_getSampleTotalLen(VGM* vgm);
+static int VGM_getSampleNumber(VGM* vgm);
 static int VGM_getMusicDataSize(VGM* vgm);
 
 VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
@@ -113,7 +114,7 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
         }
 
         ind = 0;
-        // add data block for each sample
+        // add data block
         for (i = 0; i < result->sampleBanks->size; i++)
         {
             SampleBank* bank = getFromList(result->sampleBanks, i);
@@ -125,6 +126,7 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
 
     if (verbose)
     {
+        printf("VGM sample number: %d\n", VGM_getSampleNumber(result));
         printf("Sample data size: %d\n", VGM_getSampleDataSize(result));
         printf("Sample total len: %d\n", VGM_getSampleTotalLen(result));
     }
@@ -446,6 +448,8 @@ static void VGM_buildSamples(VGM* vgm, bool convert)
                 if (convert)
                     setToList(vgm->commands, ind, Sample_getStartLongCommandEx(bank, sample, sample->len));
             }
+            else
+                printf("Warning: sample bank id %2X not found !\n", bankId);
         }
 
         // long start command
@@ -792,7 +796,7 @@ void VGM_cleanCommands(VGM* vgm)
             else
             {
                 if (verbose)
-                    printf("Command ignored: %d\n", command->command);
+                    printf("Command ignored: %2X\n", command->command);
             }
         }
 
@@ -878,6 +882,8 @@ void VGM_cleanSamples(VGM* vgm)
             Sample* sample = getFromList(bank->samples, s);
             int sampleId = sample->id;
             int sampleAddress = sample->dataOffset;
+            int minLen = max(0, sample->len - 50);
+            int maxLen = sample->len + 50;
             bool used = false;
             int currentBankId = -1;
 
@@ -900,7 +906,9 @@ void VGM_cleanSamples(VGM* vgm)
                     }
                     else if (VGMCommand_isStreamStartLong(command))
                     {
-                        if (sampleAddress == VGMCommand_getStreamSampleAddress(command))
+                        int sampleLen = VGMCommand_getStreamSampleSize(command);
+
+                        if ((sampleAddress == VGMCommand_getStreamSampleAddress(command)) && (sampleLen >= minLen) && (sampleLen <= maxLen))
                         {
                             used = true;
                             break;
@@ -913,13 +921,29 @@ void VGM_cleanSamples(VGM* vgm)
             if (!used)
             {
                 if (verbose)
-                    printf("Sample at offset %6X is not used --> removed\n", sampleAddress);
+                    printf("Sample at offset %6X (len = %d) is not used --> removed\n", sampleAddress, sample->len);
 
                 removeFromList(bank->samples, s);
             }
         }
     }
 }
+
+//Sample* VGM_getSample(VGM* vgm, int sampleOffset, int len)
+//{
+//    int i;
+//
+//    for (i = 0; i < vgm->sampleBanks->size; i++)
+//    {
+//        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+//        Sample* sample = SampleBank_getSampleByOffsetAndLen(bank, sampleOffset, len);
+//
+//        if (sample != NULL)
+//            return sample;
+//    }
+//
+//    return NULL;
+//}
 
 Sample* VGM_getSample(VGM* vgm, int sampleOffset)
 {
@@ -1046,6 +1070,20 @@ static int VGM_getSampleTotalLen(VGM* vgm)
             Sample* sample = getFromList(bank->samples, j);
             result += sample->len;
         }
+    }
+
+    return result;
+}
+
+static int VGM_getSampleNumber(VGM* vgm)
+{
+    int i;
+    int result = 0;
+
+    for (i = 0; i < vgm->sampleBanks->size; i++)
+    {
+        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+        result += bank->samples->size;
     }
 
     return result;

@@ -152,61 +152,61 @@ aplib_decrunch:
 #   movem.l 16(%a7),%a5-%a6
 #   move.l  %a6,%a1                 | save destination address in a1
 #
-# 	addq	#2,%a5                  | skip out size
-# 	lea	    (.loop).l,%a0
-# 	moveq	#0,%d7
+#     addq    #2,%a5                  | skip out size
+#     lea        (.loop).l,%a0
+#     moveq    #0,%d7
 #
 # .loop:
-# 	dbf	    %d7, .skipmask
-# 	moveq	#7,%d7
-# 	move.b	(%a5)+,%d1
+#     dbf        %d7, .skipmask
+#     moveq    #7,%d7
+#     move.b    (%a5)+,%d1
 #
 # .skipmask:
-# 	lsr.w	#1,%d1
-# 	bcs.s	.not_raw1
+#     lsr.w    #1,%d1
+#     bcs.s    .not_raw1
 #
 # .raw1:
-# 	move.b	(%a5)+,(%a6)+
-# 	jmp	    (%a0)
+#     move.b    (%a5)+,(%a6)+
+#     jmp        (%a0)
 #
 # .not_raw1:
-# 	moveq	#0,%d0
-# 	move.b	(%a5)+,%d0
-# 	bmi.w	.small_copy
-# 	cmpi.b	#0x1F,%d0
-# 	beq.s	.end
+#     moveq    #0,%d0
+#     move.b    (%a5)+,%d0
+#     bmi.w    .small_copy
+#     cmpi.b    #0x1F,%d0
+#     beq.s    .end
 #
 # .long_copy:
-# 	move.l	%d0,%d2
-# 	lsl.w	#3,%d0
-# 	move.b	(%a5)+,%d0
-# 	andi.w	#0x1F,%d2
-# 	addq.w	#2,%d2
-# 	bra.s	.copy
+#     move.l    %d0,%d2
+#     lsl.w    #3,%d0
+#     move.b    (%a5)+,%d0
+#     andi.w    #0x1F,%d2
+#     addq.w    #2,%d2
+#     bra.s    .copy
 #
 # .small_copy:
-# 	btst	#6,%d0
-# 	bne.w	.copy_input
-# 	move.l	%d0,%d2
-# 	lsr.w	#4,%d2
-# 	subq.w	#7,%d2
-# 	andi.w	#0xF,%d0
+#     btst    #6,%d0
+#     bne.w    .copy_input
+#     move.l    %d0,%d2
+#     lsr.w    #4,%d2
+#     subq.w    #7,%d2
+#     andi.w    #0xF,%d0
 #
 # .copy:
-# 	neg.w	%d0
+#     neg.w    %d0
 #
 # .loop1:
-# 	move.b	(%a6,%d0.w),(%a6)+
-# 	dbf	    %d2,.loop1
-# 	jmp	    (%a0)
+#     move.b    (%a6,%d0.w),(%a6)+
+#     dbf        %d2,.loop1
+#     jmp        (%a0)
 #
 # .copy_input:
-# 	subi.b	#0xB9,%d0
+#     subi.b    #0xB9,%d0
 #
 # .loop2:
-# 	move.b	(%a5)+,(%a6)+
-# 	dbf	    %d0, .loop2
-# 	jmp	    (%a0)
+#     move.b    (%a5)+,(%a6)+
+#     dbf        %d0, .loop2
+#     jmp        (%a0)
 #
 # .end:
 #   suba.l  %a6,%a1

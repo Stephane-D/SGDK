@@ -890,7 +890,6 @@ void SND_stopPlay_XGM()
 
     // point to Z80 command
     pb = (u8 *) Z80_DRV_COMMAND;
-
     // set stop XGM command
     *pb |= (1 << 4);
 

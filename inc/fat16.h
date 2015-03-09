@@ -8,7 +8,7 @@
  */
 
 #ifndef _FAT16_H
-#define	_FAT16_H
+#define _FAT16_H
 
 
 #if (FAT16_SUPPORT != 0)
@@ -81,4 +81,4 @@ u8 fat16SkipSectors(Fat16File *file, u16 num);
 #endif  /* FAT16_SUPPORT */
 
 
-#endif	/* _FAT16_H */
+#endif  /* _FAT16_H */
