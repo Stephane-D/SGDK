@@ -1,8 +1,24 @@
+SGDK 1.12 (March 2015)
+----------------------
+
+COMPILER
+* XGMTool:
+ - minors changes and fixes. 
+
+LIBRARY
+* SPRITE:
+ - added VDP_resetSpritesDirect() method. 
+* SOUND:
+ - minor fix to XGM driver (PCM in music was wrong in some case). 
+
+
 SGDK 1.11 (December 2014)
 -------------------------
 
-* Fixed small issue in joystick code (Chilly Willy).
-* added Z80 CPU load information in XGM driver (experimental).
+* CONTROLLER:
+ - fixed small issue in joystick code (Chilly Willy). 
+* SOUND:
+ - added Z80 CPU load information in XGM driver (experimental). * Fixed small issue in joystick code (Chilly Willy).
 
 
 SGDK 1.10 (December 2014)
