@@ -3,7 +3,7 @@ It contains a development library (sources included) to make software on Sega Me
 You can find the library doxygen documentation in the 'doc' directory: doc/html/files.html
 
 Website: https://github.com/Stephane-D/SGDK/wiki
-You can find basics tutorials about how install and use SGDK on this page: https://github.com/Stephane-D/SGDK/wiki/Tuto-Intro-%28old%29
+You can find basics tutorials about how install and use SGDK on this page: https://github.com/Stephane-D/SGDK/wiki/Tuto-Intro
 
 Unix/Linux users should give a try to the Gendev project from Kubilis: http://code.google.com/p/gendev/
 It allows to quickly setup SGDK on a Unix environment.
