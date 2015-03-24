@@ -9,8 +9,13 @@
 #include "../inc/xgm.h"
 #include "../inc/xgc.h"
 
+#define SYSTEM_AUTO     -1
+#define SYSTEM_NTSC     0
+#define SYSTEM_PAL      1
 
-const char* version = "1.32";
+
+const char* version = "1.4";
+int sys;
 bool silent;
 bool verbose;
 
@@ -54,10 +59,13 @@ int main(int argc, char *argv[ ])
         printf("Supported options:\n");
         printf("-s\tenable silent mode (no message except error and warning).\n");
         printf("-v\tenable verbose mode.\n");
+        printf("-n\tforce NTSC timing (only meaningful for VGM to XGM conversion).\n");
+        printf("-p\tforce PAL timing (only meaningful for VGM to XGM conversion).\n");
 
         exit(1);
     }
 
+    sys = SYSTEM_AUTO;
     silent = false;
     verbose = false;
 
@@ -82,6 +90,10 @@ int main(int argc, char *argv[ ])
             silent = true;
         else if (!strcasecmp(argv[i], "-v"))
             verbose = true;
+        else if (!strcasecmp(argv[i], "-n"))
+            sys = SYSTEM_NTSC;
+        else if (!strcasecmp(argv[i], "-p"))
+            sys = SYSTEM_PAL;
         else
             printf("Warning: option %s not recognized (ignored)\n", argv[3]);
     }
@@ -108,10 +120,18 @@ int main(int argc, char *argv[ ])
 
             // load file
             inData = readBinaryFile(argv[1], &inDataSize);
+            if (inData == NULL) exit(1);
             // load VGM
+            if (sys == SYSTEM_NTSC)
+                inData[0x24] = 60;
+            else if (sys == SYSTEM_PAL)
+                inData[0x24] = 50;
             vgm = VGM_create1(inData, inDataSize, 0);
+            if (vgm == NULL) exit(1);
             // optimize
             optVgm = VGM_createFromVGM(vgm, true);
+            if (optVgm == NULL) exit(1);
+
             VGM_convertWaits(optVgm);
             VGM_cleanCommands(optVgm);
             VGM_cleanSamples(optVgm);
@@ -121,6 +141,7 @@ int main(int argc, char *argv[ ])
             {
                 // get byte array
                 outData = VGM_asByteArray(optVgm, &outDataSize);
+                if (outData == NULL) exit(1);
                 // write to file
                 writeBinaryFile(outData, outDataSize, argv[2]);
             }
@@ -130,6 +151,7 @@ int main(int argc, char *argv[ ])
 
                 // convert to XGM
                 xgm = XGM_createFromVGM(optVgm);
+                if (xgm == NULL) exit(1);
 
                 // XGM output
                 if (!strcasecmp(outExt, "XGM"))
@@ -143,10 +165,12 @@ int main(int argc, char *argv[ ])
 
                     // convert to XGC (compiled XGM)
                     xgc = XGC_create(xgm);
+                    if (xgc == NULL) exit(1);
                     // get byte array
                     outData = XGC_asByteArray(xgc, &outDataSize);
                 }
 
+                if (outData == NULL) exit(1);
                 // write to file
                 writeBinaryFile(outData, outDataSize, argv[2]);
             }
@@ -170,8 +194,10 @@ int main(int argc, char *argv[ ])
 
             // load file
             inData = readBinaryFile(argv[1], &inDataSize);
+            if (inData == NULL) exit(1);
             // load XGM
             xgm = XGM_createFromData(inData, inDataSize);
+            if (xgm == NULL) exit(1);
 
             // VGM conversion
             if (!strcasecmp(outExt, "VGM"))
@@ -180,6 +206,7 @@ int main(int argc, char *argv[ ])
 
                 // convert to VGM
                 vgm = VGM_createFromXGM(xgm);
+                if (vgm == NULL) exit(1);
                 // get byte array
                 outData = VGM_asByteArray(vgm, &outDataSize);
             }
@@ -189,10 +216,12 @@ int main(int argc, char *argv[ ])
 
                 // convert to XGC (compiled XGM)
                 xgc = XGC_create(xgm);
+                if (xgc == NULL) exit(1);
                 // get byte array
                 outData = XGC_asByteArray(xgc, &outDataSize);
             }
 
+            if (outData == NULL) exit(1);
             // write to file
             writeBinaryFile(outData, outDataSize, argv[2]);
         }

@@ -34,6 +34,7 @@ typedef struct
 
 
 static void joyEvent(u16 joy, u16 changed, u16 state);
+static void vintEvent();
 
 static void setTextPalette(u16 selected);
 
@@ -129,6 +130,7 @@ static const driver_def *driver;
 static const cmd_def *cmd;
 // params value
 static const param_def *params_value[NUM_DRIVER][MAX_CMD];
+static u16 dmaMethod;
 
 
 int main()
@@ -144,11 +146,13 @@ int main()
     VDP_setScreenWidth320();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
+    SYS_setVIntCallback(vintEvent);
 
     // point to first driver
     driver = drivers;
     cmd = NULL;
     cpuload = 80;
+    dmaMethod = 0;
 
     for(i = 0, cur_driver = drivers; i < NUM_DRIVER; i++, cur_driver++)
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
@@ -158,6 +162,7 @@ int main()
     VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
     VDP_setTextPalette(PAL0);
     VDP_drawText("Current Z80 driver", 10, 1);
+    VDP_drawText("DMA Method:", 1, 23);
 
     refreshDriverInfos();
 
@@ -175,6 +180,24 @@ int main()
             strcat(str, " %");
             VDP_clearText(16, 21, 10);
             VDP_drawText(str, 16, 21);
+        }
+        switch(dmaMethod)
+        {
+            case 0:
+                VDP_drawText("NONE    ", 13, 23);
+                break;
+
+            case 1:
+                VDP_drawText("1 x 4KB ", 13, 23);
+                break;
+
+            case 2:
+                VDP_drawText("4 x 1KB ", 13, 23);
+                break;
+
+            case 3:
+                VDP_drawText("8 x 500B", 13, 23);
+                break;
         }
         SYS_enableInts();
     }
@@ -662,6 +685,62 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         }
     }
 
+    // MODE button state changed
+    if (changed & state & BUTTON_MODE)
+    {
+        dmaMethod++;
+        dmaMethod &= 3;
+    }
+
     if (changed & state)
         refreshDriverInfos();
+}
+
+static void vintEvent()
+{
+    u16 i;
+    u16 in, out;
+    char strNum[8];
+    char str[32];
+
+    in = GET_VCOUNTER;
+
+    switch(dmaMethod)
+    {
+        case 1:
+            VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, (4 * 1024) / 2, 2);
+            break;
+
+        case 2:
+            for(i = 0; i < 4; i++)
+            {
+                VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
+                VDP_loadTileData(0, 0x8000 / 32, 2, FALSE);
+            }
+            break;
+
+        case 3:
+            for(i = 0; i < 8; i++)
+            {
+                VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 512 / 2, 2);
+                VDP_loadTileData(0, 0x8000 / 32, 0, FALSE);
+            }
+            break;
+    }
+
+    out = GET_VCOUNTER;
+
+    if (dmaMethod)
+    {
+        strcpy(str, "DMA start at ");
+        uintToStr(in, strNum, 3);
+        strcat(str, strNum);
+        strcat(str, " - end at ");
+        uintToStr(out, strNum, 3);
+        strcat(str, strNum);
+
+        VDP_drawText(str, 1, 24);
+    }
+    else
+        VDP_clearTextLine(24);
 }

@@ -7,6 +7,7 @@
 #include "memory.h"
 #include "tools.h"
 #include "sys.h"
+#include "kdebug.h"
 
 
 #define DEFAULT_NUM_BLOC    128

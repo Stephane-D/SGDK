@@ -4,7 +4,6 @@
 	<Project>
 		<Option title="xgmtool" />
 		<Option pch_mode="2" />
-		<Option default_target="debug" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="release">
@@ -13,7 +12,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="bug.vgm out.vgm" />
+				<Option parameters="bug.vgm out.xgc -v" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-Os" />

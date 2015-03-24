@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
 //    strcpy(fileName, "resources.res");
 
-    printf("rescomp v1.3\n");
+    printf("rescomp v1.31\n");
 
     if (!fileName[0])
     {
@@ -366,6 +366,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     printf("  MAP\n");
     printf("  IMAGE\n");
     printf("  SPRITE\n");
+    printf("  XGM\n");
     printf("  VGM\n");
     printf("  TFM\n");
     printf("  WAV\n");

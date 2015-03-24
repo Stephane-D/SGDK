@@ -20,6 +20,7 @@
 #include "tile_cache.h"
 
 #include "tools.h"
+#include "kdebug.h"
 
 #if (ENABLE_LOGO != 0)
 #include "libres.h"

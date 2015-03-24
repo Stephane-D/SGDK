@@ -165,6 +165,10 @@ VGM* VGM_createFromXGM(XGM* xgm)
     result->lenInSample = 0;
     result->loopStart = 0;
     result->loopLenInSample = 0;
+    if (xgm->pal)
+        result->rate = 50;
+    else
+        result->rate = 60;
 
     loopOffset = -1;
     for (i = 0; i < xgm->commands->size; i++)
@@ -176,7 +180,10 @@ VGM* VGM_createFromXGM(XGM* xgm)
         {
             case XGM_FRAME:
                 data = malloc(1);
-                data[0] = 0x62;
+                if (xgm->pal)
+                    data[0] = 0x63;
+                else
+                    data[0] = 0x62;
                 addToList(result->commands, VGMCommand_createEx(data, 0));
                 break;
 

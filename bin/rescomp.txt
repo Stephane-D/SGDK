@@ -165,6 +165,10 @@ XGM name file
 
     name        XGM music variable name
     file        path of the .vgm or .xgm music file to convert to binary data array
+    timing      define the XGM base timing
+                 -1 (default) = AUTO (NTSC or PAL depending the information in source VGM file)\n");
+                  0 = NTSC (XGM is generated for NTSC system)\n");
+                  1 = PAL (XGM is generated for PAL system)\n");
 
 
 TFM
