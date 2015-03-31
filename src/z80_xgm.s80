@@ -760,8 +760,9 @@ set_DAC_enabled
             JP      .set_dac            ; assume still PCM      ' 10    |
 
 .still_pcm                              ;                       ' 118
-            LD      A, 4                ; set DAC ON expiration ' 7     |
-            LD      (YM_2B_CNT), A      ; 4 frames to expire    ' 13    | 27 (145)
+            wait7                       ; sync                  ' 7     |
+            LD      A, 4                ; set DAC ON expiration ' 7     | 27 (145)
+            LD      (YM_2B_CNT), A      ; 4 frames to expire    ' 13    |
 
             wait17                      ; sync                  ' 17    |
             LD      A, $80              ; DAC enabled           ' 7     | 34 (179)
