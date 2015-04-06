@@ -131,13 +131,12 @@ static const cmd_def *cmd;
 // params value
 static const param_def *params_value[NUM_DRIVER][MAX_CMD];
 static u16 dmaMethod;
+static u16 cpuload;
 
 
 int main()
 {
-    char str[8];
     u16 i, j;
-    u16 cpuload;
     const driver_def *cur_driver;
     const cmd_def *cur_cmd;
 
@@ -149,7 +148,7 @@ int main()
     SYS_setVIntCallback(vintEvent);
 
     // point to first driver
-    driver = drivers;
+    driver = &drivers[0];
     cmd = NULL;
     cpuload = 80;
     dmaMethod = 0;
@@ -169,37 +168,6 @@ int main()
     while(1)
     {
         VDP_waitVSync();
-
-        SYS_disableInts();
-        if (driver->id == Z80_DRIVER_XGM)
-        {
-            // calculate mean on 8 frames
-            cpuload = ((7 * cpuload) + SND_getCPULoad_XGM()) / 8;
-
-            uintToStr(cpuload, str, 3);
-            strcat(str, " %");
-            VDP_clearText(16, 21, 10);
-            VDP_drawText(str, 16, 21);
-        }
-        switch(dmaMethod)
-        {
-            case 0:
-                VDP_drawText("NONE    ", 13, 23);
-                break;
-
-            case 1:
-                VDP_drawText("1 x 4KB ", 13, 23);
-                break;
-
-            case 2:
-                VDP_drawText("4 x 1KB ", 13, 23);
-                break;
-
-            case 3:
-                VDP_drawText("8 x 500B", 13, 23);
-                break;
-        }
-        SYS_enableInts();
     }
 }
 
@@ -650,7 +618,8 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             }
             if (changed & state & BUTTON_Y)
             {
-                SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
+                //SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
+                SND_setPCM_XGM(65, f_voice1_14k, sizeof(f_voice1_14k));
                 SND_startPlayPCM_XGM(65, 10, SOUND_PCM_CH3);
             }
             if (changed & state & BUTTON_Z)
@@ -703,32 +672,79 @@ static void vintEvent()
     char strNum[8];
     char str[32];
 
+    // set BUS protection for XGM driver
+    if (driver->id == Z80_DRIVER_XGM)
+        SND_set68KBUSProtection_XGM(TRUE);
+
     in = GET_VCOUNTER;
 
-    switch(dmaMethod)
+    if ((in >= 224) && (in <= 230))
     {
-        case 1:
-            VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, (4 * 1024) / 2, 2);
-            break;
+        switch(dmaMethod)
+        {
+            case 1:
+                VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, (6 * 1024) / 2, 2);
+                break;
 
-        case 2:
-            for(i = 0; i < 4; i++)
-            {
-                VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
-                VDP_loadTileData(0, 0x8000 / 32, 2, FALSE);
-            }
-            break;
+            case 2:
+                for(i = 0; i < 4; i++)
+                {
+                    VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
+                    waitSubTick(0);
+                }
+                break;
 
-        case 3:
-            for(i = 0; i < 8; i++)
-            {
-                VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 512 / 2, 2);
-                VDP_loadTileData(0, 0x8000 / 32, 0, FALSE);
-            }
-            break;
+            case 3:
+                for(i = 0; i < 8; i++)
+                {
+                    VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 256 / 2, 2);
+                    waitSubTick(0);
+                }
+                break;
+        }
     }
 
     out = GET_VCOUNTER;
+
+    if (driver->id == Z80_DRIVER_XGM)
+    {
+        // remove BUS protection for XGM driver
+        SND_set68KBUSProtection_XGM(FALSE);
+
+        // calculate mean on 8 frames
+//        cpuload = ((7 * cpuload) + SND_getCPULoad_XGM()) / 8;
+        cpuload = SND_getCPULoad_XGM();
+
+        uintToStr(cpuload, str, 3);
+        strcat(str, " %");
+        VDP_clearText(16, 21, 10);
+        VDP_drawText(str, 16, 21);
+    }
+
+    if ((in >= 224) && (in <= 230))
+    {
+        switch(dmaMethod)
+        {
+            case 0:
+                VDP_drawText("NONE    ", 13, 23);
+                break;
+
+            case 1:
+                VDP_drawText("1 x 6KB ", 13, 23);
+                break;
+
+            case 2:
+                VDP_drawText("4 x 1KB ", 13, 23);
+                break;
+
+            case 3:
+                VDP_drawText("8 x 256B", 13, 23);
+                break;
+        }
+    }
+    else
+        VDP_drawText("NOT DONE", 13, 23);
+
 
     if (dmaMethod)
     {

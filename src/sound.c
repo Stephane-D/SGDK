@@ -1007,6 +1007,28 @@ void SND_stopPlayPCM_XGM(const u16 channel)
     Z80_releaseBus();
 }
 
+void SND_set68KBUSProtection_XGM(u8 value)
+{
+   vu16 *pw_bus;
+   vu8 *pb;
+
+    // request bus (need to end reset)
+    pw_bus = (u16 *) Z80_HALT_PORT;
+
+    // take bus
+    *pw_bus = 0x0100;
+    // wait for bus taken
+    while (*pw_bus & 0x0100);
+
+    // point to Z80 PROTECT parameter
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x0D);
+
+    *pb = value;
+
+    // release bus
+    *pw_bus = 0x0000;
+}
+
 u16 SND_getCPULoad_XGM()
 {
     vu8 *pb;
@@ -1021,6 +1043,8 @@ u16 SND_getCPULoad_XGM()
     // point to Z80 'late frame' value
     pb = (u8 *) (Z80_DRV_PARAMS + 0x5E);
     fl = *pb;
+    // reset it
+    *pb = 0;
 
     // point to Z80 'idle loop' value
     pb = (u8 *) (Z80_DRV_PARAMS + 0x5F);
@@ -1032,9 +1056,8 @@ u16 SND_getCPULoad_XGM()
 
     // some frame late --> load >100%
     if (fl > 1) return 100 + (fl * 10);
-    // single frame late --> load ~100%
-    if (fl == 1) return 110 - (idle / 8);
+    // single frame late --> load 100%
+    if (fl == 1) return 100;
     // waiting for frame --> load <100%
-    return 100 - (idle / 4);
+    return 100 - (idle / 3);
 }
-

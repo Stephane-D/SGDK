@@ -377,30 +377,32 @@ void _vint_callback()
 
     vtimer++;
 
-    // tile cache processing
-    if (VIntProcess & PROCESS_TILECACHE_TASK)
+    // may worth it
+    if (VIntProcess)
     {
-        if (!TC_doVBlankProcess()) VIntProcess &= ~PROCESS_TILECACHE_TASK;
-    }
-    // tile cache processing
-    if (VIntProcess & PROCESS_SPRITEENGINE_TASK)
-    {
-        if (!SPR_doVBlankProcess()) VIntProcess &= ~PROCESS_SPRITEENGINE_TASK;
-    }
-    // bitmap processing
-    if (VIntProcess & PROCESS_BITMAP_TASK)
-    {
-        if (!BMP_doVBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
-    }
-    // palette fading processing
-    if (VIntProcess & PROCESS_PALETTE_FADING)
-    {
-        if (!VDP_doStepFading(FALSE)) VIntProcess &= ~PROCESS_PALETTE_FADING;
+        // tile cache processing
+        if (VIntProcess & PROCESS_TILECACHE_TASK)
+        {
+            if (!TC_doVBlankProcess()) VIntProcess &= ~PROCESS_TILECACHE_TASK;
+        }
+        // tile cache processing
+        if (VIntProcess & PROCESS_SPRITEENGINE_TASK)
+        {
+            if (!SPR_doVBlankProcess()) VIntProcess &= ~PROCESS_SPRITEENGINE_TASK;
+        }
+        // bitmap processing
+        if (VIntProcess & PROCESS_BITMAP_TASK)
+        {
+            if (!BMP_doVBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
+        }
+        // palette fading processing
+        if (VIntProcess & PROCESS_PALETTE_FADING)
+        {
+            if (!VDP_doStepFading(FALSE)) VIntProcess &= ~PROCESS_PALETTE_FADING;
+        }
     }
 
-    // ...
-
-    // then call user's callback
+    // then call user callback
     if (VIntCB) VIntCB();
 
     // joy state refresh (better to do it after user's callback as it can eat some time)

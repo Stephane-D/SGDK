@@ -581,6 +581,20 @@ void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);
  *      #SOUND_PCM_CH4    = channel 4<br>
  */
 void SND_stopPlayPCM_XGM(const u16 channel);
+
+/**
+ *  \brief
+ *      Set temporary 68K BUS protection from Z80.<br>
+ *      You should protect BUS Access during DMA and restore it after:<br>
+ *      SND_set68KBUSProtection_XGM(TRUE);
+ *      VDP_doVRamDMA(data, 0x1000, 0x100);
+ *      SND_set68KBUSProtection_XGM(FALSE);
+ *
+ *      This way the XGM driver will *try* to avoid using 68K BUS during DMA to
+ *      avoid execution interruption and so preserve PCM playback quality.
+ *      Note that the success of the operation is not 100% garantee and can fails in some condition.
+ */
+void SND_set68KBUSProtection_XGM(u8 value);
 /**
  *  \brief
  *      Returns an estimation of the Z80 CPU load (XGM driver).<br>

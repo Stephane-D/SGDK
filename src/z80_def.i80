@@ -4,6 +4,10 @@ YMPORT0     EQU     $4000           ; YM2612 port 0
 YMPORT1     EQU     $4001           ; YM2612 port 1
 YMPORT2     EQU     $4002           ; YM2612 port 2
 YMPORT3     EQU     $4003           ; YM2612 port 3
+VDPSTATUS_H EQU     $7F04           ; VDP status port high
+VDPSTATUS_L EQU     $7F05           ; VDP status port low
+VCOUNTER    EQU     $7F08           ; V counter
+HCOUNTER    EQU     $7F09           ; H counter
 PSGPORT     EQU     $7F11           ; PSG port
 BANKREG     EQU     $6000           ; bank register
 

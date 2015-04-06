@@ -54,8 +54,7 @@ int main(int argc, char *argv[ ])
         printf("  xgmtool input.xgm output.bin\n");
         printf("  xgmtool input.xgm output.xgc\n");
         printf("\n");
-        printf("The action xmgtool perform is dependant from the input and output file extension.\n");
-        printf("\n");
+        printf("The action xmgtool performs is dependant from the input and output file extension.\n");
         printf("Supported options:\n");
         printf("-s\tenable silent mode (no message except error and warning).\n");
         printf("-v\tenable verbose mode.\n");
