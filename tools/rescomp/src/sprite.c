@@ -110,6 +110,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     }
 
     sprDef = getSpriteDefinition(data, wt, ht, wf, hf, time, collid);
+    if (!sprDef) return FALSE;
 
     //TODO: optimize
     removeEmptyFrame(sprDef);
