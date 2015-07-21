@@ -1196,6 +1196,11 @@
             wait2p16x 13
             endm
 
+            macro   wait218
+            wait210
+            wait8
+            endm
+
             macro   wait226
             wait2p16x 14
             endm

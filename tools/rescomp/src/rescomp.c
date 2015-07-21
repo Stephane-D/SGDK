@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
 //    strcpy(fileName, "resources.res");
 
-    printf("rescomp v1.31\n");
+    printf("rescomp v1.4\n");
 
     if (!fileName[0])
     {

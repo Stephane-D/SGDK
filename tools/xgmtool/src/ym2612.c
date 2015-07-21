@@ -146,12 +146,12 @@ bool YM2612_isDiff(YM2612* source, YM2612* state, int port, int reg)
 /**
  * Returns commands list to update to the specified YM2612 state
  */
-List* YM2612_getDelta(YM2612* source, YM2612* state)
+LList* YM2612_getDelta(YM2612* source, YM2612* state)
 {
-    List* result;
+    LList* result;
     int i, port, reg;
 
-    result = createList();
+    result = NULL;
 
     // do dual reg first
     for (i = 0; i < DUALS_SIZE; i++)
@@ -164,8 +164,8 @@ List* YM2612_getDelta(YM2612* source, YM2612* state)
         if (YM2612_isDiff(source, state, 0, reg0) || YM2612_isDiff(source, state, 0, reg1))
         {
             // add commands
-            addToList(result, VGMCommand_createYMCommand(0, reg0, YM2612_get(state, 0, reg0)));
-            addToList(result, VGMCommand_createYMCommand(0, reg1, YM2612_get(state, 0, reg1)));
+            result = insertAfterLList(result, VGMCommand_createYMCommand(0, reg0, YM2612_get(state, 0, reg0)));
+            result = insertAfterLList(result, VGMCommand_createYMCommand(0, reg1, YM2612_get(state, 0, reg1)));
         }
         // port 1 too ?
         if (dual[0] > 0x30)
@@ -173,8 +173,8 @@ List* YM2612_getDelta(YM2612* source, YM2612* state)
             if (YM2612_isDiff(source, state, 1, reg0) || YM2612_isDiff(source, state, 1, reg1))
             {
                 // add commands
-                addToList(result, VGMCommand_createYMCommand(1, reg0, YM2612_get(state, 1, reg0)));
-                addToList(result, VGMCommand_createYMCommand(1, reg1, YM2612_get(state, 1, reg1)));
+                result = insertAfterLList(result, VGMCommand_createYMCommand(1, reg0, YM2612_get(state, 1, reg0)));
+                result = insertAfterLList(result, VGMCommand_createYMCommand(1, reg1, YM2612_get(state, 1, reg1)));
             }
         }
     }
@@ -193,11 +193,11 @@ List* YM2612_getDelta(YM2612* source, YM2612* state)
 
             // value is different --> add command
             if (YM2612_isDiff(source, state, port, reg))
-                addToList(result, VGMCommand_createYMCommand(port, reg, YM2612_get(state, port, reg)));
+                result = insertAfterLList(result, VGMCommand_createYMCommand(port, reg, YM2612_get(state, port, reg)));
         }
     }
 
-    return result;
+    return getHeadLList(result);
 }
 
 /**

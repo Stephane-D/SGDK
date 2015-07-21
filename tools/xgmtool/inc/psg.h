@@ -27,7 +27,7 @@ bool PSG_isLowDiffOnly(PSG* psg, PSG* state, int ind, int typ);
 
 #include "util.h"
 
-List* PSG_getDelta(PSG* psg, PSG* state);
+LList* PSG_getDelta(PSG* psg, PSG* state);
 
 
 #endif // PSG_H_

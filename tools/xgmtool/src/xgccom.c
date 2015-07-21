@@ -3,6 +3,7 @@
 #include <memory.h>
 #include <math.h>
 
+#include "../inc/xgmtool.h"
 #include "../inc/xgmcom.h"
 #include "../inc/xgm.h"
 #include "../inc/xgccom.h"
@@ -61,10 +62,24 @@ bool XGCCommand_isPSGToneWrite(XGMCommand* source)
     return (source->command & 0xF8) == XGC_PSG_TONE;
 }
 
-
-static XGMCommand* XGCCommand_createPSGEnvCommand(List* commands, int* offset)
+bool XGCCommand_isPCM(XGMCommand* source)
 {
-    const int size = min(4, commands->size - *offset);
+    return (source->command & 0xF0) == XGC_PCM;
+}
+
+int XGCCommand_getPCMId(XGMCommand* source)
+{
+    if (XGCCommand_isPCM(source))
+        return source->data[1];
+
+    return -1;
+}
+
+
+static XGMCommand* XGCCommand_createPSGEnvCommand(LList** pcommands)
+{
+    LList* curCom = *pcommands;
+    const int size = min(4, getSizeLList(curCom));
     unsigned char* data = malloc(size + 1);
     int i, off;
 
@@ -72,17 +87,21 @@ static XGMCommand* XGCCommand_createPSGEnvCommand(List* commands, int* offset)
 
     off = 1;
     for (i = 0; i < size; i++)
-        data[off++] = VGMCommand_getPSGValue(getFromList(commands, i + *offset));
+    {
+        data[off++] = VGMCommand_getPSGValue(curCom->element);
+        curCom = curCom->next;
+    }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pcommands = curCom;
 
     return XGMCommand_create(data, size + 1);
 }
 
-static XGMCommand* XGCCommand_createPSGToneCommand(List* commands, int* offset)
+static XGMCommand* XGCCommand_createPSGToneCommand(LList** pcommands)
 {
-    const int size = min(8, commands->size - *offset);
+    LList* curCom = *pcommands;
+    const int size = min(8, getSizeLList(curCom));
     unsigned char* data = malloc(size + 1);
     int i, off;
 
@@ -90,17 +109,21 @@ static XGMCommand* XGCCommand_createPSGToneCommand(List* commands, int* offset)
 
     off = 1;
     for (i = 0; i < size; i++)
-        data[off++] = VGMCommand_getPSGValue(getFromList(commands, i + *offset));
+    {
+        data[off++] = VGMCommand_getPSGValue(curCom->element);
+        curCom = curCom->next;
+    }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pcommands = curCom;
 
     return XGMCommand_create(data, size + 1);
 }
 
-static XGMCommand* XGCCommand_createStateCommand(List* states, int* offset)
+static XGMCommand* XGCCommand_createStateCommand(LList** pstates)
 {
-    const int size = min(16, (states->size / 2) - *offset);
+    LList* curState = *pstates;
+    const int size = min(16, (getSizeLList(curState) / 2));
     unsigned char* data = malloc((size * 2) + 1);
     int i, off;
 
@@ -109,101 +132,103 @@ static XGMCommand* XGCCommand_createStateCommand(List* states, int* offset)
     off = 1;
     for (i = 0; i < size; i++)
     {
-        data[off++] = (int) getFromList(states, ((i + *offset) * 2) + 0);
-        data[off++] = (int) getFromList(states, ((i + *offset) * 2) + 1);
+        data[off++] = (int) curState->element;
+        curState = curState->next;
+        data[off++] = (int) curState->element;
+        curState = curState->next;
     }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pstates = curState;
 
     return XGMCommand_create(data, (size * 2) + 1);
 }
 
 
-List* XGCCommand_createPSGEnvCommands(List* commands)
+LList* XGCCommand_createPSGEnvCommands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    if (commands->size > 4)
-        printf("Warning: more then 4 PSG env command in a single frame !\n");
+    if (getSizeLList(src) > 4)
+    {
+        if (!silent)
+            printf("Warning: more then 4 PSG env command in a single frame !\n");
+    }
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGCCommand_createPSGEnvCommand(commands, &offset));
+    while (src != NULL)
+        result = insertAfterLList(result, XGCCommand_createPSGEnvCommand(&src));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGCCommand_createPSGToneCommands(List* commands)
+LList* XGCCommand_createPSGToneCommands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGCCommand_createPSGToneCommand(commands, &offset));
+    while (src != NULL)
+        result = insertAfterLList(result, XGCCommand_createPSGToneCommand(&src));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGCCommand_createYMKeyCommands(List* commands)
+LList* XGCCommand_createYMKeyCommands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    if (commands->size > 6)
-        printf("Warning: more then 6 Key off or Key on command in a single frame !\n");
+    if (getSizeLList(src) > 6)
+    {
+        if (!silent)
+            printf("Warning: more then 6 Key off or Key on command in a single frame !\n");
+    }
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGMCommand_createYMKeyCommand(commands, &offset, 6));
+    while (src != NULL)
+        result = insertAfterLList(result, XGMCommand_createYMKeyCommand(&src, 6));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGCCommand_createStateCommands(List* commands)
+LList* XGCCommand_createStateCommands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    offset = 0;
-    while (offset < (commands->size / 2))
-        addToList(result, XGCCommand_createStateCommand(commands, &offset));
+    while (src != NULL)
+        result = insertAfterLList(result, XGCCommand_createStateCommand(&src));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGCCommand_convertSingle(XGMCommand* command)
+LList* XGCCommand_convertSingle(XGMCommand* command)
 {
     int i, size;
-    List* result;
-    List* comm1;
-    List* comm2;
+    LList* result;
+    LList* comm1;
+    LList* comm2;
     unsigned char* data;
 
-    // allocate
-    result = createList();
-
-    comm1 = createList();
-    comm2 = createList();
+    result = NULL;
+    comm1 = NULL;
+    comm2 = NULL;
 
     switch (XGMCommand_getType(command))
     {
         default:
-            addToList(result, command);
+            result = insertAfterLList(result, command);
             break;
 
         case XGM_PSG:
@@ -221,15 +246,15 @@ List* XGCCommand_convertSingle(XGMCommand* command)
 
                 // env register write ?
                 if (VGMCommand_isPSGEnvWrite(vgmCommand))
-                    addToList(comm1, vgmCommand);
+                    comm1 = insertAfterLList(comm1, vgmCommand);
                 else
-                    addToList(comm2, vgmCommand);
+                    comm2 = insertAfterLList(comm2, vgmCommand);
             }
 
-            if (comm1->size > 0)
-                addAllToList(result, XGCCommand_createPSGEnvCommands(comm1));
-            if (comm2->size > 0)
-                addAllToList(result, XGCCommand_createPSGToneCommands(comm2));
+            if (comm1 != NULL)
+                result = insertAllAfterLList(result, XGCCommand_createPSGEnvCommands(getHeadLList(comm1)));
+            if (comm2 != NULL)
+                result = insertAllAfterLList(result, XGCCommand_createPSGToneCommands(getHeadLList(comm2)));
             break;
 
         case XGM_YM2612_REGKEY:
@@ -246,30 +271,33 @@ List* XGCCommand_convertSingle(XGMCommand* command)
                 data[2] = command->data[i + 1];
                 vgmCommand = VGMCommand_createEx(data, 0);
 
-                addToList(comm1, vgmCommand);
+                comm1 = insertAfterLList(comm1, vgmCommand);
             }
 
-            if (comm1->size > 0)
-                addAllToList(result, XGCCommand_createYMKeyCommands(comm1));
+            if (comm1 != NULL)
+                result = insertAllAfterLList(result, XGCCommand_createYMKeyCommands(getHeadLList(comm1)));
             break;
     }
 
-    deleteList(comm1);
-    deleteList(comm2);
+    deleteLList(comm1);
+    deleteLList(comm2);
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGCCommand_convert(List* commands)
+LList* XGCCommand_convert(LList* commands)
 {
-    int i;
-    List* result;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
 
-    for (i = 0; i < commands->size; i++)
-        addAllToList(result, XGCCommand_convertSingle(getFromList(commands, i)));
+    src = commands;
+    while(src != NULL)
+    {
+        result = insertAllAfterLList(result, XGCCommand_convertSingle(src->element));
+        src = src->next;
+    }
 
-    return result;
+    return getHeadLList(result);
 }

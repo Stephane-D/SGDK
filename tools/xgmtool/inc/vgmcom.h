@@ -70,6 +70,9 @@ int VGMCommand_getYM2612KeyChannel(VGMCommand* source);
 bool VGMCommand_isYM26120x2XWrite(VGMCommand* source);
 bool VGMCommand_isYM2612TimersWrite(VGMCommand* source);
 bool VGMCommand_isYM2612TimersNoSpecialNoCSMWrite(VGMCommand* source);
+bool VGMCommand_isDACEnabled(VGMCommand* source);
+bool VGMCommand_isDACEnabledON(VGMCommand* source);
+bool VGMCommand_isDACEnabledOFF(VGMCommand* source);
 bool VGMCommand_isStream(VGMCommand* source);
 bool VGMCommand_isStreamControl(VGMCommand* source);
 bool VGMCommand_isStreamData(VGMCommand* source);
@@ -85,10 +88,10 @@ int VGMCommand_getStreamSampleAddress(VGMCommand* source);
 int VGMCommand_getStreamSampleSize(VGMCommand* source);
 bool VGMCommand_isSame(VGMCommand* source, VGMCommand* com);
 
-bool VGMCommand_contains(List* commands, VGMCommand* command);
-VGMCommand* VGMCommand_getKeyCommand(List* commands, int channel);
+bool VGMCommand_contains(LList* commands, VGMCommand* command);
+VGMCommand* VGMCommand_getKeyCommand(LList* commands, int channel);
 VGMCommand* VGMCommand_createYMCommand(int port, int reg, int value);
-List* VGMCommand_createYMCommands(int port, int baseReg, int value);
+LList* VGMCommand_createYMCommands(int port, int baseReg, int value);
 
 
 #endif // VGMCOM_H_

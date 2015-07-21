@@ -12,128 +12,177 @@
 
 
 // forward
-static void XGC_extractMusic(XGM* source, XGM* xgm);
-
+static void XGC_extractMusic(XGM* xgc, XGM* xgm);
+static int XGC_computeLenInFrameOf(LList* commands);
 
 XGM* XGC_create(XGM* xgm)
 {
-    int i;
     XGM* result = XGM_create();
+    LList* s;
+    LList* d;
 
     if (!silent)
         printf("Converting to XGC...\n");
 
     // simple copy for sample
-    for(i = 0; i < xgm->samples->size; i++)
+    s = xgm->samples;
+    d = result->samples;
+    while(s != NULL)
     {
-        XGMSample* sample = getFromList(xgm->samples, i);
-        addToList(result->samples, sample);
+        XGMSample* sample = s->element;
+        d = insertAfterLList(d, sample);
+        s = s->next;
     }
+    result->samples = getHeadLList(d);
 
     // and extract music data
     XGC_extractMusic(result, xgm);
-    // shift all samples to 3 frames (~3.3 for driver buffer length)
-    XGC_shiftSamples(result, 3);
+
+    // shift all samples to 2 frames for PAL and 3 frames ahead for NTSC (because of PCM buffer length)
+    if (result->pal)
+        XGC_shiftSamples(result, 2);
+    else
+        XGC_shiftSamples(result, 3);
+
+    // display play PCM command
+//    if (verbose)
+//    {
+//        LList* curCom = result->commands;
+//        while(curCom != NULL)
+//        {
+//            XGMCommand* command = curCom->element;
+//
+//            if (XGCCommand_isPCM(command))
+//                printf("play sample %2X at frame %d\n", XGCCommand_getPCMId(command), XGC_getTimeInFrame(result, command));
+//
+//            curCom = curCom->next;
+//        }
+//    }
 
     if (verbose)
     {
         printf("Sample size: %d\n", XGM_getSampleDataSize(result));
         printf("Music data size: %d\n", XGM_getMusicDataSize(result));
-        printf("Number of sample: %d\n", result->samples->size);
+        printf("Number of sample: %d\n", getSizeLList(result->samples));
     }
     if (!silent)
-        printf("XGC duration: %d frames (%d seconds)\n", XGC_computeLenInFrame(result), XGC_computeLenInFrame(result) / 60);
+        printf("XGC duration: %d frames (%d seconds)\n", XGC_computeLenInFrame(result), XGC_computeLenInSecond(result));
 
     return result;
 }
 
-static void XGC_extractMusic(XGM* source, XGM* xgm)
+static void XGC_extractMusic(XGM* xgc, XGM* xgm)
 {
-    List* vgmCommands = createList();
-    List* frameCommands = createList();
-    List* ymCommands = createList();
-    List* ymKeyCommands = createList();
-    List* psgCommands = createList();
-    List* otherCommands = createList();
-    List* newCommands = createList();
-    List* stateChange = createList();
+    LList* vgmCommands;
+    LList* frameCommands = NULL;
+    LList* ymCommands = NULL;
+    LList* ymKeyCommands = NULL;
+    LList* psgCommands = NULL;
+    LList* otherCommands = NULL;
+    LList* newCommands = NULL;
+    LList* stateChange = NULL;
+    LList* xgcCommands;
+    LList* com;
+    LList* tmpCom;
 
     XGMCommand* sizeCommand;
     YM2612* ymOldState;
     YM2612* ymState;
-    int i, j, size;
+    int j, size;
 
     ymOldState = YM2612_create();
     ymState = YM2612_create();
 
     // reset frame
-    addToList(source->commands, XGCCommand_createFrameSizeCommand(0));
+    xgcCommands = createElement(XGCCommand_createFrameSizeCommand(0));
 
     // TL / D1L / RR set to max
-    clearList(vgmCommands);
-    addAllToList(vgmCommands, VGMCommand_createYMCommands(0, 0x40, 0x7F));
-    addAllToList(vgmCommands, VGMCommand_createYMCommands(0, 0x80, 0xFF));
-    addAllToList(source->commands, XGCCommand_convert(XGMCommand_createYMPort0Commands(vgmCommands)));
+    vgmCommands = NULL;
+    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(0, 0x40, 0x7F));
+    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(0, 0x80, 0xFF));
+    vgmCommands = getHeadLList(vgmCommands);
+
+    xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_convert(XGMCommand_createYMPort0Commands(vgmCommands)));
+
     // set ym state
-    for (i = 0; i < vgmCommands->size; i++)
+    com = vgmCommands;
+    while(com != NULL)
     {
-        VGMCommand* command = getFromList(vgmCommands, i);
+        VGMCommand* command = com->element;
         YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
+        com = com->next;
     }
 
-    clearList(vgmCommands);
-    addAllToList(vgmCommands, VGMCommand_createYMCommands(1, 0x40, 0x7F));
-    addAllToList(vgmCommands, VGMCommand_createYMCommands(1, 0x80, 0xFF));
-    addAllToList(source->commands, XGCCommand_convert(XGMCommand_createYMPort1Commands(vgmCommands)));
+    deleteLList(vgmCommands);
+    vgmCommands = NULL;
+    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(1, 0x40, 0x7F));
+    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(1, 0x80, 0xFF));
+    vgmCommands = getHeadLList(vgmCommands);
+
+    xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_convert(XGMCommand_createYMPort1Commands(vgmCommands)));
+
     // set ym state
-    for (i = 0; i < vgmCommands->size; i++)
+    com = vgmCommands;
+    while(com != NULL)
     {
-        VGMCommand* command = getFromList(vgmCommands, i);
+        VGMCommand* command = com->element;
         YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
+        com = com->next;
     }
 
     // key off for all channels
-    clearList(vgmCommands);
-    addToList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x00));
-    addToList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x01));
-    addToList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x02));
-    addToList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x04));
-    addToList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x05));
-    addToList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x06));
-    addAllToList(source->commands, XGCCommand_convert(XGMCommand_createYMKeyCommands(vgmCommands)));
+    deleteLList(vgmCommands);
+    vgmCommands = NULL;
+    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x00));
+    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x01));
+    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x02));
+    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x04));
+    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x05));
+    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x06));
+    vgmCommands = getHeadLList(vgmCommands);
+
+    xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_convert(XGMCommand_createYMKeyCommands(vgmCommands)));
+
     // set ym state
-    for (i = 0; i < vgmCommands->size; i++)
+    com = vgmCommands;
+    while(com != NULL)
     {
-        VGMCommand* command = getFromList(vgmCommands, i);
+        VGMCommand* command = com->element;
         YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
+        com = com->next;
     }
 
-    stateChange = XGC_getStateChange(source, ymState, ymOldState);
+    stateChange = XGC_getStateChange(ymState, ymOldState);
     // add the state commands if no empty
-    if (stateChange->size > 0)
-        addAllToList(source->commands, XGCCommand_createStateCommands(stateChange));
+    if (stateChange != NULL)
+        xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_createStateCommands(stateChange));
 
     // add 3 dummy frames (reserve frame space for PCM shift)
-    addToList(source->commands, XGCCommand_createFrameSizeCommand(0));
-    addToList(source->commands, XGCCommand_createFrameSizeCommand(0));
-    addToList(source->commands, XGCCommand_createFrameSizeCommand(0));
+    xgcCommands = insertAfterLList(xgcCommands, XGCCommand_createFrameSizeCommand(0));
+    xgcCommands = insertAfterLList(xgcCommands, XGCCommand_createFrameSizeCommand(0));
+    xgcCommands = insertAfterLList(xgcCommands, XGCCommand_createFrameSizeCommand(0));
 
     XGMCommand* loopCommand = XGM_getLoopPointedCommand(xgm);
     int loopOffset = -1;
-    int index = 0;
-    while (index < xgm->commands->size)
+
+    com = xgm->commands;
+    while(com != NULL)
     {
-        // get frame commands
-        clearList(frameCommands);
-        while (index < xgm->commands->size)
+        // build frame commands
+        deleteLList(frameCommands);
+        frameCommands = NULL;
+
+        while(com != NULL)
         {
-            XGMCommand* command = getFromList(xgm->commands, index++);
+            // get command and pass to next one
+            XGMCommand* command = com->element;
+            com = com->next;
 
             // this is the command where we loop
             if (command == loopCommand)
             {
                 if (loopOffset == -1)
-                    loopOffset = XGM_getMusicDataSize(source);
+                    loopOffset = XGM_getMusicDataSizeOf(getHeadLList(xgcCommands));
             }
 
             // loop information --> ignore
@@ -144,33 +193,41 @@ static void XGC_extractMusic(XGM* source, XGM* xgm)
                 break;
 
             // add command
-            addToList(frameCommands, command);
+            frameCommands = insertAfterLList(frameCommands, command);
         }
+
+        // get back to head
+        frameCommands = getHeadLList(frameCommands);
 
         // update state
         ymOldState = ymState;
         ymState = YM2612_copy(ymOldState);
 
         // prepare new commands for this frame
-        clearList(newCommands);
-
+        deleteLList(newCommands);
         // add size command
         sizeCommand = XGCCommand_createFrameSizeCommand(0);
-        addToList(newCommands, sizeCommand);
+        newCommands = createElement(sizeCommand);
 
         // group commands
-        clearList(ymCommands);
-        clearList(ymKeyCommands);
-        clearList(psgCommands);
-        clearList(otherCommands);
-        for (i = 0; i < frameCommands->size; i++)
+        deleteLList(ymCommands);
+        deleteLList(ymKeyCommands);
+        deleteLList(psgCommands);
+        deleteLList(otherCommands);
+        ymCommands = NULL;
+        ymKeyCommands = NULL;
+        psgCommands = NULL;
+        otherCommands = NULL;
+
+        tmpCom = frameCommands;
+        while(tmpCom != NULL)
         {
-            XGMCommand* command = getFromList(frameCommands, i);
+            XGMCommand* command = tmpCom->element;
 
             if (XGMCommand_isPSGWrite(command))
-                addToList(psgCommands, command);
+                psgCommands = insertAfterLList(psgCommands, command);
             else if (XGMCommand_isYM2612RegKeyWrite(command))
-                addToList(ymKeyCommands, command);
+                ymKeyCommands = insertAfterLList(ymKeyCommands, command);
             else if (XGMCommand_isYM2612Write(command))
             {
                 // update YM state
@@ -184,85 +241,142 @@ static void XGC_extractMusic(XGM* source, XGM* xgm)
 
                 // remove all $2B register writes (DAC enable is done automatically)
                 if (XGMCommand_removeYM2612RegWrite(command, 0, 0x2B))
-                    addToList(ymCommands, command);
+                    ymCommands = insertAfterLList(ymCommands, command);
             }
             else
-                addToList(otherCommands, command);
+                otherCommands = insertAfterLList(otherCommands, command);
+
+            tmpCom = tmpCom->next;
         }
 
-        // general YM commands first as key event were just done
-        if (ymCommands->size > 0)
-            addAllToList(newCommands, XGCCommand_convert(ymCommands));
+        XGMCommand* pcmComCH[4];
+        pcmComCH[0] = NULL;
+        pcmComCH[1] = NULL;
+        pcmComCH[2] = NULL;
+        pcmComCH[3] = NULL;
+
+        // discard multi PCM command in a single frame
+        tmpCom = otherCommands;
+        while(tmpCom != NULL)
+        {
+            XGMCommand* command = tmpCom->element;
+
+            if (XGMCommand_isPCM(command))
+            {
+                // get channel
+                int ch = XGMCommand_getPCMChannel(command);
+
+                // already have a PCM command for this channel ?
+                if (pcmComCH[ch] != NULL)
+                {
+                    // remove current PCM command
+                    removeFromLList(tmpCom);
+                    // we removed the last command --> update pointer
+                    if (tmpCom == otherCommands)
+                        otherCommands = tmpCom->prev;
+
+                    if (!silent)
+                    {
+                        int frameInd = XGC_computeLenInFrameOf(getHeadLList(xgcCommands));
+                        int id = XGMCommand_getPCMId(command);
+
+                        // we are ignoring a real play command --> display it
+                        if (id != 0)
+                            printf("Warning: multiple PCM command on %d --> play %2X removed\n", frameInd, id);
+                    }
+                }
+                else
+                    pcmComCH[ch] = command;
+            }
+
+            tmpCom = tmpCom->prev;
+        }
+
+        psgCommands = getHeadLList(psgCommands);
+        ymCommands = getHeadLList(ymCommands);
+        ymKeyCommands = getHeadLList(ymKeyCommands);
+        otherCommands = getHeadLList(otherCommands);
+
+        // PSG commands first as PSG require main BUS access (DMA contention)
+        if (psgCommands != NULL)
+            newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(psgCommands));
+        // then general YM commands
+        if (ymCommands != NULL)
+            newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(ymCommands));
         // then key commands
-        if (ymKeyCommands->size > 0)
-            addAllToList(newCommands, XGCCommand_convert(ymKeyCommands));
-        // then PSG commands
-        if (psgCommands->size > 0)
-            addAllToList(newCommands, XGCCommand_convert(psgCommands));
+        if (ymKeyCommands != NULL)
+            newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(ymKeyCommands));
         // and finally others commands
-        if (otherCommands->size > 0)
-            addAllToList(newCommands, XGCCommand_convert(otherCommands));
+        if (otherCommands != NULL)
+            newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(otherCommands));
 
         // state change
-        stateChange = XGC_getStateChange(source, ymState, ymOldState);
+        stateChange = XGC_getStateChange(ymState, ymOldState);
         // add the state command if no empty
-        if (stateChange->size > 0)
-            addAllToList(newCommands, XGCCommand_createStateCommands(stateChange));
+        if (stateChange != NULL)
+            newCommands = insertAllAfterLList(newCommands, XGCCommand_createStateCommands(stateChange));
 
-        // last frame ?
-        if (index >= xgm->commands->size)
+        // is it the last frame ?
+        if (com == NULL)
         {
             // loop point ?
             if (loopOffset != -1)
-                addToList(newCommands, XGMCommand_createLoopCommand(loopOffset));
+                newCommands = insertAfterLList(newCommands, XGMCommand_createLoopCommand(loopOffset));
             else
                 // add end command
-                addToList(newCommands, XGMCommand_createEndCommand());
+                newCommands = insertAfterLList(newCommands, XGMCommand_createEndCommand());
         }
+
+        // get back to head
+        newCommands = getHeadLList(newCommands);
 
         // limit frame commands to 255 bytes max
         size = 0;
-        int ind = 0;
-        while (ind < newCommands->size)
+        tmpCom = newCommands;
+        while(tmpCom != NULL)
         {
-            XGMCommand* command = getFromList(newCommands, ind);
+            XGMCommand* command = tmpCom->element;
 
             // limit reached ?
             if ((size + command->size) >= 256)
             {
-                // no firsts frame
-                if (ind > 10)
-                    printf("Warning: frame > 256 at frame %4X (need to split frame)\n", XGC_computeLenInFrame(source));
+//                if ((frameInd > 10) && (!silent))
+                if (!silent)
+                {
+                    int frameInd = XGC_computeLenInFrameOf(getHeadLList(xgcCommands)) + (XGC_computeLenInFrameOf(newCommands) - 1);
+                    printf("Warning: frame > 256 at frame %4X (need to split frame)\n", frameInd);
+                }
 
                 // end previous frame
                 XGCCommand_setFrameSizeSize(sizeCommand, size);
 
                 // insert new frame size info
                 sizeCommand = XGCCommand_createFrameSizeCommand(0);
-                addToListEx(newCommands, ind, sizeCommand);
+                insertBeforeLList(tmpCom, sizeCommand);
 
                 // reset size and pass to next element
                 size = 1;
-                ind++;
             }
 
             size += command->size;
-            ind++;
+            tmpCom = tmpCom->next;
         }
 
         // set frame size
         XGCCommand_setFrameSizeSize(sizeCommand, size);
 
         // finally add the new commands
-        addAllToList(source->commands, newCommands);
+        xgcCommands = insertAllAfterLList(xgcCommands, newCommands);
     }
 
+    xgc->commands = getHeadLList(xgcCommands);
+
     // compute offset & frame size
-    XGC_computeAllOffset(source);
-    XGC_computeAllFrameSize(source);
+    XGC_computeAllOffset(xgc);
+    XGC_computeAllFrameSize(xgc);
 
     if (!silent)
-        printf("Number of command: %d\n", source->commands->size);
+        printf("Number of command: %d\n", getSizeLList(xgc->commands));
 }
 
 void XGC_shiftSamples(XGM* source, int sft)
@@ -275,83 +389,97 @@ void XGC_shiftSamples(XGM* source, int sft)
     XGMCommand* loopCommand = XGM_getLoopCommand(source);
     XGMCommand* loopPointedCommand = XGM_getLoopPointedCommand(source);
 
-    List* sampleCommands[sft];
-    List* loopSampleCommands[sft];
+    LList* sampleCommands[sft];
+    LList* loopSampleCommands[sft];
 
     for (i = 0; i < sft; i++)
     {
-        sampleCommands[i] = createList();
-        loopSampleCommands[i] = createList();
+        sampleCommands[i] = NULL;
+        loopSampleCommands[i] = NULL;
     }
 
     int loopFrameIndex = sft;
     int frameRead = 0;
     int frameWrite = 0;
-    int index = source->commands->size - 1;
-    while (index >= 0)
-    {
-        XGMCommand* command = getFromList(source->commands, index);
+    LList* com = getTailLList(source->commands);
 
-        // this is the command pointer by the loop
+    while (com != NULL)
+    {
+        XGMCommand* command = com->element;
+
+        // this is the command pointed by the loop
         if (command == loopPointedCommand)
             loopFrameIndex = 0;
 
         if (XGMCommand_isPCM(command))
         {
-            addToList(sampleCommands[frameRead], command);
-            removeFromList(source->commands, index);
+            sampleCommands[frameRead] = insertAfterLList(sampleCommands[frameRead], command);
+            removeFromLList(com);
         }
         else if (XGCCommand_isFrameSize(command))
         {
             frameRead = (frameRead + 1) % sft;
             frameWrite = (frameWrite + 1) % sft;
 
-            // add sample command to this frame
-            while (sampleCommands[frameWrite]->size > 0)
+            // add sample commands stored for this frame
+            while (sampleCommands[frameWrite] != NULL)
             {
-                // get first and remove
-                XGMCommand* sampleCommand = removeFromList(sampleCommands[frameWrite], 0);
+                // get current sample
+                XGMCommand* sampleCommand = sampleCommands[frameWrite]->element;
+                // next sample to store
+                sampleCommands[frameWrite] = sampleCommands[frameWrite]->prev;
 
-                // add sample command to previous frame
-                addToListEx(source->commands, max(1, index), sampleCommand);
+                // insert sample command just before current frame (and bypass it)
+                com = insertBeforeLList(com, sampleCommand);
                 // store for the loop samples restore
                 if (loopFrameIndex < sft)
-                    addToList(loopSampleCommands[loopFrameIndex], XGCCommand_createFromCommand(sampleCommand));
+                    loopSampleCommands[loopFrameIndex] = insertAfterLList(loopSampleCommands[loopFrameIndex], XGCCommand_createFromCommand(sampleCommand));
             }
 
             loopFrameIndex++;
         }
 
-        index--;
+        com = com->prev;
     }
 
     // add last remaining samples
+    com = source->commands;
     for (i = 0; i < sft; i++)
-        while (sampleCommands[i]->size > 0)
-            addToListEx(source->commands, i + 1, removeFromList(sampleCommands[i], 0));
-
-    // avoid end or loop command
-    index = source->commands->size - 2;
-    loopFrameIndex = 0;
-    while ((index >= 0) && (loopFrameIndex < sft))
     {
-        XGMCommand* command = getFromList(source->commands, index);
+        while (sampleCommands[i] != NULL)
+        {
+            insertAfterLList(com, sampleCommands[i]->element);
+            // next sample to store
+            sampleCommands[i] = sampleCommands[i]->prev;
+        }
+    }
+
+    com = getTailLList(source->commands);
+    // avoid the last command (end or loop)
+    if (com != NULL)
+        com = com->prev;
+    loopFrameIndex = 0;
+    while (loopFrameIndex < sft)
+    {
+        XGMCommand* command = com->element;
 
         if (XGCCommand_isFrameSize(command))
         {
             // add sample command to previous frame
-            while (loopSampleCommands[loopFrameIndex]->size > 0)
+            while (loopSampleCommands[loopFrameIndex] != NULL)
             {
-                XGMCommand* sampleCommand = removeFromList(loopSampleCommands[loopFrameIndex], 0);
+                XGMCommand* sampleCommand = loopSampleCommands[loopFrameIndex]->element;
+                // next sample to store
+                loopSampleCommands[loopFrameIndex] = loopSampleCommands[loopFrameIndex]->prev;
 
                 // add sample command to current frame
-                addToListEx(source->commands, index + 1, sampleCommand);
+                insertAfterLList(com, sampleCommand);
             }
 
             loopFrameIndex++;
         }
 
-        index--;
+        com = com->prev;
     }
 
     // recompute offset & frame size
@@ -369,10 +497,10 @@ void XGC_shiftSamples(XGM* source, int sft)
     }
 }
 
-List* XGC_getStateChange(XGM* source, YM2612* current, YM2612* old)
+LList* XGC_getStateChange(YM2612* current, YM2612* old)
 {
     int port;
-    List* result = createList();
+    LList* result = NULL;
     int addr;
 
     addr = 0x44;
@@ -387,8 +515,8 @@ List* XGC_getStateChange(XGM* source, YM2612* current, YM2612* old)
             if (YM2612_isDiff(current, old, port, reg))
             {
                 // write state for current register
-                addToList(result, (void*) addr);
-                addToList(result, (void*) YM2612_get(current, port, reg));
+                result = insertAfterLList(result, (void*) addr);
+                result = insertAfterLList(result, (void*) YM2612_get(current, port, reg));
             }
 
             addr++;
@@ -403,45 +531,50 @@ List* XGC_getStateChange(XGM* source, YM2612* current, YM2612* old)
     if (YM2612_isDiff(current, old, 0, 0x2B))
     {
         // write state for current register
-        addToList(result, (void*) 0x44 + 0x1C);
-        addToList(result, (void*) YM2612_get(current, 0, 0x2B));
+        result = insertAfterLList(result, (void*) 0x44 + 0x1C);
+        result = insertAfterLList(result, (void*) YM2612_get(current, 0, 0x2B));
     }
 
-    return result;
+    return getHeadLList(result);
 }
 
 void XGC_computeAllOffset(XGM* source)
 {
-    int i;
+    LList* com;
 
     // compute offset
     int offset = 0;
-    for (i = 0; i < source->commands->size; i++)
+    com = source->commands;
+    while(com != NULL)
     {
-        XGMCommand* command = getFromList(source->commands, i);
+        XGMCommand* command = com->element;
 
         XGMCommand_setOffset(command, offset);
         offset += command->size;
+
+        com = com->next;
     }
 }
 
 void XGC_computeAllFrameSize(XGM* source)
 {
     XGMCommand* sizeCommand;
-    int i, size, frame;
+    int size, frame;
+    LList* com;
 
     sizeCommand = NULL;
     size = 0;
     frame = 0;
-    for (i = 0; i < source->commands->size; i++)
+    com = source->commands;
+    while(com != NULL)
     {
-        XGMCommand* command = getFromList(source->commands, i);
+        XGMCommand* command = com->element;
 
         if (XGCCommand_isFrameSize(command))
         {
             if (sizeCommand != NULL)
             {
-                if (size > 255)
+                if ((size > 255) && (!silent))
                     printf("Error: frame %4X has a size > 255 ! Can't continue...\n", frame);
 
                 XGCCommand_setFrameSizeSize(sizeCommand, size);
@@ -453,23 +586,37 @@ void XGC_computeAllFrameSize(XGM* source)
         }
         else
             size += command->size;
+
+        com = com->next;
     }
+}
+
+static int XGC_computeLenInFrameOf(LList* commands)
+{
+    LList* com = commands;
+    int result = 0;
+
+    while(com != NULL)
+    {
+        XGMCommand* command = com->element;
+
+        if (XGCCommand_isFrameSize(command))
+            result++;
+
+        com = com->next;
+    }
+
+    return result;
 }
 
 int XGC_computeLenInFrame(XGM* source)
 {
-    int i;
-    int result = 0;
+    return XGC_computeLenInFrameOf(source->commands);
+}
 
-    for (i = 0; i < source->commands->size; i++)
-    {
-        XGMCommand* command = getFromList(source->commands, i);
-
-        if (XGCCommand_isFrameSize(command))
-            result++;
-    }
-
-    return result;
+int XGC_computeLenInSecond(XGM* source)
+{
+    return XGC_computeLenInFrameOf(source->commands) / (source->pal ? 50 : 60);
 }
 
 /**
@@ -477,51 +624,65 @@ int XGC_computeLenInFrame(XGM* source)
  */
 int XGC_getTime(XGM* source, XGMCommand* command)
 {
-    int i;
+    LList* com = source->commands;
     int result = -1;
 
-    for (i = 0; i < source->commands->size; i++)
+    while(com != NULL)
     {
-        XGMCommand* c = getFromList(source->commands, i);
+        XGMCommand* c = com->element;
 
         if (XGCCommand_isFrameSize(c))
             result++;
         if (c == command)
             break;
+
+        com = com->next;
     }
 
     // convert in sample (44100 Hz)
-    return (result * 44100) / 60;
+    return (result * 44100) / (source->pal ? 50 : 60);
 }
+
+/**
+ * Return elapsed time when specified command happen (in frame)
+ */
+int XGC_getTimeInFrame(XGM* xgm, XGMCommand* command)
+{
+    return XGC_getTime(xgm, command) / (44100 / (xgm->pal ? 50 : 60));
+}
+
 
 /**
  * Return elapsed time when specified command happen
  */
-int XGC_getCommandIndexAtTime(XGM* source, int time)
+LList* XGC_getCommandElementAtTime(XGM* source, int time)
 {
+    LList* com = source->commands;
     const int adjTime = (time * 60) / 44100;
-    int c;
     int result = 0;
 
-    for (c = 0; c < source->commands->size; c++)
+    while(com != NULL)
     {
-        XGMCommand* command = getFromList(source->commands, c);
+        XGMCommand* command = com->element;
 
         if (result >= adjTime)
-            return c;
+            return com;
         if (XGCCommand_isFrameSize(command))
             result++;
+
+        com = com->next;
     }
 
-    return source->commands->size - 1;
+    return com;
 }
 
 unsigned char* XGC_asByteArray(XGM* source, int *outSize)
 {
-    int c, s;
+    int s;
     int offset;
     unsigned char byte;
     FILE* f = fopen("tmp.bin", "wb+");
+    LList* l;
 
     if (f == NULL)
     {
@@ -532,9 +693,11 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
     // 0000-00FB: sample id table
     // fixed size : 252 bytes, limit music to 63 samples max
     offset = 0;
-    for (s = 0; s < source->samples->size; s++)
+    s = 0;
+    l = source->samples;
+    while(l != NULL)
     {
-        XGMSample* sample = getFromList(source->samples, s);
+        XGMSample* sample = l->element;
         int len = sample->dataSize;
 
         byte = offset >> 8;
@@ -547,8 +710,10 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
         fwrite(&byte, 1, 1, f);
 
         offset += len;
+        s++;
+        l = l->next;
     }
-    for (s = source->samples->size; s < 0x3F; s++)
+    for (; s < 0x3F; s++)
     {
         // special mark for silent sample
         byte = 0xFF;
@@ -575,10 +740,12 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
     fwrite(&byte, 1, 1, f);
 
     // 0100-XXXX: sample data
-    for (s = 0; s < source->samples->size; s++)
+    l = source->samples;
+    while(l != NULL)
     {
-        XGMSample* sample = getFromList(source->samples, s);
+        XGMSample* sample = l->element;
         fwrite(sample->data, 1, sample->dataSize, f);
+        l = l->next;
     }
 
     // compute XGM music data size in byte
@@ -596,9 +763,10 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
 
     offset = 0;
     // XXXX+0004: music data
-    for (c = 0; c < source->commands->size; c++)
+    l = source->commands;
+    while(l != NULL)
     {
-        XGMCommand* command = getFromList(source->commands, c);
+        XGMCommand* command = l->element;
 
         if (XGCCommand_isFrameSize(command))
             fwrite(command->data, 1, command->size, f);
@@ -616,6 +784,7 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
             printf("Error: command offset is incorrect !\n");
 
         offset += command->size;
+        l = l->next;
     }
 
     unsigned char* result = inEx(f, 0, getFileSizeEx(f), outSize);

@@ -19,8 +19,8 @@ XGM* XGM_create()
 
     result = malloc(sizeof(XGM));
 
-    result->samples = createList();
-    result->commands = createList();
+    result->samples = NULL;
+    result->commands = NULL;
     result->pal = -1;
 
     return result;
@@ -41,6 +41,7 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
     }
 
     // sample id table
+    LList* samples = NULL;
     for (s = 1; s < 0x40; s++)
     {
         int offset = getInt16(data, (s * 4) + 0);
@@ -53,9 +54,11 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
             len <<= 8;
 
             // add sample
-            addToList(result->samples, XGMSample_create(s, data + (offset + 0x104), len, offset));
+            samples = insertAfterLList(samples, XGMSample_create(s, data + (offset + 0x104), len, offset));
         }
     }
+
+    result->samples = getHeadLList(samples);
 
     // calculate music data offset (sample block size + 0x104)
     int offset = (getInt16(data, 0x100) << 8) + 0x104;
@@ -67,7 +70,7 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
 
     if (verbose)
     {
-        printf("XGM sample number: %d\n", result->samples->size);
+        printf("XGM sample number: %d\n", getSizeLList(result->samples));
         printf("XGM start music data: %6X  len: %d\n", offset + 4, len);
     }
 
@@ -75,7 +78,7 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
     XGM_parseMusic(result, data + offset + 4, len);
 
     if (!silent)
-        printf("XGM duration: %d frames (%d seconds)\n", XGM_computeLenInFrame(result), XGM_computeLenInFrame(result) / 60);
+        printf("XGM duration: %d frames (%d seconds)\n", XGM_computeLenInFrame(result), XGM_computeLenInSecond(result));
 
     return result;
 }
@@ -99,14 +102,29 @@ XGM* XGM_createFromVGM(VGM* vgm)
     // and extract music data
     XGM_extractMusic(result, vgm);
 
+    // display play PCM command
+//    if (verbose)
+//    {
+//        LList* curCom = result->commands;
+//        while(curCom != NULL)
+//        {
+//            XGMCommand* command = curCom->element;
+//
+//            if (XGMCommand_isPCM(command))
+//                printf("play sample %2X at frame %d\n", XGMCommand_getPCMId(command), XGM_getTimeInFrame(result, command));
+//
+//            curCom = curCom->next;
+//        }
+//    }
+
     if (verbose)
     {
-        printf("XGM sample number: %d\n", result->samples->size);
+        printf("XGM sample number: %d\n", getSizeLList(result->samples));
         printf("Sample size: %d\n", XGM_getSampleDataSize(result));
         printf("Music data size: %d\n", XGM_getMusicDataSize(result));
     }
     if (!silent)
-        printf("XGM duration: %d frames (%d seconds)\n", XGM_computeLenInFrame(result), XGM_computeLenInFrame(result) / 60);
+        printf("XGM duration: %d frames (%d seconds)\n", XGM_computeLenInFrame(result), XGM_computeLenInSecond(result));
 
     return result;
 }
@@ -119,11 +137,12 @@ static void XGM_parseMusic(XGM* xgm, unsigned char* data, int length)
 
     // parse all XGM commands
     off = 0;
+    LList* commands = xgm->commands;
     while (off < length)
     {
         // check for loop start
         XGMCommand* command = XGMCommand_createFromData(data + off);
-        addToList(xgm->commands, command);
+        commands = insertAfterLList(commands, command);
         off += command->size;
 
         // stop here
@@ -131,63 +150,79 @@ static void XGM_parseMusic(XGM* xgm, unsigned char* data, int length)
             break;
     }
 
+    xgm->commands = getHeadLList(commands);
+
     if (!silent)
-        printf("Number of command: %d\n", xgm->commands->size);
+        printf("Number of command: %d\n", getSizeLList(xgm->commands));
 }
 
 static void XGM_extractSamples(XGM* xgm, VGM* vgm)
 {
-    int b, s;
+    int index;
+    LList* sampleXgm;
+
+    // index should be equal to current size + 1
+    index = getSizeLList(xgm->samples) + 1;
+    sampleXgm = getTailLList(xgm->samples);
 
     // extract samples
-    for(b = 0; b < vgm->sampleBanks->size; b++)
+    LList* b = vgm->sampleBanks;
+    while(b != NULL)
     {
-        SampleBank* sampleBank = getFromList(vgm->sampleBanks, b);
+        SampleBank* sampleBank = b->element;
+        LList* s = sampleBank->samples;
 
-        for(s = 0; s < sampleBank->samples->size; s++)
+        while(s != NULL)
         {
-            XGMSample* sample = XGMSample_createFromVGMSample(sampleBank, getFromList(sampleBank->samples, s));
+            XGMSample* sample = XGMSample_createFromVGMSample(sampleBank, s->element);
 
             // valid sample
             if (sample != NULL)
             {
-                // index should be equal to current size + 1
-                sample->index = xgm->samples->size + 1;
-                addToList(xgm->samples, sample);
+                sample->index = index++;
+                sampleXgm = insertAfterLList(sampleXgm, sample);
             }
+
+            s = s->next;
         }
+
+        b = b->next;
     }
+
+    xgm->samples = getHeadLList(sampleXgm);
 }
 
 static void XGM_extractMusic(XGM* xgm, VGM* vgm)
 {
-    List* frameCommands = createList();
-    List* ymKeyOffCommands = createList();
-    List* ymKeyOtherCommands = createList();
-    List* ymPort0Commands = createList();
-    List* ymPort1Commands = createList();
-    List* psgCommands = createList();
-    List* sampleCommands = createList();
+    LList* frameCommands = NULL;
+    LList* ymKeyOffCommands = NULL;
+    LList* ymKeyOtherCommands = NULL;
+    LList* ymPort0Commands = NULL;
+    LList* ymPort1Commands = NULL;
+    LList* psgCommands = NULL;
+    LList* sampleCommands = NULL;
 
-    List* xgmCommands = createList();
+    LList* xgmCommands = NULL;
 
-    int com;
-    int index = 0;
     int loopOffset = -1;
     bool lastCommWasKey;
 
-    while (index < vgm->commands->size)
+    LList* vgmCom = vgm->commands;
+    while (vgmCom != NULL)
     {
         // get frame commands
-        clearList(frameCommands);
-        while (index < vgm->commands->size)
+        deleteLList(frameCommands);
+        frameCommands = NULL;
+
+        while (vgmCom != NULL)
         {
-            VGMCommand* command = getFromList(vgm->commands, index++);
+            VGMCommand* command = vgmCom->element;
+            vgmCom = vgmCom->next;
 
             if (VGMCommand_isLoop(command))
             {
                 if (loopOffset == -1)
-                    loopOffset = XGM_getMusicDataSize(xgm);
+                    loopOffset = XGM_getMusicDataSizeOf(getHeadLList(xgm->commands));
                 continue;
             }
             // ignore data block
@@ -212,46 +247,55 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
                 break;
 
             // add command
-            addToList(frameCommands, command);
+            frameCommands = insertAfterLList(frameCommands, command);
         }
 
         // prepare new commands for this frame
-        clearList(xgmCommands);
+        deleteLList(xgmCommands);
+        xgmCommands = NULL;
 
         // group commands
-        clearList(ymKeyOffCommands);
-        clearList(ymKeyOtherCommands);
-        clearList(ymPort0Commands);
-        clearList(ymPort1Commands);
-        clearList(psgCommands);
-        clearList(sampleCommands);
+        deleteLList(ymKeyOffCommands);
+        deleteLList(ymKeyOtherCommands);
+        deleteLList(ymPort0Commands);
+        deleteLList(ymPort1Commands);
+        deleteLList(psgCommands);
+        deleteLList(sampleCommands);
+        ymKeyOffCommands = NULL;
+        ymKeyOtherCommands = NULL;
+        ymPort0Commands = NULL;
+        ymPort1Commands = NULL;
+        psgCommands = NULL;
+        sampleCommands = NULL;
+
         lastCommWasKey = false;
 
-        for (com = 0; com < frameCommands->size; com++)
+        LList* com = getHeadLList(frameCommands);
+        while(com != NULL)
         {
-            VGMCommand* command = getFromList(frameCommands, com);
+            VGMCommand* command = com->element;
 
             if (VGMCommand_isStream(command))
-                addToList(sampleCommands, command);
+                sampleCommands = insertAfterLList(sampleCommands, command);
             else if (VGMCommand_isPSGWrite(command))
-                addToList(psgCommands, command);
+                psgCommands = insertAfterLList(psgCommands, command);
             else if (VGMCommand_isYM2612KeyWrite(command))
             {
                 if (VGMCommand_isYM2612KeyOffWrite(command))
                 {
-                    if (!VGMCommand_contains(ymKeyOffCommands, command))
-                        addToList(ymKeyOffCommands, command);
+                    if (!VGMCommand_contains(getHeadLList(ymKeyOffCommands), command))
+                        ymKeyOffCommands = insertAfterLList(ymKeyOffCommands, command);
                 }
                 else
                 {
-                    VGMCommand* previousCommand = VGMCommand_getKeyCommand(ymKeyOtherCommands,
+                    VGMCommand* previousCommand = VGMCommand_getKeyCommand(getHeadLList(ymKeyOtherCommands),
                             VGMCommand_getYM2612KeyChannel(command));
 
                     // change command with last one
                     if (previousCommand != NULL)
                         previousCommand->data[previousCommand->offset + 2] = command->data[command->offset + 2];
                     else
-                        addToList(ymKeyOtherCommands, command);
+                        ymKeyOtherCommands = insertAfterLList(ymKeyOtherCommands, command);
                 }
 
                 lastCommWasKey = true;
@@ -261,93 +305,122 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
                 // need accurate key event so we transfer commands now
                 if (lastCommWasKey)
                 {
-                    // general YM commands first as key event were just done
-                    if (ymPort0Commands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createYMPort0Commands(ymPort0Commands));
-                    if (ymPort1Commands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createYMPort1Commands(ymPort1Commands));
-                    // then key off first
-                    if (ymKeyOffCommands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOffCommands));
-                    // followed by key on commands
-                    if (ymKeyOtherCommands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOtherCommands));
-                    // then PSG commands
-                    if (psgCommands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
-                    // and finally PCM commands
-                    if (sampleCommands->size > 0)
-                        addAllToList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
+                    ymPort0Commands = getHeadLList(ymPort0Commands);
+                    ymPort1Commands = getHeadLList(ymPort1Commands);
+                    ymKeyOffCommands = getHeadLList(ymKeyOffCommands);
+                    ymKeyOtherCommands = getHeadLList(ymKeyOtherCommands);
+                    psgCommands = getHeadLList(psgCommands);
+                    sampleCommands = getHeadLList(sampleCommands);
 
-                    clearList(ymKeyOffCommands);
-                    clearList(ymKeyOtherCommands);
-                    clearList(ymPort0Commands);
-                    clearList(ymPort1Commands);
-                    clearList(psgCommands);
-                    clearList(sampleCommands);
+                    // general YM commands first as key event were just done
+                    if (ymPort0Commands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort0Commands(ymPort0Commands));
+                    if (ymPort1Commands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort1Commands(ymPort1Commands));
+                    // then key off first
+                    if (ymKeyOffCommands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOffCommands));
+                    // followed by key on commands
+                    if (ymKeyOtherCommands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOtherCommands));
+                    // then PSG commands
+                    if (psgCommands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
+                    // and finally PCM commands
+                    if (sampleCommands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
+
+                    deleteLList(ymKeyOffCommands);
+                    deleteLList(ymKeyOtherCommands);
+                    deleteLList(ymPort0Commands);
+                    deleteLList(ymPort1Commands);
+                    deleteLList(psgCommands);
+                    deleteLList(sampleCommands);
+                    ymKeyOffCommands = NULL;
+                    ymKeyOtherCommands = NULL;
+                    ymPort0Commands = NULL;
+                    ymPort1Commands = NULL;
+                    psgCommands = NULL;
+                    sampleCommands = NULL;
+
                     lastCommWasKey = false;
                 }
 
                 if (VGMCommand_isYM2612Port0Write(command))
-                    addToList(ymPort0Commands, command);
+                    ymPort0Commands = insertAfterLList(ymPort0Commands, command);
                 else
-                    addToList(ymPort1Commands, command);
+                    ymPort1Commands = insertAfterLList(ymPort1Commands, command);
             }
             else
             {
                 if (verbose)
                     printf("Command %d ignored\n", command->command);
             }
+
+            com = com->next;
         }
 
+        ymPort0Commands = getHeadLList(ymPort0Commands);
+        ymPort1Commands = getHeadLList(ymPort1Commands);
+        ymKeyOffCommands = getHeadLList(ymKeyOffCommands);
+        ymKeyOtherCommands = getHeadLList(ymKeyOtherCommands);
+        psgCommands = getHeadLList(psgCommands);
+        sampleCommands = getHeadLList(sampleCommands);
+
         // general YM commands first as key event were just done
-        if (ymPort0Commands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createYMPort0Commands(ymPort0Commands));
-        if (ymPort1Commands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createYMPort1Commands(ymPort1Commands));
+        if (ymPort0Commands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort0Commands(ymPort0Commands));
+        if (ymPort1Commands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort1Commands(ymPort1Commands));
         // then key off first
-        if (ymKeyOffCommands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOffCommands));
+        if (ymKeyOffCommands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOffCommands));
         // followed by key on commands
-        if (ymKeyOtherCommands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOtherCommands));
+        if (ymKeyOtherCommands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOtherCommands));
         // then PSG commands
-        if (psgCommands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
+        if (psgCommands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
         // and finally PCM commands
-        if (sampleCommands->size > 0)
-            addAllToList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
+        if (sampleCommands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
 
         // last frame ?
-        if (index >= vgm->commands->size)
+        if (vgmCom == NULL)
         {
             // loop point ?
             if (loopOffset != -1)
-                addToList(xgmCommands, XGMCommand_createLoopCommand(loopOffset));
+                xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createLoopCommand(loopOffset));
             else
                 // add end command
-                addToList(xgmCommands, XGMCommand_createEndCommand());
+                xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createEndCommand());
         }
 
         // end frame
-        addToList(xgmCommands, XGMCommand_createFrameCommand());
+        xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createFrameCommand());
 
         // finally add the new commands
-        addAllToList(xgm->commands, xgmCommands);
+        xgm->commands = insertAllAfterLList(xgm->commands, getHeadLList(xgmCommands));
     }
+
+    // get back to head
+    xgm->commands = getHeadLList(xgm->commands);
 
     // compute offset
     int offset = 0;
-    for (com = 0; com < xgm->commands->size; com++)
+    LList* com = xgm->commands;
+    while(com != NULL)
     {
-        XGMCommand* command = getFromList(xgm->commands, com);
+        XGMCommand* command = com->element;
 
         XGMCommand_setOffset(command, offset);
         offset += command->size;
+
+        com = com->next;
     }
 
     if (!silent)
-        printf("Number of command: %d\n", xgm->commands->size);
+        printf("Number of command: %d\n", getSizeLList(xgm->commands));
 }
 
 /**
@@ -355,13 +428,15 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
  */
 XGMCommand* XGM_getLoopCommand(XGM* xgm)
 {
-    int i;
-
-    for (i = 0; i < xgm->commands->size; i++)
+    LList* com = xgm->commands;
+    while(com != NULL)
     {
-        XGMCommand* command = getFromList(xgm->commands, i);
+        XGMCommand* command = com->element;
+
         if (XGMCommand_isLoop(command))
             return command;
+
+        com = com->next;
     }
 
     return NULL;
@@ -370,14 +445,14 @@ XGMCommand* XGM_getLoopCommand(XGM* xgm)
 /**
  * Return the position of the command pointed by the loop
  */
-int XGM_getLoopPointedCommandIndex(XGM* xgm)
+LList* XGM_getLoopPointedCommandElement(XGM* xgm)
 {
     XGMCommand* loopCommand = XGM_getLoopCommand(xgm);
 
     if (loopCommand != NULL)
-        return XGM_getCommandIndexAtOffset(xgm, XGMCommand_getLoopOffset(loopCommand));
+        return XGM_getCommandElementAtOffset(xgm, XGMCommand_getLoopOffset(loopCommand));
 
-    return -1;
+    return NULL;
 }
 
 /**
@@ -385,24 +460,35 @@ int XGM_getLoopPointedCommandIndex(XGM* xgm)
  */
 XGMCommand* XGM_getLoopPointedCommand(XGM* xgm)
 {
-    int index = XGM_getLoopPointedCommandIndex(xgm);
+    LList* com = XGM_getLoopPointedCommandElement(xgm);
 
-    if (index != -1)
-        return getFromList(xgm->commands, index);
+    if (com != NULL)
+        return com->element;
 
     return NULL;
 }
 
 int XGM_computeLenInFrame(XGM* xgm)
 {
-    int i;
     int result = 0;
+    LList* com = xgm->commands;
 
-    for (i = 0; i < xgm->commands->size; i++)
-        if (XGMCommand_isFrame(getFromList(xgm->commands, i)))
+    while(com != NULL)
+    {
+        XGMCommand* command = com->element;
+
+        if (XGMCommand_isFrame(command))
             result++;
 
+        com = com->next;
+    }
+
     return result;
+}
+
+int XGM_computeLenInSecond(XGM* xgm)
+{
+    return XGM_computeLenInFrame(xgm) / (xgm->pal ? 50 : 60);
 }
 
 /**
@@ -410,17 +496,18 @@ int XGM_computeLenInFrame(XGM* xgm)
  */
 int XGM_getOffset(XGM* xgm, XGMCommand* command)
 {
-    int i;
     int result = 0;
+    LList* com = xgm->commands;
 
-    for (i = 0; i < xgm->commands->size; i++)
+    while(com != NULL)
     {
-        XGMCommand* c = getFromList(xgm->commands, i);
+        XGMCommand* c = com->element;
 
         if (c == command)
             return result;
 
         result += c->size;
+        com = com->next;
     }
 
     return -1;
@@ -431,69 +518,48 @@ int XGM_getOffset(XGM* xgm, XGMCommand* command)
  */
 int XGM_getTime(XGM* xgm, XGMCommand* command)
 {
-    int i;
     int result = -1;
+    LList* com = xgm->commands;
 
-    for (i = 0; i < xgm->commands->size; i++)
+    while(com != NULL)
     {
-        XGMCommand* c = getFromList(xgm->commands, i);
+        XGMCommand* c = com->element;
 
         if (XGMCommand_isFrame(c))
             result++;
         if (c == command)
             break;
+
+        com = com->next;
     }
 
     // convert in sample (44100 Hz)
-    return (result * 44100) / 60;
+    return (result * 44100) / (xgm->pal ? 50 : 60);
 }
 
 /**
- * Return elapsed time when specified command happen
+ * Return elapsed time when specified command happen (in frame)
  */
-int XGM_getCommandIndexAtTime(XGM* xgm, int time)
+int XGM_getTimeInFrame(XGM* xgm, XGMCommand* command)
 {
-    int i;
-    int adjTime = (time * 60) / 44100;
-    int result = 0;
-
-    for (i = 0; i < xgm->commands->size; i++)
-    {
-        XGMCommand* command = getFromList(xgm->commands, i);
-
-        if (result >= adjTime)
-            return i;
-        if (XGMCommand_isFrame(command))
-            result++;
-    }
-
-    return xgm->commands->size - 1;
+    return XGM_getTime(xgm, command) / (44100 / (xgm->pal ? 50 : 60));
 }
 
-int XGM_getCommandIndexAtOffset(XGM* xgm, int offset)
+LList* XGM_getCommandElementAtOffset(XGM* xgm, int offset)
 {
-    int i;
+    LList* com = xgm->commands;
     int curOffset = 0;
 
-    for (i = 0; i < xgm->commands->size; i++)
+    while(com != NULL)
     {
-        XGMCommand* command = getFromList(xgm->commands, i);
+        XGMCommand* command = com->element;
 
         if (curOffset == offset)
-            return i;
+            return com;
 
         curOffset += command->size;
+        com = com->next;
     }
-
-    return -1;
-}
-
-XGMCommand* XGM_getCommandAtOffset(XGM* xgm, int offset)
-{
-    const int index = XGM_getCommandIndexAtOffset(xgm, offset);
-
-    if (index != -1)
-        return getFromList(xgm->commands, index);
 
     return NULL;
 }
@@ -501,17 +567,60 @@ XGMCommand* XGM_getCommandAtOffset(XGM* xgm, int offset)
 /**
  * Return elapsed time when specified command happen
  */
+LList* XGM_getCommandElementAtTime(XGM* xgm, int time)
+{
+    int adjTime = (time * 60) / 44100;
+    int result = 0;
+    LList* com = xgm->commands;
+
+    while(com != NULL)
+    {
+        XGMCommand* command = com->element;
+
+        if (result >= adjTime)
+            return com;
+        if (XGMCommand_isFrame(command))
+            result++;
+
+        com = com->next;
+    }
+
+    return NULL;
+}
+
+XGMCommand* XGM_getCommandAtOffset(XGM* xgm, int offset)
+{
+    const LList* com = XGM_getCommandElementAtOffset(xgm, offset);
+
+    if (com != NULL)
+        return com->element;
+
+    return NULL;
+}
+
+/**
+ * Return command at specified time
+ */
 XGMCommand* XGM_getCommandAtTime(XGM* xgm, int time)
 {
-    return getFromList(xgm->commands, XGM_getCommandIndexAtTime(xgm, time));
+    const LList* com = XGM_getCommandElementAtTime(xgm, time);
+
+    if (com != NULL)
+        return com->element;
+
+    return NULL;
 }
 
 XGMSample* XGM_getSampleByIndex(XGM* xgm, int index)
 {
-    if ((index < 1) || (index > xgm->samples->size))
-        return NULL;
+    if (index < 1) return NULL;
 
-    return getFromList(xgm->samples, index);
+    const LList* sample = getElementAtLList(xgm->samples, index);
+
+    if (sample != NULL)
+        return sample->element;
+
+    return NULL;
 }
 
 //XGMSample* XGM_getSampleByAddressAndLen(XGM* xgm, int addr, int len)
@@ -536,14 +645,17 @@ XGMSample* XGM_getSampleByIndex(XGM* xgm, int index)
 
 XGMSample* XGM_getSampleByAddress(XGM* xgm, int originAddr)
 {
-    int i;
+    LList* l;
 
-    for (i = 0; i < xgm->samples->size; i++)
+    l = xgm->samples;
+    while(l != NULL)
     {
-        XGMSample* sample = getFromList(xgm->samples, i);
+        XGMSample* sample = l->element;
 
         if (sample->originAddr == originAddr)
             return sample;
+
+        l = l->next;
     }
 
     return NULL;
@@ -551,13 +663,35 @@ XGMSample* XGM_getSampleByAddress(XGM* xgm, int originAddr)
 
 int XGM_getSampleDataSize(XGM* xgm)
 {
-    int i;
     int result = 0;
+    LList* l;
 
-    for (i = 0; i < xgm->samples->size; i++)
+    l = xgm->samples;
+    while(l != NULL)
     {
-        XGMSample* sample = getFromList(xgm->samples, i);
+        XGMSample* sample = l->element;
+
         result += sample->dataSize;
+
+        l = l->next;
+    }
+
+    return result;
+}
+
+int XGM_getMusicDataSizeOf(LList* commands)
+{
+    int result = 0;
+    LList* c;
+
+    c = commands;
+    while(c != NULL)
+    {
+        XGMCommand* command = c->element;
+
+        result += command->size;
+
+        c = c->next;
     }
 
     return result;
@@ -565,16 +699,7 @@ int XGM_getSampleDataSize(XGM* xgm)
 
 int XGM_getMusicDataSize(XGM* xgm)
 {
-    int i;
-    int result = 0;
-
-    for (i = 0; i < xgm->commands->size; i++)
-    {
-        XGMCommand* command = getFromList(xgm->commands, i);
-        result += command->size;
-    }
-
-    return result;
+    return XGM_getMusicDataSizeOf(xgm->commands);
 }
 
 unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
@@ -583,6 +708,7 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
     int offset;
     unsigned char byte;
     FILE* f = fopen("tmp.bin", "wb+");
+    LList* l;
 
     if (f == NULL)
     {
@@ -596,9 +722,11 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
     // 0004-0100: sample id table
     // fixed size : 252 bytes, limit music to 63 samples max
     offset = 0;
-    for (i = 0; i < xgm->samples->size; i++)
+    i = 0;
+    l = xgm->samples;
+    while(l != NULL)
     {
-        XGMSample* sample = getFromList(xgm->samples, i);
+        XGMSample* sample = l->element;
         const int len = sample->dataSize;
 
         byte = offset >> 8;
@@ -610,8 +738,11 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
         byte = len >> 16;
         fwrite(&byte, 1, 1, f);
         offset += len;
+
+        i++;
+        l = l->next;
     }
-    for (i = xgm->samples->size; i < 0x3F; i++)
+    for (; i < 0x3F; i++)
     {
         // special mark for silent sample
         byte = 0xFF;
@@ -640,10 +771,12 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
     fwrite(&byte, 1, 1, f);
 
     // 0104-XXXX: sample data
-    for (i = 0; i < xgm->samples->size; i++)
+    l = xgm->samples;
+    while(l != NULL)
     {
-        XGMSample* sample = getFromList(xgm->samples, i);
+        XGMSample* sample = l->element;
         fwrite(sample->data, 1, sample->dataSize, f);
+        l = l->next;
     }
 
     // compute XGM music data size in byte
@@ -660,10 +793,12 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
     fwrite(&byte, 1, 1, f);
 
     // XXXX+0004: music data
-    for (i = 0; i < xgm->commands->size; i++)
+    l = xgm->commands;
+    while(l != NULL)
     {
-        XGMCommand* command = getFromList(xgm->commands, i);
+        XGMCommand* command = l->element;
         fwrite(command->data, 1, command->size, f);
+        l = l->next;
     }
 
     unsigned char* result = inEx(f, 0, getFileSizeEx(f), outSize);

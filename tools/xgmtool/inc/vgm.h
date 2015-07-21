@@ -11,8 +11,8 @@ typedef struct
     int offset;
     int dataSize;
 
-    List* sampleBanks;
-    List* commands;
+    LList* sampleBanks;
+    LList* commands;
 
     int version;
 
@@ -39,14 +39,15 @@ int VGM_computeLenEx(VGM* vgm, VGMCommand* from);
 int VGM_computeLen(VGM* vgm);
 int VGM_getOffset(VGM* vgm, VGMCommand* command);
 int VGM_getTime(VGM* vgm, VGMCommand* command);
-int VGM_getCommandIndexAtTime(VGM* vgm, int time);
+int VGM_getTimeInFrame(VGM* vgm, VGMCommand* command);
+LList* VGM_getCommandElementAtTime(VGM* vgm, int time);
 VGMCommand* VGM_getCommandAtTime(VGM* vgm, int time);
 void VGM_cleanCommands(VGM* vgm);
 void VGM_cleanSamples(VGM* vgm);
 //Sample* VGM_getSample(VGM* vgm, int sampleOffset, int len);
 Sample* VGM_getSample(VGM* vgm, int sampleOffset);
 void VGM_convertWaits(VGM* vgm);
-void VGM_shiftSamples(VGM* vgm, int sft);
+//void VGM_shiftSamples(VGM* vgm, int sft);
 unsigned char* VGM_asByteArray(VGM* vgm, int* outSize);
 
 

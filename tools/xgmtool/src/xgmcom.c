@@ -3,6 +3,7 @@
 #include <memory.h>
 #include <math.h>
 
+#include "../inc/xgmtool.h"
 #include "../inc/xgmcom.h"
 #include "../inc/xgm.h"
 #include "../inc/util.h"
@@ -128,6 +129,30 @@ bool XGMCommand_isPCM(XGMCommand* source)
     return (source->command & 0xF0) == XGM_PCM;
 }
 
+int XGMCommand_getPCMId(XGMCommand* source)
+{
+    if (XGMCommand_isPCM(source))
+        return source->data[1];
+
+    return -1;
+}
+
+int XGMCommand_getPCMChannel(XGMCommand* source)
+{
+    if (XGMCommand_isPCM(source))
+        return source->data[0] & 3;
+
+    return -1;
+}
+
+int XGMCommand_getPCMPrio(XGMCommand* source)
+{
+    if (XGMCommand_isPCM(source))
+        return (source->data[0] >> 2) & 3;
+
+    return -1;
+}
+
 bool XGMCommand_isPSGWrite(XGMCommand* source)
 {
     return (source->command & 0xF0) == XGM_PSG;
@@ -212,11 +237,14 @@ bool XGMCommand_removeYM2612RegWrite(XGMCommand* source, int port, int reg)
     off = 1;
     for (i = 0; i < size; i++)
     {
+        int r = source->data[(i * 2) + 1];
+        int v = source->data[(i * 2) + 2];
+
         // register accepted ?
-        if (source->data[(i * 2) + 1] != reg)
+        if (r != reg)
         {
-            data[off++] = source->data[(i * 2) + 1];
-            data[off++] = source->data[(i * 2) + 2];
+            data[off++] = r;
+            data[off++] = v;
         }
     }
 
@@ -240,9 +268,10 @@ bool XGMCommand_removeYM2612RegWrite(XGMCommand* source, int port, int reg)
 }
 
 
-XGMCommand* XGMCommand_createYMKeyCommand(List* commands, int* offset, int max)
+XGMCommand* XGMCommand_createYMKeyCommand(LList** pcommands, int max)
 {
-    const int size = min(max, commands->size - *offset);
+    LList* curCom = *pcommands;
+    const int size = min(max, getSizeLList(curCom));
     unsigned char* data = malloc(size + 1);
     int i, off;
 
@@ -250,17 +279,21 @@ XGMCommand* XGMCommand_createYMKeyCommand(List* commands, int* offset, int max)
 
     off = 1;
     for (i = 0; i < size; i++)
-        data[off++] = VGMCommand_getYM2612Value(getFromList(commands, i + *offset));
+    {
+        data[off++] = VGMCommand_getYM2612Value(curCom->element);
+        curCom = curCom->next;
+    }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pcommands = curCom;
 
     return XGMCommand_create(data, size + 1);
 }
 
-static XGMCommand* XGMCommand_createYMPort0Command(List* commands, int* offset)
+static XGMCommand* XGMCommand_createYMPort0Command(LList** pcommands)
 {
-    const int size = min(16, commands->size - *offset);
+    LList* curCom = *pcommands;
+    const int size = min(16, getSizeLList(curCom));
     unsigned char* data = malloc((size * 2) + 1);
     int i, off;
 
@@ -269,21 +302,24 @@ static XGMCommand* XGMCommand_createYMPort0Command(List* commands, int* offset)
     off = 1;
     for (i = 0; i < size; i++)
     {
-        VGMCommand* command = getFromList(commands, i + *offset);
+        VGMCommand* command = curCom->element;
 
         data[off++] = VGMCommand_getYM2612Register(command);
         data[off++] = VGMCommand_getYM2612Value(command);
+
+        curCom = curCom->next;
     }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pcommands = curCom;
 
     return XGMCommand_create(data, (size * 2) + 1);
 }
 
-static XGMCommand* XGMCommand_createYMPort1Command(List* commands, int* offset)
+static XGMCommand* XGMCommand_createYMPort1Command(LList** pcommands)
 {
-    const int size = min(16, commands->size - *offset);
+    LList* curCom = *pcommands;
+    const int size = min(16, getSizeLList(curCom));
     unsigned char* data = malloc((size * 2) + 1);
     int i, off;
 
@@ -292,21 +328,24 @@ static XGMCommand* XGMCommand_createYMPort1Command(List* commands, int* offset)
     off = 1;
     for (i = 0; i < size; i++)
     {
-        VGMCommand* command = getFromList(commands, i + *offset);
+        VGMCommand* command = curCom->element;
 
         data[off++] = VGMCommand_getYM2612Register(command);
         data[off++] = VGMCommand_getYM2612Value(command);
+
+        curCom = curCom->next;
     }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pcommands = curCom;
 
     return XGMCommand_create(data, (size * 2) + 1);
 }
 
-static XGMCommand* XGMCommand_createPSGCommand(List* commands, int* offset)
+static XGMCommand* XGMCommand_createPSGCommand(LList** pcommands)
 {
-    const int size = min(16, commands->size - *offset);
+    LList* curCom = *pcommands;
+    const int size = min(16, getSizeLList(curCom));
     unsigned char* data = malloc(size + 1);
     int i, off;
 
@@ -314,10 +353,13 @@ static XGMCommand* XGMCommand_createPSGCommand(List* commands, int* offset)
 
     off = 1;
     for (i = 0; i < size; i++)
-        data[off++] = VGMCommand_getPSGValue(getFromList(commands, i + *offset));
+    {
+        data[off++] = VGMCommand_getPSGValue(curCom->element);
+        curCom = curCom->next;
+    }
 
-    // remove elements we have done
-    *offset += size;
+    // update list pointer to remove elements we have done
+    *pcommands = curCom;
 
     return XGMCommand_create(data, size + 1);
 }
@@ -334,9 +376,12 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
     if (VGMCommand_isStreamStartLong(command))
     {
         int address;
+        int size;
         Sample* vgmSample;
 
         address = VGMCommand_getStreamSampleAddress(command);
+        size = VGMCommand_getStreamSampleSize(command);
+//        vgmSample = VGM_getSample(vgm, address, size);
         vgmSample = VGM_getSample(vgm, address);
 
         // use stream id as priority
@@ -351,7 +396,7 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
             len = VGMCommand_getStreamSampleSize(command);
             lenInFrame = ceil(len / ((double) vgmSample->rate / (double) vgm->rate));
         }
-        else
+        else if (!silent)
             printf("Warning: can't find original VGM sample for VGM command at offset %6X\n", command->offset);
     }
     else if (VGMCommand_isStreamStart(command))
@@ -380,7 +425,8 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
     // no sample found --> use empty sample
     if (xgmSample == NULL)
     {
-        printf("Warning: no corresponding sample found for VGM command at offset %6X in XGM\n", command->offset);
+        if (!silent)
+            printf("Warning: no corresponding sample found for VGM command at offset %6X in XGM\n", command->offset);
         data[1] = 0;
     }
     else
@@ -398,81 +444,78 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
 }
 
 
-List* XGMCommand_createYMKeyCommands(List* commands)
+LList* XGMCommand_createYMKeyCommands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGMCommand_createYMKeyCommand(commands, &offset, 16));
+    while (src != NULL)
+        result = insertAfterLList(result, XGMCommand_createYMKeyCommand(&src, 16));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGMCommand_createYMPort0Commands(List* commands)
+LList* XGMCommand_createYMPort0Commands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGMCommand_createYMPort0Command(commands, &offset));
+    while (src != NULL)
+        result = insertAfterLList(result, XGMCommand_createYMPort0Command(&src));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGMCommand_createYMPort1Commands(List* commands)
+LList* XGMCommand_createYMPort1Commands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGMCommand_createYMPort1Command(commands, &offset));
+    while (src != NULL)
+        result = insertAfterLList(result, XGMCommand_createYMPort1Command(&src));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGMCommand_createPSGCommands(List* commands)
+LList* XGMCommand_createPSGCommands(LList* commands)
 {
-    List* result;
-    int offset;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
+    result = NULL;
+    src = commands;
 
-    offset = 0;
-    while (offset < commands->size)
-        addToList(result, XGMCommand_createPSGCommand(commands, &offset));
+    while (src != NULL)
+        result = insertAfterLList(result, XGMCommand_createPSGCommand(&src));
 
-    return result;
+    return getHeadLList(result);
 }
 
-List* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, List* commands)
+LList* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, LList* commands)
 {
-    List* result;
-    int i;
+    LList* result;
+    LList* src;
 
-    // allocate
-    result = createList();
-
-    for(i = 0; i < commands->size; i++)
+    result = NULL;
+    src = commands;
+    while(src != NULL)
     {
-        VGMCommand* command = getFromList(commands, i);
+        VGMCommand* command = src->element;
 
         if (VGMCommand_isStreamStartLong(command) || VGMCommand_isStreamStart(command) || VGMCommand_isStreamStop(command))
-            addToList(result, XGMCommand_createPCMCommand(xgm, vgm, command, -1));
+            result = insertAfterLList(result, XGMCommand_createPCMCommand(xgm, vgm, command, -1));
+
+        src = src->next;
     }
 
-    return result;
+    return getHeadLList(result);
 }

@@ -18,7 +18,7 @@ int YM2612_get(YM2612* source, int port, int reg);
 bool YM2612_set(YM2612* source, int port, int reg, int value);
 bool YM2612_isSame(YM2612* source, YM2612* state, int port, int reg);
 bool YM2612_isDiff(YM2612* source, YM2612* state, int port, int reg);
-List* YM2612_getDelta(YM2612* source, YM2612* state);
+LList* YM2612_getDelta(YM2612* source, YM2612* state);
 
 bool YM2612_canIgnore(int port, int reg);
 int* YM2612_getDualReg(int reg);

@@ -9,26 +9,56 @@
 #define max(a,b) (((a)>(b))?(a):(b))
 
 
-typedef struct
+//typedef struct
+//{
+//    void** elements;
+//    int allocated;
+//    int size;
+//} List;
+
+typedef struct LList_
 {
-    void** elements;
-    int allocated;
-    int size;
-} List;
+    void* element;
+    struct LList_ *prev;
+    struct LList_ *next;
+} LList;
 
 
-void initList(List* list);
-List* createList();
-void deleteList(List* list);
-void clearList(List* list);
-void* getFromList(List* list, int index);
-void addToList(List* list, void* element);
-void addAllToList(List* list, List* elements);
-void addToListEx(List* list, int index, void* element);
-void addAllToListEx(List* list, int index, List* elements);
-void setToList(List* list, int index, void* element);
-void* removeFromList(List* list, int index);
-void** listToArray(List* list);
+//void initList(List* list);
+//List* createList();
+//void deleteList(List* list);
+//void clearList(List* list);
+//void* getFromList(List* list, int index);
+//void addToList(List* list, void* element);
+//void addAllToList(List* list, List* elements);
+//void addToListEx(List* list, int index, void* element);
+//void addAllToListEx(List* list, int index, List* elements);
+//void setToList(List* list, int index, void* element);
+//void* removeFromList(List* list, int index);
+
+LList* createEmptyElement();
+LList* createElement(void* element);
+void deleteLList(LList* list);
+LList* getHeadLList(LList* list);
+LList* getTailLList(LList* list);
+int getSizeLList(LList* list);
+LList* getElementAtLList(LList* list, int index);
+LList* insertAfterLList(LList* linkedElement, void* element);
+LList* insertBeforeLList(LList* linkedElement, void* element);
+LList* insertAllAfterLList(LList* linkedElement, LList* elements);
+LList* insertAllBeforeLList(LList* linkedElement, LList* elements);
+LList* removeFromLList(LList* linkedElement);
+
+//void* getFromLList(LList* list, int index);
+//void addToLList(LList* list, void* element);
+//void addAllToLList(LList* list, LList* elements);
+//void setToLList(LList* list, int index, void* element);
+//void* removeFromLList(LList* list, int index);
+
+void** llistToArray(LList* list);
+//void** listToArray(List* list);
+//LList* listToLList(List* list);
+//List* linkedListToList(LList* list);
 
 bool arrayEquals(unsigned char* array1, unsigned char* array2, int size);
 unsigned int swapNibble32(unsigned int value);

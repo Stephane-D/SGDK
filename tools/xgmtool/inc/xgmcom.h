@@ -36,6 +36,9 @@ bool XGMCommand_isLoop(XGMCommand* source);
 int XGMCommand_getLoopOffset(XGMCommand* source);
 bool XGMCommand_isEnd(XGMCommand* source);
 bool XGMCommand_isPCM(XGMCommand* source);
+int XGMCommand_getPCMId(XGMCommand* source);
+int XGMCommand_getPCMChannel(XGMCommand* source);
+int XGMCommand_getPCMPrio(XGMCommand* source);
 bool XGMCommand_isPSGWrite(XGMCommand* source);
 int XGMCommand_getPSGWriteCount(XGMCommand* source);
 bool XGMCommand_isYM2612Port0Write(XGMCommand* source);
@@ -51,15 +54,15 @@ bool XGMCommand_removeYM2612RegWrite(XGMCommand* source, int port, int reg);
 #include "vgmcom.h"
 #include "util.h"
 
-XGMCommand* XGMCommand_createYMKeyCommand(List* commands, int* offset, int max);
-List* XGMCommand_createYMKeyCommands(List* commands);
-List* XGMCommand_createYMPort0Commands(List* commands);
-List* XGMCommand_createYMPort1Commands(List* commands);
-List* XGMCommand_createPSGCommands(List* commands);
+XGMCommand* XGMCommand_createYMKeyCommand(LList** pcommands, int max);
+LList* XGMCommand_createYMKeyCommands(LList* commands);
+LList* XGMCommand_createYMPort0Commands(LList* commands);
+LList* XGMCommand_createYMPort1Commands(LList* commands);
+LList* XGMCommand_createPSGCommands(LList* commands);
 
 #include "xgm.h"
 
-List* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, List* commands);
+LList* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, LList* commands);
 
 
 #endif // XGMCOM_H_

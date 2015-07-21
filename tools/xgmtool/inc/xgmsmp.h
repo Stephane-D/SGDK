@@ -17,5 +17,4 @@ typedef struct
 XGMSample* XGMSample_create(int index, unsigned char* data, int dataSize, int originAddr);
 XGMSample* XGMSample_createFromVGMSample(SampleBank* bank, Sample* sample);
 
-
 #endif // XGMSMP_H_

@@ -92,7 +92,7 @@ int wavToRawEx(char* fin, char* fout, int outRate)
     return TRUE;
 }
 
-int xgmtool(char* fin, char* fout, int timing)
+int xgmtool(char* fin, char* fout, int timing, char* opt)
 {
     char cmd[MAX_PATH_LEN * 2];
     FILE *f;
@@ -115,6 +115,11 @@ int xgmtool(char* fin, char* fout, int timing)
         strcat(cmd, " -n");
     else if (timing == 1)
         strcat(cmd, " -p");
+    if (strlen(opt) > 0)
+    {
+        strcat(cmd, " ");
+        strcat(cmd, opt);
+    }
 
     printf("Executing %s\n", cmd);
 

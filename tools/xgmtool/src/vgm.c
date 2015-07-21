@@ -10,14 +10,22 @@
 #include "../inc/psg.h"
 #include "../inc/xgmtool.h"
 
+#define SAMPLE_END_DELAY        400
+#define SAMPLE_MIN_SIZE         100
+#define SAMPLE_MIN_DYNAMIC      16
+#define SAMPLE_ALLOWED_MARGE    64
+#define SAMPLE_MIN_MEAN_DELTA   1.0
+
+
 // forward
 static void VGM_parse(VGM* vgm);
 static void VGM_buildSamples(VGM* vgm, bool convert);
-static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert);
+static LList* VGM_extractSampleFromSeek(VGM* vgm, LList* command, bool convert);
 static SampleBank* VGM_getDataBank(VGM* vgm, int id);
 static SampleBank* VGM_addDataBlock(VGM* vgm, VGMCommand* command);
 static void VGM_cleanSeekCommands(VGM* vgm);
-static void VGM_removePlayPCMCommands(VGM* vgm);
+static void VGM_cleanPlayPCMCommands(VGM* vgm);
+static void VGM_removeSeekAndPlayPCMCommands(VGM* vgm);
 static int VGM_getSampleDataSize(VGM* vgm);
 static int VGM_getSampleTotalLen(VGM* vgm);
 static int VGM_getSampleNumber(VGM* vgm);
@@ -87,8 +95,8 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
         printf("Loop start offset: %6X   lenght: %d (%d seconds)\n", result->loopStart, result->loopLenInSample, result->loopLenInSample / 44100);
     }
 
-    result->sampleBanks = createList();
-    result->commands = createList();
+    result->sampleBanks = NULL;
+    result->commands = NULL;
 
     // build command list
     VGM_parse(result);
@@ -102,26 +110,41 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
     // rebuild data blocks
     if (convert)
     {
-        int i, ind;
+        LList* c;
+        LList* s;
 
         // remove previous data blocks
-        for (i = result->commands->size - 1; i >= 0; i--)
+        c = result->commands;
+        while(c != NULL)
         {
-            VGMCommand* command = getFromList(result->commands, i);
+            VGMCommand* command = c->element;
 
             if (VGMCommand_isDataBlock(command) || VGMCommand_isStreamControl(command) || VGMCommand_isStreamData(command))
-                removeFromList(result->commands, i);
+            {
+                removeFromLList(c);
+                // we removed the first command ? update list pointer
+                if (c == result->commands)
+                    result->commands = c->next;
+            }
+
+            c = c->next;
         }
 
-        ind = 0;
-        // add data block
-        for (i = 0; i < result->sampleBanks->size; i++)
+        // rebuild data blocks
+        c = NULL;
+        s = result->sampleBanks;
+        while(s != NULL)
         {
-            SampleBank* bank = getFromList(result->sampleBanks, i);
+            SampleBank* bank = s->element;
 
-            addToListEx(result->commands, ind++, SampleBank_getDataBlockCommand(bank));
-            addAllToListEx(result->commands, ind, SampleBank_getDeclarationCommands(bank));
+            c = insertAfterLList(c, SampleBank_getDataBlockCommand(bank));
+            c = insertAllAfterLList(c, SampleBank_getDeclarationCommands(bank));
+
+            s = s->next;
         }
+
+        // and re-insert them at beginning
+        result->commands = insertAllBeforeLList(result->commands, getHeadLList(c));
     }
 
     if (verbose)
@@ -147,8 +170,10 @@ VGM* VGM_createFromVGM(VGM* vgm, bool convert)
 VGM* VGM_createFromXGM(XGM* xgm)
 {
     VGM* result;
+    LList* s;
+    LList* d;
     unsigned char* data;
-    int loopOffset, i;
+    int loopOffset;
 
     result = malloc(sizeof(VGM));
 
@@ -156,8 +181,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
     result->dataSize = 0;
     result->offset = 0;
 
-    result->sampleBanks = createList();
-    result->commands = createList();
+    result->sampleBanks = NULL;
 
     result->version = 0x60;
     result->offsetStart = 0;
@@ -170,11 +194,14 @@ VGM* VGM_createFromXGM(XGM* xgm)
     else
         result->rate = 60;
 
+    // convert XGM commands to VGM commands
     loopOffset = -1;
-    for (i = 0; i < xgm->commands->size; i++)
+    s = xgm->commands;
+    d = NULL;
+    while(s != NULL)
     {
-        XGMCommand* command = getFromList(xgm->commands, i);
         int j, comsize;
+        XGMCommand* command = s->element;
 
         switch (XGMCommand_getType(command))
         {
@@ -184,7 +211,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x63;
                 else
                     data[0] = 0x62;
-                addToList(result->commands, VGMCommand_createEx(data, 0));
+                d = insertAfterLList(d, VGMCommand_createEx(data, 0));
                 break;
 
             case XGM_END:
@@ -205,7 +232,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data = malloc(2);
                     data[0] = 0x50;
                     data[1] = command->data[j + 1];
-                    addToList(result->commands, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
                 }
                 break;
 
@@ -217,7 +244,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x52;
                     data[1] = command->data[(j * 2) + 1];
                     data[2] = command->data[(j * 2) + 2];
-                    addToList(result->commands, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
                 }
                 break;
 
@@ -229,7 +256,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x53;
                     data[1] = command->data[(j * 2) + 1];
                     data[2] = command->data[(j * 2) + 2];
-                    addToList(result->commands, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
                 }
                 break;
 
@@ -241,15 +268,21 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x52;
                     data[1] = 0x28;
                     data[2] = command->data[j + 1];
-                    addToList(result->commands, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
                 }
                 break;
         }
+
+        s = s->next;
     }
 
+    // end bloc marker
     data = malloc(1);
     data[0] = 0x66;
-    addToList(result->commands, VGMCommand_createEx(data, 0));
+    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+
+    // store result
+    result->commands = getHeadLList(d);
 
     // we had a loop command ?
     if (loopOffset != -1)
@@ -259,7 +292,10 @@ VGM* VGM_createFromXGM(XGM* xgm)
 
         // insert a VGM loop command at corresponding position
         if (command != NULL)
-            addToListEx(result->commands, VGM_getCommandIndexAtTime(result, XGM_getTime(xgm, command)), VGMCommand_create(VGM_LOOP));
+        {
+            LList* c = VGM_getCommandElementAtTime(result, XGM_getTime(xgm, command));
+            insertAfterLList(c, VGMCommand_create(VGM_LOOP));
+        }
     }
 
     return result;
@@ -267,18 +303,20 @@ VGM* VGM_createFromXGM(XGM* xgm)
 
 int VGM_computeLenEx(VGM* vgm, VGMCommand* from)
 {
-    int i;
+    LList* curCom = vgm->commands;
     int result = 0;
     bool count = (from == NULL);
 
-    for (i = 0; i < vgm->commands->size; i++)
+    while(curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, i);
+        VGMCommand* command = curCom->element;
 
         if (command == from)
             count = true;
         if (count)
             result += VGMCommand_getWaitValue(command);
+
+        curCom = curCom->next;
     }
 
     return result;
@@ -294,60 +332,74 @@ int VGM_computeLen(VGM* vgm)
  */
 int VGM_getOffset(VGM* vgm, VGMCommand* command)
 {
-    int i;
+    LList* curCom = vgm->commands;
     int result = 0;
 
-    for (i = 0; i < vgm->commands->size; i++)
+    while(curCom != NULL)
     {
-        VGMCommand* c = getFromList(vgm->commands, i);
+        VGMCommand* c = curCom->element;
 
         if (c == command)
             return result;
         result += c->size;
+
+        curCom = curCom->next;
     }
 
     return -1;
 }
 
 /**
- * Return elapsed time when specified command happen
+ * Return elapsed time (in 1/44100th of second) when specified command happen
  */
 int VGM_getTime(VGM* vgm, VGMCommand* command)
 {
-    int i;
+    LList* curCom = vgm->commands;
     int result = 0;
 
-    for (i = 0; i < vgm->commands->size; i++)
+    while(curCom != NULL)
     {
-        VGMCommand* c = getFromList(vgm->commands, i);
+        VGMCommand* c = curCom->element;
 
         if (c == command)
             return result;
         result += VGMCommand_getWaitValue(c);
+
+        curCom = curCom->next;
     }
 
     return 0;
 }
 
+
 /**
- * Return elapsed time when specified command happen
+ * Return elapsed time (in frame) when specified command happen
  */
-int VGM_getCommandIndexAtTime(VGM* vgm, int time)
+int VGM_getTimeInFrame(VGM* vgm, VGMCommand* command)
 {
-    int c;
+    return VGM_getTime(vgm, command) / (44100 / vgm->rate);
+}
+
+/**
+ * Return command list element at specified time position
+ */
+LList* VGM_getCommandElementAtTime(VGM* vgm, int time)
+{
+    LList* c = vgm->commands;
     int result = 0;
 
-    for (c = 0; c < vgm->commands->size; c++)
+    while(c != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, c);
+        VGMCommand* command = c->element;
 
         if (result >= time)
             return c;
 
         result += VGMCommand_getWaitValue(command);
+        c = c->next;
     }
 
-    return vgm->commands->size - 1;
+    return NULL;
 }
 
 /**
@@ -355,23 +407,30 @@ int VGM_getCommandIndexAtTime(VGM* vgm, int time)
  */
 VGMCommand* VGM_getCommandAtTime(VGM* vgm, int time)
 {
-    return getFromList(vgm->commands, VGM_getCommandIndexAtTime(vgm, time));
+    LList* c = VGM_getCommandElementAtTime(vgm, time);
+
+    if (c != NULL) return c->element;
+
+    return NULL;
 }
+
 
 static void VGM_parse(VGM* vgm)
 {
     int off;
+    LList* commands;
 
     // parse all VGM commands
     off = vgm->offsetStart;
+    commands = getTailLList(vgm->commands);
     while (off < vgm->offsetEnd)
     {
         // check for loop start
         if ((vgm->loopStart != 0) && (off == vgm->loopStart))
-            addToList(vgm->commands, VGMCommand_create(VGM_LOOP));
+            commands = insertAfterLList(commands, VGMCommand_create(VGM_LOOP));
 
         VGMCommand* command = VGMCommand_createEx(vgm->data, off);
-        addToList(vgm->commands, command);
+        commands = insertAfterLList(commands, command);
         off += command->size;
 
         // stop here
@@ -379,37 +438,75 @@ static void VGM_parse(VGM* vgm)
             break;
     }
 
+    vgm->commands = getHeadLList(commands);
+
     if (!silent)
-        printf("Number of command: %d\n", vgm->commands->size);
+        printf("Number of command: %d\n", getSizeLList(vgm->commands));
 }
 
 static void VGM_buildSamples(VGM* vgm, bool convert)
 {
-    int i, ind;
+    int i;
+    LList* curCom;
 
     // builds data blocks
-    for (i = 0; i < vgm->commands->size; i++)
+    curCom = vgm->commands;
+    while(curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, i);
+        VGMCommand* command = curCom->element;
 
         if (VGMCommand_isDataBlock(command))
             VGM_addDataBlock(vgm, command);
+
+        curCom = curCom->next;
     }
 
     // clean seek
     VGM_cleanSeekCommands(vgm);
+    // clean useless PCM data
+//    VGM_cleanPlayPCMCommands(vgm);
 
     // extract samples from seek command
-    ind = 0;
-    while (ind < vgm->commands->size)
+    curCom = vgm->commands;
+    while(curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, ind);
+        VGMCommand* command = curCom->element;
 
         if (VGMCommand_isSeek(command))
-            ind = VGM_extractSampleFromSeek(vgm, ind, convert);
+            curCom = VGM_extractSampleFromSeek(vgm, curCom, convert);
         else
-            ind++;
+            curCom = curCom->next;
     }
+
+    // display play PCM command
+//    if (convert && verbose)
+//    {
+//        curCom = vgm->commands;
+//        while(curCom != NULL)
+//        {
+//            VGMCommand* command = curCom->element;
+//
+//            if (VGMCommand_isStreamStartLong(command))
+//            {
+//                int smpAddr = VGMCommand_getStreamSampleAddress(command);
+//                int smpSize = VGMCommand_getStreamSampleSize(command);
+//                printf("play sample long %.6X-%.6X at frame %d\n", smpAddr, smpAddr + (smpSize - 1), VGM_getTimeInFrame(vgm, command));
+//            }
+//            else if (VGMCommand_isStreamStart(command))
+//            {
+//                int id = VGMCommand_getStreamId(command);
+//                int blockId = VGMCommand_getStreamBlockId(command);
+//                printf("play sample short %d/%d at frame %d\n", id, blockId, VGM_getTimeInFrame(vgm, command));
+//            }
+//            else if (VGMCommand_isStreamStop(command))
+//            {
+//                int id = VGMCommand_getStreamId(command);
+//                printf("stop play sample %d at frame %d\n", id, VGM_getTimeInFrame(vgm, command));
+//            }
+//
+//            curCom = curCom->next;
+//        }
+//    }
 
     int sampleIdBanks[0x100];
     int sampleIdFrequencies[0x100];
@@ -422,10 +519,10 @@ static void VGM_buildSamples(VGM* vgm, bool convert)
     }
 
     // adjust samples infos from stream command
-    ind = 0;
-    while (ind < vgm->commands->size)
+    curCom = vgm->commands;
+    while(curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, ind);
+        VGMCommand* command = curCom->element;
 
         // set bank id
         if (VGMCommand_isStreamData(command))
@@ -448,14 +545,14 @@ static void VGM_buildSamples(VGM* vgm, bool convert)
                 // sample found --> adjust frequency
                 if (sample != NULL)
                     Sample_setRate(sample, sampleIdFrequencies[VGMCommand_getStreamId(command)]);
-                else
+                else if (!silent)
                     printf("Warning: sample id %2X not found !\n", sampleId);
 
                 // convert to long command as we use single data block
                 if (convert)
-                    setToList(vgm->commands, ind, Sample_getStartLongCommandEx(bank, sample, sample->len));
+                    curCom->element = Sample_getStartLongCommandEx(bank, sample, sample->len);
             }
-            else
+            else if (!silent)
                 printf("Warning: sample bank id %2X not found !\n", bankId);
         }
 
@@ -475,85 +572,127 @@ static void VGM_buildSamples(VGM* vgm, bool convert)
             }
         }
 
-        ind++;
+        curCom = curCom->next;
     }
 
     if (convert)
-        VGM_removePlayPCMCommands(vgm);
+        VGM_removeSeekAndPlayPCMCommands(vgm);
 }
 
-static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
+static LList* VGM_extractSampleFromSeek(VGM* vgm, LList* command, bool convert)
 {
-    int seekIndex = index;
-    VGMCommand* command = getFromList(vgm->commands, seekIndex);
+    LList* seekCom = command;
     // get sample address in data bank
-    int sampleAddr = VGMCommand_getSeekAddress(command);
+    int sampleAddr = VGMCommand_getSeekAddress(seekCom->element);
 
-    int ind;
+    LList* curCom;
+    LList* startPlayCom;
+    LList* endPlayCom;
+    SampleBank* bank;
     int len;
     int wait;
     int delta;
+    double deltaMean;
     int endPlayWait;
-    int startPlayInd;
-    int endPlayInd;
+
+    // sample stats
+    int sampleData;
+    int sampleMinData;
+    int sampleMaxData;
+    double sampleMeanDelta;
+
+    // use the last bank (FIXME: not really nice to do that)
+    if (vgm->sampleBanks != NULL)
+        bank = getTailLList(vgm->sampleBanks)->element;
+    else
+        bank = NULL;
 
     // then find seek command to extract sample
     len = 0;
     wait = -1;
     delta = 0;
+    deltaMean = 0;
     endPlayWait = 0;
-    startPlayInd = -1;
-    endPlayInd = -1;
-    ind = seekIndex + 1;
-    while (ind < vgm->commands->size)
+
+    sampleData = 128;
+    sampleMinData = 128;
+    sampleMaxData = 128;
+    sampleMeanDelta = 0;
+
+    startPlayCom = NULL;
+    endPlayCom = NULL;
+    curCom = seekCom->next;
+    while (curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, ind);
+        VGMCommand* command = curCom->element;
 
         // sample done !
-        if (VGMCommand_isSeek(command) || VGMCommand_isDataBlock(command) || VGMCommand_isEnd(command))
+        if (VGMCommand_isDataBlock(command) || VGMCommand_isEnd(command))
             break;
+        if (VGMCommand_isSeek(command))
+        {
+            int seekAddr = VGMCommand_getSeekAddress(command);
+            int curAddr = sampleAddr + len;
+
+            // seek on different address --> interrupt current play
+            if (((curAddr + SAMPLE_ALLOWED_MARGE) < seekAddr) || ((curAddr - SAMPLE_ALLOWED_MARGE) > seekAddr))
+                break;
+            else if (verbose)
+                printf("Seek command found with small offset change (%d) --> considering continue play\n", curAddr - seekAddr);
+        }
 
         // playing ?
         if (wait != -1)
         {
             delta = wait - endPlayWait;
+            // delta >= 20 means rate < 2200 Hz --> very unlikely, discard it from mean computation
+            if (delta < 20)
+            {
+                // compute delta mean for futher correction
+                if (deltaMean == 0) deltaMean = delta;
+                else deltaMean = (delta * 0.1) + (deltaMean * 0.9);
+            }
 
-            // delta > 200 samples --> sample ended
-            if (delta > 200)
+            // delta > SAMPLE_END_DELAY samples --> consider sample ended
+            if (delta > SAMPLE_END_DELAY)
             {
                 // found a sample --> add it
-                if ((len > 0) && (endPlayWait > 0) && (startPlayInd != endPlayInd))
+                if ((len > 0) && (endPlayWait > 0) && (startPlayCom != endPlayCom))
                 {
-                    if (vgm->sampleBanks->size > 0)
+                    // ignore too short sample
+                    if ((len < SAMPLE_MIN_SIZE) && sampleIgnore)
                     {
-                        // get last bank
-                        SampleBank* bank = getFromList(vgm->sampleBanks, vgm->sampleBanks->size - 1);
+                        if (verbose)
+                            printf("Sample at %6X is too small (%d) --> ignored\n", sampleAddr, len);
+                    }
+                    // ignore sample with too small dynamic
+                    else if (((sampleMaxData - sampleMinData) < SAMPLE_MIN_DYNAMIC) && sampleIgnore)
+                    {
+                        if (verbose)
+                            printf("Sample at %6X has a too quiet global dynamic (%d) --> ignored\n", sampleAddr, sampleMaxData - sampleMinData);
+                    }
+                    // ignore sample too quiet
+                    else if (((sampleMeanDelta / len) < SAMPLE_MIN_MEAN_DELTA) && sampleIgnore)
+                    {
+                        if (verbose)
+                            printf("Sample at %6X is too quiet (mean delta value = %g) --> ignored\n", sampleAddr, (sampleMeanDelta / len));
+                    }
+                    else if (bank != NULL)
+                    {
                         int rate = (int) round(((double) 44100 * len) / (double) endPlayWait);
                         Sample* sample = SampleBank_addSample(bank, sampleAddr, len, rate);
 
                         if (convert)
                         {
                             // insert stream play command
-                            addToListEx(vgm->commands, startPlayInd + 0, Sample_getSetRateCommand(bank, sample, sample->rate));
-                            addToListEx(vgm->commands, startPlayInd + 1, Sample_getStartLongCommandEx(bank, sample, len));
+                            insertBeforeLList(startPlayCom, Sample_getSetRateCommand(bank, sample, sample->rate));
+                            insertBeforeLList(startPlayCom, Sample_getStartLongCommandEx(bank, sample, len));
 
-                            // remove seek command
-                            if (seekIndex != -1)
-                            {
-                                removeFromList(vgm->commands, seekIndex);
-                                seekIndex = -1;
-                                // adjust index
-                                ind += 1;
-                            }
-                            else
-                                ind += 2;
-
-                            // sample stopped before end ?
-                            if (sample->len != len)
+                            // always insert sample stop as sample len can change
+//                            if ((sample->len + SAMPLE_ALLOWED_MARGE) < len)
                             {
                                 // insert stream stop command
-                                addToListEx(vgm->commands, ind, Sample_getStopCommand(bank, sample));
-                                ind++;
+                                insertAfterLList(endPlayCom, Sample_getStopCommand(bank, sample));
                             }
                         }
                     }
@@ -564,9 +703,16 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
                 len = 0;
                 wait = -1;
                 delta = 0;
+                deltaMean = 0;
                 endPlayWait = 0;
-                startPlayInd = -1;
-                endPlayInd = -1;
+
+                sampleData = 128;
+                sampleMinData = 128;
+                sampleMaxData = 128;
+                sampleMeanDelta = 0;
+
+                startPlayCom = NULL;
+                endPlayCom = NULL;
             }
         }
 
@@ -577,24 +723,49 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
             if (wait == -1)
             {
                 wait = 0;
-                startPlayInd = ind;
+                startPlayCom = curCom;
             }
 
-            // need a minimal length before applying correction
-            if ((len > 100) && (wait > 200))
+            // simple fix by using mean
+            if (sampleRateFix)
             {
-                int mean = wait / len;
+                // need a minimal length before applying correction
+    //            if ((len > 100) && (wait > 200))
+    //            {
+    //                int mean = wait / len;
+    //
+    //                // correct abnormal delta
+    //                if (delta < (mean - 2))
+    //                    wait += (mean - delta);
+    //                else if (delta > (mean + 2))
+    //                    wait -= (delta - mean);
+    //            }
 
-                // correct abnormal delta
-                if (delta < (mean - 2))
-                    wait += mean - delta;
-                else if (delta > (mean + 2))
-                    wait -= delta - mean;
+                // can correct ?
+                if (deltaMean != 0)
+                {
+                    int mean = round(deltaMean);
+                    if (delta < (mean - 2))
+                        wait += mean - delta;
+                    else if (delta > (mean + 2))
+                        wait -= delta - mean;
+                }
             }
 
             // keep trace of last play wait value
             endPlayWait = wait;
-            endPlayInd = ind;
+            endPlayCom = curCom;
+
+            // get current sample value
+            if (bank != NULL)
+            {
+                unsigned char data = bank->data[bank->offset + sampleAddr + 7 + len];
+
+                sampleMeanDelta += abs(data - sampleData);
+                if (sampleMinData > data) sampleMinData = data;
+                if (sampleMaxData < data) sampleMaxData = data;
+                sampleData = data;
+            }
 
             wait += VGMCommand_getWaitValue(command);
             len++;
@@ -603,51 +774,67 @@ static int VGM_extractSampleFromSeek(VGM* vgm, int index, bool convert)
         else if (wait != -1)
             wait += VGMCommand_getWaitValue(command);
 
-        ind++;
+        curCom = curCom->next;
     }
 
     // found a sample --> add it
-    if ((len > 0) && (endPlayWait > 0) && (startPlayInd != endPlayInd))
+    if ((len > 0) && (endPlayWait > 0) && (startPlayCom != endPlayCom))
     {
-        if (vgm->sampleBanks->size > 0)
+        // ignore too short sample
+        if ((len < SAMPLE_MIN_SIZE) && sampleIgnore)
         {
-            // get last bank
-            SampleBank* bank = getFromList(vgm->sampleBanks, vgm->sampleBanks->size - 1);
+            if (verbose)
+                printf("Sample at %6X is too small (%d) --> ignored\n", sampleAddr, len);
+        }
+        // ignore sample with too small dynamic
+        else if (((sampleMaxData - sampleMinData) < SAMPLE_MIN_DYNAMIC) && sampleIgnore)
+        {
+            if (verbose)
+                printf("Sample at %6X has a too quiet global dynamic (%d) --> ignored\n", sampleAddr, sampleMaxData - sampleMinData);
+        }
+        // ignore sample too quiet
+        else if (((sampleMeanDelta / len) < SAMPLE_MIN_MEAN_DELTA) && sampleIgnore)
+        {
+            if (verbose)
+                printf("Sample at %6X is too quiet (mean delta value = %g) --> ignored\n", sampleAddr, (sampleMeanDelta / len));
+        }
+        else if (bank != NULL)
+        {
             int rate = (int) round(((double) 44100 * len) / (double) endPlayWait);
             Sample* sample = SampleBank_addSample(bank, sampleAddr, len, rate);
 
             if (convert)
             {
                 // insert stream play command
-                addToListEx(vgm->commands, startPlayInd + 0, Sample_getSetRateCommand(bank, sample, sample->rate));
-                addToListEx(vgm->commands, startPlayInd + 1, Sample_getStartLongCommandEx(bank, sample, len));
+                insertBeforeLList(startPlayCom, Sample_getSetRateCommand(bank, sample, sample->rate));
+                insertBeforeLList(startPlayCom, Sample_getStartLongCommandEx(bank, sample, len));
 
-                // remove seek command
-                if (seekIndex != -1)
+                // always insert sample stop as sample len can change
+//              if ((sample->len + SAMPLE_ALLOWED_MARGE) < len)
                 {
-                    removeFromList(vgm->commands, seekIndex);
-                    seekIndex = -1;
-                    // adjust index
-                    ind += 1;
+                    // insert stream stop command
+                    insertAfterLList(endPlayCom, Sample_getStopCommand(bank, sample));
                 }
-                else
-                    ind += 2;
             }
         }
     }
 
-    return ind;
+    return curCom;
 }
 
 static SampleBank* VGM_getDataBank(VGM* vgm, int id)
 {
-    int i;
+    LList* curBank;
 
-    for (i = 0; i < vgm->sampleBanks->size; i++)
+    curBank = vgm->sampleBanks;
+    while(curBank != NULL)
     {
-        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+        SampleBank* bank = curBank->element;
+
         if (bank->id == id)
             return bank;
+
+        curBank = curBank->next;
     }
 
     return NULL;
@@ -661,11 +848,13 @@ static SampleBank* VGM_addDataBlock(VGM* vgm, VGMCommand* command)
     // different id --> new bank
     if (result == NULL)
     {
+        LList* curBank = getTailLList(vgm->sampleBanks);
+
         if (verbose)
             printf("Add data bank %6X:%2X\n", command->offset, VGMCommand_getDataBankId(command));
 
         result = SampleBank_create(command);
-        addToList(vgm->sampleBanks, result);
+        vgm->sampleBanks = getHeadLList(insertAfterLList(curBank, result));
     }
     // same id --> concat block
     else
@@ -681,13 +870,14 @@ static SampleBank* VGM_addDataBlock(VGM* vgm, VGMCommand* command)
 
 static void VGM_cleanSeekCommands(VGM* vgm)
 {
-    int ind;
+    LList* curCom;
     bool samplePlayed;
 
+    curCom = getTailLList(vgm->commands);
     samplePlayed = false;
-    for (ind = vgm->commands->size - 1; ind >= 0; ind--)
+    while(curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, ind);
+        VGMCommand* command = curCom->element;
 
         // seek command ?
         if (VGMCommand_isSeek(command))
@@ -698,50 +888,99 @@ static void VGM_cleanSeekCommands(VGM* vgm)
                 if (!silent)
                     printf("Useless seek command found at %6X", command->offset);
 
-                removeFromList(vgm->commands, ind);
+                removeFromLList(curCom);
             }
 
             samplePlayed = false;
         }
         else if (VGMCommand_isPCM(command))
             samplePlayed = true;
+
+        curCom = curCom->prev;
     }
 }
 
-static void VGM_removePlayPCMCommands(VGM* vgm)
+static void VGM_cleanPlayPCMCommands(VGM* vgm)
 {
-    int ind;
+    LList* curCom;
+    bool dacEnabled = false;
 
-    for (ind = vgm->commands->size - 1; ind >= 0; ind--)
+    curCom = vgm->commands;
+    while(curCom != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, ind);
+        VGMCommand* command = curCom->element;
 
+        if (VGMCommand_isDACEnabledON(command))
+            dacEnabled = true;
+        else if (VGMCommand_isDACEnabledOFF(command))
+            dacEnabled = false;
+        else
+        {
+            // DAC is currently disabled
+            if (!dacEnabled)
+            {
+                // replace PCM command by simple wait command
+                if (VGMCommand_isPCM(command))
+                {
+                    const int wait = VGMCommand_getWaitValue(command);
+
+                    // remove or just replace by wait command
+                    if (wait == 0)
+                        removeFromLList(curCom);
+                    else
+                        curCom->element = VGMCommand_create(0x70 + (wait - 1));
+                }
+            }
+        }
+
+        curCom = curCom->next;
+    }
+
+    if (!silent)
+        printf("Number of command after PCM command cleaning: %d\n", getSizeLList(vgm->commands));
+    if (verbose)
+        printf("Computed VGM duration: %d samples (%d seconds)\n", VGM_computeLen(vgm), VGM_computeLen(vgm) / 44100);
+}
+
+static void VGM_removeSeekAndPlayPCMCommands(VGM* vgm)
+{
+    LList* curCom;
+
+    curCom = vgm->commands;
+    while(curCom != NULL)
+    {
+        VGMCommand* command = curCom->element;
+
+        // remove Seek command
+        if (VGMCommand_isSeek(command))
+            removeFromLList(curCom);
         // replace PCM command by simple wait command
-        if (VGMCommand_isPCM(command))
+        else if (VGMCommand_isPCM(command))
         {
             const int wait = VGMCommand_getWaitValue(command);
 
             // remove or just replace by wait command
             if (wait == 0)
-                removeFromList(vgm->commands, ind);
+                removeFromLList(curCom);
             else
-                setToList(vgm->commands, ind, VGMCommand_create(0x70 + (wait - 1)));
+                curCom->element = VGMCommand_create(0x70 + (wait - 1));
         }
+
+        curCom = curCom->next;
     }
 
     if (!silent)
-        printf("Number of command after PCM command remove: %d\n", vgm->commands->size);
+        printf("Number of command after PCM command remove: %d\n", getSizeLList(vgm->commands));
     if (verbose)
         printf("Computed VGM duration: %d samples (%d seconds)\n", VGM_computeLen(vgm), VGM_computeLen(vgm) / 44100);
 }
 
 void VGM_cleanCommands(VGM* vgm)
 {
-    List* newCommands = createList();
-    List* normalCommands = createList();
-    List* optimizedCommands = createList();
-    List* keyOnOffCommands = createList();
-    List* lastCommands = createList();
+    LList* newCommands = NULL;
+    LList* optimizedCommands = NULL;
+    LList* keyOnOffCommands = NULL;
+    LList* lastCommands = NULL;
 
     YM2612* ymOldState;
     YM2612* ymState;
@@ -752,67 +991,72 @@ void VGM_cleanCommands(VGM* vgm)
     psgOldState = PSG_create();
 
     VGMCommand* command;
-    int startInd;
-    int endInd;
+    LList* startCom;
+    LList* endCom;
+    LList* com;
 
-    startInd = 0;
+    int cnt = 0;
+
+    startCom = vgm->commands;
     do
     {
-        int ind;
-
-        endInd = startInd;
+        endCom = startCom;
 
         do
         {
-            command = getFromList(vgm->commands, endInd);
-            endInd++;
+            command = endCom->element;
+            endCom = endCom->next;
+            cnt++;
         }
-        while ((endInd < vgm->commands->size) && !VGMCommand_isWait(command) && !VGMCommand_isEnd(command));
+        while ((endCom != NULL) && !VGMCommand_isWait(command) && !VGMCommand_isEnd(command));
 
         psgState = PSG_copy(psgOldState);
         ymState = YM2612_copy(ymOldState);
 
         // clear frame sets
-        clearList(normalCommands);
-        clearList(optimizedCommands);
-        clearList(keyOnOffCommands);
-        clearList(lastCommands);
+        deleteLList(optimizedCommands);
+        deleteLList(keyOnOffCommands);
+        deleteLList(lastCommands);
+        optimizedCommands = NULL;
+        keyOnOffCommands = NULL;
+        lastCommands = NULL;
 
-        // startInd --> endInd contains commands for a single frame
-        for (ind = startInd; ind < endInd; ind++)
+        // startCom --> endCom contains commands for a single frame
+        com = startCom;
+        while (com != endCom)
         {
-            command = getFromList(vgm->commands, ind);
-
-            // keep trace of originals commands
-            if (!VGMCommand_isYM2612TimersWrite(command))
-                addToList(normalCommands, command);
+            command = com->element;
 
             // keep data block and stream commands
             if (VGMCommand_isDataBlock(command) || VGMCommand_isStream(command) || VGMCommand_isLoop(command))
-                addToList(optimizedCommands, command);
+                optimizedCommands = insertAfterLList(optimizedCommands, command);
             else if (VGMCommand_isPSGWrite(command))
                 PSG_write(psgState, VGMCommand_getPSGValue(command));
             else if (VGMCommand_isYM2612Write(command))
             {
                 // write to YM state and store key on/off command
                 if (YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command)))
-                    addToList(keyOnOffCommands, command);
+                    keyOnOffCommands = insertAfterLList(keyOnOffCommands, command);
             }
             else if (VGMCommand_isWait(command) || VGMCommand_isSeek(command))
-                addToList(lastCommands, command);
+                lastCommands = insertAfterLList(lastCommands, command);
             else
             {
                 if (verbose)
                     printf("Command ignored: %2X\n", command->command);
             }
+
+            com = com->next;
         }
 
         bool hasStreamStart = false;
         bool hasStreamRate = false;
+        // start at end of optimized commands
+        com = optimizedCommands;
         // check we have single stream per frame
-        for (ind = optimizedCommands->size - 1; ind >= 0; ind--)
+        while(com != NULL)
         {
-            command = getFromList(optimizedCommands, ind);
+            command = com->element;
 
             if (VGMCommand_isStreamStartLong(command))
             {
@@ -824,7 +1068,8 @@ void VGM_cleanCommands(VGM* vgm)
                         printf("Command stream start removed at %g\n", (double) VGM_getTime(vgm, command) / 44100);
                     }
 
-                    removeFromList(optimizedCommands, ind);
+                    // remove the command
+                    removeFromLList(com);
                 }
 
                 hasStreamStart = true;
@@ -836,57 +1081,71 @@ void VGM_cleanCommands(VGM* vgm)
                     if (!silent)
                         printf("Command stream rate removed at %g\n", (double) VGM_getTime(vgm, command) / 44100);
 
-                    removeFromList(optimizedCommands, ind);
+                    // remove the command
+                    removeFromLList(com);
                 }
 
                 hasStreamRate = true;
             }
+
+            com = com->prev;
         }
 
+        // get back to head of list
+        keyOnOffCommands = getHeadLList(keyOnOffCommands);
+        lastCommands = getHeadLList(lastCommands);
+
         // add frame commands for delta YM
-        addAllToList(optimizedCommands, YM2612_getDelta(ymOldState, ymState));
+        optimizedCommands = insertAllAfterLList(optimizedCommands, YM2612_getDelta(ymOldState, ymState));
         // add frame commands for key on/off
-        addAllToList(optimizedCommands, keyOnOffCommands);
+        optimizedCommands = insertAllAfterLList(optimizedCommands, keyOnOffCommands);
         // add frame commands for delta PSG
-        addAllToList(optimizedCommands, PSG_getDelta(psgOldState, psgState));
+        optimizedCommands = insertAllAfterLList(optimizedCommands, PSG_getDelta(psgOldState, psgState));
         // add frame const commands
-        addAllToList(optimizedCommands, lastCommands);
+        optimizedCommands = insertAllAfterLList(optimizedCommands, lastCommands);
+
+        // get back to head
+        optimizedCommands = getHeadLList(optimizedCommands);
 
         // add frame optimized set to new commands
-        addAllToList(newCommands, optimizedCommands);
+        newCommands = insertAllAfterLList(newCommands, optimizedCommands);
 
         // update states
         ymOldState = ymState;
         psgOldState = psgState;
-        startInd = endInd;
+        startCom = endCom;
     }
-    while ((endInd < vgm->commands->size) && !VGMCommand_isEnd(command));
+    while ((endCom != NULL) && !VGMCommand_isEnd(command));
 
-    addToList(newCommands, VGMCommand_create(VGM_END));
+    newCommands = insertAfterLList(newCommands, VGMCommand_create(VGM_END));
 
-    vgm->commands = newCommands;
+    vgm->commands = getHeadLList(newCommands);
 
     if (verbose)
         printf("Music data size: %d\n", VGM_getMusicDataSize(vgm));
     if (!silent)
     {
         printf("Computed VGM duration: %d samples (%d seconds)\n", VGM_computeLen(vgm), VGM_computeLen(vgm) / 44100);
-        printf("Number of command after commands clean: %d\n", vgm->commands->size);
+        printf("Number of command after commands clean: %d\n", getSizeLList(vgm->commands));
     }
 }
 
 void VGM_cleanSamples(VGM* vgm)
 {
-    int b, s, c;
+    LList* b;
+    LList* s;
+    LList* c;
 
-    for (b = vgm->sampleBanks->size - 1; b >= 0; b--)
+    b = getTailLList(vgm->sampleBanks);
+    while(b != NULL)
     {
-        SampleBank* bank = getFromList(vgm->sampleBanks, b);
+        SampleBank* bank = b->element;
         int bankId = bank->id;
 
-        for (s = bank->samples->size - 1; s >= 0; s--)
+        s = getTailLList(bank->samples);
+        while(s != NULL)
         {
-            Sample* sample = getFromList(bank->samples, s);
+            Sample* sample = s->element;
             int sampleId = sample->id;
             int sampleAddress = sample->dataOffset;
             int minLen = max(0, sample->len - 50);
@@ -894,9 +1153,10 @@ void VGM_cleanSamples(VGM* vgm)
             bool used = false;
             int currentBankId = -1;
 
-            for (c = 0; c < vgm->commands->size - 1; c++)
+            c = vgm->commands;
+            while(c != NULL)
             {
-                VGMCommand* command = getFromList(vgm->commands, c);
+                VGMCommand* command = c->element;
 
                 if (VGMCommand_isStreamData(command))
                     currentBankId = VGMCommand_getStreamBankId(command);
@@ -922,6 +1182,8 @@ void VGM_cleanSamples(VGM* vgm)
                         }
                     }
                 }
+
+                c = c->next;
             }
 
             // sample not used --> remove it
@@ -930,23 +1192,34 @@ void VGM_cleanSamples(VGM* vgm)
                 if (verbose)
                     printf("Sample at offset %6X (len = %d) is not used --> removed\n", sampleAddress, sample->len);
 
-                removeFromList(bank->samples, s);
+                // remove sample
+                removeFromLList(s);
+                // special case where we removed first sample
+                if (s == bank->samples)
+                    bank->samples = s->next;
             }
+
+            s = s->prev;
         }
+
+        b = b->prev;
     }
 }
 
 //Sample* VGM_getSample(VGM* vgm, int sampleOffset, int len)
 //{
-//    int i;
+//    LList* b;
 //
-//    for (i = 0; i < vgm->sampleBanks->size; i++)
+//    b = vgm->sampleBanks;
+//    while(b != NULL)
 //    {
-//        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+//        SampleBank* bank = b->element;
 //        Sample* sample = SampleBank_getSampleByOffsetAndLen(bank, sampleOffset, len);
 //
 //        if (sample != NULL)
 //            return sample;
+//
+//        b = b->next;
 //    }
 //
 //    return NULL;
@@ -954,15 +1227,18 @@ void VGM_cleanSamples(VGM* vgm)
 
 Sample* VGM_getSample(VGM* vgm, int sampleOffset)
 {
-    int i;
+    LList* b;
 
-    for (i = 0; i < vgm->sampleBanks->size; i++)
+    b = vgm->sampleBanks;
+    while(b != NULL)
     {
-        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+        SampleBank* bank = b->element;
         Sample* sample = SampleBank_getSampleByOffset(bank, sampleOffset);
 
         if (sample != NULL)
             return sample;
+
+        b = b->next;
     }
 
     return NULL;
@@ -970,94 +1246,108 @@ Sample* VGM_getSample(VGM* vgm, int sampleOffset)
 
 void VGM_convertWaits(VGM* vgm)
 {
-    List* newCommands = createList();
+    LList* newCommands = NULL;
     // number of sample per frame
     const double limit = (double) 44100 / (double) vgm->rate;
     // -15%
     const double minLimit = limit - ((limit * 15) / 100);
     const int comWait = (vgm->rate == 60) ? VGM_WAIT_NTSC_FRAME : VGM_WAIT_PAL_FRAME;
-    int i;
 
     double sampleCnt = 0;
-    for (i = 0; i < vgm->commands->size; i++)
+    LList* c = vgm->commands;
+    while(c != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, i);
+        VGMCommand* command = c->element;
 
         // add no wait command
         if (!VGMCommand_isWait(command))
-            addToList(newCommands, command);
+            newCommands = insertAfterLList(newCommands, command);
         else
             sampleCnt += VGMCommand_getWaitValue(command);
 
         while (sampleCnt > minLimit)
         {
-            addToList(newCommands, VGMCommand_create(comWait));
+            newCommands = insertAfterLList(newCommands, VGMCommand_create(comWait));
             sampleCnt -= limit;
         }
+
+        c = c->next;
     }
 
     // set new commands
-    vgm->commands = newCommands;
+    vgm->commands = getHeadLList(newCommands);
 
     if (!silent)
     {
         printf("VGM duration after wait command conversion: %d samples (%d seconds)\n", VGM_computeLen(vgm), VGM_computeLen(vgm) / 44100);
-        printf("Number of command: %d\n", vgm->commands->size);
+        printf("Number of command: %d\n", getSizeLList(vgm->commands));
     }
 }
 
-void VGM_shiftSamples(VGM* vgm, int sft)
-{
-    int i;
-
-    if (sft == 0)
-        return;
-
-    List* sampleCommands[sft];
-
-    for (i = 0; i < sft; i++)
-        sampleCommands[i] = createList();
-
-    int frameRead = 0;
-    int frameWrite = 1;
-    int index = vgm->commands->size - 1;
-    while (index >= 0)
-    {
-        VGMCommand* command = getFromList(vgm->commands, index);
-
-        if (VGMCommand_isStream(command))
-        {
-            addToList(sampleCommands[frameRead], command);
-            removeFromList(vgm->commands, index);
-        }
-        else if (VGMCommand_isWait(command) || VGMCommand_isEnd(command))
-        {
-            frameRead = (frameRead + 1) % sft;
-            frameWrite = (frameWrite + 1) % sft;
-
-            // add sample command to this frame
-            while (sampleCommands[frameWrite]->size > 0)
-                addToListEx(vgm->commands, index, removeFromList(sampleCommands[frameWrite], 0));
-        }
-
-        index--;
-    }
-
-    // add last remaining samples
-    for (i = 0; i < sft; i++)
-        while (sampleCommands[i]-> size > 0)
-            addToListEx(vgm->commands, 0, removeFromList(sampleCommands[i], 0));
-}
+//void VGM_shiftSamples(VGM* vgm, int sft)
+//{
+//    int i;
+//
+//    if (sft == 0)
+//        return;
+//
+//    LList* sampleCommands[sft];
+//
+//    for (i = 0; i < sft; i++)
+//        sampleCommands[i] = NULL;
+//
+//    int frameRead = 0;
+//    int frameWrite = 1;
+//    LList* c = getTailLList(vgm->commands);
+//    while (c != NULL)
+//    {
+//        VGMCommand* command = c->element;
+//
+//        if (VGMCommand_isStream(command))
+//        {
+//            sampleCommands[frameRead] = insertAfterLList(sampleCommands[frameRead], command);
+//            removeFromLList(c);
+//        }
+//        else if (VGMCommand_isWait(command) || VGMCommand_isEnd(command))
+//        {
+//            frameRead = (frameRead + 1) % sft;
+//            frameWrite = (frameWrite + 1) % sft;
+//
+//            // add sample command to this frame
+//            while (sampleCommands[frameWrite] != NULL)
+//            {
+//                // insert and by-pass
+//                c = insertBeforeLList(c, sampleCommands[frameWrite]->element);
+//                sampleCommands[frameWrite] = removeFromLList(sampleCommands[frameWrite]);
+//            }
+//        }
+//
+//        c = c->prev;
+//    }
+//
+//    // add last remaining samples
+//    for (i = 0; i < sft; i++)
+//    {
+//        while (sampleCommands[i] != NULL)
+//        {
+//            // insert and update list head
+//            vgm->commands = insertBeforeLList(vgm->commands, sampleCommands[i]->element);
+//            sampleCommands[i] = removeFromLList(sampleCommands[frameWrite]);
+//        }
+//    }
+//}
 
 static int VGM_getSampleDataSize(VGM* vgm)
 {
-    int i;
+    LList* b;
     int result = 0;
 
-    for (i = 0; i < vgm->sampleBanks->size; i++)
+    b = vgm->sampleBanks;
+    while(b != NULL)
     {
-        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+        SampleBank* bank = b->element;
         result += bank->len;
+        b = b->next;
     }
 
     return result;
@@ -1065,18 +1355,23 @@ static int VGM_getSampleDataSize(VGM* vgm)
 
 static int VGM_getSampleTotalLen(VGM* vgm)
 {
-    int i, j;
+    LList* b;
     int result = 0;
 
-    for (i = 0; i < vgm->sampleBanks->size; i++)
+    b = vgm->sampleBanks;
+    while(b != NULL)
     {
-        SampleBank* bank = getFromList(vgm->sampleBanks, i);
+        SampleBank* bank = b->element;
+        LList* s = bank->samples;
 
-        for (j = 0; j < bank->samples->size; j++)
+        while(s != NULL)
         {
-            Sample* sample = getFromList(bank->samples, j);
+            Sample* sample = s->element;
             result += sample->len;
+            s = s->next;
         }
+
+        b = b->next;
     }
 
     return result;
@@ -1084,13 +1379,15 @@ static int VGM_getSampleTotalLen(VGM* vgm)
 
 static int VGM_getSampleNumber(VGM* vgm)
 {
-    int i;
+    LList* b;
     int result = 0;
 
-    for (i = 0; i < vgm->sampleBanks->size; i++)
+    b = vgm->sampleBanks;
+    while(b != NULL)
     {
-        SampleBank* bank = getFromList(vgm->sampleBanks, i);
-        result += bank->samples->size;
+        SampleBank* bank = b->element;
+        result += getSizeLList(bank->samples);
+        b = b->next;
     }
 
     return result;
@@ -1098,15 +1395,18 @@ static int VGM_getSampleNumber(VGM* vgm)
 
 static int VGM_getMusicDataSize(VGM* vgm)
 {
-    int i;
+    LList* c;
     int result = 0;
 
-    for (i = 0; i < vgm->commands->size; i++)
+    c = vgm->commands;
+    while(c != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, i);
+        VGMCommand* command = c->element;
 
         if (!VGMCommand_isDataBlock(command))
             result += command->size;
+
+        c = c->next;
     }
 
     return result;
@@ -1238,11 +1538,13 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
 
     VGMCommand* loopCommand = NULL;
     int loopOffset = 0;
+    LList* l;
 
     // write command (ignore loop marker)
-    for (i = 0; i < vgm->commands->size; i++)
+    l = vgm->commands;
+    while(l != NULL)
     {
-        VGMCommand* command = getFromList(vgm->commands, i);
+        VGMCommand* command = l->element;
 
         if (!VGMCommand_isLoop(command))
             fwrite(VGMCommand_asByteArray(command), 1, command->size, f);
@@ -1251,6 +1553,8 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
             loopCommand = command;
             loopOffset = getFileSizeEx(f) - 0x1C;
         }
+
+        l = l->next;
     }
 
     unsigned char* array = inEx(f, 0, getFileSizeEx(f), outSize);

@@ -7,130 +7,333 @@
 #include "../inc/util.h"
 
 
-void initList(List* list)
-{
-    list->elements = NULL;
-    list->allocated = 0;
-    list->size = 0;
-}
+//void initList(List* list)
+//{
+//    list->elements = NULL;
+//    list->allocated = 0;
+//    list->size = 0;
+//}
+//
+//List* createList()
+//{
+//    List* result = malloc(sizeof(List));
+//
+//    initList(result);
+//
+//    return result;
+//}
+//
+//void deleteList(List* list)
+//{
+//    if (list != NULL)
+//    {
+//        if (list->elements != NULL)
+//            free(list->elements);
+//
+//        free(list);
+//    }
+//}
+//
+//void clearList(List* list)
+//{
+//    if (list->elements != NULL)
+//    {
+//        free(list->elements);
+//        list->elements = NULL;
+//    }
+//
+//    list->allocated = 0;
+//    list->size = 0;
+//}
+//
+//void addToList(List* list, void* element)
+//{
+//    if (list->size >= list->allocated)
+//    {
+//        if (list->elements == NULL)
+//        {
+//            list->allocated = 256;
+//            list->elements = malloc(sizeof(void*) * list->allocated);
+//        }
+//        else
+//        {
+//            list->allocated *= 2;
+//            list->elements = realloc(list->elements, sizeof(void*) * list->allocated);
+//        }
+//    }
+//
+//    list->elements[list->size++] = element;
+//}
+//
+//void addAllToList(List* list, List* elements)
+//{
+//    int i;
+//
+//    for(i = 0; i < elements->size; i++)
+//        addToList(list, elements->elements[i]);
+//}
+//
+//void* getFromList(List* list, int index)
+//{
+//    if (index < list->size)
+//        return list->elements[index];
+//
+//    return NULL;
+//}
 
-List* createList()
-{
-    List* result = malloc(sizeof(List));
+//void addToListEx(List* list, int index, void* element)
+//{
+//    int i;
+//
+//    // add 1 slot
+//    addToList(list, NULL);
+//
+//    for(i = list->size - 2; i >= index; i--)
+//        list->elements[i + 1] = list->elements[i + 0];
+//
+//    setToList(list, index, element);
+//}
+//
+//void addAllToListEx(List* list, int index, List* elements)
+//{
+//    int i;
+//
+//    for(i = 0; i < elements->size; i++)
+//        addToListEx(list, index + i, elements->elements[i]);
+//}
 
-    initList(result);
+//void setToList(List* list, int index, void* element)
+//{
+//    list->elements[index] = element;
+//}
+//
+//void* removeFromList(List* list, int index)
+//{
+//    if (index < list->size)
+//    {
+//        int i;
+//        void* result = getFromList(list, index);
+//
+//        // remove 1 element
+//        list->size--;
+//        for(i = index; i < list->size; i++)
+//            list->elements[i + 0] = list->elements[i + 1];
+//
+//        return result;
+//    }
+//
+//    return NULL;
+//}
+
+
+LList* createEmptyElement()
+{
+    LList* result = malloc(sizeof(LList));
+
+    result->element = NULL;
+    result->next = NULL;
+    result->prev = NULL;
 
     return result;
 }
 
-void deleteList(List* list)
+LList* createElement(void* element)
 {
-    if (list != NULL)
-    {
-        if (list->elements != NULL)
-            free(list->elements);
+    LList* result = malloc(sizeof(LList));
 
-        free(list);
+    result->element = element;
+    result->next = NULL;
+    result->prev = NULL;
+
+    return result;
+}
+
+void deleteLList(LList* list)
+{
+    LList* l = list;
+
+    while(l != NULL)
+    {
+        LList* n = l->next;
+        free(l);
+        l = n;
     }
 }
 
-void clearList(List* list)
+static void connectNext(LList* element, LList* next)
 {
-    if (list->elements != NULL)
+    if (element != NULL) element->next = next;
+    if (next != NULL) next->prev = element;
+}
+
+static void connectPrev(LList* element, LList* prev)
+{
+    if (element != NULL) element->prev = prev;
+    if (prev != NULL) prev->next = element;
+}
+
+LList* getHeadLList(LList* list)
+{
+    LList* result = list;
+
+    if (result == NULL) return NULL;
+
+    while(result->prev != NULL) result = result->prev;
+
+    return result;
+}
+
+LList* getTailLList(LList* list)
+{
+    LList* result = list;
+
+    if (result == NULL) return NULL;
+
+    while(result->next != NULL) result = result->next;
+
+    return result;
+}
+
+int getSizeLList(LList* list)
+{
+    int result = 0;
+    LList* l = list;
+
+    while(l)
     {
-        free(list->elements);
-        list->elements = NULL;
+        l = l->next;
+        result++;
     }
 
-    list->allocated = 0;
-    list->size = 0;
+    return result;
 }
 
-void addToList(List* list, void* element)
+LList* getElementAtLList(LList* list, int index)
 {
-    if (list->size >= list->allocated)
+    int i = 0;
+    LList* l = list;
+
+    while(l)
     {
+        if (i == index) return l;
 
-        if (list->elements == NULL)
-        {
-            list->allocated = 256;
-            list->elements = malloc(sizeof(void*) * list->allocated);
-        }
-        else
-        {
-            list->allocated *= 2;
-            list->elements = realloc(list->elements, sizeof(void*) * list->allocated);
-        }
-    }
-
-    list->elements[list->size++] = element;
-}
-
-void addAllToList(List* list, List* elements)
-{
-    int i;
-
-    for(i = 0; i < elements->size; i++)
-        addToList(list, elements->elements[i]);
-}
-
-void* getFromList(List* list, int index)
-{
-    if (index < list->size)
-        return list->elements[index];
-
-    return NULL;
-}
-
-void addToListEx(List* list, int index, void* element)
-{
-    int i;
-
-    // add 1 slot
-    addToList(list, NULL);
-
-    for(i = list->size - 2; i >= index; i--)
-        list->elements[i + 1] = list->elements[i + 0];
-
-    setToList(list, index, element);
-}
-
-void addAllToListEx(List* list, int index, List* elements)
-{
-    int i;
-
-    for(i = 0; i < elements->size; i++)
-        addToListEx(list, index + i, elements->elements[i]);
-}
-
-void setToList(List* list, int index, void* element)
-{
-    list->elements[index] = element;
-}
-
-void* removeFromList(List* list, int index)
-{
-    if (index < list->size)
-    {
-        int i;
-        void* result = getFromList(list, index);
-
-        // remove 1 element
-        list->size--;
-        for(i = index; i < list->size; i++)
-            list->elements[i + 0] = list->elements[i + 1];
-
-        return result;
+        l = l->next;
+        i++;
     }
 
     return NULL;
 }
 
-void** listToArray(List* list)
+LList* insertAfterLList(LList* linkedElement, void* element)
+{
+    LList* newElement = createElement(element);
+
+    if (linkedElement != NULL)
+    {
+        connectNext(newElement, linkedElement->next);
+        connectPrev(newElement, linkedElement);
+    }
+
+    // return inserted element
+    return newElement;
+}
+
+LList* insertBeforeLList(LList* linkedElement, void* element)
+{
+    LList* newElement = createElement(element);
+
+    if (linkedElement != NULL)
+    {
+        connectPrev(newElement, linkedElement->prev);
+        connectNext(newElement, linkedElement);
+    }
+
+    // return inserted element
+    return newElement;
+}
+
+LList* insertAllAfterLList(LList* linkedElement, LList* elements)
+{
+    LList* src = elements;
+    LList* dst = linkedElement;
+
+    while(src != NULL)
+    {
+        dst = insertAfterLList(dst, src->element);
+        src = src->next;
+    }
+
+    // return last inserted element
+    return dst;
+}
+
+LList* insertAllBeforeLList(LList* linkedElement, LList* elements)
+{
+    LList* src = getTailLList(elements);
+    LList* dst = linkedElement;
+
+    while(src != NULL)
+    {
+        dst = insertBeforeLList(dst, src->element);
+        src = src->prev;
+    }
+
+    // return last inserted element
+    return dst;
+}
+
+LList* removeFromLList(LList* linkedElement)
+{
+    if (linkedElement == NULL) return NULL;
+
+    // next element present ?
+    if (linkedElement->next != NULL)
+        // link next to prev
+        linkedElement->next->prev = linkedElement->prev;
+
+    // previous element present ?
+    if (linkedElement->prev != NULL)
+        // link prev to next
+        linkedElement->prev->next = linkedElement->next;
+
+    // return next element
+    LList* result = linkedElement->next;
+
+    // release element (don't do it so we can still access it)
+    // free(linkedElement);
+
+    return result;
+}
+
+
+//void** listToArray(LList* list)
+//{
+//    void** result;
+//
+//    if (list->size == 0)
+//    {
+//        result = malloc(sizeof(void*));
+//        *result = NULL;
+//    }
+//    else
+//    {
+//        int i;
+//
+//        result = malloc(sizeof(void*) * list->size);
+//
+//        for(i = 0; i < list->size; i++)
+//            result[i] = list->elements[i];
+//    }
+//
+//    return result;
+//}
+
+void** llistToArray(LList* list)
 {
     void** result;
+    const int size = getSizeLList(list);
 
-    if (list->size == 0)
+    if (size == 0)
     {
         result = malloc(sizeof(void*));
         *result = NULL;
@@ -138,15 +341,61 @@ void** listToArray(List* list)
     else
     {
         int i;
+        LList* l;
 
-        result = malloc(sizeof(void*) * list->size);
+        result = malloc(sizeof(void*) * size);
 
-        for(i = 0; i < list->size; i++)
-            result[i] = list->elements[i];
+        i = 0;
+        l = list;
+        while(l != NULL)
+        {
+            result[i++] = l->element;
+            l = l ->next;
+        }
     }
 
     return result;
 }
+
+
+//LList* listToLList(List* list)
+//{
+//    LList* result;
+//    LList* cur;
+//    int i;
+//
+//    if (list->size == 0)
+//        return NULL;
+//
+//    result = createElement();
+//
+//    result->prev = NULL;
+//    result->next = NULL;
+//    result->element = list->elements[0];
+//
+//    cur = result;
+//    for(i = 1; i < list->size; i++)
+//    {
+//        insertAfterLList(cur, list->elements[i]);
+//        cur = cur->next;
+//    }
+//
+//    return result;
+//}
+//
+//List* linkedListToList(LList* list)
+//{
+//    List* result = createList();
+//    LList* cur = list;
+//
+//    while(cur != NULL)
+//    {
+//        addToList(result, cur->element);
+//        cur = cur->next;
+//    }
+//
+//    return result;
+//}
 
 
 bool arrayEquals(unsigned char* array1, unsigned char* array2, int size)

@@ -47,40 +47,40 @@ $0108+SLEN MLEN    Music data bloc. It contains the XGM music data (see the XGM 
 
 XGM command description
 -----------------------
-Value       Size    Description
-$00            1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
-$1X data     1+X    PSG register write:
-                      X = number of byte to write - 1
-                      data = byte data to write to PSG port ($4011)
-$2X data    1+2X    YM2612 port 0 register write:
-                      X = number of register write - 1
-                      data = data to write to YM2612 port 0 ($4000 and $4001)
-                        entry+$00: register number
-                        entry+$01: register value
-$3X data    1+2X    YM2612 port 1 register write:
-                      X = number of register write - 1
-                      data = data to write to YM2612 port 1 ($4002 and $4003)
-                        entry+$00: register number
-                        entry+$01: register value
-$4X data     1+X    YM2612 key off/on ($28) command write:
-                      X = number of key register write - 1
-                      data = data to write to YM2612 key register
-$5X id         2    PCM play command:
-                      X = priority (X & 0xC) and channel number (X & 0x3)
-                        Channel number varie from 0 to 3 as the driver allow to play up to 4 PCM at same time.
-                        Priority level varie from 0 to 12 (in step of 4), higher value mean higher priority.
-                        Ex: We have a sample playing on channel 0 with a priority of 5 (SFX).
-                          - We receive a PCM play command with a priority of 4
-                            --> command ignored
-                          - We receive a PCM play command with a priority of 8
-                            --> command is accepted and new sample replace old one, channel priority is changed to 8
-                      id = sample id (should be < 64). Reference the sample id table to get address and size of sample.
-                        sample address = (sampleIdTable[((id-1)*4) + 0] << 8) + (sampleIdTable[((id-1)*4) + 1] << 16)
-                        sample size = (sampleIdTable[((id-1)*4) + 2] << 8) + (sampleIdTable[((id-1)*4) + 3] << 16)
-                        Note that we use (id-1) as value 0 is a special value used to stop a PCM channel.
-$7E dddddd     4    Loop command, used for music looping sequence:
-                      dddddd = address where to loop relative to the start of music data bloc.
-$7F            1    End command (end of music data).
+Value         Size    Description
+$00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
+$1X data   1+(X+1)    PSG register write:
+                        X = number of byte to write - 1
+                        data = byte data to write to PSG port ($4011)
+$2X data  1+(2X+1)    YM2612 port 0 register write:
+                        X = number of register write - 1
+                        data = data to write to YM2612 port 0 ($4000 and $4001)
+                          entry+$00: register number
+                          entry+$01: register value
+$3X data  1+(2X+1)    YM2612 port 1 register write:
+                        X = number of register write - 1
+                        data = data to write to YM2612 port 1 ($4002 and $4003)
+                          entry+$00: register number
+                          entry+$01: register value
+$4X data   1+(X+1)    YM2612 key off/on ($28) command write:
+                        X = number of key register write - 1
+                        data = data to write to YM2612 key register
+$5X id           2    PCM play command:
+                        X = priority (X & 0xC) and channel number (X & 0x3)
+                          Channel number varie from 0 to 3 as the driver allow to play up to 4 PCM at same time.
+                          Priority level varie from 0 to 12 (in step of 4), higher value mean higher priority.
+                          Ex: We have a sample playing on channel 0 with a priority of 5 (SFX).
+                            - We receive a PCM play command with a priority of 4
+                              --> command ignored
+                            - We receive a PCM play command with a priority of 8
+                              --> command is accepted and new sample replace old one, channel priority is changed to 8
+                        id = sample id (should be < 64). Reference the sample id table to get address and size of sample.
+                          sample address = (sampleIdTable[((id-1)*4) + 0] << 8) + (sampleIdTable[((id-1)*4) + 1] << 16)
+                          sample size = (sampleIdTable[((id-1)*4) + 2] << 8) + (sampleIdTable[((id-1)*4) + 3] << 16)
+                          Note that we use (id-1) as value 0 is a special value used to stop a PCM channel.
+$7E dddddd       4    Loop command, used for music looping sequence:
+                        dddddd = address where to loop relative to the start of music data bloc.
+$7F              1    End command (end of music data).
 
 
 Command $6X and $80-$FF are reserved for internal use and should not be used.

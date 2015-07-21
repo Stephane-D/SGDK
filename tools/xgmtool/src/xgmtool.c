@@ -14,10 +14,12 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.4";
+const char* version = "1.5";
 int sys;
 bool silent;
 bool verbose;
+bool sampleRateFix;
+bool sampleIgnore;
 
 
 int main(int argc, char *argv[ ])
@@ -27,7 +29,7 @@ int main(int argc, char *argv[ ])
 
     if (argc < 3)
     {
-        printf("XGMTool %s - Stephane Dallongeville - copyright 2014\n", version);
+        printf("XGMTool %s - Stephane Dallongeville - copyright 2015\n", version);
         printf("\n");
         printf("Usage: xgmtool inputFile outputFile <options>\n");
         printf("XGMTool can do the following operations:\n");
@@ -60,6 +62,8 @@ int main(int argc, char *argv[ ])
         printf("-v\tenable verbose mode.\n");
         printf("-n\tforce NTSC timing (only meaningful for VGM to XGM conversion).\n");
         printf("-p\tforce PAL timing (only meaningful for VGM to XGM conversion).\n");
+        printf("-di\tdisable PCM sample auto ignore (it can help when PCM are not properly extracted).\n");
+        printf("-dr\tdisable PCM sample rate auto fix (it can help when PCM are not properly extracted).\n");
 
         exit(1);
     }
@@ -67,6 +71,8 @@ int main(int argc, char *argv[ ])
     sys = SYSTEM_AUTO;
     silent = false;
     verbose = false;
+    sampleIgnore = true;
+    sampleRateFix = true;
 
     // Open source for binary read (will fail if file does not exist)
     if ((infile = fopen(argv[1], "rb")) == NULL)
@@ -86,15 +92,25 @@ int main(int argc, char *argv[ ])
     for(i = 3; i < argc; i++)
     {
         if (!strcasecmp(argv[i], "-s"))
+        {
             silent = true;
+            verbose = false;
+        }
         else if (!strcasecmp(argv[i], "-v"))
+        {
             verbose = true;
+            silent = false;
+        }
+        else if (!strcasecmp(argv[i], "-di"))
+            sampleIgnore = false;
+        else if (!strcasecmp(argv[i], "-dr"))
+            sampleRateFix = false;
         else if (!strcasecmp(argv[i], "-n"))
             sys = SYSTEM_NTSC;
         else if (!strcasecmp(argv[i], "-p"))
             sys = SYSTEM_PAL;
         else
-            printf("Warning: option %s not recognized (ignored)\n", argv[3]);
+            printf("Warning: option %s not recognized (ignored)\n", argv[i]);
     }
 
     // silent mode has priority

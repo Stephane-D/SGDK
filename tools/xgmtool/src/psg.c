@@ -9,7 +9,7 @@
 static void PSG_writeLow(PSG* psg, int value);
 static void PSG_writeHigh(PSG* psg, int value);
 static VGMCommand* PSG_createLowWriteCommand(PSG* psg, int ind, int typ, int value);
-static List* PSG_createWriteCommands(PSG* psg, int ind, int typ, int value);
+static LList* PSG_createWriteCommands(PSG* psg, int ind, int typ, int value);
 
 
 PSG* PSG_create()
@@ -169,35 +169,35 @@ static VGMCommand* PSG_createLowWriteCommand(PSG* psg, int ind, int typ, int val
     return VGMCommand_createEx(data, 0);
 }
 
-static List* PSG_createWriteCommands(PSG* psg, int ind, int typ, int value)
+static LList* PSG_createWriteCommands(PSG* psg, int ind, int typ, int value)
 {
     unsigned char* data;
-    List* result = createList();
+    LList* result = NULL;
 
     // rebuild data
     data = malloc(2);
     data[0] = VGM_WRITE_SN76489;
     data[1] = 0x80 | (ind << 5) | (typ << 4) | (value & 0xF);
-    addToList(result, VGMCommand_createEx(data, 0));
+    result = insertAfterLList(result, VGMCommand_createEx(data, 0));
 
     if ((typ == 0) && (ind != 3))
     {
         data = malloc(2);
         data[0] = VGM_WRITE_SN76489;
         data[1] = 0x00 | ((value >> 4) & 0x3F);
-        addToList(result, VGMCommand_createEx(data, 0));
+        result = insertAfterLList(result, VGMCommand_createEx(data, 0));
     }
 
-    return result;
+    return getHeadLList(result);
 }
 
 /**
  * Returns commands list to update to the specified PSG state
  */
-List* PSG_getDelta(PSG* psg, PSG* state)
+LList* PSG_getDelta(PSG* psg, PSG* state)
 {
     int ind, typ;
-    List* result = createList();
+    LList* result = NULL;
 
     for (ind = 0; ind < 4; ind++)
     {
@@ -207,19 +207,19 @@ List* PSG_getDelta(PSG* psg, PSG* state)
             {
                 // value different on low bits only --> add single command
                 if (PSG_isLowDiffOnly(psg, state, ind, typ))
-                    addToList(result, PSG_createLowWriteCommand(psg, ind, typ, PSG_get(state, ind, typ)));
+                    result = insertAfterLList(result, PSG_createLowWriteCommand(psg, ind, typ, PSG_get(state, ind, typ)));
                 // value is different --> add commands
                 else if (PSG_isDiff(psg, state, ind, typ))
-                    addAllToList(result, PSG_createWriteCommands(psg, ind, typ, PSG_get(state, ind, typ)));
+                    result = insertAllAfterLList(result, PSG_createWriteCommands(psg, ind, typ, PSG_get(state, ind, typ)));
             }
             else
             {
                 // value is different --> add commands
                 if (PSG_isDiff(psg, state, ind, typ))
-                    addAllToList(result, PSG_createWriteCommands(psg, ind, typ, PSG_get(state, ind, typ)));
+                    result = insertAllAfterLList(result, PSG_createWriteCommands(psg, ind, typ, PSG_get(state, ind, typ)));
             }
         }
     }
 
-    return result;
+    return getHeadLList(result);
 }

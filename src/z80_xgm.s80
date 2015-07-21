@@ -19,7 +19,7 @@
 ; DE  = write buffer / XGM buffer
 ; BC  = counter
 ; B = $80 (used for overflow and sample unsign)
-; IYL = vint pending counter (0 when no vint pending)
+; IYL = vint pending counter - 1 ($FF when no vint pending)
 ; HL' = YMPORT1
 ; BC' = read buffer
 
@@ -94,6 +94,17 @@ PSG_ENV_OFF EQU     PARAMS+$78      ; PSG env off (4 channels)
 VINT_OVER   EQU     PARAMS+$5E      ; contains number of vint to process (just for info)
 IDLE_LOOP   EQU     PARAMS+$5F      ; idle loop counter (just for info)
 
+DEBUG_1     EQU     PARAMS+$80      ; debug
+DEBUG_2     EQU     PARAMS+$81      ; debug
+DEBUG_3     EQU     PARAMS+$82      ; debug
+DEBUG_4     EQU     PARAMS+$83      ; debug
+DEBUG_5     EQU     PARAMS+$84      ; debug
+DEBUG_6     EQU     PARAMS+$85      ; debug
+DEBUG_7     EQU     PARAMS+$86      ; debug
+DEBUG_8     EQU     PARAMS+$87      ; debug
+DEBUG_9     EQU     PARAMS+$88      ; debug
+DEBUG_A     EQU     PARAMS+$89      ; debug
+
 JUMP_TABLE  EQU     $1600           ; XGM command jump table (size = $100)
 XGM_BUFFER  EQU     $1700           ; XGM music data buffer (size = $100)
 
@@ -130,21 +141,20 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
             LD      HL, PCM_PRIO+(ch*8)     ; HL point on PCM info      ' 10    | (30)
 
             LD      A, C                    ; A = new prio              ' 4     |
-            CP      (HL)                    ; compare to old prio       ' 7     |
-            LD      A, B                    ; A = SFX id                ' 4     | 25 (55)
-            JP      NC, .play_new_wait      ; >= old prio --> play      ' 10    |
+            CP      (HL)                    ; compare to old prio       ' 7     | 21 (51)
+            JP      NC, .play_new           ; >= old prio --> play new  ' 10    |
 
-            OR      A                       ; silent PCM ?              ' 4     |
-            JP      Z, .play_new            ; always play               ' 10    | 14 (69)
-
-            wait94                          ; sync                      ' 94    |
-            JP      .end                    ;                           ' 10    | 88 (173)
-
-.play_new_wait
-            NOP                             ;                           ' 4     |
-            JP      .play_new               ; sync                      ' 10    | 14 (69)
+            wait112                         ; sync                      ' 112   |
+            JP      .end                    ;                           ' 10    | 122 (173)
 
 .play_new
+            LD      A, B                    ; A = SFX id                ' 4     |
+            OR      A                       ; not a stop PCM command ?  ' 4     | 18 (69)
+            JR      NZ, .PCM_play           ; go set new prio           ' 7/12  |
+
+            LD      C, 0                    ; reset prio for stop       ' 7     | +2
+
+.PCM_play                                   ;                           ' 69
             LD      (HL), C                 ; set new prio              ' 7     | (76)
 
             LD      H, (ID_TABLE>>10)       ;                           ' 7     |
@@ -164,52 +174,63 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 
 ; handlePCMCommandXGM
 ; -------------------
-; XGM buffer ->  DE
-; PCM prio   ->  C   -> ?
-; PCM id     ->  B   -> ?
-; ?          ->  HL  -> ?
+; XGM data ->  DE  -> XGM data
+; PCM prio ->  C   -> ?
+; ?        ->  A   -> ?
+; ?        ->  HL  -> ?
 ;
 ; handle PCM command for channel 'ch' for XGM music (PCM id < 0x40)
-; = 170 cycles
+; cycle 97 --> 254
 
-            macro handlePCMCommandXGM ch
+            macro handlePCMCommandXGM ch    ;                           ' 97
 
-            LD      HL, PCM_PRIO+(ch*8)     ; HL point on PCM info      ' 10    | (10)
-
+            LD      HL, PCM_PRIO+(ch*8)     ; HL point on PCM info      ' 10    |
             LD      A, C                    ; A = new prio              ' 4     |
-            CP      (HL)                    ; compare new and old prio  ' 7     | 25 (35)
-            LD      A, B                    ; A = SFX id (max = $3F)    ' 4     |
-            JP      NC, .play_new_wait      ; >= old prio --> play      ' 10    |
-
-            OR      A                       ; silent PCM ?              ' 4     |
-            JP      Z, .play_new            ; always play               ' 10    | 14 (49)
-
-            wait111                         ; sync                      ' 111   |
-            JP      .end                    ;                           ' 10    | 121 (170)
-
-.play_new_wait
-            OR      0                       ;                           ' 7     |
-            OR      0                       ; sync without changing A   ' 7     | 14 (49)
+            CP      (HL)                    ; compare new and old prio  ' 7     | 28 (125)
+            JR      C, .end                 ; >= old prio --> play new  ' 7/12  |
 
 .play_new
-            LD      (HL), C                 ; set new prio              ' 7     | (56)
+            LD      A, (DE)                 ; A = PCM id (max = $3F)    ' 7     |
+            INC     E                       ; next XGM command          ' 4     |
+            OR      A                       ; not a stop PCM command ?  ' 4     | 27 (152)
+            JR      NZ, .PCM_play           ; go set new prio           ' 7/12  |
+
+            LD      C, 0                    ; reset prio for stop       ' 7     | +2
+
+.PCM_play                                   ;                           ' 152
+            LD      (HL), C                 ; set new prio              ' 7     | (159)
 
             LD      H, (ID_TABLE>>8)        ;                           ' 7     |
             ADD     A                       ;                           ' 4     |
-            ADD     A                       ;                           ' 4     | 19 (75)
+            ADD     A                       ;                           ' 4     | 19 (178)
             LD      L, A                    ; HL point on new PCM addr  ' 4     |
 
-            PUSH    DE                      ; save DE                   ' 11    |
-            LD      DE, PCM_ADDR+(ch*8)     ; DE point on PCM info      ' 10    | 21 (96)
+            DI                              ; disable interrupts        ' 4     |
+            LD      SP, HL                  ; set SP to PCM addr        ' 6     | 10 (188)
 
-            LDI                             ; copy params               ' 16    |
-            LDI                             ;                           ' 16    | 64 (160)
-            LDI                             ;                           ' 16    |
-            LDI                             ;                           ' 16    |
+            POP     HL                      ; copy params               ' 10    |
+            LD      (PCM_ADDR+(ch*8)),HL    ;                           ' 16    |
+            POP     HL                      ;                           ' 10    | 52 (240)
+            LD      (PCM_LEN+(ch*8)),HL     ;                           ' 16    |
 
-            POP     DE                      ; restore DE                ' 10    | (170)
+            LD      SP, STACK               ; restore SP                ' 10    | 14 (254)
+            EI                              ; enable interrupt          ' 4     |
 
-.end
+;            LD      DE, PCM_ADDR+(ch*8)     ; DE point on PCM info      ' 10    |
+;            PUSH    DE                      ; save DE                   ' 11    |
+;            LDI                             ; copy params               ' 16    |
+;            LDI                             ;                           ' 16    | 85 (160)
+;            LDI                             ;                           ' 16    |
+;            LDI                             ;                           ' 16    |
+;            POP     DE                      ; restore DE                ' 10    |
+
+            JP      execute_xgm             ; execute next XGM com      ' 10    | (264) +10
+
+.end                                        ;                           ' 130
+            INC     E                       ; next XGM command          ' 4     |
+            wait110                         ; sync                      ' 110   | (254)
+            JP      execute_xgm             ; execute next XGM com      ' 10    |
+
             endm
 
 
@@ -246,7 +267,7 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 ; ? ->  HL  -> STATUS
 ;
 ; set null sample play for channel 'ch'
-; = 100 cycles
+; = 75 cycles
 
             macro stopChannel ch
 
@@ -258,9 +279,6 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
             XOR     A                       ;                           ' 4     |
             LD      (PCM_PRIO+(ch*8)), A    ; clear prio                ' 13    | 17 (75)
 
-            LD      HL, STATUS              ; HL = STATUS               ' 10    |
-            RES     ch, (HL)                ; clear play status         ' 15    | 25 (100)
-
             endm
 
 
@@ -269,8 +287,8 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 ; ? ->  HL  -> ?
 ;
 ; update sample address and sample lenght
-; check is sample is done and stop it if needed
-; = 178 cycles
+; check if sample is done and stop it if needed
+; = 153 cycles
 
             macro updateChannelData ch
 
@@ -285,22 +303,14 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
             OR      L                       ;                       ' 4     | 18 (78)
             JP      Z, .done                ; sample done ?         ' 10    |
 
-            wait74                          ;                       ' 74    |
-            JP      .end                    ;                       ' 10    | 84 (162)
+            LD      (PCM_LEN+(ch*8)), HL    ; set new sample len    ' 16    |
+            wait49                          ;                       ' 49    | 75 (153)
+            JP      .end                    ;                       ' 10    |
 
 .done
-            LD      HL, STATUS              ; HL = STATUS           ' 10    |
-            RES     ch, (HL)                ; clear play status     ' 15    | 25 (103)
-
-            XOR     A                       ;                       ' 4     |
-            LD      (PCM_PRIO+(ch*8)), A    ; clear prio            ' 13    | 17 (120)
-
-            LD      HL, (ID_TABLE+0)        ; HL = null PCM addr    ' 16    |
-            LD      (PCM_ADDR+(ch*8)), HL   ; set new PCM addr      ' 16    | 42 (162)
-            LD      HL, $0001               ; HL = null PCM len     ' 10    |
+            stopChannel ch                  ; stop channel          ' 75    | (153)
 
 .end
-            LD      (PCM_LEN+(ch*8)), HL    ; set new sample len    ' 16    | (178)
 
             endm
 
@@ -491,18 +501,17 @@ init
 
             BLOCK   $0038-$
 
-interrupt
-            PUSH    AF              ;                       ' 11    |
-            INC     IYL             ; inc vint counter      ' 8     |
-
             ; we should wait at least 180 cycles so the IRQ line goes down
             ; else we will take the interrupt several time
 
-            wait120                 ;
-
+interrupt                           ;                       ' 13
+            PUSH    AF              ;                       ' 11    |
+            wait120                 ;                       ' 120   | 149 (+162)
+            INC     IYL             ; inc vint counter      ' 8     |
             POP     AF              ;                       ' 10    |
-            EI                      ;                       ' 4     |
-            RET                     ;                       ' 10    | +180
+
+            EI                      ;                       ' 4     | 14 (+176)
+            RET                     ;                       ' 10    |
 
 
 ; ###########################       main       ##############################
@@ -572,7 +581,7 @@ cb_loop
             LD      (WRITEBUF), HL
             LD      HL, PCM_BUFFER1
             LD      (READBUF), HL
-            LD      IYL, $0         ; clear vint counter
+            LD      IYL, $FF        ; clear vint counter
 
             LD      BC, HL          ; BC' point to read buffer
             LD      HL, YMPORT0     ; HL' point to YMPORT0
@@ -589,6 +598,9 @@ cb_loop
             EI                      ; enable interrupt
 
 main_loop
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_1), A
 
 ; PCM channel 0
 ; -------------
@@ -629,10 +641,14 @@ main_loop
             readAndClear2               ;                       ' 38    |
 
 ; $18
-            sampleOutput                ; +10 --> too late      ' 36    |
-            readAndClear2               ;                       ' 38    | 254+8
-            updateChannelData 0         ; update channel data   ' 178   |
+            sampleOutput                ; +10 --> too late      ' 36+10 |
+            readAndClear2               ;                       ' 38    |
+            updateChannelData 0         ; update channel data   ' 153   | 254
+            wait17                      ; sync                  ' 17    |
 
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_2), A
 
 ; PCM channel 1
 ; -------------
@@ -671,8 +687,13 @@ main_loop
 
 ; $4D
             sampleOutput                ;                       ' 36    |
-            readAndMix                  ;                       ' 42    | 254+2
-            updateChannelData 1         ; update channel data   ' 178   |
+            readAndMix                  ;                       ' 42    | 254
+            updateChannelData 1         ; update channel data   ' 153   |
+            wait23                      ; sync                  ' 23    |
+
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_3), A
 
 ; PCM channel 2
 ; -------------
@@ -711,8 +732,13 @@ main_loop
 
 ; $82
             sampleOutput                ;                       ' 36    |
-            readAndMix                  ;                       ' 42    | 254+2 (assume ok)
-            updateChannelData 2         ; update channel data   ' 178   |
+            readAndMix                  ;                       ' 42    | 254
+            updateChannelData 2         ; update channel data   ' 153   |
+            wait23                      ; sync                  ' 23    |
+
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_4), A
 
 ; PCM channel 3
 ; -------------
@@ -751,9 +777,12 @@ main_loop
 
 ; $BD
             sampleOutput                ;                       ' 36    |
-            updateChannelData 3         ; update channel data   ' 178   | 254
-            wait40                      ; sync                  ' 40    |
+            updateChannelData 3         ; update channel data   ' 153   | 254
+            wait65                      ; sync                  ' 65    |
 
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_5), A
 
 ; next write buffer
 ; -----------------
@@ -822,6 +851,10 @@ next_write_buf
 
 ; $BF
 prepare_xgm
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_6), A
+
             sampleOutput                ;                       ' 36    | 36
 
             LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    |
@@ -1079,28 +1112,13 @@ end_prep_xgm                            ;                       ' 237
             LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    | 17 (254)
 
 
-; free time + frame synchro
-; -------------------------
-
-; $C0+X
-loop_synchro
-            sampleOutput                ;                       ' 36    | (36)
-
-            wait166                     ; sync                  ' 166   | 202
-
-            LD      A, (IDLE_LOOP)      ;                       ' 13    |
-            INC     A                   ; increment idle loop   ' 4     | 30 (232)
-            LD      (IDLE_LOOP), A      ;                       ' 13    |
-
-            LD      A, IYL              ; A = vint counter      ' 8     |
-            OR      A                   ; not yet ?             ' 4     | 22 (254)
-            JP      Z, loop_synchro     ; wait for vintEvent    ' 10    |
-
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_7), A
 
 ; execute XGM command
 ; -------------------
 
-; $C1+X
+; $C0+X
 execute_xgm
             sampleOutput                ;                       ' 36    | (36)
 
@@ -1877,32 +1895,17 @@ com_pcm_p3_ch3                          ; 5F                    ' 80
 
 
 com_pcm_ch0                             ;                       ' 97
-            CALL    prepareXGMPCMCom    ; prepare PCM com       ' 17++  | (46)
-
             handlePCMCommandXGM 0       ; handle command        ' 170   | (216)
-            JP      com_pcm_done        ; done                  ' 10    |
 
 com_pcm_ch1                             ;                       ' 97
-            CALL    prepareXGMPCMCom    ; prepare PCM com       ' 17++  | (46)
-
             handlePCMCommandXGM 1       ; handle command        ' 170   | (216)
-            JP      com_pcm_done        ; done                  ' 10    |
 
 com_pcm_ch2                             ;                       ' 97
-            CALL    prepareXGMPCMCom    ; prepare PCM com       ' 17++  | (46)
-
             handlePCMCommandXGM 2       ; handle command        ' 170   | (216)
-            JP      com_pcm_done        ; done                  ' 10    |
 
 com_pcm_ch3                             ;                       ' 97
-            CALL    prepareXGMPCMCom    ; prepare PCM com       ' 17++  | (46)
-
             handlePCMCommandXGM 3       ; handle command        ' 170   | (216)
-            JP      com_pcm_done        ; done                  ' 10    |
 
-com_pcm_done                            ;                       ' 216
-            wait28                      ; sync                  ' 28    |
-            JP      execute_xgm         ;                       ' 10    | 38 (254)
 
 
 ; STATE command
@@ -2174,7 +2177,7 @@ com_end                                 ; FF                    ' 80
             JP      execute_xgm         ;                       ' 10    | 149 (254)
 
 
-; $C1+X+Y
+; $C0+X+Y
 do_xgm_again                            ;                       ' 108
             LD      A, (VINT_OVER)      ;                       ' 13    |
             INC     A                   ;                       ' 4     | 30 (138)
@@ -2183,16 +2186,20 @@ do_xgm_again                            ;                       ' 108
             wait106                     ; sync                  ' 106   |
             JP      prepare_xgm         ; continue xgm process  ' 10    | 116 (254)
 
-; $C1+X+Y
+; $C0+X+Y
 xgm_done                                ;                       ' 90
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_8), A
+
             DEC     IYL                 ; some vint remains  ?  ' 8     |
-            JP      NZ, do_xgm_again    ; do XGM process again  ' 10    | 18 (108)
+            JP      P, do_xgm_again     ; do XGM process again  ' 10    | 18 (108)
 
 
 ; execute external command
 ; ------------------------
 
-; $C1+X+Y
+; $C0+X+Y
 external_com                            ;                           ' 108
             LD      HL, COMMAND         ; HL point on COMMAND       ' 10    | (118)
 
@@ -2291,7 +2298,7 @@ external_com                            ;                           ' 108
             LD      HL, COMMAND         ; restore HL                ' 10    |
             wait60                      ; sync                      ' 70    | 254
 
-; $C2+X+Y
+; $C1+X+Y
 external_com_pcm
             sampleOutput                ; *** sample output ****    ' 36    | (36)
 
@@ -2299,76 +2306,159 @@ external_com_pcm
             BIT     CH0_SFT, (HL)       ; play PCM0 command ?       ' 12    |
             JP      Z, .chk_pcm1        ;                           ' 10    | 22 (58)
 
-            RES     CH0_SFT, (HL)       ; clear command             ' 15    |
-            INC     L                   ;                           ' 4     |
-            INC     L                   ; HL point on status        ' 4     | 38 (96)
-            SET     CH0_SFT, (HL)       ; set play status           ' 15    |
+            RES     CH0_SFT, (HL)       ; clear command             ' 15    | (73)
 
-            handlePCMCommand 0          ; handle play PCM command   ' 173   | (269)
-            sampleOutput                ; *** sample output ****    ' 36    | (36+15)
-            LD      HL, COMMAND         ; restore HL                ' 10    | (61)
-                                        ; +3 cycles here, ignore
+            handlePCMCommand 0          ; handle play PCM command   ' 173   | 181 (254)
+            wait8                       ; sync                      ' 8     |
+
+            sampleOutput                ; *** sample output ****    ' 36    | (36)
+
+            wait12                      ; sync                      ' 12    | 22 (58)
+            LD      HL, COMMAND         ; restore HL                ' 10    |
 
 .chk_pcm1
             BIT     CH1_SFT, (HL)       ; play PCM1 command ?       ' 12    |
             JP      Z, .chk_pcm2        ;                           ' 10    | 22 (80)
 
-            RES     CH1_SFT, (HL)       ; clear command             ' 15    |
-            INC     L                   ;                           ' 4     |
-            INC     L                   ; HL point on status        ' 4     | 38 (118)
-            SET     CH1_SFT, (HL)       ; set play status           ' 15    |
+            RES     CH1_SFT, (HL)       ; clear command             ' 15    | (95)
 
-            handlePCMCommand 1          ; handle play PCM command   ' 173   | (291)
-            sampleOutput                ; *** sample output ****    ' 36    | (36+37)
-            LD      HL, COMMAND         ; restore HL                ' 10    | (83)
-                                        ; +3 cycles here, ignore
+            handlePCMCommand 1          ; handle play PCM command   ' 173   | (268)
+
+            sampleOutput                ; *** sample output ****    ' 36    | (36+14)
+
+            wait20                      ; sync                      ' 20    | 30 (80)
+            LD      HL, COMMAND         ; restore HL                ' 10    |
 
 .chk_pcm2
             BIT     CH2_SFT, (HL)       ; play PCM2 command ?       ' 12    |
             JP      Z, .chk_pcm3        ;                           ' 10    | 22 (102)
 
-            RES     CH2_SFT, (HL)       ; clear command             ' 15    |
-            INC     L                   ;                           ' 4     |
-            INC     L                   ; HL point on status        ' 4     | 38 (140)
-            SET     CH2_SFT, (HL)       ; set play status           ' 15    |
+            RES     CH2_SFT, (HL)       ; clear command             ' 15    | (117)
 
-            handlePCMCommand 2          ; handle play PCM command   ' 173   | (313)
-            sampleOutput                ; *** sample output ****    ' 36    | (36+59)
-            LD      HL, COMMAND         ; restore HL                ' 10    | (105)
-                                        ; +3 cycles here, ignore
+            handlePCMCommand 2          ; handle play PCM command   ' 173   | (290)
+
+            sampleOutput                ; *** sample output ****    ' 36    | (36+36)
+
+            wait20                      ; sync                      ' 20    | 30 (102)
+            LD      HL, COMMAND         ; restore HL                ' 10    |
 
 .chk_pcm3
             BIT     CH3_SFT, (HL)       ; play PCM3 command ?       ' 12    |
-            JP      Z, frame_end        ;                           ' 10    | 22 (124)
+            JP      Z, ext_com_done     ;                           ' 10    | 22 (124)
 
-            RES     CH3_SFT, (HL)       ; clear command             ' 15    |
-            INC     L                   ;                           ' 4     |
-            INC     L                   ; HL point on status        ' 4     | 38 (162)
-            SET     CH3_SFT, (HL)       ; set play status           ' 15    |
+            RES     CH3_SFT, (HL)       ; clear command             ' 15    | (139)
 
-            handlePCMCommand 3          ; handle play PCM command   ' 173   | (335)
-            sampleOutput                ; *** sample output ****    ' 36    | (36+81)
-            wait7                       ; sync                      ' 7     | (124)
+            handlePCMCommand 3          ; handle play PCM command   ' 173   | (312)
+
+            sampleOutput                ; *** sample output ****    ' 36    | (36+58)
+
+            wait30                      ; sync                      ' 30    | (124)
+
+; $C1+X+Y+Z
+ext_com_done                                ;                           ' 124
+            LD      BC, STATUS              ; BC point on STATUS        ' 10    |
+            LD      A, (BC)                 ; A = STATUS                ' 7     | 24 (148)
+            AND     $F0                     ; clear PCM play status     ' 7     |
+
+            LD      HL, (ID_TABLE+0)        ; HL = null PCM addr        ' 16    |
+            LD      DE, (PCM_ADDR+(0*8))    ; DE = PCM ch0 addr         ' 20    |
+            SBC     HL, DE                  ; HL == DE ?                ' 15    | 63 (211)
+            JR      Z, .ch0_silent          ; ch0 is not playing        ' 12    |
+
+            OR      A, $01                  ; set play status for ch0   ' +2
+
+.ch0_silent
+            EX      AF,AF'                  ; preserve AF               ' 4     |
+            wait35                          ; sync                      ' 35    | 39 (254-4)
+
+; $C2+X+Y+Z
+            sampleOutput                    ; sample output             ' 36-4  | (36)
+            EX      AF,AF'                  ; restore AF                ' 4     |
+
+            LD      HL, (ID_TABLE+0)        ; HL = null PCM addr        ' 16    |
+            LD      DE, (PCM_ADDR+(1*8))    ; DE = PCM ch1 addr         ' 20    |
+            SBC     HL, DE                  ; HL == DE ?                ' 15    | 63 (99)
+            JR      Z, .ch1_silent          ; ch1 is not playing        ' 12    |
+
+            OR      A, $02                  ; set play status for ch1   ' +2
+
+.ch1_silent
+            LD      HL, (ID_TABLE+0)        ; HL = null PCM addr        ' 16    |
+            LD      DE, (PCM_ADDR+(2*8))    ; DE = PCM ch2 addr         ' 20    |
+            SBC     HL, DE                  ; HL == DE ?                ' 15    | 63 (162)
+            JR      Z, .ch2_silent          ; ch2 is not playing        ' 12    |
+
+            OR      A, $04                  ; set play status for ch2   ' +2
+
+.ch2_silent
+            LD      HL, (ID_TABLE+0)        ; HL = null PCM addr        ' 16    |
+            LD      DE, (PCM_ADDR+(3*8))    ; DE = PCM ch3 addr         ' 20    |
+            SBC     HL, DE                  ; HL == DE ?                ' 15    | 63 (225)
+            JR      Z, .ch3_silent          ; ch3 is not playing        ' 12    |
+
+            OR      A, $08                  ; set play status for ch3   ' +2
+
+.ch3_silent
+            LD      (BC), A                 ; set new status            ' 7     | (232)
+
+            LD      A, IYL                  ; A = vint counter          ' 8     |
+            INC     A                       ; already happened ?        ' 4     | 22 (254)
+            JP      P, vint_done            ; continue                  ' 10    |
 
 
 ; frame done
 ;
 ; NTSC: we should be <= 0xE8 to respect frame time here and we need to update PCM buffer 0.9 time per frame
 ; so we have a free PCM mix frame from time to time.
-; Median (X+Y+Z) should be < 0x26 (< 38) plus some lines from the free PCM mix
+; Median (X+Y+Z) should be < 0x25 (< 37) plus some lines from the free PCM mix
 ;
 ; PAL: we should be <= 0118 to respect frame time here but we need to update PCM buffer 1.1 time per frame
 ; so we have a penalty PCM mix frame from time to time.
-; Median (X+Y+Z) should be < 0x56 (< 86) minus some lines for the extra PCM mix
+; Median (X+Y+Z) should be < 0x55 (< 85) minus some lines for the extra PCM mix
 ; -------------------------------------------------------------------------------------
 
-; $C2+X+Y+Z
-frame_end                               ;                       ' 124
-            wait47                      ; sync                  ' 47    | (171)
+; $C3+X+Y+Z
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_9), A
+
+wait_vint
+            sampleOutput                ; *** sample output *** ' 36    | (36)
+
+            wait166                     ; sync                  ' 166   | (202)
+
+            LD      A, (IDLE_LOOP)      ;                       ' 13    |
+            INC     A                   ; increment idle loop   ' 4     | 30 (232)
+            LD      (IDLE_LOOP), A      ;                       ' 13    |
+
+            LD      A, IYL              ; A = vint counter      ' 8     |
+            INC     A                   ; vint not done ?       ' 4     | 22 (254)
+            JP      M, wait_vint        ; continue              ' 10    |
+
+
+; wait one sample here so we are safe to test the bus protection flag
+;
+; $C3+X+Y+Z
+vint_done
+            sampleOutput                ; *** sample output *** ' 36    |
+            wait218                     ; sync                  ' 218   | (254)
+
+
+; BUS protection wait (to avoid BUS contention with DMA)
+;
+; $C4+X+Y+Z
+
+bus_protect_wait
+            sampleOutput                ; *** sample output *** ' 36    | (36)
+
+            wait135                     ; sync                  ' 135   | (171)
 
             LD      A, (PROTECT_ARG)    ; get BUS protect state ' 13    |
             OR      A                   ; protecting ?          ' 4     | 27 (198)
             JP      NZ, .wait           ; wait                  ' 10    |
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_A), A
 
             LD      DE, (WRITEBUF)      ; DE = write buf        ' 20    |
             compareReadWrite            ; PCM buffer full ?     ' 16    | 46 (244)
@@ -2380,44 +2470,17 @@ frame_end                               ;                       ' 124
             JP      prepare_xgm         ; continue xgm process  ' 10    | 10 (254)
 
 .wait                                   ;                       ' 198
-            wait56                      ; sync                  ' 56    | (254)
-
-            sampleOutput                ; *** sample output *** ' 36    | (36)
-
             LD      A, (IDLE_LOOP)      ;                       ' 13    |
-            INC     A                   ; increment idle loop   ' 4     | 30 (66)
+            INC     A                   ; increment idle loop   ' 4     | 30 (228)
             LD      (IDLE_LOOP), A      ;                       ' 13    |
 
-            wait48                      ; sync                  ' 48    |
-            JP      frame_end           ; we have free time     ' 10    | 58 (124)
+            wait16                      ; sync                  ' 16    |
+            JP      bus_protect_wait    ; wait until bus is ok  ' 10    | 26 (254)
 
 
 ; ##############################  functions  ################################
 
             INCLUDE "z80_fct.i80"   ; basic functions
-
-
-; prepareXGMPCMCom
-; ----------------
-;              B   -> PCM id
-;              A   -> PCM id
-; XGM data ->  DE  -> XGM data
-;
-; prepare the XGM PCM command
-; = 1 sample + 46 cycles
-
-prepareXGMPCMCom                        ;                       ' 114
-            wait118                     ; sync                  ' 118   | (232)
-
-            LD      A, (DE)             ;                       ' 7     |
-            INC     E                   ; next command          ' 4     |
-            AND     $3F                 ; A = PCM id            ' 7     | 22 (254)
-            LD      B, A                ; B = PCM id            ' 4     |
-
-            sampleOutput                ;                       ' 36    |
-
-            RET                         ; done                  ' 10    | (46)
-
 
 
 ; loadState

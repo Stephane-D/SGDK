@@ -338,6 +338,21 @@ bool VGMCommand_isYM2612TimersNoSpecialNoCSMWrite(VGMCommand* source)
     return VGMCommand_isYM2612TimersWrite(source) && ((VGMCommand_getYM2612Value(source) & 0xC0) == 0x00);
 }
 
+bool VGMCommand_isDACEnabled(VGMCommand* source)
+{
+    return VGMCommand_isYM2612Port0Write(source) && (VGMCommand_getYM2612Register(source) == 0x2B);
+}
+
+bool VGMCommand_isDACEnabledON(VGMCommand* source)
+{
+    return VGMCommand_isDACEnabled(source) && ((VGMCommand_getYM2612Value(source) & 0x80) == 0x80);
+}
+
+bool VGMCommand_isDACEnabledOFF(VGMCommand* source)
+{
+    return VGMCommand_isDACEnabled(source) && ((VGMCommand_getYM2612Value(source) & 0x80) == 0x00);
+}
+
 bool VGMCommand_isStream(VGMCommand* source)
 {
     return VGMCommand_isStreamControl(source) || VGMCommand_isStreamData(source) || VGMCommand_isStreamFrequency(source) || VGMCommand_isStreamStart(source) || VGMCommand_isStreamStartLong(source)
@@ -437,27 +452,33 @@ bool VGMCommand_isSame(VGMCommand* source, VGMCommand* com)
     return !memcmp(&(source->data[source->offset]), &(com->data[com->offset]), source->size);
 }
 
-bool VGMCommand_contains(List* commands, VGMCommand* command)
+bool VGMCommand_contains(LList* commands, VGMCommand* command)
 {
-    int i;
+    LList* l = commands;
 
-    for(i = 0; i < commands->size; i++)
-        if (VGMCommand_isSame(getFromList(commands, i), command))
+    while(l != NULL)
+    {
+        if (VGMCommand_isSame(l->element, command))
             return true;
+
+        l = l->next;
+    }
 
     return false;
 }
 
-VGMCommand* VGMCommand_getKeyCommand(List* commands, int channel)
+VGMCommand* VGMCommand_getKeyCommand(LList* commands, int channel)
 {
-    int i;
+    LList* l = commands;
 
-    for(i = 0; i < commands->size; i++)
+    while(l != NULL)
     {
-        VGMCommand* command = getFromList(commands, i);
+        VGMCommand* command = l->element;
 
         if (VGMCommand_isYM2612KeyWrite(command) && (VGMCommand_getYM2612KeyChannel(command) == channel))
             return command;
+
+        l = l->next;
     }
 
     return NULL;
@@ -482,17 +503,16 @@ VGMCommand* VGMCommand_createYMCommand(int port, int reg, int value)
     return result;
 }
 
-List* VGMCommand_createYMCommands(int port, int baseReg, int value)
+LList* VGMCommand_createYMCommands(int port, int baseReg, int value)
 {
-    List* result;
+    LList* result;
     int ch, op;
 
-    // allocate
-    result = createList();
+    result = NULL;
 
     for (ch = 0; ch < 3; ch++)
         for (op = 0; op < 4; op++)
-            addToList(result, VGMCommand_createYMCommand(port, baseReg + ((op & 3) << 2) + (ch & 3), value));
+            result = insertAfterLList(result, VGMCommand_createYMCommand(port, baseReg + ((op & 3) << 2) + (ch & 3), value));
 
-    return result;
+    return getHeadLList(result);
 }
