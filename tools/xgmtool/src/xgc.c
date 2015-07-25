@@ -24,6 +24,9 @@ XGM* XGC_create(XGM* xgm)
     if (!silent)
         printf("Converting to XGC...\n");
 
+    // copy pal/ntsc information
+    result->pal = xgm->pal;
+
     // simple copy for sample
     s = xgm->samples;
     d = result->samples;
