@@ -9,7 +9,7 @@ The driver supports playing SFX in PCM format with 16 priority levels, eventuall
 
 The driver has been designed and developed for SGDK (https://code.google.com/p/sgdk/) by Stephane dallongeville (2014).
 
-XGM file format specifications v1.00
+XGM file format specifications v1.01
 ------------------------------------
 Any tracker supporting the export in XGM music file format should use this document as reference.
 The produced XGM file can be compiled by the 'xgmtool' software (which is a part of SGDK) into a binary file (.bin or .xgc) ready to be played by the Z80 XGM driver.
