@@ -52,12 +52,12 @@ $00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
 $1X data   1+(X+1)    PSG register write:
                         X = number of byte to write - 1
                         data = byte data to write to PSG port ($4011)
-$2X data  1+(2X+1)    YM2612 port 0 register write:
+$2X data  1+2(X+1)    YM2612 port 0 register write:
                         X = number of register write - 1
                         data = data to write to YM2612 port 0 ($4000 and $4001)
                           entry+$00: register number
                           entry+$01: register value
-$3X data  1+(2X+1)    YM2612 port 1 register write:
+$3X data  1+2(X+1)    YM2612 port 1 register write:
                         X = number of register write - 1
                         data = data to write to YM2612 port 1 ($4002 and $4003)
                           entry+$00: register number
