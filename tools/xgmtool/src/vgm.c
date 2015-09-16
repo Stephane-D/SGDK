@@ -9,6 +9,7 @@
 #include "../inc/ym2612.h"
 #include "../inc/psg.h"
 #include "../inc/xgmtool.h"
+#include "../inc/gd3.h"
 
 #define SAMPLE_END_DELAY        400
 #define SAMPLE_MIN_SIZE         100
@@ -34,6 +35,7 @@ static int VGM_getMusicDataSize(VGM* vgm);
 VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
 {
     int ver;
+    int addr;
 
     if (strncasecmp(&data[offset + 0x00], "VGM ", 4))
     {
@@ -45,8 +47,8 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
     ver = data[offset + 8] & 0xFF;
     if (ver < 0x50)
     {
-        printf("Error: VGM version 1.%2X not supported !\n", ver);
-        return NULL;
+        printf("Warning: VGM version 1.%2X detected !\n", ver);
+        printf("PCM data won't be retrieved (version 1.5 or above required)\n");
     }
 
     if (!silent)
@@ -67,7 +69,10 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
     result->offset = offset;
 
     // start offset
-    result->offsetStart = getInt(data, offset + 0x34) + (offset + 0x34);
+    if (ver >= 0x50)
+        result->offsetStart = getInt(data, offset + 0x34) + (offset + 0x34);
+    else
+        result->offsetStart = (offset + 0x40);
     // end offset
     result->offsetEnd = getInt(data, offset + 0x04) + (offset + 0x04);
 
@@ -82,9 +87,26 @@ VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert)
     result->loopLenInSample = getInt(data, offset + 0x20);
 
     // 50 or 60 Hz
-    result->rate = getInt(data, offset + 0x24);
-    if (result->rate != 50)
+    if (ver >= 0x01)
+    {
+        result->rate = getInt(data, offset + 0x24);
+        if (result->rate != 50)
+            result->rate = 60;
+    }
+    else
+        // assume NTSC by default
         result->rate = 60;
+
+    // GD3 tags
+    addr = getInt(data, offset + 0x14);
+    if (addr)
+    {
+        // transform to absolute address
+        addr += (offset + 0x14);
+        // and get GD3 infos
+        result->gd3 = GD3_createFromData(data + addr);
+    }
+    else result->gd3 = NULL;
 
     if (!silent)
         printf("VGM duration: %d samples (%d seconds)\n", result->lenInSample, result->lenInSample / 44100);
@@ -174,6 +196,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
     LList* d;
     unsigned char* data;
     int loopOffset;
+    int time;
 
     result = malloc(sizeof(VGM));
 
@@ -194,8 +217,12 @@ VGM* VGM_createFromXGM(XGM* xgm)
     else
         result->rate = 60;
 
+    // GD3 tags
+    result->gd3 = xgm->gd3;
+
     // convert XGM commands to VGM commands
     loopOffset = -1;
+    time = 0;
     s = xgm->commands;
     d = NULL;
     while(s != NULL)
@@ -211,7 +238,11 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x63;
                 else
                     data[0] = 0x62;
-                d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+                d = insertAfterLList(d, VGMCommand_createEx(data, 0, time));
+                if (xgm->pal)
+                    time += 0x372;
+                else
+                    time += 0x2DF;
                 break;
 
             case XGM_END:
@@ -232,7 +263,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data = malloc(2);
                     data[0] = 0x50;
                     data[1] = command->data[j + 1];
-                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0, time));
                 }
                 break;
 
@@ -244,7 +275,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x52;
                     data[1] = command->data[(j * 2) + 1];
                     data[2] = command->data[(j * 2) + 2];
-                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0, time));
                 }
                 break;
 
@@ -256,7 +287,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x53;
                     data[1] = command->data[(j * 2) + 1];
                     data[2] = command->data[(j * 2) + 2];
-                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0, time));
                 }
                 break;
 
@@ -268,7 +299,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
                     data[0] = 0x52;
                     data[1] = 0x28;
                     data[2] = command->data[j + 1];
-                    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+                    d = insertAfterLList(d, VGMCommand_createEx(data, 0, time));
                 }
                 break;
         }
@@ -279,7 +310,7 @@ VGM* VGM_createFromXGM(XGM* xgm)
     // end bloc marker
     data = malloc(1);
     data[0] = 0x66;
-    d = insertAfterLList(d, VGMCommand_createEx(data, 0));
+    d = insertAfterLList(d, VGMCommand_createEx(data, 0, time));
 
     // store result
     result->commands = getHeadLList(d);
@@ -294,7 +325,8 @@ VGM* VGM_createFromXGM(XGM* xgm)
         if (command != NULL)
         {
             LList* c = VGM_getCommandElementAtTime(result, XGM_getTime(xgm, command));
-            insertAfterLList(c, VGMCommand_create(VGM_LOOP));
+            insertBeforeLList(c, VGMCommand_create(VGM_LOOP, time));
+//            insertAfterLList(c, VGMCommand_create(VGM_LOOP, time));
         }
     }
 
@@ -418,18 +450,21 @@ VGMCommand* VGM_getCommandAtTime(VGM* vgm, int time)
 static void VGM_parse(VGM* vgm)
 {
     int off;
+    int time;
     LList* commands;
 
     // parse all VGM commands
+    time = 0;
     off = vgm->offsetStart;
     commands = getTailLList(vgm->commands);
     while (off < vgm->offsetEnd)
     {
         // check for loop start
         if ((vgm->loopStart != 0) && (off == vgm->loopStart))
-            commands = insertAfterLList(commands, VGMCommand_create(VGM_LOOP));
+            commands = insertAfterLList(commands, VGMCommand_create(VGM_LOOP, time));
 
-        VGMCommand* command = VGMCommand_createEx(vgm->data, off);
+        VGMCommand* command = VGMCommand_createEx(vgm->data, off, time);
+        time += VGMCommand_getWaitValue(command);
         commands = insertAfterLList(commands, command);
         off += command->size;
 
@@ -904,11 +939,13 @@ static void VGM_cleanPlayPCMCommands(VGM* vgm)
 {
     LList* curCom;
     bool dacEnabled = false;
+    int time = 0;
 
     curCom = vgm->commands;
     while(curCom != NULL)
     {
         VGMCommand* command = curCom->element;
+        const int wait = VGMCommand_getWaitValue(command);
 
         if (VGMCommand_isDACEnabledON(command))
             dacEnabled = true;
@@ -922,18 +959,17 @@ static void VGM_cleanPlayPCMCommands(VGM* vgm)
                 // replace PCM command by simple wait command
                 if (VGMCommand_isPCM(command))
                 {
-                    const int wait = VGMCommand_getWaitValue(command);
-
                     // remove or just replace by wait command
                     if (wait == 0)
                         removeFromLList(curCom);
                     else
-                        curCom->element = VGMCommand_create(0x70 + (wait - 1));
+                        curCom->element = VGMCommand_create(0x70 + (wait - 1), time);
                 }
             }
         }
 
         curCom = curCom->next;
+        time += wait;
     }
 
     if (!silent)
@@ -945,11 +981,13 @@ static void VGM_cleanPlayPCMCommands(VGM* vgm)
 static void VGM_removeSeekAndPlayPCMCommands(VGM* vgm)
 {
     LList* curCom;
+    int time = 0;
 
     curCom = vgm->commands;
     while(curCom != NULL)
     {
         VGMCommand* command = curCom->element;
+        const int wait = VGMCommand_getWaitValue(command);
 
         // remove Seek command
         if (VGMCommand_isSeek(command))
@@ -957,16 +995,15 @@ static void VGM_removeSeekAndPlayPCMCommands(VGM* vgm)
         // replace PCM command by simple wait command
         else if (VGMCommand_isPCM(command))
         {
-            const int wait = VGMCommand_getWaitValue(command);
-
             // remove or just replace by wait command
             if (wait == 0)
                 removeFromLList(curCom);
             else
-                curCom->element = VGMCommand_create(0x70 + (wait - 1));
+                curCom->element = VGMCommand_create(0x70 + (wait - 1), time);
         }
 
         curCom = curCom->next;
+        time += wait;
     }
 
     if (!silent)
@@ -980,6 +1017,7 @@ void VGM_cleanCommands(VGM* vgm)
     LList* newCommands = NULL;
     LList* optimizedCommands = NULL;
     LList* keyOnOffCommands = NULL;
+    LList* ymCommands = NULL;
     LList* lastCommands = NULL;
 
     YM2612* ymOldState;
@@ -996,6 +1034,7 @@ void VGM_cleanCommands(VGM* vgm)
     LList* com;
 
     int cnt = 0;
+    bool hasKeyCom;
 
     startCom = vgm->commands;
     do
@@ -1016,10 +1055,14 @@ void VGM_cleanCommands(VGM* vgm)
         // clear frame sets
         deleteLList(optimizedCommands);
         deleteLList(keyOnOffCommands);
+        deleteLList(ymCommands);
         deleteLList(lastCommands);
         optimizedCommands = NULL;
         keyOnOffCommands = NULL;
+        ymCommands = NULL;
         lastCommands = NULL;
+
+        hasKeyCom = false;
 
         // startCom --> endCom contains commands for a single frame
         com = startCom;
@@ -1034,9 +1077,38 @@ void VGM_cleanCommands(VGM* vgm)
                 PSG_write(psgState, VGMCommand_getPSGValue(command));
             else if (VGMCommand_isYM2612Write(command))
             {
-                // write to YM state and store key on/off command
-                if (YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command)))
+                // key write ? --> always store
+                if (VGMCommand_isYM2612KeyWrite(command))
+                {
                     keyOnOffCommands = insertAfterLList(keyOnOffCommands, command);
+                    hasKeyCom = true;
+                }
+                // other write
+                else
+                {
+                    // need accurate order of key event / register write so we transfer commands now
+                    if (hasKeyCom)
+                    {
+                        keyOnOffCommands = getHeadLList(keyOnOffCommands);
+
+                        // add frame commands for delta YM
+                        ymCommands = insertAllAfterLList(ymCommands, YM2612_getDelta(ymOldState, ymState));
+                        // add frame commands for key on/off
+                        ymCommands = insertAllAfterLList(ymCommands, keyOnOffCommands);
+
+                        deleteLList(keyOnOffCommands);
+                        keyOnOffCommands = NULL;
+
+                        // update state
+                        ymOldState = ymState;
+                        ymState = YM2612_copy(ymOldState);
+
+                        hasKeyCom = false;
+                    }
+                }
+
+                // write to YM state
+                YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
             }
             else if (VGMCommand_isWait(command) || VGMCommand_isSeek(command))
                 lastCommands = insertAfterLList(lastCommands, command);
@@ -1092,6 +1164,11 @@ void VGM_cleanCommands(VGM* vgm)
         }
 
         // get back to head of list
+        ymCommands = getHeadLList(ymCommands);
+        // send first merged YM commands
+        optimizedCommands = insertAllAfterLList(optimizedCommands, ymCommands);
+
+        // get back to head of list
         keyOnOffCommands = getHeadLList(keyOnOffCommands);
         lastCommands = getHeadLList(lastCommands);
 
@@ -1117,7 +1194,7 @@ void VGM_cleanCommands(VGM* vgm)
     }
     while ((endCom != NULL) && !VGMCommand_isEnd(command));
 
-    newCommands = insertAfterLList(newCommands, VGMCommand_create(VGM_END));
+    newCommands = insertAfterLList(newCommands, VGMCommand_create(VGM_END, -1));
 
     vgm->commands = getHeadLList(newCommands);
 
@@ -1252,26 +1329,29 @@ void VGM_convertWaits(VGM* vgm)
     // -15%
     const double minLimit = limit - ((limit * 15) / 100);
     const int comWait = (vgm->rate == 60) ? VGM_WAIT_NTSC_FRAME : VGM_WAIT_PAL_FRAME;
-
     double sampleCnt = 0;
+    int time = 0;
+
     LList* c = vgm->commands;
     while(c != NULL)
     {
         VGMCommand* command = c->element;
+        const int wait = VGMCommand_getWaitValue(command);
 
         // add no wait command
         if (!VGMCommand_isWait(command))
             newCommands = insertAfterLList(newCommands, command);
         else
-            sampleCnt += VGMCommand_getWaitValue(command);
+            sampleCnt += wait;
 
         while (sampleCnt > minLimit)
         {
-            newCommands = insertAfterLList(newCommands, VGMCommand_create(comWait));
+            newCommands = insertAfterLList(newCommands, VGMCommand_create(comWait, time));
             sampleCnt -= limit;
         }
 
         c = c->next;
+        time += wait;
     }
 
     // set new commands
@@ -1284,58 +1364,122 @@ void VGM_convertWaits(VGM* vgm)
     }
 }
 
-//void VGM_shiftSamples(VGM* vgm, int sft)
-//{
-//    int i;
+void VGM_fixKeyCommands(VGM* vgm)
+{
+    LList* commands;
+    LList* delayedCommands;
+    // maximum delta time allowed for key command (1/4 of frame)
+    const int maxDelta = (44100 / vgm->rate) / 4;
+    int keyOffTime[6];
+    int keyOnTime[6];
+    int frame, i;
+
+    delayedCommands = NULL;
+    for(i = 0; i < 6; i++)
+    {
+        keyOffTime[i] = -1;
+        keyOnTime[i] = -1;
+    }
+
+    // this method should be called after waits has been converted to frame wait
+    frame = 0;
+    commands = vgm->commands;
+    while(commands != NULL)
+    {
+        VGMCommand* command = commands->element;
+
+        // new frame
+        if (VGMCommand_isWait(command))
+        {
+            // some delayed commands ?
+            if (delayedCommands != NULL)
+            {
+                // insert them right after
+                commands = insertAllAfterLList(commands, delayedCommands);
+                deleteLList(delayedCommands);
+                delayedCommands = NULL;
+            }
+
+            // reset key traces
+            for(i = 0; i < 6; i++)
+            {
+                keyOffTime[i] = -1;
+                keyOnTime[i] = -1;
+            }
+
+            frame++;
+        }
+        else
+        {
+            if (VGMCommand_isYM2612KeyWrite(command))
+            {
+                const int ch = VGMCommand_getYM2612KeyChannel(command);
+
+                if (ch != -1)
+                {
+                    // key off command ?
+                    if (VGMCommand_isYM2612KeyOffWrite(command))
+                    {
+                        keyOffTime[ch] = command->time;
+
+                        // previous key on in same frame ?
+                        if (keyOnTime[ch] != -1)
+                        {
+                            // delta time with previous key on is > max delta --> delayed key Off command
+                            if ((command->time != -1) && ((command->time - keyOnTime[ch]) > maxDelta))
+                            {
+                                if (delayKeyOff)
+                                {
+                                    if (!silent)
+                                        printf("Warning: CH%d delayed key Off command at frame %d\n", ch, frame);
+
+                                    // remove command from list
+                                    removeFromLList(commands);
+
+                                    // add to delayed only if we don't already have delayed key off for this channel
+                                    if (VGMCommand_getKeyOffCommand(getHeadLList(delayedCommands), ch) == NULL)
+                                        delayedCommands = insertAfterLList(delayedCommands, command);
+                                }
+                                else if (!silent)
+                                {
+                                    printf("Warning: CH%d both key on/off events occurs in the frame %d, you may have missing or incorrect instrument sound.", ch, frame);
+                                    printf("You can try to use the -kf switch to improve the conversion.\n");
+                                }
+                            }
+                        }
+                    }
+                    // key on command ?
+                    else
+                    {
+                        keyOnTime[ch] = command->time;
+
+                        // not a good idea to delay key on
+
+//                        // previous key off in same frame ?
+//                        if (keyOffTime[ch] != -1)
+//                        {
+//                            // delta time with previous key off is > max delta --> delayed key on command
+//                            if ((command->time != -1) && ((command->time - keyOffTime[ch]) > maxDelta))
+//                            {
+//                                if (!silent)
+//                                    printf("Warning: delayed key on ch%d command at frame %d\n", ch, frame);
 //
-//    if (sft == 0)
-//        return;
+//                                // remove command from list
+//                                removeFromLList(commands);
 //
-//    LList* sampleCommands[sft];
-//
-//    for (i = 0; i < sft; i++)
-//        sampleCommands[i] = NULL;
-//
-//    int frameRead = 0;
-//    int frameWrite = 1;
-//    LList* c = getTailLList(vgm->commands);
-//    while (c != NULL)
-//    {
-//        VGMCommand* command = c->element;
-//
-//        if (VGMCommand_isStream(command))
-//        {
-//            sampleCommands[frameRead] = insertAfterLList(sampleCommands[frameRead], command);
-//            removeFromLList(c);
-//        }
-//        else if (VGMCommand_isWait(command) || VGMCommand_isEnd(command))
-//        {
-//            frameRead = (frameRead + 1) % sft;
-//            frameWrite = (frameWrite + 1) % sft;
-//
-//            // add sample command to this frame
-//            while (sampleCommands[frameWrite] != NULL)
-//            {
-//                // insert and by-pass
-//                c = insertBeforeLList(c, sampleCommands[frameWrite]->element);
-//                sampleCommands[frameWrite] = removeFromLList(sampleCommands[frameWrite]);
-//            }
-//        }
-//
-//        c = c->prev;
-//    }
-//
-//    // add last remaining samples
-//    for (i = 0; i < sft; i++)
-//    {
-//        while (sampleCommands[i] != NULL)
-//        {
-//            // insert and update list head
-//            vgm->commands = insertBeforeLList(vgm->commands, sampleCommands[i]->element);
-//            sampleCommands[i] = removeFromLList(sampleCommands[frameWrite]);
-//        }
-//    }
-//}
+//                                // add to delayed only if we don't already have delayed key on for this channel
+//                                if (VGMCommand_getKeyOnCommand(getHeadLList(delayedCommands), ch) == NULL)
+//                                    delayedCommands = insertAfterLList(delayedCommands, command);
+//                            }
+//                        }
+                    }
+                }
+            }
+        }
+
+        commands = commands->next;
+    }
+}
 
 static int VGM_getSampleDataSize(VGM* vgm)
 {
@@ -1415,6 +1559,7 @@ static int VGM_getMusicDataSize(VGM* vgm)
 unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
 {
     int i;
+    int gd3Offset;
     unsigned char byte;
     FILE* f = fopen("tmp.bin", "wb+");
 
@@ -1557,6 +1702,15 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
         l = l->next;
     }
 
+    // write GD3 tags if present
+    if (vgm->gd3)
+    {
+        // get GD3 offset
+        gd3Offset = getFileSizeEx(f);
+        unsigned char* data = GD3_asByteArray(vgm->gd3, &i);
+        fwrite(data, 1, i, f);
+    }
+
     unsigned char* array = inEx(f, 0, getFileSizeEx(f), outSize);
 
     fclose(f);
@@ -1567,6 +1721,10 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
         setInt(array, 0x1C, loopOffset);
         setInt(array, 0x20, VGM_computeLenEx(vgm, loopCommand));
     }
+    // set GD3 offset
+    if (vgm->gd3)
+        setInt(array, 0x14, gd3Offset - 0x14);
+
     // set file size
     setInt(array, 0x04, *outSize - 4);
     // set len in sample

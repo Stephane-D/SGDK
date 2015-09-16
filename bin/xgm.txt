@@ -17,32 +17,42 @@ The normal file extension for XGM file is .xgm but it can eventually be compress
 
 File format (multi bytes value are in little endian format)
 -----------------------------------------------------------
-Address    Size    Description
-$0000         4    XGM file ident, should be "XGM "
-$0004       252    Sample id table.
-                     This table contain the address and the size for all sample (maximum = 63 samples)
-                     Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
-                       entry+$0: sample address / 256
-                       entry+$2: sample size / 256
-                     We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
-                     The sample address is relative to the start of the "Sample Data Bloc" (field $104).
-                     An empty entry should have its address set to $FFFF and size set to $0001.
-$0100         2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
-                     We will reference the value of this field as SLEN.
-$0102         1    Version information (0 currently)                 
-$0103         1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
-                     This field is used to determine how interpret the frame wait command.
-                     In NTSC mode a frame wait command is equivalent to 1/60 of second.
-                     In PAL mode a frame wait command is equivalent to 1/50 of second.
-                   bit #1 - bit #7: reserved for future use
-$0104      SLEN    Sample data bloc, contains all sample data (8 bits signed format)
-                     The size of this bloc is variable and is determined by the field $100.
-                     If field $100 contains $0000 the bloc is empty and the field is ignored.
-                     As explained in the 'Sample id table' field, sample size is aligned on 256 bytes.
-$0104+SLEN    4    Music data bloc size.
-                     We will reference the value of this field as MLEN.
-                     This fields may be used later to quickly browse multi track XGM file.
-$0108+SLEN MLEN    Music data bloc. It contains the XGM music data (see the XGM command description below).
+Address            Size    Description
+$0000                 4    XGM file ident, should be "XGM "
+$0004               252    Sample id table.
+                             This table contain the address and the size for all sample (maximum = 63 samples)
+                             Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
+                               entry+$0: sample address / 256
+                               entry+$2: sample size / 256
+                             We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
+                             The sample address is relative to the start of the "Sample Data Bloc" (field $104).
+                             An empty entry should have its address set to $FFFF and size set to $0001.
+$0100                 2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
+                             We will reference the value of this field as SLEN.
+$0102                 1    Version information (0x01 currently)                 
+$0103                 1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
+                             This field is used to determine how interpret the frame wait command.
+                             In NTSC mode a frame wait command is equivalent to 1/60 of second.
+                             In PAL mode a frame wait command is equivalent to 1/50 of second.
+                           bit #1: GD3 tags: 0=No 1=Yes
+                             If present the tags are located right after music data (address = $108+SLEN+MLEN)
+                           bit #2: Multi track file: 0=No 1=Yes
+                             When we have a multi track file, next track data can be found at the end of current music data.
+                             Next track data directly starts on 'Music data bloc size' field (MLEN) means samples are shared
+                             between all tracks. Depending the presence of GD3 tags, the next music data are located at
+                             ($108+SLEN+MLEN) or ($108+SLEN+MLEN+ size of GD3 tags)
+                           bit #3 - bit #7: reserved for future use
+$0104              SLEN    Sample data bloc, contains all sample data (8 bits signed format)
+                             The size of this bloc is variable and is determined by the field $100.
+                             If field $100 contains $0000 the bloc is empty and the field is ignored.
+                             As explained in the 'Sample id table' field, sample size is aligned on 256 bytes.
+$0104+SLEN            4    Music data bloc size.
+                             We will reference the value of this field as MLEN.
+                             This fields may be used later to quickly browse multi track XGM file.
+$0108+SLEN         MLEN    Music data bloc. It contains the XGM music data (see the XGM command description below).
+
+-----------------------    The following part is optional depending the presence of the GD3 infos (see field $0103)
+$0108+SLEN+MLEN    XXXX    GD3 tags (you can find GD3 format spec on http://www.smspower.org/uploads/Music/gd3spec100.txt)
 
 
 XGM command description

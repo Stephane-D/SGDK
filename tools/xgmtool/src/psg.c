@@ -166,7 +166,7 @@ static VGMCommand* PSG_createLowWriteCommand(PSG* psg, int ind, int typ, int val
     unsigned char* data = malloc(2);
     data[0] = VGM_WRITE_SN76489;
     data[1] = 0x80 | (ind << 5) | (typ << 4) | (value & 0xF);
-    return VGMCommand_createEx(data, 0);
+    return VGMCommand_createEx(data, 0, -1);
 }
 
 static LList* PSG_createWriteCommands(PSG* psg, int ind, int typ, int value)
@@ -178,14 +178,14 @@ static LList* PSG_createWriteCommands(PSG* psg, int ind, int typ, int value)
     data = malloc(2);
     data[0] = VGM_WRITE_SN76489;
     data[1] = 0x80 | (ind << 5) | (typ << 4) | (value & 0xF);
-    result = insertAfterLList(result, VGMCommand_createEx(data, 0));
+    result = insertAfterLList(result, VGMCommand_createEx(data, 0, -1));
 
     if ((typ == 0) && (ind != 3))
     {
         data = malloc(2);
         data[0] = VGM_WRITE_SN76489;
         data[1] = 0x00 | ((value >> 4) & 0x3F);
-        result = insertAfterLList(result, VGMCommand_createEx(data, 0));
+        result = insertAfterLList(result, VGMCommand_createEx(data, 0, -1));
     }
 
     return getHeadLList(result);

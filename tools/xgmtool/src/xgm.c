@@ -4,11 +4,14 @@
 
 #include "../inc/xgm.h"
 #include "../inc/vgm.h"
+#include "../inc/xgccom.h"
 #include "../inc/xgmtool.h"
+#include "../inc/gd3.h"
 
 
 // forward
 static void XGM_parseMusic(XGM* xgm, unsigned char* data, int length);
+static void XGM_parseMusicFromXGC(XGM* xgc, unsigned char* data, int length);
 static void XGM_extractSamples(XGM* xgm, VGM* vgm);
 static void XGM_extractMusic(XGM* xgm, VGM* vgm);
 
@@ -21,6 +24,8 @@ XGM* XGM_create()
 
     result->samples = NULL;
     result->commands = NULL;
+    result->gd3 = NULL;
+    result->xd3 = NULL;
     result->pal = -1;
 
     return result;
@@ -80,6 +85,65 @@ XGM* XGM_createFromData(unsigned char* data, int dataSize)
     if (!silent)
         printf("XGM duration: %d frames (%d seconds)\n", XGM_computeLenInFrame(result), XGM_computeLenInSecond(result));
 
+    // GD3 tags ?
+    if (data[0x103] & 2)
+        result->gd3 = GD3_createFromData(data + offset + 4 + len);
+
+    return result;
+}
+
+XGM* XGM_createFromXGCData(unsigned char* data, int dataSize)
+{
+    int s;
+    XGM* result = XGM_create();
+
+    if (!silent)
+        printf("Parsing XGM from XGC file...\n");
+
+    // sample id table
+    LList* samples = NULL;
+    for (s = 0; s < 0x3F; s++)
+    {
+        int offset = getInt16(data, (s * 4) + 0);
+        int len = getInt16(data, (s * 4) + 2);
+
+        // ignore empty sample
+        if ((offset != 0xFFFF) && (len != 0x0100))
+        {
+            offset <<= 8;
+            len <<= 8;
+
+            // add sample
+            samples = insertAfterLList(samples, XGMSample_create(s + 1, data + (offset + 0x104), len, offset));
+        }
+    }
+
+    result->samples = getHeadLList(samples);
+
+    // calculate music data offset (sample block size + 0x100)
+    int offset = (getInt16(data, 0xFC) << 8) + 0x100;
+    // int version = data[0xFE];
+    result->pal = data[0xFF] & 1;
+
+    // get music data length
+    int len = getInt(data, offset);
+
+    if (verbose)
+    {
+        printf("XGM sample number: %d\n", getSizeLList(result->samples));
+        printf("XGM start music data: %6X  len: %d\n", offset + 4, len);
+    }
+
+    // build command list
+    XGM_parseMusicFromXGC(result, data + offset + 4, len);
+
+    if (!silent)
+        printf("XGM duration: %d frames (%d seconds)\n", XGM_computeLenInFrame(result), XGM_computeLenInSecond(result));
+
+    // GD3 tags ?
+//    if (data[0xFF] & 2)
+  //      result->gd3 = XD3_createFromData(data + offset + 4 + len);
+
     return result;
 }
 
@@ -96,6 +160,8 @@ XGM* XGM_createFromVGM(VGM* vgm)
         result->pal = 1;
     else
         result->pal = -1;
+
+    result->gd3 = vgm->gd3;
 
     // extract samples from VGM
     XGM_extractSamples(result, vgm);
@@ -156,6 +222,45 @@ static void XGM_parseMusic(XGM* xgm, unsigned char* data, int length)
         printf("Number of command: %d\n", getSizeLList(xgm->commands));
 }
 
+static void XGM_parseMusicFromXGC(XGM* xgm, unsigned char* data, int length)
+{
+    // build command list
+   int off;
+
+    // parse all XGM commands
+    off = 0;
+    LList* commands = xgm->commands;
+    while (off < length)
+    {
+        // get frame size
+        int size = data[off++] - 1;
+
+        while(size > 0)
+        {
+            XGMCommand* command = XGCCommand_createFromData(data + off);
+
+            // add command if not state command
+            if (!XGCCommand_isState(command) && !XGCCommand_isFrameSkip(command))
+                commands = insertAfterLList(commands, command);
+
+            off += command->size;
+            size -= command->size;
+        }
+
+        // add frame end command
+        commands = insertAfterLList(commands, XGMCommand_createFrameCommand());
+
+        // stop here
+//        if (XGMCommand_isEnd(command))
+//            break;
+    }
+
+    xgm->commands = getHeadLList(commands);
+
+    if (!silent)
+        printf("Number of command: %d\n", getSizeLList(xgm->commands));
+}
+
 static void XGM_extractSamples(XGM* xgm, VGM* vgm)
 {
     int index;
@@ -195,8 +300,7 @@ static void XGM_extractSamples(XGM* xgm, VGM* vgm)
 static void XGM_extractMusic(XGM* xgm, VGM* vgm)
 {
     LList* frameCommands = NULL;
-    LList* ymKeyOffCommands = NULL;
-    LList* ymKeyOtherCommands = NULL;
+    LList* ymKeyCommands = NULL;
     LList* ymPort0Commands = NULL;
     LList* ymPort1Commands = NULL;
     LList* psgCommands = NULL;
@@ -205,7 +309,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
     LList* xgmCommands = NULL;
 
     int loopOffset = -1;
-    bool lastCommWasKey;
+    bool hasKeyCom;
 
     LList* vgmCom = vgm->commands;
     while (vgmCom != NULL)
@@ -255,20 +359,18 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
         xgmCommands = NULL;
 
         // group commands
-        deleteLList(ymKeyOffCommands);
-        deleteLList(ymKeyOtherCommands);
+        deleteLList(ymKeyCommands);
         deleteLList(ymPort0Commands);
         deleteLList(ymPort1Commands);
         deleteLList(psgCommands);
         deleteLList(sampleCommands);
-        ymKeyOffCommands = NULL;
-        ymKeyOtherCommands = NULL;
+        ymKeyCommands = NULL;
         ymPort0Commands = NULL;
         ymPort1Commands = NULL;
         psgCommands = NULL;
         sampleCommands = NULL;
 
-        lastCommWasKey = false;
+        hasKeyCom = false;
 
         LList* com = getHeadLList(frameCommands);
         while(com != NULL)
@@ -281,69 +383,36 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
                 psgCommands = insertAfterLList(psgCommands, command);
             else if (VGMCommand_isYM2612KeyWrite(command))
             {
-                if (VGMCommand_isYM2612KeyOffWrite(command))
-                {
-                    if (!VGMCommand_contains(getHeadLList(ymKeyOffCommands), command))
-                        ymKeyOffCommands = insertAfterLList(ymKeyOffCommands, command);
-                }
-                else
-                {
-                    VGMCommand* previousCommand = VGMCommand_getKeyCommand(getHeadLList(ymKeyOtherCommands),
-                            VGMCommand_getYM2612KeyChannel(command));
-
-                    // change command with last one
-                    if (previousCommand != NULL)
-                        previousCommand->data[previousCommand->offset + 2] = command->data[command->offset + 2];
-                    else
-                        ymKeyOtherCommands = insertAfterLList(ymKeyOtherCommands, command);
-                }
-
-                lastCommWasKey = true;
+                // keep all key commands
+                ymKeyCommands = insertAfterLList(ymKeyCommands, command);
+                hasKeyCom = true;
             }
             else if (VGMCommand_isYM2612Write(command))
             {
-                // need accurate key event so we transfer commands now
-                if (lastCommWasKey)
+                // need accurate order of key event / register write so we transfer commands now
+                if (hasKeyCom)
                 {
                     ymPort0Commands = getHeadLList(ymPort0Commands);
                     ymPort1Commands = getHeadLList(ymPort1Commands);
-                    ymKeyOffCommands = getHeadLList(ymKeyOffCommands);
-                    ymKeyOtherCommands = getHeadLList(ymKeyOtherCommands);
-                    psgCommands = getHeadLList(psgCommands);
-                    sampleCommands = getHeadLList(sampleCommands);
+                    ymKeyCommands = getHeadLList(ymKeyCommands);
 
                     // general YM commands first as key event were just done
                     if (ymPort0Commands != NULL)
                         xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort0Commands(ymPort0Commands));
                     if (ymPort1Commands != NULL)
                         xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort1Commands(ymPort1Commands));
-                    // then key off first
-                    if (ymKeyOffCommands != NULL)
-                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOffCommands));
-                    // followed by key on commands
-                    if (ymKeyOtherCommands != NULL)
-                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOtherCommands));
-                    // then PSG commands
-                    if (psgCommands != NULL)
-                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
-                    // and finally PCM commands
-                    if (sampleCommands != NULL)
-                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
+                    // then key commands
+                    if (ymKeyCommands != NULL)
+                        xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyCommands));
 
-                    deleteLList(ymKeyOffCommands);
-                    deleteLList(ymKeyOtherCommands);
                     deleteLList(ymPort0Commands);
                     deleteLList(ymPort1Commands);
-                    deleteLList(psgCommands);
-                    deleteLList(sampleCommands);
-                    ymKeyOffCommands = NULL;
-                    ymKeyOtherCommands = NULL;
+                    deleteLList(ymKeyCommands);
                     ymPort0Commands = NULL;
                     ymPort1Commands = NULL;
-                    psgCommands = NULL;
-                    sampleCommands = NULL;
+                    ymKeyCommands = NULL;
 
-                    lastCommWasKey = false;
+                    hasKeyCom = false;
                 }
 
                 if (VGMCommand_isYM2612Port0Write(command))
@@ -362,8 +431,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
 
         ymPort0Commands = getHeadLList(ymPort0Commands);
         ymPort1Commands = getHeadLList(ymPort1Commands);
-        ymKeyOffCommands = getHeadLList(ymKeyOffCommands);
-        ymKeyOtherCommands = getHeadLList(ymKeyOtherCommands);
+        ymKeyCommands = getHeadLList(ymKeyCommands);
         psgCommands = getHeadLList(psgCommands);
         sampleCommands = getHeadLList(sampleCommands);
 
@@ -372,12 +440,9 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
             xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort0Commands(ymPort0Commands));
         if (ymPort1Commands != NULL)
             xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMPort1Commands(ymPort1Commands));
-        // then key off first
-        if (ymKeyOffCommands != NULL)
-            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOffCommands));
-        // followed by key on commands
-        if (ymKeyOtherCommands != NULL)
-            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyOtherCommands));
+        // then key commands
+        if (ymKeyCommands != NULL)
+            xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createYMKeyCommands(ymKeyCommands));
         // then PSG commands
         if (psgCommands != NULL)
             xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPSGCommands(psgCommands));
@@ -764,10 +829,15 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
         xgm->pal = 0;
 
     // 0102: XGM version
-    byte = 0x00;
+    byte = 0x01;
     fwrite(&byte, 1, 1, f);
-    // 0103: b0=NTSC/PAL others=reserved
-    byte = xgm->pal & 1;
+    // 0103
+    byte = 0x00;
+    // b0=NTSC/PAL
+    byte |= xgm->pal?1:0;
+    // b1=GD3 tags
+    byte |= (xgm->gd3 != NULL)?2:0;
+    // b2=multi track, others=reserved
     fwrite(&byte, 1, 1, f);
 
     // 0104-XXXX: sample data
@@ -799,6 +869,13 @@ unsigned char* XGM_asByteArray(XGM* xgm, int *outSize)
         XGMCommand* command = l->element;
         fwrite(command->data, 1, command->size, f);
         l = l->next;
+    }
+
+    // XXXX+0004+MLEN: GD3 tags if present
+    if (xgm->gd3)
+    {
+        unsigned char* data = GD3_asByteArray(xgm->gd3, &i);
+        fwrite(data, 1, i, f);
     }
 
     unsigned char* result = inEx(f, 0, getFileSizeEx(f), outSize);

@@ -3,6 +3,7 @@
 
 #include "samplebank.h"
 #include "vgmcom.h"
+#include "gd3.h"
 
 
 typedef struct
@@ -24,6 +25,8 @@ typedef struct
     int loopLenInSample;
 
     int rate;
+
+    GD3* gd3;
 } VGM;
 
 
@@ -44,6 +47,7 @@ LList* VGM_getCommandElementAtTime(VGM* vgm, int time);
 VGMCommand* VGM_getCommandAtTime(VGM* vgm, int time);
 void VGM_cleanCommands(VGM* vgm);
 void VGM_cleanSamples(VGM* vgm);
+void VGM_fixKeyCommands(VGM* vgm);
 //Sample* VGM_getSample(VGM* vgm, int sampleOffset, int len);
 Sample* VGM_getSample(VGM* vgm, int sampleOffset);
 void VGM_convertWaits(VGM* vgm);

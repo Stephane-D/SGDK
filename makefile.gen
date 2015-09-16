@@ -51,7 +51,7 @@ OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
-OBJS = $(addprefix out/, $(OBJ))
+OBJS= $(addprefix out/, $(OBJ))
 
 INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
 DEFAULT_FLAGS= -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
@@ -60,29 +60,41 @@ FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 #release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
+release: LIBMD= $(LIB)/libmd.a
 release: out/rom.bin
 
 debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
+debug: LIBMD= $(LIB)/libmd_debug.a
 debug: out/rom.bin out/rom.out out/symbol.txt
 
 
 all: release
 default: release
 
+Default: release
+Debug: debug
+Release: release
+
 .PHONY: clean
 
 
-clean:
-	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
-
-cleanrelease:
-	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
-
-cleandebug:
-	$(RM) -f $(OBJS) out.lst out/cmd_ out/sega.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin out/symbol.txt
-
 cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
+
+clean: cleanobj
+	$(RM) -f out.lst out/cmd_ out/rom.nm out/rom.wch out/rom.bin
+
+cleanrelease: clean
+
+cleandebug: clean
+	$(RM) -f  out/symbol.txt
+
+
+cleandefault: clean
+cleanDefault: clean
+cleanRelease: cleanrelease
+cleanDebug: cleandebug
+
 
 out/rom.bin: out/rom.out
 	$(OBJCPY) -O binary out/rom.out out/rom.bin
@@ -91,8 +103,8 @@ out/rom.bin: out/rom.out
 out/symbol.txt: out/rom.out
 	$(NM) out/rom.out > out/symbol.txt
 
-out/rom.out: out/sega.o out/cmd_ $(LIB)/libmd.a
-	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
+out/rom.out: out/sega.o out/cmd_ $(LIBMD)
+	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIB)/libgcc.a -o out/rom.out
 	$(RM) out/cmd_
 
 out/cmd_: $(OBJS)

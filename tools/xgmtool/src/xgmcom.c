@@ -418,6 +418,7 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
     else
     {
         // assume stop command by default
+        prio = 3;
         data[1] = 0;
         return XGMCommand_create(data, 2);
     }

@@ -9,6 +9,7 @@
 #include "../inc/ym2612.h"
 #include "../inc/psg.h"
 #include "../inc/xgmtool.h"
+#include "../inc/gd3.h"
 
 
 // forward
@@ -26,6 +27,13 @@ XGM* XGC_create(XGM* xgm)
 
     // copy pal/ntsc information
     result->pal = xgm->pal;
+    // copy GD3 tags
+    if (xgm->gd3)
+    {
+        result->gd3 = xgm->gd3;
+        // convert to XD3 here
+        result->xd3 = XD3_createFromGD3(xgm->gd3);
+    }
 
     // simple copy for sample
     s = xgm->samples;
@@ -76,10 +84,10 @@ XGM* XGC_create(XGM* xgm)
 
 static void XGC_extractMusic(XGM* xgc, XGM* xgm)
 {
-    LList* vgmCommands;
     LList* frameCommands = NULL;
-    LList* ymCommands = NULL;
+    LList* ymOtherCommands = NULL;
     LList* ymKeyCommands = NULL;
+    LList* ymCommands = NULL;
     LList* psgCommands = NULL;
     LList* otherCommands = NULL;
     LList* newCommands = NULL;
@@ -92,76 +100,15 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
     YM2612* ymOldState;
     YM2612* ymState;
     int j, size;
+    int time;
+    bool hasKeyCom;
 
+    time = 0;
     ymOldState = YM2612_create();
     ymState = YM2612_create();
 
-    // reset frame
-    xgcCommands = createElement(XGCCommand_createFrameSizeCommand(0));
-
-    // TL / D1L / RR set to max
-    vgmCommands = NULL;
-    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(0, 0x40, 0x7F));
-    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(0, 0x80, 0xFF));
-    vgmCommands = getHeadLList(vgmCommands);
-
-    xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_convert(XGMCommand_createYMPort0Commands(vgmCommands)));
-
-    // set ym state
-    com = vgmCommands;
-    while(com != NULL)
-    {
-        VGMCommand* command = com->element;
-        YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
-        com = com->next;
-    }
-
-    deleteLList(vgmCommands);
-    vgmCommands = NULL;
-    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(1, 0x40, 0x7F));
-    vgmCommands = insertAllAfterLList(vgmCommands, VGMCommand_createYMCommands(1, 0x80, 0xFF));
-    vgmCommands = getHeadLList(vgmCommands);
-
-    xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_convert(XGMCommand_createYMPort1Commands(vgmCommands)));
-
-    // set ym state
-    com = vgmCommands;
-    while(com != NULL)
-    {
-        VGMCommand* command = com->element;
-        YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
-        com = com->next;
-    }
-
-    // key off for all channels
-    deleteLList(vgmCommands);
-    vgmCommands = NULL;
-    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x00));
-    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x01));
-    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x02));
-    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x04));
-    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x05));
-    vgmCommands = insertAfterLList(vgmCommands, VGMCommand_createYMCommand(0, 0x28, 0x06));
-    vgmCommands = getHeadLList(vgmCommands);
-
-    xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_convert(XGMCommand_createYMKeyCommands(vgmCommands)));
-
-    // set ym state
-    com = vgmCommands;
-    while(com != NULL)
-    {
-        VGMCommand* command = com->element;
-        YM2612_set(ymState, VGMCommand_getYM2612Port(command), VGMCommand_getYM2612Register(command), VGMCommand_getYM2612Value(command));
-        com = com->next;
-    }
-
-    stateChange = XGC_getStateChange(ymState, ymOldState);
-    // add the state commands if no empty
-    if (stateChange != NULL)
-        xgcCommands = insertAllAfterLList(xgcCommands, XGCCommand_createStateCommands(stateChange));
-
     // add 3 dummy frames (reserve frame space for PCM shift)
-    xgcCommands = insertAfterLList(xgcCommands, XGCCommand_createFrameSizeCommand(0));
+    xgcCommands = createElement(XGCCommand_createFrameSizeCommand(0));
     xgcCommands = insertAfterLList(xgcCommands, XGCCommand_createFrameSizeCommand(0));
     xgcCommands = insertAfterLList(xgcCommands, XGCCommand_createFrameSizeCommand(0));
 
@@ -213,14 +160,18 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
         newCommands = createElement(sizeCommand);
 
         // group commands
-        deleteLList(ymCommands);
+        deleteLList(ymOtherCommands);
         deleteLList(ymKeyCommands);
+        deleteLList(ymCommands);
         deleteLList(psgCommands);
         deleteLList(otherCommands);
-        ymCommands = NULL;
+        ymOtherCommands = NULL;
         ymKeyCommands = NULL;
+        ymCommands = NULL;
         psgCommands = NULL;
         otherCommands = NULL;
+
+        hasKeyCom = false;
 
         tmpCom = frameCommands;
         while(tmpCom != NULL)
@@ -230,9 +181,33 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             if (XGMCommand_isPSGWrite(command))
                 psgCommands = insertAfterLList(psgCommands, command);
             else if (XGMCommand_isYM2612RegKeyWrite(command))
+            {
                 ymKeyCommands = insertAfterLList(ymKeyCommands, command);
+                hasKeyCom = true;
+            }
             else if (XGMCommand_isYM2612Write(command))
             {
+                // need accurate order of key event / register write so we cumulate YM commands now
+                if (hasKeyCom)
+                {
+                    ymOtherCommands = getHeadLList(ymOtherCommands);
+                    ymKeyCommands = getHeadLList(ymKeyCommands);
+
+                    // general YM commands first as key event were just done
+                    if (ymOtherCommands != NULL)
+                        ymCommands = insertAllAfterLList(ymCommands, XGCCommand_convert(ymOtherCommands));
+                    // then key commands
+                    if (ymKeyCommands != NULL)
+                        ymCommands = insertAllAfterLList(ymCommands, XGCCommand_convert(ymKeyCommands));
+
+                    deleteLList(ymOtherCommands);
+                    deleteLList(ymKeyCommands);
+                    ymOtherCommands = NULL;
+                    ymKeyCommands = NULL;
+
+                    hasKeyCom = false;
+                }
+
                 // update YM state
                 for (j = 0; j < XGMCommand_getYM2612WriteCount(command); j++)
                 {
@@ -244,7 +219,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
 
                 // remove all $2B register writes (DAC enable is done automatically)
                 if (XGMCommand_removeYM2612RegWrite(command, 0, 0x2B))
-                    ymCommands = insertAfterLList(ymCommands, command);
+                    ymOtherCommands = insertAfterLList(ymOtherCommands, command);
             }
             else
                 otherCommands = insertAfterLList(otherCommands, command);
@@ -295,21 +270,28 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             tmpCom = tmpCom->prev;
         }
 
+        // merge YM commands
+        ymOtherCommands = getHeadLList(ymOtherCommands);
+        ymKeyCommands = getHeadLList(ymKeyCommands);
+
+        // general YM commands first as key event were just done
+        if (ymOtherCommands != NULL)
+            ymCommands = insertAllAfterLList(ymCommands, XGCCommand_convert(ymOtherCommands));
+        // then key commands
+        if (ymKeyCommands != NULL)
+            ymCommands = insertAllAfterLList(ymCommands, XGCCommand_convert(ymKeyCommands));
+
         psgCommands = getHeadLList(psgCommands);
         ymCommands = getHeadLList(ymCommands);
-        ymKeyCommands = getHeadLList(ymKeyCommands);
         otherCommands = getHeadLList(otherCommands);
 
         // PSG commands first as PSG require main BUS access (DMA contention)
         if (psgCommands != NULL)
             newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(psgCommands));
-        // then general YM commands
+        // then YM commands (already transformed in XGC command)
         if (ymCommands != NULL)
-            newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(ymCommands));
-        // then key commands
-        if (ymKeyCommands != NULL)
-            newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(ymKeyCommands));
-        // and finally others commands
+            newCommands = insertAllAfterLList(newCommands, ymCommands);
+        // and finally others commands (PCM)
         if (otherCommands != NULL)
             newCommands = insertAllAfterLList(newCommands, XGCCommand_convert(otherCommands));
 
@@ -356,9 +338,11 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
                 // insert new frame size info
                 sizeCommand = XGCCommand_createFrameSizeCommand(0);
                 insertBeforeLList(tmpCom, sizeCommand);
+                // and insert frame skip command so we recover late
+                insertBeforeLList(tmpCom, XGCCommand_createFrameSkipCommand());
 
                 // reset size and pass to next element
-                size = 1;
+                size = 2;
             }
 
             size += command->size;
@@ -738,8 +722,13 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
     // 00FE: XGM version
     byte = 0x00;
     fwrite(&byte, 1, 1, f);
-    // 00FF: PAL/NTSC flag + reserved
+    // 00FF
     byte = 0x00;
+    // b0=NTSC/PAL
+    byte |= source->pal?1:0;
+    // b1=XD3 tags
+    byte |= (source->xd3 != NULL)?2:0;
+    // b2=multi track, others=reserved
     fwrite(&byte, 1, 1, f);
 
     // 0100-XXXX: sample data
@@ -788,6 +777,13 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
 
         offset += command->size;
         l = l->next;
+    }
+
+    // XXXX+0004+MLEN: XD3 tags if present
+    if (source->xd3)
+    {
+        unsigned char* data = XD3_asByteArray(source->xd3, &s);
+        fwrite(data, 1, s, f);
     }
 
     unsigned char* result = inEx(f, 0, getFileSizeEx(f), outSize);

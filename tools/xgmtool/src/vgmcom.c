@@ -6,7 +6,7 @@
 #include "../inc/util.h"
 
 
-VGMCommand* VGMCommand_create(int command)
+VGMCommand* VGMCommand_create(int command, int time)
 {
     VGMCommand* result;
 
@@ -17,11 +17,12 @@ VGMCommand* VGMCommand_create(int command)
 
     result->command = command;
     result->size = 1;
+    result->time = time;
 
     return result;
 }
 
-VGMCommand* VGMCommand_createEx(unsigned char* data, int offset)
+VGMCommand* VGMCommand_createEx(unsigned char* data, int offset, int time)
 {
     VGMCommand* result;
 
@@ -32,6 +33,7 @@ VGMCommand* VGMCommand_createEx(unsigned char* data, int offset)
 
     result->command = data[offset] & 0xFF;
     result->size = VGMCommand_computeSize(result);
+    result->time = time;
 
     return result;
 }
@@ -315,12 +317,25 @@ bool VGMCommand_isYM2612KeyOffWrite(VGMCommand* source)
     return VGMCommand_isYM2612KeyWrite(source) && ((VGMCommand_getYM2612Value(source) & 0xF0) == 0x00);
 }
 
+bool VGMCommand_isYM2612KeyOnWrite(VGMCommand* source)
+{
+    return VGMCommand_isYM2612KeyWrite(source) && ((VGMCommand_getYM2612Value(source) & 0xF0) != 0x00);
+}
+
 int VGMCommand_getYM2612KeyChannel(VGMCommand* source)
 {
     if (VGMCommand_isYM2612KeyWrite(source))
-        return VGMCommand_getYM2612Value(source) & 0x7;
+    {
+        int reg = VGMCommand_getYM2612Value(source) & 0x7;
 
-    return 0;
+        if ((reg == 3) || (reg == 7)) return -1;
+
+        if (reg >= 4) reg--;
+
+        return reg;
+    }
+
+    return -1;
 }
 
 bool VGMCommand_isYM26120x2XWrite(VGMCommand* source)
@@ -465,6 +480,40 @@ bool VGMCommand_contains(LList* commands, VGMCommand* command)
     }
 
     return false;
+}
+
+VGMCommand* VGMCommand_getKeyOnCommand(LList* commands, int channel)
+{
+    LList* l = commands;
+
+    while(l != NULL)
+    {
+        VGMCommand* command = l->element;
+
+        if (VGMCommand_isYM2612KeyOnWrite(command) && (VGMCommand_getYM2612KeyChannel(command) == channel))
+            return command;
+
+        l = l->next;
+    }
+
+    return NULL;
+}
+
+VGMCommand* VGMCommand_getKeyOffCommand(LList* commands, int channel)
+{
+    LList* l = commands;
+
+    while(l != NULL)
+    {
+        VGMCommand* command = l->element;
+
+        if (VGMCommand_isYM2612KeyOffWrite(command) && (VGMCommand_getYM2612KeyChannel(command) == channel))
+            return command;
+
+        l = l->next;
+    }
+
+    return NULL;
 }
 
 VGMCommand* VGMCommand_getKeyCommand(LList* commands, int channel)

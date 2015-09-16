@@ -29,6 +29,7 @@ typedef struct
     int offset;
     int command;
     int size;
+    int time;
 } VGMCommand;
 
 
@@ -36,8 +37,8 @@ typedef struct
 #include "util.h"
 
 
-VGMCommand* VGMCommand_create(int command);
-VGMCommand* VGMCommand_createEx(unsigned char* data, int offset);
+VGMCommand* VGMCommand_create(int command, int time);
+VGMCommand* VGMCommand_createEx(unsigned char* data, int offset, int time);
 
 bool VGMCommand_isDataBlock(VGMCommand* source);
 int VGMCommand_getDataBankId(VGMCommand* source);
@@ -66,6 +67,7 @@ int VGMCommand_getYM2612Register(VGMCommand* source);
 int VGMCommand_getYM2612Value(VGMCommand* source);
 bool VGMCommand_isYM2612KeyWrite(VGMCommand* source);
 bool VGMCommand_isYM2612KeyOffWrite(VGMCommand* source);
+bool VGMCommand_isYM2612KeyOnWrite(VGMCommand* source);
 int VGMCommand_getYM2612KeyChannel(VGMCommand* source);
 bool VGMCommand_isYM26120x2XWrite(VGMCommand* source);
 bool VGMCommand_isYM2612TimersWrite(VGMCommand* source);
@@ -89,6 +91,8 @@ int VGMCommand_getStreamSampleSize(VGMCommand* source);
 bool VGMCommand_isSame(VGMCommand* source, VGMCommand* com);
 
 bool VGMCommand_contains(LList* commands, VGMCommand* command);
+VGMCommand* VGMCommand_getKeyOnCommand(LList* commands, int channel);
+VGMCommand* VGMCommand_getKeyOffCommand(LList* commands, int channel);
 VGMCommand* VGMCommand_getKeyCommand(LList* commands, int channel);
 VGMCommand* VGMCommand_createYMCommand(int port, int reg, int value);
 LList* VGMCommand_createYMCommands(int port, int baseReg, int value);

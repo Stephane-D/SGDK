@@ -64,7 +64,7 @@ void SampleBank_addBlock(SampleBank* bank, VGMCommand* command)
 VGMCommand* SampleBank_getDataBlockCommand(SampleBank* bank)
 {
     // return command
-    return VGMCommand_createEx(bank->data, bank->offset);
+    return VGMCommand_createEx(bank->data, bank->offset, -1);
 }
 
 LList* SampleBank_getDeclarationCommands(SampleBank* bank)
@@ -79,7 +79,7 @@ LList* SampleBank_getDeclarationCommands(SampleBank* bank)
     data[2] = 0x02;
     data[3] = 0x00;
     data[4] = 0x2A;
-    result = createElement(VGMCommand_createEx(data, 0));
+    result = createElement(VGMCommand_createEx(data, 0, -1));
 
     data = malloc(5);
     data[0] = VGM_STREAM_DATA;
@@ -87,7 +87,7 @@ LList* SampleBank_getDeclarationCommands(SampleBank* bank)
     data[2] = bank->id;
     data[3] = 0x01;
     data[4] = 0x00;
-    result = insertAfterLList(result, VGMCommand_createEx(data, 0));
+    result = insertAfterLList(result, VGMCommand_createEx(data, 0, -1));
 
     return getHeadLList(result);
 }
@@ -257,7 +257,7 @@ VGMCommand* Sample_getSetRateCommand(SampleBank* bank, Sample* sample, int value
     data[4] = 0x00;
     data[5] = 0x00;
 
-    return VGMCommand_createEx(data, 0);
+    return VGMCommand_createEx(data, 0, -1);
 }
 
 VGMCommand* Sample_getStartLongCommandEx(SampleBank* bank, Sample* sample, int value)
@@ -279,7 +279,7 @@ VGMCommand* Sample_getStartLongCommandEx(SampleBank* bank, Sample* sample, int v
     data[9] = (adjLen >> 16) & 0xFF;
     data[10] = 0x00;
 
-    return VGMCommand_createEx(data, 0);
+    return VGMCommand_createEx(data, 0, -1);
 }
 
 VGMCommand* Sample_getStartLongCommand(SampleBank* bank, Sample* sample)
@@ -296,5 +296,5 @@ VGMCommand* Sample_getStopCommand(SampleBank* bank, Sample* sample)
     data[0] = VGM_STREAM_STOP;
     data[1] = bank->id;
 
-    return VGMCommand_createEx(data, 0);
+    return VGMCommand_createEx(data, 0, -1);
 }

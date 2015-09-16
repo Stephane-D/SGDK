@@ -1,9 +1,9 @@
 BIN= $(GDK)/bin
 LIB= $(GDK)/lib
 
-SRC= $(GDK)/src
-RES= $(GDK)/res
-INCLUDE= $(GDK)/inc
+SRC_LIB= $(GDK)/src
+RES_LIB= $(GDK)/res
+INCLUDE_LIB= $(GDK)/inc
 
 SHELL= $(BIN)/sh
 RM= $(BIN)/rm
@@ -16,63 +16,85 @@ ASMZ80= $(BIN)/sjasm
 SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
 RESCOMP= $(BIN)/rescomp
+MKDIR= $(BIN)/mkdir
 
-SRC_C= $(wildcard $(SRC)/*.c)
-SRC_S= $(wildcard $(SRC)/*.s)
-SRC_S80= $(wildcard $(SRC)/*.s80)
+SRC_LIB_C= $(wildcard $(SRC_LIB)/*.c)
+SRC_LIB_S= $(wildcard $(SRC_LIB)/*.s)
+SRC_LIB_S80= $(wildcard $(SRC_LIB)/*.s80)
 
-RES_RES= $(wildcard $(RES)/*.res)
+RES_LIB_RES= $(wildcard $(RES_LIB)/*.res)
 
-OBJ= $(RES_RES:.res=.o)
-OBJ+= $(SRC_S80:.s80=.o)
-OBJ+= $(SRC_S:.s=.o)
-OBJ+= $(SRC_C:.c=.o)
+OBJ_LIB= $(RES_LIB_RES:.res=.o)
+OBJ_LIB+= $(SRC_LIB_S80:.s80=.o)
+OBJ_LIB+= $(SRC_LIB_S:.s=.o)
+OBJ_LIB+= $(SRC_LIB_C:.c=.o)
 
-INCS= -I$(INCLUDE) -I$(SRC) -I$(RES)
-DEFAULT_FLAGS= -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
-FLAGSZ80= -i$(SRC) -i$(INCLUDE)
+INCS_LIB= -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
+DEFAULT_FLAGS_LIB= -m68000 -Wall -fno-builtin $(INCS_LIB) -B$(BIN)
+FLAGSZ80_LIB= -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
-#release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
+#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -fomit-frame-pointer
 release: $(LIB)/libmd.a
 
-debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
-debug: $(LIB)/libmd.a
+debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -ggdb -DDEBUG=1
+debug: $(LIB)/libmd_debug.a
 
 
 all: release
 default: release
 
+Default: release
+Debug: debug
+Release: release
+
 .PHONY: clean
 
 
-clean:
-	$(RM) -f $(LIB)/libmd.a $(OBJ) out.lst cmd_
-
 cleanobj:
-	$(RM) -f $(OBJ) out.lst
+	$(RM) -f $(OBJ_LIB)
+
+cleanrelease: cleanobj
+	$(RM) -f $(LIB)/libmd.a out.lst cmd_
+
+cleandebug: cleanobj
+	$(RM) -f $(LIB)/libmd_debug.a out.lst cmd_
+
+clean: cleanobj
+	$(RM) -f $(LIB)/libmd.a $(LIB)/libmd_debug.a out.lst cmd_
+
+cleanall: cleanrelease
+cleanAll: cleanrelease
+cleandefault: cleanrelease
+cleanDefault: cleanrelease
+cleanRelease: cleanrelease
+cleanDebug: cleandebug
 
 
 $(LIB)/libmd.a: cmd_
 	$(AR) rs $(LIB)/libmd.a @cmd_
 	$(RM) cmd_
 
-cmd_: $(OBJ)
-	$(ECHO) "$(OBJ)" > cmd_
+$(LIB)/libmd_debug.a: cmd_
+	$(AR) rs $(LIB)/libmd_debug.a @cmd_
+	$(RM) cmd_
 
+cmd_ : $(OBJ_LIB)
+	$(ECHO) "$(OBJ_LIB)" > cmd_
+
+
+%.o: %.c
+	$(CC) $(FLAGS_LIB) -c $< -o $@
+
+%.o: %.s
+	$(CC) $(FLAGS_LIB) -c $< -o $@
 
 %.s: %.res
 	$(RESCOMP) $< $@
 
 %.o80: %.s80
-	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
+	$(ASMZ80) $(FLAGSZ80_LIB) $< $@ out.lst
 
 %.s: %.o80
 	$(BINTOS) $<
-
-%.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
-
-%.o: %.s
-	$(CC) $(FLAGS) -c $< -o $@

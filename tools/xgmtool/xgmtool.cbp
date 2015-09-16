@@ -12,7 +12,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="bug.vgm out.vgm -v" />
+				<Option parameters="bug_part_opt_xgc.vgm bug_part_opt_xgc.xgc -v" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-Os" />
@@ -27,13 +27,14 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="bug.vgm out.xgm -v" />
+				<Option parameters="bug.vgm bug_opt.vgm -v" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
 			</Target>
 		</Build>
+		<Unit filename="inc/gd3.h" />
 		<Unit filename="inc/psg.h" />
 		<Unit filename="inc/samplebank.h" />
 		<Unit filename="inc/util.h" />
@@ -48,6 +49,9 @@
 		<Unit filename="inc/xgmsmp.h" />
 		<Unit filename="inc/xgmtool.h" />
 		<Unit filename="inc/ym2612.h" />
+		<Unit filename="src/gd3.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/psg.c">
 			<Option compilerVar="CC" />
 		</Unit>

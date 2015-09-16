@@ -2,12 +2,15 @@
 #define XGM_H_
 
 #include "util.h"
+#include "gd3.h"
 
 
 typedef struct
 {
     LList* samples;
     LList* commands;
+    GD3* gd3;
+    XD3* xd3;
     int pal;
 } XGM;
 
@@ -16,8 +19,10 @@ typedef struct
 
 XGM* XGM_create();
 XGM* XGM_createFromData(unsigned char* data, int dataSize);
+XGM* XGM_createFromXGCData(unsigned char* data, int dataSize);
 XGM* XGM_createFromVGM(VGM* vgm);
 
+#include "xgm.h"
 #include "xgmcom.h"
 
 XGMCommand* XGM_getLoopCommand(XGM* xgm);
