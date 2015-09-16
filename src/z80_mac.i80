@@ -376,7 +376,7 @@
             endm
 
             macro   wait7
-            LD      A, (DE)
+            LD      A, $0
             endm
 
             macro   wait8

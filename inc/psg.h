@@ -11,50 +11,50 @@
 #define _PSG_H_
 
 /**
- *  \def PSG_PORT
+ *  \brief
  *      PSG port address.
  */
 #define PSG_PORT            0xC00011
 
 /**
- *  \def PSG_ENVELOPE_MIN
+ *  \brief
  *      Minimum PSG envelope value.
  */
 #define PSG_ENVELOPE_MIN    15
 /**
- *  \def PSG_ENVELOPE_MAX
+ *  \brief
  *      Maximum PSG envelope value.
  */
 #define PSG_ENVELOPE_MAX    0
 
 /**
- *  \def PSG_NOISE_TYPE_PERIODIC
+ *  \brief
  *      Periodic noise type (like low-frequency tone).
  */
 #define PSG_NOISE_TYPE_PERIODIC 0
 /**
- *  \def PSG_NOISE_TYPE_WHITE
+ *  \brief
  *      White noise type (hiss).
  */
 #define PSG_NOISE_TYPE_WHITE    1
 
 /**
- *  \def PSG_NOISE_FREQ_CLOCK2
+ *  \brief
  *      Noise frequency = PSG clock / 2 (less coarse).
  */
 #define PSG_NOISE_FREQ_CLOCK2   0
 /**
- *  \def PSG_NOISE_FREQ_CLOCK4
+ *  \brief
  *      Noise frequency = PSG clock / 4.
  */
 #define PSG_NOISE_FREQ_CLOCK4   1
 /**
- *  \def PSG_NOISE_FREQ_CLOCK8
+ *  \brief
  *      Noise frequency = PSG clock / 8 (more coarse).
  */
 #define PSG_NOISE_FREQ_CLOCK8   2
 /**
- *  \def PSG_NOISE_FREQ_TONE3
+ *  \brief
  *      Noise frequency = Tone generator #3.
  */
 #define PSG_NOISE_FREQ_TONE3    3

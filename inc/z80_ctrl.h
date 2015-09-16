@@ -20,56 +20,56 @@
 #define Z80_RESET_PORT                  0xA11200
 
 /**
- *  \def Z80_RAM_START
+ *  \brief
  *
  * Z80 RAM start address.
  */
 #define Z80_RAM_START                   0xA00000
 /**
- *  \def Z80_RAM_END
+ *  \brief
  *
  * Z80 RAM end address.
  */
 #define Z80_RAM_END                     0xA01FFF
 /**
- *  \def Z80_RAM
+ *  \brief
  *
  * Z80 RAM address.
  */
 #define Z80_RAM                         Z80_RAM_START
 /**
- *  \def Z80_RAM_LEN
+ *  \brief
  *
  * Z80 RAM length in byte.
  */
 #define Z80_RAM_LEN                     ((Z80_RAM_END - Z80_RAM_START) + 1)
 /**
- *  \def Z80_YM2612
+ *  \brief
  *
  * Z80 YM2612 port address.
  */
 #define Z80_YM2612                      0xA04000
 /**
- *  \def Z80_BANK_REGISTER
+ *  \brief
  *
  * Z80 Bank register address.
  */
 #define Z80_BANK_REGISTER               0xA06000
 
 /**
- *  \def Z80_DRV_COMMAND
+ *  \brief
  *
  * Z80 default driver command address.
  */
 #define Z80_DRV_COMMAND                 0xA00100
 /**
- *  \def Z80_DRV_STATUS
+ *  \brief
  *
  * Z80 default driver status address.
  */
 #define Z80_DRV_STATUS                  0xA00102
 /**
- *  \def Z80_DRV_PARAMS
+ *  \brief
  *
  * Z80 default driver parameters address.
  */
@@ -82,27 +82,23 @@
 #define Z80_DRV_STAT_READY_SFT          7
 
 /**
- *  \def Z80_DRV_COM_PLAY
- *
- * Z80 default driver play command.
+ *  \brief
+ *      Z80 default driver play command.
  */
 #define Z80_DRV_COM_PLAY                (1 << Z80_DRV_COM_PLAY_SFT)
 /**
- *  \def Z80_DRV_COM_STOP
- *
- * Z80 default driver stop command.
+ *  \brief
+ *      Z80 default driver stop command.
  */
 #define Z80_DRV_COM_STOP                (1 << Z80_DRV_COM_STOP_SFT)
 /**
- *  \def Z80_DRV_STAT_PLAYING
- *
- * Z80 default driver play status.
+ *  \brief
+ *      Z80 default driver play status.
  */
 #define Z80_DRV_STAT_PLAYING            (1 << Z80_DRV_STAT_PLAYING_SFT)
 /**
- *  \def Z80_DRV_STAT_READY
- *
- * Z80 default driver ready status.
+ *  \brief
+ *      Z80 default driver ready status.
  */
 #define Z80_DRV_STAT_READY              (1 << Z80_DRV_STAT_READY_SFT)
 
@@ -113,92 +109,79 @@
 #define Z80_DRV_CH3_SFT                 3
 
 /**
- *  \def Z80_DRV_CH0
- *
- * Z80 default driver channel 0 id.
+ *  \brief
+ *      Z80 default driver channel 0 id.
  */
 #define Z80_DRV_CH0                     (1 << Z80_DRV_CH0_SFT)
 /**
- *  \def Z80_DRV_CH1
- *
- * Z80 default driver channel 1 id.
+ *  \brief
+ *      Z80 default driver channel 1 id.
  */
 #define Z80_DRV_CH1                     (1 << Z80_DRV_CH1_SFT)
 /**
- *  \def Z80_DRV_CH2
- *
- * Z80 default driver channel 2 id.
+ *  \brief
+ *      Z80 default driver channel 2 id.
  */
 #define Z80_DRV_CH2                     (1 << Z80_DRV_CH2_SFT)
 /**
- *  \def Z80_DRV_CH3
- *
- * Z80 default driver channel 3 id.
+ *  \brief
+ *      Z80 default driver channel 3 id.
  */
 #define Z80_DRV_CH3                     (1 << Z80_DRV_CH3_SFT)
 
 
 /**
- *  \def Z80_DRIVER_NULL
- *
- * NULL Z80 driver.
+ *  \brief
+ *      NULL Z80 driver.
  */
 #define Z80_DRIVER_NULL                 0
 /**
- *  \def Z80_DRIVER_PCM
- *
- *  Variable rate sample player Z80 driver.<br/>
- *  It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
+ *  \brief
+ *      Variable rate sample player Z80 driver.<br/>
+ *      It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
  */
 #define Z80_DRIVER_PCM                  1
 /**
- *  \def Z80_DRIVER_2ADPCM
- *
- *  2 channels PCM sample player Z80 driver.<br/>
- *  It can mix 2 samples (4 bit PCM) at a fixed 22 Khz rate.
+ *  \brief
+ *      2 channels PCM sample player Z80 driver.<br/>
+ *      It can mix 2 samples (4 bit PCM) at a fixed 22 Khz rate.
  */
 #define Z80_DRIVER_2ADPCM               2
 /**
- *  \def Z80_DRIVER_4PCM_ENV
- *
- *  4 channels sample player Z80 driver with envelop control.<br/>
- *  It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br/>
- *  and handle volume (16 levels) for each channel.
+ *  \brief
+ *      4 channels sample player Z80 driver with envelop control.<br/>
+ *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br/>
+ *      and handle volume (16 levels) for each channel.
  */
 #define Z80_DRIVER_4PCM_ENV             4
 /**
- *  \def Z80_DRIVER_MVS
- *
- *  MVS tracker Z80 driver (updated to last version with PCM and PSG support).
+ *  \brief
+ *      MVS tracker Z80 driver (updated to last version with PCM and PSG support).
  */
 #define Z80_DRIVER_MVS                  5
 /**
- *  \def Z80_DRIVER_TFM
- *
- *  TFM tracker Z80 driver.
+ *  \brief
+ *      TFM tracker Z80 driver.
  */
 #define Z80_DRIVER_TFM                  6
 /**
- *  \def Z80_DRIVER_VGM
- *
- *  VGM Z80 driver.<br/>
- *  It supports 1 PCM channel at a fixed 8 Khz and allows to play SFX through the named PCM channel.<br/>
- *  Written by Sigflup and kubilus1.
+ *  \brief
+ *      VGM Z80 driver.<br/>
+ *      It supports 1 PCM channel at a fixed 8 Khz and allows to play SFX through the named PCM channel.<br/>
+ *      Written by Sigflup and kubilus1.
  */
 #define Z80_DRIVER_VGM                  7
 /**
- *  \def Z80_DRIVER_XGM
- *
- *  eXtended VGM music player driver.<br/>
- *  This driver takes VGM (or XGM) file as input to play music.<br/>
- *  It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br/>
- *  The driver is designed to avoid DMA contention when possible (depending CPU load).
+ *  \brief
+ *      eXtended VGM music player driver.<br/>
+ *      This driver takes VGM (or XGM) file as input to play music.<br/>
+ *      It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br/>
+ *      The driver is designed to avoid DMA contention when possible (depending CPU load).
  */
 #define Z80_DRIVER_XGM                  8
 /**
- *  \def Z80_DRIVER_CUSTOM
- *
- * CUSTOM Z80 driver.
+ *  \brief
+ *      CUSTOM Z80 driver.
  */
 #define Z80_DRIVER_CUSTOM               -1
 
@@ -320,7 +303,6 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  - #Z80_DRIVER_NULL<br/>
  *  - #Z80_DRIVER_PCM<br/>
  *  - #Z80_DRIVER_2ADPCM<br/>
- *  - #Z80_DRIVER_4PCM<br/>
  *  - #Z80_DRIVER_4PCM_ENV<br/>
  *  - #Z80_DRIVER_MVS<br/>
  *  - #Z80_DRIVER_TFM<br/>
@@ -343,7 +325,6 @@ void Z80_unloadDriver();
  *      - #Z80_DRIVER_NULL<br/>
  *      - #Z80_DRIVER_PCM<br/>
  *      - #Z80_DRIVER_2ADPCM<br/>
- *      - #Z80_DRIVER_4PCM<br/>
  *      - #Z80_DRIVER_4PCM_ENV<br/>
  *      - #Z80_DRIVER_MVS<br/>
  *      - #Z80_DRIVER_TFM<br/>

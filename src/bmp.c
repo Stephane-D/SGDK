@@ -1076,12 +1076,10 @@ void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_
 // internals blank processes
 ////////////////////////////
 
-u16 BMP_doVBlankProcess()
+void BMP_doVBlankProcess()
 {
     // reset phase
     phase = 0;
-
-    return 1;
 }
 
 u16 BMP_doHBlankProcess()

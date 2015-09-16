@@ -1,9 +1,10 @@
+#include "types.h"
+
 #ifndef GENRES_H_
 #define GENRES_H_
 
-
 /**
- *  \struct genresTiles
+ *  \brief
  *      GenRes tile structure
  */
 struct genresTiles
@@ -17,7 +18,7 @@ struct genresTiles
 
 
 /**
- *  \struct genresSprites
+ *  \brief
  *      GenRes Sprites definition structure.<br/>
  *      - pal: pointer to pal data<br/>
  *      - sprites: pointer to sprites data<br/>

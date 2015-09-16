@@ -14,7 +14,8 @@
 #define PROCESS_PALETTE_FADING      (1 << 0)
 #define PROCESS_BITMAP_TASK         (1 << 1)
 #define PROCESS_TILECACHE_TASK      (1 << 2)
-#define PROCESS_SPRITEENGINE_TASK   (1 << 3)
+#define PROCESS_DMA_TASK            (1 << 3)
+#define PROCESS_XGM_TASK            (1 << 4)
 
 
 // internals V/H timer
@@ -161,9 +162,9 @@ u16 SYS_getInterruptMaskLevel();
  * You can disable interrupt depending their level.<br>
  * Interrupt with level <= interrupt mask level are ignored.<br>
  * We have 3 different interrupts:<br>
- * <b>Vertical interrupt (V-INT): level 6</b>
- * <b>Horizontal interrupt (H-INT): level 4</b>
- * <b>External interrupt (EX-INT): level 2</b>
+ * <b>Vertical interrupt (V-INT): level 6</b><br/>
+ * <b>Horizontal interrupt (H-INT): level 4</b><br/>
+ * <b>External interrupt (EX-INT): level 2</b><br/>
  * Vertical interrupt has the highest level (and so priority) where external interrupt has lowest one.<br>
  * For instance to disable Vertical interrupt just use SYS_setInterruptMaskLevel(6).<br>
  *
@@ -181,9 +182,9 @@ void SYS_setInterruptMaskLevel(u16 value);
  * You can disable interrupt depending their level.<br>
  * Interrupt with level <= interrupt mask level are ignored.<br>
  * We have 3 different interrupts:<br>
- * <b>Vertical interrupt (V-INT): level 6</b>
- * <b>Horizontal interrupt (H-INT): level 4</b>
- * <b>External interrupt (EX-INT): level 2</b>
+ * <b>Vertical interrupt (V-INT): level 6</b><br/>
+ * <b>Horizontal interrupt (H-INT): level 4</b><br/>
+ * <b>External interrupt (EX-INT): level 2</b><br/>
  * Vertical interrupt has the highest level (and so priority) where external interrupt has lowest one.<br>
  * For instance to disable Vertical interrupt just use SYS_setInterruptMaskLevel(6).<br>
  *
@@ -219,19 +220,43 @@ void SYS_enableInts();
 
 /**
  *  \brief
- *      Set Vertical interrupt callback method.
+ *      Set start of 'Vertical interrupt' callback method.
+ *
+ *  \param CB
+ *      Pointer to the method to call when the Vertical Interrupt just started.<br>
+ *      You can remove current callback by passing a null pointer here.
+ *
+ * Vertical interrupt happen at the end of display period right before vertical blank.<br>
+ * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
+ * The difference with the SYS_setVIntCallback(..) method is this one is called right after
+ * the Vertical Interrupt happened and before any internals SGDK V-Int processes.<br>
+ * This is useful when you really need to so something right at the beginning of the V-Int.
+ *
+ * \see SYS_setVIntCallback(_voidCallback *CB);
+ * \see SYS_setHIntCallback(_voidCallback *CB);
+ */
+void SYS_setPreVIntCallback(_voidCallback *CB);
+/**
+ *  \brief
+ *      Set 'Vertical Interrupt' callback method.
  *
  *  \param CB
  *      Pointer to the method to call on Vertical Interrupt.<br>
  *      You can remove current callback by passing a null pointer here.
  *
  * Vertical interrupt happen at the end of display period right before vertical blank.<br>
- * This period is usually used to prepare next frame data (refresh sprites, scrolling ...)
+ * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
+ * Note that the callback will be called after some internal SGDK V-Int processes and so probably
+ * not right at the start of the 'Vertical Interrupt'.<br>
+ * For that you can use the SYS_setPreVIntCallback(..) method instead.
+ *
+ * \see SYS_setHIntCallback(_voidCallback *CB);
+ * \see SYS_setPreVIntCallback(_voidCallback *CB);
  */
 void SYS_setVIntCallback(_voidCallback *CB);
 /**
  *  \brief
- *      Set Horizontal interrupt callback method.
+ *      Set 'Horizontal Interrupt' callback method.
  *
  *  \param CB
  *      Pointer to the method to call on Horizontal Interrupt.<br>
@@ -281,6 +306,21 @@ u16 SYS_isInExtIntCallback();
  * This method tests if we are currently processing an interrupt.
  */
 u16 SYS_isInInterrupt();
+
+/**
+ *  \brief
+ *      Return != 0 if we are on a NTSC system.
+ *
+ * Better to use the IS_PALSYSTEM
+ */
+u16 SYS_isNTSC();
+/**
+ *  \brief
+ *      Return != 0 if we are on a PAL system.
+ *
+ * Better to use the IS_PALSYSTEM
+ */
+u16 SYS_isPAL();
 
 /**
  *  \brief

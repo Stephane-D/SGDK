@@ -18,6 +18,8 @@
 #include "vdp_bg.h"
 #include "vdp_pal.h"
 #include "tile_cache.h"
+#include "sound.h"
+#include "dma.h"
 
 #include "tools.h"
 #include "kdebug.h"
@@ -34,13 +36,15 @@
 
 // we don't want to share them
 extern u16 randbase;
-extern TCBloc *uploads;
+extern TileSet** uploads;
+extern s16 currentZ80Driver;
 
 // extern library callback function (we don't want to share them)
 extern u16 BMP_doHBlankProcess();
-extern u16 BMP_doVBlankProcess();
-extern u16 TC_doVBlankProcess();
+extern void BMP_doVBlankProcess();
+extern void TC_doVBlankProcess();
 extern u16 SPR_doVBlankProcess();
+extern void XGM_doVBlankProcess();
 
 // main function
 extern int main(u16 hard);
@@ -64,9 +68,11 @@ _voidCallback *internalHIntCB;
 _voidCallback *internalExtIntCB;
 
 // user V-Int, H-Int and Ext-Int callback
+static _voidCallback *VIntCBPre;
 static _voidCallback *VIntCB;
 static _voidCallback *HIntCB;
 static _voidCallback *ExtIntCB;
+
 
 u32 registerState[8+8];
 u32 pcState;
@@ -373,33 +379,58 @@ void _int_callback()
 // V-Int Callback
 void _vint_callback()
 {
+    u16 vintp;
+
     intTrace |= IN_VINT;
 
     vtimer++;
 
+    // call user callback (pre V-Int)
+    if (VIntCBPre) VIntCBPre();
+
+    vintp = VIntProcess;
     // may worth it
-    if (VIntProcess)
+    if (vintp)
     {
-        // tile cache processing
-        if (VIntProcess & PROCESS_TILECACHE_TASK)
+        // xgm processing (have to be done first !)
+        if (vintp & PROCESS_XGM_TASK)
+            XGM_doVBlankProcess();
+
+        // dma processing
+        if (vintp & PROCESS_DMA_TASK)
         {
-            if (!TC_doVBlankProcess()) VIntProcess &= ~PROCESS_TILECACHE_TASK;
+            // DMA protection for XGM driver
+            if (currentZ80Driver == Z80_DRIVER_XGM)
+            {
+                SND_set68KBUSProtection_XGM(TRUE);
+
+                // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
+                if (SND_getForceDelayDMA_XGM()) waitSubTick(10);
+
+                DMA_flushQueue();
+
+                SND_set68KBUSProtection_XGM(FALSE);
+            }
+            else
+                DMA_flushQueue();
+
+            // always clear process
+            vintp &= ~PROCESS_DMA_TASK;
         }
+
         // tile cache processing
-        if (VIntProcess & PROCESS_SPRITEENGINE_TASK)
-        {
-            if (!SPR_doVBlankProcess()) VIntProcess &= ~PROCESS_SPRITEENGINE_TASK;
-        }
+        if (vintp & PROCESS_TILECACHE_TASK)
+            TC_doVBlankProcess();
         // bitmap processing
-        if (VIntProcess & PROCESS_BITMAP_TASK)
-        {
-            if (!BMP_doVBlankProcess()) VIntProcess &= ~PROCESS_BITMAP_TASK;
-        }
+        if (vintp & PROCESS_BITMAP_TASK)
+            BMP_doVBlankProcess();
         // palette fading processing
-        if (VIntProcess & PROCESS_PALETTE_FADING)
+        if (vintp & PROCESS_PALETTE_FADING)
         {
-            if (!VDP_doStepFading(FALSE)) VIntProcess &= ~PROCESS_PALETTE_FADING;
+            if (!VDP_doStepFading(FALSE)) vintp &= ~PROCESS_PALETTE_FADING;
         }
+
+        VIntProcess = vintp;
     }
 
     // then call user callback
@@ -564,6 +595,7 @@ void _reset_entry()
 
 static void internal_reset()
 {
+    VIntCBPre = NULL;
     VIntCB = NULL;
     HIntCB = NULL;
     VIntProcess = 0;
@@ -629,6 +661,11 @@ void SYS_enableInts()
     }
 }
 
+void SYS_setVIntPreCallback(_voidCallback *CB)
+{
+    VIntCBPre = CB;
+}
+
 void SYS_setVIntCallback(_voidCallback *CB)
 {
     VIntCB = CB;
@@ -664,6 +701,15 @@ u16 SYS_isInInterrupt()
     return intTrace;
 }
 
+u16 SYS_isNTSC()
+{
+    return !IS_PALSYSTEM;
+}
+
+u16 SYS_isPAL()
+{
+    return IS_PALSYSTEM;
+}
 
 void SYS_die(char *err)
 {

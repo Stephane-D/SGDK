@@ -12,13 +12,13 @@
 #define _VDP_SPR_H_
 
 /**
- *  \def MAX_SPRITE
+ *  \brief
  *      Maximum number of sprite
  */
 #define MAX_SPRITE          80
 
 /**
- *  \def SPRITE_SIZE
+ *  \brief
  *      Helper to define sprite size in sprite definition structure.
  *
  *  \param w
@@ -30,7 +30,7 @@
 
 
 /**
- *  \struct SpriteDef
+ *  \brief
  *      VDP sprite definition structure.
  *
  *  \param posx

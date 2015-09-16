@@ -532,7 +532,6 @@ u16 JOY_waitPressTime(u16 joy, u16 btn, u16 time)
     return FALSE;
 }
 
-
 static u16 TH_CONTROL_PHASE(vu8 *pb)
 {
     u16 val;
@@ -549,7 +548,6 @@ static u16 TH_CONTROL_PHASE(vu8 *pb)
     return val;
 }
 
-
 static u16 read3Btn(u16 port)
 {
     vu8 *pb;
@@ -563,7 +561,6 @@ static u16 read3Btn(u16 port)
 
     return val | (JOY_TYPE_PAD3 << JOY_TYPE_SHIFT);
 }
-
 
 static u16 read6Btn(u16 port)
 {
@@ -587,7 +584,6 @@ static u16 read6Btn(u16 port)
     return val;
 }
 
-
 static u8 THREELINE_HANDSHAKE(vu8 *pb, u8 ph)
 {
     u8 val = 0, hs;
@@ -606,7 +602,6 @@ static u8 THREELINE_HANDSHAKE(vu8 *pb, u8 ph)
 
     return val & 0x0F;
 }
-
 
 static s16 start3lhs(u16 port, u8 *hdr, u16 len)
 {
@@ -697,7 +692,6 @@ static u16 readMouse(u16 port)
 
     return val;
 }
-
 
 static void readTeamPlayer(u16 port)
 {
@@ -815,7 +809,6 @@ static void readTeamPlayer(u16 port)
     *pb = 0x60; /* end request */
 }
 
-
 static void readEa4WayPlay()
 {
     static const u16 xlt[4] = { JOY_1, JOY_3, JOY_4, JOY_5 };
@@ -863,7 +856,6 @@ static void readEa4WayPlay()
         if ((joyEventCB) && (change)) joyEventCB(ind, change, val);
     }
 }
-
 
 static void readLightgun(u16 port)
 {
@@ -990,7 +982,6 @@ static void readLightgun(u16 port)
 
     extSet = 0;                             /* clear light sensed flag */
 }
-
 
 static u16 readTrackball(u16 port)
 {

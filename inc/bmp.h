@@ -22,15 +22,14 @@
  * and 25 time per second in PAL.
  */
 
-#ifndef _BMP_H_
-#define _BMP_H_
-
 #include "maths.h"
 #include "vdp_pal.h"
 
+#ifndef _BMP_H_
+#define _BMP_H_
 
 /**
- *      \def BMP_PLAN
+ *  \brief
  *          Plan used to draw bitmap (plan A).
  */
 #define BMP_PLAN                    APLAN
@@ -39,24 +38,24 @@
 #define BMP_PLANWIDTH_SFT           6
 #define BMP_PLANHEIGHT_SFT          6
 /**
- *      \def BMP_PLANWIDTH
+ *  \brief
  *          Bitmap plan width (in tile) : 64
  */
 #define BMP_PLANWIDTH               (1 << BMP_PLANWIDTH_SFT)
 /**
- *      \def BMP_PLANHEIGHT
+ *  \brief
  *          Bitmap plan height (in tile) : 64
  */
 #define BMP_PLANHEIGHT              (1 << BMP_PLANHEIGHT_SFT)
 
 #define BMP_CELLWIDTH_SFT           5
 /**
- *      \def BMP_CELLWIDTH
+ *  \brief
  *          Bitmap width (in tile) : 32
  */
 #define BMP_CELLWIDTH               (1 << BMP_CELLWIDTH_SFT)
 /**
- *      \def BMP_CELLHEIGHT
+ *  \brief
  *          Bitmap height (in tile) : 20
  */
 #define BMP_CELLHEIGHT              20
@@ -68,12 +67,12 @@
 #define BMP_XPIXPERTILE_SFT         3
 #define BMP_YPIXPERTILE_SFT         3
 /**
- *      \def BMP_XPIXPERTILE
+ *  \brief
  *          Number of X pixel per tile : 8 pixels per tile.
  */
 #define BMP_XPIXPERTILE             (1 << BMP_XPIXPERTILE_SFT)
 /**
- *      \def BMP_YPIXPERTILE
+ *  \brief
  *          Number of y pixel per tile : 8 pixels per tile.
  */
 #define BMP_YPIXPERTILE             (1 << BMP_YPIXPERTILE_SFT)
@@ -82,12 +81,12 @@
 
 #define BMP_WIDTH_SFT               (BMP_CELLWIDTH_SFT + BMP_XPIXPERTILE_SFT)
 /**
- *      \def BMP_WIDTH
+ *  \brief
  *          Bitmap width (in pixel) : 256
  */
 #define BMP_WIDTH                   (1 << BMP_WIDTH_SFT)
 /**
- *      \def BMP_HEIGHT
+ *  \brief
  *          Bitmap height (in pixel) : 160
  */
 #define BMP_HEIGHT                  (BMP_CELLHEIGHT * BMP_YPIXPERTILE)
@@ -95,35 +94,35 @@
 
 #define BMP_PITCH_SFT               (BMP_CELLWIDTH_SFT + 2)
 /**
- *      \def BMP_PITCH
+ *  \brief
  *          Bitmap scanline pitch (number of bytes per scanline) : 128
  */
 #define BMP_PITCH                   (1 << BMP_PITCH_SFT)
 #define BMP_PITCH_MASK              (BMP_PITCH - 1)
 
 /**
- *      \def BMP_GENBMP16_WIDTH
+ *  \brief
  *          Get width of genesis bitmap 16 object.
  */
 #define BMP_GENBMP16_WIDTH(genbmp16)    ((genbmp16)[0])
 /**
- *      \def BMP_GENBMP16_HEIGHT
+ *  \brief
  *          Get height of genesis bitmap 16 object.
  */
 #define BMP_GENBMP16_HEIGHT(genbmp16)   ((genbmp16)[1])
 /**
- *      \def BMP_GENBMP16_PALETTE
+ *  \brief
  *          Return pointer to palette of genesis bitmap 16 object.
  */
 #define BMP_GENBMP16_PALETTE(genbmp16)  (&((genbmp16)[2]))
 /**
- *      \def BMP_GENBMP16_IMAGE
+ *  \brief
  *          Return pointer to image data of genesis bitmap 16 object.
  */
 #define BMP_GENBMP16_IMAGE(genbmp16)    (&((genbmp16)[18]))
 
 /**
- *      \def BMP_GETPIXEL
+ *  \brief
  *          Return pixel value at specified location.
  *      \param x
  *          X coordinate.
@@ -137,7 +136,7 @@
 #define BMP_GETPIXEL(x, y)          bmp_buffer_write[((y) * BMP_PITCH) + ((x) >> 1)]
 
 /**
- *      \def BMP_SETPIXEL
+ *  \brief
  *          Set pixel value at specified position.
  *
  *      \param x
@@ -172,9 +171,10 @@
 
 
 /**
- *  \struct Bitmap
+ *  \brief
  *      Genesis 4bpp Bitmap structure definition.<br/>
  *      Use the unpackBitmap() method to unpack if compression is enabled.
+ *
  *  \param compression
  *      compression type for image data, accepted values:<br/>
  *      <b>COMPRESSION_NONE</b><br/>
@@ -199,11 +199,12 @@ typedef struct
 } Bitmap;
 
 /**
- *      \struct Pixel
- *          Pixel definition.<br>
- *      \param pt
+ *  \brief
+ *          Pixel definition.
+ *
+ *  \param pt
  *          Coordinates.
- *      \param col
+ *  \param col
  *          Color.
  */
 typedef struct
@@ -213,13 +214,14 @@ typedef struct
 } Pixel;
 
 /**
- *      \struct Line
- *          Line definition.<br>
- *      \param pt1
+ *  \brief
+ *          Line definition.
+ *
+ *  \param pt1
  *          Start point.
- *      \param pt2
+ *  \param pt2
  *          End point.
- *      \param col
+ *  \param col
  *          Color.
  */
 typedef struct
@@ -230,15 +232,16 @@ typedef struct
 } Line;
 
 /**
- *      \struct Triangle
- *          Triangle definition.<br>
- *      \param pt1
+ *  \brief
+ *          Triangle definition.
+ *
+ *  \param pt1
  *          Start point.
- *      \param pt2
+ *  \param pt2
  *          Second point.
- *      \param pt3
+ *  \param pt3
  *          End point.
- *      \param col
+ *  \param col
  *          Color.
  */
 typedef struct

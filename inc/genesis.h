@@ -26,6 +26,8 @@
 #include "vdp_spr.h"
 #include "vdp_tile.h"
 
+#include "dma.h"
+
 #include "bmp.h"
 #include "tile_cache.h"
 #include "sprite_eng.h"

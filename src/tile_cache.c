@@ -5,6 +5,7 @@
 
 #include "vdp.h"
 #include "memory.h"
+#include "dma.h"
 #include "tools.h"
 #include "sys.h"
 #include "kdebug.h"
@@ -166,7 +167,7 @@ static void releaseFlushable(TileCache *cache, u16 start, u16 end);
 static void addToUploadQueue(TileSet *tileset, u16 index);
 
 // upload cache structure
-TCBloc *uploads;            // this variable is specifically cleared in SYS reset method
+TileSet** uploads;            // this variable is specifically cleared in SYS reset method
 static u16 uploadIndex;
 static u16 uploadDone;
 
@@ -177,7 +178,7 @@ void TC_init()
     if (uploads == NULL)
     {
         // alloc cache structures memory
-        uploads = MEM_alloc(MAX_UPLOAD * sizeof(TCBloc));
+        uploads = MEM_alloc(MAX_UPLOAD * sizeof(TileSet*));
         // init upload
         uploadIndex = 0;
         uploadDone = FALSE;
@@ -195,28 +196,25 @@ void TC_end()
         // disabled tile cache Int processing
         VIntProcess &= ~PROCESS_TILECACHE_TASK;
 
-        // release cache structures memory
-        MEM_free(uploads);
-        uploads = NULL;
-
         // release the last uploaded tileset(s)
         if (uploadDone)
         {
-            TCBloc *bloc = uploads;
+            TileSet** tilesets = uploads;
             u16 i = uploadIndex;
 
             while(i--)
             {
-                TileSet* tileset = bloc->tileset;
+                TileSet* tileset = *tilesets++;
 
                 // released the tileset if we unpacked it here
                 if (tileset->compression != COMPRESSION_NONE)
                     MEM_free(tileset);
-
-                // next bloc to check
-                bloc++;
             }
         }
+
+        // release cache structures memory
+        MEM_free(uploads);
+        uploads = NULL;
     }
 }
 
@@ -631,24 +629,19 @@ static void releaseFlushable(TileCache *cache, u16 start, u16 end)
 
 static void addToUploadQueue(TileSet *tileset, u16 index)
 {
-    TCBloc *bloc;
-    u16 i;
-
     // need to clear to queue ?
     if (uploadDone)
     {
-        i = uploadIndex;
-        bloc = uploads;
+        TileSet** tilesets = uploads;
+        u16 i = uploadIndex;
+
         while(i--)
         {
-            TileSet* tileset = bloc->tileset;
+            TileSet* ts = *tilesets++;
 
             // released the tileset if we unpacked it here
-            if (tileset->compression != COMPRESSION_NONE)
-                MEM_free(tileset);
-
-            // next bloc to check
-            bloc++;
+            if (ts->compression != COMPRESSION_NONE)
+                MEM_free(ts);
         }
 
         // prepare for new upload
@@ -656,38 +649,18 @@ static void addToUploadQueue(TileSet *tileset, u16 index)
         uploadIndex = 0;
     }
 
-    // get bloc
-    bloc = &uploads[uploadIndex++];
-    // set upload bloc info
-    bloc->tileset = tileset;
-    bloc->index = index;
+    // set upload tileset info
+    uploads[uploadIndex++] = tileset;
+
+    // put in DMA queue
+    DMA_queueDma(DMA_VRAM, (u32) tileset->tiles, index * 32, tileset->numTile * 16, 2);
 }
 
 
 // VInt processing
-u16 TC_doVBlankProcess()
+void TC_doVBlankProcess()
 {
-    TCBloc *src;
-    u16 i;
-
+    // just inform the upload has been done (DMA queue) so we can released tilesets
     if (!uploadDone && uploadIndex)
-    {
-        i = uploadIndex;
-        src = uploads;
-        while(i--)
-        {
-            TileSet* tileset = src->tileset;
-
-            // upload the tileset to VRAM (data is already unpacked)
-            VDP_loadTileData(tileset->tiles, src->index, tileset->numTile, TRUE);
-
-            // next tileset to upload
-            src++;
-        }
-
-        // uploads done !
         uploadDone = TRUE;
-    }
-
-    return TRUE;
 }

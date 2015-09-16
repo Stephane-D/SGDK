@@ -12,7 +12,6 @@
 
 // we don't want to share them
 extern vu32 VIntProcess;
-extern vu32 HIntProcess;
 
 
 const u16 palette_black_all[64] =

@@ -5,8 +5,8 @@
 
 #include "sys.h"
 #include "vdp.h"
-#include "vdp_dma.h"
 #include "vdp_spr.h"
+#include "dma.h"
 #include "tile_cache.h"
 #include "memory.h"
 
@@ -16,9 +16,6 @@
 #define VISIBILITY_ALWAYS_OFF   (VISIBILITY_ALWAYS_FLAG | 0x00000000)
 
 
-// we don't want to share it
-extern vu32 VIntProcess;
-
 // forward
 static void computeVisibility(Sprite *sprite);
 static void setFrame(Sprite *sprite, AnimationFrame *frame);
@@ -26,10 +23,9 @@ static void allocTileSet(AnimationFrame *frame, u16 position);
 
 
 // no static so it can be read
-VDPSprite *VDPSpriteCache;
+VDPSprite *VDPSpriteCache = NULL;
 
 static TileCache tcSprite;
-static u16 toUpload;
 
 
 void SPR_init(u16 cacheSize)
@@ -42,11 +38,6 @@ void SPR_init(u16 cacheSize)
 
     // alloc cache structure memory
     VDPSpriteCache = MEM_alloc(SPRITE_CACHE_SIZE * sizeof(VDPSprite));
-    // reset
-    toUpload = 0;
-
-    // enabled sprite engine VInt processing
-    VIntProcess |= PROCESS_SPRITEENGINE_TASK;
 
     size = cacheSize?cacheSize:384;
     // get start tile index for sprite cache (reserve VRAM area just before system font)
@@ -62,13 +53,9 @@ void SPR_end()
 {
     if (SPR_isInitialized())
     {
-        // disabled tile cache Int processing
-        VIntProcess &= ~PROCESS_SPRITEENGINE_TASK;
-
-        // send an empty sprite list to VDP to hide them
-        VDPSpriteCache->y = 0;
+        // clear sprite list
+        SPR_clear();
         VDPSpriteCache->size_link = 0;
-        VDP_doVRamDMA((u32) VDPSpriteCache, VDP_getSpriteListAddress(), sizeof(VDPSprite) / 2);
 
         MEM_free(VDPSpriteCache);
         VDPSpriteCache = NULL;
@@ -79,11 +66,11 @@ void SPR_end()
 
 u16 SPR_isInitialized()
 {
-    return VIntProcess & PROCESS_SPRITEENGINE_TASK;
+    return (VDPSpriteCache != NULL);
 }
 
 
-void SPR_initSprite(Sprite *sprite, SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut)
+void SPR_initSprite(Sprite *sprite, const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut)
 {
     sprite->definition = spriteDef;
     sprite->x = x + 0x80;
@@ -248,7 +235,8 @@ void SPR_clear()
     cache->y = 0;
     cache->size_link = 0;
 
-    toUpload = 1;
+    // send 1 sprite to VRAM to clear current displayed sprites using the DMA queue
+    DMA_queueDma(DMA_VRAM, (u32) VDPSpriteCache, VDP_getSpriteListAddress(), (1 * sizeof(VDPSprite)) / 2, 2);
 }
 
 void SPR_update(Sprite *sprites, u16 num)
@@ -432,17 +420,18 @@ void SPR_update(Sprite *sprites, u16 num)
         cache--;
         // end sprite list
         cache->size_link &= 0xFF00;
-        // save number of sprite to upload
-        toUpload = ind;
     }
     else
     {
         // single sprite not visible so nothing is displayed
         cache->y = 0;
         cache->size_link = 0;
-
-        toUpload = 1;
+        // send 1 sprite to VRAM to clear current displayed sprites
+        ind = 1;
     }
+
+    // send sprites to VRAM using DMA queue
+    DMA_queueDma(DMA_VRAM, (u32) VDPSpriteCache, VDP_getSpriteListAddress(), (ind * sizeof(VDPSprite)) / 2, 2);
 }
 
 //void SPR_release(Sprite *sprites, u16 num)
@@ -458,19 +447,6 @@ void SPR_update(Sprite *sprites, u16 num)
 //        sprite++;
 //    }
 //}
-
-// VInt processing
-u16 SPR_doVBlankProcess()
-{
-    if (toUpload)
-    {
-        // send to VRAM
-        VDP_doVRamDMA((u32) VDPSpriteCache, VDP_getSpriteListAddress(), (toUpload * sizeof(VDPSprite)) / 2);
-        toUpload = 0;
-    }
-
-    return TRUE;
-}
 
 
 void computeVisibility(Sprite *sprite)

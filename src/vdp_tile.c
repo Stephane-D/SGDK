@@ -24,7 +24,7 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, u8 use_dma)
         if (comp == COMPRESSION_RLE)
         {
             // direct unpack tiles in vram
-            rle4b_unpackVRam((u8*) tileset->tiles, index * 32);
+            rle4b_unpackVRam((u8*) tileset->tiles, index * 32, 0, 0);
         }
         else
         {
@@ -388,7 +388,6 @@ void VDP_setTileMapDataRect(u16 plan, const u16 *data, u16 x, u16 y, u16 w, u16 
         *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
         j = w;
-
         while (j--) *pwdata = *src++;
 
         addr += planwidth * 2;

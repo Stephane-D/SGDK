@@ -13,23 +13,23 @@
 
 
 /**
- *  \def SUBTICKPERSECOND
+ *  \brief
  *      Number of subtick per second.
  */
 #define SUBTICKPERSECOND    76800
 /**
- *  \def TICKPERSECOND
+ *  \brief
  *      Number of tick per second.
  */
 #define TICKPERSECOND       300
 /**
- *  \def TIMEPERSECOND
+ *  \brief
  *      Time sub division per second.
  */
 #define TIMEPERSECOND       256
 
 /**
- *  \def MAXTIMER
+ *  \brief
  *      Maximum number of timer.
  */
 #define MAXTIMER            16

@@ -696,14 +696,62 @@ Bitmap *allocateBitmap(const Bitmap *bitmap)
     return allocateBitmapInternal(bitmap, MEM_alloc(getBitmapAllocSize(bitmap) + sizeof(Bitmap)));
 }
 
+Bitmap *allocateBitmapEx(u16 width, u16 heigth)
+{
+    // allocate
+    void *adr = MEM_alloc(((width * heigth) / 2) + sizeof(Bitmap));
+    Bitmap *result = (Bitmap*) adr;
+
+    if (result != NULL)
+    {
+        result->compression = COMPRESSION_NONE;
+        // set image pointer
+        result->image = (u8*) (adr + sizeof(Bitmap));
+    }
+
+    return result;
+}
+
 TileSet *allocateTileSet(const TileSet *tileset)
 {
     return allocateTileSetInternal(tileset, MEM_alloc(getTileSetAllocSize(tileset) + sizeof(TileSet)));
 }
 
+TileSet *allocateTileSetEx(u16 numTile)
+{
+    // allocate
+    void *adr = MEM_alloc((numTile * 32) + sizeof(TileSet));
+    TileSet *result = (TileSet*) adr;
+
+    if (result != NULL)
+    {
+        result->compression = COMPRESSION_NONE;
+        // set tiles pointer
+        result->tiles = (u32*) (adr + sizeof(TileSet));
+    }
+
+    return result;
+}
+
 Map *allocateMap(const Map *map)
 {
     return allocateMapInternal(map, MEM_alloc(getMapAllocSize(map) + sizeof(Map)));
+}
+
+Map *allocateMapEx(u16 width, u16 heigth)
+{
+    // allocate
+    void *adr = MEM_alloc((width * heigth * 2) + sizeof(Map));
+    Map *result = (Map*) adr;
+
+    if (result != NULL)
+    {
+        result->compression = COMPRESSION_NONE;
+        // set tilemap pointer
+        result->tilemap = (u16*) (adr + sizeof(Map));
+    }
+
+    return result;
 }
 
 Image *allocateImage(const Image *image)
@@ -714,11 +762,11 @@ Image *allocateImage(const Image *image)
     Map *map = image->map;
 
     if (tileset->compression != COMPRESSION_NONE)
-        sizeTileset = getTileSetAllocSize(tileset) + sizeof(TileSet);
+        sizeTileset = (tileset->numTile * 32) + sizeof(TileSet);
     else
         sizeTileset = 0;
     if (map->compression != COMPRESSION_NONE)
-        sizeMap = getMapAllocSize(map) + sizeof(Map);
+        sizeMap = (map->w * map->h * 2) + sizeof(Map);
     else
         sizeMap = 0;
 
@@ -747,6 +795,22 @@ Image *allocateImage(const Image *image)
     return result;
 }
 
+TileSet *getTileSet(SubTileSet *subTileSet, TileSet *dest)
+{
+    TileSet *result;
+    TileSet *ref;
+
+    if (dest) result = dest;
+    else result = allocateTileSetEx(subTileSet->numTile);
+
+    ref = subTileSet->tileSet;
+
+    // extract
+    unpackEx(ref->compression, (u8*) ref->tiles, (u8*) result->tiles, subTileSet->offset, subTileSet->size);
+
+    return result;
+}
+
 
 Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest)
 {
@@ -765,6 +829,9 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest)
         // unpack image
         if (src->compression != COMPRESSION_NONE)
             unpack(src->compression, (u8*) src->image, (u8*) result->image);
+        // simple copy if needed
+        else if (src->image != result->image)
+            memcpy((u8*) result->image, (u8*) src->image, (src->w * src->h) / 2);
     }
 
     return result;
@@ -785,6 +852,9 @@ TileSet *unpackTileSet(const TileSet *src, TileSet *dest)
         // unpack tiles
         if (src->compression != COMPRESSION_NONE)
             unpack(src->compression, (u8*) src->tiles, (u8*) result->tiles);
+        // simple copy if needed
+        else if (src->tiles != result->tiles)
+            memcpy((u8*) result->tiles, (u8*) src->tiles, src->numTile * 32);
     }
 
     return result;
@@ -806,6 +876,9 @@ Map *unpackMap(const Map *src, Map *dest)
         // unpack tilemap
         if (src->compression != COMPRESSION_NONE)
             unpack(src->compression, (u8*) src->tilemap, (u8*) result->tilemap);
+        // simple copy if needed
+        else if (src->tilemap != result->tilemap)
+            memcpy((u8*) result->tilemap, (u8*) src->tilemap, (src->w * src->h) * 2);
     }
 
     return result;
@@ -823,11 +896,11 @@ Image *unpackImage(const Image *src, Image *dest)
         // fill infos (palette is never packed)
         result->palette = src->palette;
 
-        // unpack tileset
-        if (src->tileset->compression != COMPRESSION_NONE)
+        // unpack tileset if needed
+        if (src->tileset != result->tileset)
             unpackTileSet(src->tileset, result->tileset);
-        // unpack map
-        if (src->map->compression != COMPRESSION_NONE)
+        // unpack map if needed
+        if (src->map != result->map)
             unpackMap(src->map, result->map);
     }
 
@@ -835,15 +908,22 @@ Image *unpackImage(const Image *src, Image *dest)
 }
 
 
-void unpack(u16 compression, u8 *src, u8 *dest)
+u16 unpackEx(u16 compression, u8 *src, u8 *dest, u32 offset, u16 size)
 {
     switch(compression)
     {
-        // nothing to do
-        default:
+        case COMPRESSION_NONE:
+            // cannot do anything...
+            if (size == 0) return FALSE;
+
+            // use simple memory copy
+            memcpy(dest, &src[offset], size);
             break;
 
         case COMPRESSION_APLIB:
+            // not supported
+            if ((offset != 0) || (size != 0))  return FALSE;
+
             aplib_unpack(src, dest);
             break;
 
@@ -852,17 +932,27 @@ void unpack(u16 compression, u8 *src, u8 *dest)
 //            break;
 
         case COMPRESSION_RLE:
-            rle4b_unpack(src, dest);
+            rle4b_unpack(src, dest, offset, size);
             break;
 
         case COMPRESSION_MAP_RLE:
-            rlemap_unpack(src, dest);
+            rlemap_unpack(src, dest, offset, size);
             break;
+
+        default:
+            return FALSE;
     }
+
+    return TRUE;
+}
+
+void unpack(u16 compression, u8 *src, u8 *dest)
+{
+    unpackEx(compression, src, dest, 0, 0);
 }
 
 
-void rle4b_unpack(u8 *src, u8 *dest)
+void rle4b_unpack(u8 *src, u8 *dest, u32 offset, u16 size)
 {
     u8 *s;
     u32 *d;
@@ -870,8 +960,17 @@ void rle4b_unpack(u8 *src, u8 *dest)
     u16 blocnum;
     u16 data_cnt;
 
-    blocnum = *((unsigned short*)src);
-    s = src + 2;
+    if (size == 0)
+    {
+        blocnum = *((unsigned short*)src);
+        s = src + 2;
+    }
+    else
+    {
+        blocnum = size;
+        s = src + 2 + offset;
+    }
+
     d = (u32*) dest;
     data = 0;
     data_cnt = 7;
@@ -895,14 +994,23 @@ void rle4b_unpack(u8 *src, u8 *dest)
     }
 }
 
-void rlemap_unpack(u8 *src, u8 *dest)
+void rlemap_unpack(u8 *src, u8 *dest, u32 offset, u16 size)
 {
     u8 *s;
     u16 *d;
     u16 blocnum;
 
-    blocnum = *((unsigned short*)src);
-    s = src + 2;
+    if (size == 0)
+    {
+        blocnum = *((unsigned short*)src);
+        s = src + 2;
+    }
+    else
+    {
+        blocnum = size;
+        s = src + 2 + offset;
+    }
+
     d = (u16*) dest;
     while (blocnum--)
     {
@@ -927,7 +1035,7 @@ void rlemap_unpack(u8 *src, u8 *dest)
     }
 }
 
-void rle4b_unpackVRam(u8 *src, u16 dest)
+void rle4b_unpackVRam(u8 *src, u16 dest, u32 offset, u16 size)
 {
     vu32 *plctrl;
     vu32 *pldata;
@@ -944,8 +1052,17 @@ void rle4b_unpackVRam(u8 *src, u16 dest)
 
     *plctrl = GFX_WRITE_VRAM_ADDR(dest);
 
-    blocnum = *((unsigned short*)src);
-    s = src + 2;
+    if (size == 0)
+    {
+        blocnum = *((unsigned short*)src);
+        s = src + 2;
+    }
+    else
+    {
+        blocnum = size;
+        s = src + 2 + offset;
+    }
+
     data = 0;
     data_cnt = 7;
     while (blocnum--)
@@ -965,5 +1082,50 @@ void rle4b_unpackVRam(u8 *src, u16 dest)
                 data_cnt = 7;
             }
         }
+    }
+}
+
+void uftc_unpack_old(u8* src, u8 *dest, u16 index, u16 cnt)
+{
+    // Get size of dictionary
+    u16 dirsize = *src++;
+    // Get addresses of dictionary and first tile to decompress
+    u16 *dir = (u16*) src;
+
+    src += dirsize + (index << 4);
+
+    // Decompress all tiles
+    for (; cnt != 0; cnt--)
+    {
+        // To store pointers to 4x4 blocks
+        u16 *block1, *block2;
+
+        // Retrieve location in the dictionary of first pair of 4x4 blocks
+        block1 = dir + *src++;
+        block2 = dir + *src++;
+
+        // Decompress first pair of 4x4 blocks
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+
+        // Retrieve location src the dictionary of second pair of 4x4 blocks
+        block1 = dir + *src++;
+        block2 = dir + *src++;
+
+        // Decompress second pair of 4x4 blocks
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+        *dest++ = *block1++;
+        *dest++ = *block2++;
+        *dest++ = *block1++;
+        *dest++ = *block2++;
     }
 }

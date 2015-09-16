@@ -19,214 +19,215 @@
 
 
 /**
- *  \def GFX_DATA_PORT
+ *  \brief
  *      VDP Data port address.
  */
 #define GFX_DATA_PORT           0xC00000
 /**
- *  \def GFX_CTRL_PORT
+ *  \brief
  *      VDP Control port address.
  */
 #define GFX_CTRL_PORT           0xC00004
 /**
- *  \def GFX_HVCOUNTER_PORT
+ *  \brief
  *      VDP HV counter port address.
  */
 #define GFX_HVCOUNTER_PORT      0xC00008
 
-
 /**
- *  \def VDP_FIFOEMPTY_FLAG
+ *  \brief
  *      VDP FIFO empty flag.
  */
 #define VDP_FIFOEMPTY_FLAG      (1 << 9)
 /**
- *  \def VDP_FIFOFULL_FLAG
+ *  \brief
  *      VDP FIFO full flag.
  */
 #define VDP_FIFOFULL_FLAG       (1 << 8)
 /**
- *  \def VDP_VINTPENDING_FLAG
+ *  \brief
  *      VDP Vertical interrupt pending flag.
  */
 #define VDP_VINTPENDING_FLAG    (1 << 7)
 /**
- *  \def VDP_SPROVERFLOW_FLAG
+ *  \brief
  *      VDP sprite overflow flag.
  */
 #define VDP_SPROVERFLOW_FLAG    (1 << 6)
 /**
- *  \def VDP_SPRCOLLISION_FLAG
+ *  \brief
  *      VDP sprite collision flag.
  */
 #define VDP_SPRCOLLISION_FLAG   (1 << 5)
 /**
- *  \def VDP_ODDFRAME_FLAG
+ *  \brief
  *      VDP odd frame flag.
  */
 #define VDP_ODDFRAME_FLAG       (1 << 4)
 /**
- *  \def VDP_VBLANK_FLAG
+ *  \brief
  *      VDP Vertical blanking flag.
  */
 #define VDP_VBLANK_FLAG         (1 << 3)
 /**
- *  \def VDP_HBLANK_FLAG
+ *  \brief
  *      VDP Horizontal blanking flag.
  */
 #define VDP_HBLANK_FLAG         (1 << 2)
 /**
- *  \def VDP_DMABUSY_FLAG
+ *  \brief
  *      VDP DMA busy flag.
  */
 #define VDP_DMABUSY_FLAG        (1 << 1)
 /**
- *  \def VDP_PALMODE_FLAG
+ *  \brief
  *      VDP PAL mode flag.
  */
 #define VDP_PALMODE_FLAG        (1 << 0)
 
 /**
- *  \def WINDOW
+ *  \brief
  *      VDP window tilemap address in VRAM.<br/>
- *      Short version of VDP_WINDOW definition.
+ *      Short version of #VDP_WINDOW definition.
  */
 #define WINDOW                  window_adr
 /**
- *  \deprecated Use WINDOW instead.
+ *  \deprecated
+ *      Use #WINDOW instead.
  */
 #define WPLAN                   WINDOW
 /**
- *  \def HSCRL
+ *  \brief
  *      VDP horizontal scroll table address in VRAM.<br/>
- *      Short version of VDP_SCROLL_H definition.
+ *      Short version of #VDP_SCROLL_H definition.
  */
 #define HSCRL                   hscrl_adr
 /**
- *  \def SLIST
+ *  \brief
  *      VDP sprite list table address in VRAM.<br/>
- *      Short version of VDP_SPRITE_LIST definition.
+ *      Short version of #VDP_SPRITE_LIST definition.
  */
 #define SLIST                   slist_adr
 /**
- *  \def APLAN
+ *  \brief
  *      VDP background A tilemap address in VRAM.<br/>
- *      Short version of VDP_PLAN_A definition.
+ *      Short version of #VDP_PLAN_A definition.
  */
 #define APLAN                   aplan_adr
 /**
- *  \def BPLAN
+ *  \brief
  *      VDP background B tilemap address in VRAM.<br/>
- *      Short version of VDP_PLAN_B definition.
+ *      Short version of #VDP_PLAN_B definition.
  */
 #define BPLAN                   bplan_adr
 
 /**
- *  \def VDP_WINDOW
+ *  \brief
  *      VDP window tilemap address in VRAM.
  */
 #define VDP_WINDOW              WINDOW
 /**
- *  \deprecated Use VDP_WINDOW instead.
+ *  \deprecated
+ *      Use #VDP_WINDOW instead.
  */
 #define VDP_PLAN_WINDOW         VDP_WINDOW
 /**
- *  \def VDP_SCROLL_H
+ *  \brief
  *      VDP horizontal scroll table address in VRAM.
  */
 #define VDP_SCROLL_H            HSCRL
 /**
- *  \def VDP_SPRITE_LIST
+ *  \brief
  *      VDP sprite list table address in VRAM.
  */
 #define VDP_SPRITE_LIST         SLIST
 /**
- *  \def VDP_PLAN_A
+ *  \brief
  *      VDP background A tilemap address in VRAM.
  */
 #define VDP_PLAN_A              APLAN
 /**
- *  \def VDP_PLAN_B
+ *  \brief
  *      VDP background B tilemap address in VRAM.
  */
 #define VDP_PLAN_B              BPLAN
 
 /**
- *  \def HSCROLL_PLANE
+ *  \brief
  *      Definition to set horizontal scroll to mode plan.
  */
 #define HSCROLL_PLANE           0
 /**
- *  \def HSCROLL_TILE
+ *  \brief
  *      Definition to set horizontal scroll to mode tile.
  */
 #define HSCROLL_TILE            2
 /**
- *  \def HSCROLL_LINE
+ *  \brief
  *      Definition to set horizontal scroll to mode line.
  */
 #define HSCROLL_LINE            3
 
 /**
- *  \def VSCROLL_PLANE
+ *  \brief
  *      Definition to set vertical scroll to mode plan.
  */
 #define VSCROLL_PLANE           0
 /**
- *  \def VSCROLL_2TILE
+ *  \brief
  *      Definition to set vertical scroll to mode 2 tile.
  */
 #define VSCROLL_2TILE           1
 
 /**
- *  \def INTERLACED_NONE
+ *  \brief
  *      Interlaced scanning mode disabled.<br/>
  *      That is the default mode for the VDP.
  */
 #define INTERLACED_NONE         0
 /**
- *  \def INTERLACED_MODE1
+ *  \brief
  *      Interlaced Scanning Mode 1 - 8x8 dots per cell (normal vertical resolution)<br/>
  *      In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.
  */
 #define INTERLACED_MODE1        1
 /**
- *  \def INTERLACED_MODE2
+ *  \brief
  *      Interlaced Scanning Mode 2 - 8x16 dots per cell (double vertical resolution)<br/>
  *      In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.
  */
 #define INTERLACED_MODE2        2
 
 /**
- *  \def TILE_SIZE
+ *  \brief
  *      Size of a single tile in byte.
  */
 #define TILE_SIZE               32
 #define TILE_INDEX_MASK         (0xFFFF / TILE_SIZE)
 
 /**
- *  \def TILE_SPACE
+ *  \brief
  *      Space in byte for tile in VRAM (tile space ends where window tilemap starts)
  */
 #define TILE_SPACE              WINDOW
 
 /**
- *  \def TILE_MAXNUM
+ *  \brief
  *      Maximum number of tile in VRAM (related to TILE_SPACE).
  */
 #define TILE_MAXNUM             (TILE_SPACE / TILE_SIZE)
 /**
- *  \def TILE_MAXINDEX
+ *  \brief
  *      Maximum tile index in VRAM (related to TILE_MAXNUM).
  */
 #define TILE_MAXINDEX           (TILE_MAXNUM - 1)
 /**
- *  \def TILE_SYSTEMINDEX
+ *  \brief
  *      System base tile index in VRAM.
  */
 #define TILE_SYSTEMINDEX        0x0000
 /**
- *  \def TILE_SYSTEMLENGTH
+ *  \brief
  *      Number of system tile.
  */
 #define TILE_SYSTEMLENGTH       0x10
@@ -235,17 +236,17 @@
  */
 #define TILE_SYSTEMLENGHT       TILE_SYSTEMLENGTH
 /**
- *  \def TILE_USERINDEX
+ *  \brief
  *      User base tile index.
  */
 #define TILE_USERINDEX          (TILE_SYSTEMINDEX + TILE_SYSTEMLENGTH)
 /**
- *  \def TILE_FONTINDEX
+ *  \brief
  *      Font base tile index.
  */
 #define TILE_FONTINDEX          (TILE_MAXNUM - FONT_LEN)
 /**
- *  \def TILE_USERLENGTH
+ *  \brief
  *      Number of available user tile.
  */
 #define TILE_USERLENGTH         (TILE_FONTINDEX - TILE_USERINDEX)
@@ -254,144 +255,144 @@
  */
 #define TILE_USERLENGHT         TILE_USERLENGTH
 /**
- *  \def TILE_USERMAXINDEX
+ *  \brief
  *      Maximum tile index in VRAM for user.
  */
 #define TILE_USERMAXINDEX       (TILE_USERINDEX + TILE_USERLENGTH - 1)
 /**
- *  \def TILE_SYSTEM
+ *  \brief
  *      System tile address in VRAM.
  */
 #define TILE_SYSTEM             (TILE_SYSTEMINDEX * TILE_SIZE)
 /**
- *  \def TILE_USER
+ *  \brief
  *      User tile address in VRAM.
  */
 #define TILE_USER               (TILE_USERINDEX * TILE_SIZE)
 /**
- *  \def TILE_FONT
+ *  \brief
  *      Font tile address in VRAM.
  */
 #define TILE_FONT               (TILE_FONTINDEX * TILE_SIZE)
 
 /**
- *  \def PAL0
+ *  \brief
  *      Palette 0
  */
 #define PAL0                    0
 /**
- *  \def PAL1
+ *  \brief
  *      Palette 1
  */
 #define PAL1                    1
 /**
- *  \def PAL2
+ *  \brief
  *      Palette 2
  */
 #define PAL2                    2
 /**
- *  \def PAL3
+ *  \brief
  *      Palette 3
  */
 #define PAL3                    3
 
 /**
- *  \def GFX_READ_VRAM_ADDR
+ *  \brief
  *      Set VDP command to read specified VRAM address.
  */
 #define GFX_READ_VRAM_ADDR(adr)     ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
 /**
- *  \def GFX_READ_CRAM_ADDR
+ *  \brief
  *      Set VDP command to read specified CRAM address.
  */
 #define GFX_READ_CRAM_ADDR(adr)     ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x20)
 /**
- *  \def GFX_READ_VSRAM_ADDR
+ *  \brief
  *      Set VDP command to read specified VSRAM address.
  */
 #define GFX_READ_VSRAM_ADDR(adr)    ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x10)
 
 /**
- *  \def GFX_WRITE_VRAM_ADDR
+ *  \brief
  *      Set VDP command to write at specified VRAM address.
  */
 #define GFX_WRITE_VRAM_ADDR(adr)    ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
 /**
- *  \def GFX_WRITE_CRAM_ADDR
+ *  \brief
  *      Set VDP command to write at specified CRAM address.
  */
 #define GFX_WRITE_CRAM_ADDR(adr)    ((0xC000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
 /**
- *  \def GFX_WRITE_VSRAM_ADDR
+ *  \brief
  *      Set VDP command to write at specified VSRAM address.
  */
 #define GFX_WRITE_VSRAM_ADDR(adr)   ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x10)
 
 /**
- *  \def GFX_DMA_VRAM_ADDR
+ *  \brief
  *      Set VDP command to issue a DMA transfert to specified VRAM address.
  */
 #define GFX_DMA_VRAM_ADDR(adr)      ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x80)
 /**
- *  \def GFX_DMA_CRAM_ADDR
+ *  \brief
  *      Set VDP command to issue a DMA transfert to specified CRAM address.
  */
 #define GFX_DMA_CRAM_ADDR(adr)      ((0xC000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x80)
 /**
- *  \def GFX_DMA_VSRAM_ADDR
+ *  \brief
  *      Set VDP command to issue a DMA transfert to specified VSRAM address.
  */
 #define GFX_DMA_VSRAM_ADDR(adr)     ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x90)
 
 /**
- *  \def GFX_DMA_VRAMCOPY_ADDR
+ *  \brief
  *      Set VDP command to issue a DMA VRAM copy to specified VRAM address.
  */
 #define GFX_DMA_VRAMCOPY_ADDR(adr)  ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0xC0)
 
 /**
- *  \def GFX_VERT_SCROLL
+ *  \brief
  *      Helper to write in vertical scroll table (same as GFX_WRITE_VSRAM_ADDR).
  */
 #define GFX_VERT_SCROLL(adr)        GFX_WRITE_VSRAM_ADDR(adr)
 /**
- *  \def GFX_HORZ_SCROLL
+ *  \brief
  *      Helper to write in horizontal scroll table (same as GFX_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr)).
  */
 #define GFX_HORZ_SCROLL(adr)        GFX_WRITE_VRAM_ADDR(VDP_SCROLL_H + (adr))
 
 /**
- *  \def GET_VDPSTATUS
+ *  \brief
  *      Tests VDP status against specified flag (see VDP_XXX_FLAG).
  */
 #define GET_VDPSTATUS(flag)         ((*(vu16*)(GFX_CTRL_PORT)) & (flag))
 /**
- *  \def IS_PALSYSTEM
+ *  \brief
  *      Tests if current system is a PAL system (50 Hz).
  */
 #define IS_PALSYSTEM                GET_VDPSTATUS(VDP_PALMODE_FLAG)
 
 /**
- *  \def GET_HVCOUNTER
+ *  \brief
  *      Returns HV counter.
  */
 #define GET_HVCOUNTER               (*(vu16*)(GFX_HVCOUNTER_PORT))
 /**
- *  \def GET_HCOUNTER
+ *  \brief
  *      Returns Horizontal counter.
  */
 #define GET_HCOUNTER                (GET_HVCOUNTER & 0xFF)
 /**
- *  \def GET_VCOUNTER
+ *  \brief
  *      Returns Vertical counter.
  */
 #define GET_VCOUNTER                (GET_HVCOUNTER >> 8)
 
 
 /**
- *  \struct VDPPlan
+ *  \brief
  *      Type used to define on which plan to work (only used in some methods).<br/>
- *      You should use the <b>PLAN_A</b> and <b>PLAN_B</b> constants.
+ *      You should use the #PLAN_A and #PLAN_B constants.
  *
  *   \see PLAN_A
  *   \see PLAN_B
@@ -401,8 +402,15 @@ typedef struct
     u16 v;
 } VDPPlan;
 
-
+/**
+ *  \brief
+ *      Constant to define VDP plan A
+ */
 extern const VDPPlan PLAN_B;
+/**
+ *  \brief
+ *      Constant to define VDP plan A
+ */
 extern const VDPPlan PLAN_A;
 
 
@@ -647,7 +655,7 @@ u16 VDP_getBPlanAddress();
 u16 VDP_getWindowAddress();
 /**
  *  \deprecated
- *      Use VDP_getWindowAddress(..) instead.
+ *      Use #VDP_getWindowAddress(..) instead.
  */
 u16 VDP_getWindowPlanAddress();
 /**
@@ -673,8 +681,9 @@ u16 VDP_getHScrollTableAddress();
  *      <br/>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  Ex: VDP_setAPlanAddress(0xC000)<br/>
- *  Will set the Plan A to at address 0xC000 in VRAM.
+ *  EX:<br/>
+ *      VDP_setAPlanAddress(0xC000)<br/>
+ *      Will set the Plan A to at address 0xC000 in VRAM.
  */
 void VDP_setAPlanAddress(u16 value);
 /**
@@ -689,13 +698,14 @@ void VDP_setAPlanAddress(u16 value);
  *      <br/>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  Ex: VDP_setWindowAddress(0xA000)<br/>
- *  Will set the Window tilemap to at address 0xA000 in VRAM.
+ *  EX:<br/>
+ *      VDP_setWindowAddress(0xA000)<br/>
+ *      Will set the Window tilemap to at address 0xA000 in VRAM.
  */
 void VDP_setWindowAddress(u16 value);
 /**
  *  \deprecated
- *      Use VDP_setWindowAddress(..) instead.
+ *      Use #VDP_setWindowAddress(..) instead.
  */
 void VDP_setWindowPlanAddress(u16 value);
 /**
@@ -710,8 +720,9 @@ void VDP_setWindowPlanAddress(u16 value);
  *      <br/>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  Ex: VDP_setAPlanAddress(0xE000)<br/>
- *  Will set the Plan B to at address 0xE000 in VRAM.
+ *  EX:<br/>
+ *      VDP_setBPlanAddress(0xE000)<br/>
+ *      Will set the Plan B to at address 0xE000 in VRAM.
  */
 void VDP_setBPlanAddress(u16 value);
 /**
@@ -726,8 +737,9 @@ void VDP_setBPlanAddress(u16 value);
  *      <br/>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  Ex: VDP_setSpriteListAddress(0xB800)<br/>
- *  Will set the Sprite list to at address 0xB800 in VRAM.
+ *  EX:<br/>
+ *      VDP_setSpriteListAddress(0xB800)<br/>
+ *      Will set the Sprite list to at address 0xB800 in VRAM.
  */
 void VDP_setSpriteListAddress(u16 value);
 /**
@@ -742,8 +754,9 @@ void VDP_setSpriteListAddress(u16 value);
  *      <br/>
  *      The the window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  Ex: VDP_setSpriteListAddress(0xB400)<br/>
- *  Will set the HScroll table to at address 0xB400 in VRAM.
+ *  EX:<br/>
+ *      VDP_setHScrollTableAddress(0xB400)<br/>
+ *      Will set the HScroll table to at address 0xB400 in VRAM.
  */
 void VDP_setHScrollTableAddress(u16 value);
 
@@ -754,9 +767,9 @@ void VDP_setHScrollTableAddress(u16 value);
  *  \param mode
  *      Accepted values : #INTERLACED_NONE, #INTERLACED_MODE1, #INTERLACED_MODE2
  *
- * This function changes the scanning mode on the next display blanking period.</br>
- * In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.</br>
- * In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.</br>
+ * This function changes the scanning mode on the next display blanking period.<br/>
+ * In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.<br/>
+ * In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.<br/>
  * The number of cells on the screen stays the same regardless of which scanning mode is active.
  */
 void VDP_setScanMode(u16 mode);

@@ -11,7 +11,7 @@
 #define _YM2612_H_
 
 /**
- *  \def YM2612_BASEPORT
+ *  \brief
  *      YM2612 base port address.
  */
 #define YM2612_BASEPORT     0xA04000

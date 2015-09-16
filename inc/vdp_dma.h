@@ -3,6 +3,7 @@
  *  \brief VDP DMA support
  *  \author Stephane Dallongeville
  *  \date 08/2011
+ *  \deprecated Use dma.h unit instead
  *
  * This unit provides methods to use the VDP DMA capabilities.
  */
@@ -12,24 +13,24 @@
 
 
 /**
- *  \def VDP_DMA_VRAM
+ *  \brief
  *      VRAM location for DMA operation.
  */
 #define VDP_DMA_VRAM    0
 /**
- *  \def VDP_DMA_CRAM
+ *  \brief
  *      CRAM location for DMA operation.
  */
 #define VDP_DMA_CRAM    1
 /**
- *  \def VDP_DMA_VSRAM
+ *  \brief
  *      VSRAM location for DMA operation.
  */
 #define VDP_DMA_VSRAM   2
 
 
 /**
- *  \def VDP_doVRamDMA
+ *  \brief
  *      Start DMA transfert to VRAM.
  *
  *  \param from
@@ -38,11 +39,13 @@
  *      Destination address in VRAM.
  *  \param len
  *      Number of word to transfert.
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 #define VDP_doVRamDMA(from, to, len)            \
     VDP_doDMA(VDP_DMA_VRAM, from, to, len)
 /**
- *  \def VDP_doCRamDMA
+ *  \brief
  *      Start DMA transfert to CRAM.
  *
  *  \param from
@@ -51,11 +54,13 @@
  *      Destination address in CRAM.
  *  \param len
  *      Number of word to transfert.
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 #define VDP_doCRamDMA(from, to, len)            \
     VDP_doDMA(VDP_DMA_CRAM, from, to, len)
 /**
- *  \def VDP_doVSRamDMA
+ *  \brief
  *      Start DMA transfert to VSRAM.
  *
  *  \param from
@@ -64,6 +69,8 @@
  *      Destination address in VSRAM.
  *  \param len
  *      Number of word to transfert.
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 #define VDP_doVSRamDMA(from, to, len)           \
     VDP_doDMA(VDP_DMA_VSRAM, from, to, len)
@@ -71,7 +78,7 @@
 
 /**
  *  \brief
- *      Do DMA transfert operation.
+ *      Do DMA transfer operation.
  *
  *  \param location
  *      Destination location.<br/>
@@ -84,12 +91,14 @@
  *  \param to
  *      Destination address.
  *  \param len
- *      Number of word to transfert.
+ *      Number of word to transfer.
  *  \param vramStep
  *      VRam address increment value (-1 to 255).<br/>
  *      By default you should set it to 2 for normal copy operation but you can use different value
  *      for specific operation.<br/>
  *      -1 means the VRam address increment register won't be modified (use current value).
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep);
 /**
@@ -108,6 +117,8 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep);
  *      Destination address.
  *  \param len
  *      Number of word to transfert.
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 void VDP_doDMA(u8 location, u32 from, u16 to, u16 len);
 /**
@@ -120,6 +131,8 @@ void VDP_doDMA(u8 location, u32 from, u16 to, u16 len);
  *      Number of byte to fill.
  *  \param value
  *      Fill value (byte).
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 void VDP_doVRamDMAFill(u16 to, u16 len, u8 value);
 /**
@@ -132,6 +145,8 @@ void VDP_doVRamDMAFill(u16 to, u16 len, u8 value);
  *      Destination address.
  *  \param len
  *      Number of byte to copy.
+ *
+ *  \deprecated Use DMA_xxx methods instead
  */
 void VDP_doVRamDMACopy(u16 from, u16 to, u16 len);
 

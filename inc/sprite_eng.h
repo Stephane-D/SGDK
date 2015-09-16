@@ -18,29 +18,29 @@
 
 
 /**
- *  \def SPRITE_CACHE_SIZE
+ *  \brief
  *      Maximum number of sprite in the cache
  */
 #define SPRITE_CACHE_SIZE           128
 
 /**
- *  \def COLLISION_TYPE_NONE
+ *  \brief
  *      No collision tpye
  */
 #define COLLISION_TYPE_NONE     0
 /**
- *  \def COLLISION_TYPE_BOX
+ *  \brief
  *      Bouding box collision tpye
  */
 #define COLLISION_TYPE_BOX      1
 /**
- *  \def COLLISION_TYPE_CIRCLE
+ *  \brief
  *      Round circle collision tpye
  */
 #define COLLISION_TYPE_CIRCLE   2
 
 /**
- *  \struct VDPSprite
+ *  \brief
  *      VDP sprite definition structure replicating VDP hardware sprite.
  *
  *  \param y
@@ -61,7 +61,7 @@ typedef struct
 }  VDPSprite;
 
 /**
- *  \struct FrameSprite
+ *  \brief
  *      Single frame sprite definition structure close to the VDP hardware sprite.
  *
  *  \param Sprite.y
@@ -83,7 +83,7 @@ typedef struct
 }  FrameSprite;
 
 /**
- *  \struct AnimationFrame
+ *  \brief
  *      Sprite animation frame structure.
  *
  *  \param numSprite
@@ -119,7 +119,7 @@ typedef struct
 } AnimationFrame;
 
 /**
- *  \struct Animation
+ *  \brief
  *      Sprite animation structure.
  *
  *  \param numFrame
@@ -143,7 +143,7 @@ typedef struct
 } Animation;
 
 /**
- *  \struct SpriteDefinition
+ *  \brief
  *      Sprite definition structure.<br/>
  *      Contains all animations for a Sprite.
  *
@@ -162,7 +162,7 @@ typedef struct
 } SpriteDefinition;
 
 /**
- *  \struct Sprite
+ *  \brief
  *      Sprite structure.<br/>
  *      Used to manage an active sprite in game condition.
  *
@@ -195,7 +195,7 @@ typedef struct
  */
 typedef struct
 {
-    SpriteDefinition *definition;
+    const SpriteDefinition *definition;
     Animation *animation;
     AnimationFrame *frame;
     s16 x;
@@ -221,7 +221,7 @@ typedef struct
  *
  * Initialize the sprite engine.<br/>
  * This actually allocate memory for sprite cache and initialize the tile cache engine
- * if this is not alreay done.
+ * if this is not already done.
  */
 void SPR_init(u16 cacheSize);
 /**
@@ -257,7 +257,7 @@ u16 SPR_isInitialized();
  *  \param attribut
  *      sprite attribut (see TILE_ATTR() macro).
  */
-void SPR_initSprite(Sprite *sprite, SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
+void SPR_initSprite(Sprite *sprite, const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
 /**
  *  \brief
  *      Set sprite position.
@@ -324,7 +324,9 @@ void SPR_nextFrame(Sprite *sprite);
 
 /**
  *  \brief
- *      Set the VRAM tile position for this sprite.
+ *      Set the VRAM tile position for this sprite.<br/>
+ *      Use this method only if you want to manually allocate the sprite tiles in VRAM
+ *      and force a fixed position as the sprite engine does it for you by default.
  *
  *  \param sprite
  *      Sprite to set the VRAM tile position for
@@ -362,7 +364,7 @@ void SPR_setAlwaysVisible(Sprite *sprite, u16 value);
  */
 void SPR_setNeverVisible(Sprite *sprite, u16 value);
 
-///**
+// /**
 // *  \brief
 // *      Test if specified sprites are in collision.
 // *

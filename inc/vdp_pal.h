@@ -23,7 +23,7 @@
 #define VDPPALETTE_COLORMASK        0x0EEE
 
 /**
- *  \def RGB24_TO_VDPCOLOR
+ *  \brief
  *      Convert a RGB 24 bits color to VDP color
  *
  *  \param color
@@ -33,8 +33,9 @@
 
 
 /**
- *  \struct Palette
+ *  \brief
  *      Palette structure contains color data.
+ *
  *  \param index
  *      Index where to load the palette.
  *  \param lenght

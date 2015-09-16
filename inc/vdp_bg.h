@@ -19,7 +19,7 @@
 
 
 /**
- *  \struct Image
+ *  \brief
  *      Image structure which contains all data to define an image in a background plan.<br/>
  *      Use the unpackImage() method to unpack if compression is enabled in TileSet or Map structure.
  *

@@ -23,21 +23,26 @@ extern const fix16 sqrttab16[0x10000];
 
 
 /**
- *  \def min
- *      Returns te lowest value between X an Y.
+ *  \brief
+ *      Returns the lowest value between X an Y.
  */
 #define min(X, Y) ((X) < (Y))?(X):(Y)
 
 /**
- *  \def max
- *      Returns te highest value between X an Y.
+ *  \brief
+ *      Returns the highest value between X an Y.
  */
 #define max(X, Y) ((X) > (Y))?(X):(Y)
 
+/**
+ *  \brief
+ *      Returns the absolute value of X.
+ */
+#define abs(X) ((X) < 0)?-(X):(X)
 
 #ifndef PI
 /**
- *  \def PI
+ *  \brief
  *      PI number (3,1415..)
  */
 #define PI 3.14159265358979323846
@@ -51,72 +56,73 @@ extern const fix16 sqrttab16[0x10000];
 #define FIX32_FRAC_MASK             ((1 << FIX32_FRAC_BITS) - 1)
 
 /**
- *  \def FIX32
- *      Convert specified value to fix32
+ *  \brief
+ *      Convert specified value to fix32.
  *
- *  Ex: f32 v = FIX32(34.567);
+ *  EX:<br/>
+ *      f32 v = FIX32(34.567);
  */
 #define FIX32(value)                ((fix32) ((value) * (1 << FIX32_FRAC_BITS)))
 
 /**
- *  \def intToFix32
+ *  \brief
  *      Convert integer to fix32.
  */
 #define intToFix32(value)           ((value) << FIX32_FRAC_BITS)
 /**
- *  \def fix32ToInt
+ *  \brief
  *      Convert fix32 to integer.
  */
 #define fix32ToInt(value)           ((value) >> FIX32_FRAC_BITS)
 
 /**
- *  \def fix32Round
+ *  \brief
  *      Round the specified value to nearest integer (fix32).
  */
 #define fix32Round(value)           \
     (fix32Frac(value) > FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value)
 
 /**
- *  \def fix32ToRoundedInt
+ *  \brief
  *      Round and convert the specified fix32 value to integer.
  */
 #define fix32ToRoundedInt(value)    \
     (fix32Frac(value) > FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value)
 
 /**
- *  \def fix32Frac
+ *  \brief
  *      Return fractional part of the specified value (fix32).
  */
 #define fix32Frac(value)            ((value) & FIX32_FRAC_MASK)
 /**
- *  \def fix32Int
+ *  \brief
  *      Return integer part of the specified value (fix32).
  */
 #define fix32Int(value)             ((value) & FIX32_INT_MASK)
 
 /**
- *  \def fix32Add
+ *  \brief
  *      Compute and return the result of the addition of val1 and val2 (fix32).
  */
 #define fix32Add(val1, val2)        ((val1) + (val2))
 /**
- *  \def fix32Sub
+ *  \brief
  *      Compute and return the result of the substraction of val2 from val1 (fix32).
  */
 #define fix32Sub(val1, val2)        ((val1) - (val2))
 /**
- *  \def fix32Neg
+ *  \brief
  *      Return negate of specified value (fix32).
  */
 #define fix32Neg(value)             (0 - (value))
 
 /**
- *  \def fix32Mul
+ *  \brief
  *      Compute and return the result of the multiplication of val1 and val2 (fix32).
  */
 #define fix32Mul(val1, val2)        (((val1) * (val2)) >> FIX32_FRAC_BITS)
 /**
- *  \def fix32Div
+ *  \brief
  *      Compute and return the result of the division of val1 by val2 (fix32).
  */
 #define fix32Div(val1, val2)        (((val1) << FIX32_FRAC_BITS) / (val2))
@@ -129,72 +135,73 @@ extern const fix16 sqrttab16[0x10000];
 #define FIX16_FRAC_MASK             ((1 << FIX16_FRAC_BITS) - 1)
 
 /**
- *  \def FIX16
+ *  \brief
  *      Convert specified value to fix16
  *
- *  Ex : f16 v = FIX16(-27.12);
+ *  EX:<br/>
+ *      f16 v = FIX16(-27.12);
  */
 #define FIX16(value)                ((fix16) ((value) * (1 << FIX16_FRAC_BITS)))
 
 /**
- *  \def intToFix16
+ *  \brief
  *      Convert integer to fix16.
  */
 #define intToFix16(value)           ((value) << FIX16_FRAC_BITS)
 /**
- *  \def fix16ToInt
+ *  \brief
  *      Convert fix16 to integer.
  */
 #define fix16ToInt(value)           ((value) >> FIX16_FRAC_BITS)
 
 /**
- *  \def fix16Round
+ *  \brief
  *      Round the specified value to nearest integer (fix16).
  */
 #define fix16Round(value)           \
     (fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value)
 
 /**
- *  \def fix16ToRoundedInt
+ *  \brief
  *      Round and convert the specified fix16 value to integer.
  */
 #define fix16ToRoundedInt(value)    \
     (fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value)
 
 /**
- *  \def fix16Frac
+ *  \brief
  *      Return fractional part of the specified value (fix16).
  */
 #define fix16Frac(value)            ((value) & FIX16_FRAC_MASK)
 /**
- *  \def fix16Int
+ *  \brief
  *      Return integer part of the specified value (fix16).
  */
 #define fix16Int(value)             ((value) & FIX16_INT_MASK)
 
 /**
- *  \def fix16Add
+ *  \brief
  *      Compute and return the result of the addition of val1 and val2 (fix16).
  */
 #define fix16Add(val1, val2)        ((val1) + (val2))
 /**
- *  \def fix16Sub
+ *  \brief
  *      Compute and return the result of the substraction of val2 from val1 (fix16).
  */
 #define fix16Sub(val1, val2)        ((val1) - (val2))
 /**
- *  \def fix16Neg
+ *  \brief
  *      Return negate of specified value (fix16).
  */
 #define fix16Neg(value)             (0 - (value))
 
 /**
- *  \def fix16Mul
+ *  \brief
  *      Compute and return the result of the multiplication of val1 and val2 (fix16).
  */
 #define fix16Mul(val1, val2)        (((val1) * (val2)) >> FIX16_FRAC_BITS)
 /**
- *  \def fix16Div
+ *  \brief
  *      Compute and return the result of the division of val1 by val2 (fix16).
  */
 #define fix16Div(val1, val2)        (((val1) << FIX16_FRAC_BITS) / (val2))
@@ -203,17 +210,17 @@ extern const fix16 sqrttab16[0x10000];
 #if (MATH_BIG_TABLES != 0)
 
 /**
- *  \def fix16Log2
+ *  \brief
  *      Compute and return the result of the Log2 of specified value (fix16).
  */
 #define fix16Log2(v)                log2tab16[v]
 /**
- *  \def fix16Log10
+ *  \brief
  *      Compute and return the result of the Log10 of specified value (fix16).
  */
 #define fix16Log10(v)               log10tab16[v]
 /**
- *  \def fix16Sqrt
+ *  \brief
  *      Compute and return the result of the root square of specified value (fix16).
  */
 #define fix16Sqrt(v)                sqrttab16[v]
@@ -222,37 +229,37 @@ extern const fix16 sqrttab16[0x10000];
 
 
 /**
- *  \def fix32ToFix16
+ *  \brief
  *      Convert specified fix32 value to fix16.
  */
 #define fix32ToFix16(value)         (((value) << FIX16_FRAC_BITS) >> FIX32_FRAC_BITS)
 /**
- *  \def fix16ToFix32
+ *  \brief
  *      Convert specified fix16 value to fix32.
  */
 #define fix16ToFix32(value)         (((value) << FIX32_FRAC_BITS) >> FIX16_FRAC_BITS)
 
 /**
- *  \def sinFix32
+ *  \brief
  *      Compute sinus of specified value and return it as fix32.<br>
  *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
  */
 #define sinFix32(value)             sintab32[(value) & 1023]
 /**
- *  \def cosFix32
+ *  \brief
  *      Compute cosinus of specified value and return it as fix32.<br>
  *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
  */
 #define cosFix32(value)             sintab32[((value) + 256) & 1023]
 
 /**
- *  \def sinFix16
+ *  \brief
  *      Compute sinus of specified value and return it as fix16.<br>
  *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
  */
 #define sinFix16(value)             sintab16[(value) & 1023]
 /**
- *  \def cosFix16
+ *  \brief
  *      Compute cosinus of specified value and return it as fix16.<br>
  *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
  */
@@ -262,7 +269,7 @@ extern const fix16 sqrttab16[0x10000];
 // 2D STUFF
 
 /**
- *  \struct Vect2D_u16
+ *  \brief
  *      2D Vector structure - u16 type.
  */
 typedef struct
@@ -272,7 +279,7 @@ typedef struct
 } Vect2D_u16;
 
 /**
- *  \struct Vect2D_s16
+ *  \brief
  *      2D Vector structure - s16 type.
  */
 typedef struct
@@ -282,7 +289,7 @@ typedef struct
 } Vect2D_s16;
 
 /**
- *  \struct Vect2D_u32
+ *  \brief
  *      2D Vector structure - u32 type.
  */
 typedef struct
@@ -292,7 +299,7 @@ typedef struct
 } Vect2D_u32;
 
 /**
- *  \struct Vect2D_s32
+ *  \brief
  *      2D Vector structure - s32 type.
  */
 typedef struct
@@ -302,7 +309,7 @@ typedef struct
 } Vect2D_s32;
 
 /**
- *  \struct Vect2D_f16
+ *  \brief
  *      2D Vector structure - f16 (fix16) type.
  */
 typedef struct
@@ -312,7 +319,7 @@ typedef struct
 } Vect2D_f16;
 
 /**
- *  \struct Mat2D_f16
+ *  \brief
  *      2x2 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 2 2D vectors.
  */
@@ -326,7 +333,7 @@ typedef struct
 // 3D STUFF
 
 /**
- *  \struct Vect3D_f16
+ *  \brief
  *      3D Vector structure - f16 (fix16) type.
  */
 typedef struct
@@ -337,7 +344,7 @@ typedef struct
 } Vect3D_f16;
 
 /**
- *  \struct Mat3D_f16
+ *  \brief
  *      3x3 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 3 3D vectors.
  */
@@ -352,7 +359,7 @@ typedef struct
 // 4D STUFF
 
 /**
- *  \struct Vect4D_f16
+ *  \brief
  *      4D Vector structure - f16 (fix16) type.
  */
 typedef struct
@@ -364,7 +371,7 @@ typedef struct
 } Vect4D_f16;
 
 /**
- *  \struct Mat4D_f16
+ *  \brief
  *      4x4 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 4 4D vectors.
  */
@@ -375,7 +382,6 @@ typedef struct
     Vect4D_f16 c;
     Vect4D_f16 d;
 } Mat4D_f16;
-
 
 
 /**
@@ -404,7 +410,6 @@ u32 intToBCD(u32 value);
  *      delta Y.
  */
 u32 distance_approx(s32 dx, s32 dy);
-
 
 /**
  *  \brief

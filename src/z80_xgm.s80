@@ -19,7 +19,11 @@
 ; DE  = write buffer / XGM buffer
 ; BC  = counter
 ; B = $80 (used for overflow and sample unsign)
-; IYL = vint pending counter - 1 ($FF when no vint pending)
+; IYL = vint pending counter - 1
+;   --> $FF means no vint pending
+;   --> $00 means 1 vint pending and so one XGM frame to process (in time)
+;   --> $01 means 2 vints pending and so 2 XGM frames to process (late)
+; IYH = temp value
 ; HL' = YMPORT1
 ; BC' = read buffer
 
@@ -61,6 +65,9 @@ PSG_ARG     EQU     PARAMS+$0C      ; xxxx CCCC  where 'CCCC' is PSG channel '32
 PROTECT_ARG EQU     PARAMS+$0D      ; set to 1 from 68k during DMA (in vblank period)
                                     ; to prevent Z80 accessing 68k BUS
 
+MODIFYING_F EQU     PARAMS+$0E      ; Z80 is modifying the 'PENDING_FRM' variable
+PENDING_FRM EQU     PARAMS+$0F      ; contains number of XGM frame to process
+
 PCM0_PRIO   EQU     PARAMS+$10      ; PCM0 internal priority
 PCM0_ADDR   EQU     PARAMS+$12      ; PCM0 internal addr (bit8 --> bit23)
 PCM0_LEN    EQU     PARAMS+$14      ; PCM0 internal len (bit8 --> bit23)
@@ -85,14 +92,14 @@ READBUF     EQU     PARAMS+$36      ; PCM read buffer pointer (bit8 --> bit9)
 
 YM_RR_SAV   EQU     PARAMS+$40      ; YM RR save (4 slots * 6 channels)
 PSG_ENV_SAV EQU     PARAMS+$58      ; PSG env save (4 channels)
-YM_2B_SAV   EQU     PARAMS+$5C      ; YM register $2B last write save
-YM_2B_CNT   EQU     PARAMS+$5D      ; YM register $2B ON expiration
-
 YM_RR_OFF   EQU     PARAMS+$60      ; YM RR off (4 slots * 6 channels)
 PSG_ENV_OFF EQU     PARAMS+$78      ; PSG env off (4 channels)
 
-VINT_OVER   EQU     PARAMS+$5E      ; contains number of vint to process (just for info)
-IDLE_LOOP   EQU     PARAMS+$5F      ; idle loop counter (just for info)
+YM_2B_SAV   EQU     PARAMS+$5C      ; YM register $2B last write save
+YM_2B_CNT   EQU     PARAMS+$5D      ; YM register $2B ON expiration
+
+IDLE_LOOP   EQU     PARAMS+$7C      ; idle loop counter (XGM frame wait)
+WAIT_LOOP   EQU     PARAMS+$7E      ; wait loop counter (DMA contention wait)
 
 DEBUG_1     EQU     PARAMS+$80      ; debug
 DEBUG_2     EQU     PARAMS+$81      ; debug
@@ -130,10 +137,10 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 ; ----------------
 ; ? ->  HL  -> ?
 ; ? ->  BC  -> ?
-; ? ->  DE  -> ?
+; ? ->  SP  -> ?
 ;
 ; handle PCM command for channel 'ch' (PCM id < 0x100)
-; = 173 cycles
+; = 157 cycles
 
             macro handlePCMCommand ch
 
@@ -144,8 +151,8 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
             CP      (HL)                    ; compare to old prio       ' 7     | 21 (51)
             JP      NC, .play_new           ; >= old prio --> play new  ' 10    |
 
-            wait112                         ; sync                      ' 112   |
-            JP      .end                    ;                           ' 10    | 122 (173)
+            wait96                          ; sync                      ' 96    |
+            JP      .end                    ;                           ' 10    | 106 (157)
 
 .play_new
             LD      A, B                    ; A = SFX id                ' 4     |
@@ -159,14 +166,14 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 
             LD      H, (ID_TABLE>>10)       ;                           ' 7     |
             LD      L, A                    ;                           ' 4     |
-            ADD     HL, HL                  ;                           ' 6     | 33 (109)
-            ADD     HL, HL                  ; HL point on new PCM addr  ' 6     |
-            LD      DE, PCM_ADDR+(ch*8)     ; DE point on PCM info      ' 10    |
+            ADD     HL, HL                  ;                           ' 6     |
+            ADD     HL, HL                  ; HL point on new PCM addr  ' 6     | 29 (105)
+            LD      SP, HL                  ; set SP to new PCM addr    ' 6     |
 
-            LDI                             ; copy params               ' 16    |
-            LDI                             ;                           ' 16    | 64 (173)
-            LDI                             ;                           ' 16    |
-            LDI                             ;                           ' 16    |
+            POP     HL                      ; copy params               ' 10    |
+            LD      (PCM_ADDR+(ch*8)),HL    ;                           ' 16    |
+            POP     HL                      ;                           ' 10    | 52 (157)
+            LD      (PCM_LEN+(ch*8)),HL     ;                           ' 16    |
 
 .end
             endm
@@ -176,73 +183,59 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 ; -------------------
 ; XGM data ->  DE  -> XGM data
 ; PCM prio ->  C   -> ?
-; ?        ->  A   -> ?
 ; ?        ->  HL  -> ?
+; ?        ->  SP  -> ?
 ;
 ; handle PCM command for channel 'ch' for XGM music (PCM id < 0x40)
-; cycle 97 --> 254
+; = 142 cycles
 
-            macro handlePCMCommandXGM ch    ;                           ' 97
+            macro handlePCMCommandXGM ch
 
             LD      HL, PCM_PRIO+(ch*8)     ; HL point on PCM info      ' 10    |
             LD      A, C                    ; A = new prio              ' 4     |
-            CP      (HL)                    ; compare new and old prio  ' 7     | 28 (125)
-            JR      C, .end                 ; >= old prio --> play new  ' 7/12  |
+            CP      (HL)                    ; compare new and old prio  ' 7     | (31)
+            JP      NC, .play_new           ; >= old prio --> play new  ' 10    |
+
+            INC     E                       ; next XGM command          ' 4     |
+            wait97                          ; sync                      ' 97    | 111 (142)
+            JP      .end                    ; done                      ' 10    |
 
 .play_new
             LD      A, (DE)                 ; A = PCM id (max = $3F)    ' 7     |
             INC     E                       ; next XGM command          ' 4     |
-            OR      A                       ; not a stop PCM command ?  ' 4     | 27 (152)
+            OR      A                       ; not a stop PCM command ?  ' 4     | 27 (58)
             JR      NZ, .PCM_play           ; go set new prio           ' 7/12  |
 
             LD      C, 0                    ; reset prio for stop       ' 7     | +2
 
-.PCM_play                                   ;                           ' 152
-            LD      (HL), C                 ; set new prio              ' 7     | (159)
+.PCM_play
+            LD      (HL), C                 ; set new prio              ' 7     | (65)
 
             LD      H, (ID_TABLE>>8)        ;                           ' 7     |
             ADD     A                       ;                           ' 4     |
-            ADD     A                       ;                           ' 4     | 19 (178)
+            ADD     A                       ;                           ' 4     | 25 (90)
             LD      L, A                    ; HL point on new PCM addr  ' 4     |
-
-            DI                              ; disable interrupts        ' 4     |
-            LD      SP, HL                  ; set SP to PCM addr        ' 6     | 10 (188)
+            LD      SP, HL                  ; set SP to new PCM addr    ' 6     |
 
             POP     HL                      ; copy params               ' 10    |
             LD      (PCM_ADDR+(ch*8)),HL    ;                           ' 16    |
-            POP     HL                      ;                           ' 10    | 52 (240)
+            POP     HL                      ;                           ' 10    | 52 (142)
             LD      (PCM_LEN+(ch*8)),HL     ;                           ' 16    |
 
-            LD      SP, STACK               ; restore SP                ' 10    | 14 (254)
-            EI                              ; enable interrupt          ' 4     |
-
-;            LD      DE, PCM_ADDR+(ch*8)     ; DE point on PCM info      ' 10    |
-;            PUSH    DE                      ; save DE                   ' 11    |
-;            LDI                             ; copy params               ' 16    |
-;            LDI                             ;                           ' 16    | 85 (160)
-;            LDI                             ;                           ' 16    |
-;            LDI                             ;                           ' 16    |
-;            POP     DE                      ; restore DE                ' 10    |
-
-            JP      execute_xgm             ; execute next XGM com      ' 10    | (264) +10
-
-.end                                        ;                           ' 130
-            INC     E                       ; next XGM command          ' 4     |
-            wait110                         ; sync                      ' 110   | (254)
-            JP      execute_xgm             ; execute next XGM com      ' 10    |
+.end                                        ;                           ' 142
 
             endm
 
 
-; prepareChannel
-; --------------
+; prepareChannelAlt
+; -----------------
 ; ? ->  HL  ->  point to the sample source (ROM)
 ; ? ->  DE  ->  point to write buffer
 ;
 ; set bank and prepare registers to play PCM channel 'ch'
 ; = 176 cycles
 
-            macro prepareChannel ch
+            macro prepareChannelAlt ch
 
             LD      HL, (PCM_ADDR+(ch*8))   ; HL = sample addr (HM) ' 16    | (16)
 
@@ -258,6 +251,34 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
             LD      L, 0                    ; HL = sample addr bank ' 7     |
 
             LD      DE, (WRITEBUF)          ; DE = write buffer     ' 20    | (176)
+
+            endm
+
+; prepareChannel
+; --------------
+; ? ->  SP  ->  point to the sample source (ROM)
+; ? ->  HL  ->  point to write buffer
+;
+; set bank and prepare registers to play PCM channel 'ch'
+; = 178 cycles
+
+            macro prepareChannel ch
+
+            LD      HL, (PCM_ADDR+(ch*8))   ; HL = sample addr (HM) ' 16    | (16)
+
+            LD      A, L                    ; A = bit 8-15          ' 4     |
+            RLA                             ; C flag = bit 15       ' 4     |
+            LD      A, H                    ; A = bit 16-23         ' 4     | 16 (32)
+            RLA                             ; A = bit 15-22         ' 4     |
+
+            setBank_DE                      ; set bank              ' 105   | (137)
+
+            LD      H, L                    ;                       ' 4     |
+            SET     7, H                    ; HL |= 0x8000          ' 8     | 25 (162)
+            LD      L, 0                    ; HL = sample addr bank ' 7     |
+            LD      SP, HL                  ; SP point on sample    ' 6     |
+
+            LD      HL, (WRITEBUF)          ; HL = write buffer     ' 16    | (178)
 
             endm
 
@@ -336,9 +357,9 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 
 ; readAndClear
 ; ------------
-; ? ->  HL  ->  point to the sample source (ROM)
-; ? ->  DE  ->  point to write buffer
-; ? ->  PF  ->  0=done 1=not done
+; point to sample source (ROM) ->  HL  ->  point to sample source (ROM)
+; point to write buffer        ->  DE  ->  point to write buffer
+; ?                            ->  PF  ->  0=done 1=not done
 ;
 ; read 1 sample from rom and write it in output buffer
 ; = 19 cycles
@@ -352,51 +373,141 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 
 ; readAndClear2
 ; -------------
-; ? ->  HL  ->  point to the sample source (ROM)
-; ? ->  DE  ->  point to write buffer
-; ? ->  PF  ->  0=done 1=not done
+; point to sample source (ROM) ->  HL  ->  point to sample source (ROM)
+; point to write buffer        ->  DE  ->  point to write buffer
+; ?                            ->  PF  ->  0=done 1=not done
 ;
-; read 2 samples from rom and write them in output buffer
+; read 2 samples from rom and write them in write buffer
 ; = 38 cycles
 
             macro readAndClear2
 
             LDI                     ;                           ' 16+3  |
-            LDI                     ;                           ' 16+3  | 38
+            LDI                     ;                           ' 16+3  | (38)
 
             endm
 
 
-; readAndMix
-; ----------
-; ?   ->  HL  ->  point to the sample source (ROM)
-; ?   ->  DE  ->  point to write buffer
+; readAndMix2
+; -----------
+; point to sample source (ROM) ->  SP  ->  point to sample source (ROM)
+; point to write buffer        ->  HL  ->  point to write buffer
 ; $80 ->  C
 ;
-; read 1 sample and mix it in output buffer
-; = 42 (+11 when overflow)
+; read 2 samples and mix them in output buffer
+; = 80 (+22 when overflow)
 
-            macro readAndMix
+            macro readAndMix2
 
-            LD      A, (DE)         ; read value in write buf   ' 7     |
-            ADD     (HL)            ; mix with source sample    ' 7+3   | (27)
+            POP     DE              ; read 2 samples from ROM   ' 10+6  | (16)
+
+            LD      A, E            ; first sample              ' 4     |
+            ADD     (HL)            ; mix with write buffer     ' 7     | 21 (37)
             JP      PO, .ok         ; check overflow            ' 10    |
 
             LD      A, C            ; fix overflow              ' 4     |
             ADC     $FF             ; A = $7F/$80               ' 7     | +11
 
 .ok
-            LD      (DE), A         ; write sample in buffer    ' 7     |
-            INC     E               ;                           ' 4     | 15 (42)
-            INC     L               ; next                      ' 4     |
+            LD      (HL), A         ; store it in write sample  ' 7     |
+            INC     L               ;                           ' 4     | 11 (48)
 
-            endm                    ;                           ' 42 (+11)
+            LD      A, D            ; second sample             ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (69)
+            JP      PO, .ok2        ; check overflow            ' 10    |
+
+            LD      A, C            ; fix overflow              ' 4     |
+            ADC     $FF             ; A = $7F/$80               ' 7     | +11
+
+.ok2
+            LD      (HL), A         ; store it in write sample  ' 7     |
+            INC     L               ;                           ' 4     | 11 (80)
+
+            endm                    ;                           ' 80 (+22)
+
+
+; readAndMix16WhilePlay3
+; ----------------------
+; point to sample source (ROM) ->  SP  ->  point to sample source (ROM)
+; point to write buffer        ->  HL  ->  point to write buffer
+; $80 ->  C
+;
+; read 16 samples and mix them in output buffer
+; = 2 samples + 240 cycles
+
+            macro readAndMix16WhilePlay3
+
+            sampleOutput            ;                           ' 36    | (36)
+
+            readAndMix2             ; read and mix 2 samples    ' 80    |
+            readAndMix2             ; read and mix 2 samples    ' 80    | 160 (196)
+
+            POP     DE              ; read 2 samples from ROM   ' 10+6  | (212)
+
+            LD      A, E            ; first sample              ' 4     |
+            ADD     (HL)            ; mix with write buffer     ' 7     | 21 (233)
+            JP      PO, .ok         ; check overflow            ' 10    |
+
+            LD      A, C            ; fix overflow              ' 4     |
+            ADC     $FF             ; A = $7F/$80               ' 7     | +11
+
+.ok
+            LD      (HL), A         ; store it in write sample  ' 7     |
+            INC     L               ;                           ' 4     | 11 (254-10)
+
+            sampleOutput            ; -10 --> too soon          ' 36    | (36-10)
+
+            LD      A, D            ; second sample             ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (47)
+            JP      PO, .ok2        ; check overflow            ' 10    |
+
+            LD      A, C            ; fix overflow              ' 4     |
+            ADC     $FF             ; A = $7F/$80               ' 7     | +11
+
+.ok2
+            LD      (HL), A         ; store it in write sample  ' 7     |
+            INC     L               ;                           ' 4     | 11 (58)
+
+            readAndMix2             ; read and mix 2 samples    ' 80    |
+            readAndMix2             ; read and mix 2 samples    ' 80    | 160 (218)
+
+            POP     DE              ; read 2 samples from ROM   ' 10+6  | (234)
+
+            LD      A, E            ; first sample              ' 4     |
+            ADD     (HL)            ; mix with write buffer     ' 7     | 21 (254+1)
+            JP      PO, .ok3        ; check overflow            ' 10    |
+
+            LD      A, C            ; fix overflow              ' 4     |
+            ADC     $FF             ; A = $7F/$80               ' 7     | +11
+
+.ok3
+            LD      (HL), A         ; store it in write sample  ' 7     | (254+8)
+
+            sampleOutput            ; +8 --> too late           ' 36    | (36+8)
+
+            INC     L               ;                           ' 4     | (48)
+
+            LD      A, D            ; second sample             ' 4     |
+            ADD     (HL)            ; mix                       ' 7     | 21 (69)
+            JP      PO, .ok4        ; check overflow            ' 10    |
+
+            LD      A, C            ; fix overflow              ' 4     |
+            ADC     $FF             ; A = $7F/$80               ' 7     | +11
+
+.ok4
+            LD      (HL), A         ; store it in write sample  ' 7     |
+            INC     L               ;                           ' 4     | 11 (80)
+
+            readAndMix2             ; read and mix 2 samples    ' 80    |
+            readAndMix2             ; read and mix 2 samples    ' 80    | 160 (240)
+
+            endm                    ;                           ' 240
 
 
 ; readMixAndUnsign
 ; ----------------
-; ?   ->  HL  ->  point to the sample source (ROM)
-; ?   ->  DE  ->  point to write buffer
+; point to sample source (ROM) ->  HL  ->  point to sample source (ROM)
+; point to write buffer        ->  DE  ->  point to write buffer
 ; $80 ->  C
 ;
 ; read 1 sample and mix it with output buffer, then unsign it
@@ -456,7 +567,7 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
 
             EXX                     ;                           ' 4     | 4
 
-            LD      (HL), 0x2A      ; prepare DAC write         ' 10    |
+            LD      (HL), $2A       ; prepare DAC write         ' 10    |
             LD      A, (BC)         ; read sample from buffer   ' 7     |
             INC     BC              ; increment read address    ' 6     | 38 (42)
             RES     2, B            ; read_address &= 0x03FF    ' 8     |
@@ -467,18 +578,38 @@ STACK       EQU     JUMP_TABLE      ; stack pointer above buffer region ($1600 -
             endm
 
 
-; waitYMReady
-; -----------
-; YMPORT     -> HL
+; waitYMReadyFast
+; ---------------
+; YMPORT0   -> HL
 ;
 ; wait until YM ready
 ; = 22 cycles minimum (22 * X)
 
-            macro waitYMReady
+            macro waitYMReadyFast
 
 .wait
             BIT     7, (HL)         ; test YM ready bit         ' 12    | (22)
             JP      NZ, .wait       ; wait while busy           ' 10    |
+
+            endm
+
+
+; waitYMReady
+; -----------
+; YMPORT0   -> HL'
+;
+; wait until YM ready
+; = 30 cycles minimum (8 + (22 * X))
+
+            macro waitYMReady
+
+            EXX                     ;                           ' 4     | (4)
+
+.wait
+            BIT     7, (HL)         ; test YM ready bit         ' 12    | (22)
+            JP      NZ, .wait       ; wait while busy           ' 10    |
+
+            EXX                     ;                           ' 4     | (30)
 
             endm
 
@@ -495,23 +626,6 @@ init
             LD      (STATUS), A     ; driver not ready
             LD      (COMMAND), A    ; command cleared
             JP      start           ; jump to start
-
-
-; ###########################     interrupt    ##############################
-
-            BLOCK   $0038-$
-
-            ; we should wait at least 180 cycles so the IRQ line goes down
-            ; else we will take the interrupt several time
-
-interrupt                           ;                       ' 13
-            PUSH    AF              ;                       ' 11    |
-            wait120                 ;                       ' 120   | 149 (+162)
-            INC     IYL             ; inc vint counter      ' 8     |
-            POP     AF              ;                       ' 10    |
-
-            EI                      ;                       ' 4     | 14 (+176)
-            RET                     ;                       ' 10    |
 
 
 ; ###########################       main       ##############################
@@ -575,13 +689,17 @@ cb_loop
             LD      HL, YM_2B_CNT
             LD      (HL), A         ; DAC disabled by default
 
+            LD      HL, MODIFYING_F
+            LD      (HL), A         ; clear modifying variable flag
+            LD      HL, PENDING_FRM
+            LD      (HL), A         ; clear frame to process counter
+
             CALL    initDAC         ; prepare DAC for output
 
             LD      HL, PCM_BUFFER0 ; initialise write and read buffer
             LD      (WRITEBUF), HL
             LD      HL, PCM_BUFFER1
             LD      (READBUF), HL
-            LD      IYL, $FF        ; clear vint counter
 
             LD      BC, HL          ; BC' point to read buffer
             LD      HL, YMPORT0     ; HL' point to YMPORT0
@@ -595,23 +713,302 @@ cb_loop
 
             LD      A, STATREADY
             LD      (STATUS), A     ; driver ready
-            EI                      ; enable interrupt
 
 main_loop
 
 ;    LD  A, (VCOUNTER)
 ;    LD  (DEBUG_1), A
 
+
+; prepare XGM buffer
+; ------------------
+
+; $00
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_6), A
+
+            sampleOutput                ;                       ' 36    | 36
+
+            LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    |
+            LD      A, (STATUS)         ; A = STATUS            ' 13    |
+            BIT     XGM_PLAY_SFT, A     ; is XGM playing ?      ' 8     | 41 (77)
+            JP      NZ, has_xgm         ; go to prepare buf     ' 10    |
+
+            wait146                     ; sync                  ' 146   |
+            XOR     A                   ; A = 0                 ' 4     | 160 (237)
+            JP      end_prep_xgm        ; preparation done      ' 10    |
+
+has_xgm
+            LD      HL, (XGM_ADDR)      ; XGM addr (b0-b15)     ' 16    |
+            LD      A, H                ; A = XGM addr (b8-b15) ' 4     |
+            RLA                         ; CF = XGM addr b15     ' 4     | 146 (223)
+            LD      A, (XGM_ADDR+2)     ; A = sample addr (H)   ' 13    |
+            RLA                         ; sample addr (b22-b15) ' 4     |
+            setBank_BC                  ; setBank               ' 105   |
+
+            LD      A, H                ; save H                ' 4     |
+            SET     7, H                ; HL = XGM addr bank    ' 8     |
+            LD      B, $0               ; B = 0                 ' 7     | 30 (254-1)
+            LD      C, (HL)             ; BC = bytes to process ' 7     |
+            LD      H, A                ; restore H             ' 4     |
+
+; $00+X
+            sampleOutput                ;                       ' 36    | (36-1)
+
+            LD      A, L                ; A = addr low          ' 4     |
+            ADD     C                   ; compute new addr (L)  ' 4     |
+            LD      (XGM_ADDR+0), A     ; store new addr (L)    ' 13    | 28 (63)
+            JR      C, .split           ; carry --> separate    ' 7     |
+
+.no_split
+            wait104                     ; sync                  ' 104   | (167)
+
+            SET     7, H                ; HL = XGM addr bank    ' 8     |
+            INC     HL                  ; HL = start frame data ' 6     |
+            XOR     A                   ; no second part        ' 4     |
+            LD      IYH, A              ; IYH = sec part size   ' 8     | 44 (211)
+            NOP                         ;                       ' 4     |
+            DEC     C                   ; first part size = 0 ? ' 4     |
+            JP      Z, .second_part     ; go to second part     ' 10    |
+
+            wait12                      ; sync                  ' 12    | 22 (233)
+            JP      .first_part_pre     ; start filling         ' 10    |
+
+.split
+            LD      IYH, A              ; IYH = sec part size   ' 8     |
+            SUB     C                   ;                       ' 4     |
+            NEG                         ;                       ' 8     | 34 (97)
+            DEC     A                   ; A = (C - IYH) - 1     ' 4     |
+            JP      NZ, .first_part_ok  ; not zero --> do it    ' 10    |
+
+            LD      A, H                ; A = addr med (M)      ' 4     |
+            ADD     $1                  ; inc with CF set       ' 7     |
+            LD      (XGM_ADDR+1), A     ; store new addr (M)    ' 13    |
+            LD      A, (XGM_ADDR+2)     ; load sample addr (H)  ' 13    |
+            ADC     B                   ; inc                   ' 4     | 68 (164)
+            LD      (XGM_ADDR+2), A     ; store sample addr (H) ' 13    |
+            SET     7, H                ; HL = XGM addr bank    ' 8     |
+            INC     HL                  ; HL = start frame data ' 6     |
+
+            wait36                      ; sync                  ' 36    |
+            JP      .second_part        ; go second part        ' 10    | 65 (211)
+
+.first_part_ok
+            LD      C, A                ; C = first part size   ' 4     |
+            LD      A, H                ; A = addr med (M)      ' 4     |
+            ADD     $1                  ; inc with CF set       ' 7     |
+            LD      (XGM_ADDR+1), A     ; store new addr (M)    ' 13    |
+            LD      A, (XGM_ADDR+2)     ; load sample addr (H)  ' 13    | 72 (169)
+            ADC     B                   ; inc                   ' 4     |
+            LD      (XGM_ADDR+2), A     ; store sample addr (H) ' 13    |
+            SET     7, H                ; HL = XGM addr bank    ' 8     |
+            INC     HL                  ; HL = start frame data ' 6     |
+
+            wait64                      ; sync                  ' 64    | (233)
+
+.first_part_pre                         ;                       ' 233
+            LD      A, 11               ; A = block fill size   ' 7     |
+            CP      C                   ; C < block size        ' 4     | 21 (254)
+            JP      NC, .first_part_end ; go to last bytes      ' 10    |
+
+.first_part
+; $00+X
+            sampleOutput                ;                       ' 36    | 36
+
+            LDI                         ; fill XGM buffer       ' 16+1  |
+            LDI                         ; 11 bytes at once      ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  | 187 (223)
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+
+            wait10                      ; sync                  ' 10    |
+            LD      A, 11               ; A = block fill size   ' 7     |
+            CP      C                   ; remaining > 11        ' 4     | 31 (254)
+            JP      C, .first_part      ; continu block fill    ' 10    |
+
+.first_part_end
+; $00+X
+            sampleOutput                ;                       ' 36    | 36
+
+            LDI                         ; fill XGM buffer       ' 16+1  |
+            JP      PO, .fst_part_d0    ;                       ' 10    | 27 (63)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d1    ;                       ' 10    | 27 (90)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d2    ;                       ' 10    | 27 (117)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d3    ;                       ' 10    | 27 (144)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d4    ;                       ' 10    | 27 (171)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d5    ;                       ' 10    | 27 (198)
+
+            wait56                      ; sync                  ' 56    | (254)
+
+; $00+X
+            sampleOutput                ;                       ' 36    | 36
+
+            LDI                         ; fill XGM buffer       ' 16+1  |
+            JP      PO, .fst_part_d0    ;                       ' 10    | 27 (63)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d1    ;                       ' 10    | 27 (90)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d2    ;                       ' 10    | 27 (117)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d3    ;                       ' 10    | 27 (144)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .fst_part_d4    ;                       ' 10    | 27 (171)
+            LDI                         ;                       ' 16+1  |
+            JP      .fst_part_d5        ;                       ' 10    | 27 (198)
+
+.fst_part_d0
+            wait27                      ; sync                  ' 27    | (90)
+.fst_part_d1
+            wait27                      ; sync                  ' 27    | (117)
+.fst_part_d2
+            wait27                      ; sync                  ' 27    | (144)
+.fst_part_d3
+            wait27                      ; sync                  ' 27    | (171)
+.fst_part_d4
+            wait27                      ; sync                  ' 27    | (198)
+.fst_part_d5
+            wait13                      ; sync                  ' 13    | (211)
+
+.second_part                            ;                       ' 211
+            NOP                         ; sync                  ' 4
+            LD      A, IYH              ; A = second part size  ' 8     |
+            OR      A                   ;                       ' 4     | 26 (237)
+            JP      Z, end_prep_xgm     ; done                  ' 10    |
+
+            wait17                      ; sync                  ' 17    | 254
+
+; $00+X
+            sampleOutput                ;                       ' 36    | 36
+
+            LD      HL, (XGM_ADDR)      ; XGM addr (b0-b15)     ' 16    |
+            LD      A, H                ; A = XGM addr (b8-b15) ' 4     |
+            RLA                         ; CF = XGM addr b15     ' 4     | 146 (182)
+            LD      A, (XGM_ADDR+2)     ; A = sample addr (H)   ' 13    |
+            RLA                         ; sample addr (b22-b15) ' 4     |
+            setBank_BC                  ; setBank               ' 105   |
+
+            SET     7, H                ; HL = XGM addr bank    ' 8     | 15 (197)
+            LD      L, 0                ;                       ' 7     |
+
+            wait21                      ; sync                  ' 21    | (218)
+
+            LD      B, 0                ; B = 0                 ' 7     |
+            LD      C, IYH              ; BC = second part size ' 8     |
+            LD      A, 11               ; A = block fill size   ' 7     | 36 (254)
+            CP      C                   ; C < block size        ' 4     |
+            JP      NC, .sec_part_end   ; go to last bytes      ' 10    |
+
+; $00+X
+.sec_part_loop
+            sampleOutput                ;                       ' 36    | 36
+
+            LDI                         ; fill XGM buffer       ' 16+1  |
+            LDI                         ; 11 bytes at once      ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  | 187 (223)
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+            LDI                         ;                       ' 16+1  |
+
+            wait10                      ; sync                  ' 10    |
+            LD      A, 11               ; A = block fill size   ' 7     |
+            CP      C                   ; remaining > 11        ' 4     | 31 (254)
+            JP      C, .sec_part_loop   ; continu block fill    ' 10    |
+
+.sec_part_end
+; $00+X
+            sampleOutput                ;                       ' 36    | 36
+
+            LDI                         ; fill XGM buffer       ' 16+1  |
+            JP      PO, .sec_part_d0    ;                       ' 10    | 27 (63)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d1    ;                       ' 10    | 27 (90)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d2    ;                       ' 10    | 27 (117)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d3    ;                       ' 10    | 27 (144)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d4    ;                       ' 10    | 27 (171)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d5    ;                       ' 10    | 27 (198)
+
+            wait56                      ; sync                  ' 56    | (254)
+
+; $00+X
+            sampleOutput                ;                       ' 36    | 36
+
+            LDI                         ; fill XGM buffer       ' 16+1  |
+            JP      PO, .sec_part_d0    ;                       ' 10    | 27 (63)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d1    ;                       ' 10    | 27 (90)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d2    ;                       ' 10    | 27 (117)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d3    ;                       ' 10    | 27 (144)
+            LDI                         ;                       ' 16+1  |
+            JP      PO, .sec_part_d4    ;                       ' 10    | 27 (171)
+            LDI                         ;                       ' 16+1  |
+            JP      .sec_part_d5        ;                       ' 10    | 27 (198)
+
+.sec_part_d0
+            wait27                      ; sync                  '       | (90)
+.sec_part_d1
+            wait27                      ; sync                  '       | (117)
+.sec_part_d2
+            wait27                      ; sync                  '       | (144)
+.sec_part_d3
+            wait27                      ; sync                  '       | (171)
+.sec_part_d4
+            wait27                      ; sync                  '       | (198)
+.sec_part_d5
+            wait35                      ; sync                  ' 35    |
+            XOR     A                   ; A = 0                 ' 4     | 39 (237)
+
+end_prep_xgm                            ;                       ' 237
+            LD      (DE), A             ; XGM buf end with 0    ' 7     |
+            wait10                      ; sync                  ' 10    | 17 (254)
+
+
+; XGM PREP DONE
+; -------------
+
+; $01+x
+            sampleOutput                ;                       ' 36    | (36)
+
+            wait172                     ; sync                  ' 172   | (208)
+
+            LD      DE, (WRITEBUF)      ; DE = write buf        ' 20    |
+            compareReadWrite            ; PCM buffer full ?     ' 16    | 46 (254)
+            JP      Z, sync_frame       ; go to sync directly   ' 10    |
+
+pcm_mix
+
 ; PCM channel 0
 ; -------------
 
-; $00
+; $02+X
             sampleOutput                ;                       ' 36    |
-            prepareChannel 0            ;                       ' 176   |
+            prepareChannelAlt 0         ;                       ' 176   |
             LD      BC, 242             ; prepare loop counter  ' 10    | 254
             wait32                      ; sync                  ' 32    |
 
-; $01-$16
+; $03-$18+X
 .loop_ch0
             sampleOutput                ;                       ' 36    |
             readAndClear2               ;                       ' 38    |
@@ -631,7 +1028,7 @@ main_loop
             readAndClear                ;                       ' 19    |
             JP      PE, .loop_ch0       ;                       ' 10    |
 
-; $17
+; $19+X
             sampleOutput                ;                       ' 36    |
             readAndClear2               ;                       ' 38    |
             readAndClear2               ; process 10 samples    ' 38    |
@@ -640,7 +1037,7 @@ main_loop
             readAndClear2               ;                       ' 38    |
             readAndClear2               ;                       ' 38    |
 
-; $18
+; $1A+X
             sampleOutput                ; +10 --> too late      ' 36+10 |
             readAndClear2               ;                       ' 38    |
             updateChannelData 0         ; update channel data   ' 153   | 254
@@ -653,43 +1050,22 @@ main_loop
 ; PCM channel 1
 ; -------------
 
-; $19
-            sampleOutput                ; +8 --> too late       ' 36    |
-            prepareChannel 1            ;                       ' 176   | 254-8
-            LD      BC, $1180           ; prepare loop counter  ' 10    |
-            wait26                      ; sync                  ' 26    |
-
-; $1A-4C
-.loop_ch1
+; $1B+X
             sampleOutput                ;                       ' 36    |
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ; mix 5 samples         ' 42    |
-            readAndMix                  ;                       ' 42    | 254-8
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ;                       ' 42    |
+            prepareChannel 1            ;                       ' 178   | 254
+            LD      BC, $1080           ; prepare loop counter  ' 10    |
+            wait30                      ; sync                  ' 30    |
 
-            sampleOutput                ; -8 --> too soon       ' 36    |
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ; mix 5 samples         ' 42    |
-            readAndMix                  ;                       ' 42    | 254-6
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ;                       ' 42    |
-            wait10
-
-            sampleOutput                ; -6 --> a bit soon     ' 36    |
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ; mix 5 samples         ' 42    |
-            readAndMix                  ;                       ' 42    | 254
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ;                       ' 42    |
-            DEC     B                   ;                       ' 4     |
+; $1C-4B+X
+.loop_ch1
+            readAndMix16WhilePlay3      ;                       ' 240   |
+            DEC     B                   ;                       ' 4     | 254*3
             JP      NZ, .loop_ch1       ;                       ' 10    |
 
-; $4D
+; $4C+X
             sampleOutput                ;                       ' 36    |
-            readAndMix                  ;                       ' 42    | 254
-            updateChannelData 1         ; update channel data   ' 153   |
-            wait23                      ; sync                  ' 23    |
+            updateChannelData 1         ; update channel data   ' 153   | 254
+            wait65                      ; sync                  ' 65    |
 
 
 ;    LD  A, (VCOUNTER)
@@ -698,43 +1074,22 @@ main_loop
 ; PCM channel 2
 ; -------------
 
-; $4E                                   ;                       ' +2
-            sampleOutput                ; +2 --> a bit late     ' 36    |
-            prepareChannel 2            ;                       ' 176   | 254
-            LD      BC, $1180           ; prepare loop counter  ' 10    |
+; $4D+X
+            sampleOutput                ;                       ' 36    |
+            prepareChannel 2            ;                       ' 178   | 254
+            LD      BC, $1080           ; prepare loop counter  ' 10    |
             wait30                      ; sync                  ' 30    |
 
-; $4F-81
+; $4E-7D+X
 .loop_ch2
-            sampleOutput                ;                       ' 36    |
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ; mix 5 samples         ' 42    |
-            readAndMix                  ;                       ' 42    | 254-8
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ;                       ' 42    |
-
-            sampleOutput                ; -8 --> too soon       ' 36    |
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ; mix 5 samples         ' 42    |
-            readAndMix                  ;                       ' 42    | 254-6
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ;                       ' 42    |
-            wait10
-
-            sampleOutput                ; -6 --> a bit soon     ' 36    |
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ; mix 5 samples         ' 42    |
-            readAndMix                  ;                       ' 42    | 254
-            readAndMix                  ;                       ' 42    |
-            readAndMix                  ;                       ' 42    |
-            DEC     B                   ;                       ' 4     |
+            readAndMix16WhilePlay3      ;                       ' 240   |
+            DEC     B                   ;                       ' 4     | 254*3
             JP      NZ, .loop_ch2       ;                       ' 10    |
 
-; $82
+; $7E+X
             sampleOutput                ;                       ' 36    |
-            readAndMix                  ;                       ' 42    | 254
-            updateChannelData 2         ; update channel data   ' 153   |
-            wait23                      ; sync                  ' 23    |
+            updateChannelData 2         ; update channel data   ' 153   | 254
+            wait65                      ; sync                  ' 65    |
 
 
 ;    LD  A, (VCOUNTER)
@@ -743,13 +1098,13 @@ main_loop
 ; PCM channel 3
 ; -------------
 
-; $83                                   ;                       ' +2
-            sampleOutput                ; +2 --> a bit late     ' 36    |
-            prepareChannel 3            ;                       ' 176   | 254
+; $7F+X
+            sampleOutput                ;                       ' 36    |
+            prepareChannelAlt 3         ;                       ' 176   | 254
             LD      BC, $1C80           ; prepare loop counter  ' 10    |
-            wait30                      ; sync                  ' 30    |
+            wait32                      ; sync                  ' 32    |
 
-; $84-$BB
+; $80-$B7+X
 .loop_ch3
             sampleOutput                ;                       ' 36    |
             readMixAndUnsign            ; mix/unsign 9 samples  ' 46    |
@@ -767,7 +1122,7 @@ main_loop
             DEC     B                   ;                       ' 4     |
             JP      NZ, .loop_ch3       ;                       ' 10    |
 
-; $BC
+; $B8+X
             sampleOutput                ;                       ' 36    |
             readMixAndUnsign            ;                       ' 46    |
             readMixAndUnsign            ;                       ' 46    | 254
@@ -775,7 +1130,7 @@ main_loop
             readMixAndUnsign            ;                       ' 46    |
             wait34                      ;                       ' 34    |
 
-; $BD
+; $B9+X
             sampleOutput                ;                       ' 36    |
             updateChannelData 3         ; update channel data   ' 153   | 254
             wait65                      ; sync                  ' 65    |
@@ -787,7 +1142,7 @@ main_loop
 ; next write buffer
 ; -----------------
 
-; $BE
+; $BA+X
 next_write_buf
             sampleOutput                ;                       ' 36    | 36
 
@@ -829,287 +1184,68 @@ next_write_buf
             LD      (READBUF+1), A      ; save current read buf ' 13    | 25 (187)
             EXX                         ;                       ' 4     |
 
-            LD      (HL), 0x2A          ; prepare DAC write     ' 10    | (197)
-
-            CP      D                   ; write buf == read buf ' 4     |
-            JP      Z, .continu_pcm     ; continu to fill pcm   ' 10    | 14 (211)
+            CP      D                   ; prepare DAC write     ' 4     |
+            LD      (HL), 0x2A          ; write buf == read buf ' 10    | 24 (211)
+            JP      Z, .continu_pcm     ; continu to fill pcm   ' 10    |
 
             INC     D                   ; inc write addr        ' 4     |
             RES     2, D                ; write addr &= 0x03FF  ' 8     | 42 (254-1)
             LD      (WRITEBUF), DE      ; save new write addr   ' 20    |
-            JP      prepare_xgm         ;                       ' 10    |
+            JP      sync_frame          ;                       ' 10    |
 
 .continu_pcm
             INC     D                   ; inc write addr        ' 4     |
             RES     2, D                ; write addr &= 0x03FF  ' 8     | 42 (254-1)
             LD      (WRITEBUF), DE      ; save new write addr   ' 20    |
-            JP      main_loop           ;                       ' 10    |
+            JP      pcm_mix             ; do pcm mix again      ' 10    |
 
+; sync
+; ----
 
-; prepare XGM buffer
-; ------------------
+; $BB+X
+sync_frame                              ; DE point on write buf
+            sampleOutput                ;                       ' 36    | (36)
 
-; $BF
-prepare_xgm
+            wait62                      ; sync                  ' 62    | (98)
 
-;    LD  A, (VCOUNTER)
-;    LD  (DEBUG_6), A
+            LD      HL, (IDLE_LOOP)     ;                       ' 16    |
+            INC     HL                  ; increment idle loop   ' 6     | 38 (136)
+            LD      (IDLE_LOOP), HL     ;                       ' 16    |
 
-            sampleOutput                ;                       ' 36    | 36
+            LD      A, (PENDING_FRM)    ; A = frame to process  ' 13    |
+            OR      A                   ; something to do ?     ' 4     | 27 (163)
+            JP      NZ, .do_xgm         ; do the XGM frame      ' 10    |
 
-            LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    |
-            LD      A, (STATUS)         ; A = STATUS            ' 13    |
-            BIT     XGM_PLAY_SFT, A     ; is XGM playing ?      ' 8     | 41 (77)
-            JP      NZ, has_xgm         ; go to prepare buf     ' 10    |
+            LD      A, (PROTECT_ARG)    ; get BUS protect state ' 13    |
+            OR      A                   ; protecting ?          ' 4     | 27 (190)
+            JP      NZ, .wait_dma       ; wait for it           ' 10    |
 
-            wait146                     ; sync                  ' 146   |
-            XOR     A                   ; A = 0                 ' 4     | 160 (237)
-            JP      end_prep_xgm        ; preparation done      ' 10    |
+            EXX                         ;                       ' 4     |
+            LD      A, B                ; A = read buffer high  ' 4     |
+            LD      (READBUF+1), A      ; save current read buf ' 13    | 25 (215)
+            EXX                         ;                       ' 4     |
 
-has_xgm
-            LD      HL, (XGM_ADDR)      ; XGM addr (b0-b15)     ' 16    |
-            LD      A, H                ; A = XGM addr (b8-b15) ' 4     |
-            RLA                         ; CF = XGM addr b15     ' 4     | 146 (223)
-            LD      A, (XGM_ADDR+2)     ; A = sample addr (H)   ' 13    |
-            RLA                         ; sample addr (b22-b15) ' 4     |
-            setBank_BC                  ; setBank               ' 105   |
+            ADD     $1                  ;                       ' 7     |
+            RES     2, A                ; read pos &= 0x03FF    ' 8     |
+            CP      D                   ; pcm buffer empty ?    ' 4     | 29 (244)
+            JP      Z, .do_pcm          ; fill pcm              ' 10    |
 
-            LD      A, H                ; save H                ' 4     |
-            SET     7, H                ; HL = XGM addr bank    ' 8     |
-            LD      B, $0               ; B = 0                 ' 7     | 30 (254-1)
-            LD      C, (HL)             ; BC = bytes to process ' 7     |
-            LD      H, A                ; restore H             ' 4     |
+            JP      sync_frame          ; wait for a frame      ' 10    | (254)
 
-; $BF+X
-            sampleOutput                ;                       ' 36    | (36-1)
+.wait_dma                               ;                       ' 190
+            LD      HL, (WAIT_LOOP)     ;                       ' 16    |
+            INC     HL                  ; increment wait loop   ' 6     | 38 (228)
+            LD      (WAIT_LOOP), HL     ;                       ' 16    |
 
-            LD      A, L                ; A = addr low          ' 4     |
-            ADD     C                   ; compute new addr (L)  ' 4     |
-            LD      (XGM_ADDR+0), A     ; store new addr (L)    ' 13    | 28 (63)
-            JR      C, .split           ; carry --> separate    ' 7     |
+            wait16                      ; sync                  ' 16    |
+            JP      sync_frame          ; wait for a frame      ' 10    | 26 (254)
 
-.no_split
-            wait104                     ; sync                  ' 104   | (167)
+.do_pcm                                 ;                       ' 244
+            JP      pcm_mix             ; do pcm mix again      ' 10    | (254)
 
-            SET     7, H                ; HL = XGM addr bank    ' 8     |
-            INC     HL                  ; HL = start frame data ' 6     |
-            XOR     A                   ; no second part        ' 4     |
-            LD      IXL, A              ; IXL = sec part size   ' 8     | 44 (211)
-            NOP                         ;                       ' 4     |
-            DEC     C                   ; first part size = 0 ? ' 4     |
-            JP      Z, .second_part     ; go to second part     ' 10    |
-
-            wait12                      ; sync                  ' 12    | 22 (233)
-            JP      .first_part_pre     ; start filling         ' 10    |
-
-.split
-            LD      IXL, A              ; IXL = sec part size   ' 8     |
-            SUB     C                   ;                       ' 4     |
-            NEG                         ;                       ' 8     | 34 (97)
-            DEC     A                   ; A = (C - IXL) - 1     ' 4     |
-            JP      NZ, .first_part_ok  ; not zero --> do it    ' 10    |
-
-            LD      A, H                ; A = addr med (M)      ' 4     |
-            ADD     $1                  ; inc with CF set       ' 7     |
-            LD      (XGM_ADDR+1), A     ; store new addr (M)    ' 13    |
-            LD      A, (XGM_ADDR+2)     ; load sample addr (H)  ' 13    |
-            ADC     B                   ; inc                   ' 4     | 68 (164)
-            LD      (XGM_ADDR+2), A     ; store sample addr (H) ' 13    |
-            SET     7, H                ; HL = XGM addr bank    ' 8     |
-            INC     HL                  ; HL = start frame data ' 6     |
-
-            wait36                      ; sync                  ' 36    |
-            JP      .second_part        ; go second part        ' 10    | 65 (211)
-
-.first_part_ok
-            LD      C, A                ; C = first part size   ' 4     |
-            LD      A, H                ; A = addr med (M)      ' 4     |
-            ADD     $1                  ; inc with CF set       ' 7     |
-            LD      (XGM_ADDR+1), A     ; store new addr (M)    ' 13    |
-            LD      A, (XGM_ADDR+2)     ; load sample addr (H)  ' 13    | 72 (169)
-            ADC     B                   ; inc                   ' 4     |
-            LD      (XGM_ADDR+2), A     ; store sample addr (H) ' 13    |
-            SET     7, H                ; HL = XGM addr bank    ' 8     |
-            INC     HL                  ; HL = start frame data ' 6     |
-
-            wait64                      ; sync                  ' 64    | (233)
-
-.first_part_pre                         ;                       ' 233
-            LD      A, 11               ; A = block fill size   ' 7     |
-            CP      C                   ; C < block size        ' 4     | 21 (254)
-            JP      NC, .first_part_end ; go to last bytes      ' 10    |
-
-.first_part
-; $BF+X
-            sampleOutput                ;                       ' 36    | 36
-
-            LDI                         ; fill XGM buffer       ' 16+1  |
-            LDI                         ; 11 bytes at once      ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  | 187 (223)
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-
-            wait10                      ; sync                  ' 10    |
-            LD      A, 11               ; A = block fill size   ' 7     |
-            CP      C                   ; remaining > 11        ' 4     | 31 (254)
-            JP      C, .first_part      ; continu block fill    ' 10    |
-
-.first_part_end
-; $BF+X
-            sampleOutput                ;                       ' 36    | 36
-
-            LDI                         ; fill XGM buffer       ' 16+1  |
-            JP      PO, .fst_part_d0    ;                       ' 10    | 27 (63)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d1    ;                       ' 10    | 27 (90)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d2    ;                       ' 10    | 27 (117)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d3    ;                       ' 10    | 27 (144)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d4    ;                       ' 10    | 27 (171)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d5    ;                       ' 10    | 27 (198)
-
-            wait56                      ; sync                  ' 56    | (254)
-
-; $BF+X
-            sampleOutput                ;                       ' 36    | 36
-
-            LDI                         ; fill XGM buffer       ' 16+1  |
-            JP      PO, .fst_part_d0    ;                       ' 10    | 27 (63)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d1    ;                       ' 10    | 27 (90)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d2    ;                       ' 10    | 27 (117)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d3    ;                       ' 10    | 27 (144)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .fst_part_d4    ;                       ' 10    | 27 (171)
-            LDI                         ;                       ' 16+1  |
-            JP      .fst_part_d5        ;                       ' 10    | 27 (198)
-
-.fst_part_d0
-            wait27                      ; sync                  ' 27    | (90)
-.fst_part_d1
-            wait27                      ; sync                  ' 27    | (117)
-.fst_part_d2
-            wait27                      ; sync                  ' 27    | (144)
-.fst_part_d3
-            wait27                      ; sync                  ' 27    | (171)
-.fst_part_d4
-            wait27                      ; sync                  ' 27    | (198)
-.fst_part_d5
-            wait13                      ; sync                  ' 13    | (211)
-
-.second_part                            ;                       ' 211
-            NOP                         ; sync                  ' 4
-            LD      A, IXL              ; A = second part size  ' 8     |
-            OR      A                   ;                       ' 4     | 26 (237)
-            JP      Z, end_prep_xgm     ; done                  ' 10    |
-
-            wait17                      ; sync                  ' 17    | 254
-
-; $BF+X
-            sampleOutput                ;                       ' 36    | 36
-
-            LD      HL, (XGM_ADDR)      ; XGM addr (b0-b15)     ' 16    |
-            LD      A, H                ; A = XGM addr (b8-b15) ' 4     |
-            RLA                         ; CF = XGM addr b15     ' 4     | 146 (182)
-            LD      A, (XGM_ADDR+2)     ; A = sample addr (H)   ' 13    |
-            RLA                         ; sample addr (b22-b15) ' 4     |
-            setBank_BC                  ; setBank               ' 105   |
-
-            SET     7, H                ; HL = XGM addr bank    ' 8     | 15 (197)
-            LD      L, 0                ;                       ' 7     |
-
-            wait21                      ; sync                  ' 21    | (218)
-
-            LD      B, 0                ; B = 0                 ' 7     |
-            LD      C, IXL              ; BC = second part size ' 8     |
-            LD      A, 11               ; A = block fill size   ' 7     | 36 (254)
-            CP      C                   ; C < block size        ' 4     |
-            JP      NC, .sec_part_end   ; go to last bytes      ' 10    |
-
-; $BF+X
-.sec_part_loop
-            sampleOutput                ;                       ' 36    | 36
-
-            LDI                         ; fill XGM buffer       ' 16+1  |
-            LDI                         ; 11 bytes at once      ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  | 187 (223)
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-            LDI                         ;                       ' 16+1  |
-
-            wait10                      ; sync                  ' 10    |
-            LD      A, 11               ; A = block fill size   ' 7     |
-            CP      C                   ; remaining > 11        ' 4     | 31 (254)
-            JP      C, .sec_part_loop   ; continu block fill    ' 10    |
-
-.sec_part_end
-; $BF+X
-            sampleOutput                ;                       ' 36    | 36
-
-            LDI                         ; fill XGM buffer       ' 16+1  |
-            JP      PO, .sec_part_d0    ;                       ' 10    | 27 (63)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d1    ;                       ' 10    | 27 (90)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d2    ;                       ' 10    | 27 (117)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d3    ;                       ' 10    | 27 (144)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d4    ;                       ' 10    | 27 (171)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d5    ;                       ' 10    | 27 (198)
-
-            wait56                      ; sync                  ' 56    | (254)
-
-; $BF+X
-            sampleOutput                ;                       ' 36    | 36
-
-            LDI                         ; fill XGM buffer       ' 16+1  |
-            JP      PO, .sec_part_d0    ;                       ' 10    | 27 (63)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d1    ;                       ' 10    | 27 (90)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d2    ;                       ' 10    | 27 (117)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d3    ;                       ' 10    | 27 (144)
-            LDI                         ;                       ' 16+1  |
-            JP      PO, .sec_part_d4    ;                       ' 10    | 27 (171)
-            LDI                         ;                       ' 16+1  |
-            JP      .sec_part_d5        ;                       ' 10    | 27 (198)
-
-.sec_part_d0
-            wait27                      ; sync                  '       | (90)
-.sec_part_d1
-            wait27                      ; sync                  '       | (117)
-.sec_part_d2
-            wait27                      ; sync                  '       | (144)
-.sec_part_d3
-            wait27                      ; sync                  '       | (171)
-.sec_part_d4
-            wait27                      ; sync                  '       | (198)
-.sec_part_d5
-            wait35                      ; sync                  ' 35    |
-            XOR     A                   ; A = 0                 ' 4     | 39 (237)
-
-end_prep_xgm                            ;                       ' 237
-            LD      (DE), A             ; XGM buf end with 0    ' 7     |
-            LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    | 17 (254)
+.do_xgm                                 ;                       ' 163
+            wait81                      ; sync                  ' 81    |
+            LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    | 91 (254)
 
 
 ;    LD  A, (VCOUNTER)
@@ -1118,7 +1254,7 @@ end_prep_xgm                            ;                       ' 237
 ; execute XGM command
 ; -------------------
 
-; $C0+X
+; $BC+X+Y
 execute_xgm
             sampleOutput                ;                       ' 36    | (36)
 
@@ -1337,8 +1473,9 @@ com_ym_port0_w3                         ; 23                    ' 80
 
 com_ym_port0_w4                         ; 24                    ' 80
             wait144                     ; sync                  ' 144   |
-            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    | 174 (254)
+            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    | 178 (254+4)
             LD      BC, YMPORT1         ; BC point on YM port1  ' 10    |
+            EXX                         ;                       ' 4     |
             JP      ym_port_write4      ;                       ' 10    |
 
 com_ym_port0_w5                         ; 25                    ' 80
@@ -1355,8 +1492,9 @@ com_ym_port0_w6                         ; 26                    ' 80
 
 com_ym_port0_w7                         ; 27                    ' 80
             wait144                     ; sync                  ' 144   |
-            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    | 174 (254)
+            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    | 178 (254+4)
             LD      BC, YMPORT1         ; BC point on YM port1  ' 10    |
+            EXX                         ;                       ' 4     |
             JP      ym_port_write7      ;                       ' 10    |
 
 com_ym_port0_w8                         ; 28                    ' 80
@@ -1373,8 +1511,9 @@ com_ym_port0_w9                         ; 29                    ' 80
 
 com_ym_port0_wA                         ; 2A                    ' 80
             wait144                     ; sync                  ' 144   |
-            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    | 174 (254)
+            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    | 178 (254+4)
             LD      BC, YMPORT1         ; BC point on YM port1  ' 10    |
+            EXX                         ;                       ' 4     |
             JP      ym_port_writeA      ;                       ' 10    |
 
 com_ym_port0_wB                         ; 2B                    ' 80
@@ -1435,8 +1574,9 @@ com_ym_port2_w3                         ; 33                    ' 80
 
 com_ym_port2_w4                         ; 34                    ' 80
             wait144                     ; sync                  ' 144   |
-            LD      HL, YMPORT2         ; HL point on YM port2  ' 10    | 174 (254)
+            LD      HL, YMPORT2         ; HL point on YM port0  ' 10    | 178 (254+4)
             LD      BC, YMPORT3         ; BC point on YM port3  ' 10    |
+            EXX                         ;                       ' 4     |
             JP      ym_port_write4      ;                       ' 10    |
 
 com_ym_port2_w5                         ; 35                    ' 80
@@ -1453,8 +1593,9 @@ com_ym_port2_w6                         ; 36                    ' 80
 
 com_ym_port2_w7                         ; 37                    ' 80
             wait144                     ; sync                  ' 144   |
-            LD      HL, YMPORT2         ; HL point on YM port2  ' 10    | 174 (254)
+            LD      HL, YMPORT2         ; HL point on YM port0  ' 10    | 178 (254+4)
             LD      BC, YMPORT3         ; BC point on YM port3  ' 10    |
+            EXX                         ;                       ' 4     |
             JP      ym_port_write7      ;                       ' 10    |
 
 com_ym_port2_w8                         ; 38                    ' 80
@@ -1471,8 +1612,9 @@ com_ym_port2_w9                         ; 39                    ' 80
 
 com_ym_port2_wA                         ; 3A                    ' 80
             wait144                     ; sync                  ' 144   |
-            LD      HL, YMPORT2         ; HL point on YM port2  ' 10    | 174 (254)
+            LD      HL, YMPORT2         ; HL point on YM port0  ' 10    | 178 (254+4)
             LD      BC, YMPORT3         ; BC point on YM port3  ' 10    |
+            EXX                         ;                       ' 4     |
             JP      ym_port_writeA      ;                       ' 10    |
 
 com_ym_port2_wB                         ; 3B                    ' 80
@@ -1552,18 +1694,22 @@ ym_port_write1                          ;                       ' 110
 
 ym_port_write0
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (204)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (212)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
             LD      (BC), A             ; write to YM           ' 7     |
 
-            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 42 (246)
+            EXX                         ; switch to HL' (port0) ' 4     |
+.wait                                   ;                       '       |
+            BIT     7, (HL)             ; test YM ready bit     ' 12    |
+            JP      NZ, .wait           ; wait while busy       ' 10    | 40 (252)
+                                        ;                       '       |
             LD      (HL), $2A           ; restore DAC write     ' 10    |
+            EXX                         ; switch back           ' 4     |
 
-            JP      execute_xgm         ; +2 cycles here        ' 10    | (254+2)
+            JP      execute_xgm         ; +8 cycles here        ' 10    | (254+8)
 
 ym_port_writeF                          ;                       ' 110
             LD      A, (DE)             ; A = YM reg num        ' 7     |
@@ -1575,22 +1721,22 @@ ym_port_writeF                          ;                       ' 110
 
 ym_port_writeE
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (204)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (212)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
             LD      (BC), A             ; write to YM           ' 7     |
 
-            wait28                      ; sync                  ' 28    |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 50 (254)
+            wait12                      ; sync                  ' 12    |
+            waitYMReady                 ; wait YM to be ready   ' 30    | 42 (254)
 
 ym_port_writeD
             sampleOutputSafe            ;                       ' 46    | (46)
 
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (104)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (112)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1598,8 +1744,8 @@ ym_port_writeD
 
 ;ym_port_writeC
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (162)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (178)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1607,22 +1753,29 @@ ym_port_writeD
 
 ym_port_writeB
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (220)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (244)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
             LD      (BC), A             ; write to YM           ' 7     |
 
-            wait12                      ; sync                  ' 12    |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 34 (254)
+            EXX                         ; switch to HL' (port0) ' 4     | (248)
+.wait                                   ;                       '       |
+            BIT     7, (HL)             ; test YM ready bit     ' 12    |
+            JP      NZ, .wait           ; wait while busy       ' 10    | 22 (258+14)
 
-ym_port_writeA
-            sampleOutputSafe            ;                       ' 46    | (46)
+ym_port_writeA                          ;                       ' 4
+            LD      (HL), $2A           ; restore DAC write     ' 10    |
+            LD      A, (BC)             ;                       ' 7     |
+            INC     BC                  ; play sample           ' 6     | 42 (46)
+            RES     2, B                ;                       ' 8     |
+            LD      (DE), A             ;                       ' 7     |
+            EXX                         ;                       ' 4     |
 
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (104)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (112)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1630,8 +1783,8 @@ ym_port_writeA
 
 ;ym_port_write9
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (162)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (178)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1639,22 +1792,29 @@ ym_port_writeA
 
 ym_port_write8
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (220)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (244)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
             LD      (BC), A             ; write to YM           ' 7     |
 
-            wait12                      ; sync                  ' 12    |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 34 (254)
+            EXX                         ; switch to HL' (port0) ' 4     | (248)
+.wait                                   ;                       '       |
+            BIT     7, (HL)             ; test YM ready bit     ' 12    |
+            JP      NZ, .wait           ; wait while busy       ' 10    | 22 (258+14)
 
-ym_port_write7
-            sampleOutputSafe            ;                       ' 46    | (46)
+ym_port_write7                          ;                       ' 4
+            LD      (HL), $2A           ; restore DAC write     ' 10    |
+            LD      A, (BC)             ;                       ' 7     |
+            INC     BC                  ; play sample           ' 6     | 42 (46)
+            RES     2, B                ;                       ' 8     |
+            LD      (DE), A             ;                       ' 7     |
+            EXX                         ;                       ' 4     |
 
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (104)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (112)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1662,8 +1822,8 @@ ym_port_write7
 
 ;ym_port_write6
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (162)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (178)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1671,22 +1831,29 @@ ym_port_write7
 
 ym_port_write5
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (220)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (244)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
             LD      (BC), A             ; write to YM           ' 7     |
 
-            wait12                      ; sync                  ' 12    |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 34 (254)
+            EXX                         ; switch to HL' (port0) ' 4     | (248)
+.wait                                   ;                       '       |
+            BIT     7, (HL)             ; test YM ready bit     ' 12    |
+            JP      NZ, .wait           ; wait while busy       ' 10    | 22 (258+14)
 
-ym_port_write4
-            sampleOutputSafe            ;                       ' 46    | (46)
+ym_port_write4                          ;                       ' 4
+            LD      (HL), $2A           ; restore DAC write     ' 10    |
+            LD      A, (BC)             ;                       ' 7     |
+            INC     BC                  ; play sample           ' 6     | 42 (46)
+            RES     2, B                ;                       ' 8     |
+            LD      (DE), A             ;                       ' 7     |
+            EXX                         ;                       ' 4     |
 
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (104)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (112)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1694,8 +1861,8 @@ ym_port_write4
 
 ;ym_port_write3
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (162)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (178)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
@@ -1703,21 +1870,29 @@ ym_port_write4
 
 ym_port_write2
             LD      A, (DE)             ; A = YM reg num        ' 7     |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            LD      (HL), A             ; write reg num to YM   ' 7     | 58 (220)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+            LD      (HL), A             ; write reg num to YM   ' 7     | 66 (244)
             INC     E                   ; next data             ' 4     |
             LD      A, (DE)             ; A = YM reg data       ' 7     |
             INC     E                   ; next data             ' 4     |
             LD      (BC), A             ; write to YM           ' 7     |
 
-            wait12                      ; sync                  ' 12    |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 34 (254)
+            EXX                         ; switch to HL' (port0) ' 4     | (248)
+.wait                                   ;                       '       |
+            BIT     7, (HL)             ; test YM ready bit     ' 12    |
+            JP      NZ, .wait           ; wait while busy       ' 10    | 22 (258+14)
 
-            sampleOutputSafe            ;                       ' 46    | (46)
-            wait32                      ; sync                  ' 32    | (78)
+            LD      (HL), $2A           ; restore DAC write     ' 10    |
+            LD      A, (BC)             ;                       ' 7     |
+            INC     BC                  ; play sample           ' 6     | 42 (46)
+            RES     2, B                ;                       ' 8     |
+            LD      (DE), A             ;                       ' 7     |
+            EXX                         ;                       ' 4     |
 
-            waitYMReady                 ; wait YM to be ready   ' 22    |
-            JP      ym_port_write1      ; execute next          ' 10    | 32 (110)
+            wait24                      ; sync                  ' 24    | 54 (100)
+            waitYMReady                 ; wait YM to be ready   ' 30    |
+
+            JP      ym_port_write1      ; execute next          ' 10    | (110)
 
 
 ; YM KEY command
@@ -1767,7 +1942,7 @@ com_ym_key_w5                           ; 46                    ' 80
             sampleOutputSafe            ;                       ' 46    | (46)
 
             wait16                      ; sync                  ' 16    |
-            waitYMReady                 ; wait YM to be ready   ' 22    |
+            waitYMReadyFast             ; wait YM to be ready   ' 22    |
             LD      (HL), $28           ; set reg num to YM     ' 10    | 58 (104)
             JP      ym_key_write5       ;                       ' 10    |
 
@@ -1775,17 +1950,17 @@ com_ym_key_w5                           ; 46                    ' 80
 ym_key_write1                           ;                       ' 124
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (164)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (164)
             LD      (BC), A             ; write to YM           ' 7     |
 
 ym_key_write0
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (204)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (204)
             LD      (BC), A             ; write to YM           ' 7     |
 
             wait8                       ; sync                  ' 8     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (244)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (244)
             LD      (HL), $2A           ; restore DAC write     ' 10    |
 
             JP      execute_xgm         ;                       ' 10    | (254)
@@ -1793,37 +1968,53 @@ ym_key_write0
 ym_key_write5
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (144)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (144)
             LD      (BC), A             ; write to YM           ' 7     |
 
 ym_key_write4
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (184)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (184)
             LD      (BC), A             ; write to YM           ' 7     |
 
 ym_key_write3
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (224)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (224)
             LD      (BC), A             ; write to YM           ' 7     |
 
             wait8                       ; sync                  ' 8     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 30 (254)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 30 (254)
 
 ym_key_write2
             sampleOutputSafe            ;                       ' 46    | (46)
 
             wait8                       ; sync                  ' 8     |
-            waitYMReady                 ; wait YM to be ready   ' 22    | 40 (86)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (86)
             LD      (HL), $28           ; restore write to key  ' 10    |
 
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     DE                  ; next data             ' 6     |
-            wait8                       ; wait YM to be ready   ' 8     | 28 (114)
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (126)
             LD      (BC), A             ; write to YM           ' 7     |
 
-            JP      ym_key_write1       ; execute next          ' 10    | (124)
+.write1
+            LD      A, (DE)             ; A = YM key data       ' 7     |
+            INC     E                   ; next data             ' 4     |
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (166)
+            LD      (BC), A             ; write to YM           ' 7     |
+
+.write0
+            LD      A, (DE)             ; A = YM key data       ' 7     |
+            INC     E                   ; next data             ' 4     |
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (206)
+            LD      (BC), A             ; write to YM           ' 7     |
+
+            wait7                       ; sync                  ' 7     |
+            waitYMReadyFast             ; wait YM to be ready   ' 22    | 39 (245)
+            LD      (HL), $2A           ; restore DAC write     ' 10    |
+
+            JP      execute_xgm         ;                       ' 10    | (254+1)
 
 
 ; PCM command
@@ -1895,16 +2086,24 @@ com_pcm_p3_ch3                          ; 5F                    ' 80
 
 
 com_pcm_ch0                             ;                       ' 97
-            handlePCMCommandXGM 0       ; handle command        ' 170   | (216)
+            handlePCMCommandXGM 0       ; handle command        ' 142   |
+            wait4                       ; sync                  ' 4     | 156 (254-1)
+            JP      execute_xgm         ;                       ' 10    |
 
 com_pcm_ch1                             ;                       ' 97
-            handlePCMCommandXGM 1       ; handle command        ' 170   | (216)
+            handlePCMCommandXGM 1       ; handle command        ' 142   |
+            wait4                       ; sync                  ' 4     | 156 (254-1)
+            JP      execute_xgm         ;                       ' 10    |
 
 com_pcm_ch2                             ;                       ' 97
-            handlePCMCommandXGM 2       ; handle command        ' 170   | (216)
+            handlePCMCommandXGM 2       ; handle command        ' 142   |
+            wait4                       ; sync                  ' 4     | 156 (254-1)
+            JP      execute_xgm         ;                       ' 10    |
 
 com_pcm_ch3                             ;                       ' 97
-            handlePCMCommandXGM 3       ; handle command        ' 170   | (216)
+            handlePCMCommandXGM 3       ; handle command        ' 142   |
+            wait4                       ; sync                  ' 4     | 156 (254-1)
+            JP      execute_xgm         ;                       ' 10    |
 
 
 
@@ -2141,6 +2340,25 @@ com_null                                ; 01-0F / 60-7D         ' 80
             JP      execute_xgm         ;                       ' 10    | 174 (254)
 
 
+; EXTRA FRAME command
+; -------------------
+
+com_extra_frm                           ; FD                            ' 80
+
+            LD      A, $1               ;                               ' 7     |
+            LD      (MODIFYING_F), A    ; we are modifying variable     ' 13    | 20 (100)
+
+            LD      A, (PENDING_FRM)    ;                               ' 13    |
+            INC     A                   ; force process 1 more frame    ' 4     | 30 (130)
+            LD      (PENDING_FRM), A    ;                               ' 13    |
+
+            XOR     A                   ;                               ' 4     |
+            LD      (MODIFYING_F), A    ; no more modifying variable    ' 13    | 17 (147)
+
+            wait97                      ; sync                          ' 97    | 107 (254)
+            JP      execute_xgm         ;                               ' 10    |
+
+
 ; LOOP command
 ; ------------
 
@@ -2156,7 +2374,7 @@ com_loop                                ; FE                        ' 80
             ADD     HL, BC              ; HL = XGM base addr + loop ' 11    | 47 (157)
             LD      (XGM_ADDR+0), HL    ; set new XGM addr (ML)     ' 16    |
 
-            LD      A, (DE)             ; A = loop addr b7-b0       ' 7     |
+            LD      A, (DE)             ; A = loop addr b23-b16     ' 7     |
             LD      HL, XGM_ARG_A+2     ; HL point XGM base adr H   ' 10    |
             ADC     (HL)                ; A = XGM base addr + loop  ' 7     | 41 (198)
             INC     E                   ; next param                ' 4     |
@@ -2169,69 +2387,77 @@ com_loop                                ; FE                        ' 80
 ; END XGM command
 ; ---------------
 
-com_end                                 ; FF                    ' 80
-            LD      HL, STATUS          ; HL = STATUS           ' 10    | 25 (105)
-            RES     XGM_PLAY_SFT, (HL)  ; clear play status     ' 15    |
+com_end                                 ; FF                        ' 80
+            LD      HL, STATUS          ; HL = STATUS               ' 10    | 25 (105)
+            RES     XGM_PLAY_SFT, (HL)  ; clear play status         ' 15    |
 
-            wait139                     ; sync                  ' 139   |
-            JP      execute_xgm         ;                       ' 10    | 149 (254)
+            wait139                     ; sync                      ' 139   |
+            JP      execute_xgm         ;                           ' 10    | 149 (254)
 
 
-; $C0+X+Y
-do_xgm_again                            ;                       ' 108
-            LD      A, (VINT_OVER)      ;                       ' 13    |
-            INC     A                   ;                       ' 4     | 30 (138)
-            LD      (VINT_OVER), A      ; keep trace of it      ' 13    |
+; $BC+X+Y+Z
+do_xgm_again                            ;                           ' 135
+            DEC     L                   ; HL point on MODIFYING_F   ' 4     |
+            LD      (HL), $0            ; no more modifying         ' 10    | 14 (149)
 
-            wait106                     ; sync                  ' 106   |
-            JP      prepare_xgm         ; continue xgm process  ' 10    | 116 (254)
+            wait95                      ; sync                      ' 95    |
+            JP      main_loop           ; restart loop (prep xgm)   ' 10    | 105 (254)
 
-; $C0+X+Y
-xgm_done                                ;                       ' 90
+; $BC+X+Y+Z
+xgm_done                                ;                               ' 90
 
 ;    LD  A, (VCOUNTER)
 ;    LD  (DEBUG_8), A
 
-            DEC     IYL                 ; some vint remains  ?  ' 8     |
-            JP      P, do_xgm_again     ; do XGM process again  ' 10    | 18 (108)
+            LD      HL, MODIFYING_F     ;                               ' 10    |
+            LD      (HL), $1            ; we are modifying variable     ' 10    | 24 (114)
+            INC     L                   ; HL point on PENDING_FRM       ' 4     |
+
+            DEC     (HL)                ; still have frame to process ? ' 11    |
+            JP      NZ, do_xgm_again    ; do XGM process again          ' 10    | 21 (135)
+
+            DEC     L                   ; HL point on MODIFYING_F       ' 4     |
+            LD      (HL), $0            ; no more modifying variable    ' 10    | 14 (149)
 
 
 ; execute external command
 ; ------------------------
 
-; $C0+X+Y
-external_com                            ;                           ' 108
-            LD      HL, COMMAND         ; HL point on COMMAND       ' 10    | (118)
+; $BC+X+Y+Z
+external_com                            ;                           ' 149
+            LD      SP, STACK           ; restore stack             ' 10    |
+            LD      HL, COMMAND         ; HL point on COMMAND       ' 10    | 20 (159)
 
 .chk_xgm_play
             BIT     XGM_PLAY_SFT, (HL)  ; play XGM command ?        ' 12    |
-            JP      Z, .chk_xgm_resume  ;                           ' 10    | 22 (140)
+            JP      Z, .chk_xgm_resume  ;                           ' 10    | 22 (181)
 
             RES     XGM_PLAY_SFT, (HL)  ; clear command             ' 15    |
             INC     L                   ;                           ' 4     |
-            INC     L                   ; HL point on status        ' 4     | 38 (178)
+            INC     L                   ; HL point on status        ' 4     | 38 (219)
             SET     XGM_PLAY_SFT, (HL)  ; set play status           ' 15    |
 
             LD      HL, (XGM_ARG_A)     ; set new XGM address       ' 16    |
-            LD      (XGM_ADDR), HL      ;                           ' 16    | 58 (236)
+            LD      (XGM_ADDR), HL      ;                           ' 16    | 58 (277)
             LD      A, (XGM_ARG_A+2)    ;                           ' 13    |
             LD      (XGM_ADDR+2),A      ;                           ' 13    |
 
             LD      HL, COMMAND         ; restore HL                ' 10    |
-            JP      external_com_pcm    ; do PCM commands           ' 10    | (254+2)
-                                        ; +2 cycles here, ignore
+            JP      external_com_pcm    ; do PCM commands           ' 10    | 20 (254+43)
+                                        ; +43 cycles here, ignore
 
 .chk_xgm_resume
             BIT     XGM_RESUME_SFT, (HL)    ; play XGM command ?    ' 12    |
-            JP      Z, .chk_xgm_stop        ;                       ' 10    | 22 (162)
+            JP      Z, .chk_xgm_stop        ;                       ' 10    | 22 (203)
 
             RES     XGM_RESUME_SFT, (HL)    ; clear command         ' 15    |
             INC     L                       ;                       ' 4     |
-            INC     L                       ; HL point on status    ' 4     | 38 (200)
+            INC     L                       ; HL point on status    ' 4     | 38 (241)
             SET     XGM_PLAY_SFT, (HL)      ; set play status       ' 15    |
 
             LD      DE, YM_RR_SAV       ; DE point on save state    ' 10    |
-            wait44                      ; sync                      ' 44    | 54 (254)
+            LD      SP, STACK           ; set STACK                 ' 10    | 20 (254+7)
+                                        ; +7 cycles here, ignore
 
             CALL    loadState           ; load state                ' 140+  | (140)
 
@@ -2241,15 +2467,16 @@ external_com                            ;                           ' 108
 
 .chk_xgm_stop
             BIT     XGM_STOP_SFT, (HL)  ; stop XGM command ?        ' 12    |
-            JP      Z, .chk_pcm0_pre    ;                           ' 10    | 22 (184)
+            JP      Z, .chk_pcm0_pre    ;                           ' 10    | 22 (225)
 
             RES     XGM_STOP_SFT, (HL)  ; clear command             ' 15    |
             INC     L                   ;                           ' 4     |
-            INC     L                   ; HL point on status        ' 4     | 38 (222)
+            INC     L                   ; HL point on status        ' 4     | 38 (263)
             RES     XGM_PLAY_SFT, (HL)  ; clear play status         ' 15    |
 
             LD      DE, YM_RR_OFF       ; DE point on off state     ' 10    |
-            wait22                      ; sync                      ' 22    | 32 (254)
+            LD      SP, STACK           ; set STACK                 ' 10    | 20 (254+29)
+                                        ; +29 cycles here, ignore
 
             CALL    loadState           ; stop music                ' 140+  | (140)
 
@@ -2257,48 +2484,48 @@ external_com                            ;                           ' 108
             LD      BC, YMPORT1         ; BC point on YM port1      ' 10    | 20 (160)
 
             LD      (HL), $28           ; set reg num to YM         ' 10    |
-            waitYMReady                 ; wait YM to be ready       ' 22    | 32 (192)
+            waitYMReadyFast             ; wait YM to be ready       ' 22    | 32 (192)
 
             XOR     A                   ; A = $00                   ' 4     |
             LD      (BC), A             ; key off - all channel     ' 7     |
             INC     A                   ; A = $01                   ' 4     | 37 (229)
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReadyFast             ; wait YM to be ready       ' 22    |
 
             LD      (BC), A             ; key off - all channel     ' 7     |
-            waitYMReady                 ; wait YM to be ready       ' 22    | 29 (254+4)
+            waitYMReadyFast             ; wait YM to be ready       ' 22    | 29 (254+4)
 
             sampleOutputSafe            ; *** sample output ****    ' 46    | (46+4)
 
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReadyFast             ; wait YM to be ready       ' 22    |
             LD      (HL), $28           ; set reg num to YM         ' 10    |
             LD      A, $02              ; A = $02                   ' 7     | 61 (111)
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReadyFast             ; wait YM to be ready       ' 22    |
 
             LD      (BC), A             ; key off - all channel     ' 7     |
             ADD     $2                  ; A = $04                   ' 7     | 36 (147)
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReadyFast             ; wait YM to be ready       ' 22    |
 
             LD      (BC), A             ; key off - all channel     ' 7     |
             INC     A                   ; A = $05                   ' 4     | 33 (180)
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReadyFast             ; wait YM to be ready       ' 22    |
 
             LD      (BC), A             ; key off - all channel     ' 7     |
             INC     A                   ; A = $06                   ' 4     | 33 (213)
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReadyFast             ; wait YM to be ready       ' 22    |
 
             LD      (BC), A             ; key off - all channel     ' 7     |
-            waitYMReady                 ; wait YM to be ready       ' 22    | 39 (252)
+            waitYMReadyFast             ; wait YM to be ready       ' 22    | 39 (252)
             LD      (HL), $2A           ; restore DAC write         ' 10    |
 
             LD      HL, COMMAND         ; restore HL                ' 10    |
             JP      external_com_pcm    ; continue                  ' 10    | 20 (254+18)
                                         ; +18 cycles here, ignore
 
-.chk_pcm0_pre                           ;                           ' 184
+.chk_pcm0_pre                           ;                           ' 225
             LD      HL, COMMAND         ; restore HL                ' 10    |
-            wait60                      ; sync                      ' 70    | 254
+            wait19                      ; sync                      ' 19    | 29 (254)
 
-; $C1+X+Y
+; $BD+X+Y+Z
 external_com_pcm
             sampleOutput                ; *** sample output ****    ' 36    | (36)
 
@@ -2308,13 +2535,14 @@ external_com_pcm
 
             RES     CH0_SFT, (HL)       ; clear command             ' 15    | (73)
 
-            handlePCMCommand 0          ; handle play PCM command   ' 173   | 181 (254)
-            wait8                       ; sync                      ' 8     |
+            handlePCMCommand 0          ; handle play PCM command   ' 157   | 167 (240)
+            LD      HL, COMMAND         ; restore HL                ' 10    |
+
+            wait14                      ; sync                      ' 14    | (254)
 
             sampleOutput                ; *** sample output ****    ' 36    | (36)
 
-            wait12                      ; sync                      ' 12    | 22 (58)
-            LD      HL, COMMAND         ; restore HL                ' 10    |
+            wait22                      ; sync                      ' 22    | (58)
 
 .chk_pcm1
             BIT     CH1_SFT, (HL)       ; play PCM1 command ?       ' 12    |
@@ -2322,11 +2550,11 @@ external_com_pcm
 
             RES     CH1_SFT, (HL)       ; clear command             ' 15    | (95)
 
-            handlePCMCommand 1          ; handle play PCM command   ' 173   | (268)
+            handlePCMCommand 1          ; handle play PCM command   ' 157   | (254-2)
 
-            sampleOutput                ; *** sample output ****    ' 36    | (36+14)
+            sampleOutput                ; *** sample output ****    ' 36    | (36-2)
 
-            wait20                      ; sync                      ' 20    | 30 (80)
+            wait36                      ; sync                      ' 36    | 46 (80)
             LD      HL, COMMAND         ; restore HL                ' 10    |
 
 .chk_pcm2
@@ -2335,11 +2563,11 @@ external_com_pcm
 
             RES     CH2_SFT, (HL)       ; clear command             ' 15    | (117)
 
-            handlePCMCommand 2          ; handle play PCM command   ' 173   | (290)
+            handlePCMCommand 2          ; handle play PCM command   ' 157   | (254+20)
 
-            sampleOutput                ; *** sample output ****    ' 36    | (36+36)
+            sampleOutput                ; *** sample output ****    ' 36    | (36+20)
 
-            wait20                      ; sync                      ' 20    | 30 (102)
+            wait36                      ; sync                      ' 36    | 46 (102)
             LD      HL, COMMAND         ; restore HL                ' 10    |
 
 .chk_pcm3
@@ -2348,13 +2576,13 @@ external_com_pcm
 
             RES     CH3_SFT, (HL)       ; clear command             ' 15    | (139)
 
-            handlePCMCommand 3          ; handle play PCM command   ' 173   | (312)
+            handlePCMCommand 3          ; handle play PCM command   ' 157   | (254+42)
 
-            sampleOutput                ; *** sample output ****    ' 36    | (36+58)
+            sampleOutput                ; *** sample output ****    ' 36    | (36+42)
 
-            wait30                      ; sync                      ' 30    | (124)
+            wait46                      ; sync                      ' 46    | (124)
 
-; $C1+X+Y+Z
+; $BD+X+Y+Z
 ext_com_done                                ;                           ' 124
             LD      BC, STATUS              ; BC point on STATUS        ' 10    |
             LD      A, (BC)                 ; A = STATUS                ' 7     | 24 (148)
@@ -2371,7 +2599,7 @@ ext_com_done                                ;                           ' 124
             EX      AF,AF'                  ; preserve AF               ' 4     |
             wait35                          ; sync                      ' 35    | 39 (254-4)
 
-; $C2+X+Y+Z
+; $BE+X+Y+Z
             sampleOutput                    ; sample output             ' 36-4  | (36)
             EX      AF,AF'                  ; restore AF                ' 4     |
 
@@ -2399,83 +2627,58 @@ ext_com_done                                ;                           ' 124
             OR      A, $08                  ; set play status for ch3   ' +2
 
 .ch3_silent
-            LD      (BC), A                 ; set new status            ' 7     | (232)
+            LD      (BC), A                 ; set new status            ' 7     | (229)
 
-            LD      A, IYL                  ; A = vint counter          ' 8     |
-            INC     A                       ; already happened ?        ' 4     | 22 (254)
-            JP      P, vint_done            ; continue                  ' 10    |
-
+            LD      A, (PROTECT_ARG)        ; get BUS protect state     ' 13    |
+            OR      A                       ; no protecting ?           ' 4     | 27 (254+2)
+            JP      Z, main_loop            ; process next frame        ' 10    |
+                                            ; +2 cycles here, ignore...
 
 ; frame done
 ;
+; 1 frame of PCM sample (256 bytes) is ~287 lines.
+;
 ; NTSC: we should be <= 0xE8 to respect frame time here and we need to update PCM buffer 0.9 time per frame
 ; so we have a free PCM mix frame from time to time.
-; Median (X+Y+Z) should be < 0x25 (< 37) plus some lines from the free PCM mix
+; Median (X+Y+Z) should be < 0x2A (< 42) plus some lines from the free PCM mix
 ;
 ; PAL: we should be <= 0118 to respect frame time here but we need to update PCM buffer 1.1 time per frame
 ; so we have a penalty PCM mix frame from time to time.
-; Median (X+Y+Z) should be < 0x55 (< 85) minus some lines for the extra PCM mix
+; Median (X+Y+Z) should be < 0x5A (< 90) minus some lines for the extra PCM mix
 ; -------------------------------------------------------------------------------------
-
-; $C3+X+Y+Z
-
-;    LD  A, (VCOUNTER)
-;    LD  (DEBUG_9), A
-
-wait_vint
-            sampleOutput                ; *** sample output *** ' 36    | (36)
-
-            wait166                     ; sync                  ' 166   | (202)
-
-            LD      A, (IDLE_LOOP)      ;                       ' 13    |
-            INC     A                   ; increment idle loop   ' 4     | 30 (232)
-            LD      (IDLE_LOOP), A      ;                       ' 13    |
-
-            LD      A, IYL              ; A = vint counter      ' 8     |
-            INC     A                   ; vint not done ?       ' 4     | 22 (254)
-            JP      M, wait_vint        ; continue              ' 10    |
-
-
-; wait one sample here so we are safe to test the bus protection flag
-;
-; $C3+X+Y+Z
-vint_done
-            sampleOutput                ; *** sample output *** ' 36    |
-            wait218                     ; sync                  ' 218   | (254)
 
 
 ; BUS protection wait (to avoid BUS contention with DMA)
 ;
-; $C4+X+Y+Z
+; $BF+X+Y+Z
 
 bus_protect_wait
             sampleOutput                ; *** sample output *** ' 36    | (36)
 
-            wait135                     ; sync                  ' 135   | (171)
+            wait105                     ; sync                  ' 105   | (141)
 
             LD      A, (PROTECT_ARG)    ; get BUS protect state ' 13    |
-            OR      A                   ; protecting ?          ' 4     | 27 (198)
-            JP      NZ, .wait           ; wait                  ' 10    |
+            OR      A                   ; no more protecting ?  ' 4     | 27 (168)
+            JP      Z, .continue        ; continue              ' 10    |
+
+            LD      HL, (IDLE_LOOP)     ;                       ' 16    |
+            INC     HL                  ; increment idle loop   ' 6     | 38 (206)
+            LD      (IDLE_LOOP), HL     ;                       ' 16    |
+
+            LD      HL, (WAIT_LOOP)     ;                       ' 16    |
+            INC     HL                  ; increment wait loop   ' 6     | 38 (244)
+            LD      (WAIT_LOOP), HL     ;                       ' 16    |
+
+            JP      bus_protect_wait    ; wait until bus is ok  ' 10    | (254)
+
+.continue                               ;                       ' 168
 
 ;    LD  A, (VCOUNTER)
 ;    LD  (DEBUG_A), A
 
-            LD      DE, (WRITEBUF)      ; DE = write buf        ' 20    |
-            compareReadWrite            ; PCM buffer full ?     ' 16    | 46 (244)
-            JP      Z, .process_xgm     ; go process xgm        ' 10    |
+            wait76                      ; sync                  ' 76    |
+            JP      main_loop           ; process next frame    ' 10    | 86 (254)
 
-            JP      main_loop           ; process next frame    ' 10    | 10 (254)
-
-.process_xgm                            ;                       ' 244
-            JP      prepare_xgm         ; continue xgm process  ' 10    | 10 (254)
-
-.wait                                   ;                       ' 198
-            LD      A, (IDLE_LOOP)      ;                       ' 13    |
-            INC     A                   ; increment idle loop   ' 4     | 30 (228)
-            LD      (IDLE_LOOP), A      ;                       ' 13    |
-
-            wait16                      ; sync                  ' 16    |
-            JP      bus_protect_wait    ; wait until bus is ok  ' 10    | 26 (254)
 
 
 ; ##############################  functions  ################################
@@ -2495,7 +2698,6 @@ bus_protect_wait
 loadState
 
             sampleOutput                ; *** sample output ****    ' 36    | (36)
-
 
             LD      HL, YMPORT0         ; HL point on YM port0      ' 10    |
             LD      BC, YMPORT1         ; BC point on YM port1      ' 10    | 20 (56)
@@ -2527,107 +2729,137 @@ loadState
 
 loadYMState                             ;                           ' 56
 
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $80           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     |
-            INC     E                   ; next                      ' 4     | 54 (110)
+            INC     E                   ; next                      ' 4     | 62 (118)
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $81           ; set reg num to YM         ' 10    |
-            LD      A, (DE)             ; get saved value           ' 7     | 62 (172)
+            LD      A, (DE)             ; get saved value           ' 7     | 62 (180)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $82           ; set reg num to YM         ' 10    |
-            LD      A, (DE)             ; get saved value           ' 7     | 62 (234)
+            LD      A, (DE)             ; get saved value           ' 7     | 62 (242)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    | 30 (254+10)
+            EXX                         ;                           ' 4     | (246)
 
-            sampleOutputSafe            ; *** sample output ****    ' 46    | (46+10)
+.wait1
+            BIT     7, (HL)             ; test YM ready bit         ' 12    |
+            JP      NZ, .wait1          ; wait while busy           ' 10    | 22 (254+14)
 
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            LD      (HL), $2A           ;                           ' 10    |
+            LD      A, (BC)             ;                           ' 7     |
+            INC     BC                  ; *** sample output ****    ' 6     | 38 (52)
+            RES     2, B                ;                           ' 8     |
+            LD      (DE), A             ;                           ' 7     |
+
+.wait2
+            BIT     7, (HL)             ; test YM ready bit         ' 12    |
+            JP      NZ, .wait2          ; wait while busy           ' 10    | 22 (74)
+
+            EXX                         ;                           ' 4     | (78)
+
             LD      (HL), $84           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     |
-            INC     E                   ; next                      ' 4     | 54 (110)
+            INC     E                   ; next                      ' 4     | 32 (110)
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $85           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     | 62 (172)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $86           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     | 62 (234)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    | 30 (254+10)
+            EXX                         ;                           ' 4     | (238)
 
-            sampleOutputSafe            ; *** sample output ****    ' 46    | (46+10)
+.wait3
+            BIT     7, (HL)             ; test YM ready bit         ' 12    |
+            JP      NZ, .wait3          ; wait while busy           ' 10    | 22 (254+6)
 
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            LD      (HL), $2A           ;                           ' 10    |
+            LD      A, (BC)             ;                           ' 7     |
+            INC     BC                  ; *** sample output ****    ' 6     | 38 (44)
+            RES     2, B                ;                           ' 8     |
+            LD      (DE), A             ;                           ' 7     |
+
+.wait4
+            BIT     7, (HL)             ; test YM ready bit         ' 12    |
+            JP      NZ, .wait4          ; wait while busy           ' 10    | 22 (66)
+
+            EXX                         ;                           ' 4     | (78)
+            wait8                       ; sync                      ' 8     |
+
             LD      (HL), $88           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     |
-            INC     E                   ; next                      ' 4     | 54 (110)
+            INC     E                   ; next                      ' 4     | 32 (110)
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $89           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     | 62 (172)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $8A           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     | 62 (234)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    | 30 (254+10)
+            EXX                         ;                           ' 4     | (238)
 
-            sampleOutputSafe            ; *** sample output ****    ' 46    | (46+10)
+.wait5
+            BIT     7, (HL)             ; test YM ready bit         ' 12    |
+            JP      NZ, .wait5          ; wait while busy           ' 10    | 22 (254+6)
 
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            LD      (HL), $2A           ;                           ' 10    |
+            LD      A, (BC)             ;                           ' 7     |
+            INC     BC                  ; *** sample output ****    ' 6     | 38 (44)
+            RES     2, B                ;                           ' 8     |
+            LD      (DE), A             ;                           ' 7     |
+
+.wait6
+            BIT     7, (HL)             ; test YM ready bit         ' 12    |
+            JP      NZ, .wait6          ; wait while busy           ' 10    | 22 (66)
+
+            EXX                         ;                           ' 4     | (78)
+            wait8                       ; sync                      ' 8     |
+
             LD      (HL), $8C           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     |
-            INC     E                   ; next                      ' 4     | 54 (110)
+            INC     E                   ; next                      ' 4     | 32 (110)
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $8D           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     | 62 (172)
             INC     E                   ; next                      ' 4     |
             wait4                       ; wait YM to be ready       ' 4     |
             LD      (BC), A             ; restore state             ' 7     |
 
-            wait8                       ; let busy flag to update   ' 8     |
-            waitYMReady                 ; wait YM to be ready       ' 22    |
+            waitYMReady                 ; wait YM to be ready       ' 30    |
             LD      (HL), $8E           ; set reg num to YM         ' 10    |
             LD      A, (DE)             ; get saved value           ' 7     | 62 (234)
             INC     E                   ; next                      ' 4     |
@@ -2710,8 +2942,9 @@ loadPSGState
             DW      com_null, com_null, com_null, com_null                                          ; 70-74
             DW      com_null, com_null, com_null, com_null                                          ; 74-77
             DW      com_null, com_null, com_null, com_null                                          ; 78-7B
-            DW      com_null, com_null                                                              ; 7C-7D
+            DW      com_null                                                                        ; 7C
 
+            DW      com_extra_frm                                                                   ; 7D
             DW      com_loop                                                                        ; 7E
             DW      com_end                                                                         ; 7F
 

@@ -18,7 +18,7 @@
 
 
 /**
- *  \struct Context3D
+ *  \brief
  *      Structure hosting settings / context for the 3D transform engine.
  */
 typedef struct
@@ -29,22 +29,20 @@ typedef struct
     u16 lightEnabled;
 } Context3D;
 
-
 /**
- *  \struct Translation3D
+ *  \brief
  *      3D translation informations object - f16 (fix16) type.
  */
 typedef Vect3D_f16 Translation3D;
 
 /**
- *  \struct Rotation3D
+ *  \brief
  *      3D rotation informations object - f16 (fix16) type.
  */
 typedef Vect3D_f16 Rotation3D;
 
-
 /**
- *  \struct Transformation3D
+ *  \brief
  *      3D transformation object - f16 (fix16) type.<br>
  *      This object define the global 3D transformation informations and associated cached data.<br>
  *      If rotation information is modified the rebuildMat flag should be set to 1.<br>

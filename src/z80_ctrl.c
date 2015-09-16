@@ -7,6 +7,9 @@
 #include "psg.h"
 #include "memory.h"
 #include "timer.h"
+#include "sys.h"
+#include "vdp.h"
+#include "sound.h"
 
 // Z80 drivers
 #include "z80_drv1.h"
@@ -23,7 +26,15 @@
 #include "smp_null_pcm.h"
 
 
-static s16 currentDriver;
+// we don't want to share it
+extern vu32 VIntProcess;
+
+s16 currentDriver;
+u16 driverFlags;
+
+
+// we don't want to share it
+extern void XGM_resetLoadCalculation();
 
 
 void Z80_init()
@@ -35,6 +46,7 @@ void Z80_init()
 
     // no loaded driver
     currentDriver = Z80_DRIVER_NULL;
+    driverFlags = 0;
 }
 
 
@@ -56,17 +68,14 @@ void Z80_requestBus(u16 wait)
     pw_bus = (u16 *) Z80_HALT_PORT;
     pw_reset = (u16 *) Z80_RESET_PORT;
 
-    // bus not yet taken ?
-    if (*pw_bus & 0x100)
-    {
-        *pw_bus = 0x0100;
-        *pw_reset = 0x0100;
+    // take bus and end reset
+    *pw_bus = 0x0100;
+    *pw_reset = 0x0100;
 
-        if (wait)
-        {
-            // wait for bus taken
-            while (*pw_bus & 0x0100);
-        }
+    if (wait)
+    {
+        // wait for bus taken
+        while (*pw_bus & 0x0100);
     }
 }
 
@@ -187,6 +196,9 @@ void Z80_unloadDriver()
     Z80_clear(0, Z80_RAM_LEN, TRUE);
 
     currentDriver = Z80_DRIVER_NULL;
+
+    // remove XGM task if present
+    VIntProcess &= ~PROCESS_XGM_TASK;
 }
 
 void Z80_loadDriver(const u16 driver, const u16 waitReady)
@@ -382,6 +394,22 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
 
     // new driver set
     currentDriver = driver;
+
+    // post init stuff
+    switch(driver)
+    {
+        // XGM driver
+        case Z80_DRIVER_XGM:
+            // using auto sync --> enable XGM task on VInt
+            if (!(driverFlags & DRIVER_FLAG_MANUALSYNC_XGM))
+                VIntProcess |= PROCESS_XGM_TASK;
+            // define default tempo
+            if (IS_PALSYSTEM) SND_setMusicTempo_XGM(50);
+            else SND_setMusicTempo_XGM(60);
+            // reset load calculation
+            XGM_resetLoadCalculation();
+            break;
+    }
 }
 
 void Z80_loadCustomDriver(const u8 *drv, u16 size)
@@ -393,8 +421,10 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
 
     // custom driver set
     currentDriver = Z80_DRIVER_CUSTOM;
-}
 
+    // remove XGM task if present
+    VIntProcess &= ~PROCESS_XGM_TASK;
+}
 
 u16 Z80_isDriverReady()
 {

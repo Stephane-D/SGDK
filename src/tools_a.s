@@ -213,3 +213,71 @@ aplib_decrunch:
 #   move.l   %a1,%d0
 #   movem.l (%a7)+,%a5-%a6/%d2
 #   rts
+
+
+# void uftc_unpack(u8* src, u8 *dest, u16 index, u16 cnt);
+#
+# Decompresses UFTC data
+# ----------------------------------------------------------------------------
+# input a2.l .... Pointer to UFTC data
+# input a3.l .... Pointer to output buffer
+# input d1.l .... index of first tile to decompress (counting from 0)
+# input d2.w .... How many tiles to decompress
+# output a3.l ... Right after output buffer
+# breaks: d0-d2, a0-a4
+# ****************************************************************************
+
+    .globl  uftc_unpack
+    .type   uftc_unpack, @function
+
+# --> finish implementation of uftc
+uftc_unpack:
+    movem.l %a2-%a4/%d2,-(%a7)          | save registers
+
+    movem.l 20(%a7),%a2-%a3             | a2 = src, a3 = dest
+    movem.l 28(%a7),%d1-%d2             | d1 = index, d2 = cnt
+
+uftc_unpack_a:
+    moveq   #0,%d0
+    move.w  (%a2)+,%d0                  | d0 = size of dictionary
+
+    lea     (%a2,%d0.l),%a4             | a4 = start of packed buffer
+    lsl.l   #3,%d1                      | d1 = start offset (tile index * 8)
+    lea     (%a4,%d1.l),%a4             | a4 = start of data to unpack
+
+    bra.s   .loop_end                   | Start decompressing
+
+.loop:
+    move.w  (%a4)+,%d0                  | Fetch addresses of dictionary
+    lea     (%a2,%d0.l),%a0             | entries for the first two 4x4
+    move.w  (%a4)+,%d0                  | blocks of this tile
+    lea     (%a2,%d0.l),%a1
+
+    move.w  (%a0)+,(%a3)+               | Decompress first pair of 4x4 blocks
+    move.w  (%a1)+,(%a3)+               | into the output buffer
+    move.w  (%a0)+,(%a3)+
+    move.w  (%a1)+,(%a3)+
+    move.w  (%a0)+,(%a3)+
+    move.w  (%a1)+,(%a3)+
+    move.w  (%a0)+,(%a3)+
+    move.w  (%a1)+,(%a3)+
+
+    move.w  (%a4)+,%d0                  | Fetch addresses of dictionary
+    lea     (%a2,%d0.l),%a0             | entries for the last two 4x4
+    move.w  (%a4)+,%d0                  | blocks of this tile
+    lea     (%a2,%d0.l),%a1
+
+    move.w  (%a0)+,(%a3)+               | Decompress last pair of 4x4 blocks
+    move.w  (%a1)+,(%a3)+               | into the output buffer
+    move.w  (%a0)+,(%a3)+
+    move.w  (%a1)+,(%a3)+
+    move.w  (%a0)+,(%a3)+
+    move.w  (%a1)+,(%a3)+
+    move.w  (%a0)+,(%a3)+
+    move.w  (%a1)+,(%a3)+
+
+.loop_end:
+    dbf     %d2,.loop                   | Go for next tile
+
+    movem.l (%a7)+,%a2-%a4/%d2          | restore registers
+    rts                                 | End of subroutine

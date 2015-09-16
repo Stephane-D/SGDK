@@ -21,10 +21,10 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
     // DMA works on 64 KW bank
     banklimitb = 0x20000 - (from & 0x1FFFF);
     banklimitw = banklimitb >> 1;
-    // bank limit exceded
+    // bank limit exceeded
     if (len > banklimitw)
     {
-        // we first do the second bank transfert
+        // we first do the second bank transfer
         VDP_doDMAEx(location, from + banklimitb, to + banklimitb, len - banklimitw, -1);
         newlen = banklimitw;
     }
@@ -45,9 +45,6 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
     from >>= 8;
     *pw = 0x9700 + (from & 0x7f);
 
-    // Halt the Z80 for DMA
-//    Z80_RequestBus(0);
-
     // Enable DMA
     pl = (u32 *) GFX_CTRL_PORT;
     switch(location)
@@ -64,9 +61,6 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
             *pl = GFX_DMA_VSRAM_ADDR(to);
             break;
     }
-
-    // Enable Z80
-//    Z80_ReleaseBus();
 }
 
 void VDP_doDMA(u8 location, u32 from, u16 to, u16 len)

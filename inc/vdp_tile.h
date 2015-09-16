@@ -14,37 +14,37 @@
 #define _VDP_TILE_H_
 
 /**
- *  \def TILE_ATTR_PRIORITY_MASK
+ *  \brief
  *      Mask for the tile priority attribute in tilemap data.
  */
 #define TILE_ATTR_PRIORITY_MASK     0x8000
 
 /**
- *  \def TILE_ATTR_PALETTE_MASK
+ *  \brief
  *      Mask for the tile palette attribute in tilemap data.
  */
 #define TILE_ATTR_PALETTE_MASK      0x6000
 
 /**
- *  \def TILE_ATTR_VFLIP_MASK
+ *  \brief
  *      Mask for the tile V flip attribute in tilemap data.
  */
 #define TILE_ATTR_VFLIP_MASK        0x1000
 
 /**
- *  \def TILE_ATTR_HFLIP_MASK
+ *  \brief
  *      Mask for the tile H flip attribute in tilemap data.
  */
 #define TILE_ATTR_HFLIP_MASK        0x0800
 
 /**
- *  \def TILE_ATTR_MASK
+ *  \brief
  *      Mask for the tile attributes (priority, palette and flip) in tilemap data.
  */
 #define TILE_ATTR_MASK              (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_PALETTE_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK)
 
 /**
- *  \def TILE_ATTR
+ *  \brief
  *      Encode tile attributes for tilemap data.
  *
  *  \param pal
@@ -58,7 +58,7 @@
  */
 #define TILE_ATTR(pal, prio, flipV, flipH)               (((flipH) << 11) + ((flipV) << 12) + ((pal) << 13) + ((prio) << 15))
 /**
- *  \def TILE_ATTR_FULL
+ *  \brief
  *      Encode tile attributes for tilemap data.
  *
  *  \param pal
@@ -76,9 +76,10 @@
 
 
 /**
- *  \struct TileSet
+ *  \brief
  *      Tile set structure which contains tiles definition.<br/>
  *      Use the unpackTileSet() method to unpack if compression is enabled.
+ *
  *  \param compression
  *      compression type, accepted values:<br/>
  *      <b>COMPRESSION_NONE</b><br/>
@@ -97,7 +98,32 @@ typedef struct
 } TileSet;
 
 /**
- *  \struct Map
+ *  \brief
+ *      Reference a sub set of an existing tileSet.<br/>
+ *      Use the getTileSet() method to extract the sub tileset from the tileset.
+ *
+ *  \param tileset
+ *      reference tileset
+ *  \param index
+ *      the index of the first tile relative to the reference TileSet
+ *  \param numTile
+ *      number of tile in this sub set of tiles.
+ *  \param offset
+ *      offset from reference TileSet (this parameter is used for compressed TileSet).
+ *  \param size
+ *      number of element (this parameter is used for compressed TileSet).
+ */
+typedef struct
+{
+    TileSet *tileSet;
+    u16 index;
+    u16 numTile;
+    u32 offset;
+    u16 size;
+} SubTileSet;
+
+/**
+ *  \brief
  *      Map structure which contains tilemap background definition.<br/>
  *      Use the unpackMap() method to unpack if compression is enabled.
  *  \param compression

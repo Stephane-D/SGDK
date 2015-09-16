@@ -2,6 +2,8 @@
  *  \file string.h
  *  \brief String manipulations
  *  \author Stephane Dallongeville
+ *  \author PaspallasDev
+ *  \author JackNolddor
  *  \date 08/2011
  *
  * This unit provides basic null terminated string operations and type conversions.
@@ -10,6 +12,30 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
+
+/**
+ *  \brief
+ *      Test if specified character is a digit or not
+ */
+#define isdigit(c)      ((c) >= '0' && (c) <= '9')
+
+
+typedef void *__gnuc_va_list;
+typedef __gnuc_va_list va_list;
+
+#define __va_rounded_size(TYPE)  \
+  (((sizeof (TYPE) + sizeof (int) - 1) / sizeof (int)) * sizeof (int))
+
+#define va_start(AP, LASTARG)                                           \
+ (AP = ((__gnuc_va_list) __builtin_next_arg (LASTARG)))
+
+#define va_end(AP)      ((void)0)
+
+#define va_arg(AP, TYPE)                                                \
+ (AP = (__gnuc_va_list) ((char *) (AP) + __va_rounded_size (TYPE)),     \
+  *((TYPE *) (void *) ((char *) (AP)                                    \
+                       - ((sizeof (TYPE) < __va_rounded_size (char)     \
+                           ? sizeof (TYPE) : __va_rounded_size (TYPE))))))
 
 /**
  *  \brief
@@ -22,6 +48,21 @@
  * This function calculates and returns the length of the specified string.
  */
 u32 strlen(const char *str);
+/**
+ *  \brief
+ *      Compute the length of a string, to a maximum number of bytes.
+ *
+ *  \param str
+ *      The string whose length you want to calculate.
+ *  \param maxlen
+ *      The maximum length to check.
+ *
+ *  \return The minimum of 'maxlen' and the number of characters that precede the terminating null character.
+ *
+ *  The strnlen() function computes the length of the string pointed to by 'str', not including the terminating null character ('\0'), <br/>
+ *  up to a maximum of 'maxlen' bytes. The function doesn't check any more than the first 'maxlen' bytes.
+ */
+u16 strnlen(const char *str, u16 maxlen);
 /**
  *  \brief
  *      Compare the 2 strings.
@@ -153,6 +194,33 @@ void fix32ToStr(fix32 value, char *str, s16 numdec);
  * Converts the specified fix16 value to string.<br>
  */
 void fix16ToStr(fix16 value, char *str, s16 numdec);
+
+/**
+ *  \brief
+ *      Composes a string with the same text that would be printed if format was used on printf,
+ *      but instead of being printed, the content is stored as a C string in the buffer pointed by str.
+ *
+ *  \param buffer
+ *      Destination string (it must be large enough to receive result).
+ *  \param fmt
+ *      C string that contains the text to be written to destination string.<br />
+ *      It can optionally contain embedded format specifiers.
+ *
+ *  \param ... (additional arguments)
+ *      Depending on the format string, the function may expect a sequence of additional arguments, <br/>
+ *      each containing a value to be used to replace a format specifier in the format string.
+ *
+ *      There should be at least as many of these arguments as the number of values specified in the format specifiers. <br/>
+ *      Additional arguments are ignored by the function.
+ *
+ *  \return On success, the total number of characters written is returned..
+ *
+ *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br/>
+ *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
+ *  formatted and inserted in the resulting string replacing their respective specifiers
+ *
+ */
+u16 sprintf(char *buffer,const char *fmt, ...);
 
 
 #endif // _STRING_H_
