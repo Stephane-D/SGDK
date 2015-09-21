@@ -37,7 +37,7 @@
 // we don't want to share them
 extern u16 randbase;
 extern TileSet** uploads;
-extern s16 currentZ80Driver;
+extern s16 currentDriver;
 
 // extern library callback function (we don't want to share them)
 extern u16 BMP_doHBlankProcess();
@@ -400,7 +400,7 @@ void _vint_callback()
         if (vintp & PROCESS_DMA_TASK)
         {
             // DMA protection for XGM driver
-            if (currentZ80Driver == Z80_DRIVER_XGM)
+            if (currentDriver == Z80_DRIVER_XGM)
             {
                 SND_set68KBUSProtection_XGM(TRUE);
 
