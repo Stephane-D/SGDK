@@ -114,6 +114,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
 
     XGMCommand* loopCommand = XGM_getLoopPointedCommand(xgm);
     int loopOffset = -1;
+    bool loopEnd = false;
 
     com = xgm->commands;
     while(com != NULL)
@@ -128,16 +129,22 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             XGMCommand* command = com->element;
             com = com->next;
 
-            // this is the command where we loop
+            // this is the command where we start loop
             if (command == loopCommand)
             {
                 if (loopOffset == -1)
                     loopOffset = XGM_getMusicDataSizeOf(getHeadLList(xgcCommands));
             }
 
-            // loop information --> ignore
-            if (XGMCommand_isLoop(command) || XGMCommand_isEnd(command))
+            // end information --> ignore
+            if (XGMCommand_isEnd(command))
                 continue;
+            // loop end information --> store and stop here
+            if (XGMCommand_isLoop(command))
+            {
+                loopEnd = true;
+                break;
+            }
             // stop here
             if (XGMCommand_isFrame(command))
                 break;
@@ -301,12 +308,25 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
         if (stateChange != NULL)
             newCommands = insertAllAfterLList(newCommands, XGCCommand_createStateCommands(stateChange));
 
+        // loop point ?
+        if (loopEnd)
+        {
+            if (loopOffset != -1)
+            {
+                newCommands = insertAfterLList(newCommands, XGMCommand_createLoopCommand(loopOffset));
+                loopOffset = -1;
+            }
+        }
+
         // is it the last frame ?
         if (com == NULL)
         {
             // loop point ?
             if (loopOffset != -1)
+            {
                 newCommands = insertAfterLList(newCommands, XGMCommand_createLoopCommand(loopOffset));
+                loopOffset = -1;
+            }
             else
                 // add end command
                 newCommands = insertAfterLList(newCommands, XGMCommand_createEndCommand());
@@ -575,6 +595,15 @@ void XGC_computeAllFrameSize(XGM* source)
             size += command->size;
 
         com = com->next;
+    }
+
+    // last size command
+    if (sizeCommand != NULL)
+    {
+        if ((size > 255) && (!silent))
+            printf("Error: frame %4X has a size > 255 ! Can't continue...\n", frame);
+
+        XGCCommand_setFrameSizeSize(sizeCommand, size);
     }
 }
 

@@ -241,7 +241,16 @@ int Sample_getFrameSize(Sample* sample)
 void Sample_setRate(Sample* sample, int value)
 {
     if (value != 0)
-        sample->rate = value;
+    {
+        // set sample rate if needed
+        if (sample->rate != value)
+        {
+            if (verbose)
+                printf("Sample modified  [%6X-%6X]  rate: %d --> %d Hz\n", sample->dataOffset, sample->dataOffset + (sample->len - 1), sample->rate, value);
+
+            sample->rate = value;
+        }
+    }
 }
 
 VGMCommand* Sample_getSetRateCommand(SampleBank* bank, Sample* sample, int value)

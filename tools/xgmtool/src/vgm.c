@@ -320,13 +320,29 @@ VGM* VGM_createFromXGM(XGM* xgm)
     {
         // find corresponding XGM command
         XGMCommand* command = XGM_getCommandAtOffset(xgm, loopOffset);
+        XGMCommand* loopCommand = XGM_getLoopCommand(xgm);
 
-        // insert a VGM loop command at corresponding position
+        // insert a VGM loop start command at corresponding position
         if (command != NULL)
         {
             LList* c = VGM_getCommandElementAtTime(result, XGM_getTime(xgm, command));
-            insertBeforeLList(c, VGMCommand_create(VGM_LOOP, time));
+            insertBeforeLList(c, VGMCommand_create(VGM_LOOP_START, time));
 //            insertAfterLList(c, VGMCommand_create(VGM_LOOP, time));
+        }
+
+        // insert a VGM loop end command at corresponding position
+        if (loopCommand != NULL)
+        {
+            LList* c = VGM_getCommandElementAtTime(result, XGM_getTime(xgm, command) + 1);
+            // end of list ?
+            if (c == NULL)
+            {
+                // get last element and insert after
+                c = getTailLList(result->commands);
+                insertAfterLList(c, VGMCommand_create(VGM_LOOP_END, time));
+
+            }
+            else insertBeforeLList(c, VGMCommand_create(VGM_LOOP_END, time));
         }
     }
 
@@ -451,22 +467,41 @@ static void VGM_parse(VGM* vgm)
 {
     int off;
     int time;
+    int loopTimeSt;
     LList* commands;
 
     // parse all VGM commands
     time = 0;
+    loopTimeSt = -1;
     off = vgm->offsetStart;
     commands = getTailLList(vgm->commands);
     while (off < vgm->offsetEnd)
     {
         // check for loop start
-        if ((vgm->loopStart != 0) && (off == vgm->loopStart))
-            commands = insertAfterLList(commands, VGMCommand_create(VGM_LOOP, time));
+        if (vgm->loopStart != 0)
+        {
+            if (off == vgm->loopStart)
+            {
+                commands = insertAfterLList(commands, VGMCommand_create(VGM_LOOP_START, time));
+                loopTimeSt = time;
+            }
+        }
 
         VGMCommand* command = VGMCommand_createEx(vgm->data, off, time);
         time += VGMCommand_getWaitValue(command);
         commands = insertAfterLList(commands, command);
         off += command->size;
+
+        // check for loop end
+        if ((loopTimeSt != -1) && (vgm->loopLenInSample != 0))
+        {
+            // end of loop ?
+            if ((time - loopTimeSt) >= vgm->loopLenInSample)
+            {
+                commands = insertAfterLList(commands, VGMCommand_create(VGM_LOOP_END, time));
+                loopTimeSt = -1;
+            }
+        }
 
         // stop here
         if (VGMCommand_isEnd(command))
@@ -1071,7 +1106,7 @@ void VGM_cleanCommands(VGM* vgm)
             command = com->element;
 
             // keep data block and stream commands
-            if (VGMCommand_isDataBlock(command) || VGMCommand_isStream(command) || VGMCommand_isLoop(command))
+            if (VGMCommand_isDataBlock(command) || VGMCommand_isStream(command) || VGMCommand_isLoopStart(command) || VGMCommand_isLoopEnd(command))
                 optimizedCommands = insertAfterLList(optimizedCommands, command);
             else if (VGMCommand_isPSGWrite(command))
                 PSG_write(psgState, VGMCommand_getPSGValue(command));
@@ -1691,7 +1726,7 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
     {
         VGMCommand* command = l->element;
 
-        if (!VGMCommand_isLoop(command))
+        if (!VGMCommand_isLoopStart(command) && !VGMCommand_isLoopEnd(command))
             fwrite(VGMCommand_asByteArray(command), 1, command->size, f);
         else
         {

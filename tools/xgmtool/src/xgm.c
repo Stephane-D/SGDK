@@ -309,6 +309,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
     LList* xgmCommands = NULL;
 
     int loopOffset = -1;
+    bool loopEnd;
     bool hasKeyCom;
 
     LList* vgmCom = vgm->commands;
@@ -317,21 +318,30 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
         // get frame commands
         deleteLList(frameCommands);
         frameCommands = NULL;
+        loopEnd = false;
 
         while (vgmCom != NULL)
         {
             VGMCommand* command = vgmCom->element;
             vgmCom = vgmCom->next;
 
-            if (VGMCommand_isLoop(command))
+            // ignore data block
+            if (VGMCommand_isDataBlock(command))
+                continue;
+
+            // save loop start
+            if (VGMCommand_isLoopStart(command))
             {
                 if (loopOffset == -1)
                     loopOffset = XGM_getMusicDataSizeOf(getHeadLList(xgm->commands));
                 continue;
             }
-            // ignore data block
-            if (VGMCommand_isDataBlock(command))
-                continue;
+            // save loop end and stop here
+            if (VGMCommand_isLoopEnd(command))
+            {
+                loopEnd = true;
+                break;
+            }
             // stop here
             if (VGMCommand_isWait(command))
             {
@@ -450,12 +460,25 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
         if (sampleCommands != NULL)
             xgmCommands = insertAllAfterLList(xgmCommands, XGMCommand_createPCMCommands(xgm, vgm, sampleCommands));
 
+        // loop point ?
+        if (loopEnd)
+        {
+            if (loopOffset != -1)
+            {
+                xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createLoopCommand(loopOffset));
+                loopOffset = -1;
+            }
+        }
+
         // last frame ?
         if (vgmCom == NULL)
         {
-            // loop point ?
+            // loop point not yet defined ?
             if (loopOffset != -1)
+            {
                 xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createLoopCommand(loopOffset));
+                loopOffset = -1;
+            }
             else
                 // add end command
                 xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createEndCommand());

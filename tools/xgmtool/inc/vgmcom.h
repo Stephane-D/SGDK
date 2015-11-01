@@ -20,7 +20,8 @@
 #define VGM_STREAM_STOP         0x94
 #define VGM_STREAM_START        0x95
 
-#define VGM_LOOP                0x30
+#define VGM_LOOP_START          0x30
+#define VGM_LOOP_END            0x31
 
 
 typedef struct
@@ -46,7 +47,8 @@ int VGMCommand_getDataBlockLen(VGMCommand* source);
 bool VGMCommand_isSeek(VGMCommand* source);
 int VGMCommand_getSeekAddress(VGMCommand* source);
 bool VGMCommand_isEnd(VGMCommand* source);
-bool VGMCommand_isLoop(VGMCommand* source);
+bool VGMCommand_isLoopStart(VGMCommand* source);
+bool VGMCommand_isLoopEnd(VGMCommand* source);
 bool VGMCommand_isPCM(VGMCommand* source);
 bool VGMCommand_isWait(VGMCommand* source);
 bool VGMCommand_isWaitNTSC(VGMCommand* source);

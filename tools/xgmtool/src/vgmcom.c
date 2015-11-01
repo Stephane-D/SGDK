@@ -71,9 +71,14 @@ bool VGMCommand_isEnd(VGMCommand* source)
     return source->command == VGM_END;
 }
 
-bool VGMCommand_isLoop(VGMCommand* source)
+bool VGMCommand_isLoopStart(VGMCommand* source)
 {
-    return source->command == VGM_LOOP;
+    return source->command == VGM_LOOP_START;
+}
+
+bool VGMCommand_isLoopEnd(VGMCommand* source)
+{
+    return source->command == VGM_LOOP_END;
 }
 
 bool VGMCommand_isPCM(VGMCommand* source)
