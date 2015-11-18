@@ -50,7 +50,7 @@ SECTIONS
 {
   .text 0x00000000:
   {
-    *(.text .text.*)
+    KEEP(*(.text.keepboot)) *(.text.*) *(.text)
     . = ALIGN(0x4);
      __CTOR_LIST__ = .;
     LONG((__CTOR_END__ - __CTOR_LIST__) / 4 - 2)
