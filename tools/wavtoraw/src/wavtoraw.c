@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 
 
 const char* version = "1.2";
@@ -17,12 +18,12 @@ int main(int argc, char *argv[ ])
     char prefix[4];
     char fileFormat[4];
     char ckID[4];
-    unsigned long nChunkSize;
+    uint32_t nChunkSize;
     short wFormatTag;
     short nChannels;
-    unsigned long nSamplesPerSecond;
-    unsigned long nBytesPerSecond;
-    unsigned long nOutputSamplesPerSecond;
+    uint32_t nSamplesPerSecond;
+    uint32_t nBytesPerSecond;
+    uint32_t nOutputSamplesPerSecond;
     short nBlockAlign;
     short nBitsPerSample;
     int i, j;
