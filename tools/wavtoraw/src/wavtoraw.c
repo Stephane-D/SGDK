@@ -1,7 +1,10 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 
 
 const char* version = "1.2";
@@ -15,12 +18,12 @@ int main(int argc, char *argv[ ])
     char prefix[4];
     char fileFormat[4];
     char ckID[4];
-    unsigned long nChunkSize;
+    uint32_t nChunkSize;
     short wFormatTag;
     short nChannels;
-    unsigned long nSamplesPerSecond;
-    unsigned long nBytesPerSecond;
-    unsigned long nOutputSamplesPerSecond;
+    uint32_t nSamplesPerSecond;
+    uint32_t nBytesPerSecond;
+    uint32_t nOutputSamplesPerSecond;
     short nBlockAlign;
     short nBitsPerSample;
     int i, j;
@@ -50,24 +53,28 @@ int main(int argc, char *argv[ ])
         nOutputSamplesPerSecond = 0;
 
     /* Read the header bytes. */
-    fscanf( infile, "%4s", prefix );
-    fscanf( infile, "%4c", &nChunkSize );
-    fscanf( infile, "%4c", fileFormat );
-    fscanf( infile, "%4c", ckID );
-    fscanf( infile, "%4c", &nChunkSize );
-    fscanf( infile, "%2c", &wFormatTag );
-    fscanf( infile, "%2c", &nChannels );
-    fscanf( infile, "%4c", &nSamplesPerSecond );
-    fscanf( infile, "%4c", &nBytesPerSecond );
-    fscanf( infile, "%2c", &nBlockAlign );
-    fscanf( infile, "%2c", &nBitsPerSample );
+    #define saferead(x, y, z) if (fscanf(x, y, z) != 1) puts("Failed to read " #z)
+
+    saferead( infile, "%4s", prefix );
+    saferead( infile, "%4c", &nChunkSize );
+    saferead( infile, "%4c", fileFormat );
+    saferead( infile, "%4c", ckID );
+    saferead( infile, "%4c", &nChunkSize );
+    saferead( infile, "%2c", &wFormatTag );
+    saferead( infile, "%2c", &nChannels );
+    saferead( infile, "%4c", &nSamplesPerSecond );
+    saferead( infile, "%4c", &nBytesPerSecond );
+    saferead( infile, "%2c", &nBlockAlign );
+    saferead( infile, "%2c", &nBitsPerSample );
 
     // pass extra bytes in bloc
     for(i = 0; i < nChunkSize - 0x10; i++)
-        fscanf( infile, "%1c", &j);
+        saferead( infile, "%1c", &j);
 
-    fscanf( infile, "%4c", ckID );
-    fscanf( infile, "%4c", &nChunkSize );
+    saferead( infile, "%4c", ckID );
+    saferead( infile, "%4c", &nChunkSize );
+
+    #undef saferead
 
     if (nOutputSamplesPerSecond == 0)
         nOutputSamplesPerSecond = nSamplesPerSecond;
