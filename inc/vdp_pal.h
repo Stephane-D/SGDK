@@ -17,9 +17,9 @@
 #define VDPPALETTE_GREENSFT         5
 #define VDPPALETTE_BLUESFT          1
 
-#define VDPPALETTE_REDMASK          0x0E00
+#define VDPPALETTE_REDMASK          0x000E
 #define VDPPALETTE_GREENMASK        0x00E0
-#define VDPPALETTE_BLUEMASK         0x000E
+#define VDPPALETTE_BLUEMASK         0x0E00
 #define VDPPALETTE_COLORMASK        0x0EEE
 
 /**
@@ -29,7 +29,7 @@
  *  \param color
  *      RGB 24 bits color
  */
-#define RGB24_TO_VDPCOLOR(color)    (((color >> ((2 * 4) + 4)) & VDPPALETTE_REDMASK) | ((color >> ((1 * 4) + 4)) & VDPPALETTE_GREENMASK) | ((color >> ((0 * 4) + 4)) & VDPPALETTE_BLUEMASK))
+#define RGB24_TO_VDPCOLOR(color)    (((color >> ((2 * 8) + 4)) & VDPPALETTE_REDMASK) | ((color >> ((1 * 4) + 4)) & VDPPALETTE_GREENMASK) | ((color << 4) & VDPPALETTE_BLUEMASK))
 
 
 /**
