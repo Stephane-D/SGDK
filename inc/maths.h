@@ -80,14 +80,14 @@ extern const fix16 sqrttab16[0x10000];
  *      Round the specified value to nearest integer (fix32).
  */
 #define fix32Round(value)           \
-    (fix32Frac(value) > FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value)
+    ((fix32Frac(value) > FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value))
 
 /**
  *  \brief
  *      Round and convert the specified fix32 value to integer.
  */
 #define fix32ToRoundedInt(value)    \
-    (fix32Frac(value) > FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value)
+    ((fix32Frac(value) > FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value))
 
 /**
  *  \brief
