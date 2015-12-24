@@ -408,5 +408,23 @@ void rle4b_unpackVRam(u8 *src, u16 dest, u32 offset, u16 size);
  */
 void uftc_unpack(u8* src, u8 *dest, u16 index, u16 cnt);
 
+/**
+ *  \brief
+ *      Decompresses data in raw deflate/zlib format.<br/>
+ *
+ *   zlib is a general-purpose compressor, supporting quite good
+ *   compression ratios, but unpacking is relatively slow on the
+ *   Genesis (around 23kb/s).
+ *
+ *  \param dest
+ *      Destination buffer
+ *  \param out_but_len
+ *      Size of the destination buffer in bytes
+ *  \param src
+ *      Source data buffer containing compressed data
+ *  \param src_buf_len
+ *      Size of the source buffer in bytes
+ */
+int zlib_unpack(void *dest, const unsigned out_buf_len, const void *src, const unsigned src_buf_len);
 
 #endif // _TOOLS_H_
