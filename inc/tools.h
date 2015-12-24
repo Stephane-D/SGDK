@@ -40,6 +40,11 @@
  *      Use RLE compression scheme adapted for Map data.
  */
 #define COMPRESSION_MAP_RLE     4
+/**
+ *  \brief
+ *      Use UFTC compression scheme.
+ */
+#define COMPRESSION_UFTC        5
 
 
 /**
@@ -193,28 +198,28 @@ Map *allocateMapEx(u16 width, u16 heigth);
  */
 Image *allocateImage(const Image *image);
 
-/**
- *  \brief
- *      Convert the specified SubTileSet structure to TileSet.<br/>
- *      A SubTileSet is basically a sub set of a TileSet so this method will extract a part of the original tileset data
- *      and build a new TileSet out of it.<br/>
- *      If the original TileSet is compressed this method will unpack only the sub set of data and return them in an unpacked format.
- *
- *  \param subTileSet
- *      the SubTileSet to convert to TileSet.
- *  \param dest
- *      Destination TileSet where to store result, be sure to allocate a big enough TileSet to receive the result.<br/>
- *      If set to NULL then a dynamic allocated TileSet is returned.
- *  \return
- *      The extracted TileSet.<br/>
- *      If <i>dest</i> was set to NULL then the returned tileset is allocated in a single bloc and can be released with Mem_Free(tileset).<br/>
- *      <i>NULL</i> is returned if there is not enough memory to store the extracted tileset.
- */
-TileSet *getTileSet(SubTileSet *subTileSet, TileSet *dest);
+///**
+// *  \brief
+// *      Convert the specified SubTileSet structure to TileSet.<br/>
+// *      A SubTileSet is basically a sub set of a TileSet so this method will extract a part of the original tileset data
+// *      and build a new TileSet out of it.<br/>
+// *      If the original TileSet is compressed this method will unpack only the sub set of data and return them in an unpacked format.
+// *
+// *  \param subTileSet
+// *      the SubTileSet to convert to TileSet.
+// *  \param dest
+// *      Destination TileSet where to store result, be sure to allocate a big enough TileSet to receive the result.<br/>
+// *      If set to NULL then a dynamic allocated TileSet is returned.
+// *  \return
+// *      The extracted TileSet.<br/>
+// *      If <i>dest</i> was set to NULL then the returned tileset is allocated in a single bloc and can be released with Mem_Free(tileset).<br/>
+// *      <i>NULL</i> is returned if there is not enough memory to store the extracted tileset.
+// */
+//TileSet *getTileSet(SubTileSet *subTileSet, TileSet *dest);
 
 /**
  *  \brief
- *      Unpack the specified source Bitmap.
+ *      Unpack the specified source Bitmap and return result in a new allocated Bitmap.
  *
  *  \param src
  *      bitmap to unpack.
@@ -229,7 +234,7 @@ TileSet *getTileSet(SubTileSet *subTileSet, TileSet *dest);
 Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest);
 /**
  *  \brief
- *      Unpack the specified TileSet structure.
+ *      Unpack the specified TileSet structure and return result in a new allocated TileSet.
  *
  *  \param src
  *      tiles to unpack.
@@ -244,7 +249,7 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest);
 TileSet *unpackTileSet(const TileSet *src, TileSet *dest);
 /**
  *  \brief
- *      Unpack the specified Map structure.
+ *      Unpack the specified Map structure and return result in a new allocated Map.
  *
  *  \param src
  *      map to unpack.
@@ -259,7 +264,7 @@ TileSet *unpackTileSet(const TileSet *src, TileSet *dest);
 Map *unpackMap(const Map *src, Map *dest);
 /**
  *  \brief
- *      Unpack the specified Image structure.
+ *      Unpack the specified Image structure and return result in a new allocated Image.
  *
  *  \param src
  *       image to unpack.
@@ -283,6 +288,7 @@ Image *unpackImage(const Image *src, Image *dest);
  *      <b>COMPRESSION_APLIB</b><br/>
  *      <b>COMPRESSION_RLE</b><br/>
  *      <b>COMPRESSION_MAP_RLE</b><br/>
+ *      <b>COMPRESSION_UFTC</b><br/>
  *  \param src
  *      Source data buffer containing the packed data (aplib packer) to unpack.
  *  \param dest
@@ -309,6 +315,7 @@ u16 unpackEx(u16 compression, u8 *src, u8 *dest, u32 offset, u16 size);
  *      <b>COMPRESSION_APLIB</b><br/>
  *      <b>COMPRESSION_RLE</b><br/>
  *      <b>COMPRESSION_MAP_RLE</b><br/>
+ *      <b>COMPRESSION_UFTC</b><br/>
  *  \param src
  *      Source data buffer containing the packed data (aplib packer) to unpack.
  *  \param dest
