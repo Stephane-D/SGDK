@@ -137,22 +137,16 @@ typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 
 
-#ifndef uint8_t
+#if !defined(uint8_t) && !defined(__int8_t_defined)
 #define uint8_t     u8
-#endif
-#ifndef uint16_t
-#define uint16_t    u16
-#endif
-#ifndef uint32_t
-#define uint32_t    u32
-#endif
-#ifndef int8_t
 #define int8_t      s8
 #endif
-#ifndef int16_t
+#if !defined(uint16_t) && !defined(__int16_t_defined)
+#define uint16_t    u16
 #define int16_t     s16
 #endif
-#ifndef int32_t
+#if !defined(uint32_t) && !defined(__int32_t_defined)
+#define uint32_t    u32
 #define int32_t     s32
 #endif
 
