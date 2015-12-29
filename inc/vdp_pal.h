@@ -13,9 +13,9 @@
 #define _VDP_PAL_H_
 
 
-#define VDPPALETTE_REDSFT           9
+#define VDPPALETTE_REDSFT           1
 #define VDPPALETTE_GREENSFT         5
-#define VDPPALETTE_BLUESFT          1
+#define VDPPALETTE_BLUESFT          9
 
 #define VDPPALETTE_REDMASK          0x000E
 #define VDPPALETTE_GREENMASK        0x00E0

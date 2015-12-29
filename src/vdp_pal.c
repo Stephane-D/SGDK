@@ -225,6 +225,9 @@ void VDP_setPaletteColor(u16 index, u16 value)
     *pw = value;
 }
 
+static u16 palround(u16 in) {
+    return (in + 127) >> PALETTEFADE_FRACBITS;
+}
 
 static void setFadePalette(u16 waitVSync)
 {
@@ -261,9 +264,9 @@ static void setFadePalette(u16 waitVSync)
     {
         u16 col;
 
-        col = ((*palR++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
-        col |= ((*palG++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
-        col |= ((*palB++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
+        col = (palround(*palR++) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
+        col |= (palround(*palG++) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
+        col |= (palround(*palB++) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
 
         *pw = col;
     }
