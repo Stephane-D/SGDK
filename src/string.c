@@ -36,7 +36,6 @@ u16 strnlen(const char *str, u16 maxlen)
     return src - str;
 }
 
-
 s16 strcmp(const char *str1, const char *str2)
 {
     const u8 *p1 = (const u8*) str1;
@@ -101,6 +100,13 @@ char* strcat(char *to, const char *from)
     return to;
 }
 
+char *strreplace(char *str, char old, char new)
+{
+    for (; *str; ++str)
+        if (*str == old)
+            *str = new;
+    return str;
+}
 
 void intToStr(s32 value, char *str, s16 minsize)
 {
