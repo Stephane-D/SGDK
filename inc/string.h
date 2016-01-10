@@ -2,8 +2,8 @@
  *  \file string.h
  *  \brief String manipulations
  *  \author Stephane Dallongeville
- *  \author PaspallasDev
- *  \author JackNolddor
+ *  \author Paspallas Dev
+ *  \author Jack Nolddor
  *  \date 08/2011
  *
  * This unit provides basic null terminated string operations and type conversions.
