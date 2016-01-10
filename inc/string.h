@@ -119,7 +119,21 @@ char* strcpy(char *dest, const char *src);
  * Appends the source string to the destination string.
  */
 char* strcat(char *dest, const char *src);
-
+/**
+ *  \brief
+ *      Replace the given character in a string.
+ *
+ *  \param str
+ *      The string to operate on.
+ *  \param old
+ *      The character being replaced.
+ *  \param new
+ *      The character 'old' is replaced with.
+ *  \return pointer to the nul byte at the end of 'str'.
+ *
+ * Replace all occurrences of character in a null-terminated string.
+ */
+char *strreplace(char *str, char old, char new);
 /**
  *  \brief
  *      Convert a s32 value to string.
