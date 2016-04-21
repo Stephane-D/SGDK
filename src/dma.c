@@ -2,19 +2,24 @@
 
 #include "vdp.h"
 #include "sys.h"
+#include "memory.h"
 
 #include "kdebug.h"
+#include "tools.h"
 
 
 // we don't want to share it
 extern vu32 VIntProcess;
 
-// DMA queue
-DMAOpInfo dmaQueues[DMA_QUEUE_LENGTH];
+// DMA queue (consumes 512 bytes of memory)
+DMAOpInfo dmaQueues[DMA_QUEUE_LENGHT];
 
-// current queue index (0 = empty; DMA_QUEUE_LENGTH = full)
+// current queue index (0 = empty; DMA_QUEUE_LENGHT = full)
 static u16 queueIndex = 0;
+static u16 queueIndexLimit = 0;
 static u32 queueTransferSize = 0;
+static u32 queueTransferSizeLimit = 0;
+static s16 maxTransferPerFrame = -1;
 static u16 autoFlush = TRUE;
 
 
@@ -32,10 +37,22 @@ void DMA_setAutoFlush(u16 value)
          VIntProcess |= PROCESS_DMA_TASK;
 }
 
+s16 DMA_getMaxTransferSize()
+{
+    return maxTransferPerFrame;
+}
+
+void DMA_setMaxTransferSize(s16 value)
+{
+    maxTransferPerFrame = value;
+}
+
 void DMA_clearQueue()
 {
     queueIndex = 0;
+    queueIndexLimit = 0;
     queueTransferSize = 0;
+    queueTransferSizeLimit = 0;
 }
 
 void DMA_flushQueue()
@@ -44,11 +61,13 @@ void DMA_flushQueue()
     vu32 *pl;
     u32 *info;
 
-    i = queueIndex;
+    // transfer size limit ?
+    if (queueIndexLimit) i = queueIndexLimit;
+    else i = queueIndex;
     info = (u32*) dmaQueues;
     pl = (u32*) GFX_CTRL_PORT;
 
-    while (i--)
+    while(i--)
     {
         // set DMA parameters and trigger it
         *pl = *info++;  // regStepLenL = (0x8F00 | step) | ((0x9300 | (len & 0xFF)) << 16)
@@ -57,8 +76,23 @@ void DMA_flushQueue()
         *pl = *info++;  // regCtrlWrite =  GFX_DMA_VRAMCOPY_ADDR(to)
     }
 
-    queueIndex = 0;
-    queueTransferSize = 0;
+    // transfer size limit ?
+    if (queueIndexLimit)
+    {
+        queueIndex -= queueIndexLimit;
+        // copy remaining transfer at beggining of the queue (not optimal but simpler)
+        memcpy(&dmaQueues[0], &dmaQueues[queueIndexLimit], sizeof(DMAOpInfo) * queueIndex);
+        queueTransferSize -= queueTransferSizeLimit;
+        queueIndexLimit = 0;
+        queueTransferSizeLimit = 0;
+    }
+    else
+    {
+        queueIndex = 0;
+        queueIndexLimit = 0;
+        queueTransferSize = 0;
+        queueTransferSizeLimit = 0;
+    }
 }
 
 u16 DMA_getQueueSize()
@@ -79,9 +113,12 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     DMAOpInfo *info;
 
     // queue is full --> error
-    if (queueIndex >= DMA_QUEUE_LENGTH)
+    if (queueIndex >= DMA_QUEUE_LENGHT)
     {
-        if (LIB_DEBUG) KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
+#if (LIB_DEBUG != 0)
+        KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
+#endif
+
         return FALSE;
     }
 
@@ -100,14 +137,6 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
 
     // keep trace of transfered size
     queueTransferSize += newlen << 1;
-
-    if (LIB_DEBUG)
-    {
-        if ((IS_PALSYSTEM) && (queueTransferSize > 17600))
-            KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 17700 bytes.");
-        else if (queueTransferSize > 17600)
-            KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 7600 bytes.");
-    }
 
     // auto flush enabled --> set process on VBlank
     if (autoFlush) VIntProcess |= PROCESS_DMA_TASK;
@@ -137,7 +166,47 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
             break;
     }
 
+    // we have a limit defined ?
+    if (maxTransferPerFrame != -1)
+    {
+        // above limit ?
+        if ((queueTransferSize > maxTransferPerFrame) && (queueIndexLimit == 0))
+        {
+#if (LIB_DEBUG != 0)
+            KLog_S2("DMA_queueDma(..) warning: transfer size limit raised: current = ", queueTransferSize, "  max = ", maxTransferPerFrame);
+#endif
+
+            // more than 1 transfer ?
+            if (queueIndex > 1)
+            {
+                // stop on previous transfer
+                queueIndexLimit = queueIndex - 1;
+                queueTransferSizeLimit = queueTransferSize - (newlen >> 1);
+            }
+            else
+            {
+                queueIndexLimit = queueIndex;
+                queueTransferSizeLimit = queueTransferSize;
+            }
+        }
+    }
+#if (LIB_DEBUG != 0)
+    else
+    {
+        if ((IS_PALSYSTEM) && (queueTransferSize > 17600))
+            KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 17600 bytes.");
+        else if (queueTransferSize > 7500)
+            KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 7500 bytes.");
+    }
+#endif
+
+
     return TRUE;
+}
+
+void DMA_waitCompletion()
+{
+    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
 }
 
 void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
@@ -200,14 +269,38 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
 {
     vu16 *pw;
     vu32 *pl;
+    u16 l;
 
-    VDP_setAutoInc(1);
+    if (step != -1)
+        VDP_setAutoInc(step);
+
+    // need to do some adjustement because of the way VRAM fill is done
+    if (len)
+    {
+        if (to & 1)
+        {
+            if (len < 3) l = 1;
+            else l = len - 2;
+        }
+        else
+        {
+            if (len < 2) l = 1;
+            else l = len - 1;
+        }
+    }
+    // special value of 0, we don't care
+    else l = len;
+
+//    DMA_doVRamFill(0, 1, 0xFF, 1);    // 01
+//    DMA_doVRamFill(0, 1, 0xFF, 1);    // 01-3
+//    DMA_doVRamFill(0, 2, 0xFF, 1);    // 01-3
+//    DMA_doVRamFill(0, 2, 0xFF, 1);    // 0123
 
     pw = (u16 *) GFX_CTRL_PORT;
 
     // Setup DMA length
-    *pw = 0x9300 + (len & 0xff);
-    *pw = 0x9400 + ((len >> 8) & 0xff);
+    *pw = 0x9300 + (l & 0xFF);
+    *pw = 0x9400 + ((l >> 8) & 0xFF);
 
     // Setup DMA operation (VRAM FILL)
     *pw = 0x9780;
@@ -221,12 +314,13 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
     *pw = value | (value << 8);
 }
 
-void DMA_doVRamCopy(u16 from, u16 to, u16 len)
+void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
 {
     vu16 *pw;
     vu32 *pl;
 
-    VDP_setAutoInc(1);
+    if (step != -1)
+        VDP_setAutoInc(step);
 
     pw = (u16 *) GFX_CTRL_PORT;
 
