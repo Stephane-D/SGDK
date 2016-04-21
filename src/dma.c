@@ -12,9 +12,9 @@
 extern vu32 VIntProcess;
 
 // DMA queue (consumes 512 bytes of memory)
-DMAOpInfo dmaQueues[DMA_QUEUE_LENGHT];
+DMAOpInfo dmaQueues[DMA_QUEUE_LENGTH];
 
-// current queue index (0 = empty; DMA_QUEUE_LENGHT = full)
+// current queue index (0 = empty; DMA_QUEUE_LENGTH = full)
 static u16 queueIndex = 0;
 static u16 queueIndexLimit = 0;
 static u32 queueTransferSize = 0;
@@ -113,7 +113,7 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     DMAOpInfo *info;
 
     // queue is full --> error
-    if (queueIndex >= DMA_QUEUE_LENGHT)
+    if (queueIndex >= DMA_QUEUE_LENGTH)
     {
 #if (LIB_DEBUG != 0)
         KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
