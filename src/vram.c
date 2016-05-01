@@ -9,7 +9,7 @@
 #include "tools.h"
 #include "sys.h"
 #include "kdebug.h"
-
+#include "vram.h"
 
 #define USED_SFT    15
 #define USED_MASK   (1 << USED_SFT)
@@ -206,7 +206,7 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
     if (size > *free)
     {
         // pack free block
-        p = pack(region, adjsize);
+        p = pack(region, size);
 
         // no enough memory
         if (p == NULL)
