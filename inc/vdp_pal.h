@@ -4,18 +4,18 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides methods to manipulate the VDP Color Palette.<br/>
- * The Sega Genesis VDP has 4 palettes of 16 colors.<br/>
- * Color is defined with 3 bits for each component : 0RRR00GGG00BBB00
+ * This unit provides methods to manipulate the VDP Color Palette.<br>
+ * The Sega Genesis VDP has 4 palettes of 16 colors.<br>
+ * Color is defined with 3 bits for each component : xxxxBBBxGGGxRRRx
  */
 
 #ifndef _VDP_PAL_H_
 #define _VDP_PAL_H_
 
 
-#define VDPPALETTE_REDSFT           9
+#define VDPPALETTE_REDSFT           1
 #define VDPPALETTE_GREENSFT         5
-#define VDPPALETTE_BLUESFT          1
+#define VDPPALETTE_BLUESFT          9
 
 #define VDPPALETTE_REDMASK          0x000E
 #define VDPPALETTE_GREENMASK        0x00E0
@@ -131,7 +131,7 @@ void VDP_setPaletteColor(u16 index, u16 value);
  *  \param count
  *      Number of color to set.
  */
-void VDP_setPaletteColors(u16 index, u16* values, u16 count);
+void VDP_setPaletteColors(u16 index, const u16* values, u16 count);
 /**
  *  \brief
  *      Set palette.
@@ -171,11 +171,11 @@ void VDP_interruptFade();
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
- *  This function does general palette fading effect.<br/>
- *  The fade operation is done to all palette entries between 'fromcol' and 'tocol'.<br/>
+ *  This function does general palette fading effect.<br>
+ *  The fade operation is done to all palette entries between 'fromcol' and 'tocol'.<br>
  *  Example: fading to all palette entries --> fromcol = 0  and  tocol = 63
  */
 void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async);
@@ -192,7 +192,7 @@ void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  See VDP_fade() for more informations.
@@ -209,7 +209,7 @@ void VDP_fadeTo(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  See VDP_fade() for more informations.
@@ -228,7 +228,7 @@ void VDP_fadeOut(u16 fromcol, u16 tocol, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  See VDP_fade() for more informations.
@@ -248,10 +248,10 @@ void VDP_fadeIn(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
- *  The fade operation is done to all specified palette entries.<br/>
+ *  The fade operation is done to all specified palette entries.<br>
  *  See VDP_fade() for more informations.
  */
 void VDP_fadePal(u16 numpal, const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async);
@@ -266,7 +266,7 @@ void VDP_fadePal(u16 numpal, const u16 *palsrc, const u16 *paldst, u16 numframe,
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  See VDP_fadePal() for more informations.
@@ -281,7 +281,7 @@ void VDP_fadePalTo(u16 numpal, const u16 *pal, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  See VDP_fadePal() for more informations.
@@ -298,7 +298,7 @@ void VDP_fadePalOut(u16 numpal, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  See VDP_fadePal() for more informations.
@@ -316,7 +316,7 @@ void VDP_fadePalIn(u16 numpal, const u16 *pal, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
  *  The fade operation is done to all palette entries.
@@ -331,10 +331,10 @@ void VDP_fadeAll(const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
- *  The fade operation is done to all palette entries.<br/>
+ *  The fade operation is done to all palette entries.<br>
  *  See VDP_fadeAll().
  */
 void VDP_fadeAllTo(const u16 *pal, u16 numframe, u8 async);
@@ -345,10 +345,10 @@ void VDP_fadeAllTo(const u16 *pal, u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
- *  The fade operation is done to all palette entries.<br/>
+ *  The fade operation is done to all palette entries.<br>
  *  See VDP_fadeAll().
  */
 void VDP_fadeOutAll(u16 numframe, u8 async);
@@ -361,10 +361,10 @@ void VDP_fadeOutAll(u16 numframe, u8 async);
  *  \param numframe
  *      Duration of palette fading in number of frame.
  *  \param async
- *      Async process.<br/>
+ *      Async process.<br>
  *      If set the function return immediatly else the function wait for fading to complete.
  *
- *  The fade operation is done to all palette entries.<br/>
+ *  The fade operation is done to all palette entries.<br>
  *  See VDP_fadeAll().
  */
 void VDP_fadeInAll(const u16 *pal, u16 numframe, u8 async);
