@@ -35,6 +35,8 @@
  */
 typedef unsigned char byte;
 
+int silent;
+
 /*
  * Compute ratio between two numbers.
  */
@@ -52,15 +54,16 @@ unsigned int ratio(unsigned int x, unsigned int y)
  */
 int CB_CALLCONV callback(unsigned int insize, unsigned int inpos, unsigned int outpos, void *cbparam)
 {
-   printf("\rcompressed %u -> %u bytes (%u%% done)", inpos, outpos, ratio(inpos, insize));
+    if (!silent)
+        printf("  compressed %u -> %u bytes (%u%% done)\n", inpos, outpos, ratio(inpos, insize));
 
-   return 1;
+    return 1;
 }
 
 /*
  * Compress a file.
  */
-int compress_file(const char *oldname, const char *packedname, int silent)
+int compress_file(const char *oldname, const char *packedname)
 {
     FILE *oldfile;
     FILE *packedfile;
@@ -121,7 +124,7 @@ int compress_file(const char *oldname, const char *packedname, int silent)
     if (!silent)
     {
         /* show result */
-        printf("\rcompressed %u -> %u bytes (%u%%) in %.2f seconds\n",
+        printf("compressed %u -> %u bytes (%u%%) in %.2f seconds\n",
                insize, outsize, ratio(outsize, insize),
                (double)clocks / (double)CLOCKS_PER_SEC);
     }
@@ -141,7 +144,7 @@ int compress_file(const char *oldname, const char *packedname, int silent)
 /*
  * Decompress a file.
  */
-int decompress_file(const char *packedname, const char *newname, int silent)
+int decompress_file(const char *packedname, const char *newname)
 {
     FILE *newfile;
     FILE *packedfile;
@@ -248,8 +251,6 @@ void show_syntax(void)
  */
 int main(int argc, char *argv[])
 {
-    int silent;
-
     // silent mode
     silent = argc > 4;
 
@@ -284,11 +285,11 @@ int main(int argc, char *argv[])
         {
         /* compress file */
         case 'c':
-        case 'C': return compress_file(argv[2], argv[3], silent);
+        case 'C': return compress_file(argv[2], argv[3]);
 
         /* decompress file */
         case 'd':
-        case 'D': return decompress_file(argv[2], argv[3], silent);
+        case 'D': return decompress_file(argv[2], argv[3]);
         }
     }
 
