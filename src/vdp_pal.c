@@ -8,6 +8,7 @@
 
 
 #define PALETTEFADE_FRACBITS    8
+#define PALETTEFADE_ROUND_VAL   ((1 << (PALETTEFADE_FRACBITS - 1)) - 1)
 
 
 // we don't want to share them
@@ -176,7 +177,7 @@ const u16 palette_blue[16] =
 };
 
 
-// used for palette fading (need 902 bytes of memory)
+// used for palette fading (consumes 902 bytes of memory)
 static s16 final_pal[64];
 static s16 fading_palR[64];
 static s16 fading_palG[64];
@@ -228,6 +229,7 @@ void VDP_setPaletteColor(u16 index, u16 value)
 
 static void setFadePalette(u16 waitVSync)
 {
+    u16 inVInt;
     s16 *palR;
     s16 *palG;
     s16 *palB;
@@ -235,6 +237,17 @@ static void setFadePalette(u16 waitVSync)
     vu32 *pl;
     u16 addr;
     u16 i;
+
+    // need to know if we are inside the VInt
+    inVInt = SYS_isInVIntCallback();
+
+    if (!inVInt)
+    {
+        // wait for VSync if asked
+        if (waitVSync) VDP_waitVSync();
+        // disable interrupts to not conflict with VInt accesses
+        SYS_disableInts();
+    }
 
     // lazy optimization
     if (VDP_getAutoInc() != 2)
@@ -249,34 +262,44 @@ static void setFadePalette(u16 waitVSync)
 
     i = fading_from;
 
-    palR = fading_palR + i;
-    palG = fading_palG + i;
-    palB = fading_palB + i;
-
-    // wait for VSync
-    if (waitVSync) VDP_waitVSync();
+    palR = &fading_palR[i];
+    palG = &fading_palG[i];
+    palB = &fading_palB[i];
 
     i = (fading_to - fading_from) + 1;
     while(i--)
     {
         u16 col;
 
-        col = ((*palR++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
-        col |= ((*palG++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
-        col |= ((*palB++ >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
+        col = (((*palR++ + PALETTEFADE_ROUND_VAL) >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
+        col |= (((*palG++ + PALETTEFADE_ROUND_VAL) >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
+        col |= (((*palB++ + PALETTEFADE_ROUND_VAL) >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
 
         *pw = col;
     }
+
+    if (!inVInt)
+        SYS_enableInts();
 }
 
 u16 VDP_doStepFading(u16 waitVSync)
 {
-    // one step less
+    // last step --> just recopy the final palette
     if (--fading_cnt <= 0)
     {
-        // last step --> just recopy the final palette
-        if (waitVSync) VDP_waitVSync();
-        VDP_setPaletteColors(fading_from, final_pal + fading_from, (fading_to - fading_from) + 1);
+        // we are inside VInt callback --> just set palette colors immediately
+        if (SYS_isInVIntCallback())
+            VDP_setPaletteColors(fading_from, final_pal + fading_from, (fading_to - fading_from) + 1);
+        else
+        {
+            // wait for VSync if asked
+            if (waitVSync) VDP_waitVSync();
+            // disable interrupts to not conflict with VInt accesses
+            SYS_disableInts();
+            // ans set the palette
+            VDP_setPaletteColors(fading_from, final_pal + fading_from, (fading_to - fading_from) + 1);
+            SYS_enableInts();
+        }
 
         return 0;
     }
@@ -291,12 +314,12 @@ u16 VDP_doStepFading(u16 waitVSync)
 
     i = fading_from;
 
-    palR = fading_palR + i;
-    palG = fading_palG + i;
-    palB = fading_palB + i;
-    stepR = fading_stepR + i;
-    stepG = fading_stepG + i;
-    stepB = fading_stepB + i;
+    palR = &fading_palR[i];
+    palG = &fading_palG[i];
+    palB = &fading_palB[i];
+    stepR = &fading_stepR[i];
+    stepG = &fading_stepG[i];
+    stepB = &fading_stepB[i];
 
     i = (fading_to - fading_from) + 1;
     while(i--)
@@ -384,13 +407,10 @@ void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 
 
     // process asynchrone fading
     if (async) VIntProcess |= PROCESS_PALETTE_FADING;
-    // process fading immediatly
     else
     {
-        // disable interrupts to avoid VDP accesses conflict
-        SYS_disableInts();
+        // process fading immediatly
         while (VDP_doStepFading(TRUE));
-        SYS_enableInts();
     }
 }
 
