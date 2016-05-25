@@ -4,18 +4,15 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides general VDP methods :<br/>
- * - initialisation<br/>
- * - get / set register<br/>
- * - get / set resolution<br/>
- * - enable / disable VDP features<br/>
+ * This unit provides general VDP methods :<br>
+ * - initialisation<br>
+ * - get / set register<br>
+ * - get / set resolution<br>
+ * - enable / disable VDP features<br>
  */
 
 #ifndef _VDP_H_
 #define _VDP_H_
-
-
-#include "font.h"
 
 
 /**
@@ -87,70 +84,30 @@
 
 /**
  *  \brief
- *      VDP window tilemap address in VRAM.<br/>
- *      Short version of #VDP_WINDOW definition.
- */
-#define WINDOW                  window_adr
-/**
- *  \deprecated
- *      Use #WINDOW instead.
- */
-#define WPLAN                   WINDOW
-/**
- *  \brief
- *      VDP horizontal scroll table address in VRAM.<br/>
- *      Short version of #VDP_SCROLL_H definition.
- */
-#define HSCRL                   hscrl_adr
-/**
- *  \brief
- *      VDP sprite list table address in VRAM.<br/>
- *      Short version of #VDP_SPRITE_LIST definition.
- */
-#define SLIST                   slist_adr
-/**
- *  \brief
- *      VDP background A tilemap address in VRAM.<br/>
- *      Short version of #VDP_PLAN_A definition.
- */
-#define APLAN                   aplan_adr
-/**
- *  \brief
- *      VDP background B tilemap address in VRAM.<br/>
- *      Short version of #VDP_PLAN_B definition.
- */
-#define BPLAN                   bplan_adr
-
-/**
- *  \brief
- *      VDP window tilemap address in VRAM.
- */
-#define VDP_WINDOW              WINDOW
-/**
- *  \deprecated
- *      Use #VDP_WINDOW instead.
- */
-#define VDP_PLAN_WINDOW         VDP_WINDOW
-/**
- *  \brief
- *      VDP horizontal scroll table address in VRAM.
- */
-#define VDP_SCROLL_H            HSCRL
-/**
- *  \brief
- *      VDP sprite list table address in VRAM.
- */
-#define VDP_SPRITE_LIST         SLIST
-/**
- *  \brief
  *      VDP background A tilemap address in VRAM.
  */
-#define VDP_PLAN_A              APLAN
+#define VDP_PLAN_A              aplan_adr
 /**
  *  \brief
  *      VDP background B tilemap address in VRAM.
  */
-#define VDP_PLAN_B              BPLAN
+#define VDP_PLAN_B              bplan_adr
+/**
+ *  \brief
+ *      VDP window tilemap address in VRAM.
+ */
+#define VDP_PLAN_WINDOW         window_adr
+/**
+ *  \brief
+ *      VDP horizontal scroll table address in VRAM.
+ */
+#define VDP_HSCROLL_TABLE       hscrl_adr
+/**
+ *  \brief
+ *      VDP sprite list table address in VRAM.
+ */
+#define VDP_SPRITE_TABLE        slist_adr
+
 
 /**
  *  \brief
@@ -181,22 +138,28 @@
 
 /**
  *  \brief
- *      Interlaced scanning mode disabled.<br/>
+ *      Interlaced scanning mode disabled.<br>
  *      That is the default mode for the VDP.
  */
 #define INTERLACED_NONE         0
 /**
  *  \brief
- *      Interlaced Scanning Mode 1 - 8x8 dots per cell (normal vertical resolution)<br/>
+ *      Interlaced Scanning Mode 1 - 8x8 dots per cell (normal vertical resolution)<br>
  *      In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.
  */
 #define INTERLACED_MODE1        1
 /**
  *  \brief
- *      Interlaced Scanning Mode 2 - 8x16 dots per cell (double vertical resolution)<br/>
+ *      Interlaced Scanning Mode 2 - 8x16 dots per cell (double vertical resolution)<br>
  *      In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.
  */
 #define INTERLACED_MODE2        2
+
+/**
+ *  \brief
+ *      SGDL font length
+ */
+#define FONT_LEN    96
 
 /**
  *  \brief
@@ -209,7 +172,7 @@
  *  \brief
  *      Space in byte for tile in VRAM (tile space ends where window tilemap starts)
  */
-#define TILE_SPACE              WINDOW
+#define TILE_SPACE              VDP_PLAN_WINDOW
 
 /**
  *  \brief
@@ -390,28 +353,20 @@
 
 
 /**
- *  \brief
- *      Type used to define on which plan to work (only used in some methods).<br/>
- *      You should use the #PLAN_A and #PLAN_B constants.
- *
- *   \see PLAN_A
- *   \see PLAN_B
+ * Internal use
  */
-typedef struct
-{
-    u16 v;
-} VDPPlan;
+#define CONST_PLAN_A                0
+#define CONST_PLAN_B                1
+#define CONST_PLAN_WINDOW           2
 
 /**
  *  \brief
- *      Constant to define VDP plan A
+ *      Type used to define on which plan to work (used by some methods).
  */
-extern const VDPPlan PLAN_B;
-/**
- *  \brief
- *      Constant to define VDP plan A
- */
-extern const VDPPlan PLAN_A;
+typedef struct
+{
+    u16 plan;
+} VDPPlan;
 
 
 // used by define
@@ -431,6 +386,65 @@ extern u16 screenWidth;
  *      Current screen height (verticale resolution)
  */
 extern u16 screenHeight;
+/**
+ *  \brief
+ *      Current background plan width (in tile)
+ *
+ *  Possible values are: 32, 64, 128
+ */
+extern u16 planWidth;
+/**
+ *  \brief
+ *      Current background plan height (in tile)
+ *
+ *  Possible values are: 32, 64, 128
+ */
+extern u16 planHeight;
+/**
+ *  \brief
+ *      Current window width (in tile)
+ *
+ *  Possible values are: 32, 64
+ */
+extern u16 windowWidth;
+/**
+ *  \brief
+ *      Current background plan width bit shift
+ *
+ *  Possible values are: 5, 6 or 7 (corresponding to plan width 32, 64 and 128)
+ */
+extern u16 planWidthSft;
+/**
+ *  \brief
+ *      Current background plan height bit shift
+ *
+ *  Possible values are: 5, 6 or 7 (corresponding to plan height 32, 64 and 128)
+ */
+extern u16 planHeightSft;
+/**
+ *  \brief
+ *      Current window width bit shift
+ *
+ *  Possible values are: 5 or 6 (corresponding to window width 32 or 64)
+ */
+extern u16 windowWidthSft;
+
+
+/**
+ *  \brief
+ *      Constante to represent VDP background A plan (used by some methods)
+ */
+extern const VDPPlan PLAN_A;
+/**
+ *  \brief
+ *      Constante to represent VDP background B plan (used by some methods)
+ */
+extern const VDPPlan PLAN_B;
+/**
+ *  \brief
+ *      Constante to represent VDP window plan (used by some methods)
+ */
+extern const VDPPlan PLAN_WINDOW;
 
 
 /**
@@ -522,17 +536,11 @@ void VDP_setScreenWidth256();
 void VDP_setScreenWidth320();
 
 /**
- *  \brief
- *      Returns background plan width (in tile).
- *
- *  Possible values are: 32, 64, 128
+ *  \deprecated Use the <i>planWidth</i> variable directly.
  */
 u16  VDP_getPlanWidth();
 /**
- *  \brief
- *      Returns background plan height (in tile).
- *
- *  Possible values are: 32, 64, 128
+ *  \deprecated Use the <i>planHeight</i> variable directly.
  */
 u16  VDP_getPlanHeight();
 /**
@@ -540,10 +548,10 @@ u16  VDP_getPlanHeight();
  *      Set background plan size (in tile).
  *
  *  \param w
- *      width in tile.<br/>
+ *      width in tile.<br>
  *      Possible values are 32, 64 or 128.
  *  \param h
- *      height in tile.<br/>
+ *      height in tile.<br>
  *      Possible values are 32, 64 or 128.
  */
 void VDP_setPlanSize(u16 w, u16 h);
@@ -572,19 +580,19 @@ u8 VDP_getVerticalScrollingMode();
  *
  *  \param hscroll
  *      Horizontal scrolling mode :<br>
- *      <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
- *      <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granularity (8 pixels bloc).<br/>
- *      <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granularity (1 pixel).<br/>
+ *      <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br>
+ *      <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granularity (8 pixels bloc).<br>
+ *      <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granularity (1 pixel).<br>
  *  \param vscroll
  *      Vertical scrolling mode :<br>
- *      <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
- *      <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granularity (16 pixels bloc).<br/>
+ *      <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br>
+ *      <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granularity (16 pixels bloc).<br>
  *
- *  \see VDP_setHorizontalScroll() to set horizontal scroll offset in mode plane.<br/>
- *  \see VDP_setHorizontalScrollTile() to set horizontal scroll offset(s) in mode tile.<br/>
- *  \see VDP_setHorizontalScrollLine() to set horizontal scroll offset(s) in mode line.<br/>
- *  \see VDP_setVerticalScroll() to set vertical scroll offset in mode plane.<br/>
- *  \see VDP_setVerticalScrollTile() to set vertical scroll offset(s) in mode 2-tile.<br/>
+ *  \see VDP_setHorizontalScroll() to set horizontal scroll offset in mode plane.<br>
+ *  \see VDP_setHorizontalScrollTile() to set horizontal scroll offset(s) in mode tile.<br>
+ *  \see VDP_setHorizontalScrollLine() to set horizontal scroll offset(s) in mode line.<br>
+ *  \see VDP_setVerticalScroll() to set vertical scroll offset in mode plane.<br>
+ *  \see VDP_setVerticalScrollTile() to set vertical scroll offset(s) in mode 2-tile.<br>
  */
 void VDP_setScrollingMode(u16 hscroll, u16 vscroll);
 
@@ -633,7 +641,7 @@ u8   VDP_getHIntCounter();
  *  \brief
  *      Set Horizontal interrupt counter value.
  *
- *  When Horizontal interrupt is enabled, setting 5 here means that H int will occurs each (5+1) scanline.<br/>
+ *  When Horizontal interrupt is enabled, setting 5 here means that H int will occurs each (5+1) scanline.<br>
  *  Set value 0 to get H int at each scanline.
  */
 void VDP_setHIntCounter(u8 value);
@@ -672,34 +680,34 @@ u16 VDP_getHScrollTableAddress();
 /**
  *  \brief
  *      Set VRAM address (location) of Plan A tilemap.
- *      <br/>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br/>
- *      | system tiles<br/>
- *      | user tiles<br/>
- *      | window plan<br/>
- *      v others (plan a, plan b, ...)<br/>
- *      <br/>
+ *      <br>
+ *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
+ *      | system tiles<br>
+ *      | user tiles<br>
+ *      | window plan<br>
+ *      v others (plan a, plan b, ...)<br>
+ *      <br>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  EX:<br/>
- *      VDP_setAPlanAddress(0xC000)<br/>
+ *  EX:<br>
+ *      VDP_setAPlanAddress(0xC000)<br>
  *      Will set the Plan A to at address 0xC000 in VRAM.
  */
 void VDP_setAPlanAddress(u16 value);
 /**
  *  \brief
- *      Set VRAM address (location) of Window tilemap.<br/>
- *      <br/>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br/>
- *      | system tiles<br/>
- *      | user tiles<br/>
- *      | window plan<br/>
- *      v others (plan a, plan b, ...)<br/>
- *      <br/>
+ *      Set VRAM address (location) of Window tilemap.<br>
+ *      <br>
+ *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
+ *      | system tiles<br>
+ *      | user tiles<br>
+ *      | window plan<br>
+ *      v others (plan a, plan b, ...)<br>
+ *      <br>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  EX:<br/>
- *      VDP_setWindowAddress(0xA000)<br/>
+ *  EX:<br>
+ *      VDP_setWindowAddress(0xA000)<br>
  *      Will set the Window tilemap to at address 0xA000 in VRAM.
  */
 void VDP_setWindowAddress(u16 value);
@@ -710,52 +718,52 @@ void VDP_setWindowAddress(u16 value);
 void VDP_setWindowPlanAddress(u16 value);
 /**
  *  \brief
- *      Set VRAM address (location) of Plan B tilemap.<br/>
- *      <br/>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br/>
- *      | system tiles<br/>
- *      | user tiles<br/>
- *      | window plan<br/>
- *      v others (plan a, plan b, ...)<br/>
- *      <br/>
+ *      Set VRAM address (location) of Plan B tilemap.<br>
+ *      <br>
+ *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
+ *      | system tiles<br>
+ *      | user tiles<br>
+ *      | window plan<br>
+ *      v others (plan a, plan b, ...)<br>
+ *      <br>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  EX:<br/>
- *      VDP_setBPlanAddress(0xE000)<br/>
+ *  EX:<br>
+ *      VDP_setBPlanAddress(0xE000)<br>
  *      Will set the Plan B to at address 0xE000 in VRAM.
  */
 void VDP_setBPlanAddress(u16 value);
 /**
  *  \brief
- *      Set VRAM address (location) of Sprite list.<br/>
- *      <br/>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br/>
- *      | system tiles<br/>
- *      | user tiles<br/>
- *      | window plan<br/>
- *      v others (plan a, plan b, ...)<br/>
- *      <br/>
+ *      Set VRAM address (location) of Sprite list.<br>
+ *      <br>
+ *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
+ *      | system tiles<br>
+ *      | user tiles<br>
+ *      | window plan<br>
+ *      v others (plan a, plan b, ...)<br>
+ *      <br>
  *      The window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  EX:<br/>
- *      VDP_setSpriteListAddress(0xB800)<br/>
+ *  EX:<br>
+ *      VDP_setSpriteListAddress(0xB800)<br>
  *      Will set the Sprite list to at address 0xB800 in VRAM.
  */
 void VDP_setSpriteListAddress(u16 value);
 /**
  *  \brief
- *      Set VRAM address (location) of H Scroll table.<br/>
- *      <br/>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br/>
- *      | system tiles<br/>
- *      | user tiles<br/>
- *      | window plan<br/>
- *      v others (plan a, plan b, ...)<br/>
- *      <br/>
+ *      Set VRAM address (location) of H Scroll table.<br>
+ *      <br>
+ *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
+ *      | system tiles<br>
+ *      | user tiles<br>
+ *      | window plan<br>
+ *      v others (plan a, plan b, ...)<br>
+ *      <br>
  *      The the window tilemap address is used internally to calculated how much space is available for tiles.
  *
- *  EX:<br/>
- *      VDP_setHScrollTableAddress(0xB400)<br/>
+ *  EX:<br>
+ *      VDP_setHScrollTableAddress(0xB400)<br>
  *      Will set the HScroll table to at address 0xB400 in VRAM.
  */
 void VDP_setHScrollTableAddress(u16 value);
@@ -767,16 +775,40 @@ void VDP_setHScrollTableAddress(u16 value);
  *  \param mode
  *      Accepted values : #INTERLACED_NONE, #INTERLACED_MODE1, #INTERLACED_MODE2
  *
- * This function changes the scanning mode on the next display blanking period.<br/>
- * In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.<br/>
- * In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.<br/>
+ * This function changes the scanning mode on the next display blanking period.<br>
+ * In Interlaced Mode 1, the same pattern will be displayed on the adjacent lines of even and odd numbered fields.<br>
+ * In Interlaced Mode 2, different patterns can be displayed on the adjacent lines of even and odd numbered fields.<br>
  * The number of cells on the screen stays the same regardless of which scanning mode is active.
  */
 void VDP_setScanMode(u16 mode);
 
 /**
  *  \brief
+ *      Sets the window Horizontal position.
+ *
+ *  \param right
+ *      If set to <i>FALSE</i> the window is displayed from column 0 up to column <i>pos</i>
+ *      If set to <i>TRUE</i> the window is displayed from column <i>pos</i> up to last column
+ *  \param pos
+ *      The Horizontal position of the window in 2 tiles unit (16 pixels).
+ */
+void VDP_setWindowHPos(u16 right, u16 pos);
+/**
+ *  \brief
+ *      Sets the window Vertical position.
+ *
+ *  \param down
+ *      If set to <i>FALSE</i> the window is displayed from row 0 up to row <i>pos</i>
+ *      If set to <i>TRUE</i> the window is displayed from row <i>pos</i> up to last row
+ *  \param pos
+ *      The Vertical position of the window in 1 tile unit (8 pixels).
+ */
+void VDP_setWindowVPos(u16 down, u16 pos);
+
+/**
+ *  \brief
  *      Wait for DMA operation to complete.
+ *  \deprecated Use #DMA_wait_completion() instead
  */
 void VDP_waitDMACompletion();
 /**

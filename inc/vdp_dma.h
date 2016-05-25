@@ -81,11 +81,11 @@
  *      Do DMA transfer operation.
  *
  *  \param location
- *      Destination location.<br/>
- *      Accepted values:<br/>
- *      - VDP_DMA_VRAM (for VRAM transfert).<br/>
- *      - VDP_DMA_CRAM (for CRAM transfert).<br/>
- *      - VDP_DMA_VSRAM (for VSRAM transfert).<br/>
+ *      Destination location.<br>
+ *      Accepted values:<br>
+ *      - VDP_DMA_VRAM (for VRAM transfert).<br>
+ *      - VDP_DMA_CRAM (for CRAM transfert).<br>
+ *      - VDP_DMA_VSRAM (for VSRAM transfert).<br>
  *  \param from
  *      Source address.
  *  \param to
@@ -93,9 +93,9 @@
  *  \param len
  *      Number of word to transfer.
  *  \param vramStep
- *      VRam address increment value (-1 to 255).<br/>
+ *      VRam address increment value (-1 to 255).<br>
  *      By default you should set it to 2 for normal copy operation but you can use different value
- *      for specific operation.<br/>
+ *      for specific operation.<br>
  *      -1 means the VRam address increment register won't be modified (use current value).
  *
  *  \deprecated Use DMA_xxx methods instead
@@ -106,11 +106,11 @@ void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep);
  *      Do DMA transfert operation.
  *
  *  \param location
- *      Destination location.<br/>
- *      Accepted values:<br/>
- *      - VDP_DMA_VRAM (for VRAM transfert).<br/>
- *      - VDP_DMA_CRAM (for CRAM transfert).<br/>
- *      - VDP_DMA_VSRAM (for VSRAM transfert).<br/>
+ *      Destination location.<br>
+ *      Accepted values:<br>
+ *      - VDP_DMA_VRAM (for VRAM transfert).<br>
+ *      - VDP_DMA_CRAM (for CRAM transfert).<br>
+ *      - VDP_DMA_VSRAM (for VSRAM transfert).<br>
  *  \param from
  *      Source address.
  *  \param to

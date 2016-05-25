@@ -30,11 +30,6 @@
  */
 #define DMA_VSRAM   2
 
-/**
- *  \brief
- *      Maximum DMA queue length
- */
-#define DMA_QUEUE_LENGTH        32
 
 /**
  *  \brief
@@ -52,33 +47,28 @@ typedef struct
  *  \brief
  *      DMA queue structure
  */
-extern DMAOpInfo dmaQueues[DMA_QUEUE_LENGTH];
+extern DMAOpInfo *dmaQueues;
 
 
 /**
  *  \brief
- *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.
- *  \see DMA_setMaxTransferSize()
- */
-s16 DMA_getMaxTransferSize();
-/**
- *  \brief
- *      Sets the maximum amount of data (in bytes) to transfer per #DMA_flushQueue() call.<br>
- *      VBlank area allow to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br>
- *      By default there is no limitation (-1).
+ *      Initialize the DMA queue sub system.
  *
- *  \param value
- *      The maximum amount of data (in KiloBytes) to transfer during DMA_flushQueue() operation.<br>
- *      Use <b>-1</b> for no limit.
+ *      SGDK automatically call this method on hard reset so you don't need to call it again unless
+ *      you want to change the default parameters.
  *
- *  \see DMA_flushQueue()
+ *  \param size
+ *      The queue size (0 = default size = 64).
+ *  \param capacity
+ *      The maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call (0 = default = no limit).
  */
-void DMA_setMaxTransferSize(s16 value);
+void DMA_init(u16 size, u16 capacity);
 
 /**
  *  \brief
  *      Returns TRUE if the DMA_flushQueue() method is automatically called at VBlank
  *      to process DMA operations pending in the queue.
+ *
  *  \see DMA_setAutoFlush()
  *  \see DMA_flushQueue()
  */
@@ -88,9 +78,49 @@ u16 DMA_getAutoFlush();
  *      If set to TRUE (default) then the DMA_flushQueue() method is automatically called at VBlank
  *      to process DMA operations pending in the queue otherwise you have to call the DMA_flushQueue()
  *      method by yourself.
+ *
  *  \see DMA_flushQueue()
  */
 void DMA_setAutoFlush(u16 value);
+/**
+ *  \brief
+ *      Return the "over capacity ignore" state (see #DMA_setIgnoreOverCapacity(..) method).
+ *
+ *  \see DMA_setIgnoreOverCapacity()
+ */
+u16 DMA_getIgnoreOverCapacity();
+/**
+ *  \brief
+ *      Set the "over capacity" DMA queue strategy.
+ *
+ *      When set to <i>TRUE</i> any DMA operation queued after we reached the maximum defined transfer capacity
+ *      with #DMA_setMaxTransferSize(..) are ignored.<br>
+ *      When set to <i>FALSE</i> DMA operations are postponed to the next frame.
+ *
+ *  \see DMA_setMaxTransferSize()
+ */
+void DMA_setIgnoreOverCapacity(u16 value);
+/**
+ *  \brief
+ *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.
+ *
+ *  \see DMA_setMaxTransferSize()
+ */
+s16 DMA_getMaxTransferSize();
+/**
+ *  \brief
+ *      Sets the maximum amount of data (in bytes) to transfer per #DMA_flushQueue() call.<br>
+ *      VBlank period allows to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br>
+ *      By default there is no size limit (0).
+ *
+ *  \param value
+ *      The maximum amount of data (in KiloBytes) to transfer during DMA_flushQueue() operation.<br>
+ *      Use <b>0</b> for no limit.
+ *
+ *  \see DMA_setIgnoreOverCapacity()
+ *  \see DMA_flushQueue()
+ */
+void DMA_setMaxTransferSize(s16 value);
 
 /**
  *  \brief

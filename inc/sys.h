@@ -104,9 +104,9 @@ extern _voidCallback *intCB;
  *  \brief
  *      Internal Vertical interrupt callback.
  *
- * You can modify it to use your own callback.<br/>
- * Be careful: by doing that you disable SGDK default V-Int code and related features !<br/>
- * You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
+ * You can modify it to use your own callback.<br>
+ * Be careful: by doing that you disable SGDK default V-Int code and related features !<br>
+ * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
  * In all others cases you would use the SYS_setVIntCallback() method.
  */
 extern _voidCallback *internalVIntCB;
@@ -114,9 +114,9 @@ extern _voidCallback *internalVIntCB;
  *  \brief
  *      Internal Horizontal interrupt callback.
  *
- * You can modify it to use your own callback.<br/>
- * Be careful: by doing that you disable SGDK default H-Int code and related features !<br/>
- * You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
+ * You can modify it to use your own callback.<br>
+ * Be careful: by doing that you disable SGDK default H-Int code and related features !<br>
+ * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
  * In all others cases you would use the SYS_setHIntCallback() method.
  */
 extern _voidCallback *internalHIntCB;
@@ -124,9 +124,9 @@ extern _voidCallback *internalHIntCB;
  *  \brief
  *      Internal External interrupt callback.
  *
- * You can modify it to use your own callback.<br/>
- * Be careful: by doing that you disable SGDK default Ext-Int code and related features !<br/>
- * You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
+ * You can modify it to use your own callback.<br>
+ * Be careful: by doing that you disable SGDK default Ext-Int code and related features !<br>
+ * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
  * In all others cases you would use the SYS_setExtIntCallback() method.
  */
 extern _voidCallback *internalExtIntCB;
@@ -147,6 +147,13 @@ void SYS_assertReset();
  * Software reset
  */
 void SYS_reset();
+/**
+ *  \brief
+ *      Hard reset
+ *
+ * Reset with forced hardware init and memory clear / reset operation.
+ */
+void SYS_hardReset();
 
 /**
  *  \brief
@@ -162,9 +169,9 @@ u16 SYS_getInterruptMaskLevel();
  * You can disable interrupt depending their level.<br>
  * Interrupt with level <= interrupt mask level are ignored.<br>
  * We have 3 different interrupts:<br>
- * <b>Vertical interrupt (V-INT): level 6</b><br/>
- * <b>Horizontal interrupt (H-INT): level 4</b><br/>
- * <b>External interrupt (EX-INT): level 2</b><br/>
+ * <b>Vertical interrupt (V-INT): level 6</b><br>
+ * <b>Horizontal interrupt (H-INT): level 4</b><br>
+ * <b>External interrupt (EX-INT): level 2</b><br>
  * Vertical interrupt has the highest level (and so priority) where external interrupt has lowest one.<br>
  * For instance to disable Vertical interrupt just use SYS_setInterruptMaskLevel(6).<br>
  *
@@ -182,9 +189,9 @@ void SYS_setInterruptMaskLevel(u16 value);
  * You can disable interrupt depending their level.<br>
  * Interrupt with level <= interrupt mask level are ignored.<br>
  * We have 3 different interrupts:<br>
- * <b>Vertical interrupt (V-INT): level 6</b><br/>
- * <b>Horizontal interrupt (H-INT): level 4</b><br/>
- * <b>External interrupt (EX-INT): level 2</b><br/>
+ * <b>Vertical interrupt (V-INT): level 6</b><br>
+ * <b>Horizontal interrupt (H-INT): level 4</b><br>
+ * <b>External interrupt (EX-INT): level 2</b><br>
  * Vertical interrupt has the highest level (and so priority) where external interrupt has lowest one.<br>
  * For instance to disable Vertical interrupt just use SYS_setInterruptMaskLevel(6).<br>
  *
@@ -201,7 +208,7 @@ u16 SYS_getAndSetInterruptMaskLevel(u16 value);
  *
  *
  * This method is used to temporary disable interrupt (to protect some VDP accesses for instance)
- * and should always be followed by SYS_enableInts().<br/>
+ * and should always be followed by SYS_enableInts().<br>
  * Be careful, this method can't be used if you are currently processing an interrupt !
  *
  * \see SYS_enableInts()
@@ -211,7 +218,7 @@ void SYS_disableInts();
  *  \brief
  *      Reenable interrupts (Vertical, Horizontal and External).
  *
- * This method is used to reenable interrupt after a call to SYS_disableInts().<br/>
+ * This method is used to reenable interrupt after a call to SYS_disableInts().<br>
  * Has no effect if called without a prior SYS_disableInts() call.
  *
  * \see SYS_disableInts()
@@ -230,12 +237,12 @@ void SYS_enableInts();
  * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
  * The difference with the SYS_setVIntCallback(..) method is this one is called right after
  * the Vertical Interrupt happened and before any internals SGDK V-Int processes.<br>
- * This is useful when you really need to so something right at the beginning of the V-Int.
+ * This is useful when you really need to do something right at the beginning of the V-Blank area.
  *
  * \see SYS_setVIntCallback(_voidCallback *CB);
  * \see SYS_setHIntCallback(_voidCallback *CB);
  */
-void SYS_setPreVIntCallback(_voidCallback *CB);
+void SYS_setVIntPreCallback(_voidCallback *CB);
 /**
  *  \brief
  *      Set 'Vertical Interrupt' callback method.
@@ -247,11 +254,11 @@ void SYS_setPreVIntCallback(_voidCallback *CB);
  * Vertical interrupt happen at the end of display period right before vertical blank.<br>
  * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
  * Note that the callback will be called after some internal SGDK V-Int processes and so probably
- * not right at the start of the 'Vertical Interrupt'.<br>
+ * not right at the start of the V-Blank area.<br>
  * For that you can use the SYS_setPreVIntCallback(..) method instead.
  *
  * \see SYS_setHIntCallback(_voidCallback *CB);
- * \see SYS_setPreVIntCallback(_voidCallback *CB);
+ * \see SYS_setVIntPreCallback(_voidCallback *CB);
  */
 void SYS_setVIntCallback(_voidCallback *CB);
 /**
@@ -324,7 +331,7 @@ u16 SYS_isPAL();
 
 /**
  *  \brief
- *      Die with the specified error message.<br/>
+ *      Die with the specified error message.<br>
  *      Program execution is interrupted.
  *
  * This actually display an error message and program ends execution.

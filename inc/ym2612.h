@@ -43,7 +43,7 @@ u8   YM2612_read(const u16 port);
  *  \param data
  *      Data to write
  *
- *  This function does not perform busy check before writing to YM port.<br/>
+ *  This function does not perform busy check before writing to YM port.<br>
  *  See also YM2612_writeSafe().
  */
 void YM2612_write(const u16 port, const u8 data);
@@ -62,7 +62,7 @@ void YM2612_writeSafe(const u16 port, const u8 data);
  *  \param data
  *      register value
  *
- *  This function does not perform busy check before writing to YM port.<br/>
+ *  This function does not perform busy check before writing to YM port.<br>
  *  See also YM2612_writeRegSafe().
  */
 void YM2612_writeReg(const u16 part, const u8 reg, const u8 data);

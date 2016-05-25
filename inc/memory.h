@@ -4,17 +4,17 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides memory copy/set operation and dynamic memory allocation.<br/>
- *<br/>
- * <b>Memory organization :</b><br/>
- *<br/>
- * Memory is composed of bloc, the first 2 bytes of a bloc define its size and its state:<br/>
- * b15-b1 = size in number of word (2 bytes)<br/>
+ * This unit provides memory copy/set operation and dynamic memory allocation.<br>
+ *<br>
+ * <b>Memory organization :</b><br>
+ *<br>
+ * Memory is composed of bloc, the first 2 bytes of a bloc define its size and its state:<br>
+ * b15-b1 = size in number of word (2 bytes)<br>
  * b0 = used state (1=used, 0=free)
- *<br/>
- * To reach the next bloc you just need to do:<br/>
+ *<br>
+ * To reach the next bloc you just need to do:<br>
  * <code>next_bloc_address = bloc_addres + bloc_size</code>
- * The end of memory is defined with a 0 sized bloc.<br/>
+ * The end of memory is defined with a 0 sized bloc.<br>
  */
 
 #ifndef _MEMORY_H_
@@ -156,6 +156,11 @@ void MEM_init();
 u16  MEM_getFree();
 /**
  *  \brief
+ *      Return allocated memory in bytes
+ */
+u16  MEM_getAllocated();
+/**
+ *  \brief
  *      Deallocate space in memory
  *
  *  \param ptr
@@ -181,7 +186,13 @@ void MEM_free(void *ptr);
  * The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
  */
 void* MEM_alloc(u16 size);
-
+/**
+ *  \brief
+ *      Show memory dump
+ *
+ * Do a memory dump in GensKMod console (useful for debugging).
+ */
+void MEM_dump();
 
 /**
  *  \brief

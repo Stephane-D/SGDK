@@ -107,7 +107,7 @@ void M3D_setLight(Vect3D_f16 *value);
 
 /**
  *  \brief
- *      Reset the specified rotation object.
+ *      Reset the specified Transformation3D object.
  */
 void M3D_resetTransform(Transformation3D *t);
 
@@ -125,7 +125,7 @@ void M3D_setTranslation(Transformation3D *t, fix16 x, fix16 y, fix16 z);
 /**
  *  \brief
  *      Set rotation parameters to the specified #Transformation3D object.<br>
- *      Be careful, value is not given in radiant.<br>
+ *      Be careful, x, y, z angle values are not given in radiant:<br>
  *      [-8..+8] range correspond to radian [-PI..+PI] range.
  */
 void M3D_setRotation(Transformation3D *t, fix16 x, fix16 y, fix16 z);

@@ -26,6 +26,7 @@
 #include "vdp_spr.h"
 #include "vdp_tile.h"
 
+#include "vram.h"
 #include "dma.h"
 
 #include "bmp.h"

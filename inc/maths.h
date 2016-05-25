@@ -26,19 +26,19 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Returns the lowest value between X an Y.
  */
-#define min(X, Y) ((X) < (Y))?(X):(Y)
+#define min(X, Y)   (((X) < (Y))?(X):(Y))
 
 /**
  *  \brief
  *      Returns the highest value between X an Y.
  */
-#define max(X, Y) ((X) > (Y))?(X):(Y)
+#define max(X, Y)   (((X) > (Y))?(X):(Y))
 
 /**
  *  \brief
  *      Returns the absolute value of X.
  */
-#define abs(X) ((X) < 0)?-(X):(X)
+#define abs(X)      (((X) < 0)?-(X):(X))
 
 #ifndef PI
 /**
@@ -59,7 +59,7 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Convert specified value to fix32.
  *
- *  EX:<br/>
+ *  EX:<br>
  *      f32 v = FIX32(34.567);
  */
 #define FIX32(value)                ((fix32) ((value) * (1 << FIX32_FRAC_BITS)))
@@ -120,12 +120,12 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Compute and return the result of the multiplication of val1 and val2 (fix32).
  */
-#define fix32Mul(val1, val2)        (((val1) * (val2)) >> FIX32_FRAC_BITS)
+#define fix32Mul(val1, val2)        (((val1) >> (FIX32_FRAC_BITS / 2)) * ((val2) >> (FIX32_FRAC_BITS / 2)))
 /**
  *  \brief
  *      Compute and return the result of the division of val1 by val2 (fix32).
  */
-#define fix32Div(val1, val2)        (((val1) << FIX32_FRAC_BITS) / (val2))
+#define fix32Div(val1, val2)        (((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
 
 
 #define FIX16_INT_BITS              10
@@ -138,7 +138,7 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Convert specified value to fix16
  *
- *  EX:<br/>
+ *  EX:<br>
  *      f16 v = FIX16(-27.12);
  */
 #define FIX16(value)                ((fix16) ((value) * (1 << FIX16_FRAC_BITS)))
@@ -386,12 +386,6 @@ typedef struct
 
 /**
  *  \brief
- *      Return a random u16 integer.
- */
-u16 random();
-
-/**
- *  \brief
  *      Binary to Decimal conversion.
  *
  *  \param value
@@ -409,7 +403,13 @@ u32 intToBCD(u32 value);
  *  \param dy
  *      delta Y.
  */
+u32 getApproximatedDistance(s32 dx, s32 dy);
+/**
+ *  \deprecated
+ *      Use #getApproximatedDistance(..) instead.
+ */
 u32 distance_approx(s32 dx, s32 dy);
+
 
 /**
  *  \brief

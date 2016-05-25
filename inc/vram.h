@@ -1,11 +1,11 @@
 /**
  *  \file vram.h
- *  \brief SGDK VRAM management unit
+ *  \brief SGDK VRAM (Video Memory) management unit
  *  \author Stephane Dallongeville
  *  \date 11/2015
  *
- * VRAM management unit.<br/>
- * It offerts methods to manage dynamic VRAM allocation for tile data.<br/>
+ * Video Memory management unit.<br>
+ * It offerts methods to manage dynamic VRAM allocation for tile data.<br>
  *<pre>
  * VRAMRegion structure define a VRAM region where we want to use dynamic allocation.
  * 'vram' field is a buffer representing the VRAM region usage. For each entry:
@@ -40,7 +40,7 @@
  *  end = cache+cacheSize   *end = 0
  *
  *
- *  2. After allocation of a TileSet of 32 tiles
+ *  2. After allocation of 32 tiles
  *
  *                  +------------------------+
  *  0               | 32              (used) |
@@ -56,7 +56,7 @@
  *  free = cache + 32       *free = cacheSize - 32
  *
  *
- *  3. After allocation of a TileSet of 128 tiles
+ *  3. After allocation of 128 tiles
  *
  *                  +------------------------+
  *  0               | 32              (used) |
@@ -87,7 +87,7 @@
  *                  +------------------------+
  *
  *
- *  5. After release of tileset #3 (64 tiles)
+ *  5. After release of allocation #3 (64 tiles)
  *
  *                  +------------------------+
  *  0               | 32              (used) |
@@ -104,7 +104,7 @@
  *                  +------------------------+
  *
  *
- *  6. After release of tileset #4 (500 tiles)
+ *  6. After release of allocation #4 (500 tiles)
  *
  *                  +------------------------+
  *  0               | 32              (used) |
@@ -179,6 +179,9 @@ typedef struct
  *      Size in tile of the region.
  *
  * Set parameters and allocate memory for the VRAM region structure.
+ *
+ * \see VRAM_releaseRegion(..)
+ *
  */
 void VRAM_createRegion(VRAMRegion *region, u16 startIndex, u16 size);
 /**
@@ -189,11 +192,13 @@ void VRAM_createRegion(VRAMRegion *region, u16 startIndex, u16 size);
  *      VRAMRegion we want to release.
  *
  * Release memory used by the VRAM region structure.
+ *
+ * \see VRAM_createRegion(..)
  */
 void VRAM_releaseRegion(VRAMRegion *region);
 /**
  *  \brief
- *      Release all allocation from specified VRAM region.
+ *      Release all allocations from specified VRAM region.
  *
  *  \param region
  *      VRAM region we want to clear.
@@ -209,7 +214,7 @@ void VRAM_clearRegion(VRAMRegion *region);
  *  \param size
  *      Number of tile we want to allocate in VRAM (need to be > 0).
  *  \return
- *      the index in VRAM where we allocated the bloc of tile.<br/>
+ *      the index in VRAM where we allocated the bloc of tile.<br>
  *      -1 if there is no enough available VRAM in the region.
  *
  *  \see VRAM_free(..)

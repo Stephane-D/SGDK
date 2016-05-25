@@ -59,7 +59,7 @@ u32 strlen(const char *str);
  *
  *  \return The minimum of 'maxlen' and the number of characters that precede the terminating null character.
  *
- *  The strnlen() function computes the length of the string pointed to by 'str', not including the terminating null character ('\0'), <br/>
+ *  The strnlen() function computes the length of the string pointed to by 'str', not including the terminating null character ('\0'), <br>
  *  up to a maximum of 'maxlen' bytes. The function doesn't check any more than the first 'maxlen' bytes.
  */
 u16 strnlen(const char *str, u16 maxlen);
@@ -71,12 +71,12 @@ u16 strnlen(const char *str, u16 maxlen);
  *      The string we want to compare.
  *  \param str2
  *      The string we want to compare.
- *  \return an integral value indicating the relationship between the strings:<br/>
- *      A zero value indicates that both strings are equal.<br/>
- *      A value greater than zero indicates that the first character that does not match has a greater value in str1 than in str2<br/>
+ *  \return an integral value indicating the relationship between the strings:<br>
+ *      A zero value indicates that both strings are equal.<br>
+ *      A value greater than zero indicates that the first character that does not match has a greater value in str1 than in str2<br>
  *      A value less than zero indicates the opposite.
  *
- * This function starts comparing the first character of each string.<br/>
+ * This function starts comparing the first character of each string.<br>
  * If they are equal to each other, it continues with the following pairs until
  * the characters differ or until a terminating null-character is reached.
  */
@@ -108,6 +108,21 @@ char* strclr(char *str);
 char* strcpy(char *dest, const char *src);
 /**
  *  \brief
+ *      Copy the first 'len' character of string.
+ *
+ *  \param dest
+ *      Destination string (its size must be >= (len + 1)).
+ *  \param src
+ *      Source string.
+ *  \param len
+ *      Maximum number of character to copy.
+ *  \return pointer on destination string.
+ *
+ * Copies the source string to destination.
+ */
+char* strncpy(char *dest, const char *src, u16 len);
+/**
+ *  \brief
  *      Concatenate two strings.
  *
  *  \param dest
@@ -125,15 +140,15 @@ char* strcat(char *dest, const char *src);
  *
  *  \param str
  *      The string to operate on.
- *  \param old
+ *  \param oldc
  *      The character being replaced.
- *  \param new
- *      The character 'old' is replaced with.
- *  \return pointer to the nul byte at the end of 'str'.
+ *  \param newc
+ *      The character 'oldc' is replaced with.
+ *  \return pointer to the null byte at the end of 'str'.
  *
  * Replace all occurrences of character in a null-terminated string.
  */
-char *strreplace(char *str, char old, char new);
+char *strreplacechar(char *str, char oldc, char newc);
 /**
  *  \brief
  *      Convert a s32 value to string.
@@ -221,15 +236,15 @@ void fix16ToStr(fix16 value, char *str, s16 numdec);
  *      It can optionally contain embedded format specifiers.
  *
  *  \param ... (additional arguments)
- *      Depending on the format string, the function may expect a sequence of additional arguments, <br/>
+ *      Depending on the format string, the function may expect a sequence of additional arguments, <br>
  *      each containing a value to be used to replace a format specifier in the format string.
  *
- *      There should be at least as many of these arguments as the number of values specified in the format specifiers. <br/>
+ *      There should be at least as many of these arguments as the number of values specified in the format specifiers. <br>
  *      Additional arguments are ignored by the function.
  *
  *  \return On success, the total number of characters written is returned..
  *
- *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br/>
+ *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br>
  *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
  *  formatted and inserted in the resulting string replacing their respective specifiers
  *

@@ -4,7 +4,7 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides methods to manipulate the VDP Sprites.<br/>
+ * This unit provides methods to allocate and manipulate VDP Sprite at low level.<br>
  * The Sega Genesis VDP can handle up to 80 simultanous sprites of 4x4 tiles (32x32 pixels).
  */
 
@@ -13,9 +13,9 @@
 
 /**
  *  \brief
- *      Maximum number of sprite
+ *      Maximum number of hardware sprite
  */
-#define MAX_SPRITE          80
+#define MAX_VDP_SPRITE          80
 
 /**
  *  \brief
@@ -31,165 +31,252 @@
 
 /**
  *  \brief
- *      VDP sprite definition structure.
+ *      VDP sprite definition structure replicating VDP hardware sprite.
  *
- *  \param posx
- *      position X
- *  \param posy
- *      position Y
- *  \param tile_attr
- *      tile attributes (palette, priority, HV flip, tile index)
+ *  \param y
+ *      Y position - 0x80 (0x80 = 0 on screen)
  *  \param size
- *      sprite size (1x1 tile to 4x4 tiles)
+ *      sprite size (see SPRITE_SIZE macro)
  *  \param link
- *      link to next sprite (used for sprite priority)<br/>
+ *      sprite link, this information is used to define sprite drawing order (use 0 to force end of list)
+ *  \param attr
+ *      tile index and sprite attribut (priority, palette, H/V flip), see TILE_ATTR_FULL macro
+ *  \param x
+ *      X position - 0x80 (0x80 = 0 on screen)
  */
 typedef struct
 {
-    s16 posx;
-    s16 posy;
-    u16 tile_attr;
-    u8 size;
-    u8 link;
-} SpriteDef;
+    s16 y;
+    union
+    {
+        struct {
+            u8 size;
+            u8 link;
+        };
+        u16 size_link;
+    };
+    u16 attribut;
+    s16 x;
+}  VDPSprite;
 
 
 /**
- *  \brief VDP sprite definition cache.
+ *  \brief VDP sprite cache
  */
-extern SpriteDef vdpSpriteCache[MAX_SPRITE];
+extern VDPSprite vdpSpriteCache[MAX_VDP_SPRITE];
+/**
+ *  \brief Pointer to last allocated sprite after calling VDP_allocateSprites(..) method.<br>
+ *    This can be used to do the link from the last allocated VDP sprite.
+ */
+extern VDPSprite* lastAllocatedVDPSprite;
+/**
+ *  \brief Highest index of allocated VDP sprite since the last call to VDP_resetSprites() or VDP_releaseAllSprites().<br>
+ *      A value of <i>-1</i> mean no VDP Sprite were allocated..<br>
+ *      This can be used to define the number of sprite to transfer with VDP_updateSprites(..) method.<br>
+ *      <b>WARNING:</b> this value is not correctly updated on sprite release operation so it may gives an higher index than reality.<br>
+ *      You can ue currently VDP_refreshHighestAllocatedSpriteIndex() method to force recomputation of highest index (costs a bit of time).
+ *
+ *  \see VDP_refreshHighestAllocatedSpriteIndex()
+ */
+extern s16 highestVDPSpriteIndex;
 
 
 /**
  *  \brief
- *      Reset all sprites.
- *
- *  Clear the sprite list.
+ *      Clear all sprites and reset VDP sprite allocation (if any).
  */
 void VDP_resetSprites();
+
 /**
  *  \brief
- *      Reset all sprites (direct send to VDP)
- *
- *  Clear the sprite list.
+ *      Release all VDP sprite allocation
  */
-void VDP_resetSpritesDirect();
+void VDP_releaseAllSprites();
 
+/**
+ *  \brief
+ *      Allocate the specified number of hardware VDP sprites and link them together.
+ *
+ *  \param num
+ *      Number of VDP sprite to allocate (need to be > 0)
+ *  \return the first VDP sprite index where allocation was made.<br>
+ *      -1 if there is not enough available VDP sprite remaining.
+ *
+ *  This method allocates the specified number of VDP sprite and returns the index of the
+ *  first allocated sprite in VDP sprite table (see vdpSpriteCache).<br>
+ *  Sprites are linked together using <i>link</i> field (last sprite ends with link 0).<br>
+ *  If there is not enough available VDP sprites the allocation operation fails and return -1.
+ *  NOTE: The last sprite from the allocated list can be retrieved with <i>lastAllocatedVDPSprite</i>, this is
+ *  to avoid parsing all the list to find it, if we want to link it to a specific sprite for instance.<br>
+ *
+ *  \see VDP_releaseSprites(..)
+ */
+s16 VDP_allocateSprites(u16 num);
+/**
+ *  \brief
+ *      Release specified number of VDP sprites.
+ *
+ *  \param index
+ *      The index of the first VDP sprite to release (0 <= index < MAX_SPRITE)
+ *  \param num
+ *      Number of VDP sprite to release (should be > 0)
+ *
+ *  This method release the specified number of VDP sprite from the specified index using
+ *  the <i>link</i> field information to determine which sprites to release when more than
+ *  1 sprite is released.
+ *
+ *  \see VDP_allocateSprites(..)
+ */
+void VDP_releaseSprites(u16 index, u16 num);
+/**
+ *  \brief
+ *      Return the number of available VDP sprite.
+ *
+ *  \see VDP_allocateSprites(..)
+ *  \see VDP_releaseSprites(..)
+ */
+u16 VDP_getAvailableSprites();
+/**
+ *  \brief
+ *      Compute and return the highest index of currently allocated VDP sprite.<br>
+ *      A value of <i>-1</i> mean no VDP Sprite are allocated.<br>
+ *      This value can be used to define the number of sprite to transfer with VDP_updateSprites(..) method.
+ *
+ *  \see VDP_allocateSprites(..)
+ *  \see VDP_releaseSprites(..)
+ *  \see highestVDPSpriteIndex
+ */
+s16 VDP_refreshHighestAllocatedSpriteIndex();
+
+/**
+ *  \brief
+ *      Clear all sprites.
+ */
+void VDP_clearSprites();
 /**
  *  \brief
  *      Set a sprite (use sprite list cache).
  *
  *  \param index
- *      Index of the sprite to set (should be < MAX_SPRITE).
+ *      Index of the sprite to set (should be < MAX_VDP_SPRITE).
  *  \param x
- *      Sprite position X.
+ *      Sprite position X on screen.
  *  \param y
- *      Sprite position Y.
+ *      Sprite position Y on screen.
  *  \param size
  *      Sprite size (see SPRITE_SIZE() macro).
- *  \param tile_attr
+ *  \param attribut
  *      Sprite tile attributes (see TILE_ATTR_FULL() macro).
  *  \param link
- *      Sprite link (index of next sprite, 0 for end).
+ *      Sprite link (index of next sprite, 0 for end)<br>
+ *      Be careful to not modify link made by VDP_allocateSprite(..), use VDP_setSprite(..) instead in that case.
+ *
+ *  \see VDP_setSprite()
+ *  \see VDP_updateSprites()
  */
-void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link);
+void VDP_setSpriteFull(u16 index, s16 x, s16 y, u8 size, u16 attribut, u8 link);
 /**
  *  \brief
  *      Set a sprite (use sprite list cache).
  *
  *  \param index
- *      Index of the sprite to set (should be < MAX_SPRITE).
- *  \param sprite
- *      Sprite definition.
- *
- * See VDP_setSprite().
- */
-void VDP_setSpriteP(u16 index, const SpriteDef *sprite);
-/**
- *  \brief
- *      Set a sprite (direct send to VDP).
- *
- *  \param index
- *      Index of the sprite to set (should be < MAX_SPRITE).
+ *      Index of the sprite to set (should be < MAX_VDP_SPRITE).
  *  \param x
- *      Sprite position X.
+ *      Sprite position X on screen.
  *  \param y
- *      Sprite position Y.
+ *      Sprite position Y on screen.
  *  \param size
  *      Sprite size (see SPRITE_SIZE() macro).
- *  \param tile_attr
+ *  \param attribut
  *      Sprite tile attributes (see TILE_ATTR_FULL() macro).
- *  \param link
- *      Sprite link (index of next sprite, 0 for end).
  *
- * See VDP_setSprite().
+ *  \see VDP_setSpriteFull()
+ *  \see VDP_updateSprites()
  */
-void VDP_setSpriteDirect(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link);
-/**
- *  \brief
- *      Set a sprite (direct send to VDP).
- *
- *  \param index
- *      Index of the sprite to set (should be < MAX_SPRITE).
- *  \param sprite
- *      Sprite definition.
- *
- * See VDP_setSpriteP().
- */
-void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite);
-
+void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 attribut);
 /**
  *  \brief
  *      Set sprite position (use sprite list cache).
  *
  *  \param index
- *      Index of the sprite to modify position (should be < MAX_SPRITE).
+ *      Index of the sprite to modify position (should be < MAX_VDP_SPRITE).
  *  \param x
  *      Sprite position X.
  *  \param y
  *      Sprite position Y.
  *
- * See VDP_setSprite().
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites()
  */
 void VDP_setSpritePosition(u16 index, s16 x, s16 y);
-
 /**
  *  \brief
- *      Set severals sprites (use sprite list cache).
+ *      Set sprite size (use sprite list cache).
  *
  *  \param index
- *      Index of first sprite to set (should be < MAX_SPRITE).
- *  \param sprites
- *      Sprite definitions.
- *  \param num
- *      Number of sprite to set.
+ *      Index of the sprite to modify size (should be < MAX_VDP_SPRITE).
+ *  \param size
+ *      Sprite size (see SPRITE_SIZE() macro).
  *
- * See VDP_setSpritesDirect().
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites()
  */
-void VDP_setSprites(u16 index, const SpriteDef *sprites, u16 num);
+void VDP_setSpriteSize(u16 index, u8 size);
 /**
  *  \brief
- *      Set severals sprites (direct send to VDP).
+ *      Set sprite attributes (use sprite list cache).
  *
  *  \param index
- *      Index of first sprite to set.
- *  \param sprites
- *      Sprite definitions.
- *  \param num
- *      Number of sprite to set.
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param attribut
+ *      Sprite tile attributes (see TILE_ATTR_FULL() macro).
  *
- * See VDP_setSprites().
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites()
  */
-void VDP_setSpritesDirect(u16 index, const SpriteDef *sprites, u16 num);
+void VDP_setSpriteAttribut(u16 index, u16 attribut);
+/**
+ *  \brief
+ *      Set sprite link (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify link (should be < MAX_VDP_SPRITE).
+ *  \param link
+ *      Sprite link (index of next sprite, 0 for end).
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites()
+ */
+void VDP_setSpriteLink(u16 index, u8 link);
+/**
+ *  \brief
+ *      Link sprites starting at the specified index.<br>
+ *      Links are created in simple ascending order (1 --> 2 --> 3 --> ...)
+ *
+ *  \param index
+ *      Index of the first sprite we want to link (should be < MAX_VDP_SPRITE).
+ *  \param num
+ *      Number of link to create (if you want to link 2 sprites you should use 1 here)
+ *  \return
+ *      The last linked sprite
+ */
+VDPSprite* VDP_linkSprites(u16 index, u16 num);
 
 /**
  *  \brief
  *      Send the cached sprite list to the VDP.
  *
- *  You should call this method when you completed your sprite update task.
+ *  \param num
+ *      Number of sprite to transfer starting at index 0 (max = MAX_SPRITE).<r>
+ *      If you use dynamic VDP Sprite allocation you may use 'highestVDPSpriteIndex + 1' here
+ *  \param queue
+ *      If TRUE the sprite list transfer will be put in DMA queue and sent automatically at VBlank<br>
+ *      otherwise the sprite list is immediately sent to the VDP.
+ *
+ *  \see highestVDPSpriteIndex
+ *  \see VDP_refreshHighestAllocatedSpriteIndex()
  */
-void VDP_updateSprites();
-
+void VDP_updateSprites(u16 num, u16 queue);
 
 
 #endif // _VDP_SPR_H_

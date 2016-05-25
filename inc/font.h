@@ -11,9 +11,8 @@
 #define _FONT_H_
 
 
-#define FONT_LEN    96
-
 // contains definition of the base font
+#include "vdp.h"
 #include "bmp.h"
 #include "vdp_tile.h"
 #include "libres.h"

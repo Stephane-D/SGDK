@@ -4,12 +4,12 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides Z80 access from the YM2612 :<br/>
- * - enable / disable Z80<br/>
- * - request / release Z80 BUS<br/>
- * - upload / download data to / from Z80 memory<br/>
- * - set Z80 external Bank<br/>
- * - Z80 driver handling<br/>
+ * This unit provides Z80 access from the YM2612 :<br>
+ * - enable / disable Z80<br>
+ * - request / release Z80 BUS<br>
+ * - upload / download data to / from Z80 memory<br>
+ * - set Z80 external Bank<br>
+ * - Z80 driver handling<br>
  */
 
 #ifndef _Z80_CTRL_H_
@@ -137,20 +137,20 @@
 #define Z80_DRIVER_NULL                 0
 /**
  *  \brief
- *      Variable rate sample player Z80 driver.<br/>
+ *      Variable rate sample player Z80 driver.<br>
  *      It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
  */
 #define Z80_DRIVER_PCM                  1
 /**
  *  \brief
- *      2 channels PCM sample player Z80 driver.<br/>
+ *      2 channels PCM sample player Z80 driver.<br>
  *      It can mix 2 samples (4 bit PCM) at a fixed 22 Khz rate.
  */
 #define Z80_DRIVER_2ADPCM               2
 /**
  *  \brief
- *      4 channels sample player Z80 driver with envelop control.<br/>
- *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br/>
+ *      4 channels sample player Z80 driver with envelop control.<br>
+ *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br>
  *      and handle volume (16 levels) for each channel.
  */
 #define Z80_DRIVER_4PCM_ENV             4
@@ -166,16 +166,16 @@
 #define Z80_DRIVER_TFM                  6
 /**
  *  \brief
- *      VGM Z80 driver.<br/>
- *      It supports 1 PCM channel at a fixed 8 Khz and allows to play SFX through the named PCM channel.<br/>
+ *      VGM Z80 driver.<br>
+ *      It supports 1 PCM channel at a fixed 8 Khz and allows to play SFX through the named PCM channel.<br>
  *      Written by Sigflup and kubilus1.
  */
 #define Z80_DRIVER_VGM                  7
 /**
  *  \brief
- *      eXtended VGM music player driver.<br/>
- *      This driver takes VGM (or XGM) file as input to play music.<br/>
- *      It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br/>
+ *      eXtended VGM music player driver.<br>
+ *      This driver takes VGM (or XGM) file as input to play music.<br>
+ *      It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br>
  *      The driver is designed to avoid DMA contention when possible (depending CPU load).
  */
 #define Z80_DRIVER_XGM                  8
@@ -299,16 +299,16 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  \brief
  *      Return currently loaded Z80 driver.
  *
- *  Possible returned values are:<br/>
- *  - #Z80_DRIVER_NULL<br/>
- *  - #Z80_DRIVER_PCM<br/>
- *  - #Z80_DRIVER_2ADPCM<br/>
- *  - #Z80_DRIVER_4PCM_ENV<br/>
- *  - #Z80_DRIVER_MVS<br/>
- *  - #Z80_DRIVER_TFM<br/>
- *  - #Z80_DRIVER_VGM<br/>
- *  - #Z80_DRIVER_XGM<br/>
- *  - #Z80_DRIVER_CUSTOM<br/>
+ *  Possible returned values are:<br>
+ *  - #Z80_DRIVER_NULL<br>
+ *  - #Z80_DRIVER_PCM<br>
+ *  - #Z80_DRIVER_2ADPCM<br>
+ *  - #Z80_DRIVER_4PCM_ENV<br>
+ *  - #Z80_DRIVER_MVS<br>
+ *  - #Z80_DRIVER_TFM<br>
+ *  - #Z80_DRIVER_VGM<br>
+ *  - #Z80_DRIVER_XGM<br>
+ *  - #Z80_DRIVER_CUSTOM<br>
  */
 u16  Z80_getLoadedDriver();
 /**
@@ -321,15 +321,15 @@ void Z80_unloadDriver();
  *      Load a Z80 driver.
  *
  *  \param driver
- *      Driver to load, possible values are:<br/>
- *      - #Z80_DRIVER_NULL<br/>
- *      - #Z80_DRIVER_PCM<br/>
- *      - #Z80_DRIVER_2ADPCM<br/>
- *      - #Z80_DRIVER_4PCM_ENV<br/>
- *      - #Z80_DRIVER_MVS<br/>
- *      - #Z80_DRIVER_TFM<br/>
- *      - #Z80_DRIVER_VGM<br/>
- *      - #Z80_DRIVER_XGM<br/>
+ *      Driver to load, possible values are:<br>
+ *      - #Z80_DRIVER_NULL<br>
+ *      - #Z80_DRIVER_PCM<br>
+ *      - #Z80_DRIVER_2ADPCM<br>
+ *      - #Z80_DRIVER_4PCM_ENV<br>
+ *      - #Z80_DRIVER_MVS<br>
+ *      - #Z80_DRIVER_TFM<br>
+ *      - #Z80_DRIVER_VGM<br>
+ *      - #Z80_DRIVER_XGM<br>
  *  \param waitReady
  *      Wait for driver to be ready.
  */

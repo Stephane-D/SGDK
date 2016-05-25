@@ -3,8 +3,9 @@
  *  \brief SGDK Tile cache engine (tile VRAM management)
  *  \author Stephane Dallongeville
  *  \date 11/2013
+ *  \deprecated Use vram.h instead for VRAM management
  *
- * Tile (in TileSet form) cache engine.<br/>
+ * Tile (in TileSet form) cache engine.<br>
  * It offerts methods to manage VRAM usage for tile data.
  */
 
@@ -126,7 +127,7 @@ void TC_clearCache(TileCache *cache);
  *  \param cache
  *      Cache we want to flush.
 
- * This is not exactly the same as the clear operation:<br/>
+ * This is not exactly the same as the clear operation:<br>
  * Allocated tileset remains in cache but they can be erased with newly allocated tileset.
  */
 void TC_flushCache(TileCache *cache);
@@ -144,18 +145,18 @@ void TC_flushCache(TileCache *cache);
  *  \param tileset
  *      The TileSet to put in VRAM.
  *  \param upload
- *      Upload action, possible values are:<br/>
- *      <b>NO_UPLOAD</b> don't upload tileset to VRAM (only return index)<br/>
- *      <b>UPLOAD_VINT</b> upload to VRAM will be done automatically at VInt time (VBlank area)<br/>
- *      <b>UPLOAD_NOW</b> upload to VRAM now<br/>
+ *      Upload action, possible values are:<br>
+ *      <b>NO_UPLOAD</b> don't upload tileset to VRAM (only return index)<br>
+ *      <b>UPLOAD_VINT</b> upload to VRAM will be done automatically at VInt time (VBlank area)<br>
+ *      <b>UPLOAD_NOW</b> upload to VRAM now<br>
  *  \return
- *      the index of the TileSet in VRAM.<br/>
+ *      the index of the TileSet in VRAM.<br>
  *      -1 if there is no enough available VRAM.
  */
 s16 TC_alloc(TileCache *cache, TileSet *tileset, TCUpload upload);
 /**
  *  \brief
- *      Re-allocate a TileSet which is still present in cache after a flush operation.<br/>
+ *      Re-allocate a TileSet which is still present in cache after a flush operation.<br>
  *      If the TileSet is not anymore in the tile cache the method return -1.
  *
  *  \param cache
@@ -163,7 +164,7 @@ s16 TC_alloc(TileCache *cache, TileSet *tileset, TCUpload upload);
  *  \param tileset
  *      The TileSet to re allocate if possible.
  *  \return
- *      the index of the TileSet in VRAM.<br/>
+ *      the index of the TileSet in VRAM.<br>
  *      -1 if the TileSet is not anymore in the cache.
  *  \see TC_flushCache(TileCache *cache)
  */
@@ -192,7 +193,7 @@ void TC_free(TileCache *cache, TileSet *tileset);
  *  \param tileset
  *      The TileSet we want to retrieve VRAM tile index.
  *  \return
- *      the index of the TileSet in VRAM.<br/>
+ *      the index of the TileSet in VRAM.<br>
  *      -1 if not found.
  */
 s16 TC_getTileIndex(TileCache *cache, TileSet *tileset);

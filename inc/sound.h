@@ -15,7 +15,7 @@
  * It can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate.<br>
  * Address and size of samples have to be 256 bytes boundary.<br>
  *<br>
- * <b>Z80_DRIVER_4PCM_ENV</b><br>
+ * <b>Z80_DRIVER_4PCM</b><br>
  * 4 channels 8 bits signed sample driver with volume support.<br>
  * It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.<br>
  * with volume support (16 levels du to memory limitation).<br>
@@ -248,11 +248,11 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
 void SND_stopPlay_2ADPCM(const u16 channel);
 
 
-// Z80_DRIVER_4PCM_ENV
+// Z80_DRIVER_4PCM
 
 /**
  *  \brief
- *      Return play status of specified channel (4 channels PCM ENV player driver).
+ *      Return play status of specified channel (4 channels PCM player driver).
  *
  *  \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
@@ -268,10 +268,10 @@ void SND_stopPlay_2ADPCM(const u16 channel);
  *  \return
  *      Return non zero if specified channel(s) is(are) playing.
  */
-u8   SND_isPlaying_4PCM_ENV(const u16 channel_mask);
+u8   SND_isPlaying_4PCM(const u16 channel_mask);
 /**
  *  \brief
- *      Start playing a sample on specified channel (4 channels PCM ENV player driver).<br>
+ *      Start playing a sample on specified channel (4 channels PCM player driver).<br>
  *      If a sample was currently playing on this channel then it's stopped and the new sample is played instead.
  *
  *  \param sample
@@ -290,10 +290,10 @@ u8   SND_isPlaying_4PCM_ENV(const u16 channel_mask);
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
  */
-void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, const u8 loop);
+void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop);
 /**
  *  \brief
- *      Stop playing the specified channel (4 channels PCM ENV player driver).<br>
+ *      Stop playing the specified channel (4 channels PCM player driver).<br>
  *      No effect if no sample was currently playing on this channel.
  *
  *  \param channel
@@ -303,10 +303,10 @@ void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, 
  *      #SOUND_PCM_CH3    = channel 3<br>
  *      #SOUND_PCM_CH4    = channel 4<br>
  */
-void SND_stopPlay_4PCM_ENV(const u16 channel);
+void SND_stopPlay_4PCM(const u16 channel);
 /**
  *  \brief
- *      Change envelop / volume of specified channel (4 channels PCM ENV player driver).
+ *      Change envelop / volume of specified channel (4 channels PCM player driver).
  *
  *  \param channel
  *      Channel we want to set envelop.<br>
@@ -317,10 +317,10 @@ void SND_stopPlay_4PCM_ENV(const u16 channel);
  *  \param volume
  *      Volume to set : 16 possible level from 0 (minimum) to 15 (maximum).
  */
-void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume);
+void SND_setVolume_4PCM(const u16 channel, const u8 volume);
 /**
  *  \brief
- *      Return envelop / volume level of specified channel (4 channels PCM ENV player driver).
+ *      Return envelop / volume level of specified channel (4 channels PCM player driver).
  *
  *  \param channel
  *      Channel we want to retrieve envelop level.<br>
@@ -332,7 +332,15 @@ void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume);
  *      Envelop of specified channel.<br>
  *      The returned value is comprised between 0 (quiet) to 15 (loud).
  */
-u8   SND_getVolume_4PCM_ENV(const u16 channel);
+u8   SND_getVolume_4PCM(const u16 channel);
+
+
+// just to preserve backward compatibility
+#define SND_isPlaying_4PCM_ENV      SND_isPlaying_4PCM
+#define SND_startPlay_4PCM_ENV      SND_startPlay_4PCM
+#define SND_stopPlay_4PCM_ENV       SND_stopPlay_4PCM
+#define SND_getVolume_4PCM_ENV      SND_getVolume_4PCM
+#define SND_setVolume_4PCM_ENV      SND_setVolume_4PCM
 
 
 // Z80_DRIVER_MVS
@@ -537,13 +545,13 @@ void SND_resumePlay_XGM();
 u8 SND_isPlayingPCM_XGM(const u16 channel_mask);
 /**
  *  \brief
- *      Declare a new PCM sample (maximum = 255) for the XGM music player driver.<br/>
+ *      Declare a new PCM sample (maximum = 255) for the XGM music player driver.<br>
  *      Sample id < 64 are reserved for music while others are used for SFX
  *      so if you want to declare a new SFX PCM sample use an id >= 64
  *
  *  \param id
- *      Sample id:<br/>
- *      value 0 is not allowed<br/>
+ *      Sample id:<br>
+ *      value 0 is not allowed<br>
  *      values from 1 to 63 are used for music
  *      values from 64 to 255 are used for SFX
  *  \param sample
@@ -556,12 +564,12 @@ u8 SND_isPlayingPCM_XGM(const u16 channel_mask);
 void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len);
 /**
  *  \brief
- *      Same as #SND_setPCM_XGM but fast version.<br/>
+ *      Same as #SND_setPCM_XGM but fast version.<br>
  *      This method assume that XGM driver is loaded and that 68000 has access to Z80 bus
  *
  *  \param id
- *      Sample id:<br/>
- *      value 0 is not allowed<br/>
+ *      Sample id:<br>
+ *      value 0 is not allowed<br>
  *      values from 1 to 63 are used for music
  *      values from 64 to 255 are used for SFX
  *  \param sample
@@ -580,7 +588,7 @@ void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len);
  *  \param id
  *      Sample id (set #SND_setPCM_XGM method)
  *  \param priority
- *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br/>
+ *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br>
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
  *  \param channel
  *      Channel where we want to play sample.<br>
@@ -607,9 +615,9 @@ void SND_stopPlayPCM_XGM(const u16 channel);
 /**
  *  \brief
  *      Get the current music tempo (in tick per second).<br>
- *      Default value is 60 or 50 depending the system is NTSC or PAL.<br/>
+ *      Default value is 60 or 50 depending the system is NTSC or PAL.<br>
  *      This method is meaningful only if you use the automatic music sync mode (see SND_setManualSync_XGM() method)
- *      which is the default mode.<br/>
+ *      which is the default mode.<br>
  *      Note that using specific tempo (not 60 or 50) will affect performance of DMA contention and external command parsing
  *      so it's recommended to stand with default one.
  *
@@ -622,7 +630,7 @@ u16 SND_getMusicTempo_XGM();
  *      Set the music tempo (in tick per second).<br>
  *      Default value is 60 or 50 depending the system is NTSC or PAL.
  *      This method is meaningful only if you use the automatic music sync mode (see SND_setManualSync_XGM() method)
- *      which is the default mode.<br/>
+ *      which is the default mode.<br>
  *      Note that using specific tempo (not 60 or 50) can completely distord FM instruments sound and affect
  *      performance of DMA contention and external command parsing so it's recommended to stand with default one.
  *
@@ -685,7 +693,7 @@ void SND_nextXFrame_XGM(u16 num);
  *      SND_set68KBUSProtection_XGM(FALSE);
  *
  *      This way the XGM driver will *try* to avoid using 68K BUS during DMA to
- *      avoid execution interruption and so preserve PCM playback quality.<br/>
+ *      avoid execution interruption and so preserve PCM playback quality.<br>
  *      Note that the success of the operation is not 100% garantee and can fails in some conditions
  *      (heavy Z80 load, lot of PSG data in XGM music), you can also improve the PCM playblack by using the #SND_setForceDelayDMA_XGM() method.
  *
@@ -701,9 +709,9 @@ void SND_set68KBUSProtection_XGM(u8 value);
 u16 SND_getForceDelayDMA_XGM();
 /**
  *  \brief
- *      This method can be used to improve the PCM playback during XGM music play and while DMA queue is used.<br/>
+ *      This method can be used to improve the PCM playback during XGM music play and while DMA queue is used.<br>
  *      Even using the BUS protection with #SND_set68KBUSProtection_XGM you may experience some altered PCM when the
- *      XGM music contains PSG data, this is because the Z80 uses the main BUS to access PSG.<br/>
+ *      XGM music contains PSG data, this is because the Z80 uses the main BUS to access PSG.<br>
  *      By delaying a bit the DMA execution from the DMA queue we let the Z80 to execute all PSG commands and avoid any stall.
  *      The delay is about 3 scanlines so using the force delay DMA will reduce the DMA bandwidth for about 3 vblank lines.
  *
@@ -718,8 +726,8 @@ void SND_setForceDelayDMA_XGM(u16 value);
  *      The low 16 bits returns the estimated Z80 CPU load where the high 16 bits returns the part
  *      spent waiting in the DMA contention (see #SND_set68KBUSProtection_XGM method).<br>
  *      The method computes CPU load mean over 32 frames and so it's important to call it at
- *      each frame (on VInt for instance) to get meaningful value.<br/>
- *      Note that it returns CPu load only for the XGM music parsing part as PCM channel mixing is always ON.<br/>
+ *      each frame (on VInt for instance) to get meaningful value.<br>
+ *      Note that it returns CPu load only for the XGM music parsing part as PCM channel mixing is always ON.<br>
  *      Idle usage is 40% on NTSC and 30% on PAL, 100% usage usually mean overrun and may result in music slowdown
  *      and incorrect PCM operations.
  */

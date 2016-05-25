@@ -15,7 +15,11 @@
  *  \brief
  *      Set it to 1 to enable KDebug logging (Gens KMod) for some errors (as memory allocation).
  */
-#define LIB_DEBUG           0
+#if (DEBUG == 1)
+  #define LIB_DEBUG         1
+#else
+  #define LIB_DEBUG         0
+#endif
 
 /**
  *  \brief

@@ -4,13 +4,13 @@
  *  \author Chilly Willy & Stephane Dallongeville
  *  \date 05/2012
  *
- * This unit provides methods to read controller state.<br/>
- *<br/>
- * Here is the list of supported controller device:<br/>
- * - 3 buttons joypad<br/>
- * - 6 buttons joypad<br/>
- * - Sega Mouse<br/>
- * - team player adapter<br/>
+ * This unit provides methods to read controller state.<br>
+ *<br>
+ * Here is the list of supported controller device:<br>
+ * - 3 buttons joypad<br>
+ * - 6 buttons joypad<br>
+ * - Sega Mouse<br>
+ * - team player adapter<br>
  */
 
 #ifndef _JOY_H_
@@ -357,11 +357,11 @@ u16 JOY_waitPress(u16 joy, u16 btn);
  *      <b>BUTTON_MMB</b>   = Alias for B button for mouse<br>
  *      <b>BUTTON_RMC</b>   = Alias for C button for mouse<br>
  *  \param ms
- *      maximum time in ms to wait for the button press action (0 means wait infinitely).<br/>
+ *      maximum time in ms to wait for the button press action (0 means wait infinitely).<br>
  *  \return
  *      The button actually pressed or FALSE if none of specified button has be pressed in the given time.
  *<br>
- *      Ex: if we want to wait a maximum of 5 secondes for any of direction buttons<br/>
+ *      Ex: if we want to wait a maximum of 5 secondes for any of direction buttons<br>
  *      or button A to be pressed on joypad 1:<br>
  *      pressed = JOY_waitJoypad(JOY_1, BUTTON_DIR | BUTTON_A, 5000);<br>
  */
