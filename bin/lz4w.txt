@@ -1,0 +1,59 @@
+LZ4W packer 1.0 (april 2016)
+Stephane Dallongeville
+https://stephane-d.github.io/SGDK/
+
+LZ4W is a custom packer based on LZ4 compression scheme: https://cyan4973.github.io/lz4/
+The 'W' suffix stands for 'Word' as LZ4W only uses word memory accesses.
+The main difference is that LZ4W is designed to take advantage of 16 bits CPU and achieve better decompression performance on these CPU compared to classic LZ4.
+The compression ratio offered by LZ4W is not as good to LZ4 but close for small amount of data (<= 4 KB), it becomes worst for larger size but still not too bad.
+Keep in mind it has be prelemenary designed for Megadrive hardware which has a limited 64KB of RAM anyway ;)
+
+The decompression performance for LZ4 and LZ4W running a 7.67 Mhz 68000 (both using optimized assembly code):
+LZ4    min=270KB/s   max=390KB/s
+LZ4W   min=600KB/s   max=900KB/s
+
+As you can see the difference is very important, LZ4W can unpack more than twice as fast than classic LZ4 !
+
+And the compression ratio comparison now (i used LZ4HC which provide the best compression ratio for LZ4):
+Tiles data                  original=12672    LZ4HC=6622    LZ4W=6746
+single BMP sprite           original=4798     LZ4HC=2202    LZ4W=2168
+text file                   original=40992    LZ4HC=16088   LZ4W=27458
+highly compressible tiles   original=346656   LZ4HC=24613   LZ4W=48202
+map data                    original=4576     LZ4HC=1367    LZ4W=1382
+SNES tiles data set 1       original=1536     LZ4HC=1061    LZ4W=1048
+SNES tiles data set 2       original=9216     LZ4HC=4577    LZ4W=5972
+
+As you can see LZ4W performs not too bad compared to LZ4 for small packet of data (it can do even better sometime)
+but it becomes worst as the data packet become larger.
+
+Still i think for anyone looking for very fast unpacker LZ4W is the best solution around for 68000 CPU based systems.
+68000 unpacking code can be found in SGDK library (https://stephane-d.github.io/SGDK/)
+LZ4W compressor is provided in JAR format (java code) in SGDK package so it requires a JVM (Java Virtual Machine) to work
+and can be launched by using the following command: java -jar lz4w.jar
+
+LZ4W format description
+-----------------------
+0000-0003: size of unpacked data in bytes (Big Endian format)
+0004-xxxx: LZ4W compressed blocks
+
+Each block consists of a 16 bit block header optionally followed by a literal data block.
+At this point you need to know the principe of the LZ77 compression format on which LZ4 (and LZ4W) are based.
+
+block header format (16 bit)
+----------------------------
+LLLL MMMM OOOO OOOO
+
+LLLL = literal size (in word), if > 0 then a literal data block follow the block header
+MMMM = match size - 1 (in word) i.e: if MMMM = 1 then we have a match size of 2 words
+OOOOOOOO = offset match + 1 (in word) i.e: if OOOOOOOO = 0 then we have a match offset of 1 word
+
+* if (LLLL == 0) && (MMMM == 0) --> end (see ending block description)
+* if (LLLL == 0) --> no literal data
+* if (MMMM == 0) --> no match data
+
+ending block
+------------
+Ending block consists of a last word data:
+Dxxx xxxx YYYY YYYY
+
+if (D != 0) YYYY YYYY = last byte of data
