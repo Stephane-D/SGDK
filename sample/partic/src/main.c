@@ -38,7 +38,7 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
-    BMP_init(1, 0, 0);
+    BMP_init(TRUE, PLAN_A, PAL0, FALSE);
 
     paused = 0;
     col = 0xFF;
