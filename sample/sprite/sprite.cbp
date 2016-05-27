@@ -49,12 +49,26 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="res/bga.png" />
-		<Unit filename="res/bgb.png" />
 		<Unit filename="res/gfx.res" />
-		<Unit filename="res/music.res" />
-		<Unit filename="res/sonic.png" />
+		<Unit filename="res/gfx/bga.png" />
+		<Unit filename="res/gfx/bgb.png" />
+		<Unit filename="res/sfx/S1_die.wav" />
+		<Unit filename="res/sfx/S1_explode1.wav" />
+		<Unit filename="res/sfx/S1_explode2.wav" />
+		<Unit filename="res/sfx/S1_explode3.wav" />
+		<Unit filename="res/sfx/S1_jump.wav" />
+		<Unit filename="res/sfx/S1_jumper.wav" />
+		<Unit filename="res/sfx/S1_ring1.wav" />
+		<Unit filename="res/sfx/S1_ring2.wav" />
+		<Unit filename="res/sfx/S1_ringlost.wav" />
+		<Unit filename="res/sfx/S1_roll.wav" />
+		<Unit filename="res/sfx/S1_spinning.wav" />
+		<Unit filename="res/sfx/S1_stop.wav" />
 		<Unit filename="res/sonic1.vgm" />
+		<Unit filename="res/sound.res" />
+		<Unit filename="res/sprite.res" />
+		<Unit filename="res/sprite/sonic.png" />
+		<Unit filename="res/sprite/sprites.png" />
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -65,10 +79,10 @@
 				<remote_debugging>
 					<options conn_type="-1" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
-				<remote_debugging target="release">
+				<remote_debugging target="debug">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
-				<remote_debugging target="debug">
+				<remote_debugging target="release">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
 			</debugger>

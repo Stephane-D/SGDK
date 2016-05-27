@@ -51,8 +51,6 @@
 		</Build>
 		<Unit filename="inc/main.h" />
 		<Unit filename="res/andor.png" />
-		<Unit filename="res/bga.png" />
-		<Unit filename="res/bgb.png" />
 		<Unit filename="res/cody.png" />
 		<Unit filename="res/gfx.res" />
 		<Unit filename="res/guy.png" />
@@ -60,8 +58,6 @@
 		<Unit filename="res/md_jap_logo_big.png" />
 		<Unit filename="res/md_jap_logo_med.png" />
 		<Unit filename="res/md_jap_logo_small.png" />
-		<Unit filename="res/music.res" />
-		<Unit filename="res/sonic.png" />
 		<Unit filename="res/sonic1.vgm" />
 		<Unit filename="res/spr_res.res" />
 		<Unit filename="src/bg_test.c">
@@ -90,10 +86,10 @@
 				<remote_debugging>
 					<options conn_type="-1" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
-				<remote_debugging target="release">
+				<remote_debugging target="debug">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
-				<remote_debugging target="debug">
+				<remote_debugging target="release">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
 			</debugger>

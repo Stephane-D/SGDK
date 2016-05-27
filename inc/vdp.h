@@ -808,7 +808,7 @@ void VDP_setWindowVPos(u16 down, u16 pos);
 /**
  *  \brief
  *      Wait for DMA operation to complete.
- *  \deprecated Use #DMA_wait_completion() instead
+ *  \deprecated Use #DMA_waitCompletion() instead
  */
 void VDP_waitDMACompletion();
 /**

@@ -267,7 +267,7 @@ VDPSprite* VDP_linkSprites(u16 index, u16 num);
  *      Send the cached sprite list to the VDP.
  *
  *  \param num
- *      Number of sprite to transfer starting at index 0 (max = MAX_SPRITE).<r>
+ *      Number of sprite to transfer starting at index 0 (max = MAX_SPRITE).<br>
  *      If you use dynamic VDP Sprite allocation you may use 'highestVDPSpriteIndex + 1' here
  *  \param queue
  *      If TRUE the sprite list transfer will be put in DMA queue and sent automatically at VBlank<br>

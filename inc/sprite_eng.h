@@ -208,7 +208,7 @@ typedef struct
 /**
  *  \brief
  *      Sprite structure used by the Sprite Engine to store state for a sprite.<br>
- *      WARNING: always use the #SPR_addSprite(..) or #SPR_addSprites(..) methods to allocate Sprite object !<br>
+ *      WARNING: always use the #SPR_addSprite(..) method to allocate Sprite object.<br>
  *
  *  \param status
  *      Internal state and automatic allocation information (internal)
@@ -332,7 +332,7 @@ void SPR_reset();
  *  \param flags
  *      specific settings for this sprite:<br>
  *      #SPR_FLAG_AUTO_VISIBILITY = Enable automatic sprite visibility calculation (you can also use SPR_setVisibility(..) method).<br>
- *      #SPR_FLAG_FAST_VISIBILITY = Enable fast computation for the automatic visibility calculation (disabled by default)<br>
+ *      #SPR_FLAG_FAST_AUTO_VISIBILITY = Enable fast computation for the automatic visibility calculation (disabled by default)<br>
  *          If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
  *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
  *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
@@ -377,86 +377,6 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
  *  \see SPR_releaseSprite(..)
  */
 Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
-///**
-// *  \brief
-// *      Adds the specified number of sprite and returns them.
-// *
-// *  \param dest
-// *      The sprite pointers array receiving allocated sprites (the array size should be at least 'num')
-// *  \param num
-// *      Number of sprite to add.
-// *  \param spriteDef
-// *      the SpriteDefinition data to assign to these sprites.
-// *  \param x
-// *      default X position.
-// *  \param y
-// *      default Y position.
-// *  \param baseAttribut
-// *      base sprite attribut for these sprites (see TILE_ATTR() macro).<br>
-// *      This parameter is used in conjunction with 'vramIndexInc' parameter.
-// *  \param baseSpriteIndex
-// *      base index of the first sprite in the VDP sprite table used to display these sprites (should be > 0 and < 128).<br>
-// *      This parameter is used in conjunction with 'spriteIndexInc' parameter.<br>
-// *      IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <i>flags</i> parameter).
-// *  \param vramIndexInc
-// *      vram index increment step between each sprite allocation, you can see it as the required number of tile per Sprite object.<br>
-// *      IMPORTANT: this value is used only if you use manual VRAM allocation (see the <i>flags</i> parameter).
-// *  \param spriteIndexInc
-// *      sprite index increment step between each sprite allocation, you can see it as the required number of VDP sprite per Sprite object.<br>
-// *      IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <i>flags</i> parameter).
-// *  \param flags
-// *      specific settings for these sprites:<br>
-// *      #SPR_FLAG_AUTO_VISIBILITY = Enable automatic sprite visibility calculation (you can also use SPR_setVisibility(..) method).<br>
-// *      #SPR_FLAG_FAST_VISIBILITY = Enable fast computation for the automatic visibility calculation (disabled by default)<br>
-// *          If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
-// *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
-// *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
-// *      #SPR_FLAG_AUTO_VRAM_ALLOC = Enable automatic VRAM allocation (enabled by default)<br>
-// *          If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <i>baseAttribut</i> and <i>vramIndexInc</i> parameters or by using the #SPR_setVRAMTileIndex(..) method<br>
-// *      #SPR_FLAG_AUTO_SPRITE_ALLOC = Enable automatic hardware/VDP sprite allocation (enabled by default)<br>
-// *          If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <i>baseSpriteIndex</i> and <i>spriteIndexInc</i> parameters or by using the #SPR_setSpriteTableIndex(..) method<br>
-// *      #SPR_FLAG_AUTO_TILE_UPLOAD  = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
-// *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM.<br>
-// *      It's recommended to use the following default settings:<br>
-// *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
-// *  \return pointer on dest or <i>NULL</i> if the operation failed because there is enough sprites free (some logs can be generated in the KMod console in this case)
-// *
-// *      By default sprites use the provided flags setting for automatic resources allocation and sprite visibility computation.<br>
-// *      If auto visibility is not enabled then sprites are considered as not visible by default (see SPR_setVisibility(..) method).<br>
-// *      You can release sprites resources by using SPR_releaseSprites(..) or SPR_reset(..).
-// *
-// *  \see SPR_addSprites(..)
-// *  \see SPR_releaseSprites(..)
-// */
-//Sprite** SPR_addSpritesEx(Sprite** dest, u16 num, const SpriteDefinition *spriteDef, s16 x, s16 y, u16 baseAttribut, u16 baseSpriteIndex, u16 vramIndexInc, u16 spriteIndexInc, u16 flags);
-///**
-// *  \brief
-// *      Adds the specified number of sprite and returns them.
-// *
-// *  \param dest
-// *      The sprite pointers array receiving allocated sprites (the array size should be at least 'num')
-// *  \param num
-// *      Number of sprite to add.
-// *  \param spriteDef
-// *      the SpriteDefinition data to assign to these sprites.
-// *  \param x
-// *      default X position.
-// *  \param y
-// *      default Y position.
-// *  \param attribut
-// *      base sprite attribut for all sprites (see TILE_ATTR() macro).
-// *  \return pointer on dest or <i>NULL</i> if the operation failed because there is enough sprites free (some logs can be generated in the KMod console in this case)
-// *
-// *      By default sprites use automatic resources allocation (VRAM and hardware sprite) and visibility is automatically
-// *      computed depending sprites size information (from SpriteDefinition structure) and sprite position.<br>
-// *      You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setSpriteTableIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br>
-// *      You can release sprites resources by using SPR_releaseSprites(..) or SPR_reset(..).
-// *
-// *  \see SPR_addSpritesEx(..)
-// *  \see SPR_releaseSprites(..)
-// */
-//Sprite** SPR_addSprites(Sprite** dest, u16 num, const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
-
 /**
  *  \brief
  *      Release the specified sprite (no more visible and release its resources).
@@ -469,21 +389,6 @@ Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attri
  *  \see SPR_releasesSprite(..)
  */
 void SPR_releaseSprite(Sprite* sprite);
-///**
-// *  \brief
-// *      Release the specified array of sprites.
-// *
-// *  \param sprites
-// *      The sprite pointers array containing sprites to release.
-// *  \param num
-// *      Number of sprite to release.
-// *
-// *      Same as SPR_removeSprite(..) but for several sprites.
-// *
-// *  \see SPR_releaseSprite(..)
-// */
-//void SPR_releaseSprites(Sprite** sprites, u16 num);
-
 /**
  *  \brief
  *      Returns the number of active sprite (number of sprite added with SPR_addSprite(..) method).
@@ -651,10 +556,10 @@ void SPR_setAutoTileUpload(Sprite *sprite, u16 value);
  *      Sprite to set the <i>visibility</i> information
  *  \param value
  *      Visibility value to set.<br>
- *      #SpriteVisibility.VISIBLE       = sprite is visible<br>
- *      #SpriteVisibility.HIDDEN        = sprite is not visible<br>
- *      #SpriteVisibility.AUTO_FAST     = visibility is automatically computed from the sprite position (global visibility)<br>
- *      #SpriteVisibility.AUTO_SLOW     = visibility is automatically computed from the sprite position (per hardware sprite visibility)<br>
+ *      SpriteVisibility.VISIBLE       = sprite is visible<br>
+ *      SpriteVisibility.HIDDEN        = sprite is not visible<br>
+ *      SpriteVisibility.AUTO_FAST     = visibility is automatically computed from the sprite position (global visibility)<br>
+ *      SpriteVisibility.AUTO_SLOW     = visibility is automatically computed from the sprite position (per hardware sprite visibility)<br>
  */
 void SPR_setVisibility(Sprite *sprite, SpriteVisibility value);
 /**
