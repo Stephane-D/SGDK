@@ -52,6 +52,8 @@ static const param_def *getParam(const driver_def *d, const cmd_def *c);
 static const param_def *getCurrentParam();
 static void setCurrentParam(const param_def *param);
 
+static void getZ80Debug(u8 *dst);
+
 
 static const driver_def drivers[NUM_DRIVER] =
 {
@@ -131,8 +133,6 @@ static const cmd_def *cmd;
 // params value
 static const param_def *params_value[NUM_DRIVER][MAX_CMD];
 static u16 dmaMethod;
-static u16 cpuload;
-
 
 int main()
 {
@@ -150,7 +150,6 @@ int main()
     // point to first driver
     driver = &drivers[0];
     cmd = NULL;
-    cpuload = 80;
     dmaMethod = 0;
 
     for(i = 0, cur_driver = drivers; i < NUM_DRIVER; i++, cur_driver++)
@@ -161,9 +160,10 @@ int main()
     VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
     VDP_setTextPalette(PAL0);
     VDP_drawText("Current Z80 driver", 10, 1);
-    VDP_drawText("DMA Method:", 1, 23);
+    VDP_drawText("DMA Method:", 1, 26);
 
     refreshDriverInfos();
+
 
     while(1)
     {
@@ -194,7 +194,7 @@ static void refreshDriverParams()
     u16 posY;
     u16 i, j;
 
-    VDP_clearTileMapRect(APLAN, 0, 3, 40, 8);
+    VDP_clearTileMapRect(PLAN_A, 0, 3, 40, 8);
 
     str = driver->name;
     len = strlen(str);
@@ -240,7 +240,7 @@ static void refreshDriverParams()
 
 static void refreshDriverCmd()
 {
-    VDP_clearTileMapRect(APLAN, 0, 12, 40, 8);
+    VDP_clearTileMapRect(PLAN_A, 0, 12, 40, 8);
     setTextPalette(1);
 
     switch(driver->id)
@@ -630,14 +630,18 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 
             if (changed & state & BUTTON_A)
             {
-                SND_startPlay_XGM(sor2_xgm);
+                if (SND_isPlaying_XGM()) SND_stopPlay_XGM();
+                else SND_startPlay_XGM(sor2_xgm);
             }
             if (changed & state & BUTTON_B)
             {
-                SND_startPlay_XGM(bapcm_xgm);
+                if (SND_isPlaying_XGM()) SND_stopPlay_XGM();
+                else SND_startPlay_XGM(bapcm_xgm);
             }
             if (changed & state & BUTTON_C)
             {
+                if (SND_isPlaying_XGM()) SND_stopPlay_XGM();
+                else
 //                SND_startPlay_XGM(toystory);
                 SND_startPlay_XGM(midnight);
             }
@@ -645,7 +649,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             if (changed & state & BUTTON_START)
             {
                 if (SND_isPlaying_XGM())
-                    SND_stopPlay_XGM();
+                    SND_pausePlay_XGM();
                 else
                     SND_resumePlay_XGM();
             }
@@ -670,7 +674,7 @@ static void vintEvent()
     u16 i;
     u16 in, out;
     char strNum[8];
-    char str[32];
+    char str[40];
 
     // set BUS protection for XGM driver
     if (driver->id == Z80_DRIVER_XGM)
@@ -708,17 +712,65 @@ static void vintEvent()
 
     if (driver->id == Z80_DRIVER_XGM)
     {
+        u16 load;
+
         // remove BUS protection for XGM driver
         SND_set68KBUSProtection_XGM(FALSE);
 
-        // calculate mean on 8 frames
-//        cpuload = ((7 * cpuload) + SND_getCPULoad_XGM()) / 8;
-        cpuload = SND_getCPULoad_XGM();
+        // get Z80 cpu estimated load
+        load = SND_getCPULoad_XGM();
 
-        uintToStr(cpuload, str, 3);
+        uintToStr(load, str, 3);
         strcat(str, " %");
         VDP_clearText(16, 21, 10);
         VDP_drawText(str, 16, 21);
+
+//        {
+//            u8 debugValues[10];
+//
+//            getZ80Debug(debugValues);
+//
+//            strcpy(str, "4 PCM mixing: ");
+//
+//            uintToStr(debugValues[0], strNum, 3);
+//            strcat(str, strNum);
+//            strcat(str, " ");
+//            uintToStr(debugValues[4], strNum, 3);
+//            strcat(str, strNum);
+//
+//            VDP_drawText(str, 1, 22);
+//
+//            strcpy(str, "XGM prep & parse: ");
+//
+//            uintToStr(debugValues[5], strNum, 3);
+//            strcat(str, strNum);
+//            strcat(str, " ");
+//            uintToStr(debugValues[6], strNum, 3);
+//            strcat(str, strNum);
+//            strcat(str, " ");
+//            uintToStr(debugValues[7], strNum, 3);
+//            strcat(str, strNum);
+//
+//            VDP_drawText(str, 1, 23);
+//
+//            strcpy(str, "Ext com & sync: ");
+//
+//            strcat(str, strNum);
+//            strcat(str, " ");
+//            uintToStr(debugValues[8], strNum, 3);
+//            strcat(str, strNum);
+//            strcat(str, " ");
+//            uintToStr(debugValues[9], strNum, 3);
+//            strcat(str, strNum);
+//
+//            VDP_drawText(str, 1, 24);
+//        }
+    }
+    else
+    {
+        VDP_clearTextLine(22);
+        VDP_clearTextLine(23);
+        VDP_clearTextLine(24);
     }
 
     if ((in >= 224) && (in <= 230))
@@ -726,25 +778,24 @@ static void vintEvent()
         switch(dmaMethod)
         {
             case 0:
-                VDP_drawText("NONE    ", 13, 23);
+                VDP_drawText("NONE    ", 13, 26);
                 break;
 
             case 1:
-                VDP_drawText("1 x 6KB ", 13, 23);
+                VDP_drawText("1 x 6KB ", 13, 26);
                 break;
 
             case 2:
-                VDP_drawText("4 x 1KB ", 13, 23);
+                VDP_drawText("4 x 1KB ", 13, 26);
                 break;
 
             case 3:
-                VDP_drawText("8 x 256B", 13, 23);
+                VDP_drawText("8 x 256B", 13, 26);
                 break;
         }
     }
     else
-        VDP_drawText("NOT DONE", 13, 23);
-
+        VDP_drawText("NOT DONE", 13, 26);
 
     if (dmaMethod)
     {
@@ -755,8 +806,35 @@ static void vintEvent()
         uintToStr(out, strNum, 3);
         strcat(str, strNum);
 
-        VDP_drawText(str, 1, 24);
+        VDP_drawText(str, 1, 27);
     }
     else
-        VDP_clearTextLine(24);
+        VDP_clearTextLine(27);
+}
+
+
+static void getZ80Debug(u8 *dst)
+{
+    vu16 *pw_bus;
+    vu8 *pb;
+    u8 *d;
+    u16 i;
+
+    // request bus (need to end reset)
+    pw_bus = (u16 *) Z80_HALT_PORT;
+
+    // take bus
+    *pw_bus = 0x0100;
+    // wait for bus taken
+    while (*pw_bus & 0x0100);
+
+    // point to Z80 PROTECT parameter
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x80);
+    d = dst;
+
+    i = 10;
+    while(i--) *d++ = *pb++;
+
+    // release bus
+    *pw_bus = 0x0000;
 }
