@@ -128,27 +128,26 @@
             endm                    ;                           ' 105
 
 
-; writeYM
-; -------
-; HL   -> YM port where to write
+; writeYMFast
+; -----------
+; HL  <-> YM port where to write
 ; D    -> address
 ; E    -> value
 ;
-; write to YM2612
+; write to YM2612 (no busy check)
+; = 26 cycles
 
-            macro   writeYM
+            macro   writeYMFast
 
-.wait0
-            BIT     7, (HL)         ; test YM not busy
-            JR      NZ, .wait0
-            LD      (HL), D         ; write address
-.wait1
-            BIT     7, (HL)         ; test YM not busy
-            JR      NZ, .wait1
-            INC     L
-            LD      (HL), E         ; write value
+            LD      (HL), D         ; write address             ' 7     |
+            NOP                     ;                           ' 4     | 15
+            NOP                     ; wait a bit for YM         ' 4     |
+
+            INC     L               ; next port                 ' 4     |
+            LD      (HL), E         ; write value               ' 7     | 11
 
             endm
+
 
 
 ; getPlayCommand

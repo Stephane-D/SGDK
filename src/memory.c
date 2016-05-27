@@ -5,6 +5,7 @@
 
 #include "tab_cnv.h"
 #include "sys.h"
+#include "string.h"
 #include "kdebug.h"
 
 
@@ -146,7 +147,6 @@ extern u32 _bend;
 
  // forward
 static u16* pack(u16 nsize);
-//static void dump();
 
 static u16* free;
 static u16* heap;
@@ -200,6 +200,28 @@ u16 MEM_getFree()
     return res;
 }
 
+u16 MEM_getAllocated()
+{
+    u16* b;
+    u16 bsize;
+    u16 res;
+
+    b = heap;
+    res = 0;
+
+    while ((bsize = *b))
+    {
+        // memory block used --> add allocated size to result
+        if (bsize & USED)
+            res += bsize & ~USED;
+
+        // pass to next block
+        b += bsize >> 1;
+    }
+
+    return res;
+}
+
 void MEM_free(void *ptr)
 {
     // valid block --> mark block as no more used
@@ -226,7 +248,10 @@ void* MEM_alloc(u16 size)
         // no enough memory
         if (p == NULL)
         {
-            if (LIB_DEBUG) KDebug_Alert("MEM_alloc failed: no enough memory !");
+#if (LIB_DEBUG != 0)
+            KDebug_Alert("MEM_alloc failed: no enough memory !");
+#endif
+
             return NULL;
         }
 
@@ -262,6 +287,69 @@ void* MEM_alloc(u16 size)
     return p;
 }
 
+void MEM_dump()
+{
+    char str[40];
+    char strNum[16];
+    u16 *b;
+    u16 psize;
+    u16 memused;
+    u16 memfree;
+
+    KDebug_Alert("Memory dump:");
+    KDebug_Alert(" Used blocks:");
+
+    b = heap;
+    memused = 0;
+    while ((psize = *b))
+    {
+        if (psize & USED)
+        {
+            strcpy(str, "    ");
+            intToHex((u32)b, strNum, 8);
+            strcat(str, strNum);
+            strcat(str, ": ");
+
+            intToStr(psize & 0xFFFE, strNum, 0);
+            strcat(str, strNum);
+            KDebug_Alert(str);
+
+            memused += psize & 0xFFFE;
+        }
+
+        b += psize >> 1;
+        KDebug_Alert("");
+    }
+
+    KDebug_Alert(" Free blocks:");
+
+    b = heap;
+    memfree = 0;
+    while ((psize = *b))
+    {
+        if (!(psize & USED))
+        {
+            strcpy(str, "    ");
+            intToHex((u32)b, strNum, 8);
+            strcat(str, strNum);
+            strcat(str, ": ");
+
+            intToStr(psize & 0xFFFE, strNum, 0);
+            strcat(str, strNum);
+            KDebug_Alert(str);
+
+            memfree += psize & 0xFFFE;
+        }
+
+        b += psize >> 1;
+        KDebug_Alert("");
+    }
+
+    KDebug_Alert("Total used:");
+    KDebug_AlertNumber(memused);
+    KDebug_Alert("Total free:");
+    KDebug_AlertNumber(memfree);
+}
 
 /*
  * Pack free block and return first matching free block.
@@ -286,9 +374,10 @@ static u16* pack(u16 nsize)
 
                 if (bsize >= nsize)
                     return best;
+
+                bsize = 0;
             }
 
-            bsize = 0;
             b += psize >> 1;
             best = b;
         }
@@ -309,48 +398,6 @@ static u16* pack(u16 nsize)
 
     return NULL;
 }
-
-//static void dump()
-//{
-//    u16 *b;
-//    u16 psize;
-//    u16 memused;
-//    u16 memfree;
-//
-//    KDebug_Alert("Memory dump:");
-//
-//    b = heap;
-//    memused = 0;
-//    memfree = 0;
-//
-//    while ((psize = *b))
-//    {
-//        if (psize & USED)
-//        {
-//            KDebug_Alert("Used bloc at:");
-//            KDebug_AlertNumber(b);
-//            KDebug_Alert("  size:");
-//            KDebug_AlertNumber(psize & 0xFFFE);
-//            memused += psize & 0xFFFE;
-//        }
-//        else
-//        {
-//            KDebug_Alert("Free bloc at:");
-//            KDebug_AlertNumber(b);
-//            KDebug_Alert("  size:");
-//            KDebug_AlertNumber(psize & 0xFFFE);
-//            memfree += psize & 0xFFFE;
-//        }
-//
-//        b += psize >> 1;
-//        KDebug_Alert("");
-//    }
-//
-//    KDebug_Alert("Total used:");
-//    KDebug_AlertNumber(memused);
-//    KDebug_Alert("Total free:");
-//    KDebug_AlertNumber(memfree);
-//}
 
 
 void memcpyU16(u16 *to, const u16 *from, u16 len)
@@ -392,4 +439,3 @@ void fastMemcpyU32(u32 *to, const u32 *from, u16 len)
 {
     memcpy(to, from, len * 4);
 }
-

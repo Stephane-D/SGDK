@@ -8,33 +8,77 @@
 #include "tools.h"
 
 
+//#define DMA_DEBUG
+
+#define DMA_DEFAULT_QUEUE_SIZE      64
+
+#define DMA_AUTOFLUSH               0x1
+#define DMA_OVERCAPACITY_IGNORE     0x2
+
+
 // we don't want to share it
 extern vu32 VIntProcess;
 
-// DMA queue (consumes 512 bytes of memory)
-DMAOpInfo dmaQueues[DMA_QUEUE_LENGTH];
+// DMA queue
+DMAOpInfo *dmaQueues = NULL;
 
-// current queue index (0 = empty; DMA_QUEUE_LENGTH = full)
-static u16 queueIndex = 0;
-static u16 queueIndexLimit = 0;
-static u32 queueTransferSize = 0;
-static u32 queueTransferSizeLimit = 0;
-static s16 maxTransferPerFrame = -1;
-static u16 autoFlush = TRUE;
+// DMA queue settings
+static u16 queueSize;
+static s16 maxTransferPerFrame;
+static u16 flags;
 
+// current queue index (0 = empty / queueSize = full)
+static u16 queueIndex;
+static u16 queueIndexLimit;
+static u32 queueTransferSize;
+static u32 queueTransferSizeLimit;
+
+
+void DMA_init(u16 size, u16 capacity)
+{
+    if (size) queueSize = size;
+    else queueSize = DMA_DEFAULT_QUEUE_SIZE;
+
+    maxTransferPerFrame = capacity;
+
+    // auto flush is enabled by default
+    flags = DMA_AUTOFLUSH;
+
+    // already allocated ?
+    if (dmaQueues) MEM_free(dmaQueues);
+    // allocate DMA queue
+    dmaQueues = MEM_alloc(queueSize * sizeof(DMAOpInfo));
+
+    // clear queue
+    DMA_clearQueue();
+}
 
 u16 DMA_getAutoFlush()
 {
-    return autoFlush;
+    return (flags & DMA_AUTOFLUSH)?TRUE:FALSE;
 }
 
 void DMA_setAutoFlush(u16 value)
 {
-    autoFlush = value;
+    if (value)
+    {
+        flags |= DMA_AUTOFLUSH;
+        // auto flush enabled and transfer size > 0 --> set process on VBlank
+        if (queueTransferSize > 0)
+             VIntProcess |= PROCESS_DMA_TASK;
+    }
+    else flags &= ~DMA_AUTOFLUSH;
+}
 
-    // auto flush enabled and transfer size > 0 --> set process on VBlank
-    if (value && (queueTransferSize > 0))
-         VIntProcess |= PROCESS_DMA_TASK;
+u16 DMA_getIgnoreOverCapacity()
+{
+    return (flags & DMA_OVERCAPACITY_IGNORE)?TRUE:FALSE;
+}
+
+void DMA_setIgnoreOverCapacity(u16 value)
+{
+    if (value) flags |= DMA_OVERCAPACITY_IGNORE;
+    else flags &= ~DMA_OVERCAPACITY_IGNORE;
 }
 
 s16 DMA_getMaxTransferSize()
@@ -67,6 +111,10 @@ void DMA_flushQueue()
     info = (u32*) dmaQueues;
     pl = (u32*) GFX_CTRL_PORT;
 
+#ifdef DMA_DEBUG
+    KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
+#endif
+
     while(i--)
     {
         // set DMA parameters and trigger it
@@ -79,12 +127,37 @@ void DMA_flushQueue()
     // transfer size limit ?
     if (queueIndexLimit)
     {
-        queueIndex -= queueIndexLimit;
-        // copy remaining transfer at beggining of the queue (not optimal but simpler)
-        memcpy(&dmaQueues[0], &dmaQueues[queueIndexLimit], sizeof(DMAOpInfo) * queueIndex);
-        queueTransferSize -= queueTransferSizeLimit;
-        queueIndexLimit = 0;
-        queueTransferSizeLimit = 0;
+        // just ignore
+        if (flags & DMA_OVERCAPACITY_IGNORE)
+        {
+#ifdef DMA_DEBUG
+            KLog_U1("  Ignore remaining transfer starting at index: ", queueIndexLimit);
+#endif
+
+            queueIndex = 0;
+            queueIndexLimit = 0;
+            queueTransferSize = 0;
+            queueTransferSizeLimit = 0;
+        }
+        else
+        {
+#ifdef DMA_DEBUG
+            KLog_U2_("  Delay remaining transfer on next frame, queue[", queueIndexLimit, "] moved to queue[0] (", queueIndex - queueIndexLimit, " elements copied)");
+            KLog_U2("    Before: queueIndex=", queueIndex, " queueTransferSize=", queueTransferSize);
+#endif
+
+            queueIndex -= queueIndexLimit;
+
+            // copy remaining transfer at beggining of the queue (not optimal but simpler)
+            memcpy(&dmaQueues[0], &dmaQueues[queueIndexLimit], sizeof(DMAOpInfo) * queueIndex);
+            queueTransferSize -= queueTransferSizeLimit;
+            queueIndexLimit = 0;
+            queueTransferSizeLimit = 0;
+
+#ifdef DMA_DEBUG
+            KLog_U2("    After: queueIndex=", queueIndex, " queueTransferSize=", queueTransferSize);
+#endif
+        }
     }
     else
     {
@@ -113,7 +186,7 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     DMAOpInfo *info;
 
     // queue is full --> error
-    if (queueIndex >= DMA_QUEUE_LENGTH)
+    if (queueIndex >= queueSize)
     {
 #if (LIB_DEBUG != 0)
         KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
@@ -139,7 +212,7 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     queueTransferSize += newlen << 1;
 
     // auto flush enabled --> set process on VBlank
-    if (autoFlush) VIntProcess |= PROCESS_DMA_TASK;
+    if (flags & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;
 
     // get DMA info structure and pass to next one
     info = &dmaQueues[queueIndex++];
@@ -155,19 +228,32 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     {
         case DMA_VRAM:
             info->regCtrlWrite = GFX_DMA_VRAM_ADDR(to);
+#ifdef DMA_DEBUG
+            KLog_U4("DMA_queueDma: VRAM from=", from, " to=", to, " len=", len, " step=", step);
+#endif
             break;
 
         case DMA_CRAM:
             info->regCtrlWrite = GFX_DMA_CRAM_ADDR(to);
+#ifdef DMA_DEBUG
+            KLog_U4("DMA_queueDma: CRAM from=", from, " to=", to, " len=", len, " step=", step);
+#endif
             break;
 
         case DMA_VSRAM:
             info->regCtrlWrite = GFX_DMA_VSRAM_ADDR(to);
+#ifdef DMA_DEBUG
+            KLog_U4("DMA_queueDma: VSRAM from=", from, " to=", to, " len=", len, " step=", step);
+#endif
             break;
     }
 
+#ifdef DMA_DEBUG
+    KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
+#endif
+
     // we have a limit defined ?
-    if (maxTransferPerFrame != -1)
+    if (maxTransferPerFrame)
     {
         // above limit ?
         if ((queueTransferSize > maxTransferPerFrame) && (queueIndexLimit == 0))
@@ -181,13 +267,17 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
             {
                 // stop on previous transfer
                 queueIndexLimit = queueIndex - 1;
-                queueTransferSizeLimit = queueTransferSize - (newlen >> 1);
+                queueTransferSizeLimit = queueTransferSize - (newlen << 1);
             }
             else
             {
                 queueIndexLimit = queueIndex;
                 queueTransferSizeLimit = queueTransferSize;
             }
+
+#ifdef DMA_DEBUG
+            KLog_U2("  Queue index limit set at ", queueIndexLimit, " and queueTransferSizeLimit = ", queueTransferSizeLimit);
+#endif
         }
     }
 #if (LIB_DEBUG != 0)
@@ -199,7 +289,6 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
             KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 7500 bytes.");
     }
 #endif
-
 
     return TRUE;
 }

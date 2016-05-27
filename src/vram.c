@@ -1,7 +1,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "tile_cache.h"
+#include "vram.h"
 
 #include "vdp.h"
 #include "memory.h"
@@ -15,147 +15,6 @@
 #define USED_MASK   (1 << USED_SFT)
 #define SIZE_MASK   0x7FFF
 
-/*
- * VRAM tile cache allow to handle dynamic VRAM tile allocation.
- *
- * A TilaCache structure define a part of VRAM we want to handle dynamic allocation for.
- * So
- * Bloc description:
- *
- *  tileset             = address of the stored / cached tileset
- *  index b14-b0        = VRAM position of the tileset
- *  index b15           = currently in use
- *                        If this bit is cleared it means the tileset can be released if needed
- *
- * "cache" gives the VRAM tile organization from "cacheStartIndex" for given "cacheSize":
- *
- *  address           value
- *
- *                  +-------------------+
- *  free = 0        | cacheSize  (free) |
- *                  |                   |
- *                  |                   |
- *  cacheSize - 1   |                   |
- *                  +-------------------+
- *  cacheSize       | 0                 |
- *                  +-------------------+
- *
- *
- *  1. Before allocation (with cacheSize = 1000)
- *
- *                  +-------------------+
- *  free = 0        | 1000       (free) |
- *                  |                   |
- *                  |                   |
- *  999             |                   |
- *                  +-------------------+
- *  1000            | 0                 |
- *                  +-------------------+
- *
- *  cache = ???
- *  free = cache            *free = cacheSize
- *  end = cache+cacheSize   *end = 0
- *
- *
- *  2. After allocation of a TileSet of 32 tiles
- *
- *                  +------------------------+
- *  0               | 32              (used) |
- *  free = 32       | 968             (free) |
- *                  |                        |
- *                  |                        |
- *  999             |                        |
- *                  +------------------------+
- *  1000            | 0                      |
- *                  +------------------------+
- *
- *  cache = ???
- *  free = cache + 32       *free = cacheSize - 32
- *
- *
- *  3. After allocation of a TileSet of 128 tiles
- *
- *                  +------------------------+
- *  0               | 32              (used) |
- *  32              | 128             (used) |
- *  free = 32+128   | 840             (free) |
- *                  |                        |
- *                  |                        |
- *  999             |                        |
- *                  +------------------------+
- *  1000            | 0                      |
- *                  +------------------------+
- *
- *
- *  4. After allocation of 64, 500, 100 tiles
- *
- *                  +------------------------+
- *  0               | 32              (used) |
- *  32              | 128             (used) |
- *  160             | 64              (used) |
- *  224             | 500             (used) |
- *  724             | 100             (used) |
- *  free = 824      | 176             (free) |
- *                  |                        |
- *                  |                        |
- *  999             |                        |
- *                  +------------------------+
- *  1000            | 0                      |
- *                  +------------------------+
- *
- *
- *  5. After release of tileset #3 (64 tiles)
- *
- *                  +------------------------+
- *  0               | 32              (used) |
- *  32              | 128             (used) |
- *  160             | 64              (free) |
- *  224             | 500             (used) |
- *  724             | 100             (used) |
- *  free = 824      | 176             (free) |
- *                  |                        |
- *                  |                        |
- *  999             |                        |
- *                  +------------------------+
- *  1000            | 0                      |
- *                  +------------------------+
- *
- *
- *  6. After release of tileset #4 (500 tiles)
- *
- *                  +------------------------+
- *  0               | 32              (used) |
- *  32              | 128             (used) |
- *  160             | 64              (free) |
- *  224             | 500             (free) |
- *  724             | 100             (used) |
- *  free = 824      | 176             (free) |
- *                  |                        |
- *                  |                        |
- *  999             |                        |
- *                  +------------------------+
- *  1000            | 0                      |
- *                  +------------------------+
- *
- *
- *  7. After allocation of 400 tiles
- *
- *                  +------------------------+
- *  0               | 32              (used) |
- *  32              | 128             (used) |
- *  160             | 400             (used) |
- *  560             | 164             (free) |
- *  724             | 100             (used) |
- *  free = 824      | 176             (free) |
- *                  |                        |
- *                  |                        |
- *  999             |                        |
- *                  +------------------------+
- *  1000            | 0                      |
- *                  +------------------------+
- *
- */
-
 
 // forward
 static u16* pack(VRAMRegion *region, u16 nsize);
@@ -163,8 +22,6 @@ static u16* pack(VRAMRegion *region, u16 nsize);
 
 void VRAM_createRegion(VRAMRegion *region, u16 startIndex, u16 size)
 {
-    u16 *buf;
-
     region->startIndex = startIndex;
     region->endIndex = startIndex + (size - 1);
 
@@ -206,7 +63,7 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
     if (size > *free)
     {
         // pack free block
-        p = pack(region, adjsize);
+        p = pack(region, size);
 
         // no enough memory
         if (p == NULL)
@@ -309,9 +166,10 @@ static u16* pack(VRAMRegion *region, u16 nsize)
 
                 if (bsize >= nsize)
                     return best;
+
+                bsize = 0;
             }
 
-            bsize = 0;
             b += psize & SIZE_MASK;
             best = b;
         }

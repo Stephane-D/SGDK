@@ -9,11 +9,12 @@
 #include "vdp_spr.h"
 #include "vdp_bg.h"
 
-#include "font.h"
-
 #include "tools.h"
 #include "string.h"
 #include "memory.h"
+#include "dma.h"
+
+#include "font.h"
 
 
 //#define WINDOW_DEFAULT         0xA900
@@ -25,9 +26,6 @@
 
 static u8 regValues[0x13];
 
-const VDPPlan PLAN_B = { 0 };
-const VDPPlan PLAN_A = { 1 };
-
 u16 window_adr;
 u16 aplan_adr;
 u16 bplan_adr;
@@ -36,9 +34,21 @@ u16 slist_adr;
 
 u16 screenWidth;
 u16 screenHeight;
+u16 planWidth;
+u16 planHeight;
+u16 windowWidth;
+u16 planWidthSft;
+u16 planHeightSft;
+u16 windowWidthSft;
+
+
+// constantes for plan
+const VDPPlan PLAN_A = { CONST_PLAN_A };
+const VDPPlan PLAN_B = { CONST_PLAN_B };
+const VDPPlan PLAN_WINDOW = { CONST_PLAN_WINDOW };
 
 // don't want to share it
-extern u16 *text_plan;
+extern VDPPlan text_plan;
 extern u16 text_basetile;
 
 
@@ -60,6 +70,12 @@ void VDP_init()
     // default resolution
     screenWidth = 320;
     screenHeight = 224;
+    planWidth = 64;
+    planHeight = 64;
+    windowWidth = 64;
+    planWidthSft = 6;
+    planHeightSft = 6;
+    windowWidthSft = 6;
 
     regValues[0x00] = 0x04;
     regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, VBL, DMA + VCell size */
@@ -85,14 +101,14 @@ void VDP_init()
     pw = (u16 *) GFX_CTRL_PORT;
     for (i = 0x00; i < 0x13; i++) *pw = 0x8000 | (i << 8) | regValues[i];
 
-    // reset video memory
-    VDP_doVRamDMAFill(0, 0xFFFF, 0);
+    // reset video memory (len = 0 is a special value to define 0x10000)
+    DMA_doVRamFill(0, 0, 0, 1);
     // wait for DMA completion
     VDP_waitDMACompletion();
 
     // system tiles (16 "flat" tile)
     i = 16;
-    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, 0);
+    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
 
     // load defaults palettes
     VDP_setPalette(PAL0, palette_grey);
@@ -116,14 +132,14 @@ void VDP_init()
 //    VDP_setPaletteColors((PAL0 * 16) + 8, (u16*) palette_grey, 8);
 
     // reset vertical scroll for plan A & B
-    VDP_setVerticalScroll(PLAN_A,  0);
-    VDP_setVerticalScroll(PLAN_B,  0);
+    VDP_setVerticalScroll(PLAN_A, 0);
+    VDP_setVerticalScroll(PLAN_B, 0);
 
     // reset sprite struct
     VDP_resetSprites();
 
     // default plan and base tile attribut for draw text method
-    text_plan = &aplan_adr;
+    text_plan = PLAN_A;
     text_basetile = TILE_ATTR(PAL0, TRUE, FALSE, FALSE);
     curTileInd = TILE_USERINDEX;
 }
@@ -188,13 +204,57 @@ void VDP_setReg(u16 reg, u8 value)
 
         case 0x0C:
             v = value;
-            if (v & 0x81) screenWidth = 320;
-            else screenWidth = 256;
+            if (v & 0x81)
+            {
+                screenWidth = 320;
+                windowWidth = 64;
+                windowWidthSft = 6;
+            }
+            else
+            {
+                screenWidth = 256;
+                windowWidth = 32;
+                windowWidthSft = 5;
+            }
             break;
 
         case 0x0D:
             v = value & 0x3F;
             hscrl_adr = v * 0x0400;
+            break;
+
+        case 0x10:
+            v = value;
+            if (v & 0x02)
+            {
+                planWidth = 128;
+                planWidthSft = 7;
+            }
+            else if (v & 0x01)
+            {
+                planWidth = 64;
+                planWidthSft = 6;
+            }
+            else
+            {
+                planWidth = 32;
+                planWidthSft = 5;
+            }
+            if (v & 0x20)
+            {
+                planHeight = 128;
+                planHeightSft = 7;
+            }
+            else if (v & 0x10)
+            {
+                planHeight = 64;
+                planHeightSft = 6;
+            }
+            else
+            {
+                planHeight = 32;
+                planHeightSft = 5;
+            }
             break;
     }
 
@@ -268,6 +328,8 @@ void VDP_setScreenWidth256()
 
     regValues[0x0C] &= ~0x81;
     screenWidth = 256;
+    windowWidth = 32;
+    windowWidthSft = 5;
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8C00 | regValues[0x0C];
@@ -279,6 +341,8 @@ void VDP_setScreenWidth320()
 
     regValues[0x0C] |= 0x81;
     screenWidth = 320;
+    windowWidth = 64;
+    windowWidthSft = 6;
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8C00 | regValues[0x0C];
@@ -287,19 +351,55 @@ void VDP_setScreenWidth320()
 
 u16 VDP_getPlanWidth()
 {
-    return ((regValues[0x10] & 0xF) + 1) << 5;
+    return planWidth;
 }
 
 u16 VDP_getPlanHeight()
 {
-    return ((regValues[0x10] >> 4) + 1) << 5;
+    return planHeight;
 }
 
 void VDP_setPlanSize(u16 w, u16 h)
 {
     vu16 *pw;
+    u16 v = 0;
 
-    regValues[0x10] = (((h >> 5) - 1) << 4) | (((w >> 5) - 1) << 0);
+    if (w & 0x80)
+    {
+        planWidth = 128;
+        planWidthSft = 7;
+        v |= 0x03;
+    }
+    else if (w & 0x40)
+    {
+        planWidth = 64;
+        planWidthSft = 6;
+        v |= 0x01;
+    }
+    else
+    {
+        planWidth = 32;
+        planWidthSft = 5;
+    }
+    if (h & 0x80)
+    {
+        planHeight = 128;
+        planHeightSft = 7;
+        v |= 0x30;
+    }
+    else if (h & 0x40)
+    {
+        planHeight = 64;
+        planHeightSft = 6;
+        v |= 0x10;
+    }
+    else
+    {
+        planHeight = 32;
+        planHeightSft = 5;
+    }
+
+    regValues[0x10] = v;
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x9000 | regValues[0x10];
@@ -466,8 +566,8 @@ void VDP_setBPlanAddress(u16 value)
 {
     vu16 *pw;
 
-    window_adr = value & 0xE000;
-    regValues[0x04] = window_adr / 0x2000;
+    bplan_adr = value & 0xE000;
+    regValues[0x04] = bplan_adr / 0x2000;
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8400 | regValues[0x04];
@@ -519,6 +619,35 @@ void VDP_setScanMode(u16 value)
     *pw = 0x8C00 | regValues[0x0C];
 }
 
+void VDP_setWindowHPos(u16 right, u16 pos)
+{
+    vu16 *pw;
+    u16 v;
+
+    v = pos & 0x7F;
+    if (right) v |= 0x80;
+
+    regValues[0x11] = v;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x9100 | v;
+}
+
+void VDP_setWindowVPos(u16 down, u16 pos)
+{
+    vu16 *pw;
+    u16 v;
+
+    v = pos & 0x7F;
+    if (down) v |= 0x80;
+
+    regValues[0x12] = v;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x9200 | v;
+}
+
+
 void VDP_waitDMACompletion()
 {
     while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
@@ -543,9 +672,9 @@ void VDP_waitVSync()
 
 void VDP_resetScreen()
 {
-    VDP_clearPlan(APLAN, 1);
+    VDP_clearPlan(PLAN_A, TRUE);
     VDP_waitDMACompletion();
-    VDP_clearPlan(BPLAN, 1);
+    VDP_clearPlan(PLAN_B, TRUE);
     VDP_waitDMACompletion();
 
     VDP_setPalette(PAL0, palette_grey);

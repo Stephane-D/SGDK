@@ -159,8 +159,8 @@
 extern vu32 VIntProcess;
 
 // forward
-static TCBloc* getFixedBloc(TileCache *cache, TileSet *tileset);
-static TCBloc* getBloc(TileCache *cache, TileSet* tileset);
+static TCBloc* getFixedBlock(TileCache *cache, TileSet *tileset);
+static TCBloc* getBlock(TileCache *cache, TileSet* tileset);
 static u16 findFreeRegion(TileCache *cache, u16 size);
 static u16 getConflictRegion(TileCache *cache, u16 start, u16 end);
 static void releaseFlushable(TileCache *cache, u16 start, u16 end);
@@ -258,51 +258,23 @@ void TC_flushCache(TileCache *cache)
 
 s16 TC_alloc(TileCache *cache, TileSet *tileset, TCUpload upload)
 {
-    TCBloc *bloc;
+    // try re-allocation first if already present in cache
+    u16 index = TC_reAlloc(cache, tileset);
 
-//    KDebug_Alert("Alloc TC");
-//    KDebug_AlertNumber(tileset);
-
-    bloc = getBloc(cache, tileset);
-
-    // bloc found
-    if (bloc != NULL)
+    // block not found --> do allocation
+    if ((s16) index == -1)
     {
-        // get address of next fixed bloc
-        u16 nextFixed = cache->nextFixed;
-        TCBloc *nextFixedBloc = &cache->blocs[nextFixed];
-
-        // flushed bloc ? --> re allocate it
-        if (bloc >= nextFixedBloc)
-        {
-            // need to swap blocs ?
-            if (bloc != nextFixedBloc)
-            {
-                u16 tmpInd = bloc->index;
-                bloc->index = nextFixedBloc->index;
-                bloc->tileset = nextFixedBloc->tileset;
-                nextFixedBloc->index = tmpInd;
-                nextFixedBloc->tileset = tileset;
-
-                bloc = nextFixedBloc;
-            }
-
-            // one more fixed bloc
-            cache->nextFixed = nextFixed + 1;
-        }
-
-        return bloc->index;
-    }
-    // bloc not found --> alloc
-    else
-    {
-        u16 index, size, lim;
+        TCBloc *block;
+        u16 size, lim;
         u16 nextFlush;
 
-        // not more free bloc
+        // not more free block
         if (cache->nextFixed >= cache->numBloc)
         {
-            if (LIB_DEBUG) KDebug_Alert("TC_alloc failed: no more free bloc !");
+#if (LIB_DEBUG != 0)
+            KDebug_Alert("TC_alloc failed: no more free block !");
+#endif
+
             return -1;
         }
 
@@ -356,70 +328,68 @@ s16 TC_alloc(TileCache *cache, TileSet *tileset, TCUpload upload)
         lim = index + size;
         // update current position
         cache->current = lim;
-        // release any previous flushable bloc in the allocated area
+        // release any previous flushable block in the allocated area
         releaseFlushable(cache, index, lim);
 
-        // get new allocated bloc
-        bloc = &cache->blocs[cache->nextFixed++];
+        // get new allocated block
+        block = &cache->blocs[cache->nextFixed++];
 
-        // try to save flush bloc if we still have available bloc for that ?
+        // try to save flush block if we still have available block for that ?
         nextFlush = cache->nextFlush;
         if (nextFlush < cache->numBloc)
         {
             TCBloc *nextFlushBloc = &cache->blocs[nextFlush];
 
             // test if we have something to save
-            if (nextFlushBloc != bloc)
+            if (nextFlushBloc != block)
             {
-                nextFlushBloc->index = bloc->index;
-                nextFlushBloc->tileset = bloc->tileset;
+                nextFlushBloc->index = block->index;
+                nextFlushBloc->tileset = block->tileset;
             }
 
-            // increase flush bloc address
+            // increase flush block address
             cache->nextFlush = nextFlush + 1;
         }
 
-        // set bloc info
-        bloc->tileset = tileset;
-        bloc->index = index;
+        // set block info
+        block->tileset = tileset;
+        block->index = index;
     }
 
-    return bloc->index;
+    return index;
 }
 
 s16 TC_reAlloc(TileCache *cache, TileSet *tileset)
 {
-    TCBloc *bloc;
+    TCBloc *block = getBlock(cache, tileset);
 
-    bloc = getBloc(cache, tileset);
-
-    // bloc found
-    if (bloc != NULL)
+    // block found
+    if (block != NULL)
     {
-        // get address of next fixed bloc
+        // get address of next fixed block
         u16 nextFixed = cache->nextFixed;
         TCBloc *nextFixedBloc = &cache->blocs[nextFixed];
 
-        // flushed bloc ? --> re allocate it
-        if (bloc >= nextFixedBloc)
+        // flushed block ? --> re allocate it
+        if (block >= nextFixedBloc)
         {
             // need to swap blocs ?
-            if (bloc != nextFixedBloc)
+            if (block != nextFixedBloc)
             {
-                u16 tmpInd = bloc->index;
-                bloc->index = nextFixedBloc->index;
-                bloc->tileset = nextFixedBloc->tileset;
+                u16 tmpInd = block->index;
+                block->index = nextFixedBloc->index;
+                block->tileset = nextFixedBloc->tileset;
                 nextFixedBloc->index = tmpInd;
                 nextFixedBloc->tileset = tileset;
 
-                bloc = nextFixedBloc;
+                block = nextFixedBloc;
             }
 
-            // one more fixed bloc
+            // one more fixed block
             cache->nextFixed = nextFixed + 1;
         }
 
-        return bloc->index;
+        return block->index;
     }
 
     return -1;
@@ -427,36 +397,36 @@ s16 TC_reAlloc(TileCache *cache, TileSet *tileset)
 
 void TC_free(TileCache *cache, TileSet *tileset)
 {
-    // find allocated bloc
-    TCBloc *bloc = getFixedBloc(cache, tileset);
+    // find allocated block
+    TCBloc *block = getFixedBlock(cache, tileset);
 
-    // bloc found
-    if (bloc != NULL)
+    // block found
+    if (block != NULL)
     {
-        // get last fixed bloc and decrease number of fixed bloc
+        // get last fixed block and decrease number of fixed block
         TCBloc *lastFixedBloc = &cache->blocs[--cache->nextFixed];
 
-        // exchange bloc infos if needed
-        if (lastFixedBloc != bloc)
+        // exchange block infos if needed
+        if (lastFixedBloc != block)
         {
-            u16 tmpInd = bloc->index;
-            bloc->index = lastFixedBloc->index;
-            bloc->tileset = lastFixedBloc->tileset;
+            u16 tmpInd = block->index;
+            block->index = lastFixedBloc->index;
+            block->tileset = lastFixedBloc->tileset;
             lastFixedBloc->index = tmpInd;
             lastFixedBloc->tileset = tileset;
         }
 
-        // decrease flush bloc address
+        // decrease flush block address
         cache->nextFlush--;
     }
 }
 
 s16 TC_getTileIndex(TileCache *cache, TileSet *tileset)
 {
-    TCBloc *bloc = getBloc(cache, tileset);
+    TCBloc *block = getBlock(cache, tileset);
 
-    if (bloc != NULL)
-        return bloc->index;
+    if (block != NULL)
+        return block->index;
 
     return -1;
 }
@@ -483,41 +453,41 @@ void TC_uploadAtVBlank(TileSet *tileset, u16 index)
 }
 
 
-static TCBloc* getFixedBloc(TileCache *cache, TileSet *tileset)
+static TCBloc* getFixedBlock(TileCache *cache, TileSet *tileset)
 {
-    TCBloc *bloc;
+    TCBloc *block;
     u16 i;
 
     // search in fixed blocs only
     i = cache->nextFixed;
-    bloc = cache->blocs;
+    block = cache->blocs;
     while(i--)
     {
         // found
-        if (bloc->tileset == tileset)
-            return bloc;
+        if (block->tileset == tileset)
+            return block;
 
-        bloc++;
+        block++;
     }
 
     return NULL;
 }
 
-static TCBloc* getBloc(TileCache *cache, TileSet *tileset)
+static TCBloc* getBlock(TileCache *cache, TileSet *tileset)
 {
-    TCBloc *bloc;
+    TCBloc *block;
     u16 i;
 
     // search in fixed & flushable blocs
     i = cache->nextFlush;
-    bloc = cache->blocs;
+    block = cache->blocs;
     while(i--)
     {
         // found
-        if (bloc->tileset == tileset)
-            return bloc;
+        if (block->tileset == tileset)
+            return block;
 
-        bloc++;
+        block++;
     }
 
     return NULL;
@@ -561,30 +531,32 @@ static u16 findFreeRegion(TileCache *cache, u16 size)
         end = start + size;
     }
 
-    if (LIB_DEBUG) KDebug_Alert("TC_alloc failed: no enough available VRAM in cache !");
+#if (LIB_DEBUG != 0)
+    KDebug_Alert("TC_alloc failed: no enough available VRAM in cache !");
+#endif
 
     return (u16) -1;
 }
 
 static u16 getConflictRegion(TileCache *cache, u16 start, u16 end)
 {
-    TCBloc *bloc;
+    TCBloc *block;
     u16 i;
 
     // search only in fixed blocs
     i = cache->nextFixed;
-    bloc = cache->blocs;
+    block = cache->blocs;
 
     while(i--)
     {
-        u16 startBloc = bloc->index;
-        u16 endBloc = startBloc + bloc->tileset->numTile;
+        u16 startBloc = block->index;
+        u16 endBloc = startBloc + block->tileset->numTile;
 
         // conflict ?
         if ((startBloc < end) && (endBloc > start))
             return endBloc;
 
-        bloc++;
+        block++;
     }
 
     // no conflict
@@ -593,7 +565,7 @@ static u16 getConflictRegion(TileCache *cache, u16 start, u16 end)
 
 static void releaseFlushable(TileCache *cache, u16 start, u16 end)
 {
-    TCBloc *bloc;
+    TCBloc *block;
     u16 lastFlushInd;
     u16 i;
 
@@ -601,29 +573,29 @@ static void releaseFlushable(TileCache *cache, u16 start, u16 end)
 
     // search only in flushable blocs and from end
     i = lastFlushInd - cache->nextFixed;
-    bloc = &(cache->blocs[lastFlushInd - 1]);
+    block = &(cache->blocs[lastFlushInd - 1]);
     while(i--)
     {
-        u16 index = bloc->index;
+        u16 index = block->index;
 
-        // need to release bloc ?
-        if ((index < end) && ((index + bloc->tileset->numTile) > start))
+        // need to release block ?
+        if ((index < end) && ((index + block->tileset->numTile) > start))
         {
-            // get last bloc location
+            // get last block location
             TCBloc *lastFlushBloc = &(cache->blocs[--lastFlushInd]);
 
-            // save last flush bloc data in the new released bloc to release last bloc
-            if (bloc != lastFlushBloc)
+            // save last flush block data in the new released block to release last block
+            if (block != lastFlushBloc)
             {
-                bloc->tileset = lastFlushBloc->tileset;
-                bloc->index = lastFlushBloc->index;
+                block->tileset = lastFlushBloc->tileset;
+                block->index = lastFlushBloc->index;
             }
         }
 
-        --bloc;
+        --block;
     }
 
-    // update first flushable bloc index
+    // update first flushable block index
     cache->nextFlush = lastFlushInd;
 }
 

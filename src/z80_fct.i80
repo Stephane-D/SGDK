@@ -23,11 +23,44 @@ initDAC
 ; write to YM2612
 
 writeYM0
-            LD      HL, YMPORT0
-            writeYM
-            RET
-writeYM1
-            LD      HL, YMPORT2
-            writeYM
-            RET
+            LD      HL, YMPORT0     ; HL = YM port 0            ' 10    | (10)
 
+.wait0
+            BIT     7, (HL)         ; test YM not busy          ' 12    |
+            JR      NZ, .wait0      ;                           ' 7     | 19 (29)
+
+            LD      (HL), D         ; write address             ' 7     | (36)
+
+.wait1
+            BIT     7, (HL)         ; test YM not busy          ' 12    |
+            JR      NZ, .wait1      ;                           ' 7     | 19 (55)
+
+            INC     L               ; next port                 ' 4     | 11 (66)
+            LD      (HL), E         ; write value               ' 7     |
+
+            RET                     ; end                       ' 10    | (76)
+
+
+writeYM1
+            LD      HL, YMPORT0     ; HL = YM port 0            ' 10    | (10)
+
+.wait0
+            BIT     7, (HL)         ; test YM not busy          ' 12    |
+            JR      NZ, .wait0      ;                           ' 7     | 19 (29)
+
+            INC     L               ;                           ' 4     |
+            INC     L               ; HL = YM port 2            ' 4     |
+            LD      (HL), D         ; write address             ' 7     | 23 (52)
+            DEC     L               ;                           ' 4     |
+            DEC     L               ; HL = YM port 0            ' 4     |
+
+.wait1
+            BIT     7, (HL)         ; test YM not busy          ' 12    |
+            JR      NZ, .wait1      ;                           ' 7     | 19 (71)
+
+            INC     L               ;                           ' 4     |
+            INC     L               ;                           ' 4     |
+            INC     L               ; HL = YM port 3            ' 4     | 19 (90)
+            LD      (HL), E         ; write value               ' 7     |
+
+            RET                     ; end                       ' 10    | (100)

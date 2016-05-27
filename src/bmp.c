@@ -12,18 +12,22 @@
 #include "vdp_pal.h"
 #include "vdp_bg.h"
 
+#include "dma.h"
+
 #include "memory.h"
 #include "tools.h"
 #include "string.h"
 
 
 #define BMP_FLAG_DOUBLEBUFFER   (1 << 0)
+#define BMP_FLAG_COPYBUFFER     (1 << 1)
 
 #define BMP_STAT_FLIPPING       (1 << 0)
 #define BMP_STAT_BLITTING       (1 << 1)
 #define BMP_STAT_FLIPWAITING    (1 << 2)
 
 #define HAS_DOUBLEBUFFER        (flag & BMP_FLAG_DOUBLEBUFFER)
+#define HAS_BUFFERCOPY          (flag & BMP_FLAG_COPYBUFFER)
 
 #define READ_IS_FB0             (bmp_buffer_read == bmp_buffer_0)
 #define READ_IS_FB1             (bmp_buffer_read == bmp_buffer_1)
@@ -31,6 +35,12 @@
 #define WRITE_IS_FB1            (bmp_buffer_write == bmp_buffer_1)
 
 #define GET_YOFFSET             ((HAS_DOUBLEBUFFER && READ_IS_FB1)?((BMP_PLANHEIGHT / 2) + 4):4)
+
+#define BMP_PLAN_ADR            (*bmp_plan_adr)
+
+#define BMP_FB0TILEMAP_BASE     BMP_PLAN_ADR
+#define BMP_FB1TILEMAP_BASE     (BMP_PLAN_ADR + ((BMP_PLANWIDTH * (BMP_PLANHEIGHT / 2)) * 2))
+#define BMP_FBTILEMAP_OFFSET    (((BMP_PLANWIDTH * BMP_CELLYOFFSET) + BMP_CELLXOFFSET) * 2)
 
 
 #define NTSC_TILES_BW           7
@@ -42,36 +52,46 @@ extern vu32 VIntProcess;
 extern vu32 HIntProcess;
 extern u16 text_basetile;
 
+u8 *bmp_buffer_read;
+u8 *bmp_buffer_write;
 
 static u8 *bmp_buffer_0;
 static u8 *bmp_buffer_1;
 
-u8 *bmp_buffer_read;
-u8 *bmp_buffer_write;
+VDPPlan bmp_plan;
+u16 *bmp_plan_adr;
 
 // internals
 static u16 flag;
 static u16 pal;
 static u16 prio;
 static u16 state;
-static u16 phase;
+static s16 phase;
 
 
-// forward
+// ASM methods
 extern void clearBitmapBuffer(u8 *bmp_buffer);
+extern void copyBitmapBuffer(u8 *src, u8 *dst);
 
 static void doFlip();
 static void flipBuffer();
 static void initTilemap(u16 num);
+static void clearVRAMBuffer(u16 num);
 static u16 doBlit();
 //static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
 
 
-void BMP_init(u16 double_buffer, u16 palette, u16 priority)
+void BMP_init(u16 double_buffer, VDPPlan plan, u16 palette, u16 priority)
 {
     flag = (double_buffer) ? BMP_FLAG_DOUBLEBUFFER : 0;
+    bmp_plan = plan;
     pal = palette & 3;
     prio = priority & 1;
+
+    if (plan.plan == CONST_PLAN_B)
+        bmp_plan_adr = &bplan_adr;
+    else
+        bmp_plan_adr = &aplan_adr;
 
     bmp_buffer_0 = NULL;
     bmp_buffer_1 = NULL;
@@ -81,12 +101,19 @@ void BMP_init(u16 double_buffer, u16 palette, u16 priority)
 
 void BMP_end()
 {
-    // re enabled VDP if it was disabled because of extended blank
-    VDP_setEnable(1);
-    // disabled bitmap Int processing
-    VDP_setHInterrupt(0);
+    // cancel interrupt processing
     HIntProcess &= ~PROCESS_BITMAP_TASK;
     VIntProcess &= ~PROCESS_BITMAP_TASK;
+
+    // disable H-Int
+    VDP_setHInterrupt(0);
+    // re enabled VDP if it was disabled because of extended blank
+    VDP_setEnable(1);
+    // reset hint counter
+    VDP_setHIntCounter(255);
+
+    // reset back vertical scroll to 0
+    VDP_setVerticalScroll(bmp_plan, 0);
 
     // release memory
     if (bmp_buffer_0)
@@ -103,23 +130,33 @@ void BMP_end()
 
 void BMP_reset()
 {
-    // release buffers if needed
-    if (bmp_buffer_0) MEM_free(bmp_buffer_0);
-    if (bmp_buffer_1) MEM_free(bmp_buffer_1);
+    // cancel bitmap interrupt processing
+    HIntProcess &= ~PROCESS_BITMAP_TASK;
+    VIntProcess &= ~PROCESS_BITMAP_TASK;
 
-    // tile map allocation
-    bmp_buffer_0 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
-    bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
+    // disable H-Int
+    VDP_setHInterrupt(0);
+    // re enabled VDP if it was disabled because of extended blank
+    VDP_setEnable(1);
+    // reset hint counter
+    VDP_setHIntCounter(255);
+
+    // allocate bitmap buffer if needed
+    if (!bmp_buffer_0)
+        bmp_buffer_0 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
+    if (!bmp_buffer_1)
+        bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
 
     // need 64x64 cells sized plan
-    VDP_setPlanSize(BMP_PLANWIDTH, BMP_PLANHEIGHT);
+    VDP_setPlanSize(64, 64);
 
     // clear plan (complete tilemap)
-    VDP_clearPlan(BMP_PLAN, 1);
+    VDP_clearPlan(bmp_plan, TRUE);
     VDP_waitDMACompletion();
 
+    // reset state and phase
     state = 0;
-    phase = 0;
+    phase = -1;
 
     // default
     bmp_buffer_read = bmp_buffer_0;
@@ -127,25 +164,39 @@ void BMP_reset()
 
     // prepare tilemap
     initTilemap(0);
-
+    clearVRAMBuffer(0);
     if (HAS_DOUBLEBUFFER)
+    {
         initTilemap(1);
+        clearVRAMBuffer(0);
+    }
 
-    VDP_setVerticalScroll(BMP_PLAN_ENUM, 0);
+    // clear both buffer in memory
+    clearBitmapBuffer(bmp_buffer_0);
+    clearBitmapBuffer(bmp_buffer_1);
+
+    // set back vertical scroll to 0
+    VDP_setVerticalScroll(bmp_plan, 0);
 
     // prepare hint for extended blank on next frame
     VDP_setHIntCounter(((screenHeight - BMP_HEIGHT) >> 1) - 1);
-    // enabled bitmap Int processing
+    // enabled bitmap interrupt processing
     HIntProcess |= PROCESS_BITMAP_TASK;
     VIntProcess |= PROCESS_BITMAP_TASK;
     VDP_setHInterrupt(1);
 
-    // first init, clear and flip
-    BMP_clear();
-    BMP_flip(0);
-    // second init, clear and flip for correct init (double buffer)
-    BMP_clear();
-    BMP_flip(0);
+//    // first init, clear and flip
+//    BMP_clear();
+//    BMP_flip(FALSE);
+//    // second init, clear and flip for correct init (double buffer)
+//    BMP_clear();
+//    BMP_flip(FALSE);
+}
+
+void BMP_setBufferCopy(u16 value)
+{
+    if (value) flag |= BMP_FLAG_COPYBUFFER;
+    else flag &= ~BMP_FLAG_COPYBUFFER;
 }
 
 
@@ -209,17 +260,17 @@ u16 BMP_flip(u16 async)
 
 void BMP_drawText(const char *str, u16 x, u16 y)
 {
-    VDP_drawTextBG(BMP_PLAN, str, text_basetile, x, y + GET_YOFFSET);
+    VDP_drawTextBG(bmp_plan, str, x, y + GET_YOFFSET);
 }
 
 void BMP_clearText(u16 x, u16 y, u16 w)
 {
-    VDP_clearTextBG(BMP_PLAN, x, y + GET_YOFFSET, w);
+    VDP_clearTextBG(bmp_plan, x, y + GET_YOFFSET, w);
 }
 
 void BMP_clearTextLine(u16 y)
 {
-    VDP_clearTextLineBG(BMP_PLAN, y + GET_YOFFSET);
+    VDP_clearTextLineBG(bmp_plan, y + GET_YOFFSET);
 }
 
 
@@ -231,16 +282,16 @@ void BMP_showFPS(u16 float_display)
     if (float_display)
     {
         fix32ToStr(getFPS_f(), str, 1);
-        VDP_clearTextBG(BMP_PLAN, 2, y, 5);
+        VDP_clearTextBG(bmp_plan, 2, y, 5);
     }
     else
     {
         uintToStr(getFPS(), str, 1);
-        VDP_clearTextBG(BMP_PLAN, 2, y, 2);
+        VDP_clearTextBG(bmp_plan, 2, y, 2);
     }
 
     // display FPS
-    VDP_drawTextBG(BMP_PLAN, str, 0x8000, 1, y);
+    VDP_drawTextBG(bmp_plan, str, 1, y);
 }
 
 
@@ -350,7 +401,6 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
         p++;
     }
 }
-
 
 
 //void BMP_drawLineFast(Line *l)
@@ -945,7 +995,6 @@ void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
 {
     u16 w, h;
-    const Palette *palette = bitmap->palette;
 
     // get the image width
     w = bitmap->w;
@@ -966,7 +1015,11 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
         BMP_drawBitmapData(bitmap->image, x, y, w, h, w >> 1);
 
     // load the palette
-    if (loadpal) VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+    if (loadpal)
+    {
+        const Palette *palette = bitmap->palette;
+        VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+    }
 
     return TRUE;
 }
@@ -974,7 +1027,6 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
 u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
 {
     u16 bmp_wb, bmp_h;
-    const Palette *palette = bitmap->palette;
 
     // get the image width in byte
     bmp_wb = bitmap->w >> 1;
@@ -995,7 +1047,11 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
         BMP_scale(bitmap->image, bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
 
     // load the palette
-    if (loadpal) VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+    if (loadpal)
+    {
+        const Palette *palette = bitmap->palette;
+        VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+    }
 
     return TRUE;
 }
@@ -1178,6 +1234,13 @@ static void initTilemap(u16 num)
     }
 }
 
+static void clearVRAMBuffer(u16 num)
+{
+    if (num) DMA_doVRamFill(BMP_FB1TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
+    else DMA_doVRamFill(BMP_FB0TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
+    DMA_waitCompletion();
+}
+
 static void flipBuffer()
 {
     if (READ_IS_FB0)
@@ -1190,6 +1253,10 @@ static void flipBuffer()
         bmp_buffer_read = bmp_buffer_0;
         bmp_buffer_write = bmp_buffer_1;
     }
+
+    // we want buffer preservation ?
+    if (HAS_BUFFERCOPY)
+        copyBitmapBuffer(bmp_buffer_read, bmp_buffer_write);
 }
 
 static void doFlip()
@@ -1200,26 +1267,29 @@ static void doFlip()
     // copy tile buffer to VRAM
     if (doBlit())
     {
+        // at this point copy to VRAM is done !
+
+        // flip displayed buffer
         if (HAS_DOUBLEBUFFER)
         {
             u16 vscr;
 
             // switch displayed buffer
-            if (READ_IS_FB0) vscr = ((BMP_PLANHEIGHT * 8) * 0) / 2;
-            else vscr = ((BMP_PLANHEIGHT * 8) * 1) / 2;
+            if (READ_IS_FB0) vscr = 0;
+            else vscr = (BMP_PLANHEIGHT * 8) / 2;
 
-            VDP_setVerticalScroll(BMP_PLAN_ENUM, vscr);
+            VDP_setVerticalScroll(bmp_plan, vscr);
         }
 
         // get bitmap state
         u16 s = state;
 
-        // flip pending ?
+        // we had a pending flip request ?
         if (s & BMP_STAT_FLIPWAITING)
         {
             // flip buffers
             flipBuffer();
-            // clear pending flag
+            // clear only pending flag and process new flip
             s &= ~BMP_STAT_FLIPWAITING;
         }
         else

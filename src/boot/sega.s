@@ -11,11 +11,13 @@
 *
 *-------------------------------------------------------
 
-        .org    0x00000000
+    .globl 	_hard_reset
+
+    .org    0x00000000
 
 _Start_Of_Rom:
 _Vecteurs_68K:
-        dc.l    0x00FFFE00              /* Stack address */
+        dc.l    0x00000000              /* Stack address */
         dc.l    _Entry_Point            /* Program start address */
         dc.l    _Bus_Error
         dc.l    _Address_Error
@@ -66,18 +68,16 @@ WrongVersion:
         move    %a6,%usp
         move.w  %d7,(%a1)
         move.w  %d7,(%a2)
-        jmp     Continue
+        jmp     _hard_reset
 
 Table:
         dc.w    0x8000,0x3fff,0x0100
         dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
 
 SkipSetup:
-        move.w  #0,%a7
         jmp     _reset_entry
 
-Continue:
-
+_hard_reset:
 * clear Genesis RAM
         lea     0xff0000,%a0
         moveq   #0,%d0
@@ -103,7 +103,6 @@ NoCopy:
 
 * Jump to initialisation process...
 
-        move.w  #0,%a7
         jmp     _start_entry
 
 
@@ -466,4 +465,3 @@ ltuns:
         move.l  %d3,%d0
         move.l  %a2,%d3           /* restore d3 */
         rts
-

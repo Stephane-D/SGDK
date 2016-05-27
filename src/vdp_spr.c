@@ -4,239 +4,250 @@
 #include "vdp.h"
 #include "vdp_spr.h"
 
-#include "memory.h"
-#include "vdp_dma.h"
-#include "vdp_tile.h"
+#include "dma.h"
+#include "tools.h"
+#include "string.h"
 
 
-// TODO: replace SpriteDef by VDPSprite structure for optimized VRAM copy
+// important to have a global structure here (consumes 640 bytes of memory)
+VDPSprite vdpSpriteCache[MAX_VDP_SPRITE];
+// keep trace of last allocated sprite (for special operation as link)
+VDPSprite *lastAllocatedVDPSprite;
+// keep trace of highest index allocated since the last VDP_resetSprites() or VDP_releaseAllSprites.
+// It can be used to define the number of sprite to transfer with VDP_updateSprites(..)
+s16 highestVDPSpriteIndex;
 
-// no static so they can be read
-SpriteDef vdpSpriteCache[MAX_SPRITE];
-u16 spriteNum;
+// used for VDP sprite allocation
+static VDPSprite *allocStack[MAX_VDP_SPRITE];
+// point on top of the allocation stack (first available VDP sprite)
+static VDPSprite **free;
 
 
 void VDP_resetSprites()
 {
-    vdpSpriteCache[0].posx = -0x80;
-    vdpSpriteCache[0].link = 0;
-
-    // needed to send the null sprite to the VDP
-    spriteNum = 1;
+    // reset allocation
+    VDP_releaseAllSprites();
+    // clear sprite
+    VDP_clearSprites();
 }
 
-void VDP_resetSpritesDirect()
+void VDP_releaseAllSprites()
 {
-    vu32 *plctrl;
-    vu32 *pldata;
+    u16 i;
 
-    VDP_setAutoInc(2);
+    // reset allocation stack (important that first allocated sprite is sprite 0)
+    for(i = 0; i < MAX_VDP_SPRITE; i++)
+        allocStack[i] = &vdpSpriteCache[(MAX_VDP_SPRITE - 1) - i];
+    // init free position
+    free = &allocStack[MAX_VDP_SPRITE];
 
-    /* Point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
-
-    *plctrl = GFX_WRITE_VRAM_ADDR(SLIST + 2);
-
-    // size & link / X position
-    *pldata = 0;
+    highestVDPSpriteIndex = -1;
 }
 
 
-void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link)
+s16 VDP_allocateSprites(u16 num)
 {
-    SpriteDef *sprite;
+    VDPSprite* spr;
+    u16 remaining;
+    s16 res;
+    s16 maxInd;
 
-    if (index >= MAX_SPRITE) return;
+    // enough sprite remaining ?
+    if ((free - allocStack) < num)
+    {
+#if (LIB_DEBUG != 0)
+        KLog_U2_("Couldn't allocate ", num, " VDP Sprite(s): ", VDP_getAvailableSprites(), " remaining.");
+#endif
 
-    if (index >= spriteNum) spriteNum = index + 1;
+        return -1;
+    }
 
-    sprite = &vdpSpriteCache[index];
+    spr = *--free;
+    // save index
+    res = spr - vdpSpriteCache;
+    maxInd = res;
 
-    sprite->posx = x;
-    sprite->posy = y;
-    sprite->tile_attr = tile_attr;
+    // link sprites
+    remaining = num - 1;
+    while(remaining--)
+    {
+        VDPSprite* curSpr = *--free;
+        s16 ind = curSpr - vdpSpriteCache;
+
+        // keep trace of highest index
+        if (ind > maxInd) maxInd = ind;
+
+        // link and pass to the next
+        spr->link = ind;
+        spr = curSpr;
+    }
+
+    // keep trace of highest index
+    if (maxInd > highestVDPSpriteIndex)
+        highestVDPSpriteIndex = maxInd;
+
+    // end link with 0
+    spr->link = 0;
+    // keep trace of last allocated sprite
+    lastAllocatedVDPSprite = spr;
+
+    // return allocated sprite index
+    return res;
+}
+
+void VDP_releaseSprites(u16 index, u16 num)
+{
+    VDPSprite* spr;
+    u16 remaining;
+
+    spr = &vdpSpriteCache[index];
+    // release sprite
+    *free++ = spr;
+
+    remaining = num - 1;
+    while(remaining--)
+    {
+        spr = &vdpSpriteCache[spr->link];
+        // release sprite
+        *free++ = spr;
+    }
+}
+
+u16 VDP_getAvailableSprites()
+{
+    return free - allocStack;
+}
+
+s16 VDP_refreshHighestAllocatedSpriteIndex()
+{
+    s16 res = -1;
+    VDPSprite **top = &allocStack[MAX_VDP_SPRITE];
+
+    while(top > free)
+    {
+        VDPSprite* curSpr = *--top;
+        s16 ind = curSpr - vdpSpriteCache;
+
+        // keep trace of highest index
+        if (ind > res) res = ind;
+    }
+
+    // update maximum index
+    highestVDPSpriteIndex = res;
+
+    return res;
+}
+
+
+void VDP_clearSprites()
+{
+    VDPSprite *sprite = &vdpSpriteCache[0];
+
+    // hide it
+    sprite->y = 0;
+    sprite->link = 0;
+}
+
+void VDP_setSpriteFull(u16 index, s16 x, s16 y, u8 size, u16 attribut, u8 link)
+{
+    VDPSprite *sprite = &vdpSpriteCache[index];
+
+    sprite->y = y + 0x80;
     sprite->size = size;
     sprite->link = link;
+    sprite->attribut = attribut;
+    sprite->x = x + 0x80;
 }
 
-void VDP_setSpriteP(u16 index, const SpriteDef *sprite)
+void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 attribut)
 {
-    SpriteDef *spriteDst;
+    VDPSprite *sprite = &vdpSpriteCache[index];
 
-    if (index >= MAX_SPRITE) return;
-
-    if (index >= spriteNum) spriteNum = index + 1;
-
-    spriteDst = &vdpSpriteCache[index];
-
-    spriteDst->posx = sprite->posx;
-    spriteDst->posy = sprite->posy;
-    spriteDst->tile_attr = sprite->tile_attr;
-    spriteDst->size = sprite->size;
-    spriteDst->link = sprite->link;
+    sprite->y = y + 0x80;
+    sprite->size = size;
+    sprite->attribut = attribut;
+    sprite->x = x + 0x80;
 }
-
-void VDP_setSpriteDirect(u16 index, s16 x, s16 y, u8 size, u16 tile_attr, u8 link)
-{
-    vu32 *plctrl;
-    vu16 *pwdata;
-    u32 addr;
-
-    if (index >= MAX_SPRITE) return;
-
-    VDP_setAutoInc(2);
-
-    addr = SLIST + (index * 8);
-
-    /* Point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
-
-    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-    // y position
-    *pwdata = 0x80 + y;
-    // size & link
-    *pwdata = (size << 8) | link;
-    // tile attribut
-    *pwdata = tile_attr;
-    // x position
-    *pwdata = 0X80 + x;
-}
-
-void VDP_setSpriteDirectP(u16 index, const SpriteDef *sprite)
-{
-    vu32 *plctrl;
-    vu16 *pwdata;
-    u32 addr;
-
-    if (index >= MAX_SPRITE) return;
-
-    VDP_setAutoInc(2);
-
-    addr = SLIST + (index * 8);
-
-    /* Point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
-
-    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-    // y position
-    *pwdata = 0x80 + sprite->posy;
-    // size & link
-    *pwdata = (sprite->size << 8) | sprite->link;
-    // tile attribut
-    *pwdata = sprite->tile_attr;
-    // x position
-    *pwdata = 0X80 + sprite->posx;
-}
-
 
 void VDP_setSpritePosition(u16 index, s16 x, s16 y)
 {
-    SpriteDef *sprite;
+    VDPSprite *sprite = &vdpSpriteCache[index];
 
-    if (index >= MAX_SPRITE) return;
-
-    if (index >= spriteNum) spriteNum = index + 1;
-
-    sprite = &vdpSpriteCache[index];
-
-    sprite->posx = x;
-    sprite->posy = y;
+    sprite->y = y + 0x80;
+    sprite->x = x + 0x80;
 }
 
-
-void VDP_setSpritesDirect(u16 index, const SpriteDef *sprites, u16 num)
+void VDP_setSpriteSize(u16 index, u8 size)
 {
-    vu32 *plctrl;
-    vu16 *pwdata;
-    const SpriteDef *sprite;
-    u16 i;
+    vdpSpriteCache[index].size = size;
+}
 
-    if (num == 0) return;
+void VDP_setSpriteAttribut(u16 index, u16 attribut)
+{
+    vdpSpriteCache[index].attribut = attribut;
+}
 
-    VDP_setAutoInc(2);
+void VDP_setSpriteLink(u16 index, u8 link)
+{
+    vdpSpriteCache[index].link = link;
+}
 
-    /* Point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+VDPSprite* VDP_linkSprites(u16 index, u16 num)
+{
+    VDPSprite* spr;
+    u8 ind;
+    u16 remaining;
 
-    *plctrl = GFX_WRITE_VRAM_ADDR(SLIST);
+    spr = &vdpSpriteCache[index];
+    ind = index;
+    remaining = num;
 
-    sprite = sprites;
-    i = num;
-    while(i--)
+    while(remaining--)
     {
-        // y position
-        *pwdata = 0x80 + sprite->posy;
-        // size & link
-        *pwdata = (sprite->size << 8) | sprite->link;
-        // tile attribut
-        *pwdata = sprite->tile_attr;
-        // x position
-        *pwdata = 0X80 + sprite->posx;
-
-        // next sprite
-        sprite++;
+        ind++;
+        spr->link = ind;
+        spr++;
     }
 
-    // we won't upload unmodified sprite
-    spriteNum = 0;
+    return spr;
 }
 
-
-void VDP_setSprites(u16 index, const SpriteDef *sprites, u16 num)
+void VDP_updateSprites(u16 num, u16 queue)
 {
-    u16 adjNum;
-
-    if (index >= MAX_SPRITE) return;
-
-    if ((index + num) > MAX_SPRITE) adjNum = MAX_SPRITE - index;
-    else adjNum = num;
-
-    if ((index + adjNum) > spriteNum) spriteNum = index + adjNum;
-
-    memcpy(&vdpSpriteCache[index], sprites, sizeof(SpriteDef) * adjNum);
+    // send the sprite cache to VRAM sprite table using DMA queue
+    if (queue)
+        DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * num) / 2, 2);
+    else
+        DMA_doDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * num) / 2, 2);
 }
 
-
-void VDP_updateSprites()
+void logVDPSprite(u16 index)
 {
-    vu32 *plctrl;
-    vu16 *pwdata;
-    SpriteDef *sprite;
-    u16 i;
+    char str[64];
+    char strtmp[8];
 
-    if (spriteNum == 0) return;
+    VDPSprite* vdpSprite = &vdpSpriteCache[index];
 
-    VDP_setAutoInc(2);
+    strcpy(str, "  VDP Sprite #");
 
-    /* Point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+    intToStr(index, strtmp, 1);
+    strcat(str, strtmp);
 
-    *plctrl = GFX_WRITE_VRAM_ADDR(SLIST);
+    strcat(str, " X=");
+    intToStr(vdpSprite->x, strtmp, 1);
+    strcat(str, strtmp);
+    strcat(str, " Y=");
+    intToStr(vdpSprite->y, strtmp, 1);
+    strcat(str, strtmp);
+    strcat(str, " size=");
+    intToHex(vdpSprite->size, strtmp, 2);
+    strcat(str, strtmp);
+    strcat(str, " attr=");
+    intToHex(vdpSprite->attribut, strtmp, 4);
+    strcat(str, strtmp);
+    strcat(str, " link=");
+    intToStr(vdpSprite->link, strtmp, 1);
+    strcat(str, strtmp);
 
-    sprite = &vdpSpriteCache[0];
-    i = spriteNum;
-    while(i--)
-    {
-        // y position
-        *pwdata = 0x80 + sprite->posy;
-        // size & link
-        *pwdata = (sprite->size << 8) | sprite->link;
-        // tile attribut
-        *pwdata = sprite->tile_attr;
-        // x position
-        *pwdata = 0X80 + sprite->posx;
-
-        // next sprite
-        sprite++;
-    }
-
-    // we won't upload unmodified sprite
-    spriteNum = 0;
+    KLog(str);
 }

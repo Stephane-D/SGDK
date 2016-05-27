@@ -1899,18 +1899,17 @@ ym_port_write2
 ; --------------
 
 com_ym_key_w0                           ; 40                    ' 80
-            wait18                      ; sync                  ' 40    |
+            wait44                      ; sync                  ' 44    |
             LD      HL, YMPORT0         ; HL point on YM port0  ' 10    |
             LD      BC, YMPORT1         ; BC point on YM port1  ' 10    | 84 (164)
-            wait4                       ; sync                  ' 4     |
             LD      (HL), $28           ; set reg num to YM     ' 10    |
             JP      ym_key_write0       ;                       ' 10    |
 
 com_ym_key_w1                           ; 41                    ' 80
-            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    |
-            LD      BC, YMPORT1         ; BC point on YM port1  ' 10    |
             wait4                       ; sync                  ' 4     |
-            LD      (HL), $28           ; set reg num to YM     ' 10    | 44 (124)
+            LD      HL, YMPORT0         ; HL point on YM port0  ' 10    |
+            LD      BC, YMPORT1         ; BC point on YM port1  ' 10    | 44 (124)
+            LD      (HL), $28           ; set reg num to YM     ' 10    |
             JP      ym_key_write1       ;                       ' 10    |
 
 com_ym_key_w2                           ; 43                    ' 80
@@ -1953,7 +1952,7 @@ ym_key_write1                           ;                       ' 124
             waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (164)
             LD      (BC), A             ; write to YM           ' 7     |
 
-ym_key_write0
+ym_key_write0                           ;                       ' 164
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
             waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (204)
@@ -1965,19 +1964,19 @@ ym_key_write0
 
             JP      execute_xgm         ;                       ' 10    | (254)
 
-ym_key_write5
+ym_key_write5                           ;                       ' 104
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
             waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (144)
             LD      (BC), A             ; write to YM           ' 7     |
 
-ym_key_write4
+ym_key_write4                           ;                       ' 144
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
             waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (184)
             LD      (BC), A             ; write to YM           ' 7     |
 
-ym_key_write3
+ym_key_write3                           ;                       ' 184
             LD      A, (DE)             ; A = YM key data       ' 7     |
             INC     E                   ; next data             ' 4     |
             waitYMReadyFast             ; wait YM to be ready   ' 22    | 40 (224)

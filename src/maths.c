@@ -7,18 +7,6 @@
 #include "vdp.h"
 
 
-u16 randbase;
-
-
-u16 random()
-{
-    randbase ^= (randbase >> 1) ^ GET_HVCOUNTER;
-    randbase ^= (randbase << 1);
-
-    return randbase;
-}
-
-
 u32 intToBCD(u32 value)
 {
     if (value > 99999999) return 0x99999999;
@@ -62,6 +50,11 @@ u32 intToBCD(u32 value)
 }
 
 u32 distance_approx(s32 dx, s32 dy)
+{
+    return getApproximatedDistance(dx, dy);
+}
+
+u32 getApproximatedDistance(s32 dx, s32 dy)
 {
     u32 min, max;
 

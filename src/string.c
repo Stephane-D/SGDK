@@ -7,8 +7,8 @@
 #include "maths.h"
 
 
-static const char *uppercase_hexchars = "0123456789ABCDEF";
-static const char *lowercase_hexchars = "0123456789abcdef";
+static const char* const uppercase_hexchars = "0123456789ABCDEF";
+static const char* const lowercase_hexchars = "0123456789abcdef";
 
 // FORWARD
 static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize);
@@ -71,6 +71,23 @@ char* strcpy(char *to, const char *from)
     return to;
 }
 
+char* strncpy(char *to, const char *from, u16 len)
+{
+    const char *src;
+    char *dst;
+    u16 i;
+
+    src = from;
+    dst = to;
+    i = 0;
+    while ((i++ < len) && (*dst++ = *src++));
+
+    // end string by null character
+    if (i > len) *dst = 0;
+
+    return to;
+}
+
 //char* strcpy2(char *to, const char *from)
 //{
 //  char *pto = to;
@@ -100,12 +117,19 @@ char* strcat(char *to, const char *from)
     return to;
 }
 
-char *strreplace(char *str, char old, char new)
+char *strreplacechar(char *str, char oldc, char newc)
 {
-    for (; *str; ++str)
-        if (*str == old)
-            *str = new;
-    return str;
+    char *s;
+
+    s =  str;
+    while(*s)
+    {
+        if (*s == oldc)
+            *s = newc;
+        s++;
+    }
+
+    return s;
 }
 
 void intToStr(s32 value, char *str, s16 minsize)
@@ -273,6 +297,8 @@ void fix32ToStr(fix32 value, char *str, s16 numdec)
 {
     u32 len;
     fix32 v;
+    u32 frac;
+    u8 strFrac[8];
 
     len = 0;
     if (value < 0)
@@ -284,13 +310,24 @@ void fix32ToStr(fix32 value, char *str, s16 numdec)
 
     len += uintToStr_(fix32ToInt(v), &str[len], 1, 16);
     str[len++] = '.';
-    uintToStr_((fix32Frac(v) * 1000) / (1 << FIX32_FRAC_BITS), &str[len], 1, numdec);
+
+    // get fractional part
+    frac = fix32Frac(v) * 1000;
+    frac /= 1 << FIX32_FRAC_BITS;
+
+    // get fractional string
+    uintToStr(frac, strFrac, 3);
+
+    if (numdec >= 3) strcpy(&str[len], strFrac);
+    else strncpy(&str[len], strFrac, numdec);
 }
 
 void fix16ToStr(fix16 value, char *str, s16 numdec)
 {
     u32 len;
     fix16 v;
+    u32 frac;
+    u8 strFrac[8];
 
     len = 0;
 
@@ -303,7 +340,16 @@ void fix16ToStr(fix16 value, char *str, s16 numdec)
 
     len += uintToStr_(fix16ToInt(v), &str[len], 1, 16);
     str[len++] = '.';
-    uintToStr_((fix16Frac(v) * 1000) / (1 << FIX16_FRAC_BITS), &str[len], 1, numdec);
+
+    // get fractional part
+    frac = fix16Frac(v) * 1000;
+    frac /= 1 << FIX16_FRAC_BITS;
+
+    // get fractional string
+    uintToStr(frac, strFrac, 3);
+
+    if (numdec >= 3) strcpy(&str[len], strFrac);
+    else strncpy(&str[len], strFrac, numdec);
 }
 
 

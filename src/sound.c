@@ -13,6 +13,13 @@
 #include "vdp.h"
 #include "sys.h"
 
+// just to get xgmstop resource
+#include "vdp.h"
+#include "bmp.h"
+#include "vdp_tile.h"
+#include "libres.h"
+
+
 
 // allow to access it without "public" share
 extern vu32 VIntProcess;

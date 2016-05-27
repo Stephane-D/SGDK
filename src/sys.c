@@ -74,6 +74,7 @@ static _voidCallback *HIntCB;
 static _voidCallback *ExtIntCB;
 
 
+// exception state consumes 78 bytes of memory
 u32 registerState[8+8];
 u32 pcState;
 u32 addrState;
@@ -225,7 +226,7 @@ static u16 showStackState(u16 pos)
     while(i < 24)
     {
         strclr(s);
-        addValueU8(s, "SP+", i);
+        addValueU8(s, "SP+", i * 4);
         strcat(s, " ");
         y = showValueU32U32(s, *(sp + (i + 0)), " ", *(sp + (i + 1)), y);
         i += 2;
@@ -482,7 +483,7 @@ void _extint_callback()
 void _start_entry()
 {
     // initiate random number generator
-    randbase = 0xD94B ^ GET_HVCOUNTER;
+    setRandomSeed(0);
     vtimer = 0;
 
     // default interrupt callback
@@ -611,6 +612,7 @@ static void internal_reset()
     // init part
     MEM_init();
     VDP_init();
+    DMA_init(0, 0);
     PSG_init();
     JOY_init();
     // reseting z80 also reset the ym2612
@@ -625,8 +627,9 @@ void SYS_disableInts()
     // in interrupt --> return
     if (intTrace != 0)
     {
-        if (LIB_DEBUG)
-            KDebug_Alert("SYS_disableInts() fails: call during interrupt");
+#if (LIB_DEBUG != 0)
+        KDebug_Alert("SYS_disableInts() fails: call during interrupt");
+#endif
 
         return;
     }
@@ -634,8 +637,10 @@ void SYS_disableInts()
     // disable interrupts
     if (disableIntStack++ == 0)
         intLevelSave = SYS_getAndSetInterruptMaskLevel(7);
-    else if (LIB_DEBUG)
+#if (LIB_DEBUG != 0)
+    else
         KDebug_Alert("SYS_disableInts() info: inner call");
+#endif
 }
 
 void SYS_enableInts()
@@ -643,8 +648,9 @@ void SYS_enableInts()
     // in interrupt --> return
     if (intTrace != 0)
     {
-        if (LIB_DEBUG)
-            KDebug_Alert("SYS_enableInts() fails: call during interrupt");
+#if (LIB_DEBUG != 0)
+        KDebug_Alert("SYS_enableInts() fails: call during interrupt");
+#endif
 
         return;
     }
@@ -652,13 +658,15 @@ void SYS_enableInts()
     // reenable interrupts
     if (--disableIntStack == 0)
         SYS_setInterruptMaskLevel(intLevelSave);
-    else if (LIB_DEBUG)
+#if (LIB_DEBUG != 0)
+    else
     {
         if (disableIntStack < 0)
             KDebug_Alert("SYS_enableInts() fails: already enabled");
         else
             KDebug_Alert("SYS_enableInts() info: inner call");
     }
+#endif
 }
 
 void SYS_setVIntPreCallback(_voidCallback *CB)
