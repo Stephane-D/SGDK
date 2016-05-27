@@ -24,12 +24,12 @@
 				<Option compiler="sega_genesis_compiler" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<MakeCommands>
-					<Build command="$make -f $makefile" />
+					<Build command="$make -f $makefile debug" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make -f $makefile clean" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -s -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile debug &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="release">
@@ -40,15 +40,17 @@
 				<Option compiler="sega_genesis_compiler" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<MakeCommands>
-					<Build command="$make -f $makefile" />
+					<Build command="$make -f $makefile release" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make -f $makefile clean" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -s -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile release &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="res/bga.png" />
+		<Unit filename="res/bgb.png" />
 		<Unit filename="res/gfx.res" />
 		<Unit filename="res/music.res" />
 		<Unit filename="res/sonic.png" />

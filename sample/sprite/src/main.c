@@ -1,7 +1,12 @@
 #include <genesis.h>
 
 #include "gfx.h"
-#include "music.h"
+#include "sprite.h"
+#include "sound.h"
+
+#define SFX_JUMP        64
+#define SFX_ROLL        65
+#define SFX_STOP        66
 
 #define ANIM_STAND      0
 #define ANIM_WAIT       1
@@ -34,8 +39,8 @@ static void updatePhysic();
 static void updateAnim();
 static void updateCamera(fix32 x, fix32 y);
 
-// sprites structure
-Sprite sprites[2];
+// sprites structure (pointer of Sprite)
+Sprite* sprites[3];
 
 fix32 camposx;
 fix32 camposy;
@@ -45,6 +50,10 @@ fix32 movx;
 fix32 movy;
 s16 xorder;
 s16 yorder;
+
+fix32 enemyPosx[2];
+fix32 enemyPosy[2];
+s16 enemyXorder[2];
 
 int main()
 {
@@ -56,20 +65,24 @@ int main()
     // initialization
     VDP_setScreenWidth320();
 
+    // init SFX
+    SND_setPCM_XGM(SFX_JUMP, sonic_jump_sfx, sizeof(sonic_jump_sfx));
+    SND_setPCM_XGM(SFX_ROLL, sonic_roll_sfx, sizeof(sonic_roll_sfx));
+    SND_setPCM_XGM(SFX_STOP, sonic_stop_sfx, sizeof(sonic_stop_sfx));
     // start music
     SND_startPlay_XGM(sonic_music);
 
     // init sprites engine
-    SPR_init(256);
+    SPR_init(16, 256, 256);
 
     // set all palette to black
-    VDP_setPaletteColors(0, palette_black, 64);
+    VDP_setPaletteColors(0, (u16*) palette_black, 64);
 
     // load background
     ind = TILE_USERINDEX;
-    VDP_drawImageEx(BPLAN, &bgb_image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(PLAN_B, &bgb_image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
     ind += bgb_image.tileset->numTile;
-    VDP_drawImageEx(APLAN, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(PLAN_A, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
     ind += bga_image.tileset->numTile;
 
     // VDP process done, we can re enable interrupts
@@ -84,20 +97,34 @@ int main()
     xorder = 0;
     yorder = 0;
 
+    enemyPosx[0] = FIX32(128);
+    enemyPosy[0] = FIX32(164);
+    enemyPosx[1] = FIX32(300);
+    enemyPosy[1] = FIX32(84);
+    enemyXorder[0] = 1;
+    enemyXorder[1] = -1;
+
     // init scrolling
     updateCamera(FIX32(0), FIX32(0));
 
     // init sonic sprite
-    SPR_initSprite(&sprites[0], &sonic_sprite, fix32ToInt(posx - camposx), fix32ToInt(posy - camposy), TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
-    SPR_update(sprites, 1);
+    sprites[0] = SPR_addSprite(&sonic_sprite, fix32ToInt(posx - camposx), fix32ToInt(posy - camposy), TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+    // init enemies sprites
+    sprites[1] = SPR_addSprite(&enemies_sprite, fix32ToInt(enemyPosx[0] - camposx), fix32ToInt(enemyPosy[0] - camposy), TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
+    sprites[2] = SPR_addSprite(&enemies_sprite, fix32ToInt(enemyPosx[1] - camposx), fix32ToInt(enemyPosy[1] - camposy), TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
+    // select enemy for each sprite
+    SPR_setAnim(sprites[1], 1);
+    SPR_setAnim(sprites[2], 0);
+    SPR_update();
 
     // prepare palettes
     memcpy(&palette[0], bgb_image.palette->data, 16 * 2);
     memcpy(&palette[16], bga_image.palette->data, 16 * 2);
     memcpy(&palette[32], sonic_sprite.palette->data, 16 * 2);
+    memcpy(&palette[48], enemies_sprite.palette->data, 16 * 2);
 
     // fade in
-    VDP_fadeIn(0, (3 * 16) - 1, palette, 20, FALSE);
+    VDP_fadeIn(0, (4 * 16) - 1, palette, 20, FALSE);
 
     JOY_setEventHandler(joyEvent);
 
@@ -108,8 +135,8 @@ int main()
         updatePhysic();
         updateAnim();
 
-        // update sprites (only one to update here)
-        SPR_update(sprites, 1);
+        // update sprites
+        SPR_update();
 
         VDP_waitVSync();
     }
@@ -119,6 +146,9 @@ int main()
 
 static void updatePhysic()
 {
+    u16 i;
+
+    // sonic physic
     if (xorder > 0)
     {
         movx += ACCEL;
@@ -171,6 +201,17 @@ static void updatePhysic()
         movx = 0;
     }
 
+    // enemies physic
+    if (enemyXorder[0] > 0) enemyPosx[0] += FIX32(0.7);
+    else enemyPosx[0] -= FIX32(0.7);
+    if (enemyXorder[1] > 0) enemyPosx[1] += FIX32(1.5);
+    else enemyPosx[1] -= FIX32(1.5);
+    for(i = 0; i < 2; i++)
+    {
+        if ((enemyPosx[i] >= MAX_POSX) || (enemyPosx[i] <= MIN_POSX))
+            enemyXorder[i] = -enemyXorder[i];
+    }
+
     fix32 px_scr, py_scr;
     fix32 npx_cam, npy_cam;
 
@@ -194,37 +235,53 @@ static void updatePhysic()
 
     // set camera position
     updateCamera(npx_cam, npy_cam);
-    // set sprite position
-    SPR_setPosition(&sprites[0], fix32ToInt(posx - camposx), fix32ToInt(posy - camposy));
+
+    // set sprites position
+    SPR_setPosition(sprites[0], fix32ToInt(posx - camposx), fix32ToInt(posy - camposy));
+    SPR_setPosition(sprites[1], fix32ToInt(enemyPosx[0] - camposx), fix32ToInt(enemyPosy[0] - camposy));
+    SPR_setPosition(sprites[2], fix32ToInt(enemyPosx[1] - camposx), fix32ToInt(enemyPosy[1] - camposy));
 }
 
 static void updateAnim()
 {
     // jumping
-    if (movy) SPR_setAnim(&sprites[0], ANIM_ROLL);
+    if (movy) SPR_setAnim(sprites[0], ANIM_ROLL);
     else
     {
         if (((movx >= BRAKE_SPEED) && (xorder < 0)) || ((movx <= -BRAKE_SPEED) && (xorder > 0)))
-            SPR_setAnim(&sprites[0], ANIM_BRAKE);
+        {
+            if (sprites[0]->animInd != ANIM_BRAKE)
+            {
+                SND_startPlayPCM_XGM(SFX_STOP, 1, SOUND_PCM_CH2);
+                SPR_setAnim(sprites[0], ANIM_BRAKE);
+            }
+        }
         else if ((movx >= RUN_SPEED) || (movx <= -RUN_SPEED))
-            SPR_setAnim(&sprites[0], ANIM_RUN);
+            SPR_setAnim(sprites[0], ANIM_RUN);
         else if (movx != 0)
-            SPR_setAnim(&sprites[0], ANIM_WALK);
+            SPR_setAnim(sprites[0], ANIM_WALK);
         else
         {
             if (yorder < 0)
-                SPR_setAnim(&sprites[0], ANIM_UP);
+                SPR_setAnim(sprites[0], ANIM_UP);
             else if (yorder > 0)
-                SPR_setAnim(&sprites[0], ANIM_CROUNCH);
+                SPR_setAnim(sprites[0], ANIM_CROUNCH);
             else
-                SPR_setAnim(&sprites[0], ANIM_STAND);
+                SPR_setAnim(sprites[0], ANIM_STAND);
         }
     }
 
-    if (movx > 0)
-        SPR_setAttribut(&sprites[0], TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
-    else if (movx < 0)
-        SPR_setAttribut(&sprites[0], TILE_ATTR(PAL2, TRUE, FALSE, TRUE));
+    if (movx > 0) SPR_setHFlip(sprites[0], FALSE);
+    else if (movx < 0) SPR_setHFlip(sprites[0], TRUE);
+
+    // enemies
+    if (enemyXorder[1] > 0) SPR_setHFlip(sprites[2], TRUE);
+    else SPR_setHFlip(sprites[2], FALSE);
+//    for(i = 0; i < 2; i++)
+//    {
+//        if (enemyXorder[i] > 0) SPR_setHFlip(sprites[i + 1], TRUE);
+//        else SPR_setHFlip(sprites[i + 1], FALSE);
+//    }
 }
 
 static void updateCamera(fix32 x, fix32 y)
@@ -264,6 +321,10 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 
     if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C))
     {
-        if (movy == 0) movy = JUMP_SPEED;
+        if (movy == 0)
+        {
+            movy = JUMP_SPEED;
+            SND_startPlayPCM_XGM(SFX_JUMP, 1, SOUND_PCM_CH2);
+        }
     }
 }
