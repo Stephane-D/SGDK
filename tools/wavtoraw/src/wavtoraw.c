@@ -30,7 +30,7 @@ int main(int argc, char *argv[ ])
 
     if (argc < 3)
     {
-        printf("WavToRaw %s - Stephane Dallongeville - copyright 2014\n", version);
+        printf("WavToRaw %s - Stephane Dallongeville - copyright 2016\n", version);
         printf("\n");
         printf("Usage: wav2raw sourceFile destFile <outRate>\n");
         printf("Output rate is given in Hz.\n");
