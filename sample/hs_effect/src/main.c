@@ -54,10 +54,10 @@ const u16 background_palette[16] = {
     for(row = 0; row < NUM_ROWS; row += 2) \
     for(column = 0; column < NUM_COLUMNS; column += 2) \
     { \
-       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_A, column,   row); \
-       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_B, column+1, row); \
-       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_B, column,   row+1); \
-       VDP_setTileMapXY( BPLAN, VRAM_POS_BRICK_A, column+1, row+1); \
+       VDP_setTileMapXY( PLAN_B, VRAM_POS_BRICK_A, column,   row); \
+       VDP_setTileMapXY( PLAN_B, VRAM_POS_BRICK_B, column+1, row); \
+       VDP_setTileMapXY( PLAN_B, VRAM_POS_BRICK_B, column,   row+1); \
+       VDP_setTileMapXY( PLAN_B, VRAM_POS_BRICK_A, column+1, row+1); \
     }
 
 #define DrawSpotlights(); \
@@ -65,7 +65,7 @@ const u16 background_palette[16] = {
     for(column = 0; column < NUM_SPOTLIGHTS; column++) \
     for(tile_spotlight = 0; tile_spotlight < SPOTLIGHT_WIDTH; tile_spotlight++) \
     { \
-       VDP_setTileMapXY( APLAN, TILE_ATTR_FULL(PAL0, column%2, 0, 0, VRAM_POS_TILE_VOID), \
+       VDP_setTileMapXY( PLAN_A, TILE_ATTR_FULL(PAL0, column%2, 0, 0, VRAM_POS_TILE_VOID), \
           (column * SPOTLIGHT_WIDTH) + tile_spotlight, row); \
     }
 
@@ -110,11 +110,11 @@ int main()
     for(i = 0; i < NUM_SPRITES; i++)
     {
         *sp = 20 + (i * 10);
-        VDP_setSprite((i * 2) + 0, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USERINDEX + 2), (i * 2) + 1);
+        VDP_setSpriteFull((i * 2) + 0, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USERINDEX + 2), (i * 2) + 1);
         sp++;
 
         *sp = 300 - (i * 10);
-        VDP_setSprite((i * 2) + 1, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USERINDEX + 3), (i == (NUM_SPRITES - 1))?0:(i * 2) + 2);
+        VDP_setSpriteFull((i * 2) + 1, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USERINDEX + 3), (i == (NUM_SPRITES - 1))?0:(i * 2) + 2);
         sp++;
     }
 
@@ -130,7 +130,7 @@ int main()
     VDP_loadTileData(background_tileset, TILE_USERINDEX, NUM_TILES_TILESET, 1);
     VDP_loadTileData(sprite_tileset, TILE_USERINDEX + 2, 2, 1);
 
-    VDP_updateSprites();
+    VDP_updateSprites(NUM_SPRITES, TRUE);
 
     // Drawing
     DrawWall();
@@ -171,12 +171,14 @@ int main()
             sp++;
         }
 
+        // send to VDP with DMA queue
+        VDP_updateSprites(NUM_SPRITES, TRUE);
+
         // Drawing/movement speed down
         VDP_waitVSync();
 
         // Set Horizontal Scroll and update sprites during blank period
         VDP_setHorizontalScrollLine(PLAN_A, 0, aux, NUM_LINES, 1);
-        VDP_updateSprites();
 
     } // end main loop
 
