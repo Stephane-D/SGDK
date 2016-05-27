@@ -43,12 +43,16 @@ static int execute(char *info, FILE *fs, FILE *fh)
     if (nbElem < 5)
     {
         printf("Wrong MAP definition\n");
-        printf("MAP name file width height [packed]\n");
-        printf("  name\t\tMap variable name\n");
-        printf("  file\tthe map file to convert to Map structure (.map Mappy file)\n");
-        printf("  width\tthe map width\n");
-        printf("  height\tthe map height\n");
-        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE, 4 = RLEMAP (default = NONE).\n\n");
+        printf("MAP name \"file\" width height [packed]\n");
+        printf("  name      Map variable name\n");
+        printf("  file      the map file to convert to Map structure (.map Mappy file)\n");
+        printf("  width     the map width\n");
+        printf("  height    the map height\n");
+        printf("  packed    compression type, accepted values:\n");
+        printf("              -1 / BEST / AUTO = use best compression\n");
+        printf("               0 / NONE        = no compression\n");
+        printf("               1 / APLIB       = aplib library (good compression ratio but slow)\n");
+        printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
 
         return FALSE;
     }

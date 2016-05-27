@@ -20,9 +20,8 @@
 
 
 // keep trace of the app and input file directories
-extern char *currentDirSystem;
+//extern char *currentDirSystem;
 extern char *currentDir;
-extern char *resDirSystem;
 extern char *resDir;
 
 

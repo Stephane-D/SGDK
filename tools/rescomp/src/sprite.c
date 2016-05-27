@@ -16,6 +16,7 @@
 static int isSupported(char *type);
 static int execute(char *info, FILE *fs, FILE *fh);
 
+
 // SPRITE resource support
 Plugin sprite = { isSupported, execute };
 
@@ -55,14 +56,18 @@ static int execute(char *info, FILE *fs, FILE *fh)
     if (nbElem < 5)
     {
         printf("Wrong SPRITE definition\n");
-        printf("SPRITE name file width heigth [packed [time [collision]]]\n");
-        printf("  name\t\tSprite variable name\n");
-        printf("  file\tthe image file to convert to SpriteDefinition structure (should be a 8bpp .bmp or .png)\n");
-        printf("  width\twidth of a single sprite frame in tile\n");
-        printf("  height\theigth of a single sprite frame in tile\n");
-        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n");
-        printf("  time\tdisplay frame time in 1/60 of second (time between each animation frame).\n");
-        printf("  collision\tcollision type: CIRCLE, BOX or NONE (BOX by default).\n\n");
+        printf("SPRITE name \"file\" width heigth [packed [time [collid]]]\n");
+        printf("  name      Sprite variable name\n");
+        printf("  file      the image file to convert to SpriteDefinition structure (should be a 8bpp .bmp or .png)\n");
+        printf("  width     width of a single sprite frame in tile\n");
+        printf("  height    heigth of a single sprite frame in tile\n");
+        printf("  packed    compression type, accepted values:\n");
+        printf("              -1 / BEST / AUTO = use best compression\n");
+        printf("               0 / NONE        = no compression\n");
+        printf("               1 / APLIB       = aplib library (good compression ratio but slow)\n");
+        printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
+        printf("  time      display frame time in 1/60 of second (time between each animation frame).\n");
+        printf("  collid    collision type: CIRCLE, BOX or NONE (BOX by default).\n");
 
         return FALSE;
     }
@@ -118,7 +123,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     // pack data
     if (packed != PACK_NONE)
     {
-        if (!packSpriteDef(sprDef, &packed)) return FALSE;
+        if (!packSpriteDef(sprDef, packed)) return FALSE;
     }
 
     // get palette
@@ -143,48 +148,68 @@ static int execute(char *info, FILE *fs, FILE *fh)
 }
 
 
-void outBox(box_* box, FILE* fs, FILE* fh, char* id, int global)
+void outCollision(collision_* collision, FILE* fs, FILE* fh, char* id, int global)
 {
-    // Box structure
-    decl(fs, fh, "Box", id, 2, global);
-    fprintf(fs, "    dc.x    %d\n", box->x);
-    fprintf(fs, "    dc.y    %d\n", box->y);
-    fprintf(fs, "    dc.w    %d\n", box->w);
-    fprintf(fs, "    dc.h    %d\n", box->h);
+    // Collision structure
+    decl(fs, fh, "Collision", id, 2, global);
+    // type position
+    fprintf(fs, "    dc.w    %d\n", collision->type);
+
+    switch(collision->type)
+    {
+        case COLLISION_BOX:
+            fprintf(fs, "    dc.w    %d\n", collision->box.x);
+            fprintf(fs, "    dc.w    %d\n", collision->box.y);
+            fprintf(fs, "    dc.w    %d\n", collision->box.w);
+            fprintf(fs, "    dc.w    %d\n", collision->box.h);
+            break;
+
+        case COLLISION_CIRCLE:
+            fprintf(fs, "    dc.w    %d\n", collision->circle.x);
+            fprintf(fs, "    dc.w    %d\n", collision->circle.y);
+            fprintf(fs, "    dc.w    %d\n", collision->circle.ray);
+            break;
+    }
     fprintf(fs, "\n");
 }
 
-void outCircle(circle_* circle, FILE* fs, FILE* fh, char* id, int global)
-{
-    // Box structure
-    decl(fs, fh, "Circle", id, 2, global);
-    fprintf(fs, "    dc.x    %d\n", circle->x);
-    fprintf(fs, "    dc.y    %d\n", circle->y);
-    fprintf(fs, "    dc.ray  %d\n", circle->ray);
-    fprintf(fs, "\n");
-}
+//void outFrameSprite(frameSprite_* frameSprite, FILE* fs, FILE* fh, char* baseid, char* id, int global)
+//{
+//    char temp[MAX_PATH_LEN];
+//    char refid[MAX_PATH_LEN];
+//
+//    // EXPORT TILESET
+//    sprintf(refid, "%s_gtileset", baseid);
+//    sprintf(temp, "%s_tileset", id);
+//    outTileset(frameSprite->tileset, fs, fh, refid, temp, FALSE);
+//
+//    // FrameSprite structure
+//    decl(fs, fh, "FrameSprite", id, 2, global);
+//    // Y position
+//    fprintf(fs, "    dc.w    %d\n", frameSprite->y);
+//    // size infos
+//    fprintf(fs, "    dc.w    %d\n", SPRITE_SIZE(frameSprite->w, frameSprite->h) << 8);
+//    // index and attributs
+//    fprintf(fs, "    dc.w    %d\n", frameSprite->ind | (frameSprite->attr << 11));
+//    // X position
+//    fprintf(fs, "    dc.w    %d\n", frameSprite->x);
+//    // set tileset pointer
+//    fprintf(fs, "    dc.l    %s\n", temp);
+//    fprintf(fs, "\n");
+//}
 
 void outFrameSprite(frameSprite_* frameSprite, FILE* fs, FILE* fh, char* id, int global)
 {
-    char temp[MAX_PATH_LEN];
-
-    // EXPORT TILESET
-    strcpy(temp, id);
-    strcat(temp, "_tileset");
-    outTileset(frameSprite->tileset, fs, fh, temp, FALSE);
-
-    // FrameSprite structure
-    decl(fs, fh, "FrameSprite", id, 2, global);
+    // FrameSprite = VDPSpriteInf structure in SGDK
+    decl(fs, fh, "VDPSpriteInf", id, 2, global);
     // Y position
     fprintf(fs, "    dc.w    %d\n", frameSprite->y);
     // size infos
-    fprintf(fs, "    dc.w    %d\n", SPRITE_SIZE(frameSprite->w, frameSprite->h) << 8);
-    // index and attributs
-    fprintf(fs, "    dc.w    %d\n", frameSprite->ind | (frameSprite->attr << 11));
+    fprintf(fs, "    dc.w    %d\n", SPRITE_SIZE(frameSprite->w, frameSprite->h) << 0);
     // X position
     fprintf(fs, "    dc.w    %d\n", frameSprite->x);
-    // set tileset pointer
-    fprintf(fs, "    dc.l    %s\n", temp);
+    // Num tile
+    fprintf(fs, "    dc.w    %d\n", frameSprite->numTile);
     fprintf(fs, "\n");
 }
 
@@ -192,10 +217,9 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
 {
     int i;
     frameSprite_ **frameSprites;
-    box_** boxes;
-    circle_** circles;
     char temp[MAX_PATH_LEN];
 
+    // EXPORT FRAME SPRITE
     frameSprites = animFrame->frameSprites;
     for(i = 0; i < animFrame->numSprite; i++)
     {
@@ -216,28 +240,16 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
 
     fprintf(fs, "\n");
 
-    // collision data
-    if (animFrame->tc != COLLISION_NONE)
+    // EXPORT COLLISION DATA
+    if (animFrame->numCollision > 0)
     {
-        switch (animFrame->tc)
-        {
-            case COLLISION_BOX:
-                boxes = (box_**) animFrame->collisions;
-                for(i = 0; i < animFrame->numCollision; i++)
-                {
-                    sprintf(temp, "%s_collision%d", id, i);
-                    outBox(*boxes++, fs, fh, id, FALSE);
-                }
-                break;
+        collision_** collisions;
 
-            case COLLISION_CIRCLE:
-                circles = (circle_**) animFrame->collisions;
-                for(i = 0; i < animFrame->numCollision; i++)
-                {
-                    sprintf(temp, "%s_collision%d", id, i);
-                    outCircle(*circles++, fs, fh, id, FALSE);
-                }
-                break;
+        collisions = animFrame->collisions;
+        for(i = 0; i < animFrame->numCollision; i++)
+        {
+            sprintf(temp, "%s_collision%d", id, i);
+            outCollision(*collisions++, fs, fh, temp, FALSE);
         }
 
         fprintf(fs, "\n");
@@ -254,6 +266,10 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
         fprintf(fs, "\n");
     }
 
+    // EXPORT TILESET
+    sprintf(temp, "%s_tileset", id);
+    outTileset(animFrame->tileset, fs, fh, temp, FALSE);
+
     // AnimationFrame structure
     decl(fs, fh, "AnimationFrame", id, 2, global);
     // set number of sprite
@@ -263,16 +279,18 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
     // set number of collision
     fprintf(fs, "    dc.w    %d\n", animFrame->numCollision);
     // set collisions pointer
-    if (animFrame->tc != COLLISION_NONE)
+    if (animFrame->numCollision > 0)
         fprintf(fs, "    dc.l    %s_collisions\n", id);
     else
         fprintf(fs, "    dc.l    0\n");
+    // set tileset pointer
+    fprintf(fs, "    dc.l    %s_tileset\n", id);
     // frame width
     fprintf(fs, "    dc.w    %d\n", animFrame->w * 8);
     // frame height
     fprintf(fs, "    dc.w    %d\n", animFrame->h * 8);
-    // collision type info & timer info
-    fprintf(fs, "    dc.w    %d\n", (animFrame->tc << 8) | animFrame->timer);
+    // timer info
+    fprintf(fs, "    dc.w    %d\n", animFrame->timer);
     fprintf(fs, "\n");
 }
 
@@ -282,6 +300,7 @@ void outAnimation(animation_* animation, FILE* fs, FILE* fh, char* id, int globa
     animFrame_ **frames;
     char temp[MAX_PATH_LEN];
 
+    // EXPORT FRAME
     frames = animation->frames;
     for(i = 0; i < animation->numFrame; i++)
     {
@@ -302,7 +321,7 @@ void outAnimation(animation_* animation, FILE* fs, FILE* fh, char* id, int globa
 
     fprintf(fs, "\n");
 
-    // sequence data
+    // EXPORT SEQUENCE DATA
     strcpy(temp, id);
     strcat(temp, "_sequence");
     // declare
@@ -333,6 +352,7 @@ void outSpriteDef(spriteDefinition_* spriteDef, FILE* fs, FILE* fh, char* id, in
     animation_ **animations;
     char temp[MAX_PATH_LEN];
 
+    // EXPORT ANIMATION
     animations = spriteDef->animations;
     for(i = 0; i < spriteDef->numAnimation; i++)
     {
@@ -361,6 +381,10 @@ void outSpriteDef(spriteDefinition_* spriteDef, FILE* fs, FILE* fh, char* id, in
     fprintf(fs, "    dc.w    %d\n", spriteDef->numAnimation);
     // set animations pointer
     fprintf(fs, "    dc.l    %s_animations\n", id);
+    // set maximum number of tile used by a single animation frame (used for VRAM tile space allocation)
+    fprintf(fs, "    dc.w    %d\n", spriteDef->maxNumTile);
+    // set maximum number of VDP sprite used by a single animation frame (used for VDP sprite allocation)
+    fprintf(fs, "    dc.w    %d\n", spriteDef->maxNumSprite);
+
     fprintf(fs, "\n");
 }
-

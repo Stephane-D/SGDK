@@ -50,9 +50,13 @@ static int execute(char *info, FILE *fs, FILE *fh)
     {
         printf("Wrong TILESET definition\n");
         printf("TILESET name \"file\" [packed]\n");
-        printf("  name\t\tTileset variable name\n");
-        printf("  file\tthe image to convert to TileSet structure (should be a 8bpp .bmp or .png)\n");
-        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n\n");
+        printf("  name      Tileset variable name\n");
+        printf("  file      the image to convert to TileSet structure (should be a 8bpp .bmp or .png)\n");
+        printf("  packed    compression type, accepted values:\n");
+        printf("              -1 / BEST / AUTO = use best compression\n");
+        printf("               0 / NONE        = no compression\n");
+        printf("               1 / APLIB       = aplib library (good compression ratio but slow)\n");
+        printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
 
         return FALSE;
     }
@@ -129,8 +133,7 @@ void outTileset(tileset_* tileset, FILE* fs, FILE* fh, char* id, int global)
     else size = tileset->num * 32;
 
     // tileset data
-    strcpy(temp, id);
-    strcat(temp, "_tiles");
+    sprintf(temp, "%s_tiles", id);
     // declare
     decl(fs, fh, NULL, temp, 2, FALSE);
     // output data

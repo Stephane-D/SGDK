@@ -37,6 +37,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     unsigned char *data;
 
     converted = 0;
+    z80 = 0;
     nbElem = sscanf(info, "%s %s \"%[^\"]\" %d", temp, id, temp, &z80);
 
     if (nbElem < 3)

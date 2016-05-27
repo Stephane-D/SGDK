@@ -120,7 +120,7 @@ tileimg_* getTiledImage(unsigned char* image8bpp, int w, int h, int opt, unsigne
                 return NULL;
             }
 
-            index = addTile(tile, result->tileset, opt);
+            index = addTile(tile, result->tileset, opt, TILE_MAX_NUM);
             // error adding new tile --> return NULL
             if (index == -1)
             {
@@ -164,12 +164,7 @@ int packTileSet(tileset_* tileset, int *method)
     tiles = (unsigned int*) pack((unsigned char*) tileset->tiles, 0, tileset->num * 32, &size, method);
     if (!tiles) return FALSE;
 
-    if (tiles != tileset->tiles)
-    {
-        free(tileset->tiles);
-        tileset->tiles = tiles;
-    }
-
+    tileset->tiles = tiles;
     tileset->packed = *method;
     tileset->packedSize = size;
 
@@ -181,15 +176,10 @@ int packMap(tilemap_* map, int *method)
     int size;
     unsigned short *data;
 
-    data = (unsigned short*) packEx((unsigned char*) map->data, 0, map->w * map->h * 2, 2, TRUE, &size, method);
+    data = (unsigned short*) packEx((unsigned char*) map->data, 0, map->w * map->h * 2, 2, &size, method);
     if (!data) return FALSE;
 
-    if (data != map->data)
-    {
-        free(map->data);
-        map->data = data;
-    }
-
+    map->data = data;
     map->packed = *method;
     map->packedSize = size;
 
@@ -255,7 +245,7 @@ int isSameTile1(unsigned int *t1, unsigned int *t2, int hflip, int vflip)
     unsigned int tile[8];
 
     flipTile(t1, tile, hflip, vflip);
-    if (!memcmp(t1, t2, 8 * 4)) return true;
+    if (!memcmp(tile, t2, 8 * 4)) return true;
 
     return false;
 }
@@ -264,7 +254,7 @@ int isSameTile2(unsigned int *tile, tileset_ *tileset, int index, int hflip, int
 {
     if (index >= tileset->num) return false;
 
-    return isSameTile1(tile, &tileset->tiles[index * (32/4)], hflip, vflip);
+    return isSameTile1(tile, &(tileset->tiles[index * (32 / 4)]), hflip, vflip);
 }
 
 int getTileIndex(unsigned int *tile, tileset_ *tileset, int allowFlip)
@@ -290,22 +280,22 @@ int tileExists(unsigned int *tile, tileset_ *tileset, int allowFlip)
     return getTileIndex(tile, tileset, allowFlip) != -1;
 }
 
-int addTile(unsigned int *tile, tileset_ *tileset, int opt)
+int addTile(unsigned int *tile, tileset_ *tileset, int opt, int tileLimit)
 {
     int result;
 
     // search if tile already exist
     if (opt)
     {
-         result = getTileIndex(tile, tileset, true);
+         result = getTileIndex(tile, tileset, TRUE);
          // exist --> return it
          if (result != -1) return result;
     }
 
     // maximum number of tile reached
-    if (tileset->num >= TILE_MAX_NUM)
+    if (tileset->num > tileLimit)
     {
-        printf("Error: maximum number of tile (2048) reached.\n");
+        printf("Error: maximum number of tile (%d) reached.\n", tileLimit);
         return -1;
     }
 
@@ -316,6 +306,63 @@ int addTile(unsigned int *tile, tileset_ *tileset, int opt)
 
     // copy new tile
     memcpy(&tileset->tiles[result * (32/4)], tile, 32);
+
+    // return tile index
+    return result;
+}
+
+int getTilesetIndex(tileset_ *tileset, tileset_ *dest)
+{
+    int i;
+
+    for(i = 0; i <= (dest->num - tileset->num); i++)
+    {
+        int same = true;
+        int j = 0;
+
+        while(same && (j < tileset->num))
+        {
+            same = isSameTile1(&tileset->tiles[j * (32/4)], &dest->tiles[(i + j) * (32/4)], false, false);
+            j++;
+        }
+
+        if (same) return i;
+    }
+
+    return -1;
+}
+
+int tilesetExists(tileset_ *tileset, tileset_ *dest)
+{
+    return getTilesetIndex(tileset, dest) != -1;
+}
+
+int addTileset(tileset_ *tileset, tileset_ *dest, int opt, int tileLimit)
+{
+    int result;
+
+    // search if tile already exist
+    if (opt)
+    {
+         result = getTilesetIndex(tileset, dest);
+         // exist --> return it
+         if (result != -1) return result;
+    }
+
+    // maximum number of tile reached
+    if ((tileset->num + dest->num) > tileLimit)
+    {
+        printf("Error: maximum number of tile (%d) reached.\n", tileLimit);
+        return -1;
+    }
+
+    // get tile index
+    result = dest->num;
+    // increase number of tile
+    dest->num += tileset->num;
+
+    // copy new tiles
+    memcpy(&dest->tiles[result * (32/4)], tileset->tiles, 32 * tileset->num);
 
     // return tile index
     return result;

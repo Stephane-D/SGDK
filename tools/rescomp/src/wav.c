@@ -32,6 +32,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char temp2[MAX_PATH_LEN];
     char id[50];
     char fileIn[MAX_PATH_LEN];
+    char driverStr[256];
     int size;
     int nbElem;
     int driver;
@@ -39,64 +40,63 @@ static int execute(char *info, FILE *fs, FILE *fh)
     int unsign;
     unsigned char *data;
 
-    driver = 0;
     outRate = 0;
     unsign = 0;
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d", temp, id, temp, &driver, &outRate);
+    strcpy(driverStr, "");
+
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %d", temp, id, temp, driverStr, &outRate);
 
     if (nbElem < 3)
     {
         printf("Wrong WAV definition\n");
-        printf("WAV name file [driver [out_rate]]\n");
+        printf("WAV name \"file\" [driver [out_rate]]\n");
         printf("  name      variable name\n");
         printf("  file      path of the .wav file (will be converted to 8 bits signed PCM)\n");
         printf("  driver    specify the Z80 driver we will use to play the WAV file:\n");
-        printf("            0 (default) = Z80_DRIVER_PCM\n");
-        printf("              Single channel 8 bits sample driver.\n");
-        printf("              It can play sample from 8 Khz up to 32 Khz rate.\n");
-        printf("            1 = Z80_DRIVER_2ADPCM\n");
-        printf("              2 channels 4 bits ADPCM sample driver.\n");
-        printf("              It can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate.\n");
-        printf("            2 = Z80_DRIVER_4PCM\n");
-        printf("              4 channels 8 bits sample driver.\n");
-        printf("              It can mix up to 4 samples at a fixed 16 Khz rate.\n");
-        printf("            3 = Z80_DRIVER_4PCM_ENV\n");
-        printf("              4 channels 8 bits sample driver with volume support.\n");
-        printf("              It can mix up to 4 samples at a fixed 16 Khz rate\n");
-        printf("              with volume support (16 levels du to memory limitation).\n");
-        printf("            4 = Z80_DRIVER_VGM\n");
-        printf("              VGM music driver with 8 bits PCM SFX support.\n");
-        printf("              It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
-        printf("            5 = Z80_DRIVER_XGM\n");
-        printf("              XGM music with 4 channels 8 bits samples driver.\n");
-        printf("              It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
+        printf("              0 / PCM (default)\n");
+        printf("                Single channel 8 bits sample driver.\n");
+        printf("                It can play sample from 8 Khz up to 32 Khz rate.\n");
+        printf("              1 / 2ADPCM\n");
+        printf("                2 channels 4 bits ADPCM sample driver.\n");
+        printf("                It can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate.\n");
+        printf("              2 / 3 / 4PCM\n");
+        printf("                4 channels 8 bits sample driver with volume support.\n");
+        printf("                It can mix up to 4 samples at a fixed 16 Khz rate\n");
+        printf("                with volume support (16 levels du to memory limitation).\n");
+        printf("              4 / VGM\n");
+        printf("                VGM music driver with 8 bits PCM SFX support.\n");
+        printf("                It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
+        printf("              5 / XGM\n");
+        printf("                XGM music with 4 channels 8 bits samples driver.\n");
+        printf("                It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
         printf("  out_rate  output PCM rate (only used for Z80_DRIVER_PCM driver)\n");
-        printf("            By default the default WAV output rate is used.\n");
+        printf("              By default the default WAV output rate is used.\n");
 
         return FALSE;
     }
 
     // adjust input file path
     adjustPath(resDir, temp, fileIn);
+    // get driver value
+    driver = getDriver(driverStr);
 
     // determine output rate
     switch(driver)
     {
-        case 1:
+        case DRIVER_2ADPCM:
             outRate = 22050;
             break;
 
-        case 2:
-        case 3:
+        case DRIVER_4PCM:
             outRate = 16000;
             break;
 
-        case 4:
+        case DRIVER_VGM:
             outRate = 8000;
             unsign = 1;
             break;
 
-        case 5:
+        case DRIVER_XGM:
             outRate = 14000;
             break;
     }
@@ -124,7 +124,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
                 data = sizeAlign(data, size, 256, 0, &size);
             break;
 
-        case 1:
+        case DRIVER_2ADPCM:
             strcpy(temp2, fileIn);
             removeExtension(temp2);
             strcat(temp2, ".t2");
@@ -152,7 +152,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
         unsign8b(data, size);
 
     // EXPORT WAV
-    outWAV(data, size, (driver==1)?128:256, fs, fh, id, TRUE);
+    outWAV(data, size, (driver==DRIVER_2ADPCM)?128:256, fs, fh, id, TRUE);
 
     return TRUE;
 }

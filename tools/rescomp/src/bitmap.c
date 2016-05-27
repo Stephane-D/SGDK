@@ -49,9 +49,13 @@ static int execute(char *info, FILE *fs, FILE *fh)
     {
         printf("Wrong BITMAP definition\n");
         printf("BITMAP name \"file\" [packed]\n");
-        printf("  name\t\tBitmap variable name\n");
-        printf("  file\tthe image to convert to Bitmap structure (should be a 8bpp .bmp or .png)\n");
-        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n\n");
+        printf("  name      Bitmap variable name\n");
+        printf("  file      the image to convert to Bitmap structure (should be a 8bpp .bmp or .png)\n");
+        printf("  packed    compression type, accepted values:\n");
+        printf("              -1 / BEST / AUTO = use best compression\n");
+        printf("               0 / NONE        = no compression\n");
+        printf("               1 / APLIB       = aplib library (good compression ratio but slow)\n");
+        printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
 
         return FALSE;
     }

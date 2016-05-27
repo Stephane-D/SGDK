@@ -66,6 +66,10 @@ int isSameTile1(unsigned int *t1, unsigned int *t2, int hflip, int vflip);
 int isSameTile2(unsigned int *tile, tileset_ *tileset, int index, int hflip, int vflip);
 int getTileIndex(unsigned int *tile, tileset_ *tileset, int allowFlip);
 int tileExists(unsigned int *tile, tileset_ *tileset, int allowFlip);
-int addTile(unsigned int *tile, tileset_ *tileset, int opt);
+int addTile(unsigned int *tile, tileset_ *tileset, int opt, int tileLimit);
+int getTilesetIndex(tileset_ *tileset, tileset_ *dest);
+int tilesetExists(tileset_ *tileset, tileset_ *dest);
+int addTileset(tileset_ *tileset, tileset_ *dest, int opt, int tileLimit);
+
 
 #endif // _TILE_TOOLS_H_

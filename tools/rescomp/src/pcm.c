@@ -31,53 +31,54 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char temp[MAX_PATH_LEN];
     char id[50];
     char fileIn[MAX_PATH_LEN];
+    char driverStr[256];
     int size;
     int nbElem;
     int driver;
     unsigned char *data;
 
     driver = 0;
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d", temp, id, temp, &driver);
+    strcpy(driverStr, "");
+
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s", temp, id, temp, driverStr);
 
     if (nbElem < 3)
     {
         printf("Wrong PCM definition\n");
-        printf("PCM name file [driver]\n");
-        printf("  name    variable name\n");
-        printf("  file    path of the PCM data file\n");
-        printf("          Should be 8 bits PCM signed data and size need to be aligned to 256 for correct loop operation for driver supporting it.\n");
-        printf("  driver  specify the Z80 driver we will use to play the PCM (allow conversion if needed):\n");
-        printf("          0 (default) = Z80_DRIVER_PCM\n");
-        printf("            Single channel 8 bits signed sample driver.\n");
-        printf("            It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.\n");
-        printf("            <b>Input:</b> 8 bits signed PCM at 8000 / 11025 / 13400 / 16000 / 22050 / 32000 Hz\n");
-        printf("          1 = Z80_DRIVER_2ADPCM\n");
-        printf("            2 channels 4 bits ADPCM sample driver.\n");
-        printf("            It can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate.\n");
-        printf("            <b>Input:</b> 8 bits signed PCM at 22050 Hz\n");
-        printf("          2 = Z80_DRIVER_4PCM\n");
-        printf("            4 channels 8 bits signed sample driver.\n");
-        printf("            It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.\n");
-        printf("            <b>Input:</b> 8 bits signed PCM at 16000 Hz\n");
-        printf("          3 = Z80_DRIVER_4PCM_ENV\n");
-        printf("            4 channels 8 bits signed sample driver with volume support.\n");
-        printf("            It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.\n");
-        printf("            with volume support (16 levels du to memory limitation).\n");
-        printf("            <b>Input:</b> 8 bits signed PCM at 16000 Hz\n");
-        printf("          4 = Z80_DRIVER_VGM\n");
-        printf("            VGM music driver with 8 bits PCM SFX support.\n");
-        printf("            It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
-        printf("            <b>Input:</b> 8 bits signed PCM at 8000 Hz\n");
-        printf("          5 = Z80_DRIVER_XGM\n");
-        printf("            XGM music with 4 channels 8 bits samples driver.\n");
-        printf("            It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
-        printf("            <b>Input:</b> 8 bits signed PCM at 14000 Hz\n");
+        printf("PCM name \"file\" [driver]\n");
+        printf("  name      variable name\n");
+        printf("  file      path of the PCM data file\n");
+        printf("            Should be 8 bits PCM signed data and size need to be aligned to 256 for correct loop operation for driver supporting it.\n");
+        printf("  driver    specify the Z80 driver we will use to play the PCM (allow conversion if needed):\n");
+        printf("              0 / PCM (default)\n");
+        printf("                Single channel 8 bits signed sample driver.\n");
+        printf("                It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.\n");
+        printf("                <b>Input:</b> 8 bits signed PCM at 8000 / 11025 / 13400 / 16000 / 22050 / 32000 Hz\n");
+        printf("              1 / 2ADPCM\n");
+        printf("                2 channels 4 bits ADPCM sample driver.\n");
+        printf("                It can mix up to 2 ADCPM samples at a fixed 22050 Hz Khz rate.\n");
+        printf("                <b>Input:</b> 8 bits signed PCM at 22050 Hz\n");
+        printf("              2 / 3 / 4PCM\n");
+        printf("                4 channels 8 bits signed sample driver with volume support.\n");
+        printf("                It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.\n");
+        printf("                with volume support (16 levels du to memory limitation).\n");
+        printf("                <b>Input:</b> 8 bits signed PCM at 16000 Hz\n");
+        printf("              4 / VGM\n");
+        printf("                VGM music driver with 8 bits PCM SFX support.\n");
+        printf("                It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.\n");
+        printf("                <b>Input:</b> 8 bits signed PCM at 8000 Hz\n");
+        printf("              5 / XGM\n");
+        printf("                XGM music with 4 channels 8 bits samples driver.\n");
+        printf("                It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.\n");
+        printf("                <b>Input:</b> 8 bits signed PCM at 14000 Hz\n");
 
         return FALSE;
     }
 
     // adjust input file path
     adjustPath(resDir, temp, fileIn);
+    // get driver value
+    driver = getDriver(driverStr);
 
     switch(driver)
     {
@@ -89,7 +90,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
                 data = sizeAlign(data, size, 256, 0, &size);
             break;
 
-        case 1:
+        case DRIVER_2ADPCM:
             strcpy(temp, fileIn);
             removeExtension(temp);
             strcat(temp, ".tmp");
@@ -111,12 +112,12 @@ static int execute(char *info, FILE *fs, FILE *fh)
     // error while reading data
     if (!data) return FALSE;
 
-    // need to unsign data
-    if (driver == 4)
+    // need to unsign data for VGM driver
+    if (driver == DRIVER_VGM)
         unsign8b(data, size);
 
     // EXPORT PCM
-    outPCM(data, size, (driver==1)?128:256, fs, fh, id, TRUE);
+    outPCM(data, size, (driver==DRIVER_2ADPCM)?128:256, fs, fh, id, TRUE);
 
     printf("done !");
 

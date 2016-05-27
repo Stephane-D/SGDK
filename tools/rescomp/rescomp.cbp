@@ -11,6 +11,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="out/gfx.res" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -20,6 +21,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="out/gfx.res" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>

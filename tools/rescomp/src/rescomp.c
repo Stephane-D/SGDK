@@ -30,9 +30,9 @@ static int execute(char *info, FILE *fs, FILE *fh);
 
 
 // shared directory informations
-char *currentDirSystem;
+//char *currentDirSystem;
 char *currentDir;
-char *resDirSystem;
+//char *resDirSystem;
 char *resDir;
 
 // add your plugin declaration here
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     fileNameOut[0] = 0;
 
     // save rescomp directory
-    currentDirSystem = getDirectorySystem(argv[0]);
+//    currentDirSystem = getDirectorySystem(argv[0]);
     currentDir = getDirectory(argv[0]);
 
     // parse parmeters
@@ -83,9 +83,9 @@ int main(int argc, char **argv)
         else if (!fileNameOut[0]) strcpy(fileNameOut, arg);
     }
 
-//    strcpy(fileName, "resources.res");
+    // strcpy(fileName, "gfx.res");
 
-    printf("rescomp v1.4\n");
+    printf("rescomp v1.5\n");
 
     if (!fileName[0])
     {
@@ -237,6 +237,7 @@ static int doConvert(char *dirName, char *fileNameOut)
 static int doComp(char *fileName, char *fileNameOut, int header)
 {
     char tempName[MAX_PATH_LEN];
+    char headerName[MAX_PATH_LEN];
     char line[MAX_LINE_LEN];
     FILE *fileInput;
     FILE *fileOutputS;
@@ -245,7 +246,6 @@ static int doComp(char *fileName, char *fileNameOut, int header)
     tempName[0] = 0;
 
     // save input file directory
-    resDirSystem = getDirectorySystem(fileName);
     resDir = getDirectory(fileName);
 
     if (!fileNameOut[0]) strcpy(fileNameOut, fileName);
@@ -289,12 +289,17 @@ static int doComp(char *fileName, char *fileNameOut, int header)
     fprintf(fileOutputS, ".section .rodata\n\n");
 //    fprintf(fileOutputS, ".text\n\n");
 
-    // get file name in uppercase
+    // build header name
     strcpy(tempName, getFilename(fileNameOut));
-    strupper(tempName);
+    strcpy(headerName, resDir);
+    strcat(headerName, "_");
+    strcat(headerName, tempName);
+    strreplace(headerName, ':', '_');
+    strreplace(headerName, '/', '_');
+    strupper(headerName);
 
-    fprintf(fileOutputH, "#ifndef _%s_H_\n", tempName);
-    fprintf(fileOutputH, "#define _%s_H_\n\n", tempName);
+    fprintf(fileOutputH, "#ifndef _%s_H_\n", headerName);
+    fprintf(fileOutputH, "#define _%s_H_\n\n", headerName);
 
     // process line by line
     while (fgets(line, sizeof(line), fileInput))
@@ -311,7 +316,7 @@ static int doComp(char *fileName, char *fileNameOut, int header)
     }
 
     fprintf(fileOutputH, "\n");
-    fprintf(fileOutputH, "#endif // _%s_H_\n", tempName);
+    fprintf(fileOutputH, "#endif // _%s_H_\n", headerName);
 
     fclose(fileInput);
     fclose(fileOutputS);

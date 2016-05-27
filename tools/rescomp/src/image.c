@@ -46,6 +46,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
 
     packed = 0;
     mapBase = 0;
+    strcpy(packedStr, "");
 
     nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %d", temp, id, temp, packedStr, &mapBase);
 
@@ -53,10 +54,14 @@ static int execute(char *info, FILE *fs, FILE *fh)
     {
         printf("Wrong IMAGE definition\n");
         printf("IMAGE name \"file\" [packed [mapbase]]\n");
-        printf("  name\t\tImage variable name\n");
-        printf("  file\tthe image to convert to Image structure (should be a 8bpp .bmp or .png)\n");
-        printf("  packed\tcompression: -1 = AUTO, 0 = NONE, 1 = APLIB, 3 = RLE (default = NONE).\n");
-        printf("  mapbase\tdefine the base tilemap value, useful to set the priority, default palette and base tile index.\n\n");
+        printf("  name      Image variable name\n");
+        printf("  file      the image to convert to Image structure (should be a 8bpp .bmp or .png)\n");
+        printf("  packed    compression type, accepted values:\n");
+        printf("              -1 / BEST / AUTO = use best compression\n");
+        printf("               0 / NONE        = no compression\n");
+        printf("               1 / APLIB       = aplib library (good compression ratio but slow)\n");
+        printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
+        printf("  mapbase   define the base tilemap value, useful to set the priority, default palette and base tile index.\n");
 
         return FALSE;
     }
@@ -106,8 +111,12 @@ static int execute(char *info, FILE *fs, FILE *fh)
     // pack data
     if (packed != PACK_NONE)
     {
-        if (!packTileSet(result->tileset, &packed)) return FALSE;
-        if (!packMap(result->map, &packed)) return FALSE;
+        int tmpPacked;
+
+        tmpPacked = packed;
+        if (!packTileSet(result->tileset, &tmpPacked)) return FALSE;
+        tmpPacked = packed;
+        if (!packMap(result->map, &tmpPacked)) return FALSE;
     }
 
     // get palette

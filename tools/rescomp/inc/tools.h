@@ -5,12 +5,18 @@
 #define FALSE           0
 #define TRUE            1
 
+#define DRIVER_PCM      0
+#define DRIVER_2ADPCM   1
+#define DRIVER_4PCM     2
+#define DRIVER_VGM      3
+#define DRIVER_XGM      4
+
 #define PACK_AUTO       -1
 #define PACK_NONE       0
 #define PACK_APLIB      1
-//#define PACK_LZKN       2
-#define PACK_RLE        3
-#define PACK_MAP_RLE    4
+#define PACK_LZ4W       2
+
+#define PACK_MAX_IND    PACK_LZ4W
 
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -40,6 +46,7 @@ unsigned char swapNibble8(unsigned char value);
 unsigned short toVDPColor(unsigned char b, unsigned char g, unsigned char r);
 
 char* strupper(char* text);
+void strreplace(char* text, char chr, char repl_chr);
 
 int isAbsolutePathSystem(char *path);
 int isAbsolutePath(char *path);
@@ -69,10 +76,11 @@ void decl(FILE* fs, FILE* fh, char* type, char* name, int align, int global);
 void declArray(FILE* fs, FILE* fh, char* type, char* name, int size, int align, int global);
 void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize);
 
+int getDriver(char *str);
 int getCompression(char *str);
 
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method);
-unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int swap, int *outSize, int *method);
+unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int *outSize, int *method);
 
 int maccer(char* fin, char* fout);
 int tfmcom(char* fin, char* fout);

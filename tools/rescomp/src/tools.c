@@ -8,26 +8,23 @@
 #include "../inc/img_tools.h"
 
 
-#ifdef _WIN32
-#define FILE_SEPARATOR              "\\"
-#define FILE_SEPARATOR_CHAR         '\\'
-#else
-    #ifdef _WIN64
-    #define FILE_SEPARATOR          "\\"
-    #define FILE_SEPARATOR_CHAR     '\\'
-    #else
-    #define FILE_SEPARATOR          "/"
-    #define FILE_SEPARATOR_CHAR     '/'
-    #endif
-#endif
-
+//#ifdef _WIN32
+//  #define FILE_SEPARATOR              "\\"
+//  #define FILE_SEPARATOR_CHAR         '\\'
+//#else
+//    #ifdef _WIN64
+//      #define FILE_SEPARATOR          "\\"
+//      #define FILE_SEPARATOR_CHAR     '\\'
+//    #else
+//      #define FILE_SEPARATOR          "/"
+//      #define FILE_SEPARATOR_CHAR     '/'
+//    #endif
+//#endif
+//
 
 // forward
 static int appack(char* fin, char* fout);
-//static int lzknpack(char* fin, char* fout);
-static unsigned char *rlepack(unsigned char* src, int inSize, int *outSize);
-static unsigned char *rlemappack(unsigned char* src, int inSize, int *outSize);
-
+static int lz4wpack(char* fin, char* fout);
 
 unsigned int swapNibble32(unsigned int value)
 {
@@ -68,23 +65,36 @@ char* strupper(char* text)
     return text;
 }
 
-int isAbsolutePathSystem(char* path)
+void strreplace(char* text, char chr, char repl_chr)
 {
-    int len = strlen(path);
+    char* src;
 
-    if (len > 0)
+    src = text;
+    while(*src)
     {
-        if (path[0] == FILE_SEPARATOR_CHAR) return TRUE;
-
-        if (len > 2)
-        {
-            // windows
-            if ((path[1] == ':') && (path[2] == FILE_SEPARATOR_CHAR))  return TRUE;
-        }
+        if (*src == chr)
+            *src = repl_chr;
+        src++;
     }
-
-    return FALSE;
 }
+
+//int isAbsolutePathSystem(char* path)
+//{
+//    int len = strlen(path);
+//
+//    if (len > 0)
+//    {
+//        if (path[0] == FILE_SEPARATOR_CHAR) return TRUE;
+//
+//        if (len > 2)
+//        {
+//            // windows
+//            if ((path[1] == ':') && (path[2] == FILE_SEPARATOR_CHAR))  return TRUE;
+//        }
+//    }
+//
+//    return FALSE;
+//}
 
 int isAbsolutePath(char* path)
 {
@@ -112,23 +122,23 @@ int isAbsolutePath(char* path)
     return FALSE;
 }
 
-char* getDirectorySystem(char* path)
-{
-    char* result = strdup(path);
-    char* fdir = strrchr(result, FILE_SEPARATOR_CHAR);
-
-    if (fdir) *fdir = 0;
-    else
-    {
-        fdir = strrchr(result, ':');
-
-        if (fdir) fdir[1] = 0;
-        // no directory
-        else return strdup("");
-    }
-
-    return result;
-}
+//char* getDirectorySystem(char* path)
+//{
+//    char* result = strdup(path);
+//    char* fdir = strrchr(result, FILE_SEPARATOR_CHAR);
+//
+//    if (fdir) *fdir = 0;
+//    else
+//    {
+//        fdir = strrchr(result, ':');
+//
+//        if (fdir) fdir[1] = 0;
+//        // no directory
+//        else return strdup("");
+//    }
+//
+//    return result;
+//}
 
 char* getDirectory(char* path)
 {
@@ -154,20 +164,20 @@ char* getDirectory(char* path)
     return result;
 }
 
-char* getFilenameSystem(char* path)
-{
-    char* fname = strrchr(path, FILE_SEPARATOR_CHAR);
-
-    if (fname) return fname + 1;
-    else
-    {
-        fname = strrchr(path, ':');
-
-        if (fname) return fname + 1;
-    }
-
-    return path;
-}
+//char* getFilenameSystem(char* path)
+//{
+//    char* fname = strrchr(path, FILE_SEPARATOR_CHAR);
+//
+//    if (fname) return fname + 1;
+//    else
+//    {
+//        fname = strrchr(path, ':');
+//
+//        if (fname) return fname + 1;
+//    }
+//
+//    return path;
+//}
 
 char* getFilename(char* path)
 {
@@ -207,20 +217,20 @@ void removeExtension(char* path)
     if (fext) *fext = 0;
 }
 
-void adjustPathSystem(char* dir, char* path, char* dst)
-{
-    if (isAbsolutePathSystem(path)) strcpy(dst, path);
-    else
-    {
-        if (strlen(dir) > 0)
-        {
-            strcpy(dst, dir);
-            strcat(dst, FILE_SEPARATOR);
-            strcat(dst, path);
-        }
-        else strcpy(dst, path);
-    }
-}
+//void adjustPathSystem(char* dir, char* path, char* dst)
+//{
+//    if (isAbsolutePathSystem(path)) strcpy(dst, path);
+//    else
+//    {
+//        if (strlen(dir) > 0)
+//        {
+//            strcpy(dst, dir);
+//            strcat(dst, FILE_SEPARATOR);
+//            strcat(dst, path);
+//        }
+//        else strcpy(dst, path);
+//    }
+//}
 
 void adjustPath(char* dir, char* path, char* dst)
 {
@@ -514,38 +524,55 @@ void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize)
     }
 }
 
-int getCompression(char *str)
+int getDriver(char *str)
 {
     char *upstr = strupper(str);
 
-    if (!strcmp(upstr, "AUTO") || !strcmp(upstr, "-1")) return PACK_AUTO;
-    if (!strcmp(upstr, "APLIB") || !strcmp(upstr, "1")) return PACK_APLIB;
-//    if (!strcmp(upstr, "LZKN") || !strcmp(upstr, "2")) return PACK_LZKN;
-    if (!strcmp(upstr, "RLE") || !strcmp(upstr, "3")) return PACK_RLE;
-    if (!strcmp(upstr, "RLEMAP") || !strcmp(upstr, "4")) return PACK_MAP_RLE;
+    if (!strcmp(upstr, "PCM") || !strcmp(upstr, "0")) return DRIVER_PCM;
+    if (!strcmp(upstr, "2ADPCM") || !strcmp(upstr, "1")) return DRIVER_2ADPCM;
+    if (!strcmp(upstr, "4PCM") || !strcmp(upstr, "2") || !strcmp(upstr, "3")) return DRIVER_4PCM;
+    if (!strcmp(upstr, "VGM") || !strcmp(upstr, "4")) return DRIVER_VGM;
+    if (!strcmp(upstr, "XGM") || !strcmp(upstr, "5")) return DRIVER_XGM;
 
     return 0;
 }
 
-unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method)
+int getCompression(char *str)
 {
-    return packEx(data, inOffset, size, 1, FALSE, outSize, method);
+    char *upstr = strupper(str);
+
+    if (!strcmp(upstr, "AUTO") || !strcmp(upstr, "BEST") || !strcmp(upstr, "-1")) return PACK_AUTO;
+    if (!strcmp(upstr, "NONE") || !strcmp(upstr, "0")) return PACK_NONE;
+    if (!strcmp(upstr, "APLIB") || !strcmp(upstr, "1")) return PACK_APLIB;
+    if (!strcmp(upstr, "LZ4W") || !strcmp(upstr, "2") || !strcmp(upstr, "FAST")) return PACK_LZ4W;
+
+    // not recognized --> use AUTO
+    if (strlen(upstr) > 0) return PACK_AUTO;
+
+    return PACK_NONE;
 }
 
-unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int swap, int *outSize, int *method)
+unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method)
+{
+    return packEx(data, inOffset, size, 1, outSize, method);
+}
+
+unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int *outSize, int *method)
 {
     unsigned char* src;
-    unsigned char* result1;
-    unsigned char* result2;
-    unsigned char* result3;
-    unsigned char* result4;
     unsigned char* result;
-    int size1, size2, size3, size4;
+    unsigned char* results[PACK_MAX_IND + 1];
+    int sizes[PACK_MAX_IND + 1];
     int minSize;
     int autoSelect;
+    int i;
+
+    // init no compression infos
+    results[0] = data;
+    sizes[0] = size;
 
     // create out file from data input
-    if (!out(data, inOffset, size, intSize, swap, "pack.in"))
+    if (!out(data, inOffset, size, intSize, (intSize > 1)?TRUE:FALSE, "pack.in"))
     {
         // error
         *outSize = 0;
@@ -553,116 +580,85 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
     }
 
     // get source data arranged if needed
-    src = in("pack.in", &size1);
+    src = in("pack.in", outSize);
     if (src == NULL)
     {
         *outSize = 0;
         return NULL;
     }
 
+    // init results (use 'data' as 'src' can have different endianess)
+    for(i = 1; i <= PACK_MAX_IND; i++)
+        results[i] = NULL;
+
     // select best compression scheme
     autoSelect = (*method == PACK_AUTO);
-    // initialize min size with original size
-    minSize = size;
-    size1 = size + 1;
-    size2 = size + 1;
-    size3 = size + 1;
-    size4 = size + 1;
-    result1 = NULL;
-    result2 = NULL;
-    result3 = NULL;
-    result4 = NULL;
 
-    if (autoSelect || (*method == PACK_APLIB))
+    for(i = 1; i <= PACK_MAX_IND; i++)
     {
-        if (appack("pack.in", "pack1.out"))
+        if (autoSelect || (*method == i))
         {
-            result1 = in("pack1.out", &size1);
-            minSize = MIN(minSize, size1);
+            switch(i)
+            {
+                case PACK_APLIB:
+                    if (appack("pack.in", "pack.out"))
+                        results[PACK_APLIB] = in("pack.out", &sizes[PACK_APLIB]);
+                    break;
+
+                case PACK_LZ4W:
+                    if (lz4wpack("pack.in", "pack.out"))
+                        results[PACK_LZ4W] = in("pack.out", &sizes[PACK_LZ4W]);
+                    break;
+            }
         }
     }
 
-    if (autoSelect || (*method == PACK_RLE))
+    // find best compression
+    minSize = sizes[0];
+    result = results[0];
+    *method = PACK_NONE;
+    for(i = 1; i <= PACK_MAX_IND; i++)
     {
-        result2 = rlepack(src, size, &size2);
-        if (result2 != NULL)
-            minSize = MIN(minSize, size2);
+        if (results[i] != NULL)
+        {
+            if (sizes[i] < minSize)
+            {
+                minSize = sizes[i];
+                result = results[i];
+                *method = i;
+            }
+        }
     }
 
-    // allow RLE compression to also try the RLE MAP compression
-    if (autoSelect || (*method == PACK_RLE) || (*method == PACK_MAP_RLE))
+    switch(*method)
     {
-        result3 = rlemappack(src, size, &size3);
-        if (result3 != NULL)
-            minSize = MIN(minSize, size3);
+        case PACK_APLIB:
+            printf("Packed with APLIB, ");
+            break;
+
+        case PACK_LZ4W:
+            printf("Packed with LZ4W, ");
+            break;
+
+        default:
+            printf("No compression, ");
     }
 
-//    if (autoSelect || (*method == PACK_LZKN))
-//    {
-//        if (lzknpack("pack.in", "pack4.out"))
-//        {
-//            result4 = in("pack4.out", &size4);
-//            minSize = MIN(minSize, size4);
-//        }
-//    }
-
-    // don't need it anymore
-    free(src);
-
-    if (minSize == size1)
-    {
-        *method = PACK_APLIB;
-        result = result1;
-        if (result2) free(result2);
-        if (result3) free(result3);
-        if (result4) free(result4);
-        printf("Packed with APLIB, original size = %d compressed to %d (%g %%)\n", size, minSize, (minSize * 100.0) / (float) size);
-    }
-    else if (minSize == size2)
-    {
-        *method = PACK_RLE;
-        result = result2;
-        if (result1) free(result1);
-        if (result3) free(result3);
-        if (result4) free(result4);
-        printf("Packed with RLE, original size = %d compressed to %d (%g %%)\n", size, minSize, (minSize * 100.0) / (float) size);
-    }
-    else if (minSize == size3)
-    {
-        *method = PACK_MAP_RLE;
-        result = result3;
-        if (result1) free(result1);
-        if (result2) free(result2);
-        if (result4) free(result4);
-        printf("Packed with MAP RLE, original size = %d compressed to %d (%g %%)\n", size, minSize, (minSize * 100.0) / (float) size);
-    }
-//    else if (minSize == size4)
-//    {
-//        *method = PACK_LZKN;
-//        result = result4;
-//        if (result1) free(result1);
-//        if (result2) free(result2);
-//        if (result3) free(result3);
-//        printf("Packed with LZKN, original size = %d compressed to %d (%g %%)\n", size, minSize, (minSize * 100.0) / (float) size);
-//    }
-    else
-    {
-        *method = PACK_NONE;
-        result = data;
-        if (result1) free(result1);
-        if (result2) free(result2);
-        if (result3) free(result3);
-        if (result4) free(result4);
-        printf("Could not pack, original data remain (size = %d)\n", size);
-    }
+    printf("original size = %d compressed to %d (%g %%)\n", size, minSize, (minSize * 100.0) / (float) size);
 
     // update out size
     *outSize = minSize;
 
+    // release unused buffers
+    for(i = 0; i <= PACK_MAX_IND; i++)
+    {
+        if ((results[i] != NULL) && (results[i] != result))
+            free(results[i]);
+    }
+
     // clean
     remove("pack.in");
-    remove("pack1.out");
-    remove("pack4.out");
+    remove("pack.out");
 
     return result;
 }
@@ -676,7 +672,8 @@ int maccer(char* fin, char* fout)
     remove(fout);
 
     // command
-    adjustPathSystem(currentDirSystem, "mac68k", cmd);
+//    adjustPathSystem(currentDirSystem, "mac68k", cmd);
+    adjustPath(currentDir, "mac68k", cmd);
 
     // arguments
     strcat(cmd, " -o \"");
@@ -708,7 +705,8 @@ int tfmcom(char* fin, char* fout)
     remove(fout);
 
     // command
-    adjustPathSystem(currentDirSystem, "tfmcom", cmd);
+//    adjustPathSystem(currentDirSystem, "tfmcom", cmd);
+    adjustPath(currentDir, "tfmcom", cmd);
 
     // arguments
     strcat(cmd, " \"");
@@ -790,7 +788,8 @@ static int appack(char* fin, char* fout)
     remove(fout);
 
     // command
-    adjustPathSystem(currentDirSystem, "appack", cmd);
+//    adjustPathSystem(currentDirSystem, "appack", cmd);
+    adjustPath(currentDir, "appack", cmd);
 
     // arguments
     strcat(cmd, " c \"");
@@ -814,235 +813,39 @@ static int appack(char* fin, char* fout)
     return FALSE;
 }
 
-//static int lzknpack(char* fin, char* fout)
-//{
-//    char cmd[MAX_PATH_LEN * 2];
-//    FILE *f;
-//
-//    // better to remove output file for appack
-//    remove(fout);
-//
-//    // command
-//    adjustPathSystem(currentDirSystem, "lzknpack", cmd);
-//
-//    // arguments
-//    strcat(cmd, " \"");
-//    strcat(cmd, fin);
-//    strcat(cmd, "\" \"");
-//    strcat(cmd, fout);
-//    strcat(cmd, "\"");
-//
-//    printf("Executing %s\n", cmd);
-//
-//    system(cmd);
-//
-//    // we test for the out file existence
-//    f = fopen(fout, "rb");
-//    fclose(f);
-//
-//    // file exist --> ok
-//    if (f != NULL) return TRUE;
-//
-//    return FALSE;
-//}
-
-/**
- * RLE compressor, original code by Charles MacDonald
- * WWW: http://cgfm2.emuviews.com
- **/
-static unsigned char *rlepack(unsigned char *src, int inSize, int *outSize)
+static int lz4wpack(char* fin, char* fout)
 {
-    unsigned char *nib;
-    unsigned char *result;
-    int offset;
-    int niblen;
-    int in_run;
-    int bloc_num;
-    int i;
-    unsigned char data;
-    unsigned char rle;
+    char tmp[MAX_PATH_LEN * 2];
+    char cmd[MAX_PATH_LEN * 2];
+    FILE *f;
 
-    // source size have to be aligned on 4 bytes (tile data)
-    if (inSize & 3) return NULL;
+    // better to remove output file for uftcpack
+    remove(fout);
 
-    niblen = inSize * 2;
+    // command
+//    adjustPathSystem(currentDirSystem, "java -jar lz4w.jar", cmd);
 
-    // Output data buffer (worst case is 1 byte for each nibble, 2x size)
-    result = (unsigned char *) malloc(niblen);
-    if (result == NULL)
-    {
-        printf("rlepack failed: could not allocate memory !\n");
-        return NULL;
-    }
+    adjustPath(currentDir, "lz4w.jar", tmp);
+    strcpy(cmd, "java -jar ");
+    strcat(cmd, tmp);
 
-    // convert nibble to byte for easier manipulation
-    nib = to8bpp(src, inSize);
+    // arguments
+    strcat(cmd, " p \"");
+    strcat(cmd, fin);
+    strcat(cmd, "\" \"");
+    strcat(cmd, fout);
+    strcat(cmd, "\" -s");
 
-    bloc_num = 0;
-    data = 0;
-    rle = 0;
-    in_run = 0;
-    // reserve 2 bytes for size
-    offset = 2;
-    for(i = 0; i < niblen; i++)
-    {
-        // Are we encoding a run?
-        if (in_run)
-        {
-            // Data has changed, write run and start new one
-            if (data != nib[i])
-            {
-                result[offset++] = (rle << 4) | data;
-                bloc_num++;
-                data = nib[i];
-                rle = 0;
-            }
-            else
-            {
-                // Max run length reached, write run and stop
-                if (++rle == 0x0F)
-                {
-                    result[offset++] = (rle << 4) | data;
-                    bloc_num++;
-                    in_run = 0;
-                }
-            }
-        }
-        else
-        {
-            // Start new run
-            in_run = 1;
-            data = nib[i];
-            rle = 0;
-        }
-    }
+    printf("Executing %s\n", cmd);
 
-    // If still in a run, write it result
-    if (in_run)
-    {
-        result[offset++] = (rle << 4) | data;
-        bloc_num++;
-    }
+    system(cmd);
 
-    // bloc number > 64KB
-    if (bloc_num >= 0x10000)
-    {
-        printf("rlemap failed: more than 2^16 bloc (%d)\n", bloc_num);
-        free(result);
-        return NULL;
-    }
+    // we test for the out file existence
+    f = fopen(fout, "rb");
+    fclose(f);
 
-    // Assign result size and return result
-    *outSize = offset;
+    // file exist --> ok
+    if (f != NULL) return TRUE;
 
-    // set bloc number
-    result[0] = bloc_num >> 8;
-    result[1] = bloc_num >> 0;
-
-    free(nib);
-
-    return (result);
-}
-
-static unsigned char *rlemappack(unsigned char *src, int inSize, int *outSize)
-{
-    unsigned char *result;
-    int outOffset, inOffset;
-    int rle, rle_type, in_run;
-    int bloc_num;
-    unsigned short data;
-
-    // source size have to be aligned on 2 bytes (map data)
-    if (inSize & 1) return NULL;
-
-    // Output data buffer (allocate double of input buffer)
-    result = (unsigned char *) malloc(inSize * 2);
-    if (result == NULL)
-    {
-        printf("rlemappack failed: could not allocate memory !\n");
-        return NULL;
-    }
-
-    bloc_num = 0;
-    rle = 0;
-    data = 0;
-    in_run = 0;
-    rle_type = 0;
-    // reserve 2 bytes for size
-    outOffset = 2;
-    for(inOffset = 0; inOffset < inSize; inOffset += 2)
-    {
-        unsigned short value = (src[inOffset + 1] << 0) | (src[inOffset + 0] << 8);
-
-        // Are we encoding a run ?
-        if (in_run)
-        {
-            // first pack method
-            int pack1 = (data == value) && !rle_type;
-            // second pack method
-            int pack2 = ((rle == 0) || rle_type) && ((data + rle + 1) == value);
-
-            // data can be compressed
-            if (pack1 || pack2)
-            {
-                // second method of compression
-                if (pack2) rle_type = 0x80;
-
-                // Max run length reached, write run and stop
-                if (++rle == 0x7F)
-                {
-                    result[outOffset++] = rle_type | rle;
-                    result[outOffset++] = data >> 8;
-                    result[outOffset++] = data >> 0;
-                    bloc_num++;
-                    in_run = 0;
-                }
-            }
-            else
-            {
-                // data has changed, write run & data and start new one
-                result[outOffset++] = rle_type | rle;
-                result[outOffset++] = data >> 8;
-                result[outOffset++] = data >> 0;
-                bloc_num++;
-                data = value;
-                rle = 0;
-                rle_type = 0;
-            }
-        }
-        else
-        {
-            // Start new run
-            in_run = 1;
-            data = value;
-            rle = 0;
-            rle_type = 0;
-        }
-    }
-
-    // If still in a run, write it result
-    if (in_run)
-    {
-        result[outOffset++] = rle_type | rle;
-        result[outOffset++] = data >> 8;
-        result[outOffset++] = data >> 0;
-        bloc_num++;
-    }
-
-    // bloc number > 64KB
-    if (bloc_num >= 0x10000)
-    {
-        printf("rlemappack failed: more than 2^16 bloc (%d)\n", bloc_num);
-        free(result);
-        return NULL;
-    }
-
-    // Assign result size and return result
-    *outSize = outOffset;
-
-    // set bloc number
-    result[0] = bloc_num >> 8;
-    result[1] = bloc_num >> 0;
-
-    return (result);
+    return FALSE;
 }
