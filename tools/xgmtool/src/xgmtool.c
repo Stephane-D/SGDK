@@ -14,7 +14,7 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.63";
+const char* version = "1.64";
 int sys;
 bool silent;
 bool verbose;
@@ -30,7 +30,7 @@ int main(int argc, char *argv[ ])
 
     if (argc < 3)
     {
-        printf("XGMTool %s - Stephane Dallongeville - copyright 2015\n", version);
+        printf("XGMTool %s - Stephane Dallongeville - copyright 2016\n", version);
         printf("\n");
         printf("Usage: xgmtool inputFile outputFile <options>\n");
         printf("XGMTool can do the following operations:\n");

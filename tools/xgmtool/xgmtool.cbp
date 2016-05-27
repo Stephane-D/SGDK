@@ -27,7 +27,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="test.vgm out.xgc -v" />
+				<Option parameters="sample.vgm out.vgm -v" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />

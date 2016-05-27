@@ -1726,13 +1726,13 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
     {
         VGMCommand* command = l->element;
 
-        if (!VGMCommand_isLoopStart(command) && !VGMCommand_isLoopEnd(command))
-            fwrite(VGMCommand_asByteArray(command), 1, command->size, f);
-        else
+        if (VGMCommand_isLoopStart(command))
         {
             loopCommand = command;
             loopOffset = getFileSizeEx(f) - 0x1C;
         }
+        else if (!VGMCommand_isLoopEnd(command))
+            fwrite(VGMCommand_asByteArray(command), 1, command->size, f);
 
         l = l->next;
     }
