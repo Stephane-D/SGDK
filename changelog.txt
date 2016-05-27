@@ -68,7 +68,7 @@ LIBRARY
  - added strncpy(..) method.
  - replaced strreplace(..) --> strreplacechar(..)
  - fixed fix32ToStr(..) and fix16ToStr(..) methods
-* SYSTEM
+* SYSTEM:
  - tried to more more compatible with default GCC stdint.h definitions
  - added SYS_setVIntPreCallback(..) so you can have your method called at VInt before any internal SGDK stuff are proceed.
  - added SYS_isNTSC() and SYS_isPAL() methods for easy system determination.
@@ -86,7 +86,7 @@ LIBRARY
  - renamed SLIST / VDP_SPRITE_LIST --> VDP_SPRITE_TABLE
  - renamed HSCRL / VDP_SCROLL_H --> VDP_HSCROLL_TABLE
  - added planWidth / planHeight to replace VDP_getPlanWidth() / VDP_getPlanHeigth() for faster internal SGDK calculations.
- - added windowWidth / planHeight to replace VDP_getPlanWidth() / VDP_getPlanHeigth() for faster internal SGDK calculations.
+ - added windowWidth / windowHeight for faster internal SGDK calculations.
  - added VDP_setWindowHPos(..) and VDP_setWindowVPos(..) methods to set window positions.
  - fixed a bug with VDP_setBPlanAddress(..) method.
 * VDP BG/TILE:
