@@ -16,7 +16,7 @@
 			<SilentBuild command="$make -s -f $makefile $target" />
 		</MakeCommands>
 		<Build>
-			<Target title="default">
+			<Target title="debug">
 				<Option output="D:/Stef/dev/work/genesis/essai3D/essai3D.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="." />
 				<Option deps_output="." />
@@ -24,12 +24,12 @@
 				<Option compiler="sega_genesis_compiler" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<MakeCommands>
-					<Build command="$make -f $makefile" />
+					<Build command="$make -f $makefile debug" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make -f $makefile clean" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -s -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile debug &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="release">
@@ -40,25 +40,25 @@
 				<Option compiler="sega_genesis_compiler" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<MakeCommands>
-					<Build command="$make -f $makefile" />
+					<Build command="$make -f $makefile release" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make -f $makefile clean" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -s -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile release &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="All" targets="default;" />
+			<Add alias="All" targets="debug;" />
 		</VirtualTargets>
-		<Unit filename="main.c">
+		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="meshs.c">
+		<Unit filename="src/meshs.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="meshs.h" />
+		<Unit filename="src/meshs.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
