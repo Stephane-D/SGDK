@@ -101,7 +101,7 @@ out/rom.bin: out/rom.out
 	$(SIZEBND) out/rom.bin -sizealign 131072
 
 out/symbol.txt: out/rom.out
-	$(NM) out/rom.out > out/symbol.txt
+	$(NM) -n out/rom.out > out/symbol.txt
 
 out/rom.out: out/sega.o out/cmd_ $(LIBMD)
 	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIB)/libgcc.a -o out/rom.out
