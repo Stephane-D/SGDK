@@ -483,7 +483,7 @@ void _extint_callback()
 void _start_entry()
 {
     // initiate random number generator
-    setRandomSeed(0);
+    setRandomSeed(0xC427);
     vtimer = 0;
 
     // default interrupt callback
