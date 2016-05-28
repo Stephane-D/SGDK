@@ -5,7 +5,7 @@
 
 #define SGDK_BENCHMARK      "SGDK benchmark v1.0"
 
-#define MAX_TEST            16
+#define MAX_TEST            9
 #define MAX_SUBTEST         16
 
 

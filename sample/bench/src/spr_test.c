@@ -194,7 +194,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 80; i++)
+    for(i = 0; i < 79; i++)
     {
         Sprite* spr;
 
@@ -212,10 +212,10 @@ u16 executeSpritesTest(u16 *scores)
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
     baseposy = FIX16(100);
     gravity = FIX16(0.4);
-    initPartic(80);
+    initPartic(79);
 
     // execute particle bench
-    *scores = executePartic(15, 80, FALSE, FALSE);
+    *scores = executePartic(15, 79, FALSE, FALSE);
     globalScore += *scores++;
 
     SYS_disableInts();
@@ -232,7 +232,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 80; i++)
+    for(i = 0; i < 79; i++)
     {
         Sprite* spr;
 
@@ -264,10 +264,10 @@ u16 executeSpritesTest(u16 *scores)
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
     baseposy = FIX16(100);
     gravity = FIX16(0.4);
-    initPartic(80);
+    initPartic(79);
 
     // execute particle bench
-    *scores = executePartic(15, 80, TRUE, FALSE);
+    *scores = executePartic(15, 79, TRUE, FALSE);
     globalScore += *scores++;
 
     SYS_disableInts();
