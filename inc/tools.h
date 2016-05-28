@@ -311,5 +311,24 @@ u32 aplib_unpack(u8 *src, u8 *dest);
  */
 u32 lz4w_unpack(const u8 *src, u8 *dest);
 
+/**
+ *  \brief
+ *      Decompresses data in raw deflate/zlib format.<br/>
+ *
+ *   zlib is a general-purpose compressor, supporting quite good
+ *   compression ratios, but unpacking is relatively slow on the
+ *   Genesis (around 23kb/s).
+ *
+ *  \param dest
+ *      Destination buffer
+ *  \param outLen
+ *      Size of the destination buffer in bytes
+ *  \param src
+ *      Source data buffer containing compressed data
+ *  \param srcLen
+ *      Size of the source buffer in bytes
+ */
+int zlib_unpack(void *dest, const unsigned outLen, const void *src, const unsigned srcLen);
+
 
 #endif // _TOOLS_H_

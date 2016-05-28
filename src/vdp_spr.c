@@ -216,9 +216,9 @@ void VDP_updateSprites(u16 num, u16 queue)
 {
     // send the sprite cache to VRAM sprite table using DMA queue
     if (queue)
-        DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * num) / 2, 2);
+        DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * num, 2);
     else
-        DMA_doDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * num) / 2, 2);
+        DMA_doDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * num, 2);
 }
 
 void logVDPSprite(u16 index)

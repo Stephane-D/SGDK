@@ -7,8 +7,8 @@
 #include "maths.h"
 
 
-static const char* const uppercase_hexchars = "0123456789ABCDEF";
-static const char* const lowercase_hexchars = "0123456789abcdef";
+static const char const uppercase_hexchars[] = "0123456789ABCDEF";
+static const char const lowercase_hexchars[] = "0123456789abcdef";
 
 // FORWARD
 static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize);
@@ -372,7 +372,7 @@ static u16 vsprintf(char *buf, const char *fmt, va_list args)
     s16 *ip;
     u16 num;
     char *s;
-    char *hexchars;
+    const char *hexchars;
     char *str;
     s16 left_align;
     s16 plus_sign;
@@ -499,15 +499,15 @@ repeat:
                     zero_pad = 1;
                 }
 
-                hexchars = (char *) uppercase_hexchars;
+                hexchars = uppercase_hexchars;
                 goto hexa_conv;
 
             case 'x':
-                hexchars = (char *) lowercase_hexchars;
+                hexchars = lowercase_hexchars;
                 goto hexa_conv;
 
             case 'X':
-                hexchars = (char *) uppercase_hexchars;
+                hexchars = uppercase_hexchars;
 
 hexa_conv:
                 s = &tmp_buffer[12];
