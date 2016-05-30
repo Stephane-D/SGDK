@@ -1,3 +1,16 @@
+SGDK 1.21 (May 2016)
+--------------------
+
+LIBRARY
+* SPRITE: fixed a bug causing corrupted sprite after SPR_release(..) operation
+* TOOLS: reintroduced zlib_unpack(..) method (accidentally removed from header)
+
+SAMPLE:
+* Bench:
+ - fixed a bug causing address error on real hardware during 'Sprite test'.
+ - added 2 tests in 'BG test'
+
+
 SGDK 1.2 (May 2016)
 -------------------
 
