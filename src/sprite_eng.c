@@ -401,6 +401,12 @@ void SPR_releaseSprite(Sprite *sprite)
         // fix link with previous sprite
         activeSprites[lastSpriteIndex - 1]->lastVDPSprite->link = lastSprite->lastVDPSprite->link;
 
+#ifdef SPR_DEBUG
+        KLog_U2_("  sprite[", lastSpriteIndex, "] moved to sprite[", index, "]");
+        KLog_U2("  sprite[", lastSpriteIndex - 1, "] linked to ", lastSprite->lastVDPSprite->link);
+#endif // SPR_DEBUG
+
+
         // we need to move last sprite ?
         if (lastSpriteIndex != index)
         {
@@ -414,16 +420,17 @@ void SPR_releaseSprite(Sprite *sprite)
             // fix link with previous
             if (index) activeSprites[index - 1]->lastVDPSprite->link = lastSprite->VDPSpriteIndex;
             else starter->link = lastSprite->VDPSpriteIndex;
+
+#ifdef SPR_DEBUG
+            KLog_U2("  sprite[", index, "] linked to ", sprite->lastVDPSprite->link);
+            if (index) KLog_U2("  sprite[", index - 1, "] linked to ", lastSprite->VDPSpriteIndex);
+            else KLog_U1("  starter linked to ", lastSprite->VDPSpriteIndex);
+#endif // SPR_DEBUG
         }
     }
 
     // decrement number of sprite
     spriteNum = lastSpriteIndex;
-
-#ifdef SPR_DEBUG
-    KLog_U2_("  sprite[", lastSpriteIndex, "] moved to sprite[", index, "]");
-    KLog_U2("  last VDP sprite link: ", linkToNext, "   new sprite number = ", spriteNum);
-#endif // SPR_DEBUG
 
     u16 status = sprite->status;
 
@@ -1672,7 +1679,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         u16 j;
 
@@ -1680,7 +1687,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         attr = sprite->attribut;
         j = frame->numSprite;
         spritesInf = frame->vdpSpritesInf;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_allVisible: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1691,14 +1698,15 @@ static void updateSpriteTableAll(Sprite *sprite)
             VDPSpriteInf* spriteInf = *spritesInf++;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + spriteInf->y;
-            cache->size = spriteInf->size;
-            cache->attribut = attr;
-            cache->x = sprite->x + spriteInf->x;
+            vdpSprite->y = sprite->y + spriteInf->y;
+            vdpSprite->size = spriteInf->size;
+            vdpSprite->attribut = attr;
+            vdpSprite->x = sprite->x + spriteInf->x;
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
-            cache++;
+            // next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1706,7 +1714,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         s16 fw, fh;
         u16 j;
@@ -1717,7 +1725,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_allVisibleHFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1729,14 +1737,15 @@ static void updateSpriteTableAll(Sprite *sprite)
             u16 size = spriteInf->size;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + spriteInf->y;
-            cache->size = size;
-            cache->attribut = attr;
-            cache->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
+            vdpSprite->y = sprite->y + spriteInf->y;
+            vdpSprite->size = size;
+            vdpSprite->attribut = attr;
+            vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
-            cache++;
+            // next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1744,7 +1753,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         s16 fw, fh;
         u16 j;
@@ -1755,7 +1764,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_allVisibleVFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1767,14 +1776,15 @@ static void updateSpriteTableAll(Sprite *sprite)
             u16 size = spriteInf->size;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-            cache->size = size;
-            cache->attribut = attr;
-            cache->x = sprite->x + spriteInf->x;
+            vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
+            vdpSprite->size = size;
+            vdpSprite->attribut = attr;
+            vdpSprite->x = sprite->x + spriteInf->x;
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
-            cache++;
+            // next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1782,7 +1792,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         s16 fw, fh;
         u16 j;
@@ -1793,7 +1803,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_allVisibleVFlipHFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1805,14 +1815,15 @@ static void updateSpriteTableAll(Sprite *sprite)
             u16 size = spriteInf->size;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-            cache->size = size;
-            cache->attribut = attr;
-            cache->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
+            vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
+            vdpSprite->size = size;
+            vdpSprite->attribut = attr;
+            vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
-            cache++;
+            // next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1820,7 +1831,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         u16 visibility;
 
@@ -1828,7 +1839,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         attr = sprite->attribut;
         visibility = sprite->visibility;
         spritesInf = frame->vdpSpritesInf;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_partialVisible: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1842,17 +1853,17 @@ static void updateSpriteTableAll(Sprite *sprite)
             if (visibility & 1)
             {
                 // Y first to respect VDP field order
-                cache->y = sprite->y + spriteInf->y;
-                cache->size = spriteInf->size;
-                cache->attribut = attr;
-                cache->x = sprite->x + spriteInf->x;
+                vdpSprite->y = sprite->y + spriteInf->y;
+                vdpSprite->size = spriteInf->size;
+                vdpSprite->attribut = attr;
+                vdpSprite->x = sprite->x + spriteInf->x;
             }
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1860,7 +1871,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         s16 fw, fh;
         u16 visibility;
@@ -1871,7 +1882,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_partialVisibleHFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1887,17 +1898,17 @@ static void updateSpriteTableAll(Sprite *sprite)
                 u16 size = spriteInf->size;
 
                 // Y first to respect VDP field order
-                cache->y = sprite->y + spriteInf->y;
-                cache->size = size;
-                cache->attribut = attr;
-                cache->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
+                vdpSprite->y = sprite->y + spriteInf->y;
+                vdpSprite->size = size;
+                vdpSprite->attribut = attr;
+                vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
             }
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1905,7 +1916,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         s16 fw, fh;
         u16 visibility;
@@ -1916,7 +1927,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_partialVisibleVFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1932,17 +1943,17 @@ static void updateSpriteTableAll(Sprite *sprite)
                 u16 size = spriteInf->size;
 
                 // Y first to respect VDP field order
-                cache->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-                cache->size = size;
-                cache->attribut = attr;
-                cache->x = sprite->x + spriteInf->x;
+                vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
+                vdpSprite->size = size;
+                vdpSprite->attribut = attr;
+                vdpSprite->x = sprite->x + spriteInf->x;
             }
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -1950,7 +1961,7 @@ static void updateSpriteTableAll(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 attr;
         s16 fw, fh;
         u16 visibility;
@@ -1961,7 +1972,7 @@ static void updateSpriteTableAll(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTableAll_partialVisibleHFlipVFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -1977,17 +1988,17 @@ static void updateSpriteTableAll(Sprite *sprite)
                 u16 size = spriteInf->size;
 
                 // Y first to respect VDP field order
-                cache->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-                cache->size = size;
-                cache->attribut = attr;
-                cache->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
+                vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
+                vdpSprite->size = size;
+                vdpSprite->attribut = attr;
+                vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
             }
 
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2061,13 +2072,13 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 j;
 
         frame = sprite->frame;
         j = frame->numSprite;
         spritesInf = frame->vdpSpritesInf;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_allVisible: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2078,10 +2089,11 @@ static void updateSpriteTablePos(Sprite *sprite)
             VDPSpriteInf* spriteInf = *spritesInf++;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + spriteInf->y;
-            cache->x = sprite->x + spriteInf->x;
+            vdpSprite->y = sprite->y + spriteInf->y;
+            vdpSprite->x = sprite->x + spriteInf->x;
 
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2089,7 +2101,7 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         s16 fw, fh;
         u16 j;
 
@@ -2098,7 +2110,7 @@ static void updateSpriteTablePos(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_allVisibleHFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2109,10 +2121,11 @@ static void updateSpriteTablePos(Sprite *sprite)
             VDPSpriteInf* spriteInf = *spritesInf++;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + spriteInf->y;
-            cache->x = sprite->x + (fw - (spriteInf->x + (((spriteInf->size & 0x0C) << 1) + 8)));
+            vdpSprite->y = sprite->y + spriteInf->y;
+            vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((spriteInf->size & 0x0C) << 1) + 8)));
 
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2120,7 +2133,7 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         s16 fw, fh;
         u16 j;
 
@@ -2129,7 +2142,7 @@ static void updateSpriteTablePos(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_allVisibleVFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2140,10 +2153,11 @@ static void updateSpriteTablePos(Sprite *sprite)
             VDPSpriteInf* spriteInf = *spritesInf++;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + (fh - (spriteInf->y + (((spriteInf->size & 0x03) << 3) + 8)));
-            cache->x = sprite->x + spriteInf->x;
+            vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((spriteInf->size & 0x03) << 3) + 8)));
+            vdpSprite->x = sprite->x + spriteInf->x;
 
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2151,7 +2165,7 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         s16 fw, fh;
         u16 j;
 
@@ -2160,7 +2174,7 @@ static void updateSpriteTablePos(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_allVisibleVFlipHFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2172,10 +2186,11 @@ static void updateSpriteTablePos(Sprite *sprite)
             u16 size = spriteInf->size;
 
             // Y first to respect VDP field order
-            cache->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-            cache->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
+            vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
+            vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
 
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2183,13 +2198,13 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         u16 visibility;
 
         frame = sprite->frame;
         visibility = sprite->visibility;
         spritesInf = frame->vdpSpritesInf;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_partialVisible: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2203,13 +2218,14 @@ static void updateSpriteTablePos(Sprite *sprite)
             if (visibility & 1)
             {
                 // Y first to respect VDP field order
-                cache->y = sprite->y + spriteInf->y;
-                cache->x = sprite->x + spriteInf->x;
+                vdpSprite->y = sprite->y + spriteInf->y;
+                vdpSprite->x = sprite->x + spriteInf->x;
             }
 
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2217,7 +2233,7 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         s16 fw, fh;
         u16 visibility;
 
@@ -2226,7 +2242,7 @@ static void updateSpriteTablePos(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_partialVisibleHFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2240,13 +2256,14 @@ static void updateSpriteTablePos(Sprite *sprite)
             if (visibility & 1)
             {
                 // Y first to respect VDP field order
-                cache->y = sprite->y + spriteInf->y;
-                cache->x = sprite->x + (fw - (spriteInf->x + (((spriteInf->size & 0x0C) << 1) + 8)));
+                vdpSprite->y = sprite->y + spriteInf->y;
+                vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((spriteInf->size & 0x0C) << 1) + 8)));
             }
 
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2254,7 +2271,7 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         s16 fw, fh;
         u16 visibility;
 
@@ -2263,7 +2280,7 @@ static void updateSpriteTablePos(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_partialVisibleVFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2277,13 +2294,14 @@ static void updateSpriteTablePos(Sprite *sprite)
             if (visibility & 1)
             {
                 // Y first to respect VDP field order
-                cache->y = sprite->y + (fh - (spriteInf->y + (((spriteInf->size & 0x03) << 3) + 8)));
-                cache->x = sprite->x + spriteInf->x;
+                vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((spriteInf->size & 0x03) << 3) + 8)));
+                vdpSprite->x = sprite->x + spriteInf->x;
             }
 
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2291,7 +2309,7 @@ static void updateSpriteTablePos(Sprite *sprite)
     {
         AnimationFrame *frame;
         VDPSpriteInf **spritesInf;
-        VDPSprite *cache;
+        VDPSprite *vdpSprite;
         s16 fw, fh;
         u16 visibility;
 
@@ -2300,7 +2318,7 @@ static void updateSpriteTablePos(Sprite *sprite)
         spritesInf = frame->vdpSpritesInf;
         fw = frame->w;
         fh = frame->h;
-        cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+        vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     #ifdef SPR_DEBUG
         KLog_U3("  updateSpriteTablePos_partialVisibleHFlipVFlip: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2316,13 +2334,14 @@ static void updateSpriteTablePos(Sprite *sprite)
                 u16 size = spriteInf->size;
 
                 // Y first to respect VDP field order
-                cache->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-                cache->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
+                vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
+                vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
             }
 
             // pass to next VDP sprite
             visibility >>= 1;
-            cache++;
+            // pass to next VDP sprite
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
     }
 
@@ -2398,7 +2417,7 @@ static void updateSpriteTableAttr(Sprite *sprite)
 
     AnimationFrame *frame;
     VDPSpriteInf **spritesInf;
-    VDPSprite *cache;
+    VDPSprite *vdpSprite;
     u16 attr;
     u16 j;
 
@@ -2406,7 +2425,7 @@ static void updateSpriteTableAttr(Sprite *sprite)
     attr = sprite->attribut;
     j = frame->numSprite;
     spritesInf = frame->vdpSpritesInf;
-    cache = &vdpSpriteCache[sprite->VDPSpriteIndex];
+    vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
 #ifdef SPR_DEBUG
     KLog_U3("  updateSpriteTableAttr_allVisible: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
@@ -2416,11 +2435,12 @@ static void updateSpriteTableAttr(Sprite *sprite)
     {
         VDPSpriteInf* spriteInf = *spritesInf++;
 
-        cache->attribut = attr;
+        vdpSprite->attribut = attr;
 
         // increment tile index in attribut field
         attr += spriteInf->numTile;
-        cache++;
+        // pass to next VDP sprite
+        vdpSprite = &vdpSpriteCache[vdpSprite->link];
     }
 
 #ifdef SPR_DEBUG

@@ -193,7 +193,6 @@ u16 executeBGTest(u16 *scores)
     // wait 5 seconds
     waitMs(5000);
 
-
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("128x64 image draw (packed fast)", 2, 0);
     i = 1;
@@ -236,7 +235,6 @@ u16 executeBGTest(u16 *scores)
     // wait 5 seconds
     waitMs(5000);
 
-
     // unpack image
     img = unpackImage(&logo_med, NULL);
     VDP_clearPlan(PLAN_A, TRUE);
@@ -276,6 +274,53 @@ u16 executeBGTest(u16 *scores)
     end = getTimeAsFix32(FALSE);
     VDP_clearPlan(PLAN_A, TRUE);
     *score = displayResult(1000, end - start, 2);
+    globalScore += *score++;
+    MEM_free(img);
+
+    // wait 5 seconds
+    waitMs(5000);
+
+    // unpack image
+    img = unpackImage(&logo_med, NULL);
+    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_drawText("128x64 image draw (preloaded)", 2, 0);
+    VDP_loadTileSet(img->tileset, TILE_USER, TRUE);
+    VDP_setPalette(PAL1, img->palette->data);
+    i = 5;
+    start = getTimeAsFix32(FALSE);
+    while(i--)
+    {
+        u16 j = 1000;
+        pos = xy;
+
+        while(j)
+        {
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            j -= 10;
+        }
+    }
+    end = getTimeAsFix32(FALSE);
+    VDP_clearPlan(PLAN_A, TRUE);
+    *score = displayResult(5000, end - start, 2) / 5;
     globalScore += *score++;
     MEM_free(img);
 
@@ -417,6 +462,54 @@ u16 executeBGTest(u16 *scores)
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_setPalette(PAL0, palette_grey);
     *score = displayResult(3000, end - start, 2);
+    globalScore += *score++;
+    MEM_free(img);
+
+    // wait 5 seconds
+    waitMs(5000);
+
+    // unpack image
+    img = unpackImage(&logo_sm, NULL);
+    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_drawText("64x32 image draw (preloaded)", 2, 0);
+    VDP_loadTileSet(img->tileset, TILE_USER, TRUE);
+    VDP_setPalette(PAL1, img->palette->data);
+    i = 10;
+    start = getTimeAsFix32(FALSE);
+    while(i--)
+    {
+        u16 j = 1000;
+        pos = xy;
+
+        while(j)
+        {
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            pos++;
+            j -= 10;
+        }
+    }
+    end = getTimeAsFix32(FALSE);
+    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_setPalette(PAL0, palette_grey);
+    *score = displayResult(10000, end - start, 2) / 5;
     globalScore += *score++;
     MEM_free(img);
 
