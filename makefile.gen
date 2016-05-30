@@ -61,11 +61,11 @@ FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 #release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
 release: LIBMD= $(LIB)/libmd.a
-release: out/rom.bin
+release: pre-build out/rom.bin
 
 debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
 debug: LIBMD= $(LIB)/libmd_debug.a
-debug: out/rom.bin out/rom.out out/symbol.txt
+debug: pre-build out/rom.bin out/rom.out out/symbol.txt
 
 
 all: release
@@ -76,7 +76,6 @@ Debug: debug
 Release: release
 
 .PHONY: clean
-
 
 cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
@@ -89,11 +88,17 @@ cleanrelease: clean
 cleandebug: clean
 	$(RM) -f  out/symbol.txt
 
-
 cleandefault: clean
 cleanDefault: clean
 cleanRelease: cleanrelease
 cleanDebug: cleandebug
+
+
+pre-build:
+	$(MKDIR) -p $(SRC)/boot
+	$(MKDIR) -p out
+	$(MKDIR) -p out/src
+	$(MKDIR) -p out/res
 
 
 out/rom.bin: out/rom.out
@@ -111,35 +116,25 @@ out/cmd_: $(OBJS)
 	$(ECHO) "$(OBJS)" > out/cmd_
 
 out/sega.o: $(SRC)/boot/sega.s out/rom_head.bin
-	$(MKDIR) -p out
 	$(CC) $(FLAGS) -c $(SRC)/boot/sega.s -o $@
 
 out/rom_head.bin: out/rom_head.o
 	$(LD) -T $(GDK)/md.ld -nostdlib --oformat binary -o $@ $<
 
 out/rom_head.o: $(SRC)/boot/rom_head.c
-	$(MKDIR) -p out
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(SRC)/boot/sega.s: $(LIBSRC)/boot/sega.s
-	$(MKDIR) -p $(SRC)/boot
 	$(CP) $< $@
 
 $(SRC)/boot/rom_head.c: $(LIBSRC)/boot/rom_head.c
-	$(MKDIR) -p $(SRC)/boot
 	$(CP) $< $@
 
 
 out/%.o: %.c
-	$(MKDIR) -p out
-	$(MKDIR) -p out/src
-	$(MKDIR) -p out/res
 	$(CC) $(FLAGS) -c $< -o $@
 
 out/%.o: %.s
-	$(MKDIR) -p out
-	$(MKDIR) -p out/src
-	$(MKDIR) -p out/res
 	$(CC) $(FLAGS) -c $< -o $@
 
 %.s: %.res
