@@ -249,7 +249,7 @@ void fix16ToStr(fix16 value, char *str, s16 numdec);
  *  formatted and inserted in the resulting string replacing their respective specifiers
  *
  */
-u16 sprintf(char *buffer,const char *fmt, ...);
+u16 sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
 
 
 #endif // _STRING_H_
