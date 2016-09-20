@@ -121,7 +121,8 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len);
 /**
  *  \brief
  *      Play a PCM sample on specified channel (XGM music player driver).<br>
- *      If a sample was currently playing on this channel then priority of the newer sample should be are compared then it's stopped and the new sample is played instead.
+ *      If a sample was currently playing on this channel then priority of the newer sample should be are compared then it's stopped and the new sample is played instead.<br>
+ *      Note that music may use the first PCM channel so it's better to use channel 2 to 4 for SFX.
  *
  *  \param id
  *      Sample id (set #XGM_setPCM_XGM method)
@@ -130,7 +131,7 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len);
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
  *  \param channel
  *      Channel where we want to play sample.<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
+ *      #SOUND_PCM_CH1    = channel 1 (usually used by music)<br>
  *      #SOUND_PCM_CH2    = channel 2<br>
  *      #SOUND_PCM_CH3    = channel 3<br>
  *      #SOUND_PCM_CH4    = channel 4<br>
