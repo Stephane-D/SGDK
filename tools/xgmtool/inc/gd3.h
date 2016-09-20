@@ -29,13 +29,15 @@ typedef struct
     char *date;
     char *conversionAuthor;
     char *notes;
+    int duration;           // duration in frame
+    int loopDuration;       // duration in frame (0 if no loop)
 } XD3;
 
 
 GD3* GD3_create();
 XD3* XD3_create();
 GD3* GD3_createFromData(unsigned char* data);
-XD3* XD3_createFromGD3(GD3 *gd3);
+XD3* XD3_createFromGD3(GD3 *gd3, int duration, int loopDuration);
 
 int GD3_computeDataSize(GD3* gd3);
 int XD3_computeDataSize(XD3* xd3);

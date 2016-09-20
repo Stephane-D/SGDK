@@ -1,0 +1,24 @@
+XGMRomBuilder 1.2 (september 2016)
+Copyright Stephane Dallongeville
+https://stephane-d.github.io/SGDK/
+
+XGMRomBuilder is a tool which allow you to build your own Sega Megadrive/Genesis ROM from VGM files (Sega Megadrive/Genesis compatible)
+and play them directly on your Sega Megadrive/Genesis system through the XGM player.
+Note that it does require XGMTool (which is a part of SGDK) to be located in the same folder to work properly.
+If you use Unix/OSX system you need to recompile XGMTool for your OS (sources are provided in SGDK).
+
+Usage:
+------
+Just build your list of music by adding VGM file, note that maximum ROM size is 4MB and maximum number of track is limited to 100.
+You can set some specific options to improve the VGM --> XGM conversion process if some music doesn't sound correctly when played from the ROM.
+When you're done with the list, just click on "Build ROM" button and after a while you should obtain a xgmrom.bin file in XGMBulder folder.
+
+Changelog:
+----------
+
+version 1.2:
+- upgraded to XGMPlayer v3
+
+version 1.1:
+- compatible with Java 6
+- support zipped VGM file (VGZ or ZIP)

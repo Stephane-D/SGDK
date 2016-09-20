@@ -14,8 +14,8 @@
 #include "memory.h"
 
 
-VDPPlan text_plan;
-u16 text_basetile;
+static VDPPlan text_plan;
+static u16 text_basetile;
 
 // current VRAM upload tile position
 u16 curTileInd;
@@ -32,7 +32,7 @@ void VDP_setHorizontalScroll(VDPPlan plan, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = VDP_HSCROLL_TABLE;
-    if (plan.plan == CONST_PLAN_B) addr += 2;
+    if (plan.value == CONST_PLAN_B) addr += 2;
 
     *pl = GFX_WRITE_VRAM_ADDR(addr);
     *pw = value;
@@ -43,7 +43,7 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((tile & 0x1F) * (4 * 8));
-    if (plan.plan == CONST_PLAN_B) addr += 2;
+    if (plan.value == CONST_PLAN_B) addr += 2;
 
     VDP_setAutoInc(4 * 8);
 
@@ -73,7 +73,7 @@ void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((line & 0xFF) * 4);
-    if (plan.plan == CONST_PLAN_B) addr += 2;
+    if (plan.value == CONST_PLAN_B) addr += 2;
 
     VDP_setAutoInc(4);
 
@@ -109,7 +109,7 @@ void VDP_setVerticalScroll(VDPPlan plan, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = 0;
-    if (plan.plan == CONST_PLAN_B) addr += 2;
+    if (plan.value == CONST_PLAN_B) addr += 2;
 
     *pl = GFX_WRITE_VSRAM_ADDR(addr);
     *pw = value;
@@ -120,7 +120,7 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16
     u16 addr;
 
     addr = (tile & 0x1F) * 4;
-    if (plan.plan == CONST_PLAN_B) addr += 2;
+    if (plan.value == CONST_PLAN_B) addr += 2;
 
     VDP_setAutoInc(4);
 
@@ -148,18 +148,18 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16
 
 void VDP_clearPlan(VDPPlan plan, u16 wait)
 {
-    switch(plan.plan)
+    switch(plan.value)
     {
         case CONST_PLAN_A:
-            VDP_clearTileMap(aplan_adr, 0, 1 << (planWidthSft + planHeightSft), wait);
+            VDP_clearTileMap(VDP_PLAN_A, 0, 1 << (planWidthSft + planHeightSft), wait);
             break;
 
         case CONST_PLAN_B:
-            VDP_clearTileMap(bplan_adr, 0, 1 << (planWidthSft + planHeightSft), wait);
+            VDP_clearTileMap(VDP_PLAN_B, 0, 1 << (planWidthSft + planHeightSft), wait);
             break;
 
         case CONST_PLAN_WINDOW:
-            VDP_clearTileMap(window_adr, 0, 1 << (windowWidthSft + 5), wait);
+            VDP_clearTileMap(VDP_PLAN_WINDOW, 0, 1 << (windowWidthSft + 5), wait);
             break;
     }
 }
@@ -205,7 +205,7 @@ void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
     u16 i;
 
     // get the horizontal plan size (in cell)
-    i = (plan.plan == CONST_PLAN_WINDOW)?windowWidth:planWidth;
+    i = (plan.value == CONST_PLAN_WINDOW)?windowWidth:planWidth;
     len = strlen(str);
 
     // if string don't fit in plan, we cut it
@@ -232,7 +232,7 @@ void VDP_clearTextAreaBG(VDPPlan plan, u16 x, u16 y, u16 w, u16 h)
 
 void VDP_clearTextLineBG(VDPPlan plan, u16 y)
 {
-    VDP_fillTileMapRect(plan, 0, 0, y, (plan.plan == CONST_PLAN_WINDOW)?windowWidth:planWidth, 1);
+    VDP_fillTileMapRect(plan, 0, 0, y, (plan.value == CONST_PLAN_WINDOW)?windowWidth:planWidth, 1);
 }
 
 void VDP_drawText(const char *str, u16 x, u16 y)

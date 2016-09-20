@@ -237,7 +237,7 @@ LList* XGCCommand_createPSGEnvCommands(LList* commands)
     if (getSizeLList(src) > 4)
     {
         if (!silent)
-            printf("Warning: more then 4 PSG env command in a single frame !\n");
+            printf("Warning: more than 4 PSG env command in a single frame !\n");
     }
 
     while (src != NULL)
@@ -271,7 +271,7 @@ LList* XGCCommand_createYMKeyCommands(LList* commands)
     if (getSizeLList(src) > 6)
     {
         if (!silent)
-            printf("Warning: more then 6 Key off or Key on command in a single frame !\n");
+            printf("Warning: more than 6 Key off or Key on command in a single frame !\n");
     }
 
     while (src != NULL)

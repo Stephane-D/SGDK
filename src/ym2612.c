@@ -14,7 +14,7 @@ void YM2612_reset()
 
     bus_taken = Z80_isBusTaken();
     if (!bus_taken)
-        Z80_requestBus(1);
+        Z80_requestBus(TRUE);
 
     // enable left and right output for all channel
     for(i = 0; i < 3; i++)

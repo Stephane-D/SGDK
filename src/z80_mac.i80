@@ -684,6 +684,11 @@
             wait4
             endm
 
+            macro   wait71
+            wait50
+            wait21
+            endm
+
             macro   wait72
             wait50
             wait22

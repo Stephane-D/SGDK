@@ -12,7 +12,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="bug_part_opt_xgc.vgm bug_part_opt_xgc.xgc -v" />
+				<Option parameters="bug.vgm out.xgc -v" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-Os" />
@@ -27,7 +27,7 @@
 				<Option object_output="out/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="sample.vgm out.vgm -v" />
+				<Option parameters="bug.vgm out.xgc -v" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />

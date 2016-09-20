@@ -34,6 +34,7 @@
 #include "sprite_eng.h"
 
 #include "sound.h"
+#include "xgm.h"
 #include "tfcplay.h"
 #include "z80_ctrl.h"
 #include "ym2612.h"

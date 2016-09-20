@@ -88,10 +88,21 @@ void BMP_init(u16 double_buffer, VDPPlan plan, u16 palette, u16 priority)
     pal = palette & 3;
     prio = priority & 1;
 
-    if (plan.plan == CONST_PLAN_B)
-        bmp_plan_adr = &bplan_adr;
-    else
-        bmp_plan_adr = &aplan_adr;
+    switch(plan.value)
+    {
+        default:
+        case CONST_PLAN_B:
+            bmp_plan_adr = &bplan_addr;
+            break;
+
+        case CONST_PLAN_A:
+            bmp_plan_adr = &aplan_addr;
+            break;
+
+        case CONST_PLAN_WINDOW:
+            bmp_plan_adr = &window_addr;
+            break;
+    }
 
     bmp_buffer_0 = NULL;
     bmp_buffer_1 = NULL;

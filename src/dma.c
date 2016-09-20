@@ -166,6 +166,9 @@ void DMA_flushQueue()
         queueTransferSize = 0;
         queueTransferSizeLimit = 0;
     }
+
+    // we do that to fix cached auto inc value (instead of losing time in updating it during queue flush)
+    VDP_setAutoInc(2);
 }
 
 u16 DMA_getQueueSize()

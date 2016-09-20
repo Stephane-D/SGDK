@@ -31,8 +31,8 @@ typedef struct
 
 
 VGM* VGM_create(unsigned char* data, int dataSize, int offset, bool convert);
-VGM* VGM_create1(unsigned char* data, int dataSize, int offset);
-VGM* VGM_createFromVGM(VGM* vgm, bool convert);
+//VGM* VGM_create1(unsigned char* data, int dataSize, int offset);
+//VGM* VGM_createFromVGM(VGM* vgm, bool convert);
 
 #include "xgm.h"
 

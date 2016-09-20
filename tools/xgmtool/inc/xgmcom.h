@@ -31,6 +31,7 @@ XGMCommand* XGMCommand_createEndCommand();
 XGMCommand* XGMCommand_createFromData(unsigned char* data);
 
 int XGMCommand_getType(XGMCommand* source);
+int XGMCommand_getSize(XGMCommand* source);
 bool XGMCommand_isFrame(XGMCommand* source);
 bool XGMCommand_isLoop(XGMCommand* source);
 int XGMCommand_getLoopOffset(XGMCommand* source);
@@ -63,6 +64,10 @@ LList* XGMCommand_createPSGCommands(LList* commands);
 #include "xgm.h"
 
 LList* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, LList* commands);
+
+char* XGMCommand_toString(XGMCommand* command);
+void XGMCommand_logCommand(FILE *file, XGMCommand* command);
+bool XGMCommand_logCommands(char* fileName, LList* commands);
 
 
 #endif // XGMCOM_H_

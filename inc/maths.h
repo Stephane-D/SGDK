@@ -120,12 +120,12 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Compute and return the result of the multiplication of val1 and val2 (fix32).
  */
-#define fix32Mul(val1, val2)        (((val1) >> (FIX32_FRAC_BITS / 2)) * ((val2) >> (FIX32_FRAC_BITS / 2)))
+#define fix32Mul(val1, val2)        (((val1) * (val2)) >> FIX32_FRAC_BITS)
 /**
  *  \brief
  *      Compute and return the result of the division of val1 by val2 (fix32).
  */
-#define fix32Div(val1, val2)        (((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
+#define fix32Div(val1, val2)        (((val1) << FIX32_FRAC_BITS) / (val2))
 
 
 #define FIX16_INT_BITS              10
@@ -394,6 +394,11 @@ typedef struct
 u32 intToBCD(u32 value);
 
 /**
+ *  \deprecated
+ *      Use #getApproximatedDistance(..) instead.
+ */
+u32 distance_approx(s32 dx, s32 dy);
+/**
  *  \brief
  *      Return euclidean distance approximation for specified vector.<br>
  *      The returned distance is not 100% perfect but calculation is fast.
@@ -405,84 +410,28 @@ u32 intToBCD(u32 value);
  */
 u32 getApproximatedDistance(s32 dx, s32 dy);
 /**
- *  \deprecated
- *      Use #getApproximatedDistance(..) instead.
+ *  \brief
+ *      Return 16.16 fixed point *approximation* of log2 of the specified 16.16 fixed point value.
+ *      Ex:<br>
+ *      getLog2(1 << 16) = 0<br>
+ *      getLog2(12345 << 16) = ~9.5 (real value = ~13.6)<br>
+ *
+ *  \param value
+ *      16.16 fixed point value to return log2 of
  */
-u32 distance_approx(s32 dx, s32 dy);
+s32 getApproximatedLog2(s32 value);
+/**
+ *  \brief
+ *      Return integer log2 of specified 32 bits unsigned value.
+ *      Ex:<br>
+ *      getLog2Int(1024) = 10<br>
+ *      getLog2Int(12345) = 13<br>
+ *
+ *  \param value
+ *      value to return log2 of
+ */
+u16 getLog2Int(u32 value);
 
-
-/**
- *  \brief
- *      Quick sort algo on u8 data array.
- *
- *  \param data
- *      u8 data pointer.
- *  \param left
- *      left index (should be 0).
- *  \param right
- *      right index (should be table size - 1).
- */
-void QSort_u8(u8 *data, u16 left, u16 right);
-/**
- *  \brief
- *      Quick sort algo on s8 data array.
- *
- *  \param data
- *      s8 data pointer.
- *  \param left
- *      left index (should be 0).
- *  \param right
- *      right index (should be table size - 1).
- */
-void QSort_s8(s8 *data, u16 left, u16 right);
-/**
- *  \brief
- *      Quick sort algo on u16 data array.
- *
- *  \param data
- *      u16 data pointer.
- *  \param left
- *      left index (should be 0).
- *  \param right
- *      right index (should be table size - 1).
- */
-void QSort_u16(u16 *data, u16 left, u16 right);
-/**
- *  \brief
- *      Quick sort algo on s16 data array.
- *
- *  \param data
- *      s16 data pointer.
- *  \param left
- *      left index (should be 0).
- *  \param right
- *      right index (should be table size - 1).
- */
-void QSort_s16(s16 *data, u16 left, u16 right);
-/**
- *  \brief
- *      Quick sort algo on u32 data array.
- *
- *  \param data
- *      u32 data pointer.
- *  \param left
- *      left index (should be 0).
- *  \param right
- *      right index (should be table size - 1).
- */
-void QSort_u32(u32 *data, u16 left, u16 right);
-/**
- *  \brief
- *      Quick sort algo on s32 data array.
- *
- *  \param data
- *      s32 data pointer.
- *  \param left
- *      left index (should be 0).
- *  \param right
- *      right index (should be table size - 1).
- */
-void QSort_s32(s32 *data, u16 left, u16 right);
 
 
 #endif // _MATHS_H_

@@ -77,48 +77,102 @@ u32 getApproximatedDistance(s32 dx, s32 dy)
              (min << 7) - (min << 5) + (min << 3) - (min << 1)) >> 8;
 }
 
+s32 getApproximatedLog2(s32 value)
+{
+    s32 x, t, y;
 
-#define QSORT(type)                                     \
-    u16 Partition_##type(type *data, u16 p, u16 r)      \
-    {                                                   \
-        type x = data[p];                               \
-        u16 i = p - 1;                                  \
-        u16 j = r + 1;                                  \
-                                                        \
-        while (TRUE)                                    \
-        {                                               \
-            i++;                                        \
-            while ((i < r) && (data[i] < x)) i++;       \
-            j--;                                        \
-            while ((j > p) && (data[j] > x)) j--;       \
-                                                        \
-            if (i < j)                                  \
-            {                                           \
-                type tmp;                               \
-                                                        \
-                tmp = data[i];                          \
-                data[i] = data[j];                      \
-                data[j] = tmp;                          \
-            }                                           \
-            else                                        \
-                return j;                               \
-        }                                               \
-    }                                                   \
-                                                        \
-    void QSort_##type(type *data, u16 p, u16 r)         \
-    {                                                   \
-        if (p < r)                                      \
-        {                                               \
-            u16 q = Partition_##type(data, p, r);       \
-            QSort_##type(data, p, q);                   \
-            QSort_##type(data, q + 1, r);               \
-        }                                               \
+    x = value;
+    y = 0xa65af;
+
+    if (x < 0x00008000)
+    {
+        x <<= 16;
+        y -= 0xb1721;
+    }
+    if (x < 0x00800000)
+    {
+        x <<= 8;
+        y -= 0x58b91;
+    }
+    if (x < 0x08000000)
+    {
+        x <<= 4;
+        y -= 0x2c5c8;
+    }
+    if (x < 0x20000000)
+    {
+        x <<= 2;
+        y -= 0x162e4;
+    }
+    if (x < 0x40000000)
+    {
+        x <<= 1;
+        y -= 0x0b172;
     }
 
+    t = x + (x >> 1);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x067cd;
+    }
+    t = x + (x >> 2);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x03920;
+    }
+    t = x + (x >> 3);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x01e27;
+    }
+    t = x + (x >> 4);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x00f85;
+    }
+    t = x + (x >> 5);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x007e1;
+    }
+    t = x + (x >> 6);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x003f8;
+    }
+    t = x + (x >> 7);
+    if (t >= 0)
+    {
+        x = t;
+        y -= 0x001fe;
+    }
 
-QSORT(u8)
-QSORT(s8)
-QSORT(u16)
-QSORT(s16)
-QSORT(u32)
-QSORT(s32)
+    x = 0x80000000 - x;
+    y -= x >> 15;
+
+    return y;
+}
+
+u16 getLog2Int(u32 value)
+{
+    u16 v;
+    u16 result;
+
+    result = 0;
+    if (value > 0xFFFF) result = 16;
+
+    v = value; // keep only low 16 bit
+    if (v > 0xFF) result += 8;
+    v >>= 8;
+    if (v > 0xF) result += 4;
+    v >>= 4;
+    if (v > 0x3) result += 2;
+
+    return result | (v >> 3);
+}

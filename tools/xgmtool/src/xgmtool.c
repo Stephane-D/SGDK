@@ -14,7 +14,7 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.64";
+const char* version = "1.7";
 int sys;
 bool silent;
 bool verbose;
@@ -68,12 +68,12 @@ int main(int argc, char *argv[ ])
         printf("The action xmgtool performs is dependant from the input and output file extension.\n");
         printf("Supported options:\n");
         printf("-s\tenable silent mode (no message except error and warning).\n");
-        printf("-v\tenable verbose mode.\n");
+        printf("-v\tenable verbose mode (give more info about conversion).\n");
         printf("-n\tforce NTSC timing (only meaningful for VGM to XGM conversion).\n");
         printf("-p\tforce PAL timing (only meaningful for VGM to XGM conversion).\n");
         printf("-di\tdisable PCM sample auto ignore (it can help when PCM are not properly extracted).\n");
         printf("-dr\tdisable PCM sample rate auto fix (it can help when PCM are not properly extracted).\n");
-        printf("-kf\tenable delayed KEY OFF event when we have KEY ON/OFF in a single frame (it can fix incorrect instrument sound).\n");
+        printf("-dd\tdisable delayed KEY OFF event when we have KEY ON/OFF in a single frame (it can fix incorrect instrument sound).\n");
 
         exit(1);
     }
@@ -83,7 +83,7 @@ int main(int argc, char *argv[ ])
     verbose = false;
     sampleIgnore = true;
     sampleRateFix = true;
-    delayKeyOff = false;
+    delayKeyOff = true;
 
     // Open source for binary read (will fail if file does not exist)
     if ((infile = fopen(argv[1], "rb")) == NULL)
@@ -118,8 +118,8 @@ int main(int argc, char *argv[ ])
             sampleIgnore = false;
         else if (!strcasecmp(argv[i], "-dr"))
             sampleRateFix = false;
-        else if (!strcasecmp(argv[i], "-kf"))
-            delayKeyOff = true;
+        else if (!strcasecmp(argv[i], "-dd"))
+            delayKeyOff = false;
         else if (!strcasecmp(argv[i], "-n"))
             sys = SYSTEM_NTSC;
         else if (!strcasecmp(argv[i], "-p"))
@@ -136,7 +136,8 @@ int main(int argc, char *argv[ ])
     char* outExt = getFileExtension(argv[2]);
     int errCode = 0;
 
-    if (!strcasecmp(inExt, "VGM"))
+    // VGM or empty (assumed as VGM)
+    if (!strcasecmp(inExt, "VGM") || !strlen(inExt))
     {
         if ((!strcasecmp(outExt, "VGM")) || (!strcasecmp(outExt, "XGM")) || (!strcasecmp(outExt, "BIN")) || (!strcasecmp(outExt, "XGC")))
         {
@@ -146,7 +147,7 @@ int main(int argc, char *argv[ ])
             int outDataSize;
             unsigned char* outData;
             VGM* vgm;
-            VGM* optVgm;
+//            VGM* optVgm;
 
             // load file
             inData = readBinaryFile(argv[1], &inDataSize);
@@ -156,22 +157,23 @@ int main(int argc, char *argv[ ])
                 inData[0x24] = 60;
             else if (sys == SYSTEM_PAL)
                 inData[0x24] = 50;
-            vgm = VGM_create1(inData, inDataSize, 0);
+            // create with conversion
+            vgm = VGM_create(inData, inDataSize, 0, true);
             if (vgm == NULL) exit(1);
-            // optimize
-            optVgm = VGM_createFromVGM(vgm, true);
-            if (optVgm == NULL) exit(1);
+//            // optimize
+//            optVgm = VGM_createFromVGM(vgm, true);
+//            if (optVgm == NULL) exit(1);
 
-            VGM_convertWaits(optVgm);
-            VGM_cleanCommands(optVgm);
-            VGM_cleanSamples(optVgm);
-            VGM_fixKeyCommands(optVgm);
+            VGM_convertWaits(vgm);
+            VGM_cleanCommands(vgm);
+            VGM_cleanSamples(vgm);
+            VGM_fixKeyCommands(vgm);
 
             // VGM output
             if (!strcasecmp(outExt, "VGM"))
             {
                 // get byte array
-                outData = VGM_asByteArray(optVgm, &outDataSize);
+                outData = VGM_asByteArray(vgm, &outDataSize);
                 if (outData == NULL) exit(1);
                 // write to file
                 writeBinaryFile(outData, outDataSize, argv[2]);
@@ -181,7 +183,7 @@ int main(int argc, char *argv[ ])
                 XGM* xgm;
 
                 // convert to XGM
-                xgm = XGM_createFromVGM(optVgm);
+                xgm = XGM_createFromVGM(vgm);
                 if (xgm == NULL) exit(1);
 
                 // XGM output

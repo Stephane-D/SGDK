@@ -27,13 +27,6 @@ XGM* XGC_create(XGM* xgm)
 
     // copy pal/ntsc information
     result->pal = xgm->pal;
-    // copy GD3 tags
-    if (xgm->gd3)
-    {
-        result->gd3 = xgm->gd3;
-        // convert to XD3 here
-        result->xd3 = XD3_createFromGD3(xgm->gd3);
-    }
 
     // simple copy for sample
     s = xgm->samples;
@@ -54,6 +47,25 @@ XGM* XGC_create(XGM* xgm)
         XGC_shiftSamples(result, 2);
     else
         XGC_shiftSamples(result, 3);
+
+    // copy GD3 tags
+    if (xgm->gd3)
+    {
+        LList* firstLoopCommand;
+        int duration;
+        int loopDuration;
+
+        result->gd3 = xgm->gd3;
+
+        duration = XGC_computeLenInFrame(result);
+        firstLoopCommand = XGM_getLoopPointedCommandElement(result);
+
+        if (firstLoopCommand != NULL) loopDuration = XGC_computeLenInFrameOf(firstLoopCommand);
+        else loopDuration = 0;
+
+        // convert to XD3 here
+        result->xd3 = XD3_createFromGD3(xgm->gd3, duration, loopDuration);
+    }
 
     // display play PCM command
 //    if (verbose)
@@ -97,6 +109,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
     LList* tmpCom;
 
     XGMCommand* sizeCommand;
+    YM2612* ymLoopState;
     YM2612* ymOldState;
     YM2612* ymState;
     int j, size;
@@ -104,7 +117,8 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
     bool hasKeyCom;
 
     time = 0;
-    ymOldState = YM2612_create();
+    ymLoopState = NULL;
+    ymOldState = NULL;
     ymState = YM2612_create();
 
     // add 3 dummy frames (reserve frame space for PCM shift)
@@ -133,17 +147,21 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             if (command == loopCommand)
             {
                 if (loopOffset == -1)
+                {
                     loopOffset = XGM_getMusicDataSizeOf(getHeadLList(xgcCommands));
+                    // keep YM state on loop
+                    ymLoopState = YM2612_copy(ymState);
+                }
             }
 
             // end information --> ignore
             if (XGMCommand_isEnd(command))
                 continue;
-            // loop end information --> store and stop here
+            // loop end information --> store it
             if (XGMCommand_isLoop(command))
             {
                 loopEnd = true;
-                break;
+                continue;
             }
             // stop here
             if (XGMCommand_isFrame(command))
@@ -157,6 +175,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
         frameCommands = getHeadLList(frameCommands);
 
         // update state
+        if (ymOldState) free(ymOldState);
         ymOldState = ymState;
         ymState = YM2612_copy(ymOldState);
 
@@ -313,6 +332,11 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
         {
             if (loopOffset != -1)
             {
+                --> try to fix YM state restoration on loop
+
+                // and frame skip command as we force end frame after loop from XGM
+                newCommands = insertAfterLList(newCommands, XGCCommand_createFrameSkipCommand());
+                // then insert loop command
                 newCommands = insertAfterLList(newCommands, XGMCommand_createLoopCommand(loopOffset));
                 loopOffset = -1;
             }
@@ -324,6 +348,11 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             // loop point ?
             if (loopOffset != -1)
             {
+                --> try to fix YM state restoration on loop
+
+                // and frame skip command as we force end frame after loop
+                newCommands = insertAfterLList(newCommands, XGCCommand_createFrameSkipCommand());
+                // then insert loop command
                 newCommands = insertAfterLList(newCommands, XGMCommand_createLoopCommand(loopOffset));
                 loopOffset = -1;
             }
@@ -343,26 +372,26 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             XGMCommand* command = tmpCom->element;
 
             // limit reached ?
-            if ((size + command->size) >= 256)
+            if ((size + command->size) >= 255)
             {
 //                if ((frameInd > 10) && (!silent))
                 if (!silent)
                 {
                     int frameInd = XGC_computeLenInFrameOf(getHeadLList(xgcCommands)) + (XGC_computeLenInFrameOf(newCommands) - 1);
-                    printf("Warning: frame > 256 at frame %4X (need to split frame)\n", frameInd);
+                    printf("Warning: frame >= 256 at frame %4X (need to split frame)\n", frameInd);
                 }
 
-                // end previous frame
-                XGCCommand_setFrameSizeSize(sizeCommand, size);
+                // insert frame skip command so driver will parse 2 frames together
+                insertBeforeLList(tmpCom, XGCCommand_createFrameSkipCommand());
+                // end previous frame (current size + frame skip command size)
+                XGCCommand_setFrameSizeSize(sizeCommand, size + 1);
 
                 // insert new frame size info
                 sizeCommand = XGCCommand_createFrameSizeCommand(0);
                 insertBeforeLList(tmpCom, sizeCommand);
-                // and insert frame skip command so we recover late
-                insertBeforeLList(tmpCom, XGCCommand_createFrameSkipCommand());
 
                 // reset size and pass to next element
-                size = 2;
+                size = 1;
             }
 
             size += command->size;
@@ -379,7 +408,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
     xgc->commands = getHeadLList(xgcCommands);
 
     // compute offset & frame size
-    XGC_computeAllOffset(xgc);
+    XGM_computeAllOffset(xgc);
     XGC_computeAllFrameSize(xgc);
 
     if (!silent)
@@ -490,7 +519,7 @@ void XGC_shiftSamples(XGM* source, int sft)
     }
 
     // recompute offset & frame size
-    XGC_computeAllOffset(source);
+    XGM_computeAllOffset(source);
     XGC_computeAllFrameSize(source);
 
     // fix address in loop command
@@ -543,24 +572,6 @@ LList* XGC_getStateChange(YM2612* current, YM2612* old)
     }
 
     return getHeadLList(result);
-}
-
-void XGC_computeAllOffset(XGM* source)
-{
-    LList* com;
-
-    // compute offset
-    int offset = 0;
-    com = source->commands;
-    while(com != NULL)
-    {
-        XGMCommand* command = com->element;
-
-        XGMCommand_setOffset(command, offset);
-        offset += command->size;
-
-        com = com->next;
-    }
 }
 
 void XGC_computeAllFrameSize(XGM* source)
@@ -618,6 +629,8 @@ static int XGC_computeLenInFrameOf(LList* commands)
 
         if (XGCCommand_isFrameSize(command))
             result++;
+        else if (XGCCommand_isFrameSkip(command))
+            result--;
 
         com = com->next;
     }

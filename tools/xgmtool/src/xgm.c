@@ -239,7 +239,7 @@ static void XGM_parseMusicFromXGC(XGM* xgm, unsigned char* data, int length)
         {
             XGMCommand* command = XGCCommand_createFromData(data + off);
 
-            // add command if not state command
+            // add command if not state or frame skip command
             if (!XGCCommand_isState(command) && !XGCCommand_isFrameSkip(command))
                 commands = insertAfterLList(commands, command);
 
@@ -277,7 +277,8 @@ static void XGM_extractSamples(XGM* xgm, VGM* vgm)
         SampleBank* sampleBank = b->element;
         LList* s = sampleBank->samples;
 
-        while(s != NULL)
+        // can't have more than 64 samples in XGM music
+        while((s != NULL) && (index < 64))
         {
             XGMSample* sample = XGMSample_createFromVGMSample(sampleBank, s->element);
 
@@ -289,6 +290,19 @@ static void XGM_extractSamples(XGM* xgm, VGM* vgm)
             }
 
             s = s->next;
+        }
+
+        // can't extract all samples (XGM music doesn't not support more than 63 samples)
+        if ((s != NULL) && (index >= 64))
+        {
+            if (!silent)
+            {
+                printf("Error: XGM does not support music with more than 63 samples !\n");
+                printf("Input VGM file probably has improper PCM data extraction, try to use another VGM source.\n");
+            }
+
+            // interrupt sample extraction
+            break;
         }
 
         b = b->next;
@@ -309,6 +323,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
     LList* xgmCommands = NULL;
 
     int loopOffset = -1;
+    int frame = 0;
     bool loopEnd;
     bool hasKeyCom;
 
@@ -336,11 +351,11 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
                     loopOffset = XGM_getMusicDataSizeOf(getHeadLList(xgm->commands));
                 continue;
             }
-            // save loop end and stop here
+            // save loop end
             if (VGMCommand_isLoopEnd(command))
             {
                 loopEnd = true;
-                break;
+                continue;
             }
             // stop here
             if (VGMCommand_isWait(command))
@@ -433,7 +448,7 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
             else
             {
                 if (verbose)
-                    printf("Command %d ignored\n", command->command);
+                    printf("Command %d ignored at frame %d\n", command->command, frame);
             }
 
             com = com->next;
@@ -473,30 +488,65 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
         // last frame ?
         if (vgmCom == NULL)
         {
-            // loop point not yet defined ?
+            // loop point not yet defined (should not arrive) ?
             if (loopOffset != -1)
             {
+                loopEnd = true;
                 xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createLoopCommand(loopOffset));
                 loopOffset = -1;
             }
-            else
-                // add end command
-                xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createEndCommand());
+
+            // add end command
+            xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createEndCommand());
+        }
+        // end frame
+        else xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createFrameCommand());
+
+        // get back to head of frame commands
+        xgmCommands = getHeadLList(xgmCommands);
+        int numCom = getSizeLList(xgmCommands);
+
+        // heavy frame warning, probably something wrong here...
+        if (numCom > 200)
+        {
+            // show warning
+            if (!silent)
+                printf("Warning: Heavy frame at position %d (%d commands), playback may be altered !\n", frame, numCom);
+
+            // verbose enable --> log frame command into a file
+//            if (verbose)
+//            {
+//                char filename[32];
+//
+//                sprintf(filename, "frame_%.4X.log", frame);
+//                XGMCommand_logCommands(filename, xgmCommands);
+//            }
         }
 
-        // end frame
-        xgmCommands = insertAfterLList(xgmCommands, XGMCommand_createFrameCommand());
-
         // finally add the new commands
-        xgm->commands = insertAllAfterLList(xgm->commands, getHeadLList(xgmCommands));
+        xgm->commands = insertAllAfterLList(xgm->commands, xgmCommands);
+        // next frame
+        frame++;
     }
 
     // get back to head
     xgm->commands = getHeadLList(xgm->commands);
 
+    // recompute all offset
+    XGM_computeAllOffset(xgm);
+
+    if (!silent)
+        printf("Number of command: %d\n", getSizeLList(xgm->commands));
+}
+
+
+void XGM_computeAllOffset(XGM* xgm)
+{
+    LList* com;
+
     // compute offset
     int offset = 0;
-    LList* com = xgm->commands;
+    com = xgm->commands;
     while(com != NULL)
     {
         XGMCommand* command = com->element;
@@ -506,9 +556,6 @@ static void XGM_extractMusic(XGM* xgm, VGM* vgm)
 
         com = com->next;
     }
-
-    if (!silent)
-        printf("Number of command: %d\n", getSizeLList(xgm->commands));
 }
 
 /**

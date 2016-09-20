@@ -27,7 +27,9 @@ XGM* XGM_createFromVGM(VGM* vgm);
 
 XGMCommand* XGM_getLoopCommand(XGM* xgm);
 int XGM_getLoopPointedCommandIndex(XGM* xgm);
+LList* XGM_getLoopPointedCommandElement(XGM* xgm);
 XGMCommand* XGM_getLoopPointedCommand(XGM* xgm);
+void XGM_computeAllOffset(XGM* xgm);
 int XGM_computeLenInFrame(XGM* xgm);
 int XGM_computeLenInSecond(XGM* xgm);
 int XGM_getOffset(XGM* xgm, XGMCommand* command);

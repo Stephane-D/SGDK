@@ -14,6 +14,9 @@ static void initPartic(u16 num);
 static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc);
 static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 realloc);
 
+static void updateDonut(u16 num, u16 preloadedTiles, u16 time);
+static u16 executeDonut(u16 time, u16 preloadedTiles);
+
 static void initPos(u16 num);
 static void updatePos(u16 num);
 static void updateAnim(u16 num);
@@ -365,6 +368,57 @@ u16 executeSpritesTest(u16 *scores)
     SPR_reset();
     SPR_clear();
     VDP_clearPlan(PLAN_A, TRUE);
+    VDP_drawText("Donut animation (streamed)", 1, 2);
+    SYS_enableInts();
+
+    waitMs(5000);
+    SYS_disableInts();
+    VDP_clearPlan(PLAN_A, TRUE);
+    SYS_enableInts();
+
+    // set palette
+    VDP_setPalette(PAL1, donut.palette->data);
+
+    // execute particle bench
+    *scores = executeDonut(20, FALSE);
+    globalScore += *scores++;
+
+    SYS_disableInts();
+    // reset sprite engine (release all allocated resources)
+    SPR_reset();
+    SPR_clear();
+    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_drawText("Donut animation (preloaded)", 1, 2);
+    SYS_enableInts();
+
+    waitMs(5000);
+    SYS_disableInts();
+    VDP_clearPlan(PLAN_A, TRUE);
+    SYS_enableInts();
+
+    // preload animation tilesets
+    ind = TILE_USERINDEX;
+    for(i = 0; i < donut.animations[0]->numFrame; i++)
+    {
+        TileSet* tileset = donut.animations[0]->frames[i]->tileset;
+
+        VDP_loadTileSet(tileset, ind, TRUE);
+        tileIndexes[i] = ind;
+        ind += tileset->numTile;
+    }
+
+    // set palette
+    VDP_setPalette(PAL1, donut.palette->data);
+
+    // execute particle bench
+    *scores = executeDonut(20, TRUE);
+    globalScore += *scores++;
+
+    SYS_disableInts();
+    // reset sprite engine (release all allocated resources)
+    SPR_reset();
+    SPR_clear();
+    VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("Big sprites test...", 1, 2);
     SYS_enableInts();
 
@@ -430,7 +484,7 @@ void init()
     // DMA limit
 //    DMA_setMaxTransferSize(7000);
     // init sprites engine
-    SPR_init(80, 640, 640);
+    SPR_init(80, 16 * (32 + 16 + 8), 16 * (32 + 16 + 8));
     // VDP process done, we can re enable interrupts
     SYS_enableInts();
 }
@@ -481,6 +535,7 @@ static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc)
     while(i--)
     {
         Sprite* s = *sprite;
+
         Object* o = (Object*) s->data;
 
         if ((o->pos.x < minx) || (o->pos.x > maxx) || (o->pos.y < miny))
@@ -566,6 +621,146 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
         VDP_waitVSync();
 
         score++;
+    } while(getTime(TRUE) < endTime);
+
+    return score;
+}
+
+static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
+{
+    Sprite** sprite;
+    u16 i;
+    u16 remaining;
+    u16 ts, ti, tis;
+
+    remaining = num;
+    sprite = sprites;
+
+    ti = time;
+    ts = ti >> 4;
+    i = min(32, remaining);
+    remaining -= i;
+    while(i--)
+    {
+        Sprite* s = *sprite;
+
+        u16 is = i << 5;
+        fix16 x = cosFix16(ti + is);
+        fix16 y = sinFix16(ti + is);
+
+        x = (x << 1) + (x >> 2);
+        y = (y << 0) + (y >> 1);
+
+        SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
+
+        if (preloadedTiles)
+            SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
+        else
+			SPR_setFrame(s, (ts + i) & 0x7);
+
+        sprite++;
+    }
+
+    ti = -time;
+    ts = ti >> 4;
+    i = min(16, remaining);
+    remaining -= i;
+    while(i--)
+    {
+        Sprite* s = *sprite;
+
+        u16 is = -i << 6;
+        fix16 x = cosFix16(ti + is);
+        fix16 y = sinFix16(ti + is);
+
+        x = (x << 1) - (x >> 2);
+        y = (y << 0) - 0;
+
+        SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
+
+        if (preloadedTiles)
+            SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
+        else
+			SPR_setFrame(s, (ts + i) & 0x7);
+
+        sprite++;
+    }
+
+    ti = time;
+    ts = ti >> 3;
+    i = min(8, remaining);
+    remaining -= i;
+    while(i--)
+    {
+        Sprite* s = *sprite;
+
+        u16 is = i << 7;
+        fix16 x = cosFix16(time + is);
+        fix16 y = sinFix16(time + is);
+
+        x = (x << 0) - 0;
+        y = (y >> 1) + 0;
+
+        SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
+
+        if (preloadedTiles)
+            SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
+        else
+			SPR_setFrame(s, (ts + i) & 0x7);
+
+        sprite++;
+    }
+}
+
+static u16 executeDonut(u16 time, u16 preloadedTiles)
+{
+    u32 startTime;
+    u32 endTime;
+    u16 score;
+    u16 num;
+    u16 t;
+
+    startTime = getTime(TRUE);
+    endTime = startTime + (time << 8);
+    score = 0;
+    num = 0;
+    t = 0;
+
+    do
+    {
+        if (!(score & 0x7))
+        {
+            // sprite limit not yet raised
+            if (num < 56)
+            {
+                // add a new sprite
+                Sprite* spr;
+
+                spr = SPR_addSprite(&donut, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+                sprites[num] = spr;
+
+                if (preloadedTiles)
+                {
+                    // disable automatic tile upload and manual VRAM tile position
+                    SPR_setAutoTileUpload(spr, FALSE);
+                    SPR_setVRAMTileIndex(spr, TILE_USERINDEX);
+                }
+
+                // associate object to sprite
+                spr->data = (u32) &objects[num];
+                num++;
+            }
+        }
+
+        updateDonut(num, preloadedTiles, t);
+        // update sprites
+        SPR_update();
+
+        VDP_showFPS(FALSE);
+        VDP_waitVSync();
+
+        score++;
+        t -= 4;
     } while(getTime(TRUE) < endTime);
 
     return score;

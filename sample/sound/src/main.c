@@ -726,7 +726,7 @@ static void vintEvent()
         VDP_drawText(str, 16, 21);
 
 //        {
-//            u8 debugValues[10];
+//            u8 debugValues[12];
 //
 //            getZ80Debug(debugValues);
 //
@@ -832,7 +832,7 @@ static void getZ80Debug(u8 *dst)
     pb = (u8 *) (Z80_DRV_PARAMS + 0x80);
     d = dst;
 
-    i = 10;
+    i = 12;
     while(i--) *d++ = *pb++;
 
     // release bus

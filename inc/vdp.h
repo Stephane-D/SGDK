@@ -9,6 +9,10 @@
  * - get / set register<br>
  * - get / set resolution<br>
  * - enable / disable VDP features<br>
+ * <br>
+ * VRAM should always be organized in a way that tile data are always located before map in VRAM:<br>
+ * 0000-XXXX = tile data<br>
+ * XXXX-FFFF = maps & tables (H scroll table, sprite table, B/A plan and window plan).
  */
 
 #ifndef _VDP_H_
@@ -86,28 +90,32 @@
  *  \brief
  *      VDP background A tilemap address in VRAM.
  */
-#define VDP_PLAN_A              aplan_adr
+#define VDP_PLAN_A              aplan_addr
 /**
  *  \brief
  *      VDP background B tilemap address in VRAM.
  */
-#define VDP_PLAN_B              bplan_adr
+#define VDP_PLAN_B              bplan_addr
 /**
  *  \brief
  *      VDP window tilemap address in VRAM.
  */
-#define VDP_PLAN_WINDOW         window_adr
+#define VDP_PLAN_WINDOW         window_addr
 /**
  *  \brief
  *      VDP horizontal scroll table address in VRAM.
  */
-#define VDP_HSCROLL_TABLE       hscrl_adr
+#define VDP_HSCROLL_TABLE       hscrl_addr
 /**
  *  \brief
  *      VDP sprite list table address in VRAM.
  */
-#define VDP_SPRITE_TABLE        slist_adr
-
+#define VDP_SPRITE_TABLE        slist_addr
+/**
+ *  \brief
+ *      Address in VRAM where maps start (= address of first map / table in VRAM).
+ */
+#define VDP_MAPS_START          maps_addr
 
 /**
  *  \brief
@@ -170,9 +178,9 @@
 
 /**
  *  \brief
- *      Space in byte for tile in VRAM (tile space ends where window tilemap starts)
+ *      Space in byte for tile in VRAM (tile space ends where maps starts)
  */
-#define TILE_SPACE              VDP_PLAN_WINDOW
+#define TILE_SPACE              VDP_MAPS_START
 
 /**
  *  \brief
@@ -193,7 +201,7 @@
  *  \brief
  *      Number of system tile.
  */
-#define TILE_SYSTEMLENGTH       0x10
+#define TILE_SYSTEMLENGTH       1
 /**
  *  \deprecated Use TILE_SYSTEMLENGTH instead.
  */
@@ -365,16 +373,17 @@
  */
 typedef struct
 {
-    u16 plan;
+    u16 value;
 } VDPPlan;
 
 
 // used by define
-extern u16 window_adr;
-extern u16 aplan_adr;
-extern u16 bplan_adr;
-extern u16 hscrl_adr;
-extern u16 slist_adr;
+extern u16 window_addr;
+extern u16 aplan_addr;
+extern u16 bplan_addr;
+extern u16 hscrl_addr;
+extern u16 slist_addr;
+extern u16 maps_addr;
 
 /**
  *  \brief
@@ -829,10 +838,9 @@ void VDP_waitVSync();
  *  \brief
  *      Reset background plan and palette.
  *
- *  Clear background plans and reset palette to grey / red / green / blue.
+ *  Clear background plans, reset palette to grey / red / green / blue and reset scrolls.
  */
 void VDP_resetScreen();
-
 
 /**
  *  \brief

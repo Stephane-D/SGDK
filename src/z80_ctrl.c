@@ -10,6 +10,7 @@
 #include "sys.h"
 #include "vdp.h"
 #include "sound.h"
+#include "xgm.h"
 
 // Z80 drivers
 #include "z80_drv1.h"
@@ -40,7 +41,7 @@ extern void XGM_resetLoadCalculation();
 void Z80_init()
 {
     // request Z80 bus
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
     // set bank to 0
     Z80_setBank(0);
 
@@ -134,7 +135,7 @@ void Z80_write(const u16 addr, const u8 value)
 
 void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
 {
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     const u8 zero = getZeroU8();
     u8* dst = (u8*) (Z80_RAM + to);
@@ -151,7 +152,7 @@ void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
 
 void Z80_upload(const u16 to, const u8 *from, const u16 size, const u16 resetz80)
 {
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // copy data to Z80 RAM (need to use byte copy here)
     u8* src = (u8*) from;
@@ -169,7 +170,7 @@ void Z80_upload(const u16 to, const u8 *from, const u16 size, const u16 resetz80
 
 void Z80_download(const u16 from, u8 *to, const u16 size)
 {
-    Z80_requestBus(1);
+    Z80_requestBus(TRUE);
 
     // copy data from Z80 RAM (need to use byte copy here)
     u8* src = (u8*) (Z80_RAM + from);
@@ -259,12 +260,12 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
     // driver initialisation
     switch(driver)
     {
-        vu8 *pb;
+        u8 *pb;
         u32 addr;
 
         case Z80_DRIVER_2ADPCM:
             // misc parameters initialisation
-            Z80_requestBus(1);
+            Z80_requestBus(TRUE);
             // point to Z80 null sample parameters
             pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
 
@@ -280,7 +281,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
 
         case Z80_DRIVER_PCM:
             // misc parameters initialisation
-            Z80_requestBus(1);
+            Z80_requestBus(TRUE);
             // point to Z80 null sample parameters
             pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
 
@@ -299,7 +300,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             Z80_upload(0x1000, tab_vol, 0x1000, 0);
 
             // misc parameters initialisation
-            Z80_requestBus(1);
+            Z80_requestBus(TRUE);
             // point to Z80 null sample parameters
             pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
 
@@ -315,7 +316,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
 
         case Z80_DRIVER_MVS:
             // put driver in stop state
-            Z80_requestBus(1);
+            Z80_requestBus(TRUE);
 
             // point to Z80 FM command
             pb = (u8 *) MVS_FM_CMD;
@@ -348,7 +349,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             PSG_init();
 
             // misc parameters initialisation
-            Z80_requestBus(1);
+            Z80_requestBus(TRUE);
             // point to Z80 sample id table (first entry = silent sample)
             pb = (u8 *) (0xA01C00);
 
@@ -428,7 +429,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
 
 u16 Z80_isDriverReady()
 {
-    vu8 *pb;
+    u8 *pb;
     u8 ret;
 
     // point to Z80 status
@@ -440,7 +441,7 @@ u16 Z80_isDriverReady()
     else
     {
         // take the bus, check status and release bus
-        Z80_requestBus(1);
+        Z80_requestBus(TRUE);
         ret = *pb & Z80_DRV_STAT_READY;
         Z80_releaseBus();
     }

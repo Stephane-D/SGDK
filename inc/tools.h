@@ -34,6 +34,19 @@
 
 /**
  *  \brief
+ *      Callback for QSort comparaison
+ *
+ * This callback is used to compare 2 objects.<br>
+ * Return value should be:<br>
+ * negatif if o1 is below o2<br>
+ * 0 if o1 is equal to o2<br>
+ * positif if o1 is above o2
+ */
+typedef s16 _comparatorCallback(void* o1, void* o2);
+
+
+/**
+ *  \brief
  *      Set the randomizer seed (to allow reproductible value if we are lucky with HV counter :p)
  */
 void setRandomSeed(u16 seed);
@@ -329,6 +342,94 @@ u32 lz4w_unpack(const u8 *src, u8 *dest);
  *      Size of the source buffer in bytes
  */
 int zlib_unpack(void *dest, const unsigned outLen, const void *src, const unsigned srcLen);
+
+
+/**
+ *  \brief
+ *      Quick sort algo on u8 data array.
+ *
+ *  \param data
+ *      u8 data pointer.
+ *  \param left
+ *      left index (should be 0).
+ *  \param right
+ *      right index (should be table size - 1).
+ */
+void qsort_u8(u8 *data, u16 left, u16 right);
+/**
+ *  \brief
+ *      Quick sort algo on s8 data array.
+ *
+ *  \param data
+ *      s8 data pointer.
+ *  \param left
+ *      left index (should be 0).
+ *  \param right
+ *      right index (should be table size - 1).
+ */
+void qsort_s8(s8 *data, u16 left, u16 right);
+/**
+ *  \brief
+ *      Quick sort algo on u16 data array.
+ *
+ *  \param data
+ *      u16 data pointer.
+ *  \param left
+ *      left index (should be 0).
+ *  \param right
+ *      right index (should be table size - 1).
+ */
+void qsort_u16(u16 *data, u16 left, u16 right);
+/**
+ *  \brief
+ *      Quick sort algo on s16 data array.
+ *
+ *  \param data
+ *      s16 data pointer.
+ *  \param left
+ *      left index (should be 0).
+ *  \param right
+ *      right index (should be table size - 1).
+ */
+void qsort_s16(s16 *data, u16 left, u16 right);
+/**
+ *  \brief
+ *      Quick sort algo on u32 data array.
+ *
+ *  \param data
+ *      u32 data pointer.
+ *  \param left
+ *      left index (should be 0).
+ *  \param right
+ *      right index (should be table size - 1).
+ */
+void qsort_u32(u32 *data, u16 left, u16 right);
+/**
+ *  \brief
+ *      Quick sort algo on s32 data array.
+ *
+ *  \param data
+ *      s32 data pointer.
+ *  \param left
+ *      left index (should be 0).
+ *  \param right
+ *      right index (should be table size - 1).
+ */
+void qsort_s32(s32 *data, u16 left, u16 right);
+
+/**
+ *  \brief
+ *      Quick sort algo on array of pointer (object)
+ *
+ *  \param data
+ *      array of pointer (pointer design object to sort).
+ *  \param len
+ *      number of element in the data array
+ *  \param cb
+ *      comparator callback used to compare 2 objects.
+ */
+void qsort(void** data, u16 len, _comparatorCallback* cb);
+
 
 
 #endif // _TOOLS_H_

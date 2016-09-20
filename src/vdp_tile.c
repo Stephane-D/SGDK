@@ -84,18 +84,18 @@ void VDP_setTileMapXY(VDPPlan plan, u16 tile, u16 x, u16 y)
     vu16 *pwdata;
     u32 addr;
 
-    switch(plan.plan)
+    switch(plan.value)
     {
         case CONST_PLAN_A:
-            addr = aplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_A + ((x + (y << planWidthSft)) * 2);
             break;
 
         case CONST_PLAN_B:
-            addr = bplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_B + ((x + (y << planWidthSft)) * 2);
             break;
 
         case CONST_PLAN_WINDOW:
-            addr = window_adr + ((x + (y << windowWidthSft)) * 2);
+            addr = VDP_PLAN_WINDOW + ((x + (y << windowWidthSft)) * 2);
             break;
 
         default:
@@ -158,20 +158,20 @@ void VDP_fillTileMapRect(VDPPlan plan, u16 tile, u16 x, u16 y, u16 w, u16 h)
     u32 width;
     u16 i, j;
 
-    switch(plan.plan)
+    switch(plan.value)
     {
         case CONST_PLAN_A:
-            addr = aplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_A + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_B:
-            addr = bplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_B + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_WINDOW:
-            addr = window_adr + ((x + (y << windowWidthSft)) * 2);
+            addr = VDP_PLAN_WINDOW + ((x + (y << windowWidthSft)) * 2);
             width = windowWidth;
             break;
 
@@ -275,20 +275,20 @@ void VDP_fillTileMapRectInc(VDPPlan plan, u16 basetile, u16 x, u16 y, u16 w, u16
     u16 tile;
     u16 i, j;
 
-    switch(plan.plan)
+    switch(plan.value)
     {
         case CONST_PLAN_A:
-            addr = aplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_A + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_B:
-            addr = bplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_B + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_WINDOW:
-            addr = window_adr + ((x + (y << windowWidthSft)) * 2);
+            addr = VDP_PLAN_WINDOW + ((x + (y << windowWidthSft)) * 2);
             width = windowWidth;
             break;
 
@@ -380,20 +380,20 @@ void VDP_setTileMapDataRect(VDPPlan plan, const u16 *data, u16 x, u16 y, u16 w, 
     u32 width;
     u16 i, j;
 
-    switch(plan.plan)
+    switch(plan.value)
     {
         case CONST_PLAN_A:
-            addr = aplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_A + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_B:
-            addr = bplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_B + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_WINDOW:
-            addr = window_adr + ((x + (y << windowWidthSft)) * 2);
+            addr = VDP_PLAN_WINDOW + ((x + (y << windowWidthSft)) * 2);
             width = windowWidth;
             break;
 
@@ -489,20 +489,20 @@ void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x
     u16 baseflags;
     u16 i, j;
 
-    switch(plan.plan)
+    switch(plan.value)
     {
         case CONST_PLAN_A:
-            addr = aplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_A + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_B:
-            addr = bplan_adr + ((x + (y << planWidthSft)) * 2);
+            addr = VDP_PLAN_B + ((x + (y << planWidthSft)) * 2);
             width = planWidth;
             break;
 
         case CONST_PLAN_WINDOW:
-            addr = window_adr + ((x + (y << windowWidthSft)) * 2);
+            addr = VDP_PLAN_WINDOW + ((x + (y << windowWidthSft)) * 2);
             width = windowWidth;
             break;
 

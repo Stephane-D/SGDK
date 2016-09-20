@@ -101,7 +101,7 @@ GD3* GD3_createFromData(unsigned char* data)
     return result;
 }
 
-XD3* XD3_createFromGD3(GD3 *gd3)
+XD3* XD3_createFromGD3(GD3 *gd3, int duration, int loopDuration)
 {
     XD3* result = XD3_create();
 
@@ -114,6 +114,8 @@ XD3* XD3_createFromGD3(GD3 *gd3)
     result->date = getString(gd3->date);
     result->conversionAuthor = getString(gd3->vgmConversionAuthor);
     result->notes = getString(gd3->notes);
+    result->duration = duration;
+    result->loopDuration = loopDuration;
 
     return result;
 }
@@ -140,7 +142,7 @@ int XD3_computeDataSize(XD3* xd3)
         strlen(xd3->authorName) +
         strlen(xd3->date) +
         strlen(xd3->conversionAuthor) +
-        strlen(xd3->notes) + 6;
+        strlen(xd3->notes) + (6 * 1) + 8;   // +8 for durations informations
 }
 
 
@@ -232,6 +234,9 @@ unsigned char* XD3_asByteArray(XD3* xd3, int *outSize)
     offset += size;
     size = strlen(xd3->notes) + 1;
     memcpy(result + offset, xd3->notes, size);
+    offset += size;
+    setInt(result, offset + 0, xd3->duration);
+    setInt(result, offset + 4, xd3->loopDuration);
 
     return result;
 }

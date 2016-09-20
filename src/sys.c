@@ -19,6 +19,7 @@
 #include "vdp_pal.h"
 #include "tile_cache.h"
 #include "sound.h"
+#include "xgm.h"
 #include "dma.h"
 
 #include "tools.h"
@@ -403,14 +404,14 @@ void _vint_callback()
             // DMA protection for XGM driver
             if (currentDriver == Z80_DRIVER_XGM)
             {
-                SND_set68KBUSProtection_XGM(TRUE);
+                XGM_set68KBUSProtection(TRUE);
 
                 // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
                 if (SND_getForceDelayDMA_XGM()) waitSubTick(10);
 
                 DMA_flushQueue();
 
-                SND_set68KBUSProtection_XGM(FALSE);
+                XGM_set68KBUSProtection(FALSE);
             }
             else
                 DMA_flushQueue();

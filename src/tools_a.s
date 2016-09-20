@@ -1,3 +1,120 @@
+# ---------------------------------------------------------------
+# Quicksort for MC68000
+# by Stephane Dallongeville @2016
+# original implementation by (c) 2014 Dale Whinham
+#
+# void qsort(void** src, u16 size, _comparatorCallback* cb);
+# ---------------------------------------------------------------
+
+    .global qsort
+
+qsort:
+    movem.l %a2-%a6,-(%sp)
+
+    move.l  24(%sp),%a2             | a2 = src
+    move.l  28(%sp),%d0             | d0 = size (limited to 0x3FFF)
+    move.l  32(%sp),%a6             | a6 = comparator
+
+    add.w   %d0,%d0
+    add.w   %d0,%d0
+    lea     -4(%a2,%d0.w),%a3       | a3 = &src[size - 1]
+
+	bsr quicksort		            | start sort !
+
+    movem.l (%sp)+,%a2-%a6
+	rts
+
+# ---------------------------------------------------------------
+# Quicksort
+# a2 - left pointer
+# a3 - right pointer
+# ---------------------------------------------------------------
+
+quicksort:
+	cmp.l   %a2,%a3		            | L >= R ?
+	ble     .endqsort		        | done !
+
+	bsr     partition		        | index of partition is in a1
+
+	movem.l %a1-%a3,-(%sp)		    | save P,L,R
+
+	lea     -4(%a1),%a3             | R = P-1
+
+	bsr     quicksort		        | quicksort(L, P-1)
+
+	movem.l (%sp),%a1-%a3		    | restore P,L,R
+	lea     4(%a1),%a2              | L = P+1
+	move.l  %a2,4(%sp)              | save changed L
+
+	bsr     quicksort		        | quicksort(P+1, R)
+
+	movem.l (%sp)+,%a1-%a3		    | restore P,L,R
+
+.endqsort:
+	rts
+
+# ---------------------------------------------------------------
+# Partition
+# a2 - left pointer
+# a3 - right pointer
+# return pivot in a1
+# ---------------------------------------------------------------
+partition:
+	move.l  %a2,%a4		            | a4 = L
+	move.l  %a3,%a5                 | a5 = R = P
+
+|	move.l  %a3,%d0
+|	add.l   %a2,%d0
+|	asr.l   %d0                     | d0 = P = (L+R)/2
+|	and.w   0xFFFC,%d0              | clear bit 0 & 1
+|	move.l  %d0,%a0                 | a0 = P
+
+	move.l  (%a5),-(%sp)            | reserve space for comparator arguments, put (*L,*P) by default
+	move.l  (%a4),-(%sp)
+
+	lea     -4(%a5),%a0             | tmp = next R
+	cmp.l   %a4,%a0		            | L >= R ?
+	ble     .finish     	        | done !
+
+.loop:
+.findleft:
+    move.l  (%a4)+,(%sp)            | first argument comparator = *L
+    jsr     (%a6)                   | compare
+
+	tst.w   %d0                     | *L < *P
+	blt     .findleft
+
+	lea     -4(%a4),%a4             | L fix (put on value to swap)
+
+.findright:
+    move.l  -(%a5),(%sp)            | first argument comparator = *R
+    jsr     (%a6)                   | compare
+
+	tst.w   %d0                     | *R > *P
+	bgt     .findright
+
+	cmp.l   %a4,%a5		            | L >= R ?
+	ble     .finish     	        | done !
+
+	move.l  (%a4),%d0	            | swap *R / *L
+	move.l  (%a5),(%a4)+            | L++
+	move.l  %d0,(%a5)
+
+	lea     -4(%a5),%a0             | tmp = next R
+	cmp.l   %a4,%a0		            | R > L ?
+	bhi     .loop        	        | continue !
+
+.finish:
+	move.l  (%a4),%d0	            | swap *L / *P
+	move.l  (%a3),(%a4)
+	move.l  %d0,(%a3)
+
+	move.l  %a4,%a1                 | a1 = L = new pivot
+
+	lea     8(%sp),%sp              | release space for comparator arguments
+	rts
+
+
 # -------------------------------------------------------------------------------------------------
 # Aplib decruncher for MC68000 "gcc version"
 # by MML 2010

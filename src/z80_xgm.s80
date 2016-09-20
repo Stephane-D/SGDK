@@ -1,12 +1,12 @@
-; eXtended Genesis Music (XGM) Z80 driver - Stéphane Dallongeville @2014
+; eXtended Genesis Music (XGM) Z80 driver - Stéphane Dallongeville @2014-2016
 ;
 ; XGM is a music format dedicated to the Sega Megadrive/Genesis system.
 ; It has been designed to minimize CPU decoding resource and keep reasonable data size (should be smaller than VGM file).
 ; It supports both FM and PSG chip and allow up to 4 PCM channels (8 bits signed at 14 Khz) to be played at once.
 ; These 4 PCM channels are obtained by software mixing in the FM DAC in replacement of the 6th FM channel (so at best you can have 5FM + 4PCM + 4PSG = 13 channels)
 ;
-; The driver supports playing SFX in PCM format with 16 priority levels and also allow PSG channel reservation so you can use them from the 68000 to play SFX or whatever you want.
-; PCM samples can be >32KB, the only restriction is that they should have their address and size aligned to 256 bytes.
+; The driver supports playing SFX in PCM format with 16 priority levels.
+; PCM samples can be >32KB but with the restriction of having their address and size aligned on 256 bytes.
 ;
 ; we have to do 254 cycles per sample output which consist of :
 ; - bufferize 4 PCM samples from the rom and mix them in write buffer
@@ -19,10 +19,6 @@
 ; DE  = write buffer / XGM buffer
 ; BC  = counter
 ; B = $80 (used for overflow and sample unsign)
-; IYL = vint pending counter - 1
-;   --> $FF means no vint pending
-;   --> $00 means 1 vint pending and so one XGM frame to process (in time)
-;   --> $01 means 2 vints pending and so 2 XGM frames to process (late)
 ; IYH = temp value
 ; HL' = YMPORT1
 ; BC' = read buffer
@@ -36,7 +32,7 @@
 
 XGM_PLAY_SFT    EQU     6           ; XGM music play command bit
 XGM_RESUME_SFT  EQU     5           ; XGM music resume command bit
-XGM_STOP_SFT    EQU     4           ; XGM music stop command bit
+XGM_PAUSE_SFT   EQU     4           ; XGM music pause command bit
 
                                     ; COMMAND b0 = play PCM0   STATUS b0 = PCM0 playing
                                     ; COMMAND b1 = play PCM1   STATUS b1 = PCM1 playing
@@ -60,8 +56,7 @@ PCM3_ARG_ID EQU     PARAMS+$0B      ; PCM id (0 to 255)
 PCM_ARG_P   EQU     PCM0_ARG_P
 PCM_ARG_ID  EQU     PCM0_ARG_ID
 
-PSG_ARG     EQU     PARAMS+$0C      ; xxxx CCCC  where 'CCCC' is PSG channel '3210'
-                                    ; PSG channel reservation for 68k
+LOOP_ARG    EQU     PARAMS+$0C      ; number of loop (0 = 255 loop)
 PROTECT_ARG EQU     PARAMS+$0D      ; set to 1 from 68k during DMA (in vblank period)
                                     ; to prevent Z80 accessing 68k BUS
 
@@ -90,6 +85,8 @@ XGM_ADDR    EQU     PARAMS+$30      ; XGM internal addr (bit0 --> bit23)
 WRITEBUF    EQU     PARAMS+$34      ; PCM write buffer pointer (bit8 --> bit9)
 READBUF     EQU     PARAMS+$36      ; PCM read buffer pointer (bit8 --> bit9)
 
+REM_LOOP    EQU     PARAMS+$38      ; remaining loop (0 = 255)
+
 YM_RR_SAV   EQU     PARAMS+$40      ; YM RR save (4 slots * 6 channels)
 PSG_ENV_SAV EQU     PARAMS+$58      ; PSG env save (4 channels)
 YM_RR_OFF   EQU     PARAMS+$60      ; YM RR off (4 slots * 6 channels)
@@ -111,6 +108,9 @@ DEBUG_7     EQU     PARAMS+$86      ; debug
 DEBUG_8     EQU     PARAMS+$87      ; debug
 DEBUG_9     EQU     PARAMS+$88      ; debug
 DEBUG_A     EQU     PARAMS+$89      ; debug
+DEBUG_B     EQU     PARAMS+$8A      ; debug
+
+ELAPSED     EQU     PARAMS+$90      ; elapsed frame since beginning of music (in frames), encoded on 24 bit
 
 JUMP_TABLE  EQU     $1600           ; XGM command jump table (size = $100)
 XGM_BUFFER  EQU     $1700           ; XGM music data buffer (size = $100)
@@ -725,8 +725,6 @@ main_loop
 
 ; $00
 
-;    LD  A, (VCOUNTER)
-;    LD  (DEBUG_6), A
 
             sampleOutput                ;                       ' 36    | 36
 
@@ -991,7 +989,30 @@ end_prep_xgm                            ;                       ' 237
 ; $01+x
             sampleOutput                ;                       ' 36    | (36)
 
-            wait172                     ; sync                  ' 172   | (208)
+            LD      A, (STATUS)         ; A = STATUS            ' 13    |
+            BIT     XGM_PLAY_SFT, A     ; XGM playing ?         ' 8     | 31 (67)
+            JP      NZ, .inc            ; count elapsed         ' 10    |
+
+            wait71                      ; sync                  ' 71    | 81 (148)
+            JP      .noinc              ; preparation done      ' 10    |
+
+.inc
+            LD      HL, ELAPSED         ;                       ' 10    | (77)
+
+            LD      A, (HL)             ;                       ' 7     |
+            ADD     A, #1               ;                       ' 7     |
+            LD      (HL), A             ;                       ' 7     |
+            INC     L                   ;                       ' 4     |
+            LD      A, (HL)             ;                       ' 7     |
+            ADC     A, #0               ; inc elapsed frame     ' 7     | 71 (148)
+            LD      (HL), A             ; (24 bit counter)      ' 7     |
+            INC     L                   ;                       ' 4     |
+            LD      A, (HL)             ;                       ' 7     |
+            ADC     A, #0               ;                       ' 7     |
+            LD      (HL), A             ;                       ' 7     |
+
+.noinc
+            wait60                      ; sync                  ' 60    | (208)
 
             LD      DE, (WRITEBUF)      ; DE = write buf        ' 20    |
             compareReadWrite            ; PCM buffer full ?     ' 16    | 46 (254)
@@ -1204,6 +1225,11 @@ next_write_buf
 
 ; $BB+X
 sync_frame                              ; DE point on write buf
+
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_6), A
+
+sync_frame_loop
             sampleOutput                ;                       ' 36    | (36)
 
             wait62                      ; sync                  ' 62    | (98)
@@ -1230,7 +1256,7 @@ sync_frame                              ; DE point on write buf
             CP      D                   ; pcm buffer empty ?    ' 4     | 29 (244)
             JP      Z, .do_pcm          ; fill pcm              ' 10    |
 
-            JP      sync_frame          ; wait for a frame      ' 10    | (254)
+            JP      sync_frame_loop     ; wait for a frame      ' 10    | (254)
 
 .wait_dma                               ;                       ' 190
             LD      HL, (WAIT_LOOP)     ;                       ' 16    |
@@ -2334,7 +2360,7 @@ state_w0
 ; NULL command
 ; ------------
 
-com_null                                ; 01-0F / 60-7D         ' 80
+com_null                                ; 01-0F / 60-7C         ' 80
             wait164                     ; sync                  ' 164   |
             JP      execute_xgm         ;                       ' 10    | 174 (254)
 
@@ -2342,7 +2368,7 @@ com_null                                ; 01-0F / 60-7D         ' 80
 ; EXTRA FRAME command
 ; -------------------
 
-com_extra_frm                           ; FD                            ' 80
+com_extra_frm                           ; 7D                            ' 80
 
             LD      A, $1               ;                               ' 7     |
             LD      (MODIFYING_F), A    ; we are modifying variable     ' 13    | 20 (100)
@@ -2354,44 +2380,83 @@ com_extra_frm                           ; FD                            ' 80
             XOR     A                   ;                               ' 4     |
             LD      (MODIFYING_F), A    ; no more modifying variable    ' 13    | 17 (147)
 
-            wait97                      ; sync                          ' 97    | 107 (254)
+            LD      HL, ELAPSED         ;                               ' 10    | 10 (157)
+
+            LD      A, (HL)             ;                               ' 7     |
+            SUB     A, #1               ;                               ' 7     |
+            LD      (HL), A             ;                               ' 7     |
+            INC     L                   ;                               ' 4     |
+            LD      A, (HL)             ;                               ' 7     |
+            SBC     A, #0               ; fix elapsed frame (24 bit)    ' 7     | 71 (228)
+            LD      (HL), A             ;                               ' 7     |
+            INC     L                   ;                               ' 4     |
+            LD      A, (HL)             ;                               ' 7     |
+            SBC     A, #0               ;                               ' 7     |
+            LD      (HL), A             ;                               ' 7     |
+
+            wait16                      ; sync                          ' 16    | 26 (254)
             JP      execute_xgm         ;                               ' 10    |
 
 
 ; LOOP command
 ; ------------
 
-com_loop                                ; FE                        ' 80
+com_loop                                ; 7E                        ' 80
+
+            LD      A, (REM_LOOP)       ; A = remaining loop        ' 13    |
+            DEC     A                   ; 0 mean infinite loop      ' 4     |
+            LD      (REM_LOOP), A       ; A = remaining loop        ' 13    | 40 (120)
+            JP      NZ, .continue       ;                           ' 10    |
+
+            LD      HL, COMMAND         ; HL = COMMAND              ' 10    | 25 (145)
+            SET     XGM_PAUSE_SFT, (HL) ; request pause/end XGM     ' 15    |
+
+            LD      HL, STATUS          ; HL = STATUS               ' 10    | 25 (170)
+            RES     XGM_PLAY_SFT, (HL)  ; clear play status         ' 15    |
+
+            INC     E                   ; next param                ' 4     |
+            INC     E                   ;                           ' 4     | 12 (182)
+            INC     E                   ;                           ' 4     |
+
+            wait62                      ; sync                      ' 62    |
+            JP      execute_xgm         ;                           ' 10    | 72 (254)
+
+.continue
             LD      A, (DE)             ; A = loop addr b7-b0       ' 7     |
             LD      L, A                ; L = loop addr b7-b0       ' 4     |
             INC     E                   ; next param                ' 4     |
-            LD      A, (DE)             ; A = loop addr b15-b8      ' 7     | 30 (110)
+            LD      A, (DE)             ; A = loop addr b15-b8      ' 7     | 30 (150)
             LD      H, A                ; HL = loop addr b15-b0     ' 4     |
             INC     E                   ; next param                ' 4     |
 
             LD      BC, (XGM_ARG_A+0)   ; BC = XGM base addr (ML)   ' 20    |
-            ADD     HL, BC              ; HL = XGM base addr + loop ' 11    | 47 (157)
+            ADD     HL, BC              ; HL = XGM base addr + loop ' 11    | 47 (197)
             LD      (XGM_ADDR+0), HL    ; set new XGM addr (ML)     ' 16    |
 
             LD      A, (DE)             ; A = loop addr b23-b16     ' 7     |
             LD      HL, XGM_ARG_A+2     ; HL point XGM base adr H   ' 10    |
-            ADC     (HL)                ; A = XGM base addr + loop  ' 7     | 41 (198)
+            ADC     (HL)                ; A = XGM base addr + loop  ' 7     | 41 (238)
             INC     E                   ; next param                ' 4     |
             LD      (XGM_ADDR+2), A     ; set new XGM addr (H)      ' 13    |
 
-            wait46                      ; sync                      ' 46    |
-            JP      execute_xgm         ;                           ' 10    | 56 (254)
+            XOR     A                   ; force end frame fter loop ' 4     |
+            LD      (DE), A             ; after loop taken          ' 7     | 11 (249)
+
+            JP      execute_xgm         ; +5 cycles delay here..    ' 10    | (254+5)
 
 
 ; END XGM command
 ; ---------------
 
-com_end                                 ; FF                        ' 80
-            LD      HL, STATUS          ; HL = STATUS               ' 10    | 25 (105)
+com_end                                 ; 7F                        ' 80
+            LD      HL, COMMAND         ; HL = COMMAND              ' 10    | 25 (105)
+            SET     XGM_PAUSE_SFT, (HL) ; request pause/end XGM     ' 15    |
+
+            LD      HL, STATUS          ; HL = STATUS               ' 10    | 25 (130)
             RES     XGM_PLAY_SFT, (HL)  ; clear play status         ' 15    |
 
-            wait139                     ; sync                      ' 139   |
-            JP      execute_xgm         ;                           ' 10    | 149 (254)
+            wait114                     ; sync                      ' 114   |
+            JP      execute_xgm         ;                           ' 10    | 124 (254)
 
 
 ; $BC+X+Y+Z
@@ -2419,6 +2484,9 @@ xgm_done                                ;                               ' 90
             LD      (HL), $0            ; no more modifying variable    ' 10    | 14 (149)
 
 
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_9), A
+
 ; execute external command
 ; ------------------------
 
@@ -2441,9 +2509,17 @@ external_com                            ;                           ' 149
             LD      A, (XGM_ARG_A+2)    ;                           ' 13    |
             LD      (XGM_ADDR+2),A      ;                           ' 13    |
 
+            LD      A, (LOOP_ARG)       ; set remaining loop        ' 13    |
+            LD      (REM_LOOP),A        ;                           ' 13    | 26 (303)
+
+            LD      HL, #0000           ; clear elapsed frame       ' 10    |
+            LD      (ELAPSED), HL       ; (24 bit counter)          ' 16    |
+            XOR     A                   ;                           ' 4     | 43 (346)
+            LD      (ELAPSED+2), A      ;                           ' 13    |
+
             LD      HL, COMMAND         ; restore HL                ' 10    |
-            JP      external_com_pcm    ; do PCM commands           ' 10    | 20 (254+43)
-                                        ; +43 cycles here, ignore
+            JP      external_com_pcm    ; do PCM commands           ' 10    | 20 (254+112)
+                                        ; +112 cycles here, ignore
 
 .chk_xgm_resume
             BIT     XGM_RESUME_SFT, (HL)    ; play XGM command ?    ' 12    |
@@ -2465,10 +2541,10 @@ external_com                            ;                           ' 149
             JP      external_com_pcm    ; do PCM commands           ' 10    |
 
 .chk_xgm_stop
-            BIT     XGM_STOP_SFT, (HL)  ; stop XGM command ?        ' 12    |
+            BIT     XGM_PAUSE_SFT, (HL) ; pause/end XGM command ?   ' 12    |
             JP      Z, .chk_pcm0_pre    ;                           ' 10    | 22 (225)
 
-            RES     XGM_STOP_SFT, (HL)  ; clear command             ' 15    |
+            RES     XGM_PAUSE_SFT, (HL) ; clear command             ' 15    |
             INC     L                   ;                           ' 4     |
             INC     L                   ; HL point on status        ' 4     | 38 (263)
             RES     XGM_PLAY_SFT, (HL)  ; clear play status         ' 15    |
@@ -2595,12 +2671,12 @@ ext_com_done                                ;                           ' 124
             OR      A, $01                  ; set play status for ch0   ' +2
 
 .ch0_silent
-            EX      AF,AF'                  ; preserve AF               ' 4     |
+            EX      AF, AF'                 ; preserve AF               ' 4     |
             wait35                          ; sync                      ' 35    | 39 (254-4)
 
 ; $BE+X+Y+Z
             sampleOutput                    ; sample output             ' 36-4  | (36)
-            EX      AF,AF'                  ; restore AF                ' 4     |
+            EX      AF, AF'                 ; restore AF                ' 4     |
 
             LD      HL, (ID_TABLE+0)        ; HL = null PCM addr        ' 16    |
             LD      DE, (PCM_ADDR+(1*8))    ; DE = PCM ch1 addr         ' 20    |
@@ -2647,6 +2723,9 @@ ext_com_done                                ;                           ' 124
 ; -------------------------------------------------------------------------------------
 
 
+;    LD  A, (VCOUNTER)
+;    LD  (DEBUG_A), A
+
 ; BUS protection wait (to avoid BUS contention with DMA)
 ;
 ; $BF+X+Y+Z
@@ -2673,7 +2752,7 @@ bus_protect_wait
 .continue                               ;                       ' 168
 
 ;    LD  A, (VCOUNTER)
-;    LD  (DEBUG_A), A
+;    LD  (DEBUG_B), A
 
             wait76                      ; sync                  ' 76    |
             JP      main_loop           ; process next frame    ' 10    | 86 (254)

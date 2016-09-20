@@ -1140,3 +1140,104 @@ u32 unpack(u16 compression, u8 *src, u8 *dest)
             return 0;
     }
 }
+
+
+#define QSORT(type)                                     \
+    u16 partition_##type(type *data, u16 p, u16 r)      \
+    {                                                   \
+        type x = data[p];                               \
+        u16 i = p - 1;                                  \
+        u16 j = r + 1;                                  \
+                                                        \
+        while (TRUE)                                    \
+        {                                               \
+            i++;                                        \
+            while ((i < r) && (data[i] < x)) i++;       \
+            j--;                                        \
+            while ((j > p) && (data[j] > x)) j--;       \
+                                                        \
+            if (i < j)                                  \
+            {                                           \
+                type tmp;                               \
+                                                        \
+                tmp = data[i];                          \
+                data[i] = data[j];                      \
+                data[j] = tmp;                          \
+            }                                           \
+            else                                        \
+                return j;                               \
+        }                                               \
+    }                                                   \
+                                                        \
+    void qsort_##type(type *data, u16 p, u16 r)         \
+    {                                                   \
+        if (p < r)                                      \
+        {                                               \
+            u16 q = partition_##type(data, p, r);       \
+            qsort_##type(data, p, q);                   \
+            qsort_##type(data, q + 1, r);               \
+        }                                               \
+    }
+
+
+QSORT(u8)
+QSORT(s8)
+QSORT(u16)
+QSORT(s16)
+QSORT(u32)
+QSORT(s32)
+
+
+//void** qsort_part(void** l, void** r, _comparatorCallback* cb)
+//{
+//    void** p = l + ((r - l) / 2);
+//    void* pivot = *p;
+//
+//    while (TRUE)
+//    {
+//        while ((l < r) && (cb(*r, pivot) >= 0)) r--;
+//        while ((l < r) && (cb(*l, pivot) <= 0)) l++;
+//
+//        if (l < r)
+//        {
+//            void* tmp = *l;
+//            *l = *r;
+//            *r = tmp;
+//        }
+//        else return l;
+//    }
+//}
+//
+///*
+//5 3 8 7  2  1 1 8 7
+//l        p        r
+//5 3 8 7  2  1 1 8 7
+//l             r
+//1 3 8 7  2  1 5 8 7
+//l             r
+//1 3 8 7  2  1 5 8 7
+//  l         r
+//1 1 8 7  2  3 5 8 7
+//  l         r
+//1 1 8 7  2  3 5 8 7
+//    l    r
+//1 1 2 7  8  3 5 8 7
+//    l    r
+//1 1 2 7  8  3 5 8 7
+//      lr
+//*/
+//
+//void qsort_rec(void** l, void** r, _comparatorCallback* cb)
+//{
+//    if (l < r)
+//    {
+//        void** p = qsort_part(l, r, cb);
+//        qsort_rec(l, p, cb);
+//        qsort_rec(p + 1, r, cb);
+//    }
+//}
+//
+//void QSort(void** data, u16 size, _comparatorCallback* cb)
+//{
+//    qsort_rec(&data[0], &data[size - 1], cb);
+//}

@@ -22,7 +22,6 @@ ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
 SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
-GENRES= $(BIN)/genres
 RESCOMP= $(BIN)/rescomp
 MKDIR= $(BIN)/mkdir
 
@@ -37,13 +36,10 @@ SRC_S80+= $(wildcard $(SRC)/*.s80)
 
 RES_C= $(wildcard $(RES)/*.c)
 RES_S= $(wildcard $(RES)/*.s)
-RES_RC= $(wildcard *.rc)
-RES_RC+= $(wildcard $(RES)/*.rc)
 RES_RES= $(wildcard *.res)
 RES_RES+= $(wildcard $(RES)/*.res)
 
 OBJ= $(RES_RES:.res=.o)
-OBJ+= $(RES_RC:.rc=.o)
 OBJ+= $(RES_S:.s=.o)
 OBJ+= $(RES_C:.c=.o)
 OBJ+= $(SRC_S80:.s80=.o)
@@ -139,9 +135,6 @@ out/%.o: %.s
 
 %.s: %.res
 	$(RESCOMP) $< $@
-
-%.asm: %.rc
-	$(GENRES) $< $@
 
 %.s: %.asm
 	$(MACCER) -o $@ $<

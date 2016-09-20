@@ -7,7 +7,6 @@
 #include "vdp.h"
 #include "vdp_spr.h"
 #include "dma.h"
-#include "tile_cache.h"
 #include "memory.h"
 #include "vram.h"
 #include "tools.h"
@@ -33,6 +32,8 @@
 #define NEED_VISIBILITY_UPDATE              0x0020
 #define NEED_FRAME_UPDATE                   0x0040
 #define NEED_TILES_UPLOAD                   0x0080
+
+#define NEED_UPDATE                         0x00FF
 
 
 // shared from vdp_spr.c unit
@@ -406,7 +407,6 @@ void SPR_releaseSprite(Sprite *sprite)
         KLog_U2("  sprite[", lastSpriteIndex - 1, "] linked to ", lastSprite->lastVDPSprite->link);
 #endif // SPR_DEBUG
 
-
         // we need to move last sprite ?
         if (lastSpriteIndex != index)
         {
@@ -428,6 +428,8 @@ void SPR_releaseSprite(Sprite *sprite)
 #endif // SPR_DEBUG
         }
     }
+    // no more visible sprite
+    else starter->link = 0;
 
     // decrement number of sprite
     spriteNum = lastSpriteIndex;
@@ -1222,8 +1224,6 @@ void SPR_update()
     KLog_U1("----------------- SPR_update:  sprite number = ", spriteNum);
 #endif // SPR_DEBUG
 
-    if (spriteNum == 0) return;
-
     // disable interrupts (we want to avoid DMA queue process when executing this method)
     SYS_disableInts();
 
@@ -1232,7 +1232,7 @@ void SPR_update()
 #endif // SPR_DEBUG
 
     // send sprites to VRAM using DMA queue (better to do it before sprite tiles upload to avoid being ignored by DMA queue)
-    DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_getSpriteListAddress(), ((highestVDPSpriteIndex + 1) * sizeof(VDPSprite)) / 2, 2);
+    VDP_updateSprites(highestVDPSpriteIndex + 1, TRUE);
 
     // iterate over all sprites as some can become visible and others can become hidden
     sprites = activeSprites;
@@ -1264,40 +1264,44 @@ void SPR_update()
 
         u16 status = sprite->status;
 
-        // ! order is important !
-        if (status & NEED_FRAME_UPDATE)
-            status |= updateFrame(sprite);
-        if (status & NEED_VISIBILITY_UPDATE)
-            status |= updateVisibility(sprite);
-        if (status & NEED_ST_VISIBILITY_UPDATE)
-            updateSpriteTableVisibility(sprite);
-
-        // general processes done
-        status &= ~(NEED_FRAME_UPDATE | NEED_VISIBILITY_UPDATE | NEED_ST_VISIBILITY_UPDATE);
-
-        // only if sprite is visible
-        if (sprite->visibility)
+        // trivial optimization
+        if (status & NEED_UPDATE)
         {
-            if (status & NEED_TILES_UPLOAD)
-                loadTiles(sprite);
+            // ! order is important !
+            if (status & NEED_FRAME_UPDATE)
+                status |= updateFrame(sprite);
+            if (status & NEED_VISIBILITY_UPDATE)
+                status |= updateVisibility(sprite);
+            if (status & NEED_ST_VISIBILITY_UPDATE)
+                updateSpriteTableVisibility(sprite);
 
-            if (status & NEED_ST_POS_UPDATE)
+            // general processes done
+            status &= ~(NEED_FRAME_UPDATE | NEED_VISIBILITY_UPDATE | NEED_ST_VISIBILITY_UPDATE);
+
+            // only if sprite is visible
+            if (sprite->visibility)
             {
-                // not only position to update --> update whole table
-                if (status & NEED_ST_ATTR_UPDATE)
-                    updateSpriteTableAll(sprite);
-                else
-                    updateSpriteTablePos(sprite);
+                if (status & NEED_TILES_UPLOAD)
+                    loadTiles(sprite);
+
+                if (status & NEED_ST_POS_UPDATE)
+                {
+                    // not only position to update --> update whole table
+                    if (status & NEED_ST_ATTR_UPDATE)
+                        updateSpriteTableAll(sprite);
+                    else
+                        updateSpriteTablePos(sprite);
+                }
+                else if (status & NEED_ST_ATTR_UPDATE)
+                    updateSpriteTableAttr(sprite);
+
+                // tiles upload and sprite table done
+                status &= ~(NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
             }
-            else if (status & NEED_ST_ATTR_UPDATE)
-                updateSpriteTableAttr(sprite);
 
-            // tiles upload and sprite table done
-            status &= ~(NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
+            // processes done !
+            sprite->status = status;
         }
-
-        // processes done !
-        sprite->status = status;
     }
 
     // reset unpack buffer address
@@ -1854,11 +1858,11 @@ static void updateSpriteTableAll(Sprite *sprite)
             {
                 // Y first to respect VDP field order
                 vdpSprite->y = sprite->y + spriteInf->y;
-                vdpSprite->size = spriteInf->size;
-                vdpSprite->attribut = attr;
                 vdpSprite->x = sprite->x + spriteInf->x;
             }
 
+            vdpSprite->size = spriteInf->size;
+            vdpSprite->attribut = attr;
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
@@ -1891,19 +1895,18 @@ static void updateSpriteTableAll(Sprite *sprite)
         while(visibility)
         {
             VDPSpriteInf* spriteInf = *spritesInf++;
+            u16 size = spriteInf->size;
 
             // sprite visible ?
             if (visibility & 1)
             {
-                u16 size = spriteInf->size;
-
                 // Y first to respect VDP field order
                 vdpSprite->y = sprite->y + spriteInf->y;
-                vdpSprite->size = size;
-                vdpSprite->attribut = attr;
                 vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
             }
 
+            vdpSprite->size = size;
+            vdpSprite->attribut = attr;
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
@@ -1936,19 +1939,18 @@ static void updateSpriteTableAll(Sprite *sprite)
         while(visibility)
         {
             VDPSpriteInf* spriteInf = *spritesInf++;
+            u16 size = spriteInf->size;
 
             // sprite visible ?
             if (visibility & 1)
             {
-                u16 size = spriteInf->size;
-
                 // Y first to respect VDP field order
                 vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-                vdpSprite->size = size;
-                vdpSprite->attribut = attr;
                 vdpSprite->x = sprite->x + spriteInf->x;
             }
 
+            vdpSprite->size = size;
+            vdpSprite->attribut = attr;
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite
@@ -1981,19 +1983,18 @@ static void updateSpriteTableAll(Sprite *sprite)
         while(visibility)
         {
             VDPSpriteInf* spriteInf = *spritesInf++;
+            u16 size = spriteInf->size;
 
             // sprite visible ?
             if (visibility & 1)
             {
-                u16 size = spriteInf->size;
-
                 // Y first to respect VDP field order
                 vdpSprite->y = sprite->y + (fh - (spriteInf->y + (((size & 0x03) << 3) + 8)));
-                vdpSprite->size = size;
-                vdpSprite->attribut = attr;
                 vdpSprite->x = sprite->x + (fw - (spriteInf->x + (((size & 0x0C) << 1) + 8)));
             }
 
+            vdpSprite->size = size;
+            vdpSprite->attribut = attr;
             // increment tile index in attribut field
             attr += spriteInf->numTile;
             // pass to next VDP sprite

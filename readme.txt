@@ -15,4 +15,4 @@ It allows to quickly setup SGDK on a Unix environment.
 And now MACOS users also have access to SGDK with Gendev for MacOS from Sonic3D :
 https://github.com/SONIC3D/gendev-macos
 
-SGDK and affiliated tools are distribued under the LGPL license.
+SGDK and affiliated tools are distribued under the MIT license (see license.txt file)

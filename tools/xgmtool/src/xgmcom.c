@@ -104,6 +104,40 @@ int XGMCommand_getType(XGMCommand* source)
     return source->command & 0xF0;
 }
 
+int XGMCommand_getSize(XGMCommand* source)
+{
+    int command = source->command;
+    unsigned char size = command & 0xF;
+
+    // default
+    int result = 1;
+
+    switch(command & 0xF0)
+    {
+        case XGM_PSG:
+        case XGM_YM2612_REGKEY:
+            result += size + 1;
+            break;
+
+        case XGM_YM2612_PORT0:
+        case XGM_YM2612_PORT1:
+            result += (size + 1) * 2;
+            break;
+
+        case XGM_PCM:
+            result = 2;
+            break;
+
+        case 0x70:
+            // LOOP
+            if (size == 0xE)
+                result = 4;
+            break;
+    }
+
+    return result;
+}
+
 bool XGMCommand_isFrame(XGMCommand* source)
 {
     return source->command == XGM_FRAME;
@@ -193,7 +227,7 @@ int XGMCommand_getYM2612Port(XGMCommand* source)
 
 int XGMCommand_getYM2612WriteCount(XGMCommand* source)
 {
-    if (XGMCommand_isYM2612Write(source))
+    if (XGMCommand_isYM2612Write(source) || XGMCommand_isYM2612RegKeyWrite(source))
         return (source->data[0] & 0x0F) + 1;
 
     return -1;
@@ -423,11 +457,12 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
         return XGMCommand_create(data, 2);
     }
 
-    // no sample found --> use empty sample
+    // no sample found (can arrive if we reached 63 samples limit) --> use stop sample
     if (xgmSample == NULL)
     {
         if (!silent)
             printf("Warning: no corresponding sample found for VGM command at offset %6X in XGM\n", command->offset);
+        // assume stop command by default
         data[1] = 0;
     }
     else
@@ -519,4 +554,62 @@ LList* XGMCommand_createPCMCommands(XGM* xgm, VGM* vgm, LList* commands)
     }
 
     return getHeadLList(result);
+}
+
+char* XGMCommand_toString(XGMCommand* command)
+{
+    static char str[32];
+
+    if (XGMCommand_isFrame(command)) sprintf(str, "Frame command");
+    else if (XGMCommand_isEnd(command)) sprintf(str, "Frame end");
+    else if (XGMCommand_isLoop(command)) sprintf(str, "Frame loop: %8X", XGMCommand_getLoopOffset(command));
+    else if (XGMCommand_isPCM(command)) sprintf(str, "PCM: ch%d id=%d prio=%d", XGMCommand_getPCMChannel(command), XGMCommand_getPCMId(command), XGMCommand_getPCMPrio(command));
+    else if (XGMCommand_isPSGWrite(command)) sprintf(str, "PSG: num=%d", XGMCommand_getPSGWriteCount(command));
+    else if (XGMCommand_isYM2612Port0Write(command)) sprintf(str, "YM0: num=%d", XGMCommand_getYM2612WriteCount(command));
+    else if (XGMCommand_isYM2612Port1Write(command)) sprintf(str, "YM1: num=%d", XGMCommand_getYM2612WriteCount(command));
+    else if (XGMCommand_isYM2612RegKeyWrite(command)) sprintf(str, "YM Key: num=%d", XGMCommand_getYM2612WriteCount(command));
+    else sprintf(str, "Other command id=%2X", XGMCommand_getType(command));
+
+    return str;
+}
+
+void XGMCommand_logCommand(FILE *file, XGMCommand* command)
+{
+    int size;
+    unsigned char *data;
+
+    fprintf(file, "%s", XGMCommand_toString(command));
+
+    size = XGMCommand_getSize(command) - 1;
+    data = command->data + 1;
+
+    fprintf(file, " - %02X", command->command);
+    while(size--) fprintf(file, ":%02X", *data++);
+    fprintf(file, "\n");
+}
+
+bool XGMCommand_logCommands(char* fileName, LList* commands)
+{
+    FILE *f;
+    LList* com;
+
+    f = fopen(fileName, "w");
+
+    if (!f)
+    {
+        printf("Error: couldn't open output file %s\n", fileName);
+        // error
+        return false;
+    }
+
+    com = commands;
+    while(com != NULL)
+    {
+        XGMCommand_logCommand(f, com->element);
+        com = com->next;
+    }
+
+    fclose(f);
+
+    return true;
 }

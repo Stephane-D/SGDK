@@ -11,7 +11,6 @@ void XGC_shiftSamples(XGM* source, int sft);
 #include "ym2612.h"
 
 LList* XGC_getStateChange(YM2612* current, YM2612* old);
-void XGC_computeAllOffset(XGM* source);
 void XGC_computeAllFrameSize(XGM* source);
 int XGC_computeLenInFrame(XGM* source);
 int XGC_computeLenInSecond(XGM* source);
