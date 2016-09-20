@@ -10,15 +10,15 @@
  * The driver is designed to avoid DMA contention when possible (depending CPU load).
  */
 
-#ifndef _XGM_H_
-#define _XGM_H_
+#ifndef _H_
+#define _H_
 
 
 /**
  * Internal use
  */
-#define DRIVER_FLAG_MANUALSYNC_XGM  (1 << 0)
-#define DRIVER_FLAG_DELAYDMA_XGM  (1 << 1)
+#define DRIVER_FLAG_MANUALSYNC  (1 << 0)
+#define DRIVER_FLAG_DELAYDMA  (1 << 1)
 
 
 /**
@@ -33,32 +33,32 @@ u8 XGM_isPlaying();
  *  \param song
  *      XGM track address.
  *
- *  \see XGM_stopPlay_XGM
- *  \see XGM_pausePlay_XGM
- *  \see XGM_nextFrame_XGM
+ *  \see XGM_stopPlay
+ *  \see XGM_pausePlay
+ *  \see XGM_nextFrame
  */
 void XGM_startPlay(const u8 *song);
 /**
  *  \brief
  *      Stop playing music (XGM music player driver).
  *
- *  \see XGM_pausePlay_XGM
+ *  \see XGM_pausePlay
  */
 void XGM_stopPlay();
 /**
  * \brief
- *      Pause playing music, music can be resumed by calling #XGM_resumePlay_XGM (XGM music player driver).
+ *      Pause playing music, music can be resumed by calling #XGM_resumePlay (XGM music player driver).
  *
- *  \see XGM_resumePlay_XGM
- *  \see XGM_stopPlay_XGM
+ *  \see XGM_resumePlay
+ *  \see XGM_stopPlay
  */
 void XGM_pausePlay();
 /**
  * \brief
- *      Resume playing music after pausing with XGM_pausePlay_XGM (XGM music player driver).
+ *      Resume playing music after pausing with XGM_pausePlay (XGM music player driver).
  *
- *  \see XGM_pausePlay_XGM
- *  \see XGM_nextFrame_XGM
+ *  \see XGM_pausePlay
+ *  \see XGM_nextFrame
  */
 void XGM_resumePlay();
 
@@ -102,7 +102,7 @@ u8 XGM_isPlayingPCM(const u16 channel_mask);
 void XGM_setPCM(const u8 id, const u8 *sample, const u32 len);
 /**
  *  \brief
- *      Same as #XGM_setPCM_XGM but fast version.<br>
+ *      Same as #XGM_setPCM but fast version.<br>
  *      This method assume that XGM driver is loaded and that 68000 has access to Z80 bus
  *
  *  \param id
@@ -125,7 +125,7 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len);
  *      Note that music may use the first PCM channel so it's better to use channel 2 to 4 for SFX.
  *
  *  \param id
- *      Sample id (set #XGM_setPCM_XGM method)
+ *      Sample id (set #XGM_setPCM method)
  *  \param priority
  *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br>
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
@@ -266,7 +266,7 @@ u16 XGM_getForceDelayDMA();
 /**
  *  \brief
  *      This method can be used to improve the PCM playback during XGM music play and while DMA queue is used.<br>
- *      Even using the BUS protection with #XGM_set68KBUSProtection_XGM you may experience some altered PCM when the
+ *      Even using the BUS protection with #XGM_set68KBUSProtection you may experience some altered PCM when the
  *      XGM music contains PSG data, this is because the Z80 uses the main BUS to access PSG.<br>
  *      By delaying a bit the DMA execution from the DMA queue we let the Z80 to execute all PSG commands and avoid any stall.
  *      The delay is about 3 scanlines so using the force delay DMA will reduce the DMA bandwidth for about 3 vblank lines.
@@ -280,7 +280,7 @@ void XGM_setForceDelayDMA(u16 value);
  *  \brief
  *      Returns an estimation of the Z80 CPU load (XGM driver).<br>
  *      The low 16 bits returns the estimated Z80 CPU load where the high 16 bits returns the part
- *      spent waiting in the DMA contention (see #XGM_set68KBUSProtection_XGM method).<br>
+ *      spent waiting in the DMA contention (see #XGM_set68KBUSProtection method).<br>
  *      The method computes CPU load mean over 32 frames and so it's important to call it at
  *      each frame (on VInt for instance) to get meaningful value.<br>
  *      Note that it returns CPu load only for the XGM music parsing part as PCM channel mixing is always ON.<br>
