@@ -17,8 +17,8 @@
 /**
  * Internal use
  */
-#define DRIVER_FLAG_MANUALSYNC  (1 << 0)
-#define DRIVER_FLAG_DELAYDMA  (1 << 1)
+#define DRIVER_FLAG_MANUALSYNC_XGM  (1 << 0)
+#define DRIVER_FLAG_DELAYDMA_XGM    (1 << 1)
 
 
 /**
