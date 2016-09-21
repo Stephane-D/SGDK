@@ -1,3 +1,10 @@
+SGDK 1.22a (September 2016)
+---------------------------
+
+LIBRARY
+* VDP: reintroduced the 16 plain system tiles.
+
+
 SGDK 1.22 (September 2016)
 --------------------------
 
