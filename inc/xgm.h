@@ -10,8 +10,8 @@
  * The driver is designed to avoid DMA contention when possible (depending CPU load).
  */
 
-#ifndef _H_
-#define _H_
+#ifndef _XGM_H_
+#define _XGM_H_
 
 
 /**
@@ -290,4 +290,4 @@ void XGM_setForceDelayDMA(u16 value);
 u32 XGM_getCPULoad();
 
 
-#endif // _SOUND_H_
+#endif // _XGM_H_
