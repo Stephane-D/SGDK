@@ -108,8 +108,9 @@ void VDP_init()
     // wait for DMA completion
     VDP_waitDMACompletion();
 
-    // system tile (1 transparent tile)
-    VDP_fillTileData(0, TILE_SYSTEMINDEX, 1, TRUE);
+     // system tiles (16 plain tile)
+    i = 16;
+    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
 
     // load defaults palettes
     VDP_setPalette(PAL0, palette_grey);

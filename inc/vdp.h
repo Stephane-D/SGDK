@@ -201,7 +201,7 @@
  *  \brief
  *      Number of system tile.
  */
-#define TILE_SYSTEMLENGTH       1
+#define TILE_SYSTEMLENGTH       16
 /**
  *  \deprecated Use TILE_SYSTEMLENGTH instead.
  */
