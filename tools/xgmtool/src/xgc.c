@@ -332,7 +332,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
         {
             if (loopOffset != -1)
             {
-                --> try to fix YM state restoration on loop
+                // TODO: try to fix YM state restoration on loop
 
                 // and frame skip command as we force end frame after loop from XGM
                 newCommands = insertAfterLList(newCommands, XGCCommand_createFrameSkipCommand());
@@ -348,7 +348,7 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
             // loop point ?
             if (loopOffset != -1)
             {
-                --> try to fix YM state restoration on loop
+                // TODO: try to fix YM state restoration on loop
 
                 // and frame skip command as we force end frame after loop
                 newCommands = insertAfterLList(newCommands, XGCCommand_createFrameSkipCommand());
@@ -371,8 +371,8 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
         {
             XGMCommand* command = tmpCom->element;
 
-            // limit reached ?
-            if ((size + command->size) >= 255)
+            // limit reached (use 250 for safe sample shift operation) ?
+            if ((size + command->size) >= 250)
             {
 //                if ((frameInd > 10) && (!silent))
                 if (!silent)

@@ -14,7 +14,7 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.7";
+const char* version = "1.71";
 int sys;
 bool silent;
 bool verbose;
@@ -321,4 +321,3 @@ int main(int argc, char *argv[ ])
 
     return errCode;
 }
-
