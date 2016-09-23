@@ -70,9 +70,7 @@
     echo Setting PATH to just GDK stuff so that other CC1's do not conflict.
 
     REM Assuming that the current directory exists since that is where this file is.
-    set "%PATH%=%GDK%;%GDK_WIN%"
-
-    REM if EXIST %GDK_WIN%\bin set PATH=%PATH%;%GDK_WIN%\bin
+    set "PATH=%GDK%;%GDK_WIN%"
     if EXIST %GDK_WIN%\bin set PATH=%GDK_WIN%\bin
     echo PATH = %PATH%
     goto CONTINUEAFTERCLEARQUESTION
@@ -80,8 +78,9 @@
 :NCLEARPATH
     set "TPATH=%GDK%;%GDK_WIN%"
     if EXIST %GDK_WIN%\bin set TPATH=%TPATH%;%GDK_WIN%\bin
-    set "%PATH%=%TPATH%;%PATH%"
+    set "PATH=%TPATH%;%PATH%"
     goto CONTINUEAFTERCLEARQUESTION
+
 
 :CONTINUEAFTERCLEARQUESTION
     echo %GDK_WIN%\bin added to PATH
