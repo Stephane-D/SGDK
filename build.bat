@@ -41,8 +41,8 @@
     set "GDK=%GDK:~3%"
     set "GDK=/%GDK%"
 
-    if %GDK:~-1%==/ set GDK=%GDK:~0,-1%
-    if %GDK_WIN:~-1%==\ set GDK_WIN=%GDK_WIN:~0,-1%
+    if %GDK:~-1%==/ set "GDK=%GDK:~0,-1%"
+    if %GDK_WIN:~-1%==\ set "GDK_WIN=%GDK_WIN:~0,-1%"
 
     echo GDK is %GDK%
     echo GDK_WIN is %GDK_WIN%
@@ -64,20 +64,18 @@
     echo Please type Y for Yes or N for No
     goto PATHCLEARQUESTION
 
-
-
 :YCLEARPATH
     echo Setting PATH to just GDK stuff so that other CC1's do not conflict.
 
     REM Assuming that the current directory exists since that is where this file is.
     set "PATH=%GDK%;%GDK_WIN%"
-    if EXIST %GDK_WIN%\bin set PATH=%GDK_WIN%\bin
+    if EXIST %GDK_WIN%\bin set "PATH=%PATH%;%GDK_WIN%\bin"
     echo PATH = %PATH%
     goto CONTINUEAFTERCLEARQUESTION
 
 :NCLEARPATH
     set "TPATH=%GDK%;%GDK_WIN%"
-    if EXIST %GDK_WIN%\bin set TPATH=%TPATH%;%GDK_WIN%\bin
+    if EXIST %GDK_WIN%\bin set "TPATH=%TPATH%;%GDK_WIN%\bin"
     set "PATH=%TPATH%;%PATH%"
     goto CONTINUEAFTERCLEARQUESTION
 
@@ -89,12 +87,40 @@
 
 :LAUNCHING
     echo.
-    echo 3) Launching:
+    echo 4) Launching:
     echo ------------------
 
     %GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen clean
     %GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen
 
+:MAKECARTBAT
+	echo.
+	echo 5) Creating a make_cart.bat file for this machine.
+	echo -------------------------------------------------
+	
+	echo.
+	echo Batch for your machine:
+	echo =======================
+	echo set GDK=%GDK%
+    echo GDK_WIN=%GDK_WIN%
+    echo PATH=%PATH%
+    echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen
+    echo.
+    echo ============================================
+   
+	echo set GDK=%GDK% > make_cart.bat
+	echo GDK_WIN=%GDK_WIN% >> make_cart.bat
+	echo PATH=%PATH% >> make_cart.bat
+	echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen >> make_cart.bat
+	
+      
+:CLEANUP
+	echo.
+	echo 6) Done. Cleaning up.
+	echo ---------------------
+	    
+    echo.
+    echo Reseting PATH.
     set "PATH=%PATHREAL%"
     echo PATH = %PATH%
 
