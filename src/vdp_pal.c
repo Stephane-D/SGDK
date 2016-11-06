@@ -419,8 +419,11 @@ void VDP_fadeTo(u16 fromcol, u16 tocol, const u16 *pal, u16 numframe, u8 async)
 {
     u16 tmp_pal[64];
 
+    // disable interrupts to not conflict with VInt accesses
+    SYS_disableInts();
     // read current palette
     VDP_getPaletteColors(fromcol, tmp_pal, (tocol - fromcol) + 1);
+    SYS_enableInts();
     // do the fade
     VDP_fade(fromcol, tocol, tmp_pal, pal, numframe, async);
 }

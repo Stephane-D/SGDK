@@ -214,6 +214,13 @@ VDPSprite* VDP_linkSprites(u16 index, u16 num)
 
 void VDP_updateSprites(u16 num, u16 queue)
 {
+    // 0 is a special value to hide all sprite
+    if (num == 0)
+    {
+        VDP_clearSprites();
+        num = 1;
+    }
+
     // send the sprite cache to VRAM sprite table using DMA queue
     if (queue)
         DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * num, 2);

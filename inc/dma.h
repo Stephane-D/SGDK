@@ -163,15 +163,15 @@ u32 DMA_getQueueTransferSize();
  *  \param location
  *      Destination location.<br>
  *      Accepted values:<br>
- *      - DMA_VRAM (for VRAM transfert).<br>
- *      - DMA_CRAM (for CRAM transfert).<br>
- *      - DMA_VSRAM (for VSRAM transfert).<br>
+ *      - DMA_VRAM (for VRAM transfer).<br>
+ *      - DMA_CRAM (for CRAM transfer).<br>
+ *      - DMA_VSRAM (for VSRAM transfer).<br>
  *  \param from
  *      Source address.
  *  \param to
  *      Destination address.
  *  \param len
- *      Number of word to transfert.
+ *      Number of word to transfer.
  *  \param step
  *      destination (VRAM/VSRAM/CRAM) address increment step after each write (0 to 255).<br>
  *      By default you should set it to 2 for normal copy operation but you can use different value
@@ -188,15 +188,15 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step);
  *  \param location
  *      Destination location.<br>
  *      Accepted values:<br>
- *      - DMA_VRAM (for VRAM transfert).<br>
- *      - DMA_CRAM (for CRAM transfert).<br>
- *      - DMA_VSRAM (for VSRAM transfert).<br>
+ *      - DMA_VRAM (for VRAM transfer).<br>
+ *      - DMA_CRAM (for CRAM transfer).<br>
+ *      - DMA_VSRAM (for VSRAM transfer).<br>
  *  \param from
  *      Source address.
  *  \param to
  *      Destination address.
  *  \param len
- *      Number of word to transfert.
+ *      Number of word to transfer.
  *  \param step
  *      destination (VRAM/VSRAM/CRAM) address increment step after each write (-1 to keep current step).<br>
  *      By default you should set it to 2 for normal copy operation but you can use different value
