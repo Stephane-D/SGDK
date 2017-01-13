@@ -16,3 +16,8 @@ And now MACOS users also have access to SGDK with Gendev for MacOS from Sonic3D 
 https://github.com/SONIC3D/gendev-macos
 
 SGDK and affiliated tools are distribued under the MIT license (see license.txt file)
+
+If you want to donate to support SGDK development:
+https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2SCWVXYDEEBUU
+
+Thanks =)
