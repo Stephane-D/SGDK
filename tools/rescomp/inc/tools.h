@@ -85,5 +85,10 @@ unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, 
 int maccer(char* fin, char* fout);
 int tfmcom(char* fin, char* fout);
 
+#ifdef _MSC_VER
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#define strdup _strdup
+#endif
 
 #endif // _TOOLS_H_
