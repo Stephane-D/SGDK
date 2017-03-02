@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F3578704-2995-41EE-BFBE-9018E80EF37E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>rescomp</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140_xp</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)/../bin/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)/../bin/</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>$(TargetPath) $(SolutionDir)/../res/libres.res $(SolutionDir)/../res/libres.s</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>$(TargetPath) $(SolutionDir)/../res/libres.res $(SolutionDir)/../res/libres.s</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\tools\rescomp\src\bin.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\bitmap.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\bmp_tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\image.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\img_tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\libpng.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\map.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\palette.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\pcm.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\png_tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\rescomp.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\snd_tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\sprite.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\spr_tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\tfmmusic.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\tileset.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\tile_tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\tools.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\vgmmusic.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\wav.c" />
+    <ClCompile Include="..\..\tools\rescomp\src\xgmmusic.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\tools\rescomp\inc\bin.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\bitmap.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\image.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\img_tools.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\libpng.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\map.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\palette.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\pcm.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\plugin.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\rescomp.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\snd_tools.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\sprite.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\spr_tools.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\tfmmusic.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\tileset.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\tile_tools.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\tools.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\vgmmusic.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\wav.h" />
+    <ClInclude Include="..\..\tools\rescomp\inc\xgmmusic.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
