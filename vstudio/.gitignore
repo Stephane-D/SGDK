@@ -1,0 +1,13 @@
+*.VC.opendb
+*.VC.db
+*.log
+*.obj
+*.tlog
+*.suo
+appack/Debug
+appack/Release
+libmd/Debug
+libmd/Release
+rescomp/Debug
+rescomp/Release
+out.lst
