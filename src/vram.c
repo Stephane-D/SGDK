@@ -9,7 +9,7 @@
 #include "tools.h"
 #include "sys.h"
 #include "kdebug.h"
-
+#include "vram.h"
 
 #define USED_SFT    15
 #define USED_MASK   (1 << USED_SFT)
