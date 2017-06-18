@@ -1,3 +1,39 @@
+SGDK 1.3 (June 2017)
+--------------------
+
+DOCUMENTATION
+* updated to last version
+
+COMPILER
+* Updated to GCC 6.3 (thanks a tons to Gligli for that !)
+ - many bugs fix and new features compared to old GCC 3.4.6
+ - much better assembly code generation :)
+ - added LTO (Linker Time Optimization) support
+* Modified makefile to enable LTO and improve optimization level.
+* Rescomp:
+ - updated to handle structure changes in the Sprite Engine.
+
+LIBRARY
+* DMA:
+ - minor optimization to DMA_queue(..) method (thanks to HpMan)
+* Memory:
+ - default stack size increased to 0x800 bytes (GCC 6.3 requires more stack memory :p)
+* Sprite Engine:
+ - added automatic Y sorting (per sprite)
+ - added SPR_sort(..) for generic sorting
+ - added SPR_sortOnY(..) for generic sorting
+ - by default now sprite visibility is set to always ON (faster than automatic visibility)
+ - updated 'Collision' structure (hierarchical structure)
+ - some changes to internal structures to provide better performance
+* VDP BG/Tile:
+ - fixed a minor bug in VDP_setTileMapDataEx(..) and VDP_setTileMapDataRectEx(..) methods (thanks to Alekmaul for reporting it)
+* minors fixes...
+
+SAMPLE
+* Bench:
+ - fixed math tests for GCC 6.3
+
+
 SGDK 1.22a (September 2016)
 ---------------------------
 
