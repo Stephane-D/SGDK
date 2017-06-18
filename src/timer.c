@@ -23,7 +23,7 @@
 // H-blanking out         06, 07          06, 07
 
 
-u32 vtimer;
+vu32 vtimer;
 
 static u32 timer[MAXTIMER];
 

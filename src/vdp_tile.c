@@ -434,10 +434,10 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
     const u16 *src;
     const u32 *src32;
     u32 addr;
-    u16 baseindex;
-    u16 baseflags;
+    u16 baseinc;
+    u16 baseor;
     u32 bi32;
-    u32 bf32;
+    u32 bo32;
     u16 i;
 
     VDP_setAutoInc(2);
@@ -451,18 +451,20 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
     *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
     src32 = (u32*) data;
-    baseindex = basetile & TILE_INDEX_MASK;
-    baseflags = basetile & TILE_ATTR_MASK;
-    bi32 = (baseindex << 16) | baseindex;
-    bf32 = (baseflags << 16) | baseflags;
+    // we can increment both index and palette
+    baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    // we can only do logical OR on priority and HV flip
+    baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
+    bi32 = (baseinc << 16) | baseinc;
+    bo32 = (baseor << 16) | baseor;
 
     i = num >> 3;
     while (i--)
     {
-        *pldata = bf32 | (*src32++ + bi32);
-        *pldata = bf32 | (*src32++ + bi32);
-        *pldata = bf32 | (*src32++ + bi32);
-        *pldata = bf32 | (*src32++ + bi32);
+        *pldata = bo32 | (*src32++ + bi32);
+        *pldata = bo32 | (*src32++ + bi32);
+        *pldata = bo32 | (*src32++ + bi32);
+        *pldata = bo32 | (*src32++ + bi32);
     }
 
     pwdata = (u16 *) GFX_DATA_PORT;
@@ -470,7 +472,7 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
     src = (u16*) src32;
 
     i = num & 7;
-    while (i--) *pwdata = baseflags | (*src++ + baseindex);
+    while (i--) *pwdata = baseor | (*src++ + baseinc);
 }
 
 void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 baseflags, u16 x, u16 y, u16 w, u16 h)
@@ -485,8 +487,8 @@ void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x
     const u16 *src;
     u32 addr;
     u32 width;
-    u16 baseindex;
-    u16 baseflags;
+    u16 baseinc;
+    u16 baseor;
     u16 i, j;
 
     switch(plan.value)
@@ -516,8 +518,10 @@ void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x
     plctrl = (u32 *) GFX_CTRL_PORT;
     pwdata = (u16 *) GFX_DATA_PORT;
 
-    baseindex = basetile & TILE_INDEX_MASK;
-    baseflags = basetile & TILE_ATTR_MASK;
+    // we can increment both index and palette
+    baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    // we can only do logical OR on priority and HV flip
+    baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
     src = data;
 
     i = h;
@@ -526,7 +530,7 @@ void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x
         *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
         j = w;
-        while (j--) *pwdata = baseflags | (*src++ + baseindex);
+        while (j--) *pwdata = baseor | (*src++ + baseinc);
 
         src += wm - w;
         addr += width * 2;

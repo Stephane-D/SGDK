@@ -8,6 +8,9 @@
 
 
 // extern assembly methods
+void bench_add8reg(u16 len);
+void bench_add16reg(u16 len);
+void bench_add32reg(u16 len);
 void bench_add8mem(u8 *src, u8 *dst, u16 len);
 void bench_add16mem(u16 *src, u16 *dst, u16 len);
 void bench_add32mem(u32 *src, u32 *dst, u16 len);
@@ -48,6 +51,9 @@ u16 executeMathsBasicTest(u16 *scores)
     d8 = getZeroU8();
     i = 2000000 / 32;
     start = getTimeAsFix32(FALSE);
+#ifdef ENABLE_ASM
+    bench_add8reg(i);
+#else
     while(i--)
     {
         d8 += s8;
@@ -86,6 +92,7 @@ u16 executeMathsBasicTest(u16 *scores)
         d8 += s8;
         d8 += s8;
     }
+#endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
     *score = displayResult(2000000, end - start, y++, d8) / 1;
     globalScore += *score++;
@@ -96,6 +103,9 @@ u16 executeMathsBasicTest(u16 *scores)
     d16 = getZeroU16();
     i = 2000000 / 32;
     start = getTimeAsFix32(FALSE);
+#ifdef ENABLE_ASM
+    bench_add16reg(i);
+#else
     while(i--)
     {
         d16 += s16;
@@ -134,6 +144,7 @@ u16 executeMathsBasicTest(u16 *scores)
         d16 += s16;
         d16 += s16;
     }
+#endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
     *score = displayResult(2000000, end - start, y++, d16) / 1;
     globalScore += *score++;
@@ -144,6 +155,9 @@ u16 executeMathsBasicTest(u16 *scores)
     d32 = getZeroU32();
     i = 2000000 / 32;
     start = getTimeAsFix32(FALSE);
+#ifdef ENABLE_ASM
+    bench_add32reg(i);
+#else
     while(i--)
     {
         d32 += s32;
@@ -182,6 +196,7 @@ u16 executeMathsBasicTest(u16 *scores)
         d32 += s32;
         d32 += s32;
     }
+#endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
     *score = displayResult(2000000, end - start, y++, d32) / 1;
     globalScore += *score++;

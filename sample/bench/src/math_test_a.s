@@ -1,3 +1,147 @@
+    .globl	bench_add8reg
+bench_add8reg:
+    move.w  6(%sp),%d0         | d0 = len
+
+    subq.w  #1,%d0
+
+.L11:
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+    add.b   %d1,%d1
+
+    dbra    %d0,.L11
+
+    rts
+
+
+    .globl	bench_add16reg
+bench_add16reg:
+    move.w  6(%sp),%d0         | d0 = len
+
+    subq.w  #1,%d0
+
+.L12:
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+    dbra    %d0,.L12
+
+    rts
+
+
+    .globl	bench_add32reg
+bench_add32reg:
+    move.w  6(%sp),%d0         | d0 = len
+
+    subq.w  #1,%d0
+
+.L14:
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+    add.l   %d1,%d1
+
+    dbra    %d0,.L14
+
+    rts
+
+
     .globl	bench_add8mem
 bench_add8mem:
     move.l  4(%sp),%a0          | a0 = src

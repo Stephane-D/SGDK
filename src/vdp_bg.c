@@ -61,7 +61,7 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
 
         *pl = GFX_WRITE_VRAM_ADDR(addr);
 
-        src = values;
+        src = (u16*) values;
 
         i = len;
         while(i--) *pw = *src++;
@@ -91,7 +91,7 @@ void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u
 
         *pl = GFX_WRITE_VRAM_ADDR(addr);
 
-        src = values;
+        src = (u16*) values;
 
         i = len;
         while(i--) *pw = *src++;
@@ -138,7 +138,7 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16
 
         *pl = GFX_WRITE_VSRAM_ADDR(addr);
 
-        src = values;
+        src = (u16*) values;
 
         i = len;
         while(i--) *pw = *src++;

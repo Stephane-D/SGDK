@@ -31,11 +31,6 @@
 
 /**
  *  \brief
- *      Flag to know if a sprite if currently allocated or not
- */
-#define SPR_FLAG_ALLOCATED              0x8000
-/**
- *  \brief
  *      Enable automatic visibility calculation
  */
 #define SPR_FLAG_AUTO_VISIBILITY        0x2000
@@ -59,6 +54,11 @@
  *      Enable automatic upload of sprite tiles data into VRAM
  */
 #define SPR_FLAG_AUTO_TILE_UPLOAD       0x0200
+/**
+ *  \brief
+ *      Enable automatic Y sorting
+ */
+#define SPR_FLAG_AUTO_YSORTING          0x0100
 /**
  *  \brief
  *      Mask for sprite flags
@@ -89,15 +89,36 @@ typedef enum
  *      Box definition if type = #COLLISION_TYPE_BOX
  *  \param circle
  *      Circle definition if type = #COLLISION_TYPE_CIRCLE
+ *  \param inner
+ *      if current collision is verified the we test inner for more precise collisions if needed
+ *  \param next
+ *      if current collision is not verified then we test next for next collision if needed
  */
-typedef struct
+typedef struct _collision
 {
     u16 type;
     union
     {
         Box box;
         Circle circle;
-    };
+    } norm;
+    union
+    {
+        Box box;
+        Circle circle;
+    } hflip;
+    union
+    {
+        Box box;
+        Circle circle;
+    } vflip;
+    union
+    {
+        Box box;
+        Circle circle;
+    } hvflip;
+    void* inner;
+    void* next;
 } Collision;
 
 /**
@@ -128,12 +149,10 @@ typedef struct
  *
  *  \param numSprite
  *      number of VDP sprite which compose this frame
- *  \param vdpSprites
- *      VDP sprites composing the frame
- *  \param numCollision
- *      number of collision structure for this frame
- *  \param collisions
- *      collisions structures (can be either Box or Circle)
+ *  \param vdpSpritesInf
+ *      pointer to an array of VDP sprites info composing the frame (followed by H/V/HV flipped versions)
+ *  \param collision
+ *      collision structure
  *  \param tileset
  *      tileset containing tiles for this animation frame (ordered for sprite)
  *  \param w
@@ -147,8 +166,7 @@ typedef struct
 {
     u16 numSprite;
     VDPSpriteInf **vdpSpritesInf;
-    u16 numCollision;
-    Collision **collisions;
+    Collision *collision;
     TileSet *tileset;
     s16 w;
     s16 h;
@@ -212,8 +230,6 @@ typedef struct
  *
  *  \param status
  *      Internal state and automatic allocation information (internal)
- *  \param index
- *      Current index in active sprite list (internal)
  *  \param spriteDef
  *      Sprite definition pointer
  *  \param animation
@@ -245,13 +261,16 @@ typedef struct
  *      Pointer to last VDP sprite used by this Sprite (used internally to update link between sprite)
  *  \param data
  *      this is a free field for user data, use it for whatever you want (flags, pointer...)
+ *  \param prev
+ *      pointer on previous Sprite in list
+ *  \param next
+ *      pointer on next Sprite in list
  *
  *  Used to manage an active sprite in game condition.
  */
-typedef struct
+typedef struct _Sprite
 {
     u16 status;
-    u16 index;
     u16 visibility;
     const SpriteDefinition *definition;
     Animation *animation;
@@ -267,7 +286,22 @@ typedef struct
     u16 frameNumSprite;
     VDPSprite *lastVDPSprite;
     u32 data;
+    struct _Sprite *prev;
+    struct _Sprite *next;
 } Sprite;
+
+
+/**
+ *  \brief
+ *      Callback for the sprite sorting method SPR_sort(..)
+ *
+ * This callback is used to compare 2 sprite objects.<br>
+ * Return value should be:<br>
+ * negatif if s1 is before s2<br>
+ * 0 if s1 is equal to s2<br>
+ * positif if s1 is after s2
+ */
+typedef s16 _spriteComparatorCallback(Sprite* s1, Sprite* s2);
 
 
 /**
@@ -340,8 +374,11 @@ void SPR_reset();
  *          If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <i>attribut</i> parameter or by using the #SPR_setVRAMTileIndex(..) method<br>
  *      #SPR_FLAG_AUTO_SPRITE_ALLOC = Enable automatic hardware/VDP sprite allocation (enabled by default)<br>
  *          If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <i>spriteIndex</i> parameter or by using the #SPR_setSpriteTableIndex(..) method<br>
- *      #SPR_FLAG_AUTO_TILE_UPLOAD  = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
+ *      #SPR_FLAG_AUTO_TILE_UPLOAD = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
  *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM.<br>
+ *      #SPR_FLAG_AUTO_YSORTING = Enable automatic Y sorting for this sprite so it will always appear in front of sprites with lower Y position.<br>
+ *          If you don't set this flag you can still use SPR_sortOnY() to do Y sorting on the whole sprite list.<br>
+ *      <br>
  *      It's recommended to use the following default settings:<br>
  *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
  *  \return the new sprite or <i>NULL</i> if the operation failed (some logs can be generated in the KMod console in this case)
@@ -368,8 +405,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
  *      sprite attribut (see TILE_ATTR() macro).
  *  \return the new sprite or <i>NULL</i> if the operation failed (some logs can be generated in the KMod console in this case)
  *
- *      By default the sprite uses automatic resources allocation (VRAM and hardware sprite) and visibility
- *      is automatically computed depending the sprite size information (from SpriteDefinition structure) and the sprite position.<br>
+ *      By default the sprite uses automatic resources allocation (VRAM and hardware sprite) and visibility is set to ON.<br>
  *      You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setSpriteTableIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br>
  *      You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).
  *
@@ -550,6 +586,20 @@ u16 SPR_setSpriteTableIndex(Sprite *sprite, s16 value);
 void SPR_setAutoTileUpload(Sprite *sprite, u16 value);
 /**
  *  \brief
+ *      Enable/disable the automatic Y sorting for this sprite so it will always appear in front of sprites will lower Y position.<br>
+ *      Note that you can also use SPR_sortOnY() to do manual Y sorting on the whole sprite list.
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable Y sorting for
+ *  \param value
+ *      TRUE to enable the automatic Y sorting for this sprite<br>
+ *      FALSE to disable it, you can still use the SPR_sort(..) method.<br>
+ *
+ *  \see SPR_sort(..)
+ */
+void SPR_setYSorting(Sprite *sprite, u16 value);
+/**
+ *  \brief
  *      Set the <i>visibility</i> state for this sprite.
  *
  *  \param sprite
@@ -558,8 +608,8 @@ void SPR_setAutoTileUpload(Sprite *sprite, u16 value);
  *      Visibility value to set.<br>
  *      SpriteVisibility.VISIBLE       = sprite is visible<br>
  *      SpriteVisibility.HIDDEN        = sprite is not visible<br>
- *      SpriteVisibility.AUTO_FAST     = visibility is automatically computed from the sprite position (global visibility)<br>
- *      SpriteVisibility.AUTO_SLOW     = visibility is automatically computed from the sprite position (per hardware sprite visibility)<br>
+ *      SpriteVisibility.AUTO_FAST     = visibility is automatically computed from sprite position (global visibility)<br>
+ *      SpriteVisibility.AUTO_SLOW     = visibility is automatically computed from sprite position (per hardware sprite visibility)<br>
  */
 void SPR_setVisibility(Sprite *sprite, SpriteVisibility value);
 /**
@@ -617,6 +667,41 @@ void SPR_clear();
  *  \see #SPR_addSprite(..)
  */
 void SPR_update();
+/**
+ *  \brief
+ *      Sort the sprites to define display order.
+ *
+ *  This method uses the given comparator callback to sort the whole list of Sprite and so define
+ *  the display order of the sprites.<br>
+ *  If the comparator callback is set to NULL then by default Y sorting is performed.<br>
+ *  This method can take a long time, use it carefully !
+ *
+ *  \param comparator
+ *      the comparator callback used to compare sprites.<br>
+ *      It should return a value < 0 if sprite 1 is below sprite 2 and a value > 0 in the opposite case.<br>
+ *      If order doesn't matter it can return 0.
+ *
+ *  \see #SPR_sortOnYPos()
+ */
+void SPR_sort(_spriteComparatorCallback* comparator);
+/**
+ *  \brief
+ *      Sort the sprites by their Y position to define display order (same as SPR_sort(NULL))
+ *
+ *  \see #SPR_sort(..)
+ */
+void SPR_sortOnYPos();
+
+/**
+ *  \brief
+ *      Log the profil informations (when enabled) in the KMod message window.
+ */
+void SPR_logProfil();
+/**
+ *  \brief
+ *      Log the sprites informations (when enabled) in the KMod message window.
+ */
+void SPR_logSprites();
 
 
 #endif // _SPRITE_ENG_H_

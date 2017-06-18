@@ -215,6 +215,8 @@ u16 executeMemcpyTest(u16 *scores)
     return globalScore;
 }
 
+extern u32 _bend;
+
 u16 executeMemAllocTest(u16 *scores)
 {
     fix32 start;
@@ -225,10 +227,8 @@ u16 executeMemAllocTest(u16 *scores)
     u16 *score;
     u16 globalScore;
 
-    KDebug_Alert("Mem free:");
-    KDebug_AlertNumber(MEM_getFree());
-    KDebug_Alert("Mem allocated:");
-    KDebug_AlertNumber(MEM_getAllocated());
+    KLog_U1("Mem heap: ", (u32)&_bend);
+    KLog_U2("Mem free: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     allocs = MEM_alloc(1000 * sizeof(void*));
 

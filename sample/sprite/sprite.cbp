@@ -49,9 +49,11 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="res/gfx.h" />
 		<Unit filename="res/gfx.res" />
 		<Unit filename="res/gfx/bga.png" />
 		<Unit filename="res/gfx/bgb.png" />
+		<Unit filename="res/music/sonic1.vgm" />
 		<Unit filename="res/sfx/S1_die.wav" />
 		<Unit filename="res/sfx/S1_explode1.wav" />
 		<Unit filename="res/sfx/S1_explode2.wav" />
@@ -64,11 +66,11 @@
 		<Unit filename="res/sfx/S1_roll.wav" />
 		<Unit filename="res/sfx/S1_spinning.wav" />
 		<Unit filename="res/sfx/S1_stop.wav" />
-		<Unit filename="res/sonic1.vgm" />
+		<Unit filename="res/sound.h" />
 		<Unit filename="res/sound.res" />
+		<Unit filename="res/sprite.h" />
 		<Unit filename="res/sprite.res" />
 		<Unit filename="res/sprite/sonic.png" />
-		<Unit filename="res/sprite/sprites.png" />
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -18,11 +18,6 @@
 #define PROCESS_XGM_TASK            (1 << 4)
 
 
-// internals V/H timer
-extern u32 vtimer;
-extern u32 htimer;
-
-
 /**
  *  \brief
  *      Bus error interrupt callback.
