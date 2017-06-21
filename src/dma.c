@@ -220,11 +220,12 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     // get DMA info structure and pass to next one
     info = &dmaQueues[queueIndex++];
 
-    // Setup Step and DMA length (in word here)
-    info->regStepLenL = (0x8F00 | step) | ((0x9300 | (newlen & 0xFF)) << 16);
-    // Setup DMA address
-    info->regLenHAddrL = (0x9400 | ((newlen >> 8) & 0xFF)) | ((0x9500 | ((from >> 1) & 0xFF)) << 16);
-    info->regAddrMAddrH = (0x9600 | ((from >> 9) & 0xFF)) | ((0x9700 | ((from >> 17) & 0x7F)) << 16);
+    // $14:len H  $13:len L (DMA length in word)
+    info->regLen = ((newlen | (newlen << 8)) & 0xFF00FF) | 0x94009300;
+    // $16:M  $f:step (DMA address M and Step register)
+    info->regAddrMStep = (((from << 7) & 0xFF0000) | 0x96008F00) + step;
+    // $17:H  $15:L (DMA address H & L)
+    info->regAddrHAddrL = ((from >> 1) & 0x7F00FF) | 0x97009500;
 
     // Trigger DMA
     switch(location)

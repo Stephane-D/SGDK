@@ -214,7 +214,7 @@ static void postResume(u32 score)
     VDP_setPaletteColor(15, 0x000);
 
     // display test string
-    sprintf(str, "%s score = %d", SGDK_BENCHMARK, score);
+    sprintf(str, "%s score = %d", SGDK_BENCHMARK, (int) score);
     VDP_drawText(str, 1, 1);
 
     testNum = 0;
