@@ -179,7 +179,7 @@ void BMP_reset()
     if (HAS_DOUBLEBUFFER)
     {
         initTilemap(1);
-        clearVRAMBuffer(0);
+        clearVRAMBuffer(1);
     }
 
     // clear both buffer in memory

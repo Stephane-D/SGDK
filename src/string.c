@@ -298,7 +298,7 @@ void fix32ToStr(fix32 value, char *str, s16 numdec)
     u32 len;
     fix32 v;
     u32 frac;
-    u8 strFrac[8];
+    char strFrac[8];
 
     len = 0;
     if (value < 0)
@@ -327,7 +327,7 @@ void fix16ToStr(fix16 value, char *str, s16 numdec)
     u32 len;
     fix16 v;
     u32 frac;
-    u8 strFrac[8];
+    char strFrac[8];
 
     len = 0;
 

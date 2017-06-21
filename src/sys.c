@@ -52,7 +52,7 @@ extern int main(u16 hard);
 
 static void internal_reset();
 
-// interrrupt callback
+// exception callbacks
 _voidCallback *busErrorCB;
 _voidCallback *addressErrorCB;
 _voidCallback *illegalInstCB;
@@ -68,7 +68,7 @@ _voidCallback *internalVIntCB;
 _voidCallback *internalHIntCB;
 _voidCallback *internalExtIntCB;
 
-// user V-Int, H-Int and Ext-Int callback
+// user V-Int, H-Int and Ext-Int callbacks
 static _voidCallback *VIntCBPre;
 static _voidCallback *VIntCB;
 static _voidCallback *HIntCB;
@@ -76,18 +76,17 @@ static _voidCallback *ExtIntCB;
 
 
 // exception state consumes 78 bytes of memory
-u32 registerState[8+8];
-u32 pcState;
-u32 addrState;
-u16 ext1State;
-u16 ext2State;
-u16 srState;
+__attribute__((externally_visible)) u32 registerState[8+8];
+__attribute__((externally_visible)) u32 pcState;
+__attribute__((externally_visible)) u32 addrState;
+__attribute__((externally_visible)) u16 ext1State;
+__attribute__((externally_visible)) u16 ext2State;
+__attribute__((externally_visible)) u16 srState;
 
-
-vu32 VIntProcess;
-vu32 HIntProcess;
-vu32 ExtIntProcess;
-vu16 intTrace;
+__attribute__((externally_visible)) vu32 VIntProcess;
+__attribute__((externally_visible)) vu32 HIntProcess;
+__attribute__((externally_visible)) vu32 ExtIntProcess;
+__attribute__((externally_visible)) vu16 intTrace;
 
 static u16 intLevelSave;
 static s16 disableIntStack;

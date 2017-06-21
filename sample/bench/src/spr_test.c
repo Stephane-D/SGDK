@@ -433,6 +433,12 @@ u16 executeSpritesTest(u16 *scores)
     haggarSprite = SPR_addSprite(&haggar_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
     andorSprite = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
 
+    // we want to compute per hardware sprite visibility for these sprites
+    SPR_setVisibility(guySprite, AUTO_SLOW);
+    SPR_setVisibility(codySprite, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite, AUTO_SLOW);
+    SPR_setVisibility(andorSprite, AUTO_SLOW);
+
     sprites[0] = guySprite;
     sprites[1] = codySprite;
     sprites[2] = haggarSprite;
@@ -631,7 +637,7 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
     Sprite** sprite;
     u16 i;
     u16 remaining;
-    u16 ts, ti, tis;
+    u16 ts, ti;
 
     remaining = num;
     sprite = sprites;

@@ -289,7 +289,7 @@ u16 VDP_doStepFading(u16 waitVSync)
     {
         // we are inside VInt callback --> just set palette colors immediately
         if (SYS_isInVIntCallback())
-            VDP_setPaletteColors(fading_from, final_pal + fading_from, (fading_to - fading_from) + 1);
+            VDP_setPaletteColors(fading_from, (u16*) final_pal + fading_from, (fading_to - fading_from) + 1);
         else
         {
             // wait for VSync if asked
@@ -297,7 +297,7 @@ u16 VDP_doStepFading(u16 waitVSync)
             // disable interrupts to not conflict with VInt accesses
             SYS_disableInts();
             // ans set the palette
-            VDP_setPaletteColors(fading_from, final_pal + fading_from, (fading_to - fading_from) + 1);
+            VDP_setPaletteColors(fading_from, (u16*) final_pal + fading_from, (fading_to - fading_from) + 1);
             SYS_enableInts();
         }
 
@@ -340,7 +340,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
 {
     const u16 *src;
     const u16 *dst;
-    u16 *save;
+    s16 *save;
     s16 *palR;
     s16 *palG;
     s16 *palB;

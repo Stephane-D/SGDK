@@ -34,7 +34,7 @@
  */
 #define MAXTIMER            16
 
-extern u32 vtimer;
+extern vu32 vtimer;
 
 
 /**

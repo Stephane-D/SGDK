@@ -7,6 +7,7 @@
 #include "sys.h"
 #include "string.h"
 #include "kdebug.h"
+#include "tools.h"
 
 
 #define USED        1
@@ -170,6 +171,10 @@ void MEM_init()
     heap = (u16*) h;
     // and its size
     *heap = len;
+
+#if (LIB_DEBUG != 0)
+    KLog_U1("MEM_init: heap = ", (u32) heap);
+#endif
 
     // free memory : whole heap
     free = heap;

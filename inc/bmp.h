@@ -7,18 +7,17 @@
  * This unit provides methods to simulate bitmap mode on SEGA genesis.<br>
  *<br>
  * The software bitmap engine permit to simulate a 256x160 pixels bitmap screen.<br>
- * Almost methods as #BMP_setPixel and #BMP_drawLine however use doubled X pixel so you can
+ * Some methods as #BMP_setPixel and #BMP_drawLine use doubled X pixel so you can
  * consider resolution to be 128x160 in this case.<br>
- * It uses a double buffer so you can draw to buffer while other buffer is being sent to video memory.<br>
- * Bitmap buffer requires ~41 KB of memory which is dynamically allocated.<br>
- * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period<br>
- * is very short so it takes approximately 10 frames to blit an entire buffer.<br>
+ * Bitmap engine requires a large amount of memory (~41KB) which is dynamically allocated at BMP_init(..) time and released when BMP_end) is called.<br>
+ * Bitmap engine uses a double buffer so you can draw to the write buffer while the read buffer is being sent to video memory.<br>
+ * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period is really short so it takes approximately 10 frames to blit an entire buffer.<br>
  * To improve transfer performance the blank area is extended to fit bitmap resolution:<br>
- * 0-31 = blank<br>
- * 32-191 = active<br>
- * 192-262/312 = blank<br>
+ * scanline 0-31 = blank<br>
+ * scanline 32-191 = active<br>
+ * scanline 192-262/312 = blank<br>
  * <br>
- * With extended blank bitmap can be transfered to VRAM 20 times per second in NTSC<br>
+ * With extended blank bitmap buffer can be transfered to VRAM 20 times per second in NTSC<br>
  * and 25 time per second in PAL.
  */
 

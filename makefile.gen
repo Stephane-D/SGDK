@@ -12,7 +12,6 @@ INCLUDE= inc
 SHELL= $(BIN)/sh
 RM= $(BIN)/rm
 CP= $(BIN)/cp
-AR= $(BIN)/ar
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
 NM= $(BIN)/nm
@@ -54,8 +53,8 @@ DEFAULT_FLAGS= -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
-#release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
+release: FLAGS= $(DEFAULT_FLAGS) -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+#release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
 release: LIBMD= $(LIB)/libmd.a
 release: pre-build out/rom.bin
 
@@ -102,7 +101,7 @@ out/rom.bin: out/rom.out
 	$(SIZEBND) out/rom.bin -sizealign 131072
 
 out/symbol.txt: out/rom.out
-	$(NM) -n out/rom.out > out/symbol.txt
+	$(NM) --plugin=liblto_plugin-0.dll -n out/rom.out > out/symbol.txt
 
 out/rom.out: out/sega.o out/cmd_ $(LIBMD)
 	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIB)/libgcc.a -o out/rom.out
@@ -112,13 +111,13 @@ out/cmd_: $(OBJS)
 	$(ECHO) "$(OBJS)" > out/cmd_
 
 out/sega.o: $(SRC)/boot/sega.s out/rom_head.bin
-	$(CC) $(FLAGS) -c $(SRC)/boot/sega.s -o $@
+	$(CC) $(DEFAULT_FLAGS) -c $(SRC)/boot/sega.s -o $@
 
 out/rom_head.bin: out/rom_head.o
 	$(LD) -T $(GDK)/md.ld -nostdlib --oformat binary -o $@ $<
 
 out/rom_head.o: $(SRC)/boot/rom_head.c
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
 
 $(SRC)/boot/sega.s: $(LIBSRC)/boot/sega.s
 	$(CP) $< $@

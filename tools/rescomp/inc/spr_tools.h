@@ -19,7 +19,24 @@ typedef struct
     {
         box_ box;
         circle_ circle;
-    };
+    } norm;
+    union
+    {
+        box_ box;
+        circle_ circle;
+    } hflip;
+    union
+    {
+        box_ box;
+        circle_ circle;
+    } vflip;
+    union
+    {
+        box_ box;
+        circle_ circle;
+    } hvflip;
+    void* inner;
+    void* next;
 } collision_;
 
 typedef struct
@@ -35,8 +52,7 @@ typedef struct
 {
 	int numSprite;
 	frameSprite_  **frameSprites;
-	int numCollision;
-	collision_ **collisions;
+	collision_ *collision;
 	tileset_ *tileset;
     int w;
     int h;
@@ -104,6 +120,7 @@ typedef struct
 //} spriteDefinition_;
 
 
+frameSprite_* getFlippedFrameSprite(frameSprite_* frameSprite, int wf, int hf, int hflip, int vflip);
 frameSprite_* getFrameSprite(unsigned char *image8bpp, tileset_* tileset, int wi, int x, int y, int w, int h);
 animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int wf, int hf, int time, int collisionType);
 animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int hf, int time, int collisionType);

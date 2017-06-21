@@ -34,8 +34,8 @@ DEFAULT_FLAGS_LIB= -m68000 -Wall -fno-builtin $(INCS_LIB) -B$(BIN)
 FLAGSZ80_LIB= -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
-#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -fomit-frame-pointer
+release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -fomit-frame-pointer
 release: $(LIB)/libmd.a
 
 debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -ggdb -DDEBUG=1
@@ -73,11 +73,11 @@ cleanDebug: cleandebug
 
 
 $(LIB)/libmd.a: cmd_
-	$(AR) rs $(LIB)/libmd.a @cmd_
+	$(AR) rs $(LIB)/libmd.a --plugin=liblto_plugin-0.dll @cmd_
 	$(RM) cmd_
 
 $(LIB)/libmd_debug.a: cmd_
-	$(AR) rs $(LIB)/libmd_debug.a @cmd_
+	$(AR) rs $(LIB)/libmd_debug.a --plugin=liblto_plugin-0.dll @cmd_
 	$(RM) cmd_
 
 cmd_ : $(OBJ_LIB)
