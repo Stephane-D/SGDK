@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -16,9 +16,9 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -27,9 +27,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -38,9 +38,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -49,9 +49,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -60,9 +60,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -71,9 +71,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -82,9 +82,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -93,9 +93,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -104,9 +104,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -115,9 +115,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -126,9 +126,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -137,9 +137,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -148,9 +148,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -159,9 +159,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -170,9 +170,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -181,9 +181,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -192,9 +192,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -203,9 +203,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -214,9 +214,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -225,9 +225,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -236,9 +236,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -247,9 +247,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -258,9 +258,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -269,9 +269,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -280,9 +280,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -291,9 +291,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -302,9 +302,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -313,9 +313,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -324,9 +324,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -335,9 +335,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -346,9 +346,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -357,9 +357,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -368,9 +368,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -379,9 +379,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -390,9 +390,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -401,9 +401,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -412,9 +412,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -427,9 +427,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\kdebug.s">
       <FileType>Document</FileType>
@@ -438,9 +438,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\maths3D_a.s">
       <FileType>Document</FileType>
@@ -449,9 +449,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\memory_a.s">
       <FileType>Document</FileType>
@@ -460,9 +460,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\smp_null.s">
       <FileType>Document</FileType>
@@ -471,9 +471,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\smp_null_pcm.s">
       <FileType>Document</FileType>
@@ -482,9 +482,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\sram_a.s">
       <FileType>Document</FileType>
@@ -493,9 +493,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\sys_a.s">
       <FileType>Document</FileType>
@@ -504,9 +504,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\tools_a.s">
       <FileType>Document</FileType>
@@ -515,9 +515,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\vdp_pal_a.s">
       <FileType>Document</FileType>
@@ -526,9 +526,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\src\vdp_tile_a.s">
       <FileType>Document</FileType>
@@ -537,9 +537,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -548,9 +548,9 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c %(FullPath) -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
     </CustomBuild>
@@ -563,13 +563,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
 $(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/sjasm -I$(SolutionDir)/../src -I$(SolutionDir)/../inc %(FullPath) $(SolutionDir)/../obj/%(Filename).o80 out.lst
 "$(SolutionDir)/../bin/bintos" $(SolutionDir)/../obj/%(Filename).o80
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
-$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
@@ -584,13 +584,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
 $(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/sjasm -I$(SolutionDir)/../src -I$(SolutionDir)/../inc %(FullPath) $(SolutionDir)/../obj/%(Filename).o80 out.lst
 "$(SolutionDir)/../bin/bintos" $(SolutionDir)/../obj/%(Filename).o80
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
-$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
@@ -605,13 +605,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
 $(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/sjasm -I$(SolutionDir)/../src -I$(SolutionDir)/../inc %(FullPath) $(SolutionDir)/../obj/%(Filename).o80 out.lst
 "$(SolutionDir)/../bin/bintos" $(SolutionDir)/../obj/%(Filename).o80
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
-$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
@@ -626,13 +626,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
 $(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/sjasm -I$(SolutionDir)/../src -I$(SolutionDir)/../inc %(FullPath) $(SolutionDir)/../obj/%(Filename).o80 out.lst
 "$(SolutionDir)/../bin/bintos" $(SolutionDir)/../obj/%(Filename).o80
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
-$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
@@ -647,13 +647,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
 $(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/sjasm -I$(SolutionDir)/../src -I$(SolutionDir)/../inc %(FullPath) $(SolutionDir)/../obj/%(Filename).o80 out.lst
 "$(SolutionDir)/../bin/bintos" $(SolutionDir)/../obj/%(Filename).o80
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
-$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
@@ -668,13 +668,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
 $(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -ggdb -DDEBUG=1 -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/../bin/sjasm -I$(SolutionDir)/../src -I$(SolutionDir)/../inc %(FullPath) $(SolutionDir)/../obj/%(Filename).o80 out.lst
 "$(SolutionDir)/../bin/bintos" $(SolutionDir)/../obj/%(Filename).o80
 move $(SolutionDir)/../obj/%(Filename).h $(SolutionDir)/../src/%(Filename).h
 move $(SolutionDir)/../obj/%(Filename).s $(SolutionDir)/../src/%(Filename).s
-$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O1 -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
-$(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</Command>
+$(SolutionDir)/../bin/gcc -m68000 -Wall -fno-builtin -I$(SolutionDir)/../inc -I$(SolutionDir)/../src -I$(SolutionDir)/../res -B$(SolutionDir)/../bin -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -c $(SolutionDir)/../src/%(Filename).s -o $(SolutionDir)/../obj/%(Filename).o
+$(SolutionDir)/../bin/ar rs $(TargetPath) --plugin=$(SolutionDir)/../bin/liblto_plugin-0.dll $(SolutionDir)/../obj/%(Filename).o</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling "%(Filename)"...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling "%(Filename)"...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/../obj/%(Filename).o</Outputs>
@@ -691,13 +691,13 @@ $(SolutionDir)/../bin/ar rs $(TargetPath) $(SolutionDir)/../obj/%(Filename).o</C
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
