@@ -4,6 +4,7 @@ SET PATH=%GDK_WIN%\bin;%PATH%
 
 make -f %GDK_WIN%\makelib.gen clean
 make -f %GDK_WIN%\makelib.gen release
+make -f %GDK_WIN%\makelib.gen clean
 make -f %GDK_WIN%\makelib.gen debug
 
 @ECHO.
