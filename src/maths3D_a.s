@@ -80,7 +80,7 @@ M3D_project_f16:
     move.w 46(%sp),%d7                      | d7 = i = numv
 
     subq.w #1,%d7
-    jmi .L42
+    jmi .L34
 
     lea context3D,%a2
 
