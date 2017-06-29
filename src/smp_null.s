@@ -1,4 +1,4 @@
-.text
+    .text
 
     align 256
 
