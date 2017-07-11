@@ -12,10 +12,10 @@
 #define JOY_TYPE_SHIFT          12
 
 
-static u8 joyType[8];
-static u16 joyState[8];
-static s16 joyAxisX[8];
-static s16 joyAxisY[8];
+static vu8 joyType[8];
+static vu16 joyState[8];
+static vs16 joyAxisX[8];
+static vs16 joyAxisY[8];
 
 static u8 portSupport[2];
 static u8 portType[2];
