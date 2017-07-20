@@ -35,6 +35,7 @@ FLAGSZ80_LIB= -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
 release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -S -O3 -fomit-frame-pointer
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -fomit-frame-pointer
 release: $(LIB)/libmd.a
 

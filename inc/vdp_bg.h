@@ -505,15 +505,11 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y);
  *  \param y
  *      Plan Y position (in tile).
  *  \param loadpal
- *      Load the bitmap palette information when non zero.
- *      Accepted values are:<br>
- *      0 = don't load palette.<br>
- *      1 = HIGH PRIORITY TILE.<br>
- *      0:
+ *      Load the bitmap palette information when non zero (can be TRUE or FALSE)
  *  \param use_dma
  *      Use DMA transfert (faster but can lock Z80 execution).
  *  \return
- *      FALSE if there is not enough memory to unpack the specified Image (only if compression was enabled).
+ *      FALSE if there is not enough memory to unpack the specified Image (only if image was packed).
  *
  *  Load the image tiles data in VRAM and display it at specified tilemap region.
  *

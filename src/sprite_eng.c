@@ -60,8 +60,6 @@ static void updateSpriteTableAttr(Sprite *sprite);
 static void loadTiles(Sprite *sprite);
 static Sprite* sortSpriteOnY(Sprite* sprite);
 static Sprite* sortSprite(Sprite* sprite, _spriteComparatorCallback* sorter);
-static void sortOnY();
-static void sort(_spriteComparatorCallback* sorter);
 static void moveAfter(Sprite* pos, Sprite* sprite);
 static u16 getSpriteIndex(Sprite *sprite);
 static void logSprite(Sprite *sprite);
@@ -303,14 +301,18 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     KLog_U2("SPR_addSpriteEx: added sprite #", getSpriteIndex(sprite), " - internal position = ", sprite - spritesBank);
 #endif // SPR_DEBUG
 
+    // auto visibility ?
+    if (flags & SPR_FLAG_AUTO_VISIBILITY) sprite->visibility = 0;
+    // otherwise we set it to visible by default
+    else sprite->visibility = VISIBILITY_ON;
     // initialized with specified flags
-    sprite->visibility = 0;
     sprite->definition = spriteDef;
     sprite->frame = NULL;
     sprite->animInd = -1;
     sprite->frameInd = -1;
     sprite->seqInd = -1;
     sprite->x = x + 0x80;
+    sprite->aot = 0;
     sprite->y = y + 0x80;
     sprite->frameNumSprite = 0;
 
@@ -387,13 +389,8 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
 
 Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut)
 {
-    Sprite* result = SPR_addSpriteEx(spriteDef, x, y, attribut, 0,
-                                    SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
-
-    // always visible by default
-    SPR_setVisibility(result, VISIBLE);
-
-    return result;
+    return SPR_addSpriteEx(spriteDef, x, y, attribut, 0,
+                            SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
 }
 
 void SPR_releaseSprite(Sprite *sprite)
@@ -1114,6 +1111,22 @@ void SPR_setYSorting(Sprite *sprite, u16 value)
     else sprite->status &= ~SPR_FLAG_AUTO_YSORTING;
 }
 
+void SPR_setAlwaysOnTop(Sprite *sprite, u16 value)
+{
+    if (value)
+    {
+        // use this for easy Y sorting
+        sprite->aot = TRUE;
+        sprite->status |= SPR_FLAG_ALWAYS_ON_TOP;
+    }
+    else
+    {
+        // use this for easy Y sorting
+        sprite->aot = FALSE;
+        sprite->status &= ~SPR_FLAG_ALWAYS_ON_TOP;
+    }
+}
+
 void SPR_setVisibility(Sprite *sprite, SpriteVisibility value)
 {
 #ifdef SPR_PROFIL
@@ -1276,6 +1289,8 @@ void SPR_update()
             else sprite->timer = timer;
         }
 
+        // can be changed by Y sorting so store it now
+        Sprite* next = sprite->next;
         u16 status = sprite->status;
 
         // trivial optimization
@@ -1320,7 +1335,7 @@ void SPR_update()
         }
 
         // next sprite
-        sprite = sprite->next;
+        sprite = next;
     }
 
     // reset unpack buffer address
@@ -1346,15 +1361,24 @@ void SPR_sort(_spriteComparatorCallback* sorter)
 {
     if (spriteNum)
     {
-//        Sprite *sprite;
+        Sprite *sprite;
 //        VDPSprite *prevVDPSprite;
 
         // disable interrupts (we want to avoid DMA queue process when executing this method)
         SYS_disableInts();
 
         // sort sprites
-        if (sorter) sort(sorter);
-        else sortOnY();
+        sprite = lastSprite;
+        if (sorter)
+        {
+            while (sprite)
+                sprite = sortSprite(sprite, sorter);
+        }
+        else
+        {
+            while (sprite)
+                sprite = sortSpriteOnY(sprite);
+        }
 
 //        // rebuils all links
 //        sprite = firstSprite;
@@ -2037,14 +2061,16 @@ static Sprite* sortSpriteOnY(Sprite* sprite)
     Sprite* next = sprite->next;
     Sprite* s;
 
+    // cache sprite y coordinate
+    const s32 sy = sprite->ylong;
+
 #ifdef SPR_DEBUG
     KLog_U2("Start compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
 #endif // SPR_DEBUG
 
     // find position forward first
     s = next;
-    while(s && (s->y > sprite->y)) s = s->next;
-
+    while(s && (s->ylong > sy)) s = s->next;
     // position changed ?
     if (s != next)
     {
@@ -2056,7 +2082,7 @@ static Sprite* sortSpriteOnY(Sprite* sprite)
     {
         // try to find position babckward then
         s = prev;
-        while(s && (s->y < sprite->y)) s = s->prev;
+        while(s && (s->ylong < sy)) s = s->prev;
     }
 
 #ifdef SPR_DEBUG
@@ -2127,20 +2153,6 @@ static Sprite* sortSprite(Sprite* sprite, _spriteComparatorCallback* sorter)
     if (prof < 0) prof = 100;
     profil_time[PROFIL_SORT] += prof;
 #endif // SPR_PROFIL
-}
-
-static void sortOnY()
-{
-    Sprite* sprite = lastSprite;
-
-    while (sprite) sprite = sortSpriteOnY(sprite);
-}
-
-static void sort(_spriteComparatorCallback* sorter)
-{
-    Sprite* sprite = lastSprite;
-
-    while (sprite) sprite = sortSprite(sprite, sorter);
 }
 
 static void moveAfter(Sprite* pos, Sprite* sprite)

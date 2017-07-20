@@ -4,16 +4,17 @@
  * modified by Stef
  */
 
-#include <genesis.h>
-#include <gfx.h>
+#include "genesis.h"
+#include "gfx.h"
 
 #define	TABLE_LEN       220
-#define MAX_DONUT       24
+#define MAX_DONUT       65
 #define MAX_DONUT_ANIM  8
 
 static void fastStarFieldFX();
 //static s16 compareSprite(Sprite* s1, Sprite* s2);
 static void joyEvent(u16 joy, u16 changed, u16 state);
+static void vint();
 
 s16 scroll_PLAN_B[TABLE_LEN];
 fix16 scroll_PLAN_B_F[TABLE_LEN];
@@ -36,7 +37,7 @@ static void fastStarFieldFX()
 
 	VDP_clearPlan(PLAN_A, 0);
 	VDP_clearPlan(PLAN_B, 0);
-	VDP_setPlanSize(32, 32);
+	VDP_setPlanSize(64, 32);
 
 	/* Draw the foreground */
 	VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
@@ -59,19 +60,7 @@ static void fastStarFieldFX()
 		s = ns;
 	}
 
-	/* Setup the sprites */
-	SPR_init(MAX_DONUT, 0, 0);
-	for(i = 0; i < MAX_DONUT; i++)
-    {
-	    sprites[i] = SPR_addSprite(&donut, 0, 0, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, 0));
-	    /* Disable auto tile upload */
-	    SPR_setAutoTileUpload(sprites[i], FALSE);
-	    /* Enable Y sorting */
-//	    SPR_setYSorting(sprites[i], TRUE);
-	    /* Manually set VRAM index */
-	    SPR_setVRAMTileIndex(sprites[i], vramIndex);
-    }
-
+	// load tilesets
     Animation* anim = donut.animations[0];
     for(i = 0; i < anim->numFrame; i++)
     {
@@ -81,6 +70,32 @@ static void fastStarFieldFX()
         vramIndex += tileset->numTile;
     }
 
+	/* Setup the sprites */
+	SPR_init(MAX_DONUT, 0, 0);
+
+	s = 0;
+	for(i = 0; i < MAX_DONUT; i++)
+    {
+        Sprite* spr;
+
+        // create sprite
+        spr = SPR_addSprite(&donut, 0, 0, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, 0));
+
+	    /* Disable auto tile upload */
+	    SPR_setAutoTileUpload(spr, FALSE);
+	    /* Enable Y sorting */
+	    SPR_setYSorting(spr, TRUE);
+	    /* Enable Y sorting */
+	    SPR_setAlwaysOnTop(spr, (i & 7) == 7);
+	    /* default position */
+        SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
+	    /* Manually set VRAM index */
+        SPR_setVRAMTileIndex(spr, animVramIndexes[((s >> 4) + i) & 0x7]);
+
+	    sprites[i] = spr;
+    }
+
+    // first update
 	SPR_update();
 
 	VDP_setPalette(PAL2, donut.palette->data);
@@ -88,21 +103,11 @@ static void fastStarFieldFX()
 	SYS_enableInts();
 
 	JOY_setEventHandler(&joyEvent);
+	SYS_setVIntCallback(&vint);
 
 	/*	Start !!!! */
-	s = 0;
 	while (TRUE)
 	{
-		VDP_waitVSync();
-
-        SYS_disableInts();
-
-		VDP_showFPS(TRUE);
-		/* 	Scroll the starfield */
-		VDP_setHorizontalScrollLine(PLAN_B, 2, scroll_PLAN_B, TABLE_LEN, TRUE);
-
-		SYS_enableInts();
-
 		for(i = 0; i < TABLE_LEN; i++)
         {
 			scroll_PLAN_B_F[i] += scroll_speed[i];
@@ -119,10 +124,16 @@ static void fastStarFieldFX()
 		s += 4;
 		SPR_update();
 
-        SPR_sort(NULL);
+        SYS_disableInts();
+		VDP_showFPS(FALSE);
+		SYS_enableInts();
 
-		if ((s & 0x007F) == 0x0070)
-            SPR_logProfil();
+		VDP_waitVSync();
+
+//        SPR_sort(NULL);
+
+//		if ((s & 0x007F) == 0x0070)
+//            SPR_logProfil();
 //		if ((s & 0x03FF) == 0x0370)
 //            SPR_sort(&compareSprite);
 	}
@@ -144,3 +155,10 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 {
 //    u16 pressed = changed & state;
 }
+
+static void vint()
+{
+    // hscroll table to VDP
+    VDP_setHorizontalScrollLine(PLAN_B, 2, scroll_PLAN_B, TABLE_LEN, TRUE);
+}
+

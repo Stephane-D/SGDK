@@ -33,37 +33,42 @@
  *  \brief
  *      Enable automatic visibility calculation
  */
-#define SPR_FLAG_AUTO_VISIBILITY        0x2000
+#define SPR_FLAG_AUTO_VISIBILITY        0x4000
 /**
  *  \brief
  *      Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used)
  */
-#define SPR_FLAG_FAST_AUTO_VISIBILITY   0x1000
+#define SPR_FLAG_FAST_AUTO_VISIBILITY   0x2000
 /**
  *  \brief
  *      Enable automatic VRAM allocation
  */
-#define SPR_FLAG_AUTO_VRAM_ALLOC        0x0800
+#define SPR_FLAG_AUTO_VRAM_ALLOC        0x1000
 /**
  *  \brief
  *      Enable automatic hardware sprite allocation
  */
-#define SPR_FLAG_AUTO_SPRITE_ALLOC      0x0400
+#define SPR_FLAG_AUTO_SPRITE_ALLOC      0x0800
 /**
  *  \brief
  *      Enable automatic upload of sprite tiles data into VRAM
  */
-#define SPR_FLAG_AUTO_TILE_UPLOAD       0x0200
+#define SPR_FLAG_AUTO_TILE_UPLOAD       0x0400
 /**
  *  \brief
  *      Enable automatic Y sorting
  */
-#define SPR_FLAG_AUTO_YSORTING          0x0100
+#define SPR_FLAG_AUTO_YSORTING          0x0200
+/**
+ *  \brief
+ *      Enable 'always on top' state so the sprite always stay above others sprites whatever is sorting order
+ */
+#define SPR_FLAG_ALWAYS_ON_TOP          0x0100
 /**
  *  \brief
  *      Mask for sprite flags
  */
-#define SPR_FLAGS_MASK                  (SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
+#define SPR_FLAGS_MASK                  (SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_YSORTING | SPR_FLAG_ALWAYS_ON_TOP)
 
 /**
  *  \brief
@@ -248,6 +253,10 @@ typedef struct
  *      current sprite X position on screen
  *  \param y
  *      current sprite Y position on screen
+ *  \param ylong
+ *      32 bit version of Y used for Y sorting (internal)
+ *  \param aot
+ *      ALWAYS_ON_TOP state (internal)
  *  \param attribut
  *      sprite specific attribut and allocated VRAM tile index (see TILE_ATTR_FULL() macro)
  *  \param visibility
@@ -280,7 +289,15 @@ typedef struct _Sprite
     s16 seqInd;
     u16 timer;
     s16 x;
-    s16 y;
+    union
+    {
+        s32 ylong;
+        struct
+        {
+            s16 aot;
+            s16 y;
+        };
+    };
     u16 attribut;
     u16 VDPSpriteIndex;
     u16 frameNumSprite;
@@ -378,6 +395,7 @@ void SPR_reset();
  *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM.<br>
  *      #SPR_FLAG_AUTO_YSORTING = Enable automatic Y sorting for this sprite so it will always appear in front of sprites with lower Y position.<br>
  *          If you don't set this flag you can still use SPR_sortOnY() to do Y sorting on the whole sprite list.<br>
+ *      #SPR_FLAG_ALWAYS_ON_TOP = Enable 'always on top' this sprite so it will always appear above others sprites whatever sorting order is.<br>
  *      <br>
  *      It's recommended to use the following default settings:<br>
  *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
@@ -600,6 +618,21 @@ void SPR_setAutoTileUpload(Sprite *sprite, u16 value);
 void SPR_setYSorting(Sprite *sprite, u16 value);
 /**
  *  \brief
+ *      Enable/disable 'always on top' state for this sprite so it will always appear above others sprites whatever sorting order is.<br>the automatic Y sorting for this sprite
+ *      so it will always appear in front of sprites will lower Y position.
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable 'always on top' state
+ *  \param value
+ *      TRUE to enable the 'always on top' state for this sprite<br>
+ *      FALSE to disable it
+ *
+ *  \see SPR_sort(..)
+ *  \see SPR_setYSorting(..)
+ */
+void SPR_setAlwaysOnTop(Sprite *sprite, u16 value);
+/**
+ *  \brief
  *      Set the <i>visibility</i> state for this sprite.
  *
  *  \param sprite
@@ -678,6 +711,7 @@ void SPR_update();
  *
  *  \param comparator
  *      the comparator callback used to compare sprites.<br>
+ *      The comparator is responsible to take care of the ALWAYS_ON_TOP sprite state (using <i>aot</i> sprite field).<br>
  *      It should return a value < 0 if sprite 1 is below sprite 2 and a value > 0 in the opposite case.<br>
  *      If order doesn't matter it can return 0.
  *
