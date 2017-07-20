@@ -1,3 +1,20 @@
+SGDK 1.31 (July 2017)
+---------------------
+
+DOCUMENTATION
+* minor fix and updated to last version
+
+COMPILER
+* fixed debug build in 'build_lib' batch
+
+LIBRARY
+* JOY:
+ - fixed joy state variables declaration to avoid issues when GCC -O3 optimization level is used.
+* SPRITE:
+ - added ALWAYS_ON_TOP flag to keep a sprite above others sprites whatever is sorting order.
+ - minor fix on sprite sort
+
+
 SGDK 1.3 (June 2017)
 --------------------
 
