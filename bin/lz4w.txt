@@ -28,8 +28,8 @@ but it becomes worst as the data packet become larger.
 
 Still i think for anyone looking for very fast unpacker LZ4W is the best solution around for 68000 CPU based systems.
 68000 unpacking code can be found in SGDK library (https://stephane-d.github.io/SGDK/)
-LZ4W compressor is provided in JAR format (java code) in SGDK package so it requires a JVM (Java Virtual Machine) to work
-and can be launched by using the following command: java -jar lz4w.jar
+LZ4W compressor is provided in JAR format (java code) in SGDK package so it requires a JVM (Java Virtual Machine) to work.
+Use the following command to execute it: java -jar lz4w.jar
 
 LZ4W format description
 -----------------------
@@ -37,7 +37,7 @@ LZ4W format description
 0004-xxxx: LZ4W compressed blocks
 
 Each block consists of a 16 bit block header optionally followed by a literal data block.
-At this point you need to know the principe of the LZ77 compression format on which LZ4 (and LZ4W) are based.
+At this point you need to know the principe of the LZ77 compression format on which LZ4 and LZ4W are based.
 
 block header format (16 bit)
 ----------------------------
