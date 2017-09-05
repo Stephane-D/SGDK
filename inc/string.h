@@ -163,7 +163,7 @@ char *strreplacechar(char *str, char oldc, char newc);
  * Converts the specified s32 value to string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void intToStr(s32 value, char *str, s16 minsize);
+void intToStr(s32 value, char *str, const u8 minsize);
 /**
  *  \brief
  *      Convert a u32 value to string.
@@ -178,7 +178,22 @@ void intToStr(s32 value, char *str, s16 minsize);
  * Converts the specified u32 value to string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void uintToStr(u32 value, char *str, s16 minsize);
+void uintToStr(u32 value, char *str, const u8 minsize);
+/**
+ *  \brief
+ *      Convert a u16 value to string. Faster than the 32-bit version.
+ *
+ *  \param value
+ *      The u16 integer value to convert to string.
+ *  \param str
+ *      Destination string (it must be large enough to receive result).
+ *  \param minsize
+ *      Minimum size of resulting string.
+ *
+ * Converts the specified u16 value to string.<br>
+ * If resulting value is shorter than requested minsize the method prepends result with '0' character.
+ */
+void uint16ToStr(u16 value, char *str, const u8 minsize);
 /**
  *  \brief
  *      Convert a u32 value to hexadecimal string.
