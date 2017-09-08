@@ -5,13 +5,15 @@
 
 #include "tab_cnv.h"
 #include "maths.h"
+#include "memory.h"
 
 
 static const char const uppercase_hexchars[] = "0123456789ABCDEF";
 static const char const lowercase_hexchars[] = "0123456789abcdef";
 
 // FORWARD
-static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize);
+static u8 uint16_to_str(u16 value, char * const dst, const u8 minlen);
+static u8 uint32_to_str(u32 value, char * const dst, const u8 minlen);
 static u16 skip_atoi(const char **s);
 static u16 vsprintf(char *buf, const char *fmt, va_list args);
 
@@ -132,7 +134,7 @@ char *strreplacechar(char *str, char oldc, char newc)
     return s;
 }
 
-void intToStr(s32 value, char *str, s16 minsize)
+void intToStr(s32 value, char *str, const u8 minsize)
 {
     u32 v;
     char *dst = str;
@@ -144,111 +146,18 @@ void intToStr(s32 value, char *str, s16 minsize)
     }
     else v = value;
 
-    uintToStr_(v, dst, minsize, 16);
+    uint32_to_str(v, dst, minsize);
 }
 
-void uintToStr(u32 value, char *str, s16 minsize)
+void uintToStr(u32 value, char *str, const u8 minsize)
 {
-    uintToStr_(value, str, minsize, 16);
+    uint32_to_str(value, str, minsize);
 }
 
-static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize)
+void uint16ToStr(u16 value, char *str, const u8 minsize)
 {
-    u32 res;
-    s16 cnt;
-    s16 left;
-    char data[16];
-    char *src;
-    char *dst;
-
-    src = &data[16];
-    res = value;
-    left = minsize;
-
-    cnt = 0;
-    while (res)
-    {
-        *--src = '0' + (res % 10);
-        cnt++;
-        left--;
-        res /= 10;
-    }
-    while (left > 0)
-    {
-        *--src = '0';
-        cnt++;
-        left--;
-    }
-
-    if (cnt > maxsize) cnt = maxsize;
-
-    dst = str;
-    while(cnt--) *dst++ = *src++;
-    *dst = 0;
-
-    return strlen(str);
+    uint16_to_str(value, str, minsize);
 }
-
-// SLOWER THAN PREVIOUS SOLUTION IN ALMOST CASE
-/*
-static u32 uintToStr_(u32 value, char *str, s16 minsize, s16 maxsize)
-{
-    u32 res;
-    u16 carry;
-    s16 left;
-    s16 cnt;
-    char data[16];
-    char *src;
-    char *dst;
-
-    res = value;
-
-    // handle BCD carry
-    if (value > 99999999)
-    {
-        carry = cnv_bcd_tab[value / 99999999];
-        res = value % 99999999;
-    }
-    else
-    {
-        carry = 0;
-        res = intToBCD(value);
-    }
-
-    src = &data[16];
-    left = minsize;
-    cnt = 0;
-
-    while (res)
-    {
-        *--src = '0' + (res & 0xF);
-        res >>= 4;
-        cnt++;
-        left--;
-    }
-    while (carry)
-    {
-        *--src = '0' + (carry & 0xF);
-        carry >>= 4;
-        cnt++;
-        left--;
-    }
-    while (left > 0)
-    {
-        *--src = '0';
-        cnt++;
-        left--;
-    }
-
-    if (cnt > maxsize) cnt = maxsize;
-
-    dst = str;
-    while(cnt--) *dst++ = *src++;
-    *dst = 0;
-
-    return strlen(str);
-}
-*/
 
 void intToHex(u32 value, char *str, s16 minsize)
 {
@@ -308,7 +217,7 @@ void fix32ToStr(fix32 value, char *str, s16 numdec)
     }
     else v = value;
 
-    len += uintToStr_(fix32ToInt(v), &str[len], 1, 16);
+    len += uint32_to_str(fix32ToInt(v), &str[len], 1);
     str[len++] = '.';
 
     // get fractional part
@@ -338,7 +247,7 @@ void fix16ToStr(fix16 value, char *str, s16 numdec)
     }
     else v = value;
 
-    len += uintToStr_(fix16ToInt(v), &str[len], 1, 16);
+    len += uint32_to_str(fix16ToInt(v), &str[len], 1);
     str[len++] = '.';
 
     // get fractional part
@@ -640,4 +549,93 @@ u16 sprintf(char *buffer, const char *fmt, ...)
     va_end(args);
 
     return i;
+}
+
+#define P01 10
+#define P02 100
+#define P03 1000
+#define P04 1000 * 10
+#define P05 1000 * 100
+#define P06 1000 * 1000
+#define P07 1000 * 1000 * 10
+#define P08 1000 * 1000 * 100
+#define P09 1000 * 1000 * 1000
+#define P10 1000 * 1000 * 1000 * 10
+
+static u8 digits10(const u32 v)
+{
+    if (v < P01) return 1;
+    if (v < P02) return 2;
+    if (v < P03) return 3;
+    if (v < P08) {
+        if (v < P06) {
+            if (v < P04) return 4;
+            return 5 + (v >= P05);
+        }
+        return 7 + (v >= P07);
+    }
+    return 9 + (v >= P09);
+}
+
+static const char digits[201] =
+    "0001020304050607080910111213141516171819"
+    "2021222324252627282930313233343536373839"
+    "4041424344454647484950515253545556575859"
+    "6061626364656667686970717273747576777879"
+    "8081828384858687888990919293949596979899";
+
+static u8 uint32_to_str(u32 value, char * const dst, const u8 minlen)
+{
+    memset(dst, '0', minlen);
+    u8 length = digits10(value);
+    if (length < minlen)
+        length = minlen;
+
+    dst[length] = '\0';
+    u8 next = length - 1;
+    while (value >= 100) {
+        const u8 i = (value % 100) * 2;
+        value /= 100;
+        dst[next] = digits[i + 1];
+        dst[next - 1] = digits[i];
+        next -= 2;
+    }
+    // Handle last 1-2 digits
+    if (value < 10) {
+        dst[next] = '0' + value;
+    } else {
+        u8 i = value * 2;
+        dst[next] = digits[i + 1];
+        dst[next - 1] = digits[i];
+    }
+
+    return length;
+}
+
+static u8 uint16_to_str(u16 value, char * const dst, const u8 minlen)
+{
+    memset(dst, '0', minlen);
+    u8 length = digits10(value);
+    if (length < minlen)
+        length = minlen;
+
+    dst[length] = '\0';
+    u8 next = length - 1;
+    while (value >= 100) {
+        const u8 i = (value % 100) * 2;
+        value /= 100;
+        dst[next] = digits[i + 1];
+        dst[next - 1] = digits[i];
+        next -= 2;
+    }
+    // Handle last 1-2 digits
+    if (value < 10) {
+        dst[next] = '0' + value;
+    } else {
+        u8 i = value * 2;
+        dst[next] = digits[i + 1];
+        dst[next - 1] = digits[i];
+    }
+
+    return length;
 }
