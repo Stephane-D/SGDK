@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rescomp", "rescomp\rescomp.vcxproj", "{F3578704-2995-41EE-BFBE-9018E80EF37E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D7260BB3-B8CE-4468-928C-D17CBED2E040} = {D7260BB3-B8CE-4468-928C-D17CBED2E040}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appack", "appack\appack.vcxproj", "{D7260BB3-B8CE-4468-928C-D17CBED2E040}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmd", "libmd\libmd.vcxproj", "{54F3A928-01B7-47F8-9E94-719CE087067A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F3578704-2995-41EE-BFBE-9018E80EF37E} = {F3578704-2995-41EE-BFBE-9018E80EF37E}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3578704-2995-41EE-BFBE-9018E80EF37E}.Debug|x86.ActiveCfg = Debug|Win32
+		{F3578704-2995-41EE-BFBE-9018E80EF37E}.Debug|x86.Build.0 = Debug|Win32
+		{F3578704-2995-41EE-BFBE-9018E80EF37E}.Release|x86.ActiveCfg = Release|Win32
+		{F3578704-2995-41EE-BFBE-9018E80EF37E}.Release|x86.Build.0 = Release|Win32
+		{D7260BB3-B8CE-4468-928C-D17CBED2E040}.Debug|x86.ActiveCfg = Debug|Win32
+		{D7260BB3-B8CE-4468-928C-D17CBED2E040}.Debug|x86.Build.0 = Debug|Win32
+		{D7260BB3-B8CE-4468-928C-D17CBED2E040}.Release|x86.ActiveCfg = Release|Win32
+		{D7260BB3-B8CE-4468-928C-D17CBED2E040}.Release|x86.Build.0 = Release|Win32
+		{54F3A928-01B7-47F8-9E94-719CE087067A}.Debug|x86.ActiveCfg = Debug|Win32
+		{54F3A928-01B7-47F8-9E94-719CE087067A}.Debug|x86.Build.0 = Debug|Win32
+		{54F3A928-01B7-47F8-9E94-719CE087067A}.Release|x86.ActiveCfg = Release|Win32
+		{54F3A928-01B7-47F8-9E94-719CE087067A}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
