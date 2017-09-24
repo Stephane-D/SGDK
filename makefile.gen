@@ -54,7 +54,7 @@ FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
 release: FLAGS= $(DEFAULT_FLAGS) -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-#release: FLAGS= $(DEFAULT_FLAGS) -O3 -S -fomit-frame-pointer
+#release: FLAGS= $(DEFAULT_FLAGS) -O3 -S -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 #release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
 release: LIBMD= $(LIB)/libmd.a
 release: pre-build out/rom.bin

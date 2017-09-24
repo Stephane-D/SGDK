@@ -78,7 +78,7 @@ static void flipBuffer();
 static void initTilemap(u16 num);
 static void clearVRAMBuffer(u16 num);
 static u16 doBlit();
-//static void drawLine(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
+static void drawLine_old(u16 x1, u16 y1, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
 
 
 void BMP_init(u16 double_buffer, VDPPlan plan, u16 palette, u16 priority)
@@ -318,52 +318,66 @@ void BMP_clear()
 u8* BMP_getWritePointer(u16 x, u16 y)
 {
     const u16 off = (y * BMP_PITCH) + (x >> 1);
-
     // return write address
-    return &bmp_buffer_write[off];
+    return bmp_buffer_write + off;
 }
 
 u8* BMP_getReadPointer(u16 x, u16 y)
 {
     const u16 off = (y * BMP_PITCH) + (x >> 1);
-
     // return read address
-    return &bmp_buffer_read[off];
+    return bmp_buffer_read + off;
 }
 
+// inlining allow C functions to perform better than assembly methods
+inline u8 BMP_getPixelFast(u16 x, u16 y)
+{
+    const u16 off = (y * BMP_PITCH) + (x >> 1);
+    u8* dst = bmp_buffer_write + off;
 
-u8 BMP_getPixel(u16 x, u16 y)
+    if (x & 1) return *dst >> 4;
+    else  return *dst & 0x0F;
+}
+
+// inlining allow C functions to perform better than assembly methods
+inline u8 BMP_getPixel(u16 x, u16 y)
 {
     // pixel in screen ?
-    if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
-    {
-        const u16 off = (y * BMP_PITCH) + (x >> 1);
-
-        // read pixel
-        return bmp_buffer_write[off];
-    }
+    if ((x < BMP_WIDTH) && (y < BMP_HEIGHT)) return BMP_getPixelFast(x, y);
 
     return 0;
 }
 
-void BMP_setPixel(u16 x, u16 y, u8 col)
+// inlining allow C functions to perform better than assembly methods
+inline void BMP_setPixelFast(u16 x, u16 y, u8 col)
 {
-    // pixel in screen ?
-    if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
-    {
-        const u16 off = (y * BMP_PITCH) + (x >> 1);
+    const u16 off = (y * BMP_PITCH) + (x >> 1);
+    u8* dst = bmp_buffer_write + off;
 
-        // write pixel
-        bmp_buffer_write[off] = col;
-    }
+    if (x & 1) *dst = (*dst & 0xF0) | (col & 0x0F);
+    else *dst = (*dst & 0x0F) | (col & 0xF0);
 }
 
-void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
+// inlining allow C functions to perform better than assembly methods
+inline void BMP_setPixel(u16 x, u16 y, u8 col)
 {
-    const u8 c = col;
+    // pixel in screen ?
+    if ((x < BMP_WIDTH) && (y < BMP_HEIGHT)) BMP_setPixelFast(x, y, col);
+}
+
+// obsolete: replaced by assembly function
+void BMP_setPixels_V2D_old(const Vect2D_u16 *crd, u8 col, u16 num)
+{
     const Vect2D_u16 *v;
+    u8* base;
     u16 i;
 
+    const u8 mu = 0xF0;
+    const u8 md = 0x0F;
+    const u8 cu = col & mu;
+    const u8 cd = col & md;
+
+    base = bmp_buffer_write;
     v = crd;
     i = num;
 
@@ -372,13 +386,13 @@ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
         const u16 x = v->x;
         const u16 y = v->y;
 
-        // pixel inside screen ?
         if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
         {
             const u16 off = (y * BMP_PITCH) + (x >> 1);
+            u8* dst = base + off;
 
-            // write pixel
-            bmp_buffer_write[off] = c;
+            if (x & 1) *dst = (*dst & mu) | cd;
+            else *dst = (*dst & md) | cu;
         }
 
         // next pixel
@@ -386,11 +400,48 @@ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num)
     }
 }
 
-void BMP_setPixels(const Pixel *pixels, u16 num)
+// obsolete: replaced by assembly function
+void BMP_setPixelsFast_V2D_old(const Vect2D_u16 *crd, u8 col, u16 num)
 {
-    const Pixel *p;
+    const Vect2D_u16 *v;
+    u8* base;
     u16 i;
 
+    const u8 mu = 0xF0;
+    const u8 md = 0x0F;
+    const u8 cu = col & mu;
+    const u8 cd = col & md;
+
+    base = bmp_buffer_write;
+    v = crd;
+    i = num;
+
+    while (i--)
+    {
+        const u16 x = v->x;
+        const u16 y = v->y;
+        const u16 off = (y * BMP_PITCH) + (x >> 1);
+        u8* dst = base + off;
+
+        if (x & 1) *dst = (*dst & mu) | cd;
+        else *dst = (*dst & md) | cu;
+
+        // next pixel
+        v++;
+    }
+}
+
+// obsolete: replaced by assembly function
+void BMP_setPixels_old(const Pixel *pixels, u16 num)
+{
+    const Pixel *p;
+    u8* base;
+    u16 i;
+
+    const u8 mu = 0xF0;
+    const u8 md = 0x0F;
+
+    base = bmp_buffer_write;
     p = pixels;
     i = num;
 
@@ -399,13 +450,14 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
         const u16 x = p->pt.x;
         const u16 y = p->pt.y;
 
-        // pixel inside screen ?
         if ((x < BMP_WIDTH) && (y < BMP_HEIGHT))
         {
             const u16 off = (y * BMP_PITCH) + (x >> 1);
+            u8* dst = base + off;
+            const u8 c = p->col;
 
-            // write pixel
-            bmp_buffer_write[off] = p->col;
+            if (x & 1) *dst = (*dst & mu) | (c & md);
+            else *dst = (*dst & md) | (c & mu);
         }
 
         // next pixel
@@ -413,6 +465,70 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
     }
 }
 
+// obsolete: replaced by assembly function
+void BMP_setPixelsFast_old(const Pixel *pixels, u16 num)
+{
+    const Pixel *p;
+    u8* base;
+    u16 i;
+
+    const u8 mu = 0xF0;
+    const u8 md = 0x0F;
+
+    base = bmp_buffer_write;
+    p = pixels;
+    i = num;
+
+    while (i--)
+    {
+        const u16 x = p->pt.x;
+        const u16 y = p->pt.y;
+        const u16 off = (y * BMP_PITCH) + (x >> 1);
+        u8* dst = base + off;
+        const u8 c = p->col;
+
+        if (x & 1) *dst = (*dst & mu) | (c & md);
+        else *dst = (*dst & md) | (c & mu);
+
+        // next pixel
+        p++;
+    }
+}
+
+
+void BMP_drawLine_old(Line *l)
+{
+    // process clipping (exit if outside screen)
+    if (BMP_clipLine(l))
+    {
+        s16 dx, dy;
+        s16 step_x, step_y;
+
+        const s16 x1 = l->pt1.x;
+        const s16 y1 = l->pt1.y;
+        // calcul new deltas
+        dx = l->pt2.x - x1;
+        dy = l->pt2.y - y1;
+
+        if (dx < 0)
+        {
+            dx = -dx;
+            step_x = -1;
+        }
+        else
+            step_x = 1;
+
+        if (dy < 0)
+        {
+            dy = -dy;
+            step_y = -BMP_PITCH;
+        }
+        else
+            step_y = BMP_PITCH;
+
+        drawLine_old(x1, y1, dx, dy, step_x, step_y, l->col);
+    }
+}
 
 //void BMP_drawLineFast(Line *l)
 //{
@@ -931,48 +1047,6 @@ void BMP_setPixels(const Pixel *pixels, u16 num)
 //    }
 //}
 
-//void BMP_drawLine_old(Line *l)
-//{
-//    // process clipping (exit if outside screen)
-//    if (BMP_clipLine(l))
-//    {
-//        s16 dx, dy;
-//        s16 step_x;
-//        s16 step_y;
-//
-//        const s16 x1 = l->pt1.x >> 1;
-//        const s16 y1 = l->pt1.y;
-//        // calcul new deltas
-//        dx = (l->pt2.x >> 1) - x1;
-//        dy = l->pt2.y - y1;
-//        // prepare offset
-//        const u16 offset = x1 + (y1 * BMP_PITCH);
-//
-//        if (dx < 0)
-//        {
-//            dx = -dx;
-//            step_x = -1;
-//        }
-//        else
-//            step_x = 1;
-//
-//        if (dy < 0)
-//        {
-//            dy = -dy;
-//            step_y = -BMP_PITCH;
-//        }
-//        else
-//            step_y = BMP_PITCH;
-//
-//        // reverse X and Y on deltas and steps
-//        if (dx < dy)
-//            drawLine(offset, dy, dx, step_y, step_x, l->col);
-//        else
-//            drawLine(offset, dx, dy, step_x, step_y, l->col);
-//    }
-//}
-
-
 
 void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
@@ -1413,24 +1487,58 @@ static u16 doBlit()
     return 1;
 }
 
-//static void drawLine_old(u16 offset, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
-//{
-//    const u8 c = col;
-//    u8 *dst = &bmp_buffer_write[offset];
-//    s16 delta = dx >> 1;
-//    s16 cnt = dx + 1;
-//
-//    while(cnt--)
-//    {
-//        // write pixel
-//        *dst = c;
-//        // adjust offset
-//        dst += step_x;
-//
-//        if ((delta -= dy) < 0)
-//        {
-//            dst += step_y;
-//            delta += dx;
-//        }
-//    }
-//}
+static void drawLine_old(u16 x1, u16 y1, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col)
+{
+    u8 *dst = bmp_buffer_write + (y1 * BMP_PITCH);
+    u16 x = x1;
+
+    const u8 mu = 0xF0;
+    const u8 md = 0x0F;
+    const u8 cu = col & mu;
+    const u8 cd = col & md;
+
+    if (dx < dy)
+    {
+        s16 delta = dy >> 1;
+        s16 cnt = dy + 1;
+
+        while(cnt--)
+        {
+            u8 *d = dst + (x >> 1);
+
+            // write pixel
+            if (x & 1) *d = (*d & mu) | cd;
+            else *d = (*d & md) | cu;
+
+            dst += step_y;
+
+            if ((delta -= dx) < 0)
+            {
+                x += step_x;
+                delta += dy;
+            }
+        }
+    }
+    else
+    {
+        s16 delta = dx >> 1;
+        s16 cnt = dx + 1;
+
+        while(cnt--)
+        {
+            u8 *d = dst + (x >> 1);
+
+            // write pixel
+            if (x & 1) *d = (*d & mu) | cd;
+            else *d = (*d & md) | cu;
+
+            x += step_x;
+
+            if ((delta -= dy) < 0)
+            {
+                dst += step_y;
+                delta += dx;
+            }
+        }
+    }
+}

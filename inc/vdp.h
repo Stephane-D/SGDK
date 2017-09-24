@@ -689,16 +689,9 @@ u16 VDP_getHScrollTableAddress();
 /**
  *  \brief
  *      Set VRAM address (location) of Plan A tilemap.
+ *      The address should be at multiple of $2000<br>
  *      <br>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
- *      | system tiles<br>
- *      | user tiles<br>
- *      | window plan<br>
- *      v others (plan a, plan b, ...)<br>
- *      <br>
- *      The window tilemap address is used internally to calculated how much space is available for tiles.
- *
- *  EX:<br>
+ *      Ex:<br>
  *      VDP_setAPlanAddress(0xC000)<br>
  *      Will set the Plan A to at address 0xC000 in VRAM.
  */
@@ -706,18 +699,11 @@ void VDP_setAPlanAddress(u16 value);
 /**
  *  \brief
  *      Set VRAM address (location) of Window tilemap.<br>
+ *      The address should be at multiple of $1000 in H40 and $800 in H32<br>
  *      <br>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
- *      | system tiles<br>
- *      | user tiles<br>
- *      | window plan<br>
- *      v others (plan a, plan b, ...)<br>
- *      <br>
- *      The window tilemap address is used internally to calculated how much space is available for tiles.
- *
- *  EX:<br>
+ *      Ex:<br>
  *      VDP_setWindowAddress(0xA000)<br>
- *      Will set the Window tilemap to at address 0xA000 in VRAM.
+ *      Will set the Window tilemap at address 0xA000 in VRAM.
  */
 void VDP_setWindowAddress(u16 value);
 /**
@@ -728,52 +714,31 @@ void VDP_setWindowPlanAddress(u16 value);
 /**
  *  \brief
  *      Set VRAM address (location) of Plan B tilemap.<br>
+ *      The address should be at multiple of $2000<br>
  *      <br>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
- *      | system tiles<br>
- *      | user tiles<br>
- *      | window plan<br>
- *      v others (plan a, plan b, ...)<br>
- *      <br>
- *      The window tilemap address is used internally to calculated how much space is available for tiles.
- *
- *  EX:<br>
+ *      Ex:<br>
  *      VDP_setBPlanAddress(0xE000)<br>
- *      Will set the Plan B to at address 0xE000 in VRAM.
+ *      Will set the Plan B tilemap at address 0xE000 in VRAM.
  */
 void VDP_setBPlanAddress(u16 value);
 /**
  *  \brief
  *      Set VRAM address (location) of Sprite list.<br>
+ *      The address should be at multiple of $400 in H40 and $200 in H32<br>
  *      <br>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
- *      | system tiles<br>
- *      | user tiles<br>
- *      | window plan<br>
- *      v others (plan a, plan b, ...)<br>
- *      <br>
- *      The window tilemap address is used internally to calculated how much space is available for tiles.
- *
- *  EX:<br>
- *      VDP_setSpriteListAddress(0xB800)<br>
- *      Will set the Sprite list to at address 0xB800 in VRAM.
+ *      Ex:<br>
+ *      VDP_setSpriteListAddress(0xD800)<br>
+ *      Will set the Sprite list to at address 0xD800 in VRAM.
  */
 void VDP_setSpriteListAddress(u16 value);
 /**
  *  \brief
  *      Set VRAM address (location) of H Scroll table.<br>
+ *      The address should be at multiple of $400<br>
  *      <br>
- *      WARNING: the window tilemap should always be the first object attribute in VRAM:<br>
- *      | system tiles<br>
- *      | user tiles<br>
- *      | window plan<br>
- *      v others (plan a, plan b, ...)<br>
- *      <br>
- *      The the window tilemap address is used internally to calculated how much space is available for tiles.
- *
- *  EX:<br>
- *      VDP_setHScrollTableAddress(0xB400)<br>
- *      Will set the HScroll table to at address 0xB400 in VRAM.
+ *      Ex:<br>
+ *      VDP_setHScrollTableAddress(0xD400)<br>
+ *      Will set the HScroll table to at address 0xD400 in VRAM.
  */
 void VDP_setHScrollTableAddress(u16 value);
 

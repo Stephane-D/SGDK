@@ -46,7 +46,7 @@
  *  \brief
  *      Auto select PCM channel to use.
  */
-#define SOUND_PCM_CH_AUTO   0x00
+#define SOUND_PCM_CH_AUTO   0xFF
 
 /**
  *  \brief
@@ -219,8 +219,9 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  *  \param channel
  *      Channel where we want to play sample.<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
+ *      #SOUND_PCM_CH_AUTO  = auto selection from current channel usage<br>
+ *      #SOUND_PCM_CH1      = channel 1<br>
+ *      #SOUND_PCM_CH2      = channel 2<br>
  *  \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).
@@ -273,10 +274,11 @@ u8   SND_isPlaying_4PCM(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  *  \param channel
  *      Channel where we want to play sample.<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
+ *      #SOUND_PCM_CH_AUTO  = auto selection from current channel usage<br>
+ *      #SOUND_PCM_CH1      = channel 1<br>
+ *      #SOUND_PCM_CH2      = channel 2<br>
+ *      #SOUND_PCM_CH3      = channel 3<br>
+ *      #SOUND_PCM_CH4      = channel 4<br>
  *  \param loop
  *      Loop flag.<br>
  *      If non zero then the sample will be played in loop (else sample is played only once).

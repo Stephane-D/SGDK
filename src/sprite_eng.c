@@ -28,7 +28,7 @@
 #define NEED_ST_POS_UPDATE                  0x0002
 #define NEED_ST_ALL_UPDATE                  (NEED_ST_ATTR_UPDATE | NEED_ST_POS_UPDATE)
 
-#define NEED_YSORTING                       0x0004
+#define NEED_DEPTH_SORTING                  0x0004
 
 #define NEED_ST_VISIBILITY_UPDATE           0x0010
 #define NEED_VISIBILITY_UPDATE              0x0020
@@ -58,7 +58,7 @@ static void updateSpriteTableAll(Sprite *sprite);
 static void updateSpriteTablePos(Sprite *sprite);
 static void updateSpriteTableAttr(Sprite *sprite);
 static void loadTiles(Sprite *sprite);
-static Sprite* sortSpriteOnY(Sprite* sprite);
+static Sprite* sortSpriteOnDepth(Sprite* sprite);
 static Sprite* sortSprite(Sprite* sprite, _spriteComparatorCallback* sorter);
 static void moveAfter(Sprite* pos, Sprite* sprite);
 static u16 getSpriteIndex(Sprite *sprite);
@@ -312,8 +312,8 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     sprite->frameInd = -1;
     sprite->seqInd = -1;
     sprite->x = x + 0x80;
-    sprite->aot = 0;
     sprite->y = y + 0x80;
+    sprite->depth = 0;
     sprite->frameNumSprite = 0;
 
     numVDPSprite = spriteDef->maxNumSprite;
@@ -575,9 +575,6 @@ void SPR_setPosition(Sprite *sprite, s16 x, s16 y)
         u16 status = sprite->status;
 
         sprite->x = newx;
-        // Y sorting enable for this sprite and Y position changed ? --> need sorting
-        if ((status & SPR_FLAG_AUTO_YSORTING) && (sprite->y != newy))
-            status |= NEED_YSORTING;
         sprite->y = newy;
 
         // need to recompute visibility if auto visibility is enabled
@@ -778,6 +775,39 @@ void SPR_setPalette(Sprite *sprite, u16 value)
     if (prof < 0) prof = 100;
     profil_time[PROFIL_SET_ATTRIBUTE] += prof;
 #endif // SPR_PROFIL
+}
+
+void SPR_setDepth(Sprite *sprite, u16 value)
+{
+#ifdef SPR_PROFIL
+    s32 prof = getSubTick();
+#endif // SPR_PROFIL
+
+#ifdef SPR_DEBUG
+    KLog_U2("SPR_setDepth: #", getSpriteIndex(sprite), "  Depth=", depth);
+#endif // SPR_DEBUG
+
+    // depth sorting enabled for this sprite and depth changed ? --> need sorting
+    if ((sprite->status & SPR_FLAG_AUTO_DEPTH_SORTING) && (sprite->depth != value))
+        sprite->status |= NEED_DEPTH_SORTING;
+    sprite->depth = value;
+
+#ifdef SPR_PROFIL
+    prof = getSubTick() - prof;
+    // rollback correction
+    if (prof < 0) prof = 100;
+    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+#endif // SPR_PROFIL
+}
+
+void SPR_setZ(Sprite *sprite, u16 value)
+{
+    SPR_setDepth(sprite, value);
+}
+
+void SPR_setAlwaysOnTop(Sprite *sprite, u16 value)
+{
+    SPR_setDepth(sprite, 0xFFFF);
 }
 
 void SPR_setAnimAndFrame(Sprite *sprite, s16 anim, s16 frame)
@@ -1105,26 +1135,20 @@ void SPR_setAutoTileUpload(Sprite *sprite, u16 value)
     else sprite->status &= ~SPR_FLAG_AUTO_TILE_UPLOAD;
 }
 
-void SPR_setYSorting(Sprite *sprite, u16 value)
+void SPR_setDepthSorting(Sprite *sprite, u16 value)
 {
-    if (value) sprite->status |= SPR_FLAG_AUTO_YSORTING;
-    else sprite->status &= ~SPR_FLAG_AUTO_YSORTING;
+    if (value) sprite->status |= SPR_FLAG_AUTO_ZSORTING;
+    else sprite->status &= ~SPR_FLAG_AUTO_ZSORTING;
 }
 
-void SPR_setAlwaysOnTop(Sprite *sprite, u16 value)
+void SPR_setZSorting(Sprite *sprite, u16 value)
 {
-    if (value)
-    {
-        // use this for easy Y sorting
-        sprite->aot = TRUE;
-        sprite->status |= SPR_FLAG_ALWAYS_ON_TOP;
-    }
-    else
-    {
-        // use this for easy Y sorting
-        sprite->aot = FALSE;
-        sprite->status &= ~SPR_FLAG_ALWAYS_ON_TOP;
-    }
+    SPR_setDepthSorting(sprite, value);
+}
+
+void SPR_setYSorting(Sprite *sprite, u16 value)
+{
+    SPR_setDepthSorting(sprite, value);
 }
 
 void SPR_setVisibility(Sprite *sprite, SpriteVisibility value)
@@ -1310,8 +1334,8 @@ void SPR_update()
             // only if sprite is visible
             if (sprite->visibility)
             {
-                if (status & NEED_YSORTING)
-                    sortSpriteOnY(sprite);
+                if (status & NEED_DEPTH_SORTING)
+                    sortSpriteOnDepth(sprite);
                 if (status & NEED_TILES_UPLOAD)
                     loadTiles(sprite);
 
@@ -1327,7 +1351,7 @@ void SPR_update()
                     updateSpriteTableAttr(sprite);
 
                 // tiles upload and sprite table done
-                status &= ~(NEED_YSORTING | NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
+                status &= ~(NEED_DEPTH_SORTING | NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
             }
 
             // processes done !
@@ -1350,6 +1374,11 @@ void SPR_update()
     if (prof < 0) prof = 100;
     profil_time[PROFIL_UPDATE] += prof;
 #endif // SPR_PROFIL
+}
+
+void SPR_sortOnDepth()
+{
+    SPR_sort(NULL);
 }
 
 void SPR_sortOnYPos()
@@ -1377,7 +1406,7 @@ void SPR_sort(_spriteComparatorCallback* sorter)
         else
         {
             while (sprite)
-                sprite = sortSpriteOnY(sprite);
+                sprite = sortSpriteOnDepth(sprite);
         }
 
 //        // rebuils all links
@@ -2051,7 +2080,7 @@ static void loadTiles(Sprite *sprite)
 #endif // SPR_PROFIL
 }
 
-static Sprite* sortSpriteOnY(Sprite* sprite)
+static Sprite* sortSpriteOnDepth(Sprite* sprite)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -2061,16 +2090,16 @@ static Sprite* sortSpriteOnY(Sprite* sprite)
     Sprite* next = sprite->next;
     Sprite* s;
 
-    // cache sprite y coordinate
-    const s32 sy = sprite->ylong;
+    // cache sprite depth coordinate
+    const u16 sdepth = sprite->depth;
 
 #ifdef SPR_DEBUG
-    KLog_U2("Start compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
+    KLog_U2("Start depth compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
 #endif // SPR_DEBUG
 
     // find position forward first
     s = next;
-    while(s && (s->ylong > sy)) s = s->next;
+    while(s && (s->depth > sdepth)) s = s->next;
     // position changed ?
     if (s != next)
     {
@@ -2082,7 +2111,7 @@ static Sprite* sortSpriteOnY(Sprite* sprite)
     {
         // try to find position babckward then
         s = prev;
-        while(s && (s->ylong < sy)) s = s->prev;
+        while(s && (s->depth < sdepth)) s = s->prev;
     }
 
 #ifdef SPR_DEBUG
@@ -2115,7 +2144,7 @@ static Sprite* sortSprite(Sprite* sprite, _spriteComparatorCallback* sorter)
     Sprite* s;
 
 #ifdef SPR_DEBUG
-    KLog_U2("Start compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
+    KLog_U2("Start custom compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
 #endif // SPR_DEBUG
 
     // find position forward first

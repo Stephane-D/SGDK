@@ -153,7 +153,8 @@
  *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br>
  *      and handle volume (16 levels) for each channel.
  */
-#define Z80_DRIVER_4PCM_ENV             4
+#define Z80_DRIVER_4PCM                 4
+#define Z80_DRIVER_4PCM_ENV             Z80_DRIVER_4PCM
 /**
  *  \brief
  *      MVS tracker Z80 driver (updated to last version with PCM and PSG support).
@@ -303,7 +304,7 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  - #Z80_DRIVER_NULL<br>
  *  - #Z80_DRIVER_PCM<br>
  *  - #Z80_DRIVER_2ADPCM<br>
- *  - #Z80_DRIVER_4PCM_ENV<br>
+ *  - #Z80_DRIVER_4PCM<br>
  *  - #Z80_DRIVER_MVS<br>
  *  - #Z80_DRIVER_TFM<br>
  *  - #Z80_DRIVER_VGM<br>
@@ -325,7 +326,7 @@ void Z80_unloadDriver();
  *      - #Z80_DRIVER_NULL<br>
  *      - #Z80_DRIVER_PCM<br>
  *      - #Z80_DRIVER_2ADPCM<br>
- *      - #Z80_DRIVER_4PCM_ENV<br>
+ *      - #Z80_DRIVER_4PCM<br>
  *      - #Z80_DRIVER_MVS<br>
  *      - #Z80_DRIVER_TFM<br>
  *      - #Z80_DRIVER_VGM<br>

@@ -43,4 +43,7 @@
 #include "timer.h"
 
 
+#define SGDK_VERSION    1.32
+
+
 #endif // _GENESIS_H_

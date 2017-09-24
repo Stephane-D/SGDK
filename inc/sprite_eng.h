@@ -33,42 +33,47 @@
  *  \brief
  *      Enable automatic visibility calculation
  */
-#define SPR_FLAG_AUTO_VISIBILITY        0x4000
+#define SPR_FLAG_AUTO_VISIBILITY        0x2000
 /**
  *  \brief
  *      Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used)
  */
-#define SPR_FLAG_FAST_AUTO_VISIBILITY   0x2000
+#define SPR_FLAG_FAST_AUTO_VISIBILITY   0x1000
 /**
  *  \brief
  *      Enable automatic VRAM allocation
  */
-#define SPR_FLAG_AUTO_VRAM_ALLOC        0x1000
+#define SPR_FLAG_AUTO_VRAM_ALLOC        0x0800
 /**
  *  \brief
  *      Enable automatic hardware sprite allocation
  */
-#define SPR_FLAG_AUTO_SPRITE_ALLOC      0x0800
+#define SPR_FLAG_AUTO_SPRITE_ALLOC      0x0400
 /**
  *  \brief
  *      Enable automatic upload of sprite tiles data into VRAM
  */
-#define SPR_FLAG_AUTO_TILE_UPLOAD       0x0400
+#define SPR_FLAG_AUTO_TILE_UPLOAD       0x0200
 /**
  *  \brief
- *      Enable automatic Y sorting
+ *      Enable automatic depth (Z) sorting
  */
-#define SPR_FLAG_AUTO_YSORTING          0x0200
+#define SPR_FLAG_AUTO_DEPTH_SORTING     0x0100
 /**
  *  \brief
- *      Enable 'always on top' state so the sprite always stay above others sprites whatever is sorting order
+ *      Same as #SPR_FLAG_AUTO_DEPTHSORTING
  */
-#define SPR_FLAG_ALWAYS_ON_TOP          0x0100
+#define SPR_FLAG_AUTO_ZSORTING          SPR_FLAG_AUTO_DEPTH_SORTING
+/**
+ *  \deprecated
+ *      Use #SPR_FLAG_AUTO_DEPTH_SORTING instead
+ */
+#define SPR_FLAG_AUTO_YSORTING          SPR_FLAG_AUTO_DEPTH_SORTING
 /**
  *  \brief
  *      Mask for sprite flags
  */
-#define SPR_FLAGS_MASK                  (SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_YSORTING | SPR_FLAG_ALWAYS_ON_TOP)
+#define SPR_FLAGS_MASK                  (SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_DEPTH_SORTING)
 
 /**
  *  \brief
@@ -253,10 +258,8 @@ typedef struct
  *      current sprite X position on screen
  *  \param y
  *      current sprite Y position on screen
- *  \param ylong
- *      32 bit version of Y used for Y sorting (internal)
- *  \param aot
- *      ALWAYS_ON_TOP state (internal)
+ *  \param depth
+ *      current sprite depth (Z) position used for Z sorting
  *  \param attribut
  *      sprite specific attribut and allocated VRAM tile index (see TILE_ATTR_FULL() macro)
  *  \param visibility
@@ -289,15 +292,8 @@ typedef struct _Sprite
     s16 seqInd;
     u16 timer;
     s16 x;
-    union
-    {
-        s32 ylong;
-        struct
-        {
-            s16 aot;
-            s16 y;
-        };
-    };
+    s16 y;
+    u16 depth;
     u16 attribut;
     u16 VDPSpriteIndex;
     u16 frameNumSprite;
@@ -516,7 +512,40 @@ void SPR_setPalette(Sprite *sprite, u16 value);
  *      The priority attribut value (TRUE or FALSE)
  */
 void SPR_setPriorityAttribut(Sprite *sprite, u16 value);
-
+/**
+ *  \brief
+ *      Set sprite depth (for sprite sorting).
+ *
+ *  \param sprite
+ *      Sprite to set depth for
+ *  \param value
+ *      The depth value (-1 to set always on top)
+ *
+ *  \see SPR_sort(..)
+ */
+void SPR_setDepth(Sprite *sprite, u16 value);
+/**
+ *  \brief
+ *      Same as #SPR_setDepth(..)
+ */
+void SPR_setZ(Sprite *sprite, u16 value);
+/**
+ *  \deprecated Use #SPR_setDepth(..) instead
+ *
+ *  \brief
+ *      Enable/disable 'always on top' state for this sprite so it will always appear above others sprites whatever sorting order is.<br>the automatic Y sorting for this sprite
+ *      so it will always appear in front of sprites will lower Y position.
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable 'always on top' state
+ *  \param value
+ *      TRUE to enable the 'always on top' state for this sprite<br>
+ *      FALSE to disable it
+ *
+ *  \see SPR_sort(..)
+ *  \see SPR_setDepth(..)
+*/
+void SPR_setAlwaysOnTop(Sprite *sprite, u16 value);
 /**
  *  \brief
  *      Set current sprite animation and frame.
@@ -604,33 +633,28 @@ u16 SPR_setSpriteTableIndex(Sprite *sprite, s16 value);
 void SPR_setAutoTileUpload(Sprite *sprite, u16 value);
 /**
  *  \brief
- *      Enable/disable the automatic Y sorting for this sprite so it will always appear in front of sprites will lower Y position.<br>
- *      Note that you can also use SPR_sortOnY() to do manual Y sorting on the whole sprite list.
+ *      Enable/disable the automatic depth (Z) sorting for this sprite so it will always appear in front of sprites with lower depth position.<br>
+ *      Note that you can also use SPR_sort() to do manual depth (Z) sorting on the whole sprite list.
  *
  *  \param sprite
- *      Sprite we want to enable/disable Y sorting for
+ *      Sprite we want to enable/disable depth sorting for
  *  \param value
- *      TRUE to enable the automatic Y sorting for this sprite<br>
+ *      TRUE to enable the automatic depth sorting for this sprite<br>
  *      FALSE to disable it, you can still use the SPR_sort(..) method.<br>
  *
- *  \see SPR_sort(..)
+ *  \see SPR_sort()
  */
-void SPR_setYSorting(Sprite *sprite, u16 value);
+void SPR_setDepthSorting(Sprite *sprite, u16 value);
 /**
  *  \brief
- *      Enable/disable 'always on top' state for this sprite so it will always appear above others sprites whatever sorting order is.<br>the automatic Y sorting for this sprite
- *      so it will always appear in front of sprites will lower Y position.
- *
- *  \param sprite
- *      Sprite we want to enable/disable 'always on top' state
- *  \param value
- *      TRUE to enable the 'always on top' state for this sprite<br>
- *      FALSE to disable it
- *
- *  \see SPR_sort(..)
- *  \see SPR_setYSorting(..)
+ *      Same as #SPR_setDepthSorting(..)
  */
-void SPR_setAlwaysOnTop(Sprite *sprite, u16 value);
+void SPR_setZSorting(Sprite *sprite, u16 value);
+/**
+ *  \deprecated
+ *      Use #SPR_setDepthSorting(..) instead
+ */
+void SPR_setYSorting(Sprite *sprite, u16 value);
 /**
  *  \brief
  *      Set the <i>visibility</i> state for this sprite.
@@ -701,12 +725,12 @@ void SPR_clear();
  */
 void SPR_update();
 /**
- *  \brief
+\brief
  *      Sort the sprites to define display order.
  *
  *  This method uses the given comparator callback to sort the whole list of Sprite and so define
  *  the display order of the sprites.<br>
- *  If the comparator callback is set to NULL then by default Y sorting is performed.<br>
+ *  If the comparator callback is set to NULL then by default depth sorting is performed.<br>
  *  This method can take a long time, use it carefully !
  *
  *  \param comparator
@@ -715,15 +739,22 @@ void SPR_update();
  *      It should return a value < 0 if sprite 1 is below sprite 2 and a value > 0 in the opposite case.<br>
  *      If order doesn't matter it can return 0.
  *
- *  \see #SPR_sortOnYPos()
- */
-void SPR_sort(_spriteComparatorCallback* comparator);
+ *  \see #SPR_sortOnDepth()
+*/
+void SPR_sort(_spriteComparatorCallback* sorter);
 /**
  *  \brief
- *      Sort the sprites by their Y position to define display order (same as SPR_sort(NULL))
+ *      Sort the sprites by their depth (Z) to define display order (same as SPR_sort(NULL))
  *
  *  \see #SPR_sort(..)
- */
+*/
+void SPR_sortOnDepth();
+/**
+ *  \deprecated
+ *      Use #SPR_sortOnDepth() instead
+ *
+ *  \see #SPR_sort(..)
+*/
 void SPR_sortOnYPos();
 
 /**

@@ -17,11 +17,11 @@
 #include "font.h"
 
 
-#define WINDOW_DEFAULT          0xB000
-#define HSCRL_DEFAULT           0xB800
-#define SLIST_DEFAULT           0xBC00
-#define APLAN_DEFAULT           0xE000
-#define BPLAN_DEFAULT           0xC000
+#define WINDOW_DEFAULT          0xD000      // multiple of 0x1000 (0x0800 in H32)
+#define HSCRL_DEFAULT           0xD800      // multiple of 0x0400
+#define SLIST_DEFAULT           0xDC00      // multiple of 0x0400 (0x0200 in H32)
+#define APLAN_DEFAULT           0xE000      // multiple of 0x2000
+#define BPLAN_DEFAULT           0xC000      // multiple of 0x2000
 
 
 static void updateMapsAddress();
@@ -66,25 +66,25 @@ void VDP_init()
     bplan_addr = BPLAN_DEFAULT;
     slist_addr = SLIST_DEFAULT;
     hscrl_addr = HSCRL_DEFAULT;
-    // get minimum address of all map/table
-    maps_addr = window_addr;
+    // get minimum address of all map/table (default is plan B)
+    maps_addr = BPLAN_DEFAULT;
 
     // default resolution
     screenWidth = 320;
     screenHeight = 224;
     planWidth = 64;
-    planHeight = 64;
+    planHeight = 32;
     windowWidth = 64;
     planWidthSft = 6;
-    planHeightSft = 6;
+    planHeightSft = 5;
     windowWidthSft = 6;
 
     regValues[0x00] = 0x04;
     regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, VBL, DMA + VCell size */
-    regValues[0x02] = aplan_addr / 0x400;       /* reg. 2 - Plane A =$30*$400=$C000 */
-    regValues[0x03] = window_addr / 0x400;      /* reg. 3 - Window  =$2C*$400=$B000 */
-    regValues[0x04] = bplan_addr / 0x2000;      /* reg. 4 - Plane B =$7*$2000=$E000 */
-    regValues[0x05] = slist_addr / 0x200;       /* reg. 5 - sprite table begins at $BC00=$5E*$200 */
+    regValues[0x02] = aplan_addr / 0x400;       /* reg. 2 - Plane A = $E000 */
+    regValues[0x03] = window_addr / 0x400;      /* reg. 3 - Window  = $D000 */
+    regValues[0x04] = bplan_addr / 0x2000;      /* reg. 4 - Plane B = $C000 */
+    regValues[0x05] = slist_addr / 0x200;       /* reg. 5 - Sprite table = $DC00 */
     regValues[0x06] = 0x00;                     /* reg. 6 - not used */
     regValues[0x07] = 0x00;                     /* reg. 7 - Background Color number*/
     regValues[0x08] = 0x00;                     /* reg. 8 - not used */
@@ -92,10 +92,10 @@ void VDP_init()
     regValues[0x0A] = 0x01;                     /* reg 10 - HInterrupt timing */
     regValues[0x0B] = 0x00;                     /* reg 11 - $0000abcd a=extr.int b=vscr cd=hscr */
     regValues[0x0C] = 0x81;                     /* reg 12 - hcell mode + shadow/highight + interlaced mode (40 cell, no shadow, no interlace) */
-    regValues[0x0D] = hscrl_addr / 0x400;       /* reg 13 - HScroll Table =$2E*$400=$B800 */
+    regValues[0x0D] = hscrl_addr / 0x400;       /* reg 13 - HScroll Table = $D800 */
     regValues[0x0E] = 0x00;                     /* reg 14 - not used */
     regValues[0x0F] = 0x02;                     /* reg 15 - auto increment data */
-    regValues[0x10] = 0x11;                     /* reg 16 - scrl screen v&h size (64x64) */
+    regValues[0x10] = 0x01;                     /* reg 16 - scrl screen v&h size (32x64) */
     regValues[0x11] = 0x00;                     /* reg 17 - window hpos */
     regValues[0x12] = 0x00;                     /* reg 18 - window vpos */
 
@@ -178,7 +178,7 @@ void VDP_setReg(u16 reg, u8 value)
 
         case 0x02:
             v = value & 0x38;
-            // update text plan address
+            // update plan address
             aplan_addr = v * 0x400;
             updateMapsAddress();
             break;

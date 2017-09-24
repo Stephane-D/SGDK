@@ -222,7 +222,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             len = sizeof(z80_drv2);
             break;
 
-        case Z80_DRIVER_4PCM_ENV:
+        case Z80_DRIVER_4PCM:
             drv = z80_drv3;
             len = sizeof(z80_drv3);
             break;
@@ -295,7 +295,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             Z80_releaseBus();
             break;
 
-        case Z80_DRIVER_4PCM_ENV:
+        case Z80_DRIVER_4PCM:
             // load volume table
             Z80_upload(0x1000, tab_vol, 0x1000, 0);
 
@@ -372,7 +372,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             // drivers supporting ready status
             case Z80_DRIVER_2ADPCM:
             case Z80_DRIVER_PCM:
-            case Z80_DRIVER_4PCM_ENV:
+            case Z80_DRIVER_4PCM:
             case Z80_DRIVER_XGM:
                 Z80_releaseBus();
                 // wait bus released
@@ -404,9 +404,8 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             // using auto sync --> enable XGM task on VInt
             if (!(driverFlags & DRIVER_FLAG_MANUALSYNC_XGM))
                 VIntProcess |= PROCESS_XGM_TASK;
-            // define default tempo
-            if (IS_PALSYSTEM) SND_setMusicTempo_XGM(50);
-            else SND_setMusicTempo_XGM(60);
+            // define default XGM tempo (always based on NTSC timing)
+            SND_setMusicTempo_XGM(60);
             // reset load calculation
             XGM_resetLoadCalculation();
             break;

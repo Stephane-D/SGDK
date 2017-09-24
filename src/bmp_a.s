@@ -1,5 +1,5 @@
-    .globl    clearBitmapBuffer
-    .type    clearBitmapBuffer, @function
+    .globl  clearBitmapBuffer
+    .type   clearBitmapBuffer, @function
 clearBitmapBuffer:
     move.l 4(%sp),%a0           | a0 = buffer
     lea 20480(%a0),%a0          | a0 = buffer end
@@ -46,8 +46,8 @@ clearBitmapBuffer:
     rts
 
 
-    .globl    copyBitmapBuffer
-    .type    copyBitmapBuffer, @function
+    .globl  copyBitmapBuffer
+    .type   copyBitmapBuffer, @function
 copyBitmapBuffer:
     move.l 4(%sp),%a0           | a0 = src
     move.l 8(%sp),%a1           | a1 = dest
@@ -125,24 +125,318 @@ copyBitmapBuffer:
     rts
 
 
-    | internal use only
-    | -----------------
-    | IN:
-    | d2 = x1
-    | d3 = y1
-    | d4 = x2
-    | d5 = y2
-    |
-    | OUT:
-    | d0 = ZFLAG = 0 if outside screen
-    |              1 if inside screen
-    | d1 = BMP_HEIGHT - 1
-    | d2 = x1
-    | d3 = y1
-    | d4 = x2
-    | d5 = y2
-    | d6-d7 = ??
-clipLine:
+    .globl  BMP_setPixelFastA
+    .type   BMP_setPixelFastA, @function
+BMP_setPixelFastA:
+    moveq   #-1,%d1                         | d1 = 0xFFFFFFFF
+    move.w  6(%sp),%d0                      | d0 = X
+    move.w  10(%sp),%d1                     | d1 = Y
+
+.spf_01:
+    lsl.w   #7,%d1
+    lsr.w   #1,%d0
+    jcs     .spf_x_odd
+
+.spf_x_even:
+    add.w   %d0,%d1
+    add.w   bmp_buffer_write+2,%d1
+    move.l  %d1,%a0                         | a0 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+    move.b  15(%sp),%d1                     | d1 = col
+
+    move.b  (%a0),%d0                       | d0 = *dst
+    and.b   #0x0F,%d0
+    and.b   #0xF0,%d1
+    or.b    %d1,%d0
+    move.b  %d0,(%a0)                       | *dst = (*dst & 0x0F) | (col & 0xF0);
+
+    rts
+
+.spf_x_odd:
+    add.w   %d0,%d1
+    add.w   bmp_buffer_write+2,%d1
+    move.l  %d1,%a0                         | a0 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+    move.b  15(%sp),%d1                     | d1 = col
+
+    move.b  (%a0),%d0                       | d0 = *dst
+    and.b   #0xF0,%d0
+    and.b   #0x0F,%d1
+    or.b    %d1,%d0
+    move.b  %d0,(%a0)                       | *dst = (*dst & 0xF0) | (col & 0x0F);
+
+    rts
+
+
+    .globl  BMP_setPixelA
+    .type   BMP_setPixelA, @function
+BMP_setPixelA:
+    moveq   #-1,%d1                         | d1 = 0xFFFFFFFF
+    move.w  6(%sp),%d0                      | d0.w = X
+    move.w  10(%sp),%d1                     | d1.w = Y
+
+    cmp.w   #256,%d0
+    jcc     .sp_01
+    cmp.w   #160,%d1
+    jcs     .spf_01
+
+.sp_01:
+    rts
+
+
+    .globl  BMP_setPixelsFast_V2D
+    .type   BMP_setPixelsFast_V2D, @function
+BMP_setPixelsFast_V2D:
+    move.l  4(%sp),%a0                      | a0 = crd
+    move.b  11(%sp),%d1                     | d1 = col
+    move.w  14(%sp),%d0                     | d0 = num
+    subq.w  #1,%d0
+
+    movem.l %d2-%d6/%a2,-(%sp)
+
+    move.l  bmp_buffer_write,%a2            | a2 = bmp_buffer_write
+    move.b  #0x0F,%d3
+    move.b  #0xF0,%d4
+    move.b  %d1,%d5
+    move.b  %d1,%d6
+    and.b   %d3,%d5                         | d5 = col & 0x0F = cd
+    and.b   %d4,%d6                         | d6 = col & 0xF0 = cu
+
+.spsfv_loop:
+    move.w  (%a0)+,%d1                      | d1 = X
+    move.w  (%a0)+,%d2                      | d2 = Y
+
+    lsl.w   #7,%d2
+    lsr.w   #1,%d1
+    jcs     .spsfv_x_odd
+
+.spsfv_x_even:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d3,%d2
+    or.b    %d6,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0x0F) | cu;
+
+    dbra.w  %d0,.spsfv_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2
+    rts
+
+.spsfv_x_odd:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d4,%d2
+    or.b    %d5,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0xF0) | cd;
+
+    dbra.w  %d0,.spsfv_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2
+    rts
+
+
+    .globl  BMP_setPixels_V2D
+    .type   BMP_setPixels_V2D, @function
+BMP_setPixels_V2D:
+    move.l  4(%sp),%a0                      | a0 = crd
+    move.b  11(%sp),%d1                     | d1 = col
+    move.w  14(%sp),%d0                     | d0 = num
+    subq.w  #1,%d0
+
+    movem.l %d2-%d6/%a2-%a4,-(%sp)
+
+    move.l  bmp_buffer_write,%a2            | a2 = bmp_buffer_write
+    move.b  #0x0F,%d3
+    move.b  #0xF0,%d4
+    move.b  %d1,%d5
+    move.b  %d1,%d6
+    and.b   %d3,%d5                         | d5 = col & 0x0F = cd
+    and.b   %d4,%d6                         | d6 = col & 0xF0 = cu
+    move.w  #256,%a3
+    move.w  #160,%a4
+
+.spsv_loop:
+    move.w  (%a0)+,%d1                      | d1 = X
+    move.w  (%a0)+,%d2                      | d2 = Y
+
+    cmp.w   %a3,%d1
+    jcc     .spsv_01
+    cmp.w   %a4,%d2
+    jcs     .spsv_02
+
+.spsv_01:
+    dbra.w  %d0,.spsv_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2-%a4
+    rts
+
+.spsv_02:
+    lsl.w   #7,%d2
+    lsr.w   #1,%d1
+    jcs     .spsv_x_odd
+
+.spsv_x_even:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d3,%d2
+    or.b    %d6,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0x0F) | cu;
+
+    dbra.w  %d0,.spsv_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2-%a4
+    rts
+
+.spsv_x_odd:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d4,%d2
+    or.b    %d5,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0xF0) | cd;
+
+    dbra.w  %d0,.spsv_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2-%a4
+    rts
+
+
+    .globl  BMP_setPixelsFast
+    .type   BMP_setPixelsFast, @function
+BMP_setPixelsFast:
+    move.l  4(%sp),%a0                      | a0 = pixels
+    move.w  10(%sp),%d0                     | d0 = num
+    subq.w  #1,%d0
+
+    movem.l %d2-%d4/%a2,-(%sp)
+
+    move.l  bmp_buffer_write,%a2            | a2 = bmp_buffer_write
+    move.b  #0x0F,%d3
+    move.b  #0xF0,%d4
+
+.spsf_loop:
+    move.w  (%a0)+,%d1                      | d1 = X
+    move.w  (%a0)+,%d2                      | d2 = Y
+
+    lsl.w   #7,%d2
+    lsr.w   #1,%d1
+    jcs     .spsf_x_odd
+
+.spsf_x_even:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+    move.w  (%a0)+,%d1                      | d1 = col
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d3,%d2
+    and.b   %d4,%d1
+    or.b    %d1,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0x0F) | (col & 0xF0);
+
+    dbra.w  %d0,.spsf_loop
+
+    movem.l (%sp)+,%d2-%d4/%a2
+    rts
+
+.spsf_x_odd:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+    move.w  (%a0)+,%d1                      | d1 = col
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d4,%d2
+    and.b   %d3,%d1
+    or.b    %d1,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0x0F) | (col & 0xF0);
+
+    dbra.w  %d0,.spsf_loop
+
+    movem.l (%sp)+,%d2-%d4/%a2
+    rts
+
+
+    .globl  BMP_setPixels
+    .type   BMP_setPixels, @function
+BMP_setPixels:
+    move.l  4(%sp),%a0                      | a0 = pixels
+    move.w  10(%sp),%d0                     | d0 = num
+    subq.w  #1,%d0
+
+    movem.l %d2-%d6/%a2,-(%sp)
+
+    move.l  bmp_buffer_write,%a2            | a2 = bmp_buffer_write
+    move.b  #0x0F,%d3
+    move.b  #0xF0,%d4
+    move.w  #256,%d5
+    move.w  #160,%d6
+
+.sps_loop:
+    move.w  (%a0)+,%d1                      | d1 = X
+    move.w  (%a0)+,%d2                      | d2 = Y
+
+    cmp.w   %d5,%d1
+    jcc     .sps_01
+    cmp.w   %d6,%d2
+    jcs     .sps_02
+
+.sps_01:
+    move.w  (%a0)+,%d1                      | d1 = col (ignore)
+    dbra.w  %d0,.sps_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2
+    rts
+
+.sps_02:
+    lsl.w   #7,%d2
+    lsr.w   #1,%d1
+    jcs     .sps_x_odd
+
+.sps_x_even:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+    move.w  (%a0)+,%d1                      | d1 = col
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d3,%d2
+    and.b   %d4,%d1
+    or.b    %d1,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0x0F) | (col & 0xF0);
+
+    dbra.w  %d0,.sps_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2
+    rts
+
+.sps_x_odd:
+    add.w   %d1,%d2
+    lea.l   (%a2,%d2.w),%a1                 | a1 = dst = &bmp_buffer_write[(y * BMP_PITCH) + (x >> 1)]
+    move.w  (%a0)+,%d1                      | d1 = col
+
+    move.b  (%a1),%d2                       | d2 = *dst
+    and.b   %d4,%d2
+    and.b   %d3,%d1
+    or.b    %d1,%d2
+    move.b  %d2,(%a1)                       | *dst = (*dst & 0x0F) | (col & 0xF0);
+
+    dbra.w  %d0,.sps_loop
+
+    movem.l (%sp)+,%d2-%d6/%a2
+    rts
+
+
+    .globl    BMP_clipLine
+    .type    BMP_clipLine, @function
+BMP_clipLine:
+    movm.l %d2-%d7,-(%sp)
+
+    move.l 28(%sp),%a0          | a0 = &line
+
+    movm.w (%a0),%d2-%d5        | d2 = x1, d3 = y1, d4 = x2, d5 = y2
 
     move.w #255,%d0             | d0 = BMP_WIDTH - 1
     move.w #159,%d1             | d1 = BMP_HEIGHT - 1
@@ -156,7 +450,9 @@ clipLine:
     cmp.w %d1,%d5               |     ((u16) y2 < BMP_HEIGHT))
     jhi .L50
 
+    movm.w %d2-%d5,(%a0)        |   update line
     moveq #1,%d0                |   return 1;
+    movm.l (%sp)+,%d2-%d7
     rts
 
 .L60:
@@ -254,7 +550,9 @@ clipLine:
     cmp.w %d1,%d5               |     ((u16) y2 < BMP_HEIGHT))
     jhi .L50                    | {
 
-    moveq #1,%d0
+    movm.w %d2-%d5,(%a0)        |   update line
+    moveq #1,%d0                |   return 1;
+    movm.l (%sp)+,%d2-%d7
     rts                         | }
 
 .L50:
@@ -283,107 +581,163 @@ clipLine:
 
 .L52:
     moveq #0,%d0                |   return 0;
-    rts
-
-
-    .globl    BMP_clipLine
-    .type    BMP_clipLine, @function
-BMP_clipLine:
-    movm.l %d2-%d7,-(%sp)
-
-    move.l 28(%sp),%a0          | a0 = &line
-    movm.w (%a0),%d2-%d5        | d2 = x1, d3 = y1, d4 = x2, d5 = y2
-
-    jsr clipLine
-    jeq .L10
-
-    movm.w %d2-%d5,(%a0)        |   update line
-
-.L10:
     movm.l (%sp)+,%d2-%d7
     rts
 
 
-    .globl    BMP_drawLine
+    .globl   BMP_drawLine
     .type    BMP_drawLine, @function
 BMP_drawLine:
-    movm.l %d2-%d7,-(%sp)
+    movem.l %d2-%d7/%a2-%a5,-(%sp)
 
-    move.l 28(%sp),%a0      | a0 = &line
-    movem.w (%a0)+,%d2-%d5  | d2 = x1, d3 = y1, d4 = x2, d5 = y2
+    move.l  44(%sp),%a0     | a0 = &line
+    movem.w (%a0)+,%d2-%d6  | d2 = x1, d3 = y1, d4 = x2, d5 = y2, d6 = col
 
-    jsr clipLine
-    jeq .L105
+.dl_start:
+    moveq   #1,%d0          | d0 = stepx = 1
+    move.w  #128,%d1        | d1 = stepy = BMP_PITCH;
 
-    move.b (%a0),%d6        | d6 = col
+    sub.w   %d2,%d4         | d4 = deltax
+    jge     .dl_01          | {
 
-    asr.w #1,%d2            | d2 = x1 adjusted
-    asr.w #1,%d4            | d4 = x2 adjusted
-
-    sub.w %d2,%d4           | d4 = deltax
-    sub.w %d3,%d5           | d5 = deltay
-
-    lsl.w #7,%d3
-    add.w %d2,%d3               | d3.l = offset = (y1 * BMP_PITCH) + x1
-    ext.l %d3
-    add.l bmp_buffer_write,%d3  | d3 = &bmp_buffer_write[offset];
-    move.l %d3,%a0              | a0 = *dst = &bmp_buffer_write[offset];
-
-    moveq #1,%d0            | d0 = stepx = 1
-
-    tst.w %d4               | if (deltax < 0)
-    jge .L100               | {
-
-    neg.w %d4               |     deltax = -deltax;
-    neg.w %d0               |     stepx = -stepx;
+    neg.w   %d4             |     deltax = -deltax;
+    neg.w   %d0             |     stepx = -stepx;
                             | }
-.L100:
-    move.w #128,%d1         | d1 = stepy = BMP_PITCH;
+.dl_01:
+    sub.w   %d3,%d5         | d5 = deltay
+    jge     .dl_02          | {
 
-    tst.w %d5               | if (deltay < 0)
-    jge .L101               | {
-
-    neg.w %d5               |     deltay = -deltay;
-    neg.w %d1               |     stepy = -stepy;
+    neg.w   %d5             |     deltay = -deltay;
+    neg.w   %d1             |     stepy = -stepy;
                             | }
-.L101:                      |
-    cmp.w %d4,%d5           | if (deltax < deltay)
-    jle .L102               | {
+.dl_02:                     |
+    move.w  %d0,%a2         | a2 = stepx
+    move.w  %d1,%a3         | a3 = stepy
+    move.w  %d4,%a4         | a4 = dx
+    move.w  %d5,%a5         | a5 = dy
 
-    exg %d4,%d5             |     swap(deltax, deltay);
-    exg %d0,%d1             |     swap(stepx, stey);
-                            | }
-.L102:                      |
-    move.w %d4,%d2
-    asr.w #1,%d2            | d2 = delta = dx >> 1
-    move.w %d4,%d3          | d3 = cnt
-    add.w %d0,%d1           | d1 = stepx + stepy
+    move.l  bmp_buffer_write,%d7
+    lsl.w   #7,%d3
+    add.w   %d3,%d7         | d7.l = &bmp_buffer_write[y1 * BMP_PITCH]
+    move.l  %d7,%a0         | a0 = *dst = &bmp_buffer_write[y1 * BMP_PITCH]
 
-.L103:                      | while(cnt--)
-                            | {
-    move.b %d6,(%a0)        |     *dst = col;
+    moveq   #-0x10,%d0      | d0 = mu = 0xF0
+    moveq   #0x0F,%d1       | d1 = md = 0x0F
+    move.b  %d6,%d7
+    and.b   %d0,%d6         | d6 = cu = col & mu
+    and.b   %d1,%d7         | d7 = cd = col & md
 
-    sub.w %d5,%d2           |     if ((delta -= dy) < 0)
-    jpl .L104               |     {
 
-    add.w %d1,%a0           |         dst += stepx + stepy; (can be 16 bits as dst is in RAM)
-    add.w %d4,%d2           |         delta += dx;
-                            |     }
-    dbra %d3,.L103          |     else
+    cmp.w   %d4,%d5         | if (deltax < deltay)
+    jge     .dl_on_dy       | {
 
-    movm.l (%sp)+,%d2-%d7
+.dl_on_dx:
+    move.w  %d4,%d3         |   d2 = x
+    asr.w   #1,%d3          |   d3 = delta = dx >> 1
+                            |   d4 = cnt = dx
+
+.dl_dx_loop:                |   while(cnt--)
+    move.w  %d2,%d5         |   {
+    lsr.w   #1,%d5          |     d5 = x >> 1
+    jcs     .dl_dx_odd      |     if (x & 1)
+                            |     {
+.dl_dx_even:
+    lea     (%a0,%d5.w),%a1 |       a1 = d = dst + (x >> 1)
+
+    move.b  (%a1),%d5
+    and.b   %d1,%d5
+    or.b    %d6,%d5
+    move.b  %d5,(%a1)       |       *d = (*d & md) | cu
+
+    add.w   %a2,%d2         |       x += stepx
+    sub.w   %a5,%d3         |       if ((delta -= dy) < 0)
+    jpl     .dl_dx_even_1   |       {
+
+    add.w   %a3,%a0         |         dst += stepy; (can be 16 bits as dst is in RAM)
+    add.w   %a4,%d3         |         delta += dx;
+
+.dl_dx_even_1:              |       }
+    dbra    %d4,.dl_dx_loop |     }
+
+.dl_end:
+    movem.l (%sp)+,%d2-%d7/%a2-%a5
+    rts
+                            |     else
+.dl_dx_odd:                 |     {
+    lea     (%a0,%d5.w),%a1 |       a1 = d = dst + (x >> 1)
+
+    move.b  (%a1),%d5
+    and.b   %d0,%d5
+    or.b    %d7,%d5
+    move.b  %d5,(%a1)       |       *d = (*d & mu) | cd
+
+    add.w   %a2,%d2         |       x += stepx
+    sub.w   %a5,%d3         |       if ((delta -= dy) < 0)
+    jpl     .dl_dx_odd_1    |       {
+
+    add.w   %a3,%a0         |           dst += stepy; (can be 16 bits as dst is in RAM)
+    add.w   %a4,%d3         |           delta += dx;
+
+.dl_dx_odd_1:               |       }
+    dbra    %d4,.dl_dx_loop |     }
+
+    movem.l (%sp)+,%d2-%d7/%a2-%a5
     rts
 
-.L104:                      |
-    add.w %d0,%a0           |         dst += stepx; (can be 16 bits as dst is in RAM)
-    dbra %d3,.L103          | }
+.dl_on_dy:
+    move.w  %d5,%d3         |   d2 = x
+    asr.w   #1,%d3          |   d3 = delta = dy >> 1
+    move.w  %d5,%d4         |   d4 = cnt = dy
 
-.L105:
-    movm.l (%sp)+,%d2-%d7
+.dl_dy_loop:                |   while(cnt--)
+    move.w  %d2,%d5         |   {
+    lsr.w   #1,%d5          |     d5 = x >> 1
+    jcs     .dl_dy_odd      |     if (x & 1)
+                            |     {
+.dl_dy_even:
+    lea     (%a0,%d5.w),%a1 |       a1 = d = dst + (x >> 1)
+
+    move.b  (%a1),%d5
+    and.b   %d1,%d5
+    or.b    %d6,%d5
+    move.b  %d5,(%a1)       |       *d = (*d & md) | cu
+
+    add.w   %a3,%a0         |       dst += stepy; (can be 16 bits as dst is in RAM)
+    sub.w   %a4,%d3         |       if ((delta -= dx) < 0)
+    jpl     .dl_dy_even_1   |       {
+
+    add.w   %a2,%d2         |         x += stepx
+    add.w   %a5,%d3         |         delta += dy;
+
+.dl_dy_even_1:              |       }
+    dbra    %d4,.dl_dy_loop |     }
+
+    movem.l (%sp)+,%d2-%d7/%a2-%a5
+    rts
+                            |     else
+.dl_dy_odd:                 |     {
+    lea     (%a0,%d5.w),%a1 |       a1 = d = dst + (x >> 1)
+
+    move.b  (%a1),%d5
+    and.b   %d0,%d5
+    or.b    %d7,%d5
+    move.b  %d5,(%a1)       |       *d = (*d & mu) | cd
+
+    add.w   %a3,%a0         |       dst += stepy; (can be 16 bits as dst is in RAM)
+    sub.w   %a4,%d3         |       if ((delta -= dx) < 0)
+    jpl     .dl_dy_odd_1    |       {
+
+    add.w   %a2,%d2         |         x += stepx
+    add.w   %a5,%d3         |         delta += dy;
+
+.dl_dy_odd_1:               |       }
+    dbra    %d4,.dl_dy_loop |     }
+
+    movem.l (%sp)+,%d2-%d7/%a2-%a5
     rts
 
 
-    .globl    BMP_isPolygonCulled
+    .globl   BMP_isPolygonCulled
     .type    BMP_isPolygonCulled, @function
 BMP_isPolygonCulled:
     movm.l %d2-%d5,-(%sp)

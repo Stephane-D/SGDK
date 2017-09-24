@@ -20,8 +20,8 @@ static TileSet *allocateTileSetInternal(const TileSet *tileset, void *adr);
 static Map *allocateMapInternal(const Map *map, void *adr);
 
 // internal
-static u32 framecnt;
-static u32 last;
+static u32 framecnt = 0;
+static u32 last = 0;
 u16 randbase;
 
 
@@ -41,12 +41,11 @@ u16 random()
 
 u32 getFPS()
 {
-    static u32 result;
-
+    static s32 result;
     const u32 current = getSubTick();
-    const u32 delta = current - last;
+    u32 delta = current - last;
 
-    if (delta > 19200)
+    if ((delta > 19200) && ((framecnt > (76800 * 5)) || (delta > 76800)))
     {
         result = framecnt / delta;
         if (result > 999) result = 999;
@@ -61,11 +60,10 @@ u32 getFPS()
 fix32 getFPS_f()
 {
     static fix32 result;
+    const s32 current = getSubTick();
+    u32 delta = current - last;
 
-    const u32 current = getSubTick();
-    const u32 delta = current - last;
-
-    if (delta > 19200)
+    if ((delta > 19200) && ((framecnt > (76800 * 5)) || (delta > 76800)))
     {
         if (framecnt > (250 * 76800)) result = FIX32(999);
         else

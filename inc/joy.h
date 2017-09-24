@@ -86,6 +86,40 @@
 #define JOY_SUPPORT_KEYBOARD        0x0C
 
 
+/**
+ *  \brief
+ *      Joypad event callback.
+ *
+ *  \param joy
+ *      Joypad which generated the event.<br>
+ *      <b>JOY_1</b>    = joypad 1<br>
+ *      <b>JOY_2</b>    = joypad 2<br>
+ *      <b>...  </b>    = ...<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ *      <b>JOY_ALL</b>  = joypad 1 | joypad 2 | ... | joypad 8<br>
+ *  \param change
+ *      Changed state (button for which state changed).<br>
+ *      <b>BUTTON_UP</b>    = UP button<br>
+ *      <b>BUTTON_DOWN</b>  = DOWN button<br>
+ *      <b>BUTTON_LEFT</b>  = LEFT button<br>
+ *      <b>BUTTON_RIGHT</b> = RIGHT button<br>
+ *      <b>BUTTON_A</b>     = A button<br>
+ *      <b>BUTTON_B</b>     = B button<br>
+ *      <b>BUTTON_C</b>     = C button<br>
+ *      <b>BUTTON_START</b> = START button<br>
+ *      <b>BUTTON_X</b>     = X button<br>
+ *      <b>BUTTON_Y</b>     = Y button<br>
+ *      <b>BUTTON_Z</b>     = Z button<br>
+ *      <b>BUTTON_MODE</b>  = MODE button<br>
+ *      <b>BUTTON_LMB</b>   = Alias for A button for mouse<br>
+ *      <b>BUTTON_MMB</b>   = Alias for B button for mouse<br>
+ *      <b>BUTTON_RMC</b>   = Alias for C button for mouse<br>
+ *  \param state
+ *      Current joypad state.<br>
+ *<br>
+ *      Ex: Test if button START on joypad 1 just get pressed:<br>
+ *      joy = JOY_1; changed = BUTTON_START; state = BUTTON_START | (previous state)
+ */
 typedef void _joyEventCallback(u16 joy, u16 changed, u16 state);
 
 

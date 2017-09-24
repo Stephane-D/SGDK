@@ -7,9 +7,7 @@
  * This unit provides methods to simulate bitmap mode on SEGA genesis.<br>
  *<br>
  * The software bitmap engine permit to simulate a 256x160 pixels bitmap screen.<br>
- * Some methods as #BMP_setPixel and #BMP_drawLine use doubled X pixel so you can
- * consider resolution to be 128x160 in this case.<br>
- * Bitmap engine requires a large amount of memory (~41KB) which is dynamically allocated at BMP_init(..) time and released when BMP_end) is called.<br>
+ * Bitmap engine requires a large amount of memory (~41KB) which is dynamically allocated at BMP_init(..) time and released when BMP_end() is called.<br>
  * Bitmap engine uses a double buffer so you can draw to the write buffer while the read buffer is being sent to video memory.<br>
  * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period is really short so it takes approximately 10 frames to blit an entire buffer.<br>
  * To improve transfer performance the blank area is extended to fit bitmap resolution:<br>
@@ -62,12 +60,12 @@
 #define BMP_YPIXPERTILE_SFT         3
 /**
  *  \brief
- *          Number of X pixel per tile : 8 pixels per tile.
+ *          Number of X pixel per tile: 8 pixels per tile.
  */
 #define BMP_XPIXPERTILE             (1 << BMP_XPIXPERTILE_SFT)
 /**
  *  \brief
- *          Number of y pixel per tile : 8 pixels per tile.
+ *          Number of y pixel per tile: 8 pixels per tile.
  */
 #define BMP_YPIXPERTILE             (1 << BMP_YPIXPERTILE_SFT)
 #define BMP_XPIXPERTILEMASK         (BMP_XPIXPERTILE - 1)
@@ -76,12 +74,12 @@
 #define BMP_WIDTH_SFT               (BMP_CELLWIDTH_SFT + BMP_XPIXPERTILE_SFT)
 /**
  *  \brief
- *          Bitmap width (in pixel) : 256
+ *          Bitmap width (in pixel): 256
  */
 #define BMP_WIDTH                   (1 << BMP_WIDTH_SFT)
 /**
  *  \brief
- *          Bitmap height (in pixel) : 160
+ *          Bitmap height (in pixel): 160
  */
 #define BMP_HEIGHT                  (BMP_CELLHEIGHT * BMP_YPIXPERTILE)
 #define BMP_WIDTH_MASK              (BMP_WIDTH - 1)
@@ -89,7 +87,7 @@
 #define BMP_PITCH_SFT               (BMP_CELLWIDTH_SFT + 2)
 /**
  *  \brief
- *          Bitmap scanline pitch (number of bytes per scanline) : 128
+ *          Bitmap scanline pitch (number of byte per scanline): 128
  */
 #define BMP_PITCH                   (1 << BMP_PITCH_SFT)
 #define BMP_PITCH_MASK              (BMP_PITCH - 1)
@@ -116,35 +114,14 @@
 #define BMP_GENBMP16_IMAGE(genbmp16)    (&((genbmp16)[18]))
 
 /**
- *  \brief
- *          Return pixel value at specified location.
- *      \param x
- *          X coordinate.
- *      \param y
- *          Y coordinate.
- *
- * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_GETPIXEL(0,0) will actually returns same value as BMP_GETPIXEL((1,0)<br>
- * Be careful this function does not check for retrieving pixel outside bitmap buffer.
+ *  \deprecated Use BMP_getPixelFast(..) instead (inlining make macro useless)
  */
-#define BMP_GETPIXEL(x, y)          bmp_buffer_write[((y) * BMP_PITCH) + ((x) >> 1)]
+#define BMP_GETPIXEL(x, y)      BMP_getPixelFast(x, y)
 
 /**
- *  \brief
- *          Set pixel value at specified position.
- *
- *      \param x
- *          X pixel coordinate.
- *      \param y
- *          Y pixel coordinate.
- *      \param col
- *          pixel color.
- *
- * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_SETPIXEL(0,0,..) will actually set same pixel as BMP_SETPIXEL(1,0,..).
- * Be careful this function does not check for retrieving pixel outside bitmap buffer.
+ *  \deprecated Use BMP_setPixelFast(..) instead (inlining make macro useless)
  */
-#define BMP_SETPIXEL(x, y, col)     bmp_buffer_write[((y) * BMP_PITCH) + ((x) >> 1)] = col;
+#define BMP_SETPIXEL(x, y, col) BMP_setPixelFast(x, y, col)
 
 
 #define BMP_BASETILEINDEX       TILE_USERINDEX
@@ -195,12 +172,13 @@ typedef struct
  *  \param pt
  *          Coordinates.
  *  \param col
- *          Color.
+ *          Color (should be 8 bits filled: 0x0000, 0x0011, .. for plain color).
+ *          we use u16 for alignment optimization
  */
 typedef struct
 {
     Vect2D_s16 pt;
-    u8 col;
+    u16 col;
 } Pixel;
 
 /**
@@ -212,13 +190,14 @@ typedef struct
  *  \param pt2
  *          End point.
  *  \param col
- *          Color.
+ *          Color (should be 8 bits filled: 0x0000, 0x0011, .. for plain color).
+ *          we use u16 for alignment optimization
  */
 typedef struct
 {
     Vect2D_s16 pt1;
     Vect2D_s16 pt2;
-    u8 col;
+    u16 col;
 } Line;
 
 /**
@@ -232,14 +211,15 @@ typedef struct
  *  \param pt3
  *          End point.
  *  \param col
- *          Color.
+ *          Color (should be 8 bits filled: 0x00, 0x11, .. for plain color).
+ *          we use u16 for alignment optimization
  */
 typedef struct
 {
     Vect2D_s16 pt1;
     Vect2D_s16 pt2;
     Vect2D_s16 pt3;
-    u8 col;
+    u16 col;
 } Triangle;
 
 
@@ -427,67 +407,108 @@ void BMP_clearTextLine(u16 y);
  */
 void BMP_showFPS(u16 float_display);
 
-
 /**
  *  \brief
- *      Get pixel at specified position.
+ *      Get pixel at specified position (safe version with bounds verification)
  *
  *  \param x
  *      X coordinate.
  *  \param y
  *      Y coordinate.
  *
- * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_getPixel(0,0) will actually returns same value as BMP_getPixel(1,0).
- *
- *  \see #BMP_GETPIXEL (faster but not as safe)
+ *  \see #BMP_getPixelFast
+ *  \see #BMP_setPixel
  */
 u8   BMP_getPixel(u16 x, u16 y);
 /**
  *  \brief
- *      Set pixel at specified position.
+ *      Get pixel at specified position (fast version without bounds verification)
+ *
+ *  \param x
+ *      X coordinate.
+ *  \param y
+ *      Y coordinate.
+ *
+ *  \see #BMP_getPixel
+ *  \see #BMP_setPixelFast
+ */
+u8   BMP_getPixelFast(u16 x, u16 y);
+/**
+ *  \brief
+ *      Set pixel at specified position (safe version with bounds verification)
  *
  *  \param x
  *      X pixel coordinate.
  *  \param y
  *      Y pixel coordinate.
  *  \param col
- *      pixel color.
+ *      pixel color (should be 8 bits filled: 0x00, 0x11, .. for plain color)
  *
- * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_setPixel(0,0,..) will actually set same pixel as BMP_setPixel(1,0,..).
- *
- *  \see #BMP_SETPIXEL (faster but not as safe)
+ *  \see #BMP_setPixelFast
+ *  \see #BMP_getPixel
  */
 void BMP_setPixel(u16 x, u16 y, u8 col);
 /**
  *  \brief
- *      Set pixels.
+ *      Set pixel at specified position (fast version without bounds verification)
+ *
+ *  \param x
+ *      X pixel coordinate.
+ *  \param y
+ *      Y pixel coordinate.
+ *  \param col
+ *      pixel color (should be 8 bits filled: 0x00, 0x11, .. for plain color)
+ *
+ *  \see #BMP_setPixel
+ *  \see #BMP_getPixelFast
+ */
+void BMP_setPixelFast(u16 x, u16 y, u8 col);
+/**
+ *  \brief
+ *      Set pixels from Vect2D array (safe version with bounds verification)
  *
  *  \param crd
- *      Coordinates buffer.
+ *      Vect2D_u16 Coordinates buffer.
  *  \param col
- *      pixels color.
+ *      pixels color (should be 8 bits filled: 0x00, 0x11, .. for plain color)
  *  \param num
  *      number of pixel to draw (lenght of coordinates buffer).
  *
- * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_setPixel(0,0,..) will actually set same pixel as BMP_setPixel(1,0,..).
  */
-void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
+ void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
 /**
  *  \brief
- *      Set pixels.
+ *      Set pixels from Vect2D array (fast version without bounds verification)
+ *
+ *  \param crd
+ *      Vect2D_u16 Coordinates buffer.
+ *  \param col
+ *      pixels color (should be 8 bits filled: 0x00, 0x11, .. for plain color)
+ *  \param num
+ *      number of pixel to draw (lenght of coordinates buffer).
+ *
+ */
+ void BMP_setPixelsFast_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
+/**
+ *  \brief
+ *      Set pixels from Pixel array (safe version with bounds verification)
  *
  *  \param pixels
  *      Pixels buffer.
  *  \param num
  *      number of pixel to draw (lenght of pixels buffer).
- *
- * Pixels are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_setPixel(0,0,..) will actually set same pixel as BMP_setPixel(1,0,..).
  */
-void BMP_setPixels(const Pixel *pixels, u16 num);
+ void BMP_setPixels(const Pixel *pixels, u16 num);
+/**
+ *  \brief
+ *      Set pixels from Pixel array (fast version without bounds verification)
+ *
+ *  \param pixels
+ *      Pixels buffer.
+ *  \param num
+ *      number of pixel to draw (lenght of pixels buffer).
+ */
+ void BMP_setPixelsFast(const Pixel *pixels, u16 num);
 
 /**
  *  \brief
@@ -496,19 +517,17 @@ void BMP_setPixels(const Pixel *pixels, u16 num);
  *  \param l
  *      Line to clip.
  *  \return
- *      false (0) is the line is entirely outside bitmap screen.<br>
- *      true if at least one pixel is on screen.
+ *      FALSE (0) is the line is entirely outside bitmap screen (no clip is done).<br>
+ *      TRUE if at least one pixel is on screen (line is clipped if needed).
  */
-u8   BMP_clipLine(Line *l);
+u16   BMP_clipLine(Line *l);
 /**
  *  \brief
- *      Draw a line.
+ *      Draw a line (no bounds verification).
+ *      You can use #BMP_clipLine(..) first to clip the line to view range if needed.
  *
  *  \param l
  *      Line to draw.
- *
- * Lines are rendereded with X doubled resolution (byte operation) for performance reason.<br>
- * So BMP_drawLine(0,0,0,159) will actually draw same line as BMP_drawLine(1,0,1,159).
  */
 void BMP_drawLine(Line *l);
 /**

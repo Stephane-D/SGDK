@@ -258,11 +258,11 @@ void SND_stopPlay_2ADPCM(const u16 channel)
 }
 
 
-// Z80_DRIVER_4PCM_ENV
+// Z80_DRIVER_4PCM
 // 4 channels 8 bits signed sample driver with volume support
 ///////////////////////////////////////////////////////////////
 
-u8 SND_isPlaying_4PCM_ENV(const u16 channel_mask)
+u8 SND_isPlaying_4PCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
@@ -271,7 +271,7 @@ u8 SND_isPlaying_4PCM_ENV(const u16 channel_mask)
     SYS_disableInts();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -288,7 +288,7 @@ u8 SND_isPlaying_4PCM_ENV(const u16 channel_mask)
     return ret;
 }
 
-void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, const u8 loop)
+void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop)
 {
     vu8 *pb;
     u8 status;
@@ -299,7 +299,7 @@ void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, 
     SYS_disableInts();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -351,7 +351,7 @@ void SND_startPlay_4PCM_ENV(const u8 *sample, const u32 len, const u16 channel, 
     SYS_enableInts();
 }
 
-void SND_stopPlay_4PCM_ENV(const u16 channel)
+void SND_stopPlay_4PCM(const u16 channel)
 {
     vu8 *pb;
     u32 addr;
@@ -360,7 +360,7 @@ void SND_stopPlay_4PCM_ENV(const u16 channel)
     SYS_disableInts();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -387,7 +387,7 @@ void SND_stopPlay_4PCM_ENV(const u16 channel)
     SYS_enableInts();
 }
 
-void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume)
+void SND_setVolume_4PCM(const u16 channel, const u8 volume)
 {
     vu8 *pb;
 
@@ -395,7 +395,7 @@ void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume)
     SYS_disableInts();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -410,7 +410,7 @@ void SND_setVolume_4PCM_ENV(const u16 channel, const u8 volume)
     SYS_enableInts();
 }
 
-u8 SND_getVolume_4PCM_ENV(const u16 channel)
+u8 SND_getVolume_4PCM(const u16 channel)
 {
     vu8 *pb;
     u8 volume;
@@ -419,7 +419,7 @@ u8 SND_getVolume_4PCM_ENV(const u16 channel)
     SYS_disableInts();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_4PCM_ENV, TRUE);
+    Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
 
     Z80_requestBus(TRUE);
 

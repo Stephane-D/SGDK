@@ -22,26 +22,50 @@
 // H-blanking in          93, E9          B2, E4
 // H-blanking out         06, 07          06, 07
 
+// PAL           |V28              |V30
+//|VCounter      |[1]0x00-0xFF,    |[1]0x00-0xFF,
+//|progression   |[2]0x00-0x02,    |[2]0x00-0x0A,
+//|              |[3]0xCA-0xFF     |[3]0xD2-0xFF
+// NTSC           |V28             |V30
+//|VCounter      |[1]0x00-0xEA     |[1]0x00-0xFF
+//|progression   |[2]0xE5-0xFF     |[2]0x00-0xFF
+
 
 vu32 vtimer;
 
 static u32 timer[MAXTIMER];
+static u32 lastSTick = 0;
 
 
 // return elapsed time from console reset (1/76800 second based)
 // WARNING : this function isn't accurate because of the VCounter rollback
 u32 getSubTick()
 {
-    u32 vcnt;
+    u16 vcnt;
 
     vcnt = GET_VCOUNTER;
-    const u32 scrh = screenHeight;
+    if (IS_PALSYSTEM)
+    {
+        // potentially in rollback / vblank --> use medium value
+        if (vcnt >= 0xCA) vcnt = 8;
+        // potentially in rollback --> use medium value
+        else if ((vcnt <= 0x0A) && GET_VDPSTATUS(VDP_VBLANK_FLAG)) vcnt = 8;
+        // use normal value
+        else vcnt += 16;
+    }
+    else
+    {
+        // potentially in rollback / vblank --> use medium value
+        if (vcnt >= 0xDF) vcnt = 8;
+        // use normal value
+        else vcnt += 16;
+    }
 
-    // as VCounter roolback in blank area we use a "medium" value
-    if (vcnt >= scrh) vcnt = 16;
-    else vcnt += (256 - scrh);
+    u32 current = (vtimer << 8) + vcnt;
 
-    const u32 current = (vtimer << 8) + vcnt;
+    // possible only if vtimer not yet increase while in vblank --> fix
+    if (current < lastSTick) current += 256;
+    lastSTick = current;
 
     if (IS_PALSYSTEM) return current * 6;
     else return current * 5;

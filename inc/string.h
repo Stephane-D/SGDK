@@ -39,15 +39,15 @@ typedef __gnuc_va_list va_list;
 
 /**
  *  \brief
- *      Calculate the length of a string.
+ *      Calculate the length of a string (limited to 65535 characters maximum).
  *
  *  \param str
  *      The string we want to calculate the length.
- *  \return length of string.
+ *  \return length of string
  *
- * This function calculates and returns the length of the specified string.
+ * This function calculates and returns the length of the specified string (limited to 65535 characters maximum).
  */
-u32 strlen(const char *str);
+u16 strlen(const char *str);
 /**
  *  \brief
  *      Compute the length of a string, to a maximum number of bytes.
@@ -159,11 +159,12 @@ char *strreplacechar(char *str, char oldc, char newc);
  *      Destination string (it must be large enough to receive result).
  *  \param minsize
  *      Minimum size of resulting string.
+ *  \return string length
  *
  * Converts the specified s32 value to string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void intToStr(s32 value, char *str, const u8 minsize);
+u16 intToStr(s32 value, char *str, u16 minsize);
 /**
  *  \brief
  *      Convert a u32 value to string.
@@ -174,14 +175,31 @@ void intToStr(s32 value, char *str, const u8 minsize);
  *      Destination string (it must be large enough to receive result).
  *  \param minsize
  *      Minimum size of resulting string.
+ *  \return string length
  *
  * Converts the specified u32 value to string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void uintToStr(u32 value, char *str, const u8 minsize);
+u16 uintToStr(u32 value, char *str, u16 minsize);
 /**
  *  \brief
- *      Convert a u16 value to string. Faster than the 32-bit version.
+ *      Convert a s16 value to string (faster than the 32-bit version).
+ *
+ *  \param value
+ *      The s16 integer value to convert to string.
+ *  \param str
+ *      Destination string (it must be large enough to receive result).
+ *  \param minsize
+ *      Minimum size of resulting string.
+ *  \return string length
+ *
+ * Converts the specified s16 value to string.<br>
+ * If resulting value is shorter than requested minsize the method prepends result with '0' character.
+ */
+u16 int16ToStr(s16 value, char *str, u16 minsize);
+/**
+ *  \brief
+ *      Convert a u16 value to string (faster than the 32-bit version).
  *
  *  \param value
  *      The u16 integer value to convert to string.
@@ -189,11 +207,12 @@ void uintToStr(u32 value, char *str, const u8 minsize);
  *      Destination string (it must be large enough to receive result).
  *  \param minsize
  *      Minimum size of resulting string.
+ *  \return string length
  *
  * Converts the specified u16 value to string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void uint16ToStr(u16 value, char *str, const u8 minsize);
+u16 uint16ToStr(u16 value, char *str, u16 minsize);
 /**
  *  \brief
  *      Convert a u32 value to hexadecimal string.
@@ -208,7 +227,7 @@ void uint16ToStr(u16 value, char *str, const u8 minsize);
  * Converts the specified u32 value to hexadecimal string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void intToHex(u32 value, char *str, s16 minsize);
+void intToHex(u32 value, char *str, u16 minsize);
 
 /**
  *  \brief
@@ -223,7 +242,7 @@ void intToHex(u32 value, char *str, s16 minsize);
  *
  * Converts the specified fix32 value to string.<br>
  */
-void fix32ToStr(fix32 value, char *str, s16 numdec);
+void fix32ToStr(fix32 value, char *str, u16 numdec);
 /**
  *  \brief
  *      Convert a fix16 value to string.
@@ -237,7 +256,7 @@ void fix32ToStr(fix32 value, char *str, s16 numdec);
  *
  * Converts the specified fix16 value to string.<br>
  */
-void fix16ToStr(fix16 value, char *str, s16 numdec);
+void fix16ToStr(fix16 value, char *str, u16 numdec);
 
 /**
  *  \brief

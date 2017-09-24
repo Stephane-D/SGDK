@@ -8,17 +8,33 @@
 #include "memory.h"
 
 
+#define P01 10
+#define P02 100
+#define P03 1000
+#define P04 1000 * 10
+#define P05 1000 * 100
+#define P06 1000 * 1000
+#define P07 1000 * 1000 * 10
+#define P08 1000 * 1000 * 100
+#define P09 1000 * 1000 * 1000
+#define P10 1000 * 1000 * 1000 * 10
+
 static const char const uppercase_hexchars[] = "0123456789ABCDEF";
 static const char const lowercase_hexchars[] = "0123456789abcdef";
+static const char digits[] =
+    "0001020304050607080910111213141516171819"
+    "2021222324252627282930313233343536373839"
+    "4041424344454647484950515253545556575859"
+    "6061626364656667686970717273747576777879"
+    "8081828384858687888990919293949596979899";
 
 // FORWARD
-static u8 uint16_to_str(u16 value, char * const dst, const u8 minlen);
-static u8 uint32_to_str(u32 value, char * const dst, const u8 minlen);
+static u16 digits10(const u32 v);
 static u16 skip_atoi(const char **s);
 static u16 vsprintf(char *buf, const char *fmt, va_list args);
 
 
-u32 strlen(const char *str)
+u16 strlen(const char *str)
 {
     const char *src;
 
@@ -134,40 +150,109 @@ char *strreplacechar(char *str, char oldc, char newc)
     return s;
 }
 
-void intToStr(s32 value, char *str, const u8 minsize)
+u16 intToStr(s32 value, char *str, u16 minsize)
 {
-    u32 v;
-    char *dst = str;
-
     if (value < 0)
     {
-        v = -value;
-        *dst++ = '-';
+        *str = '-';
+        return uintToStr(-value, str + 1, minsize);
     }
-    else v = value;
-
-    uint32_to_str(v, dst, minsize);
+    else return uintToStr(value, str, minsize);
 }
 
-void uintToStr(u32 value, char *str, const u8 minsize)
+u16 uintToStr(u32 value, char *str, u16 minsize)
 {
-    uint32_to_str(value, str, minsize);
+    char *dst;
+    u16 length;
+    u32 v;
+
+    memset(str, '0', minsize);
+
+    length = digits10(value);
+    if (length < minsize) length = minsize;
+
+    dst = &str[length];
+    *dst = '\0';
+    v = value;
+
+    while (v >= 100)
+    {
+        const u16 i = (v % 100) * 2;
+
+        v /= 100;
+        *--dst = digits[i + 1];
+        *--dst = digits[i + 0];
+    }
+
+    // Handle last 1-2 digits
+    if (v < 10) *--dst = '0' + v;
+    else
+    {
+        const u16 i = v * 2;
+
+        *--dst = digits[i + 1];
+        *--dst = digits[i + 0];
+    }
+
+    return length;
 }
 
-void uint16ToStr(u16 value, char *str, const u8 minsize)
+u16 int16ToStr(s16 value, char *str, u16 minsize)
 {
-    uint16_to_str(value, str, minsize);
+    if (value < 0)
+    {
+        *str = '-';
+        return uint16ToStr(-value, str + 1, minsize);
+    }
+    else return uint16ToStr(value, str, minsize);
 }
 
-void intToHex(u32 value, char *str, s16 minsize)
+u16 uint16ToStr(u16 value, char *str, u16 minlen)
+{
+    char *dst;
+    u16 length;
+    u16 v;
+
+    memset(str, '0', minlen);
+
+    length = digits10(value);
+    if (length < minlen) length = minlen;
+
+    dst = &str[length];
+    *dst = '\0';
+    v = value;
+
+    while (v >= 100)
+    {
+        const u16 i = (v % 100) * 2;
+
+        v /= 100;
+        *--dst = digits[i + 1];
+        *--dst = digits[i + 0];
+    }
+
+    // Handle last 1-2 digits
+    if (v < 10) *--dst = '0' + v;
+    else
+    {
+        const u16 i = v * 2;
+
+        *--dst = digits[i + 1];
+        *--dst = digits[i + 0];
+    }
+
+    return length;
+}
+
+void intToHex(u32 value, char *str, u16 minsize)
 {
     u32 res;
-    s16 cnt;
-    s16 left;
+    u16 cnt;
+    u16 left;
     char data[16];
     char *src;
     char *dst;
-    const s16 maxsize = 16;
+    const u16 maxsize = 16;
 
     src = &data[16];
     res = value;
@@ -202,7 +287,7 @@ void intToHex(u32 value, char *str, s16 minsize)
     *dst = 0;
 }
 
-void fix32ToStr(fix32 value, char *str, s16 numdec)
+void fix32ToStr(fix32 value, char *str, u16 numdec)
 {
     u32 len;
     fix32 v;
@@ -217,7 +302,7 @@ void fix32ToStr(fix32 value, char *str, s16 numdec)
     }
     else v = value;
 
-    len += uint32_to_str(fix32ToInt(v), &str[len], 1);
+    len += uintToStr(fix32ToInt(v), &str[len], 1);
     str[len++] = '.';
 
     // get fractional part
@@ -231,7 +316,7 @@ void fix32ToStr(fix32 value, char *str, s16 numdec)
     else strncpy(&str[len], strFrac, numdec);
 }
 
-void fix16ToStr(fix16 value, char *str, s16 numdec)
+void fix16ToStr(fix16 value, char *str, u16 numdec)
 {
     u32 len;
     fix16 v;
@@ -239,7 +324,6 @@ void fix16ToStr(fix16 value, char *str, s16 numdec)
     char strFrac[8];
 
     len = 0;
-
     if (value < 0)
     {
         v = -value;
@@ -247,7 +331,7 @@ void fix16ToStr(fix16 value, char *str, s16 numdec)
     }
     else v = value;
 
-    len += uint32_to_str(fix16ToInt(v), &str[len], 1);
+    len += uint16ToStr(fix16ToInt(v), &str[len], 1);
     str[len++] = '.';
 
     // get fractional part
@@ -255,12 +339,29 @@ void fix16ToStr(fix16 value, char *str, s16 numdec)
     frac /= 1 << FIX16_FRAC_BITS;
 
     // get fractional string
-    uintToStr(frac, strFrac, 3);
+    uint16ToStr(frac, strFrac, 3);
 
     if (numdec >= 3) strcpy(&str[len], strFrac);
     else strncpy(&str[len], strFrac, numdec);
 }
 
+
+static u16 digits10(const u32 v)
+{
+    if (v < P01) return 1;
+    if (v < P02) return 2;
+    if (v < P03) return 3;
+    if (v < P08)
+    {
+        if (v < P06)
+        {
+            if (v < P04) return 4;
+            return 5 + (v >= P05);
+        }
+        return 7 + (v >= P07);
+    }
+    return 9 + (v >= P09);
+}
 
 static u16 skip_atoi(const char **s)
 {
@@ -306,23 +407,23 @@ repeat:
 
         switch (*fmt)
         {
-            case '-':
-                left_align = 1;
-                goto repeat;
+        case '-':
+            left_align = 1;
+            goto repeat;
 
-            case '+':
-                plus_sign = 1;
-                goto repeat;
+        case '+':
+            plus_sign = 1;
+            goto repeat;
 
-            case ' ':
-                if ( !plus_sign )
-                    space_sign = 1;
+        case ' ':
+            if ( !plus_sign )
+                space_sign = 1;
 
-                goto repeat;
+            goto repeat;
 
-            case '0':
-                zero_pad = 1;
-                goto repeat;
+        case '0':
+            zero_pad = 1;
+            goto repeat;
         }
 
         // Process field width and precision
@@ -369,130 +470,130 @@ repeat:
 
         switch (*fmt)
         {
-            case 'c':
-                if (!left_align)
-                    while(--field_width > 0)
-                        *str++ = ' ';
-
-                *str++ = (unsigned char) va_arg(args, s16);
-
+        case 'c':
+            if (!left_align)
                 while(--field_width > 0)
                     *str++ = ' ';
 
-                continue;
+            *str++ = (unsigned char) va_arg(args, s16);
 
-            case 's':
-                s = va_arg(args, char *);
+            while(--field_width > 0)
+                *str++ = ' ';
 
-                if (!s)
-                    s = "<NULL>";
+            continue;
 
-                len = strnlen(s, precision);
+        case 's':
+            s = va_arg(args, char *);
 
-                if (!left_align)
-                    while(len < field_width--)
-                        *str++ = ' ';
+            if (!s)
+                s = "<NULL>";
 
-                for (i = 0; i < len; ++i)
-                    *str++ = *s++;
+            len = strnlen(s, precision);
 
+            if (!left_align)
                 while(len < field_width--)
                     *str++ = ' ';
 
-                continue;
+            for (i = 0; i < len; ++i)
+                *str++ = *s++;
 
-            case 'p':
-                if (field_width == -1)
-                {
-                    field_width = 2 * sizeof(void *);
-                    zero_pad = 1;
-                }
+            while(len < field_width--)
+                *str++ = ' ';
 
-                hexchars = uppercase_hexchars;
-                goto hexa_conv;
+            continue;
 
-            case 'x':
-                hexchars = lowercase_hexchars;
-                goto hexa_conv;
+        case 'p':
+            if (field_width == -1)
+            {
+                field_width = 2 * sizeof(void *);
+                zero_pad = 1;
+            }
 
-            case 'X':
-                hexchars = uppercase_hexchars;
+            hexchars = uppercase_hexchars;
+            goto hexa_conv;
+
+        case 'x':
+            hexchars = lowercase_hexchars;
+            goto hexa_conv;
+
+        case 'X':
+            hexchars = uppercase_hexchars;
 
 hexa_conv:
-                s = &tmp_buffer[12];
-                *--s = 0;
-                num = va_arg(args, u16);
+            s = &tmp_buffer[12];
+            *--s = 0;
+            num = va_arg(args, u16);
 
-                if (!num)
-                    *--s = '0';
+            if (!num)
+                *--s = '0';
 
-                while(num)
+            while(num)
+            {
+                *--s = hexchars[num & 0xF];
+                num >>= 4;
+            }
+
+            num = plus_sign = 0;
+
+            break;
+
+        case 'n':
+            ip = va_arg(args, s16*);
+            *ip = (str - buf);
+            continue;
+
+        case 'u':
+            s = &tmp_buffer[12];
+            *--s = 0;
+            num = va_arg(args, u16);
+
+            if (!num)
+                *--s = '0';
+
+            while(num)
+            {
+                *--s = (num % 10) + 0x30;
+                num /= 10;
+            }
+
+            num = plus_sign = 0;
+
+            break;
+
+        case 'd':
+        case 'i':
+            s = &tmp_buffer[12];
+            *--s = 0;
+            i = va_arg(args, s16);
+
+            if (!i)
+                *--s = '0';
+
+            if (i < 0)
+            {
+                num = 1;
+
+                while(i)
                 {
-                    *--s = hexchars[num & 0xF];
-                    num >>= 4;
+                    *--s = 0x30 - (i % 10);
+                    i /= 10;
                 }
+            }
+            else
+            {
+                num = 0;
 
-                num = plus_sign = 0;
-
-                break;
-
-            case 'n':
-                ip = va_arg(args, s16*);
-                *ip = (str - buf);
-                continue;
-
-            case 'u':
-                s = &tmp_buffer[12];
-                *--s = 0;
-                num = va_arg(args, u16);
-
-                if (!num)
-                    *--s = '0';
-
-                while(num)
+                while(i)
                 {
-                    *--s = (num % 10) + 0x30;
-                    num /= 10;
+                    *--s = (i % 10) + 0x30;
+                    i /= 10;
                 }
+            }
 
-                num = plus_sign = 0;
+            break;
 
-                break;
-
-            case 'd':
-            case 'i':
-                s = &tmp_buffer[12];
-                *--s = 0;
-                i = va_arg(args, s16);
-
-                if (!i)
-                    *--s = '0';
-
-                if (i < 0)
-                {
-                    num = 1;
-
-                    while(i)
-                    {
-                        *--s = 0x30 - (i % 10);
-                        i /= 10;
-                    }
-                }
-                else
-                {
-                    num = 0;
-
-                    while(i)
-                    {
-                        *--s = (i % 10) + 0x30;
-                        i /= 10;
-                    }
-                }
-
-                break;
-
-            default:
-                continue;
+        default:
+            continue;
         }
 
         len = strnlen(s, precision);
@@ -551,91 +652,4 @@ u16 sprintf(char *buffer, const char *fmt, ...)
     return i;
 }
 
-#define P01 10
-#define P02 100
-#define P03 1000
-#define P04 1000 * 10
-#define P05 1000 * 100
-#define P06 1000 * 1000
-#define P07 1000 * 1000 * 10
-#define P08 1000 * 1000 * 100
-#define P09 1000 * 1000 * 1000
-#define P10 1000 * 1000 * 1000 * 10
 
-static u8 digits10(const u32 v)
-{
-    if (v < P01) return 1;
-    if (v < P02) return 2;
-    if (v < P03) return 3;
-    if (v < P08) {
-        if (v < P06) {
-            if (v < P04) return 4;
-            return 5 + (v >= P05);
-        }
-        return 7 + (v >= P07);
-    }
-    return 9 + (v >= P09);
-}
-
-static const char digits[201] =
-    "0001020304050607080910111213141516171819"
-    "2021222324252627282930313233343536373839"
-    "4041424344454647484950515253545556575859"
-    "6061626364656667686970717273747576777879"
-    "8081828384858687888990919293949596979899";
-
-static u8 uint32_to_str(u32 value, char * const dst, const u8 minlen)
-{
-    memset(dst, '0', minlen);
-    u8 length = digits10(value);
-    if (length < minlen)
-        length = minlen;
-
-    dst[length] = '\0';
-    u8 next = length - 1;
-    while (value >= 100) {
-        const u8 i = (value % 100) * 2;
-        value /= 100;
-        dst[next] = digits[i + 1];
-        dst[next - 1] = digits[i];
-        next -= 2;
-    }
-    // Handle last 1-2 digits
-    if (value < 10) {
-        dst[next] = '0' + value;
-    } else {
-        u8 i = value * 2;
-        dst[next] = digits[i + 1];
-        dst[next - 1] = digits[i];
-    }
-
-    return length;
-}
-
-static u8 uint16_to_str(u16 value, char * const dst, const u8 minlen)
-{
-    memset(dst, '0', minlen);
-    u8 length = digits10(value);
-    if (length < minlen)
-        length = minlen;
-
-    dst[length] = '\0';
-    u8 next = length - 1;
-    while (value >= 100) {
-        const u8 i = (value % 100) * 2;
-        value /= 100;
-        dst[next] = digits[i + 1];
-        dst[next - 1] = digits[i];
-        next -= 2;
-    }
-    // Handle last 1-2 digits
-    if (value < 10) {
-        dst[next] = '0' + value;
-    } else {
-        u8 i = value * 2;
-        dst[next] = digits[i + 1];
-        dst[next - 1] = digits[i];
-    }
-
-    return length;
-}
