@@ -7,6 +7,7 @@
 #include "dma.h"
 #include "tools.h"
 #include "string.h"
+#include "memory.h"
 
 
 // important to have a global structure here (consumes 640 bytes of memory)
