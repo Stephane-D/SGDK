@@ -35,9 +35,9 @@ static void fastStarFieldFX()
 
 	SYS_disableInts();
 
+	VDP_setPlanSize(64, 32);
 	VDP_clearPlan(PLAN_A, 0);
 	VDP_clearPlan(PLAN_B, 0);
-	VDP_setPlanSize(64, 32);
 
 	/* Draw the foreground */
 	VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
@@ -83,12 +83,15 @@ static void fastStarFieldFX()
 
 	    /* Disable auto tile upload */
 	    SPR_setAutoTileUpload(spr, FALSE);
-	    /* Enable Y sorting */
-	    SPR_setYSorting(spr, TRUE);
-	    /* Enable Y sorting */
-	    SPR_setAlwaysOnTop(spr, (i & 7) == 7);
+	    /* Enable depth sorting */
+	    SPR_setDepthSorting(spr, TRUE);
 	    /* default position */
         SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
+	    /* Set depth */
+	    if ((i & 7) == 7)
+            SPR_setDepth(spr, -1);
+        else
+            SPR_setDepth(spr, spr->y);
 	    /* Manually set VRAM index */
         SPR_setVRAMTileIndex(spr, animVramIndexes[((s >> 4) + i) & 0x7]);
 
@@ -111,14 +114,17 @@ static void fastStarFieldFX()
 		for(i = 0; i < TABLE_LEN; i++)
         {
 			scroll_PLAN_B_F[i] += scroll_speed[i];
-			scroll_PLAN_B[i] = fix16ToInt(scroll_PLAN_B_F[i]) & 0xFF;
+			scroll_PLAN_B[i] = fix16ToInt(scroll_PLAN_B_F[i]) & 0x1FF;
         }
 
 		/*	Animate the donuts */
 		for(i = 0; i < MAX_DONUT; i++)
 		{
-	        SPR_setPosition(sprites[i], (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
-			SPR_setVRAMTileIndex(sprites[i], animVramIndexes[((s >> 4) + i) & 0x7]);
+		    Sprite *spr = sprites[i];
+
+	        SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
+	        if (spr->depth != -1) SPR_setDepth(spr, spr->y);
+			SPR_setVRAMTileIndex(spr, animVramIndexes[((s >> 4) + i) & 0x7]);
 		}
 
 		s += 4;

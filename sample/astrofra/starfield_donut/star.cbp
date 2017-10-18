@@ -63,6 +63,9 @@
 		<Unit filename="res/donut.png" />
 		<Unit filename="res/gfx.res" />
 		<Unit filename="res/starfield.png" />
+		<Unit filename="src/boot/rom_head.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>

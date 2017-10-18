@@ -156,7 +156,7 @@ void drawPoints(u8 col)
             l.pt1 = pts_2D[*line_ind++];
             l.pt2 = pts_2D[*line_ind++];
 
-            BMP_drawLine(&l);
+            if (BMP_clipLine(&l)) BMP_drawLine(&l);
         }
     }
 }

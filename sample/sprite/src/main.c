@@ -21,8 +21,8 @@
 #define RUN_SPEED       FIX32(6)
 #define BRAKE_SPEED     FIX32(2)
 
-#define JUMP_SPEED      FIX32(-8)
-#define GRAVITY         FIX32(0.4)
+#define JUMP_SPEED      FIX32(-7)
+#define GRAVITY         FIX32(0.3)
 #define ACCEL           FIX32(0.1)
 #define DE_ACCEL        FIX32(0.15)
 
@@ -54,6 +54,9 @@ s16 yorder;
 fix32 enemyPosx[2];
 fix32 enemyPosy[2];
 s16 enemyXorder[2];
+
+//s16 reseted = TRUE;
+
 
 int main()
 {
@@ -128,6 +131,8 @@ int main()
 
     JOY_setEventHandler(joyEvent);
 
+//    reseted = FALSE;
+
     while(TRUE)
     {
         handleInput();
@@ -135,6 +140,7 @@ int main()
         updatePhysic();
         updateAnim();
 
+//        if (!reseted)
         // update sprites
         SPR_update();
 
@@ -309,6 +315,17 @@ static void handleInput()
     if (value & BUTTON_LEFT) xorder = -1;
     else if (value & BUTTON_RIGHT) xorder = +1;
     else xorder = 0;
+
+//    if (value & BUTTON_START)
+//    {
+//        SPR_reset();
+//        SPR_clear();
+//
+//        VDP_waitVSync();
+//
+//        sprites[0] = SPR_addSprite(&sonic_sprite, 128, 128, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+//        reseted = TRUE;
+//    }
 }
 
 static void joyEvent(u16 joy, u16 changed, u16 state)
