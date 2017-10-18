@@ -1,8 +1,9 @@
 LZ4W packer 1.0 (april 2016)
-Stephane Dallongeville
+Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
-LZ4W is a custom packer based on LZ4 compression scheme: https://github.com/lz4/lz4
+LZ4W is part of SGDK (aka Sega Genesis Dev Kit).
+It's a custom packer based on LZ4 compression scheme: https://github.com/lz4/lz4
 The 'W' suffix stands for 'Word' as LZ4W only uses word memory accesses.
 The main difference is that LZ4W is designed to take advantage of 16 bits CPU and achieve better decompression performance on these CPU compared to classic LZ4.
 The compression ratio offered by LZ4W is not as good to LZ4 but close for small amount of data (<= 4 KB), it becomes worst for larger size but still not too bad.

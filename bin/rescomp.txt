@@ -1,5 +1,5 @@
 ResComp 1.5 (april 2016)
-Stephane Dallongeville
+Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
 ResComp is part of SGDK (aka Sega Genesis Dev Kit).
