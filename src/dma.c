@@ -4,6 +4,7 @@
 #include "vdp.h"
 #include "sys.h"
 #include "memory.h"
+#include "z80_ctrl.h"
 
 #include "kdebug.h"
 #include "tools.h"
