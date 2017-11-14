@@ -23,6 +23,14 @@
 
 /**
  *  \brief
+ *      Set it to 1 if you want to force Z80 halt during DMA operation.<br>
+ *      Some Megadrive hardware (as 2016 Tectoy Megadrive) needs it as to prevent possible Z80 corruption
+ *      bugs (when Z80 access main BUS during DMA operation).
+ */
+#define HALT_Z80_ON_DMA     0
+
+/**
+ *  \brief
  *      Set it to 1 to enable the big Math lookup tables.<br>
  *      This table permits Log2, Log10 and Sqrt operation for fix16 type (128*3 KB of rom).
  */
