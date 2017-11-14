@@ -1,5 +1,6 @@
 #include "dma.h"
 
+#include "config.h"
 #include "vdp.h"
 #include "sys.h"
 #include "memory.h"
@@ -101,9 +102,12 @@ void DMA_clearQueue()
 
 void DMA_flushQueue()
 {
-    u16 i;
     vu32 *pl;
     u32 *info;
+    u16 i;
+#if (HALT_Z80_ON_DMA == 1)
+    u16 z80state;
+#endif
 
     // transfer size limit ?
     if (queueIndexLimit) i = queueIndexLimit;
@@ -114,6 +118,11 @@ void DMA_flushQueue()
 #ifdef DMA_DEBUG
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
 #endif
+    
+#if (HALT_Z80_ON_DMA == 1)
+    z80state = Z80_isBusTaken();
+    if (!z80state) Z80_requestBus(FALSE);
+#endif    
 
     while(i--)
     {
@@ -121,8 +130,12 @@ void DMA_flushQueue()
         *pl = *info++;  // regStepLenL = (0x8F00 | step) | ((0x9300 | (len & 0xFF)) << 16)
         *pl = *info++;  // regLenHAddrL = (0x9400 | ((len >> 8) & 0xFF)) | ((0x9500 | ((addr >> 1) & 0xFF)) << 16)
         *pl = *info++;  // regAddrMAddrH = (0x9600 | ((addr >> 9) & 0xFF)) | ((0x9700 | ((addr >> 17) & 0x7F)) << 16)
-        *pl = *info++;  // regCtrlWrite =  GFX_DMA_VRAMCOPY_ADDR(to)
+        *pl = *info++;  // regCtrlWrite =  GFX_DMA_xxx_ADDR(to)
     }
+
+#if (HALT_Z80_ON_DMA == 1)
+    if (!z80state) Z80_releaseBus();
+#endif    
 
     // transfer size limit ?
     if (queueIndexLimit)
@@ -211,14 +224,8 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     // ok, use normal len
     else newlen = len;
 
-    // keep trace of transfered size
-    queueTransferSize += newlen << 1;
-
-    // auto flush enabled --> set process on VBlank
-    if (flags & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;
-
     // get DMA info structure and pass to next one
-    info = &dmaQueues[queueIndex++];
+    info = &dmaQueues[queueIndex];
 
     // $14:len H  $13:len L (DMA length in word)
     info->regLen = ((newlen | (newlen << 8)) & 0xFF00FF) | 0x94009300;
@@ -251,6 +258,14 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
 #endif
             break;
     }
+    
+    // pass to next index
+    queueIndex++;
+    // keep trace of transfered size
+    queueTransferSize += newlen << 1;
+
+    // auto flush enabled --> set process on VBlank
+    if (flags & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;    
 
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
@@ -309,6 +324,9 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     u32 newlen;
     u32 banklimitb;
     u32 banklimitw;
+#if (HALT_Z80_ON_DMA == 1)
+    u16 z80state;
+#endif
 
     if (step != -1)
         VDP_setAutoInc(step);
@@ -339,6 +357,11 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     *pw = 0x9600 + (from & 0xff);
     from >>= 8;
     *pw = 0x9700 + (from & 0x7f);
+    
+#if (HALT_Z80_ON_DMA == 1)
+    z80state = Z80_isBusTaken();
+    if (!z80state) Z80_requestBus(FALSE);
+#endif
 
     // Enable DMA
     pl = (u32 *) GFX_CTRL_PORT;
@@ -356,6 +379,10 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
             *pl = GFX_DMA_VSRAM_ADDR(to);
             break;
     }
+
+#if (HALT_Z80_ON_DMA == 1)
+    if (!z80state) Z80_releaseBus();
+#endif    
 }
 
 void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
