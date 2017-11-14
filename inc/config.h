@@ -24,8 +24,8 @@
 /**
  *  \brief
  *      Set it to 1 if you want to force Z80 halt during DMA operation.<br>
- *      Some Megadrive hardware (as 2016 Tectoy Megadrive) needs it as to prevent possible Z80 corruption
- *      bugs (when Z80 access main BUS during DMA operation).
+ *      Some Megadrive hardware (as 2016 Tectoy Megadrive) need it to prevent some possible Z80 corruption bugs
+ *      (may happen when Z80 access the main BUS during a DMA operation).
  */
 #define HALT_Z80_ON_DMA     0
 
