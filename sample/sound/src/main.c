@@ -687,22 +687,22 @@ static void vintEvent()
         switch(dmaMethod)
         {
             case 1:
-                VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, (6 * 1024) / 2, 2);
+                DMA_doDma(VDP_DMA_VRAM, 0, 0x8000, (6 * 1024) / 2, 2);
                 break;
 
             case 2:
-                for(i = 0; i < 4; i++)
+                for(i = 0; i < 6; i++)
                 {
-                    VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
-                    waitSubTick(0);
+                    DMA_doDma(VDP_DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
+                    waitSubTick(1);
                 }
                 break;
 
             case 3:
-                for(i = 0; i < 8; i++)
+                for(i = 0; i < 16; i++)
                 {
-                    VDP_doDMAEx(VDP_DMA_VRAM, 0, 0x8000, 256 / 2, 2);
-                    waitSubTick(0);
+                    DMA_doDma(VDP_DMA_VRAM, 0, 0x8000, 256 / 2, 2);
+                    waitSubTick(1);
                 }
                 break;
         }
@@ -778,24 +778,24 @@ static void vintEvent()
         switch(dmaMethod)
         {
             case 0:
-                VDP_drawText("NONE    ", 13, 26);
+                VDP_drawText("NONE     ", 13, 26);
                 break;
 
             case 1:
-                VDP_drawText("1 x 6KB ", 13, 26);
+                VDP_drawText("1 x 6KB  ", 13, 26);
                 break;
 
             case 2:
-                VDP_drawText("4 x 1KB ", 13, 26);
+                VDP_drawText("6 x 1KB  ", 13, 26);
                 break;
 
             case 3:
-                VDP_drawText("8 x 256B", 13, 26);
+                VDP_drawText("16 x 256B", 13, 26);
                 break;
         }
     }
     else
-        VDP_drawText("NOT DONE", 13, 26);
+        VDP_drawText("NOT DONE ", 13, 26);
 
     if (dmaMethod)
     {

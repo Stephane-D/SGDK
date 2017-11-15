@@ -119,11 +119,11 @@ void DMA_flushQueue()
 #ifdef DMA_DEBUG
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
 #endif
-    
+
 #if (HALT_Z80_ON_DMA == 1)
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
-#endif    
+#endif
 
     while(i--)
     {
@@ -136,7 +136,7 @@ void DMA_flushQueue()
 
 #if (HALT_Z80_ON_DMA == 1)
     if (!z80state) Z80_releaseBus();
-#endif    
+#endif
 
     // transfer size limit ?
     if (queueIndexLimit)
@@ -259,14 +259,14 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
 #endif
             break;
     }
-    
+
     // pass to next index
     queueIndex++;
     // keep trace of transfered size
     queueTransferSize += newlen << 1;
 
     // auto flush enabled --> set process on VBlank
-    if (flags & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;    
+    if (flags & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;
 
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
@@ -358,7 +358,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     *pw = 0x9600 + (from & 0xff);
     from >>= 8;
     *pw = 0x9700 + (from & 0x7f);
-    
+
 #if (HALT_Z80_ON_DMA == 1)
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
@@ -383,7 +383,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 
 #if (HALT_Z80_ON_DMA == 1)
     if (!z80state) Z80_releaseBus();
-#endif    
+#endif
 }
 
 void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
