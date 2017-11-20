@@ -16,13 +16,14 @@ VDP_loadTileData:
     jeq .L2
 
     lsl.w #4,%d3                    | d3 = num * 16 (size of DMA in word)
-    move.l %d3,-(%sp)               | prepare parameters for VDP_doDMA
+
+    pea 2.w                         | prepare parameters for VDP_doDMA
+    move.l %d3,-(%sp)
     move.l %d6,-(%sp)
     move.l %d2,-(%sp)
     clr.l -(%sp)
-    jsr VDP_waitDMACompletion
-    jsr VDP_doDMA
-    lea (16,%sp),%sp
+    jsr DMA_doDma
+    lea (20,%sp),%sp
     jra .L1
 
     .align  2

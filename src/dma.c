@@ -120,6 +120,9 @@ void DMA_flushQueue()
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
 #endif
 
+    // wait for DMA FILL / COPY operation to complete
+    VDP_waitDMACompletion();
+
 #if (HALT_Z80_ON_DMA == 1)
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
@@ -347,6 +350,9 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 
     pw = (u16 *) GFX_CTRL_PORT;
 
+    // wait for DMA FILL / COPY operation to complete
+    while(*pw & VDP_DMABUSY_FLAG);
+
     // Setup DMA length (in word here)
     *pw = 0x9300 + (newlen & 0xff);
     *pw = 0x9400 + ((newlen >> 8) & 0xff);
@@ -419,6 +425,9 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
 
     pw = (u16 *) GFX_CTRL_PORT;
 
+    // wait for DMA FILL / COPY operation to complete
+    while(*pw & VDP_DMABUSY_FLAG);
+
     // Setup DMA length
     *pw = 0x9300 + (l & 0xFF);
     *pw = 0x9400 + ((l >> 8) & 0xFF);
@@ -444,6 +453,9 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
         VDP_setAutoInc(step);
 
     pw = (u16 *) GFX_CTRL_PORT;
+
+    // wait for DMA FILL / COPY operation to complete
+    while(*pw & VDP_DMABUSY_FLAG);
 
     // Setup DMA length
     *pw = 0x9300 + (len & 0xff);

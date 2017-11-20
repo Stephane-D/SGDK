@@ -6,7 +6,7 @@
 
 #include "tools.h"
 #include "string.h"
-#include "vdp_dma.h"
+#include "dma.h"
 #include "vdp_pal.h"
 #include "vdp_tile.h"
 
@@ -47,7 +47,7 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
 
     VDP_setAutoInc(4 * 8);
 
-    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, -1);
+    if (use_dma) DMA_doDma(DMA_VRAM, (u32) values, addr, len, -1);
     else
     {
         vu16 *pw;
@@ -77,7 +77,7 @@ void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u
 
     VDP_setAutoInc(4);
 
-    if (use_dma) VDP_doDMAEx(VDP_DMA_VRAM, (u32) values, addr, len, -1);
+    if (use_dma) DMA_doDma(DMA_VRAM, (u32) values, addr, len, -1);
     else
     {
         vu16 *pw;
@@ -124,7 +124,7 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16
 
     VDP_setAutoInc(4);
 
-    if (use_dma) VDP_doDMAEx(VDP_DMA_VSRAM, (u32) values, addr, len, -1);
+    if (use_dma) DMA_doDma(DMA_VSRAM, (u32) values, addr, len, -1);
     else
     {
         vu16 *pw;
