@@ -788,7 +788,7 @@ void SPR_setDepth(Sprite *sprite, u16 value)
 #endif // SPR_DEBUG
 
     // depth sorting enabled for this sprite and depth changed ? --> need sorting
-    if ((sprite->status & SPR_FLAG_AUTO_DEPTH_SORTING) && (sprite->depth != value))
+    if ((sprite->depth != value) && (sprite->status & SPR_FLAG_AUTO_DEPTH_SORTING))
         sprite->status |= NEED_DEPTH_SORTING;
     sprite->depth = value;
 
@@ -1284,8 +1284,10 @@ void SPR_update()
     KLog_U1_("  Send sprites to DMA queue: ", highestVDPSpriteIndex + 1, " sprite(s) sent");
 #endif // SPR_DEBUG
 
+    const u16 sprNum = highestVDPSpriteIndex + 1;
+
     // send sprites to VRAM using DMA queue (better to do it before sprite tiles upload to avoid being ignored by DMA queue)
-    VDP_updateSprites(highestVDPSpriteIndex + 1, TRUE);
+    DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCacheQueue, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * sprNum, 2);
 
     // iterate over all sprites
     sprite = firstSprite;
@@ -1361,6 +1363,9 @@ void SPR_update()
         // next sprite
         sprite = next;
     }
+
+    // VDP sprite cache is now updated, copy it to the queue cache copy
+    memcpy(vdpSpriteCacheQueue, vdpSpriteCache, sizeof(VDPSprite) * sprNum);
 
     // reset unpack buffer address
     unpackNext = unpackBuffer;

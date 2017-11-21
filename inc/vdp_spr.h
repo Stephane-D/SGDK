@@ -65,6 +65,11 @@ typedef struct
  */
 extern VDPSprite vdpSpriteCache[MAX_VDP_SPRITE];
 /**
+ *  \brief VDP sprite cache queue copy
+ */
+extern VDPSprite vdpSpriteCacheQueue[MAX_VDP_SPRITE];
+
+/**
  *  \brief Pointer to last allocated sprite after calling VDP_allocateSprites(..) method.<br>
  *    This can be used to do the link from the last allocated VDP sprite.
  */
