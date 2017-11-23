@@ -58,8 +58,7 @@ static void updateSpriteTableAll(Sprite *sprite);
 static void updateSpriteTablePos(Sprite *sprite);
 static void updateSpriteTableAttr(Sprite *sprite);
 static void loadTiles(Sprite *sprite);
-static Sprite* sortSpriteOnDepth(Sprite* sprite);
-static Sprite* sortSprite(Sprite* sprite, _spriteComparatorCallback* sorter);
+static Sprite* sortSprite(Sprite* sprite);
 static void moveAfter(Sprite* pos, Sprite* sprite);
 static u16 getSpriteIndex(Sprite *sprite);
 static void logSprite(Sprite *sprite);
@@ -313,7 +312,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     sprite->seqInd = -1;
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
-    sprite->depth = 0;
+    sprite->depth = SPR_MAX_DEPTH;
     sprite->frameNumSprite = 0;
 
     numVDPSprite = spriteDef->maxNumSprite;
@@ -376,6 +375,9 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
 
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
+
+    // need to sort sprite (depth changed)
+    sprite->status |= NEED_DEPTH_SORTING;
 
 #ifdef SPR_PROFIL
     prof = getSubTick() - prof;
@@ -777,7 +779,7 @@ void SPR_setPalette(Sprite *sprite, u16 value)
 #endif // SPR_PROFIL
 }
 
-void SPR_setDepth(Sprite *sprite, u16 value)
+void SPR_setDepth(Sprite *sprite, s16 value)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -787,10 +789,12 @@ void SPR_setDepth(Sprite *sprite, u16 value)
     KLog_U2("SPR_setDepth: #", getSpriteIndex(sprite), "  Depth=", depth);
 #endif // SPR_DEBUG
 
-    // depth sorting enabled for this sprite and depth changed ? --> need sorting
-    if ((sprite->depth != value) && (sprite->status & SPR_FLAG_AUTO_DEPTH_SORTING))
+    // depth changed ?
+    if (sprite->depth != value)
+    {
+        sprite->depth = value;
         sprite->status |= NEED_DEPTH_SORTING;
-    sprite->depth = value;
+    }
 
 #ifdef SPR_PROFIL
     prof = getSubTick() - prof;
@@ -800,14 +804,14 @@ void SPR_setDepth(Sprite *sprite, u16 value)
 #endif // SPR_PROFIL
 }
 
-void SPR_setZ(Sprite *sprite, u16 value)
+void SPR_setZ(Sprite *sprite, s16 value)
 {
     SPR_setDepth(sprite, value);
 }
 
 void SPR_setAlwaysOnTop(Sprite *sprite, u16 value)
 {
-    SPR_setDepth(sprite, 0xFFFF);
+    if (value) SPR_setDepth(sprite, SPR_MIN_DEPTH);
 }
 
 void SPR_setAnimAndFrame(Sprite *sprite, s16 anim, s16 frame)
@@ -1135,22 +1139,6 @@ void SPR_setAutoTileUpload(Sprite *sprite, u16 value)
     else sprite->status &= ~SPR_FLAG_AUTO_TILE_UPLOAD;
 }
 
-void SPR_setDepthSorting(Sprite *sprite, u16 value)
-{
-    if (value) sprite->status |= SPR_FLAG_AUTO_ZSORTING;
-    else sprite->status &= ~SPR_FLAG_AUTO_ZSORTING;
-}
-
-void SPR_setZSorting(Sprite *sprite, u16 value)
-{
-    SPR_setDepthSorting(sprite, value);
-}
-
-void SPR_setYSorting(Sprite *sprite, u16 value)
-{
-    SPR_setDepthSorting(sprite, value);
-}
-
 void SPR_setVisibility(Sprite *sprite, SpriteVisibility value)
 {
 #ifdef SPR_PROFIL
@@ -1329,15 +1317,15 @@ void SPR_update()
                 status |= updateVisibility(sprite);
             if (status & NEED_ST_VISIBILITY_UPDATE)
                 updateSpriteTableVisibility(sprite);
+            if (status & NEED_DEPTH_SORTING)
+                sortSprite(sprite);
 
             // general processes done
-            status &= ~(NEED_FRAME_UPDATE | NEED_VISIBILITY_UPDATE | NEED_ST_VISIBILITY_UPDATE);
+            status &= ~(NEED_FRAME_UPDATE | NEED_VISIBILITY_UPDATE | NEED_ST_VISIBILITY_UPDATE | NEED_DEPTH_SORTING);
 
             // only if sprite is visible
             if (sprite->visibility)
             {
-                if (status & NEED_DEPTH_SORTING)
-                    sortSpriteOnDepth(sprite);
                 if (status & NEED_TILES_UPLOAD)
                     loadTiles(sprite);
 
@@ -1353,7 +1341,7 @@ void SPR_update()
                     updateSpriteTableAttr(sprite);
 
                 // tiles upload and sprite table done
-                status &= ~(NEED_DEPTH_SORTING | NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
+                status &= ~(NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
             }
 
             // processes done !
@@ -1379,66 +1367,6 @@ void SPR_update()
     if (prof < 0) prof = 100;
     profil_time[PROFIL_UPDATE] += prof;
 #endif // SPR_PROFIL
-}
-
-void SPR_sortOnDepth()
-{
-    SPR_sort(NULL);
-}
-
-void SPR_sortOnYPos()
-{
-    SPR_sort(NULL);
-}
-
-void SPR_sort(_spriteComparatorCallback* sorter)
-{
-    if (spriteNum)
-    {
-        Sprite *sprite;
-//        VDPSprite *prevVDPSprite;
-
-        // disable interrupts (we want to avoid DMA queue process when executing this method)
-        SYS_disableInts();
-
-        // sort sprites
-        sprite = lastSprite;
-        if (sorter)
-        {
-            while (sprite)
-                sprite = sortSprite(sprite, sorter);
-        }
-        else
-        {
-            while (sprite)
-                sprite = sortSpriteOnDepth(sprite);
-        }
-
-//        // rebuils all links
-//        sprite = firstSprite;
-//        prevVDPSprite = starter;
-//
-//        // then rebuild others links
-//        while(sprite)
-//        {
-//#ifdef SPR_DEBUG
-//            KLog_U3("VDPSprite #", prevVDPSprite - vdpSpriteCache, " linked to Sprite #", getSpriteIndex(sprite), " - VDP Sprite=", sprite->VDPSpriteIndex);
-//#endif // SPR_DEBUG
-//
-//            // update link
-//            prevVDPSprite->link = sprite->VDPSpriteIndex;
-//            prevVDPSprite = sprite->lastVDPSprite;
-//            // next sprite
-//            sprite = sprite->next;
-//        }
-//
-//        // end link
-//        prevVDPSprite->link = 0;
-
-        // re-enable interrupts
-        SYS_enableInts();
-
-    }
 }
 
 void SPR_logProfil()
@@ -2085,7 +2013,7 @@ static void loadTiles(Sprite *sprite)
 #endif // SPR_PROFIL
 }
 
-static Sprite* sortSpriteOnDepth(Sprite* sprite)
+static Sprite* sortSprite(Sprite* sprite)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -2096,7 +2024,7 @@ static Sprite* sortSpriteOnDepth(Sprite* sprite)
     Sprite* s;
 
     // cache sprite depth coordinate
-    const u16 sdepth = sprite->depth;
+    const s16 sdepth = sprite->depth;
 
 #ifdef SPR_DEBUG
     KLog_U2("Start depth compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
@@ -2104,7 +2032,7 @@ static Sprite* sortSpriteOnDepth(Sprite* sprite)
 
     // find position forward first
     s = next;
-    while(s && (s->depth > sdepth)) s = s->next;
+    while(s && (s->depth < sdepth)) s = s->next;
     // position changed ?
     if (s != next)
     {
@@ -2114,9 +2042,9 @@ static Sprite* sortSpriteOnDepth(Sprite* sprite)
     }
     else
     {
-        // try to find position babckward then
+        // try to find position backward then
         s = prev;
-        while(s && (s->depth < sdepth)) s = s->prev;
+        while(s && (s->depth > sdepth)) s = s->prev;
     }
 
 #ifdef SPR_DEBUG
@@ -2136,57 +2064,6 @@ static Sprite* sortSpriteOnDepth(Sprite* sprite)
 
     // return prev just for convenience on full sorting
     return prev;
-}
-
-static Sprite* sortSprite(Sprite* sprite, _spriteComparatorCallback* sorter)
-{
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
-
-    Sprite* prev = sprite->prev;
-    Sprite* next = sprite->next;
-    Sprite* s;
-
-#ifdef SPR_DEBUG
-    KLog_U2("Start custom compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
-#endif // SPR_DEBUG
-
-    // find position forward first
-    s = next;
-    while(s && (sorter(s, sprite) > 0)) s = s->next;
-
-    // position changed ?
-    if (s != next)
-    {
-        // adjust on previous as we insert *after*
-        if (s) s = s->prev;
-        else s = lastSprite;
-    }
-    else
-    {
-        // try to find position babckward then
-        s = prev;
-        while(s && (sorter(s, sprite) < 0)) s = s->prev;
-    }
-
-#ifdef SPR_DEBUG
-    if (s) KLog_U1("Position for sprite = ", getSpriteIndex(s) + 1);
-    else KLog_U1("Position for sprite = ", 0);
-#endif // SPR_DEBUG
-
-    // position changed ? --> insert sprite after s
-    if (s != prev) moveAfter(s, sprite);
-
-    // return prev just for convenience on full sorting
-    return prev;
-
-#ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SORT] += prof;
-#endif // SPR_PROFIL
 }
 
 static void moveAfter(Sprite* pos, Sprite* sprite)
@@ -2278,7 +2155,8 @@ static void logSprite(Sprite *sprite)
 {
     KLog_U2("Sprite #", getSpriteIndex(sprite), " ------------- status=", sprite->status);
     KLog_U3("animInd=", sprite->animInd, " seqInd=", sprite->seqInd, " frameInd=", sprite->frameInd);
-    KLog_U4("attribut=", sprite->attribut, " x=", sprite->x, " y=", sprite->y, " visibility=", sprite->visibility);
-    KLog_U3("timer=", sprite->timer, " frameNumSpr=", sprite->frameNumSprite, " VDPSpriteInd=", sprite->VDPSpriteIndex);
+    KLog_S4("attribut=", sprite->attribut, " x=", sprite->x, " y=", sprite->y, " depth=", sprite->depth);
+    KLog_U3("visibility=", sprite->visibility, " timer=", sprite->timer, " frameNumSpr=", sprite->frameNumSprite);
+    KLog_U2("VDPSpriteInd=", sprite->VDPSpriteIndex, " link=", sprite->lastVDPSprite->link);
     KLog_U2("prev=", (sprite->prev==NULL)?128:getSpriteIndex(sprite->prev), " next=", (sprite->next==NULL)?128:getSpriteIndex(sprite->next));
 }
