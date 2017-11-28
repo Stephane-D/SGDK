@@ -1,4 +1,4 @@
-SGDK 1.32 (october 2017)
+SGDK 1.33 (november 2017)
 Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 

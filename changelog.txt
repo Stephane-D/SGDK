@@ -1,3 +1,19 @@
+SGDK 1.33 (November 2017)
+-------------------------
+
+LIBRARY
+* DMA
+ - added HALT_Z80_ON_DMA flag in config.h to enable Z80 halt on DMA (avoid corruptions or sound issues on Tectoy MD).
+ - deprecated 'vdp_dma' unit now forward calls to 'dma' unit.
+ - added wait DMA checking (DMA fill or DMA copy operation) before doing a DMA operation.
+* SPRITE
+ - simplified sprite sorting (always enabled, just need to use SPR_setDepth(..) method if needed)
+ - fixed a regression which was causing 1 frame latency in sprite update.
+
+SAMPLE
+* minor change to sound sample
+
+
 SGDK 1.32 (October 2017)
 ------------------------
 
