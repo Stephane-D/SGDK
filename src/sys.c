@@ -639,7 +639,7 @@ void SYS_disableInts()
         intLevelSave = SYS_getAndSetInterruptMaskLevel(7);
 #if (LIB_DEBUG != 0)
     else
-        KDebug_Alert("SYS_disableInts() info: inner call");
+        KLog_U1("SYS_disableInts() info: inner call = ", disableIntStack);
 #endif
 }
 
@@ -662,9 +662,9 @@ void SYS_enableInts()
     else
     {
         if (disableIntStack < 0)
-            KDebug_Alert("SYS_enableInts() fails: already enabled");
+            KLog_U1("SYS_enableInts() fails: already enabled = ", disableIntStack);
         else
-            KDebug_Alert("SYS_enableInts() info: inner call");
+            KLog_U1("SYS_enableInts() info: inner call = ", disableIntStack);
     }
 #endif
 }

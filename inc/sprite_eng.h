@@ -28,7 +28,6 @@
  */
 #define COLLISION_TYPE_CIRCLE   2
 
-
 /**
  *  \brief
  *      Enable automatic visibility calculation

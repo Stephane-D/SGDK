@@ -140,9 +140,14 @@
 #define VSCROLL_PLANE           0
 /**
  *  \brief
- *      Definition to set vertical scroll to mode 2 tile.
+ *      Definition to set vertical scroll to mode column (2 tiles width).
  */
-#define VSCROLL_2TILE           1
+#define VSCROLL_COLUMN          1
+/**
+ *  \deprecated
+ *      Use VSCROLL_COLUMN instead
+ */
+#define VSCROLL_2TILE           VSCROLL_COLUMN
 
 /**
  *  \brief

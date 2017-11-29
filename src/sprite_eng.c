@@ -19,10 +19,17 @@
 //#define SPR_DEBUG
 //#define SPR_PROFIL
 
+#ifdef SPR_DEBUG
+    // force LIB_DEBUG
+    #define LIB_DEBUG   1
+#endif // SPR_DEBUG
+
 
 // internals
 #define VISIBILITY_ON                       0xFFFF
 #define VISIBILITY_OFF                      0x0000
+
+#define ALLOCATED                           0x8000
 
 #define NEED_ST_ATTR_UPDATE                 0x0001
 #define NEED_ST_POS_UPDATE                  0x0002
@@ -140,12 +147,12 @@ void SPR_init(u16 maxSprite, u16 cacheSize, u16 unpackBufferSize)
     // and create a VRAM region for sprite tile allocation
     VRAM_createRegion(&vram, index, size);
 
-#ifdef SPR_DEBUG
-    KLog("Sprite engine initialized");
+#if (LIB_DEBUG != 0)
+    KLog("Sprite engine initialized !");
     KLog_U1("  maxSprite: ", adjMax);
     KLog_U1("  unpack buffer size:", (unpackBufferSize?unpackBufferSize:256) * 32);
     KLog_U2_("  VRAM region: [", index, " - ", index + (size - 1), "]");
-#endif // SPR_DEBUG
+#endif // LIB_DEBUG
 
     // reset
     SPR_reset();
@@ -170,6 +177,10 @@ void SPR_end()
 
         VRAM_releaseRegion(&vram);
     }
+
+#if (LIB_DEBUG != 0)
+    KLog("Sprite engine ended !");
+#endif
 }
 
 u16 SPR_isInitialized()
@@ -212,31 +223,39 @@ void SPR_reset()
     memset(profil_time, 0, sizeof(profil_time));
 #endif // SPR_PROFIL
 
-#ifdef SPR_DEBUG
+#if (LIB_DEBUG != 0)
     KLog("Sprite engine reset");
     KLog_U1("  VRAM region free: ", VRAM_getFree(&vram));
     KLog_U1("  Available VDP sprites: ", VDP_getAvailableSprites());
-#endif // SPR_DEBUG
+#endif // LIB_DEBUG
 }
 
 
 static Sprite* allocateSprite()
 {
+    Sprite *result;
+
     // enough sprite remaining ?
     if (free == allocStack)
     {
 #if (LIB_DEBUG != 0)
-        KLog("Couldn't allocate Sprite, no more available sprite(s) !");
+        KLog("SPR_allocateSprite(): failed - no more available sprite !");
 #endif
 
         return NULL;
     }
 
-#ifdef SPR_DEBUG
-    KLog_U1("allocateSprite: allocating sprite at pos ", free[-1] - spritesBank);
-#endif // SPR_DEBUG
+#if (LIB_DEBUG != 0)
+    KLog_U1("SPR_allocateSprite(): success - allocating sprite at pos ", free[-1] - spritesBank);
+#endif // LIB_DEBUG
 
-    return *--free;
+    // allocate
+    result = *--free;
+
+    // mark as allocated
+    result->status |= ALLOCATED;
+
+    return result;
 }
 
 static void releaseSprite(Sprite* sprite)
@@ -245,12 +264,23 @@ static void releaseSprite(Sprite* sprite)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-#ifdef SPR_DEBUG
-    KLog_U1("releaseSprites: releasing sprite at pos ", sprite - spritesBank);
-#endif // SPR_DEBUG
+    // really allocated ?
+    if (sprite->status & ALLOCATED)
+    {
+#if (LIB_DEBUG != 0)
+        KLog_U1("SPR_releaseSprite: success - released sprite at pos ", sprite - spritesBank);
+#endif // LIB_DEBUG
 
-    // release sprite
-    *free++ = sprite;
+        // release sprite
+        *free++ = sprite;
+
+        // not anymore allocated
+        sprite->status &= ~ALLOCATED;
+    }
+#if (LIB_DEBUG != 0)
+    else
+        KLog_U1_("SPR_releaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
+#endif // LIB_DEBUG
 
 #ifdef SPR_PROFIL
     prof = getSubTick() - prof;

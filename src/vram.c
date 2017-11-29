@@ -56,6 +56,7 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
     u16* p;
     u16* free;
     u16 remaining;
+    s16 result;
 
     // cache free pointer
     free = region->free;
@@ -69,7 +70,7 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
         if (p == NULL)
         {
 #if (LIB_DEBUG != 0)
-            KDebug_Alert("VRAM_alloc failed: no enough free VRAM slot !");
+            KLog_U2_("VRAM_alloc(", size, ") failed: no enough free VRAM slot (free = ", VRAM_getFree(region), ")");
 #endif
 
             return -1;
@@ -104,8 +105,15 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
     // set block size, mark as used and point to free region
     *p = size | USED_MASK;
 
-    // return index position in VRAM
-    return ((s16) (p - region->vram)) + region->startIndex;
+    // get index position in VRAM region
+    result = ((s16) (p - region->vram)) + region->startIndex;
+
+#if (LIB_DEBUG != 0)
+    KLog_U3("VRAM_alloc(", size, ") success: ", result, " - remaining = ", VRAM_getFree(region));
+#endif
+
+    // return result
+    return result;
 }
 
 void VRAM_free(VRAMRegion *region, u16 index)
@@ -115,6 +123,10 @@ void VRAM_free(VRAMRegion *region, u16 index)
     // inside region ? --> free block
     if ((adjInd >= 0) && (index <= region->endIndex))
         region->vram[adjInd] &= ~USED_MASK;
+
+#if (LIB_DEBUG != 0)
+    KLog_U2("VRAM_free(", index, ") --> remaining = ", VRAM_getFree(region));
+#endif
 }
 
 u16 VRAM_getFree(VRAMRegion *region)

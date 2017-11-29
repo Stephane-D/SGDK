@@ -229,9 +229,25 @@ u16 MEM_getAllocated()
 
 void MEM_free(void *ptr)
 {
-    // valid block --> mark block as no more used
+    // valid block ?
     if (ptr)
+    {
+#if (LIB_DEBUG != 0)
+        // not in use ?
+        if (!(((u16*)ptr)[-1] & USED))
+        {
+            KLog_U1_("MEM_free(", (u32) ptr, ") failed: block is not allocated !");
+            return;
+        }
+#endif
+
+        // mark block as no more used
         ((u16*)ptr)[-1] &= ~USED;
+
+#if (LIB_DEBUG != 0)
+        KLog_U2("MEM_free(", (u32) ptr, ") --> remaining = ", MEM_getFree());
+#endif
+    }
 }
 
 void* MEM_alloc(u16 size)
@@ -254,7 +270,7 @@ void* MEM_alloc(u16 size)
         if (p == NULL)
         {
 #if (LIB_DEBUG != 0)
-            KDebug_Alert("MEM_alloc failed: no enough memory !");
+            KLog_U2_("MEM_alloc(", size, ") failed: no enough memory (free = ", MEM_getFree(),")");
 #endif
 
             return NULL;
@@ -287,6 +303,10 @@ void* MEM_alloc(u16 size)
 
     // set block size, mark as used and point to free region
     *p++ = adjsize | USED;
+
+#if (LIB_DEBUG != 0)
+    KLog_U3("MEM_alloc(", size, ") success: ", (u32) p, " - remaining = ", MEM_getFree());
+#endif
 
     // return block
     return p;
