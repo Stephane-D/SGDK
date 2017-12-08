@@ -88,12 +88,16 @@ void VDP_setHorizontalScroll(VDPPlan plan, s16 value);
  *      values will move it to the right.
  *  \param len
  *      Number of tile to set.
- *  \param use_dma
- *      Use DMA flag (faster for large transfer).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma);
+void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm);
 /**
  *  \brief
  *      Set plan horizontal scroll (line scroll mode).<br>
@@ -106,7 +110,7 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
  *      Plan we want to set the horizontal scroll.<br>
  *      Accepted values are:<br>
  *      - PLAN_A<br>
- *      - PLAN_B
+ *      - PLAN_B<br>
  *  \param line
  *      First line we want to set the horizontal scroll.
  *  \param values
@@ -114,12 +118,16 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
  *      Negative values will move the plan to the left while positive values will move it to the right.
  *  \param len
  *      Number of line to set.
- *  \param use_dma
- *      Use DMA flag (faster for large transfer).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *
  *  \see VDP_setScrollingMode()
  */
-void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u16 use_dma);
+void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, TransferMethod tm);
 
 /**
  *  \brief
@@ -159,12 +167,16 @@ void VDP_setVerticalScroll(VDPPlan plan, s16 value);
  *      Negative values will move the plan down while positive values will move it up.
  *  \param len
  *      Number of tile to set.
- *  \param use_dma
- *      Use DMA flag (faster for large transfer).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *
  *  \see VDP_setScrollingMode()
  */
-void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma);
+void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm);
 
 /**
  *  \brief
@@ -506,8 +518,12 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y);
  *      Plan Y position (in tile).
  *  \param loadpal
  *      Load the bitmap palette information when non zero (can be TRUE or FALSE)
- *  \param use_dma
- *      Use DMA transfert (faster but can lock Z80 execution).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Image (only if image was packed).
  *
@@ -515,7 +531,7 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y);
  *
  *  \see VDP_drawImage()
  */
-u16 VDP_drawImageEx(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, u16 use_dma);
+u16 VDP_drawImageEx(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm);
 
 
 #endif // _VDP_BG_H_

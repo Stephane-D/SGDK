@@ -15,6 +15,7 @@
 
 
 #include "vdp.h"
+#include "dma.h"
 
 
 /**
@@ -151,14 +152,18 @@ typedef struct
  *      Tile index where start tile data load (use TILE_USERINDEX as base user index).
  *  \param num
  *      Number of tile to load.
- *  \param use_dma
- *      Use DMA transfert (faster but can lock Z80 execution).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *
  *  Transfert rate:<br>
  *  ~90 bytes per scanline in software (during blanking)<br>
  *  ~190 bytes per scanline in hardware (during blanking)
  */
-void VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma);
+void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm);
 /**
  *  \brief
  *      Load tile data (pattern) in VRAM.
@@ -168,8 +173,12 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma);
  *      The TileSet is unpacked "on-the-fly" if needed (require some memory)
  *  \param index
  *      Tile index where start tile data load (use TILE_USERINDEX as base user index).
- *  \param use_dma
- *      Use DMA transfert (faster but can lock Z80 execution).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *  \return
  *      FALSE if there is not enough memory to unpack the specified TileSet (only if compression was enabled).
  *
@@ -177,7 +186,7 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, u8 use_dma);
  *  ~90 bytes per scanline in software (during blanking)<br>
  *  ~190 bytes per scanline in hardware (during blanking)
  */
-u16 VDP_loadTileSet(const TileSet *tileset, u16 index, u8 use_dma);
+u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
 /**
  *  \brief
  *      Load font tile data in VRAM.<br>
@@ -187,15 +196,19 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, u8 use_dma);
  *      Pointer to font tile data.
  *  \param length
  *      Number of characters of the font (max = FONT_LEN).
- *  \param use_dma
- *      Use DMA transfert (faster but can lock Z80 execution).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *
  *  This fonction permits to replace system font by user font.<br>
  *  The font tile data are loaded to TILE_FONTINDEX and can contains FONT_LEN characters at max.<br>
  *  Each character should fit in one tile (8x8 pixels bloc).<br>
  *  See also VDP_loadFont(..) and VDP_loadTileData(..)
  */
-void VDP_loadFontData(const u32 *font, u16 length, u8 use_dma);
+void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm);
 /**
  *  \brief
  *      Load font from the specified TileSet structure.
@@ -203,8 +216,12 @@ void VDP_loadFontData(const u32 *font, u16 length, u8 use_dma);
  *  \param font
  *      TileSet containing the font.<br>
  *      The TileSet is unpacked "on-the-fly" if needed (require some memory)
- *  \param use_dma
- *      Use DMA transfert (faster but can lock Z80 execution).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *  \return
  *      FALSE if there is not enough memory to unpack the specified font (only if compression was enabled).
  *
@@ -213,7 +230,7 @@ void VDP_loadFontData(const u32 *font, u16 length, u8 use_dma);
  *  Each character should fit in one tile (8x8 pixels bloc).<br>
  *  See also VDP_loadFontData(..)
  */
-u16 VDP_loadFont(const TileSet *font, u8 use_dma);
+u16 VDP_loadFont(const TileSet *font, TransferMethod tm);
 
 /**
  *  \brief
@@ -485,7 +502,7 @@ void VDP_fillTileMapRectInc(VDPPlan plan, u16 basetile, u16 x, u16 y, u16 w, u16
  *  \deprecated
  *      Use VDP_setTileMapData() instead.
  */
-void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma);
+void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm);
 /**
  *  \brief
  *      Load tilemap data at specified index.
@@ -502,8 +519,12 @@ void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, u8 u
  *      Tile index where to start to set tilemap.
  *  \param num
  *      Number of tile to set.
- *  \param use_dma
- *      Use DMA transfert (faster but can lock Z80 execution).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE
  *
  *  Set the specified tilemap with specified tile attributes values.<br>
  *  Transfert rate:<br>
@@ -513,7 +534,7 @@ void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, u8 u
  *  \see VDP_setTileMapDataEx().
  *  \see VDP_setTileMapDataRect().
  */
-void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma);
+void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm);
 /**
  *  \brief
  *      Load tilemap data at specified region.

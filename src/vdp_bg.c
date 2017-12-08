@@ -38,22 +38,23 @@ void VDP_setHorizontalScroll(VDPPlan plan, s16 value)
     *pw = value;
 }
 
-void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma)
+void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((tile & 0x1F) * (4 * 8));
     if (plan.value == CONST_PLAN_B) addr += 2;
 
-    VDP_setAutoInc(4 * 8);
-
-    if (use_dma) DMA_doDma(DMA_VRAM, (u32) values, addr, len, -1);
+    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VRAM, (u32) values, addr, len, 4 * 8);
+    else if (tm == DMA) DMA_doDma(DMA_VRAM, (u32) values, addr, len, 4 * 8);
     else
     {
         vu16 *pw;
         vu32 *pl;
         u16 *src;
         u16 i;
+
+        VDP_setAutoInc(4 * 8);
 
         /* Point to vdp port */
         pw = (u16 *) GFX_DATA_PORT;
@@ -68,22 +69,23 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u
     }
 }
 
-void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, u16 use_dma)
+void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((line & 0xFF) * 4);
     if (plan.value == CONST_PLAN_B) addr += 2;
 
-    VDP_setAutoInc(4);
-
-    if (use_dma) DMA_doDma(DMA_VRAM, (u32) values, addr, len, -1);
+    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VRAM, (u32) values, addr, len, 4);
+    else if (tm == DMA) DMA_doDma(DMA_VRAM, (u32) values, addr, len, 4);
     else
     {
         vu16 *pw;
         vu32 *pl;
         u16 *src;
         u16 i;
+
+        VDP_setAutoInc(4);
 
         /* Point to vdp port */
         pw = (u16 *) GFX_DATA_PORT;
@@ -115,22 +117,23 @@ void VDP_setVerticalScroll(VDPPlan plan, s16 value)
     *pw = value;
 }
 
-void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, u16 use_dma)
+void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
 
     addr = (tile & 0x1F) * 4;
     if (plan.value == CONST_PLAN_B) addr += 2;
 
-    VDP_setAutoInc(4);
-
-    if (use_dma) DMA_doDma(DMA_VSRAM, (u32) values, addr, len, -1);
+    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VSRAM, (u32) values, addr, len, 4);
+    else if (tm == DMA) DMA_doDma(DMA_VSRAM, (u32) values, addr, len, 4);
     else
     {
         vu16 *pw;
         vu32 *pl;
         u16 *src;
         u16 i;
+
+        VDP_setAutoInc(4);
 
         /* Point to vdp port */
         pw = (u16 *) GFX_DATA_PORT;
@@ -319,11 +322,11 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y)
     return result;
 }
 
-u16 VDP_drawImageEx(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, u16 use_dma)
+u16 VDP_drawImageEx(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm)
 {
     Palette *palette;
 
-    if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, use_dma))
+    if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, tm))
         return FALSE;
 
     if (!VDP_setMap(plan, image->map, basetile, x, y))

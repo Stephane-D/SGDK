@@ -12,9 +12,24 @@ VDP_loadTileData:
     move.w 30(%sp),%d6              | d6 = ind
     lsl.w #5,%d6                    | d6 = ind * 32 = VRAM address
 
-    tst.b 39(%sp)
-    jeq .L2
+    move.b 39(%sp),%d0              | d0 = tm (TransferMethod)
+    subq.b #1,%d0                   | 0 = CPU, 1 = DMA, 2 = DMA QUEUE
+    jmi .transfer_CPU
+    jeq .transfer_DMA
 
+.DMA_queue:
+    lsl.w #4,%d3                    | d3 = num * 16 (size of DMA in word)
+
+    pea 2.w                         | prepare parameters for VDP_doDMA
+    move.l %d3,-(%sp)
+    move.l %d6,-(%sp)
+    move.l %d2,-(%sp)
+    clr.l -(%sp)
+    jsr DMA_queueDma
+    lea (20,%sp),%sp
+    jra .L1
+
+.transfer_DMA:
     lsl.w #4,%d3                    | d3 = num * 16 (size of DMA in word)
 
     pea 2.w                         | prepare parameters for VDP_doDMA
@@ -27,7 +42,7 @@ VDP_loadTileData:
     jra .L1
 
     .align  2
-.L2:
+.transfer_CPU:
     pea 2.w
     jsr VDP_setAutoInc
     addq.l #4,%sp

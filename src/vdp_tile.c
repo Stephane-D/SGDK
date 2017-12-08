@@ -14,7 +14,7 @@
 #include "tab_cnv.h"
 
 
-u16 VDP_loadTileSet(const TileSet *tileset, u16 index, u8 use_dma)
+u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
 {
     const u16 comp = tileset->compression;
 
@@ -27,24 +27,24 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, u8 use_dma)
         if (t == NULL) return FALSE;
 
         // tiles
-        VDP_loadTileData(t->tiles, index, t->numTile, use_dma);
+        VDP_loadTileData(t->tiles, index, t->numTile, tm);
         MEM_free(t);
     }
     else
         // tiles
-        VDP_loadTileData(tileset->tiles, index, tileset->numTile, use_dma);
+        VDP_loadTileData(tileset->tiles, index, tileset->numTile, tm);
 
     return TRUE;
 }
 
-void VDP_loadFontData(const u32 *font, u16 length, u8 use_dma)
+void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm)
 {
-    VDP_loadTileData(font, TILE_FONTINDEX, length, use_dma);
+    VDP_loadTileData(font, TILE_FONTINDEX, length, tm);
 }
 
-u16 VDP_loadFont(const TileSet *font, u8 use_dma)
+u16 VDP_loadFont(const TileSet *font, TransferMethod tm)
 {
-    return VDP_loadTileSet(font, TILE_FONTINDEX, use_dma);
+    return VDP_loadTileSet(font, TILE_FONTINDEX, tm);
 }
 
 void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 h, u16 bmp_w)
@@ -317,20 +317,17 @@ void VDP_fillTileMapRectInc(VDPPlan plan, u16 basetile, u16 x, u16 y, u16 w, u16
     }
 }
 
-void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma)
+void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm)
 {
-    VDP_setTileMapData(plan, data, ind, num, use_dma);
+    VDP_setTileMapData(plan, data, ind, num, tm);
 }
 
-void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma)
+void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm)
 {
-    if (use_dma)
-    {
-        // wait for previous DMA completion
-        VDP_waitDMACompletion();
-        // then do DMA
-        VDP_doVRamDMA((u32) data, plan + (ind * 2), num);
-    }
+    u16 addr = plan + (ind * 2);
+
+    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VRAM, (u32) data, addr, num, 2);
+    else if (tm == DMA) DMA_doDma(DMA_VRAM, (u32) data, addr, num, 2);
     else
     {
         vu32 *plctrl;
@@ -338,7 +335,6 @@ void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma)
         vu32 *pldata;
         const u16 *src;
         const u32 *src32;
-        u32 addr;
         u16 i;
 
         VDP_setAutoInc(2);
@@ -346,8 +342,6 @@ void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, u8 use_dma)
         /* point to vdp port */
         plctrl = (u32 *) GFX_CTRL_PORT;
         pldata = (u32 *) GFX_DATA_PORT;
-
-        addr = plan + (ind * 2);
 
         *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 

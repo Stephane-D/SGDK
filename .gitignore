@@ -7,6 +7,10 @@
 *.iobj
 *.ipdb
 *.pdb
+*.o
+*.out
+*.layout
+rom_head.bin
 vstudio/appack/Debug
 vstudio/appack/Release
 vstudio/libmd/Debug
@@ -17,3 +21,7 @@ out.lst
 obj/*
 src/z80_*.s
 res/libres.s
+archive/*
+cb/*
+doc/*
+emu/*

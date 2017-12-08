@@ -33,6 +33,18 @@
 
 /**
  *  \brief
+ *      VRAM transfer method
+ */
+typedef enum
+{
+    CPU = 0,            /**< Transfer through the CPU immediately */
+    DMA = 1,            /**< Transfer through DMA immediately, using DMA is faster but can lock Z80 execution */
+    DMA_QUEUE = 2,      /**< Put in the DMA queue so it will be transfered at next VBlank, using DMA is faster but can lock Z80 execution */
+} TransferMethod;
+
+
+/**
+ *  \brief
  *      DMA transfer definition (used for DMA queue)
  */
 typedef struct
