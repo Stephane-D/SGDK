@@ -123,8 +123,9 @@ typedef struct
 frameSprite_* getFlippedFrameSprite(frameSprite_* frameSprite, int wf, int hf, int hflip, int vflip);
 frameSprite_* getFrameSprite(unsigned char *image8bpp, tileset_* tileset, int wi, int x, int y, int w, int h);
 animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int wf, int hf, int time, int collisionType);
-animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int hf, int time, int collisionType);
-spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, int wf, int hf, int time, int collisionType);
+animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int hf, int time, int collisionType, int loopFrame);
+spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, int wf, int hf, int time, int collisionType, int *loopsFrames, int numberOfLoopsFrames);
+int* getLoopsFrames(const char *loopsStr, int *numberOfFrames);
 
 int packSpriteDef(spriteDefinition_* spriteDef, int method);
 void removeEmptyFrame(spriteDefinition_ *spriteDef);

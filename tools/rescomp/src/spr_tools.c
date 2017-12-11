@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <string.h>
 
 #include "../inc/spr_tools.h"
 #include "../inc/tools.h"
@@ -183,7 +184,7 @@ animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int w
     return result;
 }
 
-animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int hf, int time, int collision)
+animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int hf, int time, int collision, int loopFrame)
 {
     int i;
     animation_* result;
@@ -206,7 +207,7 @@ animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int
     sequence = malloc(numFrame * sizeof(unsigned char));
     result->sequence = sequence;
     // default: loop to frame 0
-    result->loop = 0;
+    result->loop = loopFrame;
 
     for(i = 0; i < numFrame; i++)
     {
@@ -219,7 +220,7 @@ animation_* getAnimation(unsigned char *image8bpp, int wi, int anim, int wf, int
     return result;
 }
 
-spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, int wf, int hf, int time, int collision)
+spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, int wf, int hf, int time, int collision, int *loopsFrames, int numberOfLoopsFrames)
 {
     int i;
     int numAnim;
@@ -228,6 +229,12 @@ spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, i
 
     // get number of animation
     numAnim = h / hf;
+
+    if (loopsFrames != NULL && numAnim != numberOfLoopsFrames)
+    {
+        printf("Number of animations does not match with number of loops frames.");
+        return NULL;
+    }
 
     // allocate result
     result = malloc(sizeof(spriteDefinition_));
@@ -240,7 +247,13 @@ spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, i
 
     for(i = 0; i < numAnim; i++)
     {
-        *animations = getAnimation(image8bpp, w, i, wf, hf, time, collision);
+        int loopFrame = 0;
+        if (loopsFrames != NULL)
+        {
+            loopFrame = loopsFrames[i];
+        }
+
+        *animations = getAnimation(image8bpp, w, i, wf, hf, time, collision, loopFrame);
         if (*animations == NULL) return NULL;
 
         // update maximum number of tile and sprite
@@ -251,6 +264,30 @@ spriteDefinition_* getSpriteDefinition(unsigned char *image8bpp, int w, int h, i
     }
 
     return result;
+}
+
+int* getLoopsFrames(const char* loopsStr, int* numberOfFrames)
+{
+    if (loopsStr == NULL || strlen(loopsStr) == 0)
+        return NULL;
+
+    char *token;
+    int *frames;
+    int i = 0;
+
+    frames = malloc(sizeof(int));
+    token = strtok(loopsStr, ",");
+
+    while(token != NULL)
+    {
+        frames = realloc(frames, sizeof(int) * (i + 1));
+        frames[i] = atoi(token);
+        token = strtok(NULL, ",");
+        i++;
+    }
+
+    *numberOfFrames = i;
+    return frames;
 }
 
 

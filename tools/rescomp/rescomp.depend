@@ -1,0 +1,246 @@
+# depslib dependency file v1.0
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\bin.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/bin.h"
+	"../inc/tools.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\rescomp.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\plugin.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\bin.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\tools.h
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\bitmap.c
+	<stdio.h>
+	<string.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+	"../inc/bitmap.h"
+	"../inc/palette.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\img_tools.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\bitmap.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\palette.h
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\image.c
+	<stdio.h>
+	<string.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+	"../inc/tile_tools.h"
+	"../inc/image.h"
+	"../inc/palette.h"
+	"../inc/map.h"
+	"../inc/tileset.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\tile_tools.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\image.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\map.h
+	"../inc/tile_tools.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\tileset.h
+	"../inc/tile_tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\img_tools.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdbool.h>
+	<math.h>
+	"../inc/libpng.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\libpng.h
+	<string.h>
+	<vector>
+	<string>
+	"lodepng.h"
+	<iostream>
+	"lodepng.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\libpng.c
+	"../inc/libpng.h"
+	<stdio.h>
+	<stdlib.h>
+	<fstream>
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\map.c
+	<stdio.h>
+	<string.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+	"../inc/tile_tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\palette.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+	"../inc/palette.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\pcm.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/pcm.h"
+	"../inc/tools.h"
+	"../inc/snd_tools.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\pcm.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\snd_tools.h
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\rescomp.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<dirent.h>
+	<sys/types.h>
+	"../inc/rescomp.h"
+	"../inc/tools.h"
+	"../inc/plugin.h"
+	"../inc/palette.h"
+	"../inc/bitmap.h"
+	"../inc/tileset.h"
+	"../inc/map.h"
+	"../inc/image.h"
+	"../inc/sprite.h"
+	"../inc/xgmmusic.h"
+	"../inc/tfmmusic.h"
+	"../inc/vgmmusic.h"
+	"../inc/pcm.h"
+	"../inc/wav.h"
+	"../inc/bin.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\sprite.h
+	"../inc/spr_tools.h"
+
+1512958311 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\spr_tools.h
+	"tools.h"
+	"tile_tools.h"
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\xgmmusic.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\tfmmusic.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\vgmmusic.h
+
+1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\wav.h
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\snd_tools.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/tools.h"
+	"../inc/snd_tools.h"
+
+1512958509 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\spr_tools.c
+	<stdio.h>
+	<stdbool.h>
+	<stdlib.h>
+	<memory.h>
+	<string.h>
+	"../inc/spr_tools.h"
+	"../inc/tools.h"
+
+1512958554 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\sprite.c
+	<stdio.h>
+	<string.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+	"../inc/spr_tools.h"
+	"../inc/sprite.h"
+	"../inc/palette.h"
+	"../inc/tileset.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\tfmmusic.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tfmmusic.h"
+	"../inc/tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\tile_tools.c
+	<stdio.h>
+	<stdbool.h>
+	<stdlib.h>
+	<memory.h>
+	"../inc/tile_tools.h"
+	"../inc/tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\tileset.c
+	<stdio.h>
+	<string.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+	"../inc/tile_tools.h"
+	"../inc/tileset.h"
+	"../inc/palette.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\tools.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<ctype.h>
+	"../inc/rescomp.h"
+	"../inc/tools.h"
+	"../inc/img_tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\vgmmusic.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/vgmmusic.h"
+	"../inc/tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\wav.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/wav.h"
+	"../inc/tools.h"
+	"../inc/snd_tools.h"
+
+1512888862 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\xgmmusic.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"../inc/rescomp.h"
+	"../inc/plugin.h"
+	"../inc/xgmmusic.h"
+	"../inc/tools.h"
+	"../inc/snd_tools.h"
+

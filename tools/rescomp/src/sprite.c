@@ -46,12 +46,16 @@ static int execute(char *info, FILE *fs, FILE *fh)
     unsigned char *data;
     unsigned short *palette;
     spriteDefinition_ *sprDef;
+    char loopsStr[128] = "";
+    int *loops;
+    int numberOfLoopsFrames;
 
+    numberOfLoopsFrames = 0;
     packed = 0;
     time = 0;
     strcpy(collision, "NONE");
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %s %d %s", temp, id, temp, &wf, &hf, packedStr, &time, collision);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %s %d %s [%s]", temp, id, temp, &wf, &hf, packedStr, &time, collision, loopsStr);
 
     if (nbElem < 5)
     {
@@ -68,6 +72,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
         printf("  time      display frame time in 1/60 of second (time between each animation frame).\n");
         printf("  collid    collision type: CIRCLE, BOX or NONE (BOX by default).\n");
+        printf("  loops     sets the frames to which each animations should loop to.");
 
         return FALSE;
     }
@@ -80,6 +85,9 @@ static int execute(char *info, FILE *fs, FILE *fh)
     adjustPath(resDir, temp, fileIn);
     // get packed value
     packed = getCompression(packedStr);
+
+    // Get loops frames
+    loops = getLoopsFrames(loopsStr, &numberOfLoopsFrames);
 
     // retrieve basic infos about the image
     if (!Img_getInfos(fileIn, &w, &h, &bpp)) return FALSE;
@@ -114,7 +122,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
         return FALSE;
     }
 
-    sprDef = getSpriteDefinition(data, wt, ht, wf, hf, time, collid);
+    sprDef = getSpriteDefinition(data, wt, ht, wf, hf, time, collid, loops, numberOfLoopsFrames);
     if (!sprDef) return FALSE;
 
     //TODO: optimize
