@@ -860,7 +860,6 @@ void SPR_setAnimAndFrame(Sprite *sprite, s16 anim, s16 frame)
         sprite->animation = animation;
         sprite->frameInd = frameInd;
         sprite->frame = animation->frames[frameInd];
-        sprite->timer = sprite->frame->timer;
 
 #ifdef SPR_DEBUG
         KLog_U4("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame, " adj frame=", frameInd);
@@ -894,7 +893,6 @@ void SPR_setAnim(Sprite *sprite, s16 anim)
         sprite->animation = animation;
         sprite->frameInd = frameInd;
         sprite->frame = animation->frames[frameInd];
-        sprite->timer = sprite->frame->timer;
 
 #ifdef SPR_DEBUG
         KLog_U3("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0 adj frame=", frameInd);
