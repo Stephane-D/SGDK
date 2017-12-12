@@ -137,7 +137,7 @@
 1512888862 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\sprite.h
 	"../inc/spr_tools.h"
 
-1512958311 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\spr_tools.h
+1513056638 c:\users\heito\documents\projects\sgdk\tools\rescomp\inc\spr_tools.h
 	"tools.h"
 	"tile_tools.h"
 
@@ -157,7 +157,7 @@
 	"../inc/tools.h"
 	"../inc/snd_tools.h"
 
-1512958509 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\spr_tools.c
+1513055880 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\spr_tools.c
 	<stdio.h>
 	<stdbool.h>
 	<stdlib.h>
@@ -166,7 +166,7 @@
 	"../inc/spr_tools.h"
 	"../inc/tools.h"
 
-1512958554 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\sprite.c
+1513056230 source:c:\users\heito\documents\projects\sgdk\tools\rescomp\src\sprite.c
 	<stdio.h>
 	<string.h>
 	"../inc/rescomp.h"

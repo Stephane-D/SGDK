@@ -46,16 +46,16 @@ static int execute(char *info, FILE *fs, FILE *fh)
     unsigned char *data;
     unsigned short *palette;
     spriteDefinition_ *sprDef;
-    char loopsStr[128] = "";
-    int *loops;
-    int numberOfLoopsFrames;
+    char loopStr[128] = "";
+    int *loopFrames;
+    int loopFramesCount;
 
-    numberOfLoopsFrames = 0;
+    loopFramesCount = 0;
     packed = 0;
     time = 0;
     strcpy(collision, "NONE");
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %s %d %s [%s]", temp, id, temp, &wf, &hf, packedStr, &time, collision, loopsStr);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %d %d %s %d %s [%s]", temp, id, temp, &wf, &hf, packedStr, &time, collision, loopStr);
 
     if (nbElem < 5)
     {
@@ -86,8 +86,8 @@ static int execute(char *info, FILE *fs, FILE *fh)
     // get packed value
     packed = getCompression(packedStr);
 
-    // Get loops frames
-    loops = getLoopsFrames(loopsStr, &numberOfLoopsFrames);
+    // get loop frames defined
+    loopFrames = getLoopFrames(loopStr, &loopFramesCount);
 
     // retrieve basic infos about the image
     if (!Img_getInfos(fileIn, &w, &h, &bpp)) return FALSE;
@@ -108,6 +108,23 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("Height changed to %d\n", ht * 8);
     }
 
+    // inform about incorrect number of loop frames defined
+    if (loopFrames != NULL)
+    {
+        int numOfAnims = ht / hf;
+
+        if (loopFramesCount > numOfAnims)
+        {
+            printf("Warning: Number of loop frames (%d) for %s is greater than the number of animations (%d)\n", loopFramesCount, id, numOfAnims);
+            printf("Excess loop frames definitions will be ignored\n");
+        }
+        else if (loopFramesCount < numOfAnims)
+        {
+            printf("Warning: Number of loop frames (%d) for %s is less than the number of animations (%d)\n", loopFramesCount, id, numOfAnims);
+            printf("Animations without a loop frame defined will default to 0\n");
+        }
+    }
+
     // get image data (always 8bpp)
     data = Img_getData(fileIn, &size, 8, 8);
     if (!data) return FALSE;
@@ -122,7 +139,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
         return FALSE;
     }
 
-    sprDef = getSpriteDefinition(data, wt, ht, wf, hf, time, collid, loops, numberOfLoopsFrames);
+    sprDef = getSpriteDefinition(data, wt, ht, wf, hf, time, collid, loopFrames, loopFramesCount);
     if (!sprDef) return FALSE;
 
     //TODO: optimize
