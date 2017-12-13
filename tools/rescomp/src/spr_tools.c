@@ -289,7 +289,7 @@ int* getLoopFrames(char* loopsStr, int* numberOfFrames)
     while(token != NULL)
     {
         frames = realloc(frames, sizeof(int) * (i + 1));
-        frames[i] = atoi(token);
+        frames[i] = (int) strtol(token, NULL, 10);
         token = strtok(NULL, ",");
         i++;
     }
