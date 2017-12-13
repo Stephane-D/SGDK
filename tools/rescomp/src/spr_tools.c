@@ -288,8 +288,14 @@ int* getLoopFrames(char* loopsStr, int* numberOfFrames)
 
     while(token != NULL)
     {
+        char *temp;
         frames = realloc(frames, sizeof(int) * (i + 1));
-        frames[i] = (int) strtol(token, NULL, 10);
+        frames[i] = (int) strtol(token, &temp, 10);
+        if (token == temp)
+        {
+            printf("Warning: Invalid value (%s) for the loop frame of animation %d\n", token, i);
+            printf("Loop frame will default to 0\n");
+        }
         token = strtok(NULL, ",");
         i++;
     }
