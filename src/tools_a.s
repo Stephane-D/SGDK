@@ -254,7 +254,7 @@ aplib_decrunch:
 
 # ---------------------------------------------------------------------------
 # LZ4W unpacker for MC68000
-# by Stephane Dallongeville @2016
+# by Stephane Dallongeville @2017
 #
 # lz4w_unpack_a: A0 = Source / A1 = Destination / Returns unpacked size
 # u16 lz4w_unpack(const u8 *src, u8 *dest);  /* c prototype */
@@ -271,7 +271,6 @@ lz4w_unpack_a:
     movem.l %a2-%a4,-(%sp)
 
     lea     .next,%a3               | used for fast jump
-    addq.l  #4,%a0                  | bypass unpacked length field
     moveq   #0,%d1
 
 .next:
@@ -289,7 +288,7 @@ lz4w_unpack_a:
     .align 2
 .jump_table:
 
-    .long .done
+    .long .lit0_mat0
     .long .lit0_mat1
     .long .lit0_mat2
     .long .lit0_mat3
@@ -546,6 +545,524 @@ lz4w_unpack_a:
     .long .litF_matE
     .long .litF_matF
 
+.lm_len_FF:
+	move.w  (%a2)+,(%a1)+
+.lm_len_FE:
+	move.w  (%a2)+,(%a1)+
+.lm_len_FD:
+	move.w  (%a2)+,(%a1)+
+.lm_len_FC:
+	move.w  (%a2)+,(%a1)+
+.lm_len_FB:
+	move.w  (%a2)+,(%a1)+
+.lm_len_FA:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F9:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F8:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F7:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F6:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F5:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F4:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F3:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F2:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F1:
+	move.w  (%a2)+,(%a1)+
+.lm_len_F0:
+	move.w  (%a2)+,(%a1)+
+.lm_len_EF:
+	move.w  (%a2)+,(%a1)+
+.lm_len_EE:
+	move.w  (%a2)+,(%a1)+
+.lm_len_ED:
+	move.w  (%a2)+,(%a1)+
+.lm_len_EC:
+	move.w  (%a2)+,(%a1)+
+.lm_len_EB:
+	move.w  (%a2)+,(%a1)+
+.lm_len_EA:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E9:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E8:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E7:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E6:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E5:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E4:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E3:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E2:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E1:
+	move.w  (%a2)+,(%a1)+
+.lm_len_E0:
+	move.w  (%a2)+,(%a1)+
+.lm_len_DF:
+	move.w  (%a2)+,(%a1)+
+.lm_len_DE:
+	move.w  (%a2)+,(%a1)+
+.lm_len_DD:
+	move.w  (%a2)+,(%a1)+
+.lm_len_DC:
+	move.w  (%a2)+,(%a1)+
+.lm_len_DB:
+	move.w  (%a2)+,(%a1)+
+.lm_len_DA:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D9:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D8:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D7:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D6:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D5:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D4:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D3:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D2:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D1:
+	move.w  (%a2)+,(%a1)+
+.lm_len_D0:
+	move.w  (%a2)+,(%a1)+
+.lm_len_CF:
+	move.w  (%a2)+,(%a1)+
+.lm_len_CE:
+	move.w  (%a2)+,(%a1)+
+.lm_len_CD:
+	move.w  (%a2)+,(%a1)+
+.lm_len_CC:
+	move.w  (%a2)+,(%a1)+
+.lm_len_CB:
+	move.w  (%a2)+,(%a1)+
+.lm_len_CA:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C9:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C8:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C7:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C6:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C5:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C4:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C3:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C2:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C1:
+	move.w  (%a2)+,(%a1)+
+.lm_len_C0:
+	move.w  (%a2)+,(%a1)+
+.lm_len_BF:
+	move.w  (%a2)+,(%a1)+
+.lm_len_BE:
+	move.w  (%a2)+,(%a1)+
+.lm_len_BD:
+	move.w  (%a2)+,(%a1)+
+.lm_len_BC:
+	move.w  (%a2)+,(%a1)+
+.lm_len_BB:
+	move.w  (%a2)+,(%a1)+
+.lm_len_BA:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B9:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B8:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B7:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B6:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B5:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B4:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B3:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B2:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B1:
+	move.w  (%a2)+,(%a1)+
+.lm_len_B0:
+	move.w  (%a2)+,(%a1)+
+.lm_len_AF:
+	move.w  (%a2)+,(%a1)+
+.lm_len_AE:
+	move.w  (%a2)+,(%a1)+
+.lm_len_AD:
+	move.w  (%a2)+,(%a1)+
+.lm_len_AC:
+	move.w  (%a2)+,(%a1)+
+.lm_len_AB:
+	move.w  (%a2)+,(%a1)+
+.lm_len_AA:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A9:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A8:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A7:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A6:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A5:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A4:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A3:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A2:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A1:
+	move.w  (%a2)+,(%a1)+
+.lm_len_A0:
+	move.w  (%a2)+,(%a1)+
+.lm_len_9F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_9E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_9D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_9C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_9B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_9A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_99:
+	move.w  (%a2)+,(%a1)+
+.lm_len_98:
+	move.w  (%a2)+,(%a1)+
+.lm_len_97:
+	move.w  (%a2)+,(%a1)+
+.lm_len_96:
+	move.w  (%a2)+,(%a1)+
+.lm_len_95:
+	move.w  (%a2)+,(%a1)+
+.lm_len_94:
+	move.w  (%a2)+,(%a1)+
+.lm_len_93:
+	move.w  (%a2)+,(%a1)+
+.lm_len_92:
+	move.w  (%a2)+,(%a1)+
+.lm_len_91:
+	move.w  (%a2)+,(%a1)+
+.lm_len_90:
+	move.w  (%a2)+,(%a1)+
+.lm_len_8F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_8E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_8D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_8C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_8B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_8A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_89:
+	move.w  (%a2)+,(%a1)+
+.lm_len_88:
+	move.w  (%a2)+,(%a1)+
+.lm_len_87:
+	move.w  (%a2)+,(%a1)+
+.lm_len_86:
+	move.w  (%a2)+,(%a1)+
+.lm_len_85:
+	move.w  (%a2)+,(%a1)+
+.lm_len_84:
+	move.w  (%a2)+,(%a1)+
+.lm_len_83:
+	move.w  (%a2)+,(%a1)+
+.lm_len_82:
+	move.w  (%a2)+,(%a1)+
+.lm_len_81:
+	move.w  (%a2)+,(%a1)+
+.lm_len_80:
+	move.w  (%a2)+,(%a1)+
+.lm_len_7F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_7E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_7D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_7C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_7B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_7A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_79:
+	move.w  (%a2)+,(%a1)+
+.lm_len_78:
+	move.w  (%a2)+,(%a1)+
+.lm_len_77:
+	move.w  (%a2)+,(%a1)+
+.lm_len_76:
+	move.w  (%a2)+,(%a1)+
+.lm_len_75:
+	move.w  (%a2)+,(%a1)+
+.lm_len_74:
+	move.w  (%a2)+,(%a1)+
+.lm_len_73:
+	move.w  (%a2)+,(%a1)+
+.lm_len_72:
+	move.w  (%a2)+,(%a1)+
+.lm_len_71:
+	move.w  (%a2)+,(%a1)+
+.lm_len_70:
+	move.w  (%a2)+,(%a1)+
+.lm_len_6F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_6E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_6D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_6C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_6B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_6A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_69:
+	move.w  (%a2)+,(%a1)+
+.lm_len_68:
+	move.w  (%a2)+,(%a1)+
+.lm_len_67:
+	move.w  (%a2)+,(%a1)+
+.lm_len_66:
+	move.w  (%a2)+,(%a1)+
+.lm_len_65:
+	move.w  (%a2)+,(%a1)+
+.lm_len_64:
+	move.w  (%a2)+,(%a1)+
+.lm_len_63:
+	move.w  (%a2)+,(%a1)+
+.lm_len_62:
+	move.w  (%a2)+,(%a1)+
+.lm_len_61:
+	move.w  (%a2)+,(%a1)+
+.lm_len_60:
+	move.w  (%a2)+,(%a1)+
+.lm_len_5F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_5E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_5D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_5C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_5B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_5A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_59:
+	move.w  (%a2)+,(%a1)+
+.lm_len_58:
+	move.w  (%a2)+,(%a1)+
+.lm_len_57:
+	move.w  (%a2)+,(%a1)+
+.lm_len_56:
+	move.w  (%a2)+,(%a1)+
+.lm_len_55:
+	move.w  (%a2)+,(%a1)+
+.lm_len_54:
+	move.w  (%a2)+,(%a1)+
+.lm_len_53:
+	move.w  (%a2)+,(%a1)+
+.lm_len_52:
+	move.w  (%a2)+,(%a1)+
+.lm_len_51:
+	move.w  (%a2)+,(%a1)+
+.lm_len_50:
+	move.w  (%a2)+,(%a1)+
+.lm_len_4F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_4E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_4D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_4C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_4B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_4A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_49:
+	move.w  (%a2)+,(%a1)+
+.lm_len_48:
+	move.w  (%a2)+,(%a1)+
+.lm_len_47:
+	move.w  (%a2)+,(%a1)+
+.lm_len_46:
+	move.w  (%a2)+,(%a1)+
+.lm_len_45:
+	move.w  (%a2)+,(%a1)+
+.lm_len_44:
+	move.w  (%a2)+,(%a1)+
+.lm_len_43:
+	move.w  (%a2)+,(%a1)+
+.lm_len_42:
+	move.w  (%a2)+,(%a1)+
+.lm_len_41:
+	move.w  (%a2)+,(%a1)+
+.lm_len_40:
+	move.w  (%a2)+,(%a1)+
+.lm_len_3F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_3E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_3D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_3C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_3B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_3A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_39:
+	move.w  (%a2)+,(%a1)+
+.lm_len_38:
+	move.w  (%a2)+,(%a1)+
+.lm_len_37:
+	move.w  (%a2)+,(%a1)+
+.lm_len_36:
+	move.w  (%a2)+,(%a1)+
+.lm_len_35:
+	move.w  (%a2)+,(%a1)+
+.lm_len_34:
+	move.w  (%a2)+,(%a1)+
+.lm_len_33:
+	move.w  (%a2)+,(%a1)+
+.lm_len_32:
+	move.w  (%a2)+,(%a1)+
+.lm_len_31:
+	move.w  (%a2)+,(%a1)+
+.lm_len_30:
+	move.w  (%a2)+,(%a1)+
+.lm_len_2F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_2E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_2D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_2C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_2B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_2A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_29:
+	move.w  (%a2)+,(%a1)+
+.lm_len_28:
+	move.w  (%a2)+,(%a1)+
+.lm_len_27:
+	move.w  (%a2)+,(%a1)+
+.lm_len_26:
+	move.w  (%a2)+,(%a1)+
+.lm_len_25:
+	move.w  (%a2)+,(%a1)+
+.lm_len_24:
+	move.w  (%a2)+,(%a1)+
+.lm_len_23:
+	move.w  (%a2)+,(%a1)+
+.lm_len_22:
+	move.w  (%a2)+,(%a1)+
+.lm_len_21:
+	move.w  (%a2)+,(%a1)+
+.lm_len_20:
+	move.w  (%a2)+,(%a1)+
+.lm_len_1F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_1E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_1D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_1C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_1B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_1A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_19:
+	move.w  (%a2)+,(%a1)+
+.lm_len_18:
+	move.w  (%a2)+,(%a1)+
+.lm_len_17:
+	move.w  (%a2)+,(%a1)+
+.lm_len_16:
+	move.w  (%a2)+,(%a1)+
+.lm_len_15:
+	move.w  (%a2)+,(%a1)+
+.lm_len_14:
+	move.w  (%a2)+,(%a1)+
+.lm_len_13:
+	move.w  (%a2)+,(%a1)+
+.lm_len_12:
+	move.w  (%a2)+,(%a1)+
+.lm_len_11:
+	move.w  (%a2)+,(%a1)+
+.lm_len_10:
+	move.w  (%a2)+,(%a1)+
+.lm_len_0F:
+	move.w  (%a2)+,(%a1)+
+.lm_len_0E:
+	move.w  (%a2)+,(%a1)+
+.lm_len_0D:
+	move.w  (%a2)+,(%a1)+
+.lm_len_0C:
+	move.w  (%a2)+,(%a1)+
+.lm_len_0B:
+	move.w  (%a2)+,(%a1)+
+.lm_len_0A:
+	move.w  (%a2)+,(%a1)+
+.lm_len_09:
+	move.w  (%a2)+,(%a1)+
+.lm_len_08:
+	move.w  (%a2)+,(%a1)+
+.lm_len_07:
+	move.w  (%a2)+,(%a1)+
+.lm_len_06:
+	move.w  (%a2)+,(%a1)+
+.lm_len_05:
+	move.w  (%a2)+,(%a1)+
+.lm_len_04:
+	move.w  (%a2)+,(%a1)+
+.lm_len_03:
+	move.w  (%a2)+,(%a1)+
+.lm_len_02:
+	move.w  (%a2)+,(%a1)+
+.lm_len_01:
+	move.w  (%a2)+,(%a1)+
+.lm_len_00:
+	move.w  (%a2)+,(%a1)+
+	move.w  (%a2)+,(%a1)+
+
+    moveq   #0,%d0
+    moveq   #0,%d1
+    jmp     (%a3)
+
 .litE_mat0:
     move.l  (%a0)+,(%a1)+
 .litC_mat0:
@@ -560,8 +1077,22 @@ lz4w_unpack_a:
     move.l  (%a0)+,(%a1)+
 .lit2_mat0:
     move.l  (%a0)+,(%a1)+
-.lit0_mat0:
-    jmp     (%a3)
+
+    tst.b   %d1                     | match offset null ?
+    jeq     .next                   | not a long match
+
+.long_match_1:
+    move.w  (%a0)+,%d0              | get long offset (already * 2)
+    neg.w   %d0
+    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+.lm1_jump_base:
+    move.l  (.lm_jump_table-.lm1_jump_base)-2(%pc,%d1.w),%a4
+    jmp     (%a4)
+
 
 .litF_mat0:
     move.l  (%a0)+,(%a1)+
@@ -579,7 +1110,299 @@ lz4w_unpack_a:
     move.l  (%a0)+,(%a1)+
 .lit1_mat0:
     move.w  (%a0)+,(%a1)+
-    jmp     (%a3)
+
+    tst.b   %d1                     | match offset null ?
+    jeq     .next                   | not a long match
+
+.long_match_2:
+    move.w  (%a0)+,%d0              | get long offset (already * 2)
+    neg.w   %d0
+    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+.lm2_jump_base:
+    move.l  (.lm_jump_table-.lm2_jump_base)-2(%pc,%d1.w),%a4
+    jmp     (%a4)
+
+
+.lit0_mat0:                         | special case of lit=0 and mat=0
+    tst.b   %d1                     | match offset null ?
+    jeq    .done                    | not a long match --> done
+
+.long_match_3:
+    move.w  (%a0)+,%d0              | get long offset (already * 2)
+    neg.w   %d0
+    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+
+    add.w   %d1,%d1
+    add.w   %d1,%d1
+
+.lm3_jump_base:
+    move.l  (.lm_jump_table-.lm3_jump_base)-2(%pc,%d1.w),%a4
+    jmp     (%a4)
+
+    .align 2
+.lm_jump_table:
+
+    .long .lm_len_00
+    .long .lm_len_01
+    .long .lm_len_02
+    .long .lm_len_03
+    .long .lm_len_04
+    .long .lm_len_05
+    .long .lm_len_06
+    .long .lm_len_07
+    .long .lm_len_08
+    .long .lm_len_09
+    .long .lm_len_0A
+    .long .lm_len_0B
+    .long .lm_len_0C
+    .long .lm_len_0D
+    .long .lm_len_0E
+    .long .lm_len_0F
+    .long .lm_len_10
+    .long .lm_len_11
+    .long .lm_len_12
+    .long .lm_len_13
+    .long .lm_len_14
+    .long .lm_len_15
+    .long .lm_len_16
+    .long .lm_len_17
+    .long .lm_len_18
+    .long .lm_len_19
+    .long .lm_len_1A
+    .long .lm_len_1B
+    .long .lm_len_1C
+    .long .lm_len_1D
+    .long .lm_len_1E
+    .long .lm_len_1F
+    .long .lm_len_20
+    .long .lm_len_21
+    .long .lm_len_22
+    .long .lm_len_23
+    .long .lm_len_24
+    .long .lm_len_25
+    .long .lm_len_26
+    .long .lm_len_27
+    .long .lm_len_28
+    .long .lm_len_29
+    .long .lm_len_2A
+    .long .lm_len_2B
+    .long .lm_len_2C
+    .long .lm_len_2D
+    .long .lm_len_2E
+    .long .lm_len_2F
+    .long .lm_len_30
+    .long .lm_len_31
+    .long .lm_len_32
+    .long .lm_len_33
+    .long .lm_len_34
+    .long .lm_len_35
+    .long .lm_len_36
+    .long .lm_len_37
+    .long .lm_len_38
+    .long .lm_len_39
+    .long .lm_len_3A
+    .long .lm_len_3B
+    .long .lm_len_3C
+    .long .lm_len_3D
+    .long .lm_len_3E
+    .long .lm_len_3F
+    .long .lm_len_40
+    .long .lm_len_41
+    .long .lm_len_42
+    .long .lm_len_43
+    .long .lm_len_44
+    .long .lm_len_45
+    .long .lm_len_46
+    .long .lm_len_47
+    .long .lm_len_48
+    .long .lm_len_49
+    .long .lm_len_4A
+    .long .lm_len_4B
+    .long .lm_len_4C
+    .long .lm_len_4D
+    .long .lm_len_4E
+    .long .lm_len_4F
+    .long .lm_len_50
+    .long .lm_len_51
+    .long .lm_len_52
+    .long .lm_len_53
+    .long .lm_len_54
+    .long .lm_len_55
+    .long .lm_len_56
+    .long .lm_len_57
+    .long .lm_len_58
+    .long .lm_len_59
+    .long .lm_len_5A
+    .long .lm_len_5B
+    .long .lm_len_5C
+    .long .lm_len_5D
+    .long .lm_len_5E
+    .long .lm_len_5F
+    .long .lm_len_60
+    .long .lm_len_61
+    .long .lm_len_62
+    .long .lm_len_63
+    .long .lm_len_64
+    .long .lm_len_65
+    .long .lm_len_66
+    .long .lm_len_67
+    .long .lm_len_68
+    .long .lm_len_69
+    .long .lm_len_6A
+    .long .lm_len_6B
+    .long .lm_len_6C
+    .long .lm_len_6D
+    .long .lm_len_6E
+    .long .lm_len_6F
+    .long .lm_len_70
+    .long .lm_len_71
+    .long .lm_len_72
+    .long .lm_len_73
+    .long .lm_len_74
+    .long .lm_len_75
+    .long .lm_len_76
+    .long .lm_len_77
+    .long .lm_len_78
+    .long .lm_len_79
+    .long .lm_len_7A
+    .long .lm_len_7B
+    .long .lm_len_7C
+    .long .lm_len_7D
+    .long .lm_len_7E
+    .long .lm_len_7F
+    .long .lm_len_80
+    .long .lm_len_81
+    .long .lm_len_82
+    .long .lm_len_83
+    .long .lm_len_84
+    .long .lm_len_85
+    .long .lm_len_86
+    .long .lm_len_87
+    .long .lm_len_88
+    .long .lm_len_89
+    .long .lm_len_8A
+    .long .lm_len_8B
+    .long .lm_len_8C
+    .long .lm_len_8D
+    .long .lm_len_8E
+    .long .lm_len_8F
+    .long .lm_len_90
+    .long .lm_len_91
+    .long .lm_len_92
+    .long .lm_len_93
+    .long .lm_len_94
+    .long .lm_len_95
+    .long .lm_len_96
+    .long .lm_len_97
+    .long .lm_len_98
+    .long .lm_len_99
+    .long .lm_len_9A
+    .long .lm_len_9B
+    .long .lm_len_9C
+    .long .lm_len_9D
+    .long .lm_len_9E
+    .long .lm_len_9F
+    .long .lm_len_A0
+    .long .lm_len_A1
+    .long .lm_len_A2
+    .long .lm_len_A3
+    .long .lm_len_A4
+    .long .lm_len_A5
+    .long .lm_len_A6
+    .long .lm_len_A7
+    .long .lm_len_A8
+    .long .lm_len_A9
+    .long .lm_len_AA
+    .long .lm_len_AB
+    .long .lm_len_AC
+    .long .lm_len_AD
+    .long .lm_len_AE
+    .long .lm_len_AF
+    .long .lm_len_B0
+    .long .lm_len_B1
+    .long .lm_len_B2
+    .long .lm_len_B3
+    .long .lm_len_B4
+    .long .lm_len_B5
+    .long .lm_len_B6
+    .long .lm_len_B7
+    .long .lm_len_B8
+    .long .lm_len_B9
+    .long .lm_len_BA
+    .long .lm_len_BB
+    .long .lm_len_BC
+    .long .lm_len_BD
+    .long .lm_len_BE
+    .long .lm_len_BF
+    .long .lm_len_C0
+    .long .lm_len_C1
+    .long .lm_len_C2
+    .long .lm_len_C3
+    .long .lm_len_C4
+    .long .lm_len_C5
+    .long .lm_len_C6
+    .long .lm_len_C7
+    .long .lm_len_C8
+    .long .lm_len_C9
+    .long .lm_len_CA
+    .long .lm_len_CB
+    .long .lm_len_CC
+    .long .lm_len_CD
+    .long .lm_len_CE
+    .long .lm_len_CF
+    .long .lm_len_D0
+    .long .lm_len_D1
+    .long .lm_len_D2
+    .long .lm_len_D3
+    .long .lm_len_D4
+    .long .lm_len_D5
+    .long .lm_len_D6
+    .long .lm_len_D7
+    .long .lm_len_D8
+    .long .lm_len_D9
+    .long .lm_len_DA
+    .long .lm_len_DB
+    .long .lm_len_DC
+    .long .lm_len_DD
+    .long .lm_len_DE
+    .long .lm_len_DF
+    .long .lm_len_E0
+    .long .lm_len_E1
+    .long .lm_len_E2
+    .long .lm_len_E3
+    .long .lm_len_E4
+    .long .lm_len_E5
+    .long .lm_len_E6
+    .long .lm_len_E7
+    .long .lm_len_E8
+    .long .lm_len_E9
+    .long .lm_len_EA
+    .long .lm_len_EB
+    .long .lm_len_EC
+    .long .lm_len_ED
+    .long .lm_len_EE
+    .long .lm_len_EF
+    .long .lm_len_F0
+    .long .lm_len_F1
+    .long .lm_len_F2
+    .long .lm_len_F3
+    .long .lm_len_F4
+    .long .lm_len_F5
+    .long .lm_len_F6
+    .long .lm_len_F7
+    .long .lm_len_F8
+    .long .lm_len_F9
+    .long .lm_len_FA
+    .long .lm_len_FB
+    .long .lm_len_FC
+    .long .lm_len_FD
+    .long .lm_len_FE
+    .long .lm_len_FF
+
 
 .litE_mat1:
     move.l  (%a0)+,(%a1)+
@@ -600,7 +1423,8 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -625,7 +1449,8 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -648,7 +1473,8 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -674,7 +1500,8 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -698,8 +1525,10 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -724,8 +1553,10 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -748,8 +1579,10 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -775,8 +1608,10 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -800,9 +1635,12 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -827,9 +1665,12 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -852,9 +1693,12 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -880,9 +1724,12 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -906,10 +1753,14 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -934,10 +1785,14 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -960,10 +1815,14 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -989,10 +1848,14 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1016,11 +1879,16 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1045,11 +1913,16 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1072,11 +1945,16 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1102,11 +1980,16 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1130,12 +2013,18 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1160,12 +2049,18 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1188,12 +2083,18 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1219,12 +2120,18 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1248,13 +2155,20 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1279,13 +2193,20 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1308,13 +2229,20 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1340,13 +2268,20 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
@@ -1370,14 +2305,22 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
 
@@ -1402,17 +2345,24 @@ lz4w_unpack_a:
     neg.w   %d1
     lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
 
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
-    move.w  (%a2)+,(%a1)+  ;  move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
+    move.w  (%a2)+,(%a1)+
     moveq   #0,%d1
     jmp     (%a3)
-
 
 .done:
     move.w  (%a0)+,%d0              | need to copy a last byte ?

@@ -161,6 +161,12 @@ u16  MEM_getFree();
 u16  MEM_getAllocated();
 /**
  *  \brief
+ *      Return largest free block of memory in bytes
+ */
+u16  MEM_getLargestFreeBlock();
+
+/**
+ *  \brief
  *      Deallocate space in memory
  *
  *  \param ptr

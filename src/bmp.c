@@ -65,8 +65,8 @@ u16 *bmp_plan_adr;
 static u16 flag;
 static u16 pal;
 static u16 prio;
-static u16 state;
-static s16 phase;
+static vu16 state;
+static vs16 phase;
 
 
 // ASM methods
@@ -112,6 +112,10 @@ void BMP_init(u16 double_buffer, VDPPlan plan, u16 palette, u16 priority)
 
 void BMP_end()
 {
+    // better to disable ints here
+    // FIXME: for some reason disabling interrupts generally break BMP init :-/
+//    SYS_disableInts();
+
     // cancel interrupt processing
     HIntProcess &= ~PROCESS_BITMAP_TASK;
     VIntProcess &= ~PROCESS_BITMAP_TASK;
@@ -137,10 +141,18 @@ void BMP_end()
         MEM_free(bmp_buffer_1);
         bmp_buffer_1 = NULL;
     }
+
+    // we can re enable ints
+    // FIXME: for some reason disabling interrupts generally break BMP init :-/
+//    SYS_enableInts();
 }
 
 void BMP_reset()
 {
+    // better to disable ints here
+    // FIXME: for some reason disabling interrupts generally break BMP init :-/
+//    SYS_disableInts();
+
     // cancel bitmap interrupt processing
     HIntProcess &= ~PROCESS_BITMAP_TASK;
     VIntProcess &= ~PROCESS_BITMAP_TASK;
@@ -160,10 +172,8 @@ void BMP_reset()
 
     // need 64x64 cells sized plan
     VDP_setPlanSize(64, 64);
-
     // clear plan (complete tilemap)
     VDP_clearPlan(bmp_plan, TRUE);
-    VDP_waitDMACompletion();
 
     // reset state and phase
     state = 0;
@@ -196,6 +206,10 @@ void BMP_reset()
     VIntProcess |= PROCESS_BITMAP_TASK;
     VDP_setHInterrupt(1);
 
+    // we can re enable ints
+    // FIXME: for some reason disabling interrupts generally break BMP init :-/
+//    SYS_enableInts();
+
 //    // first init, clear and flip
 //    BMP_clear();
 //    BMP_flip(FALSE);
@@ -220,9 +234,7 @@ u16 BMP_hasFlipRequestPending()
 
 void BMP_waitWhileFlipRequestPending()
 {
-    vu16* pw = &state;
-
-    while (*pw & BMP_STAT_FLIPWAITING);
+    while (BMP_hasFlipRequestPending());
 }
 
 u16 BMP_hasFlipInProgess()
@@ -234,9 +246,7 @@ u16 BMP_hasFlipInProgess()
 
 void BMP_waitFlipComplete()
 {
-    vu16* pw = &state;
-
-    while (*pw & BMP_STAT_FLIPPING);
+    while (BMP_hasFlipInProgess());
 }
 
 
@@ -257,10 +267,17 @@ u16 BMP_flip(u16 async)
         return 1;
     }
 
+    // better to disable ints here
+    // FIXME: for some reason disabling interrupts generally break BMP init :-/
+//    SYS_disableInts();
+
     // flip bitmap buffer
     flipBuffer();
     // flip started (will be processed in blank period --> BMP_doBlankProcess)
     state |= BMP_STAT_FLIPPING;
+
+    // we can re enable ints
+//    SYS_enableInts();
 
     // wait completion
     if (!async) BMP_waitFlipComplete();
@@ -1323,7 +1340,7 @@ static void clearVRAMBuffer(u16 num)
 {
     if (num) DMA_doVRamFill(BMP_FB1TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
     else DMA_doVRamFill(BMP_FB0TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
-    DMA_waitCompletion();
+    VDP_waitDMACompletion();
 }
 
 static void flipBuffer()

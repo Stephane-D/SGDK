@@ -4,6 +4,12 @@
 #include "gfx.h"
 
 
+#define MAX_PIXEL           500
+#define MAX_LINE            100
+#define MAX_POLYGON         40
+#define MAX_PT_PER_POLY     6
+
+
 typedef struct
 {
     Vect2D_s16 *pts;
@@ -37,12 +43,10 @@ u16 executeBMPTest(u16 *scores)
     Bitmap *bmp;
     u16 palette[16];
 
-    pixels = MEM_alloc(1000 * sizeof(Pixel));
-    lines = MEM_alloc(150 * sizeof(Line));
-    pts = MEM_alloc(50 * 10 * sizeof(Vect2D_s16));
-    polys = MEM_alloc(50 * sizeof(Polygone));
-
-    initPixels(pixels, 1000);
+    pixels = MEM_alloc(MAX_PIXEL * sizeof(Pixel));
+    lines = MEM_alloc(MAX_LINE * sizeof(Line));
+    polys = MEM_alloc(MAX_POLYGON * sizeof(Polygone));
+    pts = MEM_alloc(MAX_PT_PER_POLY * MAX_POLYGON * sizeof(Vect2D_s16));
 
     // init palette
     palette[0] = RGB24_TO_VDPCOLOR(0x000000);
@@ -95,9 +99,9 @@ u16 executeBMPTest(u16 *scores)
     while(i--)
     {
         Pixel *pix = pixels;
-        u16 j = 600;
+        u16 j = MAX_PIXEL;
 
-        initPixels(pixels, 600);
+        initPixels(pixels, MAX_PIXEL);
 
         start = getTimeAsFix32(FALSE);
         while(j)
@@ -134,7 +138,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("Pixel draw safe (with clipping)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw fast (without clipping)", 2, 8);
@@ -148,9 +152,9 @@ u16 executeBMPTest(u16 *scores)
     while(i--)
     {
         Pixel *pix = pixels;
-        u16 j = 600;
+        u16 j = MAX_PIXEL;
 
-        initPixels(pixels, 600);
+        initPixels(pixels, MAX_PIXEL);
 
         start = getTimeAsFix32(FALSE);
         while(j)
@@ -187,7 +191,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("Pixel draw fast (without clipping)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw array safe (with clip.)", 2, 8);
@@ -200,10 +204,10 @@ u16 executeBMPTest(u16 *scores)
     i = 150;
     while(i--)
     {
-        initPixels(pixels, 600);
+        initPixels(pixels, MAX_PIXEL);
 
         start = getTimeAsFix32(FALSE);
-        BMP_setPixels(pixels, 600);
+        BMP_setPixels(pixels, MAX_PIXEL);
         end = getTimeAsFix32(FALSE);
         time += end - start;
 
@@ -213,7 +217,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("Pixel draw array safe (with clip.)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw array fast (without clip.)", 2, 8);
@@ -226,10 +230,10 @@ u16 executeBMPTest(u16 *scores)
     i = 150;
     while(i--)
     {
-        initPixels(pixels, 600);
+        initPixels(pixels, MAX_PIXEL);
 
         start = getTimeAsFix32(FALSE);
-        BMP_setPixelsFast(pixels, 600);
+        BMP_setPixelsFast(pixels, MAX_PIXEL);
         end = getTimeAsFix32(FALSE);
         time += end - start;
 
@@ -239,7 +243,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("Pixel draw array fast (without clip.)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
 
@@ -761,7 +765,7 @@ static void initPolys(Vect2D_s16 *pts, Polygone *polys, u16 numPts, u16 num)
     {
         while(i--)
         {
-            // dynamic number fo points
+            // dynamic number of points (minimum = 3, maximum = 6)
             numPts = (random() & 3) + 3;
 
             do

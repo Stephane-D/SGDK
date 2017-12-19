@@ -220,7 +220,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step);
 
 /**
  *  \brief
- *      Wait current DMA fill/copy operation to complete.
+ *      Wait current DMA fill/copy operation to complete (same as #VDP_waitDMACompletion())
  */
 void DMA_waitCompletion();
 

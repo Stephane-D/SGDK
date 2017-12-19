@@ -52,7 +52,7 @@ extern VDPSprite *lastAllocatedVDPSprite;
 // forward
 static Sprite* allocateSprite();
 //static Sprite** allocateSprites(Sprite** sprites, u16 num);
-static void releaseSprite(Sprite* sprite);
+static u16 releaseSprite(Sprite* sprite);
 //static void releaseSprites(Sprite** sprites, u16 num);
 
 static void setVDPSpriteIndex(Sprite *sprite, u16 ind, u16 num, VDPSprite *last);
@@ -252,13 +252,10 @@ static Sprite* allocateSprite()
     // allocate
     result = *--free;
 
-    // mark as allocated
-    result->status |= ALLOCATED;
-
     return result;
 }
 
-static void releaseSprite(Sprite* sprite)
+static u16 releaseSprite(Sprite* sprite)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -273,13 +270,21 @@ static void releaseSprite(Sprite* sprite)
 
         // release sprite
         *free++ = sprite;
-
         // not anymore allocated
         sprite->status &= ~ALLOCATED;
+
+#ifdef SPR_PROFIL
+        prof = getSubTick() - prof;
+        // rollback correction
+        if (prof < 0) prof = 100;
+        profil_time[PROFIL_RELEASE_SPRITE] += prof;
+#endif // SPR_PROFIL
+
+        return TRUE;
     }
+
 #if (LIB_DEBUG != 0)
-    else
-        KLog_U1_("SPR_releaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
+    KLog_U1_("SPR_releaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
 #endif // LIB_DEBUG
 
 #ifdef SPR_PROFIL
@@ -288,6 +293,8 @@ static void releaseSprite(Sprite* sprite)
     if (prof < 0) prof = 100;
     profil_time[PROFIL_RELEASE_SPRITE] += prof;
 #endif // SPR_PROFIL
+
+    return FALSE;
 }
 
 Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flags)
@@ -314,7 +321,8 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
         return NULL;
     }
 
-    sprite->status = flags & SPR_FLAGS_MASK;
+    // mark as allocated
+    sprite->status = ALLOCATED | (flags & SPR_FLAGS_MASK);
 
     // add the new sprite
     if (lastSprite) lastSprite->next = sprite;
@@ -439,8 +447,18 @@ void SPR_releaseSprite(Sprite *sprite)
     KLog_U2("SPR_releaseSprite: releasing sprite #", getSpriteIndex(sprite), " - internal position = ", sprite - spritesBank);
 #endif // SPR_DEBUG
 
-    // release sprite (no error checking here)
-    releaseSprite(sprite);
+    // release sprite
+    if (!releaseSprite(sprite))
+    {
+#ifdef SPR_PROFIL
+        prof = getSubTick() - prof;
+        // rollback correction
+        if (prof < 0) prof = 100;
+        profil_time[PROFIL_REMOVE_SPRITE] += prof;
+#endif // SPR_PROFIL
+
+        return;
+    }
 
     prev = sprite->prev;
     next = sprite->next;
@@ -861,6 +879,9 @@ void SPR_setAnimAndFrame(Sprite *sprite, s16 anim, s16 frame)
         sprite->frameInd = frameInd;
         sprite->frame = animation->frames[frameInd];
 
+        // set timer to 0 as it will be reseted
+        sprite->timer = 0;
+
 #ifdef SPR_DEBUG
         KLog_U4("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame, " adj frame=", frameInd);
 #endif // SPR_DEBUG
@@ -894,6 +915,9 @@ void SPR_setAnim(Sprite *sprite, s16 anim)
         sprite->frameInd = frameInd;
         sprite->frame = animation->frames[frameInd];
 
+        // set timer to 0 as it will be reseted
+        sprite->timer = 0;
+
 #ifdef SPR_DEBUG
         KLog_U3("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0 adj frame=", frameInd);
 #endif // SPR_DEBUG
@@ -926,6 +950,9 @@ void SPR_setFrame(Sprite *sprite, s16 frame)
         {
             sprite->frameInd = frameInd;
             sprite->frame = animation->frames[frameInd];
+
+            // set timer to 0 as it will be reseted
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
             KLog_U3("SPR_setFrame: #", getSpriteIndex(sprite), "  frame=", frame, " adj frame=", frameInd);

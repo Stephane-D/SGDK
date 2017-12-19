@@ -114,7 +114,6 @@ void DMA_flushQueue()
     if (queueIndexLimit) i = queueIndexLimit;
     else i = queueIndex;
     info = (u32*) dmaQueues;
-    pl = (u32*) GFX_CTRL_PORT;
 
 #ifdef DMA_DEBUG
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
@@ -127,6 +126,8 @@ void DMA_flushQueue()
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
 #endif
+
+    pl = (vu32*) GFX_CTRL_PORT;
 
     while(i--)
     {
@@ -318,7 +319,7 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
 
 void DMA_waitCompletion()
 {
-    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
+    VDP_waitDMACompletion();
 }
 
 void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
@@ -348,10 +349,10 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     // ok, use normal len
     else newlen = len;
 
-    pw = (u16 *) GFX_CTRL_PORT;
-
     // wait for DMA FILL / COPY operation to complete
-    while(*pw & VDP_DMABUSY_FLAG);
+    VDP_waitDMACompletion();
+
+    pw = (vu16*) GFX_CTRL_PORT;
 
     // Setup DMA length (in word here)
     *pw = 0x9300 + (newlen & 0xff);
@@ -371,7 +372,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 #endif
 
     // Enable DMA
-    pl = (u32 *) GFX_CTRL_PORT;
+    pl = (vu32*) GFX_CTRL_PORT;
     switch(location)
     {
         case DMA_VRAM:
@@ -423,10 +424,10 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
 //    DMA_doVRamFill(0, 2, 0xFF, 1);    // 01-3
 //    DMA_doVRamFill(0, 2, 0xFF, 1);    // 0123
 
-    pw = (u16 *) GFX_CTRL_PORT;
-
     // wait for DMA FILL / COPY operation to complete
-    while(*pw & VDP_DMABUSY_FLAG);
+    VDP_waitDMACompletion();
+
+    pw = (vu16*) GFX_CTRL_PORT;
 
     // Setup DMA length
     *pw = 0x9300 + (l & 0xFF);
@@ -436,11 +437,11 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
     *pw = 0x9780;
 
     // Write VRam DMA destination address
-    pl = (u32 *) GFX_CTRL_PORT;
+    pl = (vu32*) GFX_CTRL_PORT;
     *pl = GFX_DMA_VRAM_ADDR(to);
 
     // set up value to fill (need to be 16 bits extended)
-    pw = (u16 *) GFX_DATA_PORT;
+    pw = (vu16*) GFX_DATA_PORT;
     *pw = value | (value << 8);
 }
 
@@ -452,10 +453,10 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
     if (step != -1)
         VDP_setAutoInc(step);
 
-    pw = (u16 *) GFX_CTRL_PORT;
-
     // wait for DMA FILL / COPY operation to complete
-    while(*pw & VDP_DMABUSY_FLAG);
+    VDP_waitDMACompletion();
+
+    pw = (vu16*) GFX_CTRL_PORT;
 
     // Setup DMA length
     *pw = 0x9300 + (len & 0xff);
@@ -469,6 +470,6 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
     *pw = 0x97C0;
 
     // Write VRam DMA destination address (start DMA copy operation)
-    pl = (u32 *) GFX_CTRL_PORT;
+    pl = (vu32*) GFX_CTRL_PORT;
     *pl = GFX_DMA_VRAMCOPY_ADDR(to);
 }

@@ -541,7 +541,6 @@ static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc)
     while(i--)
     {
         Sprite* s = *sprite;
-
         Object* o = (Object*) s->data;
 
         if ((o->pos.x < minx) || (o->pos.x > maxx) || (o->pos.y < miny))

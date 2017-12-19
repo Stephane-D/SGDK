@@ -205,6 +205,29 @@ u16 MEM_getFree()
     return res;
 }
 
+u16 MEM_getLargestFreeBlock()
+{
+    u16* b;
+    u16 bsize;
+    u16 res;
+
+    b = heap;
+    res = 0;
+
+    while ((bsize = *b))
+    {
+        // memory block not used --> test it
+        if (!(bsize & USED))
+            if (bsize > res)
+                res = bsize;
+
+        // pass to next block
+        b += bsize >> 1;
+    }
+
+    return res;
+}
+
 u16 MEM_getAllocated()
 {
     u16* b;
@@ -270,7 +293,7 @@ void* MEM_alloc(u16 size)
         if (p == NULL)
         {
 #if (LIB_DEBUG != 0)
-            KLog_U2_("MEM_alloc(", size, ") failed: no enough memory (free = ", MEM_getFree(),")");
+            KLog_U3_("MEM_alloc(", size, ") failed: cannot find a big enough memory block (largest free block = ", MEM_getLargestFreeBlock(), " - free = ", MEM_getFree(),")");
 #endif
 
             return NULL;
