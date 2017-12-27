@@ -35,8 +35,6 @@
 #define NEED_ST_POS_UPDATE                  0x0002
 #define NEED_ST_ALL_UPDATE                  (NEED_ST_ATTR_UPDATE | NEED_ST_POS_UPDATE)
 
-#define NEED_DEPTH_SORTING                  0x0004
-
 #define NEED_ST_VISIBILITY_UPDATE           0x0010
 #define NEED_VISIBILITY_UPDATE              0x0020
 #define NEED_FRAME_UPDATE                   0x0040
@@ -350,6 +348,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     sprite->seqInd = -1;
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
+    // sprite is always added at the end of list so we use MAX_DEPTH here
     sprite->depth = SPR_MAX_DEPTH;
     sprite->frameNumSprite = 0;
 
@@ -413,9 +412,6 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
 
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
-
-    // need to sort sprite (depth changed)
-    sprite->status |= NEED_DEPTH_SORTING;
 
 #ifdef SPR_PROFIL
     prof = getSubTick() - prof;
@@ -840,8 +836,9 @@ void SPR_setDepth(Sprite *sprite, s16 value)
     // depth changed ?
     if (sprite->depth != value)
     {
+        // set depth and sort sprite (need to be done immediately to get consistent sort)
         sprite->depth = value;
-        sprite->status |= NEED_DEPTH_SORTING;
+        sortSprite(sprite);
     }
 
 #ifdef SPR_PROFIL
@@ -1374,11 +1371,9 @@ void SPR_update()
                 status |= updateVisibility(sprite);
             if (status & NEED_ST_VISIBILITY_UPDATE)
                 updateSpriteTableVisibility(sprite);
-            if (status & NEED_DEPTH_SORTING)
-                sortSprite(sprite);
 
             // general processes done
-            status &= ~(NEED_FRAME_UPDATE | NEED_VISIBILITY_UPDATE | NEED_ST_VISIBILITY_UPDATE | NEED_DEPTH_SORTING);
+            status &= ~(NEED_FRAME_UPDATE | NEED_VISIBILITY_UPDATE | NEED_ST_VISIBILITY_UPDATE);
 
             // only if sprite is visible
             if (sprite->visibility)

@@ -500,7 +500,8 @@ void SPR_setPriorityAttribut(Sprite *sprite, u16 value);
  *  \param value
  *      The depth value (SPR_MIN_DEPTH to set always on top)
  *
- *  Sprite having lower depth are display in front of sprite with higher depth.
+ *  Sprite having lower depth are display in front of sprite with higher depth.<br>
+ *  The sprite is *immediately* sorted when its depth value is changed.
  */
 void SPR_setDepth(Sprite *sprite, s16 value);
 /**
