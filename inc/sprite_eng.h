@@ -510,8 +510,8 @@ void SPR_setDepth(Sprite *sprite, s16 value);
  */
 void SPR_setZ(Sprite *sprite, s16 value);
 /**
- *  \deprecated Use #SPR_setDepth(SPR_MIN_DEPTH) instead
-*/
+ *  \deprecated Use SPR_setDepth(SPR_MIN_DEPTH) instead
+ */
 void SPR_setAlwaysOnTop(Sprite *sprite, u16 value);
 /**
  *  \brief
