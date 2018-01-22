@@ -83,10 +83,8 @@ static void fastStarFieldFX()
 
 	    /* Disable auto tile upload */
 	    SPR_setAutoTileUpload(spr, FALSE);
-	    /* Enable depth sorting */
-	    SPR_setDepthSorting(spr, TRUE);
 	    /* default position */
-        SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
+            SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
 	    /* Set depth */
 	    if ((i & 7) == 7)
             SPR_setDepth(spr, -1);
