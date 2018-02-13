@@ -13,7 +13,7 @@ Note that LZ4W support using previous data buffer to improve compression if avai
 
 Decompression speed (running a 7.67 Mhz 68000 using optimized assembly code)
 -------------------
-LZ4   min=270KB/s   max=390KB/s
+LZ4     min=270KB/s   max=390KB/s
 LZ4W    min=550KB/s   max=900KB/s
 
 As you can see the speed difference is very important, LZ4W can unpack at least twice as fast than classic LZ4 !
