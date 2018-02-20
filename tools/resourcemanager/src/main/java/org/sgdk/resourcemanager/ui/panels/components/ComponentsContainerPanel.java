@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.preview;
+package org.sgdk.resourcemanager.ui.panels.components;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
-public class PreviewContainerPanel extends JPanel {
+public class ComponentsContainerPanel extends JPanel {
 
 	/**
 	 * 
@@ -18,9 +18,9 @@ public class PreviewContainerPanel extends JPanel {
 	
 //	PreviewPanel previewPanel = new PreviewPanel();
 	
-	public PreviewContainerPanel(ResourceManagerFrame parent) throws IOException {
+	public ComponentsContainerPanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());		
-		setBorder(BorderFactory.createTitledBorder("Properties"));
+		setBorder(BorderFactory.createTitledBorder("Preview"));
 		
 		GridBagConstraints c = new GridBagConstraints();
 		

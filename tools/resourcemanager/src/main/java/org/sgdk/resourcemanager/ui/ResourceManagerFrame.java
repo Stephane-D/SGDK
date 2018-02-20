@@ -9,12 +9,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.sgdk.resourcemanager.ui.menubar.ResourceManagerMenuBar;
+import org.sgdk.resourcemanager.ui.panels.components.ComponentsContainerPanel;
+import org.sgdk.resourcemanager.ui.panels.console.ConsolePanel;
+import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
+import org.sgdk.resourcemanager.ui.panels.properties.PropertiesContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.proyectexplorer.ProyectExplorerPanel;
 
 public class ResourceManagerFrame extends JFrame {
@@ -28,6 +30,10 @@ public class ResourceManagerFrame extends JFrame {
 	private static final int minimizeHeight = 600;
 	
 	private ProyectExplorerPanel proyectExplorer = null;
+	private PreviewContainerPanel previewContainerPanel = null;
+	private ConsolePanel consolePanel = null;
+	private PropertiesContainerPanel propertiesContainerPanel = null;
+	private ComponentsContainerPanel componentsContainerPanel = null;
 	
 	public ResourceManagerFrame(String workingDirectory) throws IOException {
 		super("SGDK Resource Manager");
@@ -42,7 +48,6 @@ public class ResourceManagerFrame extends JFrame {
 		
 		setMenuBar(new ResourceManagerMenuBar(this));
 		
-		JPanel aux;
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -62,9 +67,8 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 0;
 		c.gridwidth = 3;
 		c.gridheight = 4;
-		aux = new JPanel();
-		aux.setBorder(BorderFactory.createTitledBorder("Preview"));
-		add(aux, c);
+		previewContainerPanel = new PreviewContainerPanel(this);
+		add(previewContainerPanel, c);
 		
 		c.weightx = 1d/2d;
 		c.weighty = 1d/5d;
@@ -72,9 +76,8 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 4;
 		c.gridwidth = 3;
 		c.gridheight = GridBagConstraints.REMAINDER;
-		aux = new JPanel();
-		aux.setBorder(BorderFactory.createTitledBorder("Console"));
-		add(aux, c);
+		consolePanel = new ConsolePanel(this);
+		add(consolePanel, c);
 		
 		c.weightx = 1d/6d;
 		c.weighty = 1.0;	
@@ -82,9 +85,8 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
-		aux = new JPanel();
-		aux.setBorder(BorderFactory.createTitledBorder("Properties"));
-		add(aux, c);
+		propertiesContainerPanel = new PropertiesContainerPanel(this);
+		add(propertiesContainerPanel, c);
 		
 		c.weightx = 1d/6d;
 		c.weighty = 1.0;	
@@ -92,9 +94,8 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
-		aux = new JPanel();
-		aux.setBorder(BorderFactory.createTitledBorder("Components"));
-		add(aux, c);
+		componentsContainerPanel = new ComponentsContainerPanel(this);
+		add(componentsContainerPanel, c);
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter(){
@@ -116,6 +117,38 @@ public class ResourceManagerFrame extends JFrame {
 
 	public void setProyectExplorer(ProyectExplorerPanel proyectExplorer) {
 		this.proyectExplorer = proyectExplorer;
+	}
+
+	public PreviewContainerPanel getPreviewContainerPanel() {
+		return previewContainerPanel;
+	}
+
+	public void setPreviewContainerPanel(PreviewContainerPanel previewContainerPanel) {
+		this.previewContainerPanel = previewContainerPanel;
+	}
+
+	public ConsolePanel getConsolePanel() {
+		return consolePanel;
+	}
+
+	public void setConsolePanel(ConsolePanel consolePanel) {
+		this.consolePanel = consolePanel;
+	}
+
+	public PropertiesContainerPanel getPropertiesContainerPanel() {
+		return propertiesContainerPanel;
+	}
+
+	public void setPropertiesContainerPanel(PropertiesContainerPanel propertiesContainerPanel) {
+		this.propertiesContainerPanel = propertiesContainerPanel;
+	}
+
+	public ComponentsContainerPanel getComponentsContainerPanel() {
+		return componentsContainerPanel;
+	}
+
+	public void setComponentsContainerPanel(ComponentsContainerPanel componentsContainerPanel) {
+		this.componentsContainerPanel = componentsContainerPanel;
 	}	
 	
 }

@@ -140,6 +140,9 @@ public class ProyectExplorerTree extends JTree {
 				initialize(sgdkChild, e);
 			}
 		}
+		DefaultTreeModel model = (DefaultTreeModel)getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();	
+		model.reload(root);
 	}
 
 	public void addElement(SGDKElement element, SGDKElement parent) {
@@ -147,7 +150,7 @@ public class ProyectExplorerTree extends JTree {
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();			
 		if(parent == null) {
 			DefaultMutableTreeNode child = new DefaultMutableTreeNode(element);
-			root.add(child);
+			model.insertNodeInto(child, root, root.getChildCount());
 		}else {
 			boolean inserted = false;
 			for(int i = 0; i < root.getChildCount() && !inserted; i++) {
@@ -155,14 +158,13 @@ public class ProyectExplorerTree extends JTree {
 				inserted = insert(element, parent, node);
 			}
 		}
-		model.reload(root);
 	}
 
 	private boolean insert(SGDKElement element, SGDKElement parent, DefaultMutableTreeNode node) {
 		SGDKElement myElement = (SGDKElement)node.getUserObject();
 		if(myElement == parent) {
 			DefaultMutableTreeNode child = new DefaultMutableTreeNode(element);
-			node.add(child);
+			((DefaultTreeModel)getModel()).insertNodeInto(child, node, node.getChildCount());
 			return true;
 		}else {
 			boolean inserted = false;
@@ -199,7 +201,6 @@ public class ProyectExplorerTree extends JTree {
 		DefaultTreeModel model = (DefaultTreeModel)getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();	
 		deleteElement(element, root);
-		model.reload(root);
 	}
 
 	private boolean deleteElement(SGDKElement element, DefaultMutableTreeNode node) {
