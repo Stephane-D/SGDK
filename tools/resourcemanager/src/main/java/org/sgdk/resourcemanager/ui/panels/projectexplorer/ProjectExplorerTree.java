@@ -56,7 +56,7 @@ public class ProjectExplorerTree extends JTree {
 		if(!f.exists()) {
 			f.mkdirs();
 		}
-		f = new File(workingDirectory+File.separator+Constants.PROYECT_SETTINGS_FILE);
+		f = new File(workingDirectory+File.separator+Constants.PROJECT_SETTINGS_FILE);
 		if(!f.exists()) {
 			try (FileWriter writer = new FileWriter(f)){
 				ObjectMapper mapper = new ObjectMapper();
@@ -181,7 +181,7 @@ public class ProjectExplorerTree extends JTree {
     	logger.debug("Saving Projects...");
 		DefaultTreeModel model = (DefaultTreeModel)getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
-		try (FileWriter writer = new FileWriter(new File(workingDirectory+File.separator+Constants.PROYECT_SETTINGS_FILE))) {
+		try (FileWriter writer = new FileWriter(new File(workingDirectory+File.separator+Constants.PROJECT_SETTINGS_FILE))) {
 			List<SGDKProject> projects = new ArrayList<>();
 			ObjectMapper mapper = new ObjectMapper();
 			for(int i = 0; i < root.getChildCount(); i++) {
