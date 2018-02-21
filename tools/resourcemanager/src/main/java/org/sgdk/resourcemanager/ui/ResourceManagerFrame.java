@@ -17,7 +17,7 @@ import org.sgdk.resourcemanager.ui.panels.components.ComponentsContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.console.ConsolePanel;
 import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.properties.PropertiesContainerPanel;
-import org.sgdk.resourcemanager.ui.panels.proyectexplorer.ProyectExplorerPanel;
+import org.sgdk.resourcemanager.ui.panels.projectexplorer.ProjectExplorerPanel;
 
 public class ResourceManagerFrame extends JFrame {
 
@@ -29,7 +29,7 @@ public class ResourceManagerFrame extends JFrame {
 	private static final int minimizeWidth = 800;
 	private static final int minimizeHeight = 600;
 	
-	private ProyectExplorerPanel proyectExplorer = null;
+	private ProjectExplorerPanel projectExplorer = null;
 	private PreviewContainerPanel previewContainerPanel = null;
 	private ConsolePanel consolePanel = null;
 	private PropertiesContainerPanel propertiesContainerPanel = null;
@@ -58,8 +58,8 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
-		proyectExplorer = new ProyectExplorerPanel(this, workingDirectory);
-		add(proyectExplorer, c);
+		projectExplorer = new ProjectExplorerPanel(this, workingDirectory);
+		add(projectExplorer, c);
 		
 		c.weightx = 1d/2d;
 		c.weighty = 4d/5d;
@@ -102,7 +102,7 @@ public class ResourceManagerFrame extends JFrame {
             public void windowClosing(WindowEvent e){
                 int i=JOptionPane.showConfirmDialog(null, "Seguro que quiere salir?");
                 if(i==0) {
-                	proyectExplorer.getProyectExplorerTree().saveProyects();
+                	projectExplorer.getProjectExplorerTree().saveProjects();
                     System.exit(0);//cierra aplicacion
                 }
             }
@@ -111,12 +111,12 @@ public class ResourceManagerFrame extends JFrame {
 		setVisible(true);
 	}
 
-	public ProyectExplorerPanel getProyectExplorer() {
-		return proyectExplorer;
+	public ProjectExplorerPanel getProjectExplorer() {
+		return projectExplorer;
 	}
 
-	public void setProyectExplorer(ProyectExplorerPanel proyectExplorer) {
-		this.proyectExplorer = proyectExplorer;
+	public void setProjectExplorer(ProjectExplorerPanel projectExplorer) {
+		this.projectExplorer = projectExplorer;
 	}
 
 	public PreviewContainerPanel getPreviewContainerPanel() {

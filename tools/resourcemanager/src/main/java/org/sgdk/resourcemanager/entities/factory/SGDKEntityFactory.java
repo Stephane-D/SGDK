@@ -14,7 +14,7 @@ import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.entities.SGDKEnvironmentSound;
 import org.sgdk.resourcemanager.entities.SGDKFXSound;
 import org.sgdk.resourcemanager.entities.SGDKFolder;
-import org.sgdk.resourcemanager.entities.SGDKProyect;
+import org.sgdk.resourcemanager.entities.SGDKProject;
 import org.sgdk.resourcemanager.entities.SGDKSprite;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 
@@ -23,11 +23,11 @@ public class SGDKEntityFactory {
 	private static final Logger logger = LogManager.getLogger(SGDKEntityFactory.class);
 	private static final String RES_FILE_EXTENSION = ".res";
 	
-	public static SGDKProyect createSGDKProyect(String path) {
-		logger.debug("Creating Proyect Element...");
+	public static SGDKProject createSGDKProject(String path) {
+		logger.debug("Creating Project Element...");
 		try {
-			logger.debug("Created Proyect Element");
-			return new SGDKProyect(path);
+			logger.debug("Created Project Element");
+			return new SGDKProject(path);
 		} catch (SGDKInvalidFormatException e) {
 			logger.error(e.getMessage(),  e);
 		}
@@ -152,11 +152,11 @@ public class SGDKEntityFactory {
 		((SGDKFolder)(element.getParent())).getChilds().remove(element);
 	}
 
-	public static void export(SGDKProyect proyect, String path) throws IOException {
+	public static void export(SGDKProject project, String path) throws IOException {
 		int step = 1;
-		logger.debug("Exporting proyect ...");
-		logger.debug("Step "+step+" Creating Proyect folder " + proyect.toString());
-		File f = new File(path + File.separator + proyect.toString());
+		logger.debug("Exporting project ...");
+		logger.debug("Step "+step+" Creating Project folder " + project.toString());
+		File f = new File(path + File.separator + project.toString());
 		f.mkdir();
 		logger.debug("Step "+step+" Success");		
 		step++;
@@ -167,7 +167,7 @@ public class SGDKEntityFactory {
 		step++;
 		logger.debug("Step "+step+" Coping Resources Tree ...");
 		StringBuilder sb = new StringBuilder();
-		for(SGDKElement child : proyect.getChilds()) {
+		for(SGDKElement child : project.getChilds()) {
 			switch(child.getType()) {
 			case SGDKBackground:
 				sb.append(exportSGDKBackground((SGDKBackground)child, f.getAbsolutePath(), ""));

@@ -24,7 +24,7 @@ public class ConsolePanel extends JPanel {
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
-//		JScrollPane scrollPaneProyectExplorerTree = new JScrollPane(previewPanel);
+//		JScrollPane scrollPaneProjectExplorerTree = new JScrollPane(previewPanel);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1.0;
@@ -33,15 +33,15 @@ public class ConsolePanel extends JPanel {
 		c.gridy = 0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridheight = GridBagConstraints.REMAINDER;
-//		add(scrollPaneProyectExplorerTree, c);
+//		add(scrollPaneProjectExplorerTree, c);
 	}
 
-//	public ProyectExplorerTree getProyectExplorerTree() {
-//		return proyectExplorerTree;
+//	public ProjectExplorerTree getProjectExplorerTree() {
+//		return projectExplorerTree;
 //	}
 //
-//	public void setProyectExplorerTree(ProyectExplorerTree proyectExplorerTree) {
-//		this.proyectExplorerTree = proyectExplorerTree;
+//	public void setProjectExplorerTree(ProjectExplorerTree projectExplorerTree) {
+//		this.projectExplorerTree = projectExplorerTree;
 //	}
 
 }

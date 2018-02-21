@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sgdk.resourcemanager.entities.SGDKProyect;
+import org.sgdk.resourcemanager.entities.SGDKProject;
 import org.sgdk.resourcemanager.entities.factory.SGDKEntityFactory;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
@@ -34,12 +34,12 @@ public class NewMenuDialog extends JDialog{
 	private static final int minimizeWidth = 340;
 	private static final int minimizeHeight = 220;
 	
-	private JTextField proyectPathText = new JTextField();
-	private JFileChooser proyectPath = new JFileChooser(System.getProperty("user.home"));
+	private JTextField projectPathText = new JTextField();
+	private JFileChooser projectPath = new JFileChooser(System.getProperty("user.home"));
 	private JButton acceptButon = new JButton("Ok");
 	
 	public NewMenuDialog(ResourceManagerFrame parent) {
-		super(parent, "New Proyect");
+		super(parent, "New Project");
 		parent.setEnabled(false);
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -57,9 +57,9 @@ public class NewMenuDialog extends JDialog{
 			}
 		});
 		
-//		proyectPath.addChoosableFileFilter(new SGDKFileFilter());
-		proyectPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		proyectPath.setAcceptAllFileFilterUsed(false);
+//		projectPath.addChoosableFileFilter(new SGDKFileFilter());
+		projectPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		projectPath.setAcceptAllFileFilterUsed(false);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();			
@@ -73,7 +73,7 @@ public class NewMenuDialog extends JDialog{
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		add(new JLabel("Proyect Path: "), c);
+		add(new JLabel("Project Path: "), c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;	
 		c.anchor = GridBagConstraints.LINE_START;
@@ -83,14 +83,14 @@ public class NewMenuDialog extends JDialog{
 		c.gridy = 0;
 		c.gridwidth = 5;
 		c.gridheight = 1;
-		add(proyectPathText, c);
+		add(projectPathText, c);
 		
-		proyectPathText.addMouseListener(new MouseAdapter() {
+		projectPathText.addMouseListener(new MouseAdapter() {
 			@Override
             public void mouseClicked(MouseEvent e){				
-				int returnVal = proyectPath.showDialog(parent, "New Proyect");
+				int returnVal = projectPath.showDialog(parent, "New Project");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					proyectPathText.setText(proyectPath.getSelectedFile().getAbsolutePath());
+					projectPathText.setText(projectPath.getSelectedFile().getAbsolutePath());
 		        }
             }
 		});
@@ -110,18 +110,18 @@ public class NewMenuDialog extends JDialog{
 			public void actionPerformed(ActionEvent e) {
 				boolean validForm = true;
 				
-				if(validForm && (proyectPathText.getText() == null || proyectPathText.getText().isEmpty())) {
+				if(validForm && (projectPathText.getText() == null || projectPathText.getText().isEmpty())) {
 					validForm = false;
 					JPanel panel = new JPanel();
 					JOptionPane.showMessageDialog(panel,
-							 "Invalid Proyect Path",
+							 "Invalid Project Path",
 							 "Error",
 					        JOptionPane.ERROR_MESSAGE);
 				}
 				
 				if (validForm) {
-					SGDKProyect proyect = SGDKEntityFactory.createSGDKProyect(proyectPathText.getText());
-					parent.getProyectExplorer().getProyectExplorerTree().addElement(proyect, null);
+					SGDKProject project = SGDKEntityFactory.createSGDKProject(projectPathText.getText());
+					parent.getProjectExplorer().getProjectExplorerTree().addElement(project, null);
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);
@@ -133,7 +133,7 @@ public class NewMenuDialog extends JDialog{
 	}
 
 	protected void clean() {
-		proyectPathText.setText("");
+		projectPathText.setText("");
 	}
 
 }

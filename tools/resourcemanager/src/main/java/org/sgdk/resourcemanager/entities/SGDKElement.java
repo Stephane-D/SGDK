@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public abstract class SGDKElement {
 	
 	public enum Type{
-		SGDKProyect,
+		SGDKProject,
 		SGDKFolder,
 		SGDKBackground,
 		SGDKSprite,

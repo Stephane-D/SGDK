@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,35 +21,35 @@ import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.constants.Constants;
 import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.entities.SGDKFolder;
-import org.sgdk.resourcemanager.entities.SGDKProyect;
+import org.sgdk.resourcemanager.entities.SGDKProject;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ProyectExplorerTree extends JTree {
+public class ProjectExplorerTree extends JTree {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(ProyectExplorerTree.class);
+	private static final Logger logger = LogManager.getLogger(ProjectExplorerTree.class);
 	
 	private FolderPopupMenu popupFolder = null;
 	private FilePopupMenu popupFile = null;	
-	private ProyectPopupMenu popupProyect = null;	
+	private ProjectPopupMenu popupProject = null;	
 
 	private String workingDirectory;
 	
-	public ProyectExplorerTree(ResourceManagerFrame parent, String workingDirectory) throws IOException{
+	public ProjectExplorerTree(ResourceManagerFrame parent, String workingDirectory) throws IOException{
 		super(new DefaultTreeModel(new DefaultMutableTreeNode("root")));
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setRootVisible(false);
-		setCellRenderer(new ProyectCellRender());
+		setCellRenderer(new ProjectCellRender());
 		
 		popupFolder = new FolderPopupMenu(parent);
 		popupFile = new FilePopupMenu(parent);
-		popupProyect = new ProyectPopupMenu(parent);
+		popupProject = new ProjectPopupMenu(parent);
 		
 		this.workingDirectory = workingDirectory;
 		File f = new File(workingDirectory);
@@ -61,8 +61,8 @@ public class ProyectExplorerTree extends JTree {
 			try (FileWriter writer = new FileWriter(f)){
 				ObjectMapper mapper = new ObjectMapper();
 				f.createNewFile();
-				List<SGDKProyect> proyects = new ArrayList<>();
-				writer.write(mapper.writeValueAsString(proyects));
+				List<SGDKProject> projects = new ArrayList<>();
+				writer.write(mapper.writeValueAsString(projects));
 			}catch (IOException e) {
 				logger.error(e);
 			}			
@@ -76,9 +76,9 @@ public class ProyectExplorerTree extends JTree {
 				text.append(sCurrentLine);
 			}
 			
-			List<SGDKProyect> proyects = mapper.readValue(text.toString(), new TypeReference<List<SGDKProyect>>(){});			
+			List<SGDKProject> projects = mapper.readValue(text.toString(), new TypeReference<List<SGDKProject>>(){});			
 			
-			for(SGDKProyect p : proyects) {
+			for(SGDKProject p : projects) {
 				initialize(p,null);
 			}
 		}catch (Exception e) {
@@ -92,9 +92,9 @@ public class ProyectExplorerTree extends JTree {
 				    if(node!=null) {				    	
 				    	SGDKElement selected = (SGDKElement)node.getUserObject();
 				    	switch(selected.getType()) {
-				    	case SGDKProyect:
-				    		popupProyect.setParentNode(selected);
-				    		popupProyect.show((JComponent) e.getSource(), e.getX(), e.getY());
+				    	case SGDKProject:
+				    		popupProject.setParentNode(selected);
+				    		popupProject.show((JComponent) e.getSource(), e.getX(), e.getY());
 				    		break;
 				    	case SGDKFolder:
 				    		popupFolder.setParentNode(selected);
@@ -134,7 +134,7 @@ public class ProyectExplorerTree extends JTree {
 	private void initialize(SGDKElement e, SGDKElement parent) {
 		addElement(e, parent);		
 		if(e.getType().equals(SGDKElement.Type.SGDKFolder)
-			|| e.getType().equals(SGDKElement.Type.SGDKProyect)) {
+			|| e.getType().equals(SGDKElement.Type.SGDKProject)) {
 			SGDKFolder folder = (SGDKFolder)e;
 			for(SGDKElement sgdkChild : folder.getChilds()) {
 				initialize(sgdkChild, e);
@@ -176,20 +176,20 @@ public class ProyectExplorerTree extends JTree {
 		}
 	}
 
-	public void saveProyects() {
+	public void saveProjects() {
 
-    	logger.debug("Saving Proyects...");
+    	logger.debug("Saving Projects...");
 		DefaultTreeModel model = (DefaultTreeModel)getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 		try (FileWriter writer = new FileWriter(new File(workingDirectory+File.separator+Constants.PROYECT_SETTINGS_FILE))) {
-			List<SGDKProyect> proyects = new ArrayList<>();
+			List<SGDKProject> projects = new ArrayList<>();
 			ObjectMapper mapper = new ObjectMapper();
 			for(int i = 0; i < root.getChildCount(); i++) {
 				DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(i);
-				SGDKProyect proyect = (SGDKProyect)child.getUserObject();
-				proyects.add(proyect);
+				SGDKProject project = (SGDKProject)child.getUserObject();
+				projects.add(project);
 			}
-			writer.write(mapper.writeValueAsString(proyects));
+			writer.write(mapper.writeValueAsString(projects));
 		} catch (IOException e) {
 			logger.error("", e);
 			e.printStackTrace();

@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer.modals;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -23,29 +23,34 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sgdk.resourcemanager.entities.SGDKBackground;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKElement;
-import org.sgdk.resourcemanager.entities.SGDKFolder;
+import org.sgdk.resourcemanager.entities.SGDKProject;
 import org.sgdk.resourcemanager.entities.factory.SGDKEntityFactory;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
-public class CreateBackgroundDialog extends JDialog{
+public class ExportProjectDialog extends JDialog{
 
 	/**
 	 * 
 	 */
+	private static final Logger logger = LogManager.getLogger(ExportProjectDialog.class);
 	
 	private static final int minimizeWidth = 340;
 	private static final int minimizeHeight = 220;
 	
-	private JTextField backgroundPathText = new JTextField();
-	private JFileChooser backgroundPath = new JFileChooser(System.getProperty("user.home"));
+	private JTextField targetPathProject = new JTextField();
+	private JFileChooser targetPath = new JFileChooser(System.getProperty("user.home"));
 	private JButton acceptButon = new JButton("Ok");
 	private static final long serialVersionUID = 1L;	
 	
-	public CreateBackgroundDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
-		super(parent, "New Background");
+	public ExportProjectDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
+		super(parent, "Export Project");
 		parent.setEnabled(false);
+		targetPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		targetPath.setAcceptAllFileFilterUsed(false);
+		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int screenWidth = new Long(Math.round(screenSize.getWidth())).intValue();
 		int screenHeight = new Long(Math.round(screenSize.getHeight())).intValue();
@@ -61,18 +66,18 @@ public class CreateBackgroundDialog extends JDialog{
 			}
 		});
 		
-		backgroundPath.addChoosableFileFilter(new FileFilter() {			
+		targetPath.addChoosableFileFilter(new FileFilter() {			
 			@Override
 			public String getDescription() {
-				return StringUtils.join(SGDKBackground.ValidFormat.values(), ", ");
+				return StringUtils.join("Folder");
 			}
 			
 			@Override
 			public boolean accept(File f) {
-				return SGDKBackground.isValidFormat(f.getAbsolutePath()) || f.isDirectory();
+				return f.isDirectory();
 			}
 		});
-		backgroundPath.setAcceptAllFileFilterUsed(false);
+		targetPath.setAcceptAllFileFilterUsed(false);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -85,7 +90,7 @@ public class CreateBackgroundDialog extends JDialog{
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		add(new JLabel("Background Path: "), c);
+		add(new JLabel("Target Path Path: "), c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;	
 		c.anchor = GridBagConstraints.LINE_START;
@@ -95,14 +100,14 @@ public class CreateBackgroundDialog extends JDialog{
 		c.gridy = 0;
 		c.gridwidth = 5;
 		c.gridheight = 1;
-		add(backgroundPathText, c);		
+		add(targetPathProject, c);		
 		
-		backgroundPathText.addMouseListener(new MouseAdapter() {
+		targetPathProject.addMouseListener(new MouseAdapter() {
 			@Override
             public void mouseClicked(MouseEvent e){				
-				int returnVal = backgroundPath.showDialog(parent, "New Background");
+				int returnVal = targetPath.showDialog(parent, "Target Path");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					backgroundPathText.setText(backgroundPath.getSelectedFile().getAbsolutePath());
+					targetPathProject.setText(targetPath.getSelectedFile().getAbsolutePath());
 		        }
             }
 		});
@@ -122,18 +127,21 @@ public class CreateBackgroundDialog extends JDialog{
 			public void actionPerformed(ActionEvent e) {
 				boolean validForm = true;
 				
-				if(validForm && (backgroundPathText.getText() == null || backgroundPathText.getText().isEmpty())) {
+				if(validForm && (targetPathProject.getText() == null || targetPathProject.getText().isEmpty())) {
 					validForm = false;
 					JPanel panel = new JPanel();
 					JOptionPane.showMessageDialog(panel,
-							 "Invalid Background File",
+							 "Invalid Target Path",
 							 "Error",
 					        JOptionPane.ERROR_MESSAGE);
 				}
 				
 				if (validForm) {
-					SGDKBackground background = SGDKEntityFactory.createSGDKBackground(backgroundPathText.getText(), (SGDKFolder)parentNode);
-					parent.getProyectExplorer().getProyectExplorerTree().addElement(background, parentNode);
+					try {
+						SGDKEntityFactory.export((SGDKProject)parentNode, targetPathProject.getText());
+					} catch (Exception e1) {
+						logger.error(e1);
+					}
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);					
@@ -145,7 +153,7 @@ public class CreateBackgroundDialog extends JDialog{
 	}
 
 	protected void clean() {
-		backgroundPathText.setText("");
+		targetPathProject.setText("");
 	}
 
 }

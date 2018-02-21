@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +28,7 @@ public class FilePopupMenu extends JPopupMenu {
 				int i=JOptionPane.showConfirmDialog(null, "Are you sure?", "Delete Item", JOptionPane.YES_NO_OPTION);
                 if(i==0) {
                 	SGDKEntityFactory.deleteSGDKElement(getParentNode());        
-                	parent.getProyectExplorer().getProyectExplorerTree().deleteElement(getParentNode());
+                	parent.getProjectExplorer().getProjectExplorerTree().deleteElement(getParentNode());
                 }
 				
 			}

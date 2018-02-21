@@ -56,11 +56,11 @@ public class SGDKElementDeserializer extends StdDeserializer<SGDKElement> {
     			SGDKEnvironmentSound environmentSound = new SGDKEnvironmentSound(path);
     			element = environmentSound;
     			break;
-    		case SGDKProyect:
-    			SGDKProyect p = new SGDKProyect(path);
-    			Iterator<JsonNode> childsProyectIterator = node.get("childs").elements();
-    			while(childsProyectIterator.hasNext()) {
-    				JsonNode childNode = childsProyectIterator.next();
+    		case SGDKProject:
+    			SGDKProject p = new SGDKProject(path);
+    			Iterator<JsonNode> childsProjectIterator = node.get("childs").elements();
+    			while(childsProjectIterator.hasNext()) {
+    				JsonNode childNode = childsProjectIterator.next();
     				SGDKElement e = mapper.readValue(childNode.toString(), SGDKElement.class);
     				e.setParent(p);
     				p.addChild(e);

@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer.modals;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -23,34 +23,25 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKElement;
-import org.sgdk.resourcemanager.entities.SGDKProyect;
+import org.sgdk.resourcemanager.entities.SGDKFXSound;
+import org.sgdk.resourcemanager.entities.SGDKFolder;
 import org.sgdk.resourcemanager.entities.factory.SGDKEntityFactory;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
-public class ExportProyectDialog extends JDialog{
-
-	/**
-	 * 
-	 */
-	private static final Logger logger = LogManager.getLogger(ExportProyectDialog.class);
+public class CreateSFXDialog extends JDialog{
 	
 	private static final int minimizeWidth = 340;
 	private static final int minimizeHeight = 220;
 	
-	private JTextField targetPathProyect = new JTextField();
-	private JFileChooser targetPath = new JFileChooser(System.getProperty("user.home"));
+	private JTextField fxSoundPathText = new JTextField();
+	private JFileChooser fxSoundPath = new JFileChooser(System.getProperty("user.home"));
 	private JButton acceptButon = new JButton("Ok");
-	private static final long serialVersionUID = 1L;	
+	private static final long serialVersionUID = 1L;
 	
-	public ExportProyectDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
-		super(parent, "Export Proyect");
+	public CreateSFXDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
+		super(parent, "New FX Sound");
 		parent.setEnabled(false);
-		targetPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		targetPath.setAcceptAllFileFilterUsed(false);
-		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int screenWidth = new Long(Math.round(screenSize.getWidth())).intValue();
 		int screenHeight = new Long(Math.round(screenSize.getHeight())).intValue();
@@ -66,18 +57,18 @@ public class ExportProyectDialog extends JDialog{
 			}
 		});
 		
-		targetPath.addChoosableFileFilter(new FileFilter() {			
+		fxSoundPath.addChoosableFileFilter(new FileFilter() {			
 			@Override
 			public String getDescription() {
-				return StringUtils.join("Folder");
+				return StringUtils.join(SGDKFXSound.ValidFormat.values(), ", ");
 			}
 			
 			@Override
 			public boolean accept(File f) {
-				return f.isDirectory();
+				return SGDKFXSound.isValidFormat(f.getAbsolutePath()) || f.isDirectory();
 			}
 		});
-		targetPath.setAcceptAllFileFilterUsed(false);
+		fxSoundPath.setAcceptAllFileFilterUsed(false);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -90,7 +81,7 @@ public class ExportProyectDialog extends JDialog{
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		add(new JLabel("Target Path Path: "), c);
+		add(new JLabel("FX Sound Path: "), c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;	
 		c.anchor = GridBagConstraints.LINE_START;
@@ -100,14 +91,14 @@ public class ExportProyectDialog extends JDialog{
 		c.gridy = 0;
 		c.gridwidth = 5;
 		c.gridheight = 1;
-		add(targetPathProyect, c);		
+		add(fxSoundPathText, c);		
 		
-		targetPathProyect.addMouseListener(new MouseAdapter() {
+		fxSoundPathText.addMouseListener(new MouseAdapter() {
 			@Override
             public void mouseClicked(MouseEvent e){				
-				int returnVal = targetPath.showDialog(parent, "Target Path");
+				int returnVal = fxSoundPath.showDialog(parent, "New FX Sound");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					targetPathProyect.setText(targetPath.getSelectedFile().getAbsolutePath());
+					fxSoundPathText.setText(fxSoundPath.getSelectedFile().getAbsolutePath());
 		        }
             }
 		});
@@ -127,24 +118,21 @@ public class ExportProyectDialog extends JDialog{
 			public void actionPerformed(ActionEvent e) {
 				boolean validForm = true;
 				
-				if(validForm && (targetPathProyect.getText() == null || targetPathProyect.getText().isEmpty())) {
+				if(validForm && (fxSoundPathText.getText() == null || fxSoundPathText.getText().isEmpty())) {
 					validForm = false;
 					JPanel panel = new JPanel();
 					JOptionPane.showMessageDialog(panel,
-							 "Invalid Target Path",
+							 "Invalid FX Sound File",
 							 "Error",
 					        JOptionPane.ERROR_MESSAGE);
 				}
 				
 				if (validForm) {
-					try {
-						SGDKEntityFactory.export((SGDKProyect)parentNode, targetPathProyect.getText());
-					} catch (Exception e1) {
-						logger.error(e1);
-					}
+					SGDKFXSound fxSound = SGDKEntityFactory.createSGDKFXSound(fxSoundPathText.getText(), (SGDKFolder)parentNode);
+					parent.getProjectExplorer().getProjectExplorerTree().addElement(fxSound,parentNode);
 					clean();
 					parent.setEnabled(true);
-					setVisible(false);					
+					setVisible(false);
 				}
 			}
 		});
@@ -153,7 +141,6 @@ public class ExportProyectDialog extends JDialog{
 	}
 
 	protected void clean() {
-		targetPathProyect.setText("");
+		fxSoundPathText.setText("");
 	}
-
 }

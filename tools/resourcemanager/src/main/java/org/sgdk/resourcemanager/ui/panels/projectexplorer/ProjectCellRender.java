@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer;
 
 import java.awt.Component;
 import javax.swing.JTree;
@@ -7,7 +7,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.sgdk.resourcemanager.entities.SGDKElement;
 
-public class ProyectCellRender extends DefaultTreeCellRenderer {
+public class ProjectCellRender extends DefaultTreeCellRenderer {
 	/**
 	 * 
 	 */

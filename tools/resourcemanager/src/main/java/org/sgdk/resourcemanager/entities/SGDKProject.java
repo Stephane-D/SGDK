@@ -8,13 +8,13 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.SVGUtils;
 
-public class SGDKProyect extends SGDKFolder{		
+public class SGDKProject extends SGDKFolder{		
 
-	public SGDKProyect() {};
+	public SGDKProject() {};
 	
-	public SGDKProyect(String path) throws SGDKInvalidFormatException {
+	public SGDKProject(String path) throws SGDKInvalidFormatException {
 		super(path);
-		setType(Type.SGDKProyect);
+		setType(Type.SGDKProject);
 	}
 	
 	@Override

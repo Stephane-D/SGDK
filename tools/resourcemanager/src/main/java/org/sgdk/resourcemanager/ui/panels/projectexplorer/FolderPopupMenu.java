@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,11 +7,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
-import org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals.AddFolderDialog;
-import org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals.CreateBackgroundDialog;
-import org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals.CreateEnvironmentDialog;
-import org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals.CreateSFXDialog;
-import org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals.CreateSpriteDialog;
+import org.sgdk.resourcemanager.ui.panels.projectexplorer.modals.AddFolderDialog;
+import org.sgdk.resourcemanager.ui.panels.projectexplorer.modals.CreateBackgroundDialog;
+import org.sgdk.resourcemanager.ui.panels.projectexplorer.modals.CreateEnvironmentDialog;
+import org.sgdk.resourcemanager.ui.panels.projectexplorer.modals.CreateSFXDialog;
+import org.sgdk.resourcemanager.ui.panels.projectexplorer.modals.CreateSpriteDialog;
 
 public class FolderPopupMenu extends FilePopupMenu {
 

@@ -1,4 +1,4 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer.modals;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -129,7 +129,7 @@ public class CreateEnvironmentDialog extends JDialog{
 				
 				if (validForm) {
 					SGDKEnvironmentSound environmentSound = SGDKEntityFactory.createSGDKEnvironmentSound(environmentSoundPathText.getText(), (SGDKFolder)parentNode);
-					parent.getProyectExplorer().getProyectExplorerTree().addElement(environmentSound, parentNode);
+					parent.getProjectExplorer().getProjectExplorerTree().addElement(environmentSound, parentNode);
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);

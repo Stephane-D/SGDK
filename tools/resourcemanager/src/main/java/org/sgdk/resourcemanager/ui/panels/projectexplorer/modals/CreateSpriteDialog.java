@@ -1,6 +1,5 @@
-package org.sgdk.resourcemanager.ui.panels.proyectexplorer.modals;
+package org.sgdk.resourcemanager.ui.panels.projectexplorer.modals;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,34 +7,43 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.entities.SGDKFolder;
+import org.sgdk.resourcemanager.entities.SGDKSprite;
 import org.sgdk.resourcemanager.entities.factory.SGDKEntityFactory;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
-public class AddFolderDialog extends JDialog{
+public class CreateSpriteDialog extends JDialog{
 
+	/**
+	 * 
+	 */
 	private static final int minimizeWidth = 340;
 	private static final int minimizeHeight = 220;
 	
-	private JLabel textError = new JLabel();
-	private JTextField folderPathText = new JTextField();
+	private JTextField spritePathText = new JTextField();
+	private JFileChooser spritePath = new JFileChooser(System.getProperty("user.home"));
 	private JButton acceptButon = new JButton("Ok");
 	private static final long serialVersionUID = 1L;
 	
-	public AddFolderDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
-		super(parent, "Add Folder");
+	public CreateSpriteDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
+		super(parent, "New Sprite");
 		parent.setEnabled(false);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int screenWidth = new Long(Math.round(screenSize.getWidth())).intValue();
@@ -51,41 +59,52 @@ public class AddFolderDialog extends JDialog{
 				parent.setEnabled(true);
 			}
 		});
-				
+		
+		spritePath.addChoosableFileFilter(new FileFilter() {			
+			@Override
+			public String getDescription() {
+				return StringUtils.join(SGDKSprite.ValidFormat.values(), ", ");
+			}
+			
+			@Override
+			public boolean accept(File f) {
+				return SGDKSprite.isValidFormat(f.getAbsolutePath()) || f.isDirectory();
+			}
+		});
+		spritePath.setAcceptAllFileFilterUsed(false);
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		
-		textError.setForeground (Color.red);
-		
-		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.CENTER;
-		c.weightx = 1d/6d;
-		c.weighty = 1d/2d;		
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 2;
-		c.gridheight = 1;
-		add(textError, c);
 			
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.CENTER;
 		c.weightx = 1d/6d;
 		c.weighty = 1d/2d;		
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		add(new JLabel("Folder Name: "), c);
+		add(new JLabel("Sprite Path: "), c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;	
 		c.anchor = GridBagConstraints.LINE_START;
 		c.weightx = 5d/6d;
 		c.weighty = 1d/2d;		
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 0;
 		c.gridwidth = 5;
 		c.gridheight = 1;
-		add(folderPathText, c);		
+		add(spritePathText, c);		
+		
+		spritePathText.addMouseListener(new MouseAdapter() {
+			@Override
+            public void mouseClicked(MouseEvent e){				
+				int returnVal = spritePath.showDialog(parent, "New Sprite");
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					spritePathText.setText(spritePath.getSelectedFile().getAbsolutePath());
+		        }
+            }
+		});
 		
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.LINE_END;
@@ -102,34 +121,30 @@ public class AddFolderDialog extends JDialog{
 			public void actionPerformed(ActionEvent e) {
 				boolean validForm = true;
 				
-				if(validForm && (folderPathText.getText() == null || folderPathText.getText().isEmpty())) {
+				if(validForm && (spritePathText.getText() == null || spritePathText.getText().isEmpty())) {
 					validForm = false;
 					JPanel panel = new JPanel();
 					JOptionPane.showMessageDialog(panel,
-							 "Invalid Folder Name",
+							 "Invalid Sprite File",
 							 "Error",
 					        JOptionPane.ERROR_MESSAGE);
 				}
 				
 				if (validForm) {
-					File directory = new File(parentNode.getPath()+File.separator+folderPathText.getText());
-					if(!directory.exists()) {
-						SGDKFolder folder = SGDKEntityFactory.createSGDKFolder(folderPathText.getText(), (SGDKFolder)parentNode);
-						parent.getProyectExplorer().getProyectExplorerTree().addElement(folder, parentNode);
-						clean();
-						parent.setEnabled(true);
-						setVisible(false);
-					}else {
-						textError.setText("Carpeta ya existe");
-					}
+					SGDKSprite sprite = SGDKEntityFactory.createSGDKSprite(spritePathText.getText(), (SGDKFolder)parentNode);
+					parent.getProjectExplorer().getProjectExplorerTree().addElement(sprite, parentNode);
+					clean();
+					parent.setEnabled(true);
+					setVisible(false);
 				}
 			}
-		});		
+		});
+		
 		setVisible(true);
 	}
 
 	protected void clean() {
-		folderPathText.setText("");
-		textError.setText("");
+		spritePathText.setText("");
 	}
+
 }
