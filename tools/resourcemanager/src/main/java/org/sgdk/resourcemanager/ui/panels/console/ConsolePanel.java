@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
@@ -16,7 +18,7 @@ public class ConsolePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-//	PreviewPanel previewPanel = new PreviewPanel();
+	private JTextArea console;
 	
 	public ConsolePanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());		
@@ -24,7 +26,10 @@ public class ConsolePanel extends JPanel {
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
-//		JScrollPane scrollPaneProjectExplorerTree = new JScrollPane(previewPanel);
+		console = new JTextArea();
+		console.setEditable(false);
+		console.setAutoscrolls(true);
+		JScrollPane scrollPaneConsole = new JScrollPane(console);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1.0;
@@ -33,7 +38,7 @@ public class ConsolePanel extends JPanel {
 		c.gridy = 0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridheight = GridBagConstraints.REMAINDER;
-//		add(scrollPaneProjectExplorerTree, c);
+		add(scrollPaneConsole, c);
 	}
 
 //	public ProjectExplorerTree getProjectExplorerTree() {
