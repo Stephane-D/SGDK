@@ -20,7 +20,7 @@ public class ComponentsContainerPanel extends JPanel {
 	
 	public ComponentsContainerPanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());		
-		setBorder(BorderFactory.createTitledBorder("Preview"));
+		setBorder(BorderFactory.createTitledBorder("Components"));
 		
 		GridBagConstraints c = new GridBagConstraints();
 		

@@ -33,7 +33,7 @@ public class ProjectExplorerTree extends JTree {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(ProjectExplorerTree.class);
+	private static final Logger logger = LogManager.getLogger("UILogger");
 	
 	private FolderPopupMenu popupFolder = null;
 	private FilePopupMenu popupFile = null;	
@@ -46,7 +46,7 @@ public class ProjectExplorerTree extends JTree {
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setRootVisible(false);
 		setCellRenderer(new ProjectCellRender());
-		
+
 		popupFolder = new FolderPopupMenu(parent);
 		popupFile = new FilePopupMenu(parent);
 		popupProject = new ProjectPopupMenu(parent);
@@ -109,23 +109,11 @@ public class ProjectExplorerTree extends JTree {
 			}
 			
 			public void mouseClicked(MouseEvent e) {
-				//TODO
 	            if (e.getClickCount() == 2) {
 	                DefaultMutableTreeNode node = (DefaultMutableTreeNode)getLastSelectedPathComponent();
 	                if (node == null) return;
-	                SGDKElement selected = (SGDKElement)node.getUserObject();
-	                switch(selected.getType()) {
-					case SGDKBackground:
-						break;
-					case SGDKSprite:
-						break;
-					case SGDKFXSound:
-						break;
-					case SGDKEnvironmentSound:
-						break;
-					default:
-						break;	                
-	                }
+	                SGDKElement selected = (SGDKElement)node.getUserObject();	               
+					parent.getPreviewContainerPanel().setPreview(selected);		                
 	            }
 	        }
 	    });

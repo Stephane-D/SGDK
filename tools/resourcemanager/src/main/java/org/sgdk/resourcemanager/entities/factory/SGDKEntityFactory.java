@@ -20,7 +20,7 @@ import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 
 public class SGDKEntityFactory {
 
-	private static final Logger logger = LogManager.getLogger(SGDKEntityFactory.class);
+	private static final Logger logger = LogManager.getLogger("UILogger");
 	private static final String RES_FILE_EXTENSION = ".res";
 	
 	public static SGDKProject createSGDKProject(String path) {

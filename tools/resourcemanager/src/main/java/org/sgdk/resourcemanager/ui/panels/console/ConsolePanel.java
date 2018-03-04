@@ -1,5 +1,6 @@
 package org.sgdk.resourcemanager.ui.panels.console;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.IOException;
@@ -18,17 +19,21 @@ public class ConsolePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private JTextArea console;
-	
 	public ConsolePanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());		
 		setBorder(BorderFactory.createTitledBorder("Console"));
 		
+		JTextArea console = new JTextArea(3,15);
+		console.setLineWrap(true);
+		console.setWrapStyleWord(true);
+		console.setEditable (false);
+		console.setFont(new Font("Courier", Font.PLAIN, 12));
+		console.setAutoscrolls(true);
+		
+		JTextAreaAppender.addTextArea(console);
+		
 		GridBagConstraints c = new GridBagConstraints();
 		
-		console = new JTextArea();
-		console.setEditable(false);
-		console.setAutoscrolls(true);
 		JScrollPane scrollPaneConsole = new JScrollPane(console);
 		
 		c.fill = GridBagConstraints.BOTH;
@@ -40,13 +45,5 @@ public class ConsolePanel extends JPanel {
 		c.gridheight = GridBagConstraints.REMAINDER;
 		add(scrollPaneConsole, c);
 	}
-
-//	public ProjectExplorerTree getProjectExplorerTree() {
-//		return projectExplorerTree;
-//	}
-//
-//	public void setProjectExplorerTree(ProjectExplorerTree projectExplorerTree) {
-//		this.projectExplorerTree = projectExplorerTree;
-//	}
 
 }
