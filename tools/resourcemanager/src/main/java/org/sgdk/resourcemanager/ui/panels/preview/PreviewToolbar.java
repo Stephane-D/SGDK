@@ -1,5 +1,6 @@
 package org.sgdk.resourcemanager.ui.panels.preview;
 
+import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
@@ -85,14 +86,15 @@ public class PreviewToolbar extends JPanel {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				backgroundColorButton.setBackground(
-						 JColorChooser.showDialog(
-								 null,
-								 "Choose a Color",
-								 backgroundColorButton.getBackground()
-						 )
-				 );
-				previewPanel.setBackgroundColor(backgroundColorButton.getBackground());
+				Color color = JColorChooser.showDialog(
+						 null,
+						 "Choose a Color",
+						 backgroundColorButton.getBackground()
+				);
+				if(color != null) {					
+					backgroundColorButton.setBackground(color);
+					previewPanel.setBackgroundColor(color);
+				}
 			}
 			
 			@Override
