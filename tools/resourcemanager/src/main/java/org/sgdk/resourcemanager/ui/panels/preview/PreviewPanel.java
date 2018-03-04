@@ -63,6 +63,16 @@ public class PreviewPanel extends JPanel {
 	public float getZoom() {
 		return zoom;
 	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+		repaint();
+	}
+	
 	
 
 }

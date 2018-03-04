@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 
 public class PreviewToolbar extends JPanel {
@@ -77,6 +78,44 @@ public class PreviewToolbar extends JPanel {
 			}
 		});
 		add(zoomDownButton);
+		
+		JButton backgroundColorButton = new JButton("");	
+		backgroundColorButton.setBackground(previewPanel.getBackgroundColor());
+		backgroundColorButton.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				backgroundColorButton.setBackground(
+						 JColorChooser.showDialog(
+								 null,
+								 "Choose a Color",
+								 backgroundColorButton.getBackground()
+						 )
+				 );
+				previewPanel.setBackgroundColor(backgroundColorButton.getBackground());
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
+		add(backgroundColorButton);
 	}
 
 }
