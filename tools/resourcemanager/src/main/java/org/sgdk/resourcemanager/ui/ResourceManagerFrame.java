@@ -48,9 +48,6 @@ public class ResourceManagerFrame extends JFrame {
 		
 		setMenuBar(new ResourceManagerMenuBar(this));
 		
-		consolePanel = new ConsolePanel(this);
-		projectExplorer = new ProjectExplorerPanel(this, workingDirectory);
-		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -61,6 +58,7 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
+		projectExplorer = new ProjectExplorerPanel(this, workingDirectory);
 		add(projectExplorer, c);
 		
 		c.weightx = 1d/2d;
@@ -78,6 +76,7 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridy = 4;
 		c.gridwidth = 3;
 		c.gridheight = GridBagConstraints.REMAINDER;
+		consolePanel = new ConsolePanel(this);
 		add(consolePanel, c);
 		
 		c.weightx = 1d/6d;
@@ -101,10 +100,11 @@ public class ResourceManagerFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-                int i=JOptionPane.showConfirmDialog(null, "Seguro que quiere salir?");
-                if(i==0) {
-                	projectExplorer.getProjectExplorerTree().saveProjects();
-                	
+                int i=JOptionPane.showConfirmDialog(null, "Do you want save the projects?");
+                if(i < 2) {
+                	if(i == 0) {                		
+                		projectExplorer.getProjectExplorerTree().saveProjects();
+                	}
                 	Thread t = new Thread(new Runnable() {						
 						@Override
 						public void run() {
