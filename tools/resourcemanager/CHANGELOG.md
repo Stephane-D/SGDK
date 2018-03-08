@@ -1,6 +1,18 @@
 Changelog
 =========
 
+#0.2.0
+
+### New Features
+1. Preview Panel to show background images and sprites.
+1.1 Add Zoom Buttons and change background preview color button;
+2. Preview Panel to play sfx sounds and vgm(there are problems at the moment with vgm files)
+2.1 Add buttons play/pause and stop sounds.
+3. Add console panel and console on real time.
+
+### Enhancements
+### Bugs
+
 #0.1.0
 
 ### New Features

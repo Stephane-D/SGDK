@@ -23,16 +23,19 @@ public class PreviewContainerPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private SoundPlayer soundPlayer;
 	private PreviewPanel previewPanel;
 	private PreviewToolbar toolBar;
+	
 	private static final Logger logger = LogManager.getLogger("UILogger");
 	
 	public PreviewContainerPanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());		
 		setBorder(BorderFactory.createTitledBorder("Preview"));
 		
+		soundPlayer = new SoundPlayer();
 		previewPanel = new PreviewPanel();
-		toolBar = new PreviewToolbar(previewPanel);
+		toolBar = new PreviewToolbar(previewPanel, soundPlayer);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -56,27 +59,49 @@ public class PreviewContainerPanel extends JPanel {
 		c.gridheight = 11;
 		add(scrollPaneProjectExplorerTree, c);
 	}
-
+	
 	public void setPreview(SGDKElement sgdkElement) {
 		cleanPanel();
+		stopSound();
+		toolBar.clean();
 		try {
 			switch(sgdkElement.getType()) {
 			case SGDKBackground:
 			case SGDKSprite:
+				paintImage(sgdkElement);
+				toolBar.showImageButtons();
+				break;
 			case SGDKEnvironmentSound:
 			case SGDKFXSound:
 				paintImage(sgdkElement);
+				playSound(sgdkElement);
+				toolBar.showSoundButtons();
 				break;
 			case SGDKFolder:
 			case SGDKProject:
 				break;
 			default:
-				break;
-				
+				break;				
 			}
 		} catch (IOException e) {
 			logger.error("", e);	
 		}
+	}
+
+	private void stopSound() {
+		try {
+			soundPlayer.stopSound();
+		}catch (Exception e) {
+			logger.error("", e);
+		}
+	}
+
+	private void playSound(SGDKElement sgdkElement) {			
+		try {
+			soundPlayer.playSound(sgdkElement);
+        } catch (Exception e) {
+        	logger.error("", e);
+        }	     
 	}
 
 	private void paintImage(SGDKElement sgdkElement) throws IOException {

@@ -1,12 +1,16 @@
 package org.sgdk.resourcemanager.entities.factory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKBackground;
@@ -53,14 +57,12 @@ public class SGDKEntityFactory {
 	public static SGDKBackground createSGDKBackground(String path, SGDKFolder parentNode) {
 		logger.debug("Creating Background Element...");
 		try {
-			SGDKBackground backgroundOrigen = new SGDKBackground(path);
-			File f = new File(parentNode.getPath()+File.separator+backgroundOrigen.toString());
-			if(!f.exists()) {				
-				Files.copy(
-						Paths.get(backgroundOrigen.getPath()),
-						Paths.get(parentNode.getPath()+File.separator+backgroundOrigen.toString()),
-						StandardCopyOption.REPLACE_EXISTING);
-			}
+			SGDKBackground backgroundOrigen = new SGDKBackground(path);						
+			Files.copy(
+					Paths.get(backgroundOrigen.getPath()),
+					Paths.get(parentNode.getPath()+File.separator+backgroundOrigen.toString()),
+					StandardCopyOption.REPLACE_EXISTING);
+			
 			SGDKBackground backgroundDest = new SGDKBackground(parentNode.getPath()+File.separator+backgroundOrigen.toString());
 			logger.debug("Created Background Element");
 			parentNode.addChild(backgroundDest);
@@ -78,14 +80,12 @@ public class SGDKEntityFactory {
 		logger.debug("Creating FX Sound Element...");
 		try {
 			SGDKFXSound fxSoundOrigen = new SGDKFXSound(path);
-			SGDKFXSound fxSoundDest = new SGDKFXSound(parentNode.getPath()+File.separator+fxSoundOrigen.toString());
-			File f = new File(fxSoundDest.getPath());
-			if(!f.exists()) {				
-				Files.copy(
-						Paths.get(fxSoundOrigen.getPath()),
-						Paths.get(fxSoundDest.getPath()),
-						StandardCopyOption.REPLACE_EXISTING);
-			}
+			SGDKFXSound fxSoundDest = new SGDKFXSound(parentNode.getPath()+File.separator+fxSoundOrigen.toString());							
+			Files.copy(
+					Paths.get(fxSoundOrigen.getPath()),
+					Paths.get(fxSoundDest.getPath()),
+					StandardCopyOption.REPLACE_EXISTING);
+			
 			logger.debug("Created FX Sound Element");
 			parentNode.addChild(fxSoundDest);
 			fxSoundDest.setParent(parentNode);
@@ -101,14 +101,12 @@ public class SGDKEntityFactory {
 	public static SGDKSprite createSGDKSprite(String path, SGDKFolder parentNode) {
 		logger.debug("Creating Sprite Element...");
 		try {
-			SGDKSprite spriteOrigen = new SGDKSprite(path);
-			File f = new File(parentNode.getPath()+File.separator+spriteOrigen.toString());
-			if(!f.exists()) {				
-				Files.copy(
-						Paths.get(spriteOrigen.getPath()),
-						Paths.get(parentNode.getPath()+File.separator+spriteOrigen.toString()),
-						StandardCopyOption.REPLACE_EXISTING);
-			}
+			SGDKSprite spriteOrigen = new SGDKSprite(path);							
+			Files.copy(
+					Paths.get(spriteOrigen.getPath()),
+					Paths.get(parentNode.getPath()+File.separator+spriteOrigen.toString()),
+					StandardCopyOption.REPLACE_EXISTING);
+			
 			SGDKSprite spriteDest = new SGDKSprite(parentNode.getPath()+File.separator+spriteOrigen.toString());
 			logger.debug("Created Sprite Element");
 			parentNode.addChild(spriteDest);
@@ -127,12 +125,39 @@ public class SGDKEntityFactory {
 		try {
 			SGDKEnvironmentSound environmentSoundOrigen = new SGDKEnvironmentSound(path);
 			SGDKEnvironmentSound environmentSoundDest = new SGDKEnvironmentSound(parentNode.getPath()+File.separator+environmentSoundOrigen.toString());
-			File f = new File(environmentSoundDest.getPath());
-			if(!f.exists()) {				
+			//Los sonidos pueden aceptarse VGM o VGZ. En caso de ser VGZ se 
+			//descomprimirá previamente para ser un vgm
+			switch(SGDKEnvironmentSound.ValidFormat.valueOf(FilenameUtils.getExtension(environmentSoundDest.getPath()).toLowerCase())) {				
+			case vgm:				
 				Files.copy(
 						Paths.get(environmentSoundOrigen.getPath()),
 						Paths.get(environmentSoundDest.getPath()),
 						StandardCopyOption.REPLACE_EXISTING);
+				break;
+			case vgz:
+				environmentSoundDest.setPath(
+					environmentSoundDest.getPath().substring(
+							0, environmentSoundDest.getPath().lastIndexOf(".") + 1
+					).concat(SGDKEnvironmentSound.ValidFormat.vgm.toString())
+				);
+				File f = new File(environmentSoundDest.getPath());
+				if(f.exists()) {
+					f.delete();
+				}
+				logger.info("Unzipping VGZ File to VGM");
+				GZIPInputStream unzipFile = new GZIPInputStream(new FileInputStream(new File(environmentSoundOrigen.getPath())));
+				FileOutputStream fos = new FileOutputStream(f);
+				byte[] buf = new byte[8000];
+				int bytesReaded = 0;
+				do{
+					bytesReaded = unzipFile.read(buf , 0, buf.length);
+					if(bytesReaded > 0) {						
+						fos.write(buf, 0, bytesReaded);
+					}
+				}while(bytesReaded > 0);					
+				fos.close();
+				unzipFile.close();
+				break;
 			}
 			logger.debug("Created Environment Sound Element");
 			parentNode.addChild(environmentSoundDest);

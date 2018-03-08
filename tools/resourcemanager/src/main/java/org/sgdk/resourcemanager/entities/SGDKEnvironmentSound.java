@@ -7,12 +7,12 @@ import javax.swing.Icon;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.commons.io.FilenameUtils;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
-import org.sgdk.resourcemanager.ui.utils.SVGUtils;
+import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
 public class SGDKEnvironmentSound extends SGDKElement{
 
 	public enum ValidFormat{
-		vgm
+		vgm, vgz
 	}
 	
 	public SGDKEnvironmentSound() {};
