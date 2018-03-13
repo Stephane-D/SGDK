@@ -100,10 +100,22 @@ public class ResourceManagerFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-                int i=JOptionPane.showConfirmDialog(null, "Seguro que quiere salir?");
-                if(i==0) {
-                	projectExplorer.getProjectExplorerTree().saveProjects();
-                    System.exit(0);//cierra aplicacion
+                int i=JOptionPane.showConfirmDialog(null, "Do you want save the projects?");
+                if(i < 2) {
+                	if(i == 0) {                		
+                		projectExplorer.getProjectExplorerTree().saveProjects();
+                	}
+                	Thread t = new Thread(new Runnable() {						
+						@Override
+						public void run() {
+							try {
+								Thread.sleep(1500);
+							} catch (InterruptedException e1) {
+							}
+							System.exit(0);//cierra aplicacion							
+						}
+					});
+                	t.start();
                 }
             }
         });

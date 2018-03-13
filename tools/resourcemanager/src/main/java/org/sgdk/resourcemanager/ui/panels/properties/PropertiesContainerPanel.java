@@ -20,7 +20,7 @@ public class PropertiesContainerPanel extends JPanel {
 	
 	public PropertiesContainerPanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());		
-		setBorder(BorderFactory.createTitledBorder("Components"));
+		setBorder(BorderFactory.createTitledBorder("Properties"));
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -35,13 +35,5 @@ public class PropertiesContainerPanel extends JPanel {
 		c.gridheight = GridBagConstraints.REMAINDER;
 //		add(scrollPaneProjectExplorerTree, c);
 	}
-
-//	public ProjectExplorerTree getProjectExplorerTree() {
-//		return projectExplorerTree;
-//	}
-//
-//	public void setProjectExplorerTree(ProjectExplorerTree projectExplorerTree) {
-//		this.projectExplorerTree = projectExplorerTree;
-//	}
 
 }

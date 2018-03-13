@@ -35,7 +35,7 @@ public class ExportProjectDialog extends JDialog{
 	/**
 	 * 
 	 */
-	private static final Logger logger = LogManager.getLogger(ExportProjectDialog.class);
+	private static final Logger logger = LogManager.getLogger("UILogger");
 	
 	private static final int minimizeWidth = 340;
 	private static final int minimizeHeight = 220;
