@@ -7,6 +7,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.entities.factory.SGDKEntityFactory;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
@@ -17,6 +19,7 @@ public class FilePopupMenu extends JPopupMenu {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger("UILogger");
 	
 	private SGDKElement parentNode;
 	
@@ -27,6 +30,7 @@ public class FilePopupMenu extends JPopupMenu {
 			public void actionPerformed(ActionEvent e) {
 				int i=JOptionPane.showConfirmDialog(null, "Are you sure?", "Delete Item", JOptionPane.YES_NO_OPTION);
                 if(i==0) {
+                	logger.info("Erasing " + getParentNode().getType().toString() +" " + getParentNode().toString());
                 	SGDKEntityFactory.deleteSGDKElement(getParentNode());        
                 	parent.getProjectExplorer().getProjectExplorerTree().deleteElement(getParentNode());
                 }

@@ -12,6 +12,8 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.ui.menubar.ResourceManagerMenuBar;
 import org.sgdk.resourcemanager.ui.panels.components.ComponentsContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.console.ConsolePanel;
@@ -25,6 +27,8 @@ public class ResourceManagerFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = LogManager.getLogger("UILogger");
 	
 	private static final int minimizeWidth = 800;
 	private static final int minimizeHeight = 600;
@@ -51,50 +55,50 @@ public class ResourceManagerFrame extends JFrame {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
-		
-		c.weightx = 1d/6d;
-		c.weighty = 1.0;		
+		c.anchor = GridBagConstraints.CENTER;
+		c.weighty = 1.0;
+			
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
+		c.weightx = 1.0/6.0;
 		projectExplorer = new ProjectExplorerPanel(this, workingDirectory);
 		add(projectExplorer, c);
 		
-		c.weightx = 1d/2d;
-		c.weighty = 4d/5d;
 		c.gridx = 1;
 		c.gridy = 0;
-		c.gridwidth = 3;
-		c.gridheight = 4;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.weighty = 5.0/6.0;
+		c.weightx = 1.0/2.0;
 		previewContainerPanel = new PreviewContainerPanel(this);
 		add(previewContainerPanel, c);
 		
-		c.weightx = 1d/2d;
-		c.weighty = 1d/5d;
 		c.gridx = 1;
-		c.gridy = 4;
-		c.gridwidth = 3;
+		c.gridy = 1;
+		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
+		c.weighty = 1.0/6.0;
+		c.weightx = 1.0/2.0;
 		consolePanel = new ConsolePanel(this);
 		add(consolePanel, c);
 		
-		c.weightx = 1d/6d;
-		c.weighty = 1.0;	
-		c.gridx = 4;
+		c.gridx = 2;
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
-		propertiesContainerPanel = new PropertiesContainerPanel(this);
+		c.weighty = 1.0;
+		c.weightx = 1.0/6.0;
+		propertiesContainerPanel = new PropertiesContainerPanel();
 		add(propertiesContainerPanel, c);
 		
-		c.weightx = 1d/6d;
-		c.weighty = 1.0;	
-		c.gridx = 5;
+		c.gridx = 3;
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
-		componentsContainerPanel = new ComponentsContainerPanel(this);
+		c.weightx = 1.0/6.0;
+		componentsContainerPanel = new ComponentsContainerPanel();
 		add(componentsContainerPanel, c);
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -115,6 +119,7 @@ public class ResourceManagerFrame extends JFrame {
 							System.exit(0);//cierra aplicacion							
 						}
 					});
+                	logger.info("Closing...");
                 	t.start();
                 }
             }

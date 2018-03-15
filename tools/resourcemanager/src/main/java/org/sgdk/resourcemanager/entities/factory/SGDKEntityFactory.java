@@ -21,6 +21,7 @@ import org.sgdk.resourcemanager.entities.SGDKFolder;
 import org.sgdk.resourcemanager.entities.SGDKProject;
 import org.sgdk.resourcemanager.entities.SGDKSprite;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
+import org.sgdk.resourcemanager.ui.utils.indexedimage.ImageUtil;
 
 public class SGDKEntityFactory {
 
@@ -28,9 +29,9 @@ public class SGDKEntityFactory {
 	private static final String RES_FILE_EXTENSION = ".res";
 	
 	public static SGDKProject createSGDKProject(String path) {
-		logger.debug("Creating Project Element...");
+		logger.info("Creating Project Element...");
 		try {
-			logger.debug("Created Project Element");
+			logger.info("Created Project Element");
 			return new SGDKProject(path);
 		} catch (SGDKInvalidFormatException e) {
 			logger.error(e.getMessage(),  e);
@@ -39,11 +40,11 @@ public class SGDKEntityFactory {
 	}
 
 	public static SGDKFolder createSGDKFolder(String path, SGDKFolder parentNode) {
-		logger.debug("Creating Folder Element...");
+		logger.info("Creating Folder Element...");
 		try {
 			File directory = new File(parentNode.getPath()+File.separator+path);
 			directory.mkdir();
-			logger.debug("Created Folder Element");
+			logger.info("Created Folder Element");
 			SGDKFolder folder =  new SGDKFolder(directory.getAbsolutePath());
 			parentNode.addChild(folder);
 			folder.setParent(parentNode);
@@ -55,21 +56,23 @@ public class SGDKEntityFactory {
 	}
 
 	public static SGDKBackground createSGDKBackground(String path, SGDKFolder parentNode) {
-		logger.debug("Creating Background Element...");
-		try {
-			SGDKBackground backgroundOrigen = new SGDKBackground(path);						
+		logger.info("Creating Background Element...");
+		try {					
 			Files.copy(
-					Paths.get(backgroundOrigen.getPath()),
-					Paths.get(parentNode.getPath()+File.separator+backgroundOrigen.toString()),
+					Paths.get(path),
+					Paths.get(parentNode.getPath()+File.separator+SGDKElement.toString(path)),
 					StandardCopyOption.REPLACE_EXISTING);
 			
-			SGDKBackground backgroundDest = new SGDKBackground(parentNode.getPath()+File.separator+backgroundOrigen.toString());
-			logger.debug("Created Background Element");
+			ImageUtil.validateAndCreateIndexedImage(parentNode.getPath()+File.separator+SGDKElement.toString(path));
+
+			SGDKBackground backgroundDest = new SGDKBackground(parentNode.getPath()+File.separator+SGDKElement.toString(path));			
+			
+			logger.info("Created Background Element");
 			parentNode.addChild(backgroundDest);
 			backgroundDest.setParent(parentNode);
 			return backgroundDest;
 		} catch (SGDKInvalidFormatException e) {
-			logger.error(e.getMessage(),  e);
+			logger.error(e.getMessage());
 		} catch (IOException e) {
 			logger.error(e.getMessage(),  e);
 		}
@@ -77,7 +80,7 @@ public class SGDKEntityFactory {
 	}
 
 	public static SGDKFXSound createSGDKFXSound(String path, SGDKFolder parentNode) {
-		logger.debug("Creating FX Sound Element...");
+		logger.info("Creating FX Sound Element...");
 		try {
 			SGDKFXSound fxSoundOrigen = new SGDKFXSound(path);
 			SGDKFXSound fxSoundDest = new SGDKFXSound(parentNode.getPath()+File.separator+fxSoundOrigen.toString());							
@@ -86,7 +89,7 @@ public class SGDKEntityFactory {
 					Paths.get(fxSoundDest.getPath()),
 					StandardCopyOption.REPLACE_EXISTING);
 			
-			logger.debug("Created FX Sound Element");
+			logger.info("Created FX Sound Element");
 			parentNode.addChild(fxSoundDest);
 			fxSoundDest.setParent(parentNode);
 			return fxSoundDest;
@@ -99,21 +102,24 @@ public class SGDKEntityFactory {
 	}
 
 	public static SGDKSprite createSGDKSprite(String path, SGDKFolder parentNode) {
-		logger.debug("Creating Sprite Element...");
+		logger.info("Creating Sprite Element...");
 		try {
-			SGDKSprite spriteOrigen = new SGDKSprite(path);							
 			Files.copy(
-					Paths.get(spriteOrigen.getPath()),
-					Paths.get(parentNode.getPath()+File.separator+spriteOrigen.toString()),
+					Paths.get(path),
+					Paths.get(parentNode.getPath()+File.separator+SGDKElement.toString(path)),
 					StandardCopyOption.REPLACE_EXISTING);
 			
-			SGDKSprite spriteDest = new SGDKSprite(parentNode.getPath()+File.separator+spriteOrigen.toString());
-			logger.debug("Created Sprite Element");
+			ImageUtil.validateAndCreateIndexedImage(parentNode.getPath()+File.separator+SGDKElement.toString(path));
+
+			SGDKSprite spriteDest = new SGDKSprite(parentNode.getPath()+File.separator+SGDKElement.toString(path));			
+			
+			logger.info("Created Sprite Element");
 			parentNode.addChild(spriteDest);
 			spriteDest.setParent(parentNode);
 			return spriteDest;
 		} catch (SGDKInvalidFormatException e) {
-			logger.error(e.getMessage(),  e);
+			new File(parentNode.getPath()+File.separator+SGDKElement.toString(path)).delete();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
 			logger.error(e.getMessage(),  e);
 		}
@@ -121,7 +127,7 @@ public class SGDKEntityFactory {
 	}
 
 	public static SGDKEnvironmentSound createSGDKEnvironmentSound(String path, SGDKFolder parentNode) {
-		logger.debug("Creating Environment Sound Element...");
+		logger.info("Creating Environment Sound Element...");
 		try {
 			SGDKEnvironmentSound environmentSoundOrigen = new SGDKEnvironmentSound(path);
 			SGDKEnvironmentSound environmentSoundDest = new SGDKEnvironmentSound(parentNode.getPath()+File.separator+environmentSoundOrigen.toString());
@@ -159,7 +165,7 @@ public class SGDKEntityFactory {
 				unzipFile.close();
 				break;
 			}
-			logger.debug("Created Environment Sound Element");
+			logger.info("Created Environment Sound Element");
 			parentNode.addChild(environmentSoundDest);
 			environmentSoundDest.setParent(parentNode);
 			return environmentSoundDest;
@@ -179,18 +185,18 @@ public class SGDKEntityFactory {
 
 	public static void export(SGDKProject project, String path) throws IOException {
 		int step = 1;
-		logger.debug("Exporting project ...");
-		logger.debug("Step "+step+" Creating Project folder " + project.toString());
+		logger.info("Exporting project ...");
+		logger.info("Step "+step+" Creating Project folder " + project.toString());
 		File f = new File(path + File.separator + project.toString());
 		f.mkdir();
-		logger.debug("Step "+step+" Success");		
+		logger.info("Step "+step+" Success");		
 		step++;
-		logger.debug("Step "+step+" Creating res folder");
+		logger.info("Step "+step+" Creating res folder");
 		f = new File(f.getAbsolutePath() + File.separator + "res");
 		f.mkdir();
-		logger.debug("Step "+step+" Success");	
+		logger.info("Step "+step+" Success");	
 		step++;
-		logger.debug("Step "+step+" Coping Resources Tree ...");
+		logger.info("Step "+step+" Coping Resources Tree ...");
 		StringBuilder sb = new StringBuilder();
 		for(SGDKElement child : project.getChilds()) {
 			switch(child.getType()) {
@@ -230,9 +236,9 @@ public class SGDKEntityFactory {
 			logger.error("Step "+step+" Error", e);
 			throw e;
 		}
-		logger.debug("Step "+step+" Success");
+		logger.info("Step "+step+" Success");
 		step++;
-		logger.debug("Exporting success");
+		logger.info("Exporting success");
 	}
 	
 	private static StringBuilder exportSGDKBackground(SGDKBackground background, String resPath, String relativePath) throws IOException {
@@ -242,7 +248,7 @@ public class SGDKEntityFactory {
 				StandardCopyOption.REPLACE_EXISTING);
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("IMAGE " + background.getName() + " \"" + relativePath+background.toString() + "\" " + background.getCompression().toString());		
+		sb.append("IMAGE " + background.getName() + " \"" + relativePath+background.toString() + "\" " + background.getCompression().toString()+"\n");		
 		return sb;		
 	}
 	
@@ -257,7 +263,7 @@ public class SGDKEntityFactory {
 				sprite.getWidth() + " " +sprite.getHeigth() + " " +
 				sprite.getCompression().toString() + " " +
 				sprite.getTime() + " " +
-				sprite.getCollision().toString());		
+				sprite.getCollision().toString()+"\n");		
 		return sb;	
 	}
 
@@ -268,7 +274,7 @@ public class SGDKEntityFactory {
 				StandardCopyOption.REPLACE_EXISTING);
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("XGM " + environmentSound.getName() + " \"" + relativePath+environmentSound.toString() + "\" " );		
+		sb.append("XGM " + environmentSound.getName() + " \"" + relativePath+environmentSound.toString() + "\"\n" );		
 		return sb;
 	}
 
@@ -279,7 +285,7 @@ public class SGDKEntityFactory {
 				StandardCopyOption.REPLACE_EXISTING);
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("WAV " + fxSound.getName() + " \"" + relativePath+fxSound.toString() + "\" ");		
+		sb.append("WAV " + fxSound.getName() + " \"" + relativePath+fxSound.toString() + "\"\n");		
 		return sb;
 	}
 	

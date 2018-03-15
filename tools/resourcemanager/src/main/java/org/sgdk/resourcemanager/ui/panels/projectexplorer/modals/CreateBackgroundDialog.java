@@ -133,7 +133,9 @@ public class CreateBackgroundDialog extends JDialog{
 				
 				if (validForm) {
 					SGDKBackground background = SGDKEntityFactory.createSGDKBackground(backgroundPathText.getText(), (SGDKFolder)parentNode);
-					parent.getProjectExplorer().getProjectExplorerTree().addElement(background, parentNode);
+					if(background != null) {						
+						parent.getProjectExplorer().getProjectExplorerTree().addElement(background, parentNode);
+					}
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);					

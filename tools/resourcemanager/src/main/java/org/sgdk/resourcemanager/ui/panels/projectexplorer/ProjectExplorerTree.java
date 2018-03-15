@@ -112,8 +112,14 @@ public class ProjectExplorerTree extends JTree {
 	            if (e.getClickCount() == 2) {
 	                DefaultMutableTreeNode node = (DefaultMutableTreeNode)getLastSelectedPathComponent();
 	                if (node == null) return;
-	                SGDKElement selected = (SGDKElement)node.getUserObject();	               
-					parent.getPreviewContainerPanel().setPreview(selected);		                
+	                SGDKElement selected = (SGDKElement)node.getUserObject();	
+	                logger.debug("Loading Preview");
+					parent.getPreviewContainerPanel().setPreview(selected);
+					logger.debug("Loading Properties");
+					parent.getPropertiesContainerPanel().setSGDKElement(selected);
+					logger.debug("Loading Components");
+					parent.getComponentsContainerPanel().setSGDKElement(selected);
+					logger.debug("End Load");
 	            }
 	        }
 	    });
@@ -166,7 +172,7 @@ public class ProjectExplorerTree extends JTree {
 
 	public void saveProjects() {
 
-    	logger.debug("Saving Projects...");
+    	logger.info("Saving Projects...");
 		DefaultTreeModel model = (DefaultTreeModel)getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 		try (FileWriter writer = new FileWriter(new File(workingDirectory+File.separator+Constants.PROJECT_SETTINGS_FILE))) {
@@ -182,7 +188,7 @@ public class ProjectExplorerTree extends JTree {
 			logger.error("", e);
 			e.printStackTrace();
 		}
-    	logger.debug("End Program");
+    	logger.info("End Program");
 	}
 
 	public void deleteElement(SGDKElement element) {

@@ -132,7 +132,9 @@ public class CreateSpriteDialog extends JDialog{
 				
 				if (validForm) {
 					SGDKSprite sprite = SGDKEntityFactory.createSGDKSprite(spritePathText.getText(), (SGDKFolder)parentNode);
-					parent.getProjectExplorer().getProjectExplorerTree().addElement(sprite, parentNode);
+					if(sprite != null) {						
+						parent.getProjectExplorer().getProjectExplorerTree().addElement(sprite, parentNode);
+					}
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);

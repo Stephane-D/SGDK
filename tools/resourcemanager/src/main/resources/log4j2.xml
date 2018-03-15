@@ -5,14 +5,14 @@
 			<PatternLayout
 				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %class.%M:%L - %msg%n" />
 		</Console>
-		<JTextAreaAppender name="jtextarea-log" maxLines="100">
+		<JTextPaneAppender name="JTextPane-log" maxLines="100">
 			<PatternLayout
-				pattern="%d{HH:mm:ss} %-5level %msg%n" />
-		</JTextAreaAppender>
+				pattern="%d{HH:mm:ss} %msg%n" />
+		</JTextPaneAppender>
 	</Appenders>
 	<Loggers>
 		<Logger name="UILogger" level="debug" additivity="false">
-            <appender-ref ref="jtextarea-log" level="debug"/>
+            <appender-ref ref="JTextPane-log" level="info"/>
             <appender-ref ref="Console" level="debug"/>
         </Logger>
 		<Root level="debug">
