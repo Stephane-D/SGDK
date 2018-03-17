@@ -82,24 +82,25 @@ public class SGDKEntityFactory {
 
 	public static SGDKFXSound createSGDKFXSound(String path, SGDKFolder parentNode) {
 		logger.info("Creating FX Sound Element...");
+		String pathDest = parentNode.getPath()+File.separator+SGDKElement.toString(path);
+		SGDKFXSound fxSoundDest = null;
 		try {
-			SGDKFXSound fxSoundOrigen = new SGDKFXSound(path);
-			SGDKFXSound fxSoundDest = new SGDKFXSound(parentNode.getPath()+File.separator+fxSoundOrigen.toString());							
 			Files.copy(
-					Paths.get(fxSoundOrigen.getPath()),
-					Paths.get(fxSoundDest.getPath()),
+					Paths.get(path),
+					Paths.get(pathDest),
 					StandardCopyOption.REPLACE_EXISTING);
-			
+			fxSoundDest = new SGDKFXSound(pathDest);	
+		} catch (SGDKInvalidFormatException|IOException e) {
+			logger.error(e.getMessage(),  e);
+			File f = new File(pathDest);
+			f.delete();
+		}
+		if (fxSoundDest != null) {
 			logger.info("Created FX Sound Element");
 			parentNode.addChild(fxSoundDest);
 			fxSoundDest.setParent(parentNode);
-			return fxSoundDest;
-		} catch (SGDKInvalidFormatException e) {
-			logger.error(e.getMessage(),  e);
-		} catch (IOException e) {
-			logger.error(e.getMessage(),  e);
 		}
-		return null;
+		return fxSoundDest;
 	}
 
 	public static SGDKSprite createSGDKSprite(String path, SGDKFolder parentNode) {
@@ -129,30 +130,29 @@ public class SGDKEntityFactory {
 
 	public static SGDKEnvironmentSound createSGDKEnvironmentSound(String path, SGDKFolder parentNode) {
 		logger.info("Creating Environment Sound Element...");
-		try {
-			SGDKEnvironmentSound environmentSoundOrigen = new SGDKEnvironmentSound(path);
-			SGDKEnvironmentSound environmentSoundDest = new SGDKEnvironmentSound(parentNode.getPath()+File.separator+environmentSoundOrigen.toString());
+		String pathDest = parentNode.getPath()+File.separator+SGDKElement.toString(path);
+		SGDKEnvironmentSound environmentSoundDest = null;
+		try {			
 			//Los sonidos pueden aceptarse VGM o VGZ. En caso de ser VGZ se 
 			//descomprimirá previamente para ser un vgm
-			switch(SGDKEnvironmentSound.ValidFormat.valueOf(FilenameUtils.getExtension(environmentSoundDest.getPath()).toLowerCase())) {				
+			switch(SGDKEnvironmentSound.ValidFormat.valueOf(FilenameUtils.getExtension(pathDest).toLowerCase())) {				
 			case vgm:				
 				Files.copy(
-						Paths.get(environmentSoundOrigen.getPath()),
-						Paths.get(environmentSoundDest.getPath()),
+						Paths.get(path),
+						Paths.get(pathDest),
 						StandardCopyOption.REPLACE_EXISTING);
 				break;
 			case vgz:
-				environmentSoundDest.setPath(
-					environmentSoundDest.getPath().substring(
-							0, environmentSoundDest.getPath().lastIndexOf(".") + 1
-					).concat(SGDKEnvironmentSound.ValidFormat.vgm.toString())
-				);
-				File f = new File(environmentSoundDest.getPath());
+				pathDest = pathDest.substring(
+						0, pathDest.lastIndexOf(".") + 1
+					).concat(SGDKEnvironmentSound.ValidFormat.vgm.toString());
+				
+				File f = new File(pathDest);
 				if(f.exists()) {
 					f.delete();
 				}
 				logger.info("Unzipping VGZ File to VGM");
-				GZIPInputStream unzipFile = new GZIPInputStream(new FileInputStream(new File(environmentSoundOrigen.getPath())));
+				GZIPInputStream unzipFile = new GZIPInputStream(new FileInputStream(new File(path)));
 				FileOutputStream fos = new FileOutputStream(f);
 				byte[] buf = new byte[8000];
 				int bytesReaded = 0;
@@ -166,16 +166,18 @@ public class SGDKEntityFactory {
 				unzipFile.close();
 				break;
 			}
-			logger.info("Created Environment Sound Element");
-			parentNode.addChild(environmentSoundDest);
-			environmentSoundDest.setParent(parentNode);
-			return environmentSoundDest;
+			environmentSoundDest = new SGDKEnvironmentSound(pathDest);			
 		} catch (SGDKInvalidFormatException e) {
 			logger.error(e.getMessage(),  e);
 		} catch (IOException e) {
 			logger.error(e.getMessage(),  e);
 		}
-		return null;
+		if (environmentSoundDest != null) {
+			logger.info("Created Environment Sound Element");
+			parentNode.addChild(environmentSoundDest);
+			environmentSoundDest.setParent(parentNode);
+		}
+		return environmentSoundDest;
 	}
 
 	public static void deleteSGDKElement(SGDKElement element) {
