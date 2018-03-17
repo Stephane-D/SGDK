@@ -124,7 +124,7 @@ public class PreviewContainerPanel extends JPanel {
 		}
 	}
 
-	private void cleanPanel() {
+	public void cleanPanel() {
 		previewPanel.clean();	
 		toolBar.getImageToolbar().getBackgroundColorButton().setBackground(previewPanel.getBackgroundColor());
 	}

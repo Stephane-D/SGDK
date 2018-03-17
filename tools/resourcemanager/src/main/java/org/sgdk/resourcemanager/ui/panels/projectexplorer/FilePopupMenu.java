@@ -33,6 +33,8 @@ public class FilePopupMenu extends JPopupMenu {
                 	logger.info("Erasing " + getParentNode().getType().toString() +" " + getParentNode().toString());
                 	SGDKEntityFactory.deleteSGDKElement(getParentNode());        
                 	parent.getProjectExplorer().getProjectExplorerTree().deleteElement(getParentNode());
+                	parent.getPreviewContainerPanel().cleanPanel();
+                	parent.getPropertiesContainerPanel().clean();
                 }
 				
 			}
