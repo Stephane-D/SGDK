@@ -78,8 +78,6 @@ public class SGDKElementDeserializer extends StdDeserializer<SGDKElement> {
     			}
     			element = f;
     			break;
-    		default:
-    			break;
     		}
         }catch (Exception e) {
 			throw new JsonGenerationException(e.getMessage());

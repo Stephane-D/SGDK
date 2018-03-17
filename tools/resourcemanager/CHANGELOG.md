@@ -10,7 +10,7 @@ Changelog
 ### Enhancements
 1. Console UI with colors.
 2. Autoconversion of VGZ files to VGM files when import into proyect a VGZ enviroment sound.
-3. Autoconversion of images with less than 16 colors into palette (RGB or Indexed) to indexed 16 colors image. 
+3. Autoconversion of images RGB to indexed 16 colors image. 
 
 ### Bugs
 1. Solve error with exported res files when multiples resources exists into same folder.
