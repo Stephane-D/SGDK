@@ -131,6 +131,7 @@ SPRITE name img_file width heigth [compression [time [collision]]]
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     time            display frame time in 1/60 of second (time between each animation frame)
+                       If this value is set to 0 (default) then auto animation is disabled
     collision       collision type: CIRCLE, BOX or NONE (NONE by default)
 
 Some informations about how SpriteDefinition is generated from the input image:
