@@ -1,14 +1,15 @@
 package org.sgdk.resourcemanager.ui.panels.console;
 
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyledDocument;
 
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
@@ -20,30 +21,25 @@ public class ConsolePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	public ConsolePanel(ResourceManagerFrame parent) throws IOException {
-		super(new GridBagLayout());		
+		super(new GridLayout(1,1));		
 		setBorder(BorderFactory.createTitledBorder("Console"));
 		
-		JTextArea console = new JTextArea(3,15);
-		console.setLineWrap(true);
-		console.setWrapStyleWord(true);
+		JTextPane console = new JTextPane();
 		console.setEditable (false);
-		console.setFont(new Font("Courier", Font.PLAIN, 12));
 		console.setAutoscrolls(true);
+				
+		JTextPaneAppender.addTextPane(console);
 		
-		JTextAreaAppender.addTextArea(console);
-		
-		GridBagConstraints c = new GridBagConstraints();
-		
-		JScrollPane scrollPaneConsole = new JScrollPane(console);
-		
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;
-		c.weighty = 1.0;	
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridheight = GridBagConstraints.REMAINDER;
-		add(scrollPaneConsole, c);
+		for(int i = 0; i<100; i++) {
+			StyledDocument myDoc =console.getStyledDocument();
+			try {
+				myDoc.insertString(myDoc.getLength(), "\n\n", new SimpleAttributeSet());
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+		}
+		JScrollPane jScrollPane = new JScrollPane(console);
+		add(jScrollPane);
 	}
 
 }

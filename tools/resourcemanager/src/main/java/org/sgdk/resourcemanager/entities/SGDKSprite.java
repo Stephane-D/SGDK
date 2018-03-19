@@ -13,18 +13,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
-public class SGDKSprite extends SGDKElement{
+public class SGDKSprite extends SGDKBackground{
 
 	public enum ValidFormat{
 		png
-	}
-	
-	public enum Compression{
-		BEST,
-		NONE,
-		APLIB,
-		FAST
-	}
+	}	
 	
 	public enum Collision{
 		NONE,
@@ -33,7 +26,6 @@ public class SGDKSprite extends SGDKElement{
 	}
 	private int width;
 	private int heigth;
-	private Compression compression = Compression.BEST;
 	private int time = 0;
 	private Collision collision = Collision.NONE;
 	
@@ -50,12 +42,6 @@ public class SGDKSprite extends SGDKElement{
 		}
 		width = img.getWidth();
 		heigth = img.getHeight();
-		if(width % 8 != 0) {
-			throw new SGDKInvalidFormatException("Sprite width is not a multiple of 8 " + toString());
-		}
-		if(heigth % 8 != 0) {
-			throw new SGDKInvalidFormatException("Sprite heigth is not a multiple of 8 " + toString());
-		}
 		width = width/8;
 		heigth = heigth/8;
 	}
@@ -98,14 +84,6 @@ public class SGDKSprite extends SGDKElement{
 		this.heigth = heigth;
 	}
 
-	public Compression getCompression() {
-		return compression;
-	}
-
-	public void setCompression(Compression compression) {
-		this.compression = compression;
-	}
-
 	public int getTime() {
 		return time;
 	}
@@ -121,6 +99,5 @@ public class SGDKSprite extends SGDKElement{
 	public void setCollision(Collision collision) {
 		this.collision = collision;
 	}
-
 	
 }

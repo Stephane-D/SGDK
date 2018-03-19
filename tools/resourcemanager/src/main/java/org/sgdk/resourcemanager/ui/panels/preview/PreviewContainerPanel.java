@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
+import org.sgdk.resourcemanager.ui.panels.preview.toolbar.PreviewContainerToolbar;
 
 public class PreviewContainerPanel extends JPanel {
 
@@ -25,7 +26,7 @@ public class PreviewContainerPanel extends JPanel {
 	
 	private SoundPlayer soundPlayer;
 	private PreviewPanel previewPanel;
-	private PreviewToolbar toolBar;
+	private PreviewContainerToolbar toolBar;
 	
 	private static final Logger logger = LogManager.getLogger("UILogger");
 	
@@ -35,29 +36,30 @@ public class PreviewContainerPanel extends JPanel {
 		
 		soundPlayer = new SoundPlayer();
 		previewPanel = new PreviewPanel();
-		toolBar = new PreviewToolbar(previewPanel, soundPlayer);
+		toolBar = new PreviewContainerToolbar(previewPanel, soundPlayer);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
-		JScrollPane scrollPaneProjectExplorerTree = new JScrollPane(previewPanel);
+		JScrollPane scrollPanePreview = new JScrollPane(previewPanel);
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 1.0;
-		c.weighty = 1.0/12.0;	
+		c.fill = GridBagConstraints.BOTH;		
+		c.anchor = GridBagConstraints.CENTER;
+
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridheight = 1;
+		c.weightx = 1.0;
+		c.weighty = 1.0/12.0;
 		add(toolBar, c);
 		
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;
-		c.weighty = 11.0/12.0;	
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridheight = 11;
-		add(scrollPaneProjectExplorerTree, c);
+		c.gridheight = GridBagConstraints.REMAINDER;
+		c.weightx = 1.0;
+		c.weighty = 11.0/12.0;
+		add(scrollPanePreview, c);
 	}
 	
 	public void setPreview(SGDKElement sgdkElement) {
@@ -122,8 +124,9 @@ public class PreviewContainerPanel extends JPanel {
 		}
 	}
 
-	private void cleanPanel() {
-		previewPanel.clean();
+	public void cleanPanel() {
+		previewPanel.clean();	
+		toolBar.getImageToolbar().getBackgroundColorButton().setBackground(previewPanel.getBackgroundColor());
 	}
 
 }

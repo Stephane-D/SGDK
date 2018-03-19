@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.entities.SGDKProject;
-import org.sgdk.resourcemanager.entities.factory.SGDKEntityFactory;
+import org.sgdk.resourcemanager.entities.factory.SGDKResfileExportManager;
 import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
 public class ExportProjectDialog extends JDialog{
@@ -138,7 +138,7 @@ public class ExportProjectDialog extends JDialog{
 				
 				if (validForm) {
 					try {
-						SGDKEntityFactory.export((SGDKProject)parentNode, targetPathProject.getText());
+						SGDKResfileExportManager.export((SGDKProject)parentNode, targetPathProject.getText());
 					} catch (Exception e1) {
 						logger.error(e1);
 					}

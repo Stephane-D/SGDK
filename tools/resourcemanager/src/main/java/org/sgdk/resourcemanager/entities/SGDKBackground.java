@@ -1,8 +1,8 @@
 package org.sgdk.resourcemanager.entities;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
@@ -14,6 +14,9 @@ import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
 public class SGDKBackground extends SGDKElement{
+	
+	public static final int PALETTE_SIZE = 16;
+//	private static final int BPP = 8;
 
 	public enum ValidFormat{
 		png, bmp
@@ -34,9 +37,11 @@ public class SGDKBackground extends SGDKElement{
 		super(path);
 		setType(Type.SGDKBackground);
 		BufferedImage img;
+		IndexColorModel icm;
 		try {
 			img = ImageIO.read(new File(path));
-		} catch (IOException e) {
+			icm = (IndexColorModel)img.getColorModel();
+		} catch (Exception e) {
 			throw new SGDKInvalidFormatException(e.getMessage(), e);
 		}
 		int width = img.getWidth();
@@ -47,6 +52,12 @@ public class SGDKBackground extends SGDKElement{
 		if(heigth % 8 != 0) {
 			throw new SGDKInvalidFormatException("Image heigth is not a multiple of 8 "+ toString());
 		}
+		if(icm.getMapSize() != PALETTE_SIZE) {
+			throw new SGDKInvalidFormatException("Palette Size is not 16. Palette size is " + icm.getMapSize() +" " + toString());
+		}
+//		if(icm.getPixelSize() != BPP) {
+//			throw new SGDKInvalidFormatException("bpp is not 8. Palette size is " + icm.getPixelSize() +" " + toString());
+//		}
 	}
 
 	@Override
@@ -80,11 +91,3 @@ public class SGDKBackground extends SGDKElement{
 	}
 
 }
-
-//final int[] colourMap = {   0x00000000, 0xff000000, 0xffffffff, 0xff353535, 0xff888888, 0xff969696, 0xff237fe9, 0xffff0000 };
-//IndexColorModel colorModel = new IndexColorModel(8, colourMap.length, colourMap, 0, true, 0, DataBuffer.TYPE_BYTE );
-//BufferedImage image = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
-//
-//// Do whatever with your image 
-//// ...
-//ImageIO.write(image, "PNG", imageFile);

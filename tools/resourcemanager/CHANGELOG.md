@@ -1,11 +1,25 @@
 Changelog
 =========
 
+#0.3.0
+
+### New Features
+1. Show background images and sprites properties.
+2. Show FX and enviroment sounds properties.
+
+### Enhancements
+1. Console UI with colors.
+2. Autoconversion of VGZ files to VGM files when import into proyect a VGZ enviroment sound.
+3. Autoconversion of images RGB to indexed 16 colors image. 
+
+### Bugs
+1. Solve error with exported res files when multiples resources exists into same folder.
+
 #0.2.0
 
 ### New Features
 1. Preview Panel to show background images and sprites.
-1.1 Add Zoom Buttons and change background preview color button;
+1.1 Add Zoom Buttons and change background preview color button.
 2. Preview Panel to play sfx sounds and vgm(there are problems at the moment with vgm files)
 2.1 Add buttons play/pause and stop sounds.
 3. Add console panel and console on real time.

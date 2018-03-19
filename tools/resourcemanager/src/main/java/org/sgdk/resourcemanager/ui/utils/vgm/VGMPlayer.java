@@ -129,6 +129,16 @@ class EmuPlayer implements Runnable {
 	SourceDataLine line;
 	double volume_ = 1.0;
 
+	
+	
+	public AudioFormat getAudioFormat() {
+		return audioFormat;
+	}
+
+	public DataLine.Info getLineInfo() {
+		return lineInfo;
+	}
+
 	public void run() {
 		try {
 			line.start();
@@ -242,4 +252,6 @@ public class VGMPlayer extends EmuPlayer {
 
 		return DataReader.loadData(in);
 	}
+	
+	
 }

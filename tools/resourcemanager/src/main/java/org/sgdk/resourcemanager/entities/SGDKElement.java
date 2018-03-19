@@ -100,5 +100,9 @@ public abstract class SGDKElement {
 	protected abstract boolean validateFormat(String path);
 	
 	protected abstract Icon calculateIcon() throws TranscoderException, URISyntaxException;
+	
+	public static String toString(String path) {
+		return path.substring(path.lastIndexOf(File.separator)+1).replaceAll(" ", "_").toLowerCase();
+	}
 
 }

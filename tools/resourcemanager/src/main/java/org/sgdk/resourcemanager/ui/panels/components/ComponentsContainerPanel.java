@@ -1,13 +1,11 @@
 package org.sgdk.resourcemanager.ui.panels.components;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
+import org.sgdk.resourcemanager.entities.SGDKElement;
 
 public class ComponentsContainerPanel extends JPanel {
 
@@ -16,32 +14,51 @@ public class ComponentsContainerPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-//	PreviewPanel previewPanel = new PreviewPanel();
+	private ImageComponentsPanel imageComponentsPanel;
+	private SoundComponentsPanel soundComponentsPanel;
 	
-	public ComponentsContainerPanel(ResourceManagerFrame parent) throws IOException {
-		super(new GridBagLayout());		
+	public ComponentsContainerPanel() throws IOException {
 		setBorder(BorderFactory.createTitledBorder("Components"));
 		
-		GridBagConstraints c = new GridBagConstraints();
+		imageComponentsPanel = new ImageComponentsPanel();
+		soundComponentsPanel = new SoundComponentsPanel();
 		
-//		JScrollPane scrollPaneProjectExplorerTree = new JScrollPane(previewPanel);
+		clean();
 		
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;
-		c.weighty = 1.0;	
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridheight = GridBagConstraints.REMAINDER;
-//		add(scrollPaneProjectExplorerTree, c);
+		add(imageComponentsPanel);
+		add(soundComponentsPanel);		
+	}
+	
+	public void clean() {
+		imageComponentsPanel.setVisible(false);
+		soundComponentsPanel.setVisible(false);
+	}
+	
+	public void showImageComponents(SGDKElement e) {
+		imageComponentsPanel.setComponents(e);
+		imageComponentsPanel.setVisible(true);
 	}
 
-//	public ProjectExplorerTree getProjectExplorerTree() {
-//		return projectExplorerTree;
-//	}
-//
-//	public void setProjectExplorerTree(ProjectExplorerTree projectExplorerTree) {
-//		this.projectExplorerTree = projectExplorerTree;
-//	}
+	public void showSoundComponents(SGDKElement e) {
+		soundComponentsPanel.setComponents(e);
+		soundComponentsPanel.setVisible(true);
+	}
+
+	public void setSGDKElement(SGDKElement element) {
+		clean();
+		switch(element.getType()) {
+		case SGDKBackground:
+		case SGDKSprite:
+			showImageComponents(element);
+			break;
+		case SGDKEnvironmentSound:
+		case SGDKFXSound:
+			showSoundComponents(element);
+			break;
+		default:
+			break;
+		
+		}
+	}
 
 }

@@ -14,7 +14,9 @@ public class PreviewPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Color backgroundColor = new Color(229, 9, 127);
+	public static final Color DAFULT_BACKGROUND_COLOR = new Color(229, 9, 127);
+	
+	private Color backgroundColor = DAFULT_BACKGROUND_COLOR;
 	private float zoom = 1f;
 	
 	private Image preview = null;
@@ -52,6 +54,7 @@ public class PreviewPanel extends JPanel {
 
 	public void clean() {
 		preview = null;
+		setBackgroundColor(DAFULT_BACKGROUND_COLOR);
 		repaint();		
 	}
 

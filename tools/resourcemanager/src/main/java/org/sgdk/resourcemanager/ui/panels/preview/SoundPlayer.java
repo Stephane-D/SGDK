@@ -8,13 +8,18 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.ui.utils.vgm.VGMPlayer;
 
 public class SoundPlayer {
+	
+	private static final Logger logger = LogManager.getLogger("UILogger");
 
 	private static final int BUFFER_SIZE = 8192;
-	private static final int SEGA_SOUND_RATE = 44100;
+	public static final int SEGA_SOUND_RATE = 44100;
+	
 	
 	private File soundFile;
 	private AudioInputStream audioStream;
@@ -64,6 +69,7 @@ public class SoundPlayer {
 				@Override
 				public void run() {
 					try {
+						logger.info("Playing fx sound ...");
 						String strFilename = sgdkElement.getPath();
 						soundFile = new File(strFilename);
 						audioStream = AudioSystem.getAudioInputStream(soundFile);
@@ -92,6 +98,7 @@ public class SoundPlayer {
 						sourceLine.close();
 					} catch (Exception e) {
 					}
+					logger.info("Finish fx sound");
 					if (thereAreWaitingToPlay()) {
 						synchronized (that) {
 							that.notifyAll();
@@ -119,6 +126,7 @@ public class SoundPlayer {
 				@Override
 				public void run() {
 					try {
+						logger.info("Playing environmet sound ...");
 //						Path pathFile = Paths.get(sgdkElement.getPath());
 						vgmPlayer.loadFile(new File(sgdkElement.getPath()).toURI().toURL(), sgdkElement.getPath());		
 						vgmPlayer.startTrack(0, 0);			
