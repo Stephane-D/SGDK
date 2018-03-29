@@ -128,8 +128,8 @@ public class SoundPlayer {
 					try {
 						logger.info("Playing environmet sound ...");
 //						Path pathFile = Paths.get(sgdkElement.getPath());
-						vgmPlayer.loadFile(new File(sgdkElement.getPath()).toURI().toURL(), sgdkElement.getPath());		
-						vgmPlayer.startTrack(0, 0);			
+						vgmPlayer.loadFile(new File(sgdkElement.getPath()).toURI().toURL(), sgdkElement.getPath());
+						vgmPlayer.startTrack(0, -1);			
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
