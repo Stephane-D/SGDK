@@ -104,7 +104,7 @@ public class ResourceManagerFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
-                int i=JOptionPane.showConfirmDialog(null, "Do you want save the projects?");
+                int i=JOptionPane.showConfirmDialog(null, "Do you want to exit the Resource Manager?","Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
                 if(i < 2) {
                 	if(i == 0) {                		
                 		projectExplorer.getProjectExplorerTree().saveProjects();

@@ -11,11 +11,18 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class SGDKFolder extends SGDKElement{
 
 	private List<SGDKElement> childs = new ArrayList<SGDKElement>();
 	
 	public SGDKFolder() {};
+	
+	public SGDKFolder(JsonNode node) throws SGDKInvalidFormatException {
+		super(node);
+		setType(Type.SGDKFolder);
+	};
 
 	public SGDKFolder(String path) throws SGDKInvalidFormatException {
 		super(path);

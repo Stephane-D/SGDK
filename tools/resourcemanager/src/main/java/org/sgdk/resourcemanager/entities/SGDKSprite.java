@@ -13,6 +13,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class SGDKSprite extends SGDKBackground{
 
 	public enum ValidFormat{
@@ -30,6 +32,15 @@ public class SGDKSprite extends SGDKBackground{
 	private Collision collision = Collision.NONE;
 	
 	public SGDKSprite() {};
+	
+	public SGDKSprite(JsonNode node) throws SGDKInvalidFormatException {
+		super(node);
+		setType(Type.SGDKSprite);
+		width = node.get("width").asInt();
+		heigth = node.get("heigth").asInt();
+		collision = Collision.valueOf(node.get("collision").asText());
+		time = node.get("time").asInt();
+	};
 
 	public SGDKSprite(String path) throws SGDKInvalidFormatException {
 		super(path);

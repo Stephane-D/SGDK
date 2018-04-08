@@ -13,6 +13,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class SGDKBackground extends SGDKElement{
 	
 	public static final int PALETTE_SIZE = 16;
@@ -23,15 +25,47 @@ public class SGDKBackground extends SGDKElement{
 	}
 	
 	public enum Compression{
-		BEST,
-		NONE,
-		APLIB,
-		FAST
+		BEST(-1), NONE(0), APLIB(1), FAST(2);
+		
+		private int value;
+		
+		private Compression(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
 	}
 	
 	private Compression compression = Compression.BEST;
 	
 	public SGDKBackground() {};
+	
+	public SGDKBackground(JsonNode node) throws SGDKInvalidFormatException {
+		super(node);
+		setType(Type.SGDKBackground);
+		BufferedImage img;
+		IndexColorModel icm;
+		try {
+			img = ImageIO.read(new File(getPath()));
+			icm = (IndexColorModel)img.getColorModel();
+		} catch (Exception e) {
+			throw new SGDKInvalidFormatException(e.getMessage(), e);
+		}
+		int width = img.getWidth();
+		int heigth = img.getHeight();
+		if(width % 8 != 0) {
+			throw new SGDKInvalidFormatException("Image width is not a multiple of 8 "+ toString());
+		}
+		if(heigth % 8 != 0) {
+			throw new SGDKInvalidFormatException("Image heigth is not a multiple of 8 "+ toString());
+		}
+		if(icm.getMapSize() != PALETTE_SIZE) {
+			throw new SGDKInvalidFormatException("Palette Size is not 16. Palette size is " + icm.getMapSize() +" " + toString());
+		}
+		this.compression = Compression.valueOf(node.get("compression").asText());
+	};
 	
 	public SGDKBackground(String path) throws SGDKInvalidFormatException {
 		super(path);

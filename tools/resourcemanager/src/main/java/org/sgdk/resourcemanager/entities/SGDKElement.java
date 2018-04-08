@@ -9,6 +9,7 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = SGDKElementDeserializer.class)
@@ -34,6 +35,10 @@ public abstract class SGDKElement {
 	private Icon icon;
 		
 	public SGDKElement() {}
+	
+	public SGDKElement(JsonNode node) throws SGDKInvalidFormatException {
+		this(node.get("path").asText());
+	};
 	
 	public SGDKElement(String path) throws SGDKInvalidFormatException{
 		this.path = path;
