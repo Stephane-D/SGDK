@@ -18,7 +18,7 @@ public class TimeComponent extends JPanel{
 	private SGDKSprite sprite = null;
 	private JTextField time = new JTextField();
 
-	private static final int TIME_MULTIPLICATOR = 60;
+	private static final float TIME_MULTIPLICATOR = 60f;
 	
 	public TimeComponent() {
 		super(new GridLayout(1,1));
