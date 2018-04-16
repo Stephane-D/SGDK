@@ -273,6 +273,7 @@ static u16 showBusAddressErrorDump(u16 pos)
 // bus error default callback
 void _buserror_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("BUS ERROR !", 10, 3);
 
@@ -284,6 +285,7 @@ void _buserror_callback()
 // address error default callback
 void _addresserror_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("ADDRESS ERROR !", 10, 3);
 
@@ -295,6 +297,7 @@ void _addresserror_callback()
 // illegal instruction exception default callback
 void _illegalinst_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("ILLEGAL INSTRUCTION !", 7, 3);
 
@@ -306,6 +309,7 @@ void _illegalinst_callback()
 // division by zero exception default callback
 void _zerodivide_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("DIVIDE BY ZERO !", 10, 3);
 
@@ -317,6 +321,7 @@ void _zerodivide_callback()
 // CHK instruction default callback
 void _chkinst_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("CHK INSTRUCTION EXCEPTION !", 5, 10);
 
@@ -328,6 +333,7 @@ void _chkinst_callback()
 // TRAPV instruction default callback
 void _trapvinst_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("TRAPV INSTRUCTION EXCEPTION !", 5, 3);
 
@@ -339,6 +345,7 @@ void _trapvinst_callback()
 // privilege violation exception default callback
 void _privilegeviolation_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("PRIVILEGE VIOLATION !", 5, 3);
 
@@ -362,6 +369,7 @@ void _line1x1x_callback()
 // error exception default callback
 void _errorexception_callback()
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("EXCEPTION ERROR !", 5, 3);
 
