@@ -727,6 +727,7 @@ u16 SYS_isPAL()
 
 void SYS_die(char *err)
 {
+    SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_drawText("A fatal error occured !", 2, 2);
     VDP_drawText("cannot continue...", 4, 3);
