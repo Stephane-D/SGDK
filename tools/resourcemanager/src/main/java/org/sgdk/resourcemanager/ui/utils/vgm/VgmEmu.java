@@ -9,6 +9,9 @@ final class VgmEmu extends ClassicEmu {
 
 		// Data and loop
 		this.data = data;
+
+		vgmVersion = getLE32(data, 8);
+
 		loopBegin = getLE32(data, 28) + 28;
 		if (loopBegin <= 28) {
 			loopBegin = data.length;
@@ -51,6 +54,7 @@ final class VgmEmu extends ClassicEmu {
 	int fm_clock_rate;
 	int pos;
 	byte[] data;
+	int vgmVersion;
 	int delay;
 	int psgFactor;
 	int loopBegin;
@@ -72,6 +76,7 @@ final class VgmEmu extends ClassicEmu {
 	static final int cmd_data_block = 0x67;
 	static final int cmd_short_delay = 0x70;
 	static final int cmd_pcm_delay = 0x80;
+	static final int cmd_pcm_stream = 0x90;
 	static final int cmd_pcm_seek = 0xE0;
 	static final int ym2612_dac_port = 0x2A;
 	static final int pcm_block_type = 0x00;
@@ -79,7 +84,10 @@ final class VgmEmu extends ClassicEmu {
 	public void startTrack(int track) {
 		super.startTrack(track);
 
-		pos = 0x40;
+		if (vgmVersion >= 0x150)
+			pos = getLE32(data, 0x34) + 0x34;
+		else
+			pos = 0x40;
 		delay = 0;
 		pcm_data = pos;
 		pcm_pos = pos;
@@ -200,6 +208,40 @@ final class VgmEmu extends ClassicEmu {
 
 			default:
 				switch (cmd & 0xF0) {
+				case cmd_pcm_stream:
+					switch (cmd & 0x0F) {
+					// Setup Stream Control
+					case 0:
+						pos += 4;
+						break;
+
+					// Set Stream Data
+					case 1:
+						pos += 4;
+						break;
+
+					// Set Stream Frequency
+					case 2:
+						pos += 5;
+						break;
+
+					// Start Stream (long)
+					case 3:
+						pos += 10;
+						break;
+
+					// Stop Stream
+					case 4:
+						pos += 1;
+						break;
+
+					// Start Stream (short)
+					case 5:
+						pos += 4;
+						break;
+					}
+					break;
+
 				case cmd_pcm_delay:
 					write_pcm(time, data[pcm_pos++] & 0xFF);
 					time += cmd & 0x0F;
