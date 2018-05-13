@@ -217,9 +217,8 @@ u16 MEM_getLargestFreeBlock()
     while ((bsize = *b))
     {
         // memory block not used --> test it
-        if (!(bsize & USED))
-            if (bsize > res)
-                res = bsize;
+        if ((!(bsize & USED)) && (bsize > res))
+            res = bsize;
 
         // pass to next block
         b += bsize >> 1;
@@ -250,29 +249,6 @@ u16 MEM_getAllocated()
     return res;
 }
 
-void MEM_free(void *ptr)
-{
-    // valid block ?
-    if (ptr)
-    {
-#if (LIB_DEBUG != 0)
-        // not in use ?
-        if (!(((u16*)ptr)[-1] & USED))
-        {
-            KLog_U1_("MEM_free(", (u32) ptr, ") failed: block is not allocated !");
-            return;
-        }
-#endif
-
-        // mark block as no more used
-        ((u16*)ptr)[-1] &= ~USED;
-
-#if (LIB_DEBUG != 0)
-        KLog_U2("MEM_free(", (u32) ptr, ") --> remaining = ", MEM_getFree());
-#endif
-    }
-}
-
 void* MEM_alloc(u16 size)
 {
     u16* p;
@@ -293,7 +269,10 @@ void* MEM_alloc(u16 size)
         if (p == NULL)
         {
 #if (LIB_DEBUG != 0)
-            KLog_U3_("MEM_alloc(", size, ") failed: cannot find a big enough memory block (largest free block = ", MEM_getLargestFreeBlock(), " - free = ", MEM_getFree(),")");
+            if (size > MEM_getFree())
+                KLog_U2_("MEM_alloc(", size, ") failed: no enough free memory (free = ", MEM_getFree(), ")");
+            else
+                KLog_U3_("MEM_alloc(", size, ") failed: cannot find a big enough memory block (largest free block = ", MEM_getLargestFreeBlock(), " - free = ", MEM_getFree(), ")");
 #endif
 
             return NULL;
@@ -333,6 +312,29 @@ void* MEM_alloc(u16 size)
 
     // return block
     return p;
+}
+
+void MEM_free(void *ptr)
+{
+    // valid block ?
+    if (ptr)
+    {
+#if (LIB_DEBUG != 0)
+        // not in use ?
+        if (!(((u16*)ptr)[-1] & USED))
+        {
+            KLog_U1_("MEM_free(", (u32) ptr, ") failed: block is not allocated !");
+            return;
+        }
+#endif
+
+        // mark block as no more used
+        ((u16*)ptr)[-1] &= ~USED;
+
+#if (LIB_DEBUG != 0)
+        KLog_U2("MEM_free(", (u32) ptr, ") --> remaining = ", MEM_getFree());
+#endif
+    }
 }
 
 void MEM_dump()
