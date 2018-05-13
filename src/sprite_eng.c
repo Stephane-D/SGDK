@@ -113,6 +113,7 @@ static VRAMRegion vram;
 #define PROFIL_UPDATE_SPRITE_TABLE      16
 #define PROFIL_LOADTILES                17
 #define PROFIL_SORT                     18
+#define PROFIL_VRAM_DEFRAG              19
 
 static u32 profil_time[20];
 #endif
@@ -272,10 +273,7 @@ static u16 releaseSprite(Sprite* sprite)
         sprite->status &= ~ALLOCATED;
 
 #ifdef SPR_PROFIL
-        prof = getSubTick() - prof;
-        // rollback correction
-        if (prof < 0) prof = 100;
-        profil_time[PROFIL_RELEASE_SPRITE] += prof;
+        profil_time[PROFIL_RELEASE_SPRITE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
         return TRUE;
@@ -286,10 +284,7 @@ static u16 releaseSprite(Sprite* sprite)
 #endif // LIB_DEBUG
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_RELEASE_SPRITE] += prof;
+    profil_time[PROFIL_RELEASE_SPRITE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     return FALSE;
@@ -390,7 +385,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
         // allocate VRAM
         ind = VRAM_alloc(&vram, spriteDef->maxNumTile);
         // not enough --> release sprite and return NULL
-        if (ind == -1)
+        if (ind < 0)
         {
             // release allocated VDP sprites
             if (flags & SPR_FLAG_AUTO_SPRITE_ALLOC)
@@ -414,10 +409,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     SPR_setAnimAndFrame(sprite, 0, 0);
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_ADD_SPRITE] += prof;
+    profil_time[PROFIL_ADD_SPRITE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     return sprite;
@@ -447,10 +439,7 @@ void SPR_releaseSprite(Sprite *sprite)
     if (!releaseSprite(sprite))
     {
 #ifdef SPR_PROFIL
-        prof = getSubTick() - prof;
-        // rollback correction
-        if (prof < 0) prof = 100;
-        profil_time[PROFIL_REMOVE_SPRITE] += prof;
+        profil_time[PROFIL_REMOVE_SPRITE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
         return;
@@ -509,10 +498,7 @@ void SPR_releaseSprite(Sprite *sprite)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_REMOVE_SPRITE] += prof;
+    profil_time[PROFIL_REMOVE_SPRITE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -521,6 +507,48 @@ u16 SPR_getNumActiveSprite()
     return spriteNum;
 }
 
+void SPR_defragVRAM()
+{
+#ifdef SPR_PROFIL
+    s32 prof = getSubTick();
+#endif // SPR_PROFIL
+
+    Sprite* sprite;
+
+    // release all VRAM region
+    VRAM_clearRegion(&vram);
+
+    // iterate over all sprites to re-allocate auto allocated VRAM
+    sprite = firstSprite;
+    while(sprite)
+    {
+        const u16 status = sprite->status;
+
+        // auto VRAM alloc enabled ?
+        if (status & SPR_FLAG_AUTO_VRAM_ALLOC)
+        {
+            // re-allocate VRAM for this sprite (can't fail here)
+            const u16 ind = VRAM_alloc(&vram, sprite->definition->maxNumTile);
+            const u16 attr = sprite->attribut;
+
+            // VRAM allocation changed ?
+            if ((attr & ~TILE_ATTR_MASK) != ind)
+            {
+                // set VRAM index and preserve previous attributs
+                sprite->attribut = ind | (attr & TILE_ATTR_MASK);
+                // need to also recompute complete VDP sprite table
+                sprite->status = status | NEED_ST_ALL_UPDATE;
+            }
+        }
+
+        // next sprite
+        sprite = sprite->next;
+    }
+
+#ifdef SPR_PROFIL
+    profil_time[PROFIL_VRAM_DEFRAG] += getSubTick() - prof;
+#endif // SPR_PROFIL
+}
 
 u16 SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef)
 {
@@ -574,7 +602,7 @@ u16 SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef)
         // allocate VRAM
         const s16 ind = VRAM_alloc(&vram, spriteDef->maxNumTile);
         // not enough --> return error
-        if (ind == -1) return FALSE;
+        if (ind < 0) return FALSE;
 
         // preserve the attributes and just overwrite VRAM index (set frame will rebuild everything)
         sprite->attribut = (sprite->attribut & TILE_ATTR_MASK) | ind;
@@ -594,10 +622,7 @@ u16 SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef)
     SPR_setAnimAndFrame(sprite, 0, 0);
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_DEF] += prof;
+    profil_time[PROFIL_SET_DEF] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     return TRUE;
@@ -631,10 +656,7 @@ void SPR_setPosition(Sprite *sprite, s16 x, s16 y)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -688,10 +710,7 @@ void SPR_setHFlip(Sprite *sprite, u16 value)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -745,10 +764,7 @@ void SPR_setVFlip(Sprite *sprite, u16 value)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -788,10 +804,7 @@ void SPR_setPriorityAttribut(Sprite *sprite, u16 value)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -816,10 +829,7 @@ void SPR_setPalette(Sprite *sprite, u16 value)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -842,10 +852,7 @@ void SPR_setDepth(Sprite *sprite, s16 value)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ATTRIBUTE] += prof;
+    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -887,10 +894,7 @@ void SPR_setAnimAndFrame(Sprite *sprite, s16 anim, s16 frame)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ANIM_FRAME] += prof;
+    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -923,10 +927,7 @@ void SPR_setAnim(Sprite *sprite, s16 anim)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ANIM_FRAME] += prof;
+    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -960,10 +961,7 @@ void SPR_setFrame(Sprite *sprite, s16 frame)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ANIM_FRAME] += prof;
+    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -983,10 +981,7 @@ void SPR_nextFrame(Sprite *sprite)
     SPR_setFrame(sprite, seqInd);
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_ANIM_FRAME] += prof;
+    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1021,10 +1016,7 @@ u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value)
         else
         {
 #ifdef SPR_PROFIL
-            prof = getSubTick() - prof;
-            // rollback correction
-            if (prof < 0) prof = 100;
-            profil_time[PROFIL_SET_VRAM_OR_SPRIND] += prof;
+            profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
             return TRUE;
@@ -1046,16 +1038,13 @@ u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value)
 #endif // SPR_DEBUG
 
             // can't allocate ?
-            if (newInd == -1)
+            if (newInd < 0)
             {
                 // save status and return FALSE
                 sprite->status = status;
 
 #ifdef SPR_PROFIL
-                prof = getSubTick() - prof;
-                // rollback correction
-                if (prof < 0) prof = 100;
-                profil_time[PROFIL_SET_VRAM_OR_SPRIND] += prof;
+                profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
                 return FALSE;
@@ -1077,10 +1066,7 @@ u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value)
     sprite->status = status;
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_VRAM_OR_SPRIND] += prof;
+    profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     return TRUE;
@@ -1118,10 +1104,7 @@ u16 SPR_setSpriteTableIndex(Sprite *sprite, s16 value)
         else
         {
 #ifdef SPR_PROFIL
-            prof = getSubTick() - prof;
-            // rollback correction
-            if (prof < 0) prof = 100;
-            profil_time[PROFIL_SET_VRAM_OR_SPRIND] += prof;
+            profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
             return TRUE;
@@ -1149,10 +1132,7 @@ u16 SPR_setSpriteTableIndex(Sprite *sprite, s16 value)
                 sprite->status = status;
 
 #ifdef SPR_PROFIL
-                prof = getSubTick() - prof;
-                // rollback correction
-                if (prof < 0) prof = 100;
-                profil_time[PROFIL_SET_VRAM_OR_SPRIND] += prof;
+                profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
                 return FALSE;
@@ -1178,10 +1158,7 @@ u16 SPR_setSpriteTableIndex(Sprite *sprite, s16 value)
     sprite->status = status;
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_VRAM_OR_SPRIND] += prof;
+    profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     return TRUE;
@@ -1206,17 +1183,19 @@ void SPR_setVisibility(Sprite *sprite, SpriteVisibility value)
         switch(value)
         {
             case VISIBLE:
-                status &= ~(SPR_FLAG_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
+                status &= ~(SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
                 status |= setVisibility(sprite, VISIBILITY_ON);
                 break;
 
             case HIDDEN:
-                status &= ~(SPR_FLAG_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
+                status &= ~(SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
                 status |= setVisibility(sprite, VISIBILITY_OFF);
                 break;
 
             case AUTO_FAST:
-                status |= SPR_FLAG_FAST_AUTO_VISIBILITY;
+                // passed from slow to fast visibility compute method
+                if (!(status & SPR_FLAG_FAST_AUTO_VISIBILITY))
+                    status |= SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
                 break;
 
             case AUTO_SLOW:
@@ -1255,10 +1234,7 @@ void SPR_setVisibility(Sprite *sprite, SpriteVisibility value)
     sprite->status = status;
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SET_VISIBILITY] += prof;
+    profil_time[PROFIL_SET_VISIBILITY] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1300,10 +1276,7 @@ void SPR_clear()
     starter->link = linkSave;
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_CLEAR] += prof;
+    profil_time[PROFIL_CLEAR] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1357,8 +1330,6 @@ void SPR_update()
             else sprite->timer = timer;
         }
 
-        // can be changed by Y sorting so store it now
-        Sprite* next = sprite->next;
         u16 status = sprite->status;
 
         // trivial optimization
@@ -1401,7 +1372,7 @@ void SPR_update()
         }
 
         // next sprite
-        sprite = next;
+        sprite = sprite->next;
     }
 
     // VDP sprite cache is now updated, copy it to the queue cache copy
@@ -1414,10 +1385,7 @@ void SPR_update()
     SYS_enableInts();
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE] += prof;
+    profil_time[PROFIL_UPDATE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1491,10 +1459,7 @@ static void setVDPSpriteIndex(Sprite *sprite, u16 ind, u16 num, VDPSprite *last)
 #endif // SPR_DEBUG
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_VDPSPRIND] += prof;
+    profil_time[PROFIL_UPDATE_VDPSPRIND] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1510,10 +1475,8 @@ static u16 updateVisibility(Sprite *sprite)
     // fast visibility computation ?
     if (sprite->status & SPR_FLAG_FAST_AUTO_VISIBILITY)
     {
-        s16 x, y;
-
-        x = sprite->x;
-        y = sprite->y;
+        const s16 x = sprite->x;
+        const s16 y = sprite->y;
 
         // compute global visibility for sprite
         if (((x + frame->w) > 0x80) && (x < (screenWidth + 0x80)) && ((y + frame->h) > 0x80) && (y < (screenHeight + 0x80)))
@@ -1528,17 +1491,16 @@ static u16 updateVisibility(Sprite *sprite)
     }
     else
     {
-        s16 xmin, ymin;
-        s16 xmax, ymax;
-        s16 fw, fh;
-
-        xmin = 0x80 - sprite->x;
-        ymin = 0x80 - sprite->y;
-        xmax = screenWidth + xmin;
-        ymax = screenHeight + ymin;
-        frame = sprite->frame;
-        fw = frame->w;
-        fh = frame->h;
+        // xmin relative to sprite pos
+        const s16 xmin = 0x80 - sprite->x;
+        // ymin relative to sprite pos
+        const s16 ymin = 0x80 - sprite->y;
+        // xmax relative to sprite pos
+        const s16 xmax = screenWidth + xmin;
+        // ymax relative to sprite pos
+        const s16 ymax = screenHeight + ymin;
+        const s16 fw = frame->w;
+        const s16 fh = frame->h;
 
 #ifdef SPR_DEBUG
         KLog_S2("  updateVisibility (slow): global x=", sprite->x, " global y=", sprite->y);
@@ -1546,8 +1508,10 @@ static u16 updateVisibility(Sprite *sprite)
         KLog_S4("    xmin=", xmin, " xmax=", xmax, " ymin=", ymin, " ymax=", ymax);
 #endif // SPR_DEBUG
 
-        // full visibility ? --> just use number of total sprite and set full visible
+        // sprite is fully visible ? --> set all sprite visible
         if ((xmin <= 0) && (xmax >= fw) && (ymin <= 0) && (ymax >= fh)) visibility = VISIBILITY_ON;
+        // sprite is fully hidden ? --> set all sprite to hidden
+        else if ((xmax < 0) || ((xmin - fw) > 0) || (ymax < 0) || ((ymin - fh) > 0)) visibility = VISIBILITY_OFF;
         else
         {
             VDPSpriteInf **spritesInf;
@@ -1610,10 +1574,7 @@ static u16 updateVisibility(Sprite *sprite)
 #endif // SPR_DEBUG
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_VISIBILITY] += prof;
+    profil_time[PROFIL_UPDATE_VISIBILITY] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     // set the new computed visibility
@@ -1670,10 +1631,7 @@ static u16 updateFrame(Sprite *sprite)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_FRAME] += prof;
+    profil_time[PROFIL_UPDATE_FRAME] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     // need to update all sprite table
@@ -1786,10 +1744,7 @@ static void updateSpriteTableVisibility(Sprite *sprite)
 
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_VISTABLE] += prof;
+    profil_time[PROFIL_UPDATE_VISTABLE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1873,10 +1828,7 @@ static void updateSpriteTableAll(Sprite *sprite)
 
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += prof;
+    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -1952,10 +1904,7 @@ static void updateSpriteTablePos(Sprite *sprite)
 #endif // SPR_DEBUG
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += prof;
+    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -2007,10 +1956,7 @@ static void updateSpriteTableAttr(Sprite *sprite)
 #endif // SPR_DEBUG
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += prof;
+    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -2023,6 +1969,8 @@ static void loadTiles(Sprite *sprite)
     TileSet *tileset = sprite->frame->tileset;
     u16 compression = tileset->compression;
     u16 lenInWord = (tileset->numTile * 32) / 2;
+
+    // TODO: separate tileset per VDP sprite and only unpack/upload visible VDP sprite (using visibility) to VRAM
 
     // need unpacking ?
     if (compression != COMPRESSION_NONE)
@@ -2058,10 +2006,7 @@ static void loadTiles(Sprite *sprite)
     }
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_LOADTILES] += prof;
+    profil_time[PROFIL_LOADTILES] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
 
@@ -2108,10 +2053,7 @@ static Sprite* sortSprite(Sprite* sprite)
     if (s != prev) moveAfter(s, sprite);
 
 #ifdef SPR_PROFIL
-    prof = getSubTick() - prof;
-    // rollback correction
-    if (prof < 0) prof = 100;
-    profil_time[PROFIL_SORT] += prof;
+    profil_time[PROFIL_SORT] += getSubTick() - prof;
 #endif // SPR_PROFIL
 
     // return prev just for convenience on full sorting
