@@ -209,6 +209,37 @@ void VRAM_clearRegion(VRAMRegion *region);
 
 /**
  *  \brief
+ *      Return the number of free tile remaining in the specified VRAM region.
+ *
+ *  \param region
+ *      VRAM region
+ *  \return
+ *      the number of free tile in the specified VRAM region
+ */
+u16 VRAM_getFree(VRAMRegion *region);
+/**
+ *  \brief
+ *      Return the number of allocated tile in the specified VRAM region.
+ *
+ *  \param region
+ *      VRAM region
+ *  \return
+ *      the number of allocated tile in the specified VRAM region.
+ */
+u16 VRAM_getAllocated(VRAMRegion *region);
+/**
+ *  \brief
+ *      Return the largest free block index in the specified VRAM region.
+ *
+ *  \param region
+ *      VRAM region
+ *  \return
+ *      the largest free block index in the specified VRAM region.
+ */
+u16 VRAM_getLargestFreeBlock(VRAMRegion *region);
+
+/**
+ *  \brief
  *      Try to allocate the specified number of tile in the given VRAM region and return its index.
  *
  *  \param region
@@ -234,16 +265,6 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size);
  *  \see VRAM_alloc(..)
  */
 void VRAM_free(VRAMRegion *region, u16 index);
-/**
- *  \brief
- *      Return the number of free tile remaining in the specified VRAM region.<br>
- *
- *  \param region
- *      VRAM region
- *  \return
- *      the number of free tile in the specified VRAM region
- */
-u16 VRAM_getFree(VRAMRegion *region);
 
 
 #endif // _VRAM_H_
