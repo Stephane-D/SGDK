@@ -3,6 +3,7 @@ package org.sgdk.resourcemanager.entities;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
@@ -42,7 +43,7 @@ public class SGDKBackground extends SGDKElement{
 	
 	public SGDKBackground() {};
 	
-	public SGDKBackground(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKBackground(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		setType(Type.SGDKBackground);
 		BufferedImage img;
@@ -67,7 +68,7 @@ public class SGDKBackground extends SGDKElement{
 		this.compression = Compression.valueOf(node.get("compression").asText());
 	};
 	
-	public SGDKBackground(String path) throws SGDKInvalidFormatException {
+	public SGDKBackground(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
 		setType(Type.SGDKBackground);
 		BufferedImage img;

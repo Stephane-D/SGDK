@@ -38,11 +38,14 @@ public class ResourceManagerFrame extends JFrame {
 	private ConsolePanel consolePanel = null;
 	private PropertiesContainerPanel propertiesContainerPanel = null;
 	private ComponentsContainerPanel componentsContainerPanel = null;
+
+	private String workingDirectory;
+	private boolean loadedData = false;
 	
 	public ResourceManagerFrame(String workingDirectory) throws IOException {
 		super("SGDK Resource Manager");
 		
-		
+		this.workingDirectory = workingDirectory;
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int screenWidth = new Long(Math.round(screenSize.getWidth())).intValue();
 		int screenHeight = new Long(Math.round(screenSize.getHeight())).intValue();
@@ -63,7 +66,7 @@ public class ResourceManagerFrame extends JFrame {
 		c.gridwidth = 1;
 		c.gridheight = GridBagConstraints.REMAINDER;
 		c.weightx = 1.0/6.0;
-		projectExplorer = new ProjectExplorerPanel(this, workingDirectory);
+		projectExplorer = new ProjectExplorerPanel(this);
 		add(projectExplorer, c);
 		
 		c.gridx = 1;
@@ -106,8 +109,10 @@ public class ResourceManagerFrame extends JFrame {
             public void windowClosing(WindowEvent e){
                 int i=JOptionPane.showConfirmDialog(null, "Do you want to exit the Resource Manager?","Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
                 if(i < 2) {
-                	if(i == 0) {                		
-                		projectExplorer.getProjectExplorerTree().saveProjects();
+                	if(i == 0) {              
+                		if(loadedData) {                			
+                			projectExplorer.getProjectExplorerTree().saveProjects(workingDirectory);
+                		}
                 	}
                 	Thread t = new Thread(new Runnable() {						
 						@Override
@@ -167,5 +172,9 @@ public class ResourceManagerFrame extends JFrame {
 	public void setComponentsContainerPanel(ComponentsContainerPanel componentsContainerPanel) {
 		this.componentsContainerPanel = componentsContainerPanel;
 	}	
+	
+	public void load() {
+		this.loadedData = this.projectExplorer.load(workingDirectory);
+	}
 	
 }

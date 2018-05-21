@@ -1,5 +1,6 @@
 package org.sgdk.resourcemanager.entities;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.swing.Icon;
@@ -40,14 +41,14 @@ public class SGDKFXSound extends SGDKElement{
 
 	public SGDKFXSound() {};
 	
-	public SGDKFXSound(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKFXSound(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		setType(Type.SGDKFXSound);
 		this.driver = Driver.valueOf(node.get("driver").asText());
 		this.outrate = node.get("outrate").asInt();
 	};
 
-	public SGDKFXSound(String path) throws SGDKInvalidFormatException {
+	public SGDKFXSound(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
 		setType(Type.SGDKFXSound);
 	}

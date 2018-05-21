@@ -33,7 +33,7 @@ public class SGDKSprite extends SGDKBackground{
 	
 	public SGDKSprite() {};
 	
-	public SGDKSprite(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKSprite(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		setType(Type.SGDKSprite);
 		width = node.get("width").asInt();
@@ -42,7 +42,7 @@ public class SGDKSprite extends SGDKBackground{
 		time = node.get("time").asInt();
 	};
 
-	public SGDKSprite(String path) throws SGDKInvalidFormatException {
+	public SGDKSprite(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
 		setType(Type.SGDKSprite);
 		BufferedImage img;

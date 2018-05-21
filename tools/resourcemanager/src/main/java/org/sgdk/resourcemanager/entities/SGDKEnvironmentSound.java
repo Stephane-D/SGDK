@@ -1,5 +1,6 @@
 package org.sgdk.resourcemanager.entities;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.swing.Icon;
@@ -36,14 +37,14 @@ public class SGDKEnvironmentSound extends SGDKElement{
 	
 	public SGDKEnvironmentSound() {};
 	
-	public SGDKEnvironmentSound(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKEnvironmentSound(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		setType(Type.SGDKEnvironmentSound);
 		this.timing = Timing.valueOf(node.get("timing").asText());
 		this.options = node.get("options").asText();
 	};
 	
-	public SGDKEnvironmentSound(String path) throws SGDKInvalidFormatException {
+	public SGDKEnvironmentSound(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
 		setType(Type.SGDKEnvironmentSound);
 	}	

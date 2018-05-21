@@ -38,10 +38,8 @@ public class ProjectExplorerTree extends JTree {
 	private FolderPopupMenu popupFolder = null;
 	private FilePopupMenu popupFile = null;	
 	private ProjectPopupMenu popupProject = null;	
-
-	private String workingDirectory;
 	
-	public ProjectExplorerTree(ResourceManagerFrame parent, String workingDirectory) throws IOException{
+	public ProjectExplorerTree(ResourceManagerFrame parent) throws IOException{
 		super(new DefaultTreeModel(new DefaultMutableTreeNode("root")));
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setRootVisible(false);
@@ -49,41 +47,7 @@ public class ProjectExplorerTree extends JTree {
 
 		popupFolder = new FolderPopupMenu(parent);
 		popupFile = new FilePopupMenu(parent);
-		popupProject = new ProjectPopupMenu(parent);
-		
-		this.workingDirectory = workingDirectory;
-		File f = new File(workingDirectory);
-		if(!f.exists()) {
-			f.mkdirs();
-		}
-		f = new File(workingDirectory+File.separator+Constants.PROJECT_SETTINGS_FILE);
-		if(!f.exists()) {
-			try (FileWriter writer = new FileWriter(f)){
-				ObjectMapper mapper = new ObjectMapper();
-				f.createNewFile();
-				List<SGDKProject> projects = new ArrayList<>();
-				writer.write(mapper.writeValueAsString(projects));
-			}catch (IOException e) {
-				logger.error(e);
-			}			
-		}
-		try (BufferedReader br = new BufferedReader(new FileReader(f))){
-			ObjectMapper mapper = new ObjectMapper();
-			
-			StringBuffer text = new StringBuffer();
-			String sCurrentLine;
-			while ((sCurrentLine = br.readLine()) != null) {
-				text.append(sCurrentLine);
-			}
-			
-			List<SGDKProject> projects = mapper.readValue(text.toString(), new TypeReference<List<SGDKProject>>(){});			
-			
-			for(SGDKProject p : projects) {
-				initialize(p,null);
-			}
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
+		popupProject = new ProjectPopupMenu(parent);		
 				
 	    addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
@@ -123,6 +87,47 @@ public class ProjectExplorerTree extends JTree {
 	            }
 	        }
 	    });
+	}
+	
+	public boolean load(String workingDirectory) {
+		File f = new File(workingDirectory);
+		logger.info("Loading Projects ...");
+		logger.info("Checking Project Setting file: " + workingDirectory+File.separator+Constants.PROJECT_SETTINGS_FILE);
+		if(!f.exists()) {
+			f.mkdirs();
+		}
+		f = new File(workingDirectory+File.separator+Constants.PROJECT_SETTINGS_FILE);
+		if(!f.exists()) {
+			try (FileWriter writer = new FileWriter(f)){
+				ObjectMapper mapper = new ObjectMapper();
+				f.createNewFile();
+				List<SGDKProject> projects = new ArrayList<>();
+				writer.write(mapper.writeValueAsString(projects));
+			}catch (IOException e) {
+				logger.error(e);
+			}			
+		}
+		try (BufferedReader br = new BufferedReader(new FileReader(f))){
+			ObjectMapper mapper = new ObjectMapper();
+			
+			StringBuffer text = new StringBuffer();
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				text.append(sCurrentLine);
+			}
+			
+			List<SGDKProject> projects = mapper.readValue(text.toString(), new TypeReference<List<SGDKProject>>(){});			
+			
+			for(SGDKProject p : projects) {
+				initialize(p,null);
+			}
+
+		}catch (Exception e) {
+			logger.error(e);
+			return false;
+		}	
+		logger.info("Projects loaded.");
+		return true;
 	}
 	
 	private void initialize(SGDKElement e, SGDKElement parent) {
@@ -170,7 +175,7 @@ public class ProjectExplorerTree extends JTree {
 		}
 	}
 
-	public void saveProjects() {
+	public void saveProjects(String workingDirectory) {
 
     	logger.info("Saving Projects...");
 		DefaultTreeModel model = (DefaultTreeModel)getModel();

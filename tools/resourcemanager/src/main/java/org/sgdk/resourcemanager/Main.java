@@ -15,7 +15,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			logger.debug("Init Program");
-			new ResourceManagerFrame(PROYECTS_SETTINGS_PATH);
+			new ResourceManagerFrame(PROYECTS_SETTINGS_PATH).load();
 		} catch (IOException e) {
 			logger.error(e);
 		}

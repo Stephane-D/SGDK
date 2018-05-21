@@ -1,5 +1,6 @@
 package org.sgdk.resourcemanager.entities;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.swing.Icon;
@@ -14,12 +15,12 @@ public class SGDKProject extends SGDKFolder{
 
 	public SGDKProject() {};
 	
-	public SGDKProject(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKProject(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		setType(Type.SGDKProject);
 	};
 	
-	public SGDKProject(String path) throws SGDKInvalidFormatException {
+	public SGDKProject(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
 		setType(Type.SGDKProject);
 	}

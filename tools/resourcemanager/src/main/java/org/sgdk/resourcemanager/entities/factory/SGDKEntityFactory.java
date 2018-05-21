@@ -33,6 +33,8 @@ public class SGDKEntityFactory {
 			return new SGDKProject(path);
 		} catch (SGDKInvalidFormatException e) {
 			logger.error(e.getMessage(),  e);
+		} catch (IOException e) {
+			logger.error(e.getMessage(),  e);
 		}
 		return null;
 	}
@@ -48,6 +50,8 @@ public class SGDKEntityFactory {
 			folder.setParent(parentNode);
 			return folder;
 		} catch (SGDKInvalidFormatException e) {
+			logger.error(e.getMessage(),  e);
+		} catch (IOException e) {
 			logger.error(e.getMessage(),  e);
 		}
 		return null;

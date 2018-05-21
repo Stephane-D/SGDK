@@ -1,6 +1,7 @@
 package org.sgdk.resourcemanager.entities;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.swing.Icon;
@@ -36,12 +37,20 @@ public abstract class SGDKElement {
 		
 	public SGDKElement() {}
 	
-	public SGDKElement(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKElement(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		this(node.get("path").asText());
 	};
 	
-	public SGDKElement(String path) throws SGDKInvalidFormatException{
+	public SGDKElement(String path) throws SGDKInvalidFormatException, IOException{
 		this.path = path;
+		try {
+			File f = new File(path);
+			if(!f.exists()) {
+				throw new IOException("File " + path + " not found");
+			}
+		} catch (IOException e) {
+			throw e;
+		}
 		if(!validateFormat(path)) throw new SGDKInvalidFormatException();
 	}
 	

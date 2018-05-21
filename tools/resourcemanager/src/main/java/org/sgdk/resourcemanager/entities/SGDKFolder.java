@@ -1,6 +1,7 @@
 package org.sgdk.resourcemanager.entities;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +20,12 @@ public class SGDKFolder extends SGDKElement{
 	
 	public SGDKFolder() {};
 	
-	public SGDKFolder(JsonNode node) throws SGDKInvalidFormatException {
+	public SGDKFolder(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		setType(Type.SGDKFolder);
 	};
 
-	public SGDKFolder(String path) throws SGDKInvalidFormatException {
+	public SGDKFolder(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
 		setType(Type.SGDKFolder);
 	}
