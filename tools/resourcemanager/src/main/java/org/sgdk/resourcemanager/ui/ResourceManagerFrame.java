@@ -1,16 +1,17 @@
 package org.sgdk.resourcemanager.ui;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,10 +19,10 @@ import org.sgdk.resourcemanager.ui.menubar.ResourceManagerMenuBar;
 import org.sgdk.resourcemanager.ui.panels.components.ComponentsContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.console.ConsolePanel;
 import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
-import org.sgdk.resourcemanager.ui.panels.properties.PropertiesContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.projectexplorer.ProjectExplorerPanel;
+import org.sgdk.resourcemanager.ui.panels.properties.PropertiesContainerPanel;
 
-public class ResourceManagerFrame extends JFrame {
+public class ResourceManagerFrame extends JFrame implements ComponentListener{
 
 	/**
 	 * 
@@ -54,56 +55,49 @@ public class ResourceManagerFrame extends JFrame {
 		setMaximizedBounds(new Rectangle(0, 0, screenWidth, screenHeight));
 		
 		setMenuBar(new ResourceManagerMenuBar(this));
+
+		previewContainerPanel = new PreviewContainerPanel(this);		
+		previewContainerPanel.setPreferredSize(new Dimension(getWidth()/2, getHeight()*3/4));
+		previewContainerPanel.setMinimumSize(new Dimension(minimizeWidth/4, minimizeHeight*2/3));
 		
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-		c.anchor = GridBagConstraints.CENTER;
-		c.weighty = 1.0;
-			
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0/6.0;
-		projectExplorer = new ProjectExplorerPanel(this);
-		add(projectExplorer, c);
-		
-		c.gridx = 1;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weighty = 5.0/6.0;
-		c.weightx = 1.0/2.0;
-		previewContainerPanel = new PreviewContainerPanel(this);
-		add(previewContainerPanel, c);
-		
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		c.gridheight = GridBagConstraints.REMAINDER;
-		c.weighty = 1.0/6.0;
-		c.weightx = 1.0/2.0;
-		consolePanel = new ConsolePanel(this);
-		add(consolePanel, c);
-		
-		c.gridx = 2;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = GridBagConstraints.REMAINDER;
-		c.weighty = 1.0;
-		c.weightx = 1.0/6.0;
 		propertiesContainerPanel = new PropertiesContainerPanel();
-		add(propertiesContainerPanel, c);
+		propertiesContainerPanel.setPreferredSize(new Dimension(getWidth()/6, getHeight()*3/4));
+		propertiesContainerPanel.setMinimumSize(new Dimension(minimizeWidth/8,minimizeHeight/3));
 		
-		c.gridx = 3;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0/6.0;
+		JSplitPane preview_propsSP = new JSplitPane(
+    			JSplitPane.HORIZONTAL_SPLIT,
+    			true,
+    	        previewContainerPanel, propertiesContainerPanel);
+		preview_propsSP.resetToPreferredSizes();
+		consolePanel = new ConsolePanel(this);
+		consolePanel.setPreferredSize(new Dimension(getWidth()/2, getHeight()/4));
+		consolePanel.setMinimumSize(new Dimension(minimizeWidth/4, minimizeHeight/6));
+		
+		JSplitPane preview_props_consoleSP = new JSplitPane(
+    			JSplitPane.VERTICAL_SPLIT,
+    			true,
+    			preview_propsSP, consolePanel);
+		preview_props_consoleSP.resetToPreferredSizes();
 		componentsContainerPanel = new ComponentsContainerPanel();
-		add(componentsContainerPanel, c);
+		componentsContainerPanel.setPreferredSize(new Dimension(getWidth()/6, getHeight()));
+		componentsContainerPanel.setMinimumSize(new Dimension(minimizeWidth/8, minimizeHeight/3));
 		
+		JSplitPane preview_props_console_compoSP = new JSplitPane(
+    			JSplitPane.HORIZONTAL_SPLIT,
+    			true,
+    			preview_props_consoleSP, componentsContainerPanel);
+		preview_props_console_compoSP.resetToPreferredSizes();
+		projectExplorer = new ProjectExplorerPanel(this);
+		projectExplorer.setPreferredSize(new Dimension(getWidth()/6, getHeight()));
+		projectExplorer.setMinimumSize(new Dimension(minimizeWidth/4, minimizeHeight/3));
+		
+		JSplitPane all = new JSplitPane(
+    			JSplitPane.HORIZONTAL_SPLIT,
+    			true,
+    			projectExplorer, preview_props_console_compoSP);
+		all.resetToPreferredSizes();
+		add(all);
+
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
@@ -176,5 +170,28 @@ public class ResourceManagerFrame extends JFrame {
 	public void load() {
 		this.loadedData = this.projectExplorer.load(workingDirectory);
 	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		previewContainerPanel.setPreferredSize(new Dimension(getWidth()/2, getHeight()*3/4));
+		previewContainerPanel.setMinimumSize(new Dimension(getWidth()/4, getHeight()*2/3));
+		propertiesContainerPanel.setPreferredSize(new Dimension(getWidth()/6, getHeight()*3/4));
+		propertiesContainerPanel.setMinimumSize(new Dimension(getWidth()/8,getHeight()/3));
+		consolePanel.setPreferredSize(new Dimension(getWidth()/2, getHeight()/4));
+		consolePanel.setMinimumSize(new Dimension(getWidth()/4, getHeight()/6));
+		componentsContainerPanel.setPreferredSize(new Dimension(getWidth()/6, getHeight()));
+		componentsContainerPanel.setMinimumSize(new Dimension(getWidth()/8, getHeight()/3));
+		projectExplorer.setPreferredSize(new Dimension(getWidth()/6, getHeight()));
+		projectExplorer.setMinimumSize(new Dimension(getWidth()/4, getHeight()/3));
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {}
+
+	@Override
+	public void componentShown(ComponentEvent e) {}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {}
 	
 }

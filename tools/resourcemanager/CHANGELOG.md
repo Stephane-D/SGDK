@@ -1,6 +1,12 @@
 Changelog
 =========
 
+#0.4.0
+
+### New Features
+1. Resizable Panels
+2. Compatibility with unix and windows
+
 #0.3.1
 
 ### Enhancements
