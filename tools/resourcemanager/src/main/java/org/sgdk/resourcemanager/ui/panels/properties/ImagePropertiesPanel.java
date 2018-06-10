@@ -121,7 +121,7 @@ public class ImagePropertiesPanel extends JPanel {
 						    null);
 					dialog.setVisible(true);
 					Color newColor =  cc.getColor();
-					if (newColor != null && element != null) {
+					if (!newColor.equals(oldColor) && element != null) {
 						ImagePlus ip = new ImagePlus(element.getPath());
 						List<Color> mapColor = new ArrayList<>();
 						for(int i = 0; i < ImageUtil.getPaletteSize(ip); i++) {
