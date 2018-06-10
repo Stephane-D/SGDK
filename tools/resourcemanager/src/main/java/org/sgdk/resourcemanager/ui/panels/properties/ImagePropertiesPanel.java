@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -117,62 +119,66 @@ public class ImagePropertiesPanel extends JPanel {
 						    "Choose a Color",
 						    true,
 						    cc,
-						    null,
+						    new ActionListener() {								
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									Color newColor =  cc.getColor();
+									if (!newColor.equals(oldColor) && element != null) {
+										ImagePlus ip = new ImagePlus(element.getPath());
+										List<Color> mapColor = new ArrayList<>();
+										for(int i = 0; i < ImageUtil.getPaletteSize(ip); i++) {
+											mapColor.add(ImageUtil.getColorFromIndex(ip, i));
+										}
+										Color[] newPalette = new Color[mapColor.size()];
+							        	//Convert Image Palete Colors
+										if(ImageUtil.exist(ip, newColor)) {
+											//Si el color existe en otro indice, intecambiamos indices de la paleta
+											int oldIndex = 0;
+											while( oldIndex < mapColor.size()) {
+												if(mapColor.get(oldIndex).equals(newColor)) {
+													break;
+												}
+												oldIndex++;
+											}
+											int newIndex = 0;
+											while( newIndex < mapColor.size()) {
+												if(mapColor.get(newIndex).equals(oldColor)) {
+													break;
+												}
+												newIndex++;
+											}
+											for(int i = 0; i< newPalette.length; i++) {
+												if(i!=oldIndex && i!=newIndex) {
+													newPalette[i] = mapColor.get(i);
+												}
+											}
+											newPalette[oldIndex] = oldColor;
+											newPalette[newIndex] = newColor;	
+											ImageUtil.switchColorsImagePalette(element.getPath(), newPalette, oldIndex, newIndex);
+										}else {
+											//Si el color no exite pintamos la imagen con el nuevo color
+											int newIndex = 0;
+											while( newIndex < mapColor.size()) {
+												if(mapColor.get(newIndex).equals(oldColor)) {
+													break;
+												}
+												newIndex++;
+											}
+											for(int i = 0; i< newPalette.length; i++) {
+												if(i!=newIndex) {
+													newPalette[i] = mapColor.get(i);
+												}
+											}
+											newPalette[newIndex] = newColor;
+											ImageUtil.changeImagePalette(element.getPath(), newPalette);
+										}						
+										
+										resourceManagerFrame.loadElement(element);
+							        }
+								}
+							},
 						    null);
-					dialog.setVisible(true);
-					Color newColor =  cc.getColor();
-					if (!newColor.equals(oldColor) && element != null) {
-						ImagePlus ip = new ImagePlus(element.getPath());
-						List<Color> mapColor = new ArrayList<>();
-						for(int i = 0; i < ImageUtil.getPaletteSize(ip); i++) {
-							mapColor.add(ImageUtil.getColorFromIndex(ip, i));
-						}
-						Color[] newPalette = new Color[mapColor.size()];
-			        	//Convert Image Palete Colors
-						if(ImageUtil.exist(ip, newColor)) {
-							//Si el color existe en otro indice, intecambiamos indices de la paleta
-							int oldIndex = 0;
-							while( oldIndex < mapColor.size()) {
-								if(mapColor.get(oldIndex).equals(newColor)) {
-									break;
-								}
-								oldIndex++;
-							}
-							int newIndex = 0;
-							while( newIndex < mapColor.size()) {
-								if(mapColor.get(newIndex).equals(oldColor)) {
-									break;
-								}
-								newIndex++;
-							}
-							for(int i = 0; i< newPalette.length; i++) {
-								if(i!=oldIndex && i!=newIndex) {
-									newPalette[i] = mapColor.get(i);
-								}
-							}
-							newPalette[oldIndex] = oldColor;
-							newPalette[newIndex] = newColor;	
-							ImageUtil.switchColorsImagePalette(element.getPath(), newPalette, oldIndex, newIndex);
-						}else {
-							//Si el color no exite pintamos la imagen con el nuevo color
-							int newIndex = 0;
-							while( newIndex < mapColor.size()) {
-								if(mapColor.get(newIndex).equals(oldColor)) {
-									break;
-								}
-								newIndex++;
-							}
-							for(int i = 0; i< newPalette.length; i++) {
-								if(i!=newIndex) {
-									newPalette[i] = mapColor.get(i);
-								}
-							}
-							newPalette[newIndex] = newColor;
-							ImageUtil.changeImagePalette(element.getPath(), newPalette);
-						}						
-						
-						resourceManagerFrame.loadElement(element);
-			        }
+					dialog.setVisible(true);					
 				}
 				
 				@Override
