@@ -52,7 +52,10 @@ public abstract class SGDKElement {
 			throw e;
 		}
 		if(!validateFormat(path)) throw new SGDKInvalidFormatException();
+		init();
 	}
+	
+	protected abstract void init() throws SGDKInvalidFormatException;
 	
 	public String getPath() {
 		return path;

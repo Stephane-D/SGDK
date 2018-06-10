@@ -22,12 +22,10 @@ public class SGDKFolder extends SGDKElement{
 	
 	public SGDKFolder(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
-		setType(Type.SGDKFolder);
 	};
 
 	public SGDKFolder(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
-		setType(Type.SGDKFolder);
 	}
 	
 	@Override
@@ -62,6 +60,11 @@ public class SGDKFolder extends SGDKElement{
 	
 	public static boolean isValidFormat(String path) {
 		return new File(path).isDirectory();
+	}
+
+	@Override
+	protected void init() throws SGDKInvalidFormatException {
+		setType(Type.SGDKFolder);		
 	}
 
 }

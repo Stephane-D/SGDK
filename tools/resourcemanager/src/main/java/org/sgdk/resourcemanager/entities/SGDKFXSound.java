@@ -43,14 +43,12 @@ public class SGDKFXSound extends SGDKElement{
 	
 	public SGDKFXSound(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
-		setType(Type.SGDKFXSound);
 		this.driver = Driver.valueOf(node.get("driver").asText());
 		this.outrate = node.get("outrate").asInt();
 	};
 
 	public SGDKFXSound(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
-		setType(Type.SGDKFXSound);
 	}
 	
 	public Driver getDriver() {
@@ -89,5 +87,10 @@ public class SGDKFXSound extends SGDKElement{
 			b = b || f.toString().equals(myExtension);
 		}
 		return b;
+	}
+
+	@Override
+	protected void init() throws SGDKInvalidFormatException {
+		setType(Type.SGDKFXSound);
 	}
 }

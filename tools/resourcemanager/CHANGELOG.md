@@ -6,6 +6,8 @@ Changelog
 ### New Features
 1. Resizable Panels
 2. Compatibility with unix and windows
+3. Change color index
+4. Switch two colors index
 
 #0.3.1
 

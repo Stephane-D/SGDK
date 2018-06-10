@@ -39,14 +39,12 @@ public class SGDKEnvironmentSound extends SGDKElement{
 	
 	public SGDKEnvironmentSound(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
-		setType(Type.SGDKEnvironmentSound);
 		this.timing = Timing.valueOf(node.get("timing").asText());
 		this.options = node.get("options").asText();
 	};
 	
 	public SGDKEnvironmentSound(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
-		setType(Type.SGDKEnvironmentSound);
 	}	
 
 	public Timing getTiming() {
@@ -85,5 +83,10 @@ public class SGDKEnvironmentSound extends SGDKElement{
 			b = b || f.toString().equals(myExtension);
 		}
 		return b;
+	}
+
+	@Override
+	protected void init() throws SGDKInvalidFormatException {
+		setType(Type.SGDKEnvironmentSound);
 	}
 }

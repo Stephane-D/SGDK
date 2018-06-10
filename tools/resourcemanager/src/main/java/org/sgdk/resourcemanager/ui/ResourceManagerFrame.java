@@ -15,6 +15,7 @@ import javax.swing.JSplitPane;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.ui.menubar.ResourceManagerMenuBar;
 import org.sgdk.resourcemanager.ui.panels.components.ComponentsContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.console.ConsolePanel;
@@ -60,7 +61,7 @@ public class ResourceManagerFrame extends JFrame implements ComponentListener{
 		previewContainerPanel.setPreferredSize(new Dimension(getWidth()/2, getHeight()*3/4));
 		previewContainerPanel.setMinimumSize(new Dimension(minimizeWidth/4, minimizeHeight*2/3));
 		
-		propertiesContainerPanel = new PropertiesContainerPanel();
+		propertiesContainerPanel = new PropertiesContainerPanel(this);
 		propertiesContainerPanel.setPreferredSize(new Dimension(getWidth()/6, getHeight()*3/4));
 		propertiesContainerPanel.setMinimumSize(new Dimension(minimizeWidth/8,minimizeHeight/3));
 		
@@ -193,5 +194,15 @@ public class ResourceManagerFrame extends JFrame implements ComponentListener{
 
 	@Override
 	public void componentHidden(ComponentEvent e) {}
+
+	public void loadElement(SGDKElement selected) {
+		logger.debug("Loading Preview");
+		getPreviewContainerPanel().setPreview(selected);
+		logger.debug("Loading Properties");
+		getPropertiesContainerPanel().setSGDKElement(selected);
+		logger.debug("Loading Components");
+		getComponentsContainerPanel().setSGDKElement(selected);
+		logger.debug("End Load");
+	}
 	
 }

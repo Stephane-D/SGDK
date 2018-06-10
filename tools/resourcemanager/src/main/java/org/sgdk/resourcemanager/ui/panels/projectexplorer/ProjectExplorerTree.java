@@ -77,13 +77,7 @@ public class ProjectExplorerTree extends JTree {
 	                DefaultMutableTreeNode node = (DefaultMutableTreeNode)getLastSelectedPathComponent();
 	                if (node == null) return;
 	                SGDKElement selected = (SGDKElement)node.getUserObject();	
-	                logger.debug("Loading Preview");
-					parent.getPreviewContainerPanel().setPreview(selected);
-					logger.debug("Loading Properties");
-					parent.getPropertiesContainerPanel().setSGDKElement(selected);
-					logger.debug("Loading Components");
-					parent.getComponentsContainerPanel().setSGDKElement(selected);
-					logger.debug("End Load");
+	                parent.loadElement(selected);
 	            }
 	        }
 	    });
