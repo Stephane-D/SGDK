@@ -8,7 +8,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -24,7 +23,6 @@ import org.sgdk.resourcemanager.ui.panels.console.ConsolePanel;
 import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
 import org.sgdk.resourcemanager.ui.panels.projectexplorer.ProjectExplorerPanel;
 import org.sgdk.resourcemanager.ui.panels.properties.PropertiesContainerPanel;
-import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
 public class ResourceManagerFrame extends JFrame implements ComponentListener{
 
@@ -127,10 +125,8 @@ public class ResourceManagerFrame extends JFrame implements ComponentListener{
                 }
             }
         });
-		try {
-			setIconImage(ImageIO.read(getClass().getResource("/icon.png").toURI().toURL()));
-		} catch (URISyntaxException e1) {
-		}
+		setIconImage(ImageIO.read(getClass().getResource("/icon.png").openStream()));
+		
 		setVisible(true);
 	}
 
