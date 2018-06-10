@@ -8,6 +8,7 @@ Changelog
 2. Compatibility with unix and windows
 3. Change color index
 4. Switch two colors index
+5. Add Program icon
 
 #0.3.1
 
