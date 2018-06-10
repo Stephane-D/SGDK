@@ -22,7 +22,7 @@ public class AboutMenuItem extends MenuItem {
 			public void actionPerformed(ActionEvent e) {
 				 JPanel panel = new JPanel();
 				 JOptionPane.showMessageDialog(panel,
-						 "SGDK Resource Manager v0.0.1\n"
+						 "SGDK Resource Manager v0.4.0\n"
 						 + "This envairoment is used to manage rescomp file on SGDK\n"
 						 + "Developed by Pachon89",
 						 "About SGDK Resource Manager",
