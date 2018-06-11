@@ -39,6 +39,7 @@ public class CreateSpriteDialog extends JDialog{
 	
 	private JTextField spritePathText = new JTextField();
 	private JFileChooser spritePath = new JFileChooser(System.getProperty("user.home"));
+	private File[] selectedFiles = null;
 	private JButton acceptButon = new JButton("Ok");
 	private static final long serialVersionUID = 1L;
 	
@@ -72,6 +73,7 @@ public class CreateSpriteDialog extends JDialog{
 			}
 		});
 		spritePath.setAcceptAllFileFilterUsed(false);
+		spritePath.setMultiSelectionEnabled(true);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -101,7 +103,14 @@ public class CreateSpriteDialog extends JDialog{
             public void mouseClicked(MouseEvent e){				
 				int returnVal = spritePath.showDialog(parent, "New Sprite");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					spritePathText.setText(spritePath.getSelectedFile().getAbsolutePath());
+					selectedFiles = spritePath.getSelectedFiles();
+					String[] values = new String[selectedFiles.length];
+					int i = 0;
+					for(File f : selectedFiles) {
+						values[i] = f.getAbsolutePath();
+						i++;
+					}
+					spritePathText.setText(StringUtils.join(values, ","));
 		        }
             }
 		});
@@ -131,9 +140,11 @@ public class CreateSpriteDialog extends JDialog{
 				}
 				
 				if (validForm) {
-					SGDKSprite sprite = SGDKEntityFactory.createSGDKSprite(spritePathText.getText(), (SGDKFolder)parentNode);
-					if(sprite != null) {						
-						parent.getProjectExplorer().getProjectExplorerTree().addElement(sprite, parentNode);
+					for(File f : selectedFiles) {
+						SGDKSprite sprite = SGDKEntityFactory.createSGDKSprite(f.getAbsolutePath(), (SGDKFolder)parentNode);
+						if(sprite != null) {						
+							parent.getProjectExplorer().getProjectExplorerTree().addElement(sprite, parentNode);
+						}
 					}
 					clean();
 					parent.setEnabled(true);

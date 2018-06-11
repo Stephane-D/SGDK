@@ -9,6 +9,7 @@ Changelog
 3. Change color index
 4. Switch two colors index
 5. Add Program icon
+6. Multiple file addition
 
 #0.3.1
 

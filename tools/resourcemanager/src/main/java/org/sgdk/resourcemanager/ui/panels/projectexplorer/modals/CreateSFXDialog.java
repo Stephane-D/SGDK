@@ -36,6 +36,7 @@ public class CreateSFXDialog extends JDialog{
 	
 	private JTextField fxSoundPathText = new JTextField();
 	private JFileChooser fxSoundPath = new JFileChooser(System.getProperty("user.home"));
+	private File[] selectedFiles = null;
 	private JButton acceptButon = new JButton("Ok");
 	private static final long serialVersionUID = 1L;
 	
@@ -69,6 +70,7 @@ public class CreateSFXDialog extends JDialog{
 			}
 		});
 		fxSoundPath.setAcceptAllFileFilterUsed(false);
+		fxSoundPath.setMultiSelectionEnabled(true);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -98,7 +100,14 @@ public class CreateSFXDialog extends JDialog{
             public void mouseClicked(MouseEvent e){				
 				int returnVal = fxSoundPath.showDialog(parent, "New FX Sound");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					fxSoundPathText.setText(fxSoundPath.getSelectedFile().getAbsolutePath());
+					selectedFiles = fxSoundPath.getSelectedFiles();
+					String[] values = new String[selectedFiles.length];
+					int i = 0;
+					for(File f : selectedFiles) {
+						values[i] = f.getAbsolutePath();
+						i++;
+					}
+					fxSoundPathText.setText(StringUtils.join(values, ","));
 		        }
             }
 		});
@@ -128,8 +137,10 @@ public class CreateSFXDialog extends JDialog{
 				}
 				
 				if (validForm) {
-					SGDKFXSound fxSound = SGDKEntityFactory.createSGDKFXSound(fxSoundPathText.getText(), (SGDKFolder)parentNode);
-					parent.getProjectExplorer().getProjectExplorerTree().addElement(fxSound,parentNode);
+					for(File f : selectedFiles) {
+						SGDKFXSound fxSound = SGDKEntityFactory.createSGDKFXSound(f.getAbsolutePath(), (SGDKFolder)parentNode);
+						parent.getProjectExplorer().getProjectExplorerTree().addElement(fxSound,parentNode);
+					}
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);
