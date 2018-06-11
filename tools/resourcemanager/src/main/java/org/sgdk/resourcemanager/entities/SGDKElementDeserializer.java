@@ -33,7 +33,6 @@ public class SGDKElementDeserializer extends StdDeserializer<SGDKElement> {
       throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
 //        int id = (Integer) ((IntNode) node.get("id")).numberValue();
-        String path = node.get("path").asText();
         SGDKElement.Type type = SGDKElement.Type.valueOf(node.get("type").asText());        
         
         SGDKElement element = null;
@@ -41,23 +40,23 @@ public class SGDKElementDeserializer extends StdDeserializer<SGDKElement> {
         try {
         	switch (type) {
     		case SGDKBackground:
-    			SGDKBackground b = new SGDKBackground(path);
+    			SGDKBackground b = new SGDKBackground(node);
     			element = b;
     			break;
     		case SGDKSprite:
-    			SGDKSprite s = new SGDKSprite(path);
+    			SGDKSprite s = new SGDKSprite(node);
     			element = s;
     			break;
     		case SGDKFXSound:
-    			SGDKFXSound fx = new SGDKFXSound(path);
+    			SGDKFXSound fx = new SGDKFXSound(node);
     			element = fx;
     			break;
     		case SGDKEnvironmentSound:
-    			SGDKEnvironmentSound environmentSound = new SGDKEnvironmentSound(path);
+    			SGDKEnvironmentSound environmentSound = new SGDKEnvironmentSound(node);
     			element = environmentSound;
     			break;
     		case SGDKProject:
-    			SGDKProject p = new SGDKProject(path);
+    			SGDKProject p = new SGDKProject(node);
     			Iterator<JsonNode> childsProjectIterator = node.get("childs").elements();
     			while(childsProjectIterator.hasNext()) {
     				JsonNode childNode = childsProjectIterator.next();
@@ -68,7 +67,7 @@ public class SGDKElementDeserializer extends StdDeserializer<SGDKElement> {
     			element = p;
     			break;
     		case SGDKFolder:
-    			SGDKFolder f = new SGDKFolder(path);
+    			SGDKFolder f = new SGDKFolder(node);
     			Iterator<JsonNode> childsFolderIterator = node.get("childs").elements();
     			while(childsFolderIterator.hasNext()) {
     				JsonNode childNode = childsFolderIterator.next();

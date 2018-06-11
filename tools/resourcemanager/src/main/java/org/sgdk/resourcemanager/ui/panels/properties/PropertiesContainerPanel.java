@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import org.sgdk.resourcemanager.entities.SGDKElement;
+import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 
 public class PropertiesContainerPanel extends JPanel {
 
@@ -19,11 +20,11 @@ public class PropertiesContainerPanel extends JPanel {
 	private ImagePropertiesPanel imagePropertiesPanel;
 	private SoundPropertiesPanel soundPropertiesPanel;
 	
-	public PropertiesContainerPanel() throws IOException {
+	public PropertiesContainerPanel(ResourceManagerFrame resourceManagerFrame) throws IOException {
 		super(new GridBagLayout());
 		setBorder(BorderFactory.createTitledBorder("Properties"));
 		
-		imagePropertiesPanel = new ImagePropertiesPanel();
+		imagePropertiesPanel = new ImagePropertiesPanel(resourceManagerFrame);
 		soundPropertiesPanel = new SoundPropertiesPanel();
 		
 		clean();

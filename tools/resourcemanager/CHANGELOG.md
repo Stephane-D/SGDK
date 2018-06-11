@@ -1,6 +1,24 @@
 Changelog
 =========
 
+#0.4.0
+
+### New Features
+1. Resizable Panels
+2. Compatibility with unix and windows
+3. Change color index
+4. Switch two colors index
+5. Add Program icon
+6. Multiple file addition
+
+#0.3.1
+
+### Enhancements
+1. Traces on loading Application 
+
+### Bugs
+1. Solved erro when app load and fail, if you close application resource file was deleted.
+
 #0.3.0
 
 ### New Features

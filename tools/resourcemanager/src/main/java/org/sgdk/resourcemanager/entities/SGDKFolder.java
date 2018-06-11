@@ -1,6 +1,7 @@
 package org.sgdk.resourcemanager.entities;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +12,20 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class SGDKFolder extends SGDKElement{
 
 	private List<SGDKElement> childs = new ArrayList<SGDKElement>();
 	
 	public SGDKFolder() {};
+	
+	public SGDKFolder(JsonNode node) throws SGDKInvalidFormatException, IOException {
+		super(node);
+	};
 
-	public SGDKFolder(String path) throws SGDKInvalidFormatException {
+	public SGDKFolder(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
-		setType(Type.SGDKFolder);
 	}
 	
 	@Override
@@ -54,6 +60,11 @@ public class SGDKFolder extends SGDKElement{
 	
 	public static boolean isValidFormat(String path) {
 		return new File(path).isDirectory();
+	}
+
+	@Override
+	protected void init() throws SGDKInvalidFormatException {
+		setType(Type.SGDKFolder);		
 	}
 
 }

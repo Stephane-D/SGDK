@@ -19,9 +19,9 @@ public class ProjectExplorerPanel extends JPanel {
 	
 	private ProjectExplorerTree projectExplorerTree = null;
 	
-	public ProjectExplorerPanel(ResourceManagerFrame parent, String workingDirectory) throws IOException {
+	public ProjectExplorerPanel(ResourceManagerFrame parent) throws IOException {
 		super(new GridBagLayout());
-		projectExplorerTree = new ProjectExplorerTree(parent, workingDirectory);
+		projectExplorerTree = new ProjectExplorerTree(parent);
 		
 		setBorder(BorderFactory.createTitledBorder("Project Explorer"));
 		
@@ -45,6 +45,10 @@ public class ProjectExplorerPanel extends JPanel {
 
 	public void setProjectExplorerTree(ProjectExplorerTree projectExplorerTree) {
 		this.projectExplorerTree = projectExplorerTree;
+	}
+	
+	public boolean load(String workingDirectory) {
+		return this.projectExplorerTree.load(workingDirectory);
 	}
 
 }

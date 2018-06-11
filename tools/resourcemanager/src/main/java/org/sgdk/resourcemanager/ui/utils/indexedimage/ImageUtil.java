@@ -1,118 +1,121 @@
 package org.sgdk.resourcemanager.ui.utils.indexedimage;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.imageio.ImageIO;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import ij.IJ;
+import ij.ImagePlus;
+import ij.io.FileInfo;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
 
 public class ImageUtil {
 
 	private static final Logger logger = LogManager.getLogger("UILogger");
 
-	private static final int BPP = 8;
 	private static final int PALETTE_SIZE = 16;
+	private static final int BITS8 = 8;
 
 	public static void validateAndCreateIndexedImage(String path) throws IOException {
-		File file = new File(path);
-		BufferedImage image = ImageIO.read(file);
+		ImagePlus ip = new ImagePlus(path);
 
-		if (!(image.getColorModel() instanceof IndexColorModel)) {
+		if (!is8BitsColorImageIndexed(ip)) {
 			logger.info("Image is not an indexed image");
 			logger.info("Starting conversion ...");
-
-			image = convertToIndexedImage(image, BPP, PALETTE_SIZE);
-			ImageIO.write(image, "GIF", file);
 			
+		    ImageConverter ic = new ImageConverter(ip);
+		    ic.convertRGBtoIndexedColor(PALETTE_SIZE);
+		    IJ.saveAs(ip, "PNG", path);
 		}
 	}
-
-	private static BufferedImage convertToIndexedImage(BufferedImage image, int bpp, int paletteSize)
-			throws IOException {
-		HashMap<Color, Integer> hashColors = new HashMap<>();
-		
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = 0; y < image.getHeight(); y++) {
-				int[] rgb = getPixelData(image, x, y);
-				Color color = new Color(rgb[0], rgb[1], rgb[2]);
-				if (hashColors.get(color) == null) {
-					hashColors.put(color, 1);
-				} else {
-					hashColors.put(color, hashColors.get(color) + 1);
-				}
-			}
+	
+	public static boolean is8BitsColorImageIndexed(ImagePlus ip) {
+		FileInfo fileInfo = ip.getFileInfo();
+		return fileInfo.fileType == FileInfo.COLOR8;
+	}
+	
+	public static int getPaletteSize(ImagePlus ip) {
+		HashMap<Color, Color> colorMap = getPalette(ip);
+		return colorMap.size() < PALETTE_SIZE? PALETTE_SIZE: colorMap.size();
+	}
+	
+	public static boolean exist(ImagePlus ip, Color color) {
+		HashMap<Color, Color> colorMap = getPalette(ip);
+		return colorMap.containsKey(color);
+	}
+	
+	private static HashMap<Color, Color> getPalette(ImagePlus ip) {
+		HashMap<Color, Color> colorMap = new HashMap<>();
+		IndexColorModel indexColorModel = (IndexColorModel) ip.getBufferedImage().getColorModel();
+		FileInfo fileInfo = ip.getFileInfo();
+		for(int i = 0; i< fileInfo.lutSize; i++) {
+			Color color = new Color(indexColorModel.getRGB(i));
+			if(!colorMap.containsKey(color)) {
+				colorMap.put(color, color);
+			}			
 		}
+		return colorMap;
+	}
 
-		Color[] paletteColors = configurePalette(hashColors, PALETTE_SIZE);
+	public static int getHeight(ImagePlus ip) {
+		FileInfo fileInfo = ip.getFileInfo();
+		return fileInfo.height;
+	}
+	
+	public static int getWidth(ImagePlus ip) {
+		FileInfo fileInfo = ip.getFileInfo();
+		return fileInfo.width;
+	}
+	
+	public static Color getColorFromIndex(ImagePlus ip, int i) {
+		IndexColorModel indexColorModel = (IndexColorModel) ip.getBufferedImage().getColorModel();
+		if(i > getPaletteSize(ip)) {
+			return new Color(0);
+		}
+		return new Color(indexColorModel.getRGB(i));
+	}
+
+	public static void changeImagePalette(String path, Color[] newPalette){
 		
 		byte[] r = new byte[PALETTE_SIZE];
 		byte[] g = new byte[PALETTE_SIZE];
 		byte[] b = new byte[PALETTE_SIZE];
 		
 		int i = 0;
-		for(Color c : paletteColors) {
+		for(Color c : newPalette) {
 			r[i]=(byte)c.getRed();
 			g[i]=(byte)c.getGreen();
 			b[i]=(byte)c.getBlue();
 			i++;
 		}
-		
-		BufferedImage indexedImage = new BufferedImage(image.getWidth(), image.getHeight(),
-				BufferedImage.TYPE_BYTE_INDEXED, new IndexColorModel(8, PALETTE_SIZE, r,g,b));
-		
-		indexedImage.getGraphics().drawImage(image, 0, 0, null);
-		return indexedImage;
-	}
+		ImagePlus imp = new ImagePlus(path);
 
-	private static Color[] configurePalette(HashMap<Color, Integer> hashColors, int paletteSize) {
-		Color[] palette = new Color[paletteSize];
-		if(hashColors.size() > paletteSize) {
-			int[] colorFreq = new int[paletteSize];
-			int minFreq = 0;
-			for(Color c : hashColors.keySet()) {
-				int myColorFreq = hashColors.get(c).intValue();
-				if( myColorFreq > minFreq) {
-					int i = 0;
-					while(colorFreq[i] > myColorFreq) {
-						i++;
-					}
-					for(int j = colorFreq.length -1; j>i;j--) {
-						colorFreq[j] = colorFreq[j-1];
-						palette[j] = palette[j-1];
-					}
-					colorFreq[i] = myColorFreq;
-					palette[i] = c;
-					minFreq = colorFreq[colorFreq.length - 1];
-				}
-			}
-		}else {
-			int i = 0;
-			for(Color c:hashColors.keySet()) {
-				palette[i++]=c;
-			}
-			while(i<paletteSize) {
-				palette[i++]=new Color(0, 0, 0);
+		IndexColorModel cm = new IndexColorModel(BITS8, PALETTE_SIZE, r, g, b);
+        ImageProcessor ip = imp.getProcessor();
+        ip.setColorModel(cm);
+        if (imp.getStackSize()>1)
+            imp.getStack().setColorModel(cm);
+        IJ.saveAs(imp, "PNG", path);
+	}
+	
+	public static void switchColorsImagePalette(String path, Color[] newPalette, int index1, int index2){
+		changeImagePalette(path, newPalette);
+		ImagePlus imp = new ImagePlus(path);
+		DataBuffer db = imp.getBufferedImage().getRaster().getDataBuffer();
+		for(int i = 0; i< db.getSize(); i++) {
+			int val = db.getElem(i);
+			if(val == index1) {
+				db.setElem(i, index2);
+			}else if(val == index2) {
+				db.setElem(i, index1);
 			}
 		}
-		return palette;
-	}
-
-	private static int[] getPixelData(BufferedImage img, int x, int y) {
-		int argb = img.getRGB(x, y);
-
-		int rgb[] = new int[] {
-//			(argb >> 24) & 0xff, //alpha
-		    (argb >> 16) & 0xff, //red
-		    (argb >>  8) & 0xff, //green
-		    (argb      ) & 0xff  //blue
-		};
-		
-		return rgb;
+		IJ.saveAs(imp, "PNG", path);
 	}
 }

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKBackground;
@@ -113,7 +114,14 @@ public class SGDKResfileExportManager {
 				StandardCopyOption.REPLACE_EXISTING);
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("XGM " + environmentSound.getName() + " \"" + relativePath+environmentSound.toString() + "\"\n" );		
+		sb.append("XGM " + environmentSound.getName() +
+				" \"" + relativePath+environmentSound.toString() +
+				"\" "+ environmentSound.getTiming() +
+				(StringUtils.isNotBlank(environmentSound.getOptions())?
+						" " + environmentSound.getOptions():
+						""
+				) +
+				"\n" );		
 		return sb;
 	}
 
@@ -124,7 +132,15 @@ public class SGDKResfileExportManager {
 				StandardCopyOption.REPLACE_EXISTING);
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("WAV " + fxSound.getName() + " \"" + relativePath+fxSound.toString() + "\"\n");		
+		sb.append("WAV " + fxSound.getName() +
+				" \"" + relativePath+fxSound.toString() + 
+				"\" " + fxSound.getDriver().getValue() +
+				(fxSound.getDriver().equals(SGDKFXSound.Driver.PCM) 
+					&& fxSound.getOutrate()>=0?
+						" "+fxSound.getOutrate()
+						:""
+				)+
+				"\n");		
 		return sb;
 	}
 	

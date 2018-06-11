@@ -36,6 +36,7 @@ public class CreateEnvironmentDialog extends JDialog{
 	
 	private JTextField environmentSoundPathText = new JTextField();
 	private JFileChooser environmentSoundPath = new JFileChooser(System.getProperty("user.home"));
+	private File[] selectedFiles = null;
 	private JButton acceptButon = new JButton("Ok");
 	private static final long serialVersionUID = 1L;
 	
@@ -69,6 +70,7 @@ public class CreateEnvironmentDialog extends JDialog{
 			}
 		});
 		environmentSoundPath.setAcceptAllFileFilterUsed(false);
+		environmentSoundPath.setMultiSelectionEnabled(true);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -98,7 +100,14 @@ public class CreateEnvironmentDialog extends JDialog{
             public void mouseClicked(MouseEvent e){				
 				int returnVal = environmentSoundPath.showDialog(parent, "New Environment Sound");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					environmentSoundPathText.setText(environmentSoundPath.getSelectedFile().getAbsolutePath());
+					selectedFiles = environmentSoundPath.getSelectedFiles();
+					String[] values = new String[selectedFiles.length];
+					int i = 0;
+					for(File f : selectedFiles) {
+						values[i] = f.getAbsolutePath();
+						i++;
+					}
+					environmentSoundPathText.setText(StringUtils.join(values, ","));
 		        }
             }
 		});
@@ -128,8 +137,10 @@ public class CreateEnvironmentDialog extends JDialog{
 				}
 				
 				if (validForm) {
-					SGDKEnvironmentSound environmentSound = SGDKEntityFactory.createSGDKEnvironmentSound(environmentSoundPathText.getText(), (SGDKFolder)parentNode);
-					parent.getProjectExplorer().getProjectExplorerTree().addElement(environmentSound, parentNode);
+					for(File f : selectedFiles) {
+						SGDKEnvironmentSound environmentSound = SGDKEntityFactory.createSGDKEnvironmentSound(f.getAbsolutePath(), (SGDKFolder)parentNode);
+						parent.getProjectExplorer().getProjectExplorerTree().addElement(environmentSound, parentNode);
+					}
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);

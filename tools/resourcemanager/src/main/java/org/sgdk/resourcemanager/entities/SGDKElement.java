@@ -1,6 +1,7 @@
 package org.sgdk.resourcemanager.entities;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.swing.Icon;
@@ -9,6 +10,7 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = SGDKElementDeserializer.class)
@@ -35,10 +37,25 @@ public abstract class SGDKElement {
 		
 	public SGDKElement() {}
 	
-	public SGDKElement(String path) throws SGDKInvalidFormatException{
+	public SGDKElement(JsonNode node) throws SGDKInvalidFormatException, IOException {
+		this(node.get("path").asText());
+	};
+	
+	public SGDKElement(String path) throws SGDKInvalidFormatException, IOException{
 		this.path = path;
+		try {
+			File f = new File(path);
+			if(!f.exists()) {
+				throw new IOException("File " + path + " not found");
+			}
+		} catch (IOException e) {
+			throw e;
+		}
 		if(!validateFormat(path)) throw new SGDKInvalidFormatException();
+		init();
 	}
+	
+	protected abstract void init() throws SGDKInvalidFormatException;
 	
 	public String getPath() {
 		return path;

@@ -13,6 +13,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class SGDKSprite extends SGDKBackground{
 
 	public enum ValidFormat{
@@ -30,10 +32,17 @@ public class SGDKSprite extends SGDKBackground{
 	private Collision collision = Collision.NONE;
 	
 	public SGDKSprite() {};
+	
+	public SGDKSprite(JsonNode node) throws SGDKInvalidFormatException, IOException {
+		super(node);
+		width = node.get("width").asInt();
+		heigth = node.get("heigth").asInt();
+		collision = Collision.valueOf(node.get("collision").asText());
+		time = node.get("time").asInt();
+	};
 
-	public SGDKSprite(String path) throws SGDKInvalidFormatException {
+	public SGDKSprite(String path) throws SGDKInvalidFormatException, IOException {
 		super(path);
-		setType(Type.SGDKSprite);
 		BufferedImage img;
 		try {
 			img = ImageIO.read(new File(path));
@@ -44,6 +53,12 @@ public class SGDKSprite extends SGDKBackground{
 		heigth = img.getHeight();
 		width = width/8;
 		heigth = heigth/8;
+	}
+	
+	@Override
+	protected void init() throws SGDKInvalidFormatException {
+		super.init();
+		setType(Type.SGDKSprite);
 	}
 	
 	@Override

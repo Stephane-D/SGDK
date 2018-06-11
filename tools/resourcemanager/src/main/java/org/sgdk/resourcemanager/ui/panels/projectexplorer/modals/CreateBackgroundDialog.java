@@ -41,6 +41,7 @@ public class CreateBackgroundDialog extends JDialog{
 	private JTextField backgroundPathText = new JTextField();
 	private JFileChooser backgroundPath = new JFileChooser(System.getProperty("user.home"));
 	private JButton acceptButon = new JButton("Ok");
+	private File[] selectedFiles = null;
 	private static final long serialVersionUID = 1L;	
 	
 	public CreateBackgroundDialog(ResourceManagerFrame parent, SGDKElement parentNode) {
@@ -73,6 +74,7 @@ public class CreateBackgroundDialog extends JDialog{
 			}
 		});
 		backgroundPath.setAcceptAllFileFilterUsed(false);
+		backgroundPath.setMultiSelectionEnabled(true);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -102,7 +104,14 @@ public class CreateBackgroundDialog extends JDialog{
             public void mouseClicked(MouseEvent e){				
 				int returnVal = backgroundPath.showDialog(parent, "New Background");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					backgroundPathText.setText(backgroundPath.getSelectedFile().getAbsolutePath());
+					selectedFiles = backgroundPath.getSelectedFiles();
+					String[] values = new String[selectedFiles.length];
+					int i = 0;
+					for(File f : selectedFiles) {
+						values[i] = f.getAbsolutePath();
+						i++;
+					}
+					backgroundPathText.setText(StringUtils.join(values, ","));
 		        }
             }
 		});
@@ -132,10 +141,13 @@ public class CreateBackgroundDialog extends JDialog{
 				}
 				
 				if (validForm) {
-					SGDKBackground background = SGDKEntityFactory.createSGDKBackground(backgroundPathText.getText(), (SGDKFolder)parentNode);
-					if(background != null) {						
-						parent.getProjectExplorer().getProjectExplorerTree().addElement(background, parentNode);
+					for(File f : selectedFiles) {
+						SGDKBackground background = SGDKEntityFactory.createSGDKBackground(f.getAbsolutePath(), (SGDKFolder)parentNode);
+						if(background != null) {						
+							parent.getProjectExplorer().getProjectExplorerTree().addElement(background, parentNode);
+						}
 					}
+					
 					clean();
 					parent.setEnabled(true);
 					setVisible(false);					

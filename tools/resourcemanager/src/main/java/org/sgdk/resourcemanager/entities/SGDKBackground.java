@@ -1,17 +1,19 @@
 package org.sgdk.resourcemanager.entities;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.commons.io.FilenameUtils;
 import org.sgdk.resourcemanager.entities.exceptions.SGDKInvalidFormatException;
+import org.sgdk.resourcemanager.ui.utils.indexedimage.ImageUtil;
 import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import ij.ImagePlus;
 
 public class SGDKBackground extends SGDKElement{
 	
@@ -23,41 +25,52 @@ public class SGDKBackground extends SGDKElement{
 	}
 	
 	public enum Compression{
-		BEST,
-		NONE,
-		APLIB,
-		FAST
+		BEST(-1), NONE(0), APLIB(1), FAST(2);
+		
+		private int value;
+		
+		private Compression(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
 	}
 	
 	private Compression compression = Compression.BEST;
 	
 	public SGDKBackground() {};
 	
-	public SGDKBackground(String path) throws SGDKInvalidFormatException {
-		super(path);
+	public SGDKBackground(JsonNode node) throws SGDKInvalidFormatException, IOException {
+		super(node);		
+		this.compression = Compression.valueOf(node.get("compression").asText());
+	};
+	
+	public SGDKBackground(String path) throws SGDKInvalidFormatException, IOException {
+		super(path);		
+	}
+	
+	@Override
+	protected void init() throws SGDKInvalidFormatException {
 		setType(Type.SGDKBackground);
-		BufferedImage img;
-		IndexColorModel icm;
-		try {
-			img = ImageIO.read(new File(path));
-			icm = (IndexColorModel)img.getColorModel();
-		} catch (Exception e) {
-			throw new SGDKInvalidFormatException(e.getMessage(), e);
-		}
-		int width = img.getWidth();
-		int heigth = img.getHeight();
+		ImagePlus ip = new ImagePlus(getPath());
+		
+		int width = ImageUtil.getWidth(ip);
+		int heigth = ImageUtil.getHeight(ip);
 		if(width % 8 != 0) {
 			throw new SGDKInvalidFormatException("Image width is not a multiple of 8 "+ toString());
 		}
 		if(heigth % 8 != 0) {
 			throw new SGDKInvalidFormatException("Image heigth is not a multiple of 8 "+ toString());
 		}
-		if(icm.getMapSize() != PALETTE_SIZE) {
-			throw new SGDKInvalidFormatException("Palette Size is not 16. Palette size is " + icm.getMapSize() +" " + toString());
+		if(!ImageUtil.is8BitsColorImageIndexed(ip)) {
+			throw new SGDKInvalidFormatException("Image is not Indexed "+ toString());
 		}
-//		if(icm.getPixelSize() != BPP) {
-//			throw new SGDKInvalidFormatException("bpp is not 8. Palette size is " + icm.getPixelSize() +" " + toString());
-//		}
+		int paletteSize = ImageUtil.getPaletteSize(ip);
+		if(paletteSize != PALETTE_SIZE) {
+			throw new SGDKInvalidFormatException("Palette Size is not 16. Palette size is " + paletteSize +" " + toString());
+		}
 	}
 
 	@Override
