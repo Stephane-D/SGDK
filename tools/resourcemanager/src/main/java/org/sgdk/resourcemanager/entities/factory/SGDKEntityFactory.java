@@ -185,6 +185,8 @@ public class SGDKEntityFactory {
 	public static void deleteSGDKElement(SGDKElement element) {
 		File f = new File(element.getPath());
 		f.delete();		
-		((SGDKFolder)(element.getParent())).getChilds().remove(element);
+		if(element.getParent() != null && ((SGDKFolder)(element.getParent())).getChilds() != null) {			
+			((SGDKFolder)(element.getParent())).getChilds().remove(element);
+		}
 	}
 }

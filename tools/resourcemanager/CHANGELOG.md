@@ -1,6 +1,11 @@
 Changelog
 =========
 
+#0.5.0
+
+### New Features
+1. Delete unnecesarie dialogs to add resources to projects
+
 #0.4.0
 
 ### New Features

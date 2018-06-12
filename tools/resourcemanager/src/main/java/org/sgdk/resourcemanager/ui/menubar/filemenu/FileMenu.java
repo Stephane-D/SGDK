@@ -14,6 +14,5 @@ public class FileMenu extends Menu {
 	public FileMenu(ResourceManagerFrame parent) {
 		super("File");
 		add(new NewMenuItem(parent));
-		add(new OpenFileMenuItem());
 	}
 }
