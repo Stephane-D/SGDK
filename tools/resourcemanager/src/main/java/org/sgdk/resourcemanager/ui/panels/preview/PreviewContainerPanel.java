@@ -2,12 +2,9 @@ package org.sgdk.resourcemanager.ui.panels.preview;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -69,9 +66,12 @@ public class PreviewContainerPanel extends JPanel {
 		try {
 			switch(sgdkElement.getType()) {
 			case SGDKBackground:
+				paintImage(sgdkElement);
+				toolBar.showImageButtons(false);
+				break;
 			case SGDKSprite:
 				paintImage(sgdkElement);
-				toolBar.showImageButtons();
+				toolBar.showImageButtons(true);
 				break;
 			case SGDKEnvironmentSound:
 			case SGDKFXSound:
@@ -107,16 +107,12 @@ public class PreviewContainerPanel extends JPanel {
 	}
 
 	private void paintImage(SGDKElement sgdkElement) throws IOException {
+		previewPanel.paintImage(sgdkElement);
 		switch (sgdkElement.getType()) {
-		case SGDKBackground:
-		case SGDKSprite:
-			previewPanel.paintImage(ImageIO.read(new File(sgdkElement.getPath())));
-			break;
 		case SGDKEnvironmentSound:
 		case SGDKFXSound:
 		case SGDKFolder:
 		case SGDKProject:
-			previewPanel.paintImage(((ImageIcon)sgdkElement.getIcon()).getImage());
 			previewPanel.setZoom(previewPanel.getZoom() * 5);
 			break;
 		default:

@@ -80,7 +80,7 @@ public class ResourceManagerFrame extends JFrame implements ComponentListener{
     			true,
     			preview_propsSP, consolePanel);
 		preview_props_consoleSP.resetToPreferredSizes();
-		componentsContainerPanel = new ComponentsContainerPanel();
+		componentsContainerPanel = new ComponentsContainerPanel(previewContainerPanel);
 		componentsContainerPanel.setPreferredSize(new Dimension(getWidth()/6, getHeight()));
 		componentsContainerPanel.setMinimumSize(new Dimension(minimizeWidth/8, minimizeHeight/3));
 		

@@ -100,7 +100,7 @@ public class SGDKResfileExportManager {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("SPRITE " + sprite.getName() + " \"" + relativePath+sprite.toString() + "\" " +
-				sprite.getWidth() + " " +sprite.getHeigth() + " " +
+				sprite.getWidth() + " " +sprite.getHeight() + " " +
 				sprite.getCompression().toString() + " " +
 				sprite.getTime() + " " +
 				sprite.getCollision().toString()+"\n");		

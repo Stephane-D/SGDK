@@ -32,8 +32,9 @@ public class PreviewContainerToolbar extends JPanel {
 		soundToolbar.setVisible(false);
 	}
 
-	public void showImageButtons() {
+	public void showImageButtons(boolean enableGrid) {
 		imageToolbar.setVisible(true);
+		imageToolbar.showGridButtton(enableGrid);
 	}
 
 	public void showSoundButtons() {

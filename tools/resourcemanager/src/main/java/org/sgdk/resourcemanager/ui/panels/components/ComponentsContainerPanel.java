@@ -12,6 +12,7 @@ import org.sgdk.resourcemanager.entities.SGDKElement;
 import org.sgdk.resourcemanager.entities.SGDKEnvironmentSound;
 import org.sgdk.resourcemanager.entities.SGDKFXSound;
 import org.sgdk.resourcemanager.entities.SGDKSprite;
+import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
 
 public class ComponentsContainerPanel extends JPanel {
 
@@ -25,12 +26,12 @@ public class ComponentsContainerPanel extends JPanel {
 	private SpriteComponentsPanel spriteComponentsPanel;
 	private EnvironmentSoundComponentsPanel environmentSoundComponentsPanel;
 	
-	public ComponentsContainerPanel() throws IOException {
+	public ComponentsContainerPanel(PreviewContainerPanel previewContainerPanel) throws IOException {
 		super(new GridBagLayout());
 		setBorder(BorderFactory.createTitledBorder("Components"));
 		
 		backgroundComponentsPanel = new BackgroundComponentsPanel();
-		spriteComponentsPanel = new SpriteComponentsPanel();
+		spriteComponentsPanel = new SpriteComponentsPanel(previewContainerPanel);
 		fxComponentsPanel = new FXSoundComponentsPanel();
 		environmentSoundComponentsPanel = new EnvironmentSoundComponentsPanel();
 		

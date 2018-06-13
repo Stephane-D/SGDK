@@ -8,6 +8,7 @@ import org.sgdk.resourcemanager.ui.panels.components.components.CollisionCompone
 import org.sgdk.resourcemanager.ui.panels.components.components.CompressionComponent;
 import org.sgdk.resourcemanager.ui.panels.components.components.SpriteDimensionComponent;
 import org.sgdk.resourcemanager.ui.panels.components.components.TimeComponent;
+import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
 
 public class SpriteComponentsPanel extends JPanel {
 
@@ -16,14 +17,20 @@ public class SpriteComponentsPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private CompressionComponent compressionComponent = new CompressionComponent();
-	private TimeComponent timeComponent = new TimeComponent();
-	private CollisionComponent collisionComponent = new CollisionComponent();
-	private SpriteDimensionComponent spriteDimensionsComponent = new SpriteDimensionComponent();
+	private CompressionComponent compressionComponent = null;
+	private TimeComponent timeComponent = null;
+	private CollisionComponent collisionComponent = null;
+	private SpriteDimensionComponent spriteDimensionsComponent = null;
 	
-	public SpriteComponentsPanel(){
+	public SpriteComponentsPanel(PreviewContainerPanel previewContainerPanel){
 		super();
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+		
+		compressionComponent = new CompressionComponent();
+		timeComponent = new TimeComponent();
+		collisionComponent = new CollisionComponent();
+		spriteDimensionsComponent = new SpriteDimensionComponent(previewContainerPanel);
+		
 		add(spriteDimensionsComponent);
 		add(compressionComponent);
 		add(timeComponent);

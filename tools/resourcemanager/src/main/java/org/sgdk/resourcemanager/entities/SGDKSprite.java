@@ -27,7 +27,7 @@ public class SGDKSprite extends SGDKBackground{
 		CIRCLE
 	}
 	private int width;
-	private int heigth;
+	private int height;
 	private int time = 0;
 	private Collision collision = Collision.NONE;
 	
@@ -36,7 +36,7 @@ public class SGDKSprite extends SGDKBackground{
 	public SGDKSprite(JsonNode node) throws SGDKInvalidFormatException, IOException {
 		super(node);
 		width = node.get("width").asInt();
-		heigth = node.get("heigth").asInt();
+		height = node.get("height").asInt();
 		collision = Collision.valueOf(node.get("collision").asText());
 		time = node.get("time").asInt();
 	};
@@ -50,9 +50,9 @@ public class SGDKSprite extends SGDKBackground{
 			throw new SGDKInvalidFormatException(e.getMessage(), e);
 		}
 		width = img.getWidth();
-		heigth = img.getHeight();
+		height = img.getHeight();
 		width = width/8;
-		heigth = heigth/8;
+		height = height/8;
 	}
 	
 	@Override
@@ -91,12 +91,12 @@ public class SGDKSprite extends SGDKBackground{
 		this.width = width;
 	}
 
-	public int getHeigth() {
-		return heigth;
+	public int getHeight() {
+		return height;
 	}
 
-	public void setHeigth(int heigth) {
-		this.heigth = heigth;
+	public void setHeight(int height) {
+		this.height = height;
 	}
 
 	public int getTime() {

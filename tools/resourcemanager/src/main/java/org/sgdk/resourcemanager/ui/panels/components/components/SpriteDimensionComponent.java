@@ -12,6 +12,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.sgdk.resourcemanager.entities.SGDKSprite;
+import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
 
 public class SpriteDimensionComponent extends JPanel{
 		
@@ -22,7 +23,7 @@ public class SpriteDimensionComponent extends JPanel{
 
 	private static final int SCALE_MULTIPLICATOR = 8;
 	
-	public SpriteDimensionComponent() {
+	public SpriteDimensionComponent(PreviewContainerPanel previewContainerPanel) {
 		super(new GridLayout(1,4));
 		setBorder(
 			BorderFactory.createTitledBorder(
@@ -40,6 +41,7 @@ public class SpriteDimensionComponent extends JPanel{
 				if(sprite != null){
 					if(Float.valueOf(w.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {						
 						sprite.setWidth(Math.round(Float.valueOf(w.getText()) / SCALE_MULTIPLICATOR));
+						previewContainerPanel.repaint();
 					}
 				}
 			}
@@ -51,7 +53,8 @@ public class SpriteDimensionComponent extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				if(sprite != null){
 					if(Float.valueOf(w.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {	
-						sprite.setHeigth(Math.round(Float.valueOf(h.getText()) / SCALE_MULTIPLICATOR));
+						sprite.setHeight(Math.round(Float.valueOf(h.getText()) / SCALE_MULTIPLICATOR));
+						previewContainerPanel.repaint();
 					}
 				}
 			}
@@ -65,7 +68,7 @@ public class SpriteDimensionComponent extends JPanel{
 	public void setSGDKSprite(SGDKSprite sprite) {
 		this.sprite = sprite;
 		w.setText(""+ (sprite.getWidth() * SCALE_MULTIPLICATOR));
-		h.setText(""+ (sprite.getHeigth() * SCALE_MULTIPLICATOR));
+		h.setText(""+ (sprite.getHeight() * SCALE_MULTIPLICATOR));
 	}
 	
 }
