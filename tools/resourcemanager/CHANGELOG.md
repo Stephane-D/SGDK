@@ -7,6 +7,7 @@ Changelog
 1. Delete unnecessaries dialogs when add resources to projects
 2. Added grid on sprite edition to separate frames
 3. Added grid color chooser.
+4. Preview zoom using wheel.
 
 #0.4.0
 
