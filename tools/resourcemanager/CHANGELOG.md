@@ -4,10 +4,13 @@ Changelog
 #0.5.0
 
 ### New Features
+1. Added grid on sprite edition to separate frames
+2. Added grid color chooser.
+
+### Enhacements
 1. Delete unnecessaries dialogs when add resources to projects
-2. Added grid on sprite edition to separate frames
-3. Added grid color chooser.
-4. Preview zoom using wheel.
+2. Preview zoom using wheel.
+3. Using keyListener instead of ActionListener to save resources
 
 #0.4.0
 

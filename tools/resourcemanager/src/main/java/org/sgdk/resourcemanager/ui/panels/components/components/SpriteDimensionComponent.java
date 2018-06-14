@@ -1,8 +1,8 @@
 package org.sgdk.resourcemanager.ui.panels.components.components;
 
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -11,11 +11,16 @@ import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sgdk.resourcemanager.entities.SGDKSprite;
 import org.sgdk.resourcemanager.ui.panels.preview.PreviewContainerPanel;
 
 public class SpriteDimensionComponent extends JPanel{
 		
+	private static final Logger logger = LogManager.getLogger("UILogger");
+	
 	private static final long serialVersionUID = 1L;
 	private SGDKSprite sprite = null;
 	private JTextField w = new JTextField();
@@ -34,27 +39,45 @@ public class SpriteDimensionComponent extends JPanel{
 			)
 		);
 		
-		w.addActionListener(new ActionListener() {
-			
+		w.addKeyListener(new KeyListener() {
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(sprite != null){
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(sprite != null && !StringUtils.isEmpty(w.getText())){
 					if(Float.valueOf(w.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {						
 						sprite.setWidth(Math.round(Float.valueOf(w.getText()) / SCALE_MULTIPLICATOR));
 						previewContainerPanel.repaint();
+						logger.info("Width was changed to "+w.getText());
+					}else {
+						logger.warn("The input("+w.getText()+") must to be multiple of 8");
 					}
 				}
 			}
 		});
 		
-		h.addActionListener(new ActionListener() {
-			
+		h.addKeyListener(new KeyListener() {
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(sprite != null){
-					if(Float.valueOf(w.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {	
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(sprite != null && StringUtils.isEmpty(h.getText())){
+					if(Float.valueOf(h.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {	
 						sprite.setHeight(Math.round(Float.valueOf(h.getText()) / SCALE_MULTIPLICATOR));
 						previewContainerPanel.repaint();
+						logger.info("Height was changed to "+h.getText());
+					}else {
+						logger.warn("The input("+h.getText()+") must to be multiple of 8");
 					}
 				}
 			}
