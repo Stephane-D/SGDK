@@ -71,7 +71,7 @@ public class SpriteDimensionComponent extends JPanel{
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(sprite != null && StringUtils.isEmpty(h.getText())){
+				if(sprite != null && !StringUtils.isEmpty(h.getText())){
 					if(Float.valueOf(h.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {	
 						sprite.setHeight(Math.round(Float.valueOf(h.getText()) / SCALE_MULTIPLICATOR));
 						previewContainerPanel.repaint();
