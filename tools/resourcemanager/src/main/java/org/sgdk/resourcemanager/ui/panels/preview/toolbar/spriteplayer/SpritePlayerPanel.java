@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 
 import org.sgdk.resourcemanager.entities.SGDKSprite;
+import org.sgdk.resourcemanager.ui.utils.indexedimage.ImageUtil;
 
 import ij.ImagePlus;
 
@@ -27,7 +28,8 @@ public class SpritePlayerPanel extends JPanel {
 	private int numAnimations = -1;
 	private float zoom = 1f;
 
-	private Image[][] frames = null;
+	private ImagePlus[][] frames = null;
+	private boolean[][] framesIsEmpty = null;
 
 	private int w;
 	private int h;
@@ -55,14 +57,23 @@ public class SpritePlayerPanel extends JPanel {
 		numFrames  = new Long(image.getWidth()/(w)).intValue();
 		numAnimations = new Long(image.getHeight()/(h)).intValue();
 		if(animationIndex < numAnimations) {
-			frames = new Image[numAnimations][numFrames];
+			frames = new ImagePlus[numAnimations][numFrames];
+			framesIsEmpty = new boolean[numAnimations][numFrames];
 			for(int i = 0; i<numAnimations; i++) {
 				for(int j = 0; j<numFrames; j++) {
-					frames[i][j] = image.getBufferedImage().getSubimage(j * w, i * h, w, h);
+					frames[i][j] =new ImagePlus("", image.getBufferedImage().getSubimage(j * w, i * h, w, h));
+					framesIsEmpty[i][j] = ImageUtil.isEmpty(frames[i][j]);
+				}
+			}			
+			
+			int length = 0;
+			for(int j = 0; j<numFrames; j++) {				
+				if(!framesIsEmpty[animationIndex][j]) {
+					length++;
 				}
 			}
 			
-			thread = new SpritePlayerThread(this, animationIndex, numFrames);
+			thread = new SpritePlayerThread(this, animationIndex, length);
 			thread.start();
 		}		
 	}	
@@ -91,7 +102,7 @@ public class SpritePlayerPanel extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 		if(frames != null && animationIndex>=0 && frame>=0) {
-			Image img = frames[animationIndex][frame].getScaledInstance(Math.round(w*zoom), Math.round(h*zoom), Image.SCALE_FAST);
+			Image img = frames[animationIndex][frame].getImage().getScaledInstance(Math.round(w*zoom), Math.round(h*zoom), Image.SCALE_FAST);
 			g.drawImage(img, Math.round(getWidth()/2f-(w*zoom)/2f), Math.round(getHeight()/2f-(h*zoom)/2f), null);
 		}
 	}

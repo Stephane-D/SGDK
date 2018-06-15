@@ -12,7 +12,7 @@ public class SpritePlayerThread extends Thread {
 	public SpritePlayerThread(SpritePlayerPanel spritePlayer, int animationIndex, int numFrames) {
 		this.spritePlayer = spritePlayer;
 		this.numFrames = numFrames;
-		run = spritePlayer.getSprite().getTime() > 0 && numFrames > 1;	
+		run = spritePlayer.getSprite().getTime() > 0 && numFrames > 0;	
 		this.animationIndex = animationIndex;
 	}
 

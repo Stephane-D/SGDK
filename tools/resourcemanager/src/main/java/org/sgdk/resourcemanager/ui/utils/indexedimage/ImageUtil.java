@@ -118,4 +118,14 @@ public class ImageUtil {
 		}
 		IJ.saveAs(imp, "PNG", path);
 	}
+
+	public static boolean isEmpty(ImagePlus image) {
+		DataBuffer db = image.getBufferedImage().getRaster().getDataBuffer();
+		boolean isEmpty = true;
+		for(int i = 0; i< db.getSize() && isEmpty; i++) {
+			int val = db.getElem(i);
+			isEmpty = val == 0;
+		}
+		return isEmpty;
+	}
 }
