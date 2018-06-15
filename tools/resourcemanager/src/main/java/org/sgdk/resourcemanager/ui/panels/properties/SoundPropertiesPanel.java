@@ -93,55 +93,7 @@ public class SoundPropertiesPanel extends JPanel {
 		labels.add(new JLabel(""));
 		soundProperties.add(labels.get(4), c);
 		
-		add(soundProperties);
-		
-//		soundFXProperties.setBorder(
-//			BorderFactory.createTitledBorder(
-//				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-//				"Sound FX Properties",
-//				TitledBorder.RIGHT,
-//				TitledBorder.ABOVE_TOP
-//			)
-//		);
-//		
-//		c.gridy = 0;
-//		labels.add(new JLabel(""));
-//		soundFXProperties.add(labels.get(2), c);
-//		
-//		c.gridy = 1;
-//		labels.add(new JLabel(""));
-//		soundFXProperties.add(labels.get(3), c);
-//		
-//		c.gridy = 2;
-//		labels.add(new JLabel(""));
-//		soundFXProperties.add(labels.get(4), c);
-//
-//		soundFXProperties.setVisible(false);
-//		add(soundFXProperties);
-//		
-//		soundEnvironmentProperties.setBorder(
-//			BorderFactory.createTitledBorder(
-//				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-//				"Sound FX Properties",
-//				TitledBorder.RIGHT,
-//				TitledBorder.ABOVE_TOP
-//			)
-//		);
-//		
-//		c.gridy = 0;
-//		labels.add(new JLabel(""));
-//		soundEnvironmentProperties.add(labels.get(5), c);
-//		
-//		c.gridy = 1;
-//		labels.add(new JLabel(""));
-//		soundEnvironmentProperties.add(labels.get(6), c);
-//		
-//		c.gridy = 2;
-//		labels.add(new JLabel(""));
-//		soundEnvironmentProperties.add(labels.get(7), c);
-//		
-//		soundEnvironmentProperties.setVisible(false);
-//		add(soundEnvironmentProperties);
+		add(soundProperties);		
 	}
 
 	public void setProperties(SGDKElement e) {
@@ -157,30 +109,40 @@ public class SoundPropertiesPanel extends JPanel {
 				VGMPlayer vgmPlayer = new VGMPlayer(SoundPlayer.SEGA_SOUND_RATE); 
 				vgmPlayer.loadFile(file.toURI().toURL(), e.getPath());
 				audioFormat = vgmPlayer.getAudioFormat();
+				
+				double durationSec = file.length() / audioFormat.getSampleRate() / (audioFormat.getSampleSizeInBits() / 8.0) / audioFormat.getChannels();
+				GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+//				gc.setTimeInMillis((int)(vgmPlayer.getVgmDuration()));				
+				gc.setTimeInMillis((int)(durationSec * 1000));
+				duration = df.format(gc.getTime());
+				format = "VGM-" +audioFormat.getEncoding().toString();
+					
+				labels.get(2).setText("Version: " + vgmPlayer.getVgmVersion());
+				labels.get(3).setText("");
+				labels.get(4).setText("");	
 			}else {
 				AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
 				audioFormat = audioStream.getFormat();
+				
+				double durationSec = file.length() / audioFormat.getSampleRate() / (audioFormat.getSampleSizeInBits() / 8.0) / audioFormat.getChannels();
+				GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+				gc.setTimeInMillis((int)(durationSec * 1000));
+				duration = df.format(gc.getTime());
+				format = audioFormat.getEncoding().toString();				
+				
+				labels.get(2).setText("Channels: " + audioFormat.getChannels());
+				labels.get(3).setText("Frame Rate: " + audioFormat.getFrameRate());
+				labels.get(4).setText("Frame Size: " + audioFormat.getFrameSize());	
 			}
+			labels.get(0).setText("Format: " +format);		
+			labels.get(1).setText("Duration: " + duration);
 		} catch (UnsupportedAudioFileException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}
-
-		double durationSec = file.length() / audioFormat.getSampleRate() / (audioFormat.getSampleSizeInBits() / 8.0) / audioFormat.getChannels();
-		GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		gc.setTimeInMillis((int)(durationSec * 1000));
-		duration = df.format(gc.getTime());
-		format = audioFormat.getEncoding().toString();
-		
-		labels.get(0).setText("Format: " +format);		
-		labels.get(1).setText("Duration: " + duration);
-		labels.get(2).setText("Channels: " + audioFormat.getChannels());
-		labels.get(3).setText("Frame Rate: " + audioFormat.getFrameRate());
-		labels.get(4).setText("Frame Size: " + audioFormat.getFrameSize());		
-		
+		}		
 	}
 
 	private void clean() {

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Locale;
 
 /* Copyright (C) 2007-2008 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser 
@@ -253,5 +254,15 @@ public class VGMPlayer extends EmuPlayer {
 		return DataReader.loadData(in);
 	}
 	
+	public String getVgmVersion() {
+		return String.format(
+				Locale.ENGLISH,
+				"%.2f",
+				Integer.valueOf(Integer.toHexString(((VgmEmu)this.emu).vgmVersion))/100f);
+	}
 	
+	public long getVgmDuration() {
+//		((VgmEmu)this.emu);
+		return 0;
+	}
 }
