@@ -25,8 +25,6 @@ public class SpriteDimensionComponent extends JPanel{
 	private SGDKSprite sprite = null;
 	private JTextField w = new JTextField();
 	private JTextField h = new JTextField();
-
-	private static final int SCALE_MULTIPLICATOR = 8;
 	
 	public SpriteDimensionComponent(PreviewContainerPanel previewContainerPanel) {
 		super(new GridLayout(1,4));
@@ -50,8 +48,8 @@ public class SpriteDimensionComponent extends JPanel{
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if(sprite != null && !StringUtils.isEmpty(w.getText())){
-					if(Float.valueOf(w.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {						
-						sprite.setWidth(Math.round(Float.valueOf(w.getText()) / SCALE_MULTIPLICATOR));
+					if(Float.valueOf(w.getText()).intValue() % SGDKSprite.SCALE_MULTIPLICATOR == 0) {						
+						sprite.setWidth(Math.round(Float.valueOf(w.getText()) / SGDKSprite.SCALE_MULTIPLICATOR));
 						previewContainerPanel.repaint();
 						logger.info("Width was changed to "+w.getText());
 					}else {
@@ -72,8 +70,8 @@ public class SpriteDimensionComponent extends JPanel{
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if(sprite != null && !StringUtils.isEmpty(h.getText())){
-					if(Float.valueOf(h.getText()).intValue() % SCALE_MULTIPLICATOR == 0) {	
-						sprite.setHeight(Math.round(Float.valueOf(h.getText()) / SCALE_MULTIPLICATOR));
+					if(Float.valueOf(h.getText()).intValue() % SGDKSprite.SCALE_MULTIPLICATOR == 0) {	
+						sprite.setHeight(Math.round(Float.valueOf(h.getText()) / SGDKSprite.SCALE_MULTIPLICATOR));
 						previewContainerPanel.repaint();
 						logger.info("Height was changed to "+h.getText());
 					}else {
@@ -90,8 +88,8 @@ public class SpriteDimensionComponent extends JPanel{
 	
 	public void setSGDKSprite(SGDKSprite sprite) {
 		this.sprite = sprite;
-		w.setText(""+ (sprite.getWidth() * SCALE_MULTIPLICATOR));
-		h.setText(""+ (sprite.getHeight() * SCALE_MULTIPLICATOR));
+		w.setText(""+ (sprite.getWidth() * SGDKSprite.SCALE_MULTIPLICATOR));
+		h.setText(""+ (sprite.getHeight() * SGDKSprite.SCALE_MULTIPLICATOR));
 	}
 	
 }

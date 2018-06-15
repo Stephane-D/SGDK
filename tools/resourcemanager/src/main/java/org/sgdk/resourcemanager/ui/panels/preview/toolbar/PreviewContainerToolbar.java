@@ -2,6 +2,7 @@ package org.sgdk.resourcemanager.ui.panels.preview.toolbar;
 
 import javax.swing.JPanel;
 
+import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 import org.sgdk.resourcemanager.ui.panels.preview.PreviewPanel;
 import org.sgdk.resourcemanager.ui.panels.preview.SoundPlayer;
 
@@ -17,10 +18,10 @@ public class PreviewContainerToolbar extends JPanel {
 	private ImageToolbar imageToolbar;
 	private SoundToolbar soundToolbar;	
 	
-	public PreviewContainerToolbar(PreviewPanel previewPanel, SoundPlayer soundPlayer) {
+	public PreviewContainerToolbar(ResourceManagerFrame parent, PreviewPanel previewPanel, SoundPlayer soundPlayer) {
 		super();
 		
-		imageToolbar = new ImageToolbar(previewPanel);
+		imageToolbar = new ImageToolbar(parent, previewPanel);
 		soundToolbar = new SoundToolbar(soundPlayer);			
 		clean();		
 		add(imageToolbar);
@@ -35,6 +36,7 @@ public class PreviewContainerToolbar extends JPanel {
 	public void showImageButtons(boolean enableGrid) {
 		imageToolbar.setVisible(true);
 		imageToolbar.showGridButtton(enableGrid);
+		imageToolbar.showSpritePlayerButton(enableGrid);
 	}
 
 	public void showSoundButtons() {

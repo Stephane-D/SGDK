@@ -6,6 +6,7 @@ Changelog
 ### New Features
 1. Added grid on sprite edition to separate frames
 2. Added grid color chooser.
+3. Added Sprite player.
 
 ### Enhacements
 1. Delete unnecessaries dialogs when add resources to projects

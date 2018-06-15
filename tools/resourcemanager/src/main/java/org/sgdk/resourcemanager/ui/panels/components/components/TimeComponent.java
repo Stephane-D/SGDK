@@ -18,8 +18,6 @@ public class TimeComponent extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private SGDKSprite sprite = null;
 	private JTextField time = new JTextField();
-
-	private static final float TIME_MULTIPLICATOR = 60f;
 	
 	public TimeComponent() {
 		super(new GridLayout(1,1));
@@ -43,7 +41,7 @@ public class TimeComponent extends JPanel{
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if(sprite != null && !StringUtils.isEmpty(time.getText())){
-					sprite.setTime(Math.round(Float.valueOf(time.getText()) * TIME_MULTIPLICATOR));
+					sprite.setTime(Math.round(Float.valueOf(time.getText()) * SGDKSprite.TIME_MULTIPLICATOR));
 				}
 			}
 		});
@@ -52,7 +50,7 @@ public class TimeComponent extends JPanel{
 	
 	public void setSGDKSprite(SGDKSprite sprite) {
 		this.sprite = sprite;
-		time.setText(""+ (sprite.getTime() / TIME_MULTIPLICATOR));
+		time.setText(""+ (sprite.getTime() / SGDKSprite.TIME_MULTIPLICATOR));
 	}
 	
 }

@@ -16,6 +16,9 @@ import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class SGDKSprite extends SGDKBackground{
+	
+	public static final float TIME_MULTIPLICATOR = 60f;
+	public static final int SCALE_MULTIPLICATOR = 8;
 
 	public enum ValidFormat{
 		png

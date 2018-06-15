@@ -5,15 +5,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
+import org.sgdk.resourcemanager.entities.SGDKSprite;
+import org.sgdk.resourcemanager.ui.ResourceManagerFrame;
 import org.sgdk.resourcemanager.ui.panels.preview.PreviewPanel;
+import org.sgdk.resourcemanager.ui.panels.preview.toolbar.spriteplayer.SpritePlayerDialog;
+import org.sgdk.resourcemanager.ui.utils.svg.SVGUtils;
 
 public class ImageToolbar extends JPanel{
 
@@ -26,10 +28,13 @@ public class ImageToolbar extends JPanel{
 	private JButton zoomDownButton;
 	private JButton backgroundColorButton;
 	private JButton gridColorButton;
+	private JButton spritePlayerButton;
 	
-	PreviewPanel previewPanel;
+	private PreviewPanel previewPanel;
+	private SpritePlayerDialog spritePlayerDialog = null;
+
 	
-	public ImageToolbar (PreviewPanel previewPanel) {
+	public ImageToolbar (ResourceManagerFrame parent, PreviewPanel previewPanel) {
 		super(new GridBagLayout());
 		this.previewPanel = previewPanel;
 		GridBagConstraints c = new GridBagConstraints();
@@ -42,30 +47,10 @@ public class ImageToolbar extends JPanel{
 		c.gridy = 0;
 		
 		zoomUpButton = new JButton("+");
-		zoomUpButton.addMouseListener(new MouseListener() {			
+		zoomUpButton.addActionListener(new ActionListener() {			
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				previewPanel.setZoom(previewPanel.getZoom() + 0.1f);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
 			}
 		});
 
@@ -73,31 +58,10 @@ public class ImageToolbar extends JPanel{
 		add(zoomUpButton, c);
 		
 		zoomDownButton = new JButton("-");	
-		zoomDownButton.addMouseListener(new MouseListener() {
-			
+		zoomDownButton.addActionListener(new ActionListener() {			
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				previewPanel.setZoom(previewPanel.getZoom() - 0.1f);	
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
 			}
 		});
 		c.gridx = 1;
@@ -105,10 +69,10 @@ public class ImageToolbar extends JPanel{
 		
 		backgroundColorButton = new JButton("");
 		backgroundColorButton.setBackground(previewPanel.getBackgroundColor());
-		backgroundColorButton.addMouseListener(new MouseListener() {
+		backgroundColorButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				JColorChooser cc = new JColorChooser();
 				cc.setColor(previewPanel.getBackgroundColor());
 				AbstractColorChooserPanel defaultPanels[] = cc.getChooserPanels();
@@ -127,36 +91,16 @@ public class ImageToolbar extends JPanel{
 					}
 				}, null).setVisible(true);
 			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
 		});
 		c.gridx = 2;
 		add(backgroundColorButton, c);
 		
 		gridColorButton = new JButton("");
 		gridColorButton.setBackground(new Color(0,0,0));
-		gridColorButton.addMouseListener(new MouseListener() {
+		gridColorButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				JColorChooser cc = new JColorChooser();
 				cc.setColor(gridColorButton.getBackground());
 				AbstractColorChooserPanel defaultPanels[] = cc.getChooserPanels();
@@ -175,29 +119,31 @@ public class ImageToolbar extends JPanel{
 					}
 				}, null).setVisible(true);
 			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
 		});
 		c.gridx = 3;
 		add(gridColorButton, c);
+		try {
+			spritePlayerButton = new JButton(SVGUtils.load(
+					getClass().getResource("/icons/043-play-button.svg").toURI(),
+					16,
+					16));
+			spritePlayerButton.addActionListener(new ActionListener() {				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(previewPanel.getElement()!= null && previewPanel.getElement() instanceof SGDKSprite) {						
+						if(spritePlayerDialog == null) {							
+							spritePlayerDialog = new SpritePlayerDialog(parent);
+						}
+						spritePlayerDialog.setSprite((SGDKSprite)previewPanel.getElement());
+						spritePlayerDialog.setVisible(true);
+					}
+				}
+			});
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		c.gridx = 4;
+		add(spritePlayerButton, c);
 	}
 
 	public JButton getBackgroundColorButton() {
@@ -211,6 +157,10 @@ public class ImageToolbar extends JPanel{
 		}else {
 			previewPanel.setGridColor(gridColorButton.getBackground());
 		}
+	}
+	
+	public void showSpritePlayerButton(boolean enablePlayerButton) {
+		spritePlayerButton.setVisible(enablePlayerButton);
 	}
 
 }

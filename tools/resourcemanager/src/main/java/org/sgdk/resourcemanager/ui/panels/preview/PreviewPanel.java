@@ -84,13 +84,13 @@ public class PreviewPanel extends JPanel {
 			if(gridColor!=null && element instanceof SGDKSprite) {
 				SGDKSprite sprite = (SGDKSprite)element;
 				g.setColor(gridColor);
-				int xSize = new Long(Math.round(((screenWidth/2f + imageWidth/2f)-(screenWidth/2f - imageWidth/2f))/(sprite.getWidth() * zoom * 8))).intValue();
+				int xSize = new Long(Math.round(((screenWidth/2f + imageWidth/2f)-(screenWidth/2f - imageWidth/2f))/(sprite.getWidth() * zoom * SGDKSprite.SCALE_MULTIPLICATOR))).intValue();
 				float gridw = ((screenWidth/2f + imageWidth/2f)-(screenWidth/2f - imageWidth/2f))/xSize;
 				for(int x = 0; x<xSize; x++) {
 					int auxX = Math.round((screenWidth/2f - imageWidth/2f) + gridw * x);
 					g.drawLine(auxX, Math.round(screenHeight/2f - imageHeight/2f), auxX, Math.round(screenHeight/2f + imageHeight/2f));
 				}
-				int ySize = new Long(Math.round(((screenHeight/2f + imageHeight/2f)-(screenHeight/2f - imageHeight/2f))/(sprite.getHeight() * zoom * 8))).intValue();
+				int ySize = new Long(Math.round(((screenHeight/2f + imageHeight/2f)-(screenHeight/2f - imageHeight/2f))/(sprite.getHeight() * zoom * SGDKSprite.SCALE_MULTIPLICATOR))).intValue();
 				float gridy = ((screenHeight/2f + imageHeight/2f)-(screenHeight/2f - imageHeight/2f))/ySize;
 				for(int y = 0; y<ySize; y++) {					
 					int auxY = Math.round((screenHeight/2f - imageHeight/2f) + gridy * y);
@@ -127,6 +127,9 @@ public class PreviewPanel extends JPanel {
 	public void setGridColor(Color color) {
 		gridColor  = color;
 		repaint();
-	}	
+	}
 
+	public SGDKElement getElement() {
+		return element;
+	}
 }

@@ -33,7 +33,7 @@ public class PreviewContainerPanel extends JPanel {
 		
 		soundPlayer = new SoundPlayer();
 		previewPanel = new PreviewPanel();
-		toolBar = new PreviewContainerToolbar(previewPanel, soundPlayer);
+		toolBar = new PreviewContainerToolbar(parent, previewPanel, soundPlayer);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -125,4 +125,12 @@ public class PreviewContainerPanel extends JPanel {
 		toolBar.getImageToolbar().getBackgroundColorButton().setBackground(previewPanel.getBackgroundColor());
 	}
 
+	public SoundPlayer getSoundPlayer() {
+		return soundPlayer;
+	}
+
+	public PreviewPanel getPreviewPanel() {
+		return previewPanel;
+	}
+	
 }
