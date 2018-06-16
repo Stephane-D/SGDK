@@ -237,18 +237,32 @@ static Sprite* allocateSprite()
     if (free == allocStack)
     {
 #if (LIB_DEBUG != 0)
-        KLog("SPR_allocateSprite(): failed - no more available sprite !");
+        KLog("SPR_internalAllocateSprite(): failed - no more available sprite !");
 #endif
 
         return NULL;
     }
 
 #if (LIB_DEBUG != 0)
-    KLog_U1("SPR_allocateSprite(): success - allocating sprite at pos ", free[-1] - spritesBank);
+    KLog_U1("SPR_internalAllocateSprite(): success - allocating sprite at pos ", free[-1] - spritesBank);
 #endif // LIB_DEBUG
 
     // allocate
     result = *--free;
+
+    // add the new sprite in the chained list
+    if (lastSprite) lastSprite->next = result;
+    result->prev = lastSprite;
+    result->next = NULL;
+    // update first and last sprite
+    if (firstSprite == NULL) firstSprite = result;
+    lastSprite = result;
+
+    // update sprite number
+    spriteNum++;
+
+    // mark as allocated --> this is done after allocate call, not needed here
+    // result->status = ALLOCATED;
 
     return result;
 }
@@ -262,12 +276,49 @@ static u16 releaseSprite(Sprite* sprite)
     // really allocated ?
     if (sprite->status & ALLOCATED)
     {
+        Sprite* prev;
+        Sprite* next;
+        VDPSprite* lastVDPSprite;
+
 #if (LIB_DEBUG != 0)
-        KLog_U1("SPR_releaseSprite: success - released sprite at pos ", sprite - spritesBank);
+        KLog_U1("SPR_internalReleaseSprite: success - released sprite at pos ", sprite - spritesBank);
 #endif // LIB_DEBUG
 
         // release sprite
         *free++ = sprite;
+
+        // remove sprite from chained list
+        prev = sprite->prev;
+        next = sprite->next;
+
+        // get the last VDP sprite to link from
+        if (prev)
+        {
+            lastVDPSprite = prev->lastVDPSprite;
+            prev->next = next;
+        }
+        else
+        {
+            lastVDPSprite = starter;
+            // update first sprite
+            firstSprite = next;
+        }
+        // get the next VDP Sprite index to link to
+        if (next)
+        {
+            lastVDPSprite->link = next->VDPSpriteIndex;
+            next->prev = prev;
+        }
+        else
+        {
+            lastVDPSprite->link = 0;
+            // update last sprite
+            lastSprite = prev;
+        }
+
+        // decrement number of sprite
+        spriteNum--;
+
         // not anymore allocated
         sprite->status &= ~ALLOCATED;
 
@@ -279,7 +330,7 @@ static u16 releaseSprite(Sprite* sprite)
     }
 
 #if (LIB_DEBUG != 0)
-    KLog_U1_("SPR_releaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
+    KLog_U1_("SPR_internalReleaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
 #endif // LIB_DEBUG
 
 #ifdef SPR_PROFIL
@@ -313,18 +364,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
         return NULL;
     }
 
-    // mark as allocated
     sprite->status = ALLOCATED | (flags & SPR_FLAGS_MASK);
-
-    // add the new sprite
-    if (lastSprite) lastSprite->next = sprite;
-    sprite->prev = lastSprite;
-    sprite->next = NULL;
-    // update first and last sprite
-    if (firstSprite == NULL) firstSprite = sprite;
-    lastSprite = sprite;
-    // update sprite number
-    spriteNum++;
 
 #ifdef SPR_DEBUG
     KLog_U2("SPR_addSpriteEx: added sprite #", getSpriteIndex(sprite), " - internal position = ", sprite - spritesBank);
@@ -426,10 +466,6 @@ void SPR_releaseSprite(Sprite *sprite)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    Sprite* prev;
-    Sprite* next;
-    VDPSprite* lastVDPSprite;
-
 #ifdef SPR_DEBUG
     KLog_U2("SPR_releaseSprite: releasing sprite #", getSpriteIndex(sprite), " - internal position = ", sprite - spritesBank);
 #endif // SPR_DEBUG
@@ -443,37 +479,6 @@ void SPR_releaseSprite(Sprite *sprite)
 
         return;
     }
-
-    prev = sprite->prev;
-    next = sprite->next;
-
-    // get the last VDP sprite to link from
-    if (prev)
-    {
-        lastVDPSprite = prev->lastVDPSprite;
-        prev->next = next;
-    }
-    else
-    {
-        lastVDPSprite = starter;
-        // update first sprite
-        firstSprite = next;
-    }
-    // get the next VDP Sprite index to link to
-    if (next)
-    {
-        lastVDPSprite->link = next->VDPSpriteIndex;
-        next->prev = prev;
-    }
-    else
-    {
-        lastVDPSprite->link = 0;
-        // update last sprite
-        lastSprite = prev;
-    }
-
-    // decrement number of sprite
-    spriteNum--;
 
     u16 status = sprite->status;
 
@@ -521,9 +526,9 @@ void SPR_defragVRAM()
     sprite = firstSprite;
     while(sprite)
     {
-        const u16 status = sprite->status;
+        u16 status = sprite->status;
 
-        // auto VRAM alloc enabled ?
+        // sprite is using auto VRAM allocation ?
         if (status & SPR_FLAG_AUTO_VRAM_ALLOC)
         {
             // re-allocate VRAM for this sprite (can't fail here)
@@ -535,8 +540,14 @@ void SPR_defragVRAM()
             {
                 // set VRAM index and preserve previous attributs
                 sprite->attribut = ind | (attr & TILE_ATTR_MASK);
-                // need to also recompute complete VDP sprite table
-                sprite->status = status | NEED_ST_ALL_UPDATE;
+
+                // need to update attribute VDP sprite table
+                status |= NEED_ST_ATTR_UPDATE;
+                // auto tile upload enabled ? --> need to re upload tile to new location
+                if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
+                    status |= NEED_TILES_UPLOAD;
+
+                sprite->status = status;
             }
         }
 
@@ -1059,6 +1070,9 @@ u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value)
         sprite->attribut = (oldAttribut & TILE_ATTR_MASK) | newInd;
         // need to update 'attribut' field of sprite table
         status |= NEED_ST_ATTR_UPDATE;
+        // auto tile upload enabled ? --> need to re upload tile to new location
+        if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
+            status |= NEED_TILES_UPLOAD;
     }
 
     // save status
