@@ -764,7 +764,7 @@ unsigned char* XGC_asByteArray(XGM* source, int *outSize)
     // 00FE: XGM version
     byte = 0x00;
     fwrite(&byte, 1, 1, f);
-    // 00FF
+    // 00FF: misc info
     byte = 0x00;
     // b0=NTSC/PAL
     byte |= source->pal?1:0;
