@@ -72,6 +72,11 @@ int main(int argc, char *argv[ ])
         saferead( infile, "%1c", &j);
 
     saferead( infile, "%4c", ckID );
+    if (ckID[0] != 'd') {
+        printf("This is not a simple WAV file, maybe it has a LIST chunk. "
+        	"Try to save in a different program, etc.\n");
+        exit(2);
+    }
     saferead( infile, "%4c", &nChunkSize );
 
     #undef saferead
