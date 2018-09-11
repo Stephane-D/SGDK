@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     FILE *FileInput;
     FILE *FileOutput;
     char path[4096];
-    char temp[4096];
+    unsigned char temp[4096];
 
     // default
     FileName = "";
@@ -206,19 +206,19 @@ int main(int argc, char **argv)
 
     if (!FileOutput)
     {
-        printf("Couldn't open output file %s\n", temp);
+        printf("Couldn't open output file %s\n", path);
         return 1;
     }
 
     for (ii = 0; ii < strlen(shortname); ii++)
-        temp[ii] = toupper(shortname[ii]);
+        path[ii] = toupper(shortname[ii]);
 
-    temp[ii] = 0;
+    path[ii] = 0;
 
-    fprintf(FileOutput, "#ifndef _%s_H_\n", temp);
-    fprintf(FileOutput, "#define _%s_H_\n\n", temp);
+    fprintf(FileOutput, "#ifndef _%s_H_\n", path);
+    fprintf(FileOutput, "#define _%s_H_\n\n", path);
     fprintf(FileOutput, "extern const %s %s[0x%X];\n\n", format, shortname, total / formatint);
-    fprintf(FileOutput, "#endif // _%s_H_\n", temp);
+    fprintf(FileOutput, "#endif // _%s_H_\n", path);
 
     fclose(FileOutput);
     return 0;
