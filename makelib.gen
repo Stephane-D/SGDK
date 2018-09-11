@@ -29,18 +29,22 @@ OBJ_LIB+= $(SRC_LIB_S80:.s80=.o)
 OBJ_LIB+= $(SRC_LIB_S:.s=.o)
 OBJ_LIB+= $(SRC_LIB_C:.c=.o)
 
+LST_LIB= $(SRC_LIB_C:.c=.lst)
+
 INCS_LIB= -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS_LIB= -m68000 -Wall -fno-builtin $(INCS_LIB) -B$(BIN)
 FLAGSZ80_LIB= -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
-release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -S -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -fomit-frame-pointer
+#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -fomit-frame-pointer -flto
+release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -flto
 release: $(LIB)/libmd.a
 
 debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -ggdb -DDEBUG=1
 debug: $(LIB)/libmd_debug.a
+
+asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -S
+asm: $(LST_LIB)
 
 
 all: release
@@ -49,28 +53,36 @@ default: release
 Default: release
 Debug: debug
 Release: release
+Asm: asm
 
 .PHONY: clean
 
 
+cleanlst:
+	$(RM) -f $(LST_LIB)
+
 cleanobj:
 	$(RM) -f $(OBJ_LIB)
 
-cleanrelease: cleanobj
+cleanrelease: cleanobj cleanlst
 	$(RM) -f $(LIB)/libmd.a out.lst cmd_
 
-cleandebug: cleanobj
+cleandebug: cleanobj cleanlst
 	$(RM) -f $(LIB)/libmd_debug.a out.lst cmd_
 
-clean: cleanobj
+cleanasm: cleanlst
+
+clean: cleanobj cleanlst
 	$(RM) -f $(LIB)/libmd.a $(LIB)/libmd_debug.a out.lst cmd_
 
-cleanall: cleanrelease
-cleanAll: cleanrelease
-cleandefault: cleanrelease
-cleanDefault: cleanrelease
+cleanall: clean
+cleanAll: clean
+cleandefault: clean
+cleanDefault: clean
+
 cleanRelease: cleanrelease
 cleanDebug: cleandebug
+cleanAsm: cleanasm
 
 
 $(LIB)/libmd.a: cmd_
@@ -84,6 +96,9 @@ $(LIB)/libmd_debug.a: cmd_
 cmd_ : $(OBJ_LIB)
 	$(ECHO) "$(OBJ_LIB)" > cmd_
 
+
+%.lst: %.c
+	$(CC) $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.c
 	$(CC) $(FLAGS_LIB) -c $< -o $@

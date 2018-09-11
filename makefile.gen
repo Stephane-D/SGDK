@@ -45,23 +45,27 @@ OBJ+= $(SRC_S80:.s80=.o)
 OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
-
 OBJS= $(addprefix out/, $(OBJ))
+
+LST= $(SRC_C:.c=.lst)
+LSTS= $(addprefix out/, $(LST))
 
 INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
 DEFAULT_FLAGS= -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
 FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
-release: FLAGS= $(DEFAULT_FLAGS) -O3 -flto -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-#release: FLAGS= $(DEFAULT_FLAGS) -O3 -S -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 #release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
+release: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -flto
 release: LIBMD= $(LIB)/libmd.a
 release: pre-build out/rom.bin
 
 debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
 debug: LIBMD= $(LIB)/libmd_debug.a
 debug: pre-build out/rom.bin out/rom.out out/symbol.txt
+
+asm: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -S
+asm: pre-build $(LSTS)
 
 
 all: release
@@ -70,25 +74,32 @@ default: release
 Default: release
 Debug: debug
 Release: release
+Asm: asm
 
 .PHONY: clean
+
+cleanlst:
+	$(RM) -f $(LSTS)
 
 cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
 
-clean: cleanobj
+clean: cleanobj cleanlst
 	$(RM) -f out.lst out/cmd_ out/rom.nm out/rom.wch out/rom.bin
 
 cleanrelease: clean
 
 cleandebug: clean
-	$(RM) -f  out/symbol.txt
+	$(RM) -f out/symbol.txt
+
+cleanasm: cleanlst
 
 cleandefault: clean
 cleanDefault: clean
+
 cleanRelease: cleanrelease
 cleanDebug: cleandebug
-
+cleanAsm: cleanasm
 
 pre-build:
 	$(MKDIR) -p $(SRC)/boot
@@ -126,6 +137,9 @@ $(SRC)/boot/sega.s: $(LIBSRC)/boot/sega.s
 $(SRC)/boot/rom_head.c: $(LIBSRC)/boot/rom_head.c
 	$(CP) $< $@
 
+
+out/%.lst: %.c
+	$(CC) $(FLAGS) -c $< -o $@
 
 out/%.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@

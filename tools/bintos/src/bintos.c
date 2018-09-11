@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     FILE *FileInput;
     FILE *FileOutput;
     char path[4096];
-    unsigned char temp[16];
+    char temp[4096];
 
     // default
     FileName = "";
@@ -200,9 +200,9 @@ int main(int argc, char **argv)
     fclose(FileInput);
 
     // now make .h file
-    strcpy(temp, FileNameOut);
-    strcat(temp, ".h");
-    FileOutput = fopen(temp, "w");
+    strcpy(path, FileNameOut);
+    strcat(path, ".h");
+    FileOutput = fopen(path, "w");
 
     if (!FileOutput)
     {

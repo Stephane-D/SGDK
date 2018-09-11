@@ -172,7 +172,7 @@ typedef struct
     u16 numSprite;
     VDPSpriteInf **vdpSpritesInf;
     Collision *collision;
-    TileSet *tileset;
+    TileSet *tileset;           // TODO: have a tileset per VDP sprite (when rescomp will be optimized for better LZ4W compression)
     s16 w;
     s16 h;
     u16 timer;
@@ -420,9 +420,14 @@ Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attri
 void SPR_releaseSprite(Sprite* sprite);
 /**
  *  \brief
- *      Returns the number of active sprite (number of sprite added with SPR_addSprite(..) method).
+ *      Returns the number of active sprite (number of sprite added with SPR_addSprite(..) or SPR_addSpriteEx(..) methods).
  */
 u16 SPR_getNumActiveSprite();
+/**
+ *  \brief
+ *      Defragment allocated VRAM for sprites, that can help when sprite allocation fail (SPR_addSprite(..) or SPR_addSpriteEx(..) return <i>NULL</i>).
+ */
+void SPR_defragVRAM();
 
 /**
  *  \brief

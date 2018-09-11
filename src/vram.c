@@ -51,6 +51,87 @@ void VRAM_clearRegion(VRAMRegion *region)
     region->free = region->vram;
 }
 
+u16 VRAM_getFree(VRAMRegion *region)
+{
+    u16* b;
+    u16 bsize;
+    u16 res;
+
+    b = region->vram;
+    res = 0;
+
+    while ((bsize = *b))
+    {
+        // memory block used ? --> just pass to next block
+        if (bsize & USED_MASK) b += bsize & SIZE_MASK;
+        else
+        {
+            // block free --> add available size to result
+            res += bsize;
+            // pass to next block
+            b += bsize;
+        }
+    }
+
+    return res;
+}
+
+u16 VRAM_getLargestFreeBlock(VRAMRegion *region)
+{
+    u16* b;
+    u16 bsize;
+    u16 res;
+
+    b = region->vram;
+    res = 0;
+
+    while ((bsize = *b))
+    {
+        // memory block used ? --> just pass to next block
+        if (bsize & USED_MASK) b += bsize & SIZE_MASK;
+        else
+        {
+            // block free --> check against largest block
+            if (bsize > res)
+                res = bsize;
+
+            // pass to next block
+            b += bsize;
+        }
+    }
+
+    return res;
+}
+
+u16 VRAM_getAllocated(VRAMRegion *region)
+{
+    u16* b;
+    u16 bsize;
+    u16 res;
+
+    b = region->vram;
+    res = 0;
+
+    while ((bsize = *b))
+    {
+        // memory block used ?
+        if (bsize & USED_MASK)
+        {
+            bsize &= SIZE_MASK;
+
+            // add allocated size to result
+            res += bsize;
+            // pass to next block
+            b += bsize;
+        }
+        else
+            // just pass to next block
+            b += bsize;
+    }
+
+    return res;
+}
+
 s16 VRAM_alloc(VRAMRegion *region, u16 size)
 {
     u16* p;
@@ -70,7 +151,10 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
         if (p == NULL)
         {
 #if (LIB_DEBUG != 0)
-            KLog_U2_("VRAM_alloc(", size, ") failed: no enough free VRAM slot (free = ", VRAM_getFree(region), ")");
+            if (size > VRAM_getFree(region))
+                KLog_U2_("VRAM_alloc(", size, ") failed: no enough free tile in VRAM (free = ", VRAM_getFree(region), ")");
+            else
+                KLog_U3_("VRAM_alloc(", size, ") failed: cannot find a big enough VRAM tile block (largest free block = ", VRAM_getLargestFreeBlock(region), " - free = ", VRAM_getFree(region), ")");
 #endif
 
             return -1;
@@ -129,34 +213,9 @@ void VRAM_free(VRAMRegion *region, u16 index)
 #endif
 }
 
-u16 VRAM_getFree(VRAMRegion *region)
-{
-    u16* b;
-    u16 bsize;
-    u16 res;
-
-    b = region->vram;
-    res = 0;
-
-    while ((bsize = *b))
-    {
-        // memory block used ? --> just pass to next block
-        if (bsize & USED_MASK) b += bsize & SIZE_MASK;
-        else
-        {
-            // block free --> add available size to result
-            res += bsize;
-            // pass to next block
-            b += bsize;
-        }
-    }
-
-    return res;
-}
-
 
 /*
- * Pack free block and return first matching free block
+ * Pack free blocks and return first matching free block
  */
 static u16* pack(VRAMRegion *region, u16 nsize)
 {

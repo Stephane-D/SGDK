@@ -1,4 +1,4 @@
-LZ4W packer 1.2 (december 2017)
+LZ4W packer 1.3 (february 2018)
 Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
@@ -13,11 +13,10 @@ Note that LZ4W support using previous data buffer to improve compression if avai
 
 Decompression speed (running a 7.67 Mhz 68000 using optimized assembly code)
 -------------------
-LZ4   min=270KB/s   max=390KB/s
+LZ4     min=270KB/s   max=390KB/s
 LZ4W    min=550KB/s   max=900KB/s
 
 As you can see the speed difference is very important, LZ4W can unpack at least twice as fast than classic LZ4 !
-
 
 Compression ratio (using LZ4HC which provide the best compression ratio for LZ4)
 -----------------
@@ -28,8 +27,8 @@ single BMP sprite           original=4798     LZ4HC=2202    LZ4W=2160
 map data                    original=4576     LZ4HC=1367    LZ4W=1312
 text file                   original=40992    LZ4HC=16088   LZ4W=21422
 
-As you can see LZ4W performs not too bad compared to LZ4 for small packet of data (it often do better than LZ4HC)
-but it becomes a bit worst as the data packet become larger or using redudant byte pattern data (as TXT file).
+LZ4W performs nicely compared to LZ4 for small packet of data (it often do better than LZ4HC) but it becomes worst as the
+data packet become larger or using redudant byte pattern data (as TXT file).
 
 Keep LZ4W has been developed for the Sega Megadrive target in mind which has very limited amount of RAM anyway (64 KB) so
 you're likely to unpack small block of data almost of time ;)
