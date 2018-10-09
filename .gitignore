@@ -41,6 +41,8 @@ tools/rescomp/out/*
 !tools/rescomp/out/rom.bin
 tools/xgmtool/out/*
 !tools/xgmtool/out/rom.bin
+tools/lz4w/test
+tools/lz4w/bin
 Fusion364/
 gensKMod_073/
 
