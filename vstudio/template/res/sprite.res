@@ -1,0 +1,1 @@
+// SPRITE ring_sprite "sprite/ring.png" 2 2 FAST 5
