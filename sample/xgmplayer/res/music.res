@@ -1,3 +1,4 @@
+XGM fabi "fabi.vgm"
 XGM xgm_1 "The Drum Run Rave.vgm"
 XGM xgm_2 "Singularity.vgm"
 XGM xgm_3 "Pump It.vgm"

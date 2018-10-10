@@ -41,6 +41,7 @@ void DMA_init(u16 size, u16 capacity)
     if (size) queueSize = size;
     else queueSize = DMA_DEFAULT_QUEUE_SIZE;
 
+    // 0 means no limit
     maxTransferPerFrame = capacity;
 
     // auto flush is enabled by default
@@ -153,9 +154,7 @@ void DMA_flushQueue()
 #endif
 
             queueIndex = 0;
-            queueIndexLimit = 0;
             queueTransferSize = 0;
-            queueTransferSizeLimit = 0;
         }
         else
         {
@@ -169,20 +168,19 @@ void DMA_flushQueue()
             // copy remaining transfer at beggining of the queue (not optimal but simpler)
             memcpy(&dmaQueues[0], &dmaQueues[queueIndexLimit], sizeof(DMAOpInfo) * queueIndex);
             queueTransferSize -= queueTransferSizeLimit;
-            queueIndexLimit = 0;
-            queueTransferSizeLimit = 0;
 
 #ifdef DMA_DEBUG
             KLog_U2("    After: queueIndex=", queueIndex, " queueTransferSize=", queueTransferSize);
 #endif
         }
+
+        queueIndexLimit = 0;
+        queueTransferSizeLimit = 0;
     }
     else
     {
         queueIndex = 0;
-        queueIndexLimit = 0;
         queueTransferSize = 0;
-        queueTransferSizeLimit = 0;
     }
 
     // we do that to fix cached auto inc value (instead of losing time in updating it during queue flush)

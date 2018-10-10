@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     FILE *FileInput;
     FILE *FileOutput;
     char path[4096];
-    char temp[4096];
+    unsigned char temp[4096];
 
     // default
     FileName = "";

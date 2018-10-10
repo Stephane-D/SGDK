@@ -2,21 +2,27 @@
 #define _TOOLS_H_
 
 
-#define FALSE           0
-#define TRUE            1
+#define FALSE               0
+#define TRUE                1
 
-#define DRIVER_PCM      0
-#define DRIVER_2ADPCM   1
-#define DRIVER_4PCM     2
-#define DRIVER_VGM      3
-#define DRIVER_XGM      4
+#define DRIVER_PCM          0
+#define DRIVER_2ADPCM       1
+#define DRIVER_4PCM         2
+#define DRIVER_VGM          3
+#define DRIVER_XGM          4
 
-#define PACK_AUTO       -1
-#define PACK_NONE       0
-#define PACK_APLIB      1
-#define PACK_LZ4W       2
+#define PACK_AUTO           -1
+#define PACK_NONE           0
+#define PACK_APLIB          1
+#define PACK_LZ4W           2
 
-#define PACK_MAX_IND    PACK_LZ4W
+#define PACK_MAX_IND        PACK_LZ4W
+
+#define MAP_OPT_NONE        0
+#define MAP_OPT_ALL         1
+#define MAP_OPT_DUPLICATE   2
+
+#define MAP_OPT_MAX_IND     MAP_OPT_DUPLICATE
 
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -78,6 +84,7 @@ void outS(unsigned char* data, int inOffset, int size, FILE* fout, int intSize);
 
 int getDriver(char *str);
 int getCompression(char *str);
+int getMapOpt(char *str);
 
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method);
 unsigned char *packEx(unsigned char* data, int inOffset, int size, int intSize, int *outSize, int *method);

@@ -118,7 +118,7 @@ static u32 profil_time[20];
 #endif
 
 
-void SPR_init(u16 maxSprite, u16 cacheSize, u16 unpackBufferSize)
+void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize)
 {
     u16 adjMax;
     u16 index;
@@ -138,8 +138,8 @@ void SPR_init(u16 maxSprite, u16 cacheSize, u16 unpackBufferSize)
     // alloc sprite tile unpack buffer
     unpackBuffer = MEM_alloc(((unpackBufferSize?unpackBufferSize:256) * 32) + 1024);
 
-    size = cacheSize?cacheSize:384;
-    // get start tile index for sprite cache (reserve VRAM area just before system font)
+    size = vramSize?vramSize:384;
+    // get start tile index for sprite data (reserve VRAM area just before system font)
     index = TILE_FONTINDEX - size;
 
     // and create a VRAM region for sprite tile allocation
@@ -154,6 +154,11 @@ void SPR_init(u16 maxSprite, u16 cacheSize, u16 unpackBufferSize)
 
     // reset
     SPR_reset();
+}
+
+void SPR_init()
+{
+    SPR_initEx(80, 384, 256);
 }
 
 void SPR_end()
@@ -458,6 +463,38 @@ Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attri
 {
     return SPR_addSpriteEx(spriteDef, x, y, attribut, 0,
                             SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+}
+
+Sprite* SPR_addSpriteExSafe(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flags)
+{
+    Sprite* result = SPR_addSpriteEx(spriteDef, x, y, attribut, spriteIndex, flags);
+
+    // allocation failed ?
+    if (result == NULL)
+    {
+        // try to defragment VRAM, it can help
+        SPR_defragVRAM();
+        // VRAM is now defragmented, so allocation should pass this time
+        result = SPR_addSpriteEx(spriteDef, x, y, attribut, spriteIndex, flags);
+    }
+
+    return result;
+}
+
+Sprite* SPR_addSpriteSafe(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut)
+{
+    Sprite* result = SPR_addSprite(spriteDef, x, y, attribut);
+
+    // allocation failed ?
+    if (result == NULL)
+    {
+        // try to defragment VRAM, it can help
+        SPR_defragVRAM();
+        // VRAM is now defragmented, so allocation should pass this time
+        result = SPR_addSprite(spriteDef, x, y, attribut);
+    }
+
+    return result;
 }
 
 void SPR_releaseSprite(Sprite *sprite)
@@ -1881,8 +1918,8 @@ static Sprite* sortSprite(Sprite* sprite)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    Sprite* prev = sprite->prev;
-    Sprite* next = sprite->next;
+    Sprite* const prev = sprite->prev;
+    Sprite* const next = sprite->next;
     Sprite* s;
 
     // cache sprite depth coordinate
@@ -1927,6 +1964,9 @@ static Sprite* sortSprite(Sprite* sprite)
 
 static void moveAfter(Sprite* pos, Sprite* sprite)
 {
+    // already at the good position ? --> nothing to do
+    if (pos->next == sprite) return;
+
     Sprite* prev = sprite->prev;
     Sprite* next = sprite->next;
 
@@ -1935,9 +1975,9 @@ static void moveAfter(Sprite* pos, Sprite* sprite)
     else KLog_U1_("Insert #", getSpriteIndex(sprite), "  at #0");
 #endif // SPR_DEBUG
 
+    // we first remove the sprite from its current position
     if (prev)
     {
-        // remove sprite from its position
         prev->next = next;
         if (next)
         {
@@ -1954,7 +1994,7 @@ static void moveAfter(Sprite* pos, Sprite* sprite)
     }
     else
     {
-        // remove sprite from its position
+        // 'next' become the first sprite
         firstSprite = next;
         if (next)
         {
@@ -1964,13 +2004,14 @@ static void moveAfter(Sprite* pos, Sprite* sprite)
         }
         else
         {
+            // no more sprite (both firstSprite and lastSprite == NULL)
             lastSprite = prev;
             // fix sprite link from previous sprite
             starter->link = 0;
         }
     }
 
-    // and insert after 'pos'
+    // then we re-insert after 'pos'
     if (pos)
     {
         next = pos->next;
@@ -1983,12 +2024,16 @@ static void moveAfter(Sprite* pos, Sprite* sprite)
         sprite->lastVDPSprite->link = pos->lastVDPSprite->link;
         pos->lastVDPSprite->link = sprite->VDPSpriteIndex;
     }
-    // or set it as first sprite
+    // or we insert before 'firstSprite' (become the new first sprite)
     else
     {
         sprite->next = firstSprite;
         sprite->prev = NULL;
-        firstSprite->prev = sprite;
+        // sprite become the preceding sprite of previous first sprite
+        if (firstSprite) firstSprite->prev = sprite;
+        // no previous first sprite ? --> sprite becomes last sprite then
+        else lastSprite = sprite;
+        // sprite become first sprite
         firstSprite = sprite;
         // fix sprite link
         sprite->lastVDPSprite->link = starter->link;

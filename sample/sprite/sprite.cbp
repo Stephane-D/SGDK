@@ -24,12 +24,12 @@
 				<Option compiler="sega_genesis_compiler" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<MakeCommands>
-					<Build command="$make -f $makefile debug" />
+					<Build command="$make -f $makefile $target" />
 					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
+					<Clean command="$make -f $makefile clean$target" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile debug &gt; $(CMD_NULL)" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="release">
@@ -40,12 +40,28 @@
 				<Option compiler="sega_genesis_compiler" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<MakeCommands>
-					<Build command="$make -f $makefile release" />
+					<Build command="$make -f $makefile $target" />
 					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
+					<Clean command="$make -f $makefile clean$target" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile release &gt; $(CMD_NULL)" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="asm">
+				<Option output="out/rom.bin" prefix_auto="0" extension_auto="0" />
+				<Option object_output="." />
+				<Option deps_output="." />
+				<Option type="1" />
+				<Option compiler="sega_genesis_compiler" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 		</Build>

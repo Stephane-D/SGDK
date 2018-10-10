@@ -282,7 +282,7 @@ int main()
     initBGScroll();
 
     // init Sprite engine
-    SPR_init(20, 80, 64);
+    SPR_initEx(20, 80, 64);
 
     // prepare sprites for panning
     YMPanSprites[0] = SPR_addSprite(&left_right, 32 + 0, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));

@@ -191,7 +191,7 @@ static s16 fading_cnt;
 
 
 // forward
-static void setFadePalette(u16 waitVSync);
+static void setFadePalette();
 
 
 u16 VDP_getPaletteColor(u16 index)
@@ -227,7 +227,7 @@ void VDP_setPaletteColor(u16 index, u16 value)
 }
 
 
-static void setFadePalette(u16 waitVSync)
+static void setFadePalette()
 {
     u16 inVInt;
     s16 *palR;
@@ -243,8 +243,9 @@ static void setFadePalette(u16 waitVSync)
 
     if (!inVInt)
     {
-        // wait for VSync if asked
-        if (waitVSync) VDP_waitVSync();
+        // wait for VSync if not already in blank
+        if (!GET_VDPSTATUS(VDP_VBLANK_FLAG))
+            VDP_waitVSync();
         // disable interrupts to not conflict with VInt accesses
         SYS_disableInts();
     }
@@ -282,7 +283,7 @@ static void setFadePalette(u16 waitVSync)
         SYS_enableInts();
 }
 
-u16 VDP_doStepFading(u16 waitVSync)
+u16 VDP_doStepFading()
 {
     // last step --> just recopy the final palette
     if (--fading_cnt <= 0)
@@ -292,8 +293,9 @@ u16 VDP_doStepFading(u16 waitVSync)
             VDP_setPaletteColors(fading_from, (u16*) final_pal + fading_from, (fading_to - fading_from) + 1);
         else
         {
-            // wait for VSync if asked
-            if (waitVSync) VDP_waitVSync();
+            // wait for VSync if not already in blank
+            if (!GET_VDPSTATUS(VDP_VBLANK_FLAG))
+                VDP_waitVSync();
             // disable interrupts to not conflict with VInt accesses
             SYS_disableInts();
             // ans set the palette
@@ -330,13 +332,13 @@ u16 VDP_doStepFading(u16 waitVSync)
     }
 
     // set current fade palette
-    setFadePalette(waitVSync);
+    setFadePalette();
 
 //    if (--fading_cnt <= 0) return 0;
     return 1;
 }
 
-u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u16 waitVSync)
+u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe)
 {
     const u16 *src;
     const u16 *dst;
@@ -389,7 +391,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
     }
 
     // set current fade palette
-    setFadePalette(waitVSync);
+    setFadePalette();
 
     return 1;
 }
@@ -403,14 +405,14 @@ void VDP_interruptFade()
 void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async)
 {
     // error during fading initialization --> exit
-    if (!VDP_initFading(fromcol, tocol, palsrc, paldst, numframe, TRUE)) return;
+    if (!VDP_initFading(fromcol, tocol, palsrc, paldst, numframe)) return;
 
     // process asynchrone fading
     if (async) VIntProcess |= PROCESS_PALETTE_FADING;
     else
     {
         // process fading immediatly
-        while (VDP_doStepFading(TRUE));
+        while (VDP_doStepFading());
     }
 }
 

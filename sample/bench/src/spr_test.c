@@ -428,16 +428,20 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // create sprites structures
-    guySprite = SPR_addSprite(&guy_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
-    codySprite = SPR_addSprite(&cody_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    guySprite = SPR_addSprite(&guy_sprite, 350, 120, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite = SPR_addSprite(&cody_sprite, 128, 300, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
     haggarSprite = SPR_addSprite(&haggar_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
     andorSprite = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+
+    SPR_update();
 
     // we want to compute per hardware sprite visibility for these sprites
     SPR_setVisibility(guySprite, AUTO_SLOW);
     SPR_setVisibility(codySprite, AUTO_SLOW);
     SPR_setVisibility(haggarSprite, AUTO_SLOW);
     SPR_setVisibility(andorSprite, AUTO_SLOW);
+
+    SPR_update();
 
     sprites[0] = guySprite;
     sprites[1] = codySprite;
@@ -462,6 +466,7 @@ u16 executeSpritesTest(u16 *scores)
 
     // init position for 4 sprites
     initPos(4);
+
     // desync frame timer so update happen on different frame
     haggarSprite->timer = 2;
     codySprite->timer = 1;
@@ -469,7 +474,7 @@ u16 executeSpritesTest(u16 *scores)
     SPR_update();
 
     // execute sprite bench
-    *scores = execute(20, 4);
+    *scores = execute(50, 4);
     globalScore += *scores++;
 
     SYS_disableInts();
@@ -490,7 +495,7 @@ void init()
     // DMA limit
 //    DMA_setMaxTransferSize(7000);
     // init sprites engine
-    SPR_init(80, 16 * (32 + 16 + 8), 16 * (32 + 16 + 8));
+    SPR_initEx(80, 16 * (32 + 16 + 8), 16 * (32 + 16 + 8));
     // VDP process done, we can re enable interrupts
     SYS_enableInts();
 }
@@ -803,10 +808,10 @@ static void updatePos(u16 num)
     fix16 maxy;
     u16 i;
 
-    minx = FIX16(-40);
-    maxx = FIX16(VDP_getScreenWidth() - 10);
-    miny = FIX16(-80);
-    maxy = FIX16(VDP_getScreenHeight() - 14);
+    minx = FIX16(-96);
+    maxx = FIX16(VDP_getScreenWidth() + 20);
+    miny = FIX16(-96);
+    maxy = FIX16(VDP_getScreenHeight() + 16);
 
     i = num;
     sprite = sprites;

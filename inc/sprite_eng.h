@@ -301,7 +301,19 @@ typedef struct _Sprite
 
 /**
  *  \brief
- *      Init the Sprite engine with specified VRAM allocation and unpacking buffer size.
+ *      Initialize the Sprite engine with default parameters.
+ *
+ *      Initialize the sprite engine using default parameters:<br>
+ *      80 sprites, 384 tiles reserved in VRAM and 256 tiles in memory for the unpack buffer.<br>
+ *      This also initialize the hardware sprite allocation system.
+ *
+ *  \see SPR_initEx()
+ *  \see SPR_end()
+ */
+void SPR_init();
+/**
+ *  \brief
+ *      Init the Sprite engine with specified advanced parameters (max sprite, VRAM allocation size and unpacking buffer size).
  *
  *  \param maxSprite
  *      Maximum number of sprite the Sprite Engine can handle, higher value requires more memory (maximum accepted = <i>127</i>).<br>
@@ -318,9 +330,10 @@ typedef struct _Sprite
  *      This allocates a VRAM region for sprite tiles, memory for tileset unpacking and initialize
  *      hardware sprite allocation system.
  *
+ *  \see SPR_init()
  *  \see SPR_end()
  */
-void SPR_init(u16 maxSprite, u16 vramSize, u16 unpackBufferSize);
+void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize);
 /**
  *  \brief
  *      End the Sprite engine.
@@ -345,7 +358,76 @@ void SPR_reset();
 
 /**
  *  \brief
- *      Adds a new sprite and returns it.
+ *      Adds a new sprite with specified parameters and returns it.
+ *
+ *  \param spriteDef
+ *      the SpriteDefinition data to assign to this sprite.
+ *  \param x
+ *      default X position.
+ *  \param y
+ *      default Y position.
+ *  \param attribut
+ *      sprite attribut (see TILE_ATTR() macro).
+ *  \param spriteIndex
+ *      index of the first sprite in the VDP sprite table used to display this Sprite (should be > 0 and < 128).<br>
+ *      IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <i>flags</i> parameter).<br>
+ *  \param flags
+ *      specific settings for this sprite:<br>
+ *      #SPR_FLAG_AUTO_VISIBILITY = Enable automatic sprite visibility calculation (you can also use SPR_setVisibility(..) method).<br>
+ *      #SPR_FLAG_FAST_AUTO_VISIBILITY = Enable fast computation for the automatic visibility calculation (disabled by default)<br>
+ *          If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
+ *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
+ *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
+ *      #SPR_FLAG_AUTO_VRAM_ALLOC = Enable automatic VRAM allocation (enabled by default)<br>
+ *          If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <i>attribut</i> parameter or by using the #SPR_setVRAMTileIndex(..) method<br>
+ *      #SPR_FLAG_AUTO_SPRITE_ALLOC = Enable automatic hardware/VDP sprite allocation (enabled by default)<br>
+ *          If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <i>spriteIndex</i> parameter or by using the #SPR_setSpriteTableIndex(..) method<br>
+ *      #SPR_FLAG_AUTO_TILE_UPLOAD = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
+ *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM.<br>
+ *      <br>
+ *      It's recommended to use the following default settings:<br>
+ *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
+ *  \return the new sprite or <i>NULL</i> if the operation failed (some logs can be generated in the KMod console in this case)
+ *
+ *      By default the sprite uses the provided flags setting for automatic resources allocation and sprite visibility computation.<br>
+ *      If auto visibility is not enabled then sprite is considered as not visible by default (see SPR_setVisibility(..) method).<br>
+ *      You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).<br>
+ *      IMPORTANT NOTE: sprite allocation can fail (return NULL) when you are using auto VRAM allocation (SPR_FLAG_AUTO_VRAM_ALLOC) even if there is enough VRAM available,<br>
+ *      this can happen because of the VRAM fragmentation. You can use #SPR_addSpriteExSafe(..) method instead so it take care about VRAM fragmentation.
+ *
+ *  \see SPR_addSprite(..)
+ *  \see SPR_addSpriteExSafe(..)
+ *  \see SPR_releaseSprite(..)
+ */
+Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flags);
+/**
+ *  \brief
+ *      Adds a new sprite with auto resource allocation enabled and returns it.
+ *
+ *  \param spriteDef
+ *      the SpriteDefinition data to assign to this sprite.
+ *  \param x
+ *      default X position.
+ *  \param y
+ *      default Y position.
+ *  \param attribut
+ *      sprite attribut (see TILE_ATTR() macro).
+ *  \return the new sprite or <i>NULL</i> if the operation failed (some logs can be generated in the KMod console in this case)
+ *
+ *      By default the sprite uses automatic resources allocation (VRAM and hardware sprite) and visibility is set to ON.<br>
+ *      You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setSpriteTableIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br>
+ *      You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).<br>
+ *      IMPORTANT NOTE: sprite allocation can fail (return NULL) because of automatic VRAM allocation even if there is enough VRAM available,
+ *      this can happen because of the VRAM fragmentation.<br> You can use #SPR_addSpriteSafe(..) method instead so it take care about VRAM fragmentation.
+ *
+ *  \see SPR_addSpriteEx(..)
+ *  \see SPR_addSpriteSafe(..)
+ *  \see SPR_releaseSprite(..)
+ */
+Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
+/**
+ *  \brief
+ *      Adds a new sprite with specified parameters and returns it.
  *
  *  \param spriteDef
  *      the SpriteDefinition data to assign to this sprite.
@@ -380,10 +462,11 @@ void SPR_reset();
  *      If auto visibility is not enabled then sprite is considered as not visible by default (see SPR_setVisibility(..) method).<br>
  *      You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).
  *
- *  \see SPR_addSprite(..)
+ *  \see SPR_addSpriteSafe(..)
+ *  \see SPR_addSpriteEx(..)
  *  \see SPR_releaseSprite(..)
  */
-Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flags);
+Sprite* SPR_addSpriteExSafe(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flags);
 /**
  *  \brief
  *      Adds a new sprite with auto resource allocation enabled and returns it.
@@ -400,12 +483,14 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
  *
  *      By default the sprite uses automatic resources allocation (VRAM and hardware sprite) and visibility is set to ON.<br>
  *      You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setSpriteTableIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br>
- *      You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).
+ *      You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).<
  *
- *  \see SPR_addSpriteEx(..)
+ *  \see SPR_addSpriteSafeEx(..)
+ *  \see SPR_addSprite(..)
  *  \see SPR_releaseSprite(..)
  */
-Sprite* SPR_addSprite(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
+Sprite* SPR_addSpriteSafe(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 attribut);
+
 /**
  *  \brief
  *      Release the specified sprite (no more visible and release its resources).

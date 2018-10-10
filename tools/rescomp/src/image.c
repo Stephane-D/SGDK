@@ -34,26 +34,29 @@ static int execute(char *info, FILE *fs, FILE *fh)
     char id[50];
     char fileIn[MAX_PATH_LEN];
     char packedStr[256];
+    char mapOptStr[256];
     int w, h, bpp;
     int wt, ht;
     int size, psize;
     int packed;
-    int maxIndex, mapBase;
+    int mapBase;
+    int mapOpt;
+    int maxIndex;
     int nbElem;
     unsigned char *data;
     unsigned short *palette;
     tileimg_ *result;
 
-    packed = 0;
     mapBase = 0;
     strcpy(packedStr, "");
+    strcpy(mapOptStr, "");
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %d", temp, id, temp, packedStr, &mapBase);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %s %d", temp, id, temp, packedStr, mapOptStr, &mapBase);
 
     if (nbElem < 3)
     {
         printf("Wrong IMAGE definition\n");
-        printf("IMAGE name \"file\" [packed [mapbase]]\n");
+        printf("IMAGE name \"file\" [packed [mapopt [mapbase]]]\n");
         printf("  name      Image variable name\n");
         printf("  file      the image to convert to Image structure (should be a 8bpp .bmp or .png)\n");
         printf("  packed    compression type, accepted values:\n");
@@ -61,7 +64,11 @@ static int execute(char *info, FILE *fs, FILE *fh)
         printf("               0 / NONE        = no compression\n");
         printf("               1 / APLIB       = aplib library (good compression ratio but slow)\n");
         printf("               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)\n");
-        printf("  mapbase   define the base tilemap value, useful to set the priority, default palette and base tile index.\n");
+        printf("  mapopt    define the map optimisation level\n");
+        printf("               0 / NONE        = no optimisation (each tile is unique)\n");
+        printf("               1 / ALL         = find duplicate and flipped tile (default)\n");
+        printf("               2 / DUPLICATE   = find duplicate tile only\n");
+        printf("  mapbase   define the base tilemap value, useful to set a default priority, palette and base tile index offset.\n");
 
         return FALSE;
     }
@@ -70,6 +77,8 @@ static int execute(char *info, FILE *fs, FILE *fh)
     adjustPath(resDir, temp, fileIn);
     // get packed value
     packed = getCompression(packedStr);
+    // get map opt value
+    mapOpt = getMapOpt(mapOptStr);
 
     // retrieve basic infos about the image
     if (!Img_getInfos(fileIn, &w, &h, &bpp)) return FALSE;
@@ -105,7 +114,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     }
 
     // convert to tiled image
-    result = getTiledImage(data, wt, ht, TRUE, mapBase);
+    result = getTiledImage(data, wt, ht, mapOpt, mapBase);
     if (!result) return FALSE;
 
     // pack data

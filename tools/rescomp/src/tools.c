@@ -552,6 +552,19 @@ int getCompression(char *str)
     return PACK_NONE;
 }
 
+int getMapOpt(char *str)
+{
+    char *upstr = strupper(str);
+
+    if (!strcmp(upstr, "NONE") || !strcmp(upstr, "0")) return MAP_OPT_NONE;
+    if (!strcmp(upstr, "ALL") || !strcmp(upstr, "1")) return MAP_OPT_ALL;
+    if (!strcmp(upstr, "DUPLICATE") || !strcmp(upstr, "2")) return MAP_OPT_DUPLICATE;
+
+    // not recognized --> use ALL
+    return MAP_OPT_ALL;
+}
+
+
 unsigned char *pack(unsigned char* data, int inOffset, int size, int *outSize, int *method)
 {
     return packEx(data, inOffset, size, 1, outSize, method);

@@ -13,6 +13,8 @@
 #include "string.h"
 #include "memory.h"
 #include "dma.h"
+#include "timer.h"
+#include "sys.h"
 
 #include "font.h"
 
@@ -102,7 +104,7 @@ void VDP_init()
     // set registers
     pw = (u16 *) GFX_CTRL_PORT;
     for (i = 0x00; i < 0x13; i++) *pw = 0x8000 | (i << 8) | regValues[i];
-   
+
     // these lines can be used in your code to change VRAM layout as olders SGDK (<= 1.30)
     /*
     VDP_setPlanSize(64, 64);
@@ -111,7 +113,7 @@ void VDP_init()
     VDP_setSpriteListAddress(0xBC00);
     VDP_setHScrollTableAddress(0xB800);
     VDP_setBPlanAddress(0xC000);
-    VDP_setAPlanAddress(0xE000);    
+    VDP_setAPlanAddress(0xE000);
     */
 
     // reset video memory (len = 0 is a special value to define 0x10000)
@@ -689,6 +691,17 @@ void VDP_waitVSync()
 
     while (*pw & VDP_VBLANK_FLAG);
     while (!(*pw & VDP_VBLANK_FLAG));
+}
+
+void VDP_waitVInt()
+{
+    // in VInt --> return
+    if (SYS_isInVIntCallback()) return;
+
+    const u32 t = vtimer;
+
+    // wait for next VInt
+    while (vtimer == t);
 }
 
 

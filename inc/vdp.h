@@ -803,6 +803,14 @@ void VDP_waitFIFOEmpty();
  *  The method actually wait for the next start of Vertical blanking.
  */
 void VDP_waitVSync();
+/**
+ *  \brief
+ *      Wait for next Vertical Interruption.
+ *
+ *  The method actually wait for the next start of Vertical Interruption.
+ *  It returns immediately if we are already in VInt handler.
+ */
+void VDP_waitVInt();
 
 /**
  *  \brief

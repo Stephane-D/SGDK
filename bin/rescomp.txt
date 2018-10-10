@@ -101,7 +101,7 @@ Take an image as input and transform it in SGDK Image structure.
 Image is used to directly draw image in background plan, it internally contains a Palette, TileSet and Map structure.
 
 Syntax:
-IMAGE name img_file [compression [mapbase]]
+IMAGE name img_file [compression [mapopt [mapbase]]]
 
     name            name of the output Image structure
     img_file        path of the input image file (should be 8bpp .bmp or .png)
@@ -110,7 +110,11 @@ IMAGE name img_file [compression [mapbase]]
                         0 / NONE        = no compression
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapbase         define the base tilemap value, useful to set the priority, default palette and base tile index.
+    mapopt          define the map optimisation level\n");
+                        0 / NONE        = no optimisation (each tile is unique)
+                        1 / ALL         = find duplicate and flipped tile (default)
+                        2 / DUPLICATE   = find duplicate tile only
+    mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
 
 
 SPRITE

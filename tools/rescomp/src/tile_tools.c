@@ -284,10 +284,10 @@ int addTile(unsigned int *tile, tileset_ *tileset, int opt, int tileLimit)
 {
     int result;
 
-    // search if tile already exist
-    if (opt)
+    // optimization enabled ? --> search if tile already exist
+    if (opt != MAP_OPT_NONE)
     {
-         result = getTileIndex(tile, tileset, TRUE);
+         result = getTileIndex(tile, tileset, opt == MAP_OPT_ALL);
          // exist --> return it
          if (result != -1) return result;
     }
@@ -341,7 +341,7 @@ int addTileset(tileset_ *tileset, tileset_ *dest, int opt, int tileLimit)
 {
     int result;
 
-    // search if tile already exist
+    // search if tileset already exist
     if (opt)
     {
          result = getTilesetIndex(tileset, dest);
