@@ -617,6 +617,18 @@ static s16 start3lhs(u16 port, u8 *hdr, u16 len)
 
     /* make sure port is deselected to start at first phase */
     pb = (vu8 *)0xa10003 + port*2;
+    *pb = 0x60;
+    asm volatile ("nop");
+    asm volatile ("nop");
+
+    /* quick check for at least initial mouse/tap value to cut the amount
+     * of time spent if a mouse/tap isn't really plugged in, but the game
+     * still activates the support
+     */
+    i = *pb & 0x0F;
+    if ((i != 0) && (i != 3))
+        return -1;
+
     hdr[0] = THREELINE_HANDSHAKE(pb, 0x60);
     if (retry)
     {
