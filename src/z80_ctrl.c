@@ -380,7 +380,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
 
                 // just wait for it
                 while(!Z80_isDriverReady())
-                    while(Z80_isBusTaken());
+                    waitMs(1);
                 break;
 
             // others drivers
