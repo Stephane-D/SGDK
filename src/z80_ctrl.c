@@ -428,7 +428,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
 
 u16 Z80_isDriverReady()
 {
-    u8 *pb;
+    vu8 *pb;
     u8 ret;
 
     // point to Z80 status
