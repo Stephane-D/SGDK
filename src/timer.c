@@ -175,8 +175,12 @@ void waitTick(u32 tick)
     while ((getTick() - start) < tick);
 }
 
-// wait for a certain amount of millisecond (~3.33 ms based timer so use 4 ms at least)
+// wait for a certain amount of millisecond (~3.33 ms based timer when wait is >= 100ms)
 void waitMs(u32 ms)
 {
-    waitTick((ms * TICKPERSECOND) / 1000);
+    // try "accurate" wait for small amount of time
+    if (ms < 100)
+        waitSubTick((ms * SUBTICKPERSECOND) / 1000);
+    else
+        waitTick((ms * TICKPERSECOND) / 1000);
 }
