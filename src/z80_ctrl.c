@@ -124,12 +124,12 @@ void Z80_setBank(const u16 bank)
 
 u8 Z80_read(const u16 addr)
 {
-    return ((u8*) Z80_RAM)[addr];
+    return ((vu8*) Z80_RAM)[addr];
 }
 
 void Z80_write(const u16 addr, const u8 value)
 {
-    ((u8*) Z80_RAM)[addr] = value;
+    ((vu8*) Z80_RAM)[addr] = value;
 }
 
 
@@ -138,7 +138,7 @@ void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
     Z80_requestBus(TRUE);
 
     const u8 zero = getZeroU8();
-    u8* dst = (u8*) (Z80_RAM + to);
+    vu8* dst = (u8*) (Z80_RAM + to);
     u16 len = size;
 
     while(len--) *dst++ = zero;
@@ -156,7 +156,7 @@ void Z80_upload(const u16 to, const u8 *from, const u16 size, const u16 resetz80
 
     // copy data to Z80 RAM (need to use byte copy here)
     u8* src = (u8*) from;
-    u8* dst = (u8*) (Z80_RAM + to);
+    vu8* dst = (u8*) (Z80_RAM + to);
     u16 len = size;
 
     while(len--) *dst++ = *src++;
@@ -173,7 +173,7 @@ void Z80_download(const u16 from, u8 *to, const u16 size)
     Z80_requestBus(TRUE);
 
     // copy data from Z80 RAM (need to use byte copy here)
-    u8* src = (u8*) (Z80_RAM + from);
+    vu8* src = (u8*) (Z80_RAM + from);
     u8* dst = (u8*) to;
     u16 len = size;
 
@@ -260,7 +260,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
     // driver initialisation
     switch(driver)
     {
-        u8 *pb;
+        vu8 *pb;
         u32 addr;
 
         case Z80_DRIVER_2ADPCM:
