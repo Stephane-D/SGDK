@@ -203,7 +203,7 @@ void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
 {
     u32 len;
     u16 data[128];
-    char *s;
+    const u8 *s;
     u16 *d;
     u16 i;
 
@@ -215,7 +215,7 @@ void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
     if (len > (i - x))
         len = i - x;
 
-    s = (char*) str;
+    s = (const u8*) str;
     d = data;
     while(i--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
