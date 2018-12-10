@@ -5,7 +5,7 @@
  *  \date 10/2013
  *
  * Sprite engine providing advanced sprites manipulation and operations.<br>
- * This unit use both the tile cache engine (see tilecache.h file for more info)<br>
+ * This unit use both the vram memory manager (see vram.h file for more info)<br>
  * and the Sega Genesis VDP sprite capabilities (see vdp_spr.h file for more info).
  */
 
