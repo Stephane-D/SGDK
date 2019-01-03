@@ -30,6 +30,13 @@
 
 /**
  *  \brief
+ *      Special flag to indicate that we want to add the sprite at position 0 (head) in the list<br>
+ *      instead of adding it in last position (default)
+ */
+#define SPR_FLAG_INSERT_HEAD            0x2000
+
+/**
+ *  \brief
  *      Enable automatic visibility calculation
  */
 #define SPR_FLAG_AUTO_VISIBILITY        0x1000

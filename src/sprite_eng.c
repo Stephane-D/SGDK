@@ -48,7 +48,7 @@ extern VDPSprite *lastAllocatedVDPSprite;
 
 
 // forward
-static Sprite* allocateSprite();
+static Sprite* allocateSprite(u16 head);
 //static Sprite** allocateSprites(Sprite** sprites, u16 num);
 static u16 releaseSprite(Sprite* sprite);
 //static void releaseSprites(Sprite** sprites, u16 num);
@@ -234,7 +234,7 @@ void SPR_reset()
 }
 
 
-static Sprite* allocateSprite()
+static Sprite* allocateSprite(u16 head)
 {
     Sprite *result;
 
@@ -255,13 +255,26 @@ static Sprite* allocateSprite()
     // allocate
     result = *--free;
 
-    // add the new sprite in the chained list
-    if (lastSprite) lastSprite->next = result;
-    result->prev = lastSprite;
-    result->next = NULL;
-    // update first and last sprite
-    if (firstSprite == NULL) firstSprite = result;
-    lastSprite = result;
+    if (head)
+    {
+        // add the new sprite at the beginning of the chained list
+        if (firstSprite) firstSprite->prev = result;
+        result->prev = NULL;
+        result->next = firstSprite;
+        // update first and last sprite
+        if (lastSprite == NULL) lastSprite = result;
+        firstSprite = result;
+    }
+    else
+    {
+        // add the new sprite at the end of the chained list
+        if (lastSprite) lastSprite->next = result;
+        result->prev = lastSprite;
+        result->next = NULL;
+        // update first and last sprite
+        if (firstSprite == NULL) firstSprite = result;
+        lastSprite = result;
+    }
 
     // update sprite number
     spriteNum++;
@@ -357,7 +370,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     VDPSprite* lastVDPSprite;
 
     // allocate new sprite
-    sprite = allocateSprite();
+    sprite = allocateSprite(flags & SPR_FLAG_INSERT_HEAD);
 
     // can't allocate --> return NULL
     if (!sprite)
