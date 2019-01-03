@@ -3,7 +3,7 @@ Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
 SGDK is an open and free development kit for the Sega Megadrive.
-It contains a development library (sources included) to make software on Sega Megadrive / Genesis system which is accompanied by a GCC compiler toolchains (binaries provided for Windows OS only) and some tools used to build the ROM.
+It contains a development library (sources included) to make software on Sega Megadrive / Genesis system, a GCC compiler (binaries provided for Windows OS only) and some tools used to build the ROM.
 SGDK and affiliated tools are distribued under the MIT license (see license.txt file).
 
 You can find the library doxygen documentation in the 'doc' directory: doc/html/files.html
@@ -14,7 +14,7 @@ SGDK Wiki page: https://github.com/Stephane-D/SGDK/wiki
 You can find basics tutorials about how install and use SGDK on this page:
 https://github.com/Stephane-D/SGDK/wiki/Tuto-Intro
 
-Unix/Linux users should give a try to the Gendev project from Kubilis:
+Unix/Linux users should give a try to the Gendev project from Kubilus:
 https://github.com/kubilus1/gendev
 It allows to quickly setup SGDK on a Unix environment.
 
