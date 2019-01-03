@@ -400,8 +400,9 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition *spriteDef, s16 x, s16 y, u16 att
     sprite->seqInd = -1;
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
-    // sprite is always added at the end of list so we use MAX_DEPTH here
-    sprite->depth = SPR_MAX_DEPTH;
+    // depending sprite position (first or last) we set its default depth
+    if (flags & SPR_FLAG_INSERT_HEAD) sprite->depth = SPR_MIN_DEPTH;
+    else sprite->depth = SPR_MAX_DEPTH;
     sprite->frameNumSprite = 0;
 
     numVDPSprite = spriteDef->maxNumSprite;
