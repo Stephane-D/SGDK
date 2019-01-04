@@ -648,7 +648,6 @@ u16 SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef)
 #ifdef SPR_DEBUG
         KLog_U3("  allocated ", num, " VDP sprite(s) at ", ind, ", remaining VDP sprite = ", VDP_getAvailableSprites());
 #endif // SPR_DEBUG
-
     }
     // auto VRAM alloc enabled --> realloc VRAM tile area
     if ((status & SPR_FLAG_AUTO_VRAM_ALLOC) && (sprite->definition->maxNumTile != spriteDef->maxNumTile))
@@ -1502,6 +1501,7 @@ static void setVDPSpriteIndex(Sprite *sprite, u16 ind, u16 num, VDPSprite *last)
 #endif // SPR_PROFIL
 
     Sprite* prev;
+    VDPSprite* vspr;
 
 #ifdef SPR_DEBUG
     KLog_U2("setVDPSpriteIndex: sprite #", getSpriteIndex(sprite), "  new VDP Sprite index = ", ind);
@@ -1509,23 +1509,38 @@ static void setVDPSpriteIndex(Sprite *sprite, u16 ind, u16 num, VDPSprite *last)
 
     sprite->VDPSpriteIndex = ind;
 
-    // link with previous sprite
-    if ((prev = sprite->prev)) prev->lastVDPSprite->link = ind;
-    else starter->link = ind;
-
-    // set last sprite pointer
-    if (last) sprite->lastVDPSprite = last;
-    else
+    // last VDP sprite pointer
+    vspr = last;
+    // not provided ?
+    if (vspr == NULL)
     {
         // compute it using the slow sprite list parsing
-        VDPSprite* vspr = &vdpSpriteCache[ind];
         u16 remaining = num - 1;
+        vspr = &vdpSpriteCache[ind];
 
         while(remaining--) vspr = &vdpSpriteCache[vspr->link];
-
-        // set last VDP sprite pointer for this sprite
-        sprite->lastVDPSprite = vspr;
     }
+
+    // adjust VDP sprites links
+    prev = sprite->prev;
+    // do we have a previous sprite ?
+    if (prev)
+    {
+        // set next link using previous sprite next link
+        vspr->link = prev->lastVDPSprite->link;
+        // previous sprite next link now link to current sprite
+        prev->lastVDPSprite->link = ind;
+    }
+    else
+    {
+        // set next link using starter link
+        vspr->link = starter->link;
+        // adjust started link
+        starter->link = ind;
+    }
+
+    // set last VDP sprite pointer for this sprite
+    sprite->lastVDPSprite = vspr;
 
 #ifdef SPR_DEBUG
     KLog_U1("  last VDP sprite = ", sprite->lastVDPSprite - vdpSpriteCache);
