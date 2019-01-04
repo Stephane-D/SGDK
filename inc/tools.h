@@ -128,7 +128,7 @@ void KLog_F4x(s16 numDec, char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix3
 /**
  *  \brief
  *      Allocate a new Bitmap structure which can receive unpacked bitmap data of the specified Bitmap.<br>
- *      If source is not packed the function only allocate space for simple shallow copy of the source.
+ *      There is no memory allocated for the palette data as it assumes to always use a reference for Palette field.
  *
  *  \param bitmap
  *      Source Bitmap we want to allocate the unpacked Bitmap object.
@@ -140,7 +140,8 @@ void KLog_F4x(s16 numDec, char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix3
 Bitmap *allocateBitmap(const Bitmap *bitmap);
 /**
  *  \brief
- *      Allocate a new Bitmap structure which can receive the bitmap data for the specified Bitmap dimension.
+ *      Allocate a new Bitmap structure which can receive the bitmap data for the specified Bitmap dimension.<br>
+ *      There is no memory allocated for the palette data as it assumes to always use a reference for Palette field.
  *
  *  \param width
  *      Width in pixel of the bitmap structure we want to allocate.
@@ -154,8 +155,7 @@ Bitmap *allocateBitmap(const Bitmap *bitmap);
 Bitmap *allocateBitmapEx(u16 width, u16 heigth);
 /**
  *  \brief
- *      Allocate TileSet structure which can receive unpacked tiles data of the specified TileSet.<br>
- *      If source is not packed the function only allocate space for simple shallow copy of the source.
+ *      Allocate TileSet structure which can receive unpacked tiles data of the specified TileSet.
  *
  *  \param tileset
  *      Source TileSet we want to allocate the unpacked TileSet object.
@@ -163,7 +163,6 @@ Bitmap *allocateBitmapEx(u16 width, u16 heigth);
  *      The new allocated TileSet object which can receive the unpacked TileSet, note that returned tile set
  *      is allocated in a single bloc and can be released with Mem_Free(tb).<br>
  *      <i>NULL</i> is returned if there is not enough memory to store the unpacked tiles.
- *      If the source TileSet is not packed then returned TileSet allocate only memory to do <i>NULL</i> is returned if there is not enough memory to store the unpacked tiles.
  */
 TileSet *allocateTileSet(const TileSet *tileset);
 /**
@@ -180,8 +179,7 @@ TileSet *allocateTileSet(const TileSet *tileset);
 TileSet *allocateTileSetEx(u16 numTile);
 /**
  *  \brief
- *      Allocate Map structure which can receive unpacked map data of the specified Map.<br>
- *      If source is not packed the function only allocate space for simple shallow copy of the source.
+ *      Allocate Map structure which can receive unpacked map data of the specified Map.
  *
  *  \param map
  *      Source Map we want to allocate the unpacked Map object.
@@ -208,7 +206,7 @@ Map *allocateMapEx(u16 width, u16 heigth);
 /**
  *  \brief
  *      Allocate Image structure which can receive unpacked image data of the specified Image.
- *      If source is not packed the function only allocate space for simple shallow copy of the source.
+ *      There is no memory allocated for the palette data as it assumes to always use a reference for Palette field.
  *
  *  \param image
  *      Source Image we want to allocate the unpacked Image object.

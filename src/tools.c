@@ -11,7 +11,7 @@
 #include "vdp.h"
 
 
-//forward
+// forward
 static u16 getBitmapAllocSize(const Bitmap *bitmap);
 static u16 getTileSetAllocSize(const TileSet *tileset);
 static u16 getMapAllocSize(const Map *map);
@@ -829,29 +829,17 @@ void KLog_F4x(s16 numDec, char* t1, fix32 v1, char* t2, fix32 v2, char* t3, fix3
 
 static u16 getBitmapAllocSize(const Bitmap *bitmap)
 {
-    // need space to decompress
-    if (bitmap->compression != COMPRESSION_NONE)
-        return (bitmap->w * bitmap->h) / 2;
-
-    return 0;
+    return (bitmap->w * bitmap->h) / 2;
 }
 
 static u16 getTileSetAllocSize(const TileSet *tileset)
 {
-    // need space to decompress
-    if (tileset->compression != COMPRESSION_NONE)
-        return tileset->numTile * 32;
-
-    return 0;
+    return tileset->numTile * 32;
 }
 
 static u16 getMapAllocSize(const Map *map)
 {
-    // need space to decompress
-    if (map->compression != COMPRESSION_NONE)
-        return map->w * map->h * 2;
-
-    return 0;
+    return map->w * map->h * 2;
 }
 
 
@@ -863,13 +851,8 @@ static Bitmap *allocateBitmapInternal(const Bitmap *bitmap, void *adr)
     if (result != NULL)
     {
         result->compression = COMPRESSION_NONE;
-
-        if (bitmap->compression != COMPRESSION_NONE)
-            // allocate sub buffers (no need to allocate palette as we directly use the source pointer)
-            result->image = (u8*) (adr + sizeof(Bitmap));
-        else
-            // image is not compressed --> directly use source pointer
-            result->image = bitmap->image;
+        // allocate image buffer
+        result->image = (u8*) (adr + sizeof(Bitmap));
     }
 
     return result;
@@ -883,13 +866,8 @@ static TileSet *allocateTileSetInternal(const TileSet *tileset, void *adr)
     if (result != NULL)
     {
         result->compression = COMPRESSION_NONE;
-
-        if (tileset->compression != COMPRESSION_NONE)
-            // allocate sub buffers (no need to allocate palette as we directly use the source pointer)
-            result->tiles = (u32*) (adr + sizeof(TileSet));
-        else
-            // tileset is not compressed --> directly use source pointer
-            result->tiles = tileset->tiles;
+        // allocate tiles buffer
+        result->tiles = (u32*) (adr + sizeof(TileSet));
     }
 
     return result;
@@ -903,17 +881,13 @@ static Map *allocateMapInternal(const Map *map, void *adr)
     if (result != NULL)
     {
         result->compression = COMPRESSION_NONE;
-
-        if (map->compression != COMPRESSION_NONE)
-            // allocate sub buffers (no need to allocate palette as we directly use the source pointer)
-            result->tilemap = (u16*) (adr + sizeof(Map));
-        else
-            // tilemap is not compressed --> directly use source pointer
-            result->tilemap = map->tilemap;
+        // allocate tilemap buffer
+        result->tilemap = (u16*) (adr + sizeof(Map));
     }
 
     return result;
 }
+
 
 Bitmap *allocateBitmap(const Bitmap *bitmap)
 {
@@ -980,19 +954,12 @@ Map *allocateMapEx(u16 width, u16 heigth)
 
 Image *allocateImage(const Image *image)
 {
-    u16 sizeTileset;
-    u16 sizeMap;
     TileSet *tileset = image->tileset;
     Map *map = image->map;
 
-    if (tileset->compression != COMPRESSION_NONE)
-        sizeTileset = (tileset->numTile * 32) + sizeof(TileSet);
-    else
-        sizeTileset = 0;
-    if (map->compression != COMPRESSION_NONE)
-        sizeMap = (map->w * map->h * 2) + sizeof(Map);
-    else
-        sizeMap = 0;
+    // get allocation size
+    u16 sizeTileset = getTileSetAllocSize(tileset) + sizeof(TileSet);
+    u16 sizeMap = getMapAllocSize(map) + sizeof(Map);
 
     const void *adr = MEM_alloc(sizeTileset + sizeMap + sizeof(Image));
 
@@ -1001,19 +968,10 @@ Image *allocateImage(const Image *image)
 
     if (result != NULL)
     {
-        if (tileset->compression != COMPRESSION_NONE)
-            // allocate tileset buffer
-            result->tileset = allocateTileSetInternal(tileset, (void*) (adr + sizeof(Image)));
-        else
-            // tileset is not compressed --> directly use source pointer
-            result->tileset = tileset;
-
-        if (map->compression != COMPRESSION_NONE)
-            // allocate map buffer
-            result->map = allocateMapInternal(map, (void*) (adr + sizeof(Image) + sizeTileset));
-        else
-            // map is not compressed --> directly use source pointer
-            result->map = map;
+        // allocate tileset buffer
+        result->tileset = allocateTileSetInternal(tileset, (void*) (adr + sizeof(Image)));
+        // allocate map buffer
+        result->map = allocateMapInternal(map, (void*) (adr + sizeof(Image) + sizeTileset));
     }
 
     return result;
@@ -1029,7 +987,7 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest)
 
     if (result != NULL)
     {
-        // fill infos (palette is never packed)
+        // fill infos (always use shallow copy for palette)
         result->w = src->w;
         result->h = src->h;
         result->palette = src->palette;
@@ -1101,7 +1059,7 @@ Image *unpackImage(const Image *src, Image *dest)
 
     if (result != NULL)
     {
-        // fill infos (palette is never packed)
+        // fill infos (always use shallow copy for palette)
         result->palette = src->palette;
 
         // unpack tileset if needed
