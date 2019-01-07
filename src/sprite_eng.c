@@ -1967,12 +1967,16 @@ static Sprite* sortSprite(Sprite* sprite)
         // adjust on previous as we insert *after*
         if (s) s = s->prev;
         else s = lastSprite;
+        // insert sprite after s
+        moveAfter(s, sprite);
     }
     else
     {
         // try to find position backward then
         s = prev;
         while(s && (s->depth > sdepth)) s = s->prev;
+        // position changed ? --> insert sprite after s
+        if (s != prev) moveAfter(s, sprite);
     }
 
 #ifdef SPR_DEBUG
@@ -1980,8 +1984,6 @@ static Sprite* sortSprite(Sprite* sprite)
     else KLog_U1("Position for sprite = ", 0);
 #endif // SPR_DEBUG
 
-    // position changed ? --> insert sprite after s
-    if (s != prev) moveAfter(s, sprite);
 
 #ifdef SPR_PROFIL
     profil_time[PROFIL_SORT] += getSubTick() - prof;
@@ -1993,9 +1995,6 @@ static Sprite* sortSprite(Sprite* sprite)
 
 static void moveAfter(Sprite* pos, Sprite* sprite)
 {
-    // already at the good position ? --> nothing to do
-    if (pos->next == sprite) return;
-
     Sprite* prev = sprite->prev;
     Sprite* next = sprite->next;
 
