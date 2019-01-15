@@ -1961,15 +1961,8 @@ static Sprite* sortSprite(Sprite* sprite)
     // find position forward first
     s = next;
     while(s && (s->depth < sdepth)) s = s->next;
-    // position changed ?
-    if (s != next)
-    {
-        // adjust on previous as we insert *after*
-        if (s) s = s->prev;
-        else s = lastSprite;
-        // insert sprite after s
-        moveAfter(s, sprite);
-    }
+    // position changed ? --> insert sprite after s->prev (as s is pointing on 'next')
+    if (s != next) moveAfter(s?s->prev:lastSprite, sprite);
     else
     {
         // try to find position backward then
