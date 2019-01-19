@@ -824,13 +824,13 @@ void VDP_resetScreen();
  *  \brief
  *      Display number of Frame Per Second.
  *
- *  \param float_display
- *      Display as float number.
+ *  \param asFloat
+ *      Display in float number format.
  *
  * This function actually display the number of time it was called in the last second.<br>
  * i.e: for benchmarking you should call this method only once per frame update.
  */
-void VDP_showFPS(u16 float_display);
+void VDP_showFPS(u16 asFloat);
 
 
 #endif // _VDP_H_

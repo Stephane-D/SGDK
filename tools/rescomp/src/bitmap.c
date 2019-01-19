@@ -34,16 +34,14 @@ static int execute(char *info, FILE *fs, FILE *fh)
     int w, h, bpp;
     int isize, psize;
     int packed;
-    int transInd;
     int nbElem;
     unsigned char *data;
     unsigned short *palette;
     unsigned char maxIndex;
 
     packed = 0;
-    transInd = 0;
 
-    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s %d", temp, id, temp, packedStr, &transInd);
+    nbElem = sscanf(info, "%s %s \"%[^\"]\" %s", temp, id, temp, packedStr);
 
     if (nbElem < 3)
     {

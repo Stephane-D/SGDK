@@ -73,6 +73,12 @@
 
 
 /**
+ *  \typedef bool
+ *      boolean type (internally set as unsigned short)
+ */
+typedef unsigned short bool;
+
+/**
  *  \typedef s8
  *      8 bits signed integer (equivalent to char).
  */

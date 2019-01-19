@@ -44,3 +44,7 @@ tools/xgmtool/out/*
 tools/lz4w/test
 tools/lz4w/bin
 tools/emu
+sample/bench/out/symbol.txt
+sample/sound/loss
+*.pal
+*.depend

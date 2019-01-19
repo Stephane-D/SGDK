@@ -725,11 +725,11 @@ void VDP_resetScreen()
 }
 
 
-void VDP_showFPS(u16 float_display)
+void VDP_showFPS(u16 asFloat)
 {
     char str[16];
 
-    if (float_display)
+    if (asFloat)
     {
         fix32ToStr(getFPS_f(), str, 1);
         VDP_clearText(2, 1, 5);

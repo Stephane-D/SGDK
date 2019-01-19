@@ -376,7 +376,7 @@ void SPR_reset();
  *  \param attribut
  *      sprite attribut (see TILE_ATTR() macro).
  *  \param spriteIndex
- *      index of the first sprite in the VDP sprite table used to display this Sprite (should be > 0 and < 128).<br>
+ *      index of the first sprite in the VDP sprite table used to display this Sprite (should be in [1..79] range.<br>
  *      IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <i>flags</i> parameter).<br>
  *  \param flags
  *      specific settings for this sprite:<br>
