@@ -283,7 +283,7 @@ static void setFadePalette()
         SYS_enableInts();
 }
 
-u16 VDP_doStepFading()
+u16 VDP_doFadingStep()
 {
     // last step --> just recopy the final palette
     if (--fading_cnt <= 0)
@@ -446,17 +446,17 @@ void VDP_fadePal(u16 numpal, const u16 *palsrc, const u16 *paldst, u16 numframe,
     VDP_fade(numpal << 4, (numpal << 4) + 15, palsrc, paldst, numframe, async);
 }
 
-void VDP_fadePalTo(u16 numpal, const u16 *pal, u16 numframe, u8 async)
+void VDP_fadeToPal(u16 numpal, const u16 *pal, u16 numframe, u8 async)
 {
     VDP_fadeTo(numpal << 4, (numpal << 4) + 15, pal, numframe, async);
 }
 
-void VDP_fadePalOut(u16 numpal, u16 numframe, u8 async)
+void VDP_fadeOutPal(u16 numpal, u16 numframe, u8 async)
 {
     VDP_fadeTo(numpal << 4, (numpal << 4) + 15, palette_black, numframe, async);
 }
 
-void VDP_fadePalIn(u16 numpal, const u16 *pal, u16 numframe, u8 async)
+void VDP_fadeInPal(u16 numpal, const u16 *pal, u16 numframe, u8 async)
 {
     VDP_fade(numpal << 4, (numpal << 4) + 15, palette_black, pal, numframe, async);
 }
@@ -467,7 +467,7 @@ void VDP_fadeAll(const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async)
     VDP_fade(0, 63, palsrc, paldst, numframe, async);
 }
 
-void VDP_fadeAllTo(const u16 *pal, u16 numframe, u8 async)
+void VDP_fadeToAll(const u16 *pal, u16 numframe, u8 async)
 {
     VDP_fadeTo(0, 63, pal, numframe, async);
 }

@@ -926,6 +926,8 @@ TileSet *allocateTileSetEx(u16 numTile)
         result->compression = COMPRESSION_NONE;
         // set tiles pointer
         result->tiles = (u32*) (adr + sizeof(TileSet));
+        // and tile number
+        result->numTile = numTile;
     }
 
     return result;
@@ -947,6 +949,9 @@ Map *allocateMapEx(u16 width, u16 heigth)
         result->compression = COMPRESSION_NONE;
         // set tilemap pointer
         result->tilemap = (u16*) (adr + sizeof(Map));
+        // and map size
+        result->w = width;
+        result->h = heigth;
     }
 
     return result;

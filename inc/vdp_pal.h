@@ -36,8 +36,6 @@
  *  \brief
  *      Palette structure contains color data.
  *
- *  \param index
- *      Index where to load the palette.
  *  \param lenght
  *      Size of this palette.
  *  \param dat
@@ -45,7 +43,6 @@
  */
 typedef struct
 {
-    u16 index;
     u16 length;
     u16 *data;
 } Palette;
@@ -101,14 +98,14 @@ u16  VDP_getPaletteColor(u16 index);
 void  VDP_getPaletteColors(u16 index, u16* dest, u16 count);
 /**
  *  \brief
- *      Get palette.
+ *      Get a complete palette (16 colors).
  *
- *  \param index
- *      Palette index (0-3).
+ *  \param num
+ *      Palette number: PAL0, PAL1, PAL2 or PAL3
  *  \param pal
- *      Destination where to copy palette (should be 16 words long at least)
+ *      Destination where to copy palette colors (should be 16 words long at least)
  */
-void VDP_getPalette(u16 index, u16 *pal);
+void VDP_getPalette(u16 num, u16 *pal);
 
 /**
  *  \brief
@@ -134,10 +131,10 @@ void VDP_setPaletteColor(u16 index, u16 value);
 void VDP_setPaletteColors(u16 index, const u16* values, u16 count);
 /**
  *  \brief
- *      Set palette.
+ *      Set a complete palette (16 colors).
  *
  *  \param num
- *      Palette number (0-3).
+ *      Palette number: PAL0, PAL1, PAL2 or PAL3
  *  \param pal
  *      Source palette.
  */
@@ -271,7 +268,7 @@ void VDP_fadePal(u16 numpal, const u16 *palsrc, const u16 *paldst, u16 numframe,
  *
  *  See VDP_fadePal() for more informations.
  */
-void VDP_fadePalTo(u16 numpal, const u16 *pal, u16 numframe, u8 async);
+void VDP_fadeToPal(u16 numpal, const u16 *pal, u16 numframe, u8 async);
 /**
  *  \brief
  *      Fade out (current color to black) effect.
@@ -286,7 +283,7 @@ void VDP_fadePalTo(u16 numpal, const u16 *pal, u16 numframe, u8 async);
  *
  *  See VDP_fadePal() for more informations.
  */
-void VDP_fadePalOut(u16 numpal, u16 numframe, u8 async);
+void VDP_fadeOutPal(u16 numpal, u16 numframe, u8 async);
 /**
  *  \brief
  *      Fade in (black to specified color) effect.
@@ -303,7 +300,7 @@ void VDP_fadePalOut(u16 numpal, u16 numframe, u8 async);
  *
  *  See VDP_fadePal() for more informations.
  */
-void VDP_fadePalIn(u16 numpal, const u16 *pal, u16 numframe, u8 async);
+void VDP_fadeInPal(u16 numpal, const u16 *pal, u16 numframe, u8 async);
 
 /**
  *  \brief
@@ -337,7 +334,7 @@ void VDP_fadeAll(const u16 *palsrc, const u16 *paldst, u16 numframe, u8 async);
  *  The fade operation is done to all palette entries.<br>
  *  See VDP_fadeAll().
  */
-void VDP_fadeAllTo(const u16 *pal, u16 numframe, u8 async);
+void VDP_fadeToAll(const u16 *pal, u16 numframe, u8 async);
 /**
  *  \brief
  *      Fade out (current color to black) effect.

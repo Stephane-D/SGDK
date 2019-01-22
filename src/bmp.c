@@ -1120,7 +1120,7 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
     if (loadpal)
     {
         const Palette *palette = bitmap->palette;
-        VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+        VDP_setPaletteColors(pal << 4, palette->data, palette->length);
     }
 
     return TRUE;
@@ -1152,7 +1152,7 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
     if (loadpal)
     {
         const Palette *palette = bitmap->palette;
-        VDP_setPaletteColors((pal << 4) + (palette->index & 0xF), palette->data, palette->length);
+        VDP_setPaletteColors(pal << 4, palette->data, palette->length);
     }
 
     return TRUE;
