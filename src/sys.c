@@ -436,7 +436,7 @@ void _vint_callback()
         // palette fading processing
         if (vintp & PROCESS_PALETTE_FADING)
         {
-            if (!VDP_doStepFading(FALSE)) vintp &= ~PROCESS_PALETTE_FADING;
+            if (!VDP_doFadingStep(FALSE)) vintp &= ~PROCESS_PALETTE_FADING;
         }
 
         VIntProcess = vintp;
@@ -543,7 +543,7 @@ void _start_entry()
                     const u32 w = 256 - size;
 
                     // adjust palette for fade
-                    VDP_doStepFading(FALSE);
+                    VDP_doFadingStep(FALSE);
 
                     // zoom logo
                     BMP_loadAndScaleBitmap(logo, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, FALSE);
@@ -552,7 +552,7 @@ void _start_entry()
                 }
 
                 // while fade not completed
-                while(VDP_doStepFading(TRUE));
+                while(VDP_doFadingStep(TRUE));
             }
 
             // wait 1 second

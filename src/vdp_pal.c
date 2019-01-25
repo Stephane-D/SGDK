@@ -412,7 +412,7 @@ void VDP_fade(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 
     else
     {
         // process fading immediatly
-        while (VDP_doStepFading());
+        while (VDP_doFadingStep());
     }
 }
 
