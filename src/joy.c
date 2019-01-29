@@ -7,6 +7,7 @@
 #include "joy.h"
 #include "sys.h"
 #include "vdp.h"
+#include "z80_ctrl.h"
 
 
 #define JOY_TYPE_SHIFT          12
@@ -36,12 +37,20 @@ void JOY_init()
     vu8 *pb;
     u8  a, id;
     u16 i;
+#if (HALT_Z80_ON_IO == 1)
+    u16 z80state;
+#endif
 
     joyEventCB = NULL;
     gport = 0xFFFF;
 
     // disable ints
     SYS_disableInts();
+
+#if (HALT_Z80_ON_IO == 1)
+    z80state = Z80_isBusTaken();
+    if (!z80state) Z80_requestBus(FALSE);
+#endif
 
     /* check for EA 4-Way Play */
     pb = (vu8 *)0xa10009;
@@ -59,6 +68,10 @@ void JOY_init()
 
     if (a == 0)
     {
+#if (HALT_Z80_ON_IO == 1)
+        if (!z80state) Z80_releaseBus();
+#endif
+
         /* EA 4-Way Play detected */
         portType[PORT_1] = PORT_TYPE_EA4WAYPLAY;
         portType[PORT_2] = PORT_TYPE_EA4WAYPLAY;
@@ -104,8 +117,17 @@ void JOY_init()
     pb += 2;
     *pb = 0x40;
 
+#if (HALT_Z80_ON_IO == 1)
+    if (!z80state) Z80_releaseBus();
+#endif
+
     VDP_waitVSync();
     VDP_waitVSync();
+
+#if (HALT_Z80_ON_IO == 1)
+    z80state = Z80_isBusTaken();
+    if (!z80state) Z80_requestBus(FALSE);
+#endif
 
     /* get ID port 1 */
     pb = (vu8 *)0xa10003;
@@ -203,6 +225,10 @@ void JOY_init()
         else if (portType[PORT_2] == PORT_TYPE_MOUSE)
             JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);
     }
+
+#if (HALT_Z80_ON_IO == 1)
+    if (!z80state) Z80_releaseBus();
+#endif
 
     // restore ints
     SYS_enableInts();
@@ -1065,6 +1091,12 @@ void JOY_update()
     u16 val;
     u16 newstate;
     u16 change;
+#if (HALT_Z80_ON_IO == 1)
+    u16 z80state;
+
+    z80state = Z80_isBusTaken();
+    if (!z80state) Z80_requestBus(FALSE);
+#endif
 
     switch (portSupport[PORT_1])
     {
@@ -1181,4 +1213,8 @@ void JOY_update()
         default:
             break;
     }
+
+#if (HALT_Z80_ON_IO == 1)
+    if (!z80state) Z80_releaseBus();
+#endif
 }
