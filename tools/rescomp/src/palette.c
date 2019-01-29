@@ -113,7 +113,7 @@ void outPalette(unsigned short* palette, int startInd, int palSize, FILE* fs, FI
     // palette structure
     decl(fs, fh, "Palette", id, 2, global);
     // first color index and palette size
-    fprintf(fs, "    dc.w    %d, %d\n", startInd, size);
+    fprintf(fs, "    dc.w    %d\n", size);
     // set palette pointer
     fprintf(fs, "    dc.l    %s\n", temp);
     fprintf(fs, "\n");
