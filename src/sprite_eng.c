@@ -158,7 +158,7 @@ void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize)
 
 void SPR_init()
 {
-    SPR_initEx(80, 384, 256);
+    SPR_initEx(80, 512, 384);
 }
 
 void SPR_end()
