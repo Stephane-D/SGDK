@@ -118,14 +118,16 @@ extern const fix16 sqrttab16[0x10000];
 
 /**
  *  \brief
- *      Compute and return the result of the multiplication of val1 and val2 (fix32).
+ *      Compute and return the result of the multiplication of val1 and val2 (fix32).<br>
+ *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
  */
-#define fix32Mul(val1, val2)        (((val1) * (val2)) >> FIX32_FRAC_BITS)
+#define fix32Mul(val1, val2)        (((val1) >> (FIX32_FRAC_BITS / 2)) * ((val2) >> (FIX32_FRAC_BITS / 2)))
 /**
  *  \brief
- *      Compute and return the result of the division of val1 by val2 (fix32).
+ *      Compute and return the result of the division of val1 by val2 (fix32).<br>
+ *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
  */
-#define fix32Div(val1, val2)        (((val1) << FIX32_FRAC_BITS) / (val2))
+#define fix32Div(val1, val2)        (((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
 
 
 #define FIX16_INT_BITS              10
@@ -320,6 +322,16 @@ typedef struct
 
 /**
  *  \brief
+ *      2D Vector structure - f32 (fix32) type.
+ */
+typedef struct
+{
+    fix32 x;
+    fix32 y;
+} Vect2D_f32;
+
+/**
+ *  \brief
  *      2x2 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 2 2D vectors.
  */
@@ -329,8 +341,63 @@ typedef struct
     Vect2D_f16 b;
 } Mat2D_f16;
 
+/**
+ *  \brief
+ *      2x2 Matrice structure - f32 (fix32) type.<br>
+ *      Internally uses 2 2D vectors.
+ */
+typedef struct
+{
+    Vect2D_f32 a;
+    Vect2D_f32 b;
+} Mat2D_f32;
+
 
 // 3D STUFF
+
+/**
+ *  \brief
+ *      3D Vector structure - u16 type.
+ */
+typedef struct
+{
+    u16 x;
+    u16 y;
+    u16 z;
+} Vect3D_u16;
+
+/**
+ *  \brief
+ *      3D Vector structure - s16 type.
+ */
+typedef struct
+{
+    s16 x;
+    s16 y;
+    s16 z;
+} Vect3D_s16;
+
+/**
+ *  \brief
+ *      3D Vector structure - u32 type.
+ */
+typedef struct
+{
+    u32 x;
+    u32 y;
+    u32 z;
+} Vect3D_u32;
+
+/**
+ *  \brief
+ *      3D Vector structure - s32 type.
+ */
+typedef struct
+{
+    s32 x;
+    s32 y;
+    s32 z;
+} Vect3D_s32;
 
 /**
  *  \brief
@@ -345,6 +412,17 @@ typedef struct
 
 /**
  *  \brief
+ *      3D Vector structure - f32 (fix32) type.
+ */
+typedef struct
+{
+    fix32 x;
+    fix32 y;
+    fix32 z;
+} Vect3D_f32;
+
+/**
+ *  \brief
  *      3x3 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 3 3D vectors.
  */
@@ -354,6 +432,18 @@ typedef struct
     Vect3D_f16 b;
     Vect3D_f16 c;
 } Mat3D_f16;
+
+/**
+ *  \brief
+ *      3x3 Matrice structure - f32 (fix32) type.<br>
+ *      Internally uses 3 3D vectors.
+ */
+typedef struct
+{
+    Vect3D_f32 a;
+    Vect3D_f32 b;
+    Vect3D_f32 c;
+} Mat3D_f32;
 
 
 // 4D STUFF
@@ -372,6 +462,18 @@ typedef struct
 
 /**
  *  \brief
+ *      4D Vector structure - f32 (fix32) type.
+ */
+typedef struct
+{
+    fix32 x;
+    fix32 y;
+    fix32 z;
+    fix32 w;
+} Vect4D_f32;
+
+/**
+ *  \brief
  *      4x4 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 4 4D vectors.
  */
@@ -383,6 +485,105 @@ typedef struct
     Vect4D_f16 d;
 } Mat4D_f16;
 
+/**
+ *  \brief
+ *      4x4 Matrice structure - f32 (fix32) type.<br>
+ *      Internally uses 4 4D vectors.
+ */
+typedef struct
+{
+    Vect4D_f32 a;
+    Vect4D_f32 b;
+    Vect4D_f32 c;
+    Vect4D_f32 d;
+} Mat4D_f32;
+
+
+// short alias
+
+/**
+ *  \brief alias for Vect2D_u16
+ */
+typedef Vect2D_u16 V2u16;
+/**
+ *  \brief alias for Vect2D_s16
+ */
+typedef Vect2D_s16 V2s16;
+/**
+ *  \brief alias for Vect2D_u32
+ */
+typedef Vect2D_u32 V2u32;
+/**
+ *  \brief alias for Vect2D_s32
+ */
+typedef Vect2D_s32 V2s32;
+/**
+ *  \brief alias for Vect2D_f16
+ */
+typedef Vect2D_f16 V2f16;
+/**
+ *  \brief alias for Vect2D_f32
+ */
+typedef Vect2D_f32 V2f32;
+
+/**
+ *  \brief alias for Vect3D_u16
+ */
+typedef Vect3D_u16 V3u16;
+/**
+ *  \brief alias for Vect3D_s16
+ */
+typedef Vect3D_s16 V3s16;
+/**
+ *  \brief alias for Vect3D_u32
+ */
+typedef Vect3D_u32 V3u32;
+/**
+ *  \brief alias for Vect3D_s32
+ */
+typedef Vect3D_s32 V3s32;
+/**
+ *  \brief alias for Vect3D_f16
+ */
+typedef Vect3D_f16 V3f16;
+/**
+ *  \brief alias for Vect3D_f32
+ */
+typedef Vect3D_f32 V3f32;
+
+/**
+ *  \brief alias for Vect4D_f16
+ */
+typedef Vect4D_f16 V4f16;
+/**
+ *  \brief alias for Vect4D_f32
+ */
+typedef Vect4D_f32 V4f32;
+
+/**
+ *  \brief alias for Mat2D_f16
+ */
+typedef Mat2D_f16 M2f16;
+/**
+ *  \brief alias for Mat2D_f32
+ */
+typedef Mat2D_f32 M2f32;
+/**
+ *  \brief alias for Mat3D_f16
+ */
+typedef Mat3D_f16 M3f16;
+/**
+ *  \brief alias for Mat3D_f32
+ */
+typedef Mat3D_f32 M3f32;
+/**
+ *  \brief alias for Mat4D_f16
+ */
+typedef Mat4D_f16 M4f16;
+/**
+ *  \brief alias for Mat4D_f32
+ */
+typedef Mat4D_f32 M4f32;
 
 /**
  *  \brief
@@ -431,7 +632,6 @@ s32 getApproximatedLog2(s32 value);
  *      value to return log2 of
  */
 u16 getLog2Int(u32 value);
-
 
 
 #endif // _MATHS_H_

@@ -54,7 +54,7 @@ void M3D_setLightXYZ(fix16 x, fix16 y, fix16 z)
     context3D.light.z = z;
 }
 
-void M3D_setLight(Vect3D_f16 *value)
+void M3D_setLight(V3f16 *value)
 {
     context3D.light.x = value->x;
     context3D.light.y = value->y;
@@ -62,10 +62,10 @@ void M3D_setLight(Vect3D_f16 *value)
 }
 
 
-void M3D_resetTransform(Transformation3D *t)
+void M3D_resetTransform(Transformation3D* t)
 {
-    Rotation3D *rot = t->rotation;
-    Translation3D *trans = t->translation;
+    Rotation3D* rot = t->rotation;
+    Translation3D* trans = t->translation;
 
     rot->x = 0;
     rot->y = 0;
@@ -110,7 +110,7 @@ void M3D_resetTransform(Transformation3D *t)
         M3D_rotateInv(t, &(context3D.light), &(t->lightInv));
 }
 
-void M3D_setTransform(Transformation3D *tr, Translation3D *t, Rotation3D *r)
+void M3D_setTransform(Transformation3D* tr, Translation3D* t, Rotation3D* r)
 {
     tr->translation = t;
 
@@ -121,18 +121,18 @@ void M3D_setTransform(Transformation3D *tr, Translation3D *t, Rotation3D *r)
     }
 }
 
-void M3D_setTranslation(Transformation3D *t, fix16 x, fix16 y, fix16 z)
+void M3D_setTranslation(Transformation3D* t, fix16 x, fix16 y, fix16 z)
 {
-    Translation3D *trans = t->translation;
+    Translation3D* trans = t->translation;
 
     trans->x = x;
     trans->y = y;
     trans->z = z;
 }
 
-void M3D_setRotation(Transformation3D *t, fix16 x, fix16 y, fix16 z)
+void M3D_setRotation(Transformation3D* t, fix16 x, fix16 y, fix16 z)
 {
-    Rotation3D *rot = t->rotation;
+    Rotation3D* rot = t->rotation;
 
     if ((rot->x != x) || (rot->y != y) || (rot->z != z))
     {
@@ -144,7 +144,7 @@ void M3D_setRotation(Transformation3D *t, fix16 x, fix16 y, fix16 z)
 }
 
 
-void M3D_combineTransform(Transformation3D *left, Transformation3D *right, Transformation3D *result)
+void M3D_combineTransform(Transformation3D* left, Transformation3D* right, Transformation3D* result)
 {
     // rebuild matrice if needed
     if (left->rebuildMat) M3D_buildMat3DOnly(left);
@@ -157,13 +157,13 @@ void M3D_combineTransform(Transformation3D *left, Transformation3D *right, Trans
 //          c   g h i z   q r s w   z     gk+hn+iq gl+ho+ir gm+hp+is gu+hv+iw+z
 //              0 0 0 1   0 0 0 1
 
-    const Mat3D_f16 *mat1 = &(left->mat);
-    const Translation3D *t1 = left->translation;
-    const Mat3D_f16 *mat2 = &(right->mat);
-    const Translation3D *t2 = right->translation;
+    const M3f16* mat1 = &(left->mat);
+    const Translation3D* t1 = left->translation;
+    const M3f16* mat2 = &(right->mat);
+    const Translation3D* t2 = right->translation;
 
-    Mat3D_f16 *matRes = &(result->mat);
-    Translation3D *tRes = result->translation;
+    M3f16* matRes = &(result->mat);
+    Translation3D* tRes = result->translation;
 
     // compute matrix product (36 multiplications + 27 additions... outch !!!)
     matRes->a.x = ((mat1->a.x * mat2->a.x) + (mat1->a.y * mat2->b.x) + (mat1->a.z * mat2->c.x)) >> FIX16_FRAC_BITS;
@@ -185,7 +185,7 @@ void M3D_combineTransform(Transformation3D *left, Transformation3D *right, Trans
     M3D_buildMat3DExtras(result);
 }
 
-void M3D_combineTranslationLeft(Translation3D *left, Transformation3D *right, Transformation3D *result)
+void M3D_combineTranslationLeft(Translation3D* left, Transformation3D* right, Transformation3D* result)
 {
     // rebuild matrice if needed
     if (right->rebuildMat) M3D_buildMat3D(right);
@@ -206,9 +206,9 @@ void M3D_combineTranslationLeft(Translation3D *left, Transformation3D *right, Tr
 //          c   0 0 1 z   q r s w   z     q r s w+z
 //              0 0 0 1   0 0 0 1
 
-    const Translation3D *t1 = left;
-    const Translation3D *t2 = right->translation;
-    Translation3D *tRes = result->translation;
+    const Translation3D* t1 = left;
+    const Translation3D* t2 = right->translation;
+    Translation3D* tRes = result->translation;
 
     // only need to modify translation object (3 additions... ok :) )
     tRes->x = t1->x + t2->x;
@@ -216,7 +216,7 @@ void M3D_combineTranslationLeft(Translation3D *left, Transformation3D *right, Tr
     tRes->z = t1->z + t2->z;
 }
 
-void M3D_combineTranslationRight(Transformation3D *left, Translation3D *right, Transformation3D *result)
+void M3D_combineTranslationRight(Transformation3D* left, Translation3D* right, Transformation3D* result)
 {
     // rebuild matrice if needed
     if (left->rebuildMat) M3D_buildMat3D(left);
@@ -237,10 +237,10 @@ void M3D_combineTranslationRight(Transformation3D *left, Translation3D *right, T
 //          c   q r s w   0 0 1 z   z     q r s qx+ry+sz+w
 //              0 0 0 1   0 0 0 1
 
-    const Mat3D_f16 *mat1 = &(left->mat);
-    const Translation3D *t1 = left->translation;
-    const Translation3D *t2 = right;
-    Translation3D *tRes = result->translation;
+    const M3f16* mat1 = &(left->mat);
+    const Translation3D* t1 = left->translation;
+    const Translation3D* t2 = right;
+    Translation3D* tRes = result->translation;
 
     // only need to modify translation object (9 multiplications + 6 additions... ok :) )
     tRes->x = (((mat1->a.x * t2->x) + (mat1->a.y * t2->y) + (mat1->a.z * t2->z)) >> FIX16_FRAC_BITS) + t1->x;
@@ -249,19 +249,19 @@ void M3D_combineTranslationRight(Transformation3D *left, Translation3D *right, T
 }
 
 
-void M3D_buildMat3D(Transformation3D *t)
+void M3D_buildMat3D(Transformation3D* t)
 {
     M3D_buildMat3DOnly(t);
     M3D_buildMat3DExtras(t);
 }
 
-void M3D_buildMat3DOnly(Transformation3D *t)
+void M3D_buildMat3DOnly(Transformation3D* t)
 {
     fix16 sx, sy, sz;
     fix16 cx, cy, cz;
     fix16 sxsy, cxsy;
 
-    Rotation3D *rot = t->rotation;
+    Rotation3D* rot = t->rotation;
 
     cx = rot->x;
     cy = rot->y;
@@ -292,7 +292,7 @@ void M3D_buildMat3DOnly(Transformation3D *t)
     t->rebuildMat = 0;
 }
 
-void M3D_buildMat3DExtras(Transformation3D *t)
+void M3D_buildMat3DExtras(Transformation3D* t)
 {
     t->matInv.a.x = t->mat.a.x;
     t->matInv.b.x = t->mat.a.y;
@@ -317,11 +317,11 @@ void M3D_buildMat3DExtras(Transformation3D *t)
 }
 
 
-void M3D_translate(Transformation3D *t, Vect3D_f16 *vertices, u16 numv)
+void M3D_translate(Transformation3D* t, V3f16* vertices, u16 numv)
 {
     fix16 *d;
     u16 i;
-    Translation3D *trans = t->translation;
+    Translation3D* trans = t->translation;
 
     const fix16 tx = trans->x;
     const fix16 ty = trans->y;
@@ -338,7 +338,7 @@ void M3D_translate(Transformation3D *t, Vect3D_f16 *vertices, u16 numv)
     }
 }
 
-void M3D_rotate(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
+void M3D_rotate(Transformation3D* t, const V3f16* src, V3f16* dest, u16 numv)
 {
     const fix16 *s;
     fix16 *d;
@@ -362,7 +362,7 @@ void M3D_rotate(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u1
     }
 }
 
-void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
+void M3D_rotateInv(Transformation3D* t, const V3f16* src, V3f16* dest)
 {
     if (t->rebuildMat) M3D_buildMat3D(t);
 
@@ -375,7 +375,7 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
     dest->z = ((sx * t->matInv.c.x) + (sy * t->matInv.c.y) + (sz * t->matInv.c.z)) >> FIX16_FRAC_BITS;
 }
 
-//void M3D_transform_old(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv)
+//void M3D_transform_old(Transformation3D* t, const V3f16* src, V3f16* dest, u16 numv)
 //{
 //    fix16 *s;
 //    fix16 *d;
@@ -383,7 +383,7 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
 //
 //    if (t->rebuildMat) M3D_buildMat3D(t);
 //
-//    Translation3D *trans = t->translation;
+//    Translation3D* trans = t->translation;
 //
 //    const fix16 tx = trans->x;
 //    const fix16 ty = trans->y;
@@ -405,9 +405,9 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
 //    }
 //}
 //
-//void M3D_project_f16_old(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv)
+//void M3D_project_f16_old(const V3f16* src, V2_f16 *dest, u16 numv)
 //{
-//    const Vect3D_f16 *s;
+//    const V3f16 *s;
 //    Vect2D_f16 *d;
 //    fix16 zi;
 //    fix16 wi, hi;
@@ -438,10 +438,10 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
 //    }
 //}
 //
-//void M3D_project_s16_old(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv)
+//void M3D_project_s16_old(const V3f16* src, V2s16 *dest, u16 numv)
 //{
-//    const Vect3D_f16 *s;
-//    Vect2D_s16 *d;
+//    const V3f16 *s;
+//    V2s16 *d;
 //    fix16 zi;
 //    u16 wi, hi;
 //    u16 i;
