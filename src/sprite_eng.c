@@ -50,7 +50,7 @@ extern VDPSprite *lastAllocatedVDPSprite;
 // forward
 static Sprite* allocateSprite(u16 head);
 //static Sprite** allocateSprites(Sprite** sprites, u16 num);
-static u16 releaseSprite(Sprite* sprite);
+static bool releaseSprite(Sprite* sprite);
 //static void releaseSprites(Sprite** sprites, u16 num);
 
 static void setVDPSpriteIndex(Sprite *sprite, u16 ind, u16 num, VDPSprite *last);
@@ -83,8 +83,6 @@ static Sprite **free;
 // pointer on first and last active sprite in the linked list
 Sprite *firstSprite;
 Sprite *lastSprite;
-// number of active sprite
-u16 spriteNum;
 
 static u8 *unpackBuffer;
 static u8 *unpackNext;
@@ -186,7 +184,7 @@ void SPR_end()
 #endif
 }
 
-u16 SPR_isInitialized()
+bool SPR_isInitialized()
 {
     return (spritesBank != NULL);
 }
@@ -207,8 +205,6 @@ void SPR_reset()
     // no active sprites
     firstSprite = NULL;
     lastSprite = NULL;
-    // reset current number of active sprite
-    spriteNum = 0;
     // reset unpack pointer
     unpackNext = unpackBuffer;
 
@@ -276,16 +272,13 @@ static Sprite* allocateSprite(u16 head)
         lastSprite = result;
     }
 
-    // update sprite number
-    spriteNum++;
-
     // mark as allocated --> this is done after allocate call, not needed here
     // result->status = ALLOCATED;
 
     return result;
 }
 
-static u16 releaseSprite(Sprite* sprite)
+static bool releaseSprite(Sprite* sprite)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -333,9 +326,6 @@ static u16 releaseSprite(Sprite* sprite)
             // update last sprite
             lastSprite = prev;
         }
-
-        // decrement number of sprite
-        spriteNum--;
 
         // not anymore allocated
         sprite->status &= ~ALLOCATED;
@@ -559,7 +549,7 @@ void SPR_releaseSprite(Sprite *sprite)
 
 u16 SPR_getNumActiveSprite()
 {
-    return spriteNum;
+    return &allocStack[spritesBankSize] - free;
 }
 
 void SPR_defragVRAM()
@@ -611,7 +601,7 @@ void SPR_defragVRAM()
 #endif // SPR_PROFIL
 }
 
-u16 SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef)
+bool SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -1045,7 +1035,7 @@ void SPR_nextFrame(Sprite *sprite)
 #endif // SPR_PROFIL
 }
 
-u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value)
+bool SPR_setVRAMTileIndex(Sprite *sprite, s16 value)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
@@ -1311,7 +1301,7 @@ void SPR_setNeverVisible(Sprite *sprite, u16 value)
     if (value) SPR_setVisibility(sprite, HIDDEN);
 }
 
-u16 SPR_computeVisibility(Sprite *sprite)
+bool SPR_computeVisibility(Sprite *sprite)
 {
     u16 status = sprite->status;
 
@@ -1485,7 +1475,7 @@ void SPR_logSprites()
 {
     Sprite* sprite = firstSprite;
 
-    KLog_U1_("Num sprite = ", spriteNum, " -----------------------------");
+    KLog_U1_("Num sprite = ", SPR_getNumActiveSprite(), " -----------------------------");
     while(sprite)
     {
         logSprite(sprite);

@@ -353,7 +353,7 @@ void SPR_end();
  *  \brief
  *      FALSE if sprite cache engine is not initialized, TRUE otherwise.
  */
-u16 SPR_isInitialized();
+bool SPR_isInitialized();
 
 /**
  *  \brief
@@ -535,7 +535,7 @@ void SPR_defragVRAM();
  *
  *  \return FALSE if auto resource allocation failed, TRUE otherwise.
  */
-u16 SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef);
+bool SPR_setDefinition(Sprite *sprite, const SpriteDefinition *spriteDef);
 /**
  *  \brief
  *      Set sprite position.
@@ -665,7 +665,7 @@ void SPR_nextFrame(Sprite *sprite);
  *  By default the Sprite Engine auto allocate VRAM for sprites tiles but you can force
  *  manual allocation and fix the sprite tiles position in VRAM with this method.
  */
-u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value);
+bool SPR_setVRAMTileIndex(Sprite *sprite, s16 value);
 /**
  *  \brief
  *      Set the VDP sprite index to use for this sprite.
@@ -683,7 +683,7 @@ u16 SPR_setVRAMTileIndex(Sprite *sprite, s16 value);
  *  index so it can fit the current sprite requirement in VDP sprite.
  *  <b>WARNING: you cannot use sprite 0 as it is internally reserved.</b>
  */
-u16 SPR_setSpriteTableIndex(Sprite *sprite, s16 value);
+bool SPR_setSpriteTableIndex(Sprite *sprite, s16 value);
 /**
  *  \brief
  *      Enable/disable the automatic upload of sprite tiles data into VRAM.
@@ -731,7 +731,7 @@ void SPR_setNeverVisible(Sprite *sprite, u16 value);
  *
  *  \see SPR_setVisibility(..)
  */
-u16 SPR_computeVisibility(Sprite *sprite);
+bool SPR_computeVisibility(Sprite *sprite);
 
 // /**
 // *  \brief
