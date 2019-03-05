@@ -23,9 +23,9 @@
  */
 typedef struct
 {
-    Vect2D_u16 viewport;
+    V2u16 viewport;
     fix16 camDist;
-    Vect3D_f16 light;
+    V3f16 light;
     u16 lightEnabled;
 } Context3D;
 
@@ -33,13 +33,13 @@ typedef struct
  *  \brief
  *      3D translation informations object - f16 (fix16) type.
  */
-typedef Vect3D_f16 Translation3D;
+typedef V3f16 Translation3D;
 
 /**
  *  \brief
  *      3D rotation informations object - f16 (fix16) type.
  */
-typedef Vect3D_f16 Rotation3D;
+typedef V3f16 Rotation3D;
 
 /**
  *  \brief
@@ -51,12 +51,12 @@ typedef Vect3D_f16 Rotation3D;
 typedef struct
 {
     u16 rebuildMat;
-    Translation3D *translation;
-    Rotation3D *rotation;
-    Mat3D_f16 mat;
-    Mat3D_f16 matInv;
-    Vect3D_f16 cameraInv;
-    Vect3D_f16 lightInv;
+    Translation3D* translation;
+    Rotation3D* rotation;
+    M3f16 mat;
+    M3f16 matInv;
+    V3f16 cameraInv;
+    V3f16 lightInv;
 } Transformation3D;
 
 /**
@@ -103,32 +103,32 @@ void M3D_setLightXYZ(fix16 x, fix16 y, fix16 z);
  *  \brief
  *      Set light direction vector.
  */
-void M3D_setLight(Vect3D_f16 *value);
+void M3D_setLight(V3f16* value);
 
 /**
  *  \brief
  *      Reset the specified Transformation3D object.
  */
-void M3D_resetTransform(Transformation3D *t);
+void M3D_resetTransform(Transformation3D* t);
 
 /**
  *  \brief
  *      Set translation and rotation objects to the specified transformation object.
  */
-void M3D_setTransform(Transformation3D *tr, Translation3D *t, Rotation3D *r);
+void M3D_setTransform(Transformation3D* tr, Translation3D* t, Rotation3D *r);
 
 /**
  *  \brief
  *      Set translation parameters to the specified transformation object.
  */
-void M3D_setTranslation(Transformation3D *t, fix16 x, fix16 y, fix16 z);
+void M3D_setTranslation(Transformation3D* t, fix16 x, fix16 y, fix16 z);
 /**
  *  \brief
  *      Set rotation parameters to the specified #Transformation3D object.<br>
  *      Be careful, x, y, z angle values are not given in radiant:<br>
  *      [-8..+8] range correspond to radian [-PI..+PI] range.
  */
-void M3D_setRotation(Transformation3D *t, fix16 x, fix16 y, fix16 z);
+void M3D_setRotation(Transformation3D* t, fix16 x, fix16 y, fix16 z);
 
 /**
  *  \brief
@@ -142,7 +142,7 @@ void M3D_setRotation(Transformation3D *t, fix16 x, fix16 y, fix16 z);
  *  \param result
  *      Result #Transformation3D object.
  */
-void M3D_combineTransform(Transformation3D *left, Transformation3D *right, Transformation3D *result);
+void M3D_combineTransform(Transformation3D* left, Transformation3D* right, Transformation3D* result);
 /**
  *  \brief
  *      Combine the specified left #Translation3D and right #Transformation3D and store result in <code>result</code>.<br>
@@ -155,7 +155,7 @@ void M3D_combineTransform(Transformation3D *left, Transformation3D *right, Trans
  *  \param result
  *      Result #Transformation3D object.
  */
-void M3D_combineTranslationLeft(Translation3D *left, Transformation3D *right, Transformation3D *result);
+void M3D_combineTranslationLeft(Translation3D* left, Transformation3D* right, Transformation3D* result);
 /**
  *  \brief
  *      Combine the specified left #Transformation3D with right #Translation3D and store result in <code>result</code>.<br>
@@ -168,7 +168,7 @@ void M3D_combineTranslationLeft(Translation3D *left, Transformation3D *right, Tr
  *  \param result
  *      Result #Transformation3D object.
  */
-void M3D_combineTranslationRight(Transformation3D *left, Translation3D *right, Transformation3D *result);
+void M3D_combineTranslationRight(Transformation3D* left, Translation3D* right, Transformation3D* result);
 
 /**
  *  \brief
@@ -178,7 +178,7 @@ void M3D_combineTranslationRight(Transformation3D *left, Translation3D *right, T
  *  \param t
  *      #Transformation3D object.
  */
-void M3D_buildMat3D(Transformation3D *t);
+void M3D_buildMat3D(Transformation3D* t);
 /**
  *  \brief
  *      Build the transformation matrix of the specified transformation object.
@@ -187,7 +187,7 @@ void M3D_buildMat3D(Transformation3D *t);
  *  \param t
  *      Transformation object.
  */
-void M3D_buildMat3DOnly(Transformation3D *t);
+void M3D_buildMat3DOnly(Transformation3D* t);
 /**
  *  \brief
  *      Only rebuild the cached infos as inverse matrix, inverse camera view...
@@ -195,7 +195,7 @@ void M3D_buildMat3DOnly(Transformation3D *t);
  *  \param t
  *      Transformation object.
  */
-void M3D_buildMat3DExtras(Transformation3D *t);
+void M3D_buildMat3DExtras(Transformation3D* t);
 
 /**
  *  \brief
@@ -208,7 +208,7 @@ void M3D_buildMat3DExtras(Transformation3D *t);
  *  \param numv
  *      Number of vertices to translate.
  */
-void M3D_translate(Transformation3D *t, Vect3D_f16 *vertices, u16 numv);
+void M3D_translate(Transformation3D* t, V3f16* vertices, u16 numv);
 /**
  *  \brief
  *      Process 3D rotation only to specified 3D vertices buffer.
@@ -222,7 +222,7 @@ void M3D_translate(Transformation3D *t, Vect3D_f16 *vertices, u16 numv);
  *  \param numv
  *      Number of vertices to rotate.
  */
-void M3D_rotate(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv);
+void M3D_rotate(Transformation3D* t, const V3f16* src, V3f16* dest, u16 numv);
 /**
  *  \brief
  *      Process 3D inverse rotation only to specified 3D vertex.
@@ -234,7 +234,7 @@ void M3D_rotate(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u1
  *  \param dest
  *      Destination 3D vertex.
  */
-void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest);
+void M3D_rotateInv(Transformation3D* t, const V3f16* src, V3f16* dest);
 /**
  *  \brief
  *      Process 3D transform (rotation and translation) to specified 3D vertices buffer.
@@ -248,7 +248,7 @@ void M3D_rotateInv(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest)
  *  \param numv
  *      Number of vertices to transform.
  */
-void M3D_transform(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest, u16 numv);
+void M3D_transform(Transformation3D* t, const V3f16* src, V3f16* dest, u16 numv);
 
 /**
  *  \brief
@@ -261,7 +261,7 @@ void M3D_transform(Transformation3D *t, const Vect3D_f16 *src, Vect3D_f16 *dest,
  *  \param numv
  *      Number of vertices to project.
  */
-void M3D_project_f16(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv);
+void M3D_project_f16(const V3f16* src, V2f16* dest, u16 numv);
 /**
  *  \brief
  *      Process 2D projection to specified 3D vertices buffer (s16 version).
@@ -273,7 +273,7 @@ void M3D_project_f16(const Vect3D_f16 *src, Vect2D_f16 *dest, u16 numv);
  *  \param numv
  *      Number of vertices to project.
  */
-void M3D_project_s16(const Vect3D_f16 *src, Vect2D_s16 *dest, u16 numv);
+void M3D_project_s16(const V3f16* src, V2s16* dest, u16 numv);
 
 
 #endif // _MATHS3D_H_
