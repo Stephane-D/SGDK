@@ -74,7 +74,8 @@
 
 /**
  *  \typedef bool
- *      boolean type (internally set as unsigned short)
+ *      boolean type, to be used with TRUE and FALSE constant.
+ *      (internally set as unsigned short)
  */
 typedef unsigned short bool;
 
