@@ -87,19 +87,19 @@ static int execute(char *info, FILE *fs, FILE *fh)
     }
 
     // EXPORT PALETTE
-    outPalette(palette, 0, size, fs, fh, id, TRUE);
+    outPalette(palette, size, fs, fh, id, TRUE);
 
     return TRUE;
 }
 
 
-void outPalette(unsigned short* palette, int startInd, int palSize, FILE* fs, FILE* fh, char* id, int global)
+void outPalette(unsigned short* palette, int palSize, FILE* fs, FILE* fh, char* id, int global)
 {
     char temp[MAX_PATH_LEN];
     int size;
 
     // we can't have more than 64 colors max
-    size = MIN(64 - startInd, palSize);
+    size = MIN(64, palSize);
 
     // palette data
     strcpy(temp, id);
@@ -112,7 +112,7 @@ void outPalette(unsigned short* palette, int startInd, int palSize, FILE* fs, FI
 
     // palette structure
     decl(fs, fh, "Palette", id, 2, global);
-    // first color index and palette size
+    // palette size
     fprintf(fs, "    dc.w    %d\n", size);
     // set palette pointer
     fprintf(fs, "    dc.l    %s\n", temp);

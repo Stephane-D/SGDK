@@ -106,7 +106,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     // EXPORT PALETTE
     strcpy(temp, id);
     strcat(temp, "_palette");
-    outPalette(palette, 0, psize, fs, fh, temp, FALSE);
+    outPalette(palette, psize, fs, fh, temp, FALSE);
 
     // EXPORT BITMAP
     outBitmap(data, packed, w, h, isize, fs, fh, id, TRUE);

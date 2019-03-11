@@ -19,22 +19,7 @@ typedef struct
     {
         box_ box;
         circle_ circle;
-    } norm;
-    union
-    {
-        box_ box;
-        circle_ circle;
-    } hflip;
-    union
-    {
-        box_ box;
-        circle_ circle;
-    } vflip;
-    union
-    {
-        box_ box;
-        circle_ circle;
-    } hvflip;
+    };
     void* inner;
     void* next;
 } collision_;
@@ -50,9 +35,14 @@ typedef struct
 
 typedef struct
 {
-	int numSprite;
 	frameSprite_  **frameSprites;
 	collision_ *collision;
+} frameInfo_;
+
+typedef struct
+{
+	int numSprite;
+	frameInfo_  frameInfos[4];
 	tileset_ *tileset;
     int w;
     int h;

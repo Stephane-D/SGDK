@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
     // strcpy(fileName, "gfx.res");
 
-    printf("rescomp v1.61\n");
+    printf("rescomp v1.62\n");
 
     if (!fileName[0])
     {

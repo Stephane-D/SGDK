@@ -1,4 +1,4 @@
-ResComp 1.5 (april 2016)
+ResComp 1.62 (march 2019)
 Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
@@ -34,11 +34,10 @@ In others cases the usual image palette data is used instead.
 Palette is used as color input for Bitmap, Image and Sprite resources.
 
 Syntax:
-PALETTE name file [index]
+PALETTE name file
 
     name            name of the output Bitmap structure
     file            path of the input image file (should be 8bpp .bmp or .png) or .pal file
-    index           start index where to copy the palette in Sega Genesis CRAM.
 
 
 BITMAP

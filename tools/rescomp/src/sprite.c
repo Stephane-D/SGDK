@@ -139,7 +139,7 @@ static int execute(char *info, FILE *fs, FILE *fh)
     // EXPORT PALETTE
     strcpy(temp, id);
     strcat(temp, "_palette");
-    outPalette(palette, 0, psize, fs, fh, temp, FALSE);
+    outPalette(palette, psize, fs, fh, temp, FALSE);
 
     // EXPORT SPRITE
     outSpriteDef(sprDef, fs, fh, id, TRUE);
@@ -158,48 +158,16 @@ void outCollision(collision_* collision, FILE* fs, FILE* fh, char* id, int globa
     switch(collision->type)
     {
         case COLLISION_BOX:
-            // normal version
-            fprintf(fs, "    dc.w    %d\n", collision->norm.box.x);
-            fprintf(fs, "    dc.w    %d\n", collision->norm.box.y);
-            fprintf(fs, "    dc.w    %d\n", collision->norm.box.w);
-            fprintf(fs, "    dc.w    %d\n", collision->norm.box.h);
-            // H flip version
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.box.x);
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.box.y);
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.box.w);
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.box.h);
-            // V flip version
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.box.x);
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.box.y);
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.box.w);
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.box.h);
-            // HV flip version
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.box.x);
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.box.y);
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.box.w);
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.box.h);
+            fprintf(fs, "    dc.w    %d\n", collision->box.x);
+            fprintf(fs, "    dc.w    %d\n", collision->box.y);
+            fprintf(fs, "    dc.w    %d\n", collision->box.w);
+            fprintf(fs, "    dc.w    %d\n", collision->box.h);
             break;
 
         case COLLISION_CIRCLE:
-            // normal version
-            fprintf(fs, "    dc.w    %d\n", collision->norm.circle.x);
-            fprintf(fs, "    dc.w    %d\n", collision->norm.circle.y);
-            fprintf(fs, "    dc.w    %d\n", collision->norm.circle.ray);
-            fprintf(fs, "    dc.w    %d\n", 0);
-            // H flip version
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.circle.x);
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.circle.y);
-            fprintf(fs, "    dc.w    %d\n", collision->hflip.circle.ray);
-            fprintf(fs, "    dc.w    %d\n", 0);
-            // V flip version
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.circle.x);
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.circle.y);
-            fprintf(fs, "    dc.w    %d\n", collision->vflip.circle.ray);
-            fprintf(fs, "    dc.w    %d\n", 0);
-            // HV flip version
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.circle.x);
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.circle.y);
-            fprintf(fs, "    dc.w    %d\n", collision->hvflip.circle.ray);
+            fprintf(fs, "    dc.w    %d\n", collision->circle.x);
+            fprintf(fs, "    dc.w    %d\n", collision->circle.y);
+            fprintf(fs, "    dc.w    %d\n", collision->circle.ray);
             fprintf(fs, "    dc.w    %d\n", 0);
             break;
     }
@@ -238,8 +206,8 @@ void outCollision(collision_* collision, FILE* fs, FILE* fh, char* id, int globa
 
 void outFrameSprite(frameSprite_* frameSprite, FILE* fs, FILE* fh, char* id, int global)
 {
-    // FrameSprite = VDPSpriteInf structure in SGDK
-    decl(fs, fh, "VDPSpriteInf", id, 2, global);
+    // FrameSprite = FrameVDPSprite structure in SGDK
+    decl(fs, fh, "FrameVDPSprite", id, 2, global);
     // Y position
     fprintf(fs, "    dc.w    %d\n", frameSprite->y);
     // size infos
@@ -251,27 +219,19 @@ void outFrameSprite(frameSprite_* frameSprite, FILE* fs, FILE* fh, char* id, int
     fprintf(fs, "\n");
 }
 
-void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int global)
+void outFrameInfo(frameInfo_* frameInfo, int numSprite, FILE* fs, FILE* fh, char* id, int global)
 {
     int i;
-    int numSprite;
     frameSprite_ **frameSprites;
     char temp[MAX_PATH_LEN];
 
-    // EXPORT FRAME SPRITE
-    numSprite = animFrame->numSprite;
-    frameSprites = animFrame->frameSprites;
+    // EXPORT FRAME SPRITES
+    frameSprites = frameInfo->frameSprites;
     // norm
     for(i = 0; i < numSprite; i++)
     {
         sprintf(temp, "%s_sprite%d", id, i);
-        outFrameSprite(frameSprites[numSprite * 0], fs, fh, temp, FALSE);
-        sprintf(temp, "%s_sprite%d_h", id, i);
-        outFrameSprite(frameSprites[numSprite * 1], fs, fh, temp, FALSE);
-        sprintf(temp, "%s_sprite%d_v", id, i);
-        outFrameSprite(frameSprites[numSprite * 2], fs, fh, temp, FALSE);
-        sprintf(temp, "%s_sprite%d_hv", id, i);
-        outFrameSprite(frameSprites[numSprite * 3], fs, fh, temp, FALSE);
+        outFrameSprite(*frameSprites, fs, fh, temp, FALSE);
         // next
         frameSprites++;
     }
@@ -279,29 +239,22 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
     fprintf(fs, "\n");
 
     // sprites data
-    strcpy(temp, id);
-    strcat(temp, "_sprites");
+    sprintf(temp, "%s_sprites", id);
     // declare
     decl(fs, fh, NULL, temp, 2, FALSE);
     // output sprite pointers
-    for(i = 0; i < animFrame->numSprite; i++)
+    for(i = 0; i < numSprite; i++)
         fprintf(fs, "    dc.l    %s_sprite%d\n", id, i);
-    for(i = 0; i < animFrame->numSprite; i++)
-        fprintf(fs, "    dc.l    %s_sprite%d_h\n", id, i);
-    for(i = 0; i < animFrame->numSprite; i++)
-        fprintf(fs, "    dc.l    %s_sprite%d_v\n", id, i);
-    for(i = 0; i < animFrame->numSprite; i++)
-        fprintf(fs, "    dc.l    %s_sprite%d_hv\n", id, i);
 
     fprintf(fs, "\n");
 
     // EXPORT COLLISION DATA
-    if (animFrame->collision)
+    if (frameInfo->collision)
     {
         collision_* collision;
 
         i = 0;
-        collision = animFrame->collision;
+        collision = frameInfo->collision;
         while(collision)
         {
             sprintf(temp, "%s_collision%d", id, i);
@@ -313,36 +266,59 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
         }
 
         fprintf(fs, "\n");
-
-//        // collisions data
-//        strcpy(temp, id);
-//        strcat(temp, "_collisions");
-//        // declare
-//        decl(fs, fh, NULL, temp, 2, FALSE);
-//        // output collision pointers
-//        for(i = 0; i < animFrame->numCollision; i++)
-//            fprintf(fs, "    dc.l    %s_collision%d\n", id, i);
-//
-//        fprintf(fs, "\n");
     }
+}
+
+void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int global)
+{
+    int numSprite;
+    frameInfo_* frameInfo;
+    char temp[MAX_PATH_LEN];
+
+    numSprite = animFrame->numSprite;
+
+    // EXPORT FRAME INFO
+    sprintf(temp, "%s_base", id);
+    outFrameInfo(&(animFrame->frameInfos[0]), numSprite, fs, fh, temp, FALSE);
+    sprintf(temp, "%s_hflip", id);
+    outFrameInfo(&(animFrame->frameInfos[1]), numSprite, fs, fh, temp, FALSE);
+    sprintf(temp, "%s_vflip", id);
+    outFrameInfo(&(animFrame->frameInfos[2]), numSprite, fs, fh, temp, FALSE);
+    sprintf(temp, "%s_hvflip", id);
+    outFrameInfo(&(animFrame->frameInfos[3]), numSprite, fs, fh, temp, FALSE);
 
     // EXPORT TILESET
     sprintf(temp, "%s_tileset", id);
     outTileset(animFrame->tileset, fs, fh, temp, FALSE);
 
+    frameInfo = &(animFrame->frameInfos[0]);
+
     // AnimationFrame structure
     decl(fs, fh, "AnimationFrame", id, 2, global);
     // set number of sprite
     fprintf(fs, "    dc.w    %d\n", animFrame->numSprite);
-    // set frames pointer
-    fprintf(fs, "    dc.l    %s_sprites\n", id);
-//    // set number of collision
-//    fprintf(fs, "    dc.w    %d\n", animFrame->numCollision);
-//    // set collisions pointer
-//    if (animFrame->numCollision > 0)
-//        fprintf(fs, "    dc.l    %s_collisions\n", id);
-    if (animFrame->collision)
-        fprintf(fs, "    dc.l    %s_collision0\n", id);
+    // set frame sprites and collision pointer (base)
+    fprintf(fs, "    dc.l    %s_base_sprites\n", id);
+    if (frameInfo->collision)
+        fprintf(fs, "    dc.l    %s_base_collision0\n", id);
+    else
+        fprintf(fs, "    dc.l    0\n");
+    // set frame sprites and collision pointer (hflip)
+    fprintf(fs, "    dc.l    %s_hflip_sprites\n", id);
+    if (frameInfo->collision)
+        fprintf(fs, "    dc.l    %s_hflip_collision0\n", id);
+    else
+        fprintf(fs, "    dc.l    0\n");
+    // set frame sprites and collision pointer (vflip)
+    fprintf(fs, "    dc.l    %s_vflip_sprites\n", id);
+    if (frameInfo->collision)
+        fprintf(fs, "    dc.l    %s_vflip_collision0\n", id);
+    else
+        fprintf(fs, "    dc.l    0\n");
+    // set frame sprites and collision pointer (hvflip)
+    fprintf(fs, "    dc.l    %s_hvflip_sprites\n", id);
+    if (frameInfo->collision)
+        fprintf(fs, "    dc.l    %s_hvflip_collision0\n", id);
     else
         fprintf(fs, "    dc.l    0\n");
     // set tileset pointer

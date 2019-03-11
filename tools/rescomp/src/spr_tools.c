@@ -77,6 +77,20 @@ frameSprite_* getFrameSprite(unsigned char *image8bpp, tileset_* tileset, int wi
     return result;
 }
 
+static void setFrameInfo(frameInfo_ *src, frameInfo_ *dest, int numSprite, int wf, int hf, int hflip, int vflip)
+{
+    int i;
+
+    // allocate frameSprite array
+    dest->frameSprites = malloc(numSprite * sizeof(frameSprite_*));
+
+    // set H Flip version of frame sprites
+    for(i = 0; i < numSprite; i++)
+        dest->frameSprites[i] = getFlippedFrameSprite(src->frameSprites[i], wf, hf, hflip, vflip);
+    // re-use the base collision info
+    dest->collision = src->collision;
+}
+
 animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int wf, int hf, int time, int collisionType)
 {
     int i, j;
@@ -85,6 +99,7 @@ animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int w
     int lastSprW, lastSprH;
     int ws, hs;
     animFrame_* result;
+    frameInfo_* frameInfo;
     frameSprite_** frameSprites;
     frameSprite_* frameSprite;
     tileset_* tileset;
@@ -102,57 +117,22 @@ animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int w
 
     // allocate result
     result = malloc(sizeof(animFrame_));
+
+    // init result
     result->numSprite = numSprite;
-
-    // allocate frameSprite array (H,V,HV flipped version as well)
-    frameSprites = malloc(4 * numSprite * sizeof(frameSprite_*));
-
-    result->frameSprites = frameSprites;
     result->tileset = tileset;
 	result->w = wf;
 	result->h = hf;
     result->timer = time;
 
-    if (collisionType == COLLISION_NONE) result->collision = NULL;
-    else
-    {
-        collision_* collision;
+    // frame info for base version
+    frameInfo = &(result->frameInfos[0]);
 
-        // allocate collision structure
-        collision = malloc(sizeof(collision_));
+    // allocate frameSprite array
+    frameSprites = malloc(numSprite * sizeof(frameSprite_*));
+    frameInfo->frameSprites = frameSprites;
 
-        switch(collisionType)
-        {
-            case COLLISION_BOX:
-                // use 75% the size of the frame for the collision
-                collision->norm.box.x = (wf * 8) / (4 * 2);
-                collision->norm.box.y = (hf * 8) / (4 * 2);
-                collision->norm.box.w = ((wf * 8) * 3) / 4;
-                collision->norm.box.h = ((hf * 8) * 3) / 4;
-            break;
-
-            case COLLISION_CIRCLE:
-                // use 75% the size of the frame for the collision
-                collision->norm.circle.x = (wf * 8) / 2;
-                collision->norm.circle.y = (hf * 8) / 2;
-                collision->norm.circle.ray = ((wf * 8) * 3) / 8;
-            break;
-        }
-
-        // single collision
-        collision->inner = NULL;
-        collision->next = NULL;
-
-        // use same collision info for H,V and HV flip version as we use centered collision here
-        collision->hvflip.box.x = collision->vflip.box.x = collision->hflip.box.x = collision->norm.box.x;
-        collision->hvflip.box.y = collision->vflip.box.y = collision->hflip.box.y = collision->norm.box.y;
-        collision->hvflip.box.w = collision->vflip.box.w = collision->hflip.box.w = collision->norm.box.w;
-        collision->hvflip.box.h = collision->vflip.box.h = collision->hflip.box.h = collision->norm.box.h;
-
-        // store
-        result->collision = collision;
-    }
-
+    // build all frame sprites
     for(j = 0; j < nbSprH; j++)
     {
         if (j == (nbSprH - 1)) hs = lastSprH;
@@ -172,13 +152,51 @@ animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int w
             frameSprite->y = j * 32;
 
             // store frame sprite
-            frameSprites[numSprite * 0] = frameSprite;
-            frameSprites[numSprite * 1] = getFlippedFrameSprite(frameSprite, wf, hf, TRUE, FALSE);
-            frameSprites[numSprite * 2] = getFlippedFrameSprite(frameSprite, wf, hf, FALSE, TRUE);
-            frameSprites[numSprite * 3] = getFlippedFrameSprite(frameSprite, wf, hf, TRUE, TRUE);
-            frameSprites++;
+            *frameSprites++ = frameSprite;
         }
     }
+
+    // build collision object
+    if (collisionType == COLLISION_NONE) frameInfo->collision = NULL;
+    else
+    {
+        collision_* collision;
+
+        // allocate collision structure
+        collision = malloc(sizeof(collision_));
+
+        switch(collisionType)
+        {
+            case COLLISION_BOX:
+                // use 75% the size of the frame for the collision
+                collision->box.x = (wf * 8) / (4 * 2);
+                collision->box.y = (hf * 8) / (4 * 2);
+                collision->box.w = ((wf * 8) * 3) / 4;
+                collision->box.h = ((hf * 8) * 3) / 4;
+            break;
+
+            case COLLISION_CIRCLE:
+                // use 75% the size of the frame for the collision
+                collision->circle.x = (wf * 8) / 2;
+                collision->circle.y = (hf * 8) / 2;
+                collision->circle.ray = ((wf * 8) * 3) / 8;
+            break;
+        }
+
+        // single collision
+        collision->inner = NULL;
+        collision->next = NULL;
+
+        // store
+        frameInfo->collision = collision;
+    }
+
+    // frame info for H flip version
+    setFrameInfo(frameInfo, &(result->frameInfos[1]), numSprite, wf, hf, TRUE, FALSE);
+    // frame info for V flip version
+    setFrameInfo(frameInfo, &(result->frameInfos[2]), numSprite, wf, hf, FALSE, TRUE);
+    // frame info for HV flip version
+    setFrameInfo(frameInfo, &(result->frameInfos[3]), numSprite, wf, hf, TRUE, TRUE);
 
     return result;
 }
