@@ -113,29 +113,14 @@ typedef struct _collision
     {
         Box box;
         Circle circle;
-    } norm;
-    union
-    {
-        Box box;
-        Circle circle;
-    } hflip;
-    union
-    {
-        Box box;
-        Circle circle;
-    } vflip;
-    union
-    {
-        Box box;
-        Circle circle;
-    } hvflip;
+    };
     struct _collision* inner;
     struct _collision* next;
 } Collision;
 
 /**
  *  \brief
- *      VDP sprite info structure for sprite resource definition.
+ *      Single VDP sprite info structure for sprite animation frame.
  *
  *  \param y
  *      Y offset for this VDP sprite relative to global Sprite position plus 0x80 (0x80 = 0 = no offset)
@@ -152,8 +137,22 @@ typedef struct
     u16 size;
     s16 x;
     u16 numTile;
-}  VDPSpriteInf;
+}  FrameVDPSprite;
 
+/**
+ *  \brief
+ *      Frame information structure (used to store frame info for base, H-Flip, V-Flip and HV-Flip version of animation frame)
+ *
+ *  \param frameSprites
+ *      pointer to an array of VDP sprites info composing the frame
+ *  \param collision
+ *      collision structure
+ */
+typedef struct
+{
+    FrameVDPSprite** frameSprites;
+    Collision* collision;
+} FrameInfo;
 
 /**
  *  \brief
@@ -161,10 +160,8 @@ typedef struct
  *
  *  \param numSprite
  *      number of VDP sprite which compose this frame
- *  \param vdpSpritesInf
- *      pointer to an array of VDP sprites info composing the frame (followed by H/V/HV flipped versions)
- *  \param collision
- *      collision structure
+ *  \param frameInfos
+ *      frame information for [base, hflip, vflip, hvflip] version of the sprite
  *  \param tileset
  *      tileset containing tiles for this animation frame (ordered for sprite)
  *  \param w
@@ -177,8 +174,7 @@ typedef struct
 typedef struct
 {
     u16 numSprite;
-    VDPSpriteInf** vdpSpritesInf;
-    Collision* collision;
+    FrameInfo frameInfos[4];
     TileSet* tileset;           // TODO: have a tileset per VDP sprite (when rescomp will be optimized for better LZ4W compression)
     s16 w;
     s16 h;
@@ -289,6 +285,7 @@ typedef struct _Sprite
     const SpriteDefinition* definition;
     Animation* animation;
     AnimationFrame* frame;
+    FrameInfo* frameInfo;
     s16 animInd;
     s16 frameInd;
     s16 seqInd;

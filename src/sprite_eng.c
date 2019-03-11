@@ -384,7 +384,12 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     else sprite->visibility = VISIBILITY_ON;
     // initialized with specified flags
     sprite->definition = spriteDef;
-    sprite->frame = NULL;
+
+//    FIXME: not needed
+//    sprite->animation = NULL;
+//    sprite->frame = NULL;
+//    sprite->frameInfo = NULL;
+
     sprite->animInd = -1;
     sprite->frameInd = -1;
     sprite->seqInd = -1;
@@ -453,7 +458,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     // just use the given attribut
     else sprite->attribut = attribut;
 
-    // set anim and frame to 0
+    // set anim and frame to 0 (important to do it after sprite->attribut has been set)
     SPR_setAnimAndFrame(sprite, 0, 0);
 
 #ifdef SPR_PROFIL
@@ -666,7 +671,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     sprite->animInd = -1;
     sprite->frameInd = -1;
     sprite->seqInd = -1;
-    sprite->frame = NULL;
+//    sprite->frame = NULL;
 
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
@@ -716,19 +721,20 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    const u16 oldAttribut = sprite->attribut;
+    u16 attr = sprite->attribut;
 
-    if (oldAttribut & TILE_ATTR_HFLIP_MASK)
+    if (attr & TILE_ATTR_HFLIP_MASK)
     {
         // H flip removed
         if (!value)
         {
-            u16 status = sprite->status;
-            sprite->attribut = oldAttribut & (~TILE_ATTR_HFLIP_MASK);
+            attr &= ~TILE_ATTR_HFLIP_MASK;
 
 #ifdef SPR_DEBUG
             KLog_U1_("SPR_setHFlip: #", getSpriteIndex(sprite), " removed HFlip");
 #endif // SPR_DEBUG
+
+            u16 status = sprite->status;
 
             // need to recompute visibility if auto visibility is enabled
             if (status & SPR_FLAG_AUTO_VISIBILITY)
@@ -736,6 +742,10 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
 
             // need to also recompute complete VDP sprite table
             sprite->status = status | NEED_ST_ALL_UPDATE;
+
+            // update attribut and frameInfo (depend from HV flip state)
+            sprite->attribut = attr;
+            sprite->frameInfo = &(sprite->frame->frameInfos[(attr & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
         }
     }
     else
@@ -743,12 +753,13 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
         // H flip set
         if (value)
         {
-            u16 status = sprite->status;
-            sprite->attribut = oldAttribut | TILE_ATTR_HFLIP_MASK;
+            attr |= TILE_ATTR_HFLIP_MASK;
 
 #ifdef SPR_DEBUG
             KLog_U1_("SPR_setHFlip: #", getSpriteIndex(sprite), " added HFlip");
 #endif // SPR_DEBUG
+
+            u16 status = sprite->status;
 
             // need to recompute visibility if auto visibility is enabled
             if (status & SPR_FLAG_AUTO_VISIBILITY)
@@ -756,6 +767,10 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
 
             // need to also recompute complete VDP sprite table
             sprite->status = status | NEED_ST_ALL_UPDATE;
+
+            // update attribut and frameInfo (depend from HV flip state)
+            sprite->attribut = attr;
+            sprite->frameInfo = &(sprite->frame->frameInfos[(attr & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
         }
     }
 
@@ -770,19 +785,20 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    const u16 oldAttribut = sprite->attribut;
+    u16 attr = sprite->attribut;
 
-    if (oldAttribut & TILE_ATTR_VFLIP_MASK)
+    if (attr & TILE_ATTR_VFLIP_MASK)
     {
         // V flip removed
         if (!value)
         {
-            u16 status = sprite->status;
-            sprite->attribut = oldAttribut & (~TILE_ATTR_VFLIP_MASK);
+            attr &= ~TILE_ATTR_VFLIP_MASK;
 
 #ifdef SPR_DEBUG
             KLog_U1_("SPR_setVFlip: #", getSpriteIndex(sprite), " removed VFlip");
 #endif // SPR_DEBUG
+
+            u16 status = sprite->status;
 
             // need to recompute visibility if auto visibility is enabled
             if (status & SPR_FLAG_AUTO_VISIBILITY)
@@ -790,6 +806,10 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
 
             // need to also recompute complete VDP sprite table
             sprite->status = status | NEED_ST_ALL_UPDATE;
+
+            // update attribut and frameInfo (depend from HV flip state)
+            sprite->attribut = attr;
+            sprite->frameInfo = &(sprite->frame->frameInfos[(attr & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
         }
     }
     else
@@ -797,12 +817,13 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
         // V flip set
         if (value)
         {
-            u16 status = sprite->status;
-            sprite->attribut = oldAttribut | TILE_ATTR_VFLIP_MASK;
+            attr |= TILE_ATTR_VFLIP_MASK;
 
 #ifdef SPR_DEBUG
             KLog_U1_("SPR_setVFlip: #", getSpriteIndex(sprite), " added VFlip");
 #endif // SPR_DEBUG
+
+            u16 status = sprite->status;
 
             // need to recompute visibility if auto visibility is enabled
             if (status & SPR_FLAG_AUTO_VISIBILITY)
@@ -810,8 +831,13 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
 
             // need to also recompute complete VDP sprite table
             sprite->status = status | NEED_ST_ALL_UPDATE;
+
+            // update attribut and frameInfo (depend from HV flip state)
+            sprite->attribut = attr;
+            sprite->frameInfo = &(sprite->frame->frameInfos[(attr & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
         }
     }
+
 
 #ifdef SPR_PROFIL
     profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
@@ -924,14 +950,17 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 
     if ((sprite->animInd != anim) || (sprite->seqInd != frame))
     {
-        Animation *animation = sprite->definition->animations[anim];
+        Animation* animation = sprite->definition->animations[anim];
         const u16 frameInd = animation->sequence[frame];
+        AnimationFrame* animFrame = animation->frames[frameInd];
 
         sprite->animInd = anim;
         sprite->seqInd = frame;
         sprite->animation = animation;
         sprite->frameInd = frameInd;
-        sprite->frame = animation->frames[frameInd];
+        sprite->frame = animFrame;
+        // get frame info depending HV flip state
+        sprite->frameInfo = &(animFrame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
 
         // set timer to 0 as it will be reseted
         sprite->timer = 0;
@@ -959,12 +988,15 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         Animation *animation = sprite->definition->animations[anim];
         // first frame by default
         const u16 frameInd = animation->sequence[0];
+        AnimationFrame* frame = animation->frames[frameInd];
 
         sprite->animInd = anim;
         sprite->seqInd = 0;
         sprite->animation = animation;
         sprite->frameInd = frameInd;
-        sprite->frame = animation->frames[frameInd];
+        sprite->frame = frame;
+        // get frame info depending HV flip state
+        sprite->frameInfo = &(frame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
 
         // set timer to 0 as it will be reseted
         sprite->timer = 0;
@@ -996,8 +1028,12 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 
         if (sprite->frameInd != frameInd)
         {
+            AnimationFrame* frame = animation->frames[frameInd];
+
             sprite->frameInd = frameInd;
-            sprite->frame = animation->frames[frameInd];
+            sprite->frame = frame;
+            // get frame info depending HV flip state
+            sprite->frameInfo = &(frame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
 
             // set timer to 0 as it will be reseted
             sprite->timer = 0;
@@ -1592,37 +1628,32 @@ static u16 updateVisibility(Sprite* sprite)
         else if ((xmax < 0) || ((xmin - fw) > 0) || (ymax < 0) || ((ymin - fh) > 0)) visibility = VISIBILITY_OFF;
         else
         {
-            VDPSpriteInf** spritesInf;
-            u16 attr;
+            FrameVDPSprite** frameSprites;
             u16 num;
 
-            attr = sprite->attribut;
             num = frame->numSprite;
             // start from the last one
-            spritesInf = &(frame->vdpSpritesInf[num - 1]);
-            // adjust for HV flip
-            if (attr & TILE_ATTR_HFLIP_MASK) spritesInf += num;
-            if (attr & TILE_ATTR_VFLIP_MASK) spritesInf += num << 1;
+            frameSprites = &(sprite->frameInfo->frameSprites[num - 1]);
             visibility = 0;
 
             while(num--)
             {
-                VDPSpriteInf* spriteInf;
+                FrameVDPSprite* frameSprite;
                 u16 size;
                 s16 x, y;
                 s16 w, h;
 
-                spriteInf = *spritesInf--;
+                frameSprite = *frameSprites--;
 
-                // Y first to respect spriteInf field order
-                y = spriteInf->y;
-                size = spriteInf->size;
+                // Y first to respect frameSprite field order
+                y = frameSprite->y;
+                size = frameSprite->size;
                 w = ((size & 0x0C) << 1) + 8;
                 h = ((size & 0x03) << 3) + 8;
-                x = spriteInf->x;
+                x = frameSprite->x;
 
     #ifdef SPR_DEBUG
-                KLog_S4("    spriteInf x=", spriteInf->x, " y=", spriteInf->y, " w=", w, " h=", h);
+                KLog_S4("    frameSprite x=", frameSprite->x, " y=", frameSprite->y, " w=", w, " h=", h);
                 KLog_S3("    attr=", attr, " adjX=", x, " adjY=", y);
     #endif // SPR_DEBUG
 
@@ -1722,35 +1753,31 @@ static void updateSpriteTableAll(Sprite* sprite)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    AnimationFrame* frame;
-    VDPSpriteInf** spritesInf;
+    FrameVDPSprite** frameSprites;
     VDPSprite* vdpSprite;
     u16 attr;
     u16 num;
     u16 visibility;
 
     visibility = sprite->visibility;
-    frame = sprite->frame;
     attr = sprite->attribut;
-    num = frame->numSprite;
-    spritesInf = frame->vdpSpritesInf;
-    if (attr & TILE_ATTR_HFLIP_MASK) spritesInf += num;
-    if (attr & TILE_ATTR_VFLIP_MASK) spritesInf += num << 1;
+    num = sprite->frame->numSprite;
+    frameSprites = sprite->frameInfo->frameSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     while(num--)
     {
-        VDPSpriteInf* spriteInf = *spritesInf++;
+        FrameVDPSprite* frameSprite = *frameSprites++;
 
         // Y first to respect VDP field order
-        if (visibility & 1) vdpSprite->y = sprite->y + spriteInf->y;
+        if (visibility & 1) vdpSprite->y = sprite->y + frameSprite->y;
         else vdpSprite->y = 0;
-        vdpSprite->size = spriteInf->size;
+        vdpSprite->size = frameSprite->size;
         vdpSprite->attribut = attr;
-        vdpSprite->x = sprite->x + spriteInf->x;
+        vdpSprite->x = sprite->x + frameSprite->x;
 
         // increment tile index in attribut field
-        attr += spriteInf->numTile;
+        attr += frameSprite->numTile;
         // next VDP sprite
         visibility >>= 1;
         vdpSprite = &vdpSpriteCache[vdpSprite->link];
@@ -1781,30 +1808,24 @@ static void updateSpriteTablePos(Sprite* sprite)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    AnimationFrame* frame;
-    VDPSpriteInf** spritesInf;
+    FrameVDPSprite** frameSprites;
     VDPSprite* vdpSprite;
-    u16 attr;
     u16 num;
     u16 visibility;
 
     visibility = sprite->visibility;
-    frame = sprite->frame;
-    attr = sprite->attribut;
-    num = frame->numSprite;
-    spritesInf = frame->vdpSpritesInf;
-    if (attr & TILE_ATTR_HFLIP_MASK) spritesInf += num;
-    if (attr & TILE_ATTR_VFLIP_MASK) spritesInf += num << 1;
+    num = sprite->frame->numSprite;
+    frameSprites = sprite->frameInfo->frameSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     while(num--)
     {
-        VDPSpriteInf* spriteInf = *spritesInf++;
+        FrameVDPSprite* frameSprite = *frameSprites++;
 
         // Y first to respect VDP field order
-        if (visibility & 1) vdpSprite->y = sprite->y + spriteInf->y;
+        if (visibility & 1) vdpSprite->y = sprite->y + frameSprite->y;
         else vdpSprite->y = 0;
-        vdpSprite->x = sprite->x + spriteInf->x;
+        vdpSprite->x = sprite->x + frameSprite->x;
 
         // pass to next VDP sprite
         visibility >>= 1;
@@ -1835,16 +1856,14 @@ static void updateSpriteTableAttr(Sprite* sprite)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    AnimationFrame* frame;
-    VDPSpriteInf** spritesInf;
+    FrameVDPSprite** frameSprites;
     VDPSprite* vdpSprite;
     u16 attr;
     u16 num;
 
-    frame = sprite->frame;
     attr = sprite->attribut;
-    num = frame->numSprite;
-    spritesInf = frame->vdpSpritesInf;
+    num = sprite->frame->numSprite;
+    frameSprites = sprite->frameInfo->frameSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
 #ifdef SPR_DEBUG
@@ -1853,12 +1872,12 @@ static void updateSpriteTableAttr(Sprite* sprite)
 
     while(num--)
     {
-        VDPSpriteInf* spriteInf = *spritesInf++;
+        FrameVDPSprite* frameSprite = *frameSprites++;
 
         vdpSprite->attribut = attr;
 
         // increment tile index in attribut field
-        attr += spriteInf->numTile;
+        attr += frameSprite->numTile;
         // pass to next VDP sprite
         vdpSprite = &vdpSpriteCache[vdpSprite->link];
     }
