@@ -1633,7 +1633,7 @@ static u16 updateVisibility(Sprite* sprite)
 
             num = frame->numSprite;
             // start from the last one
-            frameSprites = &(sprite->frameInfo->frameSprites[num - 1]);
+            frameSprites = &(sprite->frameInfo->frameVDPSprites[num - 1]);
             visibility = 0;
 
             while(num--)
@@ -1762,7 +1762,7 @@ static void updateSpriteTableAll(Sprite* sprite)
     visibility = sprite->visibility;
     attr = sprite->attribut;
     num = sprite->frame->numSprite;
-    frameSprites = sprite->frameInfo->frameSprites;
+    frameSprites = sprite->frameInfo->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     while(num--)
@@ -1815,7 +1815,7 @@ static void updateSpriteTablePos(Sprite* sprite)
 
     visibility = sprite->visibility;
     num = sprite->frame->numSprite;
-    frameSprites = sprite->frameInfo->frameSprites;
+    frameSprites = sprite->frameInfo->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
     while(num--)
@@ -1863,7 +1863,7 @@ static void updateSpriteTableAttr(Sprite* sprite)
 
     attr = sprite->attribut;
     num = sprite->frame->numSprite;
-    frameSprites = sprite->frameInfo->frameSprites;
+    frameSprites = sprite->frameInfo->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
 #ifdef SPR_DEBUG

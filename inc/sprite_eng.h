@@ -150,7 +150,7 @@ typedef struct
  */
 typedef struct
 {
-    FrameVDPSprite** frameSprites;
+    FrameVDPSprite** frameVDPSprites;
     Collision* collision;
 } FrameInfo;
 
