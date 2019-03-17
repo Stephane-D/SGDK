@@ -1646,11 +1646,11 @@ static u16 updateVisibility(Sprite* sprite)
                 frameSprite = *frameSprites--;
 
                 // Y first to respect frameSprite field order
-                y = frameSprite->y;
+                y = frameSprite->offsetY;
                 size = frameSprite->size;
                 w = ((size & 0x0C) << 1) + 8;
                 h = ((size & 0x03) << 3) + 8;
-                x = frameSprite->x;
+                x = frameSprite->offsetX;
 
     #ifdef SPR_DEBUG
                 KLog_S4("    frameSprite x=", frameSprite->x, " y=", frameSprite->y, " w=", w, " h=", h);
@@ -1770,11 +1770,11 @@ static void updateSpriteTableAll(Sprite* sprite)
         FrameVDPSprite* frameSprite = *frameSprites++;
 
         // Y first to respect VDP field order
-        if (visibility & 1) vdpSprite->y = sprite->y + frameSprite->y;
+        if (visibility & 1) vdpSprite->y = sprite->y + frameSprite->offsetY;
         else vdpSprite->y = 0;
         vdpSprite->size = frameSprite->size;
         vdpSprite->attribut = attr;
-        vdpSprite->x = sprite->x + frameSprite->x;
+        vdpSprite->x = sprite->x + frameSprite->offsetX;
 
         // increment tile index in attribut field
         attr += frameSprite->numTile;
@@ -1823,9 +1823,9 @@ static void updateSpriteTablePos(Sprite* sprite)
         FrameVDPSprite* frameSprite = *frameSprites++;
 
         // Y first to respect VDP field order
-        if (visibility & 1) vdpSprite->y = sprite->y + frameSprite->y;
+        if (visibility & 1) vdpSprite->y = sprite->y + frameSprite->offsetY;
         else vdpSprite->y = 0;
-        vdpSprite->x = sprite->x + frameSprite->x;
+        vdpSprite->x = sprite->x + frameSprite->offsetX;
 
         // pass to next VDP sprite
         visibility >>= 1;

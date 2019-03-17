@@ -160,7 +160,7 @@ typedef volatile u32 vu32;
 
 /**
  *  \typedef fix16
- *      16 bits fixed floting point type.
+ *      16 bits fixed floating point type.
  */
 typedef s16 fix16;
 /**
@@ -169,12 +169,23 @@ typedef s16 fix16;
  */
 typedef s32 fix32;
 
+/**
+ *  \typedef f16
+ *      16 bits fixed floating point type (short version).
+ */
+typedef s16 f16;
+/**
+ *  \typedef f32
+ *      32 bits fixed floating point type (short version).
+ */
+typedef s32 f32;
+
 
 #define FASTCALL
 
 /**
  *  \brief
- *      Simple Box structure (can be used for collision detection)
+ *      Simple Box structure
  *
  *  \param x
  *      X position (left)
@@ -195,7 +206,7 @@ typedef struct
 
 /**
  *  \brief
- *      Simple Circle structure (can be used for collision detection)
+ *      Simple Circle structure
  *
  *  \param x
  *      X center position

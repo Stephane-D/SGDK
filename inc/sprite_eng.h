@@ -19,6 +19,11 @@
 
 /**
  *  \brief
+ *      No collision type
+ */
+#define COLLISION_TYPE_NONE     0
+/**
+ *  \brief
  *      Bouding box collision type (Box structure)
  */
 #define COLLISION_TYPE_BOX      1
@@ -89,54 +94,101 @@ typedef enum
     AUTO_SLOW,      /**< Automatic visibility calculation SLOW (computation made per hardware sprite) */
 } SpriteVisibility;
 
+
+/**
+ *  \brief
+ *      Simple Box structure for collision
+ *
+ *  \param x
+ *      X position (left)
+ *  \param y
+ *      Y position (top)
+ *  \param w
+ *      width
+ *  \param h
+ *      heigth
+ */
+typedef struct
+{
+    s8 x;
+    s8 y;
+    u8 w;
+    u8 h;
+} BoxCollision;
+
+/**
+ *  \brief
+ *      Simple Circle structure (can be used for collision detection)
+ *
+ *  \param x
+ *      X center position
+ *  \param y
+ *      Y center position
+ *  \param ray
+ *      circle ray
+ */
+typedef struct
+{
+    s8 x;
+    s8 y;
+    u16 ray;
+} CircleCollision;
+
 /**
  *  \struct Collision
  *  \brief
  *      Collision definition union.
  *
- *  \param type
- *      Collision type:<br>
+ *  \param typeHit
+ *      Collision type for hit collision:<br>
+ *      Allowed values are #COLLISION_TYPE_BOX or #COLLISION_TYPE_CIRCLE.
+ *  \param typeAttack
+ *      Collision type for attack collision (can be used as alternative hit collision):<br>
  *      Allowed values are #COLLISION_TYPE_BOX or #COLLISION_TYPE_CIRCLE.
  *  \param box
- *      Box definition if type = #COLLISION_TYPE_BOX
+ *      BoxCollision definition if type = #COLLISION_TYPE_BOX
  *  \param circle
- *      Circle definition if type = #COLLISION_TYPE_CIRCLE
+ *      CircleCollision definition if type = #COLLISION_TYPE_CIRCLE
  *  \param inner
- *      if current collision is verified the we test inner for more precise collisions if needed
+ *      if current collision is verified then we test inner for more precise collision if needed
  *  \param next
  *      if current collision is not verified then we test next for next collision if needed
  */
 typedef struct _collision
 {
-    u16 type;
+    u8 typeHit;
+    u8 typeAttack;
     union
     {
-        Box box;
-        Circle circle;
-    };
-    struct _collision* inner;
-    struct _collision* next;
+        BoxCollision box;
+        CircleCollision circle;
+    } hit;
+    union
+    {
+        BoxCollision box;
+        CircleCollision circle;
+    } attack;
 } Collision;
 
 /**
  *  \brief
  *      Single VDP sprite info structure for sprite animation frame.
  *
- *  \param y
- *      Y offset for this VDP sprite relative to global Sprite position plus 0x80 (0x80 = 0 = no offset)
- *  \param size
- *      sprite size (see SPRITE_SIZE macro)
  *  \param numTile
  *      number of tile for this VDP sprite (should be coherent with the given size field)
- *  \param x
- *      X offset for this VDP sprite relative to global Sprite position plus 0x80 (0x80 = 0 = no offset)
+ *  \param offsetY
+ *      Y offset for this VDP sprite relative to global Sprite position
+ *  \param size
+ *      sprite size (see SPRITE_SIZE macro)
+ *  \param offsetX
+ *      X offset for this VDP sprite relative to global Sprite position
  */
 typedef struct
 {
-    s16 y;          // respect VDP sprite field order
-    u16 size;
-    s16 x;
-    u16 numTile;
+    u8 numTile;
+    s8 offsetY;          // respect VDP sprite field order
+    u8 size;
+    s8 offsetX;
 }  FrameVDPSprite;
 
 /**
