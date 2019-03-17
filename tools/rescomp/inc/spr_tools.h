@@ -14,20 +14,24 @@
 
 typedef struct
 {
-    int type;
+    int typeHit;
+    int typeAttack;
     union
     {
         box_ box;
         circle_ circle;
-    };
-    void* inner;
-    void* next;
+    } hit;
+    union
+    {
+        box_ box;
+        circle_ circle;
+    } attack;
 } collision_;
 
 typedef struct
 {
-    int x;
-    int y;
+    int offsetx;
+    int offsety;
     int w;
     int h;
     int numTile;

@@ -18,10 +18,10 @@ frameSprite_* getFlippedFrameSprite(frameSprite_* frameSprite, int wf, int hf, i
     result = malloc(sizeof(frameSprite_));
 
     // initialized afterward
-    if (hflip) result->x = (wf * 8) - (frameSprite->x + (frameSprite->w * 8));
-    else result->x = frameSprite->x;
-    if (vflip) result->y = (hf * 8) - (frameSprite->y + (frameSprite->h * 8));
-    else result->y = frameSprite->y;
+    if (hflip) result->offsetx = (wf * 8) - (frameSprite->offsetx + (frameSprite->w * 8));
+    else result->offsetx = frameSprite->offsetx;
+    if (vflip) result->offsety = (hf * 8) - (frameSprite->offsety + (frameSprite->h * 8));
+    else result->offsety = frameSprite->offsety;
     result->w = frameSprite->w;
     result->h = frameSprite->h;
     result->numTile = frameSprite->numTile;
@@ -68,8 +68,8 @@ frameSprite_* getFrameSprite(unsigned char *image8bpp, tileset_* tileset, int wi
     // allocate result
     result = malloc(sizeof(frameSprite_));
     // initialized afterward
-    result->x = 0;
-	result->y = 0;
+    result->offsetx = 0;
+	result->offsety = 0;
     result->w = w;
     result->h = h;
     result->numTile = w * h;
@@ -148,8 +148,8 @@ animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int w
                 return NULL;
 
             // set x and y offset
-            frameSprite->x = i * 32;
-            frameSprite->y = j * 32;
+            frameSprite->offsetx = i * 32;
+            frameSprite->offsety = j * 32;
 
             // store frame sprite
             *frameSprites++ = frameSprite;
@@ -165,27 +165,31 @@ animFrame_* getAnimFrame(unsigned char *image8bpp, int wi, int fx, int fy, int w
         // allocate collision structure
         collision = malloc(sizeof(collision_));
 
+        collision->typeHit = collisionType;
+
         switch(collisionType)
         {
             case COLLISION_BOX:
                 // use 75% the size of the frame for the collision
-                collision->box.x = (wf * 8) / (4 * 2);
-                collision->box.y = (hf * 8) / (4 * 2);
-                collision->box.w = ((wf * 8) * 3) / 4;
-                collision->box.h = ((hf * 8) * 3) / 4;
+                collision->hit.box.x = (wf * 8) / (4 * 2);
+                collision->hit.box.y = (hf * 8) / (4 * 2);
+                collision->hit.box.w = ((wf * 8) * 3) / 4;
+                collision->hit.box.h = ((hf * 8) * 3) / 4;
             break;
 
             case COLLISION_CIRCLE:
                 // use 75% the size of the frame for the collision
-                collision->circle.x = (wf * 8) / 2;
-                collision->circle.y = (hf * 8) / 2;
-                collision->circle.ray = ((wf * 8) * 3) / 8;
+                collision->hit.circle.x = (wf * 8) / 2;
+                collision->hit.circle.y = (hf * 8) / 2;
+                collision->hit.circle.ray = ((wf * 8) * 3) / 8;
             break;
         }
 
-        // single collision
-        collision->inner = NULL;
-        collision->next = NULL;
+        collision->typeAttack = COLLISION_NONE;
+        collision->attack.box.x = 0;
+        collision->attack.box.y = 0;
+        collision->attack.box.w = 0;
+        collision->attack.box.h = 0;
 
         // store
         frameInfo->collision = collision;
