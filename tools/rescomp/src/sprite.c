@@ -158,6 +158,18 @@ void outCollision(collision_* collision, FILE* fs, FILE* fh, char* id, int globa
 
     switch(collision->typeHit)
     {
+        default:
+            // if we have collision defined for attack then we need to fill out this space
+            if (collision->typeAttack != COLLISION_NONE)
+            {
+                fprintf(fs, "    dc.b    0\n");
+                fprintf(fs, "    dc.b    0\n");
+                fprintf(fs, "    dc.b    0\n");
+                fprintf(fs, "    dc.b    0\n");
+            }
+            // we don't export data for undefined collision (so we don't waste ROM space)
+            break;
+
         case COLLISION_BOX:
             fprintf(fs, "    dc.b    %d\n", collision->hit.box.x);
             fprintf(fs, "    dc.b    %d\n", collision->hit.box.y);
@@ -173,6 +185,10 @@ void outCollision(collision_* collision, FILE* fs, FILE* fh, char* id, int globa
     }
     switch(collision->typeAttack)
     {
+        default:
+            // we don't export data for undefined collision (so we don't waste ROM space)
+            break;
+
         case COLLISION_BOX:
             fprintf(fs, "    dc.b    %d\n", collision->attack.box.x);
             fprintf(fs, "    dc.b    %d\n", collision->attack.box.y);
@@ -297,7 +313,14 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
     // AnimationFrame structure
     decl(fs, fh, "AnimationFrame", id, 2, global);
     // set number of sprite
-    fprintf(fs, "    dc.w    %d\n", animFrame->numSprite);
+    fprintf(fs, "    dc.b    %d\n", animFrame->numSprite);
+    // frame width
+    fprintf(fs, "    dc.b    %d\n", animFrame->w * 8);
+    // frame height
+    fprintf(fs, "    dc.b    %d\n", animFrame->h * 8);
+    // timer info
+    fprintf(fs, "    dc.b    %d\n", animFrame->timer);
+
     // set frame sprites and collision pointer (base)
     fprintf(fs, "    dc.l    %s_base_sprites\n", id);
     if (animFrame->frameInfos[0].collision)
@@ -322,14 +345,10 @@ void outAnimFrame(animFrame_* animFrame, FILE* fs, FILE* fh, char* id, int globa
         fprintf(fs, "    dc.l    %s_hvflip_collision\n", id);
     else
         fprintf(fs, "    dc.l    0\n");
+
     // set tileset pointer
     fprintf(fs, "    dc.l    %s_tileset\n", id);
-    // frame width
-    fprintf(fs, "    dc.w    %d\n", animFrame->w * 8);
-    // frame height
-    fprintf(fs, "    dc.w    %d\n", animFrame->h * 8);
-    // timer info
-    fprintf(fs, "    dc.w    %d\n", animFrame->timer);
+
     fprintf(fs, "\n");
 }
 

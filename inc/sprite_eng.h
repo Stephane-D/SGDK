@@ -225,12 +225,12 @@ typedef struct
  */
 typedef struct
 {
-    u16 numSprite;
+    u8 numSprite;               // we use u8 to not waste ROM space
+    u8 w;
+    u8 h;
+    u8 timer;
     FrameInfo frameInfos[4];
     TileSet* tileset;           // TODO: have a tileset per VDP sprite (when rescomp will be optimized for better LZ4W compression)
-    s16 w;
-    s16 h;
-    u16 timer;
 } AnimationFrame;
 
 /**
