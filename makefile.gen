@@ -15,13 +15,14 @@ CP= $(BIN)/cp
 CC= $(BIN)/gcc
 LD= $(BIN)/ld
 NM= $(BIN)/nm
+JAVA= java
 ECHO= echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
 SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
-RESCOMP= $(BIN)/rescomp
+RESCOMP= java -jar $(BIN)/rescomp.jar
 MKDIR= $(BIN)/mkdir
 
 SRC_C= $(wildcard *.c)

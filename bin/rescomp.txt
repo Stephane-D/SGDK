@@ -1,9 +1,10 @@
-ResComp 1.62 (march 2019)
+ResComp 2.0 (march 2019)
 Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
-ResComp is part of SGDK (aka Sega Genesis Dev Kit).
-It allows to compile different type of resource and output them in assembly source form.
+ResComp is part of SGDK (aka Sega Genesis Dev Kit) so refer to SGDK licence if needed.
+
+It allows to compile different type of resource and output them in assembly source form (GAS format).
 
 Usage: rescomp resource.res [out.s] [-noheader]
 
@@ -17,11 +18,8 @@ Supported resource type:
 - MAP       map type resource (tilemap data).
 - IMAGE     image type resource, internally contains Palette, Tileset and Map data and can be used to draw a complete background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
-- TFM       TFM music type resource (.tfd or .tfc file), used to play music.
 - XGM       XGM music type resource (.vgm or .xgm file), used to play music.
-- VGM       VGM music type resource (.vgm file), used to play music.
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
-- PCM       PCM sound type resource (.pcm file), used to play sample sound data.
 - BIN       any binary data file which do not need any specific conversion or processing.
 
 
@@ -140,14 +138,14 @@ SPRITE name img_file width heigth [compression [time [collision]]]
 Some informations about how SpriteDefinition is generated from the input image:
 - input image dimension is aligned on tile (multiple of 8).
 - input image is a grid where each cell represents a single sprite frame and where a row define a complete sprite animation.
-- cell size (frame size) = width * height (in tile)
-- a frame can be composed of several internal VDP sprites (max = 16) if width or height are > 4.
-- rescomp detect flipped frame to avoid redundant sprite tiles.
-- rescomp detect empty frame at end of animation row to not store empty frame data.
-- rescomp detect frame copy inside an animation to generate the according animation sequence.
-- collision bounds are calculated by using 75% of the original sprite frame.
-- In future rescomp could detect empty tiles in a frame to optimize the internal VDP sprite usage (and also improve the collision box).
-That may be a nice future addition :)
+- cell size (frame size) = width * height (in tile) where width and height should be <= 16 (maximum = 128 pixels for both width and height)
+- a frame can be composed of several internal VDP sprites but it stricly limited to a maximum of 16 sprites.
+  If the sprite is too large to fit in 16 hardware sprites (rescomp will complain about it), then you may reduce its size or split it in 2.
+- rescomp detects flipped frame to avoid redundant sprite tiles.
+- rescomp detects empty frame at end of animation row to not store empty frame data.
+- rescomp try to optimize hardware sprites and vRAM usage by detecting empty areas in sprite frames.
+- rescomp detects frame copy inside an animation to generate the according animation sequence.
+- by default collision bounds are calculated by using 75% of the original sprite frame.
 
 
 XGM
@@ -166,30 +164,6 @@ XGM name file [timing [options]]
                         1           = PAL (XGM is generated for PAL system)
     options         optional(s) parameter(s) for xgmtool
                         ex: "-dr -di" to disable some sample auto process (see xgmtool to get more info)
-
-
-TFM
----
-Take a .tfd or .tfc music file as input and transform it in binary format usable with the SGDK SND_startPlay_TFM(..) method.
-
-Syntax:
-TFM name tfm_file [z80driver]
-
-    name            TFM music variable name
-    file            path of the .tfd or .tfc music file to convert to binary data array
-    z80driver       when set to 1 the music is aligned in memory so you can use the Z80 driver to play it (but it consumes more ROM).
-                    By default value is assumed to be 0 (68000 driver)
-
-
-VGM
----
-Take a .vgm music file as input and transform it in binary format usable with the SGDK SND_startPlay_VGM(..) method.
-
-Syntax:
-VGM name vgm_file
-
-    name            VGM music variable name
-    file            path of the .vgm music file to convert to binary data array
 
 
 WAV
@@ -225,40 +199,6 @@ WAV name wav_file [driver [outrate]]
                             Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
     outrate         output PCM rate (only used for Z80_DRIVER_PCM driver)
                         By default the default WAV output rate is used.
-
-
-PCM
----
-Take a .pcm sound file as input and transform it in binary format usable with one of the SGDK PCM driver.
-
-Syntax:
-PCM name pcm_file [driver]
-
-    name            variable name
-    file            path of the PCM data file
-                        Should be 8 bits PCM signed data and size need to be aligned to 256 for correct loop operation
-    driver          specify the Z80 driver to use:
-                        0 / PCM (default)
-                            Single channel 8 bits signed sample driver.
-                            It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
-                            Method to use: SND_startPlay_PCM(..)
-                        1 / 2ADPCM
-                            2 channels 4 bits ADPCM sample driver.
-                            It can mix up to 2 ADCPM samples at a fixed 22050 Hz rate.
-                            Method to use: SND_startPlay_2ADPCM(..)
-                        2 / 3 / 4PCM
-                            4 channels 8 bits signed sample driver with volume support.
-                            It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.
-                            with volume support (16 levels du to memory limitation).
-                            Method to use: SND_startPlay_4PCM_ENV(..)
-                        4 / VGM
-                            VGM music driver with 8 bits PCM SFX support.
-                            It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.
-                            Method to use: SND_playSfx_VGM(..)
-                        5 / XGM
-                            XGM music with 4 channels 8 bits samples driver.
-                            It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
-                            Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
 
 
 BIN

@@ -10,12 +10,13 @@ RM= $(BIN)/rm
 CP= $(BIN)/cp
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
+JAVA= java
 ECHO= echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 SIZEBND= $(BIN)/sizebnd
 BINTOS= $(BIN)/bintos
-RESCOMP= $(BIN)/rescomp
+RESCOMP= java -jar $(BIN)/rescomp.jar
 MKDIR= $(BIN)/mkdir
 
 SRC_LIB_C= $(wildcard $(SRC_LIB)/*.c)
