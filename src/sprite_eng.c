@@ -33,8 +33,7 @@
 
 #define NEED_ST_ATTR_UPDATE                 0x0001
 #define NEED_ST_POS_UPDATE                  0x0002
-#define NEED_ST_VISIBILITY_UPDATE           0x0004
-#define NEED_ST_ALL_UPDATE                  (NEED_ST_ATTR_UPDATE | NEED_ST_POS_UPDATE | NEED_ST_VISIBILITY_UPDATE)
+#define NEED_ST_ALL_UPDATE                  (NEED_ST_ATTR_UPDATE | NEED_ST_POS_UPDATE)
 
 #define NEED_VISIBILITY_UPDATE              0x0010
 #define NEED_FRAME_UPDATE                   0x0020
@@ -398,7 +397,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     // depending sprite position (first or last) we set its default depth
     if (flags & SPR_FLAG_INSERT_HEAD) sprite->depth = SPR_MIN_DEPTH;
     else sprite->depth = SPR_MAX_DEPTH;
-    sprite->frameNumSprite = 0;
+    sprite->spriteToHide = 0;
 
     numVDPSprite = spriteDef->maxNumSprite;
 
@@ -953,11 +952,22 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         Animation* animation = sprite->definition->animations[anim];
         const u16 frameInd = animation->sequence[frame];
         AnimationFrame* animFrame = animation->frames[frameInd];
+        AnimationFrame* prevFrame;
 
         sprite->animInd = anim;
         sprite->seqInd = frame;
         sprite->animation = animation;
         sprite->frameInd = frameInd;
+
+        // detect if we need to hide some VDP sprite
+        prevFrame = sprite->frame;
+        if (prevFrame != NULL)
+        {
+            const s16 spriteToHide = prevFrame->numSprite - animFrame->numSprite;
+            if (spriteToHide > 0)
+                sprite->spriteToHide = spriteToHide;
+        }
+
         sprite->frame = animFrame;
         // get frame info depending HV flip state
         sprite->frameInfo = &(animFrame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
@@ -989,11 +999,22 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         // first frame by default
         const u16 frameInd = animation->sequence[0];
         AnimationFrame* frame = animation->frames[frameInd];
+        AnimationFrame* prevFrame;
 
         sprite->animInd = anim;
         sprite->seqInd = 0;
         sprite->animation = animation;
         sprite->frameInd = frameInd;
+
+        // detect if we need to hide some VDP sprite
+        prevFrame = sprite->frame;
+        if (prevFrame != NULL)
+        {
+            const s16 spriteToHide = prevFrame->numSprite - frame->numSprite;
+            if (spriteToHide > 0)
+                sprite->spriteToHide = spriteToHide;
+        }
+
         sprite->frame = frame;
         // get frame info depending HV flip state
         sprite->frameInfo = &(frame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
@@ -1029,8 +1050,19 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
         if (sprite->frameInd != frameInd)
         {
             AnimationFrame* frame = animation->frames[frameInd];
+            AnimationFrame* prevFrame;
 
             sprite->frameInd = frameInd;
+
+            // detect if we need to hide some VDP sprite
+            prevFrame = sprite->frame;
+            if (prevFrame != NULL)
+            {
+            const s16 spriteToHide = prevFrame->numSprite - frame->numSprite;
+                if (spriteToHide > 0)
+                    sprite->spriteToHide = spriteToHide;
+            }
+
             sprite->frame = frame;
             // get frame info depending HV flip state
             sprite->frameInfo = &(frame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
@@ -1436,12 +1468,12 @@ void SPR_update()
             // sprite not visible ?
             if (!sprite->visibility)
             {
-                // need to hide it ?
-                if (status & NEED_ST_VISIBILITY_UPDATE)
+                // need to update its visibility (done via pos Y) ?
+                if (status & NEED_ST_POS_UPDATE)
                 {
                     // update position (and so visibility)
                     updateSpriteTablePos(sprite);
-                    status &= ~(NEED_ST_POS_UPDATE | NEED_ST_VISIBILITY_UPDATE);
+                    status &= ~NEED_ST_POS_UPDATE;
                 }
             }
             // only if sprite is visible
@@ -1698,8 +1730,8 @@ static u16 setVisibility(Sprite* sprite, u16 newVisibility)
         // set new visibility info
         sprite->visibility = newVisibility;
 
-        // need to recompute the visibility info in sprite table (and so fix other positions)
-        return NEED_ST_VISIBILITY_UPDATE | NEED_ST_POS_UPDATE;
+        // need to recompute the position info (hidding a sprite is done by setting posY to 0)
+        return NEED_ST_POS_UPDATE;
     }
 
     return 0;
@@ -1728,16 +1760,6 @@ static u16 updateFrame(Sprite* sprite)
     // require visibility update
     if (status & SPR_FLAG_AUTO_VISIBILITY)
         status |= NEED_VISIBILITY_UPDATE;
-
-    u16 numSpriteFrame = sprite->frame->numSprite;
-
-    // number of VDP sprite to use for the current frame changed ?
-    if (sprite->frameNumSprite != numSpriteFrame)
-    {
-        sprite->frameNumSprite = numSpriteFrame;
-        // need to udpate sprite table visibility info (and so fix others positions)
-        status |= NEED_ST_VISIBILITY_UPDATE | NEED_ST_POS_UPDATE;
-    }
 
 #ifdef SPR_PROFIL
     profil_time[PROFIL_UPDATE_FRAME] += getSubTick() - prof;
@@ -1780,6 +1802,15 @@ static void updateSpriteTableAll(Sprite* sprite)
         attr += frameSprite->numTile;
         // next VDP sprite
         visibility >>= 1;
+        vdpSprite = &vdpSpriteCache[vdpSprite->link];
+    }
+
+    // hide sprites that were used by previous frame
+    num = sprite->spriteToHide;
+    sprite->spriteToHide = 0;
+    while(num--)
+    {
+        vdpSprite->y = 0;
         vdpSprite = &vdpSpriteCache[vdpSprite->link];
     }
 
@@ -1829,6 +1860,15 @@ static void updateSpriteTablePos(Sprite* sprite)
 
         // pass to next VDP sprite
         visibility >>= 1;
+        vdpSprite = &vdpSpriteCache[vdpSprite->link];
+    }
+
+    // hide sprites that were used by previous frame
+    num = sprite->spriteToHide;
+    sprite->spriteToHide = 0;
+    while(num--)
+    {
+        vdpSprite->y = 0;
         vdpSprite = &vdpSpriteCache[vdpSprite->link];
     }
 
@@ -2090,7 +2130,7 @@ static void logSprite(Sprite* sprite)
     KLog_U2("Sprite #", getSpriteIndex(sprite), " ------------- status=", sprite->status);
     KLog_U3("animInd=", sprite->animInd, " seqInd=", sprite->seqInd, " frameInd=", sprite->frameInd);
     KLog_S4("attribut=", sprite->attribut, " x=", sprite->x, " y=", sprite->y, " depth=", sprite->depth);
-    KLog_U3("visibility=", sprite->visibility, " timer=", sprite->timer, " frameNumSpr=", sprite->frameNumSprite);
+    KLog_U2("visibility=", sprite->visibility, " timer=", sprite->timer);
     KLog_U2("VDPSpriteInd=", sprite->VDPSpriteIndex, " link=", sprite->lastVDPSprite->link);
     KLog_U2("prev=", (sprite->prev==NULL)?128:getSpriteIndex(sprite->prev), " next=", (sprite->next==NULL)?128:getSpriteIndex(sprite->next));
 }
