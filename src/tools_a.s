@@ -1063,6 +1063,530 @@ lz4w_unpack_a:
     moveq   #0,%d1
     jmp     (%a3)
 
+.lmr_len_FF:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_FD:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_FB:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F9:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F7:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F5:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F3:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F1:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_EF:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_ED:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_EB:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E9:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E7:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E5:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E3:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E1:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_DF:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_DD:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_DB:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D9:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D7:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D5:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D3:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D1:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_CF:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_CD:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_CB:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C9:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C7:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C5:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C3:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C1:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_BF:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_BD:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_BB:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B9:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B7:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B5:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B3:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B1:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_AF:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_AD:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_AB:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A9:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A7:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A5:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A3:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A1:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_9F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_9D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_9B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_99:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_97:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_95:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_93:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_91:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_8F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_8D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_8B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_89:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_87:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_85:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_83:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_81:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_7F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_7D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_7B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_79:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_77:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_75:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_73:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_71:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_6F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_6D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_6B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_69:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_67:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_65:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_63:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_61:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_5F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_5D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_5B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_59:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_57:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_55:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_53:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_51:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_4F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_4D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_4B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_49:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_47:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_45:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_43:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_41:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_3F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_3D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_3B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_39:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_37:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_35:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_33:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_31:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_2F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_2D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_2B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_29:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_27:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_25:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_23:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_21:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_1F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_1D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_1B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_19:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_17:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_15:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_13:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_11:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_0F:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_0D:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_0B:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_09:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_07:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_05:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_03:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_01:
+	move.l  (%a2)+,(%a1)+
+	move.w  (%a2)+,(%a1)+
+
+    moveq   #0,%d0
+    moveq   #0,%d1
+    jmp     (%a3)
+
+.lmr_len_FE:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_FC:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_FA:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F8:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F6:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F4:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F2:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_F0:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_EE:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_EC:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_EA:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E8:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E6:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E4:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E2:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_E0:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_DE:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_DC:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_DA:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D8:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D6:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D4:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D2:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_D0:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_CE:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_CC:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_CA:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C8:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C6:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C4:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C2:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_C0:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_BE:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_BC:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_BA:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B8:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B6:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B4:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B2:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_B0:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_AE:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_AC:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_AA:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A8:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A6:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A4:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A2:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_A0:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_9E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_9C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_9A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_98:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_96:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_94:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_92:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_90:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_8E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_8C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_8A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_88:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_86:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_84:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_82:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_80:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_7E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_7C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_7A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_78:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_76:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_74:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_72:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_70:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_6E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_6C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_6A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_68:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_66:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_64:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_62:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_60:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_5E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_5C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_5A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_58:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_56:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_54:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_52:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_50:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_4E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_4C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_4A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_48:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_46:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_44:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_42:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_40:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_3E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_3C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_3A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_38:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_36:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_34:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_32:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_30:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_2E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_2C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_2A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_28:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_26:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_24:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_22:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_20:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_1E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_1C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_1A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_18:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_16:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_14:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_12:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_10:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_0E:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_0C:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_0A:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_08:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_06:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_04:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_02:
+	move.l  (%a2)+,(%a1)+
+.lmr_len_00:
+	move.l  (%a2)+,(%a1)+
+
+    moveq   #0,%d0
+    moveq   #0,%d1
+    jmp     (%a3)
+
+
 .litE_mat0:
     move.l  (%a0)+,(%a1)+
 .litC_mat0:
@@ -1083,16 +1607,18 @@ lz4w_unpack_a:
 
 .long_match_1:
     move.w  (%a0)+,%d0              | get long offset (already * 2)
-    neg.w   %d0
-    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
 
-    add.w   %d1,%d1
-    add.w   %d1,%d1
+    add.w   %d1,%d1                 |
+    add.w   %d1,%d1                 | len = len * 4 (for jump table)
+
+    add.w   %d0,%d0                 | bit 15 contains ROM source info
+    jcs     .lm_rom
+
+    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
 
 .lm1_jump_base:
     move.l  (.lm_jump_table-.lm1_jump_base)-2(%pc,%d1.w),%a4
     jmp     (%a4)
-
 
 .litF_mat0:
     move.l  (%a0)+,(%a1)+
@@ -1115,12 +1641,15 @@ lz4w_unpack_a:
     jeq     .next                   | not a long match
 
 .long_match_2:
-    move.w  (%a0)+,%d0              | get long offset (already * 2)
-    neg.w   %d0
-    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+    move.w  (%a0)+,%d0              | get long offset
 
-    add.w   %d1,%d1
-    add.w   %d1,%d1
+    add.w   %d1,%d1                 |
+    add.w   %d1,%d1                 | len = len * 4 (for jump table)
+
+    add.w   %d0,%d0                 | bit 15 contains ROM source info
+    jcs     .lm_rom
+
+    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
 
 .lm2_jump_base:
     move.l  (.lm_jump_table-.lm2_jump_base)-2(%pc,%d1.w),%a4
@@ -1133,11 +1662,14 @@ lz4w_unpack_a:
 
 .long_match_3:
     move.w  (%a0)+,%d0              | get long offset (already * 2)
-    neg.w   %d0
-    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
 
-    add.w   %d1,%d1
-    add.w   %d1,%d1
+    add.w   %d1,%d1                 |
+    add.w   %d1,%d1                 | len = len * 4 (for jump table)
+
+    add.w   %d0,%d0                 | bit 15 contains ROM source info
+    jcs     .lm_rom
+
+    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
 
 .lm3_jump_base:
     move.l  (.lm_jump_table-.lm3_jump_base)-2(%pc,%d1.w),%a4
@@ -1402,6 +1934,273 @@ lz4w_unpack_a:
     .long .lm_len_FD
     .long .lm_len_FE
     .long .lm_len_FF
+
+.lm_rom:
+    lea     -2(%a0,%d0.w),%a2       | a2 = src - (match offset + 2)
+
+.lmr_jump_base:
+    move.l  (.lmr_jump_table-.lmr_jump_base)-2(%pc,%d1.w),%a4
+    jmp     (%a4)
+
+    .align 2
+.lmr_jump_table:
+
+    .long .lmr_len_00
+    .long .lmr_len_01
+    .long .lmr_len_02
+    .long .lmr_len_03
+    .long .lmr_len_04
+    .long .lmr_len_05
+    .long .lmr_len_06
+    .long .lmr_len_07
+    .long .lmr_len_08
+    .long .lmr_len_09
+    .long .lmr_len_0A
+    .long .lmr_len_0B
+    .long .lmr_len_0C
+    .long .lmr_len_0D
+    .long .lmr_len_0E
+    .long .lmr_len_0F
+    .long .lmr_len_10
+    .long .lmr_len_11
+    .long .lmr_len_12
+    .long .lmr_len_13
+    .long .lmr_len_14
+    .long .lmr_len_15
+    .long .lmr_len_16
+    .long .lmr_len_17
+    .long .lmr_len_18
+    .long .lmr_len_19
+    .long .lmr_len_1A
+    .long .lmr_len_1B
+    .long .lmr_len_1C
+    .long .lmr_len_1D
+    .long .lmr_len_1E
+    .long .lmr_len_1F
+    .long .lmr_len_20
+    .long .lmr_len_21
+    .long .lmr_len_22
+    .long .lmr_len_23
+    .long .lmr_len_24
+    .long .lmr_len_25
+    .long .lmr_len_26
+    .long .lmr_len_27
+    .long .lmr_len_28
+    .long .lmr_len_29
+    .long .lmr_len_2A
+    .long .lmr_len_2B
+    .long .lmr_len_2C
+    .long .lmr_len_2D
+    .long .lmr_len_2E
+    .long .lmr_len_2F
+    .long .lmr_len_30
+    .long .lmr_len_31
+    .long .lmr_len_32
+    .long .lmr_len_33
+    .long .lmr_len_34
+    .long .lmr_len_35
+    .long .lmr_len_36
+    .long .lmr_len_37
+    .long .lmr_len_38
+    .long .lmr_len_39
+    .long .lmr_len_3A
+    .long .lmr_len_3B
+    .long .lmr_len_3C
+    .long .lmr_len_3D
+    .long .lmr_len_3E
+    .long .lmr_len_3F
+    .long .lmr_len_40
+    .long .lmr_len_41
+    .long .lmr_len_42
+    .long .lmr_len_43
+    .long .lmr_len_44
+    .long .lmr_len_45
+    .long .lmr_len_46
+    .long .lmr_len_47
+    .long .lmr_len_48
+    .long .lmr_len_49
+    .long .lmr_len_4A
+    .long .lmr_len_4B
+    .long .lmr_len_4C
+    .long .lmr_len_4D
+    .long .lmr_len_4E
+    .long .lmr_len_4F
+    .long .lmr_len_50
+    .long .lmr_len_51
+    .long .lmr_len_52
+    .long .lmr_len_53
+    .long .lmr_len_54
+    .long .lmr_len_55
+    .long .lmr_len_56
+    .long .lmr_len_57
+    .long .lmr_len_58
+    .long .lmr_len_59
+    .long .lmr_len_5A
+    .long .lmr_len_5B
+    .long .lmr_len_5C
+    .long .lmr_len_5D
+    .long .lmr_len_5E
+    .long .lmr_len_5F
+    .long .lmr_len_60
+    .long .lmr_len_61
+    .long .lmr_len_62
+    .long .lmr_len_63
+    .long .lmr_len_64
+    .long .lmr_len_65
+    .long .lmr_len_66
+    .long .lmr_len_67
+    .long .lmr_len_68
+    .long .lmr_len_69
+    .long .lmr_len_6A
+    .long .lmr_len_6B
+    .long .lmr_len_6C
+    .long .lmr_len_6D
+    .long .lmr_len_6E
+    .long .lmr_len_6F
+    .long .lmr_len_70
+    .long .lmr_len_71
+    .long .lmr_len_72
+    .long .lmr_len_73
+    .long .lmr_len_74
+    .long .lmr_len_75
+    .long .lmr_len_76
+    .long .lmr_len_77
+    .long .lmr_len_78
+    .long .lmr_len_79
+    .long .lmr_len_7A
+    .long .lmr_len_7B
+    .long .lmr_len_7C
+    .long .lmr_len_7D
+    .long .lmr_len_7E
+    .long .lmr_len_7F
+    .long .lmr_len_80
+    .long .lmr_len_81
+    .long .lmr_len_82
+    .long .lmr_len_83
+    .long .lmr_len_84
+    .long .lmr_len_85
+    .long .lmr_len_86
+    .long .lmr_len_87
+    .long .lmr_len_88
+    .long .lmr_len_89
+    .long .lmr_len_8A
+    .long .lmr_len_8B
+    .long .lmr_len_8C
+    .long .lmr_len_8D
+    .long .lmr_len_8E
+    .long .lmr_len_8F
+    .long .lmr_len_90
+    .long .lmr_len_91
+    .long .lmr_len_92
+    .long .lmr_len_93
+    .long .lmr_len_94
+    .long .lmr_len_95
+    .long .lmr_len_96
+    .long .lmr_len_97
+    .long .lmr_len_98
+    .long .lmr_len_99
+    .long .lmr_len_9A
+    .long .lmr_len_9B
+    .long .lmr_len_9C
+    .long .lmr_len_9D
+    .long .lmr_len_9E
+    .long .lmr_len_9F
+    .long .lmr_len_A0
+    .long .lmr_len_A1
+    .long .lmr_len_A2
+    .long .lmr_len_A3
+    .long .lmr_len_A4
+    .long .lmr_len_A5
+    .long .lmr_len_A6
+    .long .lmr_len_A7
+    .long .lmr_len_A8
+    .long .lmr_len_A9
+    .long .lmr_len_AA
+    .long .lmr_len_AB
+    .long .lmr_len_AC
+    .long .lmr_len_AD
+    .long .lmr_len_AE
+    .long .lmr_len_AF
+    .long .lmr_len_B0
+    .long .lmr_len_B1
+    .long .lmr_len_B2
+    .long .lmr_len_B3
+    .long .lmr_len_B4
+    .long .lmr_len_B5
+    .long .lmr_len_B6
+    .long .lmr_len_B7
+    .long .lmr_len_B8
+    .long .lmr_len_B9
+    .long .lmr_len_BA
+    .long .lmr_len_BB
+    .long .lmr_len_BC
+    .long .lmr_len_BD
+    .long .lmr_len_BE
+    .long .lmr_len_BF
+    .long .lmr_len_C0
+    .long .lmr_len_C1
+    .long .lmr_len_C2
+    .long .lmr_len_C3
+    .long .lmr_len_C4
+    .long .lmr_len_C5
+    .long .lmr_len_C6
+    .long .lmr_len_C7
+    .long .lmr_len_C8
+    .long .lmr_len_C9
+    .long .lmr_len_CA
+    .long .lmr_len_CB
+    .long .lmr_len_CC
+    .long .lmr_len_CD
+    .long .lmr_len_CE
+    .long .lmr_len_CF
+    .long .lmr_len_D0
+    .long .lmr_len_D1
+    .long .lmr_len_D2
+    .long .lmr_len_D3
+    .long .lmr_len_D4
+    .long .lmr_len_D5
+    .long .lmr_len_D6
+    .long .lmr_len_D7
+    .long .lmr_len_D8
+    .long .lmr_len_D9
+    .long .lmr_len_DA
+    .long .lmr_len_DB
+    .long .lmr_len_DC
+    .long .lmr_len_DD
+    .long .lmr_len_DE
+    .long .lmr_len_DF
+    .long .lmr_len_E0
+    .long .lmr_len_E1
+    .long .lmr_len_E2
+    .long .lmr_len_E3
+    .long .lmr_len_E4
+    .long .lmr_len_E5
+    .long .lmr_len_E6
+    .long .lmr_len_E7
+    .long .lmr_len_E8
+    .long .lmr_len_E9
+    .long .lmr_len_EA
+    .long .lmr_len_EB
+    .long .lmr_len_EC
+    .long .lmr_len_ED
+    .long .lmr_len_EE
+    .long .lmr_len_EF
+    .long .lmr_len_F0
+    .long .lmr_len_F1
+    .long .lmr_len_F2
+    .long .lmr_len_F3
+    .long .lmr_len_F4
+    .long .lmr_len_F5
+    .long .lmr_len_F6
+    .long .lmr_len_F7
+    .long .lmr_len_F8
+    .long .lmr_len_F9
+    .long .lmr_len_FA
+    .long .lmr_len_FB
+    .long .lmr_len_FC
+    .long .lmr_len_FD
+    .long .lmr_len_FE
+    .long .lmr_len_FF
 
 
 .litE_mat1:
