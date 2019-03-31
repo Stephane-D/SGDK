@@ -111,6 +111,13 @@ void DMA_flushQueue()
     u16 z80state;
 #endif
 
+#if (LIB_DEBUG != 0)
+    if ((IS_PALSYSTEM) && (queueTransferSize > 17600))
+        KLog_U1_("DMA_flushQueue(..) warning: transfer size is above 17600 bytes (", queueTransferSize, ")");
+    else if (queueTransferSize > 7500)
+        KLog_U1_("DMA_flushQueue(..) warning: transfer size is above 7500 bytes (", queueTransferSize, ")");
+#endif
+
     // transfer size limit ?
     if (queueIndexLimit) i = queueIndexLimit;
     else i = queueIndex;
@@ -302,15 +309,6 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
 #endif
         }
     }
-#if (LIB_DEBUG != 0)
-    else
-    {
-        if ((IS_PALSYSTEM) && (queueTransferSize > 17600))
-            KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 17600 bytes.");
-        else if (queueTransferSize > 7500)
-            KDebug_Alert("DMA_queueDma(..) warning: transfer size is above 7500 bytes.");
-    }
-#endif
 
     return TRUE;
 }
