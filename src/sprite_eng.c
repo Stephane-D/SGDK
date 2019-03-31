@@ -354,7 +354,6 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
 #endif // SPR_PROFIL
 
     s16 ind;
-    u16 numVDPSprite;
     Sprite* sprite;
     VDPSprite* lastVDPSprite;
 
@@ -399,7 +398,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     else sprite->depth = SPR_MAX_DEPTH;
     sprite->spriteToHide = 0;
 
-    numVDPSprite = spriteDef->maxNumSprite;
+    const u16 numVDPSprite = spriteDef->maxNumSprite;
 
     // auto VDP sprite alloc enabled ?
     if (flags & SPR_FLAG_AUTO_SPRITE_ALLOC)
@@ -619,32 +618,36 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     if (sprite->definition == spriteDef) return TRUE;
 
     u16 status = sprite->status;
+    const u16 oldNumSprite = sprite->definition->maxNumSprite;
+    const u16 newNumSprite = spriteDef->maxNumSprite;
 
     // auto VDP sprite alloc enabled --> realloc VDP sprite(s)
-    if ((status & SPR_FLAG_AUTO_SPRITE_ALLOC) && (sprite->definition->maxNumSprite != spriteDef->maxNumSprite))
+    if ((status & SPR_FLAG_AUTO_SPRITE_ALLOC) && (oldNumSprite != newNumSprite))
     {
         // we release previous allocated VDP sprite(s)
-        VDP_releaseSprites(sprite->VDPSpriteIndex, sprite->definition->maxNumSprite);
+        VDP_releaseSprites(sprite->VDPSpriteIndex, oldNumSprite);
 
 #ifdef SPR_DEBUG
-        KLog_U3("  released ", sprite->definition->maxNumSprite, " VDP sprite(s) at ", sprite->VDPSpriteIndex, ", remaining VDP sprite = ", VDP_getAvailableSprites());
+        KLog_U3("  released ", oldNumSprite, " VDP sprite(s) at ", sprite->VDPSpriteIndex, ", remaining VDP sprite = ", VDP_getAvailableSprites());
 #endif // SPR_DEBUG
 
-        const s16 num = spriteDef->maxNumSprite;
         // then we allocate the VDP sprite(s) for the new definition
-        const s16 ind = VDP_allocateSprites(num);
+        const s16 ind = VDP_allocateSprites(newNumSprite);
         // not enough --> return error
         if (ind == -1) return FALSE;
 
         // set the VDP Sprite index for this sprite and do attached operation
-        setVDPSpriteIndex(sprite, ind, num, lastAllocatedVDPSprite);
+        setVDPSpriteIndex(sprite, ind, newNumSprite, lastAllocatedVDPSprite);
 
 #ifdef SPR_DEBUG
         KLog_U3("  allocated ", num, " VDP sprite(s) at ", ind, ", remaining VDP sprite = ", VDP_getAvailableSprites());
 #endif // SPR_DEBUG
     }
+
+    const u16 newNumTile = spriteDef->maxNumTile;
+
     // auto VRAM alloc enabled --> realloc VRAM tile area
-    if ((status & SPR_FLAG_AUTO_VRAM_ALLOC) && (sprite->definition->maxNumTile != spriteDef->maxNumTile))
+    if ((status & SPR_FLAG_AUTO_VRAM_ALLOC) && (sprite->definition->maxNumTile != newNumTile))
     {
         // we release previous allocated VRAM
         VRAM_free(&vram, sprite->attribut & TILE_INDEX_MASK);
@@ -654,7 +657,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 #endif // SPR_DEBUG
 
         // allocate VRAM
-        const s16 ind = VRAM_alloc(&vram, spriteDef->maxNumTile);
+        const s16 ind = VRAM_alloc(&vram, newNumTile);
         // not enough --> return error
         if (ind < 0) return FALSE;
 
