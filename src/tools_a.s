@@ -1606,7 +1606,7 @@ lz4w_unpack_a:
     jeq     .next                   | not a long match
 
 .long_match_1:
-    move.w  (%a0)+,%d0              | get long offset (already * 2)
+    move.w  (%a0)+,%d0              | get long offset (already negated)
 
     add.w   %d1,%d1                 |
     add.w   %d1,%d1                 | len = len * 4 (for jump table)
@@ -1641,7 +1641,7 @@ lz4w_unpack_a:
     jeq     .next                   | not a long match
 
 .long_match_2:
-    move.w  (%a0)+,%d0              | get long offset
+    move.w  (%a0)+,%d0              | get long offset (already negated)
 
     add.w   %d1,%d1                 |
     add.w   %d1,%d1                 | len = len * 4 (for jump table)
@@ -1661,7 +1661,7 @@ lz4w_unpack_a:
     jeq    .done                    | not a long match --> done
 
 .long_match_3:
-    move.w  (%a0)+,%d0              | get long offset (already * 2)
+    move.w  (%a0)+,%d0              | get long offset (already negated)
 
     add.w   %d1,%d1                 |
     add.w   %d1,%d1                 | len = len * 4 (for jump table)
