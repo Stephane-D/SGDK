@@ -663,10 +663,9 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
 
         SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
 
+        SPR_setFrame(s, (ts + i) & 0x7);
         if (preloadedTiles)
             SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
-        else
-			SPR_setFrame(s, (ts + i) & 0x7);
 
         sprite++;
     }
@@ -688,10 +687,9 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
 
         SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
 
+        SPR_setFrame(s, (ts + i) & 0x7);
         if (preloadedTiles)
             SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
-        else
-			SPR_setFrame(s, (ts + i) & 0x7);
 
         sprite++;
     }
@@ -713,10 +711,9 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
 
         SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
 
+		SPR_setFrame(s, (ts + i) & 0x7);
         if (preloadedTiles)
             SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
-        else
-			SPR_setFrame(s, (ts + i) & 0x7);
 
         sprite++;
     }
@@ -738,6 +735,9 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
 
     do
     {
+        // disable ints
+        SYS_disableInts();
+
         if (!(score & 0x7))
         {
             // sprite limit not yet raised
@@ -763,6 +763,10 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         }
 
         updateDonut(num, preloadedTiles, t);
+
+        // enable ints
+        SYS_enableInts();
+
         // update sprites
         SPR_update();
 
