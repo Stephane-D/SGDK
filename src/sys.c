@@ -17,7 +17,6 @@
 #include "vdp.h"
 #include "vdp_bg.h"
 #include "vdp_pal.h"
-#include "tile_cache.h"
 #include "sound.h"
 #include "xgm.h"
 #include "dma.h"
@@ -35,22 +34,26 @@
 #define IN_EXTINT       4
 
 
+#define FORCE_VINT_VBLANK_ALIGN     1
+
+
 // we don't want to share them
 extern u16 randbase;
-extern TileSet** uploads;
 extern s16 currentDriver;
 
 // extern library callback function (we don't want to share them)
 extern u16 BMP_doHBlankProcess();
 extern void BMP_doVBlankProcess();
-extern void TC_doVBlankProcess();
 extern u16 SPR_doVBlankProcess();
 extern void XGM_doVBlankProcess();
 
 // main function
 extern int main(u16 hard);
 
+// forward
 static void internal_reset();
+// this one can't be static (used by vdp.c)
+void addFrameLoad(u16 frameLoad);
 
 // exception callbacks
 _voidCallback *busErrorCB;
@@ -90,6 +93,13 @@ __attribute__((externally_visible)) vu16 intTrace;
 
 static u16 intLevelSave;
 static s16 disableIntStack;
+static u16 flag;
+static u32 missedFrames;
+
+// store last frames CPU load (in [0..255] range), need to shared as it can be updated by vdp.c unit
+static u16 frameLoads[8];
+static u16 frameLoadIndex;
+static u16 cpuFrameLoad;
 
 
 static void addValueU8(char *dst, char *str, u8 value)
@@ -388,20 +398,66 @@ void _int_callback()
 // V-Int Callback
 void _vint_callback()
 {
-    u16 vintp;
+    const u16 vcnt = GET_VCOUNTER;
 
     intTrace |= IN_VINT;
-
     vtimer++;
+
+    // detect if we are too late
+    bool late = FALSE;
+    // V28 mode
+    if (VDP_getScreenHeight() == 224)
+    {
+        // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
+        if ((vcnt < 224) || (vcnt > 228)) late = TRUE;
+    }
+    // V30 mode
+    else
+    {
+        // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
+        if ((vcnt < 240) || (vcnt > 244)) late = TRUE;
+    }
+
+    // interrupt happened too late ?
+    if (late)
+    {
+        // V-Interrupt VBlank alignment forced ? --> we force wait of next VBlank (and so V-Int)
+        if (flag & FORCE_VINT_VBLANK_ALIGN)
+        {
+#if (LIB_DEBUG != 0)
+            KLog_U1("Warning: forced V-Int delay for VBlank alignment (frame miss) on frame #", vtimer);
+#endif
+
+            VDP_waitVSync();
+            // we increase the number of missed frame
+            missedFrames++;
+            // assume 100% CPU usage (0-255 value) when V-Int happened too late
+            addFrameLoad(255);
+
+            // we need to return from interrupt as we don't have anyway to clear the new pending interrupt
+            // so we will take it again immediately but in time this time :)
+            intTrace &= ~IN_VINT;
+
+            return;
+        }
+
+#if (LIB_DEBUG != 0)
+        KLog_U2("Warning: V-Int happened too late for frame #", vtimer, " - VCounter = ", vcnt);
+#endif
+
+        // assume 100% CPU usage (0-255 value) when V-Int happened too late
+        addFrameLoad(255);
+    }
 
     // call user callback (pre V-Int)
     if (VIntCBPre) VIntCBPre();
 
-    vintp = VIntProcess;
+
+    u16 vintp = VIntProcess;
     // may worth it
     if (vintp)
     {
-        // xgm processing (have to be done first !)
+        // xgm processing (have to be done first, before DMA)
         if (vintp & PROCESS_XGM_TASK)
             XGM_doVBlankProcess();
 
@@ -427,9 +483,6 @@ void _vint_callback()
             vintp &= ~PROCESS_DMA_TASK;
         }
 
-        // tile cache processing
-        if (vintp & PROCESS_TILECACHE_TASK)
-            TC_doVBlankProcess();
         // bitmap processing
         if (vintp & PROCESS_BITMAP_TASK)
             BMP_doVBlankProcess();
@@ -612,13 +665,20 @@ static void internal_reset()
     intLevelSave = 0;
     disableIntStack = 0;
 
-    // reset variables which own engine initialization state
-    uploads = NULL;
+    // default
+    flag = FORCE_VINT_VBLANK_ALIGN;
+    missedFrames = 0;
+
+    // reset frame load monitor
+    memsetU16(frameLoads, 0, 8);
+    frameLoadIndex = 0;
+    cpuFrameLoad = 0;
 
     // init part
     MEM_init();
     VDP_init();
-    DMA_init(0, 0);
+    DMA_init(64, 0);
+    DMA_setMaxTransferSizeToDefault();
     PSG_init();
     JOY_init();
     // reseting z80 also reset the ym2612
@@ -626,6 +686,17 @@ static void internal_reset()
 
     // enable interrupts
     SYS_setInterruptMaskLevel(3);
+}
+
+// used to compute average frame load on 8 frames
+void addFrameLoad(u16 frameLoad)
+{
+    const u16 adjLoad = frameLoad >> 3;
+
+    cpuFrameLoad -= frameLoads[frameLoadIndex];
+    frameLoads[frameLoadIndex] = adjLoad;
+    cpuFrameLoad += adjLoad;
+    frameLoadIndex = (frameLoadIndex + 1) & 7;
 }
 
 void SYS_disableInts()
@@ -695,6 +766,17 @@ void SYS_setExtIntCallback(_voidCallback *CB)
     ExtIntCB = CB;
 }
 
+void SYS_setVIntAligned(bool value)
+{
+    if (value) flag |= FORCE_VINT_VBLANK_ALIGN;
+    else flag &= ~FORCE_VINT_VBLANK_ALIGN;
+}
+
+u16 SYS_isVIntAligned()
+{
+    return (flag & FORCE_VINT_VBLANK_ALIGN)?TRUE:FALSE;
+}
+
 u16 SYS_isInVIntCallback()
 {
     return intTrace & IN_VINT;
@@ -724,6 +806,23 @@ u16 SYS_isPAL()
 {
     return IS_PALSYSTEM;
 }
+
+
+u16 SYS_getCPULoad()
+{
+    return (cpuFrameLoad * ((u16) 100)) / ((u16) 255);
+}
+
+u32 SYS_getMissedFrames()
+{
+    return missedFrames;
+}
+
+void SYS_resetMissedFrames()
+{
+    missedFrames = 0;
+}
+
 
 void SYS_die(char *err)
 {

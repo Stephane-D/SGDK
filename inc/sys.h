@@ -311,6 +311,26 @@ u16 SYS_isInInterrupt();
 
 /**
  *  \brief
+ *      Set V-Interrupt VBlank alignment state (default state is TRUE).
+ *
+ *  This method allows to force the V-Interrupt to be aligned on VBlank period.<br>
+ *  It means that if the V-Int happen too late (after start of VBlank) then we force a passive wait for the next VBlank so we can align
+ *  start of V-Int processing with beggining of VBlank period (needed to ensure fast DMA transfer).<br>
+ *  When this happen, we increase the number of missed frames.
+
+ * \see SYS_getMissedFrames()
+ */
+void SYS_setVIntAligned(bool value);
+/**
+ *  \brief
+ *      Return != 0 if V-Interrupt are forced to be aligned on VBlank.
+ *
+ * \see SYS_setVIntAligned(bool)
+ */
+u16 SYS_isVIntAligned();
+
+/**
+ *  \brief
  *      Return != 0 if we are on a NTSC system.
  *
  * Better to use the IS_PALSYSTEM
@@ -323,6 +343,35 @@ u16 SYS_isNTSC();
  * Better to use the IS_PALSYSTEM
  */
 u16 SYS_isPAL();
+
+/**
+ *  \brief
+ *      Return an estimation of CPU load (in %)
+ *
+ * Return an estimation of CPU load (in %) of last frame based of idle time spent in VDP_waitVSync() / VDP_waitVInt() methods.<br>
+ * This method don't return accurate result when you have missed frame (V-Int missed).
+ *
+ * \see VDP_waitVSync()
+ * \see VDP_waitVInt()
+ */
+u16 SYS_getCPULoad();
+/**
+ *  \brief
+ *      Return the number of missed frames (a missed frame mean that a VInt was missed)
+ *
+ * \see SYS_setVIntAligned(bool)
+ * \see SYS_isVIntAligned()
+ * \see SYS_resetMissedFrames()
+ */
+u32 SYS_getMissedFrames();
+/**
+ *  \brief
+ *      Reset the number of missed frames
+ *
+ * \see SYS_getMissedFrames()
+ */
+void SYS_resetMissedFrames();
+
 
 /**
  *  \brief
