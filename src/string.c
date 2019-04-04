@@ -401,7 +401,7 @@ static u16 vsprintf(char *buf, const char *fmt, va_list args)
 
         space_sign = zero_pad = plus_sign = left_align = 0;
 
-        // Process the flags
+        // Process the flag
 repeat:
         ++fmt;          // this also skips first '%'
 

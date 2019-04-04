@@ -566,7 +566,7 @@ void VDP_setTileMapDataRect(VDPPlan plan, const u16 *data, u16 x, u16 y, u16 w, 
  *  \deprecated
  *      Use VDP_setTileMapDataEx() instead.
  */
-void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 baseflags, u16 ind, u16 num);
+void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 baseflag, u16 ind, u16 num);
 /**
  *  \brief
  *      Load tilemap data at specified index (extended version).
@@ -580,7 +580,7 @@ void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 b
  *  \param data
  *      tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param basetile
- *      Base tile index and flags for tile attributes (see TILE_ATTR_FULL() macro).
+ *      Base tile index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param ind
  *      Tile index where to start to set tilemap.
  *  \param num
@@ -596,7 +596,7 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
  *  \deprecated
  *      Use VDP_setTileMapDataRectEx() instead.
  */
-void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 baseflags, u16 x, u16 y, u16 w, u16 h);
+void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 baseflag, u16 x, u16 y, u16 w, u16 h);
 /**
  *  \brief
  *      Load tilemap data at specified region (extended version).
@@ -610,7 +610,7 @@ void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 base
  *  \param data
  *      tile attributes data pointer (see TILE_ATTR_FULL() macro).
  *  \param basetile
- *      Base index and flags for tile attributes (see TILE_ATTR_FULL() macro).
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
  *      Region X start position (in tile).
  *  \param y
@@ -642,7 +642,7 @@ void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x
  *  \param map
  *      Map to load.
  *  \param basetile
- *      Base index and flags for tile attributes (see TILE_ATTR_FULL() macro).
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
  *      Region X start position (in tile).
  *  \param y
@@ -667,7 +667,7 @@ u16 VDP_setMap(VDPPlan plan, const Map *map, u16 basetile, u16 x, u16 y);
  *  \param map
  *      Map to load.
  *  \param basetile
- *      Base index and flags for tile attributes (see TILE_ATTR_FULL() macro).
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
  *      Plan X destination position (in tile).
  *  \param y

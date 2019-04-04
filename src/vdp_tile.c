@@ -365,9 +365,9 @@ void VDP_setTileMapDataRect(VDPPlan plan, const u16 *data, u16 x, u16 y, u16 w, 
     }
 }
 
-void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 baseflags, u16 ind, u16 num)
+void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 baseflag, u16 ind, u16 num)
 {
-    VDP_setTileMapDataEx(plan, data, baseflags | baseindex, ind, num);
+    VDP_setTileMapDataEx(plan, data, baseflag | baseindex, ind, num);
 }
 
 void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 num)
@@ -419,9 +419,9 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
     while (i--) *pwdata = baseor | (*src++ + baseinc);
 }
 
-void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 baseflags, u16 x, u16 y, u16 w, u16 h)
+void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 baseflag, u16 x, u16 y, u16 w, u16 h)
 {
-    VDP_setTileMapDataRectEx(plan, data, baseflags | baseindex, x, y, w, h, w);
+    VDP_setTileMapDataRectEx(plan, data, baseflag | baseindex, x, y, w, h, w);
 }
 
 void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm)
