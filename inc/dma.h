@@ -73,7 +73,11 @@ extern DMAOpInfo *dmaQueues;
  *  \param size
  *      The queue size (0 = default size = 64).
  *  \param capacity
- *      The maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call (0 = default = no limit).
+ *      The maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call (0 = default = no limit).<br>
+ *      Depending the current selected strategy, furthers transfers can be ignored (by default all transfers are done whatever is the limit).
+ *      See the #DMA_setIgnoreOverCapacity(..) method to change the strategy to adopt when capacity limit is reached.
+ *
+ * \see #DMA_setIgnoreOverCapacity(..)
  */
 void DMA_init(u16 size, u16 capacity);
 
@@ -94,25 +98,7 @@ u16 DMA_getAutoFlush();
  *
  *  \see DMA_flushQueue()
  */
-void DMA_setAutoFlush(u16 value);
-/**
- *  \brief
- *      Return the "over capacity ignore" state (see #DMA_setIgnoreOverCapacity(..) method).
- *
- *  \see DMA_setIgnoreOverCapacity()
- */
-u16 DMA_getIgnoreOverCapacity();
-/**
- *  \brief
- *      Set the "over capacity" DMA queue strategy.
- *
- *      When set to <i>TRUE</i> any DMA operation queued after we reached the maximum defined transfer capacity
- *      with #DMA_setMaxTransferSize(..) are ignored.<br>
- *      When set to <i>FALSE</i> DMA operations are postponed to the next frame.
- *
- *  \see DMA_setMaxTransferSize()
- */
-void DMA_setIgnoreOverCapacity(u16 value);
+void DMA_setAutoFlush(bool value);
 /**
  *  \brief
  *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.
@@ -130,22 +116,46 @@ s16 DMA_getMaxTransferSize();
  *      The maximum amount of data (in KiloBytes) to transfer during DMA_flushQueue() operation.<br>
  *      Use <b>0</b> for no limit.
  *
- *  \see DMA_setIgnoreOverCapacity()
  *  \see DMA_flushQueue()
  */
 void DMA_setMaxTransferSize(s16 value);
+/**
+ *  \brief
+ *      Sets the maximum amount of data (in bytes) to default value (7.2 KB on NTSC system and 15 KB on PAL system).
+ *
+ *  \see DMA_setMaxTransferSize()
+ */
+void DMA_setMaxTransferSizeToDefault();
+/**
+ *  \brief
+ *      Return TRUE means that we ignore future DMA operation when we reach the maximum capacity (see #DMA_setIgnoreOverCapacity(..) method).
+ *
+ *  \see DMA_setIgnoreOverCapacity()
+ */
+u16 DMA_getIgnoreOverCapacity();
+/**
+ *  \brief
+ *      Set the "over capacity" DMA queue strategy (default is FALSE).
+ *
+ *      When set to <i>TRUE</i> any DMA operation queued after we reached the maximum defined transfer capacity
+ *      with #DMA_setMaxTransferSize(..) are ignored.<br>
+ *      When set to <i>FALSE</i> all DMA operations are done even when we are over the maximum capacity (which can lead to important slowdown).
+ *
+ *  \see DMA_setMaxTransferSize()
+ */
+void DMA_setIgnoreOverCapacity(bool value);
 
 /**
  *  \brief
- *      Clears the DMA queue, any queued operation is lost.<br>
+ *      Clears the DMA queue (all queued operations are lost).<br>
  *  \see DMA_flushQueue()
  */
 void DMA_clearQueue();
 /**
  *  \brief
- *      Send the content of the DMA queue to the VDP:<br>
+ *      Transfer the content of the DMA queue to the VDP:<br>
  *      Each pending DMA operation is sent to the VDP and processed as quickly as possible.<br>
- *      This method returns when all DMA operations present in the queue has been transfered.<br>
+ *      This method returns when all DMA operations present in the queue has been transfered (or when maximum capacity has been reached).<br>
  *      Note that this method is automatically called at VBlank time and you shouldn't call yourself except if
  *      you want to process it before vblank (if you manually extend blank period with h-int for instance) in which case
  *      you can disable the auto flush feature (see DMA_setAutoFlush(...))

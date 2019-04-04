@@ -27,13 +27,12 @@ DMAOpInfo *dmaQueues = NULL;
 // DMA queue settings
 static u16 queueSize;
 static s16 maxTransferPerFrame;
-static u16 flags;
+static u16 flag;
 
 // current queue index (0 = empty / queueSize = full)
 static u16 queueIndex;
 static u16 queueIndexLimit;
 static u32 queueTransferSize;
-static u32 queueTransferSizeLimit;
 
 
 void DMA_init(u16 size, u16 capacity)
@@ -45,7 +44,7 @@ void DMA_init(u16 size, u16 capacity)
     maxTransferPerFrame = capacity;
 
     // auto flush is enabled by default
-    flags = DMA_AUTOFLUSH;
+    flag = DMA_AUTOFLUSH;
 
     // already allocated ?
     if (dmaQueues) MEM_free(dmaQueues);
@@ -56,32 +55,21 @@ void DMA_init(u16 size, u16 capacity)
     DMA_clearQueue();
 }
 
-u16 DMA_getAutoFlush()
+bool DMA_getAutoFlush()
 {
-    return (flags & DMA_AUTOFLUSH)?TRUE:FALSE;
+    return (flag & DMA_AUTOFLUSH)?TRUE:FALSE;
 }
 
-void DMA_setAutoFlush(u16 value)
+void DMA_setAutoFlush(bool value)
 {
     if (value)
     {
-        flags |= DMA_AUTOFLUSH;
+        flag |= DMA_AUTOFLUSH;
         // auto flush enabled and transfer size > 0 --> set process on VBlank
         if (queueTransferSize > 0)
              VIntProcess |= PROCESS_DMA_TASK;
     }
-    else flags &= ~DMA_AUTOFLUSH;
-}
-
-u16 DMA_getIgnoreOverCapacity()
-{
-    return (flags & DMA_OVERCAPACITY_IGNORE)?TRUE:FALSE;
-}
-
-void DMA_setIgnoreOverCapacity(u16 value)
-{
-    if (value) flags |= DMA_OVERCAPACITY_IGNORE;
-    else flags &= ~DMA_OVERCAPACITY_IGNORE;
+    else flag &= ~DMA_AUTOFLUSH;
 }
 
 s16 DMA_getMaxTransferSize()
@@ -94,12 +82,27 @@ void DMA_setMaxTransferSize(s16 value)
     maxTransferPerFrame = value;
 }
 
+void DMA_setMaxTransferSizeToDefault()
+{
+    DMA_setMaxTransferSize(IS_PALSYSTEM?15000:7200);
+}
+
+bool DMA_getIgnoreOverCapacity()
+{
+    return (flag & DMA_OVERCAPACITY_IGNORE)?TRUE:FALSE;
+}
+
+void DMA_setIgnoreOverCapacity(bool value)
+{
+    if (value) flag |= DMA_OVERCAPACITY_IGNORE;
+    else flag &= ~DMA_OVERCAPACITY_IGNORE;
+}
+
 void DMA_clearQueue()
 {
     queueIndex = 0;
     queueIndexLimit = 0;
     queueTransferSize = 0;
-    queueTransferSizeLimit = 0;
 }
 
 void DMA_flushQueue()
@@ -111,16 +114,26 @@ void DMA_flushQueue()
     u16 z80state;
 #endif
 
-#if (LIB_DEBUG != 0)
-    if ((IS_PALSYSTEM) && (queueTransferSize > 17600))
-        KLog_U1_("DMA_flushQueue(..) warning: transfer size is above 17600 bytes (", queueTransferSize, ")");
-    else if (queueTransferSize > 7500)
-        KLog_U1_("DMA_flushQueue(..) warning: transfer size is above 7500 bytes (", queueTransferSize, ")");
-#endif
+    // default
+    i = queueIndex;
 
-    // transfer size limit ?
-    if (queueIndexLimit) i = queueIndexLimit;
-    else i = queueIndex;
+    // limit reached ?
+    if (queueIndexLimit)
+    {
+        // we choose to ignore over capacity transfers ?
+        if (flag & DMA_OVERCAPACITY_IGNORE)
+        {
+            i = queueIndexLimit;
+
+#if (LIB_DEBUG != 0)
+            KLog_U2_("DMA_flushQueue(..) warning: transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, "), some transfers are ignored.");
+#endif
+        }
+#if (LIB_DEBUG != 0)
+        else KLog_U2_("DMA_flushQueue(..) warning: transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, ").");
+#endif
+    }
+
     info = (u32*) dmaQueues;
 
 #ifdef DMA_DEBUG
@@ -150,46 +163,8 @@ void DMA_flushQueue()
     if (!z80state) Z80_releaseBus();
 #endif
 
-    // transfer size limit ?
-    if (queueIndexLimit)
-    {
-        // just ignore
-        if (flags & DMA_OVERCAPACITY_IGNORE)
-        {
-#ifdef DMA_DEBUG
-            KLog_U1("  Ignore remaining transfer starting at index: ", queueIndexLimit);
-#endif
-
-            queueIndex = 0;
-            queueTransferSize = 0;
-        }
-        else
-        {
-#ifdef DMA_DEBUG
-            KLog_U2_("  Delay remaining transfer on next frame, queue[", queueIndexLimit, "] moved to queue[0] (", queueIndex - queueIndexLimit, " elements copied)");
-            KLog_U2("    Before: queueIndex=", queueIndex, " queueTransferSize=", queueTransferSize);
-#endif
-
-            queueIndex -= queueIndexLimit;
-
-            // copy remaining transfer at beggining of the queue (not optimal but simpler)
-            memcpy(&dmaQueues[0], &dmaQueues[queueIndexLimit], sizeof(DMAOpInfo) * queueIndex);
-            queueTransferSize -= queueTransferSizeLimit;
-
-#ifdef DMA_DEBUG
-            KLog_U2("    After: queueIndex=", queueIndex, " queueTransferSize=", queueTransferSize);
-#endif
-        }
-
-        queueIndexLimit = 0;
-        queueTransferSizeLimit = 0;
-    }
-    else
-    {
-        queueIndex = 0;
-        queueTransferSize = 0;
-    }
-
+    // can clear the queue now
+    DMA_clearQueue();
     // we do that to fix cached auto inc value (instead of losing time in updating it during queue flush)
     VDP_setAutoInc(2);
 }
@@ -218,6 +193,7 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
         KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
 #endif
 
+        // return FALSE as transfer will be ignored
         return FALSE;
     }
 
@@ -274,40 +250,33 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
     // keep trace of transfered size
     queueTransferSize += newlen << 1;
 
-    // auto flush enabled --> set process on VBlank
-    if (flags & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;
-
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
 #endif
 
-    // we have a limit defined ?
-    if (maxTransferPerFrame)
+    // auto flush enabled --> set process on VBlank
+    if (flag & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;
+
+    // we are above the defined limit ?
+    if (maxTransferPerFrame && (queueTransferSize > maxTransferPerFrame))
     {
-        // above limit ?
-        if ((queueTransferSize > maxTransferPerFrame) && (queueIndexLimit == 0))
+        // first time we reach the limit ? store index where to stop transfer
+        if (queueIndexLimit == 0)
         {
 #if (LIB_DEBUG != 0)
-            KLog_S2("DMA_queueDma(..) warning: transfer size limit raised: current = ", queueTransferSize, "  max = ", maxTransferPerFrame);
+            KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
 
-            // more than 1 transfer ?
-            if (queueIndex > 1)
-            {
-                // stop on previous transfer
-                queueIndexLimit = queueIndex - 1;
-                queueTransferSizeLimit = queueTransferSize - (newlen << 1);
-            }
-            else
-            {
-                queueIndexLimit = queueIndex;
-                queueTransferSizeLimit = queueTransferSize;
-            }
+            // store limit index
+            queueIndexLimit = queueIndex - 1;
 
 #ifdef DMA_DEBUG
-            KLog_U2("  Queue index limit set at ", queueIndexLimit, " and queueTransferSizeLimit = ", queueTransferSizeLimit);
+            KLog_U1("  Queue index limit set at ", queueIndexLimit);
 #endif
         }
+
+        // return FALSE if transfer will be ignored
+        return (flag & DMA_OVERCAPACITY_IGNORE)?FALSE:TRUE;
     }
 
     return TRUE;
