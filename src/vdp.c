@@ -26,7 +26,12 @@
 #define BPLAN_DEFAULT           0xC000      // multiple of 0x2000
 
 
+// we don't want to share it
+extern void addFrameLoad(u16 frameLoad);
+
+// forward
 static void updateMapsAddress();
+static void computeFrameCPULoad(u16 blank, u16 vcnt);
 
 
 static u8 regValues[0x13];
@@ -685,12 +690,16 @@ void VDP_waitFIFOEmpty()
 
 void VDP_waitVSync()
 {
-    vu16 *pw;
+    vu16 *pw = (u16 *) GFX_CTRL_PORT;
 
-    pw = (u16 *) GFX_CTRL_PORT;
+    // store V-Counter and initial blank state
+    const u16 vcnt = GET_VCOUNTER;
+    const u16 blank = *pw & VDP_VBLANK_FLAG;
 
     while (*pw & VDP_VBLANK_FLAG);
     while (!(*pw & VDP_VBLANK_FLAG));
+
+    computeFrameCPULoad(blank, vcnt);
 }
 
 void VDP_waitVInt()
@@ -698,10 +707,38 @@ void VDP_waitVInt()
     // in VInt --> return
     if (SYS_isInVIntCallback()) return;
 
+    // initial frame counter
     const u32 t = vtimer;
+    // store V-Counter and initial blank state
+    const u16 vcnt = GET_VCOUNTER;
+    const u16 blank = GET_VDPSTATUS(VDP_VBLANK_FLAG);
 
     // wait for next VInt
     while (vtimer == t);
+
+    computeFrameCPULoad(blank, vcnt);
+}
+
+static void computeFrameCPULoad(u16 blank, u16 vcnt)
+{
+    u16 v = vcnt;
+
+    // adjust V-Counter to take care of blanking rollback
+    if (IS_PALSYSTEM)
+    {
+        // blank adjustement
+        if (blank && ((v >= 0xCA) || (v <= 0x0A))) v = 8;
+        else v += 16;
+    }
+    else
+    {
+        // blank adjustement
+        if (blank && (v >= 0xDF)) v = 8;
+        else v += 16;
+    }
+
+    // update CPU frame load
+    addFrameLoad(v);
 }
 
 
@@ -742,6 +779,17 @@ void VDP_showFPS(u16 asFloat)
 
     // display FPS
     VDP_drawText(str, 1, 1);
+}
+
+void VDP_showCPULoad()
+{
+    char str[16];
+
+    uintToStr(SYS_getCPULoad(), str, 1);
+    VDP_clearText(2, 2, 2);
+
+    // display FPS
+    VDP_drawText(str, 1, 2);
 }
 
 

@@ -829,8 +829,19 @@ void VDP_resetScreen();
  *
  * This function actually display the number of time it was called in the last second.<br>
  * i.e: for benchmarking you should call this method only once per frame update.
+ *
+ * \see #getFPS(..)
  */
 void VDP_showFPS(u16 asFloat);
+/**
+ *  \brief
+ *      Display the estimated CPU load (in %).
+ *
+ * This function actually display an estimation of the CPU load (in %) for the last frame.
+ *
+ * \see #SYS_getCPULoad()
+ */
+void VDP_showCPULoad();
 
 
 #endif // _VDP_H_
