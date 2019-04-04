@@ -16,10 +16,6 @@
 #include "z80_drv1.h"
 #include "z80_drv2.h"
 #include "z80_drv3.h"
-#include "z80_mvs.h"
-#include "z80_mvsc.h"
-#include "z80_tfm.h"
-#include "z80_vgm.h"
 #include "z80_xgm.h"
 
 #include "tab_vol.h"
@@ -227,21 +223,6 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             len = sizeof(z80_drv3);
             break;
 
-        case Z80_DRIVER_MVS:
-            drv = z80_mvs;
-            len = sizeof(z80_mvs);
-            break;
-
-        case Z80_DRIVER_TFM:
-            drv = z80_tfm;
-            len = sizeof(z80_tfm);
-            break;
-
-        case Z80_DRIVER_VGM:
-            drv = z80_vgm;
-            len = sizeof(z80_vgm);
-            break;
-
         case Z80_DRIVER_XGM:
             drv = z80_xgm;
             len = sizeof(z80_xgm);
@@ -314,35 +295,6 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
             Z80_releaseBus();
             break;
 
-        case Z80_DRIVER_MVS:
-            // put driver in stop state
-            Z80_requestBus(TRUE);
-
-            // point to Z80 FM command
-            pb = (u8 *) MVS_FM_CMD;
-            // stop command for FM
-            *pb++ = MVS_FM_STOP;
-            *pb = MVS_FM_RESET;
-
-            // point to Z80 DACcommand
-            pb = (u8 *) MVS_DAC_CMD;
-            // stop command for DAC
-            *pb = MVS_DAC_STOP;
-
-            // point to Z80 PSG command
-            pb = (u8 *) MVS_PSG_CMD;
-            // stop command for PSG
-            *pb = MVS_PSG_STOP;
-
-            Z80_releaseBus();
-            break;
-
-        case Z80_DRIVER_VGM:
-            // just reset sound chips
-            YM2612_reset();
-            PSG_init();
-            break;
-
         case Z80_DRIVER_XGM:
             // reset sound chips
             YM2612_reset();
@@ -381,14 +333,6 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
                 // just wait for it
                 while(!Z80_isDriverReady())
                     waitMs(1);
-                break;
-
-            // others drivers
-            case Z80_DRIVER_TFM:
-            case Z80_DRIVER_MVS:
-            case Z80_DRIVER_VGM:
-                // just wait a bit of time
-                waitMs(100);
                 break;
         }
     }

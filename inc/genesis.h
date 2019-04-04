@@ -30,12 +30,10 @@
 #include "dma.h"
 
 #include "bmp.h"
-#include "tile_cache.h"
 #include "sprite_eng.h"
 
 #include "sound.h"
 #include "xgm.h"
-#include "tfcplay.h"
 #include "z80_ctrl.h"
 #include "ym2612.h"
 #include "psg.h"
