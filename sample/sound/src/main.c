@@ -2,7 +2,7 @@
 
 #include "resources.h"
 
-#define NUM_DRIVER      8
+#define NUM_DRIVER      5
 #define MAX_CMD         8
 #define MAX_PARAM       16
 
@@ -91,30 +91,6 @@ static const driver_def drivers[NUM_DRIVER] =
             {"ENV CH1 ", 16, {{"*", 0}, {"*", 1}, {"*", 2}, {"*", 3}, {"*", 4}, {"*", 5}, {"*", 6}, {"*", 7}, {"*", 8}, {"*", 9}, {"*", 10}, {"*", 11}, {"*", 12}, {"*", 13}, {"*", 14}, {"*", 15}}},
             {"ENV CH2 ", 16, {{"*", 0}, {"*", 1}, {"*", 2}, {"*", 3}, {"*", 4}, {"*", 5}, {"*", 6}, {"*", 7}, {"*", 8}, {"*", 9}, {"*", 10}, {"*", 11}, {"*", 12}, {"*", 13}, {"*", 14}, {"*", 15}}},
             {"ENV CH3 ", 16, {{"*", 0}, {"*", 1}, {"*", 2}, {"*", 3}, {"*", 4}, {"*", 5}, {"*", 6}, {"*", 7}, {"*", 8}, {"*", 9}, {"*", 10}, {"*", 11}, {"*", 12}, {"*", 13}, {"*", 14}, {"*", 15}}}
-        }
-    },
-    {
-        Z80_DRIVER_MVS,
-        "MVS tracker driver",
-        1,
-        {
-            {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
-        }
-    },
-    {
-        Z80_DRIVER_TFM,
-        "TFM tracker driver",
-        1,
-        {
-            {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
-        }
-    },
-    {
-        Z80_DRIVER_VGM,
-        "VGM driver",
-        1,
-        {
-            {"LOOP ", 2, {{"off ", 0}, {"on ", 1}}}
         }
     },
     {
@@ -259,25 +235,6 @@ static void refreshDriverCmd()
             VDP_drawText("press B to start/end channel 2", 1, 13);
             VDP_drawText("press C to start/end channel 3", 1, 14);
             VDP_drawText("press START to start/end channel 4", 1, 15);
-            break;
-
-        case Z80_DRIVER_MVS:
-            VDP_drawText("press A to start/end play MVS music", 1, 12);
-            VDP_drawText("press B to play PCM SFX", 1, 13);
-            break;
-
-        case Z80_DRIVER_TFM:
-            VDP_drawText("press A to start play", 1, 12);
-            VDP_drawText("press START to stop play", 1, 13);
-            break;
-
-        case Z80_DRIVER_VGM:
-            VDP_drawText("press A to play Sonic 1 VGM", 1, 12);
-            VDP_drawText("press B to play RoadRash VGM", 1, 13);
-            VDP_drawText("press C to play Bad Apple VGM", 1, 14);
-            VDP_drawText("press Start to stop/resume VGM", 1, 15);
-
-            VDP_drawText("press X to play PCM SFX", 1, 17);
             break;
 
         case Z80_DRIVER_XGM:
@@ -545,70 +502,6 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             break;
         }
 
-        case Z80_DRIVER_MVS:
-        {
-            if (changed & state & BUTTON_A)
-            {
-                if (SND_isPlaying_MVS())
-                    SND_stopPlay_MVS();
-                else
-                {
-                    if (loop)
-                        SND_startPlay_MVS(music_mvs, 1);
-                    else
-                        SND_startPlay_MVS(music_mvs, 0);
-                }
-            }
-
-            if (changed & state & BUTTON_B)
-            {
-                SND_startDAC_MVS(explode_u8k, sizeof(explode_u8k));
-            }
-
-            break;
-        }
-
-        case Z80_DRIVER_TFM:
-        {
-            if (changed & state & BUTTON_A)
-            {
-                SND_startPlay_TFM(music_tfd);
-            }
-            if (changed & state & BUTTON_START)
-            {
-                SND_stopPlay_TFM();
-            }
-            break;
-        }
-
-        case Z80_DRIVER_VGM:
-        {
-            if (changed & state & BUTTON_X)
-            {
-                SND_playSfx_VGM(explode_u8k, sizeof(explode_u8k));
-            }
-            if (changed & state & BUTTON_A)
-            {
-                SND_startPlay_VGM(sonic1);
-            }
-            if (changed & state & BUTTON_B)
-            {
-                SND_startPlay_VGM(roadrash);
-            }
-            if (changed & state & BUTTON_C)
-            {
-                SND_startPlay_VGM(bapcm_vgm);
-            }
-            if (changed & state & BUTTON_START)
-            {
-                if (SND_isPlaying_VGM())
-                    SND_stopPlay_VGM();
-                else
-                    SND_resumePlay_VGM();
-            }
-            break;
-        }
-
         case Z80_DRIVER_XGM:
         {
             if (changed & state & BUTTON_X)
@@ -618,8 +511,8 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             }
             if (changed & state & BUTTON_Y)
             {
-                //SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
-                SND_setPCM_XGM(65, f_voice1_14k, sizeof(f_voice1_14k));
+                SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
+                //SND_setPCM_XGM(65, f_voice1_14k, sizeof(f_voice1_14k));
                 SND_startPlayPCM_XGM(65, 10, SOUND_PCM_CH3);
             }
             if (changed & state & BUTTON_Z)

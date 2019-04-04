@@ -4,11 +4,8 @@ XGM sor2_xgm "sor2.xgm"
 XGM bapcm_xgm "bad_apple_pcm.vgm"
 XGM toystory "toy_story.vgm"
 XGM midnight "midnight.vgm"
-VGM roadrash "roadrash.vgm"
-VGM sonic1 "sonic1.vgm"
-VGM bapcm_vgm "bad_apple_pcm.vgm"
-TFM music_tfd "music_tfd.tfd" 1
-BIN music_mvs "music_mvs.mvs" 256
+XGM roadrash "roadrash.vgm"
+XGM sonic1 "sonic1.vgm"
 
 WAV india_8k "india_8k.wav" 0 8000
 WAV india_11k "india_11k.wav" 0 11025
@@ -33,5 +30,3 @@ WAV explode_u8k "explode.wav" 4
 WAV loop1_14k "loop1.wav" 5
 WAV hat1_14k "hat1.wav" 5
 WAV snare1_14k "snare1.wav" 5
-
-PCM f_voice1_14k "f_voice1.pcm" 5

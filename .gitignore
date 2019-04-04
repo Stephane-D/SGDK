@@ -48,3 +48,5 @@ sample/bench/out/symbol.txt
 sample/sound/loss
 *.pal
 *.depend
+sample/sound/out/symbol.txt
+sample/sprite/out/symbol.txt
