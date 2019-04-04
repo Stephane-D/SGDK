@@ -38,30 +38,27 @@ static u32 lastSTick = 0;
 
 
 // return elapsed time from console reset (1/76800 second based)
-// WARNING : this function isn't accurate because of the VCounter rollback
-u32 getSubTick()
+// WARNING : this function isn't accurate because of the VCounter rollback during VBlank
+u32 getSubTickInternal(u16 blank, u16 vcnt, u32 vt)
 {
-    u16 vcnt;
+    u16 vc = vcnt;
 
-    vcnt = GET_VCOUNTER;
     if (IS_PALSYSTEM)
     {
-        // potentially in rollback / vblank --> use medium value
-        if (vcnt >= 0xCA) vcnt = 8;
-        // potentially in rollback --> use medium value
-        else if ((vcnt <= 0x0A) && GET_VDPSTATUS(VDP_VBLANK_FLAG)) vcnt = 8;
+        // vblank period (we also use vcounter to avoid issue with forced blank) ? --> use medium value
+        if (blank && ((vc >= 0xCA) || (vc <= 0x0A))) vc = 8;
         // use normal value
-        else vcnt += 16;
+        else vc += 16;
     }
     else
     {
-        // potentially in rollback / vblank --> use medium value
-        if (vcnt >= 0xDF) vcnt = 8;
+        // vblank period (we also use vcounter to avoid issue with forced blank) ? --> use medium value
+        if (blank && (vc >= 0xDF)) vc = 8;
         // use normal value
-        else vcnt += 16;
+        else vc += 16;
     }
 
-    u32 current = (vtimer << 8) + vcnt;
+    u32 current = (vt << 8) + vc;
 
     // possible only if vtimer not yet increase while in vblank --> fix
     if (current < lastSTick) current += 256;
@@ -69,6 +66,11 @@ u32 getSubTick()
 
     if (IS_PALSYSTEM) return current * 6;
     else return current * 5;
+}
+
+u32 getSubTick()
+{
+    return getSubTickInternal(GET_VDPSTATUS(VDP_VBLANK_FLAG), GET_VCOUNTER, vtimer);
 }
 
 // return elapsed time from console reset (1/300 second based)
