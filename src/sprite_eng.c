@@ -1729,7 +1729,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
             KLog_U3_("Warning: sprite #", getSpriteIndex(sprite), " update delayed (exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes)");
 #endif // LIB_DEBUG
 
-            // delay frame update later when we will have enough DMA capacity to do it
+            // delay frame update (when we will have enough DMA capacity to do it)
             return status;
         }
     }

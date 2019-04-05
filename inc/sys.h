@@ -315,8 +315,8 @@ u16 SYS_isInInterrupt();
  *
  *  This method allows to force the V-Interrupt to be aligned on VBlank period.<br>
  *  It means that if the V-Int happen too late (after start of VBlank) then we force a passive wait for the next VBlank so we can align
- *  start of V-Int processing with beggining of VBlank period (needed to ensure fast DMA transfer).<br>
- *  When this happen, we increase the number of missed frames.
+ *  start of V-Int processing with beggining of VBlank period (to ensure fast DMA transfert and avoid possible graphical glitches due to VRAM update during active display).<br>
+ *  When a V-Int is delayed to next VBlank then we increase the number of missed frames.
 
  * \see SYS_getMissedFrames()
  */
