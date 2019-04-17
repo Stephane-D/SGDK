@@ -7,8 +7,8 @@
 #include "genesis.h"
 #include "gfx.h"
 
-#define	TABLE_LEN       220
-#define MAX_DONUT       65
+#define    TABLE_LEN       220
+#define MAX_DONUT       32
 #define MAX_DONUT_ANIM  8
 
 static void fastStarFieldFX();
@@ -24,43 +24,43 @@ u16 animVramIndexes[MAX_DONUT_ANIM];
 
 int main()
 {
-	fastStarFieldFX();
-	return 0;
+    fastStarFieldFX();
+    return 0;
 }
 
 static void fastStarFieldFX()
 {
-	u16 vramIndex = TILE_USERINDEX;
-	s16 i, ns, s;
+    u16 vramIndex = TILE_USERINDEX;
+    s16 i, ns, s;
 
-	SYS_disableInts();
+    SYS_disableInts();
 
-	VDP_setPlanSize(64, 32);
-	VDP_clearPlan(PLAN_A, 0);
-	VDP_clearPlan(PLAN_B, 0);
+    VDP_setPlanSize(64, 32);
+    VDP_clearPlan(PLAN_A, 0);
+    VDP_clearPlan(PLAN_B, 0);
 
-	/* Draw the foreground */
-	VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
-	vramIndex += starfield.tileset->numTile;
+    /* Draw the foreground */
+    VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
+    vramIndex += starfield.tileset->numTile;
 
-	/*	Set the proper scrolling mode (line by line) */
-	VDP_setScrollingMode(HSCROLL_LINE, VSCROLL_PLANE);
+    /* Set the proper scrolling mode (line by line) */
+    VDP_setScrollingMode(HSCROLL_LINE, VSCROLL_PLANE);
 
-	/*	Create the scrolling offset table */
-	s = 1;
-	for(i = 0; i < TABLE_LEN; i++)
-	{
-		scroll_PLAN_B_F[i] = FIX16(0);
-		do
-		{
-			ns = -((random() & 0x3F) + 10);
-		}
-		while (ns == s);
-		scroll_speed[i] = ns;
-		s = ns;
-	}
+    /* Create the scrolling offset table */
+    s = 1;
+    for(i = 0; i < TABLE_LEN; i++)
+    {
+        scroll_PLAN_B_F[i] = FIX16(0);
+        do
+        {
+            ns = -((random() & 0x3F) + 10);
+        }
+        while (ns == s);
+        scroll_speed[i] = ns;
+        s = ns;
+    }
 
-	// load tilesets
+    // load tilesets
     Animation* anim = donut.animations[0];
     for(i = 0; i < anim->numFrame; i++)
     {
@@ -70,77 +70,79 @@ static void fastStarFieldFX()
         vramIndex += tileset->numTile;
     }
 
-	/* Setup the sprites */
-	SPR_initEx(MAX_DONUT, 0, 0);
+    /* Setup the sprites */
+    SPR_initEx(MAX_DONUT, 0, 0);
 
-	s = 0;
-	for(i = 0; i < MAX_DONUT; i++)
+    s = 0;
+    for(i = 0; i < MAX_DONUT; i++)
     {
-        Sprite* spr;
-
         // create sprite
-        spr = SPR_addSprite(&donut, 0, 0, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, 0));
+        Sprite* spr = SPR_addSprite(&donut, 0, 0, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, 0));
 
-	    /* Disable auto tile upload */
-	    SPR_setAutoTileUpload(spr, FALSE);
-	    /* default position */
-            SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
-	    /* Set depth */
-	    if ((i & 7) == 7)
-            SPR_setDepth(spr, -1);
-        else
-            SPR_setDepth(spr, spr->y);
-	    /* Manually set VRAM index */
-        SPR_setVRAMTileIndex(spr, animVramIndexes[((s >> 4) + i) & 0x7]);
+        /* Disable auto tile upload */
+        SPR_setAutoTileUpload(spr, FALSE);
+        /* default position */
+        SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
+        /* Set depth */
+        if ((i & 7) == 7) SPR_setDepth(spr, -1);
+        else SPR_setDepth(spr, spr->y);
 
-	    sprites[i] = spr;
+        /* Manually set frame / VRAM index */
+        const u16 frame = ((s >> 4) + i) & 0x7;
+
+        SPR_setFrame(spr, frame);
+        SPR_setVRAMTileIndex(spr, animVramIndexes[frame]);
+
+        sprites[i] = spr;
     }
 
     // first update
-	SPR_update();
+    SPR_update();
 
-	VDP_setPalette(PAL2, donut.palette->data);
+    VDP_setPalette(PAL2, donut.palette->data);
 
-	SYS_enableInts();
+    SYS_enableInts();
 
-	JOY_setEventHandler(&joyEvent);
-	SYS_setVIntCallback(&vint);
+    JOY_setEventHandler(&joyEvent);
+    SYS_setVIntCallback(&vint);
 
-	/*	Start !!!! */
-	while (TRUE)
-	{
-		for(i = 0; i < TABLE_LEN; i++)
+    /*    Start !!!! */
+    while (TRUE)
+    {
+        for(i = 0; i < TABLE_LEN; i++)
         {
-			scroll_PLAN_B_F[i] += scroll_speed[i];
-			scroll_PLAN_B[i] = fix16ToInt(scroll_PLAN_B_F[i]) & 0x1FF;
+            scroll_PLAN_B_F[i] += scroll_speed[i];
+            scroll_PLAN_B[i] = fix16ToInt(scroll_PLAN_B_F[i]) & 0x1FF;
         }
 
-		/*	Animate the donuts */
-		for(i = 0; i < MAX_DONUT; i++)
-		{
-		    Sprite *spr = sprites[i];
+        /*    Animate the donuts */
+        for(i = 0; i < MAX_DONUT; i++)
+        {
+            Sprite *spr = sprites[i];
+            const u16 frame = ((s >> 4) + i) & 0x7;
 
-	        SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
-	        if (spr->depth != -1) SPR_setDepth(spr, spr->y);
-			SPR_setVRAMTileIndex(spr, animVramIndexes[((s >> 4) + i) & 0x7]);
-		}
+            SPR_setPosition(spr, (cosFix16(s + (i << 5)) << 1) + 160 - 16, sinFix16(s + (i << 5)) + 112 - 16);
+            if (spr->depth != -1) SPR_setDepth(spr, spr->y);
+            SPR_setFrame(spr, frame);
+            SPR_setVRAMTileIndex(spr, animVramIndexes[frame]);
+        }
 
-		s += 4;
-		SPR_update();
+        s += 4;
+        SPR_update();
 
-        SYS_disableInts();
-		VDP_showFPS(FALSE);
-		SYS_enableInts();
+//        SYS_disableInts();
+//        VDP_showFPS(FALSE);
+//        SYS_enableInts();
 
-		VDP_waitVSync();
+        VDP_waitVSync();
 
 //        SPR_sort(NULL);
 
-//		if ((s & 0x007F) == 0x0070)
-//            SPR_logProfil();
-//		if ((s & 0x03FF) == 0x0370)
-//            SPR_sort(&compareSprite);
-	}
+//        if ((s & 0x007F) == 0x0070)
+//        SPR_logProfil();
+//        if ((s & 0x03FF) == 0x0370)
+//        SPR_sort(&compareSprite);
+    }
 }
 
 
