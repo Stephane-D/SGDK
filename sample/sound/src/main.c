@@ -216,7 +216,7 @@ static void refreshDriverParams()
 
 static void refreshDriverCmd()
 {
-    VDP_clearTileMapRect(PLAN_A, 0, 12, 40, 8);
+    VDP_clearTileMapRect(PLAN_A, 0, 12, 40, 14);
     setTextPalette(1);
 
     switch(driver->id)
