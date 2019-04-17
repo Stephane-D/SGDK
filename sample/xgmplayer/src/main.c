@@ -152,8 +152,8 @@ static u16 dmawaitload;
 static Sprite* YMPanSprites[6];
 static Sprite* progressBar;
 static Sprite* trackListCursor;
-static Sprite* trackListShadowTop;
-static Sprite* trackListShadowBottom;
+static Sprite* trackListShadowTop[3];
+static Sprite* trackListShadowBottom[3];
 
 // BG starfield scrolling
 static s16 scrollB[SCROLLV_LEN];
@@ -167,7 +167,9 @@ static u16 buttonsPressed;
 static u16 pressTime;
 static u16 tileIndex;
 static u16 tileIndexProgressBar;
-static u16 tileIndexShadowMask;
+static u16 tileIndexShadowMaskOdd;
+static u16 tileIndexShadowMaskEven;
+static u16 curTileIndexMesh;
 static s16 trackListScrollPos;
 static u16 playStateCnt;
 static u16 evenCnt;
@@ -192,6 +194,7 @@ int main()
     u16 i;
 
     SYS_disableInts();
+    SYS_setVIntAligned(FALSE);
 
     // clear all palette
     VDP_setPaletteColors(0, palette_black, 64);
@@ -300,10 +303,18 @@ int main()
     trackListCursor = SPR_addSprite(&cursor, 0, 108, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     SPR_setVisibility(trackListCursor, VISIBLE);
     // prepare track list shadow
-    trackListShadowTop = SPR_addSpriteEx(&shadow_mask, 8, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, tileIndexShadowMask), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowBottom = SPR_addSpriteEx(&shadow_mask, 8, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, tileIndexShadowMask), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    SPR_setVisibility(trackListShadowTop, VISIBLE);
-    SPR_setVisibility(trackListShadowBottom, VISIBLE);
+    curTileIndexMesh = tileIndexShadowMaskOdd;
+    trackListShadowTop[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowTop[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowTop[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowBottom[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowBottom[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowBottom[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    for(i = 0; i < 3; i++)
+    {
+        SPR_setVisibility(trackListShadowTop[i], VISIBLE);
+        SPR_setVisibility(trackListShadowBottom[i], VISIBLE);
+    }
 
     // reset sound chip
     YM_init(&ym);
@@ -330,7 +341,7 @@ int main()
     palette[15] = 0xEEE;
     memcpy(&palette[1 * 16], gfx_palette, 16 * 2);
     memcpy(&palette[2 * 16], music_logo.palette->data, 16 * 2);
-    memcpy(&palette[3 * 16], shadow_mask.palette->data, 16 * 2);
+    memcpy(&palette[3 * 16], shadow_mask_16.palette->data, 16 * 2);
     // set hilight/shadow operators to black color
     palette[62] = 0x000;
     palette[63] = 0x000;
@@ -382,6 +393,15 @@ int main()
             // update YM envelop states
             YM_updateEnv(&ym);
             frameToUpdate--;
+        }
+
+        // alternate mesh
+        if (curTileIndexMesh == tileIndexShadowMaskEven) curTileIndexMesh = tileIndexShadowMaskOdd;
+        else curTileIndexMesh = tileIndexShadowMaskEven;
+        for(i = 0; i < 3; i++)
+        {
+            SPR_setVRAMTileIndex(trackListShadowTop[i], curTileIndexMesh);
+            SPR_setVRAMTileIndex(trackListShadowBottom[i], curTileIndexMesh);
         }
 
         SPR_update();
@@ -609,11 +629,15 @@ static void drawStaticGUI()
     memcpy(progressTileBuffer, tileset->tiles, tileset->numTile * 32);
     VDP_loadTileSet(tileset, tileIndexProgressBar, TRUE);
 
-    tileIndexShadowMask = tileIndexProgressBar + tileset->numTile;;
+    tileIndexShadowMaskOdd = tileIndexProgressBar + tileset->numTile;
     // release unpacked tileset
     MEM_free(tileset);
-    tileset = shadow_mask.animations[0]->frames[0]->tileset;
-    VDP_loadTileSet(tileset, tileIndexShadowMask, TRUE);
+
+    tileset = shadow_mask_16.animations[0]->frames[0]->tileset;
+    VDP_loadTileSet(tileset, tileIndexShadowMaskOdd, TRUE);
+    tileIndexShadowMaskEven = tileIndexShadowMaskOdd + tileset->numTile;
+    tileset = shadow_mask_16.animations[1]->frames[0]->tileset;
+    VDP_loadTileSet(tileset, tileIndexShadowMaskEven, TRUE);
 
     SYS_enableInts();
 }
