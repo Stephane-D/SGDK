@@ -151,10 +151,10 @@ char* strcat(char *dest, const char *src);
 char *strreplacechar(char *str, char oldc, char newc);
 /**
  *  \brief
- *      Convert a s32 value to string.
+ *      Convert a s32 value to string (input value should be in [-500000000..500000000] range).
  *
  *  \param value
- *      The s32 integer value to convert to string.
+ *      The s32 integer value to convert to string (input value should be in [-500000000..500000000] range).
  *  \param str
  *      Destination string (it must be large enough to receive result).
  *  \param minsize
@@ -167,10 +167,10 @@ char *strreplacechar(char *str, char oldc, char newc);
 u16 intToStr(s32 value, char *str, u16 minsize);
 /**
  *  \brief
- *      Convert a u32 value to string.
+ *      Convert a u32 value to string (input value should be in [0..500000000] range).
  *
  *  \param value
- *      The u32 integer value to convert to string.
+ *      The u32 integer value to convert to string (input value should be in [0..500000000] range).
  *  \param str
  *      Destination string (it must be large enough to receive result).
  *  \param minsize
@@ -181,38 +181,6 @@ u16 intToStr(s32 value, char *str, u16 minsize);
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
 u16 uintToStr(u32 value, char *str, u16 minsize);
-/**
- *  \brief
- *      Convert a s16 value to string (faster than the 32-bit version).
- *
- *  \param value
- *      The s16 integer value to convert to string.
- *  \param str
- *      Destination string (it must be large enough to receive result).
- *  \param minsize
- *      Minimum size of resulting string.
- *  \return string length
- *
- * Converts the specified s16 value to string.<br>
- * If resulting value is shorter than requested minsize the method prepends result with '0' character.
- */
-u16 int16ToStr(s16 value, char *str, u16 minsize);
-/**
- *  \brief
- *      Convert a u16 value to string (faster than the 32-bit version).
- *
- *  \param value
- *      The u16 integer value to convert to string.
- *  \param str
- *      Destination string (it must be large enough to receive result).
- *  \param minsize
- *      Minimum size of resulting string.
- *  \return string length
- *
- * Converts the specified u16 value to string.<br>
- * If resulting value is shorter than requested minsize the method prepends result with '0' character.
- */
-u16 uint16ToStr(u16 value, char *str, u16 minsize);
 /**
  *  \brief
  *      Convert a u32 value to hexadecimal string.

@@ -11,13 +11,13 @@
 #define P01 10
 #define P02 100
 #define P03 1000
-#define P04 1000 * 10
-#define P05 1000 * 100
-#define P06 1000 * 1000
-#define P07 1000 * 1000 * 10
-#define P08 1000 * 1000 * 100
-#define P09 1000 * 1000 * 1000
-#define P10 1000 * 1000 * 1000 * 10
+#define P04 10000
+#define P05 100000
+#define P06 1000000
+#define P07 10000000
+#define P08 100000000
+#define P09 1000000000
+#define P10 10000000000
 
 static const char const uppercase_hexchars[] = "0123456789ABCDEF";
 static const char const lowercase_hexchars[] = "0123456789abcdef";
@@ -29,7 +29,8 @@ static const char digits[] =
     "8081828384858687888990919293949596979899";
 
 // FORWARD
-static u16 digits10(const u32 v);
+static u16 digits10(const u16 v);
+static u16 uint16ToStr(u16 value, char *str);
 static u16 skip_atoi(const char **s);
 static u16 vsprintf(char *buf, const char *fmt, va_list args);
 
@@ -152,6 +153,12 @@ char *strreplacechar(char *str, char oldc, char newc)
 
 u16 intToStr(s32 value, char *str, u16 minsize)
 {
+    if (value < -500000000)
+    {
+        strcpy(str, "<-500000000");
+        return 10;
+    }
+
     if (value < 0)
     {
         *str = '-';
@@ -162,76 +169,63 @@ u16 intToStr(s32 value, char *str, u16 minsize)
 
 u16 uintToStr(u32 value, char *str, u16 minsize)
 {
-    char *dst;
-    u16 length;
-    u32 v;
+    if (value > 500000000)
+    {
+        strcpy(str, ">500000000");
+        return 10;
+    }
 
-    memset(str, '0', minsize);
+    u16 len;
 
-    length = digits10(value);
-    if (length < minsize) length = minsize;
+    // need to split in 2 conversions ?
+    if (value > 10000)
+    {
+        const u16 v1 = value / (u16) 10000;
+        const u16 v2 = value % (u16) 10000;
 
-    dst = &str[length];
-    *dst = '\0';
-    v = value;
+        len = uint16ToStr(v1, str);
+        len += uint16ToStr(v2, str + len);
+    }
+    else len = uint16ToStr(value, str);
+
+    // need to shift and pad
+    if (len < minsize)
+    {
+        u16 offset = minsize - len;
+        char *src = str + len;
+        char *dst = src + offset;
+
+        *dst = 0;
+        while(len--) *--dst = *--src;
+        while(offset--) *--dst = '0';
+
+        return minsize;
+    }
+
+    return len;
+}
+
+static u16 uint16ToStr(u16 value, char *str)
+{
+    const u16 length = digits10(value);
+    char *dst = &str[length];
+    u16 v = value;
+
+    *dst = 0;
 
     while (v >= 100)
     {
-        const u16 i = (v % 100) * 2;
+        const u16 quot = v / 100;
+        const u16 remain = v % 100;
 
-        v /= 100;
-        *--dst = digits[i + 1];
-        *--dst = digits[i + 0];
-    }
-
-    // Handle last 1-2 digits
-    if (v < 10) *--dst = '0' + v;
-    else
-    {
-        const u16 i = v * 2;
+        const u16 i = remain * 2;
+        v = quot;
 
         *--dst = digits[i + 1];
         *--dst = digits[i + 0];
     }
 
-    return length;
-}
-
-u16 int16ToStr(s16 value, char *str, u16 minsize)
-{
-    if (value < 0)
-    {
-        *str = '-';
-        return uint16ToStr(-value, str + 1, minsize);
-    }
-    else return uint16ToStr(value, str, minsize);
-}
-
-u16 uint16ToStr(u16 value, char *str, u16 minlen)
-{
-    char *dst;
-    u16 length;
-    u16 v;
-
-    memset(str, '0', minlen);
-
-    length = digits10(value);
-    if (length < minlen) length = minlen;
-
-    dst = &str[length];
-    *dst = '\0';
-    v = value;
-
-    while (v >= 100)
-    {
-        const u16 i = (v % 100) * 2;
-
-        v /= 100;
-        *--dst = digits[i + 1];
-        *--dst = digits[i + 0];
-    }
-
-    // Handle last 1-2 digits
+    // handle last 1-2 digits
     if (v < 10) *--dst = '0' + v;
     else
     {
@@ -289,78 +283,76 @@ void intToHex(u32 value, char *str, u16 minsize)
 
 void fix32ToStr(fix32 value, char *str, u16 numdec)
 {
-    u32 len;
-    fix32 v;
-    u32 frac;
-    char strFrac[8];
+    char *dst = str;
+    fix32 v = value;
 
-    len = 0;
-    if (value < 0)
+    if (v < 0)
     {
-        v = -value;
-        str[len++] = '-';
+        v = -v;
+        *dst++ = '-';
     }
-    else v = value;
 
-    len += uintToStr(fix32ToInt(v), &str[len], 1);
-    str[len++] = '.';
+    dst += uintToStr(fix32ToInt(v), dst, 1);
+    *dst++ = '.';
 
     // get fractional part
-    frac = fix32Frac(v) * 1000;
-    frac /= 1 << FIX32_FRAC_BITS;
+    const u16 frac = (((u16) fix32Frac(v)) * (u16) 1000) / ((u16) 1 << FIX32_FRAC_BITS);
+    u16 len = uint16ToStr(frac, dst);
 
-    // get fractional string
-    uintToStr(frac, strFrac, 3);
-
-    if (numdec >= 3) strcpy(&str[len], strFrac);
-    else strncpy(&str[len], strFrac, numdec);
+    if (len < numdec)
+    {
+        // need to add ending '0'
+        dst += len;
+        while(len++ < numdec) *dst++ = '0';
+        // mark end here
+        *dst = 0;
+    }
+    else dst[numdec] = 0;
 }
 
 void fix16ToStr(fix16 value, char *str, u16 numdec)
 {
-    u32 len;
-    fix16 v;
-    u32 frac;
-    char strFrac[8];
+    char *dst = str;
+    fix16 v = value;
 
-    len = 0;
-    if (value < 0)
+    if (v < 0)
     {
-        v = -value;
-        str[len++] = '-';
+        v = -v;
+        *dst++ = '-';
     }
-    else v = value;
 
-    len += uint16ToStr(fix16ToInt(v), &str[len], 1);
-    str[len++] = '.';
+    dst += uint16ToStr(fix16ToInt(v), dst);
+    *dst++ = '.';
 
     // get fractional part
-    frac = fix16Frac(v) * 1000;
-    frac /= 1 << FIX16_FRAC_BITS;
+    const u16 frac = (((u16) fix16Frac(v)) * (u16) 1000) / ((u16) 1 << FIX16_FRAC_BITS);
+    u16 len = uint16ToStr(frac, dst);
 
-    // get fractional string
-    uint16ToStr(frac, strFrac, 3);
-
-    if (numdec >= 3) strcpy(&str[len], strFrac);
-    else strncpy(&str[len], strFrac, numdec);
+    if (len < numdec)
+    {
+        // need to add ending '0'
+        dst += len;
+        while(len++ < numdec) *dst++ = '0';
+        // mark end here
+        *dst = 0;
+    }
+    else dst[numdec] = 0;
 }
 
 
-static u16 digits10(const u32 v)
+static u16 digits10(const u16 v)
 {
-    if (v < P01) return 1;
-    if (v < P02) return 2;
-    if (v < P03) return 3;
-    if (v < P08)
+    if (v < P02)
     {
-        if (v < P06)
-        {
-            if (v < P04) return 4;
-            return 5 + (v >= P05);
-        }
-        return 7 + (v >= P07);
+        if (v < P01) return 1;
+        return 2;
     }
-    return 9 + (v >= P09);
+    else
+    {
+        if (v < P03) return 3;
+        if (v < P04) return 4;
+        return 5;
+    }
 }
 
 static u16 skip_atoi(const char **s)
@@ -651,5 +643,3 @@ u16 sprintf(char *buffer, const char *fmt, ...)
 
     return i;
 }
-
-
