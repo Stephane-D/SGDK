@@ -29,12 +29,13 @@
 #endif
 
 
-#define IN_VINT         1
-#define IN_HINT         2
-#define IN_EXTINT       4
-
+#define IN_VINT                     1
+#define IN_HINT                     2
+#define IN_EXTINT                   4
 
 #define FORCE_VINT_VBLANK_ALIGN     1
+
+#define FRAME_LOAD_MEAN             8
 
 
 // we don't want to share them
@@ -97,7 +98,7 @@ static u16 flag;
 static u32 missedFrames;
 
 // store last frames CPU load (in [0..255] range), need to shared as it can be updated by vdp.c unit
-static u16 frameLoads[8];
+static u16 frameLoads[FRAME_LOAD_MEAN];
 static u16 frameLoadIndex;
 static u16 cpuFrameLoad;
 
@@ -670,7 +671,7 @@ static void internal_reset()
     missedFrames = 0;
 
     // reset frame load monitor
-    memsetU16(frameLoads, 0, 8);
+    memsetU16(frameLoads, 0, FRAME_LOAD_MEAN);
     frameLoadIndex = 0;
     cpuFrameLoad = 0;
 
@@ -691,12 +692,10 @@ static void internal_reset()
 // used to compute average frame load on 8 frames
 void addFrameLoad(u16 frameLoad)
 {
-    const u16 adjLoad = frameLoad >> 3;
-
     cpuFrameLoad -= frameLoads[frameLoadIndex];
-    frameLoads[frameLoadIndex] = adjLoad;
-    cpuFrameLoad += adjLoad;
-    frameLoadIndex = (frameLoadIndex + 1) & 7;
+    frameLoads[frameLoadIndex] = frameLoad;
+    cpuFrameLoad += frameLoad;
+    frameLoadIndex = (frameLoadIndex + 1) & (FRAME_LOAD_MEAN - 1);
 }
 
 void SYS_disableInts()
@@ -810,7 +809,7 @@ u16 SYS_isPAL()
 
 u16 SYS_getCPULoad()
 {
-    return (cpuFrameLoad * ((u16) 100)) / ((u16) 255);
+    return (cpuFrameLoad * ((u16) 100)) / ((u16) (FRAME_LOAD_MEAN*255));
 }
 
 u32 SYS_getMissedFrames()
