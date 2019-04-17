@@ -348,8 +348,8 @@ u16 SYS_isPAL();
  *  \brief
  *      Return an estimation of CPU load (in %)
  *
- * Return an estimation of CPU load (in %) of last frame based of idle time spent in VDP_waitVSync() / VDP_waitVInt() methods.<br>
- * This method don't return accurate result when you have missed frame (V-Int missed).
+ * Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in VDP_waitVSync() / VDP_waitVInt() methods.<br>
+ * This method don't return accurate result when you have missed frames (V-Int missed).
  *
  * \see VDP_waitVSync()
  * \see VDP_waitVInt()
