@@ -9,7 +9,11 @@
 *.pdb
 *.o
 *.out
+*.pal
+*.depend
 *.layout
+symbol.txt
+out.lst
 rom_head.bin
 vstudio/appack/Debug
 vstudio/appack/Release
@@ -17,7 +21,6 @@ vstudio/libmd/Debug
 vstudio/libmd/Release
 vstudio/rescomp/Debug
 vstudio/rescomp/Release
-out.lst
 obj/*
 src/z80_*.s
 res/libres.s
@@ -44,9 +47,7 @@ tools/xgmtool/out/*
 tools/lz4w/test
 tools/lz4w/bin
 tools/emu
-sample/bench/out/symbol.txt
 sample/sound/loss
-*.pal
-*.depend
-sample/sound/out/symbol.txt
-sample/sprite/out/symbol.txt
+sample/sound/out
+!sample/sound/out/rom.bin
+tools/extras
