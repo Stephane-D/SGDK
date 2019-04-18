@@ -51,3 +51,4 @@ sample/sound/loss
 sample/sound/out
 !sample/sound/out/rom.bin
 tools/extras
+*.xml
