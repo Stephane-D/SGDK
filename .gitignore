@@ -14,6 +14,7 @@
 *.layout
 *.xml
 *.lst
+*.class
 **/out/**
 !**/out/rom.bin
 symbol.txt
@@ -37,10 +38,15 @@ cb
 doc
 emu
 not needed
+sample/sound/loss
 tools/extras
 tools/old
 tools/genesis_tools.workspace
+tools/emu
 tools/lz4w/test
 tools/lz4w/bin
-tools/emu
-sample/sound/loss
+tools/lz4w/lz4w.jar
+tools/rescomp/format
+tools/rescomp/out
+tools/rescomp/rescomp.jar
+tools/xgm tool builder/bin
