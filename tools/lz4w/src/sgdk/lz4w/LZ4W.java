@@ -1,3 +1,5 @@
+package sgdk.lz4w;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +16,8 @@ public class LZ4W
     final static int MATCH_OFFSET_SFT = 0;
     final static int MATCH_LONG_LENGTH_MASK = MATCH_OFFSET_MASK;
     final static int MATCH_LONG_LENGTH_SFT = MATCH_OFFSET_SFT;
-    final static int MATCH_LONG_OFFSET_MASK = 0xFFFE;
-    final static int MATCH_LONG_OFFSET_SFT = 1;
+    final static int MATCH_LONG_OFFSET_MASK = 0x7FFF;
+    final static int MATCH_LONG_OFFSET_ROM_SOURCE_MASK = 0x8000;
 
     final static int LITERAL_MAX_SIZE = 0xF;
     final static int MATCH_MIN_SIZE = 1;
@@ -25,7 +27,7 @@ public class LZ4W
     final static int MATCH_MIN_OFFSET = 1;
     final static int MATCH_LONG_MIN_OFFSET = 1;
     final static int MATCH_OFFSET_MAX = 0x0FF + MATCH_MIN_OFFSET;
-    final static int MATCH_LONG_OFFSET_MAX = 0x7FFF + MATCH_LONG_MIN_OFFSET;
+    final static int MATCH_LONG_OFFSET_MAX = 0x3FFF + MATCH_LONG_MIN_OFFSET;
 
     // stats
     static int[] statLiteralSize;
@@ -97,7 +99,7 @@ public class LZ4W
             final Match[] matches = new Match[wdata.length - offset];
 
             for (int i = 0; i < matches.length; i++)
-                matches[i] = findBestMatch(wordMatches, wdata, offset + i);
+                matches[i] = findBestMatch(wordMatches, wdata, offset + i, start / 2);
 
             // PASS 3: walk backward in matches and find optimal match length
             final int costs[] = new int[matches.length + 1];
@@ -132,6 +134,7 @@ public class LZ4W
             // PASS 4: build compressed data from optimal matches
             literal.reset();
             int ind = 0;
+            int offAdj = 0;
             while (ind < matches.length)
             {
                 final Match match = matches[ind];
@@ -140,7 +143,7 @@ public class LZ4W
                 if (match != null)
                 {
                     // add segment
-                    addSegment(result, literal, match, data);
+                    offAdj += addSegment(result, literal, match, offAdj);
                     // adjust index
                     ind += match.length;
                     // and clear literal data
@@ -156,13 +159,13 @@ public class LZ4W
         if (literal.size() > 0)
         {
             // last segment
-            addSegment(result, literal, new Match(), data);
+            addSegment(result, literal, new Match(), 0);
             // and clear literal data
             literal.reset();
         }
 
         // mark end with empty literal and empty match
-        addSegment(result, literal, new Match(), data);
+        addSegment(result, literal, new Match(), 0);
 
         // don't forget the last byte...
         if ((len & 1) != 0)
@@ -179,7 +182,7 @@ public class LZ4W
         if (!silent)
         {
             System.out.println("Stats:");
-            System.out.println("  Num segment = " + statNumSeg + " - " + statLongMatch + " long match(s) - " + statMiss
+            System.out.println("  Num segment = " + statNumSeg + " - " + statLongMatch + " long match(es) - " + statMiss
                     + " miss(es)");
             System.out.println("  Mean literal size = "
                     + String.format("%.2g", Double.valueOf((double) statLiteralLen / (double) statNumSeg)));
@@ -224,12 +227,14 @@ public class LZ4W
         // transform to word data
         final short wdata[] = byteToShort(data, false);
 
-        // bypass previous buffer and length
+        // bypass previous buffer
         int ind = (start / 2);
-        // int ind = (start / 2) + 2;
+        int offsetAdj = 0;
         while (ind < (wdata.length - 1))
         {
             final int seg = swap(wdata[ind++]);
+            // 1 block
+            offsetAdj++;
 
             int literalLength = (seg & LITERAL_LENGTH_MASK) >> LITERAL_LENGTH_SFT;
             int matchLength = (seg & MATCH_LENGTH_MASK) >> MATCH_LENGTH_SFT;
@@ -249,16 +254,22 @@ public class LZ4W
                 // long match mode ?
                 if (matchOffset > 0)
                 {
+                    final int value = swap(wdata[ind++]);
+                    // 1 block
+                    offsetAdj++;
+
                     // use offset as length
                     matchLength = matchOffset + MATCH_LONG_MIN_SIZE;
-                    // match offset = next word
-                    matchOffset = ((swap(wdata[ind++]) & MATCH_LONG_OFFSET_MASK) >> MATCH_LONG_OFFSET_SFT)
-                            + MATCH_LONG_MIN_OFFSET;
+                    // match offset = next word (need to be negated)
+                    matchOffset = ((-value) & MATCH_LONG_OFFSET_MASK) + MATCH_LONG_MIN_OFFSET;
+                    // ROM source ? --> adjust offset
+                    if ((value & MATCH_LONG_OFFSET_ROM_SOURCE_MASK) != 0)
+                        matchOffset -= offsetAdj;
                 }
             }
             else
             {
-                // adjust match legth and offset
+                // adjust match length and offset
                 matchLength += MATCH_MIN_SIZE;
                 matchOffset += MATCH_MIN_OFFSET;
             }
@@ -275,6 +286,8 @@ public class LZ4W
                     value |= (result.read(offset++) & 0xFF) << 8;
                     writeWordLE(result, verif, value);
                 }
+
+                offsetAdj -= matchLength;
             }
         }
 
@@ -292,7 +305,7 @@ public class LZ4W
         return resultWanted;
     }
 
-    private static Match findBestMatch(WordMatchList[] wordMatches, short[] wdata, int ind)
+    private static Match findBestMatch(WordMatchList[] wordMatches, short[] wdata, int ind, int originStartOffset)
     {
         // nothing we can do
         if (ind < 1)
@@ -321,7 +334,8 @@ public class LZ4W
         }
 
         Match best = null;
-        int savedWord = 0;
+        // we want 1 saved word at least
+        int savedWord = 1;
 
         // for all accepted word matches
         while (wmlInd < wml.size())
@@ -345,9 +359,10 @@ public class LZ4W
             // for each repeated word
             while ((repeat-- >= 0) && (off < ind))
             {
-                final Match match = findBestMatchInternal(wdata, off, ind);
+                final Match match = findBestMatchInternal(wdata, off, ind, originStartOffset);
 
-                if (match.savedWord > savedWord)
+                // we use >= as we always prefer short offset
+                if (match.savedWord >= savedWord)
                 {
                     best = match;
                     savedWord = match.savedWord;
@@ -367,12 +382,18 @@ public class LZ4W
         return best;
     }
 
-    private static Match findBestMatchInternal(short[] wdata, int from, int ind)
+    private static Match findBestMatchInternal(short[] wdata, int from, int ind, int originStart)
     {
-        final int maxLen = MATCH_LONG_MAX_SIZE;
+        final int maxLen;
         int refOffset;
         int curOffset;
         int len;
+
+        // we are referencing ROM data
+        if (from < originStart)
+            maxLen = Math.min(originStart - from, MATCH_LONG_MAX_SIZE);
+        else
+            maxLen = MATCH_LONG_MAX_SIZE;
 
         // test on simple copy
         refOffset = from;
@@ -381,14 +402,15 @@ public class LZ4W
         while ((curOffset < wdata.length) && (wdata[refOffset++] == wdata[curOffset++]) && (len < maxLen))
             len++;
 
-        return new Match(ind, from, len);
+        return new Match(ind, from, len, from < originStart);
     }
 
-    private static void addSegment(DymamicByteArray result, DymamicByteArray literal, Match match, byte[] src)
+    private static int addSegment(DymamicByteArray result, DymamicByteArray literal, Match match, int offsetDiff)
     {
         byte[] literalArray = literal.toByteArray();
         int literalLength = literal.size() / 2;
         int literalOffset = 0;
+        int offsetAdj = 0;
 
         // literal size overflow
         while (literalLength > LITERAL_MAX_SIZE)
@@ -398,6 +420,9 @@ public class LZ4W
             statLiteralLen += LITERAL_MAX_SIZE;
             statLiteralSize[LITERAL_MAX_SIZE]++;
             statMatchSize[0]++;
+
+            // 1 word spent in encoding literal block
+            offsetAdj++;
 
             // add literal only segment
             result.write(((LITERAL_MAX_SIZE & 0xF) << 4) | 0);
@@ -419,6 +444,11 @@ public class LZ4W
 
             if (match.longMatch)
             {
+                // 2 words spent for long match block encoding
+                offsetAdj += 2;
+                // words matched
+                offsetAdj -= matchLength;
+
                 // literal length and special match marker
                 result.write(((literalLength & 0xF) << 4) | 0);
                 // put match len here (minimum long match len = 3)
@@ -431,9 +461,15 @@ public class LZ4W
             }
             else
             {
+                // 1 word spent for block encoding
+                offsetAdj++;
+
                 // we have match data ?
                 if (matchLength != 0)
                 {
+                    // words matched
+                    offsetAdj -= matchLength;
+
                     // add literal only segment
                     result.write(((literalLength & 0xF) << 4) | ((matchLength - MATCH_MIN_SIZE) & 0xF));
                     // write match offset only if we have match data
@@ -448,8 +484,6 @@ public class LZ4W
 
                 statMatchLen += matchLength;
                 statMatchSize[matchLength]++;
-
-                matchLength = 0;
             }
 
             statLiteralLen += literalLength;
@@ -461,8 +495,20 @@ public class LZ4W
             // long match ?
             if (match.longMatch)
             {
+                // ROM source ? --> adjust offset
+                if (match.ROM)
+                {
+                    matchOffset += offsetDiff + offsetAdj + matchLength;
+                    // check if we are not out of range for match offset
+                    if (matchOffset > MATCH_LONG_OFFSET_MAX)
+                        throw new RuntimeException("Can't encode long offset... retry without previous data block !");
+                }
+
                 // need to write extended offset *after* literal data
-                matchOffset = ((matchOffset - MATCH_LONG_MIN_OFFSET) << MATCH_LONG_OFFSET_SFT) & MATCH_LONG_OFFSET_MASK;
+                // (we can directly write the negative offset as we put it in word)
+                matchOffset = (-(matchOffset - MATCH_LONG_MIN_OFFSET)) & MATCH_LONG_OFFSET_MASK;
+                if (match.ROM)
+                    matchOffset |= MATCH_LONG_OFFSET_ROM_SOURCE_MASK;
 
                 result.write(matchOffset >> 8);
                 result.write(matchOffset & 0xFF);
@@ -474,6 +520,8 @@ public class LZ4W
             result.write(0);
             result.write(0);
         }
+
+        return offsetAdj;
     }
 
     private static short[] byteToShort(byte[] data, boolean swap)
@@ -559,22 +607,30 @@ public class LZ4W
         final int savedWord;
         final int cost;
         final boolean longMatch;
+        final boolean ROM;
 
-        public Match(int curOff, int refOff, int len)
+        public Match(int curOff, int refOff, int len, boolean fromROM)
         {
             super();
 
             this.curOffset = curOff;
             this.refOffset = refOff;
             this.length = len;
+            this.ROM = fromROM;
 
             // need long match
-            if ((getRelativeOffset() > MATCH_OFFSET_MAX) || (len > MATCH_MAX_SIZE))
+            if (fromROM || (getRelativeOffset() > MATCH_OFFSET_MAX) || (len > MATCH_MAX_SIZE))
             {
                 longMatch = true;
                 cost = 2;
-                // minimum wanted match size for long match is 3
-                savedWord = Math.max(0, len - MATCH_LONG_MIN_SIZE);
+
+                // we need to preserve a bit of space for offset adjustment for ROM source
+                if (fromROM && (getRelativeOffset() > (MATCH_LONG_OFFSET_MAX - 0x20)))
+                    // can't use it
+                    savedWord = 0;
+                else
+                    // minimum wanted match size for long match is 3
+                    savedWord = Math.max(0, len - MATCH_LONG_MIN_SIZE);
             }
             else
             {
@@ -589,7 +645,7 @@ public class LZ4W
 
         public Match()
         {
-            this(0, 0, 0);
+            this(0, 0, 0, false);
         }
 
         /**

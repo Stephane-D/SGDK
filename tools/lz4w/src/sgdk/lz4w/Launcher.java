@@ -1,7 +1,10 @@
+package sgdk.lz4w;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Launcher
 {
@@ -28,7 +31,7 @@ public class Launcher
         String inputFile = args[1];
         String prevFile = "";
 
-        final int sep = inputFile.indexOf('*');
+        final int sep = inputFile.indexOf('@');
         // file separator character found ?
         if (sep != -1)
         {
@@ -78,12 +81,18 @@ public class Launcher
                 System.arraycopy(result, 0, resultFull, data1.length, result.length);
 
                 // verify compression
-                LZ4W.unpack(resultFull, data1.length, data, silent);
+                final byte[] unpacked = LZ4W.unpack(resultFull, data1.length, data, silent);
 
                 if (!silent)
                 {
                     System.out.println("Initial size " + data2.length + " --> packed to " + result.length + " ("
                             + ((100 * result.length) / data2.length) + "%)");
+                }
+
+                if (!Arrays.equals(data2, unpacked))
+                {
+                    System.err.println("Error while verifying compression, result data mismatch input data !");
+                    System.exit(1);
                 }
             }
             // unpack
@@ -102,7 +111,7 @@ public class Launcher
         }
         catch (IOException e)
         {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         }
     }
 
@@ -124,13 +133,11 @@ public class Launcher
 
     static void showUsage()
     {
-        System.out.println("LZ4W packer v1.3 by Stephane Dallongeville (Copyright 2018)");
+        System.out.println("LZ4W packer v1.4 by Stephane Dallongeville (Copyright 2019)");
         System.out.println("  Pack:          lz4w p <input_file> <output_file>");
-        System.out.println("                 lz4w p <prev_file>*<input_file> <output_file>");
-        System.out.println("  Pack (best):   lz4w pp <input_file> <output_file>");
-        System.out.println("                 lz4w pp <prev_file>*<input_file> <output_file>");
+        System.out.println("                 lz4w p <prev_file>&<input_file> <output_file>");
         System.out.println("  Unpack:        lz4w u <input_file> <output_file>");
-        System.out.println("                 lz4w u <prev_file>*<input_file> <output_file>");
+        System.out.println("                 lz4w u <prev_file>&<input_file> <output_file>");
         System.out.println();
         System.out.println("Tip: using an extra parameter after <output_file> will act as 'silent mode' switch");
     }
