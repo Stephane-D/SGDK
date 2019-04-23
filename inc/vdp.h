@@ -276,55 +276,55 @@
  *  \brief
  *      Set VDP command to read specified VRAM address.
  */
-#define GFX_READ_VRAM_ADDR(adr)     ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
+#define GFX_READ_VRAM_ADDR(adr)     (((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00))
 /**
  *  \brief
  *      Set VDP command to read specified CRAM address.
  */
-#define GFX_READ_CRAM_ADDR(adr)     ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x20)
+#define GFX_READ_CRAM_ADDR(adr)     (((0x0000 + ((adr) & 0x7F)) << 16) + 0x20)
 /**
  *  \brief
  *      Set VDP command to read specified VSRAM address.
  */
-#define GFX_READ_VSRAM_ADDR(adr)    ((0x0000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x10)
+#define GFX_READ_VSRAM_ADDR(adr)    (((0x0000 + ((adr) & 0x3F)) << 16) + 0x10)
 
 /**
  *  \brief
  *      Set VDP command to write at specified VRAM address.
  */
-#define GFX_WRITE_VRAM_ADDR(adr)    ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
+#define GFX_WRITE_VRAM_ADDR(adr)    (((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00))
 /**
  *  \brief
  *      Set VDP command to write at specified CRAM address.
  */
-#define GFX_WRITE_CRAM_ADDR(adr)    ((0xC000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00)
+#define GFX_WRITE_CRAM_ADDR(adr)    (((0xC000 + ((adr) & 0x7F)) << 16) + 0x00)
 /**
  *  \brief
  *      Set VDP command to write at specified VSRAM address.
  */
-#define GFX_WRITE_VSRAM_ADDR(adr)   ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x10)
+#define GFX_WRITE_VSRAM_ADDR(adr)   (((0x4000 + ((adr) & 0x3F)) << 16) + 0x10)
 
 /**
  *  \brief
  *      Set VDP command to issue a DMA transfert to specified VRAM address.
  */
-#define GFX_DMA_VRAM_ADDR(adr)      ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x80)
+#define GFX_DMA_VRAM_ADDR(adr)      (((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x80))
 /**
  *  \brief
  *      Set VDP command to issue a DMA transfert to specified CRAM address.
  */
-#define GFX_DMA_CRAM_ADDR(adr)      ((0xC000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x80)
+#define GFX_DMA_CRAM_ADDR(adr)      (((0xC000 + ((adr) & 0x7F)) << 16) + 0x80)
 /**
  *  \brief
  *      Set VDP command to issue a DMA transfert to specified VSRAM address.
  */
-#define GFX_DMA_VSRAM_ADDR(adr)     ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x90)
+#define GFX_DMA_VSRAM_ADDR(adr)     (((0x4000 + ((adr) & 0x3F)) << 16) + 0x90)
 
 /**
  *  \brief
  *      Set VDP command to issue a DMA VRAM copy to specified VRAM address.
  */
-#define GFX_DMA_VRAMCOPY_ADDR(adr)  ((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0xC0)
+#define GFX_DMA_VRAMCOPY_ADDR(adr)  (((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0xC0))
 
 /**
  *  \brief
