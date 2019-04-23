@@ -5,18 +5,13 @@ VDP_getPaletteColors:
     pea 2.w
     jbsr VDP_setAutoInc
     addq.l #4,%sp
+
     move.w 6(%sp),%d1               | d1 = index
-
     add.w %d1,%d1                   | d1 = adr
-    move.w %d1,%d0                  | d0 = adr
 
-    andi.w #0x3FFF,%d1              | d1 = adr & 0x3FFF
-    rol.w #2,%d0
-    andi.w #3,%d0                   | d0 = adr >> 14
-    ori.w #0x20,%d0                 | d0 = (adr >> 14) | 0x20
-
-    swap %d1                        | d1 = (adr & 0x3FFF) << 16
-    move.w %d0,%d1                  | d1 = ((adr & 0x3FFF) << 16) | ((adr >> 14) | 0x20)
+    andi.w #0x7F,%d1                | d1 = adr & 0x7F
+    swap %d1                        | d1 = (adr & 0x7F) << 16
+    move.w 0x20,%d1                 | d1 = ((adr & 0x7F) << 16) | 0x20
 
     move.l %d1,0xC00004             | *0xC000004 = GFX_READ_CRAM_ADDR(adr)
 
@@ -62,18 +57,14 @@ VDP_setPaletteColors:
     pea 2.w
     jbsr VDP_setAutoInc
     addq.l #4,%sp
+
     move.w 6(%sp),%d1               | d1 = index
-
     add.w %d1,%d1                   | d1 = adr
-    move.w %d1,%d0                  | d0 = adr
 
-    andi.w #0x3FFF,%d1              | d1 = adr & 0x3FFF
-    ori.w #0xC000,%d1               | d1 = (adr & 0x3FFF) | 0xC000
-    rol.w #2,%d0
-    andi.w #3,%d0                   | d0 = adr >> 14
-
+    andi.w #0x7F,%d1                | d1 = adr & 0x7F
+    ori.w #0xC000,%d1               | d1 = (adr & 0x7F) | 0xC000
     swap %d1
-    move.w %d0,%d1                  | d1 = (((adr & 0x3FFF) | 0xC000) << 16) | (adr >> 14)
+    clr.w %d1                       | d1 = ((adr & 0x7F) | 0xC000) << 16
 
     move.l %d1,0xC00004             | *0xC000004 = GFX_WRITE_CRAM_ADDR(adr)
 
@@ -119,18 +110,13 @@ VDP_getPalette:
     pea 2.w
     jbsr VDP_setAutoInc
     addq.l #4,%sp
+
     move.w 6(%sp),%d1               | d1 = index
-
     lsl.w #5,%d1                    | d1 = adr
-    move.w %d1,%d0                  | d0 = adr
 
-    and.w #0x3FFF,%d1               | d1 = adr & 0x3FFF
-    rol.w #2,%d0
-    andi.w #3,%d0                   | d0 = adr >> 14
-    ori.w #0x20,%d0                 | d0 = (adr >> 14) | 0x20
-
-    swap %d1                        | d1 = (adr & 0x3FFF) << 16
-    move.w %d0,%d1                  | d1 = ((adr & 0x3FFF) << 16) | ((adr >> 14) | 0x20)
+    andi.w #0x7F,%d1                | d1 = adr & 0x7F
+    swap %d1                        | d1 = (adr & 0x7F) << 16
+    move.w 0x20,%d1                 | d1 = ((adr & 0x7F) << 16) | 0x20
 
     move.l %d1,0xC00004             | *0xC000004 = GFX_READ_CRAM_ADDR(adr)
 
@@ -155,18 +141,14 @@ VDP_setPalette:
     pea 2.w
     jbsr VDP_setAutoInc
     addq.l #4,%sp
+
     move.w 6(%sp),%d1               | d1 = index
-
     lsl.w #5,%d1                    | d1 = adr
-    move.w %d1,%d0                  | d0 = adr
 
-    and.w #0x3FFF,%d1               | d1 = adr & 0x3FFF
-    ori.w #0xC000,%d1               | d1 = (adr & 0x3FFF) | 0xC000
-    rol.w #2,%d0
-    andi.w #3,%d0                   | d0 = adr >> 14
-
+    andi.w #0x7F,%d1                | d1 = adr & 0x7F
+    ori.w #0xC000,%d1               | d1 = (adr & 0x7F) | 0xC000
     swap %d1
-    move.w %d0,%d1                  | d1 = (((adr & 0x3FFF) | 0xC000) << 16) | (adr >> 14)
+    clr.w %d1                       | d1 = ((adr & 0x7F) | 0xC000) << 16
 
     move.l %d1,0xC00004             | *0xC000004 = GFX_WRITE_CRAM_ADDR(adr)
 
