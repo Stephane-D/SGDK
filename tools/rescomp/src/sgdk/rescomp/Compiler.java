@@ -68,8 +68,8 @@ public class Compiler
 
     public static boolean compile(String fileName, String fileNameOut, boolean header)
     {
-        //currentDir = new File("").getAbsolutePath();
-        currentDir = FileUtil.getApplicationDirectory();
+        currentDir = new File("").getAbsolutePath();
+        // currentDir = FileUtil.getApplicationDirectory();
         // get input file directory
         resDir = FileUtil.getDirectory(fileName);
 
@@ -88,8 +88,11 @@ public class Compiler
         }
 
         // process input resource file line by line
-        for (String line : lines)
+        for (String l : lines)
         {
+            // cleanup the text
+            final String line = l.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+
             // ignore empty line
             if (StringUtil.isEmpty(line))
                 continue;
