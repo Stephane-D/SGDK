@@ -1,7 +1,6 @@
 package sgdk.rescomp;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -68,8 +67,8 @@ public class Compiler
 
     public static boolean compile(String fileName, String fileNameOut, boolean header)
     {
-        currentDir = new File("").getAbsolutePath();
-        // currentDir = FileUtil.getApplicationDirectory();
+        // currentDir = new File("").getAbsolutePath();
+        currentDir = FileUtil.getApplicationDirectory();
         // get input file directory
         resDir = FileUtil.getDirectory(fileName);
 
