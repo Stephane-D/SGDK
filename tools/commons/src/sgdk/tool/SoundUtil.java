@@ -47,7 +47,7 @@ public class SoundUtil
         final int adjRate = ((rate <= 0) ? (int) audioInputFormat.getSampleRate() : rate);
 
         // define target format
-        final AudioFormat dstFormat = new AudioFormat(signed ? Encoding.PCM_SIGNED : Encoding.PCM_UNSIGNED, rate, bits,
+        final AudioFormat dstFormat = new AudioFormat(signed ? Encoding.PCM_SIGNED : Encoding.PCM_UNSIGNED, adjRate, bits,
                 channel, ((bits + 7) / 8) * channel, adjRate, bigEndian);
 
         if (!AudioSystem.isConversionSupported(dstFormat, audioInputFormat))
