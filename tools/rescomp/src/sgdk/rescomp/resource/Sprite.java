@@ -72,12 +72,21 @@ public class Sprite extends Resource
             throw new IllegalArgumentException("'" + imgFile
                     + "' uses color index >= 16, SPRITE resource requires image with a maximum of 16 colors, use 4bpp image instead if you are unsure.");
 
-        // build PALETTE
-        palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile));
-
         // get size in tile
         final int wt = w / 8;
         final int ht = h / 8;
+
+        // check image size is correct
+        if ((wt % wf) != 0)
+            throw new IllegalArgumentException(
+                    "Error: '" + imgFile + "' width (" + w + ") is not a multiple of cell width (" + (wf * 8) + ").");
+        if ((ht % hf) != 0)
+            throw new IllegalArgumentException(
+                    "Error: '" + imgFile + "' height (" + h + ") is not a multiple of cell height (" + (hf * 8) + ").");
+
+        // build PALETTE
+        palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile));
+
         // get number of animation
         final int numAnim = ht / hf;
 
