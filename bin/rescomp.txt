@@ -50,7 +50,7 @@ BITMAP name img_file [compression]
     img_file        path of the input image file (should be 8bpp .bmp or .png)
     compression     compression type (use unpackBitmap(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
-                        0 / NONE        = no compression
+                        0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
 
@@ -67,7 +67,7 @@ TILESET name img_file [compression]
     img_file        path of the input image file (should be 8bpp .bmp or .png)
     compression     compression type (use unpackTileSet(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
-                        0 / NONE        = no compression
+                        0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
 
@@ -189,11 +189,7 @@ WAV name wav_file [driver [outrate]]
                             It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.
                             with volume support (16 levels du to memory limitation).
                             Method to use: SND_startPlay_4PCM_ENV(..)
-                        4 / VGM
-                            VGM music driver with 8 bits PCM SFX support.
-                            It supports single PCM SFX at a fixed ~9 Khz rate while playing VGM music.
-                            Method to use: SND_playSfx_VGM(..)
-                        5 / XGM
+                        4 / 5 / XGM
                             XGM music with 4 channels 8 bits samples driver.
                             It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
                             Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
