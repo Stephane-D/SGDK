@@ -25,6 +25,9 @@
 #endif // SPR_DEBUG
 
 
+// first hardware sprite is reserved (used internally for sorting)
+#define MAX_SPRITE                          (80 - 1)
+
 // internals
 #define VISIBILITY_ON                       0xFFFF
 #define VISIBILITY_OFF                      0x0000
@@ -44,6 +47,7 @@
 
 // shared from vdp_spr.c unit
 extern VDPSprite* lastAllocatedVDPSprite;
+extern void logVDPSprite(u16 index);
 
 
 // forward
@@ -71,8 +75,6 @@ static VDPSprite* starter;
 
 // allocated bank of sprites for the Sprite Engine
 static Sprite* spritesBank = NULL;
-// maximum number of sprite (number of allocated sprites for the Sprite Engine)
-static u16 spritesBankSize;
 
 // used for sprite allocation
 static Sprite** allocStack;
@@ -115,23 +117,18 @@ static u32 profil_time[20];
 #endif
 
 
-void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize)
+void SPR_initEx(u16 vramSize, u16 unpackBufferSize)
 {
-    u16 adjMax;
     u16 index;
     u16 size;
 
     // already initialized --> end it first
     if (SPR_isInitialized()) SPR_end();
 
-    // don't allow more than 128 sprites max
-    adjMax = maxSprite?min(128, maxSprite):40;
-
     // alloc sprites bank
-    spritesBank = MEM_alloc(adjMax * sizeof(Sprite));
-    spritesBankSize = adjMax;
+    spritesBank = MEM_alloc(MAX_SPRITE * sizeof(Sprite));
     // allocation stack
-    allocStack = MEM_alloc(adjMax * sizeof(Sprite*));
+    allocStack = MEM_alloc(MAX_SPRITE * sizeof(Sprite*));
     // alloc sprite tile unpack buffer
     unpackBuffer = MEM_alloc(((unpackBufferSize?unpackBufferSize:256) * 32) + 1024);
 
@@ -142,11 +139,8 @@ void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize)
     // and create a VRAM region for sprite tile allocation
     VRAM_createRegion(&vram, index, size);
 
-
-
 #if (LIB_DEBUG != 0)
     KLog("Sprite engine initialized !");
-    KLog_U1("  maxSprite: ", adjMax);
     KLog_U1("  unpack buffer size:", (unpackBufferSize?unpackBufferSize:256) * 32);
     KLog_U2_("  VRAM region: [", index, " - ", index + (size - 1), "]");
 #endif // LIB_DEBUG
@@ -157,7 +151,7 @@ void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize)
 
 void SPR_init()
 {
-    SPR_initEx(80, 512, 384);
+    SPR_initEx(512, 320);
 }
 
 void SPR_end()
@@ -171,7 +165,6 @@ void SPR_end()
         // release memory
         MEM_free(spritesBank);
         spritesBank = NULL;
-        spritesBankSize = 0;
         MEM_free(allocStack);
         allocStack = NULL;
         MEM_free(unpackBuffer);
@@ -195,13 +188,13 @@ void SPR_reset()
     u16 i;
 
     // release and clear sprites data
-    memset(spritesBank, 0, sizeof(Sprite) * spritesBankSize);
+    memset(spritesBank, 0, sizeof(Sprite) * MAX_SPRITE);
 
     // reset allocation stack
-    for(i = 0; i < spritesBankSize; i++)
+    for(i = 0; i < MAX_SPRITE; i++)
         allocStack[i] = &spritesBank[i];
     // init free position
-    free = &allocStack[spritesBankSize];
+    free = &allocStack[MAX_SPRITE];
 
     // no active sprites
     firstSprite = NULL;
@@ -558,7 +551,7 @@ void SPR_releaseSprite(Sprite* sprite)
 
 u16 SPR_getNumActiveSprite()
 {
-    return &allocStack[spritesBankSize] - free;
+    return &allocStack[MAX_SPRITE] - free;
 }
 
 void SPR_defragVRAM()
@@ -646,7 +639,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
         setVDPSpriteIndex(sprite, ind, newNumSprite, lastAllocatedVDPSprite);
 
 #ifdef SPR_DEBUG
-        KLog_U3("  allocated ", num, " VDP sprite(s) at ", ind, ", remaining VDP sprite = ", VDP_getAvailableSprites());
+        KLog_U3("  allocated ", newNumSprite, " VDP sprite(s) at ", ind, ", remaining VDP sprite = ", VDP_getAvailableSprites());
 #endif // SPR_DEBUG
     }
 
@@ -926,7 +919,7 @@ void SPR_setDepth(Sprite* sprite, s16 value)
 #endif // SPR_PROFIL
 
 #ifdef SPR_DEBUG
-    KLog_U2("SPR_setDepth: #", getSpriteIndex(sprite), "  Depth=", depth);
+    KLog_U2("SPR_setDepth: #", getSpriteIndex(sprite), "  Depth=", value);
 #endif // SPR_DEBUG
 
     // depth changed ?
@@ -1380,7 +1373,7 @@ void SPR_update()
     Sprite* sprite;
 
 #ifdef SPR_DEBUG
-    KLog_U1("----------------- SPR_update:  sprite number = ", spriteNum);
+    KLog_U1("----------------- SPR_update:  sprite number = ", SPR_getNumActiveSprite());
 #endif // SPR_DEBUG
 
     // disable interrupts (we want to avoid DMA queue process when executing this method)
@@ -1652,8 +1645,8 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                 x = frameSprite->offsetX;
 
     #ifdef SPR_DEBUG
-                KLog_S4("    frameSprite x=", frameSprite->x, " y=", frameSprite->y, " w=", w, " h=", h);
-                KLog_S3("    attr=", attr, " adjX=", x, " adjY=", y);
+                KLog_S4("    frameSprite offX=", frameSprite->offsetX, " offY=", frameSprite->offsetY, " w=", w, " h=", h);
+                KLog_S3("    size=", size, " adjX=", x, " adjY=", y);
     #endif // SPR_DEBUG
 
                 visibility <<= 1;
@@ -1904,7 +1897,7 @@ static void updateSpriteTableAttr(Sprite* sprite)
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
 #ifdef SPR_DEBUG
-    KLog_U3("  updateSpriteTableAttr_allVisible: numSprite=", frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
+    KLog_U3("  updateSpriteTableAttr_allVisible: numSprite=", sprite->frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
 #endif // SPR_DEBUG
 
     while(num--)

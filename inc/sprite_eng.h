@@ -367,7 +367,7 @@ typedef struct _Sprite
  *      Initialize the Sprite engine with default parameters.
  *
  *      Initialize the sprite engine using default parameters:<br>
- *      80 sprites, 384 tiles reserved in VRAM and 256 tiles in memory for the unpack buffer.<br>
+ *      512 tiles reserved in VRAM and 320 tiles in memory for the decompression buffer.<br>
  *      This also initialize the hardware sprite allocation system.
  *
  *  \see SPR_initEx()
@@ -376,18 +376,15 @@ typedef struct _Sprite
 void SPR_init();
 /**
  *  \brief
- *      Init the Sprite engine with specified advanced parameters (max sprite, VRAM allocation size and unpacking buffer size).
+ *      Init the Sprite engine with specified advanced parameters (VRAM allocation size and decompression buffer size).
  *
- *  \param maxSprite
- *      Maximum number of sprite the Sprite Engine can handle, higher value requires more memory (maximum accepted = <i>127</i>).<br>
- *      If set to 0 the default value is used (40 sprites)
  *  \param vramSize
  *      size (in tile) of the VRAM region for the automatic VRAM tile allocation.<br>
- *      If set to 0 the default size is used (384 tiles)
+ *      If set to 0 the default size is used (512 tiles)
  *  \param unpackBufferSize
  *      size of the buffer for unpacking sprite tilesets.<br>
  *      the buffer should be big enough to contains all unpacked tileset ready to be send to VRAM.<br>
- *      If set to 0 the default size is used (256 tiles)
+ *      If set to 0 the default size is used (320 tiles)
  *
  *      Initialize the sprite engine.<br>
  *      This allocates a VRAM region for sprite tiles, memory for tileset unpacking and initialize
@@ -396,7 +393,7 @@ void SPR_init();
  *  \see SPR_init()
  *  \see SPR_end()
  */
-void SPR_initEx(u16 maxSprite, u16 vramSize, u16 unpackBufferSize);
+void SPR_initEx(u16 vramSize, u16 unpackBufferSize);
 /**
  *  \brief
  *      End the Sprite engine.
