@@ -1,7 +1,6 @@
 package sgdk.rescomp;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -68,7 +67,7 @@ public class Compiler
 
     public static boolean compile(String fileName, String fileNameOut, boolean header)
     {
-        //currentDir = new File("").getAbsolutePath();
+        // currentDir = new File("").getAbsolutePath();
         currentDir = FileUtil.getApplicationDirectory();
         // get input file directory
         resDir = FileUtil.getDirectory(fileName);
@@ -88,8 +87,11 @@ public class Compiler
         }
 
         // process input resource file line by line
-        for (String line : lines)
+        for (String l : lines)
         {
+            // cleanup the text
+            final String line = l.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+
             // ignore empty line
             if (StringUtil.isEmpty(line))
                 continue;
