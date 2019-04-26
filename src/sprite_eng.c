@@ -1796,12 +1796,15 @@ static void updateSpriteTableAll(Sprite* sprite)
     }
 
     // hide sprites that were used by previous frame
-    num = sprite->spriteToHide;
-    sprite->spriteToHide = 0;
-    while(num--)
+    if ((num = sprite->spriteToHide))
     {
-        vdpSprite->y = 0;
-        vdpSprite = &vdpSpriteCache[vdpSprite->link];
+        while(num--)
+        {
+            vdpSprite->y = 0;
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
+        }
+
+        sprite->spriteToHide = 0;
     }
 
 #ifdef SPR_DEBUG
@@ -1854,12 +1857,15 @@ static void updateSpriteTablePos(Sprite* sprite)
     }
 
     // hide sprites that were used by previous frame
-    num = sprite->spriteToHide;
-    sprite->spriteToHide = 0;
-    while(num--)
+    if ((num = sprite->spriteToHide))
     {
-        vdpSprite->y = 0;
-        vdpSprite = &vdpSpriteCache[vdpSprite->link];
+        while(num--)
+        {
+            vdpSprite->y = 0;
+            vdpSprite = &vdpSpriteCache[vdpSprite->link];
+        }
+
+        sprite->spriteToHide = 0;
     }
 
 #ifdef SPR_DEBUG
