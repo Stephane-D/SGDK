@@ -107,7 +107,7 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
                         0 / NONE        = no compression
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the map optimisation level\n");
+    mapopt          define the map optimisation level
                         0 / NONE        = no optimisation (each tile is unique)
                         1 / ALL         = find duplicate and flipped tile (default)
                         2 / DUPLICATE   = find duplicate tile only
