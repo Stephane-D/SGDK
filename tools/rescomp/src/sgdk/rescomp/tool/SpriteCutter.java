@@ -442,6 +442,7 @@ public class SpriteCutter
         {
             double score;
             double newScore = getScore();
+            double conv = 1d;
 
             do
             {
@@ -455,8 +456,12 @@ public class SpriteCutter
                     optimizeSizeForPart(cells.get(i));
 
                 newScore = getScore();
+
+                // compute convergence (to avoid death lock with oscillating score)
+                conv /= 2;
+                conv += score - newScore;
             }
-            while (newScore != score);
+            while ((newScore != score) && (Math.abs(conv) > 0.0005d));
         }
 
         public void fastOptimize()
