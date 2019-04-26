@@ -33,7 +33,7 @@ public class Util
     {
         final String upText = text.toUpperCase();
 
-        if (StringUtil.equals(upText, "PCM") || StringUtil.equals(upText, "0"))
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "PCM") || StringUtil.equals(upText, "0"))
             return SoundDriver.PCM;
         if (StringUtil.equals(upText, "2ADPCM") || StringUtil.equals(upText, "1"))
             return SoundDriver.DPCM2;
@@ -42,8 +42,7 @@ public class Util
         if (StringUtil.equals(upText, "XGM") || StringUtil.equals(upText, "4") || StringUtil.equals(upText, "5"))
             return SoundDriver.XGM;
 
-        // default
-        return SoundDriver.PCM;
+        throw new IllegalArgumentException("Unrecognized sound driver: '" + text + "'");
     }
 
     public static Compression getCompression(String text)
@@ -52,34 +51,28 @@ public class Util
 
         if (StringUtil.equals(upText, "AUTO") || StringUtil.equals(upText, "BEST") || StringUtil.equals(upText, "-1"))
             return Compression.AUTO;
-        if (StringUtil.equals(upText, "NONE") || StringUtil.equals(upText, "0"))
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "NONE") || StringUtil.equals(upText, "0"))
             return Compression.NONE;
         if (StringUtil.equals(upText, "APLIB") || StringUtil.equals(upText, "1"))
             return Compression.APLIB;
         if (StringUtil.equals(upText, "LZ4W") || StringUtil.equals(upText, "2") || StringUtil.equals(upText, "FAST"))
             return Compression.LZ4W;
 
-        // not recognized --> use AUTO
-        if (!StringUtil.isEmpty(upText))
-            return Compression.AUTO;
-
-        // default
-        return Compression.NONE;
+        throw new IllegalArgumentException("Unrecognized compression: '" + text + "'");
     }
 
     public static CollisionType getCollision(String text)
     {
         final String upText = text.toUpperCase();
 
-        if (StringUtil.equals(upText, "NONE"))
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "NONE"))
             return CollisionType.NONE;
         if (StringUtil.equals(upText, "BOX"))
             return CollisionType.BOX;
         if (StringUtil.equals(upText, "CIRCLE"))
             return CollisionType.CIRCLE;
 
-        // default
-        return CollisionType.NONE;
+        throw new IllegalArgumentException("Unrecognized collision: '" + text + "'");
     }
 
     public static TileOptimization getTileOpt(String text)
@@ -88,13 +81,12 @@ public class Util
 
         if (StringUtil.equals(upText, "NONE") || StringUtil.equals(upText, "0"))
             return TileOptimization.NONE;
-        if (StringUtil.equals(upText, "ALL") || StringUtil.equals(upText, "1"))
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "ALL") || StringUtil.equals(upText, "1"))
             return TileOptimization.ALL;
         if (StringUtil.equals(upText, "DUPLICATE") || StringUtil.equals(upText, "2"))
             return TileOptimization.DUPLICATE_ONLY;
 
-        // default
-        return TileOptimization.ALL;
+        throw new IllegalArgumentException("Unrecognized tilemap optimization: '" + text + "'");
     }
 
     public static byte[] sizeAlign(byte[] data, int align, byte fill)
@@ -567,7 +559,7 @@ public class Util
      */
     public static byte[] dpcmPack(byte[] input)
     {
-        final byte[] result = new byte[input.length / 2];
+        final byte[] result = new byte[(input.length / 2) + (input.length & 1)];
 
         int curLevel = 0;
         int offDst = 0;
@@ -582,7 +574,7 @@ public class Util
             out = ind;
 
             // input is 8 bits signed
-            ind = getBestDeltaIndex(input[off + 1], curLevel);
+            ind = getBestDeltaIndex(((off + 1) < input.length) ? input[off + 1] : 0, curLevel);
             curLevel += delta_tab[ind];
             // second nibble
             out |= (ind << 4);

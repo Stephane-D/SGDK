@@ -43,7 +43,7 @@ public class WavProcessor implements Processor
             System.out.println("                4 channels 8 bits sample driver with volume support.");
             System.out.println("                It can mix up to 4 samples at a fixed 16 Khz rate");
             System.out.println("                with volume support (16 levels du to memory limitation).");
-            System.out.println("              4/ 5 / XGM");
+            System.out.println("              4 / 5 / XGM");
             System.out.println("                XGM music with 4 channels 8 bits samples driver.");
             System.out.println("                It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.");
             System.out.println("  out_rate  output PCM rate (only used for Z80_DRIVER_PCM driver)");

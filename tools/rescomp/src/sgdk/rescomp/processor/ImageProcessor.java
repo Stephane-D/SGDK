@@ -26,21 +26,19 @@ public class ImageProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong IMAGE definition");
-            System.out.println("IMAGE name \"file\" [packed [mapopt [mapbase]]]");
-            System.out.println("  name      Image variable name");
-            System.out.println("  file      the image to convert to Image structure (should be a 8bpp .bmp or .png)");
-            System.out.println("  packed    compression type, accepted values:");
-            System.out.println("              -1 / BEST / AUTO = use best compression");
-            System.out.println("               0 / NONE        = no compression");
-            System.out.println("               1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println(
-                    "               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println("  mapopt    define the map optimisation level");
-            System.out.println("               0 / NONE        = no optimisation (each tile is unique)");
-            System.out.println("               1 / ALL         = find duplicate and flipped tile (default)");
-            System.out.println("               2 / DUPLICATE   = find duplicate tile only");
-            System.out.println(
-                    "  mapbase   define the base tilemap value, useful to set a default priority, palette and base tile index offset.");
+            System.out.println("IMAGE name \"file\" [compression [mapopt [mapbase]]]");
+            System.out.println("  name          Image variable name");
+            System.out.println("  file          the image to convert to Image structure (should be a 8bpp .bmp or .png)");
+            System.out.println("  compression   compression type, accepted values:");
+            System.out.println("                 -1 / BEST / AUTO = use best compression");
+            System.out.println("                  0 / NONE        = no compression (default)");
+            System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("  mapopt        define the map optimisation level");
+            System.out.println("                  0 / NONE        = no optimisation (each tile is unique)");
+            System.out.println("                  1 / ALL         = find duplicate and flipped tile (default)");
+            System.out.println("                  2 / DUPLICATE   = find duplicate tile only");
+            System.out.println("  mapbase       define the base tilemap value, useful to set a default priority, palette and base tile index offset.");
 
             return null;
         }

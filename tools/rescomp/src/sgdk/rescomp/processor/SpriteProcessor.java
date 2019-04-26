@@ -26,20 +26,18 @@ public class SpriteProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width heigth [packed [time [collid]]]");
-            System.out.println("  name      Sprite variable name");
-            System.out.println(
-                    "  file      the image file to convert to SpriteDefinition structure (should be a 8bpp .bmp or .png)");
-            System.out.println("  width     width of a single sprite frame in tile");
-            System.out.println("  height    heigth of a single sprite frame in tile");
-            System.out.println("  packed    compression type, accepted values:");
-            System.out.println("              -1 / BEST / AUTO = use best compression");
-            System.out.println("               0 / NONE        = no compression");
-            System.out.println("               1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println(
-                    "               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println("  time      display frame time in 1/60 of second (time between each animation frame).");
-            System.out.println("  collid    collision type: CIRCLE, BOX or NONE (BOX by default).");
+            System.out.println("SPRITE name \"file\" width heigth [compression [time [collid]]]");
+            System.out.println("  name          Sprite variable name");
+            System.out.println("  file          the image file to convert to SpriteDefinition structure (should be a 8bpp .bmp or .png)");
+            System.out.println("  width         width of a single sprite frame in tile");
+            System.out.println("  height        heigth of a single sprite frame in tile");
+            System.out.println("  compression   compression type, accepted values:");
+            System.out.println("                 -1 / BEST / AUTO = use best compression");
+            System.out.println("                  0 / NONE        = no compression (default)");
+            System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("  time          display frame time in 1/60 of second (time between each animation frame).");
+            System.out.println("  collid        collision type: CIRCLE, BOX or NONE (BOX by default).");
 
             return null;
         }

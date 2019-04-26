@@ -23,15 +23,14 @@ public class TilemapProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong MAP definition");
-            System.out.println("MAP name \"file\" [packed]");
-            System.out.println("  name      Map variable name");
-            System.out.println("  file      the map file to convert to Map structure (.tmx Tiled file)");
-            System.out.println("  packed    compression type, accepted values:");
-            System.out.println("              -1 / BEST / AUTO = use best compression");
-            System.out.println("               0 / NONE        = no compression");
-            System.out.println("               1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println(
-                    "               2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("MAP name \"file\" [compression]");
+            System.out.println("  name          Map variable name");
+            System.out.println("  file          the map file to convert to Map structure (.tmx Tiled file)");
+            System.out.println("  compression   compression type, accepted values:");
+            System.out.println("                 -1 / BEST / AUTO  = use best compression");
+            System.out.println("                  0 / NONE         = no compression (default)");
+            System.out.println("                  1 / APLIB        = aplib library (good compression ratio but slow)");
+            System.out.println("                  2 / FAST / LZ4W  = custom lz4 compression (average compression ratio but fast)");
 
             return null;
         }
