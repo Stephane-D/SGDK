@@ -75,8 +75,8 @@ int main()
     // start music
     SND_startPlay_XGM(sonic_music);
 
-    // init sprites engine
-    SPR_initEx(16, 256, 256);
+    // init sprite engine with default parameters
+    SPR_init();
 
     // set all palette to black
     VDP_setPaletteColors(0, (u16*) palette_black, 64);
