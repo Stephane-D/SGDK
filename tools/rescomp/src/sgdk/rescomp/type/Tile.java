@@ -129,7 +129,7 @@ public class Tile implements Comparable<Tile>
                 result[i] = data[line];
         }
 
-        return new Tile(data);
+        return new Tile(result);
     }
 
     public TileEquality getEquality(Tile tile)
