@@ -58,6 +58,8 @@ u16 executeSpritesTest(u16 *scores)
     // init sprite engine
     init();
 
+//    SYS_setVIntAligned(FALSE);
+
     SYS_disableInts();
     VDP_clearPlan(PLAN_A, TRUE);
     VDP_drawText("40 sprites 16x16 (all dynamic)", 1, 2);
@@ -296,6 +298,8 @@ u16 executeSpritesTest(u16 *scores)
 
         // associate object to sprite
         spr->data = (u32) &objects[i];
+        // disable delayed frame update
+        SPR_setDelayedFrameUpdate(spr, FALSE);
     }
 
     // set palette
@@ -334,7 +338,7 @@ u16 executeSpritesTest(u16 *scores)
 
         // associate object to sprite
         spr->data = (u32) &objects[i];
-        // disable automatic tile upload and manual VRAM tile position
+        // disable automatic tile upload and set manual VRAM tile position
         SPR_setAutoTileUpload(spr, FALSE);
         SPR_setVRAMTileIndex(spr, TILE_USERINDEX);
     }
@@ -435,6 +439,10 @@ u16 executeSpritesTest(u16 *scores)
 
     SPR_update();
 
+    // desync frame timer so update happen on different frame
+    haggarSprite->timer = 1;
+    codySprite->timer = 1;
+
     // we want to compute per hardware sprite visibility for these sprites
     SPR_setVisibility(guySprite, AUTO_SLOW);
     SPR_setVisibility(codySprite, AUTO_SLOW);
@@ -453,6 +461,11 @@ u16 executeSpritesTest(u16 *scores)
     sprites[2]->data = (u32) &objects[2];
     sprites[3]->data = (u32) &objects[3];
 
+    // init position for 4 sprites
+    initPos(4);
+
+    SPR_update();
+
     // prepare palettes
     memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
     memcpy(&palette[16], cody_sprite.palette->data, 16 * 2);
@@ -462,16 +475,9 @@ u16 executeSpritesTest(u16 *scores)
     palette[0] = 0;
 
     // set palette
+    SYS_disableInts();
     VDP_setPaletteColors(0, palette, 64);
-
-    // init position for 4 sprites
-    initPos(4);
-
-    // desync frame timer so update happen on different frame
-    haggarSprite->timer = 2;
-    codySprite->timer = 1;
-
-    SPR_update();
+    SYS_enableInts();
 
     // execute sprite bench
     *scores = execute(50, 4);
@@ -495,7 +501,7 @@ void init()
     // DMA limit
 //    DMA_setMaxTransferSize(7000);
     // init sprites engine
-    SPR_initEx(80, 16 * (32 + 16 + 8), 16 * (32 + 16 + 8));
+    SPR_initEx(16 * (32 + 16 + 8), 16 * (32 + 16 + 8));
     // VDP process done, we can re enable interrupts
     SYS_enableInts();
 }
@@ -628,6 +634,7 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
         SPR_update();
 
         VDP_showFPS(FALSE);
+        VDP_showCPULoad();
         VDP_waitVSync();
 
         score++;
@@ -771,6 +778,7 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         SPR_update();
 
         VDP_showFPS(FALSE);
+        VDP_showCPULoad();
         VDP_waitVSync();
 
         score++;
@@ -812,10 +820,10 @@ static void updatePos(u16 num)
     fix16 maxy;
     u16 i;
 
-    minx = FIX16(-96);
-    maxx = FIX16(VDP_getScreenWidth() + 20);
-    miny = FIX16(-96);
-    maxy = FIX16(VDP_getScreenHeight() + 16);
+    minx = FIX16(-48);
+    maxx = FIX16(VDP_getScreenWidth() - 32);
+    miny = FIX16(-48);
+    maxy = FIX16(VDP_getScreenHeight() - 32);
 
     i = num;
     sprite = sprites;
@@ -887,6 +895,7 @@ static u16 execute(u16 time, u16 numSpr)
         SPR_update();
 
         VDP_showFPS(FALSE);
+        VDP_showCPULoad();
         VDP_waitVSync();
 
         score++;
