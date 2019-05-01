@@ -71,7 +71,7 @@ static void fastStarFieldFX()
     }
 
     /* Setup the sprites */
-    SPR_initEx(MAX_DONUT, 0, 0);
+    SPR_initEx(0, 0);
 
     s = 0;
     for(i = 0; i < MAX_DONUT; i++)
