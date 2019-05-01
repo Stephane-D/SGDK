@@ -46,7 +46,6 @@
 
 
 // shared from vdp_spr.c unit
-extern VDPSprite* lastAllocatedVDPSprite;
 extern void logVDPSprite(u16 index);
 
 
@@ -56,7 +55,7 @@ static Sprite* allocateSprite(u16 head);
 static bool releaseSprite(Sprite* sprite);
 //static void releaseSprites(Sprite** sprites, u16 num);
 
-static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num, VDPSprite *last);
+static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num);
 static bool updateVisibility(Sprite* sprite, u16 status);
 static u16 setVisibility(Sprite* sprite, u16 visibility);
 static u16 updateFrame(Sprite* sprite, u16 status);
@@ -350,7 +349,6 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
 
     s16 ind;
     Sprite* sprite;
-    VDPSprite* lastVDPSprite;
 
     // allocate new sprite
     sprite = allocateSprite(flag & SPR_FLAG_INSERT_HEAD);
@@ -414,20 +412,12 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
 #ifdef SPR_DEBUG
         KLog_U3("  allocated ", numVDPSprite, " VDP sprite(s) at ", ind, ", remaining VDP sprite = ", VDP_getAvailableSprites());
 #endif // SPR_DEBUG
-
-        // get last VDP sprite pointer
-        lastVDPSprite = lastAllocatedVDPSprite;
     }
-    else
-    {
-        // use given sprite index
-        ind = spriteIndex;
-        // need to compute last VDP sprite pointer
-        lastVDPSprite = NULL;
-    }
+    // use given sprite index
+    else ind = spriteIndex;
 
     // set the VDP Sprite index for this sprite and do attached operation
-    setVDPSpriteIndex(sprite, ind, numVDPSprite, lastVDPSprite);
+    setVDPSpriteIndex(sprite, ind, numVDPSprite);
 
     // auto VRAM alloc enabled ?
     if (flag & SPR_FLAG_AUTO_VRAM_ALLOC)
@@ -636,7 +626,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
         if (ind == -1) return FALSE;
 
         // set the VDP Sprite index for this sprite and do attached operation
-        setVDPSpriteIndex(sprite, ind, newNumSprite, lastAllocatedVDPSprite);
+        setVDPSpriteIndex(sprite, ind, newNumSprite);
 
 #ifdef SPR_DEBUG
         KLog_U3("  allocated ", newNumSprite, " VDP sprite(s) at ", ind, ", remaining VDP sprite = ", VDP_getAvailableSprites());
@@ -1159,7 +1149,6 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
     s16 newInd;
     u16 status = sprite->status;
     u16 num = sprite->definition->maxNumSprite;
-    VDPSprite* lastVDPSprite = NULL;
 
     if (status & SPR_FLAG_AUTO_SPRITE_ALLOC)
     {
@@ -1215,9 +1204,6 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
 
                 return FALSE;
             }
-
-            // get last allocated VDP sprite pointer
-            lastVDPSprite = lastAllocatedVDPSprite;
         }
         // just use the new value for index
         else newInd = value;
@@ -1227,7 +1213,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
     if (sprite->VDPSpriteIndex != newInd)
     {
         // set the VDP Sprite index for this sprite and do attached operation
-        setVDPSpriteIndex(sprite, newInd, num, lastVDPSprite);
+        setVDPSpriteIndex(sprite, newInd, num);
         // need to update complete sprite table infos
         status |= NEED_ST_ALL_UPDATE;
     }
@@ -1512,14 +1498,15 @@ void SPR_logSprites()
 }
 
 
-static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num, VDPSprite *last)
+static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
 {
 #ifdef SPR_PROFIL
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
     Sprite* prev;
-    VDPSprite* vspr;
+    VDPSprite* vdpSprite;
+    u16 i;
 
 #ifdef SPR_DEBUG
     KLog_U2("setVDPSpriteIndex: sprite #", getSpriteIndex(sprite), "  new VDP Sprite index = ", ind);
@@ -1527,16 +1514,16 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num, VDPSprite *last)
 
     sprite->VDPSpriteIndex = ind;
 
-    // last VDP sprite pointer
-    vspr = last;
-    // not provided ?
-    if (vspr == NULL)
-    {
-        // compute it using the slow sprite list parsing
-        u16 remaining = num - 1;
-        vspr = &vdpSpriteCache[ind];
+    // hide all sprites by default and get last sprite
+    vdpSprite = &vdpSpriteCache[ind];
+    vdpSprite->y = 0;
 
-        while(remaining--) vspr = &vdpSpriteCache[vspr->link];
+    // get the last vdpSprite while hiding them
+    i = num - 1;
+    while(i--)
+    {
+        vdpSprite = &vdpSpriteCache[vdpSprite->link];
+        vdpSprite->y = 0;
     }
 
     // adjust VDP sprites links
@@ -1545,20 +1532,20 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num, VDPSprite *last)
     if (prev)
     {
         // set next link using previous sprite next link
-        vspr->link = prev->lastVDPSprite->link;
+        vdpSprite->link = prev->lastVDPSprite->link;
         // previous sprite next link now link to current sprite
         prev->lastVDPSprite->link = ind;
     }
     else
     {
         // set next link using starter link
-        vspr->link = starter->link;
+        vdpSprite->link = starter->link;
         // adjust started link
         starter->link = ind;
     }
 
     // set last VDP sprite pointer for this sprite
-    sprite->lastVDPSprite = vspr;
+    sprite->lastVDPSprite = vdpSprite;
 
 #ifdef SPR_DEBUG
     KLog_U1("  last VDP sprite = ", sprite->lastVDPSprite - vdpSpriteCache);
