@@ -30,7 +30,7 @@ static const char digits[] =
 
 // FORWARD
 static u16 digits10(const u16 v);
-static u16 uint16ToStr(u16 value, char *str);
+static u16 uint16ToStr(u16 value, char *str, u16 minsize);
 static u16 skip_atoi(const char **s);
 static u16 vsprintf(char *buf, const char *fmt, va_list args);
 
@@ -183,35 +183,25 @@ u16 uintToStr(u32 value, char *str, u16 minsize)
         const u16 v1 = value / (u16) 10000;
         const u16 v2 = value % (u16) 10000;
 
-        len = uint16ToStr(v1, str);
-        len += uint16ToStr(v2, str + len);
+        len = uint16ToStr(v1, str, (minsize > 4)?(minsize - 4):1);
+        len += uint16ToStr(v2, str + len, 4);
     }
-    else len = uint16ToStr(value, str);
-
-    // need to shift and pad
-    if (len < minsize)
-    {
-        u16 offset = minsize - len;
-        char *src = str + len;
-        char *dst = src + offset;
-
-        *dst = 0;
-        while(len--) *--dst = *--src;
-        while(offset--) *--dst = '0';
-
-        return minsize;
-    }
+    else len = uint16ToStr(value, str, minsize);
 
     return len;
 }
 
-static u16 uint16ToStr(u16 value, char *str)
+static u16 uint16ToStr(u16 value, char *str, u16 minsize)
 {
-    const u16 length = digits10(value);
-    char *dst = &str[length];
-    u16 v = value;
+    u16 length;
+    char *dst;
+    u16 v;
 
+    length = digits10(value);
+    if (length < minsize) length = minsize;
+    dst = &str[length];
     *dst = 0;
+    v = value;
 
     while (v >= 100)
     {
@@ -234,6 +224,9 @@ static u16 uint16ToStr(u16 value, char *str)
         *--dst = digits[i + 1];
         *--dst = digits[i + 0];
     }
+
+    // pad with '0'
+    while(dst != str) *--dst = '0';
 
     return length;
 }
@@ -297,7 +290,7 @@ void fix32ToStr(fix32 value, char *str, u16 numdec)
 
     // get fractional part
     const u16 frac = (((u16) fix32Frac(v)) * (u16) 1000) / ((u16) 1 << FIX32_FRAC_BITS);
-    u16 len = uint16ToStr(frac, dst);
+    u16 len = uint16ToStr(frac, dst, 1);
 
     if (len < numdec)
     {
@@ -321,12 +314,12 @@ void fix16ToStr(fix16 value, char *str, u16 numdec)
         *dst++ = '-';
     }
 
-    dst += uint16ToStr(fix16ToInt(v), dst);
+    dst += uint16ToStr(fix16ToInt(v), dst, 1);
     *dst++ = '.';
 
     // get fractional part
     const u16 frac = (((u16) fix16Frac(v)) * (u16) 1000) / ((u16) 1 << FIX16_FRAC_BITS);
-    u16 len = uint16ToStr(frac, dst);
+    u16 len = uint16ToStr(frac, dst, 1);
 
     if (len < numdec)
     {
