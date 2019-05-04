@@ -29,7 +29,8 @@ https://github.com/SONIC3D/gendev-macos
 There is also the new and nice solution proposed by Daniel Valdivieso tu use SGDK under any OS using Wine: 
 https://github.com/v4ld3r5/sgdk_vscode_template
 
-If you enjoy SGDK you can support it using the donation link:
+If you enjoy SGDK you can support it on Patreon or using the Paypal donation link:
+https://www.patreon.com/StephaneD
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2SCWVXYDEEBUU
 
 Thanks =) I wish you a happy coding time !
