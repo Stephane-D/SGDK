@@ -1,4 +1,4 @@
-SGDK 1.5 (mai 2019)
+SGDK 1.4 (mai 2019)
 Copyright 2019 Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
