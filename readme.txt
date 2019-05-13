@@ -1,4 +1,4 @@
-SGDK 1.34 (december 2017)
+SGDK 1.5 (mai 2019)
 Copyright 2019 Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 
@@ -19,6 +19,9 @@ SGDK Wiki page: https://github.com/Stephane-D/SGDK/wiki
 You can find basics tutorials about how install and use SGDK on this page:
 https://github.com/Stephane-D/SGDK/wiki/Tuto-Intro
 
+But be careful these tutorials are unfortunately terribly outdated :-/
+Sorry for that, i plan to update them in future but in the meantime i strongly suggest you to have a look on the available samples (in 'sample' directory) and specially into 'sprite' sample :)
+
 Unix/Linux users should give a try to the Gendev project from Kubilus:
 https://github.com/kubilus1/gendev
 It allows to quickly setup SGDK on a Unix environment.
@@ -30,7 +33,7 @@ There is also the new and nice solution proposed by Daniel Valdivieso tu use SGD
 https://github.com/v4ld3r5/sgdk_vscode_template
 
 If you enjoy SGDK you can support it on Patreon or using the Paypal donation link:
-https://www.patreon.com/StephaneD
+https://www.patreon.com/SGDK
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2SCWVXYDEEBUU
 
 Thanks =) I wish you a happy coding time !

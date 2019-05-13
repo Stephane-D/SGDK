@@ -1,3 +1,89 @@
+SGDK 1.4 (May 2019)
+-------------------
+
+COMPILER
+* RESCOMP
+ - rewrote from scratch in java for easier evolution and easy multi OS support.
+ - added smart sprite cutting (detect empty space in sprite)
+ - many changes on SPRITE resource, don't forget to read the rescomp.txt file to see changes about this resource.
+ - can now disable map optimization for IMAGE resources (see rescomp.txt for more information)
+* LZ4W
+ - added code sources (java)
+ - fixed compression using previous data block in ROM (updated packer to version 1.4)
+* BINTOS
+ - fixed a stupid bug on path.
+* added XGM ROM builder tool sources.
+* removed RESCOMP (C version), WAVTORAW, TFMCOM and Z80DASM tools.
+* added Visual Studio template.
+
+LIBRARY
+* SYS
+ - added SYS_setVIntAligned(..) method to force V-Int callback to align process on VBlank.
+   IMPORTANT: by default now SGDK *does* align the V-Int processing to VBlank so you need to disable it if you don't want it !
+ - added SYS_getCPULoad() to return CPU load estimation.
+ - added SYS_resetMissedFrames() / SYS_getMissedFrames() methods.
+* DMA
+ - simplified DMA over capacity strategy
+ - minor change in debug log message
+* SPRITE
+ - renamed SPR_init(..) to SPR_initEx(..) so now SPR_init() doesn't require any parameters by default.
+ - removed 'maxSprite' parameter from Sprite Engine initialization (alays use max available).
+ - added delayed frame update support.
+ - added SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE flag to disable the delayed frame update (when we are running out of DMA capacity).
+ - added SPR_setDelayedFrameUpdate() to change the delayed frame update state for a sprite.
+ - added SPR_FLAG_INSERT_HEAD flag to allow adding new sprite in first position (instead of last position by default)
+ - added SPR_defragVRAM() method to force VRAM defragmentation
+ - added SPR_addSpriteSafe(..) and SPR_addSpriteExSafe(..) methods (automatically do VRAM defrag if needed)
+ - fixed a bug where the last VDP sprite attribute weren't always correctly updated with visibility set to AUTO_SLOW.
+ - fixed a bug a sprite couldn't be allocated.
+ - fixed sprite visibility state when the number of used sprite changed.
+ - many changes to sprite structures (better handling of flip info, better ROM usage...)
+* VDP 
+ - added VDP_showCPULoad() method to display CPU load
+ - added VDP_waitVInt() method to wait until next VInt to happen.
+ - removed 'waitvsync' parameter for VDP_initFading(..) and VDP_doStepFading(..) methods (we always want VSync here)
+ - simplified / tweaked macros for VDP control writes
+* VRAM
+ - added VRAM_getAllocated(..) and VRAM_getLargestFreeBlock(..) methods
+* TYPE
+ - added bool type
+ - replaced u16 by bool where it needs to be
+* MEMORY
+* MATHS
+ - updated fix32Mul() and fix32Div() definition (again, trying to find the best compromize)
+ - added new missing structures as Vect2D_f32, Mat2D_f32, Vect3D_xx...
+ - added f16 and f32 as shorcut of fix16 and fix32 types.
+ - added short typedefs (V2u16 = Vect2D_u16, V2f32 = Vect2D_f32, M2f16 = Mat2D_f16, M3f32 = Mat3D_f32)
+* PALETTE
+ - removed index field from Palette structure
+* JOY
+ - added checking for mouse / multipad read operation to avoid timeout operation when mouse or multipad is not present.
+* Z80
+ - added volatile access for safety
+* TIMER
+ - improved waitMs(..) method to be more accurate on small wait.
+ - tweaked getSubTick() method (need testing, possible regression)
+* STRING
+ - fixed and optimized uintToStr() method
+* TOOL
+ - memory allocation methods for unpacking now always use deep allocation regardless of the compression used (simpler and less bug prone)
+ - fixed LZ4W decompression using previous data block
+* fixed variable initialization (last byte was not always properly initialized)
+* added HALT_Z80_ON_IO define (config.h) to force Z80 halt on IO port access.
+* new awesome SGDK logo (Thanks a tons to Lizardrive for making it !)
+* removed useless sound drivers (MVS, TFM and VGM)
+* removed old TILE_CACHE unit (replaced by VRAM unit)
+* removed useless zlib 
+* many refactoring (sorry for that, you will need to update your old code)
+* many tweaks / cleanup
+
+SAMPLE
+* updated all samples to take care of last changes made in SGDK
+* BENCHMARK
+ - tweaked big sprite test to disable the delayed sprite update (new sprite engine feature)
+ - fixed sheet size (new rescomp don't allow it)
+
+
 SGDK 1.34 (January 2018)
 ------------------------
 
