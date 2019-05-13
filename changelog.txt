@@ -48,7 +48,6 @@ LIBRARY
 * TYPE
  - added bool type
  - replaced u16 by bool where it needs to be
-* MEMORY
 * MATHS
  - updated fix32Mul() and fix32Div() definition (again, trying to find the best compromize)
  - added new missing structures as Vect2D_f32, Mat2D_f32, Vect3D_xx...
