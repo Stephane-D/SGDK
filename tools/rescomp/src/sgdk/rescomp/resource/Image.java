@@ -103,6 +103,12 @@ public class Image extends Resource
     }
 
     @Override
+    public int shallowSize()
+    {
+        return 4 + 4 + 4;
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH)
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
@@ -118,5 +124,4 @@ public class Image extends Resource
         outS.println("    dc.l    " + tilemap.id);
         outS.println();
     }
-
 }

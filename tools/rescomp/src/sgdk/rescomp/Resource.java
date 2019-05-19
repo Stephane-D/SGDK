@@ -30,11 +30,13 @@ public abstract class Resource
 
     public abstract boolean internalEquals(Object obj);
 
+    @Override
     public int hashCode()
     {
         return internalHashCode() ^ Boolean.valueOf(global).hashCode();
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj instanceof Resource)
@@ -46,6 +48,11 @@ public abstract class Resource
 
         return false;
     }
+
+    /**
+     * Return size in byte used to store current data structure without counting referenced objects
+     */
+    public abstract int shallowSize();
 
     public abstract void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException;
 }

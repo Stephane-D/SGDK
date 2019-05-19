@@ -33,6 +33,7 @@ import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.resource.internal.SpriteFrame;
 import sgdk.rescomp.resource.internal.SpriteFrameInfo;
 import sgdk.rescomp.resource.internal.VDPSprite;
+import sgdk.rescomp.type.Basics.Compression;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
 
@@ -67,10 +68,15 @@ public class Compiler
 
     public static boolean compile(String fileName, String fileNameOut, boolean header)
     {
+        // get application directory
         // currentDir = new File("").getAbsolutePath();
         currentDir = FileUtil.getApplicationDirectory();
         // get input file directory
         resDir = FileUtil.getDirectory(fileName);
+
+        // reset resources lists
+        resources.clear();
+        resourcesList.clear();
 
         List<String> lines = null;
 
@@ -162,6 +168,78 @@ public class Compiler
 
             outH.write("\n");
             outH.write("#endif // _" + headerName + "_H_\n");
+
+            int unpackedSize = 0;
+            int packedRawSize = 0;
+            int packedSize = 0;
+
+            // compute global BIN sizes
+            for (Resource res : getResources(Bin.class))
+            {
+                final Bin bin = (Bin) res;
+
+                // compressed ?
+                if (bin.doneCompression != Compression.NONE)
+                {
+                    packedRawSize += bin.data.length + (bin.data.length & 1);
+                    packedSize += bin.packedData.data.length + (bin.packedData.data.length & 1);
+                }
+                else
+                    unpackedSize += bin.data.length + (bin.data.length & 1);
+            }
+
+            System.out.println(fileName + " summary:");
+            System.out.println("-------------");
+
+            System.out.println("Binary data: " + (unpackedSize + packedSize) + " bytes");
+            if (unpackedSize > 0)
+                System.out.println("  Unpacked: " + unpackedSize + " bytes");
+            if (packedSize > 0)
+                System.out.println(
+                        "  Packed: " + packedSize + " bytes (" + Math.round((packedSize * 100f) / packedRawSize)
+                                + "% - origin size: " + packedRawSize + " bytes)");
+
+            int spriteMetaSize = 0;
+            int miscMetaSize = 0;
+
+            // has sprites ?
+            if (!getResources(Sprite.class).isEmpty())
+            {
+                // compute SPRITE structures size
+                for (Resource res : getResources(VDPSprite.class))
+                    spriteMetaSize += res.shallowSize();
+                for (Resource res : getResources(Collision.class))
+                    spriteMetaSize += res.shallowSize();
+                for (Resource res : getResources(SpriteFrameInfo.class))
+                    spriteMetaSize += res.shallowSize();
+                for (Resource res : getResources(SpriteFrame.class))
+                    spriteMetaSize += res.shallowSize();
+                for (Resource res : getResources(SpriteAnimation.class))
+                    spriteMetaSize += res.shallowSize();
+                for (Resource res : getResources(Sprite.class))
+                    spriteMetaSize += res.shallowSize();
+
+                System.out.println("Sprite metadata (all but tiles and palette data): " + spriteMetaSize + " bytes");
+            }
+
+            // compute misc structures size
+            for (Resource res : getResources(Bitmap.class))
+                miscMetaSize += res.shallowSize();
+            for (Resource res : getResources(Image.class))
+                miscMetaSize += res.shallowSize();
+            for (Resource res : getResources(Tilemap.class))
+                miscMetaSize += res.shallowSize();
+            for (Resource res : getResources(Tileset.class))
+                miscMetaSize += res.shallowSize();
+            for (Resource res : getResources(Palette.class))
+                miscMetaSize += res.shallowSize();
+
+            if (miscMetaSize > 0)
+                System.out.println(
+                        "Misc metadata (bitmap, image, tilemap, tileset, palette..): " + miscMetaSize + " bytes");
+
+            final int totalSize = unpackedSize + packedSize + spriteMetaSize + miscMetaSize;
+            System.out.println("Total: " + totalSize + " bytes (" + (totalSize / 1024) + " KB)");
         }
         catch (Throwable t)
         {
@@ -209,18 +287,21 @@ public class Compiler
 
     public static Resource addResource(Resource resource, boolean internal)
     {
-        // internal resource --> not global
+        // internal resource ?
         if (internal)
+        {
+            // mark as not global
             resource.global = false;
 
-        // check if we already have this resource
-        final Resource result = resources.get(resource);
+            // check if we already have this resource
+            final Resource result = resources.get(resource);
 
-        // return it if already exists
-        if (result != null)
-        {
-            // System.out.println("Duplicated resource found: " + resource.id + " = " + result.id);
-            return result;
+            // return it if already exists
+            if (result != null)
+            {
+                // System.out.println("Duplicated resource found: " + resource.id + " = " + result.id);
+                return result;
+            }
         }
 
         // add resource

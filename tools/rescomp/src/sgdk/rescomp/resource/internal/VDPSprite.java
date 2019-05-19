@@ -68,6 +68,12 @@ public class VDPSprite extends Resource
     {
         return id + ": [" + offsetX + "," + offsetY + "-" + (wt * 8) + "," + (ht * 8) + "]";
     }
+    
+    @Override
+    public int shallowSize()
+    {
+        return 4;
+    }
 
     @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException

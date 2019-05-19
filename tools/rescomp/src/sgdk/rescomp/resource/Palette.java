@@ -107,6 +107,12 @@ public class Palette extends Resource
     }
 
     @Override
+    public int shallowSize()
+    {
+        return 2 + 4;
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH)
     {
         // can't store pointer so we just reset binary stream here (used for compression only)

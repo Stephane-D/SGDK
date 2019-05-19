@@ -16,6 +16,7 @@ public class Bin extends Resource
     public final byte[] data;
     public final int align;
     public final Compression wantedCompression;
+    public PackedData packedData;
     public Compression doneCompression;
 
     final int hc;
@@ -30,6 +31,7 @@ public class Bin extends Resource
             this.data = data;
         this.align = align;
         wantedCompression = compression;
+        packedData = null;
         doneCompression = Compression.NONE;
 
         // compute hash code
@@ -81,11 +83,16 @@ public class Bin extends Resource
     }
 
     @Override
+    public int shallowSize()
+    {
+        return (packedData != null) ? packedData.data.length : data.length;
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
     {
         // pack data first if needed
-        final PackedData packedData = Util.pack(data, wantedCompression, outB);
-        // store compression used
+        packedData = Util.pack(data, wantedCompression, outB);
         doneCompression = packedData.compression;
 
         final int baseSize = data.length;

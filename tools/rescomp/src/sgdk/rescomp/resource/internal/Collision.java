@@ -60,7 +60,7 @@ public class Collision extends Resource
     }
 
     public void outCollision(CollisionBase c, ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH,
-            boolean forceExport) throws IOException
+            boolean forceExport)
     {
         if (c instanceof Box)
         {
@@ -104,6 +104,13 @@ public class Collision extends Resource
                 outB.write(0);
             }
         }
+    }
+
+    @Override
+    public int shallowSize()
+    {
+        return 2 + 1 + 1
+                + ((typeAttack != CollisionType.NONE) ? 8 : ((hit != null) ? 4 : 0) + ((attack != null) ? 4 : 0));
     }
 
     @Override

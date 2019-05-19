@@ -136,6 +136,12 @@ public class Tilemap extends Resource
     }
 
     @Override
+    public int shallowSize()
+    {
+        return 2 + 2 + 2 + 4;
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)

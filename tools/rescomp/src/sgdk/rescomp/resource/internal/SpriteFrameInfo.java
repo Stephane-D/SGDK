@@ -86,6 +86,13 @@ public class SpriteFrameInfo extends Resource
     {
         return id +":" + vdpSprites.size() + " sprites";
     }
+    
+    @Override
+    public int shallowSize()
+    {
+        // pointer for each vdp sprite
+        return vdpSprites.size() * 4;
+    }
 
     @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
@@ -100,4 +107,6 @@ public class SpriteFrameInfo extends Resource
 
         outS.println();
     }
+
+    
 }

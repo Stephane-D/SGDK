@@ -137,6 +137,12 @@ public class SpriteAnimation extends Resource
     }
 
     @Override
+    public int shallowSize()
+    {
+        return (frames.size() * 4) + sequence.length + (sequence.length & 1);
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
