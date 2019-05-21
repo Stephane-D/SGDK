@@ -43,13 +43,13 @@ public class Tile implements Comparable<Tile>
                     pal = curPal;
                 else if (pal != curPal)
                     throw new IllegalArgumentException(
-                            "Error: tile [+ " + x + "," + y + "] reference different palette.");
+                            "Error: pixel at [" + x + "," + y + "] reference a different palette.");
 
                 if (prio == -1)
                     prio = curPrio;
                 else if (prio != curPrio)
                     throw new IllegalArgumentException(
-                            "Error: tile [+ " + x + "," + y + "] reference different priority.");
+                            "Error: pixel at [" + x + "," + y + "] reference a different priority.");
 
                 data[dstOff++] = (byte) (pixel & 0xF);
             }
