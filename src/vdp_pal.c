@@ -5,6 +5,7 @@
 #include "vdp_pal.h"
 
 #include "sys.h"
+#include "timer.h"
 
 
 #define PALETTEFADE_FRACBITS    8
@@ -188,6 +189,7 @@ static s16 fading_stepB[64];
 static u16 fading_from;
 static u16 fading_to;
 static s16 fading_cnt;
+static u32 last_vtimer = 0;
 
 
 // forward
@@ -243,9 +245,9 @@ static void setFadePalette()
 
     if (!inVInt)
     {
-        // wait for VSync if not already in blank
-        if (!GET_VDPSTATUS(VDP_VBLANK_FLAG))
-            VDP_waitVSync();
+        // wait for VSync if not already in blank and be sure to wait at least 1 frame between fade palette call
+        if (!GET_VDPSTATUS(VDP_VBLANK_FLAG) || (last_vtimer == vtimer))
+            VDP_waitVInt();
         // disable interrupts to not conflict with VInt accesses
         SYS_disableInts();
     }
@@ -280,10 +282,14 @@ static void setFadePalette()
     }
 
     if (!inVInt)
+    {
         SYS_enableInts();
+        // keep track of last update
+        last_vtimer = vtimer;
+    }
 }
 
-u16 VDP_doFadingStep()
+bool VDP_doFadingStep()
 {
     // last step --> just recopy the final palette
     if (--fading_cnt <= 0)
@@ -293,17 +299,19 @@ u16 VDP_doFadingStep()
             VDP_setPaletteColors(fading_from, (u16*) final_pal + fading_from, (fading_to - fading_from) + 1);
         else
         {
-            // wait for VSync if not already in blank
-            if (!GET_VDPSTATUS(VDP_VBLANK_FLAG))
-                VDP_waitVSync();
+            // wait for VSync if not already in blank and be sure to wait at least 1 frame between fade palette call
+            if (!GET_VDPSTATUS(VDP_VBLANK_FLAG) || (last_vtimer == vtimer))
+                VDP_waitVInt();
             // disable interrupts to not conflict with VInt accesses
             SYS_disableInts();
             // ans set the palette
             VDP_setPaletteColors(fading_from, (u16*) final_pal + fading_from, (fading_to - fading_from) + 1);
             SYS_enableInts();
+            // keep track of last update
+            last_vtimer = vtimer;
         }
 
-        return 0;
+        return FALSE;
     }
 
     s16 *palR;
@@ -335,10 +343,10 @@ u16 VDP_doFadingStep()
     setFadePalette();
 
 //    if (--fading_cnt <= 0) return 0;
-    return 1;
+    return TRUE;
 }
 
-u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe)
+bool VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst, u16 numframe)
 {
     const u16 *src;
     const u16 *dst;
@@ -352,7 +360,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
     u16 i;
 
     // can't do a fade on 0 frame !
-    if (numframe == 0) return 0;
+    if (numframe == 0) return FALSE;
 
     fading_from = fromcol;
     fading_to = tocol;
@@ -393,7 +401,7 @@ u16 VDP_initFading(u16 fromcol, u16 tocol, const u16 *palsrc, const u16 *paldst,
     // set current fade palette
     setFadePalette();
 
-    return 1;
+    return TRUE;
 }
 
 
