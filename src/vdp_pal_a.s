@@ -11,7 +11,7 @@ VDP_getPaletteColors:
 
     andi.w #0x7F,%d1                | d1 = adr & 0x7F
     swap %d1                        | d1 = (adr & 0x7F) << 16
-    move.w 0x20,%d1                 | d1 = ((adr & 0x7F) << 16) | 0x20
+    move.w #0x20,%d1                 | d1 = ((adr & 0x7F) << 16) | 0x20
 
     move.l %d1,0xC00004             | *0xC000004 = GFX_READ_CRAM_ADDR(adr)
 
@@ -116,7 +116,7 @@ VDP_getPalette:
 
     andi.w #0x7F,%d1                | d1 = adr & 0x7F
     swap %d1                        | d1 = (adr & 0x7F) << 16
-    move.w 0x20,%d1                 | d1 = ((adr & 0x7F) << 16) | 0x20
+    move.w #0x20,%d1                 | d1 = ((adr & 0x7F) << 16) | 0x20
 
     move.l %d1,0xC00004             | *0xC000004 = GFX_READ_CRAM_ADDR(adr)
 
