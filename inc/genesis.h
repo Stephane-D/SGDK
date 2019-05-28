@@ -2,6 +2,9 @@
 #define _GENESIS_H_
 
 
+#define SGDK_VERSION    1.4
+
+
 #include "config.h"
 #include "asm.h"
 #include "types.h"
@@ -40,8 +43,10 @@
 #include "joy.h"
 #include "timer.h"
 
-
-#define SGDK_VERSION    1.34
+// preserve compatibility with old resources name
+#define logo_lib sgdk_logo
+#define font_lib font_default
+#define font_pal_lib font_pal_default
 
 
 #endif // _GENESIS_H_
