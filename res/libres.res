@@ -1,4 +1,4 @@
-BITMAP logo_lib "image/logo_lib.png" -1
-TILESET font_lib "image/font_lib.png" -1
-PALETTE font_pal_lib "image/font_lib.png"
+BITMAP sgdk_logo "image/sgdk_logo.png" -1
+TILESET font_default "image/font_default.png" -1
+PALETTE font_pal_default "image/font_default.png"
 BIN stop_xgm "sound/stop_xgm.bin"

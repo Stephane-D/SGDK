@@ -137,7 +137,7 @@ void VDP_init()
     VDP_setPalette(PAL3, palette_blue);
 
     // load default font
-    if (!VDP_loadFont(&font_lib, 0))
+    if (!VDP_loadFont(&font_default, 0))
     {
         // fatal error --> die here
 //        VDP_setPaletteColors((PAL0 * 16) + (font_pal_lib.index & 0xF), font_pal_lib.data, font_pal_lib.length);
@@ -807,6 +807,6 @@ static void updateMapsAddress()
     {
         maps_addr = min_addr;
         // reload default font as its VRAM address has changed
-        VDP_loadFont(&font_lib, TRUE);
+        VDP_loadFont(&font_default, TRUE);
     }
 }
