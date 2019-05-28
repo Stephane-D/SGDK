@@ -25,6 +25,8 @@
 #include "kdebug.h"
 
 #if (ENABLE_LOGO != 0)
+#define LOGO_SIZE                   64
+
 #include "libres.h"
 #endif
 
@@ -490,7 +492,7 @@ void _vint_callback()
         // palette fading processing
         if (vintp & PROCESS_PALETTE_FADING)
         {
-            if (!VDP_doFadingStep(FALSE)) vintp &= ~PROCESS_PALETTE_FADING;
+            if (!VDP_doFadingStep()) vintp &= ~PROCESS_PALETTE_FADING;
         }
 
         VIntProcess = vintp;
@@ -568,7 +570,7 @@ void _start_entry()
 
 #if (ENABLE_LOGO != 0)
     {
-        Bitmap *logo = unpackBitmap(&logo_lib, NULL);
+        Bitmap *logo = unpackBitmap(&sgdk_logo, NULL);
 
         // correctly unpacked
         if (logo)
@@ -580,10 +582,10 @@ void _start_entry()
 
     #if (ZOOMING_LOGO != 0)
             // init fade in to 30 step
-            if (VDP_initFading(logo_pal->index, logo_pal->index + (logo_pal->length - 1), palette_black, logo_pal->data, 30, FALSE))
+            if (VDP_initFading(0, logo_pal->length - 1, palette_black, logo_pal->data, 30))
             {
                 // prepare zoom
-                u16 size = 256;
+                u16 size = LOGO_SIZE;
 
                 // while zoom not completed
                 while(size > 0)
@@ -594,19 +596,19 @@ void _start_entry()
                     else size = 0;
 
                     // get new size
-                    const u32 w = 256 - size;
+                    const u32 w = LOGO_SIZE - size;
 
                     // adjust palette for fade
-                    VDP_doFadingStep(FALSE);
+                    VDP_doFadingStep();
 
                     // zoom logo
-                    BMP_loadAndScaleBitmap(logo, 64 + ((256 - w) >> 2), (256 - w) >> 1, w >> 1, w >> 1, FALSE);
+                    BMP_loadAndScaleBitmap(logo, 128 - (w >> 1), 80 - (w >> 1), w, w, FALSE);
                     // flip to screen
                     BMP_flip(FALSE);
                 }
 
                 // while fade not completed
-                while(VDP_doFadingStep(TRUE));
+                while(VDP_doFadingStep());
             }
 
             // wait 1 second
@@ -616,19 +618,19 @@ void _start_entry()
             VDP_setPalette(PAL0, palette_black);
 
             // don't load the palette immediatly
-            BMP_loadBitmap(logo, 64, 0, FALSE);
+            BMP_loadBitmap(logo, 128 - (LOGO_SIZE / 2), 80 - (LOGO_SIZE / 2), FALSE);
             // flip
             BMP_flip(0);
 
             // fade in logo
-            VDP_fade((PAL0 << 4) + logo_pal->index, (PAL0 << 4) + (logo_pal->index + (logo_pal->length - 1)), palette_black, logo_pal->data, 30, FALSE);
+            VDP_fade((PAL0 << 4), (PAL0 << 4) + (logo_pal->length - 1), palette_black, logo_pal->data, 30, FALSE);
 
             // wait 1.5 second
             waitTick(TICKPERSECOND * 1.5);
     #endif
-
             // fade out logo
-            VDP_fadePalOut(PAL0, 20, 0);
+            VDP_fadeOutPal(PAL0, 20, FALSE);
+
             // wait 0.5 second
             waitTick(TICKPERSECOND * 0.5);
 
