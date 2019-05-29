@@ -150,8 +150,29 @@ public class Compiler
             outH.write("#ifndef _" + headerName + "_H_\n");
             outH.write("#define _" + headerName + "_H_\n\n");
 
-            // export resources by type for better compression (binary data first)
-            exportResources(getResources(Bin.class), outB, outS, outH);
+            // get BIN resources, and also grouped by type for better compression
+            final List<Resource> binResources = getResources(Bin.class);
+            final List<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
+            final List<Resource> binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
+            final List<Resource> binResourcesOfTileset = getBinResourcesOf(Tileset.class);
+            final List<Resource> binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
+
+            // keep not typed BIN resources
+            binResources.removeAll(binResourcesOfPalette);
+            binResources.removeAll(binResourcesOfBitmap);
+            binResources.removeAll(binResourcesOfTileset);
+            binResources.removeAll(binResourcesOfTilemap);
+
+            // export not typed BIN resources first
+            exportResources(binResources, outB, outS, outH);
+
+            // then export BIN resources by type for better compression
+            exportResources(binResourcesOfPalette, outB, outS, outH);
+            exportResources(binResourcesOfBitmap, outB, outS, outH);
+            exportResources(binResourcesOfTileset, outB, outS, outH);
+            exportResources(binResourcesOfTilemap, outB, outS, outH);
+
+            // then export resources which can still be compressed (only binary data inside)
             exportResources(getResources(VDPSprite.class), outB, outS, outH);
             exportResources(getResources(Collision.class), outB, outS, outH);
 
@@ -259,6 +280,38 @@ public class Compiler
             FileUtil.delete(FileUtil.setExtension(fileNameOut, ".h"), false);
 
         return true;
+    }
+
+    private static List<Resource> getBinResourcesOf(Class<? extends Resource> resourceType)
+    {
+        final List<Resource> result = new ArrayList<>();
+        final List<Resource> typeResources = getResources(resourceType);
+
+        if (resourceType.equals(Palette.class))
+        {
+            for (Resource resource : typeResources)
+                result.add(((Palette) resource).bin);
+        }
+        else if (resourceType.equals(Bitmap.class))
+        {
+            for (Resource resource : typeResources)
+                result.add(((Bitmap) resource).bin);
+        }
+        else if (resourceType.equals(Tileset.class))
+        {
+            for (Resource resource : typeResources)
+                result.add(((Tileset) resource).bin);
+        }
+        else if (resourceType.equals(Tilemap.class))
+        {
+            for (Resource resource : typeResources)
+                result.add(((Tilemap) resource).bin);
+        }
+        else
+            throw new IllegalArgumentException(
+                    "getBinResourcesOf(..) error: " + resourceType.getName() + " class type not expected !");
+
+        return result;
     }
 
     private static List<Resource> getResources(Class<? extends Resource> resourceType)
