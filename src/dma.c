@@ -264,7 +264,7 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
         if (queueIndexLimit == 0)
         {
 #if (LIB_DEBUG != 0)
-            KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
+            KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
 
             // store limit index
