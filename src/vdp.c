@@ -19,7 +19,7 @@
 #include "font.h"
 
 
-#define WINDOW_DEFAULT          0xD000      // multiple of 0x1000 (0x0800 in H32)
+#define WINDOW_DEFAULT          0xF000      // multiple of 0x1000 (0x0800 in H32)
 #define HSCRL_DEFAULT           0xD800      // multiple of 0x0400
 #define SLIST_DEFAULT           0xDC00      // multiple of 0x0400 (0x0200 in H32)
 #define APLAN_DEFAULT           0xE000      // multiple of 0x2000
@@ -89,7 +89,7 @@ void VDP_init()
     regValues[0x00] = 0x04;
     regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, VBL, DMA + VCell size */
     regValues[0x02] = aplan_addr / 0x400;       /* reg. 2 - Plane A = $E000 */
-    regValues[0x03] = window_addr / 0x400;      /* reg. 3 - Window  = $D000 */
+    regValues[0x03] = window_addr / 0x400;      /* reg. 3 - Window  = $F000 */
     regValues[0x04] = bplan_addr / 0x2000;      /* reg. 4 - Plane B = $C000 */
     regValues[0x05] = slist_addr / 0x200;       /* reg. 5 - Sprite table = $DC00 */
     regValues[0x06] = 0x00;                     /* reg. 6 - not used */
