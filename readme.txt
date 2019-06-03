@@ -4,7 +4,7 @@ Patreon: https://www.patreon.com/SGDK
 Github: https://github.com/Stephane-D/SGDK
 
 
-SGDK is an open and free development kit for the Sega Megadrive.
+SGDK is a free and open development kit for the Sega Megadrive.
 It contains the development library itself (with the code sources) and some custom tools used to compile resources.
 SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate ROM image. Binaries (GCC 6.3) are provided for Windows OS for convenience but you need to install it by yourself for others operating systems.
 Note that SGDK also requires Java (custom tools need it) so you need to have Java JRE installed on your system:
