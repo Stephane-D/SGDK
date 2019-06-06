@@ -46,23 +46,23 @@ It allows to quickly setup SGDK on a Unix environment.
 MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D:
 https://github.com/SONIC3D/gendev-macos
 
-There is also the new and nice solution proposed by Daniel Valdivieso tu use SGDK under any OS using Wine: 
+There is also the new and nice solution proposed by Daniel Valdivieso tu use SGDK under any OS using Wine:
 https://github.com/v4ld3r5/sgdk_vscode_template
 
 
 THANKS
 ------
 
-- Chilly Willy for making almost all the JOY / controller support in SGDK (also done the joy test sample).
+- Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofa for the starfield donut sample ;)
 - LIZARDRIVE for making the new SGDK logo.
-- Vladimir Kryvian for Visual Studio support and template
-- Tusario for resource manager tools
-- clbr for various contributions
+- Vladimir Kryvian for Visual Studio support and template.
+- Tusario for resource manager tools.
+- clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
-- starling13 for fixes. 
-- all people helping by providing support, reporting bugs and supporting SGDK in any way !
+- starling13 for fixes.
+- all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
 
 
 SUPPORT SGDK
