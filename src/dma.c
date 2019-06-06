@@ -298,9 +298,6 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     u16 z80state;
 #endif
 
-    if (step != -1)
-        VDP_setAutoInc(step);
-
     // DMA works on 64 KW bank
     banklimitb = 0x20000 - (from & 0x1FFFF);
     banklimitw = banklimitb >> 1;
@@ -313,6 +310,9 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     }
     // ok, use normal len
     else newlen = len;
+
+    if (step != -1)
+        VDP_setAutoInc(step);
 
     // wait for DMA FILL / COPY operation to complete
     VDP_waitDMACompletion();
