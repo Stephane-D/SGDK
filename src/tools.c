@@ -3,6 +3,7 @@
 
 #include "tools.h"
 
+#include "sys.h"
 #include "string.h"
 #include "kdebug.h"
 #include "timer.h"
@@ -20,8 +21,6 @@ static TileSet *allocateTileSetInternal(const TileSet *tileset, void *adr);
 static Map *allocateMapInternal(const Map *map, void *adr);
 
 // internal
-static u32 framecnt = 0;
-static u32 last = 0;
 u16 randbase;
 
 
@@ -41,43 +40,12 @@ u16 random()
 
 u32 getFPS()
 {
-    static s32 result;
-    const u32 current = getSubTick();
-    u32 delta = current - last;
-
-    if ((delta > 19200) && ((framecnt > (76800 * 5)) || (delta > 76800)))
-    {
-        result = framecnt / delta;
-        if (result > 999) result = 999;
-        last = current;
-        framecnt = 76800;
-    }
-    else framecnt += 76800;
-
-    return result;
+    return SYS_getFPS();
 }
 
 fix32 getFPS_f()
 {
-    static fix32 result;
-    const s32 current = getSubTick();
-    u32 delta = current - last;
-
-    if ((delta > 19200) && ((framecnt > (76800 * 5)) || (delta > 76800)))
-    {
-        if (framecnt > (250 * 76800)) result = FIX32(999);
-        else
-        {
-            result = (framecnt << FIX16_FRAC_BITS) / delta;
-            if (result > (999 << FIX16_FRAC_BITS)) result = FIX32(999);
-            else result <<= (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
-        }
-        last = current;
-        framecnt = 76800;
-    }
-    else framecnt += 76800;
-
-    return result;
+    return SYS_getFPSAsFloat();
 }
 
 void KLog(char* text)

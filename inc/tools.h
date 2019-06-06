@@ -57,19 +57,13 @@ void setRandomSeed(u16 seed);
 u16 random();
 
 /**
- *  \brief
- *      Returns number of Frame Per Second.
- *
- * This function actually returns the number of time it was called in the last second.<br>
- * i.e: for benchmarking you should call this method only once per frame update.
+ *  \deprecated
+ *      Uses #SYS_getFPS() instead
  */
 u32 getFPS();
 /**
- *  \brief
- *      Returns number of Frame Per Second (fix32 form).
- *
- * This function actually returns the number of time it was called in the last second.<br>
- * i.e: for benchmarking you should call this method only once per frame update.
+ *  \deprecated
+ *      Uses #SYS_getFPSAsFloat() instead
  */
 fix32 getFPS_f();
 

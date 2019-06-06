@@ -36,6 +36,7 @@
 #define IN_EXTINT                   4
 
 #define FORCE_VINT_VBLANK_ALIGN     1
+#define VINT_ALLOWED_LINE_DELAY     4
 
 #define FRAME_LOAD_MEAN             8
 
@@ -103,6 +104,8 @@ static u32 missedFrames;
 static u16 frameLoads[FRAME_LOAD_MEAN];
 static u16 frameLoadIndex;
 static u16 cpuFrameLoad;
+static u32 frameCnt;
+static u32 lastSubTick;
 
 
 static void addValueU8(char *dst, char *str, u8 value)
@@ -412,18 +415,23 @@ void _vint_callback()
     if (VDP_getScreenHeight() == 224)
     {
         // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
-        if ((vcnt < 224) || (vcnt > 228)) late = TRUE;
+        if ((vcnt < 224) || (vcnt > (224 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
     }
     // V30 mode
     else
     {
         // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
-        if ((vcnt < 240) || (vcnt > 244)) late = TRUE;
+        if ((vcnt < 240) || (vcnt > (240 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
     }
 
     // interrupt happened too late ?
     if (late)
     {
+        // we increase the number of missed frame
+        missedFrames++;
+        // assume 100% CPU usage (0-255 value) when V-Int happened too late
+        addFrameLoad(255);
+
         // V-Interrupt VBlank alignment forced ? --> we force wait of next VBlank (and so V-Int)
         if (flag & FORCE_VINT_VBLANK_ALIGN)
         {
@@ -432,10 +440,6 @@ void _vint_callback()
 #endif
 
             VDP_waitVSync();
-            // we increase the number of missed frame
-            missedFrames++;
-            // assume 100% CPU usage (0-255 value) when V-Int happened too late
-            addFrameLoad(255);
 
             // we need to return from interrupt as we don't have anyway to clear the new pending interrupt
             // so we will take it again immediately but in time this time :)
@@ -445,11 +449,8 @@ void _vint_callback()
         }
 
 #if (LIB_DEBUG != 0)
-        KLog_U2("Warning: V-Int happened too late for frame #", vtimer, " - VCounter = ", vcnt);
+        KLog_U2("Warning: V-Int happened too late (possible frame miss) for frame #", vtimer, " - VCounter = ", vcnt);
 #endif
-
-        // assume 100% CPU usage (0-255 value) when V-Int happened too late
-        addFrameLoad(255);
     }
 
     // call user callback (pre V-Int)
@@ -615,7 +616,7 @@ void _start_entry()
             waitTick(TICKPERSECOND * 1);
     #else
             // set palette 0 to black
-            VDP_setPalette(PAL0, palette_black);
+            PAL_setPalette(PAL0, palette_black);
 
             // don't load the palette immediatly
             BMP_loadBitmap(logo, 128 - (LOGO_SIZE / 2), 80 - (LOGO_SIZE / 2), FALSE);
@@ -623,13 +624,13 @@ void _start_entry()
             BMP_flip(0);
 
             // fade in logo
-            VDP_fade((PAL0 << 4), (PAL0 << 4) + (logo_pal->length - 1), palette_black, logo_pal->data, 30, FALSE);
+            PAL_fade((PAL0 << 4), (PAL0 << 4) + (logo_pal->length - 1), palette_black, logo_pal->data, 30, FALSE);
 
             // wait 1.5 second
             waitTick(TICKPERSECOND * 1.5);
     #endif
             // fade out logo
-            VDP_fadeOutPal(PAL0, 20, FALSE);
+            PAL_fadeOutPalette(PAL0, 20, FALSE);
 
             // wait 0.5 second
             waitTick(TICKPERSECOND * 0.5);
@@ -676,6 +677,8 @@ static void internal_reset()
     memsetU16(frameLoads, 0, FRAME_LOAD_MEAN);
     frameLoadIndex = 0;
     cpuFrameLoad = 0;
+    frameCnt = 0;
+    lastSubTick = 0;
 
     // init part
     MEM_init();
@@ -689,15 +692,6 @@ static void internal_reset()
 
     // enable interrupts
     SYS_setInterruptMaskLevel(3);
-}
-
-// used to compute average frame load on 8 frames
-void addFrameLoad(u16 frameLoad)
-{
-    cpuFrameLoad -= frameLoads[frameLoadIndex];
-    frameLoads[frameLoadIndex] = frameLoad;
-    cpuFrameLoad += frameLoad;
-    frameLoadIndex = (frameLoadIndex + 1) & (FRAME_LOAD_MEAN - 1);
 }
 
 void SYS_disableInts()
@@ -809,9 +803,70 @@ u16 SYS_isPAL()
 }
 
 
+u32 SYS_getFPS()
+{
+    static s32 result;
+    const u32 current = getSubTick();
+    u32 delta = current - lastSubTick;
+
+    if ((delta > 19200) && ((frameCnt > (76800 * 5)) || (delta > 76800)))
+    {
+        result = frameCnt / delta;
+        if (result > 999) result = 999;
+        lastSubTick = current;
+        frameCnt = 76800;
+    }
+    else frameCnt += 76800;
+
+    return result;
+}
+
+fix32 SYS_getFPSAsFloat()
+{
+    static fix32 result;
+    const s32 current = getSubTick();
+    u32 delta = current - lastSubTick;
+
+    if ((delta > 19200) && ((frameCnt > (76800 * 5)) || (delta > 76800)))
+    {
+        if (frameCnt > (250 * 76800)) result = FIX32(999);
+        else
+        {
+            result = (frameCnt << FIX16_FRAC_BITS) / delta;
+            if (result > (999 << FIX16_FRAC_BITS)) result = FIX32(999);
+            else result <<= (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
+        }
+        lastSubTick = current;
+        frameCnt = 76800;
+    }
+    else frameCnt += 76800;
+
+    return result;
+}
+
+
+// used to compute average frame load on 8 frames
+void addFrameLoad(u16 frameLoad)
+{
+    static u16 lastMissedFrame = 0;
+    static u16 lastVTimer = 0;
+
+    u16 v = frameLoad;
+    // force full load if we have frame miss
+    if ((lastMissedFrame != missedFrames) || ((vtimer - lastVTimer) > 1))
+        v = 255;
+
+    cpuFrameLoad -= frameLoads[frameLoadIndex];
+    frameLoads[frameLoadIndex] = v;
+    cpuFrameLoad += v;
+    frameLoadIndex = (frameLoadIndex + 1) & (FRAME_LOAD_MEAN - 1);
+    lastMissedFrame = missedFrames;
+    lastVTimer = vtimer;
+}
+
 u16 SYS_getCPULoad()
 {
-    return (cpuFrameLoad * ((u16) 100)) / ((u16) (FRAME_LOAD_MEAN*255));
+    return (cpuFrameLoad * ((u16) 100)) / ((u16) (FRAME_LOAD_MEAN * 255));
 }
 
 u32 SYS_getMissedFrames()

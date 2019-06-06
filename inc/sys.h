@@ -344,6 +344,23 @@ u16 SYS_isNTSC();
  */
 u16 SYS_isPAL();
 
+
+/**
+ *  \brief
+ *      Returns number of Frame Per Second.
+ *
+ * This function actually returns the number of time it was called in the last second.<br>
+ * i.e: for benchmarking you should call this method only once per frame update.
+ */
+u32 SYS_getFPS();
+/**
+ *  \brief
+ *      Returns number of Frame Per Second (fix32 form).
+ *
+ * This function actually returns the number of time it was called in the last second.<br>
+ * i.e: for benchmarking you should call this method only once per frame update.
+ */
+fix32 SYS_getFPSAsFloat();
 /**
  *  \brief
  *      Return an estimation of CPU load (in %)
@@ -351,6 +368,7 @@ u16 SYS_isPAL();
  * Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in VDP_waitVSync() / VDP_waitVInt() methods.<br>
  * This method don't return accurate result when you have missed frames (V-Int missed).
  *
+ * \see SYS_getMissedFrames()
  * \see VDP_waitVSync()
  * \see VDP_waitVInt()
  */
