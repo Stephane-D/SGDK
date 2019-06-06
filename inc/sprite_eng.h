@@ -12,9 +12,9 @@
 #ifndef _SPRITE_ENG_H_
 #define _SPRITE_ENG_H_
 
-#include "vdp_pal.h"
 #include "vdp_tile.h"
 #include "vdp_spr.h"
+#include "pal.h"
 
 
 /**

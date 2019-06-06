@@ -1,78 +1,9 @@
 /**
- *  \file vdp_pal.h
- *  \brief VDP Palette support
- *  \author Stephane Dallongeville
- *  \date 08/2011
- *
- * This unit provides methods to manipulate the VDP Color Palette.<br>
- * The Sega Genesis VDP has 4 palettes of 16 colors.<br>
- * Color is defined with 3 bits for each component : xxxxBBBxGGGxRRRx
+ *  \deprecated Uses pal.h unit instead
  */
 
 #ifndef _VDP_PAL_H_
 #define _VDP_PAL_H_
-
-
-#define VDPPALETTE_REDSFT           1
-#define VDPPALETTE_GREENSFT         5
-#define VDPPALETTE_BLUESFT          9
-
-#define VDPPALETTE_REDMASK          0x000E
-#define VDPPALETTE_GREENMASK        0x00E0
-#define VDPPALETTE_BLUEMASK         0x0E00
-#define VDPPALETTE_COLORMASK        0x0EEE
-
-/**
- *  \brief
- *      Convert a RGB 24 bits color to VDP color
- *
- *  \param color
- *      RGB 24 bits color
- */
-#define RGB24_TO_VDPCOLOR(color)    (((color >> ((2 * 8) + 4)) & VDPPALETTE_REDMASK) | ((color >> ((1 * 4) + 4)) & VDPPALETTE_GREENMASK) | ((color << 4) & VDPPALETTE_BLUEMASK))
-
-
-/**
- *  \brief
- *      Palette structure contains color data.
- *
- *  \param lenght
- *      Size of this palette.
- *  \param dat
- *      Color data.
- */
-typedef struct
-{
-    u16 length;
-    u16 *data;
-} Palette;
-
-
-/**
- *  \brief
- *      Default black palette.
- */
-extern const u16* const palette_black;
-/**
- *  \brief
- *      Default grey palette.
- */
-extern const u16 palette_grey[16];
-/**
- *  \brief
- *      Default red palette.
- */
-extern const u16 palette_red[16];
-/**
- *  \brief
- *      Default green palette.
- */
-extern const u16 palette_green[16];
-/**
- *  \brief
- *      Default blue palette.
- */
-extern const u16 palette_blue[16];
 
 
 /**

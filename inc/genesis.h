@@ -2,7 +2,7 @@
 #define _GENESIS_H_
 
 
-#define SGDK_VERSION    1.4
+#define SGDK_VERSION    1.41
 
 
 #include "config.h"
@@ -25,9 +25,11 @@
 #include "vdp.h"
 #include "vdp_bg.h"
 #include "vdp_dma.h"
-#include "vdp_pal.h"
 #include "vdp_spr.h"
 #include "vdp_tile.h"
+#include "vdp_pal.h"
+
+#include "pal.h"
 
 #include "vram.h"
 #include "dma.h"

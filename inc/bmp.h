@@ -21,7 +21,7 @@
 
 #include "maths.h"
 #include "vdp.h"
-#include "vdp_pal.h"
+#include "pal.h"
 
 #ifndef _BMP_H_
 #define _BMP_H_
