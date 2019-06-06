@@ -309,12 +309,12 @@ void BMP_showFPS(u16 float_display)
 
     if (float_display)
     {
-        fix32ToStr(getFPS_f(), str, 1);
+        fix32ToStr(SYS_getFPSAsFloat(), str, 1);
         VDP_clearTextBG(bmp_plan, 2, y, 5);
     }
     else
     {
-        uintToStr(getFPS(), str, 1);
+        uintToStr(SYS_getFPS(), str, 1);
         VDP_clearTextBG(bmp_plan, 2, y, 2);
     }
 
@@ -1120,7 +1120,7 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
     if (loadpal)
     {
         const Palette *palette = bitmap->palette;
-        VDP_setPaletteColors(pal << 4, palette->data, palette->length);
+        PAL_setPaletteColors(pal << 4, palette);
     }
 
     return TRUE;
@@ -1152,7 +1152,7 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
     if (loadpal)
     {
         const Palette *palette = bitmap->palette;
-        VDP_setPaletteColors(pal << 4, palette->data, palette->length);
+        PAL_setPaletteColors(pal << 4, palette);
     }
 
     return TRUE;

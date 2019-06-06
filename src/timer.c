@@ -30,6 +30,8 @@
 //|VCounter      |[1]0x00-0xEA     |[1]0x00-0xFF
 //|progression   |[2]0xE5-0xFF     |[2]0x00-0xFF
 
+// we don't want to share them outside
+extern u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 
 vu32 vtimer;
 
@@ -41,23 +43,7 @@ static u32 lastSTick = 0;
 // WARNING : this function isn't accurate because of the VCounter rollback during VBlank
 u32 getSubTickInternal(u16 blank, u16 vcnt, u32 vt)
 {
-    u16 vc = vcnt;
-
-    if (IS_PALSYSTEM)
-    {
-        // vblank period (we also use vcounter to avoid issue with forced blank) ? --> use medium value
-        if (blank && ((vc >= 0xCA) || (vc <= 0x0A))) vc = 8;
-        // use normal value
-        else vc += 16;
-    }
-    else
-    {
-        // vblank period (we also use vcounter to avoid issue with forced blank) ? --> use medium value
-        if (blank && (vc >= 0xDF)) vc = 8;
-        // use normal value
-        else vc += 16;
-    }
-
+    u16 vc = getAdjustedVCounterInternal(blank, vcnt);
     u32 current = (vt << 8) + vc;
 
     // possible only if vtimer not yet increase while in vblank --> fix
