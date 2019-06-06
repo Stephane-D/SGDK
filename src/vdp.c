@@ -32,6 +32,7 @@ extern void addFrameLoad(u16 frameLoad);
 // forward
 static void updateMapsAddress();
 static void computeFrameCPULoad(u16 blank, u16 vcnt);
+u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 
 
 static u8 regValues[0x13];
@@ -131,16 +132,16 @@ void VDP_init()
     while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
 
     // load defaults palettes
-    VDP_setPalette(PAL0, palette_grey);
-    VDP_setPalette(PAL1, palette_red);
-    VDP_setPalette(PAL2, palette_green);
-    VDP_setPalette(PAL3, palette_blue);
+    PAL_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL1, palette_red);
+    PAL_setPalette(PAL2, palette_green);
+    PAL_setPalette(PAL3, palette_blue);
 
     // load default font
     if (!VDP_loadFont(&font_default, 0))
     {
         // fatal error --> die here
-//        VDP_setPaletteColors((PAL0 * 16) + (font_pal_lib.index & 0xF), font_pal_lib.data, font_pal_lib.length);
+//        PAL_setColors((PAL0 * 16) + (font_pal_lib.index & 0xF), font_pal_lib.data, font_pal_lib.length);
         // the font did not get loaded so maybe not really useful to show these messages...
         VDP_drawText("A fatal error occured !", 2, 2);
         VDP_drawText("cannot continue...", 4, 3);
@@ -721,24 +722,8 @@ void VDP_waitVInt()
 
 static void computeFrameCPULoad(u16 blank, u16 vcnt)
 {
-    u16 v = vcnt;
-
-    // adjust V-Counter to take care of blanking rollback
-    if (IS_PALSYSTEM)
-    {
-        // blank adjustement
-        if (blank && ((v >= 0xCA) || (v <= 0x0A))) v = 8;
-        else v += 16;
-    }
-    else
-    {
-        // blank adjustement
-        if (blank && (v >= 0xDF)) v = 8;
-        else v += 16;
-    }
-
     // update CPU frame load
-    addFrameLoad(v);
+    addFrameLoad(getAdjustedVCounterInternal(blank, vcnt));
 }
 
 
@@ -749,16 +734,42 @@ void VDP_resetScreen()
     VDP_clearPlan(PLAN_B, TRUE);
     VDP_waitDMACompletion();
 
-    VDP_setPalette(PAL0, palette_grey);
-    VDP_setPalette(PAL1, palette_red);
-    VDP_setPalette(PAL2, palette_green);
-    VDP_setPalette(PAL3, palette_blue);
+    PAL_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL1, palette_red);
+    PAL_setPalette(PAL2, palette_green);
+    PAL_setPalette(PAL3, palette_blue);
 
     VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
     VDP_setHorizontalScroll(PLAN_A, 0);
     VDP_setHorizontalScroll(PLAN_B, 0);
     VDP_setVerticalScroll(PLAN_A, 0);
     VDP_setVerticalScroll(PLAN_B, 0);
+}
+
+u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
+{
+    u16 result = vcnt;
+
+    // adjust V-Counter to take care of blanking rollback
+    if (IS_PALSYSTEM)
+    {
+        // blank adjustement
+        if (blank && ((result >= 0xCA) || (result <= 0x0A))) result = 8;
+        else result += 16;
+    }
+    else
+    {
+        // blank adjustement
+        if (blank && (result >= 0xDF)) result = 16;
+        else result += 32;
+    }
+
+    return result;
+}
+
+u16 VDP_getAdjustedVCounter()
+{
+    return getAdjustedVCounterInternal(GET_VDPSTATUS(VDP_VBLANK_FLAG), GET_VCOUNTER);
 }
 
 
@@ -768,12 +779,12 @@ void VDP_showFPS(u16 asFloat)
 
     if (asFloat)
     {
-        fix32ToStr(getFPS_f(), str, 1);
+        fix32ToStr(SYS_getFPSAsFloat(), str, 1);
         VDP_clearText(2, 1, 5);
     }
     else
     {
-        uintToStr(getFPS(), str, 1);
+        uintToStr(SYS_getFPS(), str, 1);
         VDP_clearText(2, 1, 2);
     }
 
@@ -786,7 +797,8 @@ void VDP_showCPULoad()
     char str[16];
 
     uintToStr(SYS_getCPULoad(), str, 1);
-    VDP_clearText(2, 2, 2);
+    strcat(str, "%");
+    VDP_clearText(2, 2, 4);
 
     // display FPS
     VDP_drawText(str, 1, 2);
