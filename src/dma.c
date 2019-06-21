@@ -113,6 +113,7 @@ void DMA_flushQueue()
 #if (HALT_Z80_ON_DMA == 1)
     u16 z80state;
 #endif
+    u8 autoInc;
 
     // default
     i = queueIndex;
@@ -134,8 +135,6 @@ void DMA_flushQueue()
 #endif
     }
 
-    info = (u32*) dmaQueues;
-
 #ifdef DMA_DEBUG
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
 #endif
@@ -143,11 +142,15 @@ void DMA_flushQueue()
     // wait for DMA FILL / COPY operation to complete
     VDP_waitDMACompletion();
 
+    // save autoInc
+    autoInc = VDP_getAutoInc();
+
 #if (HALT_Z80_ON_DMA == 1)
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
 #endif
 
+    info = (u32*) dmaQueues;
     pl = (vu32*) GFX_CTRL_PORT;
 
     while(i--)
@@ -165,8 +168,8 @@ void DMA_flushQueue()
 
     // can clear the queue now
     DMA_clearQueue();
-    // we do that to fix cached auto inc value (instead of losing time in updating it during queue flush)
-    VDP_setAutoInc(2);
+    // restore autoInc
+    VDP_setAutoInc(autoInc);
 }
 
 u16 DMA_getQueueSize()
@@ -290,7 +293,8 @@ void DMA_waitCompletion()
 void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 {
     vu16 *pw;
-    vu32 *pl;
+//    vu32 *pl;
+    u32 cmd;
     u32 newlen;
     u32 banklimitb;
     u32 banklimitw;
@@ -336,22 +340,49 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     if (!z80state) Z80_requestBus(FALSE);
 #endif
 
-    // Enable DMA
-    pl = (vu32*) GFX_CTRL_PORT;
+    // start DMA
+//    pl = (vu32*) GFX_CTRL_PORT;
+//
+//    switch(location)
+//    {
+//        default:
+//        case DMA_VRAM:
+//            *pl = GFX_DMA_VRAM_ADDR(to);
+//            break;
+//
+//        case DMA_CRAM:
+//            *pl = GFX_DMA_CRAM_ADDR(to);
+//            break;
+//
+//        case DMA_VSRAM:
+//            *pl = GFX_DMA_VSRAM_ADDR(to);
+//            break;
+//    }
+
+
     switch(location)
     {
+        default:
         case DMA_VRAM:
-            *pl = GFX_DMA_VRAM_ADDR(to);
+            cmd = GFX_DMA_VRAM_ADDR(to);
             break;
 
         case DMA_CRAM:
-            *pl = GFX_DMA_CRAM_ADDR(to);
+            cmd = GFX_DMA_CRAM_ADDR(to);
             break;
 
         case DMA_VSRAM:
-            *pl = GFX_DMA_VSRAM_ADDR(to);
+            cmd = GFX_DMA_VSRAM_ADDR(to);
             break;
     }
+
+    // start DMA: force last command word to be fetched from RAM
+    // we do that to avoid possible DMA failure on some MD (bulletin notes from SEGA specify it)
+    asm volatile (
+    "move.l %0,-(%%sp)\n"
+    "\tmove.l (%%sp)+,0xC00004"
+    :: "r" (cmd) : "cc"
+    );
 
 #if (HALT_Z80_ON_DMA == 1)
     if (!z80state) Z80_releaseBus();
