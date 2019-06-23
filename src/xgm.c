@@ -399,6 +399,7 @@ void XGM_nextXFrame(u16 num)
     vu16 *pw_bus;
     vu16 *pw_reset;
     vu8 *pb;
+    u32 tmp;
 
     // driver should be loaded here
 
@@ -423,8 +424,12 @@ void XGM_nextXFrame(u16 num)
         *pw_bus = 0x0000;
 
         // wait a bit (about 80 cycles)
-        asm volatile ("\t\tmovm.l %d0-%d3,-(%sp)\n");
-        asm volatile ("\t\tmovm.l (%sp)+,%d0-%d3\n");
+        asm volatile (
+        "moveq #7,%0\n"
+        "1:\n\t"
+        "\tdbra %0,1b\n\t"
+        : "=d" (tmp) : : "cc"
+        );
 
         // wait for bus released before requesting it again
         while (!(*pw_bus & 0x0100));
