@@ -293,8 +293,6 @@ void DMA_waitCompletion()
 void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 {
     vu16 *pw;
-//    vu32 *pl;
-    u32 cmd;
     u32 newlen;
     u32 banklimitb;
     u32 banklimitw;
@@ -340,25 +338,27 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     if (!z80state) Z80_requestBus(FALSE);
 #endif
 
+#if 0
     // start DMA
-//    pl = (vu32*) GFX_CTRL_PORT;
-//
-//    switch(location)
-//    {
-//        default:
-//        case DMA_VRAM:
-//            *pl = GFX_DMA_VRAM_ADDR(to);
-//            break;
-//
-//        case DMA_CRAM:
-//            *pl = GFX_DMA_CRAM_ADDR(to);
-//            break;
-//
-//        case DMA_VSRAM:
-//            *pl = GFX_DMA_VSRAM_ADDR(to);
-//            break;
-//    }
+    vu32 *pl = (vu32*) GFX_CTRL_PORT;
 
+    switch(location)
+    {
+        default:
+        case DMA_VRAM:
+            *pl = GFX_DMA_VRAM_ADDR(to);
+            break;
+
+        case DMA_CRAM:
+            *pl = GFX_DMA_CRAM_ADDR(to);
+            break;
+
+        case DMA_VSRAM:
+            *pl = GFX_DMA_VSRAM_ADDR(to);
+            break;
+    }
+#else
+    u32 cmd;
 
     switch(location)
     {
@@ -383,6 +383,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     "\tmove.l (%%sp)+,0xC00004"
     :: "r" (cmd) : "cc"
     );
+#endif // 0
 
 #if (HALT_Z80_ON_DMA == 1)
     if (!z80state) Z80_releaseBus();
