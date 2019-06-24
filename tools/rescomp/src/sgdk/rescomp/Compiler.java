@@ -1,6 +1,7 @@
 package sgdk.rescomp;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,9 +9,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import sgdk.rescomp.processor.BinProcessor;
 import sgdk.rescomp.processor.BitmapProcessor;
@@ -152,10 +156,10 @@ public class Compiler
 
             // get BIN resources, and also grouped by type for better compression
             final List<Resource> binResources = getResources(Bin.class);
-            final List<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
-            final List<Resource> binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
-            final List<Resource> binResourcesOfTileset = getBinResourcesOf(Tileset.class);
-            final List<Resource> binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
+            final Set<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
+            final Set<Resource> binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
+            final Set<Resource> binResourcesOfTileset = getBinResourcesOf(Tileset.class);
+            final Set<Resource> binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
 
             // keep not typed BIN resources
             binResources.removeAll(binResourcesOfPalette);
@@ -282,9 +286,9 @@ public class Compiler
         return true;
     }
 
-    private static List<Resource> getBinResourcesOf(Class<? extends Resource> resourceType)
+    private static Set<Resource> getBinResourcesOf(Class<? extends Resource> resourceType)
     {
-        final List<Resource> result = new ArrayList<>();
+        final Set<Resource> result = new HashSet<>();
         final List<Resource> typeResources = getResources(resourceType);
 
         if (resourceType.equals(Palette.class))
@@ -325,10 +329,10 @@ public class Compiler
         return result;
     }
 
-    private static void exportResources(List<Resource> resources, ByteArrayOutputStream outB, PrintWriter outS,
-            PrintWriter outH) throws IOException
+    private static void exportResources(Collection<Resource> resourceCollection, ByteArrayOutputStream outB,
+            PrintWriter outS, PrintWriter outH) throws IOException
     {
-        for (Resource res : resources)
+        for (Resource res : resourceCollection)
             exportResource(res, outB, outS, outH);
     }
 
