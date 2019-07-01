@@ -119,12 +119,15 @@ void waitSubTick(u32 subtick)
 
         while(i--)
         {
-            u16 j;
+            u32 tmp;
 
             // TODO: use cycle accurate wait loop in asm
             // about 100 cycles for 1 subtick
-            j = 6;
-            while(j--) asm("nop");
+            asm volatile ("moveq #7,%0\n"
+                "1:\n\t"
+                "dbra %0,1b\n\t"
+                : "=d" (tmp) : : "cc"
+            );
         }
 
         return;
