@@ -110,8 +110,10 @@ void DMA_flushQueue()
     vu32 *pl;
     u32 *info;
     u16 i;
-#if (HALT_Z80_ON_DMA == 1)
+#if (HALT_Z80_ON_DMA != 0)
     u16 z80state;
+#else
+    vu16 *pw;
 #endif
     u8 autoInc;
 
@@ -145,24 +147,42 @@ void DMA_flushQueue()
     // save autoInc
     autoInc = VDP_getAutoInc();
 
-#if (HALT_Z80_ON_DMA == 1)
+#if (HALT_Z80_ON_DMA != 0)
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
+#else
+    const u16 zoff = 0x0100;
+    const u16 zon = 0x000;
 #endif
 
     info = (u32*) dmaQueues;
     pl = (vu32*) GFX_CTRL_PORT;
+#if (HALT_Z80_ON_DMA == 0)
+    pw = (vu16*) Z80_HALT_PORT;
+#endif
 
     while(i--)
     {
-        // set DMA parameters and trigger it
+        // set DMA parameters
         *pl = *info++;  // regStepLenL = (0x8F00 | step) | ((0x9300 | (len & 0xFF)) << 16)
         *pl = *info++;  // regLenHAddrL = (0x9400 | ((len >> 8) & 0xFF)) | ((0x9500 | ((addr >> 1) & 0xFF)) << 16)
         *pl = *info++;  // regAddrMAddrH = (0x9600 | ((addr >> 9) & 0xFF)) | ((0x9700 | ((addr >> 17) & 0x7F)) << 16)
+
+#if (HALT_Z80_ON_DMA == 0)
+        // disable and re-enable Z80 immediately
+        *pw = zoff;
+        *pw = zon;
+#endif
+
+        // and trigger DMA !
+        // This allow to avoid DMA failure on some MD
+        // when Z80 try to access 68k BUS at same time the DMA starts.
+        // BUS arbitrer lantecy will disable Z80 for a very small amont of time
+        // when DMA start, avoiding that situation to happen !
         *pl = *info++;  // regCtrlWrite =  GFX_DMA_xxx_ADDR(to)
     }
 
-#if (HALT_Z80_ON_DMA == 1)
+#if (HALT_Z80_ON_DMA != 0)
     if (!z80state) Z80_releaseBus();
 #endif
 
@@ -293,12 +313,12 @@ void DMA_waitCompletion()
 void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 {
     vu16 *pw;
-//    vu32 *pl;
+    vu32 *pl;
     u32 cmd;
     u32 newlen;
     u32 banklimitb;
     u32 banklimitw;
-#if (HALT_Z80_ON_DMA == 1)
+#if (HALT_Z80_ON_DMA != 0)
     u16 z80state;
 #endif
 
@@ -335,12 +355,12 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     from >>= 8;
     *pw = 0x9700 + (from & 0x7f);
 
-#if (HALT_Z80_ON_DMA == 1)
+#if (HALT_Z80_ON_DMA != 0)
     z80state = Z80_isBusTaken();
     if (!z80state) Z80_requestBus(FALSE);
 #endif
 
-    // start DMA
+//    // start DMA
 //    pl = (vu32*) GFX_CTRL_PORT;
 //
 //    switch(location)
@@ -359,7 +379,6 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 //            break;
 //    }
 
-
     switch(location)
     {
         default:
@@ -376,15 +395,23 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
             break;
     }
 
-    // start DMA: force last command word to be fetched from RAM
-    // we do that to avoid possible DMA failure on some MD (bulletin notes from SEGA specify it)
-    asm volatile (
-    "move.l %0,-(%%sp)\n"
-    "\tmove.l (%%sp)+,0xC00004"
-    :: "r" (cmd) : "cc"
-    );
+    pw = (vu16*) Z80_HALT_PORT;
+    pl = (vu32*) GFX_CTRL_PORT;
 
-#if (HALT_Z80_ON_DMA == 1)
+#if (HALT_Z80_ON_DMA == 0)
+    // disable and re-enable Z80 immediately
+    *pw = 0x0100;
+    *pw = 0x0000;
+#endif
+
+    // and trigger DMA...
+    // This allow to avoid DMA failure on some MD
+    // when Z80 try to access 68k BUS at same time the DMA starts.
+    // BUS arbitrer lantecy will disable Z80 for a very small amont of time
+    // when DMA start, avoiding that situation to happen !
+    *pl = cmd;
+
+#if (HALT_Z80_ON_DMA != 0)
     if (!z80state) Z80_releaseBus();
 #endif
 }
