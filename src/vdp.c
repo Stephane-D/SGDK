@@ -122,20 +122,8 @@ void VDP_init()
     VDP_setAPlanAddress(0xE000);
     */
 
-    // reset video memory (len = 0 is a special value to define 0x10000)
-    DMA_doVRamFill(0, 0, 0, 1);
-    // wait for DMA completion
-    VDP_waitDMACompletion();
-
-     // system tiles (16 plain tile)
-    i = 16;
-    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
-
-    // load defaults palettes
-    PAL_setPalette(PAL0, palette_grey);
-    PAL_setPalette(PAL1, palette_red);
-    PAL_setPalette(PAL2, palette_green);
-    PAL_setPalette(PAL3, palette_blue);
+    // clear VRAM, reset palettes and scroll mode
+    VDP_resetScreen();
 
     // load default font
     if (!VDP_loadFont(&font_default, 0))
@@ -148,10 +136,6 @@ void VDP_init()
         VDP_drawText("Not enough memory to reset VDP !", 0, 5);
         while(1);
     }
-
-    // reset vertical scroll for plan A & B
-    VDP_setVerticalScroll(PLAN_A, 0);
-    VDP_setVerticalScroll(PLAN_B, 0);
 
     // reset sprite struct
     VDP_resetSprites();
@@ -729,10 +713,16 @@ static void computeFrameCPULoad(u16 blank, u16 vcnt)
 
 void VDP_resetScreen()
 {
-    VDP_clearPlan(PLAN_A, TRUE);
+    u16 i;
+
+    // reset video memory (len = 0 is a special value to define 0x10000)
+    DMA_doVRamFill(0, 0, 0, 1);
+    // wait for DMA completion
     VDP_waitDMACompletion();
-    VDP_clearPlan(PLAN_B, TRUE);
-    VDP_waitDMACompletion();
+
+     // system tiles (16 plain tile)
+    i = 16;
+    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
 
     PAL_setPalette(PAL0, palette_grey);
     PAL_setPalette(PAL1, palette_red);
