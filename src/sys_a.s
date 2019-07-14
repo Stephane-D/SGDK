@@ -46,6 +46,7 @@ SYS_setInterruptMaskLevel:
 
     move.w  6(%sp),%d0                      | d0 = value
     andi.w  #0x07,%d0
+    move.w  %d0,intLevelSave                | overwrite intLevelSave so we do not lost new interrupt mask
     ori.w   #0x20,%d0
     lsl.w   #8,%d0
     move.w  %d0,%sr
