@@ -68,8 +68,12 @@
 #define PORT_TYPE_MOUSE         0x03
 #define PORT_TYPE_TEAMPLAYER    0x07
 #define PORT_TYPE_PAD           0x0D
-#define PORT_TYPE_UKNOWN        0x0F
+#define PORT_TYPE_UNKNOWN       0x0F
 #define PORT_TYPE_EA4WAYPLAY    0x10
+/**
+ * \deprecated Use  PORT_TYPE_UNKNOWN instead
+ */
+#define PORT_TYPE_UKNOWN        PORT_TYPE_UNKNOWN
 
 #define JOY_SUPPORT_OFF             0x00
 #define JOY_SUPPORT_3BTN            0x01
@@ -127,10 +131,19 @@ typedef void _joyEventCallback(u16 joy, u16 changed, u16 state);
  *  \brief
  *      Initialize the controller sub system.<br>
  *
- *      Software and hardware controller port initialization.<br>
+ *      Software and hardware controller port initialization (reset and devices detection).<br>
  *      Automatically called at SGDK initialization, no need to call it manually.
  */
 void JOY_init();
+
+/**
+ *  \brief
+ *      Reset the controller sub system.<br>
+ *
+ *      It will reset the controller port state and perform device detectionSoftware and hardware controller port initialization.<br>
+ *      Automatically called at SGDK initialization, no need to call it manually.
+ */
+void JOY_reset();
 
 /**
  *  \brief
@@ -177,7 +190,7 @@ void JOY_setEventHandler(_joyEventCallback *CB);
  *      <b>JOY_SUPPORT_ANALOGJOY</b>      = Sega analog joypad (not yet supported)<br>
  *      <b>JOY_SUPPORT_KEYBOARD</b>       = Sega keyboard (not yet supported)<br>
  *<br>
- *      Ex : enable support for MegaMouse on second port :<br>
+ *      Ex: enable support for MegaMouse on second port<br>
  *      JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);<br>
  *<br>
  */
@@ -187,7 +200,7 @@ void JOY_setSupport(u16 port, u16 support);
  *  \brief
  *      Get peripheral type for the specified port.<br>
  *<br>
- *      The peripheral type for each port is automatically detected during JOY_init().<br>
+ *      The peripheral type for each port is automatically detected during #JOY_init() / #JOY_reset() call.<br>
  *      This function returns that type to help decide how the port support should be set.<br>
  *      Types greater than 15 are not derived via Sega's controller ID method.<br>
  *<br>
@@ -205,7 +218,7 @@ void JOY_setSupport(u16 port, u16 support);
  *      <b>PORT_TYPE_UNKNOWN</b>        = unidentified or no peripheral<br>
  *      <b>PORT_TYPE_EA4WAYPLAY</b>     = EA 4-Way Play<br>
  *<br>
- *      Ex : get peripheral type in port 1 :<br>
+ *      Ex: get peripheral type in port 1<br>
  *      type = JOY_getPortType(PORT_1);<br>
  *<br>
  */
@@ -214,6 +227,7 @@ u8 JOY_getPortType(u16 port);
 /**
  *  \brief
  *      Get joypad peripheral type connected to the specified joypad port.<br>
+ *      The joypad peripheral type for each port is automatically detected during #JOY_init() or #JOY_reset() call.<br>
  *      Prefer this method over JOY_getPortType(..) when you need to get information<br>
  *      about peripheral connected to multi joypad adapter (as the Sega TeamPlayer).
  *
