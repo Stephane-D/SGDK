@@ -95,7 +95,8 @@ __attribute__((externally_visible)) vu32 HIntProcess;
 __attribute__((externally_visible)) vu32 ExtIntProcess;
 __attribute__((externally_visible)) vu16 intTrace;
 
-static u16 intLevelSave;
+// need to be accessed from external
+u16 intLevelSave;
 static s16 disableIntStack;
 static u16 flag;
 static u32 missedFrames;
