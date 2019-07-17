@@ -337,8 +337,7 @@ void JOY_setSupport(u16 port, u16 support)
 
                 pb = (vu8 *)0xa10009 + port*2;
                 *pb = 0xB0;                     /* enable TH->HL */
-                val = VDP_getReg(0);
-                VDP_setReg(0, val | 0x02);      /* set M3, enable HV counter latch */
+                VDP_setHVLatching(TRUE);           /* enable HV counter latch */
                 val = VDP_getReg(11);
                 VDP_setReg(11, val | 0x08);     /* set IE2, enable external int */
 
@@ -357,8 +356,7 @@ void JOY_setSupport(u16 port, u16 support)
 
                 pb = (vu8 *)0xa10009 + port*2;
                 *pb = 0x30;                         /* disable TH->HL */
-                val = VDP_getReg(0);
-                VDP_setReg(0, val & ~0x02);         /* clear M3, disable HV counter latch */
+                VDP_setHVLatching(FALSE);              /* disable HV counter latch */
                 val = VDP_getReg(11);
                 VDP_setReg(11, val & ~0x08);        /* clear IE2, disable external int */
 
@@ -423,8 +421,7 @@ void JOY_setSupport(u16 port, u16 support)
 
                 pb = (vu8 *)0xa10009 + port*2;
                 *pb = 0x80;                     /* enable TH->HL */
-                val = VDP_getReg(0);
-                VDP_setReg(0, val | 0x02);      /* set M3, enable HV counter latch */
+                VDP_setHVLatching(TRUE);           /* enable HV counter latch */
                 val = VDP_getReg(11);
                 VDP_setReg(11, val | 0x08);     /* set IE2, enable external int */
 
@@ -443,8 +440,7 @@ void JOY_setSupport(u16 port, u16 support)
 
                 pb = (vu8 *)0xa10009 + port*2;
                 *pb = 0x40;                         /* disable TH->HL */
-                val = VDP_getReg(0);
-                VDP_setReg(0, val & ~0x02);         /* clear M3, disable HV counter latch */
+                VDP_setHVLatching(FALSE);              /* disable HV counter latch */
                 val = VDP_getReg(11);
                 VDP_setReg(11, val & ~0x08);        /* clear IE2, disable external int */
 
