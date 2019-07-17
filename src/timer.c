@@ -108,21 +108,16 @@ u32 getTimer(u16 numTimer, u16 restart)
 // WARNING : this function isn't accurate because of the VCounter rollback
 void waitSubTick(u32 subtick)
 {
-    u32 start;
-    u32 current;
-    u32 i;
-
-    // waitSubTick(...) can not be called from V-Int callback or when V-Int is disabled
-    if (SYS_getInterruptMaskLevel() >= 6)
+    // waitSubTick(...) can not be used from V-Int callback or when HV counter is latched
+    if ((SYS_getInterruptMaskLevel() >= 6) || VDP_getHVLatching())
     {
-        i = subtick;
+        u32 i = subtick;
 
         while(i--)
         {
             u32 tmp;
 
-            // TODO: use cycle accurate wait loop in asm
-            // about 100 cycles for 1 subtick
+            // TODO: use cycle accurate wait loop in asm (about 100 cycles for 1 subtick)
             asm volatile ("moveq #7,%0\n"
                 "1:\n\t"
                 "dbra %0,1b\n\t"
@@ -133,7 +128,8 @@ void waitSubTick(u32 subtick)
         return;
     }
 
-    start = getSubTick();
+    const u32 start = getSubTick();
+    u32 current;
 
     // wait until we reached subtick
     do
