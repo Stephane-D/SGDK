@@ -412,17 +412,22 @@ void _vint_callback()
 
     // detect if we are too late
     bool late = FALSE;
-    // V28 mode
-    if (VDP_getScreenHeight() == 224)
+
+    // we cannot detect late frame if HV latching is enabled..
+    if (!VDP_getHVLatching())
     {
-        // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
-        if ((vcnt < 224) || (vcnt > (224 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
-    }
-    // V30 mode
-    else
-    {
-        // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
-        if ((vcnt < 240) || (vcnt > (240 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
+        // V28 mode
+        if (VDP_getScreenHeight() == 224)
+        {
+            // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
+            if ((vcnt < 224) || (vcnt > (224 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
+        }
+        // V30 mode
+        else
+        {
+            // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
+            if ((vcnt < 240) || (vcnt > (240 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
+        }
     }
 
     // interrupt happened too late ?
@@ -456,7 +461,6 @@ void _vint_callback()
 
     // call user callback (pre V-Int)
     if (VIntCBPre) VIntCBPre();
-
 
     u16 vintp = VIntProcess;
     // may worth it
