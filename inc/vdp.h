@@ -610,7 +610,6 @@ u8 VDP_getVerticalScrollingMode();
  */
 void VDP_setScrollingMode(u16 hscroll, u16 vscroll);
 
-
 /**
  *  \brief
  *      Returns the background color index.
@@ -633,6 +632,30 @@ u8   VDP_getAutoInc();
  */
 void VDP_setAutoInc(u8 value);
 
+/**
+ *  \brief
+ *      Returns DMA enabled state
+ */
+u8 VDP_getDMAEnabled();
+/**
+ *  \brief
+ *      Set DMA enabled state.
+ *
+ *  Note that by default SGDK always enable DMA (there is no reason to disable it)
+ */
+void VDP_setDMAEnabled(u8 value);
+/**
+ *  \brief
+ *      Returns HV counter latching on INT2 (used for light gun)
+ */
+u8 VDP_getHVLatching();
+/**
+ *  \brief
+ *      Set HV counter latching on INT2 (used for light gun)
+ *
+ *  You can ask the HV Counter to fix its value on INT2 for accurate light gun positionning.
+ */
+void VDP_setHVLatching(u8 value);
 /**
  *  \brief
  *      Enable or Disable Horizontal interrupt.

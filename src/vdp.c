@@ -469,6 +469,38 @@ void VDP_setAutoInc(u8 value)
 }
 
 
+u8 VDP_getDMAEnabled()
+{
+    return regValues[0x01] & 0x10;
+}
+
+void VDP_setDMAEnabled(u8 value)
+{
+    vu16 *pw;
+
+    if (value) regValues[0x01] |= 0x10;
+    else regValues[0x01] &= ~0x10;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8100 | regValues[0x01];
+}
+
+u8 VDP_getHVLatching()
+{
+    return regValues[0x00] & 0x02;
+}
+
+void VDP_setHVLatching(u8 value)
+{
+    vu16 *pw;
+
+    if (value) regValues[0x00] |= 0x02;
+    else regValues[0x00] &= ~0x02;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8000 | regValues[0x00];
+}
+
 void VDP_setHInterrupt(u8 value)
 {
     vu16 *pw;
