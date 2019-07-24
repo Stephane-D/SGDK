@@ -37,6 +37,7 @@ typedef __gnuc_va_list va_list;
                        - ((sizeof (TYPE) < __va_rounded_size (char)     \
                            ? sizeof (TYPE) : __va_rounded_size (TYPE))))))
 
+#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Calculate the length of a string (limited to 65535 characters maximum).
@@ -149,6 +150,8 @@ char* strcat(char *dest, const char *src);
  * Replace all occurrences of character in a null-terminated string.
  */
 char *strreplacechar(char *str, char oldc, char newc);
+#endif  // ENABLE_NEWLIB
+
 /**
  *  \brief
  *      Convert a s32 value to string (input value should be in [-500000000..500000000] range).
@@ -226,6 +229,7 @@ void fix32ToStr(fix32 value, char *str, u16 numdec);
  */
 void fix16ToStr(fix16 value, char *str, u16 numdec);
 
+#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Composes a string with the same text that would be printed if format was used on printf,
@@ -252,7 +256,7 @@ void fix16ToStr(fix16 value, char *str, u16 numdec);
  *
  */
 u16 sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
-
+#endif  // ENABLE_NEWLIB
 
 #endif // _STRING_H_
 

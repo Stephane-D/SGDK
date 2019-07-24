@@ -34,11 +34,13 @@ extern const fix16 sqrttab16[0x10000];
  */
 #define max(X, Y)   (((X) > (Y))?(X):(Y))
 
+#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Returns the absolute value of X.
  */
 #define abs(X)      (((X) < 0)?-(X):(X))
+#endif  // ENABLE_NEWLIB
 
 #ifndef PI
 /**

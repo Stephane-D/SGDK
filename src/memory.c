@@ -450,6 +450,23 @@ static u16* pack(u16 nsize)
 }
 
 
+#if (ENABLE_NEWLIB == 0)
+extern void memset_(void *to, u8 value, u16 len);
+
+void memset(void *to, u8 value, u16 len)
+{
+    memset_(to, value, len);
+}
+
+extern void memcpy_(void *to, const void *from, u16 len);
+
+void memcpy(void *to, const void *from, u16 len)
+{
+    memcpy_(to, from, len);
+}
+#endif  // ENABLE_NEWLIB
+
+
 void memcpyU16(u16 *to, const u16 *from, u16 len)
 {
     memcpy(to, from, len * 2);

@@ -39,6 +39,13 @@
 
 /**
  *  \brief
+ *      Set it to 1 if you want to use newlib with SGDK.<br>
+ *      That will disable any standard methods from SGDK to replace them by newlib library implementation.
+ */
+#define ENABLE_NEWLIB       0
+
+/**
+ *  \brief
  *      Set it to 1 to enable the big Math lookup tables.<br>
  *      This table permits Log2, Log10 and Sqrt operation for fix16 type (128*3 KB of rom).
  */

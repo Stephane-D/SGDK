@@ -19,8 +19,10 @@
 #define P09 1000000000
 #define P10 10000000000
 
+#if (ENABLE_NEWLIB == 0)
 static const char const uppercase_hexchars[] = "0123456789ABCDEF";
 static const char const lowercase_hexchars[] = "0123456789abcdef";
+#endif  // ENABLE_NEWLIB
 static const char digits[] =
     "0001020304050607080910111213141516171819"
     "2021222324252627282930313233343536373839"
@@ -31,10 +33,13 @@ static const char digits[] =
 // FORWARD
 static u16 digits10(const u16 v);
 static u16 uint16ToStr(u16 value, char *str, u16 minsize);
+#if (ENABLE_NEWLIB == 0)
 static u16 skip_atoi(const char **s);
 static u16 vsprintf(char *buf, const char *fmt, va_list args);
+#endif  // ENABLE_NEWLIB
 
 
+#if (ENABLE_NEWLIB == 0)
 u16 strlen(const char *str)
 {
     const char *src;
@@ -150,6 +155,8 @@ char *strreplacechar(char *str, char oldc, char newc)
 
     return s;
 }
+#endif  // ENABLE_NEWLIB
+
 
 u16 intToStr(s32 value, char *str, u16 minsize)
 {
@@ -348,6 +355,7 @@ static u16 digits10(const u16 v)
     }
 }
 
+#if (ENABLE_NEWLIB == 0)
 static u16 skip_atoi(const char **s)
 {
     u16 i = 0;
@@ -357,7 +365,6 @@ static u16 skip_atoi(const char **s)
 
     return i;
 }
-
 
 static u16 vsprintf(char *buf, const char *fmt, va_list args)
 {
@@ -636,3 +643,4 @@ u16 sprintf(char *buffer, const char *fmt, ...)
 
     return i;
 }
+#endif // ENABLE_NEWLIB

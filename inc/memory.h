@@ -200,6 +200,7 @@ void* MEM_alloc(u16 size);
  */
 void MEM_dump();
 
+#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Fill block of memory
@@ -214,6 +215,8 @@ void MEM_dump();
  * Sets the first num bytes of the block of memory pointed by to with the specified value.
  */
 void memset(void *to, u8 value, u16 len);
+#endif  // ENABLE_NEWLIB
+
 /**
  *  \brief
  *      Fill block of memory (optimized for u16)
@@ -242,6 +245,8 @@ void memsetU16(u16 *to, u16 value, u16 len);
  * Sets the first num longs of the block of memory pointed by to with the specified value.
  */
 void memsetU32(u32 *to, u32 value, u16 len);
+
+#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Copy block of memory
@@ -257,6 +262,8 @@ void memsetU32(u32 *to, u32 value, u16 len);
  * The underlying type of the objects pointed by both the source and destination pointers are irrelevant for this function; The result is a binary copy of the data.
  */
 void memcpy(void *to, const void *from, u16 len);
+#endif  // ENABLE_NEWLIB
+
 /**
  *  \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */

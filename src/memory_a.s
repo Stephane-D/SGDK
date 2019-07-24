@@ -1,5 +1,5 @@
-    .globl	memset
-memset:
+    .globl	memset_
+memset_:
     move.w  14(%sp),%d0         | d0 = len
     jeq     .L02
 
@@ -191,8 +191,8 @@ memsetU32:
     rts
 
 
-    .globl	memcpy
-memcpy:
+    .globl	memcpy_
+memcpy_:
     move.w  14(%sp),%d0         | d0 = len
     jeq     .L82
 
