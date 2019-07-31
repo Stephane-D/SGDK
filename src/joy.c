@@ -64,18 +64,26 @@ void JOY_reset()
     pb = (vu8 *)0xa10009;
     *pb = 0x40;
     pb = (vu8 *)0xa1000b;
-    *pb = 0x43;
-    pb = (vu8 *)0xa10005;
-    *pb = 0x7C;
-    pb = (vu8 *)0xa1000b;
     *pb = 0x7F;
+    pb = (vu8 *)0xa10003;
+    *pb = 0x40;
+
     pb = (vu8 *)0xa10005;
-    *pb = 0x7C;
+    *pb = 0x0C;
+    asm volatile ("nop");
+    asm volatile ("nop");
     pb = (vu8 *)0xa10003;
     a = *pb & 3;
 
+    pb = (vu8 *)0xa10005;
+    *pb = 0x7C;
+    asm volatile ("nop");
+    asm volatile ("nop");
+    pb = (vu8 *)0xa10003;
+    b = *pb & 3;
+
     /* EA 4-Way Play detected */
-    if (a == 0)
+    if (a != 0 && b == 0)
     {
         /* EA 4-Way Play is the only thing that can be plugged in as it takes both ports */
         portType[PORT_1] = PORT_TYPE_EA4WAYPLAY;
