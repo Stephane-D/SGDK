@@ -150,7 +150,6 @@ static u16 dmawaitload;
 
 // left / right sprites
 static Sprite* YMPanSprites[6];
-static Sprite* progressBar;
 static Sprite* trackListCursor;
 static Sprite* trackListShadowTop[3];
 static Sprite* trackListShadowBottom[3];
@@ -218,7 +217,7 @@ int main()
     VDP_setBPlanAddress(0xC000);
     VDP_setAPlanAddress(0xE000);
 
-    // set window visible from first ro up to row 13
+    // set window visible from first row up to row 13
     VDP_setWindowHPos(FALSE, 0);
     VDP_setWindowVPos(FALSE, 13);
     // by default we draw text in window plan and in high priority
@@ -274,7 +273,9 @@ int main()
     XGM_setForceDelayDMA(TRUE);
 
     // init some GFX var
-    tileIndex = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + starfield.tileset->numTile;
+    tileIndexProgressBar = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile;
+    tileIndex = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile + starfield.tileset->numTile;
+
     bgMap = unpackMap(bg.map, NULL);
 
     // init shuffle list
@@ -285,7 +286,7 @@ int main()
     initBGScroll();
 
     // init Sprite engine
-    SPR_initEx(20, 80, 64);
+    SPR_initEx(80, 64);
 
     // prepare sprites for panning
     YMPanSprites[0] = SPR_addSprite(&left_right, 32 + 0, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
@@ -296,9 +297,6 @@ int main()
     YMPanSprites[5] = SPR_addSprite(&left_right, 32 + 119, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     for(i = 0; i < 6; i++)
         SPR_setVisibility(YMPanSprites[i], VISIBLE);
-    // progress bar
-    progressBar = SPR_addSpriteEx(&progress_bar, 78, 64, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, tileIndexProgressBar), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    SPR_setVisibility(progressBar, VISIBLE);
     // prepare track list cursor
     trackListCursor = SPR_addSprite(&cursor, 0, 108, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     SPR_setVisibility(trackListCursor, VISIBLE);
@@ -598,9 +596,12 @@ static void drawStaticGUI()
 
     SYS_disableInts();
 
+    // General GUI & logo
     VDP_drawImageEx(PLAN_WINDOW, &bg, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 0, FALSE, TRUE);
     VDP_drawImageEx(PLAN_WINDOW, &music_logo, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile), 21, 0, FALSE, TRUE);
-    VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(PLAN_WINDOW, &progress_bar, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileIndexProgressBar), 9, 8, FALSE, TRUE);
+    // starfield
+    VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile), 0, 0, FALSE, TRUE);
 
     // prepare 'bitmap' buffer for chips state rendering
     i = 0;
@@ -623,16 +624,14 @@ static void drawStaticGUI()
         for(y = 0; y < 4; y++, i++)
             VDP_setTileMapXY(PLAN_WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 36 + x, 21 + y);
 
-    // preload tilesets for progress bar and shadow mask
-    tileIndexProgressBar = tileIndex + i;
-    tileset = unpackTileSet(progress_bar.animations[0]->frames[0]->tileset, NULL);
+    // prepare progress bar rendering buffer
+    tileset = unpackTileSet(progress_bar.tileset, NULL);
     memcpy(progressTileBuffer, tileset->tiles, tileset->numTile * 32);
-    VDP_loadTileSet(tileset, tileIndexProgressBar, TRUE);
-
-    tileIndexShadowMaskOdd = tileIndexProgressBar + tileset->numTile;
     // release unpacked tileset
     MEM_free(tileset);
 
+    // preload tilesets for shadow mask
+    tileIndexShadowMaskOdd =  tileIndex + i;
     tileset = shadow_mask_16.animations[0]->frames[0]->tileset;
     VDP_loadTileSet(tileset, tileIndexShadowMaskOdd, TRUE);
     tileIndexShadowMaskEven = tileIndexShadowMaskOdd + tileset->numTile;
@@ -802,7 +801,7 @@ static void updateProgressBar(u16 level)
 
     // min level = 2, max level = 58
     u16 curLevel = progressBarLevel;
-    u8 col = 0x33;
+    u8 col = 0x99;
     u8* dst = &progressTileBuffer[12];
 
     dst += (curLevel >> 2) << 5;
@@ -1097,10 +1096,18 @@ static void drawYMState()
     while(c--)
     {
         const YM_SLOT *sl = &(ch->slots[0]);
+        const u16 pan = (ch->pan >> 6) & 3;
         u16 s;
 
         // set LEFT/RIGHT panning info
-        SPR_setAnim(*panSpr++, (ch->pan >> 6) & 3);
+        if (pan)
+        {
+            SPR_setVisibility(*panSpr, VISIBLE);
+            SPR_setAnim(*panSpr, pan - 1);
+        }
+        else
+            SPR_setVisibility(*panSpr, HIDDEN);
+        panSpr++;
 
         s = 4;
         while(s--)
