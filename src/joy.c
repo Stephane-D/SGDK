@@ -44,7 +44,8 @@ void JOY_init()
 void JOY_reset()
 {
     vu8 *pb;
-    u8  a, id;
+    u8 a, b;
+    u8 id;
     u16 i;
 #if (HALT_Z80_ON_IO == 1)
     u16 z80state;
