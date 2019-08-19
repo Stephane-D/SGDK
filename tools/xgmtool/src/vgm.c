@@ -1135,7 +1135,16 @@ void VGM_cleanCommands(VGM* vgm)
 
             // keep data block, stream commands and other misc commands
             if (VGMCommand_isDataBlock(command) || VGMCommand_isStream(command) || VGMCommand_isLoopStart(command) || VGMCommand_isLoopEnd(command))
+            {
                 optimizedCommands = insertAfterLList(optimizedCommands, command);
+                // loop start ? -->
+                if (VGMCommand_isLoopStart(command))
+                {
+                    // need to reset YM and PSG previous state
+                    ymOldState = YM2612_create();
+                    psgOldState = PSG_create();
+                }
+            }
             else if (VGMCommand_isPSGWrite(command))
                 PSG_write(psgState, VGMCommand_getPSGValue(command));
             else if (VGMCommand_isYM2612Write(command))
