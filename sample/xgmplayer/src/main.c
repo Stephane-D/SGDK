@@ -60,7 +60,7 @@ const u16 gfx_palette[16] =
     0x0040,     // C - dark green
     0x00E0,     // D - green
 
-    0x0044,     // D - dark yellow
+    0x0044,     // E - dark yellow
     0x00EE      // F - yellow
 };
 
