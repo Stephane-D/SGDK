@@ -11,6 +11,7 @@ import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.SpriteCell.OptimizationType;
 
 public class SpriteAnimation extends Resource
 {
@@ -31,7 +32,7 @@ public class SpriteAnimation extends Resource
      *        height of frame in tile
      */
     public SpriteAnimation(String id, byte[] image8bpp, int w, int h, int animIndex, int wf, int hf, int time,
-            CollisionType collision, Compression compression)
+            CollisionType collision, Compression compression, OptimizationType opt, long optIteration)
     {
         super(id);
 
@@ -47,7 +48,7 @@ public class SpriteAnimation extends Resource
         for (int i = 0; i < numFrame; i++)
         {
             SpriteFrame frame = new SpriteFrame(id + "_frame" + i, image8bpp, w, h, i, animIndex, wf, hf, time,
-                    collision, compression);
+                    collision, compression, opt, optIteration);
 
             // check if empty
             if (!frame.isEmpty())

@@ -9,21 +9,22 @@ import java.util.List;
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.SpriteCell;
+import sgdk.rescomp.type.SpriteCell.OptimizationType;
 
 public class SpriteFrameInfo extends Resource
 {
     public static SpriteFrameInfo getSpriteFrameInfo(String id, SpriteFrameInfo base, int wf, int hf, boolean hflip,
-            boolean vflip)
+            boolean vflip, OptimizationType opt)
     {
         final List<SpriteCell> spriteCells = new ArrayList<>();
 
         for (VDPSprite sprite : base.vdpSprites)
-            spriteCells.add(getSpriteCell(sprite, wf, hf, hflip, vflip));
+            spriteCells.add(getSpriteCell(sprite, wf, hf, hflip, vflip, opt));
 
         return new SpriteFrameInfo(id, spriteCells, base.collision);
     }
 
-    static SpriteCell getSpriteCell(VDPSprite base, int wf, int hf, boolean hflip, boolean vflip)
+    static SpriteCell getSpriteCell(VDPSprite base, int wf, int hf, boolean hflip, boolean vflip, OptimizationType opt)
     {
         final int x;
         final int y;
@@ -37,7 +38,7 @@ public class SpriteFrameInfo extends Resource
         else
             y = base.offsetY;
 
-        return new SpriteCell(x, y, base.wt * 8, base.ht * 8);
+        return new SpriteCell(x, y, base.wt * 8, base.ht * 8, opt);
     }
 
     public final List<VDPSprite> vdpSprites;
@@ -84,9 +85,9 @@ public class SpriteFrameInfo extends Resource
     @Override
     public String toString()
     {
-        return id +":" + vdpSprites.size() + " sprites";
+        return id + ":" + vdpSprites.size() + " sprites";
     }
-    
+
     @Override
     public int shallowSize()
     {
@@ -108,5 +109,4 @@ public class SpriteFrameInfo extends Resource
         outS.println();
     }
 
-    
 }

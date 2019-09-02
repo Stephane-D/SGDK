@@ -10,6 +10,7 @@ import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.PackedData;
 import sgdk.rescomp.type.Basics.SoundDriver;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
 import sgdk.tool.SystemUtil;
@@ -87,6 +88,20 @@ public class Util
             return TileOptimization.DUPLICATE_ONLY;
 
         throw new IllegalArgumentException("Unrecognized tilemap optimization: '" + text + "'");
+    }
+
+    public static OptimizationType getSpriteOpt(String text)
+    {
+        final String upText = text.toUpperCase();
+
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "BALANCED") || StringUtil.equals(upText, "0"))
+            return OptimizationType.BALANCED;
+        if (StringUtil.equals(upText, "SPRITE") || StringUtil.equals(upText, "1"))
+            return OptimizationType.MIN_SPRITE;
+        if (StringUtil.equals(upText, "TILE") || StringUtil.equals(upText, "2"))
+            return OptimizationType.MIN_TILE;
+
+        throw new IllegalArgumentException("Unrecognized sprite optimization: '" + text + "'");
     }
 
     public static byte[] sizeAlign(byte[] data, int align, byte fill)

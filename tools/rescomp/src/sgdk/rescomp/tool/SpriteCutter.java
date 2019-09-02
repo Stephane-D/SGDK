@@ -32,10 +32,10 @@ public class SpriteCutter
         for (int gridSize = 8; gridSize <= 32; gridSize += 8)
         {
             // get best grid (minimum number of tile for region image covering)
-            final CellGrid grid = spriteCutter.getBestGrid(gridSize);
+            final CellGrid grid = spriteCutter.getBestGrid(gridSize, optimizationType);
             // quick tiles merging where possible
             if (gridSize == 8)
-                grid.mergeCells();
+                grid.mergeCells(optimizationType);
             // build the solution from the grid
             final Solution solution = spriteCutter.getSolution(grid, optimizationType);
             // fast optimization
@@ -90,7 +90,7 @@ public class SpriteCutter
      * <b>WARNING:</b> this methods can take a very long time to execute depending the wanted number
      * of iteration.
      * 
-     * @param numIteration
+     * @param optIteration
      *        Number of iteration for the genetic algorithm (about 100000 it/s on core i5@2Ghz with
      *        a 128x96 sprite)
      * @param optimizationType
@@ -98,10 +98,10 @@ public class SpriteCutter
      * @see SpriteCutter#startOptimization(Solution, int)
      * @see SpriteCutter#getOptimizedSolution()
      */
-    public static List<SpriteCell> getSlowOptimizedSpriteList(byte[] image8bpp, Dimension imageDim, int numIteration,
+    public static List<SpriteCell> getSlowOptimizedSpriteList(byte[] image8bpp, Dimension imageDim, long optIteration,
             OptimizationType optimizationType)
     {
-        return getSlowOptimizedSpriteList(image8bpp, imageDim, new Rectangle(imageDim), numIteration, optimizationType);
+        return getSlowOptimizedSpriteList(image8bpp, imageDim, new Rectangle(imageDim), optIteration, optimizationType);
     }
 
     /**
@@ -109,7 +109,7 @@ public class SpriteCutter
      * <b>WARNING:</b> this methods can take a very long time to execute depending the wanted number
      * of iteration.
      * 
-     * @param numIteration
+     * @param optIteration
      *        Number of iteration for the genetic algorithm (about 100000 it/s on core i5@2Ghz with
      *        a 128x96 sprite)
      * @param optimizationType
@@ -118,7 +118,7 @@ public class SpriteCutter
      * @see SpriteCutter#getOptimizedSolution()
      */
     public static List<SpriteCell> getSlowOptimizedSpriteList(byte[] image8bpp, Dimension imageDim,
-            Rectangle frameBounds, int numIteration, OptimizationType optimizationType)
+            Rectangle frameBounds, long optIteration, OptimizationType optimizationType)
     {
         // get fast solution
         final List<Solution> baseSolutions = getFastOptimizedSolutions(image8bpp, imageDim, frameBounds,
@@ -131,7 +131,7 @@ public class SpriteCutter
         // build the solution
         final SpriteCutter spriteCutter = new SpriteCutter(image8bpp, imageDim, frameBounds);
         // start optimization
-        spriteCutter.startOptimization(baseSolutions, numIteration);
+        spriteCutter.startOptimization(baseSolutions, optIteration);
 
         try
         {
@@ -689,7 +689,7 @@ public class SpriteCutter
 
         final int maxBranch;
         final int solutionPoolSize;
-        final int maxIteration;
+        final long maxIteration;
         final int numWorker;
 
         int curBranchId;
@@ -705,20 +705,20 @@ public class SpriteCutter
         /**
          * @param bases
          *        input solutions to optimize (should be valid)
-         * @param maxIteration
+         * @param numIteration
          *        maximum number of iteration (0 = no maximum)
          * @param maxBranch
          *        maximum number of alive branch
          * @param solutionPoolSize
          *        maximum number of solution per branch
          */
-        public SolutionOptimizer(List<Solution> bases, int maxIteration, int maxBranch, int solutionPoolSize)
+        public SolutionOptimizer(List<Solution> bases, long numIteration, int maxBranch, int solutionPoolSize)
         {
             super();
 
             this.maxBranch = maxBranch;
             this.solutionPoolSize = solutionPoolSize;
-            this.maxIteration = maxIteration;
+            this.maxIteration = numIteration;
 
             globalBestScore = Double.MAX_VALUE;
             numWorker = SystemUtil.getNumberOfCPUs();
@@ -747,12 +747,12 @@ public class SpriteCutter
         /**
          * @param bases
          *        input solutions to optimize (should be valid)
-         * @param maxIteration
+         * @param numIteration
          *        maximum number of iteration (0 = no maximum)
          */
-        public SolutionOptimizer(List<Solution> bases, int maxIteration)
+        public SolutionOptimizer(List<Solution> bases, long numIteration)
         {
-            this(bases, maxIteration, DEFAULT_MAX_BRANCH, DEFAULT_SOLUTION_POOL_SIZE);
+            this(bases, numIteration, DEFAULT_MAX_BRANCH, DEFAULT_SOLUTION_POOL_SIZE);
         }
 
         public byte[] getImage()
@@ -927,7 +927,7 @@ public class SpriteCutter
         this(ImageUtil.getSubImage(image8bpp, imageDim, frameBounds), frameBounds.getSize());
     }
 
-    public CellGrid getBestGrid(int cellSize)
+    public CellGrid getBestGrid(int cellSize, OptimizationType opt)
     {
         final Rectangle imageBounds = new Rectangle(dim);
         final int cellMask = cellSize - 1;
@@ -945,7 +945,7 @@ public class SpriteCutter
                 {
                     for (int y = offY, yc = 0; y < (dim.height + cellSize); y += cellSize, yc++)
                     {
-                        final SpriteCell tileRect = new SpriteCell(x, y, cellSize, cellSize);
+                        final SpriteCell tileRect = new SpriteCell(x, y, cellSize, cellSize, opt);
 
                         if (!ImageUtil.isTransparent(image, dim, tileRect.intersection(imageBounds)))
                             grid.set(xc, yc, tileRect);
@@ -988,7 +988,7 @@ public class SpriteCutter
      * @see #isOptimizationDone()
      * @see #getOptimizedSolution()
      */
-    public void startOptimization(List<Solution> solutions, int numIteration)
+    public void startOptimization(List<Solution> solutions, long numIteration)
     {
         if (optimizer != null)
             optimizer.interrupt();

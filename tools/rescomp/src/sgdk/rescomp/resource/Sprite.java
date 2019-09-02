@@ -11,6 +11,7 @@ import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ArrayMath;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
@@ -25,8 +26,8 @@ public class Sprite extends Resource
 
     public final Palette palette;
 
-    public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision)
-            throws IOException, IllegalArgumentException
+    public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision,
+            OptimizationType opt, long optIteration) throws IOException, IllegalArgumentException
     {
         super(id);
 
@@ -94,7 +95,7 @@ public class Sprite extends Resource
         {
             // build sprite animation
             SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, imgData, wt, ht, i, wf, hf, time,
-                    collision, compression);
+                    collision, compression, opt, optIteration);
 
             // check if empty
             if (!animation.isEmpty())

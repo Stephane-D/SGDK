@@ -21,7 +21,7 @@ import sgdk.tool.ImageUtil;
 
 public class SpriteFrame extends Resource
 {
-    static final int SPRITE_SLOW_OPTIMIZATION_NUM_ITERATION = 500000;
+    public static final int DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION = 500000;
 
     public final SpriteFrameInfo frameInfo;
     public final SpriteFrameInfo frameInfoH;
@@ -45,7 +45,7 @@ public class SpriteFrame extends Resource
      *        height of frame in tile
      */
     public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf,
-            int timer, CollisionType collisionType, Compression compression)
+            int timer, CollisionType collisionType, Compression compression, OptimizationType opt, long optIteration)
     {
         super(id);
 
@@ -62,18 +62,16 @@ public class SpriteFrame extends Resource
         List<SpriteCell> sprites;
 
         // always start with the fast optimization first
-        sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(), OptimizationType.MIX);
+        sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(), opt);
 
         // too many sprites used for this sprite ? prefer better (but slower) sprite optimization
         if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
-            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(),
-                    SPRITE_SLOW_OPTIMIZATION_NUM_ITERATION, OptimizationType.MIX);
+            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration, opt);
 
-        // above the limit of internal sprite ? try the alternative optimization method
-        // (minimize the number of sprite)
-        if (sprites.size() > 16)
-            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(),
-                    SPRITE_SLOW_OPTIMIZATION_NUM_ITERATION, OptimizationType.MIN_SPRITE);
+        // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of sprite)
+        if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
+            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration,
+                    OptimizationType.MIN_SPRITE);
 
         // still above the limit ? --> stop here :-(
         if (sprites.size() > 16)
@@ -136,11 +134,11 @@ public class SpriteFrame extends Resource
         // build frameInfo structures
         frameInfo = (SpriteFrameInfo) addInternalResource(new SpriteFrameInfo(id + "_base", sprites, collision));
         frameInfoH = (SpriteFrameInfo) addInternalResource(
-                SpriteFrameInfo.getSpriteFrameInfo(id + "_hflip", frameInfo, wf, hf, true, false));
+                SpriteFrameInfo.getSpriteFrameInfo(id + "_hflip", frameInfo, wf, hf, true, false, opt));
         frameInfoV = (SpriteFrameInfo) addInternalResource(
-                SpriteFrameInfo.getSpriteFrameInfo(id + "_vflip", frameInfo, wf, hf, false, true));
+                SpriteFrameInfo.getSpriteFrameInfo(id + "_vflip", frameInfo, wf, hf, false, true, opt));
         frameInfoHV = (SpriteFrameInfo) addInternalResource(
-                SpriteFrameInfo.getSpriteFrameInfo(id + "_hvflip", frameInfo, wf, hf, true, true));
+                SpriteFrameInfo.getSpriteFrameInfo(id + "_hvflip", frameInfo, wf, hf, true, true, opt));
 
         hc = (h << 0) ^ (w << 8) ^ (timer << 16) ^ tileset.hashCode() ^ frameInfo.hashCode() ^ frameInfoH.hashCode()
                 ^ frameInfoV.hashCode() ^ frameInfoHV.hashCode();

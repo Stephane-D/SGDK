@@ -1,6 +1,6 @@
-ResComp 2.0 (march 2019)
+ResComp 2.4 (september 2019)
 Copyright Stephane Dallongeville
-https://stephane-d.github.io/SGDK/
+https://github.com/Stephane-D/SGDK
 
 ResComp is part of SGDK (aka Sega Genesis Dev Kit) so refer to SGDK licence if needed.
 
@@ -120,7 +120,7 @@ Take an image as input and transform it in SGDK SpriteDefinition structure.
 SpriteDefinition is used to draw, animate and manage sprites, it internally contains severals TileSet, Palette and Animation structures.
 
 Syntax:
-SPRITE name img_file width heigth [compression [time [collision]]]
+SPRITE name img_file width heigth [compression [time [collision [opt [iteration]]]]]
 
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (should be 8bpp .bmp or .png)
@@ -134,6 +134,11 @@ SPRITE name img_file width heigth [compression [time [collision]]]
     time            display frame time in 1/60 of second (time between each animation frame)
                        If this value is set to 0 (default) then auto animation is disabled
     collision       collision type: CIRCLE, BOX or NONE (NONE by default)
+    opt             sprite cutting optimization strategy, accepted values:
+                        0 / BALANCED  = balance between used tiles and hardware sprites (default)
+                        1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles
+                        2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)
+    iteration       number of iteration for sprite cutting optimization (default = 500000)
 
 Some informations about how SpriteDefinition is generated from the input image:
 - input image dimension is aligned on tile (multiple of 8).

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sgdk.rescomp.type.SpriteCell.OptimizationType;
+
 public class CellGrid
 {
     final SpriteCell[][] grid;
@@ -75,7 +77,7 @@ public class CellGrid
         return result;
     }
 
-    public void mergeCells()
+    public void mergeCells(OptimizationType opt)
     {
         for (int j = 0; j < grid.length; j++)
         {
@@ -85,7 +87,7 @@ public class CellGrid
             {
                 // occupied and not yet merged ?
                 if ((row[i] != null) && row[i].isSingleTile())
-                    mergeAt(i, j);
+                    mergeAt(i, j, opt);
             }
         }
     }
@@ -106,7 +108,7 @@ public class CellGrid
         return new ArrayList<>(result);
     }
 
-    private void mergeAt(int x, int y)
+    private void mergeAt(int x, int y, OptimizationType opt)
     {
         int w = 1;
         while ((w < 4) && isUsed(x + w, y, false))
@@ -144,7 +146,7 @@ public class CellGrid
         // merge to do ?
         if ((w > 1) || (h > 1))
         {
-            final SpriteCell cell = new SpriteCell(offsetX + (x * 8), offsetY + (y * 8), w * 8, h * 8);
+            final SpriteCell cell = new SpriteCell(offsetX + (x * 8), offsetY + (y * 8), w * 8, h * 8, opt);
 
             for (int j = y; j < y + h; j++)
             {

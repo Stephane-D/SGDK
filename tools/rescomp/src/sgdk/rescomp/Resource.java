@@ -20,7 +20,7 @@ public abstract class Resource
     /**
      * Add this resource as internal resource
      */
-    public Resource addInternalResource(Resource resource)
+    public static Resource addInternalResource(Resource resource)
     {
         // add this resource as 'internal' resource
         return Compiler.addResource(resource, true);

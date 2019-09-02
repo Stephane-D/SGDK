@@ -14,7 +14,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
 {
     public static enum OptimizationType
     {
-        MIN_SPRITE, MIN_TILE, MIX
+        BALANCED, MIN_SPRITE, MIN_TILE
     };
 
     public static final Comparator<SpriteCell> sizeAndCoverageComparator = new Comparator<SpriteCell>()
@@ -45,11 +45,6 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         coveredPix = -1;
     }
 
-    public SpriteCell(Rectangle r)
-    {
-        this(r, OptimizationType.MIX);
-    }
-
     public SpriteCell(int x, int y, int width, int height, OptimizationType opt)
     {
         super(x, y, width, height);
@@ -57,11 +52,6 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         this.opt = opt;
         numTile = (width * height) / 64;
         coveredPix = -1;
-    }
-
-    public SpriteCell(int x, int y, int width, int height)
-    {
-        this(x, y, width, height, OptimizationType.MIX);
     }
 
     public boolean isSingleTile()
@@ -247,15 +237,15 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
     {
         switch (opt)
         {
+            default:
+            case BALANCED:
+                return (numTile / 20d) + (1 / 10d);
+
             case MIN_SPRITE:
                 return (numTile / 40d) + (1 / 8d);
 
             case MIN_TILE:
                 return (numTile / 10d) + (1 / 15d);
-
-            default:
-            case MIX:
-                return (numTile / 20d) + (1 / 10d);
         }
 
         // return (1 / 10d);
