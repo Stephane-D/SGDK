@@ -1,6 +1,6 @@
 LZ4W packer 1.4 (march 2019)
 Copyright Stephane Dallongeville
-https://stephane-d.github.io/SGDK/
+https://github.com/Stephane-D/SGDK
 
 LZ4W is part of SGDK (aka Sega Genesis Dev Kit) so refer to SGDK licence if needed.
 
