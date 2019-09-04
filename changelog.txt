@@ -1,3 +1,54 @@
+SGDK 1.41 (September 2019)
+--------------------------
+
+COMPILER
+* RESCOMP
+ - added new sprite optimization options to SPRITE resource (see rescomp.txt for details)
+ - minor tweak on binary export order (can save some bytes with LZ4W compression)
+ - fixed resource duplication bug
+* XGMTOOL
+ - fixed VGM loop
+  
+LIBRARY
+* SYS
+ - Safer SYS_setInterruptMaskLevel() so interrupt mask is not lost after SYS_enablesInts() call
+ - fixed/updated SGDK logo display code
+ - renamed getFPS() / getFPS_f() to SYS_getFPS() / SYS_getFPSAsFloat()
+* DMA
+ - fixed possible DMA failure on some Megadrive when Z80 access 68K BUS at same time we trigger DMA
+ - minor fix on autoInc restoration after DMA_flushQueue(..)
+* VDP 
+ - tweaked default VRAM configuration so window can be freely used anywhere.
+ - added VDP_getAdjustedVCounter() method to have a consistent [0..255] V-Counter (avoiding roolback issue)
+ - tweaked up VDP_resetScreen() method
+ - added VDP_setHVLatching() and VDP_setDMAEnabled() methods
+* PALETTE
+ - fixed VDP_getPaletteColors() and VDP_getPalette(..) methods (regression)
+ - fixed a bug with all palette fading mathods (regression)
+ - renamed vdp_pal unit to pal unit (so all palette methods are now called PAL_xxx)
+* JOY
+ - added JOY_reset() method to reset controller detection without clearing JOY state change event callback
+ - safer JOY_setSupport(..) / gun controller implementation
+ - more permissive mouse id detection in mouse pooling code
+ - fixed an issue where an EA 4-way multitap could be incorrectly detected
+* TIMER
+ - safer waitSubTick(..) implementation during VInt.
+ - fixed getSubTick() method to take care of HV counter latching when light guns are used.
+* RESOURCE
+ - added 2 alternate SGDK logo (free feel to use it)
+ - minor change on library resources name
+ - fixed version and added alias for old resource names
+* added ENABLE_NEWLIB define in config.h file for those who want to use newlib within SGDK (you need to build it by yourself)
+* changed 'u16' to 'bool' where it makes sense to use 'bool' (internally they are the same type, it's just for readability).
+* minors tweaks, changes and fixes here and there
+
+SAMPLE
+* XGMPlayer
+ - updated to make it work with last SGDK (sprite engine difference mainly)
+* SOUND
+ - reintroduced cry SFX test for XGM driver
+
+
 SGDK 1.4 (May 2019)
 -------------------
 
