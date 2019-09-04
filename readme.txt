@@ -1,4 +1,4 @@
-SGDK 1.4 (may 2019)
+SGDK 1.41 (september 2019)
 Copyright 2019 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK
 Github: https://github.com/Stephane-D/SGDK
