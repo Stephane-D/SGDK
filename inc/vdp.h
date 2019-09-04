@@ -446,17 +446,17 @@ extern u16 windowWidthSft;
 
 /**
  *  \brief
- *      Constante to represent VDP background A plan (used by some methods)
+ *      Constant to represent VDP background A plan (used by some methods)
  */
 extern const VDPPlan PLAN_A;
 /**
  *  \brief
- *      Constante to represent VDP background B plan (used by some methods)
+ *      Constant to represent VDP background B plan (used by some methods)
  */
 extern const VDPPlan PLAN_B;
 /**
  *  \brief
- *      Constante to represent VDP window plan (used by some methods)
+ *      Constant to represent VDP window plan (used by some methods)
  */
 extern const VDPPlan PLAN_WINDOW;
 
