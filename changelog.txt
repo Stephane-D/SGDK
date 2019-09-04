@@ -16,15 +16,15 @@ LIBRARY
  - renamed getFPS() / getFPS_f() to SYS_getFPS() / SYS_getFPSAsFloat()
 * DMA
  - fixed possible DMA failure on some Megadrive when Z80 access 68K BUS at same time we trigger DMA
- - minor fix on autoInc restoration after DMA_flushQueue(..)
+ - minor fix on autoInc restoration after DMA_flushQueue()
 * VDP 
  - tweaked default VRAM configuration so window can be freely used anywhere.
- - added VDP_getAdjustedVCounter() method to have a consistent [0..255] V-Counter (avoiding roolback issue)
+ - added VDP_getAdjustedVCounter() method to have a consistent [0..255] V-Counter (avoiding rollback issue)
  - tweaked up VDP_resetScreen() method
  - added VDP_setHVLatching() and VDP_setDMAEnabled() methods
 * PALETTE
  - fixed VDP_getPaletteColors() and VDP_getPalette(..) methods (regression)
- - fixed a bug with all palette fading mathods (regression)
+ - fixed a bug with all palette fading methods (regression)
  - renamed vdp_pal unit to pal unit (so all palette methods are now called PAL_xxx)
 * JOY
  - added JOY_reset() method to reset controller detection without clearing JOY state change event callback
