@@ -135,7 +135,7 @@ void PAL_setColors(u16 index, const u16* pal, u16 count);
  *
  *  \param index
  *      Color index where to start to write (0-63).
- *  \param palette
+ *  \param pal
  *      Source Palette.
  */
 void PAL_setPaletteColors(u16 index, const Palette* pal);
@@ -156,7 +156,7 @@ void PAL_setPalette(u16 numPal, const u16* pal);
  *
  *  \param index
  *      Color index where to start to write (0-63).
- *  \param values
+ *  \param pal
  *      RGB intensities to set.
  *  \param count
  *      Number of color to set.
@@ -168,7 +168,7 @@ void PAL_setColorsDMA(u16 index, const u16* pal, u16 count);
  *
  *  \param index
  *      Color index where to start to write (0-63).
- *  \param palette
+ *  \param pal
  *      Source Palette.
  */
 void PAL_setPaletteColorsDMA(u16 index, const Palette* pal);
