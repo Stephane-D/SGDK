@@ -517,7 +517,8 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             }
             if (changed & state & BUTTON_Z)
             {
-                SND_setPCM_XGM(66, loop1_14k, sizeof(loop1_14k));
+                SND_setPCM_XGM(66, cri_14k, sizeof(cri_14k));
+//                SND_setPCM_XGM(66, loop1_14k, sizeof(loop1_14k));
                 SND_startPlayPCM_XGM(66, 10, SOUND_PCM_CH4);
             }
 

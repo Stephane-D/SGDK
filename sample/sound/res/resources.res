@@ -30,3 +30,5 @@ WAV explode_u8k "explode.wav" 4
 WAV loop1_14k "loop1.wav" 5
 WAV hat1_14k "hat1.wav" 5
 WAV snare1_14k "snare1.wav" 5
+
+WAV cri_14k "cri.wav" XGM
