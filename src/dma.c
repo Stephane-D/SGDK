@@ -108,13 +108,10 @@ void DMA_clearQueue()
 void DMA_flushQueue()
 {
     vu32 *pl;
+    vu16 *pw;
     u32 *info;
     u16 i;
-#if (HALT_Z80_ON_DMA != 0)
-    u16 z80state;
-#else
-    vu16 *pw;
-#endif
+    u16 z80restore;
     u8 autoInc;
 
     // default
@@ -147,18 +144,18 @@ void DMA_flushQueue()
     // save autoInc
     autoInc = VDP_getAutoInc();
 
-#if (HALT_Z80_ON_DMA != 0)
-    z80state = Z80_isBusTaken();
-    if (!z80state) Z80_requestBus(FALSE);
-#else
-    const u16 zoff = 0x0100;
-    const u16 zon = 0x000;
-#endif
+    // define z80 BUSREQ restore state
+    const u16 z80off = 0x0100;
+    if (Z80_isBusTaken()) z80restore = 0x0100;
+    else z80restore = 0x0000;
 
     info = (u32*) dmaQueues;
     pl = (vu32*) GFX_CTRL_PORT;
-#if (HALT_Z80_ON_DMA == 0)
     pw = (vu16*) Z80_HALT_PORT;
+
+#if (HALT_Z80_ON_DMA != 0)
+    // disable Z80 before processing DMA
+    *pw = z80off;
 #endif
 
     while(i--)
@@ -170,20 +167,22 @@ void DMA_flushQueue()
 
 #if (HALT_Z80_ON_DMA == 0)
         // disable and re-enable Z80 immediately
-        *pw = zoff;
-        *pw = zon;
-#endif
+        *pw = z80off;
+        *pw = z80restore;
 
-        // and trigger DMA !
         // This allow to avoid DMA failure on some MD
         // when Z80 try to access 68k BUS at same time the DMA starts.
         // BUS arbitrer lantecy will disable Z80 for a very small amont of time
         // when DMA start, avoiding that situation to happen !
+#endif
+
+        // trigger DMA !
         *pl = *info++;  // regCtrlWrite =  GFX_DMA_xxx_ADDR(to)
     }
 
 #if (HALT_Z80_ON_DMA != 0)
-    if (!z80state) Z80_releaseBus();
+    // re-enable Z80 after all DMA (safer method)
+    *pw = z80restore;
 #endif
 
     // can clear the queue now
@@ -318,9 +317,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     u32 newlen;
     u32 banklimitb;
     u32 banklimitw;
-#if (HALT_Z80_ON_DMA != 0)
-    u16 z80state;
-#endif
+    u16 z80restore;
 
     // DMA works on 64 KW bank
     banklimitb = 0x20000 - (from & 0x1FFFF);
@@ -341,6 +338,10 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     // wait for DMA FILL / COPY operation to complete
     VDP_waitDMACompletion();
 
+    // define z80 BUSREQ restore state
+    if (Z80_isBusTaken()) z80restore = 0x0100;
+    else z80restore = 0x0000;
+
     pw = (vu16*) GFX_CTRL_PORT;
 
     // Setup DMA length (in word here)
@@ -354,30 +355,6 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     *pw = 0x9600 + (from & 0xff);
     from >>= 8;
     *pw = 0x9700 + (from & 0x7f);
-
-#if (HALT_Z80_ON_DMA != 0)
-    z80state = Z80_isBusTaken();
-    if (!z80state) Z80_requestBus(FALSE);
-#endif
-
-//    // start DMA
-//    pl = (vu32*) GFX_CTRL_PORT;
-//
-//    switch(location)
-//    {
-//        default:
-//        case DMA_VRAM:
-//            *pl = GFX_DMA_VRAM_ADDR(to);
-//            break;
-//
-//        case DMA_CRAM:
-//            *pl = GFX_DMA_CRAM_ADDR(to);
-//            break;
-//
-//        case DMA_VSRAM:
-//            *pl = GFX_DMA_VSRAM_ADDR(to);
-//            break;
-//    }
 
     switch(location)
     {
@@ -398,21 +375,25 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     pw = (vu16*) Z80_HALT_PORT;
     pl = (vu32*) GFX_CTRL_PORT;
 
-#if (HALT_Z80_ON_DMA == 0)
-    // disable and re-enable Z80 immediately
+    // disable Z80
     *pw = 0x0100;
-    *pw = 0x0000;
-#endif
 
-    // and trigger DMA...
+#if (HALT_Z80_ON_DMA == 0)
+    // re-enable it immediately before trigger DMA
+    *pw = z80restore;
+
     // This allow to avoid DMA failure on some MD
     // when Z80 try to access 68k BUS at same time the DMA starts.
     // BUS arbitrer lantecy will disable Z80 for a very small amont of time
     // when DMA start, avoiding that situation to happen !
+#endif
+
+    // trigger DMA...
     *pl = cmd;
 
 #if (HALT_Z80_ON_DMA != 0)
-    if (!z80state) Z80_releaseBus();
+    // re-enable Z80 after DMA (safer method)
+    *pw = z80restore;
 #endif
 }
 
