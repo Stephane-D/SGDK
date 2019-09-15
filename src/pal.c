@@ -346,14 +346,17 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
     // we are inside VInt callback --> just set palette colors immediately
     if (SYS_isInVIntCallback())
     {
+        // be sure to wait at least 1 frame between set fade palette call
+        if (lastVTimer == vtimer) VDP_waitVSync();
+
         // use DMA for long transfer
         if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
         else PAL_setColors(ind, src, len);
     }
     else
     {
-        // be sure to wait at least 1 frame between set fade palette call
-        if (lastVTimer == vtimer) VDP_waitVSync();
+        // wait VSync (always)
+        VDP_waitVSync();
 
         // disable interrupts to not conflict with VInt accesses
         SYS_disableInts();
@@ -361,11 +364,39 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
         if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
         else PAL_setColors(ind, src, len);
         SYS_enableInts();
-
-        // keep track of last update
-        lastVTimer = vtimer;
     }
+
+    // keep track of last update
+    lastVTimer = vtimer;
 }
+
+//static void setFadePalette(u16 ind, const u16 *src, u16 len)
+//{
+//    static u32 lastVTimer = 0;
+//
+//    // we are inside VInt callback --> just set palette colors immediately
+//    if (SYS_isInVIntCallback())
+//    {
+//        // use DMA for long transfer
+//        if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
+//        else PAL_setColors(ind, src, len);
+//    }
+//    else
+//    {
+//        // be sure to wait at least 1 frame between set fade palette call
+//        if (lastVTimer == vtimer) VDP_waitVSync();
+//
+//        // disable interrupts to not conflict with VInt accesses
+//        SYS_disableInts();
+//        // use DMA for long transfer
+//        if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
+//        else PAL_setColors(ind, src, len);
+//        SYS_enableInts();
+//
+//        // keep track of last update
+//        lastVTimer = vtimer;
+//    }
+//}
 
 
 bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame)
