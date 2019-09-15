@@ -2,17 +2,17 @@
     .globl  VDP_loadTileData
     .type   VDP_loadTileData, @function
 VDP_loadTileData:
-    movm.l #0x3e00,-(%sp)
+    movm.l %d2-%d4,-(%sp)
 
-    move.l 24(%sp),%d2              | d2 = data
-    move.l 32(%sp),%d3              | d3 = num
+    move.l 16(%sp),%d2              | d2 = data
+    move.w 26(%sp),%d3              | d3 = num
     jeq .L1
 
-    movq  #0,%d6
-    move.w 30(%sp),%d6              | d6 = ind
-    lsl.w #5,%d6                    | d6 = ind * 32 = VRAM address
+    movq  #0,%d4
+    move.w 22(%sp),%d4              | d4 = ind
+    lsl.w #5,%d4                    | d4 = ind * 32 = VRAM address
 
-    move.b 39(%sp),%d0              | d0 = tm (TransferMethod)
+    move.b 31(%sp),%d0              | d0 = tm (TransferMethod)
     subq.b #1,%d0                   | 0 = CPU, 1 = DMA, 2 = DMA QUEUE
     jmi .transfer_CPU
     jeq .transfer_DMA
@@ -22,7 +22,7 @@ VDP_loadTileData:
 
     pea 2.w                         | prepare parameters for VDP_doDMA
     move.l %d3,-(%sp)
-    move.l %d6,-(%sp)
+    move.l %d4,-(%sp)
     move.l %d2,-(%sp)
     clr.l -(%sp)
     jsr DMA_queueDma
@@ -34,7 +34,7 @@ VDP_loadTileData:
 
     pea 2.w                         | prepare parameters for VDP_doDMA
     move.l %d3,-(%sp)
-    move.l %d6,-(%sp)
+    move.l %d4,-(%sp)
     move.l %d2,-(%sp)
     clr.l -(%sp)
     jsr DMA_doDma
@@ -47,15 +47,15 @@ VDP_loadTileData:
     jsr VDP_setAutoInc
     addq.l #4,%sp
 
-    lsl.l #2,%d6
-    lsr.w #2,%d6
-    andi.w #0x3FFF,%d6
-    ori.w #0x4000,%d6
-    swap %d6                            | d6 = formated VRAM address for VDP command write
+    lsl.l #2,%d4
+    lsr.w #2,%d4
+    andi.w #0x3FFF,%d4
+    ori.w #0x4000,%d4
+    swap %d4                        | d4 = formated VRAM address for VDP command write
 
-    move.l %d6,0xC00004                 | set destination address in VDP Ctrl command
+    move.l %d4,0xC00004             | set destination address in VDP Ctrl command
 
-    move.l %d2,%a0                      | a0 = data
+    move.l %d2,%a0                  | a0 = data
     move.l #0xC00000,%a1
     subq.w #1,%d3
 
@@ -71,7 +71,7 @@ VDP_loadTileData:
     dbra %d3,.L6
 
 .L1:
-    movm.l (%sp)+,#0x7c
+    movm.l (%sp)+,%d2-%d4
     rts
 
 

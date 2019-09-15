@@ -315,7 +315,7 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y)
     if ((curTileInd + numTile) > TILE_USERMAXINDEX)
         curTileInd = TILE_USERINDEX;
 
-    result = VDP_drawImageEx(plan, image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE, TRUE);
+    result = VDP_drawImageEx(plan, image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE, DMA);
 
     curTileInd += numTile;
 
