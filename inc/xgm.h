@@ -78,7 +78,8 @@ void XGM_resumePlay();
  *      will actually return play state for channel 1 and channel 2.
  *
  *  \return
- *      Return non zero if specified channel(s) is(are) playing.
+ *      Return the channel mask of current playing channel(s).<br>
+ *      For instance it returns (SOUND_PCM_CH1_MSK | SOUND_PCM_CH3_MSK) if channels 1 and 3 are currently playing.
  */
 u8 XGM_isPlayingPCM(const u16 channel_mask);
 /**
