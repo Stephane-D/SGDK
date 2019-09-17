@@ -17,6 +17,15 @@ GCC compiler and libgcc are under GNU license (GPL3) and any software build from
 GET STARTED
 -----------
 
+First, you need to know that SGDK uses C language (assembly is also possible) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'MegaDrive' programming is (imo) definitely too difficult and you will end nowhere.
+It's also important to understand how the Sega Megadrive works internally (specifically the video system) so i recommend you to read documents about the Sega Megadrive hardware and development.
+For that you can visit Megacats Studio Sega Megadrive graphics guide page:
+https://megacatstudios.com/blogs/press/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
+You can also check Sik's web site which is more dedicated to assembly programming but explain a lot about the Sega Megadrive hardware:
+https://plutiedev.com/
+
+Then when you feel ready you can go further and finally install SGDK :)
+
 You can find installation instructions and basic tutorials about how use SGDK on this page:
 https://github.com/Stephane-D/SGDK/wiki
 
@@ -46,8 +55,16 @@ It allows to quickly setup SGDK on a Unix environment.
 MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D:
 https://github.com/SONIC3D/gendev-macos
 
-There is also the new and nice solution proposed by Daniel Valdivieso tu use SGDK under any OS using Wine:
+There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK under any OS using Wine:
 https://github.com/v4ld3r5/sgdk_vscode_template
+
+
+Visual Studio
+-------------
+
+You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK integration with VS.
+To go even further you can also install the VS extension made by zerasul:
+https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 
 
 THANKS
@@ -68,9 +85,9 @@ THANKS
 SUPPORT SGDK
 ------------
 
-SGDK is completly free but you can now support it on Patreon or using the Paypal donation link.
+SGDK is completly free but you can support it on Patreon or using the Paypal donation link.
 
 Patreon: https://www.patreon.com/SGDK
 Paypal donation link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2SCWVXYDEEBUU
 
-Thanks =) I wish you a great and happy coding time
+Thanks =) I wish you a great and happy coding time !
