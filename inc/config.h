@@ -15,7 +15,7 @@
  *  \brief
  *      Set it to 1 to enable KDebug logging (Gens KMod) to log some errors (as memory allocation).
  */
-#if (DEBUG == 1)
+#if (DEBUG != 0)
   #define LIB_DEBUG         1
 #else
   #define LIB_DEBUG         0
@@ -36,6 +36,12 @@
  *      (may happen when Z80 access the main BUS during IO port access from 68K).
  */
 #define HALT_Z80_ON_IO      0
+
+/**
+ *  \brief
+ *      Set it to 1 if you want to completely disable DMA transfers (for testing purpose) and replace them with (slower) software CPU copy.
+ */
+#define DMA_DISABLED        0
 
 /**
  *  \brief
