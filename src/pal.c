@@ -341,17 +341,20 @@ void PAL_setPaletteDMA(u16 numPal, const u16* pal)
 
 static void setFadePalette(u16 ind, const u16 *src, u16 len)
 {
-    static u32 lastVTimer = 0;
-
     // we are inside VInt callback --> just set palette colors immediately
     if (SYS_isInVIntCallback())
     {
+        static u32 lastVTimer = 0;
+
         // be sure to wait at least 1 frame between set fade palette call
         if (lastVTimer == vtimer) VDP_waitVSync();
 
         // use DMA for long transfer
         if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
         else PAL_setColors(ind, src, len);
+
+        // keep track of last update
+        lastVTimer = vtimer;
     }
     else
     {
@@ -365,9 +368,6 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
         else PAL_setColors(ind, src, len);
         SYS_enableInts();
     }
-
-    // keep track of last update
-    lastVTimer = vtimer;
 }
 
 //static void setFadePalette(u16 ind, const u16 *src, u16 len)
