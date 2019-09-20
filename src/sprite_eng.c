@@ -943,7 +943,24 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 
     if ((sprite->animInd != anim) || (sprite->seqInd != frame))
     {
+#if (LIB_DEBUG != 0)
+        if (anim >= sprite->definition->numAnimation)
+        {
+            KLog_U2("SPR_setAnimAndFrame: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
+            return;
+        }
+#endif // LIB_DEBUG
+
         Animation* animation = sprite->definition->animations[anim];
+
+#if (LIB_DEBUG != 0)
+        if (frame >= animation->length)
+        {
+            KLog_U3("SPR_setAnimAndFrame: error - trying to use non existing frame #", frame, " for animation #", anim, " - num frame = ", animation->length);
+            return;
+        }
+#endif // LIB_DEBUG
+
         const u16 frameInd = animation->sequence[frame];
 
         sprite->animInd = anim;
@@ -974,6 +991,14 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 
     if (sprite->animInd != anim)
     {
+#if (LIB_DEBUG != 0)
+        if (anim >= sprite->definition->numAnimation)
+        {
+            KLog_U2("SPR_setAnim: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
+            return;
+        }
+#endif // LIB_DEBUG
+
         Animation *animation = sprite->definition->animations[anim];
         // first frame by default
         const u16 frameInd = animation->sequence[0];
@@ -1006,6 +1031,14 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 
     if (sprite->seqInd != frame)
     {
+#if (LIB_DEBUG != 0)
+        if (frame >= sprite->animation->length)
+        {
+            KLog_U3("SPR_setFrame: error - trying to use non existing frame #", frame, " for animation #", sprite->animInd, " - num frame = ", sprite->animation->length);
+            return;
+        }
+#endif // LIB_DEBUG
+
         const u16 frameInd = sprite->animation->sequence[frame];
 
         sprite->seqInd = frame;
