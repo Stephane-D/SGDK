@@ -705,7 +705,7 @@ void SYS_disableInts()
     if (intTrace != 0)
     {
 #if (LIB_DEBUG != 0)
-        KDebug_Alert("SYS_disableInts() fails: call during interrupt");
+        // KDebug_Alert("SYS_disableInts() fails: call during interrupt");
 #endif
 
         return;
@@ -726,7 +726,7 @@ void SYS_enableInts()
     if (intTrace != 0)
     {
 #if (LIB_DEBUG != 0)
-        KDebug_Alert("SYS_enableInts() fails: call during interrupt");
+        // KDebug_Alert("SYS_enableInts() fails: call during interrupt");
 #endif
 
         return;
