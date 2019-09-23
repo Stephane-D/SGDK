@@ -266,5 +266,44 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step);
  */
 void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step);
 
+/**
+ *  \brief
+ *      Do software (CPU) copy to VDP memory (mainly for testing purpose as it's slower than using DMA)
+ *
+ *  \param location
+ *      Destination location.<br>
+ *      Accepted values:<br>
+ *      - DMA_VRAM (for VRAM transfer).<br>
+ *      - DMA_CRAM (for CRAM transfer).<br>
+ *      - DMA_VSRAM (for VSRAM transfer).<br>
+ *  \param from
+ *      Source address.
+ *  \param to
+ *      Destination address.
+ *  \param len
+ *      Number of word to transfer.
+ *  \param step
+ *      destination (VRAM/VSRAM/CRAM) address increment step after each write (-1 to keep current step).<br>
+ *      By default you should set it to 2 for normal copy operation but you can use different value
+ *      for specific operation.
+ */
+void DMA_doSoftwareCopy(u8 location, u32 from, u16 to, u16 len, s16 step);
+/**
+ *  \brief
+ *      Do software (CPU) copy to VDP memory (mainly for testing purpose as it's slower than using DMA)
+ *
+ *  \param cmd
+ *      VDP packed control command (contains operation and destination address).
+ *  \param from
+ *      Source address.
+ *  \param len
+ *      Number of word to transfer.
+ *  \param step
+ *      destination (VRAM/VSRAM/CRAM) address increment step after each write (-1 to keep current step).<br>
+ *      By default you should set it to 2 for normal copy operation but you can use different value
+ *      for specific operation.
+ */
+void DMA_doSoftwareCopyDirect(u32 cmd, u32 from, u16 len, s16 step);
+
 
 #endif // _DMA_H_

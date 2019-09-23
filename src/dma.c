@@ -107,11 +107,7 @@ void DMA_clearQueue()
 
 void DMA_flushQueue()
 {
-    vu32 *pl;
-    vu16 *pw;
-    u32 *info;
     u16 i;
-    u16 z80restore;
     u8 autoInc;
 
     // default
@@ -138,32 +134,53 @@ void DMA_flushQueue()
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
 #endif
 
-    // wait for DMA FILL / COPY operation to complete
+    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
     VDP_waitDMACompletion();
-
     // save autoInc
     autoInc = VDP_getAutoInc();
+
+#if (DMA_DISABLED != 0)
+    // DMA disabled --> replace with software copy
+
+    DMAOpInfo *info = dmaQueues;
+
+    while(i--)
+    {
+        u16 len = (info->regLen & 0xFF) | ((info->regLen & 0xFF0000) >> 8);
+        s16 step = info->regAddrMStep & 0xFF;
+        u32 from = ((info->regAddrMStep & 0xFF0000) >> 7) | ((info->regAddrHAddrL & 0x7F00FF) << 1);
+        // replace DMA command by WRITE command
+        u32 cmd = info->regCtrlWrite & ~0x80;
+
+        // software copy
+        DMA_doSoftwareCopyDirect(cmd, from, len, step);
+
+        // next
+        info++;
+    }
+#else
+    u16 z80restore;
 
     // define z80 BUSREQ restore state
     const u16 z80off = 0x0100;
     if (Z80_isBusTaken()) z80restore = 0x0100;
     else z80restore = 0x0000;
 
-    info = (u32*) dmaQueues;
-    pl = (vu32*) GFX_CTRL_PORT;
-    pw = (vu16*) Z80_HALT_PORT;
-
 #if (HALT_Z80_ON_DMA != 0)
     // disable Z80 before processing DMA
     *pw = z80off;
 #endif
 
+    u32 *info = (u32*) dmaQueues;
+    vu32 *pl = (vu32*) GFX_CTRL_PORT;
+    vu16 *pw = (vu16*) Z80_HALT_PORT;
+
     while(i--)
     {
         // set DMA parameters
-        *pl = *info++;  // regStepLenL = (0x8F00 | step) | ((0x9300 | (len & 0xFF)) << 16)
-        *pl = *info++;  // regLenHAddrL = (0x9400 | ((len >> 8) & 0xFF)) | ((0x9500 | ((addr >> 1) & 0xFF)) << 16)
-        *pl = *info++;  // regAddrMAddrH = (0x9600 | ((addr >> 9) & 0xFF)) | ((0x9700 | ((addr >> 17) & 0x7F)) << 16)
+        *pl = *info++;  // regLen = 0x94000x9300 | (len | (len << 8) & 0xFF00FF)
+        *pl = *info++;  // regAddrMStep = 0x96008F00 | ((from << 7) & 0xFF0000) | step
+        *pl = *info++;  // regAddrHAddrL = 0x97009500 | ((from >> 1) & 0x7F00FF)
 
 #if (HALT_Z80_ON_DMA == 0)
         // disable and re-enable Z80 immediately
@@ -184,6 +201,7 @@ void DMA_flushQueue()
     // re-enable Z80 after all DMA (safer method)
     *pw = z80restore;
 #endif
+#endif  // DMA_DISABLED
 
     // can clear the queue now
     DMA_clearQueue();
@@ -311,6 +329,12 @@ void DMA_waitCompletion()
 
 void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 {
+#if (DMA_DISABLED != 0)
+    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
+    VDP_waitDMACompletion();
+    // DMA disabled --> replace with software copy
+    DMA_doSoftwareCopy(location, from, to, len, step);
+#else
     vu16 *pw;
     vu32 *pl;
     u32 cmd;
@@ -335,7 +359,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     if (step != -1)
         VDP_setAutoInc(step);
 
-    // wait for DMA FILL / COPY operation to complete
+    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
     VDP_waitDMACompletion();
 
     // define z80 BUSREQ restore state
@@ -382,7 +406,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     // re-enable it immediately before trigger DMA
     *pw = z80restore;
 
-    // This allow to avoid DMA failure on some MD
+    // We do that to avoid DMA failure on some MD
     // when Z80 try to access 68k BUS at same time the DMA starts.
     // BUS arbitrer lantecy will disable Z80 for a very small amont of time
     // when DMA start, avoiding that situation to happen !
@@ -395,6 +419,7 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     // re-enable Z80 after DMA (safer method)
     *pw = z80restore;
 #endif
+#endif  // DMA_DISABLED
 }
 
 void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
@@ -476,4 +501,47 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
     // Write VRam DMA destination address (start DMA copy operation)
     pl = (vu32*) GFX_CTRL_PORT;
     *pl = GFX_DMA_VRAMCOPY_ADDR(to);
+}
+
+void DMA_doSoftwareCopy(u8 location, u32 from, u16 to, u16 len, s16 step)
+{
+    u32 cmd;
+
+    switch(location)
+    {
+        default:
+        case DMA_VRAM:
+            cmd = GFX_WRITE_VRAM_ADDR(to);
+            break;
+
+        case DMA_CRAM:
+            cmd = GFX_WRITE_CRAM_ADDR(to);
+            break;
+
+        case DMA_VSRAM:
+            cmd = GFX_WRITE_VSRAM_ADDR(to);
+            break;
+    }
+
+    DMA_doSoftwareCopyDirect(cmd, from, len, step);
+}
+
+void DMA_doSoftwareCopyDirect(u32 cmd, u32 from, u16 len, s16 step)
+{
+    vu16 *pw;
+    vu32 *pl;
+    u16 *src;
+    u16 i;
+
+    if (step != -1)
+        VDP_setAutoInc(step);
+
+    pl = (vu32*) GFX_CTRL_PORT;
+    pw = (vu16*) GFX_DATA_PORT;
+    src = (u16*) from;
+    i = len;
+
+    *pl = cmd;
+    // do software copy (not optimized but we don't care as this is normally just for testing)
+    while(i--) *pw = *src++;
 }
