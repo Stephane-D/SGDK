@@ -2966,7 +2966,7 @@ BMP_drawPolygon:
     sub.w %d2,%d6               | d6 = len = maxY - minY
     jlt .dp_end0                | < 0 = nothing to draw --> exit
 
-    move.b 644+59(%sp),%d1     | d1 = col
+    move.b 644+59(%sp),%d1      | d1 = col
 
     move.b %d1,-(%sp)
     move.w (%sp)+,%d0           | d0 = d1 << 8
