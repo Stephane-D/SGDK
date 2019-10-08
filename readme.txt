@@ -59,7 +59,7 @@ There is also the new and nice solution proposed by Daniel Valdivieso to use SGD
 https://github.com/v4ld3r5/sgdk_vscode_template
 
 
-Visual Studio
+VISUAL STUDIO
 -------------
 
 You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK integration with VS.
