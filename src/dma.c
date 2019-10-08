@@ -166,14 +166,14 @@ void DMA_flushQueue()
     if (Z80_isBusTaken()) z80restore = 0x0100;
     else z80restore = 0x0000;
 
+    u32 *info = (u32*) dmaQueues;
+    vu32 *pl = (vu32*) GFX_CTRL_PORT;
+    vu16 *pw = (vu16*) Z80_HALT_PORT;
+
 #if (HALT_Z80_ON_DMA != 0)
     // disable Z80 before processing DMA
     *pw = z80off;
 #endif
-
-    u32 *info = (u32*) dmaQueues;
-    vu32 *pl = (vu32*) GFX_CTRL_PORT;
-    vu16 *pw = (vu16*) Z80_HALT_PORT;
 
     while(i--)
     {
