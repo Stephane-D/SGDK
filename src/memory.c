@@ -209,16 +209,23 @@ u16 MEM_getLargestFreeBlock()
 {
     u16* b;
     u16 bsize;
+    u16 csize;
     u16 res;
 
     b = heap;
     res = 0;
+    csize = 0;
 
     while ((bsize = *b))
     {
-        // memory block not used --> test it
-        if ((!(bsize & USED)) && (bsize > res))
-            res = bsize;
+        // memory block is used --> reset cumulated size
+        if (bsize & USED) csize = 0;
+        else
+        {
+            csize += bsize;
+            // largest available bloc ?
+            if (csize > res) res = csize;
+        }
 
         // pass to next block
         b += bsize >> 1;
