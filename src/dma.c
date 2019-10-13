@@ -425,26 +425,34 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
             break;
     }
 
-    const u16 cmdh = cmd >> 16;
-    const u16 cmdl = cmd;
-
-    pw = (vu16*) GFX_CTRL_PORT;
     pwz = (vu16*) Z80_HALT_PORT;
 
-    // DISABLE Z80
-    *pwz = 0x0100;
+    {
+        vu32 cmdbuf[1];
+        u16* cmdbufp;
+
+        // force storing DMA command into memory
+        cmdbuf[0] = cmd;
+
+        // then force issuing DMA from memory word operand
+        cmdbufp = (u16*) cmdbuf;
+        // first command word
+        *pw = *cmdbufp++;
+
+        // DISABLE Z80
+        *pwz = 0x0100;
 #if (HALT_Z80_ON_DMA == 0)
-    // RE-ENABLE it immediately before trigger DMA
-    // We do that to avoid DMA failure on some MD
-    // when Z80 try to access 68k BUS at same time the DMA starts.
-    // BUS arbitrer lantecy will disable Z80 for a very small amont of time
-    // when DMA start, avoiding that situation to happen !
-    *pwz = z80restore;
+        // RE-ENABLE it immediately before trigger DMA
+        // We do that to avoid DMA failure on some MD
+        // when Z80 try to access 68k BUS at same time the DMA starts.
+        // BUS arbitrer lantecy will disable Z80 for a very small amont of time
+        // when DMA start, avoiding that situation to happen !
+        *pwz = z80restore;
 #endif
 
-    // trigger DMA
-    *pw = cmdh;
-    *pw = cmdl;
+        // trigger DMA (second word command wrote from memory to avoid possible failure on some MD)
+        *pw = *cmdbufp;
+    }
 
 #if (HALT_Z80_ON_DMA != 0)
     // re-enable Z80 after DMA (safer method)
