@@ -8,7 +8,6 @@ import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
-import sgdk.tool.ArrayMath;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
@@ -54,12 +53,20 @@ public class Image extends Resource
         if (imgInfo.bpp == 4)
             data = ImageUtil.convert4bppTo8bpp(data);
 
-        // find max color index
-        final int maxIndex = ArrayMath.max(data, false);
-        // not allowed here
-        if (maxIndex >= 64)
-            throw new IllegalArgumentException("'" + imgFile
-                    + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
+        // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
+        // check if image try to use bit 6 (probably mean that we have too much colors in our image)
+        for (byte d : data)
+        {
+            // bit 6 used ?
+            if ((d & 0x40) != 0)
+                throw new IllegalArgumentException("'" + imgFile
+                        + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
+        }
+
+        // final int maxIndex = ArrayMath.max(data, false);
+        // if (maxIndex >= 64)
+        // throw new IllegalArgumentException("'" + imgFile
+        // + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
 
         // build TILESET with wanted compression
         tileset = (Tileset) addInternalResource(
