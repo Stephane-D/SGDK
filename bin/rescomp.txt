@@ -126,11 +126,11 @@ SPRITE name img_file width heigth [compression [time [collision [opt [iteration]
     img_file        path of the input image file (should be 8bpp .bmp or .png)
     width           width of a single sprite frame in tile (width * heigth <= 256)
     heigth          heigth of a single sprite frame in tile (width * heigth <= 256)
-    compression     compression type (use unpackSprite(..) to unpack), accepted values:
+    compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression
-                        1 / APLIB       = aplib library (good compression ratio but slow)
-                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
+                        1 / APLIB       = aplib library (good compression ratio but slow, don't use it for streamed sprite)
+                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast, recommended for streamed sprite)
     time            display frame time in 1/60 of second (time between each animation frame)
                        If this value is set to 0 (default) then auto animation is disabled
     collision       collision type: CIRCLE, BOX or NONE (NONE by default)
