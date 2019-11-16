@@ -65,6 +65,16 @@ extern DMAOpInfo *dmaQueues;
 
 /**
  *  \brief
+ *      Initialize the DMA queue sub system with default settings.
+ *
+ *      SGDK automatically call this method on hard reset so you don't need to call it again unless
+ *      you want to change the default parameters in which casse you should use #DMA_initEx(..)
+ *
+ * \see #DMA_initEx(..)
+ */
+void DMA_init();
+/**
+ *  \brief
  *      Initialize the DMA queue sub system.
  *
  *      SGDK automatically call this method on hard reset so you don't need to call it again unless
@@ -79,7 +89,7 @@ extern DMAOpInfo *dmaQueues;
  *
  * \see #DMA_setIgnoreOverCapacity(..)
  */
-void DMA_init(u16 size, u16 capacity);
+void DMA_initEx(u16 size, u16 capacity);
 
 /**
  *  \brief
@@ -105,7 +115,7 @@ void DMA_setAutoFlush(bool value);
  *
  *  \see DMA_setMaxTransferSize()
  */
-s16 DMA_getMaxTransferSize();
+u16 DMA_getMaxTransferSize();
 /**
  *  \brief
  *      Sets the maximum amount of data (in bytes) to transfer per #DMA_flushQueue() call.<br>
@@ -118,7 +128,7 @@ s16 DMA_getMaxTransferSize();
  *
  *  \see DMA_flushQueue()
  */
-void DMA_setMaxTransferSize(s16 value);
+void DMA_setMaxTransferSize(u16 value);
 /**
  *  \brief
  *      Sets the maximum amount of data (in bytes) to default value (7.2 KB on NTSC system and 15 KB on PAL system).

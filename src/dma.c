@@ -26,7 +26,7 @@ DMAOpInfo *dmaQueues = NULL;
 
 // DMA queue settings
 static u16 queueSize;
-static s16 maxTransferPerFrame;
+static u16 maxTransferPerFrame;
 static u16 flag;
 
 // current queue index (0 = empty / queueSize = full)
@@ -39,7 +39,12 @@ void flushQueue(u16 num);
 void flushQueueSafe(u16 num, u16 z80restore);
 
 
-void DMA_init(u16 size, u16 capacity)
+void DMA_init()
+{
+    DMA_initEx(DMA_DEFAULT_QUEUE_SIZE, 0);
+}
+
+void DMA_initEx(u16 size, u16 capacity)
 {
     if (size) queueSize = size;
     else queueSize = DMA_DEFAULT_QUEUE_SIZE;
@@ -76,12 +81,12 @@ void DMA_setAutoFlush(bool value)
     else flag &= ~DMA_AUTOFLUSH;
 }
 
-s16 DMA_getMaxTransferSize()
+u16 DMA_getMaxTransferSize()
 {
     return maxTransferPerFrame;
 }
 
-void DMA_setMaxTransferSize(s16 value)
+void DMA_setMaxTransferSize(u16 value)
 {
     maxTransferPerFrame = value;
 }
