@@ -146,11 +146,6 @@
 
 /**
  *  \brief
- *      Initialize memory sub system
- */
-void MEM_init();
-/**
- *  \brief
  *      Return available memory in bytes
  */
 u16  MEM_getFree();
