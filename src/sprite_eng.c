@@ -1736,7 +1736,9 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     if ((status & (SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE)) == SPR_FLAG_AUTO_TILE_UPLOAD)
     {
         // not enough DMA capacity to transfer sprite tile data ?
-        if ((DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > DMA_getMaxTransferSize())
+        const u16 dmaCapacity = DMA_getMaxTransferSize();
+
+        if (dmaCapacity && (DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity)
         {
 #if (LIB_DEBUG != 0)
             KLog_U3_("Warning: sprite #", getSpriteIndex(sprite), " update delayed (exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes)");
