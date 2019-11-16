@@ -51,6 +51,9 @@ extern void BMP_doVBlankProcess();
 extern u16 SPR_doVBlankProcess();
 extern void XGM_doVBlankProcess();
 
+// we don't want to share that method
+extern void MEM_init();
+
 // main function
 extern int main(u16 hard);
 
@@ -688,7 +691,7 @@ static void internal_reset()
     // init part
     MEM_init();
     VDP_init();
-    DMA_init(64, 0);
+    DMA_init();
     DMA_setMaxTransferSizeToDefault();
     PSG_init();
     JOY_init();
