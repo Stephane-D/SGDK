@@ -102,12 +102,12 @@ public class Tile implements Comparable<Tile>
 
     public Tile(byte[] pixel8bpp, int pal, boolean prio)
     {
-        this(ArrayUtil.byteToInt(ImageUtil.convert8bppTo4bpp(pixel8bpp)), pal, prio);
+        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)), pal, prio);
     }
 
     public Tile(byte[] pixel8bpp)
     {
-        this(ArrayUtil.byteToInt(ImageUtil.convert8bppTo4bpp(pixel8bpp)));
+        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)));
     }
 
     public Tile getFlipped(boolean hflip, boolean vflip)

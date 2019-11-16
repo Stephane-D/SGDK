@@ -28,9 +28,9 @@ public class Bitmap extends Resource
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
 
         // check BPP is correct
-        if ((imgInfo.bpp != 8) && (imgInfo.bpp != 4))
-            throw new IllegalArgumentException(
-                    "'" + imgFile + "' is in " + imgInfo.bpp + " bpp format, only 8bpp or 4bpp image supported.");
+        if (imgInfo.bpp > 8)
+            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
+                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
 
         // set width and height
         w = imgInfo.w;
@@ -38,24 +38,20 @@ public class Bitmap extends Resource
 
         // check width is correct
         if ((w & 1) == 1)
-            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", even width required.");
+            throw new IllegalArgumentException(
+                    "'" + imgFile + "' width is '" + w + ", even width (multiple of 2) required.");
 
         // get image data
         byte[] data = ImageUtil.getIndexedPixels(imgFile);
+        // convert to 4 bpp
+        data = ImageUtil.convertTo4bpp(data, imgInfo.bpp);
 
-        // 8 bpp image ?
-        if (imgInfo.bpp > 4)
-        {
-            // find max color index
-            final int maxIndex = ArrayMath.max(data, false);
-            // not allowed here
-            if (maxIndex >= 16)
-                throw new IllegalArgumentException("'" + imgFile
-                        + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
-
-            // convert to 4 bpp
-            data = ImageUtil.convert8bppTo4bpp(data);
-        }
+        // find max color index
+        final int maxIndex = ArrayMath.max(data, false);
+        // not allowed here
+        if (maxIndex >= 16)
+            throw new IllegalArgumentException("'" + imgFile
+                    + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
 
         // build BIN (image data) with wanted compression
         bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression));

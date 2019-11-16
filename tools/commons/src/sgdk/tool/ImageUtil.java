@@ -598,7 +598,7 @@ public class ImageUtil
     }
 
     /**
-     * Return pixels (indexed color) array from the specified imafe file
+     * Return pixels (indexed color) array from the specified image file
      * 
      * @param filename
      * @return
@@ -613,7 +613,7 @@ public class ImageUtil
         final ColorModel cm = image.getColorModel();
         if (!(cm instanceof IndexColorModel))
             throw new IllegalArgumentException(
-                    "Image '" + filename + "' is RGB, only indexed images (8bpp or 4bpp) are supported !");
+                    "Image '" + filename + "' is RGB, only indexed images (8bpp, 4bpp, 2bpp and 1bpp) are supported !");
 
         final DataBuffer db = image.getRaster().getDataBuffer();
         if (!(db instanceof DataBufferByte))
@@ -708,6 +708,7 @@ public class ImageUtil
             int offset = (adjRegion.y * imageDim.width) + adjRegion.x + (adjRegion.width - 1);
             for (int i = adjRegion.y; i < adjRegion.y + adjRegion.height; i++)
             {
+
                 if (image8bpp[offset] != 0)
                     return true;
                 offset += w;
@@ -782,7 +783,41 @@ public class ImageUtil
         return convertRGBA8888toRGBA4444(pixels, 0xFFFF);
     }
 
-    public static byte[] convert4bppTo8bpp(byte[] data)
+    static byte[] convert1bppTo8bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length * 8];
+
+        for (int i = 0; i < data.length; i++)
+        {
+            result[(i * 8) + 0] = (byte) ((data[i] >> 7) & 0x01);
+            result[(i * 8) + 1] = (byte) ((data[i] >> 6) & 0x01);
+            result[(i * 8) + 2] = (byte) ((data[i] >> 5) & 0x01);
+            result[(i * 8) + 3] = (byte) ((data[i] >> 4) & 0x01);
+            result[(i * 8) + 4] = (byte) ((data[i] >> 3) & 0x01);
+            result[(i * 8) + 5] = (byte) ((data[i] >> 2) & 0x01);
+            result[(i * 8) + 6] = (byte) ((data[i] >> 1) & 0x01);
+            result[(i * 8) + 7] = (byte) ((data[i] >> 0) & 0x01);
+        }
+
+        return result;
+    }
+
+    static byte[] convert2bppTo8bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length * 4];
+
+        for (int i = 0; i < data.length; i++)
+        {
+            result[(i * 4) + 0] = (byte) ((data[i] >> 6) & 0x03);
+            result[(i * 4) + 1] = (byte) ((data[i] >> 4) & 0x03);
+            result[(i * 4) + 2] = (byte) ((data[i] >> 3) & 0x03);
+            result[(i * 4) + 3] = (byte) ((data[i] >> 0) & 0x03);
+        }
+
+        return result;
+    }
+
+    static byte[] convert4bppTo8bpp(byte[] data)
     {
         final byte[] result = new byte[data.length * 2];
 
@@ -795,7 +830,41 @@ public class ImageUtil
         return result;
     }
 
-    public static byte[] convert8bppTo4bpp(byte[] data)
+    static byte[] convert1bppTo4bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length * 4];
+
+        for (int i = 0; i < data.length; i++)
+        {
+            result[(i * 4) + 0] = (byte) (((data[i] >> 7) & 0x01) << 4);
+            result[(i * 4) + 0] |= (byte) (((data[i] >> 6) & 0x01) << 0);
+            result[(i * 4) + 1] = (byte) (((data[i] >> 5) & 0x01) << 4);
+            result[(i * 4) + 1] |= (byte) (((data[i] >> 4) & 0x01) << 0);
+            result[(i * 4) + 2] = (byte) (((data[i] >> 3) & 0x01) << 4);
+            result[(i * 4) + 2] |= (byte) (((data[i] >> 2) & 0x01) << 0);
+            result[(i * 4) + 3] = (byte) (((data[i] >> 1) & 0x01) << 4);
+            result[(i * 4) + 3] |= (byte) (((data[i] >> 0) & 0x01) << 0);
+        }
+
+        return result;
+    }
+
+    static byte[] convert2bppTo4bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length * 2];
+
+        for (int i = 0; i < data.length; i++)
+        {
+            result[(i * 2) + 0] = (byte) (((data[i] >> 6) & 0x03) << 4);
+            result[(i * 2) + 0] |= (byte) (((data[i] >> 4) & 0x03) << 0);
+            result[(i * 2) + 1] = (byte) (((data[i] >> 2) & 0x03) << 4);
+            result[(i * 2) + 1] |= (byte) (((data[i] >> 0) & 0x03) << 0);
+        }
+
+        return result;
+    }
+
+    static byte[] convert8bppTo4bpp(byte[] data)
     {
         final byte[] result = new byte[data.length / 2];
 
@@ -806,5 +875,39 @@ public class ImageUtil
         }
 
         return result;
+    }
+
+    public static byte[] convertTo4bpp(byte[] data, int inputBpp)
+    {
+        switch (inputBpp)
+        {
+            default:
+                throw new IllegalArgumentException("Not supported image data format (" + inputBpp + " bpp)");
+            case 1:
+                return convert1bppTo4bpp(data);
+            case 2:
+                return convert2bppTo4bpp(data);
+            case 4:
+                return data;
+            case 8:
+                return convert8bppTo4bpp(data);
+        }
+    }
+
+    public static byte[] convertTo8bpp(byte[] data, int inputBpp)
+    {
+        switch (inputBpp)
+        {
+            default:
+                throw new IllegalArgumentException("Not supported image data format (" + inputBpp + " bpp)");
+            case 1:
+                return convert1bppTo8bpp(data);
+            case 2:
+                return convert2bppTo8bpp(data);
+            case 4:
+                return convert4bppTo8bpp(data);
+            case 8:
+                return data;
+        }
     }
 }

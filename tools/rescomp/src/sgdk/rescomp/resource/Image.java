@@ -28,9 +28,9 @@ public class Image extends Resource
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
 
         // check BPP is correct
-        if ((imgInfo.bpp != 8) && (imgInfo.bpp != 4))
-            throw new IllegalArgumentException(
-                    "'" + imgFile + "' is in " + imgInfo.bpp + " bpp format, only 8bpp or 4bpp image supported.");
+        if (imgInfo.bpp > 8)
+            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
+                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
 
         // set width and height
         final int w = imgInfo.w;
@@ -48,10 +48,8 @@ public class Image extends Resource
 
         // get image data
         byte[] data = ImageUtil.getIndexedPixels(imgFile);
-
-        // 4 bpp image ? --> convert to 8bpp
-        if (imgInfo.bpp == 4)
-            data = ImageUtil.convert4bppTo8bpp(data);
+        // convert to 8bpp
+        data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
 
         // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
         // check if image try to use bit 6 (probably mean that we have too much colors in our image)

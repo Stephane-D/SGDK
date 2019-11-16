@@ -45,9 +45,9 @@ public class Sprite extends Resource
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
 
         // check BPP is correct
-        if ((imgInfo.bpp != 8) && (imgInfo.bpp != 4))
-            throw new IllegalArgumentException(
-                    "'" + imgFile + "' is in " + imgInfo.bpp + " bpp format, only 8bpp or 4bpp image supported.");
+        if (imgInfo.bpp > 8)
+            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
+                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
 
         // set width and height
         final int w = imgInfo.w;
@@ -61,10 +61,8 @@ public class Sprite extends Resource
 
         // get image data
         byte[] imgData = ImageUtil.getIndexedPixels(imgFile);
-
-        // 4 bpp image ? --> convert to 8bpp
-        if (imgInfo.bpp == 4)
-            imgData = ImageUtil.convert4bppTo8bpp(imgData);
+        // convert to 8bpp
+        imgData = ImageUtil.convertTo8bpp(imgData, imgInfo.bpp);
 
         // find max color index
         final int maxIndex = ArrayMath.max(imgData, false);

@@ -37,9 +37,9 @@ public class Palette extends Resource
             final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(file);
 
             // check BPP is correct
-            if ((imgInfo.bpp != 8) && (imgInfo.bpp != 4))
-                throw new IllegalArgumentException(
-                        "'" + file + "' is in " + imgInfo.bpp + " bpp format, only 8bpp or 4bpp image supported.");
+            if (imgInfo.bpp > 8)
+                throw new IllegalArgumentException("'" + file + "' is in " + imgInfo.bpp
+                        + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
 
             // get palette
             palette = ImageUtil.getRGBA4444Palette(file, 0x0EEE);
@@ -49,10 +49,8 @@ public class Palette extends Resource
             {
                 // get image data
                 byte[] pixels = ImageUtil.getIndexedPixels(file);
-
-                // 4 bpp image ? --> convert to 8bpp
-                if (imgInfo.bpp == 4)
-                    pixels = ImageUtil.convert4bppTo8bpp(pixels);
+                // convert to 8bpp
+                pixels = ImageUtil.convertTo8bpp(pixels, imgInfo.bpp);
 
                 final short[] tmpPalette = new short[palette.length];
                 // set temp palette from pixel value
