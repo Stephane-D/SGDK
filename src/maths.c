@@ -180,7 +180,11 @@ u16 getLog2Int(u32 value)
         result += 4;
         v >>= 4;
     }
-    if (v >= 0x0004) result += 2;
+    if (v >= 0x0004)
+    {
+        result += 2;
+        v >>= 2;
+    }
 
-    return result | (v >> 3);
+    return result | (v >> 1);
 }
