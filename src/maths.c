@@ -167,12 +167,20 @@ u16 getLog2Int(u32 value)
     result = 0;
     if (value > 0xFFFF) result = 16;
 
-    v = value; // keep only low 16 bit
-    if (v > 0xFF) result += 8;
-    v >>= 8;
-    if (v > 0xF) result += 4;
-    v >>= 4;
-    if (v > 0x3) result += 2;
+    // keep only low 16 bit
+    v = value;
+
+    if (v >= 0x0100)
+    {
+        result += 8;
+        v >>= 8;
+    }
+    if (v >= 0x0010)
+    {
+        result += 4;
+        v >>= 4;
+    }
+    if (v >= 0x0004) result += 2;
 
     return result | (v >> 3);
 }
