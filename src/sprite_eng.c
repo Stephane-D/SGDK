@@ -662,6 +662,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     sprite->animInd = -1;
     sprite->frameInd = -1;
     sprite->seqInd = -1;
+
     // to avoid NULL pointer access as frame can be used without being yet initialized
     sprite->frame = spriteDef->animations[0]->frames[0];
     sprite->frameInfo = &(sprite->frame->frameInfos[0]);
@@ -1537,7 +1538,7 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    Sprite* prev;
+    Sprite* spr;
     VDPSprite* vdpSprite;
     u16 i;
 
@@ -1560,22 +1561,17 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
     }
 
     // adjust VDP sprites links
-    prev = sprite->prev;
-    // do we have a previous sprite ?
-    if (prev)
-    {
-        // set next link using previous sprite next link
-        vdpSprite->link = prev->lastVDPSprite->link;
-        // previous sprite next link now link to current sprite
-        prev->lastVDPSprite->link = ind;
-    }
-    else
-    {
-        // set next link using starter link
-        vdpSprite->link = starter->link;
-        // adjust started link
-        starter->link = ind;
-    }
+    spr = sprite->prev;
+    // do we have a previous sprite ? --> set its next link to current sprite index
+    if (spr) spr->lastVDPSprite->link = ind;
+    // othrwise we set started link
+    else starter->link = ind;
+
+    spr = sprite->next;
+    // do we have a next sprite ? --> set link on next sprite
+    if (spr) vdpSprite->link = spr->VDPSpriteIndex;
+    // last sprite
+    else vdpSprite->link = 0;
 
     // set last VDP sprite pointer for this sprite
     sprite->lastVDPSprite = vdpSprite;
