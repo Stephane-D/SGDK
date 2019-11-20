@@ -43,15 +43,20 @@ public class Bitmap extends Resource
 
         // get image data
         byte[] data = ImageUtil.getIndexedPixels(imgFile);
+        
+        // 8 bpp image ?
+        if (imgInfo.bpp > 4)
+        {
+            // find max color index
+            final int maxIndex = ArrayMath.max(data, false);
+            // not allowed here
+            if (maxIndex >= 16)
+                throw new IllegalArgumentException("'" + imgFile
+                        + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
+        }
+        
         // convert to 4 bpp
         data = ImageUtil.convertTo4bpp(data, imgInfo.bpp);
-
-        // find max color index
-        final int maxIndex = ArrayMath.max(data, false);
-        // not allowed here
-        if (maxIndex >= 16)
-            throw new IllegalArgumentException("'" + imgFile
-                    + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
 
         // build BIN (image data) with wanted compression
         bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression));
