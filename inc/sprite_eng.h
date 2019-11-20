@@ -39,7 +39,6 @@
  *      instead of adding it in last position (default)
  */
 #define SPR_FLAG_INSERT_HEAD                    0x4000
-
 /**
  *  \brief
  *      Disable delaying of frame update when we are running out of DMA capacity.<br>
@@ -447,6 +446,9 @@ void SPR_reset();
  *          If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <i>spriteIndex</i> parameter or by using the #SPR_setSpriteTableIndex(..) method<br>
  *      #SPR_FLAG_AUTO_TILE_UPLOAD = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
  *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM (you can change this setting using #SPR_setAutoTileUpload(..) method).<br>
+ *      #SPR_FLAG_INSERT_HEAD = Allow to insert the sprite at the start/head of the list.<br>
+ *          When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to #SPR_setDepth(SPR_MIN_DEPTH))<br>
+ *          while default insertion position is at the end of the list (equivalent to #SPR_setDepth(SPR_MAX_DEPTH))<br>
  *      <br>
  *      It's recommended to use the following default settings:<br>
  *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
@@ -519,6 +521,9 @@ Sprite* SPR_addSprite(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attri
  *          If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <i>spriteIndex</i> parameter or by using the #SPR_setSpriteTableIndex(..) method<br>
  *      #SPR_FLAG_AUTO_TILE_UPLOAD = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
  *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM (you can change this setting using #SPR_setAutoTileUpload(..) method).<br>
+ *      #SPR_FLAG_INSERT_HEAD = Allow to insert the sprite at the start/head of the list.<br>
+ *          When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to #SPR_setDepth(SPR_MIN_DEPTH))<br>
+ *          while default insertion position is at the end of the list (equivalent to #SPR_setDepth(SPR_MAX_DEPTH))<br>
  *      <br>
  *      It's recommended to use the following default settings:<br>
  *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>

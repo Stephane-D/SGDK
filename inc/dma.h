@@ -111,7 +111,8 @@ u16 DMA_getAutoFlush();
 void DMA_setAutoFlush(bool value);
 /**
  *  \brief
- *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.
+ *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.<br>
+ *      A value of 0 means there is no DMA limit.
  *
  *  \see DMA_setMaxTransferSize()
  */
