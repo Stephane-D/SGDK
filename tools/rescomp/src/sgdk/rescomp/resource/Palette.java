@@ -49,7 +49,7 @@ public class Palette extends Resource
             {
                 // get image data
                 byte[] pixels = ImageUtil.getIndexedPixels(file);
-                // convert to 8bpp
+                // convert to 8 bpp
                 pixels = ImageUtil.convertTo8bpp(pixels, imgInfo.bpp);
 
                 final short[] tmpPalette = new short[palette.length];

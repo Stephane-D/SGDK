@@ -344,7 +344,6 @@ u16 SYS_isNTSC();
  */
 u16 SYS_isPAL();
 
-
 /**
  *  \brief
  *      Returns number of Frame Per Second.
@@ -389,7 +388,6 @@ u32 SYS_getMissedFrames();
  * \see SYS_getMissedFrames()
  */
 void SYS_resetMissedFrames();
-
 
 /**
  *  \brief

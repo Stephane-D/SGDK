@@ -48,7 +48,7 @@ public class Image extends Resource
 
         // get image data
         byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8bpp
+        // convert to 8 bpp
         data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
 
         // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit

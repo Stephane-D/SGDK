@@ -46,7 +46,7 @@ public class Tileset extends Resource
 
         // get image data
         byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8bpp
+        // convert to 8 bpp
         data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
 
         // find max color index

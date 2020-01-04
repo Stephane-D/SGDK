@@ -61,7 +61,7 @@ public class Sprite extends Resource
 
         // get image data
         byte[] imgData = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8bpp
+        // convert to 8 bpp
         imgData = ImageUtil.convertTo8bpp(imgData, imgInfo.bpp);
 
         // find max color index
