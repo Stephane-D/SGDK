@@ -156,7 +156,7 @@ u16  MEM_getFree();
 u16  MEM_getAllocated();
 /**
  *  \brief
- *      Return largest free block of memory in bytes
+ *      Return largest free memory block in bytes
  */
 u16  MEM_getLargestFreeBlock();
 
