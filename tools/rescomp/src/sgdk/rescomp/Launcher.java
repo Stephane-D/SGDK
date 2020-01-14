@@ -24,9 +24,7 @@ public class Launcher
                 fileNameOut = param;
         }
 
-        // fileName = "gfx.res";
-
-        System.out.println("ResComp 2.42 - SGDK Resource Compiler - Copyright 2019 (Stephane Dallongeville)");
+        System.out.println("ResComp 2.43 - SGDK Resource Compiler - Copyright 2019 (Stephane Dallongeville)");
 
         if (fileName == null)
         {

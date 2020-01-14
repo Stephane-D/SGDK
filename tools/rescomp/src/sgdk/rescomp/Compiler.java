@@ -1,7 +1,6 @@
 package sgdk.rescomp;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,7 +10,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,18 +154,18 @@ public class Compiler
 
             // get BIN resources, and also grouped by type for better compression
             final List<Resource> binResources = getResources(Bin.class);
-            final Set<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
-            final Set<Resource> binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
-            final Set<Resource> binResourcesOfTileset = getBinResourcesOf(Tileset.class);
-            final Set<Resource> binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
+            final List<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
+            final List<Resource> binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
+            final List<Resource> binResourcesOfTileset = getBinResourcesOf(Tileset.class);
+            final List<Resource> binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
 
-            // keep not typed BIN resources
+            // keep raw BIN resources only
             binResources.removeAll(binResourcesOfPalette);
             binResources.removeAll(binResourcesOfBitmap);
             binResources.removeAll(binResourcesOfTileset);
             binResources.removeAll(binResourcesOfTilemap);
 
-            // export not typed BIN resources first
+            // export raw BIN resources first
             exportResources(binResources, outB, outS, outH);
 
             // then export BIN resources by type for better compression
@@ -180,7 +178,7 @@ public class Compiler
             exportResources(getResources(VDPSprite.class), outB, outS, outH);
             exportResources(getResources(Collision.class), outB, outS, outH);
 
-            // then we can export other type of resource (no compression)
+            // then we can export others types of resource (no compression)
             exportResources(getResources(Palette.class), outB, outS, outH);
             exportResources(getResources(Tileset.class), outB, outS, outH);
             exportResources(getResources(Tilemap.class), outB, outS, outH);
@@ -286,30 +284,34 @@ public class Compiler
         return true;
     }
 
-    private static Set<Resource> getBinResourcesOf(Class<? extends Resource> resourceType)
+    private static List<Resource> getBinResourcesOf(Class<? extends Resource> resourceType)
     {
-        final Set<Resource> result = new HashSet<>();
+        final List<Resource> result = new ArrayList<>();
         final List<Resource> typeResources = getResources(resourceType);
 
         if (resourceType.equals(Palette.class))
         {
             for (Resource resource : typeResources)
-                result.add(((Palette) resource).bin);
+                if (!result.contains(resource))
+                    result.add(((Palette) resource).bin);
         }
         else if (resourceType.equals(Bitmap.class))
         {
             for (Resource resource : typeResources)
-                result.add(((Bitmap) resource).bin);
+                if (!result.contains(resource))
+                    result.add(((Bitmap) resource).bin);
         }
         else if (resourceType.equals(Tileset.class))
         {
             for (Resource resource : typeResources)
-                result.add(((Tileset) resource).bin);
+                if (!result.contains(resource))
+                    result.add(((Tileset) resource).bin);
         }
         else if (resourceType.equals(Tilemap.class))
         {
             for (Resource resource : typeResources)
-                result.add(((Tilemap) resource).bin);
+                if (!result.contains(resource))
+                    result.add(((Tilemap) resource).bin);
         }
         else
             throw new IllegalArgumentException(
