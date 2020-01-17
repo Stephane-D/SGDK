@@ -24,7 +24,7 @@ public class Launcher
                 fileNameOut = param;
         }
 
-        System.out.println("ResComp 2.43 - SGDK Resource Compiler - Copyright 2019 (Stephane Dallongeville)");
+        System.out.println("ResComp 2.5 - SGDK Resource Compiler - Copyright 2019 (Stephane Dallongeville)");
 
         if (fileName == null)
         {

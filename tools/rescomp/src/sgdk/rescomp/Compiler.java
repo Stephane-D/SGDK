@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import sgdk.rescomp.processor.AlignProcessor;
 import sgdk.rescomp.processor.BinProcessor;
 import sgdk.rescomp.processor.BitmapProcessor;
 import sgdk.rescomp.processor.ImageProcessor;
@@ -23,6 +23,7 @@ import sgdk.rescomp.processor.TilemapProcessor;
 import sgdk.rescomp.processor.TilesetProcessor;
 import sgdk.rescomp.processor.WavProcessor;
 import sgdk.rescomp.processor.XgmProcessor;
+import sgdk.rescomp.resource.Align;
 import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.resource.Bitmap;
 import sgdk.rescomp.resource.Image;
@@ -48,6 +49,10 @@ public class Compiler
 
     static
     {
+        // function processors
+        resourceProcessors.add(new AlignProcessor());
+
+        // resource processors
         resourceProcessors.add(new BinProcessor());
         resourceProcessors.add(new PaletteProcessor());
         resourceProcessors.add(new BitmapProcessor());
@@ -94,11 +99,16 @@ public class Compiler
             return false;
         }
 
+        int align = -1;
+        int lineCnt = 1;
+
         // process input resource file line by line
         for (String l : lines)
         {
             // cleanup the text
             final String line = l.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+            // count line
+            lineCnt++;
 
             // ignore empty line
             if (StringUtil.isEmpty(line))
@@ -112,10 +122,30 @@ public class Compiler
 
             // can't get resource ? --> error happened, stop here..
             if (resource == null)
+            {
+                System.err.println(fileName + ": error on line " + lineCnt);
                 return false;
+            }
 
-            // store resource
-            addResource(resource);
+            // ALIGN resource (not a real resource so handle it specifically)
+            if (resource instanceof Align)
+            {
+                if (align == -1)
+                    align = ((Align) resource).align;
+                else
+                    // ALIGN is only allowed at start of resource file
+                    System.err.println(
+                            fileName + " - line " + lineCnt + ": ALIGN directive only allowed at the start of file");
+            }
+            else
+            {
+                // can be set only at start (too late now)
+                if (align == -1)
+                    align = 0;
+
+                // store resource
+                addResource(resource);
+            }
         }
 
         // define output file printer
@@ -140,7 +170,11 @@ public class Compiler
 
             // Read Only Data section
             outS.write(".section .rodata\n\n");
-            // outS.write(".text\n\n");
+            
+            // resources alignment
+            if (align > 0)
+                outS.println("    .align " + align);
+            outS.println();    
 
             // build header name from resource parent folder name
             String headerName = FileUtil.getFileName(FileUtil.getDirectory(resDir, false), false);

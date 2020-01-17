@@ -23,9 +23,8 @@ public class PaletteProcessor implements Processor
         {
             System.out.println("Wrong PALETTE definition");
             System.out.println("PALETTE name file");
-            System.out.println("  name\\t\\tPalette variable name");
-            System.out.println(
-                    "  file\\tpath of the .pal or image file to convert to Palette structure (should be a 8bpp / 4bpp .bmp or .png)");
+            System.out.println("  name       Palette variable name");
+            System.out.println("  file       path of the .pal or image file to convert to Palette structure (should be a 8bpp / 4bpp .bmp or .png)");
 
             return null;
         }

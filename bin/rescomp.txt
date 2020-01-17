@@ -1,4 +1,4 @@
-ResComp 2.43 (january 2020)
+ResComp 2.5 (january 2020)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -22,6 +22,9 @@ Supported resource type:
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
 - BIN       any binary data file which do not need any specific conversion or processing.
 
+Note that you can force data alignment for the resource file using 'ALIGN value' at the first line. You can't align data in middle of the file
+as internals resources may be exported in an arbitrary way making intermediate alignments pointless so if you want several data alignments
+you need to use several resources files.
 
 PALETTE
 -------
