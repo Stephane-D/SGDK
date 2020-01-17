@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     // force align on 2
     if (align < 2) align = 2;
 
-    fprintf(FileOutput, ".text\n\n");
+    fprintf(FileOutput, ".section .rodata\n\n");
 
     fprintf(FileOutput, "    .align  %d\n\n", align);
     fprintf(FileOutput, "    .global %s\n", shortname);
