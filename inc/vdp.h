@@ -559,7 +559,8 @@ u16  VDP_getPlanWidth();
 u16  VDP_getPlanHeight();
 /**
  *  \brief
- *      Set background plan size (in tile).
+ *      Set background plan size (in tile).<br>
+ *      WARNING: take attention to properly setup VRAM so tilemaps has enough space.
  *
  *  \param w
  *      width in tile.<br>

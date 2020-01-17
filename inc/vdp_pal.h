@@ -1,5 +1,5 @@
 /**
- *  \deprecated Uses pal.h unit instead
+ *  \deprecated Use pal.h unit instead
  */
 
 #ifndef _VDP_PAL_H_
