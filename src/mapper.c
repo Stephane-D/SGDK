@@ -7,7 +7,6 @@
 
 #include "mapper.h"
 
-
 #define NUM_BANK        8
 
 
@@ -33,22 +32,19 @@ void BANK_setBank(u16 regionIndex, u16 bankIndex)
 }
 
 
-void* BANK_getFarData(void* data)
+static bool needBankSwitch(u32 addr)
 {
-    // convert to address
-    const u32 addr = data;
+    return (addr & 0x00700000) >= 0x00300000;
+}
 
-    // don't require bank switch --> return direct pointer
-    if ((addr & 0x00700000) < 0x00300000) return data;
-
+static u32 setBank(u32 addr)
+{
     // get 512 KB bank index
     const u16 bankIndex = addr >> 11;
-    // get 512 KB bank data mask
-    const u32 bankMask = addr & 0x07FFFF;
 
     // check if bank is already set ?
-    if (banks[6] == bankIndex) return (void*) (bankMask + 0x300000);
-    if (banks[7] == bankIndex) return (void*) (bankMask + 0x380000);
+    if (banks[6] == bankIndex) return 0x300000;
+    if (banks[7] == bankIndex) return 0x380000;
 
     if (reg)    // use region 7
     {
@@ -57,8 +53,8 @@ void* BANK_getFarData(void* data)
         // next time we will use other region
         reg = 0;
 
-        // return adjusted pointer
-        return (void*) (bankMask + 0x380000);
+        // return bank address
+        return 0x380000;
     }
     else        // use region 6
     {
@@ -67,51 +63,19 @@ void* BANK_getFarData(void* data)
         // next time we will use other region
         reg = 1;
 
-        // return adjusted pointer
-        return (void*) (bankMask + 0x300000);
+        // return bank address
+        return 0x300000;
     }
 }
 
-SpriteDefinition* BANK_getFarSpriteDef(SpriteDefinition* spriteDef)
+void* BANK_getFarData(void* data)
 {
     // convert to address
-    const u32 addr = spriteDef;
+    const u32 addr = (u32) data;
 
     // don't require bank switch --> return direct pointer
-    if ((addr & 0x00700000) < 0x00300000) return spriteDef;
+    if (!needBankSwitch(addr)) return data;
 
-    // get 512 KB bank index
-    const u16 bankIndex = addr >> 11;
-
-}
-
-void BANK_releaseFarSpriteDef(SpriteDefinition* farSpriteDef)
-{
-
-
-}
-
-
-Image* BANK_getFarImage(Image* image)
-{
-
-
-}
-
-TileSet* BANK_getFarTileSet(TileSet* tileSet)
-{
-
-
-}
-
-Map* BANK_getFarTileMap(Map* tileMap)
-{
-
-
-}
-
-Bitmap* BANK_getFarBitmap(Bitmap* bitmap)
-{
-
-
+    // set bank and return adjusted address
+    return (void*) (setBank(addr) + (addr & 0x07FFFF));
 }
