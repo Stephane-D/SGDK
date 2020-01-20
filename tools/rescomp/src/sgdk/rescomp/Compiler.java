@@ -1,9 +1,9 @@
 package sgdk.rescomp;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -148,33 +148,16 @@ public class Compiler
             }
         }
 
-        // define output file printer
-        PrintWriter outS = null;
-        PrintWriter outH = null;
-
-        try
-        {
-            outS = new PrintWriter(FileUtil.setExtension(fileNameOut, ".s"));
-            outH = new PrintWriter(FileUtil.setExtension(fileNameOut, ".h"));
-        }
-        catch (FileNotFoundException e)
-        {
-            System.err.println("Couldn't create output file:");
-            System.err.println(e.getMessage());
-            return false;
-        }
+        // define output files
+        final StringBuilder outS = new StringBuilder(1024);
+        final StringBuilder outH = new StringBuilder(1024);
 
         try
         {
             final ByteArrayOutputStream outB = new ByteArrayOutputStream();
 
             // Read Only Data section
-            outS.write(".section .rodata\n\n");
-            
-            // resources alignment
-            if (align > 0)
-                outS.println("    .align " + align);
-            outS.println();    
+            outS.append(".section .rodata\n\n");
 
             // build header name from resource parent folder name
             String headerName = FileUtil.getFileName(FileUtil.getDirectory(resDir, false), false);
@@ -183,8 +166,25 @@ public class Compiler
             headerName += "_" + FileUtil.getFileName(fileNameOut, false);
             headerName = headerName.toUpperCase();
 
-            outH.write("#ifndef _" + headerName + "_H_\n");
-            outH.write("#define _" + headerName + "_H_\n\n");
+            outH.append("#ifndef _" + headerName + "_H_\n");
+            outH.append("#define _" + headerName + "_H_\n\n");
+
+            // export "metadata" first (no compression possible)
+            exportResources(getResources(Palette.class), outB, outS, outH);
+            exportResources(getResources(Tileset.class), outB, outS, outH);
+            exportResources(getResources(Tilemap.class), outB, outS, outH);
+            exportResources(getResources(SpriteFrameInfo.class), outB, outS, outH);
+            exportResources(getResources(SpriteFrame.class), outB, outS, outH);
+            exportResources(getResources(SpriteAnimation.class), outB, outS, outH);
+            exportResources(getResources(Sprite.class), outB, outS, outH);
+            exportResources(getResources(Image.class), outB, outS, outH);
+            exportResources(getResources(Bitmap.class), outB, outS, outH);
+
+            // then export "metadata" resources which can be compressed (only binary data inside)
+            exportResources(getResources(VDPSprite.class), outB, outS, outH);
+            exportResources(getResources(Collision.class), outB, outS, outH);
+
+            // -- BINARY SECTION --
 
             // get BIN resources, and also grouped by type for better compression
             final List<Resource> binResources = getResources(Bin.class);
@@ -199,32 +199,51 @@ public class Compiler
             binResources.removeAll(binResourcesOfTileset);
             binResources.removeAll(binResourcesOfTilemap);
 
-            // export raw BIN resources first
+            // get "far" BIN resources
+            final List<Resource> farBinResources = getFarBinResourcesOf(binResources);
+            final List<Resource> farBinResourcesOfPalette = getFarBinResourcesOf(binResourcesOfPalette);
+            final List<Resource> farBinResourcesOfBitmap = getFarBinResourcesOf(binResourcesOfBitmap);
+            final List<Resource> farBinResourcesOfTileset = getFarBinResourcesOf(binResourcesOfTileset);
+            final List<Resource> farBinResourcesOfTilemap = getFarBinResourcesOf(binResourcesOfTilemap);
+
+            // keep "non far" BIN resources only
+            binResources.removeAll(farBinResources);
+            binResourcesOfPalette.removeAll(farBinResourcesOfPalette);
+            binResourcesOfBitmap.removeAll(farBinResourcesOfBitmap);
+            binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
+            binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
+
+            // export "nor far" RAW binary data first
             exportResources(binResources, outB, outS, outH);
 
-            // then export BIN resources by type for better compression
+            // then export "not far" BIN resources by type for better compression
             exportResources(binResourcesOfPalette, outB, outS, outH);
             exportResources(binResourcesOfBitmap, outB, outS, outH);
             exportResources(binResourcesOfTileset, outB, outS, outH);
             exportResources(binResourcesOfTilemap, outB, outS, outH);
 
-            // then export resources which can still be compressed (only binary data inside)
-            exportResources(getResources(VDPSprite.class), outB, outS, outH);
-            exportResources(getResources(Collision.class), outB, outS, outH);
+            // FAR Read Only Data section
+            outS.append(".section .far_rodata\n\n");
 
-            // then we can export others types of resource (no compression)
-            exportResources(getResources(Palette.class), outB, outS, outH);
-            exportResources(getResources(Tileset.class), outB, outS, outH);
-            exportResources(getResources(Tilemap.class), outB, outS, outH);
-            exportResources(getResources(SpriteFrameInfo.class), outB, outS, outH);
-            exportResources(getResources(SpriteFrame.class), outB, outS, outH);
-            exportResources(getResources(SpriteAnimation.class), outB, outS, outH);
-            exportResources(getResources(Sprite.class), outB, outS, outH);
-            exportResources(getResources(Image.class), outB, outS, outH);
-            exportResources(getResources(Bitmap.class), outB, outS, outH);
+            // resources alignment
+            if (align > 0)
+            {
+                // can't preserve binary buffer on alignment
+                outB.reset();
+                outS.append("    .align " + align + "\n\n");
+            }
 
-            outH.write("\n");
-            outH.write("#endif // _" + headerName + "_H_\n");
+            // then export "far" raw BIN resources
+            exportResources(farBinResources, outB, outS, outH);
+
+            // and finally export "far" BIN resources by type for better compression
+            exportResources(farBinResourcesOfPalette, outB, outS, outH);
+            exportResources(farBinResourcesOfBitmap, outB, outS, outH);
+            exportResources(farBinResourcesOfTileset, outB, outS, outH);
+            exportResources(farBinResourcesOfTilemap, outB, outS, outH);
+
+            outH.append("\n");
+            outH.append("#endif // _" + headerName + "_H_\n");
 
             int unpackedSize = 0;
             int packedRawSize = 0;
@@ -303,12 +322,25 @@ public class Compiler
             System.err.println(t.getMessage());
             return false;
         }
-        finally
+
+        BufferedWriter out;
+
+        try
         {
-            outS.flush();
-            outH.flush();
-            outS.close();
-            outH.close();
+            // save .s file
+            out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".s")));
+            out.write(outS.toString());
+            out.close();
+            // save .h file
+            out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".h")));
+            out.write(outH.toString());
+            out.close();
+        }
+        catch (IOException e)
+        {
+            System.err.println("Couldn't create output file:");
+            System.err.println(e.getMessage());
+            return false;
         }
 
         // remove unwanted header file if asked
@@ -316,6 +348,18 @@ public class Compiler
             FileUtil.delete(FileUtil.setExtension(fileNameOut, ".h"), false);
 
         return true;
+    }
+
+    private static List<Resource> getFarBinResourcesOf(List<Resource> resourceList)
+    {
+        final List<Resource> result = new ArrayList<>();
+
+        for (Resource resource : resourceList)
+            if (resource instanceof Bin)
+                if (((Bin) resource).far)
+                    result.add(resource);
+
+        return result;
     }
 
     private static List<Resource> getBinResourcesOf(Class<? extends Resource> resourceType)
@@ -366,14 +410,14 @@ public class Compiler
     }
 
     private static void exportResources(Collection<Resource> resourceCollection, ByteArrayOutputStream outB,
-            PrintWriter outS, PrintWriter outH) throws IOException
+            StringBuilder outS, StringBuilder outH) throws IOException
     {
         for (Resource res : resourceCollection)
             exportResource(res, outB, outS, outH);
     }
 
-    private static void exportResource(Resource resource, ByteArrayOutputStream outB, PrintWriter outS,
-            PrintWriter outH) throws IOException
+    private static void exportResource(Resource resource, ByteArrayOutputStream outB, StringBuilder outS,
+            StringBuilder outH) throws IOException
     {
         resource.out(outB, outS, outH);
     }
