@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import sgdk.rescomp.Resource;
 
@@ -46,13 +45,13 @@ public class Align extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't know align size so we just reset binary stream here (used for compression only)
         outB.reset();
 
         // simple alignment declaration
-        outS.println("    .align  " + align);
-        outS.println();
+        outS.append("    .align  " + align + "\n");
+        outS.append("\n");
     }
 }
