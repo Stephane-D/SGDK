@@ -45,6 +45,16 @@
 
 /**
  *  \brief
+ *      Set it to 1 to enable automatic bank switch using official SEGA mapper for ROM > 4MB.
+ *
+ *      When automatic bank switch is enabled all internal BIN data structures declared in .far_rodata section
+ *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
+ *      it's why it's disabled by default if you don't require bank switch.
+ */
+#define ENABLE_BANK_SWITCH  0
+
+/**
+ *  \brief
  *      Set it to 1 if you want to use newlib with SGDK.<br>
  *      That will disable any standard methods from SGDK to replace them by newlib library implementation.
  */

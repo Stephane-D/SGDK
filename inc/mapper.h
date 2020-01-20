@@ -6,6 +6,7 @@
  *
  * This unit provides tools to deal with ROM larger than 4MB.<br>
  * It allows to do classic bank switching using the official SEGA mapper but also provide methods to get easy access to "far" data.<br>
+ * Note that you can use the ENABLE_BANK_SWITCH flag in config.h file to enable automatic bank switch on binary data access.<br>
  *<br>
  * SEGA official mapper description (taken from Segaretro.org):<br>
  * The bankswitching mechanism is very simple. It views the addressable 4 mega-bytes of ROM as 8 512KB regions.<br>
@@ -37,6 +38,13 @@
 #define MAPPER_BASE     0xA130F1
 
 
+#if (ENABLE_BANK_SWITCH == 0)
+    #define FAR(data) data
+#else
+    #define FAR(data) BANK_getFarData(data)
+#endif
+
+
 /**
  *  \brief
  *      Returns the current bank of specified region index.
@@ -56,7 +64,7 @@ void SYS_setBank(u16 regionIndex, u16 bankIndex);
 
 /**
  *  \brief
- *      Make the given data ressource accessible and return a pointer to it.
+ *      Make the given binary data ressource accessible and return a pointer to it.
  *
  *  \param data far data we want to access.
  *
