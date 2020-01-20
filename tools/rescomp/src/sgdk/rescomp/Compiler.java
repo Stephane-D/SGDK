@@ -156,9 +156,6 @@ public class Compiler
         {
             final ByteArrayOutputStream outB = new ByteArrayOutputStream();
 
-            // Read Only Data section
-            outS.append(".section .rodata\n\n");
-
             // build header name from resource parent folder name
             String headerName = FileUtil.getFileName(FileUtil.getDirectory(resDir, false), false);
             if (StringUtil.isEmpty(headerName))
@@ -168,22 +165,7 @@ public class Compiler
 
             outH.append("#ifndef _" + headerName + "_H_\n");
             outH.append("#define _" + headerName + "_H_\n\n");
-
-            // export "metadata" first (no compression possible)
-            exportResources(getResources(Palette.class), outB, outS, outH);
-            exportResources(getResources(Tileset.class), outB, outS, outH);
-            exportResources(getResources(Tilemap.class), outB, outS, outH);
-            exportResources(getResources(SpriteFrameInfo.class), outB, outS, outH);
-            exportResources(getResources(SpriteFrame.class), outB, outS, outH);
-            exportResources(getResources(SpriteAnimation.class), outB, outS, outH);
-            exportResources(getResources(Sprite.class), outB, outS, outH);
-            exportResources(getResources(Image.class), outB, outS, outH);
-            exportResources(getResources(Bitmap.class), outB, outS, outH);
-
-            // then export "metadata" resources which can be compressed (only binary data inside)
-            exportResources(getResources(VDPSprite.class), outB, outS, outH);
-            exportResources(getResources(Collision.class), outB, outS, outH);
-
+            
             // -- BINARY SECTION --
 
             // get BIN resources, and also grouped by type for better compression
@@ -213,7 +195,17 @@ public class Compiler
             binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
             binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
 
-            // export "nor far" RAW binary data first
+            // export binary data first !! very important !!
+            // otherwise metadata structures can't properly retrieve BIN.doneCompression field value
+
+            // Read Only Data section
+            outS.append(".section .rodata\n\n");
+
+            // export simple "metadata" resources which can be compressed (only binary data inside without reference)
+            exportResources(getResources(VDPSprite.class), outB, outS, outH);
+            exportResources(getResources(Collision.class), outB, outS, outH);
+
+            // then export "nor far" RAW binary data first
             exportResources(binResources, outB, outS, outH);
 
             // then export "not far" BIN resources by type for better compression
@@ -236,11 +228,25 @@ public class Compiler
             // then export "far" raw BIN resources
             exportResources(farBinResources, outB, outS, outH);
 
-            // and finally export "far" BIN resources by type for better compression
+            // then export "far" BIN resources by type for better compression
             exportResources(farBinResourcesOfPalette, outB, outS, outH);
             exportResources(farBinResourcesOfBitmap, outB, outS, outH);
             exportResources(farBinResourcesOfTileset, outB, outS, outH);
             exportResources(farBinResourcesOfTilemap, outB, outS, outH);
+
+            // Read Only Data section
+            outS.append(".section .rodata\n\n");
+
+            // and finally export "metadata" *after* binary data (no compression possible)
+            exportResources(getResources(Palette.class), outB, outS, outH);
+            exportResources(getResources(Tileset.class), outB, outS, outH);
+            exportResources(getResources(Tilemap.class), outB, outS, outH);
+            exportResources(getResources(SpriteFrameInfo.class), outB, outS, outH);
+            exportResources(getResources(SpriteFrame.class), outB, outS, outH);
+            exportResources(getResources(SpriteAnimation.class), outB, outS, outH);
+            exportResources(getResources(Sprite.class), outB, outS, outH);
+            exportResources(getResources(Image.class), outB, outS, outH);
+            exportResources(getResources(Bitmap.class), outB, outS, outH);
 
             outH.append("\n");
             outH.append("#endif // _" + headerName + "_H_\n");
@@ -320,6 +326,7 @@ public class Compiler
         catch (Throwable t)
         {
             System.err.println(t.getMessage());
+            t.printStackTrace();
             return false;
         }
 
