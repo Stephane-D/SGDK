@@ -105,6 +105,6 @@ public class WavProcessor implements Processor
 
         // build BIN resource
         return new Bin(id, pcmData, (driver == SoundDriver.DPCM2) ? 128 : 256,
-                (driver == SoundDriver.DPCM2) ? 128 : 256, (driver == SoundDriver.DPCM2) ? 136 : 0, Compression.NONE);
+                (driver == SoundDriver.DPCM2) ? 128 : 256, (driver == SoundDriver.DPCM2) ? 136 : 0, Compression.NONE, false);
     }
 }

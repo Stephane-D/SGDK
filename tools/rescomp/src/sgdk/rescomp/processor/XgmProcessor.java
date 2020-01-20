@@ -71,6 +71,6 @@ public class XgmProcessor implements Processor
             throw new IOException("Can't read BIN data from file'" + fileOut + "' !");
 
         // build BIN resource
-        return new Bin(id, data, 256, 256, 0, Compression.NONE);
+        return new Bin(id, data, 256, 256, 0, Compression.NONE, false);
     }
 }
