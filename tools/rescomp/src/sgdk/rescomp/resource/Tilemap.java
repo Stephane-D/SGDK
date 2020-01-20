@@ -148,7 +148,7 @@ public class Tilemap extends Resource
 
         // output Map structure
         Util.decl(outS, outH, "Map", id, 2, global);
-        // set compression info
+        // set compression info (very important that binary data had already been exported at this point)
         outS.append("    dc.w    " + (bin.doneCompression.ordinal() - 1) + "\n");
         // set size in tile
         outS.append("    dc.w    " + w + ", " + h + "\n");

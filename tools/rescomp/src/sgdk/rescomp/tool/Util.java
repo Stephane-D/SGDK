@@ -351,7 +351,7 @@ public class Util
         {
             final byte[] result = lz4wpack((bin != null) ? bin.toByteArray() : null, data);
 
-            // error on compression or no compression possible ? return origin data
+            // error or no compression possible ? return origin data
             if ((result == null) || (result.length >= data.length))
                 return new PackedData(data, Compression.NONE);
 

@@ -98,7 +98,7 @@ public class Bitmap extends Resource
 
         // output Bitmap structure
         Util.decl(outS, outH, "Bitmap", id, 2, global);
-        // set compression info
+        // set compression info (very important that binary data had already been exported at this point)
         outS.append("    dc.w    " + (bin.doneCompression.ordinal() - 1) + "\n");
         // set size in pixel
         outS.append("    dc.w    " + w + ", " + h + "\n");
