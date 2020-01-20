@@ -2,9 +2,9 @@ package sgdk.rescomp.tool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
+import sgdk.lz4w.LZ4W;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.PackedData;
@@ -122,34 +122,34 @@ public class Util
         return result;
     }
 
-    public static void decl(PrintWriter outS, PrintWriter outH, String type, String name, int align, boolean global)
+    public static void decl(StringBuilder outS, StringBuilder outH, String type, String name, int align, boolean global)
     {
         // asm declaration
-        outS.println("    .align " + ((align < 2) ? 2 : align));
+        outS.append("    .align " + ((align < 2) ? 2 : align) + "\n");
         if (global)
-            outS.println("    .global " + name);
-        outS.println(name + ":");
+            outS.append("    .global " + name + "\n");
+        outS.append(name + ":\n");
 
         // include declaration
         if (global)
-            outH.println("extern const " + type + " " + name + ";");
+            outH.append("extern const " + type + " " + name + ";\n");
     }
 
-    public static void declArray(PrintWriter outS, PrintWriter outH, String type, String name, int size, int align,
+    public static void declArray(StringBuilder outS, StringBuilder outH, String type, String name, int size, int align,
             boolean global)
     {
         // asm declaration
-        outS.println("    .align  " + ((align < 2) ? 2 : align));
+        outS.append("    .align  " + ((align < 2) ? 2 : align) + "\n");
         if (global)
-            outS.println("    .global " + name);
-        outS.println(name + ":");
+            outS.append("    .global " + name + "\n");
+        outS.append(name + ":\n");
 
         // include declaration
         if (global)
-            outH.println("extern const " + type + " " + name + "[" + size + "];");
+            outH.append("extern const " + type + " " + name + "[" + size + "];\n");
     }
 
-    public static void outS(PrintWriter out, byte[] data, int intSize)
+    public static void outS(StringBuilder out, byte[] data, int intSize)
     {
         int offset = 0;
         // align remain on word
@@ -158,24 +158,24 @@ public class Util
 
         while (remain > 0)
         {
-            out.print("    dc." + formatAsm[adjIntSize] + "    ");
+            out.append("    dc." + formatAsm[adjIntSize] + "    ");
 
             for (int i = 0; i < Math.min(16, remain) / adjIntSize; i++)
             {
                 if (i > 0)
-                    out.print(", ");
+                    out.append(", ");
 
-                out.print("0x");
+                out.append("0x");
 
                 if (intSize == 1)
                 {
                     // we cannot use byte data because of GCC bugs with -G parameter
-                    out.print(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 0]), 2));
+                    out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 0]), 2));
 
                     if ((offset + 1) >= data.length)
-                        out.print("00");
+                        out.append("00");
                     else
-                        out.print(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 1]), 2));
+                        out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 1]), 2));
 
                     offset += adjIntSize;
                 }
@@ -184,11 +184,11 @@ public class Util
                     offset += adjIntSize;
 
                     for (int j = 0; j < adjIntSize; j++)
-                        out.print(StringUtil.toHexaString(TypeUtil.unsign(data[offset - (j + 1)]), 2));
+                        out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset - (j + 1)]), 2));
                 }
             }
 
-            out.println();
+            out.append("\n");
             remain -= 16;
         }
     }
@@ -253,6 +253,11 @@ public class Util
         }
 
         return FileUtil.save(fout, outData, true) && (remain == 0);
+    }
+
+    public static boolean out(byte[] data, String fout)
+    {
+        return out(data, 1, false, fout);
     }
 
     public static void align(ByteArrayOutputStream out, int align)
@@ -337,14 +342,22 @@ public class Util
 
     public static PackedData pack(byte[] data, Compression compression, ByteArrayOutputStream bin)
     {
-        return packEx(data, 1, compression, bin);
-    }
-
-    public static PackedData packEx(byte[] data, int intSize, Compression compression, ByteArrayOutputStream bin)
-    {
         // nothing to do
         if (compression == Compression.NONE)
             return new PackedData(data, Compression.NONE);
+
+        // LZ4W compression with byte size ? do it quickly :)
+        if (compression == Compression.LZ4W)
+        {
+            final byte[] result = lz4wpack((bin != null) ? bin.toByteArray() : null, data);
+
+            // error on compression or no compression possible ? return origin data
+            if ((result == null) || (result.length >= data.length))
+                return new PackedData(data, Compression.NONE);
+
+            // return compressed result
+            return new PackedData(result, Compression.LZ4W);
+        }
 
         // we don't count AUTO
         final byte[][] results = new byte[Compression.values().length - 1][];
@@ -357,11 +370,11 @@ public class Util
         // create prev file from bin stream
         if ((bin != null) && (bin.size() > 1))
         {
-            if (!out(bin.toByteArray(), 1, false, "prev.in"))
+            if (!out(bin.toByteArray(), "prev.in"))
                 return null;
         }
         // create out file from data input
-        if (!out(data, intSize, (intSize > 1) ? true : false, "pack.in"))
+        if (!out(data, "pack.in"))
             return null;
 
         // init results
@@ -466,6 +479,26 @@ public class Util
 
         // file exist --> ok
         return FileUtil.exists(fout);
+    }
+
+    public static byte[] lz4wpack(byte[] prev, byte[] data)
+    {
+        final int prevLen = (prev != null) ? prev.length : 0;
+        final byte[] buf = new byte[prevLen + data.length];
+
+        if (prev != null)
+            System.arraycopy(prev, 0, buf, 0, prevLen);
+        System.arraycopy(data, 0, buf, prevLen, data.length);
+
+        try
+        {
+            return LZ4W.pack(buf, prevLen, true);
+        }
+        catch (IOException e)
+        {
+            System.err.println(e.getMessage());
+            return null;
+        }
     }
 
     public static boolean lz4wpack(String prev, String fin, String fout)
