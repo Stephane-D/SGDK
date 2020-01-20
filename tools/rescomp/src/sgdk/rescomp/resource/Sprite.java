@@ -162,7 +162,7 @@ public class Sprite extends Resource
         // set palette pointer
         outS.append("    dc.l    " + palette.id + "\n");
         // set number of animation
-        outS.append("    dc.w    " + animations.size());
+        outS.append("    dc.w    " + animations.size() + "\n");
         // set animations pointer
         outS.append("    dc.l    " + id + "_animations" + "\n");
         // set maximum number of tile used by a single animation frame (used for VRAM tile space
@@ -174,5 +174,4 @@ public class Sprite extends Resource
 
         outS.append("\n");
     }
-
 }
