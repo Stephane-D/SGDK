@@ -2,7 +2,6 @@ package sgdk.rescomp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public abstract class Resource
 {
@@ -54,5 +53,5 @@ public abstract class Resource
      */
     public abstract int shallowSize();
 
-    public abstract void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException;
+    public abstract void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException;
 }
