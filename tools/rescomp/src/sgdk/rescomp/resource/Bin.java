@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 import sgdk.rescomp.Resource;
@@ -18,10 +17,11 @@ public class Bin extends Resource
     public final Compression wantedCompression;
     public PackedData packedData;
     public Compression doneCompression;
+    public boolean far;
 
     final int hc;
 
-    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression)
+    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far)
     {
         super(id);
 
@@ -33,9 +33,15 @@ public class Bin extends Resource
         wantedCompression = compression;
         packedData = null;
         doneCompression = Compression.NONE;
+        this.far = far;
 
         // compute hash code
         hc = Arrays.hashCode(data) ^ (align << 16) ^ wantedCompression.hashCode();
+    }
+
+    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression)
+    {
+        this(id, data, align, sizeAlign, fill, compression, true);
     }
 
     public Bin(String id, byte[] data, int align, int sizeAlign, int fill)
@@ -53,9 +59,9 @@ public class Bin extends Resource
         this(id, data, 2, 0, 0, compression);
     }
 
-    public Bin(String id, short[] data, Compression compression)
+    public Bin(String id, short[] data, Compression compression, boolean far)
     {
-        this(id, ArrayUtil.shortToByte(data), 2, 0, 0, compression);
+        this(id, ArrayUtil.shortToByte(data), 2, 0, 0, compression, far);
     }
 
     public Bin(String id, int[] data, Compression compression)
@@ -89,7 +95,7 @@ public class Bin extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // pack data first if needed
         packedData = Util.pack(data, wantedCompression, outB);
@@ -125,6 +131,6 @@ public class Bin extends Resource
         Util.declArray(outS, outH, "u8", id, data.length, align, global);
         // output data (compression information is stored in 'parent' resource)
         Util.outS(outS, packedData.data, 1);
-        outS.println();
+        outS.append("\n");
     }
 }
