@@ -62,7 +62,6 @@ SECTIONS
     *(.dtors)
      LONG(0)
     __DTOR_END__ = .;
-    *(.rodata .rodata.*)
     *(.gcc_except_table .gcc_except_table.*)
 
     . = ALIGN(0x4);
@@ -76,6 +75,9 @@ SECTIONS
 
     _etext = .;
     *(.lit)
+
+    *(.rodata .rodata.*)
+    *(.far_rodata .far_rodata.*)
   } > rom
   _stext = SIZEOF (.text);
 
