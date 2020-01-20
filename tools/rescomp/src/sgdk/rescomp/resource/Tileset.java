@@ -3,7 +3,6 @@ package sgdk.rescomp.resource;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,7 +204,7 @@ public class Tileset extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -213,12 +212,12 @@ public class Tileset extends Resource
         // output TileSet structure
         Util.decl(outS, outH, "TileSet", id, 2, global);
         // set compression info
-        outS.println("    dc.w    " + (bin.doneCompression.ordinal() - 1));
+        outS.append("    dc.w    " + (bin.doneCompression.ordinal() - 1) + "\n");
         // set number of tile
-        outS.println("    dc.w    " + getNumTile());
+        outS.append("    dc.w    " + getNumTile() + "\n");
         // set data pointer
-        outS.println("    dc.l    " + bin.id);
-        outS.println();
+        outS.append("    dc.l    " + bin.id + "\n");
+        outS.append("\n");
     }
 
 }

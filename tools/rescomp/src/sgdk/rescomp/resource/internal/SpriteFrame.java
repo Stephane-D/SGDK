@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
@@ -193,7 +192,7 @@ public class SpriteFrame extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -201,27 +200,27 @@ public class SpriteFrame extends Resource
         // AnimationFrame structure
         Util.decl(outS, outH, "AnimationFrame", id, 2, global);
         // number of sprite / frame width
-        outS.println("    dc.w    " + ((getNumSprite() << 8) | (((w * 8) << 0) & 0xFF)));
+        outS.append("    dc.w    " + ((getNumSprite() << 8) | (((w * 8) << 0) & 0xFF)) + "\n");
         // frame height / timer info
-        outS.println("    dc.w    " + (((h * 8) << 8) | ((timer << 0) & 0xFF)));
+        outS.append("    dc.w    " + (((h * 8) << 8) | ((timer << 0) & 0xFF)) + "\n");
 
         // set vdp sprites table and collision pointers (base)
-        outS.println("    dc.l    " + frameInfo.id + "_sprites");
-        outS.println("    dc.l    " + ((frameInfo.collision != null) ? frameInfo.collision.id : "0"));
+        outS.append("    dc.l    " + frameInfo.id + "_sprites\n");
+        outS.append("    dc.l    " + ((frameInfo.collision != null) ? frameInfo.collision.id : "0") + "\n");
         // set vdp sprites table and collision pointers (hflip)
-        outS.println("    dc.l    " + frameInfoH.id + "_sprites");
-        outS.println("    dc.l    " + ((frameInfoH.collision != null) ? frameInfoH.collision.id : "0"));
+        outS.append("    dc.l    " + frameInfoH.id + "_sprites\n");
+        outS.append("    dc.l    " + ((frameInfoH.collision != null) ? frameInfoH.collision.id : "0") + "\n");
         // set vdp sprites table and collision pointers (vflip)
-        outS.println("    dc.l    " + frameInfoV.id + "_sprites");
-        outS.println("    dc.l    " + ((frameInfoV.collision != null) ? frameInfoV.collision.id : "0"));
+        outS.append("    dc.l    " + frameInfoV.id + "_sprites\n");
+        outS.append("    dc.l    " + ((frameInfoV.collision != null) ? frameInfoV.collision.id : "0") + "\n");
         // set vdp sprites table and collision pointers (hvflip)
-        outS.println("    dc.l    " + frameInfoHV.id + "_sprites");
-        outS.println("    dc.l    " + ((frameInfoHV.collision != null) ? frameInfoHV.collision.id : "0"));
+        outS.append("    dc.l    " + frameInfoHV.id + "_sprites\n");
+        outS.append("    dc.l    " + ((frameInfoHV.collision != null) ? frameInfoHV.collision.id : "0") + "\n");
 
         // set tileset pointer
-        outS.println("    dc.l    " + tileset.id);
+        outS.append("    dc.l    " + tileset.id + "\n");
 
-        outS.println();
+        outS.append("\n");
     }
 
 }

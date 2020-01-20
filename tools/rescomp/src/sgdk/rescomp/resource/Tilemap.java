@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -111,7 +110,7 @@ public class Tilemap extends Resource
         this.h = h;
 
         // build BIN (tilemap data) with wanted compression
-        bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression));
+        bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression, true));
 
         // compute hash code
         hc = bin.hashCode() ^ (w << 8) ^ (h << 16);
@@ -142,7 +141,7 @@ public class Tilemap extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -150,11 +149,11 @@ public class Tilemap extends Resource
         // output Map structure
         Util.decl(outS, outH, "Map", id, 2, global);
         // set compression info
-        outS.println("    dc.w    " + (bin.doneCompression.ordinal() - 1));
+        outS.append("    dc.w    " + (bin.doneCompression.ordinal() - 1) + "\n");
         // set size in tile
-        outS.println("    dc.w    " + w + ", " + h);
+        outS.append("    dc.w    " + w + ", " + h + "\n");
         // set data pointer
-        outS.println("    dc.l    " + bin.id);
-        outS.println();
+        outS.append("    dc.l    " + bin.id + "\n");
+        outS.append("\n");
     }
 }

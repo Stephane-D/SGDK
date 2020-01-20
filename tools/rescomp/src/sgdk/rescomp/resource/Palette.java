@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 import sgdk.rescomp.Resource;
@@ -75,7 +74,7 @@ public class Palette extends Resource
             palette = Arrays.copyOf(palette, adjMaxSize);
 
         // build BIN (we never compress palette)
-        bin = (Bin) addInternalResource(new Bin(id + "_data", palette, Compression.NONE));
+        bin = (Bin) addInternalResource(new Bin(id + "_data", palette, Compression.NONE, false));
 
         // compute hash code
         hc = bin.hashCode();
@@ -111,7 +110,7 @@ public class Palette extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH)
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH)
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -119,9 +118,9 @@ public class Palette extends Resource
         // declare
         Util.decl(outS, outH, "Palette", id, 2, global);
         // first palette size
-        outS.println("    dc.w    " + bin.data.length / 2);
+        outS.append("    dc.w    " + (bin.data.length / 2) + "\n");
         // set palette data pointer
-        outS.println("    dc.l    " + bin.id);
-        outS.println();
+        outS.append("    dc.l    " + bin.id + "\n");
+        outS.append("\n");
     }
 }

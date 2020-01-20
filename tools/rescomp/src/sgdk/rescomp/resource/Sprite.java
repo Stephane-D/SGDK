@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,7 +145,7 @@ public class Sprite extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -154,26 +153,26 @@ public class Sprite extends Resource
         // animations pointer table
         Util.decl(outS, outH, null, id + "_animations", 2, false);
         for (SpriteAnimation animation : animations)
-            outS.println("    dc.l    " + animation.id);
+            outS.append("    dc.l    " + animation.id + "\n");
 
-        outS.println();
+        outS.append("\n");
 
         // SpriteDefinition structure
         Util.decl(outS, outH, "SpriteDefinition", id, 2, global);
         // set palette pointer
-        outS.println("    dc.l    " + palette.id);
+        outS.append("    dc.l    " + palette.id + "\n");
         // set number of animation
-        outS.println("    dc.w    " + animations.size());
+        outS.append("    dc.w    " + animations.size());
         // set animations pointer
-        outS.println("    dc.l    " + id + "_animations");
+        outS.append("    dc.l    " + id + "_animations" + "\n");
         // set maximum number of tile used by a single animation frame (used for VRAM tile space
         // allocation)
-        outS.println("    dc.w    " + maxNumTile);
+        outS.append("    dc.w    " + maxNumTile + "\n");
         // set maximum number of VDP sprite used by a single animation frame (used for VDP sprite
         // allocation)
-        outS.println("    dc.w    " + maxNumSprite);
+        outS.append("    dc.w    " + maxNumSprite + "\n");
 
-        outS.println();
+        outS.append("\n");
     }
 
 }

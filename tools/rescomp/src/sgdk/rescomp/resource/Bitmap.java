@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -43,7 +42,7 @@ public class Bitmap extends Resource
 
         // get image data
         byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        
+
         // 8 bpp image ?
         if (imgInfo.bpp > 4)
         {
@@ -54,7 +53,7 @@ public class Bitmap extends Resource
                 throw new IllegalArgumentException("'" + imgFile
                         + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
         }
-        
+
         // convert to 4 bpp
         data = ImageUtil.convertTo4bpp(data, imgInfo.bpp);
 
@@ -92,7 +91,7 @@ public class Bitmap extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH)
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH)
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -100,14 +99,14 @@ public class Bitmap extends Resource
         // output Bitmap structure
         Util.decl(outS, outH, "Bitmap", id, 2, global);
         // set compression info
-        outS.println("    dc.w    " + (bin.doneCompression.ordinal() - 1));
+        outS.append("    dc.w    " + (bin.doneCompression.ordinal() - 1) + "\n");
         // set size in pixel
-        outS.println("    dc.w    " + w + ", " + h);
+        outS.append("    dc.w    " + w + ", " + h + "\n");
         // set palette pointer
-        outS.println("    dc.l    " + palette.id);
+        outS.append("    dc.l    " + palette.id + "\n");
         // set image data pointer
-        outS.println("    dc.l    " + bin.id);
-        outS.println();
+        outS.append("    dc.l    " + bin.id + "\n");
+        outS.append("\n");
     }
 
 }

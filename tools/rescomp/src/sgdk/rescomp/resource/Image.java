@@ -2,7 +2,6 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -114,7 +113,7 @@ public class Image extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH)
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH)
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -122,11 +121,11 @@ public class Image extends Resource
         // output Image structure
         Util.decl(outS, outH, "Image", id, 2, global);
         // Palette pointer
-        outS.println("    dc.l    " + palette.id);
+        outS.append("    dc.l    " + palette.id + "\n");
         // Tileset pointer
-        outS.println("    dc.l    " + tileset.id);
+        outS.append("    dc.l    " + tileset.id + "\n");
         // Tilemap pointer
-        outS.println("    dc.l    " + tilemap.id);
-        outS.println();
+        outS.append("    dc.l    " + tilemap.id + "\n");
+        outS.append("\n");
     }
 }

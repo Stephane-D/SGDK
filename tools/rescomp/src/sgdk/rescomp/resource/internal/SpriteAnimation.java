@@ -2,7 +2,6 @@ package sgdk.rescomp.resource.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -144,7 +143,7 @@ public class SpriteAnimation extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -152,30 +151,30 @@ public class SpriteAnimation extends Resource
         // frames pointer table
         Util.decl(outS, outH, null, id + "_frames", 2, false);
         for (SpriteFrame frame : frames)
-            outS.println("    dc.l    " + frame.id);
+            outS.append("    dc.l    " + frame.id + "\n");
 
-        outS.println();
+        outS.append("\n");
 
         // sequence data
         Util.decl(outS, outH, null, id + "_sequence", 2, false);
         // output sequence data
         Util.outS(outS, sequence, 1);
 
-        outS.println();
+        outS.append("\n");
 
         // Animation structure
         Util.decl(outS, outH, "Animation", id, 2, global);
         // set number of frame
-        outS.println("    dc.w    " + frames.size());
+        outS.append("    dc.w    " + frames.size() + "\n");
         // set frames pointer
-        outS.println("    dc.l    " + id + "_frames");
+        outS.append("    dc.l    " + id + "_frames\n");
         // set size of sequence
-        outS.println("    dc.w    " + sequence.length);
+        outS.append("    dc.w    " + sequence.length + "\n");
         // set sequence pointer
-        outS.println("    dc.l    " + id + "_sequence");
+        outS.append("    dc.l    " + id + "_sequence\n");
         // loop info
-        outS.println("    dc.w    " + loopIndex);
+        outS.append("    dc.w    " + loopIndex + "\n");
 
-        outS.println();
+        outS.append("\n");
     }
 }

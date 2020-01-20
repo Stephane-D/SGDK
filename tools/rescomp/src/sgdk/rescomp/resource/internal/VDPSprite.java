@@ -2,7 +2,6 @@ package sgdk.rescomp.resource.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -68,7 +67,7 @@ public class VDPSprite extends Resource
     {
         return id + ": [" + offsetX + "," + offsetY + "-" + (wt * 8) + "," + (ht * 8) + "]";
     }
-    
+
     @Override
     public int shallowSize()
     {
@@ -76,20 +75,20 @@ public class VDPSprite extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // FrameVDPSprite structure
         Util.decl(outS, outH, "FrameVDPSprite", id, 2, global);
 
         // respect VDP sprite field order: (numTile, offsetY, size, offsetX)
-        outS.println("    dc.w    " + (((ht * wt) << 8) | ((offsetY << 0) & 0xFF)));
-        outS.println("    dc.w    " + ((getFormattedSize() << 8) | ((offsetX << 0) & 0xFF)));
+        outS.append("    dc.w    " + (((ht * wt) << 8) | ((offsetY << 0) & 0xFF)) + "\n");
+        outS.append("    dc.w    " + ((getFormattedSize() << 8) | ((offsetX << 0) & 0xFF)) + "\n");
         // write to binary buffer
         outB.write(ht * wt);
         outB.write(offsetY);
         outB.write(getFormattedSize());
         outB.write(offsetX);
 
-        outS.println();
+        outS.append("\n");
     }
 }

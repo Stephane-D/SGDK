@@ -2,7 +2,6 @@ package sgdk.rescomp.resource.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +95,7 @@ public class SpriteFrameInfo extends Resource
     }
 
     @Override
-    public void out(ByteArrayOutputStream outB, PrintWriter outS, PrintWriter outH) throws IOException
+    public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
@@ -104,9 +103,9 @@ public class SpriteFrameInfo extends Resource
         // VDP sprites pointer table
         Util.decl(outS, outH, null, id + "_sprites", 2, false);
         for (VDPSprite sprite : vdpSprites)
-            outS.println("    dc.l    " + sprite.id);
+            outS.append("    dc.l    " + sprite.id + "\n");
 
-        outS.println();
+        outS.append("\n");
     }
 
 }
