@@ -122,21 +122,8 @@ void VDP_init()
     VDP_setAPlanAddress(0xE000);
     */
 
-    // clear VRAM, reset palettes and scroll mode
+    // clear VRAM, reset palettes / default tiles / font and scroll mode
     VDP_resetScreen();
-
-    // load default font
-    if (!VDP_loadFont(&font_default, 0))
-    {
-        // fatal error --> die here
-//        PAL_setColors((PAL0 * 16) + (font_pal_lib.index & 0xF), font_pal_lib.data, font_pal_lib.length);
-        // the font did not get loaded so maybe not really useful to show these messages...
-        VDP_drawText("A fatal error occured !", 2, 2);
-        VDP_drawText("cannot continue...", 4, 3);
-        VDP_drawText("Not enough memory to reset VDP !", 0, 5);
-        while(1);
-    }
-
     // reset sprite struct
     VDP_resetSprites();
 
@@ -766,6 +753,11 @@ void VDP_resetScreen()
     VDP_setHorizontalScroll(PLAN_B, 0);
     VDP_setVerticalScroll(PLAN_A, 0);
     VDP_setVerticalScroll(PLAN_B, 0);
+
+    // load default font
+    if (!VDP_loadFont(&font_default, CPU))
+        // fatal error --> die here (the font did not get loaded so maybe not really useful to show this message...)
+        SYS_die("A fatal error occured (not enough memory to reset VDP) !");
 }
 
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
@@ -841,6 +833,6 @@ static void updateMapsAddress()
     {
         maps_addr = min_addr;
         // reload default font as its VRAM address has changed
-        VDP_loadFont(&font_default, TRUE);
+        VDP_loadFont(&font_default, DMA);
     }
 }
