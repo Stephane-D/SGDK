@@ -22,7 +22,7 @@ public class AlignProcessor implements Processor
         {
             System.out.println("Wrong ALIGN definition");
             System.out.println("ALIGN alignment");
-            System.out.println("  alignment     specifies the minimum data alignment in bytes");
+            System.out.println("  alignment     specifies the minimum binary data alignment in bytes");
 
             return null;
         }
