@@ -154,7 +154,7 @@
  *  \param palette
  *      Palette data.
  *  \param image
- *      Image data, array size = (w * h / 2).
+ *      Image data, array size = (w * h / 2) - can be FAR pointer (see mapper.h unit for explaination)
  */
 typedef struct
 {
