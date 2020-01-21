@@ -10,6 +10,7 @@
 #include "memory.h"
 #include "vram.h"
 #include "tools.h"
+#include "mapper.h"
 
 #include "kdebug.h"
 #include "string.h"
@@ -1970,7 +1971,7 @@ static void loadTiles(Sprite* sprite)
     if (compression != COMPRESSION_NONE)
     {
         // unpack
-        unpack(compression, (u8*) tileset->tiles, unpackNext);
+        unpack(compression, (u8*) FAR(tileset->tiles), unpackNext);
         // queue DMA operation to transfert unpacked data to VRAM
         DMA_queueDma(DMA_VRAM, (u32) unpackNext, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
@@ -1992,7 +1993,7 @@ static void loadTiles(Sprite* sprite)
     // just queue DMA operation to transfert tileset data to VRAM
     else
     {
-        DMA_queueDma(DMA_VRAM, (u32) tileset->tiles, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        DMA_queueDma(DMA_VRAM, (u32) FAR(tileset->tiles), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
 #ifdef SPR_DEBUG
         KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);

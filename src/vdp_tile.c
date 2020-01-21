@@ -9,6 +9,7 @@
 #include "vdp_dma.h"
 #include "dma.h"
 #include "tools.h"
+#include "mapper.h"
 
 #include "font.h"
 #include "tab_cnv.h"
@@ -32,7 +33,7 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
     }
     else
         // tiles
-        VDP_loadTileData(tileset->tiles, index, tileset->numTile, tm);
+        VDP_loadTileData(FAR(tileset->tiles), index, tileset->numTile, tm);
 
     return TRUE;
 }
@@ -489,7 +490,7 @@ u16 VDP_setMapEx(VDPPlan plan, const Map *map, u16 basetile, u16 x, u16 y, u16 x
     }
     else
         // tilemap
-        VDP_setTileMapDataRectEx(plan, map->tilemap + offset, basetile, x, y, wm, hm, map->w);
+        VDP_setTileMapDataRectEx(plan, ((u16*) FAR(map->tilemap)) + offset, basetile, x, y, wm, hm, map->w);
 
     return TRUE;
 }

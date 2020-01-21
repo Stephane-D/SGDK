@@ -12,6 +12,7 @@
 
 #include "font.h"
 #include "memory.h"
+#include "mapper.h"
 
 
 static VDPPlan text_plan;
@@ -295,7 +296,7 @@ u16 VDP_drawBitmapEx(VDPPlan plan, const Bitmap *bitmap, u16 basetile, u16 x, u1
     }
     else
         // tiles
-        VDP_loadBMPTileData((u32*) bitmap->image, basetile & TILE_INDEX_MASK, wt, ht, wt);
+        VDP_loadBMPTileData((u32*) FAR(bitmap->image), basetile & TILE_INDEX_MASK, wt, ht, wt);
 
     // tilemap
     VDP_fillTileMapRectInc(plan, basetile, x, y, wt, ht);

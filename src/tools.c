@@ -9,6 +9,7 @@
 #include "timer.h"
 #include "maths.h"
 #include "memory.h"
+#include "mapper.h"
 #include "vdp.h"
 
 
@@ -967,10 +968,10 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest)
 
         // unpack image
         if (src->compression != COMPRESSION_NONE)
-            unpack(src->compression, (u8*) src->image, (u8*) result->image);
+            unpack(src->compression, (u8*) FAR(src->image), (u8*) result->image);
         // simple copy if needed
         else if (src->image != result->image)
-            memcpy((u8*) result->image, (u8*) src->image, (src->w * src->h) / 2);
+            memcpy((u8*) result->image, FAR(src->image), (src->w * src->h) / 2);
     }
 
     return result;
@@ -990,10 +991,10 @@ TileSet *unpackTileSet(const TileSet *src, TileSet *dest)
 
         // unpack tiles
         if (src->compression != COMPRESSION_NONE)
-            unpack(src->compression, (u8*) src->tiles, (u8*) result->tiles);
+            unpack(src->compression, (u8*) FAR(src->tiles), (u8*) result->tiles);
         // simple copy if needed
         else if (src->tiles != result->tiles)
-            memcpy((u8*) result->tiles, (u8*) src->tiles, src->numTile * 32);
+            memcpy((u8*) result->tiles, FAR(src->tiles), src->numTile * 32);
     }
 
     return result;
@@ -1014,10 +1015,10 @@ Map *unpackMap(const Map *src, Map *dest)
 
         // unpack tilemap
         if (src->compression != COMPRESSION_NONE)
-            unpack(src->compression, (u8*) src->tilemap, (u8*) result->tilemap);
+            unpack(src->compression, (u8*) FAR(src->tilemap), (u8*) result->tilemap);
         // simple copy if needed
         else if (src->tilemap != result->tilemap)
-            memcpy((u8*) result->tilemap, (u8*) src->tilemap, (src->w * src->h) * 2);
+            memcpy((u8*) result->tilemap, FAR(src->tilemap), (src->w * src->h) * 2);
     }
 
     return result;
