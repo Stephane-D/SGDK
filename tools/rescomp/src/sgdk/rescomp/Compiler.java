@@ -196,7 +196,7 @@ public class Compiler
             binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
 
             // export binary data first !! very important !!
-            // otherwise metadata structures can't properly retrieve BIN.doneCompression field value
+            // otherwise metadata structures can't properly get BIN.doneCompression field value
 
             // Read Only Data section
             outS.append(".section .rodata\n\n");
@@ -205,7 +205,10 @@ public class Compiler
             exportResources(getResources(VDPSprite.class), outB, outS, outH);
             exportResources(getResources(Collision.class), outB, outS, outH);
 
-            // then export "nor far" RAW binary data first
+            // BIN Read Only Data section
+            outS.append(".section .rodata_bin\n\n");
+
+            // then export "nor far" raw BIN resources first
             exportResources(binResources, outB, outS, outH);
 
             // then export "not far" BIN resources by type for better compression
@@ -214,8 +217,8 @@ public class Compiler
             exportResources(binResourcesOfTileset, outB, outS, outH);
             exportResources(binResourcesOfTilemap, outB, outS, outH);
 
-            // FAR Read Only Data section
-            outS.append(".section .far_rodata\n\n");
+            // FAR BIN Read Only Data section
+            outS.append(".section .rodata_binf\n\n");
 
             // resources alignment
             if (align > 0)
