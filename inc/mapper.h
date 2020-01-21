@@ -35,13 +35,23 @@
 #define _MAPPER_H_
 
 
+#include "config.h"
+#include "types.h"
+
+
 #define MAPPER_BASE     0xA130F1
 
 
-#if (ENABLE_BANK_SWITCH == 0)
-    #define FAR(data) data
+/**
+ *  \brief
+ *      Give access to specified 'far' data through SEGA official bank switch mechanism if needed.
+ *
+ *  \see #ENABLE_BANK_SWITCH flag in config.h file
+ */
+#if (ENABLE_BANK_SWITCH != 0)
+    #define FAR(data) SYS_getFarData((void*) (data))
 #else
-    #define FAR(data) BANK_getFarData(data)
+    #define FAR(data) data
 #endif
 
 

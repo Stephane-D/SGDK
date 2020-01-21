@@ -10,10 +10,8 @@
 #include "types.h"
 
 #include "sys.h"
-
 #include "sram.h"
 #include "mapper.h"
-
 #include "memory.h"
 #include "tools.h"
 
