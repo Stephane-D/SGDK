@@ -147,7 +147,7 @@ void XGM_stopPlay()
     Z80_requestBus(TRUE);
 
     // special xgm sequence to stop any sound
-    addr = ((u32) stop_xgm);
+    addr = (u32) stop_xgm;
 
     // point to Z80 XGM address parameter
     pb = (u8 *) (Z80_DRV_PARAMS + 0x00);
