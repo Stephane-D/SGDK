@@ -16,6 +16,7 @@ import java.util.Map;
 import sgdk.rescomp.processor.AlignProcessor;
 import sgdk.rescomp.processor.BinProcessor;
 import sgdk.rescomp.processor.BitmapProcessor;
+import sgdk.rescomp.processor.GroupProcessor;
 import sgdk.rescomp.processor.ImageProcessor;
 import sgdk.rescomp.processor.PaletteProcessor;
 import sgdk.rescomp.processor.SpriteProcessor;
@@ -26,6 +27,7 @@ import sgdk.rescomp.processor.XgmProcessor;
 import sgdk.rescomp.resource.Align;
 import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.resource.Bitmap;
+import sgdk.rescomp.resource.Group;
 import sgdk.rescomp.resource.Image;
 import sgdk.rescomp.resource.Palette;
 import sgdk.rescomp.resource.Sprite;
@@ -51,6 +53,7 @@ public class Compiler
     {
         // function processors
         resourceProcessors.add(new AlignProcessor());
+        resourceProcessors.add(new GroupProcessor());
 
         // resource processors
         resourceProcessors.add(new BinProcessor());
@@ -99,8 +102,9 @@ public class Compiler
             return false;
         }
 
-        int align = -1;
         int lineCnt = 1;
+        int align = -1;
+        boolean group = false;
 
         // process input resource file line by line
         for (String l : lines)
@@ -127,25 +131,16 @@ public class Compiler
                 return false;
             }
 
-            // ALIGN resource (not a real resource so handle it specifically)
+            // ALIGN function (not a real resource so handle it specifically)
             if (resource instanceof Align)
-            {
-                if (align == -1)
-                    align = ((Align) resource).align;
-                else
-                    // ALIGN is only allowed at start of resource file
-                    System.err.println(
-                            fileName + " - line " + lineCnt + ": ALIGN directive only allowed at the start of file");
-            }
+                align = ((Align) resource).align;
+            // GROUP function (not a real resource so handle it specifically)
+            else if (resource instanceof Group)
+                // group resource export by type
+                group = true;
+            // just store resource
             else
-            {
-                // can be set only at start (too late now)
-                if (align == -1)
-                    align = 0;
-
-                // store resource
                 addResource(resource);
-            }
         }
 
         // define output files
@@ -165,35 +160,65 @@ public class Compiler
 
             outH.append("#ifndef _" + headerName + "_H_\n");
             outH.append("#define _" + headerName + "_H_\n\n");
-            
+
             // -- BINARY SECTION --
 
-            // get BIN resources, and also grouped by type for better compression
+            // get BIN resources
             final List<Resource> binResources = getResources(Bin.class);
             final List<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
-            final List<Resource> binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
-            final List<Resource> binResourcesOfTileset = getBinResourcesOf(Tileset.class);
-            final List<Resource> binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
+            final List<Resource> binResourcesOfBitmap;
+            final List<Resource> binResourcesOfTileset;
+            final List<Resource> binResourcesOfTilemap;
 
             // keep raw BIN resources only
             binResources.removeAll(binResourcesOfPalette);
-            binResources.removeAll(binResourcesOfBitmap);
-            binResources.removeAll(binResourcesOfTileset);
-            binResources.removeAll(binResourcesOfTilemap);
 
-            // get "far" BIN resources
+            if (group)
+            {
+                // get BIN resources grouped by type for better compression
+                binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
+                binResourcesOfTileset = getBinResourcesOf(Tileset.class);
+                binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
+
+                // keep raw BIN resources only
+                binResources.removeAll(binResourcesOfBitmap);
+                binResources.removeAll(binResourcesOfTileset);
+                binResources.removeAll(binResourcesOfTilemap);
+            }
+            else
+            {
+                binResourcesOfBitmap = new ArrayList<>();
+                binResourcesOfTileset = new ArrayList<>();
+                binResourcesOfTilemap = new ArrayList<>();
+            }
+
+            // get "far" BIN resources (palette BIN data are never far)
             final List<Resource> farBinResources = getFarBinResourcesOf(binResources);
-            final List<Resource> farBinResourcesOfPalette = getFarBinResourcesOf(binResourcesOfPalette);
-            final List<Resource> farBinResourcesOfBitmap = getFarBinResourcesOf(binResourcesOfBitmap);
-            final List<Resource> farBinResourcesOfTileset = getFarBinResourcesOf(binResourcesOfTileset);
-            final List<Resource> farBinResourcesOfTilemap = getFarBinResourcesOf(binResourcesOfTilemap);
+            final List<Resource> farBinResourcesOfBitmap;
+            final List<Resource> farBinResourcesOfTileset;
+            final List<Resource> farBinResourcesOfTilemap;
 
             // keep "non far" BIN resources only
             binResources.removeAll(farBinResources);
-            binResourcesOfPalette.removeAll(farBinResourcesOfPalette);
-            binResourcesOfBitmap.removeAll(farBinResourcesOfBitmap);
-            binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
-            binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
+
+            if (group)
+            {
+                // get "far" BIN resources grouped by type for better compression
+                farBinResourcesOfBitmap = getFarBinResourcesOf(binResourcesOfBitmap);
+                farBinResourcesOfTileset = getFarBinResourcesOf(binResourcesOfTileset);
+                farBinResourcesOfTilemap = getFarBinResourcesOf(binResourcesOfTilemap);
+
+                // keep "non far" BIN resources only
+                binResourcesOfBitmap.removeAll(farBinResourcesOfBitmap);
+                binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
+                binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
+            }
+            else
+            {
+                farBinResourcesOfBitmap = new ArrayList<>();
+                farBinResourcesOfTileset = new ArrayList<>();
+                farBinResourcesOfTilemap = new ArrayList<>();
+            }
 
             // export binary data first !! very important !!
             // otherwise metadata structures can't properly get BIN.doneCompression field value
@@ -201,38 +226,29 @@ public class Compiler
             // Read Only Data section
             outS.append(".section .rodata\n\n");
 
-            // export simple "metadata" resources which can be compressed (only binary data inside without reference)
+            // export simple and safe "metadata" resources which can be compressed (binary data without reference)
             exportResources(getResources(VDPSprite.class), outB, outS, outH);
             exportResources(getResources(Collision.class), outB, outS, outH);
 
             // BIN Read Only Data section
             outS.append(".section .rodata_bin\n\n");
 
-            // then export "nor far" raw BIN resources first
-            exportResources(binResources, outB, outS, outH);
-
             // then export "not far" BIN resources by type for better compression
             exportResources(binResourcesOfPalette, outB, outS, outH);
+            exportResources(binResources, outB, outS, outH);
+            exportResources(binResourcesOfTilemap, outB, outS, outH);
             exportResources(binResourcesOfBitmap, outB, outS, outH);
             exportResources(binResourcesOfTileset, outB, outS, outH);
-            exportResources(binResourcesOfTilemap, outB, outS, outH);
 
             // FAR BIN Read Only Data section
             outS.append(".section .rodata_binf\n\n");
 
-            // resources alignment
-            if (align > 0)
-            {
-                // can't preserve binary buffer on alignment
-                outB.reset();
-                outS.append("    .align " + align + "\n\n");
-            }
-
-            // then export "far" raw BIN resources
-            exportResources(farBinResources, outB, outS, outH);
+            // do alignment for FAR BIN data
+            if (align != -1)
+                outS.append("    .align  " + align + "\n\n");
 
             // then export "far" BIN resources by type for better compression
-            exportResources(farBinResourcesOfPalette, outB, outS, outH);
+            exportResources(farBinResources, outB, outS, outH);
             exportResources(farBinResourcesOfBitmap, outB, outS, outH);
             exportResources(farBinResourcesOfTileset, outB, outS, outH);
             exportResources(farBinResourcesOfTilemap, outB, outS, outH);
