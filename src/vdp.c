@@ -756,8 +756,11 @@ void VDP_resetScreen()
 
     // load default font
     if (!VDP_loadFont(&font_default, CPU))
+    {
+        KLog("A fatal error occured (not enough memory to reset VDP) !");
         // fatal error --> die here (the font did not get loaded so maybe not really useful to show this message...)
         SYS_die("A fatal error occured (not enough memory to reset VDP) !");
+    }
 }
 
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
