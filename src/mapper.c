@@ -45,8 +45,8 @@ void SYS_setBank(u16 regionIndex, u16 bankIndex)
 
 static bool needBankSwitch(u32 addr)
 {
-    const u16 mask = (addr >> 16) & 0x00F0;
-    return (mask >= 0x0030) && (mask < 0x00C0);
+    const u16 mask = (addr >> 16) & 0xF0;
+    return (mask >= 0x30) && (mask < 0xC0);
 }
 
 static u32 setBank(u32 addr)
