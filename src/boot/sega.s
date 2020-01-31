@@ -87,23 +87,6 @@ ClearRam:
         move.l  %d0,(%a0)+
         dbra    %d1,ClearRam
 
-* copy initialized variables from ROM to Work RAM
-        lea     _stext,%a0
-        lea     0xFF0000,%a1
-        move.l  #_sdata,%d0
-
-* fix for last byte to initialize
-        addq.l  #1,%d0
-        lsr.l   #1,%d0
-        beq     NoCopy
-
-        subq.w  #1,%d0
-CopyVar:
-        move.w  (%a0)+,(%a1)+
-        dbra    %d0,CopyVar
-
-NoCopy:
-
 * Jump to initialisation process...
 
         jmp     _start_entry

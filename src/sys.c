@@ -20,6 +20,7 @@
 #include "sound.h"
 #include "xgm.h"
 #include "dma.h"
+#include "mapper.h"
 
 #include "tools.h"
 #include "kdebug.h"
@@ -44,6 +45,10 @@
 // we don't want to share them
 extern u16 randbase;
 extern s16 currentDriver;
+// size of text segment --> start of initialized data (RO)
+extern u32 _stext;
+// size of initialized data segment
+extern u32 _sdata;
 
 // extern library callback function (we don't want to share them)
 extern u16 BMP_doHBlankProcess();
@@ -555,6 +560,22 @@ void _extint_callback()
 
 void _start_entry()
 {
+    u16* src;
+    u16* dst;
+    u16 len;
+
+    // point to start of RO initialized data (can be FAR)
+    src = FAR(&_stext);
+    // point to start initialized variable (always start at beginning of ram)
+    dst = (u16*) 0xFF0000;
+    // get number of byte to copy
+    len = (u16)(u32)(&_sdata);
+    // convert to word
+    len = (len + 1) / 2;
+
+    // Initialize "initialized variables"
+    while(len--) *dst++ = *src++;
+
     // initiate random number generator
     setRandomSeed(0xC427);
     vtimer = 0;
