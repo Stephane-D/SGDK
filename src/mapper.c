@@ -92,7 +92,7 @@ void* SYS_getFarData(void* data)
     const u32 mappedAddr = setBank(addr) + (addr & 0x07FFFF);
 
 #if (LIB_DEBUG != 0)
-     KLog_U2("Data at ", addr, " accessed through bank switch from ", mappedAddr);
+//     KLog_U2("Data at ", addr, " accessed through bank switch from ", mappedAddr);
 #endif
 
     // return it
