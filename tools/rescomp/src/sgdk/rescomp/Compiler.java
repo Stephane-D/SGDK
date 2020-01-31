@@ -166,9 +166,9 @@ public class Compiler
             // get BIN resources
             final List<Resource> binResources = getResources(Bin.class);
             final List<Resource> binResourcesOfPalette = getBinResourcesOf(Palette.class);
-            final List<Resource> binResourcesOfBitmap;
-            final List<Resource> binResourcesOfTileset;
             final List<Resource> binResourcesOfTilemap;
+            final List<Resource> binResourcesOfTileset;
+            final List<Resource> binResourcesOfBitmap;
 
             // keep raw BIN resources only
             binResources.removeAll(binResourcesOfPalette);
@@ -176,27 +176,27 @@ public class Compiler
             if (group)
             {
                 // get BIN resources grouped by type for better compression
-                binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
-                binResourcesOfTileset = getBinResourcesOf(Tileset.class);
                 binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
+                binResourcesOfTileset = getBinResourcesOf(Tileset.class);
+                binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
 
                 // keep raw BIN resources only
-                binResources.removeAll(binResourcesOfBitmap);
-                binResources.removeAll(binResourcesOfTileset);
                 binResources.removeAll(binResourcesOfTilemap);
+                binResources.removeAll(binResourcesOfTileset);
+                binResources.removeAll(binResourcesOfBitmap);
             }
             else
             {
-                binResourcesOfBitmap = new ArrayList<>();
-                binResourcesOfTileset = new ArrayList<>();
                 binResourcesOfTilemap = new ArrayList<>();
+                binResourcesOfTileset = new ArrayList<>();
+                binResourcesOfBitmap = new ArrayList<>();
             }
 
             // get "far" BIN resources (palette BIN data are never far)
             final List<Resource> farBinResources = getFarBinResourcesOf(binResources);
-            final List<Resource> farBinResourcesOfBitmap;
-            final List<Resource> farBinResourcesOfTileset;
             final List<Resource> farBinResourcesOfTilemap;
+            final List<Resource> farBinResourcesOfTileset;
+            final List<Resource> farBinResourcesOfBitmap;
 
             // keep "non far" BIN resources only
             binResources.removeAll(farBinResources);
@@ -204,20 +204,20 @@ public class Compiler
             if (group)
             {
                 // get "far" BIN resources grouped by type for better compression
-                farBinResourcesOfBitmap = getFarBinResourcesOf(binResourcesOfBitmap);
-                farBinResourcesOfTileset = getFarBinResourcesOf(binResourcesOfTileset);
                 farBinResourcesOfTilemap = getFarBinResourcesOf(binResourcesOfTilemap);
+                farBinResourcesOfTileset = getFarBinResourcesOf(binResourcesOfTileset);
+                farBinResourcesOfBitmap = getFarBinResourcesOf(binResourcesOfBitmap);
 
                 // keep "non far" BIN resources only
-                binResourcesOfBitmap.removeAll(farBinResourcesOfBitmap);
-                binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
                 binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
+                binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
+                binResourcesOfBitmap.removeAll(farBinResourcesOfBitmap);
             }
             else
             {
-                farBinResourcesOfBitmap = new ArrayList<>();
-                farBinResourcesOfTileset = new ArrayList<>();
                 farBinResourcesOfTilemap = new ArrayList<>();
+                farBinResourcesOfTileset = new ArrayList<>();
+                farBinResourcesOfBitmap = new ArrayList<>();
             }
 
             // export binary data first !! very important !!
@@ -237,8 +237,8 @@ public class Compiler
             exportResources(binResourcesOfPalette, outB, outS, outH);
             exportResources(binResources, outB, outS, outH);
             exportResources(binResourcesOfTilemap, outB, outS, outH);
-            exportResources(binResourcesOfBitmap, outB, outS, outH);
             exportResources(binResourcesOfTileset, outB, outS, outH);
+            exportResources(binResourcesOfBitmap, outB, outS, outH);
 
             // FAR BIN Read Only Data section
             outS.append(".section .rodata_binf\n\n");
@@ -249,9 +249,9 @@ public class Compiler
 
             // then export "far" BIN resources by type for better compression
             exportResources(farBinResources, outB, outS, outH);
-            exportResources(farBinResourcesOfBitmap, outB, outS, outH);
-            exportResources(farBinResourcesOfTileset, outB, outS, outH);
             exportResources(farBinResourcesOfTilemap, outB, outS, outH);
+            exportResources(farBinResourcesOfTileset, outB, outS, outH);
+            exportResources(farBinResourcesOfBitmap, outB, outS, outH);
 
             // Read Only Data section
             outS.append(".section .rodata\n\n");
