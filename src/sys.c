@@ -4,6 +4,7 @@
 #include "sys.h"
 
 #include "memory.h"
+#include "mapper.h"
 #include "vdp.h"
 #include "vdp_pal.h"
 #include "psg.h"
@@ -20,7 +21,6 @@
 #include "sound.h"
 #include "xgm.h"
 #include "dma.h"
-#include "mapper.h"
 
 #include "tools.h"
 #include "kdebug.h"
@@ -560,23 +560,44 @@ void _extint_callback()
 
 void _start_entry()
 {
+    u32 banklimit;
     u16* src;
     u16* dst;
     u16 len;
 
-    // point to start of RO initialized data (can be FAR)
-    src = FAR(&_stext);
+    // safe to check for DMA completion on reset
+    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
+
+    // clear all RAM
+    dst = (u16*) RAM;
+    len = 0x8000;
+    while(len--) *dst++ = 0;
+
+    // then do variables initialization (those which aren't set to 0)
+
+    // point to start of RO initialized data
+    src = (u16*) &_stext;
     // point to start initialized variable (always start at beginning of ram)
-    dst = (u16*) 0xFF0000;
+    dst = (u16*) RAM;
     // get number of byte to copy
     len = (u16)(u32)(&_sdata);
     // convert to word
     len = (len + 1) / 2;
 
-    // Initialize "initialized variables"
-    while(len--) *dst++ = *src++;
+    // get bank limite in word (bank size is 512KB)
+    banklimit = (0x80000 - (((u32)src) & 0x7FFFF)) >> 1;
+    // bank limit exceeded ?
+    if (len > banklimit)
+    {
+        // we first do the second bank part
+        memcpyU16(dst + banklimit, FAR(src + banklimit), len - banklimit);
+        // adjust len
+        len = banklimit;
+    }
+    // initialize "initialized variables"
+    memcpyU16(dst, FAR(src), len);
 
-    // initiate random number generator
+    // initialize random number generator
     setRandomSeed(0xC427);
     vtimer = 0;
 
@@ -676,6 +697,9 @@ void _start_entry()
 
     // let's the fun go on !
     main(1);
+
+    // for safety
+    while(TRUE);
 }
 
 void _reset_entry()
@@ -683,8 +707,10 @@ void _reset_entry()
     internal_reset();
 
     main(0);
-}
 
+    // for safety
+    while(TRUE);
+}
 
 static void internal_reset()
 {
