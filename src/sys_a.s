@@ -14,8 +14,7 @@ SYS_reset:
 
     move   #0x2700,%sr
     move.l (0),%a7
-    move.l (4),%a0
-    jmp    (%a0)
+    jmp     _reset_entry
 
 
     .align  2
@@ -25,7 +24,7 @@ SYS_hardReset:
 
     move   #0x2700,%sr
     move.l (0),%a7
-    jmp    _hard_reset
+    jmp    _start_entry
 
 
     .align  2
