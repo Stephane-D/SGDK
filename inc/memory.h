@@ -23,6 +23,17 @@
 
 /**
  *  \brief
+ *      Define start of ROM region
+ */
+#define ROM      0x000000
+/**
+ *  \brief
+ *      Define start of RAM region
+ */
+#define RAM      0xFF0000
+
+/**
+ *  \brief
  *      Define memory allocated for stack (default = 0x800)
  */
 #define STACK_SIZE      0x800
