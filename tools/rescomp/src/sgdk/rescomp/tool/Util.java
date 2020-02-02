@@ -260,19 +260,8 @@ public class Util
         return out(data, 1, false, fout);
     }
 
-    public static void align(ByteArrayOutputStream out, int align)
+    public static void outB(ByteArrayOutputStream out, short data, boolean swap)
     {
-        if (align > 1)
-        {
-            while ((out.size() % align) != 0)
-                out.write(0);
-        }
-    }
-
-    public static void outB(ByteArrayOutputStream out, short data, int align, boolean swap)
-    {
-        // does alignment
-        align(out, align);
         // then write data
         if (swap)
         {
@@ -284,22 +273,15 @@ public class Util
             out.write(data >> 0);
             out.write(data >> 8);
         }
-    }
-
-    public static void outB(ByteArrayOutputStream out, short data, boolean swap)
-    {
-        outB(out, data, 0, swap);
     }
 
     public static void outB(ByteArrayOutputStream out, short data)
     {
-        outB(out, data, 0, false);
+        outB(out, data, false);
     }
 
-    public static void outB(ByteArrayOutputStream out, int data, int align, boolean swap)
+    public static void outB(ByteArrayOutputStream out, int data, boolean swap)
     {
-        // does alignment
-        align(out, align);
         // then write data
         if (swap)
         {
@@ -317,20 +299,28 @@ public class Util
         }
     }
 
-    public static void outB(ByteArrayOutputStream out, int data, boolean swap)
-    {
-        outB(out, data, 0, swap);
-    }
-
     public static void outB(ByteArrayOutputStream out, int data)
     {
-        outB(out, data, 0, false);
+        outB(out, data, false);
     }
 
     public static void outB(ByteArrayOutputStream out, byte[] data, int align) throws IOException
     {
-        // does alignment
-        align(out, align);
+        // no way to know actual fill size so we reset binary data
+        if (align > 2)
+        {
+            out.reset();
+            return;
+        }
+        
+        // we can only handle align 2
+        if (align == 2)
+        {
+            // do alignment
+            while ((out.size() % align) != 0)
+                out.write(0);
+        }
+
         // then write data
         out.write(data);
     }
