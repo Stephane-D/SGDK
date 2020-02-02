@@ -88,7 +88,7 @@ public class Collision extends Resource
             outS.append("    dc.w    " + ccircle.ray + "\n");
             outB.write(ccircle.x);
             outB.write(ccircle.y);
-            Util.outB(outB, ccircle.ray);
+            Util.outB(outB, (short) ccircle.ray);
         }
         else
         {
