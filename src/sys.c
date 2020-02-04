@@ -568,12 +568,12 @@ void _start_entry()
     // safe to check for DMA completion on reset
     while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
 
-    // clear all RAM
+    // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so all the stack as well)
     dst = (u16*) RAM;
     len = 0x8000;
     while(len--) *dst++ = 0;
 
-    // then do variables initialization (those which aren't set to 0)
+    // then do variables initialization (those which have specific value)
 
     // point to start of RO initialized data
     src = (u16*) &_stext;
