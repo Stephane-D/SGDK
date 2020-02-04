@@ -225,6 +225,8 @@ public class Compiler
 
             // Read Only Data section
             outS.append(".section .rodata\n\n");
+            // reset binary buffer
+            outB.reset();
 
             // export simple and safe "metadata" resources which can be compressed (binary data without reference)
             exportResources(getResources(VDPSprite.class), outB, outS, outH);
@@ -232,6 +234,8 @@ public class Compiler
 
             // BIN Read Only Data section
             outS.append(".section .rodata_bin\n\n");
+            // need to reset binary buffer
+            outB.reset();
 
             // then export "not far" BIN resources by type for better compression
             exportResources(binResourcesOfPalette, outB, outS, outH);
@@ -242,6 +246,8 @@ public class Compiler
 
             // FAR BIN Read Only Data section
             outS.append(".section .rodata_binf\n\n");
+            // need to reset binary buffer
+            outB.reset();
 
             // do alignment for FAR BIN data
             if (align != -1)
@@ -255,6 +261,8 @@ public class Compiler
 
             // Read Only Data section
             outS.append(".section .rodata\n\n");
+            // need to reset binary buffer
+            outB.reset();
 
             // and finally export "metadata" *after* binary data (no compression possible)
             exportResources(getResources(Palette.class), outB, outS, outH);
