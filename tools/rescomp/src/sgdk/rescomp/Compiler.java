@@ -16,23 +16,23 @@ import java.util.Map;
 import sgdk.rescomp.processor.AlignProcessor;
 import sgdk.rescomp.processor.BinProcessor;
 import sgdk.rescomp.processor.BitmapProcessor;
-import sgdk.rescomp.processor.GroupProcessor;
 import sgdk.rescomp.processor.ImageProcessor;
 import sgdk.rescomp.processor.PaletteProcessor;
 import sgdk.rescomp.processor.SpriteProcessor;
 import sgdk.rescomp.processor.TilemapProcessor;
 import sgdk.rescomp.processor.TilesetProcessor;
+import sgdk.rescomp.processor.UngroupProcessor;
 import sgdk.rescomp.processor.WavProcessor;
 import sgdk.rescomp.processor.XgmProcessor;
 import sgdk.rescomp.resource.Align;
 import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.resource.Bitmap;
-import sgdk.rescomp.resource.Group;
 import sgdk.rescomp.resource.Image;
 import sgdk.rescomp.resource.Palette;
 import sgdk.rescomp.resource.Sprite;
 import sgdk.rescomp.resource.Tilemap;
 import sgdk.rescomp.resource.Tileset;
+import sgdk.rescomp.resource.Ungroup;
 import sgdk.rescomp.resource.internal.Collision;
 import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.resource.internal.SpriteFrame;
@@ -53,7 +53,7 @@ public class Compiler
     {
         // function processors
         resourceProcessors.add(new AlignProcessor());
-        resourceProcessors.add(new GroupProcessor());
+        resourceProcessors.add(new UngroupProcessor());
 
         // resource processors
         resourceProcessors.add(new BinProcessor());
@@ -104,7 +104,7 @@ public class Compiler
 
         int lineCnt = 1;
         int align = -1;
-        boolean group = false;
+        boolean group = true;
 
         // process input resource file line by line
         for (String l : lines)
@@ -134,10 +134,10 @@ public class Compiler
             // ALIGN function (not a real resource so handle it specifically)
             if (resource instanceof Align)
                 align = ((Align) resource).align;
-            // GROUP function (not a real resource so handle it specifically)
-            else if (resource instanceof Group)
-                // group resource export by type
-                group = true;
+            // UNGROUP function (not a real resource so handle it specifically)
+            else if (resource instanceof Ungroup)
+                // disable resource export grouping by type
+                group = false;
             // just store resource
             else
                 addResource(resource);
