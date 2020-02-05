@@ -1,4 +1,4 @@
-ResComp 2.5 (january 2020)
+ResComp 2.63 (january 2020)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -22,7 +22,10 @@ Supported resource type:
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
 - BIN       any binary data file which do not need any specific conversion or processing.
 
-Note that you can force *binary* data alignment for the whole resource file using 'ALIGN <value>' at the first line. If you need several data alignments then you need to use several resources files. Note that if you omit <value> parameter by default data is aligned on 512KB as this is the bank size for Sega official bank switch mechanism.
+Supported function:
+- ALIGN     align *binary* data for the whole resource file using
+- UNGROUP   by default rescomp will group data export by type, using UNGROUP allow to disable that feature.
+
 
 PALETTE
 -------
@@ -215,3 +218,25 @@ BIN name file [align [salign [fill]]]
     align           memory address alignment for generated data array (default is 2)
     salign          size alignment for the generated data array (default is 2)
     fill            fill value for the size alignment (default is 0)
+
+
+ALIGN
+-----
+Align *binary* data for the *whole* resource file so you can have only ALIGN directive per resource (.res) file.
+ALIGN function is useful when using bank switch for ROM larger than 4MB, it allows to avoid having a block of data crossing 2 data banks.
+If you need several data alignments then you have to use several resources files.
+Note that if you omit [value] parameter by default data is aligned on 512KB as this is the bank size when using bank switch mechanism.
+
+Syntax:
+ALIGN [value]
+
+    value           specifies the minimum binary data alignment in bytes (default is 524288 = bank size)
+
+
+UNGROUP
+-------
+By default rescomp will group data export by type of data, this generally allow better LZ4W compression.
+Using UNGROUP function allow to disable that feature, that might be useful to help in bank data separation when using the bank switch mechanism.
+
+Syntax:
+UNGROUP
