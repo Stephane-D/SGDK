@@ -5,11 +5,11 @@ import java.io.IOException;
 
 import sgdk.rescomp.Resource;
 
-public class Group extends Resource
+public class Ungroup extends Resource
 {
     final int hc;
 
-    public Group(String id)
+    public Ungroup(String id)
     {
         super(id);
 
@@ -26,7 +26,7 @@ public class Group extends Resource
     @Override
     public boolean internalEquals(Object obj)
     {
-        return (obj instanceof Group);
+        return (obj instanceof Ungroup);
     }
 
     @Override
