@@ -3,6 +3,7 @@
 #include "gfx.h"
 #include "sprite.h"
 #include "sound.h"
+#include "dma.h"
 
 #define SFX_JUMP        64
 #define SFX_ROLL        65
@@ -83,9 +84,9 @@ int main()
 
     // load background
     ind = TILE_USERINDEX;
-    VDP_drawImageEx(PLAN_B, &bgb_image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(PLAN_B, &bgb_image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, DMA);
     ind += bgb_image.tileset->numTile;
-    VDP_drawImageEx(PLAN_A, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(PLAN_A, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, DMA);
     ind += bga_image.tileset->numTile;
 
     // VDP process done, we can re enable interrupts
