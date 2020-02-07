@@ -26,13 +26,16 @@ https://plutiedev.com/
 
 Then when you feel ready you can go further and finally install SGDK :)
 
-You can find installation instructions and basic tutorials about how use SGDK on this page:
+You can find installation instructions about how use SGDK on this page but DON'T USE THE TUTORIALS as they are terribly outdated !
 https://github.com/Stephane-D/SGDK/wiki
 
-WARNING: tutorials available in wiki pages are unfortunately terribly outdated :-/
-Sorry for that, i plan to update them in future but in the meantime i strongly suggest you to have a look on the available samples instead in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
+I plan to update tutorials in future but in the meantime i strongly suggest you to have a look on the available samples instead in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
 
-You can also use the SGDK library doxygen documentation in the 'doc' directory: doc/html/files.html
+You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):
+https://www.ohsat.com/tutorial/
+
+SGDK comes with a doxygen documentation that you can find in the 'doc' directory: doc/html/files.html
+This documentation is generated from header files (.h) which provides basic information about SGDK structures and functions.
 
 
 HELP AND SUPPORT
@@ -73,12 +76,16 @@ THANKS
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofa for the starfield donut sample ;)
 - LIZARDRIVE for making the new SGDK logo.
+- Kubilus for the Linux port of SGDK.
+- Sonic3D for the OSX port of SGDK.
+- Daniel Valdivieso for the SGDK multi-OS solution using Wine.
 - Vladimir Kryvian for Visual Studio support and template.
 - Tusario for resource manager tools.
 - clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
 - starling13 for fixes.
+- Ohsat for making nice tutorials.
 - all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
 
 
