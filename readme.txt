@@ -26,10 +26,10 @@ https://plutiedev.com/
 
 Then when you feel ready you can go further and finally install SGDK :)
 
-You can find installation instructions about how use SGDK on this page but DON'T USE THE TUTORIALS as they are terribly outdated !
+You can find installation instructions about how use SGDK on this page but be careful, the tutorials are incomplete / outdated:
 https://github.com/Stephane-D/SGDK/wiki
 
-I plan to update tutorials in future but in the meantime i strongly suggest you to have a look on the available samples instead in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
+I plan to complete tutorials in future but in the meantime i strongly suggest you to have a look on the available samples instead in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
 
 You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):
 https://www.ohsat.com/tutorial/
