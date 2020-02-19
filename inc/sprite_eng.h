@@ -341,6 +341,7 @@ typedef struct _Sprite
     u16 status;
     u16 visibility;
     const SpriteDefinition* definition;
+    void (*onFrameChange)(struct _Sprite* sprite);
     Animation* animation;
     AnimationFrame* frame;
     FrameInfo* frameInfo;
@@ -360,6 +361,18 @@ typedef struct _Sprite
     struct _Sprite* next;
 } Sprite;
 
+/**
+ *  \brief
+ *      Sprite frame change event callback.<br>
+ *
+ *  \param sprite
+ *      The sprite for which frame just changed.
+ *
+ *      This event occurs onframe change process during #SPR_update() call (CAUTION: sprite->status field is not up to date at this point).<br>
+ *      It let opportunity to the developer to apply special behavior or process when sprite frame just changed:<br>
+ *      for instance we can disable animation looping by setting sprite->timer to 0 when we meet the last animation frame.
+ */
+typedef void FrameChangeCallback(Sprite* sprite);
 
 /**
  *  \brief
@@ -772,6 +785,23 @@ void SPR_setAutoTileUpload(Sprite* sprite, bool value);
  *  \see #SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE
  */
 void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value);
+/**
+ *  \brief
+ *      Set the frame change event callback for this sprite.
+ *
+ *  \param sprite
+ *      Sprite we want to set the frame change callback
+ *  \param callback
+ *      the callback (function pointer) to call when we just changed the animation frame for this sprite.
+ *
+ *      The callback (if not NULL) will be called on frame change process during #SPR_update() call (CAUTION: sprite->status field is not up to date at this point).<br>
+ *      It let opportunity to the developer to apply special behavior or process when sprite frame just changed:<br>
+ *      for instance we can disable animation looping by setting sprite->timer to 0 when we meet the last animation frame.
+ *
+ *  \see #FrameChangeCallback
+ */
+void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback);
+
 /**
  *  \brief
  *      Set the <i>visibility</i> state for this sprite.

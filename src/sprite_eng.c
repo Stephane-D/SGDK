@@ -376,7 +376,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     else sprite->visibility = VISIBILITY_ON;
     // initialized with specified flag
     sprite->definition = spriteDef;
-
+    sprite->onFrameChange = NULL;
 //    FIXME: not needed
 //    sprite->animation = NULL;
 //    sprite->frame = NULL;
@@ -1275,6 +1275,11 @@ void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value)
     else sprite->status |= SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE;
 }
 
+void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback)
+{
+    sprite->onFrameChange = callback;
+}
+
 void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
 {
 #ifdef SPR_PROFIL
@@ -1759,6 +1764,9 @@ static u16 updateFrame(Sprite* sprite, u16 status)
 
     // init timer for this frame
     sprite->timer = frame->timer;
+
+    // frame change event handler defined ? --> call it
+    if (sprite->onFrameChange) sprite->onFrameChange(sprite);
 
     // require tile data upload
     if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
