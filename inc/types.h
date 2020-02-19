@@ -223,7 +223,7 @@ typedef struct
 } Circle;
 
 
-typedef void _voidCallback();
+typedef void VoidCallback();
 
 
 u8  getZeroU8();

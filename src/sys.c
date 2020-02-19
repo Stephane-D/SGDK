@@ -68,26 +68,26 @@ static void internal_reset();
 void addFrameLoad(u16 frameLoad);
 
 // exception callbacks
-_voidCallback *busErrorCB;
-_voidCallback *addressErrorCB;
-_voidCallback *illegalInstCB;
-_voidCallback *zeroDivideCB;
-_voidCallback *chkInstCB;
-_voidCallback *trapvInstCB;
-_voidCallback *privilegeViolationCB;
-_voidCallback *traceCB;
-_voidCallback *line1x1xCB;
-_voidCallback *errorExceptionCB;
-_voidCallback *intCB;
-_voidCallback *internalVIntCB;
-_voidCallback *internalHIntCB;
-_voidCallback *internalExtIntCB;
+VoidCallback *busErrorCB;
+VoidCallback *addressErrorCB;
+VoidCallback *illegalInstCB;
+VoidCallback *zeroDivideCB;
+VoidCallback *chkInstCB;
+VoidCallback *trapvInstCB;
+VoidCallback *privilegeViolationCB;
+VoidCallback *traceCB;
+VoidCallback *line1x1xCB;
+VoidCallback *errorExceptionCB;
+VoidCallback *intCB;
+VoidCallback *internalVIntCB;
+VoidCallback *internalHIntCB;
+VoidCallback *internalExtIntCB;
 
 // user V-Int, H-Int and Ext-Int callbacks
-static _voidCallback *VIntCBPre;
-static _voidCallback *VIntCB;
-static _voidCallback *HIntCB;
-static _voidCallback *ExtIntCB;
+static VoidCallback *VIntCBPre;
+static VoidCallback *VIntCB;
+static VoidCallback *HIntCB;
+static VoidCallback *ExtIntCB;
 
 
 // exception state consumes 78 bytes of memory
@@ -796,22 +796,22 @@ void SYS_enableInts()
 #endif
 }
 
-void SYS_setVIntPreCallback(_voidCallback *CB)
+void SYS_setVIntPreCallback(VoidCallback *CB)
 {
     VIntCBPre = CB;
 }
 
-void SYS_setVIntCallback(_voidCallback *CB)
+void SYS_setVIntCallback(VoidCallback *CB)
 {
     VIntCB = CB;
 }
 
-void SYS_setHIntCallback(_voidCallback *CB)
+void SYS_setHIntCallback(VoidCallback *CB)
 {
     HIntCB = CB;
 }
 
-void SYS_setExtIntCallback(_voidCallback *CB)
+void SYS_setExtIntCallback(VoidCallback *CB)
 {
     ExtIntCB = CB;
 }

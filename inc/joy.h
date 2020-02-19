@@ -124,7 +124,7 @@
  *      Ex: Test if button START on joypad 1 just get pressed:<br>
  *      joy = JOY_1; changed = BUTTON_START; state = BUTTON_START | (previous state)
  */
-typedef void _joyEventCallback(u16 joy, u16 changed, u16 state);
+typedef void JoyEventCallback(u16 joy, u16 changed, u16 state);
 
 
 /**
@@ -162,7 +162,7 @@ void JOY_reset();
  *      <b>Ex 2</b> : if player 2 just released the A button you receive :<br>
  *      joy = JOY_2, changed = BUTTON_A, state = 0<br>
  */
-void JOY_setEventHandler(_joyEventCallback *CB);
+void JOY_setEventHandler(JoyEventCallback *CB);
 /**
  *  \brief
  *      Set peripheral support for the specified port.<br>

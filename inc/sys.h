@@ -24,77 +24,77 @@
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *busErrorCB;
+extern VoidCallback *busErrorCB;
 /**
  *  \brief
  *      Address error interrupt callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *addressErrorCB;
+extern VoidCallback *addressErrorCB;
 /**
  *  \brief
  *      Illegal instruction exception callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *illegalInstCB;
+extern VoidCallback *illegalInstCB;
 /**
  *  \brief
  *      Division by zero exception callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *zeroDivideCB;
+extern VoidCallback *zeroDivideCB;
 /**
  *  \brief
  *      CHK instruction interrupt callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *chkInstCB;
+extern VoidCallback *chkInstCB;
 /**
  *  \brief
  *      TRAPV instruction interrupt callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *trapvInstCB;
+extern VoidCallback *trapvInstCB;
 /**
  *  \brief
  *      Privilege violation exception callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *privilegeViolationCB;
+extern VoidCallback *privilegeViolationCB;
 /**
  *  \brief
  *      Trace interrupt callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *traceCB;
+extern VoidCallback *traceCB;
 /**
  *  \brief
  *      Line 1x1x exception callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *line1x1xCB;
+extern VoidCallback *line1x1xCB;
 /**
  *  \brief
  *      Error exception callback.
  *
  * You can modify it to use your own callback (for debug purpose).
  */
-extern _voidCallback *errorExceptionCB;
+extern VoidCallback *errorExceptionCB;
 /**
  *  \brief
  *      Level interrupt callback.
  *
  * You can modify it to use your own callback.
  */
-extern _voidCallback *intCB;
+extern VoidCallback *intCB;
 /**
  *  \brief
  *      Internal Vertical interrupt callback.
@@ -104,7 +104,7 @@ extern _voidCallback *intCB;
  * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
  * In all others cases you would use the SYS_setVIntCallback() method.
  */
-extern _voidCallback *internalVIntCB;
+extern VoidCallback *internalVIntCB;
 /**
  *  \brief
  *      Internal Horizontal interrupt callback.
@@ -114,7 +114,7 @@ extern _voidCallback *internalVIntCB;
  * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
  * In all others cases you would use the SYS_setHIntCallback() method.
  */
-extern _voidCallback *internalHIntCB;
+extern VoidCallback *internalHIntCB;
 /**
  *  \brief
  *      Internal External interrupt callback.
@@ -124,7 +124,7 @@ extern _voidCallback *internalHIntCB;
  * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
  * In all others cases you would use the SYS_setExtIntCallback() method.
  */
-extern _voidCallback *internalExtIntCB;
+extern VoidCallback *internalExtIntCB;
 
 
 /**
@@ -234,10 +234,10 @@ void SYS_enableInts();
  * the Vertical Interrupt happened and before any internals SGDK V-Int processes.<br>
  * This is useful when you really need to do something right at the beginning of the V-Blank area.
  *
- * \see SYS_setVIntCallback(_voidCallback *CB);
- * \see SYS_setHIntCallback(_voidCallback *CB);
+ * \see SYS_setVIntCallback(VoidCallback *CB);
+ * \see SYS_setHIntCallback(VoidCallback *CB);
  */
-void SYS_setVIntPreCallback(_voidCallback *CB);
+void SYS_setVIntPreCallback(VoidCallback *CB);
 /**
  *  \brief
  *      Set 'Vertical Interrupt' callback method.
@@ -252,10 +252,10 @@ void SYS_setVIntPreCallback(_voidCallback *CB);
  * not right at the start of the V-Blank area.<br>
  * For that you can use the SYS_setPreVIntCallback(..) method instead.
  *
- * \see SYS_setHIntCallback(_voidCallback *CB);
- * \see SYS_setVIntPreCallback(_voidCallback *CB);
+ * \see SYS_setHIntCallback(VoidCallback *CB);
+ * \see SYS_setVIntPreCallback(VoidCallback *CB);
  */
-void SYS_setVIntCallback(_voidCallback *CB);
+void SYS_setVIntCallback(VoidCallback *CB);
 /**
  *  \brief
  *      Set 'Horizontal Interrupt' callback method.
@@ -267,7 +267,7 @@ void SYS_setVIntCallback(_voidCallback *CB);
  * Horizontal interrupt happen at the end of scanline display period right before Horizontal blank.<br>
  * This period is usually used to do mid frame changes (palette, scrolling or others raster effect)
  */
-void SYS_setHIntCallback(_voidCallback *CB);
+void SYS_setHIntCallback(VoidCallback *CB);
 /**
  *  \brief
  *      Set External interrupt callback method.
@@ -278,7 +278,7 @@ void SYS_setHIntCallback(_voidCallback *CB);
  *
  * External interrupt happen on Light Gun trigger (HVCounter is locked).
  */
-void SYS_setExtIntCallback(_voidCallback *CB);
+void SYS_setExtIntCallback(VoidCallback *CB);
 
 /**
  *  \brief

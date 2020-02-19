@@ -29,7 +29,7 @@ static u8 extSet;
 static u16 gport;
 
 
-static _joyEventCallback *joyEventCB;
+static JoyEventCallback *joyEventCB;
 
 
 void JOY_init()
@@ -254,7 +254,7 @@ void JOY_reset()
 }
 
 
-void JOY_setEventHandler(_joyEventCallback *CB)
+void JOY_setEventHandler(JoyEventCallback *CB)
 {
     joyEventCB = CB;
 }
