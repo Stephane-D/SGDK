@@ -220,7 +220,7 @@ void MEM_dump();
  *
  * Sets the first num bytes of the block of memory pointed by to with the specified value.
  */
-void memset(void *to, u8 value, u16 len);
+void __attribute__ ((noinline, used)) memset(void *to, u8 value, u16 len);
 #endif  // ENABLE_NEWLIB
 
 /**
@@ -267,7 +267,7 @@ void memsetU32(u32 *to, u32 value, u16 len);
  * Copies the values of len long from the location pointed by from directly to the memory block pointed by to.
  * The underlying type of the objects pointed by both the source and destination pointers are irrelevant for this function; The result is a binary copy of the data.
  */
-void memcpy(void *to, const void *from, u16 len);
+void __attribute__ ((noinline, used)) memcpy(void *to, const void *from, u16 len);
 #endif  // ENABLE_NEWLIB
 
 /**
