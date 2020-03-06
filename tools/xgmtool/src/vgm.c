@@ -640,15 +640,17 @@ static void VGM_buildSamples(VGM* vgm, bool convert)
                 int sampleId = VGMCommand_getStreamBlockId(command);
                 Sample* sample = SampleBank_getSampleById(bank, sampleId);
 
-                // sample found --> adjust frequency
+                // sample found ?
                 if (sample != NULL)
+                {
+                    // adjust frequency
                     Sample_setRate(sample, sampleIdFrequencies[VGMCommand_getStreamId(command)]);
+                    // convert to long command as we use single data block
+                    if (convert)
+                        curCom->element = Sample_getStartLongCommandEx(bank, sample, sample->len);
+                }
                 else if (!silent)
                     printf("Warning: sample id %2X not found !\n", sampleId);
-
-                // convert to long command as we use single data block
-                if (convert)
-                    curCom->element = Sample_getStartLongCommandEx(bank, sample, sample->len);
             }
             else if (!silent)
                 printf("Warning: sample bank id %2X not found !\n", bankId);
