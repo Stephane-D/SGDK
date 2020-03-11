@@ -565,10 +565,10 @@ void _start_entry()
     u16* dst;
     u16 len;
 
-    // safe to check for DMA completion on reset
+    // safe to check for DMA completion on reset (also clear internal VDP latch)
     while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
 
-    // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so all the stack as well)
+    // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so the stack as well)
     dst = (u16*) RAM;
     len = 0x8000;
     while(len--) *dst++ = 0;
@@ -584,7 +584,7 @@ void _start_entry()
     // convert to word
     len = (len + 1) / 2;
 
-    // get bank limite in word (bank size is 512KB)
+    // get bank limit in word (bank size is 512KB)
     banklimit = (0x80000 - (((u32)src) & 0x7FFFF)) >> 1;
     // bank limit exceeded ?
     if (len > banklimit)
