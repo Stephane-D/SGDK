@@ -34,15 +34,11 @@ import sun.misc.IOUtils;
 
 public class MainFrame extends JFrame implements ActionListener
 {
-    // 0002bf00 NUM_MUSIC
-    // 0002bf02-0002c092 xgm_musics
-    // 0002efa0 FREE
-
-    // 2389
-    final static int numMusicLocation = 0x2BF3E;  // (old = 0x2BF00)
-//    final static int numMusicLocationAlt = 0x70A;
-    final static int XGMListLocation = 0x2BF40; // (old = 0x2BF02) 
-    final static int startXGMLocation = 0x2F000; // 0x2EFA0 aligned on 0x100
+    // right after _stext after all symbols
+    final static int numMusicLocation = 0x27F54; // (old = 0x2BF3E, 0x2BF00)
+    final static int XGMListLocation = 0x1329E; // (old = 0x2BF40, 0x2BF02)
+    // should be aligned on 0x100
+    final static int startXGMLocation = 0x28000; // (old = 0x2F000)
 
     // GUI
     JPanel contentPane;
@@ -124,7 +120,7 @@ public class MainFrame extends JFrame implements ActionListener
 
     private void initialize()
     {
-        setTitle("XGM rom builder 1.2");
+        setTitle("XGM rom builder 1.3");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 800, 381);
@@ -482,7 +478,7 @@ public class MainFrame extends JFrame implements ActionListener
 
                 // set music number
                 Util.setInt16Swapped(rom, numMusicLocation, len);
-//                Util.setInt16Swapped(rom, numMusicLocationAlt, len);
+                // Util.setInt16Swapped(rom, numMusicLocationAlt, len);
 
                 try
                 {
