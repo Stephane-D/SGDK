@@ -4,20 +4,19 @@
 #include "music.h"
 
 
-const u16 NUM_MUSIC = 10;
 const u8* const xgm_musics[MAX_MUSIC] =
 {
-    xgm_1,
-    xgm_2,
-    xgm_3,
-    xgm_4,
-    xgm_5,
-    xgm_6,
+//    xgm_1,
+//    xgm_2,
+//    xgm_3,
+//    xgm_4,
+//    xgm_5,
+//    xgm_6,
     xgm_7,
-    xgm_8,
-    xgm_9,
-    xgm_10
-//    xgm_11,
+//    xgm_8,
+//    xgm_9,
+//    xgm_10,
+//    xgm_11
 //    xgm_12,
 //    xgm_13,
 //    xgm_14,

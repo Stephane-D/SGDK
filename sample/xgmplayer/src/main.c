@@ -112,8 +112,8 @@ static void hint();
 // get access to XGM driver timer
 extern s16 xgmTempoCnt;
 
-// store it in variable for single value
-u16 numMusic;
+// make it in a volatile variable so compiler won't optimize to constant in code
+vu16 numMusic = 1;
 
 // track infos cache
 static XD3 trackInfos[MAX_MUSIC];
@@ -234,9 +234,6 @@ int main()
     memset(trackInfos, 0, sizeof(trackInfos));
     // init plan track cache
     memset(planTrackIndexesCache, 0xFF, sizeof(planTrackIndexesCache));
-
-    // init it for once
-    numMusic = NUM_MUSIC;
 
     trackPlayedRawIndex = -1;
     trackPlayed = -1;
@@ -1744,20 +1741,20 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     // PCM 1
     if (pressed & BUTTON_X)
     {
-        XGM_setPCM(64, pcm_loop, sizeof(pcm_loop));
+        XGM_setPCM(64, pcm_hat2, sizeof(pcm_hat2));
         XGM_startPlayPCM(64, 1, SOUND_PCM_CH2);
     }
     // PCM 2
     if (pressed & BUTTON_Y)
     {
-        XGM_setPCM(65, pcm_voice, sizeof(pcm_voice));
+        XGM_setPCM(65, pcm_snare2, sizeof(pcm_snare2));
         XGM_startPlayPCM(65, 1, SOUND_PCM_CH3);
     }
     // PCM 3
     if (pressed & BUTTON_Z)
     {
-        XGM_setPCM(64, pcm_loop, sizeof(pcm_loop));
-        XGM_startPlayPCM(64, 1, SOUND_PCM_CH4);
+        XGM_setPCM(66, pcm_voice, sizeof(pcm_voice));
+        XGM_startPlayPCM(66, 1, SOUND_PCM_CH4);
     }
 }
 
