@@ -16,6 +16,7 @@
 *.lst
 *.class
 **/out/**
+**/bin/**
 !**/out/rom.bin
 symbol.txt
 rom_head.bin
@@ -47,6 +48,6 @@ tools/lz4w/test
 tools/lz4w/bin
 tools/lz4w/lz4w.jar
 tools/rescomp/format
-tools/rescomp/out
 tools/rescomp/rescomp.jar
-tools/xgm tool builder/bin
+lib/libmd_old.a
+*.ini
