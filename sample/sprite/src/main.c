@@ -40,6 +40,8 @@ static void updatePhysic();
 static void updateAnim();
 static void updateCamera(fix32 x, fix32 y);
 
+static void frameChanged(Sprite* sprite);
+
 // sprites structure (pointer of Sprite)
 Sprite* sprites[3];
 
@@ -55,6 +57,8 @@ s16 yorder;
 fix32 enemyPosx[2];
 fix32 enemyPosy[2];
 s16 enemyXorder[2];
+
+u16** animIndexes;
 
 //s16 reseted = TRUE;
 
@@ -116,9 +120,19 @@ int main()
     // init enemies sprites
     sprites[1] = SPR_addSprite(&enemies_sprite, fix32ToInt(enemyPosx[0] - camposx), fix32ToInt(enemyPosy[0] - camposy), TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
     sprites[2] = SPR_addSprite(&enemies_sprite, fix32ToInt(enemyPosx[1] - camposx), fix32ToInt(enemyPosy[1] - camposy), TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
+
+    // pre load all animation frames into VRAM for enemy
+    animIndexes = SPR_loadAllFrames(&enemies_sprite, ind);
+
+    // disable auto upload for sprite 2
+    SPR_setAutoTileUpload(sprites[2], FALSE);
+    // set frame change callback so we can update tile index easily
+    SPR_setFrameChangeCallback(sprites[2], &frameChanged);
+
     // select enemy for each sprite
     SPR_setAnim(sprites[1], 1);
     SPR_setAnim(sprites[2], 0);
+
     SPR_update();
 
     // prepare palettes
@@ -304,6 +318,12 @@ static void updateCamera(fix32 x, fix32 y)
     }
 }
 
+static void frameChanged(Sprite* sprite)
+{
+    // manually set tile index for the current frame (preloaded in VRAM)
+    u16 tileIndex = animIndexes[sprite->animInd][sprite->frameInd];
+    SPR_setVRAMTileIndex(sprite, tileIndex);
+}
 
 static void handleInput()
 {
