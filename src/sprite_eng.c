@@ -594,6 +594,69 @@ void SPR_defragVRAM()
 #endif // SPR_PROFIL
 }
 
+u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index)
+{
+    u16 numFrameTot = 0;
+    u16 numTileTot = 0;
+    Animation** anim = sprDef->animations;
+    const u16 numAnimation = sprDef->numAnimation;
+
+    for(u16 indAnim = 0; indAnim < numAnimation; indAnim++)
+    {
+        AnimationFrame** frame = (*anim)->frames;
+        const u16 numFrame = (*anim)->numFrame;
+
+        for(u16 indFrame = 0; indFrame < numFrame; indFrame++)
+        {
+            numTileTot += (*frame)->tileset->numTile;
+            frame++;
+        }
+
+        numFrameTot += numFrame;
+        anim++;
+    }
+
+    // allocate result table indexes[numAnim][numFrame]
+    u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
+    // store pointer
+    u16** result = indexes;
+    // init frames indexes pointer
+    u16* indFrames = (u16*) (indexes + numAnimation);
+
+    // start index
+    u16 tileInd = index;
+
+    anim = sprDef->animations;
+
+    for(u16 indAnim = 0; indAnim < numAnimation; indAnim++)
+    {
+        // store frames indexes pointer for this animation
+        *indexes++ = indFrames;
+
+        AnimationFrame** frame = (*anim)->frames;
+        const u16 numFrame = (*anim)->numFrame;
+
+        for(u16 indFrame = 0; indFrame < numFrame; indFrame++)
+        {
+            const TileSet* tileset = (*frame)->tileset;
+
+            // load tileset
+            VDP_loadTileSet(tileset, tileInd, DMA);
+            // store frame tile index
+            *indFrames++ = tileInd;
+            // next tileset
+            tileInd += tileset->numTile;
+            // next frame
+            frame++;
+        }
+
+        anim++;
+    }
+
+    return result;
+}
+
+
 bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 {
 #ifdef SPR_PROFIL
@@ -1504,6 +1567,7 @@ void SPR_update()
     profil_time[PROFIL_UPDATE] += getSubTick() - prof;
 #endif // SPR_PROFIL
 }
+
 
 void SPR_logProfil()
 {

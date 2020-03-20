@@ -597,6 +597,33 @@ u16 SPR_getNumActiveSprite();
  *      Defragment allocated VRAM for sprites, that can help when sprite allocation fail (SPR_addSprite(..) or SPR_addSpriteEx(..) return <i>NULL</i>).
  */
 void SPR_defragVRAM();
+/**
+ *  \brief
+ *      Load all frames of spriteDef (using DMA) at specified VRAM tile index and return the indexes table.<br>
+ *      <b>WARNING: This function should be call at init/loading time as it can be quite long (several frames)</b>
+ *
+ *  \param spriteDef
+ *      the SpriteDefinition we want to load frame data in VRAM.
+ *  \param index
+ *      the tile position in VRAM where we will upload all sprite frame tiles data.
+ *
+ *   Load all frames of spriteDef (using DMA) at specified VRAM tile index and return the indexes table.<br>
+ *   The returned index table is a dynamically allocated 2D table[anim][frame] so you need to release it using #MEM_free(..)
+ *   when you don't need the table anymore.<br>
+ *   You can use the frame change callback (see #SPR_setFrameChangeCallback(..)) to automatically update the VRAM index using the indexes table:<br>
+ *   <code>frameIndexes = SPR_loadAllFrames(sprite->definition, ind);<br>
+ *   SPR_setFrameChangeCallback(sprite, &frameChanged);<br>
+ *   ....<br>
+ *   void frameChanged(Sprite* sprite)<br>
+ *   {<br>
+ *       u16 tileIndex = frameIndexes[sprite->animInd][sprite->frameInd];<br>
+ *       SPR_setVRAMTileIndex(sprite, tileIndex);<br>
+ *   }</code>
+ *
+ *  \return the 2D indexes table or NULL if there is not enough memory to allocate the table.
+ *  \see SPR_setFrameChangeCallback(...);
+ */
+u16** SPR_loadAllFrames(const SpriteDefinition* spriteDef, u16 index);
 
 /**
  *  \brief
