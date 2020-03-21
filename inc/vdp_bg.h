@@ -180,7 +180,7 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, Tra
 
 /**
  *  \brief
- *      Clear specified plan.
+ *      Clear specified plan (using DMA).
  *
  *  \param plan
  *      Plan we want to clear.<br>
@@ -192,7 +192,7 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, Tra
  *      Wait the operation to complete when set to TRUE otherwise it returns immediately
  *      but then you will require to wait for DMA completion (#DMA_waitCompletion()) before accessing the VDP.
  */
-void VDP_clearPlan(VDPPlan plan, u16 wait);
+void VDP_clearPlan(VDPPlan plan, bool wait);
 
 /**
  *  \brief

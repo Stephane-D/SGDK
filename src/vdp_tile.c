@@ -54,7 +54,7 @@ void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 
 }
 
 
-void VDP_fillTileData(u8 value, u16 index, u16 num, u16 wait)
+void VDP_fillTileData(u8 value, u16 index, u16 num, bool wait)
 {
     // do DMA fill
     DMA_doVRamFill(index * 32, num * 32, value, 1);
@@ -112,11 +112,6 @@ void VDP_setTileMapXY(VDPPlan plan, u16 tile, u16 x, u16 y)
 
     *plctrl = GFX_WRITE_VRAM_ADDR(addr);
     *pwdata = tile;
-}
-
-void VDP_fillTileMapRectByIndex(u16 plan, u16 tile, u16 ind, u16 num)
-{
-    VDP_fillTileMap(plan, tile, ind, num);
 }
 
 void VDP_fillTileMap(u16 plan, u16 tile, u16 ind, u16 num)
@@ -185,12 +180,7 @@ void VDP_fillTileMapRect(VDPPlan plan, u16 tile, u16 x, u16 y, u16 w, u16 h)
     }
 }
 
-void VDP_clearTileMapRectByIndex(u16 plan, u16 ind, u16 num, u16 wait)
-{
-    VDP_clearTileMap(plan, ind, num, wait);
-}
-
-void VDP_clearTileMap(u16 plan, u16 ind, u16 num, u16 wait)
+void VDP_clearTileMap(u16 plan, u16 ind, u16 num, bool wait)
 {
     // do DMA fill
     DMA_doVRamFill(plan + (ind * 2), num * 2, 0, 1);
@@ -202,11 +192,6 @@ void VDP_clearTileMap(u16 plan, u16 ind, u16 num, u16 wait)
 void VDP_clearTileMapRect(VDPPlan plan, u16 x, u16 y, u16 w, u16 h)
 {
     VDP_fillTileMapRect(plan, 0, x, y, w, h);
-}
-
-void VDP_fillTileMapRectIncByIndex(u16 plan, u16 basetile, u16 ind, u16 num)
-{
-    VDP_fillTileMapInc(plan, basetile, ind, num);
 }
 
 void VDP_fillTileMapInc(u16 plan, u16 basetile, u16 ind, u16 num)
@@ -286,11 +271,6 @@ void VDP_fillTileMapRectInc(VDPPlan plan, u16 basetile, u16 x, u16 y, u16 w, u16
     }
 }
 
-void VDP_setTileMapRectByIndex(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm)
-{
-    VDP_setTileMapData(plan, data, ind, num, tm);
-}
-
 void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm)
 {
     u16 addr = plan + (ind * 2);
@@ -366,11 +346,6 @@ void VDP_setTileMapDataRect(VDPPlan plan, const u16 *data, u16 x, u16 y, u16 w, 
     }
 }
 
-void VDP_setTileMapRectExByIndex(u16 plan, const u16 *data, u16 baseindex, u16 baseflag, u16 ind, u16 num)
-{
-    VDP_setTileMapDataEx(plan, data, baseflag | baseindex, ind, num);
-}
-
 void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 num)
 {
     vu32 *plctrl;
@@ -418,11 +393,6 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
 
     i = num & 7;
     while (i--) *pwdata = baseor | (*src++ + baseinc);
-}
-
-void VDP_setTileMapRectEx(VDPPlan plan, const u16 *data, u16 baseindex, u16 baseflag, u16 x, u16 y, u16 w, u16 h)
-{
-    VDP_setTileMapDataRectEx(plan, data, baseflag | baseindex, x, y, w, h, w);
 }
 
 void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm)

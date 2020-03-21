@@ -17,9 +17,9 @@
 static u16 getBitmapAllocSize(const Bitmap *bitmap);
 static u16 getTileSetAllocSize(const TileSet *tileset);
 static u16 getMapAllocSize(const Map *map);
-static Bitmap *allocateBitmapInternal(const Bitmap *bitmap, void *adr);
-static TileSet *allocateTileSetInternal(const TileSet *tileset, void *adr);
-static Map *allocateMapInternal(const Map *map, void *adr);
+static Bitmap *allocateBitmapInternal(void *adr);
+static TileSet *allocateTileSetInternal(void *adr);
+static Map *allocateMapInternal(void *adr);
 
 // internal
 u16 randbase;
@@ -812,7 +812,7 @@ static u16 getMapAllocSize(const Map *map)
 }
 
 
-static Bitmap *allocateBitmapInternal(const Bitmap *bitmap, void *adr)
+static Bitmap *allocateBitmapInternal(void *adr)
 {
     // cast
     Bitmap *result = (Bitmap*) adr;
@@ -827,7 +827,7 @@ static Bitmap *allocateBitmapInternal(const Bitmap *bitmap, void *adr)
     return result;
 }
 
-static TileSet *allocateTileSetInternal(const TileSet *tileset, void *adr)
+static TileSet *allocateTileSetInternal(void *adr)
 {
     // cast
     TileSet *result = (TileSet*) adr;
@@ -842,7 +842,7 @@ static TileSet *allocateTileSetInternal(const TileSet *tileset, void *adr)
     return result;
 }
 
-static Map *allocateMapInternal(const Map *map, void *adr)
+static Map *allocateMapInternal(void *adr)
 {
     // cast
     Map *result = (Map*) adr;
@@ -860,7 +860,7 @@ static Map *allocateMapInternal(const Map *map, void *adr)
 
 Bitmap *allocateBitmap(const Bitmap *bitmap)
 {
-    return allocateBitmapInternal(bitmap, MEM_alloc(getBitmapAllocSize(bitmap) + sizeof(Bitmap)));
+    return allocateBitmapInternal(MEM_alloc(getBitmapAllocSize(bitmap) + sizeof(Bitmap)));
 }
 
 Bitmap *allocateBitmapEx(u16 width, u16 heigth)
@@ -881,7 +881,7 @@ Bitmap *allocateBitmapEx(u16 width, u16 heigth)
 
 TileSet *allocateTileSet(const TileSet *tileset)
 {
-    return allocateTileSetInternal(tileset, MEM_alloc(getTileSetAllocSize(tileset) + sizeof(TileSet)));
+    return allocateTileSetInternal(MEM_alloc(getTileSetAllocSize(tileset) + sizeof(TileSet)));
 }
 
 TileSet *allocateTileSetEx(u16 numTile)
@@ -904,7 +904,7 @@ TileSet *allocateTileSetEx(u16 numTile)
 
 Map *allocateMap(const Map *map)
 {
-    return allocateMapInternal(map, MEM_alloc(getMapAllocSize(map) + sizeof(Map)));
+    return allocateMapInternal(MEM_alloc(getMapAllocSize(map) + sizeof(Map)));
 }
 
 Map *allocateMapEx(u16 width, u16 heigth)
@@ -943,9 +943,9 @@ Image *allocateImage(const Image *image)
     if (result != NULL)
     {
         // allocate tileset buffer
-        result->tileset = allocateTileSetInternal(tileset, (void*) (adr + sizeof(Image)));
+        result->tileset = allocateTileSetInternal((void*) (adr + sizeof(Image)));
         // allocate map buffer
-        result->map = allocateMapInternal(map, (void*) (adr + sizeof(Image) + sizeTileset));
+        result->map = allocateMapInternal((void*) (adr + sizeof(Image) + sizeTileset));
     }
 
     return result;

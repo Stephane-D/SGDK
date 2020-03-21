@@ -150,7 +150,7 @@ void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, Tra
 }
 
 
-void VDP_clearPlan(VDPPlan plan, u16 wait)
+void VDP_clearPlan(VDPPlan plan, bool wait)
 {
     switch(plan.value)
     {
@@ -202,7 +202,7 @@ void VDP_setTextPriority(u16 prio)
 
 void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
 {
-    u32 len;
+    u16 len;
     u16 data[128];
     const u8 *s;
     u16 *d;
