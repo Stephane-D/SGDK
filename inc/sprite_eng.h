@@ -354,8 +354,9 @@ typedef struct _Sprite
     s16 depth;
     u16 attribut;
     u16 VDPSpriteIndex;
-    u16 spriteToHide;
     VDPSprite* lastVDPSprite;
+    u16 lastNumSprite;
+    u16 spriteToHide;
     u32 data;
     struct _Sprite* prev;
     struct _Sprite* next;

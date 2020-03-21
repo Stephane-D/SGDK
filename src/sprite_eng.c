@@ -377,26 +377,27 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     // initialized with specified flag
     sprite->definition = spriteDef;
     sprite->onFrameChange = NULL;
+
 //    FIXME: not needed
 //    sprite->animation = NULL;
-//    sprite->frame = NULL;
-//    sprite->frameInfo = NULL;
+    sprite->frame = NULL;
+    sprite->frameInfo = NULL;
 
     sprite->animInd = -1;
     sprite->frameInd = -1;
     sprite->seqInd = -1;
-    // to avoid NULL pointer access as frame can be used without being yet initialized
-    sprite->frame = spriteDef->animations[0]->frames[0];
-    sprite->frameInfo = &(sprite->frame->frameInfos[0]);
 
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
     // depending sprite position (first or last) we set its default depth
     if (flag & SPR_FLAG_INSERT_HEAD) sprite->depth = SPR_MIN_DEPTH;
     else sprite->depth = SPR_MAX_DEPTH;
-    sprite->spriteToHide = 0;
 
     const u16 numVDPSprite = spriteDef->maxNumSprite;
+
+    // default on sprite init
+    sprite->lastNumSprite = numVDPSprite;
+    sprite->spriteToHide = 0;
 
     // auto VDP sprite alloc enabled ?
     if (flag & SPR_FLAG_AUTO_SPRITE_ALLOC)
@@ -674,6 +675,10 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     const u16 oldNumSprite = sprite->definition->maxNumSprite;
     const u16 newNumSprite = spriteDef->maxNumSprite;
 
+    // definition changed --> re-init that
+    sprite->lastNumSprite = newNumSprite;
+    sprite->spriteToHide = 0;
+
     // auto VDP sprite alloc enabled --> realloc VDP sprite(s)
     if ((status & SPR_FLAG_AUTO_SPRITE_ALLOC) && (oldNumSprite != newNumSprite))
     {
@@ -723,13 +728,13 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     }
 
     sprite->definition = spriteDef;
+//    FIXME: not needed
+//    sprite->animation = NULL;
+    sprite->frame = NULL;
+    sprite->frameInfo = NULL;
     sprite->animInd = -1;
     sprite->frameInd = -1;
     sprite->seqInd = -1;
-
-    // to avoid NULL pointer access as frame can be used without being yet initialized
-    sprite->frame = spriteDef->animations[0]->frames[0];
-    sprite->frameInfo = &(sprite->frame->frameInfos[0]);
 
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
@@ -1427,7 +1432,13 @@ bool SPR_computeVisibility(Sprite* sprite)
 
     // update visibility if needed
     if (status & NEED_VISIBILITY_UPDATE)
+    {
+        // frame update need to be done first
+        if (status & NEED_FRAME_UPDATE)
+            status = updateFrame(sprite, status);
+        // then do visibility update
         sprite->status = updateVisibility(sprite, status);
+    }
 
     return (sprite->visibility)?TRUE:FALSE;
 }
@@ -1622,13 +1633,18 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
     vdpSprite = &vdpSpriteCache[ind];
     vdpSprite->y = 0;
 
-    // get the last vdpSprite while hiding them
+    // we don't need to hide sprite by default anymore as we take of it with 'lastNumSprite' field
+//    // get the last vdpSprite while hiding them
+//    i = num - 1;
+//    while(i--)
+//    {
+//        vdpSprite = &vdpSpriteCache[vdpSprite->link];
+//        vdpSprite->y = 0;
+//    }
+
+    // get the last vdpSprite
     i = num - 1;
-    while(i--)
-    {
-        vdpSprite = &vdpSpriteCache[vdpSprite->link];
-        vdpSprite->y = 0;
-    }
+    while(i--) vdpSprite = &vdpSpriteCache[vdpSprite->link];
 
     // adjust VDP sprites links
     spr = sprite->prev;
@@ -1810,17 +1826,30 @@ static u16 updateFrame(Sprite* sprite, u16 status)
             KLog_U3_("Warning: sprite #", getSpriteIndex(sprite), " update delayed (exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes)");
 #endif // LIB_DEBUG
 
+            // initial frame update ? --> better to set frame and frameInfo pointer at least
+            if (sprite->frame == NULL)
+            {
+                // set frame
+                sprite->frame = frame;
+                // get frame info depending HV flip state
+                sprite->frameInfo = &(frame->frameInfos[(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK)) >> TILE_ATTR_HFLIP_SFT]);
+            }
+
             // delay frame update (when we will have enough DMA capacity to do it)
             return status;
         }
     }
 
     // detect if we need to hide some VDP sprite
-    s16 spriteToHide = sprite->frame->numSprite - frame->numSprite;
+    s16 currentNumSprite = frame->numSprite;
+    s16 spriteToHide = sprite->lastNumSprite - currentNumSprite;
 
+    // need to hide some sprite
     if (spriteToHide > 0)
         sprite->spriteToHide = spriteToHide;
 
+    // store last used number of sprite
+    sprite->lastNumSprite = currentNumSprite;
     // set frame
     sprite->frame = frame;
     // get frame info depending HV flip state
