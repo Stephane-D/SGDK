@@ -404,26 +404,42 @@ public class Compiler
         if (resourceType.equals(Palette.class))
         {
             for (Resource resource : typeResources)
-                if (!result.contains(resource))
-                    result.add(((Palette) resource).bin);
+            {
+                final Bin binResource =((Palette) resource).bin;
+                
+                if (!result.contains(binResource))
+                    result.add(binResource);
+            }
         }
         else if (resourceType.equals(Bitmap.class))
         {
             for (Resource resource : typeResources)
-                if (!result.contains(resource))
-                    result.add(((Bitmap) resource).bin);
+            {
+                final Bin binResource =((Bitmap) resource).bin;
+                
+                if (!result.contains(binResource))
+                    result.add(binResource);
+            }
         }
         else if (resourceType.equals(Tileset.class))
         {
             for (Resource resource : typeResources)
-                if (!result.contains(resource))
-                    result.add(((Tileset) resource).bin);
+            {
+                final Bin binResource =((Tileset) resource).bin;
+                
+                if (!result.contains(binResource))
+                    result.add(binResource);
+            }
         }
         else if (resourceType.equals(Tilemap.class))
         {
             for (Resource resource : typeResources)
-                if (!result.contains(resource))
-                    result.add(((Tilemap) resource).bin);
+            {
+                final Bin binResource =((Tilemap) resource).bin;
+                
+                if (!result.contains(binResource))
+                    result.add(binResource);
+            }
         }
         else
             throw new IllegalArgumentException(
