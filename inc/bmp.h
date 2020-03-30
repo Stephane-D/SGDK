@@ -31,12 +31,12 @@
 #define BMP_PLANHEIGHT_SFT          planHeightSft
 /**
  *  \brief
- *          Bitmap plan width (in tile)
+ *          Bitmap plane width (in tile)
  */
 #define BMP_PLANWIDTH               planWidth
 /**
  *  \brief
- *          Bitmap plan height (in tile)
+ *          Bitmap plane height (in tile)
  */
 #define BMP_PLANHEIGHT              planHeight
 
@@ -240,23 +240,23 @@ extern u8 *bmp_buffer_write;
  *  \param double_buffer
  *      Enabled VRAM double buffer.<br>
  *      VRAM Double buffer permit to avoid image tearing because of partial screen refresh.<br>
- *      It requires almost all VRAM tiles space (~41 KB) so enable it only if you don't need other plan or sprites.
- *  \param plan
- *      Plan to use to display the bitmap.<br>
+ *      It requires almost all VRAM tiles space (~41 KB) so enable it only if you don't need other plane or sprites.
+ *  \param plane
+ *      Plane to use to display the bitmap.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
  *  \param palette
- *      Palette index to use to render the bitmap plan.<br>
+ *      Palette index to use to render the bitmap plane.<br>
  *      Set it to 0 if unsure.
  *  \param priority
- *      Set the priority of bitmap plan.<br>
+ *      Set the priority of bitmap plane.<br>
  *      0 = low priority (default).<br>
  *      1 = high priority.
  *
  * Requires ~41 KB of memory which is dynamically allocated.
  */
-void BMP_init(u16 double_buffer, VDPPlan plan, u16 palette, u16 priority);
+void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority);
 /**
  *  \brief
  *      End the software bitmap engine.
