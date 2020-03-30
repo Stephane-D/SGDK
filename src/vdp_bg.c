@@ -15,14 +15,14 @@
 #include "mapper.h"
 
 
-static VDPPlan text_plan;
+static VDPPlane text_plan;
 static u16 text_basetile;
 
 // current VRAM upload tile position
 u16 curTileInd;
 
 
-void VDP_setHorizontalScroll(VDPPlan plan, s16 value)
+void VDP_setHorizontalScroll(VDPPlane plane, s16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -33,75 +33,33 @@ void VDP_setHorizontalScroll(VDPPlan plan, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = VDP_HSCROLL_TABLE;
-    if (plan.value == CONST_PLAN_B) addr += 2;
+    if (plane.value == CONST_BG_B) addr += 2;
 
     *pl = GFX_WRITE_VRAM_ADDR(addr);
     *pw = value;
 }
 
-void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm)
+void VDP_setHorizontalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((tile & 0x1F) * (4 * 8));
-    if (plan.value == CONST_PLAN_B) addr += 2;
+    if (plane.value == CONST_BG_B) addr += 2;
 
-    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VRAM, (u32) values, addr, len, 4 * 8);
-    else if (tm == DMA) DMA_doDma(DMA_VRAM, (u32) values, addr, len, 4 * 8);
-    else
-    {
-        vu16 *pw;
-        vu32 *pl;
-        u16 *src;
-        u16 i;
-
-        VDP_setAutoInc(4 * 8);
-
-        /* Point to vdp port */
-        pw = (u16 *) GFX_DATA_PORT;
-        pl = (u32 *) GFX_CTRL_PORT;
-
-        *pl = GFX_WRITE_VRAM_ADDR(addr);
-
-        src = (u16*) values;
-
-        i = len;
-        while(i--) *pw = *src++;
-    }
+    DMA_transfer(tm, DMA_VRAM, values, addr, len, 4 * 8);
 }
 
-void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, TransferMethod tm)
+void VDP_setHorizontalScrollLine(VDPPlane plane, u16 line, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((line & 0xFF) * 4);
-    if (plan.value == CONST_PLAN_B) addr += 2;
+    if (plane.value == CONST_BG_B) addr += 2;
 
-    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VRAM, (u32) values, addr, len, 4);
-    else if (tm == DMA) DMA_doDma(DMA_VRAM, (u32) values, addr, len, 4);
-    else
-    {
-        vu16 *pw;
-        vu32 *pl;
-        u16 *src;
-        u16 i;
-
-        VDP_setAutoInc(4);
-
-        /* Point to vdp port */
-        pw = (u16 *) GFX_DATA_PORT;
-        pl = (u32 *) GFX_CTRL_PORT;
-
-        *pl = GFX_WRITE_VRAM_ADDR(addr);
-
-        src = (u16*) values;
-
-        i = len;
-        while(i--) *pw = *src++;
-    }
+    DMA_transfer(tm, DMA_VRAM, values, addr, len, 4);
 }
 
-void VDP_setVerticalScroll(VDPPlan plan, s16 value)
+void VDP_setVerticalScroll(VDPPlane plane, s16 value)
 {
     vu16 *pw;
     vu32 *pl;
@@ -112,63 +70,42 @@ void VDP_setVerticalScroll(VDPPlan plan, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = 0;
-    if (plan.value == CONST_PLAN_B) addr += 2;
+    if (plane.value == CONST_BG_B) addr += 2;
 
     *pl = GFX_WRITE_VSRAM_ADDR(addr);
     *pw = value;
 }
 
-void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm)
+void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
 
     addr = (tile & 0x1F) * 4;
-    if (plan.value == CONST_PLAN_B) addr += 2;
+    if (plane.value == CONST_BG_B) addr += 2;
 
-    if (tm == DMA_QUEUE) DMA_queueDma(DMA_VSRAM, (u32) values, addr, len, 4);
-    else if (tm == DMA) DMA_doDma(DMA_VSRAM, (u32) values, addr, len, 4);
-    else
-    {
-        vu16 *pw;
-        vu32 *pl;
-        u16 *src;
-        u16 i;
-
-        VDP_setAutoInc(4);
-
-        /* Point to vdp port */
-        pw = (u16 *) GFX_DATA_PORT;
-        pl = (u32 *) GFX_CTRL_PORT;
-
-        *pl = GFX_WRITE_VSRAM_ADDR(addr);
-
-        src = (u16*) values;
-
-        i = len;
-        while(i--) *pw = *src++;
-    }
+    DMA_transfer(tm, DMA_VSRAM, values, addr, len, 4);
 }
 
 
-void VDP_clearPlan(VDPPlan plan, bool wait)
+void VDP_clearPlan(VDPPlane plane, bool wait)
 {
-    switch(plan.value)
+    switch(plane.value)
     {
-        case CONST_PLAN_A:
-            VDP_clearTileMap(VDP_PLAN_A, 0, 1 << (planWidthSft + planHeightSft), wait);
+        case CONST_BG_A:
+            VDP_clearTileMap(VDP_BG_A, 0, 1 << (planWidthSft + planHeightSft), wait);
             break;
 
-        case CONST_PLAN_B:
-            VDP_clearTileMap(VDP_PLAN_B, 0, 1 << (planWidthSft + planHeightSft), wait);
+        case CONST_BG_B:
+            VDP_clearTileMap(VDP_BG_B, 0, 1 << (planWidthSft + planHeightSft), wait);
             break;
 
-        case CONST_PLAN_WINDOW:
-            VDP_clearTileMap(VDP_PLAN_WINDOW, 0, 1 << (windowWidthSft + 5), wait);
+        case CONST_WINDOW:
+            VDP_clearTileMap(VDP_WINDOW, 0, 1 << (windowWidthSft + 5), wait);
             break;
     }
 }
 
-VDPPlan VDP_getTextPlan()
+VDPPlane VDP_getTextPlan()
 {
     return text_plan;
 }
@@ -183,9 +120,9 @@ u16 VDP_getTextPriority()
     return (text_basetile >> 15) & 1;
 }
 
-void VDP_setTextPlan(VDPPlan plan)
+void VDP_setTextPlan(VDPPlane plane)
 {
-    text_plan = plan;
+    text_plan = plane;
 }
 
 void VDP_setTextPalette(u16 pal)
@@ -200,7 +137,7 @@ void VDP_setTextPriority(u16 prio)
     text_basetile |= (prio & 1) << 15;
 }
 
-void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
+void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
 {
     u16 len;
     u16 data[128];
@@ -208,11 +145,11 @@ void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
     u16 *d;
     u16 i;
 
-    // get the horizontal plan size (in cell)
-    i = (plan.value == CONST_PLAN_WINDOW)?windowWidth:planWidth;
+    // get the horizontal plane size (in cell)
+    i = (plane.value == CONST_WINDOW)?windowWidth:planWidth;
     len = strlen(str);
 
-    // if string don't fit in plan, we cut it
+    // if string don't fit in plane, we cut it
     if (len > (i - x))
         len = i - x;
 
@@ -221,22 +158,22 @@ void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y)
     while(i--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
 
-    VDP_setTileMapDataRectEx(plan, data, text_basetile, x, y, len, 1, len);
+    VDP_setTileMapDataRectEx(plane, data, text_basetile, x, y, len, 1, len);
 }
 
-void VDP_clearTextBG(VDPPlan plan, u16 x, u16 y, u16 w)
+void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w)
 {
-    VDP_fillTileMapRect(plan, 0, x, y, w, 1);
+    VDP_fillTileMapRect(plane, 0, x, y, w, 1);
 }
 
-void VDP_clearTextAreaBG(VDPPlan plan, u16 x, u16 y, u16 w, u16 h)
+void VDP_clearTextAreaBG(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)
 {
-    VDP_fillTileMapRect(plan, 0, x, y, w, h);
+    VDP_fillTileMapRect(plane, 0, x, y, w, h);
 }
 
-void VDP_clearTextLineBG(VDPPlan plan, u16 y)
+void VDP_clearTextLineBG(VDPPlane plane, u16 y)
 {
-    VDP_fillTileMapRect(plan, 0, 0, y, (plan.value == CONST_PLAN_WINDOW)?windowWidth:planWidth, 1);
+    VDP_fillTileMapRect(plane, 0, 0, y, (plane.value == CONST_WINDOW)?windowWidth:planWidth, 1);
 }
 
 void VDP_drawText(const char *str, u16 x, u16 y)
@@ -260,7 +197,7 @@ void VDP_clearTextLine(u16 y)
 }
 
 
-u16 VDP_drawBitmap(VDPPlan plan, const Bitmap *bitmap, u16 x, u16 y)
+u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
 {
     u16 numTile;
     u16 result;
@@ -270,14 +207,14 @@ u16 VDP_drawBitmap(VDPPlan plan, const Bitmap *bitmap, u16 x, u16 y)
     if ((curTileInd + numTile) > TILE_USERMAXINDEX)
         curTileInd = TILE_USERINDEX;
 
-    result = VDP_drawBitmapEx(plan, bitmap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE);
+    result = VDP_drawBitmapEx(plane, bitmap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE);
 
     curTileInd += numTile;
 
     return result;
 }
 
-u16 VDP_drawBitmapEx(VDPPlan plan, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)
+u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)
 {
     const int wt = bitmap->w / 8;
     const int ht = bitmap->h / 8;
@@ -299,14 +236,14 @@ u16 VDP_drawBitmapEx(VDPPlan plan, const Bitmap *bitmap, u16 basetile, u16 x, u1
         VDP_loadBMPTileData((u32*) FAR(bitmap->image), basetile & TILE_INDEX_MASK, wt, ht, wt);
 
     // tilemap
-    VDP_fillTileMapRectInc(plan, basetile, x, y, wt, ht);
+    VDP_fillTileMapRectInc(plane, basetile, x, y, wt, ht);
     // palette
     if (loadpal) PAL_setPaletteColors((basetile >> 9) & 0x30, palette);
 
     return TRUE;
 }
 
-u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y)
+u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
 {
     u16 numTile;
     u16 result;
@@ -316,21 +253,21 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y)
     if ((curTileInd + numTile) > TILE_USERMAXINDEX)
         curTileInd = TILE_USERINDEX;
 
-    result = VDP_drawImageEx(plan, image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE, DMA);
+    result = VDP_drawImageEx(plane, image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE, DMA);
 
     curTileInd += numTile;
 
     return result;
 }
 
-u16 VDP_drawImageEx(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm)
+u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm)
 {
     Palette *palette;
 
     if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, tm))
         return FALSE;
 
-    if (!VDP_setMap(plan, image->map, basetile, x, y))
+    if (!VDP_setTileMap(plane, image->tilemap, basetile, x, y))
         return FALSE;
 
     palette = image->palette;
