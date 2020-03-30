@@ -10,9 +10,9 @@
  * - get / set resolution<br>
  * - enable / disable VDP features<br>
  * <br>
- * VRAM should always be organized in a way that tile data are always located before map in VRAM:<br>
+ * VRAM should always be organized in a way that tile data are always located before tilemap in VRAM:<br>
  * 0000-XXXX = tile data<br>
- * XXXX-FFFF = maps & tables (H scroll table, sprite table, B/A plan and window plan).
+ * XXXX-FFFF = tilemaps & tables (H scroll table, sprite table, B/A plane and window plane).
  */
 
 #ifndef _VDP_H_
@@ -87,20 +87,36 @@
 #define VDP_PALMODE_FLAG        (1 << 0)
 
 /**
+ *  \deprecated
+ *      Use VDP_BG_A instead
+ */
+#define VDP_PLAN_A              VDP_BG_A
+/**
+ *  \deprecated
+ *      Use VDP_BG_B instead
+ */
+#define VDP_PLAN_B              VDP_BG_B
+/**
+ *  \deprecated
+ *      Use VDP_WINDOW instead
+ */
+#define VDP_PLAN_WINDOW         VDP_WINDOW
+
+/**
  *  \brief
  *      VDP background A tilemap address in VRAM.
  */
-#define VDP_PLAN_A              aplan_addr
+#define VDP_BG_A                aplan_addr
 /**
  *  \brief
  *      VDP background B tilemap address in VRAM.
  */
-#define VDP_PLAN_B              bplan_addr
+#define VDP_BG_B                bplan_addr
 /**
  *  \brief
  *      VDP window tilemap address in VRAM.
  */
-#define VDP_PLAN_WINDOW         window_addr
+#define VDP_WINDOW              window_addr
 /**
  *  \brief
  *      VDP horizontal scroll table address in VRAM.
@@ -113,13 +129,13 @@
 #define VDP_SPRITE_TABLE        slist_addr
 /**
  *  \brief
- *      Address in VRAM where maps start (= address of first map / table in VRAM).
+ *      Address in VRAM where tilemaps start (= address of first tilemap / table in VRAM).
  */
 #define VDP_MAPS_START          maps_addr
 
 /**
  *  \brief
- *      Definition to set horizontal scroll to mode plan.
+ *      Definition to set horizontal scroll to mode plane.
  */
 #define HSCROLL_PLANE           0
 /**
@@ -135,7 +151,7 @@
 
 /**
  *  \brief
- *      Definition to set vertical scroll to mode plan.
+ *      Definition to set vertical scroll to mode plane.
  */
 #define VSCROLL_PLANE           0
 /**
@@ -183,7 +199,7 @@
 
 /**
  *  \brief
- *      Space in byte for tile in VRAM (tile space ends where maps starts)
+ *      Space in byte for tile in VRAM (tile space ends where tilemaps starts)
  */
 #define TILE_SPACE              VDP_MAPS_START
 
@@ -368,18 +384,18 @@
 /**
  * Internal use
  */
-#define CONST_PLAN_A                0
-#define CONST_PLAN_B                1
-#define CONST_PLAN_WINDOW           2
+#define CONST_BG_A                  0
+#define CONST_BG_B                  1
+#define CONST_WINDOW                2
 
 /**
  *  \brief
- *      Type used to define on which plan to work (used by some methods).
+ *      Type used to define on which plane to work (used by some methods).
  */
 typedef struct
 {
     u16 value;
-} VDPPlan;
+} VDPPlane;
 
 
 // used by define
@@ -402,14 +418,14 @@ extern u16 screenWidth;
 extern u16 screenHeight;
 /**
  *  \brief
- *      Current background plan width (in tile)
+ *      Current background plane width (in tile)
  *
  *  Possible values are: 32, 64, 128
  */
 extern u16 planWidth;
 /**
  *  \brief
- *      Current background plan height (in tile)
+ *      Current background plane height (in tile)
  *
  *  Possible values are: 32, 64, 128
  */
@@ -423,16 +439,16 @@ extern u16 planHeight;
 extern u16 windowWidth;
 /**
  *  \brief
- *      Current background plan width bit shift
+ *      Current background plane width bit shift
  *
- *  Possible values are: 5, 6 or 7 (corresponding to plan width 32, 64 and 128)
+ *  Possible values are: 5, 6 or 7 (corresponding to plane width 32, 64 and 128)
  */
 extern u16 planWidthSft;
 /**
  *  \brief
- *      Current background plan height bit shift
+ *      Current background plane height bit shift
  *
- *  Possible values are: 5, 6 or 7 (corresponding to plan height 32, 64 and 128)
+ *  Possible values are: 5, 6 or 7 (corresponding to plane height 32, 64 and 128)
  */
 extern u16 planHeightSft;
 /**
@@ -446,19 +462,19 @@ extern u16 windowWidthSft;
 
 /**
  *  \brief
- *      Constant to represent VDP background A plan (used by some methods)
+ *      Constant to represent VDP background A plane (used by some methods)
  */
-extern const VDPPlan PLAN_A;
+extern const VDPPlane BG_A;
 /**
  *  \brief
- *      Constant to represent VDP background B plan (used by some methods)
+ *      Constant to represent VDP background B plane (used by some methods)
  */
-extern const VDPPlan PLAN_B;
+extern const VDPPlane BG_B;
 /**
  *  \brief
- *      Constant to represent VDP window plan (used by some methods)
+ *      Constant to represent VDP window plane (used by some methods)
  */
-extern const VDPPlan PLAN_WINDOW;
+extern const VDPPlane WINDOW;
 
 
 /**
@@ -559,7 +575,7 @@ u16  VDP_getPlanWidth();
 u16  VDP_getPlanHeight();
 /**
  *  \brief
- *      Set background plan size (in tile).<br>
+ *      Set background plane size (in tile).<br>
  *      WARNING: take attention to properly setup VRAM so tilemaps has enough space.
  *
  *  \param w
@@ -568,12 +584,16 @@ u16  VDP_getPlanHeight();
  *  \param h
  *      height in tile.<br>
  *      Possible values are 32, 64 or 128.
+ *  \param setupVram
+ *      If set to TRUE then tilemaps and tables will be automatically remapped in VRAM depending
+ *      the plane size.<br>
+ *      If you don't know what that means then it's better to keep this value to TRUE :p
  */
-void VDP_setPlanSize(u16 w, u16 h);
+void VDP_setPlanSize(u16 w, u16 h, bool setupVram);
 
 /**
  *  \brief
- *      Returns plan horizontal scrolling mode.
+ *      Returns plane horizontal scrolling mode.
  *
  *  Possible values are: HSCROLL_PLANE, HSCROLL_TILE, HSCROLL_LINE
  *
@@ -582,7 +602,7 @@ void VDP_setPlanSize(u16 w, u16 h);
 u8 VDP_getHorizontalScrollingMode();
 /**
  *  \brief
- *      Returns plan vertical scrolling mode.
+ *      Returns plane vertical scrolling mode.
  *
  *  Possible values are: VSCROLL_PLANE, VSCROLL_2TILE
  *
@@ -591,16 +611,16 @@ u8 VDP_getHorizontalScrollingMode();
 u8 VDP_getVerticalScrollingMode();
 /**
  *  \brief
- *      Set plan scrolling mode.
+ *      Set plane scrolling mode.
  *
  *  \param hscroll
  *      Horizontal scrolling mode :<br>
- *      <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br>
+ *      <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plane.<br>
  *      <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granularity (8 pixels bloc).<br>
  *      <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granularity (1 pixel).<br>
  *  \param vscroll
  *      Vertical scrolling mode :<br>
- *      <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br>
+ *      <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plane.<br>
  *      <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granularity (16 pixels bloc).<br>
  *
  *  \see VDP_setHorizontalScroll() to set horizontal scroll offset in mode plane.<br>
@@ -686,12 +706,12 @@ void VDP_setHIntCounter(u8 value);
 
 /**
  *  \brief
- *      Get VRAM address (location) of Plan A tilemap.
+ *      Get VRAM address (location) of BG A tilemap.
  */
 u16 VDP_getAPlanAddress();
 /**
  *  \brief
- *      Get VRAM address (location) of Plan B tilemap.
+ *      Get VRAM address (location) of BG B tilemap.
  */
 u16 VDP_getBPlanAddress();
 /**
@@ -717,12 +737,12 @@ u16 VDP_getHScrollTableAddress();
 
 /**
  *  \brief
- *      Set VRAM address (location) of Plan A tilemap.
+ *      Set VRAM address (location) of BG A tilemap.
  *      The address should be at multiple of $2000<br>
  *      <br>
  *      Ex:<br>
  *      VDP_setAPlanAddress(0xC000)<br>
- *      Will set the Plan A to at address 0xC000 in VRAM.
+ *      Will set the BG A to at address 0xC000 in VRAM.
  */
 void VDP_setAPlanAddress(u16 value);
 /**
@@ -742,12 +762,12 @@ void VDP_setWindowAddress(u16 value);
 void VDP_setWindowPlanAddress(u16 value);
 /**
  *  \brief
- *      Set VRAM address (location) of Plan B tilemap.<br>
+ *      Set VRAM address (location) of BG B tilemap.<br>
  *      The address should be at multiple of $2000<br>
  *      <br>
  *      Ex:<br>
  *      VDP_setBPlanAddress(0xE000)<br>
- *      Will set the Plan B tilemap at address 0xE000 in VRAM.
+ *      Will set the BG B tilemap at address 0xE000 in VRAM.
  */
 void VDP_setBPlanAddress(u16 value);
 /**
@@ -838,7 +858,7 @@ void VDP_waitVInt();
 
 /**
  *  \brief
- *      Reset background plan and palette.
+ *      Reset background plane and palette.
  *
  *  Clear background plans, reset palette to grey / red / green / blue and reset scrolls.
  */
