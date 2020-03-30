@@ -102,7 +102,7 @@ u16 executeMemsetTest(u16 *scores)
     y++;
 
     waitMs(5000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     MEM_free(buffer);
 
@@ -208,7 +208,7 @@ u16 executeMemcpyTest(u16 *scores)
     y++;
 
     waitMs(5000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     MEM_free(buffer);
 
@@ -228,7 +228,7 @@ u16 executeMemAllocTest(u16 *scores)
     u16 globalScore;
 
     KLog_U1("Mem heap: ", (u32)&_bend);
-    KLog_U2("Mem free: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
+    KLog_U2("Mem free before: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     allocs = MEM_alloc(1000 * sizeof(void*));
 
@@ -336,58 +336,60 @@ u16 executeMemAllocTest(u16 *scores)
     // here we have about 55000 bytes free
 
     if (!doAlloc(100, 16, &allocs[0], TRUE))                    // 1800 bytes
-        VDP_drawText("Error while allocating...", 2, y++);
+        VDP_drawText("Error while allocating 16...", 2, y++);
     if (!doAlloc(300, 64, &allocs[100], TRUE))                  // +19800 = 21600
-        VDP_drawText("Error while allocating...", 2, y++);
-    if (!doAlloc(15, 1024, &allocs[500], TRUE))                 // +15390 = 36990
-        VDP_drawText("Error while allocating...", 2, y++);
-    if (!doAlloc(50, 256, &allocs[520], TRUE))                  // +12900 = 49890
-        VDP_drawText("Error while allocating...", 2, y++);
+        VDP_drawText("Error while allocating 64...", 2, y++);
+    if (!doAlloc(15, 1024, &allocs[400], TRUE))                 // +15390 = 36990
+        VDP_drawText("Error while allocating 1024...", 2, y++);
+    if (!doAlloc(40, 128, &allocs[415], TRUE))                  // +12900 = 49890
+        VDP_drawText("Error while allocating 256...", 2, y++);
     if (!doRelease(300, 64, &allocs[100], TRUE))                // -19800 = 30090
-        VDP_drawText("Error while releasing...", 2, y++);
-    if (!doAlloc(20, 1024, &allocs[600], TRUE))                 // +20520 = 50610
-        VDP_drawText("Error while allocating...", 2, y++);
+        VDP_drawText("Error while releasing 64...", 2, y++);
+    if (!doAlloc(50, 256, &allocs[500], TRUE))                 // +20520 = 50610
+        VDP_drawText("Error while allocating 1024...", 2, y++);
     if (!doRelease(100, 16, &allocs[0], TRUE))                  // -1800 = 48810
-        VDP_drawText("Error while releasing...", 2, y++);
-    if (!doAlloc(20, 128, &allocs[620], TRUE))                  // +2600 = 51410
-        VDP_drawText("Error while allocating...", 2, y++);
-    if (!doRelease(15, 1024, &allocs[500], TRUE))               // -15390 = 36020
-        VDP_drawText("Error while releasing...", 2, y++);
-    if (!doRelease(50, 256, &allocs[520], TRUE))                // -12900 = 23120
-        VDP_drawText("Error while releasing...", 2, y++);
-    if (!doRelease(20, 1024, &allocs[600], TRUE))               // -20520 = 2600
-        VDP_drawText("Error while releasing...", 2, y++);
-    if (!doRelease(20, 128, &allocs[620], TRUE))                // -2600 = 0
-        VDP_drawText("Error while releasing...", 2, y++);
+        VDP_drawText("Error while releasing 16...", 2, y++);
+    if (!doAlloc(20, 512, &allocs[550], TRUE))                  // +2600 = 51410
+        VDP_drawText("Error while allocating 128...", 2, y++);
+    if (!doRelease(15, 1024, &allocs[400], TRUE))               // -15390 = 36020
+        VDP_drawText("Error while releasing 1024...", 2, y++);
+    if (!doRelease(40, 128, &allocs[415], TRUE))                // -12900 = 23120
+        VDP_drawText("Error while releasing 256...", 2, y++);
+    if (!doRelease(50, 256, &allocs[500], TRUE))               // -20520 = 2600
+        VDP_drawText("Error while releasing 1024...", 2, y++);
+    if (!doRelease(20, 512, &allocs[550], TRUE))                // -2600 = 0
+        VDP_drawText("Error while releasing 128...", 2, y++);
 
     VDP_drawText("50000 random size alloc/release", 2, y++);
-    i = 100;
+    i = 95;
     start = getTimeAsFix32(FALSE);
     while(i--)
     {
         doAlloc(100, 16, &allocs[0], FALSE);                    // 1800 bytes
         doAlloc(300, 64, &allocs[100], FALSE);                  // +19800 = 21600
-        doAlloc(15, 1024, &allocs[500], FALSE);                 // +15390 = 36990
-        doAlloc(50, 256, &allocs[520], FALSE);                  // +12900 = 49890
+        doAlloc(15, 1024, &allocs[400], FALSE);                 // +15390 = 36990
+        doAlloc(40, 128, &allocs[415], FALSE);                  // +12900 = 49890
         doRelease(300, 64, &allocs[100], FALSE);                // -19800 = 30090
-        doAlloc(20, 1024, &allocs[600], FALSE);                 // +20520 = 50610
+        doAlloc(50, 256, &allocs[500], FALSE);                 // +20520 = 50610
         doRelease(100, 16, &allocs[0], FALSE);                  // -1800 = 48810
-        doAlloc(20, 128, &allocs[620], FALSE);                  // +2600 = 51410
-        doRelease(15, 1024, &allocs[500], FALSE);               // -15390 = 36020
-        doRelease(50, 256, &allocs[520], FALSE);                // -12900 = 23120
-        doRelease(20, 1024, &allocs[600], FALSE);               // -20520 = 2600
-        doRelease(20, 128, &allocs[620], FALSE);                // -2600 = 0
+        doAlloc(20, 512, &allocs[550], FALSE);                  // +2600 = 51410
+        doRelease(15, 1024, &allocs[400], FALSE);               // -15390 = 36020
+        doRelease(40, 128, &allocs[415], FALSE);                // -12900 = 23120
+        doRelease(50, 256, &allocs[500], FALSE);               // -20520 = 2600
+        doRelease(20, 512, &allocs[550], FALSE);                // -2600 = 0
     }
     end = getTimeAsFix32(FALSE);
     *score = displayResultAlloc(50000, end - start, y++);
     globalScore += *score++;
     y++;
 
-
     waitMs(5000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     MEM_free(allocs);
+
+    KLog_U2("Mem free after: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
+    MEM_dump();
 
     return globalScore;
 }
@@ -592,7 +594,7 @@ u16 executeVRamAllocTest(u16 *scores)
 
 
     waitMs(5000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     MEM_free(allocs);
     VRAM_releaseRegion(&region);

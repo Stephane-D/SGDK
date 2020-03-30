@@ -47,7 +47,7 @@ int main()
 
     JOY_setEventHandler(handleJoyEvent);
 
-    BMP_init(TRUE, PLAN_A, PAL0, FALSE);
+    BMP_init(TRUE, BG_A, PAL0, FALSE);
 
     camdist = FIX16(15);
 

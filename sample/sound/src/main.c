@@ -170,7 +170,7 @@ static void refreshDriverParams()
     u16 posY;
     u16 i, j;
 
-    VDP_clearTileMapRect(PLAN_A, 0, 3, 40, 8);
+    VDP_clearTileMapRect(BG_A, 0, 3, 40, 8);
 
     str = driver->name;
     len = strlen(str);
@@ -216,7 +216,7 @@ static void refreshDriverParams()
 
 static void refreshDriverCmd()
 {
-    VDP_clearTileMapRect(PLAN_A, 0, 12, 40, 14);
+    VDP_clearTileMapRect(BG_A, 0, 12, 40, 14);
     setTextPalette(1);
 
     switch(driver->id)

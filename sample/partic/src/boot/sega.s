@@ -48,7 +48,9 @@ _Entry_Point:
         move    #0x2700,%sr
         tst.l   0xa10008
         bne.s   SkipJoyDetect
+
         tst.w   0xa1000c
+
 SkipJoyDetect:
         bne.s   SkipSetup
 
@@ -59,6 +61,7 @@ SkipJoyDetect:
         move.b  -0x10ff(%a1),%d0
         andi.b  #0x0f,%d0
         beq.s   WrongVersion
+
 * Sega Security Code (SEGA)
         move.l  #0x53454741,0x2f00(%a1)
 WrongVersion:
@@ -68,45 +71,18 @@ WrongVersion:
         move    %a6,%usp
         move.w  %d7,(%a1)
         move.w  %d7,(%a2)
-        jmp     _hard_reset
 
-Table:
-        dc.w    0x8000,0x3fff,0x0100
-        dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
+* Jump to initialisation process now...
+
+        jmp     _start_entry
 
 SkipSetup:
         jmp     _reset_entry
 
-_hard_reset:
-* clear Genesis RAM
-        lea     0xff0000,%a0
-        moveq   #0,%d0
-        move.w  #0x3FFF,%d1
 
-ClearRam:
-        move.l  %d0,(%a0)+
-        dbra    %d1,ClearRam
-
-* copy initialized variables from ROM to Work RAM
-        lea     _stext,%a0
-        lea     0xFF0000,%a1
-        move.l  #_sdata,%d0
-
-* fix for last byte to initialize
-        addq.l  #1,%d0
-        lsr.l   #1,%d0
-        beq     NoCopy
-
-        subq.w  #1,%d0
-CopyVar:
-        move.w  (%a0)+,(%a1)+
-        dbra    %d0,CopyVar
-
-NoCopy:
-
-* Jump to initialisation process...
-
-        jmp     _start_entry
+Table:
+        dc.w    0x8000,0x3fff,0x0100
+        dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
 
 
 *------------------------------------------------

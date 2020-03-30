@@ -3,7 +3,7 @@
 #include "gfx.h"
 
 
-#define SGDK_BENCHMARK      "SGDK benchmark v1.23"
+#define SGDK_BENCHMARK      "SGDK benchmark v1.24"
 
 #define MAX_TEST            9
 #define MAX_SUBTEST         16
@@ -117,7 +117,7 @@ int main()
         // fade text
         VDP_fadeOut(15, 15, 30, FALSE);
         // clear text
-        VDP_clearPlan(PLAN_A, TRUE);
+        VDP_clearPlan(BG_A, TRUE);
 
         // reset text color to white
         VDP_setPaletteColor(15, 0xEEE);
@@ -143,7 +143,7 @@ static void showIntroScreen()
     // fade text
     VDP_fadeOut(15, 15, 30, FALSE);
     // clear text
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     // reset text color to white
     VDP_setPaletteColor(15, 0xEEE);
@@ -169,7 +169,7 @@ static void preTest(char *title, s16 num)
     // fade text
     VDP_fadeOut(15, 15, 30, FALSE);
     // clear text
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     // reset text color to white
     VDP_setPaletteColor(15, 0xEEE);
@@ -197,7 +197,7 @@ static void postTest(char *title, u16 score, s16 num)
     // fade text
     VDP_fadeOut(15, 15, 30, FALSE);
     // clear text
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     // reset text color to white
     VDP_setPaletteColor(15, 0xEEE);

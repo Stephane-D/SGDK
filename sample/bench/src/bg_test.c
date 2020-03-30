@@ -35,7 +35,7 @@ u16 executeBGTest(u16 *scores)
     score = scores;
     globalScore = 0;
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Draw text...", 2, 0);
     i = 10;
     start = getTimeAsFix32(FALSE);
@@ -70,14 +70,14 @@ u16 executeBGTest(u16 *scores)
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     *score = displayResult(10000, end - start, 2);
     globalScore += *score++;
 
     // wait 5 seconds
     waitMs(5000);
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Draw/clear text...", 2, 0);
     i = 10;
     start = getTimeAsFix32(FALSE);
@@ -134,7 +134,7 @@ u16 executeBGTest(u16 *scores)
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     *score = displayResult(10000, end - start, 2);
     globalScore += *score++;
 
@@ -151,7 +151,7 @@ u16 executeBGTest(u16 *scores)
         pos++;
     }
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (packed slow)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
@@ -162,38 +162,38 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     *score = displayResult(300, end - start, 2);
     globalScore += *score++;
 
     // wait 5 seconds
     waitMs(5000);
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (packed fast)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
@@ -204,31 +204,31 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     *score = displayResult(800, end - start, 2);
     globalScore += *score++;
 
@@ -237,7 +237,7 @@ u16 executeBGTest(u16 *scores)
 
     // unpack image
     img = unpackImage(&logo_med, NULL);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (unpacked)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
@@ -248,31 +248,31 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     *score = displayResult(1000, end - start, 2);
     globalScore += *score++;
     MEM_free(img);
@@ -282,7 +282,7 @@ u16 executeBGTest(u16 *scores)
 
     // unpack image
     img = unpackImage(&logo_med, NULL);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (preloaded)", 2, 0);
     VDP_loadTileSet(img->tileset, TILE_USER, TRUE);
     VDP_setPalette(PAL1, img->palette->data);
@@ -295,31 +295,31 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     *score = displayResult(5000, end - start, 2) / 5;
     globalScore += *score++;
     MEM_free(img);
@@ -336,7 +336,7 @@ u16 executeBGTest(u16 *scores)
         pos++;
     }
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (packed slow)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
@@ -347,31 +347,31 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_setPalette(PAL0, palette_grey);
     *score = displayResult(1000, end - start, 2);
     globalScore += *score++;
@@ -379,7 +379,7 @@ u16 executeBGTest(u16 *scores)
     // wait 5 seconds
     waitMs(5000);
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (packed fast)", 2, 0);
     i = 2;
     start = getTimeAsFix32(FALSE);
@@ -390,31 +390,31 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_setPalette(PAL0, palette_grey);
     *score = displayResult(2000, end - start, 2);
     globalScore += *score++;
@@ -424,7 +424,7 @@ u16 executeBGTest(u16 *scores)
 
     // unpack image
     img = unpackImage(&logo_sm, NULL);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (unpacked)", 2, 0);
     i = 3;
     start = getTimeAsFix32(FALSE);
@@ -435,31 +435,31 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
-            VDP_drawImageEx(PLAN_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
+            VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_setPalette(PAL0, palette_grey);
     *score = displayResult(3000, end - start, 2);
     globalScore += *score++;
@@ -470,7 +470,7 @@ u16 executeBGTest(u16 *scores)
 
     // unpack image
     img = unpackImage(&logo_sm, NULL);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (preloaded)", 2, 0);
     VDP_loadTileSet(img->tileset, TILE_USER, TRUE);
     VDP_setPalette(PAL1, img->palette->data);
@@ -483,38 +483,38 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
-            VDP_setMap(PLAN_A, img->map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
+            VDP_setTileMap(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y);
             pos++;
             j -= 10;
         }
     }
     end = getTimeAsFix32(FALSE);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_setPalette(PAL0, palette_grey);
     *score = displayResult(10000, end - start, 2) / 5;
     globalScore += *score++;
     MEM_free(img);
 
     waitMs(5000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     MEM_free(xy);
 
