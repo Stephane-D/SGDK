@@ -146,8 +146,8 @@ public class Tilemap extends Resource
         // can't store pointer so we just reset binary stream here (used for compression only)
         outB.reset();
 
-        // output Map structure
-        Util.decl(outS, outH, "Map", id, 2, global);
+        // output TileMap structure
+        Util.decl(outS, outH, "TileMap", id, 2, global);
         // set compression info (very important that binary data had already been exported at this point)
         outS.append("    dc.w    " + (bin.doneCompression.ordinal() - 1) + "\n");
         // set size in tile

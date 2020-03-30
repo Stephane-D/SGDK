@@ -1,4 +1,4 @@
-ResComp 2.63 (january 2020)
+ResComp 2.65 (march 2020)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -15,7 +15,7 @@ Supported resource type:
 - BITMAP    bitmapped image type resource, used for the Bitmap SGDK engine (do not use it as tile resource).
 - PALETTE   palette type resource, used as color input for Bitmap, Image or Sprite resource.
 - TILESET   tileset type resource, contains tiles data which are used by Image or Sprite resource.
-- MAP       map type resource (tilemap data).
+- MAP       map type resource.
 - IMAGE     image type resource, internally contains Palette, Tileset and Map data and can be used to draw a complete background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
 - XGM       XGM music type resource (.vgm or .xgm file), used to play music.
@@ -80,7 +80,7 @@ MAP
 ---
 NOT YET SUPPORTED !
 Take an map file as input and transform it in SGDK Map structure.
-Map is used to define background plan tilemap data.
+Map is used to define a complete background (plane) data.
 
 Syntax:
 MAP name map_file width height [compression]
