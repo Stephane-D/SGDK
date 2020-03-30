@@ -394,10 +394,6 @@ void SPR_init();
  *  \param vramSize
  *      size (in tile) of the VRAM region for the automatic VRAM tile allocation.<br>
  *      If set to 0 the default size is used (512 tiles)
- *  \param unpackBufferSize
- *      size of the buffer for unpacking sprite tilesets.<br>
- *      the buffer should be big enough to contains all unpacked tileset ready to be send to VRAM.<br>
- *      If set to 0 the default size is used (320 tiles)
  *
  *      Initialize the sprite engine.<br>
  *      This allocates a VRAM region for sprite tiles, memory for tileset unpacking and initialize
@@ -406,7 +402,7 @@ void SPR_init();
  *  \see SPR_init()
  *  \see SPR_end()
  */
-void SPR_initEx(u16 vramSize, u16 unpackBufferSize);
+void SPR_initEx(u16 vramSize);
 /**
  *  \brief
  *      End the Sprite engine.
