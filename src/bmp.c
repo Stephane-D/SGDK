@@ -59,7 +59,7 @@ u8 *bmp_buffer_write;
 static u8 *bmp_buffer_0;
 static u8 *bmp_buffer_1;
 
-VDPPlan bmp_plan;
+VDPPlane bmp_plan;
 u16 *bmp_plan_adr;
 
 // internals
@@ -82,25 +82,25 @@ static u16 doBlit();
 static void drawLine_old(u16 x1, u16 y1, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
 
 
-void BMP_init(u16 double_buffer, VDPPlan plan, u16 palette, u16 priority)
+void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
 {
     flag = (double_buffer) ? BMP_FLAG_DOUBLEBUFFER : 0;
-    bmp_plan = plan;
+    bmp_plan = plane;
     pal = palette & 3;
     prio = priority & 1;
 
-    switch(plan.value)
+    switch(plane.value)
     {
         default:
-        case CONST_PLAN_B:
+        case CONST_BG_B:
             bmp_plan_adr = &bplan_addr;
             break;
 
-        case CONST_PLAN_A:
+        case CONST_BG_A:
             bmp_plan_adr = &aplan_addr;
             break;
 
-        case CONST_PLAN_WINDOW:
+        case CONST_WINDOW:
             bmp_plan_adr = &window_addr;
             break;
     }
@@ -171,9 +171,9 @@ void BMP_reset()
     if (!bmp_buffer_1)
         bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
 
-    // need 64x64 cells sized plan
-    VDP_setPlanSize(64, 64);
-    // clear plan (complete tilemap)
+    // need 64x64 cells sized plane
+    VDP_setPlanSize(64, 64, TRUE);
+    // clear plane (complete tilemap)
     VDP_clearPlan(bmp_plan, TRUE);
 
     // reset state and phase
