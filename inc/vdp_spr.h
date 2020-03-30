@@ -8,6 +8,10 @@
  * The Sega Genesis VDP can handle up to 80 simultanous sprites of 4x4 tiles (32x32 pixels).
  */
 
+#include "config.h"
+#include "types.h"
+#include "dma.h"
+
 #ifndef _VDP_SPR_H_
 #define _VDP_SPR_H_
 
@@ -64,10 +68,6 @@ typedef struct
  *  \brief VDP sprite cache
  */
 extern VDPSprite vdpSpriteCache[MAX_VDP_SPRITE];
-/**
- *  \brief VDP sprite cache queue copy
- */
-extern VDPSprite vdpSpriteCacheQueue[MAX_VDP_SPRITE];
 
 /**
  *  \brief Pointer to last allocated sprite after calling VDP_allocateSprites(..) method.<br>
@@ -274,14 +274,18 @@ VDPSprite* VDP_linkSprites(u16 index, u16 num);
  *  \param num
  *      Number of sprite to transfer starting at index 0 (max = MAX_SPRITE).<br>
  *      If you use dynamic VDP Sprite allocation you may use 'highestVDPSpriteIndex + 1' here
- *  \param queue
- *      If TRUE the sprite list transfer will be put in DMA queue and sent automatically at VBlank<br>
- *      otherwise the sprite list is immediately sent to the VDP.
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *
  *  \see highestVDPSpriteIndex
  *  \see VDP_refreshHighestAllocatedSpriteIndex()
  */
-void VDP_updateSprites(u16 num, u16 queue);
+void VDP_updateSprites(u16 num, TransferMethod tm);
 
 
 #endif // _VDP_SPR_H_

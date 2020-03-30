@@ -12,9 +12,6 @@
 
 // important to have a global structure here (consumes 640 bytes of memory)
 VDPSprite vdpSpriteCache[MAX_VDP_SPRITE];
-// copy of the global structure needed for DMA queue as we can modify
-// global structure before DMA actually occurs (consumes 640 bytes of memory)
-VDPSprite vdpSpriteCacheQueue[MAX_VDP_SPRITE];
 // keep trace of last allocated sprite (for special operation as link)
 VDPSprite *lastAllocatedVDPSprite;
 // keep trace of highest index allocated since the last VDP_resetSprites() or VDP_releaseAllSprites.
@@ -224,7 +221,7 @@ VDPSprite* VDP_linkSprites(u16 index, u16 num)
     return spr;
 }
 
-void VDP_updateSprites(u16 num, u16 queue)
+void VDP_updateSprites(u16 num, TransferMethod tm)
 {
     // 0 is a special value to hide all sprite
     if (num == 0)
@@ -233,17 +230,7 @@ void VDP_updateSprites(u16 num, u16 queue)
         num = 1;
     }
 
-    // send the sprite cache to VRAM sprite table using DMA queue
-    if (queue)
-    {
-        // copy global structure to queue copy
-        memcpy(vdpSpriteCacheQueue, vdpSpriteCache, sizeof(VDPSprite) * num);
-        // then queue the DMA operation
-        DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCacheQueue, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * num, 2);
-    }
-    else
-        // send the sprite cache to the VRAM with DMA now
-        DMA_doDma(DMA_VRAM, (u32) vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * num, 2);
+    DMA_transfer(tm, DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * num) / 2, 2);
 }
 
 void logVDPSprite(u16 index)
