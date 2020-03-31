@@ -36,26 +36,40 @@ public class Tile implements Comparable<Tile>
                     pixel = 0;
                 srcOff++;
 
-                final int curPal = (pixel >> 4) & 3;
-                final int curPrio = (pixel >> 7) & 1;
+                final int color = pixel & 0xF;
 
-                if (pal == -1)
-                    pal = curPal;
-                else if (pal != curPal)
-                    throw new IllegalArgumentException(
-                            "Error: pixel at [" + x + "," + y + "] reference a different palette.");
+                // not a transparent pixel ?
+                if (color != 0)
+                {
+                    final int curPal = (pixel >> 4) & 3;
+                    final int curPrio = (pixel >> 7) & 1;
 
-                if (prio == -1)
-                    prio = curPrio;
-                else if (prio != curPrio)
-                    throw new IllegalArgumentException(
-                            "Error: pixel at [" + x + "," + y + "] reference a different priority.");
+                    // set palette
+                    if (pal == -1)
+                        pal = curPal;
+                    else if (pal != curPal)
+                        throw new IllegalArgumentException("Error: pixel at [" + i + "," + j
+                                + "] reference a different palette (" + curPal + " != " + pal + ").");
 
-                data[dstOff++] = (byte) (pixel & 0xF);
+                    // set prio
+                    if (prio == -1)
+                        prio = curPrio;
+                    else if (prio != curPrio)
+                        throw new IllegalArgumentException("Error: pixel at [" + i + "," + j
+                                + "] reference a different priority (" + curPrio + " != " + prio + ").");
+                }
+
+                data[dstOff++] = (byte) color;
             }
 
             srcOff += imgW - 8;
         }
+
+        // default palette and priority
+        if (pal == -1)
+            pal = 0;
+        if (prio == -1)
+            prio = 0;
 
         return new Tile(data, pal, prio != 0);
     }
