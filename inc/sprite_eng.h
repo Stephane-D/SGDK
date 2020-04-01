@@ -603,6 +603,8 @@ void SPR_defragVRAM();
  *      the SpriteDefinition we want to load frame data in VRAM.
  *  \param index
  *      the tile position in VRAM where we will upload all sprite frame tiles data.
+ *  \param totalNumTile
+ *      if not NULL then the function will store here the total number of tile used to load all animation frames.
  *
  *   Load all frames of spriteDef (using DMA) at specified VRAM tile index and return the indexes table.<br>
  *   The returned index table is a dynamically allocated 2D table[anim][frame] so you need to release it using #MEM_free(..)
@@ -620,7 +622,7 @@ void SPR_defragVRAM();
  *  \return the 2D indexes table or NULL if there is not enough memory to allocate the table.
  *  \see SPR_setFrameChangeCallback(...);
  */
-u16** SPR_loadAllFrames(const SpriteDefinition* spriteDef, u16 index);
+u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile);
 
 /**
  *  \brief

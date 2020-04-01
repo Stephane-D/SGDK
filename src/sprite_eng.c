@@ -587,7 +587,7 @@ void SPR_defragVRAM()
 #endif // SPR_PROFIL
 }
 
-u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index)
+u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
 {
     u16 numFrameTot = 0;
     u16 numTileTot = 0;
@@ -608,6 +608,9 @@ u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index)
         numFrameTot += numFrame;
         anim++;
     }
+
+    // store total num tile if needed
+    if (totalNumTile) *totalNumTile = numTileTot;
 
     // allocate result table indexes[numAnim][numFrame]
     u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
