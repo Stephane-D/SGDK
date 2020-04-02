@@ -12,7 +12,7 @@ performance on these CPU compared to classic LZ4.
 The compression ratio offered by LZ4W is not as good to LZ4 but close enough depending the input data.
 Note that LZ4W support using previous data buffer to improve compression if available.
 
-Decompression speed (running a 7.67 Mhz 68000 using optimized assembly code)
+Decompression speed (running on a 7.67 Mhz 68000 using optimized assembly code)
 -------------------
 LZ4     min=270KB/s   max=390KB/s
 LZ4W    min=550KB/s   max=950KB/s
@@ -31,10 +31,9 @@ text file                   original=40992    LZ4HC=16088   LZ4W=21400
 LZ4W performs nicely compared to LZ4 for small packet of data (it often do better than LZ4HC) but it becomes worst as the
 data packet become larger or using redudant byte pattern data (as TXT file).
 
-Keep LZ4W has been developed for the Sega Megadrive target in mind which has very limited amount of RAM anyway (64 KB) so
-you're likely to unpack small block of data almost of time ;)
+Keep in mind that LZ4W has been developed for the Sega Megadrive target first which has very limited amount of RAM anyway (64 KB) so you're likely to unpack small data blocks almost of time.
 
-Still i think for anyone looking for very fast unpacker LZ4W is probably the best solution around for 68000 CPU based systems.
+Still for people looking for a very fast unpacker LZ4W is probably the best solution around for 68000 CPU based systems.
 68000 unpacking code can be found in SGDK library (https://stephane-d.github.io/SGDK/)
 LZ4W compressor is provided in JAR format (java code) in SGDK package so it requires a JVM (Java Virtual Machine) to work.
 Use the following command to execute it: java -jar lz4w.jar
@@ -58,16 +57,17 @@ OOOOOOOO = match offset - 1 (in word)           if (OOOOOOOO == 0) then we have 
 * if (LLLL == 0) && (MMMM == 0) && (OOOOOOOO == 0) --> end (see ending block description)
 * if (LLLL == 0) --> no literal data
 * if (MMMM == 0)
-  * if (OOOOOOOO == 0) --> no match data
-  * if (OOOOOOOO != 0) --> long match block
+  - if (OOOOOOOO == 0) --> no match data
+  - if (OOOOOOOO != 0) --> long match block
     OOOOOOOO = match length - 2 (in word)       if (OOOOOOOO == 1) then we have a match length of 3 words
     the next word *after* literal data block become the match offset - 1 (in word)
     Match offset in encoded as follow: XOOOOOOO OOOOOOOO
-    where X = 1 if the match come from a previous data block (0 if it comes from current data block).    
+    - if (X == 0) the match comes from current data block (RAM)
+    - if (X == 1) the match comes from a previous data block (stored in ROM)
 
 ending block
 ------------
 Ending block consists of a last word data:
 Dxxx xxxx YYYY YYYY
 
-if (D != 0) YYYY YYYY = last byte of data
+if (D == 0) YYYY YYYY = last byte of data
