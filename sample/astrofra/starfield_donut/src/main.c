@@ -35,7 +35,7 @@ static void fastStarFieldFX()
 
     SYS_disableInts();
 
-    VDP_setPlanSize(64, 32, TRUE);
+    VDP_setPlaneSize(64, 32, TRUE);
     VDP_clearPlan(BG_A, 0);
     VDP_clearPlan(BG_B, 0);
 

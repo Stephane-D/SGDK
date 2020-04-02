@@ -210,12 +210,12 @@ int main()
     VDP_setHIntCounter(128);
 
     // setup VRAM
-    VDP_setPlanSize(64, 64, FALSE);
+    VDP_setPlaneSize(64, 64, FALSE);
     VDP_setSpriteListAddress(0xA800);
     VDP_setHScrollTableAddress(0xAC00);
     VDP_setWindowAddress(0xB000);
-    VDP_setBPlanAddress(0xC000);
-    VDP_setAPlanAddress(0xE000);
+    VDP_setBGBAddress(0xC000);
+    VDP_setBGAAddress(0xE000);
 
     // set window visible from first row up to row 13
     VDP_setWindowHPos(FALSE, 0);
