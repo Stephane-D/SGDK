@@ -729,6 +729,38 @@ public class ImageUtil
     }
 
     /**
+     * Returns used palette index
+     */
+    public static int getSpritePaletteIndex(byte[] image8bpp, int imgW, int imgH) throws IllegalArgumentException
+    {
+        int pal = -1;
+        int srcOff = 0;
+        for (int y = 0; y < imgH; y++)
+        {
+            for (int x = 0; x < imgW; x++)
+            {
+                final int pixel = TypeUtil.unsign(image8bpp[srcOff++]);
+                final int color = pixel & 0xF;
+
+                // not a transparent pixel ?
+                if (color != 0)
+                {
+                    final int curPal = (pixel >> 4) & 0xF;
+
+                    // set palette
+                    if (pal == -1)
+                        pal = curPal;
+                    else if (pal != curPal)
+                        throw new IllegalArgumentException("Error: pixel at [" + x + "," + y
+                                + "] reference a different palette (" + curPal + " != " + pal + ").");
+                }
+            }
+        }
+
+        return (pal == -1) ? 0 : pal;
+    }
+
+    /**
      * Returns RGBA palette (A in high bits and R in low bits)
      */
     public static int[] getRGBA8888Palette(String filename) throws IOException, IllegalArgumentException

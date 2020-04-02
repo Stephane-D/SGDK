@@ -119,8 +119,8 @@ typedef struct
 
 /**
  *  \brief
- *      Map structure which contains tilemap background definition.<br>
- *      Use the unpackMap() method to unpack if compression is enabled.
+ *      TileMap structure which contains tilemap background definition.<br>
+ *      Use the unpackTileMap() method to unpack if compression is enabled.
  *  \param compression
  *      compression type, accepted values:<br>
  *      <b>COMPRESSION_NONE</b><br>
@@ -139,7 +139,7 @@ typedef struct
     u16 w;
     u16 h;
     u16 *tilemap;
-} Map;
+} TileMap;
 
 
 /**
@@ -157,7 +157,8 @@ typedef struct
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *
  *  Transfert rate:<br>
  *  ~90 bytes per scanline in software (during blanking)<br>
@@ -178,7 +179,8 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm);
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *  \return
  *      FALSE if there is not enough memory to unpack the specified TileSet (only if compression was enabled).
  *
@@ -201,7 +203,8 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *
  *  This fonction permits to replace system font by user font.<br>
  *  The font tile data are loaded to TILE_FONTINDEX and can contains FONT_LEN characters at max.<br>
@@ -221,7 +224,8 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm);
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *  \return
  *      FALSE if there is not enough memory to unpack the specified font (only if compression was enabled).
  *
@@ -297,71 +301,158 @@ void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 
  */
 void VDP_fillTileData(u8 value, u16 index, u16 num, bool wait);
 
+///**
+// *  \brief
+// *      Set tilemap data at single position.
+// *
+// *  \param plane
+// *      Plane where we want to set tilemap data.<br>
+// *      Accepted values are:<br>
+// *      - VDP_BG_A<br>
+// *      - VDP_BG_B<br>
+// *      - VDP_WINDOW<br>
+// *  \param tile
+// *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+// *  \param ind
+// *      position in tilemap.
+// *
+// *  \see VDP_setTileMapXY()
+// */
+//void VDP_setTileMap(u16 plane, u16 tile, u16 ind);
+
 /**
  *  \brief
- *      Set tilemap data at single position.
+ *      Clear tilemap data.
  *
- *  \param plan
- *      Plan where we want to set tilemap data.<br>
+ *  \param plane
+ *      Plane where we want to clear tilemap region.<br>
  *      Accepted values are:<br>
- *      - VDP_PLAN_A<br>
- *      - VDP_PLAN_B<br>
+ *      - VDP_BG_A<br>
+ *      - VDP_BG_B<br>
  *      - VDP_WINDOW<br>
- *  \param tile
- *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param ind
- *      position in tilemap.
- */
-void VDP_setTileMap(u16 plan, u16 tile, u16 ind);
-/**
- *  \brief
- *      Set tilemap data at single position.
+ *      Tile index where to start fill.
+ *  \param num
+ *      Number of tile to fill.
+ *  \param wait
+ *      Wait the operation to complete when set to TRUE otherwise it returns immediately
+ *      but then you will require to wait for DMA completion (#DMA_waitCompletion()) before accessing the VDP.
  *
- *  \param plan
- *      Plan where we want to set tilemap data.<br>
- *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
- *  \param tile
- *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
- *  \param x
- *      X position (in tile).
- *  \param y
- *      y position (in tile).
+ *  \see VDP_clearTileMapRect()
+ *  \see VDP_fillTileMap()
  */
-void VDP_setTileMapXY(VDPPlan plan, u16 tile, u16 x, u16 y);
+void VDP_clearTileMap(u16 plane, u16 ind, u16 num, bool wait);
 /**
  *  \brief
  *      Fill tilemap data.
  *
- *  \param plan
- *      Plan where we want to fill tilemap data.<br>
+ *  \param plane
+ *      Plane where we want to fill tilemap data.<br>
  *      Accepted values are:<br>
- *      - VDP_PLAN_A<br>
- *      - VDP_PLAN_B<br>
+ *      - VDP_BG_A<br>
+ *      - VDP_BG_B<br>
  *      - VDP_WINDOW<br>
  *  \param tile
- *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros) used to fill tilemap
  *  \param ind
  *      tile index where to start fill.
  *  \param num
  *      Number of tile to fill.
  *
  *  \see VDP_fillTileMapRect()
- *  \see VDP_fillTileMapRectInc()
  */
-void VDP_fillTileMap(u16 plan, u16 tile, u16 ind, u16 num);
+void VDP_fillTileMap(u16 plane, u16 tile, u16 ind, u16 num);
 /**
  *  \brief
- *      Fill tilemap data at specified region.
+ *      Set tilemap data at specified index.
  *
- *  \param plan
- *      Plan where we want to fill tilemap region.<br>
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - VDP_BG_A<br>
+ *      - VDP_BG_B<br>
+ *      - VDP_WINDOW<br>
+ *  \param data
+ *      Tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param ind
+ *      Tile index where to start to set tilemap.
+ *  \param num
+ *      Number of tile to set.
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set the specified tilemap with specified tile attributes values.<br>
+ *  Transfert rate:<br>
+ *  ~90 bytes per scanline in software (during blanking)<br>
+ *  ~190 bytes per scanline in hardware (during blanking)
+ *
+ *  \see VDP_setTileMapDataEx().
+ *  \see VDP_setTileMapDataRect().
+ */
+void VDP_setTileMapData(u16 plane, const u16 *data, u16 ind, u16 num, TransferMethod tm);
+/**
+ *  \brief
+ *      Set tilemap data at specified index (extended version).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - VDP_BG_A<br>
+ *      - VDP_BG_B<br>
+ *      - VDP_WINDOW<br>
+ *  \param data
+ *      tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param basetile
+ *      Base tile index and flag for tile attributes (see TILE_ATTR_FULL() macro).
+ *  \param ind
+ *      Tile index where to start to set tilemap.
+ *  \param num
+ *      Number of tile to set.
+ *
+ *  Set the specified tilemap with specified tile attributes values.
+ *
+ *  \see VDP_setTileMapData()
+ *  \see VDP_setTileMapDataRectEx()
+ */
+void VDP_setTileMapDataEx(u16 plane, const u16 *data, u16 basetile, u16 ind, u16 num);
+
+/**
+ *  \brief
+ *      Clear specified region of tilemap data.
+ *
+ *  \param plane
+ *      Plane where we want to clear tilemap region.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param x
+ *      Region X start position (in tile).
+ *  \param y
+ *      Region Y start position (in tile).
+ *  \param w
+ *      Region Width (in tile).
+ *  \param h
+ *      Region Heigh (in tile).
+ *
+ *  \see VDP_clearTileMap() (faster method)
+ */
+void VDP_clearTileMapRect(VDPPlane plane, u16 x, u16 y, u16 w, u16 h);
+/**
+ *  \brief
+ *      Fill speficied region of tilemap data.
+ *
+ *  \param plane
+ *      Plane where we want to fill tilemap region.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param tile
  *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param x
@@ -378,89 +469,17 @@ void VDP_fillTileMap(u16 plan, u16 tile, u16 ind, u16 num);
  *  \see VDP_fillTileMap() (faster method)
  *  \see VDP_fillTileMapRectInc()
  */
-void VDP_fillTileMapRect(VDPPlan plan, u16 tile, u16 x, u16 y, u16 w, u16 h);
-/**
- *  \brief
- *      Clear tilemap data.
- *
- *  \param plan
- *      Plan where we want to clear tilemap region.<br>
- *      Accepted values are:<br>
- *      - VDP_PLAN_A<br>
- *      - VDP_PLAN_B<br>
- *      - VDP_WINDOW<br>
- *  \param ind
- *      Tile index where to start fill.
- *  \param num
- *      Number of tile to fill.
- *  \param wait
- *      Wait the operation to complete when set to TRUE otherwise it returns immediately
- *      but then you will require to wait for DMA completion (#DMA_waitCompletion()) before accessing the VDP.
- *
- *  \see VDP_clearTileMapRect()
- *  \see VDP_fillTileMap()
- *  \see VDP_fillTileMapRectInc()
- */
-void VDP_clearTileMap(u16 plan, u16 ind, u16 num, bool wait);
-/**
- *  \brief
- *      Clear tilemap data at specified region.
- *
- *  \param plan
- *      Plan where we want to clear tilemap region.<br>
- *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
- *  \param x
- *      Region X start position (in tile).
- *  \param y
- *      Region Y start position (in tile).
- *  \param w
- *      Region Width (in tile).
- *  \param h
- *      Region Heigh (in tile).
- *
- *  \see VDP_clearTileMap() (faster method)
- */
-void VDP_clearTileMapRect(VDPPlan plan, u16 x, u16 y, u16 w, u16 h);
-/**
- *  \brief
- *      Fill tilemap data with index auto increment.
- *
- *  \param plan
- *      Plan where we want to fill tilemap region.<br>
- *      Accepted values are:<br>
- *      - VDP_PLAN_A<br>
- *      - VDP_PLAN_B<br>
- *      - VDP_WINDOW<br>
- *  \param basetile
- *      Base tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
- *  \param ind
- *      tile index where to start fill.
- *  \param num
- *      Number of tile to fill.
- *
- *  Set the specified tilemap with specified tile attributes values.<br>
- *  The function auto increments tile index in tile attribute :<br>
- *  tilemap at index : basetile, basetile+1, basetile+2, basetile+3, ...<br>
- *  ...<br>
- *  So this function is pratical to display image.<br>
- *
- *  \see also VDP_fillTileMap()
- *  \see also VDP_fillTileMapRectInc()
- */
-void VDP_fillTileMapInc(u16 plan, u16 basetile, u16 ind, u16 num);
+void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h);
 /**
  *  \brief
  *      Fill tilemap data with index auto increment at specified region.
  *
- *  \param plan
- *      Plan where we want to fill tilemap region.<br>
+ *  \param plane
+ *      Plane where we want to fill tilemap region.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param basetile
  *      Base tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param x
@@ -482,49 +501,35 @@ void VDP_fillTileMapInc(u16 plan, u16 basetile, u16 ind, u16 num);
  *  \see also VDP_fillTileMapInc() (faster method)
  *  \see also VDP_fillTileMapRect()
  */
-void VDP_fillTileMapRectInc(VDPPlan plan, u16 basetile, u16 x, u16 y, u16 w, u16 h);
+void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h);
 /**
  *  \brief
- *      Load tilemap data at specified index.
+ *      Set tilemap data at single position.
  *
- *  \param plan
- *      Plan where we want to load tilemap data.<br>
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
  *      Accepted values are:<br>
- *      - VDP_PLAN_A<br>
- *      - VDP_PLAN_B<br>
- *      - VDP_WINDOW<br>
- *  \param data
- *      Tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
- *  \param ind
- *      Tile index where to start to set tilemap.
- *  \param num
- *      Number of tile to set.
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE
- *
- *  Set the specified tilemap with specified tile attributes values.<br>
- *  Transfert rate:<br>
- *  ~90 bytes per scanline in software (during blanking)<br>
- *  ~190 bytes per scanline in hardware (during blanking)
- *
- *  \see VDP_setTileMapDataEx().
- *  \see VDP_setTileMapDataRect().
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tile
+ *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
  */
-void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, TransferMethod tm);
+void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y);
 /**
  *  \brief
- *      Load tilemap data at specified region.
+ *      Set tilemap data for specified region.
  *
- *  \param plan
- *      Plan where we want to load tilemap data.<br>
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param data
  *      tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
  *  \param x
@@ -541,44 +546,19 @@ void VDP_setTileMapData(u16 plan, const u16 *data, u16 ind, u16 num, TransferMet
  *  \see VDP_setTileMapDataRectEx().
  *  \see VDP_setTileMapData().
  */
-void VDP_setTileMapDataRect(VDPPlan plan, const u16 *data, u16 x, u16 y, u16 w, u16 h);
+void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h);
 /**
  *  \brief
- *      Load tilemap data at specified index (extended version).
+ *      Set tilemap data for specified region (extended version).
  *
- *  \param plan
- *      Plan where we want to load tilemap data.<br>
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
  *      Accepted values are:<br>
- *      - VDP_PLAN_A<br>
- *      - VDP_PLAN_B<br>
- *      - VDP_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param data
- *      tile attributes data pointer (see TILE_ATTR_FULL() and TILE_ATTR() macros).
- *  \param basetile
- *      Base tile index and flag for tile attributes (see TILE_ATTR_FULL() macro).
- *  \param ind
- *      Tile index where to start to set tilemap.
- *  \param num
- *      Number of tile to set.
- *
- *  Set the specified tilemap with specified tile attributes values.
- *
- *  \see VDP_setTileMapData()
- *  \see VDP_setTileMapDataRectEx()
- */
-void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 num);
-/**
- *  \brief
- *      Load tilemap data at specified region (extended version).
- *
- *  \param plan
- *      Plan where we want to load tilemap data.<br>
- *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
- *  \param data
- *      tile attributes data pointer (see TILE_ATTR_FULL() macro).
+ *      Source tilemap pointer containing tile attributes data (see TILE_ATTR_FULL() macro).
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
@@ -597,20 +577,227 @@ void VDP_setTileMapDataEx(u16 plan, const u16 *data, u16 basetile, u16 ind, u16 
  *  \see VDP_setTileMapDataRect()
  *  \see VDP_setTileMapDataEx()
  */
-void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm);
+void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm);
 
 /**
  *  \brief
- *      Load Map at specified position.
+ *      Set a complete row of tilemap data (size depend of tilemap width).
  *
- *  \param plan
- *      Plan where we want to load Map.<br>
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
- *  \param map
- *      Map to load.
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param data
+ *      tile attributes data pointer (see TILE_ATTR_FULL() macro).
+ *  \param row
+ *      Plane row we want to set data
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set a complete row of tilemap data (size depend of tilemap width) with given tile attributes values.
+ *
+ *  \see VDP_setTileMapDataColumnFast()
+ *  \see VDP_setTileMapDataRow()
+ *  \see VDP_setTileMapData()
+ */
+void VDP_setTileMapDataRowFast(VDPPlane plane, u16* data, u16 row, TransferMethod tm);
+/**
+ *  \brief
+ *      Set a complete column of tilemap data (size depend of tilemap height).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param data
+ *      tile attributes data pointer (see TILE_ATTR_FULL() macros).
+ *  \param column
+ *      Plane column we want to set data
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set a complete column of tilemap data (size depend of tilemap height) with given tile attributes values.
+ *
+ *  \see VDP_setTileMapDataRowFast()
+ *  \see VDP_setTileMapDataColumn()
+ *  \see VDP_setTileMapData()
+ */
+void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, TransferMethod tm);
+/**
+ *  \brief
+ *      Set a complete row of tilemap data (size depend of tilemap width).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param data
+ *      Source tilemap pointer containing tile attributes data (see TILE_ATTR_FULL() macro).
+ *  \param row
+ *      Plane row we want to set data
+ *  \param xm
+ *      TileMap region X start position (in tile).
+ *  \param ym
+ *      TileMap region Y start position (in tile).
+ *  \param wm
+ *      TileMap region Width (in tile).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set a complete row of tilemap data (size depend of tilemap width) with given tile attributes values.
+ *
+ *  \see VDP_setTileMapDataColumnFast()
+ *  \see VDP_setTileMapDataRow()
+ *  \see VDP_setTileMapData()
+ */
+void VDP_setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 xm, u16 ym, u16 wm, TransferMethod tm);
+/**
+ *  \brief
+ *      Set a complete column of tilemap data (size depend of tilemap height).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param data
+ *      Source tilemap pointer containing tile attributes data (see TILE_ATTR_FULL() macro).
+ *  \param column
+ *      Plane column we want to set data
+ *  \param xm
+ *      TileMap region X start position (in tile).
+ *  \param ym
+ *      TileMap region Y start position (in tile).
+ *  \param wm
+ *      TileMap region Width (in tile).
+ *  \param hm
+ *      TileMap region Heigh (in tile).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set a complete column of tilemap data (size depend of tilemap height) with given tile attributes values.
+ *
+ *  \see VDP_setTileMapDataColumnFast()
+ *  \see VDP_setTileMapDataRow()
+ *  \see VDP_setTileMapData()
+ */
+void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 xm, u16 ym, u16 wm, u16 hm, TransferMethod tm);
+/**
+ *  \brief
+ *      Set a complete row of tilemap data (size depend of tilemap width).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param data
+ *      Source tilemap pointer containing tile attributes data (see TILE_ATTR_FULL() macro).
+ *  \param basetile
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
+ *  \param row
+ *      Plane row we want to set data
+ *  \param xm
+ *      TileMap region X start position (in tile).
+ *  \param ym
+ *      TileMap region Y start position (in tile).
+ *  \param wm
+ *      TileMap region Width (in tile).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set a complete row of tilemap data (size depend of tilemap width) with given tile attributes values.
+ *
+ *  \see VDP_setTileMapDataColumnFast()
+ *  \see VDP_setTileMapDataRow()
+ *  \see VDP_setTileMapData()
+ */
+void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 xm, u16 ym, u16 wm, TransferMethod tm);
+/**
+ *  \brief
+ *      Set a complete column of tilemap data (size depend of tilemap height).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param data
+ *      Source tilemap pointer containing tile attributes data (see TILE_ATTR_FULL() macro).
+ *  \param basetile
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
+ *  \param column
+ *      Plane column we want to set data
+ *  \param xm
+ *      TileMap region X start position (in tile).
+ *  \param ym
+ *      TileMap region Y start position (in tile).
+ *  \param wm
+ *      TileMap region Width (in tile).
+ *  \param hm
+ *      TileMap region Heigh (in tile).
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Set a complete column of tilemap data (size depend of tilemap height) with given tile attributes values.
+ *
+ *  \see VDP_setTileMapDataColumnFast()
+ *  \see VDP_setTileMapDataRow()
+ *  \see VDP_setTileMapData()
+ */
+void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 xm, u16 ym, u16 wm, u16 hm, TransferMethod tm);
+
+/**
+ *  \brief
+ *      Load TileMap at specified position.
+ *
+ *  \param plane
+ *      Plane where we want to load TileMap.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tilemap
+ *      TileMap to load.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
@@ -618,45 +805,110 @@ void VDP_setTileMapDataRectEx(VDPPlan plan, const u16 *data, u16 basetile, u16 x
  *  \param y
  *      Region Y start position (in tile).
  *
- *  Load the specified Map at specified plan position.
+ *  Load the specified TileMap at specified plane position.
  *
  *  \see VDP_setTileMapData()
  *  \see VDP_setTileMapDataEx()
  */
-u16 VDP_setMap(VDPPlan plan, const Map *map, u16 basetile, u16 x, u16 y);
+bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y);
 /**
  *  \brief
- *      Load Map region at specified position.
+ *      Load TileMap region at specified position.
  *
- *  \param plan
- *      Plan where we want to load Map.<br>
+ *  \param plane
+ *      Plane where we want to load TileMap.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
- *  \param map
- *      Map to load.
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tilemap
+ *      TileMap to load.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
- *      Plan X destination position (in tile).
+ *      Plane X destination position (in tile).
  *  \param y
- *      Plan Y destination position (in tile).
+ *      Plane Y destination position (in tile).
  *  \param xm
- *      Map region X start position (in tile).
+ *      TileMap region X start position (in tile).
  *  \param ym
- *      Map region Y start position (in tile).
+ *      TileMap region Y start position (in tile).
  *  \param wm
- *      Map region Width (in tile).
+ *      TileMap region Width (in tile).
  *  \param hm
- *      Map region Heigh (in tile).
+ *      TileMap region Heigh (in tile).
  *
- *  Load the specified Map region at specified plan position.
+ *  Load the specified TileMap region at specified plane position.
  *
  *  \see VDP_setTileMapDataRect()
  *  \see VDP_setTileMapDataRectEx()
  */
-u16 VDP_setMapEx(VDPPlan plan, const Map *map, u16 basetile, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm);
+bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm);
+/**
+ *  \brief
+ *      Load TileMap row at specified position.
+ *
+ *  \param plane
+ *      Plane where we want to load TileMap.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tilemap
+ *      TileMap to load.
+ *  \param basetile
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
+ *  \param row
+ *      Plane row we want to set data
+ *  \param xm
+ *      TileMap X start position (in tile).
+ *  \param ym
+ *      TileMap Y / row position (in tile).
+ *
+ *  Load a single row of data from TileMap at specified position.
+ *
+ *  \see VDP_setMapColumn()
+ *  \see VDP_setTileMapDataRow()
+ */
+bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 row, u16 xm, u16 ym, TransferMethod tm);
+/**
+ *  \brief
+ *      Load TileMap column at specified position.
+ *
+ *  \param plane
+ *      Plane where we want to load TileMap.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tilemap
+ *      TileMap to load.
+ *  \param basetile
+ *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
+ *  \param column
+ *      Plane column we want to set data
+ *  \param xm
+ *      TileMap X / column position (in tile).
+ *  \param ym
+ *      TileMap Y start position (in tile).
+ *
+ *  Load a single column of data from TileMap at specified position.
+ *
+ *  \see VDP_setMapRow()
+ *  \see VDP_setTileMapDataColumn()
+ */
+bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 column, u16 xm, u16 ym, TransferMethod tm);
+
+/**
+ *  \deprecated
+ *      Use #VDP_setTileMap() instead.
+ */
+bool VDP_setMap(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y);
+/**
+ *  \deprecated
+ *      Use #VDP_setTileMapEx() instead.
+ */
+bool VDP_setMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm);
 
 
 #endif // _VDP_TILE_H_

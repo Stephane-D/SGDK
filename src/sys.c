@@ -629,7 +629,7 @@ void _start_entry()
             const Palette *logo_pal = logo->palette;
 
             // display logo (use BMP mode for that)
-            BMP_init(TRUE, PLAN_A, PAL0, FALSE);
+            BMP_init(TRUE, BG_A, PAL0, FALSE);
 
     #if (ZOOMING_LOGO != 0)
             // init fade in to 30 step

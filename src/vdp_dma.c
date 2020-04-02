@@ -9,12 +9,12 @@
 
 void VDP_doDMAEx(u8 location, u32 from, u16 to, u16 len, s16 vramStep)
 {
-    DMA_doDma(location, from, to, len, vramStep);
+    DMA_doDma(location, (void*) from, to, len, vramStep);
 }
 
 void VDP_doDMA(u8 location, u32 from, u16 to, u16 len)
 {
-    DMA_doDma(location, from, to, len, 2);
+    DMA_doDma(location, (void*) from, to, len, 2);
 }
 
 void VDP_doVRamDMAFill(u16 to, u16 len, u8 value)

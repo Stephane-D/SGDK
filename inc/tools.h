@@ -173,30 +173,30 @@ TileSet *allocateTileSet(const TileSet *tileset);
 TileSet *allocateTileSetEx(u16 numTile);
 /**
  *  \brief
- *      Allocate Map structure which can receive unpacked map data of the specified Map.
+ *      Allocate TileMap structure which can receive unpacked tilemap data of the specified TileMap.
  *
- *  \param map
- *      Source Map we want to allocate the unpacked Map object.
+ *  \param tilemap
+ *      Source TileMap we want to allocate the unpacked TileMap object.
  *  \return
- *      The new allocated Map object which can receive the unpacked Map, note that returned map
- *      is allocated in a single bloc and can be released with Mem_Free(map).<br>
- *      <i>NULL</i> is returned if there is not enough memory to store the unpacked map.
+ *      The new allocated TileMap object which can receive the unpacked TileMap, note that returned tilemap
+ *      is allocated in a single bloc and can be released with Mem_Free(tilemap).<br>
+ *      <i>NULL</i> is returned if there is not enough memory to store the unpacked tilemap.
  */
-Map *allocateMap(const Map *map);
+TileMap *allocateTileMap(const TileMap *tilemap);
 /**
  *  \brief
- *      Allocate a new Map structure which can receive map data for the specified Map dimension.
+ *      Allocate a new TileMap structure which can receive tilemap data for the specified TileMap dimension.
  *
  *  \param width
- *      Width in tile of the Map structure we want to allocate.
+ *      Width in tile of the TileMap structure we want to allocate.
  *  \param heigth
- *      heigth in tile of the Map structure we want to allocate.
+ *      heigth in tile of the TileMap structure we want to allocate.
  *  \return
- *      The new allocated Map object which can receive data for the specified Map dimension.<br>
- *      Note that returned map is allocated in a single bloc and can be released with Mem_Free(map).<br>
- *      <i>NULL</i> is returned if there is not enough memory to allocate the map.
+ *      The new allocated TileMap object which can receive data for the specified TileMap dimension.<br>
+ *      Note that returned tilemap is allocated in a single bloc and can be released with Mem_Free(tilemap).<br>
+ *      <i>NULL</i> is returned if there is not enough memory to allocate the tilemap.
  */
-Map *allocateMapEx(u16 width, u16 heigth);
+TileMap *allocateTileMapEx(u16 width, u16 heigth);
 /**
  *  \brief
  *      Allocate Image structure which can receive unpacked image data of the specified Image.
@@ -243,19 +243,19 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest);
 TileSet *unpackTileSet(const TileSet *src, TileSet *dest);
 /**
  *  \brief
- *      Unpack the specified Map structure and return result in a new allocated Map.
+ *      Unpack the specified TileMap structure and return result in a new allocated TileMap.
  *
  *  \param src
- *      map to unpack.
+ *      tilemap to unpack.
  *  \param dest
- *      Destination map where to store unpacked data, be sure to allocate enough space in tiles and tilemap buffer.<br>
- *      If set to NULL then a dynamic allocated Map is returned.
+ *      Destination tilemap where to store unpacked data, be sure to allocate enough space in tiles and tilemap buffer.<br>
+ *      If set to NULL then a dynamic allocated TileMap is returned.
  *  \return
- *      The unpacked Map.<br>
- *      If <i>dest</i> was set to NULL then the returned map is allocated in a single bloc and can be released with Mem_Free(map).<br>
- *      <i>NULL</i> is returned if there is not enough memory to store the unpacked map.
+ *      The unpacked TileMap.<br>
+ *      If <i>dest</i> was set to NULL then the returned tilemap is allocated in a single bloc and can be released with Mem_Free(tilemap).<br>
+ *      <i>NULL</i> is returned if there is not enough memory to store the unpacked tilemap.
  */
-Map *unpackMap(const Map *src, Map *dest);
+TileMap *unpackTileMap(const TileMap *src, TileMap *dest);
 /**
  *  \brief
  *      Unpack the specified Image structure and return result in a new allocated Image.
@@ -315,25 +315,6 @@ u32 aplib_unpack(u8 *src, u8 *dest);
  *      Unpacked size.
  */
 u32 lz4w_unpack(const u8 *src, u8 *dest);
-
-/**
- *  \brief
- *      Decompresses data in raw deflate/zlib format.<br/>
- *
- *   zlib is a general-purpose compressor, supporting quite good
- *   compression ratios, but unpacking is relatively slow on the
- *   Genesis (around 23kb/s).
- *
- *  \param dest
- *      Destination buffer
- *  \param outLen
- *      Size of the destination buffer in bytes
- *  \param src
- *      Source data buffer containing compressed data
- *  \param srcLen
- *      Size of the source buffer in bytes
- */
-int zlib_unpack(void *dest, const unsigned outLen, const void *src, const unsigned srcLen);
 
 
 /**

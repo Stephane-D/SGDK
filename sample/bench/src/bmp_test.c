@@ -43,6 +43,9 @@ u16 executeBMPTest(u16 *scores)
     Bitmap *bmp;
     u16 palette[16];
 
+    // release as much memory as possible as we require maximum memory here
+    DMA_setBufferSize(0);
+
     pixels = MEM_alloc(MAX_PIXEL * sizeof(Pixel));
     lines = MEM_alloc(MAX_LINE * sizeof(Line));
     polys = MEM_alloc(MAX_POLYGON * sizeof(Polygone));
@@ -71,28 +74,28 @@ u16 executeBMPTest(u16 *scores)
     score = scores;
     globalScore = 0;
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Bitmap buffer clear", 2, 1);
     waitMs(3000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     i = 1000;
     start = getTimeAsFix32(FALSE);
     while(i--) BMP_clear();
     end = getTimeAsFix32(FALSE);
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Bitmap buffer clear", 2, 1);
     *score = displayResult(1000, end - start, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw safe (with clipping)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
@@ -136,16 +139,16 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Pixel draw safe (with clipping)", 2, 1);
     *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw fast (without clipping)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
@@ -189,16 +192,16 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Pixel draw fast (without clipping)", 2, 1);
     *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw array safe (with clip.)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
@@ -215,16 +218,16 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Pixel draw array safe (with clip.)", 2, 1);
     *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
 
     VDP_drawText("Pixel draw array fast (without clip.)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
@@ -241,7 +244,7 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Pixel draw array fast (without clip.)", 2, 1);
     *score = displayResult2(150 * MAX_PIXEL, time, 3);
     globalScore += *score++;
@@ -249,9 +252,9 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_drawText("Line draw safe (with clipping)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 60;
@@ -295,7 +298,7 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Line draw safe (with clipping)", 2, 1);
     *score = displayResult3(60 * 80, time, 3);
     globalScore += *score++;
@@ -303,9 +306,9 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_drawText("Line draw fast (without clip.)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 60;
@@ -339,7 +342,7 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Line draw fast (without clip.)", 2, 1);
     *score = displayResult3(60 * 80, time, 3);
     globalScore += *score++;
@@ -347,9 +350,9 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_drawText("Polygon draw", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 100;
@@ -373,17 +376,17 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("Polygon draw", 2, 1);
     *score = displayResult(100 * 25, time, 3);
     globalScore += *score++;
 
     VDP_drawText("128x64 image draw (packed slow)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     VDP_setPalette(PAL1, logo_med_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 25;
@@ -414,17 +417,17 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (packed slow)", 2, 1);
     *score = displayResult(25 * 5, time, 3);
     globalScore += *score++;
 
     VDP_drawText("128x64 image draw (packed fast)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     VDP_setPalette(PAL1, logo_med_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 35;
@@ -455,19 +458,19 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (packed fast)", 2, 1);
     *score = displayResult(35 * 8, time, 3);
     globalScore += *score++;
 
     VDP_drawText("128x64 image draw (unpacked)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     // unpack bitmap
     bmp = unpackBitmap(&logo_med_bmp, NULL);
     VDP_setPalette(PAL1, logo_med_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 50;
@@ -499,17 +502,17 @@ u16 executeBMPTest(u16 *scores)
     BMP_end();
     MEM_free(bmp);
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("128x64 image draw (unpacked)", 2, 1);
     *score = displayResult(50 * 10, time, 3);
     globalScore += *score++;
 
     VDP_drawText("64x32 image draw (packed slow)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     VDP_setPalette(PAL1, logo_sm_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 30;
@@ -540,17 +543,17 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (packed slow)", 2, 1);
     *score = displayResult(30 * 10, time, 3);
     globalScore += *score++;
 
     VDP_drawText("64x32 image draw (packed fast)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     VDP_setPalette(PAL1, logo_sm_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 50;
@@ -581,19 +584,19 @@ u16 executeBMPTest(u16 *scores)
     }
     BMP_end();
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (packed fast)", 2, 1);
     *score = displayResult(50 * 25, time, 3);
     globalScore += *score++;
 
     VDP_drawText("64x32 image draw (unpacked)", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     // unpack bitmap
     bmp = unpackBitmap(&logo_sm_bmp, NULL);
     VDP_setPalette(PAL1, logo_sm_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 50;
@@ -625,19 +628,19 @@ u16 executeBMPTest(u16 *scores)
     BMP_end();
     MEM_free(bmp);
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image draw (unpacked)", 2, 1);
     *score = displayResult(50 * 30, time, 3);
     globalScore += *score++;
 
     VDP_drawText("128x64 image scaling", 2, 8);
     waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     // unpack bitmap
     bmp = unpackBitmap(&logo_med_x2_bmp, NULL);
     VDP_setPalette(PAL1, logo_med_x2_bmp.palette->data);
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_init(TRUE, BG_A, PAL1, FALSE);
     time = FIX32(0);
     i = 4;
     while(i--)
@@ -668,18 +671,21 @@ u16 executeBMPTest(u16 *scores)
     BMP_end();
     MEM_free(bmp);
 
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
     VDP_drawText("64x32 image scaling", 2, 1);
     *score = displayResult(2 * 2 * (128-32), time, 3) * 10;
     globalScore += *score++;
 
     waitMs(5000);
-    VDP_clearPlan(PLAN_A, TRUE);
+    VDP_clearPlan(BG_A, TRUE);
 
     MEM_free(polys);
     MEM_free(pts);
     MEM_free(pixels);
     MEM_free(lines);
+
+    // restore DMA buffer
+    DMA_setBufferSizeToDefault();
 
     return globalScore;
 }

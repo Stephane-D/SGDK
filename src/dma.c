@@ -24,10 +24,17 @@ extern vu32 VIntProcess;
 // DMA queue
 DMAOpInfo *dmaQueues = NULL;
 
+// DMA data buffer
+static u16* dataBuffer = NULL;
+static u16* nextDataBuffer;
+
 // DMA queue settings
 static u16 queueSize;
 static u16 maxTransferPerFrame;
 static u16 flag;
+
+// DMA data buffer settings
+static u16 dataBufferSize;
 
 // current queue index (0 = empty / queueSize = full)
 static u16 queueIndex;
@@ -41,32 +48,34 @@ void flushQueueSafe(u16 num, u16 z80restore);
 
 void DMA_init()
 {
-    DMA_initEx(DMA_DEFAULT_QUEUE_SIZE, 0);
+    DMA_initEx(0, 0, 0);
 }
 
-void DMA_initEx(u16 size, u16 capacity)
+void DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
 {
-    if (size) queueSize = size;
-    else queueSize = DMA_DEFAULT_QUEUE_SIZE;
-
     // 0 means no limit
     maxTransferPerFrame = capacity;
-
     // auto flush is enabled by default
     flag = DMA_AUTOFLUSH;
+
+    // define queue size
+    if (size) queueSize = size;
+    else queueSize = DMA_DEFAULT_QUEUE_SIZE;
 
     // already allocated ?
     if (dmaQueues) MEM_free(dmaQueues);
     // allocate DMA queue
     dmaQueues = MEM_alloc(queueSize * sizeof(DMAOpInfo));
 
-    // clear queue
-    DMA_clearQueue();
+    // define DMA data buffer size (in words)
+    // this actually clear the DMA queue
+    if (bufferSize) DMA_setBufferSize(bufferSize);
+    else DMA_setBufferSizeToDefault();
 }
 
 bool DMA_getAutoFlush()
 {
-    return (flag & DMA_AUTOFLUSH)?TRUE:FALSE;
+    return (flag & DMA_AUTOFLUSH) ? TRUE : FALSE;
 }
 
 void DMA_setAutoFlush(bool value)
@@ -76,7 +85,7 @@ void DMA_setAutoFlush(bool value)
         flag |= DMA_AUTOFLUSH;
         // auto flush enabled and transfer size > 0 --> set process on VBlank
         if (queueTransferSize > 0)
-             VIntProcess |= PROCESS_DMA_TASK;
+            VIntProcess |= PROCESS_DMA_TASK;
     }
     else flag &= ~DMA_AUTOFLUSH;
 }
@@ -93,12 +102,38 @@ void DMA_setMaxTransferSize(u16 value)
 
 void DMA_setMaxTransferSizeToDefault()
 {
-    DMA_setMaxTransferSize(IS_PALSYSTEM?15000:7200);
+    DMA_setMaxTransferSize(IS_PALSYSTEM ? 15000 : 7200);
+}
+
+u16 DMA_getBufferSize()
+{
+    return dataBufferSize * 2;
+}
+
+void DMA_setBufferSize(u16 value)
+{
+    dataBufferSize = value / 2;
+
+    // already allocated ?
+    if (dataBuffer) MEM_free(dataBuffer);
+    // allocate DMA data buffer
+    if (dataBufferSize)
+        dataBuffer = MEM_alloc(dataBufferSize * sizeof(u16));
+    else
+        dataBuffer = NULL;
+
+    // reset queue
+    DMA_clearQueue();
+}
+
+void DMA_setBufferSizeToDefault()
+{
+    DMA_setBufferSize(IS_PALSYSTEM ? 14 * 1024 : 8 * 1024);
 }
 
 bool DMA_getIgnoreOverCapacity()
 {
-    return (flag & DMA_OVERCAPACITY_IGNORE)?TRUE:FALSE;
+    return (flag & DMA_OVERCAPACITY_IGNORE) ? TRUE : FALSE;
 }
 
 void DMA_setIgnoreOverCapacity(bool value)
@@ -112,6 +147,10 @@ void DMA_clearQueue()
     queueIndex = 0;
     queueIndexLimit = 0;
     queueTransferSize = 0;
+
+    // reset DMA data buffer pointer
+    nextDataBuffer = dataBuffer;
+
 }
 
 void DMA_flushQueue()
@@ -253,11 +292,101 @@ u32 DMA_getQueueTransferSize()
     return queueTransferSize;
 }
 
-u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
+bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u16 step)
 {
-    u32 newlen;
-    u32 banklimitb;
-    u32 banklimitw;
+    switch(tm)
+    {
+        // default = CPU transfer
+        default:
+            DMA_doCPUCopy(location, from, to, len, step);
+            return TRUE;
+
+        case DMA:
+            DMA_doDma(location, from, to, len, step);
+            return TRUE;
+
+        case DMA_QUEUE:
+            return DMA_queueDma(location, from, to, len, step);
+
+        case DMA_QUEUE_COPY:
+            return DMA_copyAndQueueDma(location, from, to, len, step);
+    }
+}
+
+void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
+{
+    u16* result = nextDataBuffer;
+
+    nextDataBuffer += len;
+
+    if (nextDataBuffer > (dataBuffer + dataBufferSize))
+    {
+#if (LIB_DEBUG != 0)
+        KLog_U2_("DMA_allocateAndQueueDma(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
+#endif
+
+        // error
+        return NULL;
+    }
+
+#ifdef DMA_DEBUG
+    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
+#endif
+
+    // try to queue the DMA transfer
+    if (!DMA_queueDma(location, result, to, len, step))
+    {
+        // failed --> revert allocation
+        nextDataBuffer -= len;
+        // error
+        return NULL;
+    }
+
+    // return buffer than will be fill by user before being transfered through the DMA queue
+    return result;
+}
+
+bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
+{
+    u16* buffer = nextDataBuffer;
+
+    nextDataBuffer += len;
+
+    if (nextDataBuffer > (dataBuffer + dataBufferSize))
+    {
+#if (LIB_DEBUG != 0)
+        KLog_U2_("DMA_copyAndQueueDma(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
+#endif
+
+        // error
+        return FALSE;
+    }
+
+#ifdef DMA_DEBUG
+    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
+#endif
+
+    // do copy to temporal buffer (as from buffer may be modified in between)
+    memcpy(buffer, from, len * 2);
+
+    // try to queue the DMA transfer
+    if (!DMA_queueDma(location, buffer, to, len, step))
+    {
+        // failed --> revert allocation
+        nextDataBuffer -= len;
+        // error
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
+{
+    u32 fromAdr;
+    u32 newLen;
+    u32 bankLimitB;
+    u32 bankLimitW;
     DMAOpInfo *info;
 
     // queue is full --> error
@@ -271,58 +400,60 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
         return FALSE;
     }
 
+
     // DMA works on 64 KW bank
-    banklimitb = 0x20000 - (from & 0x1FFFF);
-    banklimitw = banklimitb >> 1;
+    fromAdr = (u32) from;
+    bankLimitB = 0x20000 - (fromAdr & 0x1FFFF);
+    bankLimitW = bankLimitB >> 1;
     // bank limit exceeded
-    if (len > banklimitw)
+    if (len > bankLimitW)
     {
         // we first do the second bank transfer
-        DMA_queueDma(location, from + banklimitb, to + banklimitb, len - banklimitw, step);
-        newlen = banklimitw;
+        DMA_queueDma(location, (void*) (fromAdr + bankLimitB), to + bankLimitB, len - bankLimitW, step);
+        newLen = bankLimitW;
     }
     // ok, use normal len
-    else newlen = len;
+    else newLen = len;
 
     // get DMA info structure and pass to next one
     info = &dmaQueues[queueIndex];
 
     // $14:len H  $13:len L (DMA length in word)
-    info->regLen = ((newlen | (newlen << 8)) & 0xFF00FF) | 0x94009300;
+    info->regLen = ((newLen | (newLen << 8)) & 0xFF00FF) | 0x94009300;
     // $16:M  $f:step (DMA address M and Step register)
-    info->regAddrMStep = (((from << 7) & 0xFF0000) | 0x96008F00) + step;
+    info->regAddrMStep = (((fromAdr << 7) & 0xFF0000) | 0x96008F00) + step;
     // $17:H  $15:L (DMA address H & L)
-    info->regAddrHAddrL = ((from >> 1) & 0x7F00FF) | 0x97009500;
+    info->regAddrHAddrL = ((fromAdr >> 1) & 0x7F00FF) | 0x97009500;
 
     // Trigger DMA
     switch(location)
     {
-        case DMA_VRAM:
-            info->regCtrlWrite = GFX_DMA_VRAM_ADDR(to);
+    case DMA_VRAM:
+        info->regCtrlWrite = GFX_DMA_VRAM_ADDR(to);
 #ifdef DMA_DEBUG
-            KLog_U4("DMA_queueDma: VRAM from=", from, " to=", to, " len=", len, " step=", step);
+        KLog_U4("DMA_queueDma: VRAM from=", fromAdr, " to=", to, " len=", len, " step=", step);
 #endif
-            break;
+        break;
 
-        case DMA_CRAM:
-            info->regCtrlWrite = GFX_DMA_CRAM_ADDR(to);
+    case DMA_CRAM:
+        info->regCtrlWrite = GFX_DMA_CRAM_ADDR(to);
 #ifdef DMA_DEBUG
-            KLog_U4("DMA_queueDma: CRAM from=", from, " to=", to, " len=", len, " step=", step);
+        KLog_U4("DMA_queueDma: CRAM from=", fromAdr, " to=", to, " len=", len, " step=", step);
 #endif
-            break;
+        break;
 
-        case DMA_VSRAM:
-            info->regCtrlWrite = GFX_DMA_VSRAM_ADDR(to);
+    case DMA_VSRAM:
+        info->regCtrlWrite = GFX_DMA_VSRAM_ADDR(to);
 #ifdef DMA_DEBUG
-            KLog_U4("DMA_queueDma: VSRAM from=", from, " to=", to, " len=", len, " step=", step);
+        KLog_U4("DMA_queueDma: VSRAM from=", fromAdr, " to=", to, " len=", len, " step=", step);
 #endif
-            break;
+        break;
     }
 
     // pass to next index
     queueIndex++;
     // keep trace of transfered size
-    queueTransferSize += newlen << 1;
+    queueTransferSize += newLen << 1;
 
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
@@ -350,18 +481,13 @@ u16 DMA_queueDma(u8 location, u32 from, u16 to, u16 len, u16 step)
         }
 
         // return FALSE if transfer will be ignored
-        return (flag & DMA_OVERCAPACITY_IGNORE)?FALSE:TRUE;
+        return (flag & DMA_OVERCAPACITY_IGNORE) ? FALSE : TRUE;
     }
 
     return TRUE;
 }
 
-void DMA_waitCompletion()
-{
-    VDP_waitDMACompletion();
-}
-
-void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
+void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
 {
 #if (DMA_DISABLED != 0)
     // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
@@ -372,23 +498,25 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     vu16 *pw;
     vu16 *pwz;
     u32 cmd;
-    u32 newlen;
-    u32 banklimitb;
-    u32 banklimitw;
+    u32 fromAdr;
+    u32 newLen;
+    u32 bankLimitB;
+    u32 bankLimitW;
     u16 z80restore;
 
     // DMA works on 64 KW bank
-    banklimitb = 0x20000 - (from & 0x1FFFF);
-    banklimitw = banklimitb >> 1;
+    fromAdr = (u32) from;
+    bankLimitB = 0x20000 - (fromAdr & 0x1FFFF);
+    bankLimitW = bankLimitB >> 1;
     // bank limit exceeded
-    if (len > banklimitw)
+    if (len > bankLimitW)
     {
         // we first do the second bank transfer
-        DMA_doDma(location, from + banklimitb, to + banklimitb, len - banklimitw, -1);
-        newlen = banklimitw;
+        DMA_doDma(location, (void*) (fromAdr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
+        newLen = bankLimitW;
     }
     // ok, use normal len
-    else newlen = len;
+    else newLen = len;
 
     if (step != -1)
         VDP_setAutoInc(step);
@@ -403,31 +531,31 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
     pw = (vu16*) GFX_CTRL_PORT;
 
     // Setup DMA length (in word here)
-    *pw = 0x9300 + (newlen & 0xff);
-    *pw = 0x9400 + ((newlen >> 8) & 0xff);
+    *pw = 0x9300 + (newLen & 0xff);
+    *pw = 0x9400 + ((newLen >> 8) & 0xff);
 
     // Setup DMA address
-    from >>= 1;
-    *pw = 0x9500 + (from & 0xff);
-    from >>= 8;
-    *pw = 0x9600 + (from & 0xff);
-    from >>= 8;
-    *pw = 0x9700 + (from & 0x7f);
+    fromAdr >>= 1;
+    *pw = 0x9500 + (fromAdr & 0xff);
+    fromAdr >>= 8;
+    *pw = 0x9600 + (fromAdr & 0xff);
+    fromAdr >>= 8;
+    *pw = 0x9700 + (fromAdr & 0x7f);
 
     switch(location)
     {
-        default:
-        case DMA_VRAM:
-            cmd = GFX_DMA_VRAM_ADDR(to);
-            break;
+    default:
+    case DMA_VRAM:
+        cmd = GFX_DMA_VRAM_ADDR(to);
+        break;
 
-        case DMA_CRAM:
-            cmd = GFX_DMA_CRAM_ADDR(to);
-            break;
+    case DMA_CRAM:
+        cmd = GFX_DMA_CRAM_ADDR(to);
+        break;
 
-        case DMA_VSRAM:
-            cmd = GFX_DMA_VSRAM_ADDR(to);
-            break;
+    case DMA_VSRAM:
+        cmd = GFX_DMA_VSRAM_ADDR(to);
+        break;
     }
 
     pwz = (vu16*) Z80_HALT_PORT;
@@ -465,6 +593,70 @@ void DMA_doDma(u8 location, u32 from, u16 to, u16 len, s16 step)
 #endif
 #endif  // DMA_DISABLED
 }
+
+void DMA_doCPUCopy(u8 location, void* from, u16 to, u16 len, s16 step)
+{
+    u32 cmd;
+
+    switch(location)
+    {
+    default:
+    case DMA_VRAM:
+        cmd = GFX_WRITE_VRAM_ADDR(to);
+        break;
+
+    case DMA_CRAM:
+        cmd = GFX_WRITE_CRAM_ADDR(to);
+        break;
+
+    case DMA_VSRAM:
+        cmd = GFX_WRITE_VSRAM_ADDR(to);
+        break;
+    }
+
+    DMA_doCPUCopyDirect(cmd, from, len, step);
+}
+
+void DMA_doCPUCopyDirect(u32 cmd, void* from, u16 len, s16 step)
+{
+    vu32 *plctrl;
+    vu16 *pwdata;
+    vu32 *pldata;
+    u16 *srcw;
+    u32 *srcl;
+    u16 il;
+    u16 iw;
+
+    if (step != -1)
+        VDP_setAutoInc(step);
+
+    plctrl = (vu32*) GFX_CTRL_PORT;
+    *plctrl = cmd;
+
+    il = len / 16;
+    iw = len & 0xF;
+
+    srcl = (u32*) from;
+    pldata = (vu32*) GFX_DATA_PORT;
+
+    while(il--)
+    {
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+        *pldata = *srcl++;
+    }
+
+    srcw = (u16*) srcl;
+    pwdata = (vu16*) GFX_DATA_PORT;
+
+    while(iw--) *pwdata = *srcw++;
+}
+
 
 void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
 {
@@ -547,45 +739,7 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
     *pl = GFX_DMA_VRAMCOPY_ADDR(to);
 }
 
-void DMA_doSoftwareCopy(u8 location, u32 from, u16 to, u16 len, s16 step)
+void DMA_waitCompletion()
 {
-    u32 cmd;
-
-    switch(location)
-    {
-        default:
-        case DMA_VRAM:
-            cmd = GFX_WRITE_VRAM_ADDR(to);
-            break;
-
-        case DMA_CRAM:
-            cmd = GFX_WRITE_CRAM_ADDR(to);
-            break;
-
-        case DMA_VSRAM:
-            cmd = GFX_WRITE_VSRAM_ADDR(to);
-            break;
-    }
-
-    DMA_doSoftwareCopyDirect(cmd, from, len, step);
-}
-
-void DMA_doSoftwareCopyDirect(u32 cmd, u32 from, u16 len, s16 step)
-{
-    vu16 *pw;
-    vu32 *pl;
-    u16 *src;
-    u16 i;
-
-    if (step != -1)
-        VDP_setAutoInc(step);
-
-    pl = (vu32*) GFX_CTRL_PORT;
-    pw = (vu16*) GFX_DATA_PORT;
-    src = (u16*) from;
-    i = len;
-
-    *pl = cmd;
-    // do software copy (not optimized but we don't care as this is normally just for testing)
-    while(i--) *pw = *src++;
+    VDP_waitDMACompletion();
 }

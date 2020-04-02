@@ -325,7 +325,7 @@ void PAL_setPalette(u16 numPal, const u16* pal)
 
 void PAL_setColorsDMA(u16 index, const u16* pal, u16 count)
 {
-    DMA_queueDma(DMA_CRAM, (u32) pal, index * 2, count, 2);
+    DMA_queueDma(DMA_CRAM, (void*) pal, index * 2, count, 2);
 }
 
 void PAL_setPaletteColorsDMA(u16 index, const Palette* pal)
@@ -350,7 +350,7 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
         if (lastVTimer == vtimer) VDP_waitVSync();
 
         // use DMA for long transfer
-        if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
+        if (len > 16) DMA_doDma(DMA_CRAM, (void*) src, ind * 2, len, 2);
         else PAL_setColors(ind, src, len);
 
         // keep track of last update
@@ -364,7 +364,7 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
         // disable interrupts to not conflict with VInt accesses
         SYS_disableInts();
         // use DMA for long transfer
-        if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
+        if (len > 16) DMA_doDma(DMA_CRAM, (void*) src, ind * 2, len, 2);
         else PAL_setColors(ind, src, len);
         SYS_enableInts();
     }

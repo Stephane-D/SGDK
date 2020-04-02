@@ -85,8 +85,7 @@ static Sprite** free;
 Sprite* firstSprite;
 Sprite* lastSprite;
 
-static u8* unpackBuffer;
-static u8* unpackNext;
+// VRAM region allocated for the Sprite Engine
 static VRAMRegion vram;
 
 
@@ -117,7 +116,7 @@ static u32 profil_time[20];
 #endif
 
 
-void SPR_initEx(u16 vramSize, u16 unpackBufferSize)
+void SPR_initEx(u16 vramSize)
 {
     u16 index;
     u16 size;
@@ -129,10 +128,8 @@ void SPR_initEx(u16 vramSize, u16 unpackBufferSize)
     spritesBank = MEM_alloc(MAX_SPRITE * sizeof(Sprite));
     // allocation stack
     allocStack = MEM_alloc(MAX_SPRITE * sizeof(Sprite*));
-    // alloc sprite tile unpack buffer
-    unpackBuffer = MEM_alloc(((unpackBufferSize?unpackBufferSize:256) * 32) + 1024);
 
-    size = vramSize?vramSize:384;
+    size = vramSize?vramSize:420;
     // get start tile index for sprite data (reserve VRAM area just before system font)
     index = TILE_FONTINDEX - size;
 
@@ -141,7 +138,6 @@ void SPR_initEx(u16 vramSize, u16 unpackBufferSize)
 
 #if (LIB_DEBUG != 0)
     KLog("Sprite engine initialized !");
-    KLog_U1("  unpack buffer size:", (unpackBufferSize?unpackBufferSize:256) * 32);
     KLog_U2_("  VRAM region: [", index, " - ", index + (size - 1), "]");
 #endif // LIB_DEBUG
 
@@ -151,7 +147,7 @@ void SPR_initEx(u16 vramSize, u16 unpackBufferSize)
 
 void SPR_init()
 {
-    SPR_initEx(512, 320);
+    SPR_initEx(420);
 }
 
 void SPR_end()
@@ -160,15 +156,13 @@ void SPR_end()
     {
         // reset and clear VDP sprite
         VDP_resetSprites();
-        VDP_updateSprites(1, TRUE);
+        VDP_updateSprites(1, DMA_QUEUE_COPY);
 
         // release memory
         MEM_free(spritesBank);
         spritesBank = NULL;
         MEM_free(allocStack);
         allocStack = NULL;
-        MEM_free(unpackBuffer);
-        unpackBuffer = NULL;
 
         VRAM_releaseRegion(&vram);
     }
@@ -199,8 +193,6 @@ void SPR_reset()
     // no active sprites
     firstSprite = NULL;
     lastSprite = NULL;
-    // reset unpack pointer
-    unpackNext = unpackBuffer;
 
     // clear VRAM region
     VRAM_clearRegion(&vram);
@@ -595,7 +587,7 @@ void SPR_defragVRAM()
 #endif // SPR_PROFIL
 }
 
-u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index)
+u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
 {
     u16 numFrameTot = 0;
     u16 numTileTot = 0;
@@ -616,6 +608,9 @@ u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index)
         numFrameTot += numFrame;
         anim++;
     }
+
+    // store total num tile if needed
+    if (totalNumTile) *totalNumTile = numTileTot;
 
     // allocate result table indexes[numAnim][numFrame]
     u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
@@ -1454,7 +1449,7 @@ void SPR_clear()
     u8 linkSave = starter->link;
 
     VDP_clearSprites();
-    VDP_updateSprites(1, TRUE);
+    VDP_updateSprites(1, DMA_QUEUE_COPY);
 
     // restore starter link
     starter->link = linkSave;
@@ -1484,9 +1479,17 @@ void SPR_update()
 #endif // SPR_DEBUG
 
     const u16 sprNum = highestVDPSpriteIndex + 1;
-
     // send sprites to VRAM using DMA queue (better to do it before sprite tiles upload to avoid being ignored by DMA queue)
-    DMA_queueDma(DMA_VRAM, (u32) vdpSpriteCacheQueue, VDP_SPRITE_TABLE, (sizeof(VDPSprite) / 2) * sprNum, 2);
+    void* vdpSpriteTableCopy = DMA_allocateAndQueueDma(DMA_VRAM, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * sprNum) / 2, 2);
+
+#if (LIB_DEBUG != 0)
+    // DMA temporary buffer is full ? --> can't do sprite update
+    if (!vdpSpriteTableCopy)
+    {
+        KLog("SPR_update(): failed... DMA data buffer is full.");
+        return;
+    }
+#endif // LIB_DEBUG
 
     // iterate over all sprites
     sprite = firstSprite;
@@ -1565,11 +1568,8 @@ void SPR_update()
         sprite = sprite->next;
     }
 
-    // VDP sprite cache is now updated, copy it to the queue cache copy
-    memcpy(vdpSpriteCacheQueue, vdpSpriteCache, sizeof(VDPSprite) * sprNum);
-
-    // reset unpack buffer address
-    unpackNext = unpackBuffer;
+    // VDP sprite cache is now updated, copy it to the temporary cache copy we got from DMA queue buffer
+    memcpy(vdpSpriteTableCopy, vdpSpriteCache, sizeof(VDPSprite) * sprNum);
 
     // re-enable interrupts
     SYS_enableInts();
@@ -1629,12 +1629,11 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
 
     sprite->VDPSpriteIndex = ind;
 
-    // hide all sprites by default and get last sprite
-    vdpSprite = &vdpSpriteCache[ind];
-    vdpSprite->y = 0;
-
     // we don't need to hide sprite by default anymore as we take of it with 'lastNumSprite' field
-//    // get the last vdpSprite while hiding them
+//    // hide all sprites by default and get last sprite
+//    vdpSprite = &vdpSpriteCache[ind];
+//    vdpSprite->y = 0;
+//
 //    i = num - 1;
 //    while(i--)
 //    {
@@ -1643,6 +1642,7 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
 //    }
 
     // get the last vdpSprite
+    vdpSprite = &vdpSpriteCache[ind];
     i = num - 1;
     while(i--) vdpSprite = &vdpSpriteCache[vdpSprite->link];
 
@@ -2071,10 +2071,15 @@ static void loadTiles(Sprite* sprite)
     // need unpacking ?
     if (compression != COMPRESSION_NONE)
     {
-        // unpack
-        unpack(compression, (u8*) FAR(tileset->tiles), unpackNext);
-        // queue DMA operation to transfert unpacked data to VRAM
-        DMA_queueDma(DMA_VRAM, (u32) unpackNext, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        // get buffer and send to DMA queue
+        u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+
+#if (LIB_DEBUG != 0)
+        if (!buf) KDebug_Alert("  loadTiles: unpack tileset failed (DMA temporary buffre is full)");
+        else
+#endif
+        // unpack in temp buffer obtained from DMA queue
+        unpack(compression, (u8*) FAR(tileset->tiles), buf);
 
 #ifdef SPR_DEBUG
         char str1[32];
@@ -2087,14 +2092,11 @@ static void loadTiles(Sprite* sprite)
         KLog_U1_("  loadTiles: unpack tileset, numTile= ", tileset->numTile, str1);
         KLog_U2("    Queue DMA: to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
 #endif // SPR_DEBUG
-
-        // update unpacking address
-        unpackNext += lenInWord * 2;
     }
-    // just queue DMA operation to transfert tileset data to VRAM
     else
     {
-        DMA_queueDma(DMA_VRAM, (u32) FAR(tileset->tiles), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        // just queue DMA operation to transfer tileset data to VRAM
+        DMA_queueDma(DMA_VRAM, FAR(tileset->tiles), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
 #ifdef SPR_DEBUG
         KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);

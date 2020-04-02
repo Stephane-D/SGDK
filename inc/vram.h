@@ -6,7 +6,7 @@
  *
  * Video Memory management unit.<br>
  * It offerts methods to manage dynamic VRAM allocation for tile data.<br>
- * Tile data should always be located before map in VRAM (0000-XXXX = tile data, XXXX-FFFF = maps).<br>
+ * Tile data should always be located before tilemap in VRAM (0000-XXXX = tile data, XXXX-FFFF = tilemaps).<br>
  *<br>
  *<pre>
  * VRAMRegion structure define a VRAM region where we want to use dynamic allocation.

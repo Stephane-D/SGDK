@@ -65,11 +65,23 @@ public class Sprite extends Resource
 
         // find max color index
         final int maxIndex = ArrayMath.max(imgData, false);
-        // 16 colors (1 palette) max for a sprite
-        if (maxIndex >= 16)
+        if (maxIndex >= 64)
             throw new IllegalArgumentException("'" + imgFile
-                    + "' uses color index >= 16, SPRITE resource requires image with a maximum of 16 colors, use 4bpp image instead if you are unsure.");
+                    + "' uses color index >= 64, SPRITE resource requires image with a maximum of 64 colors, use 4bpp image instead if you are unsure.");
 
+        final int palIndex;
+        try
+        {
+            // get palette index used (only 1 palette allowed for sprite)
+            palIndex = ImageUtil.getSpritePaletteIndex(imgData, imgInfo.w, imgInfo.h);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IllegalArgumentException(
+                    "'" + imgFile
+                            + "' SPRITE resource use more than 1 palette (16 colors), use 4bpp image instead if you are unsure.",
+                    e);
+        }
         // get size in tile
         final int wt = w / 8;
         final int ht = h / 8;
@@ -83,7 +95,7 @@ public class Sprite extends Resource
                     "Error: '" + imgFile + "' height (" + h + ") is not a multiple of cell height (" + (hf * 8) + ").");
 
         // build PALETTE
-        palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile));
+        palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, palIndex * 16, 16, true));
 
         // get number of animation
         final int numAnim = ht / hf;

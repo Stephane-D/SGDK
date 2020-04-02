@@ -35,12 +35,12 @@ static void fastStarFieldFX()
 
     SYS_disableInts();
 
-    VDP_setPlanSize(64, 32);
-    VDP_clearPlan(PLAN_A, 0);
-    VDP_clearPlan(PLAN_B, 0);
+    VDP_setPlanSize(64, 32, TRUE);
+    VDP_clearPlan(BG_A, 0);
+    VDP_clearPlan(BG_B, 0);
 
     /* Draw the foreground */
-    VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
+    VDP_drawImageEx(BG_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
     vramIndex += starfield.tileset->numTile;
 
     /* Set the proper scrolling mode (line by line) */
@@ -71,7 +71,7 @@ static void fastStarFieldFX()
     }
 
     /* Setup the sprites */
-    SPR_initEx(0, 0);
+    SPR_initEx(0);
 
     s = 0;
     for(i = 0; i < MAX_DONUT; i++)
@@ -165,6 +165,6 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 static void vint()
 {
     // hscroll table to VDP
-    VDP_setHorizontalScrollLine(PLAN_B, 2, scroll_PLAN_B, TABLE_LEN, TRUE);
+    VDP_setHorizontalScrollLine(BG_B, 2, scroll_PLAN_B, TABLE_LEN, TRUE);
 }
 

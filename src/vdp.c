@@ -54,10 +54,10 @@ u16 planHeightSft;
 u16 windowWidthSft;
 
 
-// constants for plan
-const VDPPlan PLAN_A = { CONST_PLAN_A };
-const VDPPlan PLAN_B = { CONST_PLAN_B };
-const VDPPlan PLAN_WINDOW = { CONST_PLAN_WINDOW };
+// constants for plane
+const VDPPlane BG_A = { CONST_BG_A };
+const VDPPlane BG_B = { CONST_BG_B };
+const VDPPlane WINDOW = { CONST_WINDOW };
 
 
 void VDP_init()
@@ -74,7 +74,7 @@ void VDP_init()
     bplan_addr = BPLAN_DEFAULT;
     slist_addr = SLIST_DEFAULT;
     hscrl_addr = HSCRL_DEFAULT;
-    // get minimum address of all map/table (default is plan B)
+    // get minimum address of all tilemap/table (default is plane B)
     maps_addr = BPLAN_DEFAULT;
 
     // default resolution
@@ -111,24 +111,13 @@ void VDP_init()
     pw = (u16 *) GFX_CTRL_PORT;
     for (i = 0x00; i < 0x13; i++) *pw = 0x8000 | (i << 8) | regValues[i];
 
-    // these lines can be used in your code to change VRAM layout as olders SGDK (<= 1.30)
-    /*
-    VDP_setPlanSize(64, 64);
-
-    VDP_setWindowAddress(0xB000);
-    VDP_setSpriteListAddress(0xBC00);
-    VDP_setHScrollTableAddress(0xB800);
-    VDP_setBPlanAddress(0xC000);
-    VDP_setAPlanAddress(0xE000);
-    */
-
     // clear VRAM, reset palettes / default tiles / font and scroll mode
     VDP_resetScreen();
     // reset sprite struct
     VDP_resetSprites();
 
-    // default plan and base tile attribut for draw text method
-    VDP_setTextPlan(PLAN_A);
+    // default plane and base tile attribut for draw text method
+    VDP_setTextPlan(BG_A);
     VDP_setTextPalette(PAL0);
     VDP_setTextPriority(TRUE);
 
@@ -168,7 +157,7 @@ void VDP_setReg(u16 reg, u8 value)
 
         case 0x02:
             v = value & 0x38;
-            // update plan address
+            // update plane address
             aplan_addr = v * 0x400;
             updateMapsAddress();
             break;
@@ -184,7 +173,7 @@ void VDP_setReg(u16 reg, u8 value)
 
         case 0x04:
             v = value & 0x7;
-            // update text plan address
+            // update text plane address
             bplan_addr = v * 0x2000;
             updateMapsAddress();
             break;
@@ -356,7 +345,7 @@ u16 VDP_getPlanHeight()
     return planHeight;
 }
 
-void VDP_setPlanSize(u16 w, u16 h)
+void VDP_setPlanSize(u16 w, u16 h, bool setupVram)
 {
     vu16 *pw;
     u16 v = 0;
@@ -400,6 +389,44 @@ void VDP_setPlanSize(u16 w, u16 h)
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x9000 | regValues[0x10];
+
+    if (setupVram)
+    {
+        switch(planWidthSft + planHeightSft)
+        {
+            case 10:
+                // 2KB tilemap VRAM setup
+                VDP_setBPlanAddress(0xC000);
+                VDP_setWindowAddress(0xC800);
+                VDP_setAPlanAddress(0xE000);
+                VDP_setSpriteListAddress(0xE800);
+                VDP_setHScrollTableAddress(0xEC00);
+                // 0xD000-0xDFFF free
+                // 0xF000-0xFFFF free
+                break;
+
+            case 11:
+                // 4KB tilemap VRAM setup
+                VDP_setBPlanAddress(0xC000);
+                VDP_setWindowAddress(0xD000);
+                VDP_setAPlanAddress(0xE000);
+                VDP_setHScrollTableAddress(0xF000);
+                VDP_setSpriteListAddress(0xF400);
+                // 0xF700-0xFFFF free
+                break;
+
+            default:
+                // 8KB tilemap VRAM setup
+                VDP_setWindowAddress(0xB000);
+                VDP_setSpriteListAddress(0xBC00);
+                VDP_setHScrollTableAddress(0xB800);
+                VDP_setBPlanAddress(0xC000);
+                VDP_setAPlanAddress(0xE000);
+                // be careful as window only allocate tilemap for upper 128 pixels
+                // you need to change Sprite List and HScroll Table address to have a complete window plane if required
+                break;
+        }
+    }
 }
 
 
@@ -749,10 +776,10 @@ void VDP_resetScreen()
     PAL_setPalette(PAL3, palette_blue);
 
     VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
-    VDP_setHorizontalScroll(PLAN_A, 0);
-    VDP_setHorizontalScroll(PLAN_B, 0);
-    VDP_setVerticalScroll(PLAN_A, 0);
-    VDP_setVerticalScroll(PLAN_B, 0);
+    VDP_setHorizontalScroll(BG_A, 0);
+    VDP_setHorizontalScroll(BG_B, 0);
+    VDP_setVerticalScroll(BG_A, 0);
+    VDP_setVerticalScroll(BG_B, 0);
 
     // load default font
     if (!VDP_loadFont(&font_default, CPU))

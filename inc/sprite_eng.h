@@ -394,10 +394,6 @@ void SPR_init();
  *  \param vramSize
  *      size (in tile) of the VRAM region for the automatic VRAM tile allocation.<br>
  *      If set to 0 the default size is used (512 tiles)
- *  \param unpackBufferSize
- *      size of the buffer for unpacking sprite tilesets.<br>
- *      the buffer should be big enough to contains all unpacked tileset ready to be send to VRAM.<br>
- *      If set to 0 the default size is used (320 tiles)
  *
  *      Initialize the sprite engine.<br>
  *      This allocates a VRAM region for sprite tiles, memory for tileset unpacking and initialize
@@ -406,7 +402,7 @@ void SPR_init();
  *  \see SPR_init()
  *  \see SPR_end()
  */
-void SPR_initEx(u16 vramSize, u16 unpackBufferSize);
+void SPR_initEx(u16 vramSize);
 /**
  *  \brief
  *      End the Sprite engine.
@@ -607,6 +603,8 @@ void SPR_defragVRAM();
  *      the SpriteDefinition we want to load frame data in VRAM.
  *  \param index
  *      the tile position in VRAM where we will upload all sprite frame tiles data.
+ *  \param totalNumTile
+ *      if not NULL then the function will store here the total number of tile used to load all animation frames.
  *
  *   Load all frames of spriteDef (using DMA) at specified VRAM tile index and return the indexes table.<br>
  *   The returned index table is a dynamically allocated 2D table[anim][frame] so you need to release it using #MEM_free(..)
@@ -624,7 +622,7 @@ void SPR_defragVRAM();
  *  \return the 2D indexes table or NULL if there is not enough memory to allocate the table.
  *  \see SPR_setFrameChangeCallback(...);
  */
-u16** SPR_loadAllFrames(const SpriteDefinition* spriteDef, u16 index);
+u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile);
 
 /**
  *  \brief

@@ -88,9 +88,9 @@ int main()
 
     // load background
     ind = TILE_USERINDEX;
-    VDP_drawImageEx(PLAN_B, &bgb_image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, DMA);
+    VDP_drawImageEx(BG_B, &bgb_image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, DMA);
     ind += bgb_image.tileset->numTile;
-    VDP_drawImageEx(PLAN_A, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, DMA);
+    VDP_drawImageEx(BG_A, &bga_image, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, ind), 0, 0, FALSE, DMA);
     ind += bga_image.tileset->numTile;
 
     // VDP process done, we can re enable interrupts
@@ -311,10 +311,10 @@ static void updateCamera(fix32 x, fix32 y)
     {
         camposx = x;
         camposy = y;
-        VDP_setHorizontalScroll(PLAN_A, fix32ToInt(-camposx));
-        VDP_setHorizontalScroll(PLAN_B, fix32ToInt(-camposx) >> 3);
-        VDP_setVerticalScroll(PLAN_A, fix32ToInt(camposy));
-        VDP_setVerticalScroll(PLAN_B, fix32ToInt(camposy) >> 3);
+        VDP_setHorizontalScroll(BG_A, fix32ToInt(-camposx));
+        VDP_setHorizontalScroll(BG_B, fix32ToInt(-camposx) >> 3);
+        VDP_setVerticalScroll(BG_A, fix32ToInt(camposy));
+        VDP_setVerticalScroll(BG_B, fix32ToInt(camposy) >> 3);
     }
 }
 

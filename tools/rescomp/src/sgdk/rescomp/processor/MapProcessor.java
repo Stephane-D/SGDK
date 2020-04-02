@@ -9,7 +9,7 @@ import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.tool.FileUtil;
 
-public class TilemapProcessor implements Processor
+public class MapProcessor implements Processor
 {
     @Override
     public String getId()

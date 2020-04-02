@@ -176,7 +176,7 @@ static u16 playIdleCnt;
 static u16 fastForward;
 static u16 progressBarLevel;
 static u16 needProgressUpload;
-static Map* bgMap;
+static TileMap* bgTileMap;
 
 // tiles buffer for chips state rendering
 static u8 progressTileBuffer[32*15];
@@ -210,7 +210,7 @@ int main()
     VDP_setHIntCounter(128);
 
     // setup VRAM
-    VDP_setPlanSize(64, 64);
+    VDP_setPlanSize(64, 64, FALSE);
     VDP_setSpriteListAddress(0xA800);
     VDP_setHScrollTableAddress(0xAC00);
     VDP_setWindowAddress(0xB000);
@@ -221,7 +221,7 @@ int main()
     VDP_setWindowHPos(FALSE, 0);
     VDP_setWindowVPos(FALSE, 13);
     // by default we draw text in window plan and in high priority
-    VDP_setTextPlan(PLAN_WINDOW);
+    VDP_setTextPlan(WINDOW);
     VDP_setTextPriority(TRUE);
 
     // clear HScroll table
@@ -273,7 +273,7 @@ int main()
     tileIndexProgressBar = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile;
     tileIndex = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile + starfield.tileset->numTile;
 
-    bgMap = unpackMap(bg.map, NULL);
+    bgTileMap = unpackTileMap(bg.tilemap, NULL);
 
     // init shuffle list
     buildShuffledList();
@@ -283,7 +283,7 @@ int main()
     initBGScroll();
 
     // init Sprite engine
-    SPR_initEx(80, 64);
+    SPR_initEx(80);
 
     // prepare sprites for panning
     YMPanSprites[0] = SPR_addSprite(&left_right, 32 + 0, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
@@ -594,32 +594,32 @@ static void drawStaticGUI()
     SYS_disableInts();
 
     // General GUI & logo
-    VDP_drawImageEx(PLAN_WINDOW, &bg, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 0, FALSE, TRUE);
-    VDP_drawImageEx(PLAN_WINDOW, &music_logo, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile), 21, 0, FALSE, TRUE);
-    VDP_drawImageEx(PLAN_WINDOW, &progress_bar, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileIndexProgressBar), 9, 8, FALSE, TRUE);
+    VDP_drawImageEx(WINDOW, &bg, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(WINDOW, &music_logo, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile), 21, 0, FALSE, TRUE);
+    VDP_drawImageEx(WINDOW, &progress_bar, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileIndexProgressBar), 9, 8, FALSE, TRUE);
     // starfield
-    VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(BG_B, &starfield, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile), 0, 0, FALSE, TRUE);
 
-    // prepare 'bitmap' buffer for chips state rendering
+    // prepare 'bitTileMap' buffer for chips state rendering
     i = 0;
 
     // Z80 area
     for(y = 0; y < 4; y++, i++)
-        VDP_setTileMapXY(PLAN_WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 1, 21 + y);
+        VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 1, 21 + y);
     // YM area
     for(x = 0; x < 6; x++)
         for(sx = 0; sx < 3; sx++)
             for(y = 0; y < 4; y++, i++)
-                VDP_setTileMapXY(PLAN_WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 4 + (x * 3) + sx, 21 + y);
+                VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 4 + (x * 3) + sx, 21 + y);
     // PCM area
     for(x = 0; x < 4; x++)
         for(sx = 0; sx < 3; sx++)
             for(y = 0; y < 4; y++, i++)
-                VDP_setTileMapXY(PLAN_WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 23 + (x * 3) + sx, 21 + y);
+                VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 23 + (x * 3) + sx, 21 + y);
     // PSG area
     for(x = 0; x < 4; x++)
         for(y = 0; y < 4; y++, i++)
-            VDP_setTileMapXY(PLAN_WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 36 + x, 21 + y);
+            VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 36 + x, 21 + y);
 
     // prepare progress bar rendering buffer
     tileset = unpackTileSet(progress_bar.tileset, NULL);
@@ -646,24 +646,24 @@ static void drawPlayerControls()
     if (buttonsPressed & BUTTON_START)
     {
         // DPad control
-        VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40 + 7, 6, 7, 6);
+        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40 + 7, 6, 7, 6);
 
         // not playing
         if ((trackPlayed == -1) || paused)
-            VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2), 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2), 0, 7, 6);
         else
-            VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2) + 7, 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2) + 7, 0, 7, 6);
     }
     else
     {
         // DPad control
-        VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40, 6, 7, 6);
+        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40, 6, 7, 6);
 
         // not playing
         if ((trackPlayed == -1) || paused)
-            VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21, 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21, 0, 7, 6);
         else
-            VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + 7, 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + 7, 0, 7, 6);
     }
 
     SYS_enableInts();
@@ -685,12 +685,12 @@ static void drawPlayerSettings()
 
     VDP_drawText(tempoStr, 17, 4);
     // refresh shuffle state
-    if (shuffle) VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 25, 6, 2, 1);
-    else VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 23, 6, 2, 1);
+    if (shuffle) VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 25, 6, 2, 1);
+    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 23, 6, 2, 1);
     // refresh loop state
     if (loop != MAX_LOOP) VDP_drawText(loopStr, 18, 6);
     // use infinite symbol from original image
-    else VDP_setMapEx(PLAN_WINDOW, bgMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 18, 6, 21, 6, 2, 1);
+    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 18, 6, 21, 6, 2, 1);
 
     SYS_enableInts();
 }
@@ -907,7 +907,7 @@ static void drawPlayList()
     u16 num;
 
     // play list is draw in plan A to use scrolling capabilities
-    VDP_setTextPlan(PLAN_A);
+    VDP_setTextPlan(BG_A);
 
     planInd = trackIndexList - 3;
     trackInd = planInd % numMusic;
@@ -924,7 +924,7 @@ static void drawPlayList()
     }
 
     // restore previous value
-    VDP_setTextPlan(PLAN_WINDOW);
+    VDP_setTextPlan(WINDOW);
 }
 
 static void drawShortTrackInfo(s16 planIndex, u16 index)
@@ -1025,25 +1025,25 @@ static void drawChipsStates()
     SYS_disableInts();
     if (needProgressUpload)
     {
-        DMA_queueDma(DMA_VRAM, (u32) progressTileBuffer, tileIndexProgressBar * TILE_SIZE, sizeof(progressTileBuffer) / 2, 2);
+        DMA_queueDma(DMA_VRAM, progressTileBuffer, tileIndexProgressBar * TILE_SIZE, sizeof(progressTileBuffer) / 2, 2);
         needProgressUpload = FALSE;
     }
-    DMA_queueDma(DMA_VRAM, (u32) z80TileBuffer, (tileIndex + (0 * 4)) * TILE_SIZE, sizeof(z80TileBuffer) / 2, 2);
+    DMA_queueDma(DMA_VRAM, z80TileBuffer, (tileIndex + (0 * 4)) * TILE_SIZE, sizeof(z80TileBuffer) / 2, 2);
     // first part
     if (evenCnt & 1)
     {
-        DMA_queueDma(DMA_VRAM, (u32) ymTileBuffer, (tileIndex + (1 * 4)) * TILE_SIZE, sizeof(ymTileBuffer) / 4, 2);
-        DMA_queueDma(DMA_VRAM, (u32) pcmTileBuffer, (tileIndex + ((1 + (6 * 3)) * 4)) * TILE_SIZE, sizeof(pcmTileBuffer) / 4, 2);
-        DMA_queueDma(DMA_VRAM, (u32) psgTileBuffer, (tileIndex + ((1 + (6 * 3) + (4 * 3)) * 4)) * TILE_SIZE, sizeof(psgTileBuffer) / 4, 2);
+        DMA_queueDma(DMA_VRAM, ymTileBuffer, (tileIndex + (1 * 4)) * TILE_SIZE, sizeof(ymTileBuffer) / 4, 2);
+        DMA_queueDma(DMA_VRAM, pcmTileBuffer, (tileIndex + ((1 + (6 * 3)) * 4)) * TILE_SIZE, sizeof(pcmTileBuffer) / 4, 2);
+        DMA_queueDma(DMA_VRAM, psgTileBuffer, (tileIndex + ((1 + (6 * 3) + (4 * 3)) * 4)) * TILE_SIZE, sizeof(psgTileBuffer) / 4, 2);
     }
     // second part
     else
     {
-        DMA_queueDma(DMA_VRAM, ((u32) ymTileBuffer) + (32 * 4 * 3 * 3), (tileIndex + ((1 + (3 * 3)) * 4)) * TILE_SIZE, sizeof(ymTileBuffer) / 4, 2);
-        DMA_queueDma(DMA_VRAM, ((u32) pcmTileBuffer) + (32 * 4 * 3 * 2), (tileIndex + ((1 + (6 * 3) + (2 * 3)) * 4)) * TILE_SIZE, sizeof(pcmTileBuffer) / 4, 2);
-        DMA_queueDma(DMA_VRAM, ((u32) psgTileBuffer) + (32 * 4 * 1 * 2), (tileIndex + ((1 + (6 * 3) + (4 * 3) + (2 * 1)) * 4)) * TILE_SIZE, sizeof(psgTileBuffer) / 4, 2);
+        DMA_queueDma(DMA_VRAM, ymTileBuffer + (32 * 4 * 3 * 3), (tileIndex + ((1 + (3 * 3)) * 4)) * TILE_SIZE, sizeof(ymTileBuffer) / 4, 2);
+        DMA_queueDma(DMA_VRAM, pcmTileBuffer + (32 * 4 * 3 * 2), (tileIndex + ((1 + (6 * 3) + (2 * 3)) * 4)) * TILE_SIZE, sizeof(pcmTileBuffer) / 4, 2);
+        DMA_queueDma(DMA_VRAM, psgTileBuffer + (32 * 4 * 1 * 2), (tileIndex + ((1 + (6 * 3) + (4 * 3) + (2 * 1)) * 4)) * TILE_SIZE, sizeof(psgTileBuffer) / 4, 2);
     }
-    DMA_queueDma(DMA_VRAM, (u32) scrollB, VDP_HSCROLL_TABLE + 2, SCROLLV_LEN, 4);
+    DMA_queueDma(DMA_VRAM, scrollB, VDP_HSCROLL_TABLE + 2, SCROLLV_LEN, 4);
     SYS_enableInts();
 }
 
@@ -1474,7 +1474,7 @@ static void updateListScroll()
         trackListScrollPos += step;
 
         // set new track list scroll position
-        VDP_setVerticalScroll(PLAN_A, trackListScrollPos);
+        VDP_setVerticalScroll(BG_A, trackListScrollPos);
 
         cursorPos = trackIndexList;
         cursorPos %= numMusic;
@@ -1624,12 +1624,12 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             if (bgEnabled)
             {
                 bgEnabled = FALSE;
-                VDP_setVerticalScroll(PLAN_B, 32 * 8);
+                VDP_setVerticalScroll(BG_B, 32 * 8);
             }
             else
             {
                 bgEnabled = TRUE;
-                VDP_setVerticalScroll(PLAN_B, 0 * 8);
+                VDP_setVerticalScroll(BG_B, 0 * 8);
             }
         }
         // hide/show playlist

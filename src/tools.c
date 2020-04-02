@@ -16,10 +16,10 @@
 // forward
 static u16 getBitmapAllocSize(const Bitmap *bitmap);
 static u16 getTileSetAllocSize(const TileSet *tileset);
-static u16 getMapAllocSize(const Map *map);
+static u16 getMapAllocSize(const TileMap *tilemap);
 static Bitmap *allocateBitmapInternal(void *adr);
 static TileSet *allocateTileSetInternal(void *adr);
-static Map *allocateMapInternal(void *adr);
+static TileMap *allocateMapInternal(void *adr);
 
 // internal
 u16 randbase;
@@ -806,9 +806,9 @@ static u16 getTileSetAllocSize(const TileSet *tileset)
     return tileset->numTile * 32;
 }
 
-static u16 getMapAllocSize(const Map *map)
+static u16 getMapAllocSize(const TileMap *tilemap)
 {
-    return map->w * map->h * 2;
+    return tilemap->w * tilemap->h * 2;
 }
 
 
@@ -842,16 +842,16 @@ static TileSet *allocateTileSetInternal(void *adr)
     return result;
 }
 
-static Map *allocateMapInternal(void *adr)
+static TileMap *allocateMapInternal(void *adr)
 {
     // cast
-    Map *result = (Map*) adr;
+    TileMap *result = (TileMap*) adr;
 
     if (result != NULL)
     {
         result->compression = COMPRESSION_NONE;
         // allocate tilemap buffer
-        result->tilemap = (u16*) (adr + sizeof(Map));
+        result->tilemap = (u16*) (adr + sizeof(TileMap));
     }
 
     return result;
@@ -902,23 +902,23 @@ TileSet *allocateTileSetEx(u16 numTile)
     return result;
 }
 
-Map *allocateMap(const Map *map)
+TileMap *allocateTileMap(const TileMap *tilemap)
 {
-    return allocateMapInternal(MEM_alloc(getMapAllocSize(map) + sizeof(Map)));
+    return allocateMapInternal(MEM_alloc(getMapAllocSize(tilemap) + sizeof(TileMap)));
 }
 
-Map *allocateMapEx(u16 width, u16 heigth)
+TileMap *allocateTileMapEx(u16 width, u16 heigth)
 {
     // allocate
-    void *adr = MEM_alloc((width * heigth * 2) + sizeof(Map));
-    Map *result = (Map*) adr;
+    void *adr = MEM_alloc((width * heigth * 2) + sizeof(TileMap));
+    TileMap *result = (TileMap*) adr;
 
     if (result != NULL)
     {
         result->compression = COMPRESSION_NONE;
         // set tilemap pointer
-        result->tilemap = (u16*) (adr + sizeof(Map));
-        // and map size
+        result->tilemap = (u16*) (adr + sizeof(TileMap));
+        // and tilemap size
         result->w = width;
         result->h = heigth;
     }
@@ -929,11 +929,11 @@ Map *allocateMapEx(u16 width, u16 heigth)
 Image *allocateImage(const Image *image)
 {
     TileSet *tileset = image->tileset;
-    Map *map = image->map;
+    TileMap *tilemap = image->tilemap;
 
     // get allocation size
     u16 sizeTileset = getTileSetAllocSize(tileset) + sizeof(TileSet);
-    u16 sizeMap = getMapAllocSize(map) + sizeof(Map);
+    u16 sizeMap = getMapAllocSize(tilemap) + sizeof(TileMap);
 
     const void *adr = MEM_alloc(sizeTileset + sizeMap + sizeof(Image));
 
@@ -944,8 +944,8 @@ Image *allocateImage(const Image *image)
     {
         // allocate tileset buffer
         result->tileset = allocateTileSetInternal((void*) (adr + sizeof(Image)));
-        // allocate map buffer
-        result->map = allocateMapInternal((void*) (adr + sizeof(Image) + sizeTileset));
+        // allocate tilemap buffer
+        result->tilemap = allocateMapInternal((void*) (adr + sizeof(Image) + sizeTileset));
     }
 
     return result;
@@ -1000,12 +1000,12 @@ TileSet *unpackTileSet(const TileSet *src, TileSet *dest)
     return result;
 }
 
-Map *unpackMap(const Map *src, Map *dest)
+TileMap *unpackTileMap(const TileMap *src, TileMap *dest)
 {
-    Map *result;
+    TileMap *result;
 
     if (dest) result = dest;
-    else result = allocateMap(src);
+    else result = allocateTileMap(src);
 
     if (result != NULL)
     {
@@ -1039,9 +1039,9 @@ Image *unpackImage(const Image *src, Image *dest)
         // unpack tileset if needed
         if (src->tileset != result->tileset)
             unpackTileSet(src->tileset, result->tileset);
-        // unpack map if needed
-        if (src->map != result->map)
-            unpackMap(src->map, result->map);
+        // unpack tilemap if needed
+        if (src->tilemap != result->tilemap)
+            unpackTileMap(src->tilemap, result->tilemap);
     }
 
     return result;

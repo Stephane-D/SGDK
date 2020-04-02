@@ -18,7 +18,8 @@ public class Palette extends Resource
 
     public Bin bin;
 
-    public Palette(String id, String file, int maxSize, boolean align16) throws IllegalArgumentException, IOException
+    public Palette(String id, String file, int startIndex, int maxSize, boolean align16)
+            throws IllegalArgumentException, IOException
     {
         super(id);
 
@@ -78,6 +79,11 @@ public class Palette extends Resource
 
         // compute hash code
         hc = bin.hashCode();
+    }
+
+    public Palette(String id, String file, int maxSize, boolean align16) throws IllegalArgumentException, IOException
+    {
+        this(id, file, 0, 16, true);
     }
 
     public Palette(String id, String file) throws IllegalArgumentException, IOException

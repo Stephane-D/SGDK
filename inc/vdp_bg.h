@@ -1,13 +1,13 @@
 /**
  *  \file vdp_bg.h
- *  \brief VDP background plan support
+ *  \brief VDP background plane support
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides plan A & plan B facilities :
+ * This unit provides plane A & plane B facilities :
  * - set scrolling
- * - clear plan
- * - draw text in plan
+ * - clear plane
+ * - draw text in plane
  */
 
 #ifndef _VDP_BG_H_
@@ -20,21 +20,21 @@
 
 /**
  *  \brief
- *      Image structure which contains all data to define an image in a background plan.<br>
- *      Use the unpackImage() method to unpack if compression is enabled in TileSet or Map structure.
+ *      Image structure which contains all data to define an image in a background plane.<br>
+ *      Use the unpackImage() method to unpack if compression is enabled in TileSet or TileMap structure.
  *
  *  \param palette
  *      Palette data.
  *  \param tileset
  *      TileSet data structure (contains tiles definition for the image).
- *  \param map
- *      Map data structure (contains tilemap definition for the image).
+ *  \param tilemap
+ *      TileMap data structure (contains tilemap definition for the image).
  */
 typedef struct
 {
     Palette *palette;
     TileSet *tileset;
-    Map *map;
+    TileMap *tilemap;
 } Image;
 
 
@@ -48,43 +48,43 @@ extern u16 curTileInd;
 
 /**
  *  \brief
- *      Set plan horizontal scroll (plain scroll mode).<br>
+ *      Set plane horizontal scroll (plain scroll mode).<br>
  *      3 horizontal scroll modes are supported:<br>
- *      - Plain (whole plan)<br>
+ *      - Plain (whole plane)<br>
  *      - Tile (8 pixels bloc)<br>
  *      - Line (per pixel scroll)<br>
  *
- *  \param plan
- *      Plan we want to set the horizontal scroll.<br>
+ *  \param plane
+ *      Plane we want to set the horizontal scroll.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
  *  \param value
  *      H scroll offset.<br>
- *      Negative value will move the plan to the left while positive
+ *      Negative value will move the plane to the left while positive
  *      value will move it to the right.
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScroll(VDPPlan plan, s16 value);
+void VDP_setHorizontalScroll(VDPPlane plane, s16 value);
 /**
  *  \brief
- *      Set plan horizontal scroll (tile scroll mode).<br>
+ *      Set plane horizontal scroll (tile scroll mode).<br>
  *      3 horizontal scroll modes are supported:<br>
- *      - Plain (whole plan)<br>
+ *      - Plain (whole plane)<br>
  *      - Tile (8 pixels bloc)<br>
  *      - Line (per pixel scroll)<br>
  *
- *  \param plan
- *      Plan we want to set the horizontal scroll.<br>
+ *  \param plane
+ *      Plane we want to set the horizontal scroll.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
  *  \param tile
  *      First tile we want to set the horizontal scroll.
  *  \param values
  *      H scroll offsets.<br>
- *      Negative values will move the plan to the left while positive
+ *      Negative values will move the plane to the left while positive
  *      values will move it to the right.
  *  \param len
  *      Number of tile to set.
@@ -93,29 +93,30 @@ void VDP_setHorizontalScroll(VDPPlan plan, s16 value);
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
  */
-void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm);
+void VDP_setHorizontalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, TransferMethod tm);
 /**
  *  \brief
- *      Set plan horizontal scroll (line scroll mode).<br>
+ *      Set plane horizontal scroll (line scroll mode).<br>
  *      3 horizontal scroll modes are supported:<br>
- *      - Plain (whole plan)<br>
+ *      - Plain (whole plane)<br>
  *      - Tile (8 pixels bloc)<br>
  *      - Line (per pixel scroll)<br>
  *
- *  \param plan
- *      Plan we want to set the horizontal scroll.<br>
+ *  \param plane
+ *      Plane we want to set the horizontal scroll.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
  *  \param line
  *      First line we want to set the horizontal scroll.
  *  \param values
  *      H scroll offsets.<br>
- *      Negative values will move the plan to the left while positive values will move it to the right.
+ *      Negative values will move the plane to the left while positive values will move it to the right.
  *  \param len
  *      Number of line to set.
  *  \param tm
@@ -123,48 +124,49 @@ void VDP_setHorizontalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, T
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *
  *  \see VDP_setScrollingMode()
  */
-void VDP_setHorizontalScrollLine(VDPPlan plan, u16 line, s16* values, u16 len, TransferMethod tm);
+void VDP_setHorizontalScrollLine(VDPPlane plane, u16 line, s16* values, u16 len, TransferMethod tm);
 
 /**
  *  \brief
- *      Set plan vertical scroll (plain scroll mode).
+ *      Set plane vertical scroll (plain scroll mode).
  *      2 vertical scroll modes are supported:<br>
- *      - Plain (whole plan)<br>
+ *      - Plain (whole plane)<br>
  *      - 2-Tiles (16 pixels bloc)<br>
  *
- *  \param plan
- *      Plan we want to set the vertical scroll.<br>
+ *  \param plane
+ *      Plane we want to set the vertical scroll.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
  *  \param value
  *      V scroll offset.<br>
- *      Negative value will move the plan down while positive value will move it up.
+ *      Negative value will move the plane down while positive value will move it up.
  *
  *  \see VDP_setScrollingMode()
  */
-void VDP_setVerticalScroll(VDPPlan plan, s16 value);
+void VDP_setVerticalScroll(VDPPlane plane, s16 value);
 /**
  *  \brief
- *      Set plan vertical scroll (2-Tiles scroll mode).
+ *      Set plane vertical scroll (2-Tiles scroll mode).
  *      2 vertical scroll modes are supported:<br>
- *      - Plain (whole plan)<br>
+ *      - Plain (whole plane)<br>
  *      - 2-Tiles (16 pixels bloc)<br>
  *
- *  \param plan
- *      Plan we want to set the vertical scroll.<br>
+ *  \param plane
+ *      Plane we want to set the vertical scroll.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
  *  \param tile
  *      First tile we want to set the vertical scroll.
  *  \param values
  *      V scroll offsets.<br>
- *      Negative values will move the plan down while positive values will move it up.
+ *      Negative values will move the plane down while positive values will move it up.
  *  \param len
  *      Number of tile to set.
  *  \param tm
@@ -172,38 +174,39 @@ void VDP_setVerticalScroll(VDPPlan plan, s16 value);
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *
  *  \see VDP_setScrollingMode()
  */
-void VDP_setVerticalScrollTile(VDPPlan plan, u16 tile, s16* values, u16 len, TransferMethod tm);
+void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, TransferMethod tm);
 
 /**
  *  \brief
- *      Clear specified plan (using DMA).
+ *      Clear specified plane (using DMA).
  *
- *  \param plan
- *      Plan we want to clear.<br>
+ *  \param plane
+ *      Plane we want to clear.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param wait
  *      Wait the operation to complete when set to TRUE otherwise it returns immediately
  *      but then you will require to wait for DMA completion (#DMA_waitCompletion()) before accessing the VDP.
  */
-void VDP_clearPlan(VDPPlan plan, bool wait);
+void VDP_clearPlan(VDPPlane plane, bool wait);
 
 /**
  *  \brief
- *      Returns the plan used to display text.
+ *      Returns the plane used to display text.
  *
- *  Returned value should be either equals to PLAN_A, PLAN_B or PLAN_WINDOW.
+ *  Returned value should be either equals to BG_A, BG_B or WINDOW.
  *
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-VDPPlan VDP_getTextPlan();
+VDPPlane VDP_getTextPlan();
 /**
  *  \brief
  *      Returns the palette number used to display text.
@@ -223,19 +226,19 @@ u16 VDP_getTextPriority();
 
 /**
  *  \brief
- *      Define the plan to use to display text.
+ *      Define the plane to use to display text.
  *
- *  \param plan
- *      Plan where to display text.<br>
+ *  \param plane
+ *      Plane where to display text.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-void VDP_setTextPlan(VDPPlan plan);
+void VDP_setTextPlan(VDPPlane plane);
 /**
  *  \brief
  *      Define the palette to use to display text.
@@ -263,14 +266,14 @@ void VDP_setTextPriority(u16 prio);
 
 /**
  *  \brief
- *      Draw text in specified plan.
+ *      Draw text in specified plane.
  *
- *  \param plan
- *      Plan where we want to draw text.<br>
+ *  \param plane
+ *      Plane where we want to draw text.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param str
  *      String to draw.
  *  \param x
@@ -283,17 +286,17 @@ void VDP_setTextPriority(u16 prio);
  *  \see VDP_setTextPriority(..)
  *  \see VDP_setTextPlan(..)
  */
-void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y);
+void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y);
 /**
  *  \brief
  *      Clear a single line portion of text.
  *
- *  \param plan
- *      Plan where we want to clear text.<br>
+ *  \param plane
+ *      Plane where we want to clear text.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param x
  *      X position (in tile).
  *  \param y
@@ -305,17 +308,17 @@ void VDP_drawTextBG(VDPPlan plan, const char *str, u16 x, u16 y);
  *  \see VDP_clearTextArea(..)
  *  \see VDP_clearTextLine(..)
  */
-void VDP_clearTextBG(VDPPlan plan, u16 x, u16 y, u16 w);
+void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w);
 /**
  *  \brief
  *      Clear a specific area of text.
  *
- *  \param plan
- *      Plan where we want to clear text.<br>
+ *  \param plane
+ *      Plane where we want to clear text.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param x
  *      X position (in tile).
  *  \param y
@@ -329,17 +332,17 @@ void VDP_clearTextBG(VDPPlan plan, u16 x, u16 y, u16 w);
  *  \see VDP_clearText(..)
  *  \see VDP_clearTextLine(..)
  */
-void VDP_clearTextAreaBG(VDPPlan plan, u16 x, u16 y, u16 w, u16 h);
+void VDP_clearTextAreaBG(VDPPlane plane, u16 x, u16 y, u16 w, u16 h);
 /**
  *  \brief
  *      Clear a complete line of text.
  *
- *  \param plan
- *      Plan where we want to clear text.<br>
+ *  \param plane
+ *      Plane where we want to clear text.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param y
  *      y position (in tile).
  *
@@ -347,7 +350,7 @@ void VDP_clearTextAreaBG(VDPPlan plan, u16 x, u16 y, u16 w, u16 h);
  *  \see VDP_clearText(..)
  *  \see VDP_clearTextArea(..)
  */
-void VDP_clearTextLineBG(VDPPlan plan, u16 y);
+void VDP_clearTextLineBG(VDPPlane plane, u16 y);
 
 /**
  *  \brief
@@ -415,21 +418,21 @@ void VDP_clearTextLine(u16 y);
 
 /**
  *  \brief
- *      Draw Bitmap in specified background plan and at given position.
+ *      Draw Bitmap in specified background plane and at given position.
  *
- *  \param plan
- *      Plan where we want to draw the bitmap.<br>
+ *  \param plane
+ *      Plane where we want to draw the bitmap.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param bitmap
  *      Genesis bitmap (the width and height should be aligned to 8).<br>
  *      The Bitmap is unpacked "on the fly" if needed (require some memory).
  *  \param x
- *      Plan X position (in tile).
+ *      Plane X position (in tile).
  *  \param y
- *      Plan Y position (in tile).
+ *      Plane Y position (in tile).
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Bitmap (only if compression was enabled).
  *
@@ -439,26 +442,26 @@ void VDP_clearTextLine(u16 y);
  *
  *  \see VDP_loadBMPTileData()
  */
-u16 VDP_drawBitmap(VDPPlan plan, const Bitmap *bitmap, u16 x, u16 y);
+u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y);
 /**
  *  \brief
- *      Draw Bitmap in specified background plan and at given position.
+ *      Draw Bitmap in specified background plane and at given position.
  *
- *  \param plan
- *      Plan where we want to draw the bitmap.<br>
+ *  \param plane
+ *      Plane where we want to draw the bitmap.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param bitmap
  *      Genesis bitmap (the width and height should be aligned to 8).<br>
  *      The Bitmap is unpacked "on the fly" if needed (require some memory).
  *  \param basetile
  *      Base tile attributes data (see TILE_ATTR_FULL() macro).
  *  \param x
- *      Plan X position (in tile).
+ *      Plane X position (in tile).
  *  \param y
- *      Plan Y position (in tile).
+ *      Plane Y position (in tile).
  *  \param loadpal
  *      Load the bitmap palette information when non zero.
  *  \return
@@ -470,52 +473,52 @@ u16 VDP_drawBitmap(VDPPlan plan, const Bitmap *bitmap, u16 x, u16 y);
  *
  *  \see VDP_loadBMPTileData()
  */
-u16 VDP_drawBitmapEx(VDPPlan plan, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal);
+u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal);
 
 /**
  *  \brief
- *      Draw Map in specified background plan and at given position.
+ *      Draw Image in specified background plane and at given position.
  *
- *  \param plan
- *      Plan where we want to draw the map.<br>
+ *  \param plane
+ *      Plane where we want to draw the tilemap.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param image
  *      Image structure to draw.<br>
  *      The Image is unpacked "on the fly" if needed (require some memory).
  *  \param x
- *      Plan X position (in tile).
+ *      Plane X position (in tile).
  *  \param y
- *      Plan Y position (in tile).
+ *      Plane Y position (in tile).
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Image (only if compression was enabled).
  *
- *  Load the image tiles data in VRAM and display it at specified tilemap region.
+ *  Load the image tiles data in VRAM and display it at specified plane position.
  *
  *  \see VDP_drawImageEx()
  */
-u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y);
+u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
 /**
  *  \brief
- *      Draw Map at the specified plan position.
+ *      Draw Image in specified background plane and at given position.
  *
- *  \param plan
- *      Plan where we want to load map.<br>
+ *  \param plane
+ *      Plane where we want to load tilemap.<br>
  *      Accepted values are:<br>
- *      - PLAN_A<br>
- *      - PLAN_B<br>
- *      - PLAN_WINDOW<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
  *  \param image
  *      Image structure to draw.<br>
  *      The Image is unpacked "on the fly" if needed (require some memory).
  *  \param basetile
  *      Base tile attributes data (see TILE_ATTR_FULL() macro).
  *  \param x
- *      Plan X position (in tile).
+ *      Plane X position (in tile).
  *  \param y
- *      Plan Y position (in tile).
+ *      Plane Y position (in tile).
  *  \param loadpal
  *      Load the bitmap palette information when non zero (can be TRUE or FALSE)
  *  \param tm
@@ -523,15 +526,16 @@ u16 VDP_drawImage(VDPPlan plan, const Image *image, u16 x, u16 y);
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
- *      - DMA_QUEUE
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Image (only if image was packed).
  *
- *  Load the image tiles data in VRAM and display it at specified tilemap region.
+ *  Load the image tiles data in VRAM and display it at specified plane position.
  *
  *  \see VDP_drawImage()
  */
-u16 VDP_drawImageEx(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm);
+u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm);
 
 
 #endif // _VDP_BG_H_
