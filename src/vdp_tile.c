@@ -79,10 +79,10 @@ static u16 getPlanAddress(VDPPlane plane, u16 x, u16 y)
     {
         default:
         case CONST_BG_A:
-            return VDP_BG_A + (((x & (planWidth - 1)) + ((y & (planHeight - 1)) << planWidthSft)) * 2);
+            return VDP_BG_A + (((x & (planeWidth - 1)) + ((y & (planeHeight - 1)) << planeWidthSft)) * 2);
 
         case CONST_BG_B:
-            return VDP_BG_B + (((x & (planWidth - 1)) + ((y & (planHeight - 1)) << planWidthSft)) * 2);
+            return VDP_BG_B + (((x & (planeWidth - 1)) + ((y & (planeHeight - 1)) << planeWidthSft)) * 2);
 
         case CONST_WINDOW:
             return VDP_WINDOW + (((x & (windowWidth - 1)) + ((y & (32 - 1)) << windowWidthSft)) * 2);
@@ -243,7 +243,7 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
 
     addr = getPlanAddress(plane, x, y);
     if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planWidth;
+    else width = planeWidth;
 
     const u32 tile32 = (tile << 16) | tile;
 
@@ -285,7 +285,7 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
 
     addr = getPlanAddress(plane, x, y);
     if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planWidth;
+    else width = planeWidth;
     tile = basetile;
 
     i = h;
@@ -318,7 +318,7 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
 
     addr = getPlanAddress(plane, x, y);
     if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planWidth;
+    else width = planeWidth;
     src = data;
 
     i = h;
@@ -352,7 +352,7 @@ void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16
 
     addr = getPlanAddress(plane, x, y);
     if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planWidth;
+    else width = planeWidth;
 
     // we can increment both index and palette
     baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
@@ -380,7 +380,7 @@ void VDP_setTileMapDataRowFast(VDPPlane plane, u16* data, u16 row, TransferMetho
 
     addr = getPlanAddress(plane, 0, row);
     if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planWidth;
+    else width = planeWidth;
 
     DMA_transfer(tm, DMA_VRAM, data, addr, width, 2);
 }
@@ -399,8 +399,8 @@ void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, Transfe
     }
     else
     {
-        width = planWidth;
-        height = planHeight;
+        width = planeWidth;
+        height = planeHeight;
     }
 
     DMA_transfer(tm, DMA_VRAM, data, addr, height, width * 2);
@@ -410,7 +410,7 @@ void VDP_setTileMapDataRow(VDPPlane plane, const u16 *mapData, u16 row, u16 xm, 
 {
     const u16* src = mapData + (ym * wm);
     u16 addr = getPlanAddress(plane, 0, row);
-    u16 width = (plane.value == CONST_WINDOW)?windowWidth:planWidth;
+    u16 width = (plane.value == CONST_WINDOW)?windowWidth:planeWidth;
 
     if (tm >= DMA_QUEUE)
     {
@@ -451,8 +451,8 @@ void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *mapData, u16 column, u1
     }
     else
     {
-        width = planWidth;
-        height = planHeight;
+        width = planeWidth;
+        height = planeHeight;
     }
 
     if (tm >= DMA_QUEUE)
@@ -484,7 +484,7 @@ void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *mapData, u16 basetile, u
 {
     const u16* src = mapData + (ym * wm);
     u16 addr = getPlanAddress(plane, 0, row);
-    u16 width = (plane.value == CONST_WINDOW)?windowWidth:planWidth;
+    u16 width = (plane.value == CONST_WINDOW)?windowWidth:planeWidth;
 
     if (tm >= DMA_QUEUE)
     {
@@ -525,8 +525,8 @@ void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *mapData, u16 basetile
     }
     else
     {
-        width = planWidth;
-        height = planHeight;
+        width = planeWidth;
+        height = planeHeight;
     }
 
     if (tm >= DMA_QUEUE)

@@ -93,11 +93,11 @@ void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
     {
         default:
         case CONST_BG_B:
-            bmp_plan_adr = &bplan_addr;
+            bmp_plan_adr = &bgb_addr;
             break;
 
         case CONST_BG_A:
-            bmp_plan_adr = &aplan_addr;
+            bmp_plan_adr = &bga_addr;
             break;
 
         case CONST_WINDOW:

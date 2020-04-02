@@ -38,19 +38,19 @@ u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 static u8 regValues[0x13];
 
 u16 window_addr;
-u16 aplan_addr;
-u16 bplan_addr;
+u16 bga_addr;
+u16 bgb_addr;
 u16 hscrl_addr;
 u16 slist_addr;
 u16 maps_addr;
 
 u16 screenWidth;
 u16 screenHeight;
-u16 planWidth;
-u16 planHeight;
+u16 planeWidth;
+u16 planeHeight;
 u16 windowWidth;
-u16 planWidthSft;
-u16 planHeightSft;
+u16 planeWidthSft;
+u16 planeHeightSft;
 u16 windowWidthSft;
 
 
@@ -70,8 +70,8 @@ void VDP_init()
 
     // default VRAM organization
     window_addr = WINDOW_DEFAULT;
-    aplan_addr = APLAN_DEFAULT;
-    bplan_addr = BPLAN_DEFAULT;
+    bga_addr = APLAN_DEFAULT;
+    bgb_addr = BPLAN_DEFAULT;
     slist_addr = SLIST_DEFAULT;
     hscrl_addr = HSCRL_DEFAULT;
     // get minimum address of all tilemap/table (default is plane B)
@@ -80,18 +80,18 @@ void VDP_init()
     // default resolution
     screenWidth = 320;
     screenHeight = 224;
-    planWidth = 64;
-    planHeight = 32;
+    planeWidth = 64;
+    planeHeight = 32;
     windowWidth = 64;
-    planWidthSft = 6;
-    planHeightSft = 5;
+    planeWidthSft = 6;
+    planeHeightSft = 5;
     windowWidthSft = 6;
 
     regValues[0x00] = 0x04;
     regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, VBL, DMA + VCell size */
-    regValues[0x02] = aplan_addr / 0x400;       /* reg. 2 - Plane A = $E000 */
+    regValues[0x02] = bga_addr / 0x400;         /* reg. 2 - Plane A = $E000 */
     regValues[0x03] = window_addr / 0x400;      /* reg. 3 - Window  = $D000 */
-    regValues[0x04] = bplan_addr / 0x2000;      /* reg. 4 - Plane B = $C000 */
+    regValues[0x04] = bgb_addr / 0x2000;        /* reg. 4 - Plane B = $C000 */
     regValues[0x05] = slist_addr / 0x200;       /* reg. 5 - Sprite table = $F400 */
     regValues[0x06] = 0x00;                     /* reg. 6 - not used */
     regValues[0x07] = 0x00;                     /* reg. 7 - Background Color number*/
@@ -158,7 +158,7 @@ void VDP_setReg(u16 reg, u8 value)
         case 0x02:
             v = value & 0x38;
             // update plane address
-            aplan_addr = v * 0x400;
+            bga_addr = v * 0x400;
             updateMapsAddress();
             break;
 
@@ -174,7 +174,7 @@ void VDP_setReg(u16 reg, u8 value)
         case 0x04:
             v = value & 0x7;
             // update text plane address
-            bplan_addr = v * 0x2000;
+            bgb_addr = v * 0x2000;
             updateMapsAddress();
             break;
 
@@ -213,33 +213,33 @@ void VDP_setReg(u16 reg, u8 value)
             v = value;
             if (v & 0x02)
             {
-                planWidth = 128;
-                planWidthSft = 7;
+                planeWidth = 128;
+                planeWidthSft = 7;
             }
             else if (v & 0x01)
             {
-                planWidth = 64;
-                planWidthSft = 6;
+                planeWidth = 64;
+                planeWidthSft = 6;
             }
             else
             {
-                planWidth = 32;
-                planWidthSft = 5;
+                planeWidth = 32;
+                planeWidthSft = 5;
             }
             if (v & 0x20)
             {
-                planHeight = 128;
-                planHeightSft = 7;
+                planeHeight = 128;
+                planeHeightSft = 7;
             }
             else if (v & 0x10)
             {
-                planHeight = 64;
-                planHeightSft = 6;
+                planeHeight = 64;
+                planeHeightSft = 6;
             }
             else
             {
-                planHeight = 32;
-                planHeightSft = 5;
+                planeHeight = 32;
+                planeHeightSft = 5;
             }
             break;
     }
@@ -337,12 +337,12 @@ void VDP_setScreenWidth320()
 
 u16 VDP_getPlanWidth()
 {
-    return planWidth;
+    return planeWidth;
 }
 
 u16 VDP_getPlanHeight()
 {
-    return planHeight;
+    return planeHeight;
 }
 
 void VDP_setPlanSize(u16 w, u16 h, bool setupVram)
@@ -352,37 +352,37 @@ void VDP_setPlanSize(u16 w, u16 h, bool setupVram)
 
     if (w & 0x80)
     {
-        planWidth = 128;
-        planWidthSft = 7;
+        planeWidth = 128;
+        planeWidthSft = 7;
         v |= 0x03;
     }
     else if (w & 0x40)
     {
-        planWidth = 64;
-        planWidthSft = 6;
+        planeWidth = 64;
+        planeWidthSft = 6;
         v |= 0x01;
     }
     else
     {
-        planWidth = 32;
-        planWidthSft = 5;
+        planeWidth = 32;
+        planeWidthSft = 5;
     }
     if (h & 0x80)
     {
-        planHeight = 128;
-        planHeightSft = 7;
+        planeHeight = 128;
+        planeHeightSft = 7;
         v |= 0x30;
     }
     else if (h & 0x40)
     {
-        planHeight = 64;
-        planHeightSft = 6;
+        planeHeight = 64;
+        planeHeightSft = 6;
         v |= 0x10;
     }
     else
     {
-        planHeight = 32;
-        planHeightSft = 5;
+        planeHeight = 32;
+        planeHeightSft = 5;
     }
 
     regValues[0x10] = v;
@@ -392,7 +392,7 @@ void VDP_setPlanSize(u16 w, u16 h, bool setupVram)
 
     if (setupVram)
     {
-        switch(planWidthSft + planHeightSft)
+        switch(planeWidthSft + planeHeightSft)
         {
             case 10:
                 // 2KB tilemap VRAM setup
@@ -556,12 +556,12 @@ void VDP_setHIntCounter(u8 value)
 
 u16 VDP_getAPlanAddress()
 {
-    return aplan_addr;
+    return bga_addr;
 }
 
 u16 VDP_getBPlanAddress()
 {
-    return bplan_addr;
+    return bgb_addr;
 }
 
 u16 VDP_getWindowAddress()
@@ -589,10 +589,10 @@ void VDP_setAPlanAddress(u16 value)
 {
     vu16 *pw;
 
-    aplan_addr = value & 0xE000;
+    bga_addr = value & 0xE000;
     updateMapsAddress();
 
-    regValues[0x02] = aplan_addr / 0x400;
+    regValues[0x02] = bga_addr / 0x400;
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8200 | regValues[0x02];
@@ -623,10 +623,10 @@ void VDP_setBPlanAddress(u16 value)
 {
     vu16 *pw;
 
-    bplan_addr = value & 0xE000;
+    bgb_addr = value & 0xE000;
     updateMapsAddress();
 
-    regValues[0x04] = bplan_addr / 0x2000;
+    regValues[0x04] = bgb_addr / 0x2000;
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8400 | regValues[0x04];
@@ -853,8 +853,8 @@ static void updateMapsAddress()
 {
     u16 min_addr = window_addr;
 
-    if (bplan_addr < min_addr) min_addr = bplan_addr;
-    if (aplan_addr < min_addr) min_addr = aplan_addr;
+    if (bgb_addr < min_addr) min_addr = bgb_addr;
+    if (bga_addr < min_addr) min_addr = bga_addr;
     if (hscrl_addr < min_addr) min_addr = hscrl_addr;
     if (slist_addr < min_addr) min_addr = slist_addr;
 

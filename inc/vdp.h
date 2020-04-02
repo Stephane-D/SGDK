@@ -106,12 +106,12 @@
  *  \brief
  *      VDP background A tilemap address in VRAM.
  */
-#define VDP_BG_A                aplan_addr
+#define VDP_BG_A                bga_addr
 /**
  *  \brief
  *      VDP background B tilemap address in VRAM.
  */
-#define VDP_BG_B                bplan_addr
+#define VDP_BG_B                bgb_addr
 /**
  *  \brief
  *      VDP window tilemap address in VRAM.
@@ -400,8 +400,8 @@ typedef struct
 
 // used by define
 extern u16 window_addr;
-extern u16 aplan_addr;
-extern u16 bplan_addr;
+extern u16 bga_addr;
+extern u16 bgb_addr;
 extern u16 hscrl_addr;
 extern u16 slist_addr;
 extern u16 maps_addr;
@@ -422,14 +422,14 @@ extern u16 screenHeight;
  *
  *  Possible values are: 32, 64, 128
  */
-extern u16 planWidth;
+extern u16 planeWidth;
 /**
  *  \brief
  *      Current background plane height (in tile)
  *
  *  Possible values are: 32, 64, 128
  */
-extern u16 planHeight;
+extern u16 planeHeight;
 /**
  *  \brief
  *      Current window width (in tile)
@@ -443,14 +443,14 @@ extern u16 windowWidth;
  *
  *  Possible values are: 5, 6 or 7 (corresponding to plane width 32, 64 and 128)
  */
-extern u16 planWidthSft;
+extern u16 planeWidthSft;
 /**
  *  \brief
  *      Current background plane height bit shift
  *
  *  Possible values are: 5, 6 or 7 (corresponding to plane height 32, 64 and 128)
  */
-extern u16 planHeightSft;
+extern u16 planeHeightSft;
 /**
  *  \brief
  *      Current window width bit shift
@@ -566,11 +566,11 @@ void VDP_setScreenWidth256();
 void VDP_setScreenWidth320();
 
 /**
- *  \deprecated Use the <i>planWidth</i> variable directly.
+ *  \deprecated Use the <i>planeWidth</i> variable directly.
  */
 u16  VDP_getPlanWidth();
 /**
- *  \deprecated Use the <i>planHeight</i> variable directly.
+ *  \deprecated Use the <i>planeHeight</i> variable directly.
  */
 u16  VDP_getPlanHeight();
 /**

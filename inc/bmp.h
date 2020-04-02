@@ -27,18 +27,18 @@
 #define _BMP_H_
 
 
-#define BMP_PLANWIDTH_SFT           planWidthSft
-#define BMP_PLANHEIGHT_SFT          planHeightSft
+#define BMP_PLANWIDTH_SFT           planeWidthSft
+#define BMP_PLANHEIGHT_SFT          planeHeightSft
 /**
  *  \brief
  *          Bitmap plane width (in tile)
  */
-#define BMP_PLANWIDTH               planWidth
+#define BMP_PLANWIDTH               planeWidth
 /**
  *  \brief
  *          Bitmap plane height (in tile)
  */
-#define BMP_PLANHEIGHT              planHeight
+#define BMP_PLANHEIGHT              planeHeight
 
 #define BMP_CELLWIDTH_SFT           5
 /**
