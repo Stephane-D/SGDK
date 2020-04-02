@@ -172,7 +172,7 @@ void BMP_reset()
         bmp_buffer_1 = MEM_alloc(BMP_PITCH * BMP_HEIGHT * sizeof(u8));
 
     // need 64x64 cells sized plane
-    VDP_setPlanSize(64, 64, TRUE);
+    VDP_setPlaneSize(64, 64, TRUE);
     // clear plane (complete tilemap)
     VDP_clearPlan(bmp_plan, TRUE);
 

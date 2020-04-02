@@ -335,17 +335,17 @@ void VDP_setScreenWidth320()
 }
 
 
-u16 VDP_getPlanWidth()
+u16 VDP_getPlaneWidth()
 {
     return planeWidth;
 }
 
-u16 VDP_getPlanHeight()
+u16 VDP_getPlaneHeight()
 {
     return planeHeight;
 }
 
-void VDP_setPlanSize(u16 w, u16 h, bool setupVram)
+void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
 {
     vu16 *pw;
     u16 v = 0;
@@ -429,6 +429,10 @@ void VDP_setPlanSize(u16 w, u16 h, bool setupVram)
     }
 }
 
+void VDP_setPlanSize(u16 w, u16 h)
+{
+    VDP_setPlaneSize(w, h, FALSE);
+}
 
 u8 VDP_getVerticalScrollingMode()
 {
@@ -554,14 +558,24 @@ void VDP_setHIntCounter(u8 value)
 }
 
 
-u16 VDP_getAPlanAddress()
+u16 VDP_getBGAAddress()
 {
     return bga_addr;
 }
 
-u16 VDP_getBPlanAddress()
+u16 VDP_getBGBAddress()
 {
     return bgb_addr;
+}
+
+u16 VDP_getAPlanAddress()
+{
+    return VDP_getBGAAddress();
+}
+
+u16 VDP_getBPlanAddress()
+{
+    return VDP_getBGBAddress();
 }
 
 u16 VDP_getWindowAddress()
@@ -585,7 +599,7 @@ u16 VDP_getHScrollTableAddress()
 }
 
 
-void VDP_setAPlanAddress(u16 value)
+void VDP_setBGAAddress(u16 value)
 {
     vu16 *pw;
 
@@ -596,6 +610,29 @@ void VDP_setAPlanAddress(u16 value)
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8200 | regValues[0x02];
+}
+
+void VDP_setBGBAddress(u16 value)
+{
+    vu16 *pw;
+
+    bgb_addr = value & 0xE000;
+    updateMapsAddress();
+
+    regValues[0x04] = bgb_addr / 0x2000;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8400 | regValues[0x04];
+}
+
+void VDP_setAPlanAddress(u16 value)
+{
+    VDP_setBGAAddress(value);
+}
+
+void VDP_setBPlanAddress(u16 value)
+{
+    VDP_setBGBAddress(value);
 }
 
 void VDP_setWindowAddress(u16 value)
@@ -617,19 +654,6 @@ void VDP_setWindowAddress(u16 value)
 void VDP_setWindowPlanAddress(u16 value)
 {
     VDP_setWindowAddress(value);
-}
-
-void VDP_setBPlanAddress(u16 value)
-{
-    vu16 *pw;
-
-    bgb_addr = value & 0xE000;
-    updateMapsAddress();
-
-    regValues[0x04] = bgb_addr / 0x2000;
-
-    pw = (u16 *) GFX_CTRL_PORT;
-    *pw = 0x8400 | regValues[0x04];
 }
 
 void VDP_setSpriteListAddress(u16 value)
