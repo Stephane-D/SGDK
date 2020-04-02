@@ -83,7 +83,7 @@ public class Palette extends Resource
 
     public Palette(String id, String file, int maxSize, boolean align16) throws IllegalArgumentException, IOException
     {
-        this(id, file, 0, 16, true);
+        this(id, file, 0, maxSize, true);
     }
 
     public Palette(String id, String file) throws IllegalArgumentException, IOException
