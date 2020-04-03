@@ -1859,7 +1859,13 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     sprite->timer = frame->timer;
 
     // frame change event handler defined ? --> call it
-    if (sprite->onFrameChange) sprite->onFrameChange(sprite);
+    if (sprite->onFrameChange)
+    {
+        // important to preserve status value which may be modified externally here
+        sprite->status = status;
+        sprite->onFrameChange(sprite);
+        status = sprite->status;
+    }
 
     // require tile data upload
     if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
@@ -2085,7 +2091,7 @@ static void loadTiles(Sprite* sprite)
         char str1[32];
         char str2[8];
 
-        intToHex((u32) unpackNext, str2, 4);
+        intToHex((u32) buf, str2, 4);
         strcpy(str1, " at ");
         strcat(str1, str2);
 
