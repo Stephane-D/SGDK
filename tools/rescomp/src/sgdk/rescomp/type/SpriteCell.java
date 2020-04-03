@@ -242,10 +242,10 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
                 return (numTile / 20d) + (1d / 10d);
 
             case MIN_SPRITE:
-                return (numTile / 40d) + (1d / 5d);
+                return (numTile / 50d) + (1d / 5d);
 
             case MIN_TILE:
-                return (numTile / 10d) + (1d / 20d);
+                return (numTile / 10d) + (1d / 25d);
         }
 
         // return (1 / 10d);
