@@ -262,15 +262,15 @@ u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
 
 u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm)
 {
-    Palette *palette;
-
     if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, tm))
         return FALSE;
 
-    if (!VDP_setTileMap(plane, image->tilemap, basetile, x, y))
+    TileMap* tilemap = image->tilemap;
+
+    if (!VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h))
         return FALSE;
 
-    palette = image->palette;
+    Palette* palette = image->palette;
 
     // palette
     if (loadpal) PAL_setPaletteColors((basetile >> 9) & 0x30, palette);
