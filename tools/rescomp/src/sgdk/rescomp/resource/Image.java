@@ -66,8 +66,8 @@ public class Image extends Resource
         // + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
 
         // build TILESET with wanted compression
-        tileset = (Tileset) addInternalResource(
-                new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht, tileOpt, compression));
+        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht,
+                tileOpt, (mapBase & Tilemap.TILE_INDEX_MASK) != 0, compression));
         // build TILEMAP with wanted compression
         tilemap = (Tilemap) addInternalResource(
                 Tilemap.getTilemap(id + "_map", tileset, mapBase, data, w, h, 0, 0, wt, ht, tileOpt, compression));

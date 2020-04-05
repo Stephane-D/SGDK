@@ -56,7 +56,7 @@ public class Tileset extends Resource
                     + ", TILESET resource requires image with a maximum of " + maxPaletteSize + " colors.");
 
         // build TILESET
-        return new Tileset(id, data, w, h, 0, 0, wt, ht, tileOpt, compression);
+        return new Tileset(id, data, w, h, 0, 0, wt, ht, tileOpt, false, compression);
     }
 
     // tiles
@@ -67,7 +67,7 @@ public class Tileset extends Resource
     public final Bin bin;
 
     public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY,
-            int widthTile, int heightTile, TileOptimization opt, Compression compression)
+            int widthTile, int heightTile, TileOptimization opt, boolean ignorePlain, Compression compression)
     {
         super(id);
 
@@ -81,6 +81,11 @@ public class Tileset extends Resource
                 // get tile
                 final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8,
                         (j + startTileY) * 8);
+
+                // ignore plain tiles
+                if (ignorePlain && tile.isPlain())
+                    continue;
+
                 // find if tile already exist
                 final int index = getTileIndex(tile, opt);
 

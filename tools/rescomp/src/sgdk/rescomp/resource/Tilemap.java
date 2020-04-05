@@ -60,6 +60,11 @@ public class Tilemap extends Resource
         final int w = widthTile;
         final int h = heigthTile;
 
+        final int mapBaseAttr = mapBase & TILE_ATTR_MASK;
+        final int mapBaseTileInd = mapBase & TILE_INDEX_MASK;
+        // we have a base offset --> we can use system plain tiles
+        final boolean useSystemTiles = mapBaseTileInd != 0;
+
         final short[] data = new short[w * h];
 
         int offset = 0;
@@ -75,10 +80,16 @@ public class Tilemap extends Resource
 
                 // if no optimization, just use current offset as index
                 if (opt == TileOptimization.NONE)
-                    index = offset;
-                // otherwise we try to get tile index in the tileset
+                    index = offset + mapBaseTileInd;
                 else
-                    index = tileset.getTileIndex(tile, opt);
+                {
+                    // use system tiles for plain tiles if possible
+                    if (useSystemTiles && tile.isPlain())
+                        index = tile.getPlainValue();
+                    else
+                        // otherwise we try to get tile index in the tileset
+                        index = tileset.getTileIndex(tile, opt) + mapBaseTileInd;
+                }
 
                 // should never happen
                 if (index == -1)
@@ -87,7 +98,7 @@ public class Tilemap extends Resource
                 // get equality info
                 final TileEquality equality = tile.getEquality(tileset.tiles.get(index));
                 // set tilemap
-                data[offset++] = (short) (mapBase
+                data[offset++] = (short) (mapBaseAttr
                         | TILE_ATTR_FULL(tile.pal, tile.prio, equality.vflip, equality.hflip, index));
             }
         }

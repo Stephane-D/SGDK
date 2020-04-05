@@ -124,6 +124,32 @@ public class Tile implements Comparable<Tile>
         this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)));
     }
 
+    public boolean isPlain()
+    {
+        return getPlainValue() != -1;
+    }
+
+    /**
+     * Return plain pixel value for plain tile (-1 otherwise)
+     */
+    public int getPlainValue()
+    {
+        final int result = data[0] & 0xF;
+
+        for (int d : data)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if ((d & 0xF) != result)
+                    return -1;
+
+                d >>= 4;
+            }
+        }
+
+        return result;
+    }
+
     public Tile getFlipped(boolean hflip, boolean vflip)
     {
         final int[] result = new int[8];

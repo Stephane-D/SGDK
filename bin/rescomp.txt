@@ -116,6 +116,7 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
                         1 / ALL         = find duplicate and flipped tile (default)
                         2 / DUPLICATE   = find duplicate tile only
     mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                    Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
 
 SPRITE
