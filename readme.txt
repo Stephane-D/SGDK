@@ -33,6 +33,8 @@ I plan to complete tutorials in future but in the meantime i strongly suggest yo
 
 You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):
 https://www.ohsat.com/tutorial/
+You also have the great ones from Danibus (spanish only):
+https://danibus.wordpress.com/
 
 SGDK comes with a doxygen documentation that you can find in the 'doc' directory: doc/html/files.html
 This documentation is generated from header files (.h) which provides basic information about SGDK structures and functions.
