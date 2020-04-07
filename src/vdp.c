@@ -54,12 +54,6 @@ u16 planeHeightSft;
 u16 windowWidthSft;
 
 
-// constants for plane
-const VDPPlane BG_A = { CONST_BG_A };
-const VDPPlane BG_B = { CONST_BG_B };
-const VDPPlane WINDOW = { CONST_WINDOW };
-
-
 void VDP_init()
 {
     vu16 *pw;

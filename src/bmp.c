@@ -89,18 +89,18 @@ void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
     pal = palette & 3;
     prio = priority & 1;
 
-    switch(plane.value)
+    switch(plane)
     {
         default:
-        case CONST_BG_B:
+        case BG_B:
             bmp_plan_adr = &bgb_addr;
             break;
 
-        case CONST_BG_A:
+        case BG_A:
             bmp_plan_adr = &bga_addr;
             break;
 
-        case CONST_WINDOW:
+        case WINDOW:
             bmp_plan_adr = &window_addr;
             break;
     }
