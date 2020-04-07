@@ -238,6 +238,8 @@ u32 DMA_getQueueTransferSize();
  *      - DMA_VRAM (for VRAM transfer).<br>
  *      - DMA_CRAM (for CRAM transfer).<br>
  *      - DMA_VSRAM (for VSRAM transfer).<br>
+ *  \param from
+ *      Source buffer.
  *  \param to
  *      VRAM/CRAM/VSRAM destination address.
  *  \param len
