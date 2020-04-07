@@ -33,7 +33,7 @@ void VDP_setHorizontalScroll(VDPPlane plane, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = VDP_HSCROLL_TABLE;
-    if (plane.value == CONST_BG_B) addr += 2;
+    if (plane == BG_B) addr += 2;
 
     *pl = GFX_WRITE_VRAM_ADDR(addr);
     *pw = value;
@@ -44,7 +44,7 @@ void VDP_setHorizontalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len,
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((tile & 0x1F) * (4 * 8));
-    if (plane.value == CONST_BG_B) addr += 2;
+    if (plane == BG_B) addr += 2;
 
     DMA_transfer(tm, DMA_VRAM, values, addr, len, 4 * 8);
 }
@@ -54,7 +54,7 @@ void VDP_setHorizontalScrollLine(VDPPlane plane, u16 line, s16* values, u16 len,
     u16 addr;
 
     addr = VDP_HSCROLL_TABLE + ((line & 0xFF) * 4);
-    if (plane.value == CONST_BG_B) addr += 2;
+    if (plane == BG_B) addr += 2;
 
     DMA_transfer(tm, DMA_VRAM, values, addr, len, 4);
 }
@@ -70,7 +70,7 @@ void VDP_setVerticalScroll(VDPPlane plane, s16 value)
     pl = (u32 *) GFX_CTRL_PORT;
 
     addr = 0;
-    if (plane.value == CONST_BG_B) addr += 2;
+    if (plane == BG_B) addr += 2;
 
     *pl = GFX_WRITE_VSRAM_ADDR(addr);
     *pw = value;
@@ -81,7 +81,7 @@ void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, T
     u16 addr;
 
     addr = (tile & 0x1F) * 4;
-    if (plane.value == CONST_BG_B) addr += 2;
+    if (plane == BG_B) addr += 2;
 
     DMA_transfer(tm, DMA_VSRAM, values, addr, len, 4);
 }
@@ -89,17 +89,17 @@ void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, T
 
 void VDP_clearPlan(VDPPlane plane, bool wait)
 {
-    switch(plane.value)
+    switch(plane)
     {
-        case CONST_BG_A:
+        case BG_A:
             VDP_clearTileMap(VDP_BG_A, 0, 1 << (planeWidthSft + planeHeightSft), wait);
             break;
 
-        case CONST_BG_B:
+        case BG_B:
             VDP_clearTileMap(VDP_BG_B, 0, 1 << (planeWidthSft + planeHeightSft), wait);
             break;
 
-        case CONST_WINDOW:
+        case WINDOW:
             VDP_clearTileMap(VDP_WINDOW, 0, 1 << (windowWidthSft + 5), wait);
             break;
     }
@@ -146,7 +146,7 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
     u16 i;
 
     // get the horizontal plane size (in cell)
-    i = (plane.value == CONST_WINDOW)?windowWidth:planeWidth;
+    i = (plane == WINDOW)?windowWidth:planeWidth;
     len = strlen(str);
 
     // if string don't fit in plane, we cut it
@@ -158,7 +158,7 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
     while(i--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
 
-    VDP_setTileMapDataRectEx(plane, data, text_basetile, x, y, len, 1, len);
+    VDP_setTileMapDataRowPartEx(plane, data, text_basetile, y, x, len, CPU);
 }
 
 void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w)
@@ -173,7 +173,7 @@ void VDP_clearTextAreaBG(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)
 
 void VDP_clearTextLineBG(VDPPlane plane, u16 y)
 {
-    VDP_fillTileMapRect(plane, 0, 0, y, (plane.value == CONST_WINDOW)?windowWidth:planeWidth, 1);
+    VDP_fillTileMapRect(plane, 0, 0, y, (plane == WINDOW)?windowWidth:planeWidth, 1);
 }
 
 void VDP_drawText(const char *str, u16 x, u16 y)
@@ -260,14 +260,14 @@ u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
     return result;
 }
 
-u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm)
+u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, bool dma)
 {
-    if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, tm))
+    if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, dma?DMA:CPU))
         return FALSE;
 
     TileMap* tilemap = image->tilemap;
 
-    if (!VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h))
+    if (!VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h, dma?DMA:CPU))
         return FALSE;
 
     Palette* palette = image->palette;
