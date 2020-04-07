@@ -367,7 +367,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 #endif
 
     // do copy to temporal buffer (as from buffer may be modified in between)
-    memcpy(buffer, from, len * 2);
+    memcpyU16(buffer, from, len * 2);
 
     // try to queue the DMA transfer
     if (!DMA_queueDma(location, buffer, to, len, step))
