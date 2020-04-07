@@ -13,13 +13,13 @@
 
 #include "font.h"
 #include "tab_cnv.h"
+#include "tools.h"
 
 
 // forward
-static void prepareTileMapDataRow(u16* dest, u16 width, const u16* mapData, u16 xm, u16 wm);
-static void prepareTileMapDataColumn(u16* dest, u16 height, const u16 *mapData, u16 ym, u16 wm, u16 hm);
-static void prepareTileMapDataRowEx(u16* dest, u16 width, const u16* mapData, u16 basetile, u16 xm, u16 wm);
-static void prepareTileMapDataColumnEx(u16* dest, u16 height, const u16 *mapData, u16 basetile, u16 ym, u16 wm, u16 hm);
+static void prepareTileMapDataColumn(u16* dest, u16 height, const u16 *data, u16 wm);
+static void prepareTileMapDataRowEx(u16* dest, u16 width, const u16* data, u16 basetile);
+static void prepareTileMapDataColumnEx(u16* dest, u16 height, const u16 *mapData, u16 basetile, u16 wm);
 
 
 void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm)
@@ -75,16 +75,16 @@ void VDP_fillTileData(u8 value, u16 index, u16 num, bool wait)
 
 static u16 getPlanAddress(VDPPlane plane, u16 x, u16 y)
 {
-    switch(plane.value)
+    switch(plane)
     {
         default:
-        case CONST_BG_A:
+        case BG_A:
             return VDP_BG_A + (((x & (planeWidth - 1)) + ((y & (planeHeight - 1)) << planeWidthSft)) * 2);
 
-        case CONST_BG_B:
+        case BG_B:
             return VDP_BG_B + (((x & (planeWidth - 1)) + ((y & (planeHeight - 1)) << planeWidthSft)) * 2);
 
-        case CONST_WINDOW:
+        case WINDOW:
             return VDP_WINDOW + (((x & (windowWidth - 1)) + ((y & (32 - 1)) << windowWidthSft)) * 2);
     }
 }
@@ -105,16 +105,16 @@ static u16 getPlanAddress(VDPPlane plane, u16 x, u16 y)
 //    *pwdata = tile;
 //}
 
-void VDP_clearTileMap(u16 plane, u16 ind, u16 num, bool wait)
+void VDP_clearTileMap(u16 planeAddr, u16 ind, u16 num, bool wait)
 {
     // do DMA fill
-    DMA_doVRamFill(plane + (ind * 2), num * 2, 0, 1);
+    DMA_doVRamFill(planeAddr + (ind * 2), num * 2, 0, 1);
     // wait for DMA completion
     if (wait)
         VDP_waitDMACompletion();
 }
 
-void VDP_fillTileMap(u16 plane, u16 tile, u16 ind, u16 num)
+void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -128,7 +128,7 @@ void VDP_fillTileMap(u16 plane, u16 tile, u16 ind, u16 num)
     plctrl = (u32 *) GFX_CTRL_PORT;
     pldata = (u32 *) GFX_DATA_PORT;
 
-    addr = plane + (ind * 2);
+    addr = planeAddr + (ind * 2);
 
     *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
@@ -149,12 +149,12 @@ void VDP_fillTileMap(u16 plane, u16 tile, u16 ind, u16 num)
     while (i--) *pwdata = tile;
 }
 
-void VDP_setTileMapData(u16 plane, const u16 *data, u16 ind, u16 num, TransferMethod tm)
+void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, TransferMethod tm)
 {
-    DMA_transfer(tm, DMA_VRAM, (void*) data,  plane + (ind * 2), num, 2);
+    DMA_transfer(tm, DMA_VRAM, (void*) data,  planeAddr + (ind * 2), num, 2);
 }
 
-void VDP_setTileMapDataEx(u16 plane, const u16 *data, u16 basetile, u16 ind, u16 num)
+void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -174,7 +174,7 @@ void VDP_setTileMapDataEx(u16 plane, const u16 *data, u16 basetile, u16 ind, u16
     plctrl = (u32 *) GFX_CTRL_PORT;
     pldata = (u32 *) GFX_DATA_PORT;
 
-    addr = plane + (ind * 2);
+    addr = planeAddr + (ind * 2);
 
     *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
@@ -242,8 +242,7 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
     pwdata = (u16 *) GFX_DATA_PORT;
 
     addr = getPlanAddress(plane, x, y);
-    if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planeWidth;
+    width = (plane == WINDOW)?windowWidth:planeWidth;
 
     const u32 tile32 = (tile << 16) | tile;
 
@@ -284,8 +283,7 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
     pwdata = (u16 *) GFX_DATA_PORT;
 
     addr = getPlanAddress(plane, x, y);
-    if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planeWidth;
+    width = (plane == WINDOW)?windowWidth:planeWidth;
     tile = basetile;
 
     i = h;
@@ -294,83 +292,39 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
         *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
         j = w;
-
         while (j--) *pwdata = tile++;
 
         addr += width * 2;
     }
 }
 
-void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h, u16 wm)
+void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
-    vu32 *plctrl;
-    vu16 *pwdata;
-    const u16 *src;
-    u16 addr;
-    u16 width;
-    u16 i, j;
+    const u16* src = data;
+    u16 row = y;
+    u16 i = h;
 
-    VDP_setAutoInc(2);
-
-    /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
-
-    addr = getPlanAddress(plane, x, y);
-    if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planeWidth;
-    src = data;
-
-    i = h;
+    // set region by row
     while (i--)
     {
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-        j = w;
-        while (j--) *pwdata = *src++;
-
-        src += wm - w;
-        addr += width * 2;
+        VDP_setTileMapDataRowPart(plane, src, row, x, w, tm);
+        row++;
+        src += wm;
     }
 }
 
-void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm)
+void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
-    vu32 *plctrl;
-    vu16 *pwdata;
-    const u16 *src;
-    u16 addr;
-    u16 width;
-    u16 baseinc;
-    u16 baseor;
-    u16 i, j;
+    const u16* src = data;
+    u16 row = y;
+    u16 i = h;
 
-    VDP_setAutoInc(2);
-
-    /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
-
-    addr = getPlanAddress(plane, x, y);
-    if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planeWidth;
-
-    // we can increment both index and palette
-    baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
-    // we can only do logical OR on priority and HV flip
-    baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
-    src = data;
-
-    i = h;
+    // set region by row
     while (i--)
     {
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-        j = w;
-        while (j--) *pwdata = baseor | (*src++ + baseinc);
-
-        src += wm - w;
-        addr += width * 2;
+        VDP_setTileMapDataRowPartEx(plane, src, basetile, row, x, w, tm);
+        row++;
+        src += wm;
     }
 }
 
@@ -380,10 +334,57 @@ void VDP_setTileMapDataRowFast(VDPPlane plane, u16* data, u16 row, TransferMetho
     u16 width;
 
     addr = getPlanAddress(plane, 0, row);
-    if (plane.value == CONST_WINDOW) width = windowWidth;
-    else width = planeWidth;
+    width = (plane == WINDOW)?windowWidth:planeWidth;
 
     DMA_transfer(tm, DMA_VRAM, data, addr, width, 2);
+}
+
+void VDP_setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, TransferMethod tm)
+{
+    VDP_setTileMapDataRowPart(plane, data, row, 0, (plane == WINDOW)?windowWidth:planeWidth, tm);
+}
+
+void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, TransferMethod tm)
+{
+    VDP_setTileMapDataRowPartEx(plane, data, basetile, row, 0, (plane == WINDOW)?windowWidth:planeWidth, tm);
+}
+
+void VDP_setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm)
+{
+    DMA_transfer(tm, DMA_VRAM, (void*) data, getPlanAddress(plane, x, row), w, 2);
+}
+
+void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
+{
+    u16 addr = getPlanAddress(plane, x, row);
+
+    if (tm >= DMA_QUEUE)
+    {
+        // get temp buffer and schedule DMA
+        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, w, 2);
+
+#if (LIB_DEBUG != 0)
+        if (!buf)
+        {
+            KLog("VDP_setTileMapDataRowEx failed: DMA temporary buffer is full");
+            return;
+        }
+#endif
+        // then prepare data in buffer that will be transfered by DMA
+        prepareTileMapDataRowEx(buf, w, data, basetile);
+    }
+    else
+    {
+        // maximum plane width (stack size has be increased to 0xA00 so it's ok)
+        u16 buf[1024];
+
+        // prepare tilemap data into temp buffer
+        prepareTileMapDataRowEx(buf, w, data, basetile);
+
+        // transfer the buffer data to VRAM
+        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, w, 2);
+        else DMA_doCPUCopy(DMA_VRAM, buf, addr, w, 2);
+    }
 }
 
 void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, TransferMethod tm)
@@ -393,7 +394,7 @@ void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, Transfe
     u16 height;
 
     addr = getPlanAddress(plane, column, 0);
-    if (plane.value == CONST_WINDOW)
+    if (plane == WINDOW)
     {
         width = windowWidth;
         height = 32;
@@ -407,158 +408,88 @@ void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, Transfe
     DMA_transfer(tm, DMA_VRAM, data, addr, height, width * 2);
 }
 
-void VDP_setTileMapDataRow(VDPPlane plane, const u16 *mapData, u16 row, u16 xm, u16 wm, TransferMethod tm)
+void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 wm, TransferMethod tm)
 {
-    const u16* src = mapData + (row * wm);
-    u16 addr = getPlanAddress(plane, 0, row);
-    u16 width = (plane.value == CONST_WINDOW)?windowWidth:planeWidth;
+    VDP_setTileMapDataColumnPart(plane, data, column, 0, (plane == WINDOW)?32:planeHeight, wm, tm);
+}
+
+void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 wm, TransferMethod tm)
+{
+    VDP_setTileMapDataColumnPartEx(plane, data, basetile, column, 0, (plane == WINDOW)?32:planeHeight, wm, tm);
+}
+
+void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+{
+    u16 addr = getPlanAddress(plane, column, y);
+    u16 width = (plane == WINDOW)?windowWidth:planeWidth;
 
     if (tm >= DMA_QUEUE)
     {
         // get temp buffer and schedule DMA
-        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, width, 2);
+        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, h, width * 2);
 
 #if (LIB_DEBUG != 0)
-        if (!buf) KDebug_Alert("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
-        else
+        if (!buf)
+        {
+            KLog("VDP_setTileMapDataColumn failed: DMA temporary buffer is full");
+            return;
+        }
 #endif
         // then prepare data in buffer that will be transfered by DMA
-        prepareTileMapDataRow(buf, width, src, xm, wm);
+        prepareTileMapDataColumn(buf, h, data, wm);
     }
     else
     {
-        // maximum plane width or height
+        // maximum plane height (stack size has be increased to 0xA00 so it's ok)
         u16 buf[1024];
 
-        // prepare tilemap data and copy it into temp buffer
-        prepareTileMapDataRow(buf, width, src, xm, wm);
-        // transfer the buffer data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, width, 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, width, 2);
+        // prepare tilemap data into temp buffer
+        prepareTileMapDataColumn(buf, h, data, wm);
+
+        // transfer the temp data to VRAM
+        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
+        else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
     }
 }
 
-void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *mapData, u16 column, u16 ym, u16 wm, u16 hm, TransferMethod tm)
+void VDP_setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
-    const u16* src = mapData + column;
-    u16 addr = getPlanAddress(plane, column, 0);
-    u16 width;
-    u16 height;
-
-    if (plane.value == CONST_WINDOW)
-    {
-        width = windowWidth;
-        height = 32;
-    }
-    else
-    {
-        width = planeWidth;
-        height = planeHeight;
-    }
+    u16 addr = getPlanAddress(plane, column, y);
+    u16 width = (plane == WINDOW)?windowWidth:planeWidth;
 
     if (tm >= DMA_QUEUE)
     {
         // get temp buffer and schedule DMA
-        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, height, width * 2);
+        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, h, width * 2);
 
 #if (LIB_DEBUG != 0)
-        if (!buf) KDebug_Alert("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
-        else
+        if (!buf)
+        {
+            KLog("VDP_setTileMapDataColumnEx failed: DMA temporary buffer is full");
+            return;
+        }
 #endif
         // then prepare data in buffer that will be transfered by DMA
-        prepareTileMapDataColumn(buf, height, src, ym, wm, hm);
+        prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
     }
     else
     {
-        // maximum plane width or height
+        // maximum plane height (stack size has be increased to 0xA00 so it's ok)
         u16 buf[1024];
 
-        // prepare tilemap data and copy it into temp buffer
-        prepareTileMapDataColumn(buf, height, src, ym, wm, hm);
+        // prepare tilemap data into temp buffer
+        prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
+
         // transfer the buffer data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, height, width * 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, height, width * 2);
-    }
-}
-
-void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *mapData, u16 basetile, u16 row, u16 xm, u16 ym, u16 wm, TransferMethod tm)
-{
-    const u16* src = mapData + (ym * wm);
-    u16 addr = getPlanAddress(plane, 0, row);
-    u16 width = (plane.value == CONST_WINDOW)?windowWidth:planeWidth;
-
-    if (tm >= DMA_QUEUE)
-    {
-        // get temp buffer and schedule DMA
-        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, width, 2);
-
-#if (LIB_DEBUG != 0)
-        if (!buf) KDebug_Alert("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
-        else
-#endif
-        // then prepare data in buffer that will be transfered by DMA
-        prepareTileMapDataRowEx(buf, width, src, basetile, xm, wm);
-    }
-    else
-    {
-        // maximum plane width or height
-        u16 buf[1024];
-
-        // prepare tilemap data and copy it into temp buffer
-        prepareTileMapDataRowEx(buf, width, src, basetile, xm, wm);
-        // transfer the buffer data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, width, 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, width, 2);
-    }
-}
-
-void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *mapData, u16 basetile, u16 column, u16 xm, u16 ym, u16 wm, u16 hm, TransferMethod tm)
-{
-    const u16* src = mapData + xm;
-    u16 addr = getPlanAddress(plane, column, 0);
-    u16 width;
-    u16 height;
-
-    if (plane.value == CONST_WINDOW)
-    {
-        width = windowWidth;
-        height = 32;
-    }
-    else
-    {
-        width = planeWidth;
-        height = planeHeight;
-    }
-
-    if (tm >= DMA_QUEUE)
-    {
-        // get temp buffer and schedule DMA
-        u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, height, width * 2);
-
-#if (LIB_DEBUG != 0)
-        if (!buf) KDebug_Alert("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
-        else
-#endif
-        // then prepare data in buffer that will be transfered by DMA
-        prepareTileMapDataColumnEx(buf, height, src, basetile, ym, wm, hm);
-    }
-    else
-    {
-        // maximum plane width or height
-        u16 buf[1024];
-
-        // prepare tilemap data and copy it into temp buffer
-        prepareTileMapDataColumnEx(buf, height, src, basetile, ym, wm, hm);
-        // transfer the buffer data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, height, width * 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, height, width * 2);
+        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
+        else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
     }
 }
 
 
-bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm)
+bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)
 {
-    const u32 offset = (ym * tilemap->w) + xm;
+    const u32 offset = (y * tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -569,19 +500,19 @@ bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 xm
         if (m == NULL) return FALSE;
 
         // tilemap
-        VDP_setTileMapDataRect(plane, m->tilemap + offset, x, y, wm, hm, m->w);
+        VDP_setTileMapDataRect(plane, m->tilemap + offset, x, y, w, h, m->w, tm);
         MEM_free(m);
     }
     else
         // tilemap
-        VDP_setTileMapDataRect(plane, (u16*) FAR(tilemap->tilemap + offset), x, y, wm, hm, tilemap->w);
+        VDP_setTileMapDataRect(plane, (u16*) FAR(tilemap->tilemap + offset), x, y, w, h, tilemap->w, tm);
 
     return TRUE;
 }
 
-bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm)
+bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 xp, u16 yp, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)
 {
-    const u32 offset = (ym * tilemap->w) + xm;
+    const u32 offset = (y * tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -592,18 +523,20 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
         if (m == NULL) return FALSE;
 
         // tilemap
-        VDP_setTileMapDataRectEx(plane, m->tilemap + offset, basetile, x, y, wm, hm, m->w);
+        VDP_setTileMapDataRectEx(plane, m->tilemap + offset, basetile, xp, yp, w, h, m->w, tm);
         MEM_free(m);
     }
     else
         // tilemap
-        VDP_setTileMapDataRectEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, x, y, wm, hm, tilemap->w);
+        VDP_setTileMapDataRectEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, xp, yp, w, h, tilemap->w, tm);
 
     return TRUE;
 }
 
-bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 xm, TransferMethod tm)
+bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, TransferMethod tm)
 {
+    const u32 offset = (row * tilemap->w) + x;
+
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
     {
@@ -613,18 +546,20 @@ bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 xm, 
         if (m == NULL) return FALSE;
 
         // tilemap
-        VDP_setTileMapDataRow(plane, m->tilemap, row, xm, m->w, tm);
+        VDP_setTileMapDataRow(plane, m->tilemap + offset, row,  tm);
         MEM_free(m);
     }
     else
         // tilemap
-        VDP_setTileMapDataRow(plane, (u16*) FAR(tilemap->tilemap), row, xm, tilemap->w, tm);
+        VDP_setTileMapDataRow(plane, (u16*) FAR(tilemap->tilemap + offset), row, tm);
 
     return TRUE;
 }
 
-bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u16 ym, TransferMethod tm)
+bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u16 y, TransferMethod tm)
 {
+    const u32 offset = (y * tilemap->w) + column;
+
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
     {
@@ -634,18 +569,20 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
         if (m == NULL) return FALSE;
 
         // tilemap
-        VDP_setTileMapDataColumn(plane, m->tilemap, column, ym, m->w, m->h, tm);
+        VDP_setTileMapDataColumn(plane, m->tilemap + offset, column, m->w, tm);
         MEM_free(m);
     }
     else
         // tilemap
-        VDP_setTileMapDataColumn(plane, (u16*) FAR(tilemap->tilemap), column, ym, tilemap->w, tilemap->h, tm);
+        VDP_setTileMapDataColumn(plane, (u16*) FAR(tilemap->tilemap + offset), column, tilemap->w, tm);
 
     return TRUE;
 }
 
-bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 row, u16 xm, u16 ym, TransferMethod tm)
+bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 row, u16 x, u16 y, TransferMethod tm)
 {
+    const u32 offset = (y * tilemap->w) + x;
+
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
     {
@@ -655,18 +592,20 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
         if (m == NULL) return FALSE;
 
         // tilemap
-        VDP_setTileMapDataRowEx(plane, m->tilemap, basetile, row, xm, ym, m->w, tm);
+        VDP_setTileMapDataRowEx(plane, m->tilemap + offset, basetile, row, tm);
         MEM_free(m);
     }
     else
         // tilemap
-        VDP_setTileMapDataRowEx(plane, (u16*) FAR(tilemap->tilemap), basetile, row, xm, ym, tilemap->w, tm);
+        VDP_setTileMapDataRowEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, row, tm);
 
     return TRUE;
 }
 
-bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 column, u16 xm, u16 ym, TransferMethod tm)
+bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 column, u16 x, u16 y, TransferMethod tm)
 {
+    const u32 offset = (y * tilemap->w) + x;
+
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
     {
@@ -676,12 +615,12 @@ bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile
         if (m == NULL) return FALSE;
 
         // tilemap
-        VDP_setTileMapDataColumnEx(plane, m->tilemap, basetile, column, xm, ym, m->w, m->h, tm);
+        VDP_setTileMapDataColumnEx(plane, m->tilemap + offset, basetile, column, m->w, tm);
         MEM_free(m);
     }
     else
         // tilemap
-        VDP_setTileMapDataColumnEx(plane, (u16*) FAR(tilemap->tilemap), basetile, column, xm, ym, tilemap->w, tilemap->h, tm);
+        VDP_setTileMapDataColumnEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, column, tilemap->w, tm);
 
     return TRUE;
 }
@@ -689,137 +628,171 @@ bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile
 
 bool VDP_setMap(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y)
 {
-    return VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h);
+    return VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h, CPU);
 }
 
 bool VDP_setMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm)
 {
-    return VDP_setTileMapEx(plane, tilemap, basetile, x, y, xm, ym, wm, hm);
+    return VDP_setTileMapEx(plane, tilemap, basetile, x, y, xm, ym, wm, hm, CPU);
 }
 
+//static void setTileMapDataRowInternal(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, u16 xm, u16 ym, u16 wm, TransferMethod tm)
+//{
+//    // maximum plane width or height (we upgraded stack size to 0xA00 so this is valid)
+//    u16 localBuffer[1024];
+//    u16 addr = getPlanAddress(plane, 0, row);
+//    u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
+//    u16* buf;
+//
+//    // get temp buffer and schedule DMA at same time
+//    if (tm >= DMA_QUEUE)
+//    {
+//        buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, pw, 2);
+//
+//#if (LIB_DEBUG != 0)
+//        if (!buf)
+//        {
+//            KLog("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
+//            return;
+//        }
+//#endif
+//    }
+//    // use local buffer
+//    else buf = localBuffer;
+//
+//
+//    const u16* src = data + (ym * wm);
+//    u16 xAdj = x & (pw - 1);
+//
+//    // then prepare data in buffer that will be transfered by DMA
+//    prepareTileMapDataRowEx(buf, width, src, basetile, xm, wm);
+//
+//    // transfer the buffer data to VRAM if not already scheduled
+//    if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, width, 2);
+//    else if (tm == CPU) DMA_doCPUCopy(DMA_VRAM, buf, addr, width, 2);
+//}
 
-static void copyColumnW(u16* dest, const u16* src, u16 step, u16 size)
+//static void setTileMapDataRowExInternal(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, u16 xm, u16 ym, u16 wm, TransferMethod tm)
+//{
+//    // maximum plane width or height (we upgraded stack size to 0xA00 so this is valid)
+//    u16 localBuffer[1024];
+//    u16 addr = getPlanAddress(plane, 0, row);
+//    u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
+//    u16* buf;
+//
+//    // get temp buffer and schedule DMA at same time
+//    if (tm >= DMA_QUEUE)
+//    {
+//        buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, pw, 2);
+//
+//#if (LIB_DEBUG != 0)
+//        if (!buf)
+//        {
+//            KLog("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
+//            return;
+//        }
+//#endif
+//    }
+//    // use local buffer
+//    else buf = localBuffer;
+//
+//
+//    const u16* src = data + (ym * wm);
+//    u16 xAdj = x & (pw - 1);
+//
+//    // then prepare data in buffer that will be transfered by DMA
+//    prepareTileMapDataRowEx(buf, width, src, basetile, xm, wm);
+//
+//    // transfer the buffer data to VRAM if not already scheduled
+//    if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, width, 2);
+//    else if (tm == CPU) DMA_doCPUCopy(DMA_VRAM, buf, addr, width, 2);
+//}
+
+
+
+
+static void prepareTileMapDataColumn(u16* dest, u16 height, const u16 *data, u16 wm)
 {
     u16* d = dest;
-    const u16* s = src;
+    const u16* s = data;
     u16 i;
 
-    i = size >> 2;
+    i = height >> 2;
     while (i--)
     {
         *d++ = *s;
-        s += step;
+        s += wm;
         *d++ = *s;
-        s += step;
+        s += wm;
         *d++ = *s;
-        s += step;
+        s += wm;
         *d++ = *s;
-        s += step;
+        s += wm;
     }
 
-    i = size & 3;
+    i = height & 3;
     while (i--)
     {
         *d++ = *s;
-        s += step;
+        s += wm;
     }
 }
 
-static void copyColumnWEx(u16* dest, const u16* src, u16 baseinc, u16 baseor, u16 step, u16 size)
-{
-    u16* d = dest;
-    const u16* s = src;
-    u16 i;
-
-    i = size >> 2;
-    while (i--)
-    {
-        *d++ = baseor | (*s + baseinc);
-        s += step;
-        *d++ = baseor | (*s + baseinc);
-        s += step;
-        *d++ = baseor | (*s + baseinc);
-        s += step;
-        *d++ = baseor | (*s + baseinc);
-        s += step;
-    }
-
-    i = size & 3;
-    while (i--)
-    {
-        *d++ = baseor | (*s + baseinc);
-        s += step;
-    }
-}
-
-// mapData should point on current row of tilemap data we want to prepare. i.e: mapData + (ym * wm)
-static void prepareTileMapDataRow(u16* dest, u16 width, const u16* mapData, u16 xm, u16 wm)
-{
-    if ((xm + width) > wm)
-    {
-        const u16 len = wm - xm;
-        memcpyU16(dest, mapData + xm, len);
-        memcpyU16(dest + len, mapData, width - len);
-    }
-    else memcpyU16(dest, mapData + xm, width);
-}
-
-// mapData should point on current column of tilemap data we want to prepare. i.e: mapData + xm
-static void prepareTileMapDataColumn(u16* dest, u16 height, const u16 *mapData, u16 ym, u16 wm, u16 hm)
-{
-    if ((ym + height) > hm)
-    {
-        const u16 len = hm - ym;
-        copyColumnW(dest, mapData + (ym * wm), wm, len);
-        copyColumnW(dest + len, mapData, wm, height - len);
-    }
-    else copyColumnW(dest, mapData + (ym * wm), wm, height);
-}
-
-// mapData should point on current row of tilemap data we want to prepare. i.e: mapData + (ym * wm)
-static void prepareTileMapDataRowEx(u16* dest, u16 width, const u16* mapData, u16 basetile, u16 xm, u16 wm)
-{
-    const u16* s;
-    u16* d = dest;
-    // we can increment both index and palette
-    const u16 baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
-    // we can only do logical OR on priority and HV flip
-    const u16 baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
-    u16 i;
-
-    if ((xm + width) > wm)
-    {
-        const u16 len = wm - xm;
-
-        s = mapData + xm;
-        i = len;
-        while (i--) *d++ = baseor | (*s++ + baseinc);
-
-        s = mapData;
-        i = width - len;
-        while (i--) *d++ = baseor | (*s++ + baseinc);
-    }
-    else
-    {
-        s = mapData + xm;
-        i = width;
-        while (i--) *d++ = baseor | (*s++ + baseinc);
-    }
-}
-
-// mapData should point on current column of tilemap data we want to prepare. i.e: mapData + xm
-static void prepareTileMapDataColumnEx(u16* dest, u16 height, const u16 *mapData, u16 basetile, u16 ym, u16 wm, u16 hm)
+static void prepareTileMapDataRowEx(u16* dest, u16 width, const u16* data, u16 basetile)
 {
     // we can increment both index and palette
     const u16 baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
     // we can only do logical OR on priority and HV flip
     const u16 baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
 
-    if ((ym + height) > hm)
+    const u16* s = data;
+    u16* d = dest;
+    u16 i;
+
+    i = width >> 2;
+    // prepare map data for row update
+    while (i--)
     {
-        const u16 len = hm - ym;
-        copyColumnWEx(dest, mapData + (ym * wm), baseinc, baseor, wm, len);
-        copyColumnWEx(dest + len, mapData, baseinc, baseor, wm, height - len);
+        *d++ = baseor | (*s++ + baseinc);
+        *d++ = baseor | (*s++ + baseinc);
+        *d++ = baseor | (*s++ + baseinc);
+        *d++ = baseor | (*s++ + baseinc);
     }
-    else copyColumnWEx(dest, mapData + (ym * wm), baseinc, baseor, wm, height);
+
+    i = width & 3;
+    // prepare map data for row update
+    while (i--) *d++ = baseor | (*s++ + baseinc);
+}
+
+static void prepareTileMapDataColumnEx(u16* dest, u16 height, const u16 *data, u16 basetile, u16 wm)
+{
+    // we can increment both index and palette
+    const u16 baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    // we can only do logical OR on priority and HV flip
+    const u16 baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
+
+    // prepare map data for column update
+    u16* d = dest;
+    const u16* s = data;
+    u16 i;
+
+    i = height >> 2;
+    while (i--)
+    {
+        *d++ = baseor | (*s + baseinc);
+        s += wm;
+        *d++ = baseor | (*s + baseinc);
+        s += wm;
+        *d++ = baseor | (*s + baseinc);
+        s += wm;
+        *d++ = baseor | (*s + baseinc);
+        s += wm;
+    }
+
+    i = height & 3;
+    while (i--)
+    {
+        *d++ = baseor | (*s + baseinc);
+        s += wm;
+    }
 }
