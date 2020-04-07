@@ -477,7 +477,7 @@ u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, 
 
 /**
  *  \brief
- *      Draw Image in specified background plane and at given position.
+ *      Draw Image (using DMA) in specified background plane and at given position.
  *
  *  \param plane
  *      Plane where we want to draw the tilemap.<br>
@@ -521,13 +521,8 @@ u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
  *      Plane Y position (in tile).
  *  \param loadpal
  *      Load the bitmap palette information when non zero (can be TRUE or FALSE)
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *  \param dma
+ *      use DMA
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Image (only if image was packed).
  *
@@ -535,7 +530,7 @@ u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
  *
  *  \see VDP_drawImage()
  */
-u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm);
+u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, bool dma);
 
 
 #endif // _VDP_BG_H_
