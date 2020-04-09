@@ -17,6 +17,11 @@
 
 
 // forward
+static void setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm);
+static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm);
+static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
+static void setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
+
 static void prepareTileMapDataColumn(u16* dest, u16 height, const u16 *data, u16 wm);
 static void prepareTileMapDataRowEx(u16* dest, u16 width, const u16* data, u16 basetile);
 static void prepareTileMapDataColumnEx(u16* dest, u16 height, const u16 *mapData, u16 basetile, u16 wm);
@@ -301,60 +306,176 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
 void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
     const u16* src = data;
-    u16 row = y;
-    u16 i = h;
 
-    // set region by row
-    while (i--)
+    // if half less number of column than number of row then we use column transfer
+    if (w < (h / 2))
     {
-        VDP_setTileMapDataRowPart(plane, src, row, x, w, tm);
-        row++;
-        src += wm;
+        u16 ph = (plane == WINDOW)?32:planeHeight;
+        u16 h1, h2;
+        u32 off;
+
+        // larger than plane height ? --> need to split
+        if ((y + h) > ph)
+        {
+            // first part
+            h1 = ph - y;
+            // second part
+            h2 = h - h1;
+            // offset
+            off = wm * h1;
+        }
+        else
+        {
+            // no split
+            h1 = h;
+            h2 = 0;
+            off = 0;
+        }
+
+        u16 col = x;
+        u16 i = w;
+
+        // set region by column
+        while (i--)
+        {
+            // first part
+            setTileMapDataColumnPart(plane, src, col, y, h1, wm, tm);
+            // second part
+            if (h2 != 0) setTileMapDataColumnPart(plane, src + off, col, 0, h2, wm, tm);
+            col++;
+            src++;
+        }
+    }
+    else
+    {
+        u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
+        u16 w1, w2;
+
+        // larger than plane width ? --> need to split
+        if ((x + w) > pw)
+        {
+            // first part
+            w1 = pw - x;
+            // second part
+            w2 = w - w2;
+        }
+        else
+        {
+            w1 = w;
+            w2 = 0;
+        }
+
+        u16 row = y;
+        u16 i = h;
+
+        // otherwise we set region by row (faster)
+        while (i--)
+        {
+            // first part
+            setTileMapDataRowPart(plane, src, row, x, w1, tm);
+            // second part
+            if (w2 != 0) setTileMapDataRowPart(plane, src + w1, row, 0, w2, tm);
+            row++;
+            src += wm;
+        }
     }
 }
 
 void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
     const u16* src = data;
-    u16 row = y;
-    u16 i = h;
 
-    // set region by row
-    while (i--)
+    // if half less number of column than number of row then we use column transfer
+    if (w < (h / 2))
     {
-        VDP_setTileMapDataRowPartEx(plane, src, basetile, row, x, w, tm);
-        row++;
-        src += wm;
+        const u16 ph = (plane == WINDOW)?32:planeHeight;
+        u16 h1, h2;
+        u32 off;
+
+        // larger than plane height ? --> need to split
+        if ((y + h) > ph)
+        {
+            // first part
+            h1 = ph - y;
+            // second part
+            h2 = h - h1;
+            // offset
+            off = wm * h1;
+        }
+        else
+        {
+            // no split
+            h1 = h;
+            h2 = 0;
+            off = 0;
+        }
+
+        u16 col = x;
+        u16 i = w;
+
+        // set region by column
+        while (i--)
+        {
+            // first part
+            setTileMapDataColumnPartEx(plane, src, basetile, col, y, h1, wm, tm);
+            // second part
+            if (h2 != 0) setTileMapDataColumnPartEx(plane, src + off, basetile, col, 0, h2, wm, tm);
+            col++;
+            src++;
+        }
+    }
+    else
+    {
+        const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
+        u16 w1, w2;
+
+        // larger than plane width ? --> need to split
+        if ((x + w) > pw)
+        {
+            // first part
+            w1 = pw - x;
+            // second part
+            w2 = w - w1;
+        }
+        else
+        {
+            w1 = w;
+            w2 = 0;
+        }
+
+        u16 row = y;
+        u16 i = h;
+
+        // otherwise we set region by row (faster)
+        while (i--)
+        {
+            // first part
+            setTileMapDataRowPartEx(plane, src, basetile, row, x, w1, tm);
+            // second part
+            if (w2 != 0) setTileMapDataRowPartEx(plane, src + w1, basetile, row, 0, w2, tm);
+            row++;
+            src += wm;
+        }
     }
 }
 
-void VDP_setTileMapDataRowFast(VDPPlane plane, u16* data, u16 row, TransferMethod tm)
-{
-    u16 addr;
-    u16 width;
-
-    addr = getPlanAddress(plane, 0, row);
-    width = (plane == WINDOW)?windowWidth:planeWidth;
-
-    DMA_transfer(tm, DMA_VRAM, data, addr, width, 2);
-}
 
 void VDP_setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, TransferMethod tm)
 {
-    VDP_setTileMapDataRowPart(plane, data, row, 0, (plane == WINDOW)?windowWidth:planeWidth, tm);
+    setTileMapDataRowPart(plane, data, row, 0, (plane == WINDOW)?windowWidth:planeWidth, tm);
 }
 
 void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, TransferMethod tm)
 {
-    VDP_setTileMapDataRowPartEx(plane, data, basetile, row, 0, (plane == WINDOW)?windowWidth:planeWidth, tm);
+    setTileMapDataRowPartEx(plane, data, basetile, row, 0, (plane == WINDOW)?windowWidth:planeWidth, tm);
 }
 
-void VDP_setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm)
+static void setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm)
 {
     DMA_transfer(tm, DMA_VRAM, (void*) data, getPlanAddress(plane, x, row), w, 2);
 }
 
-void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
+static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
 {
     u16 addr = getPlanAddress(plane, x, row);
 
@@ -387,6 +508,42 @@ void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, 
     }
 }
 
+void VDP_setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm)
+{
+    const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
+
+    // larger than plane width ? --> need to split
+    if ((x + w) > pw)
+    {
+        u16 w1 = pw - x;
+
+        // first part
+        setTileMapDataRowPart(plane, data, row, x, w1, tm);
+        // second part
+        setTileMapDataRowPart(plane, data + w1, row, 0, w - w1, tm);
+    }
+    // no split needed
+    else setTileMapDataRowPart(plane, data, row, x, w, tm);
+}
+
+void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
+{
+    const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
+
+    // larger than plane width ? --> need to split
+    if ((x + w) > pw)
+    {
+        u16 w1 = pw - x;
+
+        // first part
+        setTileMapDataRowPartEx(plane, data, basetile, row, x, w1, tm);
+        // second part
+        setTileMapDataRowPartEx(plane, data + w1, basetile, row, 0, w - w1, tm);
+    }
+    // no split needed
+    else setTileMapDataRowPartEx(plane, data, basetile, row, x, w, tm);
+}
+
 void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, TransferMethod tm)
 {
     u16 addr;
@@ -410,15 +567,15 @@ void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, Transfe
 
 void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 wm, TransferMethod tm)
 {
-    VDP_setTileMapDataColumnPart(plane, data, column, 0, (plane == WINDOW)?32:planeHeight, wm, tm);
+    setTileMapDataColumnPart(plane, data, column, 0, (plane == WINDOW)?32:planeHeight, wm, tm);
 }
 
 void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 wm, TransferMethod tm)
 {
-    VDP_setTileMapDataColumnPartEx(plane, data, basetile, column, 0, (plane == WINDOW)?32:planeHeight, wm, tm);
+    setTileMapDataColumnPartEx(plane, data, basetile, column, 0, (plane == WINDOW)?32:planeHeight, wm, tm);
 }
 
-void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
     u16 addr = getPlanAddress(plane, column, y);
     u16 width = (plane == WINDOW)?windowWidth:planeWidth;
@@ -452,7 +609,7 @@ void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u
     }
 }
 
-void VDP_setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+static void setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
     u16 addr = getPlanAddress(plane, column, y);
     u16 width = (plane == WINDOW)?windowWidth:planeWidth;
@@ -484,6 +641,42 @@ void VDP_setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetil
         if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
         else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
     }
+}
+
+void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+{
+    const u16 ph = (plane == WINDOW)?32:planeHeight;
+
+    // larger than plane height ? --> need to split
+    if ((y + h) > ph)
+    {
+        u16 h1 = ph - y;
+
+        // first part
+        setTileMapDataColumnPart(plane, data, column, y, h1, wm, tm);
+        // second part
+        setTileMapDataColumnPart(plane, data + (wm * h1), column, 0, h - h1, wm, tm);
+    }
+    // no split needed
+    else setTileMapDataColumnPart(plane, data, column, y, h, wm, tm);
+}
+
+void VDP_setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+{
+    const u16 ph = (plane == WINDOW)?32:planeHeight;
+
+    // larger than plane height ? --> need to split
+    if ((y + h) > ph)
+    {
+        u16 h1 = ph - y;
+
+        // first part
+        setTileMapDataColumnPartEx(plane, data, basetile, column, y, h1, wm, tm);
+        // second part
+        setTileMapDataColumnPartEx(plane, data + (wm * h1), basetile, column, 0, h - h1, wm, tm);
+    }
+    // no split needed
+    else setTileMapDataColumnPartEx(plane, data, basetile, column, y, h, wm, tm);
 }
 
 
@@ -635,80 +828,6 @@ bool VDP_setMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 x, u
 {
     return VDP_setTileMapEx(plane, tilemap, basetile, x, y, xm, ym, wm, hm, CPU);
 }
-
-//static void setTileMapDataRowInternal(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, u16 xm, u16 ym, u16 wm, TransferMethod tm)
-//{
-//    // maximum plane width or height (we upgraded stack size to 0xA00 so this is valid)
-//    u16 localBuffer[1024];
-//    u16 addr = getPlanAddress(plane, 0, row);
-//    u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
-//    u16* buf;
-//
-//    // get temp buffer and schedule DMA at same time
-//    if (tm >= DMA_QUEUE)
-//    {
-//        buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, pw, 2);
-//
-//#if (LIB_DEBUG != 0)
-//        if (!buf)
-//        {
-//            KLog("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
-//            return;
-//        }
-//#endif
-//    }
-//    // use local buffer
-//    else buf = localBuffer;
-//
-//
-//    const u16* src = data + (ym * wm);
-//    u16 xAdj = x & (pw - 1);
-//
-//    // then prepare data in buffer that will be transfered by DMA
-//    prepareTileMapDataRowEx(buf, width, src, basetile, xm, wm);
-//
-//    // transfer the buffer data to VRAM if not already scheduled
-//    if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, width, 2);
-//    else if (tm == CPU) DMA_doCPUCopy(DMA_VRAM, buf, addr, width, 2);
-//}
-
-//static void setTileMapDataRowExInternal(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, u16 xm, u16 ym, u16 wm, TransferMethod tm)
-//{
-//    // maximum plane width or height (we upgraded stack size to 0xA00 so this is valid)
-//    u16 localBuffer[1024];
-//    u16 addr = getPlanAddress(plane, 0, row);
-//    u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
-//    u16* buf;
-//
-//    // get temp buffer and schedule DMA at same time
-//    if (tm >= DMA_QUEUE)
-//    {
-//        buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, pw, 2);
-//
-//#if (LIB_DEBUG != 0)
-//        if (!buf)
-//        {
-//            KLog("VDP_setTileMapDataRows failed: DMA temporary buffer is full");
-//            return;
-//        }
-//#endif
-//    }
-//    // use local buffer
-//    else buf = localBuffer;
-//
-//
-//    const u16* src = data + (ym * wm);
-//    u16 xAdj = x & (pw - 1);
-//
-//    // then prepare data in buffer that will be transfered by DMA
-//    prepareTileMapDataRowEx(buf, width, src, basetile, xm, wm);
-//
-//    // transfer the buffer data to VRAM if not already scheduled
-//    if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, width, 2);
-//    else if (tm == CPU) DMA_doCPUCopy(DMA_VRAM, buf, addr, width, 2);
-//}
-
-
 
 
 static void prepareTileMapDataColumn(u16* dest, u16 height, const u16 *data, u16 wm)
