@@ -34,9 +34,9 @@
 
 /**
  *  \brief
- *      Define memory allocated for stack (default = 0xA00)
+ *      Define memory allocated for stack (default = 0x1000)
  */
-#define STACK_SIZE      0xA00
+#define STACK_SIZE      0x1000
 /**
  *  \brief
  *      Define the memory high address limit for dynamic allocation
