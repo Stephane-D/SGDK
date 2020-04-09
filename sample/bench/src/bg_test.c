@@ -295,25 +295,25 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
             j -= 10;
         }
@@ -483,25 +483,25 @@ u16 executeBGTest(u16 *scores)
 
         while(j)
         {
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
-            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h);
+            VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
             j -= 10;
         }
