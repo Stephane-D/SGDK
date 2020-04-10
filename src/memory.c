@@ -344,6 +344,52 @@ void MEM_free(void *ptr)
     }
 }
 
+void MEM_pack()
+{
+    u16 *b;
+    u16 *best;
+    u16 bsize, psize;
+    bool first;
+
+    b = heap;
+    best = b;
+    bsize = 0;
+    first = TRUE;
+
+    while ((psize = *b))
+    {
+        if (psize & USED)
+        {
+            if (bsize != 0)
+            {
+                // first free block found ?
+                if (first)
+                {
+                    // reset next free block
+                    free = best;
+                    first = FALSE;
+                }
+
+                // store packed free memory for this block
+                *best = bsize;
+                bsize = 0;
+            }
+
+            b += psize >> 1;
+            best = b;
+        }
+        else
+        {
+            bsize += psize;
+            b += psize >> 1;
+        }
+    }
+
+    // last block update
+    if (bsize != 0) *best = bsize;
+}
+
+
 void MEM_dump()
 {
     char str[40];

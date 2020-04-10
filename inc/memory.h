@@ -34,9 +34,9 @@
 
 /**
  *  \brief
- *      Define memory allocated for stack (default = 0x1000)
+ *      Define memory allocated for stack (default = 0xC00)
  */
-#define STACK_SIZE      0x1000
+#define STACK_SIZE      0x0A00
 /**
  *  \brief
  *      Define the memory high address limit for dynamic allocation
@@ -198,6 +198,13 @@ void MEM_free(void *ptr);
  * The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
  */
 void* MEM_alloc(u16 size);
+
+/**
+ *  \brief
+ *      Pack all free blocks and reset allocation search from start of heap.<br>
+ *      You can call this method before trying to allocate small block of memory to reduce memory fragmentation.
+ */
+void MEM_pack();
 /**
  *  \brief
  *      Show memory dump
