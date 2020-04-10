@@ -12,8 +12,6 @@
 
 //#define DMA_DEBUG
 
-#define DMA_DEFAULT_QUEUE_SIZE      64
-
 #define DMA_AUTOFLUSH               0x1
 #define DMA_OVERCAPACITY_IGNORE     0x2
 
@@ -59,8 +57,8 @@ void DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
     flag = DMA_AUTOFLUSH;
 
     // define queue size
-    if (size) queueSize = size;
-    else queueSize = DMA_DEFAULT_QUEUE_SIZE;
+    if (size) queueSize = max(DMA_QUEUE_SIZE_MIN, size);
+    else queueSize = DMA_QUEUE_SIZE_DEFAULT;
 
     // already allocated ?
     if (dmaQueues) MEM_free(dmaQueues);
@@ -90,6 +88,29 @@ void DMA_setAutoFlush(bool value)
     else flag &= ~DMA_AUTOFLUSH;
 }
 
+u16 DMA_getMaxQueueSize()
+{
+    return queueSize;
+}
+
+void DMA_setMaxQueueSize(u16 value)
+{
+    queueSize = max(DMA_QUEUE_SIZE_MIN, value);
+
+    // already allocated ?
+    if (dmaQueues) MEM_free(dmaQueues);
+    // allocate DMA queue
+    dmaQueues = MEM_alloc(queueSize * sizeof(DMAOpInfo));
+
+    // reset queue
+    DMA_clearQueue();
+}
+
+void DMA_setMaxQueueSizeToDefault()
+{
+    DMA_setMaxQueueSize(DMA_QUEUE_SIZE_DEFAULT);
+}
+
 u16 DMA_getMaxTransferSize()
 {
     return maxTransferPerFrame;
@@ -102,7 +123,7 @@ void DMA_setMaxTransferSize(u16 value)
 
 void DMA_setMaxTransferSizeToDefault()
 {
-    DMA_setMaxTransferSize(IS_PALSYSTEM ? 15000 : 7200);
+    DMA_setMaxTransferSize(IS_PALSYSTEM ? DMA_TRANSFER_CAPACITY_PAL : DMA_TRANSFER_CAPACITY_NTSC);
 }
 
 u16 DMA_getBufferSize()
@@ -112,7 +133,7 @@ u16 DMA_getBufferSize()
 
 void DMA_setBufferSize(u16 value)
 {
-    dataBufferSize = value / 2;
+    dataBufferSize = max(DMA_BUFFER_SIZE_MIN, value) / 2;
 
     // already allocated ?
     if (dataBuffer) MEM_free(dataBuffer);
@@ -128,7 +149,7 @@ void DMA_setBufferSize(u16 value)
 
 void DMA_setBufferSizeToDefault()
 {
-    DMA_setBufferSize(IS_PALSYSTEM ? 14 * 1024 : 8 * 1024);
+    DMA_setBufferSize(IS_PALSYSTEM ? DMA_BUFFER_SIZE_PAL : DMA_BUFFER_SIZE_NTSC);
 }
 
 bool DMA_getIgnoreOverCapacity()
@@ -313,7 +334,7 @@ bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u
     }
 }
 
-void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
+void* DMA_allocateTemp(u16 len)
 {
     u16* result = nextDataBuffer;
 
@@ -322,12 +343,31 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
     if (nextDataBuffer > (dataBuffer + dataBufferSize))
     {
 #if (LIB_DEBUG != 0)
-        KLog_U2_("DMA_allocateAndQueueDma(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
+        KLog_U2_("DMA_allocateTemp(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
 #endif
+
+        // failed --> revert allocation
+        DMA_releaseTemp(len);
 
         // error
         return NULL;
     }
+
+    return result;
+}
+
+void DMA_releaseTemp(u16 len)
+{
+    // release allocation
+    nextDataBuffer -= len;
+}
+
+void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
+{
+    u16* result = DMA_allocateTemp(len);
+
+    // can't allocate --> exit
+    if (result == NULL) return result;
 
 #ifdef DMA_DEBUG
     KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
@@ -336,8 +376,8 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
     // try to queue the DMA transfer
     if (!DMA_queueDma(location, result, to, len, step))
     {
-        // failed --> revert allocation
-        nextDataBuffer -= len;
+        // failed --> release allocation
+        DMA_releaseTemp(len);
         // error
         return NULL;
     }
@@ -348,19 +388,10 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
 
 bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 {
-    u16* buffer = nextDataBuffer;
+    u16* buffer = DMA_allocateTemp(len);
 
-    nextDataBuffer += len;
-
-    if (nextDataBuffer > (dataBuffer + dataBufferSize))
-    {
-#if (LIB_DEBUG != 0)
-        KLog_U2_("DMA_copyAndQueueDma(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
-#endif
-
-        // error
-        return FALSE;
-    }
+    // can't allocate --> exit
+    if (buffer == NULL) return FALSE;
 
 #ifdef DMA_DEBUG
     KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
@@ -372,8 +403,8 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     // try to queue the DMA transfer
     if (!DMA_queueDma(location, buffer, to, len, step))
     {
-        // failed --> revert allocation
-        nextDataBuffer -= len;
+        // failed --> release allocation
+        DMA_releaseTemp(len);
         // error
         return FALSE;
     }
