@@ -372,7 +372,7 @@ u16 executeMathsBasicTest(u16 *scores)
 
 
     waitMs(5000);
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(buffer);
 
@@ -604,7 +604,7 @@ u16 executeMathsAdvTest(u16 *scores)
 
 
     waitMs(5000);
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(src_3D);
     MEM_free(res_3D);

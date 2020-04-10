@@ -103,7 +103,7 @@ u16 executeMemsetTest(u16 *scores)
     y++;
 
     waitMs(5000);
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(buffer);
 
@@ -209,7 +209,7 @@ u16 executeMemcpyTest(u16 *scores)
     y++;
 
     waitMs(5000);
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(buffer);
 
@@ -385,7 +385,7 @@ u16 executeMemAllocTest(u16 *scores)
     y++;
 
     waitMs(5000);
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(allocs);
 
@@ -595,7 +595,7 @@ u16 executeVRamAllocTest(u16 *scores)
 
 
     waitMs(5000);
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(allocs);
     VRAM_releaseRegion(&region);
