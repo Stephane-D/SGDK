@@ -4,15 +4,17 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides general VDP methods :<br>
+ * This unit provides general VDP (Video Display Processor) methods:<br>
  * - initialisation<br>
  * - get / set register<br>
  * - get / set resolution<br>
  * - enable / disable VDP features<br>
  * <br>
- * VRAM should always be organized in a way that tile data are always located before tilemap in VRAM:<br>
+ * <b>WARNING:</b> It's very important that VRAM is organized with tile data being located before tilemaps and tables:<br>
  * 0000-XXXX = tile data<br>
- * XXXX-FFFF = tilemaps & tables (H scroll table, sprite table, B/A plane and window plane).
+ * XXXX-FFFF = tilemaps & tables (H scroll table, sprite table, B/A plane and window plane).<br>
+ * <br>
+ * If you don't respect that you may get in troubles as SGDK expect it ;)
  */
 
 #ifndef _VDP_H_
@@ -239,18 +241,23 @@
 #define TILE_FONTINDEX          (TILE_MAXNUM - FONT_LEN)
 /**
  *  \brief
+ *      Sprite engine base tile index (equal TILE_FONTINDEX if Sprite Engine is not initialized).
+ */
+#define TILE_SPRITEINDEX        (TILE_FONTINDEX - spriteVramSize)
+/**
+ *  \brief
  *      Number of available user tile.
  */
-#define TILE_USERLENGTH         (TILE_FONTINDEX - TILE_USERINDEX)
+#define TILE_USERLENGTH         ((userTileMaxIndex - TILE_USERINDEX) + 1)
 /**
  *  \deprecated Use TILE_USERLENGTH instead.
  */
 #define TILE_USERLENGHT         TILE_USERLENGTH
 /**
  *  \brief
- *      Maximum tile index in VRAM for user.
+ *      Maximum tile index in VRAM reserved for user (for background and user managed sprites)
  */
-#define TILE_USERMAXINDEX       (TILE_USERINDEX + TILE_USERLENGTH - 1)
+#define TILE_USERMAXINDEX       userTileMaxIndex
 /**
  *  \brief
  *      System tile address in VRAM.
@@ -405,6 +412,7 @@ extern u16 bgb_addr;
 extern u16 hscrl_addr;
 extern u16 slist_addr;
 extern u16 maps_addr;
+extern u16 userTileMaxIndex;
 
 /**
  *  \brief

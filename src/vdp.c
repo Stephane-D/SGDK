@@ -17,6 +17,7 @@
 #include "sys.h"
 
 #include "font.h"
+#include "sprite_eng.h"
 
 
 #define WINDOW_DEFAULT          0xD000      // multiple of 0x1000 (0x0800 in H32)
@@ -33,6 +34,7 @@ extern void addFrameLoad(u16 frameLoad);
 static void updateMapsAddress();
 static void computeFrameCPULoad(u16 blank, u16 vcnt);
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
+void updateUserTileMaxIndex();
 
 
 static u8 regValues[0x13];
@@ -43,6 +45,8 @@ u16 bgb_addr;
 u16 hscrl_addr;
 u16 slist_addr;
 u16 maps_addr;
+
+u16 userTileMaxIndex;
 
 u16 screenWidth;
 u16 screenHeight;
@@ -68,8 +72,10 @@ void VDP_init()
     bgb_addr = BPLAN_DEFAULT;
     slist_addr = SLIST_DEFAULT;
     hscrl_addr = HSCRL_DEFAULT;
-    // get minimum address of all tilemap/table (default is plane B)
-    maps_addr = BPLAN_DEFAULT;
+
+    maps_addr = 0;
+    // update minimum address of all tilemap/table (default is plane B)
+    updateMapsAddress();
 
     // default resolution
     screenWidth = 320;
@@ -111,7 +117,7 @@ void VDP_init()
     VDP_resetSprites();
 
     // default plane and base tile attribut for draw text method
-    VDP_setTextPlan(BG_A);
+    VDP_setTextPlane(BG_A);
     VDP_setTextPalette(PAL0);
     VDP_setTextPriority(TRUE);
 
@@ -867,6 +873,12 @@ void VDP_showCPULoad()
 }
 
 
+void updateUserTileMaxIndex()
+{
+    // sprite engine always allocate VRAM just below FONT
+    userTileMaxIndex = TILE_FONTINDEX - spriteVramSize;
+}
+
 static void updateMapsAddress()
 {
     u16 min_addr = window_addr;
@@ -882,5 +894,7 @@ static void updateMapsAddress()
         maps_addr = min_addr;
         // reload default font as its VRAM address has changed
         VDP_loadFont(&font_default, DMA);
+        // update user max tile index
+        updateUserTileMaxIndex();
     }
 }
