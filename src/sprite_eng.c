@@ -48,6 +48,8 @@
 
 // shared from vdp_spr.c unit
 extern void logVDPSprite(u16 index);
+// shared from vdp.c unit
+extern void updateUserTileMaxIndex();
 
 
 // forward
@@ -88,6 +90,8 @@ Sprite* lastSprite;
 // VRAM region allocated for the Sprite Engine
 static VRAMRegion vram;
 
+// size of VRAM allocated for Sprite Engine
+u16 spriteVramSize = 0;
 
 #ifdef SPR_PROFIL
 
@@ -135,6 +139,11 @@ void SPR_initEx(u16 vramSize)
 
     // and create a VRAM region for sprite tile allocation
     VRAM_createRegion(&vram, index, size);
+    // store allocated VRAM size to let SGDK know about it
+    spriteVramSize = size;
+
+    // need to update user tile max index
+    updateUserTileMaxIndex();
 
 #if (LIB_DEBUG != 0)
     KLog("Sprite engine initialized !");
@@ -165,6 +174,10 @@ void SPR_end()
         allocStack = NULL;
 
         VRAM_releaseRegion(&vram);
+        spriteVramSize = 0;
+
+        // need to update user tile max index
+        updateUserTileMaxIndex();
     }
 
 #if (LIB_DEBUG != 0)
