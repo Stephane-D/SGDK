@@ -376,6 +376,11 @@ typedef struct _Sprite
 typedef void FrameChangeCallback(Sprite* sprite);
 
 /**
+ * Allocated VRAM (in tile) for Sprite Engine
+ */
+extern u16 spriteVramSize;
+
+/**
  *  \brief
  *      Initialize the Sprite engine with default parameters.
  *
