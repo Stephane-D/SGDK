@@ -87,7 +87,7 @@ void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, T
 }
 
 
-void VDP_clearPlan(VDPPlane plane, bool wait)
+void VDP_clearPlane(VDPPlane plane, bool wait)
 {
     switch(plane)
     {
@@ -105,7 +105,7 @@ void VDP_clearPlan(VDPPlane plane, bool wait)
     }
 }
 
-VDPPlane VDP_getTextPlan()
+VDPPlane VDP_getTextPlane()
 {
     return text_plan;
 }
@@ -120,7 +120,7 @@ u16 VDP_getTextPriority()
     return (text_basetile >> 15) & 1;
 }
 
-void VDP_setTextPlan(VDPPlane plane)
+void VDP_setTextPlane(VDPPlane plane)
 {
     text_plan = plane;
 }

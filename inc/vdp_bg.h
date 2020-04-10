@@ -195,7 +195,7 @@ void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, T
  *      Wait the operation to complete when set to TRUE otherwise it returns immediately
  *      but then you will require to wait for DMA completion (#DMA_waitCompletion()) before accessing the VDP.
  */
-void VDP_clearPlan(VDPPlane plane, bool wait);
+void VDP_clearPlane(VDPPlane plane, bool wait);
 
 /**
  *  \brief
@@ -206,7 +206,7 @@ void VDP_clearPlan(VDPPlane plane, bool wait);
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-VDPPlane VDP_getTextPlan();
+VDPPlane VDP_getTextPlane();
 /**
  *  \brief
  *      Returns the palette number used to display text.
@@ -238,7 +238,7 @@ u16 VDP_getTextPriority();
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-void VDP_setTextPlan(VDPPlane plane);
+void VDP_setTextPlane(VDPPlane plane);
 /**
  *  \brief
  *      Define the palette to use to display text.
@@ -284,7 +284,7 @@ void VDP_setTextPriority(u16 prio);
  *  \see VDP_clearText(..)
  *  \see VDP_setTextPalette(..)
  *  \see VDP_setTextPriority(..)
- *  \see VDP_setTextPlan(..)
+ *  \see VDP_setTextPlane(..)
  */
 void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y);
 /**
@@ -366,7 +366,7 @@ void VDP_clearTextLineBG(VDPPlane plane, u16 y);
  *  \see VDP_clearText(..)
  *  \see VDP_setTextPalette(..)
  *  \see VDP_setTextPriority(..)
- *  \see VDP_setTextPlan(..)
+ *  \see VDP_setTextPlane(..)
  */
 void VDP_drawText(const char *str, u16 x, u16 y);
 /**
