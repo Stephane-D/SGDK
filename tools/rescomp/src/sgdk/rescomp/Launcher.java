@@ -46,6 +46,11 @@ public class Launcher
             fileNameOut = FileUtil.setExtension(fileName, "");
 
         // compile resources
-        Compiler.compile(fileName, fileNameOut, header);
+        boolean result = Compiler.compile(fileName, fileNameOut, header);
+
+        if (result)
+            System.exit(0);
+        else
+            System.exit(-1);
     }
 }
