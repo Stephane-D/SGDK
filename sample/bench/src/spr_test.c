@@ -61,13 +61,13 @@ u16 executeSpritesTest(u16 *scores)
 //    SYS_setVIntAligned(FALSE);
 
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 16x16 (all dynamic)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -99,13 +99,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 16x16 (streamed animation)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -137,13 +137,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 16x16 (preloaded animation)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -189,13 +189,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("80 sprites 16x16 (streamed animation)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -229,13 +229,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("80 sprites 16x16 (preloaded animation)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -281,13 +281,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 32x32 (streamed)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -321,13 +321,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 32x32 (preloaded)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // initialize sprites
@@ -369,23 +369,24 @@ u16 executeSpritesTest(u16 *scores)
     *scores = executePartic(15, 40, TRUE, FALSE);
     globalScore += *scores++;
 
+
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Donut animation (streamed)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // set palette
     VDP_setPalette(PAL1, donut.palette->data);
 
-    // execute particle bench
+    // execute donut bench
     *scores = executeDonut(20, FALSE);
     globalScore += *scores++;
 
@@ -393,13 +394,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Donut animation (preloaded)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // preload animation tilesets
@@ -424,13 +425,13 @@ u16 executeSpritesTest(u16 *scores)
     // reset sprite engine (release all allocated resources)
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Big sprites test...", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
     SYS_disableInts();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
     // create sprites structures
@@ -488,7 +489,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_disableInts();
     SPR_reset();
     SPR_clear();
-    VDP_clearPlan(BG_A, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     end();
     SYS_enableInts();
 
@@ -780,8 +781,11 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         // update sprites
         SPR_update();
 
+        SYS_disableInts();
         VDP_showFPS(FALSE);
         VDP_showCPULoad();
+        SYS_enableInts();
+
         VDP_waitVSync();
 
         score++;

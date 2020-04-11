@@ -174,7 +174,7 @@ void BMP_reset()
     // need 64x64 cells sized plane
     VDP_setPlaneSize(64, 64, TRUE);
     // clear plane (complete tilemap)
-    VDP_clearPlan(bmp_plan, TRUE);
+    VDP_clearPlane(bmp_plan, TRUE);
 
     // reset state and phase
     state = 0;

@@ -496,8 +496,8 @@ static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetil
     }
     else
     {
-        // maximum plane width (stack size has be increased to 0xA00 so it's ok)
-        u16 buf[1024];
+        // allocate on DMA buffer
+        u16* buf = DMA_allocateTemp(w);
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataRowEx(buf, w, data, basetile);
@@ -505,6 +505,9 @@ static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetil
         // transfer the buffer data to VRAM
         if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, w, 2);
         else DMA_doCPUCopy(DMA_VRAM, buf, addr, w, 2);
+
+        // release allocated buffer
+        DMA_releaseTemp(w);
     }
 }
 
@@ -597,8 +600,8 @@ static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column
     }
     else
     {
-        // maximum plane height (stack size has be increased to 0xA00 so it's ok)
-        u16 buf[1024];
+        // allocate on DMA buffer
+        u16* buf = DMA_allocateTemp(h);
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataColumn(buf, h, data, wm);
@@ -606,6 +609,9 @@ static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column
         // transfer the temp data to VRAM
         if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
         else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
+
+        // release allocated buffer
+        DMA_releaseTemp(h);
     }
 }
 
@@ -631,8 +637,8 @@ static void setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 base
     }
     else
     {
-        // maximum plane height (stack size has be increased to 0xA00 so it's ok)
-        u16 buf[1024];
+        // allocate on DMA buffer
+        u16* buf = DMA_allocateTemp(h);
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
@@ -640,6 +646,9 @@ static void setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 base
         // transfer the buffer data to VRAM
         if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
         else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
+
+        // release allocated buffer
+        DMA_releaseTemp(h);
     }
 }
 

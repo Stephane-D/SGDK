@@ -30,6 +30,16 @@
  */
 #define DMA_VSRAM   2
 
+#define DMA_QUEUE_SIZE_DEFAULT      64
+#define DMA_QUEUE_SIZE_MIN          20
+
+#define DMA_TRANSFER_CAPACITY_NTSC  7200
+#define DMA_TRANSFER_CAPACITY_PAL   15000
+
+#define DMA_BUFFER_SIZE_NTSC        (8 * 1024)
+#define DMA_BUFFER_SIZE_PAL         (14 * 1024)
+#define DMA_BUFFER_SIZE_MIN         (2 * 1024)
+
 
 /**
  *  \brief
@@ -79,7 +89,7 @@ void DMA_init();
  *      Initialize the DMA queue sub system.
  *
  *  \param size
- *      The queue size (0 = default size = 64).
+ *      The queue size (0 = default size = 64, min size = 20).
  *  \param capacity
  *      The maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call (0 = default = no limit).<br>
  *      Depending the current selected strategy, furthers transfers can be ignored (by default all transfers are done whatever is the limit).
@@ -113,6 +123,33 @@ u16 DMA_getAutoFlush();
  *  \see DMA_flushQueue()
  */
 void DMA_setAutoFlush(bool value);
+/**
+ *  \brief
+ *      Returns the maximum allowed number of pending transfer in the queue (allocated queue size).
+ *
+ *  \see DMA_setMaxQueueSize()
+ */
+u16 DMA_getMaxQueueSize();
+/**
+ *  \brief
+ *      Sets the maximum allowed number of pending transfer in the queue (allocated queue size).<br>
+ *      <b>WARNING:</b> changing the queue size will clear the DMA queue.
+ *
+ *  \param value
+ *      The queue size (minimum allowed size = 20)
+ *
+ *  \see DMA_getMaxQueueSize()
+ *  \see DMA_setMaxQueueSizeToDefault()
+ */
+void DMA_setMaxQueueSize(u16 value);
+/**
+ *  \brief
+ *      Sets the maximum allowed number of pending transfer in the queue (allocated queue size) to default value (64).<br>
+ *      <b>WARNING:</b> changing the queue size will clear the DMA queue.
+ *
+ *  \see DMA_setMaxQueueSize()
+ */
+void DMA_setMaxQueueSizeToDefault();
 /**
  *  \brief
  *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.<br>
@@ -153,10 +190,11 @@ u16 DMA_getBufferSize();
  *  \brief
  *      Sets the size (in bytes) of the temporary data buffer which can be used to store data
  *      that will be transfered through the DMA queue.<br>
- *      WARNING: changing the buffer size will clear the DMA queue.
+ *      <b>WARNING:</b> changing the buffer size will clear the DMA queue.
  *
  *  \param value
- *      The size of the temporary data buffer (in bytes)
+ *      The size of the temporary data buffer (in bytes).<br>
+ *      Minimum allowed buffer size if 2048 (internals methods require a minimal buffer size)
  *
  *  \see DMA_getBufferSize()
  *  \see DMA_setBufferSizeToDefault()
@@ -223,6 +261,31 @@ u32 DMA_getQueueTransferSize();
 
 /**
  *  \brief
+ *      Tool method allowing to allocate memory from the DMA temporary buffer if you need a very temporary buffer.<br>
+ *      Don't forget to release memory using #DMA_releaseTemp(..).<br>
+ *      <b>WARNING:</b> it's very important to disable interrupts while using the temporary DMA buffer as DMA buffer can be flushed on interrupt.
+ *
+ *  \param len
+ *      Number of word to allocate.
+ *  \return
+ *      The source buffer pointer if allocation succeeded,.<br>
+ *      Returns NULL if the buffer is full (or not big enough).
+ *  \see DMA_releaseTemp(..)
+ */
+void* DMA_allocateTemp(u16 len);
+/**
+ *  \brief
+ *      Tool method allowing to release memory previously allocated using #DMA_allocateTemp(..).<br>
+ *      <b>WARNING:</b> it's very important to disable interrupts while using the temporary DMA buffer as DMA buffer can be flushed on interrupt.
+ *
+ *  \param len
+ *      Number of word to release.
+ *  \see DMA_allocateTemp(..)
+ */
+void DMA_releaseTemp(u16 len);
+
+/**
+ *  \brief
  *      General method to transfer data to VDP memory.
  *
  *  \param tm
@@ -249,8 +312,7 @@ u32 DMA_getQueueTransferSize();
  *      By default you should set it to 2 for normal copy operation but you can use different value
  *      for specific operation.<br>
  *  \return
- *      The source buffer pointer that will be used for the DMA transfer so you can fill its content.<br>
- *      Returns NULL if the buffer is full or is the DMA queue operation failed (queue is full).
+ *      TRUE if the operation succeeded, FALSE otherwise (buffer or queue full).
  *  \see DMA_queueDMA(..)
  */
 bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u16 step);
@@ -278,7 +340,7 @@ bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u
  *      for specific operation.<br>
  *  \return
  *      The source buffer pointer that will be used for the DMA transfer so you can fill its content.<br>
- *      Returns NULL if the buffer is full or is the DMA queue operation failed (queue is full).
+ *      Returns NULL if the buffer is full or if the DMA queue operation failed (queue is full).
  *  \see DMA_queueDMA(..)
  */
 void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step);
