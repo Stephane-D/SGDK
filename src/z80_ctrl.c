@@ -26,7 +26,7 @@
 // we don't want to share it
 extern vu32 VIntProcess;
 
-s16 currentDriver;
+u16 currentDriver;
 u16 driverFlags;
 
 
