@@ -17,6 +17,9 @@
 
 
 // forward
+static void setTileMapData(u16 addr, const u16 *data, u16 step, u16 num, TransferMethod tm);
+static void setTileMapDataEx(u16 addr, const u16 *data, u16 basetile, u16 step, u16 num);
+
 static void setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm);
 static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm);
 static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
@@ -137,7 +140,7 @@ void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
 
     *plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
-    const u32 tile32 = (tile << 16) | tile;
+    const u32 tile32 = ((u32) tile << 16) | tile;
 
     i = num >> 3;
     while (i--)
@@ -154,59 +157,61 @@ void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
     while (i--) *pwdata = tile;
 }
 
-void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, TransferMethod tm)
+
+static void setTileMapData(u16 addr, const u16 *data, u16 step, u16 num, TransferMethod tm)
 {
-    DMA_transfer(tm, DMA_VRAM, (void*) data,  planeAddr + (ind * 2), num, 2);
+    DMA_transfer(tm, DMA_VRAM, (void*) data,  addr, num, step);
 }
 
-void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num)
+static void setTileMapDataEx(u16 addr, const u16 *data, u16 basetile, u16 step, u16 num)
 {
     vu32 *plctrl;
     vu16 *pwdata;
-    vu32 *pldata;
     const u16 *src;
-    const u32 *src32;
-    u32 addr;
     u16 baseinc;
     u16 baseor;
-    u32 bi32;
-    u32 bo32;
     u16 i;
 
-    VDP_setAutoInc(2);
+    VDP_setAutoInc(step);
 
     /* point to vdp port */
     plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
+    pwdata = (u16 *) GFX_DATA_PORT;
 
-    addr = planeAddr + (ind * 2);
+    *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
 
-    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
-
-    src32 = (u32*) data;
     // we can increment both index and palette
     baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
     // we can only do logical OR on priority and HV flip
     baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
-    bi32 = (baseinc << 16) | baseinc;
-    bo32 = (baseor << 16) | baseor;
 
+    src = (u16*) data;
     i = num >> 3;
     while (i--)
     {
-        *pldata = bo32 | (*src32++ + bi32);
-        *pldata = bo32 | (*src32++ + bi32);
-        *pldata = bo32 | (*src32++ + bi32);
-        *pldata = bo32 | (*src32++ + bi32);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
+        *pwdata = baseor | (*src++ + baseinc);
     }
-
-    pwdata = (u16 *) GFX_DATA_PORT;
-    src = (u16*) src32;
 
     i = num & 7;
     while (i--) *pwdata = baseor | (*src++ + baseinc);
 }
 
+void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, TransferMethod tm)
+{
+    setTileMapData(planeAddr + (ind * 2), data, 2, num, tm);
+}
+
+void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num)
+{
+    setTileMapDataEx(planeAddr + (ind * 2), data, basetile, 2, num);
+}
 
 void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y)
 {
@@ -221,7 +226,7 @@ void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y)
     // get address
     addr = getPlanAddress(plane, x, y);
 
-    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
+    *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
     *pwdata = tile;
 }
 
@@ -249,12 +254,12 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
     addr = getPlanAddress(plane, x, y);
     width = (plane == WINDOW)?windowWidth:planeWidth;
 
-    const u32 tile32 = (tile << 16) | tile;
+    const u32 tile32 = ((u32) tile << 16) | tile;
 
     i = h;
     while (i--)
     {
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr);
+        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
 
         j = w >> 3;
         while (j--)
@@ -294,7 +299,7 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
     i = h;
     while (i--)
     {
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr);
+        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
 
         j = w;
         while (j--) *pwdata = tile++;
@@ -494,20 +499,24 @@ static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetil
         // then prepare data in buffer that will be transfered by DMA
         prepareTileMapDataRowEx(buf, w, data, basetile);
     }
-    else
+    // DMA is interesting only for long transfer
+    else if ((tm == DMA) && (w > 16))
     {
         // allocate on DMA buffer
         u16* buf = DMA_allocateTemp(w);
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataRowEx(buf, w, data, basetile);
-
         // transfer the buffer data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, w, 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, w, 2);
+        DMA_doDma(DMA_VRAM, buf, addr, w, 2);
 
         // release allocated buffer
         DMA_releaseTemp(w);
+    }
+    else
+    {
+        // CPU copy
+        setTileMapDataEx(addr, data, basetile, 2, w);
     }
 }
 
@@ -598,20 +607,56 @@ static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column
         // then prepare data in buffer that will be transfered by DMA
         prepareTileMapDataColumn(buf, h, data, wm);
     }
-    else
+    // DMA is interesting only for long transfer
+    else if ((tm == DMA) && (h > 16))
     {
         // allocate on DMA buffer
         u16* buf = DMA_allocateTemp(h);
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataColumn(buf, h, data, wm);
-
         // transfer the temp data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
+        DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
 
         // release allocated buffer
         DMA_releaseTemp(h);
+    }
+    // CPU copy
+    else
+    {
+        vu32 *plctrl;
+        vu16 *pwdata;
+        const u16 *src;
+        u16 i;
+
+        VDP_setAutoInc(width * 2);
+
+        /* point to vdp port */
+        plctrl = (u32 *) GFX_CTRL_PORT;
+        pwdata = (u16 *) GFX_DATA_PORT;
+
+        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+
+        src = (u16*) data;
+        i = h >> 2;
+        while (i--)
+        {
+            *pwdata = *src;
+            src += wm;
+            *pwdata = *src;
+            src += wm;
+            *pwdata = *src;
+            src += wm;
+            *pwdata = *src;
+            src += wm;
+        }
+
+        i = h & 3;
+        while (i--)
+        {
+            *pwdata = *src;
+            src += wm;
+        }
     }
 }
 
@@ -635,20 +680,63 @@ static void setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 base
         // then prepare data in buffer that will be transfered by DMA
         prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
     }
-    else
+    // DMA is interesting only for long transfer
+    else if ((tm == DMA) && (h > 16))
     {
         // allocate on DMA buffer
         u16* buf = DMA_allocateTemp(h);
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
-
         // transfer the buffer data to VRAM
-        if (tm == DMA) DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
-        else DMA_doCPUCopy(DMA_VRAM, buf, addr, h, width * 2);
+        DMA_doDma(DMA_VRAM, buf, addr, h, width * 2);
 
         // release allocated buffer
         DMA_releaseTemp(h);
+    }
+    // CPU copy
+    else
+    {
+        vu32 *plctrl;
+        vu16 *pwdata;
+        const u16 *src;
+        u16 baseinc;
+        u16 baseor;
+        u16 i;
+
+        VDP_setAutoInc(width * 2);
+
+        /* point to vdp port */
+        plctrl = (u32 *) GFX_CTRL_PORT;
+        pwdata = (u16 *) GFX_DATA_PORT;
+
+        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+
+        // we can increment both index and palette
+        baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+        // we can only do logical OR on priority and HV flip
+        baseor = basetile & (TILE_ATTR_PRIORITY_MASK | TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
+
+        src = (u16*) data;
+        i = h >> 2;
+        while (i--)
+        {
+            *pwdata = baseor | (*src + baseinc);
+            src += wm;
+            *pwdata = baseor | (*src + baseinc);
+            src += wm;
+            *pwdata = baseor | (*src + baseinc);
+            src += wm;
+            *pwdata = baseor | (*src + baseinc);
+            src += wm;
+        }
+
+        i = h & 3;
+        while (i--)
+        {
+            *pwdata = baseor | (*src + baseinc);
+            src += wm;
+        }
     }
 }
 
