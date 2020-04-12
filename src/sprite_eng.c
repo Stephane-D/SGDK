@@ -1022,7 +1022,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
     if ((sprite->animInd != anim) || (sprite->seqInd != frame))
     {
 #if (LIB_DEBUG != 0)
-        if (anim >= sprite->definition->numAnimation)
+        if (anim >= (s16) sprite->definition->numAnimation)
         {
             KLog_U2("SPR_setAnimAndFrame: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
             return;
@@ -1032,7 +1032,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         Animation* animation = sprite->definition->animations[anim];
 
 #if (LIB_DEBUG != 0)
-        if (frame >= animation->length)
+        if (frame >= (s16) animation->length)
         {
             KLog_U3("SPR_setAnimAndFrame: error - trying to use non existing frame #", frame, " for animation #", anim, " - num frame = ", animation->length);
             return;
@@ -1070,7 +1070,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
     if (sprite->animInd != anim)
     {
 #if (LIB_DEBUG != 0)
-        if (anim >= sprite->definition->numAnimation)
+        if (anim >= (s16) sprite->definition->numAnimation)
         {
             KLog_U2("SPR_setAnim: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
             return;
@@ -1110,14 +1110,14 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
     if (sprite->seqInd != frame)
     {
 #if (LIB_DEBUG != 0)
-        if (frame >= sprite->animation->length)
+        if (frame >= (s16) sprite->animation->length)
         {
             KLog_U3("SPR_setFrame: error - trying to use non existing frame #", frame, " for animation #", sprite->animInd, " - num frame = ", sprite->animation->length);
             return;
         }
 #endif // LIB_DEBUG
 
-        const u16 frameInd = sprite->animation->sequence[frame];
+        const s16 frameInd = sprite->animation->sequence[frame];
 
         sprite->seqInd = frame;
 
@@ -1231,7 +1231,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
     }
 
     // VRAM tile index changed ?
-    if ((oldAttribut & TILE_INDEX_MASK) != newInd)
+    if ((oldAttribut & TILE_INDEX_MASK) != (u16) newInd)
     {
         sprite->attribut = (oldAttribut & TILE_ATTR_MASK) | newInd;
         // need to update 'attribut' field of sprite table
@@ -1304,7 +1304,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
 #endif // SPR_DEBUG
 
             // can't allocate ?
-            if (newInd == -1)
+            if (newInd < 0)
             {
                 // save status and return FALSE
                 sprite->status = status;
@@ -1321,7 +1321,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
     }
 
     // VDP sprite index changed ?
-    if (sprite->VDPSpriteIndex != newInd)
+    if (sprite->VDPSpriteIndex != (u16) newInd)
     {
         // set the VDP Sprite index for this sprite and do attached operation
         setVDPSpriteIndex(sprite, newInd, num);
@@ -1700,7 +1700,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
         const s16 y = sprite->y;
 
         // compute global visibility for sprite
-        if (((x + frame->w) > 0x80) && (x < (screenWidth + 0x80)) && ((y + frame->h) > 0x80) && (y < (screenHeight + 0x80)))
+        if (((x + frame->w) > (s16) 0x80) && (x < (s16) (screenWidth + 0x80)) && ((y + frame->h) > (s16) 0x80) && (y < (s16) (screenHeight + 0x80)))
             visibility = VISIBILITY_ON;
         else
             visibility = VISIBILITY_OFF;
