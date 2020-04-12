@@ -35,7 +35,7 @@ void VDP_setHorizontalScroll(VDPPlane plane, s16 value)
     addr = VDP_HSCROLL_TABLE;
     if (plane == BG_B) addr += 2;
 
-    *pl = GFX_WRITE_VRAM_ADDR(addr);
+    *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
     *pw = value;
 }
 
@@ -72,7 +72,7 @@ void VDP_setVerticalScroll(VDPPlane plane, s16 value)
     addr = 0;
     if (plane == BG_B) addr += 2;
 
-    *pl = GFX_WRITE_VSRAM_ADDR(addr);
+    *pl = GFX_WRITE_VSRAM_ADDR((u32) addr);
     *pw = value;
 }
 
