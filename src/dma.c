@@ -414,7 +414,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 
 bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 {
-    u32 fromAdr;
+    u32 fromAddr;
     u32 newLen;
     u32 bankLimitB;
     u32 bankLimitW;
@@ -433,14 +433,14 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 
 
     // DMA works on 64 KW bank
-    fromAdr = (u32) from;
-    bankLimitB = 0x20000 - (fromAdr & 0x1FFFF);
+    fromAddr = (u32) from;
+    bankLimitB = 0x20000 - (fromAddr & 0x1FFFF);
     bankLimitW = bankLimitB >> 1;
     // bank limit exceeded
     if (len > bankLimitW)
     {
         // we first do the second bank transfer
-        DMA_queueDma(location, (void*) (fromAdr + bankLimitB), to + bankLimitB, len - bankLimitW, step);
+        DMA_queueDma(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, step);
         newLen = bankLimitW;
     }
     // ok, use normal len
@@ -452,31 +452,31 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     // $14:len H  $13:len L (DMA length in word)
     info->regLen = ((newLen | (newLen << 8)) & 0xFF00FF) | 0x94009300;
     // $16:M  $f:step (DMA address M and Step register)
-    info->regAddrMStep = (((fromAdr << 7) & 0xFF0000) | 0x96008F00) + step;
+    info->regAddrMStep = (((fromAddr << 7) & 0xFF0000) | 0x96008F00) + step;
     // $17:H  $15:L (DMA address H & L)
-    info->regAddrHAddrL = ((fromAdr >> 1) & 0x7F00FF) | 0x97009500;
+    info->regAddrHAddrL = ((fromAddr >> 1) & 0x7F00FF) | 0x97009500;
 
     // Trigger DMA
     switch(location)
     {
     case DMA_VRAM:
-        info->regCtrlWrite = GFX_DMA_VRAM_ADDR(to);
+        info->regCtrlWrite = GFX_DMA_VRAM_ADDR((u32)to);
 #ifdef DMA_DEBUG
-        KLog_U4("DMA_queueDma: VRAM from=", fromAdr, " to=", to, " len=", len, " step=", step);
+        KLog_U4("DMA_queueDma: VRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
         break;
 
     case DMA_CRAM:
-        info->regCtrlWrite = GFX_DMA_CRAM_ADDR(to);
+        info->regCtrlWrite = GFX_DMA_CRAM_ADDR((u32)to);
 #ifdef DMA_DEBUG
-        KLog_U4("DMA_queueDma: CRAM from=", fromAdr, " to=", to, " len=", len, " step=", step);
+        KLog_U4("DMA_queueDma: CRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
         break;
 
     case DMA_VSRAM:
-        info->regCtrlWrite = GFX_DMA_VSRAM_ADDR(to);
+        info->regCtrlWrite = GFX_DMA_VSRAM_ADDR((u32)to);
 #ifdef DMA_DEBUG
-        KLog_U4("DMA_queueDma: VSRAM from=", fromAdr, " to=", to, " len=", len, " step=", step);
+        KLog_U4("DMA_queueDma: VSRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
         break;
     }
@@ -529,21 +529,21 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     vu16 *pw;
     vu16 *pwz;
     u32 cmd;
-    u32 fromAdr;
+    u32 fromAddr;
     u32 newLen;
     u32 bankLimitB;
     u32 bankLimitW;
     u16 z80restore;
 
     // DMA works on 64 KW bank
-    fromAdr = (u32) from;
-    bankLimitB = 0x20000 - (fromAdr & 0x1FFFF);
+    fromAddr = (u32) from;
+    bankLimitB = 0x20000 - (fromAddr & 0x1FFFF);
     bankLimitW = bankLimitB >> 1;
     // bank limit exceeded
     if (len > bankLimitW)
     {
         // we first do the second bank transfer
-        DMA_doDma(location, (void*) (fromAdr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
+        DMA_doDma(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
         newLen = bankLimitW;
     }
     // ok, use normal len
@@ -566,26 +566,26 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     *pw = 0x9400 + ((newLen >> 8) & 0xff);
 
     // Setup DMA address
-    fromAdr >>= 1;
-    *pw = 0x9500 + (fromAdr & 0xff);
-    fromAdr >>= 8;
-    *pw = 0x9600 + (fromAdr & 0xff);
-    fromAdr >>= 8;
-    *pw = 0x9700 + (fromAdr & 0x7f);
+    fromAddr >>= 1;
+    *pw = 0x9500 + (fromAddr & 0xff);
+    fromAddr >>= 8;
+    *pw = 0x9600 + (fromAddr & 0xff);
+    fromAddr >>= 8;
+    *pw = 0x9700 + (fromAddr & 0x7f);
 
     switch(location)
     {
     default:
     case DMA_VRAM:
-        cmd = GFX_DMA_VRAM_ADDR(to);
+        cmd = GFX_DMA_VRAM_ADDR((u32)to);
         break;
 
     case DMA_CRAM:
-        cmd = GFX_DMA_CRAM_ADDR(to);
+        cmd = GFX_DMA_CRAM_ADDR((u32)to);
         break;
 
     case DMA_VSRAM:
-        cmd = GFX_DMA_VSRAM_ADDR(to);
+        cmd = GFX_DMA_VSRAM_ADDR((u32)to);
         break;
     }
 
@@ -633,15 +633,15 @@ void DMA_doCPUCopy(u8 location, void* from, u16 to, u16 len, s16 step)
     {
     default:
     case DMA_VRAM:
-        cmd = GFX_WRITE_VRAM_ADDR(to);
+        cmd = GFX_WRITE_VRAM_ADDR((u32)to);
         break;
 
     case DMA_CRAM:
-        cmd = GFX_WRITE_CRAM_ADDR(to);
+        cmd = GFX_WRITE_CRAM_ADDR((u32)to);
         break;
 
     case DMA_VSRAM:
-        cmd = GFX_WRITE_VSRAM_ADDR(to);
+        cmd = GFX_WRITE_VSRAM_ADDR((u32)to);
         break;
     }
 
@@ -734,7 +734,7 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
 
     // Write VRam DMA destination address
     pl = (vu32*) GFX_CTRL_PORT;
-    *pl = GFX_DMA_VRAM_ADDR(to);
+    *pl = GFX_DMA_VRAM_ADDR((u32)to);
 
     // set up value to fill (need to be 16 bits extended)
     pw = (vu16*) GFX_DATA_PORT;
@@ -767,7 +767,7 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
 
     // Write VRam DMA destination address (start DMA copy operation)
     pl = (vu32*) GFX_CTRL_PORT;
-    *pl = GFX_DMA_VRAMCOPY_ADDR(to);
+    *pl = GFX_DMA_VRAMCOPY_ADDR((u32)to);
 }
 
 void DMA_waitCompletion()
