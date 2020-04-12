@@ -44,7 +44,7 @@
 
 // we don't want to share them
 extern u16 randbase;
-extern s16 currentDriver;
+extern u16 currentDriver;
 // size of text segment --> start of initialized data (RO)
 extern u32 _stext;
 // size of initialized data segment
@@ -884,13 +884,14 @@ fix32 SYS_getFPSAsFloat()
 
     if ((delta > 19200) && ((frameCnt > (76800 * 5)) || (delta > 76800)))
     {
-        if (frameCnt > (250 * 76800)) result = FIX32(999);
+        if (frameCnt > (250 * 76800)) result = FIX32((u32) 999);
         else
         {
             result = (frameCnt << FIX16_FRAC_BITS) / delta;
-            if (result > (999 << FIX16_FRAC_BITS)) result = FIX32(999);
+            if (result > (999 << FIX16_FRAC_BITS)) result = FIX32((u32)999);
             else result <<= (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
         }
+
         lastSubTick = current;
         frameCnt = 76800;
     }
