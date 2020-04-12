@@ -80,7 +80,7 @@ void XGM_startPlay(const u8 *song)
     {
         // sample address in sample bank data
         addr = song[(i * 4) + 0] << 8;
-        addr |= song[(i * 4) + 1] << 16;
+        addr |= ((u32) song[(i * 4) + 1]) << 16;
 
         // silent sample ? use null sample address
         if (addr == 0xFFFF00) addr = (u32) smp_null;
@@ -102,7 +102,7 @@ void XGM_startPlay(const u8 *song)
     addr = ((u32) song) + 0x100;
     // bypass sample data (use the sample data size)
     addr += song[0xFC] << 8;
-    addr += song[0xFD] << 16;
+    addr += ((u32) song[0xFD]) << 16;
     // and bypass the music data size field
     addr += 4;
 
@@ -525,7 +525,7 @@ u32 XGM_getElapsed()
     // re-enable ints
     SYS_enableInts();
 
-    result = (values[0] << 0) | (values[1] << 8) | (values[2] << 16);
+    result = (values[0] << 0) | (values[1] << 8) | ((u32) values[2] << 16);
 
     // fix possible 24 bit negative value (parsing first extra frame)
     if (result >= 0xFFFFF0) return 0;
@@ -582,7 +582,7 @@ u32 XGM_getCPULoad()
 
     load = 105 - (xgmIdleMean >> 5);
 
-    return load | ((xgmWaitMean >> 5) << 16);
+    return load | ((u32) (xgmWaitMean >> 5) << 16);
 }
 
 void XGM_resetLoadCalculation()
