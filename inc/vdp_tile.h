@@ -755,7 +755,7 @@ void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, 
  *      - WINDOW<br>
  *  \param data
  *      Prepared tile attributes data (see TILE_ATTR_FULL() macro).<br>
- *      Column data are already arranged to be transfered as a single contiguous data block.
+ *      Column data are already arranged to be transferred as a single contiguous data block.
  *  \param column
  *      Plane column we want to set data
  *  \param tm

@@ -496,7 +496,7 @@ static void setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetil
             return;
         }
 #endif
-        // then prepare data in buffer that will be transfered by DMA
+        // then prepare data in buffer that will be transferred by DMA
         prepareTileMapDataRowEx(buf, w, data, basetile);
     }
     // DMA is interesting only for long transfer
@@ -604,7 +604,7 @@ static void setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column
             return;
         }
 #endif
-        // then prepare data in buffer that will be transfered by DMA
+        // then prepare data in buffer that will be transferred by DMA
         prepareTileMapDataColumn(buf, h, data, wm);
     }
     // DMA is interesting only for long transfer
@@ -677,7 +677,7 @@ static void setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 base
             return;
         }
 #endif
-        // then prepare data in buffer that will be transfered by DMA
+        // then prepare data in buffer that will be transferred by DMA
         prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
     }
     // DMA is interesting only for long transfer

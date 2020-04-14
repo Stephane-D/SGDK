@@ -382,7 +382,7 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
         return NULL;
     }
 
-    // return buffer than will be fill by user before being transfered through the DMA queue
+    // return buffer than will be fill by user before being transferred through the DMA queue
     return result;
 }
 
@@ -483,7 +483,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 
     // pass to next index
     queueIndex++;
-    // keep trace of transfered size
+    // keep trace of transferred size
     queueTransferSize += newLen << 1;
 
 #ifdef DMA_DEBUG

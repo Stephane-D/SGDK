@@ -49,8 +49,8 @@ typedef enum
 {
     CPU = 0,            /**< Transfer through the CPU immediately (slower.. useful for testing purpose mainly) */
     DMA = 1,            /**< Transfer through DMA immediately, using DMA is faster but can lock Z80 execution */
-    DMA_QUEUE = 2,      /**< Put in the DMA queue so it will be transfered at next VBlank. Using DMA is faster but can lock Z80 execution */
-    DMA_QUEUE_COPY = 3  /**< Copy the buffer and put in the DMA queue so it will be transfered at next VBlank. Using DMA is faster but can lock Z80 execution */
+    DMA_QUEUE = 2,      /**< Put in the DMA queue so it will be transferred at next VBlank. Using DMA is faster but can lock Z80 execution */
+    DMA_QUEUE_COPY = 3  /**< Copy the buffer and put in the DMA queue so it will be transferred at next VBlank. Using DMA is faster but can lock Z80 execution */
 } TransferMethod;
 
 
@@ -95,7 +95,7 @@ void DMA_init();
  *      Depending the current selected strategy, furthers transfers can be ignored (by default all transfers are done whatever is the limit).
  *      See the #DMA_setIgnoreOverCapacity(..) method to change the strategy to adopt when capacity limit is reached.
  *  \param bufferSize
- *      Size of the buffer (in bytes) to store temporary data that will be transfered through the DMA queue (0 = default size = 8192 on NTSC and 14336 on PAL).<br>
+ *      Size of the buffer (in bytes) to store temporary data that will be transferred through the DMA queue (0 = default size = 8192 on NTSC and 14336 on PAL).<br>
  *      The buffer should be big enough to contains all temporary that you need to store before next #DMA_flushQueue() call.
  *
  *      SGDK automatically call this method on hard reset so you don't need to call it again unless
@@ -181,7 +181,7 @@ void DMA_setMaxTransferSizeToDefault();
 /**
  *  \brief
  *      Returns the size (in bytes) of the temporary data buffer which can be used to store data
- *      that will be transfered through the DMA queue.
+ *      that will be transferred through the DMA queue.
  *
  *  \see DMA_setBufferSize()
  */
@@ -189,7 +189,7 @@ u16 DMA_getBufferSize();
 /**
  *  \brief
  *      Sets the size (in bytes) of the temporary data buffer which can be used to store data
- *      that will be transfered through the DMA queue.<br>
+ *      that will be transferred through the DMA queue.<br>
  *      <b>WARNING:</b> changing the buffer size will clear the DMA queue.
  *
  *  \param value
@@ -236,7 +236,7 @@ void DMA_clearQueue();
  *  \brief
  *      Transfer the content of the DMA queue to the VDP:<br>
  *      Each pending DMA operation is sent to the VDP and processed as quickly as possible.<br>
- *      This method returns when all DMA operations present in the queue has been transfered (or when maximum capacity has been reached).<br>
+ *      This method returns when all DMA operations present in the queue has been transferred (or when maximum capacity has been reached).<br>
  *      Note that this method is automatically called at VBlank time and you shouldn't call yourself except if
  *      you want to process it before vblank (if you manually extend blank period with h-int for instance) in which case
  *      you can disable the auto flush feature (see DMA_setAutoFlush(...))
@@ -253,8 +253,8 @@ void DMA_flushQueue();
 u16 DMA_getQueueSize();
 /**
  *  \brief
- *      Returns the size (in byte) of data to be transfered currently present in the DMA queue.<br>
- *      NTSC frame allows about 7.6 KB of data to be transfered during VBlank (in H40) while
+ *      Returns the size (in byte) of data to be transferred currently present in the DMA queue.<br>
+ *      NTSC frame allows about 7.6 KB of data to be transferred during VBlank (in H40) while
  *      PAL frame allows about 17 KB (in H40).
  */
 u32 DMA_getQueueTransferSize();

@@ -9,13 +9,13 @@
  * The software bitmap engine permit to simulate a 256x160 pixels bitmap screen.<br>
  * Bitmap engine requires a large amount of memory (~41KB) which is dynamically allocated at BMP_init(..) time and released when BMP_end() is called.<br>
  * Bitmap engine uses a double buffer so you can draw to the write buffer while the read buffer is being sent to video memory.<br>
- * These buffers are transfered to VRAM during blank area, by default on NTSC system the blanking period is really short so it takes approximately 10 frames to blit an entire buffer.<br>
+ * These buffers are transferred to VRAM during blank area, by default on NTSC system the blanking period is really short so it takes approximately 10 frames to blit an entire buffer.<br>
  * To improve transfer performance the blank area is extended to fit bitmap resolution:<br>
  * scanline 0-31 = blank<br>
  * scanline 32-191 = active<br>
  * scanline 192-262/312 = blank<br>
  * <br>
- * With extended blank bitmap buffer can be transfered to VRAM 20 times per second in NTSC<br>
+ * With extended blank bitmap buffer can be transferred to VRAM 20 times per second in NTSC<br>
  * and 25 time per second in PAL.
  */
 
@@ -276,7 +276,7 @@ void BMP_reset();
  *      Enable back buffer preservation.
  *
  * The bitmap engine is always using double buffering in maim memory so you can continue to write your bitmap
- * while the previous bitmap is being transfered to video memory.<br>
+ * while the previous bitmap is being transferred to video memory.<br>
  * The problem with double buffer is that your content is not preserved on a frame basis as you have 2 differents buffers,
  * by enabling "buffer copy" you can preserve your bitmap but this has an important CPU cost as we need to copy bitmap buffer
  * at each flip operation.<br>
