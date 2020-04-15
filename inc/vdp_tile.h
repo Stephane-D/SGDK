@@ -378,6 +378,8 @@ void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num);
  *      Tile index where to start to set tilemap data.
  *  \param num
  *      Number of tile to set.
+ *  \param vramStep
+ *      VRAM address increment after each write (default value = 2)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -394,7 +396,7 @@ void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num);
  *  \see VDP_setTileMapDataEx().
  *  \see VDP_setTileMapDataRect().
  */
-void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, TransferMethod tm);
+void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, u16 vramStep, TransferMethod tm);
 /**
  *  \brief
  *      Set tilemap data at specified index (extended version).
@@ -413,6 +415,8 @@ void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, Transf
  *      Tile index where to start to set tilemap data.
  *  \param num
  *      Number of tile to set.
+ *  \param vramStep
+ *      VRAM address increment after each write (default value = 2).
  *
  *  Set the specified tilemap with specified tile attributes values.<br>
  *  Unlike #VDP_setTileMapData(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
@@ -422,8 +426,28 @@ void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, Transf
  *  \see VDP_setTileMapData()
  *  \see VDP_setTileMapDataRectEx()
  */
-void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num);
+void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num, u16 vramStep);
 
+/**
+ *  \brief
+ *      Set tilemap data (single position).
+ *
+ *  \param plane
+ *      Plane where we want to set tilemap data.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tile
+ *      tile attributes (see TILE_ATTR_FULL() and TILE_ATTR() macros).
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
+ *
+ *  Set the specified tilemap position (tilemap wrapping supported) with given tile attributes.
+ */
+void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y);
 /**
  *  \brief
  *      Clear specified region of tilemap.
@@ -504,26 +528,7 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h);
  *  \see also VDP_fillTileMapRect()
  */
 void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h);
-/**
- *  \brief
- *      Set tilemap data (single position).
- *
- *  \param plane
- *      Plane where we want to set tilemap data.<br>
- *      Accepted values are:<br>
- *      - BG_A<br>
- *      - BG_B<br>
- *      - WINDOW<br>
- *  \param tile
- *      tile attributes (see TILE_ATTR_FULL() and TILE_ATTR() macros).
- *  \param x
- *      X position (in tile).
- *  \param y
- *      y position (in tile).
- *
- *  Set the specified tilemap position (tilemap wrapping supported) with given tile attributes.
- */
-void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y);
+
 /**
  *  \brief
  *      Set tilemap data for specified region.
@@ -607,72 +612,6 @@ void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16
 
 /**
  *  \brief
- *      Set a complete row of tilemap data.
- *
- *  \param plane
- *      Plane where we want to set tilemap data.<br>
- *      Accepted values are:<br>
- *      - BG_A<br>
- *      - BG_B<br>
- *      - WINDOW<br>
- *  \param data
- *      Source tilemap data containing tile attributes (see TILE_ATTR_FULL() macro).
- *  \param row
- *      Plane row we want to set data
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
- *
- *  Set a complete row of tilemap data with given tile attributes values.
- *  You can use this method when you are using the 'mapbase' parameter on your resource definition to set the base attributes<br>
- *  (palette, priority and base tile index) so you don't need to provide them here.<br>
- *  This method is faster than using #VDP_setTileMapDataRowEx(..) which allow to override base tile attributes though the 'basetile' parameter.
- *
- *  \see VDP_setTileMapDataRowPart()
- *  \see VDP_setTileMapDataRowFast()
- *  \see VDP_setTileMapData()
- */
-void VDP_setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, TransferMethod tm);
-/**
- *  \brief
- *      Set a complete row of tilemap data.
- *
- *  \param plane
- *      Plane where we want to set tilemap data.<br>
- *      Accepted values are:<br>
- *      - BG_A<br>
- *      - BG_B<br>
- *      - WINDOW<br>
- *  \param data
- *      Source tilemap data containing tile attributes (see TILE_ATTR_FULL() macro).
- *  \param basetile
- *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
- *  \param row
- *      Plane row we want to set data
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
- *
- *  Set a complete row of tilemap data with given tile attributes values.<br>
- *  Unlike #VDP_setTileMapDataRow(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
- *  at the expense of more computation time. If you want faster tilemap processing (using #VDP_setTileMapDataRow(..)), you can use<br>
- *  the 'mapbase' parameter when declaring your IMAGE resource to set base tile attributes but then you have fixed/static tile allocation.
- *
- *  \see VDP_setTileMapDataColumnFast()
- *  \see VDP_setTileMapDataRow()
- *  \see VDP_setTileMapData()
- */
-void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, TransferMethod tm);
-/**
- *  \brief
  *      Set a row of tilemap data.
  *
  *  \param plane
@@ -688,7 +627,7 @@ void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 
  *  \param x
  *      Row X start position (in tile)
  *  \param w
- *      Row width (in tile)
+ *      Row width to update (in tile)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -705,7 +644,7 @@ void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 
  *  \see VDP_setTileMapDataRowPartEx()
  *  \see VDP_setTileMapDataRow()
  */
-void VDP_setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm);
+void VDP_setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm);
 /**
  *  \brief
  *      Set a row of tilemap data.
@@ -725,7 +664,7 @@ void VDP_setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, 
  *  \param x
  *      Row X start position (in tile)
  *  \param w
- *      Row width (in tile)
+ *      Row width to update (in tile)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -742,7 +681,7 @@ void VDP_setTileMapDataRowPart(VDPPlane plane, const u16 *data, u16 row, u16 x, 
  *  \see VDP_setTileMapDataRowPart()
  *  \see VDP_setTileMapDataRow()
  */
-void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm);
+void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm);
 /**
  *  \brief
  *      Set a complete column of pre-arranged tilemap data.
@@ -758,6 +697,10 @@ void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, 
  *      Column data are already arranged to be transfered as a single contiguous data block.
  *  \param column
  *      Plane column we want to set data
+ *  \param y
+ *      Column Y start position (in tile)
+ *  \param h
+ *      Column height to update (in tile)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -774,78 +717,7 @@ void VDP_setTileMapDataRowPartEx(VDPPlane plane, const u16 *data, u16 basetile, 
  *  \see VDP_setTileMapDataColumn()
  *  \see VDP_setTileMapData()
  */
-void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, TransferMethod tm);
-/**
- *  \brief
- *      Set a complete column of tilemap data.
- *
- *  \param plane
- *      Plane where we want to set tilemap data.<br>
- *      Accepted values are:<br>
- *      - BG_A<br>
- *      - BG_B<br>
- *      - WINDOW<br>
- *  \param data
- *      Source tilemap data containing tile attributes (see TILE_ATTR_FULL() macro).
- *  \param column
- *      Plane column we want to set data
- *  \param wm
- *      Source tilemap width (in tile).
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
- *
- *  Set a complete column of tilemap data with given tile attributes values.<br>
- *  You can use this method when you are using the 'mapbase' parameter on your resource definition to set the base tile attributes<br>
- *  (palette, priority and base tile index) so you don't need to provide them here.<br>
- *  This method is faster than using #VDP_setTileMapDataColumnEx(..) which allow to override base tile attributes though the 'basetile' parameter.
- *
- *  \see VDP_setTileMapDataColumnPart()
- *  \see VDP_setTileMapDataColumnFast()
- *  \see VDP_setTileMapDataRow()
- *  \see VDP_setTileMapData()
- */
-void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 wm, TransferMethod tm);
-/**
- *  \brief
- *      Set a complete column of tilemap data.
- *
- *  \param plane
- *      Plane where we want to set tilemap data.<br>
- *      Accepted values are:<br>
- *      - BG_A<br>
- *      - BG_B<br>
- *      - WINDOW<br>
- *  \param data
- *      Source tilemap data containing tile attributes (see TILE_ATTR_FULL() macro).
- *  \param basetile
- *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
- *  \param column
- *      Plane column we want to set data
- *  \param wm
- *      Source tilemap width (in tile).
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
- *
- *  Set a complete column of tilemap data with given tile attributes values.<br>
- *  Unlike #VDP_setTileMapDataColumn(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
- *  at the expense of more computation time. If you want faster tilemap processing (using #VDP_setTileMapDataColumn(..)), you can use<br>
- *  the 'mapbase' parameter when declaring your IMAGE resource to set base tile attributes but then you have fixed/static tile allocation.
- *
- *  \see VDP_setTileMapDataColumn()
- *  \see VDP_setTileMapDataColumnFast()
- *  \see VDP_setTileMapData()
- */
-void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 wm, TransferMethod tm);
+void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, u16 y, u16 h, TransferMethod tm);
 /**
  *  \brief
  *      Set a column of tilemap data.
@@ -863,7 +735,7 @@ void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u
  *  \param y
  *      Column Y start position (in tile)
  *  \param h
- *      Column height (in tile)
+ *      Column height to update (in tile)
  *  \param wm
  *      Source tilemap width (in tile).
  *  \param tm
@@ -882,7 +754,7 @@ void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u
  *  \see VDP_setTileMapDataColumnPartEx()
  *  \see VDP_setTileMapDataColumn()
  */
-void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
+void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
 /**
  *  \brief
  *      Set a column of tilemap data.
@@ -902,7 +774,7 @@ void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u
  *  \param y
  *      Column Y start position (in tile)
  *  \param h
- *      Column height (in tile)
+ *      Column height to update (in tile)
  *  \param wm
  *      Source tilemap width (in tile).
  *  \param tm
@@ -922,7 +794,7 @@ void VDP_setTileMapDataColumnPart(VDPPlane plane, const u16 *data, u16 column, u
  *  \see VDP_setTileMapDataColumnEx()
  *  \see VDP_setTileMapData()
  */
-void VDP_setTileMapDataColumnPartEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
+void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
 
 /**
  *  \brief
@@ -1020,6 +892,8 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
  *      Plane row we want to set data
  *  \param x
  *      Source tilemap X start position (in tile).
+ *  \param w
+ *      Row width to update (in tile)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -1037,41 +911,7 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
  *  \see VDP_setMapColumn()
  *  \see VDP_setTileMapDataRow()
  */
-bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, TransferMethod tm);
-/**
- *  \brief
- *      Load tilemap column.
- *
- *  \param plane
- *      Plane where we want to load tilemap.<br>
- *      Accepted values are:<br>
- *      - BG_A<br>
- *      - BG_B<br>
- *      - WINDOW<br>
- *  \param tilemap
- *      Source tilemap to set column from.
- *  \param column
- *      Plane column we want to set data
- *  \param y
- *      Source tilemap Y start position (in tile).
- *  \param tm
- *      Transfer method.<br>
- *      Accepted values are:<br>
- *      - CPU<br>
- *      - DMA<br>
- *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
- *
- *  Load a complete column of data from tilemap at equivalent plane position (wrapped around if needed).<br>
- *  You can use this method when you are using the 'mapbase' parameter on your resource definition to set the base attributes<br>
- *  (palette, priority and base tile index) so you don't need to provide them here.<br>
- *  This method is faster than using #VDP_setTileMapColumnEx(..) which allow to override base tile attributes though the 'basetile' parameter.
- *
- *  \see VDP_setTileMapColumnEx()
- *  \see VDP_setMapRow()
- *  \see VDP_setTileMapDataColumn()
- */
-bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u16 y, TransferMethod tm);
+bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u16 w, TransferMethod tm);
 /**
  *  \brief
  *      Load tilemap row (extended version).
@@ -1092,6 +932,8 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
  *      Source tilemap X start position (in tile)
  *  \param y
  *      Source tilemap Y / row position (in tile), can be different that plane row if desired.
+ *  \param w
+ *      Row width to update (in tile)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -1109,7 +951,43 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
  *  \see VDP_setMapColumnEx()
  *  \see VDP_setTileMapDataRowEx()
  */
-bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 row, u16 x, u16 y, TransferMethod tm);
+bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 row, u16 x, u16 y, u16 w, TransferMethod tm);
+/**
+ *  \brief
+ *      Load tilemap column.
+ *
+ *  \param plane
+ *      Plane where we want to load tilemap.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param tilemap
+ *      Source tilemap to set column from.
+ *  \param column
+ *      Plane column we want to set data
+ *  \param y
+ *      Source tilemap Y start position (in tile).
+ *  \param h
+ *      Column height to update (in tile)
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  Load a complete column of data from tilemap at equivalent plane position (wrapped around if needed).<br>
+ *  You can use this method when you are using the 'mapbase' parameter on your resource definition to set the base attributes<br>
+ *  (palette, priority and base tile index) so you don't need to provide them here.<br>
+ *  This method is faster than using #VDP_setTileMapColumnEx(..) which allow to override base tile attributes though the 'basetile' parameter.
+ *
+ *  \see VDP_setTileMapColumnEx()
+ *  \see VDP_setMapRow()
+ *  \see VDP_setTileMapDataColumn()
+ */
+bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u16 y, u16 h, TransferMethod tm);
 /**
  *  \brief
  *      Load tilemap column (extended version).
@@ -1130,6 +1008,8 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
  *      Source tilemap X / column position (in tile), can be different than plane column if desired.
  *  \param y
  *      Source tilemap Y start position (in tile).
+ *  \param h
+ *      Column height to update (in tile)
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -1147,7 +1027,7 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
  *  \see VDP_setMapRowEx()
  *  \see VDP_setTileMapDataColumnEx()
  */
-bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 column, u16 x, u16 y, TransferMethod tm);
+bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 column, u16 x, u16 y, u16 h, TransferMethod tm);
 
 /**
  *  \deprecated
