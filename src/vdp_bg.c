@@ -158,7 +158,7 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
     while(i--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
 
-    VDP_setTileMapDataRowPartEx(plane, data, text_basetile, y, x, len, CPU);
+    VDP_setTileMapDataRowEx(plane, data, text_basetile, y, x, len, CPU);
 }
 
 void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w)
