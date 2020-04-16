@@ -23,7 +23,7 @@ public class BinProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong BIN definition");
-            System.out.println("BIN name file [align [salign [fill [far]]]]");
+            System.out.println("BIN name file [align [salign [fill [compression [far]]]]]");
             System.out.println("  name          BIN data variable name");
             System.out.println("  file          path of the data file to convert to binary data array");
             System.out.println("  align         memory address alignment for generated data array (default is 2)");
