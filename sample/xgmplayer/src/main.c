@@ -221,7 +221,7 @@ int main()
     VDP_setWindowHPos(FALSE, 0);
     VDP_setWindowVPos(FALSE, 13);
     // by default we draw text in window plan and in high priority
-    VDP_setTextPlan(WINDOW);
+    VDP_setTextPlane(WINDOW);
     VDP_setTextPriority(TRUE);
 
     // clear HScroll table
@@ -646,24 +646,24 @@ static void drawPlayerControls()
     if (buttonsPressed & BUTTON_START)
     {
         // DPad control
-        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40 + 7, 6, 7, 6);
+        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40 + 7, 6, 7, 6, CPU);
 
         // not playing
         if ((trackPlayed == -1) || paused)
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2), 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2), 0, 7, 6, CPU);
         else
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2) + 7, 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2) + 7, 0, 7, 6, CPU);
     }
     else
     {
         // DPad control
-        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40, 6, 7, 6);
+        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40, 6, 7, 6, CPU);
 
         // not playing
         if ((trackPlayed == -1) || paused)
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21, 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21, 0, 7, 6, CPU);
         else
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + 7, 0, 7, 6);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + 7, 0, 7, 6, CPU);
     }
 
     SYS_enableInts();
@@ -685,12 +685,12 @@ static void drawPlayerSettings()
 
     VDP_drawText(tempoStr, 17, 4);
     // refresh shuffle state
-    if (shuffle) VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 25, 6, 2, 1);
-    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 23, 6, 2, 1);
+    if (shuffle) VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 25, 6, 2, 1, CPU);
+    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 23, 6, 2, 1, CPU);
     // refresh loop state
     if (loop != MAX_LOOP) VDP_drawText(loopStr, 18, 6);
     // use infinite symbol from original image
-    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 18, 6, 21, 6, 2, 1);
+    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 18, 6, 21, 6, 2, 1, CPU);
 
     SYS_enableInts();
 }
@@ -907,7 +907,7 @@ static void drawPlayList()
     u16 num;
 
     // play list is draw in plan A to use scrolling capabilities
-    VDP_setTextPlan(BG_A);
+    VDP_setTextPlane(BG_A);
 
     planInd = trackIndexList - 3;
     trackInd = planInd % numMusic;
@@ -924,7 +924,7 @@ static void drawPlayList()
     }
 
     // restore previous value
-    VDP_setTextPlan(WINDOW);
+    VDP_setTextPlane(WINDOW);
 }
 
 static void drawShortTrackInfo(s16 planIndex, u16 index)
