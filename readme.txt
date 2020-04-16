@@ -1,5 +1,5 @@
-SGDK 1.41 (september 2019)
-Copyright 2019 Stephane Dallongeville
+SGDK 1.5 (april 2020)
+Copyright 2020 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK
 Github: https://github.com/Stephane-D/SGDK
 
@@ -21,12 +21,12 @@ First, you need to know that SGDK uses C language (assembly is also possible) so
 It's also important to understand how the Sega Megadrive works internally (specifically the video system) so i recommend you to read documents about the Sega Megadrive hardware and development.
 For that you can visit Mega Cat Studios Sega Megadrive graphics guide page:
 https://megacatstudios.com/blogs/press/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
-You can also check Sik's web site which is more dedicated to assembly programming but explain a lot about the Sega Megadrive hardware:
+You can also check Sik's web site which is more dedicated to assembly programming but explain a lot (and nicely) about the Sega Megadrive hardware:
 https://plutiedev.com/
 
 Then when you feel ready you can go further and finally install SGDK :)
 
-You can find installation instructions about how use SGDK on this page but be careful, the tutorials are incomplete / outdated:
+You can find installation instructions about how use SGDK on this page but be careful, some of these tutorials are incomplete or outdated:
 https://github.com/Stephane-D/SGDK/wiki
 
 I plan to complete tutorials in future but in the meantime i strongly suggest you to have a look on the available samples instead in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
@@ -37,7 +37,7 @@ You also have the great ones from Danibus (spanish only):
 https://danibus.wordpress.com/
 
 SGDK comes with a doxygen documentation that you can find in the 'doc' directory: doc/html/files.html
-This documentation is generated from header files (.h) which provides basic information about SGDK structures and functions.
+This documentation is generated from header files (.h) which provides information about SGDK structures and functions description.
 
 
 HELP AND SUPPORT
