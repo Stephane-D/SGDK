@@ -631,18 +631,18 @@ void DMA_doCPUCopy(u8 location, void* from, u16 to, u16 len, s16 step)
 
     switch(location)
     {
-    default:
-    case DMA_VRAM:
-        cmd = GFX_WRITE_VRAM_ADDR((u32)to);
-        break;
+        default:
+        case DMA_VRAM:
+            cmd = GFX_WRITE_VRAM_ADDR((u32)to);
+            break;
 
-    case DMA_CRAM:
-        cmd = GFX_WRITE_CRAM_ADDR((u32)to);
-        break;
+        case DMA_CRAM:
+            cmd = GFX_WRITE_CRAM_ADDR((u32)to);
+            break;
 
-    case DMA_VSRAM:
-        cmd = GFX_WRITE_VSRAM_ADDR((u32)to);
-        break;
+        case DMA_VSRAM:
+            cmd = GFX_WRITE_VSRAM_ADDR((u32)to);
+            break;
     }
 
     DMA_doCPUCopyDirect(cmd, from, len, step);
