@@ -388,13 +388,6 @@
 #define GET_VCOUNTER                (GET_HVCOUNTER >> 8)
 
 
-///**
-// * Internal use
-// */
-//#define CONST_BG_A                  0
-//#define CONST_BG_B                  1
-//#define CONST_WINDOW                2
-
 /**
  *  \brief
  *      Type used to define on which plane to work (used by some methods).
@@ -466,23 +459,6 @@ extern u16 planeHeightSft;
  *  Possible values are: 5 or 6 (corresponding to window width 32 or 64)
  */
 extern u16 windowWidthSft;
-
-
-///**
-// *  \brief
-// *      Constant to represent VDP background A plane (used by some methods)
-// */
-//extern const VDPPlane BG_A;
-///**
-// *  \brief
-// *      Constant to represent VDP background B plane (used by some methods)
-// */
-//extern const VDPPlane BG_B;
-///**
-// *  \brief
-// *      Constant to represent VDP window plane (used by some methods)
-// */
-//extern const VDPPlane WINDOW;
 
 
 /**
