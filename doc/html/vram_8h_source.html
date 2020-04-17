@@ -95,16 +95,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00169"></a>00169 } <a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a>;
 <a name="l00170"></a>00170 
 <a name="l00171"></a>00171 
-<a name="l00188"></a>00188 <span class="keywordtype">void</span> VRAM_createRegion(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> startIndex, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
-<a name="l00200"></a>00200 <span class="keywordtype">void</span> VRAM_releaseRegion(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
-<a name="l00208"></a>00208 <span class="keywordtype">void</span> VRAM_clearRegion(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
+<a name="l00188"></a>00188 <span class="keywordtype">void</span> <a class="code" href="vram_8h.html#a2795a9111d2279db5058cd6a32b54b44" title="Initialize a new VRAM region structure.">VRAM_createRegion</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> startIndex, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00200"></a>00200 <span class="keywordtype">void</span> <a class="code" href="vram_8h.html#ac1cc483e4d46c52e801f44311baf4c3b" title="Release the VRAM region structure.">VRAM_releaseRegion</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
+<a name="l00208"></a>00208 <span class="keywordtype">void</span> <a class="code" href="vram_8h.html#a0c58ecb5bffe20e635a1576195520180" title="Release all allocations from specified VRAM region.">VRAM_clearRegion</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
 <a name="l00209"></a>00209 
-<a name="l00219"></a>00219 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VRAM_getFree(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
-<a name="l00229"></a>00229 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VRAM_getAllocated(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
-<a name="l00239"></a>00239 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VRAM_getLargestFreeBlock(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
+<a name="l00219"></a>00219 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vram_8h.html#a4b7c7c2d93c8add4959bb878d889cfa9" title="Return the number of free tile remaining in the specified VRAM region.">VRAM_getFree</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
+<a name="l00229"></a>00229 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vram_8h.html#ad4c2a32ffe22a8b4e085c43b8b48c895" title="Return the number of allocated tile in the specified VRAM region.">VRAM_getAllocated</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
+<a name="l00239"></a>00239 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vram_8h.html#a60f670e7c071ee25996d87c0d9565f65" title="Return the largest free block index in the specified VRAM region.">VRAM_getLargestFreeBlock</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region);
 <a name="l00240"></a>00240 
-<a name="l00255"></a>00255 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> VRAM_alloc(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
-<a name="l00267"></a>00267 <span class="keywordtype">void</span> VRAM_free(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index);
+<a name="l00255"></a>00255 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="vram_8h.html#aa38eb68653103ca3124e6785c66f75eb" title="Try to allocate the specified number of tile in the given VRAM region and return its index...">VRAM_alloc</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00267"></a>00267 <span class="keywordtype">void</span> <a class="code" href="vram_8h.html#a98374c886ffbdf6c5a177f774c1cd0d7" title="Release the previously allocated VRAM block at specified index in the given VRAM region. ">VRAM_free</a>(<a class="code" href="struct_v_r_a_m_region.html" title="VRAM region structure.">VRAMRegion</a> *region, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index);
 <a name="l00268"></a>00268 
 <a name="l00269"></a>00269 
 <a name="l00270"></a>00270 <span class="preprocessor">#endif // _VRAM_H_</span>
@@ -113,7 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vram_8h.html">vram.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:28:24 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

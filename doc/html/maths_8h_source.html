@@ -372,12 +372,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00584"></a><a class="code" href="maths_8h.html#a490a7024c908e3aabcd1d791f58a6e5a">00584</a> <span class="keyword">typedef</span> <a class="code" href="struct_mat4_d__f16.html" title="4x4 Matrice structure - f16 (fix16) type.  Internally uses 4 4D vectors.">Mat4D_f16</a> <a class="code" href="maths_8h.html#a490a7024c908e3aabcd1d791f58a6e5a" title="alias for Mat4D_f16">M4f16</a>;
 <a name="l00588"></a><a class="code" href="maths_8h.html#aeac8a64a5efe395e859f0f67a16c4d3f">00588</a> <span class="keyword">typedef</span> <a class="code" href="struct_mat4_d__f32.html" title="4x4 Matrice structure - f32 (fix32) type.  Internally uses 4 4D vectors.">Mat4D_f32</a> <a class="code" href="maths_8h.html#aeac8a64a5efe395e859f0f67a16c4d3f" title="alias for Mat4D_f32">M4f32</a>;
 <a name="l00589"></a>00589 
-<a name="l00597"></a>00597 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> intToBCD(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
+<a name="l00597"></a>00597 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#abbbce15df0c9773582c24e76d9435d1e" title="Binary to Decimal conversion.">intToBCD</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
 <a name="l00598"></a>00598 
-<a name="l00603"></a>00603 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> distance_approx(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
-<a name="l00614"></a>00614 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getApproximatedDistance(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
-<a name="l00625"></a>00625 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> getApproximatedLog2(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value);
-<a name="l00636"></a>00636 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> getLog2Int(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
+<a name="l00603"></a>00603 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#a45eb4a206ea2f7aaaa20991f866f58c3">distance_approx</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
+<a name="l00614"></a>00614 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
+<a name="l00625"></a>00625 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> <a class="code" href="maths_8h.html#a106adf2151130b0e25436de93ca1b0d5" title="Return 16.16 fixed point *approximation* of log2 of the specified 16.16 fixed point value...">getApproximatedLog2</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value);
+<a name="l00636"></a>00636 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="maths_8h.html#ab64f8020bfca041933a4686f83b22567" title="Return integer log2 of specified 32 bits unsigned value. Ex:  getLog2Int(1024) = 10  getLog2Int(12345...">getLog2Int</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
 <a name="l00637"></a>00637 
 <a name="l00638"></a>00638 
 <a name="l00639"></a>00639 <span class="preprocessor">#endif // _MATHS_H_</span>
@@ -386,7 +386,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="maths_8h.html">maths.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:28:24 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

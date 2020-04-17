@@ -93,14 +93,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00030"></a>00030 <span class="preprocessor"></span><span class="preprocessor">#define SRAM_BASE       0x200001</span>
 <a name="l00031"></a>00031 <span class="preprocessor"></span>
 <a name="l00032"></a>00032 
-<a name="l00037"></a>00037 <span class="keywordtype">void</span> SRAM_enable();
-<a name="l00042"></a>00042 <span class="keywordtype">void</span> SRAM_enableRO();
-<a name="l00047"></a>00047 <span class="keywordtype">void</span> SRAM_disable();
+<a name="l00037"></a>00037 <span class="keywordtype">void</span> <a class="code" href="sram_8h.html#a75265203d0aa39f67c7685a369f4e759" title="Enable SRAM in Read Write mode.">SRAM_enable</a>();
+<a name="l00042"></a>00042 <span class="keywordtype">void</span> <a class="code" href="sram_8h.html#a85af727d0f18baf19dcaf7801d8f53f6" title="Enable SRAM in Read Only mode.">SRAM_enableRO</a>();
+<a name="l00047"></a>00047 <span class="keywordtype">void</span> <a class="code" href="sram_8h.html#a43ee574e45e21b336391a401f9dc55c2" title="Disable SRAM.">SRAM_disable</a>();
 <a name="l00048"></a>00048 
-<a name="l00057"></a>00057 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> SRAM_readByte(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset);
+<a name="l00057"></a>00057 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="sram_8h.html#ac9e9143f9a87474bf5769c5b2d069fbe" title="Read a byte from the SRAM.">SRAM_readByte</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset);
 <a name="l00066"></a>00066 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sram_8h.html#a06936e1b0adb2ebebff8ada5803e6431" title="Read a word from the SRAM.">SRAM_readWord</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset);
 <a name="l00075"></a>00075 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="sram_8h.html#a33ebdffe1c17bdae978175bc8072c425" title="Read a long from the SRAM.">SRAM_readLong</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset);
-<a name="l00085"></a>00085 <span class="keywordtype">void</span> SRAM_writeByte(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> val);
+<a name="l00085"></a>00085 <span class="keywordtype">void</span> <a class="code" href="sram_8h.html#aadd1e635ee738b32f44d5d6c7b72b3bb" title="Write a byte to the SRAM.">SRAM_writeByte</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> val);
 <a name="l00095"></a>00095 <span class="keywordtype">void</span> <a class="code" href="sram_8h.html#a223418ddc25a497f633a55d6301ddd3d" title="Write a word to the SRAM.">SRAM_writeWord</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> val);
 <a name="l00105"></a>00105 <span class="keywordtype">void</span> <a class="code" href="sram_8h.html#af2807977028bbcfe0061c15391d8b2a2" title="Write a long to the SRAM.">SRAM_writeLong</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> offset, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> val);
 <a name="l00106"></a>00106 
@@ -111,7 +111,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sram_8h.html">sram.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:28:24 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
