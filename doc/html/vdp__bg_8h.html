@@ -86,7 +86,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 
-<p>VDP background plan support.  
+<p>VDP background plane support.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="bmp_8h_source.html">bmp.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="vdp_8h_source.html">vdp.h</a>&quot;</code><br/>
@@ -97,50 +97,50 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_image.html">Image</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure which contains all data to define an image in a background plan.<br/>
- Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure.  <a href="struct_image.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure which contains all data to define an image in a background plane.<br/>
+ Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure.  <a href="struct_image.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a27f90d94ed7cf9be6f99a05a6f327b9d">VDP_setHorizontalScroll</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plan horizontal scroll (plain scroll mode).<br/>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#af0baa5635019a6b2fbde12e26ea05cc0">VDP_setHorizontalScroll</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane horizontal scroll (plain scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
-  <a href="#a27f90d94ed7cf9be6f99a05a6f327b9d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ab248ca10634033609e7c5c0e2c552a80">VDP_setHorizontalScrollTile</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> tile, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plan horizontal scroll (tile scroll mode).<br/>
+  <a href="#af0baa5635019a6b2fbde12e26ea05cc0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a1112424bede68bddd1ed72cb317e6263">VDP_setHorizontalScrollTile</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> tile, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane horizontal scroll (tile scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
-  <a href="#ab248ca10634033609e7c5c0e2c552a80"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a290adc9522bacdec454f731f87e7f32f">VDP_setHorizontalScrollLine</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> line, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plan horizontal scroll (line scroll mode).<br/>
+  <a href="#a1112424bede68bddd1ed72cb317e6263"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#aa5fa5eb1cd66609521bb31de9bbe1a9f">VDP_setHorizontalScrollLine</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> line, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane horizontal scroll (line scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
-  <a href="#a290adc9522bacdec454f731f87e7f32f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a6c07a01efecc127d2790957c26326435">VDP_setVerticalScroll</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plan vertical scroll (plain scroll mode). 2 vertical scroll modes are supported:<br/>
-  <a href="#a6c07a01efecc127d2790957c26326435"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a1f4b555a6bf31930a9af9ba5005b642c">VDP_setVerticalScrollTile</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> tile, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plan vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported:<br/>
-  <a href="#a1f4b555a6bf31930a9af9ba5005b642c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a089c3ba719219330004eef2e9b00f3df">VDP_clearPlan</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> wait)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear specified plan.  <a href="#a089c3ba719219330004eef2e9b00f3df"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a6be50fc2925e88ef71705ade53cf53c4">VDP_getTextPlan</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the plan used to display text.  <a href="#a6be50fc2925e88ef71705ade53cf53c4"></a><br/></td></tr>
+  <a href="#aa5fa5eb1cd66609521bb31de9bbe1a9f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a409223c220fd59440b2ee49b843e589f">VDP_setVerticalScroll</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane vertical scroll (plain scroll mode). 2 vertical scroll modes are supported:<br/>
+  <a href="#a409223c220fd59440b2ee49b843e589f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a4e71b64bebe1c5b15b381a2314a010ec">VDP_setVerticalScrollTile</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> tile, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported:<br/>
+  <a href="#a4e71b64bebe1c5b15b381a2314a010ec"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a6ebe539bda71201c506e58f8d72dee54">VDP_clearPlane</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> wait)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear specified plane (using DMA).  <a href="#a6ebe539bda71201c506e58f8d72dee54"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a8f81de23de3154856710e9ad776d13cb">VDP_getTextPlane</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the plane used to display text.  <a href="#a8f81de23de3154856710e9ad776d13cb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#aa59e24e45a57dfcae290010fd8907deb">VDP_getTextPalette</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the palette number used to display text.  <a href="#aa59e24e45a57dfcae290010fd8907deb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a5ab1cfa144a3a480dfd9537d5a0997b7">VDP_getTextPriority</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the priority used to display text.  <a href="#a5ab1cfa144a3a480dfd9537d5a0997b7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ad9c7c8c4b7d73cb362772970ab75eb67">VDP_setTextPlan</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the plan to use to display text.  <a href="#ad9c7c8c4b7d73cb362772970ab75eb67"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a9d201c78a244418a0465942646a9490a">VDP_setTextPlane</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the plane to use to display text.  <a href="#a9d201c78a244418a0465942646a9490a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ad3317b01c16004cc0489e7c8029a3cc1">VDP_setTextPalette</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> palette)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the palette to use to display text.  <a href="#ad3317b01c16004cc0489e7c8029a3cc1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a51815b0c060464bfcd80706fbaf6a8d2">VDP_setTextPriority</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> prio)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the priority to use to display text.  <a href="#a51815b0c060464bfcd80706fbaf6a8d2"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a709e7255abd15dea14dd8072859b182c">VDP_drawTextBG</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, const char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw text in specified plan.  <a href="#a709e7255abd15dea14dd8072859b182c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a88ec51ab9c5848af887fb1b508b2ab58">VDP_clearTextBG</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a single line portion of text.  <a href="#a88ec51ab9c5848af887fb1b508b2ab58"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a1304c713bb92e0992f2a2dcc348be06d">VDP_clearTextAreaBG</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a specific area of text.  <a href="#a1304c713bb92e0992f2a2dcc348be06d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ac12e718e1a967c6e6cf58183f2e15b63">VDP_clearTextLineBG</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a complete line of text.  <a href="#ac12e718e1a967c6e6cf58183f2e15b63"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ae9ad3c440665d1497ed937906b0750c6">VDP_drawTextBG</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw text in specified plane.  <a href="#ae9ad3c440665d1497ed937906b0750c6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a0c743b5e67653611835bb58e6e40b4a0">VDP_clearTextBG</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a single line portion of text.  <a href="#a0c743b5e67653611835bb58e6e40b4a0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a3f108e4ab202dda31bafb4527614cdb0">VDP_clearTextAreaBG</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a specific area of text.  <a href="#a3f108e4ab202dda31bafb4527614cdb0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a53167807a30810223d3c5019d1a32af4">VDP_clearTextLineBG</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a complete line of text.  <a href="#a53167807a30810223d3c5019d1a32af4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ab04cf06289b7bae2085ac485d7cb3dd2">VDP_drawText</a> (const char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw text.  <a href="#ab04cf06289b7bae2085ac485d7cb3dd2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#afae295449d30870463b539cd2e4266a0">VDP_clearText</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w)</td></tr>
@@ -149,43 +149,43 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a specific area of text.  <a href="#ab3d7660973c1c0dd02feef59cddac3a5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a82a31cf678c43308b8f4964b0acda6bf">VDP_clearTextLine</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a complete line of text.  <a href="#a82a31cf678c43308b8f4964b0acda6bf"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a6c6d90287c7dc7a86ec4677e2ca7f353">VDP_drawBitmap</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plan and at given position.  <a href="#a6c6d90287c7dc7a86ec4677e2ca7f353"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a2d0414bc4f747f8dd5e4701b0ed8ec9e">VDP_drawBitmapEx</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plan and at given position.  <a href="#a2d0414bc4f747f8dd5e4701b0ed8ec9e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a8fedade3c5aa833c8f82177db8d4de5c">VDP_drawImage</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> in specified background plan and at given position.  <a href="#a8fedade3c5aa833c8f82177db8d4de5c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a748f5c452f507a79c0250491d65c7f96">VDP_drawImageEx</a> (<a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> plan, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> at the specified plan position.  <a href="#a748f5c452f507a79c0250491d65c7f96"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#afffdc71840c43eb607de08c2f20987f5">VDP_drawBitmap</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position.  <a href="#afffdc71840c43eb607de08c2f20987f5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a8a44a02e42d69be6fb11d270733764dc">VDP_drawBitmapEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position.  <a href="#a8a44a02e42d69be6fb11d270733764dc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a46631e6061ffcb81e7b485cbfa3aba03">VDP_drawImage</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (using DMA) in specified background plane and at given position.  <a href="#a46631e6061ffcb81e7b485cbfa3aba03"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a721950dd11157a6e848fcdbc1d09a61e">VDP_drawImageEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> dma)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> in specified background plane and at given position.  <a href="#a721950dd11157a6e848fcdbc1d09a61e"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#aefede8565dede05bc9af1acc7b3b07d3">curTileInd</a></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>VDP background plan support. </p>
+<div class="textblock"><p>VDP background plane support. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011</dd></dl>
-<p>This unit provides plan A &amp; plan B facilities :</p>
+<p>This unit provides plane A &amp; plane B facilities :</p>
 <ul>
 <li>set scrolling</li>
-<li>clear plan</li>
-<li>draw text in plan </li>
+<li>clear plane</li>
+<li>draw text in plane </li>
 </ul>
 </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a089c3ba719219330004eef2e9b00f3df"></a><!-- doxytag: member="vdp_bg.h::VDP_clearPlan" ref="a089c3ba719219330004eef2e9b00f3df" args="(VDPPlan plan, u16 wait)" -->
+<a class="anchor" id="a6ebe539bda71201c506e58f8d72dee54"></a><!-- doxytag: member="vdp_bg.h::VDP_clearPlane" ref="a6ebe539bda71201c506e58f8d72dee54" args="(VDPPlane plane, bool wait)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void VDP_clearPlan </td>
+          <td class="memname">void VDP_clearPlane </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>wait</em>&#160;</td>
         </tr>
         <tr>
@@ -197,17 +197,17 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Clear specified plan. </p>
+<p>Clear specified plane (using DMA). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan we want to clear.<br/>
+    <tr><td class="paramname">plane</td><td>Plane we want to clear.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
@@ -321,15 +321,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1304c713bb92e0992f2a2dcc348be06d"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextAreaBG" ref="a1304c713bb92e0992f2a2dcc348be06d" args="(VDPPlan plan, u16 x, u16 y, u16 w, u16 h)" -->
+<a class="anchor" id="a3f108e4ab202dda31bafb4527614cdb0"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextAreaBG" ref="a3f108e4ab202dda31bafb4527614cdb0" args="(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_clearTextAreaBG </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -367,14 +367,14 @@ Variables</h2></td></tr>
 <p>Clear a specific area of text. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to clear text.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to clear text.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
@@ -393,15 +393,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a88ec51ab9c5848af887fb1b508b2ab58"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextBG" ref="a88ec51ab9c5848af887fb1b508b2ab58" args="(VDPPlan plan, u16 x, u16 y, u16 w)" -->
+<a class="anchor" id="a0c743b5e67653611835bb58e6e40b4a0"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextBG" ref="a0c743b5e67653611835bb58e6e40b4a0" args="(VDPPlane plane, u16 x, u16 y, u16 w)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_clearTextBG </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -433,14 +433,14 @@ Variables</h2></td></tr>
 <p>Clear a single line portion of text. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to clear text.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to clear text.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
@@ -488,15 +488,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac12e718e1a967c6e6cf58183f2e15b63"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextLineBG" ref="ac12e718e1a967c6e6cf58183f2e15b63" args="(VDPPlan plan, u16 y)" -->
+<a class="anchor" id="a53167807a30810223d3c5019d1a32af4"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextLineBG" ref="a53167807a30810223d3c5019d1a32af4" args="(VDPPlane plane, u16 y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_clearTextLineBG </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -516,14 +516,14 @@ Variables</h2></td></tr>
 <p>Clear a complete line of text. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to clear text.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to clear text.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
@@ -539,15 +539,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6c6d90287c7dc7a86ec4677e2ca7f353"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmap" ref="a6c6d90287c7dc7a86ec4677e2ca7f353" args="(VDPPlan plan, const Bitmap *bitmap, u16 x, u16 y)" -->
+<a class="anchor" id="afffdc71840c43eb607de08c2f20987f5"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmap" ref="afffdc71840c43eb607de08c2f20987f5" args="(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawBitmap </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -576,24 +576,24 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plan and at given position. </p>
+<p>Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to draw the bitmap.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to draw the bitmap.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">bitmap</td><td>Genesis bitmap (the width and height should be aligned to 8).<br/>
  The <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
-    <tr><td class="paramname">x</td><td>Plan X position (in tile). </td></tr>
-    <tr><td class="paramname">y</td><td>Plan Y position (in tile). </td></tr>
+    <tr><td class="paramname">x</td><td>Plane X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>Plane Y position (in tile). </td></tr>
   </table>
   </dd>
 </dl>
@@ -605,15 +605,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2d0414bc4f747f8dd5e4701b0ed8ec9e"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmapEx" ref="a2d0414bc4f747f8dd5e4701b0ed8ec9e" args="(VDPPlan plan, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)" -->
+<a class="anchor" id="a8a44a02e42d69be6fb11d270733764dc"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmapEx" ref="a8a44a02e42d69be6fb11d270733764dc" args="(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawBitmapEx </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -654,25 +654,25 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plan and at given position. </p>
+<p>Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to draw the bitmap.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to draw the bitmap.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">bitmap</td><td>Genesis bitmap (the width and height should be aligned to 8).<br/>
  The <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
     <tr><td class="paramname">basetile</td><td>Base tile attributes data (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro). </td></tr>
-    <tr><td class="paramname">x</td><td>Plan X position (in tile). </td></tr>
-    <tr><td class="paramname">y</td><td>Plan Y position (in tile). </td></tr>
+    <tr><td class="paramname">x</td><td>Plane X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>Plane Y position (in tile). </td></tr>
     <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information when non zero. </td></tr>
   </table>
   </dd>
@@ -686,15 +686,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8fedade3c5aa833c8f82177db8d4de5c"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImage" ref="a8fedade3c5aa833c8f82177db8d4de5c" args="(VDPPlan plan, const Image *image, u16 x, u16 y)" -->
+<a class="anchor" id="a46631e6061ffcb81e7b485cbfa3aba03"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImage" ref="a46631e6061ffcb81e7b485cbfa3aba03" args="(VDPPlane plane, const Image *image, u16 x, u16 y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawImage </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -723,42 +723,42 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Draw <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> in specified background plan and at given position. </p>
+<p>Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (using DMA) in specified background plane and at given position. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to draw the map.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to draw the tilemap.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
-    <tr><td class="paramname">image</td><td><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure to draw.<br/>
- The <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
-    <tr><td class="paramname">x</td><td>Plan X position (in tile). </td></tr>
-    <tr><td class="paramname">y</td><td>Plan Y position (in tile). </td></tr>
+    <tr><td class="paramname">image</td><td><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure to draw.<br/>
+ The <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
+    <tr><td class="paramname">x</td><td>Plane X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>Plane Y position (in tile). </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> (only if compression was enabled).</dd></dl>
-<p>Load the image tiles data in VRAM and display it at specified tilemap region.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a748f5c452f507a79c0250491d65c7f96" title="Draw Map at the specified plan position.">VDP_drawImageEx()</a> </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (only if compression was enabled).</dd></dl>
+<p>Load the image tiles data in VRAM and display it at specified plane position.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a721950dd11157a6e848fcdbc1d09a61e" title="Draw Image in specified background plane and at given position.">VDP_drawImageEx()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a748f5c452f507a79c0250491d65c7f96"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImageEx" ref="a748f5c452f507a79c0250491d65c7f96" args="(VDPPlan plan, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, TransferMethod tm)" -->
+<a class="anchor" id="a721950dd11157a6e848fcdbc1d09a61e"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImageEx" ref="a721950dd11157a6e848fcdbc1d09a61e" args="(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, bool dma)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawImageEx </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -793,8 +793,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
-          <td class="paramname"><em>tm</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>dma</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -805,42 +805,33 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Draw <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> at the specified plan position. </p>
+<p>Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> in specified background plane and at given position. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to load map.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to load tilemap.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
-    <tr><td class="paramname">image</td><td><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure to draw.<br/>
- The <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
+    <tr><td class="paramname">image</td><td><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure to draw.<br/>
+ The <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
     <tr><td class="paramname">basetile</td><td>Base tile attributes data (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro). </td></tr>
-    <tr><td class="paramname">x</td><td>Plan X position (in tile). </td></tr>
-    <tr><td class="paramname">y</td><td>Plan Y position (in tile). </td></tr>
+    <tr><td class="paramname">x</td><td>Plane X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>Plane Y position (in tile). </td></tr>
     <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information when non zero (can be TRUE or FALSE) </td></tr>
-    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
- Accepted values are:<br/>
-<ul>
-<li>CPU<br/>
-</li>
-<li>DMA<br/>
-</li>
-<li>DMA_QUEUE </li>
-</ul>
-</td></tr>
+    <tr><td class="paramname">dma</td><td>use DMA </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> (only if image was packed).</dd></dl>
-<p>Load the image tiles data in VRAM and display it at specified tilemap region.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a8fedade3c5aa833c8f82177db8d4de5c" title="Draw Map in specified background plan and at given position.">VDP_drawImage()</a> </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (only if image was packed).</dd></dl>
+<p>Load the image tiles data in VRAM and display it at specified plane position.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a46631e6061ffcb81e7b485cbfa3aba03" title="Draw Image (using DMA) in specified background plane and at given position.">VDP_drawImage()</a> </dd></dl>
 
 </div>
 </div>
@@ -890,19 +881,19 @@ Variables</h2></td></tr>
 <dd>
 <a class="el" href="vdp__bg_8h.html#a51815b0c060464bfcd80706fbaf6a8d2" title="Define the priority to use to display text.">VDP_setTextPriority</a>(..) </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#ad9c7c8c4b7d73cb362772970ab75eb67" title="Define the plan to use to display text.">VDP_setTextPlan</a>(..) </dd></dl>
+<a class="el" href="vdp__bg_8h.html#a9d201c78a244418a0465942646a9490a" title="Define the plane to use to display text.">VDP_setTextPlane</a>(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a709e7255abd15dea14dd8072859b182c"></a><!-- doxytag: member="vdp_bg.h::VDP_drawTextBG" ref="a709e7255abd15dea14dd8072859b182c" args="(VDPPlan plan, const char *str, u16 x, u16 y)" -->
+<a class="anchor" id="ae9ad3c440665d1497ed937906b0750c6"></a><!-- doxytag: member="vdp_bg.h::VDP_drawTextBG" ref="ae9ad3c440665d1497ed937906b0750c6" args="(VDPPlane plane, const char *str, u16 x, u16 y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_drawTextBG </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -931,17 +922,17 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Draw text in specified plan. </p>
+<p>Draw text in specified plane. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where we want to draw text.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to draw text.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
  </li>
 </ul>
 </td></tr>
@@ -957,7 +948,7 @@ Variables</h2></td></tr>
 <dd>
 <a class="el" href="vdp__bg_8h.html#a51815b0c060464bfcd80706fbaf6a8d2" title="Define the priority to use to display text.">VDP_setTextPriority</a>(..) </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#ad9c7c8c4b7d73cb362772970ab75eb67" title="Define the plan to use to display text.">VDP_setTextPlan</a>(..) </dd></dl>
+<a class="el" href="vdp__bg_8h.html#a9d201c78a244418a0465942646a9490a" title="Define the plane to use to display text.">VDP_setTextPlane</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -982,12 +973,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6be50fc2925e88ef71705ade53cf53c4"></a><!-- doxytag: member="vdp_bg.h::VDP_getTextPlan" ref="a6be50fc2925e88ef71705ade53cf53c4" args="()" -->
+<a class="anchor" id="a8f81de23de3154856710e9ad776d13cb"></a><!-- doxytag: member="vdp_bg.h::VDP_getTextPlane" ref="a8f81de23de3154856710e9ad776d13cb" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a> VDP_getTextPlan </td>
+          <td class="memname"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> VDP_getTextPlane </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -996,8 +987,8 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Returns the plan used to display text. </p>
-<p>Returned value should be either equals to PLAN_A, PLAN_B or PLAN_WINDOW.</p>
+<p>Returns the plane used to display text. </p>
+<p>Returned value should be either equals to BG_A, BG_B or WINDOW.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#ab04cf06289b7bae2085ac485d7cb3dd2" title="Draw text.">VDP_drawText</a>(..) </dd>
 <dd>
 <a class="el" href="vdp__bg_8h.html#afae295449d30870463b539cd2e4266a0" title="Clear a single line portion of text.">VDP_clearText</a>(..) </dd></dl>
@@ -1025,15 +1016,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a27f90d94ed7cf9be6f99a05a6f327b9d"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScroll" ref="a27f90d94ed7cf9be6f99a05a6f327b9d" args="(VDPPlan plan, s16 value)" -->
+<a class="anchor" id="af0baa5635019a6b2fbde12e26ea05cc0"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScroll" ref="af0baa5635019a6b2fbde12e26ea05cc0" args="(VDPPlane plane, s16 value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setHorizontalScroll </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1050,11 +1041,11 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Set plan horizontal scroll (plain scroll mode).<br/>
+<p>Set plane horizontal scroll (plain scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
  </p>
 <ul>
-<li>Plain (whole plan)<br/>
+<li>Plain (whole plane)<br/>
 </li>
 <li>Tile (8 pixels bloc)<br/>
 </li>
@@ -1063,33 +1054,33 @@ Variables</h2></td></tr>
 </ul>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan we want to set the horizontal scroll.<br/>
+    <tr><td class="paramname">plane</td><td>Plane we want to set the horizontal scroll.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">value</td><td>H scroll offset.<br/>
- Negative value will move the plan to the left while positive value will move it to the right.</td></tr>
+ Negative value will move the plane to the left while positive value will move it to the right.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a290adc9522bacdec454f731f87e7f32f"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScrollLine" ref="a290adc9522bacdec454f731f87e7f32f" args="(VDPPlan plan, u16 line, s16 *values, u16 len, TransferMethod tm)" -->
+<a class="anchor" id="aa5fa5eb1cd66609521bb31de9bbe1a9f"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScrollLine" ref="aa5fa5eb1cd66609521bb31de9bbe1a9f" args="(VDPPlane plane, u16 line, s16 *values, u16 len, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setHorizontalScrollLine </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1124,11 +1115,11 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Set plan horizontal scroll (line scroll mode).<br/>
+<p>Set plane horizontal scroll (line scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
  </p>
 <ul>
-<li>Plain (whole plan)<br/>
+<li>Plain (whole plane)<br/>
 </li>
 <li>Tile (8 pixels bloc)<br/>
 </li>
@@ -1137,18 +1128,18 @@ Variables</h2></td></tr>
 </ul>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan we want to set the horizontal scroll.<br/>
+    <tr><td class="paramname">plane</td><td>Plane we want to set the horizontal scroll.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">line</td><td>First line we want to set the horizontal scroll. </td></tr>
     <tr><td class="paramname">values</td><td>H scroll offsets.<br/>
- Negative values will move the plan to the left while positive values will move it to the right. </td></tr>
+ Negative values will move the plane to the left while positive values will move it to the right. </td></tr>
     <tr><td class="paramname">len</td><td>Number of line to set. </td></tr>
     <tr><td class="paramname">tm</td><td>Transfer method.<br/>
  Accepted values are:<br/>
@@ -1157,25 +1148,27 @@ Variables</h2></td></tr>
 </li>
 <li>DMA<br/>
 </li>
-<li>DMA_QUEUE</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
 </ul>
 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ab248ca10634033609e7c5c0e2c552a80"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScrollTile" ref="ab248ca10634033609e7c5c0e2c552a80" args="(VDPPlan plan, u16 tile, s16 *values, u16 len, TransferMethod tm)" -->
+<a class="anchor" id="a1112424bede68bddd1ed72cb317e6263"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScrollTile" ref="a1112424bede68bddd1ed72cb317e6263" args="(VDPPlane plane, u16 tile, s16 *values, u16 len, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setHorizontalScrollTile </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1210,11 +1203,11 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Set plan horizontal scroll (tile scroll mode).<br/>
+<p>Set plane horizontal scroll (tile scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
  </p>
 <ul>
-<li>Plain (whole plan)<br/>
+<li>Plain (whole plane)<br/>
 </li>
 <li>Tile (8 pixels bloc)<br/>
 </li>
@@ -1223,18 +1216,18 @@ Variables</h2></td></tr>
 </ul>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan we want to set the horizontal scroll.<br/>
+    <tr><td class="paramname">plane</td><td>Plane we want to set the horizontal scroll.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">tile</td><td>First tile we want to set the horizontal scroll. </td></tr>
     <tr><td class="paramname">values</td><td>H scroll offsets.<br/>
- Negative values will move the plan to the left while positive values will move it to the right. </td></tr>
+ Negative values will move the plane to the left while positive values will move it to the right. </td></tr>
     <tr><td class="paramname">len</td><td>Number of tile to set. </td></tr>
     <tr><td class="paramname">tm</td><td>Transfer method.<br/>
  Accepted values are:<br/>
@@ -1243,13 +1236,15 @@ Variables</h2></td></tr>
 </li>
 <li>DMA<br/>
 </li>
-<li>DMA_QUEUE</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
 </ul>
 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd></dl>
 
 </div>
 </div>
@@ -1281,32 +1276,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad9c7c8c4b7d73cb362772970ab75eb67"></a><!-- doxytag: member="vdp_bg.h::VDP_setTextPlan" ref="ad9c7c8c4b7d73cb362772970ab75eb67" args="(VDPPlan plan)" -->
+<a class="anchor" id="a9d201c78a244418a0465942646a9490a"></a><!-- doxytag: member="vdp_bg.h::VDP_setTextPlane" ref="a9d201c78a244418a0465942646a9490a" args="(VDPPlane plane)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void VDP_setTextPlan </td>
+          <td class="memname">void VDP_setTextPlane </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Define the plan to use to display text. </p>
+<p>Define the plane to use to display text. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan where to display text.<br/>
+    <tr><td class="paramname">plane</td><td>Plane where to display text.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
 </li>
-<li>PLAN_WINDOW<br/>
+<li>WINDOW<br/>
 </li>
 </ul>
 </td></tr>
@@ -1350,15 +1345,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6c07a01efecc127d2790957c26326435"></a><!-- doxytag: member="vdp_bg.h::VDP_setVerticalScroll" ref="a6c07a01efecc127d2790957c26326435" args="(VDPPlan plan, s16 value)" -->
+<a class="anchor" id="a409223c220fd59440b2ee49b843e589f"></a><!-- doxytag: member="vdp_bg.h::VDP_setVerticalScroll" ref="a409223c220fd59440b2ee49b843e589f" args="(VDPPlane plane, s16 value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setVerticalScroll </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1375,43 +1370,43 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Set plan vertical scroll (plain scroll mode). 2 vertical scroll modes are supported:<br/>
+<p>Set plane vertical scroll (plain scroll mode). 2 vertical scroll modes are supported:<br/>
  </p>
 <ul>
-<li>Plain (whole plan)<br/>
+<li>Plain (whole plane)<br/>
 </li>
 <li>2-Tiles (16 pixels bloc)<br/>
 </li>
 </ul>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan we want to set the vertical scroll.<br/>
+    <tr><td class="paramname">plane</td><td>Plane we want to set the vertical scroll.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">value</td><td>V scroll offset.<br/>
- Negative value will move the plan down while positive value will move it up.</td></tr>
+ Negative value will move the plane down while positive value will move it up.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a1f4b555a6bf31930a9af9ba5005b642c"></a><!-- doxytag: member="vdp_bg.h::VDP_setVerticalScrollTile" ref="a1f4b555a6bf31930a9af9ba5005b642c" args="(VDPPlan plan, u16 tile, s16 *values, u16 len, TransferMethod tm)" -->
+<a class="anchor" id="a4e71b64bebe1c5b15b381a2314a010ec"></a><!-- doxytag: member="vdp_bg.h::VDP_setVerticalScrollTile" ref="a4e71b64bebe1c5b15b381a2314a010ec" args="(VDPPlane plane, u16 tile, s16 *values, u16 len, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setVerticalScrollTile </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td>
-          <td class="paramname"><em>plan</em>, </td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1446,28 +1441,28 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Set plan vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported:<br/>
+<p>Set plane vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported:<br/>
  </p>
 <ul>
-<li>Plain (whole plan)<br/>
+<li>Plain (whole plane)<br/>
 </li>
 <li>2-Tiles (16 pixels bloc)<br/>
 </li>
 </ul>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">plan</td><td>Plan we want to set the vertical scroll.<br/>
+    <tr><td class="paramname">plane</td><td>Plane we want to set the vertical scroll.<br/>
  Accepted values are:<br/>
 <ul>
-<li>PLAN_A<br/>
+<li>BG_A<br/>
 </li>
-<li>PLAN_B<br/>
+<li>BG_B<br/>
  </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">tile</td><td>First tile we want to set the vertical scroll. </td></tr>
     <tr><td class="paramname">values</td><td>V scroll offsets.<br/>
- Negative values will move the plan down while positive values will move it up. </td></tr>
+ Negative values will move the plane down while positive values will move it up. </td></tr>
     <tr><td class="paramname">len</td><td>Number of tile to set. </td></tr>
     <tr><td class="paramname">tm</td><td>Transfer method.<br/>
  Accepted values are:<br/>
@@ -1476,13 +1471,15 @@ Variables</h2></td></tr>
 </li>
 <li>DMA<br/>
 </li>
-<li>DMA_QUEUE</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
 </ul>
 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
 
 </div>
 </div>
@@ -1498,9 +1495,9 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Contains current VRAM tile position where we will upload next tile data.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a6c6d90287c7dc7a86ec4677e2ca7f353" title="Draw Bitmap in specified background plan and at given position.">VDP_drawBitmap()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#afffdc71840c43eb607de08c2f20987f5" title="Draw Bitmap in specified background plane and at given position.">VDP_drawBitmap()</a> </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#a8fedade3c5aa833c8f82177db8d4de5c" title="Draw Map in specified background plan and at given position.">VDP_drawImage()</a> </dd></dl>
+<a class="el" href="vdp__bg_8h.html#a46631e6061ffcb81e7b485cbfa3aba03" title="Draw Image (using DMA) in specified background plane and at given position.">VDP_drawImage()</a> </dd></dl>
 
 </div>
 </div>
@@ -1509,7 +1506,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__bg_8h.html">vdp_bg.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

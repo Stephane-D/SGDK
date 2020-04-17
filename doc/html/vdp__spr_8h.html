@@ -89,7 +89,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>VDP Sprite support.  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &quot;<a class="el" href="config_8h_source.html">config.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="types_8h_source.html">types.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="dma_8h_source.html">dma.h</a>&quot;</code><br/>
+</div>
 <p><a href="vdp__spr_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
@@ -139,16 +142,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a981e4151f44758965fcbcdf1949f90b9">VDP_linkSprites</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Link sprites starting at the specified index.<br/>
  Links are created in simple ascending order (1 --&gt; 2 --&gt; 3 --&gt; ...)  <a href="#a981e4151f44758965fcbcdf1949f90b9"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19">VDP_updateSprites</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> queue)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the cached sprite list to the VDP.  <a href="#aa75af8ee6eb2be44ec48ce0a9dadfb19"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47">VDP_updateSprites</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the cached sprite list to the VDP.  <a href="#a309621f4216c6c1b8181739c655b8a47"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae75c6877c027dcf38cffae8b81496191"></a><!-- doxytag: member="vdp_spr.h::vdpSpriteCache" ref="ae75c6877c027dcf38cffae8b81496191" args="[MAX_VDP_SPRITE]" -->
 <a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#ae75c6877c027dcf38cffae8b81496191">vdpSpriteCache</a> [MAX_VDP_SPRITE]</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP sprite cache. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13f875d7769eccd374d4d8982dd12fda"></a><!-- doxytag: member="vdp_spr.h::vdpSpriteCacheQueue" ref="a13f875d7769eccd374d4d8982dd12fda" args="[MAX_VDP_SPRITE]" -->
-<a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a13f875d7769eccd374d4d8982dd12fda">vdpSpriteCacheQueue</a> [MAX_VDP_SPRITE]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP sprite cache queue copy. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af453ffc4cda22a0439abf11e4501e4dc"></a><!-- doxytag: member="vdp_spr.h::lastAllocatedVDPSprite" ref="af453ffc4cda22a0439abf11e4501e4dc" args="" -->
 <a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#af453ffc4cda22a0439abf11e4501e4dc">lastAllocatedVDPSprite</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to last allocated sprite after calling VDP_allocateSprites(..) method.<br/>
@@ -414,7 +414,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a16ac8e7ec2cf7b209f05e30d6c6f0cf9" title="Set a sprite (use sprite list cache).">VDP_setSpriteFull()</a> </dd>
 <dd>
-<a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
+<a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
 
 </div>
 </div>
@@ -453,7 +453,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a96585b6f0df2c4f9e009a2bdb849bcce" title="Set a sprite (use sprite list cache).">VDP_setSprite</a>(..) </dd>
 <dd>
-<a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
+<a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
 
 </div>
 </div>
@@ -521,7 +521,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a96585b6f0df2c4f9e009a2bdb849bcce" title="Set a sprite (use sprite list cache).">VDP_setSprite()</a> </dd>
 <dd>
-<a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
+<a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
 
 </div>
 </div>
@@ -560,7 +560,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a96585b6f0df2c4f9e009a2bdb849bcce" title="Set a sprite (use sprite list cache).">VDP_setSprite</a>(..) </dd>
 <dd>
-<a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
+<a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
 
 </div>
 </div>
@@ -606,7 +606,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a96585b6f0df2c4f9e009a2bdb849bcce" title="Set a sprite (use sprite list cache).">VDP_setSprite</a>(..) </dd>
 <dd>
-<a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
+<a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
 
 </div>
 </div>
@@ -645,11 +645,11 @@ Variables</h2></td></tr>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a96585b6f0df2c4f9e009a2bdb849bcce" title="Set a sprite (use sprite list cache).">VDP_setSprite</a>(..) </dd>
 <dd>
-<a class="el" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
+<a class="el" href="vdp__spr_8h.html#a309621f4216c6c1b8181739c655b8a47" title="Send the cached sprite list to the VDP.">VDP_updateSprites()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aa75af8ee6eb2be44ec48ce0a9dadfb19"></a><!-- doxytag: member="vdp_spr.h::VDP_updateSprites" ref="aa75af8ee6eb2be44ec48ce0a9dadfb19" args="(u16 num, u16 queue)" -->
+<a class="anchor" id="a309621f4216c6c1b8181739c655b8a47"></a><!-- doxytag: member="vdp_spr.h::VDP_updateSprites" ref="a309621f4216c6c1b8181739c655b8a47" args="(u16 num, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -662,8 +662,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>queue</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -679,8 +679,18 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">num</td><td>Number of sprite to transfer starting at index 0 (max = MAX_SPRITE).<br/>
  If you use dynamic VDP Sprite allocation you may use 'highestVDPSpriteIndex + 1' here </td></tr>
-    <tr><td class="paramname">queue</td><td>If TRUE the sprite list transfer will be put in DMA queue and sent automatically at VBlank<br/>
- otherwise the sprite list is immediately sent to the VDP.</td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -716,7 +726,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__spr_8h.html">vdp_spr.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

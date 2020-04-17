@@ -102,27 +102,20 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#a69de64e44e5047075b98c0466f3f71d0">VDP_DMA_VSRAM</a>&#160;&#160;&#160;2</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VSRAM location for DMA operation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959">VDP_doVRamDMA</a>(from, to, len)&#160;&#160;&#160;VDP_doDMA(VDP_DMA_VRAM, from, to, len)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start DMA transfert to VRAM.  <a href="#a0806f0a5e7e102869a653e0a8d573959"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#a7144e66717a4dc90d7cfd6700a6d21b2">VDP_doCRamDMA</a>(from, to, len)&#160;&#160;&#160;VDP_doDMA(VDP_DMA_CRAM, from, to, len)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start DMA transfert to CRAM.  <a href="#a7144e66717a4dc90d7cfd6700a6d21b2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#a3c589aae4a3ac150cdea54e9643643e6">VDP_doVSRamDMA</a>(from, to, len)&#160;&#160;&#160;VDP_doDMA(VDP_DMA_VSRAM, from, to, len)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start DMA transfert to VSRAM.  <a href="#a3c589aae4a3ac150cdea54e9643643e6"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#aa52fc8847c5ae44c2ab432af3ceff3b2">VDP_doDMAEx</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> vramStep)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do DMA transfer operation.  <a href="#aa52fc8847c5ae44c2ab432af3ceff3b2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#ac57cd4380aaf65681cef122d642c6791">VDP_doDMA</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do DMA transfert operation.  <a href="#ac57cd4380aaf65681cef122d642c6791"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#ab640a2fdce24df6a9a5e36aaa090d4e1">VDP_doVRamDMAFill</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do VRAM DMA fill operation.  <a href="#ab640a2fdce24df6a9a5e36aaa090d4e1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__dma_8h.html#a9f2430fd7ad9ed7f1cddd035809446ce">VDP_doVRamDMACopy</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do VRAM DMA copy operation.  <a href="#a9f2430fd7ad9ed7f1cddd035809446ce"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>VDP DMA support. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011 </dd></dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000049">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html" title="DMA support.">dma.h</a> unit instead</dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000038">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html" title="DMA support.">dma.h</a> unit instead</dd></dl>
 <p>This unit provides methods to use the VDP DMA capabilities. </p>
 </div><hr/><h2>Define Documentation</h2>
 <a class="anchor" id="a7144e66717a4dc90d7cfd6700a6d21b2"></a><!-- doxytag: member="vdp_dma.h::VDP_doCRamDMA" ref="a7144e66717a4dc90d7cfd6700a6d21b2" args="(from, to, len)" -->
@@ -155,17 +148,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Start DMA transfert to CRAM. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">from</td><td>Source address. </td></tr>
-    <tr><td class="paramname">to</td><td>Destination address in CRAM. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of word to transfert.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000051">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000040">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -199,17 +182,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Start DMA transfert to VRAM. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">from</td><td>Source address. </td></tr>
-    <tr><td class="paramname">to</td><td>Destination address in VRAM. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of word to transfert.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000050">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000039">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -243,17 +216,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Start DMA transfert to VSRAM. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">from</td><td>Source address. </td></tr>
-    <tr><td class="paramname">to</td><td>Destination address in VSRAM. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of word to transfert.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000052">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000041">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -294,28 +257,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Do DMA transfert operation. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">location</td><td>Destination location.<br/>
- Accepted values:<br/>
-<ul>
-<li>VDP_DMA_VRAM (for VRAM transfert).<br/>
-</li>
-<li>VDP_DMA_CRAM (for CRAM transfert).<br/>
-</li>
-<li>VDP_DMA_VSRAM (for VSRAM transfert).<br/>
- </li>
-</ul>
-</td></tr>
-    <tr><td class="paramname">from</td><td>Source address. </td></tr>
-    <tr><td class="paramname">to</td><td>Destination address. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of word to transfert.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000054">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000043">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -361,31 +303,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Do DMA transfer operation. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">location</td><td>Destination location.<br/>
- Accepted values:<br/>
-<ul>
-<li>VDP_DMA_VRAM (for VRAM transfert).<br/>
-</li>
-<li>VDP_DMA_CRAM (for CRAM transfert).<br/>
-</li>
-<li>VDP_DMA_VSRAM (for VSRAM transfert).<br/>
- </li>
-</ul>
-</td></tr>
-    <tr><td class="paramname">from</td><td>Source address. </td></tr>
-    <tr><td class="paramname">to</td><td>Destination address. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of word to transfer. </td></tr>
-    <tr><td class="paramname">vramStep</td><td>VRam address increment value (-1 to 255).<br/>
- By default you should set it to 2 for normal copy operation but you can use different value for specific operation.<br/>
- -1 means the VRam address increment register won't be modified (use current value).</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000053">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000042">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -419,17 +337,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Do VRAM DMA copy operation. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">from</td><td>Source address. </td></tr>
-    <tr><td class="paramname">to</td><td>Destination address. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of byte to copy.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000056">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000045">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -463,17 +371,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Do VRAM DMA fill operation. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">to</td><td>Destination address. </td></tr>
-    <tr><td class="paramname">len</td><td>Number of byte to fill. </td></tr>
-    <tr><td class="paramname">value</td><td>Fill value (byte).</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000055">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000044">Deprecated:</a></b></dt><dd>Use DMA_xxx methods instead </dd></dl>
 
 </div>
 </div>
@@ -482,7 +380,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__dma_8h.html">vdp_dma.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

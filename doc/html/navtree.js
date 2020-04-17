@@ -21,7 +21,6 @@ var NAVTREE =
       [ "FrameVDPSprite", "struct_frame_v_d_p_sprite.html", null ],
       [ "Image", "struct_image.html", null ],
       [ "Line", "struct_line.html", null ],
-      [ "Map", "struct_map.html", null ],
       [ "Mat2D_f16", "struct_mat2_d__f16.html", null ],
       [ "Mat2D_f32", "struct_mat2_d__f32.html", null ],
       [ "Mat3D_f16", "struct_mat3_d__f16.html", null ],
@@ -31,10 +30,10 @@ var NAVTREE =
       [ "Palette", "struct_palette.html", null ],
       [ "Pixel", "struct_pixel.html", null ],
       [ "SpriteDefinition", "struct_sprite_definition.html", null ],
+      [ "TileMap", "struct_tile_map.html", null ],
       [ "TileSet", "struct_tile_set.html", null ],
       [ "Transformation3D", "struct_transformation3_d.html", null ],
       [ "Triangle", "struct_triangle.html", null ],
-      [ "VDPPlan", "struct_v_d_p_plan.html", null ],
       [ "VDPSprite", "struct_v_d_p_sprite.html", null ],
       [ "Vect2D_f16", "struct_vect2_d__f16.html", null ],
       [ "Vect2D_f32", "struct_vect2_d__f32.html", null ],
@@ -65,6 +64,7 @@ var NAVTREE =
       [ "joy.h", "joy_8h.html", null ],
       [ "kdebug.h", "kdebug_8h.html", null ],
       [ "libres.h", null, null ],
+      [ "mapper.h", "mapper_8h.html", null ],
       [ "maths.h", "maths_8h.html", null ],
       [ "maths3D.h", "maths3_d_8h.html", null ],
       [ "memory.h", "memory_8h.html", null ],
@@ -91,9 +91,7 @@ var NAVTREE =
       [ "vram.h", "vram_8h.html", null ],
       [ "xgm.h", "xgm_8h.html", null ],
       [ "ym2612.h", "ym2612_8h.html", null ],
-      [ "z80_ctrl.h", "z80__ctrl_8h.html", null ],
-      [ "z80_mvsc.h", "z80__mvsc_8h.html", null ],
-      [ "z80_vgm.h", "z80__vgm_8h.html", null ]
+      [ "z80_ctrl.h", "z80__ctrl_8h.html", null ]
     ] ],
     [ "File Members", "globals.html", null ]
   ] ]

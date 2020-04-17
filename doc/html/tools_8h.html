@@ -220,20 +220,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> structure which can receive unpacked tiles data of the specified <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a>.  <a href="#ad749fe263ebe91821994871f26ec6135"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_tile_set.html">TileSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a5ba58e1b206b0304ecc9afe0a8eae7a5">allocateTileSetEx</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numTile)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> structure which can receive the data for the specified number of tile.  <a href="#a5ba58e1b206b0304ecc9afe0a8eae7a5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_map.html">Map</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a80a1782293f77ae202d557ffd4c68d97">allocateMap</a> (const <a class="el" href="struct_map.html">Map</a> *map)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure which can receive unpacked map data of the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a>.  <a href="#a80a1782293f77ae202d557ffd4c68d97"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_map.html">Map</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a6bcbf064e74ff295943a77084316f759">allocateMapEx</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> width, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> heigth)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure which can receive map data for the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> dimension.  <a href="#a6bcbf064e74ff295943a77084316f759"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#adfb79ce6528556f451cea358abc4edd6">allocateTileMap</a> (const <a class="el" href="struct_tile_map.html">TileMap</a> *tilemap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure which can receive unpacked tilemap data of the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a>.  <a href="#adfb79ce6528556f451cea358abc4edd6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#ada11be37f8d325d74e1defed1cc4afca">allocateTileMapEx</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> width, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> heigth)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure which can receive tilemap data for the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> dimension.  <a href="#ada11be37f8d325d74e1defed1cc4afca"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_image.html">Image</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#ab0be08b430ade3efb31e15607eb363eb">allocateImage</a> (const <a class="el" href="struct_image.html">Image</a> *image)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure which can receive unpacked image data of the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a>. There is no memory allocated for the palette data as it assumes to always use a reference for <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> field.  <a href="#ab0be08b430ade3efb31e15607eb363eb"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure which can receive unpacked image data of the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a>. There is no memory allocated for the palette data as it assumes to always use a reference for <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> field.  <a href="#ab0be08b430ade3efb31e15607eb363eb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bitmap.html">Bitmap</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#ab4c88450f236f63323635d00121137a2">unpackBitmap</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *src, <a class="el" href="struct_bitmap.html">Bitmap</a> *dest)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified source <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> and return result in a new allocated <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a>.  <a href="#ab4c88450f236f63323635d00121137a2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_tile_set.html">TileSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#adfccefcd20b388d24eb1292c03388240">unpackTileSet</a> (const <a class="el" href="struct_tile_set.html">TileSet</a> *src, <a class="el" href="struct_tile_set.html">TileSet</a> *dest)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> structure and return result in a new allocated <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a>.  <a href="#adfccefcd20b388d24eb1292c03388240"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_map.html">Map</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a934d949ac27d1e1a23be4432f7f115ca">unpackMap</a> (const <a class="el" href="struct_map.html">Map</a> *src, <a class="el" href="struct_map.html">Map</a> *dest)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure and return result in a new allocated <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a>.  <a href="#a934d949ac27d1e1a23be4432f7f115ca"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#ab9391d9e68607d3a26b9944129606a74">unpackTileMap</a> (const <a class="el" href="struct_tile_map.html">TileMap</a> *src, <a class="el" href="struct_tile_map.html">TileMap</a> *dest)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure and return result in a new allocated <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a>.  <a href="#ab9391d9e68607d3a26b9944129606a74"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_image.html">Image</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f">unpackImage</a> (const <a class="el" href="struct_image.html">Image</a> *src, <a class="el" href="struct_image.html">Image</a> *dest)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure and return result in a new allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a>.  <a href="#a715a02435a6ac7206d0d49e95ec8a75f"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure and return result in a new allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a>.  <a href="#a715a02435a6ac7206d0d49e95ec8a75f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a4671a97c98cb96774bedfc055a178ea8">unpack</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> compression, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *src, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *dest)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack the specified source data buffer in the specified destination buffer.<br/>
  if source is not packed then nothing is done.  <a href="#a4671a97c98cb96774bedfc055a178ea8"></a><br/></td></tr>
@@ -241,9 +241,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack (aplib packer) the specified source data buffer in the specified destination buffer.  <a href="#aee87421c5a2c3c6c6ef0ef13f32db781"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#ac129bbdcd329c4065ee694013abd2672">lz4w_unpack</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *src, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *dest)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack (LZ4W) the specified source data buffer in the specified destination buffer.  <a href="#ac129bbdcd329c4065ee694013abd2672"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a84f520ac86da22e734bcc51ed4743018">zlib_unpack</a> (void *dest, const unsigned outLen, const void *src, const unsigned srcLen)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompresses data in raw deflate/zlib format.<br/>
-  <a href="#a84f520ac86da22e734bcc51ed4743018"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#a9108d188496793097380c4c26ba4cf7f">qsort_u8</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *data, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> left, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> right)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Quick sort algo on u8 data array.  <a href="#a9108d188496793097380c4c26ba4cf7f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tools_8h.html#ae71647e4b86dfd72a2af53f5ac57f92f">qsort_s8</a> (<a class="el" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> *data, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> left, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> right)</td></tr>
@@ -369,51 +366,51 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 </div>
 <div class="memdoc">
 
-<p>Allocate <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure which can receive unpacked image data of the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a>. There is no memory allocated for the palette data as it assumes to always use a reference for <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> field. </p>
+<p>Allocate <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure which can receive unpacked image data of the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a>. There is no memory allocated for the palette data as it assumes to always use a reference for <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> field. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">image</td><td>Source <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> we want to allocate the unpacked <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> object. </td></tr>
+    <tr><td class="paramname">image</td><td>Source <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> we want to allocate the unpacked <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> object. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The new allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> object which can receive the unpacked <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a>, note that returned image is allocated in a single bloc and can be released with Mem_Free(image).<br/>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The new allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> object which can receive the unpacked <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a>, note that returned image is allocated in a single bloc and can be released with Mem_Free(image).<br/>
  <em>NULL</em> is returned if there is not enough memory to store the unpacked image. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a80a1782293f77ae202d557ffd4c68d97"></a><!-- doxytag: member="tools.h::allocateMap" ref="a80a1782293f77ae202d557ffd4c68d97" args="(const Map *map)" -->
+<a class="anchor" id="adfb79ce6528556f451cea358abc4edd6"></a><!-- doxytag: member="tools.h::allocateTileMap" ref="adfb79ce6528556f451cea358abc4edd6" args="(const TileMap *tilemap)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_map.html">Map</a>* allocateMap </td>
+          <td class="memname"><a class="el" href="struct_tile_map.html">TileMap</a>* allocateTileMap </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_map.html">Map</a> *&#160;</td>
-          <td class="paramname"><em>map</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td>
+          <td class="paramname"><em>tilemap</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Allocate <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure which can receive unpacked map data of the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a>. </p>
+<p>Allocate <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure which can receive unpacked tilemap data of the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a>. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">map</td><td>Source <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> we want to allocate the unpacked <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> object. </td></tr>
+    <tr><td class="paramname">tilemap</td><td>Source <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> we want to allocate the unpacked <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> object. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The new allocated <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> object which can receive the unpacked <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a>, note that returned map is allocated in a single bloc and can be released with Mem_Free(map).<br/>
- <em>NULL</em> is returned if there is not enough memory to store the unpacked map. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The new allocated <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> object which can receive the unpacked <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a>, note that returned tilemap is allocated in a single bloc and can be released with Mem_Free(tilemap).<br/>
+ <em>NULL</em> is returned if there is not enough memory to store the unpacked tilemap. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a6bcbf064e74ff295943a77084316f759"></a><!-- doxytag: member="tools.h::allocateMapEx" ref="a6bcbf064e74ff295943a77084316f759" args="(u16 width, u16 heigth)" -->
+<a class="anchor" id="ada11be37f8d325d74e1defed1cc4afca"></a><!-- doxytag: member="tools.h::allocateTileMapEx" ref="ada11be37f8d325d74e1defed1cc4afca" args="(u16 width, u16 heigth)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_map.html">Map</a>* allocateMapEx </td>
+          <td class="memname"><a class="el" href="struct_tile_map.html">TileMap</a>* allocateTileMapEx </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
           <td class="paramname"><em>width</em>, </td>
@@ -433,17 +430,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 </div>
 <div class="memdoc">
 
-<p>Allocate a new <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure which can receive map data for the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> dimension. </p>
+<p>Allocate a new <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure which can receive tilemap data for the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> dimension. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">width</td><td>Width in tile of the <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure we want to allocate. </td></tr>
-    <tr><td class="paramname">heigth</td><td>heigth in tile of the <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure we want to allocate. </td></tr>
+    <tr><td class="paramname">width</td><td>Width in tile of the <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure we want to allocate. </td></tr>
+    <tr><td class="paramname">heigth</td><td>heigth in tile of the <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure we want to allocate. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The new allocated <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> object which can receive data for the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> dimension.<br/>
- Note that returned map is allocated in a single bloc and can be released with Mem_Free(map).<br/>
- <em>NULL</em> is returned if there is not enough memory to allocate the map. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The new allocated <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> object which can receive data for the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> dimension.<br/>
+ Note that returned tilemap is allocated in a single bloc and can be released with Mem_Free(tilemap).<br/>
+ <em>NULL</em> is returned if there is not enough memory to allocate the tilemap. </dd></dl>
 
 </div>
 </div>
@@ -552,7 +549,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Uses <a class="el" href="sys_8h.html#a6da7917ffe400bdcc56e90970d10b6d9" title="Returns number of Frame Per Second.">SYS_getFPS()</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated:</a></b></dt><dd>Uses <a class="el" href="sys_8h.html#a6da7917ffe400bdcc56e90970d10b6d9" title="Returns number of Frame Per Second.">SYS_getFPS()</a> instead </dd></dl>
 
 </div>
 </div>
@@ -569,7 +566,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>Uses <a class="el" href="sys_8h.html#a93cb05493e93fb79c8376b885ee1aae2" title="Returns number of Frame Per Second (fix32 form).">SYS_getFPSAsFloat()</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Uses <a class="el" href="sys_8h.html#a93cb05493e93fb79c8376b885ee1aae2" title="Returns number of Frame Per Second (fix32 form).">SYS_getFPSAsFloat()</a> instead </dd></dl>
 
 </div>
 </div>
@@ -1025,35 +1022,35 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 </div>
 <div class="memdoc">
 
-<p>Unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure and return result in a new allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a>. </p>
+<p>Unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure and return result in a new allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a>. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">src</td><td>image to unpack. </td></tr>
-    <tr><td class="paramname">dest</td><td>Destination <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> where to store unpacked data.<br/>
- If set to NULL then a dynamic allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> is returned. </td></tr>
+    <tr><td class="paramname">dest</td><td>Destination <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> where to store unpacked data.<br/>
+ If set to NULL then a dynamic allocated <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> is returned. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The unpacked <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a>.<br/>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The unpacked <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a>.<br/>
  If <em>dest</em> was set to NULL then the returned image is allocated in a single bloc and can be released with Mem_Free(image).<br/>
  <em>NULL</em> is returned if there is not enough memory to store the unpacked image. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a934d949ac27d1e1a23be4432f7f115ca"></a><!-- doxytag: member="tools.h::unpackMap" ref="a934d949ac27d1e1a23be4432f7f115ca" args="(const Map *src, Map *dest)" -->
+<a class="anchor" id="ab9391d9e68607d3a26b9944129606a74"></a><!-- doxytag: member="tools.h::unpackTileMap" ref="ab9391d9e68607d3a26b9944129606a74" args="(const TileMap *src, TileMap *dest)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_map.html">Map</a>* unpackMap </td>
+          <td class="memname"><a class="el" href="struct_tile_map.html">TileMap</a>* unpackTileMap </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_map.html">Map</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td>
           <td class="paramname"><em>src</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_map.html">Map</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td>
           <td class="paramname"><em>dest</em>&#160;</td>
         </tr>
         <tr>
@@ -1065,18 +1062,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 </div>
 <div class="memdoc">
 
-<p>Unpack the specified <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure and return result in a new allocated <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a>. </p>
+<p>Unpack the specified <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure and return result in a new allocated <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a>. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">src</td><td>map to unpack. </td></tr>
-    <tr><td class="paramname">dest</td><td>Destination map where to store unpacked data, be sure to allocate enough space in tiles and tilemap buffer.<br/>
- If set to NULL then a dynamic allocated <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> is returned. </td></tr>
+    <tr><td class="paramname">src</td><td>tilemap to unpack. </td></tr>
+    <tr><td class="paramname">dest</td><td>Destination tilemap where to store unpacked data, be sure to allocate enough space in tiles and tilemap buffer.<br/>
+ If set to NULL then a dynamic allocated <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> is returned. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The unpacked <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a>.<br/>
- If <em>dest</em> was set to NULL then the returned map is allocated in a single bloc and can be released with Mem_Free(map).<br/>
- <em>NULL</em> is returned if there is not enough memory to store the unpacked map. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The unpacked <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a>.<br/>
+ If <em>dest</em> was set to NULL then the returned tilemap is allocated in a single bloc and can be released with Mem_Free(tilemap).<br/>
+ <em>NULL</em> is returned if there is not enough memory to store the unpacked tilemap. </dd></dl>
 
 </div>
 </div>
@@ -1120,64 +1117,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>KLog_F4x</b> (<a clas
 
 </div>
 </div>
-<a class="anchor" id="a84f520ac86da22e734bcc51ed4743018"></a><!-- doxytag: member="tools.h::zlib_unpack" ref="a84f520ac86da22e734bcc51ed4743018" args="(void *dest, const unsigned outLen, const void *src, const unsigned srcLen)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int zlib_unpack </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>dest</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned&#160;</td>
-          <td class="paramname"><em>outLen</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>src</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned&#160;</td>
-          <td class="paramname"><em>srcLen</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Decompresses data in raw deflate/zlib format.<br/>
- </p>
-<p>zlib is a general-purpose compressor, supporting quite good compression ratios, but unpacking is relatively slow on the Genesis (around 23kb/s).</p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">dest</td><td>Destination buffer </td></tr>
-    <tr><td class="paramname">outLen</td><td>Size of the destination buffer in bytes </td></tr>
-    <tr><td class="paramname">src</td><td>Source data buffer containing compressed data </td></tr>
-    <tr><td class="paramname">srcLen</td><td>Size of the source buffer in bytes </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 </div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="tools_8h.html">tools.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

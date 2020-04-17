@@ -82,65 +82,68 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <a href="vdp__spr_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
-<a name="l00011"></a>00011 <span class="preprocessor">#ifndef _VDP_SPR_H_</span>
-<a name="l00012"></a>00012 <span class="preprocessor"></span><span class="preprocessor">#define _VDP_SPR_H_</span>
-<a name="l00013"></a>00013 <span class="preprocessor"></span>
-<a name="l00018"></a><a class="code" href="vdp__spr_8h.html#a8527f39a469ac1c4cd0f6ced21151921">00018</a> <span class="preprocessor">#define MAX_VDP_SPRITE          80</span>
-<a name="l00019"></a>00019 <span class="preprocessor"></span>
-<a name="l00029"></a><a class="code" href="vdp__spr_8h.html#a605aedd263c7cb685d023033a7d7b856">00029</a> <span class="preprocessor">#define SPRITE_SIZE(w, h)   ((((w) - 1) &lt;&lt; 2) | ((h) - 1))</span>
-<a name="l00030"></a>00030 <span class="preprocessor"></span>
-<a name="l00031"></a>00031 
-<a name="l00047"></a><a class="code" href="struct_v_d_p_sprite.html">00047</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00048"></a>00048 {
-<a name="l00049"></a>00049     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y;
-<a name="l00050"></a>00050     <span class="keyword">union</span>
-<a name="l00051"></a>00051     {
-<a name="l00052"></a>00052         <span class="keyword">struct </span>{
-<a name="l00053"></a>00053             <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size;
-<a name="l00054"></a>00054             <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> link;
-<a name="l00055"></a>00055         };
-<a name="l00056"></a>00056         <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size_link;
-<a name="l00057"></a>00057     };
-<a name="l00058"></a>00058     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut;
-<a name="l00059"></a>00059     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x;
-<a name="l00060"></a>00060 }  <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>;
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062 
-<a name="l00066"></a>00066 <span class="keyword">extern</span> <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a> <a class="code" href="vdp__spr_8h.html#ae75c6877c027dcf38cffae8b81496191" title="VDP sprite cache.">vdpSpriteCache</a>[<a class="code" href="vdp__spr_8h.html#a8527f39a469ac1c4cd0f6ced21151921" title="Maximum number of hardware sprite.">MAX_VDP_SPRITE</a>];
-<a name="l00070"></a>00070 <span class="keyword">extern</span> <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a> <a class="code" href="vdp__spr_8h.html#a13f875d7769eccd374d4d8982dd12fda" title="VDP sprite cache queue copy.">vdpSpriteCacheQueue</a>[<a class="code" href="vdp__spr_8h.html#a8527f39a469ac1c4cd0f6ced21151921" title="Maximum number of hardware sprite.">MAX_VDP_SPRITE</a>];
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="config_8h.html" title="Basic SGDK library configuration file.">config.h</a>&quot;</span>
+<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;<a class="code" href="types_8h.html" title="Types definition.">types.h</a>&quot;</span>
+<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="dma_8h.html" title="DMA support.">dma.h</a>&quot;</span>
+<a name="l00014"></a>00014 
+<a name="l00015"></a>00015 <span class="preprocessor">#ifndef _VDP_SPR_H_</span>
+<a name="l00016"></a>00016 <span class="preprocessor"></span><span class="preprocessor">#define _VDP_SPR_H_</span>
+<a name="l00017"></a>00017 <span class="preprocessor"></span>
+<a name="l00022"></a><a class="code" href="vdp__spr_8h.html#a8527f39a469ac1c4cd0f6ced21151921">00022</a> <span class="preprocessor">#define MAX_VDP_SPRITE          80</span>
+<a name="l00023"></a>00023 <span class="preprocessor"></span>
+<a name="l00033"></a><a class="code" href="vdp__spr_8h.html#a605aedd263c7cb685d023033a7d7b856">00033</a> <span class="preprocessor">#define SPRITE_SIZE(w, h)   ((((w) - 1) &lt;&lt; 2) | ((h) - 1))</span>
+<a name="l00034"></a>00034 <span class="preprocessor"></span>
+<a name="l00035"></a>00035 
+<a name="l00051"></a><a class="code" href="struct_v_d_p_sprite.html">00051</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00052"></a>00052 {
+<a name="l00053"></a>00053     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y;
+<a name="l00054"></a>00054     <span class="keyword">union</span>
+<a name="l00055"></a>00055     {
+<a name="l00056"></a>00056         <span class="keyword">struct </span>{
+<a name="l00057"></a>00057             <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size;
+<a name="l00058"></a>00058             <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> link;
+<a name="l00059"></a>00059         };
+<a name="l00060"></a>00060         <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size_link;
+<a name="l00061"></a>00061     };
+<a name="l00062"></a>00062     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut;
+<a name="l00063"></a>00063     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x;
+<a name="l00064"></a>00064 }  <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>;
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066 
+<a name="l00070"></a>00070 <span class="keyword">extern</span> <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a> vdpSpriteCache[<a class="code" href="vdp__spr_8h.html#a8527f39a469ac1c4cd0f6ced21151921" title="Maximum number of hardware sprite.">MAX_VDP_SPRITE</a>];
 <a name="l00071"></a>00071 
-<a name="l00076"></a>00076 <span class="keyword">extern</span> <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>* <a class="code" href="vdp__spr_8h.html#af453ffc4cda22a0439abf11e4501e4dc" title="Pointer to last allocated sprite after calling VDP_allocateSprites(..) method.  This can be used to d...">lastAllocatedVDPSprite</a>;
-<a name="l00086"></a>00086 <span class="keyword">extern</span> <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="vdp__spr_8h.html#a92f6d10a96344417e298741d6d505021" title="Highest index of allocated VDP sprite since the last call to VDP_resetSprites() or VDP_releaseAllSpri...">highestVDPSpriteIndex</a>;
+<a name="l00076"></a>00076 <span class="keyword">extern</span> <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>* lastAllocatedVDPSprite;
+<a name="l00086"></a>00086 <span class="keyword">extern</span> <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> highestVDPSpriteIndex;
 <a name="l00087"></a>00087 
 <a name="l00088"></a>00088 
-<a name="l00093"></a>00093 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a119d43a38bb9ee01bdfcc1d023c8ef14" title="Clear all sprites and reset VDP sprite allocation (if any).">VDP_resetSprites</a>();
+<a name="l00093"></a>00093 <span class="keywordtype">void</span> VDP_resetSprites();
 <a name="l00094"></a>00094 
-<a name="l00099"></a>00099 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#aee925b150a1f1b7e626b0ef6e7ad37ca" title="Release all VDP sprite allocation.">VDP_releaseAllSprites</a>();
+<a name="l00099"></a>00099 <span class="keywordtype">void</span> VDP_releaseAllSprites();
 <a name="l00100"></a>00100 
-<a name="l00119"></a>00119 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together.">VDP_allocateSprites</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num);
-<a name="l00135"></a>00135 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a758f671284c304640676af27ce7c77ba" title="Release specified number of VDP sprites.">VDP_releaseSprites</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num);
-<a name="l00143"></a>00143 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp__spr_8h.html#acdf22d61bb050bc7e88e61a7a3f16a24" title="Return the number of available VDP sprite.">VDP_getAvailableSprites</a>();
-<a name="l00154"></a>00154 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="vdp__spr_8h.html#ad50be004cabf7375d84d88bd6e15adf1" title="Compute and return the highest index of currently allocated VDP sprite.  A value of -1 mean no VDP Sp...">VDP_refreshHighestAllocatedSpriteIndex</a>();
+<a name="l00119"></a>00119 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> VDP_allocateSprites(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num);
+<a name="l00135"></a>00135 <span class="keywordtype">void</span> VDP_releaseSprites(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num);
+<a name="l00143"></a>00143 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getAvailableSprites();
+<a name="l00154"></a>00154 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> VDP_refreshHighestAllocatedSpriteIndex();
 <a name="l00155"></a>00155 
-<a name="l00160"></a>00160 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a7d0d375d8fbcda202e9afcb50866f8bd" title="Clear all sprites.">VDP_clearSprites</a>();
-<a name="l00182"></a>00182 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a16ac8e7ec2cf7b209f05e30d6c6f0cf9" title="Set a sprite (use sprite list cache).">VDP_setSpriteFull</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> link);
-<a name="l00201"></a>00201 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a96585b6f0df2c4f9e009a2bdb849bcce" title="Set a sprite (use sprite list cache).">VDP_setSprite</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
-<a name="l00216"></a>00216 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#afbc27635216160233d3dd9156d636e22" title="Set sprite position (use sprite list cache).">VDP_setSpritePosition</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y);
-<a name="l00229"></a>00229 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a4cb61055bde52ca0b97b945c475d2784" title="Set sprite size (use sprite list cache).">VDP_setSpriteSize</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size);
-<a name="l00242"></a>00242 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#aa72c36f8ef668f6e9f174159cb401d03" title="Set sprite attributes (use sprite list cache).">VDP_setSpriteAttribut</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
-<a name="l00255"></a>00255 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#a37cd782521bd2af8ff5c6c226d818610" title="Set sprite link (use sprite list cache).">VDP_setSpriteLink</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> link);
-<a name="l00268"></a>00268 <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>* <a class="code" href="vdp__spr_8h.html#a981e4151f44758965fcbcdf1949f90b9" title="Link sprites starting at the specified index.  Links are created in simple ascending order (1 --&gt; 2 -...">VDP_linkSprites</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num);
+<a name="l00160"></a>00160 <span class="keywordtype">void</span> VDP_clearSprites();
+<a name="l00182"></a>00182 <span class="keywordtype">void</span> VDP_setSpriteFull(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> link);
+<a name="l00201"></a>00201 <span class="keywordtype">void</span> VDP_setSprite(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
+<a name="l00216"></a>00216 <span class="keywordtype">void</span> VDP_setSpritePosition(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y);
+<a name="l00229"></a>00229 <span class="keywordtype">void</span> VDP_setSpriteSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size);
+<a name="l00242"></a>00242 <span class="keywordtype">void</span> VDP_setSpriteAttribut(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
+<a name="l00255"></a>00255 <span class="keywordtype">void</span> VDP_setSpriteLink(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> link);
+<a name="l00268"></a>00268 <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>* VDP_linkSprites(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num);
 <a name="l00269"></a>00269 
-<a name="l00284"></a>00284 <span class="keywordtype">void</span> <a class="code" href="vdp__spr_8h.html#aa75af8ee6eb2be44ec48ce0a9dadfb19" title="Send the cached sprite list to the VDP.">VDP_updateSprites</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> queue);
-<a name="l00285"></a>00285 
-<a name="l00286"></a>00286 
-<a name="l00287"></a>00287 <span class="preprocessor">#endif // _VDP_SPR_H_</span>
+<a name="l00288"></a>00288 <span class="keywordtype">void</span> VDP_updateSprites(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num, <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm);
+<a name="l00289"></a>00289 
+<a name="l00290"></a>00290 
+<a name="l00291"></a>00291 <span class="preprocessor">#endif // _VDP_SPR_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__spr_8h.html">vdp_spr.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:03 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

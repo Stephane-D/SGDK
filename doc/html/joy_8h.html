@@ -212,8 +212,8 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>JOY_SUPPORT_KEYBOARD</b>&#160;&#160;&#160;0x0C</td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a9c16521cfc0557e4f766171d04537fa6">_joyEventCallback</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> changed, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> state)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Joypad event callback.  <a href="#a9c16521cfc0557e4f766171d04537fa6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> changed, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> state)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Joypad event callback.  <a href="#a4f83081825a2a980a01ce9ff78ccfa41"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a6e15180697fbee159bcedfa8974efc31">JOY_init</a> ()</td></tr>
@@ -222,12 +222,12 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a6c5e812ed03bd58a227a5c08c8692209">JOY_reset</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the controller sub system.<br/>
   <a href="#a6c5e812ed03bd58a227a5c08c8692209"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a8746eff6d3ce4c091a14249fb2e93871">JOY_setEventHandler</a> (<a class="el" href="joy_8h.html#a9c16521cfc0557e4f766171d04537fa6">_joyEventCallback</a> *CB)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a8812d0aecb9f032f429dd45138777fef">JOY_setEventHandler</a> (<a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a> *CB)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the callback function for controller state changed.<br/>
  <br/>
  SGDK provides facilities to detect state change on controller.<br/>
  It update controllers state at each V Blank period and fire event if a state change is detected.<br/>
-  <a href="#a8746eff6d3ce4c091a14249fb2e93871"></a><br/></td></tr>
+  <a href="#a8812d0aecb9f032f429dd45138777fef"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a2849113e4a8af7ca42ab59c4bf4fae8d">JOY_setSupport</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> support)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set peripheral support for the specified port.<br/>
  <br/>
@@ -302,17 +302,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000063">Deprecated:</a></b></dt><dd>Use PORT_TYPE_UNKNOWN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000023">Deprecated:</a></b></dt><dd>Use PORT_TYPE_UNKNOWN instead </dd></dl>
 
 </div>
 </div>
 <hr/><h2>Typedef Documentation</h2>
-<a class="anchor" id="a9c16521cfc0557e4f766171d04537fa6"></a><!-- doxytag: member="joy.h::_joyEventCallback" ref="a9c16521cfc0557e4f766171d04537fa6" args="(u16 joy, u16 changed, u16 state)" -->
+<a class="anchor" id="a4f83081825a2a980a01ce9ff78ccfa41"></a><!-- doxytag: member="joy.h::JoyEventCallback" ref="a4f83081825a2a980a01ce9ff78ccfa41" args="(u16 joy, u16 changed, u16 state)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void <a class="el" href="joy_8h.html#a9c16521cfc0557e4f766171d04537fa6">_joyEventCallback</a>(<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> changed, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> state)</td>
+          <td class="memname">typedef void <a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a>(<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> changed, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> state)</td>
         </tr>
       </table>
 </div>
@@ -624,14 +624,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
 
 </div>
 </div>
-<a class="anchor" id="a8746eff6d3ce4c091a14249fb2e93871"></a><!-- doxytag: member="joy.h::JOY_setEventHandler" ref="a8746eff6d3ce4c091a14249fb2e93871" args="(_joyEventCallback *CB)" -->
+<a class="anchor" id="a8812d0aecb9f032f429dd45138777fef"></a><!-- doxytag: member="joy.h::JOY_setEventHandler" ref="a8812d0aecb9f032f429dd45138777fef" args="(JoyEventCallback *CB)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void JOY_setEventHandler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="joy_8h.html#a9c16521cfc0557e4f766171d04537fa6">_joyEventCallback</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a> *&#160;</td>
           <td class="paramname"><em>CB</em></td><td>)</td>
           <td></td>
         </tr>
@@ -859,7 +859,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="joy_8h.html">joy.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:03 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

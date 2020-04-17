@@ -104,14 +104,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00060"></a><a class="code" href="psg_8h.html#a8ab32c52645088c28a5efe1d315bb88e">00060</a> <span class="preprocessor">#define PSG_NOISE_FREQ_TONE3    3</span>
 <a name="l00061"></a>00061 <span class="preprocessor"></span>
 <a name="l00062"></a>00062 
-<a name="l00067"></a>00067 <span class="keywordtype">void</span> <a class="code" href="psg_8h.html#a1bbcbff5775bb824757e9812c6b77cfb" title="Initialize PSG chip.">PSG_init</a>();
+<a name="l00067"></a>00067 <span class="keywordtype">void</span> PSG_init();
 <a name="l00068"></a>00068 
-<a name="l00079"></a>00079 <span class="keywordtype">void</span> <a class="code" href="psg_8h.html#ae541dc886ab4cb3d1c543310abcc7b9b" title="Write to PSG port.">PSG_write</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
+<a name="l00079"></a>00079 <span class="keywordtype">void</span> PSG_write(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
 <a name="l00080"></a>00080 
-<a name="l00092"></a>00092 <span class="keywordtype">void</span> <a class="code" href="psg_8h.html#a19c1523f633c96dab3a631d2d5bc3962" title="Set envelope level.">PSG_setEnvelope</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> channel, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
-<a name="l00104"></a>00104 <span class="keywordtype">void</span> <a class="code" href="psg_8h.html#ade3ccab12ba93ff8927df5aa4138da4b" title="Set tone.">PSG_setTone</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> channel, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00117"></a>00117 <span class="keywordtype">void</span> <a class="code" href="psg_8h.html#aa70145114eb0025c2e59ab57d22fd78d" title="Set frequency.">PSG_setFrequency</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> channel, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00133"></a>00133 <span class="keywordtype">void</span> <a class="code" href="psg_8h.html#a8a3f1e62ce1f80236316c79ae8d953cc" title="Set noise type and frequency.">PSG_setNoise</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> type, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> frequency);
+<a name="l00092"></a>00092 <span class="keywordtype">void</span> PSG_setEnvelope(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> channel, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00104"></a>00104 <span class="keywordtype">void</span> PSG_setTone(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> channel, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00117"></a>00117 <span class="keywordtype">void</span> PSG_setFrequency(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> channel, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00133"></a>00133 <span class="keywordtype">void</span> PSG_setNoise(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> type, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> frequency);
 <a name="l00134"></a>00134 
 <a name="l00135"></a>00135 
 <a name="l00136"></a>00136 <span class="preprocessor">#endif // _PSG_H_</span>
@@ -120,7 +120,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="psg_8h.html">psg.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:02 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

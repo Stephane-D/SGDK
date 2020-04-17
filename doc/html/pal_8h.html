@@ -140,9 +140,6 @@ Functions</h2></td></tr>
 <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>PAL_initFade</b> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromCol, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> toCol, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *palSrc, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *palDst, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numFrame)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a216f827353b5e00f0ba4c4f7069e8b84"></a><!-- doxytag: member="pal.h::PAL_doFadeStep" ref="a216f827353b5e00f0ba4c4f7069e8b84" args="()" -->
 <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>PAL_doFadeStep</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a239207112c97618d7390043e75fdcb1a"></a><!-- doxytag: member="pal.h::PAL_interruptFade" ref="a239207112c97618d7390043e75fdcb1a" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a239207112c97618d7390043e75fdcb1a">PAL_interruptFade</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt any asynchronous palette fading effect. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a665f2f27cac6dcade6ee8a4ed460fa2e">PAL_fade</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromCol, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> toCol, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *palSrc, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *palDst, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numFrame, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> async)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">General palette fading effect.  <a href="#a665f2f27cac6dcade6ee8a4ed460fa2e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a2195cfab6faa4c983f861a7c2477ec3f">PAL_fadeTo</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromCol, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> toCol, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numFrame, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> async)</td></tr>
@@ -173,6 +170,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd682d8904fca046867007c0586c99bc"></a><!-- doxytag: member="pal.h::PAL_waitFadeCompletion" ref="acd682d8904fca046867007c0586c99bc" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#acd682d8904fca046867007c0586c99bc">PAL_waitFadeCompletion</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for palette fading operation to complete (for asynchrone fading). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a239207112c97618d7390043e75fdcb1a"></a><!-- doxytag: member="pal.h::PAL_interruptFade" ref="a239207112c97618d7390043e75fdcb1a" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a239207112c97618d7390043e75fdcb1a">PAL_interruptFade</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt any asynchronous palette fading effect. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0387b41895203dd233ab618703ed0e1a"></a><!-- doxytag: member="pal.h::palette_black" ref="a0387b41895203dd233ab618703ed0e1a" args="" -->
@@ -1231,7 +1231,7 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="pal_8h.html">pal.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:03 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

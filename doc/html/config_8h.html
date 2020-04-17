@@ -93,7 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77db44a872ff57297a7f770f1193f0f3"></a><!-- doxytag: member="config.h::LIB_DEBUG" ref="a77db44a872ff57297a7f770f1193f0f3" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a77db44a872ff57297a7f770f1193f0f3">LIB_DEBUG</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 to enable KDebug logging (Gens KMod) for some errors (as memory allocation). <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 to enable KDebug logging (Gens KMod) to log some errors (as memory allocation). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4dbd3badcdb6094eb9a9a00a660ba3b8"></a><!-- doxytag: member="config.h::HALT_Z80_ON_DMA" ref="a4dbd3badcdb6094eb9a9a00a660ba3b8" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a4dbd3badcdb6094eb9a9a00a660ba3b8">HALT_Z80_ON_DMA</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to force Z80 halt during DMA operation.<br/>
@@ -102,6 +102,11 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">HALT_Z80_ON_IO</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to force Z80 halt during IO port (controller) accesses.<br/>
  Some Megadrive models (as some MD2) need it to prevent some possible Z80 corruption bugs (may happen when Z80 access the main BUS during IO port access from 68K). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d2163fee9102ccfe4da038b29df814e"></a><!-- doxytag: member="config.h::DMA_DISABLED" ref="a6d2163fee9102ccfe4da038b29df814e" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a6d2163fee9102ccfe4da038b29df814e">DMA_DISABLED</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to completely disable DMA transfers (for testing purpose) and replace them with (slower) software CPU copy. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a8e5f37f8dd287ef08c10552d637738a7">ENABLE_BANK_SWITCH</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 to enable automatic bank switch using official SEGA mapper for ROM &gt; 4MB.  <a href="#a8e5f37f8dd287ef08c10552d637738a7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a071a17c9240694ea053efd33130ad764"></a><!-- doxytag: member="config.h::ENABLE_NEWLIB" ref="a071a17c9240694ea053efd33130ad764" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a071a17c9240694ea053efd33130ad764">ENABLE_NEWLIB</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use newlib with SGDK.<br/>
@@ -123,12 +128,29 @@ Defines</h2></td></tr>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011</dd></dl>
 <p>This unit is used to define some specific compilation option of the library. </p>
-</div></div>
+</div><hr/><h2>Define Documentation</h2>
+<a class="anchor" id="a8e5f37f8dd287ef08c10552d637738a7"></a><!-- doxytag: member="config.h::ENABLE_BANK_SWITCH" ref="a8e5f37f8dd287ef08c10552d637738a7" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ENABLE_BANK_SWITCH&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set it to 1 to enable automatic bank switch using official SEGA mapper for ROM &gt; 4MB. </p>
+<p>When automatic bank switch is enabled all internal BIN data structures declared in .far_rodata section will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit it's why it's disabled by default if you don't require bank switch. </p>
+
+</div>
+</div>
+</div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:03 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -150,7 +150,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246">XGM_set68KBUSProtection</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set temporary 68K BUS protection from Z80 (XGM music player driver).<br/>
  You should protect BUS Access during DMA and restore it after:<br/>
- XGM_set68KBUSProtection(TRUE); <a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959" title="Start DMA transfert to VRAM.">VDP_doVRamDMA(data, 0x1000, 0x100)</a>; XGM_set68KBUSProtection(FALSE);.  <a href="#a09d28faaea58861315be8021cfe29246"></a><br/></td></tr>
+ XGM_set68KBUSProtection(TRUE); <a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959">VDP_doVRamDMA(data, 0x1000, 0x100)</a>; XGM_set68KBUSProtection(FALSE);.  <a href="#a09d28faaea58861315be8021cfe29246"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#ad9dc54c2a7cd28a45c94df19a02b6477">XGM_getForceDelayDMA</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="types_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d" title="TRUE define (equivalent to 1).">TRUE</a> if DMA delay is enabled to improve PCM playback.  <a href="#ad9dc54c2a7cd28a45c94df19a02b6477"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7">XGM_setForceDelayDMA</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
@@ -333,7 +333,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>Return non zero if specified channel(s) is(are) playing. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Return the channel mask of current playing channel(s).<br/>
+ For instance it returns (SOUND_PCM_CH1_MSK | SOUND_PCM_CH3_MSK) if channels 1 and 3 are currently playing. </dd></dl>
 
 </div>
 </div>
@@ -416,7 +417,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 
 <p>Set temporary 68K BUS protection from Z80 (XGM music player driver).<br/>
  You should protect BUS Access during DMA and restore it after:<br/>
- XGM_set68KBUSProtection(TRUE); <a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959" title="Start DMA transfert to VRAM.">VDP_doVRamDMA(data, 0x1000, 0x100)</a>; XGM_set68KBUSProtection(FALSE);. </p>
+ XGM_set68KBUSProtection(TRUE); <a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959">VDP_doVRamDMA(data, 0x1000, 0x100)</a>; XGM_set68KBUSProtection(FALSE);. </p>
 <p>This way the XGM driver will *try* to avoid using 68K BUS during DMA to avoid execution interruption and so preserve PCM playback quality.<br/>
  Note that the success of the operation is not 100% garantee and can fails in some conditions (heavy Z80 load, lot of PSG data in XGM music), you can also improve the PCM playblack by using the <a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA()</a> method.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA</a>(..) </dd></dl>
@@ -737,7 +738,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="xgm_8h.html">xgm.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

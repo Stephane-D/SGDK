@@ -91,86 +91,86 @@ WARN_IF_UNDOCUMENTED   = NO
 WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = YES
 WARN_FORMAT            = "$file:$line: $text"
-WARN_LOGFILE            = "D:\apps\SGDK\cb\doc\doxygen.log"
+WARN_LOGFILE            = "D:\Apps\SGDK\cb\doc\doxygen.log"
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = \
-	"..\..\src\xgm.c" \
-	"..\..\inc\genesis.h" \
-	"..\..\inc\psg.h" \
-	"..\..\src\tools.c" \
-	"..\..\inc\maths3D.h" \
-	"..\..\inc\timer.h" \
-	"..\..\src\sound.c" \
-	"..\..\inc\sys.h" \
-	"..\..\src\fat16.c" \
-	"..\..\src\tab_log10.c" \
-	"..\..\inc\tab_cnv.h" \
-	"..\..\src\tab_cnv.c" \
-	"..\..\inc\tools.h" \
-	"..\..\src\maths.c" \
-	"..\..\src\tab_sqrt.c" \
-	"..\..\inc\bmp.h" \
-	"..\..\inc\sram.h" \
-	"..\..\inc\config.h" \
-	"..\..\inc\sound.h" \
-	"..\..\res\libres.h" \
-	"..\..\src\vdp_tile.c" \
-	"..\..\inc\dma.h" \
-	"..\..\inc\smp_null.h" \
 	"..\..\src\pal.c" \
-	"..\..\inc\vdp_pal.h" \
-	"..\..\inc\font.h" \
-	"..\..\inc\string.h" \
-	"..\..\src\sprite_eng.c" \
-	"..\..\inc\ym2612.h" \
-	"..\..\src\sys.c" \
-	"..\..\inc\memory.h" \
+	"..\..\src\types.c" \
+	"..\..\inc\fat16.h" \
+	"..\..\src\psg.c" \
+	"..\..\src\vdp_dma.c" \
+	"..\..\inc\maths3D.h" \
+	"..\..\src\xgm.c" \
+	"..\..\inc\sprite_eng.h" \
+	"..\..\src\maths.c" \
 	"..\..\inc\types.h" \
-	"..\..\src\tab_sin.c" \
-	"..\..\src\ym2612.c" \
+	"..\..\inc\tools.h" \
+	"..\..\src\sprite_eng.c" \
+	"..\..\inc\genesis.h" \
+	"..\..\inc\smp_null_pcm.h" \
+	"..\..\src\sys.c" \
+	"..\..\inc\sys.h" \
+	"..\..\inc\config.h" \
+	"..\..\src\memory.c" \
+	"..\..\src\vdp_pal.c" \
+	"..\..\inc\timer.h" \
+	"..\..\res\libres.h" \
+	"..\..\src\tab_sqrt.c" \
+	"..\..\inc\dma.h" \
+	"..\..\src\fat16.c" \
+	"..\..\src\maths3D.c" \
 	"..\..\inc\vdp.h" \
+	"..\..\inc\font.h" \
+	"..\..\src\bmp.c" \
+	"..\..\src\vdp_spr.c" \
+	"..\..\inc\maths.h" \
+	"..\..\src\boot\rom_head.c" \
+	"..\..\inc\vdp_tile.h" \
 	"..\..\src\tab_vol.c" \
+	"..\..\inc\joy.h" \
 	"..\..\inc\xgm.h" \
 	"..\..\src\z80_ctrl.c" \
-	"..\..\inc\kdebug.h" \
-	"..\..\inc\vdp_bg.h" \
-	"..\..\src\psg.c" \
-	"..\..\src\joy.c" \
-	"..\..\inc\tab_vol.h" \
-	"..\..\src\memory.c" \
-	"..\..\inc\vdp_dma.h" \
-	"..\..\src\sram.c" \
-	"..\..\inc\pal.h" \
-	"..\..\src\timer.c" \
-	"..\..\src\tab_log2.c" \
-	"..\..\src\vdp.c" \
-	"..\..\inc\z80_mvsc.h" \
-	"..\..\inc\z80_ctrl.h" \
-	"..\..\src\vdp_bg.c" \
-	"..\..\src\bmp.c" \
-	"..\..\src\vdp_dma.c" \
+	"..\..\inc\bmp.h" \
+	"..\..\src\sound.c" \
 	"..\..\inc\vdp_spr.h" \
+	"..\..\src\vdp_tile.c" \
+	"..\..\src\tab_log2.c" \
 	"..\..\inc\asm.h" \
-	"..\..\src\boot\rom_head.c" \
-	"..\..\inc\z80_vgm.h" \
-	"..\..\src\dma.c" \
-	"..\..\src\types.c" \
-	"..\..\src\vdp_pal.c" \
-	"..\..\inc\everdrive.h" \
-	"..\..\src\everdrive.c" \
-	"..\..\src\vdp_spr.c" \
-	"..\..\inc\fat16.h" \
-	"..\..\src\maths3D.c" \
-	"..\..\inc\vdp_tile.h" \
-	"..\..\src\string.c" \
-	"..\..\inc\joy.h" \
-	"..\..\inc\smp_null_pcm.h" \
-	"..\..\inc\vram.h" \
+	"..\..\src\sram.c" \
+	"..\..\src\vdp.c" \
+	"..\..\src\tab_sin.c" \
+	"..\..\inc\kdebug.h" \
+	"..\..\inc\z80_ctrl.h" \
 	"..\..\src\vram.c" \
-	"..\..\inc\maths.h" \
-	"..\..\inc\sprite_eng.h" 
+	"..\..\inc\memory.h" \
+	"..\..\src\string.c" \
+	"..\..\inc\everdrive.h" \
+	"..\..\src\tab_cnv.c" \
+	"..\..\inc\vdp_dma.h" \
+	"..\..\src\tab_log10.c" \
+	"..\..\src\timer.c" \
+	"..\..\inc\pal.h" \
+	"..\..\inc\vram.h" \
+	"..\..\inc\psg.h" \
+	"..\..\inc\vdp_bg.h" \
+	"..\..\src\vdp_bg.c" \
+	"..\..\inc\smp_null.h" \
+	"..\..\inc\sound.h" \
+	"..\..\src\everdrive.c" \
+	"..\..\inc\ym2612.h" \
+	"..\..\inc\sram.h" \
+	"..\..\src\joy.c" \
+	"..\..\inc\vdp_pal.h" \
+	"..\..\inc\string.h" \
+	"..\..\src\mapper.c" \
+	"..\..\src\tools.c" \
+	"..\..\inc\mapper.h" \
+	"..\..\src\dma.c" \
+	"..\..\src\ym2612.c" \
+	"..\..\inc\tab_cnv.h" \
+	"..\..\inc\tab_vol.h" 
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
@@ -200,7 +200,7 @@ VERBATIM_HEADERS       = YES
 #---------------------------------------------------------------------------
 # configuration options related to the alphabetical class index
 #---------------------------------------------------------------------------
-ALPHABETICAL_INDEX     = NO
+ALPHABETICAL_INDEX     = YES
 COLS_IN_ALPHA_INDEX    = 5
 IGNORE_PREFIX          =
 #---------------------------------------------------------------------------

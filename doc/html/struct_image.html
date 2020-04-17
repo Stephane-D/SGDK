@@ -59,6 +59,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
+      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
     </ul>
   </div>
 </div>
@@ -83,8 +84,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <!-- doxytag: class="Image" -->
-<p><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure which contains all data to define an image in a background plan.<br/>
- Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure.  
+<p><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure which contains all data to define an image in a background plane.<br/>
+ Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure.  
  <a href="struct_image.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="vdp__bg_8h_source.html">vdp_bg.h</a>&gt;</code></p>
@@ -97,17 +98,17 @@ Public Attributes</h2></td></tr>
 <a class="el" href="struct_palette.html">Palette</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>palette</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a197c06cf75129e3ddd62edaf84da350a"></a><!-- doxytag: member="Image::tileset" ref="a197c06cf75129e3ddd62edaf84da350a" args="" -->
 <a class="el" href="struct_tile_set.html">TileSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>tileset</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4451fc6fd1e3c6aa131ba71e0cbf150d"></a><!-- doxytag: member="Image::map" ref="a4451fc6fd1e3c6aa131ba71e0cbf150d" args="" -->
-<a class="el" href="struct_map.html">Map</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>map</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78a7f70f71f03e194f8aecd9b368170e"></a><!-- doxytag: member="Image::tilemap" ref="a78a7f70f71f03e194f8aecd9b368170e" args="" -->
+<a class="el" href="struct_tile_map.html">TileMap</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>tilemap</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plan.  Use the unpackImage...">Image</a> structure which contains all data to define an image in a background plan.<br/>
- Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> structure. </p>
+<div class="textblock"><p><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure which contains all data to define an image in a background plane.<br/>
+ Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">palette</td><td><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> data. </td></tr>
     <tr><td class="paramname">tileset</td><td><a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> data structure (contains tiles definition for the image). </td></tr>
-    <tr><td class="paramname">map</td><td><a class="el" href="struct_map.html" title="Map structure which contains tilemap background definition.  Use the unpackMap() method to unpack if ...">Map</a> data structure (contains tilemap definition for the image). </td></tr>
+    <tr><td class="paramname">tilemap</td><td><a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> data structure (contains tilemap definition for the image). </td></tr>
   </table>
   </dd>
 </dl>
@@ -119,7 +120,7 @@ Public Attributes</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct_image.html">Image</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:05 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

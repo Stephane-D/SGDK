@@ -78,8 +78,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#define-members">Defines</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
@@ -92,10 +92,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p><a href="vdp_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_d_p_plan.html">VDPPlan</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to define on which plan to work (used by some methods).  <a href="struct_v_d_p_plan.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d449dbdbe6d6fab619aeb79df669482"></a><!-- doxytag: member="vdp.h::GFX_DATA_PORT" ref="a5d449dbdbe6d6fab619aeb79df669482" args="" -->
@@ -137,14 +133,17 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4dd4609aabe9abaf766037c81df21120"></a><!-- doxytag: member="vdp.h::VDP_PALMODE_FLAG" ref="a4dd4609aabe9abaf766037c81df21120" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4dd4609aabe9abaf766037c81df21120">VDP_PALMODE_FLAG</a>&#160;&#160;&#160;(1 &lt;&lt; 0)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP PAL mode flag. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7814b5440d8c1abac2d3b713da9e661e"></a><!-- doxytag: member="vdp.h::VDP_PLAN_A" ref="a7814b5440d8c1abac2d3b713da9e661e" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7814b5440d8c1abac2d3b713da9e661e">VDP_PLAN_A</a>&#160;&#160;&#160;aplan_addr</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7814b5440d8c1abac2d3b713da9e661e">VDP_PLAN_A</a>&#160;&#160;&#160;VDP_BG_A</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aad093d575e8a3b56a7aad71005928d2e">VDP_PLAN_B</a>&#160;&#160;&#160;VDP_BG_B</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#accbf240474704163a78d290de2ea6418">VDP_PLAN_WINDOW</a>&#160;&#160;&#160;VDP_WINDOW</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a101e1b0a8104f916e705c6b899776d"></a><!-- doxytag: member="vdp.h::VDP_BG_A" ref="a9a101e1b0a8104f916e705c6b899776d" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9a101e1b0a8104f916e705c6b899776d">VDP_BG_A</a>&#160;&#160;&#160;bga_addr</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP background A tilemap address in VRAM. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad093d575e8a3b56a7aad71005928d2e"></a><!-- doxytag: member="vdp.h::VDP_PLAN_B" ref="aad093d575e8a3b56a7aad71005928d2e" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aad093d575e8a3b56a7aad71005928d2e">VDP_PLAN_B</a>&#160;&#160;&#160;bplan_addr</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f364c71b1dfcd67c541857dfe49d52d"></a><!-- doxytag: member="vdp.h::VDP_BG_B" ref="a3f364c71b1dfcd67c541857dfe49d52d" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3f364c71b1dfcd67c541857dfe49d52d">VDP_BG_B</a>&#160;&#160;&#160;bgb_addr</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP background B tilemap address in VRAM. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="accbf240474704163a78d290de2ea6418"></a><!-- doxytag: member="vdp.h::VDP_PLAN_WINDOW" ref="accbf240474704163a78d290de2ea6418" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#accbf240474704163a78d290de2ea6418">VDP_PLAN_WINDOW</a>&#160;&#160;&#160;window_addr</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e9c08563599850903d430461a485ee8"></a><!-- doxytag: member="vdp.h::VDP_WINDOW" ref="a9e9c08563599850903d430461a485ee8" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9e9c08563599850903d430461a485ee8">VDP_WINDOW</a>&#160;&#160;&#160;window_addr</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP window tilemap address in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7ffc6a55a97acb15262a5d4d40aff15"></a><!-- doxytag: member="vdp.h::VDP_HSCROLL_TABLE" ref="ab7ffc6a55a97acb15262a5d4d40aff15" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab7ffc6a55a97acb15262a5d4d40aff15">VDP_HSCROLL_TABLE</a>&#160;&#160;&#160;hscrl_addr</td></tr>
@@ -154,10 +153,10 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP sprite list table address in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab0301a45107f4e9af754323b84609aea"></a><!-- doxytag: member="vdp.h::VDP_MAPS_START" ref="ab0301a45107f4e9af754323b84609aea" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab0301a45107f4e9af754323b84609aea">VDP_MAPS_START</a>&#160;&#160;&#160;maps_addr</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in VRAM where maps start (= address of first map / table in VRAM). <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in VRAM where tilemaps start (= address of first tilemap / table in VRAM). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f391a03b6e9d7e254b0c96ca92e5445"></a><!-- doxytag: member="vdp.h::HSCROLL_PLANE" ref="a1f391a03b6e9d7e254b0c96ca92e5445" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1f391a03b6e9d7e254b0c96ca92e5445">HSCROLL_PLANE</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set horizontal scroll to mode plan. <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set horizontal scroll to mode plane. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5ea654edb614ab1279bef2395b3d02d"></a><!-- doxytag: member="vdp.h::HSCROLL_TILE" ref="ac5ea654edb614ab1279bef2395b3d02d" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac5ea654edb614ab1279bef2395b3d02d">HSCROLL_TILE</a>&#160;&#160;&#160;2</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set horizontal scroll to mode tile. <br/></td></tr>
@@ -166,7 +165,7 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set horizontal scroll to mode line. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aac37ccc18d7cd1878f5c576bfdb80cbc"></a><!-- doxytag: member="vdp.h::VSCROLL_PLANE" ref="aac37ccc18d7cd1878f5c576bfdb80cbc" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aac37ccc18d7cd1878f5c576bfdb80cbc">VSCROLL_PLANE</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set vertical scroll to mode plan. <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set vertical scroll to mode plane. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34c9e07aabb9c978ea2e9a34a2694f2a"></a><!-- doxytag: member="vdp.h::VSCROLL_COLUMN" ref="a34c9e07aabb9c978ea2e9a34a2694f2a" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a34c9e07aabb9c978ea2e9a34a2694f2a">VSCROLL_COLUMN</a>&#160;&#160;&#160;1</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition to set vertical scroll to mode column (2 tiles width). <br/></td></tr>
@@ -193,7 +192,7 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>TILE_INDEX_MASK</b>&#160;&#160;&#160;(0xFFFF / TILE_SIZE)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf336af2110de222d6ae9d2a522597fa"></a><!-- doxytag: member="vdp.h::TILE_SPACE" ref="abf336af2110de222d6ae9d2a522597fa" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#abf336af2110de222d6ae9d2a522597fa">TILE_SPACE</a>&#160;&#160;&#160;VDP_MAPS_START</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Space in byte for tile in VRAM (tile space ends where maps starts) <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Space in byte for tile in VRAM (tile space ends where tilemaps starts) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd87774b106e4044bccd121ba2c50a40"></a><!-- doxytag: member="vdp.h::TILE_MAXNUM" ref="acd87774b106e4044bccd121ba2c50a40" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#acd87774b106e4044bccd121ba2c50a40">TILE_MAXNUM</a>&#160;&#160;&#160;(TILE_SPACE / TILE_SIZE)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of tile in VRAM (related to TILE_SPACE). <br/></td></tr>
@@ -213,13 +212,16 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4bc0d5b47958f86d2808f4c514783a4a"></a><!-- doxytag: member="vdp.h::TILE_FONTINDEX" ref="a4bc0d5b47958f86d2808f4c514783a4a" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4bc0d5b47958f86d2808f4c514783a4a">TILE_FONTINDEX</a>&#160;&#160;&#160;(TILE_MAXNUM - FONT_LEN)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Font base tile index. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0165afa29e400fa1eb2a3b199b3b996"></a><!-- doxytag: member="vdp.h::TILE_SPRITEINDEX" ref="ae0165afa29e400fa1eb2a3b199b3b996" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae0165afa29e400fa1eb2a3b199b3b996">TILE_SPRITEINDEX</a>&#160;&#160;&#160;(TILE_FONTINDEX - <a class="el" href="sprite__eng_8h.html#a6c07bb0777a434f9078e6cd395ceaf58">spriteVramSize</a>)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite engine base tile index (equal TILE_FONTINDEX if Sprite Engine is not initialized). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac149a6347ea7afecb802ac017b144224"></a><!-- doxytag: member="vdp.h::TILE_USERLENGTH" ref="ac149a6347ea7afecb802ac017b144224" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac149a6347ea7afecb802ac017b144224">TILE_USERLENGTH</a>&#160;&#160;&#160;(TILE_FONTINDEX - TILE_USERINDEX)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac149a6347ea7afecb802ac017b144224">TILE_USERLENGTH</a>&#160;&#160;&#160;((userTileMaxIndex - TILE_USERINDEX) + 1)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of available user tile. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a00c8f6aa061b3c0d28ca334448ec3e65">TILE_USERLENGHT</a>&#160;&#160;&#160;TILE_USERLENGTH</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1dd96b6bb178af312b86be90bac434a2"></a><!-- doxytag: member="vdp.h::TILE_USERMAXINDEX" ref="a1dd96b6bb178af312b86be90bac434a2" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1dd96b6bb178af312b86be90bac434a2">TILE_USERMAXINDEX</a>&#160;&#160;&#160;(TILE_USERINDEX + TILE_USERLENGTH - 1)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum tile index in VRAM for user. <br/></td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1dd96b6bb178af312b86be90bac434a2">TILE_USERMAXINDEX</a>&#160;&#160;&#160;userTileMaxIndex</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum tile index in VRAM reserved for user (for background and user managed sprites) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3841b9a934469c3e420e96c5806c3219"></a><!-- doxytag: member="vdp.h::TILE_SYSTEM" ref="a3841b9a934469c3e420e96c5806c3219" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3841b9a934469c3e420e96c5806c3219">TILE_SYSTEM</a>&#160;&#160;&#160;(TILE_SYSTEMINDEX * TILE_SIZE)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">System tile address in VRAM. <br/></td></tr>
@@ -292,15 +294,17 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a12dc09792a1dab61ee03cf36ebc40398"></a><!-- doxytag: member="vdp.h::GET_VCOUNTER" ref="a12dc09792a1dab61ee03cf36ebc40398" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a12dc09792a1dab61ee03cf36ebc40398">GET_VCOUNTER</a>&#160;&#160;&#160;(GET_HVCOUNTER &gt;&gt; 8)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns Vertical counter. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a639d0e0055cf7044cc7df5e60bc86473">CONST_PLAN_A</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa23d4b6075529ad3796188167e35a71b"></a><!-- doxytag: member="vdp.h::CONST_PLAN_B" ref="aa23d4b6075529ad3796188167e35a71b" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CONST_PLAN_B</b>&#160;&#160;&#160;1</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c5aea8ed7609f696c44092459e4cf4b"></a><!-- doxytag: member="vdp.h::CONST_PLAN_WINDOW" ref="a4c5aea8ed7609f696c44092459e4cf4b" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CONST_PLAN_WINDOW</b>&#160;&#160;&#160;2</td></tr>
+<tr><td colspan="2"><h2><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> { <b>BG_A</b> =  0, 
+<b>BG_B</b> =  1, 
+<b>WINDOW</b> =  2
+ }</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to define on which plane to work (used by some methods).  <a href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7345ee2c2e6270fcdfb218298566186d">VDP_init</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the VDP sub system.  <a href="#a7345ee2c2e6270fcdfb218298566186d"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant to represent VDP background A plane (used by some methods)  <a href="#a7345ee2c2e6270fcdfb218298566186d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9ce7e4dd92c2dd50dae1b1a33cb96bca">VDP_getReg</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VDP register value.  <a href="#a9ce7e4dd92c2dd50dae1b1a33cb96bca"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6d0b327444609dcef40f54f26437cce4">VDP_setReg</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
@@ -326,16 +330,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cdcddf2dfbd7f392f3d521aeba416a8"></a><!-- doxytag: member="vdp.h::VDP_setScreenWidth320" ref="a7cdcddf2dfbd7f392f3d521aeba416a8" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7cdcddf2dfbd7f392f3d521aeba416a8">VDP_setScreenWidth320</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set horizontal resolution to 320 pixels. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5793f69c0b9b026d5e8bd90814d13798">VDP_getPlanWidth</a> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3b84cf9009b283c7a0ca90cdd688efcc">VDP_getPlanHeight</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1bdd9773d0d91814d3cb98ac08ce08f2"></a><!-- doxytag: member="vdp.h::VDP_getPlaneWidth" ref="a1bdd9773d0d91814d3cb98ac08ce08f2" args="()" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1bdd9773d0d91814d3cb98ac08ce08f2">VDP_getPlaneWidth</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return background plane width (in tile). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a041df052687062ff701a0eb1a92d11c4"></a><!-- doxytag: member="vdp.h::VDP_getPlaneHeight" ref="a041df052687062ff701a0eb1a92d11c4" args="()" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a041df052687062ff701a0eb1a92d11c4">VDP_getPlaneHeight</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return background plane height (in tile). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe">VDP_setPlaneSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> setupVram)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set background plane size (in tile).<br/>
+ WARNING: take attention to properly setup VRAM so tilemaps has enough space.  <a href="#ad46064f4e0eb6c7359e3a107cbed9fbe"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a692b0e6c1e5346a58322ecb5a35f8c49">VDP_setPlanSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set background plan size (in tile).  <a href="#a692b0e6c1e5346a58322ecb5a35f8c49"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a246782f31e06f1c4f4e78ebad78dcce1">VDP_getHorizontalScrollingMode</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plan horizontal scrolling mode.  <a href="#a246782f31e06f1c4f4e78ebad78dcce1"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plane horizontal scrolling mode.  <a href="#a246782f31e06f1c4f4e78ebad78dcce1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a58829d25cd93168db1b132b7d5e78418">VDP_getVerticalScrollingMode</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plan vertical scrolling mode.  <a href="#a58829d25cd93168db1b132b7d5e78418"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plane vertical scrolling mode.  <a href="#a58829d25cd93168db1b132b7d5e78418"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c">VDP_setScrollingMode</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> hscroll, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vscroll)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plan scrolling mode.  <a href="#ac0caefa37ccea591c081e69de7caf48c"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane scrolling mode.  <a href="#ac0caefa37ccea591c081e69de7caf48c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38e61b2a2b06031415115e7faa44a521"></a><!-- doxytag: member="vdp.h::VDP_getBackgroundColor" ref="a38e61b2a2b06031415115e7faa44a521" args="()" -->
 <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a38e61b2a2b06031415115e7faa44a521">VDP_getBackgroundColor</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the background color index. <br/></td></tr>
@@ -368,12 +378,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Horizontal interrupt counter value. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a104e6d70f2e9dff5e20fdb011552adf3">VDP_setHIntCounter</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set Horizontal interrupt counter value.  <a href="#a104e6d70f2e9dff5e20fdb011552adf3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c5331dddbbd3e7e47812b23a27c1b7e"></a><!-- doxytag: member="vdp.h::VDP_getAPlanAddress" ref="a6c5331dddbbd3e7e47812b23a27c1b7e" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6c5331dddbbd3e7e47812b23a27c1b7e">VDP_getAPlanAddress</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of Plan A tilemap. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7889e3313763eb5b25fa76c9d6920dcf"></a><!-- doxytag: member="vdp.h::VDP_getBPlanAddress" ref="a7889e3313763eb5b25fa76c9d6920dcf" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7889e3313763eb5b25fa76c9d6920dcf">VDP_getBPlanAddress</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of Plan B tilemap. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30f0e1fa17d334c719fa04abec92be51"></a><!-- doxytag: member="vdp.h::VDP_getBGAAddress" ref="a30f0e1fa17d334c719fa04abec92be51" args="()" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51">VDP_getBGAAddress</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of BG A tilemap. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e2a9f8e00402607bd1b14dfc1b2d02d"></a><!-- doxytag: member="vdp.h::VDP_getBGBAddress" ref="a7e2a9f8e00402607bd1b14dfc1b2d02d" args="()" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d">VDP_getBGBAddress</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of BG B tilemap. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6c5331dddbbd3e7e47812b23a27c1b7e">VDP_getAPlanAddress</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7889e3313763eb5b25fa76c9d6920dcf">VDP_getBPlanAddress</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7dbb7ca74519f6b4052649eb9b1116dc"></a><!-- doxytag: member="vdp.h::VDP_getWindowAddress" ref="a7dbb7ca74519f6b4052649eb9b1116dc" args="()" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc">VDP_getWindowAddress</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of Window tilemap. <br/></td></tr>
@@ -384,13 +396,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac93008561bd3fa36e6562387ae1921e7"></a><!-- doxytag: member="vdp.h::VDP_getHScrollTableAddress" ref="ac93008561bd3fa36e6562387ae1921e7" args="()" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac93008561bd3fa36e6562387ae1921e7">VDP_getHScrollTableAddress</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of H SCroll table. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c9e0ae9a36332d334b4ce5a388d047a"></a><!-- doxytag: member="vdp.h::VDP_setAPlanAddress" ref="a5c9e0ae9a36332d334b4ce5a388d047a" args="(u16 value)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5c9e0ae9a36332d334b4ce5a388d047a">VDP_setAPlanAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of Plan A tilemap. The address should be at multiple of $2000<br/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a368d0330d36c7f2801b88e6dbeb9e23a"></a><!-- doxytag: member="vdp.h::VDP_setBGAAddress" ref="a368d0330d36c7f2801b88e6dbeb9e23a" args="(u16 value)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a">VDP_setBGAAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000<br/>
  <br/>
  Ex:<br/>
- VDP_setAPlanAddress(0xC000)<br/>
- Will set the Plan A to at address 0xC000 in VRAM. <br/></td></tr>
+ VDP_setBGAAddress(0xC000)<br/>
+ Will set the BG A to at address 0xC000 in VRAM. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a111fd5c20e11199f3000e5495974c364"></a><!-- doxytag: member="vdp.h::VDP_setBGBAddress" ref="a111fd5c20e11199f3000e5495974c364" args="(u16 value)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364">VDP_setBGBAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of BG B tilemap.<br/>
+ The address should be at multiple of $2000<br/>
+ <br/>
+ Ex:<br/>
+ VDP_setBGBAddress(0xE000)<br/>
+ Will set the BG B tilemap at address 0xE000 in VRAM. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5c9e0ae9a36332d334b4ce5a388d047a">VDP_setAPlanAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#afb80485408f0cce3c0745fc122114f79">VDP_setBPlanAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1eae215e64454a3ed819f39509e824e1"></a><!-- doxytag: member="vdp.h::VDP_setWindowAddress" ref="a1eae215e64454a3ed819f39509e824e1" args="(u16 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1">VDP_setWindowAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of Window tilemap.<br/>
@@ -400,14 +422,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
  VDP_setWindowAddress(0xA000)<br/>
  Will set the Window tilemap at address 0xA000 in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a43c8dc47075db8250040db50b2e6fa6f">VDP_setWindowPlanAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb80485408f0cce3c0745fc122114f79"></a><!-- doxytag: member="vdp.h::VDP_setBPlanAddress" ref="afb80485408f0cce3c0745fc122114f79" args="(u16 value)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#afb80485408f0cce3c0745fc122114f79">VDP_setBPlanAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of Plan B tilemap.<br/>
- The address should be at multiple of $2000<br/>
- <br/>
- Ex:<br/>
- VDP_setBPlanAddress(0xE000)<br/>
- Will set the Plan B tilemap at address 0xE000 in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a66bf8cbd2c4dbce406e817ce68b7c9"></a><!-- doxytag: member="vdp.h::VDP_setSpriteListAddress" ref="a0a66bf8cbd2c4dbce406e817ce68b7c9" args="(u16 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a0a66bf8cbd2c4dbce406e817ce68b7c9">VDP_setSpriteListAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of Sprite list.<br/>
@@ -440,7 +454,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9c5f289685a0103e7231b3726ff4bee3">VDP_waitVInt</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next Vertical Interruption.  <a href="#a9c5f289685a0103e7231b3726ff4bee3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#acbb3529f5c7d26499b3d4a0e62007f5a">VDP_resetScreen</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset background plan and palette.  <a href="#acbb3529f5c7d26499b3d4a0e62007f5a"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset background plane and palette.  <a href="#acbb3529f5c7d26499b3d4a0e62007f5a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a78e58a2fd3120b7e6356985aa1f48181">VDP_getAdjustedVCounter</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an enhanced V Counter representation.  <a href="#a78e58a2fd3120b7e6356985aa1f48181"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#adbdb6ea2d08c4f7a90e827c8541c3e35">VDP_showFPS</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> asFloat)</td></tr>
@@ -451,49 +465,42 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5892a729da53f6e06f6aa467a19f6c46"></a><!-- doxytag: member="vdp.h::window_addr" ref="a5892a729da53f6e06f6aa467a19f6c46" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>window_addr</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35174b8d917642a7a6d17c89e53cc425"></a><!-- doxytag: member="vdp.h::aplan_addr" ref="a35174b8d917642a7a6d17c89e53cc425" args="" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>aplan_addr</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1a94986b4e292673a5687a90387e9cc"></a><!-- doxytag: member="vdp.h::bplan_addr" ref="ac1a94986b4e292673a5687a90387e9cc" args="" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>bplan_addr</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2418ee07969b77286bfc40029d91c924"></a><!-- doxytag: member="vdp.h::bga_addr" ref="a2418ee07969b77286bfc40029d91c924" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>bga_addr</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d9ceff3caf36638d020d259ccff7384"></a><!-- doxytag: member="vdp.h::bgb_addr" ref="a7d9ceff3caf36638d020d259ccff7384" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>bgb_addr</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d59d8e12c2865548728c5c7742f4761"></a><!-- doxytag: member="vdp.h::hscrl_addr" ref="a0d59d8e12c2865548728c5c7742f4761" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>hscrl_addr</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2054111d691a8932d402e14b1613b4a"></a><!-- doxytag: member="vdp.h::slist_addr" ref="ab2054111d691a8932d402e14b1613b4a" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>slist_addr</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa24f375899708f14bbf885ce8f5273e6"></a><!-- doxytag: member="vdp.h::maps_addr" ref="aa24f375899708f14bbf885ce8f5273e6" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>maps_addr</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade823673922f62fcbea3f9718391f7bb"></a><!-- doxytag: member="vdp.h::userTileMaxIndex" ref="ade823673922f62fcbea3f9718391f7bb" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>userTileMaxIndex</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb05016d6ffc9a828d3e9f5298cb6406"></a><!-- doxytag: member="vdp.h::screenWidth" ref="aeb05016d6ffc9a828d3e9f5298cb6406" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aeb05016d6ffc9a828d3e9f5298cb6406">screenWidth</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current screen width (horizontale resolution) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80176485af5729b4cd0c7645371806d4"></a><!-- doxytag: member="vdp.h::screenHeight" ref="a80176485af5729b4cd0c7645371806d4" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a80176485af5729b4cd0c7645371806d4">screenHeight</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current screen height (verticale resolution) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4fd6bd28fadec6f8707c8dd33c969a9c">planWidth</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plan width (in tile)  <a href="#a4fd6bd28fadec6f8707c8dd33c969a9c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ad81375640e742b1c79dd65df204fedc9">planHeight</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plan height (in tile)  <a href="#ad81375640e742b1c79dd65df204fedc9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a52f0e00982796dc386af73589df96116">planeWidth</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plane width (in tile)  <a href="#a52f0e00982796dc386af73589df96116"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5ce6e9af21db78c7310ca0fc96619a7f">planeHeight</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plane height (in tile)  <a href="#a5ce6e9af21db78c7310ca0fc96619a7f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a73fde7b0a0d98cb3f03a12f6765cb9f6">windowWidth</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current window width (in tile)  <a href="#a73fde7b0a0d98cb3f03a12f6765cb9f6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3f233a10ede33a7c3f6416abe9731a89">planWidthSft</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plan width bit shift.  <a href="#a3f233a10ede33a7c3f6416abe9731a89"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a26e69c609e7d5b55714f45cc5e1a86eb">planHeightSft</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plan height bit shift.  <a href="#a26e69c609e7d5b55714f45cc5e1a86eb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af086223b50d78b82eaa777991241dfac">planeWidthSft</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plane width bit shift.  <a href="#af086223b50d78b82eaa777991241dfac"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae83446a116f7446c643e74c1df1c25d5">planeHeightSft</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current background plane height bit shift.  <a href="#ae83446a116f7446c643e74c1df1c25d5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5e242a1512924e5e5db8a443f709f2b0">windowWidthSft</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current window width bit shift.  <a href="#a5e242a1512924e5e5db8a443f709f2b0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac96d497a746fea5305bd87a8290fe690"></a><!-- doxytag: member="vdp.h::PLAN_A" ref="ac96d497a746fea5305bd87a8290fe690" args="" -->
-const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac96d497a746fea5305bd87a8290fe690">PLAN_A</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant to represent VDP background A plan (used by some methods) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af5b9e0a49c91a396004973777fecb42a"></a><!-- doxytag: member="vdp.h::PLAN_B" ref="af5b9e0a49c91a396004973777fecb42a" args="" -->
-const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af5b9e0a49c91a396004973777fecb42a">PLAN_B</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant to represent VDP background B plan (used by some methods) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac512a33ff41906433a930dd4d9984aa5"></a><!-- doxytag: member="vdp.h::PLAN_WINDOW" ref="ac512a33ff41906433a930dd4d9984aa5" args="" -->
-const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac512a33ff41906433a930dd4d9984aa5">PLAN_WINDOW</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant to represent VDP window plan (used by some methods) <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>VDP main. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011</dd></dl>
-<p>This unit provides general VDP methods :<br/>
+<p>This unit provides general VDP (Video Display Processor) methods:<br/>
 </p>
 <ul>
 <li>initialisation<br/>
@@ -504,25 +511,13 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </li>
 <li>enable / disable VDP features<br/>
  <br/>
- VRAM should always be organized in a way that tile data are always located before map in VRAM:<br/>
+ <b>WARNING:</b> It's very important that VRAM is organized with tile data being located before tilemaps and tables:<br/>
  0000-XXXX = tile data<br/>
- XXXX-FFFF = maps &amp; tables (H scroll table, sprite table, B/A plan and window plan). </li>
+ XXXX-FFFF = tilemaps &amp; tables (H scroll table, sprite table, B/A plane and window plane).<br/>
+ <br/>
+ If you don't respect that you may get in troubles as SGDK expect it ;) </li>
 </ul>
 </div><hr/><h2>Define Documentation</h2>
-<a class="anchor" id="a639d0e0055cf7044cc7df5e60bc86473"></a><!-- doxytag: member="vdp.h::CONST_PLAN_A" ref="a639d0e0055cf7044cc7df5e60bc86473" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CONST_PLAN_A&#160;&#160;&#160;0</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Internal use </p>
-
-</div>
-</div>
 <a class="anchor" id="ad0195876622b609b7780c70477340826"></a><!-- doxytag: member="vdp.h::TILE_SYSTEMLENGHT" ref="ad0195876622b609b7780c70477340826" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -533,7 +528,7 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000042">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -547,7 +542,49 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000043">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7814b5440d8c1abac2d3b713da9e661e"></a><!-- doxytag: member="vdp.h::VDP_PLAN_A" ref="a7814b5440d8c1abac2d3b713da9e661e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VDP_PLAN_A&#160;&#160;&#160;VDP_BG_A</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aad093d575e8a3b56a7aad71005928d2e"></a><!-- doxytag: member="vdp.h::VDP_PLAN_B" ref="aad093d575e8a3b56a7aad71005928d2e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VDP_PLAN_B&#160;&#160;&#160;VDP_BG_B</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="accbf240474704163a78d290de2ea6418"></a><!-- doxytag: member="vdp.h::VDP_PLAN_WINDOW" ref="accbf240474704163a78d290de2ea6418" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VDP_PLAN_WINDOW&#160;&#160;&#160;VDP_WINDOW</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
 
 </div>
 </div>
@@ -561,7 +598,24 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000041">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000009">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
+
+</div>
+</div>
+<hr/><h2>Enumeration Type Documentation</h2>
+<a class="anchor" id="a2e4eaa8c8f7f7c32c8021105122f98f8"></a><!-- doxytag: member="vdp.h::VDPPlane" ref="a2e4eaa8c8f7f7c32c8021105122f98f8" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Type used to define on which plane to work (used by some methods). </p>
+<p>Internal use </p>
 
 </div>
 </div>
@@ -586,6 +640,40 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 
 </div>
 </div>
+<a class="anchor" id="a6c5331dddbbd3e7e47812b23a27c1b7e"></a><!-- doxytag: member="vdp.h::VDP_getAPlanAddress" ref="a6c5331dddbbd3e7e47812b23a27c1b7e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getAPlanAddress </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000013">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7889e3313763eb5b25fa76c9d6920dcf"></a><!-- doxytag: member="vdp.h::VDP_getBPlanAddress" ref="a7889e3313763eb5b25fa76c9d6920dcf" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getBPlanAddress </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000014">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a246782f31e06f1c4f4e78ebad78dcce1"></a><!-- doxytag: member="vdp.h::VDP_getHorizontalScrollingMode" ref="a246782f31e06f1c4f4e78ebad78dcce1" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -600,43 +688,9 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </div>
 <div class="memdoc">
 
-<p>Returns plan horizontal scrolling mode. </p>
+<p>Returns plane horizontal scrolling mode. </p>
 <p>Possible values are: HSCROLL_PLANE, HSCROLL_TILE, HSCROLL_LINE</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode</a> for more informations about scrolling mode. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a3b84cf9009b283c7a0ca90cdd688efcc"></a><!-- doxytag: member="vdp.h::VDP_getPlanHeight" ref="a3b84cf9009b283c7a0ca90cdd688efcc" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getPlanHeight </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000045">Deprecated:</a></b></dt><dd>Use the <em>planHeight</em> variable directly. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a5793f69c0b9b026d5e8bd90814d13798"></a><!-- doxytag: member="vdp.h::VDP_getPlanWidth" ref="a5793f69c0b9b026d5e8bd90814d13798" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getPlanWidth </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000044">Deprecated:</a></b></dt><dd>Use the <em>planWidth</em> variable directly. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode</a> for more informations about scrolling mode. </dd></dl>
 
 </div>
 </div>
@@ -738,9 +792,9 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </div>
 <div class="memdoc">
 
-<p>Returns plan vertical scrolling mode. </p>
+<p>Returns plane vertical scrolling mode. </p>
 <p>Possible values are: VSCROLL_PLANE, VSCROLL_2TILE</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plan scrolling mode.">VDP_setScrollingMode</a> for more informations about scrolling mode. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode</a> for more informations about scrolling mode. </dd></dl>
 
 </div>
 </div>
@@ -757,7 +811,7 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000046">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000015">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -775,7 +829,10 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </div>
 <div class="memdoc">
 
-<p>Initialize the VDP sub system. </p>
+<p>Constant to represent VDP background A plane (used by some methods) </p>
+<p>Constant to represent VDP background B plane (used by some methods)</p>
+<p>Constant to represent VDP window plane (used by some methods)</p>
+<p>Initialize the VDP sub system.</p>
 <p>Reset VDP registers, clear VRAM, set defaults grey, red, green &amp; blue palette. </p>
 
 </div>
@@ -794,8 +851,44 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </div>
 <div class="memdoc">
 
-<p>Reset background plan and palette. </p>
+<p>Reset background plane and palette. </p>
 <p>Clear background plans, reset palette to grey / red / green / blue and reset scrolls. </p>
+
+</div>
+</div>
+<a class="anchor" id="a5c9e0ae9a36332d334b4ce5a388d047a"></a><!-- doxytag: member="vdp.h::VDP_setAPlanAddress" ref="a5c9e0ae9a36332d334b4ce5a388d047a" args="(u16 value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_setAPlanAddress </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000016">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afb80485408f0cce3c0745fc122114f79"></a><!-- doxytag: member="vdp.h::VDP_setBPlanAddress" ref="afb80485408f0cce3c0745fc122114f79" args="(u16 value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_setBPlanAddress </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000017">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -900,6 +993,53 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 
 </div>
 </div>
+<a class="anchor" id="ad46064f4e0eb6c7359e3a107cbed9fbe"></a><!-- doxytag: member="vdp.h::VDP_setPlaneSize" ref="ad46064f4e0eb6c7359e3a107cbed9fbe" args="(u16 w, u16 h, bool setupVram)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_setPlaneSize </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>h</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>setupVram</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set background plane size (in tile).<br/>
+ WARNING: take attention to properly setup VRAM so tilemaps has enough space. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">w</td><td>width in tile.<br/>
+ Possible values are 32, 64 or 128. </td></tr>
+    <tr><td class="paramname">h</td><td>height in tile.<br/>
+ Possible values are 32, 64 or 128. </td></tr>
+    <tr><td class="paramname">setupVram</td><td>If set to TRUE then tilemaps and tables will be automatically remapped in VRAM depending the plane size.<br/>
+ If you don't know what that means then it's better to keep this value to TRUE :p </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a692b0e6c1e5346a58322ecb5a35f8c49"></a><!-- doxytag: member="vdp.h::VDP_setPlanSize" ref="a692b0e6c1e5346a58322ecb5a35f8c49" args="(u16 w, u16 h)" -->
 <div class="memitem">
 <div class="memproto">
@@ -924,17 +1064,7 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
       </table>
 </div>
 <div class="memdoc">
-
-<p>Set background plan size (in tile). </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">w</td><td>width in tile.<br/>
- Possible values are 32, 64 or 128. </td></tr>
-    <tr><td class="paramname">h</td><td>height in tile.<br/>
- Possible values are 32, 64 or 128. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1066,34 +1196,34 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </div>
 <div class="memdoc">
 
-<p>Set plan scrolling mode. </p>
+<p>Set plane scrolling mode. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">hscroll</td><td>Horizontal scrolling mode :<br/>
- <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
+ <b>HSCROLL_PLANE</b> = Scroll offset is applied to the whole plane.<br/>
  <b>HSCROLL_TILE</b> = Scroll offset is applied on a tile basis granularity (8 pixels bloc).<br/>
  <b>HSCROLL_LINE</b> = Scroll offset is applied on a line basis granularity (1 pixel).<br/>
  </td></tr>
     <tr><td class="paramname">vscroll</td><td>Vertical scrolling mode :<br/>
- <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plan.<br/>
+ <b>VSCROLL_PLANE</b> = Scroll offset is applied to the whole plane.<br/>
  <b>VSCROLL_2TILE</b> = Scroll offset is applied on 2 tiles basis granularity (16 pixels bloc).<br/>
 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a27f90d94ed7cf9be6f99a05a6f327b9d" title="Set plan horizontal scroll (plain scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScroll()</a> to set horizontal scroll offset in mode plane.<br/>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#af0baa5635019a6b2fbde12e26ea05cc0" title="Set plane horizontal scroll (plain scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScroll()</a> to set horizontal scroll offset in mode plane.<br/>
  </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#ab248ca10634033609e7c5c0e2c552a80" title="Set plan horizontal scroll (tile scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScrollTile()</a> to set horizontal scroll offset(s) in mode tile.<br/>
+<a class="el" href="vdp__bg_8h.html#a1112424bede68bddd1ed72cb317e6263" title="Set plane horizontal scroll (tile scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScrollTile()</a> to set horizontal scroll offset(s) in mode tile.<br/>
  </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#a290adc9522bacdec454f731f87e7f32f" title="Set plan horizontal scroll (line scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScrollLine()</a> to set horizontal scroll offset(s) in mode line.<br/>
+<a class="el" href="vdp__bg_8h.html#aa5fa5eb1cd66609521bb31de9bbe1a9f" title="Set plane horizontal scroll (line scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScrollLine()</a> to set horizontal scroll offset(s) in mode line.<br/>
  </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#a6c07a01efecc127d2790957c26326435" title="Set plan vertical scroll (plain scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScroll()</a> to set vertical scroll offset in mode plane.<br/>
+<a class="el" href="vdp__bg_8h.html#a409223c220fd59440b2ee49b843e589f" title="Set plane vertical scroll (plain scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScroll()</a> to set vertical scroll offset in mode plane.<br/>
  </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#a1f4b555a6bf31930a9af9ba5005b642c" title="Set plan vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScrollTile()</a> to set vertical scroll offset(s) in mode 2-tile.<br/>
+<a class="el" href="vdp__bg_8h.html#a4e71b64bebe1c5b15b381a2314a010ec" title="Set plane vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScrollTile()</a> to set vertical scroll offset(s) in mode 2-tile.<br/>
  </dd></dl>
 
 </div>
@@ -1148,7 +1278,7 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000047">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000018">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1251,7 +1381,7 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 <div class="memdoc">
 
 <p>Wait for DMA operation to complete. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000048">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000019">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
 
 </div>
 </div>
@@ -1294,67 +1424,67 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
 </div>
 </div>
 <hr/><h2>Variable Documentation</h2>
-<a class="anchor" id="ad81375640e742b1c79dd65df204fedc9"></a><!-- doxytag: member="vdp.h::planHeight" ref="ad81375640e742b1c79dd65df204fedc9" args="" -->
+<a class="anchor" id="a5ce6e9af21db78c7310ca0fc96619a7f"></a><!-- doxytag: member="vdp.h::planeHeight" ref="a5ce6e9af21db78c7310ca0fc96619a7f" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#ad81375640e742b1c79dd65df204fedc9">planHeight</a></td>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#a5ce6e9af21db78c7310ca0fc96619a7f">planeHeight</a></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Current background plan height (in tile) </p>
+<p>Current background plane height (in tile) </p>
 <p>Possible values are: 32, 64, 128 </p>
 
 </div>
 </div>
-<a class="anchor" id="a26e69c609e7d5b55714f45cc5e1a86eb"></a><!-- doxytag: member="vdp.h::planHeightSft" ref="a26e69c609e7d5b55714f45cc5e1a86eb" args="" -->
+<a class="anchor" id="ae83446a116f7446c643e74c1df1c25d5"></a><!-- doxytag: member="vdp.h::planeHeightSft" ref="ae83446a116f7446c643e74c1df1c25d5" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#a26e69c609e7d5b55714f45cc5e1a86eb">planHeightSft</a></td>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#ae83446a116f7446c643e74c1df1c25d5">planeHeightSft</a></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Current background plan height bit shift. </p>
-<p>Possible values are: 5, 6 or 7 (corresponding to plan height 32, 64 and 128) </p>
+<p>Current background plane height bit shift. </p>
+<p>Possible values are: 5, 6 or 7 (corresponding to plane height 32, 64 and 128) </p>
 
 </div>
 </div>
-<a class="anchor" id="a4fd6bd28fadec6f8707c8dd33c969a9c"></a><!-- doxytag: member="vdp.h::planWidth" ref="a4fd6bd28fadec6f8707c8dd33c969a9c" args="" -->
+<a class="anchor" id="a52f0e00982796dc386af73589df96116"></a><!-- doxytag: member="vdp.h::planeWidth" ref="a52f0e00982796dc386af73589df96116" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#a4fd6bd28fadec6f8707c8dd33c969a9c">planWidth</a></td>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#a52f0e00982796dc386af73589df96116">planeWidth</a></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Current background plan width (in tile) </p>
+<p>Current background plane width (in tile) </p>
 <p>Possible values are: 32, 64, 128 </p>
 
 </div>
 </div>
-<a class="anchor" id="a3f233a10ede33a7c3f6416abe9731a89"></a><!-- doxytag: member="vdp.h::planWidthSft" ref="a3f233a10ede33a7c3f6416abe9731a89" args="" -->
+<a class="anchor" id="af086223b50d78b82eaa777991241dfac"></a><!-- doxytag: member="vdp.h::planeWidthSft" ref="af086223b50d78b82eaa777991241dfac" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#a3f233a10ede33a7c3f6416abe9731a89">planWidthSft</a></td>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="el" href="vdp_8h.html#af086223b50d78b82eaa777991241dfac">planeWidthSft</a></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Current background plan width bit shift. </p>
-<p>Possible values are: 5, 6 or 7 (corresponding to plan width 32, 64 and 128) </p>
+<p>Current background plane width bit shift. </p>
+<p>Possible values are: 5, 6 or 7 (corresponding to plane width 32, 64 and 128) </p>
 
 </div>
 </div>
@@ -1395,7 +1525,7 @@ const <a class="el" href="struct_v_d_p_plan.html">VDPPlan</a>&#160;</td><td clas
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp_8h.html">vdp.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

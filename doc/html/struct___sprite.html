@@ -59,6 +59,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
+      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
     </ul>
   </div>
 </div>
@@ -100,6 +101,8 @@ Public Attributes</h2></td></tr>
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>visibility</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51e4d01483fd754971f47a4a79860702"></a><!-- doxytag: member="_Sprite::definition" ref="a51e4d01483fd754971f47a4a79860702" args="" -->
 const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>definition</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa00074fb929215e8cf0e1f3871edc2b8"></a><!-- doxytag: member="_Sprite::onFrameChange" ref="aa00074fb929215e8cf0e1f3871edc2b8" args=")(struct _Sprite *sprite)" -->
+void(*&#160;</td><td class="memItemRight" valign="bottom"><b>onFrameChange</b> )(struct <a class="el" href="struct___sprite.html">_Sprite</a> *sprite)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a591dea6961b97606207334d5e2ed4c17"></a><!-- doxytag: member="_Sprite::animation" ref="a591dea6961b97606207334d5e2ed4c17" args="" -->
 <a class="el" href="struct_animation.html">Animation</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>animation</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abaa4d5f86515803f266c8131731225a8"></a><!-- doxytag: member="_Sprite::frame" ref="abaa4d5f86515803f266c8131731225a8" args="" -->
@@ -124,10 +127,12 @@ const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *&
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>attribut</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a5a780cd923434dfbc7a4662a729705"></a><!-- doxytag: member="_Sprite::VDPSpriteIndex" ref="a4a5a780cd923434dfbc7a4662a729705" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>VDPSpriteIndex</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a416cb8c6187c31d7e2de992d707e143c"></a><!-- doxytag: member="_Sprite::spriteToHide" ref="a416cb8c6187c31d7e2de992d707e143c" args="" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>spriteToHide</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac09ab007fc2faf7ce7761bbe54805650"></a><!-- doxytag: member="_Sprite::lastVDPSprite" ref="ac09ab007fc2faf7ce7761bbe54805650" args="" -->
 <a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>lastVDPSprite</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a54e484769da7bea6619b9667ba820a"></a><!-- doxytag: member="_Sprite::lastNumSprite" ref="a0a54e484769da7bea6619b9667ba820a" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>lastNumSprite</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a416cb8c6187c31d7e2de992d707e143c"></a><!-- doxytag: member="_Sprite::spriteToHide" ref="a416cb8c6187c31d7e2de992d707e143c" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>spriteToHide</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51283afc3d96d295b97375d82e71e7cc"></a><!-- doxytag: member="_Sprite::data" ref="a51283afc3d96d295b97375d82e71e7cc" args="" -->
 <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03c8622b243b12d360d0b6c0a6d7f64d"></a><!-- doxytag: member="_Sprite::prev" ref="a03c8622b243b12d360d0b6c0a6d7f64d" args="" -->
@@ -173,7 +178,7 @@ struct <a class="el" href="struct___sprite.html">_Sprite</a> *&#160;</td><td cla
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct___sprite.html">_Sprite</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:05 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -121,14 +121,14 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable interrupts (Vertical, Horizontal and External).  <a href="#a5bb8d045df433ef1148309fa1a568985"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7">SYS_enableInts</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reenable interrupts (Vertical, Horizontal and External).  <a href="#a0a0ba98b3892c42b0fd3147841a643a7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a3868e46b137999baa26ae7421840b812">SYS_setVIntPreCallback</a> (_voidCallback *CB)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set start of 'Vertical interrupt' callback method.  <a href="#a3868e46b137999baa26ae7421840b812"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a1574bcc7d4d5986b6374c05115f43767">SYS_setVIntCallback</a> (_voidCallback *CB)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set 'Vertical Interrupt' callback method.  <a href="#a1574bcc7d4d5986b6374c05115f43767"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a484224fb509c7e59b1bc039853458378">SYS_setHIntCallback</a> (_voidCallback *CB)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set 'Horizontal Interrupt' callback method.  <a href="#a484224fb509c7e59b1bc039853458378"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a8c47111f72c099e26793bc8ace97e6f4">SYS_setExtIntCallback</a> (_voidCallback *CB)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set External interrupt callback method.  <a href="#a8c47111f72c099e26793bc8ace97e6f4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ae7d254bd58379a4c72234dde2f971db8">SYS_setVIntPreCallback</a> (VoidCallback *CB)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set start of 'Vertical interrupt' callback method.  <a href="#ae7d254bd58379a4c72234dde2f971db8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1">SYS_setVIntCallback</a> (VoidCallback *CB)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set 'Vertical Interrupt' callback method.  <a href="#abc2725f07baaf70c775935a3878343a1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49">SYS_setHIntCallback</a> (VoidCallback *CB)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set 'Horizontal Interrupt' callback method.  <a href="#a6804e7c1dab303971561691d0caf0d49"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aa189958e09ac6e0b5ca069cd6a99e856">SYS_setExtIntCallback</a> (VoidCallback *CB)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set External interrupt callback method.  <a href="#aa189958e09ac6e0b5ca069cd6a99e856"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#acb2ccb6cafa55bd4f4386675f147fc80">SYS_isInVIntCallback</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if we are in the V-Int callback method.  <a href="#acb2ccb6cafa55bd4f4386675f147fc80"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a42abebb1cbe8f1dc9449666700611f9a">SYS_isInHIntCallback</a> ()</td></tr>
@@ -160,34 +160,34 @@ Functions</h2></td></tr>
  Program execution is interrupted.  <a href="#abf16e3876c8375abef07da14d96d7ba9"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ac6ef2942937e272530cd63c26892850d">busErrorCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Bus error interrupt callback.  <a href="#ac6ef2942937e272530cd63c26892850d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a7f156b6c6de7f5b2555d5f54d9cf9ca0">addressErrorCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Address error interrupt callback.  <a href="#a7f156b6c6de7f5b2555d5f54d9cf9ca0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a292a61001e5334efc7b0cbcfbb0b64b0">illegalInstCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Illegal instruction exception callback.  <a href="#a292a61001e5334efc7b0cbcfbb0b64b0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aa396bc08378e9a0008a736444bb16141">zeroDivideCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Division by zero exception callback.  <a href="#aa396bc08378e9a0008a736444bb16141"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a6ccf711749f5fce7d6d8e607402f76ce">chkInstCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">CHK instruction interrupt callback.  <a href="#a6ccf711749f5fce7d6d8e607402f76ce"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a1e452c7e8e1141bb8364810784789d65">trapvInstCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">TRAPV instruction interrupt callback.  <a href="#a1e452c7e8e1141bb8364810784789d65"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a85cddfd222ba16053021ddeef05a274f">privilegeViolationCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Privilege violation exception callback.  <a href="#a85cddfd222ba16053021ddeef05a274f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#affadcb8a5dc0e97e6ca5c2ad123261cf">traceCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace interrupt callback.  <a href="#affadcb8a5dc0e97e6ca5c2ad123261cf"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aae9d074ca6c50757acce8468c26f825f">line1x1xCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_line.html" title="Line definition.">Line</a> 1x1x exception callback.  <a href="#aae9d074ca6c50757acce8468c26f825f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a639a9d0b99d6cb9856de47bdd0d2f5d0">errorExceptionCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Error exception callback.  <a href="#a639a9d0b99d6cb9856de47bdd0d2f5d0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a070081acddcbff17fadf1f49a1d66a78">intCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Level interrupt callback.  <a href="#a070081acddcbff17fadf1f49a1d66a78"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a36cffeb26ac70e735bd9e4d2d3ed29bd">internalVIntCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal Vertical interrupt callback.  <a href="#a36cffeb26ac70e735bd9e4d2d3ed29bd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a89025ecaee4cb3e9011f68fb48f5541a">internalHIntCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal Horizontal interrupt callback.  <a href="#a89025ecaee4cb3e9011f68fb48f5541a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">_voidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ac78ce4a6bd2f08f0eec2912881f4e212">internalExtIntCB</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal External interrupt callback.  <a href="#ac78ce4a6bd2f08f0eec2912881f4e212"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a61bbd6b4f07f82f9bd611ef58721eef1">busErrorCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Bus error interrupt callback.  <a href="#a61bbd6b4f07f82f9bd611ef58721eef1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ab41d8358de9da304b45a9cd847cb03cd">addressErrorCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Address error interrupt callback.  <a href="#ab41d8358de9da304b45a9cd847cb03cd"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ac850e8b90e9b259160ffb52963981df8">illegalInstCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Illegal instruction exception callback.  <a href="#ac850e8b90e9b259160ffb52963981df8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a182faeee80f45228cb08a9a934a293d3">zeroDivideCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Division by zero exception callback.  <a href="#a182faeee80f45228cb08a9a934a293d3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abf6b1b9a2bfea27af8214110dc17a46b">chkInstCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">CHK instruction interrupt callback.  <a href="#abf6b1b9a2bfea27af8214110dc17a46b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ac391fc51fd8d14f9fa49df15659dfe82">trapvInstCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">TRAPV instruction interrupt callback.  <a href="#ac391fc51fd8d14f9fa49df15659dfe82"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a5038c44f538391d4f31be0a59c7c3462">privilegeViolationCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Privilege violation exception callback.  <a href="#a5038c44f538391d4f31be0a59c7c3462"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ab2ad43e595f0a19f7a8431dc2a7d8de5">traceCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace interrupt callback.  <a href="#ab2ad43e595f0a19f7a8431dc2a7d8de5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a202e800a4fe6f8f9072d8a22847bb5d0">line1x1xCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_line.html" title="Line definition.">Line</a> 1x1x exception callback.  <a href="#a202e800a4fe6f8f9072d8a22847bb5d0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#af2a592696b5e90e63bf969d555d66cbf">errorExceptionCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Error exception callback.  <a href="#af2a592696b5e90e63bf969d555d66cbf"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a46c6198d4926288b16793833d2ddc89a">intCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Level interrupt callback.  <a href="#a46c6198d4926288b16793833d2ddc89a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a91cb991688de411af6aa4fd506aabb41">internalVIntCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal Vertical interrupt callback.  <a href="#a91cb991688de411af6aa4fd506aabb41"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a4c23de7fbe5c89191f24bc8e3da6ac1b">internalHIntCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal Horizontal interrupt callback.  <a href="#a4c23de7fbe5c89191f24bc8e3da6ac1b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VoidCallback *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#af16d031f63fb98c01df52fcfc98e8800">internalExtIntCB</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal External interrupt callback.  <a href="#af16d031f63fb98c01df52fcfc98e8800"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Entry point unit / Interrupt callback / System. </p>
@@ -306,9 +306,9 @@ Variables</h2></td></tr>
 <dd>
 <a class="el" href="sys_8h.html#a810cfc8509ce88565fc002240539f9db" title="Set interrupt mask level.">SYS_setInterruptMaskLevel()</a> </dd>
 <dd>
-<a class="el" href="sys_8h.html#a1574bcc7d4d5986b6374c05115f43767" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback()</a> </dd>
+<a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback()</a> </dd>
 <dd>
-<a class="el" href="sys_8h.html#a484224fb509c7e59b1bc039853458378" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback()</a> </dd></dl>
+<a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback()</a> </dd></dl>
 
 </div>
 </div>
@@ -609,14 +609,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8c47111f72c099e26793bc8ace97e6f4"></a><!-- doxytag: member="sys.h::SYS_setExtIntCallback" ref="a8c47111f72c099e26793bc8ace97e6f4" args="(_voidCallback *CB)" -->
+<a class="anchor" id="aa189958e09ac6e0b5ca069cd6a99e856"></a><!-- doxytag: member="sys.h::SYS_setExtIntCallback" ref="aa189958e09ac6e0b5ca069cd6a99e856" args="(VoidCallback *CB)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void SYS_setExtIntCallback </td>
           <td>(</td>
-          <td class="paramtype">_voidCallback *&#160;</td>
+          <td class="paramtype">VoidCallback *&#160;</td>
           <td class="paramname"><em>CB</em></td><td>)</td>
           <td></td>
         </tr>
@@ -636,14 +636,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a484224fb509c7e59b1bc039853458378"></a><!-- doxytag: member="sys.h::SYS_setHIntCallback" ref="a484224fb509c7e59b1bc039853458378" args="(_voidCallback *CB)" -->
+<a class="anchor" id="a6804e7c1dab303971561691d0caf0d49"></a><!-- doxytag: member="sys.h::SYS_setHIntCallback" ref="a6804e7c1dab303971561691d0caf0d49" args="(VoidCallback *CB)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void SYS_setHIntCallback </td>
           <td>(</td>
-          <td class="paramtype">_voidCallback *&#160;</td>
+          <td class="paramtype">VoidCallback *&#160;</td>
           <td class="paramname"><em>CB</em></td><td>)</td>
           <td></td>
         </tr>
@@ -693,9 +693,9 @@ Variables</h2></td></tr>
 <dd>
 <a class="el" href="sys_8h.html#a00419727f141d248e171b4f66320bf2c" title="Set the interrupt mask level to given value and return previous level.">SYS_getAndSetInterruptMaskLevel()</a> </dd>
 <dd>
-<a class="el" href="sys_8h.html#a1574bcc7d4d5986b6374c05115f43767" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback()</a> </dd>
+<a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback()</a> </dd>
 <dd>
-<a class="el" href="sys_8h.html#a484224fb509c7e59b1bc039853458378" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback()</a> </dd></dl>
+<a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback()</a> </dd></dl>
 
 </div>
 </div>
@@ -722,14 +722,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1574bcc7d4d5986b6374c05115f43767"></a><!-- doxytag: member="sys.h::SYS_setVIntCallback" ref="a1574bcc7d4d5986b6374c05115f43767" args="(_voidCallback *CB)" -->
+<a class="anchor" id="abc2725f07baaf70c775935a3878343a1"></a><!-- doxytag: member="sys.h::SYS_setVIntCallback" ref="abc2725f07baaf70c775935a3878343a1" args="(VoidCallback *CB)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void SYS_setVIntCallback </td>
           <td>(</td>
-          <td class="paramtype">_voidCallback *&#160;</td>
+          <td class="paramtype">VoidCallback *&#160;</td>
           <td class="paramname"><em>CB</em></td><td>)</td>
           <td></td>
         </tr>
@@ -749,20 +749,20 @@ Variables</h2></td></tr>
  This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br/>
  Note that the callback will be called after some internal SGDK V-Int processes and so probably not right at the start of the V-Blank area.<br/>
  For that you can use the SYS_setPreVIntCallback(..) method instead.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a484224fb509c7e59b1bc039853458378" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(_voidCallback *CB)</a>; </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(VoidCallback *CB)</a>; </dd>
 <dd>
-<a class="el" href="sys_8h.html#a3868e46b137999baa26ae7421840b812" title="Set start of &#39;Vertical interrupt&#39; callback method.">SYS_setVIntPreCallback(_voidCallback *CB)</a>; </dd></dl>
+<a class="el" href="sys_8h.html#ae7d254bd58379a4c72234dde2f971db8" title="Set start of &#39;Vertical interrupt&#39; callback method.">SYS_setVIntPreCallback(VoidCallback *CB)</a>; </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a3868e46b137999baa26ae7421840b812"></a><!-- doxytag: member="sys.h::SYS_setVIntPreCallback" ref="a3868e46b137999baa26ae7421840b812" args="(_voidCallback *CB)" -->
+<a class="anchor" id="ae7d254bd58379a4c72234dde2f971db8"></a><!-- doxytag: member="sys.h::SYS_setVIntPreCallback" ref="ae7d254bd58379a4c72234dde2f971db8" args="(VoidCallback *CB)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void SYS_setVIntPreCallback </td>
           <td>(</td>
-          <td class="paramtype">_voidCallback *&#160;</td>
+          <td class="paramtype">VoidCallback *&#160;</td>
           <td class="paramname"><em>CB</em></td><td>)</td>
           <td></td>
         </tr>
@@ -782,19 +782,19 @@ Variables</h2></td></tr>
  This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br/>
  The difference with the SYS_setVIntCallback(..) method is this one is called right after the Vertical Interrupt happened and before any internals SGDK V-Int processes.<br/>
  This is useful when you really need to do something right at the beginning of the V-Blank area.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a1574bcc7d4d5986b6374c05115f43767" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback(_voidCallback *CB)</a>; </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback(VoidCallback *CB)</a>; </dd>
 <dd>
-<a class="el" href="sys_8h.html#a484224fb509c7e59b1bc039853458378" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(_voidCallback *CB)</a>; </dd></dl>
+<a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(VoidCallback *CB)</a>; </dd></dl>
 
 </div>
 </div>
 <hr/><h2>Variable Documentation</h2>
-<a class="anchor" id="a7f156b6c6de7f5b2555d5f54d9cf9ca0"></a><!-- doxytag: member="sys.h::addressErrorCB" ref="a7f156b6c6de7f5b2555d5f54d9cf9ca0" args="" -->
+<a class="anchor" id="ab41d8358de9da304b45a9cd847cb03cd"></a><!-- doxytag: member="sys.h::addressErrorCB" ref="ab41d8358de9da304b45a9cd847cb03cd" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a7f156b6c6de7f5b2555d5f54d9cf9ca0">addressErrorCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#ab41d8358de9da304b45a9cd847cb03cd">addressErrorCB</a></td>
         </tr>
       </table>
 </div>
@@ -805,12 +805,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac6ef2942937e272530cd63c26892850d"></a><!-- doxytag: member="sys.h::busErrorCB" ref="ac6ef2942937e272530cd63c26892850d" args="" -->
+<a class="anchor" id="a61bbd6b4f07f82f9bd611ef58721eef1"></a><!-- doxytag: member="sys.h::busErrorCB" ref="a61bbd6b4f07f82f9bd611ef58721eef1" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#ac6ef2942937e272530cd63c26892850d">busErrorCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a61bbd6b4f07f82f9bd611ef58721eef1">busErrorCB</a></td>
         </tr>
       </table>
 </div>
@@ -821,12 +821,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6ccf711749f5fce7d6d8e607402f76ce"></a><!-- doxytag: member="sys.h::chkInstCB" ref="a6ccf711749f5fce7d6d8e607402f76ce" args="" -->
+<a class="anchor" id="abf6b1b9a2bfea27af8214110dc17a46b"></a><!-- doxytag: member="sys.h::chkInstCB" ref="abf6b1b9a2bfea27af8214110dc17a46b" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a6ccf711749f5fce7d6d8e607402f76ce">chkInstCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#abf6b1b9a2bfea27af8214110dc17a46b">chkInstCB</a></td>
         </tr>
       </table>
 </div>
@@ -837,12 +837,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a639a9d0b99d6cb9856de47bdd0d2f5d0"></a><!-- doxytag: member="sys.h::errorExceptionCB" ref="a639a9d0b99d6cb9856de47bdd0d2f5d0" args="" -->
+<a class="anchor" id="af2a592696b5e90e63bf969d555d66cbf"></a><!-- doxytag: member="sys.h::errorExceptionCB" ref="af2a592696b5e90e63bf969d555d66cbf" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a639a9d0b99d6cb9856de47bdd0d2f5d0">errorExceptionCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#af2a592696b5e90e63bf969d555d66cbf">errorExceptionCB</a></td>
         </tr>
       </table>
 </div>
@@ -853,12 +853,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a292a61001e5334efc7b0cbcfbb0b64b0"></a><!-- doxytag: member="sys.h::illegalInstCB" ref="a292a61001e5334efc7b0cbcfbb0b64b0" args="" -->
+<a class="anchor" id="ac850e8b90e9b259160ffb52963981df8"></a><!-- doxytag: member="sys.h::illegalInstCB" ref="ac850e8b90e9b259160ffb52963981df8" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a292a61001e5334efc7b0cbcfbb0b64b0">illegalInstCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#ac850e8b90e9b259160ffb52963981df8">illegalInstCB</a></td>
         </tr>
       </table>
 </div>
@@ -869,12 +869,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a070081acddcbff17fadf1f49a1d66a78"></a><!-- doxytag: member="sys.h::intCB" ref="a070081acddcbff17fadf1f49a1d66a78" args="" -->
+<a class="anchor" id="a46c6198d4926288b16793833d2ddc89a"></a><!-- doxytag: member="sys.h::intCB" ref="a46c6198d4926288b16793833d2ddc89a" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a070081acddcbff17fadf1f49a1d66a78">intCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a46c6198d4926288b16793833d2ddc89a">intCB</a></td>
         </tr>
       </table>
 </div>
@@ -885,12 +885,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac78ce4a6bd2f08f0eec2912881f4e212"></a><!-- doxytag: member="sys.h::internalExtIntCB" ref="ac78ce4a6bd2f08f0eec2912881f4e212" args="" -->
+<a class="anchor" id="af16d031f63fb98c01df52fcfc98e8800"></a><!-- doxytag: member="sys.h::internalExtIntCB" ref="af16d031f63fb98c01df52fcfc98e8800" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#ac78ce4a6bd2f08f0eec2912881f4e212">internalExtIntCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#af16d031f63fb98c01df52fcfc98e8800">internalExtIntCB</a></td>
         </tr>
       </table>
 </div>
@@ -900,16 +900,16 @@ Variables</h2></td></tr>
 <p>You can modify it to use your own callback.<br/>
  Be careful: by doing that you disable SGDK default Ext-Int code and related features !<br/>
  You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
- In all others cases you would use the <a class="el" href="sys_8h.html#a8c47111f72c099e26793bc8ace97e6f4" title="Set External interrupt callback method.">SYS_setExtIntCallback()</a> method. </p>
+ In all others cases you would use the <a class="el" href="sys_8h.html#aa189958e09ac6e0b5ca069cd6a99e856" title="Set External interrupt callback method.">SYS_setExtIntCallback()</a> method. </p>
 
 </div>
 </div>
-<a class="anchor" id="a89025ecaee4cb3e9011f68fb48f5541a"></a><!-- doxytag: member="sys.h::internalHIntCB" ref="a89025ecaee4cb3e9011f68fb48f5541a" args="" -->
+<a class="anchor" id="a4c23de7fbe5c89191f24bc8e3da6ac1b"></a><!-- doxytag: member="sys.h::internalHIntCB" ref="a4c23de7fbe5c89191f24bc8e3da6ac1b" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a89025ecaee4cb3e9011f68fb48f5541a">internalHIntCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a4c23de7fbe5c89191f24bc8e3da6ac1b">internalHIntCB</a></td>
         </tr>
       </table>
 </div>
@@ -919,16 +919,16 @@ Variables</h2></td></tr>
 <p>You can modify it to use your own callback.<br/>
  Be careful: by doing that you disable SGDK default H-Int code and related features !<br/>
  You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
- In all others cases you would use the <a class="el" href="sys_8h.html#a484224fb509c7e59b1bc039853458378" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback()</a> method. </p>
+ In all others cases you would use the <a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback()</a> method. </p>
 
 </div>
 </div>
-<a class="anchor" id="a36cffeb26ac70e735bd9e4d2d3ed29bd"></a><!-- doxytag: member="sys.h::internalVIntCB" ref="a36cffeb26ac70e735bd9e4d2d3ed29bd" args="" -->
+<a class="anchor" id="a91cb991688de411af6aa4fd506aabb41"></a><!-- doxytag: member="sys.h::internalVIntCB" ref="a91cb991688de411af6aa4fd506aabb41" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a36cffeb26ac70e735bd9e4d2d3ed29bd">internalVIntCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a91cb991688de411af6aa4fd506aabb41">internalVIntCB</a></td>
         </tr>
       </table>
 </div>
@@ -938,16 +938,16 @@ Variables</h2></td></tr>
 <p>You can modify it to use your own callback.<br/>
  Be careful: by doing that you disable SGDK default V-Int code and related features !<br/>
  You should use it only for very low level process and if you don't care about SGDK facilities.<br/>
- In all others cases you would use the <a class="el" href="sys_8h.html#a1574bcc7d4d5986b6374c05115f43767" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback()</a> method. </p>
+ In all others cases you would use the <a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback()</a> method. </p>
 
 </div>
 </div>
-<a class="anchor" id="aae9d074ca6c50757acce8468c26f825f"></a><!-- doxytag: member="sys.h::line1x1xCB" ref="aae9d074ca6c50757acce8468c26f825f" args="" -->
+<a class="anchor" id="a202e800a4fe6f8f9072d8a22847bb5d0"></a><!-- doxytag: member="sys.h::line1x1xCB" ref="a202e800a4fe6f8f9072d8a22847bb5d0" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#aae9d074ca6c50757acce8468c26f825f">line1x1xCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a202e800a4fe6f8f9072d8a22847bb5d0">line1x1xCB</a></td>
         </tr>
       </table>
 </div>
@@ -958,12 +958,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a85cddfd222ba16053021ddeef05a274f"></a><!-- doxytag: member="sys.h::privilegeViolationCB" ref="a85cddfd222ba16053021ddeef05a274f" args="" -->
+<a class="anchor" id="a5038c44f538391d4f31be0a59c7c3462"></a><!-- doxytag: member="sys.h::privilegeViolationCB" ref="a5038c44f538391d4f31be0a59c7c3462" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a85cddfd222ba16053021ddeef05a274f">privilegeViolationCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a5038c44f538391d4f31be0a59c7c3462">privilegeViolationCB</a></td>
         </tr>
       </table>
 </div>
@@ -974,12 +974,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="affadcb8a5dc0e97e6ca5c2ad123261cf"></a><!-- doxytag: member="sys.h::traceCB" ref="affadcb8a5dc0e97e6ca5c2ad123261cf" args="" -->
+<a class="anchor" id="ab2ad43e595f0a19f7a8431dc2a7d8de5"></a><!-- doxytag: member="sys.h::traceCB" ref="ab2ad43e595f0a19f7a8431dc2a7d8de5" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#affadcb8a5dc0e97e6ca5c2ad123261cf">traceCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#ab2ad43e595f0a19f7a8431dc2a7d8de5">traceCB</a></td>
         </tr>
       </table>
 </div>
@@ -990,12 +990,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1e452c7e8e1141bb8364810784789d65"></a><!-- doxytag: member="sys.h::trapvInstCB" ref="a1e452c7e8e1141bb8364810784789d65" args="" -->
+<a class="anchor" id="ac391fc51fd8d14f9fa49df15659dfe82"></a><!-- doxytag: member="sys.h::trapvInstCB" ref="ac391fc51fd8d14f9fa49df15659dfe82" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#a1e452c7e8e1141bb8364810784789d65">trapvInstCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#ac391fc51fd8d14f9fa49df15659dfe82">trapvInstCB</a></td>
         </tr>
       </table>
 </div>
@@ -1006,12 +1006,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa396bc08378e9a0008a736444bb16141"></a><!-- doxytag: member="sys.h::zeroDivideCB" ref="aa396bc08378e9a0008a736444bb16141" args="" -->
+<a class="anchor" id="a182faeee80f45228cb08a9a934a293d3"></a><!-- doxytag: member="sys.h::zeroDivideCB" ref="a182faeee80f45228cb08a9a934a293d3" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">_voidCallback* <a class="el" href="sys_8h.html#aa396bc08378e9a0008a736444bb16141">zeroDivideCB</a></td>
+          <td class="memname">VoidCallback* <a class="el" href="sys_8h.html#a182faeee80f45228cb08a9a934a293d3">zeroDivideCB</a></td>
         </tr>
       </table>
 </div>
@@ -1027,7 +1027,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sys_8h.html">sys.h</a>      </li>
-      <li class="footer">Generated on Wed Sep 4 2019 21:05:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Apr 17 2020 11:17:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
