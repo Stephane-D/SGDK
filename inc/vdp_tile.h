@@ -301,25 +301,6 @@ void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 
  */
 void VDP_fillTileData(u8 value, u16 index, u16 num, bool wait);
 
-///**
-// *  \brief
-// *      Set tilemap data at single position.
-// *
-// *  \param plane
-// *      Plane where we want to set tilemap data.<br>
-// *      Accepted values are:<br>
-// *      - VDP_BG_A<br>
-// *      - VDP_BG_B<br>
-// *      - VDP_WINDOW<br>
-// *  \param tile
-// *      tile attributes data (see TILE_ATTR_FULL() and TILE_ATTR() macros).
-// *  \param ind
-// *      position in tilemap.
-// *
-// *  \see VDP_setTileMapXY()
-// */
-//void VDP_setTileMap(u16 plane, u16 tile, u16 ind);
-
 /**
  *  \brief
  *      Clear tilemap.

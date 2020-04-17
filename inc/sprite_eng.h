@@ -462,8 +462,8 @@ void SPR_reset();
  *      #SPR_FLAG_AUTO_TILE_UPLOAD = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
  *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM (you can change this setting using #SPR_setAutoTileUpload(..) method).<br>
  *      #SPR_FLAG_INSERT_HEAD = Allow to insert the sprite at the start/head of the list.<br>
- *          When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to #SPR_setDepth(SPR_MIN_DEPTH))<br>
- *          while default insertion position is at the end of the list (equivalent to #SPR_setDepth(SPR_MAX_DEPTH))<br>
+ *          When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to #SPR_setDepth(#SPR_MIN_DEPTH))<br>
+ *          while default insertion position is at the end of the list (equivalent to #SPR_setDepth(#SPR_MAX_DEPTH))<br>
  *      <br>
  *      It's recommended to use the following default settings:<br>
  *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
@@ -537,8 +537,8 @@ Sprite* SPR_addSprite(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attri
  *      #SPR_FLAG_AUTO_TILE_UPLOAD = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br>
  *          If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM (you can change this setting using #SPR_setAutoTileUpload(..) method).<br>
  *      #SPR_FLAG_INSERT_HEAD = Allow to insert the sprite at the start/head of the list.<br>
- *          When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to #SPR_setDepth(SPR_MIN_DEPTH))<br>
- *          while default insertion position is at the end of the list (equivalent to #SPR_setDepth(SPR_MAX_DEPTH))<br>
+ *          When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to #SPR_setDepth(#SPR_MIN_DEPTH))<br>
+ *          while default insertion position is at the end of the list (equivalent to #SPR_setDepth(#SPR_MAX_DEPTH))<br>
  *      <br>
  *      It's recommended to use the following default settings:<br>
  *      SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br>
@@ -601,10 +601,10 @@ u16 SPR_getNumActiveSprite();
 void SPR_defragVRAM();
 /**
  *  \brief
- *      Load all frames of spriteDef (using DMA) at specified VRAM tile index and return the indexes table.<br>
+ *      Load all frames of SpriteDefinition (using DMA) at specified VRAM tile index and return the indexes table.<br>
  *      <b>WARNING: This function should be call at init/loading time as it can be quite long (several frames)</b>
  *
- *  \param spriteDef
+ *  \param sprDef
  *      the SpriteDefinition we want to load frame data in VRAM.
  *  \param index
  *      the tile position in VRAM where we will upload all sprite frame tiles data.
