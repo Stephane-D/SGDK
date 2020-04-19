@@ -85,17 +85,6 @@ s16 strcmp(const char *str1, const char *str2);
 
 /**
  *  \brief
- *      Clear a string.
- *
- *  \param str
- *      string to clear.
- *  \return pointer on the given string.
- *
- * Clear the specified string.
- */
-char* strclr(char *str);
-/**
- *  \brief
  *      Copy a string.
  *
  *  \param dest
@@ -135,6 +124,19 @@ char* strncpy(char *dest, const char *src, u16 len);
  * Appends the source string to the destination string.
  */
 char* strcat(char *dest, const char *src);
+#endif  // ENABLE_NEWLIB
+
+/**
+ *  \brief
+ *      Clear a string.
+ *
+ *  \param str
+ *      string to clear.
+ *  \return pointer on the given string.
+ *
+ * Clear the specified string.
+ */
+char* strclr(char *str);
 /**
  *  \brief
  *      Replace the given character in a string.
@@ -150,8 +152,6 @@ char* strcat(char *dest, const char *src);
  * Replace all occurrences of character in a null-terminated string.
  */
 char *strreplacechar(char *str, char oldc, char newc);
-#endif  // ENABLE_NEWLIB
-
 /**
  *  \brief
  *      Convert a s32 value to string (input value should be in [-500000000..500000000] range).
