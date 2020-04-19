@@ -9,9 +9,16 @@
  * This unit provides basic null terminated string operations and type conversions.
  */
 
+#if (ENABLE_NEWLIB == 1) && !defined(_NEWLIB_STRING_H_)
+#define _NEWLIB_STRING_H_
+#include_next <string.h> // Include string.h from newlib
+#undef _STRING_H_        // Will be defined again just below
+#endif
+
 #ifndef _STRING_H_
 #define _STRING_H_
 
+#if (ENABLE_NEWLIB == 0)
 
 /**
  *  \brief
@@ -37,7 +44,6 @@ typedef __gnuc_va_list va_list;
                        - ((sizeof (TYPE) < __va_rounded_size (char)     \
                            ? sizeof (TYPE) : __va_rounded_size (TYPE))))))
 
-#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Calculate the length of a string (limited to 65535 characters maximum).
@@ -124,6 +130,33 @@ char* strncpy(char *dest, const char *src, u16 len);
  * Appends the source string to the destination string.
  */
 char* strcat(char *dest, const char *src);
+/**
+ *  \brief
+ *      Composes a string with the same text that would be printed if format was used on printf,
+ *      but instead of being printed, the content is stored as a C string in the buffer pointed by str.
+ *
+ *  \param buffer
+ *      Destination string (it must be large enough to receive result).
+ *  \param fmt
+ *      C string that contains the text to be written to destination string.<br />
+ *      It can optionally contain embedded format specifiers.
+ *
+ *  \param ... (additional arguments)
+ *      Depending on the format string, the function may expect a sequence of additional arguments, <br>
+ *      each containing a value to be used to replace a format specifier in the format string.
+ *
+ *      There should be at least as many of these arguments as the number of values specified in the format specifiers. <br>
+ *      Additional arguments are ignored by the function.
+ *
+ *  \return On success, the total number of characters written is returned..
+ *
+ *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br>
+ *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
+ *  formatted and inserted in the resulting string replacing their respective specifiers
+ *
+ */
+u16 sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+
 #endif  // ENABLE_NEWLIB
 
 /**
@@ -228,35 +261,6 @@ void fix32ToStr(fix32 value, char *str, u16 numdec);
  * Converts the specified fix16 value to string.<br>
  */
 void fix16ToStr(fix16 value, char *str, u16 numdec);
-
-#if (ENABLE_NEWLIB == 0)
-/**
- *  \brief
- *      Composes a string with the same text that would be printed if format was used on printf,
- *      but instead of being printed, the content is stored as a C string in the buffer pointed by str.
- *
- *  \param buffer
- *      Destination string (it must be large enough to receive result).
- *  \param fmt
- *      C string that contains the text to be written to destination string.<br />
- *      It can optionally contain embedded format specifiers.
- *
- *  \param ... (additional arguments)
- *      Depending on the format string, the function may expect a sequence of additional arguments, <br>
- *      each containing a value to be used to replace a format specifier in the format string.
- *
- *      There should be at least as many of these arguments as the number of values specified in the format specifiers. <br>
- *      Additional arguments are ignored by the function.
- *
- *  \return On success, the total number of characters written is returned..
- *
- *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br>
- *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
- *  formatted and inserted in the resulting string replacing their respective specifiers
- *
- */
-u16 sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
-#endif  // ENABLE_NEWLIB
 
 #endif // _STRING_H_
 
