@@ -565,9 +565,6 @@ void _start_entry()
     u16* dst;
     u16 len;
 
-    // safe to check for DMA completion on reset (also clear internal VDP latch)
-    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
-
     // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so the stack as well)
     dst = (u16*) RAM;
     len = 0x8000;
@@ -735,7 +732,11 @@ static void internal_reset()
     frameCnt = 0;
     lastSubTick = 0;
 
-    // init part
+    // safe to check for DMA completion before dealing with VDP (this also clear internal VDP latch)
+    // WARNING: it's important to not access the VDP too soon or you can lock the system (it's why we do it just here) !
+    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
+
+    // init part (always do MEM_init() first)
     MEM_init();
     VDP_init();
     DMA_init();
