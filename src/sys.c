@@ -738,9 +738,9 @@ static void internal_reset()
 
     // init part (always do MEM_init() first)
     MEM_init();
-    VDP_init();
     DMA_init();
     DMA_setMaxTransferSizeToDefault();
+    VDP_init();
     PSG_init();
     JOY_init();
     // reseting z80 also reset the ym2612
