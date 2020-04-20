@@ -12,7 +12,7 @@ objects = appack.o
 
 cflags  = -Wall -O2 -s
 ldflags = $(cflags)
-incdir  = lib/elf
+incdir  = lib/elf64
 libs    = $(incdir)/aplib.a
 
 .PHONY: all clean
