@@ -579,7 +579,10 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
  *      - CPU<br>
  *      - DMA<br>
  *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *      - DMA_QUEUE_COPY<br>
+ *      But i highly discourage of using DMA here as VDP_setTileMapDataRectEx(..) requires to prepare data in a temporary buffer first<br>
+ *      to use DMA, resulting in a slower process than using CPU. However DMA_QUEUE is very useful as it wil prepare the data<br>
+ *      and transfer the data as fast as possible during VBlank.
  *
  *  Set the specified tilemap region (tilemap wrapping supported) with specified tile attributes values.<br>
  *  Unlike #VDP_setTileMapDataRect(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
@@ -652,7 +655,10 @@ void VDP_setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 
  *      - CPU<br>
  *      - DMA<br>
  *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *      - DMA_QUEUE_COPY<br>
+ *      But i highly discourage of using DMA here as VDP_setTileMapDataRowEx(..) requires to prepare data in a temporary buffer first<br>
+ *      to use DMA, resulting in a slower process than using CPU. However DMA_QUEUE is very useful as it wil prepare the data<br>
+ *      and transfer the data as fast as possible during VBlank.
  *
  *  Set a row of tilemap data (tilemap wrapping supported) with given tile attributes values.<br>
  *  Unlike #VDP_setTileMapDataRow(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
@@ -764,7 +770,10 @@ void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y
  *      - CPU<br>
  *      - DMA<br>
  *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *      - DMA_QUEUE_COPY<br>
+ *      But i highly discourage of using DMA here as VDP_setTileMapDataColumnEx(..) requires to prepare data in a temporary buffer first<br>
+ *      to use DMA, resulting in a slower process than using CPU. However DMA_QUEUE is very useful as it wil prepare the data<br>
+ *      and transfer the data as fast as possible during VBlank.
  *
  *  Set a column of tilemap data (tilemap wrapping supported) with given tile attributes values.<br>
  *  Unlike #VDP_setTileMapDataColumn(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
@@ -846,7 +855,10 @@ bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w,
  *      - CPU<br>
  *      - DMA<br>
  *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *      - DMA_QUEUE_COPY<br>
+ *      But i highly discourage of using DMA here as VDP_setTileMapEx(..) requires to prepare data in a temporary buffer first<br>
+ *      to use DMA, resulting in a slower process than using CPU. However DMA_QUEUE is very useful as it wil prepare the data<br>
+ *      and transfer the data as fast as possible during VBlank.
  *
  *  Load the specified tilemap region at specified plane position (tilemap wrapping supported).<br>
  *  Unlike #VDP_setTileMap(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
@@ -921,7 +933,10 @@ bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u
  *      - CPU<br>
  *      - DMA<br>
  *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *      - DMA_QUEUE_COPY<br>
+ *      But i highly discourage of using DMA here as VDP_setTileMapRowEx(..) requires to prepare data in a temporary buffer first<br>
+ *      to use DMA, resulting in a slower process than using CPU. However DMA_QUEUE is very useful as it wil prepare the data<br>
+ *      and transfer the data as fast as possible during VBlank.
  *
  *  Load a complete row of data from tilemap at equivalent plane position (wrapped around if needed).<br>
  *  Unlike #VDP_setTileMapRow(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
@@ -997,7 +1012,10 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
  *      - CPU<br>
  *      - DMA<br>
  *      - DMA_QUEUE<br>
- *      - DMA_QUEUE_COPY
+ *      - DMA_QUEUE_COPY<br>
+ *      But i highly discourage of using DMA here as VDP_setTileMapColumnEx(..) requires to prepare data in a temporary buffer first<br>
+ *      to use DMA, resulting in a slower process than using CPU. However DMA_QUEUE is very useful as it wil prepare the data<br>
+ *      and transfer the data as fast as possible during VBlank.
  *
  *  Load a complete column of data from tilemap at equivalent plane position (wrapped around if needed).<br>
  *  Unlike #VDP_setTileMapColumn(..) this method let you to override the base tile attributes (priority, palette and base index)<br>
