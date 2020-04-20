@@ -917,5 +917,8 @@ static void updateMapsAddress()
         VDP_loadFont(&font_default, CPU);
         // update user max tile index
         updateUserTileMaxIndex();
+
+        // re-pack memory as VDP_lontFont allocate memory to unpack font
+        MEM_pack();
     }
 }
