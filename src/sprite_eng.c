@@ -178,6 +178,9 @@ void SPR_end()
 
         // need to update user tile max index
         updateUserTileMaxIndex();
+
+        // try to pack memory free blocks (before to avoid memory fragmentation)
+        MEM_pack();
     }
 
 #if (LIB_DEBUG != 0)

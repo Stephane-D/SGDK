@@ -56,12 +56,25 @@ void DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
     // auto flush is enabled by default
     flag = DMA_AUTOFLUSH;
 
+    // release buffers first
+    if (dmaQueues)
+    {
+        MEM_free(dmaQueues);
+        dmaQueues = NULL;
+    }
+    if (dataBuffer)
+    {
+        MEM_free(dataBuffer);
+        dataBuffer = NULL;
+    }
+
+    // try to pack memory free blocks (help to avoid memory fragmentation)
+    MEM_pack();
+
     // define queue size
     if (size) queueSize = max(DMA_QUEUE_SIZE_MIN, size);
     else queueSize = DMA_QUEUE_SIZE_DEFAULT;
 
-    // already allocated ?
-    if (dmaQueues) MEM_free(dmaQueues);
     // allocate DMA queue
     dmaQueues = MEM_alloc(queueSize * sizeof(DMAOpInfo));
 

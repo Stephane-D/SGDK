@@ -143,6 +143,9 @@ void BMP_end()
         bmp_buffer_1 = NULL;
     }
 
+    // try to pack memory free blocks (before to avoid memory fragmentation)
+    MEM_pack();
+
     // we can re enable ints
     // FIXME: for some reason disabling interrupts generally break BMP init :-/
 //    SYS_enableInts();
