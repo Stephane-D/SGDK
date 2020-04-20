@@ -2,7 +2,7 @@
 #define _GENESIS_H_
 
 
-#define SGDK_VERSION    1.49
+#define SGDK_VERSION    1.51
 
 
 #include "config.h"
