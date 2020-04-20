@@ -176,7 +176,7 @@ void MEM_init()
     KLog_U1("MEM_init: heap = ", (u32) heap);
 #endif
 
-    // free memory : whole heap
+    // free memory: whole heap
     free = heap;
 
     // mark end of heap memory
@@ -372,20 +372,27 @@ void MEM_pack()
 
                 // store packed free memory for this block
                 *best = bsize;
+                // reset packed free size
                 bsize = 0;
             }
 
+            // point to next memory block
             b += psize >> 1;
+            // remember it in case it becomes free
             best = b;
         }
         else
         {
+            // increment free size
             bsize += psize;
+            // clear this memory block as it will be packed
+            *b = 0;
+            // point to next memory block
             b += psize >> 1;
         }
     }
 
-    // last block update
+    // last free block update
     if (bsize != 0) *best = bsize;
 }
 
@@ -473,28 +480,40 @@ static u16* pack(u16 nsize)
         {
             if (bsize != 0)
             {
+                // store packed free size
                 *best = bsize;
 
+                // return it if greater than what we're looking for
                 if (bsize >= nsize)
                     return best;
 
+                // reset packed free size
                 bsize = 0;
             }
 
+            // point to next memory block
             b += psize >> 1;
+            // remember it in case it becomes free
             best = b;
         }
         else
         {
+            // increment free size
             bsize += psize;
+            // clear this memory block as it will be packed
+            *b = 0;
+            // point to next memory block
             b += psize >> 1;
         }
     }
 
+    // last free block update
     if (bsize != 0)
     {
+        // store packed free size
         *best = bsize;
 
+        // return it if greater than what we're looking for
         if (bsize >= nsize)
             return best;
     }
