@@ -41,6 +41,9 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
+    // reduce DMA buffer size to avoid running out of memory (we don't need it)
+    DMA_setBufferSize(2048);
+
     // speed up controller checking
     JOY_setSupport(PORT_1, JOY_SUPPORT_6BTN);
     JOY_setSupport(PORT_2, JOY_SUPPORT_OFF);

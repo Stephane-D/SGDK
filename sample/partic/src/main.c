@@ -38,6 +38,9 @@ int main()
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
 
+    // reduce DMA buffer size to avoid running out of memory (we don't need it)
+    DMA_setBufferSize(2048);
+
     BMP_init(TRUE, BG_A, PAL0, FALSE);
 
     paused = 0;
