@@ -267,7 +267,8 @@ u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16
 
     TileMap* tilemap = image->tilemap;
 
-    if (!VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h, dma?DMA:CPU))
+    // no interest in using VDP_setTileMapEx with DMA (DMA_QUEUE is ok)
+    if (!VDP_setTileMapEx(plane, tilemap, basetile, x, y, 0, 0, tilemap->w, tilemap->h, CPU))
         return FALSE;
 
     Palette* palette = image->palette;
