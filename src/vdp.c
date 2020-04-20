@@ -73,10 +73,6 @@ void VDP_init()
     slist_addr = SLIST_DEFAULT;
     hscrl_addr = HSCRL_DEFAULT;
 
-    maps_addr = 0;
-    // update minimum address of all tilemap/table (default is plane B)
-    updateMapsAddress();
-
     // default resolution
     screenWidth = 320;
     screenHeight = 224;
@@ -123,6 +119,10 @@ void VDP_init()
 
     // internal
     curTileInd = TILE_USERINDEX;
+
+    maps_addr = 0;
+    // update minimum address of all tilemap/table (default is plane B)
+    updateMapsAddress();
 }
 
 
@@ -355,34 +355,53 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
         planeWidth = 128;
         planeWidthSft = 7;
         v |= 0x03;
+
+        // plane height fixed to 32
+        planeHeight = 32;
+        planeHeightSft = 5;
     }
     else if (w & 0x40)
     {
         planeWidth = 64;
         planeWidthSft = 6;
         v |= 0x01;
+
+        // only 64 or 32 accepted for plane height
+        if (h & 0x40)
+        {
+            planeHeight = 64;
+            planeHeightSft = 6;
+            v |= 0x10;
+        }
+        else
+        {
+            planeHeight = 32;
+            planeHeightSft = 5;
+        }
     }
     else
     {
         planeWidth = 32;
         planeWidthSft = 5;
-    }
-    if (h & 0x80)
-    {
-        planeHeight = 128;
-        planeHeightSft = 7;
-        v |= 0x30;
-    }
-    else if (h & 0x40)
-    {
-        planeHeight = 64;
-        planeHeightSft = 6;
-        v |= 0x10;
-    }
-    else
-    {
-        planeHeight = 32;
-        planeHeightSft = 5;
+
+        // plane height can be 128, 64 or 32
+        if (h & 0x80)
+        {
+            planeHeight = 128;
+            planeHeightSft = 7;
+            v |= 0x30;
+        }
+        else if (h & 0x40)
+        {
+            planeHeight = 64;
+            planeHeightSft = 6;
+            v |= 0x10;
+        }
+        else
+        {
+            planeHeight = 32;
+            planeHeightSft = 5;
+        }
     }
 
     regValues[0x10] = v;
@@ -426,6 +445,8 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
                 // you need to change Sprite List and HScroll Table address to have a complete window plane if required
                 break;
         }
+
+        updateMapsAddress();
     }
 }
 
@@ -893,7 +914,7 @@ static void updateMapsAddress()
     {
         maps_addr = min_addr;
         // reload default font as its VRAM address has changed
-        VDP_loadFont(&font_default, DMA);
+        VDP_loadFont(&font_default, CPU);
         // update user max tile index
         updateUserTileMaxIndex();
     }
