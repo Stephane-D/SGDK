@@ -126,6 +126,40 @@ void VDP_init()
 }
 
 
+void VDP_resetScreen()
+{
+    u16 i;
+
+    // reset video memory (len = 0 is a special value to define 0x10000)
+    DMA_doVRamFill(0, 0, 0, 1);
+    // wait for DMA completion
+    VDP_waitDMACompletion();
+
+     // system tiles (16 plain tile)
+    i = 16;
+    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
+
+    PAL_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL1, palette_red);
+    PAL_setPalette(PAL2, palette_green);
+    PAL_setPalette(PAL3, palette_blue);
+
+    VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
+    VDP_setHorizontalScroll(BG_A, 0);
+    VDP_setHorizontalScroll(BG_B, 0);
+    VDP_setVerticalScroll(BG_A, 0);
+    VDP_setVerticalScroll(BG_B, 0);
+
+    // load default font
+    if (!VDP_loadFont(&font_default, CPU))
+    {
+        KLog("A fatal error occured (not enough memory to reset VDP) !");
+        // fatal error --> die here (the font did not get loaded so maybe not really useful to show this message...)
+        SYS_die("A fatal error occured (not enough memory to reset VDP) !");
+    }
+}
+
+
 u8 VDP_getReg(u16 reg)
 {
     if (reg < 0x13) return regValues[reg];
@@ -802,39 +836,6 @@ static void computeFrameCPULoad(u16 blank, u16 vcnt)
 }
 
 
-void VDP_resetScreen()
-{
-    u16 i;
-
-    // reset video memory (len = 0 is a special value to define 0x10000)
-    DMA_doVRamFill(0, 0, 0, 1);
-    // wait for DMA completion
-    VDP_waitDMACompletion();
-
-     // system tiles (16 plain tile)
-    i = 16;
-    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
-
-    PAL_setPalette(PAL0, palette_grey);
-    PAL_setPalette(PAL1, palette_red);
-    PAL_setPalette(PAL2, palette_green);
-    PAL_setPalette(PAL3, palette_blue);
-
-    VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
-    VDP_setHorizontalScroll(BG_A, 0);
-    VDP_setHorizontalScroll(BG_B, 0);
-    VDP_setVerticalScroll(BG_A, 0);
-    VDP_setVerticalScroll(BG_B, 0);
-
-    // load default font
-    if (!VDP_loadFont(&font_default, CPU))
-    {
-        KLog("A fatal error occured (not enough memory to reset VDP) !");
-        // fatal error --> die here (the font did not get loaded so maybe not really useful to show this message...)
-        SYS_die("A fatal error occured (not enough memory to reset VDP) !");
-    }
-}
-
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
 {
     u16 result = vcnt;
@@ -844,12 +845,20 @@ u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
     {
         // blank adjustement
         if (blank && ((result >= 0xCA) || (result <= 0x0A))) result = 8;
+        // sometime blank flag is not yet/anymore set on edge area so we double check
+        else if (result >= VDP_getScreenHeight()) result = 8;
         else result += 16;
     }
     else
     {
+//        // blank adjustement
+//        if (blank && (result >= 0xDF)) result = 16;
+//        // sometime blank flag is not yet/anymore set on edge area
+//        else if (result >= 224) result = 16;
+//        else result += 32;
+
         // blank adjustement
-        if (blank && (result >= 0xDF)) result = 16;
+        if (result >= 0xDF) result = 16;
         else result += 32;
     }
 
