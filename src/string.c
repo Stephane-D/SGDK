@@ -76,13 +76,6 @@ s16 strcmp(const char *str1, const char *str2)
     return c1 - c2;
 }
 
-char* strclr(char *str)
-{
-    str[0] = 0;
-
-    return str;
-}
-
 char* strcpy(char *to, const char *from)
 {
     const char *src;
@@ -140,6 +133,14 @@ char* strcat(char *to, const char *from)
 
     return to;
 }
+#endif  // ENABLE_NEWLIB
+
+char* strclr(char *str)
+{
+    str[0] = 0;
+
+    return str;
+}
 
 char *strreplacechar(char *str, char oldc, char newc)
 {
@@ -155,8 +156,6 @@ char *strreplacechar(char *str, char oldc, char newc)
 
     return s;
 }
-#endif  // ENABLE_NEWLIB
-
 
 u16 intToStr(s32 value, char *str, u16 minsize)
 {

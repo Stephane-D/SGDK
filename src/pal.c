@@ -9,6 +9,9 @@
 #include "memory.h"
 #include "dma.h"
 
+#if (ENABLE_NEWLIB == 1)
+#include <string.h>	// For memcpy
+#endif
 
 #define PALETTEFADE_FRACBITS    8
 #define PALETTEFADE_ROUND_VAL   ((1 << (PALETTEFADE_FRACBITS - 1)) - 1)
