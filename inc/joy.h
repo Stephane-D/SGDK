@@ -1,7 +1,8 @@
 /**
  *  \file joy.h
  *  \brief General controller support.
- *  \author Chilly Willy & Stephane Dallongeville
+ *  \author Chilly Willy
+ *  \author Stephane Dallongeville
  *  \date 05/2012
  *
  * This unit provides methods to read controller state.<br>
@@ -10,7 +11,23 @@
  * - 3 buttons joypad<br>
  * - 6 buttons joypad<br>
  * - Sega Mouse<br>
- * - team player adapter<br>
+ * - Sega Team Player adapter<br>
+ * - EA 4-Way Play<br>
+ * - the Menacer<br>
+ * - the Justifier<br>
+ * - Sega Master System pad<br>
+ * - Sega Trackball<br>
+ * - Sega Phaser<br>
+ *
+ * Although Sega Master System pad, trackball, and Phaser are supported, they aren't automatically detected on JOY_init().<br>
+ * Another caveat is that although the Menacer and Justifier are automatically recognized and supported, the support is not enabled
+ * until the programmer tells it to because of the extra overhead that lightguns add. This way, SGDK defaults to a lower overhead state for controllers.
+ * Games that can use lightguns can check and enable the lightgun as part of the init process, while normal games
+ * can ignore that and simply count on the default init state for controllers.<br>
+ * Note that mice are enabled by default by JOY_init() and will return emulated pad values for reading the port as if it were a controller.<br>
+ * This allows using a mouse as a pad for SGDK games. However, mice use a little more overhead than pads, so a game that doesn't use mice
+ * as mice and wants every last scrap of speed should check if mice are connected and turn them off to get just that extra little bit of speed.<br>
+ * If you have an existing SGDK based game that needs every last bit of speed and doesn't check for mice, unplug any mice for extra speed. Mice are only enabled if detected.
  */
 
 #ifndef _JOY_H_
