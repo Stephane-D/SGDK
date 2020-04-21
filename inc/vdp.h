@@ -471,6 +471,14 @@ void VDP_init();
 
 /**
  *  \brief
+ *      Reset background plane and palette.
+ *
+ *  Clear background plans, reset palette to grey / red / green / blue and reset scrolls.
+ */
+void VDP_resetScreen();
+
+/**
+ *  \brief
  *      Get VDP register value.
  *
  *  \param reg
@@ -869,15 +877,7 @@ void VDP_waitVInt();
 
 /**
  *  \brief
- *      Reset background plane and palette.
- *
- *  Clear background plans, reset palette to grey / red / green / blue and reset scrolls.
- */
-void VDP_resetScreen();
-
-/**
- *  \brief
- *      Return an enhanced V Counter representation
+ *      Return an enhanced V Counter representation.
  *
  *  Using direct V counter from VDP may give troubles as the VDP V-Counter rollback during V-Blank period.<br>
  *  This function aim to make ease the use of V-Counter by adjusting it to a [0-255] range where 0 is the start of VBlank area and 255 the end of active display area.
