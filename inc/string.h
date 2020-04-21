@@ -4,6 +4,7 @@
  *  \author Stephane Dallongeville
  *  \author Paspallas Dev
  *  \author Jack Nolddor
+ *  \author Jesus Alonso (doragasu)
  *  \date 08/2011
  *
  * This unit provides basic null terminated string operations and type conversions.
