@@ -39,7 +39,7 @@
 #define FORCE_VINT_VBLANK_ALIGN     1
 #define VINT_ALLOWED_LINE_DELAY     4
 
-#define FRAME_LOAD_MEAN             8
+#define LOAD_MEAN_FRAME_NUM         8
 
 
 // we don't want to share them
@@ -110,7 +110,7 @@ static u16 flag;
 static u32 missedFrames;
 
 // store last frames CPU load (in [0..255] range), need to shared as it can be updated by vdp.c unit
-static u16 frameLoads[FRAME_LOAD_MEAN];
+static u16 frameLoads[LOAD_MEAN_FRAME_NUM];
 static u16 frameLoadIndex;
 static u16 cpuFrameLoad;
 static u32 frameCnt;
@@ -424,13 +424,13 @@ void _vint_callback()
     // we cannot detect late frame if HV latching is enabled..
     if (!VDP_getHVLatching())
     {
-        // V28 mode
+        // V28 mode --> we expect V counter to be in [224..227] range
         if (VDP_getScreenHeight() == 224)
         {
             // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
             if ((vcnt < 224) || (vcnt > (224 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
         }
-        // V30 mode
+        // V30 mode --> we expect V counter to be in [240..243] range
         else
         {
             // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
@@ -450,7 +450,7 @@ void _vint_callback()
         if (flag & FORCE_VINT_VBLANK_ALIGN)
         {
 #if (LIB_DEBUG != 0)
-            KLog_U1("Warning: forced V-Int delay for VBlank alignment (frame miss) on frame #", vtimer);
+            KLog_U2("Warning: forced V-Int delay for VBlank alignment (frame miss) on frame #", vtimer, " - VCounter = ", vcnt);
 #endif
 
             VDP_waitVSync();
@@ -726,7 +726,7 @@ static void internal_reset()
     missedFrames = 0;
 
     // reset frame load monitor
-    memsetU16(frameLoads, 0, FRAME_LOAD_MEAN);
+    memsetU16(frameLoads, 0, LOAD_MEAN_FRAME_NUM);
     frameLoadIndex = 0;
     cpuFrameLoad = 0;
     frameCnt = 0;
@@ -911,19 +911,25 @@ void addFrameLoad(u16 frameLoad)
     u16 v = frameLoad;
     // force full load if we have frame miss
     if ((lastMissedFrame != missedFrames) || ((vtimer - lastVTimer) > 1))
+    {
+        lastMissedFrame = missedFrames;
         v = 255;
+
+//#if (LIB_DEBUG != 0)
+//        KLog("FrameLoad: frame missed detection, force max frame load (255)");
+//#endif
+    }
 
     cpuFrameLoad -= frameLoads[frameLoadIndex];
     frameLoads[frameLoadIndex] = v;
     cpuFrameLoad += v;
-    frameLoadIndex = (frameLoadIndex + 1) & (FRAME_LOAD_MEAN - 1);
-    lastMissedFrame = missedFrames;
+    frameLoadIndex = (frameLoadIndex + 1) & (LOAD_MEAN_FRAME_NUM - 1);
     lastVTimer = vtimer;
 }
 
 u16 SYS_getCPULoad()
 {
-    return (cpuFrameLoad * ((u16) 100)) / ((u16) (FRAME_LOAD_MEAN * 255));
+   return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 255);
 }
 
 u32 SYS_getMissedFrames()
