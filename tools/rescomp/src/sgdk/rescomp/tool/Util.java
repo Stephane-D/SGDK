@@ -312,7 +312,7 @@ public class Util
             out.reset();
             return;
         }
-        
+
         // we can only handle align 2
         if (align == 2)
         {
@@ -482,9 +482,17 @@ public class Util
 
         try
         {
-            return LZ4W.pack(buf, prevLen, true);
+            try
+            {
+                return LZ4W.pack(buf, prevLen, true);
+            }
+            catch (IllegalArgumentException e1)
+            {
+                // try to pack without previous data block then
+                return LZ4W.pack(data, 0, true);
+            }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             System.err.println(e.getMessage());
             return null;

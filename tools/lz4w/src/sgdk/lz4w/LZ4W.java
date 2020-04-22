@@ -47,8 +47,10 @@ public class LZ4W
      *        offset (in byte) where to start packing
      * @return LZ4W compressed data
      * @throws IOException
+     * @throws IllegalArgumentException
+     *         Cannot be packed using previous data block (try to pack without previous data block)
      */
-    public static byte[] pack(byte[] data, int start, boolean silent) throws IOException
+    public static byte[] pack(byte[] data, int start, boolean silent) throws IOException, IllegalArgumentException
     {
         final DymamicByteArray result = new DymamicByteArray(data.length);
         final DymamicByteArray literal = new DymamicByteArray(1024);
@@ -406,6 +408,7 @@ public class LZ4W
     }
 
     private static int addSegment(DymamicByteArray result, DymamicByteArray literal, Match match, int offsetDiff)
+            throws IllegalArgumentException
     {
         byte[] literalArray = literal.toByteArray();
         int literalLength = literal.size() / 2;
@@ -501,7 +504,8 @@ public class LZ4W
                     matchOffset += offsetDiff + offsetAdj + matchLength;
                     // check if we are not out of range for match offset
                     if (matchOffset > MATCH_LONG_OFFSET_MAX)
-                        throw new RuntimeException("Can't encode long offset... retry without previous data block !");
+                        throw new IllegalArgumentException(
+                                "Can't encode long offset... retry without previous data block !");
                 }
 
                 // need to write extended offset *after* literal data

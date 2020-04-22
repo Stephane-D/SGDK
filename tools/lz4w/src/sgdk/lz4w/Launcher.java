@@ -60,7 +60,7 @@ public class Launcher
             final byte[] data1 = pad((prevFile.isEmpty() ? new byte[0] : readBinaryFile(prevFile)));
             final byte[] data2 = readBinaryFile(inputFile);
             final byte[] data = new byte[data1.length + data2.length];
-            final byte[] result;
+            byte[] result;
 
             // concatenate the 2 arrays
             System.arraycopy(data1, 0, data, 0, data1.length);
@@ -72,7 +72,15 @@ public class Launcher
                 if (!silent)
                     System.out.println("Packing " + inputFile + "...");
 
-                result = LZ4W.pack(data, data1.length, silent);
+                try
+                {
+                    result = LZ4W.pack(data, data1.length, silent);
+                }
+                catch (IllegalArgumentException e1)
+                {
+                    // try to pack without previous data block then
+                    result = LZ4W.pack(data2, 0, silent);
+                }
 
                 final byte[] resultFull = new byte[data1.length + result.length];
 
@@ -133,7 +141,7 @@ public class Launcher
 
     static void showUsage()
     {
-        System.out.println("LZ4W packer v1.4 by Stephane Dallongeville (Copyright 2019)");
+        System.out.println("LZ4W packer v1.41 by Stephane Dallongeville (Copyright 2020)");
         System.out.println("  Pack:          lz4w p <input_file> <output_file>");
         System.out.println("                 lz4w p <prev_file>&<input_file> <output_file>");
         System.out.println("  Unpack:        lz4w u <input_file> <output_file>");
