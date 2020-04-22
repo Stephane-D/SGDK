@@ -1,4 +1,4 @@
-LZ4W packer 1.4 (march 2019)
+LZ4W packer 1.41 (april 2020)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
