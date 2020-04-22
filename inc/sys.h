@@ -364,7 +364,7 @@ fix32 SYS_getFPSAsFloat();
  *  \brief
  *      Return an estimation of CPU load (in %)
  *
- * Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in VDP_waitVSync() / VDP_waitVInt() methods.<br>
+ * Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in #VDP_waitVSync() / #VDP_waitVInt() methods.<br>
  * This method don't return accurate result when you have missed frames (V-Int missed).
  *
  * \see SYS_getMissedFrames()
@@ -372,6 +372,24 @@ fix32 SYS_getFPSAsFloat();
  * \see VDP_waitVInt()
  */
 u16 SYS_getCPULoad();
+/**
+ *  \brief
+ *      Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)
+ *
+ *  Show current frame load using a cursor indicating the scanline reached when #VDP_waitVSync() / #VDP_waitVInt() method was called.<br>
+ *  Note that internally sprite 0 is used to display to cursor (palette 0 and color 15) as it is not directly used by the Sprite Engine but
+ *  if you're using the low level VDP sprite methods then you should know that sprite 0 will be used here.
+ *
+ * \see SYS_hideFrameLoad()
+ */
+void SYS_showFrameLoad();
+/**
+ *  \brief
+ *      Hide the frame load cursor previously enabled using #SYS_showFrameLoad() method.
+
+ * \see SYS_showFrameLoad()
+ */
+void SYS_hideFrameLoad();
 /**
  *  \brief
  *      Return the number of missed frames (a missed frame mean that a VInt was missed)

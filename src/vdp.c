@@ -57,6 +57,8 @@ u16 planeWidthSft;
 u16 planeHeightSft;
 u16 windowWidthSft;
 
+u16 lastVCnt;
+
 
 void VDP_init()
 {
@@ -82,6 +84,7 @@ void VDP_init()
     planeWidthSft = 6;
     planeHeightSft = 5;
     windowWidthSft = 6;
+    lastVCnt = 0;
 
     regValues[0x00] = 0x04;
     regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, VBL, DMA + VCell size */
@@ -805,6 +808,8 @@ void VDP_waitVSync()
     // store V-Counter and initial blank state
     const u16 vcnt = GET_VCOUNTER;
     const u16 blank = *pw & VDP_VBLANK_FLAG;
+    // save it (used to diplay frame load)
+    lastVCnt = vcnt;
 
     while (*pw & VDP_VBLANK_FLAG);
     while (!(*pw & VDP_VBLANK_FLAG));
@@ -822,6 +827,8 @@ void VDP_waitVInt()
     // store V-Counter and initial blank state
     const u16 vcnt = GET_VCOUNTER;
     const u16 blank = GET_VDPSTATUS(VDP_VBLANK_FLAG);
+    // save it (used to diplay frame load)
+    lastVCnt = vcnt;
 
     // wait for next VInt
     while (vtimer == t);
@@ -834,7 +841,6 @@ static void computeFrameCPULoad(u16 blank, u16 vcnt)
     // update CPU frame load
     addFrameLoad(getAdjustedVCounterInternal(blank, vcnt));
 }
-
 
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
 {

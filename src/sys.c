@@ -7,6 +7,7 @@
 #include "mapper.h"
 #include "vdp.h"
 #include "vdp_pal.h"
+#include "vdp_spr.h"
 #include "psg.h"
 #include "ym2612.h"
 #include "joy.h"
@@ -36,7 +37,9 @@
 #define IN_HINT                     2
 #define IN_EXTINT                   4
 
-#define FORCE_VINT_VBLANK_ALIGN     1
+#define FORCE_VINT_VBLANK_ALIGN     (1 << 0)
+#define SHOW_FRAME_LOAD             (1 << 1)
+
 #define VINT_ALLOWED_LINE_DELAY     4
 
 #define LOAD_MEAN_FRAME_NUM         8
@@ -49,6 +52,8 @@ extern u16 currentDriver;
 extern u32 _stext;
 // size of initialized data segment
 extern u32 _sdata;
+// last V-Counter on VDP_waitVSycn() / VDP_waitVInt() call
+extern u16 lastVCnt;
 
 // extern library callback function (we don't want to share them)
 extern u16 BMP_doHBlankProcess();
@@ -106,7 +111,7 @@ __attribute__((externally_visible)) vu16 intTrace;
 // need to be accessed from external
 u16 intLevelSave;
 static s16 disableIntStack;
-static u16 flag;
+static u16 flags;
 static u32 missedFrames;
 
 // store last frames CPU load (in [0..255] range), need to shared as it can be updated by vdp.c unit
@@ -447,7 +452,7 @@ void _vint_callback()
         addFrameLoad(255);
 
         // V-Interrupt VBlank alignment forced ? --> we force wait of next VBlank (and so V-Int)
-        if (flag & FORCE_VINT_VBLANK_ALIGN)
+        if (flags & FORCE_VINT_VBLANK_ALIGN)
         {
 #if (LIB_DEBUG != 0)
             KLog_U2("Warning: forced V-Int delay for VBlank alignment (frame miss) on frame #", vtimer, " - VCounter = ", vcnt);
@@ -510,6 +515,25 @@ void _vint_callback()
         }
 
         VIntProcess = vintp;
+    }
+
+    // frame load display enabled ?
+    if (flags & SHOW_FRAME_LOAD)
+    {
+        // use internal sprite 0 to show cursor
+        VDPSprite* vdpSprite = &vdpSpriteCache[0];
+
+        // update position relative to last stored VCounter
+        if ((lastVCnt > 224) || (lastVCnt < 4)) vdpSprite->y = 0x80;
+        else if (lastVCnt > 220) vdpSprite->y = 220 + 0x80;
+        else vdpSprite->y = lastVCnt + (0x80 - 4);
+
+        // write immediately in VRAM the sprite position change
+        vu16* pw = (u16 *) GFX_DATA_PORT;
+        vu32* pl = (u32 *) GFX_CTRL_PORT;
+
+        *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+        *pw = vdpSprite->y;
     }
 
     // then call user callback
@@ -722,7 +746,7 @@ static void internal_reset()
     disableIntStack = 0;
 
     // default
-    flag = FORCE_VINT_VBLANK_ALIGN;
+    flags = FORCE_VINT_VBLANK_ALIGN;
     missedFrames = 0;
 
     // reset frame load monitor
@@ -819,13 +843,64 @@ void SYS_setExtIntCallback(VoidCallback *CB)
 
 void SYS_setVIntAligned(bool value)
 {
-    if (value) flag |= FORCE_VINT_VBLANK_ALIGN;
-    else flag &= ~FORCE_VINT_VBLANK_ALIGN;
+    if (value) flags |= FORCE_VINT_VBLANK_ALIGN;
+    else flags &= ~FORCE_VINT_VBLANK_ALIGN;
 }
 
 u16 SYS_isVIntAligned()
 {
-    return (flag & FORCE_VINT_VBLANK_ALIGN)?TRUE:FALSE;
+    return (flags & FORCE_VINT_VBLANK_ALIGN)?TRUE:FALSE;
+}
+
+void SYS_showFrameLoad()
+{
+    flags |= SHOW_FRAME_LOAD;
+
+    // use internal sprite 0 to show cursor
+    VDPSprite* vdpSprite = &vdpSpriteCache[0];
+    vdpSprite->y = 0;
+    vdpSprite->size = SPRITE_SIZE(1, 1);
+    // point on left cursor tile in font
+    vdpSprite->attribut = TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_FONTINDEX + 94);
+    vdpSprite->x = 0x80;
+
+    SYS_disableInts();
+
+    // apply changes immediately in VRAM
+    vu16* pw = (u16 *) GFX_DATA_PORT;
+    vu32* pl = (u32 *) GFX_CTRL_PORT;
+
+    *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+
+    // write fields in correct order
+    *pw = vdpSprite->y;
+    *pw = vdpSprite->size_link;
+    *pw = vdpSprite->attribut;
+    *pw = vdpSprite->x;
+
+    SYS_enableInts();
+}
+
+void SYS_hideFrameLoad()
+{
+    flags &= ~SHOW_FRAME_LOAD;
+
+    // use internal sprite 0 to show cursor
+    VDPSprite* vdpSprite = &vdpSpriteCache[0];
+    // hide it
+    vdpSprite->y = 0;
+
+    SYS_disableInts();
+
+    // apply changes immediately in VRAM
+    vu16* pw = (u16 *) GFX_DATA_PORT;
+    vu32* pl = (u32 *) GFX_CTRL_PORT;
+
+    *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+    // no need to write more
+    *pw = vdpSprite->y;
+
+    SYS_enableInts();
 }
 
 u16 SYS_isInVIntCallback()
