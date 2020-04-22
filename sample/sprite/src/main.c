@@ -230,6 +230,9 @@ int main()
 
     JOY_setEventHandler(joyEvent);
 
+    // just to monitor frame CPU usage
+    SYS_showFrameLoad();
+
 //    reseted = FALSE;
 
     while(TRUE)
