@@ -103,10 +103,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00046"></a>00046 <span class="preprocessor">    VDP_doDMA(VDP_DMA_VSRAM, from, to, len)</span>
 <a name="l00047"></a>00047 <span class="preprocessor"></span>
 <a name="l00048"></a>00048 
-<a name="l00052"></a>00052 <span class="keywordtype">void</span> VDP_doDMAEx(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> vramStep);
-<a name="l00056"></a>00056 <span class="keywordtype">void</span> VDP_doDMA(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00060"></a>00060 <span class="keywordtype">void</span> VDP_doVRamDMAFill(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
-<a name="l00064"></a>00064 <span class="keywordtype">void</span> VDP_doVRamDMACopy(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00052"></a>00052 <span class="keywordtype">void</span> <a class="code" href="vdp__dma_8h.html#aa52fc8847c5ae44c2ab432af3ceff3b2">VDP_doDMAEx</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> vramStep);
+<a name="l00056"></a>00056 <span class="keywordtype">void</span> <a class="code" href="vdp__dma_8h.html#ac57cd4380aaf65681cef122d642c6791">VDP_doDMA</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00060"></a>00060 <span class="keywordtype">void</span> <a class="code" href="vdp__dma_8h.html#ab640a2fdce24df6a9a5e36aaa090d4e1">VDP_doVRamDMAFill</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00064"></a>00064 <span class="keywordtype">void</span> <a class="code" href="vdp__dma_8h.html#a9f2430fd7ad9ed7f1cddd035809446ce">VDP_doVRamDMACopy</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
 <a name="l00065"></a>00065 
 <a name="l00066"></a>00066 
 <a name="l00067"></a>00067 <span class="preprocessor">#endif // _VDP_DMA_H_</span>
@@ -115,7 +115,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__dma_8h.html">vdp_dma.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:28:24 for sgdk by&#160;
+      <li class="footer">Generated on Sat Apr 25 2020 22:18:27 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

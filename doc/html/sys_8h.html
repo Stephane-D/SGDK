@@ -151,6 +151,10 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of Frame Per Second (fix32 form).  <a href="#a93cb05493e93fb79c8376b885ee1aae2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a0cab55e25824806a19c4b0e64cc42b3c">SYS_getCPULoad</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an estimation of CPU load (in %)  <a href="#a0cab55e25824806a19c4b0e64cc42b3c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abed822e697c78a2d2dbb83157760381a">SYS_showFrameLoad</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)  <a href="#abed822e697c78a2d2dbb83157760381a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abec7ff3302a05dc916fec5d9c69b9368">SYS_hideFrameLoad</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Hide the frame load cursor previously enabled using <a class="el" href="sys_8h.html#abed822e697c78a2d2dbb83157760381a" title="Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)...">SYS_showFrameLoad()</a> method.  <a href="#abec7ff3302a05dc916fec5d9c69b9368"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a931425fcd2a16022d8b8b01d96e4ad60">SYS_getMissedFrames</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of missed frames (a missed frame mean that a VInt was missed)  <a href="#a931425fcd2a16022d8b8b01d96e4ad60"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aa9bd41587923b283beba48e947e949cc">SYS_resetMissedFrames</a> ()</td></tr>
@@ -435,6 +439,25 @@ Variables</h2></td></tr>
 
 <p>Hard reset. </p>
 <p>Reset with forced hardware init and memory clear / reset operation. </p>
+
+</div>
+</div>
+<a class="anchor" id="abec7ff3302a05dc916fec5d9c69b9368"></a><!-- doxytag: member="sys.h::SYS_hideFrameLoad" ref="abec7ff3302a05dc916fec5d9c69b9368" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SYS_hideFrameLoad </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Hide the frame load cursor previously enabled using <a class="el" href="sys_8h.html#abed822e697c78a2d2dbb83157760381a" title="Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)...">SYS_showFrameLoad()</a> method. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#abed822e697c78a2d2dbb83157760381a" title="Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)...">SYS_showFrameLoad()</a> </dd></dl>
 
 </div>
 </div>
@@ -788,6 +811,27 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="abed822e697c78a2d2dbb83157760381a"></a><!-- doxytag: member="sys.h::SYS_showFrameLoad" ref="abed822e697c78a2d2dbb83157760381a" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SYS_showFrameLoad </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load) </p>
+<p>Show current frame load using a cursor indicating the scanline reached when <a class="el" href="vdp_8h.html#aec5aa111d268210860106ebc6c8b6c6c" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> / <a class="el" href="vdp_8h.html#a9c5f289685a0103e7231b3726ff4bee3" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> method was called.<br/>
+ Note that internally sprite 0 is used to display to cursor (palette 0 and color 15) as it is not directly used by the Sprite Engine but if you're using the low level VDP sprite methods then you should know that sprite 0 will be used here.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#abec7ff3302a05dc916fec5d9c69b9368" title="Hide the frame load cursor previously enabled using SYS_showFrameLoad() method.">SYS_hideFrameLoad()</a> </dd></dl>
+
+</div>
+</div>
 <hr/><h2>Variable Documentation</h2>
 <a class="anchor" id="ab41d8358de9da304b45a9cd847cb03cd"></a><!-- doxytag: member="sys.h::addressErrorCB" ref="ab41d8358de9da304b45a9cd847cb03cd" args="" -->
 <div class="memitem">
@@ -1027,7 +1071,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sys_8h.html">sys.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:28:25 for sgdk by&#160;
+      <li class="footer">Generated on Sat Apr 25 2020 22:18:27 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

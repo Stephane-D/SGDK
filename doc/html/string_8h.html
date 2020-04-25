@@ -93,6 +93,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a16ae9dc4d60ab6d2ef39bf346a1038"></a><!-- doxytag: member="string.h::_STRING_H_" ref="a9a16ae9dc4d60ab6d2ef39bf346a1038" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>_STRING_H_</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80e33e966a7ec3facaf0b2b4afaf5be5"></a><!-- doxytag: member="string.h::isdigit" ref="a80e33e966a7ec3facaf0b2b4afaf5be5" args="(c)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a80e33e966a7ec3facaf0b2b4afaf5be5">isdigit</a>(c)&#160;&#160;&#160;((c) &gt;= '0' &amp;&amp; (c) &lt;= '9')</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if specified character is a digit or not. <br/></td></tr>
@@ -117,14 +119,16 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the length of a string, to a maximum number of bytes.  <a href="#ac95d9e6de719572fa47ad276baa664de"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a70cac0e742d8195dd77ea209ff657422">strcmp</a> (const char *str1, const char *str2)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the 2 strings.  <a href="#a70cac0e742d8195dd77ea209ff657422"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a7923e87d08b9d5b3cc7a4bd6130aae39">strclr</a> (char *str)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a string.  <a href="#a7923e87d08b9d5b3cc7a4bd6130aae39"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a7a82515b5d377be04817715c5465b647">strcpy</a> (char *dest, const char *src)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a string.  <a href="#a7a82515b5d377be04817715c5465b647"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a163d330dc80db3896c6c81e08bfcdbb1">strncpy</a> (char *dest, const char *src, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the first 'len' character of string.  <a href="#a163d330dc80db3896c6c81e08bfcdbb1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#adb8723e585ed29f2370cddf90f6891bc">strcat</a> (char *dest, const char *src)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenate two strings.  <a href="#adb8723e585ed29f2370cddf90f6891bc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a713f9358d522eae1dee42f0500eac17f">sprintf</a> (char *buffer, const char *fmt,...) __attribute__((format(printf</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Composes a string with the same text that would be printed if format was used on printf, but instead of being printed, the content is stored as a C string in the buffer pointed by str.  <a href="#a713f9358d522eae1dee42f0500eac17f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a8cf052a5713a75761f04405cf9b83c86">strclr</a> (char *str)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a string.  <a href="#a8cf052a5713a75761f04405cf9b83c86"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#aad3b2fea33e8b56f31f612a33b61573f">strreplacechar</a> (char *str, char oldc, char newc)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the given character in a string.  <a href="#aad3b2fea33e8b56f31f612a33b61573f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#af5351ac0cc44eca34b2e719aef69bec3">intToStr</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize)</td></tr>
@@ -137,8 +141,6 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a fix32 value to string.  <a href="#a6553654e51ce1b70a13759efcb54cbb6"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a271a92ad68b7125bffe94c52c3e19f8e">fix16ToStr</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a fix16 value to string.  <a href="#a271a92ad68b7125bffe94c52c3e19f8e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a713f9358d522eae1dee42f0500eac17f">sprintf</a> (char *buffer, const char *fmt,...) __attribute__((format(printf</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Composes a string with the same text that would be printed if format was used on printf, but instead of being printed, the content is stored as a C string in the buffer pointed by str.  <a href="#a713f9358d522eae1dee42f0500eac17f"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>String manipulations. </p>
@@ -146,7 +148,9 @@ Functions</h2></td></tr>
 <dd>
 Paspallas Dev </dd>
 <dd>
-Jack Nolddor </dd></dl>
+Jack Nolddor </dd>
+<dd>
+Jesus Alonso (doragasu) </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011</dd></dl>
 <p>This unit provides basic null terminated string operations and type conversions. </p>
 </div><hr/><h2>Define Documentation</h2>
@@ -451,12 +455,12 @@ Jack Nolddor </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7923e87d08b9d5b3cc7a4bd6130aae39"></a><!-- doxytag: member="string.h::strclr" ref="a7923e87d08b9d5b3cc7a4bd6130aae39" args="(char *str)" -->
+<a class="anchor" id="a8cf052a5713a75761f04405cf9b83c86"></a><!-- doxytag: member="string.h::strclr" ref="a8cf052a5713a75761f04405cf9b83c86" args="(char *str)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char* strclr </td>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> char* strclr </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
@@ -765,7 +769,7 @@ Jack Nolddor </dd></dl>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="string_8h.html">string.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:28:25 for sgdk by&#160;
+      <li class="footer">Generated on Sat Apr 25 2020 22:18:27 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

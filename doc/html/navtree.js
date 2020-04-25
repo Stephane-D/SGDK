@@ -91,7 +91,9 @@ var NAVTREE =
       [ "vram.h", "vram_8h.html", null ],
       [ "xgm.h", "xgm_8h.html", null ],
       [ "ym2612.h", "ym2612_8h.html", null ],
-      [ "z80_ctrl.h", "z80__ctrl_8h.html", null ]
+      [ "z80_ctrl.h", "z80__ctrl_8h.html", null ],
+      [ "z80_mvsc.h", "z80__mvsc_8h.html", null ],
+      [ "z80_vgm.h", "z80__vgm_8h.html", null ]
     ] ],
     [ "File Members", "globals.html", null ]
   ] ]

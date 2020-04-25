@@ -275,7 +275,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>General controller support. </p>
-<dl class="author"><dt><b>Author:</b></dt><dd>Chilly Willy &amp; Stephane Dallongeville </dd></dl>
+<dl class="author"><dt><b>Author:</b></dt><dd>Chilly Willy </dd>
+<dd>
+Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>05/2012</dd></dl>
 <p>This unit provides methods to read controller state.<br/>
  <br/>
@@ -288,9 +290,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
 </li>
 <li>Sega Mouse<br/>
 </li>
-<li>team player adapter<br/>
- </li>
+<li>Sega Team Player adapter<br/>
+</li>
+<li>EA 4-Way Play<br/>
+</li>
+<li>the Menacer<br/>
+</li>
+<li>the Justifier<br/>
+</li>
+<li>Sega Master System pad<br/>
+</li>
+<li>Sega Trackball<br/>
+</li>
+<li>Sega Phaser<br/>
+</li>
 </ul>
+<p>Although Sega Master System pad, trackball, and Phaser are supported, they aren't automatically detected on <a class="el" href="joy_8h.html#a6e15180697fbee159bcedfa8974efc31" title="Initialize the controller sub system. ">JOY_init()</a>.<br/>
+ Another caveat is that although the Menacer and Justifier are automatically recognized and supported, the support is not enabled until the programmer tells it to because of the extra overhead that lightguns add. This way, SGDK defaults to a lower overhead state for controllers. Games that can use lightguns can check and enable the lightgun as part of the init process, while normal games can ignore that and simply count on the default init state for controllers.<br/>
+ Note that mice are enabled by default by <a class="el" href="joy_8h.html#a6e15180697fbee159bcedfa8974efc31" title="Initialize the controller sub system. ">JOY_init()</a> and will return emulated pad values for reading the port as if it were a controller.<br/>
+ This allows using a mouse as a pad for SGDK games. However, mice use a little more overhead than pads, so a game that doesn't use mice as mice and wants every last scrap of speed should check if mice are connected and turn them off to get just that extra little bit of speed.<br/>
+ If you have an existing SGDK based game that needs every last bit of speed and doesn't check for mice, unplug any mice for extra speed. Mice are only enabled if detected. </p>
 </div><hr/><h2>Define Documentation</h2>
 <a class="anchor" id="a81baaa8c28f517c590f9a3d586b6b7d0"></a><!-- doxytag: member="joy.h::PORT_TYPE_UKNOWN" ref="a81baaa8c28f517c590f9a3d586b6b7d0" args="" -->
 <div class="memitem">
@@ -302,7 +321,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000071">Deprecated:</a></b></dt><dd>Use PORT_TYPE_UNKNOWN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000052">Deprecated:</a></b></dt><dd>Use PORT_TYPE_UNKNOWN instead </dd></dl>
 
 </div>
 </div>
@@ -859,7 +878,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="joy_8h.html">joy.h</a>      </li>
-      <li class="footer">Generated on Fri Apr 17 2020 11:28:24 for sgdk by&#160;
+      <li class="footer">Generated on Sat Apr 25 2020 22:18:27 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
