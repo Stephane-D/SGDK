@@ -233,26 +233,36 @@ static u16* pack(VRAMRegion *region, u16 nsize)
         {
             if (bsize != 0)
             {
+                 // store packed free memory for this block
                 *best = bsize;
 
                 if (bsize >= nsize)
                     return best;
 
-                bsize = 0;
+                 // reset packed free size
+                 bsize = 0;
             }
 
+            // point to next memory block
             b += psize & SIZE_MASK;
+            // remember it in case it becomes free
             best = b;
         }
         else
         {
+            // increment free size
             bsize += psize;
+            // clear this memory block as it will be packed
+            *b = 0;
+            // point to next memory block
             b += psize;
         }
     }
 
+    // last free block update
     if (bsize != 0)
     {
+        // store packed free size
         *best = bsize;
 
         if (bsize >= nsize)
