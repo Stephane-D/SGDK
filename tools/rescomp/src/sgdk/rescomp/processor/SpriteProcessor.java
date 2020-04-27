@@ -50,6 +50,8 @@ public class SpriteProcessor implements Processor
                     "                  1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles");
             System.out.println(
                     "                  2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)");
+            System.out.println(
+                    "                  3 / NONE      = no optimization (cover the whole sprite frame)");
             System.out
                     .println("  iteration     number of iteration for sprite cutting optimization (default = 500000)");
 

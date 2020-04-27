@@ -14,7 +14,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
 {
     public static enum OptimizationType
     {
-        BALANCED, MIN_SPRITE, MIN_TILE
+        BALANCED, MIN_SPRITE, MIN_TILE, NONE
     };
 
     public static final Comparator<SpriteCell> sizeAndCoverageComparator = new Comparator<SpriteCell>()

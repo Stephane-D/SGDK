@@ -143,6 +143,7 @@ SPRITE name img_file width heigth [compression [time [collision [opt [iteration]
                         0 / BALANCED  = balance between used tiles and hardware sprites (default)
                         1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles
                         2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)
+                        3 / NONE      = no optimization (cover the whole sprite frame)
     iteration       number of iteration for sprite cutting optimization (default = 500000)
 
 Some informations about how SpriteDefinition is generated from the input image:

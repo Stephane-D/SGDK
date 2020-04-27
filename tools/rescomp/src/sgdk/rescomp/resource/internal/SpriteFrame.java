@@ -72,7 +72,7 @@ public class SpriteFrame extends Resource
             sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration,
                     OptimizationType.MIN_SPRITE);
 
-        // still above the limit ? --> stop here :-(
+        // still above the limit (shouldn't be possible as max sprite size is 128x128) ? --> stop here :-(
         if (sprites.size() > 16)
             throw new IllegalArgumentException("Sprite frame '" + id + "' uses " + sprites.size()
                     + " internal sprites, that is above the limit (16), try to reduce the sprite size or split it...");

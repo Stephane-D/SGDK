@@ -29,21 +29,27 @@ public class SpriteCutter
         final List<Solution> result = new ArrayList<>();
         final SpriteCutter spriteCutter = new SpriteCutter(image8bpp, imageDim, frameBounds);
 
-        for (int gridSize = 8; gridSize <= 32; gridSize += 8)
+        // no optimization ? --> get default solution covering the whole sprite frame
+        if (optimizationType.equals(OptimizationType.NONE))
+            result.add(spriteCutter.getDefaultSolution());
+        else
         {
-            // get best grid (minimum number of tile for region image covering)
-            final CellGrid grid = spriteCutter.getBestGrid(gridSize, optimizationType);
-            // quick tiles merging where possible
-            if (gridSize == 8)
-                grid.mergeCells(optimizationType);
-            // build the solution from the grid
-            final Solution solution = spriteCutter.getSolution(grid, optimizationType);
-            // fast optimization
-            solution.fastOptimize();
+            for (int gridSize = 8; gridSize <= 32; gridSize += 8)
+            {
+                // get best grid (minimum number of tile for region image covering)
+                final CellGrid grid = spriteCutter.getBestGrid(gridSize, optimizationType);
+                // quick tiles merging where possible
+                if (gridSize == 8)
+                    grid.mergeCells(optimizationType);
+                // build the solution from the grid
+                final Solution solution = spriteCutter.getSolution(grid, optimizationType);
+                // fast optimization
+                solution.fastOptimize();
 
-            // add the solution
-            if (!solution.cells.isEmpty())
-                result.add(solution);
+                // add the solution
+                if (!solution.cells.isEmpty())
+                    result.add(solution);
+            }
         }
 
         return result;
@@ -925,6 +931,41 @@ public class SpriteCutter
     public SpriteCutter(byte[] image8bpp, Dimension imageDim, Rectangle frameBounds)
     {
         this(ImageUtil.getSubImage(image8bpp, imageDim, frameBounds), frameBounds.getSize());
+    }
+
+    /**
+     * Return default solution (just covering the whole sprite frame using plain VDP sprites)
+     */
+    public Solution getDefaultSolution()
+    {
+        final Rectangle imageCellBounds = new Rectangle(dim.width / 8, dim.height / 8);
+
+        // default using 32x32 cell
+        final int numCellW = (imageCellBounds.width + 3) / 4;
+        final int numCellH = (imageCellBounds.height + 3) / 4;
+
+        // last cell size
+        int lastCellW = imageCellBounds.width & 3;
+        int lastCellH = imageCellBounds.height & 3;
+        // adjust
+        if (lastCellW == 0)
+            lastCellW = 4;
+        if (lastCellH == 0)
+            lastCellH = 4;
+
+        final List<Rectangle> sprites = new ArrayList<>();
+
+        // build the list of sprite
+        for (int xc = 0; xc < numCellW; xc++)
+        {
+            for (int yc = 0; yc < numCellH; yc++)
+            {
+                sprites.add(new Rectangle(xc * 32, yc * 32, (xc == (numCellW - 1)) ? lastCellW * 8 : 32,
+                        (yc == (numCellH - 1)) ? lastCellH * 8 : 32));
+            }
+        }
+
+        return new Solution(sprites, OptimizationType.NONE);
     }
 
     public CellGrid getBestGrid(int cellSize, OptimizationType opt)

@@ -100,6 +100,8 @@ public class Util
             return OptimizationType.MIN_SPRITE;
         if (StringUtil.equals(upText, "TILE") || StringUtil.equals(upText, "2"))
             return OptimizationType.MIN_TILE;
+        if (StringUtil.equals(upText, "NONE") || StringUtil.equals(upText, "3"))
+            return OptimizationType.NONE;
 
         throw new IllegalArgumentException("Unrecognized sprite optimization: '" + text + "'");
     }
