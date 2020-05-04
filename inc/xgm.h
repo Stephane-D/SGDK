@@ -47,7 +47,9 @@ void XGM_startPlay(const u8 *song);
 void XGM_stopPlay();
 /**
  * \brief
- *      Pause playing music, music can be resumed by calling #XGM_resumePlay (XGM music player driver).
+ *      Pause playing music, music can be resumed by calling #XGM_resumePlay (XGM music player driver).<br>
+ *      Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect
+ *      and some notes will miss until next key-on event occurs.
  *
  *  \see XGM_resumePlay
  *  \see XGM_stopPlay
@@ -55,7 +57,9 @@ void XGM_stopPlay();
 void XGM_pausePlay();
 /**
  * \brief
- *      Resume playing music after pausing with XGM_pausePlay (XGM music player driver).
+ *      Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br>
+ *      Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect
+ *      and some notes will miss until next key-on event occurs.
  *
  *  \see XGM_pausePlay
  *  \see XGM_nextFrame
