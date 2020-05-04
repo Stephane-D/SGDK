@@ -34,7 +34,7 @@ public class ImageProcessor implements Processor
             System.out.println("                  0 / NONE        = no compression (default)");
             System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println("  mapopt        define the map optimisation level");
+            System.out.println("  mapopt        define the map optimisation level, accepted values:");
             System.out.println("                  0 / NONE        = no optimisation (each tile is unique)");
             System.out.println("                  1 / ALL         = find duplicate and flipped tile (default)");
             System.out.println("                  2 / DUPLICATE   = find duplicate tile only");
