@@ -74,6 +74,10 @@ TILESET name img_file [compression]
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
+    opt             define the optimisation level, accepted values:
+                        0 / NONE        = no optimisation, each tile is unique (default)
+                        1 / ALL         = ignore duplicated and flipped tile
+                        2 / DUPLICATE   = ignore duplicated tile only
 
 
 MAP
@@ -111,10 +115,10 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
                         0 / NONE        = no compression
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the map optimisation level
+    mapopt          define the map optimisation level, accepted values:
                         0 / NONE        = no optimisation (each tile is unique)
-                        1 / ALL         = find duplicate and flipped tile (default)
-                        2 / DUPLICATE   = find duplicate tile only
+                        1 / ALL         = find duplicated and flipped tile (default)
+                        2 / DUPLICATE   = find duplicated tile only
     mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                     Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
