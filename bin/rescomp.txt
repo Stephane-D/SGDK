@@ -105,7 +105,7 @@ Syntax:
 IMAGE name img_file [compression [mapopt [mapbase]]]
 
     name            name of the output Image structure
-    img_file        path of the input image file (should be 8bpp .bmp or .png)
+    img_file        path of the input image file (should be indexed colors image in .bmp or .png format)
     compression     compression type (use unpackImage(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression
@@ -128,7 +128,7 @@ Syntax:
 SPRITE name img_file width heigth [compression [time [collision [opt [iteration]]]]]
 
     name            name of the output SpriteDefinition structure
-    img_file        path of the input image file (should be 8bpp .bmp or .png)
+    img_file        path of the input image file (should be indexed colors image in .bmp or .png format)
     width           width of a single sprite frame in tile (width * heigth <= 256)
     heigth          heigth of a single sprite frame in tile (width * heigth <= 256)
     compression     compression type, accepted values:
