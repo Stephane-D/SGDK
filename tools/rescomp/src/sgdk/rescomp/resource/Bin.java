@@ -97,6 +97,9 @@ public class Bin extends Resource
     @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
+        // do 'outB' align *before* doing compression (as LZ4W compression can use previous data block)
+        Util.align(outB, align);
+        
         // pack data first if needed
         packedData = Util.pack(data, wantedCompression, outB);
         doneCompression = packedData.compression;
@@ -124,11 +127,11 @@ public class Bin extends Resource
                     + Math.round((packedSize * 100f) / baseSize) + "% - origin size = " + baseSize + ")");
         }
 
-        // output binary data
-        Util.outB(outB, packedData.data, align);
+        // output binary data (data alignment was done before)
+        Util.outB(outB, packedData.data);
 
         // declare
-        Util.declArray(outS, outH, "u8", id, data.length, align, global);
+        Util.declArray(outS, outH, "u8", id, packedData.data.length, align, global);
         // output data (compression information is stored in 'parent' resource)
         Util.outS(outS, packedData.data, 1);
         outS.append("\n");

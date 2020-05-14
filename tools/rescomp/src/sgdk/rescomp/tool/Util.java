@@ -306,13 +306,13 @@ public class Util
         outB(out, data, false);
     }
 
-    public static void outB(ByteArrayOutputStream out, byte[] data, int align) throws IOException
+    public static boolean align(ByteArrayOutputStream out, int align)
     {
         // no way to know actual fill size so we reset binary data
         if (align > 2)
         {
             out.reset();
-            return;
+            return false;
         }
 
         // we can only handle align 2
@@ -323,8 +323,14 @@ public class Util
                 out.write(0);
         }
 
-        // then write data
-        out.write(data);
+        return true;
+    }
+
+    public static void outB(ByteArrayOutputStream out, byte[] data, int align) throws IOException
+    {
+        // align ok ? --> then write data
+        if (align(out, align))
+            out.write(data);
     }
 
     public static void outB(ByteArrayOutputStream out, byte[] data) throws IOException
