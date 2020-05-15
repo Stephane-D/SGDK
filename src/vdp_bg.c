@@ -143,19 +143,19 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
     u16 data[128];
     const u8 *s;
     u16 *d;
-    u16 i;
+    u16 w;
 
     // get the horizontal plane size (in cell)
-    i = (plane == WINDOW)?windowWidth:planeWidth;
+    w = (plane == WINDOW)?windowWidth:planeWidth;
     len = strlen(str);
 
     // if string don't fit in plane, we cut it
-    if (len > (i - x))
-        len = i - x;
+    if (len > (w - x))
+        len = w - x;
 
     s = (const u8*) str;
     d = data;
-    while(i--)
+    while(len--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
 
     VDP_setTileMapDataRowEx(plane, data, text_basetile, y, x, len, CPU);
