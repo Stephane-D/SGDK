@@ -15,6 +15,7 @@
 *.xml
 *.lst
 *.class
+*.ini
 **/out/**
 **/bin/**
 !**/out/rom.bin
@@ -36,7 +37,6 @@ res/libres.s
 src/z80_*.s
 archive
 cb
-doc
 emu
 not needed
 sample/sound/loss
@@ -50,4 +50,4 @@ tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
 lib/libmd_old.a
-*.ini
+**/.settings/**
