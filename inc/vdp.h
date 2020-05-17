@@ -874,6 +874,20 @@ void VDP_waitVSync();
  *  It returns immediately if we are already in VInt handler.
  */
 void VDP_waitVInt();
+/**
+ *  \brief
+ *      Wait for next vertical blank period (same as #VDP_waitVSync())
+ *
+ *  The method actually wait for the next start of Vertical blanking.
+ */
+void VDP_waitVBlank();
+/**
+ *  \brief
+ *      Wait for next vertical active area (end of vertical blank period)
+ *
+ *  The method actually wait for the next start of Vertical active area.
+ */
+void VDP_waitVActive();
 
 /**
  *  \brief

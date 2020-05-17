@@ -836,6 +836,20 @@ void VDP_waitVInt()
     computeFrameCPULoad(blank, vcnt);
 }
 
+void VDP_waitVBlank()
+{
+    VDP_waitVSync();
+}
+
+void VDP_waitVActive()
+{
+    vu16 *pw = (u16 *) GFX_CTRL_PORT;
+
+    while (!(*pw & VDP_VBLANK_FLAG));
+    while (*pw & VDP_VBLANK_FLAG);
+}
+
+
 static void computeFrameCPULoad(u16 blank, u16 vcnt)
 {
     // update CPU frame load
