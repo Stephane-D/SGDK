@@ -455,6 +455,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for Vertical Synchro.  <a href="#aec5aa111d268210860106ebc6c8b6c6c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9c5f289685a0103e7231b3726ff4bee3">VDP_waitVInt</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next Vertical Interruption.  <a href="#a9c5f289685a0103e7231b3726ff4bee3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a834fbef47321ba60b880e1257a899550">VDP_waitVBlank</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next vertical blank period (same as <a class="el" href="vdp_8h.html#aec5aa111d268210860106ebc6c8b6c6c" title="Wait for Vertical Synchro.">VDP_waitVSync()</a>)  <a href="#a834fbef47321ba60b880e1257a899550"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aac4bbd6ee1880de6bbe44272ee3a7a0e">VDP_waitVActive</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next vertical active area (end of vertical blank period)  <a href="#aac4bbd6ee1880de6bbe44272ee3a7a0e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a78e58a2fd3120b7e6356985aa1f48181">VDP_getAdjustedVCounter</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an enhanced V Counter representation.  <a href="#a78e58a2fd3120b7e6356985aa1f48181"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#adbdb6ea2d08c4f7a90e827c8541c3e35">VDP_showFPS</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> asFloat)</td></tr>
@@ -528,7 +532,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000081">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -542,7 +546,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000082">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000013">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -556,7 +560,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000077">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
 
 </div>
 </div>
@@ -570,7 +574,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000078">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000009">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
 
 </div>
 </div>
@@ -584,7 +588,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000079">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
 
 </div>
 </div>
@@ -598,7 +602,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000080">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
 
 </div>
 </div>
@@ -636,7 +640,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000084">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000015">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -653,7 +657,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000085">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000016">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -794,7 +798,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000086">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000017">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -850,7 +854,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000087">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000018">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -868,7 +872,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000088">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000019">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1044,7 +1048,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000083">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000014">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1258,7 +1262,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000089">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000020">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1361,7 +1365,45 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Wait for DMA operation to complete. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000090">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000021">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aac4bbd6ee1880de6bbe44272ee3a7a0e"></a><!-- doxytag: member="vdp.h::VDP_waitVActive" ref="aac4bbd6ee1880de6bbe44272ee3a7a0e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_waitVActive </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Wait for next vertical active area (end of vertical blank period) </p>
+<p>The method actually wait for the next start of Vertical active area. </p>
+
+</div>
+</div>
+<a class="anchor" id="a834fbef47321ba60b880e1257a899550"></a><!-- doxytag: member="vdp.h::VDP_waitVBlank" ref="a834fbef47321ba60b880e1257a899550" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_waitVBlank </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Wait for next vertical blank period (same as <a class="el" href="vdp_8h.html#aec5aa111d268210860106ebc6c8b6c6c" title="Wait for Vertical Synchro.">VDP_waitVSync()</a>) </p>
+<p>The method actually wait for the next start of Vertical blanking. </p>
 
 </div>
 </div>
@@ -1505,7 +1547,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp_8h.html">vdp.h</a>      </li>
-      <li class="footer">Generated on Sat Apr 25 2020 22:18:27 for sgdk by&#160;
+      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

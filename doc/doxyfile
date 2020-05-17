@@ -96,83 +96,83 @@ WARN_LOGFILE            = "D:\apps\SGDK\cb\doc\doxygen.log"
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = \
-	"..\..\inc\timer.h" \
-	"..\..\src\mapper.c" \
-	"..\..\src\sprite_eng.c" \
-	"..\..\inc\bmp.h" \
-	"..\..\inc\smp_null_pcm.h" \
-	"..\..\inc\dma.h" \
-	"..\..\inc\sram.h" \
-	"..\..\inc\memory.h" \
-	"..\..\src\tab_vol.c" \
 	"..\..\src\everdrive.c" \
-	"..\..\inc\config.h" \
-	"..\..\inc\string.h" \
-	"..\..\src\vdp.c" \
-	"..\..\inc\everdrive.h" \
-	"..\..\inc\sys.h" \
-	"..\..\src\tab_sqrt.c" \
-	"..\..\src\fat16.c" \
-	"..\..\inc\fat16.h" \
-	"..\..\inc\vdp_bg.h" \
-	"..\..\src\tab_cnv.c" \
-	"..\..\inc\font.h" \
-	"..\..\inc\vdp_dma.h" \
-	"..\..\src\joy.c" \
-	"..\..\inc\genesis.h" \
+	"..\..\inc\mapper.h" \
 	"..\..\src\string.c" \
-	"..\..\src\maths3D.c" \
-	"..\..\inc\maths.h" \
-	"..\..\src\sys.c" \
-	"..\..\inc\sound.h" \
+	"..\..\src\sram.c" \
+	"..\..\src\mapper.c" \
+	"..\..\inc\maths3D.h" \
 	"..\..\src\vram.c" \
-	"..\..\src\memory.c" \
-	"..\..\inc\sprite_eng.h" \
+	"..\..\inc\timer.h" \
+	"..\..\src\fat16.c" \
+	"..\..\inc\genesis.h" \
 	"..\..\inc\tools.h" \
-	"..\..\src\tools.c" \
-	"..\..\inc\vdp_spr.h" \
-	"..\..\src\vdp_dma.c" \
+	"..\..\inc\kdebug.h" \
+	"..\..\inc\z80_mvsc.h" \
+	"..\..\src\timer.c" \
+	"..\..\inc\ym2612.h" \
+	"..\..\src\maths.c" \
+	"..\..\src\vdp.c" \
+	"..\..\inc\vdp_bg.h" \
+	"..\..\inc\xgm.h" \
+	"..\..\inc\asm.h" \
 	"..\..\src\vdp_bg.c" \
 	"..\..\inc\vdp_tile.h" \
-	"..\..\src\maths.c" \
-	"..\..\inc\xgm.h" \
-	"..\..\src\tab_log10.c" \
-	"..\..\inc\vram.h" \
-	"..\..\inc\joy.h" \
-	"..\..\src\vdp_spr.c" \
-	"..\..\inc\types.h" \
-	"..\..\inc\ym2612.h" \
-	"..\..\src\vdp_tile.c" \
-	"..\..\inc\tab_cnv.h" \
-	"..\..\inc\z80_ctrl.h" \
-	"..\..\src\timer.c" \
-	"..\..\inc\vdp_pal.h" \
-	"..\..\src\boot\rom_head.c" \
-	"..\..\inc\smp_null.h" \
-	"..\..\src\tab_log2.c" \
-	"..\..\src\bmp.c" \
-	"..\..\src\dma.c" \
-	"..\..\inc\z80_mvsc.h" \
-	"..\..\src\tab_sin.c" \
-	"..\..\inc\mapper.h" \
-	"..\..\src\z80_ctrl.c" \
 	"..\..\src\pal.c" \
-	"..\..\inc\kdebug.h" \
-	"..\..\src\types.c" \
-	"..\..\src\psg.c" \
+	"..\..\src\z80_ctrl.c" \
+	"..\..\inc\joy.h" \
+	"..\..\src\vdp_dma.c" \
 	"..\..\inc\vdp.h" \
-	"..\..\src\sound.c" \
-	"..\..\inc\psg.h" \
+	"..\..\src\psg.c" \
 	"..\..\src\xgm.c" \
-	"..\..\res\libres.h" \
-	"..\..\inc\asm.h" \
-	"..\..\inc\pal.h" \
-	"..\..\src\ym2612.c" \
-	"..\..\inc\maths3D.h" \
-	"..\..\src\sram.c" \
+	"..\..\inc\smp_null.h" \
+	"..\..\src\tab_log10.c" \
 	"..\..\inc\z80_vgm.h" \
+	"..\..\inc\psg.h" \
+	"..\..\inc\string.h" \
+	"..\..\src\tab_vol.c" \
+	"..\..\src\tab_sin.c" \
+	"..\..\inc\memory.h" \
+	"..\..\src\types.c" \
+	"..\..\inc\vdp_pal.h" \
+	"..\..\inc\sprite_eng.h" \
+	"..\..\src\vdp_spr.c" \
+	"..\..\inc\pal.h" \
+	"..\..\inc\sram.h" \
+	"..\..\src\vdp_pal.c" \
+	"..\..\inc\sound.h" \
+	"..\..\inc\smp_null_pcm.h" \
+	"..\..\inc\dma.h" \
+	"..\..\inc\z80_ctrl.h" \
+	"..\..\src\boot\rom_head.c" \
+	"..\..\inc\tab_cnv.h" \
+	"..\..\inc\bmp.h" \
+	"..\..\src\tab_sqrt.c" \
+	"..\..\inc\maths.h" \
+	"..\..\src\tab_cnv.c" \
+	"..\..\src\bmp.c" \
+	"..\..\inc\sys.h" \
+	"..\..\src\tools.c" \
+	"..\..\inc\vdp_dma.h" \
+	"..\..\inc\everdrive.h" \
+	"..\..\src\ym2612.c" \
+	"..\..\res\libres.h" \
+	"..\..\src\memory.c" \
+	"..\..\inc\config.h" \
+	"..\..\src\sys.c" \
+	"..\..\src\dma.c" \
+	"..\..\src\sound.c" \
+	"..\..\src\vdp_tile.c" \
+	"..\..\inc\types.h" \
+	"..\..\src\maths3D.c" \
+	"..\..\src\tab_log2.c" \
 	"..\..\inc\tab_vol.h" \
-	"..\..\src\vdp_pal.c" 
+	"..\..\src\sprite_eng.c" \
+	"..\..\inc\fat16.h" \
+	"..\..\inc\vdp_spr.h" \
+	"..\..\src\joy.c" \
+	"..\..\inc\font.h" \
+	"..\..\inc\vram.h" 
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO

@@ -107,9 +107,11 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a00e8cc267ce9301beb17bf2cf9662d71">XGM_stopPlay</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop playing music (XGM music player driver).  <a href="#a00e8cc267ce9301beb17bf2cf9662d71"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584">XGM_pausePlay</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).">XGM_resumePlay</a> (XGM music player driver).  <a href="#a8a0eda7746cc40e0642b3fab58d79584"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
+ Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#a8a0eda7746cc40e0642b3fab58d79584"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c">XGM_resumePlay</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  <a href="#adfcc6dfd90ee5311c04cfd7947f7c32c"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br/>
+ Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#adfcc6dfd90ee5311c04cfd7947f7c32c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a3446bcd38404e76b891dd4652f8568d8">XGM_isPlayingPCM</a> (const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel_mask)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return play status of specified PCM channel (XGM music player driver).  <a href="#a3446bcd38404e76b891dd4652f8568d8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a9203faa0b1ebfe1f264095affc4b9562">XGM_setPCM</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> id, const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, const <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len)</td></tr>
@@ -372,8 +374,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </div>
 <div class="memdoc">
 
-<p>Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).">XGM_resumePlay</a> (XGM music player driver). </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).">XGM_resumePlay</a> </dd>
+<p>Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
+ Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> </dd>
 <dd>
 <a class="el" href="xgm_8h.html#a00e8cc267ce9301beb17bf2cf9662d71" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd></dl>
 
@@ -393,7 +396,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </div>
 <div class="memdoc">
 
-<p>Resume playing music after pausing with XGM_pausePlay (XGM music player driver). </p>
+<p>Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br/>
+ Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs. </p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
 <dd>
 <a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d" title="Notify the Z80 a new frame just happened (XGM music player driver).">XGM_nextFrame</a> </dd></dl>
@@ -738,7 +742,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="xgm_8h.html">xgm.h</a>      </li>
-      <li class="footer">Generated on Sat Apr 25 2020 22:18:27 for sgdk by&#160;
+      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

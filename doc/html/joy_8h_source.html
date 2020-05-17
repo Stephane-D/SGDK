@@ -160,29 +160,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00144"></a><a class="code" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">00144</a> <span class="keyword">typedef</span> <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41" title="Joypad event callback.">JoyEventCallback</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> changed, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> state);
 <a name="l00145"></a>00145 
 <a name="l00146"></a>00146 
-<a name="l00154"></a>00154 <span class="keywordtype">void</span> JOY_init();
+<a name="l00154"></a>00154 <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#a6e15180697fbee159bcedfa8974efc31" title="Initialize the controller sub system. ">JOY_init</a>();
 <a name="l00155"></a>00155 
-<a name="l00163"></a>00163 <span class="keywordtype">void</span> JOY_reset();
+<a name="l00163"></a>00163 <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#a6c5e812ed03bd58a227a5c08c8692209" title="Reset the controller sub system. ">JOY_reset</a>();
 <a name="l00164"></a>00164 
-<a name="l00182"></a>00182 <span class="keywordtype">void</span> JOY_setEventHandler(<a class="code" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41" title="Joypad event callback.">JoyEventCallback</a> *CB);
-<a name="l00214"></a>00214 <span class="keywordtype">void</span> JOY_setSupport(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> support);
+<a name="l00182"></a>00182 <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#a8812d0aecb9f032f429dd45138777fef" title="Set the callback function for controller state changed.    SGDK provides facilities to detect state c...">JOY_setEventHandler</a>(<a class="code" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41" title="Joypad event callback.">JoyEventCallback</a> *CB);
+<a name="l00214"></a>00214 <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#a2849113e4a8af7ca42ab59c4bf4fae8d" title="Set peripheral support for the specified port.    By default ports are configured to only enable supp...">JOY_setSupport</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> support);
 <a name="l00215"></a>00215 
-<a name="l00242"></a>00242 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> JOY_getPortType(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port);
+<a name="l00242"></a>00242 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="joy_8h.html#a6d2de104460d53ace962fa857d5581ee" title="Get peripheral type for the specified port.    The peripheral type for each port is automatically det...">JOY_getPortType</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port);
 <a name="l00243"></a>00243 
-<a name="l00266"></a>00266 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> JOY_getJoypadType(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
+<a name="l00266"></a>00266 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="joy_8h.html#a7454525213d2183c17cd6af476c33152" title="Get joypad peripheral type connected to the specified joypad port.  The joypad peripheral type for ea...">JOY_getJoypadType</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
 <a name="l00267"></a>00267 
-<a name="l00301"></a>00301 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  JOY_readJoypad(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
+<a name="l00301"></a>00301 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="joy_8h.html#ab13f5ced9409ff151d729f018f9152f3" title="Get joypad state.">JOY_readJoypad</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
 <a name="l00302"></a>00302 
-<a name="l00325"></a>00325 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>  JOY_readJoypadX(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
+<a name="l00325"></a>00325 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>  <a class="code" href="joy_8h.html#a1b00d938ee1d3bdc34fbd924fbfc29c9" title="Get joypad X axis.">JOY_readJoypadX</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
 <a name="l00326"></a>00326 
-<a name="l00349"></a>00349 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>  JOY_readJoypadY(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
+<a name="l00349"></a>00349 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>  <a class="code" href="joy_8h.html#afcd8407429a9177d77bae50c9df77936" title="Get joypad Y axis.">JOY_readJoypadY</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy);
 <a name="l00350"></a>00350 
-<a name="l00355"></a>00355 <span class="keywordtype">void</span> JOY_waitPressBtn();
-<a name="l00360"></a>00360 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> JOY_waitPressBtnTime(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ms);
-<a name="l00395"></a>00395 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> JOY_waitPress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> btn);
-<a name="l00433"></a>00433 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> JOY_waitPressTime(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> btn, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ms);
+<a name="l00355"></a>00355 <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#a63d3faf6fa675058186b197c7dd17887" title="Wait until a button is pressed on any connected controller.">JOY_waitPressBtn</a>();
+<a name="l00360"></a>00360 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="joy_8h.html#a06ce95e076439506c8b8315a2a04736f" title="Wait the specified amount of time or until a button is pressed on any connected controller.">JOY_waitPressBtnTime</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ms);
+<a name="l00395"></a>00395 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="joy_8h.html#a9815434dcfddcd4aa46736073cb5e751" title="Wait for specified button to be pressed on specified joypad.">JOY_waitPress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> btn);
+<a name="l00433"></a>00433 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="joy_8h.html#a8a9f2732f4b89570c62e3606df436548" title="Wait for specified button(s) to be pressed on specified joypad.">JOY_waitPressTime</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> joy, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> btn, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ms);
 <a name="l00434"></a>00434 
-<a name="l00442"></a>00442 <span class="keywordtype">void</span> JOY_update();
+<a name="l00442"></a>00442 <span class="keywordtype">void</span> <a class="code" href="joy_8h.html#aeedd62ac7b36ecbace2061c97b6c08d0" title="Manual update joypad state.    By default the library update joypad state on V interrupt process...">JOY_update</a>();
 <a name="l00443"></a>00443 
 <a name="l00444"></a>00444 
 <a name="l00445"></a>00445 <span class="preprocessor">#endif // _JOY_H_</span>
@@ -191,7 +191,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="joy_8h.html">joy.h</a>      </li>
-      <li class="footer">Generated on Sat Apr 25 2020 22:18:26 for sgdk by&#160;
+      <li class="footer">Generated on Sun May 17 2020 21:50:51 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
