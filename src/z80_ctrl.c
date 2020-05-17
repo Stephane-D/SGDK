@@ -129,7 +129,7 @@ void Z80_write(const u16 addr, const u8 value)
 }
 
 
-void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
+void Z80_clear(const u16 to, const u16 size, const bool resetz80)
 {
     Z80_requestBus(TRUE);
 
@@ -146,7 +146,7 @@ void Z80_clear(const u16 to, const u16 size, const u16 resetz80)
     if (resetz80) Z80_endReset();
 }
 
-void Z80_upload(const u16 to, const u8 *from, const u16 size, const u16 resetz80)
+void Z80_upload(const u16 to, const u8 *from, const u16 size, const bool resetz80)
 {
     Z80_requestBus(TRUE);
 
@@ -198,7 +198,7 @@ void Z80_unloadDriver()
     VIntProcess &= ~PROCESS_XGM_TASK;
 }
 
-void Z80_loadDriver(const u16 driver, const u16 waitReady)
+void Z80_loadDriver(const u16 driver, const bool waitReady)
 {
     const u8 *drv;
     u16 len;
@@ -236,7 +236,7 @@ void Z80_loadDriver(const u16 driver, const u16 waitReady)
     // clear z80 memory
     Z80_clear(0, Z80_RAM_LEN, FALSE);
     // upload Z80 driver and reset Z80
-    Z80_upload(0, drv, len, 1);
+    Z80_upload(0, drv, len, TRUE);
 
     // driver initialisation
     switch(driver)
@@ -361,7 +361,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
     // clear z80 memory
     Z80_clear(0, Z80_RAM_LEN, FALSE);
     // upload Z80 driver and reset Z80
-    Z80_upload(0, drv, size, 1);
+    Z80_upload(0, drv, size, TRUE);
 
     // custom driver set
     currentDriver = Z80_DRIVER_CUSTOM;

@@ -252,7 +252,7 @@ void Z80_write(const u16 addr, const u8 value);
  *  \param resetz80
  *      Reset Z80 if set to TRUE.
  */
-void Z80_clear(const u16 dest, const u16 size, const u16 resetz80);
+void Z80_clear(const u16 dest, const u16 size, const bool resetz80);
 /**
  *  \brief
  *      Upload data in Z80 memory.
@@ -265,7 +265,7 @@ void Z80_clear(const u16 dest, const u16 size, const u16 resetz80);
  *  \param resetz80
  *      Reset Z80 if set to TRUE.
  */
-void Z80_upload(const u16 dest, const u8 *data, const u16 size, const u16 resetz80);
+void Z80_upload(const u16 dest, const u8 *data, const u16 size, const bool resetz80);
 /**
  *  \brief
  *      Read data from Z80 memory.
@@ -311,7 +311,7 @@ void Z80_unloadDriver();
  *  \param waitReady
  *      Wait for driver to be ready.
  */
-void Z80_loadDriver(const u16 driver, const u16 waitReady);
+void Z80_loadDriver(const u16 driver, const bool waitReady);
 /**
  *  \brief
  *      Load a custom Z80 driver.
