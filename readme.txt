@@ -4,11 +4,10 @@ Patreon: https://www.patreon.com/SGDK
 Github: https://github.com/Stephane-D/SGDK
 
 
-SGDK is a free and open development kit for the Sega Megadrive.
+SGDK is a free development kit allowing to develop software in C language for the Sega Mega Drive.
 It contains the development library itself (with the code sources) and some custom tools used to compile resources.
 SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate ROM image. Binaries (GCC 6.3) are provided for Windows OS for convenience but you need to install it by yourself for others operating systems.
-Note that SGDK also requires Java (custom tools need it) so you need to have Java JRE installed on your system:
-https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+Note that SGDK also requires Java (custom tools need it) so you need to have Java installed on your system.
 
 SGDK library and custom tools are distributed under the MIT license (see license.txt file).
 GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see COPYING.RUNTIME file)
@@ -17,33 +16,30 @@ GCC compiler and libgcc are under GNU license (GPL3) and any software build from
 GET STARTED
 -----------
 
-First, you need to know that SGDK uses C language (assembly is also possible) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'MegaDrive' programming is (imo) definitely too difficult and you will end nowhere.
-It's also important to understand how the Sega Megadrive works internally (specifically the video system) so i recommend you to read documents about the Sega Megadrive hardware and development.
-For that you can visit Mega Cat Studios Sega Megadrive graphics guide page:
-https://megacatstudios.com/blogs/press/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
-You can also check Sik's web site which is more dedicated to assembly programming but explain a lot (and nicely) about the Sega Megadrive hardware:
-https://plutiedev.com/
+First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). If that's not the case then i recommend you to read these documents:
+* Mega Cat Studios Sega Mega Drive graphics guide page: https://megacatstudios.com/blogs/press/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
+* Sik's Blog dedicated to assembly programming but explain a lot (and quite nicely) about the Sega Mega Drive hardware: https://plutiedev.com
+* Genesis Software Manual which contains absolutely everything you need to know about the Sega Mega Drive: https://segaretro.org/images/a/a2/Genesis_Software_Manual.pdf
 
 Then when you feel ready you can go further and finally install SGDK :)
 
-You can find installation instructions about how use SGDK on this page but be careful, some of these tutorials are incomplete or outdated:
+You can find installation instructions and tutorials about how use SGDK on the wiki:
 https://github.com/Stephane-D/SGDK/wiki
 
-I plan to complete tutorials in future but in the meantime i strongly suggest you to have a look on the available samples instead in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
+Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the 'doc' folder: doc/html/files.html
+
+Finally i also strongly suggest you to have a look on the available samples in the 'sample' directory of SGDK. The 'sprite' example is particularly useful as it show the basics in a small example.
 
 You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):
 https://www.ohsat.com/tutorial/
 You also have the great ones from Danibus (spanish only):
 https://danibus.wordpress.com/
 
-SGDK comes with a doxygen documentation that you can find in the 'doc' directory: doc/html/files.html
-This documentation is generated from header files (.h) which provides information about SGDK structures and functions description.
-
 
 HELP AND SUPPORT
 ----------------
 
-If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Megadrive development and has a specific section for SGDK:
+If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:
 http://gendev.spritesmind.net/forum/
 
 You can also join the SGDK Discord server to get support:
@@ -88,6 +84,8 @@ THANKS
 - nolddor for fixes / contributions.
 - starling13 for fixes.
 - Ohsat for making nice tutorials.
+- ShiningBzh / Jeremy and Kentosama for their precious help in testing.
+- Vetea and Studio Vetea Discord people in general for their support and kindness.
 - all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
 
 
