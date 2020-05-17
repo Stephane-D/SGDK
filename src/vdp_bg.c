@@ -139,11 +139,10 @@ void VDP_setTextPriority(u16 prio)
 
 void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
 {
-    u16 len;
     u16 data[128];
     const u8 *s;
     u16 *d;
-    u16 w;
+    u16 i, w, len;
 
     // get the horizontal plane size (in cell)
     w = (plane == WINDOW)?windowWidth:planeWidth;
@@ -155,7 +154,8 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
 
     s = (const u8*) str;
     d = data;
-    while(len--)
+    i = len;
+    while(i--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
 
     VDP_setTileMapDataRowEx(plane, data, text_basetile, y, x, len, CPU);
