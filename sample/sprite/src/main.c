@@ -103,7 +103,7 @@ u16 bgBaseTileIndex[2];
 //s16 reseted = TRUE;
 bool paused;
 
-int main()
+int main(u16 hard)
 {
     u16 palette[64];
     u16 ind;
