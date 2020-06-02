@@ -1,11 +1,5 @@
 package sgdk.rescomp.resource;
 
-import java.awt.Rectangle;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
@@ -15,6 +9,12 @@ import sgdk.rescomp.type.Tile;
 import sgdk.tool.ArrayMath;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
+
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Tileset extends Resource
 {
@@ -56,7 +56,7 @@ public class Tileset extends Resource
                     + ", TILESET resource requires image with a maximum of " + maxPaletteSize + " colors.");
 
         // build TILESET
-        return new Tileset(id, data, w, h, 0, 0, wt, ht, tileOpt, false, compression);
+        return new Tileset(id, data, imgFile, w, h, 0, 0, wt, ht, tileOpt, false, compression);
     }
 
     // tiles
@@ -66,10 +66,14 @@ public class Tileset extends Resource
     // binary data block (tiles)
     public final Bin bin;
 
-    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY,
+    private final String fileName;
+
+    public Tileset(String id, byte[] image8bpp, String imgFile, int imageWidth, int imageHeight, int startTileX, int startTileY,
             int widthTile, int heightTile, TileOptimization opt, boolean ignorePlain, Compression compression)
     {
         super(id);
+
+        fileName = imgFile;
 
         tiles = new ArrayList<>();
 
@@ -112,10 +116,12 @@ public class Tileset extends Resource
         hc = bin.hashCode();
     }
 
-    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, List<? extends Rectangle> sprites,
+    public Tileset(String id, byte[] image8bpp, String imgFile, int imageWidth, int imageHeight, List<? extends Rectangle> sprites,
             Compression compression)
     {
         super(id);
+
+        fileName = imgFile;
 
         tiles = new ArrayList<>();
 
@@ -200,6 +206,15 @@ public class Tileset extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override

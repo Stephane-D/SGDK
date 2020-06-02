@@ -1,11 +1,5 @@
 package sgdk.rescomp.resource.internal;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.SpriteCutter;
@@ -17,6 +11,11 @@ import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.SpriteCell;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ImageUtil;
+
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 public class SpriteFrame extends Resource
 {
@@ -101,7 +100,7 @@ public class SpriteFrame extends Resource
 
         // build tileset
         tileset = (Tileset) addInternalResource(
-                new Tileset(id + "_tileset", frameImage, wf * 8, hf * 8, sprites, compression));
+                new Tileset(id + "_tileset", frameImage, null, wf * 8, hf * 8, sprites, compression));
 
         final Collision collision;
 
@@ -177,6 +176,15 @@ public class SpriteFrame extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return null;
     }
 
     @Override

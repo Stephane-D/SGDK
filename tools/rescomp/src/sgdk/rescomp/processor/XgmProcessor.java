@@ -1,7 +1,5 @@
 package sgdk.rescomp.processor;
 
-import java.io.IOException;
-
 import sgdk.rescomp.Compiler;
 import sgdk.rescomp.Processor;
 import sgdk.rescomp.Resource;
@@ -10,6 +8,8 @@ import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
+
+import java.io.IOException;
 
 public class XgmProcessor implements Processor
 {
@@ -71,6 +71,6 @@ public class XgmProcessor implements Processor
             throw new IOException("Can't read BIN data from file'" + fileOut + "' !");
 
         // build BIN resource
-        return new Bin(id, data, 256, 256, 0, Compression.NONE, false);
+        return new Bin(id, data, fileIn, 256, 256, 0, Compression.NONE, false);
     }
 }

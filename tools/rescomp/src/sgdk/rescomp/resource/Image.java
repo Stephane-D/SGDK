@@ -1,14 +1,14 @@
 package sgdk.rescomp.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class Image extends Resource
 {
@@ -18,10 +18,14 @@ public class Image extends Resource
     public final Tilemap tilemap;
     public final Palette palette;
 
+    private final String fileName;
+
     public Image(String id, String imgFile, Compression compression, TileOptimization tileOpt, int mapBase)
             throws IOException, IllegalArgumentException
     {
         super(id);
+
+        fileName = imgFile;
 
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
@@ -66,7 +70,7 @@ public class Image extends Resource
         // + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
 
         // build TILESET with wanted compression
-        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht,
+        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, null, w, h, 0, 0, wt, ht,
                 tileOpt, (mapBase & Tilemap.TILE_INDEX_MASK) != 0, compression));
         // build TILEMAP with wanted compression
         tilemap = (Tilemap) addInternalResource(
@@ -104,6 +108,15 @@ public class Image extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override

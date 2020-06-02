@@ -1,14 +1,14 @@
 package sgdk.rescomp.resource.internal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Box;
 import sgdk.rescomp.type.Basics.Circle;
 import sgdk.rescomp.type.Basics.CollisionBase;
 import sgdk.rescomp.type.Basics.CollisionType;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class Collision extends Resource
 {
@@ -103,6 +103,15 @@ public class Collision extends Resource
                 outB.write(0);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return null;
     }
 
     @Override

@@ -1,14 +1,14 @@
 package sgdk.rescomp.resource.internal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.SpriteCell;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpriteFrameInfo extends Resource
 {
@@ -79,6 +79,15 @@ public class SpriteFrameInfo extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return null;
     }
 
     @Override

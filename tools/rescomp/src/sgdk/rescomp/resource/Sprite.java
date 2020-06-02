@@ -1,10 +1,5 @@
 package sgdk.rescomp.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.tool.Util;
@@ -14,6 +9,11 @@ import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ArrayMath;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Sprite extends Resource
 {
@@ -25,10 +25,14 @@ public class Sprite extends Resource
 
     public final Palette palette;
 
+    private final String fileName;
+
     public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision,
             OptimizationType opt, long optIteration) throws IOException, IllegalArgumentException
     {
         super(id);
+
+        fileName = imgFile;
 
         // init
         maxNumTile = 0;
@@ -142,6 +146,15 @@ public class Sprite extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override

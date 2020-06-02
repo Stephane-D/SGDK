@@ -72,6 +72,6 @@ public class BinProcessor implements Processor
         if (data == null)
             return null;
 
-        return new Bin(id, data, align, salign, fill, compression, far);
+        return new Bin(id, data, fileIn, align, salign, fill, compression, far);
     }
 }

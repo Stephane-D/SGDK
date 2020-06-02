@@ -29,6 +29,12 @@ public abstract class Resource
 
     public abstract boolean internalEquals(Object obj);
 
+    /**
+     * If the resource is file based, return the filename
+     * @return filename or null if not file based
+     */
+    public abstract String physicalFileName();
+
     @Override
     public int hashCode()
     {

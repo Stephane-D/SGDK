@@ -1,14 +1,14 @@
 package sgdk.rescomp.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.rescomp.type.Tile;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class Tilemap extends Resource
 {
@@ -103,7 +103,7 @@ public class Tilemap extends Resource
             }
         }
 
-        return new Tilemap(id, data, w, h, compression);
+        return new Tilemap(id, data, null, w, h, compression);
     }
 
     public final int w;
@@ -113,9 +113,13 @@ public class Tilemap extends Resource
     // binary data for tilemap
     public final Bin bin;
 
-    public Tilemap(String id, short[] data, int w, int h, Compression compression)
+    private final String fileName;
+
+    public Tilemap(String id, short[] data, String imgFile, int w, int h, Compression compression)
     {
         super(id);
+
+        fileName = imgFile;
 
         this.w = w;
         this.h = h;
@@ -143,6 +147,15 @@ public class Tilemap extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override

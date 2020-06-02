@@ -1,9 +1,9 @@
 package sgdk.rescomp.resource;
 
+import sgdk.rescomp.Resource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import sgdk.rescomp.Resource;
 
 public class Ungroup extends Resource
 {
@@ -27,6 +27,15 @@ public class Ungroup extends Resource
     public boolean internalEquals(Object obj)
     {
         return (obj instanceof Ungroup);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return null;
     }
 
     @Override

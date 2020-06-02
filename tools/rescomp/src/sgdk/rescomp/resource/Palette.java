@@ -1,9 +1,5 @@
 package sgdk.rescomp.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
@@ -12,16 +8,24 @@ import sgdk.tool.FileUtil;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
 public class Palette extends Resource
 {
     final int hc;
 
     public Bin bin;
 
+    private final String fileName;
+
     public Palette(String id, String file, int startIndex, int maxSize, boolean align16)
             throws IllegalArgumentException, IOException
     {
         super(id);
+
+        fileName = file;
 
         short[] palette;
 
@@ -107,6 +111,15 @@ public class Palette extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override

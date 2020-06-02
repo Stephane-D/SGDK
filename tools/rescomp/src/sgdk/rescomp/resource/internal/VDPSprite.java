@@ -1,11 +1,11 @@
 package sgdk.rescomp.resource.internal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.SpriteCell;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class VDPSprite extends Resource
 {
@@ -60,6 +60,15 @@ public class VDPSprite extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return null;
     }
 
     @Override

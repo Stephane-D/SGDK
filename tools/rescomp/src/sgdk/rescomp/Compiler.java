@@ -1,5 +1,12 @@
 package sgdk.rescomp;
 
+import sgdk.rescomp.processor.*;
+import sgdk.rescomp.resource.*;
+import sgdk.rescomp.resource.internal.*;
+import sgdk.rescomp.type.Basics.Compression;
+import sgdk.tool.FileUtil;
+import sgdk.tool.StringUtil;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
@@ -7,40 +14,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import sgdk.rescomp.processor.AlignProcessor;
-import sgdk.rescomp.processor.BinProcessor;
-import sgdk.rescomp.processor.BitmapProcessor;
-import sgdk.rescomp.processor.ImageProcessor;
-import sgdk.rescomp.processor.PaletteProcessor;
-import sgdk.rescomp.processor.SpriteProcessor;
-import sgdk.rescomp.processor.MapProcessor;
-import sgdk.rescomp.processor.TilesetProcessor;
-import sgdk.rescomp.processor.UngroupProcessor;
-import sgdk.rescomp.processor.WavProcessor;
-import sgdk.rescomp.processor.XgmProcessor;
-import sgdk.rescomp.resource.Align;
-import sgdk.rescomp.resource.Bin;
-import sgdk.rescomp.resource.Bitmap;
-import sgdk.rescomp.resource.Image;
-import sgdk.rescomp.resource.Palette;
-import sgdk.rescomp.resource.Sprite;
-import sgdk.rescomp.resource.Tilemap;
-import sgdk.rescomp.resource.Tileset;
-import sgdk.rescomp.resource.Ungroup;
-import sgdk.rescomp.resource.internal.Collision;
-import sgdk.rescomp.resource.internal.SpriteAnimation;
-import sgdk.rescomp.resource.internal.SpriteFrame;
-import sgdk.rescomp.resource.internal.SpriteFrameInfo;
-import sgdk.rescomp.resource.internal.VDPSprite;
-import sgdk.rescomp.type.Basics.Compression;
-import sgdk.tool.FileUtil;
-import sgdk.tool.StringUtil;
+import java.util.*;
 
 public class Compiler
 {
@@ -76,7 +50,22 @@ public class Compiler
     // list to preserve order
     public static List<Resource> resourcesList = new ArrayList<>();
 
+    /**
+     * compile entry point without the deps parameters
+     *
+     * Note: Not used at the moment. Generated for possible future use
+     *
+     * @param fileName
+     * @param fileNameOut
+     * @param header
+     * @return
+     */
     public static boolean compile(String fileName, String fileNameOut, boolean header)
+    {
+        return Compiler.compile(fileName, fileNameOut, header, false, null);
+    }
+
+    public static boolean compile(String fileName, String fileNameOut, boolean header, boolean generateDeps, String depsFileName)
     {
         // get application directory
         // currentDir = new File("").getAbsolutePath();
@@ -139,8 +128,9 @@ public class Compiler
                 // disable resource export grouping by type
                 group = false;
             // just store resource
-            else
+            else {
                 addResource(resource);
+            }
         }
 
         // define output files
@@ -369,6 +359,19 @@ public class Compiler
             out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".h")));
             out.write(outH.toString());
             out.close();
+
+            // if flag set, save deps file
+            if(generateDeps) {
+                // Note: We use the deps filename for the o file since it should be in the
+                //       the same path. If the deps file is not in the same path then there
+                //       is not much we can do.
+                StringBuilder outDeps = Compiler.generateDependencyFile(fileName, FileUtil.setExtension(depsFileName, ".o"));
+
+                // save .d file
+                out = new BufferedWriter(new FileWriter(depsFileName));
+                out.write(outDeps.toString());
+                out.close();
+            }
         }
         catch (IOException e)
         {
@@ -382,6 +385,55 @@ public class Compiler
             FileUtil.delete(FileUtil.setExtension(fileNameOut, ".h"), false);
 
         return true;
+    }
+
+    /**
+     * Generate the content of the dependency list file
+     *
+     * Note: should be return en empty buffer if there is no deps? Not sure what is the rule for that
+     *
+     * @param resFileName Name and proper path of current resource file
+     * @param targetFileName Name of the file we want to generate a dependency list
+     * @return Output buffer for the generated dependency list file
+     */
+    private static StringBuilder generateDependencyFile(String resFileName, String targetFileName)
+    {
+        // list of unique dependency
+        List<String> depsList = new ArrayList<String>();
+
+        // buffer for output file
+        StringBuilder outDeps = new StringBuilder(1024);
+
+        // add resource file name to the list
+        depsList.add(resFileName);
+
+        // First extract unique dependency file
+        for(Resource currentResource : resourcesList) {
+            if(currentResource.physicalFileName() != null && !depsList.contains(currentResource.physicalFileName())) {
+                depsList.add(currentResource.physicalFileName());
+            }
+        }
+
+        // Use an iterator to simplify the separator management
+        Iterator<String> depsIterator = depsList.iterator();
+
+        // First line start with the name of the target with a column
+        outDeps.append(targetFileName);
+        outDeps.append(": ");
+
+        while(depsIterator.hasNext()) {
+            // write dependency file name with a leading space (official files are generated that way)
+            outDeps.append(" ");
+            outDeps.append(depsIterator.next());
+
+            // If there is still an element in the list, add separator (\) and change line
+            // note: for now linux based format. Not sure if this could be an issue yet
+            if(depsIterator.hasNext()) {
+                outDeps.append(" \\\n");
+            }
+        }
+
+        return outDeps;
     }
 
     private static List<Resource> getFarBinResourcesOf(List<Resource> resourceList)

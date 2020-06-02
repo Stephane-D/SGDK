@@ -1,9 +1,9 @@
 package sgdk.rescomp.resource;
 
+import sgdk.rescomp.Resource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import sgdk.rescomp.Resource;
 
 public class Align extends Resource
 {
@@ -36,6 +36,15 @@ public class Align extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return null;
     }
 
     @Override

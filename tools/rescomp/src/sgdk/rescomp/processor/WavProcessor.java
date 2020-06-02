@@ -1,9 +1,5 @@
 package sgdk.rescomp.processor;
 
-import java.io.IOException;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import sgdk.rescomp.Compiler;
 import sgdk.rescomp.Processor;
 import sgdk.rescomp.Resource;
@@ -14,6 +10,9 @@ import sgdk.rescomp.type.Basics.SoundDriver;
 import sgdk.tool.FileUtil;
 import sgdk.tool.SoundUtil;
 import sgdk.tool.StringUtil;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 
 public class WavProcessor implements Processor
 {
@@ -104,7 +103,7 @@ public class WavProcessor implements Processor
             pcmData = Util.dpcmPack(pcmData);
 
         // build BIN resource
-        return new Bin(id, pcmData, (driver == SoundDriver.DPCM2) ? 128 : 256,
+        return new Bin(id, pcmData, fileIn, (driver == SoundDriver.DPCM2) ? 128 : 256,
                 (driver == SoundDriver.DPCM2) ? 128 : 256, (driver == SoundDriver.DPCM2) ? 136 : 0, Compression.NONE, false);
     }
 }

@@ -1,14 +1,14 @@
 package sgdk.rescomp.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.tool.ArrayMath;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class Bitmap extends Resource
 {
@@ -19,9 +19,13 @@ public class Bitmap extends Resource
     public final Bin bin;
     public final Palette palette;
 
+    private final String fileName;
+
     public Bitmap(String id, String imgFile, Compression compression) throws IOException, IllegalArgumentException
     {
         super(id);
+
+        fileName = imgFile;
 
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
@@ -82,6 +86,15 @@ public class Bitmap extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override

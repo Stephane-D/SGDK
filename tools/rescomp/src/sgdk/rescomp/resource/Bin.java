@@ -1,14 +1,14 @@
 package sgdk.rescomp.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.PackedData;
 import sgdk.tool.ArrayUtil;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class Bin extends Resource
 {
@@ -21,9 +21,13 @@ public class Bin extends Resource
 
     final int hc;
 
-    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far)
+    private final String fileName;
+
+    public Bin(String id, byte[] data, String binFile, int align, int sizeAlign, int fill, Compression compression, boolean far)
     {
         super(id);
+
+        fileName = binFile;
 
         if (sizeAlign > 0)
             this.data = Util.sizeAlign(data, sizeAlign, (byte) fill);
@@ -41,7 +45,7 @@ public class Bin extends Resource
 
     public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression)
     {
-        this(id, data, align, sizeAlign, fill, compression, true);
+        this(id, data, null, align, sizeAlign, fill, compression, true);
     }
 
     public Bin(String id, byte[] data, int align, int sizeAlign, int fill)
@@ -61,7 +65,7 @@ public class Bin extends Resource
 
     public Bin(String id, short[] data, Compression compression, boolean far)
     {
-        this(id, ArrayUtil.shortToByte(data), 2, 0, 0, compression, far);
+        this(id, ArrayUtil.shortToByte(data), null, 2, 0, 0, compression, far);
     }
 
     public Bin(String id, int[] data, Compression compression)
@@ -86,6 +90,15 @@ public class Bin extends Resource
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String physicalFileName()
+    {
+        return fileName;
     }
 
     @Override
