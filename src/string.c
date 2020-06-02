@@ -367,11 +367,11 @@ static u16 skip_atoi(const char **s)
 
 static u16 vsprintf(char *buf, const char *fmt, va_list args)
 {
-    char tmp_buffer[12];
-    s16 i;
+    char tmp_buffer[14];
+    s32 i;
     s16 len;
-    s16 *ip;
-    u16 num;
+    s32 *ip;
+    u32 num;
     char *s;
     const char *hexchars;
     char *str;
@@ -427,7 +427,7 @@ repeat:
         {
             ++fmt;
             // it's the next argument
-            field_width = va_arg(args, s16);
+            field_width = va_arg(args, s32);
 
             if (field_width < 0)
             {
@@ -446,7 +446,7 @@ repeat:
             {
                 ++fmt;
                 // it's the next argument
-                precision = va_arg(args, s16);
+                precision = va_arg(args, s32);
             }
 
             if (precision < 0)
@@ -466,7 +466,7 @@ repeat:
                 while(--field_width > 0)
                     *str++ = ' ';
 
-            *str++ = (unsigned char) va_arg(args, s16);
+            *str++ = (unsigned char) va_arg(args, s32);
 
             while(--field_width > 0)
                 *str++ = ' ';
@@ -513,7 +513,7 @@ repeat:
 hexa_conv:
             s = &tmp_buffer[12];
             *--s = 0;
-            num = va_arg(args, u16);
+            num = va_arg(args, u32);
 
             if (!num)
                 *--s = '0';
@@ -529,14 +529,14 @@ hexa_conv:
             break;
 
         case 'n':
-            ip = va_arg(args, s16*);
+            ip = va_arg(args, s32*);
             *ip = (str - buf);
             continue;
 
         case 'u':
             s = &tmp_buffer[12];
             *--s = 0;
-            num = va_arg(args, u16);
+            num = va_arg(args, u32);
 
             if (!num)
                 *--s = '0';
@@ -555,7 +555,7 @@ hexa_conv:
         case 'i':
             s = &tmp_buffer[12];
             *--s = 0;
-            i = va_arg(args, s16);
+            i = va_arg(args, s32);
 
             if (!i)
                 *--s = '0';
