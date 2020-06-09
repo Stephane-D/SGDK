@@ -7,7 +7,7 @@ $(OBJDIR)/%.o: src/../%.c
 	@mkdir -p '$(@D)'
 	$(CC) $(CFLAGS) -c $< -o $@
 
-APP := apultra
+APP := appack
 
 OBJS += $(OBJDIR)/src/appack_compat.o
 OBJS += $(OBJDIR)/src/expand.o

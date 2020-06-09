@@ -33,13 +33,11 @@
 #ifndef _MATCHFINDER_H
 #define _MATCHFINDER_H
 
+#include "shrink.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/* Forward declarations */
-typedef struct _apultra_match apultra_match;
-typedef struct _apultra_compressor apultra_compressor;
 
 /**
  * Parse input data, build suffix array and overlaid data structures to speed up match finding

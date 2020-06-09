@@ -5,4 +5,4 @@ Unnecessary files for the purpose of integrating with SGDK were removed.
 appack.c was rewritten into appack_compat.c for appack compatibility.
 
 Note this uses zlib and CC0 licenses. The tool is only used for the purpose
-of packing assets into game ROMs, but no code is shipped in such ROMs.
+of packing assets into game ROMs but no code is shipped in such ROMs.

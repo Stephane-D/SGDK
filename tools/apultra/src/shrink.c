@@ -136,7 +136,7 @@ static int apultra_write_gamma2_value(unsigned char *pOutData, int nOutOffset, c
 
    while (msb >= 0) {
       int bit = (nValue >> msb) & 1;
-   
+
       nOutOffset = apultra_write_bit(pOutData, nOutOffset, nMaxOutDataSize, bit ? 1 : 0, nCurBitsOffset, nCurBitMask);
       msb--;
       nOutOffset = apultra_write_bit(pOutData, nOutOffset, nMaxOutDataSize, msb >= 0 ? 1 : 0, nCurBitsOffset, nCurBitMask);
@@ -323,6 +323,7 @@ static void apultra_insert_forward_match(apultra_compressor *pCompressor, const 
 static void apultra_optimize_forward(apultra_compressor *pCompressor, const unsigned char *pInWindow, const int nStartOffset, const int nEndOffset, const int nInsertForwardReps, const int *nCurRepMatchOffset, const int nBlockFlags, const int nMatchesPerArrival) {
    apultra_arrival *arrival = pCompressor->arrival - (nStartOffset * nMatchesPerArrival);
    int i, j, n;
+   unsigned int d;
 
    if ((nEndOffset - nStartOffset) > pCompressor->block_size) return;
 
@@ -338,7 +339,7 @@ static void apultra_optimize_forward(apultra_compressor *pCompressor, const unsi
    for (i = nStartOffset; i != nEndOffset; i++) {
       apultra_arrival *cur_arrival = &arrival[i * nMatchesPerArrival];
       int m;
-      
+
       unsigned char *match1 = pCompressor->match1 + (i - nStartOffset);
       int nShortOffset;
       int nMatchLen;
@@ -432,7 +433,7 @@ static void apultra_optimize_forward(apultra_compressor *pCompressor, const unsi
          const unsigned int nOrigMatchDepth = match_depth[m] & 0x7fff;
          const int nScorePenalty = 3 + ((match_depth[m] & 0x8000) >> 15);
 
-         for (unsigned int d = 0; d <= nOrigMatchDepth; d += (nOrigMatchDepth ? nOrigMatchDepth : 1)) {
+         for (d = 0; d <= nOrigMatchDepth; d += (nOrigMatchDepth ? nOrigMatchDepth : 1)) {
             int nStartingMatchLen, nJumpMatchLen, k;
             int nMaxRepLen[NMATCHES_PER_ARRIVAL];
             int nMinMatchLen[NMATCHES_PER_ARRIVAL];
@@ -542,7 +543,7 @@ static void apultra_optimize_forward(apultra_compressor *pCompressor, const unsi
                   int nRepMatchCmdCost = nRepMatchOffsetCost + nRepMatchMatchLenCost;
                   apultra_arrival *pDestSlots = &cur_arrival[k * nMatchesPerArrival];
                   int nInsertedNonRepOffset = 0;
- 
+
                   for (j = 0; j < nMatchesPerArrival && cur_arrival[j].from_slot; j++) {
                      int nPrevCost = cur_arrival[j].cost & 0x3fffffff;
 
@@ -715,10 +716,10 @@ static void apultra_optimize_forward(apultra_compressor *pCompressor, const unsi
          }
       }
    }
-   
+
    apultra_arrival *end_arrival = &arrival[(i * nMatchesPerArrival) + 0];
    apultra_final_match *pBestMatch = pCompressor->best_match - nStartOffset;
-      
+
    while (end_arrival->from_slot > 0 && end_arrival->from_pos >= 0 && (int)end_arrival->from_pos < nEndOffset) {
       pBestMatch[end_arrival->from_pos].length = end_arrival->match_len;
       if (end_arrival->match_len >= 2)
