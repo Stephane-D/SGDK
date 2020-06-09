@@ -362,6 +362,8 @@ public class Compiler
 
             // if flag set, save deps file
             if(generateDeps) {
+                System.out.println("--> generating dependencies...");
+
                 // Note: We use the deps filename for the o file since it should be in the
                 //       the same path. If the deps file is not in the same path then there
                 //       is not much we can do.
