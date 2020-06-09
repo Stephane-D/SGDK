@@ -83,6 +83,7 @@ THANKS
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
 - starling13 for fixes.
+- davidgf for contribution (replaced appack tool by apultra which is completely open).
 - Ohsat for making nice tutorials.
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
