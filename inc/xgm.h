@@ -130,7 +130,7 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len);
  *      Note that music may use the first PCM channel so it's better to use channel 2 to 4 for SFX.
  *
  *  \param id
- *      Sample id (set #XGM_setPCM method)
+ *      Sample id (use #XGM_setPCM(..) method first to set id)
  *  \param priority
  *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br>
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
