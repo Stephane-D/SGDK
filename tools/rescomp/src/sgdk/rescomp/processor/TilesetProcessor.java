@@ -54,6 +54,9 @@ public class TilesetProcessor implements Processor
         if (fields.length >= 5)
             opt = Util.getTileOpt(fields[4]);
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+        
         // TILESET resource never optimize tiles and we ignore palette information
         return Tileset.getTileset(id, fileIn, compression, opt, 256);
     }

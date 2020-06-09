@@ -44,6 +44,9 @@ public class MapProcessor implements Processor
         if (fields.length >= 4)
             compression = Util.getCompression(fields[3]);
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+        
         System.err.println("MAP resource not yet supported !");
 
         return null;

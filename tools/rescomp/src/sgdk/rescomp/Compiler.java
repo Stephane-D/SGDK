@@ -10,16 +10,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import sgdk.rescomp.processor.AlignProcessor;
 import sgdk.rescomp.processor.BinProcessor;
 import sgdk.rescomp.processor.BitmapProcessor;
 import sgdk.rescomp.processor.ImageProcessor;
+import sgdk.rescomp.processor.MapProcessor;
 import sgdk.rescomp.processor.PaletteProcessor;
 import sgdk.rescomp.processor.SpriteProcessor;
-import sgdk.rescomp.processor.MapProcessor;
 import sgdk.rescomp.processor.TilesetProcessor;
 import sgdk.rescomp.processor.UngroupProcessor;
 import sgdk.rescomp.processor.WavProcessor;
@@ -76,7 +78,10 @@ public class Compiler
     // list to preserve order
     public static List<Resource> resourcesList = new ArrayList<>();
 
-    public static boolean compile(String fileName, String fileNameOut, boolean header)
+    // set storing all resource paths
+    public static Set<String> resourcesFile = new HashSet<>();
+
+    public static boolean compile(String fileName, String fileNameOut, boolean header, boolean deps)
     {
         // get application directory
         // currentDir = new File("").getAbsolutePath();
@@ -84,9 +89,10 @@ public class Compiler
         // get input file directory
         resDir = FileUtil.getDirectory(fileName);
 
-        // reset resources lists
+        // reset resources / files lists
         resources.clear();
         resourcesList.clear();
+        resourcesFile.clear();
 
         List<String> lines = null;
 
@@ -369,6 +375,14 @@ public class Compiler
             out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".h")));
             out.write(outH.toString());
             out.close();
+            // generate deps file if asked
+            if (deps)
+            {
+                // save .d file
+                out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".d")));
+                out.write(generateDependency(fileName, FileUtil.setExtension(fileNameOut, ".s")));
+                out.close();
+            }
         }
         catch (IOException e)
         {
@@ -382,6 +396,26 @@ public class Compiler
             FileUtil.delete(FileUtil.setExtension(fileNameOut, ".h"), false);
 
         return true;
+    }
+
+    /**
+     * Generate the content of the dependency list file.
+     *
+     * @param resFileName
+     *        Name and proper path of current resource file
+     * @param targetFileName
+     *        Name of the file we want to generate a dependency list
+     * @return String containing generated dependency list file
+     */
+    private static String generateDependency(String resFileName, String targetFileName)
+    {
+        // default deps
+        String result = targetFileName + ": " + resFileName;
+
+        for (String fileName : resourcesFile)
+            result += " " + fileName;
+
+        return result + "\n";
     }
 
     private static List<Resource> getFarBinResourcesOf(List<Resource> resourceList)
@@ -405,8 +439,8 @@ public class Compiler
         {
             for (Resource resource : typeResources)
             {
-                final Bin binResource =((Palette) resource).bin;
-                
+                final Bin binResource = ((Palette) resource).bin;
+
                 if (!result.contains(binResource))
                     result.add(binResource);
             }
@@ -415,8 +449,8 @@ public class Compiler
         {
             for (Resource resource : typeResources)
             {
-                final Bin binResource =((Bitmap) resource).bin;
-                
+                final Bin binResource = ((Bitmap) resource).bin;
+
                 if (!result.contains(binResource))
                     result.add(binResource);
             }
@@ -425,8 +459,8 @@ public class Compiler
         {
             for (Resource resource : typeResources)
             {
-                final Bin binResource =((Tileset) resource).bin;
-                
+                final Bin binResource = ((Tileset) resource).bin;
+
                 if (!result.contains(binResource))
                     result.add(binResource);
             }
@@ -435,8 +469,8 @@ public class Compiler
         {
             for (Resource resource : typeResources)
             {
-                final Bin binResource =((Tilemap) resource).bin;
-                
+                final Bin binResource = ((Tilemap) resource).bin;
+
                 if (!result.contains(binResource))
                     result.add(binResource);
             }
@@ -501,6 +535,11 @@ public class Compiler
     public static Resource addResource(Resource resource)
     {
         return addResource(resource, false);
+    }
+
+    public static void addResourceFile(String file)
+    {
+        resourcesFile.add(file);
     }
 
     private static Resource execute(String input)

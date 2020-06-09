@@ -106,6 +106,9 @@ public class SpriteProcessor implements Processor
         if (fields.length >= 10)
             iteration = StringUtil.parseInt(fields[9], SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION);
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+        
         return new Sprite(id, fileIn, wf, hf, compression, time, collision, opt, iteration);
     }
 }

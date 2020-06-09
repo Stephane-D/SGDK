@@ -60,6 +60,9 @@ public class ImageProcessor implements Processor
         if (fields.length >= 6)
             mapBase = StringUtil.parseInt(fields[5], 0);
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+        
         return new Image(id, fileIn, compression, tileOpt, mapBase);
     }
 }

@@ -72,6 +72,9 @@ public class BinProcessor implements Processor
         if (data == null)
             return null;
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+
         return new Bin(id, data, align, salign, fill, compression, far);
     }
 }

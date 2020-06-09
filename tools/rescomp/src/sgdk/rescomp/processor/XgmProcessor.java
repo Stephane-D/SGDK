@@ -70,6 +70,9 @@ public class XgmProcessor implements Processor
         if (data == null)
             throw new IOException("Can't read BIN data from file'" + fileOut + "' !");
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+
         // build BIN resource
         return new Bin(id, data, 256, 256, 0, Compression.NONE, false);
     }

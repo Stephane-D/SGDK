@@ -34,6 +34,9 @@ public class PaletteProcessor implements Processor
         // get input file
         final String fileIn = FileUtil.adjustPath(Compiler.resDir, fields[2]);
 
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
+
         return new Palette(id, fileIn, 64, true);
     }
 }

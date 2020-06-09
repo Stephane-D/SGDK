@@ -44,6 +44,9 @@ public class BitmapProcessor implements Processor
         Compression compression = Compression.NONE;
         if (fields.length >= 4)
             compression = Util.getCompression(fields[3]);
+        
+        // add resource file (used for deps generation)
+        Compiler.addResourceFile(fileIn);
 
         return new Bitmap(id, fileIn, compression);
     }
