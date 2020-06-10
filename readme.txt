@@ -84,6 +84,7 @@ THANKS
 - nolddor for fixes / contributions.
 - starling13 for fixes.
 - davidgf for contribution (replaced appack tool by apultra which is completely open).
+- Benshaku for its contribution on improving makefile and deps generation with rescomp.
 - Ohsat for making nice tutorials.
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
