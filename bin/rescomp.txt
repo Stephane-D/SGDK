@@ -1,4 +1,4 @@
-ResComp 2.71 (april 2020)
+ResComp 2.75 (june 2020)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 

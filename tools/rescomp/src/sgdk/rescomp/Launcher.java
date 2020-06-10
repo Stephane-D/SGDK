@@ -34,7 +34,7 @@ public class Launcher
             System.out.println("Error: missing the input file.");
             System.out.println();
             System.out.println("Usage:");
-            System.out.println("  rescomp input [output] [-noheader] [-d]");
+            System.out.println("  rescomp input [output] [-noheader] [-deps]");
             System.out.println("    input: the input resource file (.res)");
             System.out.println("    output: the asm output filename (same name is used for the include file)");
             System.out.println("    -noheader: specify that we don't want to generate the header file (.h)");

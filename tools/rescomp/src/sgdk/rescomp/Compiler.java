@@ -409,13 +409,12 @@ public class Compiler
      */
     private static String generateDependency(String resFileName, String targetFileName)
     {
-        // default deps
-        String result = targetFileName + ": " + resFileName;
+        String result = resFileName;
 
         for (String fileName : resourcesFile)
-            result += " " + fileName;
+            result += " \\\n" + fileName;
 
-        return result + "\n";
+        return targetFileName + ": " + result;
     }
 
     private static List<Resource> getFarBinResourcesOf(List<Resource> resourceList)
