@@ -380,7 +380,7 @@ public class Compiler
             {
                 // save .d file
                 out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".d")));
-                out.write(generateDependency(fileName, FileUtil.setExtension(fileNameOut, ".s")));
+                out.write(generateDependency(fileName, FileUtil.setExtension(fileNameOut, ".o")));
                 out.close();
             }
         }
