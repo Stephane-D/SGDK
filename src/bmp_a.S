@@ -1,6 +1,7 @@
-    .globl  clearBitmapBuffer
-    .type   clearBitmapBuffer, @function
-clearBitmapBuffer:
+
+#include "sgdk_asm_macros.h"
+
+func clearBitmapBuffer
     move.l 4(%sp),%a0           | a0 = buffer
     lea 20480(%a0),%a0          | a0 = buffer end
 
@@ -46,9 +47,7 @@ clearBitmapBuffer:
     rts
 
 
-    .globl  copyBitmapBuffer
-    .type   copyBitmapBuffer, @function
-copyBitmapBuffer:
+func copyBitmapBuffer
     move.l 4(%sp),%a0           | a0 = src
     move.l 8(%sp),%a1           | a1 = dest
 
@@ -125,9 +124,7 @@ copyBitmapBuffer:
     rts
 
 
-    .globl  BMP_setPixelFastA
-    .type   BMP_setPixelFastA, @function
-BMP_setPixelFastA:
+func BMP_setPixelFastA
     moveq   #-1,%d1                         | d1 = 0xFFFFFFFF
     move.w  6(%sp),%d0                      | d0 = X
     move.w  10(%sp),%d1                     | d1 = Y
@@ -166,9 +163,7 @@ BMP_setPixelFastA:
     rts
 
 
-    .globl  BMP_setPixelA
-    .type   BMP_setPixelA, @function
-BMP_setPixelA:
+func BMP_setPixelA
     moveq   #-1,%d1                         | d1 = 0xFFFFFFFF
     move.w  6(%sp),%d0                      | d0.w = X
     move.w  10(%sp),%d1                     | d1.w = Y
@@ -182,9 +177,7 @@ BMP_setPixelA:
     rts
 
 
-    .globl  BMP_setPixelsFast_V2D
-    .type   BMP_setPixelsFast_V2D, @function
-BMP_setPixelsFast_V2D:
+func BMP_setPixelsFast_V2D
     move.l  4(%sp),%a0                      | a0 = crd
     move.b  11(%sp),%d1                     | d1 = col
     move.w  14(%sp),%d0                     | d0 = num
@@ -237,9 +230,7 @@ BMP_setPixelsFast_V2D:
     rts
 
 
-    .globl  BMP_setPixels_V2D
-    .type   BMP_setPixels_V2D, @function
-BMP_setPixels_V2D:
+func BMP_setPixels_V2D
     move.l  4(%sp),%a0                      | a0 = crd
     move.b  11(%sp),%d1                     | d1 = col
     move.w  14(%sp),%d0                     | d0 = num
@@ -306,9 +297,7 @@ BMP_setPixels_V2D:
     rts
 
 
-    .globl  BMP_setPixelsFast
-    .type   BMP_setPixelsFast, @function
-BMP_setPixelsFast:
+func BMP_setPixelsFast
     move.l  4(%sp),%a0                      | a0 = pixels
     move.w  10(%sp),%d0                     | d0 = num
     subq.w  #1,%d0
@@ -360,9 +349,7 @@ BMP_setPixelsFast:
     rts
 
 
-    .globl  BMP_setPixels
-    .type   BMP_setPixels, @function
-BMP_setPixels:
+func BMP_setPixels
     move.l  4(%sp),%a0                      | a0 = pixels
     move.w  10(%sp),%d0                     | d0 = num
     subq.w  #1,%d0
@@ -429,9 +416,7 @@ BMP_setPixels:
     rts
 
 
-    .globl    BMP_clipLine
-    .type    BMP_clipLine, @function
-BMP_clipLine:
+func BMP_clipLine
     movm.l %d2-%d7,-(%sp)
 
     move.l 28(%sp),%a0          | a0 = &line
@@ -585,9 +570,7 @@ BMP_clipLine:
     rts
 
 
-    .globl   BMP_drawLine
-    .type    BMP_drawLine, @function
-BMP_drawLine:
+func BMP_drawLine
     movem.l %d2-%d7/%a2-%a5,-(%sp)
 
     move.l  44(%sp),%a0     | a0 = &line
@@ -737,9 +720,7 @@ BMP_drawLine:
     rts
 
 
-    .globl   BMP_isPolygonCulled
-    .type    BMP_isPolygonCulled, @function
-BMP_isPolygonCulled:
+func BMP_isPolygonCulled
     movm.l %d2-%d5,-(%sp)
 
     move.l 20(%sp),%a1          | a1 = pts
@@ -2001,9 +1982,7 @@ fillEdgeFast:
     | a3 = rightEdge
     | a4 = free use
 
-    .globl    BMP_drawPolygon
-    .type    BMP_drawPolygon, @function
-BMP_drawPolygon:
+func BMP_drawPolygon
     movm.l %d2-%d7/%a2-%a6,-(%sp)
 
     move.l 48(%sp),%a0      | a0 = pt = &pts[0]

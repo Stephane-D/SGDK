@@ -21,6 +21,7 @@ MKDIR= $(BIN)/mkdir
 
 SRC_LIB_C= $(wildcard $(SRC_LIB)/*.c)
 SRC_LIB_S= $(wildcard $(SRC_LIB)/*.s)
+SRC_LIB_PPS= $(wildcard $(SRC_LIB)/*.S)
 SRC_LIB_S80= $(wildcard $(SRC_LIB)/*.s80)
 
 RES_LIB_RES= $(wildcard $(RES_LIB)/*.res)
@@ -28,6 +29,7 @@ RES_LIB_RES= $(wildcard $(RES_LIB)/*.res)
 OBJ_LIB= $(RES_LIB_RES:.res=.o)
 OBJ_LIB+= $(SRC_LIB_S80:.s80=.o)
 OBJ_LIB+= $(SRC_LIB_S:.s=.o)
+OBJ_LIB+= $(SRC_LIB_PPS:.S=.o)
 OBJ_LIB+= $(SRC_LIB_C:.c=.o)
 
 LST_LIB= $(SRC_LIB_C:.c=.lst)
@@ -105,6 +107,9 @@ cmd_ : $(OBJ_LIB)
 	$(CC) $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.s
+	$(CC) $(FLAGS_LIB) -c $< -o $@
+
+%.o: %.S
 	$(CC) $(FLAGS_LIB) -c $< -o $@
 
 %.s: %.res
