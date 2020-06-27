@@ -13,19 +13,19 @@
 
             LD  HL, BANKREG         ; HL = BANKREG              ' 10
             LD  (HL), A             ; #1 (bit 15)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #2 (bit 16)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #3 (bit 17)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #4 (bit 18)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #5 (bit 19)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #6 (bit 20)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #7 (bit 21)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #8 (bit 22)               ' 7
             LD  (HL), L             ; #9 (bit 23 = 0)           ' 7
 
@@ -44,17 +44,17 @@
 
             LD  HL, BANKREG         ; HL = BANKREG              ' 10
             LD  (HL), A             ; #1 (bit 15)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #2 (bit 16)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #3 (bit 17)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #4 (bit 18)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #5 (bit 19)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #6 (bit 20)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (HL), A             ; #7 (bit 21)               ' 7
             LD  (HL), L             ; #8 (bit 22 = 0)           ' 7
             LD  (HL), L             ; #9 (bit 23 = 0)           ' 7
@@ -75,21 +75,21 @@
 
             LD  BC, BANKREG         ; BC = BANKREG              ' 10
             LD  (BC), A             ; #1 (bit 15)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #2 (bit 16)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #3 (bit 17)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #4 (bit 18)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #5 (bit 19)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #6 (bit 20)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #7 (bit 21)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (BC), A             ; #8 (bit 22)               ' 7
-            RRA                     ;                           ' 4
+            XOR A                    ;                          ' 4
             LD  (BC), A             ; #9 (bit 23 = 0)           ' 7
 
             endm                    ;                           ' 105
@@ -108,21 +108,21 @@
 
             LD  DE, BANKREG         ; DE = BANKREG              ' 10
             LD  (DE), A             ; #1 (bit 15)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #2 (bit 16)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #3 (bit 17)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #4 (bit 18)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #5 (bit 19)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #6 (bit 20)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #7 (bit 21)               ' 7
-            RRA                     ;                           ' 4
+            RRCA                     ;                          ' 4
             LD  (DE), A             ; #8 (bit 22)               ' 7
-            RRA                     ;                           ' 4
+            XOR A                    ;                          ' 4
             LD  (DE), A             ; #9 (bit 23 = 0)           ' 7
 
             endm                    ;                           ' 105
@@ -677,6 +677,11 @@
             macro   wait68
             wait50
             wait18
+            endm
+
+            macro   wait69
+            wait50
+            wait19
             endm
 
             macro   wait70
