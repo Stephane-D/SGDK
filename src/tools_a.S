@@ -6,9 +6,9 @@
 # void qsort(void** src, u16 size, _comparatorCallback* cb);
 # ---------------------------------------------------------------
 
-    .global qsort
+#include "sgdk_asm_macros.h"
 
-qsort:
+func qsort
     movem.l %a2-%a6,-(%sp)
 
     move.l  24(%sp),%a2             | a2 = src
@@ -126,10 +126,7 @@ partition:
 #
 # -------------------------------------------------------------------------------------------------
 
-    .global aplib_unpack
-    .global aplib_decrunch
-
-aplib_unpack:
+func aplib_unpack
     movem.l 4(%a7),%a0-%a1
 
 aplib_decrunch:
@@ -259,11 +256,8 @@ aplib_decrunch:
 # lz4w_unpack_a: A0 = Source / A1 = Destination / Returns unpacked size
 # u16 lz4w_unpack(const u8 *src, u8 *dest);  /* c prototype */
 # ---------------------------------------------------------------------------
-    .align    2
-    .globl    lz4w_unpack
-    .globl    lz4w_unpack_a
 
-lz4w_unpack:
+func lz4w_unpack
     move.l  4(%sp),%a0              | a0 = src
     move.l  8(%sp),%a1              | a1 = dst
 

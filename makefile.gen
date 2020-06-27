@@ -117,7 +117,7 @@ out/symbol.txt: out/rom.out
 	$(NM) --plugin=liblto_plugin-0.dll -n out/rom.out > out/symbol.txt
 
 out/rom.out: out/sega.o out/cmd_ $(LIBMD)
-	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIB)/libgcc.a -o out/rom.out
+	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIB)/libgcc.a -o out/rom.out -Wl,--gc-sections
 	$(RM) out/cmd_
 
 out/cmd_: $(OBJS)
