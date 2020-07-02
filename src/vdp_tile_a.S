@@ -1,7 +1,7 @@
-    .align  2
-    .globl  VDP_loadBMPTileData
-    .type   VDP_loadBMPTileData, @function
-VDP_loadBMPTileData:
+
+#include "sgdk_asm_macros.h"
+
+func VDP_loadBMPTileData
     movm.l #0x3c00,-(%sp)
 
     move.w 34(%sp),%d3                  | d3 = h

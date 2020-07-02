@@ -1,36 +1,27 @@
-    .align  2
-    .globl	SYS_assertReset
-    .type   SYS_assertReset, @function
-SYS_assertReset:
+
+#include "sgdk_asm_macros.h"
+
+func SYS_assertReset
 
     reset
     rts
 
 
-    .align  2
-    .globl 	SYS_reset
-    .type   SYS_reset, @function
-SYS_reset:
+func SYS_reset
 
     move   #0x2700,%sr
     move.l (0),%a7
     jmp     _reset_entry
 
 
-    .align  2
-    .globl 	SYS_hardReset
-    .type   SYS_hardReset, @function
-SYS_hardReset:
+func SYS_hardReset
 
     move   #0x2700,%sr
     move.l (0),%a7
     jmp    _start_entry
 
 
-    .align  2
-    .globl  SYS_getInterruptMaskLevel
-    .type   SYS_getInterruptMaskLevel, @function
-SYS_getInterruptMaskLevel:
+func SYS_getInterruptMaskLevel
 
     move.w  %sr,%d0
     andi.w  #0x0700,%d0
@@ -38,10 +29,7 @@ SYS_getInterruptMaskLevel:
     rts
 
 
-    .align  2
-    .globl  SYS_setInterruptMaskLevel
-    .type   SYS_setInterruptMaskLevel, @function
-SYS_setInterruptMaskLevel:
+func SYS_setInterruptMaskLevel
 
     move.w  6(%sp),%d0                      | d0 = value
     andi.w  #0x07,%d0
@@ -52,10 +40,7 @@ SYS_setInterruptMaskLevel:
     rts
 
 
-    .align  2
-    .globl  SYS_getAndSetInterruptMaskLevel
-    .type   SYS_getAndSetInterruptMaskLevel, @function
-SYS_getAndSetInterruptMaskLevel:
+func SYS_getAndSetInterruptMaskLevel
 
     move.w  6(%sp),%d1                      | d1 = value
     andi.w  #0x07,%d1
