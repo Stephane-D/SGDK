@@ -2067,7 +2067,7 @@ com_pcm_p0_ch1                          ; 51                    ' 80
 
 com_pcm_p1_ch1                          ; 55                    ' 80
             LD      C, 1                ; C = prio              ' 7     |
-            JP      com_pcm_ch0         ; execute PCM com       ' 10    | 17 (97)
+            JP      com_pcm_ch1         ; execute PCM com       ' 10    | 17 (97)
 
 com_pcm_p2_ch1                          ; 59                    ' 80
             LD      C, 2                ; C = prio              ' 7     |
