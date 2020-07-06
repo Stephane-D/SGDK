@@ -724,8 +724,6 @@ main_loop
 ; ------------------
 
 ; $00
-
-
             sampleOutput                ;                       ' 36    | 36
 
             LD      DE, XGM_BUFFER      ; DE point to XGM buf   ' 10    |

@@ -1,8 +1,8 @@
     .extern    viewport
 
-    .globl	M3D_transform
-    .type	M3D_transform, @function
-M3D_transform:
+#include "sgdk_asm_macros.h"
+
+func M3D_transform
     movm.l %d2-%d5/%a2-%a5,-(%sp)
 
     move.l 36(%sp),%a2             	| a2 = &transform
@@ -70,9 +70,7 @@ M3D_transform:
     rts
 
 
-    .globl    M3D_project_f16
-    .type    M3D_project_f16, @function
-M3D_project_f16:
+func M3D_project_f16
     movem.l %d2-%d7/%a2-%a3,-(%sp)
 
     move.l 36(%sp),%a0                      | a0 = s = src
@@ -137,9 +135,7 @@ M3D_project_f16:
     rts
 
 
-    .globl    M3D_project_s16
-    .type    M3D_project_s16, @function
-M3D_project_s16:
+func M3D_project_s16
     movem.l %d2-%d7/%a2-%a3,-(%sp)
 
     move.l 36(%sp),%a0                      | a0 = s = src
