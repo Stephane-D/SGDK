@@ -110,6 +110,10 @@ void VDP_init()
     pw = (u16 *) GFX_CTRL_PORT;
     for (i = 0x00; i < 0x13; i++) *pw = 0x8000 | (i << 8) | regValues[i];
 
+    maps_addr = 0;
+    // update minimum address of all tilemap/table (default is plane B)
+    updateMapsAddress();
+
     // clear VRAM, reset palettes / default tiles / font and scroll mode
     VDP_resetScreen();
     // reset sprite struct
@@ -122,10 +126,6 @@ void VDP_init()
 
     // internal
     curTileInd = TILE_USERINDEX;
-
-    maps_addr = 0;
-    // update minimum address of all tilemap/table (default is plane B)
-    updateMapsAddress();
 }
 
 
