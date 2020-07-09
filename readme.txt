@@ -17,7 +17,7 @@ GET STARTED
 -----------
 
 First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). If that's not the case then i recommend you to read these documents:
-* Mega Cat Studios Sega Mega Drive graphics guide page: https://megacatstudios.com/blogs/press/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
+* Mega Cat Studios Sega Mega Drive graphics guide page: https://megacatstudios.com/blogs/retro-development/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
 * Sik's Blog dedicated to assembly programming but explain a lot (and quite nicely) about the Sega Mega Drive hardware: https://plutiedev.com
 * Genesis Software Manual which contains absolutely everything you need to know about the Sega Mega Drive: https://segaretro.org/images/a/a2/Genesis_Software_Manual.pdf
 
