@@ -447,7 +447,8 @@ void _vint_callback()
     if (late)
     {
         // we increase the number of missed frame
-        missedFrames++;
+        // FIXME: don't increase it as even if we are late we didn't missed it yet
+//        missedFrames++;
         // assume 100% CPU usage (0-255 value) when V-Int happened too late
         addFrameLoad(255);
 
