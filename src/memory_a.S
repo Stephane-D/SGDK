@@ -1,5 +1,7 @@
-    .globl	memset_
-memset_:
+
+#include "sgdk_asm_macros.h"
+
+func memset_
     move.w  14(%sp),%d0         | d0 = len
     jeq     .L02
 
@@ -80,8 +82,7 @@ memset_:
     rts
 
 
-    .globl	memsetU16
-memsetU16:
+func memsetU16
     move.w  14(%sp),%d0         | d0 = len
     jeq     .L53
 
@@ -147,8 +148,7 @@ memsetU16:
     rts
 
 
-    .globl    memsetU32
-memsetU32:
+func memsetU32
     move.w  14(%sp),%d0         | d0 = len
     jeq     .L73
 
@@ -191,8 +191,7 @@ memsetU32:
     rts
 
 
-    .globl	memcpy_
-memcpy_:
+func memcpy_
     move.w  14(%sp),%d0         | d0 = len
     jeq     .L82
 
