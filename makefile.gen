@@ -146,7 +146,7 @@ out/%.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 out/%.o: %.s
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) -x assembler-with-cpp $(FLAGS) -c $< -o $@
 
 %.s: %.res
 	$(RESCOMP) $< $@

@@ -1,6 +1,7 @@
-	.globl	flushQueue
-	.type	flushQueue, @function
-flushQueue:
+
+#include "sgdk_asm_macros.h"
+
+func flushQueue
 	move.w 6(%sp),%d0
     jeq     .fq_end
 
@@ -21,9 +22,7 @@ flushQueue:
 .fq_end:
 	rts
 
-	.globl	flushQueueSafe
-	.type	flushQueueSafe, @function
-flushQueueSafe:
+func flushQueueSafe
 	move.w 6(%sp),%d0
     jeq     .fqs_end
 
