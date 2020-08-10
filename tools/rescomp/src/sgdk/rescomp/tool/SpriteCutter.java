@@ -87,8 +87,24 @@ public class SpriteCutter
 
         // sort on score
         Collections.sort(solutions);
+        
+        List<SpriteCell> result = null;
 
-        return solutions.get(0).cells;
+        for(int s = 0; s < solutions.size(); s++)
+        {
+            // get cells
+            final List<SpriteCell> currentCells = solutions.get(s).cells;
+            
+            // is it valid (16 sprites max) ? --> return it directly
+            if (currentCells.size() <= 16)
+                return currentCells;
+
+            // keep the ones with the less number of sprite
+            if ((result == null) || (currentCells.size() < result.size()))
+                result = currentCells;
+        }
+        
+        return result;
     }
 
     /**
