@@ -1,5 +1,4 @@
-*.VC.opendb
-*.VC.db
+*.VC.*
 *.log
 *.obj
 *.tlog
@@ -16,17 +15,16 @@
 *.lst
 *.class
 *.ini
+*.rs
+*.d
+**/.settings/**
 **/out/**
 **/bin/**
 !**/out/rom.bin
 symbol.txt
 rom_head.bin
-vstudio/appack/Debug
-vstudio/appack/Release
-vstudio/libmd/Debug
-vstudio/libmd/Release
-vstudio/rescomp/Debug
-vstudio/rescomp/Release
+**/Debug
+**/Release
 sega.s
 rom_head.c
 !src/boot/sega.s
@@ -37,7 +35,6 @@ res/libres.s
 src/z80_*.s
 archive
 cb
-emu
 not needed
 sample/sound/loss
 tools/extras
@@ -49,5 +46,3 @@ tools/lz4w/bin
 tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
-lib/libmd_old.a
-**/.settings/**
