@@ -39,6 +39,11 @@ RES_S= $(wildcard $(RES)/*.s)
 RES_RES= $(wildcard *.res)
 RES_RES+= $(wildcard $(RES)/*.res)
 
+RES_RS= $(RES_RES:.res=.rs)
+RES_H= $(RES_RES:.res=.h)
+RES_DEP= $(RES_RES:.res=.d)
+RES_DEPS= $(addprefix out/, $(RES_DEP))
+
 OBJ= $(RES_RES:.res=.o)
 OBJ+= $(RES_S:.s=.o)
 OBJ+= $(RES_C:.c=.o)
@@ -47,6 +52,10 @@ OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 OBJS= $(addprefix out/, $(OBJ))
+
+DEPS= $(OBJS:.o=.d)
+
+-include $(DEPS)
 
 LST= $(SRC_C:.c=.lst)
 LSTS= $(addprefix out/, $(LST))
@@ -79,19 +88,27 @@ Asm: asm
 
 .PHONY: clean
 
+cleantmp:
+	$(RM) -f $(RES_RS)
+
+cleandep:
+	$(RM) -f $(DEPS)
+
 cleanlst:
 	$(RM) -f $(LSTS)
+
+cleanres: cleantmp
+	$(RM) -f $(RES_H) $(RES_DEP) $(RES_DEPS)
 
 cleanobj:
 	$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
 
-clean: cleanobj cleanlst
-	$(RM) -f out.lst out/cmd_ out/rom.nm out/rom.wch out/rom.bin
+clean: cleanobj cleanres cleanlst cleandep
+	$(RM) -f out.lst out/cmd_ out/symbol.txt out/rom.nm out/rom.wch out/rom.bin
 
 cleanrelease: clean
 
 cleandebug: clean
-	$(RM) -f out/symbol.txt
 
 cleanasm: cleanlst
 
@@ -143,13 +160,24 @@ out/%.lst: %.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 out/%.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) -MMD -c $< -o $@
 
 out/%.o: %.s
-	$(CC) -x assembler-with-cpp $(FLAGS) -c $< -o $@
+	$(CC) -x assembler-with-cpp $(FLAGS) -MMD -c $< -o $@
 
-%.s: %.res
-	$(RESCOMP) $< $@
+out/%.o: %.rs
+	$(CC) -x assembler-with-cpp $(FLAGS) -c $*.rs -o $@
+	$(CP) $*.d out/$*.d
+	$(RM) $*.d
+
+%.rs: %.res
+	$(RESCOMP) $*.res $*.rs -dep out/$*.o
+
+#%.h: %.res
+#	$(RESCOMP) $< $@
+
+#%.s: %.res
+#	$(RESCOMP) $< $@
 
 %.s: %.asm
 	$(MACCER) -o $@ $<
