@@ -30,6 +30,10 @@ OBJ_LIB+= $(SRC_LIB_S80:.s80=.o)
 OBJ_LIB+= $(SRC_LIB_S:.s=.o)
 OBJ_LIB+= $(SRC_LIB_C:.c=.o)
 
+DEP_LIB= $(OBJ_LIB:.o=.d)
+
+-include $(DEP_LIB)
+
 LST_LIB= $(SRC_LIB_C:.c=.lst)
 
 INCS_LIB= -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
@@ -62,18 +66,21 @@ Asm: asm
 cleanlst:
 	$(RM) -f $(LST_LIB)
 
+cleandep:
+	$(RM) -f $(DEP_LIB)
+
 cleanobj:
 	$(RM) -f $(OBJ_LIB)
 
-cleanrelease: cleanobj cleanlst
+cleanrelease: cleanobj cleandep cleanlst
 	$(RM) -f $(LIB)/libmd.a out.lst cmd_
 
-cleandebug: cleanobj cleanlst
+cleandebug: cleanobj cleandep cleanlst
 	$(RM) -f $(LIB)/libmd_debug.a out.lst cmd_
 
 cleanasm: cleanlst
 
-clean: cleanobj cleanlst
+clean: cleanobj cleandep cleanlst
 	$(RM) -f $(LIB)/libmd.a $(LIB)/libmd_debug.a out.lst cmd_
 
 cleanall: clean
@@ -102,10 +109,10 @@ cmd_ : $(OBJ_LIB)
 	$(CC) $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.c
-	$(CC) $(FLAGS_LIB) -c $< -o $@
+	$(CC) $(FLAGS_LIB) -MMD -c $< -o $@
 
 %.o: %.s
-	$(CC) -x assembler-with-cpp $(FLAGS_LIB) -c $< -o $@
+	$(CC) -x assembler-with-cpp -MMD $(FLAGS_LIB) -c $< -o $@
 
 %.s: %.res
 	$(RESCOMP) $< $@
