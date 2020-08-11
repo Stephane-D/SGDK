@@ -81,7 +81,7 @@ public class Compiler
     // set storing all resource paths
     public static Set<String> resourcesFile = new HashSet<>();
 
-    public static boolean compile(String fileName, String fileNameOut, boolean header, boolean deps)
+    public static boolean compile(String fileName, String fileNameOut, boolean header, String depTarget)
     {
         // get application directory
         // currentDir = new File("").getAbsolutePath();
@@ -368,19 +368,22 @@ public class Compiler
         try
         {
             // save .s file
-            out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".s")));
+            out = new BufferedWriter(new FileWriter(fileNameOut));
             out.write(outS.toString());
             out.close();
             // save .h file
-            out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".h")));
-            out.write(outH.toString());
-            out.close();
+            if (header)
+            {
+                out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".h")));
+                out.write(outH.toString());
+                out.close();
+            }
             // generate deps file if asked
-            if (deps)
+            if (depTarget != null)
             {
                 // save .d file
                 out = new BufferedWriter(new FileWriter(FileUtil.setExtension(fileNameOut, ".d")));
-                out.write(generateDependency(fileName, FileUtil.setExtension(fileNameOut, ".o")));
+                out.write(generateDependency(fileName, depTarget));
                 out.close();
             }
         }
@@ -390,10 +393,6 @@ public class Compiler
             System.err.println(e.getMessage());
             return false;
         }
-
-        // remove unwanted header file if asked
-        if (!header)
-            FileUtil.delete(FileUtil.setExtension(fileNameOut, ".h"), false);
 
         return true;
     }
@@ -409,12 +408,12 @@ public class Compiler
      */
     private static String generateDependency(String resFileName, String targetFileName)
     {
-        String result = resFileName;
+        String result =  FileUtil.getGenericPath(resFileName);
 
         for (String fileName : resourcesFile)
-            result += " \\\n" + fileName;
+            result += " \\\n" + FileUtil.getGenericPath(fileName);
 
-        return targetFileName + ": " + result;
+        return FileUtil.getGenericPath(targetFileName) + ": " + result;
     }
 
     private static List<Resource> getFarBinResourcesOf(List<Resource> resourceList)
