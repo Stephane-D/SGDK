@@ -6,7 +6,7 @@
 # void qsort(void** src, u16 size, _comparatorCallback* cb);
 # ---------------------------------------------------------------
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 func qsort
     movem.l %a2-%a6,-(%sp)

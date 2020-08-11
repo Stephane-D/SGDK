@@ -1,5 +1,5 @@
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 func memset_
     move.w  14(%sp),%d0         | d0 = len

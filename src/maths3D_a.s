@@ -1,6 +1,6 @@
     .extern    viewport
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 func M3D_transform
     movm.l %d2-%d5/%a2-%a5,-(%sp)

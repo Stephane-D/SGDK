@@ -1,5 +1,5 @@
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 | extern u16 SRAM_readWord(u32 offset);
 func SRAM_readWord

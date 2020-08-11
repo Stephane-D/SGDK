@@ -1,5 +1,5 @@
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 func VDP_loadBMPTileData
     movm.l #0x3c00,-(%sp)

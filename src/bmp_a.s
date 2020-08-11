@@ -1,5 +1,5 @@
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 func clearBitmapBuffer
     move.l 4(%sp),%a0           | a0 = buffer

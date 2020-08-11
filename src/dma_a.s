@@ -1,5 +1,5 @@
 
-#include "sgdk_asm_macros.h"
+#include "asm_mac.i"
 
 func flushQueue
 	move.w 6(%sp),%d0
