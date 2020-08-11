@@ -49,10 +49,14 @@ u16 executeBMPTest(u16 *scores)
     // help reduce fragmentation before allocation
     MEM_pack();
 
+    KLog_U2("Bitmap - Mem free before: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
+
     pixels = MEM_alloc(MAX_PIXEL * sizeof(Pixel));
     lines = MEM_alloc(MAX_LINE * sizeof(Line));
     polys = MEM_alloc(MAX_POLYGON * sizeof(Polygone));
     pts = MEM_alloc(MAX_PT_PER_POLY * MAX_POLYGON * sizeof(Vect2D_s16));
+
+    KLog_U1("Bitmap - Mem free before initializing Bitmap mode: ", MEM_getFree());
 
     // init palette
     palette[0] = RGB24_TO_VDPCOLOR(0x000000);
@@ -686,6 +690,8 @@ u16 executeBMPTest(u16 *scores)
     MEM_free(pts);
     MEM_free(pixels);
     MEM_free(lines);
+
+    KLog_U2("Bitmap - Mem free after: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     // restore DMA buffer
     DMA_setBufferSizeToDefault();

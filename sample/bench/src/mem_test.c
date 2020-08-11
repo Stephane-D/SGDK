@@ -229,11 +229,9 @@ u16 executeMemAllocTest(u16 *scores)
     u16 globalScore;
 
     KLog_U1("Mem heap: ", (u32)&_bend);
-    KLog_U2("Mem free before: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
+    KLog_U2("Memory - Mem free before: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     allocs = MEM_alloc(1000 * sizeof(void*));
-
-    MEM_dump();
 
     score = scores;
     globalScore = 0;
@@ -388,9 +386,9 @@ u16 executeMemAllocTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(allocs);
+    MEM_pack();
 
-    KLog_U2("Mem free after: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
-    MEM_dump();
+    KLog_U2("Memory - Mem free after: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     return globalScore;
 }
@@ -405,6 +403,8 @@ u16 executeVRamAllocTest(u16 *scores)
     VRAMRegion region;
     u16 *score;
     u16 globalScore;
+
+    KLog_U2("VRAM - Mem free before: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     VRAM_createRegion(&region, 16, 1000);
     allocs = MEM_alloc(1000 * sizeof(s16));
@@ -593,12 +593,15 @@ u16 executeVRamAllocTest(u16 *scores)
     globalScore += *score++;
     y++;
 
-
     waitMs(5000);
     VDP_clearPlane(BG_A, TRUE);
 
     MEM_free(allocs);
     VRAM_releaseRegion(&region);
+
+    MEM_pack();
+
+    KLog_U2("VRAM - Mem free after: ", MEM_getFree(), "   Mem allocated: ", MEM_getAllocated());
 
     return globalScore;
 }
