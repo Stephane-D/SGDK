@@ -1,5 +1,5 @@
 
-#include "asm_mac.i"
+.include "asm_mac.i"
 
 func SYS_assertReset
 

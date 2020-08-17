@@ -14,7 +14,7 @@
 * others should be preserved and
 * return value -if there is- is placed in d0
 
-#include "asm_mac.i"
+.include "asm_mac.i"
 
 **************
 * Pause Gens *
