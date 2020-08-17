@@ -173,12 +173,6 @@ out/%.o: %.rs
 %.rs: %.res
 	$(RESCOMP) $*.res $*.rs -dep out/$*.o
 
-#%.h: %.res
-#	$(RESCOMP) $< $@
-
-#%.s: %.res
-#	$(RESCOMP) $< $@
-
 %.s: %.asm
 	$(MACCER) -o $@ $<
 
