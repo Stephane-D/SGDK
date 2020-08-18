@@ -114,13 +114,11 @@ cmd_ : $(OBJ_LIB)
 %.o: %.s
 	$(CC) -x assembler-with-cpp -MMD $(FLAGS_LIB) -c $< -o $@
 
-out/%.o: %.rs
+%.o: %.rs
 	$(CC) -x assembler-with-cpp $(FLAGS) -c $*.rs -o $@
-	$(CP) $*.d out/$*.d
-	$(RM) $*.d
 
 %.rs: %.res
-	$(RESCOMP) $*.res $*.rs -dep out/$*.o
+	$(RESCOMP) $*.res $*.rs -dep $*.o
 
 %.o80: %.s80
 	$(ASMZ80) $(FLAGSZ80_LIB) $< $@ out.lst
