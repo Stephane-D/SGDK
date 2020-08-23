@@ -397,6 +397,11 @@ public class Compiler
         return true;
     }
 
+    private static String getFixedPath(String path)
+    {
+        return FileUtil.getGenericPath(path).replace(" ", "\\ ");
+    }
+
     /**
      * Generate the content of the dependency list file.
      *
@@ -408,12 +413,12 @@ public class Compiler
      */
     private static String generateDependency(String resFileName, String targetFileName)
     {
-        String result =  FileUtil.getGenericPath(resFileName);
+        String result =  getFixedPath(resFileName);
 
         for (String fileName : resourcesFile)
-            result += " \\\n" + FileUtil.getGenericPath(fileName);
+            result += " \\\n" + getFixedPath(fileName);
 
-        return FileUtil.getGenericPath(targetFileName) + ": " + result;
+        return getFixedPath(targetFileName) + ": " + result;
     }
 
     private static List<Resource> getFarBinResourcesOf(List<Resource> resourceList)
