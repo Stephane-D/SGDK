@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import sgdk.aplib.Cap;
 import sgdk.lz4w.LZ4W;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
@@ -360,20 +361,26 @@ public class Util
         // we don't count AUTO
         final byte[][] results = new byte[Compression.values().length - 1][];
         final int[] sizes = new int[Compression.values().length - 1];
+        final byte[] prevData;
 
         // init no compression info
         results[0] = data;
         sizes[0] = data.length;
 
-        // create prev file from bin stream
+        // create prev data from bin stream (for LZ4W compression)
         if ((bin != null) && (bin.size() > 1))
-        {
-            if (!out(bin.toByteArray(), "prev.in"))
-                return null;
-        }
-        // create out file from data input
-        if (!out(data, "pack.in"))
-            return null;
+            prevData = bin.toByteArray();
+        else
+            prevData = null;
+
+        // if ((bin != null) && (bin.size() > 1))
+        // {
+        // if (!out(bin.toByteArray(), "prev.in"))
+        // return null;
+        // }
+        // // create out file from data input
+        // if (!out(data, "pack.in"))
+        // return null;
 
         // init results
         for (int i = 1; i < results.length; i++)
@@ -389,29 +396,52 @@ public class Util
             if ((compression == Compression.AUTO) || (compression == comp))
             {
                 final int compIndex = comp.ordinal() - 1;
-                boolean packed;
+                byte[] out;
 
                 switch (comp)
                 {
                     case APLIB:
-                        packed = appack("pack.in", "pack.out");
+                        out = appack(data);
                         break;
 
                     case LZ4W:
-                        packed = lz4wpack((bin != null) && (bin.size() > 1) ? "prev.in" : null, "pack.in", "pack.out");
+                        out = lz4wpack(prevData, data);
                         break;
 
                     default:
-                        packed = false;
+                        out = null;
                         break;
                 }
 
                 // correctly packed ? --> store results
-                if (packed)
+                if (out != null)
                 {
-                    results[compIndex] = in("pack.out");
-                    sizes[compIndex] = results[compIndex].length;
+                    results[compIndex] = out;
+                    sizes[compIndex] = out.length;
                 }
+
+                // boolean packed;
+                // switch (comp)
+                // {
+                // case APLIB:
+                // packed = appack("pack.in", "pack.out");
+                // break;
+                //
+                // case LZ4W:
+                // packed = lz4wpack((bin != null) && (bin.size() > 1) ? "prev.in" : null, "pack.in", "pack.out");
+                // break;
+                //
+                // default:
+                // packed = false;
+                // break;
+                // }
+                //
+                // // correctly packed ? --> store results
+                // if (packed)
+                // {
+                // results[compIndex] = in("pack.out");
+                // sizes[compIndex] = results[compIndex].length;
+                // }
             }
         }
 
@@ -439,13 +469,26 @@ public class Util
             }
         }
 
-        // clean
-        if ((bin != null) && (bin.size() > 0))
-            FileUtil.delete("prev.in", false);
-        FileUtil.delete("pack.in", false);
-        FileUtil.delete("pack.out", false);
+        // // clean
+        // if ((bin != null) && (bin.size() > 0))
+        // FileUtil.delete("prev.in", false);
+        // FileUtil.delete("pack.in", false);
+        // FileUtil.delete("pack.out", false);
 
         return new PackedData(result, bestComp);
+    }
+
+    public static byte[] appack(byte[] data)
+    {
+        try
+        {
+            return Cap.encode(data, true);
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.getMessage());
+            return null;
+        }
     }
 
     public static boolean appack(String fin, String fout)
@@ -454,8 +497,8 @@ public class Util
         FileUtil.delete(fout, false);
 
         // build complete command line
-        final String[] cmd = new String[] {FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "appack"), "c", fin,
-                fout, "-s"};
+        final String[] cmd = new String[] {"java", "-jar",
+                FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "apj.jar"), "p", fin, fout, "-s"};
 
         String cmdLine = "";
         for (String s : cmd)
