@@ -27,12 +27,18 @@ MKDIR= $(BIN)/mkdir
 
 SRC_C= $(wildcard *.c)
 SRC_C+= $(wildcard $(SRC)/*.c)
+SRC_C+= $(wildcard $(SRC)/**/*.c)
+SRC_C:= $(filter-out $(SRC)/boot/rom_head.c,$(SRC_C))
 SRC_S= $(wildcard *.s)
 SRC_S+= $(wildcard $(SRC)/*.s)
+SRC_S+= $(wildcard $(SRC)/**/*.s)
+SRC_S:= $(filter-out $(SRC)/boot/sega.s,$(SRC_S))
 SRC_ASM= $(wildcard *.asm)
 SRC_ASM+= $(wildcard $(SRC)/*.asm)
+SRC_ASM+= $(wildcard $(SRC)/**/*.asm)
 SRC_S80= $(wildcard *.s80)
 SRC_S80+= $(wildcard $(SRC)/*.s80)
+SRC_S80+= $(wildcard $(SRC)/**/*.s80)
 
 RES_C= $(wildcard $(RES)/*.c)
 RES_S= $(wildcard $(RES)/*.s)
@@ -141,7 +147,7 @@ out/cmd_: $(OBJS)
 	$(ECHO) "$(OBJS)" > out/cmd_
 
 out/sega.o: $(SRC)/boot/sega.s out/rom_head.bin
-	$(CC) $(DEFAULT_FLAGS) -c $(SRC)/boot/sega.s -o $@
+	$(CC) -x assembler-with-cpp $(DEFAULT_FLAGS) -c $(SRC)/boot/sega.s -o $@
 
 out/rom_head.bin: out/rom_head.o
 	$(LD) -T $(GDK)/md.ld -nostdlib --oformat binary -o $@ $<
