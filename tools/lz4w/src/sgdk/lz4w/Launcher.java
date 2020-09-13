@@ -55,6 +55,14 @@ public class Launcher
         // assume the fourth argument as silent
         silent = (args.length > 3);
 
+        if (execute(cmd, prevFile, inputFile, outputFile, silent))
+            System.exit(0);
+        else
+            System.exit(1);
+    }
+
+    static boolean execute(String cmd, String prevFile, String inputFile, String outputFile, boolean silent)
+    {
         try
         {
             final byte[] data1 = pad((prevFile.isEmpty() ? new byte[0] : readBinaryFile(prevFile)));
@@ -100,7 +108,7 @@ public class Launcher
                 if (!Arrays.equals(data2, unpacked))
                 {
                     System.err.println("Error while verifying compression, result data mismatch input data !");
-                    System.exit(1);
+                    return false;
                 }
             }
             // unpack
@@ -120,7 +128,10 @@ public class Launcher
         catch (IOException e)
         {
             System.out.println(e);
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -141,11 +152,11 @@ public class Launcher
 
     static void showUsage()
     {
-        System.out.println("LZ4W packer v1.41 by Stephane Dallongeville (Copyright 2020)");
-        System.out.println("  Pack:          lz4w p <input_file> <output_file>");
-        System.out.println("                 lz4w p <prev_file>&<input_file> <output_file>");
-        System.out.println("  Unpack:        lz4w u <input_file> <output_file>");
-        System.out.println("                 lz4w u <prev_file>&<input_file> <output_file>");
+        System.out.println("LZ4W packer v1.42 by Stephane Dallongeville (Copyright 2020)");
+        System.out.println("  Pack:     java -jar lz4w.jar p <input_file> <output_file>");
+        System.out.println("            java -jar lz4w.jar p <prev_file>&<input_file> <output_file>");
+        System.out.println("  Unpack:   java -jar lz4w.jar u <input_file> <output_file>");
+        System.out.println("            java -jar lz4w.jar u <prev_file>&<input_file> <output_file>");
         System.out.println();
         System.out.println("Tip: using an extra parameter after <output_file> will act as 'silent mode' switch");
     }
