@@ -19,7 +19,6 @@
 *.d
 **/.settings/**
 **/out/**
-**/bin/**
 !**/out/rom.bin
 symbol.txt
 rom_head.bin
@@ -46,3 +45,4 @@ tools/lz4w/bin
 tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
+tools/xgm rom builder/bin
