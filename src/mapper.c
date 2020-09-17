@@ -13,7 +13,7 @@
 #define NUM_BANK        8
 
 
-static u16 banks[NUM_BANK] = {0, 0, 0, 0, 0, 0, 0, 0};
+static u16 banks[NUM_BANK] = {0, 1, 2, 3, 4, 5, 6, 7};
 static u16 reg = 0;
 
 
@@ -89,7 +89,7 @@ void* SYS_getFarData(void* data)
     if (!needBankSwitch(addr)) return data;
 
     // set bank and get mapped address
-    const u32 mappedAddr = setBank(addr) + (addr & 0x07FFFF);
+    const u32 mappedAddr = setBank(addr) + (addr & BANK_MASK);
 
 #if (LIB_DEBUG != 0)
 //     KLog_U2("Data at ", addr, " accessed through bank switch from ", mappedAddr);
