@@ -41,6 +41,8 @@
 
 #define MAPPER_BASE     0xA130F1
 
+#define BANK_SIZE       0x80000
+#define BANK_MASK       (BANK_SIZE - 1)
 
 /**
  *  \brief
@@ -59,7 +61,7 @@
  *  \brief
  *      Returns the current bank of specified region index.
  *
- *  \param regionIndex the 512KB region index we want to get. Accepted values: 1-7 as region 0 (0x080000-0x0FFFFF) is fixed.
+ *  \param regionIndex the 512KB region index we want to get. Accepted values: 1-7 as region 0 (0x000000-0x07FFFF) is fixed.
  *  \return the effective 512KB data bank index mapped on this region (0 to 63)
  */
 u16 SYS_getBank(u16 regionIndex);
@@ -67,7 +69,7 @@ u16 SYS_getBank(u16 regionIndex);
  *  \brief
  *      Set the current bank of specified region index.
  *
- *  \param regionIndex the 512KB region index we want to set. Accepted values: 1-7 as region 0 (0x080000-0x0FFFFF) is fixed.
+ *  \param regionIndex the 512KB region index we want to set. Accepted values: 1-7 as region 0 (0x000000-0x07FFFF) is fixed.
  *  \param bankIndex the effective 512KB data bank index mapped on this region. Accepted values: 0-63
  */
 void SYS_setBank(u16 regionIndex, u16 bankIndex);
