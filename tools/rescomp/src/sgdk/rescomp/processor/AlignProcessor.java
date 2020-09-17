@@ -31,7 +31,7 @@ public class AlignProcessor implements Processor
         // get alignment (default alignment is bank size alignment = 512KB)
         int alignment = 524288;
         if (fields.length > 1)
-            StringUtil.parseInt(fields[1], alignment);
+            alignment = StringUtil.parseInt(fields[1], alignment);
 
         // build ALIGN resource
         return new Align("align", alignment);
