@@ -24,7 +24,8 @@ u16 SYS_getBank(u16 regionIndex)
 
 void SYS_setBank(u16 regionIndex, u16 bankIndex)
 {
-    // check we are in valid region
+    // check we are in valid region (region 0 is not switchable)
+//    if (regionIndex < 8)
     if ((regionIndex > 0) && (regionIndex < 8))
     {
         // set bank
