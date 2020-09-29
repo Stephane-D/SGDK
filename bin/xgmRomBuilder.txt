@@ -1,4 +1,4 @@
-XGMRomBuilder 1.2 (september 2016)
+XGMRomBuilder 1.31 (september 2020)
 Copyright Stephane Dallongeville
 https://stephane-d.github.io/SGDK/
 

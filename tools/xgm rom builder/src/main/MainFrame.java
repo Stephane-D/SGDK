@@ -55,6 +55,7 @@ public class MainFrame extends JFrame implements ActionListener
     // internals
     final VGMFileModel model;
     final byte[] rom;
+    String lastFolder;
 
     /**
      * Create the frame.
@@ -66,7 +67,8 @@ public class MainFrame extends JFrame implements ActionListener
         initialize();
 
         model = new VGMFileModel();
-
+        lastFolder = "";
+        
         xgmFileTable.setModel(model);
         xgmFileTable.getTableHeader().setDefaultRenderer(new CustomHeaderCellRenderer());
         xgmFileTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -120,7 +122,7 @@ public class MainFrame extends JFrame implements ActionListener
 
     private void initialize()
     {
-        setTitle("XGM rom builder 1.3");
+        setTitle("XGM rom builder 1.31");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 800, 381);
@@ -278,11 +280,15 @@ public class MainFrame extends JFrame implements ActionListener
         {
             final JFileChooser f = new JFileChooser();
 
+            f.setSelectedFile(new File(lastFolder+"/music.vgm"));
             f.setFileSelectionMode(JFileChooser.FILES_ONLY);
             f.setMultiSelectionEnabled(true);
 
             if (f.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            {
+                lastFolder = f.getSelectedFile().getParent();
                 new Thread(new VGMAdder(f.getSelectedFiles()), "VGM adder").start();
+            }
         }
         else if (source == btnRemoveSelected)
         {
