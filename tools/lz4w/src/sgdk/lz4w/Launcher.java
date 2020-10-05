@@ -74,6 +74,8 @@ public class Launcher
             System.arraycopy(data1, 0, data, 0, data1.length);
             System.arraycopy(data2, 0, data, data1.length, data2.length);
 
+            final long start = System.currentTimeMillis();
+
             // compress
             if (cmd.equals("p"))
             {
@@ -90,6 +92,8 @@ public class Launcher
                     result = LZ4W.pack(data2, 0, silent);
                 }
 
+                // get elapsed time
+                final long time = System.currentTimeMillis() - start;
                 final byte[] resultFull = new byte[data1.length + result.length];
 
                 // concatenate the 2 arrays
@@ -102,7 +106,7 @@ public class Launcher
                 if (!silent)
                 {
                     System.out.println("Initial size " + data2.length + " --> packed to " + result.length + " ("
-                            + ((100 * result.length) / data2.length) + "%)");
+                            + ((100 * result.length) / data2.length) + "%) in " + time + " ms");
                 }
 
                 if (!Arrays.equals(data2, unpacked))
@@ -119,8 +123,12 @@ public class Launcher
 
                 result = LZ4W.unpack(data, data1.length, null, silent);
 
+                final long time = System.currentTimeMillis() - start;
                 if (!silent)
-                    System.out.println("Initial size " + data2.length + " --> unpacked to " + result.length);
+                {
+                    System.out.println("Initial size " + data2.length + " --> unpacked to " + result.length + " in "
+                            + time + " ms");
+                }
             }
 
             writeBinaryFile(result, outputFile);
@@ -152,7 +160,7 @@ public class Launcher
 
     static void showUsage()
     {
-        System.out.println("LZ4W packer v1.42 by Stephane Dallongeville (Copyright 2020)");
+        System.out.println("LZ4W packer v1.43 by Stephane Dallongeville (Copyright 2020)");
         System.out.println("  Pack:     java -jar lz4w.jar p <input_file> <output_file>");
         System.out.println("            java -jar lz4w.jar p <prev_file>&<input_file> <output_file>");
         System.out.println("  Unpack:   java -jar lz4w.jar u <input_file> <output_file>");

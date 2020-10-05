@@ -1,4 +1,4 @@
-LZ4W packer 1.41 (april 2020)
+LZ4W packer 1.43 (october 2020)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -19,17 +19,17 @@ LZ4W    min=550KB/s   max=950KB/s
 
 As you can see the speed difference is very important, LZ4W can unpack at least twice as fast than classic LZ4 !
 
-Compression ratio (using LZ4HC which provide the best compression ratio for LZ4)
+Compression ratio (LZ4HC vs custom LZ4W packer)
 -----------------
 linear tiles data           original=12672    LZ4HC=6622    LZ4W=6582
 planar tiles data           original=1536     LZ4HC=1061    LZ4W=1038
-highly compressible tiles   original=346656   LZ4HC=24613   LZ4W=29304
+highly compressible tiles   original=346656   LZ4HC=24613   LZ4W=29308
 single BMP sprite           original=4798     LZ4HC=2202    LZ4W=2158
 map data                    original=4576     LZ4HC=1367    LZ4W=1312
 text file                   original=40992    LZ4HC=16088   LZ4W=21400
 
-LZ4W performs nicely compared to LZ4 for small packet of data (it often do better than LZ4HC) but it becomes worst as the
-data packet become larger or using redudant byte pattern data (as TXT file).
+LZ4W performs nicely compared to LZ4 for small packet of data (it often does better than LZ4HC) but it becomes worst as the
+data packet become larger or using lot of redudant byte pattern data (as TXT file).
 
 Keep in mind that LZ4W has been developed for the Sega Megadrive target first which has very limited amount of RAM anyway (64 KB) so you're likely to unpack small data blocks almost of time.
 

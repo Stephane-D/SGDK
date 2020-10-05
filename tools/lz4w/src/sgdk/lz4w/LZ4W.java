@@ -335,6 +335,9 @@ public class LZ4W
             wmlInd++;
         }
 
+        // get number of repeat for current byte
+        final int curRepeat = getRepeat(wdata, ind);
+
         Match best = null;
         // we want 1 saved word at least
         int savedWord = 1;
@@ -358,23 +361,92 @@ public class LZ4W
                 off = offMin;
             }
 
-            // for each repeated word
-            while ((repeat-- >= 0) && (off < ind))
+            // can optimize repeat ?
+            if ((off >= originStartOffset) || ((off + repeat) < originStartOffset))
             {
-                final Match match = findBestMatchInternal(wdata, off, ind, originStartOffset);
-
-                // we use >= as we always prefer short offset
-                if (match.savedWord >= savedWord)
+                // less repeat on match
+                if (repeat < curRepeat)
                 {
-                    best = match;
-                    savedWord = match.savedWord;
+                    Match match = new Match(ind, off, Math.min(MATCH_LONG_MAX_SIZE, repeat + 1),
+                            off < originStartOffset);
 
-                    // maximum saved ? --> don't continue
-                    if (savedWord == Match.MAX_SAVED_WORD)
-                        return best;
+                    // we use >= as we always prefer shorter offset
+                    if (match.savedWord >= savedWord)
+                    {
+                        best = match;
+                        savedWord = match.savedWord;
+
+                        // maximum saved ? --> don't continue
+                        if (savedWord == Match.MAX_SAVED_WORD)
+                            return best;
+                    }
                 }
+                else
+                {
+                    // more repeat on match ?
+                    if (repeat > curRepeat)
+                    {
+                        // bypass extras repeats on match
+                        int delta = repeat - curRepeat;
+                        // fix maximum delta to not raise ind
+                        if ((off + delta) >= ind)
+                            delta = (ind - off) - 1;
 
-                off++;
+                        off += delta;
+                        repeat -= delta;
+                    }
+
+                    Match match;
+
+                    // still some repeat ?
+                    if (repeat > 0)
+                    {
+                        // we raised ind ? --> limit start offset to (ind - 1)
+                        if ((off + repeat) >= ind)
+                            repeat = (ind - off) - 1;
+
+                        // easy optimization (start comparing after repeat)
+                        match = findBestMatchInternal(wdata, off + repeat, ind + repeat, originStartOffset);
+                        // then fix the match
+                        match = new Match(match.curOffset - repeat, match.refOffset - repeat,
+                                Math.min(MATCH_LONG_MAX_SIZE, match.length + repeat),
+                                (match.curOffset - repeat) < originStartOffset);
+                    }
+                    else
+                        match = findBestMatchInternal(wdata, off, ind, originStartOffset);
+
+                    // we use >= as we always prefer short offset
+                    if (match.savedWord >= savedWord)
+                    {
+                        best = match;
+                        savedWord = match.savedWord;
+
+                        // maximum saved ? --> don't continue
+                        if (savedWord == Match.MAX_SAVED_WORD)
+                            return best;
+                    }
+                }
+            }
+            else
+            {
+                // for each repeated word
+                while ((repeat-- >= 0) && (off < ind))
+                {
+                    final Match match = findBestMatchInternal(wdata, off, ind, originStartOffset);
+
+                    // we use >= as we always prefer short offset
+                    if (match.savedWord >= savedWord)
+                    {
+                        best = match;
+                        savedWord = match.savedWord;
+
+                        // maximum saved ? --> don't continue
+                        if (savedWord == Match.MAX_SAVED_WORD)
+                            return best;
+                    }
+
+                    off++;
+                }
             }
 
             // next word match
@@ -405,6 +477,17 @@ public class LZ4W
             len++;
 
         return new Match(ind, from, len, from < originStart);
+    }
+
+    private static int getRepeat(short[] wdata, int ind)
+    {
+        final short value = wdata[ind];
+
+        int off = ind + 1;
+        while ((off < wdata.length) && (wdata[off] == value))
+            off++;
+
+        return (off - ind) - 1;
     }
 
     private static int addSegment(DymamicByteArray result, DymamicByteArray literal, Match match, int offsetDiff)
