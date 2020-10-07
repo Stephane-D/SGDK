@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 class Launcher
 {
@@ -16,20 +17,51 @@ class Launcher
             System.exit(-1);
         }
 
-        String command = args[0];
-        String loadname = args[1];
-        String savename = args[2];
-        boolean silent = args.length > 3;
+        final String command = args[0];
+        final String loadname = args[1];
+        final String savename = args[2];
+        final boolean silent = args.length > 3;
+        final byte[] input = LoadFile(loadname);
+        final byte[] output;
 
-        byte[] input = LoadFile(loadname);
-        byte[] output = new byte[0];
+        final long start = System.currentTimeMillis();
 
         if (command.equals("p"))
-            output = Cap.encode(input, silent);
-        else if (command.equals("u"))
-            output = Cap.decode(input, silent);
+        {
+            // compress
+            output = APJ.pack(input, silent);
 
-        SaveFile(output, savename);        
+            final long time = System.currentTimeMillis() - start;
+
+            // verify compression
+            if (!Arrays.equals(input, APJ.unpack(output, input)))
+            {
+                System.err.println("Error while verifying compression, result data mismatch input data !");
+                System.exit(1);
+            }
+
+            if (!silent)
+            {
+                System.out.println("Initial size " + input.length + " --> packed to " + output.length + " ("
+                        + ((100 * output.length) / input.length) + "%) in " + time + " ms");
+            }
+        }
+        else
+        {
+            output = APJ.unpack(input, null);
+
+            final long time = System.currentTimeMillis() - start;
+            if (!silent)
+            {
+                System.out.println(
+                        "Initial size " + input.length + " --> unpacked to " + output.length + " in " + time + " ms");
+            }
+        }
+
+        // save result file
+        SaveFile(output, savename);
+        // and success exit
+        System.exit(0);
     }
 
     private static byte[] LoadFile(String filename) throws IOException
@@ -46,9 +78,7 @@ class Launcher
 
     private static void PrintUsage()
     {
-        System.out.println("APJ packer v1.00 by Stephane Dallongeville (Copyright 2020)");
-        System.out.println(
-                "This is a simple port (originally in C#) of CAP aplib compressor tool made by Svendahl (https://github.com/svendahl/cap)");
+        System.out.println("APJ (ApLib for Java) packer v1.10 by Stephane Dallongeville (Copyright 2020)");
         System.out.println("  Pack:     java -jar apj.jar p <input_file> <output_file>");
         System.out.println("  Unpack:   java -jar apj.jar u <input_file> <output_file>");
         System.out.println();
@@ -57,7 +87,7 @@ class Launcher
 
     private static boolean ValidInput(String[] input)
     {
-        return (input.length >= 3 && input[0].length() == 1 && (input[0].equals("p") || input[0].equals("u"))
-                && new File(input[1]).exists() && !input[1].equals(input[2]));
+        return (input.length >= 3) && (input[0].equals("p") || input[0].equals("u")) && new File(input[1]).exists()
+                && !input[1].equals(input[2]);
     }
 }

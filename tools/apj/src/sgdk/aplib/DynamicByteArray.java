@@ -14,19 +14,26 @@ public class DynamicByteArray extends ByteArrayOutputStream
         super(size);
     }
 
-    public byte read(int off)
+    public int readBackUByte(int off)
     {
-        if ((off < 0) || (off >= count))
-            throw new IndexOutOfBoundsException();
-
-        return buf[off];
+        return buf[count - off] & 0xFF;
     }
 
-    public void write(int off, byte value)
+    public int readUByte(int off)
     {
-        if ((off < 0) || (off >= count))
-            throw new IndexOutOfBoundsException();
+        return buf[off] & 0xFF;
+    }
 
-        buf[off] = value;
+    public void write(int off, int value)
+    {
+        buf[off] = (byte) value;
+    }
+
+    public void writeCheck(int value, byte[] verif)
+    {
+        if ((verif != null) && (value != (verif[count] & 0xFF)))
+            System.out.println("Error at " + count);
+
+        super.write(value);
     }
 }
