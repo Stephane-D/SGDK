@@ -965,6 +965,7 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest)
         result->w = src->w;
         result->h = src->h;
         result->palette = src->palette;
+        result->compression = COMPRESSION_NONE;
 
         // unpack image
         if (src->compression != COMPRESSION_NONE)
@@ -988,6 +989,7 @@ TileSet *unpackTileSet(const TileSet *src, TileSet *dest)
     {
         // fill infos
         result->numTile = src->numTile;
+        result->compression = COMPRESSION_NONE;
 
         // unpack tiles
         if (src->compression != COMPRESSION_NONE)
@@ -1012,6 +1014,7 @@ TileMap *unpackTileMap(const TileMap *src, TileMap *dest)
         // fill infos
         result->w = src->w;
         result->h = src->h;
+        result->compression = COMPRESSION_NONE;
 
         // unpack tilemap
         if (src->compression != COMPRESSION_NONE)
