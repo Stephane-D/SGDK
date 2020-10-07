@@ -1,8 +1,8 @@
-APJ packer v1.00 by Stephane Dallongeville (Copyright 2020)
+APJ packer v1.2 by Stephane Dallongeville (Copyright 2020)
 
-This tool is basically a (dirty) Java port from the original C# version of CAP compressor (ApLib based) from Svendahl (https://github.com/svendahl/cap). Many thanks to him for letting me to use it !
-It has been slighly modified for the purpose of integration with SGDK.
-There is no licence attached to original version but the (current) Java version obey to SGDK (https://github.com/Stephane-D/SGDK) licenses.
+This tool is ApLib compressor wrote in Java for easier and faster integration with rescomp tool (SGDK).
+Aplib is a LZSS based lossless compression algorithm developed by Jorgen Ibsen - http://www.ibsensoftware.com
+Same license than SGDK apply to the tool.
 
 Usage
 -----

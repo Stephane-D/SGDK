@@ -16,8 +16,8 @@ public class APJ
     {
         int offset;
         int length;
-        int saved;
-        int cost;
+        private int saved;
+        private int cost;
 
         public Match(int offset, int length)
         {
@@ -25,7 +25,8 @@ public class APJ
 
             this.offset = offset;
             this.length = length;
-            updateSaved();
+            cost = -1;
+            saved = -1;
         }
 
         private int computeCost()
@@ -58,8 +59,19 @@ public class APJ
 
         public void updateSaved()
         {
-            updateCost();
-            saved = (length * 8) - cost;
+            saved = (length * 8) - getCost();
+        }
+        
+        public int getCost()
+        {
+            if (cost == -1) updateCost();
+            return cost;
+        }
+
+        public int getSaved()
+        {
+            if (saved == -1) updateSaved();
+            return saved;
         }
 
         @Override
@@ -155,10 +167,10 @@ public class APJ
                 final Match match = new Match(ind - off, repeat + 1);
 
                 // we use >= as we always prefer shorter offset
-                if (match.saved >= saved)
+                if (match.getSaved() >= saved)
                 {
                     best = match;
-                    saved = match.saved;
+                    saved = match.getSaved();
                 }
             }
             else
@@ -189,17 +201,15 @@ public class APJ
                     match = findBestMatchInternal(data, off + repeat, ind + repeat);
                     // adjust match length
                     match.length += repeat;
-                    // update saved
-                    match.updateSaved();
                 }
                 else
                     match = findBestMatchInternal(data, off, ind);
 
                 // we use >= as we always prefer shorter offset
-                if (match.saved >= saved)
+                if (match.getSaved() >= saved)
                 {
                     best = match;
-                    saved = match.saved;
+                    saved = match.getSaved();
                 }
             }
 
@@ -248,10 +258,38 @@ public class APJ
 
     static int getHighBitNum(int value)
     {
-        // find highest bit
-        int result = 31;
-        while ((result > 0) && (((value >> result) & 1) == 0))
-            result--;
+        int result = 0;
+        int v = value;
+
+        if (v >= 0x10000)
+        {
+            result += 16;
+            v >>= 16;
+        }
+        if (v >= 0x100)
+        {
+            result += 8;
+            v >>= 8;
+        }
+        if (v >= 0x10)
+        {
+            result += 4;
+            v >>= 4;
+        }
+        if (v >= 4)
+        {
+            result += 2;
+            v >>= 2;
+        }
+        if (v >= 2)
+            result++;
+
+//        // find highest bit
+//        while (v > 1)
+//        {
+//            v >>= 1;
+//            result++;
+//        }
 
         return result;
     }
@@ -440,13 +478,13 @@ public class APJ
      */
     public static byte[] pack(byte[] data, boolean silent) throws IOException, IllegalArgumentException
     {
-        final BitWriter result = new BitWriter(data.length);
-
         // data length
         final int len = data.length;
         // not enough data to try compression..
         if (len < 2)
             return data;
+
+        final BitWriter result = new BitWriter(data.length);
 
         // PASS 1: build the byte matches table
         final ByteMatchList[] byteMatches = new ByteMatchList[0x100];

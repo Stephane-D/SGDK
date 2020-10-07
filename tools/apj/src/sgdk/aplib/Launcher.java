@@ -78,7 +78,7 @@ class Launcher
 
     private static void PrintUsage()
     {
-        System.out.println("APJ (ApLib for Java) packer v1.10 by Stephane Dallongeville (Copyright 2020)");
+        System.out.println("APJ (ApLib for Java) packer v1.2 by Stephane Dallongeville (Copyright 2020)");
         System.out.println("  Pack:     java -jar apj.jar p <input_file> <output_file>");
         System.out.println("  Unpack:   java -jar apj.jar u <input_file> <output_file>");
         System.out.println();
