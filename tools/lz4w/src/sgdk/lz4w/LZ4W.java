@@ -216,7 +216,7 @@ public class LZ4W
      *        offset (in byte) where to start unpacking
      * @param verif
      *        data buffer to verify unpacking (optional, can be null)
-     * @return LZ4W compressed data
+     * @return unpacked data
      * @throws IOException
      */
     public static byte[] unpack(byte[] data, int start, byte[] verif, boolean silent)
@@ -367,7 +367,7 @@ public class LZ4W
                 // less repeat on match
                 if (repeat < curRepeat)
                 {
-                    Match match = new Match(ind, off, Math.min(MATCH_LONG_MAX_SIZE, repeat + 1),
+                    final Match match = new Match(ind, off, Math.min(MATCH_LONG_MAX_SIZE, repeat + 1),
                             off < originStartOffset);
 
                     // we use >= as we always prefer shorter offset
