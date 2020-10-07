@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import sgdk.aplib.Cap;
+import sgdk.aplib.APJ;
 import sgdk.lz4w.LZ4W;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
@@ -482,7 +482,7 @@ public class Util
     {
         try
         {
-            return Cap.encode(data, true);
+            return APJ.pack(data, true);
         }
         catch (Exception e)
         {

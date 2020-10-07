@@ -11,8 +11,11 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{APJ.java"/>
         <javaElement handleIdentifier="=Rescomp/src"/>
-        <javaElement handleIdentifier="=APJ Packer/src"/>
+        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitReader.java"/>
+        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{DynamicByteArray.java"/>
+        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitWriter.java"/>
         <javaElement handleIdentifier="=Commons/src"/>
         <javaElement handleIdentifier="=LZ4W Packer/src&lt;sgdk.lz4w{LZ4W.java"/>
     </selectedElements>
