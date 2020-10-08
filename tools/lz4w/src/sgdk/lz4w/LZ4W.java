@@ -410,7 +410,7 @@ public class LZ4W
                         // then fix the match
                         match = new Match(match.curOffset - repeat, match.refOffset - repeat,
                                 Math.min(MATCH_LONG_MAX_SIZE, match.length + repeat),
-                                (match.curOffset - repeat) < originStartOffset);
+                                (match.refOffset - repeat) < originStartOffset);
                     }
                     else
                         match = findBestMatchInternal(wdata, off, ind, originStartOffset);
