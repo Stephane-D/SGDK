@@ -337,7 +337,7 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
             // first part
             w1 = pw - xAdj;
             // second part
-            w2 = w - w2;
+            w2 = w - w1;
         }
         else
         {
