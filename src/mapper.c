@@ -33,11 +33,11 @@ void SYS_setBank(u16 regionIndex, u16 bankIndex)
         // store it so we can read it later
         banks[regionIndex] = bankIndex;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
         KLog_U2("Region #", regionIndex, " set to bank #", bankIndex);
 #endif
     }
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     else
         KLog_U1("Cannot set bank in region #", regionIndex);
 #endif
@@ -92,7 +92,7 @@ void* SYS_getFarData(void* data)
     // set bank and get mapped address
     const u32 mappedAddr = setBank(addr) + (addr & BANK_MASK);
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
 //     KLog_U2("Data at ", addr, " accessed through bank switch from ", mappedAddr);
 #endif
 

@@ -172,7 +172,7 @@ void MEM_init()
     // and its size
     *heap = len;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U1("MEM_init: heap = ", (u32) heap);
 #endif
 
@@ -275,7 +275,7 @@ void* MEM_alloc(u16 size)
         // no enough memory
         if (p == NULL)
         {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
             if (size > MEM_getFree())
                 KLog_U2_("MEM_alloc(", size, ") failed: no enough free memory (free = ", MEM_getFree(), ")");
             else
@@ -313,7 +313,7 @@ void* MEM_alloc(u16 size)
     // set block size, mark as used and point to free region
     *p++ = adjsize | USED;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U3("MEM_alloc(", size, ") success: ", (u32) p, " - remaining = ", MEM_getFree());
 #endif
 
@@ -326,7 +326,7 @@ void MEM_free(void *ptr)
     // valid block ?
     if (ptr)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         // not in use ?
         if (!(((u16*)ptr)[-1] & USED))
         {
@@ -338,7 +338,7 @@ void MEM_free(void *ptr)
         // mark block as no more used
         ((u16*)ptr)[-1] &= ~USED;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
         KLog_U2("MEM_free(", (u32) ptr, ") --> remaining = ", MEM_getFree());
 #endif
     }

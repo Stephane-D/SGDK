@@ -13,12 +13,40 @@
 
 /**
  *  \brief
+ *      Log disable
+ */
+#define LOG_LEVEL_DISABLE   0
+/**
+ *  \brief
+ *      Log for error only
+ */
+#define LOG_LEVEL_ERROR     1
+/**
+ *  \brief
+ *      Log for error and warning
+ */
+#define LOG_LEVEL_WARNING   2
+/**
+ *  \brief
+ *      Log for error, warning and info (as memory allocation)
+ */
+#define LOG_LEVEL_INFO      3
+
+/**
+ *  \brief
+ *      Define library log level (for debug build)
+ */
+#define LIB_LOG_LEVEL       LOG_LEVEL_ERROR
+
+/**
+ *  \brief
  *      Set it to 1 to enable KDebug logging (Gens KMod) to log some errors (as memory allocation).
  */
 #if (DEBUG != 0)
-  #define LIB_DEBUG         1
+    #define LIB_DEBUG       1
 #else
-  #define LIB_DEBUG         0
+    #define LIB_DEBUG       0
+    #define LIB_LOG_LEVEL   LOG_LEVEL_ERROR
 #endif
 
 /**
@@ -51,7 +79,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH  0
+#define ENABLE_BANK_SWITCH  1
 
 /**
  *  \brief

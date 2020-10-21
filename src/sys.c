@@ -455,7 +455,7 @@ void _vint_callback()
         // V-Interrupt VBlank alignment forced ? --> we force wait of next VBlank (and so V-Int)
         if (flags & FORCE_VINT_VBLANK_ALIGN)
         {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
             KLog_U2("Warning: forced V-Int delay for VBlank alignment (frame miss) on frame #", vtimer, " - VCounter = ", vcnt);
 #endif
 
@@ -468,7 +468,7 @@ void _vint_callback()
             return;
         }
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
         KLog_U2("Warning: V-Int happened too late (possible frame miss) for frame #", vtimer, " - VCounter = ", vcnt);
 #endif
     }
@@ -780,8 +780,8 @@ void SYS_disableInts()
     // in interrupt --> return
     if (intTrace != 0)
     {
-#if (LIB_DEBUG != 0)
-        // KDebug_Alert("SYS_disableInts() fails: call during interrupt");
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        // KDebug_Alert("SYS_disableInts() warning: call during interrupt (ignored)");
 #endif
 
         return;
@@ -790,9 +790,16 @@ void SYS_disableInts()
     // disable interrupts
     if (disableIntStack++ == 0)
         intLevelSave = SYS_getAndSetInterruptMaskLevel(7);
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
     else
-        KLog_U1("SYS_disableInts() info: inner call = ", disableIntStack);
+    {
+        if (disableIntStack <= 0)
+            KLog_S1_("SYS_disableInts() fails: need ", (-disableIntStack) + 1, " more");
+    #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
+        else
+            KLog_S1("SYS_disableInts() info: inner call = ", disableIntStack);
+    #endif
+    }
 #endif
 }
 
@@ -801,7 +808,7 @@ void SYS_enableInts()
     // in interrupt --> return
     if (intTrace != 0)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
         // KDebug_Alert("SYS_enableInts() fails: call during interrupt");
 #endif
 
@@ -811,13 +818,15 @@ void SYS_enableInts()
     // reenable interrupts
     if (--disableIntStack == 0)
         SYS_setInterruptMaskLevel(intLevelSave);
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
     else
     {
         if (disableIntStack < 0)
-            KLog_U1("SYS_enableInts() fails: already enabled = ", disableIntStack);
+            KLog_S1("SYS_enableInts() fails: already enabled = ", disableIntStack);
+    #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
         else
-            KLog_U1("SYS_enableInts() info: inner call = ", disableIntStack);
+            KLog_S1_("SYS_enableInts() info: inner call, need ", disableIntStack, " more");
+    #endif
     }
 #endif
 }
@@ -871,6 +880,7 @@ void SYS_showFrameLoad()
     vu16* pw = (u16 *) GFX_DATA_PORT;
     vu32* pl = (u32 *) GFX_CTRL_PORT;
 
+    // prepare write to sprite #0
     *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
 
     // write fields in correct order
@@ -897,6 +907,7 @@ void SYS_hideFrameLoad()
     vu16* pw = (u16 *) GFX_DATA_PORT;
     vu32* pl = (u32 *) GFX_CTRL_PORT;
 
+    // prepare write to sprite #0
     *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
     // no need to write more
     *pw = vdpSprite->y;

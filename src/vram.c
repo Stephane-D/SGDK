@@ -150,7 +150,7 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
         // no enough memory
         if (p == NULL)
         {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
             if (size > VRAM_getFree(region))
                 KLog_U2_("VRAM_alloc(", size, ") failed: no enough free tile in VRAM (free = ", VRAM_getFree(region), ")");
             else
@@ -192,7 +192,7 @@ s16 VRAM_alloc(VRAMRegion *region, u16 size)
     // get index position in VRAM region
     result = ((s16) (p - region->vram)) + region->startIndex;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U3("VRAM_alloc(", size, ") success: ", result, " - remaining = ", VRAM_getFree(region));
 #endif
 
@@ -208,7 +208,7 @@ void VRAM_free(VRAMRegion *region, u16 index)
     if ((adjInd >= 0) && (index <= region->endIndex))
         region->vram[adjInd] &= ~USED_MASK;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U2("VRAM_free(", index, ") --> remaining = ", VRAM_getFree(region));
 #endif
 }

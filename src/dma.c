@@ -203,11 +203,11 @@ void DMA_flushQueue()
         {
             i = queueIndexLimit;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
             KLog_U2_("DMA_flushQueue(..) warning: transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, "), some transfers are ignored.");
 #endif
         }
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
         else KLog_U2_("DMA_flushQueue(..) warning: transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, ").");
 #endif
     }
@@ -355,7 +355,7 @@ void* DMA_allocateTemp(u16 len)
 
     if (nextDataBuffer > (dataBuffer + dataBufferSize))
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KLog_U2_("DMA_allocateTemp(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
 #endif
 
@@ -436,7 +436,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     // queue is full --> error
     if (queueIndex >= queueSize)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
 #endif
 
@@ -512,7 +512,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
         // first time we reach the limit ? store index where to stop transfer
         if (queueIndexLimit == 0)
         {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
             KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
 

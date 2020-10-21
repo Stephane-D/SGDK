@@ -208,7 +208,7 @@ typedef struct
  */
 typedef struct
 {
-    FrameVDPSprite** frameVDPSprites;
+    FrameVDPSprite** frameVDPSprites;       // TODO: optimize that using static array (FrameVDPSprite[])
     Collision* collision;
 } FrameInfo;
 
@@ -218,16 +218,16 @@ typedef struct
  *
  *  \param numSprite
  *      number of VDP sprite which compose this frame
- *  \param frameInfos
- *      frame information for [base, hflip, vflip, hvflip] version of the sprite
- *  \param tileset
- *      tileset containing tiles for this animation frame (ordered for sprite)
  *  \param w
  *      frame width in pixel
  *  \param h
  *      frame height in pixel
  *  \param timer
  *      active time for this frame (in 1/60 of second)
+ *  \param frameInfos
+ *      frame information for [base, hflip, vflip, hvflip] version of the sprite
+ *  \param tileset
+ *      tileset containing tiles for this animation frame (ordered for sprite)
  */
 typedef struct
 {
@@ -235,7 +235,7 @@ typedef struct
     u8 w;
     u8 h;
     u8 timer;
-    FrameInfo frameInfos[4];
+    FrameInfo frameInfos[4];    // TODO: it would be nice to optimize that, maybe compute it on runtime
     TileSet* tileset;           // TODO: have a tileset per VDP sprite (when rescomp will be optimized for better LZ4W compression)
 } AnimationFrame;
 

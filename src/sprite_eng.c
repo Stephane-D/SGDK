@@ -145,7 +145,7 @@ void SPR_initEx(u16 vramSize)
     // need to update user tile max index
     updateUserTileMaxIndex();
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog("Sprite engine initialized !");
     KLog_U2_("  VRAM region: [", index, " - ", index + (size - 1), "]");
 #endif // LIB_DEBUG
@@ -183,7 +183,7 @@ void SPR_end()
         MEM_pack();
     }
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog("Sprite engine ended !");
 #endif
 }
@@ -224,7 +224,7 @@ void SPR_reset()
     memset(profil_time, 0, sizeof(profil_time));
 #endif // SPR_PROFIL
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog("Sprite engine reset");
     KLog_U1("  VRAM region free: ", VRAM_getFree(&vram));
     KLog_U1("  Available VDP sprites: ", VDP_getAvailableSprites());
@@ -239,14 +239,14 @@ static Sprite* allocateSprite(u16 head)
     // enough sprite remaining ?
     if (free == allocStack)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KLog("SPR_internalAllocateSprite(): failed - no more available sprite !");
 #endif
 
         return NULL;
     }
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U1("SPR_internalAllocateSprite(): success - allocating sprite at pos ", free[-1] - spritesBank);
 #endif // LIB_DEBUG
 
@@ -293,7 +293,7 @@ static bool releaseSprite(Sprite* sprite)
         Sprite* next;
         VDPSprite* lastVDPSprite;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
         KLog_U1("SPR_internalReleaseSprite: success - released sprite at pos ", sprite - spritesBank);
 #endif // LIB_DEBUG
 
@@ -339,7 +339,7 @@ static bool releaseSprite(Sprite* sprite)
         return TRUE;
     }
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     KLog_U1_("SPR_internalReleaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
 #endif // LIB_DEBUG
 
@@ -365,7 +365,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     // can't allocate --> return NULL
     if (!sprite)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KDebug_Alert("SPR_addSpriteEx failed: max sprite number reached !");
 #endif
 
@@ -1024,7 +1024,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 
     if ((sprite->animInd != anim) || (sprite->seqInd != frame))
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (anim >= (s16) sprite->definition->numAnimation)
         {
             KLog_U2("SPR_setAnimAndFrame: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
@@ -1034,7 +1034,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 
         Animation* animation = sprite->definition->animations[anim];
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (frame >= (s16) animation->length)
         {
             KLog_U3("SPR_setAnimAndFrame: error - trying to use non existing frame #", frame, " for animation #", anim, " - num frame = ", animation->length);
@@ -1072,7 +1072,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 
     if (sprite->animInd != anim)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (anim >= (s16) sprite->definition->numAnimation)
         {
             KLog_U2("SPR_setAnim: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
@@ -1112,7 +1112,7 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 
     if (sprite->seqInd != frame)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (frame >= (s16) sprite->animation->length)
         {
             KLog_U3("SPR_setFrame: error - trying to use non existing frame #", frame, " for animation #", sprite->animInd, " - num frame = ", sprite->animation->length);
@@ -1498,7 +1498,7 @@ void SPR_update()
     // send sprites to VRAM using DMA queue (better to do it before sprite tiles upload to avoid being ignored by DMA queue)
     void* vdpSpriteTableCopy = DMA_allocateAndQueueDma(DMA_VRAM, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * sprNum) / 2, 2);
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     // DMA temporary buffer is full ? --> can't do sprite update
     if (!vdpSpriteTableCopy)
     {
@@ -1838,7 +1838,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
 
         if (dmaCapacity && (DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity)
         {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
             KLog_U3_("Warning: sprite #", getSpriteIndex(sprite), " update delayed (exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes)");
 #endif // LIB_DEBUG
 
@@ -2096,8 +2096,8 @@ static void loadTiles(Sprite* sprite)
         // get buffer and send to DMA queue
         u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
-#if (LIB_DEBUG != 0)
-        if (!buf) KDebug_Alert("  loadTiles: unpack tileset failed (DMA temporary buffre is full)");
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+        if (!buf) KDebug_Alert("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
         else
 #endif
         // unpack in temp buffer obtained from DMA queue

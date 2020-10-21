@@ -56,7 +56,7 @@ s16 VDP_allocateSprites(u16 num)
     // enough sprite remaining ?
     if ((free - allocStack) < num)
     {
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KLog_U2("VDP_allocateSprites(", num, ") failed: no enough free VDP Sprite - remaining = ", VDP_getAvailableSprites());
 #endif
 
@@ -92,7 +92,7 @@ s16 VDP_allocateSprites(u16 num)
     // keep trace of last allocated sprite
     lastAllocatedVDPSprite = spr;
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U3("VDP_allocateSprites(", num, ") success: ", res, " - remaining = ", VDP_getAvailableSprites());
 #endif
 
@@ -117,7 +117,7 @@ void VDP_releaseSprites(u16 index, u16 num)
         *free++ = spr;
     }
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog_U3("VDP_releaseSprites(", index, ", ", num, ") --> remaining = ", VDP_getAvailableSprites());
 #endif
 }

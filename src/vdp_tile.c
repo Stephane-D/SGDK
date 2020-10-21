@@ -456,7 +456,7 @@ static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u
         // get temp buffer and schedule DMA
         u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, w, 2);
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (!buf)
         {
             KLog("VDP_setTileMapDataRowEx failed: DMA temporary buffer is full");
@@ -536,7 +536,7 @@ static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u1
         // get temp buffer and schedule DMA
         u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, h, pw * 2);
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (!buf)
         {
             KLog("VDP_setTileMapDataColumn failed: DMA temporary buffer is full");
@@ -609,7 +609,7 @@ static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile
         // get temp buffer and schedule DMA
         u16* buf = DMA_allocateAndQueueDma(DMA_VRAM, addr, h, pw * 2);
 
-#if (LIB_DEBUG != 0)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (!buf)
         {
             KLog("VDP_setTileMapDataColumnEx failed: DMA temporary buffer is full");
