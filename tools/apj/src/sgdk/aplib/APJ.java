@@ -32,7 +32,7 @@ public class APJ
         private int computeCost()
         {
             if ((length == 1) && (offset > 0) && (offset < 16))
-                return 7;
+                return 3 + 4;
 
             if ((length >= 2) && (length <= 3) && (offset > 0) && (offset < 128))
                 return 3 + 8;
@@ -40,7 +40,7 @@ public class APJ
             if (length >= 3)
             {
                 // cost for offset high bits (estimation)
-                int c = ((getHighBitNum(offset >> 8)) * 2) + 2;
+                int c = ((getHighBitNum(offset >> 8)) * 2) + 2 + 3;
                 // cost for offset low bit
                 c += 8;
                 // cost for length
@@ -59,7 +59,8 @@ public class APJ
 
         public void updateSaved()
         {
-            saved = (length * 8) - getCost();
+            // --> we should consider 0 as costing 7 and not 9
+            saved = (length * 9) - getCost();
         }
         
         public int getCost()
