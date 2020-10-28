@@ -11,7 +11,7 @@ typedef struct
     Vect2D_f16 mov;
 } _particule;
 
-_particule partics[MAX_PARTIC];
+_particule* partics;
 
 s16 numpartic;
 
@@ -28,7 +28,7 @@ static void updatePartic(_particule *part_pos, s16 num);
 static void drawPartic(_particule *part_pos, s16 num, u8 col);
 
 
-int main()
+int main(u16 hard)
 {
     char col;
 
@@ -41,7 +41,11 @@ int main()
     // reduce DMA buffer size to avoid running out of memory (we don't need it)
     DMA_setBufferSize(2048);
 
+    // init Bitmap engine (require a ton shit of memory)
     BMP_init(TRUE, BG_A, PAL0, FALSE);
+
+    // allocate particules buffer
+    partics = MEM_alloc(sizeof(_particule) * MAX_PARTIC);
 
     paused = 0;
     col = 0xFF;
