@@ -296,7 +296,7 @@ void fix32ToStr(fix32 value, char *str, u16 numdec)
 
     // get fractional part
     const u16 frac = (((u16) fix32Frac(v)) * (u16) 1000) / ((u16) 1 << FIX32_FRAC_BITS);
-    u16 len = uint16ToStr(frac, dst, 1);
+    u16 len = uint16ToStr(frac, dst, 3);
 
     if (len < numdec)
     {
@@ -325,7 +325,7 @@ void fix16ToStr(fix16 value, char *str, u16 numdec)
 
     // get fractional part
     const u16 frac = (((u16) fix16Frac(v)) * (u16) 1000) / ((u16) 1 << FIX16_FRAC_BITS);
-    u16 len = uint16ToStr(frac, dst, 1);
+    u16 len = uint16ToStr(frac, dst, 3);
 
     if (len < numdec)
     {
