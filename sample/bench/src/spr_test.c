@@ -64,7 +64,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 16x16 (all dynamic)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -103,7 +102,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 16x16 (streamed animation)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -142,7 +140,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 16x16 (preloaded animation)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -195,7 +192,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("80 sprites 16x16 (streamed animation)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -236,7 +232,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("80 sprites 16x16 (preloaded animation)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -289,7 +284,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 32x32 (streamed)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -330,7 +324,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("40 sprites 32x32 (preloaded)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -384,7 +377,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Donut animation (streamed)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -405,7 +397,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Donut animation (preloaded)", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
@@ -437,7 +428,6 @@ u16 executeSpritesTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Big sprites test...", 1, 2);
     SYS_enableInts();
-    SYS_doVBlankProcess();
 
     waitMs(5000);
     SYS_disableInts();
