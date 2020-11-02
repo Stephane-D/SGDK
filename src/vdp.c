@@ -28,11 +28,11 @@
 
 
 // we don't want to share it
-extern void addFrameLoad(u16 frameLoad);
+extern bool addFrameLoad(u16 frameLoad);
 
 // forward
 static void updateMapsAddress();
-static void computeFrameCPULoad(u16 blank, u16 vcnt);
+static bool computeFrameCPULoad(u16 blank, u16 vcnt);
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 void updateUserTileMaxIndex();
 
@@ -801,26 +801,10 @@ void VDP_waitFIFOEmpty()
 }
 
 
-void VDP_waitVSync()
-{
-    vu16 *pw = (u16 *) GFX_CTRL_PORT;
-
-    // store V-Counter and initial blank state
-    const u16 vcnt = GET_VCOUNTER;
-    const u16 blank = *pw & VDP_VBLANK_FLAG;
-    // save it (used to diplay frame load)
-    lastVCnt = vcnt;
-
-    while (*pw & VDP_VBLANK_FLAG);
-    while (!(*pw & VDP_VBLANK_FLAG));
-
-    computeFrameCPULoad(blank, vcnt);
-}
-
-void VDP_waitVInt()
+bool VDP_waitVInt()
 {
     // in VInt --> return
-    if (SYS_isInVIntCallback()) return;
+    if (SYS_isInVInt()) return FALSE;
 
     // initial frame counter
     const u32 t = vtimer;
@@ -830,30 +814,88 @@ void VDP_waitVInt()
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
+    // compute frame load now (return TRUE if frame miss / late detected)
+    bool late = computeFrameCPULoad(blank, vcnt);
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+    if (late)
+    {
+        // we cannot detect frame miss if HV latching is enabled..
+        if (!VDP_getHVLatching())
+            KLog_U2("Warning: frame missed detection on frame #", t, " - V-Counter = ", vcnt);
+    }
+#endif
+
     // wait for next VInt
     while (vtimer == t);
 
-    computeFrameCPULoad(blank, vcnt);
+    return late;
 }
 
-void VDP_waitVBlank()
-{
-    VDP_waitVSync();
-}
-
-void VDP_waitVActive()
+bool VDP_waitVBlank(bool forceNext)
 {
     vu16 *pw = (u16 *) GFX_CTRL_PORT;
 
+    // store V-Counter and initial blank state
+    const u16 vcnt = GET_VCOUNTER;
+    const u16 blank = *pw & VDP_VBLANK_FLAG;
+    // save it (used to diplay frame load)
+    lastVCnt = vcnt;
+
+    // we want to wait for next start of VBlank ?
+    if (forceNext && blank)
+    {
+        // wait end of vblank if already in vblank
+        while (*pw & VDP_VBLANK_FLAG);
+    }
+
+    // compute frame load now (return TRUE if frame miss / late detected)
+    bool late = computeFrameCPULoad(blank, vcnt);
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+    if (late)
+    {
+        // we cannot detect late frame if HV latching is enabled..
+        if (!VDP_getHVLatching())
+        {
+            if (forceNext)
+                KLog_U2("Warning: frame missed detection on frame #", vtimer, " - V-Counter = ", vcnt);
+            else
+                KLog_U2("Warning: frame late detection on frame #", vtimer, " - V-Counter = ", vcnt);
+        }
+    }
+#endif
+
+    // wait end of active period
     while (!(*pw & VDP_VBLANK_FLAG));
+
+    return late;
+}
+
+void VDP_waitVActive(bool forceNext)
+{
+    vu16 *pw = (u16 *) GFX_CTRL_PORT;
+
+    // we want to wait for next start of VActive ?
+    if (forceNext)
+    {
+        // wait end of vactive if already in vactive
+        while (!(*pw & VDP_VBLANK_FLAG));
+    }
+    // wait end of vblank
     while (*pw & VDP_VBLANK_FLAG);
 }
 
+bool VDP_waitVSync()
+{
+    return VDP_waitVBlank(TRUE);
+}
 
-static void computeFrameCPULoad(u16 blank, u16 vcnt)
+
+static bool computeFrameCPULoad(u16 blank, u16 vcnt)
 {
     // update CPU frame load
-    addFrameLoad(getAdjustedVCounterInternal(blank, vcnt));
+    return addFrameLoad(getAdjustedVCounterInternal(blank, vcnt));
 }
 
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
@@ -871,14 +913,10 @@ u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
     }
     else
     {
-//        // blank adjustement
-//        if (blank && (result >= 0xDF)) result = 16;
-//        // sometime blank flag is not yet/anymore set on edge area
-//        else if (result >= 224) result = 16;
-//        else result += 32;
-
         // blank adjustement
-        if (result >= 0xDF) result = 16;
+        if (blank && (result >= 0xDF)) result = 16;
+        // sometime blank flag is not yet/anymore set on edge area
+        else if (result >= 224) result = 16;
         else result += 32;
     }
 

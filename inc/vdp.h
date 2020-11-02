@@ -861,33 +861,45 @@ void VDP_waitFIFOEmpty();
 
 /**
  *  \brief
- *      Wait for Vertical Synchro.
- *
- *  The method actually wait for the next start of Vertical blanking.
- */
-void VDP_waitVSync();
-/**
- *  \brief
  *      Wait for next Vertical Interruption.
+ *  \return
+ *      TRUE if a frame miss was detected (more than 1 frame elapsed since last call)
  *
- *  The method actually wait for the next start of Vertical Interruption.
- *  It returns immediately if we are already in VInt handler.
+ *  The method actually wait for the start of Vertical Interruption.
+ *  It returns immediately if we are already in V-Int handler.
  */
-void VDP_waitVInt();
+bool VDP_waitVInt();
 /**
  *  \brief
  *      Wait for next vertical blank period (same as #VDP_waitVSync())
+ *  \return
+ *      TRUE if a frame miss was detected (more than 1 frame elapsed since last call)
  *
- *  The method actually wait for the next start of Vertical blanking.
+ *  \param forceNext
+ *      Force waiting for next start of VBlank if we are already in VBlank period when calling the method.
+ *
+ *  The method wait until we are in Vertical blanking area/period.
  */
-void VDP_waitVBlank();
+bool VDP_waitVBlank(bool forceNext);
+/**
+ *  \brief
+ *      Wait for Vertical Synchro.
+ *  \return
+ *      TRUE if a frame miss was detected (more than 1 frame elapsed since last call)
+ *
+ *  The method actually wait for the *next* start of Vertical blanking.
+ */
+bool VDP_waitVSync();
 /**
  *  \brief
  *      Wait for next vertical active area (end of vertical blank period)
  *
- *  The method actually wait for the next start of Vertical active area.
+ *  \param forceNext
+ *      Force waiting for next start of V-Active if we are already in V-Active period when calling the method.
+ *
+ *  The method wait until we are in Vertical active area/period.
  */
-void VDP_waitVActive();
+void VDP_waitVActive(bool forceNext);
 
 /**
  *  \brief
