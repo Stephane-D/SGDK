@@ -17,7 +17,7 @@
 
 
 // we don't want to share it
-extern vu32 VIntProcess;
+extern vu16 VBlankProcess;
 
 // DMA queue
 DMAOpInfo *dmaQueues = NULL;
@@ -96,7 +96,7 @@ void DMA_setAutoFlush(bool value)
         flag |= DMA_AUTOFLUSH;
         // auto flush enabled and transfer size > 0 --> set process on VBlank
         if (queueTransferSize > 0)
-            VIntProcess |= PROCESS_DMA_TASK;
+            VBlankProcess |= PROCESS_DMA_TASK;
     }
     else flag &= ~DMA_AUTOFLUSH;
 }
@@ -504,7 +504,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 #endif
 
     // auto flush enabled --> set process on VBlank
-    if (flag & DMA_AUTOFLUSH) VIntProcess |= PROCESS_DMA_TASK;
+    if (flag & DMA_AUTOFLUSH) VBlankProcess |= PROCESS_DMA_TASK;
 
     // we are above the defined limit ?
     if (maxTransferPerFrame && (queueTransferSize > maxTransferPerFrame))
@@ -588,18 +588,18 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
 
     switch(location)
     {
-    default:
-    case DMA_VRAM:
-        cmd = GFX_DMA_VRAM_ADDR((u32)to);
-        break;
+        default:
+        case DMA_VRAM:
+            cmd = GFX_DMA_VRAM_ADDR((u32)to);
+            break;
 
-    case DMA_CRAM:
-        cmd = GFX_DMA_CRAM_ADDR((u32)to);
-        break;
+        case DMA_CRAM:
+            cmd = GFX_DMA_CRAM_ADDR((u32)to);
+            break;
 
-    case DMA_VSRAM:
-        cmd = GFX_DMA_VSRAM_ADDR((u32)to);
-        break;
+        case DMA_VSRAM:
+            cmd = GFX_DMA_VSRAM_ADDR((u32)to);
+            break;
     }
 
     pwz = (vu16*) Z80_HALT_PORT;
