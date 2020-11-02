@@ -15,7 +15,7 @@
 
 
 // allow to access it without "public" share
-extern vu32 VIntProcess;
+extern vu16 VBlankProcess;
 extern s16 currentDriver;
 extern u16 driverFlags;
 
@@ -41,9 +41,7 @@ u8 XGM_isPlaying()
 {
     vu8 *pb;
     u8 ret;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -54,10 +52,7 @@ u8 XGM_isPlaying()
     Z80_requestBus(TRUE);
     // play status
     ret = *pb & (1 << 6);
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 
     return ret;
 }
@@ -68,9 +63,7 @@ void XGM_startPlay(const u8 *song)
     u32 addr;
     u16 i;
     vu8 *pb;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -127,19 +120,14 @@ void XGM_startPlay(const u8 *song)
     // clear pending frame
     *pb = 0;
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_stopPlay()
 {
     vu8 *pb;
     u32 addr;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -168,18 +156,13 @@ void XGM_stopPlay()
     // clear pending frame
     *pb = 0;
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_pausePlay()
 {
     vu8 *pb;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -191,18 +174,13 @@ void XGM_pausePlay()
     // set pause XGM command
     *pb |= (1 << 4);
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_resumePlay()
 {
     vu8 *pb;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -219,19 +197,14 @@ void XGM_resumePlay()
     // clear pending frame
     *pb = 0;
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 u8 XGM_isPlayingPCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -243,30 +216,21 @@ u8 XGM_isPlayingPCM(const u16 channel_mask)
     // play status
     ret = *pb & (channel_mask << Z80_DRV_STAT_PLAYING_SFT);
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 
     return ret;
 }
 
 void XGM_setPCM(const u8 id, const u8 *sample, const u32 len)
 {
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
 
     Z80_requestBus(TRUE);
-
     XGM_setPCMFast(id, sample, len);
-
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len)
@@ -286,9 +250,7 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len)
 void XGM_startPlayPCM(const u8 id, const u8 priority, const u16 channel)
 {
     vu8 *pb;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -307,18 +269,13 @@ void XGM_startPlayPCM(const u8 id, const u8 priority, const u16 channel)
     // set play PCM channel command
     *pb |= (Z80_DRV_COM_PLAY << channel);
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_stopPlayPCM(const u16 channel)
 {
     vu8 *pb;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -337,18 +294,13 @@ void XGM_stopPlayPCM(const u16 channel)
     // set play PCM channel command
     *pb |= (Z80_DRV_COM_PLAY << channel);
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_setLoopNumber(s8 value)
 {
     vu8 *pb;
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
@@ -361,87 +313,25 @@ void XGM_setLoopNumber(s8 value)
     // set loop argument (+1 as internally 0 = infinite)
     *pb = value + 1;
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 }
 
 void XGM_set68KBUSProtection(u8 value)
 {
-    vu16 *pw_bus;
-    vu16 *pw_reset;
     vu8 *pb;
 
-    // driver should be loaded here
+    // nothing to do (driver should be loaded here)
+    if (currentDriver != Z80_DRIVER_XGM)
+        return;
 
-    // point on bus req and reset ports
-    pw_bus = (u16 *) Z80_HALT_PORT;
-    pw_reset = (u16 *) Z80_RESET_PORT;
-
-    // take bus and end reset (fast method)
-    *pw_bus = 0x0100;
-    *pw_reset = 0x0100;
-    // wait for bus taken
-    while (*pw_bus & 0x0100);
+    bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // point to Z80 PROTECT parameter
     pb = (u8 *) (Z80_DRV_PARAMS + 0x0D);
-
     *pb = value;
 
     // release bus
-    *pw_bus = 0x0000;
-}
-
-void XGM_nextXFrame(u16 num)
-{
-    vu16 *pw_bus;
-    vu16 *pw_reset;
-    vu8 *pb;
-    u32 tmp;
-
-    // driver should be loaded here
-
-    // point on bus req and reset ports
-    pw_bus = (u16 *) Z80_HALT_PORT;
-    pw_reset = (u16 *) Z80_RESET_PORT;
-    // point to MODIFYING_F parameter
-    pb = (u8 *) (Z80_DRV_PARAMS + 0x0E);
-
-    while(TRUE)
-    {
-        // take bus and end reset (fast method)
-        *pw_bus = 0x0100;
-        *pw_reset = 0x0100;
-        // wait for bus taken
-        while (*pw_bus & 0x0100);
-
-        // Z80 not accessing ?
-        if (!*pb) break;
-
-        // release bus
-        *pw_bus = 0x0000;
-
-        // wait a bit (about 80 cycles)
-        asm volatile (
-        "moveq #7,%0\n"
-        "1:\n\t"
-        "\tdbra %0,1b\n\t"
-        : "=d" (tmp) : : "cc"
-        );
-
-        // wait for bus released before requesting it again
-        while (!(*pw_bus & 0x0100));
-    }
-
-    // point to PENDING_FRM parameter
-    pb++;
-    // increment frame to process
-    *pb += num;
-
-    // release bus
-    *pw_bus = 0x0000;
+    if (!busTaken) Z80_releaseBus();
 }
 
 
@@ -460,13 +350,13 @@ void XGM_setManualSync(u16 value)
     {
         driverFlags |= DRIVER_FLAG_MANUALSYNC_XGM;
         // remove VInt XGM process
-        VIntProcess &= ~PROCESS_XGM_TASK;
+        VBlankProcess &= ~PROCESS_XGM_TASK;
     }
     else
     {
         driverFlags &= ~DRIVER_FLAG_MANUALSYNC_XGM;
         // set VInt XGM process
-        VIntProcess |= PROCESS_XGM_TASK;
+        VBlankProcess |= PROCESS_XGM_TASK;
     }
 }
 
@@ -506,24 +396,22 @@ u32 XGM_getElapsed()
     u8 values[3];
     u32 result;
 
+    // nothing to do (driver should be loaded here)
+    if (currentDriver != Z80_DRIVER_XGM)
+        return 0;
+
     // point to ELAPSED value
     pb = (u8 *) (Z80_DRV_PARAMS + 0x90);
     dst = values;
 
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
-
-    Z80_requestBus(TRUE);
+    bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // copy quickly elapsed time
     *dst++ = *pb++;
     *dst++ = *pb++;
     *dst = *pb;
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 
     result = (values[0] << 0) | (values[1] << 8) | ((u32) values[2] << 16);
 
@@ -541,15 +429,14 @@ u32 XGM_getCPULoad()
     u16 ind;
     s16 load;
 
-    // driver should be loaded here
+    // nothing to do (driver should be loaded here)
+    if (currentDriver != Z80_DRIVER_XGM)
+        return 0;
+
+    bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // point to Z80 'idle wait loop' value
     pb = (u8 *) (Z80_DRV_PARAMS + 0x7C);
-
-    // disable ints when requesting Z80 BUS
-    SYS_disableInts();
-
-    Z80_requestBus(TRUE);
 
     // get idle
     idle = pb[0] + (pb[1] << 8);
@@ -563,10 +450,7 @@ u32 XGM_getCPULoad()
     *pb++ = 0;
     *pb = 0;
 
-    Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
+    if (!busTaken) Z80_releaseBus();
 
     ind = xgmTabInd;
 
@@ -605,6 +489,52 @@ void XGM_resetLoadCalculation()
     xgmWaitMean = 0;
 }
 
+void XGM_nextXFrame(u16 num)
+{
+    vu16 *pw_bus;
+    vu16 *pw_reset;
+    vu8 *pb;
+
+    // nothing to do (driver should be loaded here)
+    if (currentDriver != Z80_DRIVER_XGM)
+        return;
+
+    bool busTaken = Z80_isBusTaken();
+
+    // point on bus req and reset ports
+    pw_bus = (u16 *) Z80_HALT_PORT;
+    pw_reset = (u16 *) Z80_RESET_PORT;
+    // point to MODIFYING_F parameter
+    pb = (u8 *) (Z80_DRV_PARAMS + 0x0E);
+
+    while(TRUE)
+    {
+        // take bus and end reset (fast method)
+        *pw_bus = 0x0100;
+        *pw_reset = 0x0100;
+        // wait for bus taken
+        while (*pw_bus & 0x0100);
+
+        // Z80 not accessing ?
+        if (!*pb) break;
+
+        // release bus
+        *pw_bus = 0x0000;
+
+        // wait a bit (about 80 cycles)
+        asm volatile ("\t\tmovm.l %d0-%d3,-(%sp)\n");
+        asm volatile ("\t\tmovm.l (%sp)+,%d0-%d3\n");
+    }
+
+    // point to PENDING_FRM parameter
+    pb++;
+    // increment frame to process
+    *pb += num;
+
+    // release bus
+    if (!busTaken) *pw_bus = 0x0000;
+}
+
 // VInt processing for XGM driver
 void XGM_doVBlankProcess()
 {
@@ -625,6 +555,7 @@ void XGM_doVBlankProcess()
 
     // directly do the frame here as we want this code to be as fast as possible (to not waste vint time)
     // driver should be loaded here
+    bool busTaken = Z80_isBusTaken();
 
     // point on bus req and reset ports
     pw_bus = (u16 *) Z80_HALT_PORT;
@@ -649,9 +580,6 @@ void XGM_doVBlankProcess()
         // wait a bit (about 80 cycles)
         asm volatile ("\t\tmovm.l %d0-%d3,-(%sp)\n");
         asm volatile ("\t\tmovm.l (%sp)+,%d0-%d3\n");
-
-        // wait for bus released before requesting it again
-        while (!(*pw_bus & 0x0100));
     }
 
     // point to PENDING_FRM parameter
@@ -660,5 +588,5 @@ void XGM_doVBlankProcess()
     *pb += num;
 
     // release bus
-    *pw_bus = 0x0000;
+    if (!busTaken) *pw_bus = 0x0000;
 }
