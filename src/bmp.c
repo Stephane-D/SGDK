@@ -49,8 +49,7 @@
 
 
 // we don't want to share them
-extern vu32 VIntProcess;
-extern vu32 HIntProcess;
+extern vu16 VBlankProcess;
 extern u16 text_basetile;
 
 u8 *bmp_buffer_read;
@@ -76,10 +75,11 @@ extern void copyBitmapBuffer(u8 *src, u8 *dst);
 
 static void doFlip();
 static void flipBuffer();
-static void initTilemap(u16 num);
-static void clearVRAMBuffer(u16 num);
+static void initTilemap(u16 index);
+static void clearVRAMBuffer(u16 index);
 static u16 doBlit();
 static void drawLine_old(u16 x1, u16 y1, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
+static void hint();
 
 
 void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
@@ -113,13 +113,13 @@ void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
 
 void BMP_end()
 {
+    // cancel interrupt processing
+    SYS_setHIntCallback(NULL);
+    VBlankProcess &= ~PROCESS_BITMAP_TASK;
+
     // better to disable ints here
     // FIXME: for some reason disabling interrupts generally break BMP init :-/
 //    SYS_disableInts();
-
-    // cancel interrupt processing
-    HIntProcess &= ~PROCESS_BITMAP_TASK;
-    VIntProcess &= ~PROCESS_BITMAP_TASK;
 
     // disable H-Int
     VDP_setHInterrupt(0);
@@ -153,13 +153,13 @@ void BMP_end()
 
 void BMP_reset()
 {
+    // cancel bitmap interrupt processing
+    SYS_setHIntCallback(NULL);
+    VBlankProcess &= ~PROCESS_BITMAP_TASK;
+
     // better to disable ints here
     // FIXME: for some reason disabling interrupts generally break BMP init :-/
 //    SYS_disableInts();
-
-    // cancel bitmap interrupt processing
-    HIntProcess &= ~PROCESS_BITMAP_TASK;
-    VIntProcess &= ~PROCESS_BITMAP_TASK;
 
     // disable H-Int
     VDP_setHInterrupt(0);
@@ -206,8 +206,8 @@ void BMP_reset()
     // prepare hint for extended blank on next frame
     VDP_setHIntCounter(((screenHeight - BMP_HEIGHT) >> 1) - 1);
     // enabled bitmap interrupt processing
-    HIntProcess |= PROCESS_BITMAP_TASK;
-    VIntProcess |= PROCESS_BITMAP_TASK;
+    SYS_setHIntCallback(hint);
+    VBlankProcess |= PROCESS_BITMAP_TASK;
     VDP_setHInterrupt(1);
 
     // we can re enable ints
@@ -271,17 +271,10 @@ u16 BMP_flip(u16 async)
         return 1;
     }
 
-    // better to disable ints here
-    // FIXME: for some reason disabling interrupts generally break BMP init :-/
-//    SYS_disableInts();
-
     // flip bitmap buffer
     flipBuffer();
     // flip started (will be processed in blank period --> BMP_doBlankProcess)
     state |= BMP_STAT_FLIPPING;
-
-    // we can re enable ints
-//    SYS_enableInts();
 
     // wait completion
     if (!async) BMP_waitFlipComplete();
@@ -1244,7 +1237,8 @@ void BMP_doVBlankProcess()
     phase = 0;
 }
 
-u16 BMP_doHBlankProcess()
+// called on h-interrupt
+static void hint()
 {
     // vborder low
     if (phase == 0)
@@ -1278,15 +1272,13 @@ u16 BMP_doHBlankProcess()
         // flip requested or not complete ? --> start / continu flip
         if (state & BMP_STAT_FLIPPING) doFlip();
     }
-
-    return 1;
 }
 
 
 // internals helper methods
 ///////////////////////////
 
-static void initTilemap(u16 num)
+static void initTilemap(u16 index)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -1299,7 +1291,7 @@ static void initTilemap(u16 num)
     // calculated
     const u32 offset = BMP_FBTILEMAP_OFFSET;
 
-    if (num == 0)
+    if (index == 0)
     {
         addr_tilemap = BMP_FB0TILEMAP_BASE + offset;
         tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB0TILEINDEX);
@@ -1340,9 +1332,9 @@ static void initTilemap(u16 num)
     }
 }
 
-static void clearVRAMBuffer(u16 num)
+static void clearVRAMBuffer(u16 index)
 {
-    if (num) DMA_doVRamFill(BMP_FB1TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
+    if (index) DMA_doVRamFill(BMP_FB1TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
     else DMA_doVRamFill(BMP_FB0TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
     VDP_waitDMACompletion();
 }
@@ -1367,6 +1359,9 @@ static void flipBuffer()
 
 static void doFlip()
 {
+    // better to disable ints here
+    SYS_disableInts();
+
     // wait for DMA completion if used otherwise VDP writes can be corrupted
     VDP_waitDMACompletion();
 
@@ -1405,6 +1400,8 @@ static void doFlip()
         // save back bitmap state
         state = s;
     }
+
+    SYS_enableInts();
 }
 
 #define TRANSFER(x)                                     \
