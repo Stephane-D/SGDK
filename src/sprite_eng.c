@@ -1487,9 +1487,6 @@ void SPR_update()
     KLog_U1("----------------- SPR_update:  sprite number = ", SPR_getNumActiveSprite());
 #endif // SPR_DEBUG
 
-    // disable interrupts (we want to avoid DMA queue process when executing this method)
-    SYS_disableInts();
-
 #ifdef SPR_DEBUG
     KLog_U1_("  Send sprites to DMA queue: ", highestVDPSpriteIndex + 1, " sprite(s) sent");
 #endif // SPR_DEBUG
@@ -1586,9 +1583,6 @@ void SPR_update()
 
     // VDP sprite cache is now updated, copy it to the temporary cache copy we got from DMA queue buffer
     memcpy(vdpSpriteTableCopy, vdpSpriteCache, sizeof(VDPSprite) * sprNum);
-
-    // re-enable interrupts
-    SYS_enableInts();
 
 #ifdef SPR_PROFIL
     profil_time[PROFIL_UPDATE] += getSubTick() - prof;
