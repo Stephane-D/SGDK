@@ -220,24 +220,40 @@ _INT:
 
 _EXTINT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  internalExtIntCB, %a0
+        move.l  eintCB, %a0
         jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _HINT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  internalHIntCB, %a0
+        move.l  hintCB, %a0
         jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _VINT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  internalVIntCB, %a0
-        jsr    (%a0)
+        ori.w   #0x0001, intTrace           // in V-Int
+        addq.l  #1, vtimer                  // increment frame counter (more a vint counter)
+        btst    #3, VBlankProcess+1         // PROCESS_XGM_TASK ? (use VBlankProcess+1 as btst is a byte operation)
+        beq.s   _no_xgm_task
+
+        jsr     XGM_doVBlankProcess         // do XGM vblank task
+
+_no_xgm_task:
+        btst    #1, VBlankProcess+1         // PROCESS_BITMAP_TASK ? (use VBlankProcess+1 as btst is a byte operation)
+        beq.s   _no_bmp_task
+
+        jsr     BMP_doVBlankProcess         // do BMP vblank task
+
+_no_bmp_task:
+        move.l  vintCB, %a0                 // load user callback
+        jsr    (%a0)                        // call user callback
+        andi.w  #0xFFFE, intTrace           // out V-Int
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
+
 
 *------------------------------------------------
 *
