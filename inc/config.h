@@ -36,7 +36,7 @@
  *  \brief
  *      Define library log level (for debug build)
  */
-#define LIB_LOG_LEVEL       LOG_LEVEL_ERROR
+#define LIB_LOG_LEVEL       LOG_LEVEL_WARNING
 
 /**
  *  \brief
@@ -46,6 +46,7 @@
     #define LIB_DEBUG       1
 #else
     #define LIB_DEBUG       0
+    #undef LIB_LOG_LEVEL
     #define LIB_LOG_LEVEL   LOG_LEVEL_ERROR
 #endif
 
@@ -79,7 +80,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH  1
+#define ENABLE_BANK_SWITCH  0
 
 /**
  *  \brief
