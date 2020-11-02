@@ -24,9 +24,6 @@ u8 SND_isPlaying_PCM()
     vu8 *pb;
     u8 ret;
 
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
-
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
 
@@ -39,9 +36,6 @@ u8 SND_isPlaying_PCM()
 
     Z80_releaseBus();
 
-    // re-enable ints
-    SYS_enableInts();
-
     return ret;
 }
 
@@ -49,9 +43,6 @@ void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 
 {
     vu8 *pb;
     u32 addr;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
@@ -86,18 +77,12 @@ void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 
     else pb[1] &= ~Z80_DRV_STAT_PLAYING;
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 void SND_stopPlay_PCM()
 {
     vu8 *pb;
     u32 addr;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
@@ -122,9 +107,6 @@ void SND_stopPlay_PCM()
     pb[1] &= ~Z80_DRV_STAT_PLAYING;
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 
@@ -136,9 +118,6 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
@@ -152,9 +131,6 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask)
 
     Z80_releaseBus();
 
-    // re-enable ints
-    SYS_enableInts();
-
     return ret;
 }
 
@@ -164,9 +140,6 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
     u8 status;
     u16 ch;
     u32 addr;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
@@ -216,18 +189,12 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
     else pb[1] &= ~(Z80_DRV_STAT_PLAYING << ch);
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 void SND_stopPlay_2ADPCM(const u16 channel)
 {
     vu8 *pb;
     u32 addr;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_2ADPCM, TRUE);
@@ -252,9 +219,6 @@ void SND_stopPlay_2ADPCM(const u16 channel)
     pb[1] &= ~(Z80_DRV_STAT_PLAYING << channel);
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 
@@ -266,9 +230,6 @@ u8 SND_isPlaying_4PCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
@@ -282,9 +243,6 @@ u8 SND_isPlaying_4PCM(const u16 channel_mask)
 
     Z80_releaseBus();
 
-    // re-enable ints
-    SYS_enableInts();
-
     return ret;
 }
 
@@ -294,9 +252,6 @@ void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, cons
     u8 status;
     u16 ch;
     u32 addr;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
@@ -346,18 +301,12 @@ void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, cons
     else pb[1] &= ~(Z80_DRV_STAT_PLAYING << ch);
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 void SND_stopPlay_4PCM(const u16 channel)
 {
     vu8 *pb;
     u32 addr;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
@@ -382,17 +331,11 @@ void SND_stopPlay_4PCM(const u16 channel)
     pb[1] &= ~(Z80_DRV_STAT_PLAYING << channel);
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 void SND_setVolume_4PCM(const u16 channel, const u8 volume)
 {
     vu8 *pb;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
@@ -405,18 +348,12 @@ void SND_setVolume_4PCM(const u16 channel, const u8 volume)
     *pb = volume & 0x0F;
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 }
 
 u8 SND_getVolume_4PCM(const u16 channel)
 {
     vu8 *pb;
     u8 volume;
-
-    // disable ints when requesting Z80 bus
-    SYS_disableInts();
 
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_4PCM, TRUE);
@@ -429,9 +366,6 @@ u8 SND_getVolume_4PCM(const u16 channel)
     volume = *pb & 0x0F;
 
     Z80_releaseBus();
-
-    // re-enable ints
-    SYS_enableInts();
 
     return volume;
 }
