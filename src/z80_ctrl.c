@@ -13,6 +13,7 @@
 #include "xgm.h"
 
 // Z80 drivers
+#include "z80_drv0.h"
 #include "z80_drv1.h"
 #include "z80_drv2.h"
 #include "z80_drv3.h"
@@ -24,7 +25,7 @@
 
 
 // we don't want to share it
-extern vu32 VIntProcess;
+extern vu16 VBlankProcess;
 
 u16 currentDriver;
 u16 driverFlags;
@@ -42,21 +43,24 @@ void Z80_init()
     Z80_setBank(0);
 
     // no loaded driver
-    currentDriver = Z80_DRIVER_NULL;
+    currentDriver = -1;
     driverFlags = 0;
+
+    // load null/dummy driver as it's important to have Z80 active (state is preserved)
+    Z80_loadDriver(Z80_DRIVER_NULL, FALSE);
 }
 
 
-u16 Z80_isBusTaken()
+bool Z80_isBusTaken()
 {
     vu16 *pw;
 
     pw = (u16 *) Z80_HALT_PORT;
-    if (*pw & 0x0100) return 0;
-    else return 1;
+    if (*pw & 0x0100) return FALSE;
+    else return TRUE;
 }
 
-void Z80_requestBus(u16 wait)
+void Z80_requestBus(bool wait)
 {
     vu16 *pw_bus;
     vu16 *pw_reset;
@@ -74,6 +78,31 @@ void Z80_requestBus(u16 wait)
         // wait for bus taken
         while (*pw_bus & 0x0100);
     }
+}
+
+bool Z80_getAndRequestBus(bool wait)
+{
+    vu16 *pw_bus;
+    vu16 *pw_reset;
+
+    pw_bus = (u16 *) Z80_HALT_PORT;
+
+    // already requested ? just return TRUE
+    if (!(*pw_bus & 0x0100)) return TRUE;
+
+    pw_reset = (u16 *) Z80_RESET_PORT;
+
+    // take bus and end reset
+    *pw_bus = 0x0100;
+    *pw_reset = 0x0100;
+
+    if (wait)
+    {
+        // wait for bus taken
+        while (*pw_bus & 0x0100);
+    }
+
+    return FALSE;
 }
 
 void Z80_releaseBus()
@@ -166,7 +195,7 @@ void Z80_upload(const u16 to, const u8 *from, const u16 size, const bool resetz8
 
 void Z80_download(const u16 from, u8 *to, const u16 size)
 {
-    Z80_requestBus(TRUE);
+    bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // copy data from Z80 RAM (need to use byte copy here)
     vu8* src = (u8*) (Z80_RAM + from);
@@ -175,7 +204,8 @@ void Z80_download(const u16 from, u8 *to, const u16 size)
 
     while(len--) *dst++ = *src++;
 
-    Z80_releaseBus();
+    if (!busTaken)
+        Z80_releaseBus();
 }
 
 
@@ -195,7 +225,7 @@ void Z80_unloadDriver()
     currentDriver = Z80_DRIVER_NULL;
 
     // remove XGM task if present
-    VIntProcess &= ~PROCESS_XGM_TASK;
+    VBlankProcess &= ~PROCESS_XGM_TASK;
 }
 
 void Z80_loadDriver(const u16 driver, const bool waitReady)
@@ -208,6 +238,11 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
 
     switch(driver)
     {
+        case Z80_DRIVER_NULL:
+            drv = z80_drv0;
+            len = sizeof(z80_drv0);
+            break;
+
         case Z80_DRIVER_PCM:
             drv = z80_drv1;
             len = sizeof(z80_drv1);
@@ -347,11 +382,15 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
         case Z80_DRIVER_XGM:
             // using auto sync --> enable XGM task on VInt
             if (!(driverFlags & DRIVER_FLAG_MANUALSYNC_XGM))
-                VIntProcess |= PROCESS_XGM_TASK;
+                VBlankProcess |= PROCESS_XGM_TASK;
             // define default XGM tempo (always based on NTSC timing)
-            SND_setMusicTempo_XGM(60);
+            XGM_setMusicTempo(60);
             // reset load calculation
             XGM_resetLoadCalculation();
+            break;
+
+        default:
+            VBlankProcess &= ~PROCESS_XGM_TASK;
             break;
     }
 }
@@ -367,7 +406,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
     currentDriver = Z80_DRIVER_CUSTOM;
 
     // remove XGM task if present
-    VIntProcess &= ~PROCESS_XGM_TASK;
+    VBlankProcess &= ~PROCESS_XGM_TASK;
 }
 
 u16 Z80_isDriverReady()

@@ -184,14 +184,24 @@ void Z80_init();
  *  \brief
  *      Return Z80 BUS taken state.
  */
-u16  Z80_isBusTaken();
+bool Z80_isBusTaken();
 /**
  *  \brief
  *      Request Z80 BUS.
  *  \param wait
  *      Wait for BUS request operation to complete.
  */
-void Z80_requestBus(u16 wait);
+void Z80_requestBus(bool wait);
+/**
+ *  \brief
+ *      Request Z80 BUS if not yet taken.
+ *  \param wait
+ *      Wait for BUS request operation to complete.
+ *  \return
+ *      Z80 BUS taken state before calling the function.
+ */
+bool Z80_getAndRequestBus(bool wait);
+
 /**
  *  \brief
  *      Release Z80 BUS.
