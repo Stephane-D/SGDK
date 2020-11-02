@@ -65,7 +65,7 @@ OBJS= $(addprefix out/, $(OBJ))
 
 DEPS= $(OBJS:.o=.d)
 
--include $(DEPS)
+#-include $(DEPS)
 
 LST= $(SRC_C:.c=.lst)
 LSTS= $(addprefix out/, $(LST))
