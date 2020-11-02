@@ -34,11 +34,10 @@
 
 
 #define IN_VINT                     1
-#define IN_HINT                     2
-#define IN_EXTINT                   4
+//#define IN_HINT                     2
+//#define IN_EXTINT                   4
 
-#define FORCE_VINT_VBLANK_ALIGN     (1 << 0)
-#define SHOW_FRAME_LOAD             (1 << 1)
+#define SHOW_FRAME_LOAD             (1 << 0)
 
 #define VINT_ALLOWED_LINE_DELAY     4
 
@@ -52,11 +51,10 @@ extern u16 currentDriver;
 extern u32 _stext;
 // size of initialized data segment
 extern u32 _sdata;
-// last V-Counter on VDP_waitVSycn() / VDP_waitVInt() call
+// last V-Counter on VDP_waitVSync() / VDP_waitVInt() call
 extern u16 lastVCnt;
 
 // extern library callback function (we don't want to share them)
-extern u16 BMP_doHBlankProcess();
 extern void BMP_doVBlankProcess();
 extern u16 SPR_doVBlankProcess();
 extern void XGM_doVBlankProcess();
@@ -70,7 +68,7 @@ extern int main(u16 hard);
 // forward
 static void internal_reset();
 // this one can't be static (used by vdp.c)
-void addFrameLoad(u16 frameLoad);
+bool addFrameLoad(u16 frameLoad);
 
 // exception callbacks
 VoidCallback *busErrorCB;
@@ -84,15 +82,10 @@ VoidCallback *traceCB;
 VoidCallback *line1x1xCB;
 VoidCallback *errorExceptionCB;
 VoidCallback *intCB;
-VoidCallback *internalVIntCB;
-VoidCallback *internalHIntCB;
-VoidCallback *internalExtIntCB;
-
 // user V-Int, H-Int and Ext-Int callbacks
-static VoidCallback *VIntCBPre;
-static VoidCallback *VIntCB;
-static VoidCallback *HIntCB;
-static VoidCallback *ExtIntCB;
+VoidCallback *vintCB;
+VoidCallback *hintCB;
+VoidCallback *eintCB;
 
 
 // exception state consumes 78 bytes of memory
@@ -103,16 +96,13 @@ __attribute__((externally_visible)) u16 ext1State;
 __attribute__((externally_visible)) u16 ext2State;
 __attribute__((externally_visible)) u16 srState;
 
-__attribute__((externally_visible)) vu32 VIntProcess;
-__attribute__((externally_visible)) vu32 HIntProcess;
-__attribute__((externally_visible)) vu32 ExtIntProcess;
+__attribute__((externally_visible)) vu16 VBlankProcess;
 __attribute__((externally_visible)) vu16 intTrace;
 
 // need to be accessed from external
 u16 intLevelSave;
 static s16 disableIntStack;
 static u16 flags;
-static u32 missedFrames;
 
 // store last frames CPU load (in [0..255] range), need to shared as it can be updated by vdp.c unit
 static u16 frameLoads[LOAD_MEAN_FRAME_NUM];
@@ -411,175 +401,26 @@ void _errorexception_callback()
 // level interrupt default callback
 void _int_callback()
 {
-
+    //
 }
 
 
-// V-Int Callback
-void _vint_callback()
+// Dummy V-Int Callback
+void _vint_dummy_callback()
 {
-    const u16 vcnt = GET_VCOUNTER;
-
-    intTrace |= IN_VINT;
-    vtimer++;
-
-    // detect if we are too late
-    bool late = FALSE;
-
-    // we cannot detect late frame if HV latching is enabled..
-    if (!VDP_getHVLatching())
-    {
-        // V28 mode --> we expect V counter to be in [224..227] range
-        if (VDP_getScreenHeight() == 224)
-        {
-            // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
-            if ((vcnt < 224) || (vcnt > (224 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
-        }
-        // V30 mode --> we expect V counter to be in [240..243] range
-        else
-        {
-            // V Counter outside expected range ? (rollback in PAL mode can mess up the test here..)
-            if ((vcnt < 240) || (vcnt > (240 + VINT_ALLOWED_LINE_DELAY))) late = TRUE;
-        }
-    }
-
-    // interrupt happened too late ?
-    if (late)
-    {
-        // we increase the number of missed frame
-        // FIXME: don't increase it as even if we are late we didn't missed it yet
-//        missedFrames++;
-        // assume 100% CPU usage (0-255 value) when V-Int happened too late
-        addFrameLoad(255);
-
-        // V-Interrupt VBlank alignment forced ? --> we force wait of next VBlank (and so V-Int)
-        if (flags & FORCE_VINT_VBLANK_ALIGN)
-        {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_U2("Warning: forced V-Int delay for VBlank alignment (frame miss) on frame #", vtimer, " - VCounter = ", vcnt);
-#endif
-
-            VDP_waitVSync();
-
-            // we need to return from interrupt as we don't have anyway to clear the new pending interrupt
-            // so we will take it again immediately but in time this time :)
-            intTrace &= ~IN_VINT;
-
-            return;
-        }
-
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-        KLog_U2("Warning: V-Int happened too late (possible frame miss) for frame #", vtimer, " - VCounter = ", vcnt);
-#endif
-    }
-
-    // call user callback (pre V-Int)
-    if (VIntCBPre) VIntCBPre();
-
-    u16 vintp = VIntProcess;
-    // may worth it
-    if (vintp)
-    {
-        // xgm processing (have to be done first, before DMA)
-        if (vintp & PROCESS_XGM_TASK)
-            XGM_doVBlankProcess();
-
-        // dma processing
-        if (vintp & PROCESS_DMA_TASK)
-        {
-            // DMA protection for XGM driver
-            if (currentDriver == Z80_DRIVER_XGM)
-            {
-                XGM_set68KBUSProtection(TRUE);
-
-                // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
-                if (SND_getForceDelayDMA_XGM()) waitSubTick(10);
-
-                DMA_flushQueue();
-
-                XGM_set68KBUSProtection(FALSE);
-            }
-            else
-                DMA_flushQueue();
-
-            // always clear process
-            vintp &= ~PROCESS_DMA_TASK;
-        }
-
-        // bitmap processing
-        if (vintp & PROCESS_BITMAP_TASK)
-            BMP_doVBlankProcess();
-        // palette fading processing
-        if (vintp & PROCESS_PALETTE_FADING)
-        {
-            if (!VDP_doFadingStep()) vintp &= ~PROCESS_PALETTE_FADING;
-        }
-
-        VIntProcess = vintp;
-    }
-
-    // frame load display enabled ?
-    if (flags & SHOW_FRAME_LOAD)
-    {
-        // use internal sprite 0 to show cursor
-        VDPSprite* vdpSprite = &vdpSpriteCache[0];
-
-        // update position relative to last stored VCounter
-        if ((lastVCnt > 224) || (lastVCnt < 4)) vdpSprite->y = 0x80;
-        else if (lastVCnt > 220) vdpSprite->y = 220 + 0x80;
-        else vdpSprite->y = lastVCnt + (0x80 - 4);
-
-        // write immediately in VRAM the sprite position change
-        vu16* pw = (u16 *) GFX_DATA_PORT;
-        vu32* pl = (u32 *) GFX_CTRL_PORT;
-
-        *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
-        *pw = vdpSprite->y;
-    }
-
-    // then call user callback
-    if (VIntCB) VIntCB();
-
-    // joy state refresh (better to do it after user's callback as it can eat some time)
-    JOY_update();
-
-    intTrace &= ~IN_VINT;
+    //
 }
 
-// H-Int Callback
-void _hint_callback()
+// Dummy H-Int Callback
+void _hint_dummy_callback()
 {
-    intTrace |= IN_HINT;
-
-    // bitmap processing
-    if (HIntProcess & PROCESS_BITMAP_TASK)
-    {
-        if (!BMP_doHBlankProcess()) HIntProcess &= ~PROCESS_BITMAP_TASK;
-    }
-
-    // ...
-
-    // then call user's callback
-    if (HIntCB) HIntCB();
-
-    intTrace &= ~IN_HINT;
+    //
 }
 
-// Ext-Int Callback
-void _extint_callback()
+// Dummy Ext-Int Callback
+void _extint_dummy_callback()
 {
-    intTrace |= IN_EXTINT;
-
-    // processing
-//    if (ExtIntProcess & ...)
-//    {
-//      ...
-//    }
-
-    // then call user's callback
-    if (ExtIntCB) ExtIntCB();
-
-    intTrace &= ~IN_EXTINT;
+    //
 }
 
 
@@ -635,9 +476,6 @@ void _start_entry()
     line1x1xCB = _line1x1x_callback;
     errorExceptionCB = _errorexception_callback;
     intCB = _int_callback;
-    internalVIntCB = _vint_callback;
-    internalHIntCB = _hint_callback;
-    internalExtIntCB = _extint_callback;
 
     internal_reset();
 
@@ -736,19 +574,16 @@ void _reset_entry()
 
 static void internal_reset()
 {
-    VIntCBPre = NULL;
-    VIntCB = NULL;
-    HIntCB = NULL;
-    VIntProcess = 0;
-    HIntProcess = 0;
-    ExtIntProcess = 0;
+    vintCB = _vint_dummy_callback;
+    hintCB = _hint_dummy_callback;
+    eintCB = _extint_dummy_callback;
+    VBlankProcess = 0;
     intTrace = 0;
     intLevelSave = 0;
     disableIntStack = 0;
 
     // default
-    flags = FORCE_VINT_VBLANK_ALIGN;
-    missedFrames = 0;
+    flags = 0;
 
     // reset frame load monitor
     memsetU16(frameLoads, 0, LOAD_MEAN_FRAME_NUM);
@@ -773,6 +608,87 @@ static void internal_reset()
 
     // enable interrupts
     SYS_setInterruptMaskLevel(3);
+}
+
+bool SYS_doVBlankProcess()
+{
+    return SYS_doVBlankProcessEx(ON_VBLANK_START);
+}
+
+bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
+{
+    if (processTime != IMMEDIATLY)
+    {
+        // wait for VBlank
+        if (VDP_waitVBlank(processTime == ON_VBLANK_START))
+        {
+            // frame late/miss detection and VBlank process forced on VBlank start ?
+            if (processTime == ON_VBLANK_START)
+            {
+                // SYS_doVBlankProcess() was called from V-Int callback ?
+                if (SYS_isInVInt())
+                    // we need to return from interrupt as we don't have anyway to clear the new pending interrupt
+                    // so we will take it again immediately but should be in time for this one :)
+                    return FALSE;
+            }
+        }
+    }
+
+    u16 vbp = VBlankProcess;
+
+    // dma processing
+    if (vbp & PROCESS_DMA_TASK)
+    {
+        // DMA protection for XGM driver
+        if (currentDriver == Z80_DRIVER_XGM)
+        {
+            XGM_set68KBUSProtection(TRUE);
+
+            // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
+            if (XGM_getForceDelayDMA()) waitSubTick(10);
+            DMA_flushQueue();
+
+            XGM_set68KBUSProtection(FALSE);
+        }
+        else
+            DMA_flushQueue();
+
+        // always clear process
+        vbp &= ~PROCESS_DMA_TASK;
+    }
+
+    // palette fading processing
+    if (vbp & PROCESS_PALETTE_FADING)
+    {
+        if (!PAL_doFadeStep()) vbp &= ~PROCESS_PALETTE_FADING;
+    }
+
+    // store back
+    VBlankProcess = vbp;
+
+    // frame load display enabled ?
+    if (flags & SHOW_FRAME_LOAD)
+    {
+        // use internal sprite 0 to show cursor
+        VDPSprite* vdpSprite = &vdpSpriteCache[0];
+
+        // update position relative to last stored VCounter
+        if ((lastVCnt > 224) || (lastVCnt < 4)) vdpSprite->y = 0x80;
+        else if (lastVCnt > 220) vdpSprite->y = 220 + 0x80;
+        else vdpSprite->y = lastVCnt + (0x80 - 4);
+
+        // write immediately in VRAM the sprite position change
+        vu16* pw = (u16 *) GFX_DATA_PORT;
+        vu32* pl = (u32 *) GFX_CTRL_PORT;
+
+        *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+        *pw = vdpSprite->y;
+    }
+
+    // joy state refresh
+    JOY_update();
+
+    return TRUE;
 }
 
 void SYS_disableInts()
@@ -831,35 +747,32 @@ void SYS_enableInts()
 #endif
 }
 
-void SYS_setVIntPreCallback(VoidCallback *CB)
-{
-    VIntCBPre = CB;
-}
-
 void SYS_setVIntCallback(VoidCallback *CB)
 {
-    VIntCB = CB;
+    if (CB) vintCB = CB;
+    else vintCB = _vint_dummy_callback;
 }
 
 void SYS_setHIntCallback(VoidCallback *CB)
 {
-    HIntCB = CB;
+    if (CB) hintCB = CB;
+    else hintCB = _hint_dummy_callback;
 }
 
 void SYS_setExtIntCallback(VoidCallback *CB)
 {
-    ExtIntCB = CB;
+    if (CB) eintCB = CB;
+    else eintCB = _extint_dummy_callback;
 }
 
 void SYS_setVIntAligned(bool value)
 {
-    if (value) flags |= FORCE_VINT_VBLANK_ALIGN;
-    else flags &= ~FORCE_VINT_VBLANK_ALIGN;
+    // deprecated
 }
 
-u16 SYS_isVIntAligned()
+bool SYS_isVIntAligned()
 {
-    return (flags & FORCE_VINT_VBLANK_ALIGN)?TRUE:FALSE;
+    return FALSE;
 }
 
 void SYS_showFrameLoad()
@@ -874,8 +787,6 @@ void SYS_showFrameLoad()
     vdpSprite->attribut = TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_FONTINDEX + 94);
     vdpSprite->x = 0x80;
 
-    SYS_disableInts();
-
     // apply changes immediately in VRAM
     vu16* pw = (u16 *) GFX_DATA_PORT;
     vu32* pl = (u32 *) GFX_CTRL_PORT;
@@ -888,8 +799,6 @@ void SYS_showFrameLoad()
     *pw = vdpSprite->size_link;
     *pw = vdpSprite->attribut;
     *pw = vdpSprite->x;
-
-    SYS_enableInts();
 }
 
 void SYS_hideFrameLoad()
@@ -901,8 +810,6 @@ void SYS_hideFrameLoad()
     // hide it
     vdpSprite->y = 0;
 
-    SYS_disableInts();
-
     // apply changes immediately in VRAM
     vu16* pw = (u16 *) GFX_DATA_PORT;
     vu32* pl = (u32 *) GFX_CTRL_PORT;
@@ -911,8 +818,6 @@ void SYS_hideFrameLoad()
     *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
     // no need to write more
     *pw = vdpSprite->y;
-
-    SYS_enableInts();
 }
 
 u16 SYS_isInVIntCallback()
@@ -922,17 +827,23 @@ u16 SYS_isInVIntCallback()
 
 u16 SYS_isInHIntCallback()
 {
-    return intTrace & IN_HINT;
+    return 0;
 }
 
 u16 SYS_isInExtIntCallback()
 {
-    return intTrace & IN_EXTINT;
+    return 0;
 }
 
 u16 SYS_isInInterrupt()
 {
-    return intTrace;
+    return SYS_isInVInt();
+}
+
+
+bool SYS_isInVInt()
+{
+    return (intTrace & IN_VINT)?TRUE:FALSE;
 }
 
 u16 SYS_isNTSC()
@@ -990,21 +901,18 @@ fix32 SYS_getFPSAsFloat()
 
 
 // used to compute average frame load on 8 frames
-void addFrameLoad(u16 frameLoad)
+bool addFrameLoad(u16 frameLoad)
 {
-    static u16 lastMissedFrame = 0;
     static u16 lastVTimer = 0;
 
+    bool miss = FALSE;
     u16 v = frameLoad;
-    // force full load if we have frame miss
-    if ((lastMissedFrame != missedFrames) || ((vtimer - lastVTimer) > 1))
+    // frame miss ?
+    if ((vtimer - lastVTimer) > 1)
     {
-        lastMissedFrame = missedFrames;
+        // force frame load to 255
         v = 255;
-
-//#if (LIB_DEBUG != 0)
-//        KLog("FrameLoad: frame missed detection, force max frame load (255)");
-//#endif
+        miss = TRUE;
     }
 
     cpuFrameLoad -= frameLoads[frameLoadIndex];
@@ -1012,21 +920,13 @@ void addFrameLoad(u16 frameLoad)
     cpuFrameLoad += v;
     frameLoadIndex = (frameLoadIndex + 1) & (LOAD_MEAN_FRAME_NUM - 1);
     lastVTimer = vtimer;
+
+    return miss;
 }
 
 u16 SYS_getCPULoad()
 {
    return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 255);
-}
-
-u32 SYS_getMissedFrames()
-{
-    return missedFrames;
-}
-
-void SYS_resetMissedFrames()
-{
-    missedFrames = 0;
 }
 
 

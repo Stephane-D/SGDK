@@ -13,10 +13,19 @@
 
 #define PROCESS_PALETTE_FADING      (1 << 0)
 #define PROCESS_BITMAP_TASK         (1 << 1)
-#define PROCESS_TILECACHE_TASK      (1 << 2)
-#define PROCESS_DMA_TASK            (1 << 3)
-#define PROCESS_XGM_TASK            (1 << 4)
+#define PROCESS_DMA_TASK            (1 << 2)
+#define PROCESS_XGM_TASK            (1 << 3)
 
+/**
+ *  \brief
+ *      Define at which period to do VBlank process (see #SYS_doVBlankProcess() method)
+ */
+typedef enum
+{
+    IMMEDIATLY,         /** Start VBlank process immediatly whatever we are in blanking period or not */
+    ON_VBLANK ,         /** Start VBlank process on VBlank period, start immediatly in we are already in VBlank */
+    ON_VBLANK_START     /** Start VBlank process on VBlank *start* period, means that we wait the next *start* of VBlank period if we missed it */
+} VBlankProcessTime;
 
 /**
  *  \brief
@@ -152,6 +161,56 @@ void SYS_hardReset();
 
 /**
  *  \brief
+ *      Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..)
+ *  \return FALSE if process was canceled because the method was called from V-Int (vertical interrupt) callback
+ *      in which case we exit the function as V-Int will be triggered immediately.<br>
+ *
+ * Do all the SGDK VBlank process.<br>
+ * Some specific processing should be done during the Vertical Blank period as the VDP is idle at this time.
+ * This is always where we should do all VDP data transfer (using the DMA preferably) but we can also do the processes which
+ * has to be done at a frame basis (joypad polling, sound driver sync/update..)<br>
+ * In the case of SGDK, calling this method will actually do the following tasks:<br>
+ * - flush the DMA queue<br>
+ * - process asynchronous palette fading operation<br>
+ * - joypad polling<br>
+ * <br>
+ * Note that VBlank process may be delayed to next VBlank if we missed the start of the VBlank period so that will cause a frame miss.
+ */
+bool SYS_doVBlankProcess();
+/**
+ *  \brief
+ *      Do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..)
+ *  \param processTime
+ *      Define at which period we start VBlank process, accepted values are:<br>
+ *      <b>IMMEDIATELY</b>      Start VBlank process immediatly whatever we are in blanking period or not
+ *                              (*highly discouraged* unless you really know what you're doing !)<br>
+ *      <b>ON_VBLANK</b>        Start VBlank process on VBlank period, if we already are in VBlank period
+ *                              it starts immediately (discouraged as VBlank period may be shortened and all
+ *                              processes cannot be completed in time)<br>
+ *      <b>ON_VBLANK_START</b>  Start VBlank process on VBlank *start* period (recommanded as default value).
+ *                              That means that if #SYS_doVBlankProcess() is called too late (after the start
+ *                              of VBlank) then we force a passive wait for the next start of VBlank so we can
+ *                              align the processing with the beggining of VBlank period to ensure fast DMA
+ *                              transfert and avoid possible graphical glitches due to VRAM update during active display.<br>
+ *  \return FALSE if process was canceled because we forced Start VBlank process (<i>time = ON_VBLANK_START</i>)
+ *      and the method was called from V-Int (vertical interrupt) callback in which case we exit the function
+ *      as V-Int will be triggered immediately.<br>
+ *
+ * Do all the SGDK VBlank process.<br>
+ * Some specific processing should be done during the Vertical Blank period as the VDP is idle at this time.
+ * This is always where we should do all VDP data transfer (using the DMA preferably) but we can also do the processes which
+ * has to be done at a frame basis (joypad polling, sound driver sync/update..)<br>
+ * In the case of SGDK, calling this method will actually do the following tasks:<br>
+ * - flush the DMA queue<br>
+ * - process asynchronous palette fading operation<br>
+ * - joypad polling<br>
+ * <br>
+ * Note that depending the used <i>time</i> parameter, VBlank process may be delayed to next VBlank so that will wause a frame miss.
+ */
+bool SYS_doVBlankProcessEx(VBlankProcessTime processTime);
+
+/**
+ *  \brief
  *      Return current interrupt mask level.
  *
  * See SYS_setInterruptMaskLevel() for more informations about interrupt mask level.
@@ -202,19 +261,21 @@ u16 SYS_getAndSetInterruptMaskLevel(u16 value);
  *      Disable interrupts (Vertical, Horizontal and External).
  *
  *
- * This method is used to temporary disable interrupt (to protect some VDP accesses for instance)
- * and should always be followed by SYS_enableInts().<br>
- * Be careful, this method can't be used if you are currently processing an interrupt !
+ * This method is used to temporary disable interrupts to protect some processes and should always be followed by SYS_enableInts().<br>
+ * You need to protect against interrupts any processes than can be perturbed / corrupted by the interrupt callback code (IO ports access in general but not only).<br>
+ * Now by default SGDK doesn't do anything armful in its interrupts handlers (except with the Bitmap engine) so it's not necessary to protect from interrupts by default
+ * but you may need it if your interrupts callback code does mess with VDP for instance.<br>
+ * Note that you can nest #SYS_disableInts / #SYS_enableInts() calls.
  *
  * \see SYS_enableInts()
  */
 void SYS_disableInts();
 /**
  *  \brief
- *      Reenable interrupts (Vertical, Horizontal and External).
+ *      Re-enable interrupts (Vertical, Horizontal and External).
  *
- * This method is used to reenable interrupt after a call to SYS_disableInts().<br>
- * Has no effect if called without a prior SYS_disableInts() call.
+ * This method is used to reenable interrupts after a call to #SYS_disableInts().<br>
+ * Note that you can nest #SYS_disableInts / #SYS_enableInts() calls.
  *
  * \see SYS_disableInts()
  */
@@ -222,38 +283,20 @@ void SYS_enableInts();
 
 /**
  *  \brief
- *      Set start of 'Vertical interrupt' callback method.
- *
- *  \param CB
- *      Pointer to the method to call when the Vertical Interrupt just started.<br>
- *      You can remove current callback by passing a null pointer here.
- *
- * Vertical interrupt happen at the end of display period right before vertical blank.<br>
- * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
- * The difference with the SYS_setVIntCallback(..) method is this one is called right after
- * the Vertical Interrupt happened and before any internals SGDK V-Int processes.<br>
- * This is useful when you really need to do something right at the beginning of the V-Blank area.
- *
- * \see SYS_setVIntCallback(VoidCallback *CB);
- * \see SYS_setHIntCallback(VoidCallback *CB);
- */
-void SYS_setVIntPreCallback(VoidCallback *CB);
-/**
- *  \brief
  *      Set 'Vertical Interrupt' callback method.
  *
  *  \param CB
  *      Pointer to the method to call on Vertical Interrupt.<br>
- *      You can remove current callback by passing a null pointer here.
+ *      You can remove current callback by passing a <i>NULL</i> pointer here.
  *
- * Vertical interrupt happen at the end of display period right before vertical blank.<br>
- * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
- * Note that the callback will be called after some internal SGDK V-Int processes and so probably
- * not right at the start of the V-Blank area.<br>
- * For that you can use the SYS_setPreVIntCallback(..) method instead.
+ * Vertical interrupt happen at the end of display period at the start of the vertical blank period.<br>
+ * This period is usually used to prepare next frame data (refresh sprites, scrolling ...) though now
+ * SGDK handle most of these process using #SYS_doVBlankProcess() so you can control it manually (do it from main loop or put it in Vint callback).<br>
+ * The only things that SGDK always handle from the vint callback is the XGM sound driver music tempo and Bitmap engine phase reset.<br>
+ * It's recommended to keep your code as fast as possible as it will eat precious VBlank time, nor you should touch the VDP from your Vint callback
+ * otherwise you will need to protect any VDP accesses from your main loop (which is painful).
  *
  * \see SYS_setHIntCallback(VoidCallback *CB);
- * \see SYS_setVIntPreCallback(VoidCallback *CB);
  */
 void SYS_setVIntCallback(VoidCallback *CB);
 /**
@@ -265,7 +308,9 @@ void SYS_setVIntCallback(VoidCallback *CB);
  *      You can remove current callback by passing a null pointer here.
  *
  * Horizontal interrupt happen at the end of scanline display period right before Horizontal blank.<br>
- * This period is usually used to do mid frame changes (palette, scrolling or others raster effect)
+ * This period is usually used to do mid frame changes (palette, scrolling or others raster effect).<br>
+ * When you do that, don't forget to protect your VDP access from your main loop using
+ * #SYS_disableInts() / #SYS_enableInts() otherwise you may corrupt your VDP writes.
  */
 void SYS_setHIntCallback(VoidCallback *CB);
 /**
@@ -281,53 +326,44 @@ void SYS_setHIntCallback(VoidCallback *CB);
 void SYS_setExtIntCallback(VoidCallback *CB);
 
 /**
- *  \brief
- *      Return != 0 if we are in the V-Int callback method.
- *
- * This method tests if we are currently processing a Vertical retrace interrupt.
+ *  \deprecated
+ *      Use #SYS_isInVInt() instead
  */
 u16 SYS_isInVIntCallback();
 /**
- *  \brief
- *      Return != 0 if we are in the H-Int callback method.
- *
- * This method tests if we are currently processing a Horizontal retrace interrupt.
+ *  \deprecated
+ *      Always return 0 now, you need to use your own flag to detect if you are processing a Horizontal interrupt
  */
 u16 SYS_isInHIntCallback();
 /**
- *  \brief
- *      Return != 0 if we are in the Ext-Int callback method.
- *
- * This method tests if we are currently processing an External interrupt.
+ *  \deprecated
+ *      Always return 0 now, you need to use your own flag to detect if you are processing an External interrupt
  */
 u16 SYS_isInExtIntCallback();
 /**
- *  \brief
- *      Return != 0 if we are in an interrupt callback method (Vertical, Horizontal or External)
- *
- * This method tests if we are currently processing an interrupt.
+ *  \deprecated
+ *      Use #SYS_isInVInt() instead, only vertical interrupt supported now
  */
 u16 SYS_isInInterrupt();
 
 /**
  *  \brief
- *      Set V-Interrupt VBlank alignment state (default state is TRUE).
+ *      Return TRUE if we are in the V-Interrupt process.
  *
- *  This method allows to force the V-Interrupt to be aligned on VBlank period.<br>
- *  It means that if the V-Int happen too late (after start of VBlank) then we force a passive wait for the next VBlank so we can align
- *  start of V-Int processing with beggining of VBlank period (to ensure fast DMA transfert and avoid possible graphical glitches due to VRAM update during active display).<br>
- *  When a V-Int is delayed to next VBlank then we increase the number of missed frames.
+ * This method tests if we are currently processing a Vertical retrace interrupt (V-Int callback).
+ */
+bool SYS_isInVInt();
 
- * \see SYS_getMissedFrames()
+/**
+ *  \deprecated
+ *      Not anymore useful as #SYS_doVBlankProcess() handle that directly now
  */
 void SYS_setVIntAligned(bool value);
 /**
- *  \brief
- *      Return != 0 if V-Interrupt are forced to be aligned on VBlank.
- *
- * \see SYS_setVIntAligned(bool)
+ *  \deprecated
+ *      Not anymore useful as #SYS_doVBlankProcess() handle that directly now
  */
-u16 SYS_isVIntAligned();
+bool SYS_isVIntAligned();
 
 /**
  *  \brief
@@ -390,22 +426,6 @@ void SYS_showFrameLoad();
  * \see SYS_showFrameLoad()
  */
 void SYS_hideFrameLoad();
-/**
- *  \brief
- *      Return the number of missed frames (a missed frame mean that a VInt was missed)
- *
- * \see SYS_setVIntAligned(bool)
- * \see SYS_isVIntAligned()
- * \see SYS_resetMissedFrames()
- */
-u32 SYS_getMissedFrames();
-/**
- *  \brief
- *      Reset the number of missed frames
- *
- * \see SYS_getMissedFrames()
- */
-void SYS_resetMissedFrames();
 
 /**
  *  \brief
