@@ -1,0 +1,27 @@
+; ###########################      define      ##############################
+
+            INCLUDE "z80_def.i80"   ; basic definitions
+
+; ###########################       init       ##############################
+
+            ORG     $0000
+
+init
+            DI                      ; disable ints
+            LD      SP, $2000       ; setup stack
+            IM      $01             ; set int mode 1
+            LD      A, $80
+            LD      (STATUS), A     ; driver ready
+            XOR     A
+            LD      (COMMAND), A    ; command cleared
+
+loop
+            JP      loop            ; dumy driver, infinite loop
+
+
+; ###########################     interrupt    ##############################
+
+            BLOCK   $0038-$
+
+interrupt                           ; do nothing in this program
+            RETI
