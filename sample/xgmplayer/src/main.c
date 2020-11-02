@@ -408,6 +408,9 @@ int main()
 //        SYS_enableInts();
 
 //        VDP_setBackgroundColor(3);
+//        SYS_disableInts();
+//        SYS_doVBlankProcess();
+//        SYS_enableInts();
         VDP_waitVSync();
 //        VDP_setBackgroundColor(0);
 
@@ -1761,6 +1764,9 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 
 void vint()
 {
+    // do vblank process directly from the vint callback (easier to manage here)
+    SYS_doVBlankProcessEx(IMMEDIATLY);
+
     // set window visible from first row up to row 13
     VDP_setWindowVPos(FALSE, 13);
     // update track list scroll position

@@ -115,11 +115,11 @@ int main(u16 hard)
     VDP_setScreenWidth320();
 
     // init SFX
-    SND_setPCM_XGM(SFX_JUMP, sonic_jump_sfx, sizeof(sonic_jump_sfx));
-    SND_setPCM_XGM(SFX_ROLL, sonic_roll_sfx, sizeof(sonic_roll_sfx));
-    SND_setPCM_XGM(SFX_STOP, sonic_stop_sfx, sizeof(sonic_stop_sfx));
+    XGM_setPCM(SFX_JUMP, sonic_jump_sfx, sizeof(sonic_jump_sfx));
+    XGM_setPCM(SFX_ROLL, sonic_roll_sfx, sizeof(sonic_roll_sfx));
+    XGM_setPCM(SFX_STOP, sonic_stop_sfx, sizeof(sonic_stop_sfx));
     // start music
-    SND_startPlay_XGM(sonic_music);
+    XGM_startPlay(sonic_music);
 
     // init sprite engine with default parameters
     SPR_init();
@@ -249,7 +249,7 @@ int main(u16 hard)
         // update sprites
         SPR_update();
 
-        VDP_waitVInt();
+        SYS_doVBlankProcess();
 
         if (scrollNeedUpdate)
         {
