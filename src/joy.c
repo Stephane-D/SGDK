@@ -53,12 +53,11 @@ void JOY_reset()
 
     gport = 0xFFFF;
 
-    /* disable ints */
+    /* disable ints (we can do it here for safety) */
     SYS_disableInts();
 
 #if (HALT_Z80_ON_IO == 1)
-    z80state = Z80_isBusTaken();
-    if (!z80state) Z80_requestBus(FALSE);
+    z80state = Z80_getAndRequestBus(TRUE);
 #endif
 
     /* check for EA 4-Way Play */
@@ -131,8 +130,7 @@ void JOY_reset()
         VDP_waitVSync();
 
 #if (HALT_Z80_ON_IO == 1)
-        z80state = Z80_isBusTaken();
-        if (!z80state) Z80_requestBus(FALSE);
+        z80state = Z80_getAndRequestBus(TRUE);
 #endif
 
         /* get ID port 1 */
@@ -273,8 +271,7 @@ static void externalIntCB()
     if (extSet || (gport == 0xFFFF)) return;
 
 #if (HALT_Z80_ON_IO == 1)
-    z80state = Z80_isBusTaken();
-    if (!z80state) Z80_requestBus(FALSE);
+    z80state = Z80_getAndRequestBus(TRUE);
 #endif
 
     pb = (vu8 *)0xa10003 + gport*2;
@@ -310,8 +307,7 @@ void JOY_setSupport(u16 port, u16 support)
     if (port > PORT_2) return;
 
 #if (HALT_Z80_ON_IO == 1)
-    z80state = Z80_isBusTaken();
-    if (!z80state) Z80_requestBus(FALSE);
+    z80state = Z80_getAndRequestBus(TRUE);
 #endif
 
     if ((portType[port] == PORT_TYPE_MENACER) || (portType[port] == PORT_TYPE_JUSTIFIER))
@@ -563,11 +559,7 @@ u16 JOY_waitPressTime(u16 joy, u16 btn, u16 time)
     {
         u16 state;
 
-        VDP_waitVSync();
-
-        /* vblank int won't occur - do JOY_update() manually */
-        if (SYS_getInterruptMaskLevel() >= 6)
-            JOY_update();
+        SYS_doVBlankProcess();
 
         if (joy == JOY_ALL)
         {
@@ -1142,8 +1134,7 @@ void JOY_update()
     SYS_disableInts();
 
 #if (HALT_Z80_ON_IO == 1)
-    z80state = Z80_isBusTaken();
-    if (!z80state) Z80_requestBus(FALSE);
+    z80state = Z80_getAndRequestBus(TRUE);
 #endif
 
     switch (portSupport[PORT_1])
