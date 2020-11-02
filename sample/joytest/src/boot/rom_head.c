@@ -41,8 +41,8 @@ const struct
 #endif
     0x00FF0000,
     0x00FFFFFF,
-    "  ",
-    0x0000,
+    "RA",
+    0xF820,
     0x00200000,
     0x002001FF,
     "            ",

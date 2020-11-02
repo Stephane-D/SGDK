@@ -104,6 +104,9 @@ static void handleInput()
 {
     u16 value;
 
+    // need to call it manually as we don't use SYS_doVBlankProcess() here
+    JOY_update();
+
     value = JOY_readJoypad(JOY_1);
 
     if (value & BUTTON_A)

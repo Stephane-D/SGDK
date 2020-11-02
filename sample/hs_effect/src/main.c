@@ -2,7 +2,7 @@
   DEMO TEST SPOTLIGHT EFFECT (LINE SCROLL + SHADOW MODE)
 
 ******************************************************************************/
-#include <genesis.h>
+#include "genesis.h"
 
 // CONSTANTS ==================================================================
 
@@ -175,7 +175,7 @@ int main()
         VDP_updateSprites(NUM_SPRITES, TRUE);
 
         // Drawing/movement speed down
-        VDP_waitVSync();
+        SYS_doVBlankProcess();
 
         // Set Horizontal Scroll and update sprites during blank period
         VDP_setHorizontalScrollLine(BG_A, 0, aux, NUM_LINES, 1);

@@ -5,16 +5,18 @@
 #define MAX_POINTS  256
 
 
-Vect3D_f16 pts_3D[MAX_POINTS];
-Vect2D_s16 pts_2D[MAX_POINTS];
-
-
 extern Mat3D_f16 MatInv;
 extern Mat3D_f16 Mat;
 
+//Vect3D_f16 pts_3D[MAX_POINTS];
+//Vect2D_s16 pts_2D[MAX_POINTS];
+//Vect3D_f16 vtab_3D[MAX_POINTS];
+//Vect2D_s16 vtab_2D[MAX_POINTS];
 
-Vect3D_f16 vtab_3D[MAX_POINTS];
-Vect2D_s16 vtab_2D[MAX_POINTS];
+Vect3D_f16* pts_3D;
+Vect2D_s16* pts_2D;
+Vect3D_f16* vtab_3D;
+Vect2D_s16* vtab_2D;
 
 Rotation3D rotation;
 Translation3D translation;
@@ -43,6 +45,7 @@ int main()
 
     // reduce DMA buffer size to avoid running out of memory (we don't need it)
     DMA_setBufferSize(2048);
+    MEM_pack();
 
     // speed up controller checking
     JOY_setSupport(PORT_1, JOY_SUPPORT_6BTN);
@@ -51,6 +54,11 @@ int main()
     JOY_setEventHandler(handleJoyEvent);
 
     BMP_init(TRUE, BG_A, PAL0, FALSE);
+
+    pts_3D = MEM_alloc(MAX_POINTS * sizeof(Vect3D_f16));
+    pts_2D = MEM_alloc(MAX_POINTS * sizeof(Vect2D_s16));
+    vtab_3D = MEM_alloc(MAX_POINTS * sizeof(Vect3D_f16));
+    vtab_2D = MEM_alloc(MAX_POINTS * sizeof(Vect2D_s16));
 
     camdist = FIX16(15);
 
@@ -68,6 +76,9 @@ int main()
 
     while (1)
     {
+        // need to call it manually as we don't use SYS_doVBlankProcess() here
+        JOY_update();
+
         doActionJoy(JOY_1, JOY_readJoypad(JOY_1));
 
         M3D_setCamDistance(camdist);
@@ -81,7 +92,7 @@ int main()
         updatePointsPos();
 
         // ensure previous flip buffer request has been started
-        BMP_waitWhileFlipRequestPending();
+//        BMP_waitWhileFlipRequestPending();
         BMP_showFPS(1);
 
         BMP_clear();

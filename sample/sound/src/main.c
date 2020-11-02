@@ -140,10 +140,9 @@ int main()
 
     refreshDriverInfos();
 
-
-    while(1)
+    while(TRUE)
     {
-        VDP_waitVSync();
+        SYS_doVBlankProcess();
     }
 }
 
