@@ -18,7 +18,7 @@
 
 
 // we don't want to share them
-extern vu32 VIntProcess;
+extern vu16 VBlankProcess;
 
 
 const u16 palette_black_all[64] =
@@ -344,33 +344,17 @@ void PAL_setPaletteDMA(u16 numPal, const u16* pal)
 
 static void setFadePalette(u16 ind, const u16 *src, u16 len)
 {
-    // we are inside VInt callback --> just set palette colors immediately
-    if (SYS_isInVIntCallback())
-    {
-        static u32 lastVTimer = 0;
+    static u32 lastVTimer = 0;
 
-        // be sure to wait at least 1 frame between set fade palette call
-        if (lastVTimer == vtimer) VDP_waitVSync();
+    // be sure to wait at least 1 frame between set fade palette call
+    if (lastVTimer == vtimer) VDP_waitVSync();
 
-        // use DMA for long transfer
-        if (len > 16) DMA_doDma(DMA_CRAM, (void*) src, ind * 2, len, 2);
-        else PAL_setColors(ind, src, len);
+    // use DMA for long transfer
+    if (len > 16) DMA_doDma(DMA_CRAM, (void*) src, ind * 2, len, 2);
+    else PAL_setColors(ind, src, len);
 
-        // keep track of last update
-        lastVTimer = vtimer;
-    }
-    else
-    {
-        // wait VSync (always)
-        VDP_waitVSync();
-
-        // disable interrupts to not conflict with VInt accesses
-        SYS_disableInts();
-        // use DMA for long transfer
-        if (len > 16) DMA_doDma(DMA_CRAM, (void*) src, ind * 2, len, 2);
-        else PAL_setColors(ind, src, len);
-        SYS_enableInts();
-    }
+    // keep track of last update
+    lastVTimer = vtimer;
 }
 
 //static void setFadePalette(u16 ind, const u16 *src, u16 len)
@@ -508,7 +492,7 @@ bool PAL_doFadeStep()
 
 void PAL_interruptFade()
 {
-    VIntProcess &= ~PROCESS_PALETTE_FADING;
+    VBlankProcess &= ~PROCESS_PALETTE_FADING;
 }
 
 void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame, bool async)
@@ -517,7 +501,7 @@ void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 
     if (!PAL_initFade(fromCol, toCol, palSrc, palDst, numFrame)) return;
 
     // process asynchrone fading
-    if (async) VIntProcess |= PROCESS_PALETTE_FADING;
+    if (async) VBlankProcess |= PROCESS_PALETTE_FADING;
     else
     {
         // process fading immediatly
@@ -530,11 +514,8 @@ void PAL_fadeTo(u16 fromCol, u16 toCol, const u16* pal, u16 numFrame, bool async
 {
     u16 tmp_pal[64];
 
-    // disable interrupts to not conflict with VInt accesses
-    SYS_disableInts();
     // read current palette
     PAL_getColors(fromCol, tmp_pal, (toCol - fromCol) + 1);
-    SYS_enableInts();
     // do the fade
     PAL_fade(fromCol, toCol, tmp_pal, pal, numFrame, async);
 }
@@ -594,10 +575,10 @@ void PAL_fadeInAll(const u16* pal, u16 numFrame, bool async)
 
 u16 PAL_isDoingFade()
 {
-    return (VIntProcess & PROCESS_PALETTE_FADING)?TRUE:FALSE;
+    return (VBlankProcess & PROCESS_PALETTE_FADING)?TRUE:FALSE;
 }
 
 void PAL_waitFadeCompletion()
 {
-    while (VIntProcess & PROCESS_PALETTE_FADING);
+    while (VBlankProcess & PROCESS_PALETTE_FADING);
 }
