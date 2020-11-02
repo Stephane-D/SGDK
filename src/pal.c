@@ -580,5 +580,10 @@ u16 PAL_isDoingFade()
 
 void PAL_waitFadeCompletion()
 {
-    while (VBlankProcess & PROCESS_PALETTE_FADING);
+    if (PAL_isDoingFade())
+    {
+        // need to do VBlank process otherwise we can wait a long time for completion ^^
+        while (VBlankProcess & PROCESS_PALETTE_FADING)
+            SYS_doVBlankProcess();
+    }
 }
