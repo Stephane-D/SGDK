@@ -98,7 +98,7 @@ u32  getTimer(u16 numTimer, u16 restart);
 
 /**
  *  \brief
- *      Wait for a certain amount of subticks.
+ *      Wait for a certain amount of subticks (1/76800 second based).
  *
  *  \param subtick
  *      Number of subtick to wait for.
@@ -108,12 +108,12 @@ u32  getTimer(u16 numTimer, u16 restart);
 void waitSubTick(u32 subtick);
 /**
  *  \brief
- *      Wait for a certain amount of ticks.
+ *      Wait for a certain amount of ticks (1/300 second based).
  *
  *  \param tick
  *      Number of tick to wait for.
  *
- * <b>WARNING:</b> 5/6 (PAL/NTSC) ticks based timer so use 5/6 ticks as minimum wait value.
+ * <b>WARNING:</b> 5/6 (PAL/NTSC) ticks based timer so use 5 or 6 ticks as minimum wait value.
  */
 void waitTick(u32 tick);
 /**

@@ -559,7 +559,10 @@ u16 JOY_waitPressTime(u16 joy, u16 btn, u16 time)
     {
         u16 state;
 
-        SYS_doVBlankProcess();
+        // more than 1 frame remaining ? directly use SYS_doVBlankProcess()
+        if ((maxtime - current) >= 20) SYS_doVBlankProcess();
+        // just update JOY states
+        else JOY_update();
 
         if (joy == JOY_ALL)
         {

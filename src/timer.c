@@ -36,7 +36,7 @@ extern u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 vu32 vtimer;
 
 static u32 timer[MAXTIMER];
-static u32 lastSTick = 0;
+static u32 lastTick = 0;
 
 
 // return elapsed time from console reset (1/76800 second based)
@@ -47,8 +47,8 @@ u32 getSubTickInternal(u16 blank, u16 vcnt, u32 vt)
     u32 current = (vt << 8) + vc;
 
     // possible only if vtimer not yet increase while in vblank --> fix
-    if (current < lastSTick) current += 256;
-    lastSTick = current;
+    if (current < lastTick) current += 256;
+    lastTick = current;
 
     if (IS_PALSYSTEM) return current * 6;
     else return current * 5;
@@ -129,37 +129,63 @@ void waitSubTick(u32 subtick)
     }
 
     const u32 start = getSubTick();
+    u32 max = start + subtick;
     u32 current;
+
+    // need to check for overflow
+    if (max < start) max = 0xFFFFFFFF;
 
     // wait until we reached subtick
     do
     {
+        s32 remain;
+
         current = getSubTick();
-        // error du to the VCounter roolback, ignore...
+        // error due to the VCounter roolback, ignore...
         if (current < start) current = start;
+
+        // still one frame to wait ?
+        remain = max - current;
+        if (remain >= 1280)
+            // do vblank process (maintain compatiblity with previous SGDK)
+            SYS_doVBlankProcess();
     }
-    while ((current - start) < subtick);
+    while (current < max);
 }
 
 // wait for a certain amount of tick
 void waitTick(u32 tick)
 {
-    u32 start;
-    u32 i;
-
     // waitTick(...) can not be called from V-Int callback or when V-Int is disabled
     if (SYS_getInterruptMaskLevel() >= 6)
     {
-        i = tick;
-
-        while(i--) waitSubTick(256);
-
+        // cannot wait more than that using sub tick
+        if (tick >= 0xFFFFFF) waitSubTick(0xFFFFFFFF);
+        else waitSubTick(tick * 256);
         return;
     }
 
-    start = getTick();
-    // wait until we reached tick
-    while ((getTick() - start) < tick);
+    const u32 start = getTick();
+    u32 max = start + tick;
+    u32 current;
+
+    // need to check for overflow
+    if (max < start) max = 0xFFFFFFFF;
+
+    // wait until we reached subtick
+    do
+    {
+        s32 remain;
+
+        current = getTick();
+
+        // still one frame to wait ?
+        remain = max - current;
+        if (remain >= 5)
+            // do vblank process (maintain compatiblity with previous SGDK)
+            SYS_doVBlankProcess();
+    }
+    while (current < max);
 }
 
 // wait for a certain amount of millisecond (~3.33 ms based timer when wait is >= 100ms)
