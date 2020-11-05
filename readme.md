@@ -11,8 +11,7 @@ Note that SGDK also requires Java (custom tools need it) so you need to have Jav
 
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
 GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see COPYING.RUNTIME file)
-<br>
-<br>
+ 
 ### GET STARTED
 
 First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). If that's not the case then i recommend you to read these documents:
@@ -33,8 +32,7 @@ You can also follow up-to-date and more complete online tutorials as this one (t
 https://www.ohsat.com/tutorial/
 You also have the great ones from Danibus (spanish only):
 https://danibus.wordpress.com/
-<br>
-<br>
+ 
 ### HELP AND SUPPORT
 
 If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:
@@ -42,8 +40,7 @@ http://gendev.spritesmind.net/forum/
 
 You can also join the SGDK Discord server to get support:
 https://discord.gg/xmnBWQS
-<br>
-<br>
+ 
 ### MACOSX / LINUX
 
 Unix/Linux users should give a try to the Gendev project from Kubilus:
@@ -55,15 +52,13 @@ https://github.com/SONIC3D/gendev-macos
 
 There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK under any OS using Wine:
 https://github.com/v4ld3r5/sgdk_vscode_template
-<br>
-<br>
+ 
 ### VISUAL STUDIO
 
 You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK integration with VS.
 To go even further you can also install the VS extension made by zerasul:
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
-<br>
-<br>
+ 
 ### THANKS
 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
@@ -84,8 +79,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
 - all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
-<br>
-<br>
+
 ### SUPPORT SGDK
 
 SGDK is completly free but you can support it on Patreon or using the Paypal donation link.
