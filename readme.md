@@ -61,7 +61,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 ### THANKS
 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
-- Astrofa for the starfield donut sample ;)
+- Astrofa for the starfield donut sample and the revamped readme ;)
 - LIZARDRIVE for making the new SGDK logo.
 - Kubilus for the Linux port of SGDK.
 - Sonic3D for the OSX port of SGDK.
