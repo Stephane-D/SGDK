@@ -96,9 +96,9 @@ These projects are known to be based on the SGDK _(non-exhaustive list)_:
  
 Tanzer by [Mega Cat Studios](https://megacatstudios.com/products/tanzer-sega-genesis)
 
-![alt text](doc/img/game_phantomgear.gif)
+![alt text](doc/img/demo_masiaka.gif)
  
-Phantom Gear by [Mega Cat Studios](https://megacatstudios.com)
+MASIAKA by [Resistance](https://www.pouet.net/prod.php?which=71543)
 
 ![alt text](doc/img/game_xenocrisis.gif)
  
