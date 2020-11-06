@@ -90,6 +90,8 @@ Thanks =) I wish you a great and happy coding time !
 
 ## POWERED BY THE SGDK!
 
+These projects are known to be based on the SGDK _(non-exhaustive list)_:
+
 ![alt text](doc/img/game_tanzer.gif)
  
 Tanzer by [Mega Cat Studios](https://megacatstudios.com/products/tanzer-sega-genesis)
