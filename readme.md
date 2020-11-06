@@ -1,8 +1,7 @@
 # SGDK 1.51 (april 2020)
-## Copyright 2020 Stephane Dallongeville
+#### Copyright 2020 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
-
 
 **SGDK** is a free development kit allowing to develop software in **C language** for the **Sega Mega Drive**.
 It contains the development library itself (with the code sources) and some custom tools used to compile resources.
@@ -12,7 +11,7 @@ Note that SGDK also requires Java (custom tools need it) so you need to have Jav
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
 GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see COPYING.RUNTIME file)
  
-### GET STARTED
+## GET STARTED
 
 First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). If that's not the case then i recommend you to read these documents:
 * Mega Cat Studios Sega Mega Drive graphics guide page: https://megacatstudios.com/blogs/retro-development/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
@@ -33,7 +32,7 @@ https://www.ohsat.com/tutorial/
 You also have the great ones from Danibus (spanish only):
 https://danibus.wordpress.com/
  
-### HELP AND SUPPORT
+## HELP AND SUPPORT
 
 If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:
 http://gendev.spritesmind.net/forum/
@@ -88,3 +87,17 @@ Patreon: https://www.patreon.com/SGDK<br>
 Paypal donation link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2SCWVXYDEEBUU
 
 Thanks =) I wish you a great and happy coding time !
+
+## POWERED BY THE SGDK!
+
+![alt text](doc/img/game_tanzer.gif)
+ 
+Tanzer by [Mega Cat Studios](https://megacatstudios.com/products/tanzer-sega-genesis)
+
+![alt text](doc/img/game_phantomgear.gif)
+ 
+Phantom Gear by [Mega Cat Studios](https://megacatstudios.com)
+
+![alt text](doc/img/game_xenocrisis.gif)
+ 
+Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
