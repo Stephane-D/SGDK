@@ -108,6 +108,8 @@ Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 
 * [Art of LeonBli (the)](https://www.pouet.net/prod.php?which=72272) by Resistance
 * [Barbarian](https://www.youtube.com/watch?v=e8IIfNLXzAU) by Z-Team
+* [Devwill Too MD](https://amaweks.itch.io/devwill-too-md) by Amaweks
+* [FoxyLand](https://www.youtube.com/watch?v=y45dXTCyKxo) by PSCD Games
 * [Fullscreen NICCC 2000](https://www.pouet.net/prod.php?which=81136) by Resistance
 * [IK+ Deluxe](https://www.youtube.com/watch?v=mcm0TRsOwuw) by Z-Team
 * [Right 2 Repair](https://supermegabyte.itch.io/right-2-repair) by Super Megabyte made for the Global Game Jam 2020
