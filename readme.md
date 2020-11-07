@@ -61,7 +61,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 ### THANKS
 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
-- Astrofa for the starfield donut sample and the revamped readme ;)
+- Astrofra for the starfield donut sample and the revamped readme ;)
 - LIZARDRIVE for making the new SGDK logo.
 - Kubilus for the Linux port of SGDK.
 - Sonic3D for the OSX port of SGDK.
@@ -103,3 +103,16 @@ MASIAKA by [Resistance](https://www.pouet.net/prod.php?which=71543)
 ![alt text](doc/img/game_xenocrisis.gif)
  
 Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
+
+### Random list of SGDK-powered games and demos
+
+* [Art of LeonBli (the)](https://www.pouet.net/prod.php?which=72272) by Resistance
+* [Barbarian](https://www.youtube.com/watch?v=e8IIfNLXzAU) by Z-Team
+* [Fullscreen NICCC 2000](https://www.pouet.net/prod.php?which=81136) by Resistance
+* [IK+ Deluxe](https://www.youtube.com/watch?v=mcm0TRsOwuw) by Z-Team
+* [Right 2 Repair](https://supermegabyte.itch.io/right-2-repair) by Super Megabyte made for the Global Game Jam 2020
+* [Return to Genesis](https://www.youtube.com/watch?v=jjy0Iz_64dY) by Z-Team
+* [Road to Valhalla](https://www.pouet.net/prod.php?which=72961) by Bounty/Banana & Resistance
+* [Spiral (the)](https://www.pouet.net/prod.php?which=82607) by Resistance
+* [Travel](https://www.pouet.net/prod.php?which=65975) by Resistance
+* [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the Global Game Jam 2017
