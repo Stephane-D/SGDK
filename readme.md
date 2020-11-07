@@ -106,15 +106,18 @@ Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 
 ### Random list of SGDK-powered games and demos
 
+* [Abbaye des Morts (l')](https://playonretro.itch.io/labbaye-des-morts-megadrivegenesis-por-002) unofficial MD port by Moon-Watcher
 * [Art of LeonBli (the)](https://www.pouet.net/prod.php?which=72272) by Resistance
-* [Barbarian](https://www.youtube.com/watch?v=e8IIfNLXzAU) by Z-Team
+* [Barbarian](https://www.youtube.com/watch?v=e8IIfNLXzAU) unofficial MD port by Z-Team
 * [Devwill Too MD](https://amaweks.itch.io/devwill-too-md) by Amaweks
-* [FoxyLand](https://www.youtube.com/watch?v=y45dXTCyKxo) by PSCD Games
+* [Fatal Smarties](https://globalgamejam.org/2016/games/fatal-smarties) made for the GGJ 2016
 * [Fullscreen NICCC 2000](https://www.pouet.net/prod.php?which=81136) by Resistance
-* [IK+ Deluxe](https://www.youtube.com/watch?v=mcm0TRsOwuw) by Z-Team
-* [Right 2 Repair](https://supermegabyte.itch.io/right-2-repair) by Super Megabyte made for the Global Game Jam 2020
-* [Return to Genesis](https://www.youtube.com/watch?v=jjy0Iz_64dY) by Z-Team
+* [IK+ Deluxe](https://www.youtube.com/watch?v=mcm0TRsOwuw) unofficial MD port by Z-Team
+* [Perlin & Pinpin](https://lizardrive.itch.io/perlin-pinpin-episode1) by Lizardrive
+* [Right 2 Repair](https://supermegabyte.itch.io/right-2-repair) by Super Megabyte made for the GGJ 2020
+* [Return to Genesis](https://www.youtube.com/watch?v=jjy0Iz_64dY) unofficial MD port by Z-Team
 * [Road to Valhalla](https://www.pouet.net/prod.php?which=72961) by Bounty/Banana & Resistance
 * [Spiral (the)](https://www.pouet.net/prod.php?which=82607) by Resistance
+* [Tetris MD](https://github.com/NeroJin/TetrisMD) unofficial MD port by Nero Jin
 * [Travel](https://www.pouet.net/prod.php?which=65975) by Resistance
-* [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the Global Game Jam 2017
+* [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the GGJ 2017
