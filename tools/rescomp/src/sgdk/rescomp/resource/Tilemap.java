@@ -12,47 +12,6 @@ import sgdk.rescomp.type.Tile;
 
 public class Tilemap extends Resource
 {
-    public static final int TILE_MAX_NUM = 1 << 11;
-    public static final int TILE_INDEX_MASK = TILE_MAX_NUM - 1;
-
-    public static final int TILE_HFLIP_SFT = 11;
-    public static final int TILE_VFLIP_SFT = 12;
-    public static final int TILE_PALETTE_SFT = 13;
-    public static final int TILE_PRIORITY_SFT = 15;
-
-    public static final int TILE_HFLIP_FLAG = 1 << TILE_HFLIP_SFT;
-    public static final int TILE_VFLIP_FLAG = 1 << TILE_VFLIP_SFT;
-    public static final int TILE_PRIORITY_FLAG = 1 << TILE_PRIORITY_SFT;
-
-    public static final int TILE_HFLIP_MASK = TILE_HFLIP_FLAG;
-    public static final int TILE_VFLIP_MASK = TILE_VFLIP_FLAG;
-    public static final int TILE_PALETTE_MASK = 3 << TILE_PALETTE_SFT;
-    public static final int TILE_PRIORITY_MASK = TILE_PRIORITY_FLAG;
-
-    public static final int TILE_ATTR_MASK = TILE_PRIORITY_MASK | TILE_PALETTE_MASK | TILE_VFLIP_MASK | TILE_HFLIP_MASK;
-
-    public static int TILE_ATTR(int pal, int prio, int flipV, int flipH)
-    {
-        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT)
-                + (prio << TILE_PRIORITY_SFT);
-    }
-
-    public static int TILE_ATTR_FULL(int pal, int prio, int flipV, int flipH, int index)
-    {
-        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT)
-                + (prio << TILE_PRIORITY_SFT) + index;
-    }
-
-    public static int TILE_ATTR(int pal, boolean prio, boolean flipV, boolean flipH)
-    {
-        return TILE_ATTR(pal, prio ? 1 : 0, flipV ? 1 : 0, flipH ? 1 : 0);
-    }
-
-    public static int TILE_ATTR_FULL(int pal, boolean prio, boolean flipV, boolean flipH, int index)
-    {
-        return TILE_ATTR_FULL(pal, prio ? 1 : 0, flipV ? 1 : 0, flipH ? 1 : 0, index);
-    }
-
     public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int imageWidth,
             int imageHeight, int startTileX, int startTileY, int widthTile, int heigthTile, TileOptimization opt,
             Compression compression)
@@ -60,8 +19,8 @@ public class Tilemap extends Resource
         final int w = widthTile;
         final int h = heigthTile;
 
-        final int mapBaseAttr = mapBase & TILE_ATTR_MASK;
-        final int mapBaseTileInd = mapBase & TILE_INDEX_MASK;
+        final int mapBaseAttr = mapBase & Tile.TILE_ATTR_MASK;
+        final int mapBaseTileInd = mapBase & Tile.TILE_INDEX_MASK;
         // we have a base offset --> we can use system plain tiles
         final boolean useSystemTiles = mapBaseTileInd != 0;
 
@@ -76,7 +35,8 @@ public class Tilemap extends Resource
                 // get tile
                 final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8,
                         (j + startTileY) * 8);
-                final int index;
+                int index;
+                TileEquality equality = TileEquality.NONE;
 
                 // if no optimization, just use current offset as index
                 if (opt == TileOptimization.NONE)
@@ -87,23 +47,34 @@ public class Tilemap extends Resource
                     if (useSystemTiles && tile.isPlain())
                         index = tile.getPlainValue();
                     else
+                    {
                         // otherwise we try to get tile index in the tileset
-                        index = tileset.getTileIndex(tile, opt) + mapBaseTileInd;
+                        index = tileset.getTileIndex(tile, opt);
+                        // not found ? (should never happen)
+                        if (index == -1)
+                            throw new RuntimeException("Can't find tile in tileset, something wrong happened...");
+
+                        // get equality info
+                        equality = tile.getEquality(tileset.tiles.get(index));
+                        // can add base index now
+                        index += mapBaseTileInd;
+                    }
                 }
 
-                // should never happen
-                if (index == -1)
-                    throw new RuntimeException("Can't find tile in tileset, something wrong happened...");
-
-                // get equality info
-                final TileEquality equality = tile.getEquality(tileset.tiles.get(index));
                 // set tilemap
                 data[offset++] = (short) (mapBaseAttr
-                        | TILE_ATTR_FULL(tile.pal, tile.prio, equality.vflip, equality.hflip, index));
+                        | Tile.TILE_ATTR_FULL(tile.pal, tile.prio, equality.vflip, equality.hflip, index));
             }
         }
 
         return new Tilemap(id, data, w, h, compression);
+    }
+
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int widthTile,
+            int heigthTile, TileOptimization opt, Compression compression)
+    {
+        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heigthTile * 8, 0, 0, widthTile, heigthTile,
+                opt, compression);
     }
 
     public final int w;
