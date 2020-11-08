@@ -311,9 +311,9 @@ typedef struct
  *  \param timer
  *      timer for current frame (internal)
  *  \param x
- *      current sprite X position on screen
+ *      current sprite X position on screen offseted by 0x80 (internal VDP position)
  *  \param y
- *      current sprite Y position on screen
+ *      current sprite Y position on screen offseted by 0x80 (internal VDP position)
  *  \param depth
  *      current sprite depth (Z) position used for Z sorting
  *  \param attribut
