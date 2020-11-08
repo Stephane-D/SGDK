@@ -9,6 +9,47 @@ import sgdk.tool.TypeUtil;
 
 public class Tile implements Comparable<Tile>
 {
+    public static final int TILE_MAX_NUM = 1 << 11;
+    public static final int TILE_INDEX_MASK = TILE_MAX_NUM - 1;
+
+    public static final int TILE_HFLIP_SFT = 11;
+    public static final int TILE_VFLIP_SFT = 12;
+    public static final int TILE_PALETTE_SFT = 13;
+    public static final int TILE_PRIORITY_SFT = 15;
+
+    public static final int TILE_HFLIP_FLAG = 1 << TILE_HFLIP_SFT;
+    public static final int TILE_VFLIP_FLAG = 1 << TILE_VFLIP_SFT;
+    public static final int TILE_PRIORITY_FLAG = 1 << TILE_PRIORITY_SFT;
+
+    public static final int TILE_HFLIP_MASK = TILE_HFLIP_FLAG;
+    public static final int TILE_VFLIP_MASK = TILE_VFLIP_FLAG;
+    public static final int TILE_PALETTE_MASK = 3 << TILE_PALETTE_SFT;
+    public static final int TILE_PRIORITY_MASK = TILE_PRIORITY_FLAG;
+
+    public static final int TILE_ATTR_MASK = TILE_PRIORITY_MASK | TILE_PALETTE_MASK | TILE_VFLIP_MASK | TILE_HFLIP_MASK;
+
+    public static int TILE_ATTR(int pal, int prio, int flipV, int flipH)
+    {
+        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT)
+                + (prio << TILE_PRIORITY_SFT);
+    }
+
+    public static int TILE_ATTR_FULL(int pal, int prio, int flipV, int flipH, int index)
+    {
+        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT)
+                + (prio << TILE_PRIORITY_SFT) + index;
+    }
+
+    public static int TILE_ATTR(int pal, boolean prio, boolean flipV, boolean flipH)
+    {
+        return TILE_ATTR(pal, prio ? 1 : 0, flipV ? 1 : 0, flipH ? 1 : 0);
+    }
+
+    public static int TILE_ATTR_FULL(int pal, boolean prio, boolean flipV, boolean flipH, int index)
+    {
+        return TILE_ATTR_FULL(pal, prio ? 1 : 0, flipV ? 1 : 0, flipH ? 1 : 0, index);
+    }
+
     /**
      * @param x
      *        X position in pixel
@@ -18,6 +59,9 @@ public class Tile implements Comparable<Tile>
     public static Tile getTile(byte[] image8bpp, int imgW, int imgH, int x, int y)
     {
         final byte[] data = new byte[64];
+
+        int plainCol = -1;
+        boolean plain = true;
 
         int pal = -1;
         int prio = -1;
@@ -37,6 +81,13 @@ public class Tile implements Comparable<Tile>
                 srcOff++;
 
                 final int color = pixel & 0xF;
+
+                // first pixel --> affect color
+                if (plainCol == -1)
+                    plainCol = color;
+                // not the same color --> not a plain tile
+                else if (plainCol != color)
+                    plain = false;
 
                 // not a transparent pixel ?
                 if (color != 0)
@@ -71,17 +122,18 @@ public class Tile implements Comparable<Tile>
         if (prio == -1)
             prio = 0;
 
-        return new Tile(data, pal, prio != 0);
+        return new Tile(data, pal, prio != 0, plain ? plainCol : -1);
     }
 
     public final int[] data;
     public final int pal;
+    public final int plain;
     public final boolean prio;
     public final boolean empty;
 
     final int hc;
 
-    public Tile(int[] data, int pal, boolean prio)
+    public Tile(int[] data, int pal, boolean prio, int plain)
     {
         super();
 
@@ -93,6 +145,7 @@ public class Tile implements Comparable<Tile>
 
         this.pal = pal & 3;
         this.prio = prio;
+        this.plain = plain;
 
         // compute hash code and empty
         int c = 0;
@@ -109,19 +162,9 @@ public class Tile implements Comparable<Tile>
         empty = emp;
     }
 
-    public Tile(int[] data)
+    public Tile(byte[] pixel8bpp, int pal, boolean prio, int plain)
     {
-        this(data, 0, false);
-    }
-
-    public Tile(byte[] pixel8bpp, int pal, boolean prio)
-    {
-        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)), pal, prio);
-    }
-
-    public Tile(byte[] pixel8bpp)
-    {
-        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)));
+        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)), pal, prio, plain);
     }
 
     public boolean isPlain()
@@ -134,20 +177,7 @@ public class Tile implements Comparable<Tile>
      */
     public int getPlainValue()
     {
-        final int result = data[0] & 0xF;
-
-        for (int d : data)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                if ((d & 0xF) != result)
-                    return -1;
-
-                d >>= 4;
-            }
-        }
-
-        return result;
+        return plain;
     }
 
     public Tile getFlipped(boolean hflip, boolean vflip)
@@ -169,7 +199,7 @@ public class Tile implements Comparable<Tile>
                 result[i] = data[line];
         }
 
-        return new Tile(result);
+        return new Tile(result, pal, prio, plain);
     }
 
     public TileEquality getEquality(Tile tile)
