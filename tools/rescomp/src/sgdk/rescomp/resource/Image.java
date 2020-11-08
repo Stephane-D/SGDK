@@ -7,6 +7,7 @@ import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Tile;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
@@ -57,20 +58,15 @@ public class Image extends Resource
             // bit 6 used ?
             if ((d & 0x40) != 0)
                 throw new IllegalArgumentException("'" + imgFile
-                        + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
+                        + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
         }
 
-        // final int maxIndex = ArrayMath.max(data, false);
-        // if (maxIndex >= 64)
-        // throw new IllegalArgumentException("'" + imgFile
-        // + "' uses color index >= 64, IMAGE resource requires image with a maximum of 64 colors");
-
         // build TILESET with wanted compression
-        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht,
-                tileOpt, (mapBase & Tilemap.TILE_INDEX_MASK) != 0, compression));
+        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht, tileOpt,
+                (mapBase & Tile.TILE_INDEX_MASK) != 0, compression));
         // build TILEMAP with wanted compression
         tilemap = (Tilemap) addInternalResource(
-                Tilemap.getTilemap(id + "_map", tileset, mapBase, data, w, h, 0, 0, wt, ht, tileOpt, compression));
+                Tilemap.getTilemap(id + "_tilemap", tileset, mapBase, data, wt, ht, tileOpt, compression));
         // build PALETTE
         palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, 64, true));
 
@@ -83,7 +79,7 @@ public class Image extends Resource
         return tilemap.w * 8;
     }
 
-    public int getHeigth()
+    public int getHeight()
     {
         return tilemap.h * 8;
     }
