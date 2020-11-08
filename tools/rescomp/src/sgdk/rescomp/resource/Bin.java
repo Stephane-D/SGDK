@@ -64,6 +64,11 @@ public class Bin extends Resource
         this(id, ArrayUtil.shortToByte(data), 2, 0, 0, compression, far);
     }
 
+    public Bin(String id, short[] data, Compression compression)
+    {
+        this(id, ArrayUtil.shortToByte(data), 2, 0, 0, compression, true);
+    }
+
     public Bin(String id, int[] data, Compression compression)
     {
         this(id, ArrayUtil.intToByte(data), 2, 0, 0, compression);
