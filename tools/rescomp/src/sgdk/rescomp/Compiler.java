@@ -413,7 +413,7 @@ public class Compiler
      */
     private static String generateDependency(String resFileName, String targetFileName)
     {
-        String result =  getFixedPath(resFileName);
+        String result = getFixedPath(resFileName);
 
         for (String fileName : resourcesFile)
             result += " \\\n" + getFixedPath(fileName);
@@ -543,6 +543,15 @@ public class Compiler
     public static void addResourceFile(String file)
     {
         resourcesFile.add(file);
+    }
+
+    public static Resource getResourceById(String id)
+    {
+        for (Resource resource : resourcesList)
+            if (resource.id.equals(id))
+                return resource;
+
+        return null;
     }
 
     private static Resource execute(String input)
