@@ -73,7 +73,7 @@ public class Tileset extends Resource
 
         tiles = new ArrayList<>();
 
-        // important to always use the same loop order when building Tileset and Tilemap object
+        // important to always use the same loop order when building Tileset and Tilemap/Map object
         for (int j = 0; j < heightTile; j++)
         {
             for (int i = 0; i < widthTile; i++)
@@ -153,6 +153,11 @@ public class Tileset extends Resource
         return tiles.size();
     }
 
+    public Tile get(int index)
+    {
+        return tiles.get(index);
+    }
+
     public int getTileIndex(Tile tile, TileOptimization opt)
     {
         // no optimization allowed --> need to duplicate tile
@@ -224,5 +229,4 @@ public class Tileset extends Resource
         outS.append("    dc.l    " + bin.id + "\n");
         outS.append("\n");
     }
-
 }
