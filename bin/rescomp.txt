@@ -82,28 +82,25 @@ TILESET name img_file [compression]
 
 MAP
 ---
-NOT YET SUPPORTED !
-Take an map file as input and transform it in SGDK Map structure.
-Map is used to define a complete background (plane) data.
+Take an image as input and transform it in SGDK Map structure.
+Map is used to define a large background (plane) data, it' different from the IMAGE resource as MAP uses a specific encoding
+so it can encode large background while taking much less ROM space than IMAGE resource so use it to define large level.
 
 Syntax:
-MAP name map_file width height [compression]
+MAP name img_file tileset_id [mapbase]
 
     name            name of the output Map structure
-    map_file        path of the input map file (not yet defined, mappy ?)
-    width           width of the map in tile
-    heigth          heigth of the map in tile
-    compression     compression type (use unpackMap(..) to unpack), accepted values:
-                       -1 / BEST / AUTO = use best compression
-                        0 / NONE        = no compression
-                        1 / APLIB       = aplib library (good compression ratio but slow)
-                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
+    img_file        path of the input image file (should be 8bpp .bmp or .png)
+    tileset_id      base tileset resource to use (allow to share tileset with several maps)
+    mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                    Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
 
 IMAGE
 -----
 Take an image as input and transform it in SGDK Image structure.
-Image is used to directly draw image in background plan, it internally contains a Palette, TileSet and Map structure.
+Image is used to directly draw image in background plan, it internally contains a Palette, TileSet and TileMap structure.
+IMAGE resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
 Syntax:
 IMAGE name img_file [compression [mapopt [mapbase]]]
@@ -115,7 +112,7 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
                         0 / NONE        = no compression
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the map optimisation level, accepted values:
+    mapopt          define the tilemap optimisation level, accepted values:
                         0 / NONE        = no optimisation (each tile is unique)
                         1 / ALL         = find duplicated and flipped tile (default)
                         2 / DUPLICATE   = find duplicated tile only
