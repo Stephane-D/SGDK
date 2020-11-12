@@ -35,6 +35,8 @@
 #include "vram.h"
 #include "dma.h"
 
+#include "map.h"
+
 #include "bmp.h"
 #include "sprite_eng.h"
 
