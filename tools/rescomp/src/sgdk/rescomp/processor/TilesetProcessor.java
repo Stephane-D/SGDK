@@ -34,8 +34,8 @@ public class TilesetProcessor implements Processor
             System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  opt           define the optimisation level, accepted values:");
-            System.out.println("                  0 / NONE        = no optimisation, each tile is unique (default)");
-            System.out.println("                  1 / ALL         = ignore duplicated and flipped tile");
+            System.out.println("                  0 / NONE        = no optimisation, each tile is unique");
+            System.out.println("                  1 / ALL         = ignore duplicated and flipped tile (default)");
             System.out.println("                  2 / DUPLICATE   = ignore duplicated tile only");
 
             return null;
@@ -50,7 +50,7 @@ public class TilesetProcessor implements Processor
         if (fields.length >= 4)
             compression = Util.getCompression(fields[3]);
         // get optimization value
-        TileOptimization opt = TileOptimization.NONE;
+        TileOptimization opt = TileOptimization.ALL;
         if (fields.length >= 5)
             opt = Util.getTileOpt(fields[4]);
 

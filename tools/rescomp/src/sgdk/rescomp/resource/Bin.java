@@ -100,11 +100,17 @@ public class Bin extends Resource
     }
 
     @Override
+    public int totalSize()
+    {
+        return shallowSize();
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // do 'outB' align *before* doing compression (as LZ4W compression can use previous data block)
         Util.align(outB, align);
-        
+
         // pack data first if needed
         packedData = Util.pack(data, wantedCompression, outB);
         doneCompression = packedData.compression;

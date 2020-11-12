@@ -245,4 +245,10 @@ public class Tile implements Comparable<Tile>
     {
         return Integer.compare(hc, tile.hc);
     }
+    
+    @Override
+    public String toString()
+    {
+        return Arrays.toString(data);
+    }
 }

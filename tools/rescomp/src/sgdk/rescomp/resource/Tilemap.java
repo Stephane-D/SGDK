@@ -19,7 +19,8 @@ public class Tilemap extends Resource
         final int w = widthTile;
         final int h = heigthTile;
 
-        final int mapBaseAttr = mapBase & Tile.TILE_ATTR_MASK;
+        final int mapBaseAttr = mapBase & (Tile.TILE_PRIORITY_MASK | Tile.TILE_VFLIP_MASK | Tile.TILE_HFLIP_MASK);
+        final int mapBasePal = (mapBase & Tile.TILE_PALETTE_MASK) >> Tile.TILE_PALETTE_SFT;
         final int mapBaseTileInd = mapBase & Tile.TILE_INDEX_MASK;
         // we have a base offset --> we can use system plain tiles
         final boolean useSystemTiles = mapBaseTileInd != 0;
@@ -63,7 +64,7 @@ public class Tilemap extends Resource
 
                 // set tilemap
                 data[offset++] = (short) (mapBaseAttr
-                        | Tile.TILE_ATTR_FULL(tile.pal, tile.prio, equality.vflip, equality.hflip, index));
+                        | Tile.TILE_ATTR_FULL(mapBasePal + tile.pal, tile.prio, equality.vflip, equality.hflip, index));
             }
         }
 
@@ -120,6 +121,12 @@ public class Tilemap extends Resource
     public int shallowSize()
     {
         return 2 + 2 + 2 + 4;
+    }
+
+    @Override
+    public int totalSize()
+    {
+        return bin.totalSize() + shallowSize();
     }
 
     @Override

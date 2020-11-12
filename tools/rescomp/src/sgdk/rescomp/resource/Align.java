@@ -45,6 +45,12 @@ public class Align extends Resource
     }
 
     @Override
+    public int totalSize()
+    {
+        return shallowSize();
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't know align size so we just reset binary stream here (used for compression only)

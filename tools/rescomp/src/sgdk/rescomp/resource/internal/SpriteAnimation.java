@@ -143,6 +143,17 @@ public class SpriteAnimation extends Resource
     }
 
     @Override
+    public int totalSize()
+    {
+        int result = 0;
+        
+        for (SpriteFrame frame : frames)
+            result += frame.totalSize();
+        
+        return result + shallowSize();
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)

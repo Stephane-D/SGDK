@@ -53,5 +53,11 @@ public abstract class Resource
      */
     public abstract int shallowSize();
 
+    /**
+     * Return total size in byte used to store current data structure (counting referenced objects)
+     */
+    public abstract int totalSize();
+
     public abstract void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException;
+
 }

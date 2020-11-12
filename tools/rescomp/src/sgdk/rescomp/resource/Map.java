@@ -27,6 +27,7 @@ public class Map extends Resource
     public final List<MapBlock> mapBlocks;
     public final short mapBlockIndexes[];
     public final short mapBlockRowOffsets[];
+    public final Tileset tileset;
     public final Palette palette;
 
     // binary data
@@ -77,11 +78,14 @@ public class Map extends Resource
                         + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
         }
 
-        // base attributes and base tile index offset
-        final int mapBaseAttr = mapBase & Tile.TILE_ATTR_MASK;
+        // base pal attributes and base tile index offset
+        final int mapBasePal = (mapBase & Tile.TILE_PALETTE_MASK) >> Tile.TILE_PALETTE_SFT;
         final int mapBaseTileInd = mapBase & Tile.TILE_INDEX_MASK;
         // we have a base offset --> we can use system plain tiles
         final boolean useSystemTiles = mapBaseTileInd != 0;
+
+        // store tileset
+        this.tileset = tileset;
 
         // // build TILESET with wanted compression
         // tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht,
@@ -150,8 +154,8 @@ public class Map extends Resource
                                 }
 
                                 // set metatile attributes
-                                mt.set(mtsi++, (short) (mapBaseAttr
-                                        | Tile.TILE_ATTR_FULL(tile.pal, tile.prio, eq.vflip, eq.hflip, index)));
+                                mt.set(mtsi++, (short) Tile.TILE_ATTR_FULL(mapBasePal + tile.pal, tile.prio, eq.vflip,
+                                        eq.hflip, index));
                             }
                         }
 
@@ -303,7 +307,14 @@ public class Map extends Resource
     @Override
     public int shallowSize()
     {
-        return 4 + 2 + 2 + 2 + 4 + 2 + 4 + 4 + 4;
+        return 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4;
+    }
+
+    @Override
+    public int totalSize()
+    {
+        return palette.totalSize() + metatilesBin.totalSize() + mapBlocksBin.totalSize()
+                + mapBlockIndexesBin.totalSize() + mapBlockRowOffsetsBin.totalSize() + shallowSize();
     }
 
     @Override
@@ -313,17 +324,19 @@ public class Map extends Resource
         outB.reset();
 
         // output Image structure
-        Util.decl(outS, outH, "Map", id, 2, global);
-        // Palette pointer
-        outS.append("    dc.l    " + palette.id + "\n");
+        Util.decl(outS, outH, "MapDefinition", id, 2, global);
         // set size in block
         outS.append("    dc.w    " + wb + ", " + hb + "\n");
         // set num metatile
         outS.append("    dc.w    " + metatiles.size() + "\n");
-        // set metatile data pointer
-        outS.append("    dc.l    " + metatilesBin.id + "\n");
         // set num mapblock
         outS.append("    dc.w    " + mapBlocks.size() + "\n");
+        // Palette pointer
+        outS.append("    dc.l    " + palette.id + "\n");
+        // Tileset pointer
+        outS.append("    dc.l    " + tileset.id + "\n");
+        // set metatile data pointer
+        outS.append("    dc.l    " + metatilesBin.id + "\n");
         // set mapblock data pointer
         outS.append("    dc.l    " + mapBlocksBin.id + "\n");
         // set mapBlockIndexes data pointer

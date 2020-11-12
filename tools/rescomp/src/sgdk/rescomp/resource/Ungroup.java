@@ -36,6 +36,12 @@ public class Ungroup extends Resource
     }
 
     @Override
+    public int totalSize()
+    {
+        return shallowSize();
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // nothing here

@@ -192,6 +192,26 @@ public class SpriteFrame extends Resource
     }
 
     @Override
+    public int totalSize()
+    {
+        if (isEmpty())
+            return shallowSize();
+
+        int result = frameInfo.totalSize() + frameInfoH.totalSize() + frameInfoV.totalSize() + frameInfoHV.totalSize();
+
+        if (frameInfo.collision != null)
+            result += frameInfo.collision.totalSize();
+        if (frameInfoH.collision != null)
+            result += frameInfoH.collision.totalSize();
+        if (frameInfoV.collision != null)
+            result += frameInfoV.collision.totalSize();
+        if (frameInfoHV.collision != null)
+            result += frameInfoHV.collision.totalSize();
+
+        return result + shallowSize();
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         // can't store pointer so we just reset binary stream here (used for compression only)

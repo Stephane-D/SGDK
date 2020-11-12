@@ -146,7 +146,11 @@ public class Compiler
                 group = false;
             // just store resource
             else
+            {
                 addResource(resource);
+                System.out.println(
+                        "Resource " + resource.id + " total size (unpacked): " + resource.totalSize() + " bytes");
+            }
         }
 
         // define output files
@@ -175,6 +179,7 @@ public class Compiler
             final List<Resource> binResourcesOfTilemap;
             final List<Resource> binResourcesOfTileset;
             final List<Resource> binResourcesOfBitmap;
+            final List<Resource> binResourcesOfMap;
 
             // keep raw BIN resources only
             binResources.removeAll(binResourcesOfPalette);
@@ -185,17 +190,20 @@ public class Compiler
                 binResourcesOfTilemap = getBinResourcesOf(Tilemap.class);
                 binResourcesOfTileset = getBinResourcesOf(Tileset.class);
                 binResourcesOfBitmap = getBinResourcesOf(Bitmap.class);
+                binResourcesOfMap = getBinResourcesOf(sgdk.rescomp.resource.Map.class);
 
                 // keep raw BIN resources only
                 binResources.removeAll(binResourcesOfTilemap);
                 binResources.removeAll(binResourcesOfTileset);
                 binResources.removeAll(binResourcesOfBitmap);
+                binResources.removeAll(binResourcesOfMap);
             }
             else
             {
                 binResourcesOfTilemap = new ArrayList<>();
                 binResourcesOfTileset = new ArrayList<>();
                 binResourcesOfBitmap = new ArrayList<>();
+                binResourcesOfMap = new ArrayList<>();
             }
 
             // get "far" BIN resources (palette BIN data are never far)
@@ -203,6 +211,7 @@ public class Compiler
             final List<Resource> farBinResourcesOfTilemap;
             final List<Resource> farBinResourcesOfTileset;
             final List<Resource> farBinResourcesOfBitmap;
+            final List<Resource> farBinResourcesOfMap;
 
             // keep "non far" BIN resources only
             binResources.removeAll(farBinResources);
@@ -213,17 +222,20 @@ public class Compiler
                 farBinResourcesOfTilemap = getFarBinResourcesOf(binResourcesOfTilemap);
                 farBinResourcesOfTileset = getFarBinResourcesOf(binResourcesOfTileset);
                 farBinResourcesOfBitmap = getFarBinResourcesOf(binResourcesOfBitmap);
+                farBinResourcesOfMap = getFarBinResourcesOf(binResourcesOfMap);
 
                 // keep "non far" BIN resources only
                 binResourcesOfTilemap.removeAll(farBinResourcesOfTilemap);
                 binResourcesOfTileset.removeAll(farBinResourcesOfTileset);
                 binResourcesOfBitmap.removeAll(farBinResourcesOfBitmap);
+                binResourcesOfMap.removeAll(farBinResourcesOfMap);
             }
             else
             {
                 farBinResourcesOfTilemap = new ArrayList<>();
                 farBinResourcesOfTileset = new ArrayList<>();
                 farBinResourcesOfBitmap = new ArrayList<>();
+                farBinResourcesOfMap = new ArrayList<>();
             }
 
             // export binary data first !! very important !!
@@ -249,6 +261,7 @@ public class Compiler
             exportResources(binResourcesOfTilemap, outB, outS, outH);
             exportResources(binResourcesOfTileset, outB, outS, outH);
             exportResources(binResourcesOfBitmap, outB, outS, outH);
+            exportResources(binResourcesOfMap, outB, outS, outH);
 
             // FAR BIN Read Only Data section
             outS.append(".section .rodata_binf\n\n");
@@ -264,6 +277,7 @@ public class Compiler
             exportResources(farBinResourcesOfTilemap, outB, outS, outH);
             exportResources(farBinResourcesOfTileset, outB, outS, outH);
             exportResources(farBinResourcesOfBitmap, outB, outS, outH);
+            exportResources(farBinResourcesOfMap, outB, outS, outH);
 
             // Read Only Data section
             outS.append(".section .rodata\n\n");
@@ -280,6 +294,7 @@ public class Compiler
             exportResources(getResources(Sprite.class), outB, outS, outH);
             exportResources(getResources(Image.class), outB, outS, outH);
             exportResources(getResources(Bitmap.class), outB, outS, outH);
+            exportResources(getResources(sgdk.rescomp.resource.Map.class), outB, outS, outH);
 
             outH.append("\n");
             outH.append("#endif // _" + headerName + "_H_\n");
@@ -476,6 +491,25 @@ public class Compiler
 
                 if (!result.contains(binResource))
                     result.add(binResource);
+            }
+        }
+        else if (resourceType.equals(sgdk.rescomp.resource.Map.class))
+        {
+            for (Resource resource : typeResources)
+            {
+                final Bin binResourceMT = ((sgdk.rescomp.resource.Map) resource).metatilesBin;
+                final Bin binResourceMB = ((sgdk.rescomp.resource.Map) resource).mapBlocksBin;
+                final Bin binResourceMBI = ((sgdk.rescomp.resource.Map) resource).mapBlockIndexesBin;
+                final Bin binResourceMBRO = ((sgdk.rescomp.resource.Map) resource).mapBlockRowOffsetsBin;
+
+                if (!result.contains(binResourceMT))
+                    result.add(binResourceMT);
+                if (!result.contains(binResourceMB))
+                    result.add(binResourceMB);
+                if (!result.contains(binResourceMBI))
+                    result.add(binResourceMBI);
+                if (!result.contains(binResourceMBRO))
+                    result.add(binResourceMBRO);
             }
         }
         else

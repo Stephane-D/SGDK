@@ -116,6 +116,12 @@ public class Palette extends Resource
     }
 
     @Override
+    public int totalSize()
+    {
+        return bin.totalSize() + shallowSize();
+    }
+
+    @Override
     public void out(ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH)
     {
         // can't store pointer so we just reset binary stream here (used for compression only)
