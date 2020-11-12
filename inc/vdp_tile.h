@@ -141,6 +141,22 @@ typedef struct
     u16 *tilemap;
 } TileMap;
 
+/**
+ *  \brief
+ *      Return the VRAM tilemap address for the specified plane position
+ *
+ *  \param plane
+ *      Plane we want to get the VRAM tilemap address for a given position.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      Y position (in tile).
+ */
+u16 VDP_getPlaneAddress(VDPPlane plane, u16 x, u16 y);
 
 /**
  *  \brief

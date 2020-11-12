@@ -78,7 +78,7 @@ void VDP_fillTileData(u8 value, u16 index, u16 num, bool wait)
 }
 
 
-static u16 getPlanAddress(VDPPlane plane, u16 x, u16 y)
+u16 VDP_getPlaneAddress(VDPPlane plane, u16 x, u16 y)
 {
     switch(plane)
     {
@@ -196,7 +196,7 @@ void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y)
     pwdata = (u16 *) GFX_DATA_PORT;
 
     // get address
-    addr = getPlanAddress(plane, x, y);
+    addr = VDP_getPlaneAddress(plane, x, y);
 
     *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
     *pwdata = tile;
@@ -223,7 +223,7 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
     pldata = (u32 *) GFX_DATA_PORT;
     pwdata = (u16 *) GFX_DATA_PORT;
 
-    addr = getPlanAddress(plane, x, y);
+    addr = VDP_getPlaneAddress(plane, x, y);
     width = (plane == WINDOW)?windowWidth:planeWidth;
 
     const u32 tile32 = ((u32) tile << 16) | tile;
@@ -264,7 +264,7 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
     plctrl = (u32 *) GFX_CTRL_PORT;
     pwdata = (u16 *) GFX_DATA_PORT;
 
-    addr = getPlanAddress(plane, x, y);
+    addr = VDP_getPlaneAddress(plane, x, y);
     width = (plane == WINDOW)?windowWidth:planeWidth;
     tile = basetile;
 
@@ -444,12 +444,12 @@ void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16
 
 static void setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm)
 {
-    DMA_transfer(tm, DMA_VRAM, (void*) data, getPlanAddress(plane, x, row), w, 2);
+    DMA_transfer(tm, DMA_VRAM, (void*) data, VDP_getPlaneAddress(plane, x, row), w, 2);
 }
 
 static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
 {
-    const u16 addr = getPlanAddress(plane, x, row);
+    const u16 addr = VDP_getPlaneAddress(plane, x, row);
 
     if (tm >= DMA_QUEUE)
     {
@@ -528,7 +528,7 @@ void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 
 
 static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
-    const u16 addr = getPlanAddress(plane, column, y);
+    const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
 
     if (tm >= DMA_QUEUE)
@@ -601,7 +601,7 @@ static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u1
 
 static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
-    const u16 addr = getPlanAddress(plane, column, y);
+    const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
 
     if (tm >= DMA_QUEUE)
@@ -681,7 +681,7 @@ static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile
 
 void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, u16 y, u16 h, TransferMethod tm)
 {
-    const u16 addr = getPlanAddress(plane, column, y);
+    const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
     const u16 ph = (plane == WINDOW)?32:planeHeight;
     const u16 yAdj = y & (ph - 1);
@@ -694,7 +694,7 @@ void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, u16 y, 
         // first part
         DMA_transfer(tm, DMA_VRAM, data, addr, h1, pw * 2);
         // second part
-        DMA_transfer(tm, DMA_VRAM, data + h1, getPlanAddress(plane, column, 0), h - h1, pw * 2);
+        DMA_transfer(tm, DMA_VRAM, data + h1, VDP_getPlaneAddress(plane, column, 0), h - h1, pw * 2);
     }
     // no split needed
     else DMA_transfer(tm, DMA_VRAM, data, addr, h, pw * 2);
