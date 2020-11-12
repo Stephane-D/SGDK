@@ -38,7 +38,7 @@
 
 #define MIN_POSX            FIX32(10L)
 #define MAX_POSX            FIX32(4000L)
-#define MAX_POSY            FIX32(414L)
+#define MAX_POSY            FIX32(924L)
 
 
 // forward
@@ -54,14 +54,10 @@ static void updateAnim();
 
 static void updateCameraPosition();
 static void setCameraPosition(s16 x, s16 y);
-static void updateMap(VDPPlane plane, TileMap* tileMap, s16 xt, s16 yt);
 
-static void updateVDPScroll();
+//static void updateVDPScroll();
 
 static void frameChanged(Sprite* sprite);
-
-TileMap* bgb;
-TileMap* bga;
 
 // player (sonic) sprite
 Sprite* player;
@@ -71,9 +67,10 @@ Sprite* enemies[2];
 // Speed, Jump and Gravity interface
 Sprite* bars[3];
 
-// maps (BGA and BGB) position (tile)
-s16 mapTilePosX[2];
-s16 mapTilePosY[2];
+// maps (BGA and BGB)
+Map bgb;
+Map bga;
+
 // absolute camera position (pixel)
 s16 camPosX;
 s16 camPosY;
@@ -130,31 +127,17 @@ int main(u16 hard)
     // load background tilesets in VRAM
     ind = TILE_USERINDEX;
     bgBaseTileIndex[0] = ind;
-    VDP_loadTileSet(bga_image.tileset, ind, DMA);
-    ind += bga_image.tileset->numTile;
+    VDP_loadTileSet(&bga_tileset, ind, DMA);
+    ind += bga_tileset.numTile;
     bgBaseTileIndex[1] = ind;
-    VDP_loadTileSet(bgb_image.tileset, ind, DMA);
-    ind += bgb_image.tileset->numTile;
-
-    // BG A is too big to fit in RAM so it is stored unpacked in ROM (need to work that out)
-    bga = bga_image.tilemap;
-    // unpack BG B map (small enough to fit in RAM)
-    bgb = unpackTileMap(bgb_image.tilemap, NULL);
-
-    // draw backgrounds
-//    VDP_setTileMapEx(BG_A, bga, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]), 0, 0, 0, 0 + 32, 42, 32, DMA);
-//    VDP_setTileMapEx(BG_B, bgb, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]), 0, 0, 0, 0, 42, 32, DMA);
+    VDP_loadTileSet(&bgb_tileset, ind, DMA);
+    ind += bgb_tileset.numTile;
 
     // VDP process done, we can re enable interrupts
     SYS_enableInts();
 
     paused = FALSE;
 
-    // BGB/BGA tile position (force refresh)
-    mapTilePosX[0] = -100;
-    mapTilePosY[0] = -100;
-    mapTilePosX[1] = -100;
-    mapTilePosY[1] = -100;
     // camera position (force refresh)
     camPosX = -1;
     camPosY = -1;
@@ -179,9 +162,19 @@ int main(u16 hard)
     enemiesXOrder[0] = -1;
     enemiesXOrder[1] = 1;
 
+    // init background
+    MAP_init(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]), 0, 0, &bga);
+    MAP_init(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]), 0 >> 3, 0 >> 5, &bgb);
+
+    // let map update
+    SYS_doVBlankProcess();
+
     // init scrolling
     updateCameraPosition();
-    updateVDPScroll();
+//    updateVDPScroll();
+
+    // update camera position
+    SYS_doVBlankProcess();
 
     // init sonic sprite
     player = SPR_addSprite(&sonic_sprite, fix32ToInt(posX) - camPosX, fix32ToInt(posY) - camPosY, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
@@ -220,7 +213,7 @@ int main(u16 hard)
     SPR_update();
 
     // prepare palettes (BGB image contains the 4 palettes data)
-    memcpy(&palette[0], bgb_image.palette->data, 64 * 2);
+    memcpy(&palette[0], palette_all.data, 64 * 2);
 //    memcpy(&palette[16], bga_image.palette->data, 16 * 2);
 //    memcpy(&palette[32], sonic_sprite.palette->data, 16 * 2);
 //    memcpy(&palette[48], enemies_sprite.palette->data, 16 * 2);
@@ -251,11 +244,11 @@ int main(u16 hard)
 
         SYS_doVBlankProcess();
 
-        if (scrollNeedUpdate)
-        {
-            updateVDPScroll();
-            scrollNeedUpdate = FALSE;
-        }
+//        if (scrollNeedUpdate)
+//        {
+//            updateVDPScroll();
+//            scrollNeedUpdate = FALSE;
+//        }
 
 //        KLog_U1("CPU usage = ", SYS_getCPULoad());
     }
@@ -449,7 +442,7 @@ static void updateCameraPosition()
     if (npx_cam < 0) npx_cam = 0;
     else if (npx_cam > (4096 - 320)) npx_cam = (4096 - 320);
     if (npy_cam < 0) npy_cam = 0;
-    else if (npy_cam > (512 - 224)) npy_cam = (512 - 224);
+    else if (npy_cam > (1280 - 224)) npy_cam = (1280 - 224);
 
     // set new camera position
     setCameraPosition(npx_cam, npy_cam);
@@ -462,96 +455,96 @@ static void setCameraPosition(s16 x, s16 y)
         camPosX = x;
         camPosY = y;
 
-        // update maps (convert pixel to tile coordinate)
-        updateMap(BG_A, bga, x >> 3, y >> 3);
-        // scrolling is slower on BGB, no vertical scroll (should be consisten with updateVDPScroll())
-        updateMap(BG_B, bgb, x >> 6, 0);
+        // scroll maps
+        MAP_scrollTo(&bga, x, y);
+        // scrolling is slower on BGB
+        MAP_scrollTo(&bgb, x >> 3, y >> 5);
 
         scrollNeedUpdate = TRUE;
     }
 }
 
-static void updateMap(VDPPlane plane, TileMap* tileMap, s16 xt, s16 yt)
-{
-    // BGA = 0; BGB = 1
-    s16 curPosX = mapTilePosX[plane];
-    s16 curPosY = mapTilePosY[plane];
-
-    s16 deltaX = xt - curPosX;
-    s16 deltaY = yt - curPosY;
-
-    // no update --> exit
-    if ((deltaX == 0) && (deltaY == 0)) return;
-
-    SYS_disableInts();
-
-    // many row/column updates ? --> better to do a full screen update
-    if ((abs(deltaX * 2) + abs(deltaY)) > 20)
-    {
-        VDP_setTileMapEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-                         xt & 0x003F, yt & 0x001F, xt, yt, 42, 30, DMA_QUEUE);
-    }
-    else
-    {
-        if (deltaX > 0)
-        {
-            // need to update map column on right
-            while(deltaX--)
-            {
-                VDP_setTileMapColumnEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-                                       (curPosX + 42) & 0x3F, curPosX + 42, yt, 30, DMA_QUEUE);
-                curPosX++;
-            }
-        }
-        else if (deltaX < 0)
-        {
-            // need to update map column on left
-            while(deltaX++)
-            {
-                curPosX--;
-                VDP_setTileMapColumnEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-                                       curPosX & 0x3F, curPosX, yt, 30, DMA_QUEUE);
-            }
-        }
-
-
-        if (deltaY > 0)
-        {
-            // need to update map row on bottom
-            while(deltaY--)
-            {
-                VDP_setTileMapRowEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-                                    (curPosY + 30) & 0x1F, xt, curPosY + 30, 42, DMA_QUEUE);
-                curPosY++;
-            }
-        }
-        else if (deltaY < 0)
-        {
-            // need to update map row on top
-            while(deltaY++)
-            {
-                curPosY--;
-                VDP_setTileMapRowEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-                                    curPosY & 0x1F, xt, curPosY, 42, DMA_QUEUE);
-            }
-        }
-    }
-
-    SYS_enableInts();
-
-    mapTilePosX[plane] = xt;
-    mapTilePosY[plane] = yt;
-}
-
-static void updateVDPScroll()
-{
-    SYS_disableInts();
-    VDP_setHorizontalScroll(BG_A, -camPosX);
-    VDP_setHorizontalScroll(BG_B, (-camPosX) >> 3);
-    VDP_setVerticalScroll(BG_A, camPosY);
-    VDP_setVerticalScroll(BG_B, 0);
-    SYS_enableInts();
-}
+//static void updateMap(VDPPlane plane, TileMap* tileMap, s16 xt, s16 yt)
+//{
+//    // BGA = 0; BGB = 1
+//    s16 curPosX = mapTilePosX[plane];
+//    s16 curPosY = mapTilePosY[plane];
+//
+//    s16 deltaX = xt - curPosX;
+//    s16 deltaY = yt - curPosY;
+//
+//    // no update --> exit
+//    if ((deltaX == 0) && (deltaY == 0)) return;
+//
+//    SYS_disableInts();
+//
+//    // many row/column updates ? --> better to do a full screen update
+//    if ((abs(deltaX * 2) + abs(deltaY)) > 20)
+//    {
+//        VDP_setTileMapEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
+//                         xt & 0x003F, yt & 0x001F, xt, yt, 42, 30, DMA_QUEUE);
+//    }
+//    else
+//    {
+//        if (deltaX > 0)
+//        {
+//            // need to update map column on right
+//            while(deltaX--)
+//            {
+//                VDP_setTileMapColumnEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
+//                                       (curPosX + 42) & 0x3F, curPosX + 42, yt, 30, DMA_QUEUE);
+//                curPosX++;
+//            }
+//        }
+//        else if (deltaX < 0)
+//        {
+//            // need to update map column on left
+//            while(deltaX++)
+//            {
+//                curPosX--;
+//                VDP_setTileMapColumnEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
+//                                       curPosX & 0x3F, curPosX, yt, 30, DMA_QUEUE);
+//            }
+//        }
+//
+//
+//        if (deltaY > 0)
+//        {
+//            // need to update map row on bottom
+//            while(deltaY--)
+//            {
+//                VDP_setTileMapRowEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
+//                                    (curPosY + 30) & 0x1F, xt, curPosY + 30, 42, DMA_QUEUE);
+//                curPosY++;
+//            }
+//        }
+//        else if (deltaY < 0)
+//        {
+//            // need to update map row on top
+//            while(deltaY++)
+//            {
+//                curPosY--;
+//                VDP_setTileMapRowEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
+//                                    curPosY & 0x1F, xt, curPosY, 42, DMA_QUEUE);
+//            }
+//        }
+//    }
+//
+//    SYS_enableInts();
+//
+//    mapTilePosX[plane] = xt;
+//    mapTilePosY[plane] = yt;
+//}
+//
+//static void updateVDPScroll()
+//{
+//    SYS_disableInts();
+//    VDP_setHorizontalScroll(BG_A, -bga.posX);
+//    VDP_setHorizontalScroll(BG_B, -bgb.posX);
+//    VDP_setVerticalScroll(BG_A, bga.posY);
+//    VDP_setVerticalScroll(BG_B, bgb.posY);
+//    SYS_enableInts();
+//}
 
 static void frameChanged(Sprite* sprite)
 {
