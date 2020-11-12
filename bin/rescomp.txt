@@ -15,8 +15,8 @@ Supported resource type:
 - BITMAP    bitmapped image type resource, used for the Bitmap SGDK engine (do not use it as tile resource).
 - PALETTE   palette type resource, used as color input for Bitmap, Image or Sprite resource.
 - TILESET   tileset type resource, contains tiles data which are used by Image or Sprite resource.
-- MAP       map type resource.
-- IMAGE     image type resource, internally contains Palette, Tileset and Map data and can be used to draw a complete background.
+- MAP       map type resource, internally contains Palette, Tileset and encoded map optimized to draw large background/plane.
+- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data and can be used to draw a complete background (small).
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
 - XGM       XGM music type resource (.vgm or .xgm file), used to play music.
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
@@ -75,16 +75,16 @@ TILESET name img_file [compression]
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     opt             define the optimisation level, accepted values:
-                        0 / NONE        = no optimisation, each tile is unique (default)
-                        1 / ALL         = ignore duplicated and flipped tile
+                        0 / NONE        = no optimisation, each tile is unique
+                        1 / ALL         = ignore duplicated and flipped tile (default)
                         2 / DUPLICATE   = ignore duplicated tile only
 
 
 MAP
 ---
 Take an image as input and transform it in SGDK Map structure.
-Map is used to define a large background (plane) data, it' different from the IMAGE resource as MAP uses a specific encoding
-so it can encode large background while taking much less ROM space than IMAGE resource so use it to define large level.
+Map is used to define a large background/plane data, it' different from the IMAGE resource as MAP uses a specific encoding
+so it can encode large background while taking much less ROM space than IMAGE resource so use it to handle large level.
 
 Syntax:
 MAP name img_file tileset_id [mapbase]
@@ -93,7 +93,6 @@ MAP name img_file tileset_id [mapbase]
     img_file        path of the input image file (should be 8bpp .bmp or .png)
     tileset_id      base tileset resource to use (allow to share tileset with several maps)
     mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                    Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
 
 IMAGE
