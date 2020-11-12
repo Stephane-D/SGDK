@@ -27,7 +27,7 @@ const struct
 #else
     "SEGA MEGA DRIVE ",
 #endif
-    "(C)SGDK 2019    ",
+    "(C)SGDK 2020    ",
     "SAMPLE PROGRAM                                  ",
     "SAMPLE PROGRAM                                  ",
     "GM 00000000-00",
