@@ -56,8 +56,8 @@ extern u16 lastVCnt;
 
 // extern library callback function (we don't want to share them)
 extern void BMP_doVBlankProcess();
-extern u16 SPR_doVBlankProcess();
 extern void XGM_doVBlankProcess();
+extern bool MAP_doVBlankProcess();
 
 // we don't want to share that method
 extern void MEM_init();
@@ -655,6 +655,12 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 
         // always clear process
         vbp &= ~PROCESS_DMA_TASK;
+    }
+
+    // map process (VDP scroll)
+    if (vbp & PROCESS_MAP_TASK)
+    {
+        if (!MAP_doVBlankProcess()) vbp &= ~PROCESS_MAP_TASK;
     }
 
     // palette fading processing

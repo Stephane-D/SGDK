@@ -15,6 +15,7 @@
 #define PROCESS_BITMAP_TASK         (1 << 1)
 #define PROCESS_DMA_TASK            (1 << 2)
 #define PROCESS_XGM_TASK            (1 << 3)
+#define PROCESS_MAP_TASK            (1 << 4)
 
 /**
  *  \brief
