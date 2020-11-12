@@ -4,10 +4,23 @@
  *  \author Stephane Dallongeville
  *  \date 11/2020
  *
- * This unit provides methods to manipulate large background MAP :<br>
- * - Create / load / release MAP object<br>
+ * This unit provides methods to manipulate / scroll large background MAP:<br>
+ * - Create / release MAP object<br>
  * - MAP decoding functions<br>
- * - Large MAP scrolling engine
+ * - Large MAP scrolling engine<br>
+ * <br>
+ * Using MAP resource you can encode large image as a #MapDefinition structure which will be
+ * used to handle large background scrolling. The #MapDefinition structure is optimized to encode
+ * large map efficiently (space wise), here's the encoding format:<br>
+ * - background map is encoded as a grid of 128x128 pixels blocks<br>
+ * - duplicated 128x128 blocks are optimized (keep only 1 reference)<br>
+ * - each 128x128 blocks is encoded internally as a 8x8 grid of metatile<br>
+ * - a metatile is a 16x16 pixels block (2x2 tiles block)<br>
+ * - each duplicated / flipped metatile are optimized.<br>
+ * <br>
+ * Knowing that you can draw your level background to optimize its space usage by trying to optimize<br>
+ * the number of unique 128x128 pixels block.
+ *
  */
 
 #ifndef _MAP_H_
@@ -37,7 +50,7 @@
  *  \param tileset
  *      TileSet data structure (contains tiles definition for the image).
  *  \param metaTiles
- *      metatiles definition, each metatile is encoded as 2x2 tiles:<br>
+ *      metatiles definition, each metatile is encoded as 2x2 tiles block:<br>
  *      - b15: priority<br>
  *      - b14-b13: palette<br>
  *      - b12: vflip<br>
@@ -104,7 +117,6 @@ typedef struct
     u16 planeHeightMask;
     u16 lastXT;
     u16 lastYT;
-    bool updateScroll;
 } Map;
 
 
@@ -131,7 +143,9 @@ typedef struct
 void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, u32 x, u32 y, Map *map);
 /**
  *  \brief
- *      Scroll map to specified position
+ *      Scroll map to specified position.<vr>
+ *      The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then
+ *      VDP background scrolling is automatically set on VBlank (into the SYS_doVBlankProcess() tasks)
  *
  *  \param map
  *      Map structure containing map information.
@@ -144,14 +158,14 @@ void MAP_scrollTo(Map* map, u32 x, u32 y);
 
 /**
  *  \brief
- *      Returns given metatile attribute
+ *      Returns given metatile attribute (a metatile is a block of 2x2 tiles = 16x16 pixels)
  *
  *  \param mapDef
  *      MapDefinition structure containing map information.
  *  \param x
- *      metatile X position (a metatile is basically a block of 2x2 tiles = 16x16 pixels)
+ *      metatile X position
  *  \param x
- *      metatile Y position (a metatile is basically a block of 2x2 tiles = 16x16 pixels)
+ *      metatile Y position
  *
  *  \return
  *      metatile attribute:<br>
@@ -184,20 +198,20 @@ u16 MAP_getMetaTile(const MapDefinition* mapDef, u16 x, u16 y);
 u16 MAP_getTile(const MapDefinition* mapDef, u16 x, u16 y);
 /**
  *  \brief
- *      Returns metatiles attribute for the specified region
+ *      Returns metatiles attribute for the specified region (a metatile is a block of 2x2 tiles = 16x16 pixels)
  *
  *  \param mapDef
  *      MapDefinition structure containing map information.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param x
- *      Region X start position (in tile).
+ *      Region X start position (in metatile).
  *  \param y
- *      Region Y start position (in tile).
+ *      Region Y start position (in metatile).
  *  \param w
- *      Region Width (in tile).
+ *      Region Width (in metatile).
  *  \param h
- *      Region Heigh (in tile).
+ *      Region Heigh (in metatile).
  *  \param dest
  *      destination pointer receiving metatiles attribute data
  *
@@ -217,17 +231,17 @@ void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u1
  *  \param mapDef
  *      MapDefinition structure containing map information.
  *  \param x
- *      Region X start position (in tile).
+ *      Region X start position <b>(in metatile)</b>
  *  \param y
- *      Region Y start position (in tile).
+ *      Region Y start position <b>(in metatile)</b>
  *  \param w
- *      Region Width (in tile).
+ *      Region Width <b>(in metatile)</b>
  *  \param h
- *      Region Heigh (in tile).
+ *      Region Heigh <b>(in metatile)</b>
  *  \param column
  *      if set to TRUE then tilemap data is stored by column order [Y,X] instead of row order [X,Y].
  *  \param basetile
- *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro) to use to fill tiles attribute data.
+ *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro)
  *  \param dest
  *      destination pointer receiving tiles attribute data
  *
