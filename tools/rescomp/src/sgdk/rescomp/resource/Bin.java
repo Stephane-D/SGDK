@@ -118,24 +118,27 @@ public class Bin extends Resource
         final int baseSize = data.length;
         final int packedSize = packedData.data.length;
 
+        // data was compressed ?
         if (packedSize < baseSize)
         {
+            System.out.print("'" + id + "' ");
+
             switch (packedData.compression)
             {
                 case APLIB:
-                    System.out.print("Packed with APLIB, ");
+                    System.out.print("packed with APLIB, ");
                     break;
 
                 case LZ4W:
-                    System.out.print("Packed with LZ4W, ");
+                    System.out.print("packed with LZ4W, ");
                     break;
 
                 default:
-                    System.out.print("No compression, ");
+                    break;
             }
 
-            System.out.println("'" + id + "' final size = " + packedSize + " ("
-                    + Math.round((packedSize * 100f) / baseSize) + "% - origin size = " + baseSize + ")");
+            System.out.println("size = " + packedSize + " (" + Math.round((packedSize * 100f) / baseSize)
+                    + "% - origin size = " + baseSize + ")");
         }
 
         // output binary data (data alignment was done before)
