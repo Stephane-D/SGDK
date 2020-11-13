@@ -47,7 +47,7 @@
 #else
     #define LIB_DEBUG       0
     #undef LIB_LOG_LEVEL
-    #define LIB_LOG_LEVEL   LOG_LEVEL_ERROR
+    #define LIB_LOG_LEVEL   LOG_LEVEL_DISABLE
 #endif
 
 /**
