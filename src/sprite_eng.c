@@ -20,12 +20,6 @@
 //#define SPR_DEBUG
 //#define SPR_PROFIL
 
-#ifdef SPR_DEBUG
-    // force LIB_DEBUG
-    #define LIB_DEBUG   1
-#endif // SPR_DEBUG
-
-
 // first hardware sprite is reserved (used internally for sorting)
 #define MAX_SPRITE                          (80 - 1)
 
