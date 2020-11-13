@@ -652,9 +652,6 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         }
         else
             DMA_flushQueue();
-
-        // always clear process
-        vbp &= ~PROCESS_DMA_TASK;
     }
 
     // map process (VDP scroll)
