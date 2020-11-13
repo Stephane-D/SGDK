@@ -41,7 +41,7 @@ void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, u32 x, 
 
     // force full map update using row updates
     map->posX = x;
-    map->posY = y - 240;
+    map->posY = y - 256;
     map->lastXT = map->posX >> 4;
     map->lastYT = map->posY >> 4;
 
@@ -91,6 +91,8 @@ static void updateMap(Map* map, s16 xt, s16 yt)
 
     // no update --> exit
     if ((deltaX == 0) && (deltaY == 0)) return;
+
+//    KLog_S3("updateMap map=", map->plane, " deltaX=", deltaX, " deltaY=", deltaY);
 
     if (deltaX > 0)
     {
@@ -185,7 +187,7 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
         setMapColumnEx(map, column, 0, h - h1, x, y + h1);
     }
     // no split needed
-    setMapColumnEx(map, column, yAdj, h, x, y);
+    else setMapColumnEx(map, column, yAdj, h, x, y);
 }
 
 static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym)
