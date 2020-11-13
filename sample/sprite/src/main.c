@@ -26,7 +26,7 @@
 #define BRAKE_SPEED         FIX32(2L)
 
 #define JUMP_SPEED_MIN      FIX32(4L)
-#define JUMP_SPEED_MAX      FIX32(15L)
+#define JUMP_SPEED_MAX      FIX32(22L)
 #define JUMP_SPEED_DEFAULT  FIX32(7.8L)
 
 #define GRAVITY_MIN         FIX32(0.15)
@@ -36,9 +36,12 @@
 #define ACCEL               FIX32(0.1)
 #define DE_ACCEL            FIX32(0.15)
 
+#define MAP_WIDTH           10240
+#define MAP_HEIGHT          1280
+
 #define MIN_POSX            FIX32(10L)
-#define MAX_POSX            FIX32(4000L)
-#define MAX_POSY            FIX32(924L)
+#define MAX_POSX            FIX32(MAP_WIDTH - 100)
+#define MAX_POSY            FIX32(MAP_HEIGHT - 356)
 
 
 // forward
@@ -106,8 +109,6 @@ int main(u16 hard)
     u16 ind;
     u16 numTile;
 
-    // disable interrupt when accessing VDP
-    SYS_disableInts();
     // initialization
     VDP_setScreenWidth320();
 
@@ -133,16 +134,14 @@ int main(u16 hard)
     VDP_loadTileSet(&bgb_tileset, ind, DMA);
     ind += bgb_tileset.numTile;
 
-    // VDP process done, we can re enable interrupts
-    SYS_enableInts();
-
+    // initialize variables
     paused = FALSE;
-
     // camera position (force refresh)
     camPosX = -1;
     camPosY = -1;
     scrollNeedUpdate = FALSE;
 
+    // default speeds
     maxSpeed = MAX_SPEED_DEFAULT;
     jumpSpeed = JUMP_SPEED_DEFAULT;
     gravity = GRAVITY_DEFAULT;
@@ -155,6 +154,7 @@ int main(u16 hard)
     xOrder = 0;
     yOrder = 0;
 
+    // enemies position
     enemiesPosX[0] = FIX32(300L);
     enemiesPosY[0] = FIX32(304L);
     enemiesPosX[1] = FIX32(128L);
@@ -162,7 +162,7 @@ int main(u16 hard)
     enemiesXOrder[0] = -1;
     enemiesXOrder[1] = 1;
 
-    // init background
+    // init backgrounds
     MAP_init(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]), 0, 0, &bga);
     MAP_init(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]), 0 >> 3, 0 >> 5, &bgb);
 
@@ -242,6 +242,7 @@ int main(u16 hard)
         // update sprites
         SPR_update();
 
+        // sync frame and do vblank process
         SYS_doVBlankProcess();
 
 //        if (scrollNeedUpdate)
@@ -421,7 +422,7 @@ static void updateAnim()
 
 static void updateCameraPosition()
 {
-     // get player position (pixel)
+    // get player position (pixel)
     s16 px = fix32ToInt(posX);
     s16 py = fix32ToInt(posY);
     // current sprite position on screen
@@ -440,9 +441,9 @@ static void updateCameraPosition()
 
     // clip camera position
     if (npx_cam < 0) npx_cam = 0;
-    else if (npx_cam > (4096 - 320)) npx_cam = (4096 - 320);
+    else if (npx_cam > (MAP_WIDTH - 320)) npx_cam = (MAP_WIDTH - 320);
     if (npy_cam < 0) npy_cam = 0;
-    else if (npy_cam > (1280 - 224)) npy_cam = (1280 - 224);
+    else if (npy_cam > (MAP_HEIGHT - 224)) npy_cam = (MAP_HEIGHT - 224);
 
     // set new camera position
     setCameraPosition(npx_cam, npy_cam);
@@ -579,13 +580,13 @@ static void handleInput()
 
         if (value & BUTTON_UP)
         {
-            jumpSpeed += FIX32(0.1);
+            jumpSpeed += FIX32(0.3);
             if (jumpSpeed > JUMP_SPEED_MAX) jumpSpeed = JUMP_SPEED_MAX;
             updateBar(bars[1], JUMP_SPEED_MIN, JUMP_SPEED_MAX, jumpSpeed);
         }
         else if (value & BUTTON_DOWN)
         {
-            jumpSpeed -= FIX32(0.1);
+            jumpSpeed -= FIX32(0.3);
             if (jumpSpeed < JUMP_SPEED_MIN) jumpSpeed = JUMP_SPEED_MIN;
             updateBar(bars[1], JUMP_SPEED_MIN, JUMP_SPEED_MAX, jumpSpeed);
         }
