@@ -91,7 +91,7 @@ public class Tileset extends Resource
 
                 // not found --> add it
                 if (index == -1)
-                    tiles.add(tile);
+                    add(tile);
             }
         }
 
@@ -128,7 +128,7 @@ public class Tileset extends Resource
             // important to respect sprite tile ordering (vertical)
             for (int i = 0; i < widthTile; i++)
                 for (int j = 0; j < heightTile; j++)
-                    tiles.add(Tile.getTile(image8bpp, imageWidth, imageHeight, rect.x + (i * 8), rect.y + (j * 8)));
+                    add(Tile.getTile(image8bpp, imageWidth, imageHeight, rect.x + (i * 8), rect.y + (j * 8)));
         }
 
         // build the binary bloc
@@ -158,6 +158,11 @@ public class Tileset extends Resource
         return tiles.get(index);
     }
 
+    private void add(Tile tile)
+    {
+        tiles.add(tile);
+    }
+
     public int getTileIndex(Tile tile, TileOptimization opt)
     {
         // no optimization allowed --> need to duplicate tile
@@ -167,18 +172,13 @@ public class Tileset extends Resource
         int ind = 0;
         for (Tile t : tiles)
         {
-            if (opt == TileOptimization.DUPLICATE_ONLY)
+            final TileEquality result = t.getEquality(tile);
+
+            // found an equality ?
+            if (result != TileEquality.NONE)
             {
-                // look only for duplicated tiles
-                if (t.equals(tile))
-                    return ind;
-            }
-            else
-            {
-                // look for flipped tiles as well
-                final TileEquality result = t.getEquality(tile);
-                // we found a matching tile --> return its index
-                if (result != TileEquality.NONE)
+                // perfect equality or flipped allowed ? --> found it
+                if ((result == TileEquality.EQUAL) || (opt == TileOptimization.ALL))
                     return ind;
             }
 

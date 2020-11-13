@@ -131,6 +131,10 @@ public class Tile implements Comparable<Tile>
     public final boolean prio;
     public final boolean empty;
 
+    final int[] flipH;
+    final int[] flipV;
+    final int[] flipHV;
+
     final int hc;
 
     public Tile(int[] data, int pal, boolean prio, int plain)
@@ -147,24 +151,40 @@ public class Tile implements Comparable<Tile>
         this.prio = prio;
         this.plain = plain;
 
-        // compute hash code and empty
-        int c = 0;
+        // set empty
         boolean emp = true;
         for (int i = 0; i < data.length; i++)
         {
-            final int d = data[i];
-            c ^= d;
-            if (d != 0)
+            if (data[i] != 0)
+            {
                 emp = false;
+                break;
+            }
         }
-
-        hc = c;
         empty = emp;
+
+        flipH = getFlipped(true, false);
+        flipV = getFlipped(false, true);
+        flipHV = getFlipped(true, true);
+
+        hc = getHash(data) ^ getHash(flipH) ^ getHash(flipV) ^ getHash(flipHV);
     }
 
     public Tile(byte[] pixel8bpp, int pal, boolean prio, int plain)
     {
         this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)), pal, prio, plain);
+    }
+
+    public int getHash(int[] array)
+    {
+        int result = 0;
+        for (int i = 0; i < array.length; i++)
+        {
+            final int d = array[i];
+            result ^= d;
+        }
+
+        return result;
     }
 
     public boolean isPlain()
@@ -180,7 +200,7 @@ public class Tile implements Comparable<Tile>
         return plain;
     }
 
-    public Tile getFlipped(boolean hflip, boolean vflip)
+    private int[] getFlipped(boolean hflip, boolean vflip)
     {
         final int[] result = new int[8];
 
@@ -199,23 +219,23 @@ public class Tile implements Comparable<Tile>
                 result[i] = data[line];
         }
 
-        return new Tile(result, pal, prio, plain);
+        return result;
     }
 
     public TileEquality getEquality(Tile tile)
     {
         // perfect equality
-        if (tile.equals(this))
+        if ( Arrays.equals(tile.data, data))
             return TileEquality.EQUAL;
 
         // hflip
-        if (Arrays.equals(data, tile.getFlipped(true, false).data))
+        if (Arrays.equals(tile.data, flipH))
             return TileEquality.HFLIP;
         // vflip
-        if (Arrays.equals(data, tile.getFlipped(false, true).data))
+        if (Arrays.equals(tile.data, flipV))
             return TileEquality.VFLIP;
         // hvflip
-        if (Arrays.equals(data, tile.getFlipped(true, true).data))
+        if (Arrays.equals(tile.data, flipHV))
             return TileEquality.HVFLIP;
 
         return TileEquality.NONE;
@@ -245,7 +265,7 @@ public class Tile implements Comparable<Tile>
     {
         return Integer.compare(hc, tile.hc);
     }
-    
+
     @Override
     public String toString()
     {
