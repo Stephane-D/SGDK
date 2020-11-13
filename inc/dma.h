@@ -162,7 +162,7 @@ u16 DMA_getMaxTransferSize();
  *  \brief
  *      Sets the maximum amount of data (in bytes) to transfer per #DMA_flushQueue() call.<br>
  *      VBlank period allows to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br>
- *      By default there is no size limit (0).
+ *      By default there is no size limit (0)
  *
  *  \param value
  *      The maximum amount of data (in bytes) to transfer during DMA_flushQueue() operation.<br>
@@ -257,7 +257,7 @@ u16 DMA_getQueueSize();
  *      NTSC frame allows about 7.6 KB of data to be transferred during VBlank (in H40) while
  *      PAL frame allows about 17 KB (in H40).
  */
-u32 DMA_getQueueTransferSize();
+u16 DMA_getQueueTransferSize();
 
 /**
  *  \brief

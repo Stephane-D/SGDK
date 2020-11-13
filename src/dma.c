@@ -12,8 +12,8 @@
 
 //#define DMA_DEBUG
 
-#define DMA_AUTOFLUSH               0x1
-#define DMA_OVERCAPACITY_IGNORE     0x2
+#define DMA_AUTOFLUSH               1
+#define DMA_OVERCAPACITY_IGNORE     2
 
 
 // we don't want to share it
@@ -37,7 +37,7 @@ static u16 dataBufferSize;
 // current queue index (0 = empty / queueSize = full)
 static u16 queueIndex;
 static u16 queueIndexLimit;
-static u32 queueTransferSize;
+static u16 queueTransferSize;
 
 // do not share (assembly methods)
 void flushQueue(u16 num);
@@ -46,15 +46,16 @@ void flushQueueSafe(u16 num, u16 z80restore);
 
 void DMA_init()
 {
-    DMA_initEx(0, 0, 0);
+    DMA_initEx(0, -1, 0);
 }
 
 void DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
 {
-    // 0 means no limit
+    // -1/65535 means no limit
     maxTransferPerFrame = capacity;
     // auto flush is enabled by default
     flag = DMA_AUTOFLUSH;
+    VBlankProcess |= PROCESS_DMA_TASK;
 
     // release buffers first
     if (dmaQueues)
@@ -94,11 +95,13 @@ void DMA_setAutoFlush(bool value)
     if (value)
     {
         flag |= DMA_AUTOFLUSH;
-        // auto flush enabled and transfer size > 0 --> set process on VBlank
-        if (queueTransferSize > 0)
-            VBlankProcess |= PROCESS_DMA_TASK;
+        VBlankProcess |= PROCESS_DMA_TASK;
     }
-    else flag &= ~DMA_AUTOFLUSH;
+    else
+    {
+        flag &= ~DMA_AUTOFLUSH;
+        VBlankProcess &= ~PROCESS_DMA_TASK;
+    }
 }
 
 u16 DMA_getMaxQueueSize()
@@ -126,12 +129,13 @@ void DMA_setMaxQueueSizeToDefault()
 
 u16 DMA_getMaxTransferSize()
 {
-    return maxTransferPerFrame;
+    return ((s16) maxTransferPerFrame == -1)?0:maxTransferPerFrame;
 }
 
 void DMA_setMaxTransferSize(u16 value)
 {
-    maxTransferPerFrame = value;
+    if (value) maxTransferPerFrame = value;
+    else maxTransferPerFrame = -1;
 }
 
 void DMA_setMaxTransferSizeToDefault()
@@ -321,7 +325,7 @@ u16 DMA_getQueueSize()
     return queueIndex;
 }
 
-u32 DMA_getQueueTransferSize()
+u16 DMA_getQueueTransferSize()
 {
     return queueTransferSize;
 }
@@ -428,10 +432,10 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 {
     u32 fromAddr;
-    u32 newLen;
     u32 bankLimitB;
     u32 bankLimitW;
     DMAOpInfo *info;
+    u16 newLen;
 
     // queue is full --> error
     if (queueIndex >= queueSize)
@@ -443,7 +447,6 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
         // return FALSE as transfer will be ignored
         return FALSE;
     }
-
 
     // DMA works on 64 KW bank
     fromAddr = (u32) from;
@@ -503,11 +506,8 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
 #endif
 
-    // auto flush enabled --> set process on VBlank
-    if (flag & DMA_AUTOFLUSH) VBlankProcess |= PROCESS_DMA_TASK;
-
     // we are above the defined limit ?
-    if (maxTransferPerFrame && (queueTransferSize > maxTransferPerFrame))
+    if (queueTransferSize > maxTransferPerFrame)
     {
         // first time we reach the limit ? store index where to stop transfer
         if (queueIndexLimit == 0)
