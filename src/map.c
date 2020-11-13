@@ -8,6 +8,9 @@
 #include "tools.h"
 
 
+//#define MAP_DEBUG
+
+
 // we don't want to share them
 extern vu16 VBlankProcess;
 
@@ -92,7 +95,9 @@ static void updateMap(Map* map, s16 xt, s16 yt)
     // no update --> exit
     if ((deltaX == 0) && (deltaY == 0)) return;
 
-//    KLog_S3("updateMap map=", map->plane, " deltaX=", deltaX, " deltaY=", deltaY);
+#ifdef DMA_DEBUG
+    KLog_S4("updateMap xt=", xt, " yt=", yt, " deltaX=", deltaX, " deltaY=", deltaY);
+#endif
 
     if (deltaX > 0)
     {
@@ -169,7 +174,9 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
     // 16 metatile = 32 tiles = 256 pixels (full screen height + 16 pixels)
     u16 h = 16;
 
-//    KLog_U3("setMapColumn column=", column, " x=", x, " y=", y);
+#ifdef DMA_DEBUG
+    KLog_U3("setMapColumn column=", column, " x=", x, " y=", y);
+#endif
 
     // clip Y against plane size
     const u16 yAdj = y & map->planeHeightMask;
@@ -217,7 +224,9 @@ static void setMapRow(Map *map, u16 row, u16 x, u16 y)
     // 21 metatile = 42 tiles = 336 pixels (full screen width + 16 pixels)
     u16 w = 21;
 
-//    KLog_U3("setMapRow row=", row, " x=", x, " y=", y);
+#ifdef DMA_DEBUG
+    KLog_U3("setMapRow row=", row, " x=", x, " y=", y);
+#endif
 
     // clip X against plane size
     const u16 xAdj = x & map->planeWidthMask;
