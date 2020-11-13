@@ -9,6 +9,7 @@
 
 
 //#define MAP_DEBUG
+//#define MAP_PROFIL
 
 
 // we don't want to share them
@@ -199,6 +200,10 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
 
 static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym)
 {
+#ifdef MAP_PROFIL
+    u16 start = GET_VCOUNTER;
+#endif
+
     const u16 addr = VDP_getPlaneAddress(map->plane, column * 2, y * 2);
     const u16 pw = planeWidth;
 
@@ -206,6 +211,11 @@ static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym)
     u16* bufCol1 = DMA_allocateAndQueueDma(DMA_VRAM, addr + 0, h * 2, pw * 2);
     // get temp buffer for second tile column and schedule DMA
     u16* bufCol2 = DMA_allocateAndQueueDma(DMA_VRAM, addr + 2, h * 2, pw * 2);
+
+#ifdef MAP_PROFIL
+    u16 end = GET_VCOUNTER;
+    KLog_S2("DMA_allocateAndQueueDma - duration=", end-start, " h=", h);
+#endif
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!bufCol1 || !bufCol2)
@@ -271,6 +281,10 @@ static void setMapRowEx(Map *map, u16 row, u16 x, u16 w, u16 xm, u16 ym)
 
 static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
+#ifdef MAP_PROFIL
+    u16 start = GET_VCOUNTER;
+#endif
+
     // we can add both base index and base palette
     const u16 baseAttr = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
 
@@ -371,6 +385,11 @@ static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 
             block += blockFixedOffset;
         }
     }
+
+#ifdef MAP_PROFIL
+    u16 end = GET_VCOUNTER;
+    KLog_S3("prepareMapDataColumn - start=", start, " end=", end, " h=", height);
+#endif
 }
 
 static void prepareMapDataRow(const MapDefinition *mapDef, u16 baseTile, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
