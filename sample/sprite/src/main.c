@@ -78,7 +78,7 @@ Map bga;
 s16 camPosX;
 s16 camPosY;
 // require scroll update
-bool scrollNeedUpdate;
+//bool scrollNeedUpdate;
 
 fix32 maxSpeed;
 fix32 jumpSpeed;
@@ -139,7 +139,7 @@ int main(u16 hard)
     // camera position (force refresh)
     camPosX = -1;
     camPosY = -1;
-    scrollNeedUpdate = FALSE;
+//    scrollNeedUpdate = FALSE;
 
     // default speeds
     maxSpeed = MAX_SPEED_DEFAULT;
@@ -156,18 +156,15 @@ int main(u16 hard)
 
     // enemies position
     enemiesPosX[0] = FIX32(300L);
-    enemiesPosY[0] = FIX32(304L);
+    enemiesPosY[0] = MAX_POSY - FIX32(100);
     enemiesPosX[1] = FIX32(128L);
-    enemiesPosY[1] = FIX32(418L);
+    enemiesPosY[1] = MAX_POSY + FIX32(5);
     enemiesXOrder[0] = -1;
     enemiesXOrder[1] = 1;
 
     // init backgrounds
-    MAP_init(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]), 0, 0, &bga);
-    MAP_init(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]), 0 >> 3, 0 >> 5, &bgb);
-
-    // let map update
-    SYS_doVBlankProcess();
+    MAP_init(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]), &bga);
+    MAP_init(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]), &bgb);
 
     // init scrolling
     updateCameraPosition();
@@ -219,7 +216,7 @@ int main(u16 hard)
 //    memcpy(&palette[48], enemies_sprite.palette->data, 16 * 2);
 
     // fade in
-    VDP_fadeIn(0, (4 * 16) - 1, palette, 20, FALSE);
+    PAL_fadeIn(0, (4 * 16) - 1, palette, 20, FALSE);
 
     JOY_setEventHandler(joyEvent);
 
@@ -461,7 +458,7 @@ static void setCameraPosition(s16 x, s16 y)
         // scrolling is slower on BGB
         MAP_scrollTo(&bgb, x >> 3, y >> 5);
 
-        scrollNeedUpdate = TRUE;
+//        scrollNeedUpdate = TRUE;
     }
 }
 
