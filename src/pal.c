@@ -505,7 +505,8 @@ void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 
     else
     {
         // process fading immediatly
-        while (PAL_doFadeStep());
+        while (PAL_doFadeStep())
+            SYS_doVBlankProcess();
     }
 }
 
