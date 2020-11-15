@@ -4,6 +4,7 @@
 #include "map.h"
 
 #include "sys.h"
+#include "mapper.h"
 #include "vdp_tile.h"
 #include "tools.h"
 
@@ -17,15 +18,15 @@ extern vu16 VBlankProcess;
 
 
 // forward
-static void updateMap(Map* map, s16 xt, s16 yt);
+static void updateMap(Map *map, s16 xt, s16 yt);
 
 static void setMapColumn(Map *map, u16 column, u16 x, u16 y);
 static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym);
 static void setMapRow(Map *map, u16 row, u16 x, u16 y);
 static void setMapRowEx(Map *map, u16 row, u16 x, u16 w, u16 xm, u16 ym);
 
-static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
-static void prepareMapDataRow(const MapDefinition *mapDef, u16 baseTile, u16* bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataColumn(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataRow(Map* map, u16* bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
 
 
 static s16 scrollX[2];
@@ -33,41 +34,43 @@ static s16 scrollY[2];
 static bool updateScroll[2];
 
 
-void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, u32 x, u32 y, Map *map)
+void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, Map *map)
 {
-    map->mapDefinition = mapDef;
+    map->w = mapDef->w;
+    map->h = mapDef->h;
+
+    // init FAR pointer
+    map->metaTiles = FAR(mapDef->metaTiles);
+    map->blocks = FAR(mapDef->blocks);
+    map->blockIndexes = FAR(mapDef->blockIndexes);
+    map->blockRowOffsets = FAR(mapDef->blockRowOffsets);
+
+    // init base parameters
     map->plane = plane;
     // keep only base index and base palette
     map->baseTile = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
-    // we want plane size mask in metatile
-    map->planeWidthMask = (planeWidth >> 1) - 1;
-    map->planeHeightMask = (planeHeight >> 1) - 1;
-
-    // force full map update using row updates
-    map->posX = x;
-    map->posY = y - 256;
-    map->lastXT = map->posX >> 4;
-    map->lastYT = map->posY >> 4;
-
-    // update map
-    updateMap(map, x >> 4, y >> 4);
-
-    // store position
-    map->posX = x;
-    map->posY = y;
-
-    // store info for scrolling
-    scrollX[plane] = -x;
-    scrollY[plane] = y;
-    updateScroll[plane] = TRUE;
-    // add task for vblank process
-    VBlankProcess |= PROCESS_MAP_TASK;
+    // mark for init
+    map->planeWidthMask = 0;
+    map->planeHeightMask = 0;
 }
 
 void MAP_scrollTo(Map* map, u32 x, u32 y)
 {
+    // first scroll ?
+    if (map->planeWidthMask == 0)
+    {
+        // init plane dimension
+        map->planeWidthMask = (planeWidth >> 1) - 1;
+        map->planeHeightMask = (planeHeight >> 1) - 1;
+
+        // force full map update using row updates
+        map->posX = x;
+        map->posY = y - 256;
+        map->lastXT = map->posX >> 4;
+        map->lastYT = map->posY >> 4;
+    }
     // nothing to do..
-    if ((x == map->posX) && (y == map->posY)) return;
+    else if ((x == map->posX) && (y == map->posY)) return;
 
     // update map
     updateMap(map, x >> 4, y >> 4);
@@ -226,7 +229,7 @@ static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym)
 #endif
 
     // then prepare data in buffer that will be transferred by DMA
-    prepareMapDataColumn(map->mapDefinition, map->baseTile, bufCol1, bufCol2, xm, ym, h);
+    prepareMapDataColumn(map, bufCol1, bufCol2, xm, ym, h);
 }
 
 static void setMapRow(Map *map, u16 row, u16 x, u16 y)
@@ -275,18 +278,18 @@ static void setMapRowEx(Map *map, u16 row, u16 x, u16 w, u16 xm, u16 ym)
 #endif
 
     // then prepare data in buffer that will be transferred by DMA
-    prepareMapDataRow(map->mapDefinition, map->baseTile, bufRow1, bufRow2, xm, ym, w);
+    prepareMapDataRow(map, bufRow1, bufRow2, xm, ym, w);
 }
 
 
-static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+static void prepareMapDataColumn(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
 #ifdef MAP_PROFIL
     u16 start = GET_VCOUNTER;
 #endif
 
     // we can add both base index and base palette
-    const u16 baseAttr = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
 
     u16 *d1 = bufCol1;
     u16 *d2 = bufCol2;
@@ -294,9 +297,9 @@ static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 
     u16 h = height;
 
     // block grid index
-    u16 blockGridIndex = mapDef->blockRowOffsets[ym / 8] + (xm / 8);
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
     // get first block data pointer
-    u16* block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+    u16* block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
     u16 blockFixedOffset = xm & 7;
     // start y position inside block
@@ -318,7 +321,7 @@ static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 
         u16 flip = metaTileAttr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
 
         // get metatile pointeur
-        u16* metaTile = &mapDef->metaTiles[2 * 2 * (metaTileAttr & TILE_INDEX_MASK)];
+        u16* metaTile = &map->metaTiles[2 * 2 * (metaTileAttr & TILE_INDEX_MASK)];
 
         switch(flip)
         {
@@ -378,9 +381,9 @@ static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 
         {
             yi = 0;
             // increment block grid index (next row)
-            blockGridIndex += mapDef->w;
+            blockGridIndex += map->w;
             // get block data pointer
-            block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+            block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
             // add base offset
             block += blockFixedOffset;
         }
@@ -392,10 +395,14 @@ static void prepareMapDataColumn(const MapDefinition *mapDef, u16 baseTile, u16 
 #endif
 }
 
-static void prepareMapDataRow(const MapDefinition *mapDef, u16 baseTile, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
 {
+#ifdef MAP_PROFIL
+    u16 start = GET_VCOUNTER;
+#endif
+
     // we can add both base index and base palette
-    const u16 baseAttr = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
 
     u16 *d1 = bufRow1;
     u16 *d2 = bufRow2;
@@ -403,9 +410,9 @@ static void prepareMapDataRow(const MapDefinition *mapDef, u16 baseTile, u16 *bu
     u16 w = width;
 
     // block grid index
-    u16 blockGridIndex = mapDef->blockRowOffsets[ym / 8] + (xm / 8);
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
     // get first block data pointer
-    u16* block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+    u16* block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
     u16 blockFixedOffset = (ym & 7) * 8;
     // start x position inside block
@@ -425,7 +432,7 @@ static void prepareMapDataRow(const MapDefinition *mapDef, u16 baseTile, u16 *bu
         u16 flip = metaTileAttr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
 
         // get metatile pointeur
-        u16* metaTile = &mapDef->metaTiles[2 * 2 * (metaTileAttr & TILE_INDEX_MASK)];
+        u16* metaTile = &map->metaTiles[2 * 2 * (metaTileAttr & TILE_INDEX_MASK)];
 
         switch(flip)
         {
@@ -487,33 +494,38 @@ static void prepareMapDataRow(const MapDefinition *mapDef, u16 baseTile, u16 *bu
             // increment block grid index (next column)
             blockGridIndex++;
             // get block data pointer
-            block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+            block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
             // add base offset
             block += blockFixedOffset;
         }
     }
+
+#ifdef MAP_PROFIL
+    u16 end = GET_VCOUNTER;
+    KLog_S3("prepareMapDataRow - start=", start, " end=", end, " h=", height);
+#endif
 }
 
 
-u16 MAP_getMetaTile(const MapDefinition* mapDef, u16 x, u16 y)
+u16 MAP_getMetaTile(Map* map, u16 x, u16 y)
 {
     u16 xb = x / 8;
     u16 yb = y / 8;
-    u16 blockInd = mapDef->blockIndexes[mapDef->blockRowOffsets[yb] + xb];
-    u16* block = &mapDef->blocks[8 * 8 * blockInd];
+    u16 blockInd = map->blockIndexes[map->blockRowOffsets[yb] + xb];
+    u16* block = &map->blocks[8 * 8 * blockInd];
     u16 xi = x & 7;
     u16 yi = y & 7;
 
     return block[(yi * 8) + xi];
 }
 
-u16 MAP_getTile(const MapDefinition* mapDef, u16 x, u16 y)
+u16 MAP_getTile(Map* map, u16 x, u16 y)
 {
-    u16 metaTileAttr = MAP_getMetaTile(mapDef, x / 2, y / 2);
+    u16 metaTileAttr = MAP_getMetaTile(map, x / 2, y / 2);
     u16 metaPrio = metaTileAttr & TILE_ATTR_PRIORITY_MASK;
     u16 metaFlip = metaTileAttr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
     u16 metaInd = metaTileAttr & TILE_INDEX_MASK;
-    u16* metaTile = &mapDef->metaTiles[2 * 2 * metaInd];
+    u16* metaTile = &map->metaTiles[2 * 2 * metaInd];
 
     u16 xi = x & 1;
     u16 yi = y & 1;
@@ -525,16 +537,16 @@ u16 MAP_getTile(const MapDefinition* mapDef, u16 x, u16 y)
 }
 
 
-void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u16 h, u16* dest)
+void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
 {
     // start y position inside block
     u16 yi = y & 7;
     u16 hi = h;
 
     // block grid index
-    u16 blockGridIndex = mapDef->blockRowOffsets[y / 8] + (x / 8);
+    u16 blockGridIndex = map->blockRowOffsets[y / 8] + (x / 8);
     // get first block data pointer
-    u16* block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+    u16* block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
     // block Y offset
     u16 blockYOffset = yi * 8;
 
@@ -563,7 +575,7 @@ void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u1
                 // increment block grid index (next column)
                 blockGridIndex++;
                 // get block data pointer
-                block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+                block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
                 // add Y offset
                 block += blockYOffset;
             }
@@ -576,16 +588,16 @@ void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u1
         {
             yi = 0;
             // increment block grid index (next row)
-            blockGridIndex += mapDef->w;
+            blockGridIndex += map->w;
             // get block data pointer
-            block = &mapDef->blocks[8 * 8 * mapDef->blockIndexes[blockGridIndex]];
+            block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
             // block Y offset
             blockYOffset = yi * 8;
         }
     }
 }
 
-void MAP_getTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u16 h, u16 baseTile, bool column, u16* dest)
+void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest)
 {
     // destination
     u16 *d1 = dest;
@@ -601,7 +613,7 @@ void MAP_getTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u16 h,
 
         while(wi--)
         {
-            prepareMapDataColumn(mapDef, baseTile, d1, d2, xi, y, h);
+            prepareMapDataColumn(map, d1, d2, xi, y, h);
             // next metatile X
             xi++;
             // next metatile column
@@ -620,7 +632,7 @@ void MAP_getTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u16 h,
 
         while(hi--)
         {
-            prepareMapDataRow(mapDef, baseTile, d1, d2, x, yi, w);
+            prepareMapDataRow(map, d1, d2, x, yi, w);
             // next metatile Y
             yi++;
             // next metatile row

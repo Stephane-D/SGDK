@@ -85,10 +85,20 @@ typedef struct
 
 /**
  *  \brief
- *      Map structure containing information for background/plane update using MapDefinition
+ *      Map structure containing information for large background/plane update based on #MapDefinition
  *
- *  \param mapDefinition
- *      MapDefinition structure containing background/plane data.
+ *  \param w
+ *      map width in block (128x128 pixels block)
+ *  \param h
+ *      map height in block (128x128 pixels block)
+ *  \param metaTiles
+ *      internal - direct FAR access (see #FAR) to mapDefinition->metaTiles
+ *  \param blocks
+ *      internal - direct FAR access (see #FAR) to mapDefinition->blocks
+ *  \param blockIndexes
+ *      internal - direct FAR access (see #FAR) to mapDefinition->blocks
+ *  \param blockRowOffsets
+ *      internal - direct FAR access (see #FAR) to mapDefinition->blocks
  *  \param plane
  *      VDP plane where MAP is draw
  *  \param baseTile
@@ -108,7 +118,12 @@ typedef struct
  */
 typedef struct
 {
-    const MapDefinition *mapDefinition;
+    u16 w;
+    u16 h;
+    u16 *metaTiles;
+    u16 *blocks;
+    u16 *blockIndexes;
+    u16 *blockRowOffsets;
     VDPPlane plane;
     u16 baseTile;
     u32 posX;
@@ -122,25 +137,23 @@ typedef struct
 
 /**
  *  \brief
- *      Initialize Map structure and refresh whole wisible BG plane with map data at given position
+ *      Initialize Map structure required to use all MAP_xxx functions
  *
  *  \param mapDef
  *      MapDefinition structure containing background/plane data.
  *  \param plane
- *      Plane where we want to draw the Map.<br>
+ *      Plane where we want to draw the Map (for #MAP_scroll(..) method).<br>
  *      Accepted values are:<br>
  *      - BG_A<br>
  *      - BG_B<br>
  *  \param basetile
  *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro)
- *  \param x
- *      default view position X
- *  \param y
- *      default view position Y
  *  \param map
  *      Map structure to initialize
+ *
+ *  \see #MAP_scrollTo(..)
  */
-void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, u32 x, u32 y, Map *map);
+void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, Map *map);
 /**
  *  \brief
  *      Scroll map to specified position.<vr>
@@ -153,6 +166,8 @@ void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, u32 x, 
  *      view position X we want to scroll on
  *  \param y
  *      view position Y we want to scroll on
+ *
+ *  \see #MAP_init(..)
  */
 void MAP_scrollTo(Map* map, u32 x, u32 y);
 
@@ -174,11 +189,15 @@ void MAP_scrollTo(Map* map, u32 x, u32 y);
  *      - b12: combined vflip<br>
  *      - b11: combined hflip<br>
  *      - b10-b0: metatile index<br>
+ *
+ *  \see #MAP_init(..)
+ *  \see #MAP_Tile(..)
+ *  \see #MAP_getMetaTilemapRect(..)
  */
-u16 MAP_getMetaTile(const MapDefinition* mapDef, u16 x, u16 y);
+u16 MAP_getMetaTile(Map* map, u16 x, u16 y);
 /**
  *  \brief
- *      Returns given tile attribute
+ *      Returns given tile attribute (note than map->baseTile isn't added to the result)
  *
  *  \param mapDef
  *      MapDefinition structure containing map information.
@@ -194,13 +213,17 @@ u16 MAP_getMetaTile(const MapDefinition* mapDef, u16 x, u16 y);
  *      - b12: vflip<br>
  *      - b11: hflip<br>
  *      - b10-b0: tile index
+ *
+ *  \see #MAP_init(..)
+ *  \see #MAP_getMetaTile(..)
+ *  \see #MAP_getTilemapRect(..)
  */
-u16 MAP_getTile(const MapDefinition* mapDef, u16 x, u16 y);
+u16 MAP_getTile(Map* map, u16 x, u16 y);
 /**
  *  \brief
  *      Returns metatiles attribute for the specified region (a metatile is a block of 2x2 tiles = 16x16 pixels)
  *
- *  \param mapDef
+ *  \param mapDefmap
  *      MapDefinition structure containing map information.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
@@ -222,11 +245,14 @@ u16 MAP_getTile(const MapDefinition* mapDef, u16 x, u16 y);
  *      - b12: combined vflip<br>
  *      - b11: combined hflip<br>
  *      - b10-b0: metatile index<br>
+ *
+ *  \see #MAP_init(..)
+ *  \see #MAP_getTilemapRect(..)
  */
-void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u16 h, u16* dest);
+void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 /**
  *  \brief
- *      Returns tiles attribute data for the specified region
+ *      Returns tiles attribute data for the specified region (map->baseTile is used as base tiles attribute, see #MAP_init(..))
  *
  *  \param mapDef
  *      MapDefinition structure containing map information.
@@ -240,8 +266,6 @@ void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u1
  *      Region Heigh <b>(in metatile)</b>
  *  \param column
  *      if set to TRUE then tilemap data is stored by column order [Y,X] instead of row order [X,Y].
- *  \param basetile
- *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro)
  *  \param dest
  *      destination pointer receiving tiles attribute data
  *
@@ -252,8 +276,12 @@ void MAP_getMetaTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u1
  *      - b12: vflip<br>
  *      - b11: hflip<br>
  *      - b10-b0: tile index
+ *
+ *  \see #MAP_init(..)
+ *  \see #MAP_Tile(..)
+ *  \see #MAP_getMetaTilemapRect(..)
  */
-void MAP_getTilemapRect(const MapDefinition* mapDef, u16 x, u16 y, u16 w, u16 h, u16 baseTile, bool column, u16* dest);
+void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest);
 
 
 #endif // _MAP_H_
