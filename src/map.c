@@ -19,12 +19,8 @@ extern vu16 VBlankProcess;
 
 // forward
 static void updateMap(Map *map, s16 xt, s16 yt);
-
 static void setMapColumn(Map *map, u16 column, u16 x, u16 y);
-static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym);
 static void setMapRow(Map *map, u16 row, u16 x, u16 y);
-static void setMapRowEx(Map *map, u16 row, u16 x, u16 w, u16 xm, u16 ym);
-
 static void prepareMapDataColumn(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
 static void prepareMapDataRow(Map* map, u16* bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
 
@@ -175,112 +171,119 @@ static void updateMap(Map* map, s16 xt, s16 yt)
 
 static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
 {
-    // 16 metatile = 32 tiles = 256 pixels (full screen height + 16 pixels)
-    u16 h = 16;
-
 #ifdef MAP_DEBUG
     KLog_U3("setMapColumn column=", column, " x=", x, " y=", y);
 #endif
 
-    // clip Y against plane size
-    const u16 yAdj = y & map->planeHeightMask;
-    // get plane height
-    const u16 ph = map->planeHeightMask + 1;
-
-    // larger than plane height ? --> need to split
-    if ((yAdj + h) > ph)
-    {
-        u16 h1 = ph - yAdj;
-
-        // first part
-        setMapColumnEx(map, column, yAdj, h1, x, y);
-        // second part
-        setMapColumnEx(map, column, 0, h - h1, x, y + h1);
-    }
-    // no split needed
-    else setMapColumnEx(map, column, yAdj, h, x, y);
-}
-
-static void setMapColumnEx(Map *map, u16 column, u16 y, u16 h, u16 xm, u16 ym)
-{
 #ifdef MAP_PROFIL
     u16 start = GET_VCOUNTER;
 #endif
 
-    const u16 addr = VDP_getPlaneAddress(map->plane, column * 2, y * 2);
-    const u16 pw = planeWidth;
+    const u16 ph = planeHeight;
 
-    // get temp buffer for first tile column and schedule DMA
-    u16* bufCol1 = DMA_allocateAndQueueDma(DMA_VRAM, addr + 0, h * 2, pw * 2);
-    // get temp buffer for second tile column and schedule DMA
-    u16* bufCol2 = DMA_allocateAndQueueDma(DMA_VRAM, addr + 2, h * 2, pw * 2);
-
-#ifdef MAP_PROFIL
-    u16 end = GET_VCOUNTER;
-    KLog_S2("DMA_allocateAndQueueDma - duration=", end-start, " h=", h);
-#endif
+    // allocate temp buffer for tilemap
+    u16* buf = DMA_allocateTemp(ph * 2);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!bufCol1 || !bufCol2)
+    if (!buf)
     {
-        KLog("MAP - setMapColumnEx(..) failed: DMA temporary buffer is full");
+        KLog("MAP - setMapColumn(..) failed: DMA temporary buffer is full");
         return;
     }
 #endif
 
-    // then prepare data in buffer that will be transferred by DMA
-    prepareMapDataColumn(map, bufCol1, bufCol2, xm, ym, h);
+    // VRAM destination address
+    const u16 vramAddr = ((map->plane == BG_A)?VDP_BG_A:VDP_BG_B) + (column * 4);
+    // get plane width * 2
+    const u16 pw2 = planeWidth * 2;
+
+    // queue DMA (first column)
+    DMA_queueDmaFast(DMA_VRAM, buf, vramAddr + 0, ph, pw2);
+    // queue DMA (second column)
+    DMA_queueDmaFast(DMA_VRAM, buf + ph, vramAddr + 2, ph, pw2);
+
+#ifdef MAP_PROFIL
+    u16 end = GET_VCOUNTER;
+    KLog_S1("setMapColumn - DMA queue operations duration=", end - start);
+#endif
+
+    // 16 metatile = 32 tiles = 256 pixels (full screen height + 16 pixels)
+    const u16 h = 16;
+    // clip Y against plane size
+    const u16 yAdj = y & map->planeHeightMask;
+    // get plane height
+    const u16 ph2 = map->planeHeightMask + 1;
+
+    // larger than plane height ? --> need to split
+    if ((yAdj + h) > ph2)
+    {
+        const u16 h1 = ph2 - yAdj;
+
+        // prepare first part of column data
+        prepareMapDataColumn(map, buf + (yAdj * 2), buf + (yAdj * 2) + ph, x, y, h1);
+        // prepare second part of column data
+        prepareMapDataColumn(map, buf, buf + ph, x, y + h1, h - h1);
+    }
+    // no split needed
+    else prepareMapDataColumn(map, buf + (yAdj * 2), buf + (yAdj * 2) + ph, x, y, h);
 }
 
 static void setMapRow(Map *map, u16 row, u16 x, u16 y)
 {
-    // 21 metatile = 42 tiles = 336 pixels (full screen width + 16 pixels)
-    u16 w = 21;
-
 #ifdef MAP_DEBUG
     KLog_U3("setMapRow row=", row, " x=", x, " y=", y);
 #endif
 
-    // clip X against plane size
-    const u16 xAdj = x & map->planeWidthMask;
-    // get plane width
-    const u16 pw = map->planeWidthMask + 1;
+#ifdef MAP_PROFIL
+    u16 start = GET_VCOUNTER;
+#endif
 
-    // larger than plane width ? --> need to split
-    if ((xAdj + w) > pw)
-    {
-        u16 w1 = pw - xAdj;
+    const u16 pw = planeWidth;
 
-        // first part
-        setMapRowEx(map, row, xAdj, w1, x, y);
-        // second part
-        setMapRowEx(map, row, 0, w - w1, x + w1, y);
-    }
-    // no split needed
-    else setMapRowEx(map, row, xAdj, w, x, y);
-}
-
-static void setMapRowEx(Map *map, u16 row, u16 x, u16 w, u16 xm, u16 ym)
-{
-    const u16 addr = VDP_getPlaneAddress(map->plane, x * 2, row * 2);
-
-    // get temp buffer for first tile row and schedule DMA
-    u16* bufRow1 = DMA_allocateAndQueueDma(DMA_VRAM, addr + 0, w * 2, 2);
-    // get temp buffer for second tile row and schedule DMA
-    u16* bufRow2 = DMA_allocateAndQueueDma(DMA_VRAM, addr + (planeWidth * 2), w * 2, 2);
+    // allocate temp buffer for tilemap
+    u16* buf = DMA_allocateTemp(pw * 2);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!bufRow1 || !bufRow2)
+    if (!buf)
     {
-        KLog("MAP - setMapRowEx(..) failed: DMA temporary buffer is full");
+        KLog("MAP - setMapRow(..) failed: DMA temporary buffer is full");
         return;
     }
 #endif
 
-    // then prepare data in buffer that will be transferred by DMA
-    prepareMapDataRow(map, bufRow1, bufRow2, xm, ym, w);
-}
+    // VRAM destination address
+    const u16 vramAddr = ((map->plane == BG_A)?VDP_BG_A:VDP_BG_B) + (row << (planeWidthSft + 2));
 
+    // queue DMA (first column)
+    DMA_queueDmaFast(DMA_VRAM, buf, vramAddr + (pw * 0), pw, 2);
+    // queue DMA (second column)
+    DMA_queueDmaFast(DMA_VRAM, buf + pw, vramAddr + (pw * 2), pw, 2);
+
+#ifdef MAP_PROFIL
+    u16 end = GET_VCOUNTER;
+    KLog_S1("setMapRow - DMA queue operations duration=", end - start);
+#endif
+
+    // 21 metatile = 42 tiles = 336 pixels (full screen width + 16 pixels)
+    u16 w = 21;
+    // clip X against plane size
+    const u16 xAdj = x & map->planeWidthMask;
+    // get plane width
+    const u16 pw2 = map->planeWidthMask + 1;
+
+    // larger than plane width ? --> need to split
+    if ((xAdj + w) > pw2)
+    {
+        const u16 w1 = pw2 - xAdj;
+
+        // prepare first part of row data
+        prepareMapDataRow(map, buf + (xAdj * 2), buf + (xAdj * 2) + pw, x, y, w1);
+        // prepare second part of row data
+        prepareMapDataRow(map, buf, buf + pw, x + w1, y, w - w1);
+    }
+    // no split needed
+    else prepareMapDataRow(map, buf + (xAdj * 2), buf + (xAdj * 2) + pw, x, y, w);
+}
 
 static void prepareMapDataColumn(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
@@ -391,7 +394,7 @@ static void prepareMapDataColumn(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u
 
 #ifdef MAP_PROFIL
     u16 end = GET_VCOUNTER;
-    KLog_S3("prepareMapDataColumn - start=", start, " end=", end, " h=", height);
+    KLog_S2("prepareMapDataColumn - duration=", end - start, " h=", height);
 #endif
 }
 
@@ -502,7 +505,7 @@ static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 
 
 #ifdef MAP_PROFIL
     u16 end = GET_VCOUNTER;
-    KLog_S3("prepareMapDataRow - start=", start, " end=", end, " h=", height);
+    KLog_S2("prepareMapDataRow - duration=", end - start, " w=", width);
 #endif
 }
 
