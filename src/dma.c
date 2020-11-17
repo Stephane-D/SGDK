@@ -465,12 +465,13 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     // get DMA info structure and pass to next one
     info = &dmaQueues[queueIndex];
 
-    // $14:len H  $13:len L (DMA length in word)
-    info->regLen = ((newLen | (newLen << 8)) & 0xFF00FF) | 0x94009300;
+    // $13:len L  $14:len H (DMA length in word)
+    info->regLenL = 0x9300 + (newLen & 0xFF);
+    info->regLenH = 0x9400 + ((newLen >> 8) & 0xFF);
     // $16:M  $f:step (DMA address M and Step register)
-    info->regAddrMStep = (((fromAddr << 7) & 0xFF0000) | 0x96008F00) + step;
+    info->regAddrMStep = 0x96008F00 + ((fromAddr << 7) & 0xFF0000) + step;
     // $17:H  $15:L (DMA address H & L)
-    info->regAddrHAddrL = ((fromAddr >> 1) & 0x7F00FF) | 0x97009500;
+    info->regAddrHAddrL = 0x97009500 + ((fromAddr >> 1) & 0x7F00FF);
 
     // Trigger DMA
     switch(location)
@@ -501,6 +502,144 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     queueIndex++;
     // keep trace of transferred size
     queueTransferSize += newLen << 1;
+
+#ifdef DMA_DEBUG
+    KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
+#endif
+
+    // we are above the defined limit ?
+    if (queueTransferSize > maxTransferPerFrame)
+    {
+        // first time we reach the limit ? store index where to stop transfer
+        if (queueIndexLimit == 0)
+        {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+            KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
+#endif
+
+            // store limit index
+            queueIndexLimit = queueIndex - 1;
+
+#ifdef DMA_DEBUG
+            KLog_U1("  Queue index limit set at ", queueIndexLimit);
+#endif
+        }
+
+        // return FALSE if transfer will be ignored
+        return (flag & DMA_OVERCAPACITY_IGNORE) ? FALSE : TRUE;
+    }
+
+    return TRUE;
+}
+
+void* DMA_allocateAndQueueDmaFast(u8 location, u16 to, u16 len, u16 step)
+{
+    u16* result = DMA_allocateTemp(len);
+
+    // can't allocate --> exit
+    if (result == NULL) return result;
+
+#ifdef DMA_DEBUG
+    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
+#endif
+
+    // try to queue the DMA transfer
+    if (!DMA_queueDmaFast(location, result, to, len, step))
+    {
+        // failed --> release allocation
+        DMA_releaseTemp(len);
+        // error
+        return NULL;
+    }
+
+    // return buffer than will be fill by user before being transferred through the DMA queue
+    return result;
+}
+
+bool DMA_copyAndQueueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
+{
+    u16* buffer = DMA_allocateTemp(len);
+
+    // can't allocate --> exit
+    if (buffer == NULL) return FALSE;
+
+#ifdef DMA_DEBUG
+    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
+#endif
+
+    // do copy to temporal buffer (as from buffer may be modified in between)
+    memcpyU16(buffer, from, len * 2);
+
+    // try to queue the DMA transfer
+    if (!DMA_queueDmaFast(location, buffer, to, len, step))
+    {
+        // failed --> release allocation
+        DMA_releaseTemp(len);
+        // error
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
+{
+    u32 fromAddr;
+    DMAOpInfo *info;
+
+    // queue is full --> error
+    if (queueIndex >= queueSize)
+    {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+        KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
+#endif
+
+        // return FALSE as transfer will be ignored
+        return FALSE;
+    }
+
+    fromAddr = (u32) from;
+
+    // get DMA info structure and pass to next one
+    info = &dmaQueues[queueIndex];
+
+    // $13:len L  $14:len H (DMA length in word)
+    info->regLenL = 0x9300 + (len & 0xFF);
+    info->regLenH = 0x9400 + ((len >> 8) & 0xFF);
+    // $16:M  $f:step (DMA address M and Step register)
+    info->regAddrMStep = 0x96008F00 + ((fromAddr << 7) & 0xFF0000) + step;
+    // $17:H  $15:L (DMA address H & L)
+    info->regAddrHAddrL = 0x97009500 + ((fromAddr >> 1) & 0x7F00FF);
+
+    // Trigger DMA
+    switch(location)
+    {
+    case DMA_VRAM:
+        info->regCtrlWrite = GFX_DMA_VRAM_ADDR((u32)to);
+#ifdef DMA_DEBUG
+        KLog_U4("DMA_queueDma: VRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
+#endif
+        break;
+
+    case DMA_CRAM:
+        info->regCtrlWrite = GFX_DMA_CRAM_ADDR((u32)to);
+#ifdef DMA_DEBUG
+        KLog_U4("DMA_queueDma: CRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
+#endif
+        break;
+
+    case DMA_VSRAM:
+        info->regCtrlWrite = GFX_DMA_VSRAM_ADDR((u32)to);
+#ifdef DMA_DEBUG
+        KLog_U4("DMA_queueDma: VSRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
+#endif
+        break;
+    }
+
+    // pass to next index
+    queueIndex++;
+    // keep trace of transferred size
+    queueTransferSize += len << 1;
 
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
@@ -577,6 +716,98 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     // Setup DMA length (in word here)
     *pw = 0x9300 + (newLen & 0xff);
     *pw = 0x9400 + ((newLen >> 8) & 0xff);
+
+    // Setup DMA address
+    fromAddr >>= 1;
+    *pw = 0x9500 + (fromAddr & 0xff);
+    fromAddr >>= 8;
+    *pw = 0x9600 + (fromAddr & 0xff);
+    fromAddr >>= 8;
+    *pw = 0x9700 + (fromAddr & 0x7f);
+
+    switch(location)
+    {
+        default:
+        case DMA_VRAM:
+            cmd = GFX_DMA_VRAM_ADDR((u32)to);
+            break;
+
+        case DMA_CRAM:
+            cmd = GFX_DMA_CRAM_ADDR((u32)to);
+            break;
+
+        case DMA_VSRAM:
+            cmd = GFX_DMA_VSRAM_ADDR((u32)to);
+            break;
+    }
+
+    pwz = (vu16*) Z80_HALT_PORT;
+
+    {
+        vu32 cmdbuf[1];
+        u16* cmdbufp;
+
+        // force storing DMA command into memory
+        cmdbuf[0] = cmd;
+
+        // then force issuing DMA from memory word operand
+        cmdbufp = (u16*) cmdbuf;
+        // first command word
+        *pw = *cmdbufp++;
+
+        // DISABLE Z80
+        *pwz = 0x0100;
+#if (HALT_Z80_ON_DMA == 0)
+        // RE-ENABLE it immediately before trigger DMA
+        // We do that to avoid DMA failure on some MD
+        // when Z80 try to access 68k BUS at same time the DMA starts.
+        // BUS arbitrer lantecy will disable Z80 for a very small amont of time
+        // when DMA start, avoiding that situation to happen !
+        *pwz = z80restore;
+#endif
+
+        // trigger DMA (second word command wrote from memory to avoid possible failure on some MD)
+        *pw = *cmdbufp;
+    }
+
+#if (HALT_Z80_ON_DMA != 0)
+    // re-enable Z80 after DMA (safer method)
+    *pwz = z80restore;
+#endif
+#endif  // DMA_DISABLED
+}
+
+void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
+{
+#if (DMA_DISABLED != 0)
+    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
+    VDP_waitDMACompletion();
+    // DMA disabled --> replace with software copy
+    DMA_doSoftwareCopy(location, from, to, len, step);
+#else
+    vu16 *pw;
+    vu16 *pwz;
+    u32 cmd;
+    u32 fromAddr;
+    u16 z80restore;
+
+    fromAddr = (u32) from;
+
+    if (step != -1)
+        VDP_setAutoInc(step);
+
+    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
+    VDP_waitDMACompletion();
+
+    // define z80 BUSREQ restore state
+    if (Z80_isBusTaken()) z80restore = 0x0100;
+    else z80restore = 0x0000;
+
+    pw = (vu16*) GFX_CTRL_PORT;
+
+    // Setup DMA length (in word here)
+    *pw = 0x9300 + (len & 0xff);
+    *pw = 0x9400 + ((len >> 8) & 0xff);
 
     // Setup DMA address
     fromAddr >>= 1;
