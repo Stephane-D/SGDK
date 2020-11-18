@@ -474,8 +474,8 @@ static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataRowEx(buf, w, data, basetile);
-        // transfer the buffer data to VRAM
-        DMA_doDma(DMA_VRAM, buf, addr, w, 2);
+        // transfer the buffer data to VRAM (can use fast version here as source is in RAM)
+        DMA_doDmaFast(DMA_VRAM, buf, addr, w, 2);
 
         // release allocated buffer
         DMA_releaseTemp(w);
@@ -554,8 +554,8 @@ static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u1
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataColumn(buf, h, data, wm);
-        // transfer the temp data to VRAM
-        DMA_doDma(DMA_VRAM, buf, addr, h, pw * 2);
+        // transfer the temp data to VRAM (can use fast version here as source is in RAM)
+        DMA_doDmaFast(DMA_VRAM, buf, addr, h, pw * 2);
 
         // release allocated buffer
         DMA_releaseTemp(h);
@@ -627,8 +627,8 @@ static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile
 
         // prepare tilemap data into temp buffer
         prepareTileMapDataColumnEx(buf, h, data, basetile, wm);
-        // transfer the buffer data to VRAM
-        DMA_doDma(DMA_VRAM, buf, addr, h, pw * 2);
+        // transfer the buffer data to VRAM (can use fast version here as source is in RAM)
+        DMA_doDmaFast(DMA_VRAM, buf, addr, h, pw * 2);
 
         // release allocated buffer
         DMA_releaseTemp(h);

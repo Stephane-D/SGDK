@@ -383,7 +383,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step);
  *      - DMA_CRAM (for CRAM transfer).<br>
  *      - DMA_VSRAM (for VSRAM transfer).<br>
  *  \param from
- *      Source buffer.
+ *      Source buffer address.
  *  \param to
  *      VRAM/CRAM/VSRAM destination address.
  *  \param len
@@ -397,19 +397,6 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step);
  *  \see DMA_do(..)
  */
 bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step);
-
-/**
- *  \brief
- *      Same as #DMA_allocateAndQueueDma(..) method except if doesn't check for 128 KB bank crossing on source
- *  \see #DMA_allocateAndQueueDma(..)
- */
-void* DMA_allocateAndQueueDmaFast(u8 location, u16 to, u16 len, u16 step);
-/**
- *  \brief
- *      Same as #DMA_copyAndQueueDma(..) method except if doesn't check for 128 KB bank crossing on source
- *  \see #DMA_copyAndQueueDma(..)
- */
-bool DMA_copyAndQueueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step);
 /**
  *  \brief
  *      Same as #DMA_queueDma(..) method except if doesn't check for 128 KB bank crossing on source
@@ -428,7 +415,7 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step);
  *      - DMA_CRAM (for CRAM transfer).<br>
  *      - DMA_VSRAM (for VSRAM transfer).<br>
  *  \param from
- *      Source buffer.
+ *      Source buffer address.
  *  \param to
  *      VRAM/CRAM/VSRAM destination address.
  *  \param len
@@ -440,6 +427,13 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step);
  *  \see DMA_queue(..)
  */
 void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step);
+/**
+ *  \brief
+ *      Same as #DMA_doDma(..) method except if doesn't check for 128 KB bank crossing on source
+ *  \see #DMA_doDma(..)
+ */
+void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step);
+
 /**
  *  \brief
  *      Do software (CPU) copy to VDP memory (mainly for testing purpose as it's slower than using DMA)

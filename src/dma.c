@@ -390,8 +390,8 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
     KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
 #endif
 
-    // try to queue the DMA transfer
-    if (!DMA_queueDma(location, result, to, len, step))
+    // try to queue the DMA transfer (we can use FAST version as source is always located in RAM)
+    if (!DMA_queueDmaFast(location, result, to, len, step))
     {
         // failed --> release allocation
         DMA_releaseTemp(len);
@@ -417,8 +417,8 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     // do copy to temporal buffer (as from buffer may be modified in between)
     memcpyU16(buffer, from, len * 2);
 
-    // try to queue the DMA transfer
-    if (!DMA_queueDma(location, buffer, to, len, step))
+    // try to queue the DMA transfer (we can use FAST version as source is always located in RAM)
+    if (!DMA_queueDmaFast(location, buffer, to, len, step))
     {
         // failed --> release allocation
         DMA_releaseTemp(len);
@@ -455,8 +455,8 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     // bank limit exceeded
     if (len > bankLimitW)
     {
-        // we first do the second bank transfer
-        DMA_queueDma(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, step);
+        // we first do the second bank transfer (can use the fast version here)
+        DMA_queueDmaFast(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, step);
         newLen = bankLimitW;
     }
     // ok, use normal len
@@ -527,56 +527,6 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 
         // return FALSE if transfer will be ignored
         return (flag & DMA_OVERCAPACITY_IGNORE) ? FALSE : TRUE;
-    }
-
-    return TRUE;
-}
-
-void* DMA_allocateAndQueueDmaFast(u8 location, u16 to, u16 len, u16 step)
-{
-    u16* result = DMA_allocateTemp(len);
-
-    // can't allocate --> exit
-    if (result == NULL) return result;
-
-#ifdef DMA_DEBUG
-    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
-#endif
-
-    // try to queue the DMA transfer
-    if (!DMA_queueDmaFast(location, result, to, len, step))
-    {
-        // failed --> release allocation
-        DMA_releaseTemp(len);
-        // error
-        return NULL;
-    }
-
-    // return buffer than will be fill by user before being transferred through the DMA queue
-    return result;
-}
-
-bool DMA_copyAndQueueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
-{
-    u16* buffer = DMA_allocateTemp(len);
-
-    // can't allocate --> exit
-    if (buffer == NULL) return FALSE;
-
-#ifdef DMA_DEBUG
-    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
-#endif
-
-    // do copy to temporal buffer (as from buffer may be modified in between)
-    memcpyU16(buffer, from, len * 2);
-
-    // try to queue the DMA transfer
-    if (!DMA_queueDmaFast(location, buffer, to, len, step))
-    {
-        // failed --> release allocation
-        DMA_releaseTemp(len);
-        // error
-        return FALSE;
     }
 
     return TRUE;
@@ -694,8 +644,8 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     // bank limit exceeded
     if (len > bankLimitW)
     {
-        // we first do the second bank transfer
-        DMA_doDma(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
+        // we first do the second bank transfer (can use the fast version here)
+        DMA_doDmaFast(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
         newLen = bankLimitW;
     }
     // ok, use normal len
