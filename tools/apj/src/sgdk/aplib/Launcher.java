@@ -26,10 +26,10 @@ class Launcher
 
         final long start = System.currentTimeMillis();
 
-        if (command.equals("p"))
+        if (command.equals("p") | command.equals("pp"))
         {
             // compress
-            output = APJ.pack(input, silent);
+            output = APJ.pack(input, command.equals("pp"), silent);
 
             final long time = System.currentTimeMillis() - start;
 
@@ -78,16 +78,17 @@ class Launcher
 
     private static void PrintUsage()
     {
-        System.out.println("APJ (ApLib for Java) packer v1.2 by Stephane Dallongeville (Copyright 2020)");
-        System.out.println("  Pack:     java -jar apj.jar p <input_file> <output_file>");
-        System.out.println("  Unpack:   java -jar apj.jar u <input_file> <output_file>");
+        System.out.println("APJ (ApLib for Java) packer v1.3 by Stephane Dallongeville (Copyright 2020)");
+        System.out.println("  Pack:       java -jar apj.jar p <input_file> <output_file>");
+        System.out.println("  Pack max:   java -jar apj.jar pp <input_file> <output_file>");
+        System.out.println("  Unpack:     java -jar apj.jar u <input_file> <output_file>");
         System.out.println();
         System.out.println("Tip: using an extra parameter after <output_file> will act as 'silent mode' switch");
     }
 
     private static boolean ValidInput(String[] input)
     {
-        return (input.length >= 3) && (input[0].equals("p") || input[0].equals("u")) && new File(input[1]).exists()
-                && !input[1].equals(input[2]);
+        return (input.length >= 3) && (input[0].equals("p") || input[0].equals("pp") || input[0].equals("u"))
+                && new File(input[1]).exists() && !input[1].equals(input[2]);
     }
 }

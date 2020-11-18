@@ -14,19 +14,65 @@ public class APJ
 {
     static class Match
     {
+        final private byte[] data;
+        private int index;
+
         int offset;
         int length;
-        private int saved;
-        private int cost;
 
-        public Match(int offset, int length)
+        private int rawCost;
+        private int cost;
+        private int saved;
+
+        public Match(byte[] data, int index, int offset, int length)
         {
             super();
 
+            this.data = data;
+            this.index = index;
+
             this.offset = offset;
             this.length = length;
+
+            rawCost = -1;
             cost = -1;
             saved = -1;
+        }
+
+        public void incLength(int value)
+        {
+            index -= value;
+            length += value;
+
+            // need to reset costs and saved
+            rawCost = -1;
+            cost = -1;
+            saved = -1;
+        }
+
+        public boolean isShortOrLong()
+        {
+            if ((length >= 2) && (length <= 3) && (offset > 0) && (offset < 128))
+                return true;
+            if (length >= 3)
+                return true;
+
+            return false;
+        }
+
+        private int computeRawCost()
+        {
+            int result = 0;
+
+            for (int i = index; i < index + length; i++)
+            {
+                if (data[i] == 0)
+                    result += 7;
+                else
+                    result += 9;
+            }
+
+            return result;
         }
 
         private int computeCost()
@@ -39,17 +85,32 @@ public class APJ
 
             if (length >= 3)
             {
-                // cost for offset high bits (estimation)
-                int c = ((getHighBitNum(offset >> 8)) * 2) + 2 + 3;
-                // cost for offset low bit
-                c += 8;
+                int c = 2;
+
+                // can re-use last offset ?
+                if (!wasMatch && (lastOffset == offset))
+                    // minimal variable encoding cost
+                    c += 2;
+                else
+                {
+                    // cost for offset high bits (estimation)
+                    c += ((getHighBitNum(offset >> 8)) * 2) + 2;
+                    // cost for offset low bit
+                    c += 8;
+                }
+
                 // cost for length
                 c += getHighBitNum(length) * 2;
 
                 return c;
             }
 
-            return length * 9;
+            return getRawCost();
+        }
+
+        private void updateRawCost()
+        {
+            rawCost = computeRawCost();
         }
 
         private void updateCost()
@@ -59,19 +120,27 @@ public class APJ
 
         public void updateSaved()
         {
-            // --> we should consider 0 as costing 7 and not 9
-            saved = (length * 9) - getCost();
+            saved = getRawCost() - getCost();
         }
-        
+
+        public int getRawCost()
+        {
+            if (rawCost == -1)
+                updateRawCost();
+            return rawCost;
+        }
+
         public int getCost()
         {
-            if (cost == -1) updateCost();
+            if (cost == -1)
+                updateCost();
             return cost;
         }
 
         public int getSaved()
         {
-            if (saved == -1) updateSaved();
+            if (saved == -1)
+                updateSaved();
             return saved;
         }
 
@@ -80,6 +149,7 @@ public class APJ
         {
             return "Offset= " + offset + " - Length= " + length;
         }
+
     }
 
     @SuppressWarnings("serial")
@@ -165,7 +235,7 @@ public class APJ
             // less repeat on match
             if (repeat < curRepeat)
             {
-                final Match match = new Match(ind - off, repeat + 1);
+                final Match match = new Match(data, ind, ind - off, repeat + 1);
 
                 // we use >= as we always prefer shorter offset
                 if (match.getSaved() >= saved)
@@ -199,12 +269,12 @@ public class APJ
                         repeat = (ind - off) - 1;
 
                     // easy optimization
-                    match = findBestMatchInternal(data, off + repeat, ind + repeat);
+                    match = getMatch(data, off + repeat, ind + repeat);
                     // adjust match length
-                    match.length += repeat;
+                    match.incLength(repeat);
                 }
                 else
-                    match = findBestMatchInternal(data, off, ind);
+                    match = getMatch(data, off, ind);
 
                 // we use >= as we always prefer shorter offset
                 if (match.getSaved() >= saved)
@@ -221,7 +291,7 @@ public class APJ
         return best;
     }
 
-    private static Match findBestMatchInternal(byte[] data, int from, int ind)
+    private static Match getMatch(byte[] data, int from, int ind)
     {
         int refOffset;
         int curOffset;
@@ -234,7 +304,7 @@ public class APJ
         while ((curOffset < data.length) && (data[refOffset++] == data[curOffset++]))
             len++;
 
-        return new Match(ind - from, len);
+        return new Match(data, ind, ind - from, len);
     }
 
     private static int getRepeat(byte[] data, int ind)
@@ -285,12 +355,12 @@ public class APJ
         if (v >= 2)
             result++;
 
-//        // find highest bit
-//        while (v > 1)
-//        {
-//            v >>= 1;
-//            result++;
-//        }
+        // // find highest bit
+        // while (v > 1)
+        // {
+        // v >>= 1;
+        // result++;
+        // }
 
         return result;
     }
@@ -477,7 +547,7 @@ public class APJ
      * @throws IllegalArgumentException
      *         Cannot be packed using previous data block (try to pack without previous data block)
      */
-    public static byte[] pack(byte[] data, boolean silent) throws IOException, IllegalArgumentException
+    public static byte[] pack(byte[] data, boolean ultra, boolean silent) throws IOException, IllegalArgumentException
     {
         // data length
         final int len = data.length;
@@ -515,40 +585,77 @@ public class APJ
             Collections.sort(byteMatches[i]);
 
         // PASS 2: get best match for each source position using the matches table
+        wasMatch = false;
+        lastOffset = -1;
         final Match[] matches = new Match[data.length];
 
-        // need to clear these work variables
-        for (int i = 1; i < matches.length; i++)
-            matches[i] = findBestMatch(byteMatches, data, i);
-
-        // PASS 3: walk backward in matches and find optimal match length
-        final int costs[] = new int[matches.length + 1];
-
-        // initialize ending cost
-        costs[matches.length] = 0;
-
-        for (int i = matches.length - 1; i >= 0; i--)
+        if (ultra)
         {
-            // literal cost = next cost + 1
-            final int literalCost = costs[i + 1] + 9;
-            // default match cost
-            int matchCost = Integer.MAX_VALUE;
-
-            final Match match = matches[i];
-
-            // we have a match ? its cost = current match cost + cost after match sequence
-            if (match != null)
-                matchCost = match.cost + costs[i + match.length];
-
-            // literal cost is cheaper than match cost ?
-            if (literalCost < matchCost)
+            // ultra compression mode (very slow)
+            for (int i = 1; i < matches.length; i++)
+                matches[i] = findBestMatch(byteMatches, data, i);
+        }
+        else
+        {
+            // fast compression mode
+            for (int i = 1; i < matches.length;)
             {
-                // change the match to a literal as it is more efficient
-                costs[i] = literalCost;
-                matches[i] = null;
+                final Match match = findBestMatch(byteMatches, data, i);
+
+                matches[i] = match;
+
+                if (match != null)
+                {
+                    i += matches[i].length;
+
+                    if (match.isShortOrLong())
+                    {
+                        lastOffset = match.offset;
+                        wasMatch = true;
+                    }
+                    else
+                        wasMatch = false;
+                }
+                else
+                {
+                    i++;
+                    wasMatch = false;
+                }
             }
-            else
-                costs[i] = matchCost;
+        }
+
+        // meaningful only in ultra mode
+        if (ultra)
+        {
+            // PASS 3: walk backward in matches and find optimal match length
+            final int costs[] = new int[matches.length + 1];
+
+            // initialize ending cost
+            costs[matches.length] = 0;
+
+            for (int i = matches.length - 1; i >= 0; i--)
+            {
+                // literal cost = next cost + 1
+                final int literalCost = costs[i + 1] + ((data[i] == 0) ? 7 : 9);
+                // default match cost
+                int matchCost = Integer.MAX_VALUE;
+
+                final Match match = matches[i];
+
+                // we have a match ? its cost = current match cost + cost after match sequence
+                if (match != null)
+                    matchCost = match.getCost() + costs[i + match.length];
+
+                // literal cost is cheaper than match cost ?
+                if (literalCost < matchCost)
+                {
+                    // change the match to a literal as it is more efficient
+                    costs[i] = literalCost;
+                    matches[i] = null;
+                }
+                else
+                    costs[i] = matchCost;
+            }
         }
 
         // clear stats
