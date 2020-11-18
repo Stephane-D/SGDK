@@ -11,10 +11,6 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitReader.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{DynamicByteArray.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitWriter.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{APJ.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{Launcher.java"/>
+        <javaElement handleIdentifier="=APJ Packer/src"/>
     </selectedElements>
 </jardesc>
