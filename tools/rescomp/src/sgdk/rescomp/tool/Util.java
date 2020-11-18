@@ -482,7 +482,7 @@ public class Util
     {
         try
         {
-            return APJ.pack(data, true);
+            return APJ.pack(data, false, true);
         }
         catch (Exception e)
         {
