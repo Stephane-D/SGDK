@@ -139,19 +139,27 @@ public class Compiler
 
             // ALIGN function (not a real resource so handle it specifically)
             if (resource instanceof Align)
+            {
                 align = ((Align) resource).align;
+                System.out.println();
+            }
             // UNGROUP function (not a real resource so handle it specifically)
             else if (resource instanceof Ungroup)
+            {
                 // disable resource export grouping by type
                 group = false;
+                System.out.println();
+            }
             // just store resource
             else
             {
                 addResource(resource);
-                System.out.println(
-                        "Resource " + resource.id + " total size (unpacked): " + resource.totalSize() + " bytes");
+                System.out.println("'" + resource.id + "' raw size: " + resource.totalSize() + " bytes");
             }
         }
+
+        // separate output
+        System.out.println();
 
         // define output files
         final StringBuilder outS = new StringBuilder(1024);
@@ -318,6 +326,7 @@ public class Compiler
                     unpackedSize += bin.data.length + (bin.data.length & 1);
             }
 
+            System.out.println();
             System.out.println(fileName + " summary:");
             System.out.println("-------------");
 
@@ -617,14 +626,14 @@ public class Compiler
                 return null;
             }
 
-            System.out.println();
             System.out.println("Resource: " + input);
-            System.out.println("--> executing plugin " + type + "...");
+            System.out.print("--> executing plugin " + type + "...");
 
             return processor.execute(fields);
         }
         catch (IOException e)
         {
+            System.out.println();
             System.err.println(e.getMessage());
             System.err.println("Error: cannot compile resource '" + input + "'");
             e.printStackTrace();
@@ -632,6 +641,7 @@ public class Compiler
         }
         catch (IllegalArgumentException e)
         {
+            System.out.println();
             System.err.println(e.getMessage());
             System.err.println("Error: cannot compile resource '" + input + "'");
             e.printStackTrace();

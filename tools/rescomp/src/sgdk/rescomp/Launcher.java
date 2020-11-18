@@ -30,7 +30,7 @@ public class Launcher
                 depTarget = param;
         }
 
-        System.out.println("ResComp 3.0 - SGDK Resource Compiler - Copyright 2020 (Stephane Dallongeville)");
+        System.out.println("ResComp 3.01 - SGDK Resource Compiler - Copyright 2020 (Stephane Dallongeville)");
 
         if (fileName == null)
         {
@@ -50,6 +50,9 @@ public class Launcher
             // stop here with error code 1
             System.exit(1);
         }
+
+        // separate
+        System.out.println();
 
         // if not defined we use input file name as output file name with .s extension
         if (fileNameOut == null)
