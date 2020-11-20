@@ -109,10 +109,13 @@ Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 * [Abbaye des Morts (l')](https://playonretro.itch.io/labbaye-des-morts-megadrivegenesis-por-002) unofficial MD port by Moon-Watcher
 * [Art of LeonBli (the)](https://www.pouet.net/prod.php?which=72272) by Resistance
 * [Barbarian](https://www.youtube.com/watch?v=e8IIfNLXzAU) unofficial MD port by Z-Team
+* [Demons of Asteborg](https://demonsofasteborg.com/) by Neofid Studio
 * [Devwill Too MD](https://amaweks.itch.io/devwill-too-md) by Amaweks
 * [Fatal Smarties](https://globalgamejam.org/2016/games/fatal-smarties) made for the GGJ 2016
 * [Fullscreen NICCC 2000](https://www.pouet.net/prod.php?which=81136) by Resistance
 * [IK+ Deluxe](https://www.youtube.com/watch?v=mcm0TRsOwuw) unofficial MD port by Z-Team
+* [Irena](https://white-ninja.itch.io/irena-genesis-metal-fury) by White Ninja Studio
+* [Omega Blast](https://nendo16.jimdofree.com/omega-blast/) by Nendo
 * [Perlin & Pinpin](https://lizardrive.itch.io/perlin-pinpin-episode1) by Lizardrive
 * [Right 2 Repair](https://supermegabyte.itch.io/right-2-repair) by Super Megabyte made for the GGJ 2020
 * [Return to Genesis](https://www.youtube.com/watch?v=jjy0Iz_64dY) unofficial MD port by Z-Team
