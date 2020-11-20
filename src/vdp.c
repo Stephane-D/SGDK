@@ -28,11 +28,11 @@
 
 
 // we don't want to share it
-extern bool addFrameLoad(u16 frameLoad);
+extern bool addFrameLoad(u16 frameLoad, u32 vtime);
 
 // forward
 static void updateMapsAddress();
-static bool computeFrameCPULoad(u16 blank, u16 vcnt);
+static bool computeFrameCPULoad(u16 blank, u16 vcnt, u32 vtime);
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 void updateUserTileMaxIndex();
 
@@ -815,7 +815,7 @@ bool VDP_waitVInt()
     lastVCnt = vcnt;
 
     // compute frame load now (return TRUE if frame miss / late detected)
-    bool late = computeFrameCPULoad(blank, vcnt);
+    bool late = computeFrameCPULoad(blank, vcnt, t);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
     if (late)
@@ -836,6 +836,8 @@ bool VDP_waitVBlank(bool forceNext)
 {
     vu16 *pw = (u16 *) GFX_CTRL_PORT;
 
+    // initial frame counter
+    const u32 t = vtimer;
     // store V-Counter and initial blank state
     const u16 vcnt = GET_VCOUNTER;
     const u16 blank = *pw & VDP_VBLANK_FLAG;
@@ -850,7 +852,7 @@ bool VDP_waitVBlank(bool forceNext)
     }
 
     // compute frame load now (return TRUE if frame miss / late detected)
-    bool late = computeFrameCPULoad(blank, vcnt);
+    bool late = computeFrameCPULoad(blank, vcnt, t);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
     if (late)
@@ -892,10 +894,10 @@ bool VDP_waitVSync()
 }
 
 
-static bool computeFrameCPULoad(u16 blank, u16 vcnt)
+static bool computeFrameCPULoad(u16 blank, u16 vcnt, u32 vtime)
 {
     // update CPU frame load
-    return addFrameLoad(getAdjustedVCounterInternal(blank, vcnt));
+    return addFrameLoad(getAdjustedVCounterInternal(blank, vcnt), vtime);
 }
 
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)

@@ -68,7 +68,7 @@ extern int main(u16 hard);
 // forward
 static void internal_reset();
 // this one can't be static (used by vdp.c)
-bool addFrameLoad(u16 frameLoad);
+bool addFrameLoad(u16 frameLoad, u32 vtime);
 
 // exception callbacks
 VoidCallback *busErrorCB;
@@ -904,25 +904,30 @@ fix32 SYS_getFPSAsFloat()
 
 
 // used to compute average frame load on 8 frames
-bool addFrameLoad(u16 frameLoad)
+bool addFrameLoad(u16 frameLoad, u32 vtime)
 {
     static u16 lastVTimer = 0;
+    bool miss;
+    u16 v;
 
-    bool miss = FALSE;
-    u16 v = frameLoad;
     // frame miss ?
-    if ((vtimer - lastVTimer) > 1)
+    if ((vtime - lastVTimer) > 1)
     {
         // force frame load to 255
         v = 255;
         miss = TRUE;
+    }
+    else
+    {
+        miss = FALSE;
+        v = frameLoad;
     }
 
     cpuFrameLoad -= frameLoads[frameLoadIndex];
     frameLoads[frameLoadIndex] = v;
     cpuFrameLoad += v;
     frameLoadIndex = (frameLoadIndex + 1) & (LOAD_MEAN_FRAME_NUM - 1);
-    lastVTimer = vtimer;
+    lastVTimer = vtime;
 
     return miss;
 }
