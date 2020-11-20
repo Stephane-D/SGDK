@@ -126,31 +126,42 @@ public class Map extends Resource
                                 // tile position
                                 final int ti = ((i * 16) + (bi * 2) + (mi * 1));
                                 final int tj = ((j * 16) + (bj * 2) + (mj * 1));
-
-                                // get tile
-                                final Tile tile = Tile.getTile(image, wt * 8, ht * 8, ti * 8, tj * 8);
+                                final Tile tile;
                                 final TileEquality eq;
                                 int index;
 
-                                // use system tiles for plain tiles if possible
-                                if (useSystemTiles && tile.isPlain())
+                                // outside image ?
+                                if ((ti >= wt) || (tj >= ht))
                                 {
-                                    index = tile.getPlainValue();
+                                    // use dummy tile
+                                    tile = new Tile(new byte[64], 0, false, -1);
                                     eq = TileEquality.NONE;
+                                    index = 0;
                                 }
                                 else
                                 {
-                                    // otherwise we try to get tile index in the tileset
-                                    index = tileset.getTileIndex(tile, TileOptimization.ALL);
-                                    // not found ? (should never happen)
-                                    if (index == -1)
-                                        throw new RuntimeException(
-                                                "Can't find tile in tileset, something wrong happened...");
+                                    tile = Tile.getTile(image, wt * 8, ht * 8, ti * 8, tj * 8);
 
-                                    // get equality info
-                                    eq = tile.getEquality(tileset.get(index));
-                                    // can add base index now
-                                    index += mapBaseTileInd;
+                                    // use system tiles for plain tiles if possible
+                                    if (useSystemTiles && tile.isPlain())
+                                    {
+                                        index = tile.getPlainValue();
+                                        eq = TileEquality.NONE;
+                                    }
+                                    else
+                                    {
+                                        // otherwise we try to get tile index in the tileset
+                                        index = tileset.getTileIndex(tile, TileOptimization.ALL);
+                                        // not found ? (should never happen)
+                                        if (index == -1)
+                                            throw new RuntimeException(
+                                                    "Can't find tile in tileset, something wrong happened...");
+
+                                        // get equality info
+                                        eq = tile.getEquality(tileset.get(index));
+                                        // can add base index now
+                                        index += mapBaseTileInd;
+                                    }
                                 }
 
                                 // set metatile attributes
