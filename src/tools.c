@@ -16,10 +16,10 @@
 // forward
 static u16 getBitmapAllocSize(const Bitmap *bitmap);
 static u16 getTileSetAllocSize(const TileSet *tileset);
-static u16 getMapAllocSize(const TileMap *tilemap);
+static u16 getTileMapAllocSize(const TileMap *tilemap);
 static Bitmap *allocateBitmapInternal(void *adr);
 static TileSet *allocateTileSetInternal(void *adr);
-static TileMap *allocateMapInternal(void *adr);
+static TileMap *allocateTileMapInternal(void *adr);
 
 // internal
 u16 randbase;
@@ -806,7 +806,7 @@ static u16 getTileSetAllocSize(const TileSet *tileset)
     return tileset->numTile * 32;
 }
 
-static u16 getMapAllocSize(const TileMap *tilemap)
+static u16 getTileMapAllocSize(const TileMap *tilemap)
 {
     return tilemap->w * tilemap->h * 2;
 }
@@ -842,7 +842,7 @@ static TileSet *allocateTileSetInternal(void *adr)
     return result;
 }
 
-static TileMap *allocateMapInternal(void *adr)
+static TileMap *allocateTileMapInternal(void *adr)
 {
     // cast
     TileMap *result = (TileMap*) adr;
@@ -904,7 +904,7 @@ TileSet *allocateTileSetEx(u16 numTile)
 
 TileMap *allocateTileMap(const TileMap *tilemap)
 {
-    return allocateMapInternal(MEM_alloc(getMapAllocSize(tilemap) + sizeof(TileMap)));
+    return allocateTileMapInternal(MEM_alloc(getTileMapAllocSize(tilemap) + sizeof(TileMap)));
 }
 
 TileMap *allocateTileMapEx(u16 width, u16 heigth)
@@ -933,7 +933,7 @@ Image *allocateImage(const Image *image)
 
     // get allocation size
     u16 sizeTileset = getTileSetAllocSize(tileset) + sizeof(TileSet);
-    u16 sizeMap = getMapAllocSize(tilemap) + sizeof(TileMap);
+    u16 sizeMap = getTileMapAllocSize(tilemap) + sizeof(TileMap);
 
     const void *adr = MEM_alloc(sizeTileset + sizeMap + sizeof(Image));
 
@@ -945,7 +945,49 @@ Image *allocateImage(const Image *image)
         // allocate tileset buffer
         result->tileset = allocateTileSetInternal((void*) (adr + sizeof(Image)));
         // allocate tilemap buffer
-        result->tilemap = allocateMapInternal((void*) (adr + sizeof(Image) + sizeTileset));
+        result->tilemap = allocateTileMapInternal((void*) (adr + sizeof(Image) + sizeTileset));
+    }
+
+    return result;
+}
+
+Map *allocateMap(const MapDefinition *mapDef)
+{
+    u16 baseSize = sizeof(Map);
+    u16 metaTilesSize;
+    u16 blocksSize;
+    u16 blockIndexesSize;
+
+    // need to allocate memory for packed data buffers
+    if (mapDef->compression != COMPRESSION_NONE)
+    {
+        metaTilesSize = mapDef->numMetaTile * 4 * 2;
+        blocksSize = mapDef->numBlock * 8 * 8;
+        if (mapDef->numMetaTile > 256) blocksSize *= 2;
+        blockIndexesSize = mapDef->w * mapDef->hp;
+        if (mapDef->numBlock > 256) blockIndexesSize *= 2;
+    }
+    else
+    {
+        // can use direct reference
+        metaTilesSize = 0;
+        blocksSize = 0;
+        blockIndexesSize = 0;
+    }
+
+    const void *adr = MEM_alloc(baseSize + metaTilesSize + blocksSize + blockIndexesSize);
+
+    // cast
+    Map *result = (Map*) adr;
+
+    if (result != NULL)
+    {
+        // allocate metaTiles buffer
+        result->metaTiles = (void*) (adr + baseSize);
+        // allocate blocks buffer
+        result->blocks = (void*) (adr + baseSize + metaTilesSize);
+        // allocate blockIndexes buffer
+        result->blockIndexes = (void*) (adr + baseSize + metaTilesSize + blocksSize);
     }
 
     return result;

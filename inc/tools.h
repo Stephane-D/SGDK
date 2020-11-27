@@ -13,6 +13,7 @@
 #include "bmp.h"
 #include "vdp_tile.h"
 #include "vdp_bg.h"
+#include "map.h"
 
 
 /**
@@ -210,6 +211,18 @@ TileMap *allocateTileMapEx(u16 width, u16 heigth);
  *      <i>NULL</i> is returned if there is not enough memory to store the unpacked image.
  */
 Image *allocateImage(const Image *image);
+/**
+ *  \brief
+ *      Allocate Map structure which can receive unpacked data of the specified MapDefinition.
+ *
+ *  \param mapDef
+ *      Source MapDefinition we want to allocate Map object for.
+ *  \return
+ *      The new allocated Map object which can receive the (unpacked) MapDefinition data, note that returned map
+ *      is allocated in a single bloc and can be released with Mem_Free(image).<br>
+ *      <i>NULL</i> is returned if there is not enough memory to store the data for given MapDefinition.
+ */
+Map *allocateMap(const MapDefinition *mapDef);
 
 /**
  *  \brief

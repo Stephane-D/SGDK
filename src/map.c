@@ -21,8 +21,36 @@ extern vu16 VBlankProcess;
 static void updateMap(Map *map, s16 xt, s16 yt);
 static void setMapColumn(Map *map, u16 column, u16 x, u16 y);
 static void setMapRow(Map *map, u16 row, u16 x, u16 y);
+
 static void prepareMapDataColumn(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumn_MTI8_BI8(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumn_MTI8_BI16(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumn_MTI16_BI8(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumn_MTI16_BI16(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumnEx_MTI8_BI8(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumnEx_MTI8_BI16(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumnEx_MTI16_BI8(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+static void prepareMapDataColumnEx_MTI16_BI16(Map* map, u16* bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+
 static void prepareMapDataRow(Map* map, u16* bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRow_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRow_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRow_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRow_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRowEx_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRowEx_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRowEx_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+static void prepareMapDataRowEx_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+
+static u16 getMetaTile_MTI8_BI8(Map* map, u16 x, u16 y);
+static u16 getMetaTile_MTI8_BI16(Map* map, u16 x, u16 y);
+static u16 getMetaTile_MTI16_BI8(Map* map, u16 x, u16 y);
+static u16 getMetaTile_MTI16_BI16(Map* map, u16 x, u16 y);
+
+static void getMetaTilemapRect_MTI8_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
+static void getMetaTilemapRect_MTI8_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
+static void getMetaTilemapRect_MTI16_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
+static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 
 
 static s16 scrollX[2];
@@ -30,24 +58,129 @@ static s16 scrollY[2];
 static bool updateScroll[2];
 
 
-void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, Map *map)
+Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
 {
-    map->w = mapDef->w;
-    map->h = mapDef->h;
+    Map* result = allocateMap(mapDef);
 
+    if (result == NULL) return result;
+
+    result->w = mapDef->w;
+    result->h = mapDef->h;
+
+    u16 compression = mapDef->compression;
+    // map is compressed ?
+    if (compression != COMPRESSION_NONE)
+    {
+        // unpack data
+        unpack(compression, (u8*) FAR(mapDef->metaTiles), (u8*) result->metaTiles);
+        unpack(compression, (u8*) FAR(mapDef->blocks), (u8*) result->blocks);
+        unpack(compression, (u8*) FAR(mapDef->blockIndexes), (u8*) result->blockIndexes);
+    }
+    else
+    {
+        // init FAR pointer
+        result->metaTiles = FAR(mapDef->metaTiles);
+        result->blocks = FAR(mapDef->blocks);
+        result->blockIndexes = FAR(mapDef->blockIndexes);
+    }
     // init FAR pointer
-    map->metaTiles = FAR(mapDef->metaTiles);
-    map->blocks = FAR(mapDef->blocks);
-    map->blockIndexes = FAR(mapDef->blockIndexes);
-    map->blockRowOffsets = FAR(mapDef->blockRowOffsets);
+    result->blockRowOffsets = FAR(mapDef->blockRowOffsets);
 
     // init base parameters
-    map->plane = plane;
+    result->plane = plane;
     // keep only base index and base palette
-    map->baseTile = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    result->baseTile = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
     // mark for init
-    map->planeWidthMask = 0;
-    map->planeHeightMask = 0;
+    result->planeWidthMask = 0;
+    result->planeHeightMask = 0;
+
+    // prepare function pointers
+    if (mapDef->numMetaTile > 256)
+    {
+        // 16 bit for metatile index
+        if (mapDef->numBlock > 256)
+        {
+            // 16 bit for block index
+            if (result->baseTile == 0)
+            {
+                // no base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumn_MTI16_BI16;
+                result->prepareMapDataRowCB = &prepareMapDataRow_MTI16_BI16;
+            }
+            else
+            {
+                // with base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumnEx_MTI16_BI16;
+                result->prepareMapDataRowCB = &prepareMapDataRowEx_MTI16_BI16;
+            }
+
+            result->getMetaTileCB = &getMetaTile_MTI16_BI16;
+            result->getMetaTilemapRectCB = &getMetaTilemapRect_MTI16_BI16;
+        }
+        else
+        {
+            // 8 bit for block index
+            if (result->baseTile == 0)
+            {
+                // no base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumn_MTI16_BI8;
+                result->prepareMapDataRowCB = &prepareMapDataRow_MTI16_BI8;
+            }
+            else
+            {
+                // with base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumnEx_MTI16_BI8;
+                result->prepareMapDataRowCB = &prepareMapDataRowEx_MTI16_BI8;
+            }
+
+            result->getMetaTileCB = &getMetaTile_MTI16_BI8;
+            result->getMetaTilemapRectCB = &getMetaTilemapRect_MTI16_BI8;
+        }
+    }
+    else
+    {
+        // 8 bit for metatile index
+        if (mapDef->numBlock > 256)
+        {
+            // 16 bit for block index
+            if (result->baseTile == 0)
+            {
+                // no base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumn_MTI8_BI16;
+                result->prepareMapDataRowCB = &prepareMapDataRow_MTI8_BI16;
+            }
+            else
+            {
+                // with base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumnEx_MTI8_BI16;
+                result->prepareMapDataRowCB = &prepareMapDataRowEx_MTI8_BI16;
+            }
+
+            result->getMetaTileCB = &getMetaTile_MTI8_BI16;
+            result->getMetaTilemapRectCB = &getMetaTilemapRect_MTI8_BI16;
+        }
+        else
+        {
+            // 8 bit for block index
+            if (result->baseTile == 0)
+            {
+                // no base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumn_MTI8_BI8;
+                result->prepareMapDataRowCB = &prepareMapDataRow_MTI8_BI8;
+            }
+            else
+            {
+                // with base attribute
+                result->prepareMapDataColumnCB = &prepareMapDataColumnEx_MTI8_BI8;
+                result->prepareMapDataRowCB = &prepareMapDataRowEx_MTI8_BI8;
+            }
+
+            result->getMetaTileCB = &getMetaTile_MTI8_BI8;
+            result->getMetaTilemapRectCB = &getMetaTilemapRect_MTI8_BI8;
+        }
+    }
+
+    return result;
 }
 
 void MAP_scrollTo(Map* map, u32 x, u32 y)
@@ -291,106 +424,7 @@ static void prepareMapDataColumn(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u
     u16 start = GET_VCOUNTER;
 #endif
 
-    // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
-
-    u16 *d1 = bufCol1;
-    u16 *d2 = bufCol2;
-    // number of metatile to decode
-    u16 h = height;
-
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
-    // get first block data pointer
-    u16* block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
-    // internal block fixed offset (will never change)
-    u16 blockFixedOffset = xm & 7;
-    // start y position inside block
-    u16 yi = ym & 7;
-
-    // block start offset
-    block += blockFixedOffset + (yi * 8);
-
-    // remain metatile ?
-    while(h--)
-    {
-        // metatile attribute
-        u16 metaTileAttr = *block;
-        // next row
-        block += 8;
-
-        // add priority bit to base attribut
-        u16 ba = baseAttr + (metaTileAttr & TILE_ATTR_PRIORITY_MASK);
-        u16 flip = metaTileAttr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
-
-        // get metatile pointeur
-        u16* metaTile = &map->metaTiles[2 * 2 * (metaTileAttr & TILE_INDEX_MASK)];
-
-        switch(flip)
-        {
-            // no flip
-            case 0:
-                // 0,0
-                *d1++ = *metaTile++ + ba;
-                // 1,0
-                *d2++ = *metaTile++ + ba;
-                // 0,1
-                *d1++ = *metaTile++ + ba;
-                // 1,1
-                *d2++ = *metaTile + ba;
-                break;
-
-            // V flip
-            case TILE_ATTR_VFLIP_MASK:
-                // 0,1
-                *d1++ = (metaTile[2] ^ flip) + ba;
-                // 1,1
-                *d2++ = (metaTile[3] ^ flip) + ba;
-                // 0,0
-                *d1++ = (metaTile[0] ^ flip) + ba;
-                // 1,0
-                *d2++ = (metaTile[1] ^ flip) + ba;
-                break;
-
-            // H flip
-            case TILE_ATTR_HFLIP_MASK:
-                // 0,0
-                *d2++ = (*metaTile++ ^ flip) + ba;
-                // 1,0
-                *d1++ = (*metaTile++ ^ flip) + ba;
-                // 0,1
-                *d2++ = (*metaTile++ ^ flip) + ba;
-                // 1,1
-                *d1++ = (*metaTile ^ flip) + ba;
-                break;
-
-            // HV flip
-            case TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK:
-                // 1,1
-                *d1++ = (metaTile[3] ^ flip) + ba;
-                // 0,1
-                *d2++ = (metaTile[2] ^ flip) + ba;
-                // 1,0
-                *d1++ = (metaTile[1] ^ flip) + ba;
-                // 0,0
-                *d2++ = (metaTile[0] ^ flip) + ba;
-                break;
-        }
-
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
-        {
-            yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
-            // get block data pointer
-            block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
-            // add base offset
-            block += blockFixedOffset;
-        }
-    }
+    map->prepareMapDataColumnCB(map, bufCol1, bufCol2, xm, ym, height);
 
 #ifdef MAP_PROFIL
     u16 end = GET_VCOUNTER;
@@ -404,18 +438,497 @@ static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 
     u16 start = GET_VCOUNTER;
 #endif
 
+    map->prepareMapDataRowCB(map, bufRow1, bufRow2, xm, ym, width);
+
+#ifdef MAP_PROFIL
+    u16 end = GET_VCOUNTER;
+    KLog_S2("prepareMapDataRow - duration=", end - start, " w=", width);
+#endif
+}
+
+
+static void prepareMapDataColumn_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u8* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u8 metaTileInd = *block;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumn_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u16* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u8 metaTileInd = *block;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumn_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u8* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u16 metaTileInd = *block & TILE_INDEX_MASK;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumn_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u16* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u16 metaTileInd = *block & TILE_INDEX_MASK;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumnEx_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
     // we can add both base index and base palette
     const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
 
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u8* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u8 metaTileInd = *block;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumnEx_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u16* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u8 metaTileInd = *block;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumnEx_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u8* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u16 metaTileInd = *block & TILE_INDEX_MASK;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataColumnEx_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufCol1;
+    u16 *d2 = bufCol2;
+    // number of metatile to decode
+    u16 h = height;
+
+    u16* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = xm & 7;
+    // start y position inside block
+    u16 yi = ym & 7;
+
+    // block start offset
+    block += blockFixedOffset + (yi * 8);
+
+    u16* metaTiles = map->metaTiles;
+
+    // remain metatile ?
+    while(h--)
+    {
+        // get metatile index
+        u16 metaTileInd = *block & TILE_INDEX_MASK;
+        // next row
+        block += 8;
+
+        // get metatile pointeur
+        u16* metaTile = &metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRow_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
     u16 *d1 = bufRow1;
     u16 *d2 = bufRow2;
     // number of metatile to decode
     u16 w = width;
 
+    u8* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
     // block grid index
     u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
     // get first block data pointer
-    u16* block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
     u16 blockFixedOffset = (ym & 7) * 8;
     // start x position inside block
@@ -427,66 +940,16 @@ static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 
     // remain metatile ?
     while(w--)
     {
-        // metatile attribute; next col
-        u16 metaTileAttr = *block++;
-
-        // add priority bit to base attribut
-        u16 ba = baseAttr + (metaTileAttr & TILE_ATTR_PRIORITY_MASK);
-        u16 flip = metaTileAttr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
-
+        // metatile index; next col
+        u8 metaTileInd = *block++;
         // get metatile pointeur
-        u16* metaTile = &map->metaTiles[2 * 2 * (metaTileAttr & TILE_INDEX_MASK)];
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
 
-        switch(flip)
-        {
-            // no flip
-            case 0:
-                // 0,0
-                *d1++ = *metaTile++ + ba;
-                // 1,0
-                *d1++ = *metaTile++ + ba;
-                // 0,1
-                *d2++ = *metaTile++ + ba;
-                // 1,1
-                *d2++ = *metaTile + ba;
-                break;
-
-            // V flip
-            case TILE_ATTR_VFLIP_MASK:
-                // 0,0
-                *d2++ = (*metaTile++ ^ flip) + ba;
-                // 1,0
-                *d2++ = (*metaTile++ ^ flip) + ba;
-                // 0,1
-                *d1++ = (*metaTile++ ^ flip) + ba;
-                // 1,1
-                *d1++ = (*metaTile ^ flip) + ba;
-                break;
-
-            // H flip
-            case TILE_ATTR_HFLIP_MASK:
-                // 1,0
-                *d1++ = (metaTile[1] ^ flip) + ba;
-                // 0,0
-                *d1++ = (metaTile[0] ^ flip) + ba;
-                // 1,1
-                *d2++ = (metaTile[3] ^ flip) + ba;
-                // 0,1
-                *d2++ = (metaTile[2] ^ flip) + ba;
-                break;
-
-            // HV flip
-            case TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK:
-                // 1,1
-                *d1++ = (metaTile[3] ^ flip) + ba;
-                // 0,1
-                *d1++ = (metaTile[2] ^ flip) + ba;
-                // 1,0
-                *d2++ = (metaTile[1] ^ flip) + ba;
-                // 0,0
-                *d2++ = (metaTile[0] ^ flip) + ba;
-                break;
-        }
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d2++ = *metaTile;
 
         // next metatile
         xi++;
@@ -497,51 +960,518 @@ static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 
             // increment block grid index (next column)
             blockGridIndex++;
             // get block data pointer
-            block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
             block += blockFixedOffset;
         }
     }
+}
 
-#ifdef MAP_PROFIL
-    u16 end = GET_VCOUNTER;
-    KLog_S2("prepareMapDataRow - duration=", end - start, " w=", width);
-#endif
+static void prepareMapDataRow_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u16* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u8 metaTileInd = *block++;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRow_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u8* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u16 metaTileInd = *block++ & TILE_INDEX_MASK;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRow_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u16* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u16 metaTileInd = *block++ & TILE_INDEX_MASK;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++;
+        *d1++ = *metaTile++;
+        *d2++ = *metaTile++;
+        *d2++ = *metaTile;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRowEx_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u8* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u8 metaTileInd = *block++;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRowEx_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u16* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u8 metaTileInd = *block++;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRowEx_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u8* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u16 metaTileInd = *block++ & TILE_INDEX_MASK;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
+}
+
+static void prepareMapDataRowEx_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
+{
+    // we can add both base index and base palette
+    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+
+    u16 *d1 = bufRow1;
+    u16 *d2 = bufRow2;
+    // number of metatile to decode
+    u16 w = width;
+
+    u16* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // internal block fixed offset (will never change)
+    u16 blockFixedOffset = (ym & 7) * 8;
+    // start x position inside block
+    u16 xi = xm & 7;
+
+    // block start offset
+    block += blockFixedOffset + xi;
+
+    // remain metatile ?
+    while(w--)
+    {
+        // metatile index; next col
+        u16 metaTileInd = *block++ & TILE_INDEX_MASK;
+        // get metatile pointeur
+        u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+
+        // copy tiles attribute
+        *d1++ = *metaTile++ + baseAttr;
+        *d1++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile++ + baseAttr;
+        *d2++ = *metaTile + baseAttr;
+
+        // next metatile
+        xi++;
+        // new block ?
+        if (xi == 8)
+        {
+            xi = 0;
+            // increment block grid index (next column)
+            blockGridIndex++;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // add base offset
+            block += blockFixedOffset;
+        }
+    }
 }
 
 
 u16 MAP_getMetaTile(Map* map, u16 x, u16 y)
 {
+    return map->getMetaTileCB(map, x, y);
+}
+
+u16 MAP_getTile(Map* map, u16 x, u16 y)
+{
+    u16 metaTileInd = map->getMetaTileCB(map, x / 2, y / 2) & TILE_INDEX_MASK;
+    u16* metaTile = &map->metaTiles[2 * 2 * metaTileInd];
+    return metaTile[((y & 1) * 2) + (x & 1)];
+}
+
+void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
+{
+    return map->getMetaTilemapRectCB(map, x, y, w, h, dest);
+}
+
+void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest)
+{
+    // destination
+    u16 *d1 = dest;
+
+    // column arrangment ?
+    if (column)
+    {
+        u16 xi = x;
+        u16 wi = w;
+
+        // secondary destination
+        u16 *d2 = dest + h;
+
+        while(wi--)
+        {
+            map->prepareMapDataColumnCB(map, d1, d2, xi, y, h);
+            // next metatile X
+            xi++;
+            // next metatile column
+            d1 += h * 2;
+            d2 += h * 2;
+        }
+    }
+    // classic row arrangment
+    else
+    {
+        u16 yi = y;
+        u16 hi = h;
+
+        // secondary destination
+        u16 *d2 = dest + w;
+
+        while(hi--)
+        {
+            map->prepareMapDataRowCB(map, d1, d2, x, yi, w);
+            // next metatile Y
+            yi++;
+            // next metatile row
+            d1 += w * 2;
+            d2 += w * 2;
+        }
+    }
+}
+
+
+static u16 getMetaTile_MTI8_BI8(Map* map, u16 x, u16 y)
+{
+    u8* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
     u16 xb = x / 8;
     u16 yb = y / 8;
-    u16 blockInd = map->blockIndexes[map->blockRowOffsets[yb] + xb];
-    u16* block = &map->blocks[8 * 8 * blockInd];
+    u8 blockInd = blockIndexes[map->blockRowOffsets[yb] + xb];
+    u8* block = &blocks[8 * 8 * blockInd];
     u16 xi = x & 7;
     u16 yi = y & 7;
 
     return block[(yi * 8) + xi];
 }
 
-u16 MAP_getTile(Map* map, u16 x, u16 y)
+static u16 getMetaTile_MTI8_BI16(Map* map, u16 x, u16 y)
 {
-    u16 metaTileAttr = MAP_getMetaTile(map, x / 2, y / 2);
-    u16 metaPrio = metaTileAttr & TILE_ATTR_PRIORITY_MASK;
-    u16 metaFlip = metaTileAttr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK);
-    u16 metaInd = metaTileAttr & TILE_INDEX_MASK;
-    u16* metaTile = &map->metaTiles[2 * 2 * metaInd];
+    u16* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
 
-    u16 xi = x & 1;
-    u16 yi = y & 1;
+    u16 xb = x / 8;
+    u16 yb = y / 8;
+    u16 blockInd = blockIndexes[map->blockRowOffsets[yb] + xb];
+    u8* block = &blocks[8 * 8 * blockInd];
+    u16 xi = x & 7;
+    u16 yi = y & 7;
 
-    if (metaFlip & TILE_ATTR_HFLIP_MASK) xi ^= 1;
-    if (metaFlip & TILE_ATTR_VFLIP_MASK) yi ^= 1;
-
-    return (metaTile[(yi * 2) + xi] ^ metaFlip) | metaPrio;
+    return block[(yi * 8) + xi];
 }
 
-
-void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
+static u16 getMetaTile_MTI16_BI8(Map* map, u16 x, u16 y)
 {
+    u8* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    u16 xb = x / 8;
+    u16 yb = y / 8;
+    u8 blockInd = blockIndexes[map->blockRowOffsets[yb] + xb];
+    u16* block = &blocks[8 * 8 * blockInd];
+    u16 xi = x & 7;
+    u16 yi = y & 7;
+
+    return block[(yi * 8) + xi];
+}
+
+static u16 getMetaTile_MTI16_BI16(Map* map, u16 x, u16 y)
+{
+    u16* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    u16 xb = x / 8;
+    u16 yb = y / 8;
+    u16 blockInd = blockIndexes[map->blockRowOffsets[yb] + xb];
+    u16* block = &blocks[8 * 8 * blockInd];
+    u16 xi = x & 7;
+    u16 yi = y & 7;
+
+    return block[(yi * 8) + xi];
+}
+
+static void getMetaTilemapRect_MTI8_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
+{
+    u8* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
+
     // start y position inside block
     u16 yi = y & 7;
     u16 hi = h;
@@ -549,7 +1479,7 @@ void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
     // block grid index
     u16 blockGridIndex = map->blockRowOffsets[y / 8] + (x / 8);
     // get first block data pointer
-    u16* block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // block Y offset
     u16 blockYOffset = yi * 8;
 
@@ -578,7 +1508,7 @@ void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
                 // increment block grid index (next column)
                 blockGridIndex++;
                 // get block data pointer
-                block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
+                block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
                 // add Y offset
                 block += blockYOffset;
             }
@@ -593,57 +1523,205 @@ void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
             // increment block grid index (next row)
             blockGridIndex += map->w;
             // get block data pointer
-            block = &map->blocks[8 * 8 * map->blockIndexes[blockGridIndex]];
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // block Y offset
             blockYOffset = yi * 8;
         }
     }
 }
 
-void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest)
+static void getMetaTilemapRect_MTI8_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
 {
-    // destination
-    u16 *d1 = dest;
+    u16* blockIndexes = map->blockIndexes;
+    u8* blocks = map->blocks;
 
-    // column arrangment ?
-    if (column)
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[y / 8] + (x / 8);
+    // get first block data pointer
+    u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // block Y offset
+    u16 blockYOffset = yi * 8;
+
+    // remain metatile ?
+    while(hi--)
     {
-        u16 xi = x;
+        // start x position inside block
+        u16 xi = x & 7;
         u16 wi = w;
 
-        // secondary destination
-        u16 *d2 = dest + h;
+        // block start offset
+        block += blockYOffset + xi;
 
+        // remain metatile ?
         while(wi--)
         {
-            prepareMapDataColumn(map, d1, d2, xi, y, h);
+            // store metatile attribute; next col
+            *dest++ = *block++;
+
             // next metatile X
             xi++;
-            // next metatile column
-            d1 += h * 2;
-            d2 += h * 2;
+            // new block ?
+            if (xi == 8)
+            {
+                xi = 0;
+                // increment block grid index (next column)
+                blockGridIndex++;
+                // get block data pointer
+                block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+                // add Y offset
+                block += blockYOffset;
+            }
         }
-    }
-    // classic row arrangment
-    else
-    {
-        u16 yi = y;
-        u16 hi = h;
 
-        // secondary destination
-        u16 *d2 = dest + w;
-
-        while(hi--)
+        // next metatile Y
+        yi++;
+        // new block ?
+        if (yi == 8)
         {
-            prepareMapDataRow(map, d1, d2, x, yi, w);
-            // next metatile Y
-            yi++;
-            // next metatile row
-            d1 += w * 2;
-            d2 += w * 2;
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // block Y offset
+            blockYOffset = yi * 8;
         }
     }
 }
+
+static void getMetaTilemapRect_MTI16_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
+{
+    u8* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[y / 8] + (x / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // block Y offset
+    u16 blockYOffset = yi * 8;
+
+    // remain metatile ?
+    while(hi--)
+    {
+        // start x position inside block
+        u16 xi = x & 7;
+        u16 wi = w;
+
+        // block start offset
+        block += blockYOffset + xi;
+
+        // remain metatile ?
+        while(wi--)
+        {
+            // store metatile attribute; next col
+            *dest++ = *block++;
+
+            // next metatile X
+            xi++;
+            // new block ?
+            if (xi == 8)
+            {
+                xi = 0;
+                // increment block grid index (next column)
+                blockGridIndex++;
+                // get block data pointer
+                block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+                // add Y offset
+                block += blockYOffset;
+            }
+        }
+
+        // next metatile Y
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // block Y offset
+            blockYOffset = yi * 8;
+        }
+    }
+}
+
+static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest)
+{
+    u16* blockIndexes = map->blockIndexes;
+    u16* blocks = map->blocks;
+
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
+
+    // block grid index
+    u16 blockGridIndex = map->blockRowOffsets[y / 8] + (x / 8);
+    // get first block data pointer
+    u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+    // block Y offset
+    u16 blockYOffset = yi * 8;
+
+    // remain metatile ?
+    while(hi--)
+    {
+        // start x position inside block
+        u16 xi = x & 7;
+        u16 wi = w;
+
+        // block start offset
+        block += blockYOffset + xi;
+
+        // remain metatile ?
+        while(wi--)
+        {
+            // store metatile attribute; next col
+            *dest++ = *block++;
+
+            // next metatile X
+            xi++;
+            // new block ?
+            if (xi == 8)
+            {
+                xi = 0;
+                // increment block grid index (next column)
+                blockGridIndex++;
+                // get block data pointer
+                block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+                // add Y offset
+                block += blockYOffset;
+            }
+        }
+
+        // next metatile Y
+        yi++;
+        // new block ?
+        if (yi == 8)
+        {
+            yi = 0;
+            // increment block grid index (next row)
+            blockGridIndex += map->w;
+            // get block data pointer
+            block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
+            // block Y offset
+            blockYOffset = yi * 8;
+        }
+    }
+}
+
+
+
+
 
 
 bool MAP_doVBlankProcess()

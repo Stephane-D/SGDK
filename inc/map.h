@@ -41,6 +41,14 @@
  *      map width in block (128x128 pixels block).
  *  \param h
  *      map height in block (128x128 pixels block).
+ *  \param hp
+ *      map height in block (128x128 pixels block) removing duplicated rows
+ *  \param compression
+ *      compression type for metaTiles, blocks and blockIndexes data. Accepted values:<br>
+ *        <b>COMPRESSION_NONE</b><br>
+ *        <b>COMPRESSION_APLIB</b><br>
+ *        <b>COMPRESSION_LZ4W</b><br>
+ *      smap height in block (128x128 pixels block) removing duplicated rows
  *  \param numMetaTile
  *      number of MetaTile
  *  \param numBlock
@@ -58,13 +66,12 @@
  *      - b10-b0: tile index (from tileset)
  *  \param blocks
  *      blocks definition, each block is encoded as 8x8 metatiles:<br>
- *      - b15: priority override<br>
- *      - b14-b13: free, can be used to encode collision info ?<br>
- *      - b12: combined vflip<br>
- *      - b11: combined hflip<br>
- *      - b10-b0: metatile index
+ *      if numMetaTile <= 256 --> 8 bit index for metaTile<br>
+ *      else --> 16 bit index for metaTile
  *  \param blockIndexes
- *      block index array (referencing blocks) for the w * h sized map
+ *      block index array (referencing blocks) for the w * hp sized map<br>
+ *      if numBlock <= 256 --> 8 bit index for block
+ *      else --> 16 bit index for block
  *  \param blockRowOffsets
  *      block row offsets used internally for fast retrieval of block data (index = blockIndexes[blockRowOffsets[y] + x])
  */
@@ -72,13 +79,15 @@ typedef struct
 {
     u16 w;
     u16 h;
+    u16 hp;
+    u16 compression;
     u16 numMetaTile;
     u16 numBlock;
     Palette *palette;
     TileSet *tileset;
     u16 *metaTiles;
-    u16 *blocks;
-    u16 *blockIndexes;
+    void *blocks;
+    void *blockIndexes;
     u16 *blockRowOffsets;
 } MapDefinition;
 
@@ -92,13 +101,13 @@ typedef struct
  *  \param h
  *      map height in block (128x128 pixels block)
  *  \param metaTiles
- *      internal - direct FAR access (see #FAR) to mapDefinition->metaTiles
+ *      internal - unpacked data of #mapDefinition.metaTiles
  *  \param blocks
- *      internal - direct FAR access (see #FAR) to mapDefinition->blocks
+ *      internal - unpacked data of #mapDefinition.blocks
  *  \param blockIndexes
- *      internal - direct FAR access (see #FAR) to mapDefinition->blocks
+ *      internal - unpacked data of #mapDefinition.blockIndexes
  *  \param blockRowOffsets
- *      internal - direct FAR access (see #FAR) to mapDefinition->blocks
+ *      internal - direct access of #mapDefinition.blockRowOffsets
  *  \param plane
  *      VDP plane where MAP is draw
  *  \param baseTile
@@ -115,14 +124,22 @@ typedef struct
  *      internal
  *  \param lastYT
  *      internal
+ *  \param prepareMapDataColumnCB
+ *      internal
+ *  \param prepareMapDataRowCB
+ *      internal
+ *  \param getMetaTileCB
+ *      internal
+ *  \param getMetaTilemapRectCB
+ *      internal
  */
-typedef struct
+typedef struct _Map
 {
     u16 w;
     u16 h;
     u16 *metaTiles;
-    u16 *blocks;
-    u16 *blockIndexes;
+    void *blocks;
+    void *blockIndexes;
     u16 *blockRowOffsets;
     VDPPlane plane;
     u16 baseTile;
@@ -132,12 +149,18 @@ typedef struct
     u16 planeHeightMask;
     u16 lastXT;
     u16 lastYT;
+    void (*prepareMapDataColumnCB)(struct _Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+    void (*prepareMapDataRowCB)(struct _Map *map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+    u16  (*getMetaTileCB)(struct _Map *map, u16 x, u16 y);
+    void (*getMetaTilemapRectCB)(struct _Map *map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 } Map;
 
 
 /**
  *  \brief
- *      Initialize Map structure required to use all MAP_xxx functions
+ *      Create and return a Map structure required to use all MAP_xxx functions
+ *      from a given #MapDefinition.<br>
+ *      When you're done with the map just use MEM_free(map) to release it.
  *
  *  \param mapDef
  *      MapDefinition structure containing background/plane data.
@@ -148,12 +171,12 @@ typedef struct
  *      - BG_B<br>
  *  \param basetile
  *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro)
- *  \param map
- *      Map structure to initialize
+ *  \return initialized #Map structure or <i>NULL</i> if there is not enough memory to allocate data for given MapDefinition.
  *
- *  \see #MAP_scrollTo(..)
+ *  \see #MAP_release(..)
  */
-void MAP_init(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile, Map *map);
+Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);
+
 /**
  *  \brief
  *      Scroll map to specified position.<vr>
