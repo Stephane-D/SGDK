@@ -71,8 +71,8 @@ Sprite* enemies[2];
 Sprite* bars[3];
 
 // maps (BGA and BGB)
-Map bgb;
-Map bga;
+Map *bgb;
+Map *bga;
 
 // absolute camera position (pixel)
 s16 camPosX;
@@ -163,8 +163,8 @@ int main(u16 hard)
     enemiesXOrder[1] = 1;
 
     // init backgrounds
-    MAP_init(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]), &bga);
-    MAP_init(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]), &bgb);
+    bga = MAP_create(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]));
+    bgb = MAP_create(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]));
 
     // init scrolling
     updateCameraPosition();
@@ -250,6 +250,10 @@ int main(u16 hard)
 
 //        KLog_U1("CPU usage = ", SYS_getCPULoad());
     }
+
+    // release maps
+    MEM_free(bga);
+    MEM_free(bgb);
 
     return 0;
 }
@@ -454,9 +458,9 @@ static void setCameraPosition(s16 x, s16 y)
         camPosY = y;
 
         // scroll maps
-        MAP_scrollTo(&bga, x, y);
+        MAP_scrollTo(bga, x, y);
         // scrolling is slower on BGB
-        MAP_scrollTo(&bgb, x >> 3, y >> 5);
+        MAP_scrollTo(bgb, x >> 3, y >> 5);
 
 //        scrollNeedUpdate = TRUE;
     }
