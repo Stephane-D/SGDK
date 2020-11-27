@@ -21,12 +21,13 @@ public class Map extends Resource
 {
     public final int wb;
     public final int hb;
+    public final Compression compression;
     final int hc;
 
     public final List<Metatile> metatiles;
     public final List<MapBlock> mapBlocks;
-    public final short mapBlockIndexes[];
-    public final short mapBlockRowOffsets[];
+    public final List<short[]> mapBlockIndexes;
+    public final short[] mapBlockRowOffsets;
     public final Tileset tileset;
     public final Palette palette;
 
@@ -36,7 +37,7 @@ public class Map extends Resource
     public final Bin mapBlockIndexesBin;
     public final Bin mapBlockRowOffsetsBin;
 
-    public Map(String id, String imgFile, int mapBase, int metatileSize, Tileset tileset)
+    public Map(String id, String imgFile, int mapBase, int metatileSize, Tileset tileset, Compression comp)
             throws IOException, IllegalArgumentException
     {
         super(id);
@@ -81,11 +82,13 @@ public class Map extends Resource
         // base pal attributes and base tile index offset
         final int mapBasePal = (mapBase & Tile.TILE_PALETTE_MASK) >> Tile.TILE_PALETTE_SFT;
         final int mapBaseTileInd = mapBase & Tile.TILE_INDEX_MASK;
-        // we have a base offset --> we can use system plain tiles
-        final boolean useSystemTiles = mapBaseTileInd != 0;
+        // store base tile index usage
+        final boolean hasBaseTileIndex = mapBaseTileInd != 0;
 
         // store tileset
         this.tileset = tileset;
+        // store compression (AUTO --> APLIB here)
+        this.compression = (comp == Compression.AUTO) ? Compression.APLIB : comp;
 
         // // build TILESET with wanted compression
         // tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht,
@@ -99,14 +102,19 @@ public class Map extends Resource
         metatiles = new ArrayList<>();
         // build MAPBLOCKS
         mapBlocks = new ArrayList<>();
-
-        // block indexes
-        mapBlockIndexes = new short[wb * hb];
-        int mbii = 0;
+        // build block indexes
+        mapBlockIndexes = new ArrayList<>();
+        // build block row offsets
+        mapBlockRowOffsets = new short[hb];
+        // set to -1 to mark that it's not yet set (we shouldn't never meet an offset of 65535 realistically)
+        Arrays.fill(mapBlockRowOffsets, (short) -1);
 
         // important to always use the same loop order when building Tileset and Tilemap object
         for (int j = 0; j < hb; j++)
         {
+            int mbrii = 0;
+            final short[] mbRowIndexes = new short[wb];
+
             for (int i = 0; i < wb; i++)
             {
                 final MapBlock mb = new MapBlock();
@@ -142,8 +150,8 @@ public class Map extends Resource
                                 {
                                     tile = Tile.getTile(image, wt * 8, ht * 8, ti * 8, tj * 8);
 
-                                    // use system tiles for plain tiles if possible
-                                    if (useSystemTiles && tile.isPlain())
+                                    // we can use system tiles when we have a base tile offset
+                                    if (hasBaseTileIndex && tile.isPlain())
                                     {
                                         index = tile.getPlainValue();
                                         eq = TileEquality.NONE;
@@ -156,6 +164,10 @@ public class Map extends Resource
                                         if (index == -1)
                                             throw new RuntimeException(
                                                     "Can't find tile in tileset, something wrong happened...");
+                                        // index > 2047 ? --> not allowed
+                                        if (index > 2047)
+                                            throw new RuntimeException(
+                                                    "Can't have more than 2048 different tiles, try to reduce number of unique tile...");
 
                                         // get equality info
                                         eq = tile.getEquality(tileset.get(index));
@@ -170,7 +182,7 @@ public class Map extends Resource
                             }
                         }
 
-                        // update prio and hash code
+                        // update internals (hash code)
                         mt.updateInternals();
 
                         // get index of metatile
@@ -184,12 +196,8 @@ public class Map extends Resource
                             metatiles.add(mt);
                         }
 
-                        // get equality info
-                        final TileEquality mtEq = mt.getEquality(metatiles.get(mtIndex));
-
-                        // set block attributes
-                        mb.set(mbi++,
-                                (short) Tile.TILE_ATTR_FULL(0, mt.getGlobalPrio(), mtEq.vflip, mtEq.hflip, mtIndex));
+                        // set block attributes (metatile index only here) 
+                        mb.set(mbi++, (short) mtIndex);
                     }
                 }
 
@@ -208,51 +216,131 @@ public class Map extends Resource
                 }
 
                 // store MapBlock index (we can't have more than 65536 blocks)
-                mapBlockIndexes[mbii++] = (short) mbIndex;
+                mbRowIndexes[mbrii++] = (short) mbIndex;
+            }
+
+            // check if we have a duplicated map block row
+            for (int i = 0; i < mapBlockIndexes.size(); i++)
+            {
+                // duplicated ?
+                if (Arrays.equals(mbRowIndexes, mapBlockIndexes.get(i)))
+                {
+                    // store offset for this map block row
+                    mapBlockRowOffsets[j] = (short) (i * wb);
+                    break;
+                }
+            }
+
+            // not yet set ?
+            if (mapBlockRowOffsets[j] == -1)
+            {
+                // set offset to current row
+                mapBlockRowOffsets[j] = (short) (mapBlockIndexes.size() * wb);
+                // and add map block row indexes to list
+                mapBlockIndexes.add(mbRowIndexes);
             }
         }
 
-        // define block row offsets
-        mapBlockRowOffsets = new short[hb];
-        for (int j = 0; j < hb; j++)
-            mapBlockRowOffsets[j] = (short) (j * wb);
-
-        // need convert to array data
-        short[] data;
-        int offset;
-
         // convert metatiles to array
-        data = new short[metatiles.size() * (metatileSize * metatileSize)];
-        offset = 0;
+        short[] mtData = new short[metatiles.size() * (metatileSize * metatileSize)];
+        int offset = 0;
         for (Metatile mt : metatiles)
         {
+            // we can't use packed metatile representation when we have a base tile index
             for (short attr : mt.data)
-                data[offset++] = attr;
+                mtData[offset++] = attr;
         }
 
         // build BIN (metatiles data)
-        metatilesBin = (Bin) addInternalResource(new Bin(id + "_metatiles", data, Compression.NONE));
+        metatilesBin = (Bin) addInternalResource(new Bin(id + "_metatiles", mtData, compression));
 
         // convert mapBlocks to array
-        data = new short[mapBlocks.size() * (8 * 8)];
-        offset = 0;
-        for (MapBlock mb : mapBlocks)
+        if (metatiles.size() > 256)
         {
-            for (short attr : mb.data)
-                data[offset++] = attr;
+            // require 16 bit index
+            final short[] mbData = new short[mapBlocks.size() * (8 * 8)];
+            offset = 0;
+            for (MapBlock mb : mapBlocks)
+            {
+                for (short ind : mb.data)
+                    mbData[offset++] = ind;
+            }
+
+            // build BIN (mapBlocks data)
+            mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapblocks", mbData, compression));
+        }
+        else
+        {
+            // 8 bit index
+            final byte[] mbData = new byte[mapBlocks.size() * (8 * 8)];
+            offset = 0;
+            for (MapBlock mb : mapBlocks)
+            {
+                for (short ind : mb.data)
+                    mbData[offset++] = (byte) ind;
+            }
+
+            // build BIN (mapBlocks data)
+            mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapblocks", mbData, compression));
         }
 
-        // build BIN (mapBlocks data)
-        mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapblocks", data, Compression.NONE));
-        // build BIN (mapBlockIndexes data)
-        mapBlockIndexesBin = (Bin) addInternalResource(
-                new Bin(id + "_mapblockindexes", mapBlockIndexes, Compression.NONE));
+        // require 16 bit index ? --> directly use mapBlockIndexes map
+        if (mapBlocks.size() > 256)
+        {
+            // 16 bit index
+            final short[] mbiData = new short[mapBlockIndexes.size() * wb];
+            offset = 0;
+            for (short[] rowIndexes : mapBlockIndexes)
+                for (short ind : rowIndexes)
+                    mbiData[offset++] = ind;
+
+            // build BIN (mapBlockIndexes data)
+            mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapblockindexes", mbiData, compression));
+        }
+        else
+        {
+            // 8 bit index
+            final byte[] mbiData = new byte[mapBlockIndexes.size() * wb];
+            offset = 0;
+            for (short[] rowIndexes : mapBlockIndexes)
+                for (short ind : rowIndexes)
+                    mbiData[offset++] = (byte) ind;
+
+            // build BIN (mapBlockIndexes data)
+            mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapblockindexes", mbiData, compression));
+        }
+
         // build BIN (mapBlockRowOffsets data)
         mapBlockRowOffsetsBin = (Bin) addInternalResource(
                 new Bin(id + "_mapblockrowoffsets", mapBlockRowOffsets, Compression.NONE));
 
         // build PALETTE
         palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, 64, true));
+
+        // check if we can unpack the MAP
+        if (compression != Compression.NONE)
+        {
+            // get unpacked size
+            int ts = totalSize();
+
+            // fix for condensed encoded metatiles
+            if (!hasBaseTileIndex)
+            {
+                // remove metatiles binary blob size
+                ts -= metatilesBin.totalSize();
+                // add metatiles definition RAW size
+                ts += metatiles.size() * 4 * 2;
+            }
+
+            // above 50 KB ? --> error
+            if (ts > (50 * 1024))
+                throw new RuntimeException("Error: MAP '" + id + "' unpacked size = " + ts
+                        + " bytes, you won't have enough memory to unpack it.\nRemove compression from MAP resource definition");
+            // above 34 KB ? --> warning
+            if (ts > (34 * 1024))
+                System.err.println("Warning: MAP '" + id + "' unpacked size = " + ts
+                        + " bytes, you may not be able to unpack it.\nYou may remove compression from MAP resource definition");
+        }
 
         // compute hash code
         hc = tileset.hashCode() ^ palette.hashCode() ^ metatilesBin.hashCode() ^ mapBlocksBin.hashCode()
@@ -266,7 +354,7 @@ public class Map extends Resource
             final Metatile mt = metatiles.get(ind);
 
             // we found a matching metatile --> return its index
-            if (mt.getEquality(metatile) != TileEquality.NONE)
+            if (mt.equals(metatile))
                 return ind;
         }
 
@@ -308,7 +396,7 @@ public class Map extends Resource
         {
             final Map map = (Map) obj;
             return palette.equals(map.palette) && metatiles.equals(map.metatiles) && mapBlocks.equals(map.mapBlocks)
-                    && Arrays.equals(mapBlockIndexes, map.mapBlockIndexes)
+                    && mapBlockIndexesBin.equals(map.mapBlockIndexesBin)
                     && Arrays.equals(mapBlockRowOffsets, map.mapBlockRowOffsets);
         }
 
@@ -338,6 +426,10 @@ public class Map extends Resource
         Util.decl(outS, outH, "MapDefinition", id, 2, global);
         // set size in block
         outS.append("    dc.w    " + wb + ", " + hb + "\n");
+        // set real height of mapBlockIndexes (can have duplicated row which aren't stored)
+        outS.append("    dc.w    " + mapBlockIndexes.size() + "\n");
+        // set compression
+        outS.append("    dc.w    " + (compression.ordinal() - 1) + "\n");
         // set num metatile
         outS.append("    dc.w    " + metatiles.size() + "\n");
         // set num mapblock
