@@ -131,9 +131,9 @@ public class Tile implements Comparable<Tile>
     public final boolean prio;
     public final boolean empty;
 
-    final int[] flipH;
-    final int[] flipV;
-    final int[] flipHV;
+    final int[] hFlip;
+    final int[] vFlip;
+    final int[] hvFlip;
 
     final int hc;
 
@@ -163,11 +163,11 @@ public class Tile implements Comparable<Tile>
         }
         empty = emp;
 
-        flipH = getFlipped(true, false);
-        flipV = getFlipped(false, true);
-        flipHV = getFlipped(true, true);
+        hFlip = getFlipped(true, false);
+        vFlip = getFlipped(false, true);
+        hvFlip = getFlipped(true, true);
 
-        hc = getHash(data) ^ getHash(flipH) ^ getHash(flipV) ^ getHash(flipHV);
+        hc = getHash(data) ^ getHash(hFlip) ^ getHash(vFlip) ^ getHash(hvFlip);
     }
 
     public Tile(byte[] pixel8bpp, int pal, boolean prio, int plain)
@@ -229,13 +229,13 @@ public class Tile implements Comparable<Tile>
             return TileEquality.EQUAL;
 
         // hflip
-        if (Arrays.equals(tile.data, flipH))
+        if (Arrays.equals(tile.data, hFlip))
             return TileEquality.HFLIP;
         // vflip
-        if (Arrays.equals(tile.data, flipV))
+        if (Arrays.equals(tile.data, vFlip))
             return TileEquality.VFLIP;
         // hvflip
-        if (Arrays.equals(tile.data, flipHV))
+        if (Arrays.equals(tile.data, hvFlip))
             return TileEquality.HVFLIP;
 
         return TileEquality.NONE;
