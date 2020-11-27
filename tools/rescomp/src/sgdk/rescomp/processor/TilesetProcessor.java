@@ -25,14 +25,16 @@ public class TilesetProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong TILESET definition");
-            System.out.println("TILESET name \"file\" [compression]");
+            System.out.println("TILESET name \"file\" [compression [opt [metatile]]]");
             System.out.println("  name          Tileset variable name");
-            System.out.println("  file          the image to convert to TileSet structure (should be a 8bpp .bmp or .png)");
+            System.out.println(
+                    "  file          the image to convert to TileSet structure (should be a 8bpp .bmp or .png)");
             System.out.println("  compression   compression type, accepted values:");
             System.out.println("                 -1 / BEST / AUTO = use best compression");
             System.out.println("                  0 / NONE        = no compression (default)");
             System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println(
+                    "                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  opt           define the optimisation level, accepted values:");
             System.out.println("                  0 / NONE        = no optimisation, each tile is unique");
             System.out.println("                  1 / ALL         = ignore duplicated and flipped tile (default)");
@@ -56,7 +58,7 @@ public class TilesetProcessor implements Processor
 
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
-        
+
         // TILESET resource never optimize tiles and we ignore palette information
         return Tileset.getTileset(id, fileIn, compression, opt, 256);
     }
