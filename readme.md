@@ -30,7 +30,7 @@ https://github.com/Stephane-D/SGDK/wiki
 
 Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the 'doc' folder: *doc/html/files.html*
 
-Finally i also strongly suggest you to have a look on the available samples in the **'sample' folder** of SGDK and in particular the **[sprite sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sprite)** which is a good showcase of SGDK functions.
+Finally i also strongly suggest you to have a look on the available samples in the **'sample' folder** of SGDK and in particular the [sprite sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sprite) which is a good showcase of SGDK functions/usage.
 
 You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):
 https://www.ohsat.com/tutorial/
