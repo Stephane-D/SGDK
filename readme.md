@@ -28,7 +28,7 @@ Then when you feel ready you can go further and finally install SGDK :)
 You can find installation instructions and tutorials about how use SGDK on the wiki:
 https://github.com/Stephane-D/SGDK/wiki
 
-Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the 'doc' folder: *doc/html/files.html*
+Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the _'doc'_ folder: *doc/html/files.html*
 
 Another important point to know is that SGDK heavily relies on _resources_ which are compiled through _rescomp_ tool. You can read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to know which kind of resource you can use and how to declare them then you can check the *'sample' folder* from SGDK and in particular the [sprite sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sprite) which is a good showcase of SGDK usage in general (functions and resources).
 
