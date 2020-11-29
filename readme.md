@@ -86,10 +86,8 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 
 ### SUPPORT SGDK
 
-SGDK is completly free but you can support it on Patreon or using the Paypal donation link.
-
-Patreon: https://www.patreon.com/SGDK<br>
-Paypal donation link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2SCWVXYDEEBUU
+SGDK is completly free but you can support it on Patreon:<br>
+Patreon: https://www.patreon.com/SGDK
 
 Thanks =) I wish you a great and happy coding time !
 
