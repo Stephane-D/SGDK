@@ -441,7 +441,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     if (queueIndex >= queueSize)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
+        KDebug_Alert("DMA_queueDma(..) failed: queue is full ! Try to increase queue size using DMA_setMaxQueueSize(..)");
 #endif
 
         // return FALSE as transfer will be ignored
@@ -541,7 +541,7 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
     if (queueIndex >= queueSize)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KDebug_Alert("DMA_queueDma(..) failed: queue is full !");
+        KDebug_Alert("DMA_queueDma(..) failed: queue is full ! Try to increase queue size using DMA_setMaxQueueSize(..)");
 #endif
 
         // return FALSE as transfer will be ignored

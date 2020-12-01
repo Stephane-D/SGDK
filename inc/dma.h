@@ -30,8 +30,8 @@
  */
 #define DMA_VSRAM   2
 
-#define DMA_QUEUE_SIZE_DEFAULT      64
-#define DMA_QUEUE_SIZE_MIN          20
+#define DMA_QUEUE_SIZE_DEFAULT      80
+#define DMA_QUEUE_SIZE_MIN          32
 
 #define DMA_TRANSFER_CAPACITY_NTSC  7200
 #define DMA_TRANSFER_CAPACITY_PAL   15000
