@@ -232,31 +232,53 @@ static void updateMap(Map* map, s16 xt, s16 yt)
     KLog_S4("updateMap xt=", xt, " yt=", yt, " deltaX=", deltaX, " deltaY=", deltaY);
 #endif
 
+    // clip to 21 metatiles column max (full screen update)
+    if (deltaX > 21)
+    {
+        cxt += deltaX - 21;
+        deltaX = 21;
+        // as we have a full screen update, we don't need row update then
+        deltaY = 0;
+    }
+    // clip to 21 metatiles column max (full screen update)
+    else if (deltaX < -21)
+    {
+        cxt += deltaX + 21;
+        deltaX = -21;
+        // as we have a full screen update, we don't need row update then
+        deltaY = 0;
+    }
+    // clip to 16 metatiles row max (full screen update)
+    else if (deltaY > 16)
+    {
+        cyt += deltaY - 16;
+        deltaY = 16;
+        // as we have a full screen update, we don't need column update then
+        deltaX = 0;
+    }
+    // clip to 16 metatiles row max (full screen update)
+    else if (deltaY > 16)
+    {
+        cyt += deltaY - 16;
+        deltaY = 16;
+        // as we have a full screen update, we don't need column update then
+        deltaX = 0;
+    }
+
     if (deltaX > 0)
     {
-        // clip to 21 metatiles max (full screen update)
-        if (deltaX > 21)
-        {
-            cxt += deltaX - 21;
-            deltaX = 21;
-        }
+        // update on right
+        cxt += 21;
 
         // need to update map column on right
         while(deltaX--)
         {
-            setMapColumn(map, (cxt + 21) & map->planeWidthMask, cxt + 21, yt);
+            setMapColumn(map, cxt & map->planeWidthMask, cxt, yt);
             cxt++;
         }
     }
-    else if (deltaX < 0)
+    else
     {
-        // clip to 21 metatiles max (full screen update)
-        if (deltaX < -21)
-        {
-            cxt += deltaX + 21;
-            deltaX = -21;
-        }
-
         // need to update map column on left
         while(deltaX++)
         {
@@ -267,29 +289,18 @@ static void updateMap(Map* map, s16 xt, s16 yt)
 
     if (deltaY > 0)
     {
-        // clip to 16 metatiles max (full screen update)
-        if (deltaY > 16)
-        {
-            cyt += deltaY - 16;
-            deltaY = 16;
-        }
+        // update on bottom
+        cyt += 16;
 
         // need to update map row on bottom
         while(deltaY--)
         {
-            setMapRow(map, (cyt + 16) & map->planeHeightMask, xt, cyt + 16);
+            setMapRow(map, cyt & map->planeHeightMask, xt, cyt);
             cyt++;
         }
     }
-    else if (deltaY < 0)
+    else
     {
-        // clip to 21 metatiles max (full screen update)
-        if (deltaY < -16)
-        {
-            cyt += deltaY + 16;
-            deltaY = -16;
-        }
-
         // need to update map row on top
         while(deltaY++)
         {
@@ -1373,16 +1384,18 @@ void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* 
         u16 wi = w;
 
         // secondary destination
-        u16 *d2 = dest + h;
+        u16 *d2 = dest + (h * 2);
+        // get map col update function pointer
+        void (*updateCol)(Map *map, u16 *d1, u16 *d2, u16 xm, u16 ym, u16 h) = map->prepareMapDataColumnCB;
 
         while(wi--)
         {
-            map->prepareMapDataColumnCB(map, d1, d2, xi, y, h);
+            updateCol(map, d1, d2, xi, y, h);
             // next metatile X
             xi++;
             // next metatile column
-            d1 += h * 2;
-            d2 += h * 2;
+            d1 += h * 4;
+            d2 += h * 4;
         }
     }
     // classic row arrangment
@@ -1392,16 +1405,18 @@ void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* 
         u16 hi = h;
 
         // secondary destination
-        u16 *d2 = dest + w;
+        u16 *d2 = dest + (w * 2);
+        // get map row update function pointer
+        void (*updateRow)(Map *map, u16 *d1, u16 *d2, u16 xm, u16 ym, u16 h) = map->prepareMapDataRowCB;
 
         while(hi--)
         {
-            map->prepareMapDataRowCB(map, d1, d2, x, yi, w);
+            updateRow(map, d1, d2, x, yi, w);
             // next metatile Y
             yi++;
             // next metatile row
-            d1 += w * 2;
-            d2 += w * 2;
+            d1 += w * 4;
+            d2 += w * 4;
         }
     }
 }
@@ -1718,10 +1733,6 @@ static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, 
         }
     }
 }
-
-
-
-
 
 
 bool MAP_doVBlankProcess()
