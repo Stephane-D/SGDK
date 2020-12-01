@@ -58,9 +58,16 @@ static void updateAnim();
 static void updateCameraPosition();
 static void setCameraPosition(s16 x, s16 y);
 
-//static void updateVDPScroll();
+static void updateMap(VDPPlane plane, Map* map, s16 xt, s16 yt);
+static void updateVDPScroll();
 
 static void frameChanged(Sprite* sprite);
+
+
+// 42 * 32 = complete tilemap update; * 2 as we have 2 full plans to update potentially
+// used for alternate map update mode
+u16 tilemapBuf[42 * 32 * 2];
+u16 bufOffset;
 
 // player (sonic) sprite
 Sprite* player;
@@ -70,6 +77,9 @@ Sprite* enemies[2];
 // Speed, Jump and Gravity interface
 Sprite* bars[3];
 
+// maps (BGA and BGB) position (tile) for alternate method
+s16 mapMetaTilePosX[2];
+s16 mapMetaTilePosY[2];
 // maps (BGA and BGB)
 Map *bgb;
 Map *bga;
@@ -78,12 +88,14 @@ Map *bga;
 s16 camPosX;
 s16 camPosY;
 // require scroll update
-//bool scrollNeedUpdate;
+bool scrollNeedUpdate;
 
+// physic variables
 fix32 maxSpeed;
 fix32 jumpSpeed;
 fix32 gravity;
 
+// position and movement variables
 fix32 posX;
 fix32 posY;
 fix32 movX;
@@ -91,6 +103,7 @@ fix32 movY;
 s16 xOrder;
 s16 yOrder;
 
+// enemies positions and move direction
 fix32 enemiesPosX[2];
 fix32 enemiesPosY[2];
 s16 enemiesXOrder[2];
@@ -100,7 +113,8 @@ u16** sprTileIndexes[2];
 // BG start tile index
 u16 bgBaseTileIndex[2];
 
-//s16 reseted = TRUE;
+// maintain X button to use alternate MAP update mode
+bool alternateScrollMethod;
 bool paused;
 
 int main(u16 hard)
@@ -135,11 +149,20 @@ int main(u16 hard)
     ind += bgb_tileset.numTile;
 
     // initialize variables
+    bufOffset = 0;
+
+    alternateScrollMethod = FALSE;          // by default we use the easy MAP_scrollTo(..) method
     paused = FALSE;
+
+    // BGB/BGA tile position (force refresh)
+    mapMetaTilePosX[0] = -42;
+    mapMetaTilePosY[0] = 0;
+    mapMetaTilePosX[1] = -42;
+    mapMetaTilePosY[1] = 0;
     // camera position (force refresh)
     camPosX = -1;
     camPosY = -1;
-//    scrollNeedUpdate = FALSE;
+    scrollNeedUpdate = FALSE;
 
     // default speeds
     maxSpeed = MAX_SPEED_DEFAULT;
@@ -168,10 +191,16 @@ int main(u16 hard)
 
     // init scrolling
     updateCameraPosition();
-//    updateVDPScroll();
+    if (scrollNeedUpdate)
+    {
+        updateVDPScroll();
+        scrollNeedUpdate = FALSE;
+    }
 
     // update camera position
     SYS_doVBlankProcess();
+    // reset tilemap buffer position after update
+    bufOffset = 0;
 
     // init sonic sprite
     player = SPR_addSprite(&sonic_sprite, fix32ToInt(posX) - camPosX, fix32ToInt(posY) - camPosY, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
@@ -241,12 +270,15 @@ int main(u16 hard)
 
         // sync frame and do vblank process
         SYS_doVBlankProcess();
+        // reset tilemap buffer position after update
+        bufOffset = 0;
 
-//        if (scrollNeedUpdate)
-//        {
-//            updateVDPScroll();
-//            scrollNeedUpdate = FALSE;
-//        }
+        // needed only for alternate MAP update method
+        if (scrollNeedUpdate)
+        {
+            updateVDPScroll();
+            scrollNeedUpdate = FALSE;
+        }
 
 //        KLog_U1("CPU usage = ", SYS_getCPULoad());
     }
@@ -457,96 +489,154 @@ static void setCameraPosition(s16 x, s16 y)
         camPosX = x;
         camPosY = y;
 
-        // scroll maps
-        MAP_scrollTo(bga, x, y);
-        // scrolling is slower on BGB
-        MAP_scrollTo(bgb, x >> 3, y >> 5);
+        // alternate map update method ?
+        if (alternateScrollMethod)
+        {
+            // update maps (convert pixel to metatile coordinate)
+            updateMap(BG_A, bga, x >> 4, y >> 4);
+            // scrolling is slower on BGB, no vertical scroll (should be consisten with updateVDPScroll())
+            updateMap(BG_B, bgb, x >> 7, y >> 9);
 
-//        scrollNeedUpdate = TRUE;
+            // request VDP scroll update
+            scrollNeedUpdate = TRUE;
+        }
+        else
+        {
+            // scroll maps
+            MAP_scrollTo(bga, x, y);
+            // scrolling is slower on BGB
+            MAP_scrollTo(bgb, x >> 3, y >> 5);
+        }
+
+        // always store it to avoid full map update on method change
+        mapMetaTilePosX[BG_A] = x >> 4;
+        mapMetaTilePosY[BG_A] = y >> 4;
+        mapMetaTilePosX[BG_B] = x >> 7;
+        mapMetaTilePosY[BG_B] = y >> 9;
     }
 }
 
-//static void updateMap(VDPPlane plane, TileMap* tileMap, s16 xt, s16 yt)
-//{
-//    // BGA = 0; BGB = 1
-//    s16 curPosX = mapTilePosX[plane];
-//    s16 curPosY = mapTilePosY[plane];
-//
-//    s16 deltaX = xt - curPosX;
-//    s16 deltaY = yt - curPosY;
-//
-//    // no update --> exit
-//    if ((deltaX == 0) && (deltaY == 0)) return;
-//
-//    SYS_disableInts();
-//
-//    // many row/column updates ? --> better to do a full screen update
-//    if ((abs(deltaX * 2) + abs(deltaY)) > 20)
-//    {
-//        VDP_setTileMapEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-//                         xt & 0x003F, yt & 0x001F, xt, yt, 42, 30, DMA_QUEUE);
-//    }
-//    else
-//    {
-//        if (deltaX > 0)
-//        {
-//            // need to update map column on right
-//            while(deltaX--)
-//            {
-//                VDP_setTileMapColumnEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-//                                       (curPosX + 42) & 0x3F, curPosX + 42, yt, 30, DMA_QUEUE);
-//                curPosX++;
-//            }
-//        }
-//        else if (deltaX < 0)
-//        {
-//            // need to update map column on left
-//            while(deltaX++)
-//            {
-//                curPosX--;
-//                VDP_setTileMapColumnEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-//                                       curPosX & 0x3F, curPosX, yt, 30, DMA_QUEUE);
-//            }
-//        }
-//
-//
-//        if (deltaY > 0)
-//        {
-//            // need to update map row on bottom
-//            while(deltaY--)
-//            {
-//                VDP_setTileMapRowEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-//                                    (curPosY + 30) & 0x1F, xt, curPosY + 30, 42, DMA_QUEUE);
-//                curPosY++;
-//            }
-//        }
-//        else if (deltaY < 0)
-//        {
-//            // need to update map row on top
-//            while(deltaY++)
-//            {
-//                curPosY--;
-//                VDP_setTileMapRowEx(plane, tileMap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bgBaseTileIndex[plane]),
-//                                    curPosY & 0x1F, xt, curPosY, 42, DMA_QUEUE);
-//            }
-//        }
-//    }
-//
-//    SYS_enableInts();
-//
-//    mapTilePosX[plane] = xt;
-//    mapTilePosY[plane] = yt;
-//}
-//
-//static void updateVDPScroll()
-//{
-//    SYS_disableInts();
-//    VDP_setHorizontalScroll(BG_A, -bga.posX);
-//    VDP_setHorizontalScroll(BG_B, -bgb.posX);
-//    VDP_setVerticalScroll(BG_A, bga.posY);
-//    VDP_setVerticalScroll(BG_B, bgb.posY);
-//    SYS_enableInts();
-//}
+// this is just to show how use the MAP_getTilemapRect(..) method
+// if we weed to actually access tilemap data and do manual tilemap update to VDP
+static void updateMap(VDPPlane plane, Map* map, s16 xmt, s16 ymt)
+{
+    // BGA = 0; BGB = 1
+    s16 cxmt = mapMetaTilePosX[plane];
+    s16 cymt = mapMetaTilePosY[plane];
+    s16 deltaX = xmt - cxmt;
+    s16 deltaY = ymt - cymt;
+
+    // no update --> exit
+    if ((deltaX == 0) && (deltaY == 0)) return;
+
+    // clip to 21 metatiles column max (full screen update)
+    if (deltaX > 21)
+    {
+        cxmt += deltaX - 21;
+        deltaX = 21;
+        deltaY = 0;
+    }
+    // clip to 21 metatiles column max (full screen update)
+    else if (deltaX < -21)
+    {
+        cxmt += deltaX + 21;
+        deltaX = -21;
+        deltaY = 0;
+    }
+    // clip to 16 metatiles row max (full screen update)
+    else if (deltaY > 16)
+    {
+        cymt += deltaY - 16;
+        deltaY = 16;
+        deltaX = 0;
+    }
+    // clip to 16 metatiles row max (full screen update)
+    else if (deltaY < -16)
+    {
+        cymt += deltaY + 16;
+        deltaY = -16;
+        deltaX = 0;
+    }
+
+    if (deltaX > 0)
+    {
+        // update on right
+        cxmt += 21;
+
+        // need to update map column on right
+        while(deltaX--)
+        {
+            MAP_getTilemapRect(map, cxmt, ymt, 1, 16, TRUE, tilemapBuf + bufOffset);
+            VDP_setTileMapDataColumnFast(plane, tilemapBuf + bufOffset, (cxmt * 2) + 0, ymt * 2, 16 * 2, DMA_QUEUE);
+            // next column
+            bufOffset += 16 * 2;
+            VDP_setTileMapDataColumnFast(plane, tilemapBuf + bufOffset, (cxmt * 2) + 1, ymt * 2, 16 * 2, DMA_QUEUE);
+            // next column
+            bufOffset += 16 * 2;
+            cxmt++;
+        }
+    }
+    else
+    {
+        // need to update map column on left
+        while(deltaX++)
+        {
+            cxmt--;
+            MAP_getTilemapRect(map, cxmt, ymt, 1, 16, TRUE, tilemapBuf + bufOffset);
+            VDP_setTileMapDataColumnFast(plane, tilemapBuf + bufOffset, (cxmt * 2) + 0, ymt * 2, 16 * 2, DMA_QUEUE);
+            // next column
+            bufOffset += 16 * 2;
+            VDP_setTileMapDataColumnFast(plane, tilemapBuf + bufOffset, (cxmt * 2) + 1, ymt * 2, 16 * 2, DMA_QUEUE);
+            // next column
+            bufOffset += 16 * 2;
+        }
+    }
+
+    if (deltaY > 0)
+    {
+        // update at bottom
+        cymt += 16;
+
+        // need to update map row on bottom
+        while(deltaY--)
+        {
+            MAP_getTilemapRect(map, xmt, cymt, 21, 1, FALSE, tilemapBuf + bufOffset);
+            VDP_setTileMapDataRow(plane, tilemapBuf + bufOffset, (cymt * 2) + 0, (xmt * 2), 21 * 2, DMA_QUEUE);
+            // next row
+            bufOffset += 21 * 2;
+            VDP_setTileMapDataRow(plane, tilemapBuf + bufOffset, (cymt * 2) + 1, (xmt * 2), 21 * 2, DMA_QUEUE);
+            // next row
+            bufOffset += 21 * 2;
+            cymt++;
+        }
+    }
+    else
+    {
+        // need to update map row on top
+        while(deltaY++)
+        {
+            cymt--;
+            MAP_getTilemapRect(map, xmt, cymt, 21, 1, FALSE, tilemapBuf + bufOffset);
+            VDP_setTileMapDataRow(plane, tilemapBuf + bufOffset, (cymt * 2) + 0, (xmt * 2), 21 * 2, DMA_QUEUE);
+            // next row
+            bufOffset += 21 * 2;
+            VDP_setTileMapDataRow(plane, tilemapBuf + bufOffset, (cymt * 2) + 1, (xmt * 2), 21 * 2, DMA_QUEUE);
+            // next row
+            bufOffset += 21 * 2;
+        }
+    }
+
+    mapMetaTilePosX[plane] = xmt;
+    mapMetaTilePosY[plane] = ymt;
+}
+
+static void updateVDPScroll()
+{
+    VDP_setHorizontalScroll(BG_A, -camPosX);
+    VDP_setHorizontalScroll(BG_B, (-camPosX) >> 3);
+    VDP_setVerticalScroll(BG_A, camPosY);
+    VDP_setVerticalScroll(BG_B, camPosY >> 5);
+}
 
 static void frameChanged(Sprite* sprite)
 {
@@ -565,7 +655,6 @@ static void handleInput()
     // game is paused ? adjust physics settings
     if (paused)
     {
-
         if (value & BUTTON_RIGHT)
         {
             maxSpeed += FIX32(0.2);
@@ -615,6 +704,9 @@ static void handleInput()
         if (value & BUTTON_LEFT) xOrder = -1;
         else if (value & BUTTON_RIGHT) xOrder = +1;
         else xOrder = 0;
+
+        if (value & BUTTON_X) alternateScrollMethod = TRUE;
+        else alternateScrollMethod = FALSE;
     }
 }
 
@@ -624,6 +716,10 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     if (changed & state & BUTTON_START)
     {
         paused = !paused;
+//        // change scroll method when pressing pause
+//        if (paused)
+//            alternateScrollMethod = !alternateScrollMethod;
+
         updateBarsVisitility();
     }
 
