@@ -1,4 +1,4 @@
-# SGDK 1.51 (april 2020)
+# SGDK 1.6 (december 2020)
 #### Copyright 2020 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
@@ -67,6 +67,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
+- Gligli for building and providing GCC 6.3 for Windows.
 - LIZARDRIVE for making the new SGDK logo.
 - Kubilus for the Linux port of SGDK.
 - Sonic3D for the OSX port of SGDK.
@@ -77,7 +78,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
 - starling13 for fixes.
-- davidgf for contribution (replaced appack tool by apultra which is completely open).
+- davidgf for contribution (replaced appack tool by apultra even if I endend by building my own ApLib packer ^^).
 - Banshaku for its contribution on improving makefile and deps generation with rescomp.
 - Ohsat for making nice tutorials.
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
