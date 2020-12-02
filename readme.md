@@ -78,7 +78,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
 - starling13 for fixes.
-- davidgf for contribution (replaced appack tool by apultra even if I endend by building my own ApLib packer ^^).
+- davidgf for contributions (added apultra tool, improved assembly LTO optimization).
 - Banshaku for its contribution on improving makefile and deps generation with rescomp.
 - Ohsat for making nice tutorials.
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
