@@ -1,3 +1,88 @@
+SGDK 1.6 (December 2020)
+------------------------
+
+COMPILER
+* APJ
+ - replaced appack tool by new APJ (Java APLIB packer) tool written from scratch
+* LZ4W
+ - much faster compression speed
+ - better exit operation
+* RESCOMP
+ - added new MAP resource and MAP_xx methods (in map.h unit) to handle large maps / background scrolling easily (finally !)
+ - integrated APJ tool for faster ApLib compression
+ - added per resource size information, fixed Map resource export...
+ - we can now disable sprite cutting optimisation ('NONE' value for opt parameter)
+ - fixed a small bug on Sprite cutting optimisation process
+ - added 'optimisation' parameter to TILESET resource
+ - fixed bug on tilemap generation with base tile index used
+ - fixed a mall bug in BIN resource export
+ - fixed a small bug on ALIGN directive
+ - optimized tile parsing
+* XGMROMBUILDER
+ - now remind last used folder
+* MAKEFILE
+ - added deps file (.d) support for better dependencies handling
+ - added sources sub folders support (2 depth levels)
+ - removed useless and undesired warnings
+* README
+ - added GET STARTED part
+ - major rewrite / revamp to take benefit of Markdown format (thanks to Astrofra)
+
+LIBRARY
+* MAJOR CHANGE !WARNING!:
+  Added SYS_doVBlankProcess(..) to replace automatic V-Int processing of SGDK.
+  This was done to avoid issue with interrupts protection and offering more control.
+  So basically you should replace all your 'VDP_waitVSync()' references by 'SYS_doVBlankProcess()'
+* SYS
+ - faster user callback interrupt handling
+ - modified ROM header to enable SRAM by default
+ - fixed small initialization issue
+ - minor fix on SSF2 mapper initialization
+ - added LOG_LEVEL setting allowing different level of log for debug (default = LOG_LEVEL_WARNING)
+ - removed interrupts protection where they are not anymore useful
+ - small change for more accurate detection of frame miss
+* MAP
+ - added new MAP engine (map.h unit) to handle large maps / background scrolling easily from MAP resource:
+   - Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);
+   - void MAP_scrollTo(Map* map, u32 x, u32 y);
+   - u16 MAP_getMetaTile(Map* map, u16 x, u16 y);
+   - u16 MAP_getTile(Map* map, u16 x, u16 y);
+   - void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
+   - void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest);
+* DMA
+ - added DMA_xxxFast() methods (no 128 KB bank cross check)
+ - small tweaks for bit faster DMA queue
+ - tweaks in general to DMA methods
+ - increased default DMA queue size (we can quickly reach 64)
+* VDP 
+ - fixed a small bug on VDP_drawTextBG(..) method
+ - added VDP_waitVBlank() and VDP_waitVActive() methods
+ - added VDP_getPlaneAddress() method (was internal first)
+* STRING
+ - added support to u32/s32 type to sprintf(..) function
+ - fixed fix16ToStr(..) and fix32ToStr(..) methods
+* SOUND
+ - fixed a small bug on PCM command play (thanks to hsk)
+ - better restoring of Z80 BUS request state
+* Z80
+ - added Z80_getAndRequestBus() method
+ - added loading of a dummy driver by default to keep Z80 active on init
+* replaced some u16 parameter by bool where it makes sense to have it
+
+SAMPLE
+* Updated for SGDK 1.6 changes
+* BENCHMARK
+ - minors changes (updated to version 1.31)
+* SPRITE
+ - updated background to complete level dimension.
+ - updated to take benefit of the new MAP resource and advanced MAP methods
+ - added alternate scroliing update mode (still using new MAP unit)
+
+SGDK 1.6 MIGRATION
+* Replace VDP_waitVSync() --> SYS_doVBlankProcess()
+* Replace VDP_waitVInt() --> SYS_doVBlankProcess()
+
+
 SGDK 1.51 (April 2020)
 ----------------------
 
