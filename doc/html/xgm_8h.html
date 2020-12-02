@@ -672,7 +672,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
  Note that music may use the first PCM channel so it's better to use channel 2 to 4 for SFX. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td>Sample id (set <a class="el" href="xgm_8h.html#a9203faa0b1ebfe1f264095affc4b9562" title="Declare a new PCM sample (maximum = 255) for the XGM music player driver.  Sample id &lt; 64 are reserve...">XGM_setPCM</a> method) </td></tr>
+    <tr><td class="paramname">id</td><td>Sample id (use <a class="el" href="xgm_8h.html#a9203faa0b1ebfe1f264095affc4b9562" title="Declare a new PCM sample (maximum = 255) for the XGM music player driver.  Sample id &lt; 64 are reserve...">XGM_setPCM</a>(..) method first to set id) </td></tr>
     <tr><td class="paramname">priority</td><td>Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br/>
  If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority &gt;= old priority). </td></tr>
     <tr><td class="paramname">channel</td><td>Channel where we want to play sample.<br/>
@@ -742,7 +742,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="xgm_8h.html">xgm.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

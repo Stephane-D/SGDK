@@ -111,9 +111,9 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a3bbb0cd77f08b981e4b1bf80db0ab6ad">DMA_VSRAM</a>&#160;&#160;&#160;2</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VSRAM destination for DMA operation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6c39bed639216e18ac96318b7f2275f"></a><!-- doxytag: member="dma.h::DMA_QUEUE_SIZE_DEFAULT" ref="ab6c39bed639216e18ac96318b7f2275f" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_QUEUE_SIZE_DEFAULT</b>&#160;&#160;&#160;64</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_QUEUE_SIZE_DEFAULT</b>&#160;&#160;&#160;80</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8204b684ecd2fbd75546c3b56b86fdb"></a><!-- doxytag: member="dma.h::DMA_QUEUE_SIZE_MIN" ref="af8204b684ecd2fbd75546c3b56b86fdb" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_QUEUE_SIZE_MIN</b>&#160;&#160;&#160;20</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_QUEUE_SIZE_MIN</b>&#160;&#160;&#160;32</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affba2a8e99d46090bb87ff028a4bee60"></a><!-- doxytag: member="dma.h::DMA_TRANSFER_CAPACITY_NTSC" ref="affba2a8e99d46090bb87ff028a4bee60" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_TRANSFER_CAPACITY_NTSC</b>&#160;&#160;&#160;7200</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a32058bc73f7c08afce81dfcf629143"></a><!-- doxytag: member="dma.h::DMA_TRANSFER_CAPACITY_PAL" ref="a6a32058bc73f7c08afce81dfcf629143" args="" -->
@@ -156,7 +156,7 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a40f7f6c1d079bce13f16800f86401a05">DMA_setMaxTransferSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum amount of data (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
  VBlank period allows to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br/>
- By default there is no size limit (0).  <a href="#a40f7f6c1d079bce13f16800f86401a05"></a><br/></td></tr>
+ By default there is no size limit (0)  <a href="#a40f7f6c1d079bce13f16800f86401a05"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ab57a5f92ebf1608cd0320882b3d57c09">DMA_setMaxTransferSizeToDefault</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum amount of data (in bytes) to default value (7.2 KB on NTSC system and 15 KB on PAL system).  <a href="#ab57a5f92ebf1608cd0320882b3d57c09"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a710d69abcda6e72d2c62e9c6e917a06f">DMA_getBufferSize</a> ()</td></tr>
@@ -181,8 +181,8 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2415fb8d52144a7c6d2b55fafd8977dc"></a><!-- doxytag: member="dma.h::DMA_getQueueSize" ref="a2415fb8d52144a7c6d2b55fafd8977dc" args="()" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a2415fb8d52144a7c6d2b55fafd8977dc">DMA_getQueueSize</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of transfer currently pending in the DMA queue. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a977fef48a0db1b8cedd70d0a3ccedc8a"></a><!-- doxytag: member="dma.h::DMA_getQueueTransferSize" ref="a977fef48a0db1b8cedd70d0a3ccedc8a" args="()" -->
-<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a977fef48a0db1b8cedd70d0a3ccedc8a">DMA_getQueueTransferSize</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6fba3d9226d6a090bbc642298a9b0a1"></a><!-- doxytag: member="dma.h::DMA_getQueueTransferSize" ref="aa6fba3d9226d6a090bbc642298a9b0a1" args="()" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aa6fba3d9226d6a090bbc642298a9b0a1">DMA_getQueueTransferSize</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size (in byte) of data to be transferred currently present in the DMA queue.<br/>
  NTSC frame allows about 7.6 KB of data to be transferred during VBlank (in H40) while PAL frame allows about 17 KB (in H40). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a5f9f1860394cfeee3a978d4e631ee31a">DMA_allocateTemp</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
@@ -205,8 +205,12 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Queues the specified DMA transfer operation in the DMA queue.<br/>
  The idea of the DMA queue is to burst all DMA operations during VBLank to maximize bandwidth usage.<br/>
   <a href="#a104f614c51da00bd66e6a949b8f35169"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a7bd01cf2230c04c92e53a6153f12928c">DMA_queueDmaFast</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, void *from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="dma_8h.html#a104f614c51da00bd66e6a949b8f35169" title="Queues the specified DMA transfer operation in the DMA queue.  The idea of the DMA queue is to burst ...">DMA_queueDma</a>(..) method except if doesn't check for 128 KB bank crossing on source.  <a href="#a7bd01cf2230c04c92e53a6153f12928c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a3d59b498d0650d718b53725eec0beeb9">DMA_doDma</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, void *from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do DMA transfer operation immediately.  <a href="#a3d59b498d0650d718b53725eec0beeb9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a60bd88652a671779973ec08835fd3dd2">DMA_doDmaFast</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, void *from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="dma_8h.html#a3d59b498d0650d718b53725eec0beeb9" title="Do DMA transfer operation immediately.">DMA_doDma</a>(..) method except if doesn't check for 128 KB bank crossing on source.  <a href="#a60bd88652a671779973ec08835fd3dd2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#af10ae4a4dad73acd0c2e234cd80ef8c1">DMA_doCPUCopy</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, void *from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do software (CPU) copy to VDP memory (mainly for testing purpose as it's slower than using DMA)  <a href="#af10ae4a4dad73acd0c2e234cd80ef8c1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ab7845a4deb1042572189df13250dbf80">DMA_doCPUCopyDirect</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> cmd, void *from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step)</td></tr>
@@ -627,7 +631,7 @@ Variables</h2></td></tr>
  </li>
 </ul>
 </td></tr>
-    <tr><td class="paramname">from</td><td>Source buffer. </td></tr>
+    <tr><td class="paramname">from</td><td>Source buffer address. </td></tr>
     <tr><td class="paramname">to</td><td>VRAM/CRAM/VSRAM destination address. </td></tr>
     <tr><td class="paramname">len</td><td>Number of word to transfer. </td></tr>
     <tr><td class="paramname">step</td><td>destination (VRAM/VSRAM/CRAM) address increment step after each write (-1 to keep current step).<br/>
@@ -636,6 +640,54 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd>DMA_queue(..) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a60bd88652a671779973ec08835fd3dd2"></a><!-- doxytag: member="dma.h::DMA_doDmaFast" ref="a60bd88652a671779973ec08835fd3dd2" args="(u8 location, void *from, u16 to, u16 len, s16 step)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DMA_doDmaFast </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramname"><em>location</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>from</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>to</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>step</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Same as <a class="el" href="dma_8h.html#a3d59b498d0650d718b53725eec0beeb9" title="Do DMA transfer operation immediately.">DMA_doDma</a>(..) method except if doesn't check for 128 KB bank crossing on source. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a3d59b498d0650d718b53725eec0beeb9" title="Do DMA transfer operation immediately.">DMA_doDma</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -990,7 +1042,7 @@ Variables</h2></td></tr>
  </li>
 </ul>
 </td></tr>
-    <tr><td class="paramname">from</td><td>Source buffer. </td></tr>
+    <tr><td class="paramname">from</td><td>Source buffer address. </td></tr>
     <tr><td class="paramname">to</td><td>VRAM/CRAM/VSRAM destination address. </td></tr>
     <tr><td class="paramname">len</td><td>Number of word to transfer. </td></tr>
     <tr><td class="paramname">step</td><td>destination (VRAM/VSRAM/CRAM) address increment step after each write (0 to 255).<br/>
@@ -1001,6 +1053,54 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if the operation failed (queue is full) </dd></dl>
 <dl class="see"><dt><b>See also:</b></dt><dd>DMA_do(..) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7bd01cf2230c04c92e53a6153f12928c"></a><!-- doxytag: member="dma.h::DMA_queueDmaFast" ref="a7bd01cf2230c04c92e53a6153f12928c" args="(u8 location, void *from, u16 to, u16 len, u16 step)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> DMA_queueDmaFast </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramname"><em>location</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>from</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>to</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>step</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Same as <a class="el" href="dma_8h.html#a104f614c51da00bd66e6a949b8f35169" title="Queues the specified DMA transfer operation in the DMA queue.  The idea of the DMA queue is to burst ...">DMA_queueDma</a>(..) method except if doesn't check for 128 KB bank crossing on source. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a104f614c51da00bd66e6a949b8f35169" title="Queues the specified DMA transfer operation in the DMA queue.  The idea of the DMA queue is to burst ...">DMA_queueDma</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -1188,7 +1288,7 @@ Variables</h2></td></tr>
 
 <p>Sets the maximum amount of data (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
  VBlank period allows to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br/>
- By default there is no size limit (0). </p>
+ By default there is no size limit (0) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>The maximum amount of data (in bytes) to transfer during <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> operation.<br/>
@@ -1314,7 +1414,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="dma_8h.html">dma.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

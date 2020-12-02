@@ -871,19 +871,6 @@ void SPR_setNeverVisible(Sprite* sprite, u16 value);
  */
 bool SPR_computeVisibility(Sprite* sprite);
 
-// /**
-// *  \brief
-// *      Test if specified sprites are in collision.
-// *
-// *  \param sprite1
-// *      first sprite.
-// *  \param sprite2
-// *      second sprite.
-// *  \return
-// *      TRUE if sprite1 and sprite2 are in collision, FALSE otherwise.
-// */
-//u16 SPR_testCollision(Sprite* sprite1, Sprite* sprite2);
-
 /**
  *  \brief
  *      Clear all displayed sprites.

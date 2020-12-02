@@ -196,11 +196,13 @@ Defines</h2></td></tr>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#ad5d9dd755029bd1a57a95065f79311c0">Z80_init</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize Z80 sub system.  <a href="#ad5d9dd755029bd1a57a95065f79311c0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7797db552844e43456faaf7362a7c6bc"></a><!-- doxytag: member="z80_ctrl.h::Z80_isBusTaken" ref="a7797db552844e43456faaf7362a7c6bc" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#a7797db552844e43456faaf7362a7c6bc">Z80_isBusTaken</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a469481298d3c738e3c8035e58e6ba820"></a><!-- doxytag: member="z80_ctrl.h::Z80_isBusTaken" ref="a469481298d3c738e3c8035e58e6ba820" args="()" -->
+<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#a469481298d3c738e3c8035e58e6ba820">Z80_isBusTaken</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return Z80 BUS taken state. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#ae905e910bc1c29b9038f263b5ec90ffe">Z80_requestBus</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> wait)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request Z80 BUS.  <a href="#ae905e910bc1c29b9038f263b5ec90ffe"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#a31ff1129c52a4aec2ae35aa37f4aaa9a">Z80_requestBus</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> wait)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request Z80 BUS.  <a href="#a31ff1129c52a4aec2ae35aa37f4aaa9a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#a636bf7a214dfa953cb20d6554d497e68">Z80_getAndRequestBus</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> wait)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request Z80 BUS if not yet taken.  <a href="#a636bf7a214dfa953cb20d6554d497e68"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1deeac7eaeaca589b3aea471914e5bae"></a><!-- doxytag: member="z80_ctrl.h::Z80_releaseBus" ref="a1deeac7eaeaca589b3aea471914e5bae" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80__ctrl_8h.html#a1deeac7eaeaca589b3aea471914e5bae">Z80_releaseBus</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release Z80 BUS. <br/></td></tr>
@@ -337,6 +339,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80_
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a636bf7a214dfa953cb20d6554d497e68"></a><!-- doxytag: member="z80_ctrl.h::Z80_getAndRequestBus" ref="a636bf7a214dfa953cb20d6554d497e68" args="(bool wait)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> Z80_getAndRequestBus </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>wait</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Request Z80 BUS if not yet taken. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">wait</td><td>Wait for BUS request operation to complete. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Z80 BUS taken state before calling the function. </dd></dl>
 
 </div>
 </div>
@@ -501,18 +529,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80_
   </dd>
 </dl>
 <p>You need to request Z80 BUS to access Z80 memory.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="z80__ctrl_8h.html#ae905e910bc1c29b9038f263b5ec90ffe" title="Request Z80 BUS.">Z80_requestBus(u16)</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="z80__ctrl_8h.html#a31ff1129c52a4aec2ae35aa37f4aaa9a" title="Request Z80 BUS.">Z80_requestBus(u16)</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae905e910bc1c29b9038f263b5ec90ffe"></a><!-- doxytag: member="z80_ctrl.h::Z80_requestBus" ref="ae905e910bc1c29b9038f263b5ec90ffe" args="(u16 wait)" -->
+<a class="anchor" id="a31ff1129c52a4aec2ae35aa37f4aaa9a"></a><!-- doxytag: member="z80_ctrl.h::Z80_requestBus" ref="a31ff1129c52a4aec2ae35aa37f4aaa9a" args="(bool wait)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void Z80_requestBus </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>wait</em></td><td>)</td>
           <td></td>
         </tr>
@@ -639,7 +667,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80_
   </dd>
 </dl>
 <p>You need to request Z80 BUS to access Z80 memory.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="z80__ctrl_8h.html#ae905e910bc1c29b9038f263b5ec90ffe" title="Request Z80 BUS.">Z80_requestBus(u16)</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="z80__ctrl_8h.html#a31ff1129c52a4aec2ae35aa37f4aaa9a" title="Request Z80 BUS.">Z80_requestBus(u16)</a> </dd></dl>
 
 </div>
 </div>
@@ -648,7 +676,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="z80_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="z80__ctrl_8h.html">z80_ctrl.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

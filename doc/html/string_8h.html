@@ -98,13 +98,12 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80e33e966a7ec3facaf0b2b4afaf5be5"></a><!-- doxytag: member="string.h::isdigit" ref="a80e33e966a7ec3facaf0b2b4afaf5be5" args="(c)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a80e33e966a7ec3facaf0b2b4afaf5be5">isdigit</a>(c)&#160;&#160;&#160;((c) &gt;= '0' &amp;&amp; (c) &lt;= '9')</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if specified character is a digit or not. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55652336df705aa88fec968ab397ab2b"></a><!-- doxytag: member="string.h::__va_rounded_size" ref="a55652336df705aa88fec968ab397ab2b" args="(TYPE)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>__va_rounded_size</b>(TYPE)&#160;&#160;&#160;(((sizeof (TYPE) + sizeof (int) - 1) / sizeof (int)) * sizeof (int))</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a41ae753ad859126fe15c0e4655f400"></a><!-- doxytag: member="string.h::va_start" ref="a4a41ae753ad859126fe15c0e4655f400" args="(AP, LASTARG)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>va_start</b>(AP, LASTARG)&#160;&#160;&#160;(AP = ((__gnuc_va_list) __builtin_next_arg (LASTARG)))</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89e547abd2927b21e5398404e68e7f94"></a><!-- doxytag: member="string.h::va_end" ref="a89e547abd2927b21e5398404e68e7f94" args="(AP)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>va_end</b>(AP)&#160;&#160;&#160;((void)0)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>va_arg</b>(AP, TYPE)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0628ab596c3d7e78f5e08c2d98e24da"></a><!-- doxytag: member="string.h::va_start" ref="aa0628ab596c3d7e78f5e08c2d98e24da" args="(v, l)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>va_start</b>(v, l)&#160;&#160;&#160;__builtin_va_start(v,l)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a823b205416e9129825841b74c3bf8484"></a><!-- doxytag: member="string.h::va_end" ref="a823b205416e9129825841b74c3bf8484" args="(v)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>va_end</b>(v)&#160;&#160;&#160;__builtin_va_end(v)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9cfd655f1203c9a345ddd90446f0bcee"></a><!-- doxytag: member="string.h::va_arg" ref="a9cfd655f1203c9a345ddd90446f0bcee" args="(v, l)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>va_arg</b>(v, l)&#160;&#160;&#160;__builtin_va_arg(v,l)</td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a562f3559e6193429a09afe30e6856ca9"></a><!-- doxytag: member="string.h::__gnuc_va_list" ref="a562f3559e6193429a09afe30e6856ca9" args="" -->
@@ -153,39 +152,7 @@ Jack Nolddor </dd>
 Jesus Alonso (doragasu) </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011</dd></dl>
 <p>This unit provides basic null terminated string operations and type conversions. </p>
-</div><hr/><h2>Define Documentation</h2>
-<a class="anchor" id="a73bff2bd79d774417fcd63f973202dd3"></a><!-- doxytag: member="string.h::va_arg" ref="a73bff2bd79d774417fcd63f973202dd3" args="(AP, TYPE)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define va_arg</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">AP, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">TYPE&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment">(AP = (__gnuc_va_list) ((<span class="keywordtype">char</span> *) (AP) + __va_rounded_size (TYPE)),     \
-  *((TYPE *) (<span class="keywordtype">void</span> *) ((<span class="keywordtype">char</span> *) (AP)                                    \
-                       - ((<span class="keyword">sizeof</span> (TYPE) &lt; __va_rounded_size (<span class="keywordtype">char</span>)     \
-                           ? <span class="keyword">sizeof</span> (TYPE) : __va_rounded_size (TYPE))))))
-</pre></div>
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
+</div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="a271a92ad68b7125bffe94c52c3e19f8e"></a><!-- doxytag: member="string.h::fix16ToStr" ref="a271a92ad68b7125bffe94c52c3e19f8e" args="(fix16 value, char *str, u16 numdec)" -->
 <div class="memitem">
 <div class="memproto">
@@ -769,7 +736,7 @@ Jesus Alonso (doragasu) </dd></dl>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="string_8h.html">string.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

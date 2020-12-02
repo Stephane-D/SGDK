@@ -79,6 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#define-members">Defines</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
@@ -97,12 +98,19 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_PALETTE_FADING</b>&#160;&#160;&#160;(1 &lt;&lt; 0)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a609d87796fe3401e7583e05c78e1c52b"></a><!-- doxytag: member="sys.h::PROCESS_BITMAP_TASK" ref="a609d87796fe3401e7583e05c78e1c52b" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_BITMAP_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 1)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a70998bc69b5ee935d3620a0753329bee"></a><!-- doxytag: member="sys.h::PROCESS_TILECACHE_TASK" ref="a70998bc69b5ee935d3620a0753329bee" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_TILECACHE_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 2)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8e620a9f64f7b8f200b5fe17b7287c8"></a><!-- doxytag: member="sys.h::PROCESS_DMA_TASK" ref="aa8e620a9f64f7b8f200b5fe17b7287c8" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_DMA_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 3)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_DMA_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 2)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab363519476a47ed0698781533ab506d0"></a><!-- doxytag: member="sys.h::PROCESS_XGM_TASK" ref="ab363519476a47ed0698781533ab506d0" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_XGM_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 4)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_XGM_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 3)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ed55b77dbbf52b7cffd8fac454e3dee"></a><!-- doxytag: member="sys.h::PROCESS_MAP_TASK" ref="a9ed55b77dbbf52b7cffd8fac454e3dee" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>PROCESS_MAP_TASK</b>&#160;&#160;&#160;(1 &lt;&lt; 4)</td></tr>
+<tr><td colspan="2"><h2><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ab430c96f46851da92937d54104c6635e">VBlankProcessTime</a> { <b>IMMEDIATLY</b>, 
+<a class="el" href="sys_8h.html#ab430c96f46851da92937d54104c6635ea4b81f850a51345d4a4df71211fa3d5bc">ON_VBLANK</a>, 
+<a class="el" href="sys_8h.html#ab430c96f46851da92937d54104c6635eaec4a09e18e25c55cc5758202868234d5">ON_VBLANK_START</a>
+ }</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define at which period to do VBlank process (see <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> method)  <a href="sys_8h.html#ab430c96f46851da92937d54104c6635e">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ae03a1cb2f4963df61140fdb5a5ecda29">SYS_assertReset</a> ()</td></tr>
@@ -111,6 +119,10 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Soft reset.  <a href="#a82aa7fc0a522d67d6566401b09227b07"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ac18d4586095c8fb1ed7195fa02fbe8ce">SYS_hardReset</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Hard reset.  <a href="#ac18d4586095c8fb1ed7195fa02fbe8ce"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d">SYS_doVBlankProcess</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..)  <a href="#aa1b966e61dccc6b5ee67cb877afe910d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abb71a9d2233dd1dda79dfeccb74c8ab5">SYS_doVBlankProcessEx</a> (<a class="el" href="sys_8h.html#ab430c96f46851da92937d54104c6635e">VBlankProcessTime</a> processTime)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..)  <a href="#abb71a9d2233dd1dda79dfeccb74c8ab5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#af88f01f0b4500096ce3bf5ed5889bc88">SYS_getInterruptMaskLevel</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return current interrupt mask level.  <a href="#af88f01f0b4500096ce3bf5ed5889bc88"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a810cfc8509ce88565fc002240539f9db">SYS_setInterruptMaskLevel</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
@@ -120,9 +132,7 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985">SYS_disableInts</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable interrupts (Vertical, Horizontal and External).  <a href="#a5bb8d045df433ef1148309fa1a568985"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7">SYS_enableInts</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reenable interrupts (Vertical, Horizontal and External).  <a href="#a0a0ba98b3892c42b0fd3147841a643a7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ae7d254bd58379a4c72234dde2f971db8">SYS_setVIntPreCallback</a> (VoidCallback *CB)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set start of 'Vertical interrupt' callback method.  <a href="#ae7d254bd58379a4c72234dde2f971db8"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-enable interrupts (Vertical, Horizontal and External).  <a href="#a0a0ba98b3892c42b0fd3147841a643a7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1">SYS_setVIntCallback</a> (VoidCallback *CB)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set 'Vertical Interrupt' callback method.  <a href="#abc2725f07baaf70c775935a3878343a1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49">SYS_setHIntCallback</a> (VoidCallback *CB)</td></tr>
@@ -130,17 +140,13 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aa189958e09ac6e0b5ca069cd6a99e856">SYS_setExtIntCallback</a> (VoidCallback *CB)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set External interrupt callback method.  <a href="#aa189958e09ac6e0b5ca069cd6a99e856"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#acb2ccb6cafa55bd4f4386675f147fc80">SYS_isInVIntCallback</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if we are in the V-Int callback method.  <a href="#acb2ccb6cafa55bd4f4386675f147fc80"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a42abebb1cbe8f1dc9449666700611f9a">SYS_isInHIntCallback</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if we are in the H-Int callback method.  <a href="#a42abebb1cbe8f1dc9449666700611f9a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a2797db05d872b532ac7175549b077d8f">SYS_isInExtIntCallback</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if we are in the Ext-Int callback method.  <a href="#a2797db05d872b532ac7175549b077d8f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a8005e858f5e02a069a61e4d17d78528e">SYS_isInInterrupt</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if we are in an interrupt callback method (Vertical, Horizontal or External)  <a href="#a8005e858f5e02a069a61e4d17d78528e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a1b0ff4cab761b5800596135a80032c9e">SYS_isInVInt</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return TRUE if we are in the V-Interrupt process.  <a href="#a1b0ff4cab761b5800596135a80032c9e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a24a0338e186032510c61e781e88bb46b">SYS_setVIntAligned</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set V-Interrupt VBlank alignment state (default state is TRUE).  <a href="#a24a0338e186032510c61e781e88bb46b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a579a75048c43516e5c7ac2af74ece376">SYS_isVIntAligned</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if V-Interrupt are forced to be aligned on VBlank.  <a href="#a579a75048c43516e5c7ac2af74ece376"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#ad2aa129d39c60118e27c8c685737c4d4">SYS_isVIntAligned</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a4ce4e106801dfd1b38e66b91d355e18c">SYS_isNTSC</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return != 0 if we are on a NTSC system.  <a href="#a4ce4e106801dfd1b38e66b91d355e18c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a5b8f43df61374b05a042b7b7122f5e1c">SYS_isPAL</a> ()</td></tr>
@@ -155,10 +161,6 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)  <a href="#abed822e697c78a2d2dbb83157760381a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abec7ff3302a05dc916fec5d9c69b9368">SYS_hideFrameLoad</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Hide the frame load cursor previously enabled using <a class="el" href="sys_8h.html#abed822e697c78a2d2dbb83157760381a" title="Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)...">SYS_showFrameLoad()</a> method.  <a href="#abec7ff3302a05dc916fec5d9c69b9368"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#a931425fcd2a16022d8b8b01d96e4ad60">SYS_getMissedFrames</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of missed frames (a missed frame mean that a VInt was missed)  <a href="#a931425fcd2a16022d8b8b01d96e4ad60"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#aa9bd41587923b283beba48e947e949cc">SYS_resetMissedFrames</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the number of missed frames.  <a href="#aa9bd41587923b283beba48e947e949cc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sys_8h.html#abf16e3876c8375abef07da14d96d7ba9">SYS_die</a> (char *err)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Die with the specified error message.<br/>
  Program execution is interrupted.  <a href="#abf16e3876c8375abef07da14d96d7ba9"></a><br/></td></tr>
@@ -198,7 +200,33 @@ Variables</h2></td></tr>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2011</dd></dl>
 <p>This unit contains SGDK initialization / reset methods, IRQ callbacks and others system stuff. </p>
-</div><hr/><h2>Function Documentation</h2>
+</div><hr/><h2>Enumeration Type Documentation</h2>
+<a class="anchor" id="ab430c96f46851da92937d54104c6635e"></a><!-- doxytag: member="sys.h::VBlankProcessTime" ref="ab430c96f46851da92937d54104c6635e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="sys_8h.html#ab430c96f46851da92937d54104c6635e">VBlankProcessTime</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Define at which period to do VBlank process (see <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> method) </p>
+<dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" id="ab430c96f46851da92937d54104c6635ea4b81f850a51345d4a4df71211fa3d5bc"></a><!-- doxytag: member="ON_VBLANK" ref="ab430c96f46851da92937d54104c6635ea4b81f850a51345d4a4df71211fa3d5bc" args="" -->ON_VBLANK</em>&nbsp;</td><td>
+<p>Start VBlank process immediatly whatever we are in blanking period or not </p>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" id="ab430c96f46851da92937d54104c6635eaec4a09e18e25c55cc5758202868234d5"></a><!-- doxytag: member="ON_VBLANK_START" ref="ab430c96f46851da92937d54104c6635eaec4a09e18e25c55cc5758202868234d5" args="" -->ON_VBLANK_START</em>&nbsp;</td><td>
+<p>Start VBlank process on VBlank period, start immediatly in we are already in VBlank Start VBlank process on VBlank *start* period, means that we wait the next *start* of VBlank period if we missed it </p>
+</td></tr>
+</table>
+</dd>
+</dl>
+
+</div>
+</div>
+<hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ae03a1cb2f4963df61140fdb5a5ecda29"></a><!-- doxytag: member="sys.h::SYS_assertReset" ref="ae03a1cb2f4963df61140fdb5a5ecda29" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -254,9 +282,88 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Disable interrupts (Vertical, Horizontal and External). </p>
-<p>This method is used to temporary disable interrupt (to protect some VDP accesses for instance) and should always be followed by <a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Reenable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a>.<br/>
- Be careful, this method can't be used if you are currently processing an interrupt !</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Reenable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a> </dd></dl>
+<p>This method is used to temporary disable interrupts to protect some processes and should always be followed by <a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Re-enable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a>.<br/>
+ You need to protect against interrupts any processes than can be perturbed / corrupted by the interrupt callback code (IO ports access in general but not only).<br/>
+ Now by default SGDK doesn't do anything armful in its interrupts handlers (except with the <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> engine) so it's not necessary to protect from interrupts by default but you may need it if your interrupts callback code does mess with VDP for instance.<br/>
+ Note that you can nest <a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts</a> / <a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Re-enable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a> calls.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Re-enable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa1b966e61dccc6b5ee67cb877afe910d"></a><!-- doxytag: member="sys.h::SYS_doVBlankProcess" ref="aa1b966e61dccc6b5ee67cb877afe910d" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SYS_doVBlankProcess </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..) </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if process was canceled because the method was called from V-Int (vertical interrupt) callback in which case we exit the function as V-Int will be triggered immediately.<br/>
+</dd></dl>
+<p>Do all the SGDK VBlank process.<br/>
+ Some specific processing should be done during the Vertical Blank period as the VDP is idle at this time. This is always where we should do all VDP data transfer (using the DMA preferably) but we can also do the processes which has to be done at a frame basis (joypad polling, sound driver sync/update..)<br/>
+ In the case of SGDK, calling this method will actually do the following tasks:<br/>
+</p>
+<ul>
+<li>flush the DMA queue<br/>
+</li>
+<li>process asynchronous palette fading operation<br/>
+</li>
+<li>joypad polling<br/>
+ <br/>
+ Note that VBlank process may be delayed to next VBlank if we missed the start of the VBlank period so that will cause a frame miss. </li>
+</ul>
+
+</div>
+</div>
+<a class="anchor" id="abb71a9d2233dd1dda79dfeccb74c8ab5"></a><!-- doxytag: member="sys.h::SYS_doVBlankProcessEx" ref="abb71a9d2233dd1dda79dfeccb74c8ab5" args="(VBlankProcessTime processTime)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SYS_doVBlankProcessEx </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="sys_8h.html#ab430c96f46851da92937d54104c6635e">VBlankProcessTime</a>&#160;</td>
+          <td class="paramname"><em>processTime</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..) </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">processTime</td><td>Define at which period we start VBlank process, accepted values are:<br/>
+ <b>IMMEDIATELY</b> Start VBlank process immediatly whatever we are in blanking period or not (*highly discouraged* unless you really know what you're doing !)<br/>
+ <b>ON_VBLANK</b> Start VBlank process on VBlank period, if we already are in VBlank period it starts immediately (discouraged as VBlank period may be shortened and all processes cannot be completed in time)<br/>
+ <b>ON_VBLANK_START</b> Start VBlank process on VBlank *start* period (recommanded as default value). That means that if <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> is called too late (after the start of VBlank) then we force a passive wait for the next start of VBlank so we can align the processing with the beggining of VBlank period to ensure fast DMA transfert and avoid possible graphical glitches due to VRAM update during active display.<br/>
+ </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if process was canceled because we forced Start VBlank process (<em>time = ON_VBLANK_START</em>) and the method was called from V-Int (vertical interrupt) callback in which case we exit the function as V-Int will be triggered immediately.<br/>
+</dd></dl>
+<p>Do all the SGDK VBlank process.<br/>
+ Some specific processing should be done during the Vertical Blank period as the VDP is idle at this time. This is always where we should do all VDP data transfer (using the DMA preferably) but we can also do the processes which has to be done at a frame basis (joypad polling, sound driver sync/update..)<br/>
+ In the case of SGDK, calling this method will actually do the following tasks:<br/>
+</p>
+<ul>
+<li>flush the DMA queue<br/>
+</li>
+<li>process asynchronous palette fading operation<br/>
+</li>
+<li>joypad polling<br/>
+ <br/>
+ Note that depending the used <em>time</em> parameter, VBlank process may be delayed to next VBlank so that will wause a frame miss. </li>
+</ul>
 
 </div>
 </div>
@@ -274,9 +381,9 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reenable interrupts (Vertical, Horizontal and External). </p>
-<p>This method is used to reenable interrupt after a call to <a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts()</a>.<br/>
- Has no effect if called without a prior <a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts()</a> call.</p>
+<p>Re-enable interrupts (Vertical, Horizontal and External). </p>
+<p>This method is used to reenable interrupts after a call to <a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts()</a>.<br/>
+ Note that you can nest <a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts</a> / <a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Re-enable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a> calls.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts()</a> </dd></dl>
 
 </div>
@@ -331,13 +438,13 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Return an estimation of CPU load (in %) </p>
-<p>Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in <a class="el" href="vdp_8h.html#aec5aa111d268210860106ebc6c8b6c6c" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> / <a class="el" href="vdp_8h.html#a9c5f289685a0103e7231b3726ff4bee3" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> methods.<br/>
+<p>Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in <a class="el" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> / <a class="el" href="vdp_8h.html#a95669875c2ba5eaf567140e19daf14ed" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> methods.<br/>
  This method don't return accurate result when you have missed frames (V-Int missed).</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a931425fcd2a16022d8b8b01d96e4ad60" title="Return the number of missed frames (a missed frame mean that a VInt was missed)">SYS_getMissedFrames()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd>SYS_getMissedFrames() </dd>
 <dd>
-<a class="el" href="vdp_8h.html#aec5aa111d268210860106ebc6c8b6c6c" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> </dd>
+<a class="el" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> </dd>
 <dd>
-<a class="el" href="vdp_8h.html#a9c5f289685a0103e7231b3726ff4bee3" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> </dd></dl>
+<a class="el" href="vdp_8h.html#a95669875c2ba5eaf567140e19daf14ed" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> </dd></dl>
 
 </div>
 </div>
@@ -400,29 +507,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a931425fcd2a16022d8b8b01d96e4ad60"></a><!-- doxytag: member="sys.h::SYS_getMissedFrames" ref="a931425fcd2a16022d8b8b01d96e4ad60" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> SYS_getMissedFrames </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Return the number of missed frames (a missed frame mean that a VInt was missed) </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a24a0338e186032510c61e781e88bb46b" title="Set V-Interrupt VBlank alignment state (default state is TRUE).">SYS_setVIntAligned(bool)</a> </dd>
-<dd>
-<a class="el" href="sys_8h.html#a579a75048c43516e5c7ac2af74ece376" title="Return != 0 if V-Interrupt are forced to be aligned on VBlank.">SYS_isVIntAligned()</a> </dd>
-<dd>
-<a class="el" href="sys_8h.html#aa9bd41587923b283beba48e947e949cc" title="Reset the number of missed frames.">SYS_resetMissedFrames()</a> </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="ac18d4586095c8fb1ed7195fa02fbe8ce"></a><!-- doxytag: member="sys.h::SYS_hardReset" ref="ac18d4586095c8fb1ed7195fa02fbe8ce" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -474,9 +558,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Return != 0 if we are in the Ext-Int callback method. </p>
-<p>This method tests if we are currently processing an External interrupt. </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000093">Deprecated:</a></b></dt><dd>Always return 0 now, you need to use your own flag to detect if you are processing an External interrupt </dd></dl>
 
 </div>
 </div>
@@ -493,9 +575,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Return != 0 if we are in the H-Int callback method. </p>
-<p>This method tests if we are currently processing a Horizontal retrace interrupt. </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000092">Deprecated:</a></b></dt><dd>Always return 0 now, you need to use your own flag to detect if you are processing a Horizontal interrupt </dd></dl>
 
 </div>
 </div>
@@ -512,9 +592,26 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000094">Deprecated:</a></b></dt><dd>Use <a class="el" href="sys_8h.html#a1b0ff4cab761b5800596135a80032c9e" title="Return TRUE if we are in the V-Interrupt process.">SYS_isInVInt()</a> instead, only vertical interrupt supported now </dd></dl>
 
-<p>Return != 0 if we are in an interrupt callback method (Vertical, Horizontal or External) </p>
-<p>This method tests if we are currently processing an interrupt. </p>
+</div>
+</div>
+<a class="anchor" id="a1b0ff4cab761b5800596135a80032c9e"></a><!-- doxytag: member="sys.h::SYS_isInVInt" ref="a1b0ff4cab761b5800596135a80032c9e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SYS_isInVInt </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return TRUE if we are in the V-Interrupt process. </p>
+<p>This method tests if we are currently processing a Vertical retrace interrupt (V-Int callback). </p>
 
 </div>
 </div>
@@ -531,9 +628,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Return != 0 if we are in the V-Int callback method. </p>
-<p>This method tests if we are currently processing a Vertical retrace interrupt. </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000091">Deprecated:</a></b></dt><dd>Use <a class="el" href="sys_8h.html#a1b0ff4cab761b5800596135a80032c9e" title="Return TRUE if we are in the V-Interrupt process.">SYS_isInVInt()</a> instead </dd></dl>
 
 </div>
 </div>
@@ -575,12 +670,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a579a75048c43516e5c7ac2af74ece376"></a><!-- doxytag: member="sys.h::SYS_isVIntAligned" ref="a579a75048c43516e5c7ac2af74ece376" args="()" -->
+<a class="anchor" id="ad2aa129d39c60118e27c8c685737c4d4"></a><!-- doxytag: member="sys.h::SYS_isVIntAligned" ref="ad2aa129d39c60118e27c8c685737c4d4" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> SYS_isVIntAligned </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SYS_isVIntAligned </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -588,9 +683,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Return != 0 if V-Interrupt are forced to be aligned on VBlank. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a24a0338e186032510c61e781e88bb46b" title="Set V-Interrupt VBlank alignment state (default state is TRUE).">SYS_setVIntAligned(bool)</a> </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000096">Deprecated:</a></b></dt><dd>Not anymore useful as <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> handle that directly now </dd></dl>
 
 </div>
 </div>
@@ -610,25 +703,6 @@ Variables</h2></td></tr>
 
 <p>Soft reset. </p>
 <p>Software reset </p>
-
-</div>
-</div>
-<a class="anchor" id="aa9bd41587923b283beba48e947e949cc"></a><!-- doxytag: member="sys.h::SYS_resetMissedFrames" ref="aa9bd41587923b283beba48e947e949cc" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void SYS_resetMissedFrames </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Reset the number of missed frames. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a931425fcd2a16022d8b8b01d96e4ad60" title="Return the number of missed frames (a missed frame mean that a VInt was missed)">SYS_getMissedFrames()</a> </dd></dl>
 
 </div>
 </div>
@@ -683,7 +757,8 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <p>Horizontal interrupt happen at the end of scanline display period right before Horizontal blank.<br/>
- This period is usually used to do mid frame changes (palette, scrolling or others raster effect) </p>
+ This period is usually used to do mid frame changes (palette, scrolling or others raster effect).<br/>
+ When you do that, don't forget to protect your VDP access from your main loop using <a class="el" href="sys_8h.html#a5bb8d045df433ef1148309fa1a568985" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts()</a> / <a class="el" href="sys_8h.html#a0a0ba98b3892c42b0fd3147841a643a7" title="Re-enable interrupts (Vertical, Horizontal and External).">SYS_enableInts()</a> otherwise you may corrupt your VDP writes. </p>
 
 </div>
 </div>
@@ -736,12 +811,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Set V-Interrupt VBlank alignment state (default state is TRUE). </p>
-<p>This method allows to force the V-Interrupt to be aligned on VBlank period.<br/>
- It means that if the V-Int happen too late (after start of VBlank) then we force a passive wait for the next VBlank so we can align start of V-Int processing with beggining of VBlank period (to ensure fast DMA transfert and avoid possible graphical glitches due to VRAM update during active display).<br/>
- When a V-Int is delayed to next VBlank then we increase the number of missed frames.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a931425fcd2a16022d8b8b01d96e4ad60" title="Return the number of missed frames (a missed frame mean that a VInt was missed)">SYS_getMissedFrames()</a> </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000095">Deprecated:</a></b></dt><dd>Not anymore useful as <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> handle that directly now </dd></dl>
 
 </div>
 </div>
@@ -764,50 +834,15 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">CB</td><td>Pointer to the method to call on Vertical Interrupt.<br/>
- You can remove current callback by passing a null pointer here.</td></tr>
+ You can remove current callback by passing a <em>NULL</em> pointer here.</td></tr>
   </table>
   </dd>
 </dl>
-<p>Vertical interrupt happen at the end of display period right before vertical blank.<br/>
- This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br/>
- Note that the callback will be called after some internal SGDK V-Int processes and so probably not right at the start of the V-Blank area.<br/>
- For that you can use the SYS_setPreVIntCallback(..) method instead.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(VoidCallback *CB)</a>; </dd>
-<dd>
-<a class="el" href="sys_8h.html#ae7d254bd58379a4c72234dde2f971db8" title="Set start of &#39;Vertical interrupt&#39; callback method.">SYS_setVIntPreCallback(VoidCallback *CB)</a>; </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ae7d254bd58379a4c72234dde2f971db8"></a><!-- doxytag: member="sys.h::SYS_setVIntPreCallback" ref="ae7d254bd58379a4c72234dde2f971db8" args="(VoidCallback *CB)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void SYS_setVIntPreCallback </td>
-          <td>(</td>
-          <td class="paramtype">VoidCallback *&#160;</td>
-          <td class="paramname"><em>CB</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Set start of 'Vertical interrupt' callback method. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">CB</td><td>Pointer to the method to call when the Vertical Interrupt just started.<br/>
- You can remove current callback by passing a null pointer here.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Vertical interrupt happen at the end of display period right before vertical blank.<br/>
- This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br/>
- The difference with the SYS_setVIntCallback(..) method is this one is called right after the Vertical Interrupt happened and before any internals SGDK V-Int processes.<br/>
- This is useful when you really need to do something right at the beginning of the V-Blank area.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1" title="Set &#39;Vertical Interrupt&#39; callback method.">SYS_setVIntCallback(VoidCallback *CB)</a>; </dd>
-<dd>
-<a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(VoidCallback *CB)</a>; </dd></dl>
+<p>Vertical interrupt happen at the end of display period at the start of the vertical blank period.<br/>
+ This period is usually used to prepare next frame data (refresh sprites, scrolling ...) though now SGDK handle most of these process using <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> so you can control it manually (do it from main loop or put it in Vint callback).<br/>
+ The only things that SGDK always handle from the vint callback is the XGM sound driver music tempo and <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> engine phase reset.<br/>
+ It's recommended to keep your code as fast as possible as it will eat precious VBlank time, nor you should touch the VDP from your Vint callback otherwise you will need to protect any VDP accesses from your main loop (which is painful).</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method.">SYS_setHIntCallback(VoidCallback *CB)</a>; </dd></dl>
 
 </div>
 </div>
@@ -826,7 +861,7 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load) </p>
-<p>Show current frame load using a cursor indicating the scanline reached when <a class="el" href="vdp_8h.html#aec5aa111d268210860106ebc6c8b6c6c" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> / <a class="el" href="vdp_8h.html#a9c5f289685a0103e7231b3726ff4bee3" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> method was called.<br/>
+<p>Show current frame load using a cursor indicating the scanline reached when <a class="el" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800" title="Wait for Vertical Synchro.">VDP_waitVSync()</a> / <a class="el" href="vdp_8h.html#a95669875c2ba5eaf567140e19daf14ed" title="Wait for next Vertical Interruption.">VDP_waitVInt()</a> method was called.<br/>
  Note that internally sprite 0 is used to display to cursor (palette 0 and color 15) as it is not directly used by the Sprite Engine but if you're using the low level VDP sprite methods then you should know that sprite 0 will be used here.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#abec7ff3302a05dc916fec5d9c69b9368" title="Hide the frame load cursor previously enabled using SYS_showFrameLoad() method.">SYS_hideFrameLoad()</a> </dd></dl>
 
@@ -1071,7 +1106,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sys_8h.html">sys.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

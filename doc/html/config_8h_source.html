@@ -86,42 +86,54 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00011"></a>00011 <span class="preprocessor"></span><span class="preprocessor">#define _CONFIG_</span>
 <a name="l00012"></a>00012 <span class="preprocessor"></span>
 <a name="l00013"></a>00013 
-<a name="l00018"></a>00018 <span class="preprocessor">#if (DEBUG != 0)</span>
-<a name="l00019"></a>00019 <span class="preprocessor"></span><span class="preprocessor">  #define LIB_DEBUG         1</span>
-<a name="l00020"></a>00020 <span class="preprocessor"></span><span class="preprocessor">#else</span>
-<a name="l00021"></a><a class="code" href="config_8h.html#a77db44a872ff57297a7f770f1193f0f3">00021</a> <span class="preprocessor"></span><span class="preprocessor">  #define LIB_DEBUG         0</span>
-<a name="l00022"></a>00022 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00023"></a>00023 <span class="preprocessor"></span>
-<a name="l00030"></a><a class="code" href="config_8h.html#a4dbd3badcdb6094eb9a9a00a660ba3b8">00030</a> <span class="preprocessor">#define HALT_Z80_ON_DMA     0</span>
-<a name="l00031"></a>00031 <span class="preprocessor"></span>
-<a name="l00038"></a><a class="code" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">00038</a> <span class="preprocessor">#define HALT_Z80_ON_IO      0</span>
-<a name="l00039"></a>00039 <span class="preprocessor"></span>
-<a name="l00044"></a><a class="code" href="config_8h.html#a6d2163fee9102ccfe4da038b29df814e">00044</a> <span class="preprocessor">#define DMA_DISABLED        0</span>
-<a name="l00045"></a>00045 <span class="preprocessor"></span>
-<a name="l00054"></a><a class="code" href="config_8h.html#a8e5f37f8dd287ef08c10552d637738a7">00054</a> <span class="preprocessor">#define ENABLE_BANK_SWITCH  0</span>
-<a name="l00055"></a>00055 <span class="preprocessor"></span>
-<a name="l00061"></a><a class="code" href="config_8h.html#a071a17c9240694ea053efd33130ad764">00061</a> <span class="preprocessor">#define ENABLE_NEWLIB       0</span>
-<a name="l00062"></a>00062 <span class="preprocessor"></span>
-<a name="l00068"></a><a class="code" href="config_8h.html#ae4f786f2792c840d47dfd0b1a8161a76">00068</a> <span class="preprocessor">#define MATH_BIG_TABLES     0</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>
-<a name="l00075"></a><a class="code" href="config_8h.html#aae567e22de980e82ed4be4028a55e049">00075</a> <span class="preprocessor">#define FAT16_SUPPORT       0</span>
-<a name="l00076"></a>00076 <span class="preprocessor"></span>
-<a name="l00081"></a><a class="code" href="config_8h.html#ab2bde168f01e48cef3f7e94ea91c3287">00081</a> <span class="preprocessor">#define ENABLE_LOGO         0</span>
-<a name="l00082"></a>00082 <span class="preprocessor"></span>
-<a name="l00083"></a>00083 <span class="preprocessor">#if (ENABLE_LOGO != 0)</span>
+<a name="l00018"></a><a class="code" href="config_8h.html#ac9af99280cbca814af6aa7855e5e88c4">00018</a> <span class="preprocessor">#define LOG_LEVEL_DISABLE   0</span>
+<a name="l00019"></a>00019 <span class="preprocessor"></span>
+<a name="l00023"></a><a class="code" href="config_8h.html#a742fc70e331d7e568bd893c514756a29">00023</a> <span class="preprocessor">#define LOG_LEVEL_ERROR     1</span>
+<a name="l00024"></a>00024 <span class="preprocessor"></span>
+<a name="l00028"></a><a class="code" href="config_8h.html#af539a66abed2a7a15e3443d70a3cf1e1">00028</a> <span class="preprocessor">#define LOG_LEVEL_WARNING   2</span>
+<a name="l00029"></a>00029 <span class="preprocessor"></span>
+<a name="l00033"></a><a class="code" href="config_8h.html#a2e25fe130cf710da4ad800747fdd51f3">00033</a> <span class="preprocessor">#define LOG_LEVEL_INFO      3</span>
+<a name="l00034"></a>00034 <span class="preprocessor"></span>
+<a name="l00039"></a>00039 <span class="preprocessor">#define LIB_LOG_LEVEL       LOG_LEVEL_WARNING</span>
+<a name="l00040"></a>00040 <span class="preprocessor"></span>
+<a name="l00045"></a>00045 <span class="preprocessor">#if (DEBUG != 0)</span>
+<a name="l00046"></a>00046 <span class="preprocessor"></span><span class="preprocessor">    #define LIB_DEBUG       1</span>
+<a name="l00047"></a>00047 <span class="preprocessor"></span><span class="preprocessor">#else</span>
+<a name="l00048"></a><a class="code" href="config_8h.html#a77db44a872ff57297a7f770f1193f0f3">00048</a> <span class="preprocessor"></span><span class="preprocessor">    #define LIB_DEBUG       0</span>
+<a name="l00049"></a>00049 <span class="preprocessor"></span><span class="preprocessor">    #undef LIB_LOG_LEVEL</span>
+<a name="l00050"></a><a class="code" href="config_8h.html#a7e2996b9179e35f76960ab4f15f85d9c">00050</a> <span class="preprocessor"></span><span class="preprocessor">    #define LIB_LOG_LEVEL   LOG_LEVEL_DISABLE</span>
+<a name="l00051"></a>00051 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00052"></a>00052 <span class="preprocessor"></span>
+<a name="l00059"></a><a class="code" href="config_8h.html#a4dbd3badcdb6094eb9a9a00a660ba3b8">00059</a> <span class="preprocessor">#define HALT_Z80_ON_DMA     0</span>
+<a name="l00060"></a>00060 <span class="preprocessor"></span>
+<a name="l00067"></a><a class="code" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">00067</a> <span class="preprocessor">#define HALT_Z80_ON_IO      0</span>
+<a name="l00068"></a>00068 <span class="preprocessor"></span>
+<a name="l00073"></a><a class="code" href="config_8h.html#a6d2163fee9102ccfe4da038b29df814e">00073</a> <span class="preprocessor">#define DMA_DISABLED        0</span>
+<a name="l00074"></a>00074 <span class="preprocessor"></span>
+<a name="l00083"></a><a class="code" href="config_8h.html#a8e5f37f8dd287ef08c10552d637738a7">00083</a> <span class="preprocessor">#define ENABLE_BANK_SWITCH  0</span>
 <a name="l00084"></a>00084 <span class="preprocessor"></span>
-<a name="l00089"></a>00089 <span class="preprocessor">#define ZOOMING_LOGO        0</span>
-<a name="l00090"></a>00090 <span class="preprocessor"></span>
-<a name="l00091"></a>00091 <span class="preprocessor">#endif // ENABLE_LOGO</span>
-<a name="l00092"></a>00092 <span class="preprocessor"></span>
-<a name="l00093"></a>00093 
-<a name="l00094"></a>00094 <span class="preprocessor">#endif // _CONFIG_</span>
+<a name="l00090"></a><a class="code" href="config_8h.html#a071a17c9240694ea053efd33130ad764">00090</a> <span class="preprocessor">#define ENABLE_NEWLIB       0</span>
+<a name="l00091"></a>00091 <span class="preprocessor"></span>
+<a name="l00097"></a><a class="code" href="config_8h.html#ae4f786f2792c840d47dfd0b1a8161a76">00097</a> <span class="preprocessor">#define MATH_BIG_TABLES     0</span>
+<a name="l00098"></a>00098 <span class="preprocessor"></span>
+<a name="l00104"></a><a class="code" href="config_8h.html#aae567e22de980e82ed4be4028a55e049">00104</a> <span class="preprocessor">#define FAT16_SUPPORT       0</span>
+<a name="l00105"></a>00105 <span class="preprocessor"></span>
+<a name="l00110"></a><a class="code" href="config_8h.html#ab2bde168f01e48cef3f7e94ea91c3287">00110</a> <span class="preprocessor">#define ENABLE_LOGO         0</span>
+<a name="l00111"></a>00111 <span class="preprocessor"></span>
+<a name="l00112"></a>00112 <span class="preprocessor">#if (ENABLE_LOGO != 0)</span>
+<a name="l00113"></a>00113 <span class="preprocessor"></span>
+<a name="l00118"></a>00118 <span class="preprocessor">#define ZOOMING_LOGO        0</span>
+<a name="l00119"></a>00119 <span class="preprocessor"></span>
+<a name="l00120"></a>00120 <span class="preprocessor">#endif // ENABLE_LOGO</span>
+<a name="l00121"></a>00121 <span class="preprocessor"></span>
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123 <span class="preprocessor">#endif // _CONFIG_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:51 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

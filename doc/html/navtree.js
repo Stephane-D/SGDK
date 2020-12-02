@@ -6,6 +6,7 @@ var NAVTREE =
     ] ],
     [ "Class List", "annotated.html", [
       [ "_collision", "struct__collision.html", null ],
+      [ "_Map", "struct___map.html", null ],
       [ "_Sprite", "struct___sprite.html", null ],
       [ "Animation", "struct_animation.html", null ],
       [ "AnimationFrame", "struct_animation_frame.html", null ],
@@ -21,6 +22,7 @@ var NAVTREE =
       [ "FrameVDPSprite", "struct_frame_v_d_p_sprite.html", null ],
       [ "Image", "struct_image.html", null ],
       [ "Line", "struct_line.html", null ],
+      [ "MapDefinition", "struct_map_definition.html", null ],
       [ "Mat2D_f16", "struct_mat2_d__f16.html", null ],
       [ "Mat2D_f32", "struct_mat2_d__f32.html", null ],
       [ "Mat3D_f16", "struct_mat3_d__f16.html", null ],
@@ -64,6 +66,7 @@ var NAVTREE =
       [ "joy.h", "joy_8h.html", null ],
       [ "kdebug.h", "kdebug_8h.html", null ],
       [ "libres.h", null, null ],
+      [ "map.h", "map_8h.html", null ],
       [ "mapper.h", "mapper_8h.html", null ],
       [ "maths.h", "maths_8h.html", null ],
       [ "maths3D.h", "maths3_d_8h.html", null ],

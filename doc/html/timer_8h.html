@@ -120,9 +120,9 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#ae87bd4b7d5dd6cc2b6ce74d6c8e910e8">getTimer</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numTimer, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> restart)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get elapsed subticks for specified timer.  <a href="#ae87bd4b7d5dd6cc2b6ce74d6c8e910e8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#ae3137afb6e906f124388e489a1d8b2cb">waitSubTick</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> subtick)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for a certain amount of subticks.  <a href="#ae3137afb6e906f124388e489a1d8b2cb"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for a certain amount of subticks (1/76800 second based).  <a href="#ae3137afb6e906f124388e489a1d8b2cb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#a8eca7c2d21d8f3612fb7f0072f3dc5a1">waitTick</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> tick)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for a certain amount of ticks.  <a href="#a8eca7c2d21d8f3612fb7f0072f3dc5a1"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for a certain amount of ticks (1/300 second based).  <a href="#a8eca7c2d21d8f3612fb7f0072f3dc5a1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#a4a9f46b1bf1b1cddeafbbddded10a8a1">waitMs</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> ms)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for a certain amount of millisecond.  <a href="#a4a9f46b1bf1b1cddeafbbddded10a8a1"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
@@ -332,7 +332,7 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Wait for a certain amount of subticks. </p>
+<p>Wait for a certain amount of subticks (1/76800 second based). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">subtick</td><td>Number of subtick to wait for.</td></tr>
@@ -358,14 +358,14 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Wait for a certain amount of ticks. </p>
+<p>Wait for a certain amount of ticks (1/300 second based). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">tick</td><td>Number of tick to wait for.</td></tr>
   </table>
   </dd>
 </dl>
-<p><b>WARNING:</b> 5/6 (PAL/NTSC) ticks based timer so use 5/6 ticks as minimum wait value. </p>
+<p><b>WARNING:</b> 5/6 (PAL/NTSC) ticks based timer so use 5 or 6 ticks as minimum wait value. </p>
 
 </div>
 </div>
@@ -374,7 +374,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="timer_8h.html">timer.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

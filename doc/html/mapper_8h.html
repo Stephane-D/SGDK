@@ -96,6 +96,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a325de47aab9559936677898563c164d8"></a><!-- doxytag: member="mapper.h::MAPPER_BASE" ref="a325de47aab9559936677898563c164d8" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>MAPPER_BASE</b>&#160;&#160;&#160;0xA130F1</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb7dc5a33a5b4a8d2b71e744832f9523"></a><!-- doxytag: member="mapper.h::BANK_SIZE" ref="acb7dc5a33a5b4a8d2b71e744832f9523" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>BANK_SIZE</b>&#160;&#160;&#160;0x80000</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac60597badc76e6f2c5ce64d862746c67"></a><!-- doxytag: member="mapper.h::BANK_MASK" ref="ac60597badc76e6f2c5ce64d862746c67" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>BANK_MASK</b>&#160;&#160;&#160;(BANK_SIZE - 1)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#ae249f87ab1a28f3ed37cbd811c14c51a">FAR</a>(data)&#160;&#160;&#160;data</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Give access to specified 'far' data through SEGA official bank switch mechanism if needed.  <a href="#ae249f87ab1a28f3ed37cbd811c14c51a"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
@@ -176,7 +180,7 @@ Functions</h2></td></tr>
 <p>Returns the current bank of specified region index. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">regionIndex</td><td>the 512KB region index we want to get. Accepted values: 1-7 as region 0 (0x080000-0x0FFFFF) is fixed. </td></tr>
+    <tr><td class="paramname">regionIndex</td><td>the 512KB region index we want to get. Accepted values: 1-7 as region 0 (0x000000-0x07FFFF) is fixed. </td></tr>
   </table>
   </dd>
 </dl>
@@ -240,7 +244,7 @@ Functions</h2></td></tr>
 <p>Set the current bank of specified region index. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">regionIndex</td><td>the 512KB region index we want to set. Accepted values: 1-7 as region 0 (0x080000-0x0FFFFF) is fixed. </td></tr>
+    <tr><td class="paramname">regionIndex</td><td>the 512KB region index we want to set. Accepted values: 1-7 as region 0 (0x000000-0x07FFFF) is fixed. </td></tr>
     <tr><td class="paramname">bankIndex</td><td>the effective 512KB data bank index mapped on this region. Accepted values: 0-63 </td></tr>
   </table>
   </dd>
@@ -253,7 +257,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="mapper_8h.html">mapper.h</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

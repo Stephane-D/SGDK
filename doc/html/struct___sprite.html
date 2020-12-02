@@ -153,8 +153,8 @@ struct <a class="el" href="struct___sprite.html">_Sprite</a> *&#160;</td><td cla
     <tr><td class="paramname">frameInd</td><td>current frame animation index (internal) </td></tr>
     <tr><td class="paramname">seqInd</td><td>current frame animation sequence index (internal) </td></tr>
     <tr><td class="paramname">timer</td><td>timer for current frame (internal) </td></tr>
-    <tr><td class="paramname">x</td><td>current sprite X position on screen </td></tr>
-    <tr><td class="paramname">y</td><td>current sprite Y position on screen </td></tr>
+    <tr><td class="paramname">x</td><td>current sprite X position on screen offseted by 0x80 (internal VDP position) </td></tr>
+    <tr><td class="paramname">y</td><td>current sprite Y position on screen offseted by 0x80 (internal VDP position) </td></tr>
     <tr><td class="paramname">depth</td><td>current sprite depth (Z) position used for Z sorting </td></tr>
     <tr><td class="paramname">attribut</td><td>sprite specific attribut and allocated VRAM tile index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro) </td></tr>
     <tr><td class="paramname">visibility</td><td>visibility information of current frame for each VDP sprite (max = 16) </td></tr>
@@ -177,7 +177,7 @@ struct <a class="el" href="struct___sprite.html">_Sprite</a> *&#160;</td><td cla
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct___sprite.html">_Sprite</a>      </li>
-      <li class="footer">Generated on Sun May 17 2020 21:50:52 for sgdk by&#160;
+      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
