@@ -44,11 +44,13 @@
  *  \param hp
  *      map height in block (128x128 pixels block) removing duplicated rows
  *  \param compression
- *      compression type for metaTiles, blocks and blockIndexes data. Accepted values:<br>
+ *      b0-b3=compression type for metaTiles<br>
+ *      b4-b7=compression for blocks data<br>
+ *      b8-b11=compression for blockIndexes data<br>
+ *      Accepted values:<br>
  *        <b>COMPRESSION_NONE</b><br>
  *        <b>COMPRESSION_APLIB</b><br>
  *        <b>COMPRESSION_LZ4W</b><br>
- *      smap height in block (128x128 pixels block) removing duplicated rows
  *  \param numMetaTile
  *      number of MetaTile
  *  \param numBlock

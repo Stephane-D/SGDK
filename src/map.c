@@ -68,21 +68,29 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
     result->h = mapDef->h;
 
     u16 compression = mapDef->compression;
-    // map is compressed ?
-    if (compression != COMPRESSION_NONE)
-    {
-        // unpack data
-        unpack(compression, (u8*) FAR(mapDef->metaTiles), (u8*) result->metaTiles);
-        unpack(compression, (u8*) FAR(mapDef->blocks), (u8*) result->blocks);
-        unpack(compression, (u8*) FAR(mapDef->blockIndexes), (u8*) result->blockIndexes);
-    }
-    else
-    {
-        // init FAR pointer
-        result->metaTiles = FAR(mapDef->metaTiles);
-        result->blocks = FAR(mapDef->blocks);
-        result->blockIndexes = FAR(mapDef->blockIndexes);
-    }
+    u16 comp;
+
+    // get metaTiles compression
+    comp = compression & 0xF;
+    // meteTiles are compressed ?
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR(mapDef->metaTiles), (u8*) result->metaTiles);
+    // init FAR pointer
+    else result->metaTiles = FAR(mapDef->metaTiles);
+
+    // get blocks data compression
+    comp = (compression >> 4) & 0xF;
+    // blocks data are compressed ?
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR(mapDef->blocks), (u8*) result->blocks);
+    // init FAR pointer
+    else result->blocks = FAR(mapDef->blocks);
+
+    // get blocks indexes data compression
+    comp = (compression >> 8) & 0xF;
+    // blocks indexes data are compressed ?
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR(mapDef->blockIndexes), (u8*) result->blockIndexes);
+    // init FAR pointer
+    else result->blockIndexes = FAR(mapDef->blockIndexes);
+
     // init FAR pointer
     result->blockRowOffsets = FAR(mapDef->blockRowOffsets);
 
