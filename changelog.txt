@@ -2,7 +2,7 @@ SGDK 1.6 (December 2020)
 ------------------------
 
 COMPILER
-* APJ
+* APLIB
  - replaced appack tool by new APJ (Java APLIB packer) tool written from scratch
 * LZ4W
  - much faster compression speed
@@ -19,7 +19,7 @@ COMPILER
  - fixed a small bug on ALIGN directive
  - optimized tile parsing
 * XGMROMBUILDER
- - now remind last used folder
+ - now remember last used folder
 * MAKEFILE
  - added deps file (.d) support for better dependencies handling
  - added sources sub folders support (2 depth levels)
@@ -27,12 +27,13 @@ COMPILER
 * README
  - added GET STARTED part
  - major rewrite / revamp to take benefit of Markdown format (thanks to Astrofra)
+ - others changes
 
 LIBRARY
 * MAJOR CHANGE !WARNING!:
   Added SYS_doVBlankProcess(..) to replace automatic V-Int processing of SGDK.
-  This was done to avoid issue with interrupts protection and offering more control.
-  So basically you should replace all your 'VDP_waitVSync()' references by 'SYS_doVBlankProcess()'
+  This was done to avoid issues with missing interrupts protection and to offer more control in general.
+  So basically you should replace all your _VDP_waitVSync()_ references with _SYS_doVBlankProcess()_
 * SYS
  - faster user callback interrupt handling
  - modified ROM header to enable SRAM by default
@@ -42,13 +43,13 @@ LIBRARY
  - removed interrupts protection where they are not anymore useful
  - small change for more accurate detection of frame miss
 * MAP
- - added new MAP engine (map.h unit) to handle large maps / background scrolling easily from MAP resource:
-   - Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);
-   - void MAP_scrollTo(Map* map, u32 x, u32 y);
-   - u16 MAP_getMetaTile(Map* map, u16 x, u16 y);
-   - u16 MAP_getTile(Map* map, u16 x, u16 y);
-   - void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
-   - void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest);
+ Added new MAP engine (map.h unit) to handle large maps / background scrolling easily from MAP resource:
+ - Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);
+ - void MAP_scrollTo(Map* map, u32 x, u32 y);
+ - u16 MAP_getMetaTile(Map* map, u16 x, u16 y);
+ - u16 MAP_getTile(Map* map, u16 x, u16 y);
+ - void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
+ - void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest);
 * DMA
  - added DMA_xxxFast() methods (no 128 KB bank cross check)
  - small tweaks for bit faster DMA queue
@@ -76,11 +77,11 @@ SAMPLE
 * SPRITE
  - updated background to complete level dimension.
  - updated to take benefit of the new MAP resource and advanced MAP methods
- - added alternate scroliing update mode (still using new MAP unit)
+ - added alternate scrolling update mode (still using new MAP unit)
 
-SGDK 1.6 MIGRATION
-* Replace VDP_waitVSync() --> SYS_doVBlankProcess()
-* Replace VDP_waitVInt() --> SYS_doVBlankProcess()
+SGDK 1.6 MIGRATION NOTE
+* Replace all VDP_waitVSync() references with SYS_doVBlankProcess()
+* Replace all VDP_waitVInt() references with SYS_doVBlankProcess()
 
 
 SGDK 1.51 (April 2020)
