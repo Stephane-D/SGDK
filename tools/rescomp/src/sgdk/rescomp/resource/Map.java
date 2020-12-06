@@ -37,7 +37,7 @@ public class Map extends Resource
     public final Bin mapBlockIndexesBin;
     public final Bin mapBlockRowOffsetsBin;
 
-    public Map(String id, String imgFile, int mapBase, int metatileSize, Tileset tileset, Compression comp)
+    public Map(String id, String imgFile, int mapBase, int metatileSize, Tileset tileset, Compression compression)
             throws IOException, IllegalArgumentException
     {
         super(id);
@@ -87,8 +87,8 @@ public class Map extends Resource
 
         // store tileset
         this.tileset = tileset;
-        // store compression (AUTO --> APLIB here)
-        this.compression = (comp == Compression.AUTO) ? Compression.APLIB : comp;
+        // store compression
+        this.compression = compression;
 
         // // build TILESET with wanted compression
         // tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht,
@@ -196,7 +196,7 @@ public class Map extends Resource
                             metatiles.add(mt);
                         }
 
-                        // set block attributes (metatile index only here) 
+                        // set block attributes (metatile index only here)
                         mb.set(mbi++, (short) mtIndex);
                     }
                 }
@@ -383,6 +383,19 @@ public class Map extends Resource
         return hb;
     }
 
+    private int getCompression()
+    {
+        int result = 0;
+
+        result += (mapBlockIndexesBin.packedData.compression.ordinal() - 1);
+        result <<= 4;
+        result += (mapBlocksBin.packedData.compression.ordinal() - 1);
+        result <<= 4;
+        result += (metatilesBin.packedData.compression.ordinal() - 1);
+
+        return result;
+    }
+
     @Override
     public int internalHashCode()
     {
@@ -429,7 +442,7 @@ public class Map extends Resource
         // set real height of mapBlockIndexes (can have duplicated row which aren't stored)
         outS.append("    dc.w    " + mapBlockIndexes.size() + "\n");
         // set compression
-        outS.append("    dc.w    " + (compression.ordinal() - 1) + "\n");
+        outS.append("    dc.w    " + getCompression() + "\n");
         // set num metatile
         outS.append("    dc.w    " + metatiles.size() + "\n");
         // set num mapblock

@@ -378,7 +378,7 @@ public class Compiler
                         "Misc metadata (bitmap, image, tilemap, tileset, palette..): " + miscMetaSize + " bytes");
 
             final int totalSize = unpackedSize + packedSize + spriteMetaSize + miscMetaSize;
-            System.out.println("Total: " + totalSize + " bytes (" + (totalSize / 1024) + " KB)");
+            System.out.println("Total: " + totalSize + " bytes (" + Math.round(totalSize / 1024d) + " KB)");
         }
         catch (Throwable t)
         {

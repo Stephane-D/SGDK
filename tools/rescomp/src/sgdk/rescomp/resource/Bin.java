@@ -140,6 +140,9 @@ public class Bin extends Resource
             System.out.println("size = " + packedSize + " (" + Math.round((packedSize * 100f) / baseSize)
                     + "% - origin size = " + baseSize + ")");
         }
+        // couldn't compress
+        else if (wantedCompression != Compression.NONE)
+            System.out.print("'" + id + "' couldn't be compressed");
 
         // output binary data (data alignment was done before)
         Util.outB(outB, packedData.data);
