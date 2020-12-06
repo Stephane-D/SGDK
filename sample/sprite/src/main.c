@@ -250,7 +250,7 @@ int main(u16 hard)
     JOY_setEventHandler(joyEvent);
 
     // just to monitor frame CPU usage
-    SYS_showFrameLoad();
+    SYS_showFrameLoad(TRUE);
 
 //    reseted = FALSE;
 
