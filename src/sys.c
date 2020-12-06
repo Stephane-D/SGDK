@@ -38,6 +38,7 @@
 //#define IN_EXTINT                   4
 
 #define SHOW_FRAME_LOAD             (1 << 0)
+#define SHOW_FRAME_LOAD_MEAN        (2 << 0)
 
 #define VINT_ALLOWED_LINE_DELAY     4
 
@@ -675,10 +676,23 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         // use internal sprite 0 to show cursor
         VDPSprite* vdpSprite = &vdpSpriteCache[0];
 
-        // update position relative to last stored VCounter
-        if ((lastVCnt > 224) || (lastVCnt < 4)) vdpSprite->y = 0x80;
-        else if (lastVCnt > 220) vdpSprite->y = 220 + 0x80;
-        else vdpSprite->y = lastVCnt + (0x80 - 4);
+        // use CPU load display instead
+        if (flags & SHOW_FRAME_LOAD)
+        {
+            // get CPU load (0-255)
+            u16 load = cpuFrameLoad / LOAD_MEAN_FRAME_NUM;
+
+            if (load > 224) vdpSprite->y = 220 + 0x80;
+            else vdpSprite->y = load + (0x80 - 4);
+        }
+        // directly use VCounter
+        else
+        {
+            // update position relative to last stored VCounter
+            if ((lastVCnt > 224) || (lastVCnt < 4)) vdpSprite->y = 0x80;
+            else if (lastVCnt > 220) vdpSprite->y = 220 + 0x80;
+            else vdpSprite->y = lastVCnt + (0x80 - 4);
+        }
 
         // write immediately in VRAM the sprite position change
         vu16* pw = (u16 *) GFX_DATA_PORT;
@@ -778,9 +792,10 @@ bool SYS_isVIntAligned()
     return FALSE;
 }
 
-void SYS_showFrameLoad()
+void SYS_showFrameLoad(bool mean)
 {
-    flags |= SHOW_FRAME_LOAD;
+    if (mean) flags |= (SHOW_FRAME_LOAD | SHOW_FRAME_LOAD_MEAN);
+    else flags |= SHOW_FRAME_LOAD;
 
     // use internal sprite 0 to show cursor
     VDPSprite* vdpSprite = &vdpSpriteCache[0];
@@ -806,7 +821,7 @@ void SYS_showFrameLoad()
 
 void SYS_hideFrameLoad()
 {
-    flags &= ~SHOW_FRAME_LOAD;
+    flags &= ~(SHOW_FRAME_LOAD | SHOW_FRAME_LOAD_MEAN);
 
     // use internal sprite 0 to show cursor
     VDPSprite* vdpSprite = &vdpSpriteCache[0];
@@ -907,14 +922,15 @@ fix32 SYS_getFPSAsFloat()
 bool addFrameLoad(u16 frameLoad, u32 vtime)
 {
     static u16 lastVTimer = 0;
+    u16 deltaFrame = vtime - lastVTimer;
     bool miss;
     u16 v;
 
     // frame miss ?
-    if ((vtime - lastVTimer) > 1)
+    if (deltaFrame > 1)
     {
         // force frame load to 255
-        v = 255;
+        v = ((deltaFrame - 1) << 8) + frameLoad;
         miss = TRUE;
     }
     else
@@ -934,7 +950,7 @@ bool addFrameLoad(u16 frameLoad, u32 vtime)
 
 u16 SYS_getCPULoad()
 {
-   return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 255);
+   return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 256);
 }
 
 
