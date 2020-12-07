@@ -59,6 +59,7 @@ extern u16 lastVCnt;
 extern void BMP_doVBlankProcess();
 extern void XGM_doVBlankProcess();
 extern bool MAP_doVBlankProcess();
+extern bool VDP_doVBlankScrollProcess();
 
 // we don't want to share that method
 extern void MEM_init();
@@ -661,7 +662,13 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         if (!MAP_doVBlankProcess()) vbp &= ~PROCESS_MAP_TASK;
     }
 
-    // palette fading processing
+    // VDP scroll process (async scroll update)
+    if (vbp & PROCESS_VDP_SCROLL_TASK)
+    {
+        if (!VDP_doVBlankScrollProcess()) vbp &= ~PROCESS_VDP_SCROLL_TASK;
+    }
+
+    // palette fading process
     if (vbp & PROCESS_PALETTE_FADING)
     {
         if (!PAL_doFadeStep()) vbp &= ~PROCESS_PALETTE_FADING;

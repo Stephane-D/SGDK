@@ -13,6 +13,11 @@
 #include "font.h"
 #include "memory.h"
 #include "mapper.h"
+#include "sys.h"
+
+
+// we don't want to share it
+extern vu16 VBlankProcess;
 
 
 static VDPPlane text_plan;
@@ -20,6 +25,11 @@ static u16 text_basetile;
 
 // current VRAM upload tile position
 u16 curTileInd;
+
+static s16 hscroll[2];
+static s16 vscroll[2];
+static u8 hscroll_update = 0;
+static u8 vscroll_update = 0;
 
 
 void VDP_setHorizontalScroll(VDPPlane plane, s16 value)
@@ -37,6 +47,23 @@ void VDP_setHorizontalScroll(VDPPlane plane, s16 value)
 
     *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
     *pw = value;
+}
+
+void VDP_setHorizontalScrollVSync(VDPPlane plane, s16 value)
+{
+    if (plane == BG_B)
+    {
+        hscroll[1] = value;
+        hscroll_update |= 1 << 1;
+    }
+    else
+    {
+        hscroll[0] = value;
+        hscroll_update |= 0 << 1;
+    }
+
+    // add task for vblank process
+    VBlankProcess |= PROCESS_VDP_SCROLL_TASK;
 }
 
 void VDP_setHorizontalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, TransferMethod tm)
@@ -76,6 +103,23 @@ void VDP_setVerticalScroll(VDPPlane plane, s16 value)
     *pw = value;
 }
 
+void VDP_setVerticalScrollVSync(VDPPlane plane, s16 value)
+{
+    if (plane == BG_B)
+    {
+        vscroll[1] = value;
+        vscroll_update |= 1 << 1;
+    }
+    else
+    {
+        vscroll[0] = value;
+        vscroll_update |= 0 << 1;
+    }
+
+    // add task for vblank process
+    VBlankProcess |= PROCESS_VDP_SCROLL_TASK;
+}
+
 void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, TransferMethod tm)
 {
     u16 addr;
@@ -84,6 +128,50 @@ void VDP_setVerticalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len, T
     if (plane == BG_B) addr += 2;
 
     DMA_transfer(tm, DMA_VSRAM, values, addr, len, 4);
+}
+
+bool VDP_doVBlankScrollProcess()
+{
+    vu16 *pw;
+    vu32 *pl;
+    u16 addr;
+
+    /* Point to vdp port */
+    pw = (u16 *) GFX_DATA_PORT;
+    pl = (u32 *) GFX_CTRL_PORT;
+
+    addr = VDP_HSCROLL_TABLE;
+    if (hscroll_update & 1)
+    {
+        *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *pw = hscroll[0];
+    }
+    addr += 2;
+    if (hscroll_update & 2)
+    {
+        *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *pw = hscroll[1];
+    }
+
+    addr = 0;
+    if (vscroll_update & 1)
+    {
+        *pl = GFX_WRITE_VSRAM_ADDR((u32) addr);
+        *pw = vscroll[0];
+    }
+    addr += 2;
+    if (vscroll_update & 2)
+    {
+        *pl = GFX_WRITE_VSRAM_ADDR((u32) addr);
+        *pw = vscroll[1];
+    }
+
+    // done
+    hscroll_update = 0;
+    vscroll_update = 0;
+
+    // no more task
+    return FALSE;
 }
 
 

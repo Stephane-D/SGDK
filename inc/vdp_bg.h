@@ -65,8 +65,26 @@ extern u16 curTileInd;
  *      value will move it to the right.
  *
  *  \see VDP_setScrollingMode() function to change scroll mode.
+ *  \see VDP_setHorizontalScrollVSync()
  */
 void VDP_setHorizontalScroll(VDPPlane plane, s16 value);
+/**
+ *  \brief
+ *      Same as #VDP_setHorizontalScroll(..) except that it will delay scroll update on VSync.
+ *
+ *  \param plane
+ *      Plane we want to set the horizontal scroll.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *  \param value
+ *      H scroll offset.<br>
+ *      Negative value will move the plane to the left while positive
+ *      value will move it to the right.
+ *
+ *  \see VDP_setHorizontalScroll()
+ */
+void VDP_setHorizontalScrollVSync(VDPPlane plane, s16 value);
 /**
  *  \brief
  *      Set plane horizontal scroll (tile scroll mode).<br>
@@ -89,7 +107,7 @@ void VDP_setHorizontalScroll(VDPPlane plane, s16 value);
  *  \param len
  *      Number of tile to set.
  *  \param tm
- *      Transfer method.<br>
+ *      Transfer method, it's recommended to use DMA_QUEUE so it will be executed as fast as possible during VBlank.<br>
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
@@ -120,7 +138,7 @@ void VDP_setHorizontalScrollTile(VDPPlane plane, u16 tile, s16* values, u16 len,
  *  \param len
  *      Number of line to set.
  *  \param tm
- *      Transfer method.<br>
+ *      Transfer method, it's recommended to use DMA_QUEUE so it will be executed as fast as possible during VBlank.<br>
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
@@ -152,6 +170,22 @@ void VDP_setHorizontalScrollLine(VDPPlane plane, u16 line, s16* values, u16 len,
 void VDP_setVerticalScroll(VDPPlane plane, s16 value);
 /**
  *  \brief
+ *      Same as #VDP_setVerticalScroll(..) except that it will delay scroll update on VSync.
+ *
+ *  \param plane
+ *      Plane we want to set the vertical scroll.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *  \param value
+ *      V scroll offset.<br>
+ *      Negative value will move the plane down while positive value will move it up.
+ *
+ *  \see VDP_setHorizontalScroll()
+ */
+void VDP_setVerticalScrollVSync(VDPPlane plane, s16 value);
+/**
+ *  \brief
  *      Set plane vertical scroll (2-Tiles scroll mode).
  *      2 vertical scroll modes are supported:<br>
  *      - Plain (whole plane)<br>
@@ -170,7 +204,7 @@ void VDP_setVerticalScroll(VDPPlane plane, s16 value);
  *  \param len
  *      Number of tile to set.
  *  \param tm
- *      Transfer method.<br>
+ *      Transfer method, it's recommended to use DMA_QUEUE so it will be executed as fast as possible during VBlank.<br>
  *      Accepted values are:<br>
  *      - CPU<br>
  *      - DMA<br>
