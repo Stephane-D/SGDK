@@ -13,7 +13,7 @@
 //#define MAP_PROFIL
 
 
-// we don't want to share them
+// we don't want to share it
 extern vu16 VBlankProcess;
 
 
