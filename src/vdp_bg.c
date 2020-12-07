@@ -59,7 +59,7 @@ void VDP_setHorizontalScrollVSync(VDPPlane plane, s16 value)
     else
     {
         hscroll[0] = value;
-        hscroll_update |= 0 << 1;
+        hscroll_update |= 1 << 0;
     }
 
     // add task for vblank process
@@ -113,7 +113,7 @@ void VDP_setVerticalScrollVSync(VDPPlane plane, s16 value)
     else
     {
         vscroll[0] = value;
-        vscroll_update |= 0 << 1;
+        vscroll_update |= 1 << 0;
     }
 
     // add task for vblank process
