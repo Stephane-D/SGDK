@@ -10,7 +10,7 @@
  * This unit provides basic null terminated string operations and type conversions.
  */
 
-#if (ENABLE_NEWLIB == 1) && !defined(_NEWLIB_STRING_H_)
+#if (ENABLE_NEWLIB != 0) && !defined(_NEWLIB_STRING_H_)
 #define _NEWLIB_STRING_H_
 #include_next <string.h> // Include string.h from newlib
 #undef _STRING_H_        // Will be defined again just below
@@ -19,7 +19,7 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
-#if (ENABLE_NEWLIB == 0)
+#if (ENABLE_NEWLIB == 0) || !defined(ENABLE_NEWLIB)
 
 /**
  *  \brief
@@ -35,21 +35,6 @@ typedef __gnuc_va_list va_list;
 #define va_end(v) __builtin_va_end(v)
 #define va_arg(v,l) __builtin_va_arg(v,l)
 
-/*
-//#define __va_rounded_size(TYPE)  \
-//  (((sizeof (TYPE) + sizeof (int) - 1) / sizeof (int)) * sizeof (int))
-//
-//#define va_start(AP, LASTARG)                                           \
-// (AP = ((__gnuc_va_list) __builtin_next_arg (LASTARG)))
-//
-//#define va_end(AP)      ((void)0)
-//
-//#define va_arg(AP, TYPE)                                                \
-// (AP = (__gnuc_va_list) ((char *) (AP) + __va_rounded_size (TYPE)),     \
-//  *((TYPE *) (void *) ((char *) (AP)                                    \
-//                       - ((sizeof (TYPE) < __va_rounded_size (char)     \
-//                           ? sizeof (TYPE) : __va_rounded_size (TYPE))))))
-*/
 
 /**
  *  \brief
