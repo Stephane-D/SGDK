@@ -230,15 +230,22 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
     u16 data[128];
     const u8 *s;
     u16 *d;
-    u16 i, w, len;
+    u16 i, pw, ph, len;
 
     // get the horizontal plane size (in cell)
-    w = (plane == WINDOW)?windowWidth:planeWidth;
+    pw = (plane == WINDOW)?windowWidth:planeWidth;
+    ph = (plane == WINDOW)?32:planeHeight;
+
+    // string outside plane --> exit
+    if ((x >= pw) || (y >= ph))
+        return;
+
+    // get string len
     len = strlen(str);
 
     // if string don't fit in plane, we cut it
-    if (len > (w - x))
-        len = w - x;
+    if (len > (pw - x))
+        len = pw - x;
 
     s = (const u8*) str;
     d = data;
@@ -251,12 +258,51 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
 
 void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w)
 {
-    VDP_fillTileMapRect(plane, 0, x, y, w, 1);
+    u16 pw, ph;
+    u16 wa;
+
+    // get the horizontal plane size (in cell)
+    pw = (plane == WINDOW)?windowWidth:planeWidth;
+    ph = (plane == WINDOW)?32:planeHeight;
+
+    // string outside plane --> exit
+    if ((x >= pw) || (y >= ph))
+        return;
+
+    // adjust dim
+    wa = w;
+
+    // if don't fit in plane, we cut it
+    if (wa > (pw - x))
+        wa = pw - x;
+
+    VDP_fillTileMapRect(plane, 0, x, y, wa, 1);
 }
 
 void VDP_clearTextAreaBG(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)
 {
-    VDP_fillTileMapRect(plane, 0, x, y, w, h);
+    u16 pw, ph;
+    u16 wa, ha;
+
+    // get the horizontal plane size (in cell)
+    pw = (plane == WINDOW)?windowWidth:planeWidth;
+    ph = (plane == WINDOW)?32:planeHeight;
+
+    // string outside plane --> exit
+    if ((x >= pw) || (y >= ph))
+        return;
+
+    // adjust dim
+    wa = w;
+    ha = h;
+
+    // if don't fit in plane, we cut it
+    if (wa > (pw - x))
+        wa = pw - x;
+    if (ha > (ph - y))
+        ha = ph - y;
+
+    VDP_fillTileMapRect(plane, 0, x, y, wa, ha);
 }
 
 void VDP_clearTextLineBG(VDPPlane plane, u16 y)
