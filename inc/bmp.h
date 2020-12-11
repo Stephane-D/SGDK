@@ -472,7 +472,7 @@ void BMP_setPixelFast(u16 x, u16 y, u8 col);
  *  \param col
  *      pixels color (should be 8 bits filled: 0x00, 0x11, .. for plain color)
  *  \param num
- *      number of pixel to draw (lenght of coordinates buffer).
+ *      number of pixel to draw (length of coordinates buffer).
  *
  */
  void BMP_setPixels_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
@@ -485,7 +485,7 @@ void BMP_setPixelFast(u16 x, u16 y, u8 col);
  *  \param col
  *      pixels color (should be 8 bits filled: 0x00, 0x11, .. for plain color)
  *  \param num
- *      number of pixel to draw (lenght of coordinates buffer).
+ *      number of pixel to draw (length of coordinates buffer).
  *
  */
  void BMP_setPixelsFast_V2D(const Vect2D_u16 *crd, u8 col, u16 num);
@@ -496,7 +496,7 @@ void BMP_setPixelFast(u16 x, u16 y, u8 col);
  *  \param pixels
  *      Pixels buffer.
  *  \param num
- *      number of pixel to draw (lenght of pixels buffer).
+ *      number of pixel to draw (length of pixels buffer).
  */
  void BMP_setPixels(const Pixel *pixels, u16 num);
 /**
@@ -506,7 +506,7 @@ void BMP_setPixelFast(u16 x, u16 y, u8 col);
  *  \param pixels
  *      Pixels buffer.
  *  \param num
- *      number of pixel to draw (lenght of pixels buffer).
+ *      number of pixel to draw (length of pixels buffer).
  */
  void BMP_setPixelsFast(const Pixel *pixels, u16 num);
 
@@ -539,7 +539,7 @@ void BMP_drawLine(Line *l);
  *  \param pts
  *      Polygon points buffer.
  *  \param num
- *      number of point (lenght of points buffer).
+ *      number of point (length of points buffer).
  *  \return 1 if polygon is culled (should not be draw) and 0 otherwise.<br>
  */
 u16 BMP_isPolygonCulled(const Vect2D_s16 *pts, u16 num);
@@ -552,7 +552,7 @@ u16 BMP_isPolygonCulled(const Vect2D_s16 *pts, u16 num);
  *  \param pts
  *      Polygon points buffer.
  *  \param num
- *      number of point (lenght of points buffer).
+ *      number of point (length of points buffer).
  *  \param col
  *      fill color.
  *  \return 0 if polygon was not drawn (outside screen or whatever).

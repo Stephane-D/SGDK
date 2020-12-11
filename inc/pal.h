@@ -36,7 +36,7 @@
  *  \brief
  *      Palette structure contains color data.
  *
- *  \param lenght
+ *  \param length
  *      Size of this palette.
  *  \param dat
  *      Color data.
