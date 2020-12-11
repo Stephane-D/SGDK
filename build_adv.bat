@@ -38,9 +38,6 @@
     set "GDK_WIN=%str_MyCurrentDir%"
     set "GDK=%GDK:\=/%"
 
-    set "GDK=%GDK:~3%"
-    set "GDK=/%GDK%"
-
     if %GDK:~-1%==/ set "GDK=%GDK:~0,-1%"
     if %GDK_WIN:~-1%==\ set "GDK_WIN=%GDK_WIN:~0,-1%"
 
@@ -68,13 +65,13 @@
     echo Setting PATH to just GDK stuff so that other CC1's do not conflict.
 
     REM Assuming that the current directory exists since that is where this file is.
-    set "PATH=%GDK%;%GDK_WIN%"
+    set "PATH=%GDK_WIN%"
     if EXIST %GDK_WIN%\bin set "PATH=%PATH%;%GDK_WIN%\bin"
     echo PATH = %PATH%
     goto CONTINUEAFTERCLEARQUESTION
 
 :NCLEARPATH
-    set "TPATH=%GDK%;%GDK_WIN%"
+    set "TPATH=%GDK_WIN%"
     if EXIST %GDK_WIN%\bin set "TPATH=%TPATH%;%GDK_WIN%\bin"
     set "PATH=%TPATH%;%PATH%"
     goto CONTINUEAFTERCLEARQUESTION
@@ -108,10 +105,10 @@
     echo.
     echo ============================================
    
-	echo set GDK=%GDK% > make_cart.bat
-	echo GDK_WIN=%GDK_WIN% >> make_cart.bat
-	echo PATH=%PATH% >> make_cart.bat
-	echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen >> make_cart.bat
+	echo set GDK=%GDK%> make_cart.bat
+	echo set GDK_WIN=%GDK_WIN%>> make_cart.bat
+	echo set PATH=%PATH%>> make_cart.bat
+	echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen>> make_cart.bat
 	
       
 :CLEANUP
