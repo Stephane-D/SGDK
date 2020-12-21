@@ -1575,6 +1575,9 @@ void SPR_update()
         sprite = sprite->next;
     }
 
+    // TODO: maybe prevent using SPR_xxx methods between SPR_update() and SYS_doVBlankProcess() call
+    // so we don't need to do a copy of vdpSpriteCache here
+
     // VDP sprite cache is now updated, copy it to the temporary cache copy we got from DMA queue buffer
     memcpy(vdpSpriteTableCopy, vdpSpriteCache, sizeof(VDPSprite) * sprNum);
 
