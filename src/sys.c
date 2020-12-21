@@ -619,7 +619,7 @@ bool SYS_doVBlankProcess()
 
 bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 {
-    if (processTime != IMMEDIATLY)
+    if (processTime != IMMEDIATELY)
     {
         // wait for VBlank
         if (VDP_waitVBlank(processTime == ON_VBLANK_START))

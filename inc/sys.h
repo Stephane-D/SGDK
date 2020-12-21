@@ -24,7 +24,7 @@
  */
 typedef enum
 {
-    IMMEDIATLY,         /** Start VBlank process immediatly whatever we are in blanking period or not */
+    IMMEDIATELY,        /** Start VBlank process immediately whatever we are in blanking period or not */
     ON_VBLANK ,         /** Start VBlank process on VBlank period, start immediatly in we are already in VBlank */
     ON_VBLANK_START     /** Start VBlank process on VBlank *start* period, means that we wait the next *start* of VBlank period if we missed it */
 } VBlankProcessTime;
