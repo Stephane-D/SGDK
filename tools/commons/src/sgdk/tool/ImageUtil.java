@@ -610,10 +610,14 @@ public class ImageUtil
         if (image == null)
             throw new IOException("Can't open image '" + filename + "'.");
 
-        final ColorModel cm = image.getColorModel();
-        if (!(cm instanceof IndexColorModel))
-            throw new IllegalArgumentException(
-                    "Image '" + filename + "' is RGB, only indexed images (8bpp, 4bpp, 2bpp and 1bpp) are supported !");
+        // not a gray scale image ?
+        if (image.getType() != BufferedImage.TYPE_BYTE_GRAY)
+        {
+            final ColorModel cm = image.getColorModel();
+            if (!(cm instanceof IndexColorModel))
+                throw new IllegalArgumentException("Image '" + filename
+                        + "' is RGB, only indexed images (8bpp, 4bpp, 2bpp and 1bpp) are supported !");
+        }
 
         final DataBuffer db = image.getRaster().getDataBuffer();
         if (!(db instanceof DataBufferByte))
@@ -769,10 +773,21 @@ public class ImageUtil
         if (image == null)
             throw new IOException("Can't open image '" + filename + "'.");
 
+        // special case of 8bit gray scale image
+        if (image.getType() == BufferedImage.TYPE_BYTE_GRAY)
+        {
+            final int[] result = new int[256];
+
+            for (int i = 0; i < result.length; i++)
+                result[i] = 0xFF000000 | (i << 16) | (i << 8) | (i << 0);
+
+            return result;
+        }
+
         final ColorModel cm = image.getColorModel();
         if (!(cm instanceof IndexColorModel))
             throw new IllegalArgumentException(
-                    "Image '" + filename + "' is RGB, only indexed images (8bpp or 4bpp) are supported !");
+                    "Image '" + filename + "' is RGB, only indexed images (8bpp, 4bpp, 2bpp and 1bpp) are supported !");
 
         final IndexColorModel icm = (IndexColorModel) cm;
         final int[] result = new int[icm.getMapSize()];
