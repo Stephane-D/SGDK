@@ -135,7 +135,7 @@ typedef struct
  *  \param getMetaTilemapRectCB
  *      internal
  */
-typedef struct _Map
+typedef struct Map
 {
     u16 w;
     u16 h;
@@ -151,10 +151,10 @@ typedef struct _Map
     u16 planeHeightMask;
     u16 lastXT;
     u16 lastYT;
-    void (*prepareMapDataColumnCB)(struct _Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
-    void (*prepareMapDataRowCB)(struct _Map *map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
-    u16  (*getMetaTileCB)(struct _Map *map, u16 x, u16 y);
-    void (*getMetaTilemapRectCB)(struct _Map *map, u16 x, u16 y, u16 w, u16 h, u16* dest);
+    void (*prepareMapDataColumnCB)(struct Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
+    void (*prepareMapDataRowCB)(struct Map *map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+    u16  (*getMetaTileCB)(struct Map *map, u16 x, u16 y);
+    void (*getMetaTilemapRectCB)(struct Map *map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 } Map;
 
 
