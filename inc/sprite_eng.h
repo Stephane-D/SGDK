@@ -336,12 +336,12 @@ typedef struct
  *
  *  Used to manage an active sprite in game condition.
  */
-typedef struct _Sprite
+typedef struct Sprite
 {
     u16 status;
     u16 visibility;
     const SpriteDefinition* definition;
-    void (*onFrameChange)(struct _Sprite* sprite);
+    void (*onFrameChange)(struct Sprite* sprite);
     Animation* animation;
     AnimationFrame* frame;
     FrameInfo* frameInfo;
@@ -358,8 +358,8 @@ typedef struct _Sprite
     u16 lastNumSprite;
     u16 spriteToHide;
     u32 data;
-    struct _Sprite* prev;
-    struct _Sprite* next;
+    struct Sprite* prev;
+    struct Sprite* next;
 } Sprite;
 
 /**
