@@ -384,8 +384,7 @@ extern u16 spriteVramSize;
  *  \brief
  *      Initialize the Sprite engine with default parameters.
  *
- *      Initialize the sprite engine using default parameters:<br>
- *      512 tiles reserved in VRAM and 320 tiles in memory for the decompression buffer.<br>
+ *      Initialize the sprite engine using default parameters (420 reserved tiles in VRAM).<br>
  *      This also initialize the hardware sprite allocation system.
  *
  *  \see SPR_initEx()
@@ -398,11 +397,10 @@ void SPR_init();
  *
  *  \param vramSize
  *      size (in tile) of the VRAM region for the automatic VRAM tile allocation.<br>
- *      If set to 0 the default size is used (512 tiles)
+ *      If set to 0 the default size is used (420 tiles)
  *
  *      Initialize the sprite engine.<br>
- *      This allocates a VRAM region for sprite tiles, memory for tileset unpacking and initialize
- *      hardware sprite allocation system.
+ *      This allocates a VRAM region for sprite tiles and initialize hardware sprite allocation system.
  *
  *  \see SPR_init()
  *  \see SPR_end()
@@ -413,7 +411,7 @@ void SPR_initEx(u16 vramSize);
  *      End the Sprite engine.
  *
  *      End the sprite engine and release attached resources.<br>
- *      This releases the allocated VRAM region, memory for unpacking and hardware sprite.
+ *      This releases the allocated VRAM region and hardware sprites.
  */
 void SPR_end();
 /**
