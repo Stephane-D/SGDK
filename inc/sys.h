@@ -106,36 +106,6 @@ extern VoidCallback *errorExceptionCB;
  * You can modify it to use your own callback.
  */
 extern VoidCallback *intCB;
-/**
- *  \brief
- *      Internal Vertical interrupt callback.
- *
- * You can modify it to use your own callback.<br>
- * Be careful: by doing that you disable SGDK default V-Int code and related features !<br>
- * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
- * In all others cases you would use the SYS_setVIntCallback() method.
- */
-extern VoidCallback *internalVIntCB;
-/**
- *  \brief
- *      Internal Horizontal interrupt callback.
- *
- * You can modify it to use your own callback.<br>
- * Be careful: by doing that you disable SGDK default H-Int code and related features !<br>
- * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
- * In all others cases you would use the SYS_setHIntCallback() method.
- */
-extern VoidCallback *internalHIntCB;
-/**
- *  \brief
- *      Internal External interrupt callback.
- *
- * You can modify it to use your own callback.<br>
- * Be careful: by doing that you disable SGDK default Ext-Int code and related features !<br>
- * You should use it only for very low level process and if you don't care about SGDK facilities.<br>
- * In all others cases you would use the SYS_setExtIntCallback() method.
- */
-extern VoidCallback *internalExtIntCB;
 
 
 /**
