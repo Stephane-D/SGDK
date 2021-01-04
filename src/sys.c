@@ -84,6 +84,7 @@ VoidCallback *traceCB;
 VoidCallback *line1x1xCB;
 VoidCallback *errorExceptionCB;
 VoidCallback *intCB;
+
 // user V-Int, H-Int and Ext-Int callbacks
 VoidCallback *vintCB;
 VoidCallback *hintCB;
