@@ -163,7 +163,8 @@ public class Map extends Resource
                                         // not found ? (should never happen)
                                         if (index == -1)
                                             throw new RuntimeException(
-                                                    "Can't find tile in tileset, something wrong happened...");
+                                                    "Can't find tile [" + ti + "," + tj
+                                                            + "] in tileset, something wrong happened...");
                                         // index > 2047 ? --> not allowed
                                         if (index > 2047)
                                             throw new RuntimeException(

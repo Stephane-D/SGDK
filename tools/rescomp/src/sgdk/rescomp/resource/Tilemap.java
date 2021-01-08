@@ -33,9 +33,12 @@ public class Tilemap extends Resource
         {
             for (int i = 0; i < w; i++)
             {
+                // tile position
+                final int ti = i + startTileX;
+                final int tj = j + startTileY;
+
                 // get tile
-                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8,
-                        (j + startTileY) * 8);
+                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, ti * 8, tj * 8);
                 int index;
                 TileEquality equality = TileEquality.NONE;
 
@@ -53,7 +56,8 @@ public class Tilemap extends Resource
                         index = tileset.getTileIndex(tile, opt);
                         // not found ? (should never happen)
                         if (index == -1)
-                            throw new RuntimeException("Can't find tile in tileset, something wrong happened...");
+                            throw new RuntimeException(
+                                    "Can't find tile [" + ti + "," + tj + "] in tileset, something wrong happened...");
 
                         // get equality info
                         equality = tile.getEquality(tileset.tiles.get(index));
