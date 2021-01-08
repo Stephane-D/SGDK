@@ -172,7 +172,9 @@ typedef struct Map
  *      - BG_A<br>
  *      - BG_B<br>
  *  \param baseTile
- *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro)
+ *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro).<br>
+ *      Note that you can also use it to force HIGH priority but in that case your map should only contains LOW priority tiles
+ *      otherwise the HIGH priority tiles will be set in LOW priority instead (mutually exclusive).
  *  \return initialized Map structure or <i>NULL</i> if there is not enough memory to allocate data for given MapDefinition.
  */
 Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);

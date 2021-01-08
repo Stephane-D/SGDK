@@ -97,7 +97,7 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
     // init base parameters
     result->plane = plane;
     // keep only base index and base palette
-    result->baseTile = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    result->baseTile = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK | TILE_ATTR_PRIORITY_MASK);
     // mark for init
     result->planeWidthMask = 0;
     result->planeHeightMask = 0;
@@ -697,7 +697,7 @@ static void prepareMapDataColumn_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2
 static void prepareMapDataColumnEx_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufCol1;
     u16 *d2 = bufCol2;
@@ -757,7 +757,7 @@ static void prepareMapDataColumnEx_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2
 static void prepareMapDataColumnEx_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufCol1;
     u16 *d2 = bufCol2;
@@ -817,7 +817,7 @@ static void prepareMapDataColumnEx_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol
 static void prepareMapDataColumnEx_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufCol1;
     u16 *d2 = bufCol2;
@@ -877,7 +877,7 @@ static void prepareMapDataColumnEx_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol
 static void prepareMapDataColumnEx_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufCol1;
     u16 *d2 = bufCol2;
@@ -1145,7 +1145,7 @@ static void prepareMapDataRow_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u
 static void prepareMapDataRowEx_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufRow1;
     u16 *d2 = bufRow2;
@@ -1200,7 +1200,7 @@ static void prepareMapDataRowEx_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u
 static void prepareMapDataRowEx_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufRow1;
     u16 *d2 = bufRow2;
@@ -1255,7 +1255,7 @@ static void prepareMapDataRowEx_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, 
 static void prepareMapDataRowEx_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufRow1;
     u16 *d2 = bufRow2;
@@ -1310,7 +1310,7 @@ static void prepareMapDataRowEx_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, 
 static void prepareMapDataRowEx_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)
 {
     // we can add both base index and base palette
-    const u16 baseAttr = map->baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
+    const u16 baseAttr = map->baseTile;
 
     u16 *d1 = bufRow1;
     u16 *d2 = bufRow2;
