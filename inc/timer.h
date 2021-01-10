@@ -42,7 +42,8 @@ extern vu32 vtimer;
  *      Returns elapsed subticks from console reset.
  *
  * Returns elapsed subticks from console reset (1/76800 second based).<br>
- * <b>WARNING:</b> this function isn't accurate because of the VCounter rollback.
+ * <b>WARNING:</b> this function isn't accurate during VBlank (return fixed value for the whole VBlank).<br>
+ * This is to avoid issue with the VCounter rollback during VBlank.
  */
 u32  getSubTick();
 /**
@@ -103,7 +104,7 @@ u32  getTimer(u16 numTimer, u16 restart);
  *  \param subtick
  *      Number of subtick to wait for.
  *
- * <b>WARNING:</b> this function isn't accurate because of the VCounter rollback.
+ * <b>WARNING:</b> this function isn't accurate during VBlank (always wait until the end of VBlank) because of the VCounter rollback.
  */
 void waitSubTick(u32 subtick);
 /**

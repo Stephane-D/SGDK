@@ -105,11 +105,12 @@ u32 getTimer(u16 numTimer, u16 restart)
 
 
 // wait for a certain amount of subtick
-// WARNING : this function isn't accurate because of the VCounter rollback
+// WARNING: this function isn't accurate during VBlank (always wait until the end of VBlank) because of the VCounter rollback
 void waitSubTick(u32 subtick)
 {
     // waitSubTick(...) can not be used from V-Int callback or when HV counter is latched
-    if ((SYS_getInterruptMaskLevel() >= 6) || VDP_getHVLatching())
+    // also it doesn't work during VBlank so always use alternative method for small wait
+    if ((subtick < 150) || (SYS_getInterruptMaskLevel() >= 6) || VDP_getHVLatching())
     {
         u32 i = subtick;
 
@@ -141,7 +142,8 @@ void waitSubTick(u32 subtick)
         s32 remain;
 
         current = getSubTick();
-        // error due to the VCounter roolback, ignore...
+
+        // shouldn't happen anymore (we take care of VCounter rollback in getSubTick()) but just for safety
         if (current < start) current = start;
 
         // still one frame to wait ?
