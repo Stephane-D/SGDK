@@ -64,7 +64,7 @@ public class WavProcessor implements Processor
         if (fields.length >= 4)
             driver = Util.getSoundDriver(fields[3]);
 
-        // determine output rate
+        // determine default output rate
         switch (driver)
         {
             case DPCM2:
