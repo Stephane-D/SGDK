@@ -40,32 +40,32 @@ https://danibus.wordpress.com/
  
 ## HELP AND SUPPORT
 
-If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:
+If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:<br>
 http://gendev.spritesmind.net/forum/
 
-You can also join the SGDK Discord server to get support:
+You can also join the SGDK Discord server to get support:<br>
 https://discord.gg/xmnBWQS
  
 ### MACOSX / LINUX
 
-Unix/Linux users should give a try to this very simple script allowing to use SGDK from Wine easily:
+Unix/Linux users should give a try to this very simple script allowing to use SGDK from Wine easily:<br>
 https://github.com/Franticware/SGDK_wine
 
-There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:
+There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:<br>
 https://github.com/v4ld3r5/sgdk_vscode_template
 
-An alternative solution for Unix/Linux is Gendev project from Kubilus:
-https://github.com/kubilus1/gendev
+An alternative solution for Unix/Linux is Gendev project from Kubilus:<br>
+https://github.com/kubilus1/gendev<br>
 But it seems to be outdated and is more complexe to setup than Wine based solution.
 
-MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:
+MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:<br>
 https://github.com/SONIC3D/gendev-macos
 
  
 ### VISUAL STUDIO
 
 You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK integration with VS.
-To go even further you can also install the VS extension made by zerasul:
+To go even further you can also install the VS extension made by zerasul:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ### THANKS
