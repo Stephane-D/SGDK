@@ -34,7 +34,7 @@ Also SGDK comes with a doxygen documentation (generated from .h header files) wh
 Another important point to know is that SGDK heavily relies on _resources_ which are compiled through _rescomp_ tool. You can read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to know which kind of resource you can use and how to declare them then you can check the *'sample'* folder from SGDK and in particular the [sprite sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sprite) which is a good showcase of SGDK usage in general (functions and resources).
 
 You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):<br>
-https://www.ohsat.com/tutorial/
+https://www.ohsat.com/tutorial/<br>
 You also have the great ones from Danibus (spanish only):<br>
 https://danibus.wordpress.com/
  
