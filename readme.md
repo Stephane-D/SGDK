@@ -73,12 +73,12 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Sonic3D for the OSX port of SGDK.
 - Daniel Valdivieso for the SGDK multi-OS solution using Wine.
 - Vladimir Kryvian for Visual Studio support and template.
-- Tusario for resource manager tools.
+- Joe Musashi for the nice Wobbler effect sample.
 - clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
 - starling13 for fixes.
-- davidgf for contributions (added apultra tool, improved assembly LTO optimization).
+- davidgf for its contributions (apultra tool, improved assembly LTO optimization).
 - Banshaku for its contribution on improving makefile and deps generation with rescomp.
 - Ohsat for making nice tutorials.
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
