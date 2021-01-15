@@ -25,16 +25,17 @@ https://segaretro.org/images/a/a2/Genesis_Software_Manual.pdf
 
 Then when you feel ready you can go further and finally install SGDK :)
 
-You can find installation instructions and tutorials about how use SGDK on the wiki:
+You can find installation instructions and tutorials about how use SGDK on the wiki:<br>
 https://github.com/Stephane-D/SGDK/wiki
 
-Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the _'doc'_ folder: *doc/html/files.html*
+Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the _'doc'_ folder:<br>
+*doc/html/files.html*
 
 Another important point to know is that SGDK heavily relies on _resources_ which are compiled through _rescomp_ tool. You can read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to know which kind of resource you can use and how to declare them then you can check the *'sample'* folder from SGDK and in particular the [sprite sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sprite) which is a good showcase of SGDK usage in general (functions and resources).
 
-You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):
+You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):<br>
 https://www.ohsat.com/tutorial/
-You also have the great ones from Danibus (spanish only):
+You also have the great ones from Danibus (spanish only):<br>
 https://danibus.wordpress.com/
  
 ## HELP AND SUPPORT
@@ -47,15 +48,19 @@ https://discord.gg/xmnBWQS
  
 ### MACOSX / LINUX
 
-Unix/Linux users should give a try to the Gendev project from Kubilus:
-https://github.com/kubilus1/gendev
-It allows to quickly setup SGDK on a Unix environment.
+Unix/Linux users should give a try to this very simple script allowing to use SGDK from Wine easily:
+https://github.com/Franticware/SGDK_wine
 
-MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D:
+There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:
+https://github.com/v4ld3r5/sgdk_vscode_template
+
+An alternative solution for Unix/Linux is Gendev project from Kubilus:
+https://github.com/kubilus1/gendev
+But it seems to be outdated and is more complexe to setup than Wine based solution.
+
+MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:
 https://github.com/SONIC3D/gendev-macos
 
-There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK under any OS using Wine:
-https://github.com/v4ld3r5/sgdk_vscode_template
  
 ### VISUAL STUDIO
 
@@ -69,9 +74,10 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
 - LIZARDRIVE for making the new SGDK logo.
-- Kubilus for the Linux port of SGDK.
-- Sonic3D for the OSX port of SGDK.
-- Daniel Valdivieso for the SGDK multi-OS solution using Wine.
+- Vojtěch Salajka for the script allowing to use SGDK easily from Wine (Linux/Unix but may work on OSX too).
+- Daniel Valdivieso for another Wine based solution to use SGDK on multi-OS (including a VSCode template).
+- Kubilus for the GenDev Linux port of SGDK.
+- Sonic3D for the GenDev OSX port of SGDK.
 - Vladimir Kryvian for Visual Studio support and template.
 - Joe Musashi for the nice Wobbler effect sample.
 - clbr for various contributions.
