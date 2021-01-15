@@ -210,8 +210,8 @@ WAV name wav_file [driver [outrate]]
                             XGM music with 4 channels 8 bits samples driver.
                             It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
                             Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
-    outrate         output PCM rate (only used for Z80_DRIVER_PCM driver)
-                        By default the default WAV output rate is used.
+    outrate         output PCM rate (required for Z80_DRIVER_PCM driver)
+                        By default the default driver output rate is used.
 
 
 BIN
