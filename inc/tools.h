@@ -408,7 +408,7 @@ void qsort_s32(s32 *data, u16 left, u16 right);
  *      Quick sort algo on array of pointer (object)
  *
  *  \param data
- *      array of pointer (pointer design object to sort).
+ *      array of pointer (pointer of object to sort).
  *  \param len
  *      number of element in the data array
  *  \param cb
