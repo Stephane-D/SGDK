@@ -112,6 +112,12 @@ typedef unsigned short u16;
 typedef unsigned long u32;
 
 /**
+ *  \typedef vbool
+ *      volatile boolean type.
+ *      (internally set as volatile unsigned short)
+ */
+typedef volatile u16 vbool;
+/**
  *  \typedef vs8
  *      volatile 8 bits signed integer.
  */

@@ -1,0 +1,407 @@
+XGM v1.1 Driver
+---------------
+The XGM name stands for "eXtended Genesis Music", the XGM driver is a music driver developed specifically for the Sega Megadrive/Genesis system.
+The XGM v1.1 driver has be developed to replace the previous XGM v1.0 driver, mainly to reduce music dataa space and also improve PCM latency.
+
+As the previous XGM driver, it runs at 100% on the Z80 CPU and left the 68000 free for others tasks.
+It has been designed to keep CPU decoding resource reasonnable and provide small data size (about half the size of original XGM and about 1/3 of VGM file).
+
+It supports both FM and PSG chip and allow up to 4 PCM channels (8 bits signed) with adjustable playback rate up to ~13.3 Khz. PCM samples does not have any size limitation, the only restriction is that they should have their address and size aligned to 256 bytes (so we can ignore low 8 bit address). These 4 PCM channels are obtained by software mixing in the FM DAC in replacement of the 6th FM channel so at best you can have 5FM + 4PCM + 4PSG = 13 channels.
+
+The PCM playback rate can be modified from ~2Khz to ~13.3Khz but it's recommended to keep the original value (13.3 Khz) as all PCM channels share the same playback rate.
+Example of possible playback playback rate:
+ - 13.3 Khz
+ - 10.65 Khz
+ - 8.87 KHz
+ - 7.6 KHz
+ - 6.65 KHz
+ - 5.9 Khz
+ - ...
+ 
+Note that it's possible to enable half speed PCM playback:
+for instance if PCM playback rate is set to 13.3 Khz, then you can play PCM at full rate (13.3 Khz) or half rate (13.3 / 2 = 6.65 Khz)
+This feature allows to limit ROM usage for samples which don't need high playback rate.
+
+The driver supports playing SFX through PCM channels only, normally channel 0 is reserved for music while channel 1 to channel 3 can be used for SFX.
+
+The driver has been designed and developed for SGDK (https://code.google.com/p/sgdk/) by Stephane dallongeville (2018).
+
+XGM v1.1 file format specifications
+-----------------------------------
+The file extension for XGM file is .xgm while compiled XGM file (ready to be interpreted by Z80) are .xgc
+Any tracker wanting to support XGM export music file format should use this document as reference.
+Note that XGM file can be produced from Megadrive VGM file using the 'xgmtool' software (which is a part of SGDK).
+This XGM file can then be compiled (always using 'xgmtool') into a binary file (.bin or .xgc) ready to be played by the Z80 XGM v1.1 driver.
+
+File format (multi bytes value are in little endian format)
+-----------------------------------------------------------
+Address                 Size    Description
+$0000                      4    XGM file ident, should be "XGM "
+$0004                    252    Sample id table.
+                                  This table contain the address and the size for all sample (maximum = 63 samples)
+                                  Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
+                                    entry+$0: sample address / 256
+                                    entry+$2: sample size / 256
+                                  We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
+                                  The sample address is relative to the start of the "Sample Data Bloc" (field $104).
+                                  An empty entry should have its address set to $FFFF and size set to $0001.
+$0100                      2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
+                                  We will reference the value of this field as SLEN.
+$0102                      1    Version information (0x11 currently), not compatible with v1.0
+$0103                      1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
+                                  This field is used to determine how interpret the frame wait command.
+                                  In NTSC mode a frame wait command is equivalent to 1/60 of second.
+                                  In PAL mode a frame wait command is equivalent to 1/50 of second.
+                                bit #1: GD3 tags: 0=No 1=Yes
+                                  If present the tags are located right after music data (address = $108+SLEN+MLEN)
+                                bit #2: Multi track file: 0=No 1=Yes
+                                  When we have a multi track file, next track data can be found at the end of current music data.
+                                  Next track data directly starts on 'Music data bloc size' field (MLEN) means samples are shared
+                                  between all tracks. Depending the presence of GD3 tags, the next music data are located at
+                                  ($108+SLEN+MLEN) or ($108+SLEN+MLEN+ size of GD3 tags)
+                                bit #3 - bit #7: reserved for future use
+$0104                   SLEN    Sample data bloc, contains all sample data (8 bits signed format)
+                                  The size of this bloc is variable and is determined by the field $100.
+                                  If field $100 contains $0000 the bloc is empty and the field is ignored.
+                                  As explained in the 'Sample id table' field, sample size is aligned on 256 bytes.
+$0104+SLEN                 4    Music data bloc size (track #0).
+                                  We will reference the value of this field as MLEN.
+                                  This field can be used to quickly raise next track if we have multi track XGM file.
+$0108+SLEN+4            MLEN    Music data bloc (track #0). It contains the XGM music data (see the XGM command description below).
+----------------------------    The following part is optional depending the presence of the GD3 infos (see field $0103)
+$0108+SLEN+MLEN+4          4    XD3 tags bloc size (track #0).
+                                  We will reference the value of this field as XLEN.
+                                  This field can be used to quickly raise next track if we have multi track XGM file.
+$0108+SLEN+MLEN+8       XLEN    XD3 tags (close to GD3 format spec on http://www.smspower.org/uploads/Music/gd3spec100.txt)
+----------------------------    The following part is optional depending if we have a multi track XGM file or not (see field $0103)
+$0108+SLEN+MLEN+XLEN+8     4    Music data bloc size (track #1).
+                                  We will reference the value of this field as MLEN2.                                  
+                                  This field can be used later to quickly browse multi track XGM file.
+$0108+SLEN+MLEN+XLEN+12 MLE2    Music data bloc (track #1). It contains the XGM music data (see the XGM command description below).
+----------------------------
+....                            Then things get repeated depending how many tracks we have (multi track XGM only) until we find a
+                                music data bloc size equals to 0 which mean this is the end of the file.
+
+
+
+// many
+$1x ab yy .. .. = FM write
+x = channel
+a = reg start
+b = number
+yy .. .. = values as byte
+
+
+
+XGM command description
+-----------------------
+Value         Size    Description
+$0X              1    end of frame - short wait
+                        X = number of frame to wait - 1 (if x == 0 then we wait 1 frame)
+$0F XX           2    end of frame - long Wait
+                        XX = number of frame to wait - 15 (if x == 00 then we wait 15 frames)
+$1X data   1+(X+1)    PSG register write
+                        X = number of byte to write - 1
+                        data = byte data to write to PSG port ($4011)
+$2X id           2    PCM play command:
+                        X = channel number
+                          b1-b0 = channel number (0-3), the driver allow to play up to 4 PCM at same time. 
+                        id = sample id (should be < 64). Reference the sample id table to get address and size of sample.
+                          sample address = (sampleIdTable[((id-1)*4) + 0] << 8) + (sampleIdTable[((id-1)*4) + 1] << 16)
+                          sample size = (sampleIdTable[((id-1)*4) + 2] << 8) + (sampleIdTable[((id-1)*4) + 3] << 16)
+                          Note that we use (id-1) as value 0 is a special value used to stop a PCM channel.
+$4X data  1+2(x+1)    YM2612 port 0 channel 0 register write
+                        X = number of register write - 1
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+$5X data  1+2(x+1)    YM2612 port 0 channel 1 register write
+                        X = number of register write - 1
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+$6X data  1+2(x+1)    YM2612 port 0 channel 2 register write
+                        X = number of register write - 1
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+$8X data  1+2(x+1)    YM2612 port 1 channel 0 register write
+                        X = number of register write - 1
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+$9X data  1+2(x+1)    YM2612 port 1 channel 1 register write
+                        X = number of register write - 1
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+$AX data  1+2(x+1)    YM2612 port 1 channel 2 register write
+                        X = number of register write - 1
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+$CX data       1+2    YM2612 frequency set
+                        X = channel number
+                          b1-b0 = channel number (0-2)
+                          b2 = channel 3 mode (0: normal mode; 1: special mode in which case b1-b0 represents slot number)
+                          b3 = port (0-1)
+                        data = 16 bit frequency write (high byte first)
+$DX data   1+(X+1)    YM2612 key off/on ($28) command write
+                        X = number of key register write - 1
+                        data = data to write to YM2612 key register
+$F0 XX           2    YM2612 Register $22 (LFO) write
+$F1              1    YM2612 Register $27.6 = 1 (CH3 special mode enable)
+$F2              1    YM2612 Register $27.6 = 0 (CH3 special mode enable)
+$F3              1    YM2612 Register $2B = 80 (DAC enable)
+$F4              1    YM2612 Register $2B = 00 (DAC disable)
+$FE dddddd       4    Loop command, used for music looping sequence:
+                        dddddd = address where to loop relative to the start of music data bloc.
+$FF              1    End (end of music data).
+
+
+Commands $3x/$7x/$Bx/$Ex are reserved for future or internal use.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+XGM2 Driver
+-----------
+The XGM name stands for "eXtended Genesis Music", the XGM driver is a music driver developed specifically for the Sega Megadrive/Genesis system.
+The XGM2 driver has be developed to replace the previous XGM driver, bringing new features and reducing music space.
+
+As the previous XGM driver, it runs at 100% on the Z80 CPU and left the 68000 free for others tasks.
+It has been designed to keep CPU decoding resource reasonnable and provide small data size (about half the size of original XGM and about 1/3 of VGM file).
+It supports both FM and PSG chip and allow up to 4 PCM channels (8 bits signed at 13 Khz max) to be played at once.
+PCM samples does not have any size limitation, the only restriction is that they should have their address and size aligned to 64 bytes.
+These 4 PCM channels are obtained by software mixing in the FM DAC in replacement of the 6th FM channel so at best you can have 5FM + 4PCM + 4PSG = 13 channels.
+
+The PCM playback rate can be modified from ~2Khz to ~13.3Khz but it's recommended to keep the original value (13.3 Khz) as all PCM channels share the same playback rate.
+Example of possible playback playback rate:
+ - 13.3 Khz
+ - 10.65 Khz
+ - 8.87 KHz
+ - 7.6 KHz
+ - 6.65 KHz
+ - 5.9 Khz
+ - ...
+ 
+Note that it's possible to enable half speed PCM playback:
+for instance if PCM playback rate is set to 13.3 Khz, then you can play PCM at full rate (13.3 Khz) or half rate (13.3 / 2 = 6.65 Khz)
+This feature allows to limit ROM usage for samples which don't need high playback rate.
+
+Compared to the old XGM driver, this new driver has envelop support for both FM and PSG channels and can be independently set on channel.
+The driver supports playing SFX with PCM (16 levels of priority) but also in FM or PSG format now (with channel reservation) :)
+
+The driver has been designed and developed for SGDK (https://code.google.com/p/sgdk/) by Stephane dallongeville (2018).
+
+XGM2 file format specifications v1.0
+------------------------------------
+Any tracker supporting the export in XGM music file format should use this document as reference.
+The produced XGM file can be compiled by the 'xgmtool' software (which is a part of SGDK) into a binary file (.bin or .xgc) ready to be played by the Z80 XGM2 driver.
+The normal file extension for XGM file is .xgm but it can eventually be compressed (zip compression) and use the .xgz extension instead.
+
+File format (multi bytes value are in little endian format)
+-----------------------------------------------------------
+Address                 Size    Description
+$0000                      4    XGM2 file ident, should be "XGM2"
+$0004                    252    Sample id table.
+                                  This table contain the address and the size for all sample (maximum = 63 samples)
+                                  Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
+                                    entry+$0: sample address / 256
+                                    entry+$2: sample size / 256
+                                  We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
+                                  The sample address is relative to the start of the "Sample Data Bloc" (field $104).
+                                  An empty entry should have its address set to $FFFF and size set to $0001.
+$0100                      2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
+                                  We will reference the value of this field as SLEN.
+$0102                      1    Version information (0x01 currently)                 
+$0103                      1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
+                                  This field is used to determine how interpret the frame wait command.
+                                  In NTSC mode a frame wait command is equivalent to 1/60 of second.
+                                  In PAL mode a frame wait command is equivalent to 1/50 of second.
+                                bit #1: GD3 tags: 0=No 1=Yes
+                                  If present the tags are located right after music data (address = $108+SLEN+MLEN)
+                                bit #2: Multi track file: 0=No 1=Yes
+                                  When we have a multi track file, next track data can be found at the end of current music data.
+                                  Next track data directly starts on 'Music data bloc size' field (MLEN) means samples are shared
+                                  between all tracks. Depending the presence of GD3 tags, the next music data are located at
+                                  ($108+SLEN+MLEN) or ($108+SLEN+MLEN+ size of GD3 tags)
+                                bit #3 - bit #7: reserved for future use
+$0104                   SLEN    Sample data bloc, contains all sample data (8 bits signed format)
+                                  The size of this bloc is variable and is determined by the field $100.
+                                  If field $100 contains $0000 the bloc is empty and the field is ignored.
+                                  As explained in the 'Sample id table' field, sample size is aligned on 256 bytes.
+$0104+SLEN                 4    Music data bloc size (track #0).
+                                  We will reference the value of this field as MLEN.
+                                  This field can be used to quickly raise next track if we have multi track XGM file.
+$0108+SLEN+4            MLEN    Music data bloc (track #0). It contains the XGM music data (see the XGM command description below).
+----------------------------    The following part is optional depending the presence of the GD3 infos (see field $0103)
+$0108+SLEN+MLEN+4          4    XD3 tags bloc size (track #0).
+                                  We will reference the value of this field as XLEN.
+                                  This field can be used to quickly raise next track if we have multi track XGM file.
+$0108+SLEN+MLEN+8       XLEN    XD3 tags (close to GD3 format spec on http://www.smspower.org/uploads/Music/gd3spec100.txt)
+----------------------------    The following part is optional depending if we have a multi track XGM file or not (see field $0103)
+$0108+SLEN+MLEN+XLEN+8     4    Music data bloc size (track #1).
+                                  We will reference the value of this field as MLEN2.                                  
+                                  This field can be used later to quickly browse multi track XGM file.
+$0108+SLEN+MLEN+XLEN+12 MLE2    Music data bloc (track #1). It contains the XGM music data (see the XGM command description below).
+----------------------------
+....                            Then things get repeated depending how many tracks we have (multi track XGM only) until we find a
+                                music data bloc size equals to 0 which mean this is the end of the file.
+
+
+
+// many
+$1x ab yy .. .. = FM write
+x = channel
+a = reg start
+b = number
+yy .. .. = values as byte
+
+
+
+XGM command description
+-----------------------
+Value         Size    Description
+$00 xxxx         3    long Wait
+                        xxxx = number of frame (~1/300 of second) to wait
+$01 xx           2    medium Wait
+                        xx = number of frame to wait
+$0x              1    short wait
+                        x = number of frame to wait + 1 (if x == 2 then we wait 1 frame)
+$1X data   1+(X+1)    PSG register write
+                        X = number of byte to write - 1
+                        data = byte data to write to PSG port ($4011)
+$2X data  1+2(x+1)    YM2612 port 0 register write
+                        X = channel number / number of register write
+                          b1-b0 = channel number (0-2)
+                          b3-b2 = number of register write - 1 (1 to 4)                        
+                        data = data to write to YM2612 port 0 ($4000 and $4001)
+                          entry+$00: register number
+                          entry+$01: register value
+$3X data  1+2(x+1)    YM2612 port 1 register write
+                        X = channel number / number of register write
+                          b1-b0 = channel number (0-2)
+                          b3-b2 = number of register write - 1 (1 to 4)                        
+                        data = data to write to YM2612 port 1 ($4002 and $4003)
+                          entry+$00: register number
+                          entry+$01: register value
+$4X data       1+2    YM2612 frequency set
+                        X = channel number
+                          b1-b0 = channel number (0-2)
+                          b2 = channel 3 mode (0: normal mode; 1: special mode in which case b1-b0 represents slot number)
+                          b3 = port (0-1)
+                        data = 16 bit frequency write
+$5X data   1+(X+1)    YM2612 key off/on ($28) command write
+                        X = number of key register write - 1
+                        data = data to write to YM2612 key register
+$6X id           2    PCM play command:
+                        X = priority / channel number
+                          b1-b0 = channel number (0-3), the driver allow to play up to 4 PCM at same time. 
+                          b3-b2 = priority from 0 to 12 (in step of 4), higher value mean higher priority.
+                          Ex: We have a sample playing on channel 0 with a priority of 5 (SFX).
+                            - We receive a PCM play command with a priority of 4
+                              --> command ignored
+                            - We receive a PCM play command with a priority of 8
+                              --> command is accepted and new sample replace old one, channel priority is changed to 8
+                        id = sample id (should be < 64). Reference the sample id table to get address and size of sample.
+                          sample address = (sampleIdTable[((id-1)*4) + 0] << 8) + (sampleIdTable[((id-1)*4) + 1] << 16)
+                          sample size = (sampleIdTable[((id-1)*4) + 2] << 8) + (sampleIdTable[((id-1)*4) + 3] << 16)
+                          Note that we use (id-1) as value 0 is a special value used to stop a PCM channel.
+$70 xx           2    YM2612 Register $22 (LFO) write
+$71 xx           2    YM2612 Register $27 (Timer) write, only b7-b6 are used here (CH3 special mode)
+$72 xx           2    YM2612 Register $2B (DAC enable)
+$7E dddddd       4    Loop command, used for music looping sequence:
+                        dddddd = address where to loop relative to the start of music data bloc.
+$7F              1    End (end of music data).
+
+
+Command $80-$FF are reserved for internal use and should not be used.
