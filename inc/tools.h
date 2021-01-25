@@ -39,9 +39,9 @@
  *
  * This callback is used to compare 2 objects.<br>
  * Return value should be:<br>
- * negatif if o1 is below o2<br>
- * 0 if o1 is equal to o2<br>
- * positif if o1 is above o2
+ * < 0 if o1 is below o2<br>
+ * = 0 if o1 is equal to o2<br>
+ * > 0 if o1 is above o2
  */
 typedef s16 _comparatorCallback(void* o1, void* o2);
 
@@ -53,7 +53,7 @@ typedef s16 _comparatorCallback(void* o1, void* o2);
 void setRandomSeed(u16 seed);
 /**
  *  \brief
- *      Return a random u16 integer.
+ *      Returns a random u16 integer value.
  */
 u16 random();
 
