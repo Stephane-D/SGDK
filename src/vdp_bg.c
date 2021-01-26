@@ -367,7 +367,7 @@ u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, 
     }
     else
         // tiles
-        VDP_loadBMPTileData((u32*) FAR(bitmap->image), basetile & TILE_INDEX_MASK, wt, ht, wt);
+        VDP_loadBMPTileData((u32*) FAR_SAFE(bitmap->image, wt * ht * 32), basetile & TILE_INDEX_MASK, wt, ht, wt);
 
     // tilemap
     VDP_fillTileMapRectInc(plane, basetile, x, y, wt, ht);

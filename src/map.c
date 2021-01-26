@@ -72,27 +72,27 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
 
     // get metaTiles compression
     comp = compression & 0xF;
-    // meteTiles are compressed ?
-    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR(mapDef->metaTiles), (u8*) result->metaTiles);
+    // metaTiles are compressed ?
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR_SAFE(mapDef->metaTiles, mapDef->numMetaTile * 2 * 4), (u8*) result->metaTiles);
     // init FAR pointer
-    else result->metaTiles = FAR(mapDef->metaTiles);
+    else result->metaTiles = FAR_SAFE(mapDef->metaTiles, mapDef->numMetaTile * 2 * 4);
 
     // get blocks data compression
     comp = (compression >> 4) & 0xF;
     // blocks data are compressed ?
-    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR(mapDef->blocks), (u8*) result->blocks);
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR_SAFE(mapDef->blocks, mapDef->numBlock * 64 * ((mapDef->numMetaTile > 256)?2:1)), (u8*) result->blocks);
     // init FAR pointer
-    else result->blocks = FAR(mapDef->blocks);
+    else result->blocks = FAR_SAFE(mapDef->blocks, mapDef->numBlock * 64 * ((mapDef->numMetaTile > 256)?2:1));
 
     // get blocks indexes data compression
     comp = (compression >> 8) & 0xF;
     // blocks indexes data are compressed ?
-    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR(mapDef->blockIndexes), (u8*) result->blockIndexes);
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR_SAFE(mapDef->blockIndexes, mapDef->w * mapDef->hp * ((mapDef->numBlock > 256)?2:1)), (u8*) result->blockIndexes);
     // init FAR pointer
-    else result->blockIndexes = FAR(mapDef->blockIndexes);
+    else result->blockIndexes = FAR_SAFE(mapDef->blockIndexes, mapDef->w * mapDef->hp * ((mapDef->numBlock > 256)?2:1));
 
     // init FAR pointer
-    result->blockRowOffsets = FAR(mapDef->blockRowOffsets);
+    result->blockRowOffsets = FAR_SAFE(mapDef->blockRowOffsets, mapDef->h * 2);
 
     // init base parameters
     result->plane = plane;

@@ -1111,7 +1111,7 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
         MEM_free(b);
     }
     else
-        BMP_drawBitmapData((u8*) FAR(bitmap->image), x, y, w, h, w >> 1);
+        BMP_drawBitmapData((u8*) FAR_SAFE(bitmap->image, (w * h) / 2), x, y, w, h, w >> 1);
 
     // load the palette
     if (loadpal)
@@ -1143,7 +1143,7 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
         MEM_free(b);
     }
     else
-        BMP_scale(FAR(bitmap->image), bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
+        BMP_scale(FAR_SAFE(bitmap->image, (w * h) / 2), bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
 
     // load the palette
     if (loadpal)

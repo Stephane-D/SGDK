@@ -2092,7 +2092,7 @@ static void loadTiles(Sprite* sprite)
         else
 #endif
         // unpack in temp buffer obtained from DMA queue
-        unpack(compression, (u8*) FAR(tileset->tiles), buf);
+        unpack(compression, (u8*) FAR_SAFE(tileset->tiles, tileset->numTile * 32), buf);
 
 #ifdef SPR_DEBUG
         char str1[32];
@@ -2109,7 +2109,7 @@ static void loadTiles(Sprite* sprite)
     else
     {
         // just queue DMA operation to transfer tileset data to VRAM
-        DMA_queueDma(DMA_VRAM, FAR(tileset->tiles), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, tileset->numTile * 32), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
 #ifdef SPR_DEBUG
         KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);

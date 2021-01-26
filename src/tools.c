@@ -1011,10 +1011,13 @@ Bitmap *unpackBitmap(const Bitmap *src, Bitmap *dest)
 
         // unpack image
         if (src->compression != COMPRESSION_NONE)
-            unpack(src->compression, (u8*) FAR(src->image), (u8*) result->image);
+            unpack(src->compression, (u8*) FAR_SAFE(src->image, (src->w * src->h) / 2), (u8*) result->image);
         // simple copy if needed
         else if (src->image != result->image)
-            memcpy((u8*) result->image, FAR(src->image), (src->w * src->h) / 2);
+        {
+            const u16 size = (src->w * src->h) / 2;
+            memcpy((u8*) result->image, FAR_SAFE(src->image, size), size);
+        }
     }
 
     return result;
@@ -1035,10 +1038,13 @@ TileSet *unpackTileSet(const TileSet *src, TileSet *dest)
 
         // unpack tiles
         if (src->compression != COMPRESSION_NONE)
-            unpack(src->compression, (u8*) FAR(src->tiles), (u8*) result->tiles);
+            unpack(src->compression, (u8*) FAR_SAFE(src->tiles, src->numTile * 32), (u8*) result->tiles);
         // simple copy if needed
         else if (src->tiles != result->tiles)
-            memcpy((u8*) result->tiles, FAR(src->tiles), src->numTile * 32);
+        {
+            const u16 size = src->numTile * 32;
+            memcpy((u8*) result->tiles, FAR_SAFE(src->tiles, size), size);
+        }
     }
 
     return result;
@@ -1060,10 +1066,13 @@ TileMap *unpackTileMap(const TileMap *src, TileMap *dest)
 
         // unpack tilemap
         if (src->compression != COMPRESSION_NONE)
-            unpack(src->compression, (u8*) FAR(src->tilemap), (u8*) result->tilemap);
+            unpack(src->compression, (u8*) FAR_SAFE(src->tilemap, (src->w * src->h) * 2), (u8*) result->tilemap);
         // simple copy if needed
         else if (src->tilemap != result->tilemap)
-            memcpy((u8*) result->tilemap, FAR(src->tilemap), (src->w * src->h) * 2);
+        {
+            const u16 size = (src->w * src->h) * 2;
+            memcpy((u8*) result->tilemap, FAR_SAFE(src->tilemap, size), size);
+        }
     }
 
     return result;

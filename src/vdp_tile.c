@@ -53,7 +53,7 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
     }
     else
         // tiles
-        VDP_loadTileData(FAR(tileset->tiles), index, tileset->numTile, tm);
+        VDP_loadTileData(FAR_SAFE(tileset->tiles, tileset->numTile * 32), index, tileset->numTile, tm);
 
     return TRUE;
 }
@@ -757,7 +757,7 @@ bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w,
     }
     else
         // tilemap
-        VDP_setTileMapDataRect(plane, (u16*) FAR(tilemap->tilemap + offset), x, y, w, h, tilemap->w, tm);
+        VDP_setTileMapDataRect(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), x, y, w, h, tilemap->w, tm);
 
     return TRUE;
 }
@@ -780,7 +780,7 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
     }
     else
         // tilemap
-        VDP_setTileMapDataRectEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, xp, yp, w, h, tilemap->w, tm);
+        VDP_setTileMapDataRectEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), basetile, xp, yp, w, h, tilemap->w, tm);
 
     return TRUE;
 }
@@ -803,7 +803,7 @@ bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u
     }
     else
         // tilemap
-        VDP_setTileMapDataRow(plane, (u16*) FAR(tilemap->tilemap + offset), row, x, w, tm);
+        VDP_setTileMapDataRow(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, w * 2), row, x, w, tm);
 
     return TRUE;
 }
@@ -826,7 +826,7 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
     }
     else
         // tilemap
-        VDP_setTileMapDataRowEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, row, x, w, tm);
+        VDP_setTileMapDataRowEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, w * 2), basetile, row, x, w, tm);
 
     return TRUE;
 }
@@ -851,7 +851,7 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
     }
     else
         // tilemap
-        VDP_setTileMapDataColumn(plane, (u16*) FAR(tilemap->tilemap + offset), column, y, h, tilemap->w, tm);
+        VDP_setTileMapDataColumn(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), column, y, h, tilemap->w, tm);
 
     return TRUE;
 }
@@ -874,7 +874,7 @@ bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile
     }
     else
         // tilemap
-        VDP_setTileMapDataColumnEx(plane, (u16*) FAR(tilemap->tilemap + offset), basetile, column, y, h, tilemap->w, tm);
+        VDP_setTileMapDataColumnEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), basetile, column, y, h, tilemap->w, tm);
 
     return TRUE;
 }
