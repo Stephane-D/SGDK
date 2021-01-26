@@ -1765,7 +1765,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
 void vint()
 {
     // do vblank process directly from the vint callback (easier to manage here)
-    SYS_doVBlankProcessEx(IMMEDIATLY);
+    SYS_doVBlankProcessEx(IMMEDIATELY);
 
     // set window visible from first row up to row 13
     VDP_setWindowVPos(FALSE, 13);
