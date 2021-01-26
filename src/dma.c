@@ -232,14 +232,14 @@ void DMA_flushQueue()
 
     while(i--)
     {
-        u16 len = (info->regLen & 0xFF) | ((info->regLen & 0xFF0000) >> 8);
+        u16 len = (info->regLenL & 0xFF) | ((info->regLenH & 0xFF) << 8);
         s16 step = info->regAddrMStep & 0xFF;
         u32 from = ((info->regAddrMStep & 0xFF0000) >> 7) | ((info->regAddrHAddrL & 0x7F00FF) << 1);
         // replace DMA command by WRITE command
         u32 cmd = info->regCtrlWrite & ~0x80;
 
         // software copy
-        DMA_doSoftwareCopyDirect(cmd, from, len, step);
+        DMA_doCPUCopyDirect(cmd, (void*) from, len, step);
 
         // next
         info++;
@@ -626,7 +626,7 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
     VDP_waitDMACompletion();
     // DMA disabled --> replace with software copy
-    DMA_doSoftwareCopy(location, from, to, len, step);
+    DMA_doCPUCopy(location, from, to, len, step);
 #else
     vu16 *pw;
     vu16 *pwz;
@@ -641,21 +641,24 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     fromAddr = (u32) from;
     bankLimitB = 0x20000 - (fromAddr & 0x1FFFF);
     bankLimitW = bankLimitB >> 1;
-    // bank limit exceeded
+    // bank limit exceeded ?
     if (len > bankLimitW)
     {
         // we first do the second bank transfer (can use the fast version here)
         DMA_doDmaFast(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
         newLen = bankLimitW;
     }
-    // ok, use normal len
-    else newLen = len;
+    else
+    {
+        // ok, use normal len
+        newLen = len;
 
-    if (step != -1)
-        VDP_setAutoInc(step);
-
-    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
-    VDP_waitDMACompletion();
+        // change increment step if required
+        if (step != -1)
+            VDP_setAutoInc(step);
+        // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
+        VDP_waitDMACompletion();
+    }
 
     // define z80 BUSREQ restore state
     if (Z80_isBusTaken()) z80restore = 0x0100;
@@ -733,7 +736,7 @@ void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
     // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
     VDP_waitDMACompletion();
     // DMA disabled --> replace with software copy
-    DMA_doSoftwareCopy(location, from, to, len, step);
+    DMA_doCPUCopy(location, from, to, len, step);
 #else
     vu16 *pw;
     vu16 *pwz;
