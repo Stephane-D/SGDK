@@ -1,0 +1,6 @@
+# Ignore git repo
+/.git
+
+# Ignore non-building related directories
+/sample/
+/doc/
