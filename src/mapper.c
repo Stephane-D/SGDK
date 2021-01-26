@@ -34,7 +34,7 @@ void SYS_setBank(u16 regionIndex, u16 bankIndex)
         banks[regionIndex] = bankIndex;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-        KLog_U2("Region #", regionIndex, " set to bank #", bankIndex);
+        KLog_U2("Region #", regionIndex, " set to bank ", bankIndex);
 #endif
     }
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
@@ -81,6 +81,28 @@ static u32 setBank(u32 addr)
     }
 }
 
+static u32 setBanks(u32 addr)
+{
+    // get 512 KB bank index
+    const u16 bankIndex = (addr >> 19) & 0x3F;
+
+    // special case of 0x28xxxx-0x3xxxxx range ?
+    if (bankIndex == 5)
+    {
+        // only set second bank
+        SYS_setBank(6, 6);
+        // return bank address
+        return 0x280000;
+    }
+
+    // set the 2 banks as we have data crossing banks
+    SYS_setBank(6, bankIndex + 0);
+    SYS_setBank(7, bankIndex + 1);
+
+    // return bank address
+    return 0x300000;
+}
+
 void* SYS_getFarData(void* data)
 {
     // convert to address
@@ -90,12 +112,48 @@ void* SYS_getFarData(void* data)
     if (!needBankSwitch(addr)) return data;
 
     // set bank and get mapped address
-    const u32 mappedAddr = setBank(addr) + (addr & BANK_MASK);
+    const u32 mappedAddr = setBank(addr) + (addr & BANK_IN_MASK);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-//     KLog_U2("Data at ", addr, " accessed through bank switch from ", mappedAddr);
+//    {
+//        char str[64];
+//
+//        sprintf(str, "Data at %8X accessed through bank switch from %8X", addr, mappedAddr);
+//        KLog(str);
+//    }
 #endif
 
     // return it
     return (void*) mappedAddr;
+}
+
+void* SYS_getFarDataSafe(void* data, u32 size)
+{
+    u32 start = (u32) data;
+    u32 end = start + (size - 1);
+
+    // crossing bank ? --> need to use 2 banks
+    if ((start ^ end) & BANK_OUT_MASK)
+    {
+        // don't require bank switch (better to test on end address) --> return direct pointer
+        if (!needBankSwitch(end)) return data;
+
+        // set bank and get mapped address
+        const u32 mappedAddr = setBanks(start) + (start & BANK_IN_MASK);
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
+//    {
+//        char str[64];
+//
+//        sprintf(str, "Data at %8X:%8X accessed through bank switch from %8X", start, end, mappedAddr);
+//        KLog(str);
+//    }
+#endif
+
+        // return it
+        return (void*) mappedAddr;
+    }
+
+    // use the simpler method
+    return SYS_getFarData(data);
 }

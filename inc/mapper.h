@@ -42,18 +42,23 @@
 #define MAPPER_BASE     0xA130F1
 
 #define BANK_SIZE       0x80000
-#define BANK_MASK       (BANK_SIZE - 1)
+#define BANK_IN_MASK    (BANK_SIZE - 1)
+#define BANK_OUT_MASK   (0xFFFFFF ^ BANK_IN_MASK)
 
 /**
  *  \brief
  *      Give access to specified 'far' data through SEGA official bank switch mechanism if needed.
  *
  *  \see #ENABLE_BANK_SWITCH flag in config.h file
+ *  \see #SYS_getFarData(..)
+ *  \see #SYS_getFarDataSafe(..)
  */
 #if (ENABLE_BANK_SWITCH != 0)
     #define FAR(data) SYS_getFarData((void*) (data))
+    #define FAR_SAFE(data, size) SYS_getFarDataSafe((void*) (data), size)
 #else
     #define FAR(data) data
+    #define FAR_SAFE(data, size) data
 #endif
 
 
@@ -84,8 +89,27 @@ void SYS_setBank(u16 regionIndex, u16 bankIndex);
  * <b>WARNING:</b> this method use the 0x00300000-0x003FFFFF range (2 regions) to make the requested data accessible using bank switching mechanism.<br>
  * If data bank is already accessible it re-uses the region otherwise it will change bank of one of the region so be careful of that if you want to access data
  * from different data bank at same time :p
+ *
+ *  \see SYS_getFarDataSafe
  */
 void* SYS_getFarData(void* data);
+/**
+ *  \brief
+ *      Make the given binary data ressource accessible and return a pointer to it (safe version with possible bank crossing)
+ *
+ *  \param data address of far data we want to access.
+ *  \param size size (in byte) of the far data block we want to access.<br>
+ *     Note that size should be > 0, if you don't the size then use SYS_getFarData(..) method instead.
+ *
+ * This method will use bank switching to make the specified data accessible and return a valid pointer to it.<br>
+ * <b>WARNING:</b> this method use the 0x00300000-0x003FFFFF range (2 regions) to make the requested data accessible using bank switching mechanism.<br>
+ * If data bank is already accessible it re-uses the region otherwise it will change bank of one of the region so be careful of that if you want to access data
+ * from different data bank at same time :p<br>
+ * The method checks if the data is crossing banks in which case it will set the 2 switchable regions to make the data fully accessible.
+ *
+ *  \see SYS_getFarData
+ */
+void* SYS_getFarDataSafe(void* data, u32 size);
 
 
 #endif // _MAPPER_H_
