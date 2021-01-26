@@ -73,7 +73,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
-- LIZARDRIVE for making the new SGDK logo.
+- Gunpog for making the new SGDK logo.
 - Vojtěch Salajka for the script allowing to use SGDK easily from Wine (Linux/Unix but may work on OSX too).
 - Daniel Valdivieso for another Wine based solution to use SGDK on multi-OS (including a VSCode template).
 - Kubilus for the GenDev Linux port of SGDK.
