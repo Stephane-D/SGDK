@@ -1,0 +1,498 @@
+; Custom single ADPCM sample player Z80 driver for the BadApple demo.
+; Output rate is fixed at 13000 Hz to keep sample size fit in rom.
+; address and size of sample have to be 256 bytes boundary.
+; Stéphane Dallongeville @2012
+;
+; We take Z80 clock = 3.575 Mhz as the demo work only on NTSC system (30 FPS playback).
+;
+; we round to 275 cycles per sample output.
+;
+; register usage :
+; BC  = sample source (in ROM)
+; DE  = write buffer
+; HL  = ADPCM delta table (H = $06 = high byte address / 2)
+; A'  = current sample level (unpacking)
+; BC' = read buffer
+; DE' = YMPORT1 (for DAC output)
+; L'  = $80 (fast unsign)
+; IXL = loop counter
+; IXH = overflow
+
+
+; ###########################      define      ##############################
+
+            INCLUDE "z80_def.i80"   ; basic definitions
+
+
+; ###########################       var        ##############################
+
+WAVADR      EQU     PARAMS+$00      ; WAV address (bit 8 --> bit 23)
+WAVLEN      EQU     PARAMS+$02      ; WAV lenght (bit 8 --> bit 23)
+IWAVADR     EQU     PARAMS+$10      ; internal WAV address (bit 8 --> bit 23)
+IWAVLEN     EQU     PARAMS+$12      ; internal WAV lenght (bit 8 --> bit 23)
+
+NULLWAVADR  EQU     PARAMS+$20      ; silent WAV adr
+NULLWAVLEN  EQU     PARAMS+$22      ; silent WAV len
+
+WAVBUFFER0  EQU     $1800           ; WAV buffer 0
+WAVBUFFER1  EQU     $1900           ; WAV buffer 1
+WAVBUFFER2  EQU     $1A00           ; WAV buffer 2
+WAVBUFFER3  EQU     $1B00           ; WAV buffer 3
+
+
+; ###########################      macro       ##############################
+
+            INCLUDE "z80_mac.i80"  ; basic macros
+
+
+; copyChannelParams
+; -----------------
+; copy channel parameters to internal structure
+; = 64 cycles
+
+            macro copyChannelParams
+
+            LD      HL, (WAVADR)            ;                   ' 16
+            LD      (IWAVADR), HL           ;                   ' 16
+            LD      HL, (WAVLEN)            ;                   ' 16
+            LD      (IWAVLEN), HL           ;                   ' 16
+
+            endm                            ;                   ' 64
+
+
+; stopChannel
+; -----------
+; set null sample play
+; = 90 cycles
+
+            macro stopChannel
+
+            LD      HL, (NULLWAVADR)    ;                       ' 16
+            LD      (IWAVADR), HL       ;                       ' 16
+            LD      HL, (NULLWAVLEN)    ;                       ' 16
+            LD      (IWAVLEN), HL       ;                       ' 16
+            clearAllStatus              ; clear play/loop stat  ' 26
+
+;            initSample                 ; init sample value     ' 17
+
+            endm                        ;                       ' 90
+
+
+; initSample
+; ----------
+; A'  <- 0
+;
+; init sample
+; = 12 cycles
+
+            macro initSample
+
+            EX      AF, AF'                 ;                   ' 4
+            XOR     A                       ;                   ' 4
+            EX      AF, AF'                 ;                   ' 4
+
+            endm                            ;                   ' 12
+
+
+; handlePlayCommand
+; -----------------
+; HL  <-  ?
+;
+; handle play command
+; = 158 cycles
+
+            macro handlePlayCommand
+
+            getPlayCommand 0            ; play command ?        ' 22    | 32 (32)
+            JP      NZ, .play           ;                       ' 10    |
+
+            wait121                     ; synchro               ' 116   | 126 (158)
+            JP      .end                ;                       ' 10    |
+
+.play
+            clearPlayCommand 0          ; clear play command    ' 25    |
+            copyChannelParams           ; copy params           ' 64    | 126 (158)
+            initSample                  ; init sample value     ' 12    |
+            setPlayStatus 0             ; set play status       ' 25    |
+
+.end
+            endm                        ;                       ' 158
+
+
+; prepareChannel
+; --------------
+; BC  <-  point to the sample source
+; HL  <-  ?
+; A   <-  ?
+;
+; set bank and prepare registers to play
+; = 160 cycles
+
+            macro prepareChannel
+
+            LD      HL, IWAVADR         ; point to sample adr   ' 10    |
+            LD      B, (HL)             ; B = bit 7-14          ' 7     |
+            INC     L                   ;                       ' 4     | 129 (129)
+            LD      A, (HL)             ; A = bit 15-22         ' 7     |
+            setBank                     ; set bank              ' 101   |
+
+            LD      A, B                ; A = bit 7-14          ' 4     |
+            SCF                         ;                       ' 4     |
+            RRA                         ; A = $80 | bit 8-14    ' 4     |
+            LD      B, A                ; B = high byte src     ' 4     | 31 (160)
+            RRA                         ; A = bit 7 + ???       ' 4     |
+            AND     $80                 ; A = bit 7 only        ' 7     |
+            LD      C, A                ; BC = src adr          ' 4     |
+
+            endm                                                ' 160
+
+
+; updateChannelData
+; -----------------
+; HL  <-  ?
+;
+; update sample address and sample lenght
+; = 76 cycles
+
+            macro updateChannelData
+
+            LD      HL, (IWAVADR)           ; increment address ' 16    |
+            INC     HL                      ;                   ' 6     | 38
+            LD      (IWAVADR), HL           ;                   ' 16    |
+
+            LD      HL, (IWAVLEN)           ; decrement lenght  ' 16    |
+            DEC     HL                      ;                   ' 6     | 38 (76)
+            LD      (IWAVLEN), HL           ;                   ' 16    |
+
+            endm
+
+; checkChannelEnd
+; ---------------
+; HL  <-  ?
+; A   <-  ?
+;
+; check is sample is done, restart it if needed
+; = 164 cycles
+
+            macro checkChannelEnd
+
+            LD      HL, (IWAVLEN)       ; get sample lenght     ' 16    |
+            LD      A, H                ;                       ' 4     | 34 (34)
+            OR      L                   ;                       ' 4     |
+            JP      Z, .done            ; sample done ?         ' 10    |
+
+            wait121                     ;                       ' 120   | 130 (164)
+            JP      .end                ;                       ' 10    |
+
+.done
+            getLoopStatus 0             ; loop play ?           ' 22    | 32 (66)
+            JP      Z, .stop            ;                       ' 10    |
+
+.restart
+            copyChannelParams           ; copy params           ' 64    |
+            initSample                  ; init sample value     ' 17    | 98 (164)
+            wait7                       ;                       ' 7     |
+            JP      .end                ;                       ' 10    |
+
+.stop
+            stopChannel                 ;                       ' 90    | 98 (164)
+            wait8                       ;                       ' 8     |
+
+.end
+            endm                        ;                       ' 164
+
+
+; nextWriteBuffer
+; ---------------
+; DE  <-  point to new write buffer
+;
+; pass to next write buffer
+; = 19 cycles
+
+            macro nextWriteBuffer
+
+            LD      A, D            ; next write buffer         ' 4
+            INC     A               ;                           ' 4
+            AND     $1B             ;                           ' 7
+            LD      D, A            ;                           ' 4
+
+            endm                    ;                           ' 19
+
+
+; sampleOutput
+; ------------
+; HL'  -> YMPORT1
+; BC' <-> point to sample buffer (read buffer)
+; L'   -> $80
+;
+; output a sample to the DAC and check read buffer overflow
+; = 67 cycles
+
+            macro sampleOutput
+
+            EXX                     ;                           ' 4     | 4 (4)
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            ADD     L               ; unsign                    ' 4     |
+            INC     C               ; increment read address    ' 4     | 32 (36)
+            LD      (DE), A         ; play sample               ' 7     |
+            JP      Z, .end_read    ; end read ?                ' 10    |
+
+            wait17                  ; synchro                   ' 17    | 27 (63)
+            JP     .end             ;                           ' 10    |
+
+.end_read
+            LD      A, B            ; next read buffer          ' 4     |
+            INC     A               ;                           ' 4     |
+            AND     $1B             ;                           ' 7     | 27 (63)
+            LD      B, A            ;                           ' 4     |
+            INC     IXH             ; mark overflow             ' 8     |
+
+.end
+
+            EXX                     ;                           ' 4     | 4 (67)
+
+            endm                    ;                           ' 67
+
+
+; unpack2
+; ------------------
+; BC  <-> point to the sample source (ROM)
+; DE  <-> point to the write output buffer
+; L   <-  ?
+; A   <-  ?
+; A'  <-> current sample level
+; H   <-> DELTATAB >> 1
+;
+; unpack 2 adpcm samples and write them in output buffer
+; = 83 cycles
+
+            macro unpack2
+
+            LD      A, (BC)         ; read 2 ADPCM samples      ' 7+2   |
+            INC     C               ; next                      ' 4     | 35 (35)
+            LD      H, $06          ; H = DELTATAB >> 9         ' 7     |
+            LD      L, A            ;                           ' 4     |
+            ADD     HL, HL          ; HL point to delta val     ' 11    |
+
+            EX      AF, AF'         ; A = current level         ' 4     | 4 (39)
+
+            ADD     (HL)            ; decode                    ' 7     |
+            INC     L               ; next delta                ' 4     |
+            LD      (DE), A         ; write sample in buffer    ' 7     |
+            INC     E               ;                           ' 4     |
+            ADD     (HL)            ; decode                    ' 7     | 40 (79)
+            LD      (DE), A         ; write sample in buffer    ' 7     |
+            INC     E               ;                           ' 4     |
+
+            EX      AF, AF'         ; A' = current level        ' 4     | 4 (83)
+
+            endm                    ;                           ' 83
+
+
+; ###########################       init       ##############################
+
+            ORG     $0000
+
+init
+            DI                      ; disable ints
+            LD      SP, $2000       ; setup stack
+            IM      $01             ; set int mode 1
+            XOR     A
+            LD      (STATUS), A     ; driver not ready
+            LD      (COMMAND), A    ; command cleared
+            JP      start           ; jump to start
+
+
+; ###########################     interrupt    ##############################
+
+            BLOCK   $0038-$
+
+interrupt                           ;                       ' 13    |
+            PUSH    AF              ;                       ' 11    |
+            sampleOutput            ;                       ' 67    | 102
+            PUSH    BC              ;                       ' 11    |
+
+            wait166                 ;                       ' 166   | 173 (275)
+            LD      B, 30           ; 30 samples for vblank ' 7     |
+
+vblank_loop
+            sampleOutput            ;                       ' 67    |
+            wait194                 ;                       ' 194   | 275
+            DEC     B               ;                       ' 4     |
+            JP      NZ, vblank_loop ; wait while vblank     ' 10    |
+
+            sampleOutput            ;                       ' 67    | 241
+            wait174                 ;                       ' 174   |
+
+            POP     BC              ;                       ' 10    |
+            POP     AF              ;                       ' 10    | 34 (275)
+            RETI                    ;                       ' 14    |
+
+
+; ###########################       main       ##############################
+
+            BLOCK   $0200-$
+
+start
+            LD      HL, PARAMS
+            LD      A, $00
+            LD      B, $20
+
+cp_loop
+            LD      (HL), A         ; clear sample parameters
+            INC     HL
+            DJNZ    cp_loop
+
+            LD      HL, WAVBUFFER0
+            LD      A, $00
+            LD      B, $00          ; for 256 * 4 bytes to clear
+
+cb_loop
+            LD      (HL), A         ; initialise buffers to silent
+            INC     HL
+            LD      (HL), A
+            INC     HL
+            LD      (HL), A
+            INC     HL
+            LD      (HL), A
+            INC     HL
+            DJNZ    cb_loop
+
+            CALL    initDAC         ; prepare DAC for output
+
+wait_nullwav
+            LD      HL, (NULLWAVADR)
+            LD      A, H
+            OR      L
+            JP      Z, wait_nullwav ; wait for null wav address being initialised
+            LD      HL, (NULLWAVLEN)
+            LD      A, H
+            OR      L
+            JP      Z, wait_nullwav ; wait for null wav len being initialised
+
+            stopChannel             ; stop channel
+
+            LD      BC, WAVBUFFER0  ; BC' = read buffer
+            LD      L, $80          ; L' = $80 (fast unsign)
+            LD      DE, YMPORT1     ; DE' point to YMPORT1
+            EXX
+
+            XOR     A
+            EX      AF, AF'         ; A' = current sample level
+
+            LD      DE, WAVBUFFER3  ; DE = write buf
+            LD      IXH, 0          ; read not done
+
+            LD      A, STATREADY
+            LD      (STATUS), A     ; driver ready
+
+main_loop
+
+; $00
+            sampleOutput                ;                       ' 67    |
+            handlePlayCommand           ;                       ' 158   | 275
+            EI                          ; enable ints           ' 4     |
+            wait42                      ;                       ' 42    |
+            DI                          ; disable ints          ' 4     |
+
+; $01
+            sampleOutput                ;                       ' 67    |
+            prepareChannel              ; BC point to src       ' 160   |
+            EI                          ; enable ints           ' 4     |
+            wait29                      ;                       ' 29    | 275
+            DI                          ; disable ints          ' 4     |
+            LD      IXL, 64             ; prepare loop counter  ' 11    |
+
+; $02-$41
+loop_decode
+            sampleOutput                ;                       ' 67    |
+            unpack2                     ; unpack 2 samples      ' 83    |
+            unpack2                     ; unpack 2 samples      ' 83    |
+            EI                          ; enable ints           ' 4     |
+            wait16                      ;                       ' 16    | 275
+            DI                          ; disable ints          ' 4     |
+            DEC     IXL                 ;                       ' 8     |
+            JP      NZ, loop_decode     ;                       ' 10    |
+
+; $42
+            sampleOutput                ;                       ' 67    |
+            nextWriteBuffer             ; next write buffer     ' 19    |
+            updateChannelData           ; update channel data   ' 76    | 275
+            EI                          ; enable ints           ' 4     |
+            wait105                     ;                       ' 105   |
+            DI                          ; disable ints          ' 4     |
+
+; $43
+            sampleOutput                ;                       ' 67    |
+            checkChannelEnd             ;                       ' 164   |
+            EI                          ; enable ints           ' 4     | 275
+            wait36                      ;                       ' 36    |
+            DI                          ; disable ints          ' 4     |
+
+; free time here
+; --------------
+
+loop_free
+; $44-$xx
+            sampleOutput                ;                       ' 67    |
+            EI                          ; enable ints           ' 4     |
+            wait178                     ;                       ' 178   |
+            DI                          ; disable ints          ' 4     | 275
+            XOR     A                   ;                       ' 4     |
+            OR      IXH                 ; read not yet done ?   ' 8     |
+            JP      Z, loop_free        ; loop                  ' 10    |
+
+; $xx
+            sampleOutput                ;                       ' 67    |
+            DEC     IXH                 ; read done             ' 8     |
+            EI                          ; enable ints           ' 4     |
+            wait182                     ;                       ' 182   | 275
+            DI                          ; disable ints          ' 4     |
+            JP      main_loop           ;                       ' 10    |
+
+
+; ##############################  functions  ################################
+
+            INCLUDE "z80_fct.i80"   ; basic functions
+
+
+; ##############################    tables   ################################
+
+            BLOCK   $0C00-$
+
+DELTATAB
+DELTATAB_0  DB      -34, -34, -21, -34, -13, -34, -8, -34, -5, -34, -3, -34, -2, -34, -1, -34
+            DB      0, -34, 1, -34, 2, -34, 3, -34, 5, -34, 8, -34, 13, -34, 21, -34
+DELTATAB_1  DB      -34, -21, -21, -21, -13, -21, -8, -21, -5, -21, -3, -21, -2, -21, -1, -21
+            DB      0, -21, 1, -21, 2, -21, 3, -21, 5, -21, 8, -21, 13, -21, 21, -21
+DELTATAB_2  DB      -34, -13, -21, -13, -13, -13, -8, -13, -5, -13, -3, -13, -2, -13, -1, -13
+            DB      0, -13, 1, -13, 2, -13, 3, -13, 5, -13, 8, -13, 13, -13, 21, -13
+DELTATAB_3  DB      -34, -8, -21, -8, -13, -8, -8, -8, -5, -8, -3, -8, -2, -8, -1, -8
+            DB      0, -8, 1, -8, 2, -8, 3, -8, 5, -8, 8, -8, 13, -8, 21, -8
+DELTATAB_4  DB      -34, -5, -21, -5, -13, -5, -8, -5, -5, -5, -3, -5, -2, -5, -1, -5
+            DB      0, -5, 1, -5, 2, -5, 3, -5, 5, -5, 8, -5, 13, -5, 21, -5
+DELTATAB_5  DB      -34, -3, -21, -3, -13, -3, -8, -3, -5, -3, -3, -3, -2, -3, -1, -3
+            DB      0, -3, 1, -3, 2, -3, 3, -3, 5, -3, 8, -3, 13, -3, 21, -3
+DELTATAB_6  DB      -34, -2, -21, -2, -13, -2, -8, -2, -5, -2, -3, -2, -2, -2, -1, -2
+            DB      0, -2, 1, -2, 2, -2, 3, -2, 5, -2, 8, -2, 13, -2, 21, -2
+DELTATAB_7  DB      -34, -1, -21, -1, -13, -1, -8, -1, -5, -1, -3, -1, -2, -1, -1, -1
+            DB      0, -1, 1, -1, 2, -1, 3, -1, 5, -1, 8, -1, 13, -1, 21, -1
+DELTATAB_8  DB      -34, 0, -21, 0, -13, 0, -8, 0, -5, 0, -3, 0, -2, 0, -1, 0
+            DB      0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 8, 0, 13, 0, 21, 0
+DELTATAB_9  DB      -34, 1, -21, 1, -13, 1, -8, 1, -5, 1, -3, 1, -2, 1, -1, 1
+            DB      0, 1, 1, 1, 2, 1, 3, 1, 5, 1, 8, 1, 13, 1, 21, 1
+DELTATAB_A  DB      -34, 2, -21, 2, -13, 2, -8, 2, -5, 2, -3, 2, -2, 2, -1, 2
+            DB      0, 2, 1, 2, 2, 2, 3, 2, 5, 2, 8, 2, 13, 2, 21, 2
+DELTATAB_B  DB      -34, 3, -21, 3, -13, 3, -8, 3, -5, 3, -3, 3, -2, 3, -1, 3
+            DB      0, 3, 1, 3, 2, 3, 3, 3, 5, 3, 8, 3, 13, 3, 21, 3
+DELTATAB_C  DB      -34, 5, -21, 5, -13, 5, -8, 5, -5, 5, -3, 5, -2, 5, -1, 5
+            DB      0, 5, 1, 5, 2, 5, 3, 5, 5, 5, 8, 5, 13, 5, 21, 5
+DELTATAB_D  DB      -34, 8, -21, 8, -13, 8, -8, 8, -5, 8, -3, 8, -2, 8, -1, 8
+            DB      0, 8, 1, 8, 2, 8, 3, 8, 5, 8, 8, 8, 13, 8, 21, 8
+DELTATAB_E  DB      -34, 13, -21, 13, -13, 13, -8, 13, -5, 13, -3, 13, -2, 13, -1, 13
+            DB      0, 13, 1, 13, 2, 13, 3, 13, 5, 13, 8, 13, 13, 13, 21, 13
+DELTATAB_F  DB      -34, 21, -21, 21, -13, 21, -8, 21, -5, 21, -3, 21, -2, 21, -1, 21
+            DB      0, 21, 1, 21, 2, 21, 3, 21, 5, 21, 8, 21, 13, 21, 21, 21
+
+            END

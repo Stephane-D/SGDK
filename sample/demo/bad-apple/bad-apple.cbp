@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Bad Apple (sample)" />
+		<Option makefile="D:/apps/SGDK/makefile.gen" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="0" />
+		<Option compiler="sega_genesis_compiler" />
+		<MakeCommands>
+			<Build command="$make -f $makefile" />
+			<CompileFile command="$make -f $makefile $file" />
+			<Clean command="$make -f $makefile clean" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="$make -q -f $makefile" />
+			<SilentBuild command="$make -s -f $makefile" />
+		</MakeCommands>
+		<Build>
+			<Target title="default">
+				<Option output="D:/Stef/dev/work/genesis/demo01/demo01.exe" prefix_auto="0" extension_auto="0" />
+				<Option type="1" />
+				<Option compiler="sega_genesis_compiler" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile" />
+					<SilentBuild command="$make -s -f $makefile" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="default;" />
+		</VirtualTargets>
+		<Unit filename="inc/main.h" />
+		<Unit filename="inc/movie.h" />
+		<Unit filename="inc/pcm.h" />
+		<Unit filename="inc/tile.h" />
+		<Unit filename="inc/tilemap.h" />
+		<Unit filename="res/movie.res" />
+		<Unit filename="res/sound_res.res" />
+		<Unit filename="src/boot/rom_head.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/boot/sega.s" />
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/movie.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/pcm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/tile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/tilemap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/z80_drv.s80" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
