@@ -91,13 +91,6 @@
 
 /**
  *  \brief
- *      Set it to 1 to enable the big Math lookup tables.<br>
- *      This table permits Log2, Log10 and Sqrt operation for fix16 type (128*3 KB of rom).
- */
-#define MATH_BIG_TABLES     0
-
-/**
- *  \brief
  *      Set it to 1 if you want to use FAT16 methods provided by Krik.<br>
  *      This cost a bit more than 1 KB of RAM.
  */

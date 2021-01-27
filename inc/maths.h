@@ -15,11 +15,9 @@
 extern const fix32 sintab32[1024];
 extern const fix16 sintab16[1024];
 
-#if (MATH_BIG_TABLES != 0)
 extern const fix16 log2tab16[0x10000];
 extern const fix16 log10tab16[0x10000];
 extern const fix16 sqrttab16[0x10000];
-#endif
 
 
 /**
@@ -211,8 +209,6 @@ extern const fix16 sqrttab16[0x10000];
 #define fix16Div(val1, val2)        (((val1) << FIX16_FRAC_BITS) / (val2))
 
 
-#if (MATH_BIG_TABLES != 0)
-
 /**
  *  \brief
  *      Compute and return the result of the Log2 of specified value (fix16).
@@ -228,8 +224,6 @@ extern const fix16 sqrttab16[0x10000];
  *      Compute and return the result of the root square of specified value (fix16).
  */
 #define fix16Sqrt(v)                sqrttab16[v]
-
-#endif
 
 
 /**

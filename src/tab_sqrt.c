@@ -3,8 +3,6 @@
 
 #include "maths.h"
 
-#if (MATH_BIG_TABLES != 0)
-
 // only for positives values
 const fix16 sqrttab16[0x10000] =
 {
@@ -8201,5 +8199,3 @@ const fix16 sqrttab16[0x10000] =
     2047, 2047, 2047, 2047, 2047, 2047, 2047, 2047,
     2047, 2047, 2047, 2047, 2047, 2047, 2047, 2047
 };
-
-#endif
