@@ -288,7 +288,7 @@ void XGM_setForceDelayDMA(u16 value);
  *      spent waiting in the DMA contention (see #XGM_set68KBUSProtection method).<br>
  *      The method computes CPU load mean over 32 frames and so it's important to call it at
  *      each frame (on VInt for instance) to get meaningful value.<br>
- *      Note that it returns CPu load only for the XGM music parsing part as PCM channel mixing is always ON.<br>
+ *      Note that it returns CPU load only for the XGM music parsing part as PCM channel mixing is always ON.<br>
  *      Idle usage is 40% on NTSC and 30% on PAL, 100% usage usually mean overrun and may result in music slowdown
  *      and incorrect PCM operations.
  */
