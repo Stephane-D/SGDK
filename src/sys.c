@@ -65,7 +65,7 @@ extern bool VDP_doVBlankScrollProcess();
 extern void MEM_init();
 
 // main function
-extern int main(u16 hard);
+extern int main(bool hardReset);
 
 // forward
 static void internal_reset();
@@ -563,20 +563,20 @@ void _start_entry()
 #endif
 
     // let's the fun go on !
-    main(1);
+    main(TRUE);
 
     // for safety
-    while(TRUE);
+    while(TRUE) SYS_doVBlankProcess();
 }
 
 void _reset_entry()
 {
     internal_reset();
 
-    main(0);
+    main(FALSE);
 
     // for safety
-    while(TRUE);
+    while(TRUE) SYS_doVBlankProcess();
 }
 
 static void internal_reset()
