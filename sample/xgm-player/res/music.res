@@ -10,6 +10,7 @@ XGM xgm_9 "SMetroid Intro.vgm"
 XGM xgm_10 "SMetroid Crateria Surface.vgm"
 XGM xgm_11 "bonus.vgm"
 XGM xgm_12 "Icecap.vgm"
+XGM xgm_13 "shinobi01.vgm"
 WAV pcm_hat1 "hat1.wav" 5
 WAV pcm_hat2 "hat2.wav" 5
 WAV pcm_voice "voice.wav" 5
