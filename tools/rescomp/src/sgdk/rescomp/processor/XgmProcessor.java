@@ -74,6 +74,6 @@ public class XgmProcessor implements Processor
         Compiler.addResourceFile(fileIn);
 
         // build BIN resource
-        return new Bin(id, data, 256, 256, 0, Compression.NONE, false);
+        return new Bin(id, data, 256, 256, 0, Compression.NONE, true);
     }
 }
