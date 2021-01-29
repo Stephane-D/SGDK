@@ -36,8 +36,25 @@ u8 XGM_isPlaying();
  *  \see XGM_stopPlay
  *  \see XGM_pausePlay
  *  \see XGM_nextFrame
+ *  \see XGM_startPlay_FAR
  */
 void XGM_startPlay(const u8 *song);
+/**
+ *  \brief
+ *      Same as #XGM_startPlay(..) except it supports music accessible through bank switch
+ *
+ *  \param song
+ *      XGM track address.
+ *  \param size
+ *      XGM track size (in byte)
+ *
+ *  \see XGM_startPlay
+ *  \see XGM_stopPlay
+ *  \see XGM_pausePlay
+ *  \see XGM_nextFrame
+ */
+void XGM_startPlay_FAR(const u8 *song, u32 size);
+
 /**
  *  \brief
  *      Stop playing music (XGM music player driver).

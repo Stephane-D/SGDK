@@ -6,6 +6,7 @@
 #include "z80_ctrl.h"
 #include "smp_null.h"
 #include "sys.h"
+#include "mapper.h"
 
 //// just to get xgmstop resource
 #include "vdp.h"
@@ -121,6 +122,11 @@ void XGM_startPlay(const u8 *song)
     *pb = 0;
 
     if (!busTaken) Z80_releaseBus();
+}
+
+void XGM_startPlay_FAR(const u8 *song, u32 size)
+{
+    XGM_startPlay(FAR_SAFE(song, size));
 }
 
 void XGM_stopPlay()
