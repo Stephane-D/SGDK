@@ -768,7 +768,7 @@ static u16 readMouse(u16 port)
             if (md[0] & 0x02)
                 my |= my ? 0xFF00 : 0xFFFF; /* y sign extend */
             joyAxisX[port] += (s16)mx;
-            joyAxisY[port] += (s16)my;
+            joyAxisY[port] -= (s16)my;
 
             if (md[1] & 8) val |= BUTTON_START;
             if (md[1] & 4) val |= BUTTON_MMB;
