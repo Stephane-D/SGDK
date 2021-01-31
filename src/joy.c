@@ -511,6 +511,7 @@ u16 JOY_readJoypad(u16 joy)
     return 0;
 }
 
+
 s16 JOY_readJoypadX(u16 joy)
 {
     if (joy < JOY_NUM)
@@ -519,10 +520,26 @@ s16 JOY_readJoypadX(u16 joy)
     return 0;
 }
 
+s16 JOY_writeJoypadX(u16 joy, u16 pos)
+{
+    if (joy < JOY_NUM)
+        joyAxisX[joy]=pos;
+
+    return 0;
+}
+
 s16 JOY_readJoypadY(u16 joy)
 {
     if (joy < JOY_NUM)
         return joyAxisY[joy];
+
+    return 0;
+}
+
+s16 JOY_writeJoypadY(u16 joy, u16 pos)
+{
+    if (joy < JOY_NUM)
+        joyAxisY[joy]=pos;
 
     return 0;
 }
