@@ -67,7 +67,7 @@ But it seems to be outdated and is more complexe to setup than Wine based soluti
 MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:<br>
 https://github.com/SONIC3D/gendev-macos
 
-### Docker
+### DOCKER
 
 *A modern way to install it on any environement is to use Docker.*
 
