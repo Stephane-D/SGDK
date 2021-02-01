@@ -326,6 +326,21 @@ s16  JOY_readJoypadX(u16 joy);
 
 /**
  *  \brief
+ *      Write joypad X axis.
+ *
+ *  \param joy
+ *      Joypad we query state.<br>
+ *      <b>JOY_1</b>    = joypad 1<br>
+ *      <b>JOY_2</b>    = joypad 2<br>
+ *      <b>...  </b>    = ...<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ *  \param pos
+ *      Desired X position for joypad.<br>
+ */
+s16  JOY_writeJoypadX(u16 joy, u16 pos);
+
+/**
+ *  \brief
  *      Get joypad Y axis.
  *
  *  \param joy
@@ -347,6 +362,21 @@ s16  JOY_readJoypadX(u16 joy);
  *<br>
  */
 s16  JOY_readJoypadY(u16 joy);
+
+/**
+ *  \brief
+ *      Write joypad Y axis.
+ *
+ *  \param joy
+ *      Joypad we query state.<br>
+ *      <b>JOY_1</b>    = joypad 1<br>
+ *      <b>JOY_2</b>    = joypad 2<br>
+ *      <b>...  </b>    = ...<br>
+ *      <b>JOY_8</b>    = joypad 8 (only possible with 2 teamplayers connected)<br>
+ *  \param pos
+ *      Desired Y position for joypad.<br>
+ */
+s16  JOY_writeJoypadY(u16 joy, u16 pos);
 
 /**
  *  \brief
