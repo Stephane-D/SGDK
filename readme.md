@@ -94,6 +94,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Kubilus for the GenDev Linux port of SGDK.
 - Sonic3D for the GenDev OSX port of SGDK.
 - Vladimir Kryvian for Visual Studio support and template.
+- Steve Schnepp for Docker support.
 - Joe Musashi for the nice Wobbler effect sample.
 - clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
