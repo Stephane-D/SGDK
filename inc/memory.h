@@ -155,6 +155,13 @@
 }
 
 
+#if (ENABLE_NEWLIB == 0)
+// enable standard libc compatibility
+#define malloc(x)       MEM_alloc(x)
+#define free(x)         MEM_free(x)
+#endif  // ENABLE_NEWLIB
+
+
 /**
  *  \brief
  *      Return available memory in bytes
