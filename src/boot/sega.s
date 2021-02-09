@@ -11,7 +11,7 @@
 *
 *-------------------------------------------------------
 
-    .globl 	_hard_reset
+    .globl  rom_header
 
     .org    0x00000000
 
@@ -42,6 +42,7 @@ _Vecteurs_68K:
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
 
+rom_header:
         .incbin "out/rom_head.bin", 0x10, 0x100
 
 _Entry_Point:
