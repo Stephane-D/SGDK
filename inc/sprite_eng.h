@@ -192,9 +192,9 @@ typedef struct _collision
 typedef struct
 {
     u8 numTile;
-    s8 offsetY;          // respect VDP sprite field order
+    u8 offsetY;          // respect VDP sprite field order
     u8 size;
-    s8 offsetX;
+    u8 offsetX;
 }  FrameVDPSprite;
 
 /**
@@ -236,7 +236,8 @@ typedef struct
     u8 h;
     u8 timer;
     FrameInfo frameInfos[4];    // TODO: it would be nice to optimize that, maybe compute it on runtime
-    TileSet* tileset;           // TODO: have a tileset per VDP sprite (when rescomp will be optimized for better LZ4W compression)
+    TileSet* tileset;           // TODO: have a tileset per VDP sprite --> probably not a good idea performance wise
+                                // Require many DMA queue operations and fast DMA flush as well, also bring extra computing in calculating delayed update
 } AnimationFrame;
 
 /**
@@ -244,23 +245,20 @@ typedef struct
  *      Sprite animation structure.
  *
  *  \param numFrame
- *      number of different frame for this animation
+ *      number of different frame for this animation (max = 255)
+ *  \param loop
+ *      frame index for loop (last index if no loop)
  *  \param frames
  *      frames composing the animation
- *  \param length
- *      animation sequence length
- *  \param sequence
- *      frame sequence animation (for instance: 0-1-2-2-1-2-3-4..)
- *  \param loop
- *      frame sequence index for loop (last index if no loop)
  */
 typedef struct
 {
-    u16 numFrame;
+    u8 numFrame;
+    u8 loop;
     AnimationFrame** frames;
-    u16 length;
-    u8* sequence;
-    s16 loop;
+//    u16 length;                 // remove that and just use frames to find duplicated frame (almost time we won't have duplicated)
+//    u8* sequence;               // remove that and just use frames to find duplicated frame (almost time we won't have duplicated)
+//    s16 loop;                   // change that to **AnimationFrame (last frame for no loop)
 } Animation;
 
 /**
@@ -306,8 +304,6 @@ typedef struct
  *      current animation index (internal)
  *  \param frameInd
  *      current frame animation index (internal)
- *  \param seqInd
- *      current frame animation sequence index (internal)
  *  \param timer
  *      timer for current frame (internal)
  *  \param x
@@ -347,7 +343,7 @@ typedef struct Sprite
     FrameInfo* frameInfo;
     s16 animInd;
     s16 frameInd;
-    s16 seqInd;
+//    s16 seqInd;
     u16 timer;
     s16 x;
     s16 y;

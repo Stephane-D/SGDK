@@ -387,7 +387,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
 
     sprite->animInd = -1;
     sprite->frameInd = -1;
-    sprite->seqInd = -1;
+//    sprite->seqInd = -1;
 
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
@@ -739,7 +739,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     sprite->frameInfo = NULL;
     sprite->animInd = -1;
     sprite->frameInd = -1;
-    sprite->seqInd = -1;
+//    sprite->seqInd = -1;
 
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
@@ -1016,7 +1016,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    if ((sprite->animInd != anim) || (sprite->seqInd != frame))
+    if ((sprite->animInd != anim) || (sprite->frameInd != frame))
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (anim >= (s16) sprite->definition->numAnimation)
@@ -1029,25 +1029,22 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         Animation* animation = sprite->definition->animations[anim];
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        if (frame >= (s16) animation->length)
+        if (frame >= (s16) animation->numFrame)
         {
-            KLog_U3("SPR_setAnimAndFrame: error - trying to use non existing frame #", frame, " for animation #", anim, " - num frame = ", animation->length);
+            KLog_U3("SPR_setAnimAndFrame: error - trying to use non existing frame #", frame, " for animation #", anim, " - num frame = ", animation->numFrame);
             return;
         }
 #endif // LIB_DEBUG
 
-        const u16 frameInd = animation->sequence[frame];
-
         sprite->animInd = anim;
-        sprite->seqInd = frame;
+        sprite->frameInd = frame;
         sprite->animation = animation;
-        sprite->frameInd = frameInd;
 
         // set timer to 0 to prevent auto animation to change frame in between
         sprite->timer = 0;
 
 #ifdef SPR_DEBUG
-        KLog_U4("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame, " adj frame=", frameInd);
+        KLog_U3("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame);
 #endif // SPR_DEBUG
 
         sprite->status |= NEED_FRAME_UPDATE;
@@ -1074,20 +1071,16 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         }
 #endif // LIB_DEBUG
 
-        Animation *animation = sprite->definition->animations[anim];
-        // first frame by default
-        const u16 frameInd = animation->sequence[0];
-
         sprite->animInd = anim;
-        sprite->seqInd = 0;
-        sprite->animation = animation;
-        sprite->frameInd = frameInd;
+        // first frame by default
+        sprite->frameInd = 0;
+        sprite->animation = sprite->definition->animations[anim];
 
         // set timer to 0 to prevent auto animation to change frame in between
         sprite->timer = 0;
 
 #ifdef SPR_DEBUG
-        KLog_U3("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0 adj frame=", frameInd);
+        KLog_U2_("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0");
 #endif // SPR_DEBUG
 
         sprite->status |= NEED_FRAME_UPDATE;
@@ -1104,33 +1097,26 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
     s32 prof = getSubTick();
 #endif // SPR_PROFIL
 
-    if (sprite->seqInd != frame)
+    if (sprite->frameInd != frame)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        if (frame >= (s16) sprite->animation->length)
+        if (frame >= (s16) sprite->animation->numFrame)
         {
-            KLog_U3("SPR_setFrame: error - trying to use non existing frame #", frame, " for animation #", sprite->animInd, " - num frame = ", sprite->animation->length);
+            KLog_U3("SPR_setFrame: error - trying to use non existing frame #", frame, " for animation #", sprite->animInd, " - num frame = ", sprite->animation->numFrame);
             return;
         }
 #endif // LIB_DEBUG
 
-        const s16 frameInd = sprite->animation->sequence[frame];
+        sprite->frameInd = frame;
 
-        sprite->seqInd = frame;
-
-        if (sprite->frameInd != frameInd)
-        {
-            sprite->frameInd = frameInd;
-
-            // set timer to 0 to prevent auto animation to change frame in between
-            sprite->timer = 0;
+        // set timer to 0 to prevent auto animation to change frame in between
+        sprite->timer = 0;
 
 #ifdef SPR_DEBUG
-            KLog_U3("SPR_setFrame: #", getSpriteIndex(sprite), "  frame=", frame, " adj frame=", frameInd);
+        KLog_U2("SPR_setFrame: #", getSpriteIndex(sprite), "  frame=", frame);
 #endif // SPR_DEBUG
 
-            sprite->status |= NEED_FRAME_UPDATE;
-        }
+        sprite->status |= NEED_FRAME_UPDATE;
     }
 
 #ifdef SPR_PROFIL
@@ -1145,13 +1131,13 @@ void SPR_nextFrame(Sprite* sprite)
 #endif // SPR_PROFIL
 
     const Animation *anim = sprite->animation;
-    u16 seqInd = sprite->seqInd + 1;
+    u16 frameInd = sprite->frameInd + 1;
 
-    if (seqInd >= anim->length)
-        seqInd = anim->loop;
+    if (frameInd >= anim->numFrame)
+        frameInd = anim->loop;
 
     // set new frame
-    SPR_setFrame(sprite, seqInd);
+    SPR_setFrame(sprite, frameInd);
 
 #ifdef SPR_PROFIL
     profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
@@ -1636,7 +1622,7 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
 
     sprite->VDPSpriteIndex = ind;
 
-    // we don't need to hide sprite by default anymore as we take of it with 'lastNumSprite' field
+    // we don't need to hide sprite by default anymore as we take care of it with 'lastNumSprite' field
 //    // hide all sprites by default and get last sprite
 //    vdpSprite = &vdpSpriteCache[ind];
 //    vdpSprite->y = 0;
@@ -2259,7 +2245,7 @@ static u16 getSpriteIndex(Sprite* sprite)
 static void logSprite(Sprite* sprite)
 {
     KLog_U2("Sprite #", getSpriteIndex(sprite), " ------------- status=", sprite->status);
-    KLog_U3("animInd=", sprite->animInd, " seqInd=", sprite->seqInd, " frameInd=", sprite->frameInd);
+    KLog_U2("animInd=", sprite->animInd, " frameInd=", sprite->frameInd);
     KLog_S4("attribut=", sprite->attribut, " x=", sprite->x, " y=", sprite->y, " depth=", sprite->depth);
     KLog_U2("visibility=", sprite->visibility, " timer=", sprite->timer);
     KLog_U2("VDPSpriteInd=", sprite->VDPSpriteIndex, " link=", sprite->lastVDPSprite->link);
