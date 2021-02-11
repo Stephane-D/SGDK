@@ -75,7 +75,7 @@ public class SpriteProcessor implements Processor
             return null;
         }
 
-        // frame size over limit (we need VDP sprite offset to fit into s8 type)
+        // frame size over limit (we need VDP sprite offset to fit into u8 type)
         if ((wf > 32) || (hf > 32))
         {
             System.out.println("Wrong SPRITE definition");
