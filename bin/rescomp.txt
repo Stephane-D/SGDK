@@ -1,4 +1,4 @@
-ResComp 3.15 (february 2021)
+ResComp 3.16 (february 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -100,6 +100,13 @@ MAP name img_file tileset_id [compression [mapbase]]
     mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                     Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
 
+Tips:
+You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
+that all pixel from a same tile (block of 8x8 pixels) use the same value other rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
+    bit 6: should be 0 (not used)
+    bit 7: priority information (0=LOW 1=HIGH)
+
 
 IMAGE
 -----
@@ -124,6 +131,13 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
     mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                     Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
+Tips:
+You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
+that all pixel from a same tile (block of 8x8 pixels) use the same value other rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
+    bit 6: should be 0 (not used)
+    bit 7: priority information (0=LOW 1=HIGH)
+
 
 SPRITE
 ------
@@ -135,8 +149,8 @@ SPRITE name img_file width heigth [compression [time [collision [opt [iteration]
 
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (should be indexed colors image in .bmp or .png format)
-    width           width of a single sprite frame in tile (should be <= 32)
-    heigth          heigth of a single sprite frame in tile (should be <= 32)
+    width           width of a single sprite frame in tile (should be < 32)
+    heigth          heigth of a single sprite frame in tile (should be < 32)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
@@ -156,7 +170,7 @@ Some informations about how SpriteDefinition is generated from the input image:
 - input image dimension should be aligned on tile (multiple of 8).
 - input image is a grid where each cell represents a single animation frame and where each row define a complete sprite animation.
 - an animation cannot contains more than 255 frames.
-- cell size (frame size) = width * height (in tile) where width and height should be <= 32 (maximum = 256 pixels for both width and height).
+- cell size (frame size) = width * height (in tile) where width and height should be < 32 (maximum = 248 pixels for both width and height).
 - a frame can be composed of several internal VDP (hardware) sprites but it stricly limited to a maximum of 16 hardware sprites.
   If the sprite is too large to fit in 16 hardware sprites (rescomp will complain about it), then you may reduce its size or split it in 2 parts.
 - rescomp detects flipped frame to avoid redundant sprite tiles.
