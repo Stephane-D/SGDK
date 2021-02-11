@@ -36,9 +36,9 @@ public class Sprite extends Resource
         animations = new ArrayList<>();
 
         // frame size over limit (we need VDP sprite offset to fit into u8 type)
-        if ((wf > 32) || (hf > 32))
+        if ((wf >= 32) || (hf >= 32))
             throw new IllegalArgumentException(
-                    "SPRITE '" + id + "' has frame width or frame height > 32 (not supported)");
+                    "SPRITE '" + id + "' has frame width or frame height >= 32 (not supported)");
 
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);

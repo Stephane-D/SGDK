@@ -76,11 +76,11 @@ public class SpriteProcessor implements Processor
         }
 
         // frame size over limit (we need VDP sprite offset to fit into u8 type)
-        if ((wf > 32) || (hf > 32))
+        if ((wf >= 32) || (hf >= 32))
         {
             System.out.println("Wrong SPRITE definition");
             System.out.println("SPRITE name \"file\" width heigth [packed [time [collid]]]");
-            System.out.println("  width and height (size of sprite frame) should be <= 32");
+            System.out.println("  width and height (size of sprite frame) should be < 32");
 
             return null;
         }
