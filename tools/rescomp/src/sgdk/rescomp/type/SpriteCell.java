@@ -239,8 +239,8 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         {
             default:
             case BALANCED:
-                return (numTile / 20d) + (1d / 10d);
-
+                return (numTile / 25d) + (1d / 10d);
+                
             case MIN_SPRITE:
                 return (numTile / 50d) + (1d / 5d);
 
@@ -368,5 +368,28 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         bounds.setBounds(bounds.x, bounds.y, ((bounds.width + 7) / 8) * 8, ((bounds.height + 7) / 8) * 8);
 
         return new SpriteCell(bounds, part.opt);
+    }
+
+    /**
+     * Fix cell position (cannot be negative)
+     */
+    public static SpriteCell fixPosition(Dimension imageDim, SpriteCell spr)
+    {
+        Rectangle region = new Rectangle(spr);
+
+        // fix on right
+        if (region.getMaxX() > imageDim.getWidth())
+            region.x -= region.getMaxX() - imageDim.getWidth();
+        // fix on bottom
+        if (region.getMaxY() > imageDim.getHeight())
+            region.y -= region.getMaxY() - imageDim.getHeight();
+        // fix on left
+        if (region.x < 0)
+            region.x = 0;
+        // fix on top
+        if (region.y < 0)
+            region.y = 0;
+
+        return new SpriteCell(region, spr.opt);
     }
 }
