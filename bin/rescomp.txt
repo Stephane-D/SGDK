@@ -1,4 +1,4 @@
-ResComp 3.1 (november 2020)
+ResComp 3.15 (february 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -135,8 +135,8 @@ SPRITE name img_file width heigth [compression [time [collision [opt [iteration]
 
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (should be indexed colors image in .bmp or .png format)
-    width           width of a single sprite frame in tile (width * heigth <= 256)
-    heigth          heigth of a single sprite frame in tile (width * heigth <= 256)
+    width           width of a single sprite frame in tile (should be <= 32)
+    heigth          heigth of a single sprite frame in tile (should be <= 32)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
@@ -153,11 +153,12 @@ SPRITE name img_file width heigth [compression [time [collision [opt [iteration]
     iteration       number of iteration for sprite cutting optimization (default = 500000)
 
 Some informations about how SpriteDefinition is generated from the input image:
-- input image dimension is aligned on tile (multiple of 8).
-- input image is a grid where each cell represents a single sprite frame and where a row define a complete sprite animation.
-- cell size (frame size) = width * height (in tile) where width and height should be <= 16 (maximum = 128 pixels for both width and height)
-- a frame can be composed of several internal VDP sprites but it stricly limited to a maximum of 16 sprites.
-  If the sprite is too large to fit in 16 hardware sprites (rescomp will complain about it), then you may reduce its size or split it in 2.
+- input image dimension should be aligned on tile (multiple of 8).
+- input image is a grid where each cell represents a single animation frame and where each row define a complete sprite animation.
+- an animation cannot contains more than 255 frames.
+- cell size (frame size) = width * height (in tile) where width and height should be <= 32 (maximum = 256 pixels for both width and height).
+- a frame can be composed of several internal VDP (hardware) sprites but it stricly limited to a maximum of 16 hardware sprites.
+  If the sprite is too large to fit in 16 hardware sprites (rescomp will complain about it), then you may reduce its size or split it in 2 parts.
 - rescomp detects flipped frame to avoid redundant sprite tiles.
 - rescomp detects empty frame at end of animation row to not store empty frame data.
 - rescomp try to optimize hardware sprites and vRAM usage by detecting empty areas in sprite frames.
