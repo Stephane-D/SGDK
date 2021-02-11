@@ -45,6 +45,8 @@ public class SpriteCutter
                 final Solution solution = spriteCutter.getSolution(grid, optimizationType);
                 // fast optimization
                 solution.fastOptimize();
+                // fix positions
+                solution.fixPos();
 
                 // add the solution
                 if (!solution.cells.isEmpty())
@@ -87,14 +89,14 @@ public class SpriteCutter
 
         // sort on score
         Collections.sort(solutions);
-        
+
         List<SpriteCell> result = null;
 
-        for(int s = 0; s < solutions.size(); s++)
+        for (int s = 0; s < solutions.size(); s++)
         {
             // get cells
             final List<SpriteCell> currentCells = solutions.get(s).cells;
-            
+
             // is it valid (16 sprites max) ? --> return it directly
             if (currentCells.size() <= 16)
                 return currentCells;
@@ -103,7 +105,7 @@ public class SpriteCutter
             if ((result == null) || (currentCells.size() < result.size()))
                 result = currentCells;
         }
-        
+
         return result;
     }
 
@@ -484,6 +486,16 @@ public class SpriteCutter
                 conv += score - newScore;
             }
             while ((newScore != score) && (Math.abs(conv) > 0.0005d));
+        }
+
+        public void fixPos()
+        {
+            final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
+
+            // rebuild solution while fixing cell position (no negative position)
+            reset();
+            for (SpriteCell cell : cellsCopy)
+                addCell(SpriteCell.fixPosition(dim, cell));
         }
 
         public void fastOptimize()
@@ -1037,7 +1049,7 @@ public class SpriteCutter
      * The method returns immediately, you should retrieve the result using
      * {@link #getOptimizedSolution()}
      * 
-     * @param solution
+     * @param solutions
      *        input solution< to optimize (should be valid)
      * @param numIteration
      *        Number of iteration for the genetic algorithm (0 = no limit, about 100000 it/s on core
@@ -1099,6 +1111,8 @@ public class SpriteCutter
 
         // get best solution from optimizer
         final Solution result = optimizer.getBestSolution();
+        // fix positions
+        result.fixPos();
         // done
         optimizer = null;
 
