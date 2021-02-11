@@ -20,9 +20,12 @@ public class VDPSprite extends Resource
     {
         super(id);
 
-        if ((offX < -128) || (offX > 127) || (offY < -128) || (offY > 127))
+        if ((offX < 0) || (offX > 255) || (offY < 0) || (offY > 255))
             throw new IllegalArgumentException(
-                    "Error: sprite '" + id + "' offset X / Y is out of range (< -128 or > 127)");
+                    "Error: sprite '" + id + "' offset X / Y is out of range (< 0 or > 255)");
+        // if ((offX < -128) || (offX > 127) || (offY < -128) || (offY > 127))
+        // throw new IllegalArgumentException(
+        // "Error: sprite '" + id + "' offset X / Y is out of range (< -128 or > 127)");
 
         this.offsetX = offX;
         this.offsetY = offY;
