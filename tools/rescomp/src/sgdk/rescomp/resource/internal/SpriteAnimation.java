@@ -3,8 +3,9 @@ package sgdk.rescomp.resource.internal;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -15,7 +16,7 @@ import sgdk.rescomp.type.SpriteCell.OptimizationType;
 public class SpriteAnimation extends Resource
 {
     public final List<SpriteFrame> frames;
-    public final byte[] sequence;
+    public final Set<SpriteFrame> frameSet;
     public int loopIndex;
 
     final int hc;
@@ -37,12 +38,12 @@ public class SpriteAnimation extends Resource
 
         // init
         frames = new ArrayList<>();
+        frameSet = new HashSet<>();
         // default loop index
         loopIndex = 0;
 
         // get max number of frame
         final int numFrame = w / wf;
-        final List<Integer> sequenceList = new ArrayList<>();
 
         for (int i = 0; i < numFrame; i++)
         {
@@ -54,30 +55,18 @@ public class SpriteAnimation extends Resource
             {
                 // add as internal resource (get duplicate if exist)
                 frame = (SpriteFrame) addInternalResource(frame);
-
-                // search if this frame already exist in the animation
-                final int ind = frames.indexOf(frame);
-
-                // not found --> just add the frame
-                if (ind == -1)
-                {
-                    // add frame index to sequence
-                    sequenceList.add(Integer.valueOf(frames.size()));
-                    // add frame
-                    frames.add(frame);
-                }
-                else
-                    // just add frame index to sequence
-                    sequenceList.add(Integer.valueOf(ind));
+                // add frame
+                frames.add(frame);
+                frameSet.add(frame);
             }
         }
 
-        sequence = new byte[sequenceList.size()];
-        for (int s = 0; s < sequence.length; s++)
-            sequence[s] = sequenceList.get(s).byteValue();
+        if (frames.size() > 255)
+            throw new IllegalArgumentException(
+                    "Sprite animation '" + id + "' has " + frames.size() + " frames (max = 255)");
 
         // compute hash code
-        hc = loopIndex ^ Arrays.hashCode(sequence) ^ frames.hashCode();
+        hc = loopIndex ^ frames.hashCode();
     }
 
     public boolean isEmpty()
@@ -87,7 +76,7 @@ public class SpriteAnimation extends Resource
 
     public int getNumFrame()
     {
-        return sequence.length;
+        return frames.size();
     }
 
     public int getMaxNumTile()
@@ -122,8 +111,7 @@ public class SpriteAnimation extends Resource
         if (obj instanceof SpriteAnimation)
         {
             final SpriteAnimation spriteAnim = (SpriteAnimation) obj;
-            return (loopIndex == spriteAnim.loopIndex) && Arrays.equals(sequence, spriteAnim.sequence)
-                    && frames.equals(spriteAnim.frames);
+            return (loopIndex == spriteAnim.loopIndex) && frames.equals(spriteAnim.frames);
         }
 
         return false;
@@ -139,17 +127,17 @@ public class SpriteAnimation extends Resource
     @Override
     public int shallowSize()
     {
-        return (frames.size() * 4) + sequence.length + (sequence.length & 1);
+        return (frames.size() * 4) + 1 + 1 + 4;
     }
 
     @Override
     public int totalSize()
     {
         int result = 0;
-        
-        for (SpriteFrame frame : frames)
+
+        for (SpriteFrame frame : frameSet)
             result += frame.totalSize();
-        
+
         return result + shallowSize();
     }
 
@@ -166,25 +154,12 @@ public class SpriteAnimation extends Resource
 
         outS.append("\n");
 
-        // sequence data
-        Util.decl(outS, outH, null, id + "_sequence", 2, false);
-        // output sequence data
-        Util.outS(outS, sequence, 1);
-
-        outS.append("\n");
-
         // Animation structure
         Util.decl(outS, outH, "Animation", id, 2, global);
-        // set number of frame
-        outS.append("    dc.w    " + frames.size() + "\n");
+        // set number of frame and loop info
+        outS.append("    dc.w    " + ((frames.size() << 8) | ((loopIndex << 0) & 0xFF)) + "\n");
         // set frames pointer
         outS.append("    dc.l    " + id + "_frames\n");
-        // set size of sequence
-        outS.append("    dc.w    " + sequence.length + "\n");
-        // set sequence pointer
-        outS.append("    dc.l    " + id + "_sequence\n");
-        // loop info
-        outS.append("    dc.w    " + loopIndex + "\n");
 
         outS.append("\n");
     }
