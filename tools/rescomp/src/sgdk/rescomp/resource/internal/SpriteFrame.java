@@ -60,12 +60,18 @@ public class SpriteFrame extends Resource
         // get optimized sprite list from the image frame
         List<SpriteCell> sprites;
 
-        // always start with the fast optimization first
-        sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(), opt);
-
-        // too many sprites used for this sprite ? prefer better (but slower) sprite optimization
-        if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
+        // not default value ? --> force slow optimzation
+        if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
             sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration, opt);
+        else
+        {
+            // always start with the fast optimization first
+            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(), opt);
+
+            // too many sprites used for this sprite ? prefer better (but slower) sprite optimization
+            if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration, opt);
+        }
 
         // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of sprite)
         if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
