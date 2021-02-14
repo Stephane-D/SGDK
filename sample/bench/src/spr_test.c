@@ -625,14 +625,16 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
 {
     u32 startTime;
     u32 endTime;
-    u16 score;
+    u32 freeCpuTime;
+    u16 cpuLoad;
 
     startTime = getTime(TRUE);
     endTime = startTime + (time << 8);
-    score = 0;
+    freeCpuTime = 0;
 
     do
     {
+
         updatePartic(numPartic, preloadedTiles, realloc);
         // update sprites
         SPR_update();
@@ -640,11 +642,14 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
         VDP_showFPS(FALSE);
         VDP_showCPULoad();
         SYS_doVBlankProcess();
+        cpuLoad = SYS_getCPULoad();
 
-        score++;
+        if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
+        else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
+        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
     } while(getTime(TRUE) < endTime);
 
-    return score;
+    return freeCpuTime >> 6;
 }
 
 static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
@@ -734,13 +739,16 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
 {
     u32 startTime;
     u32 endTime;
-    u16 score;
+    u32 freeCpuTime;
+    u16 cpuLoad;
+    u16 frame;
     u16 num;
     u16 t;
 
     startTime = getTime(TRUE);
     endTime = startTime + (time << 8);
-    score = 0;
+    freeCpuTime = 0;
+    frame = 0;
     num = 0;
     t = 0;
 
@@ -749,7 +757,7 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         // disable ints
         SYS_disableInts();
 
-        if (!(score & 0x7))
+        if (!(frame & 0x7))
         {
             // sprite limit not yet raised
             if (num < 56)
@@ -781,18 +789,21 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         // update sprites
         SPR_update();
 
-        SYS_disableInts();
         VDP_showFPS(FALSE);
         VDP_showCPULoad();
-        SYS_enableInts();
 
         SYS_doVBlankProcess();
+        cpuLoad = SYS_getCPULoad();
 
-        score++;
+        if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
+        else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
+        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
+
         t -= 4;
+        frame++;
     } while(getTime(TRUE) < endTime);
 
-    return score;
+    return freeCpuTime >> 6;
 }
 
 static void initPos(u16 num)
@@ -886,11 +897,12 @@ static u16 execute(u16 time, u16 numSpr)
 {
     u32 startTime;
     u32 endTime;
-    u16 score;
+    u32 freeCpuTime;
+    u16 cpuLoad;
 
     startTime = getTime(TRUE);
     endTime = startTime + (time << 8);
-    score = 0;
+    freeCpuTime = 0;
 
     do
     {
@@ -904,11 +916,15 @@ static u16 execute(u16 time, u16 numSpr)
         VDP_showFPS(FALSE);
         VDP_showCPULoad();
         SYS_doVBlankProcess();
+        cpuLoad = SYS_getCPULoad();
 
-        score++;
+        if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
+        else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
+        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
+
     } while(getTime(TRUE) < endTime);
 
-    return score;
+    return freeCpuTime >> 6;
 }
 
 

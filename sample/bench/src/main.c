@@ -3,7 +3,7 @@
 #include "gfx.h"
 
 
-#define SGDK_BENCHMARK      "SGDK benchmark v1.31"
+#define SGDK_BENCHMARK      "SGDK benchmark v1.4"
 
 #define MAX_TEST            9
 #define MAX_SUBTEST         16
