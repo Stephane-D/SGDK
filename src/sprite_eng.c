@@ -20,6 +20,14 @@
 //#define SPR_DEBUG
 //#define SPR_PROFIL
 
+#ifdef SPR_PROFIL
+    #define START_PROFIL      s32 prof = getSubTick();
+    #define END_PROFIL(x)     profil_time[x] += getSubTick() - prof;
+#else
+    #define START_PROFIL
+    #define END_PROFIL(x)
+#endif // SPR_PROFIL
+
 // first hardware sprite is reserved (used internally for sorting)
 #define MAX_SPRITE                          (80 - 1)
 
@@ -277,9 +285,7 @@ static Sprite* allocateSprite(u16 head)
 
 static bool releaseSprite(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     // really allocated ?
     if (sprite->status & ALLOCATED)
@@ -327,9 +333,7 @@ static bool releaseSprite(Sprite* sprite)
         // not anymore allocated
         sprite->status &= ~ALLOCATED;
 
-#ifdef SPR_PROFIL
-        profil_time[PROFIL_RELEASE_SPRITE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+        END_PROFIL(PROFIL_RELEASE_SPRITE)
 
         return TRUE;
     }
@@ -338,18 +342,14 @@ static bool releaseSprite(Sprite* sprite)
     KLog_U1_("SPR_internalReleaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
 #endif // LIB_DEBUG
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_RELEASE_SPRITE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_RELEASE_SPRITE)
 
     return FALSE;
 }
 
 Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     s16 ind;
     Sprite* sprite;
@@ -452,9 +452,7 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     // set anim and frame to 0 (important to do it after sprite->attribut has been set)
     SPR_setAnimAndFrame(sprite, 0, 0);
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_ADD_SPRITE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_ADD_SPRITE)
 
     return sprite;
 }
@@ -499,9 +497,7 @@ Sprite* SPR_addSpriteSafe(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 a
 
 void SPR_releaseSprite(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
 #ifdef SPR_DEBUG
     KLog_U2("SPR_releaseSprite: releasing sprite #", getSpriteIndex(sprite), " - internal position = ", sprite - spritesBank);
@@ -510,9 +506,7 @@ void SPR_releaseSprite(Sprite* sprite)
     // release sprite
     if (!releaseSprite(sprite))
     {
-#ifdef SPR_PROFIL
-        profil_time[PROFIL_REMOVE_SPRITE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+        END_PROFIL(PROFIL_REMOVE_SPRITE)
 
         return;
     }
@@ -538,9 +532,7 @@ void SPR_releaseSprite(Sprite* sprite)
 #endif // SPR_DEBUG
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_REMOVE_SPRITE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_REMOVE_SPRITE)
 }
 
 u16 SPR_getNumActiveSprite()
@@ -550,9 +542,7 @@ u16 SPR_getNumActiveSprite()
 
 void SPR_defragVRAM()
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     Sprite* sprite;
 
@@ -592,9 +582,7 @@ void SPR_defragVRAM()
         sprite = sprite->next;
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_VRAM_DEFRAG] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_VRAM_DEFRAG)
 }
 
 u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
@@ -665,9 +653,7 @@ u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNum
 
 bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
 #ifdef SPR_DEBUG
     KLog_U1("SPR_setDefinition: #", getSpriteIndex(sprite));
@@ -743,9 +729,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     // set anim and frame to 0
     SPR_setAnimAndFrame(sprite, 0, 0);
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_DEF] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_DEF)
 
     return TRUE;
 }
@@ -762,9 +746,7 @@ s16 SPR_getPositionY(Sprite* sprite)
 
 void SPR_setPosition(Sprite* sprite, s16 x, s16 y)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     const s16 newx = x + 0x80;
     const s16 newy = y + 0x80;
@@ -787,16 +769,12 @@ void SPR_setPosition(Sprite* sprite, s16 x, s16 y)
         sprite->status = status | NEED_ST_POS_UPDATE;
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
 void SPR_setHFlip(Sprite* sprite, u16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     u16 attr = sprite->attribut;
 
@@ -849,16 +827,12 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
         }
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
 void SPR_setVFlip(Sprite* sprite, u16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     u16 attr = sprite->attribut;
 
@@ -911,17 +885,12 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
         }
     }
 
-
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
 void SPR_setPriorityAttribut(Sprite* sprite, u16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     const u16 oldAttribut = sprite->attribut;
 
@@ -952,16 +921,12 @@ void SPR_setPriorityAttribut(Sprite* sprite, u16 value)
         }
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
 void SPR_setPalette(Sprite* sprite, u16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     const u16 oldAttribut = sprite->attribut;
     const u16 newAttribut = (oldAttribut & (~TILE_ATTR_PALETTE_MASK)) | (value << TILE_ATTR_PALETTE_SFT);
@@ -977,16 +942,12 @@ void SPR_setPalette(Sprite* sprite, u16 value)
 #endif // SPR_DEBUG
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
 void SPR_setDepth(Sprite* sprite, s16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
 #ifdef SPR_DEBUG
     KLog_U2("SPR_setDepth: #", getSpriteIndex(sprite), "  Depth=", value);
@@ -1000,9 +961,7 @@ void SPR_setDepth(Sprite* sprite, s16 value)
         sortSprite(sprite);
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ATTRIBUTE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
 void SPR_setZ(Sprite* sprite, s16 value)
@@ -1017,9 +976,7 @@ void SPR_setAlwaysOnTop(Sprite* sprite, u16 value)
 
 void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     if ((sprite->animInd != anim) || (sprite->frameInd != frame))
     {
@@ -1055,16 +1012,12 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         sprite->status |= NEED_FRAME_UPDATE;
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
 
 void SPR_setAnim(Sprite* sprite, s16 anim)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     if (sprite->animInd != anim)
     {
@@ -1091,16 +1044,12 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         sprite->status |= NEED_FRAME_UPDATE;
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
 
 void SPR_setFrame(Sprite* sprite, s16 frame)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     if (sprite->frameInd != frame)
     {
@@ -1124,16 +1073,12 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
         sprite->status |= NEED_FRAME_UPDATE;
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
 
 void SPR_nextFrame(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     const Animation *anim = sprite->animation;
     u16 frameInd = sprite->frameInd + 1;
@@ -1144,16 +1089,12 @@ void SPR_nextFrame(Sprite* sprite)
     // set new frame
     SPR_setFrame(sprite, frameInd);
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_ANIM_FRAME] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
 
 bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     s16 newInd;
     u16 status = sprite->status;
@@ -1179,9 +1120,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
         // nothing to do --> just return TRUE
         else
         {
-#ifdef SPR_PROFIL
-            profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+            END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
 
             return TRUE;
         }
@@ -1207,9 +1146,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
                 // save status and return FALSE
                 sprite->status = status;
 
-#ifdef SPR_PROFIL
-                profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+                END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
 
                 return FALSE;
             }
@@ -1232,18 +1169,14 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
     // save status
     sprite->status = status;
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
 
     return TRUE;
 }
 
 bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     s16 newInd;
     u16 status = sprite->status;
@@ -1269,9 +1202,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
         // nothing to do --> return TRUE
         else
         {
-#ifdef SPR_PROFIL
-            profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+            END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
 
             return TRUE;
         }
@@ -1297,9 +1228,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
                 // save status and return FALSE
                 sprite->status = status;
 
-#ifdef SPR_PROFIL
-                profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+                END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
 
                 return FALSE;
             }
@@ -1320,9 +1249,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
     // save status
     sprite->status = status;
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_VRAM_OR_SPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
 
     return TRUE;
 }
@@ -1346,9 +1273,7 @@ void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback)
 
 void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     u16 status = sprite->status;
 
@@ -1407,9 +1332,7 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
     // update status
     sprite->status = status;
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SET_VISIBILITY] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SET_VISIBILITY)
 }
 
 void SPR_setAlwaysVisible(Sprite* sprite, u16 value)
@@ -1442,9 +1365,7 @@ bool SPR_computeVisibility(Sprite* sprite)
 
 void SPR_clear()
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     // save starter link
     u8 linkSave = starter->link;
@@ -1455,16 +1376,12 @@ void SPR_clear()
     // restore starter link
     starter->link = linkSave;
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_CLEAR] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_CLEAR)
 }
 
 void SPR_update()
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     Sprite* sprite;
 
@@ -1572,9 +1489,7 @@ void SPR_update()
     // VDP sprite cache is now updated, copy it to the temporary cache copy we got from DMA queue buffer
     memcpy(vdpSpriteTableCopy, vdpSpriteCache, sizeof(VDPSprite) * sprNum);
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE)
 }
 
 
@@ -1613,9 +1528,7 @@ void SPR_logSprites()
 
 static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     Sprite* spr;
     VDPSprite* vdpSprite;
@@ -1664,16 +1577,12 @@ static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num)
     KLog_U1("  last VDP sprite = ", sprite->lastVDPSprite - vdpSpriteCache);
 #endif // SPR_DEBUG
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_VDPSPRIND] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_VDPSPRIND)
 }
 
 static u16 updateVisibility(Sprite* sprite, u16 status)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     u16 visibility;
     AnimationFrame* frame = sprite->frame;
@@ -1840,9 +1749,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
     KLog_U3("    Sprite at [", sprite->x - 0x80, ",", sprite->y - 0x80, "] visibility = ", visibility);
 #endif // SPR_DEBUG
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_VISIBILITY] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_VISIBILITY)
 
     // set the new computed visibility
     status |= setVisibility(sprite, visibility);
@@ -1868,9 +1775,7 @@ static u16 setVisibility(Sprite* sprite, u16 newVisibility)
 
 static u16 updateFrame(Sprite* sprite, u16 status)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
 #ifdef SPR_DEBUG
     KLog_U1("  updateFrame: sprite #", getSpriteIndex(sprite));
@@ -1934,9 +1839,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     // frame update done
     status &= ~NEED_FRAME_UPDATE;
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_FRAME] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_FRAME)
 
     // need to update all sprite table
     return status | NEED_ST_ALL_UPDATE;
@@ -1944,9 +1847,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
 
 static void updateSpriteTableAll(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     AnimationFrame* frame;
     FrameVDPSprite* frameSprite;
@@ -2055,17 +1956,12 @@ static void updateSpriteTableAll(Sprite* sprite)
     }
 #endif // SPR_DEBUG
 
-
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_SPRITE_TABLE)
 }
 
 static void updateSpriteTablePos(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     AnimationFrame* frame;
     FrameVDPSprite* frameSprite;
@@ -2168,16 +2064,12 @@ static void updateSpriteTablePos(Sprite* sprite)
     }
 #endif // SPR_DEBUG
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_SPRITE_TABLE)
 }
 
 static void updateSpriteTableHide(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     VDPSprite* vdpSprite;
     u16 num;
@@ -2203,16 +2095,12 @@ static void updateSpriteTableHide(Sprite* sprite)
         sprite->spriteToHide = 0;
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_SPRITE_TABLE)
 }
 
 static void updateSpriteTableAttr(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     AnimationFrame* frame;
     FrameVDPSprite* frameSprite;
@@ -2255,16 +2143,12 @@ static void updateSpriteTableAttr(Sprite* sprite)
     }
 #endif // SPR_DEBUG
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_UPDATE_SPRITE_TABLE] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_UPDATE_SPRITE_TABLE)
 }
 
 static void loadTiles(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     TileSet* tileset = sprite->frame->tileset;
     u16 compression = tileset->compression;
@@ -2307,16 +2191,12 @@ static void loadTiles(Sprite* sprite)
 #endif // SPR_DEBUG
     }
 
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_LOADTILES] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_LOADTILES)
 }
 
 static Sprite* sortSprite(Sprite* sprite)
 {
-#ifdef SPR_PROFIL
-    s32 prof = getSubTick();
-#endif // SPR_PROFIL
+    START_PROFIL
 
     Sprite* const prev = sprite->prev;
     Sprite* const next = sprite->next;
@@ -2348,10 +2228,7 @@ static Sprite* sortSprite(Sprite* sprite)
     else KLog_U1("Position for sprite = ", 0);
 #endif // SPR_DEBUG
 
-
-#ifdef SPR_PROFIL
-    profil_time[PROFIL_SORT] += getSubTick() - prof;
-#endif // SPR_PROFIL
+    END_PROFIL(PROFIL_SORT)
 
     // return prev just for convenience on full sorting
     return prev;
