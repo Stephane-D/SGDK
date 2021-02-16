@@ -94,6 +94,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores++ = executePartic(15, 40, FALSE, TRUE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -132,6 +133,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores++ = executePartic(15, 40, FALSE, FALSE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -184,6 +186,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores = executePartic(15, 40, TRUE, FALSE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -224,6 +227,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores = executePartic(15, 79, FALSE, FALSE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -276,6 +280,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores = executePartic(15, 79, TRUE, FALSE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -316,6 +321,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores = executePartic(15, 40, FALSE, FALSE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -368,7 +374,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores = executePartic(15, 40, TRUE, FALSE);
     globalScore += *scores++;
-
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -389,6 +395,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute donut bench
     *scores = executeDonut(20, FALSE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -420,6 +427,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute particle bench
     *scores = executeDonut(20, TRUE);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     // reset sprite engine (release all allocated resources)
@@ -453,6 +461,7 @@ u16 executeSpritesTest(u16 *scores)
     SPR_setVisibility(andorSprite, AUTO_SLOW);
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     sprites[0] = guySprite;
     sprites[1] = codySprite;
@@ -485,6 +494,7 @@ u16 executeSpritesTest(u16 *scores)
     // execute sprite bench
     *scores = execute(50, 4);
     globalScore += *scores++;
+    SPR_logProfil();
 
     SYS_disableInts();
     SPR_reset();
@@ -865,6 +875,8 @@ static void updatePos(u16 num)
 
         // set sprite position
         SPR_setPosition(s, fix16ToInt(o->pos.x), fix16ToInt(o->pos.y));
+        // set sprite depth
+        SPR_setDepth(s, (300 - fix16ToInt(o->pos.y)) >> 4);
 
         sprite++;
     }
