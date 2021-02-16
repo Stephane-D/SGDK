@@ -199,45 +199,32 @@ typedef struct
 
 /**
  *  \brief
- *      Frame information structure (used to store frame info for base, H-Flip, V-Flip and HV-Flip version of animation frame)
- *
- *  \param frameSprites
- *      pointer to an array of VDP sprites info composing the frame
- *  \param collision
- *      collision structure
- */
-typedef struct
-{
-    FrameVDPSprite** frameVDPSprites;       // TODO: optimize that using static array (FrameVDPSprite[])
-    Collision* collision;
-} FrameInfo;
-
-/**
- *  \brief
  *      Sprite animation frame structure.
  *
- *  \param numSprite
- *      number of VDP sprite which compose this frame
  *  \param w
  *      frame width in pixel
  *  \param h
  *      frame height in pixel
+ *  \param numSprite
+ *      number of VDP sprite which compose this frame
  *  \param timer
  *      active time for this frame (in 1/60 of second)
- *  \param frameInfos
- *      frame information for [base, hflip, vflip, hvflip] version of the sprite
  *  \param tileset
  *      tileset containing tiles for this animation frame (ordered for sprite)
+ *  \param collision
+ *      collision structure
+ *  \param frameSprites
+ *      array of VDP sprites info composing the frame
  */
 typedef struct
 {
-    u8 numSprite;               // we use u8 to not waste ROM space
     u8 w;
     u8 h;
+    u8 numSprite;
     u8 timer;
-    FrameInfo frameInfos[4];    // TODO: it would be nice to optimize that, maybe compute it on runtime
-    TileSet* tileset;           // TODO: have a tileset per VDP sprite --> probably not a good idea performance wise
-                                // Require many DMA queue operations and fast DMA flush as well, also bring extra computing in calculating delayed update
+    TileSet* tileset;                   // TODO: have a tileset per VDP sprite --> probably not a good idea performance wise
+    Collision* collision;               // Require many DMA queue operations and fast DMA flush as well, also bring extra computing in calculating delayed update
+    FrameVDPSprite frameVDPSprites[];
 } AnimationFrame;
 
 /**
@@ -256,9 +243,6 @@ typedef struct
     u8 numFrame;
     u8 loop;
     AnimationFrame** frames;
-//    u16 length;                 // remove that and just use frames to find duplicated frame (almost time we won't have duplicated)
-//    u8* sequence;               // remove that and just use frames to find duplicated frame (almost time we won't have duplicated)
-//    s16 loop;                   // change that to **AnimationFrame (last frame for no loop)
 } Animation;
 
 /**
@@ -323,6 +307,8 @@ typedef struct
  *      the number of VDP sprite used by the current frame (internal)
  *  \param lastVDPSprite
  *      Pointer to last VDP sprite used by this Sprite (used internally to update link between sprite)
+ *  \param spriteToHide
+ *      internal
  *  \param data
  *      this is a free field for user data, use it for whatever you want (flags, pointer...)
  *  \param prev
@@ -340,10 +326,8 @@ typedef struct Sprite
     void (*onFrameChange)(struct Sprite* sprite);
     Animation* animation;
     AnimationFrame* frame;
-    FrameInfo* frameInfo;
     s16 animInd;
     s16 frameInd;
-//    s16 seqInd;
     u16 timer;
     s16 x;
     s16 y;
@@ -638,6 +622,16 @@ u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNum
  *  \return FALSE if auto resource allocation failed, TRUE otherwise.
  */
 bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef);
+/**
+ *  \brief
+ *      Get sprite position X.
+ */
+s16 SPR_getPositionX(Sprite* sprite);
+/**
+ *  \brief
+ *      Get sprite position Y.
+ */
+s16 SPR_getPositionY(Sprite* sprite);
 /**
  *  \brief
  *      Set sprite position.
