@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
@@ -22,10 +23,8 @@ public class SpriteFrame extends Resource
 {
     public static final int DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION = 500000;
 
-    public final SpriteFrameInfo frameInfo;
-    public final SpriteFrameInfo frameInfoH;
-    public final SpriteFrameInfo frameInfoV;
-    public final SpriteFrameInfo frameInfoHV;
+    public final List<VDPSprite> vdpSprites;
+    public final Collision collision;
     public final Tileset tileset;
     public final int w; // width of frame in tile
     public final int h; // height of frame in tile
@@ -48,6 +47,7 @@ public class SpriteFrame extends Resource
     {
         super(id);
 
+        vdpSprites = new ArrayList<>();
         this.w = wf;
         this.h = hf;
         this.timer = timer;
@@ -87,11 +87,8 @@ public class SpriteFrame extends Resource
         if (sprites.isEmpty())
         {
             // we can exit now, frame will be discarded anyway
+            collision = null;
             tileset = null;
-            frameInfo = null;
-            frameInfoH = null;
-            frameInfoV = null;
-            frameInfoHV = null;
             hc = 0;
 
             return;
@@ -109,11 +106,11 @@ public class SpriteFrame extends Resource
         tileset = (Tileset) addInternalResource(
                 new Tileset(id + "_tileset", frameImage, wf * 8, hf * 8, sprites, compression));
 
-        final Collision collision;
+        final Collision coll;
 
         // define collision
         if (collisionType == CollisionType.NONE)
-            collision = null;
+            coll = null;
         else
         {
             CollisionBase c = null;
@@ -133,25 +130,26 @@ public class SpriteFrame extends Resource
                     break;
             }
 
-            collision = new Collision(id + "collision", c);
+            coll = new Collision(id + "_collision", c);
         }
 
-        // build frameInfo structures
-        frameInfo = (SpriteFrameInfo) addInternalResource(new SpriteFrameInfo(id + "_base", sprites, collision));
-        frameInfoH = (SpriteFrameInfo) addInternalResource(
-                SpriteFrameInfo.getSpriteFrameInfo(id + "_hflip", frameInfo, wf, hf, true, false, opt));
-        frameInfoV = (SpriteFrameInfo) addInternalResource(
-                SpriteFrameInfo.getSpriteFrameInfo(id + "_vflip", frameInfo, wf, hf, false, true, opt));
-        frameInfoHV = (SpriteFrameInfo) addInternalResource(
-                SpriteFrameInfo.getSpriteFrameInfo(id + "_hvflip", frameInfo, wf, hf, true, true, opt));
+        // need to check that as it can be null
+        if (coll != null)
+            collision = (Collision) addInternalResource(coll);
+        else
+            collision = null;
 
-        hc = (h << 0) ^ (w << 8) ^ (timer << 16) ^ tileset.hashCode() ^ frameInfo.hashCode() ^ frameInfoH.hashCode()
-                ^ frameInfoV.hashCode() ^ frameInfoHV.hashCode();
+        int ind = 0;
+        for (SpriteCell sprite : sprites)
+            vdpSprites.add(new VDPSprite(id + "_sprite" + ind++, sprite));
+
+        hc = (h << 0) ^ (w << 8) ^ (timer << 16) ^ tileset.hashCode() ^ vdpSprites.hashCode()
+                ^ ((collision != null) ? collision.hashCode() : 0);
     }
 
     public int getNumSprite()
     {
-        return isEmpty() ? 0 : frameInfo.vdpSprites.size();
+        return isEmpty() ? 0 : vdpSprites.size();
     }
 
     public boolean isEmpty()
@@ -177,9 +175,9 @@ public class SpriteFrame extends Resource
         {
             final SpriteFrame spriteFrame = (SpriteFrame) obj;
             return (w == spriteFrame.w) && (h == spriteFrame.h) && (timer == spriteFrame.timer)
-                    && tileset.equals(spriteFrame.tileset) && frameInfo.equals(spriteFrame.frameInfo)
-                    && frameInfoH.equals(spriteFrame.frameInfoH) && frameInfoV.equals(spriteFrame.frameInfoV)
-                    && frameInfoHV.equals(spriteFrame.frameInfoHV);
+                    && tileset.equals(spriteFrame.tileset) && vdpSprites.equals(spriteFrame.vdpSprites)
+                    && ((collision == spriteFrame.collision)
+                            || ((collision != null) && collision.equals(spriteFrame.collision)));
         }
 
         return false;
@@ -194,7 +192,7 @@ public class SpriteFrame extends Resource
     @Override
     public int shallowSize()
     {
-        return 2 + 2 + (4 * 4 * 2) + 4;
+        return (vdpSprites.size() * 4) + 1 + 1 + 1 + 1 + 4 + 4;
     }
 
     @Override
@@ -203,18 +201,7 @@ public class SpriteFrame extends Resource
         if (isEmpty())
             return shallowSize();
 
-        int result = frameInfo.totalSize() + frameInfoH.totalSize() + frameInfoV.totalSize() + frameInfoHV.totalSize();
-
-        if (frameInfo.collision != null)
-            result += frameInfo.collision.totalSize();
-        if (frameInfoH.collision != null)
-            result += frameInfoH.collision.totalSize();
-        if (frameInfoV.collision != null)
-            result += frameInfoV.collision.totalSize();
-        if (frameInfoHV.collision != null)
-            result += frameInfoHV.collision.totalSize();
-
-        return result + shallowSize();
+        return tileset.totalSize() + ((collision != null) ? collision.totalSize() : 0) + shallowSize();
     }
 
     @Override
@@ -225,26 +212,24 @@ public class SpriteFrame extends Resource
 
         // AnimationFrame structure
         Util.decl(outS, outH, "AnimationFrame", id, 2, global);
-        // number of sprite / frame width
-        outS.append("    dc.w    " + ((getNumSprite() << 8) | (((w * 8) << 0) & 0xFF)) + "\n");
-        // frame height / timer info
-        outS.append("    dc.w    " + (((h * 8) << 8) | ((timer << 0) & 0xFF)) + "\n");
-
-        // set vdp sprites table and collision pointers (base)
-        outS.append("    dc.l    " + frameInfo.id + "_sprites\n");
-        outS.append("    dc.l    " + ((frameInfo.collision != null) ? frameInfo.collision.id : "0") + "\n");
-        // set vdp sprites table and collision pointers (hflip)
-        outS.append("    dc.l    " + frameInfoH.id + "_sprites\n");
-        outS.append("    dc.l    " + ((frameInfoH.collision != null) ? frameInfoH.collision.id : "0") + "\n");
-        // set vdp sprites table and collision pointers (vflip)
-        outS.append("    dc.l    " + frameInfoV.id + "_sprites\n");
-        outS.append("    dc.l    " + ((frameInfoV.collision != null) ? frameInfoV.collision.id : "0") + "\n");
-        // set vdp sprites table and collision pointers (hvflip)
-        outS.append("    dc.l    " + frameInfoHV.id + "_sprites\n");
-        outS.append("    dc.l    " + ((frameInfoHV.collision != null) ? frameInfoHV.collision.id : "0") + "\n");
-
+        // frame width / height
+        outS.append("    dc.w    " + (((w * 8) << 8) | (((h * 8) << 0) & 0xFF)) + "\n");
+        // number of sprite / timer info
+        outS.append("    dc.w    " + ((getNumSprite() << 8) | ((timer << 0) & 0xFF)) + "\n");
         // set tileset pointer
         outS.append("    dc.l    " + tileset.id + "\n");
+        // set collision pointer
+        if (collision == null)
+            outS.append("    dc.l    " + 0 + "\n");
+        else
+            outS.append("    dc.l    " + collision.id + "\n");
+
+        // array of VDPSrpite - respect VDP sprite field order: (numTile, offsetY, size, offsetX)
+        for (VDPSprite sprite : vdpSprites)
+        {
+            outS.append("    dc.w    " + (((sprite.ht * sprite.wt) << 8) | ((sprite.offsetY << 0) & 0xFF)) + "\n");
+            outS.append("    dc.w    " + ((sprite.getFormattedSize() << 8) | ((sprite.offsetX << 0) & 0xFF)) + "\n");
+        }
 
         outS.append("\n");
     }
