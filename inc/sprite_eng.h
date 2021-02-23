@@ -356,6 +356,15 @@ typedef struct Sprite
 typedef void FrameChangeCallback(Sprite* sprite);
 
 /**
+ * First allocated sprite (NULL if no sprite allocated)
+ */
+Sprite* firstSprite;
+/**
+ * Last allocated sprite (NULL if no sprite allocated)
+ */
+Sprite* lastSprite;
+
+/**
  * Allocated VRAM (in tile) for Sprite Engine
  */
 extern u16 spriteVramSize;
