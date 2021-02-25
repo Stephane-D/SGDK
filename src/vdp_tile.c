@@ -284,9 +284,11 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
 void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
     const u16* src = data;
+    const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
 
-    // if half less number of column than number of row then we use column transfer
-    if (w < (h / 2))
+    // if plan width < 128 (we cannot do 256 bytes auto increment) and
+    // if half less number of column than number of row --> we use column transfer
+    if ((pw < 128) && (w < (h / 2))
     {
         const u16 ph = (plane == WINDOW)?32:planeHeight;
         const u16 yAdj = y & (ph - 1);
@@ -327,7 +329,6 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
     }
     else
     {
-        const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
         const u16 xAdj = x & (pw - 1);
         u16 w1, w2;
 
@@ -364,9 +365,11 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
 void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
     const u16* src = data;
+    const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
 
-    // if half less number of column than number of row then we use column transfer
-    if (w < (h / 2))
+    // if plan width < 128 (we cannot do 256 bytes auto increment) and
+    // if half less number of column than number of row --> we use column transfer
+    if ((pw < 128) && (w < (h / 2))
     {
         const u16 ph = (plane == WINDOW)?32:planeHeight;
         const u16 yAdj = y & (ph - 1);
@@ -407,7 +410,6 @@ void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16
     }
     else
     {
-        const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
         const u16 xAdj = x & (pw - 1);
         u16 w1, w2;
 
@@ -531,6 +533,11 @@ static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u1
     const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
 
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+    if (pw == 128)
+        KLog("setTileMapDataColumn(..) error: cannot be used when tilemap width is set to 128 !");
+#endif
+
     if (tm >= DMA_QUEUE)
     {
         // get temp buffer and schedule DMA
@@ -604,6 +611,11 @@ static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile
     const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
 
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+    if (pw == 128)
+        KLog("setTileMapDataColumnEx(..) error: cannot be used when tilemap width is set to 128 !");
+#endif
+
     if (tm >= DMA_QUEUE)
     {
         // get temp buffer and schedule DMA
@@ -612,7 +624,7 @@ static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (!buf)
         {
-            KLog("VDP_setTileMapDataColumnEx failed: DMA temporary buffer is full");
+            KLog("setTileMapDataColumnEx(..) failed: DMA temporary buffer is full");
             return;
         }
 #endif
@@ -685,6 +697,11 @@ void VDP_setTileMapDataColumnFast(VDPPlane plane, u16* data, u16 column, u16 y, 
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
     const u16 ph = (plane == WINDOW)?32:planeHeight;
     const u16 yAdj = y & (ph - 1);
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+    if (pw == 128)
+        KLog("VDP_setTileMapDataColumnFast(..) error: cannot be used when tilemap width is set to 128 !");
+#endif
 
     // larger than plane height ? --> need to split
     if ((yAdj + h) > ph)
