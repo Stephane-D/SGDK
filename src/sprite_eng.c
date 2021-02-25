@@ -37,15 +37,14 @@
 
 #define ALLOCATED                           0x8000
 
-#define NEED_ST_ATTR_UPDATE                 0x0001
-#define NEED_ST_POS_UPDATE                  0x0002
-#define NEED_ST_ALL_UPDATE                  (NEED_ST_ATTR_UPDATE | NEED_ST_POS_UPDATE)
+#define NEED_ST_POS_UPDATE                  0x0001
+#define NEED_ST_ALL_UPDATE                  0x0002
+#define NEED_ST_UPDATE                      0x0003
+#define NEED_VISIBILITY_UPDATE              0x0004
+#define NEED_FRAME_UPDATE                   0x0008
+#define NEED_TILES_UPLOAD                   0x0010
 
-#define NEED_VISIBILITY_UPDATE              0x0010
-#define NEED_FRAME_UPDATE                   0x0020
-#define NEED_TILES_UPLOAD                   0x0040
-
-#define NEED_UPDATE                         0x00FF
+#define NEED_UPDATE                         0x001F
 
 
 // shared from vdp_spr.c unit
@@ -68,7 +67,6 @@ static u16 updateFrame(Sprite* sprite, u16 status);
 static void updateSpriteTableAll(Sprite* sprite);
 static void updateSpriteTablePos(Sprite* sprite);
 static void updateSpriteTableHide(Sprite* sprite);
-static void updateSpriteTableAttr(Sprite* sprite);
 static void loadTiles(Sprite* sprite);
 static Sprite* sortSprite(Sprite* sprite);
 static void moveAfter(Sprite* pos, Sprite* sprite);
@@ -568,8 +566,8 @@ void SPR_defragVRAM()
                 // set VRAM index and preserve previous attributs
                 sprite->attribut = ind | (attr & TILE_ATTR_MASK);
 
-                // need to update attribute VDP sprite table
-                status |= NEED_ST_ATTR_UPDATE;
+                // need to update VDP sprite table
+                status |= NEED_ST_ALL_UPDATE;
                 // auto tile upload enabled ? --> need to re upload tile to new location
                 if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
                     status |= NEED_TILES_UPLOAD;
@@ -900,7 +898,7 @@ void SPR_setPriorityAttribut(Sprite* sprite, u16 value)
         if (!value)
         {
             sprite->attribut = oldAttribut & (~TILE_ATTR_PRIORITY_MASK);
-            sprite->status |= NEED_ST_ATTR_UPDATE;
+            sprite->status |= NEED_ST_ALL_UPDATE;
 
 #ifdef SPR_DEBUG
             KLog_U1_("SPR_setPriorityAttribut: #", getSpriteIndex(sprite), " removed priority");
@@ -913,7 +911,7 @@ void SPR_setPriorityAttribut(Sprite* sprite, u16 value)
         if (value)
         {
             sprite->attribut = oldAttribut | TILE_ATTR_PRIORITY_MASK;
-            sprite->status |= NEED_ST_ATTR_UPDATE;
+            sprite->status |= NEED_ST_ALL_UPDATE;
 
 #ifdef SPR_DEBUG
             KLog_U1_("SPR_setPriorityAttribut: #", getSpriteIndex(sprite), " added priority");
@@ -935,7 +933,7 @@ void SPR_setPalette(Sprite* sprite, u16 value)
     {
         sprite->attribut = newAttribut;
         // need to update VDP sprite attribut field only
-        sprite->status |= NEED_ST_ATTR_UPDATE;
+        sprite->status |= NEED_ST_ALL_UPDATE;
 
 #ifdef SPR_DEBUG
         KLog_U2("SPR_setPalette: #", getSpriteIndex(sprite), " palette=", value);
@@ -1159,8 +1157,8 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
     if ((oldAttribut & TILE_INDEX_MASK) != (u16) newInd)
     {
         sprite->attribut = (oldAttribut & TILE_ATTR_MASK) | newInd;
-        // need to update 'attribut' field of sprite table
-        status |= NEED_ST_ATTR_UPDATE;
+        // need to update sprite table
+        status |= NEED_ST_ALL_UPDATE;
         // auto tile upload enabled ? --> need to re upload tile to new location
         if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
             status |= NEED_TILES_UPLOAD;
@@ -1271,6 +1269,50 @@ void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback)
     sprite->onFrameChange = callback;
 }
 
+SpriteVisibility SPR_getVisibility(Sprite* sprite)
+{
+    u16 status = sprite->status;
+
+    if (status & SPR_FLAG_AUTO_VISIBILITY)
+    {
+        // AUTO FAST
+        if (status & SPR_FLAG_FAST_AUTO_VISIBILITY)
+        {
+            if (status & SPR_FLAG_FULL_AUTO_VISIBILITY) return AUTO_FAST_FULL;
+            else return AUTO_FAST;
+        }
+        // AUTO SLOW
+        else
+        {
+            if (status & SPR_FLAG_FULL_AUTO_VISIBILITY) return AUTO_SLOW_FULL;
+            else return AUTO_SLOW;
+        }
+    }
+
+    if (sprite->visibility) return VISIBLE;
+    else return HIDDEN;
+}
+
+bool SPR_isVisible(Sprite* sprite, bool recompute)
+{
+    if (recompute)
+    {
+        u16 status = sprite->status;
+
+        // update visibility if needed
+        if (status & NEED_VISIBILITY_UPDATE)
+        {
+            // frame update need to be done first
+            if (status & NEED_FRAME_UPDATE)
+                status = updateFrame(sprite, status);
+            // then do visibility update
+            sprite->status = updateVisibility(sprite, status);
+        }
+    }
+
+    return (sprite->visibility)?TRUE:FALSE;
+}
+
 void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
 {
     START_PROFIL
@@ -1282,12 +1324,12 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
         switch(value)
         {
             case VISIBLE:
-                status &= ~(SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
+                status &= ~(SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_FULL_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
                 status |= setVisibility(sprite, VISIBILITY_ON);
                 break;
 
             case HIDDEN:
-                status &= ~(SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
+                status &= ~(SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_FULL_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE);
                 status |= setVisibility(sprite, VISIBILITY_OFF);
                 break;
 
@@ -1295,6 +1337,12 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
                 // passed from slow to fast visibility compute method
                 if (!(status & SPR_FLAG_FAST_AUTO_VISIBILITY))
                     status |= SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
+                // passed from full to partial visibility compute method
+                if (status & SPR_FLAG_FULL_AUTO_VISIBILITY)
+                {
+                    status &= ~SPR_FLAG_FULL_AUTO_VISIBILITY;
+                    status |= NEED_VISIBILITY_UPDATE;
+                }
                 break;
 
             case AUTO_SLOW:
@@ -1304,6 +1352,33 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
                     status &= ~SPR_FLAG_FAST_AUTO_VISIBILITY;
                     status |= NEED_VISIBILITY_UPDATE;
                 }
+                // passed from full to partial visibility compute method
+                if (status & SPR_FLAG_FULL_AUTO_VISIBILITY)
+                {
+                    status &= ~SPR_FLAG_FULL_AUTO_VISIBILITY;
+                    status |= NEED_VISIBILITY_UPDATE;
+                }
+                break;
+
+            case AUTO_FAST_FULL:
+                // passed from slow to fast visibility compute method
+                if (!(status & SPR_FLAG_FAST_AUTO_VISIBILITY))
+                    status |= SPR_FLAG_FAST_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
+                // passed from partial to full visibility compute method
+                if (!(status & SPR_FLAG_FULL_AUTO_VISIBILITY))
+                    status |= SPR_FLAG_FULL_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
+                break;
+
+            case AUTO_SLOW_FULL:
+                // passed from fast to slow visibility compute method
+                if (status & SPR_FLAG_FAST_AUTO_VISIBILITY)
+                {
+                    status &= ~SPR_FLAG_FAST_AUTO_VISIBILITY;
+                    status |= NEED_VISIBILITY_UPDATE;
+                }
+                // passed from partial to full visibility compute method
+                if (!(status & SPR_FLAG_FULL_AUTO_VISIBILITY))
+                    status |= SPR_FLAG_FULL_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
                 break;
         }
     }
@@ -1326,6 +1401,14 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
             case AUTO_SLOW:
                 status |= SPR_FLAG_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
                 break;
+
+            case AUTO_FAST_FULL:
+                status |= SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_FULL_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
+                break;
+
+            case AUTO_SLOW_FULL:
+                status |= SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FULL_AUTO_VISIBILITY | NEED_VISIBILITY_UPDATE;
+                break;
         }
     }
 
@@ -1347,19 +1430,7 @@ void SPR_setNeverVisible(Sprite* sprite, u16 value)
 
 bool SPR_computeVisibility(Sprite* sprite)
 {
-    u16 status = sprite->status;
-
-    // update visibility if needed
-    if (status & NEED_VISIBILITY_UPDATE)
-    {
-        // frame update need to be done first
-        if (status & NEED_FRAME_UPDATE)
-            status = updateFrame(sprite, status);
-        // then do visibility update
-        sprite->status = updateVisibility(sprite, status);
-    }
-
-    return (sprite->visibility)?TRUE:FALSE;
+    return SPR_isVisible(sprite, TRUE);
 }
 
 
@@ -1460,19 +1531,13 @@ void SPR_update()
                 if (status & NEED_TILES_UPLOAD)
                     loadTiles(sprite);
 
-                if (status & NEED_ST_POS_UPDATE)
-                {
-                    // not only position to update --> update whole table
-                    if (status & NEED_ST_ATTR_UPDATE)
-                        updateSpriteTableAll(sprite);
-                    else
-                        updateSpriteTablePos(sprite);
-                }
-                else if (status & NEED_ST_ATTR_UPDATE)
-                    updateSpriteTableAttr(sprite);
+                if (status & NEED_ST_ALL_UPDATE)
+                    updateSpriteTableAll(sprite);
+                else if (status & NEED_ST_POS_UPDATE)
+                    updateSpriteTablePos(sprite);
 
                 // tiles upload and sprite table done
-                status &= ~(NEED_TILES_UPLOAD | NEED_ST_ALL_UPDATE);
+                status &= ~(NEED_TILES_UPLOAD | NEED_ST_UPDATE);
             }
 
             // processes done !
@@ -1590,14 +1655,27 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
     // fast visibility computation ?
     if (status & SPR_FLAG_FAST_AUTO_VISIBILITY)
     {
-        const s16 x = sprite->x - 0x80;
-        const s16 y = sprite->y - 0x80;
+        if (status & SPR_FLAG_FULL_AUTO_VISIBILITY)
+        {
+            const s16 x = sprite->x - 0x80;
+            const s16 y = sprite->y - 0x80;
 
-        // compute global visibility for sprite
-        if (((x + frame->w) > (s16) 0) && (x < (s16) screenWidth) && ((y + frame->h) > (s16) 0) && (y < (s16) screenHeight))
-            visibility = VISIBILITY_ON;
+            // compute global visibility for sprite
+            if (((x + frame->w) > (s16) 0) && (x < (s16) screenWidth) && ((y + frame->h) > (s16) 0) && (y < (s16) screenHeight))
+                visibility = VISIBILITY_ON;
+            else
+                visibility = VISIBILITY_OFF;
+        }
         else
-            visibility = VISIBILITY_OFF;
+        {
+            const s16 x = sprite->x - 0x80;
+
+            // compute global visibility for sprite
+            if (((x + frame->w) > (s16) 0) && (x < (s16) screenWidth))
+                visibility = VISIBILITY_ON;
+            else
+                visibility = VISIBILITY_OFF;
+        }
 
 #ifdef SPR_DEBUG
         KLog_S2("  updateVisibility (fast): global x=", x, " global y=", y);
@@ -1606,44 +1684,94 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
     }
     else
     {
-        // attributes
-        u16 attr = sprite->attribut;
-        // xmin relative to sprite pos
-        const s16 xmin = 0x80 - sprite->x;
-        // ymin relative to sprite pos
-        const s16 ymin = 0x80 - sprite->y;
-        // xmax relative to sprite pos
-        const s16 xmax = screenWidth + xmin;
-        // ymax relative to sprite pos
-        const s16 ymax = screenHeight + ymin;
-        const s16 fw = frame->w;
-        const s16 fh = frame->h;
-
-#ifdef SPR_DEBUG
-        KLog_S2("  updateVisibility (slow): global x=", sprite->x, " global y=", sprite->y);
-        KLog_S2("    frame w=", fw, " h=", fh);
-        KLog_S4("    xmin=", xmin, " xmax=", xmax, " ymin=", ymin, " ymax=", ymax);
-#endif // SPR_DEBUG
-
-        // sprite is fully visible ? --> set all sprite visible
-        if ((xmin <= 0) && (xmax >= fw) && (ymin <= 0) && (ymax >= fh)) visibility = VISIBILITY_ON;
-        // sprite is fully hidden ? --> set all sprite to hidden
-        else if ((xmax < 0) || ((xmin - fw) > 0) || (ymax < 0) || ((ymin - fh) > 0)) visibility = VISIBILITY_OFF;
-        else
+        if (status & SPR_FLAG_FULL_AUTO_VISIBILITY)
         {
-            FrameVDPSprite* frameSprite;
-            u16 num;
+            // attributes
+            u16 attr = sprite->attribut;
+            // xmin relative to sprite pos
+            const s16 xmin = 0x80 - sprite->x;
+            // ymin relative to sprite pos
+            const s16 ymin = 0x80 - sprite->y;
+            // xmax relative to sprite pos
+            const s16 xmax = screenWidth + xmin;
+            // ymax relative to sprite pos
+            const s16 ymax = screenHeight + ymin;
+            const s16 fw = frame->w;
+            const s16 fh = frame->h;
 
-            num = frame->numSprite;
-            // start from the last one
-            frameSprite = &(frame->frameVDPSprites[num]);
-            visibility = 0;
+    #ifdef SPR_DEBUG
+            KLog_S2("  updateVisibility (slow full): global x=", sprite->x, " global y=", sprite->y);
+            KLog_S2("    frame w=", fw, " h=", fh);
+            KLog_S4("    xmin=", xmin, " xmax=", xmax, " ymin=", ymin, " ymax=", ymax);
+    #endif // SPR_DEBUG
 
-            if (attr & TILE_ATTR_VFLIP_MASK)
+            // sprite is fully visible ? --> set all sprite visible
+            if ((xmin <= 0) && (xmax >= fw) && (ymin <= 0) && (ymax >= fh)) visibility = VISIBILITY_ON;
+            // sprite is fully hidden ? --> set all sprite to hidden
+            else if ((xmax < 0) || ((xmin - fw) > 0) || (ymax < 0) || ((ymin - fh) > 0)) visibility = VISIBILITY_OFF;
+            else
             {
-                if (attr & TILE_ATTR_HFLIP_MASK)
+                FrameVDPSprite* frameSprite;
+                u16 num;
+
+                num = frame->numSprite;
+                // start from the last one
+                frameSprite = &(frame->frameVDPSprites[num]);
+                visibility = 0;
+
+                if (attr & TILE_ATTR_VFLIP_MASK)
                 {
-                    // HV flip
+                    if (attr & TILE_ATTR_HFLIP_MASK)
+                    {
+                        // HV flip
+                        while(num--)
+                        {
+                            // next
+                            frameSprite--;
+                            u16 size = frameSprite->size;
+                            s16 w = ((size & 0x0C) << 1) + 8;
+                            s16 h = ((size & 0x03) << 3) + 8;
+                            // Y first to respect frameSprite field order
+                            s16 y = fh - (frameSprite->offsetY + h);
+                            s16 x = fw - (frameSprite->offsetX + w);
+
+                #ifdef SPR_DEBUG
+                            KLog_S4("    frameSprite offX=", frameSprite->offsetX, " offY=", frameSprite->offsetY, " w=", w, " h=", h);
+                            KLog_S3("    size=", size, " adjX=", x, " adjY=", y);
+                #endif // SPR_DEBUG
+
+                            visibility <<= 1;
+
+                            // compute visibility
+                            if (((x + w) > xmin) && (x < xmax) && ((y + h) > ymin) && (y < ymax))
+                                visibility |= 1;
+                        }
+                    }
+                    else
+                    {
+                        // V flip
+                        while(num--)
+                        {
+                            // next
+                            frameSprite--;
+                            u16 size = frameSprite->size;
+                            s16 w = ((size & 0x0C) << 1) + 8;
+                            s16 h = ((size & 0x03) << 3) + 8;
+                            // Y first to respect frameSprite field order
+                            s16 y = fh - (frameSprite->offsetY + h);
+                            s16 x = frameSprite->offsetX;
+
+                            visibility <<= 1;
+
+                            // compute visibility
+                            if (((x + w) > xmin) && (x < xmax) && ((y + h) > ymin) && (y < ymax))
+                                visibility |= 1;
+                        }
+                    }
+                }
+                else if (attr & TILE_ATTR_HFLIP_MASK)
+                {
+                    // H flip
                     while(num--)
                     {
                         // next
@@ -1652,36 +1780,18 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                         s16 w = ((size & 0x0C) << 1) + 8;
                         s16 h = ((size & 0x03) << 3) + 8;
                         // Y first to respect frameSprite field order
-                        s16 y = fh - (frameSprite->offsetY + h);
+                        s16 y = frameSprite->offsetY;
                         s16 x = fw - (frameSprite->offsetX + w);
-
-            #ifdef SPR_DEBUG
-                        KLog_S4("    frameSprite offX=", frameSprite->offsetX, " offY=", frameSprite->offsetY, " w=", w, " h=", h);
-                        KLog_S3("    size=", size, " adjX=", x, " adjY=", y);
-            #endif // SPR_DEBUG
 
                         visibility <<= 1;
 
                         // compute visibility
                         if (((x + w) > xmin) && (x < xmax) && ((y + h) > ymin) && (y < ymax))
-                        {
                             visibility |= 1;
-
-            #ifdef SPR_DEBUG
-                            KLog("      visible");
-            #endif // SPR_DEBUG
-                        }
-                        else
-                        {
-            #ifdef SPR_DEBUG
-                            KLog("      not visible");
-            #endif // SPR_DEBUG
-                        }
                     }
                 }
                 else
                 {
-                    // V flip
                     while(num--)
                     {
                         // next
@@ -1690,7 +1800,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                         s16 w = ((size & 0x0C) << 1) + 8;
                         s16 h = ((size & 0x03) << 3) + 8;
                         // Y first to respect frameSprite field order
-                        s16 y = fh - (frameSprite->offsetY + h);
+                        s16 y = frameSprite->offsetY;
                         s16 x = frameSprite->offsetX;
 
                         visibility <<= 1;
@@ -1701,45 +1811,74 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                     }
                 }
             }
-            else if (attr & TILE_ATTR_HFLIP_MASK)
-            {
-                // H flip
-                while(num--)
-                {
-                    // next
-                    frameSprite--;
-                    u16 size = frameSprite->size;
-                    s16 w = ((size & 0x0C) << 1) + 8;
-                    s16 h = ((size & 0x03) << 3) + 8;
-                    // Y first to respect frameSprite field order
-                    s16 y = frameSprite->offsetY;
-                    s16 x = fw - (frameSprite->offsetX + w);
+        }
+        else
+        {
+            // attributes
+            u16 attr = sprite->attribut;
+            // xmin relative to sprite pos
+            const s16 xmin = 0x80 - sprite->x;
+            // xmax relative to sprite pos
+            const s16 xmax = screenWidth + xmin;
+            const s16 fw = frame->w;
 
-                    visibility <<= 1;
+    #ifdef SPR_DEBUG
+            KLog_S1("  updateVisibility (slow X only): global x=", sprite->x);
+            KLog_S1("    frame w=", fw);
+            KLog_S2("    xmin=", xmin, " xmax=", xmax);
+    #endif // SPR_DEBUG
 
-                    // compute visibility
-                    if (((x + w) > xmin) && (x < xmax) && ((y + h) > ymin) && (y < ymax))
-                        visibility |= 1;
-                }
-            }
+            // sprite is fully visible ? --> set all sprite visible
+            if ((xmin <= 0) && (xmax >= fw)) visibility = VISIBILITY_ON;
+            // sprite is fully hidden ? --> set all sprite to hidden
+            else if ((xmax < 0) || ((xmin - fw) > 0)) visibility = VISIBILITY_OFF;
             else
             {
-                while(num--)
+                FrameVDPSprite* frameSprite;
+                u16 num;
+
+                num = frame->numSprite;
+                // start from the last one
+                frameSprite = &(frame->frameVDPSprites[num]);
+                visibility = 0;
+
+                if (attr & TILE_ATTR_HFLIP_MASK)
                 {
-                    // next
-                    frameSprite--;
-                    u16 size = frameSprite->size;
-                    s16 w = ((size & 0x0C) << 1) + 8;
-                    s16 h = ((size & 0x03) << 3) + 8;
-                    // Y first to respect frameSprite field order
-                    s16 y = frameSprite->offsetY;
-                    s16 x = frameSprite->offsetX;
+                    // H flip
+                    while(num--)
+                    {
+                        // next
+                        frameSprite--;
+                        s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
+                        s16 x = fw - (frameSprite->offsetX + w);
 
-                    visibility <<= 1;
+            #ifdef SPR_DEBUG
+                        KLog_S2("    frameSprite offX=", frameSprite->offsetX, " w=", w);
+                        KLog_S2("    size=", size, " adjX=", x);
+            #endif // SPR_DEBUG
 
-                    // compute visibility
-                    if (((x + w) > xmin) && (x < xmax) && ((y + h) > ymin) && (y < ymax))
-                        visibility |= 1;
+                        visibility <<= 1;
+
+                        // compute visibility
+                        if (((x + w) > xmin) && (x < xmax))
+                            visibility |= 1;
+                    }
+                }
+                else
+                {
+                    while(num--)
+                    {
+                        // next
+                        frameSprite--;
+                        s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
+                        s16 x = frameSprite->offsetX;
+
+                        visibility <<= 1;
+
+                        // compute visibility
+                        if (((x + w) > xmin) && (x < xmax))
+                            visibility |= 1;
+                    }
                 }
             }
         }
@@ -1765,7 +1904,6 @@ static u16 setVisibility(Sprite* sprite, u16 newVisibility)
     {
         // set new visibility info
         sprite->visibility = newVisibility;
-
         // need to recompute the position info (hidding a sprite is done by setting posY to 0)
         return NEED_ST_POS_UPDATE;
     }
@@ -2094,54 +2232,6 @@ static void updateSpriteTableHide(Sprite* sprite)
 
         sprite->spriteToHide = 0;
     }
-
-    END_PROFIL(PROFIL_UPDATE_SPRITE_TABLE)
-}
-
-static void updateSpriteTableAttr(Sprite* sprite)
-{
-    START_PROFIL
-
-    AnimationFrame* frame;
-    FrameVDPSprite* frameSprite;
-    VDPSprite* vdpSprite;
-    u16 attr;
-    u16 num;
-
-    attr = sprite->attribut;
-    frame = sprite->frame;
-    num = frame->numSprite;
-    frameSprite = frame->frameVDPSprites;
-    vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
-
-#ifdef SPR_DEBUG
-    KLog_U3("  updateSpriteTableAttr_allVisible: numSprite=", sprite->frame->numSprite, " visibility=", sprite->visibility, " VDPSprIndex=", sprite->VDPSpriteIndex);
-#endif // SPR_DEBUG
-
-    while(num--)
-    {
-        vdpSprite->attribut = attr;
-
-        // increment tile index in attribut field
-        attr += frameSprite->numTile;
-        // pass to next VDP sprite
-        vdpSprite = &vdpSpriteCache[vdpSprite->link];
-        // next
-        frameSprite++;
-    }
-
-#ifdef SPR_DEBUG
-    {
-        u16 ind = sprite->VDPSpriteIndex;
-        u16 i = sprite->definition->maxNumSprite;
-        while(i--)
-        {
-            logVDPSprite(ind);
-            // get next sprite
-            ind = vdpSpriteCache[ind].link;
-        }
-    }
-#endif // SPR_DEBUG
 
     END_PROFIL(PROFIL_UPDATE_SPRITE_TABLE)
 }

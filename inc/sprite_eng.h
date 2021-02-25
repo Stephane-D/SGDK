@@ -48,34 +48,46 @@
 #define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x2000
 /**
  *  \brief
- *      Enable automatic visibility calculation
- */
-#define SPR_FLAG_AUTO_VISIBILITY                0x1000
-/**
- *  \brief
- *      Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used)
- */
-#define SPR_FLAG_FAST_AUTO_VISIBILITY           0x0800
-/**
- *  \brief
  *      Enable automatic VRAM allocation
  */
-#define SPR_FLAG_AUTO_VRAM_ALLOC                0x0400
+#define SPR_FLAG_AUTO_VRAM_ALLOC                0x1000
 /**
  *  \brief
  *      Enable automatic hardware sprite allocation
  */
-#define SPR_FLAG_AUTO_SPRITE_ALLOC              0x0200
+#define SPR_FLAG_AUTO_SPRITE_ALLOC              0x0800
 /**
  *  \brief
  *      Enable automatic upload of sprite tiles data into VRAM
  */
-#define SPR_FLAG_AUTO_TILE_UPLOAD               0x0100
+#define SPR_FLAG_AUTO_TILE_UPLOAD               0x0400
+/**
+ *  \brief
+ *      Enable automatic visibility calculation
+ */
+#define SPR_FLAG_AUTO_VISIBILITY                0x0200
+/**
+ *  \brief
+ *      Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used).<br>
+ *      If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
+ *      hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
+ */
+#define SPR_FLAG_FAST_AUTO_VISIBILITY           0x0100
+/**
+ *  \brief
+ *      Enable full visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used)<br>
+ *      If you set this flag the automatic visibility calculation will also consider the Y position, otherwise only X position is used for
+ *      the visibility calculation as only X position mind to optimize scanline sprite usage.<br>
+ *      Using this flag result in slower visibility computation but it can be useful if you need to use SPR_isVisible() to know
+ *      if the sprite is visible on screen or not.
+ */
+#define SPR_FLAG_FULL_AUTO_VISIBILITY           0x0080
+
 /**
  *  \brief
  *      Mask for sprite flag
  */
-#define SPR_FLAG_MASK                           (SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
+#define SPR_FLAG_MASK                           (SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_FULL_AUTO_VISIBILITY)
 
 /**
  *  \brief
@@ -96,10 +108,11 @@ typedef enum
 {
     VISIBLE,        /**< Sprite is visible (no computation needed) */
     HIDDEN,         /**< Sprite is hidden (no computation needed) */
-    AUTO_FAST,      /**< Automatic visibility calculation FAST (computation made on global meta sprite) */
-    AUTO_SLOW,      /**< Automatic visibility calculation SLOW (computation made per hardware sprite) */
+    AUTO_FAST,      /**< Automatic visibility calculation - X sprite position only - FAST (computation made on global meta sprite) */
+    AUTO_SLOW,      /**< Automatic visibility calculation - X sprite position only - SLOW (computation made per hardware sprite) */
+    AUTO_FAST_FULL, /**< Automatic visibility calculation - full position - FAST (computation made on global meta sprite) */
+    AUTO_SLOW_FULL, /**< Automatic visibility calculation - full position - SLOW (computation made per hardware sprite) */
 } SpriteVisibility;
-
 
 /**
  *  \brief
@@ -336,10 +349,12 @@ typedef struct Sprite
     u16 VDPSpriteIndex;
     VDPSprite* lastVDPSprite;
     u16 lastNumSprite;
-    u16 spriteToHide;
-    u32 data;
     struct Sprite* prev;
     struct Sprite* next;
+    u16 spriteToHide;
+    u32 data;
+    u16 (*updateVisibilityFunc)(struct Sprite* sprite, u16 status);
+    u16 (*updateSpriteTableFunc)(struct Sprite* sprite, u16 status);
 } Sprite;
 
 /**
@@ -442,6 +457,11 @@ void SPR_reset();
  *          If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
  *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
  *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
+ *      #SPR_FLAG_FULL_AUTO_VISIBILITY = Enable full visibility computation for the automatic visibility calculation (disabled by default)<br>
+ *          If you set this flag the automatic visibility calculation will also consider the Y position, otherwise only X position is used for
+ *          the visibility calculation as only X position mind to optimize scanline sprite usage. Enabling this flag result in slower visibility
+ *          computation but it can be useful if you need to use SPR_isVisible() to know if the sprite is visible on screen or not.
+ *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
  *      #SPR_FLAG_AUTO_VRAM_ALLOC = Enable automatic VRAM allocation (enabled by default)<br>
  *          If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <i>attribut</i> parameter or by using the #SPR_setVRAMTileIndex(..) method<br>
  *      #SPR_FLAG_AUTO_SPRITE_ALLOC = Enable automatic hardware/VDP sprite allocation (enabled by default)<br>
@@ -515,7 +535,7 @@ Sprite* SPR_addSprite(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attri
  *      #SPR_FLAG_AUTO_VISIBILITY = Enable automatic sprite visibility calculation (you can also use SPR_setVisibility(..) method).<br>
  *      #SPR_FLAG_FAST_AUTO_VISIBILITY = Enable fast computation for the automatic visibility calculation (disabled by default)<br>
  *          If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
- *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
+ *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite (scanline limit).
  *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
  *      #SPR_FLAG_AUTO_VRAM_ALLOC = Enable automatic VRAM allocation (enabled by default)<br>
  *          If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <i>attribut</i> parameter or by using the #SPR_setVRAMTileIndex(..) method<br>
@@ -832,16 +852,71 @@ void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback);
 
 /**
  *  \brief
+ *      Return the <i>visibility</i> state for this sprite.<br>
+ *      WARNING: this is different from SPR_isVisible(..) method, possible value are:<br>
+ *      SpriteVisibility.VISIBLE        = sprite is visible<br>
+ *      SpriteVisibility.HIDDEN         = sprite is not visible<br>
+ *      SpriteVisibility.AUTO_FAST      = visibility is automatically computed from sprite X position only (global visibility)<br>
+ *      SpriteVisibility.AUTO_SLOW      = visibility is automatically computed from sprite X position only (per hardware sprite visibility)<br>
+ *      SpriteVisibility.AUTO_FAST_FULL = visibility is automatically computed from sprite full position (global visibility)<br>
+ *      SpriteVisibility.AUTO_SLOW_FULL = visibility is automatically computed from sprite full position (per hardware sprite visibility)<br>
+ *
+ *  \param sprite
+ *      Sprite to return <i>visibility</i> state
+ *
+ *  \return
+ *       the <i>visibility</i> state for this sprite.
+ *
+ *  \see SPR_isVisible(...)
+ *  \see SPR_setVisibility(...)
+ */
+SpriteVisibility SPR_getVisibility(Sprite* sprite);
+/**
+ *  \brief
+ *      Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see #SPR_setVisibility(..) method).<br>
+ *
+ *  \param sprite
+ *      Sprite to return visible </i> state
+ *  \param recompute
+ *      Force visibility computation.<br>
+ *      Only required if SPR_update() wasn't called since last sprite position change (note that can force the frame update processing).
+ *
+ *  Note that only sprite X position may be used to determine if sprite is visible or not depending you are using priteVisibility.AUTO_xxx_FULL
+ *  or SpriteVisibility.AUTO_xxx_FULL  visibility computation method (see SPR_setVisibility(..) method).
+
+ *  \return
+ *      the <i>visible</i> state for this sprite.
+ *
+ *  \see SPR_setVisibility(...)
+ */
+bool SPR_isVisible(Sprite* sprite, bool recompute);
+
+/**
+ *  \brief
  *      Set the <i>visibility</i> state for this sprite.
  *
  *  \param sprite
  *      Sprite to set the <i>visibility</i> information
  *  \param value
  *      Visibility value to set.<br>
- *      SpriteVisibility.VISIBLE       = sprite is visible<br>
- *      SpriteVisibility.HIDDEN        = sprite is not visible<br>
- *      SpriteVisibility.AUTO_FAST     = visibility is automatically computed from sprite position (global visibility)<br>
- *      SpriteVisibility.AUTO_SLOW     = visibility is automatically computed from sprite position (per hardware sprite visibility)<br>
+ *      SpriteVisibility.VISIBLE        = sprite is visible<br>
+ *      SpriteVisibility.HIDDEN         = sprite is not visible<br>
+ *      SpriteVisibility.AUTO_FAST      = visibility is automatically computed from sprite X position only (global visibility)<br>
+ *      SpriteVisibility.AUTO_SLOW      = visibility is automatically computed from sprite X position only (per hardware sprite visibility)<br>
+ *      SpriteVisibility.AUTO_FAST_FULL = visibility is automatically computed from sprite full position (global visibility)<br>
+ *      SpriteVisibility.AUTO_SLOW_FULL = visibility is automatically computed from sprite full position (per hardware sprite visibility)<br>
+ *
+ *      The only interest in having a sprite not visible is to avoid having it rendered and consuming the scanline sprite budget:<br>
+ *      The VDP is limited to a maximum of 20 sprites or 320 pixels of sprite per scanline (16 sprites/256 px in H32 mode).<br>
+ *      If you have reach this limit, following sprites won't be renderer so it's important to try to optimize the number of sprites
+ *      on a single scanline.<br>
+ *      When a sprite is set to not visible (automatically or manually), its position is set offscreen *vertically* so it won't eat
+ *      anymore the scanline sprite rendering budget, only X position test is required for that so use AUTO_FAST or AUTO_SLOW if you don't need to use to optimize scanline determine that.
+ *      #SPR_isVisible(..) method.
+ *
+ *  \see SPR_computeVisibility(...)
+ *  \see SPR_getVisibility(...)
+ *  \see SPR_isVisible(...)
  */
 void SPR_setVisibility(Sprite* sprite, SpriteVisibility value);
 /**
@@ -853,18 +928,7 @@ void SPR_setAlwaysVisible(Sprite* sprite, u16 value);
  */
 void SPR_setNeverVisible(Sprite* sprite, u16 value);
 /**
- *  \brief
- *      Update the internal <i>visibility</i> state for this sprite (when AUTO visibility is enabled).<br>
- *
- *  \param sprite
- *      Sprite to compute <i>visibility</i> state
- *  \return TRUE if sprite is visible, FALSE otherwise
- *
- *  This method computes the visibility state for the specified sprite if the AUTO visibility is enabled (see SPR_setVisibility(..) method).<br>
- *  Note that sprite visibility is automatically computed when you call SPR_update() so you need to use this method
- *  only if you want to know if the sprite is visible or not before the next SPR_update() call.
- *
- *  \see SPR_setVisibility(..)
+ *  \deprecated Use SPR_isVisible(..) instead.
  */
 bool SPR_computeVisibility(Sprite* sprite);
 
