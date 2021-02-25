@@ -288,7 +288,7 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
 
     // if plan width < 128 (we cannot do 256 bytes auto increment) and
     // if half less number of column than number of row --> we use column transfer
-    if ((pw < 128) && (w < (h / 2))
+    if ((pw < 128) && (w < (h / 2)))
     {
         const u16 ph = (plane == WINDOW)?32:planeHeight;
         const u16 yAdj = y & (ph - 1);
@@ -369,7 +369,7 @@ void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16
 
     // if plan width < 128 (we cannot do 256 bytes auto increment) and
     // if half less number of column than number of row --> we use column transfer
-    if ((pw < 128) && (w < (h / 2))
+    if ((pw < 128) && (w < (h / 2)))
     {
         const u16 ph = (plane == WINDOW)?32:planeHeight;
         const u16 yAdj = y & (ph - 1);
