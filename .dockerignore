@@ -1,6 +1,16 @@
-# Ignore git repo
-/.git
-
-# Ignore non-building related directories
-/sample/
+# Ignore non-build related directories
+/.git/
 /doc/
+/sample/
+/vstudio/
+
+# Ignore non-build related files
+/.dockerignore
+/.gitignore
+/build_adv.bat
+/build_lib.bat
+/changelog.txt
+/COPYING.RUNTIME
+/Dockerfile
+/license.txt
+/readme.md

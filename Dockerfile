@@ -1,24 +1,42 @@
 FROM i386/debian:buster-slim
-RUN echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/30install-suggests \
-    && echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf.d/30install-suggests \
-    && apt-get update -y
 
-RUN apt-get install -y wine
-RUN apt-get install -y make
+# Set-up argument defaults
+ARG SGDK_WINE_VER=1aca454a2c1419d97c3518907d156ddf1250469b
+ARG JDK_VER=11
 
-# workdaround required for jdk
+# Work-around required for JDK
 RUN mkdir -p /usr/share/man/man1
-RUN apt-get install -y openjdk-11-jdk-headless
 
-ADD . /sgdk
+# Install supporting packages
+RUN export DEBIAN_FRONTEND='noninteractive' && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+      make \
+      openjdk-${JDK_VER}-jdk-headless \
+      wine && \
+    apt-get autoremove --purge -y && \
+    apt-get clean && \
+    rm -rf \
+      /var/lib/apt/lists/* \
+      /var/tmp/* \
+      /tmp/*
+
+# Set-up SGDK
+COPY . /sgdk
 WORKDIR /sgdk
-
-# Crudely get the script from github.
-# This isn't very secure, but at least we use the commit hash.
-# Ideally that repository should simply be merged into this one.
-ADD https://raw.githubusercontent.com/Franticware/SGDK_wine/c8a580a06f20fb45f43a18b65849e318b5f1341e/generate_wine.sh bin/generate_wine.sh
-RUN cd bin && sh generate_wine.sh
-
 ENV GDK=/sgdk
+
+# Crudely get the script from GitHub. This isn't very secure, but at least we
+# use the commit hash. Ideally that repository should simply be merged into this
+# one.
+ADD https://github.com/Franticware/SGDK_wine/raw/${SGDK_WINE_VER}/generate_wine.sh \
+    /tmp/generate_wine.sh
+RUN chmod u+x /tmp/generate_wine.sh && \
+    cd ${GDK}/bin && \
+    /tmp/generate_wine.sh && \
+    rm -f /tmp/generate_wine.sh
+
+# Set-up mount point and make command
+VOLUME /src
 WORKDIR /src
 ENTRYPOINT [ "make", "-f", "/sgdk/makefile_wine.gen" ]
