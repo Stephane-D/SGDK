@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="v-scaling" />
+		<Option title="scaling" />
 		<Option makefile="D:/apps/SGDK/makefile.gen" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="0" />
@@ -52,10 +52,6 @@
 		<VirtualTargets>
 			<Add alias="All" targets="release;" />
 		</VirtualTargets>
-		<Unit filename="src/helpers.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src/helpers.h" />
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
