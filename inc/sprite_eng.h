@@ -73,21 +73,12 @@
  *      hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
  */
 #define SPR_FLAG_FAST_AUTO_VISIBILITY           0x0100
-/**
- *  \brief
- *      Enable full visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used)<br>
- *      If you set this flag the automatic visibility calculation will also consider the Y position, otherwise only X position is used for
- *      the visibility calculation as only X position mind to optimize scanline sprite usage.<br>
- *      Using this flag result in slower visibility computation but it can be useful if you need to use SPR_isVisible() to know
- *      if the sprite is visible on screen or not.
- */
-#define SPR_FLAG_FULL_AUTO_VISIBILITY           0x0080
 
 /**
  *  \brief
  *      Mask for sprite flag
  */
-#define SPR_FLAG_MASK                           (SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_FULL_AUTO_VISIBILITY)
+#define SPR_FLAG_MASK                           (SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)
 
 /**
  *  \brief
@@ -108,10 +99,8 @@ typedef enum
 {
     VISIBLE,        /**< Sprite is visible (no computation needed) */
     HIDDEN,         /**< Sprite is hidden (no computation needed) */
-    AUTO_FAST,      /**< Automatic visibility calculation - X sprite position only - FAST (computation made on global meta sprite) */
-    AUTO_SLOW,      /**< Automatic visibility calculation - X sprite position only - SLOW (computation made per hardware sprite) */
-    AUTO_FAST_FULL, /**< Automatic visibility calculation - full position - FAST (computation made on global meta sprite) */
-    AUTO_SLOW_FULL, /**< Automatic visibility calculation - full position - SLOW (computation made per hardware sprite) */
+    AUTO_FAST,      /**< Automatic visibility calculation - FAST (computation made on global meta sprite) */
+    AUTO_SLOW,      /**< Automatic visibility calculation - SLOW (computation made per hardware sprite) */
 } SpriteVisibility;
 
 /**
@@ -214,10 +203,6 @@ typedef struct
  *  \brief
  *      Sprite animation frame structure.
  *
- *  \param w
- *      frame width in pixel
- *  \param h
- *      frame height in pixel
  *  \param numSprite
  *      number of VDP sprite which compose this frame
  *  \param timer
@@ -231,8 +216,6 @@ typedef struct
  */
 typedef struct
 {
-    u8 w;
-    u8 h;
     u8 numSprite;
     u8 timer;
     TileSet* tileset;                   // TODO: have a tileset per VDP sprite --> probably not a good idea performance wise
@@ -262,8 +245,12 @@ typedef struct
  *  \brief
  *      Sprite definition structure.
  *
+ *  \param w
+ *      frame cell width in pixel
+ *  \param h
+ *      frame cell height in pixel
  *  \param palette
- *      Default palette data
+ *      default palette data
  *  \param numAnimation
  *      number of animation for this sprite
  *  \param animations
@@ -277,6 +264,8 @@ typedef struct
  */
 typedef struct
 {
+    u16 w;
+    u16 h;
     Palette* palette;
     u16 numAnimation;
     Animation** animations;
@@ -291,8 +280,12 @@ typedef struct
  *
  *  \param status
  *      Internal state and automatic allocation information (internal)
+ *  \param visibility
+ *      visibility information of current frame for each VDP sprite (max = 16)
  *  \param spriteDef
  *      Sprite definition pointer
+ *  \param onFrameChange
+ *      Custom callback on frame change event (see #SPR_setFrameChangeCallback(..) method)
  *  \param animation
  *      Animation pointer cache (internal)
  *  \param frame
@@ -311,15 +304,13 @@ typedef struct
  *      current sprite depth (Z) position used for Z sorting
  *  \param attribut
  *      sprite specific attribut and allocated VRAM tile index (see TILE_ATTR_FULL() macro)
- *  \param visibility
- *      visibility information of current frame for each VDP sprite (max = 16)
  *  \param VDPSpriteIndex
  *      index of first allocated VDP sprite (0 when no yet allocated)<br>
  *      Number of allocated VDP sprite is defined by definition->maxNumSprite
- *  \param frameNumSprite
- *      the number of VDP sprite used by the current frame (internal)
  *  \param lastVDPSprite
  *      Pointer to last VDP sprite used by this Sprite (used internally to update link between sprite)
+ *  \param lastNumSprite
+ *      the number of VDP sprite used by the current frame (internal)
  *  \param spriteToHide
  *      internal
  *  \param data
@@ -349,12 +340,10 @@ typedef struct Sprite
     u16 VDPSpriteIndex;
     VDPSprite* lastVDPSprite;
     u16 lastNumSprite;
-    struct Sprite* prev;
-    struct Sprite* next;
     u16 spriteToHide;
     u32 data;
-    u16 (*updateVisibilityFunc)(struct Sprite* sprite, u16 status);
-    u16 (*updateSpriteTableFunc)(struct Sprite* sprite, u16 status);
+    struct Sprite* prev;
+    struct Sprite* next;
 } Sprite;
 
 /**
@@ -856,10 +845,8 @@ void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback);
  *      WARNING: this is different from SPR_isVisible(..) method, possible value are:<br>
  *      SpriteVisibility.VISIBLE        = sprite is visible<br>
  *      SpriteVisibility.HIDDEN         = sprite is not visible<br>
- *      SpriteVisibility.AUTO_FAST      = visibility is automatically computed from sprite X position only (global visibility)<br>
- *      SpriteVisibility.AUTO_SLOW      = visibility is automatically computed from sprite X position only (per hardware sprite visibility)<br>
- *      SpriteVisibility.AUTO_FAST_FULL = visibility is automatically computed from sprite full position (global visibility)<br>
- *      SpriteVisibility.AUTO_SLOW_FULL = visibility is automatically computed from sprite full position (per hardware sprite visibility)<br>
+ *      SpriteVisibility.AUTO_FAST      = visibility is automatically computed - global visibility (only using sprite X position)<br>
+ *      SpriteVisibility.AUTO_SLOW      = visibility is automatically computed - per hardware sprite visibility (only using sprite X position)<br>
  *
  *  \param sprite
  *      Sprite to return <i>visibility</i> state
@@ -881,8 +868,7 @@ SpriteVisibility SPR_getVisibility(Sprite* sprite);
  *      Force visibility computation.<br>
  *      Only required if SPR_update() wasn't called since last sprite position change (note that can force the frame update processing).
  *
- *  Note that only sprite X position may be used to determine if sprite is visible or not depending you are using priteVisibility.AUTO_xxx_FULL
- *  or SpriteVisibility.AUTO_xxx_FULL  visibility computation method (see SPR_setVisibility(..) method).
+ *  Note that only the sprite X position is used to determine if it's visible (see #SPR_setVisibility(..) method for more information)
 
  *  \return
  *      the <i>visible</i> state for this sprite.
@@ -901,18 +887,14 @@ bool SPR_isVisible(Sprite* sprite, bool recompute);
  *      Visibility value to set.<br>
  *      SpriteVisibility.VISIBLE        = sprite is visible<br>
  *      SpriteVisibility.HIDDEN         = sprite is not visible<br>
- *      SpriteVisibility.AUTO_FAST      = visibility is automatically computed from sprite X position only (global visibility)<br>
- *      SpriteVisibility.AUTO_SLOW      = visibility is automatically computed from sprite X position only (per hardware sprite visibility)<br>
- *      SpriteVisibility.AUTO_FAST_FULL = visibility is automatically computed from sprite full position (global visibility)<br>
- *      SpriteVisibility.AUTO_SLOW_FULL = visibility is automatically computed from sprite full position (per hardware sprite visibility)<br>
+ *      SpriteVisibility.AUTO_FAST      = visibility is automatically computed - global visibility (only using sprite X position)<br>
+ *      SpriteVisibility.AUTO_SLOW      = visibility is automatically computed - per hardware sprite visibility (only using sprite X position)<br>
  *
- *      The only interest in having a sprite not visible is to avoid having it rendered and consuming the scanline sprite budget:<br>
+ *      The only interest in having a sprite hidden / not visible is to avoid having it consuming scanline sprite budget:<br>
  *      The VDP is limited to a maximum of 20 sprites or 320 pixels of sprite per scanline (16 sprites/256 px in H32 mode).<br>
- *      If you have reach this limit, following sprites won't be renderer so it's important to try to optimize the number of sprites
- *      on a single scanline.<br>
+ *      If we reach this limit, following sprites won't be renderer so it's important to try to optimize the number of sprites on a single scanline.<br>
  *      When a sprite is set to not visible (automatically or manually), its position is set offscreen *vertically* so it won't eat
- *      anymore the scanline sprite rendering budget, only X position test is required for that so use AUTO_FAST or AUTO_SLOW if you don't need to use to optimize scanline determine that.
- *      #SPR_isVisible(..) method.
+ *      anymore the scanline sprite rendering budget, only X position test is required for that so a sprite is determined not visible only using its X coordinate.
  *
  *  \see SPR_computeVisibility(...)
  *  \see SPR_getVisibility(...)
