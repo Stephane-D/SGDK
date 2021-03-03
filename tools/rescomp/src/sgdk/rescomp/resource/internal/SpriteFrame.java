@@ -137,7 +137,7 @@ public class SpriteFrame extends Resource
 
         int ind = 0;
         for (SpriteCell sprite : sprites)
-            vdpSprites.add(new VDPSprite(id + "_sprite" + ind++, sprite));
+            vdpSprites.add(new VDPSprite(id + "_sprite" + ind++, sprite, wf, hf));
 
         hc = (timer << 16) ^ tileset.hashCode() ^ vdpSprites.hashCode()
                 ^ ((collision != null) ? collision.hashCode() : 0);
@@ -187,7 +187,7 @@ public class SpriteFrame extends Resource
     @Override
     public int shallowSize()
     {
-        return (vdpSprites.size() * 4) + 1 + 1 + 4 + 4;
+        return (vdpSprites.size() * 6) + 1 + 1 + 4 + 4;
     }
 
     @Override
@@ -221,7 +221,8 @@ public class SpriteFrame extends Resource
         for (VDPSprite sprite : vdpSprites)
         {
             outS.append("    dc.w    " + (((sprite.ht * sprite.wt) << 8) | ((sprite.offsetY << 0) & 0xFF)) + "\n");
-            outS.append("    dc.w    " + ((sprite.getFormattedSize() << 8) | ((sprite.offsetX << 0) & 0xFF)) + "\n");
+            outS.append("    dc.w    " + ((sprite.offsetYFlip << 8) | ((sprite.getFormattedSize() << 0) & 0xFF)) + "\n");
+            outS.append("    dc.w    " + ((sprite.offsetX << 8) | ((sprite.offsetXFlip << 0) & 0xFF)) + "\n");
         }
 
         outS.append("\n");
