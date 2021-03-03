@@ -1623,73 +1623,41 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
         else
         {
             u16 num = frame->numSprite;
+            // start from the last one
+            FrameVDPSprite* frameSprite = &(frame->frameVDPSprites[num]);
+            visibility = 0;
 
-            // special case of single hard sprite
-            if (num == 1)
+            if (attr & TILE_ATTR_HFLIP_MASK)
             {
-                // single sprite
-                FrameVDPSprite* frameSprite = frame->frameVDPSprites;
-                s16 x, w;
-
-                if (attr & TILE_ATTR_HFLIP_MASK)
+                // H flip
+                while(num--)
                 {
-                    // H flip
-                    w = ((frameSprite->size & 0x0C) << 1) + 8;
-                    x = fw - (frameSprite->offsetX + w);
-                }
-                else
-                {
-                    w = ((frameSprite->size & 0x0C) << 1) + 8;
-                    x = frameSprite->offsetX;
-                }
+                    // next
+                    frameSprite--;
+                    visibility <<= 1;
 
-#ifdef SPR_DEBUG
-                KLog_S2("    frameSprite offX=", frameSprite->offsetX, " w=", w);
-                KLog_S2("    size=", size, " adjX=", x);
-#endif // SPR_DEBUG
+                    s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
+                    s16 x = frameSprite->offsetXFlip;
 
-                // compute visibility
-                if (((x + w) > xmin) && (x < xmax)) visibility = VISIBILITY_ON;
-                else visibility = VISIBILITY_OFF;
+                    // compute visibility
+                    if (((x + w) > xmin) && (x < xmax))
+                        visibility |= 1;
+                }
             }
             else
             {
-                // start from the last one
-                FrameVDPSprite* frameSprite = &(frame->frameVDPSprites[num]);
-                visibility = 0;
-
-                if (attr & TILE_ATTR_HFLIP_MASK)
+                while(num--)
                 {
-                    // H flip
-                    while(num--)
-                    {
-                        // next
-                        frameSprite--;
-                        s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
-                        s16 x = fw - (frameSprite->offsetX + w);
+                    // next
+                    frameSprite--;
+                    visibility <<= 1;
 
-                        visibility <<= 1;
+                    s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
+                    s16 x = frameSprite->offsetX;
 
-                        // compute visibility
-                        if (((x + w) > xmin) && (x < xmax))
-                            visibility |= 1;
-                    }
-                }
-                else
-                {
-                    while(num--)
-                    {
-                        // next
-                        frameSprite--;
-                        s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
-                        s16 x = frameSprite->offsetX;
-
-                        visibility <<= 1;
-
-                        // compute visibility
-                        if (((x + w) > xmin) && (x < xmax))
-                            visibility |= 1;
-                    }
+                    // compute visibility
+                    if (((x + w) > xmin) && (x < xmax))
+                        visibility |= 1;
                 }
             }
         }
@@ -1798,21 +1766,16 @@ static void updateSpriteTableAll(Sprite* sprite)
 {
     START_PROFIL
 
-    const SpriteDefinition* sprDef;
     AnimationFrame* frame;
     FrameVDPSprite* frameSprite;
     VDPSprite* vdpSprite;
     u16 attr;
-    u16 fw, fh;
     u16 num;
     u16 visibility;
 
     visibility = sprite->visibility;
     attr = sprite->attribut;
     frame = sprite->frame;
-    sprDef = sprite->definition;
-    fw = sprDef->w;
-    fh = sprDef->h;
     num = frame->numSprite;
     frameSprite = frame->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
@@ -1821,23 +1784,12 @@ static void updateSpriteTableAll(Sprite* sprite)
     {
         while(num--)
         {
-            u8 size = frameSprite->size;
-
-            if (attr & TILE_ATTR_VFLIP_MASK)
-            {
-                s16 sh = ((size & 0x03) << 3) + 8;
-                vdpSprite->y = sprite->y + (fh - (frameSprite->offsetY + sh));
-            }
+            if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
             else vdpSprite->y = sprite->y + frameSprite->offsetY;
-            if (attr & TILE_ATTR_HFLIP_MASK)
-            {
-                s16 sw = ((size & 0x0C) << 1) + 8;
-                vdpSprite->x = sprite->x + (fw - (frameSprite->offsetX + sw));
-            }
-            else
-                vdpSprite->x = sprite->x + frameSprite->offsetX;
-            vdpSprite->size = size;
+            vdpSprite->size = frameSprite->size;
             vdpSprite->attribut = attr;
+            if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+            else vdpSprite->x = sprite->x + frameSprite->offsetX;
 
             // increment tile index in attribut field
             attr += frameSprite->numTile;
@@ -1850,26 +1802,15 @@ static void updateSpriteTableAll(Sprite* sprite)
     {
         while(num--)
         {
-            u8 size = frameSprite->size;
-
             if (visibility & 1)
             {
-                if (attr & TILE_ATTR_VFLIP_MASK)
-                {
-                    s16 sh = ((size & 0x03) << 3) + 8;
-                    vdpSprite->y = sprite->y + (fh - (frameSprite->offsetY + sh));
-                }
+                if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                 else vdpSprite->y = sprite->y + frameSprite->offsetY;
-                if (attr & TILE_ATTR_HFLIP_MASK)
-                {
-                    s16 sw = ((size & 0x0C) << 1) + 8;
-                    vdpSprite->x = sprite->x + (fw - (frameSprite->offsetX + sw));
-                }
-                else
-                    vdpSprite->x = sprite->x + frameSprite->offsetX;
+                if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+                else vdpSprite->x = sprite->x + frameSprite->offsetX;
             }
             else vdpSprite->y = 0;
-            vdpSprite->size = size;
+            vdpSprite->size = frameSprite->size;
             vdpSprite->attribut = attr;
 
             // increment tile index in attribut field
@@ -1914,21 +1855,16 @@ static void updateSpriteTablePos(Sprite* sprite)
 {
     START_PROFIL
 
-    const SpriteDefinition* sprDef;
     AnimationFrame* frame;
     FrameVDPSprite* frameSprite;
     VDPSprite* vdpSprite;
     u16 attr;
-    u16 fw, fh;
     u16 num;
     u16 visibility;
 
     visibility = sprite->visibility;
     attr = sprite->attribut;
     frame = sprite->frame;
-    sprDef = sprite->definition;
-    fw = sprDef->w;
-    fh = sprDef->h;
     num = frame->numSprite;
     frameSprite = frame->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
@@ -1937,21 +1873,10 @@ static void updateSpriteTablePos(Sprite* sprite)
     {
         while(num--)
         {
-            u8 size = frameSprite->size;
-
-            if (attr & TILE_ATTR_VFLIP_MASK)
-            {
-                s16 sh = ((size & 0x03) << 3) + 8;
-                vdpSprite->y = sprite->y + (fh - (frameSprite->offsetY + sh));
-            }
+            if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
             else vdpSprite->y = sprite->y + frameSprite->offsetY;
-            if (attr & TILE_ATTR_HFLIP_MASK)
-            {
-                s16 sw = ((size & 0x0C) << 1) + 8;
-                vdpSprite->x = sprite->x + (fw - (frameSprite->offsetX + sw));
-            }
-            else
-                vdpSprite->x = sprite->x + frameSprite->offsetX;
+            if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+            else vdpSprite->x = sprite->x + frameSprite->offsetX;
 
             // pass to next VDP sprite
             vdpSprite = &vdpSpriteCache[vdpSprite->link];
@@ -1965,21 +1890,10 @@ static void updateSpriteTablePos(Sprite* sprite)
         {
             if (visibility & 1)
             {
-                u8 size = frameSprite->size;
-
-                if (attr & TILE_ATTR_VFLIP_MASK)
-                {
-                    s16 sh = ((size & 0x03) << 3) + 8;
-                    vdpSprite->y = sprite->y + (fh - (frameSprite->offsetY + sh));
-                }
+                if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                 else vdpSprite->y = sprite->y + frameSprite->offsetY;
-                if (attr & TILE_ATTR_HFLIP_MASK)
-                {
-                    s16 sw = ((size & 0x0C) << 1) + 8;
-                    vdpSprite->x = sprite->x + (fw - (frameSprite->offsetX + sw));
-                }
-                else
-                    vdpSprite->x = sprite->x + frameSprite->offsetX;
+                if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+                else vdpSprite->x = sprite->x + frameSprite->offsetX;
             }
             else vdpSprite->y = 0;
 
@@ -1990,7 +1904,6 @@ static void updateSpriteTablePos(Sprite* sprite)
             frameSprite++;
         }
     }
-
 
     // hide sprites that were used by previous frame
     if ((num = sprite->spriteToHide))
