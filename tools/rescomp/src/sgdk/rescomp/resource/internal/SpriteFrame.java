@@ -26,8 +26,6 @@ public class SpriteFrame extends Resource
     public final List<VDPSprite> vdpSprites;
     public final Collision collision;
     public final Tileset tileset;
-    public final int w; // width of frame in tile
-    public final int h; // height of frame in tile
     public final int timer;
 
     final int hc;
@@ -48,17 +46,15 @@ public class SpriteFrame extends Resource
         super(id);
 
         vdpSprites = new ArrayList<>();
-        this.w = wf;
-        this.h = hf;
         this.timer = timer;
 
-        final int numTile = w * h;
         // define frame bounds
         final Rectangle frameBounds = new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
         // get image for this frame
         final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
         // get optimized sprite list from the image frame
         List<SpriteCell> sprites;
+        final int numTile = wf * hf;
 
         // not default value ? --> force slow optimzation
         if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
@@ -143,7 +139,7 @@ public class SpriteFrame extends Resource
         for (SpriteCell sprite : sprites)
             vdpSprites.add(new VDPSprite(id + "_sprite" + ind++, sprite));
 
-        hc = (h << 0) ^ (w << 8) ^ (timer << 16) ^ tileset.hashCode() ^ vdpSprites.hashCode()
+        hc = (timer << 16) ^ tileset.hashCode() ^ vdpSprites.hashCode()
                 ^ ((collision != null) ? collision.hashCode() : 0);
     }
 
@@ -174,9 +170,8 @@ public class SpriteFrame extends Resource
         if (obj instanceof SpriteFrame)
         {
             final SpriteFrame spriteFrame = (SpriteFrame) obj;
-            return (w == spriteFrame.w) && (h == spriteFrame.h) && (timer == spriteFrame.timer)
-                    && tileset.equals(spriteFrame.tileset) && vdpSprites.equals(spriteFrame.vdpSprites)
-                    && ((collision == spriteFrame.collision)
+            return (timer == spriteFrame.timer) && tileset.equals(spriteFrame.tileset)
+                    && vdpSprites.equals(spriteFrame.vdpSprites) && ((collision == spriteFrame.collision)
                             || ((collision != null) && collision.equals(spriteFrame.collision)));
         }
 
@@ -192,7 +187,7 @@ public class SpriteFrame extends Resource
     @Override
     public int shallowSize()
     {
-        return (vdpSprites.size() * 4) + 1 + 1 + 1 + 1 + 4 + 4;
+        return (vdpSprites.size() * 4) + 1 + 1 + 4 + 4;
     }
 
     @Override
@@ -212,8 +207,6 @@ public class SpriteFrame extends Resource
 
         // AnimationFrame structure
         Util.decl(outS, outH, "AnimationFrame", id, 2, global);
-        // frame width / height
-        outS.append("    dc.w    " + (((w * 8) << 8) | (((h * 8) << 0) & 0xFF)) + "\n");
         // number of sprite / timer info
         outS.append("    dc.w    " + ((getNumSprite() << 8) | ((timer << 0) & 0xFF)) + "\n");
         // set tileset pointer
