@@ -17,9 +17,11 @@ First, you need to know that SGDK uses C language (assembly is also possible but
 
 ### MEGA DRIVE TECHNICAL INFO REFERENCES
 
-* Mega Cat Studios Sega Mega Drive graphics guide page:<br>
+* Raster Scroll - Sega Mega Drive Graphics guide:<br>
+https://rasterscroll.com/mdgraphics/
+* Mega Cat Studios - Sega Mega Drive graphics guide:<br>
 https://megacatstudios.com/blogs/retro-development/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
-* Sik's Blog dedicated to assembly programming but explain a lot (and quite nicely) about the Sega Mega Drive hardware:<br>
+* Sik's Blog dedicated to MD assembly programming but explain a lot of stuff (and in a nice way) about the Sega Mega Drive hardware:<br>
 https://plutiedev.com
 * A nice article from Rodrigo Copetti explaining the Mega Drive architecture:<br>
 https://www.copetti.org/projects/consoles/mega-drive-genesis
