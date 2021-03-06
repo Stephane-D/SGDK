@@ -32,6 +32,12 @@ extern const fix16 sqrttab16[0x10000];
  */
 #define max(X, Y)   (((X) > (Y))?(X):(Y))
 
+/**
+ *  \brief
+ *      Returns L if X is less than L, H if X is greater than H or X if in between L and H.
+ */
+#define clamp(X, L, H)   (min(max((X), (L)), (H)))
+
 #if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
