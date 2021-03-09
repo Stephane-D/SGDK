@@ -155,5 +155,6 @@ Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 * [Road to Valhalla](https://www.pouet.net/prod.php?which=72961) by Bounty/Banana & Resistance
 * [Spiral (the)](https://www.pouet.net/prod.php?which=82607) by Resistance
 * [Tetris MD](https://github.com/NeroJin/TetrisMD) unofficial MD port by Nero Jin
+* [ThunderCats MD](https://github.com/mxfolken/thundercats_megadrive) by Rolando Fernández Benavidez.
 * [Travel](https://www.pouet.net/prod.php?which=65975) by Resistance
 * [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the GGJ 2017
