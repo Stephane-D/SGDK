@@ -167,14 +167,14 @@ extern const fix16 sqrttab16[0x10000];
  *      Round the specified value to nearest integer (fix16).
  */
 #define fix16Round(value)           \
-    (fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value)
+    ((fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))
 
 /**
  *  \brief
  *      Round and convert the specified fix16 value to integer.
  */
 #define fix16ToRoundedInt(value)    \
-    (fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value)
+    ((fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value))
 
 /**
  *  \brief
