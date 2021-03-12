@@ -29,7 +29,7 @@ COMPILER
   
 LIBRARY
 * SYS
- - added SYS_getFarDataSafe(..) method / FAR_SAFE(..) macro allowing safe access to resource brossing 512 KB banks
+ - added SYS_getFarDataSafe(..) method / FAR_SAFE(..) macro allowing safe access to resource crossing 512 KB banks
    SGDK methods now use FAR_SAFE(..) accessor instead of FAR(..) for bank switch mechanism
  - fixed a bug in bank switch initialization
  - better CPU load reporting
