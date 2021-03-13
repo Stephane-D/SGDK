@@ -73,6 +73,11 @@ SAMPLE
 * BENCHMARK
  - better score computation for Sprite part (also now comparable to others tests)
 
+SGDK 1.62 MIGRATION NOTE
+* Replace all sprite->seqInd occurence with sprite->frameInd
+* Replace all sprite->animation->length occurence with sprite->animation->numFrame
+* Sprite frame size is now directly defined in the SpriteDefinition structure (SpriteDefinition->w, SpriteDefinition->y) as it's fixed for all frames.
+
 
 SGDK 1.6 (December 2020)
 ------------------------
