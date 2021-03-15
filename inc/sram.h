@@ -4,8 +4,10 @@
  *  \author Chilly Willy & Stephane Dallongeville
  *  \date 08/2012
  *
- * This unit provides methods to read from or write to SRAM.
- *
+ * This unit provides methods to read from or write to SRAM.<br>
+ * By default we suppose SRAM is 8bit and connected to odd address.<br>
+ * You can change to even address by changing SRAM_BASE from 0x200001 to 0x200000 and rebuild the library.<br>
+ *<br>
  * Informations about SRAM (taken from Segaretro.org):<br>
  * The regions specified by 0xA130F9-0xA130FF (0x200000-0x3FFFFF) can be either ROM or RAM and can be write-protected.<br>
  * Here is the layout of the register as far as I know:<br>

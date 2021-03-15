@@ -1,3 +1,84 @@
+SGDK 1.62 (March 2021)
+----------------------
+
+COMPILER
+* RESCOMP
+ - fixed a small bug on MAP resource compression
+ - implemented independant compression on MAP resource
+ - XGM resource are now stored as FAR (accessible through bank switch)
+ - tweaked default BALANCED sprite cutting optimization strategy to reduce a bit sprite usage over tile
+ - increased maximum SPRITE width / height to 248 pixels (it was 128 pixels)
+ - optimized SPRITE metadata size (divided size by 4) at the expense of slower sprite processing
+ - force slow sprite cutting processing when specifying a number of iteration different from default (500000)
+ - added information (rescomp.txt) about how to provide extra data (priority / palette) on tilemap for MAP and IMAGE resources
+ - added support to grayscale image
+ - better error reporting
+* BATCH
+ - several fixes to build_adv.bat file
+* MAKEFILE
+ - makefile can now define GDK variable on its own (environment variable not anymore needed)
+ - fixed copy/paste typo in makelib.gen file
+* README
+ - smalls changes to alternative OS solutions
+ - added Raster Scroll MD graphics guide reference
+ - updated credits part
+ - fixed line return
+* increased maximum ROM size to 12MB
+* removed resourcemanager tool which was not used nor complete 
+* added prelemenary docker support for easier SGDK usage on alternative OS (thanks to Steve Schnepp for it)
+  
+LIBRARY
+* SYS
+ - added SYS_getFarDataSafe(..) method / FAR_SAFE(..) macro allowing safe access to resource crossing 512 KB banks
+   SGDK methods now use FAR_SAFE(..) accessor instead of FAR(..) for bank switch mechanism
+ - fixed a bug in bank switch initialization
+ - better CPU load reporting
+ - minor change to main(..) prototype and return execution
+ - added new 'ROMHeader rom_header' variable to get easier access to ROM header infos
+* SPRITE
+ - modified sprite structures to reduce metadata size (but at the expense of a bit slower processing)
+ - added SPR_getVisibility(..) and SPR_isVisible(..) methods
+ - now automatic sprite visibility is computed using only X position as we use it only scanline sprite usage optimization
+ - made 'firstSprite' / 'lastSprite' visible
+ - improved profiling
+* DMA
+ - small tweak + some fixes when DMA is disabled
+* VDP
+ - added VDP_setHorizontalScrollVSync() and VDP_setVerticalScrollVSync() methods to do delayed scrolling update
+ - safier VDP_drawText(..) / VDP_clearText(..) methods (bounds check)
+ - prevented tilemap column update when plane width is set to 128 (not possible because auto-inc register is limited to 255)
+* MAP
+ - added priority info support to baseTile parameter in MAP_create(..)
+* MATH
+ - removed MATH_BIG_TABLES define as it's not anymore useful with the lto
+ - add clamp function (thanks de Devon Powell)
+ - fix issue with rounding helpers (fix16)
+* MEMORY
+ - added malloc(..) / free(..) so they forward to MEM_alloc(..) / MEM_free(..) methods
+* SOUND
+ - added XGM_startPlay_FAR(..) to allow to play XGM music accessible through bank switch
+* TIMER
+ - small fix on waitSubTick(..) method to take care of small wait during vblank
+* JOY
+ - added JOY_writeJoypadX(..) and JOY_writeJoypadY(...) which allow to set a specific position for mouse pointer (Thanks to LIZARDRIVE)
+* small change to 'Map' and 'Sprite' structure for better doxygen documentation reference
+
+SAMPLE
+* reworked folder structure
+* added new basic HELLO_WORLD sample
+* added BAD APPLE demo sample (to exhibit SGDK bank switching mechanism)
+* added new WOBBLE fx sample (thanks to Andreas Dietrich for it)
+* added new SCALING fx sample (thanks to Andreas Dietrich for it)
+* SPRITE sample renamed to SONIC
+* BENCHMARK
+ - better score computation for Sprite part (also now comparable to others tests)
+
+SGDK 1.62 MIGRATION NOTE
+* Replace all sprite->seqInd occurence with sprite->frameInd
+* Replace all sprite->animation->length occurence with sprite->animation->numFrame
+* Sprite frame size is now directly defined in the SpriteDefinition structure (SpriteDefinition->w, SpriteDefinition->y) as it's fixed for all frames.
+
+
 SGDK 1.6 (December 2020)
 ------------------------
 

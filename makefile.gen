@@ -1,78 +1,85 @@
-BIN= $(GDK)/bin
-LIB= $(GDK)/lib
+MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
 
-LIBSRC= $(GDK)/src
-LIBRES= $(GDK)/res
-LIBINCLUDE= $(GDK)/inc
+ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
+    GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
+endif
 
-SRC= src
-RES= res
-INCLUDE= inc
+BIN := $(GDK)/bin
+LIB := $(GDK)/lib
 
-SHELL= $(BIN)/sh
-RM= $(BIN)/rm
-CP= $(BIN)/cp
-CC= $(BIN)/gcc
-LD= $(BIN)/ld
-NM= $(BIN)/nm
-JAVA= java
-ECHO= echo
-OBJCPY= $(BIN)/objcopy
-ASMZ80= $(BIN)/sjasm
-MACCER= $(BIN)/mac68k
-SIZEBND= $(BIN)/sizebnd
-BINTOS= $(BIN)/bintos
-RESCOMP= $(JAVA) -jar $(BIN)/rescomp.jar
-MKDIR= $(BIN)/mkdir
+LIBSRC := $(GDK)/src
+LIBRES := $(GDK)/res
+LIBINCLUDE := $(GDK)/inc
 
-SRC_C= $(wildcard *.c)
-SRC_C+= $(wildcard $(SRC)/*.c)
-SRC_C+= $(wildcard $(SRC)/*/*.c)
-SRC_C+= $(wildcard $(SRC)/*/*/*.c)
-SRC_C:= $(filter-out $(SRC)/boot/rom_head.c,$(SRC_C))
-SRC_S= $(wildcard *.s)
-SRC_S+= $(wildcard $(SRC)/*.s)
-SRC_S+= $(wildcard $(SRC)/*/*.s)
-SRC_S+= $(wildcard $(SRC)/*/*/*.s)
-SRC_S:= $(filter-out $(SRC)/boot/sega.s,$(SRC_S))
-SRC_ASM= $(wildcard *.asm)
-SRC_ASM+= $(wildcard $(SRC)/*.asm)
-SRC_ASM+= $(wildcard $(SRC)/*/*.asm)
-SRC_ASM+= $(wildcard $(SRC)/*/*/*.asm)
-SRC_S80= $(wildcard *.s80)
-SRC_S80+= $(wildcard $(SRC)/*.s80)
-SRC_S80+= $(wildcard $(SRC)/*/*.s80)
-SRC_S80+= $(wildcard $(SRC)/*/*/*.s80)
+SRC := src
+RES := res
+INCLUDE := inc
 
-RES_C= $(wildcard $(RES)/*.c)
-RES_S= $(wildcard $(RES)/*.s)
-RES_RES= $(wildcard *.res)
-RES_RES+= $(wildcard $(RES)/*.res)
+SHELL := $(BIN)/sh
+RM := $(BIN)/rm
+CP := $(BIN)/cp
+CC := $(BIN)/gcc
+LD := $(BIN)/ld
+NM := $(BIN)/nm
+JAVA := java
+ECHO := echo
+OBJCPY := $(BIN)/objcopy
+ASMZ80 := $(BIN)/sjasm
+MACCER := $(BIN)/mac68k
+SIZEBND := $(BIN)/sizebnd
+BINTOS := $(BIN)/bintos
+RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+MKDIR := $(BIN)/mkdir
 
-RES_RS= $(RES_RES:.res=.rs)
-RES_H= $(RES_RES:.res=.h)
-RES_DEP= $(RES_RES:.res=.d)
-RES_DEPS= $(addprefix out/, $(RES_DEP))
+SRC_C = $(wildcard *.c)
+SRC_C += $(wildcard $(SRC)/*.c)
+SRC_C += $(wildcard $(SRC)/*/*.c)
+SRC_C += $(wildcard $(SRC)/*/*/*.c)
+SRC_C := $(filter-out $(SRC)/boot/rom_head.c,$(SRC_C))
+SRC_S = $(wildcard *.s)
+SRC_S += $(wildcard $(SRC)/*.s)
+SRC_S += $(wildcard $(SRC)/*/*.s)
+SRC_S += $(wildcard $(SRC)/*/*/*.s)
+SRC_S := $(filter-out $(SRC)/boot/sega.s,$(SRC_S))
+SRC_ASM = $(wildcard *.asm)
+SRC_ASM += $(wildcard $(SRC)/*.asm)
+SRC_ASM += $(wildcard $(SRC)/*/*.asm)
+SRC_ASM += $(wildcard $(SRC)/*/*/*.asm)
+SRC_S80 = $(wildcard *.s80)
+SRC_S80 += $(wildcard $(SRC)/*.s80)
+SRC_S80 += $(wildcard $(SRC)/*/*.s80)
+SRC_S80 += $(wildcard $(SRC)/*/*/*.s80)
 
-OBJ= $(RES_RES:.res=.o)
-OBJ+= $(RES_S:.s=.o)
-OBJ+= $(RES_C:.c=.o)
-OBJ+= $(SRC_S80:.s80=.o)
-OBJ+= $(SRC_ASM:.asm=.o)
-OBJ+= $(SRC_S:.s=.o)
-OBJ+= $(SRC_C:.c=.o)
-OBJS= $(addprefix out/, $(OBJ))
+RES_C = $(wildcard $(RES)/*.c)
+RES_S = $(wildcard $(RES)/*.s)
+RES_RES = $(wildcard *.res)
+RES_RES += $(wildcard $(RES)/*.res)
 
-DEPS= $(OBJS:.o=.d)
+RES_RS = $(RES_RES:.res=.rs)
+RES_H = $(RES_RES:.res=.h)
+RES_DEP = $(RES_RES:.res=.d)
+RES_DEPS = $(addprefix out/, $(RES_DEP))
+
+OBJ = $(RES_RES:.res=.o)
+OBJ += $(RES_S:.s=.o)
+OBJ += $(RES_C:.c=.o)
+OBJ += $(SRC_S80:.s80=.o)
+OBJ += $(SRC_ASM:.asm=.o)
+OBJ += $(SRC_S:.s=.o)
+OBJ += $(SRC_C:.c=.o)
+OBJS := $(addprefix out/, $(OBJ))
+
+DEPS := $(OBJS:.o=.d)
 
 #-include $(DEPS)
 
-LST= $(SRC_C:.c=.lst)
-LSTS= $(addprefix out/, $(LST))
+LST := $(SRC_C:.c=.lst)
+LSTS := $(addprefix out/, $(LST))
 
-INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
-DEFAULT_FLAGS= -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin $(INCS) -B$(BIN)
-FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
+INCS := -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
+DEFAULT_FLAGS = -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin $(INCS) -B$(BIN)
+FLAGSZ80 := -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto

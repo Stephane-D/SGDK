@@ -1,44 +1,51 @@
-BIN= $(GDK)/bin
-LIB= $(GDK)/lib
+MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
 
-SRC_LIB= $(GDK)/src
-RES_LIB= $(GDK)/res
-INCLUDE_LIB= $(GDK)/inc
+ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
+    GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
+endif
 
-SHELL= $(BIN)/sh
-RM= $(BIN)/rm
-CP= $(BIN)/cp
-AR= $(BIN)/ar
-CC= $(BIN)/gcc
-JAVA= java
-ECHO= echo
-OBJCPY= $(BIN)/objcopy
-ASMZ80= $(BIN)/sjasm
-SIZEBND= $(BIN)/sizebnd
-BINTOS= $(BIN)/bintos
-RESCOMP= $(JAVA) -jar $(BIN)/rescomp.jar
-MKDIR= $(BIN)/mkdir
+BIN := $(GDK)/bin
+LIB := $(GDK)/lib
 
-SRC_LIB_C= $(wildcard $(SRC_LIB)/*.c)
-SRC_LIB_S= $(wildcard $(SRC_LIB)/*.s)
-SRC_LIB_S80= $(wildcard $(SRC_LIB)/*.s80)
+SRC_LIB := $(GDK)/src
+RES_LIB := $(GDK)/res
+INCLUDE_LIB := $(GDK)/inc
 
-RES_LIB_RES= $(wildcard $(RES_LIB)/*.res)
+SHELL := $(BIN)/sh
+RM := $(BIN)/rm
+CP := $(BIN)/cp
+AR := $(BIN)/ar
+CC := $(BIN)/gcc
+JAVA := java
+ECHO := echo
+OBJCPY := $(BIN)/objcopy
+ASMZ80 := $(BIN)/sjasm
+SIZEBND := $(BIN)/sizebnd
+BINTOS := $(BIN)/bintos
+RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+MKDIR := $(BIN)/mkdir
 
-OBJ_LIB= $(RES_LIB_RES:.res=.o)
-OBJ_LIB+= $(SRC_LIB_S80:.s80=.o)
-OBJ_LIB+= $(SRC_LIB_S:.s=.o)
-OBJ_LIB+= $(SRC_LIB_C:.c=.o)
+SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
+SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
+SRC_LIB_S80 := $(wildcard $(SRC_LIB)/*.s80)
 
-DEP_LIB= $(OBJ_LIB:.o=.d)
+RES_LIB_RES := $(wildcard $(RES_LIB)/*.res)
+
+OBJ_LIB = $(RES_LIB_RES:.res=.o)
+OBJ_LIB += $(SRC_LIB_S80:.s80=.o)
+OBJ_LIB += $(SRC_LIB_S:.s=.o)
+OBJ_LIB += $(SRC_LIB_C:.c=.o)
+
+DEP_LIB := $(OBJ_LIB:.o=.d)
 
 -include $(DEP_LIB)
 
-LST_LIB= $(SRC_LIB_C:.c=.lst)
+LST_LIB := $(SRC_LIB_C:.c=.lst)
 
-INCS_LIB= -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
-DEFAULT_FLAGS_LIB= -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin $(INCS_LIB) -B$(BIN)
-FLAGSZ80_LIB= -i$(SRC_LIB) -i$(INCLUDE_LIB)
+INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
+DEFAULT_FLAGS_LIB := -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin -Wno-unused-parameter $(INCS_LIB) -B$(BIN)
+FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
@@ -115,7 +122,7 @@ cmd_ : $(OBJ_LIB)
 	$(CC) -x assembler-with-cpp -MMD $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.rs
-	$(CC) -x assembler-with-cpp $(FLAGS) -c $*.rs -o $@
+	$(CC) -x assembler-with-cpp $(FLAGS_LIB) -c $*.rs -o $@
 
 %.rs: %.res
 	$(RESCOMP) $*.res $*.rs -dep $*.o

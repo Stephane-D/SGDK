@@ -452,11 +452,6 @@ void SPR_reset();
  *          If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
  *          hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
  *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
- *      #SPR_FLAG_FULL_AUTO_VISIBILITY = Enable full visibility computation for the automatic visibility calculation (disabled by default)<br>
- *          If you set this flag the automatic visibility calculation will also consider the Y position, otherwise only X position is used for
- *          the visibility calculation as only X position mind to optimize scanline sprite usage. Enabling this flag result in slower visibility
- *          computation but it can be useful if you need to use SPR_isVisible() to know if the sprite is visible on screen or not.
- *          You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br>
  *      #SPR_FLAG_AUTO_VRAM_ALLOC = Enable automatic VRAM allocation (enabled by default)<br>
  *          If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <i>attribut</i> parameter or by using the #SPR_setVRAMTileIndex(..) method<br>
  *      #SPR_FLAG_AUTO_SPRITE_ALLOC = Enable automatic hardware/VDP sprite allocation (enabled by default)<br>
