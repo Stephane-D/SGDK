@@ -545,8 +545,12 @@ void SPR_defragVRAM()
 
     Sprite* sprite;
 
-    // release all VRAM region
-    VRAM_clearRegion(&vram);
+    // release VRAM region
+    VRAM_releaseRegion(&vram);
+    // pack
+    MEM_pack();
+    // and re-create it (useful if TILE_FONTINDEX changed, when we modify plane size for instance)
+    VRAM_createRegion(&vram, TILE_FONTINDEX - spriteVramSize, spriteVramSize);
 
     // iterate over all sprites to re-allocate auto allocated VRAM
     sprite = firstSprite;

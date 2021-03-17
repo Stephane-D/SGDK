@@ -989,5 +989,9 @@ static void updateMapsAddress()
 
         // re-pack memory as VDP_lontFont allocate memory to unpack font
         MEM_pack();
+
+        // sprite engine in use ? --> defrag VRAM (this will basically re-allocate all dynamically managed VRAM)
+        if (SPR_isInitialized())
+            SPR_defragVRAM();
     }
 }
