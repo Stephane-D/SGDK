@@ -134,7 +134,11 @@ extern const fix16 sqrttab16[0x10000];
  *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
  */
 #define fix32Div(val1, val2)        (((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
-
+/**
+ *  \brief
+ *      Compute and return the result of the average of val1 by val2 (fix32).
+ */
+#define fix32Avg(val1, val2)        (((val1) >> 1) + ((val2) >> 1))
 
 #define FIX16_INT_BITS              10
 #define FIX16_FRAC_BITS             (16 - FIX16_INT_BITS)
@@ -213,7 +217,11 @@ extern const fix16 sqrttab16[0x10000];
  *      Compute and return the result of the division of val1 by val2 (fix16).
  */
 #define fix16Div(val1, val2)        (((val1) << FIX16_FRAC_BITS) / (val2))
-
+/**
+ *  \brief
+ *      Compute and return the result of the average of val1 by val2 (fix16).
+ */
+#define fix16Avg(val1, val2)        (((val1) >> 1) + ((val2) >> 1))
 
 /**
  *  \brief
