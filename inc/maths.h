@@ -138,7 +138,7 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Compute and return the result of the average of val1 by val2 (fix32).
  */
-#define fix32Avg(val1, val2)        (((val1) >> 1) + ((val2) >> 1))
+#define fix32Avg(val1, val2)        (((val1) + (val2)) >> 1)
 
 #define FIX16_INT_BITS              10
 #define FIX16_FRAC_BITS             (16 - FIX16_INT_BITS)
@@ -221,7 +221,7 @@ extern const fix16 sqrttab16[0x10000];
  *  \brief
  *      Compute and return the result of the average of val1 by val2 (fix16).
  */
-#define fix16Avg(val1, val2)        (((val1) >> 1) + ((val2) >> 1))
+#define fix16Avg(val1, val2)        (((val1) + (val2)) >> 1)
 
 /**
  *  \brief
