@@ -17,6 +17,8 @@ import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Sprite extends Resource
 {
+    public final int wf; // width of frame cell in tile
+    public final int hf; // height of frame cell in tile
     public final List<SpriteAnimation> animations;
     public int maxNumTile;
     public int maxNumSprite;
@@ -35,10 +37,14 @@ public class Sprite extends Resource
         maxNumSprite = 0;
         animations = new ArrayList<>();
 
-        // frame size over limit (we need VDP sprite offset to fit into s8 type)
-        if ((wf > 16) || (hf > 16))
+        // frame size over limit (we need VDP sprite offset to fit into u8 type)
+        if ((wf >= 32) || (hf >= 32))
             throw new IllegalArgumentException(
-                    "SPRITE '" + id + "' has frame width or frame height > 16 (not supported)");
+                    "SPRITE '" + id + "' has frame width or frame height >= 32 (not supported)");
+
+        // set frame size
+        this.wf = wf;
+        this.hf = hf;
 
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
@@ -122,7 +128,8 @@ public class Sprite extends Resource
         }
 
         // compute hash code
-        hc = maxNumTile ^ (maxNumSprite << 16) ^ animations.hashCode() ^ palette.hashCode();
+        hc = (wf << 0) ^ (hf << 8) ^ (maxNumTile << 16) ^ (maxNumSprite << 24) ^ animations.hashCode()
+                ^ palette.hashCode();
     }
 
     @Override
@@ -137,8 +144,9 @@ public class Sprite extends Resource
         if (obj instanceof Sprite)
         {
             final Sprite sprite = (Sprite) obj;
-            return (maxNumTile == sprite.maxNumTile) && (maxNumSprite == sprite.maxNumSprite)
-                    && animations.equals(sprite.animations) && palette.equals(sprite.palette);
+            return (wf == sprite.wf) && (hf == sprite.hf) && (maxNumTile == sprite.maxNumTile)
+                    && (maxNumSprite == sprite.maxNumSprite) && animations.equals(sprite.animations)
+                    && palette.equals(sprite.palette);
         }
 
         return false;
@@ -147,13 +155,14 @@ public class Sprite extends Resource
     @Override
     public String toString()
     {
-        return id + ": numAnim=" + animations.size() + " maxNumTile=" + maxNumSprite + " maxNumSprite=" + maxNumSprite;
+        return id + ": wf=" + wf + " hf=" + hf + " numAnim=" + animations.size() + " maxNumTile=" + maxNumSprite
+                + " maxNumSprite=" + maxNumSprite;
     }
 
     @Override
     public int shallowSize()
     {
-        return (animations.size() * 4) + 4 + 2 + 4 + 2 + 2;
+        return (animations.size() * 4) + 2 + 2 + 4 + 2 + 4 + 2 + 2;
     }
 
     @Override
@@ -182,6 +191,9 @@ public class Sprite extends Resource
 
         // SpriteDefinition structure
         Util.decl(outS, outH, "SpriteDefinition", id, 2, global);
+        // set frame cell size
+        outS.append("    dc.w    " + (wf * 8) + "\n");
+        outS.append("    dc.w    " + (hf * 8) + "\n");
         // set palette pointer
         outS.append("    dc.l    " + palette.id + "\n");
         // set number of animation

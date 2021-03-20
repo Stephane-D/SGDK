@@ -38,7 +38,6 @@ import sgdk.rescomp.resource.Ungroup;
 import sgdk.rescomp.resource.internal.Collision;
 import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.resource.internal.SpriteFrame;
-import sgdk.rescomp.resource.internal.SpriteFrameInfo;
 import sgdk.rescomp.resource.internal.VDPSprite;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.tool.FileUtil;
@@ -296,7 +295,6 @@ public class Compiler
             exportResources(getResources(Palette.class), outB, outS, outH);
             exportResources(getResources(Tileset.class), outB, outS, outH);
             exportResources(getResources(Tilemap.class), outB, outS, outH);
-            exportResources(getResources(SpriteFrameInfo.class), outB, outS, outH);
             exportResources(getResources(SpriteFrame.class), outB, outS, outH);
             exportResources(getResources(SpriteAnimation.class), outB, outS, outH);
             exportResources(getResources(Sprite.class), outB, outS, outH);
@@ -348,8 +346,6 @@ public class Compiler
                 for (Resource res : getResources(VDPSprite.class))
                     spriteMetaSize += res.shallowSize();
                 for (Resource res : getResources(Collision.class))
-                    spriteMetaSize += res.shallowSize();
-                for (Resource res : getResources(SpriteFrameInfo.class))
                     spriteMetaSize += res.shallowSize();
                 for (Resource res : getResources(SpriteFrame.class))
                     spriteMetaSize += res.shallowSize();

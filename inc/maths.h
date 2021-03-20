@@ -32,6 +32,12 @@ extern const fix16 sqrttab16[0x10000];
  */
 #define max(X, Y)   (((X) > (Y))?(X):(Y))
 
+/**
+ *  \brief
+ *      Returns L if X is less than L, H if X is greater than H or X if in between L and H.
+ */
+#define clamp(X, L, H)   (min(max((X), (L)), (H)))
+
 #if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
@@ -128,7 +134,11 @@ extern const fix16 sqrttab16[0x10000];
  *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
  */
 #define fix32Div(val1, val2)        (((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
-
+/**
+ *  \brief
+ *      Compute and return the result of the average of val1 by val2 (fix32).
+ */
+#define fix32Avg(val1, val2)        (((val1) + (val2)) >> 1)
 
 #define FIX16_INT_BITS              10
 #define FIX16_FRAC_BITS             (16 - FIX16_INT_BITS)
@@ -161,14 +171,14 @@ extern const fix16 sqrttab16[0x10000];
  *      Round the specified value to nearest integer (fix16).
  */
 #define fix16Round(value)           \
-    (fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value)
+    ((fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))
 
 /**
  *  \brief
  *      Round and convert the specified fix16 value to integer.
  */
 #define fix16ToRoundedInt(value)    \
-    (fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value)
+    ((fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value))
 
 /**
  *  \brief
@@ -207,7 +217,11 @@ extern const fix16 sqrttab16[0x10000];
  *      Compute and return the result of the division of val1 by val2 (fix16).
  */
 #define fix16Div(val1, val2)        (((val1) << FIX16_FRAC_BITS) / (val2))
-
+/**
+ *  \brief
+ *      Compute and return the result of the average of val1 by val2 (fix16).
+ */
+#define fix16Avg(val1, val2)        (((val1) + (val2)) >> 1)
 
 /**
  *  \brief

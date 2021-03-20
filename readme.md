@@ -1,5 +1,5 @@
-# SGDK 1.6 (december 2020)
-#### Copyright 2020 Stephane Dallongeville
+# SGDK 1.62 (march 2021)
+#### Copyright 2021 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
 
@@ -13,25 +13,33 @@ GCC compiler and libgcc are under GNU license (GPL3) and any software build from
  
 ## GET STARTED
 
-First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). If that's not the case then i recommend you to read these documents:
-* Mega Cat Studios Sega Mega Drive graphics guide page:<br>
+First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). 
+
+### MEGA DRIVE TECHNICAL INFO REFERENCES
+
+* Raster Scroll - Sega Mega Drive Graphics guide:<br>
+https://rasterscroll.com/mdgraphics/
+* Mega Cat Studios - Sega Mega Drive graphics guide:<br>
 https://megacatstudios.com/blogs/retro-development/sega-genesis-mega-drive-vdp-graphics-guide-v1-2a-03-14-17
-* Sik's Blog dedicated to assembly programming but explain a lot (and quite nicely) about the Sega Mega Drive hardware:<br>
+* Sik's Blog dedicated to MD assembly programming but explain a lot of stuff (and in a nice way) about the Sega Mega Drive hardware:<br>
 https://plutiedev.com
 * A nice article from Rodrigo Copetti explaining the Mega Drive architecture:<br>
 https://www.copetti.org/projects/consoles/mega-drive-genesis
 * Genesis Software Manual which contains absolutely everything you need to know about the Sega Mega Drive:<br>
 https://segaretro.org/images/a/a2/Genesis_Software_Manual.pdf
 
+### INSTALLATION AND DOCUMENTATION 
+
 Then when you feel ready you can go further and finally install SGDK :)
 
 You can find installation instructions and tutorials about how use SGDK on the wiki:<br>
 https://github.com/Stephane-D/SGDK/wiki
 
-Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the _'doc'_ folder:<br>
-*doc/html/files.html*
+Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the _'doc'_ folder (open your local _doc/html/files.html_ in your browser).
 
 Another important point to know is that SGDK heavily relies on _resources_ which are compiled through _rescomp_ tool. You can read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to know which kind of resource you can use and how to declare them then you can check the *'sample'* folder from SGDK and in particular the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sonic) which is a good showcase of SGDK usage in general (functions and resources).
+
+### OTHERS TUTORIALS
 
 You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):<br>
 https://www.ohsat.com/tutorial/<br>
@@ -61,6 +69,21 @@ But it seems to be outdated and is more complexe to setup than Wine based soluti
 MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:<br>
 https://github.com/SONIC3D/gendev-macos
 
+### DOCKER
+
+*A modern way to install it on any environement is to use Docker.*
+
+To build the `sgdk` base image:
+
+    docker build -t sgdk .
+
+And then to compile the local env, such as `samples` for example:
+
+    cd sample/sonic
+    docker run --rm -v $PWD:/src sgdk
+
+Note: `$PWD` will not work on Windows, there `%CD%` has to be used instead.
+
  
 ### VISUAL STUDIO
 
@@ -68,7 +91,7 @@ You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK
 To go even further you can also install the VS extension made by zerasul:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
-### THANKS
+## THANKS
 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
@@ -79,7 +102,8 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Kubilus for the GenDev Linux port of SGDK.
 - Sonic3D for the GenDev OSX port of SGDK.
 - Vladimir Kryvian for Visual Studio support and template.
-- Joe Musashi for the nice Wobbler effect sample.
+- Steve Schnepp for Docker support.
+- Andreas Dietrich for the nice Wobbler & scaling effect samples.
 - clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
@@ -91,7 +115,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
 - all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
 
-### SUPPORT SGDK
+## SUPPORT SGDK
 
 SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
 
@@ -131,5 +155,6 @@ Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 * [Road to Valhalla](https://www.pouet.net/prod.php?which=72961) by Bounty/Banana & Resistance
 * [Spiral (the)](https://www.pouet.net/prod.php?which=82607) by Resistance
 * [Tetris MD](https://github.com/NeroJin/TetrisMD) unofficial MD port by Nero Jin
+* [ThunderCats MD](https://github.com/mxfolken/thundercats_megadrive) by Rolando Fernández Benavidez.
 * [Travel](https://www.pouet.net/prod.php?which=65975) by Resistance
 * [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the GGJ 2017
