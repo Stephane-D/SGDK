@@ -473,13 +473,12 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
 
             default:
                 // 8KB tilemap VRAM setup
+                VDP_setSpriteListAddress(0xAC00);
+                VDP_setHScrollTableAddress(0xA800);
                 VDP_setWindowAddress(0xB000);
-                VDP_setSpriteListAddress(0xBC00);
-                VDP_setHScrollTableAddress(0xB800);
                 VDP_setBPlanAddress(0xC000);
                 VDP_setAPlanAddress(0xE000);
-                // be careful as window only allocate tilemap for upper 128 pixels
-                // you need to change Sprite List and HScroll Table address to have a complete window plane if required
+                // 0xAF00-0xAFFF free
                 break;
         }
 
