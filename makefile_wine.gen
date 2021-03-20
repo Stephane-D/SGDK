@@ -1,29 +1,37 @@
 RM= rm
 CP= cp
 MKDIR= mkdir
+SHELL= sh
 
-BIN= $(GDK)/bin
-LIB= $(GDK)/lib
+MAKEFILE_DIR:= $(dir $(lastword $(MAKEFILE_LIST)))
+MAKEFILE_DIR:= $(subst \,/,$(MAKEFILE_DIR))
 
-LIBSRC= $(GDK)/src
-LIBRES= $(GDK)/res
-LIBINCLUDE= $(GDK)/inc
+ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
+    GDK:= $(patsubst %/,%,$(MAKEFILE_DIR))
+endif
 
-SRC= src
-RES= res
-INCLUDE= inc
+BIN:= $(GDK)/bin
+LIB:= $(GDK)/lib
 
-CC= $(BIN)/gcc
-LD= $(BIN)/ld
-NM= $(BIN)/nm
-JAVA= java
-ECHO= echo
-OBJCPY= $(BIN)/objcopy
-ASMZ80= $(BIN)/sjasm
-MACCER= $(BIN)/mac68k
-SIZEBND= $(BIN)/sizebnd
-BINTOS= $(BIN)/bintos
-RESCOMP= $(JAVA) -jar $(BIN)/rescomp.jar
+LIBSRC:= $(GDK)/src
+LIBRES:= $(GDK)/res
+LIBINCLUDE:= $(GDK)/inc
+
+SRC:= src
+RES:= res
+INCLUDE:= inc
+
+CC:= $(BIN)/gcc
+LD:= $(BIN)/ld
+NM:= $(BIN)/nm
+JAVA:= java
+ECHO:= echo
+OBJCPY:= $(BIN)/objcopy
+ASMZ80:= $(BIN)/sjasm
+MACCER:= $(BIN)/mac68k
+SIZEBND:= $(BIN)/sizebnd
+BINTOS:= $(BIN)/bintos
+RESCOMP:= $(JAVA) -jar $(BIN)/rescomp.jar
 
 SRC_C= $(wildcard *.c)
 SRC_C+= $(wildcard $(SRC)/*.c)
@@ -61,18 +69,18 @@ OBJ+= $(SRC_S80:.s80=.o)
 OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
-OBJS= $(addprefix out/, $(OBJ))
+OBJS:= $(addprefix out/, $(OBJ))
 
-DEPS= $(OBJS:.o=.d)
+DEPS:= $(OBJS:.o=.d)
 
 #-include $(DEPS)
 
-LST= $(SRC_C:.c=.lst)
-LSTS= $(addprefix out/, $(LST))
+LST:= $(SRC_C:.c=.lst)
+LSTS:= $(addprefix out/, $(LST))
 
-INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
+INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
 DEFAULT_FLAGS= -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin $(INCS) -B$(BIN)
-FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
+FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
