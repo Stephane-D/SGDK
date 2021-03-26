@@ -1598,7 +1598,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
             visibility = VISIBILITY_OFF;
 
 #ifdef SPR_DEBUG
-        KLog_S2("  updateVisibility (fast): global x=", x, " global y=", y);
+        KLog_S1("  updateVisibility (fast): global x=", x);
         KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
 #endif // SPR_DEBUG
     }
