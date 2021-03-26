@@ -174,7 +174,7 @@ func M3D_project_s16
     jle .L38                                |   {
 
     move.l %a3,%d3
-    divs.w %d2,%d3                          |       d3 = scale = fix16Div((camDist << (4 + 2)), camDist + z)
+    divs.w %d2,%d3                          |       d3 = scale = fix16Div((camDist << (4 + 2)), zi)
 
     muls.w %d3,%d0
     swap %d0
