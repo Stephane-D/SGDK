@@ -955,8 +955,8 @@ void VDP_showCPULoad()
 
     uintToStr(SYS_getCPULoad(), str, 1);
     strcat(str, "%");
-    VDP_clearText(2, 2, 4);
 
+    VDP_clearText(2, 2, 4);
     // display FPS
     VDP_drawText(str, 1, 2);
 }
