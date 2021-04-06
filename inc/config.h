@@ -56,7 +56,7 @@
  *      Some Megadrive models (as 2016 Tectoy Megadrive) need it to prevent some possible 68000 memory or Z80 corruption bugs
  *      (may happen when Z80 access the main BUS during a DMA operation).
  */
-#define HALT_Z80_ON_DMA     0
+#define HALT_Z80_ON_DMA     1
 
 /**
  *  \brief
