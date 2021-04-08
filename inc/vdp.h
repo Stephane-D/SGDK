@@ -766,12 +766,12 @@ void VDP_setBGAAddress(u16 value);
 void VDP_setBGBAddress(u16 value);
 /**
  *  \deprecated
- *      Use #VDP_setWindowAddress(..) instead.
+ *      Use #VDP_setBGAAddress(..) instead.
  */
 void VDP_setAPlanAddress(u16 value);
 /**
  *  \deprecated
- *      Use #VDP_setWindowAddress(..) instead.
+ *      Use #VDP_setBGBAddress(..) instead.
  */
 void VDP_setBPlanAddress(u16 value);
 /**
