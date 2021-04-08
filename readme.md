@@ -62,9 +62,9 @@ https://github.com/Franticware/SGDK_wine
 There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:<br>
 https://github.com/v4ld3r5/sgdk_vscode_template
 
-An alternative solution for Unix/Linux is Gendev project from Kubilus:<br>
-https://github.com/kubilus1/gendev<br>
-But it seems to be outdated and is more complexe to setup than Wine based solution.
+Another great alternative is to use the complete _MarsDev_ environment developed by Andy Grind:
+https://github.com/andwn/marsdev
+It suppots all OSes, provides SGDK compatibility as well than 32X support so be sure to check it.
 
 MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:<br>
 https://github.com/SONIC3D/gendev-macos
@@ -99,6 +99,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - Gunpog for making the new SGDK logo.
 - Vojtěch Salajka for the script allowing to use SGDK easily from Wine (Linux/Unix but may work on OSX too).
 - Daniel Valdivieso for another Wine based solution to use SGDK on multi-OS (including a VSCode template).
+- Andy Grind for the MarsDev project allowing to use SGDK on any OS and also supporting 32X dev.
 - Kubilus for the GenDev Linux port of SGDK.
 - Sonic3D for the GenDev OSX port of SGDK.
 - Vladimir Kryvian for Visual Studio support and template.
