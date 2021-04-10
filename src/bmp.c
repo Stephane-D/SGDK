@@ -146,6 +146,9 @@ void BMP_end()
     // try to pack memory free blocks (before to avoid memory fragmentation)
     MEM_pack();
 
+    // restore 64x32 cells sized plane
+    VDP_setPlaneSize(64, 32, TRUE);
+
     // we can re enable ints
     // FIXME: for some reason disabling interrupts generally break BMP init :-/
 //    SYS_enableInts();
@@ -176,6 +179,11 @@ void BMP_reset()
 
     // need 64x64 cells sized plane
     VDP_setPlaneSize(64, 64, TRUE);
+    // we need to tweak VRAM setup as Bitmap mode may require double buffering in VRAM
+    VDP_setSpriteListAddress(0xBC00);
+    VDP_setHScrollTableAddress(0xB800);
+    // so window plan can be use only on first top half of the screen
+
     // clear plane (complete tilemap)
     VDP_clearPlane(bmp_plan, TRUE);
 
@@ -1111,7 +1119,7 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
         MEM_free(b);
     }
     else
-        BMP_drawBitmapData((u8*) FAR_SAFE(bitmap->image, (w * h) / 2), x, y, w, h, w >> 1);
+        BMP_drawBitmapData((u8*) FAR_SAFE(bitmap->image, mulu(w , h) / 2), x, y, w, h, w >> 1);
 
     // load the palette
     if (loadpal)
@@ -1143,7 +1151,7 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
         MEM_free(b);
     }
     else
-        BMP_scale(FAR_SAFE(bitmap->image, (w * h) / 2), bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
+        BMP_scale(FAR_SAFE(bitmap->image, mulu(w, h) / 2), bmp_wb, bmp_h, bmp_wb, BMP_getWritePointer(x, y), w >> 1, h, BMP_PITCH);
 
     // load the palette
     if (loadpal)
@@ -1179,10 +1187,10 @@ void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *dest)
 // works only for 8 bits image (x doubled)
 void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_wb, u16 dst_h, u16 dst_pitch)
 {
-    const s32 yd = ((src_h / dst_h) * src_wb) - src_wb;
-    const u16 yr = src_h % dst_h;
-    const s32 xd = src_wb / dst_wb;
-    const u16 xr = src_wb % dst_wb;
+    const s32 yd = mulu(divu(src_h, dst_h), src_wb) - src_wb;
+    const u16 yr = modu(src_h, dst_h);
+    const u32 xd = divu(src_wb, dst_wb);
+    const u16 xr = modu(src_wb, dst_wb);
 
     const u32 adj_src = src_pitch - src_wb;
     const u32 adj_dst = dst_pitch - dst_wb;
