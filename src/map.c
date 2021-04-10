@@ -87,7 +87,7 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
     // get blocks indexes data compression
     comp = (compression >> 8) & 0xF;
     // blocks indexes data are compressed ?
-    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR_SAFE(mapDef->blockIndexes, mapDef->w * mapDef->hp * ((mapDef->numBlock > 256)?2:1)), (u8*) result->blockIndexes);
+    if (comp != COMPRESSION_NONE) unpack(comp, (u8*) FAR_SAFE(mapDef->blockIndexes, mulu(mapDef->w, mapDef->hp) * ((mapDef->numBlock > 256)?2:1)), (u8*) result->blockIndexes);
     // init FAR pointer
     else result->blockIndexes = FAR_SAFE(mapDef->blockIndexes, mapDef->w * mapDef->hp * ((mapDef->numBlock > 256)?2:1));
 

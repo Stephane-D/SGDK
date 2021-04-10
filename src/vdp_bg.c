@@ -336,7 +336,7 @@ u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
     u16 numTile;
     u16 result;
 
-    numTile = ((bitmap->h + 7) >> 3) * ((bitmap->w + 7) >> 3);
+    numTile = mulu((bitmap->h + 7) >> 3, (bitmap->w + 7) >> 3);
     // not enough tiles to display the image, get back to first user index
     if ((curTileInd + numTile) > TILE_USERMAXINDEX)
         curTileInd = TILE_USERINDEX;
@@ -350,8 +350,8 @@ u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
 
 u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)
 {
-    const int wt = bitmap->w / 8;
-    const int ht = bitmap->h / 8;
+    const u16 wt = bitmap->w / 8;
+    const u16 ht = bitmap->h / 8;
     const Palette *palette = bitmap->palette;
 
     // compressed bitmap ?
@@ -367,7 +367,7 @@ u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, 
     }
     else
         // tiles
-        VDP_loadBMPTileData((u32*) FAR_SAFE(bitmap->image, wt * ht * 32), basetile & TILE_INDEX_MASK, wt, ht, wt);
+        VDP_loadBMPTileData((u32*) FAR_SAFE(bitmap->image, mulu(wt, ht) * 32), basetile & TILE_INDEX_MASK, wt, ht, wt);
 
     // tilemap
     VDP_fillTileMapRectInc(plane, basetile, x, y, wt, ht);

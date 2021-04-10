@@ -65,7 +65,7 @@ u16 VDP_loadFont(const TileSet *font, TransferMethod tm)
 
 void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 h, u16 bmp_w)
 {
-    VDP_loadBMPTileData(&data[x + (y * bmp_w)], index, w, h, bmp_w);
+    VDP_loadBMPTileData(&data[x + mulu(y, bmp_w)], index, w, h, bmp_w);
 }
 
 void VDP_fillTileData(u8 value, u16 index, u16 num, bool wait)
@@ -303,7 +303,7 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
             // second part
             h2 = h - h1;
             // offset
-            off = wm * h1;
+            off = mulu(wm, h1);
         }
         else
         {
@@ -384,7 +384,7 @@ void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16
             // second part
             h2 = h - h1;
             // offset
-            off = wm * h1;
+            off = mulu(wm, h1);
         }
         else
         {
@@ -730,7 +730,7 @@ void VDP_setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y
         // first part
         setTileMapDataColumn(plane, data, column, yAdj, h1, wm, tm);
         // second part
-        setTileMapDataColumn(plane, data + (wm * h1), column, 0, h - h1, wm, tm);
+        setTileMapDataColumn(plane, data + mulu(wm, h1), column, 0, h - h1, wm, tm);
     }
     // no split needed
     else setTileMapDataColumn(plane, data, column, yAdj, h, wm, tm);
@@ -749,7 +749,7 @@ void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u
         // first part
         setTileMapDataColumnEx(plane, data, basetile, column, yAdj, h1, wm, tm);
         // second part
-        setTileMapDataColumnEx(plane, data + (wm * h1), basetile, column, 0, h - h1, wm, tm);
+        setTileMapDataColumnEx(plane, data + mulu(wm, h1), basetile, column, 0, h - h1, wm, tm);
     }
     // no split needed
     else setTileMapDataColumnEx(plane, data, basetile, column, yAdj, h, wm, tm);
@@ -758,7 +758,7 @@ void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u
 
 bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)
 {
-    const u32 offset = (y * tilemap->w) + x;
+    const u32 offset = mulu(y, tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -774,14 +774,14 @@ bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w,
     }
     else
         // tilemap
-        VDP_setTileMapDataRect(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), x, y, w, h, tilemap->w, tm);
+        VDP_setTileMapDataRect(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, mulu(tilemap->w, h) * 2), x, y, w, h, tilemap->w, tm);
 
     return TRUE;
 }
 
 bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 xp, u16 yp, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)
 {
-    const u32 offset = (y * tilemap->w) + x;
+    const u32 offset = mulu(y, tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -797,14 +797,14 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
     }
     else
         // tilemap
-        VDP_setTileMapDataRectEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), basetile, xp, yp, w, h, tilemap->w, tm);
+        VDP_setTileMapDataRectEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, mulu(tilemap->w, h) * 2), basetile, xp, yp, w, h, tilemap->w, tm);
 
     return TRUE;
 }
 
 bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u16 w, TransferMethod tm)
 {
-    const u32 offset = (row * tilemap->w) + x;
+    const u32 offset = mulu(row, tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -827,7 +827,7 @@ bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u
 
 bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 row, u16 x, u16 y, u16 w, TransferMethod tm)
 {
-    const u32 offset = (y * tilemap->w) + x;
+    const u32 offset = mulu(y, tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -852,7 +852,7 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
 
 bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u16 y, u16 h, TransferMethod tm)
 {
-    const u32 offset = (y * tilemap->w) + column;
+    const u32 offset = mulu(y, tilemap->w) + column;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -868,14 +868,14 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
     }
     else
         // tilemap
-        VDP_setTileMapDataColumn(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), column, y, h, tilemap->w, tm);
+        VDP_setTileMapDataColumn(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, mulu(tilemap->w, h) * 2), column, y, h, tilemap->w, tm);
 
     return TRUE;
 }
 
 bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 column, u16 x, u16 y, u16 h, TransferMethod tm)
 {
-    const u32 offset = (y * tilemap->w) + x;
+    const u32 offset = mulu(y, tilemap->w) + x;
 
     // compressed tilemap ?
     if (tilemap->compression != COMPRESSION_NONE)
@@ -891,7 +891,7 @@ bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile
     }
     else
         // tilemap
-        VDP_setTileMapDataColumnEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, tilemap->w * h * 2), basetile, column, y, h, tilemap->w, tm);
+        VDP_setTileMapDataColumnEx(plane, (u16*) FAR_SAFE(tilemap->tilemap + offset, mulu(tilemap->w, h) * 2), basetile, column, y, h, tilemap->w, tm);
 
     return TRUE;
 }
