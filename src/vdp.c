@@ -150,8 +150,17 @@ void VDP_resetScreen()
     VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
     VDP_setHorizontalScroll(BG_A, 0);
     VDP_setHorizontalScroll(BG_B, 0);
-    VDP_setVerticalScroll(BG_A, 0);
-    VDP_setVerticalScroll(BG_B, 0);
+
+    {
+        s16 values[20];
+
+        // clear
+        memset(values, 0, sizeof(values));
+
+        // clear VSRAM
+        VDP_setVerticalScrollTile(BG_A, 0, values, 20, CPU);
+        VDP_setVerticalScrollTile(BG_B, 0, values, 20, CPU);
+    }
 
     // load default font
     if (!VDP_loadFont(&font_default, CPU))
