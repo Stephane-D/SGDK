@@ -33,22 +33,22 @@
  *  \brief
  *          Bitmap plane width (in tile)
  */
-#define BMP_PLANWIDTH               planeWidth
+#define BMP_PLANWIDTH               64
 /**
  *  \brief
  *          Bitmap plane height (in tile)
  */
-#define BMP_PLANHEIGHT              planeHeight
+#define BMP_PLANHEIGHT              64
 
 #define BMP_CELLWIDTH_SFT           5
 /**
  *  \brief
- *          Bitmap width (in tile) : 32
+ *          Bitmap width (in tile): 32
  */
 #define BMP_CELLWIDTH               (1 << BMP_CELLWIDTH_SFT)
 /**
  *  \brief
- *          Bitmap height (in tile) : 20
+ *          Bitmap height (in tile): 20
  */
 #define BMP_CELLHEIGHT              20
 #define BMP_CELLWIDTHMASK           (BMP_CELLWIDTH - 1)
