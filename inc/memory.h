@@ -34,7 +34,7 @@
 
 /**
  *  \brief
- *      Define memory allocated for stack (default = 0xC00)
+ *      Define memory allocated for stack (default = 0xA00)
  */
 #define STACK_SIZE      0x0A00
 /**
