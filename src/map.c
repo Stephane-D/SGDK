@@ -6,6 +6,7 @@
 #include "sys.h"
 #include "mapper.h"
 #include "vdp_tile.h"
+#include "memory.h"
 #include "tools.h"
 
 
@@ -51,11 +52,6 @@ static void getMetaTilemapRect_MTI8_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u1
 static void getMetaTilemapRect_MTI8_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 static void getMetaTilemapRect_MTI16_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
-
-
-static s16 scrollX[2];
-static s16 scrollY[2];
-static bool updateScroll[2];
 
 
 Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
@@ -212,16 +208,54 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
     // update map
     updateMap(map, x >> 4, y >> 4);
 
-    // store position
-    map->posX = x;
-    map->posY = y;
+    // X scrolling changed ?
+    if (map->posX != x)
+    {
+        u16 len;
 
-    // store info for scrolling
-    scrollX[map->plane] = -x;
-    scrollY[map->plane] = y;
-    updateScroll[map->plane] = TRUE;
-    // add task for vblank process
-    VBlankProcess |= PROCESS_MAP_TASK;
+        switch(VDP_getHorizontalScrollingMode())
+        {
+            case HSCROLL_PLANE:
+                VDP_setHorizontalScrollVSync(map->plane, -x);
+                break;
+
+            case HSCROLL_TILE:
+                // important to set scroll for all tile
+                len = screenHeight / 8;
+                memsetU16(map->hScrollTable, -x, len);
+                VDP_setHorizontalScrollTile(map->plane, 0, (s16*) map->hScrollTable, len, DMA_QUEUE);
+                break;
+
+            case HSCROLL_LINE:
+                // important to set scroll for all line
+                len = screenHeight;
+                memsetU16(map->hScrollTable, -x, len);
+                VDP_setHorizontalScrollLine(map->plane, 0, (s16*) map->hScrollTable, len, DMA_QUEUE);
+                break;
+        }
+
+        // store X position
+        map->posX = x;
+    }
+    // Y scrolling changed ?
+    if (map->posY != y)
+    {
+        switch(VDP_getVerticalScrollingMode())
+        {
+            case VSCROLL_PLANE:
+                VDP_setVerticalScrollVSync(map->plane, y);
+                break;
+
+            case VSCROLL_COLUMN:
+                // important to set scroll for all column
+                memsetU16(map->vScrollTable, y, 20);
+                VDP_setVerticalScrollTile(map->plane, 0, (s16*) map->vScrollTable, 20, DMA_QUEUE);
+                break;
+        }
+
+        // store Y position
+        map->posY = y;
+    }
 }
 
 
@@ -1740,24 +1774,4 @@ static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, 
             blockYOffset = yi * 8;
         }
     }
-}
-
-
-bool MAP_doVBlankProcess()
-{
-    if (updateScroll[BG_A])
-    {
-        VDP_setHorizontalScroll(BG_A, scrollX[BG_A]);
-        VDP_setVerticalScroll(BG_A, scrollY[BG_A]);
-        updateScroll[BG_A] = FALSE;
-    }
-    if (updateScroll[BG_B])
-    {
-        VDP_setHorizontalScroll(BG_B, scrollX[BG_B]);
-        VDP_setVerticalScroll(BG_B, scrollY[BG_B]);
-        updateScroll[BG_B] = FALSE;
-    }
-
-    // no more task
-    return FALSE;
 }

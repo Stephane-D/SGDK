@@ -130,6 +130,10 @@ typedef struct
  *      internal
  *  \param prepareMapDataRowCB
  *      internal
+ *  \param hScrollTable
+ *      internal
+ *  \param vScrollTable
+ *      internal
  *  \param getMetaTileCB
  *      internal
  *  \param getMetaTilemapRectCB
@@ -151,6 +155,8 @@ typedef struct Map
     u16 planeHeightMask;
     u16 lastXT;
     u16 lastYT;
+    u16 hScrollTable[240];
+    u16 vScrollTable[20];
     void (*prepareMapDataColumnCB)(struct Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
     void (*prepareMapDataRowCB)(struct Map *map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
     u16  (*getMetaTileCB)(struct Map *map, u16 x, u16 y);

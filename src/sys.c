@@ -661,12 +661,6 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
             DMA_flushQueue();
     }
 
-    // map process (VDP scroll)
-    if (vbp & PROCESS_MAP_TASK)
-    {
-        if (!MAP_doVBlankProcess()) vbp &= ~PROCESS_MAP_TASK;
-    }
-
     // VDP scroll process (async scroll update)
     if (vbp & PROCESS_VDP_SCROLL_TASK)
     {
@@ -688,8 +682,8 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         // use internal sprite 0 to show cursor
         VDPSprite* vdpSprite = &vdpSpriteCache[0];
 
-        // use CPU load display instead
-        if (flags & SHOW_FRAME_LOAD)
+        // use CPU load display instead (mean)
+        if (flags & SHOW_FRAME_LOAD_MEAN)
         {
             // get CPU load (0-255)
             u16 load = cpuFrameLoad / LOAD_MEAN_FRAME_NUM;
