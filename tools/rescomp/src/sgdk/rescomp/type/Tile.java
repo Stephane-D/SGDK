@@ -241,6 +241,22 @@ public class Tile implements Comparable<Tile>
         return TileEquality.NONE;
     }
 
+    // only test for flip version here
+    public TileEquality getFlipEquality(Tile tile)
+    {
+        // hflip
+        if (Arrays.equals(tile.data, hFlip))
+            return TileEquality.HFLIP;
+        // vflip
+        if (Arrays.equals(tile.data, vFlip))
+            return TileEquality.VFLIP;
+        // hvflip
+        if (Arrays.equals(tile.data, hvFlip))
+            return TileEquality.HVFLIP;
+
+        return TileEquality.NONE;
+    }
+
     @Override
     public int hashCode()
     {

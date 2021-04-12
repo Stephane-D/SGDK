@@ -169,20 +169,18 @@ public class Tileset extends Resource
         if (opt == TileOptimization.NONE)
             return -1;
 
-        int ind = 0;
-        for (Tile t : tiles)
+        // always do a first pass for direct matching (preferred choice if possible)
+        for (int ind = 0; ind < tiles.size(); ind++)
+            if (tiles.get(ind).equals(tile))
+                return ind;
+
+        // allow flip ?
+        if (opt == TileOptimization.ALL)
         {
-            final TileEquality result = t.getEquality(tile);
-
-            // found an equality ?
-            if (result != TileEquality.NONE)
-            {
-                // perfect equality or flipped allowed ? --> found it
-                if ((result == TileEquality.EQUAL) || (opt == TileOptimization.ALL))
+            for (int ind = 0; ind < tiles.size(); ind++)
+                // found a flip equality ?
+                if (tiles.get(ind).getFlipEquality(tile) != TileEquality.NONE)
                     return ind;
-            }
-
-            ind++;
         }
 
         // not found
