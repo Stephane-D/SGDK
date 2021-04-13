@@ -1370,9 +1370,6 @@ static void doFlip()
     // better to disable ints here
     SYS_disableInts();
 
-    // wait for DMA completion if used otherwise VDP writes can be corrupted
-    VDP_waitDMACompletion();
-
     // copy tile buffer to VRAM
     if (doBlit())
     {
