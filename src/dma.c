@@ -220,8 +220,6 @@ void DMA_flushQueue()
     KLog_U3("DMA_flushQueue: queueIndexLimit=", queueIndexLimit, " queueIndex=", queueIndex, " i=", i);
 #endif
 
-    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
-    VDP_waitDMACompletion();
     // save autoInc
     autoInc = VDP_getAutoInc();
 
@@ -623,8 +621,6 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
 void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
 {
 #if (DMA_DISABLED != 0)
-    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
-    VDP_waitDMACompletion();
     // DMA disabled --> replace with software copy
     DMA_doCPUCopy(location, from, to, len, step);
 #else
@@ -656,8 +652,6 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
         // change increment step if required
         if (step != -1)
             VDP_setAutoInc(step);
-        // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
-        VDP_waitDMACompletion();
     }
 
     // define z80 BUSREQ restore state
@@ -733,8 +727,6 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
 void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
 {
 #if (DMA_DISABLED != 0)
-    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
-    VDP_waitDMACompletion();
     // DMA disabled --> replace with software copy
     DMA_doCPUCopy(location, from, to, len, step);
 #else
@@ -748,9 +740,6 @@ void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
 
     if (step != -1)
         VDP_setAutoInc(step);
-
-    // wait for DMA FILL / COPY operation to complete (otherwise we can corrupt VDP)
-    VDP_waitDMACompletion();
 
     // define z80 BUSREQ restore state
     if (Z80_isBusTaken()) z80restore = 0x0100;
@@ -917,9 +906,6 @@ void DMA_doVRamFill(u16 to, u16 len, u8 value, s16 step)
 //    DMA_doVRamFill(0, 2, 0xFF, 1);    // 01-3
 //    DMA_doVRamFill(0, 2, 0xFF, 1);    // 0123
 
-    // wait for DMA FILL / COPY operation to complete
-    VDP_waitDMACompletion();
-
     pw = (vu16*) GFX_CTRL_PORT;
 
     // Setup DMA length
@@ -945,9 +931,6 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step)
 
     if (step != -1)
         VDP_setAutoInc(step);
-
-    // wait for DMA FILL / COPY operation to complete
-    VDP_waitDMACompletion();
 
     pw = (vu16*) GFX_CTRL_PORT;
 
