@@ -8,6 +8,7 @@
 
 #include "kdebug.h"
 #include "tools.h"
+#include "timer.h"
 
 
 //#define DMA_DEBUG
@@ -208,11 +209,11 @@ void DMA_flushQueue()
             i = queueIndexLimit;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_U2_("DMA_flushQueue(..) warning: transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, "), some transfers are ignored.");
+            KLog_U3_("DMA_flushQueue(..) warning: frame #", vtimer, " - transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, "), some transfers are ignored.");
 #endif
         }
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-        else KLog_U2_("DMA_flushQueue(..) warning: transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, ").");
+        else KLog_U3_("DMA_flushQueue(..) warning: frame #", vtimer, " - transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, ").");
 #endif
     }
 
@@ -512,7 +513,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
         if (queueIndexLimit == 0)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
+            KLog_S4("DMA_queueDma(..) warning: transfer size limit raised for transfer #", queueIndex - 1, " on frame #", vtimer, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
 
             // store limit index
@@ -600,7 +601,7 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
         if (queueIndexLimit == 0)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_S3("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
+            KLog_S4("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, " on frame #", vtimer, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
 
             // store limit index

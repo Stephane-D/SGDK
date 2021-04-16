@@ -1713,7 +1713,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
         if (dmaCapacity && (DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_U3_("Warning: sprite #", getSpriteIndex(sprite), " update delayed (exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes)");
+            KLog_U4_("Warning: sprite #", getSpriteIndex(sprite), " update delayed on frame #", vtimer, " - exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes");
 #endif // LIB_DEBUG
 
             // initial frame update ? --> better to set frame at least

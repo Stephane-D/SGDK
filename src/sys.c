@@ -642,6 +642,9 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
     }
 
     u16 vbp = VBlankProcess;
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+    u16 vcnt;
+#endif
 
     // dma processing
     if (vbp & PROCESS_DMA_TASK)
@@ -659,18 +662,50 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         }
         else
             DMA_flushQueue();
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        vcnt = GET_VCOUNTER;
+
+        // above scanline 2 ? better to warn about DMA overrun..
+        if ((vcnt < 224) && (vcnt > 2))
+            KLog_U2("Warning: DMA tasks completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
+#endif
     }
 
     // VDP scroll process (async scroll update)
     if (vbp & PROCESS_VDP_SCROLL_TASK)
     {
         if (!VDP_doVBlankScrollProcess()) vbp &= ~PROCESS_VDP_SCROLL_TASK;
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        // previous v-counter was ok ?
+        if ((vcnt >= 224) || (vcnt < 3))
+        {
+            vcnt = GET_VCOUNTER;
+
+            // above scanline 2 ? better to warn about frame overrun..
+            if ((vcnt < 224) && (vcnt > 2))
+                KLog_U2("Warning: Scroll tasks completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
+        }
+#endif
     }
 
     // palette fading process
     if (vbp & PROCESS_PALETTE_FADING)
     {
         if (!PAL_doFadeStep()) vbp &= ~PROCESS_PALETTE_FADING;
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        // previous v-counter was ok ?
+        if ((vcnt >= 224) || (vcnt < 3))
+        {
+            vcnt = GET_VCOUNTER;
+
+            // above scanline 2 ? better to warn about frame overrun..
+            if ((vcnt < 224) && (vcnt > 2))
+                KLog_U2("Warning: Palette fade tasks completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
+        }
+#endif
     }
 
     // store back
