@@ -88,11 +88,24 @@ void SYS_setBank(u16 regionIndex, u16 bankIndex);
  * This method will use bank switching to make the specified data accessible and return a valid pointer to it.<br>
  * <b>WARNING:</b> this method use the 0x00300000-0x003FFFFF range (2 regions) to make the requested data accessible using bank switching mechanism.<br>
  * If data bank is already accessible it re-uses the region otherwise it will change bank of one of the region so be careful of that if you want to access data
- * from different data bank at same time :p
+ * from different data bank at same time
  *
  *  \see SYS_getFarDataSafe
  */
 void* SYS_getFarData(void* data);
+/**
+ *  \brief
+ *      Make the given binary data ressource accessible and return a pointer to it.
+ *
+ *  \param data far data we want to access.
+ *  \param bank remappable bank to use for the FAR acces (0 or 1 accepted)
+ *
+ * This method will use bank switching to make the specified data accessible and return a valid pointer to it.<br>
+ * It will use the 0x00300000-0x0037FFFF or 0x00380000-0x003FFFFF region depending the value of <i>bank</i> parameter.
+ *
+ *  \see SYS_getFarData
+ */
+void* SYS_getFarDataEx(void* data, u16 bank);
 /**
  *  \brief
  *      Make the given binary data ressource accessible and return a pointer to it (safe version with possible bank crossing)
@@ -105,11 +118,29 @@ void* SYS_getFarData(void* data);
  * <b>WARNING:</b> this method use the 0x00300000-0x003FFFFF range (2 regions) to make the requested data accessible using bank switching mechanism.<br>
  * If data bank is already accessible it re-uses the region otherwise it will change bank of one of the region so be careful of that if you want to access data
  * from different data bank at same time :p<br>
- * The method checks if the data is crossing banks in which case it will set the 2 switchable regions to make the data fully accessible.
+ * The method checks if the data is crossing banks in which case it will set the 2 switchable/remappable regions to make the data fully accessible.
  *
  *  \see SYS_getFarData
+ *  \see SYS_setNextFarAccessBank
  */
 void* SYS_getFarDataSafe(void* data, u32 size);
+/**
+ *  \brief
+ *      Make the given binary data ressource accessible and return a pointer to it (safe version with possible bank crossing)
+ *
+ *  \param data address of far data we want to access.
+ *  \param size size (in byte) of the far data block we want to access.<br>
+ *     Note that size should be > 0, if you don't the size then use SYS_getFarData(..) method instead.
+ *  \param bank remappable bank to use for the FAR acces (0 or 1 accepted)
+ *
+ * This method will use bank switching to make the specified data accessible and return a valid pointer to it.<br>
+ * It will use the 0x00300000-0x0037FFFF or 0x00380000-0x003FFFFF region depending the value of <i>bank</i> parameter.<br>
+ * The method checks if the data is crossing banks in which case it will set the 2 switchable/remappable regions to make the data fully accessible.
+ *
+ *  \see SYS_getFarData
+ *  \see SYS_setNextFarAccessBank
+ */
+void* SYS_getFarDataSafeEx(void* data, u32 size, u16 bank);
 
 
 #endif // _MAPPER_H_
