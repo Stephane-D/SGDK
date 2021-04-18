@@ -643,7 +643,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 
     u16 vbp = VBlankProcess;
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-    u16 vcnt;
+    u16 vcnt = 0;
 #endif
 
     // dma processing
