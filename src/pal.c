@@ -8,6 +8,7 @@
 #include "timer.h"
 #include "memory.h"
 #include "dma.h"
+#include "maths.h"
 
 #if (ENABLE_NEWLIB == 1)
 #include <string.h>	// For memcpy
@@ -427,13 +428,10 @@ bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, 
         const s16 GD = ((d & VDPPALETTE_GREENMASK) >> VDPPALETTE_GREENSFT) << PALETTEFADE_FRACBITS;
         const s16 BD = ((d & VDPPALETTE_BLUEMASK) >> VDPPALETTE_BLUESFT) << PALETTEFADE_FRACBITS;
 
-        *stepR++ = (RD - RS) / numFrame;
-        *stepG++ = (GD - GS) / numFrame;
-        *stepB++ = (BD - BS) / numFrame;
+        *stepR++ = divs(RD - RS, numFrame);
+        *stepG++ = divs(GD - GS, numFrame);
+        *stepB++ = divs(BD - BS, numFrame);
     }
-
-    // do first fade step
-    PAL_doFadeStep();
 
     return TRUE;
 }
