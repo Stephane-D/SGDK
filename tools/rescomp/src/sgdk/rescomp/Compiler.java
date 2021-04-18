@@ -20,6 +20,7 @@ import sgdk.rescomp.processor.BinProcessor;
 import sgdk.rescomp.processor.BitmapProcessor;
 import sgdk.rescomp.processor.ImageProcessor;
 import sgdk.rescomp.processor.MapProcessor;
+import sgdk.rescomp.processor.NearProcessor;
 import sgdk.rescomp.processor.PaletteProcessor;
 import sgdk.rescomp.processor.SpriteProcessor;
 import sgdk.rescomp.processor.TilesetProcessor;
@@ -30,6 +31,7 @@ import sgdk.rescomp.resource.Align;
 import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.resource.Bitmap;
 import sgdk.rescomp.resource.Image;
+import sgdk.rescomp.resource.Near;
 import sgdk.rescomp.resource.Palette;
 import sgdk.rescomp.resource.Sprite;
 import sgdk.rescomp.resource.Tilemap;
@@ -55,6 +57,7 @@ public class Compiler
         // function processors
         resourceProcessors.add(new AlignProcessor());
         resourceProcessors.add(new UngroupProcessor());
+        resourceProcessors.add(new NearProcessor());
 
         // resource processors
         resourceProcessors.add(new BinProcessor());
@@ -110,6 +113,7 @@ public class Compiler
         int lineCnt = 1;
         int align = -1;
         boolean group = true;
+        boolean near = false;
 
         // process input resource file line by line
         for (String l : lines)
@@ -147,6 +151,13 @@ public class Compiler
             {
                 // disable resource export grouping by type
                 group = false;
+                System.out.println();
+            }
+            // NEAR function (not a real resource so handle it specifically)
+            else if (resource instanceof Near)
+            {
+                // enable forced near resource export
+                near = true;
                 System.out.println();
             }
             // just store resource
@@ -270,14 +281,21 @@ public class Compiler
             exportResources(binResourcesOfBitmap, outB, outS, outH);
             exportResources(binResourcesOfMap, outB, outS, outH);
 
-            // FAR BIN Read Only Data section
-            outS.append(".section .rodata_binf\n\n");
-            // need to reset binary buffer
-            outB.reset();
+            // FAR BIN Read Only Data section if NEAR not enabled
+            if (!near)
+            {
+                outS.append(".section .rodata_binf\n\n");
+                // need to reset binary buffer
+                outB.reset();
+            }
 
             // do alignment for FAR BIN data
             if (align != -1)
+            {
                 outS.append("    .align  " + align + "\n\n");
+                // need to reset binary buffer
+                outB.reset();
+            }
 
             // then export "far" BIN resources by type for better compression
             exportResources(farBinResources, outB, outS, outH);

@@ -1,4 +1,4 @@
-ResComp 3.23 (april 2021)
+ResComp 3.24 (april 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -25,7 +25,9 @@ Supported resource type:
 Supported function:
 - ALIGN     align *binary* data for the whole resource file using
 - UNGROUP   by default rescomp will group data export by type, using UNGROUP allow to disable that feature.
-
+- NEAR      force all resources from the file to be exported as "not FAR" data.
+            Usually binary data are exported as "FAR" data by default, that means they are located in the end of the ROM and can require
+            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before FAR data in the ROM.
 
 PALETTE
 -------
@@ -269,3 +271,12 @@ Using UNGROUP function allow to disable that feature, that might be useful to he
 
 Syntax:
 UNGROUP
+
+
+NEAR
+----
+By default binary data are always exported as "FAR" data, that means they are located in the end of the ROM and can require bank switch mechanism
+if the ROM is larger than 4MB. Using NEAR function allow all binary data from the file to be located before all FAR data in the ROM.
+
+Syntax:
+NEAR
