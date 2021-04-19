@@ -598,7 +598,7 @@ typedef Mat4D_f32 M4f32;
 
 /**
  *  \brief
- *      Direct mulu instruction (unsigned 16x16=32) access using inline assembly
+ *      16x16=32 unsigned multiplication. Force GCC to use proper 68000 <i>mulu</i> instruction.
  *
  *  \param op1
  *      first operand
@@ -609,7 +609,7 @@ typedef Mat4D_f32 M4f32;
 u32 mulu(u16 op1, u16 op2);
 /**
  *  \brief
- *      Direct muls instruction (signed 16x16=32) access using inline assembly
+ *      16x16=32 signed multiplication. Force GCC to use proper 68000 <i>muls</i> instruction.
  *
  *  \param op1
  *      first operand

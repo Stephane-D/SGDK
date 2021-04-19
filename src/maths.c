@@ -7,26 +7,35 @@
 #include "vdp.h"
 
 
-
 u32 mulu(u16 op1, u16 op2)
 {
-    u32 result = op1;
-    asm ("mulu.w %1, %0"
-         : "+d" (result)
-         : "d" (op2)
-         : "cc");
-    return result;
+    return op1 * op2;
 }
 
 s32 muls(s16 op1, s16 op2)
 {
-    s32 result = op1;
-    asm ("muls.w %1, %0"
-         : "+d" (result)
-         : "d" (op2)
-         : "cc");
-    return result;
+    return op1 * op2;
 }
+
+//u32 mulu(u16 op1, u16 op2)
+//{
+//    u32 result = op1;
+//    asm ("mulu.w %1, %0"
+//         : "+d" (result)
+//         : "d" (op2)
+//         : "cc");
+//    return result;
+//}
+//
+//s32 muls(s16 op1, s16 op2)
+//{
+//    s32 result = op1;
+//    asm ("muls.w %1, %0"
+//         : "+d" (result)
+//         : "d" (op2)
+//         : "cc");
+//    return result;
+//}
 
 u16 divu(u32 op1, u16 op2)
 {
