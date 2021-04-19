@@ -649,6 +649,10 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
     // dma processing
     if (vbp & PROCESS_DMA_TASK)
     {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        u16 dmaSize = DMA_getQueueTransferSize();
+#endif
+
         // DMA protection for XGM driver
         if (currentDriver == Z80_DRIVER_XGM)
         {
@@ -668,7 +672,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 
         // above scanline 2 ? better to warn about DMA overrun..
         if ((vcnt < 224) && (vcnt > 2))
-            KLog_U2("Warning: DMA tasks completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
+            KLog_U3("Warning: DMA task (", dmaSize, " bytes) completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
 #endif
     }
 
@@ -685,7 +689,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 
             // above scanline 2 ? better to warn about frame overrun..
             if ((vcnt < 224) && (vcnt > 2))
-                KLog_U2("Warning: Scroll tasks completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
+                KLog_U2("Warning: Scroll task completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
         }
 #endif
     }
@@ -703,7 +707,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 
             // above scanline 2 ? better to warn about frame overrun..
             if ((vcnt < 224) && (vcnt > 2))
-                KLog_U2("Warning: Palette fade tasks completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
+                KLog_U2("Warning: Palette fade task completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
         }
 #endif
     }
