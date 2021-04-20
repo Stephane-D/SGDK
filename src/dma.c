@@ -141,7 +141,7 @@ void DMA_setMaxTransferSize(u16 value)
 
 void DMA_setMaxTransferSizeToDefault()
 {
-    DMA_setMaxTransferSize(IS_PALSYSTEM ? DMA_TRANSFER_CAPACITY_PAL : DMA_TRANSFER_CAPACITY_NTSC);
+    DMA_setMaxTransferSize(IS_PALSYSTEM ? DMA_TRANSFER_CAPACITY_PAL_LOW : DMA_TRANSFER_CAPACITY_NTSC);
 }
 
 u16 DMA_getBufferSize()
@@ -167,7 +167,7 @@ void DMA_setBufferSize(u16 value)
 
 void DMA_setBufferSizeToDefault()
 {
-    DMA_setBufferSize(IS_PALSYSTEM ? DMA_BUFFER_SIZE_PAL : DMA_BUFFER_SIZE_NTSC);
+    DMA_setBufferSize(IS_PALSYSTEM ? DMA_BUFFER_SIZE_PAL_LOW : DMA_BUFFER_SIZE_NTSC);
 }
 
 bool DMA_getIgnoreOverCapacity()
