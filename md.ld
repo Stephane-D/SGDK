@@ -17,7 +17,7 @@ __DYNAMIC  =  0;
  * .                    .
  * .                    .
  * .                    .
- * +--------------------+ <- 0x00FF0000
+ * +--------------------+ <- 0xFFFF0000
  * | .data              | initialized data goes here
  * |        _data       |
  * |        _edata      |
@@ -30,12 +30,12 @@ __DYNAMIC  =  0;
  * .                    .
  * .                    .
  * |        __stack     | top of stack
- * +--------------------+ <- 0x01000000
+ * +--------------------+ <- 0x00000000
  */
 MEMORY
 {
-	rom (rx) : ORIGIN = 0x00000000, LENGTH = 0x00C00000
-	ram : ORIGIN = 0x00FF0000, LENGTH = 0x00010000
+	rom (rx) : ORIGIN = 0x00000000, LENGTH = 0x10000000
+	ram : ORIGIN = 0xFFFF0000, LENGTH = 0x00010000
 }
 
 /*
@@ -43,7 +43,7 @@ MEMORY
  * grows down
  */
 
-PROVIDE (__stack = 0x01000000);
+PROVIDE (__stack = 0x00000000);
 
 
 SECTIONS
@@ -83,7 +83,7 @@ SECTIONS
   } > rom
   _stext = SIZEOF (.text);
 
-  .data 0xFF0000 :
+  .data 0xFFFF0000 :
   AT ( ADDR (.text) + SIZEOF (.text) )
   {
     *(.got.plt) *(.got)
@@ -93,7 +93,7 @@ SECTIONS
   } > ram
   _sdata = SIZEOF (.data);
 
-  .bss 0xFF0000 + SIZEOF (.data) :
+  .bss 0xFFFF0000 + SIZEOF (.data) :
   {
     _start = . ;
     *(.shbss)
