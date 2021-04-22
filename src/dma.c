@@ -359,7 +359,7 @@ void* DMA_allocateTemp(u16 len)
     if (nextDataBuffer > (dataBuffer + dataBufferSize))
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KLog_U2_("DMA_allocateTemp(..) failed: buffer over capacity (", (u32) (nextDataBuffer - dataBuffer), " raised, max capacity = ", dataBufferSize, ")");
+        KLog_U2_("DMA_allocateTemp(..) failed: buffer over capacity (", (u32) nextDataBuffer - (u32) dataBuffer, " raised, max capacity = ", DMA_getBufferSize(), ")");
 #endif
 
         // failed --> revert allocation
@@ -386,7 +386,7 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
     if (result == NULL) return result;
 
 #ifdef DMA_DEBUG
-    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
+    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) nextDataBuffer - (u32) dataBuffer, " on ", DMA_getBufferSize(), " availaible");
 #endif
 
     // try to queue the DMA transfer (we can use FAST version as source is always located in RAM)
@@ -410,7 +410,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     if (buffer == NULL) return FALSE;
 
 #ifdef DMA_DEBUG
-    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) (nextDataBuffer - dataBuffer)" on ", dataBufferSize, " availaible");
+    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) nextDataBuffer - (u32) dataBuffer, " on ", DMA_getBufferSize(), " availaible");
 #endif
 
     // do copy to temporal buffer (as from buffer may be modified in between)
