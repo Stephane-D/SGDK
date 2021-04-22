@@ -19,8 +19,8 @@ const ROMHeader rom_header = {
 #else
     0x000FFFFF,
 #endif
-    0x00FF0000,
-    0x00FFFFFF,
+    0xE0FF0000,
+    0xE0FFFFFF,
     "RA",
     0xF820,
     0x00200000,

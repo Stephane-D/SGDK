@@ -43,7 +43,7 @@
 
 #define BANK_SIZE       0x80000
 #define BANK_IN_MASK    (BANK_SIZE - 1)
-#define BANK_OUT_MASK   (0xFFFFFF ^ BANK_IN_MASK)
+#define BANK_OUT_MASK   (0xFFFFFFFF ^ BANK_IN_MASK)
 
 /**
  *  \brief
