@@ -189,8 +189,11 @@ int main(u16 hard)
     bga = MAP_create(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]));
     bgb = MAP_create(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]));
 
+    // need to increase a bit DMA buffer size to init both plan tilemap
+    DMA_setBufferSize(9000);
     // init scrolling
     updateCameraPosition();
+
     if (scrollNeedUpdate)
     {
         updateVDPScroll();
@@ -201,6 +204,9 @@ int main(u16 hard)
     SYS_doVBlankProcess();
     // reset tilemap buffer position after update
     bufOffset = 0;
+
+    // can restore default DMA buffer size
+    DMA_setBufferSizeToDefault();
 
     // init sonic sprite
     player = SPR_addSprite(&sonic_sprite, fix32ToInt(posX) - camPosX, fix32ToInt(posY) - camPosY, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
