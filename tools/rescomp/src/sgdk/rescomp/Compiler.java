@@ -105,7 +105,7 @@ public class Compiler
         }
         catch (IOException e)
         {
-            System.err.println("Couldn't open input file " + fileName + ":");
+            System.err.println("Couldn't open input file " + Paths.get(fileName).toAbsolutePath().toString() + ":");
             System.err.println(e.getMessage());
             return false;
         }

@@ -275,6 +275,7 @@ public class SpriteCutter
 
         public double getScore()
         {
+            // not yet complete
             if (!isComplete())
                 return Double.MAX_VALUE;
 
@@ -285,6 +286,10 @@ public class SpriteCutter
                 for (SpriteCell cell : cells)
                     result += cell.getScore();
 
+                // if more than 16 sprites (not allowed) we set a penalty
+                if (cells.size() > 16)
+                    cachedScore *= 2d;
+                
                 cachedScore = Math.round(result * 100000d) / 100000d;
             }
 

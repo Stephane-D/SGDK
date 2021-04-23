@@ -230,7 +230,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
 
     public double getScore()
     {
-        return getBaseScore() + (getCoverageInv() / 100d);
+        return getBaseScore() + getCoverageInv();
     }
 
     public double getBaseScore()
@@ -239,13 +239,13 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         {
             default:
             case BALANCED:
-                return (numTile / 25d) + (1d / 10d);
+                return  5d + (numTile * 2d) + (getWidth() / 5d);
                 
             case MIN_SPRITE:
-                return (numTile / 50d) + (1d / 5d);
+                return 10d + (numTile * 1d) + (getWidth() / 5d);
 
             case MIN_TILE:
-                return (numTile / 10d) + (1d / 25d);
+                return 2d + (numTile * 5d) + (getWidth() / 5d);
         }
 
         // return (1 / 10d);
