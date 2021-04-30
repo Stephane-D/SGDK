@@ -1,4 +1,4 @@
-ResComp 3.25 (april 2021)
+ResComp 3.26 (april 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -67,7 +67,7 @@ Take an image as input and transform it in SGDK TileSet structure.
 TileSet is used as tiles source for Image and Sprite.
 
 Syntax:
-TILESET name img_file [compression [opt [metatile]]]
+TILESET name img_file [compression [opt]]
 
     name            name of the output TileSet structure
     img_file        path of the input image file (should be 8bpp .bmp or .png)
@@ -104,7 +104,7 @@ MAP name img_file tileset_id [compression [mapbase]]
 
 Tips:
 You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
-that all pixel from a same tile (block of 8x8 pixels) use the same value other rescomp will generate an error.
+that all pixel from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
     bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
     bit 6: should be 0 (not used)
     bit 7: priority information (0=LOW 1=HIGH)
@@ -135,7 +135,7 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
 
 Tips:
 You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
-that all pixel from a same tile (block of 8x8 pixels) use the same value other rescomp will generate an error.
+that all pixel from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
     bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
     bit 6: should be 0 (not used)
     bit 7: priority information (0=LOW 1=HIGH)

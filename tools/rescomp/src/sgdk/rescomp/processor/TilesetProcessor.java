@@ -25,7 +25,7 @@ public class TilesetProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong TILESET definition");
-            System.out.println("TILESET name \"file\" [compression [opt [metatile]]]");
+            System.out.println("TILESET name \"file\" [compression [opt]]");
             System.out.println("  name          Tileset variable name");
             System.out.println(
                     "  file          the image to convert to TileSet structure (should be a 8bpp .bmp or .png)");
