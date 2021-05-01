@@ -510,8 +510,12 @@ static void prepareMapDataColumn_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, 
     u8* blockIndexes = map->blockIndexes;
     u8* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -547,8 +551,8 @@ static void prepareMapDataColumn_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, 
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -567,8 +571,12 @@ static void prepareMapDataColumn_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol2,
     u16* blockIndexes = map->blockIndexes;
     u8* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -604,8 +612,8 @@ static void prepareMapDataColumn_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol2,
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -624,8 +632,12 @@ static void prepareMapDataColumn_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol2,
     u8* blockIndexes = map->blockIndexes;
     u16* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -661,8 +673,8 @@ static void prepareMapDataColumn_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol2,
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -681,8 +693,12 @@ static void prepareMapDataColumn_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2
     u16* blockIndexes = map->blockIndexes;
     u16* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -718,8 +734,8 @@ static void prepareMapDataColumn_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -741,8 +757,12 @@ static void prepareMapDataColumnEx_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2
     u8* blockIndexes = map->blockIndexes;
     u8* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -778,8 +798,8 @@ static void prepareMapDataColumnEx_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -801,8 +821,12 @@ static void prepareMapDataColumnEx_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol
     u16* blockIndexes = map->blockIndexes;
     u8* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u8* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -838,8 +862,8 @@ static void prepareMapDataColumnEx_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -861,8 +885,12 @@ static void prepareMapDataColumnEx_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol
     u8* blockIndexes = map->blockIndexes;
     u16* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -898,8 +926,8 @@ static void prepareMapDataColumnEx_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
@@ -921,8 +949,12 @@ static void prepareMapDataColumnEx_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCo
     u16* blockIndexes = map->blockIndexes;
     u16* blocks = map->blocks;
 
-    // block grid index
-    u16 blockGridIndex = map->blockRowOffsets[ym / 8] + (xm / 8);
+    // current block row offset
+    u16* rowOffset = &map->blockRowOffsets[ym / 8];
+    // block X position
+    u16 xb = xm / 8;
+    // get block grid index
+    u16 blockGridIndex = *rowOffset++ + xb;
     // get first block data pointer
     u16* block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
     // internal block fixed offset (will never change)
@@ -958,8 +990,8 @@ static void prepareMapDataColumnEx_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCo
         if (yi == 8)
         {
             yi = 0;
-            // increment block grid index (next row)
-            blockGridIndex += map->w;
+            // get new block grid index (next row)
+            blockGridIndex = *rowOffset++ + xb;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[blockGridIndex]];
             // add base offset
