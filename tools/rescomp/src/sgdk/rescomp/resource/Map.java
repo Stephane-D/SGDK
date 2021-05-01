@@ -90,10 +90,6 @@ public class Map extends Resource
         // store compression
         this.compression = compression;
 
-        // // build TILESET with wanted compression
-        // tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht,
-        // TileOptimization.ALL, useSystemTiles, Compression.AUTO));
-
         // get size in block
         wb = (wt + 15) / 16;
         hb = (ht + 15) / 16;
@@ -162,9 +158,8 @@ public class Map extends Resource
                                         index = tileset.getTileIndex(tile, TileOptimization.ALL);
                                         // not found ? (should never happen)
                                         if (index == -1)
-                                            throw new RuntimeException(
-                                                    "Can't find tile [" + ti + "," + tj
-                                                            + "] in tileset, something wrong happened...");
+                                            throw new RuntimeException("Can't find tile [" + ti + "," + tj
+                                                    + "] in tileset, something wrong happened...");
                                         // index > 2047 ? --> not allowed
                                         if (index > 2047)
                                             throw new RuntimeException(
@@ -268,7 +263,7 @@ public class Map extends Resource
             }
 
             // build BIN (mapBlocks data)
-            mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapblocks", mbData, compression));
+            mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapBlocks", mbData, compression));
         }
         else
         {
@@ -282,7 +277,7 @@ public class Map extends Resource
             }
 
             // build BIN (mapBlocks data)
-            mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapblocks", mbData, compression));
+            mapBlocksBin = (Bin) addInternalResource(new Bin(id + "_mapBlocks", mbData, compression));
         }
 
         // require 16 bit index ? --> directly use mapBlockIndexes map
@@ -296,7 +291,7 @@ public class Map extends Resource
                     mbiData[offset++] = ind;
 
             // build BIN (mapBlockIndexes data)
-            mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapblockindexes", mbiData, compression));
+            mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapBlockIndexes", mbiData, compression));
         }
         else
         {
@@ -308,12 +303,12 @@ public class Map extends Resource
                     mbiData[offset++] = (byte) ind;
 
             // build BIN (mapBlockIndexes data)
-            mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapblockindexes", mbiData, compression));
+            mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapBlockIndexes", mbiData, compression));
         }
 
         // build BIN (mapBlockRowOffsets data)
         mapBlockRowOffsetsBin = (Bin) addInternalResource(
-                new Bin(id + "_mapblockrowoffsets", mapBlockRowOffsets, Compression.NONE));
+                new Bin(id + "_mapBlockRowOffsets", mapBlockRowOffsets, Compression.NONE));
 
         // build PALETTE
         palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, 64, true));
@@ -333,8 +328,8 @@ public class Map extends Resource
                 ts += metatiles.size() * 4 * 2;
             }
 
-            // above 50 KB ? --> error
-            if (ts > (50 * 1024))
+            // above 48 KB ? --> error
+            if (ts > (48 * 1024))
                 throw new RuntimeException("Error: MAP '" + id + "' unpacked size = " + ts
                         + " bytes, you won't have enough memory to unpack it.\nRemove compression from MAP resource definition");
             // above 34 KB ? --> warning
@@ -342,6 +337,11 @@ public class Map extends Resource
                 System.err.println("Warning: MAP '" + id + "' unpacked size = " + ts
                         + " bytes, you may not be able to unpack it.\nYou may remove compression from MAP resource definition");
         }
+
+        // display info about map encoding
+        System.out.println("MAP '" + id + "' details: " + metatiles.size() + " metatiles, " + mapBlocks.size()
+                + " blocks, block grid size = " + wb + " x " + hb + " - optimized = " + wb + " x "
+                + mapBlockIndexes.size());
 
         // compute hash code
         hc = tileset.hashCode() ^ palette.hashCode() ^ metatilesBin.hashCode() ^ mapBlocksBin.hashCode()

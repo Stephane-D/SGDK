@@ -1,4 +1,4 @@
-ResComp 3.26 (april 2021)
+ResComp 3.27 (april 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
