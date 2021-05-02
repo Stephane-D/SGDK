@@ -289,7 +289,7 @@ public class SpriteCutter
                 // if more than 16 sprites (not allowed) we set a penalty
                 if (cells.size() > 16)
                     cachedScore *= 2d;
-                
+
                 cachedScore = Math.round(result * 100000d) / 100000d;
             }
 
@@ -456,12 +456,37 @@ public class SpriteCutter
                 addCell(SpriteCell.optimizePosition(image, dim, cell));
         }
 
+        private void optimizeOverdraw()
+        {
+            // sort cells on their size and coverage
+            Collections.sort(cells, SpriteCell.sizeAndCoverageComparator);
+
+            final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
+            boolean changed = true;
+
+            while (changed)
+            {
+                // rebuild solution while optimize cell position to avoid as much sprite overdraw as possible
+                reset();
+                changed = false;
+                // start from largest cell
+                for (SpriteCell cell : cellsCopy)
+                {
+                    // cell moved ? --> 
+                    if (cell.optimizeOverdraw(dim, cellsCopy))
+                        changed = true;
+                    
+                    addCell(cell);
+                }
+            }
+        }
+
         private void optimizeSizeForPart(SpriteCell cell)
         {
             rebuildWithout(cell);
 
             // get optimized cell
-            final SpriteCell newCell = SpriteCell.optimizeSize(image, dim, cell);
+            final SpriteCell newCell = SpriteCell.optimizeSize(coverageImage, dim, cell);
             // add optimized cell
             if (newCell != null)
                 addCell(newCell);
@@ -508,6 +533,7 @@ public class SpriteCutter
             optimizeMerge();
             optimizePos();
             optimizeSize();
+            optimizeOverdraw();
         }
 
         public void showInfo()
@@ -664,7 +690,12 @@ public class SpriteCutter
 
                         // stop as soon solution is complete
                         if (result.isComplete())
+                        {
+                            // add a fast opti on it
+                            if ((Random.nextInt() & 15) == 0)
+                                result.fastOptimize();
                             break;
+                        }
                     }
                 }
                 finally

@@ -1,6 +1,7 @@
 package sgdk.rescomp.type;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.util.ArrayList;
@@ -239,8 +240,8 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         {
             default:
             case BALANCED:
-                return  5d + (numTile * 2d) + (getWidth() / 5d);
-                
+                return 5d + (numTile * 2d) + (getWidth() / 5d);
+
             case MIN_SPRITE:
                 return 10d + (numTile * 1d) + (getWidth() / 5d);
 
@@ -267,6 +268,71 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
     public double getCoverageInv()
     {
         return 1d - getCoverage();
+    }
+
+    public boolean optimizeOverdraw(Dimension imageDim, List<SpriteCell> allSpr)
+    {
+        final Area area = new Area();
+
+        // build area corresponding to others sprites
+        for (SpriteCell sc : allSpr)
+            if (sc != this)
+                area.add(new Area(sc));
+
+        // get intersection with others sprites
+        area.intersects(this);
+
+        // no overdraw --> ok
+        if (area.isEmpty())
+            return false;
+
+        final Point initialPos = getLocation();
+        final Rectangle bounds = new Rectangle(imageDim);
+        final Rectangle rectH = new Rectangle(0, 0, width, 1);
+        final Rectangle rectV = new Rectangle(0, 0, 1, height);
+
+        while (canMoveLeft(area, x, y, rectH, rectV))
+        {
+            x--;
+            // outside image bounds ? --> stop
+            if (!bounds.contains(this))
+            {
+                x++;
+                break;
+            }
+        }
+        while (canMoveRight(area, x, y, rectH, rectV))
+        {
+            x++;
+            // outside image bounds ? --> stop
+            if (!bounds.contains(this))
+            {
+                x--;
+                break;
+            }
+        }
+        while (canMoveTop(area, x, y, rectH, rectV))
+        {
+            y--;
+            // outside image bounds ? --> stop
+            if (!bounds.contains(this))
+            {
+                y++;
+                break;
+            }
+        }
+        while (canMoveBottom(area, x, y, rectH, rectV))
+        {
+            y++;
+            // outside image bounds ? --> stop
+            if (!bounds.contains(this))
+            {
+                y--;
+                break;
+            }
+        }
+        
+        return !getLocation().equals(initialPos);
     }
 
     @Override
@@ -350,6 +416,74 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         region.height += 8;
 
         return new SpriteCell(region, spr.opt);
+    }
+
+    private static boolean canMoveTop(Area area, int x, int y, Rectangle rectH, Rectangle rectV)
+    {
+        // move rect to bottom
+        rectH.setLocation(x, y + (rectV.height - 1));
+        // overdraw on bottom line ?
+        if (area.contains(rectH))
+        {
+            // move rect to top-1
+            rectH.setLocation(x, y - 1);
+            // nothing on top ?
+            if (!area.intersects(rectH))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean canMoveBottom(Area area, int x, int y, Rectangle rectH, Rectangle rectV)
+    {
+        // move rect to top
+        rectH.setLocation(x, y);
+        // overdraw on top line ?
+        if (area.contains(rectH))
+        {
+            // move rect to bottom+1
+            rectH.setLocation(x, y + rectV.height);
+            // nothing on bottom ?
+            if (!area.intersects(rectH))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean canMoveLeft(Area area, int x, int y, Rectangle rectH, Rectangle rectV)
+    {
+        // move rect to right
+        rectV.setLocation(x + (rectH.width - 1), y);
+        // overdraw on right line ?
+        if (area.contains(rectV))
+        {
+            // move rect to left-1
+            rectV.setLocation(x - 1, y);
+            // nothing on left ?
+            if (!area.intersects(rectV))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean canMoveRight(Area area, int x, int y, Rectangle rectH, Rectangle rectV)
+    {
+        // move rect to left
+        rectV.setLocation(x, y);
+        // overdraw on left line ?
+        if (area.contains(rectV))
+        {
+            // move rect to right+1
+            rectV.setLocation(x + rectH.width, y);
+            // nothing on right ?
+            if (!area.intersects(rectV))
+                return true;
+        }
+
+        return false;
     }
 
     /**
