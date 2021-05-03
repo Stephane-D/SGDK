@@ -649,11 +649,13 @@ static u16 read6Btn(u16 port)
     v1 = TH_CONTROL_PHASE(pb);                    /* - 0 s a 0 0 d u - 1 c b r l d u */
     val = TH_CONTROL_PHASE(pb);                   /* - 0 s a 0 0 d u - 1 c b r l d u */
     v2 = TH_CONTROL_PHASE(pb);                    /* - 0 s a 0 0 0 0 - 1 c b m x y z */
-    val = TH_CONTROL_PHASE(pb);                   /* - 0 s a - - - - - 1 c b r l d u */
+    val = TH_CONTROL_PHASE(pb);                   /* - 0 s a x x x x - 1 c b r l d u */
+                                                  /* x should be read as 1 on a 6 button controller but in some case we read 0 so take care of that */
 
     // On a six-button controller, bits 0-3 of the high byte will always read 0.
-    // This corresponds to up + down on a 3-button controller.
-    if ((v2 & 0x0F00) != 0x0000) v2 = (JOY_TYPE_PAD3 << JOY_TYPE_SHIFT) | 0x0F00; /* three button pad */
+    // This corresponds to up + down on a 3-button controller, on some controller or emulator that is a possible combination so we try
+    // to compensante using last TH low read which should return 1111 on 6 buttons controller (not 100% though).
+    if (((v2 & 0x0F00) != 0x0000) || ((val & 0x0C00) == 0x0000)) v2 = (JOY_TYPE_PAD3 << JOY_TYPE_SHIFT) | 0x0F00; /* three button pad */
     else v2 = (JOY_TYPE_PAD6 << JOY_TYPE_SHIFT) | ((v2 & 0x000F) << 8); /* six button pad */
 
     val = ((v1 & 0x3000) >> 6) | (v1 & 0x003F);   /* 0 0 0 0 0 0 0 0 s a c b r l d u  */
