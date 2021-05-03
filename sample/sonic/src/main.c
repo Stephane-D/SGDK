@@ -732,7 +732,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     // can't do more in paused state
     if (paused) return;
 
-    if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C))
+    if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_X | BUTTON_Y | BUTTON_Z))
     {
         if (movY == 0)
         {
