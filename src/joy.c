@@ -649,7 +649,7 @@ static u16 read6Btn(u16 port)
     v1 = TH_CONTROL_PHASE(pb);                    /* - 0 s a 0 0 d u - 1 c b r l d u */
     val = TH_CONTROL_PHASE(pb);                   /* - 0 s a 0 0 d u - 1 c b r l d u */
     v2 = TH_CONTROL_PHASE(pb);                    /* - 0 s a 0 0 0 0 - 1 c b m x y z */
-    val = TH_CONTROL_PHASE(pb);                   /* - 0 s a x x x x - 1 c b r l d u */
+    val = TH_CONTROL_PHASE(pb);                   /* - 0 s a 1 1 x x - 1 c b r l d u */
                                                   /* x should be read as 1 on a 6 button controller but in some case we read 0 so take care of that */
 
     // On a six-button controller, bits 0-3 of the high byte will always read 0.
