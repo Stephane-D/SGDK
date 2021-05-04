@@ -145,16 +145,38 @@ public class SpriteCutter
             Rectangle frameBounds, long optIteration, OptimizationType optimizationType)
     {
         // get fast solution
-        final List<Solution> baseSolutions = getFastOptimizedSolutions(image8bpp, imageDim, frameBounds,
-                optimizationType);
-
-        // nothing more to do..
-        if (baseSolutions.isEmpty())
-            return new ArrayList<>();
-
-        // build the solution
+        final List<Solution> baseSolutions = new ArrayList<>();
         final SpriteCutter spriteCutter = new SpriteCutter(image8bpp, imageDim, frameBounds);
-        // start optimization
+
+        // always add the default solution covering the whole sprite frame
+        baseSolutions.add(spriteCutter.getDefaultSolution());
+
+        for (int opt = 0; opt < 2; opt++)
+        {
+            for (int gridSize = 8; gridSize <= 32; gridSize += 8)
+            {
+                // get best grid (minimum number of tile for region image covering)
+                final CellGrid grid = spriteCutter.getBestGrid(gridSize, optimizationType);
+                // quick tiles merging where possible
+                if (gridSize == 8)
+                    grid.mergeCells(optimizationType);
+                // build the solution from the grid
+                final Solution solution = spriteCutter.getSolution(grid, optimizationType);
+
+                // do fast optimization ?
+                if (opt == 1)
+                    solution.fastOptimize();
+
+                // fix positions
+                solution.fixPos();
+
+                // add to base solutions
+                if (!solution.cells.isEmpty())
+                    baseSolutions.add(solution);
+            }
+        }
+
+        // start optimization with a base of solution (less or more optimized)
         spriteCutter.startOptimization(baseSolutions, optIteration);
 
         try
@@ -288,7 +310,7 @@ public class SpriteCutter
 
                 // if more than 16 sprites (not allowed) we set a penalty
                 if (cells.size() > 16)
-                    cachedScore *= 2d;
+                    result *= 2d;
 
                 cachedScore = Math.round(result * 100000d) / 100000d;
             }
@@ -481,18 +503,18 @@ public class SpriteCutter
             }
         }
 
-        private void optimizeSizeForPart(SpriteCell cell)
+        private void optimizeSizeForPart(SpriteCell cell, boolean fromOriginalImage)
         {
             rebuildWithout(cell);
 
             // get optimized cell
-            final SpriteCell newCell = SpriteCell.optimizeSize(coverageImage, dim, cell);
+            final SpriteCell newCell = SpriteCell.optimizeSize(fromOriginalImage ? image : coverageImage, dim, cell);
             // add optimized cell
             if (newCell != null)
                 addCell(newCell);
         }
 
-        private void optimizeSize()
+        private void optimizeSize(boolean fromOriginalImage)
         {
             double score;
             double newScore = getScore();
@@ -507,7 +529,7 @@ public class SpriteCutter
 
                 // optimize each cell independently (starting from smallest cell)
                 for (int i = cells.size() - 1; i >= 0; i--)
-                    optimizeSizeForPart(cells.get(i));
+                    optimizeSizeForPart(cells.get(i), fromOriginalImage);
 
                 newScore = getScore();
 
@@ -530,10 +552,13 @@ public class SpriteCutter
 
         public void fastOptimize()
         {
-            optimizeMerge();
-            optimizePos();
-            optimizeSize();
-            optimizeOverdraw();
+            for (int i = 0; i < 2; i++)
+            {
+                optimizeMerge();
+                optimizePos();
+                optimizeSize((i & 1) == 0);
+                optimizeOverdraw();
+            }
         }
 
         public void showInfo()
@@ -844,22 +869,23 @@ public class SpriteCutter
         public void run()
         {
             int maxItMul = 1;
-            
+
             while (!interrupted())
             {
                 while (executor.getQueue().size() < (numWorker * 2))
                     addNewTask();
-                
+
                 // reached maximum number of iteration ?
                 if ((maxIteration > 0) && (getIterationCount() >= (maxIteration * maxItMul)))
                 {
                     final int numSprite = getBestSolution().cells.size();
-                    
+
                     // too many sprites but close to a valid solution ? try a bit more
-                    if ((numSprite > 16) && (numSprite < 19) && (maxItMul < 8))
+                    if ((numSprite > 16) && (numSprite < 19) && (maxItMul < 10))
                         maxItMul++;
                     // stop now
-                    else break;
+                    else
+                        break;
                 }
 
                 ThreadUtil.sleep(0);
