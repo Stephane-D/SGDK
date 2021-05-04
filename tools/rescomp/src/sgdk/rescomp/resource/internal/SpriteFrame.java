@@ -56,7 +56,7 @@ public class SpriteFrame extends Resource
         List<SpriteCell> sprites;
         final int numTile = wf * hf;
 
-        // not default value ? --> force slow optimzation
+        // not default value ? --> force slow optimization
         if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
             sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration, opt);
         else
@@ -64,9 +64,15 @@ public class SpriteFrame extends Resource
             // always start with the fast optimization first
             sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(), opt);
 
+            // too many sprites used for this sprite with no optimization ? try sprite opti with fast opti
+            if ((sprites.size() > 16) && (opt == OptimizationType.NONE))
+                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(),
+                        OptimizationType.MIN_SPRITE);
+
             // too many sprites used for this sprite ? prefer better (but slower) sprite optimization
             if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
-                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration, opt);
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration,
+                        (opt == OptimizationType.NONE) ? OptimizationType.BALANCED : opt);
         }
 
         // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of sprite)
@@ -221,7 +227,8 @@ public class SpriteFrame extends Resource
         for (VDPSprite sprite : vdpSprites)
         {
             outS.append("    dc.w    " + (((sprite.ht * sprite.wt) << 8) | ((sprite.offsetY << 0) & 0xFF)) + "\n");
-            outS.append("    dc.w    " + ((sprite.offsetYFlip << 8) | ((sprite.getFormattedSize() << 0) & 0xFF)) + "\n");
+            outS.append(
+                    "    dc.w    " + ((sprite.offsetYFlip << 8) | ((sprite.getFormattedSize() << 0) & 0xFF)) + "\n");
             outS.append("    dc.w    " + ((sprite.offsetX << 8) | ((sprite.offsetXFlip << 0) & 0xFF)) + "\n");
         }
 
