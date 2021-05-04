@@ -34,7 +34,9 @@ public class SpriteCutter
             result.add(spriteCutter.getDefaultSolution());
         else
         {
-            for (int gridSize = 8; gridSize <= 32; gridSize += 8)
+            // only need to use grid size of 8 or 32, intermediate doesn't not produce better result
+            // as we fuse adjacent cells when grid size = 8
+            for (int gridSize = 8; gridSize <= 32; gridSize += 24)
             {
                 // get best grid (minimum number of tile for region image covering)
                 final CellGrid grid = spriteCutter.getBestGrid(gridSize, optimizationType);
@@ -482,22 +484,17 @@ public class SpriteCutter
         {
             // sort cells on their size and coverage
             Collections.sort(cells, SpriteCell.sizeAndCoverageComparator);
-
+            
             final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
-            boolean changed = true;
 
-            while (changed)
+            for(int i = 0; i < 2; i++)
             {
                 // rebuild solution while optimize cell position to avoid as much sprite overdraw as possible
                 reset();
-                changed = false;
                 // start from largest cell
                 for (SpriteCell cell : cellsCopy)
                 {
-                    // cell moved ? -->
-                    if (cell.optimizeOverdraw(dim, cellsCopy))
-                        changed = true;
-
+                    cell.optimizeOverdraw(dim, cellsCopy);
                     addCell(cell);
                 }
             }
@@ -557,6 +554,7 @@ public class SpriteCutter
                 optimizeMerge();
                 optimizePos();
                 optimizeSize((i & 1) == 0);
+                fixPos();
                 optimizeOverdraw();
             }
         }
