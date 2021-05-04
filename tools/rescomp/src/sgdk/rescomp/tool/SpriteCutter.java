@@ -472,10 +472,10 @@ public class SpriteCutter
                 // start from largest cell
                 for (SpriteCell cell : cellsCopy)
                 {
-                    // cell moved ? --> 
+                    // cell moved ? -->
                     if (cell.optimizeOverdraw(dim, cellsCopy))
                         changed = true;
-                    
+
                     addCell(cell);
                 }
             }
@@ -690,12 +690,7 @@ public class SpriteCutter
 
                         // stop as soon solution is complete
                         if (result.isComplete())
-                        {
-                            // add a fast opti on it
-                            if ((Random.nextInt() & 15) == 0)
-                                result.fastOptimize();
                             break;
-                        }
                     }
                 }
                 finally
@@ -848,14 +843,24 @@ public class SpriteCutter
         @Override
         public void run()
         {
+            int maxItMul = 1;
+            
             while (!interrupted())
             {
                 while (executor.getQueue().size() < (numWorker * 2))
                     addNewTask();
-
-                // reached maximum number of iteration ? stop here
-                if ((maxIteration > 0) && (getIterationCount() >= maxIteration))
-                    break;
+                
+                // reached maximum number of iteration ?
+                if ((maxIteration > 0) && (getIterationCount() >= (maxIteration * maxItMul)))
+                {
+                    final int numSprite = getBestSolution().cells.size();
+                    
+                    // too many sprites but close to a valid solution ? try a bit more
+                    if ((numSprite > 16) && (numSprite < 19) && (maxItMul < 8))
+                        maxItMul++;
+                    // stop now
+                    else break;
+                }
 
                 ThreadUtil.sleep(0);
             }

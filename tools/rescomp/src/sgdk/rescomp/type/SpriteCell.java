@@ -231,7 +231,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
 
     public double getScore()
     {
-        return getBaseScore() + getCoverageInv();
+        return getBaseScore() + getCoveragePenalty();
     }
 
     public double getBaseScore()
@@ -265,7 +265,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         return (double) coveredPix / (double) (numTile * 64);
     }
 
-    public double getCoverageInv()
+    public double getCoveragePenalty()
     {
         return 1d - getCoverage();
     }
