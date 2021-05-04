@@ -280,7 +280,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
                 area.add(new Area(sc));
 
         // get intersection with others sprites
-        area.intersects(this);
+        area.intersect(new Area(this));
 
         // no overdraw --> ok
         if (area.isEmpty())
