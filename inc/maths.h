@@ -667,6 +667,33 @@ s16 mods(s32 op1, s16 op2);
 
 /**
  *  \brief
+ *      Direct divu instruction (unsigned 32/16=16:16) access using inline assembly
+ *      to process op1/op2 operation and op1%op2 at same time.
+ *
+ *  \param op1
+ *      first operand - dividende (32 bit)
+ *  \param op2
+ *      second operand - divisor (16 bit)
+ *  \return 16 bit (unsigned) result of the division in low 16 bit (0-15) and
+ *      16 bit (unsigned) result of the modulo operation in high 16 bit (16-31)
+ */
+u32 divmodu(u32 op1, u16 op2);
+/**
+ *  \brief
+ *      Direct divs instruction (signed 32/16=16:16) access using inline assembly
+ *      to process op1/op2 operation and op1%op2 at same time.
+ *
+ *  \param op1
+ *      first operand - dividende (32 bit)
+ *  \param op2
+ *      second operand - divisor (16 bit)
+ *  \return 16 bit (signed) result of the division in low 16 bit (0-15) and
+ *      16 bit (signed) result of the modulo operation in high 16 bit (16-31)
+ */
+s32 divmods(s32 op1, s16 op2);
+
+/**
+ *  \brief
  *      Binary to Decimal conversion.
  *
  *  \param value

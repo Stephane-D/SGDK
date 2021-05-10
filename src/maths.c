@@ -79,6 +79,26 @@ s16 mods(s32 op1, s16 op2)
     return result;
 }
 
+u32 divmodu(u32 op1, u16 op2)
+{
+    u32 result = op1;
+    asm ("divu.w %1, %0"
+         : "+d" (result)
+         : "d" (op2)
+         : "cc");
+    return result;
+}
+
+s32 divmods(s32 op1, s16 op2)
+{
+    s32 result = op1;
+    asm ("divs.w %1, %0"
+         : "+d" (result)
+         : "d" (op2)
+         : "cc");
+    return result;
+}
+
 
 u32 intToBCD(u32 value)
 {
