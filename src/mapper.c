@@ -194,13 +194,27 @@ void* SYS_getFarDataEx(void* data, u16 bank)
     return (void*) mappedAddr;
 }
 
+static bool isCrossingBank(u32 start, u32 end)
+{
+    // return TRUE if crossing bank
+    return ((start ^ end) & BANK_OUT_MASK)?TRUE:FALSE;
+}
+
+bool SYS_isCrossingBank(void* data, u32 size)
+{
+    u32 start = (u32) data;
+    u32 end = start + (size - 1);
+
+    return isCrossingBank(start, end);
+}
+
 void* SYS_getFarDataSafe(void* data, u32 size)
 {
     u32 start = (u32) data;
     u32 end = start + (size - 1);
 
     // crossing bank ? --> need to use 2 banks
-    if ((start ^ end) & BANK_OUT_MASK)
+    if (isCrossingBank(start, end))
     {
         // don't require bank switch (better to test on end address) --> return direct pointer
         if (!needBankSwitch(end)) return data;
@@ -231,7 +245,7 @@ void* SYS_getFarDataSafeEx(void* data, u32 size, u16 bank)
     u32 end = start + (size - 1);
 
     // crossing bank ? --> need to use 2 banks
-    if ((start ^ end) & BANK_OUT_MASK)
+    if (isCrossingBank(start, end))
     {
         // don't require bank switch (better to test on end address) --> return direct pointer
         if (!needBankSwitch(end)) return data;
