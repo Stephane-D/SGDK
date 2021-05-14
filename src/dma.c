@@ -642,7 +642,7 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     if (len > bankLimitW)
     {
         // we first do the second bank transfer (can use the fast version here)
-        DMA_doDmaFast(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, -1);
+        DMA_doDmaFast(location, (void*) (fromAddr + bankLimitB), to + bankLimitB, len - bankLimitW, step);
         newLen = bankLimitW;
     }
     else
