@@ -463,9 +463,11 @@ void _start_entry()
     // initialize "initialized variables"
     memcpyU16(dst, FAR(src), len);
 
-    // reset banks as we messed them during init
+#if (ENABLE_BANK_SWITCH != 0)
+    // reset banks as we variable initialization may have modified them
     len = 8;
     while(--len) SYS_setBank(len, len);
+#endif
 
     // initialize random number generator
     setRandomSeed(0xC427);
