@@ -857,7 +857,7 @@ public class ImageUtil
         {
             result[(i * 4) + 0] = (byte) ((data[i] >> 6) & 0x03);
             result[(i * 4) + 1] = (byte) ((data[i] >> 4) & 0x03);
-            result[(i * 4) + 2] = (byte) ((data[i] >> 3) & 0x03);
+            result[(i * 4) + 2] = (byte) ((data[i] >> 2) & 0x03);
             result[(i * 4) + 3] = (byte) ((data[i] >> 0) & 0x03);
         }
 
