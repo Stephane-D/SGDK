@@ -240,7 +240,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         {
             default:
             case BALANCED:
-                return 10d + (numTile * 2d) + (getWidth() / 32d);
+                return 8d + (numTile * 2d) + (getWidth() / 32d);
 
             case MIN_SPRITE:
                 return 15d + (numTile * 1d) + (getWidth() / 32d);
