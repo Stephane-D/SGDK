@@ -702,6 +702,11 @@ void SPR_setPalette(Sprite* sprite, u16 value);
  *  \param value
  *      The priority attribut value (TRUE or FALSE)
  */
+void SPR_setPriority(Sprite* sprite, u16 value);
+/**
+ *  \deprecated
+ *      Use #SPR_setPriority(..) instead
+ */
 void SPR_setPriorityAttribut(Sprite* sprite, u16 value);
 /**
  *  \brief
