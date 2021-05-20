@@ -74,6 +74,16 @@ extern const u16 palette_green[16];
  */
 extern const u16 palette_blue[16];
 
+/**
+ *  \brief
+ *      Current fade palette
+ */
+extern u16 fadeCurrentPal[64];
+/**
+ *  \brief
+ *      End fade palette
+ */
+extern u16 fadeEndPal[64];
 
 /**
  *  \brief
