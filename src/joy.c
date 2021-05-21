@@ -246,9 +246,9 @@ void JOY_reset()
     SYS_enableInts();
 
     /* wait a few vblanks for JOY_update() to get valid data */
-    VDP_waitVSync();
-    VDP_waitVSync();
-    VDP_waitVSync();
+    SYS_doVBlankProcess();
+    SYS_doVBlankProcess();
+    SYS_doVBlankProcess();
 }
 
 
