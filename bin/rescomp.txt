@@ -1,4 +1,4 @@
-ResComp 3.31 (may 2021)
+ResComp 3.33 (may 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -205,12 +205,12 @@ WAV
 Take a .wav sound file as input and transform it to in binary format usable with one of the SGDK PCM driver.
 
 Syntax:
-WAV name wav_file [driver [outrate]]
+WAV name wav_file driver [out_rate [far]]
 
     name            variable name
     file            path of the .wav file (will be automatically converted to 8 bits signed PCM at needed rate)
     driver          specify the Z80 driver to use:
-                        0 / PCM (default)
+                        0 / PCM
                             Single channel 8 bits signed sample driver.
                             It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
                             Method to use: SND_startPlay_PCM(..)
@@ -227,8 +227,9 @@ WAV name wav_file [driver [outrate]]
                             XGM music with 4 channels 8 bits samples driver.
                             It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
                             Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
-    outrate         output PCM rate (required for Z80_DRIVER_PCM driver)
+    out_rate        output PCM rate (required for Z80_DRIVER_PCM driver, ignored for others)
                         By default the default driver output rate is used.
+    far             'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = FALSE)
 
 
 BIN

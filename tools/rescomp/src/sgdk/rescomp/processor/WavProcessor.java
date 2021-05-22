@@ -26,14 +26,14 @@ public class WavProcessor implements Processor
     @Override
     public Resource execute(String[] fields) throws IOException
     {
-        if (fields.length < 3)
+        if (fields.length < 4)
         {
             System.out.println("Wrong WAV definition");
-            System.out.println("WAV name \"file\" [driver [out_rate]]");
+            System.out.println("WAV name \"file\" driver [out_rate [far]]");
             System.out.println("  name      variable name");
             System.out.println("  file      path of the .wav file (will be converted to 8 bits signed PCM)");
             System.out.println("  driver    specify the Z80 driver we will use to play the WAV file:");
-            System.out.println("              0 / PCM (default)");
+            System.out.println("              0 / PCM");
             System.out.println("                Single channel 8 bits sample driver.");
             System.out.println("                It can play sample from 8 Khz up to 32 Khz rate.");
             System.out.println("              1 / 2ADPCM");
@@ -48,6 +48,8 @@ public class WavProcessor implements Processor
             System.out.println("                It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.");
             System.out.println("  out_rate  output PCM rate (only used for Z80_DRIVER_PCM driver)");
             System.out.println("              By default the default WAV output rate is used.");
+            System.out.println(
+                    "  far           'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = TRUE)");
 
             return null;
         }
@@ -56,13 +58,10 @@ public class WavProcessor implements Processor
         final String id = fields[1];
         // get input file
         final String fileIn = FileUtil.adjustPath(Compiler.resDir, fields[2]);
-
-        SoundDriver driver = SoundDriver.PCM;
-        int outRate = 0;
-
         // get sound driver
-        if (fields.length >= 4)
-            driver = Util.getSoundDriver(fields[3]);
+        SoundDriver driver = Util.getSoundDriver(fields[3]);
+
+        int outRate = 0;
 
         // determine default output rate
         switch (driver)
@@ -80,12 +79,16 @@ public class WavProcessor implements Processor
                 break;
 
             default:
+                // output rate
+                if (fields.length >= 5)
+                    outRate = StringUtil.parseInt(fields[4], outRate);
                 break;
         }
 
-        // output rate
-        if (fields.length >= 5)
-            outRate = StringUtil.parseInt(fields[4], outRate);
+        // get far value
+        boolean far = false;
+        if (fields.length >= 6)
+            far = StringUtil.parseBoolean(fields[5], far);
 
         byte[] pcmData;
 
@@ -108,6 +111,6 @@ public class WavProcessor implements Processor
 
         // build BIN resource
         return new Bin(id, pcmData, (driver == SoundDriver.DPCM2) ? 128 : 256,
-                (driver == SoundDriver.DPCM2) ? 128 : 256, (driver == SoundDriver.DPCM2) ? 136 : 0, Compression.NONE, false);
+                (driver == SoundDriver.DPCM2) ? 128 : 256, (driver == SoundDriver.DPCM2) ? 136 : 0, Compression.NONE, far);
     }
 }
