@@ -276,9 +276,27 @@ public class Compiler
             // then export "not far" BIN resources by type for better compression
             exportResources(binResourcesOfPalette, outB, outS, outH);
             exportResources(binResources, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            binResourcesOfTilemap.removeAll(binResourcesOfPalette);
+            binResourcesOfTilemap.removeAll(binResources);
             exportResources(binResourcesOfTilemap, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            binResourcesOfTileset.removeAll(binResourcesOfPalette);
+            binResourcesOfTileset.removeAll(binResources);
+            binResourcesOfTileset.removeAll(binResourcesOfTilemap);
             exportResources(binResourcesOfTileset, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            binResourcesOfBitmap.removeAll(binResourcesOfPalette);
+            binResourcesOfBitmap.removeAll(binResources);
+            binResourcesOfBitmap.removeAll(binResourcesOfTilemap);
+            binResourcesOfBitmap.removeAll(binResourcesOfTileset);
             exportResources(binResourcesOfBitmap, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            binResourcesOfMap.removeAll(binResourcesOfPalette);
+            binResourcesOfMap.removeAll(binResources);
+            binResourcesOfMap.removeAll(binResourcesOfTilemap);
+            binResourcesOfMap.removeAll(binResourcesOfTileset);
+            binResourcesOfMap.removeAll(binResourcesOfBitmap);
             exportResources(binResourcesOfMap, outB, outS, outH);
 
             // FAR BIN Read Only Data section if NEAR not enabled
@@ -299,9 +317,23 @@ public class Compiler
 
             // then export "far" BIN resources by type for better compression
             exportResources(farBinResources, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            farBinResourcesOfTilemap.removeAll(farBinResources);
             exportResources(farBinResourcesOfTilemap, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            farBinResourcesOfTileset.removeAll(farBinResources);
+            farBinResourcesOfTileset.removeAll(farBinResourcesOfTilemap);
             exportResources(farBinResourcesOfTileset, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            farBinResourcesOfBitmap.removeAll(farBinResources);
+            farBinResourcesOfBitmap.removeAll(farBinResourcesOfTilemap);
+            farBinResourcesOfBitmap.removeAll(farBinResourcesOfTileset);
             exportResources(farBinResourcesOfBitmap, outB, outS, outH);
+            // remove already exported ones (just for safety, we already had a tileset bin data = palette bin data)
+            farBinResourcesOfMap.removeAll(farBinResources);
+            farBinResourcesOfMap.removeAll(farBinResourcesOfTilemap);
+            farBinResourcesOfMap.removeAll(farBinResourcesOfTileset);
+            farBinResourcesOfMap.removeAll(farBinResourcesOfBitmap);
             exportResources(farBinResourcesOfMap, outB, outS, outH);
 
             // Read Only Data section
