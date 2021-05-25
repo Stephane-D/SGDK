@@ -140,6 +140,7 @@ Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 
 ### Random list of SGDK-powered games and demos
 
+* [2048](https://github.com/atamurad/sega-2048) by atamurad
 * [Abbaye des Morts (l')](https://playonretro.itch.io/labbaye-des-morts-megadrivegenesis-por-002) unofficial MD port by Moon-Watcher
 * [Art of LeonBli (the)](https://www.pouet.net/prod.php?which=72272) by Resistance
 * [Barbarian](https://www.youtube.com/watch?v=e8IIfNLXzAU) unofficial MD port by Z-Team
