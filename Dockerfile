@@ -1,29 +1,20 @@
-FROM amd64/ubuntu:focal
+FROM i386/alpine
 
 # Set-up argument defaults
-ARG SGDK_WINE_VER=1aca454a2c1419d97c3518907d156ddf1250469b
-ARG JRE_VER=14
-
-# Work-around required for JDK
-RUN mkdir -p /usr/share/man/man1
+ARG JDK_VER=8
 
 # Install supporting packages
-RUN export DEBIAN_FRONTEND='noninteractive' && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests \
+RUN apk update && \
+    apk add --no-cache \
+      bash \
       make \
-      openjdk-${JDK_VER}-jre-headless \
+      openjdk${JDK_VER}-jre \
+      freetype \
       wine && \
-    apt-get autoremove --purge -y && \
-    apt-get clean && \
-    rm -rf \
-      /var/lib/apt/lists/* \
-      /var/tmp/* \
-      /tmp/*
+	  rm -fr /var/cache/apk/*
 
 # Set-up SGDK
 COPY . /sgdk
-WORKDIR /sgdk
 ENV GDK=/sgdk
 
 # Set-up mount point and make command
