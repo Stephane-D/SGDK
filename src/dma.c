@@ -20,11 +20,11 @@
 // we don't want to share it
 extern vu16 VBlankProcess;
 
-// DMA queue
-DMAOpInfo *dmaQueues = NULL;
+// DMA queue (initialized on reset)
+DMAOpInfo *dmaQueues;
 
-// DMA data buffer
-static u16* dataBuffer = NULL;
+// DMA data buffer (initialized on reset)
+u16* dmaDataBuffer;
 static u16* nextDataBuffer;
 
 // DMA queue settings
@@ -64,10 +64,10 @@ void DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
         MEM_free(dmaQueues);
         dmaQueues = NULL;
     }
-    if (dataBuffer)
+    if (dmaDataBuffer)
     {
-        MEM_free(dataBuffer);
-        dataBuffer = NULL;
+        MEM_free(dmaDataBuffer);
+        dmaDataBuffer = NULL;
     }
 
     // try to pack memory free blocks (help to avoid memory fragmentation)
@@ -154,12 +154,12 @@ void DMA_setBufferSize(u16 value)
     dataBufferSize = max(DMA_BUFFER_SIZE_MIN, value) / 2;
 
     // already allocated ?
-    if (dataBuffer) MEM_free(dataBuffer);
+    if (dmaDataBuffer) MEM_free(dmaDataBuffer);
     // allocate DMA data buffer
     if (dataBufferSize)
-        dataBuffer = MEM_alloc(dataBufferSize * sizeof(u16));
+        dmaDataBuffer = MEM_alloc(dataBufferSize * sizeof(u16));
     else
-        dataBuffer = NULL;
+        dmaDataBuffer = NULL;
 
     // reset queue
     DMA_clearQueue();
@@ -188,7 +188,7 @@ void DMA_clearQueue()
     queueTransferSize = 0;
 
     // reset DMA data buffer pointer
-    nextDataBuffer = dataBuffer;
+    nextDataBuffer = dmaDataBuffer;
 
 }
 
@@ -356,10 +356,10 @@ void* DMA_allocateTemp(u16 len)
 
     nextDataBuffer += len;
 
-    if (nextDataBuffer > (dataBuffer + dataBufferSize))
+    if (nextDataBuffer > (dmaDataBuffer + dataBufferSize))
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KLog_U2_("DMA_allocateTemp(..) failed: buffer over capacity (", (u32) nextDataBuffer - (u32) dataBuffer, " raised, max capacity = ", DMA_getBufferSize(), ")");
+        KLog_U2_("DMA_allocateTemp(..) failed: buffer over capacity (", (u32) nextDataBuffer - (u32) dmaDataBuffer, " raised, max capacity = ", DMA_getBufferSize(), ")");
 #endif
 
         // failed --> revert allocation
@@ -386,7 +386,7 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
     if (result == NULL) return result;
 
 #ifdef DMA_DEBUG
-    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) nextDataBuffer - (u32) dataBuffer, " on ", DMA_getBufferSize(), " availaible");
+    KLog_U3_("DMA_allocateAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) nextDataBuffer - (u32) dmaDataBuffer, " on ", DMA_getBufferSize(), " availaible");
 #endif
 
     // try to queue the DMA transfer (we can use FAST version as source is always located in RAM)
@@ -410,7 +410,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     if (buffer == NULL) return FALSE;
 
 #ifdef DMA_DEBUG
-    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) nextDataBuffer - (u32) dataBuffer, " on ", DMA_getBufferSize(), " availaible");
+    KLog_U3_("DMA_copyAndQueueDma: allocate ", 2 * len, " bytes - current allocated = ", (u32) nextDataBuffer - (u32) dmaDataBuffer, " on ", DMA_getBufferSize(), " availaible");
 #endif
 
     // do copy to temporal buffer (as from buffer may be modified in between)

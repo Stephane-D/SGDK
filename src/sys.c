@@ -22,6 +22,8 @@
 #include "sound.h"
 #include "xgm.h"
 #include "dma.h"
+#include "sram.h"
+#include "sprite_eng.h"
 
 #include "tools.h"
 #include "kdebug.h"
@@ -583,6 +585,15 @@ void _reset_entry()
 
 static void internal_reset()
 {
+    // disable SRAM just in case (if it was enabled on reset)
+    SRAM_disable();
+
+#if (ENABLE_BANK_SWITCH != 0)
+    // reset banks
+    u16 len = 8;
+    while(--len) SYS_setBank(len, len);
+#endif
+
     vintCB = _vint_dummy_callback;
     hintCB = _hint_dummy_callback;
     eintCB = _extint_dummy_callback;
@@ -607,6 +618,9 @@ static void internal_reset()
 
     // init part (always do MEM_init() first)
     MEM_init();
+    // need to be reseted before first DMA_init()
+    dmaQueues = NULL;
+    dmaDataBuffer = NULL;
     DMA_init();
     DMA_setMaxTransferSizeToDefault();
     VDP_init();
@@ -614,6 +628,10 @@ static void internal_reset()
     JOY_init();
     // reseting z80 also reset the ym2612
     Z80_init();
+
+    // Sprite engine variables reset (we use to know if sprite engine is initialized)
+    spritesBank  = NULL;
+    spriteVramSize = 0;
 
     // enable interrupts
     SYS_setInterruptMaskLevel(3);

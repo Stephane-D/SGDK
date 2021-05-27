@@ -75,7 +75,11 @@ typedef struct
  *      DMA queue structure
  */
 extern DMAOpInfo *dmaQueues;
-
+/**
+ *  \brief
+ *      DMA queue structure
+ */
+extern u16* dmaDataBuffer;
 
 /**
  *  \brief

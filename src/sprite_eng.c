@@ -77,7 +77,7 @@ static void logSprite(Sprite* sprite);
 static VDPSprite* starter;
 
 // allocated bank of sprites for the Sprite Engine
-static Sprite* spritesBank = NULL;
+Sprite* spritesBank;
 
 // used for sprite allocation
 static Sprite** allocStack;
@@ -92,7 +92,7 @@ Sprite* lastSprite;
 static VRAMRegion vram;
 
 // size of VRAM allocated for Sprite Engine
-u16 spriteVramSize = 0;
+u16 spriteVramSize;
 
 #ifdef SPR_PROFIL
 
