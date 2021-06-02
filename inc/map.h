@@ -189,7 +189,10 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);
  *  \brief
  *      Scroll map to specified position.<br>
  *      The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then
- *      VDP background scrolling is automatically set on VBlank (into the SYS_doVBlankProcess() tasks)
+ *      VDP background scrolling is automatically set on VBlank (into the SYS_doVBlankProcess() tasks).<br>
+ *      WARNING: first MAP_scrollTo(..) call will do a full plane update, for a 64x32 sized plane this represents 4KB of data.<br>
+ *      That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling
+ *      SYS_doVBlankProcess() in between.
  *
  *  \param map
  *      Map structure containing map information.

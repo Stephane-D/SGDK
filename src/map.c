@@ -202,8 +202,6 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
         map->lastXT = map->posX >> 4;
         map->lastYT = map->posY >> 4;
     }
-    // nothing to do..
-    else if ((x == map->posX) && (y == map->posY)) return;
 
     // update map
     updateMap(map, x >> 4, y >> 4);
@@ -440,9 +438,9 @@ static void setMapRow(Map *map, u16 row, u16 x, u16 y)
     // VRAM destination address
     const u16 vramAddr = ((map->plane == BG_A)?VDP_BG_A:VDP_BG_B) + (row << (planeWidthSft + 2));
 
-    // queue DMA (first column)
+    // queue DMA (first row)
     DMA_queueDmaFast(DMA_VRAM, buf, vramAddr + (pw * 0), pw, 2);
-    // queue DMA (second column)
+    // queue DMA (second row)
     DMA_queueDmaFast(DMA_VRAM, buf + pw, vramAddr + (pw * 2), pw, 2);
 
 #ifdef MAP_PROFIL
