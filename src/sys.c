@@ -630,7 +630,7 @@ static void internal_reset()
     Z80_init();
 
     // Sprite engine variables reset (we use to know if sprite engine is initialized)
-    spritesBank  = NULL;
+    spritesBank = NULL;
     spriteVramSize = 0;
 
     // enable interrupts
