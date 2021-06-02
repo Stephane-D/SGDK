@@ -126,8 +126,8 @@ void SPR_initEx(u16 vramSize)
     u16 index;
     u16 size;
 
-    // already initialized --> end it first
-    if (SPR_isInitialized()) SPR_end();
+    // end it first (if initialized)
+    SPR_end();
 
     // alloc sprites bank
     spritesBank = MEM_alloc(MAX_SPRITE * sizeof(Sprite));
@@ -182,11 +182,11 @@ void SPR_end()
 
         // try to pack memory free blocks (before to avoid memory fragmentation)
         MEM_pack();
-    }
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    KLog("Sprite engine ended !");
+        KLog("Sprite engine ended !");
 #endif
+    }
 }
 
 bool SPR_isInitialized()
@@ -218,8 +218,8 @@ void SPR_reset()
 
     // we reserve sprite 0 for sorting (cannot be used for display)
     starter = &vdpSpriteCache[VDP_allocateSprites(1)];
-    // hide it
-    starter->y = 0;
+    // hide it (already done by VDP_resetSprites)
+//    starter->y = 0;
 
 #ifdef SPR_PROFIL
     memset(profil_time, 0, sizeof(profil_time));
