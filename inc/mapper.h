@@ -99,15 +99,15 @@ void* SYS_getFarData(void* data);
  *      Make the given binary data ressource accessible and return a pointer to it.
  *
  *  \param data far data we want to access.
- *  \param bank remappable bank to use for the FAR acces (0 or 1 accepted)
+ *  \param high if set to TRUE then we use the high remappable bank for the FAR acces otherwise we use the low one
  *
  * This method will use bank switching to make the specified data accessible and return a valid pointer to it.<br>
- * It will use the 0x00300000-0x0037FFFF or 0x00380000-0x003FFFFF region depending the value of <i>bank</i> parameter.
+ * It will use the 0x00300000-0x0037FFFF or 0x00380000-0x003FFFFF region depending the value of <i>high</i> parameter.<br>
  *
  *  \see SYS_getFarData
  *  \see SYS_getFarDataSafe
  */
-void* SYS_getFarDataEx(void* data, u16 bank);
+void* SYS_getFarDataEx(void* data, bool high);
 /**
  *  \brief
  *      Returns TRUE if given binary data is crossing 2 512 KB banks
@@ -145,15 +145,15 @@ void* SYS_getFarDataSafe(void* data, u32 size);
  *  \param data address of far data we want to access.
  *  \param size size (in byte) of the far data block we want to access.<br>
  *     Note that size should be > 0, if you don't the size then use SYS_getFarData(..) method instead.
- *  \param bank remappable bank to use for the FAR acces (0 or 1 accepted), not used if data block is crossing bank
+ *  \param high if set to TRUE then we use the high remappable bank for the FAR acces otherwise we use the low one
  *
  * This method will use bank switching to make the specified data accessible and return a valid pointer to it.<br>
- * It will use the 0x00300000-0x0037FFFF or 0x00380000-0x003FFFFF region depending the value of <i>bank</i> parameter.<br>
+ * It will use the 0x00300000-0x0037FFFF or 0x00380000-0x003FFFFF region depending the value of <i>high</i> parameter.<br>
  * The method checks if the data is crossing banks in which case it will set the 2 switchable/remappable regions to make the data fully accessible.
  *
  *  \see SYS_getFarDataSafe
  */
-void* SYS_getFarDataSafeEx(void* data, u32 size, u16 bank);
+void* SYS_getFarDataSafeEx(void* data, u32 size, bool high);
 
 
 #endif // _MAPPER_H_

@@ -88,19 +88,20 @@ static u32 setBank(u32 addr)
     }
 }
 
-static u32 setBankEx(u32 addr, u16 bank)
+static u32 setBankEx(u32 addr, bool high)
 {
     // get 512 KB bank index
     const u16 bankIndex = (addr >> 19) & 0x3F;
+    const u16 bank = high?1:0;
 
     // check if bank is already set ?
     if (banks[6 + bank] == bankIndex)
     {
         reg = 1 - bank;
-        return bank?0x380000:0x300000;
+        return high?0x380000:0x300000;
     }
 
-    if (bank)    // use region 7
+    if (high)    // use region 7
     {
         // set bank
         SYS_setBank(7, bankIndex);
@@ -170,7 +171,7 @@ void* SYS_getFarData(void* data)
     return (void*) mappedAddr;
 }
 
-void* SYS_getFarDataEx(void* data, u16 bank)
+void* SYS_getFarDataEx(void* data, bool high)
 {
     // convert to address
     const u32 addr = (u32) data;
@@ -179,7 +180,7 @@ void* SYS_getFarDataEx(void* data, u16 bank)
     if (!needBankSwitch(addr)) return data;
 
     // set bank and get mapped address
-    const u32 mappedAddr = setBankEx(addr, bank & 1) + (addr & BANK_IN_MASK);
+    const u32 mappedAddr = setBankEx(addr, high) + (addr & BANK_IN_MASK);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
 //    {
@@ -202,16 +203,16 @@ static bool isCrossingBank(u32 start, u32 end)
 
 bool SYS_isCrossingBank(void* data, u32 size)
 {
-    u32 start = (u32) data;
-    u32 end = start + (size - 1);
+    const u32 start = (u32) data;
+    const u32 end = start + (size - 1);
 
     return isCrossingBank(start, end);
 }
 
 void* SYS_getFarDataSafe(void* data, u32 size)
 {
-    u32 start = (u32) data;
-    u32 end = start + (size - 1);
+    const u32 start = (u32) data;
+    const u32 end = start + (size - 1);
 
     // crossing bank ? --> need to use 2 banks
     if (isCrossingBank(start, end))
@@ -239,10 +240,10 @@ void* SYS_getFarDataSafe(void* data, u32 size)
     return SYS_getFarData(data);
 }
 
-void* SYS_getFarDataSafeEx(void* data, u32 size, u16 bank)
+void* SYS_getFarDataSafeEx(void* data, u32 size, bool high)
 {
-    u32 start = (u32) data;
-    u32 end = start + (size - 1);
+    const u32 start = (u32) data;
+    const u32 end = start + (size - 1);
 
     // crossing bank ? --> need to use 2 banks
     if (isCrossingBank(start, end))
@@ -267,5 +268,5 @@ void* SYS_getFarDataSafeEx(void* data, u32 size, u16 bank)
     }
 
     // use the simpler method
-    return SYS_getFarDataEx(data, bank);
+    return SYS_getFarDataEx(data, high);
 }
