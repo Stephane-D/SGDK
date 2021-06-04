@@ -372,7 +372,7 @@ u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, 
     // tilemap
     VDP_fillTileMapRectInc(plane, basetile, x, y, wt, ht);
     // palette
-    if (loadpal) PAL_setPaletteColors((basetile >> 9) & 0x30, palette);
+    if (loadpal) PAL_setPaletteColors((basetile >> 9) & 0x30, palette, CPU);
 
     return TRUE;
 }
@@ -408,7 +408,7 @@ u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16
     Palette* palette = image->palette;
 
     // palette
-    if (loadpal) PAL_setPaletteColors((basetile >> 9) & 0x30, palette);
+    if (loadpal) PAL_setPaletteColors((basetile >> 9) & 0x30, palette, CPU);
 
     return TRUE;
 }

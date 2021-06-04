@@ -9,9 +9,12 @@
  * Color is defined with 3 bits for each component : xxxxBBBxGGGxRRRx
  */
 
+#include "config.h"
+#include "types.h"
+#include "dma.h"
+
 #ifndef _PAL_H_
 #define _PAL_H_
-
 
 #define VDPPALETTE_REDSFT           1
 #define VDPPALETTE_GREENSFT         5
@@ -137,8 +140,15 @@ void PAL_setColor(u16 index, u16 value);
  *      RGB intensities to set.
  *  \param count
  *      Number of color to set.
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY<br>
  */
-void PAL_setColors(u16 index, const u16* pal, u16 count);
+void PAL_setColors(u16 index, const u16* pal, u16 count, TransferMethod tm);
 /**
  *  \brief
  *      Write the given Palette RGB colors into CRAM for the specified palette entries.
@@ -147,8 +157,15 @@ void PAL_setColors(u16 index, const u16* pal, u16 count);
  *      Color index where to start to write (0-63).
  *  \param pal
  *      Source Palette.
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY<br>
  */
-void PAL_setPaletteColors(u16 index, const Palette* pal);
+void PAL_setPaletteColors(u16 index, const Palette* pal, TransferMethod tm);
 /**
  *  \brief
  *      Set a complete palette (16 colors) into CRAM.
@@ -157,39 +174,29 @@ void PAL_setPaletteColors(u16 index, const Palette* pal);
  *      Palette number: PAL0, PAL1, PAL2 or PAL3
  *  \param pal
  *      Source palette.
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY<br>
  */
-void PAL_setPalette(u16 numPal, const u16* pal);
+void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm);
 
 /**
- *  \brief
- *      Write RGB colors into CRAM for the specified palette entries (DMA queue version).
- *
- *  \param index
- *      Color index where to start to write (0-63).
- *  \param pal
- *      RGB intensities to set.
- *  \param count
- *      Number of color to set.
+ *  \deprecated
+ *      Use PAL_setColors(..) instead
  */
 void PAL_setColorsDMA(u16 index, const u16* pal, u16 count);
 /**
- *  \brief
- *      Write the given Palette RGB colors into CRAM for the specified palette entries (DMA queue version).
- *
- *  \param index
- *      Color index where to start to write (0-63).
- *  \param pal
- *      Source Palette.
+ *  \deprecated
+ *      Use PAL_setPaletteColors(..) instead
  */
 void PAL_setPaletteColorsDMA(u16 index, const Palette* pal);
 /**
- *  \brief
- *      Set a complete palette (16 colors) into CRAM (DMA queue version).
- *
- *  \param numPal
- *      Palette number: PAL0, PAL1, PAL2 or PAL3
- *  \param pal
- *      Source palette.
+ *  \deprecated
+ *      Use PAL_setPalette(..) instead
  */
 void PAL_setPaletteDMA(u16 numPal, const u16* pal);
 

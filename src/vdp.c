@@ -142,10 +142,10 @@ void VDP_resetScreen()
     i = 16;
     while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
 
-    PAL_setPalette(PAL0, palette_grey);
-    PAL_setPalette(PAL1, palette_red);
-    PAL_setPalette(PAL2, palette_green);
-    PAL_setPalette(PAL3, palette_blue);
+    PAL_setPalette(PAL0, palette_grey, CPU);
+    PAL_setPalette(PAL1, palette_red, CPU);
+    PAL_setPalette(PAL2, palette_green, CPU);
+    PAL_setPalette(PAL3, palette_blue, CPU);
 
     VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
     VDP_setHorizontalScroll(BG_A, 0);

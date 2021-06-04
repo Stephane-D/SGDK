@@ -27,12 +27,12 @@ void VDP_setPaletteColor(u16 index, u16 value)
 
 void VDP_setPaletteColors(u16 index, const u16* values, u16 count)
 {
-    PAL_setColors(index, values, count);
+    PAL_setColors(index, values, count, CPU);
 }
 
 void VDP_setPalette(u16 numPal, const u16 *pal)
 {
-    PAL_setPalette(numPal, pal);
+    PAL_setPalette(numPal, pal, CPU);
 }
 
 

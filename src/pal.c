@@ -272,76 +272,35 @@ void PAL_setColor(u16 index, u16 value)
     *((vu16*) GFX_DATA_PORT) = value;
 }
 
-void PAL_setColors(u16 index, const u16* pal, u16 count)
+void PAL_setColors(u16 index, const u16* pal, u16 count, TransferMethod tm)
 {
-    VDP_setAutoInc(2);
-
-    const u16 addr = index * 2;
-    *((vu32*) GFX_CTRL_PORT) = GFX_WRITE_CRAM_ADDR((u32)addr);
-
-    vu32* pl = (u32*) GFX_DATA_PORT;
-    u32* sl = (u32*) pal;
-
-    u16 il = count >> 4;
-    while(il--)
-    {
-        *pl = *sl++;
-        *pl = *sl++;
-        *pl = *sl++;
-        *pl = *sl++;
-        *pl = *sl++;
-        *pl = *sl++;
-        *pl = *sl++;
-        *pl = *sl++;
-    }
-
-    vu16* pw = (u16*) pl;
-    u16* sw = (u16*) sl;
-
-    u16 i = count & 0xF;
-    while(i--) *pw = *sw++;
+    DMA_transfer(tm, DMA_CRAM, (void*) pal, index * 2, count, 2);
 }
 
-void PAL_setPaletteColors(u16 index, const Palette* pal)
+void PAL_setPaletteColors(u16 index, const Palette* pal, TransferMethod tm)
 {
-    PAL_setColors(index, pal->data, pal->length);
+    PAL_setColors(index, pal->data, pal->length, tm);
 }
 
-void PAL_setPalette(u16 numPal, const u16* pal)
+void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm)
 {
-    VDP_setAutoInc(2);
-
-    const u16 addr = numPal * (16 * 2);
-    *((vu32*) GFX_CTRL_PORT) = GFX_WRITE_CRAM_ADDR((u32)addr);
-
-    vu32* pl = (u32*) GFX_DATA_PORT;
-    u32* s = (u32*) pal;
-
-    *pl = *s++;
-    *pl = *s++;
-    *pl = *s++;
-    *pl = *s++;
-    *pl = *s++;
-    *pl = *s++;
-    *pl = *s++;
-    *pl = *s++;
+    PAL_setColors(numPal * 16, pal, 16, tm);
 }
 
 void PAL_setColorsDMA(u16 index, const u16* pal, u16 count)
 {
-    DMA_queueDma(DMA_CRAM, (void*) pal, index * 2, count, 2);
+    PAL_setColors(index, pal, count, DMA);
 }
 
 void PAL_setPaletteColorsDMA(u16 index, const Palette* pal)
 {
-    PAL_setColorsDMA(index, pal->data, pal->length);
+    PAL_setPaletteColors(index, pal, DMA);
 }
 
 void PAL_setPaletteDMA(u16 numPal, const u16* pal)
 {
-    PAL_setColorsDMA(numPal * 16, pal, 16);
+    PAL_setPalette(numPal * 16, pal, DMA);
 }
-
 
 static void setFadePalette(u16 ind, const u16 *src, u16 len)
 {
@@ -351,8 +310,7 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
     if (lastVTimer == vtimer) SYS_doVBlankProcess();
 
     // use DMA for long transfer
-    if (len > 16) DMA_doDma(DMA_CRAM, (void*) src, ind * 2, len, 2);
-    else PAL_setColors(ind, src, len);
+    PAL_setColors(ind, src, len, (len > 16)?DMA:CPU);
 
     // keep track of last update
     lastVTimer = vtimer;
