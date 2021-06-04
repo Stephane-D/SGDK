@@ -20,4 +20,4 @@ ENV GDK=/sgdk
 # Set-up mount point and make command
 VOLUME /src
 WORKDIR /src
-ENTRYPOINT [ "make", "-f", "/sgdk/makefile_wine.gen" ]
+ENTRYPOINT [ "make", "-f", "/sgdk/makefile.gen" ]
