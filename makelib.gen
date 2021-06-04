@@ -12,19 +12,35 @@ SRC_LIB := $(GDK)/src
 RES_LIB := $(GDK)/res
 INCLUDE_LIB := $(GDK)/inc
 
-SHELL := $(BIN)/sh
-RM := $(BIN)/rm
-CP := $(BIN)/cp
-AR := $(BIN)/ar
-CC := $(BIN)/gcc
+ifeq ($(OS),Windows_NT)
+	SHELL := $(BIN)/sh.exe
+	RM := $(BIN)/rm.exe
+	CP := $(BIN)/cp.exe
+	MKDIR := $(BIN)/mkdir.exe
+
+	AR := $(BIN)/ar.exe
+	CC := $(BIN)/gcc.exe
+	OBJCPY := $(BIN)/objcopy.exe
+	ASMZ80 := $(BIN)/sjasm.exe
+	SIZEBND := $(BIN)/sizebnd.exe
+	BINTOS := $(BIN)/bintos.exe
+else
+	SHELL = sh
+	RM = rm
+	CP = cp
+	MKDIR = mkdir
+
+	AR := $(BIN)/ar
+	CC := $(BIN)/gcc
+	OBJCPY := $(BIN)/objcopy
+	ASMZ80 := $(BIN)/sjasm
+	SIZEBND := $(BIN)/sizebnd
+	BINTOS := $(BIN)/bintos
+endif
+
 JAVA := java
 ECHO := echo
-OBJCPY := $(BIN)/objcopy
-ASMZ80 := $(BIN)/sjasm
-SIZEBND := $(BIN)/sizebnd
-BINTOS := $(BIN)/bintos
 RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
-MKDIR := $(BIN)/mkdir
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
 SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)

@@ -1,46 +1,53 @@
-MAKEFILE_DIR:= $(dir $(lastword $(MAKEFILE_LIST)))
-MAKEFILE_DIR:= $(subst \,/,$(MAKEFILE_DIR))
+MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
 
 ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
-    GDK:= $(patsubst %/,%,$(MAKEFILE_DIR))
+    GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
 endif
 
-BIN:= $(GDK)/bin
-LIB:= $(GDK)/lib
+BIN := $(GDK)/bin
+LIB := $(GDK)/lib
 
-LIBSRC:= $(GDK)/src
-LIBRES:= $(GDK)/res
-LIBINCLUDE:= $(GDK)/inc
+LIBSRC := $(GDK)/src
+LIBRES := $(GDK)/res
+LIBINCLUDE := $(GDK)/inc
 
-SRC:= src
-RES:= res
-INCLUDE:= inc
+SRC := src
+RES := res
+INCLUDE := inc
 
-
-OSFLAG 				:=
 ifeq ($(OS),Windows_NT)
-	SHELL:= $(BIN)/sh
-	RM:= $(BIN)/rm
-	CP:= $(BIN)/cp
-	MKDIR:= $(BIN)/mkdir
+	SHELL := $(BIN)/sh.exe
+	RM := $(BIN)/rm.exe
+	CP := $(BIN)/cp.exe
+	MKDIR := $(BIN)/mkdir.exe
+
+	CC := $(BIN)/gcc.exe
+	LD:= $(BIN)/ld.exe
+	NM:= $(BIN)/nm.exe
+	OBJCPY := $(BIN)/objcopy.exe
+	ASMZ80 := $(BIN)/sjasm.exe
+	MACCER := $(BIN)/mac68k.exe
+	SIZEBND := $(BIN)/sizebnd.exe
+	BINTOS := $(BIN)/bintos.exe
 else
-	RM= rm
-	CP= cp
-	MKDIR= mkdir
-	SHELL= sh
+	SHELL = sh
+	RM = rm
+	CP = cp
+	MKDIR = mkdir
+
+	CC := $(BIN)/gcc
+	LD := $(BIN)/ld
+	NM := $(BIN)/nm
+	OBJCPY := $(BIN)/objcopy
+	ASMZ80 := $(BIN)/sjasm
+	MACCER := $(BIN)/mac68k
+	SIZEBND := $(BIN)/sizebnd
+	BINTOS := $(BIN)/bintos
 endif
 
-
-CC:= $(BIN)/gcc
-LD:= $(BIN)/ld
-NM:= $(BIN)/nm
 JAVA:= java
 ECHO:= echo
-OBJCPY:= $(BIN)/objcopy
-ASMZ80:= $(BIN)/sjasm
-MACCER:= $(BIN)/mac68k
-SIZEBND:= $(BIN)/sizebnd
-BINTOS:= $(BIN)/bintos
 RESCOMP:= $(JAVA) -jar $(BIN)/rescomp.jar
 
 SRC_C= $(wildcard *.c)
