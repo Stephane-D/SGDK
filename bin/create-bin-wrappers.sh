@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# List of binaries to wrap (without ".exe" extension)
-BINARIES="ar as bintos cc1 cpp gcc gdb ld lto1 mac68k make nm objcopy objdump size sizebnd sjasm xgmtool"
+# This script will be executed at docker build.
+# See Dockerfile
 
-# Output path
-BIN_PATH=$(dirname "$0")
+BIN_PATH="/sgdk/bin"
 
-# Create a bash script for each binary file
-for binary in $(echo $BINARIES); do
-    FILENAME = "$BIN_PATH/$binary";
-    echo "#!/bin/bash" > FILENAME
-    echo "WINEDEBUG=-all WINEPREFIX=/sgdk/bin/.wineconf wine /sgdk/bin/$binary.exe \"\$@\"" >> FILENAME
+# Create a bash script for each .exe file in BIN_PATH
+for binary in $BIN_PATH/*.exe; do
+    BASENAME=$(basename $binary .exe)
+    FILENAME=$BIN_PATH/$BASENAME
+    echo "#!/bin/bash" > $FILENAME
+    echo "WINEDEBUG=-all WINEPREFIX=/sgdk/bin/.wineconf wine /sgdk/bin/$BASENAME.exe \"\$@\"" >> $FILENAME
+    chmod +x $FILENAME
 done
