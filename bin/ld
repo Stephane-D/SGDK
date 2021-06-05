@@ -1,2 +1,0 @@
-#!/bin/bash
-WINEDEBUG=-all WINEPREFIX=/sgdk/bin/.wineconf wine /sgdk/bin/ld.exe "$@"
