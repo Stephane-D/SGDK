@@ -82,7 +82,7 @@ To build the `sgdk` base image:
 And then to compile the local env, such as `samples` for example:
 
     cd sample/sonic
-    docker run --rm -v $PWD:/src sgdk
+    docker run --rm -v "$PWD":/src sgdk
 
 Note: `$PWD` will not work on Windows, there `%CD%` has to be used instead.
 
