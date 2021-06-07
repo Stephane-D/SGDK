@@ -326,6 +326,24 @@ bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u
 
 /**
  *  \brief
+ *      Return TRUE if we have enough DMA capacity to transfer the given data block len (see #DMA_setMaxTransferSize(..))
+ *
+ *  \param location
+ *      Destination location.<br>
+ *      Accepted values:<br>
+ *      - DMA_VRAM (for VRAM transfer).<br>
+ *      - DMA_CRAM (for CRAM transfer).<br>
+ *      - DMA_VSRAM (for VSRAM transfer).<br>
+ *  \param len
+ *      Number of word we want to transfer.
+ *  \return
+ *      TRUE if we have enough capacity, FALSE otherwise
+ *  \see DMA_getMaxTransferSize(..)
+ *  \see DMA_queueDma(..)
+ */
+bool DMA_canQueue(u8 location, u16 len);
+/**
+ *  \brief
  *      Allocate temporary memory and queues the DMA transfer operation in the DMA queue.<br>
  *      The idea of the DMA queue is to burst all DMA operations during VBLank to maximize bandwidth usage.<br>
  *      <b>IMPORTANT:</b> You need to fill the returned data buffer before DMA occurs so it's a good practise to disable interrupts before
@@ -349,6 +367,7 @@ bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u
  *      The source buffer pointer that will be used for the DMA transfer so you can fill its content.<br>
  *      Returns NULL if the buffer is full or if the DMA queue operation failed (queue is full).
  *  \see DMA_queueDMA(..)
+ *  \see DMA_copyAndQueueDma(..)
  */
 void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step);
 /**
@@ -374,7 +393,8 @@ void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step);
  *      for specific operation.<br>
  *  \return
  *      FALSE if the operation failed (queue is full)
- *  \see DMA_do(..)
+ *  \see DMA_doDma(..)
+ *  \see DMA_queueDma(..)
  */
 bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step);
 /**
@@ -400,7 +420,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step);
  *      for specific operation.<br>
  *  \return
  *      FALSE if the operation failed (queue is full)
- *  \see DMA_do(..)
+ *  \see DMA_doDma(..)
  */
 bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step);
 /**

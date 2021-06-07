@@ -378,6 +378,13 @@ void DMA_releaseTemp(u16 len)
     nextDataBuffer -= len;
 }
 
+bool DMA_canQueue(u8 location, u16 len)
+{
+    u16 nextSize = queueTransferSize + (len << (location == DMA_VRAM)?1:0);
+    // return TRUE if we are below limit
+    return (nextSize <= maxTransferPerFrame);
+}
+
 void* DMA_allocateAndQueueDma(u8 location, u16 to, u16 len, u16 step)
 {
     u16* result = DMA_allocateTemp(len);
@@ -480,6 +487,8 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 #ifdef DMA_DEBUG
         KLog_U4("DMA_queueDma: VRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
+        // keep trace of transferred size
+        queueTransferSize += newLen << 1;
         break;
 
     case DMA_CRAM:
@@ -487,6 +496,8 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 #ifdef DMA_DEBUG
         KLog_U4("DMA_queueDma: CRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
+        // keep trace of transferred size (only half as CRAM trasnfer are 16 bit wide)
+        queueTransferSize += newLen;
         break;
 
     case DMA_VSRAM:
@@ -494,13 +505,13 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 #ifdef DMA_DEBUG
         KLog_U4("DMA_queueDma: VSRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
+        // keep trace of transferred size (only half as VSRAM trasnfer are 16 bit wide)
+        queueTransferSize += newLen;
         break;
     }
 
     // pass to next index
     queueIndex++;
-    // keep trace of transferred size
-    queueTransferSize += newLen << 1;
 
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
@@ -568,6 +579,8 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
 #ifdef DMA_DEBUG
         KLog_U4("DMA_queueDma: VRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
+        // keep trace of transferred size
+        queueTransferSize += len << 1;
         break;
 
     case DMA_CRAM:
@@ -575,6 +588,8 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
 #ifdef DMA_DEBUG
         KLog_U4("DMA_queueDma: CRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
+        // keep trace of transferred size (only half as CRAM trasnfer are 16 bit wide)
+        queueTransferSize += len;
         break;
 
     case DMA_VSRAM:
@@ -582,13 +597,13 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
 #ifdef DMA_DEBUG
         KLog_U4("DMA_queueDma: VSRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
 #endif
+        // keep trace of transferred size (only half as VSRAM trasnfer are 16 bit wide)
+        queueTransferSize += len;
         break;
     }
 
     // pass to next index
     queueIndex++;
-    // keep trace of transferred size
-    queueTransferSize += len << 1;
 
 #ifdef DMA_DEBUG
     KLog_U2("  Queue index=", queueIndex, " new queueTransferSize=", queueTransferSize);
