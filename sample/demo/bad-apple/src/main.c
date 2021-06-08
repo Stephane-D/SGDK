@@ -117,7 +117,7 @@ int main()
     JOY_setSupport(PORT_1, JOY_SUPPORT_3BTN);
     JOY_setSupport(PORT_2, JOY_SUPPORT_OFF);
 
-    PAL_setPalette(0, palette_black);
+    PAL_setPalette(0, palette_black, CPU);
 
     VDP_drawText("Bad apple PV demo - SGDK sample", 2, 0);
 
@@ -175,7 +175,7 @@ int main()
 
     VDP_init();
     VDP_setPlaneSize(64, 64, TRUE);
-    PAL_setPalette(PAL0, palette_black);
+    PAL_setPalette(PAL0, palette_black, CPU);
 
     VDP_drawText("Hope you enjoyed :)", 5, 10);
     VDP_drawText("@2021  Stephane Dallongeville", 9, 27);
