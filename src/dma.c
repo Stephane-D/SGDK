@@ -380,7 +380,8 @@ void DMA_releaseTemp(u16 len)
 
 bool DMA_canQueue(u8 location, u16 len)
 {
-    u16 nextSize = queueTransferSize + (len << (location == DMA_VRAM)?1:0);
+    u16 nextSize = queueTransferSize + (len << ((location == DMA_VRAM)?1:0));
+
     // return TRUE if we are below limit
     return (nextSize <= maxTransferPerFrame);
 }
