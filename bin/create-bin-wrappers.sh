@@ -10,6 +10,8 @@ for binary in $BIN_PATH/*.exe; do
     BASENAME=$(basename $binary .exe)
     FILENAME=$BIN_PATH/$BASENAME
     echo "#!/bin/bash" > $FILENAME
-    echo "WINEDEBUG=-all WINEPREFIX=/sgdk/bin/.wineconf wine /sgdk/bin/$BASENAME.exe \"\$@\"" >> $FILENAME
+    # create a wineconf folder owned by us, otherwise it will refuse to execute for current user
+    echo "mkdir -p /tmp/wine" >> $FILENAME
+    echo "WINEARCH=win32 WINEDEBUG=-all WINEPREFIX=/tmp/wine/.wineconf wine /sgdk/bin/$BASENAME.exe \"\$@\"" >> $FILENAME
     chmod +x $FILENAME
 done
