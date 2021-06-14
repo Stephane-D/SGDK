@@ -122,8 +122,8 @@ void XGM_startPlay(const u8 *song)
 
     // point to Z80 command
     pb = (u8 *) Z80_DRV_COMMAND;
-    // set play XGM command
-    *pb |= (1 << 6);
+    // set play XGM command (clear pause/resume if any)
+    *pb = (*pb & 0x0F) | (1 << 6);
 
     // clear pending frame
     setNextXFrame(0, TRUE);
@@ -164,8 +164,8 @@ void XGM_stopPlay()
 
     // point to Z80 command
     pb = (u8 *) Z80_DRV_COMMAND;
-    // set play XGM command
-    *pb |= (1 << 6);
+    // set play XGM command (clear pause/resume if any)
+    *pb = (*pb & 0x0F) | (1 << 6);
 
     // force immediate music process
     setNextXFrame(5, TRUE);
@@ -188,8 +188,11 @@ void XGM_pausePlay()
 
     // point to Z80 command
     pb = (u8 *) Z80_DRV_COMMAND;
-    // set pause XGM command
-    *pb |= (1 << 4);
+    // set pause XGM command (clear play/resume if any)
+    *pb = (*pb & 0x0F) | (1 << 4);
+
+    // clear pending frame
+    setNextXFrame(0, TRUE);
 
     if (!busTaken) Z80_releaseBus();
     SYS_enableInts();
@@ -209,11 +212,14 @@ void XGM_resumePlay()
 
     // point to Z80 command
     pb = (u8 *) Z80_DRV_COMMAND;
-    // set resume XGM command
-    *pb |= (1 << 5);
-
-    // clear pending frame
-    setNextXFrame(0, TRUE);
+    // does not contains a play command ?
+    if ((*pb & (1 << 6)) == 0)
+    {
+        // set resume XGM command (clear pause if any)
+        *pb = (*pb & 0x0F) | (1 << 5);
+        // clear pending frame
+        setNextXFrame(0, TRUE);
+    }
 
     if (!busTaken) Z80_releaseBus();
     SYS_enableInts();
