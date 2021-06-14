@@ -2465,6 +2465,13 @@ do_xgm_again                            ;                           ' 135
             wait95                      ; sync                      ' 95    |
             JP      main_loop           ; restart loop (prep xgm)   ' 10    | 105 (254)
 
+
+
+xgm_stopped
+            LD      (HL), $0            ; clear PENDING_FRM         ' xx
+            JP      xgm_stopped_cont    ; continue                  ' xx
+
+
 ; $BC+X+Y+Z
 xgm_done                                ;                               ' 90
 
@@ -2476,8 +2483,10 @@ xgm_done                                ;                               ' 90
             INC     L                   ; HL point on PENDING_FRM       ' 4     |
 
             DEC     (HL)                ; still have frame to process ? ' 11    |
+            JP      M, xgm_stopped      ; for safety on 68k clear       ' xx
             JP      NZ, do_xgm_again    ; do XGM process again          ' 10    | 21 (135)
 
+xgm_stopped_cont
             DEC     L                   ; HL point on MODIFYING_F       ' 4     |
             LD      (HL), $0            ; no more modifying variable    ' 10    | 14 (149)
 
