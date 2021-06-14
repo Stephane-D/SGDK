@@ -1,4 +1,4 @@
-; eXtended Genesis Music (XGM) Z80 driver - Stéphane Dallongeville @2014-2016
+; eXtended Genesis Music (XGM) Z80 driver - Stï¿½phane Dallongeville @2014-2016
 ;
 ; XGM is a music format dedicated to the Sega Megadrive/Genesis system.
 ; It has been designed to minimize CPU decoding resource and keep reasonable data size (should be smaller than VGM file).
@@ -2789,7 +2789,7 @@ loadState
 
             LD      HL, PSGPORT         ; HL point on PSG           ' 10    | (254)
 
-            sampleOutput                ; *** sample output ****    ' 36    | (36)
+            sampleOutputSafe            ; *** sample output ****    ' 46    | (46+10)
 
             JP      loadPSGState        ; load PSG state            ' 10+94 | (140)
 
