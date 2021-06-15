@@ -92,6 +92,8 @@ VoidCallback *vintCB;
 VoidCallback *hintCB;
 VoidCallback *eintCB;
 
+// user VBlank callbacks
+VoidCallback *vblankCB;
 
 // exception state consumes 78 bytes of memory
 __attribute__((externally_visible)) u32 registerState[8+8];
@@ -410,6 +412,12 @@ void _int_callback()
 }
 
 
+// Dummy V-Blank Callback
+void _vblank_dummy_callback()
+{
+    //
+}
+
 // Dummy V-Int Callback
 void _vint_dummy_callback()
 {
@@ -588,6 +596,7 @@ static void internal_reset()
     while(--len) SYS_setBank(len, len);
 #endif
 
+    vblankCB = _vblank_dummy_callback;
     vintCB = _vint_dummy_callback;
     hintCB = _hint_dummy_callback;
     eintCB = _extint_dummy_callback;
@@ -729,6 +738,9 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
     // store back
     VBlankProcess = vbp;
 
+    // user VBlank callback
+    (*vblankCB)();
+
     // frame load display enabled ?
     if (flags & SHOW_FRAME_LOAD)
     {
@@ -821,6 +833,12 @@ void SYS_enableInts()
     #endif
     }
 #endif
+}
+
+void SYS_setVBlankCallback(VoidCallback *CB)
+{
+    if (CB) vblankCB = CB;
+    else vblankCB = _vblank_dummy_callback;
 }
 
 void SYS_setVIntCallback(VoidCallback *CB)

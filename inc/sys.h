@@ -254,6 +254,23 @@ void SYS_enableInts();
 
 /**
  *  \brief
+ *      Set user 'Vertical Blank' callback method.
+ *
+ *  \param CB
+ *      Pointer to the method to call on Vertical Blank period.<br>
+ *      You can remove current callback by passing a <i>NULL</i> pointer here.
+ *
+ * Vertical blank period starts right at the end of display period.<br>
+ * This period is usually used to prepare next frame data (refresh sprites, scrolling ...).<br>
+ * SGDK handle that in the #SYS_doVBlankProcess() method and will call the user 'Vertical Blank' from this method after all major tasks.<br>
+ * It's recommended to use the 'Vertical Blank' callback instead of the 'VInt' callback if you need to do some VDP accesses.
+ *
+ * \see SYS_setVIntCallback(VoidCallback *CB);
+ */
+void SYS_setVBlankCallback(VoidCallback *CB);
+
+/**
+ *  \brief
  *      Set 'Vertical Interrupt' callback method.
  *
  *  \param CB
@@ -265,8 +282,9 @@ void SYS_enableInts();
  * SGDK handle most of these process using #SYS_doVBlankProcess() so you can control it manually (do it from main loop or put it in Vint callback).<br>
  * The only things that SGDK always handle from the vint callback is the XGM sound driver music tempo and Bitmap engine phase reset.<br>
  * It's recommended to keep your code as fast as possible as it will eat precious VBlank time, nor you should touch the VDP from your Vint callback
- * otherwise you will need to protect any VDP accesses from your main loop (which is painful).
+ * otherwise you will need to protect any VDP accesses from your main loop (which is painful), use the SYS_setVIntCallback(..) instead for that.
  *
+ * \see SYS_setVBlankCallback(VoidCallback *CB);
  * \see SYS_setHIntCallback(VoidCallback *CB);
  */
 void SYS_setVIntCallback(VoidCallback *CB);
