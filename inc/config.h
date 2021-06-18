@@ -52,16 +52,17 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to force Z80 halt during DMA operation.<br>
- *      Some Megadrive models (as 2016 Tectoy Megadrive) need it to prevent some possible 68000 memory or Z80 corruption bugs
- *      (may happen when Z80 access the main BUS during a DMA operation).
+ *      Set it to 1 if you want to force Z80 halt during DMA operation (default).<br>
+ *      Some Megadrive models need it to prevent some possible DMA transfer corruption or even 68000 memory or Z80 invalid data fetch in very rare case.<br>
+ *      This actually happen when Z80 access the main BUS exactly at same time you trigger a DMA operation.<br>
+ *      If you are 100% sure that you are actually avoiding that case you may try to disable the flag (at your own risk though).
  */
 #define HALT_Z80_ON_DMA     1
 
 /**
  *  \brief
  *      Set it to 1 if you want to force Z80 halt during IO port (controller) accesses.<br>
- *      Some Megadrive models (as some MD2) need it to prevent some possible Z80 corruption bugs
+ *      Some Megadrive models (as some MD2) need it to prevent some possible (but very rare) Z80 corruption bugs
  *      (may happen when Z80 access the main BUS during IO port access from 68K).
  */
 #define HALT_Z80_ON_IO      0
