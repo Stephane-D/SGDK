@@ -168,7 +168,7 @@ void XGM_stopPlay()
     *pb = (*pb & 0x0F) | (1 << 6);
 
     // force immediate music process
-    setNextXFrame(5, TRUE);
+    setNextXFrame(3, TRUE);
 
     if (!busTaken) Z80_releaseBus();
     SYS_enableInts();
