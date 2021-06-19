@@ -27,7 +27,7 @@ Supported function:
 - UNGROUP   by default rescomp will group data export by type, using UNGROUP allow to disable that feature.
 - NEAR      force all resources from the file to be exported as "not FAR" data.
             Usually binary data are exported as "FAR" data by default, that means they are located in the end of the ROM and can require
-            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before FAR data in the ROM.
+            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before all FAR data in the ROM.
 
 PALETTE
 -------
