@@ -296,6 +296,17 @@ int VGMCommand_getYM2612Port(VGMCommand* source)
     return -1;
 }
 
+int VGMCommand_getYM2612Channel(VGMCommand* source)
+{
+    if (VGMCommand_isYM2612Port0Write(source))
+        return (VGMCommand_getYM2612Register(source) & 3);
+
+    if (VGMCommand_isYM2612Port1Write(source))
+        return (VGMCommand_getYM2612Register(source) & 3) + 3;
+
+    return -1;
+}
+
 int VGMCommand_getYM2612Register(VGMCommand* source)
 {
     if (VGMCommand_isYM2612Write(source))

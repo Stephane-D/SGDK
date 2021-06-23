@@ -65,6 +65,7 @@ bool VGMCommand_isYM2612Port0Write(VGMCommand* source);
 bool VGMCommand_isYM2612Port1Write(VGMCommand* source);
 bool VGMCommand_isYM2612Write(VGMCommand* source);
 int VGMCommand_getYM2612Port(VGMCommand* source);
+int VGMCommand_getYM2612Channel(VGMCommand* source);
 int VGMCommand_getYM2612Register(VGMCommand* source);
 int VGMCommand_getYM2612Value(VGMCommand* source);
 bool VGMCommand_isYM2612KeyWrite(VGMCommand* source);
