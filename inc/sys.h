@@ -17,6 +17,46 @@
 #define PROCESS_XGM_TASK            (1 << 3)
 #define PROCESS_VDP_SCROLL_TASK     (1 << 4)
 
+
+#define ROM_ALIGN_BIT               17
+#define ROM_ALIGN                   (1 << ROM_ALIGN_BIT)
+#define ROM_ALIGN_MASK              (ROM_ALIGN - 1)
+
+#define ROM_START                   0
+#define ROM_END                     (((u32) &_stext) + ((u32) &_sdata))
+#define ROM_SIZE                    ((ROM_END + ROM_ALIGN_MASK) & ROM_ALIGN)
+
+
+// exist through rom_head.c
+typedef struct
+{
+    char console[16];               /* Console Name (16) */
+    char copyright[16];             /* Copyright Information (16) */
+    char title_local[48];           /* Domestic Name (48) */
+    char title_int[48];             /* Overseas Name (48) */
+    char serial[14];                /* Serial Number (2, 12) */
+    u16 checksum;                   /* Checksum (2) */
+    char IOSupport[16];             /* I/O Support (16) */
+    u32 rom_start;                  /* ROM Start Address (4) */
+    u32 rom_end;                    /* ROM End Address (4) */
+    u32 ram_start;                  /* Start of Backup RAM (4) */
+    u32 ram_end;                    /* End of Backup RAM (4) */
+    char sram_sig[2];               /* "RA" for save ram (2) */
+    u16 sram_type;                  /* 0xF820 for save ram on odd bytes (2) */
+    u32 sram_start;                 /* SRAM start address - normally 0x200001 (4) */
+    u32 sram_end;                   /* SRAM end address - start + 2*sram_size (4) */
+    char modem_support[12];         /* Modem Support (24) */
+    char notes[40];                 /* Memo (40) */
+    char region[16];                /* Country Support (16) */
+} ROMHeader;
+
+extern const ROMHeader rom_header;
+
+// size of text segment --> start of initialized data (RO)
+extern u32 _stext;
+// size of initialized data segment
+extern u32 _sdata;
+
 /**
  *  \brief
  *      Define at which period to do VBlank process (see #SYS_doVBlankProcess() method)
@@ -417,6 +457,19 @@ void SYS_showFrameLoad(bool mean);
  * \see SYS_showFrameLoad()
  */
 void SYS_hideFrameLoad();
+
+
+/**
+ *  \brief
+ *      Computes full ROM checksum and return it.<br>
+ *      The checksum is a custom fast 32 bit checksum converted to 16 bit at end
+ */
+u16 SYS_computeChecksum();
+/**
+ *  \brief
+ *      Returns TRUE if ROM checksum is ok (correspond to rom_head.checksum field)
+ */
+bool SYS_isChecksumOk();
 
 /**
  *  \brief

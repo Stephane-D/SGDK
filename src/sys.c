@@ -50,10 +50,6 @@
 // we don't want to share them
 extern u16 randbase;
 extern u16 currentDriver;
-// size of text segment --> start of initialized data (RO)
-extern u32 _stext;
-// size of initialized data segment
-extern u32 _sdata;
 // last V-Counter on VDP_waitVSync() / VDP_waitVInt() call
 extern u16 lastVCnt;
 
@@ -1028,6 +1024,43 @@ bool addFrameLoad(u16 frameLoad, u32 vtime)
 u16 SYS_getCPULoad()
 {
    return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 256);
+}
+
+
+u16 SYS_computeChecksum()
+{
+    u32 adr;
+    u32 chk;
+
+    chk = 0;
+    for(adr = 0; adr < ROM_SIZE; adr += BANK_SIZE)
+    {
+        // dword x8 checksum
+        u16 len = BANK_SIZE / (4 * 8);
+        // get source pointer
+        u32* src = (u32 *) FAR(adr);
+
+        while(len--)
+        {
+          chk += *src++;
+          chk += *src++;
+          chk += *src++;
+          chk += *src++;
+          chk += *src++;
+          chk += *src++;
+          chk += *src++;
+          chk += *src++;
+        }
+    }
+
+    // pack 32 bit checksum on 16 bit
+    return chk + (chk >> 16);
+}
+
+bool SYS_isChecksumOk()
+{
+    // remove checksum from it
+    return (SYS_computeChecksum() - rom_header.checksum) == rom_header.checksum;
 }
 
 
