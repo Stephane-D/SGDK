@@ -24,7 +24,7 @@
 
 #define ROM_START                   0
 #define ROM_END                     (((u32) &_stext) + ((u32) &_sdata))
-#define ROM_SIZE                    ((ROM_END + ROM_ALIGN_MASK) & ROM_ALIGN)
+#define ROM_SIZE                    ((ROM_END + ROM_ALIGN_MASK) & (~ROM_ALIGN_MASK))
 
 
 // exist through rom_head.c
