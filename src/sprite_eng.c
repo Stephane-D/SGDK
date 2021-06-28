@@ -1828,11 +1828,12 @@ static u16 updateFrame(Sprite* sprite, u16 status)
 
     // detect if we need to hide some VDP sprite
     s16 currentNumSprite = frame->numSprite;
-    s16 spriteToHide = sprite->lastNumSprite - currentNumSprite;
 
-    // need to hide some sprite
-    if (spriteToHide > 0)
-        sprite->spriteToHide = spriteToHide;
+    // adjust number of sprite to hide
+    sprite->spriteToHide += sprite->lastNumSprite - currentNumSprite;
+
+//    if (sprite->status & SPR_FLAG_AUTO_VISIBILITY)
+//        KLog_U3("currNumSprite= ", currentNumSprite, " lastNumSprite= ", sprite->lastNumSprite, " spriteToHide= ", sprite->spriteToHide);
 
     // store last used number of sprite
     sprite->lastNumSprite = currentNumSprite;
@@ -1875,7 +1876,7 @@ static void updateSpriteTableAll(Sprite* sprite)
     FrameVDPSprite* frameSprite;
     VDPSprite* vdpSprite;
     u16 attr;
-    u16 num;
+    s16 num;
     u16 visibility;
 
     visibility = sprite->visibility;
@@ -1929,16 +1930,15 @@ static void updateSpriteTableAll(Sprite* sprite)
     }
 
     // hide sprites that were used by previous frame
-    if ((num = sprite->spriteToHide))
+    if ((num = sprite->spriteToHide) > 0)
     {
         while(num--)
         {
             vdpSprite->y = 0;
             vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
-
-        sprite->spriteToHide = 0;
     }
+    sprite->spriteToHide = 0;
 
 #ifdef SPR_DEBUG
     {
@@ -1964,7 +1964,7 @@ static void updateSpriteTablePos(Sprite* sprite)
     FrameVDPSprite* frameSprite;
     VDPSprite* vdpSprite;
     u16 attr;
-    u16 num;
+    s16 num;
     u16 visibility;
 
     visibility = sprite->visibility;
@@ -2011,16 +2011,15 @@ static void updateSpriteTablePos(Sprite* sprite)
     }
 
     // hide sprites that were used by previous frame
-    if ((num = sprite->spriteToHide))
+    if ((num = sprite->spriteToHide) > 0)
     {
         while(num--)
         {
             vdpSprite->y = 0;
             vdpSprite = &vdpSpriteCache[vdpSprite->link];
         }
-
-        sprite->spriteToHide = 0;
     }
+    sprite->spriteToHide = 0;
 
 #ifdef SPR_DEBUG
     {
@@ -2044,7 +2043,11 @@ static void updateSpriteTableHide(Sprite* sprite)
 
     VDPSprite* vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
     // don't forget to hide sprites that were used by previous frame
-    u16 num = sprite->frame->numSprite + sprite->spriteToHide;
+    s16 num = sprite->frame->numSprite;
+
+    if (sprite->spriteToHide > 0) num += sprite->spriteToHide;
+
+//    KLog_U3("updateSpriteTableHide():  sprite->spriteToHide= ", sprite->spriteToHide, " num= ", num, " maxNumSprite= ", sprite->definition->maxNumSprite);
 
     while(num--)
     {
@@ -2074,7 +2077,7 @@ static void loadTiles(Sprite* sprite)
         u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        if (!buf) KDebug_Alert("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
+        if (!buf) KLog("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
         else
 #endif
             // unpack in temp buffer obtained from DMA queue

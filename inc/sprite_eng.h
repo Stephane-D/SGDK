@@ -346,7 +346,7 @@ typedef struct Sprite
     u16 VDPSpriteIndex;
     VDPSprite* lastVDPSprite;
     u16 lastNumSprite;
-    u16 spriteToHide;
+    s16 spriteToHide;
     u32 data;
     struct Sprite* prev;
     struct Sprite* next;
