@@ -1042,25 +1042,27 @@ u16 SYS_computeChecksum()
 
         while(len--)
         {
-          chk += *src++;
-          chk += *src++;
-          chk += *src++;
-          chk += *src++;
-          chk += *src++;
-          chk += *src++;
-          chk += *src++;
-          chk += *src++;
+          chk ^= *src++;
+          chk ^= *src++;
+          chk ^= *src++;
+          chk ^= *src++;
+          chk ^= *src++;
+          chk ^= *src++;
+          chk ^= *src++;
+          chk ^= *src++;
         }
     }
 
     // pack 32 bit checksum on 16 bit
-    return chk + (chk >> 16);
+    return chk ^ (chk >> 16);
 }
 
 bool SYS_isChecksumOk()
 {
+    u16 checksum = SYS_computeChecksum();
+
     // remove checksum from it
-    return (SYS_computeChecksum() - rom_header.checksum) == rom_header.checksum;
+    return (checksum ^ rom_header.checksum) == rom_header.checksum;
 }
 
 
