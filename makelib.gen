@@ -22,7 +22,6 @@ ifeq ($(OS),Windows_NT)
 	CC := $(BIN)/gcc.exe
 	OBJCPY := $(BIN)/objcopy.exe
 	ASMZ80 := $(BIN)/sjasm.exe
-	SIZEBND := $(BIN)/sizebnd.exe
 	BINTOS := $(BIN)/bintos.exe
 else
 	SHELL = sh
@@ -34,12 +33,12 @@ else
 	CC := $(BIN)/gcc
 	OBJCPY := $(BIN)/objcopy
 	ASMZ80 := $(BIN)/sjasm
-	SIZEBND := $(BIN)/sizebnd
 	BINTOS := $(BIN)/bintos
 endif
 
 JAVA := java
 ECHO := echo
+SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
 RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)

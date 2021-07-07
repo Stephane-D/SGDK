@@ -28,7 +28,6 @@ ifeq ($(OS),Windows_NT)
 	OBJCPY := $(BIN)/objcopy.exe
 	ASMZ80 := $(BIN)/sjasm.exe
 	MACCER := $(BIN)/mac68k.exe
-	SIZEBND := $(BIN)/sizebnd.exe
 	BINTOS := $(BIN)/bintos.exe
 else
 	SHELL = sh
@@ -42,12 +41,12 @@ else
 	OBJCPY := $(BIN)/objcopy
 	ASMZ80 := $(BIN)/sjasm
 	MACCER := $(BIN)/mac68k
-	SIZEBND := $(BIN)/sizebnd
 	BINTOS := $(BIN)/bintos
 endif
 
 JAVA:= java
 ECHO:= echo
+SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
 RESCOMP:= $(JAVA) -jar $(BIN)/rescomp.jar
 
 SRC_C= $(wildcard *.c)
@@ -162,7 +161,7 @@ pre-build:
 
 out/rom.bin: out/rom.out
 	$(OBJCPY) -O binary out/rom.out out/rom.bin
-	$(SIZEBND) out/rom.bin -sizealign 131072
+	$(SIZEBND) out/rom.bin -sizealign 131072 -checksum
 
 out/symbol.txt: out/rom.out
 	$(NM) --plugin=liblto_plugin-0.dll -n out/rom.out > out/symbol.txt
