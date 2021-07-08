@@ -84,8 +84,11 @@ And then to compile the local env, such as `samples` for example:
     cd sample/sonic
     docker run --rm -v "$PWD":/src sgdk
 
-Note: `$PWD` will not work on Windows, there `%CD%` has to be used instead.
+Notes:
 
+- `$PWD` will not work on Windows, there `%CD%` has to be used instead.
+- To avoid writing `./out` files as root, execute the docker command as current user:
+  - `docker run --rm -v "$PWD":/src -u $(id -u):$(id -g) sgdk`
  
 ### VISUAL STUDIO
 

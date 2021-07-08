@@ -1,17 +1,17 @@
-FROM i386/alpine
+FROM ubuntu:20.04
 
 # Set-up argument defaults
-ARG JDK_VER=8
+ARG JDK_VER=11
 
 # Install supporting packages
-RUN apk update && \
-    apk add --no-cache \
-      bash \
-      make \
-      openjdk${JDK_VER}-jre \
-      freetype \
-      wine && \
-        rm -fr /var/cache/apk/*
+RUN dpkg --add-architecture i386 \
+  && apt-get update  \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  bash \
+  make \
+  openjdk-${JDK_VER}-jre-headless \
+  wine32 \
+  && rm -rf /var/lib/apt/lists/*
 
 # Set-up SGDK
 COPY . /sgdk
