@@ -49,6 +49,7 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
 
         // tiles
         VDP_loadTileData(t->tiles, index, t->numTile, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(t);
     }
     else
@@ -770,6 +771,7 @@ bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w,
 
         // tilemap
         VDP_setTileMapDataRect(plane, m->tilemap + offset, x, y, w, h, m->w, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(m);
     }
     else
@@ -793,6 +795,7 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
 
         // tilemap
         VDP_setTileMapDataRectEx(plane, m->tilemap + offset, basetile, xp, yp, w, h, m->w, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(m);
     }
     else
@@ -816,6 +819,7 @@ bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u
 
         // tilemap
         VDP_setTileMapDataRow(plane, m->tilemap + offset, row, x, w, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(m);
     }
     else
@@ -839,6 +843,7 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
 
         // tilemap
         VDP_setTileMapDataRowEx(plane, m->tilemap + offset, basetile, row, x, w, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(m);
     }
     else
@@ -864,6 +869,7 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
 
         // tilemap
         VDP_setTileMapDataColumn(plane, m->tilemap + offset, column, y, h, m->w, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(m);
     }
     else
@@ -887,6 +893,7 @@ bool VDP_setTileMapColumnEx(VDPPlane plane, const TileMap *tilemap, u16 basetile
 
         // tilemap
         VDP_setTileMapDataColumnEx(plane, m->tilemap + offset, basetile, column, y, h, m->w, tm);
+        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(m);
     }
     else

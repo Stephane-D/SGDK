@@ -187,7 +187,9 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm);
  *
  *  \param tileset
  *      Pointer to TileSet structure.<br>
- *      The TileSet is unpacked "on-the-fly" if needed (require some memory)
+ *      The TileSet is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param index
  *      Tile index where start tile data load (use TILE_USERINDEX as base user index).
  *  \param tm
@@ -234,7 +236,9 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm);
  *
  *  \param font
  *      TileSet containing the font.<br>
- *      The TileSet is unpacked "on-the-fly" if needed (require some memory)
+ *      The TileSet is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param tm
  *      Transfer method.<br>
  *      Accepted values are:<br>
@@ -816,7 +820,10 @@ void VDP_setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u
  *      - BG_B<br>
  *      - WINDOW<br>
  *  \param tilemap
- *      Source tilemap to load.
+ *      Source tilemap to load.<br>
+ *      The TileMap is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param x
  *      Region X start position (in tile).
  *  \param y
@@ -853,7 +860,10 @@ bool VDP_setTileMap(VDPPlane plane, const TileMap *tilemap, u16 x, u16 y, u16 w,
  *      - BG_B<br>
  *      - WINDOW<br>
  *  \param tilemap
- *      Source tilemap to load.
+ *      Source tilemap to load.<br>
+ *      The TileMap is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param xp
@@ -899,7 +909,10 @@ bool VDP_setTileMapEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u16 
  *      - BG_B<br>
  *      - WINDOW<br>
  *  \param tilemap
- *      Source tilemap to set row from.
+ *      Source tilemap to set row from.<br>
+ *      The TileMap is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param row
  *      Plane row we want to set data
  *  \param x
@@ -935,7 +948,10 @@ bool VDP_setTileMapRow(VDPPlane plane, const TileMap *tilemap, u16 row, u16 x, u
  *      - BG_B<br>
  *      - WINDOW<br>
  *  \param tilemap
- *      Source tilemap to set row from.
+ *      Source tilemap to set row from.<br>
+ *      The TileMap is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param row
@@ -978,7 +994,10 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
  *      - BG_B<br>
  *      - WINDOW<br>
  *  \param tilemap
- *      Source tilemap to set column from.
+ *      Source tilemap to set column from.<br>
+ *      The TileMap is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param column
  *      Plane column we want to set data
  *  \param y
@@ -1015,7 +1034,10 @@ bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u1
  *      - BG_B<br>
  *      - WINDOW<br>
  *  \param tilemap
- *      Source tilemap to set column from.
+ *      Source tilemap to set column from.<br>
+ *      The TileMap is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
  *  \param basetile
  *      Base index and flag for tile attributes (see TILE_ATTR_FULL() macro).
  *  \param column
