@@ -574,7 +574,7 @@ public class Compiler
         return result;
     }
 
-    private static List<Resource> getResources(Class<? extends Resource> resourceType)
+    public static List<Resource> getResources(Class<? extends Resource> resourceType)
     {
         final List<Resource> result = new ArrayList<>();
 

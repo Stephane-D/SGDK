@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
@@ -30,6 +31,12 @@ public class SpriteFrame extends Resource
 
     final int hc;
 
+    // just for pre-equal test
+    final byte[] frameImage;
+    final Dimension frameDim;
+    final CollisionType collisionType;
+    final int fhc;
+
     /**
      * @param w
      *        width of image in tile
@@ -40,44 +47,43 @@ public class SpriteFrame extends Resource
      * @param hf
      *        height of frame in tile
      */
-    public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf,
-            int timer, CollisionType collisionType, Compression compression, OptimizationType opt, long optIteration)
+    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType,
+            Compression compression, OptimizationType opt, long optIteration)
     {
         super(id);
 
         vdpSprites = new ArrayList<>();
         this.timer = timer;
+        this.collisionType = collisionType;
+        this.frameImage = frameImage8bpp;
+        this.frameDim = new Dimension(wf * 8, hf * 8);
+        this.fhc = computeFastHashcode(frameImage8bpp, frameDim, timer, collisionType);
 
-        // define frame bounds
-        final Rectangle frameBounds = new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
-        // get image for this frame
-        final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
         // get optimized sprite list from the image frame
         List<SpriteCell> sprites;
         final int numTile = wf * hf;
 
         // not default value ? --> force slow optimization
         if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
-            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration, opt);
+            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, opt);
         else
         {
             // always start with the fast optimization first
-            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(), opt);
+            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, opt);
 
             // too many sprites used for this sprite with no optimization ? try sprite opti with fast opti
             if ((sprites.size() > 16) && (opt == OptimizationType.NONE))
-                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameBounds.getSize(),
-                        OptimizationType.MIN_SPRITE);
+                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE);
 
             // too many sprites used for this sprite ? prefer better (but slower) sprite optimization
             if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
-                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration,
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration,
                         (opt == OptimizationType.NONE) ? OptimizationType.BALANCED : opt);
         }
 
         // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of sprite)
         if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
-            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameBounds.getSize(), optIteration,
+            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration,
                     OptimizationType.MIN_SPRITE);
 
         // still above the limit (shouldn't be possible as max sprite size is 128x128) ? --> stop here :-(
@@ -147,6 +153,30 @@ public class SpriteFrame extends Resource
 
         hc = (timer << 16) ^ tileset.hashCode() ^ vdpSprites.hashCode()
                 ^ ((collision != null) ? collision.hashCode() : 0);
+    }
+
+    /**
+     * @param w
+     *        width of image in tile
+     * @param h
+     *        height of image in tile
+     * @param wf
+     *        width of frame in tile
+     * @param hf
+     *        height of frame in tile
+     */
+    public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf,
+            int timer, CollisionType collisionType, Compression compression, OptimizationType opt, long optIteration)
+    {
+        this(id, ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8),
+                new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8)), wf, hf, timer,
+                collisionType, compression, opt, optIteration);
+    }
+
+    static int computeFastHashcode(byte[] frameImage8bpp, Dimension frameDim, int timer, CollisionType collision)
+    {
+        return (timer << 16) ^ ((collision != null) ? collision.hashCode() : 0) ^ Arrays.hashCode(frameImage8bpp)
+                ^ frameDim.hashCode();
     }
 
     public int getNumSprite()

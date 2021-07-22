@@ -1,17 +1,22 @@
 package sgdk.rescomp.resource.internal;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sgdk.rescomp.Compiler;
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
+import sgdk.tool.ImageUtil;
 
 public class SpriteAnimation extends Resource
 {
@@ -47,8 +52,24 @@ public class SpriteAnimation extends Resource
 
         for (int i = 0; i < numFrame; i++)
         {
-            SpriteFrame frame = new SpriteFrame(id + "_frame" + i, image8bpp, w, h, i, animIndex, wf, hf, time,
-                    collision, compression, opt, optIteration);
+            // define frame bounds
+            final Rectangle frameBounds = new Rectangle((i * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
+            // get image for this frame
+            final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
+
+            // try to search for duplicated frame first
+            SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision);
+
+            // not found ? --> define new frame
+            if (frame == null)
+            {
+                frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt,
+                        optIteration);
+            }
+            else
+            {
+                System.out.println("Sprite frame at anim #" + animIndex + " frame #" + i + " is a duplicate of " + frame.id);
+            }
 
             // check if empty
             if (!frame.isEmpty())
@@ -67,6 +88,30 @@ public class SpriteAnimation extends Resource
 
         // compute hash code
         hc = loopIndex ^ frames.hashCode();
+    }
+
+    private SpriteFrame findExistingSpriteFrame(byte[] frameImage, Dimension dimension, int time,
+            CollisionType collision)
+    {
+        for (Resource res : Compiler.getResources(SpriteFrame.class))
+        {
+            final SpriteFrame spriteFrame = (SpriteFrame) res;
+
+            if (checkEqual(spriteFrame, frameImage, dimension, time, collision))
+                return spriteFrame;
+        }
+
+        return null;
+    }
+
+    private boolean checkEqual(SpriteFrame spriteFrame, byte[] frameImage, Dimension dimension, int timer,
+            CollisionType collision)
+    {
+        return (SpriteFrame.computeFastHashcode(frameImage, dimension, timer, collision) == spriteFrame.fhc)
+                && Arrays.equals(frameImage, spriteFrame.frameImage)
+                && ((collision == spriteFrame.collisionType)
+                        || ((collision != null) && (collision.equals(spriteFrame.collisionType)))
+                                && (timer == spriteFrame.timer));
     }
 
     public boolean isEmpty()
