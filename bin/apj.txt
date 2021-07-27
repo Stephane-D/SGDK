@@ -1,4 +1,4 @@
-APJ packer v1.3 by Stephane Dallongeville (Copyright 2020)
+APJ packer v1.31 by Stephane Dallongeville (Copyright 2021)
 
 This tool is ApLib compressor wrote in Java for easier and faster integration with rescomp tool (SGDK).
 Aplib is a LZSS based lossless compression algorithm developed by Jorgen Ibsen - http://www.ibsensoftware.com

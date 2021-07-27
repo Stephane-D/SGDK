@@ -400,7 +400,7 @@ public class APJ
     {
         if (value < 2)
         {
-            System.out.println("Encoding error");
+            System.out.println("Encoding error - writeVariableNumber");
             return;
         }
 
@@ -438,7 +438,7 @@ public class APJ
         // should not be the case
         if ((offset < 0) || (offset > 15))
         {
-            System.out.println("Encoding error");
+            System.out.println("Offset encoding error - writeTinyBlock");
             return;
         }
 
@@ -463,13 +463,13 @@ public class APJ
         // should not be the case
         if ((offset < 1) || (offset > 127))
         {
-            System.out.println("Encoding error");
+            System.out.println("Offset encoding error - writeShortBlock");
             return;
         }
         // should not be the case
         if ((length < 2) || (length > 3))
         {
-            System.out.println("Encoding error");
+            System.out.println("Length encoding error - writeShortBlock");
             return;
         }
 
