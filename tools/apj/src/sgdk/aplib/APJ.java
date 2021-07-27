@@ -693,15 +693,19 @@ public class APJ
 
                 if ((l == 1) && (off > 0) && (off < 16))
                     writeTinyBlock(result, off);
-                else if ((l >= 2) && (l <= 3) && (off > 0) && (off < 128))
+                else if ((l >= 2) && (l <= 3) && (off > 0) && (off < 0x80))
                     writeShortBlock(result, off, l);
-                else if (l >= 3)
+                else if ((l >= 2) && (off >= 0x80) && (off < 0x500))
+                    writeBlock(result, off, l);
+                else if ((l >= 3) && (off >= 0x500) && (off < 0x7D00))
+                    writeBlock(result, off, l);
+                else if (l >= 4)
                     writeBlock(result, off, l);
                 else
                 {
                     // long offset with very small match --> can't encode...
                     done = false;
-                    System.out.println("Can't encode match: ind=" + ind + " - offset=" + off + " - len=" + l);
+//                    System.out.println("Can't encode match: ind=" + ind + " - offset=" + off + " - len=" + l);
                     statMiss++;
                 }
 
