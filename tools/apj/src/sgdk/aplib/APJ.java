@@ -82,8 +82,10 @@ public class APJ
 
             if ((length >= 2) && (length <= 3) && (offset > 0) && (offset < 128))
                 return 3 + 8;
-
-            if (length >= 3)
+            
+            if (((length >= 2) && (offset >= 0x80) && (offset < 0x500)) ||
+                ((length >= 3) && (offset >= 0x500) && (offset < 0x7D00)) ||
+                (length >= 4))
             {
                 int c = 2;
 
