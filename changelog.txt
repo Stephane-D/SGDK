@@ -1,3 +1,90 @@
+SGDK 1.65 (July 2021)
+---------------------
+
+COMPILER
+* rewrote sizebnd tool in Java and added auto checksum feature.
+* RESCOMP
+ - added new NEAR function to force NEAR location of binary data (read rescomp.txt file for more info)
+ - fixed a small bug on MAP resource where it was using flipped version of a tile even if tileset was containing non flipped version
+ - better optimisation process for large sprites (close to the limit of 16 hardware sprites)
+ - many small fixes, tweaks and improvements to sprite cutting process
+ - added duplicated sprite frame optimization
+ - fixed typo on 2BPP to 8BPP image conversion
+ - added information on MAP resource compilation
+ - WAV resource can now be set as FAR (bank switch)
+ - fixed sample output override for WAV resource (needed for Bad Apple sample which use a custom ADPCM2 driver)
+ - fixed a possible bug in duplicated resource symbol
+* APJ
+ - fixed cost computation (bit better compression)
+ - fixed encoding for short match with long offset
+ - more infos on encoding errors
+* LINK
+ - increased theoretical max ROM size to ~3.8GB (using bank switch)
+* README
+ - added MarsDev project reference
+ - added And-0 documentation references
+* DOCKER
+ - use lighter docker image
+ - improved / fixed docker script (thanks to all contributors for that)
+
+LIBRARY
+* SPRITE
+ - fixed a bug where some sprites wouldn't be properly hidden in rare occasion
+ - automatically update VRAM region location when VRAM mapping changed
+ - VRAM region can be remapped if needed on defrag operation
+ - added sprite validity check in 'debug' build
+* VDP
+ - VDP_resetScreen() now also reset VSRAM
+ - updated VRAM mapping for 64x64 plane size to allow full window map
+ - use new mul/div/mod functions for small performance improvement on some functions
+* MAP
+ - fixed a decoding bug when we had consecutive same row block offset
+ - fixed MAP scrolling update when using TILE/LINE horizontal scrolling mode
+* MATH
+ - added fix32Avg(..) and fix16Avg(..) methods
+ - added mulu/muls/divu/divs/modu/mods/divmodu/divmods(..) functions which allow to directly use the 68000 mul/div instruction (GCC doesn't always use them correctly)
+* SYS
+ - added ROM_SIZE definition to get ROM size
+ - added SYS_getFarDataEx(..) and SYS_getFarDataSafeEx(..) methods
+ - added SYS_isCrossingBank(..) method
+ - fixed RAM mapping for bank switching with ROM larger than 12MB
+ - reset banks only when bank switch is enabled (may help with Everdrive X3)
+ - added SYS_setVBlankCallback(..) method
+ - added SYS_computeChecksum() and SYS_isChecksumOk() methods
+* DMA
+ - lowered default PAL buffer capacity (DMA_BUFFER_SIZE_PAL_LOW) to spare memory
+ - HALT_Z80_ON_DMA is now enabled by default for the sake of safety
+ - added DMA_canQueue(..) method and small fix on transferSize calculation
+ - fixed a stupid bug in DMA_doDma(..) on 128K bank crossing
+ - removed some VDP_waitDMACompletion() check for performance reason (developer need to do it by himself)
+* PAL
+ - added TransfertMethod parameter to set palette colors methods
+ - made 'fadeCurrentPal' and 'fadeEndPal' variables visible (can be useful)
+* SOUND / XGM
+ - protected XGM_xxx methods against interrupts
+ - fixed XGM_pausePlay(..) which wasn't always muting all sound (thanks to BigEvilCorporation for the fix)
+ - fixed potential PENDING_FRM overflow (mutual change)
+ - XGM play / pause / resume commands are now exclusive (cannot be pending at same time)
+ - full YM reset on YM2612_reset()
+* BITMAP
+ - fixed VRAM organization for Bitmap mode (restore 64x32 plane size on exit)
+ - use new mul/div/mod functions for small performance improvement on BMP_scale(..) function
+* ROM HEADER
+ - updated default SRAM size to 64 KB
+* JOY
+ - use the correct bits to detect 3-button.
+ - tried to compensate 6 button read to avoid the UP+DOWN issue state (emulator or unofficial controllers)
+* small changes for better/safer soft reset behavior
+* replaced some waitVSync() by SYS_doVBlankProcess()
+* more detailed error / warning logs in debug build
+* documentation fixes and updates
+* cleanup, removed old deprecated units / headers
+
+SAMPLE
+* SONIC
+ - fixed DMA buffer size for initial MAP update
+ 
+
 SGDK 1.62 (March 2021)
 ----------------------
 
