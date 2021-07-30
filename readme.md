@@ -9,7 +9,7 @@ SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate ROM imag
 Note that SGDK also requires Java (custom tools need it) so you need to have Java installed on your system.
 
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
-GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see COPYING.RUNTIME file)
+GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see [COPYING.RUNTIME](COPYING.RUNTIME) file)
  
 ## GET STARTED
 
