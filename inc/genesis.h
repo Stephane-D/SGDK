@@ -2,7 +2,7 @@
 #define _GENESIS_H_
 
 
-#define SGDK_VERSION    1.62
+#define SGDK_VERSION    1.65
 
 #include "config.h"
 #include "asm.h"
