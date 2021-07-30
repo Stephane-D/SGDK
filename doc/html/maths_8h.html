@@ -149,6 +149,9 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab95f7757e11b270d27b95ec0d8e798b5"></a><!-- doxytag: member="maths.h::max" ref="ab95f7757e11b270d27b95ec0d8e798b5" args="(X, Y)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ab95f7757e11b270d27b95ec0d8e798b5">max</a>(X, Y)&#160;&#160;&#160;(((X) &gt; (Y))?(X):(Y))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the highest value between X an Y. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c357db5fb1424e72f322ad2533a8e1e"></a><!-- doxytag: member="maths.h::clamp" ref="a3c357db5fb1424e72f322ad2533a8e1e" args="(X, L, H)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a3c357db5fb1424e72f322ad2533a8e1e">clamp</a>(X, L, H)&#160;&#160;&#160;(min(max((X), (L)), (H)))</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns L if X is less than L, H if X is greater than H or X if in between L and H. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a257284a430c131a8fa610a3d4af16e89"></a><!-- doxytag: member="maths.h::abs" ref="a257284a430c131a8fa610a3d4af16e89" args="(X)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a257284a430c131a8fa610a3d4af16e89">abs</a>(X)&#160;&#160;&#160;(((X) &lt; 0)?-(X):(X))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the absolute value of X. <br/></td></tr>
@@ -200,6 +203,9 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a92bedd35f292e0bfb024521e1b338ee9">fix32Div</a>(val1, val2)&#160;&#160;&#160;(((val1) &lt;&lt; (FIX32_FRAC_BITS / 2)) / ((val2) &gt;&gt; (FIX32_FRAC_BITS / 2)))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the division of val1 by val2 (fix32).<br/>
  WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed2dbc1fff889524be62dc412baa5c5d"></a><!-- doxytag: member="maths.h::fix32Avg" ref="aed2dbc1fff889524be62dc412baa5c5d" args="(val1, val2)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aed2dbc1fff889524be62dc412baa5c5d">fix32Avg</a>(val1, val2)&#160;&#160;&#160;(((val1) + (val2)) &gt;&gt; 1)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the average of val1 by val2 (fix32). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5e886026faa364cc810e5e042a9f435"></a><!-- doxytag: member="maths.h::FIX16_INT_BITS" ref="ac5e886026faa364cc810e5e042a9f435" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX16_INT_BITS</b>&#160;&#160;&#160;10</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a359c469200a6a4fe5a1cfbe625234a30"></a><!-- doxytag: member="maths.h::FIX16_FRAC_BITS" ref="a359c469200a6a4fe5a1cfbe625234a30" args="" -->
@@ -217,10 +223,10 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a69ae914f50c3c78aca8f2f7141427d59">fix16ToInt</a>(value)&#160;&#160;&#160;((value) &gt;&gt; FIX16_FRAC_BITS)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix16 to integer. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8c54f0b4fd1a806fe3b84161b6d482c"></a><!-- doxytag: member="maths.h::fix16Round" ref="ae8c54f0b4fd1a806fe3b84161b6d482c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ae8c54f0b4fd1a806fe3b84161b6d482c">fix16Round</a>(value)&#160;&#160;&#160;(fix16Frac(value) &gt; FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ae8c54f0b4fd1a806fe3b84161b6d482c">fix16Round</a>(value)&#160;&#160;&#160;((fix16Frac(value) &gt; FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round the specified value to nearest integer (fix16). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40bb16ce992aa996327619a3c5c84e4c"></a><!-- doxytag: member="maths.h::fix16ToRoundedInt" ref="a40bb16ce992aa996327619a3c5c84e4c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a40bb16ce992aa996327619a3c5c84e4c">fix16ToRoundedInt</a>(value)&#160;&#160;&#160;(fix16Frac(value) &gt; FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a40bb16ce992aa996327619a3c5c84e4c">fix16ToRoundedInt</a>(value)&#160;&#160;&#160;((fix16Frac(value) &gt; FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round and convert the specified fix16 value to integer. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b09ffe4fce24a7280a628451c304984"></a><!-- doxytag: member="maths.h::fix16Frac" ref="a6b09ffe4fce24a7280a628451c304984" args="(value)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a6b09ffe4fce24a7280a628451c304984">fix16Frac</a>(value)&#160;&#160;&#160;((value) &amp; FIX16_FRAC_MASK)</td></tr>
@@ -238,11 +244,23 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a201b2645f05a0b7794d331f675050170">fix16Neg</a>(value)&#160;&#160;&#160;(0 - (value))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return negate of specified value (fix16). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10d9142c9e20c0e330e425dd6304f3c5"></a><!-- doxytag: member="maths.h::fix16Mul" ref="a10d9142c9e20c0e330e425dd6304f3c5" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a10d9142c9e20c0e330e425dd6304f3c5">fix16Mul</a>(val1, val2)&#160;&#160;&#160;(((val1) * (val2)) &gt;&gt; FIX16_FRAC_BITS)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a10d9142c9e20c0e330e425dd6304f3c5">fix16Mul</a>(val1, val2)&#160;&#160;&#160;(muls(val1, val2) &gt;&gt; FIX16_FRAC_BITS)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the multiplication of val1 and val2 (fix16). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c942e60981e2071901f84808c3807bf"></a><!-- doxytag: member="maths.h::fix16Div" ref="a2c942e60981e2071901f84808c3807bf" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a2c942e60981e2071901f84808c3807bf">fix16Div</a>(val1, val2)&#160;&#160;&#160;(((val1) &lt;&lt; FIX16_FRAC_BITS) / (val2))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a2c942e60981e2071901f84808c3807bf">fix16Div</a>(val1, val2)&#160;&#160;&#160;(divs(val1 &lt;&lt; FIX16_FRAC_BITS, val2))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the division of val1 by val2 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac102124ca8ab852ea2fbf7865b5f2e1c"></a><!-- doxytag: member="maths.h::fix16Avg" ref="ac102124ca8ab852ea2fbf7865b5f2e1c" args="(val1, val2)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ac102124ca8ab852ea2fbf7865b5f2e1c">fix16Avg</a>(val1, val2)&#160;&#160;&#160;(((val1) + (val2)) &gt;&gt; 1)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the average of val1 by val2 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63fd727afb56589db1b4fb7797f176a0"></a><!-- doxytag: member="maths.h::fix16Log2" ref="a63fd727afb56589db1b4fb7797f176a0" args="(v)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a63fd727afb56589db1b4fb7797f176a0">fix16Log2</a>(v)&#160;&#160;&#160;log2tab16[v]</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the Log2 of specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a418c4e16874e6acb6f7e491b71232f7a"></a><!-- doxytag: member="maths.h::fix16Log10" ref="a418c4e16874e6acb6f7e491b71232f7a" args="(v)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a418c4e16874e6acb6f7e491b71232f7a">fix16Log10</a>(v)&#160;&#160;&#160;log10tab16[v]</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the Log10 of specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a341001129c5cff4e166fba0decd81ac0"></a><!-- doxytag: member="maths.h::fix16Sqrt" ref="a341001129c5cff4e166fba0decd81ac0" args="(v)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a341001129c5cff4e166fba0decd81ac0">fix16Sqrt</a>(v)&#160;&#160;&#160;sqrttab16[v]</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the root square of specified value (fix16). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a8ba26f627cd4622d382a5332746153"></a><!-- doxytag: member="maths.h::fix32ToFix16" ref="a7a8ba26f627cd4622d382a5332746153" args="(value)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a7a8ba26f627cd4622d382a5332746153">fix32ToFix16</a>(value)&#160;&#160;&#160;(((value) &lt;&lt; FIX16_FRAC_BITS) &gt;&gt; FIX32_FRAC_BITS)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified fix32 value to fix16. <br/></td></tr>
@@ -329,6 +347,22 @@ typedef <a class="el" href="struct_mat4_d__f32.html">Mat4D_f32</a>&#160;</td><td
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">alias for <a class="el" href="struct_mat4_d__f32.html" title="4x4 Matrice structure - f32 (fix32) type.  Internally uses 4 4D vectors.">Mat4D_f32</a> <br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ab7503cce3e6a02a815cb8ef0df21a181">mulu</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op1, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">16x16=32 unsigned multiplication. Force GCC to use proper 68000 <em>mulu</em> instruction.  <a href="#ab7503cce3e6a02a815cb8ef0df21a181"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a3cc3e9b16b5abe9f0641f11e8c516aea">muls</a> (<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op1, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">16x16=32 signed multiplication. Force GCC to use proper 68000 <em>muls</em> instruction.  <a href="#a3cc3e9b16b5abe9f0641f11e8c516aea"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a3719e0599e12a805b5ea5010b19999a8">divu</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operation.  <a href="#a3719e0599e12a805b5ea5010b19999a8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a72a0f0ad4d6aa75b1140190cba1c24a4">divs</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operation.  <a href="#a72a0f0ad4d6aa75b1140190cba1c24a4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a5bbdcd777f15ca2afe634b7826d3862f">modu</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divu instruction (unsigned 32/16=16:16) access using inline assembly.  <a href="#a5bbdcd777f15ca2afe634b7826d3862f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ac9ccfa5ee24893574556e3cfe53102b8">mods</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divs instruction (signed 32/16=16:16) access using inline assembly.  <a href="#ac9ccfa5ee24893574556e3cfe53102b8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aa88daac11d54ff8846ac726491e5cdfb">divmodu</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operation and op1op2 at same time.  <a href="#aa88daac11d54ff8846ac726491e5cdfb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a4b1eae35655f7cca5d7b02ec71860ea2">divmods</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operation and op1op2 at same time.  <a href="#a4b1eae35655f7cca5d7b02ec71860ea2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#abbbce15df0c9773582c24e76d9435d1e">intToBCD</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary to Decimal conversion.  <a href="#abbbce15df0c9773582c24e76d9435d1e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a45eb4a206ea2f7aaaa20991f866f58c3">distance_approx</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy)</td></tr>
@@ -351,6 +385,12 @@ Variables</h2></td></tr>
 const <a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sintab32</b> [1024]</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8dfb0a5929208ec1b9a57274705b4dcf"></a><!-- doxytag: member="maths.h::sintab16" ref="a8dfb0a5929208ec1b9a57274705b4dcf" args="[1024]" -->
 const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sintab16</b> [1024]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20623b6f910564d1a8dee12f0814218b"></a><!-- doxytag: member="maths.h::log2tab16" ref="a20623b6f910564d1a8dee12f0814218b" args="[0x10000]" -->
+const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>log2tab16</b> [0x10000]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a690761661fa375283274b8cd40a35bd0"></a><!-- doxytag: member="maths.h::log10tab16" ref="a690761661fa375283274b8cd40a35bd0" args="[0x10000]" -->
+const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>log10tab16</b> [0x10000]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9217735b5c8d80420277d15a82b2b2b7"></a><!-- doxytag: member="maths.h::sqrttab16" ref="a9217735b5c8d80420277d15a82b2b2b7" args="[0x10000]" -->
+const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sqrttab16</b> [0x10000]</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Mathematical methods. </p>
@@ -427,7 +467,155 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000043">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4b1eae35655f7cca5d7b02ec71860ea2"></a><!-- doxytag: member="maths.h::divmods" ref="a4b1eae35655f7cca5d7b02ec71860ea2" args="(s32 op1, s16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> divmods </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operation and op1op2 at same time. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand - dividende (32 bit) </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand - divisor (16 bit) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>16 bit (signed) result of the division in low 16 bit (0-15) and 16 bit (signed) result of the modulo operation in high 16 bit (16-31) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa88daac11d54ff8846ac726491e5cdfb"></a><!-- doxytag: member="maths.h::divmodu" ref="aa88daac11d54ff8846ac726491e5cdfb" args="(u32 op1, u16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> divmodu </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operation and op1op2 at same time. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand - dividende (32 bit) </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand - divisor (16 bit) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>16 bit (unsigned) result of the division in low 16 bit (0-15) and 16 bit (unsigned) result of the modulo operation in high 16 bit (16-31) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a72a0f0ad4d6aa75b1140190cba1c24a4"></a><!-- doxytag: member="maths.h::divs" ref="a72a0f0ad4d6aa75b1140190cba1c24a4" args="(s32 op1, s16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> divs </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operation. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand (32 bit) </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand (16 bit) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>16 bit (signed) result of the division </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3719e0599e12a805b5ea5010b19999a8"></a><!-- doxytag: member="maths.h::divu" ref="a3719e0599e12a805b5ea5010b19999a8" args="(u32 op1, u16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> divu </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operation. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand - dividende (32 bit) </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand - divisor (16 bit) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>16 bit (unsigned) result of the division </dd></dl>
 
 </div>
 </div>
@@ -549,12 +737,160 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
 
 </div>
 </div>
+<a class="anchor" id="ac9ccfa5ee24893574556e3cfe53102b8"></a><!-- doxytag: member="maths.h::mods" ref="ac9ccfa5ee24893574556e3cfe53102b8" args="(s32 op1, s16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> mods </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Direct divs instruction (signed 32/16=16:16) access using inline assembly. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand (32 bit) </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand (16 bit) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>16 bit (signed) modulo result of the division </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5bbdcd777f15ca2afe634b7826d3862f"></a><!-- doxytag: member="maths.h::modu" ref="a5bbdcd777f15ca2afe634b7826d3862f" args="(u32 op1, u16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> modu </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Direct divu instruction (unsigned 32/16=16:16) access using inline assembly. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand (32 bit) </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand (16 bit) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>16 bit (unsigned) modulo result of the division </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3cc3e9b16b5abe9f0641f11e8c516aea"></a><!-- doxytag: member="maths.h::muls" ref="a3cc3e9b16b5abe9f0641f11e8c516aea" args="(s16 op1, s16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> muls </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>16x16=32 signed multiplication. Force GCC to use proper 68000 <em>muls</em> instruction. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>32 bit (signed) result of multiply </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab7503cce3e6a02a815cb8ef0df21a181"></a><!-- doxytag: member="maths.h::mulu" ref="ab7503cce3e6a02a815cb8ef0df21a181" args="(u16 op1, u16 op2)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> mulu </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>op1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>op2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>16x16=32 unsigned multiplication. Force GCC to use proper 68000 <em>mulu</em> instruction. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">op1</td><td>first operand </td></tr>
+    <tr><td class="paramname">op2</td><td>second operand </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>32 bit (unsigned) result of multiply </dd></dl>
+
+</div>
+</div>
 </div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="maths_8h.html">maths.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

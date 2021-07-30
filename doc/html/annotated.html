@@ -82,12 +82,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock">Here are the classes, structs, unions and interfaces with brief descriptions:</div><table>
   <tr><td class="indexkey"><a class="el" href="struct__collision.html">_collision</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey"><a class="el" href="struct___map.html">_Map</a></td><td class="indexvalue">Map structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a> </td></tr>
-  <tr><td class="indexkey"><a class="el" href="struct___sprite.html">_Sprite</a></td><td class="indexvalue">Sprite structure used by the Sprite Engine to store state for a sprite.<br/>
- WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate Sprite object.<br/>
- </td></tr>
-  <tr><td class="indexkey"><a class="el" href="struct_animation.html">Animation</a></td><td class="indexvalue">Sprite animation structure </td></tr>
-  <tr><td class="indexkey"><a class="el" href="struct_animation_frame.html">AnimationFrame</a></td><td class="indexvalue">Sprite animation frame structure </td></tr>
+  <tr><td class="indexkey"><a class="el" href="struct_animation.html">Animation</a></td><td class="indexvalue"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> animation structure </td></tr>
+  <tr><td class="indexkey"><a class="el" href="struct_animation_frame.html">AnimationFrame</a></td><td class="indexvalue"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> animation frame structure </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_bitmap.html">Bitmap</a></td><td class="indexvalue">Genesis 4bpp <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> structure definition.<br/>
  Use the <a class="el" href="tools_8h.html#ab4c88450f236f63323635d00121137a2" title="Unpack the specified source Bitmap and return result in a new allocated Bitmap.">unpackBitmap()</a> method to unpack if compression is enabled </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_box.html">Box</a></td><td class="indexvalue">Simple <a class="el" href="struct_box.html" title="Simple Box structure.">Box</a> structure </td></tr>
@@ -97,11 +93,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="struct_collision.html">Collision</a></td><td class="indexvalue"><a class="el" href="struct_collision.html" title="Collision definition union.">Collision</a> definition union </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_context3_d.html">Context3D</a></td><td class="indexvalue">Structure hosting settings / context for the 3D transform engine </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_d_m_a_op_info.html">DMAOpInfo</a></td><td class="indexvalue">DMA transfer definition (used for DMA queue) </td></tr>
-  <tr><td class="indexkey"><a class="el" href="struct_frame_info.html">FrameInfo</a></td><td class="indexvalue">Frame information structure (used to store frame info for base, H-Flip, V-Flip and HV-Flip version of animation frame) </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_frame_v_d_p_sprite.html">FrameVDPSprite</a></td><td class="indexvalue">Single VDP sprite info structure for sprite animation frame </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_image.html">Image</a></td><td class="indexvalue"><a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> structure which contains all data to define an image in a background plane.<br/>
  Use the <a class="el" href="tools_8h.html#a715a02435a6ac7206d0d49e95ec8a75f" title="Unpack the specified Image structure and return result in a new allocated Image.">unpackImage()</a> method to unpack if compression is enabled in <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> or <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_line.html">Line</a></td><td class="indexvalue"><a class="el" href="struct_line.html" title="Line definition.">Line</a> definition </td></tr>
+  <tr><td class="indexkey"><a class="el" href="struct_map.html">Map</a></td><td class="indexvalue"><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_map_definition.html">MapDefinition</a></td><td class="indexvalue"><a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a> structure which contains data for large level background.<br/>
  It's optimized to encode large map using 128x128 block chunk (block chunk are organized in metatile) </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_mat2_d__f16.html">Mat2D_f16</a></td><td class="indexvalue">2x2 Matrice structure - f16 (fix16) type.<br/>
@@ -118,7 +114,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  Internally uses 4 4D vectors </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_palette.html">Palette</a></td><td class="indexvalue"><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> structure contains color data </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_pixel.html">Pixel</a></td><td class="indexvalue"><a class="el" href="struct_pixel.html" title="Pixel definition.">Pixel</a> definition </td></tr>
-  <tr><td class="indexkey"><a class="el" href="struct_sprite_definition.html">SpriteDefinition</a></td><td class="indexvalue">Sprite definition structure </td></tr>
+  <tr><td class="indexkey"><a class="el" href="struct_r_o_m_header.html">ROMHeader</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="struct_sprite.html">Sprite</a></td><td class="indexvalue"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> structure used by the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine to store state for a sprite.<br/>
+ WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> object.<br/>
+ </td></tr>
+  <tr><td class="indexkey"><a class="el" href="struct_sprite_definition.html">SpriteDefinition</a></td><td class="indexvalue"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> definition structure </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_tile_map.html">TileMap</a></td><td class="indexvalue"><a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> structure which contains tilemap background definition.<br/>
  Use the <a class="el" href="tools_8h.html#ab9391d9e68607d3a26b9944129606a74" title="Unpack the specified TileMap structure and return result in a new allocated TileMap.">unpackTileMap()</a> method to unpack if compression is enabled </td></tr>
   <tr><td class="indexkey"><a class="el" href="struct_tile_set.html">TileSet</a></td><td class="indexvalue">Tile set structure which contains tiles definition.<br/>
@@ -149,7 +149,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
   <div id="nav-path" class="navpath">
     <ul>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

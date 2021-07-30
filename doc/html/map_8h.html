@@ -99,27 +99,29 @@ Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_map_definition.html">MapDefinition</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a> structure which contains data for large level background.<br/>
  It's optimized to encode large map using 128x128 block chunk (block chunk are organized in metatile).  <a href="struct_map_definition.html#details">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct___map.html">_Map</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Map structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.  <a href="struct___map.html#details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_map.html">Map</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.  <a href="struct_map.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct___map.html">_Map</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#a25b4e5c2591a978fdc9f42358482c15a">Map</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Map structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.  <a href="#a25b4e5c2591a978fdc9f42358482c15a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_map.html">Map</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#aca840b6acee4aaeed71f7bb576720f84">Map</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.  <a href="#aca840b6acee4aaeed71f7bb576720f84"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct___map.html">Map</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ae6caf599926a96c6625000328b8cd296">MAP_create</a> (const <a class="el" href="struct_map_definition.html">MapDefinition</a> *mapDef, <a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> baseTile)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Create and return a Map structure required to use all MAP_xxx functions from a given <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.<br/>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_map.html">Map</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ae6caf599926a96c6625000328b8cd296">MAP_create</a> (const <a class="el" href="struct_map_definition.html">MapDefinition</a> *mapDef, <a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> baseTile)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Create and return a <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure required to use all MAP_xxx functions from a given <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.<br/>
  When you're done with the map just use MEM_free(map) to release it.  <a href="#ae6caf599926a96c6625000328b8cd296"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#aa1fb89c58b51a5e7e274b2d607960744">MAP_scrollTo</a> (<a class="el" href="struct___map.html">Map</a> *map, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> x, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> y)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#aa1fb89c58b51a5e7e274b2d607960744">MAP_scrollTo</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> x, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Scroll map to specified position.<br/>
- The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks)  <a href="#aa1fb89c58b51a5e7e274b2d607960744"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ad963c9683530a15354b6560c38568ea3">MAP_getMetaTile</a> (<a class="el" href="struct___map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+ The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks).<br/>
+ WARNING: first MAP_scrollTo(..) call will do a full plane update, for a 64x32 sized plane this represents 4KB of data.<br/>
+ That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> in between.  <a href="#aa1fb89c58b51a5e7e274b2d607960744"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ad963c9683530a15354b6560c38568ea3">MAP_getMetaTile</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns given metatile attribute (a metatile is a block of 2x2 tiles = 16x16 pixels)  <a href="#ad963c9683530a15354b6560c38568ea3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#abc85a62c5df559117e6d1f0e328b6008">MAP_getTile</a> (<a class="el" href="struct___map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#abc85a62c5df559117e6d1f0e328b6008">MAP_getTile</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns given tile attribute (note than map-&gt;baseTile isn't added to the result)  <a href="#abc85a62c5df559117e6d1f0e328b6008"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#a704c6968da1462c9c415223ccdf48890">MAP_getMetaTilemapRect</a> (<a class="el" href="struct___map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *dest)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#a704c6968da1462c9c415223ccdf48890">MAP_getMetaTilemapRect</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *dest)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns metatiles attribute for the specified region (a metatile is a block of 2x2 tiles = 16x16 pixels)  <a href="#a704c6968da1462c9c415223ccdf48890"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ac25ba2fb4761652222cd45265dbb80b7">MAP_getTilemapRect</a> (<a class="el" href="struct___map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> column, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *dest)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ac25ba2fb4761652222cd45265dbb80b7">MAP_getTilemapRect</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> column, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *dest)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns tiles attribute data for the specified region (map-&gt;baseTile is used as base tiles attribute, see <a class="el" href="map_8h.html#ae6caf599926a96c6625000328b8cd296" title="Create and return a Map structure required to use all MAP_xxx functions from a given MapDefinition...">MAP_create</a>(..))  <a href="#ac25ba2fb4761652222cd45265dbb80b7"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
@@ -151,18 +153,18 @@ Functions</h2></td></tr>
  the number of unique 128x128 pixels block. </li>
 </ul>
 </div><hr/><h2>Typedef Documentation</h2>
-<a class="anchor" id="a25b4e5c2591a978fdc9f42358482c15a"></a><!-- doxytag: member="map.h::Map" ref="a25b4e5c2591a978fdc9f42358482c15a" args="" -->
+<a class="anchor" id="aca840b6acee4aaeed71f7bb576720f84"></a><!-- doxytag: member="map.h::Map" ref="aca840b6acee4aaeed71f7bb576720f84" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="struct___map.html">_Map</a>  <a class="el" href="struct___map.html">Map</a></td>
+          <td class="memname">typedef struct <a class="el" href="struct_map.html">Map</a>  <a class="el" href="struct_map.html">Map</a></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Map structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>. </p>
+<p><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">w</td><td>map width in block (128x128 pixels block) </td></tr>
@@ -181,6 +183,8 @@ Functions</h2></td></tr>
     <tr><td class="paramname">lastYT</td><td>internal </td></tr>
     <tr><td class="paramname">prepareMapDataColumnCB</td><td>internal </td></tr>
     <tr><td class="paramname">prepareMapDataRowCB</td><td>internal </td></tr>
+    <tr><td class="paramname">hScrollTable</td><td>internal </td></tr>
+    <tr><td class="paramname">vScrollTable</td><td>internal </td></tr>
     <tr><td class="paramname">getMetaTileCB</td><td>internal </td></tr>
     <tr><td class="paramname">getMetaTilemapRectCB</td><td>internal </td></tr>
   </table>
@@ -195,7 +199,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct___map.html">Map</a>* MAP_create </td>
+          <td class="memname"><a class="el" href="struct_map.html">Map</a>* MAP_create </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_map_definition.html">MapDefinition</a> *&#160;</td>
           <td class="paramname"><em>mapDef</em>, </td>
@@ -221,12 +225,12 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Create and return a Map structure required to use all MAP_xxx functions from a given <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.<br/>
+<p>Create and return a <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure required to use all MAP_xxx functions from a given <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.<br/>
  When you're done with the map just use MEM_free(map) to release it. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">mapDef</td><td><a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a> structure containing background/plane data. </td></tr>
-    <tr><td class="paramname">plane</td><td>Plane where we want to draw the Map (for <a class="el" href="map_8h.html#aa1fb89c58b51a5e7e274b2d607960744" title="Scroll map to specified position.  The fonction takes care of updating the VDP tilemap which will be ...">MAP_scrollTo</a>(..) method).<br/>
+    <tr><td class="paramname">plane</td><td>Plane where we want to draw the <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> (for <a class="el" href="map_8h.html#aa1fb89c58b51a5e7e274b2d607960744" title="Scroll map to specified position.  The fonction takes care of updating the VDP tilemap which will be ...">MAP_scrollTo</a>(..) method).<br/>
  Accepted values are:<br/>
 <ul>
 <li>BG_A<br/>
@@ -235,11 +239,12 @@ Functions</h2></td></tr>
  </li>
 </ul>
 </td></tr>
-    <tr><td class="paramname">baseTile</td><td>Used to provide base tile index and base palette index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro) </td></tr>
+    <tr><td class="paramname">baseTile</td><td>Used to provide base tile index and base palette index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro).<br/>
+ Note that you can also use it to force HIGH priority but in that case your map should only contains LOW priority tiles otherwise the HIGH priority tiles will be set in LOW priority instead (mutually exclusive). </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>initialized Map structure or <em>NULL</em> if there is not enough memory to allocate data for given <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>initialized <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure or <em>NULL</em> if there is not enough memory to allocate data for given <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>. </dd></dl>
 
 </div>
 </div>
@@ -250,7 +255,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> MAP_getMetaTile </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___map.html">Map</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_map.html">Map</a> *&#160;</td>
           <td class="paramname"><em>map</em>, </td>
         </tr>
         <tr>
@@ -277,7 +282,7 @@ Functions</h2></td></tr>
 <p>Returns given metatile attribute (a metatile is a block of 2x2 tiles = 16x16 pixels) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">map</td><td>source Map structure containing map information. </td></tr>
+    <tr><td class="paramname">map</td><td>source <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing map information. </td></tr>
     <tr><td class="paramname">x</td><td>metatile X position </td></tr>
     <tr><td class="paramname">y</td><td>metatile Y position</td></tr>
   </table>
@@ -312,7 +317,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void MAP_getMetaTilemapRect </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___map.html">Map</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_map.html">Map</a> *&#160;</td>
           <td class="paramname"><em>map</em>, </td>
         </tr>
         <tr>
@@ -357,7 +362,7 @@ Functions</h2></td></tr>
 <p>Returns metatiles attribute for the specified region (a metatile is a block of 2x2 tiles = 16x16 pixels) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">map</td><td>source Map structure containing map information. </td></tr>
+    <tr><td class="paramname">map</td><td>source <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing map information. </td></tr>
     <tr><td class="paramname">x</td><td>Region X start position (in metatile). </td></tr>
     <tr><td class="paramname">y</td><td>Region Y start position (in metatile). </td></tr>
     <tr><td class="paramname">w</td><td>Region Width (in metatile). </td></tr>
@@ -393,7 +398,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> MAP_getTile </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___map.html">Map</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_map.html">Map</a> *&#160;</td>
           <td class="paramname"><em>map</em>, </td>
         </tr>
         <tr>
@@ -420,7 +425,7 @@ Functions</h2></td></tr>
 <p>Returns given tile attribute (note than map-&gt;baseTile isn't added to the result) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">map</td><td>source Map structure containing map information. </td></tr>
+    <tr><td class="paramname">map</td><td>source <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing map information. </td></tr>
     <tr><td class="paramname">x</td><td>tile X position </td></tr>
     <tr><td class="paramname">y</td><td>tile Y position</td></tr>
   </table>
@@ -454,7 +459,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void MAP_getTilemapRect </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___map.html">Map</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_map.html">Map</a> *&#160;</td>
           <td class="paramname"><em>map</em>, </td>
         </tr>
         <tr>
@@ -505,7 +510,7 @@ Functions</h2></td></tr>
 <p>Returns tiles attribute data for the specified region (map-&gt;baseTile is used as base tiles attribute, see <a class="el" href="map_8h.html#ae6caf599926a96c6625000328b8cd296" title="Create and return a Map structure required to use all MAP_xxx functions from a given MapDefinition...">MAP_create</a>(..)) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">map</td><td>source Map structure containing map information. </td></tr>
+    <tr><td class="paramname">map</td><td>source <a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing map information. </td></tr>
     <tr><td class="paramname">x</td><td>Region X start position <b>(in metatile)</b> </td></tr>
     <tr><td class="paramname">y</td><td>Region Y start position <b>(in metatile)</b> </td></tr>
     <tr><td class="paramname">w</td><td>Region Width <b>(in metatile)</b> </td></tr>
@@ -543,7 +548,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void MAP_scrollTo </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___map.html">Map</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_map.html">Map</a> *&#160;</td>
           <td class="paramname"><em>map</em>, </td>
         </tr>
         <tr>
@@ -568,10 +573,12 @@ Functions</h2></td></tr>
 <div class="memdoc">
 
 <p>Scroll map to specified position.<br/>
- The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks) </p>
+ The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks).<br/>
+ WARNING: first MAP_scrollTo(..) call will do a full plane update, for a 64x32 sized plane this represents 4KB of data.<br/>
+ That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> in between. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">map</td><td>Map structure containing map information. </td></tr>
+    <tr><td class="paramname">map</td><td><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing map information. </td></tr>
     <tr><td class="paramname">x</td><td>view position X we want to scroll on </td></tr>
     <tr><td class="paramname">y</td><td>view position Y we want to scroll on</td></tr>
   </table>
@@ -586,7 +593,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="map_8h.html">map.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

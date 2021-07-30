@@ -89,7 +89,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> support (herited from <a class="el" href="vdp__pal_8h_source.html">vdp_pal.h</a> unit)  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &quot;<a class="el" href="config_8h_source.html">config.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="types_8h_source.html">types.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="dma_8h_source.html">dma.h</a>&quot;</code><br/>
+</div>
 <p><a href="pal_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
@@ -124,18 +127,15 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a complete palette (16 colors) from CRAM.  <a href="#a4fda6a776c0b939f47f97c1cd17c8dcb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a70e2b80c7b3f2f42e9821dd1b1477f59">PAL_setColor</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set RGB color into CRAM for the specified palette entry.  <a href="#a70e2b80c7b3f2f42e9821dd1b1477f59"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a32726c4135b619dd5f383e020428a852">PAL_setColors</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> count)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write RGB colors into CRAM for the specified palette entries.  <a href="#a32726c4135b619dd5f383e020428a852"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a8dc250b05c74768f347fca888946b5b8">PAL_setPaletteColors</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, const <a class="el" href="struct_palette.html">Palette</a> *pal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the given <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> RGB colors into CRAM for the specified palette entries.  <a href="#a8dc250b05c74768f347fca888946b5b8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#aceae2d2496bd4da773bcd2245ac310a9">PAL_setPalette</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numPal, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a complete palette (16 colors) into CRAM.  <a href="#aceae2d2496bd4da773bcd2245ac310a9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#afef9f31c8c24db59db95661535e95b7c">PAL_setColors</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> count, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write RGB colors into CRAM for the specified palette entries.  <a href="#afef9f31c8c24db59db95661535e95b7c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a6a52ac7e59b0235a430ec88a702ff231">PAL_setPaletteColors</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, const <a class="el" href="struct_palette.html">Palette</a> *pal, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the given <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> RGB colors into CRAM for the specified palette entries.  <a href="#a6a52ac7e59b0235a430ec88a702ff231"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a2b681402f605e31ff1d07121dff08944">PAL_setPalette</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numPal, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a complete palette (16 colors) into CRAM.  <a href="#a2b681402f605e31ff1d07121dff08944"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a91136291475340058b0edb2596292465">PAL_setColorsDMA</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> count)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write RGB colors into CRAM for the specified palette entries (DMA queue version).  <a href="#a91136291475340058b0edb2596292465"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a93428fe7fbec7dc667cd6a380bcc27a5">PAL_setPaletteColorsDMA</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, const <a class="el" href="struct_palette.html">Palette</a> *pal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the given <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> RGB colors into CRAM for the specified palette entries (DMA queue version).  <a href="#a93428fe7fbec7dc667cd6a380bcc27a5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#aea1c0c5b7f7362f2cb09a180687b62cb">PAL_setPaletteDMA</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numPal, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a complete palette (16 colors) into CRAM (DMA queue version).  <a href="#aea1c0c5b7f7362f2cb09a180687b62cb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9e1abd3305ff8b213d7218e8e54862b"></a><!-- doxytag: member="pal.h::PAL_initFade" ref="ab9e1abd3305ff8b213d7218e8e54862b" args="(u16 fromCol, u16 toCol, const u16 *palSrc, const u16 *palDst, u16 numFrame)" -->
 <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>PAL_initFade</b> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromCol, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> toCol, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *palSrc, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *palDst, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numFrame)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a216f827353b5e00f0ba4c4f7069e8b84"></a><!-- doxytag: member="pal.h::PAL_doFadeStep" ref="a216f827353b5e00f0ba4c4f7069e8b84" args="()" -->
@@ -190,6 +190,12 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ad14cadfc75010e513f85947fee6396"></a><!-- doxytag: member="pal.h::palette_blue" ref="a7ad14cadfc75010e513f85947fee6396" args="[16]" -->
 const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a7ad14cadfc75010e513f85947fee6396">palette_blue</a> [16]</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default blue palette. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad6db7ffe92ce3f1a7847f9807213f2d1"></a><!-- doxytag: member="pal.h::fadeCurrentPal" ref="ad6db7ffe92ce3f1a7847f9807213f2d1" args="[64]" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#ad6db7ffe92ce3f1a7847f9807213f2d1">fadeCurrentPal</a> [64]</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current fade palette. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a809a15767649d075a6ce606701f44e9a"></a><!-- doxytag: member="pal.h::fadeEndPal" ref="a809a15767649d075a6ce606701f44e9a" args="[64]" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pal_8h.html#a809a15767649d075a6ce606701f44e9a">fadeEndPal</a> [64]</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">End fade palette. <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> support (herited from <a class="el" href="vdp__pal_8h_source.html">vdp_pal.h</a> unit) </p>
@@ -996,7 +1002,7 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
 
 </div>
 </div>
-<a class="anchor" id="a32726c4135b619dd5f383e020428a852"></a><!-- doxytag: member="pal.h::PAL_setColors" ref="a32726c4135b619dd5f383e020428a852" args="(u16 index, const u16 *pal, u16 count)" -->
+<a class="anchor" id="afef9f31c8c24db59db95661535e95b7c"></a><!-- doxytag: member="pal.h::PAL_setColors" ref="afef9f31c8c24db59db95661535e95b7c" args="(u16 index, const u16 *pal, u16 count, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1016,7 +1022,13 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1033,6 +1045,19 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
     <tr><td class="paramname">index</td><td>Color index where to start to write (0-63). </td></tr>
     <tr><td class="paramname">pal</td><td>RGB intensities to set. </td></tr>
     <tr><td class="paramname">count</td><td>Number of color to set. </td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY<br/>
+ </li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -1069,20 +1094,11 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
       </table>
 </div>
 <div class="memdoc">
-
-<p>Write RGB colors into CRAM for the specified palette entries (DMA queue version). </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">index</td><td>Color index where to start to write (0-63). </td></tr>
-    <tr><td class="paramname">pal</td><td>RGB intensities to set. </td></tr>
-    <tr><td class="paramname">count</td><td>Number of color to set. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000009">Deprecated:</a></b></dt><dd>Use PAL_setColors(..) instead </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aceae2d2496bd4da773bcd2245ac310a9"></a><!-- doxytag: member="pal.h::PAL_setPalette" ref="aceae2d2496bd4da773bcd2245ac310a9" args="(u16 numPal, const u16 *pal)" -->
+<a class="anchor" id="a2b681402f605e31ff1d07121dff08944"></a><!-- doxytag: member="pal.h::PAL_setPalette" ref="a2b681402f605e31ff1d07121dff08944" args="(u16 numPal, const u16 *pal, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1096,7 +1112,13 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *&#160;</td>
-          <td class="paramname"><em>pal</em>&#160;</td>
+          <td class="paramname"><em>pal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1112,13 +1134,26 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
   <table class="params">
     <tr><td class="paramname">numPal</td><td><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> number: PAL0, PAL1, PAL2 or PAL3 </td></tr>
     <tr><td class="paramname">pal</td><td>Source palette. </td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY<br/>
+ </li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a8dc250b05c74768f347fca888946b5b8"></a><!-- doxytag: member="pal.h::PAL_setPaletteColors" ref="a8dc250b05c74768f347fca888946b5b8" args="(u16 index, const Palette *pal)" -->
+<a class="anchor" id="a6a52ac7e59b0235a430ec88a702ff231"></a><!-- doxytag: member="pal.h::PAL_setPaletteColors" ref="a6a52ac7e59b0235a430ec88a702ff231" args="(u16 index, const Palette *pal, TransferMethod tm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1132,7 +1167,13 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="struct_palette.html">Palette</a> *&#160;</td>
-          <td class="paramname"><em>pal</em>&#160;</td>
+          <td class="paramname"><em>pal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1148,6 +1189,19 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
   <table class="params">
     <tr><td class="paramname">index</td><td>Color index where to start to write (0-63). </td></tr>
     <tr><td class="paramname">pal</td><td>Source <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a>. </td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY<br/>
+ </li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -1178,15 +1232,7 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
       </table>
 </div>
 <div class="memdoc">
-
-<p>Write the given <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> RGB colors into CRAM for the specified palette entries (DMA queue version). </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">index</td><td>Color index where to start to write (0-63). </td></tr>
-    <tr><td class="paramname">pal</td><td>Source <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use PAL_setPaletteColors(..) instead </dd></dl>
 
 </div>
 </div>
@@ -1214,15 +1260,7 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
       </table>
 </div>
 <div class="memdoc">
-
-<p>Set a complete palette (16 colors) into CRAM (DMA queue version). </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">numPal</td><td><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> number: PAL0, PAL1, PAL2 or PAL3 </td></tr>
-    <tr><td class="paramname">pal</td><td>Source palette. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>Use PAL_setPalette(..) instead </dd></dl>
 
 </div>
 </div>
@@ -1231,7 +1269,7 @@ const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="pal_8h.html">pal.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

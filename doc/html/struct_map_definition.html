@@ -126,11 +126,14 @@ void *&#160;</td><td class="memItemRight" valign="bottom"><b>blockIndexes</b></t
     <tr><td class="paramname">w</td><td>map width in block (128x128 pixels block). </td></tr>
     <tr><td class="paramname">h</td><td>map height in block (128x128 pixels block). </td></tr>
     <tr><td class="paramname">hp</td><td>map height in block (128x128 pixels block) removing duplicated rows </td></tr>
-    <tr><td class="paramname">compression</td><td>compression type for metaTiles, blocks and blockIndexes data. Accepted values:<br/>
+    <tr><td class="paramname">compression</td><td>b0-b3=compression type for metaTiles<br/>
+ b4-b7=compression for blocks data<br/>
+ b8-b11=compression for blockIndexes data<br/>
+ Accepted values:<br/>
  <b>COMPRESSION_NONE</b><br/>
  <b>COMPRESSION_APLIB</b><br/>
  <b>COMPRESSION_LZ4W</b><br/>
- smap height in block (128x128 pixels block) removing duplicated rows </td></tr>
+ </td></tr>
     <tr><td class="paramname">numMetaTile</td><td>number of MetaTile </td></tr>
     <tr><td class="paramname">numBlock</td><td>number of Block (128x128 pixels chunk) </td></tr>
     <tr><td class="paramname">palette</td><td><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> data. </td></tr>
@@ -165,7 +168,7 @@ void *&#160;</td><td class="memItemRight" valign="bottom"><b>blockIndexes</b></t
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct_map_definition.html">MapDefinition</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

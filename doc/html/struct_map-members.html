@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>sgdk: z80_mvsc.h Source File</title>
+<title>sgdk: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/search.js"></script>
@@ -36,8 +36,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
-      <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -58,8 +58,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
-      <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
+      <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
     </ul>
   </div>
 </div>
@@ -73,51 +72,40 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-  initNavTree('z80__mvsc_8h.html','');
+  initNavTree('struct_map.html','');
 </script>
 <div id="doc-content">
 <div class="header">
   <div class="headertitle">
-<div class="title">z80_mvsc.h</div>  </div>
+<div class="title">Map Member List</div>  </div>
 </div>
 <div class="contents">
-<a href="z80__mvsc_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
-<a name="l00008"></a>00008 <span class="preprocessor">#ifndef _Z80_MVSC_H_</span>
-<a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define _Z80_MVSC_H_</span>
-<a name="l00010"></a>00010 <span class="preprocessor"></span>
-<a name="l00011"></a>00011 
-<a name="l00012"></a>00012 <span class="preprocessor">#define MVS_FM_CMD    0xA01500</span>
-<a name="l00013"></a>00013 <span class="preprocessor"></span><span class="preprocessor">#define MVS_FM_TEMPO  0xA01514</span>
-<a name="l00014"></a>00014 <span class="preprocessor"></span><span class="preprocessor">#define MVS_FM_ADR    0xA0151E</span>
-<a name="l00015"></a>00015 <span class="preprocessor"></span>
-<a name="l00016"></a>00016 <span class="preprocessor">#define MVS_DAC_CMD   0xA01521</span>
-<a name="l00017"></a>00017 <span class="preprocessor"></span><span class="preprocessor">#define MVS_DAC_ADR   0xA01524</span>
-<a name="l00018"></a>00018 <span class="preprocessor"></span><span class="preprocessor">#define MVS_DAC_SIZE  0xA01527</span>
-<a name="l00019"></a>00019 <span class="preprocessor"></span>
-<a name="l00020"></a>00020 <span class="preprocessor">#define MVS_PSG_CMD   0xA01529</span>
-<a name="l00021"></a>00021 <span class="preprocessor"></span><span class="preprocessor">#define MVS_PSG_CHAN  0xA0152A</span>
-<a name="l00022"></a>00022 <span class="preprocessor"></span><span class="preprocessor">#define MVS_PSG_ADR   0xA0152B</span>
-<a name="l00023"></a>00023 <span class="preprocessor"></span><span class="preprocessor">#define MVS_PSG_STAT  0xA0152E</span>
-<a name="l00024"></a>00024 <span class="preprocessor"></span>
-<a name="l00025"></a>00025 <span class="preprocessor">#define MVS_FM_STOP   0x00</span>
-<a name="l00026"></a>00026 <span class="preprocessor"></span><span class="preprocessor">#define MVS_FM_ONCE   0x01</span>
-<a name="l00027"></a>00027 <span class="preprocessor"></span><span class="preprocessor">#define MVS_FM_LOOP   0x02</span>
-<a name="l00028"></a>00028 <span class="preprocessor"></span><span class="preprocessor">#define MVS_FM_RESET  0x0F</span>
-<a name="l00029"></a>00029 <span class="preprocessor"></span>
-<a name="l00030"></a>00030 <span class="preprocessor">#define MVS_DAC_PLAY  0x01</span>
-<a name="l00031"></a>00031 <span class="preprocessor"></span><span class="preprocessor">#define MVS_DAC_STOP  0xFF</span>
-<a name="l00032"></a>00032 <span class="preprocessor"></span>
-<a name="l00033"></a>00033 <span class="preprocessor">#define MVS_PSG_PLAY  0x01</span>
-<a name="l00034"></a>00034 <span class="preprocessor"></span><span class="preprocessor">#define MVS_PSG_STOP  0xFF</span>
-<a name="l00035"></a>00035 <span class="preprocessor"></span>
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037 <span class="preprocessor">#endif // _Z80_MVSC_H_</span>
-</pre></div></div>
+This is the complete list of members for <a class="el" href="struct_map.html">Map</a>, including all inherited members.<table>
+  <tr bgcolor="#f0f0f0"><td><b>baseTile</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>blockIndexes</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>blockRowOffsets</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>blocks</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>getMetaTileCB</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>getMetaTilemapRectCB</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>h</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>hScrollTable</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>lastXT</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>lastYT</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>metaTiles</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>plane</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>planeHeightMask</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>planeWidthMask</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>posX</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>posY</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>prepareMapDataColumnCB</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>prepareMapDataRowCB</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>vScrollTable</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>w</b> (defined in <a class="el" href="struct_map.html">Map</a>)</td><td><a class="el" href="struct_map.html">Map</a></td><td></td></tr>
+</table></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
-      <li class="navelem"><a class="el" href="z80__mvsc_8h.html">z80_mvsc.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

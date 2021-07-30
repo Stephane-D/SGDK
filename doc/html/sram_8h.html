@@ -125,8 +125,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sram
 <div class="textblock"><p>SRAM (Static RAM used for save backup) support. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Chilly Willy &amp; Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2012</dd></dl>
-<p>This unit provides methods to read from or write to SRAM.</p>
-<p>Informations about SRAM (taken from Segaretro.org):<br/>
+<p>This unit provides methods to read from or write to SRAM.<br/>
+ By default we suppose SRAM is 8bit and connected to odd address.<br/>
+ You can change to even address by changing SRAM_BASE from 0x200001 to 0x200000 and rebuild the library.<br/>
+ <br/>
+ Informations about SRAM (taken from Segaretro.org):<br/>
  The regions specified by 0xA130F9-0xA130FF (0x200000-0x3FFFFF) can be either ROM or RAM and can be write-protected.<br/>
  Here is the layout of the register as far as I know:<br/>
  <br/>
@@ -329,7 +332,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sram
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sram_8h.html">sram.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

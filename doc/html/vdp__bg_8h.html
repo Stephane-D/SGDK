@@ -105,6 +105,8 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane horizontal scroll (plain scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
   <a href="#af0baa5635019a6b2fbde12e26ea05cc0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a2d1615d875bd37dab48554a9394eb235">VDP_setHorizontalScrollVSync</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="vdp__bg_8h.html#af0baa5635019a6b2fbde12e26ea05cc0" title="Set plane horizontal scroll (plain scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScroll</a>(..) except that it will delay scroll update on VSync.  <a href="#a2d1615d875bd37dab48554a9394eb235"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a1112424bede68bddd1ed72cb317e6263">VDP_setHorizontalScrollTile</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> tile, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane horizontal scroll (tile scroll mode).<br/>
  3 horizontal scroll modes are supported:<br/>
@@ -116,6 +118,8 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a409223c220fd59440b2ee49b843e589f">VDP_setVerticalScroll</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane vertical scroll (plain scroll mode). 2 vertical scroll modes are supported:<br/>
   <a href="#a409223c220fd59440b2ee49b843e589f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a63ede295af0dbb0bda27513437c1b36d">VDP_setVerticalScrollVSync</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="vdp__bg_8h.html#a409223c220fd59440b2ee49b843e589f" title="Set plane vertical scroll (plain scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScroll</a>(..) except that it will delay scroll update on VSync.  <a href="#a63ede295af0dbb0bda27513437c1b36d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a4e71b64bebe1c5b15b381a2314a010ec">VDP_setVerticalScrollTile</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> tile, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> *values, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported:<br/>
   <a href="#a4e71b64bebe1c5b15b381a2314a010ec"></a><br/></td></tr>
@@ -1068,7 +1072,9 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#a2d1615d875bd37dab48554a9394eb235" title="Same as VDP_setHorizontalScroll(..) except that it will delay scroll update on VSync.">VDP_setHorizontalScrollVSync()</a> </dd></dl>
 
 </div>
 </div>
@@ -1141,7 +1147,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">values</td><td>H scroll offsets.<br/>
  Negative values will move the plane to the left while positive values will move it to the right. </td></tr>
     <tr><td class="paramname">len</td><td>Number of line to set. </td></tr>
-    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+    <tr><td class="paramname">tm</td><td>Transfer method, it's recommended to use DMA_QUEUE so it will be executed as fast as possible during VBlank.<br/>
  Accepted values are:<br/>
 <ul>
 <li>CPU<br/>
@@ -1229,7 +1235,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">values</td><td>H scroll offsets.<br/>
  Negative values will move the plane to the left while positive values will move it to the right. </td></tr>
     <tr><td class="paramname">len</td><td>Number of tile to set. </td></tr>
-    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+    <tr><td class="paramname">tm</td><td>Transfer method, it's recommended to use DMA_QUEUE so it will be executed as fast as possible during VBlank.<br/>
  Accepted values are:<br/>
 <ul>
 <li>CPU<br/>
@@ -1245,6 +1251,52 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> function to change scroll mode. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2d1615d875bd37dab48554a9394eb235"></a><!-- doxytag: member="vdp_bg.h::VDP_setHorizontalScrollVSync" ref="a2d1615d875bd37dab48554a9394eb235" args="(VDPPlane plane, s16 value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_setHorizontalScrollVSync </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Same as <a class="el" href="vdp__bg_8h.html#af0baa5635019a6b2fbde12e26ea05cc0" title="Set plane horizontal scroll (plain scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScroll</a>(..) except that it will delay scroll update on VSync. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plane</td><td>Plane we want to set the horizontal scroll.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>BG_A<br/>
+</li>
+<li>BG_B<br/>
+ </li>
+</ul>
+</td></tr>
+    <tr><td class="paramname">value</td><td>H scroll offset.<br/>
+ Negative value will move the plane to the left while positive value will move it to the right.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#af0baa5635019a6b2fbde12e26ea05cc0" title="Set plane horizontal scroll (plain scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScroll()</a> </dd></dl>
 
 </div>
 </div>
@@ -1464,7 +1516,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">values</td><td>V scroll offsets.<br/>
  Negative values will move the plane down while positive values will move it up. </td></tr>
     <tr><td class="paramname">len</td><td>Number of tile to set. </td></tr>
-    <tr><td class="paramname">tm</td><td>Transfer method.<br/>
+    <tr><td class="paramname">tm</td><td>Transfer method, it's recommended to use DMA_QUEUE so it will be executed as fast as possible during VBlank.<br/>
  Accepted values are:<br/>
 <ul>
 <li>CPU<br/>
@@ -1480,6 +1532,52 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a63ede295af0dbb0bda27513437c1b36d"></a><!-- doxytag: member="vdp_bg.h::VDP_setVerticalScrollVSync" ref="a63ede295af0dbb0bda27513437c1b36d" args="(VDPPlane plane, s16 value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_setVerticalScrollVSync </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Same as <a class="el" href="vdp__bg_8h.html#a409223c220fd59440b2ee49b843e589f" title="Set plane vertical scroll (plain scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScroll</a>(..) except that it will delay scroll update on VSync. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plane</td><td>Plane we want to set the vertical scroll.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>BG_A<br/>
+</li>
+<li>BG_B<br/>
+ </li>
+</ul>
+</td></tr>
+    <tr><td class="paramname">value</td><td>V scroll offset.<br/>
+ Negative value will move the plane down while positive value will move it up.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#af0baa5635019a6b2fbde12e26ea05cc0" title="Set plane horizontal scroll (plain scroll mode).  3 horizontal scroll modes are supported: ...">VDP_setHorizontalScroll()</a> </dd></dl>
 
 </div>
 </div>
@@ -1506,7 +1604,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__bg_8h.html">vdp_bg.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

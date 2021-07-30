@@ -241,94 +241,94 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00407"></a>00407 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maps_addr;
 <a name="l00408"></a>00408 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> userTileMaxIndex;
 <a name="l00409"></a>00409 
-<a name="l00414"></a>00414 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#aeb05016d6ffc9a828d3e9f5298cb6406" title="Current screen width (horizontale resolution)">screenWidth</a>;
-<a name="l00419"></a>00419 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a80176485af5729b4cd0c7645371806d4" title="Current screen height (verticale resolution)">screenHeight</a>;
-<a name="l00426"></a>00426 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a52f0e00982796dc386af73589df96116" title="Current background plane width (in tile)">planeWidth</a>;
-<a name="l00433"></a>00433 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a5ce6e9af21db78c7310ca0fc96619a7f" title="Current background plane height (in tile)">planeHeight</a>;
-<a name="l00440"></a>00440 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a73fde7b0a0d98cb3f03a12f6765cb9f6" title="Current window width (in tile)">windowWidth</a>;
-<a name="l00447"></a>00447 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#af086223b50d78b82eaa777991241dfac" title="Current background plane width bit shift.">planeWidthSft</a>;
-<a name="l00454"></a>00454 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#ae83446a116f7446c643e74c1df1c25d5" title="Current background plane height bit shift.">planeHeightSft</a>;
-<a name="l00461"></a>00461 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a5e242a1512924e5e5db8a443f709f2b0" title="Current window width bit shift.">windowWidthSft</a>;
+<a name="l00414"></a>00414 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> screenWidth;
+<a name="l00419"></a>00419 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> screenHeight;
+<a name="l00426"></a>00426 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> planeWidth;
+<a name="l00433"></a>00433 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> planeHeight;
+<a name="l00440"></a>00440 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> windowWidth;
+<a name="l00447"></a>00447 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> planeWidthSft;
+<a name="l00454"></a>00454 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> planeHeightSft;
+<a name="l00461"></a>00461 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> windowWidthSft;
 <a name="l00462"></a>00462 
 <a name="l00463"></a>00463 
-<a name="l00470"></a>00470 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a7345ee2c2e6270fcdfb218298566186d" title="Initialize the VDP sub system.">VDP_init</a>();
+<a name="l00470"></a>00470 <span class="keywordtype">void</span> VDP_init();
 <a name="l00471"></a>00471 
-<a name="l00478"></a>00478 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#acbb3529f5c7d26499b3d4a0e62007f5a" title="Reset background plane and palette.">VDP_resetScreen</a>();
+<a name="l00478"></a>00478 <span class="keywordtype">void</span> VDP_resetScreen();
 <a name="l00479"></a>00479 
-<a name="l00488"></a>00488 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="vdp_8h.html#a9ce7e4dd92c2dd50dae1b1a33cb96bca" title="Get VDP register value.">VDP_getReg</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg);
-<a name="l00498"></a>00498 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a6d0b327444609dcef40f54f26437cce4" title="Set VDP register value.">VDP_setReg</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00488"></a>00488 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   VDP_getReg(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg);
+<a name="l00498"></a>00498 <span class="keywordtype">void</span> VDP_setReg(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00499"></a>00499 
-<a name="l00504"></a>00504 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="vdp_8h.html#ad7afae25b5d9eb9d4c8c51a15935e277" title="Returns VDP enable state.">VDP_getEnable</a>();
-<a name="l00511"></a>00511 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a0b3f9d0ad0a3803feca1b8aa22d8028a" title="Set VDP enable state.">VDP_setEnable</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00504"></a>00504 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   VDP_getEnable();
+<a name="l00511"></a>00511 <span class="keywordtype">void</span> VDP_setEnable(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00512"></a>00512 
-<a name="l00519"></a>00519 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="vdp_8h.html#a0113ce2aa7675146b2eeb86a4fec339a" title="Returns number of total scanline.">VDP_getScanlineNumber</a>();
-<a name="l00527"></a>00527 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="vdp_8h.html#a1c0d801e09ec825961b2f5d2b20a49ea" title="Returns vertical screen resolution.">VDP_getScreenHeight</a>();
-<a name="l00534"></a>00534 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#abccccf1377d10b531425a62d561f688e" title="Set vertical resolution to 224 pixels.">VDP_setScreenHeight224</a>();
-<a name="l00541"></a>00541 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a6eaaecd4997e32eb7aa84292c3eb4abe" title="Set vertical resolution to 240 pixels.">VDP_setScreenHeight240</a>();
-<a name="l00548"></a>00548 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="vdp_8h.html#a03bd91c06075930b2bb2a37830c1aa1e" title="Returns horizontal screen resolution.">VDP_getScreenWidth</a>();
-<a name="l00553"></a>00553 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a9868e7c4356b37b34bf54fee6828a4f5" title="Set horizontal resolution to 256 pixels.">VDP_setScreenWidth256</a>();
-<a name="l00558"></a>00558 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a7cdcddf2dfbd7f392f3d521aeba416a8" title="Set horizontal resolution to 320 pixels.">VDP_setScreenWidth320</a>();
+<a name="l00519"></a>00519 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  VDP_getScanlineNumber();
+<a name="l00527"></a>00527 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  VDP_getScreenHeight();
+<a name="l00534"></a>00534 <span class="keywordtype">void</span> VDP_setScreenHeight224();
+<a name="l00541"></a>00541 <span class="keywordtype">void</span> VDP_setScreenHeight240();
+<a name="l00548"></a>00548 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  VDP_getScreenWidth();
+<a name="l00553"></a>00553 <span class="keywordtype">void</span> VDP_setScreenWidth256();
+<a name="l00558"></a>00558 <span class="keywordtype">void</span> VDP_setScreenWidth320();
 <a name="l00559"></a>00559 
-<a name="l00564"></a>00564 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="vdp_8h.html#a1bdd9773d0d91814d3cb98ac08ce08f2" title="Return background plane width (in tile).">VDP_getPlaneWidth</a>();
-<a name="l00569"></a>00569 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="vdp_8h.html#a041df052687062ff701a0eb1a92d11c4" title="Return background plane height (in tile).">VDP_getPlaneHeight</a>();
-<a name="l00586"></a>00586 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <span class="keywordtype">bool</span> setupVram);
-<a name="l00591"></a>00591 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a692b0e6c1e5346a58322ecb5a35f8c49">VDP_setPlanSize</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h);
+<a name="l00564"></a>00564 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  VDP_getPlaneWidth();
+<a name="l00569"></a>00569 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  VDP_getPlaneHeight();
+<a name="l00586"></a>00586 <span class="keywordtype">void</span> VDP_setPlaneSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <span class="keywordtype">bool</span> setupVram);
+<a name="l00591"></a>00591 <span class="keywordtype">void</span> VDP_setPlanSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h);
 <a name="l00592"></a>00592 
-<a name="l00601"></a>00601 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="vdp_8h.html#a246782f31e06f1c4f4e78ebad78dcce1" title="Returns plane horizontal scrolling mode.">VDP_getHorizontalScrollingMode</a>();
-<a name="l00610"></a>00610 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="vdp_8h.html#a58829d25cd93168db1b132b7d5e78418" title="Returns plane vertical scrolling mode.">VDP_getVerticalScrollingMode</a>();
-<a name="l00631"></a>00631 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c" title="Set plane scrolling mode.">VDP_setScrollingMode</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> hscroll, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vscroll);
+<a name="l00601"></a>00601 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getHorizontalScrollingMode();
+<a name="l00610"></a>00610 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getVerticalScrollingMode();
+<a name="l00631"></a>00631 <span class="keywordtype">void</span> VDP_setScrollingMode(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> hscroll, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vscroll);
 <a name="l00632"></a>00632 
-<a name="l00637"></a>00637 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="vdp_8h.html#a38e61b2a2b06031415115e7faa44a521" title="Returns the background color index.">VDP_getBackgroundColor</a>();
-<a name="l00642"></a>00642 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#abcd72ebb58ac96787807a968f80476ed" title="Set the background color index.">VDP_setBackgroundColor</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00637"></a>00637 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getBackgroundColor();
+<a name="l00642"></a>00642 <span class="keywordtype">void</span> VDP_setBackgroundColor(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00643"></a>00643 
-<a name="l00648"></a>00648 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="vdp_8h.html#a1312a0dc4f9c1cbe2f8b0b9da13c9a09" title="Returns auto increment register value.">VDP_getAutoInc</a>();
-<a name="l00653"></a>00653 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a3e745d29389298b2a3c4ebdc38c177c0" title="Set auto increment register value.">VDP_setAutoInc</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00648"></a>00648 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   VDP_getAutoInc();
+<a name="l00653"></a>00653 <span class="keywordtype">void</span> VDP_setAutoInc(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00654"></a>00654 
-<a name="l00659"></a>00659 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="vdp_8h.html#a6ea62d50886724c4f73e0a6832b503f6" title="Returns DMA enabled state.">VDP_getDMAEnabled</a>();
-<a name="l00666"></a>00666 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a7f22fce440398b421d38a4fe61bd4a6d" title="Set DMA enabled state.">VDP_setDMAEnabled</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
-<a name="l00671"></a>00671 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="vdp_8h.html#a9985da41f3ce68f953fbc87f261f93d0" title="Returns HV counter latching on INT2 (used for light gun)">VDP_getHVLatching</a>();
-<a name="l00678"></a>00678 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a52ac795bc29bd3eab88ff525b100bf01" title="Set HV counter latching on INT2 (used for light gun)">VDP_setHVLatching</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
-<a name="l00685"></a>00685 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a29fb3e82bf904d2ee77e7b63f56b40c4" title="Enable or Disable Horizontal interrupt.">VDP_setHInterrupt</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
-<a name="l00690"></a>00690 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a002987d1c2379698f996ae9d5408aaa9" title="Enable or Disable Hilight / Shadow effect.">VDP_setHilightShadow</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00659"></a>00659 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getDMAEnabled();
+<a name="l00666"></a>00666 <span class="keywordtype">void</span> VDP_setDMAEnabled(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00671"></a>00671 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getHVLatching();
+<a name="l00678"></a>00678 <span class="keywordtype">void</span> VDP_setHVLatching(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00685"></a>00685 <span class="keywordtype">void</span> VDP_setHInterrupt(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00690"></a>00690 <span class="keywordtype">void</span> VDP_setHilightShadow(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00691"></a>00691 
-<a name="l00696"></a>00696 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="vdp_8h.html#a7f54475d3af2700abfad09e1e3a79aa7" title="Get Horizontal interrupt counter value.">VDP_getHIntCounter</a>();
-<a name="l00704"></a>00704 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a104e6d70f2e9dff5e20fdb011552adf3" title="Set Horizontal interrupt counter value.">VDP_setHIntCounter</a>(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00696"></a>00696 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   VDP_getHIntCounter();
+<a name="l00704"></a>00704 <span class="keywordtype">void</span> VDP_setHIntCounter(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00705"></a>00705 
-<a name="l00710"></a>00710 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>();
-<a name="l00715"></a>00715 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>();
-<a name="l00720"></a>00720 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a6c5331dddbbd3e7e47812b23a27c1b7e">VDP_getAPlanAddress</a>();
-<a name="l00725"></a>00725 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a7889e3313763eb5b25fa76c9d6920dcf">VDP_getBPlanAddress</a>();
-<a name="l00730"></a>00730 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>();
-<a name="l00735"></a>00735 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a8c5cffc7652b8d9c1f2585f059b00b6b">VDP_getWindowPlanAddress</a>();
-<a name="l00740"></a>00740 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#ab855f50da58b5b40349eedf830f396d7" title="Get VRAM address (location) of Sprite list.">VDP_getSpriteListAddress</a>();
-<a name="l00745"></a>00745 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#ac93008561bd3fa36e6562387ae1921e7" title="Get VRAM address (location) of H SCroll table.">VDP_getHScrollTableAddress</a>();
+<a name="l00710"></a>00710 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getBGAAddress();
+<a name="l00715"></a>00715 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getBGBAddress();
+<a name="l00720"></a>00720 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getAPlanAddress();
+<a name="l00725"></a>00725 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getBPlanAddress();
+<a name="l00730"></a>00730 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getWindowAddress();
+<a name="l00735"></a>00735 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getWindowPlanAddress();
+<a name="l00740"></a>00740 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getSpriteListAddress();
+<a name="l00745"></a>00745 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getHScrollTableAddress();
 <a name="l00746"></a>00746 
-<a name="l00756"></a>00756 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00766"></a>00766 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00771"></a>00771 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a5c9e0ae9a36332d334b4ce5a388d047a">VDP_setAPlanAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00776"></a>00776 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#afb80485408f0cce3c0745fc122114f79">VDP_setBPlanAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00786"></a>00786 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00791"></a>00791 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a43c8dc47075db8250040db50b2e6fa6f">VDP_setWindowPlanAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00801"></a>00801 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a0a66bf8cbd2c4dbce406e817ce68b7c9" title="Set VRAM address (location) of Sprite list.  The address should be at multiple of $400 in H40 and $20...">VDP_setSpriteListAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00811"></a>00811 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a7f5df5f64af9caa73bd00859b3184762" title="Set VRAM address (location) of H Scroll table.  The address should be at multiple of $400    Ex:  VDP...">VDP_setHScrollTableAddress</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00756"></a>00756 <span class="keywordtype">void</span> VDP_setBGAAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00766"></a>00766 <span class="keywordtype">void</span> VDP_setBGBAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00771"></a>00771 <span class="keywordtype">void</span> VDP_setAPlanAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00776"></a>00776 <span class="keywordtype">void</span> VDP_setBPlanAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00786"></a>00786 <span class="keywordtype">void</span> VDP_setWindowAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00791"></a>00791 <span class="keywordtype">void</span> VDP_setWindowPlanAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00801"></a>00801 <span class="keywordtype">void</span> VDP_setSpriteListAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00811"></a>00811 <span class="keywordtype">void</span> VDP_setHScrollTableAddress(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
 <a name="l00812"></a>00812 
-<a name="l00825"></a>00825 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a005fb7b1bd13b709397048d656f13618" title="Sets the scan mode of the display.">VDP_setScanMode</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> mode);
+<a name="l00825"></a>00825 <span class="keywordtype">void</span> VDP_setScanMode(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> mode);
 <a name="l00826"></a>00826 
-<a name="l00837"></a>00837 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a6e57b8c2e7ea714e8f850bebf9e1164c" title="Sets the window Horizontal position.">VDP_setWindowHPos</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> right, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> pos);
-<a name="l00848"></a>00848 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a8b0428a8582b2818500a04c93232ada8" title="Sets the window Vertical position.">VDP_setWindowVPos</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> down, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> pos);
+<a name="l00837"></a>00837 <span class="keywordtype">void</span> VDP_setWindowHPos(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> right, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> pos);
+<a name="l00848"></a>00848 <span class="keywordtype">void</span> VDP_setWindowVPos(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> down, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> pos);
 <a name="l00849"></a>00849 
-<a name="l00855"></a>00855 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#aefb8190a24577aa5156ca24c5f8d43eb" title="Wait for DMA operation to complete.">VDP_waitDMACompletion</a>();
-<a name="l00860"></a>00860 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#aa5ab03e66954736fa94c248d689f930f" title="Wait for VDP FIFO to be empty.">VDP_waitFIFOEmpty</a>();
+<a name="l00855"></a>00855 <span class="keywordtype">void</span> VDP_waitDMACompletion();
+<a name="l00860"></a>00860 <span class="keywordtype">void</span> VDP_waitFIFOEmpty();
 <a name="l00861"></a>00861 
-<a name="l00871"></a>00871 <span class="keywordtype">bool</span> <a class="code" href="vdp_8h.html#a95669875c2ba5eaf567140e19daf14ed" title="Wait for next Vertical Interruption.">VDP_waitVInt</a>();
-<a name="l00883"></a>00883 <span class="keywordtype">bool</span> <a class="code" href="vdp_8h.html#ab6ab006d4d6596a34a4293d26b36da91" title="Wait for next vertical blank period (same as VDP_waitVSync())">VDP_waitVBlank</a>(<span class="keywordtype">bool</span> forceNext);
-<a name="l00892"></a>00892 <span class="keywordtype">bool</span> <a class="code" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800" title="Wait for Vertical Synchro.">VDP_waitVSync</a>();
-<a name="l00902"></a>00902 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a45631e49e5dbd94a6402a7b863e1857d" title="Wait for next vertical active area (end of vertical blank period)">VDP_waitVActive</a>(<span class="keywordtype">bool</span> forceNext);
+<a name="l00871"></a>00871 <span class="keywordtype">bool</span> VDP_waitVInt();
+<a name="l00883"></a>00883 <span class="keywordtype">bool</span> VDP_waitVBlank(<span class="keywordtype">bool</span> forceNext);
+<a name="l00892"></a>00892 <span class="keywordtype">bool</span> VDP_waitVSync();
+<a name="l00902"></a>00902 <span class="keywordtype">void</span> VDP_waitVActive(<span class="keywordtype">bool</span> forceNext);
 <a name="l00903"></a>00903 
-<a name="l00911"></a>00911 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="vdp_8h.html#a78e58a2fd3120b7e6356985aa1f48181" title="Return an enhanced V Counter representation.">VDP_getAdjustedVCounter</a>();
+<a name="l00911"></a>00911 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getAdjustedVCounter();
 <a name="l00912"></a>00912 
-<a name="l00925"></a>00925 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#adbdb6ea2d08c4f7a90e827c8541c3e35" title="Display number of Frame Per Second.">VDP_showFPS</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> asFloat);
-<a name="l00934"></a>00934 <span class="keywordtype">void</span> <a class="code" href="vdp_8h.html#a9a34ca5b3eeffe50e0ad36d071510a55" title="Display the estimated CPU load (in %).">VDP_showCPULoad</a>();
+<a name="l00925"></a>00925 <span class="keywordtype">void</span> VDP_showFPS(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> asFloat);
+<a name="l00934"></a>00934 <span class="keywordtype">void</span> VDP_showCPULoad();
 <a name="l00935"></a>00935 
 <a name="l00936"></a>00936 
 <a name="l00937"></a>00937 <span class="preprocessor">#endif // _VDP_H_</span>
@@ -337,7 +337,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp_8h.html">vdp.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

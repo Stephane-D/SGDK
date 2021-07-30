@@ -153,7 +153,8 @@ Variables</h2></td></tr>
 
 <p>Returns elapsed subticks from console reset. </p>
 <p>Returns elapsed subticks from console reset (1/76800 second based).<br/>
- <b>WARNING:</b> this function isn't accurate because of the VCounter rollback. </p>
+ <b>WARNING:</b> this function isn't accurate during VBlank (return fixed value for the whole VBlank).<br/>
+ This is to avoid issue with the VCounter rollback during VBlank. </p>
 
 </div>
 </div>
@@ -339,7 +340,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p><b>WARNING:</b> this function isn't accurate because of the VCounter rollback. </p>
+<p><b>WARNING:</b> this function isn't accurate during VBlank (always wait until the end of VBlank) because of the VCounter rollback. </p>
 
 </div>
 </div>
@@ -374,7 +375,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="timer_8h.html">timer.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

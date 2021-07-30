@@ -89,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 
-<p>Sprite engine.  
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="vdp__tile_8h_source.html">vdp_tile.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="vdp__spr_8h_source.html">vdp_spr.h</a>&quot;</code><br/>
@@ -106,18 +106,16 @@ Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__collision.html">_collision</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_frame_v_d_p_sprite.html">FrameVDPSprite</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Single VDP sprite info structure for sprite animation frame.  <a href="struct_frame_v_d_p_sprite.html#details">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_frame_info.html">FrameInfo</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Frame information structure (used to store frame info for base, H-Flip, V-Flip and HV-Flip version of animation frame)  <a href="struct_frame_info.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_animation_frame.html">AnimationFrame</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite animation frame structure.  <a href="struct_animation_frame.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> animation frame structure.  <a href="struct_animation_frame.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_animation.html">Animation</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite animation structure.  <a href="struct_animation.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> animation structure.  <a href="struct_animation.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_sprite_definition.html">SpriteDefinition</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite definition structure.  <a href="struct_sprite_definition.html#details">More...</a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct___sprite.html">_Sprite</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite structure used by the Sprite Engine to store state for a sprite.<br/>
- WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate Sprite object.<br/>
-  <a href="struct___sprite.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> definition structure.  <a href="struct_sprite_definition.html#details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_sprite.html">Sprite</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> structure used by the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine to store state for a sprite.<br/>
+ WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> object.<br/>
+  <a href="struct_sprite.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3d82c84bad35b71a46d7c92acb9d715"></a><!-- doxytag: member="sprite_eng.h::COLLISION_TYPE_NONE" ref="ad3d82c84bad35b71a46d7c92acb9d715" args="" -->
@@ -137,23 +135,24 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166">SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE</a>&#160;&#160;&#160;0x2000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable delaying of frame update when we are running out of DMA capacity.<br/>
  By default we delay the frame update when DMA is already full so the frame update happen as soon we have enough DMA capacity to do it. This flag forces frame update to always happen immediately but that may cause graphical glitches. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2835792f6efc1489feb58abc15a310c5"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_VISIBILITY" ref="a2835792f6efc1489feb58abc15a310c5" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a2835792f6efc1489feb58abc15a310c5">SPR_FLAG_AUTO_VISIBILITY</a>&#160;&#160;&#160;0x1000</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic visibility calculation. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d4d3e5f40a12a457c83e8ed564777f0"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_FAST_AUTO_VISIBILITY" ref="a1d4d3e5f40a12a457c83e8ed564777f0" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a1d4d3e5f40a12a457c83e8ed564777f0">SPR_FLAG_FAST_AUTO_VISIBILITY</a>&#160;&#160;&#160;0x0800</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a977f2941066277659d05eb247e5d5757"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_VRAM_ALLOC" ref="a977f2941066277659d05eb247e5d5757" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757">SPR_FLAG_AUTO_VRAM_ALLOC</a>&#160;&#160;&#160;0x0400</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757">SPR_FLAG_AUTO_VRAM_ALLOC</a>&#160;&#160;&#160;0x1000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic VRAM allocation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35e88e2bc35473300ec3f87251a27d39"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_SPRITE_ALLOC" ref="a35e88e2bc35473300ec3f87251a27d39" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39">SPR_FLAG_AUTO_SPRITE_ALLOC</a>&#160;&#160;&#160;0x0200</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39">SPR_FLAG_AUTO_SPRITE_ALLOC</a>&#160;&#160;&#160;0x0800</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic hardware sprite allocation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a278911126652f8402cb2c7b01249e7f5"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_TILE_UPLOAD" ref="a278911126652f8402cb2c7b01249e7f5" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5">SPR_FLAG_AUTO_TILE_UPLOAD</a>&#160;&#160;&#160;0x0100</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5">SPR_FLAG_AUTO_TILE_UPLOAD</a>&#160;&#160;&#160;0x0400</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic upload of sprite tiles data into VRAM. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2835792f6efc1489feb58abc15a310c5"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_VISIBILITY" ref="a2835792f6efc1489feb58abc15a310c5" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a2835792f6efc1489feb58abc15a310c5">SPR_FLAG_AUTO_VISIBILITY</a>&#160;&#160;&#160;0x0200</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic visibility calculation. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d4d3e5f40a12a457c83e8ed564777f0"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_FAST_AUTO_VISIBILITY" ref="a1d4d3e5f40a12a457c83e8ed564777f0" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a1d4d3e5f40a12a457c83e8ed564777f0">SPR_FLAG_FAST_AUTO_VISIBILITY</a>&#160;&#160;&#160;0x0100</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used).<br/>
+ If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a606b4d7e71bfe2f14a6df4e8a9433309"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_MASK" ref="a606b4d7e71bfe2f14a6df4e8a9433309" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">SPR_FLAG_MASK</a>&#160;&#160;&#160;(SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">SPR_FLAG_MASK</a>&#160;&#160;&#160;(SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for sprite flag. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64468da518c5199db61c840ed64a3d35"></a><!-- doxytag: member="sprite_eng.h::SPR_MIN_DEPTH" ref="a64468da518c5199db61c840ed64a3d35" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a64468da518c5199db61c840ed64a3d35">SPR_MIN_DEPTH</a>&#160;&#160;&#160;(-0x8000)</td></tr>
@@ -165,12 +164,12 @@ Defines</h2></td></tr>
 Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa319303a0245f31a04222bfc2c3f1902"></a><!-- doxytag: member="sprite_eng.h::Collision" ref="aa319303a0245f31a04222bfc2c3f1902" args="" -->
 typedef struct <a class="el" href="struct__collision.html">_collision</a>&#160;</td><td class="memItemRight" valign="bottom"><b>Collision</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct___sprite.html">_Sprite</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a875c573fc718dc253e6dcba9a13d6454">Sprite</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite structure used by the Sprite Engine to store state for a sprite.<br/>
- WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate Sprite object.<br/>
-  <a href="#a875c573fc718dc253e6dcba9a13d6454"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">FrameChangeCallback</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite frame change event callback.<br/>
+<tr><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_sprite.html">Sprite</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ab1686e881087d6370cd9ddebea2ce6d4">Sprite</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> structure used by the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine to store state for a sprite.<br/>
+ WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> object.<br/>
+  <a href="#ab1686e881087d6370cd9ddebea2ce6d4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">FrameChangeCallback</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> frame change event callback.<br/>
   <a href="#a8066e165338e0b3365328ffd288dd29f"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -179,30 +178,30 @@ Enumerations</h2></td></tr>
 <a class="el" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61">AUTO_FAST</a>, 
 <a class="el" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b">AUTO_SLOW</a>
  }</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite visibility enumeration.  <a href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> visibility enumeration.  <a href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ab08fa6fbe35f100894188c0de3afb8c0">SPR_init</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the Sprite engine with default parameters.  <a href="#ab08fa6fbe35f100894188c0de3afb8c0"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine with default parameters.  <a href="#ab08fa6fbe35f100894188c0de3afb8c0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a54f00b28a0ab0bdb97abce4189b240fc">SPR_initEx</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vramSize)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Init the Sprite engine with specified advanced parameters (VRAM allocation size and decompression buffer size).  <a href="#a54f00b28a0ab0bdb97abce4189b240fc"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Init the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine with specified advanced parameters (VRAM allocation size and decompression buffer size).  <a href="#a54f00b28a0ab0bdb97abce4189b240fc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a85217a014c106c484b16a37d8e4e1279">SPR_end</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">End the Sprite engine.  <a href="#a85217a014c106c484b16a37d8e4e1279"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">End the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine.  <a href="#a85217a014c106c484b16a37d8e4e1279"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03bd2640ded0833660fad89a43cb8fb9"></a><!-- doxytag: member="sprite_eng.h::SPR_isInitialized" ref="a03bd2640ded0833660fad89a43cb8fb9" args="()" -->
 <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a03bd2640ded0833660fad89a43cb8fb9">SPR_isInitialized</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">FALSE if sprite cache engine is not initialized, TRUE otherwise. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a1b5fae134d3011c77ac2ea07ca9099ea">SPR_reset</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the Sprite engine.<br/>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine.<br/>
   <a href="#a1b5fae134d3011c77ac2ea07ca9099ea"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a78e283f11115b0f36701fe7833bd124a">SPR_addSpriteEx</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a78e283f11115b0f36701fe7833bd124a">SPR_addSpriteEx</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a new sprite with specified parameters and returns it.  <a href="#a78e283f11115b0f36701fe7833bd124a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0">SPR_addSprite</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0">SPR_addSprite</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a new sprite with auto resource allocation enabled and returns it.  <a href="#a94ccee731dbfa40d6ae185a484bad7b0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ac5fad357734dc048fd5066d3ef02debf">SPR_addSpriteExSafe</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ac5fad357734dc048fd5066d3ef02debf">SPR_addSpriteExSafe</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a new sprite with specified parameters and returns it.  <a href="#ac5fad357734dc048fd5066d3ef02debf"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a538de73de8a9c6cf3502401cb2bd18c3">SPR_addSpriteSafe</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a538de73de8a9c6cf3502401cb2bd18c3">SPR_addSpriteSafe</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a new sprite with auto resource allocation enabled and returns it.  <a href="#a538de73de8a9c6cf3502401cb2bd18c3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a0e22c7988eafb8ce819582d77bdcdbec">SPR_releaseSprite</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a0e22c7988eafb8ce819582d77bdcdbec">SPR_releaseSprite</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release the specified sprite (no more visible and release its resources).  <a href="#a0e22c7988eafb8ce819582d77bdcdbec"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5762c80b69302158e55a9f971f8cde0a"></a><!-- doxytag: member="sprite_eng.h::SPR_getNumActiveSprite" ref="a5762c80b69302158e55a9f971f8cde0a" args="()" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5762c80b69302158e55a9f971f8cde0a">SPR_getNumActiveSprite</a> ()</td></tr>
@@ -213,49 +212,65 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spri
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5d6d1d715769af4df2c9855d1d1973b6">SPR_loadAllFrames</a> (const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *sprDef, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *totalNumTile)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Load all frames of <a class="el" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a> (using DMA) at specified VRAM tile index and return the indexes table.<br/>
  <b>WARNING: This function should be call at init/loading time as it can be quite long (several frames)</b>  <a href="#a5d6d1d715769af4df2c9855d1d1973b6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ac100abd8f7a492453c7c79bb4dfcea11">SPR_setDefinition</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Sprite Definition.  <a href="#ac100abd8f7a492453c7c79bb4dfcea11"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ae7d28372a873a655c2f7de88963a0d8a">SPR_setPosition</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ac100abd8f7a492453c7c79bb4dfcea11">SPR_setDefinition</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *spriteDef)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Definition.  <a href="#ac100abd8f7a492453c7c79bb4dfcea11"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43dafb098b1775da9cf20bc51ccb9c5b"></a><!-- doxytag: member="sprite_eng.h::SPR_getPositionX" ref="a43dafb098b1775da9cf20bc51ccb9c5b" args="(Sprite *sprite)" -->
+<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a43dafb098b1775da9cf20bc51ccb9c5b">SPR_getPositionX</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get sprite position X. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5bdc0c12cbf190dad1cca2e4b506df8c"></a><!-- doxytag: member="sprite_eng.h::SPR_getPositionY" ref="a5bdc0c12cbf190dad1cca2e4b506df8c" args="(Sprite *sprite)" -->
+<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5bdc0c12cbf190dad1cca2e4b506df8c">SPR_getPositionY</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get sprite position Y. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ae7d28372a873a655c2f7de88963a0d8a">SPR_setPosition</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite position.  <a href="#ae7d28372a873a655c2f7de88963a0d8a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a6edcc25e3ee1cfbf3af248aeb5e34661">SPR_setHFlip</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a6edcc25e3ee1cfbf3af248aeb5e34661">SPR_setHFlip</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite Horizontal Flip attribut.  <a href="#a6edcc25e3ee1cfbf3af248aeb5e34661"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5a898756b5bbda09ee1848dfbce8f912">SPR_setVFlip</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5a898756b5bbda09ee1848dfbce8f912">SPR_setVFlip</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite Vertical Flip attribut.  <a href="#a5a898756b5bbda09ee1848dfbce8f912"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aba19c8cb2e9144a25b08b20b4d12df41">SPR_setPalette</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aba19c8cb2e9144a25b08b20b4d12df41">SPR_setPalette</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> index to use.  <a href="#aba19c8cb2e9144a25b08b20b4d12df41"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a05f54d36b5649b37d770cb6dc873378f">SPR_setPriorityAttribut</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite Priority attribut.  <a href="#a05f54d36b5649b37d770cb6dc873378f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f">SPR_setDepth</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a27f1b65d1085f172556841f4be2de3df">SPR_setPriority</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite Priority attribut.  <a href="#a27f1b65d1085f172556841f4be2de3df"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a05f54d36b5649b37d770cb6dc873378f">SPR_setPriorityAttribut</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f">SPR_setDepth</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite depth (for sprite display ordering)  <a href="#ad3fde63ad9fcb617293cdabde09bbb1f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8edd601ed056f5e7cb7fa44c5e9fc2d"></a><!-- doxytag: member="sprite_eng.h::SPR_setZ" ref="ab8edd601ed056f5e7cb7fa44c5e9fc2d" args="(Sprite *sprite, s16 value)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ab8edd601ed056f5e7cb7fa44c5e9fc2d">SPR_setZ</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ab8edd601ed056f5e7cb7fa44c5e9fc2d">SPR_setZ</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(..) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aaaf5d7636687419ef7a8d6ec3ba4d7c8">SPR_setAlwaysOnTop</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a7f4d357bbe7a3b5e88d0adc6d7209575">SPR_setAnimAndFrame</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aaaf5d7636687419ef7a8d6ec3ba4d7c8">SPR_setAlwaysOnTop</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a7f4d357bbe7a3b5e88d0adc6d7209575">SPR_setAnimAndFrame</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current sprite animation and frame.  <a href="#a7f4d357bbe7a3b5e88d0adc6d7209575"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a2f86e3e794df170352a5409cdaf64b95">SPR_setAnim</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a2f86e3e794df170352a5409cdaf64b95">SPR_setAnim</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current sprite animation.  <a href="#a2f86e3e794df170352a5409cdaf64b95"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5b992fb79ffb269f8eaaf55e121dc7ea">SPR_setFrame</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5b992fb79ffb269f8eaaf55e121dc7ea">SPR_setFrame</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current sprite frame.  <a href="#a5b992fb79ffb269f8eaaf55e121dc7ea"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aafd20fc33df8a81fc5675e132833e8a8">SPR_nextFrame</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aafd20fc33df8a81fc5675e132833e8a8">SPR_nextFrame</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass to the next sprite frame.  <a href="#aafd20fc33df8a81fc5675e132833e8a8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3">SPR_setVRAMTileIndex</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3">SPR_setVRAMTileIndex</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the VRAM tile position reserved for this sprite.  <a href="#a0f9e5a58f7885f0535af1d554d23d2d3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a9b1da6feff3d9f3d9febb0884ff25f1b">SPR_setSpriteTableIndex</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a9b1da6feff3d9f3d9febb0884ff25f1b">SPR_setSpriteTableIndex</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the VDP sprite index to use for this sprite.  <a href="#a9b1da6feff3d9f3d9febb0884ff25f1b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a198bc55589dad6b74ad6fa593b6b35d0">SPR_setAutoTileUpload</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a198bc55589dad6b74ad6fa593b6b35d0">SPR_setAutoTileUpload</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable/disable the automatic upload of sprite tiles data into VRAM.  <a href="#a198bc55589dad6b74ad6fa593b6b35d0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#abcc0480baf7470a71de6b8d01cb4343e">SPR_setDelayedFrameUpdate</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#abcc0480baf7470a71de6b8d01cb4343e">SPR_setDelayedFrameUpdate</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable/disable the delayed frame update.  <a href="#abcc0480baf7470a71de6b8d01cb4343e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032">SPR_setFrameChangeCallback</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">FrameChangeCallback</a> *callback)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032">SPR_setFrameChangeCallback</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">FrameChangeCallback</a> *callback)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the frame change event callback for this sprite.  <a href="#a62e13ffd44ebe9f84178a78e3ffb9032"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1">SPR_setVisibility</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">SpriteVisibility</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">SpriteVisibility</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ae97c00e7a9dee82f518627550183e2e7">SPR_getVisibility</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the <em>visibility</em> state for this sprite.<br/>
+ WARNING: this is different from SPR_isVisible(..) method, possible value are:<br/>
+ SpriteVisibility.VISIBLE = sprite is visible<br/>
+ SpriteVisibility.HIDDEN = sprite is not visible<br/>
+ SpriteVisibility.AUTO_FAST = visibility is automatically computed - global visibility (only using sprite X position)<br/>
+ SpriteVisibility.AUTO_SLOW = visibility is automatically computed - per hardware sprite visibility (only using sprite X position)<br/>
+  <a href="#ae97c00e7a9dee82f518627550183e2e7"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#afd03d00ed3be960a396081a8b5f03a71">SPR_isVisible</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> recompute)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method).<br/>
+  <a href="#afd03d00ed3be960a396081a8b5f03a71"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1">SPR_setVisibility</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">SpriteVisibility</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the <em>visibility</em> state for this sprite.  <a href="#a5775e4ee57393b47f3c2995b8a65abb1"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad0c8ca6c151a3a4f410a7ea3b42fd8a0">SPR_setAlwaysVisible</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aaef30cc5900d691eefe5e38f625fe914">SPR_setNeverVisible</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ae7ed2668e777d3f326b62b680d26076e">SPR_computeVisibility</a> (<a class="el" href="struct___sprite.html">Sprite</a> *sprite)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the internal <em>visibility</em> state for this sprite (when AUTO visibility is enabled).<br/>
-  <a href="#ae7ed2668e777d3f326b62b680d26076e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad0c8ca6c151a3a4f410a7ea3b42fd8a0">SPR_setAlwaysVisible</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aaef30cc5900d691eefe5e38f625fe914">SPR_setNeverVisible</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ae7ed2668e777d3f326b62b680d26076e">SPR_computeVisibility</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aaeca42253b3a02a23402d895c0faff6e">SPR_clear</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear all displayed sprites.  <a href="#aaeca42253b3a02a23402d895c0faff6e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a45cf5d0e4da38baa4b2f4b35283c7aed">SPR_update</a> ()</td></tr>
@@ -268,13 +283,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spri
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Log the sprites informations (when enabled) in the KMod message window. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a878fe8e5e2a1d73ae026b66b7062233d">spritesBank</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a8f52e18717357ee667565f4aa087c31e">firstSprite</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ab6b973085a740f846f3d62dd01a9ad07">lastSprite</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a6c07bb0777a434f9078e6cd395ceaf58">spriteVramSize</a></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Sprite engine. </p>
+<div class="textblock"><p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stephane Dallongeville </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>10/2013</dd></dl>
-<p>Sprite engine providing advanced sprites manipulation and operations.<br/>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine providing advanced sprites manipulation and operations.<br/>
  This unit use both the vram memory manager (see <a class="el" href="vram_8h.html" title="SGDK VRAM (Video Memory) management unit.">vram.h</a> file for more info)<br/>
  and the Sega Genesis VDP sprite capabilities (see <a class="el" href="vdp__spr_8h.html" title="VDP Sprite support.">vdp_spr.h</a> file for more info). </p>
 </div><hr/><h2>Typedef Documentation</h2>
@@ -283,13 +301,13 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void <a class="el" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">FrameChangeCallback</a>(<a class="el" href="struct___sprite.html">Sprite</a> *sprite)</td>
+          <td class="memname">typedef void <a class="el" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">FrameChangeCallback</a>(<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Sprite frame change event callback.<br/>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> frame change event callback.<br/>
  </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
@@ -303,42 +321,43 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a875c573fc718dc253e6dcba9a13d6454"></a><!-- doxytag: member="sprite_eng.h::Sprite" ref="a875c573fc718dc253e6dcba9a13d6454" args="" -->
+<a class="anchor" id="ab1686e881087d6370cd9ddebea2ce6d4"></a><!-- doxytag: member="sprite_eng.h::Sprite" ref="ab1686e881087d6370cd9ddebea2ce6d4" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="struct___sprite.html">_Sprite</a>  <a class="el" href="struct___sprite.html">Sprite</a></td>
+          <td class="memname">typedef struct <a class="el" href="struct_sprite.html">Sprite</a>  <a class="el" href="struct_sprite.html">Sprite</a></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Sprite structure used by the Sprite Engine to store state for a sprite.<br/>
- WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate Sprite object.<br/>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> structure used by the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine to store state for a sprite.<br/>
+ WARNING: always use the <a class="el" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(..) method to allocate <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> object.<br/>
  </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">status</td><td>Internal state and automatic allocation information (internal) </td></tr>
-    <tr><td class="paramname">spriteDef</td><td>Sprite definition pointer </td></tr>
+    <tr><td class="paramname">visibility</td><td>visibility information of current frame for each VDP sprite (max = 16) </td></tr>
+    <tr><td class="paramname">spriteDef</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> definition pointer </td></tr>
+    <tr><td class="paramname">onFrameChange</td><td>Custom callback on frame change event (see <a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..) method) </td></tr>
     <tr><td class="paramname">animation</td><td><a class="el" href="struct_animation.html" title="Sprite animation structure.">Animation</a> pointer cache (internal) </td></tr>
     <tr><td class="paramname">frame</td><td><a class="el" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a> pointer cache (internal) </td></tr>
     <tr><td class="paramname">animInd</td><td>current animation index (internal) </td></tr>
     <tr><td class="paramname">frameInd</td><td>current frame animation index (internal) </td></tr>
-    <tr><td class="paramname">seqInd</td><td>current frame animation sequence index (internal) </td></tr>
     <tr><td class="paramname">timer</td><td>timer for current frame (internal) </td></tr>
     <tr><td class="paramname">x</td><td>current sprite X position on screen offseted by 0x80 (internal VDP position) </td></tr>
     <tr><td class="paramname">y</td><td>current sprite Y position on screen offseted by 0x80 (internal VDP position) </td></tr>
     <tr><td class="paramname">depth</td><td>current sprite depth (Z) position used for Z sorting </td></tr>
     <tr><td class="paramname">attribut</td><td>sprite specific attribut and allocated VRAM tile index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro) </td></tr>
-    <tr><td class="paramname">visibility</td><td>visibility information of current frame for each VDP sprite (max = 16) </td></tr>
     <tr><td class="paramname">VDPSpriteIndex</td><td>index of first allocated VDP sprite (0 when no yet allocated)<br/>
  Number of allocated VDP sprite is defined by definition-&gt;maxNumSprite </td></tr>
-    <tr><td class="paramname">frameNumSprite</td><td>the number of VDP sprite used by the current frame (internal) </td></tr>
-    <tr><td class="paramname">lastVDPSprite</td><td>Pointer to last VDP sprite used by this Sprite (used internally to update link between sprite) </td></tr>
+    <tr><td class="paramname">lastVDPSprite</td><td>Pointer to last VDP sprite used by this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (used internally to update link between sprite) </td></tr>
+    <tr><td class="paramname">lastNumSprite</td><td>the number of VDP sprite used by the current frame (internal) </td></tr>
+    <tr><td class="paramname">spriteToHide</td><td>internal </td></tr>
     <tr><td class="paramname">data</td><td>this is a free field for user data, use it for whatever you want (flags, pointer...) </td></tr>
-    <tr><td class="paramname">prev</td><td>pointer on previous Sprite in list </td></tr>
-    <tr><td class="paramname">next</td><td>pointer on next Sprite in list</td></tr>
+    <tr><td class="paramname">prev</td><td>pointer on previous <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> in list </td></tr>
+    <tr><td class="paramname">next</td><td>pointer on next <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> in list</td></tr>
   </table>
   </dd>
 </dl>
@@ -358,19 +377,19 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Sprite visibility enumeration. </p>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> visibility enumeration. </p>
 <dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" id="a91bab69b7e2921de87dce78b1a4b58f8abb22a6fcb7f208995b092f12d388786c"></a><!-- doxytag: member="VISIBLE" ref="a91bab69b7e2921de87dce78b1a4b58f8abb22a6fcb7f208995b092f12d388786c" args="" -->VISIBLE</em>&nbsp;</td><td>
-<p>Sprite is visible (no computation needed) </p>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> is visible (no computation needed) </p>
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" id="a91bab69b7e2921de87dce78b1a4b58f8a41ae0a505430bf564b119bc82db7592d"></a><!-- doxytag: member="HIDDEN" ref="a91bab69b7e2921de87dce78b1a4b58f8a41ae0a505430bf564b119bc82db7592d" args="" -->HIDDEN</em>&nbsp;</td><td>
-<p>Sprite is hidden (no computation needed) </p>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> is hidden (no computation needed) </p>
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" id="a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61"></a><!-- doxytag: member="AUTO_FAST" ref="a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61" args="" -->AUTO_FAST</em>&nbsp;</td><td>
-<p>Automatic visibility calculation FAST (computation made on global meta sprite) </p>
+<p>Automatic visibility calculation - FAST (computation made on global meta sprite) </p>
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" id="a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b"></a><!-- doxytag: member="AUTO_SLOW" ref="a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b" args="" -->AUTO_SLOW</em>&nbsp;</td><td>
-<p>Automatic visibility calculation SLOW (computation made per hardware sprite) </p>
+<p>Automatic visibility calculation - SLOW (computation made per hardware sprite) </p>
 </td></tr>
 </table>
 </dd>
@@ -384,7 +403,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct___sprite.html">Sprite</a>* SPR_addSprite </td>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* SPR_addSprite </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *&#160;</td>
           <td class="paramname"><em>spriteDef</em>, </td>
@@ -445,7 +464,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct___sprite.html">Sprite</a>* SPR_addSpriteEx </td>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* SPR_addSpriteEx </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *&#160;</td>
           <td class="paramname"><em>spriteDef</em>, </td>
@@ -496,8 +515,8 @@ Variables</h2></td></tr>
     <tr><td class="paramname">x</td><td>default X position. </td></tr>
     <tr><td class="paramname">y</td><td>default Y position. </td></tr>
     <tr><td class="paramname">attribut</td><td>sprite attribut (see <a class="el" href="vdp__tile_8h.html#a6f7dd23d9b1a506969fc3678a6f3910f" title="Encode tile attributes for tilemap data.">TILE_ATTR()</a> macro). </td></tr>
-    <tr><td class="paramname">spriteIndex</td><td>index of the first sprite in the VDP sprite table used to display this Sprite (should be in [1..79] range.<br/>
- IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <em>flags</em> parameter).<br/>
+    <tr><td class="paramname">spriteIndex</td><td>index of the first sprite in the VDP sprite table used to display this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (should be in [1..79] range.<br/>
+ IMPORTANT: this value is used only if you use manual VDP <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> allocation (see the <em>flags</em> parameter).<br/>
  </td></tr>
     <tr><td class="paramname">flag</td><td>specific settings for this sprite:<br/>
  <a class="el" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166" title="Disable delaying of frame update when we are running out of DMA capacity.  By default we delay the fr...">SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE</a> = Disable delaying of frame update when we are running out of DMA capacity.<br/>
@@ -540,7 +559,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct___sprite.html">Sprite</a>* SPR_addSpriteExSafe </td>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* SPR_addSpriteExSafe </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *&#160;</td>
           <td class="paramname"><em>spriteDef</em>, </td>
@@ -591,15 +610,15 @@ Variables</h2></td></tr>
     <tr><td class="paramname">x</td><td>default X position. </td></tr>
     <tr><td class="paramname">y</td><td>default Y position. </td></tr>
     <tr><td class="paramname">attribut</td><td>sprite attribut (see <a class="el" href="vdp__tile_8h.html#a6f7dd23d9b1a506969fc3678a6f3910f" title="Encode tile attributes for tilemap data.">TILE_ATTR()</a> macro). </td></tr>
-    <tr><td class="paramname">spriteIndex</td><td>index of the first sprite in the VDP sprite table used to display this Sprite (should be &gt; 0 and &lt; 128).<br/>
- IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <em>flag</em> parameter).<br/>
+    <tr><td class="paramname">spriteIndex</td><td>index of the first sprite in the VDP sprite table used to display this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (should be &gt; 0 and &lt; 128).<br/>
+ IMPORTANT: this value is used only if you use manual VDP <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> allocation (see the <em>flag</em> parameter).<br/>
  </td></tr>
     <tr><td class="paramname">flag</td><td>specific settings for this sprite:<br/>
  <a class="el" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166" title="Disable delaying of frame update when we are running out of DMA capacity.  By default we delay the fr...">SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE</a> = Disable delaying of frame update when we are running out of DMA capacity.<br/>
  If you set this flag then sprite frame update always happen immediately but may lead to some graphical glitches (tiles data and sprite table data not synchronized). You can use SPR_setDelayedFrameUpdate(..) method to change this setting.<br/>
  <a class="el" href="sprite__eng_8h.html#a2835792f6efc1489feb58abc15a310c5" title="Enable automatic visibility calculation.">SPR_FLAG_AUTO_VISIBILITY</a> = Enable automatic sprite visibility calculation (you can also use SPR_setVisibility(..) method).<br/>
  <a class="el" href="sprite__eng_8h.html#a1d4d3e5f40a12a457c83e8ed564777f0" title="Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used)...">SPR_FLAG_FAST_AUTO_VISIBILITY</a> = Enable fast computation for the automatic visibility calculation (disabled by default)<br/>
- If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite. You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br/>
+ If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite (scanline limit). You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br/>
  <a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757" title="Enable automatic VRAM allocation.">SPR_FLAG_AUTO_VRAM_ALLOC</a> = Enable automatic VRAM allocation (enabled by default)<br/>
  If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <em>attribut</em> parameter or by using the <a class="el" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3" title="Set the VRAM tile position reserved for this sprite.">SPR_setVRAMTileIndex</a>(..) method<br/>
  <a class="el" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39" title="Enable automatic hardware sprite allocation.">SPR_FLAG_AUTO_SPRITE_ALLOC</a> = Enable automatic hardware/VDP sprite allocation (enabled by default)<br/>
@@ -633,7 +652,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct___sprite.html">Sprite</a>* SPR_addSpriteSafe </td>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* SPR_addSpriteSafe </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_sprite_definition.html">SpriteDefinition</a> *&#160;</td>
           <td class="paramname"><em>spriteDef</em>, </td>
@@ -714,26 +733,14 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_computeVisibility </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p>Update the internal <em>visibility</em> state for this sprite (when AUTO visibility is enabled).<br/>
- </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to compute <em>visibility</em> state </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>TRUE if sprite is visible, FALSE otherwise</dd></dl>
-<p>This method computes the visibility state for the specified sprite if the AUTO visibility is enabled (see SPR_setVisibility(..) method).<br/>
- Note that sprite visibility is automatically computed when you call <a class="el" href="sprite__eng_8h.html#a45cf5d0e4da38baa4b2f4b35283c7aed" title="Update and display the active list of sprite.">SPR_update()</a> so you need to use this method only if you want to know if the sprite is visible or not before the next <a class="el" href="sprite__eng_8h.html#a45cf5d0e4da38baa4b2f4b35283c7aed" title="Update and display the active list of sprite.">SPR_update()</a> call.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000083">Deprecated:</a></b></dt><dd>Use SPR_isVisible(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -751,9 +758,44 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>End the Sprite engine. </p>
+<p>End the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine. </p>
 <p>End the sprite engine and release attached resources.<br/>
- This releases the allocated VRAM region, memory for unpacking and hardware sprite. </p>
+ This releases the allocated VRAM region and hardware sprites. </p>
+
+</div>
+</div>
+<a class="anchor" id="ae97c00e7a9dee82f518627550183e2e7"></a><!-- doxytag: member="sprite_eng.h::SPR_getVisibility" ref="ae97c00e7a9dee82f518627550183e2e7" args="(Sprite *sprite)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">SpriteVisibility</a> SPR_getVisibility </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramname"><em>sprite</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return the <em>visibility</em> state for this sprite.<br/>
+ WARNING: this is different from SPR_isVisible(..) method, possible value are:<br/>
+ SpriteVisibility.VISIBLE = sprite is visible<br/>
+ SpriteVisibility.HIDDEN = sprite is not visible<br/>
+ SpriteVisibility.AUTO_FAST = visibility is automatically computed - global visibility (only using sprite X position)<br/>
+ SpriteVisibility.AUTO_SLOW = visibility is automatically computed - per hardware sprite visibility (only using sprite X position)<br/>
+ </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to return <em>visibility</em> state</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the <em>visibility</em> state for this sprite.</dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#afd03d00ed3be960a396081a8b5f03a71" title="Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see SPR_setVisibility(..) method). ">SPR_isVisible</a>(...) </dd>
+<dd>
+<a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(...) </dd></dl>
 
 </div>
 </div>
@@ -771,9 +813,8 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Initialize the Sprite engine with default parameters. </p>
-<p>Initialize the sprite engine using default parameters:<br/>
- 512 tiles reserved in VRAM and 320 tiles in memory for the decompression buffer.<br/>
+<p>Initialize the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine with default parameters. </p>
+<p>Initialize the sprite engine using default parameters (420 reserved tiles in VRAM).<br/>
  This also initialize the hardware sprite allocation system.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a54f00b28a0ab0bdb97abce4189b240fc" title="Init the Sprite engine with specified advanced parameters (VRAM allocation size and decompression buf...">SPR_initEx()</a> </dd>
 <dd>
@@ -796,19 +837,60 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Init the Sprite engine with specified advanced parameters (VRAM allocation size and decompression buffer size). </p>
+<p>Init the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine with specified advanced parameters (VRAM allocation size and decompression buffer size). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">vramSize</td><td>size (in tile) of the VRAM region for the automatic VRAM tile allocation.<br/>
- If set to 0 the default size is used (512 tiles)</td></tr>
+ If set to 0 the default size is used (420 tiles)</td></tr>
   </table>
   </dd>
 </dl>
 <p>Initialize the sprite engine.<br/>
- This allocates a VRAM region for sprite tiles, memory for tileset unpacking and initialize hardware sprite allocation system.</p>
+ This allocates a VRAM region for sprite tiles and initialize hardware sprite allocation system.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#ab08fa6fbe35f100894188c0de3afb8c0" title="Initialize the Sprite engine with default parameters.">SPR_init()</a> </dd>
 <dd>
 <a class="el" href="sprite__eng_8h.html#a85217a014c106c484b16a37d8e4e1279" title="End the Sprite engine.">SPR_end()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afd03d00ed3be960a396081a8b5f03a71"></a><!-- doxytag: member="sprite_eng.h::SPR_isVisible" ref="afd03d00ed3be960a396081a8b5f03a71" args="(Sprite *sprite, bool recompute)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_isVisible </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramname"><em>sprite</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>recompute</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method).<br/>
+ </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to return <em>visible</em> state </td></tr>
+    <tr><td class="paramname">recompute</td><td>Force visibility computation.<br/>
+ Only required if <a class="el" href="sprite__eng_8h.html#a45cf5d0e4da38baa4b2f4b35283c7aed" title="Update and display the active list of sprite.">SPR_update()</a> wasn't called since last sprite position change (note that can force the frame update processing).</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Note that only the sprite X position is used to determine if it's visible (see <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method for more information)</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the <em>visible</em> state for this sprite.</dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(...) </dd></dl>
 
 </div>
 </div>
@@ -876,7 +958,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_nextFrame </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em></td><td>)</td>
           <td></td>
         </tr>
@@ -887,7 +969,7 @@ Variables</h2></td></tr>
 <p>Pass to the next sprite frame. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to pass to next frame for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to pass to next frame for </td></tr>
   </table>
   </dd>
 </dl>
@@ -901,7 +983,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_releaseSprite </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em></td><td>)</td>
           <td></td>
         </tr>
@@ -912,11 +994,11 @@ Variables</h2></td></tr>
 <p>Release the specified sprite (no more visible and release its resources). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to release</td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to release</td></tr>
   </table>
   </dd>
 </dl>
-<p>This method release resources for the specified Sprite object and remove it from the screen at next <a class="el" href="sprite__eng_8h.html#a45cf5d0e4da38baa4b2f4b35283c7aed" title="Update and display the active list of sprite.">SPR_update()</a> call.</p>
+<p>This method release resources for the specified <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> object and remove it from the screen at next <a class="el" href="sprite__eng_8h.html#a45cf5d0e4da38baa4b2f4b35283c7aed" title="Update and display the active list of sprite.">SPR_update()</a> call.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd>SPR_releasesSprite(..) </dd></dl>
 
 </div>
@@ -935,7 +1017,7 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Reset the Sprite engine.<br/>
+<p>Reset the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine.<br/>
  </p>
 <p>This method releases all allocated sprites and their resources. </p>
 
@@ -948,7 +1030,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setAlwaysOnTop </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -965,7 +1047,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000086">Deprecated:</a></b></dt><dd>Use SPR_setDepth(SPR_MIN_DEPTH) instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000080">Deprecated:</a></b></dt><dd>Use SPR_setDepth(SPR_MIN_DEPTH) instead </dd></dl>
 
 </div>
 </div>
@@ -976,7 +1058,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setAlwaysVisible </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -993,7 +1075,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000087">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000081">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
 
 </div>
 </div>
@@ -1004,7 +1086,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setAnim </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1025,7 +1107,7 @@ Variables</h2></td></tr>
 <p>Set current sprite animation. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set animation for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set animation for </td></tr>
     <tr><td class="paramname">anim</td><td>animation index to set. </td></tr>
   </table>
   </dd>
@@ -1040,7 +1122,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setAnimAndFrame </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1067,7 +1149,7 @@ Variables</h2></td></tr>
 <p>Set current sprite animation and frame. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set animation and frame for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set animation and frame for </td></tr>
     <tr><td class="paramname">anim</td><td>animation index to set </td></tr>
     <tr><td class="paramname">frame</td><td>frame index to set </td></tr>
   </table>
@@ -1083,7 +1165,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setAutoTileUpload </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1104,7 +1186,7 @@ Variables</h2></td></tr>
 <p>Enable/disable the automatic upload of sprite tiles data into VRAM. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite we want to enable/disable auto tile upload for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> we want to enable/disable auto tile upload for </td></tr>
     <tr><td class="paramname">value</td><td>TRUE to enable the automatic upload of sprite tiles data into VRAM.<br/>
  FALSE to disable it (mean you have to handle that on your own).<br/>
  </td></tr>
@@ -1121,7 +1203,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_setDefinition </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1139,16 +1221,16 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Set the Sprite Definition. </p>
+<p>Set the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Definition. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set definition for. </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set definition for. </td></tr>
     <tr><td class="paramname">spriteDef</td><td>the <a class="el" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a> data to assign to this sprite.</td></tr>
   </table>
   </dd>
 </dl>
-<p>Set the Sprite Definition for this sprite.<br/>
- By default the first frame of the first animation from Sprite Definition is loaded.</p>
+<p>Set the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Definition for this sprite.<br/>
+ By default the first frame of the first animation from <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Definition is loaded.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if auto resource allocation failed, TRUE otherwise. </dd></dl>
 
 </div>
@@ -1160,7 +1242,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setDelayedFrameUpdate </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1181,7 +1263,7 @@ Variables</h2></td></tr>
 <p>Enable/disable the delayed frame update. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite we want to enable/disable delayed frame update </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> we want to enable/disable delayed frame update </td></tr>
     <tr><td class="paramname">value</td><td>TRUE to enable the delayed frame update when DMA is running out of transfert capacity.<br/>
  FALSE to disable it (sprite frame is always updated immediately but that may cause graphical glitches).<br/>
 </td></tr>
@@ -1199,7 +1281,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setDepth </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1220,12 +1302,12 @@ Variables</h2></td></tr>
 <p>Set sprite depth (for sprite display ordering) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set depth for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set depth for </td></tr>
     <tr><td class="paramname">value</td><td>The depth value (SPR_MIN_DEPTH to set always on top)</td></tr>
   </table>
   </dd>
 </dl>
-<p>Sprite having lower depth are display in front of sprite with higher depth.<br/>
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> having lower depth are display in front of sprite with higher depth.<br/>
  The sprite is *immediately* sorted when its depth value is changed. </p>
 
 </div>
@@ -1237,7 +1319,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setFrame </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1258,7 +1340,7 @@ Variables</h2></td></tr>
 <p>Set current sprite frame. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set frame for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set frame for </td></tr>
     <tr><td class="paramname">frame</td><td>frame index to set. </td></tr>
   </table>
   </dd>
@@ -1273,7 +1355,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setFrameChangeCallback </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1294,7 +1376,7 @@ Variables</h2></td></tr>
 <p>Set the frame change event callback for this sprite. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite we want to set the frame change callback </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> we want to set the frame change callback </td></tr>
     <tr><td class="paramname">callback</td><td>the callback (function pointer) to call when we just changed the animation frame for this sprite.</td></tr>
   </table>
   </dd>
@@ -1313,7 +1395,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setHFlip </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1334,7 +1416,7 @@ Variables</h2></td></tr>
 <p>Set sprite Horizontal Flip attribut. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set attribut for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set attribut for </td></tr>
     <tr><td class="paramname">value</td><td>The horizontal flip attribut value (TRUE or FALSE) </td></tr>
   </table>
   </dd>
@@ -1349,7 +1431,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setNeverVisible </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1366,7 +1448,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000088">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000082">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
 
 </div>
 </div>
@@ -1377,7 +1459,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setPalette </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1398,7 +1480,7 @@ Variables</h2></td></tr>
 <p>Set sprite <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> index to use. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set attribut for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set attribut for </td></tr>
     <tr><td class="paramname">value</td><td>The palette index to use for this sprite (PAL0, PAL1, PAL2 or PAL3) </td></tr>
   </table>
   </dd>
@@ -1413,7 +1495,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setPosition </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1440,7 +1522,7 @@ Variables</h2></td></tr>
 <p>Set sprite position. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set position for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set position for </td></tr>
     <tr><td class="paramname">x</td><td>X position </td></tr>
     <tr><td class="paramname">y</td><td>Y position </td></tr>
   </table>
@@ -1449,14 +1531,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a05f54d36b5649b37d770cb6dc873378f"></a><!-- doxytag: member="sprite_eng.h::SPR_setPriorityAttribut" ref="a05f54d36b5649b37d770cb6dc873378f" args="(Sprite *sprite, u16 value)" -->
+<a class="anchor" id="a27f1b65d1085f172556841f4be2de3df"></a><!-- doxytag: member="sprite_eng.h::SPR_setPriority" ref="a27f1b65d1085f172556841f4be2de3df" args="(Sprite *sprite, u16 value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void SPR_setPriorityAttribut </td>
+          <td class="memname">void SPR_setPriority </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1477,11 +1559,39 @@ Variables</h2></td></tr>
 <p>Set sprite Priority attribut. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set attribut for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set attribut for </td></tr>
     <tr><td class="paramname">value</td><td>The priority attribut value (TRUE or FALSE) </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a05f54d36b5649b37d770cb6dc873378f"></a><!-- doxytag: member="sprite_eng.h::SPR_setPriorityAttribut" ref="a05f54d36b5649b37d770cb6dc873378f" args="(Sprite *sprite, u16 value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SPR_setPriorityAttribut </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramname"><em>sprite</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000079">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a27f1b65d1085f172556841f4be2de3df" title="Set sprite Priority attribut.">SPR_setPriority</a>(..) instead </dd></dl>
 
 </div>
 </div>
@@ -1492,7 +1602,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_setSpriteTableIndex </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1513,15 +1623,15 @@ Variables</h2></td></tr>
 <p>Set the VDP sprite index to use for this sprite. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set the VDP Sprite index for </td></tr>
-    <tr><td class="paramname">value</td><td>the index of the first sprite in the VDP sprite table used to display this Sprite (should be &gt; 0 and &lt; 128).<br/>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set the VDP <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> index for </td></tr>
+    <tr><td class="paramname">value</td><td>the index of the first sprite in the VDP sprite table used to display this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (should be &gt; 0 and &lt; 128).<br/>
  Use <b>-1</b> for auto allocation.<br/>
  </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if auto allocation failed (can happen only if sprite is currently active), TRUE otherwise</dd></dl>
-<p>By default the Sprite Engine auto allocate VDP sprite but you can force manual allocation and fix the index of the first VDP sprite to use with this method.<br/>
+<p>By default the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine auto allocate VDP sprite but you can force manual allocation and fix the index of the first VDP sprite to use with this method.<br/>
  If you set the index manually you need to ensure you have enough available contiguous VDP sprites at this index so it can fit the current sprite requirement in VDP sprite. <b>WARNING: you cannot use sprite 0 as it is internally reserved.</b> </p>
 
 </div>
@@ -1533,7 +1643,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setVFlip </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1554,7 +1664,7 @@ Variables</h2></td></tr>
 <p>Set sprite Vertical Flip attribut. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set attribut for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set attribut for </td></tr>
     <tr><td class="paramname">value</td><td>The vertical flip attribut value (TRUE or FALSE) </td></tr>
   </table>
   </dd>
@@ -1569,7 +1679,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void SPR_setVisibility </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1590,16 +1700,25 @@ Variables</h2></td></tr>
 <p>Set the <em>visibility</em> state for this sprite. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set the <em>visibility</em> information </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set the <em>visibility</em> information </td></tr>
     <tr><td class="paramname">value</td><td>Visibility value to set.<br/>
  SpriteVisibility.VISIBLE = sprite is visible<br/>
  SpriteVisibility.HIDDEN = sprite is not visible<br/>
- SpriteVisibility.AUTO_FAST = visibility is automatically computed from sprite position (global visibility)<br/>
- SpriteVisibility.AUTO_SLOW = visibility is automatically computed from sprite position (per hardware sprite visibility)<br/>
- </td></tr>
+ SpriteVisibility.AUTO_FAST = visibility is automatically computed - global visibility (only using sprite X position)<br/>
+ SpriteVisibility.AUTO_SLOW = visibility is automatically computed - per hardware sprite visibility (only using sprite X position)<br/>
+</td></tr>
   </table>
   </dd>
 </dl>
+<p>The only interest in having a sprite hidden / not visible is to avoid having it consuming scanline sprite budget:<br/>
+ The VDP is limited to a maximum of 20 sprites or 320 pixels of sprite per scanline (16 sprites/256 px in H32 mode).<br/>
+ If we reach this limit, following sprites won't be renderer so it's important to try to optimize the number of sprites on a single scanline.<br/>
+ When a sprite is set to not visible (automatically or manually), its position is set offscreen *vertically* so it won't eat anymore the scanline sprite rendering budget, only X position test is required for that so a sprite is determined not visible only using its X coordinate.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#ae7ed2668e777d3f326b62b680d26076e">SPR_computeVisibility</a>(...) </dd>
+<dd>
+<a class="el" href="sprite__eng_8h.html#ae97c00e7a9dee82f518627550183e2e7" title="Return the visibility state for this sprite.  WARNING: this is different from SPR_isVisible(..) method, possible value are:  SpriteVisibility.VISIBLE = sprite is visible  SpriteVisibility.HIDDEN = sprite is not visible  SpriteVisibility.AUTO_FAST = visibility is automatically computed - global visibility (only using sprite X position)  SpriteVisibility.AUTO_SLOW = visibility is automatically computed - per hardware sprite visibility (only using sprite X position) ">SPR_getVisibility</a>(...) </dd>
+<dd>
+<a class="el" href="sprite__eng_8h.html#afd03d00ed3be960a396081a8b5f03a71" title="Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see SPR_setVisibility(..) method). ">SPR_isVisible</a>(...) </dd></dl>
 
 </div>
 </div>
@@ -1610,7 +1729,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_setVRAMTileIndex </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct___sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
           <td class="paramname"><em>sprite</em>, </td>
         </tr>
         <tr>
@@ -1631,7 +1750,7 @@ Variables</h2></td></tr>
 <p>Set the VRAM tile position reserved for this sprite. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td>Sprite to set the VRAM tile position for </td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set the VRAM tile position for </td></tr>
     <tr><td class="paramname">value</td><td>the tile position in VRAM where we will upload the sprite tiles data.<br/>
  Use <b>-1</b> for auto allocation.<br/>
  </td></tr>
@@ -1639,7 +1758,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if auto allocation failed (can happen only if sprite is currently active), TRUE otherwise</dd></dl>
-<p>By default the Sprite Engine auto allocate VRAM for sprites tiles but you can force manual allocation and fix the sprite tiles position in VRAM with this method. </p>
+<p>By default the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine auto allocate VRAM for sprites tiles but you can force manual allocation and fix the sprite tiles position in VRAM with this method. </p>
 
 </div>
 </div>
@@ -1664,6 +1783,48 @@ Variables</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Variable Documentation</h2>
+<a class="anchor" id="a8f52e18717357ee667565f4aa087c31e"></a><!-- doxytag: member="sprite_eng.h::firstSprite" ref="a8f52e18717357ee667565f4aa087c31e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* <a class="el" href="sprite__eng_8h.html#a8f52e18717357ee667565f4aa087c31e">firstSprite</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>First allocated sprite (NULL if no sprite allocated) </p>
+
+</div>
+</div>
+<a class="anchor" id="ab6b973085a740f846f3d62dd01a9ad07"></a><!-- doxytag: member="sprite_eng.h::lastSprite" ref="ab6b973085a740f846f3d62dd01a9ad07" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* <a class="el" href="sprite__eng_8h.html#ab6b973085a740f846f3d62dd01a9ad07">lastSprite</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Last allocated sprite (NULL if no sprite allocated) </p>
+
+</div>
+</div>
+<a class="anchor" id="a878fe8e5e2a1d73ae026b66b7062233d"></a><!-- doxytag: member="sprite_eng.h::spritesBank" ref="a878fe8e5e2a1d73ae026b66b7062233d" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_sprite.html">Sprite</a>* <a class="el" href="sprite__eng_8h.html#a878fe8e5e2a1d73ae026b66b7062233d">spritesBank</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Sprites bank for the sprite engine </p>
+
+</div>
+</div>
 <a class="anchor" id="a6c07bb0777a434f9078e6cd395ceaf58"></a><!-- doxytag: member="sprite_eng.h::spriteVramSize" ref="a6c07bb0777a434f9078e6cd395ceaf58" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -1674,7 +1835,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Allocated VRAM (in tile) for Sprite Engine </p>
+<p>Allocated VRAM (in tile) for <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine </p>
 
 </div>
 </div>
@@ -1683,7 +1844,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sprite__eng_8h.html">sprite_eng.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

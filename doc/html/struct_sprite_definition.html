@@ -83,7 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <!-- doxytag: class="SpriteDefinition" -->
-<p>Sprite definition structure.  
+<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> definition structure.  
  <a href="struct_sprite_definition.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="sprite__eng_8h_source.html">sprite_eng.h</a>&gt;</code></p>
@@ -92,6 +92,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a53b06eb585afe30dd296e6ccbf28b6"></a><!-- doxytag: member="SpriteDefinition::w" ref="a4a53b06eb585afe30dd296e6ccbf28b6" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>w</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8a884fc356d9d027c0d953f810e81dd"></a><!-- doxytag: member="SpriteDefinition::h" ref="ae8a884fc356d9d027c0d953f810e81dd" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>h</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9b130595df8d9fa116a5ea5d4d6be33"></a><!-- doxytag: member="SpriteDefinition::palette" ref="af9b130595df8d9fa116a5ea5d4d6be33" args="" -->
 <a class="el" href="struct_palette.html">Palette</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>palette</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4d0abaca6c8452a4d1d944aa6d29e9d"></a><!-- doxytag: member="SpriteDefinition::numAnimation" ref="aa4d0abaca6c8452a4d1d944aa6d29e9d" args="" -->
@@ -104,10 +108,12 @@ Public Attributes</h2></td></tr>
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>maxNumSprite</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Sprite definition structure. </p>
+<div class="textblock"><p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> definition structure. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">palette</td><td>Default palette data </td></tr>
+    <tr><td class="paramname">w</td><td>frame cell width in pixel </td></tr>
+    <tr><td class="paramname">h</td><td>frame cell height in pixel </td></tr>
+    <tr><td class="paramname">palette</td><td>default palette data </td></tr>
     <tr><td class="paramname">numAnimation</td><td>number of animation for this sprite </td></tr>
     <tr><td class="paramname">animations</td><td>animation definitions </td></tr>
     <tr><td class="paramname">maxNumTile</td><td>maximum number of tile used by a single animation frame (used for VRAM tile space allocation) </td></tr>
@@ -115,7 +121,7 @@ Public Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Contains all animations for a Sprite and internal informations. </p>
+<p>Contains all animations for a <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> and internal informations. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li><a class="el" href="sprite__eng_8h_source.html">sprite_eng.h</a></li>
 </ul>
@@ -124,7 +130,7 @@ Public Attributes</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct_sprite_definition.html">SpriteDefinition</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

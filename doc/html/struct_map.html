@@ -76,16 +76,65 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
 <div id="doc-content">
 <div class="header">
+  <div class="summary">
+<a href="#pub-attribs">Public Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">Map Struct Reference</div>  </div>
 </div>
 <div class="contents">
 <!-- doxytag: class="Map" -->
+<p><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>.  
+ <a href="struct_map.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="map_8h_source.html">map.h</a>&gt;</code></p>
+
+<p><a href="struct_map-members.html">List of all members.</a></p>
 <table class="memberdecls">
+<tr><td colspan="2"><h2><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5bde72a36485719799c608e330761697"></a><!-- doxytag: member="Map::w" ref="a5bde72a36485719799c608e330761697" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>w</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae62abd3fbbc18289169508e1127956e7"></a><!-- doxytag: member="Map::h" ref="ae62abd3fbbc18289169508e1127956e7" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>h</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86dfd949bd754cf6225c0daa7d66c032"></a><!-- doxytag: member="Map::metaTiles" ref="a86dfd949bd754cf6225c0daa7d66c032" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>metaTiles</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03a2ca9c55610c708102289aefb2d54d"></a><!-- doxytag: member="Map::blocks" ref="a03a2ca9c55610c708102289aefb2d54d" args="" -->
+void *&#160;</td><td class="memItemRight" valign="bottom"><b>blocks</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58bf7bff3e7c4a4f7077b74355ab2c18"></a><!-- doxytag: member="Map::blockIndexes" ref="a58bf7bff3e7c4a4f7077b74355ab2c18" args="" -->
+void *&#160;</td><td class="memItemRight" valign="bottom"><b>blockIndexes</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adaf73d7b4224af5616cf6f0fb88e4dbf"></a><!-- doxytag: member="Map::blockRowOffsets" ref="adaf73d7b4224af5616cf6f0fb88e4dbf" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>blockRowOffsets</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31063d709f6dbfadb1dd57e051454820"></a><!-- doxytag: member="Map::plane" ref="a31063d709f6dbfadb1dd57e051454820" args="" -->
+<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td><td class="memItemRight" valign="bottom"><b>plane</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a19ea6113090810ba9df3c3b21c185879"></a><!-- doxytag: member="Map::baseTile" ref="a19ea6113090810ba9df3c3b21c185879" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>baseTile</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a049a83b182ffb22be58c58e3f74f8257"></a><!-- doxytag: member="Map::posX" ref="a049a83b182ffb22be58c58e3f74f8257" args="" -->
+<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><b>posX</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64f8c5a3ecf91519cface0b062d13a59"></a><!-- doxytag: member="Map::posY" ref="a64f8c5a3ecf91519cface0b062d13a59" args="" -->
+<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><b>posY</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4b57fabf094d5dab1ad1498c397a468"></a><!-- doxytag: member="Map::planeWidthMask" ref="ad4b57fabf094d5dab1ad1498c397a468" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>planeWidthMask</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a976a8158797b1f4ef02518f78f10f100"></a><!-- doxytag: member="Map::planeHeightMask" ref="a976a8158797b1f4ef02518f78f10f100" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>planeHeightMask</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e23f5c632dfbdf3aa903f4993bd07b3"></a><!-- doxytag: member="Map::lastXT" ref="a6e23f5c632dfbdf3aa903f4993bd07b3" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>lastXT</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01911c20b1bf0d8debdd16f81c495c62"></a><!-- doxytag: member="Map::lastYT" ref="a01911c20b1bf0d8debdd16f81c495c62" args="" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>lastYT</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d0e82c431d960af22e86796d2613ed7"></a><!-- doxytag: member="Map::hScrollTable" ref="a5d0e82c431d960af22e86796d2613ed7" args="[240]" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>hScrollTable</b> [240]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb5a6ec47e357ec0ae061bdf60c60c5e"></a><!-- doxytag: member="Map::vScrollTable" ref="aeb5a6ec47e357ec0ae061bdf60c60c5e" args="[20]" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vScrollTable</b> [20]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a8155a23330523a6069650531b685a3"></a><!-- doxytag: member="Map::prepareMapDataColumnCB" ref="a6a8155a23330523a6069650531b685a3" args=")(struct Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height)" -->
+void(*&#160;</td><td class="memItemRight" valign="bottom"><b>prepareMapDataColumnCB</b> )(struct <a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *bufCol1, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *bufCol2, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> xm, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ym, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> height)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e932bbe597a289fce6f597d01294b69"></a><!-- doxytag: member="Map::prepareMapDataRowCB" ref="a9e932bbe597a289fce6f597d01294b69" args=")(struct Map *map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width)" -->
+void(*&#160;</td><td class="memItemRight" valign="bottom"><b>prepareMapDataRowCB</b> )(struct <a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *bufRow1, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *bufRow2, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> xm, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ym, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> width)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9329348a56f31c5e954827e5d4b09f80"></a><!-- doxytag: member="Map::getMetaTileCB" ref="a9329348a56f31c5e954827e5d4b09f80" args=")(struct Map *map, u16 x, u16 y)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>(*&#160;</td><td class="memItemRight" valign="bottom"><b>getMetaTileCB</b> )(struct <a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8afb6c18f696e403da14186641968d51"></a><!-- doxytag: member="Map::getMetaTilemapRectCB" ref="a8afb6c18f696e403da14186641968d51" args=")(struct Map *map, u16 x, u16 y, u16 w, u16 h, u16 *dest)" -->
+void(*&#160;</td><td class="memItemRight" valign="bottom"><b>getMetaTilemapRectCB</b> )(struct <a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *dest)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="struct_map.html">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a></p>
+<div class="textblock"><p><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing information for large background/plane update based on <a class="el" href="struct_map_definition.html" title="MapDefinition structure which contains data for large level background.  It&#39;s optimized to encode lar...">MapDefinition</a>. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">w</td><td>map width in block (128x128 pixels block) </td></tr>
@@ -104,6 +153,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <tr><td class="paramname">lastYT</td><td>internal </td></tr>
     <tr><td class="paramname">prepareMapDataColumnCB</td><td>internal </td></tr>
     <tr><td class="paramname">prepareMapDataRowCB</td><td>internal </td></tr>
+    <tr><td class="paramname">hScrollTable</td><td>internal </td></tr>
+    <tr><td class="paramname">vScrollTable</td><td>internal </td></tr>
     <tr><td class="paramname">getMetaTileCB</td><td>internal </td></tr>
     <tr><td class="paramname">getMetaTilemapRectCB</td><td>internal </td></tr>
   </table>
@@ -117,7 +168,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct_map.html">Map</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:45:04 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

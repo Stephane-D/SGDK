@@ -214,7 +214,7 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Font base tile index. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0165afa29e400fa1eb2a3b199b3b996"></a><!-- doxytag: member="vdp.h::TILE_SPRITEINDEX" ref="ae0165afa29e400fa1eb2a3b199b3b996" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae0165afa29e400fa1eb2a3b199b3b996">TILE_SPRITEINDEX</a>&#160;&#160;&#160;(TILE_FONTINDEX - <a class="el" href="sprite__eng_8h.html#a6c07bb0777a434f9078e6cd395ceaf58">spriteVramSize</a>)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprite engine base tile index (equal TILE_FONTINDEX if Sprite Engine is not initialized). <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine base tile index (equal TILE_FONTINDEX if <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine is not initialized). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac149a6347ea7afecb802ac017b144224"></a><!-- doxytag: member="vdp.h::TILE_USERLENGTH" ref="ac149a6347ea7afecb802ac017b144224" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac149a6347ea7afecb802ac017b144224">TILE_USERLENGTH</a>&#160;&#160;&#160;((userTileMaxIndex - TILE_USERINDEX) + 1)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of available user tile. <br/></td></tr>
@@ -394,7 +394,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8c5cffc7652b8d9c1f2585f059b00b6b">VDP_getWindowPlanAddress</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab855f50da58b5b40349eedf830f396d7"></a><!-- doxytag: member="vdp.h::VDP_getSpriteListAddress" ref="ab855f50da58b5b40349eedf830f396d7" args="()" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab855f50da58b5b40349eedf830f396d7">VDP_getSpriteListAddress</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of Sprite list. <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> list. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac93008561bd3fa36e6562387ae1921e7"></a><!-- doxytag: member="vdp.h::VDP_getHScrollTableAddress" ref="ac93008561bd3fa36e6562387ae1921e7" args="()" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac93008561bd3fa36e6562387ae1921e7">VDP_getHScrollTableAddress</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of H SCroll table. <br/></td></tr>
@@ -426,12 +426,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a43c8dc47075db8250040db50b2e6fa6f">VDP_setWindowPlanAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a66bf8cbd2c4dbce406e817ce68b7c9"></a><!-- doxytag: member="vdp.h::VDP_setSpriteListAddress" ref="a0a66bf8cbd2c4dbce406e817ce68b7c9" args="(u16 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a0a66bf8cbd2c4dbce406e817ce68b7c9">VDP_setSpriteListAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of Sprite list.<br/>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> list.<br/>
  The address should be at multiple of $400 in H40 and $200 in H32<br/>
  <br/>
  Ex:<br/>
  VDP_setSpriteListAddress(0xD800)<br/>
- Will set the Sprite list to at address 0xD800 in VRAM. <br/></td></tr>
+ Will set the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> list to at address 0xD800 in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f5df5f64af9caa73bd00859b3184762"></a><!-- doxytag: member="vdp.h::VDP_setHScrollTableAddress" ref="a7f5df5f64af9caa73bd00859b3184762" args="(u16 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7f5df5f64af9caa73bd00859b3184762">VDP_setHScrollTableAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VRAM address (location) of H Scroll table.<br/>
@@ -532,7 +532,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000027">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000090">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -546,7 +546,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000028">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000091">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -560,7 +560,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000023">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000086">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
 
 </div>
 </div>
@@ -574,7 +574,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000024">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000087">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
 
 </div>
 </div>
@@ -588,7 +588,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000025">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000088">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
 
 </div>
 </div>
@@ -602,7 +602,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000026">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000089">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
 
 </div>
 </div>
@@ -640,7 +640,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000030">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000093">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -657,7 +657,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000031">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000094">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -798,7 +798,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000032">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000095">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -854,7 +854,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000033">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000096">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -872,7 +872,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000034">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000097">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1016,8 +1016,8 @@ Variables</h2></td></tr>
  Possible values are 32, 64 or 128. </td></tr>
     <tr><td class="paramname">h</td><td>height in tile.<br/>
  Possible values are 32, 64 or 128. </td></tr>
-    <tr><td class="paramname">setupVram</td><td>If set to TRUE then tilemaps and tables will be automatically remapped in VRAM depending the plane size.<br/>
- If you don't know what that means then it's better to keep this value to TRUE :p </td></tr>
+    <tr><td class="paramname">setupVram</td><td>If set to TRUE then tilemaps and tables will be automatically remapped in VRAM depending the plane size. If you don't know what that means then it's better to keep this value to TRUE :p<br/>
+ Be careful to redraw your backgrounds, also the sprite engine may need to re-allocate its VRAM region if location changed. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1048,7 +1048,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000029">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000092">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1262,7 +1262,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000035">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000098">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1318,7 +1318,7 @@ Variables</h2></td></tr>
 
 <p>Display the estimated CPU load (in %). </p>
 <p>This function actually display an estimation of the CPU load (in %) for the last frame.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a0cab55e25824806a19c4b0e64cc42b3c" title="Return an estimation of CPU load (in %)">SYS_getCPULoad()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a0cab55e25824806a19c4b0e64cc42b3c" title="Return an estimation of CPU frame load (in %)">SYS_getCPULoad()</a> </dd></dl>
 
 </div>
 </div>
@@ -1365,7 +1365,7 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Wait for DMA operation to complete. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000036">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000099">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
 
 </div>
 </div>
@@ -1564,7 +1564,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp_8h.html">vdp.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -6,8 +6,6 @@ var NAVTREE =
     ] ],
     [ "Class List", "annotated.html", [
       [ "_collision", "struct__collision.html", null ],
-      [ "_Map", "struct___map.html", null ],
-      [ "_Sprite", "struct___sprite.html", null ],
       [ "Animation", "struct_animation.html", null ],
       [ "AnimationFrame", "struct_animation_frame.html", null ],
       [ "Bitmap", "struct_bitmap.html", null ],
@@ -18,10 +16,10 @@ var NAVTREE =
       [ "Collision", "struct_collision.html", null ],
       [ "Context3D", "struct_context3_d.html", null ],
       [ "DMAOpInfo", "struct_d_m_a_op_info.html", null ],
-      [ "FrameInfo", "struct_frame_info.html", null ],
       [ "FrameVDPSprite", "struct_frame_v_d_p_sprite.html", null ],
       [ "Image", "struct_image.html", null ],
       [ "Line", "struct_line.html", null ],
+      [ "Map", "struct_map.html", null ],
       [ "MapDefinition", "struct_map_definition.html", null ],
       [ "Mat2D_f16", "struct_mat2_d__f16.html", null ],
       [ "Mat2D_f32", "struct_mat2_d__f32.html", null ],
@@ -31,6 +29,8 @@ var NAVTREE =
       [ "Mat4D_f32", "struct_mat4_d__f32.html", null ],
       [ "Palette", "struct_palette.html", null ],
       [ "Pixel", "struct_pixel.html", null ],
+      [ "ROMHeader", "struct_r_o_m_header.html", null ],
+      [ "Sprite", "struct_sprite.html", null ],
       [ "SpriteDefinition", "struct_sprite_definition.html", null ],
       [ "TileMap", "struct_tile_map.html", null ],
       [ "TileSet", "struct_tile_set.html", null ],
@@ -94,9 +94,7 @@ var NAVTREE =
       [ "vram.h", "vram_8h.html", null ],
       [ "xgm.h", "xgm_8h.html", null ],
       [ "ym2612.h", "ym2612_8h.html", null ],
-      [ "z80_ctrl.h", "z80__ctrl_8h.html", null ],
-      [ "z80_mvsc.h", "z80__mvsc_8h.html", null ],
-      [ "z80_vgm.h", "z80__vgm_8h.html", null ]
+      [ "z80_ctrl.h", "z80__ctrl_8h.html", null ]
     ] ],
     [ "File Members", "globals.html", null ]
   ] ]

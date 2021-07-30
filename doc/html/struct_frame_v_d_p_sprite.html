@@ -94,21 +94,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5981225258c60314ee2e11e22706dd9a"></a><!-- doxytag: member="FrameVDPSprite::numTile" ref="a5981225258c60314ee2e11e22706dd9a" args="" -->
 <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>numTile</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a830df3e8c53bca407965dc09e71a1ca0"></a><!-- doxytag: member="FrameVDPSprite::offsetY" ref="a830df3e8c53bca407965dc09e71a1ca0" args="" -->
-<a class="el" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>offsetY</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a371c1e02ad19424b5839e1d628c0a5f9"></a><!-- doxytag: member="FrameVDPSprite::offsetY" ref="a371c1e02ad19424b5839e1d628c0a5f9" args="" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>offsetY</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e5a73dec6def33c181ea71158737d91"></a><!-- doxytag: member="FrameVDPSprite::offsetYFlip" ref="a1e5a73dec6def33c181ea71158737d91" args="" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>offsetYFlip</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1c4856917e5072b3ac7a408d7753b8c"></a><!-- doxytag: member="FrameVDPSprite::size" ref="af1c4856917e5072b3ac7a408d7753b8c" args="" -->
 <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>size</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0681672775bce43626faa4c68e14bd7"></a><!-- doxytag: member="FrameVDPSprite::offsetX" ref="ad0681672775bce43626faa4c68e14bd7" args="" -->
-<a class="el" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>offsetX</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a81e1c7aec8959500720783058db1becd"></a><!-- doxytag: member="FrameVDPSprite::offsetX" ref="a81e1c7aec8959500720783058db1becd" args="" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>offsetX</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ad1cc6b62447e9fcbc883aa5cdcca09"></a><!-- doxytag: member="FrameVDPSprite::offsetXFlip" ref="a0ad1cc6b62447e9fcbc883aa5cdcca09" args="" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><b>offsetXFlip</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Single VDP sprite info structure for sprite animation frame. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">numTile</td><td>number of tile for this VDP sprite (should be coherent with the given size field) </td></tr>
-    <tr><td class="paramname">offsetY</td><td>Y offset for this VDP sprite relative to global Sprite position </td></tr>
+    <tr><td class="paramname">offsetY</td><td>Y offset for this VDP sprite relative to global <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position </td></tr>
+    <tr><td class="paramname">offsetYFlip</td><td>Y offset (flip version) for this VDP sprite relative to global <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position </td></tr>
     <tr><td class="paramname">size</td><td>sprite size (see SPRITE_SIZE macro) </td></tr>
-    <tr><td class="paramname">offsetX</td><td>X offset for this VDP sprite relative to global Sprite position </td></tr>
+    <tr><td class="paramname">offsetX</td><td>X offset for this VDP sprite relative to global <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position </td></tr>
+    <tr><td class="paramname">offsetXFlip</td><td>X offset (flip version) for this VDP sprite relative to global <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position </td></tr>
   </table>
   </dd>
 </dl>
@@ -120,7 +126,7 @@ Public Attributes</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct_frame_v_d_p_sprite.html">FrameVDPSprite</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:20 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

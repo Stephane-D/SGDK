@@ -113,13 +113,15 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a7e2996b9179e35f76960ab4f15f85d9c">LIB_LOG_LEVEL</a>&#160;&#160;&#160;LOG_LEVEL_DISABLE</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define library log level (for debug build) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4dbd3badcdb6094eb9a9a00a660ba3b8"></a><!-- doxytag: member="config.h::HALT_Z80_ON_DMA" ref="a4dbd3badcdb6094eb9a9a00a660ba3b8" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a4dbd3badcdb6094eb9a9a00a660ba3b8">HALT_Z80_ON_DMA</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to force Z80 halt during DMA operation.<br/>
- Some Megadrive models (as 2016 Tectoy Megadrive) need it to prevent some possible 68000 memory or Z80 corruption bugs (may happen when Z80 access the main BUS during a DMA operation). <br/></td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a4dbd3badcdb6094eb9a9a00a660ba3b8">HALT_Z80_ON_DMA</a>&#160;&#160;&#160;1</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to force Z80 halt during DMA operation (default).<br/>
+ Some Megadrive models need it to prevent some possible DMA transfer corruption or even 68000 memory or Z80 invalid data fetch in very rare case.<br/>
+ This actually happen when Z80 access the main BUS exactly at same time you trigger a DMA operation.<br/>
+ If you are 100% sure that you are actually avoiding that case you may try to disable the flag (at your own risk though). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2adc6dcc736109045da97cc0d8c54244"></a><!-- doxytag: member="config.h::HALT_Z80_ON_IO" ref="a2adc6dcc736109045da97cc0d8c54244" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">HALT_Z80_ON_IO</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to force Z80 halt during IO port (controller) accesses.<br/>
- Some Megadrive models (as some MD2) need it to prevent some possible Z80 corruption bugs (may happen when Z80 access the main BUS during IO port access from 68K). <br/></td></tr>
+ Some Megadrive models (as some MD2) need it to prevent some possible (but very rare) Z80 corruption bugs (may happen when Z80 access the main BUS during IO port access from 68K). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d2163fee9102ccfe4da038b29df814e"></a><!-- doxytag: member="config.h::DMA_DISABLED" ref="a6d2163fee9102ccfe4da038b29df814e" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a6d2163fee9102ccfe4da038b29df814e">DMA_DISABLED</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to completely disable DMA transfers (for testing purpose) and replace them with (slower) software CPU copy. <br/></td></tr>
@@ -129,10 +131,6 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a071a17c9240694ea053efd33130ad764">ENABLE_NEWLIB</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use newlib with SGDK.<br/>
  That will disable any standard methods from SGDK to replace them by newlib library implementation. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4f786f2792c840d47dfd0b1a8161a76"></a><!-- doxytag: member="config.h::MATH_BIG_TABLES" ref="ae4f786f2792c840d47dfd0b1a8161a76" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ae4f786f2792c840d47dfd0b1a8161a76">MATH_BIG_TABLES</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 to enable the big Math lookup tables.<br/>
- This table permits Log2, Log10 and Sqrt operation for fix16 type (128*3 KB of rom). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae567e22de980e82ed4be4028a55e049"></a><!-- doxytag: member="config.h::FAT16_SUPPORT" ref="aae567e22de980e82ed4be4028a55e049" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#aae567e22de980e82ed4be4028a55e049">FAT16_SUPPORT</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use FAT16 methods provided by Krik.<br/>
@@ -168,7 +166,7 @@ Defines</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

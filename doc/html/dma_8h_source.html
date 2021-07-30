@@ -95,91 +95,94 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00027"></a>00027 <span class="preprocessor"></span>
 <a name="l00031"></a><a class="code" href="dma_8h.html#a3bbb0cd77f08b981e4b1bf80db0ab6ad">00031</a> <span class="preprocessor">#define DMA_VSRAM   2</span>
 <a name="l00032"></a>00032 <span class="preprocessor"></span>
-<a name="l00033"></a>00033 <span class="preprocessor">#define DMA_QUEUE_SIZE_DEFAULT      80</span>
-<a name="l00034"></a>00034 <span class="preprocessor"></span><span class="preprocessor">#define DMA_QUEUE_SIZE_MIN          32</span>
+<a name="l00033"></a>00033 <span class="preprocessor">#define DMA_QUEUE_SIZE_DEFAULT          80</span>
+<a name="l00034"></a>00034 <span class="preprocessor"></span><span class="preprocessor">#define DMA_QUEUE_SIZE_MIN              32</span>
 <a name="l00035"></a>00035 <span class="preprocessor"></span>
-<a name="l00036"></a>00036 <span class="preprocessor">#define DMA_TRANSFER_CAPACITY_NTSC  7200</span>
-<a name="l00037"></a>00037 <span class="preprocessor"></span><span class="preprocessor">#define DMA_TRANSFER_CAPACITY_PAL   15000</span>
-<a name="l00038"></a>00038 <span class="preprocessor"></span>
-<a name="l00039"></a>00039 <span class="preprocessor">#define DMA_BUFFER_SIZE_NTSC        (8 * 1024)</span>
-<a name="l00040"></a>00040 <span class="preprocessor"></span><span class="preprocessor">#define DMA_BUFFER_SIZE_PAL         (14 * 1024)</span>
-<a name="l00041"></a>00041 <span class="preprocessor"></span><span class="preprocessor">#define DMA_BUFFER_SIZE_MIN         (2 * 1024)</span>
-<a name="l00042"></a>00042 <span class="preprocessor"></span>
-<a name="l00043"></a>00043 
-<a name="l00048"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">00048</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
-<a name="l00049"></a>00049 {
-<a name="l00050"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a0035eb0600d18dfc302f6bf7a7cbfa3b">00050</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a0035eb0600d18dfc302f6bf7a7cbfa3b">CPU</a> = 0,            
-<a name="l00051"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a6537a62f6f155792bb9a320ee2ec4d68">00051</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a6537a62f6f155792bb9a320ee2ec4d68">DMA</a> = 1,            
-<a name="l00052"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a5cf93c26f5b5eadbcd28a16de3c7dfa1">00052</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a5cf93c26f5b5eadbcd28a16de3c7dfa1">DMA_QUEUE</a> = 2,      
-<a name="l00053"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a71a94b622881a79a09d349f0df1e1966">00053</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a71a94b622881a79a09d349f0df1e1966">DMA_QUEUE_COPY</a> = 3  
-<a name="l00054"></a>00054 } <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a>;
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056 
-<a name="l00061"></a><a class="code" href="struct_d_m_a_op_info.html">00061</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00062"></a>00062 {
-<a name="l00063"></a>00063     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> regLenL;        <span class="comment">// (newLen &amp; 0xFF) | 0x9300;</span>
-<a name="l00064"></a>00064     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> regLenH;        <span class="comment">// ((newLen &gt;&gt; 8) &amp; 0xFF) | 0x9400;</span>
-<a name="l00065"></a>00065     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> regAddrMStep;   <span class="comment">// (((addr &lt;&lt; 7) &amp; 0xFF0000) | 0x96008F00) + step;</span>
-<a name="l00066"></a>00066     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> regAddrHAddrL;  <span class="comment">// ((addr &gt;&gt; 1) &amp; 0x7F00FF) | 0x97009500;</span>
-<a name="l00067"></a>00067     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> regCtrlWrite;   <span class="comment">// GFX_DMA_VRAMCOPY_ADDR(to)</span>
-<a name="l00068"></a>00068 } <a class="code" href="struct_d_m_a_op_info.html" title="DMA transfer definition (used for DMA queue)">DMAOpInfo</a>;
-<a name="l00069"></a>00069 
-<a name="l00070"></a>00070 
-<a name="l00075"></a>00075 <span class="keyword">extern</span> <a class="code" href="struct_d_m_a_op_info.html" title="DMA transfer definition (used for DMA queue)">DMAOpInfo</a> *dmaQueues;
-<a name="l00076"></a>00076 
-<a name="l00077"></a>00077 
-<a name="l00087"></a>00087 <span class="keywordtype">void</span> DMA_init();
-<a name="l00107"></a>00107 <span class="keywordtype">void</span> DMA_initEx(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> capacity, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> bufferSize);
-<a name="l00108"></a>00108 
-<a name="l00117"></a>00117 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getAutoFlush();
-<a name="l00126"></a>00126 <span class="keywordtype">void</span> DMA_setAutoFlush(<span class="keywordtype">bool</span> value);
-<a name="l00133"></a>00133 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getMaxQueueSize();
-<a name="l00145"></a>00145 <span class="keywordtype">void</span> DMA_setMaxQueueSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00153"></a>00153 <span class="keywordtype">void</span> DMA_setMaxQueueSizeToDefault();
-<a name="l00161"></a>00161 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getMaxTransferSize();
-<a name="l00174"></a>00174 <span class="keywordtype">void</span> DMA_setMaxTransferSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00181"></a>00181 <span class="keywordtype">void</span> DMA_setMaxTransferSizeToDefault();
-<a name="l00189"></a>00189 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getBufferSize();
-<a name="l00203"></a>00203 <span class="keywordtype">void</span> DMA_setBufferSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00210"></a>00210 <span class="keywordtype">void</span> DMA_setBufferSizeToDefault();
-<a name="l00217"></a>00217 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getIgnoreOverCapacity();
-<a name="l00228"></a>00228 <span class="keywordtype">void</span> DMA_setIgnoreOverCapacity(<span class="keywordtype">bool</span> value);
-<a name="l00229"></a>00229 
-<a name="l00235"></a>00235 <span class="keywordtype">void</span> DMA_clearQueue();
-<a name="l00248"></a>00248 <span class="keywordtype">void</span> DMA_flushQueue();
-<a name="l00249"></a>00249 
-<a name="l00254"></a>00254 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getQueueSize();
-<a name="l00261"></a>00261 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getQueueTransferSize();
-<a name="l00262"></a>00262 
-<a name="l00276"></a>00276 <span class="keywordtype">void</span>* DMA_allocateTemp(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00286"></a>00286 <span class="keywordtype">void</span> DMA_releaseTemp(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00287"></a>00287 
-<a name="l00319"></a>00319 <span class="keywordtype">bool</span> DMA_transfer(<a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
-<a name="l00320"></a>00320 
-<a name="l00347"></a>00347 <span class="keywordtype">void</span>* DMA_allocateAndQueueDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
-<a name="l00373"></a>00373 <span class="keywordtype">bool</span> DMA_copyAndQueueDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
-<a name="l00399"></a>00399 <span class="keywordtype">bool</span> DMA_queueDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
-<a name="l00405"></a>00405 <span class="keywordtype">bool</span> DMA_queueDmaFast(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
-<a name="l00406"></a>00406 
-<a name="l00429"></a>00429 <span class="keywordtype">void</span> DMA_doDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
-<a name="l00435"></a>00435 <span class="keywordtype">void</span> DMA_doDmaFast(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
-<a name="l00436"></a>00436 
-<a name="l00458"></a>00458 <span class="keywordtype">void</span> DMA_doCPUCopy(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
-<a name="l00474"></a>00474 <span class="keywordtype">void</span> DMA_doCPUCopyDirect(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> cmd, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
-<a name="l00475"></a>00475 
-<a name="l00491"></a>00491 <span class="keywordtype">void</span> DMA_doVRamFill(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
-<a name="l00506"></a>00506 <span class="keywordtype">void</span> DMA_doVRamCopy(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
-<a name="l00507"></a>00507 
-<a name="l00512"></a>00512 <span class="keywordtype">void</span> DMA_waitCompletion();
-<a name="l00513"></a>00513 
-<a name="l00514"></a>00514 
-<a name="l00515"></a>00515 <span class="preprocessor">#endif // _DMA_H_</span>
+<a name="l00036"></a>00036 <span class="preprocessor">#define DMA_TRANSFER_CAPACITY_NTSC      7200</span>
+<a name="l00037"></a>00037 <span class="preprocessor"></span><span class="preprocessor">#define DMA_TRANSFER_CAPACITY_PAL_LOW   8000</span>
+<a name="l00038"></a>00038 <span class="preprocessor"></span><span class="preprocessor">#define DMA_TRANSFER_CAPACITY_PAL_MAX   15000</span>
+<a name="l00039"></a>00039 <span class="preprocessor"></span>
+<a name="l00040"></a>00040 <span class="preprocessor">#define DMA_BUFFER_SIZE_NTSC            DMA_TRANSFER_CAPACITY_NTSC</span>
+<a name="l00041"></a>00041 <span class="preprocessor"></span><span class="preprocessor">#define DMA_BUFFER_SIZE_PAL_LOW         DMA_TRANSFER_CAPACITY_PAL_LOW</span>
+<a name="l00042"></a>00042 <span class="preprocessor"></span><span class="preprocessor">#define DMA_BUFFER_SIZE_PAL_MAX         (14 * 1024)</span>
+<a name="l00043"></a>00043 <span class="preprocessor"></span><span class="preprocessor">#define DMA_BUFFER_SIZE_MIN             (2 * 1024)</span>
+<a name="l00044"></a>00044 <span class="preprocessor"></span>
+<a name="l00045"></a>00045 
+<a name="l00050"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">00050</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
+<a name="l00051"></a>00051 {
+<a name="l00052"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a0035eb0600d18dfc302f6bf7a7cbfa3b">00052</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a0035eb0600d18dfc302f6bf7a7cbfa3b">CPU</a> = 0,            
+<a name="l00053"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a6537a62f6f155792bb9a320ee2ec4d68">00053</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a6537a62f6f155792bb9a320ee2ec4d68">DMA</a> = 1,            
+<a name="l00054"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a5cf93c26f5b5eadbcd28a16de3c7dfa1">00054</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a5cf93c26f5b5eadbcd28a16de3c7dfa1">DMA_QUEUE</a> = 2,      
+<a name="l00055"></a><a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a71a94b622881a79a09d349f0df1e1966">00055</a>     <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481a71a94b622881a79a09d349f0df1e1966">DMA_QUEUE_COPY</a> = 3  
+<a name="l00056"></a>00056 } <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a>;
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058 
+<a name="l00063"></a><a class="code" href="struct_d_m_a_op_info.html">00063</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00064"></a>00064 {
+<a name="l00065"></a>00065     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> regLenL;        <span class="comment">// (newLen &amp; 0xFF) | 0x9300;</span>
+<a name="l00066"></a>00066     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> regLenH;        <span class="comment">// ((newLen &gt;&gt; 8) &amp; 0xFF) | 0x9400;</span>
+<a name="l00067"></a>00067     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> regAddrMStep;   <span class="comment">// (((addr &lt;&lt; 7) &amp; 0xFF0000) | 0x96008F00) + step;</span>
+<a name="l00068"></a>00068     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> regAddrHAddrL;  <span class="comment">// ((addr &gt;&gt; 1) &amp; 0x7F00FF) | 0x97009500;</span>
+<a name="l00069"></a>00069     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> regCtrlWrite;   <span class="comment">// GFX_DMA_VRAMCOPY_ADDR(to)</span>
+<a name="l00070"></a>00070 } <a class="code" href="struct_d_m_a_op_info.html" title="DMA transfer definition (used for DMA queue)">DMAOpInfo</a>;
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072 
+<a name="l00077"></a>00077 <span class="keyword">extern</span> <a class="code" href="struct_d_m_a_op_info.html" title="DMA transfer definition (used for DMA queue)">DMAOpInfo</a> *dmaQueues;
+<a name="l00082"></a>00082 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* dmaDataBuffer;
+<a name="l00083"></a>00083 
+<a name="l00093"></a>00093 <span class="keywordtype">void</span> DMA_init();
+<a name="l00113"></a>00113 <span class="keywordtype">void</span> DMA_initEx(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> capacity, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> bufferSize);
+<a name="l00114"></a>00114 
+<a name="l00123"></a>00123 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getAutoFlush();
+<a name="l00132"></a>00132 <span class="keywordtype">void</span> DMA_setAutoFlush(<span class="keywordtype">bool</span> value);
+<a name="l00139"></a>00139 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getMaxQueueSize();
+<a name="l00151"></a>00151 <span class="keywordtype">void</span> DMA_setMaxQueueSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00159"></a>00159 <span class="keywordtype">void</span> DMA_setMaxQueueSizeToDefault();
+<a name="l00167"></a>00167 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getMaxTransferSize();
+<a name="l00180"></a>00180 <span class="keywordtype">void</span> DMA_setMaxTransferSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00187"></a>00187 <span class="keywordtype">void</span> DMA_setMaxTransferSizeToDefault();
+<a name="l00195"></a>00195 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getBufferSize();
+<a name="l00209"></a>00209 <span class="keywordtype">void</span> DMA_setBufferSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00216"></a>00216 <span class="keywordtype">void</span> DMA_setBufferSizeToDefault();
+<a name="l00223"></a>00223 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getIgnoreOverCapacity();
+<a name="l00234"></a>00234 <span class="keywordtype">void</span> DMA_setIgnoreOverCapacity(<span class="keywordtype">bool</span> value);
+<a name="l00235"></a>00235 
+<a name="l00241"></a>00241 <span class="keywordtype">void</span> DMA_clearQueue();
+<a name="l00254"></a>00254 <span class="keywordtype">void</span> DMA_flushQueue();
+<a name="l00255"></a>00255 
+<a name="l00260"></a>00260 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getQueueSize();
+<a name="l00267"></a>00267 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getQueueTransferSize();
+<a name="l00268"></a>00268 
+<a name="l00282"></a>00282 <span class="keywordtype">void</span>* DMA_allocateTemp(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00292"></a>00292 <span class="keywordtype">void</span> DMA_releaseTemp(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00293"></a>00293 
+<a name="l00325"></a>00325 <span class="keywordtype">bool</span> DMA_transfer(<a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
+<a name="l00326"></a>00326 
+<a name="l00344"></a>00344 <span class="keywordtype">bool</span> DMA_canQueue(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00372"></a>00372 <span class="keywordtype">void</span>* DMA_allocateAndQueueDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
+<a name="l00399"></a>00399 <span class="keywordtype">bool</span> DMA_copyAndQueueDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
+<a name="l00425"></a>00425 <span class="keywordtype">bool</span> DMA_queueDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
+<a name="l00431"></a>00431 <span class="keywordtype">bool</span> DMA_queueDmaFast(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> step);
+<a name="l00432"></a>00432 
+<a name="l00455"></a>00455 <span class="keywordtype">void</span> DMA_doDma(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
+<a name="l00461"></a>00461 <span class="keywordtype">void</span> DMA_doDmaFast(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
+<a name="l00462"></a>00462 
+<a name="l00484"></a>00484 <span class="keywordtype">void</span> DMA_doCPUCopy(<a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> location, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
+<a name="l00500"></a>00500 <span class="keywordtype">void</span> DMA_doCPUCopyDirect(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> cmd, <span class="keywordtype">void</span>* from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
+<a name="l00501"></a>00501 
+<a name="l00517"></a>00517 <span class="keywordtype">void</span> DMA_doVRamFill(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
+<a name="l00532"></a>00532 <span class="keywordtype">void</span> DMA_doVRamCopy(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step);
+<a name="l00533"></a>00533 
+<a name="l00538"></a>00538 <span class="keywordtype">void</span> DMA_waitCompletion();
+<a name="l00539"></a>00539 
+<a name="l00540"></a>00540 
+<a name="l00541"></a>00541 <span class="preprocessor">#endif // _DMA_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="dma_8h.html">dma.h</a>      </li>
-      <li class="footer">Generated on Wed Dec 2 2020 22:53:19 for sgdk by&#160;
+      <li class="footer">Generated on Fri Jul 30 2021 16:00:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
