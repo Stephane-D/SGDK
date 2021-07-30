@@ -873,7 +873,7 @@ SpriteVisibility SPR_getVisibility(Sprite* sprite);
  *      Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see #SPR_setVisibility(..) method).<br>
  *
  *  \param sprite
- *      Sprite to return visible </i> state
+ *      Sprite to return <i>visible</i> state
  *  \param recompute
  *      Force visibility computation.<br>
  *      Only required if SPR_update() wasn't called since last sprite position change (note that can force the frame update processing).
