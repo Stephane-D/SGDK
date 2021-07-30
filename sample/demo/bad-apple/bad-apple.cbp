@@ -39,7 +39,7 @@
 		<Unit filename="inc/pcm.h" />
 		<Unit filename="inc/tile.h" />
 		<Unit filename="inc/tilemap.h" />
-		<Unit filename="res/movie.res" />
+		<Unit filename="res/movie_res.res" />
 		<Unit filename="res/sound_res.res" />
 		<Unit filename="src/boot/rom_head.c">
 			<Option compilerVar="CC" />
