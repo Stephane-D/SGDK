@@ -61,7 +61,7 @@ public class WavProcessor implements Processor
         // get sound driver
         SoundDriver driver = Util.getSoundDriver(fields[3]);
 
-        int outRate = 0;
+        int outRate;
 
         // determine default output rate
         switch (driver)
@@ -79,11 +79,14 @@ public class WavProcessor implements Processor
                 break;
 
             default:
-                // output rate
-                if (fields.length >= 5)
-                    outRate = StringUtil.parseInt(fields[4], outRate);
+                // 0 = use the media audio rate 
+                outRate = 0;
                 break;
         }
+
+        // override output rate
+        if (fields.length >= 5)
+            outRate = StringUtil.parseInt(fields[4], outRate);
 
         // get far value
         boolean far = false;
