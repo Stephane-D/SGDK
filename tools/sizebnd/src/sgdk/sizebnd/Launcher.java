@@ -83,7 +83,7 @@ public class Launcher
 
     private static void showUsage()
     {
-        System.out.println("Sizebnd tool v1.00 by Stephane Dallongeville (Copyright 2021)");
+        System.out.println("Sizebnd tool v1.1 by Stephane Dallongeville (Copyright 2021)");
         System.out.println();
         System.out.println("Usage: java -jar sizebnd.jar <file> -sizealign <size>");
         System.out.println();
@@ -112,6 +112,7 @@ public class Launcher
         // calculate how many extra byte are needed
         int len = buffer.length;
         int needed = len & (align - 1);
+        if (needed != 0) needed = align - needed;
         final byte[] result = new byte[len + needed];
 
         // copy to destination
