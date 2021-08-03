@@ -306,8 +306,8 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len)
 {
     static u32 lastVTimer = 0;
 
-    // be sure to wait at least 1 frame between set fade palette call
-    if (lastVTimer == vtimer) SYS_doVBlankProcess();
+    // be sure that we are during vblank and to wait at least 1 frame between each setFadePalette call
+    if ((GET_VDPSTATUS(VDP_VBLANK_FLAG) == 0) || (lastVTimer == vtimer)) SYS_doVBlankProcess();
 
     // use DMA for long transfer
     PAL_setColors(ind, src, len, (len > 16)?DMA:CPU);
