@@ -202,7 +202,8 @@ static s16 fadeCounter;
 
 
 // forward
-static void setFadePalette(u16 ind, const u16 *src, u16 len);
+static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlank);
+static bool doFadeStepInternal(bool forceWaitVBlank);
 
 
 u16 PAL_getColor(u16 index)
@@ -302,18 +303,13 @@ void PAL_setPaletteDMA(u16 numPal, const u16* pal)
     PAL_setPalette(numPal * 16, pal, DMA);
 }
 
-static void setFadePalette(u16 ind, const u16 *src, u16 len)
+static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlank)
 {
-    static u32 lastVTimer = 0;
-
-    // be sure that we are during vblank and to wait at least 1 frame between each setFadePalette call
-    if ((GET_VDPSTATUS(VDP_VBLANK_FLAG) == 0) || (lastVTimer == vtimer)) SYS_doVBlankProcess();
+    // be sure that we are during vblank
+    if (forceWaitVBlank) SYS_doVBlankProcess();
 
     // use DMA for long transfer
     PAL_setColors(ind, src, len, (len > 16)?DMA:CPU);
-
-    // keep track of last update
-    lastVTimer = vtimer;
 }
 
 //static void setFadePalette(u16 ind, const u16 *src, u16 len)
@@ -394,13 +390,13 @@ bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, 
     return TRUE;
 }
 
-bool PAL_doFadeStep()
+static bool doFadeStepInternal(bool forceWaitVBlank)
 {
     // not yet done ?
     if (--fadeCounter >= 0)
     {
         // set current fade palette
-        setFadePalette(fadeInd, fadeCurrentPal, fadeSize);
+        setFadePalette(fadeInd, fadeCurrentPal, fadeSize, forceWaitVBlank);
 
         // then prepare fade palette for next frame
         s16* palR = fadeR;
@@ -438,13 +434,17 @@ bool PAL_doFadeStep()
     else
     {
         // last step --> we can just set the final fade palette
-        setFadePalette(fadeInd, fadeEndPal, fadeSize);
+        setFadePalette(fadeInd, fadeEndPal, fadeSize, forceWaitVBlank);
 
         // done
         return FALSE;
     }
 }
 
+bool PAL_doFadeStep()
+{
+    return doFadeStepInternal(FALSE);
+}
 
 void PAL_interruptFade()
 {
@@ -460,8 +460,8 @@ void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 
     if (async) VBlankProcess |= PROCESS_PALETTE_FADING;
     else
     {
-        // process fading immediatly (PAL_doFadeStep() wait for vblank if needed)
-        while (PAL_doFadeStep());
+        // process fading immediatly with forced VBlank wait
+        while (doFadeStepInternal(TRUE));
     }
 }
 
