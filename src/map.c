@@ -297,10 +297,10 @@ static void updateMap(Map* map, s16 xt, s16 yt)
         deltaX = 0;
     }
     // clip to 16 metatiles row max (full screen update)
-    else if (deltaY > 16)
+    else if (deltaY < -16)
     {
-        cyt += deltaY - 16;
-        deltaY = 16;
+        cyt += deltaY + 16;
+        deltaY = -16;
         // as we have a full screen update, we don't need column update then
         deltaX = 0;
     }
