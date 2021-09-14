@@ -190,7 +190,9 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
 void MAP_scrollTo(Map* map, u32 x, u32 y)
 {
     // first scroll ?
-    if (map->planeWidthMask == 0)
+    const bool init = (map->planeWidthMask == 0);
+
+    if (init)
     {
         // init plane dimension
         map->planeWidthMask = (planeWidth >> 1) - 1;
@@ -207,7 +209,7 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
     updateMap(map, x >> 4, y >> 4);
 
     // X scrolling changed ?
-    if (map->posX != x)
+    if (init || (map->posX != x))
     {
         u16 len;
 
@@ -236,7 +238,7 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
         map->posX = x;
     }
     // Y scrolling changed ?
-    if (map->posY != y)
+    if (init || (map->posY != y))
     {
         switch(VDP_getVerticalScrollingMode())
         {
