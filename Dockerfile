@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM amd64/ubuntu:20.04
 
 # Set-up argument defaults
 ARG JDK_VER=11
