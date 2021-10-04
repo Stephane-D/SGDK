@@ -142,7 +142,7 @@ public class Bin extends Resource
         }
         // couldn't compress
         else if (wantedCompression != Compression.NONE)
-            System.out.print("'" + id + "' couldn't be compressed");
+            System.out.println("'" + id + "' couldn't be compressed");
 
         // output binary data (data alignment was done before)
         Util.outB(outB, packedData.data);
