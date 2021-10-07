@@ -740,5 +740,17 @@ s32 getApproximatedLog2(s32 value);
  */
 u16 getLog2Int(u32 value);
 
+/**
+ *  \brief
+ *      Return next pow2 value which is greater than specified 32 bits unsigned value.
+ *      Ex:<br>
+ *      getNextPow2(700) = 1024<br>
+ *      getNextPow2(18) = 32<br>
+ *
+ *  \param value
+ *      value to return next pow2
+ */
+u32 getNextPow2(u32 value);
+
 
 #endif // _MATHS_H_
