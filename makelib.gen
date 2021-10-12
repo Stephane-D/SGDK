@@ -59,7 +59,7 @@ DEP_LIB := $(OBJ_LIB:.o=.d)
 LST_LIB := $(SRC_LIB_C:.c=.lst)
 
 INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
-DEFAULT_FLAGS_LIB := -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin -Wno-unused-parameter $(INCS_LIB) -B$(BIN)
+DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin -Wno-unused-parameter $(INCS_LIB) -B$(BIN)
 FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
