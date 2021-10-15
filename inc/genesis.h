@@ -1,12 +1,14 @@
 #ifndef _GENESIS_H_
 #define _GENESIS_H_
 
-
 #define SGDK_VERSION    1.65
+
+#include "types.h"
+
+#define SGDK            TRUE
 
 #include "config.h"
 #include "asm.h"
-#include "types.h"
 
 #include "sys.h"
 #include "sram.h"

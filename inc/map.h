@@ -118,6 +118,10 @@ typedef struct
  *      current view position X set using #MAP_scrollTo(..) method
  *  \param posY
  *      current view position Y set using #MAP_scrollTo(..) method
+ *  \param wMask
+ *      internal
+ *  \param hMask
+ *      internal
  *  \param planeWidthMask
  *      internal
  *  \param planeHeightMask
@@ -151,6 +155,8 @@ typedef struct Map
     u16 baseTile;
     u32 posX;
     u32 posY;
+    u16 wMask;
+    u16 hMask;
     u16 planeWidthMask;
     u16 planeHeightMask;
     u16 lastXT;

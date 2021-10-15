@@ -281,3 +281,16 @@ u16 getLog2Int(u32 value)
 
     return result | (v >> 1);
 }
+
+u32 getNextPow2(u32 value)
+{
+    u32 result = value - 1;
+
+    result |= result >> 1;
+    result |= result >> 2;
+    result |= result >> 4;
+    result |= result >> 8;
+    result |= result >> 16;
+
+    return result + 1;
+}
