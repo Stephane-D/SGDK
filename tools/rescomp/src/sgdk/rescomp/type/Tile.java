@@ -98,14 +98,16 @@ public class Tile implements Comparable<Tile>
                     // set palette
                     if (pal == -1)
                         pal = curPal;
-                    else if (pal != curPal)
+                    // test for difference only for not transparent pixel (simpler) 
+                    else if ((pal != curPal) && (color != 0))
                         throw new IllegalArgumentException("Error: pixel at [" + i + "," + j
                                 + "] reference a different palette (" + curPal + " != " + pal + ").");
 
                     // set prio
                     if (prio == -1)
                         prio = curPrio;
-                    else if (prio != curPrio)
+                    // test for difference only for not transparent pixel (simpler) 
+                    else if ((prio != curPrio) && (color != 0))
                         throw new IllegalArgumentException("Error: pixel at [" + i + "," + j
                                 + "] reference a different priority (" + curPrio + " != " + prio + ").");
                 }
