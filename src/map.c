@@ -191,17 +191,23 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
     return result;
 }
 
-void MAP_scrollTo(Map* map, u32 x, u32 y)
+void MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
 {
-    // first scroll ?
-    const bool init = (map->planeWidthMask == 0);
+    bool redraw;
 
-    if (init)
+    // first scroll ?
+    if (map->planeWidthMask == 0)
     {
         // init plane dimension
         map->planeWidthMask = (planeWidth >> 1) - 1;
         map->planeHeightMask = (planeHeight >> 1) - 1;
+        // force complete redraw
+        redraw = TRUE;
+    }
+    else redraw = forceRedraw;
 
+    if (redraw)
+    {
         // force full map update using row updates
         map->posX = x;
         map->posY = y - 256;
@@ -213,7 +219,7 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
     updateMap(map, x >> 4, y >> 4);
 
     // X scrolling changed ?
-    if (init || (map->posX != x))
+    if (redraw || (map->posX != x))
     {
         u16 len;
 
@@ -242,7 +248,7 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
         map->posX = x;
     }
     // Y scrolling changed ?
-    if (init || (map->posY != y))
+    if (redraw || (map->posY != y))
     {
         switch(VDP_getVerticalScrollingMode())
         {
@@ -260,6 +266,11 @@ void MAP_scrollTo(Map* map, u32 x, u32 y)
         // store Y position
         map->posY = y;
     }
+}
+
+void MAP_scrollTo(Map* map, u32 x, u32 y)
+{
+    MAP_scrollToEx(map, x, y, FALSE);
 }
 
 
