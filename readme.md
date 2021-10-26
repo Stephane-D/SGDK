@@ -143,6 +143,10 @@ MASIAKA by [Resistance](https://www.pouet.net/prod.php?which=71543)
  
 Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 
+![alt text](doc/img/game_doa.gif)
+ 
+Demons of Asteborg [Neofid Studios](https://neofid-studios.com/)
+
 ### Random list of SGDK-powered games and demos
 
 * [2048](https://github.com/atamurad/sega-2048) by atamurad
