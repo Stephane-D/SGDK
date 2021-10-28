@@ -65,7 +65,7 @@
  *      Some Megadrive models (as some MD2) need it to prevent some possible (but very rare) Z80 corruption bugs
  *      (may happen when Z80 access the main BUS during IO port access from 68K).
  */
-#define HALT_Z80_ON_IO      0
+#define HALT_Z80_ON_IO      1
 
 /**
  *  \brief
