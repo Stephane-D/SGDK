@@ -269,10 +269,10 @@ VGMCommand* Sample_getSetRateCommand(SampleBank* bank, Sample* sample, int value
     return VGMCommand_createEx(data, 0, -1);
 }
 
-VGMCommand* Sample_getStartLongCommandEx(SampleBank* bank, Sample* sample, int value)
+VGMCommand* Sample_getStartLongCommandEx(SampleBank* bank, Sample* sample, int len)
 {
     unsigned char* data;
-    int adjLen = min(value, sample->len);
+    int adjLen = min(len, sample->len);
 
     // build command
     data = malloc(11);
