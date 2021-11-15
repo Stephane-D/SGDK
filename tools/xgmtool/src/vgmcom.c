@@ -558,7 +558,7 @@ VGMCommand* VGMCommand_createYMCommand(int port, int reg, int value)
     else
         result->command = VGM_WRITE_YM2612_PORT1;
 
-    result->data = malloc(2);
+    result->data = malloc(3);
     result->data[0] = result->command;
     result->data[1] = reg;
     result->data[2] = value;
