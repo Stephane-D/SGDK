@@ -345,7 +345,7 @@ static bool releaseSprite(Sprite* sprite)
     return FALSE;
 }
 
-#if LIB_DEBUG
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
 static bool isSpriteValid(Sprite* sprite)
 {
     return sprite->status & ALLOCATED;
