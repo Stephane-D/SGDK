@@ -460,34 +460,33 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
         switch(planeWidthSft + planeHeightSft)
         {
             case 10:
-                // 2KB tilemap VRAM setup
+                // 2KB tilemap VRAM setup: 0xC000 --> 0xEFFF
+                // 0xD000-0xDFFF free
                 VDP_setBPlanAddress(0xC000);
                 VDP_setWindowAddress(0xC800);
                 VDP_setAPlanAddress(0xE000);
                 VDP_setSpriteListAddress(0xE800);
                 VDP_setHScrollTableAddress(0xEC00);
-                // 0xD000-0xDFFF free
-                // 0xF000-0xFFFF free
                 break;
 
             case 11:
-                // 4KB tilemap VRAM setup
+                // 4KB tilemap VRAM setup: 0xC000 --> 0xFFFF
+                // 0xF700-0xFFFF free
                 VDP_setBPlanAddress(0xC000);
                 VDP_setWindowAddress(0xD000);
                 VDP_setAPlanAddress(0xE000);
                 VDP_setHScrollTableAddress(0xF000);
                 VDP_setSpriteListAddress(0xF400);
-                // 0xF700-0xFFFF free
                 break;
 
             default:
-                // 8KB tilemap VRAM setup
+                // 8KB tilemap VRAM setup: 0xA800 --> 0xFFFF
+                // 0xAF00-0xAFFF free
                 VDP_setSpriteListAddress(0xAC00);
                 VDP_setHScrollTableAddress(0xA800);
                 VDP_setWindowAddress(0xB000);
                 VDP_setBPlanAddress(0xC000);
                 VDP_setAPlanAddress(0xE000);
-                // 0xAF00-0xAFFF free
                 break;
         }
 
