@@ -826,8 +826,8 @@ void SPR_setAutoTileUpload(Sprite* sprite, bool value);
  *  \param sprite
  *      Sprite we want to enable/disable delayed frame update
  *  \param value
- *      TRUE to enable the delayed frame update when DMA is running out of transfert capacity.<br>
- *      FALSE to disable it (sprite frame is always updated immediately but that may cause graphical glitches).<br>
+ *      TRUE to enable the delayed frame update when DMA is running out of transfert capacity (default).<br>
+ *      FALSE to disable it. In which case sprite frame is always updated immediately but that may cause graphical glitches (update during active display).<br>
  *
  *  \see #SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE
  */
