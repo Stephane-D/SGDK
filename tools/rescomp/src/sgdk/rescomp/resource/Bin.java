@@ -17,11 +17,13 @@ public class Bin extends Resource
     public final Compression wantedCompression;
     public PackedData packedData;
     public Compression doneCompression;
-    public boolean far;
+    public final boolean far;
+    public final boolean embedded;
 
     final int hc;
 
-    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far)
+    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far,
+            boolean embedded)
     {
         super(id);
 
@@ -34,9 +36,16 @@ public class Bin extends Resource
         packedData = null;
         doneCompression = Compression.NONE;
         this.far = far;
+        this.embedded = embedded;
 
         // compute hash code
         hc = Arrays.hashCode(data) ^ (align << 16) ^ wantedCompression.hashCode();
+    }
+
+    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far)
+    {
+        // consider embeded by default
+        this(id, data, align, sizeAlign, fill, compression, far, true);
     }
 
     public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression)
@@ -111,15 +120,15 @@ public class Bin extends Resource
         // do 'outB' align *before* doing compression (as LZ4W compression can use previous data block)
         Util.align(outB, align);
 
-        // pack data first if needed
-        packedData = Util.pack(data, wantedCompression, outB);
+        // pack data first if needed (force selected compression when not embedded resource)
+        packedData = Util.pack(data, wantedCompression, outB, !embedded);
         doneCompression = packedData.compression;
 
         final int baseSize = data.length;
         final int packedSize = packedData.data.length;
 
         // data was compressed ?
-        if (packedSize < baseSize)
+        if (wantedCompression != Compression.NONE)
         {
             System.out.print("'" + id + "' ");
 
@@ -134,22 +143,20 @@ public class Bin extends Resource
                     break;
 
                 default:
+                    System.out.print("packed with UNKNOW, ");
                     break;
             }
 
             System.out.println("size = " + packedSize + " (" + Math.round((packedSize * 100f) / baseSize)
                     + "% - origin size = " + baseSize + ")");
         }
-        // couldn't compress
-        else if (wantedCompression != Compression.NONE)
-            System.out.println("'" + id + "' couldn't be compressed");
 
         // output binary data (data alignment was done before)
         Util.outB(outB, packedData.data);
 
         // declare
         Util.declArray(outS, outH, "u8", id, packedData.data.length, align, global);
-        // output data (compression information is stored in 'parent' resource)
+        // output data (compression information is stored in 'parent' resource when embedded)
         Util.outS(outS, packedData.data, 1);
         outS.append("\n");
     }

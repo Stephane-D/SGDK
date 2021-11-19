@@ -339,20 +339,34 @@ public class Util
         outB(out, data, 0);
     }
 
-    public static PackedData pack(byte[] data, Compression compression, ByteArrayOutputStream bin)
+    public static PackedData pack(byte[] data, Compression compression, ByteArrayOutputStream bin,
+            boolean forceSelectedCompression)
     {
         // nothing to do
         if (compression == Compression.NONE)
             return new PackedData(data, Compression.NONE);
+
+        // we need to have a proper defined compression
+        if (forceSelectedCompression && (compression == Compression.AUTO))
+            throw new IllegalArgumentException("Cannot use AUTO compression !");
 
         // LZ4W compression with byte size ? do it quickly :)
         if (compression == Compression.LZ4W)
         {
             final byte[] result = lz4wpack((bin != null) ? bin.toByteArray() : null, data);
 
-            // error or no compression possible ? return origin data
-            if ((result == null) || (result.length >= data.length))
-                return new PackedData(data, Compression.NONE);
+            if (forceSelectedCompression)
+            {
+                if (result == null)
+                    throw new RuntimeException(
+                            "Cannot use desired compression on resource ! Try removing compression.");
+            }
+            else
+            {
+                // error or no compression possible ? return origin data
+                if ((result == null) || (result.length >= data.length))
+                    return new PackedData(data, Compression.NONE);
+            }
 
             // return compressed result
             return new PackedData(result, Compression.LZ4W);
@@ -372,15 +386,6 @@ public class Util
             prevData = bin.toByteArray();
         else
             prevData = null;
-
-        // if ((bin != null) && (bin.size() > 1))
-        // {
-        // if (!out(bin.toByteArray(), "prev.in"))
-        // return null;
-        // }
-        // // create out file from data input
-        // if (!out(data, "pack.in"))
-        // return null;
 
         // init results
         for (int i = 1; i < results.length; i++)
@@ -413,35 +418,23 @@ public class Util
                         break;
                 }
 
+                // force selection scheme ?
+                if (forceSelectedCompression)
+                {
+                    if (out == null)
+                        throw new RuntimeException(
+                                "Cannot use desired compression on resource ! Try removing compression.");
+
+                    // directly return result
+                    return new PackedData(out, comp);
+                }
+
                 // correctly packed ? --> store results
                 if (out != null)
                 {
                     results[compIndex] = out;
                     sizes[compIndex] = out.length;
                 }
-
-                // boolean packed;
-                // switch (comp)
-                // {
-                // case APLIB:
-                // packed = appack("pack.in", "pack.out");
-                // break;
-                //
-                // case LZ4W:
-                // packed = lz4wpack((bin != null) && (bin.size() > 1) ? "prev.in" : null, "pack.in", "pack.out");
-                // break;
-                //
-                // default:
-                // packed = false;
-                // break;
-                // }
-                //
-                // // correctly packed ? --> store results
-                // if (packed)
-                // {
-                // results[compIndex] = in("pack.out");
-                // sizes[compIndex] = results[compIndex].length;
-                // }
             }
         }
 
@@ -469,13 +462,12 @@ public class Util
             }
         }
 
-        // // clean
-        // if ((bin != null) && (bin.size() > 0))
-        // FileUtil.delete("prev.in", false);
-        // FileUtil.delete("pack.in", false);
-        // FileUtil.delete("pack.out", false);
-
         return new PackedData(result, bestComp);
+    }
+
+    public static PackedData pack(byte[] data, Compression compression, ByteArrayOutputStream bin)
+    {
+        return pack(data, compression, bin, false);
     }
 
     public static byte[] appack(byte[] data)
@@ -596,6 +588,10 @@ public class Util
         String cmdLine = "";
         for (String s : cmd)
             cmdLine += s + " ";
+        // just to remove the warning with unrecognized parameter
+        while (cmdLine.endsWith(" "))
+            cmdLine = StringUtil.removeLast(cmdLine, 1);
+        
         System.out.println("Executing " + cmdLine);
 
         // execute

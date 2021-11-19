@@ -1,4 +1,4 @@
-ResComp 3.38 (November 2021)
+ResComp 3.39 (November 2021)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -245,7 +245,6 @@ BIN name file [align [salign [fill [compression [far]]]]]
     salign          size alignment for the generated data array (default is 2)
     fill            fill value for the size alignment (default is 0)
     compression     compression type, accepted values:
-                       -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)

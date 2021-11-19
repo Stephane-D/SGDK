@@ -30,7 +30,6 @@ public class BinProcessor implements Processor
             System.out.println("  salign        size alignment for the generated data array (default is 2)");
             System.out.println("  fill          fill value for the size alignment (default is 0)");
             System.out.println("  compression   compression type, accepted values:");
-            System.out.println("                 -1 / BEST / AUTO = use best compression");
             System.out.println("                  0 / NONE        = no compression (default)");
             System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println(
@@ -61,6 +60,8 @@ public class BinProcessor implements Processor
         Compression compression = Compression.NONE;
         if (fields.length >= 7)
             compression = Util.getCompression(fields[6]);
+        if (compression == Compression.AUTO)
+            throw new IllegalArgumentException("Cannot use AUTO compression on BIN resource !");
         // get far value
         boolean far = true;
         if (fields.length >= 8)
@@ -75,6 +76,6 @@ public class BinProcessor implements Processor
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
 
-        return new Bin(id, data, align, salign, fill, compression, far);
+        return new Bin(id, data, align, salign, fill, compression, far, false);
     }
 }
