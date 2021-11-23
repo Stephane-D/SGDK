@@ -675,7 +675,7 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setDefinition: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setDefinition: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     // nothing to do...
@@ -776,7 +776,7 @@ void SPR_setPosition(Sprite* sprite, s16 x, s16 y)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setPosition: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setPosition: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     if ((sprite->x != newx) || (sprite->y != newy))
@@ -802,7 +802,7 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setHFlip: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setHFlip: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     u16 attr = sprite->attribut;
@@ -855,7 +855,7 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setVFlip: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setVFlip: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     u16 attr = sprite->attribut;
@@ -908,7 +908,7 @@ void SPR_setPriority(Sprite* sprite, u16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setPriority: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setPriority: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     const u16 attr = sprite->attribut;
@@ -954,7 +954,7 @@ void SPR_setPalette(Sprite* sprite, u16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setPalette: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setPalette: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     const u16 oldAttribut = sprite->attribut;
@@ -980,7 +980,7 @@ void SPR_setDepth(Sprite* sprite, s16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setDepth: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setDepth: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     // depth changed ?
@@ -1014,7 +1014,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setAnimAndFrame: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setAnimAndFrame: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     if ((sprite->animInd != anim) || (sprite->frameInd != frame))
@@ -1022,7 +1022,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (anim >= (s16) sprite->definition->numAnimation)
         {
-            KLog_U2("SPR_setAnimAndFrame: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
+            kprintf("SPR_setAnimAndFrame: error - trying to use non existing animation #%d on definition=%p - num animation = %d", anim, sprite->definition, sprite->definition->numAnimation);
             return;
         }
 #endif // LIB_DEBUG
@@ -1032,7 +1032,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (frame >= (s16) animation->numFrame)
         {
-            KLog_U3("SPR_setAnimAndFrame: error - trying to use non existing frame #", frame, " for animation #", anim, " - num frame = ", animation->numFrame);
+            kprintf("SPR_setAnimAndFrame: error - trying to use non existing frame #%d for animation %d on definition=%p - num frame = %d", frame, anim, sprite->definition, animation->numFrame);
             return;
         }
 #endif // LIB_DEBUG
@@ -1060,7 +1060,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setAnim: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setAnim: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     if (sprite->animInd != anim)
@@ -1068,7 +1068,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (anim >= (s16) sprite->definition->numAnimation)
         {
-            KLog_U2("SPR_setAnim: error - trying to use non existing animation #", anim, " - num animation = ", sprite->definition->numAnimation);
+            kprintf("SPR_setAnim: error - trying to use non existing animation #%d on definition=%p - num animation = %d", anim, sprite->definition, sprite->definition->numAnimation);
             return;
         }
 #endif // LIB_DEBUG
@@ -1097,7 +1097,7 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setFrame: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setFrame: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     if (sprite->frameInd != frame)
@@ -1105,7 +1105,7 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (frame >= (s16) sprite->animation->numFrame)
         {
-            KLog_U3("SPR_setFrame: error - trying to use non existing frame #", frame, " for animation #", sprite->animInd, " - num frame = ", sprite->animation->numFrame);
+            kprintf("SPR_setFrame: error - trying to use non existing frame #%d for animation %d on definition=%p - num frame = %d", frame, sprite->animInd, sprite->definition, sprite->animation->numFrame);
             return;
         }
 #endif // LIB_DEBUG
@@ -1147,7 +1147,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setVRAMTileIndex: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setVRAMTileIndex: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     s16 newInd;
@@ -1234,7 +1234,7 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setSpriteTableIndex: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setSpriteTableIndex: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     s16 newInd;
@@ -1317,7 +1317,7 @@ void SPR_setAutoTileUpload(Sprite* sprite, bool value)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setAutoTileUpload: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setAutoTileUpload: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     if (value) sprite->status |= SPR_FLAG_AUTO_TILE_UPLOAD;
@@ -1328,7 +1328,7 @@ void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setDelayedFrameUpdate: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setDelayedFrameUpdate: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     if (value) sprite->status &= ~SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE;
@@ -1339,7 +1339,7 @@ void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setFrameChangeCallback: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setFrameChangeCallback: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     sprite->onFrameChange = callback;
@@ -1365,7 +1365,7 @@ bool SPR_isVisible(Sprite* sprite, bool recompute)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         if (!isSpriteValid(sprite))
-            KLog_U1_("SPR_isVisible: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+            kprintf("SPR_isVisible: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
         u16 status = sprite->status;
@@ -1390,7 +1390,7 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!isSpriteValid(sprite))
-        KLog_U1_("SPR_setVisibility: error - sprite at address ", (u32) sprite, " is invalid (not allocated) !");
+        kprintf("SPR_setVisibility: error - sprite at address %p is invalid (not allocated) !", sprite);
 #endif
 
     u16 status = sprite->status;

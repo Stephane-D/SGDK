@@ -236,7 +236,7 @@ void VDP_updateSprites(u16 num, TransferMethod tm)
 void logVDPSprite(u16 index)
 {
     char str[64];
-    char strtmp[8];
+    char strtmp[16];
 
     VDPSprite* vdpSprite = &vdpSpriteCache[index];
 

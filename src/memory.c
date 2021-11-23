@@ -173,7 +173,7 @@ void MEM_init()
     *heap = len;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    KLog_U1("MEM_init: heap = ", (u32) heap);
+    kprintf("MEM_init: heap = %lx", (u32) heap);
 #endif
 
     // free memory: whole heap
@@ -314,7 +314,7 @@ void* MEM_alloc(u16 size)
     *p++ = adjsize | USED;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    KLog_U3("MEM_alloc(", size, ") success: ", (u32) p, " - remaining = ", MEM_getFree());
+    kprintf("MEM_alloc(%d) success: %lx - remaining = %d", size, (u32) p, MEM_getFree());
 #endif
 
     // return block
@@ -330,7 +330,7 @@ void MEM_free(void *ptr)
         // not in use ?
         if (!(((u16*)ptr)[-1] & USED))
         {
-            KLog_U1_("MEM_free(", (u32) ptr, ") failed: block is not allocated !");
+            kprintf("MEM_free(%lx) failed: block is not allocated !", (u32) ptr);
             return;
         }
 #endif
@@ -339,7 +339,7 @@ void MEM_free(void *ptr)
         ((u16*)ptr)[-1] &= ~USED;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-        KLog_U2("MEM_free(", (u32) ptr, ") --> remaining = ", MEM_getFree());
+        kprintf("MEM_free(%lx) --> remaining = %d", (u32) ptr, MEM_getFree());
 #endif
     }
 }
