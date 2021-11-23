@@ -71,7 +71,34 @@ fix32 getFPS_f();
 
 /**
  *  \brief
+ *      Composes a string with the same text that would be printed if format was used on printf,
+ *      but instead of being printed to screen, the content is printed in KMod console.
+ *
+ *  \param fmt
+ *      C string that contains the text to be written to destination string.<br />
+ *      It can optionally contain embedded format specifiers.
+ *
+ *  \param ... (additional arguments)
+ *      Depending on the format string, the function may expect a sequence of additional arguments, <br>
+ *      each containing a value to be used to replace a format specifier in the format string.
+ *
+ *      There should be at least as many of these arguments as the number of values specified in the format specifiers. <br>
+ *      Additional arguments are ignored by the function.
+ *
+ *  \return On success, the total number of characters written (limited to 255 max)
+ *
+ *  Copy the string pointed by 'fmt' param to KMod console.<br>
+ *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
+ *  formatted and inserted in the resulting string replacing their respective specifiers.<br>
+ *  Note that internally a buffer of 255 characters is allocated so consider this limitation !
+ *
+ */
+u16 kprintf(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+
+/**
+ *  \brief
  *      KDebug log helper methods
+ *  \deprecated Use kprintf(..) instead
  */
 void KLog(char* text);
 void KLog_U1(char* t1, u32 v1);
