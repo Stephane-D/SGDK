@@ -35,7 +35,6 @@ static u16 digits10(const u16 v);
 static u16 uint16ToStr(u16 value, char *str, u16 minsize);
 #if (ENABLE_NEWLIB == 0)
 static u16 skip_atoi(const char **s);
-static u16 vsprintf(char *buf, const char *fmt, va_list args);
 #endif  // ENABLE_NEWLIB
 
 
@@ -161,25 +160,23 @@ u16 intToStr(s32 value, char *str, u16 minsize)
 {
     if (value < -500000000)
     {
-        strcpy(str, "<-500000000");
-        return 10;
+        *str = '-';
+        return intToHex(-value, str + 1, minsize) + 1;
     }
 
     if (value < 0)
     {
         *str = '-';
-        return uintToStr(-value, str + 1, minsize);
+        return uintToStr(-value, str + 1, minsize) + 1;
     }
     else return uintToStr(value, str, minsize);
 }
 
 u16 uintToStr(u32 value, char *str, u16 minsize)
 {
+    // the implentation cannot encode > 500000000 value --> use hexa
     if (value > 500000000)
-    {
-        strcpy(str, ">500000000");
-        return 10;
-    }
+        return intToHex(value, str, minsize);
 
     u16 len;
 
@@ -237,19 +234,18 @@ static u16 uint16ToStr(u16 value, char *str, u16 minsize)
     return length;
 }
 
-void intToHex(u32 value, char *str, u16 minsize)
+u16 intToHex(u32 value, char *str, u16 minsize)
 {
     u32 res;
     u16 cnt;
-    u16 left;
+    s16 left;
     char data[16];
     char *src;
     char *dst;
-    const u16 maxsize = 16;
 
     src = &data[16];
     res = value;
-    left = minsize;
+    left = (minsize > 15)?15:minsize;
 
     cnt = 0;
     while (res)
@@ -273,11 +269,11 @@ void intToHex(u32 value, char *str, u16 minsize)
         left--;
     }
 
-    if (cnt > maxsize) cnt = maxsize;
-
     dst = str;
     while(cnt--) *dst++ = *src++;
     *dst = 0;
+
+    return dst - str;
 }
 
 void fix32ToStr(fix32 value, char *str, u16 numdec)
@@ -365,7 +361,7 @@ static u16 skip_atoi(const char **s)
     return i;
 }
 
-static u16 vsprintf(char *buf, const char *fmt, va_list args)
+u16 vsprintf(char *buf, const char *fmt, va_list args)
 {
     char tmp_buffer[14];
     s32 i;

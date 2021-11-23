@@ -219,11 +219,12 @@ u16 uintToStr(u32 value, char *str, u16 minsize);
  *      Destination string (it must be large enough to receive result).
  *  \param minsize
  *      Minimum size of resulting string.
+ *  \return string length
  *
  * Converts the specified u32 value to hexadecimal string.<br>
  * If resulting value is shorter than requested minsize the method prepends result with '0' character.
  */
-void intToHex(u32 value, char *str, u16 minsize);
+u16 intToHex(u32 value, char *str, u16 minsize);
 
 /**
  *  \brief
