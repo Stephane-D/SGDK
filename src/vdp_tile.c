@@ -17,8 +17,8 @@
 
 
 // forward
-static void setTileMapDataRow(VDPPlane plane, const u16 *data, u16 x, u16 row, u16 w, TransferMethod tm);
-static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 row, u16 w, TransferMethod tm);
+static void setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 x, u16 w, TransferMethod tm);
+static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm);
 static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
 static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm);
 
