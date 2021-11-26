@@ -32,7 +32,7 @@
  *  \param color
  *      RGB 24 bits color
  */
-#define RGB24_TO_VDPCOLOR(color)    (((color >> ((2 * 8) + 4)) & VDPPALETTE_REDMASK) | ((color >> ((1 * 4) + 4)) & VDPPALETTE_GREENMASK) | ((color << 4) & VDPPALETTE_BLUEMASK))
+#define RGB24_TO_VDPCOLOR(color)    ((((color + 0x100000) >> ((2 * 8) + 4)) & VDPPALETTE_REDMASK) | (((color + 0x1000) >> ((1 * 4) + 4)) & VDPPALETTE_GREENMASK) | (((color + 0x10) << 4) & VDPPALETTE_BLUEMASK))
 
 
 /**
