@@ -119,6 +119,8 @@ static u32 setBankEx(u32 addr, bool high)
         SYS_setBank(6, bankIndex);
         // next time we will use other region
         reg = 1;
+        // bank 7 point on same bank ? --> force reset so we will stay on bank 6 for this region
+        if (banks[7] == bankIndex) banks[7] = 0;
 
         // return bank address
         return 0x300000;
