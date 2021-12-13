@@ -50,11 +50,11 @@ https://danibus.wordpress.com/
  
 ## HELP AND SUPPORT
 
-If you need help or support with SGDK, you can go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:<br>
-http://gendev.spritesmind.net/forum/
-
-You can also join the SGDK Discord server to get support:<br>
+If you need help or support with SGDK, you can join the SGDK Discord server to get support:<br>
 https://discord.gg/xmnBWQS
+
+You can also go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:<br>
+http://gendev.spritesmind.net/forum/
  
 ### MACOSX / LINUX
 
