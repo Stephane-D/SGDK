@@ -13,6 +13,9 @@ RUN dpkg --add-architecture i386 \
   wine32 \
   && rm -rf /var/lib/apt/lists/*
 
+# Create sgdk unprivileged user
+RUN useradd -ms /bin/sh -d /sgdk sgdk
+
 # Set-up SGDK
 COPY . /sgdk
 ENV GDK=/sgdk
@@ -24,4 +27,6 @@ RUN /sgdk/bin/create-bin-wrappers.sh
 VOLUME /src
 WORKDIR /src
 
+# Use sgdk user
+USER sgdk
 ENTRYPOINT [ "make", "-f", "/sgdk/makefile.gen" ]
