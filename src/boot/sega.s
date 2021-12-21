@@ -43,7 +43,7 @@ _Vecteurs_68K:
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
 
 rom_header:
-        .incbin "out/rom_head.bin", 0x10, 0x100
+        .incbin "out/rom_head.bin", 0, 0x100
 
 _Entry_Point:
         move    #0x2700,%sr
