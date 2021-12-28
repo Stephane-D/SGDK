@@ -25,6 +25,7 @@ ifeq ($(OS),Windows_NT)
 	MACCER := $(BIN)/mac68k.exe
 	BINTOS := $(BIN)/bintos.exe
 	LTO_PLUGIN := --plugin=liblto_plugin-0.dll 
+	LIBGCC := $(LIB)/libgcc.a
 else
 	ifeq ($(SGDK_DOCKER),y)
 		# Linux docker
@@ -42,6 +43,7 @@ else
 		MACCER := $(BIN)/mac68k
 		BINTOS := $(BIN)/bintos
 		LTO_PLUGIN := --plugin=liblto_plugin-0.dll
+		LIBGCC := $(LIB)/libgcc.a
 	else
 		# Native Linux
 		PREFIX := m68k-elf-
@@ -58,6 +60,7 @@ else
 		ASMZ80 := sjasm
 		MACCER := mac68k
 		BINTOS := bintos
+		LIBGCC := -lgcc
 	endif
 endif
 
