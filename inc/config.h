@@ -113,5 +113,20 @@
 
 #endif // ENABLE_LOGO
 
+/**
+ *  \brief
+ *      Set it to 1 if you want to enable MegaWiFi functions and support code
+ */
+#define ENABLE_MEGAWIFI     0
+
+#if (ENABLE_MEGAWIFI != 0)
+
+/**
+ *  \brief
+ *      Byte length for the user task stack, uses usually to poll WiFi module
+ */
+#define USER_STACK_LENGTH   512
+
+#endif // ENABLE_MEGAWIFI
 
 #endif // _CONFIG_

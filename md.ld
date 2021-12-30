@@ -30,7 +30,7 @@ __DYNAMIC  =  0;
  * .                    .
  * .                    .
  * |        __stack     | top of stack
- * +--------------------+ <- 0x00000000
+ * +--------------------+ <- 0xE1000000
  */
 MEMORY
 {
@@ -43,7 +43,7 @@ MEMORY
  * grows down
  */
 
-PROVIDE (__stack = 0x00000000);
+PROVIDE (__stack = 0xE1000000);
 
 
 SECTIONS

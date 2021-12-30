@@ -1,3 +1,5 @@
+#include "config.h"
+
 .section .text.keepboot
 
 *-------------------------------------------------------
@@ -17,7 +19,7 @@
 
 _Start_Of_Rom:
 _Vecteurs_68K:
-        dc.l    0x00000000              /* Stack address */
+        dc.l    __stack                 /* Stack address */
         dc.l    _Entry_Point            /* Program start address */
         dc.l    _Bus_Error
         dc.l    _Address_Error
@@ -37,7 +39,12 @@ _Vecteurs_68K:
         dc.l    _INT
         dc.l    _VINT
         dc.l    _INT
-        dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
+.if (ENABLE_MEGAWIFI == 1)
+        dc.l    _trap_0                 /* Resume supervisor task */
+.else
+        dc.l    _INT
+.endif
+        dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
@@ -66,10 +73,18 @@ SkipJoyDetect:
 * Sega Security Code (SEGA)
         move.l  #0x53454741,0x2f00(%a1)
 WrongVersion:
+* Read from the control port to cancel any pending read/write command
         move.w  (%a4),%d0
+.if (ENABLE_MEGAWIFI == 1)
+* Configure a 512-byte user stack at bottom, and system stack on top of it
+        move    %sp, %usp
+        sub     #USER_STACK_LENGTH, %sp
+.else
+        /* doragasu: is initializing the usp to 0 really needed? */
         moveq   #0x00,%d0
         movea.l %d0,%a6
         move    %a6,%usp
+.endif
         move.w  %d7,(%a1)
         move.w  %d7,(%a2)
 
@@ -233,7 +248,151 @@ _HINT:
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
+.if (ENABLE_MEGAWIFI == 1)
+
+idle:
+        bra.s idle
+
+.data
+/****************************************************************************
+ * Variables needed for the task context switches
+ ****************************************************************************/
+# User task status register. Initial value of second nibble must be 5 or
+# lower in order for VINT interrupts to fire. First nibble must be 0 in
+# order for the user task to run.
+utsk_sr: .word 0x0400
+
+# User task program counter
+utsk_pc: .long idle
+
+# User task registers saved on context switch
+        .equ UTSK_REGS_LEN, 15 * 4
+utsk_regs: .fill UTSK_REGS_LEN, 1, 0
+
+# Supervisor task lock
+lock:   .word 0
+
+.section .text.keepboot
+
+.endif /* (ENABLE_MEGAWIFI == 1) */
+
+.if (ENABLE_MEGAWIFI == 1)
+/************************************************************************//**
+ * Configure the task used as user task. Must be invoked once before calling
+ * tsk_user_yield().
+ *
+ * Receives a parameter with the pointer to the user task.
+ ****************************************************************************/
+        .globl tsk_user_set
+tsk_user_set:
+        move.l  4(%sp), utsk_pc
+        rts
+
+/************************************************************************//**
+ * Resume a blocked supervisor task. Must be called from user task.
+ ****************************************************************************/
+        .globl tsk_super_post
+tsk_super_post:
+        clr lock
+        tst.b   7(%sp)
+        beq.s   1f
+        /* Call supervisor for the context switch */
+        trap #0
+1:
+        rts
+
+/************************************************************************//**
+ * Block supervisor task and resume user task. Supervisor task will not
+ * resume execution until tsk_super_post() is called from user task.
+ ****************************************************************************/
+        .globl tsk_super_pend
+tsk_super_pend:
+        /* Set lock and fallthrough to tsk_user_yield to switch to user task */
+        move.w  6(%sp), lock
+
+/************************************************************************//**
+ * tsk_user_yield: yield from supervisor task to user task
+ ****************************************************************************/
+        .globl tsk_user_yield
+tsk_user_yield:
+        /* Push sr onto the stack. We already have there the pc, so we can */
+        /* use rte in the _VINT code to go back to the supervisor task.    */
+        move.w  %sr, %d0
+        move.w  #0x2700, %sr
+        move.w  %d0, -(%sp)
+
+        /* Push non clobberable registers. Since user task can modify them,   */
+        /* they need to be restored before resuming the supervisor task.      */
+        /* a7 (the sp) should not need to be saved because when this function */
+        /* exits, the usp will be used instead, and if any interrupt fires    */
+        /* (so sp is used again), on return it should leave it where it was.  */
+        movem.l %d2-%d7/%a2-%a6, -(%sp)
+
+        /* Restore bg task registers. a7 does not need to be restored,        */
+        /* since it is the usp and is restored when we go to user mode.       */
+        lea     (utsk_regs + 4), %a0
+        movem.l (%a0)+, %d0-%d7/%a1-%a6
+        move.l  utsk_regs, %a0
+
+        /* Enter the user task by pushing its pc and sr, and executing an rte.*/
+        /* This will change context to user mode.                             */
+        move.l  utsk_pc, -(%sp)
+        move.w  utsk_sr, -(%sp)
+        rte
+
+/************************************************************************//**
+ * Trap #0. Unlocks supervisor task immediately (without waiting for VBLANK
+ * interrupt to occur).
+ ****************************************************************************/
+_trap_0:
+        move.l  %a0, (utsk_regs)
+        lea     (utsk_regs + UTSK_REGS_LEN), %a0
+        movem.l %d0-%d7/%a1-%a6, -(%a0)
+
+        move.w  (%sp)+, (utsk_sr)
+        move.l  (%sp)+, (utsk_pc)
+
+        movem.l (%sp)+, %d2-%d7/%a2-%a6
+
+        # For the pending task to return 0
+        moveq   #0, %d0
+        rte
+
 _VINT:
+        btst    #5, (%sp)       /* Skip context switch if not in user task */
+        bne.s   no_ctx_switch
+
+        tst.w   lock
+        bne.s   1f
+        move.w  #0, -(%sp)      /* tsk_super_pend() will return 0 */
+        bra.s   unlock          /* If lock == 0, supervisor task is not locked */
+1:
+        bcs.s   no_ctx_switch   /* If lock < 0, super is locked with infinite wait */
+        subq.w  #1, lock        /* Locked with wait, subtract 1 to the frame count */
+        bne.s   no_ctx_switch   /* And do not unlock if we did not reach 0 */
+        move.w  #1, -(%sp)      /* tsk_super_pend() will return 1 */
+
+unlock:
+        /* Save bg task registers (excepting a7, that is stored in usp) */
+        move.l  %a0, utsk_regs
+        lea     (utsk_regs + UTSK_REGS_LEN), %a0
+        movem.l %d0-%d7/%a1-%a6, -(%a0)
+
+        move.w  (%sp)+, %d0     /* Load return value previously pushed to stack */
+
+        move.w  (%sp)+, utsk_sr /* Pop user task sr and pc, and save them, */
+        move.l  (%sp)+, utsk_pc /* so they can be restored later.          */
+        movem.l (%sp)+, %d2-%d7/%a2-%a6 /* Restore non clobberable registers */
+
+no_ctx_switch:
+        /* At this point, we always have in the stack the SR and PC of the task */
+        /* we want to jump after processing the interrupt, that might be the    */
+        /* point where we came from (if there is no context switch) or the      */
+        /* supervisor task (if we unlocked it).                                 */
+
+.else
+_VINT:
+.endif /* (ENABLE_MEGAWIFI == 1) */
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         ori.w   #0x0001, intTrace           /* in V-Int */
         addq.l  #1, vtimer                  /* increment frame counter (more a vint counter) */
@@ -254,7 +413,6 @@ _no_bmp_task:
         andi.w  #0xFFFE, intTrace           /* out V-Int */
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
-
 
 *------------------------------------------------
 *

@@ -19,6 +19,10 @@
 #include "font.h"
 #include "sprite_eng.h"
 
+#if (ENABLE_MEGAWIFI != 0)
+#include "tsk.h"
+#endif
+
 
 #define WINDOW_DEFAULT          0xD000      // multiple of 0x1000 (0x0800 in H32)
 #define HSCRL_DEFAULT           0xF000      // multiple of 0x0400
@@ -851,12 +855,16 @@ bool VDP_waitVBlank(bool forceNext)
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
+    // When using the tasking approach in MegaWiFi, this is the only supported
+    // behavior, since task switch occurs only at the start of VBlank
+#if (ENABLE_MEGAWIFI == 0)
     // we want to wait for next start of VBlank ?
     if (forceNext && blank)
     {
         // wait end of vblank if already in vblank
         while (*pw & VDP_VBLANK_FLAG);
     }
+#endif
 
     // compute frame load now (return TRUE if frame miss / late detected)
     bool late = computeFrameCPULoad(blank, vcnt, t);
@@ -876,7 +884,11 @@ bool VDP_waitVBlank(bool forceNext)
 #endif
 
     // wait end of active period
+#if (ENABLE_MEGAWIFI == 0)
     while (!(*pw & VDP_VBLANK_FLAG));
+#else
+    tsk_user_yield();
+#endif
 
     return late;
 }
