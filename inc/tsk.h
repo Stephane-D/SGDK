@@ -13,7 +13,12 @@
  *   a) The user task calls tsk_super_pend().
  *   b) The timeout specified in tsk_super_post() expires.
  *
+ * For the scheduler to work, VBlank interrupts must be enabled.
+ *
  * These functions are implemented in boot/sega.s
+ *
+ * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
+ * rebuilding the library.
  ****************************************************************************/
 
 #ifndef __TSK_H__
@@ -21,6 +26,7 @@
 
 #include "types.h"
 
+/// Timeout value to use for infinite waits
 #define TSK_PEND_FOREVER -1
 
 /************************************************************************//**
