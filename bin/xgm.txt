@@ -7,7 +7,7 @@ It has been designed to minimize CPU decoding resource and keep reasonable data 
 It supports both FM and PSG chip and allow up to 4 PCM channels (8 bits signed at 14 Khz) to be played at once. PCM samples can be >32KB, the only restriction is that they should have their address and size aligned to 256 bytes. These 4 PCM channels are obtained by software mixing in the FM DAC in replacement of the 6th FM channel (so at best you can have 5FM + 4PCM + 4PSG = 13 channels)
 The driver supports playing SFX in PCM format with 16 priority levels, eventually you can reserve some PSG channel to play SFX from the 68000 side.
 
-The driver has been designed and developed for SGDK (https://code.google.com/p/sgdk/) by Stephane dallongeville (2014).
+The driver has been designed and developed for SGDK (https://github.com/Stephane-D/SGDK) by Stephane dallongeville (2014).
 
 XGM file format specifications v1.01
 ------------------------------------
