@@ -166,8 +166,15 @@ void VDP_resetScreen()
     if (!VDP_loadFont(&font_default, CPU))
     {
         KLog("A fatal error occured (not enough memory to reset VDP) !");
+
         // fatal error --> die here (the font did not get loaded so maybe not really useful to show this message...)
-        SYS_die("A fatal error occured (not enough memory to reset VDP) !");
+        VDP_drawText("Not enough memory to reset VDP !", 0, 2);
+
+        VDP_drawText("A fatal error occured !", 2, 4);
+        VDP_drawText("cannot continue...", 4, 5);
+
+        // stop here
+        while(TRUE);
     }
 }
 
