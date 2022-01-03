@@ -20,6 +20,10 @@
 #include <tsk.h>
 #include <megawifi.h>
 
+#if (ENABLE_MULTITASK == 0) || (ENABLE_MEGAWIFI == 0)
+#error "Set ENABLE_MULTITASK and ENABLE_MEGAWIFI to 1 in config.h and rebuild the library"
+#endif
+
 /// Length of the wflash buffer
 #define MW_BUFLEN	1460
 
