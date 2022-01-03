@@ -19,8 +19,8 @@
  * \author Jesus Alonso (doragasu)
  * \date 2015
  *
- * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
- * rebuilding the library.
+ * \note This module requires setting ENABLE_MULTITASK and ENABLE_MEGAWIFI
+ * to 1 in config.h and rebuilding the library (if you had to change them).
  ****************************************************************************/
 
 #ifndef _MEGAWIFI_H_

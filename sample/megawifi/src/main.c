@@ -1,15 +1,15 @@
 /****************************************************************************
  * \brief MegaWiFi example.
  *
- * This example demonstrate the following:
+ * This example demonstrates the following:
  * - How to initialize MegaWiFi
  * - How to do TCP connections
  * - How to do HTTP queries
  * - How to get the date/time (synchronized to NTP servers)
  * - How to send and receive data using UDP protocol
  *
- * To build this file you need to set ENABLE_MEGAWIFI to 1 in config.h,
- * and rebuild the library.
+ * To build this example set ENABLE_MULTITASK and ENABLE_MEGAWIFI to 1 in
+ * config.h and rebuild the library.
  *
  * \author Jesus Alonso (doragasu)
  * \date 01/2022

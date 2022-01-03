@@ -115,18 +115,24 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to enable MegaWiFi functions and support code
+ *      Set it to 1 if you want to enable multitasking
  */
-#define ENABLE_MEGAWIFI     0
+#define ENABLE_MULTITASK    0
 
-#if (ENABLE_MEGAWIFI != 0)
+#if (ENABLE_MULTITASK != 0)
 
 /**
  *  \brief
- *      Byte length for the user task stack, uses usually to poll WiFi module
+ *      Byte length for the user task stack
  */
 #define USER_STACK_LENGTH   512
 
-#endif // ENABLE_MEGAWIFI
+#endif // ENABLE_MULTITASK
+
+/**
+ *  \brief
+ *      Set it to 1 if you want to enable MegaWiFi functions and support code
+ */
+#define ENABLE_MEGAWIFI     0
 
 #endif // _CONFIG_

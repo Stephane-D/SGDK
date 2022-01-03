@@ -19,7 +19,7 @@
 #include "font.h"
 #include "sprite_eng.h"
 
-#if (ENABLE_MEGAWIFI != 0)
+#if (ENABLE_MULTITASK != 0)
 #include "tsk.h"
 #endif
 
@@ -855,9 +855,9 @@ bool VDP_waitVBlank(bool forceNext)
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
-    // When using the tasking approach in MegaWiFi, this is the only supported
+    // When using the multitasking approach, this is the only supported
     // behavior, since task switch occurs only at the start of VBlank
-#if (ENABLE_MEGAWIFI == 0)
+#if (ENABLE_MULTITASK == 0)
     // we want to wait for next start of VBlank ?
     if (forceNext && blank)
     {
@@ -884,7 +884,7 @@ bool VDP_waitVBlank(bool forceNext)
 #endif
 
     // wait end of active period
-#if (ENABLE_MEGAWIFI == 0)
+#if (ENABLE_MULTITASK == 0)
     while (!(*pw & VDP_VBLANK_FLAG));
 #else
     tsk_user_yield();

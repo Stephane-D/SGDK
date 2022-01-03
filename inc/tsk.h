@@ -17,7 +17,7 @@
  *
  * These functions are implemented in boot/sega.s
  *
- * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
+ * \note This module requires setting ENABLE_MULTITASK to 1 in config.h and
  * rebuilding the library.
  ****************************************************************************/
 
@@ -56,7 +56,7 @@ void tsk_user_yield(void);
  * \return false if task was awakened from user task, or true if timeout
  * occurred.
  ****************************************************************************/
-s8 tsk_super_pend(int16_t wait_tout);
+int8_t tsk_super_pend(int16_t wait_tout);
 
 /************************************************************************//**
  * \brief Resume a blocked supervisor task. Must be called from user task.
@@ -65,6 +65,6 @@ s8 tsk_super_pend(int16_t wait_tout);
  *            supervisor task. If false, context switch will not occur until
  *            the VBLANK interrupt.
  ****************************************************************************/
-void tsk_super_post(s8 force_ctx_sw);
+void tsk_super_post(int8_t force_ctx_sw);
 
 #endif /*__TSK_H__*/

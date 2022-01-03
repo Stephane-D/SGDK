@@ -39,7 +39,7 @@ _Vecteurs_68K:
         dc.l    _INT
         dc.l    _VINT
         dc.l    _INT
-.if (ENABLE_MEGAWIFI == 1)
+.if (ENABLE_MULTITASK == 1)
         dc.l    _trap_0                 /* Resume supervisor task */
 .else
         dc.l    _INT
@@ -75,7 +75,7 @@ SkipJoyDetect:
 WrongVersion:
 * Read from the control port to cancel any pending read/write command
         move.w  (%a4),%d0
-.if (ENABLE_MEGAWIFI == 1)
+.if (ENABLE_MULTITASK == 1)
 * Configure a 512-byte user stack at bottom, and system stack on top of it
         move    %sp, %usp
         sub     #USER_STACK_LENGTH, %sp
@@ -248,7 +248,7 @@ _HINT:
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
-.if (ENABLE_MEGAWIFI == 1)
+.if (ENABLE_MULTITASK == 1)
 
 idle:
         bra.s idle
@@ -274,9 +274,6 @@ lock:   .word 0
 
 .section .text.keepboot
 
-.endif /* (ENABLE_MEGAWIFI == 1) */
-
-.if (ENABLE_MEGAWIFI == 1)
 /************************************************************************//**
  * Configure the task used as user task. Must be invoked once before calling
  * tsk_user_yield().
@@ -392,7 +389,7 @@ no_ctx_switch:
 
 .else
 _VINT:
-.endif /* (ENABLE_MEGAWIFI == 1) */
+.endif /* (ENABLE_MULTITASK == 1) */
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         ori.w   #0x0001, intTrace           /* in V-Int */
         addq.l  #1, vtimer                  /* increment frame counter (more a vint counter) */
