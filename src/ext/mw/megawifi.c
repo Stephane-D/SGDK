@@ -13,8 +13,8 @@
 #include <types.h>
 #include <string.h>
 #include <memory.h>
-#include <tsk.h>
-#include <mw/megawifi.h>
+#include <task.h>
+#include <ext/mw/megawifi.h>
 
 /// Remove compiler warnings when not using a function parameter
 #define UNUSED_PARAM(x)		(void)x
@@ -154,7 +154,7 @@ static void cmd_send_cb(enum lsd_status err, void *ctx)
 	// FIXME: Treat errors!
 	if (!err) {
 		// TODO: Do we always want to force a context switch
-		tsk_super_post(TRUE);
+		TSK_superPost(TRUE);
 	}
 }
 
@@ -168,7 +168,7 @@ static void cmd_recv_cb(enum lsd_status err, uint8_t ch,
 	if (!err) {
 		md->ch = ch;
 		md->len = len;
-		tsk_super_post(TRUE);
+		TSK_superPost(TRUE);
 	}
 }
 
@@ -183,7 +183,7 @@ static enum mw_err mw_command(int16_t timeout_frames)
 
 	while (!done) {
 		mw_cmd_recv(d.cmd, &md, cmd_recv_cb);
-		tout = tsk_super_pend(timeout_frames);
+		tout = TSK_superPend(timeout_frames);
 		if (tout) {
 			return MW_ERR_RECV;
 		}
@@ -235,7 +235,7 @@ enum mw_err mw_recv_sync(uint8_t *ch, char *buf, int16_t *buf_len,
 	bool tout;
 
 	lsd_recv(buf, *buf_len, &md, cmd_recv_cb);
-	tout = tsk_super_pend(tout_frames);
+	tout = TSK_superPend(tout_frames);
 	if (tout) {
 		return MW_ERR_RECV;
 	}
@@ -256,7 +256,7 @@ enum mw_err mw_send_sync(uint8_t ch, const char *data, uint16_t len,
 	while (sent < len) {
 		to_send = MIN(len - sent, d.buf_len);
 		lsd_send(ch, data + sent, to_send, NULL, cmd_send_cb);
-		tout = tsk_super_pend(tout_frames);
+		tout = TSK_superPend(tout_frames);
 		if (tout) {
 			return MW_ERR_SEND;
 		}
@@ -273,9 +273,9 @@ enum mw_err mw_detect(uint8_t *major, uint8_t *minor, char **variant)
 	uint8_t version[3];
 
 	// Wait a bit and take module out of resest
-	tsk_super_pend(MS_TO_FRAMES(30));
+	TSK_superPend(MS_TO_FRAMES(30));
 	mw_module_start();
-	tsk_super_pend(MS_TO_FRAMES(1000));
+	TSK_superPend(MS_TO_FRAMES(1000));
 
 	do {
 		retries--;
@@ -560,7 +560,7 @@ enum mw_err mw_ap_assoc_wait(int16_t tout_frames)
 			return MW_ERR_NONE;
 		}
 		// Sleep for MW_STAT_POLL_TOUT frames
-		tsk_super_pend(MW_STAT_POLL_TOUT);
+		TSK_superPend(MW_STAT_POLL_TOUT);
 		tout_frames -= MW_STAT_POLL_TOUT;
 	}
 
@@ -754,7 +754,7 @@ enum mw_err mw_sock_conn_wait(uint8_t ch, int16_t tout_frames)
 			return MW_ERR_NONE;
 		}
 		// Sleep for MW_STAT_POLL_TOUT frames
-		tsk_super_pend(MW_STAT_POLL_TOUT);
+		TSK_superPend(MW_STAT_POLL_TOUT);
 		tout_frames -= MW_STAT_POLL_MS;
 	}
 
@@ -1294,7 +1294,7 @@ void mw_power_off(void)
 
 void mw_sleep(int16_t frames)
 {
-	tsk_super_pend(frames);
+	TSK_superPend(frames);
 }
 
 enum mw_err mw_cfg_save(void)

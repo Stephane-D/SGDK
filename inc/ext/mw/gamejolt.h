@@ -15,8 +15,8 @@
  * \author Jesus Alonso (doragasu)
  * \date 2020
  *
- * \note This module requires setting ENABLE_MULTITASK and ENABLE_MEGAWIFI
- * to 1 in config.h and rebuilding the library (if you had to change them).
+ * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
+ * rebuilding the library (if you had to change them).
  * \note The module uses X Macros, making Doxygen documentation of some
  * elements a bit complicated. Sorry about that.
  ****************************************************************************/
@@ -27,7 +27,7 @@
 #include <types.h>
 
 /// \brief Module error codes.
-/// 
+///
 /// On success value is 0. On error all values are
 /// negative, with the exception of the HTTP status error. In this case,
 /// the value reported is the HTTP status code obtained (e.g. 500).

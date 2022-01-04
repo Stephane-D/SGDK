@@ -12,8 +12,8 @@
 
 #include <types.h>
 #include <string.h>
-#include <mw/jsmn.h>
-#include <mw/json.h>
+#include <ext/mw/jsmn.h>
+#include <ext/mw/json.h>
 
 int json_null_terminate(char *json_str, const jsmntok_t *json_tok, int num_tok)
 {
@@ -36,7 +36,7 @@ bool json_is_key(const jsmntok_t *json_tok, int obj_idx, int num_tok)
 	// or any other type with size 0
 	// NOTE: an alternative implementation could search for the ':'
 	// character after the end member of the token.
-	int i = obj_idx;	
+	int i = obj_idx;
 	jsmntype_t type;
 
 	if (num_tok < (i + 2)) {

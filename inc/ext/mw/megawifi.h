@@ -19,8 +19,8 @@
  * \author Jesus Alonso (doragasu)
  * \date 2015
  *
- * \note This module requires setting ENABLE_MULTITASK and ENABLE_MEGAWIFI
- * to 1 in config.h and rebuilding the library (if you had to change them).
+ * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
+ * rebuilding the library (if you had to change them).
  ****************************************************************************/
 
 #ifndef _MEGAWIFI_H_
@@ -133,7 +133,7 @@ enum mw_if_type {
  *        other function. It also initializes de UART.
  *
  * \param[in] cmd_buf Pointer to the buffer used to send and receive commands.
- * \param[in] buf_len Length of cmdBuf in bytes. 
+ * \param[in] buf_len Length of cmdBuf in bytes.
  *
  * \return MW_ERR_NONE on success, other code on failure.
  ****************************************************************************/

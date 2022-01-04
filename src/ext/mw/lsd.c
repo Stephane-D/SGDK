@@ -14,7 +14,7 @@
 #include <types.h>
 #include <string.h>
 #include <memory.h>
-#include <mw/lsd.h>
+#include <ext/mw/lsd.h>
 /// Uart used for LSD
 #define LSD_UART		0
 
