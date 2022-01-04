@@ -16,6 +16,7 @@
 #define PROCESS_DMA_TASK            (1 << 2)
 #define PROCESS_XGM_TASK            (1 << 3)
 #define PROCESS_VDP_SCROLL_TASK     (1 << 4)
+#define PROCESS_VBLANK_USER_TASK    (1 << 5)
 
 
 #define ROM_ALIGN_BIT               17
@@ -479,6 +480,5 @@ bool SYS_isChecksumOk();
  * This actually display an error message and program ends execution.
  */
 void SYS_die(char *err);
-
 
 #endif // _SYS_H_

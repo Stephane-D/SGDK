@@ -59,6 +59,17 @@ u16 windowWidthSft;
 
 u16 lastVCnt;
 
+#if (ENABLE_MULTITASK != 0)
+#include "tsk.h"
+
+extern vu16 VBlankProcess;
+
+void VDP_setVBlankUserYield(bool yieldToUser)
+{
+	if (yieldToUser) VBlankProcess |= PROCESS_VBLANK_USER_TASK;
+	else VBlankProcess &= ~PROCESS_VBLANK_USER_TASK;
+}
+#endif
 
 void VDP_init()
 {
@@ -858,8 +869,15 @@ bool VDP_waitVBlank(bool forceNext)
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
+#if (ENABLE_MULTITASK != 0)
+    // NOTE: when multitasking, we want to avoid active waits, so if multitasking
+    // is active, do not wait until the end of vblank
+    bool yield_to_user = VBlankProcess & PROCESS_VBLANK_USER_TASK;
+    if (!yield_to_user && forceNext && blank)
+#else
     // we want to wait for next start of VBlank ?
     if (forceNext && blank)
+#endif
     {
         // wait end of vblank if already in vblank
         while (*pw & VDP_VBLANK_FLAG);
@@ -883,7 +901,12 @@ bool VDP_waitVBlank(bool forceNext)
 #endif
 
     // wait end of active period
+#if (ENABLE_MULTITASK == 0)
     while (!(*pw & VDP_VBLANK_FLAG));
+#else
+    if (yield_to_user) tsk_user_yield();
+    else while (!(*pw & VDP_VBLANK_FLAG));
+#endif
 
     return late;
 }
