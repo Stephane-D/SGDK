@@ -17,11 +17,10 @@
 
 #include <types.h>
 #include <genesis.h>
-#include <tsk.h>
-#include <mw/megawifi.h>
+#include <ext/mw/megawifi.h>
 
-#if (ENABLE_MULTITASK == 0) || (ENABLE_MEGAWIFI == 0)
-#error "Set ENABLE_MULTITASK and ENABLE_MEGAWIFI to 1 in config.h and rebuild the library"
+#if (ENABLE_MEGAWIFI == 0)
+#error "Set ENABLE_MEGAWIFI to 1 in config.h and rebuild the library"
 #endif
 
 /// Length of the wflash buffer
@@ -346,9 +345,7 @@ static bool megawifi_init(void)
 /// Set idle task that polls WiFi module
 static void tasking_init(void)
 {
-	tsk_user_set(idle_tsk);
-	// Configure system to yield to user task while waiting for VBlank
-	VDP_setVBlankUserYield(TRUE);
+	TSK_userSet(idle_tsk);
 }
 
 /// Global initialization
