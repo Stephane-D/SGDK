@@ -8,9 +8,11 @@ endif
 include $(GDK)/common.mk
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
-SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*.c)
+SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*.c)
+SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*/*.c)
 SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
-SRC_LIB_S += $(wildcard $(SRC_LIB)/*/*.s)
+SRC_LIB_S += $(wildcard $(SRC_LIB)/ext/*.s)
+SRC_LIB_S += $(wildcard $(SRC_LIB)/ext/*/*.s)
 SRC_LIB_S80 := $(wildcard $(SRC_LIB)/*.s80)
 
 RES_LIB_RES := $(wildcard $(RES_LIB)/*.res)
