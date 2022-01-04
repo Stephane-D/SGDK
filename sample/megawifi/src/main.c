@@ -347,6 +347,8 @@ static bool megawifi_init(void)
 static void tasking_init(void)
 {
 	tsk_user_set(idle_tsk);
+	// Configure system to yield to user task while waiting for VBlank
+	VDP_setVBlankUserYield(TRUE);
 }
 
 /// Global initialization

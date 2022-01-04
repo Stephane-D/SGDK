@@ -19,10 +19,6 @@
 #include "font.h"
 #include "sprite_eng.h"
 
-#if (ENABLE_MULTITASK != 0)
-#include "tsk.h"
-#endif
-
 
 #define WINDOW_DEFAULT          0xD000      // multiple of 0x1000 (0x0800 in H32)
 #define HSCRL_DEFAULT           0xF000      // multiple of 0x0400
@@ -63,6 +59,17 @@ u16 windowWidthSft;
 
 u16 lastVCnt;
 
+#if (ENABLE_MULTITASK != 0)
+#include "tsk.h"
+
+extern vu16 VBlankProcess;
+
+void VDP_setVBlankUserYield(bool yieldToUser)
+{
+	if (yieldToUser) VBlankProcess |= PROCESS_VBLANK_USER_TASK;
+	else VBlankProcess &= ~PROCESS_VBLANK_USER_TASK;
+}
+#endif
 
 void VDP_init()
 {
@@ -855,16 +862,19 @@ bool VDP_waitVBlank(bool forceNext)
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
-    // When using the multitasking approach, this is the only supported
-    // behavior, since task switch occurs only at the start of VBlank
-#if (ENABLE_MULTITASK == 0)
+#if (ENABLE_MULTITASK != 0)
+    // NOTE: when multitasking, we want to avoid active waits, so if multitasking
+    // is active, do not wait until the end of vblank
+    bool yield_to_user = VBlankProcess & PROCESS_VBLANK_USER_TASK;
+    if (!yield_to_user && forceNext && blank)
+#else
     // we want to wait for next start of VBlank ?
     if (forceNext && blank)
+#endif
     {
         // wait end of vblank if already in vblank
         while (*pw & VDP_VBLANK_FLAG);
     }
-#endif
 
     // compute frame load now (return TRUE if frame miss / late detected)
     bool late = computeFrameCPULoad(blank, vcnt, t);
@@ -887,7 +897,8 @@ bool VDP_waitVBlank(bool forceNext)
 #if (ENABLE_MULTITASK == 0)
     while (!(*pw & VDP_VBLANK_FLAG));
 #else
-    tsk_user_yield();
+    if (yield_to_user) tsk_user_yield();
+    else while (!(*pw & VDP_VBLANK_FLAG));
 #endif
 
     return late;

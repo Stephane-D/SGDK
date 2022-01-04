@@ -116,6 +116,9 @@ int main(uint16_t __attribute__((unused)) hard)
 	SYS_setVIntCallback(vint_cb);
 	// Configure background task as user task
 	tsk_user_set(bg_tsk);
+	// Configure system to yield to user task while waiting for VBlank
+	VDP_setVBlankUserYield(TRUE);
+
 	// Start foreground task
 	fg_tsk();
 
