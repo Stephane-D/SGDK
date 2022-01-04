@@ -15,6 +15,7 @@
 #include "dma.h"
 #include "timer.h"
 #include "sys.h"
+#include "task.h"
 
 #include "font.h"
 #include "sprite_eng.h"
@@ -27,6 +28,8 @@
 #define BPLAN_DEFAULT           0xC000      // multiple of 0x2000
 
 
+// we don't want to share it
+extern u32 task_pc;
 // we don't want to share it
 extern bool addFrameLoad(u16 frameLoad, u32 vtime);
 
@@ -59,17 +62,6 @@ u16 windowWidthSft;
 
 u16 lastVCnt;
 
-#if (ENABLE_MULTITASK != 0)
-#include "tsk.h"
-
-extern vu16 VBlankProcess;
-
-void VDP_setVBlankUserYield(bool yieldToUser)
-{
-	if (yieldToUser) VBlankProcess |= PROCESS_VBLANK_USER_TASK;
-	else VBlankProcess &= ~PROCESS_VBLANK_USER_TASK;
-}
-#endif
 
 void VDP_init()
 {
@@ -851,11 +843,14 @@ bool VDP_waitVInt()
     }
 #endif
 
-    // wait for next VInt
-    while (vtimer == t);
+    // background user task ? --> switch to it
+    if (task_pc != NULL) TSK_userYield();
+    // otherwise we just wait for next VInt
+    else while (vtimer == t);
 
     return late;
 }
+
 
 bool VDP_waitVBlank(bool forceNext)
 {
@@ -866,18 +861,13 @@ bool VDP_waitVBlank(bool forceNext)
     // store V-Counter and initial blank state
     const u16 vcnt = GET_VCOUNTER;
     const u16 blank = *pw & VDP_VBLANK_FLAG;
+    // have an user task (multitasking) ?
+    const bool yield_to_user = (task_pc != NULL);
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
-#if (ENABLE_MULTITASK != 0)
-    // NOTE: when multitasking, we want to avoid active waits, so if multitasking
-    // is active, do not wait until the end of vblank
-    bool yield_to_user = VBlankProcess & PROCESS_VBLANK_USER_TASK;
-    if (!yield_to_user && forceNext && blank)
-#else
-    // we want to wait for next start of VBlank ?
-    if (forceNext && blank)
-#endif
+    // we want to wait for next start of VBlank ? (only if no multitasking)
+    if (forceNext && blank && !yield_to_user)
     {
         // wait end of vblank if already in vblank
         while (*pw & VDP_VBLANK_FLAG);
@@ -900,13 +890,10 @@ bool VDP_waitVBlank(bool forceNext)
     }
 #endif
 
-    // wait end of active period
-#if (ENABLE_MULTITASK == 0)
-    while (!(*pw & VDP_VBLANK_FLAG));
-#else
-    if (yield_to_user) tsk_user_yield();
+    // multitasking ? --> switch to user task
+    if (yield_to_user) TSK_userYield();
+    // otherwise we just wait end of active period
     else while (!(*pw & VDP_VBLANK_FLAG));
-#endif
 
     return late;
 }

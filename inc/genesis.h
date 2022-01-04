@@ -49,6 +49,8 @@
 #include "joy.h"
 #include "timer.h"
 
+#include "task.h"
+
 // preserve compatibility with old resources name
 #define logo_lib sgdk_logo
 #define font_lib font_default

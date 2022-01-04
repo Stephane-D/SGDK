@@ -933,18 +933,5 @@ void VDP_showFPS(u16 asFloat);
  */
 void VDP_showCPULoad();
 
-/**
- *  \brief
- *      When enabled, yields to user task during VBlank wait.
- *
- *  \param yieldToUser
- *      Set to TRUE to enable yielding to user task while waiting for VBlank.
- *      Set to FALSE to disable yielding to user task while waiting for VBlank.
- *
- * This function requires ENABLE_MULTITASK to be set to 1 in config.h.
- *
- * \see #tsk_user_set() for user task configuration.
- */
-void VDP_setVBlankUserYield(bool yieldToUser);
 
 #endif // _VDP_H_
