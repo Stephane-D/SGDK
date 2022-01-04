@@ -5,41 +5,7 @@ ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
     GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
 endif
 
-BIN := $(GDK)/bin
-LIB := $(GDK)/lib
-
-SRC_LIB := $(GDK)/src
-RES_LIB := $(GDK)/res
-INCLUDE_LIB := $(GDK)/inc
-
-ifeq ($(OS),Windows_NT)
-	SHELL := $(BIN)/sh.exe
-	RM := $(BIN)/rm.exe
-	CP := $(BIN)/cp.exe
-	MKDIR := $(BIN)/mkdir.exe
-
-	AR := $(BIN)/ar.exe
-	CC := $(BIN)/gcc.exe
-	OBJCPY := $(BIN)/objcopy.exe
-	ASMZ80 := $(BIN)/sjasm.exe
-	BINTOS := $(BIN)/bintos.exe
-else
-	SHELL = sh
-	RM = rm
-	CP = cp
-	MKDIR = mkdir
-
-	AR := $(BIN)/ar
-	CC := $(BIN)/gcc
-	OBJCPY := $(BIN)/objcopy
-	ASMZ80 := $(BIN)/sjasm
-	BINTOS := $(BIN)/bintos
-endif
-
-JAVA := java
-ECHO := echo
-SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
-RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+include $(GDK)/common.mk
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
 SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
@@ -116,11 +82,11 @@ cleanAsm: cleanasm
 
 
 $(LIB)/libmd.a: cmd_
-	$(AR) rs $(LIB)/libmd.a --plugin=liblto_plugin-0.dll @cmd_
+	$(AR) rs $(LIB)/libmd.a $(LTO_PLUGIN) @cmd_
 	$(RM) cmd_
 
 $(LIB)/libmd_debug.a: cmd_
-	$(AR) rs $(LIB)/libmd_debug.a --plugin=liblto_plugin-0.dll @cmd_
+	$(AR) rs $(LIB)/libmd_debug.a $(LTO_PLUGIN) @cmd_
 	$(RM) cmd_
 
 cmd_ : $(OBJ_LIB)

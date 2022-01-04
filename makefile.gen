@@ -5,49 +5,12 @@ ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
     GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
 endif
 
-BIN := $(GDK)/bin
-LIB := $(GDK)/lib
-
-LIBSRC := $(GDK)/src
-LIBRES := $(GDK)/res
-LIBINCLUDE := $(GDK)/inc
+include $(GDK)/common.mk
 
 SRC := src
 RES := res
 INCLUDE := inc
 
-ifeq ($(OS),Windows_NT)
-	SHELL := $(BIN)/sh.exe
-	RM := $(BIN)/rm.exe
-	CP := $(BIN)/cp.exe
-	MKDIR := $(BIN)/mkdir.exe
-
-	CC := $(BIN)/gcc.exe
-	LD:= $(BIN)/ld.exe
-	NM:= $(BIN)/nm.exe
-	OBJCPY := $(BIN)/objcopy.exe
-	ASMZ80 := $(BIN)/sjasm.exe
-	MACCER := $(BIN)/mac68k.exe
-	BINTOS := $(BIN)/bintos.exe
-else
-	SHELL = sh
-	RM = rm
-	CP = cp
-	MKDIR = mkdir
-
-	CC := $(BIN)/gcc
-	LD := $(BIN)/ld
-	NM := $(BIN)/nm
-	OBJCPY := $(BIN)/objcopy
-	ASMZ80 := $(BIN)/sjasm
-	MACCER := $(BIN)/mac68k
-	BINTOS := $(BIN)/bintos
-endif
-
-JAVA:= java
-ECHO:= echo
-SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
-RESCOMP:= $(JAVA) -jar $(BIN)/rescomp.jar
 
 SRC_C= $(wildcard *.c)
 SRC_C+= $(wildcard $(SRC)/*.c)
@@ -94,9 +57,9 @@ DEPS:= $(OBJS:.o=.d)
 LST:= $(SRC_C:.c=.lst)
 LSTS:= $(addprefix out/, $(LST))
 
-INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
+INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(INCLUDE_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS= $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin $(INCS) -B$(BIN)
-FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
+FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
@@ -164,10 +127,10 @@ out/rom.bin: out/rom.out
 	$(SIZEBND) out/rom.bin -sizealign 131072 -checksum
 
 out/symbol.txt: out/rom.out
-	$(NM) --plugin=liblto_plugin-0.dll -n out/rom.out > out/symbol.txt
+	$(NM) $(LTO_PLUGIN) -n out/rom.out > out/symbol.txt
 
 out/rom.out: out/sega.o out/cmd_ $(LIBMD)
-	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIB)/libgcc.a -o out/rom.out -Wl,--gc-sections
+	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIBGCC) -o out/rom.out -Wl,--gc-sections
 	$(RM) out/cmd_
 
 out/cmd_: $(OBJS)
@@ -182,10 +145,10 @@ out/rom_head.bin: out/rom_head.o
 out/rom_head.o: $(SRC)/boot/rom_head.c
 	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
 
-$(SRC)/boot/sega.s: $(LIBSRC)/boot/sega.s
+$(SRC)/boot/sega.s: $(SRC_LIB)/boot/sega.s
 	$(CP) $< $@
 
-$(SRC)/boot/rom_head.c: $(LIBSRC)/boot/rom_head.c
+$(SRC)/boot/rom_head.c: $(SRC_LIB)/boot/rom_head.c
 	$(CP) $< $@
 
 
