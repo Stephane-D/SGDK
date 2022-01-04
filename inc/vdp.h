@@ -463,17 +463,17 @@ extern u16 windowWidthSft;
 
 /**
  *  \brief
- *      Initialize the VDP sub system.
+ *      Initialize the whole VDP sub system.
  *
- * Reset VDP registers, clear VRAM, set defaults grey, red, green & blue palette.
+ * Reset VDP registers, reset sprites then call #VDP_resetScreen() to reset BG and palettes.
  */
 void VDP_init();
 
 /**
  *  \brief
- *      Reset background plane and palette.
+ *      Reset background planes and palettes.
  *
- *  Clear background plans, reset palette to grey / red / green / blue and reset scrolls.
+ *  Reset VRAM (clear BG planes and reload font), reset scrolls and reset palettes (set to default grey / red / green / blue ramps).
  */
 void VDP_resetScreen();
 

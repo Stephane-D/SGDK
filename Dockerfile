@@ -19,6 +19,7 @@ RUN useradd -ms /bin/sh -d /sgdk sgdk
 # Set-up SGDK
 COPY . /sgdk
 ENV GDK=/sgdk
+ENV SGDK_DOCKER=y
 
 # Create wrappers to execute .exe files using wine
 RUN /sgdk/bin/create-bin-wrappers.sh

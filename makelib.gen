@@ -5,45 +5,12 @@ ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
     GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
 endif
 
-BIN := $(GDK)/bin
-LIB := $(GDK)/lib
-
-SRC_LIB := $(GDK)/src
-RES_LIB := $(GDK)/res
-INCLUDE_LIB := $(GDK)/inc $(GDK)/inc/ext
-
-ifeq ($(OS),Windows_NT)
-	SHELL := $(BIN)/sh.exe
-	RM := $(BIN)/rm.exe
-	CP := $(BIN)/cp.exe
-	MKDIR := $(BIN)/mkdir.exe
-
-	AR := $(BIN)/ar.exe
-	CC := $(BIN)/gcc.exe
-	OBJCPY := $(BIN)/objcopy.exe
-	ASMZ80 := $(BIN)/sjasm.exe
-	BINTOS := $(BIN)/bintos.exe
-else
-	SHELL = sh
-	RM = rm
-	CP = cp
-	MKDIR = mkdir
-
-	AR := $(BIN)/ar
-	CC := $(BIN)/gcc
-	OBJCPY := $(BIN)/objcopy
-	ASMZ80 := $(BIN)/sjasm
-	BINTOS := $(BIN)/bintos
-endif
-
-JAVA := java
-ECHO := echo
-SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
-RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+include $(GDK)/common.mk
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
-SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*/*.c)
+SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*.c)
 SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
+SRC_LIB_S += $(wildcard $(SRC_LIB)/*/*.s)
 SRC_LIB_S80 := $(wildcard $(SRC_LIB)/*.s80)
 
 RES_LIB_RES := $(wildcard $(RES_LIB)/*.res)
@@ -59,11 +26,9 @@ DEP_LIB := $(OBJ_LIB:.o=.d)
 
 LST_LIB := $(SRC_LIB_C:.c=.lst)
 
-INCS_LIB_C := $(foreach incdir, $(INCLUDE_LIB), -I$(incdir))
-INCS_LIB_Z80 := $(foreach incdir, $(INCLUDE_LIB), -i$(incdir))
-INCS_LIB := $(INCS_LIB_C) -I$(SRC_LIB) -I$(RES_LIB)
+INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin -Wno-unused-parameter $(INCS_LIB) -B$(BIN)
-FLAGSZ80_LIB := -i$(SRC_LIB) $(INCS_LIB_Z80)
+FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
@@ -119,11 +84,11 @@ cleanAsm: cleanasm
 
 
 $(LIB)/libmd.a: cmd_
-	$(AR) rs $(LIB)/libmd.a --plugin=liblto_plugin-0.dll @cmd_
+	$(AR) rs $(LIB)/libmd.a $(LTO_PLUGIN) @cmd_
 	$(RM) cmd_
 
 $(LIB)/libmd_debug.a: cmd_
-	$(AR) rs $(LIB)/libmd_debug.a --plugin=liblto_plugin-0.dll @cmd_
+	$(AR) rs $(LIB)/libmd_debug.a $(LTO_PLUGIN) @cmd_
 	$(RM) cmd_
 
 cmd_ : $(OBJ_LIB)
