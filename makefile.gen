@@ -10,7 +10,7 @@ LIB := $(GDK)/lib
 
 LIBSRC := $(GDK)/src
 LIBRES := $(GDK)/res
-LIBINCLUDE := $(GDK)/inc
+LIBINCLUDE := $(GDK)/inc $(GDK)/inc/ext
 
 SRC := src
 RES := res
@@ -94,9 +94,9 @@ DEPS:= $(OBJS:.o=.d)
 LST:= $(SRC_C:.c=.lst)
 LSTS:= $(addprefix out/, $(LST))
 
-INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
+INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) $(foreach inc, $(LIBINCLUDE), -I$(inc)) -I$(LIBRES)
 DEFAULT_FLAGS= $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin $(INCS) -B$(BIN)
-FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
+FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) $(foreach inc, $(LIBINCLUDE), -i$(inc))
 
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto

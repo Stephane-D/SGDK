@@ -12,8 +12,8 @@
 
 #include <types.h>
 #include <string.h>
-#include "jsmn.h"
-#include "json.h"
+#include <mw/jsmn.h>
+#include <mw/json.h>
 
 int json_null_terminate(char *json_str, const jsmntok_t *json_tok, int num_tok)
 {

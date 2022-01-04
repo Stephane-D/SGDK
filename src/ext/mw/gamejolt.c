@@ -7,8 +7,8 @@
 #include <types.h>
 #include <string.h>
 #include <memory.h>
-#include "megawifi.h"
-#include "gamejolt.h"
+#include <mw/megawifi.h>
+#include <mw/gamejolt.h>
 
 // I miss having stding.h sooooooo much
 #ifndef INT32_MAX

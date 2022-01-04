@@ -117,7 +117,7 @@
  *  \brief
  *      Set it to 1 if you want to enable multitasking
  */
-#define ENABLE_MULTITASK    0
+#define ENABLE_MULTITASK    1
 
 #if (ENABLE_MULTITASK != 0)
 

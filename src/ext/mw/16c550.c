@@ -1,4 +1,4 @@
-#include "16c550.h"
+#include <mw/16c550.h>
 
 /// Shadow copy of the UART registers
 UartShadow sh;

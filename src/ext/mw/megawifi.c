@@ -13,8 +13,8 @@
 #include <types.h>
 #include <string.h>
 #include <memory.h>
-#include "megawifi.h"
-#include "tsk.h"
+#include <tsk.h>
+#include <mw/megawifi.h>
 
 /// Remove compiler warnings when not using a function parameter
 #define UNUSED_PARAM(x)		(void)x

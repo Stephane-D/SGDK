@@ -10,7 +10,7 @@ LIB := $(GDK)/lib
 
 SRC_LIB := $(GDK)/src
 RES_LIB := $(GDK)/res
-INCLUDE_LIB := $(GDK)/inc
+INCLUDE_LIB := $(GDK)/inc $(GDK)/inc/ext
 
 ifeq ($(OS),Windows_NT)
 	SHELL := $(BIN)/sh.exe
@@ -42,6 +42,7 @@ SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
 RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
+SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*/*.c)
 SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
 SRC_LIB_S80 := $(wildcard $(SRC_LIB)/*.s80)
 
@@ -58,9 +59,11 @@ DEP_LIB := $(OBJ_LIB:.o=.d)
 
 LST_LIB := $(SRC_LIB_C:.c=.lst)
 
-INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
+INCS_LIB_C := $(foreach incdir, $(INCLUDE_LIB), -I$(incdir))
+INCS_LIB_Z80 := $(foreach incdir, $(INCLUDE_LIB), -i$(incdir))
+INCS_LIB := $(INCS_LIB_C) -I$(SRC_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin -Wno-unused-parameter $(INCS_LIB) -B$(BIN)
-FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
+FLAGSZ80_LIB := -i$(SRC_LIB) $(INCS_LIB_Z80)
 
 
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
