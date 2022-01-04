@@ -57,9 +57,10 @@ DEPS:= $(OBJS:.o=.d)
 LST:= $(SRC_C:.c=.lst)
 LSTS:= $(addprefix out/, $(LST))
 
-INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(INCLUDE_LIB) -I$(RES_LIB)
+INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) $(foreach inc, $(INCLUDE_LIB), -I$(inc)) -I$(RES_LIB)
 DEFAULT_FLAGS= $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin $(INCS) -B$(BIN)
-FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(SRC_LIB) -i$(INCLUDE_LIB)
+FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(RES_LIB) $(foreach inc, $(INCLUDE_LIB), -i$(inc))
+
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
 release: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -flto
