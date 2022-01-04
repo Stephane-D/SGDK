@@ -115,22 +115,6 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to enable multitasking
- */
-#define ENABLE_MULTITASK    1
-
-#if (ENABLE_MULTITASK != 0)
-
-/**
- *  \brief
- *      Byte length for the user task stack
- */
-#define USER_STACK_LENGTH   512
-
-#endif // ENABLE_MULTITASK
-
-/**
- *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code
  */
 #define ENABLE_MEGAWIFI     0
