@@ -24,7 +24,7 @@ ifeq ($(OS),Windows_NT)
 	ASMZ80 := $(BIN)/sjasm.exe
 	MACCER := $(BIN)/mac68k.exe
 	BINTOS := $(BIN)/bintos.exe
-	LTO_PLUGIN := --plugin=liblto_plugin-0.dll 
+	LTO_PLUGIN := --plugin=liblto_plugin-0.dll
 	LIBGCC := $(LIB)/libgcc.a
 else
 	ifeq ($(SGDK_DOCKER),y)
@@ -60,6 +60,7 @@ else
 		ASMZ80 := sjasm
 		MACCER := mac68k
 		BINTOS := bintos
+	    LTO_PLUGIN :=
 		LIBGCC := -lgcc
 	endif
 endif
