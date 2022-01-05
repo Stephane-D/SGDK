@@ -29,20 +29,12 @@
  *    and the third row will show "UNLOCKED" to inform that the foreground task
  *    has been unlocked by the background task (i.e. no timeout has occurred).
  *
- * To build this example set ENABLE_MULTITASK to 1 in config.h. If you had to
- * enable it, you must rebuild the library.
- *
  * \author Jesus Alonso (doragasu)
  * \date 01/2022
  ****************************************************************************/
 
 #include <types.h>
 #include <genesis.h>
-#include <tsk.h>
-
-#if (ENABLE_MULTITASK == 0)
-#error "Set ENABLE_MULTITASK to 1 in config.h and rebuild the library"
-#endif
 
 /// Counter to be incremented by background task
 static volatile uint32_t count = 0;
@@ -53,7 +45,7 @@ static void draw_hex(uint32_t value, uint16_t x, uint16_t y)
 	char num[9];
 
 	intToHex(value, num, 8);
-//	num[8] = '\0';
+	num[8] = '\0';
 	VDP_drawText(num, x, y);
 }
 
@@ -74,7 +66,7 @@ static void bg_tsk(void)
 		count++;
 		if (!posted && count >= 0x100000) {
 			posted = TRUE;
-			tsk_super_post(FALSE);
+			TSK_superPost(FALSE);
 		}
 	}
 }
@@ -85,7 +77,7 @@ static void pend_check(uint16_t timeout)
 	const char *message;
 
 	VDP_drawText("PENDING ", 1, 3);
-	if (tsk_super_pend(timeout)) {
+	if (TSK_superPend(timeout)) {
 		message = "TIMEOUT ";
 	} else {
 		message = "UNLOCKED";
@@ -115,9 +107,7 @@ int main(uint16_t __attribute__((unused)) hard)
 	// Configure vertical blanking interrupt callback
 	SYS_setVIntCallback(vint_cb);
 	// Configure background task as user task
-	tsk_user_set(bg_tsk);
-	// Configure system to yield to user task while waiting for VBlank
-	VDP_setVBlankUserYield(TRUE);
+	TSK_userSet(bg_tsk);
 
 	// Start foreground task
 	fg_tsk();
