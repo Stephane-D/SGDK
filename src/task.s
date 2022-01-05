@@ -41,6 +41,15 @@ func TSK_userSet
         move.l  4(%sp), task_pc
         rts
 
+
+/**
+ * Stop the user task.
+ *  This has the same effect than using TSK_setUser(NULL).
+ */
+func TSK_stop
+        move.l  #0, task_pc
+        rts
+
 /**
  * Resume a blocked supervisor task. Must be called from user task.
  */

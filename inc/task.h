@@ -29,9 +29,15 @@
  * \brief Configure the user task callback function.<br>
  *  Must be set with a not NULL callback before calling any TSK_xxx functions.
  *
- * \param[in] task A function pointer to the user task (or NULL to disable multitasking).
+ * \param task A function pointer to the user task (or NULL to disable multitasking).
  */
 void TSK_userSet(VoidCallback *task);
+
+/**
+ * \brief Stop the user task.<br>
+ *  This has the same effect than using TSK_setUser(NULL).
+ */
+void TSK_stop();
 
 /**
  * \brief Yield from supervisor task to user task. The user task will resume
@@ -45,7 +51,7 @@ void TSK_userYield(void);
  * not resume execution until #TSK_superPost() is called from user task or a
  * timeout happens..
  *
- * \param[in] wait Maximum number of frames to wait while blocking. Use
+ * \param wait Maximum number of frames to wait while blocking. Use
  *            TSK_PEND_FOREVER for an infinite wait, or a positive number
  *            (greater than 0) for a specific number of frames.
  *
@@ -57,7 +63,7 @@ bool TSK_superPend(s16 wait);
 /**
  * \brief Resume a blocked supervisor task. Must be called from user task.
  *
- * \param[in] immediate If true, immediately causes a context switch to
+ * \param immediate If true, immediately causes a context switch to
  *            supervisor task. If false, context switch will not occur until
  *            the VBLANK interrupt.
  */
