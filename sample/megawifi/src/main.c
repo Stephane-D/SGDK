@@ -35,9 +35,6 @@
 /// Tuned for 60 Hz, change it for PAL consoles
 #define MS_TO_FRAMES(ms)  ((((ms) * 60 / 500) + 1)/2)
 
-/// Get the minimum of two numbers
-#define MIN(a, b) (a)<(b)?(a):(b)
-
 /// Command buffer
 static char cmd_buf[MW_BUFLEN];
 
@@ -147,7 +144,7 @@ static void udp_normal_test(void)
 	}
 	mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, TSK_PEND_FOREVER);
 	mw_recv_sync(&ch, line, &len, TSK_PEND_FOREVER);
-	line[MIN(39, len)] = '\0';
+	line[min(39, len)] = '\0';
 	if (1 == ch) {
 		println("Got UDP reply:");
 		println(line);
