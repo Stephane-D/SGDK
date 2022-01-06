@@ -843,7 +843,7 @@ bool VDP_waitVInt()
     }
 #endif
 
-    // background user task ? --> switch to it
+    // background user task ? --> switch to it (automatically switch back to front task on v-int)
     if (task_pc != NULL) TSK_userYield();
     // otherwise we just wait for next VInt
     else while (vtimer == t);
@@ -890,7 +890,7 @@ bool VDP_waitVBlank(bool forceNext)
     }
 #endif
 
-    // multitasking ? --> switch to user task
+    // background user task ? --> switch to it (automatically switch back to front task on v-int)
     if (yield_to_user) TSK_userYield();
     // otherwise we just wait end of active period
     else while (!(*pw & VDP_VBLANK_FLAG));
