@@ -300,6 +300,102 @@ void VDP_setTextPriority(u16 prio);
 
 /**
  *  \brief
+ *      Draw text in specified plane (advanced method).
+ *
+ *  \param plane
+ *      Plane where we want to draw text.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param str
+ *      String to draw.
+ *  \param basetile
+ *      Base tile attributes data (see TILE_ATTR() macro).
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
+ *  \param tm
+ *      Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  \see VDP_clearText(..)
+ *  \see VDP_setTextPalette(..)
+ *  \see VDP_setTextPriority(..)
+ *  \see VDP_setTextPlane(..)
+ */
+void VDP_drawTextEx(VDPPlane plane, const char *str, u16 basetile, u16 x, u16 y, TransferMethod tm);
+/**
+ *  \brief
+ *      Clear a single line portion of text (advanced method).
+ *
+ *  \param plane
+ *      Plane where we want to clear text.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param basetile
+ *      Base tile attributes data (see TILE_ATTR() macro).
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
+ *  \param w
+ *      width to clear (in tile).
+ *  \param tm
+ *      Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  \see VDP_drawText(..)
+ *  \see VDP_clearTextArea(..)
+ *  \see VDP_clearTextLine(..)
+ */
+void VDP_clearTextEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, TransferMethod tm);
+/**
+ *  \brief
+ *      Clear a specific area of text (advanced method).
+ *
+ *  \param plane
+ *      Plane where we want to clear text.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param basetile
+ *      Base tile attributes data (see TILE_ATTR() macro).
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
+ *  \param w
+ *      width to clear (in tile).
+ *  \param h
+ *      heigth to clear (in tile).
+ *  \param tm
+ *      Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *
+ *  \see VDP_drawText(..)
+ *  \see VDP_clearText(..)
+ */
+void VDP_clearTextAreaEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h, TransferMethod tm);
+
+/**
+ *  \brief
  *      Draw text in specified plane.
  *
  *  \param plane
@@ -315,6 +411,7 @@ void VDP_setTextPriority(u16 prio);
  *  \param y
  *      y position (in tile).
  *
+ *  \see VDP_drawTextEx(..)
  *  \see VDP_clearText(..)
  *  \see VDP_setTextPalette(..)
  *  \see VDP_setTextPriority(..)
@@ -338,6 +435,7 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y);
  *  \param w
  *      width to clear (in tile).
  *
+ *  \see VDP_clearTextEx(..)
  *  \see VDP_drawText(..)
  *  \see VDP_clearTextArea(..)
  *  \see VDP_clearTextLine(..)
@@ -362,6 +460,7 @@ void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w);
  *  \param h
  *      heigth to clear (in tile).
  *
+ *  \see VDP_clearTextAreaEx(..)
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  *  \see VDP_clearTextLine(..)

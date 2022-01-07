@@ -225,7 +225,7 @@ void VDP_setTextPriority(u16 prio)
     text_basetile |= (prio & 1) << 15;
 }
 
-void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
+void VDP_drawTextEx(VDPPlane plane, const char *str, u16 basetile, u16 x, u16 y, TransferMethod tm)
 {
     u16 data[128];
     const u8 *s;
@@ -242,18 +242,86 @@ void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
 
     // get string len
     len = strlen(str);
-
     // if string don't fit in plane, we cut it
     if (len > (pw - x))
         len = pw - x;
 
+    // prepare the data
     s = (const u8*) str;
     d = data;
     i = len;
     while(i--)
         *d++ = TILE_FONTINDEX + (*s++ - 32);
 
-    VDP_setTileMapDataRowEx(plane, data, text_basetile, y, x, len, CPU);
+    // VDP_setTileMapDataRowEx(..) take care of using temporary buffer to build the data so we are ok here
+    VDP_setTileMapDataRowEx(plane, data, basetile, y, x, len, tm);
+}
+
+void VDP_clearTextEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, TransferMethod tm)
+{
+    u16 data[128];
+    u16 pw, ph, len;
+
+    // get the horizontal plane size (in cell)
+    pw = (plane == WINDOW)?windowWidth:planeWidth;
+    ph = (plane == WINDOW)?32:planeHeight;
+
+    // string outside plane --> exit
+    if ((x >= pw) || (y >= ph))
+        return;
+
+    // adjust width
+    len = w;
+    // if don't fit in plane, we cut it
+    if (len > (pw - x))
+        len = pw - x;
+
+    // prepare the data
+    memsetU16(data, 0, len);
+
+    // VDP_setTileMapDataRowEx(..) take care of using temporary buffer to build the data so we are ok here
+    VDP_setTileMapDataRowEx(plane, data, basetile, y, x, len, tm);
+}
+
+void VDP_clearTextAreaEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)
+{
+    u16 data[128];
+    u16 i, ya, len;
+    u16 pw, ph;
+    u16 wa, ha;
+
+    // get the horizontal plane size (in cell)
+    pw = (plane == WINDOW)?windowWidth:planeWidth;
+    ph = (plane == WINDOW)?32:planeHeight;
+
+    // string outside plane --> exit
+    if ((x >= pw) || (y >= ph))
+        return;
+
+    // adjust width
+    wa = w;
+    // if don't fit in plane, we cut it
+    if (wa > (pw - x))
+        wa = pw - x;
+    // adjust height
+    ha = h;
+    // if don't fit in plane, we cut it
+    if (ha > (ph - y))
+        ha = ph - y;
+
+    // prepare the data
+    memsetU16(data, 0, wa);
+
+    ya = y;
+    i = ha;
+    while(i--)
+        // VDP_setTileMapDataRowEx(..) take care of using temporary buffer to build the data so we are ok here
+        VDP_setTileMapDataRowEx(plane, data, basetile, ya++, x, len, tm);
+}
+
+void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
+{
+    VDP_drawTextEx(plane, str, text_basetile, x, y, CPU);
 }
 
 void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w)
