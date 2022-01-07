@@ -523,7 +523,8 @@ void VDP_setScrollingMode(u16 hscroll, u16 vscroll)
 {
     vu16 *pw;
 
-    regValues[0x0B] = ((vscroll & 1) << 2) | (hscroll & 3);
+    regValues[0x0B] &= ~0x07;
+    regValues[0x0B] |= ((vscroll & 1) << 2) | (hscroll & 3);
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8B00 | regValues[0x0B];
@@ -603,6 +604,17 @@ void VDP_setHInterrupt(u8 value)
 
     pw = (u16 *) GFX_CTRL_PORT;
     *pw = 0x8000 | regValues[0x00];
+}
+
+void VDP_setExtInterrupt(u8 value)
+{
+    vu16 *pw;
+
+    if (value) regValues[0x0B] |= 0x08;
+    else regValues[0x0B] &= ~0x08;
+
+    pw = (u16 *) GFX_CTRL_PORT;
+    *pw = 0x8B00 | regValues[0x0B];
 }
 
 void VDP_setHilightShadow(u8 value)

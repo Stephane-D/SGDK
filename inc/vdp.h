@@ -685,6 +685,13 @@ void VDP_setHVLatching(u8 value);
 void VDP_setHInterrupt(u8 value);
 /**
  *  \brief
+ *      Enable or Disable External interrupt.
+ *
+ *  \see VDP_setExtIntCounter()
+ */
+void VDP_setExtInterrupt(u8 value);
+/**
+ *  \brief
  *      Enable or Disable Hilight / Shadow effect.
  */
 void VDP_setHilightShadow(u8 value);
