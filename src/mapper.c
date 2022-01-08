@@ -161,7 +161,7 @@ void* SYS_getFarData(void* data)
     const u32 mappedAddr = setBank(addr) + (addr & BANK_IN_MASK);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-//    kprintf(""Data at %8lX accessed through bank switch from %8lX", addr, mappedAddr);
+    kprintf("Data at %8lX accessed through bank switch from %8lX", addr, mappedAddr);
 #endif
 
     // return it
@@ -180,7 +180,7 @@ void* SYS_getFarDataEx(void* data, bool high)
     const u32 mappedAddr = setBankEx(addr, high) + (addr & BANK_IN_MASK);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-//    kprintf(""Data at %8lX accessed through bank switch from %8lX", addr, mappedAddr);
+    kprintf("Data at %8lX accessed through bank switch from %8lX", addr, mappedAddr);
 #endif
 
     // return it
@@ -216,7 +216,7 @@ void* SYS_getFarDataSafe(void* data, u32 size)
         const u32 mappedAddr = setBanks(start) + (start & BANK_IN_MASK);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-//        kprintf("Data at %8lX:%8lX accessed through bank switch from %8lX", start, end, mappedAddr);
+        kprintf("Data at %8lX:%8lX accessed through bank switch from %8lX", start, end, mappedAddr);
 #endif
 
         // return it
@@ -242,7 +242,7 @@ void* SYS_getFarDataSafeEx(void* data, u32 size, bool high)
         const u32 mappedAddr = setBanks(start) + (start & BANK_IN_MASK);
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-//        kprintf("Data at %8lX:%8lX accessed through bank switch from %8lX", start, end, mappedAddr);
+        kprintf("Data at %8lX:%8lX accessed through bank switch from %8lX", start, end, mappedAddr);
 #endif
 
         // return it
