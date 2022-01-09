@@ -320,7 +320,7 @@ public class Util
         if (align == 2)
         {
             // do alignment
-            while ((out.size() % align) != 0)
+            if ((out.size() & 1) != 0)
                 out.write(0);
         }
 

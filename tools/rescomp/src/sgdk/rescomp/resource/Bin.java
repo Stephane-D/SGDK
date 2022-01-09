@@ -44,7 +44,7 @@ public class Bin extends Resource
 
     public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far)
     {
-        // consider embeded by default
+        // consider embedded by default
         this(id, data, align, sizeAlign, fill, compression, far, true);
     }
 

@@ -279,7 +279,8 @@ public class SpriteCutter
                 offset += pitchAdj;
             }
 
-            if (numCoveredPixel > 0)
+            // always add when optimization is NONE
+            if ((numCoveredPixel > 0) || (cell.opt == OptimizationType.NONE)) 
             {
                 remainingPixToCover -= numCoveredPixel;
                 // num covered pixel by this sprite cell
