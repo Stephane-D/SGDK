@@ -575,7 +575,7 @@ void VDP_clearTextLine(u16 y);
  *
  *  \see VDP_loadBMPTileData()
  */
-u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y);
+bool VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y);
 /**
  *  \brief
  *      Draw Bitmap in specified background plane and at given position.
@@ -596,7 +596,7 @@ u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y);
  *  \param y
  *      Plane Y position (in tile).
  *  \param loadpal
- *      Load the bitmap palette information when non zero.
+ *      Load the bitmap palette information when non zero (can be TRUE or FALSE)
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Bitmap (only if compression was enabled).
  *
@@ -606,7 +606,7 @@ u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y);
  *
  *  \see VDP_loadBMPTileData()
  */
-u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal);
+bool VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, bool loadpal);
 
 /**
  *  \brief
@@ -632,7 +632,7 @@ u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, 
  *
  *  \see VDP_drawImageEx()
  */
-u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
+bool VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
 /**
  *  \brief
  *      Draw Image in specified background plane and at given position.
@@ -663,7 +663,7 @@ u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
  *
  *  \see VDP_drawImage()
  */
-u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, bool dma);
+bool VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, bool loadpal, bool dma);
 
 
 #endif // _VDP_BG_H_

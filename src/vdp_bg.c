@@ -399,7 +399,7 @@ void VDP_clearTextLine(u16 y)
 }
 
 
-u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
+bool VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
 {
     u16 numTile;
     u16 result;
@@ -416,7 +416,7 @@ u16 VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
     return result;
 }
 
-u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)
+bool VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, bool loadpal)
 {
     const u16 wt = bitmap->w / 8;
     const u16 ht = bitmap->h / 8;
@@ -445,7 +445,7 @@ u16 VDP_drawBitmapEx(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, 
     return TRUE;
 }
 
-u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
+bool VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
 {
     u16 numTile;
     u16 result;
@@ -462,7 +462,7 @@ u16 VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
     return result;
 }
 
-u16 VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, bool dma)
+bool VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, bool loadpal, bool dma)
 {
     if (!VDP_loadTileSet(image->tileset, basetile & TILE_INDEX_MASK, dma?DMA:CPU))
         return FALSE;
