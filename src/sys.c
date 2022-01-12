@@ -535,7 +535,7 @@ void _start_entry()
             waitTick(TICKPERSECOND * 1);
     #else
             // set palette 0 to black
-            PAL_setPalette(PAL0, palette_black);
+            PAL_setPalette(PAL0, palette_black, CPU);
 
             // don't load the palette immediatly
             BMP_loadBitmap(logo, 128 - (LOGO_SIZE / 2), 80 - (LOGO_SIZE / 2), FALSE);
