@@ -3,8 +3,12 @@
 #include "main.h"
 
 
-#define RAND_32     0x9579BD26
-#define RAND_16     0xB8E7
+#define RAND_32         (random() | (random() << 16))
+#define RAND_16         (random())
+#define RAND_8          (random() & 0xFF)
+#define FIX_RAND_32     0x957FBE6
+#define FIX_RAND_16     0x1DE7
+#define FIX_RAND_8      0xCE
 
 
 // extern assembly methods
@@ -30,12 +34,21 @@ u16 executeMathsBasicTest(u16 *scores)
     fix32 end;
     u16 i;
     u16 y;
-    u8 s8, d8;
-    u16 s16, d16;
-    u32 s32, d32;
+#ifdef ENABLE_ASM
     u8 *ps8, *pd8;
     u16 *ps16, *pd16;
     u32 *ps32, *pd32;
+#else
+    u8 _s8;
+    u16 _s16;
+    u32 _s32;
+    vu8 d8;             // need volatile to not be optimized but that screw up the results (much slower)
+    vu16 d16;
+    vu32 d32;
+    vu8 *ps8, *pd8;
+    vu16 *ps16, *pd16;
+    vu32 *ps32, *pd32;
+#endif
     u16 *score;
     u16 globalScore;
 
@@ -47,8 +60,10 @@ u16 executeMathsBasicTest(u16 *scores)
     y++;
 
     VDP_drawText("2000000 8bit add (reg)", 2, y++);
-    s8 = getZeroU8();
-    d8 = getZeroU8();
+#ifndef ENABLE_ASM
+    _s8 = RAND_8;
+    d8 = RAND_8;
+#endif
     i = 2000000 / 32;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
@@ -56,51 +71,53 @@ u16 executeMathsBasicTest(u16 *scores)
 #else
     while(i--)
     {
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
 
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
 
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
 
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
-        d8 += s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
+        d8 += _s8;
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(2000000, end - start, y++, d8) / 1;
+    *score = displayResult(2000000, end - start, y++, 0) / 1;
     globalScore += *score++;
     y++;
 
     VDP_drawText("2000000 16bit add (reg)", 2, y++);
-    s16 = getZeroU16();
-    d16 = getZeroU16();
+#ifndef ENABLE_ASM
+    _s16 = RAND_16;
+    d16 = RAND_16;
+#endif
     i = 2000000 / 32;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
@@ -108,51 +125,53 @@ u16 executeMathsBasicTest(u16 *scores)
 #else
     while(i--)
     {
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
 
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
 
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
 
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
-        d16 += s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
+        d16 += _s16;
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(2000000, end - start, y++, d16) / 1;
+    *score = displayResult(2000000, end - start, y++, 0) / 1;
     globalScore += *score++;
     y++;
 
     VDP_drawText("2000000 32bit add (reg)", 2, y++);
-    s32 = getZeroU32();
-    d32 = getZeroU32();
+#ifndef ENABLE_ASM
+    _s32 = RAND_32;
+    d32 = RAND_32;
+#endif // ENABLE_ASM
     i = 2000000 / 32;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
@@ -160,45 +179,45 @@ u16 executeMathsBasicTest(u16 *scores)
 #else
     while(i--)
     {
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
 
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
 
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
 
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
-        d32 += s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
+        d32 += _s32;
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(2000000, end - start, y++, d32) / 1;
+    *score = displayResult(2000000, end - start, y++, 0) / 1;
     globalScore += *score++;
     y++;
 
@@ -386,10 +405,19 @@ u16 executeMathsAdvTest(u16 *scores)
     fix32 end;
     u16 i;
     u16 y;
-    u16 m16, n16;
-    s16 sn16;
-    u32 m32;
-    s32 sm32;
+    u16 _s16;
+    s16 _ss16;
+#ifdef ENABLE_ASM
+    u16 d16;
+    s16 sd16;
+    u32 d32;
+    s32 sd32;
+#else
+    vu16 d16;       // need volatile to not be optimized but that may screw up the results
+    vs16 sd16;
+    vu32 d32;
+    vs32 sd32;
+#endif
     u16 *score;
     u16 globalScore;
     Vect3D_f16 *src_3D;
@@ -411,138 +439,138 @@ u16 executeMathsAdvTest(u16 *scores)
     y++;
 
     VDP_drawText("500000 16x16=32 unsign multiply", 2, y++);
-    m32 = RAND_32;
-    n16 = RAND_16;
+    _s16 = FIX_RAND_16;
+    d16 = FIX_RAND_16;
     i = 500000 / 16;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
-    bench_mulu(m32, n16, i);
+    bench_mulu(_s16, d16, i);
 #else
     while(i--)
     {
-        m32 = (u16)m32 * n16;   // force 32 bits result to use unsigned multiplications
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
 
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
-        m32 = (u16)m32 * n16;
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
+        d16 = mulu(_s16, d16);
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(500000, end - start, y++, m32);
+    *score = displayResult(500000, end - start, y++, 0);
     globalScore += *score++;
     y++;
 
     VDP_drawText("500000 16x16=32 signed multiply", 2, y++);
-    sm32 = RAND_32;
-    sn16 = RAND_16;
+    _ss16 = FIX_RAND_16;
+    sd16 = FIX_RAND_16;
     i = 500000 / 16;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
-    bench_muls(sm32, sn16, i);
+    bench_muls(_ss16, sd16, i);
 #else
     while(i--)
     {
-        sm32 = (s16)sm32 * sn16;   // force 32 bits result
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
 
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
-        sm32 = (s16)sm32 * sn16;
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
+        sd16 = muls(_ss16, sd16);
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(500000, end - start, y++, sm32);
+    *score = displayResult(500000, end - start, y++, 0);
     globalScore += *score++;
     y++;
 
     VDP_drawText("200000 32/16=16 unsign division", 2, y++);
-    m32 = RAND_32;
-    n16 = RAND_16;
+    d32 = FIX_RAND_32;
+    _s16 = FIX_RAND_16;
     i = 200000 / 16;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
-    bench_divu(m32, n16, i);
+    bench_divu(d32, _s16, i);
 #else
     while(i--)
     {
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
 
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
-        m32 = m16 = m32 / n16;
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
+        d32 = divu(d32, _s16);
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(200000, end - start, y++, m16);
+    *score = displayResult(200000, end - start, y++, 0);
     globalScore += *score++;
     y++;
 
     VDP_drawText("200000 32/16=16 signed division", 2, y++);
-    sm32 = RAND_32;
-    sn16 = RAND_16;
+    sd32 = FIX_RAND_32;
+    _ss16 = FIX_RAND_16;
     i = 200000 / 16;
     start = getTimeAsFix32(FALSE);
 #ifdef ENABLE_ASM
-    bench_divs(sm32, sn16, i);
+    bench_divs(sd32, _ss16, i);
 #else
     while(i--)
     {
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
 
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
-        sm32 = sm16 = sm32 / sn16;
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
+        sd32 = divs(sd32, _ss16);
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(200000, end - start, y++, m16);
+    *score = displayResult(200000, end - start, y++, 0);
     globalScore += *score++;
     y++;
 
