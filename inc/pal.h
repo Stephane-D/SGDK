@@ -34,6 +34,31 @@
  */
 #define RGB24_TO_VDPCOLOR(color)    (((((color + 0x100000) < 0xFF0000 ? color + 0x100000 : 0xFF0000) >> (20)) & VDPPALETTE_REDMASK) | (((((color & 0xff00) + 0x1000) < 0xFF00 ? (color & 0xff00) + 0x1000 : 0xFF00) >> ((1 * 4) + 4)) & VDPPALETTE_GREENMASK) | (((((color & 0xff) + 0x10) < 0xFF ? (color & 0xff) + 0x10 : 0xFF) << 4) & VDPPALETTE_BLUEMASK))
 
+/**
+ *  \brief
+ *      Convert a RGB333 color to VDP color (VDP uses RGB333 internally)
+ *
+ *  \param r
+ *      Red intensity (0-7)
+ *  \param color
+ *      Green intensity (0-7)
+ *  \param color
+ *      Blue intensity (0-7)
+ */
+#define RGB3_3_3_TO_VDPCOLOR(r, g, b) ((((r) & 7) << VDPPALETTE_REDSFT) | (((g) & 7) << VDPPALETTE_GREENSFT) | (((b) & 7) << VDPPALETTE_BLUESFT))
+
+/**
+ *  \brief
+ *      Convert a RGB888 color to VDP color (VDP uses RGB333 internally)
+ *
+ *  \param r
+ *      Red intensity (0-255)
+ *  \param color
+ *      Green intensity (0-255)
+ *  \param color
+ *      Blue intensity (0-255)
+ */
+#define RGB8_8_8_TO_VDPCOLOR(r, g, b) RGB24_TO_VDPCOLOR(((((b) << 0) & 0xFF) | (((g) & 0xFF) << 8) | (((r) & 0xFF) << 16)))
 
 /**
  *  \brief
