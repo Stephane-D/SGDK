@@ -166,23 +166,23 @@ typedef volatile u32 vu32;
 
 /**
  *  \typedef fix16
- *      16 bits fixed floating point type.
+ *      16 bits fixed point type.
  */
 typedef s16 fix16;
 /**
  *  \typedef fix32
- *      32 bits fixed floating point type.
+ *      32 bits fixed point type.
  */
 typedef s32 fix32;
 
 /**
  *  \typedef f16
- *      16 bits fixed floating point type (short version).
+ *      16 bits fixed point type (short version).
  */
 typedef s16 f16;
 /**
  *  \typedef f32
- *      32 bits fixed floating point type (short version).
+ *      32 bits fixed point type (short version).
  */
 typedef s32 f32;
 
