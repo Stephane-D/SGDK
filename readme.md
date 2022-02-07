@@ -1,5 +1,5 @@
-# SGDK 1.65 (july 2021)
-#### Copyright 2021 Stephane Dallongeville
+# SGDK 1.70 (february 2022)
+#### Copyright 2022 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
 
@@ -88,7 +88,9 @@ Notes:
 
 - `$PWD` will not work on Windows, there `%CD%` has to be used instead.
 - To avoid writing `./out` files as root, execute the docker command as current user:
-  - `docker run --rm -v "$PWD":/src -u $(id -u):$(id -g) sgdk`
+  `docker run --rm -v "$PWD":/src -u $(id -u):$(id -g) sgdk`
+- You can also try the alternate Doragasu docker solution which use native linux compiler (much faster):
+  https://gitlab.com/doragasu/docker-sgdk
  
 ### VISUAL STUDIO
 
@@ -98,6 +100,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ## THANKS
 
+- Doragasu for the multi-tasking engine, MegaWifi support and others nice additions.
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
