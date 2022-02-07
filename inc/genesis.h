@@ -51,6 +51,19 @@
 
 #include "task.h"
 
+// modules
+#if (MODULE_EVERDRIVE != 0)
+#include "ext/everdrive.h"
+#endif
+
+#if (MODULE_FAT16 != 0)
+#include "ext/fat16.h"
+#endif
+
+#if (MODULE_MEGAWIFI != 0)
+#include "ext/mw/megawifi.h"
+#endif
+
 // preserve compatibility with old resources name
 #define logo_lib sgdk_logo
 #define font_lib font_default
