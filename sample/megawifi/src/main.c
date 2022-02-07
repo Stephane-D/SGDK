@@ -8,19 +8,17 @@
  * - How to get the date/time (synchronized to NTP servers)
  * - How to send and receive data using UDP protocol
  *
- * To build this example set ENABLE_MULTITASK and ENABLE_MEGAWIFI to 1 in
- * config.h and rebuild the library.
+ * To build this example set MODULE_MEGAWIFI to 1 in config.h and
+ * rebuild the library.
  *
  * \author Jesus Alonso (doragasu)
  * \date 01/2022
  ****************************************************************************/
 
-#include <types.h>
-#include <genesis.h>
-#include <ext/mw/megawifi.h>
+#include "genesis.h"
 
-#if (ENABLE_MEGAWIFI == 0)
-#error "Set ENABLE_MEGAWIFI to 1 in config.h and rebuild the library"
+#if (MODULE_MEGAWIFI == 0)
+#error "Set MODULE_MEGAWIFI to 1 in config.h and rebuild the library"
 #endif
 
 /// Length of the wflash buffer
