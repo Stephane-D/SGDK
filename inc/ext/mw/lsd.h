@@ -174,9 +174,8 @@ void lsd_process(void);
  ****************************************************************************/
 void lsd_line_sync(void);
 
-/** \} */
-
 #endif // MODULE_MEGAWIFI
 
 #endif //_LSD_H_
 
+/** \} */

@@ -40,9 +40,9 @@
  *
  *  \param r
  *      Red intensity (0-7)
- *  \param color
+ *  \param g
  *      Green intensity (0-7)
- *  \param color
+ *  \param b
  *      Blue intensity (0-7)
  */
 #define RGB3_3_3_TO_VDPCOLOR(r, g, b) ((((r) & 7) << VDPPALETTE_REDSFT) | (((g) & 7) << VDPPALETTE_GREENSFT) | (((b) & 7) << VDPPALETTE_BLUESFT))
@@ -53,9 +53,9 @@
  *
  *  \param r
  *      Red intensity (0-255)
- *  \param color
+ *  \param g
  *      Green intensity (0-255)
- *  \param color
+ *  \param b
  *      Blue intensity (0-255)
  */
 #define RGB8_8_8_TO_VDPCOLOR(r, g, b) RGB24_TO_VDPCOLOR(((((b) << 0) & 0xFF) | (((g) & 0xFF) << 8) | (((r) & 0xFF) << 16)))
