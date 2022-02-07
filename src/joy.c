@@ -300,14 +300,10 @@ static void externalIntCB()
 
 void JOY_setSupport(u16 port, u16 support)
 {
-#if (HALT_Z80_ON_IO == 1)
-    u16 z80state;
-#endif
-
     if (port > PORT_2) return;
 
 #if (HALT_Z80_ON_IO == 1)
-    z80state = Z80_getAndRequestBus(TRUE);
+    u16 z80state = Z80_getAndRequestBus(TRUE);
 #endif
 
     if ((portType[port] == PORT_TYPE_MENACER) || (portType[port] == PORT_TYPE_JUSTIFIER))
