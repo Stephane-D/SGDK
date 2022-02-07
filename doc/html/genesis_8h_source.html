@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -84,64 +85,81 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#ifndef _GENESIS_H_</span>
 <a name="l00002"></a>00002 <span class="preprocessor"></span><span class="preprocessor">#define _GENESIS_H_</span>
 <a name="l00003"></a>00003 <span class="preprocessor"></span>
-<a name="l00004"></a>00004 
-<a name="l00005"></a>00005 <span class="preprocessor">#define SGDK_VERSION    1.65</span>
-<a name="l00006"></a>00006 <span class="preprocessor"></span>
-<a name="l00007"></a>00007 <span class="preprocessor">#include &quot;<a class="code" href="config_8h.html" title="Basic SGDK library configuration file.">config.h</a>&quot;</span>
-<a name="l00008"></a>00008 <span class="preprocessor">#include &quot;<a class="code" href="asm_8h.html" title="Assembly helper.">asm.h</a>&quot;</span>
-<a name="l00009"></a>00009 <span class="preprocessor">#include &quot;<a class="code" href="types_8h.html" title="Types definition.">types.h</a>&quot;</span>
-<a name="l00010"></a>00010 
-<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="sys_8h.html" title="Entry point unit / Interrupt callback / System.">sys.h</a>&quot;</span>
-<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;<a class="code" href="sram_8h.html" title="SRAM (Static RAM used for save backup) support.">sram.h</a>&quot;</span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="mapper_8h.html" title="Mapper / bank switch methods.">mapper.h</a>&quot;</span>
-<a name="l00014"></a>00014 <span class="preprocessor">#include &quot;<a class="code" href="memory_8h.html" title="Memory handling methods.">memory.h</a>&quot;</span>
-<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="tools_8h.html" title="Misc tools methods.">tools.h</a>&quot;</span>
-<a name="l00016"></a>00016 
-<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="font_8h.html" title="SGDK system Font.">font.h</a>&quot;</span>
-<a name="l00018"></a>00018 <span class="preprocessor">#include &quot;<a class="code" href="string_8h.html" title="String manipulations.">string.h</a>&quot;</span>
-<a name="l00019"></a>00019 
-<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;tab_cnv.h&quot;</span>
+<a name="l00004"></a>00004 <span class="preprocessor">#define SGDK_VERSION    1.65</span>
+<a name="l00005"></a>00005 <span class="preprocessor"></span>
+<a name="l00006"></a>00006 <span class="preprocessor">#include &quot;<a class="code" href="types_8h.html" title="Types definition.">types.h</a>&quot;</span>
+<a name="l00007"></a>00007 
+<a name="l00008"></a>00008 <span class="preprocessor">#define SGDK            TRUE</span>
+<a name="l00009"></a>00009 <span class="preprocessor"></span>
+<a name="l00010"></a>00010 <span class="preprocessor">#include &quot;<a class="code" href="config_8h.html" title="Basic SGDK library configuration file.">config.h</a>&quot;</span>
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="asm_8h.html" title="Assembly helper.">asm.h</a>&quot;</span>
+<a name="l00012"></a>00012 
+<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="sys_8h.html" title="Entry point unit / Interrupt callback / System.">sys.h</a>&quot;</span>
+<a name="l00014"></a>00014 <span class="preprocessor">#include &quot;<a class="code" href="sram_8h.html" title="SRAM (Static RAM used for save backup) support.">sram.h</a>&quot;</span>
+<a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="mapper_8h.html" title="Mapper / bank switch methods.">mapper.h</a>&quot;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#include &quot;<a class="code" href="memory_8h.html" title="Memory handling methods.">memory.h</a>&quot;</span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="tools_8h.html" title="Misc tools methods.">tools.h</a>&quot;</span>
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;<a class="code" href="font_8h.html" title="SGDK system Font.">font.h</a>&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;<a class="code" href="string_8h.html" title="String manipulations.">string.h</a>&quot;</span>
 <a name="l00021"></a>00021 
-<a name="l00022"></a>00022 <span class="preprocessor">#include &quot;<a class="code" href="maths_8h.html" title="Mathematical methods.">maths.h</a>&quot;</span>
-<a name="l00023"></a>00023 <span class="preprocessor">#include &quot;<a class="code" href="maths3_d_8h.html" title="3D math engine.">maths3D.h</a>&quot;</span>
-<a name="l00024"></a>00024 
-<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;<a class="code" href="vdp_8h.html" title="VDP main.">vdp.h</a>&quot;</span>
-<a name="l00026"></a>00026 <span class="preprocessor">#include &quot;<a class="code" href="vdp__bg_8h.html" title="VDP background plane support.">vdp_bg.h</a>&quot;</span>
-<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;<a class="code" href="vdp__dma_8h.html" title="VDP DMA support.">vdp_dma.h</a>&quot;</span>
-<a name="l00028"></a>00028 <span class="preprocessor">#include &quot;<a class="code" href="vdp__spr_8h.html" title="VDP Sprite support.">vdp_spr.h</a>&quot;</span>
-<a name="l00029"></a>00029 <span class="preprocessor">#include &quot;<a class="code" href="vdp__tile_8h.html" title="VDP General Tile / Tilemap operations.">vdp_tile.h</a>&quot;</span>
-<a name="l00030"></a>00030 <span class="preprocessor">#include &quot;vdp_pal.h&quot;</span>
-<a name="l00031"></a>00031 
-<a name="l00032"></a>00032 <span class="preprocessor">#include &quot;<a class="code" href="pal_8h.html" title="Palette support (herited from vdp_pal.h unit)">pal.h</a>&quot;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &quot;tab_cnv.h&quot;</span>
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 <span class="preprocessor">#include &quot;<a class="code" href="maths_8h.html" title="Mathematical methods.">maths.h</a>&quot;</span>
+<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;<a class="code" href="maths3_d_8h.html" title="3D math engine.">maths3D.h</a>&quot;</span>
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;<a class="code" href="vdp_8h.html" title="VDP main.">vdp.h</a>&quot;</span>
+<a name="l00028"></a>00028 <span class="preprocessor">#include &quot;<a class="code" href="vdp__bg_8h.html" title="VDP background plane support.">vdp_bg.h</a>&quot;</span>
+<a name="l00029"></a>00029 <span class="preprocessor">#include &quot;<a class="code" href="vdp__dma_8h.html" title="VDP DMA support.">vdp_dma.h</a>&quot;</span>
+<a name="l00030"></a>00030 <span class="preprocessor">#include &quot;<a class="code" href="vdp__spr_8h.html" title="VDP Sprite support.">vdp_spr.h</a>&quot;</span>
+<a name="l00031"></a>00031 <span class="preprocessor">#include &quot;<a class="code" href="vdp__tile_8h.html" title="VDP General Tile / Tilemap operations.">vdp_tile.h</a>&quot;</span>
+<a name="l00032"></a>00032 <span class="preprocessor">#include &quot;vdp_pal.h&quot;</span>
 <a name="l00033"></a>00033 
-<a name="l00034"></a>00034 <span class="preprocessor">#include &quot;<a class="code" href="vram_8h.html" title="SGDK VRAM (Video Memory) management unit.">vram.h</a>&quot;</span>
-<a name="l00035"></a>00035 <span class="preprocessor">#include &quot;<a class="code" href="dma_8h.html" title="DMA support.">dma.h</a>&quot;</span>
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037 <span class="preprocessor">#include &quot;<a class="code" href="map_8h.html" title="MAP (large background map) management unit.">map.h</a>&quot;</span>
+<a name="l00034"></a>00034 <span class="preprocessor">#include &quot;<a class="code" href="pal_8h.html" title="Palette support (herited from vdp_pal.h unit)">pal.h</a>&quot;</span>
+<a name="l00035"></a>00035 
+<a name="l00036"></a>00036 <span class="preprocessor">#include &quot;<a class="code" href="vram_8h.html" title="SGDK VRAM (Video Memory) management unit.">vram.h</a>&quot;</span>
+<a name="l00037"></a>00037 <span class="preprocessor">#include &quot;<a class="code" href="dma_8h.html" title="DMA support.">dma.h</a>&quot;</span>
 <a name="l00038"></a>00038 
-<a name="l00039"></a>00039 <span class="preprocessor">#include &quot;<a class="code" href="bmp_8h.html" title="Software bitmap engine.">bmp.h</a>&quot;</span>
-<a name="l00040"></a>00040 <span class="preprocessor">#include &quot;<a class="code" href="sprite__eng_8h.html" title="Sprite engine.">sprite_eng.h</a>&quot;</span>
-<a name="l00041"></a>00041 
-<a name="l00042"></a>00042 <span class="preprocessor">#include &quot;<a class="code" href="sound_8h.html" title="Audio / Sound stuff.">sound.h</a>&quot;</span>
-<a name="l00043"></a>00043 <span class="preprocessor">#include &quot;<a class="code" href="xgm_8h.html" title="XGM sound driver.">xgm.h</a>&quot;</span>
-<a name="l00044"></a>00044 <span class="preprocessor">#include &quot;<a class="code" href="z80__ctrl_8h.html" title="Z80 control.">z80_ctrl.h</a>&quot;</span>
-<a name="l00045"></a>00045 <span class="preprocessor">#include &quot;<a class="code" href="ym2612_8h.html" title="YM2612 support.">ym2612.h</a>&quot;</span>
-<a name="l00046"></a>00046 <span class="preprocessor">#include &quot;<a class="code" href="psg_8h.html" title="PSG support.">psg.h</a>&quot;</span>
-<a name="l00047"></a>00047 <span class="preprocessor">#include &quot;<a class="code" href="joy_8h.html" title="General controller support.">joy.h</a>&quot;</span>
-<a name="l00048"></a>00048 <span class="preprocessor">#include &quot;<a class="code" href="timer_8h.html" title="Timer support.">timer.h</a>&quot;</span>
-<a name="l00049"></a>00049 
-<a name="l00050"></a>00050 <span class="comment">// preserve compatibility with old resources name</span>
-<a name="l00051"></a>00051 <span class="preprocessor">#define logo_lib sgdk_logo</span>
-<a name="l00052"></a>00052 <span class="preprocessor"></span><span class="preprocessor">#define font_lib font_default</span>
-<a name="l00053"></a>00053 <span class="preprocessor"></span><span class="preprocessor">#define font_pal_lib font_pal_default</span>
-<a name="l00054"></a>00054 <span class="preprocessor"></span>
-<a name="l00055"></a>00055 <span class="preprocessor">#endif // _GENESIS_H_</span>
+<a name="l00039"></a>00039 <span class="preprocessor">#include &quot;<a class="code" href="map_8h.html" title="MAP (large background map) management unit.">map.h</a>&quot;</span>
+<a name="l00040"></a>00040 
+<a name="l00041"></a>00041 <span class="preprocessor">#include &quot;<a class="code" href="bmp_8h.html" title="Software bitmap engine.">bmp.h</a>&quot;</span>
+<a name="l00042"></a>00042 <span class="preprocessor">#include &quot;<a class="code" href="sprite__eng_8h.html" title="Sprite engine.">sprite_eng.h</a>&quot;</span>
+<a name="l00043"></a>00043 
+<a name="l00044"></a>00044 <span class="preprocessor">#include &quot;<a class="code" href="sound_8h.html" title="Audio / Sound stuff.">sound.h</a>&quot;</span>
+<a name="l00045"></a>00045 <span class="preprocessor">#include &quot;<a class="code" href="xgm_8h.html" title="XGM sound driver.">xgm.h</a>&quot;</span>
+<a name="l00046"></a>00046 <span class="preprocessor">#include &quot;<a class="code" href="z80__ctrl_8h.html" title="Z80 control.">z80_ctrl.h</a>&quot;</span>
+<a name="l00047"></a>00047 <span class="preprocessor">#include &quot;<a class="code" href="ym2612_8h.html" title="YM2612 support.">ym2612.h</a>&quot;</span>
+<a name="l00048"></a>00048 <span class="preprocessor">#include &quot;<a class="code" href="psg_8h.html" title="PSG support.">psg.h</a>&quot;</span>
+<a name="l00049"></a>00049 <span class="preprocessor">#include &quot;<a class="code" href="joy_8h.html" title="General controller support.">joy.h</a>&quot;</span>
+<a name="l00050"></a>00050 <span class="preprocessor">#include &quot;<a class="code" href="timer_8h.html" title="Timer support.">timer.h</a>&quot;</span>
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052 <span class="preprocessor">#include &quot;<a class="code" href="task_8h.html" title="User task support.">task.h</a>&quot;</span>
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054 <span class="comment">// modules</span>
+<a name="l00055"></a>00055 <span class="preprocessor">#if (MODULE_EVERDRIVE != 0)</span>
+<a name="l00056"></a>00056 <span class="preprocessor"></span><span class="preprocessor">#include &quot;<a class="code" href="everdrive_8h.html" title="Everdrive support.">ext/everdrive.h</a>&quot;</span>
+<a name="l00057"></a>00057 <span class="preprocessor">#endif</span>
+<a name="l00058"></a>00058 <span class="preprocessor"></span>
+<a name="l00059"></a>00059 <span class="preprocessor">#if (MODULE_FAT16 != 0)</span>
+<a name="l00060"></a>00060 <span class="preprocessor"></span><span class="preprocessor">#include &quot;<a class="code" href="fat16_8h.html" title="FAT16 file system support.">ext/fat16.h</a>&quot;</span>
+<a name="l00061"></a>00061 <span class="preprocessor">#endif</span>
+<a name="l00062"></a>00062 <span class="preprocessor"></span>
+<a name="l00063"></a>00063 <span class="preprocessor">#if (MODULE_MEGAWIFI != 0)</span>
+<a name="l00064"></a>00064 <span class="preprocessor"></span><span class="preprocessor">#include &quot;<a class="code" href="megawifi_8h.html" title="MegaWiFi API implementation.">ext/mw/megawifi.h</a>&quot;</span>
+<a name="l00065"></a>00065 <span class="preprocessor">#endif</span>
+<a name="l00066"></a>00066 <span class="preprocessor"></span>
+<a name="l00067"></a>00067 <span class="comment">// preserve compatibility with old resources name</span>
+<a name="l00068"></a>00068 <span class="preprocessor">#define logo_lib sgdk_logo</span>
+<a name="l00069"></a>00069 <span class="preprocessor"></span><span class="preprocessor">#define font_lib font_default</span>
+<a name="l00070"></a>00070 <span class="preprocessor"></span><span class="preprocessor">#define font_pal_lib font_pal_default</span>
+<a name="l00071"></a>00071 <span class="preprocessor"></span>
+<a name="l00072"></a>00072 <span class="preprocessor">#endif // _GENESIS_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><b>genesis.h</b>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:35 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:47:59 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

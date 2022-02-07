@@ -2,7 +2,16 @@ var NAVTREE =
 [
   [ "sgdk", "index.html", [
     [ "Related Pages", "pages.html", [
+      [ "Todo List", "todo.html", null ],
       [ "Deprecated List", "deprecated.html", null ]
+    ] ],
+    [ "Modules", "modules.html", [
+      [ "gamejolt", "group__gamejolt.html", null ],
+      [ "16c550", "group___c550.html", null ],
+      [ "lsd", "group__lsd.html", null ],
+      [ "megawifi", "group__megawifi.html", null ],
+      [ "mw-msg", "group__mw-msg.html", null ],
+      [ "json", "group__json.html", null ]
     ] ],
     [ "Class List", "annotated.html", [
       [ "_collision", "struct__collision.html", null ],
@@ -55,6 +64,7 @@ var NAVTREE =
     ] ],
     [ "Class Index", "classes.html", null ],
     [ "File List", "files.html", [
+      [ "16c550.h", null, null ],
       [ "asm.h", "asm_8h.html", null ],
       [ "bmp.h", "bmp_8h.html", null ],
       [ "config.h", "config_8h.html", null ],
@@ -62,15 +72,21 @@ var NAVTREE =
       [ "everdrive.h", "everdrive_8h.html", null ],
       [ "fat16.h", "fat16_8h.html", null ],
       [ "font.h", "font_8h.html", null ],
+      [ "gamejolt.h", "gamejolt_8h.html", null ],
       [ "genesis.h", null, null ],
       [ "joy.h", "joy_8h.html", null ],
+      [ "jsmn.h", null, null ],
+      [ "json.h", "json_8h.html", null ],
       [ "kdebug.h", "kdebug_8h.html", null ],
       [ "libres.h", null, null ],
+      [ "lsd.h", null, null ],
       [ "map.h", "map_8h.html", null ],
       [ "mapper.h", "mapper_8h.html", null ],
       [ "maths.h", "maths_8h.html", null ],
       [ "maths3D.h", "maths3_d_8h.html", null ],
+      [ "megawifi.h", "megawifi_8h.html", null ],
       [ "memory.h", "memory_8h.html", null ],
+      [ "mw-msg.h", "mw-msg_8h.html", null ],
       [ "pal.h", "pal_8h.html", null ],
       [ "psg.h", "psg_8h.html", null ],
       [ "smp_null.h", null, null ],
@@ -82,6 +98,8 @@ var NAVTREE =
       [ "sys.h", "sys_8h.html", null ],
       [ "tab_cnv.h", null, null ],
       [ "tab_vol.h", null, null ],
+      [ "task.h", "task_8h.html", null ],
+      [ "task_cst.h", "task__cst_8h.html", null ],
       [ "timer.h", "timer_8h.html", null ],
       [ "tools.h", "tools_8h.html", null ],
       [ "types.h", "types_8h.html", null ],

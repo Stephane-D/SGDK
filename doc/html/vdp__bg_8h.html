@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -137,6 +138,12 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the palette to use to display text.  <a href="#ad3317b01c16004cc0489e7c8029a3cc1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a51815b0c060464bfcd80706fbaf6a8d2">VDP_setTextPriority</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> prio)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the priority to use to display text.  <a href="#a51815b0c060464bfcd80706fbaf6a8d2"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#aedad0db4912904bac0e8addb44a9e192">VDP_drawTextEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw text in specified plane (advanced method).  <a href="#aedad0db4912904bac0e8addb44a9e192"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#afb679fae5fcddffeba96d8d42155773a">VDP_clearTextEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a single line portion of text (advanced method).  <a href="#afb679fae5fcddffeba96d8d42155773a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a445ec461cb7cd569ce429b4f18e0a263">VDP_clearTextAreaEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a specific area of text (advanced method).  <a href="#a445ec461cb7cd569ce429b4f18e0a263"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#ae9ad3c440665d1497ed937906b0750c6">VDP_drawTextBG</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw text in specified plane.  <a href="#ae9ad3c440665d1497ed937906b0750c6"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a0c743b5e67653611835bb58e6e40b4a0">VDP_clearTextBG</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w)</td></tr>
@@ -153,14 +160,14 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a specific area of text.  <a href="#ab3d7660973c1c0dd02feef59cddac3a5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a82a31cf678c43308b8f4964b0acda6bf">VDP_clearTextLine</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear a complete line of text.  <a href="#a82a31cf678c43308b8f4964b0acda6bf"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#afffdc71840c43eb607de08c2f20987f5">VDP_drawBitmap</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position.  <a href="#afffdc71840c43eb607de08c2f20987f5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a8a44a02e42d69be6fb11d270733764dc">VDP_drawBitmapEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position.  <a href="#a8a44a02e42d69be6fb11d270733764dc"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a46631e6061ffcb81e7b485cbfa3aba03">VDP_drawImage</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (using DMA) in specified background plane and at given position.  <a href="#a46631e6061ffcb81e7b485cbfa3aba03"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a721950dd11157a6e848fcdbc1d09a61e">VDP_drawImageEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> dma)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> in specified background plane and at given position.  <a href="#a721950dd11157a6e848fcdbc1d09a61e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a2e2fae86ff6afddc79aa42da3b4e0cf6">VDP_drawBitmap</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position.  <a href="#a2e2fae86ff6afddc79aa42da3b4e0cf6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a00431b83499baacdfdbf9ea61859fcc6">VDP_drawBitmapEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> loadpal)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> in specified background plane and at given position.  <a href="#a00431b83499baacdfdbf9ea61859fcc6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a4efc5f6afcfaeda1181814ce8913f271">VDP_drawImage</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (using DMA) in specified background plane and at given position.  <a href="#a4efc5f6afcfaeda1181814ce8913f271"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#a11ee20e28eb9b82332fe5c3bd46218b6">VDP_drawImageEx</a> (<a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, const <a class="el" href="struct_image.html">Image</a> *image, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> basetile, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> loadpal, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> dma)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> in specified background plane and at given position.  <a href="#a11ee20e28eb9b82332fe5c3bd46218b6"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__bg_8h.html#aefede8565dede05bc9af1acc7b3b07d3">curTileInd</a></td></tr>
@@ -389,11 +396,108 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#ab04cf06289b7bae2085ac485d7cb3dd2" title="Draw text.">VDP_drawText</a>(..) </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a445ec461cb7cd569ce429b4f18e0a263" title="Clear a specific area of text (advanced method).">VDP_clearTextAreaEx</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#ab04cf06289b7bae2085ac485d7cb3dd2" title="Draw text.">VDP_drawText</a>(..) </dd>
 <dd>
 <a class="el" href="vdp__bg_8h.html#afae295449d30870463b539cd2e4266a0" title="Clear a single line portion of text.">VDP_clearText</a>(..) </dd>
 <dd>
 <a class="el" href="vdp__bg_8h.html#a82a31cf678c43308b8f4964b0acda6bf" title="Clear a complete line of text.">VDP_clearTextLine</a>(..) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a445ec461cb7cd569ce429b4f18e0a263"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextAreaEx" ref="a445ec461cb7cd569ce429b4f18e0a263" args="(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_clearTextAreaEx </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>basetile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>h</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Clear a specific area of text (advanced method). </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plane</td><td>Plane where we want to clear text.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>BG_A<br/>
+</li>
+<li>BG_B<br/>
+</li>
+<li>WINDOW<br/>
+ </li>
+</ul>
+</td></tr>
+    <tr><td class="paramname">basetile</td><td>Base tile attributes data (see <a class="el" href="vdp__tile_8h.html#a6f7dd23d9b1a506969fc3678a6f3910f" title="Encode tile attributes for tilemap data.">TILE_ATTR()</a> macro). </td></tr>
+    <tr><td class="paramname">x</td><td>X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>y position (in tile). </td></tr>
+    <tr><td class="paramname">w</td><td>width to clear (in tile). </td></tr>
+    <tr><td class="paramname">h</td><td>heigth to clear (in tile). </td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
+</ul>
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#ab04cf06289b7bae2085ac485d7cb3dd2" title="Draw text.">VDP_drawText</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#afae295449d30870463b539cd2e4266a0" title="Clear a single line portion of text.">VDP_clearText</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -451,6 +555,98 @@ Variables</h2></td></tr>
     <tr><td class="paramname">x</td><td>X position (in tile). </td></tr>
     <tr><td class="paramname">y</td><td>y position (in tile). </td></tr>
     <tr><td class="paramname">w</td><td>width to clear (in tile).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#afb679fae5fcddffeba96d8d42155773a" title="Clear a single line portion of text (advanced method).">VDP_clearTextEx</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#ab04cf06289b7bae2085ac485d7cb3dd2" title="Draw text.">VDP_drawText</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#ab3d7660973c1c0dd02feef59cddac3a5" title="Clear a specific area of text.">VDP_clearTextArea</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#a82a31cf678c43308b8f4964b0acda6bf" title="Clear a complete line of text.">VDP_clearTextLine</a>(..) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afb679fae5fcddffeba96d8d42155773a"></a><!-- doxytag: member="vdp_bg.h::VDP_clearTextEx" ref="afb679fae5fcddffeba96d8d42155773a" args="(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, TransferMethod tm)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_clearTextEx </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>basetile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Clear a single line portion of text (advanced method). </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plane</td><td>Plane where we want to clear text.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>BG_A<br/>
+</li>
+<li>BG_B<br/>
+</li>
+<li>WINDOW<br/>
+ </li>
+</ul>
+</td></tr>
+    <tr><td class="paramname">basetile</td><td>Base tile attributes data (see <a class="el" href="vdp__tile_8h.html#a6f7dd23d9b1a506969fc3678a6f3910f" title="Encode tile attributes for tilemap data.">TILE_ATTR()</a> macro). </td></tr>
+    <tr><td class="paramname">x</td><td>X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>y position (in tile). </td></tr>
+    <tr><td class="paramname">w</td><td>width to clear (in tile). </td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -543,12 +739,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="afffdc71840c43eb607de08c2f20987f5"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmap" ref="afffdc71840c43eb607de08c2f20987f5" args="(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)" -->
+<a class="anchor" id="a2e2fae86ff6afddc79aa42da3b4e0cf6"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmap" ref="a2e2fae86ff6afddc79aa42da3b4e0cf6" args="(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawBitmap </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> VDP_drawBitmap </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
           <td class="paramname"><em>plane</em>, </td>
@@ -609,12 +805,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8a44a02e42d69be6fb11d270733764dc"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmapEx" ref="a8a44a02e42d69be6fb11d270733764dc" args="(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, u16 loadpal)" -->
+<a class="anchor" id="a00431b83499baacdfdbf9ea61859fcc6"></a><!-- doxytag: member="vdp_bg.h::VDP_drawBitmapEx" ref="a00431b83499baacdfdbf9ea61859fcc6" args="(VDPPlane plane, const Bitmap *bitmap, u16 basetile, u16 x, u16 y, bool loadpal)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawBitmapEx </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> VDP_drawBitmapEx </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
           <td class="paramname"><em>plane</em>, </td>
@@ -646,7 +842,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>loadpal</em>&#160;</td>
         </tr>
         <tr>
@@ -677,7 +873,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">basetile</td><td>Base tile attributes data (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro). </td></tr>
     <tr><td class="paramname">x</td><td>Plane X position (in tile). </td></tr>
     <tr><td class="paramname">y</td><td>Plane Y position (in tile). </td></tr>
-    <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information when non zero. </td></tr>
+    <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information when non zero (can be TRUE or FALSE) </td></tr>
   </table>
   </dd>
 </dl>
@@ -690,12 +886,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a46631e6061ffcb81e7b485cbfa3aba03"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImage" ref="a46631e6061ffcb81e7b485cbfa3aba03" args="(VDPPlane plane, const Image *image, u16 x, u16 y)" -->
+<a class="anchor" id="a4efc5f6afcfaeda1181814ce8913f271"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImage" ref="a4efc5f6afcfaeda1181814ce8913f271" args="(VDPPlane plane, const Image *image, u16 x, u16 y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawImage </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> VDP_drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
           <td class="paramname"><em>plane</em>, </td>
@@ -750,16 +946,16 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (only if compression was enabled).</dd></dl>
 <p>Load the image tiles data in VRAM and display it at specified plane position.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a721950dd11157a6e848fcdbc1d09a61e" title="Draw Image in specified background plane and at given position.">VDP_drawImageEx()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a11ee20e28eb9b82332fe5c3bd46218b6" title="Draw Image in specified background plane and at given position.">VDP_drawImageEx()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a721950dd11157a6e848fcdbc1d09a61e"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImageEx" ref="a721950dd11157a6e848fcdbc1d09a61e" args="(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, u16 loadpal, bool dma)" -->
+<a class="anchor" id="a11ee20e28eb9b82332fe5c3bd46218b6"></a><!-- doxytag: member="vdp_bg.h::VDP_drawImageEx" ref="a11ee20e28eb9b82332fe5c3bd46218b6" args="(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, bool loadpal, bool dma)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_drawImageEx </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> VDP_drawImageEx </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
           <td class="paramname"><em>plane</em>, </td>
@@ -791,7 +987,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>loadpal</em>, </td>
         </tr>
         <tr>
@@ -835,7 +1031,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified <a class="el" href="struct_image.html" title="Image structure which contains all data to define an image in a background plane.  Use the unpackImag...">Image</a> (only if image was packed).</dd></dl>
 <p>Load the image tiles data in VRAM and display it at specified plane position.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a46631e6061ffcb81e7b485cbfa3aba03" title="Draw Image (using DMA) in specified background plane and at given position.">VDP_drawImage()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a4efc5f6afcfaeda1181814ce8913f271" title="Draw Image (using DMA) in specified background plane and at given position.">VDP_drawImage()</a> </dd></dl>
 
 </div>
 </div>
@@ -943,6 +1139,100 @@ Variables</h2></td></tr>
     <tr><td class="paramname">str</td><td>String to draw. </td></tr>
     <tr><td class="paramname">x</td><td>X position (in tile). </td></tr>
     <tr><td class="paramname">y</td><td>y position (in tile).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#aedad0db4912904bac0e8addb44a9e192" title="Draw text in specified plane (advanced method).">VDP_drawTextEx</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#afae295449d30870463b539cd2e4266a0" title="Clear a single line portion of text.">VDP_clearText</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#ad3317b01c16004cc0489e7c8029a3cc1" title="Define the palette to use to display text.">VDP_setTextPalette</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#a51815b0c060464bfcd80706fbaf6a8d2" title="Define the priority to use to display text.">VDP_setTextPriority</a>(..) </dd>
+<dd>
+<a class="el" href="vdp__bg_8h.html#a9d201c78a244418a0465942646a9490a" title="Define the plane to use to display text.">VDP_setTextPlane</a>(..) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aedad0db4912904bac0e8addb44a9e192"></a><!-- doxytag: member="vdp_bg.h::VDP_drawTextEx" ref="aedad0db4912904bac0e8addb44a9e192" args="(VDPPlane plane, const char *str, u16 basetile, u16 x, u16 y, TransferMethod tm)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_drawTextEx </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a>&#160;</td>
+          <td class="paramname"><em>plane</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>basetile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Draw text in specified plane (advanced method). </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plane</td><td>Plane where we want to draw text.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>BG_A<br/>
+</li>
+<li>BG_B<br/>
+</li>
+<li>WINDOW<br/>
+ </li>
+</ul>
+</td></tr>
+    <tr><td class="paramname">str</td><td>String to draw. </td></tr>
+    <tr><td class="paramname">basetile</td><td>Base tile attributes data (see <a class="el" href="vdp__tile_8h.html#a6f7dd23d9b1a506969fc3678a6f3910f" title="Encode tile attributes for tilemap data.">TILE_ATTR()</a> macro). </td></tr>
+    <tr><td class="paramname">x</td><td>X position (in tile). </td></tr>
+    <tr><td class="paramname">y</td><td>y position (in tile). </td></tr>
+    <tr><td class="paramname">tm</td><td>Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br/>
+ Accepted values are:<br/>
+<ul>
+<li>CPU<br/>
+</li>
+<li>DMA<br/>
+</li>
+<li>DMA_QUEUE<br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -1593,9 +1883,9 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Contains current VRAM tile position where we will upload next tile data.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#afffdc71840c43eb607de08c2f20987f5" title="Draw Bitmap in specified background plane and at given position.">VDP_drawBitmap()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__bg_8h.html#a2e2fae86ff6afddc79aa42da3b4e0cf6" title="Draw Bitmap in specified background plane and at given position.">VDP_drawBitmap()</a> </dd>
 <dd>
-<a class="el" href="vdp__bg_8h.html#a46631e6061ffcb81e7b485cbfa3aba03" title="Draw Image (using DMA) in specified background plane and at given position.">VDP_drawImage()</a> </dd></dl>
+<a class="el" href="vdp__bg_8h.html#a4efc5f6afcfaeda1181814ce8913f271" title="Draw Image (using DMA) in specified background plane and at given position.">VDP_drawImage()</a> </dd></dl>
 
 </div>
 </div>
@@ -1604,7 +1894,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__bg_8h.html">vdp_bg.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -106,7 +107,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00052"></a>00052 <span class="preprocessor"></span>
 <a name="l00060"></a><a class="code" href="config_8h.html#a4dbd3badcdb6094eb9a9a00a660ba3b8">00060</a> <span class="preprocessor">#define HALT_Z80_ON_DMA     1</span>
 <a name="l00061"></a>00061 <span class="preprocessor"></span>
-<a name="l00068"></a><a class="code" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">00068</a> <span class="preprocessor">#define HALT_Z80_ON_IO      0</span>
+<a name="l00068"></a><a class="code" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">00068</a> <span class="preprocessor">#define HALT_Z80_ON_IO      1</span>
 <a name="l00069"></a>00069 <span class="preprocessor"></span>
 <a name="l00074"></a><a class="code" href="config_8h.html#a6d2163fee9102ccfe4da038b29df814e">00074</a> <span class="preprocessor">#define DMA_DISABLED        0</span>
 <a name="l00075"></a>00075 <span class="preprocessor"></span>
@@ -114,24 +115,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00085"></a>00085 <span class="preprocessor"></span>
 <a name="l00091"></a><a class="code" href="config_8h.html#a071a17c9240694ea053efd33130ad764">00091</a> <span class="preprocessor">#define ENABLE_NEWLIB       0</span>
 <a name="l00092"></a>00092 <span class="preprocessor"></span>
-<a name="l00098"></a><a class="code" href="config_8h.html#aae567e22de980e82ed4be4028a55e049">00098</a> <span class="preprocessor">#define FAT16_SUPPORT       0</span>
-<a name="l00099"></a>00099 <span class="preprocessor"></span>
-<a name="l00104"></a><a class="code" href="config_8h.html#ab2bde168f01e48cef3f7e94ea91c3287">00104</a> <span class="preprocessor">#define ENABLE_LOGO         0</span>
-<a name="l00105"></a>00105 <span class="preprocessor"></span>
-<a name="l00106"></a>00106 <span class="preprocessor">#if (ENABLE_LOGO != 0)</span>
-<a name="l00107"></a>00107 <span class="preprocessor"></span>
-<a name="l00112"></a>00112 <span class="preprocessor">#define ZOOMING_LOGO        0</span>
-<a name="l00113"></a>00113 <span class="preprocessor"></span>
-<a name="l00114"></a>00114 <span class="preprocessor">#endif // ENABLE_LOGO</span>
-<a name="l00115"></a>00115 <span class="preprocessor"></span>
-<a name="l00116"></a>00116 
-<a name="l00117"></a>00117 <span class="preprocessor">#endif // _CONFIG_</span>
+<a name="l00097"></a><a class="code" href="config_8h.html#ab2bde168f01e48cef3f7e94ea91c3287">00097</a> <span class="preprocessor">#define ENABLE_LOGO         0</span>
+<a name="l00098"></a>00098 <span class="preprocessor"></span>
+<a name="l00099"></a>00099 <span class="preprocessor">#if (ENABLE_LOGO != 0)</span>
+<a name="l00100"></a>00100 <span class="preprocessor"></span>
+<a name="l00105"></a>00105 <span class="preprocessor">#define ZOOMING_LOGO        0</span>
+<a name="l00106"></a>00106 <span class="preprocessor"></span>
+<a name="l00107"></a>00107 <span class="preprocessor">#endif // ENABLE_LOGO</span>
+<a name="l00108"></a>00108 <span class="preprocessor"></span>
+<a name="l00113"></a><a class="code" href="config_8h.html#ab994ff5c1f0d832e364f82723aaf9e1b">00113</a> <span class="preprocessor">#define MODULE_EVERDRIVE    0</span>
+<a name="l00114"></a>00114 <span class="preprocessor"></span>
+<a name="l00120"></a><a class="code" href="config_8h.html#a169e5932b65bfb7696b89126d8d44c72">00120</a> <span class="preprocessor">#define MODULE_FAT16        0</span>
+<a name="l00121"></a>00121 <span class="preprocessor"></span>
+<a name="l00122"></a>00122 <span class="comment">// FAT16 need EVERDRIVE</span>
+<a name="l00123"></a>00123 <span class="preprocessor">#if ((MODULE_EVERDRIVE == 0) &amp;&amp; (MODULE_FAT16 != 0))</span>
+<a name="l00124"></a>00124 <span class="preprocessor"></span><span class="preprocessor">#error &quot;Cannot enable FAT16 module without EVERDRIVE module&quot;</span>
+<a name="l00125"></a>00125 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00126"></a>00126 <span class="preprocessor"></span>
+<a name="l00131"></a><a class="code" href="config_8h.html#a94820bb8ad48091e615f56d0a7960e9f">00131</a> <span class="preprocessor">#define MODULE_MEGAWIFI     0</span>
+<a name="l00132"></a>00132 <span class="preprocessor"></span>
+<a name="l00133"></a>00133 <span class="preprocessor">#endif // _CONFIG_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:35 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:47:59 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

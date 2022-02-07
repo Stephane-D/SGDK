@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -169,10 +170,10 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a0bb7ef633c3b6bcff1903ed20b3917f8">FIX32</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>) ((value) * (1 &lt;&lt; FIX32_FRAC_BITS)))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix32.  <a href="#a0bb7ef633c3b6bcff1903ed20b3917f8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a0ad8ca409359839219bd8e31faac0c"></a><!-- doxytag: member="maths.h::intToFix32" ref="a7a0ad8ca409359839219bd8e31faac0c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a7a0ad8ca409359839219bd8e31faac0c">intToFix32</a>(value)&#160;&#160;&#160;((value) &lt;&lt; FIX32_FRAC_BITS)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a7a0ad8ca409359839219bd8e31faac0c">intToFix32</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>) ((value) &lt;&lt; FIX32_FRAC_BITS))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert integer to fix32. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aefa93759cc1ca56d6f934f50b26d81fd"></a><!-- doxytag: member="maths.h::fix32ToInt" ref="aefa93759cc1ca56d6f934f50b26d81fd" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aefa93759cc1ca56d6f934f50b26d81fd">fix32ToInt</a>(value)&#160;&#160;&#160;((value) &gt;&gt; FIX32_FRAC_BITS)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aefa93759cc1ca56d6f934f50b26d81fd">fix32ToInt</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>) ((value) &gt;&gt; FIX32_FRAC_BITS))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix32 to integer. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add30d7e9eb8b9b058595f37edfc9868a"></a><!-- doxytag: member="maths.h::fix32Round" ref="add30d7e9eb8b9b058595f37edfc9868a" args="(value)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#add30d7e9eb8b9b058595f37edfc9868a">fix32Round</a>(value)&#160;&#160;&#160;((fix32Frac(value) &gt; FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value))</td></tr>
@@ -217,10 +218,10 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aaf38619511c2a84d230051163c5af728">FIX16</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>) ((value) * (1 &lt;&lt; FIX16_FRAC_BITS)))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix16.  <a href="#aaf38619511c2a84d230051163c5af728"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a607f0764e3d3f146a04242431d33f041"></a><!-- doxytag: member="maths.h::intToFix16" ref="a607f0764e3d3f146a04242431d33f041" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a607f0764e3d3f146a04242431d33f041">intToFix16</a>(value)&#160;&#160;&#160;((value) &lt;&lt; FIX16_FRAC_BITS)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a607f0764e3d3f146a04242431d33f041">intToFix16</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>) ((value) &lt;&lt; FIX16_FRAC_BITS))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert integer to fix16. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69ae914f50c3c78aca8f2f7141427d59"></a><!-- doxytag: member="maths.h::fix16ToInt" ref="a69ae914f50c3c78aca8f2f7141427d59" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a69ae914f50c3c78aca8f2f7141427d59">fix16ToInt</a>(value)&#160;&#160;&#160;((value) &gt;&gt; FIX16_FRAC_BITS)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a69ae914f50c3c78aca8f2f7141427d59">fix16ToInt</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>) ((value) &gt;&gt; FIX16_FRAC_BITS))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix16 to integer. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8c54f0b4fd1a806fe3b84161b6d482c"></a><!-- doxytag: member="maths.h::fix16Round" ref="ae8c54f0b4fd1a806fe3b84161b6d482c" args="(value)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ae8c54f0b4fd1a806fe3b84161b6d482c">fix16Round</a>(value)&#160;&#160;&#160;((fix16Frac(value) &gt; FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))</td></tr>
@@ -379,6 +380,11 @@ Functions</h2></td></tr>
  getLog2Int(1024) = 10<br/>
  getLog2Int(12345) = 13<br/>
   <a href="#ab64f8020bfca041933a4686f83b22567"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a1d587837cfc564b0420ca112a6ce7a77">getNextPow2</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return next pow2 value which is greater than specified 32 bits unsigned value. Ex:<br/>
+ getNextPow2(700) = 1024<br/>
+ getNextPow2(18) = 32<br/>
+  <a href="#a1d587837cfc564b0420ca112a6ce7a77"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc25db6e6f31f8c6686a853e279554d7"></a><!-- doxytag: member="maths.h::sintab32" ref="acc25db6e6f31f8c6686a853e279554d7" args="[1024]" -->
@@ -467,7 +473,7 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000061">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -712,6 +718,34 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
 
 </div>
 </div>
+<a class="anchor" id="a1d587837cfc564b0420ca112a6ce7a77"></a><!-- doxytag: member="maths.h::getNextPow2" ref="a1d587837cfc564b0420ca112a6ce7a77" args="(u32 value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getNextPow2 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return next pow2 value which is greater than specified 32 bits unsigned value. Ex:<br/>
+ getNextPow2(700) = 1024<br/>
+ getNextPow2(18) = 32<br/>
+ </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>value to return next pow2 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="abbbce15df0c9773582c24e76d9435d1e"></a><!-- doxytag: member="maths.h::intToBCD" ref="abbbce15df0c9773582c24e76d9435d1e" args="(u32 value)" -->
 <div class="memitem">
 <div class="memproto">
@@ -890,7 +924,7 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="maths_8h.html">maths.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

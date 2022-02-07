@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -134,8 +135,8 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a s32 value to string (input value should be in [-500000000..500000000] range).  <a href="#af5351ac0cc44eca34b2e719aef69bec3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#ad0f493ebfb0f0df1add02e95f0156e10">uintToStr</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a u32 value to string (input value should be in [0..500000000] range).  <a href="#ad0f493ebfb0f0df1add02e95f0156e10"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a6fc9ec4b4ce3d990536ae5bc3fde09ac">intToHex</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a u32 value to hexadecimal string.  <a href="#a6fc9ec4b4ce3d990536ae5bc3fde09ac"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a196f183a2d07943ca44b068e73a9421f">intToHex</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a u32 value to hexadecimal string.  <a href="#a196f183a2d07943ca44b068e73a9421f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a6553654e51ce1b70a13759efcb54cbb6">fix32ToStr</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a fix32 value to string.  <a href="#a6553654e51ce1b70a13759efcb54cbb6"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="string_8h.html#a271a92ad68b7125bffe94c52c3e19f8e">fix16ToStr</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value, char *str, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec)</td></tr>
@@ -243,12 +244,12 @@ Jesus Alonso (doragasu) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a6fc9ec4b4ce3d990536ae5bc3fde09ac"></a><!-- doxytag: member="string.h::intToHex" ref="a6fc9ec4b4ce3d990536ae5bc3fde09ac" args="(u32 value, char *str, u16 minsize)" -->
+<a class="anchor" id="a196f183a2d07943ca44b068e73a9421f"></a><!-- doxytag: member="string.h::intToHex" ref="a196f183a2d07943ca44b068e73a9421f" args="(u32 value, char *str, u16 minsize)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void intToHex </td>
+          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> intToHex </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
           <td class="paramname"><em>value</em>, </td>
@@ -279,10 +280,11 @@ Jesus Alonso (doragasu) </dd></dl>
   <table class="params">
     <tr><td class="paramname">value</td><td>The u32 integer value to convert to hexadecimal string. </td></tr>
     <tr><td class="paramname">str</td><td>Destination string (it must be large enough to receive result). </td></tr>
-    <tr><td class="paramname">minsize</td><td>Minimum size of resulting string.</td></tr>
+    <tr><td class="paramname">minsize</td><td>Minimum size of resulting string. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>string length</dd></dl>
 <p>Converts the specified u32 value to hexadecimal string.<br/>
  If resulting value is shorter than requested minsize the method prepends result with '0' character. </p>
 
@@ -736,7 +738,7 @@ Jesus Alonso (doragasu) </dd></dl>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="string_8h.html">string.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -119,9 +120,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00063"></a>00063 <span class="preprocessor"></span>
 <a name="l00071"></a><a class="code" href="maths_8h.html#a0bb7ef633c3b6bcff1903ed20b3917f8">00071</a> <span class="preprocessor">#define FIX32(value)                ((fix32) ((value) * (1 &lt;&lt; FIX32_FRAC_BITS)))</span>
 <a name="l00072"></a>00072 <span class="preprocessor"></span>
-<a name="l00077"></a><a class="code" href="maths_8h.html#a7a0ad8ca409359839219bd8e31faac0c">00077</a> <span class="preprocessor">#define intToFix32(value)           ((value) &lt;&lt; FIX32_FRAC_BITS)</span>
+<a name="l00077"></a><a class="code" href="maths_8h.html#a7a0ad8ca409359839219bd8e31faac0c">00077</a> <span class="preprocessor">#define intToFix32(value)           ((fix32) ((value) &lt;&lt; FIX32_FRAC_BITS))</span>
 <a name="l00078"></a>00078 <span class="preprocessor"></span>
-<a name="l00082"></a><a class="code" href="maths_8h.html#aefa93759cc1ca56d6f934f50b26d81fd">00082</a> <span class="preprocessor">#define fix32ToInt(value)           ((value) &gt;&gt; FIX32_FRAC_BITS)</span>
+<a name="l00082"></a><a class="code" href="maths_8h.html#aefa93759cc1ca56d6f934f50b26d81fd">00082</a> <span class="preprocessor">#define fix32ToInt(value)           ((s32) ((value) &gt;&gt; FIX32_FRAC_BITS))</span>
 <a name="l00083"></a>00083 <span class="preprocessor"></span>
 <a name="l00088"></a><a class="code" href="maths_8h.html#add30d7e9eb8b9b058595f37edfc9868a">00088</a> <span class="preprocessor">#define fix32Round(value)           \</span>
 <a name="l00089"></a>00089 <span class="preprocessor">    ((fix32Frac(value) &gt; FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value))</span>
@@ -153,9 +154,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00148"></a>00148 <span class="preprocessor"></span>
 <a name="l00156"></a><a class="code" href="maths_8h.html#aaf38619511c2a84d230051163c5af728">00156</a> <span class="preprocessor">#define FIX16(value)                ((fix16) ((value) * (1 &lt;&lt; FIX16_FRAC_BITS)))</span>
 <a name="l00157"></a>00157 <span class="preprocessor"></span>
-<a name="l00162"></a><a class="code" href="maths_8h.html#a607f0764e3d3f146a04242431d33f041">00162</a> <span class="preprocessor">#define intToFix16(value)           ((value) &lt;&lt; FIX16_FRAC_BITS)</span>
+<a name="l00162"></a><a class="code" href="maths_8h.html#a607f0764e3d3f146a04242431d33f041">00162</a> <span class="preprocessor">#define intToFix16(value)           ((fix16) ((value) &lt;&lt; FIX16_FRAC_BITS))</span>
 <a name="l00163"></a>00163 <span class="preprocessor"></span>
-<a name="l00167"></a><a class="code" href="maths_8h.html#a69ae914f50c3c78aca8f2f7141427d59">00167</a> <span class="preprocessor">#define fix16ToInt(value)           ((value) &gt;&gt; FIX16_FRAC_BITS)</span>
+<a name="l00167"></a><a class="code" href="maths_8h.html#a69ae914f50c3c78aca8f2f7141427d59">00167</a> <span class="preprocessor">#define fix16ToInt(value)           ((s16) ((value) &gt;&gt; FIX16_FRAC_BITS))</span>
 <a name="l00168"></a>00168 <span class="preprocessor"></span>
 <a name="l00173"></a><a class="code" href="maths_8h.html#ae8c54f0b4fd1a806fe3b84161b6d482c">00173</a> <span class="preprocessor">#define fix16Round(value)           \</span>
 <a name="l00174"></a>00174 <span class="preprocessor">    ((fix16Frac(value) &gt; FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))</span>
@@ -371,31 +372,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00596"></a><a class="code" href="maths_8h.html#aeac8a64a5efe395e859f0f67a16c4d3f">00596</a> <span class="keyword">typedef</span> <a class="code" href="struct_mat4_d__f32.html" title="4x4 Matrice structure - f32 (fix32) type.  Internally uses 4 4D vectors.">Mat4D_f32</a> <a class="code" href="maths_8h.html#aeac8a64a5efe395e859f0f67a16c4d3f" title="alias for Mat4D_f32">M4f32</a>;
 <a name="l00597"></a>00597 
 <a name="l00598"></a>00598 
-<a name="l00609"></a>00609 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#ab7503cce3e6a02a815cb8ef0df21a181" title="16x16=32 unsigned multiplication. Force GCC to use proper 68000 mulu instruction.">mulu</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
-<a name="l00620"></a>00620 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> <a class="code" href="maths_8h.html#a3cc3e9b16b5abe9f0641f11e8c516aea" title="16x16=32 signed multiplication. Force GCC to use proper 68000 muls instruction.">muls</a>(<a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
-<a name="l00632"></a>00632 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="maths_8h.html#a3719e0599e12a805b5ea5010b19999a8" title="Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operat...">divu</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
-<a name="l00644"></a>00644 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="maths_8h.html#a72a0f0ad4d6aa75b1140190cba1c24a4" title="Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operatio...">divs</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
-<a name="l00655"></a>00655 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="maths_8h.html#a5bbdcd777f15ca2afe634b7826d3862f" title="Direct divu instruction (unsigned 32/16=16:16) access using inline assembly.">modu</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
-<a name="l00666"></a>00666 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="maths_8h.html#ac9ccfa5ee24893574556e3cfe53102b8" title="Direct divs instruction (signed 32/16=16:16) access using inline assembly.">mods</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
+<a name="l00609"></a>00609 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> mulu(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
+<a name="l00620"></a>00620 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> muls(<a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
+<a name="l00632"></a>00632 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> divu(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
+<a name="l00644"></a>00644 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> divs(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
+<a name="l00655"></a>00655 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> modu(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
+<a name="l00666"></a>00666 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> mods(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
 <a name="l00667"></a>00667 
-<a name="l00680"></a>00680 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#aa88daac11d54ff8846ac726491e5cdfb" title="Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operat...">divmodu</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
-<a name="l00693"></a>00693 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> <a class="code" href="maths_8h.html#a4b1eae35655f7cca5d7b02ec71860ea2" title="Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operatio...">divmods</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
+<a name="l00680"></a>00680 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> divmodu(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> op1, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> op2);
+<a name="l00693"></a>00693 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> divmods(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2);
 <a name="l00694"></a>00694 
-<a name="l00702"></a>00702 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#abbbce15df0c9773582c24e76d9435d1e" title="Binary to Decimal conversion.">intToBCD</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
+<a name="l00702"></a>00702 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> intToBCD(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
 <a name="l00703"></a>00703 
-<a name="l00708"></a>00708 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#a45eb4a206ea2f7aaaa20991f866f58c3">distance_approx</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
-<a name="l00719"></a>00719 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
-<a name="l00730"></a>00730 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> <a class="code" href="maths_8h.html#a106adf2151130b0e25436de93ca1b0d5" title="Return 16.16 fixed point *approximation* of log2 of the specified 16.16 fixed point value...">getApproximatedLog2</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value);
-<a name="l00741"></a>00741 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="maths_8h.html#ab64f8020bfca041933a4686f83b22567" title="Return integer log2 of specified 32 bits unsigned value. Ex:  getLog2Int(1024) = 10  getLog2Int(12345...">getLog2Int</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
+<a name="l00708"></a>00708 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> distance_approx(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
+<a name="l00719"></a>00719 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getApproximatedDistance(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy);
+<a name="l00730"></a>00730 <a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> getApproximatedLog2(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value);
+<a name="l00741"></a>00741 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> getLog2Int(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
 <a name="l00742"></a>00742 
-<a name="l00743"></a>00743 
-<a name="l00744"></a>00744 <span class="preprocessor">#endif // _MATHS_H_</span>
+<a name="l00753"></a>00753 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getNextPow2(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value);
+<a name="l00754"></a>00754 
+<a name="l00755"></a>00755 
+<a name="l00756"></a>00756 <span class="preprocessor">#endif // _MATHS_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="maths_8h.html">maths.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:35 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:47:59 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

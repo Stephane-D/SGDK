@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -104,34 +105,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00036"></a>00036 <span class="preprocessor"></span><span class="preprocessor">#define va_arg(v,l) __builtin_va_arg(v,l)</span>
 <a name="l00037"></a>00037 <span class="preprocessor"></span>
 <a name="l00038"></a>00038 
-<a name="l00049"></a>00049 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> strlen(<span class="keyword">const</span> <span class="keywordtype">char</span> *str);
-<a name="l00064"></a>00064 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> strnlen(<span class="keyword">const</span> <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maxlen);
-<a name="l00082"></a>00082 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> strcmp(<span class="keyword">const</span> <span class="keywordtype">char</span> *str1, <span class="keyword">const</span> <span class="keywordtype">char</span> *str2);
+<a name="l00049"></a>00049 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="string_8h.html#a092fab806751b7e9e956f30b74228a23" title="Calculate the length of a string (limited to 65535 characters maximum).">strlen</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *str);
+<a name="l00064"></a>00064 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="string_8h.html#ac95d9e6de719572fa47ad276baa664de" title="Compute the length of a string, to a maximum number of bytes.">strnlen</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maxlen);
+<a name="l00082"></a>00082 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="string_8h.html#a70cac0e742d8195dd77ea209ff657422" title="Compare the 2 strings.">strcmp</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *str1, <span class="keyword">const</span> <span class="keywordtype">char</span> *str2);
 <a name="l00083"></a>00083 
-<a name="l00096"></a>00096 <span class="keywordtype">char</span>* strcpy(<span class="keywordtype">char</span> *dest, <span class="keyword">const</span> <span class="keywordtype">char</span> *src);
-<a name="l00111"></a>00111 <span class="keywordtype">char</span>* strncpy(<span class="keywordtype">char</span> *dest, <span class="keyword">const</span> <span class="keywordtype">char</span> *src, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00124"></a>00124 <span class="keywordtype">char</span>* strcat(<span class="keywordtype">char</span> *dest, <span class="keyword">const</span> <span class="keywordtype">char</span> *src);
+<a name="l00096"></a>00096 <span class="keywordtype">char</span>* <a class="code" href="string_8h.html#a7a82515b5d377be04817715c5465b647" title="Copy a string.">strcpy</a>(<span class="keywordtype">char</span> *dest, <span class="keyword">const</span> <span class="keywordtype">char</span> *src);
+<a name="l00111"></a>00111 <span class="keywordtype">char</span>* <a class="code" href="string_8h.html#a163d330dc80db3896c6c81e08bfcdbb1" title="Copy the first &#39;len&#39; character of string.">strncpy</a>(<span class="keywordtype">char</span> *dest, <span class="keyword">const</span> <span class="keywordtype">char</span> *src, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00124"></a>00124 <span class="keywordtype">char</span>* <a class="code" href="string_8h.html#adb8723e585ed29f2370cddf90f6891bc" title="Concatenate two strings.">strcat</a>(<span class="keywordtype">char</span> *dest, <span class="keyword">const</span> <span class="keywordtype">char</span> *src);
 <a name="l00150"></a>00150 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="string_8h.html#a713f9358d522eae1dee42f0500eac17f" title="Composes a string with the same text that would be printed if format was used on printf, but instead of being printed, the content is stored as a C string in the buffer pointed by str.">sprintf</a>(<span class="keywordtype">char</span> *buffer,<span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, ...) __attribute__ ((format (printf, 2, 3)));
 <a name="l00151"></a>00151 
 <a name="l00152"></a>00152 <span class="preprocessor">#endif  // ENABLE_NEWLIB</span>
 <a name="l00153"></a>00153 <span class="preprocessor"></span>
-<a name="l00164"></a>00164 <span class="keywordtype">char</span>* strclr(<span class="keywordtype">char</span> *str);
-<a name="l00179"></a>00179 <span class="keywordtype">char</span> *strreplacechar(<span class="keywordtype">char</span> *str, <span class="keywordtype">char</span> oldc, <span class="keywordtype">char</span> newc);
-<a name="l00195"></a>00195 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> intToStr(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize);
-<a name="l00211"></a>00211 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> uintToStr(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize);
-<a name="l00226"></a>00226 <span class="keywordtype">void</span> intToHex(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize);
-<a name="l00227"></a>00227 
-<a name="l00241"></a>00241 <span class="keywordtype">void</span> fix32ToStr(<a class="code" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec);
-<a name="l00255"></a>00255 <span class="keywordtype">void</span> fix16ToStr(<a class="code" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec);
-<a name="l00256"></a>00256 
-<a name="l00257"></a>00257 <span class="preprocessor">#endif // _STRING_H_</span>
-<a name="l00258"></a>00258 <span class="preprocessor"></span>
+<a name="l00164"></a>00164 <span class="keywordtype">char</span>* <a class="code" href="string_8h.html#a8cf052a5713a75761f04405cf9b83c86" title="Clear a string.">strclr</a>(<span class="keywordtype">char</span> *str);
+<a name="l00179"></a>00179 <span class="keywordtype">char</span> *<a class="code" href="string_8h.html#aad3b2fea33e8b56f31f612a33b61573f" title="Replace the given character in a string.">strreplacechar</a>(<span class="keywordtype">char</span> *str, <span class="keywordtype">char</span> oldc, <span class="keywordtype">char</span> newc);
+<a name="l00195"></a>00195 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="string_8h.html#af5351ac0cc44eca34b2e719aef69bec3" title="Convert a s32 value to string (input value should be in [-500000000..500000000] range).">intToStr</a>(<a class="code" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize);
+<a name="l00211"></a>00211 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="string_8h.html#ad0f493ebfb0f0df1add02e95f0156e10" title="Convert a u32 value to string (input value should be in [0..500000000] range).">uintToStr</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize);
+<a name="l00227"></a>00227 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="string_8h.html#a196f183a2d07943ca44b068e73a9421f" title="Convert a u32 value to hexadecimal string.">intToHex</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> minsize);
+<a name="l00228"></a>00228 
+<a name="l00242"></a>00242 <span class="keywordtype">void</span> <a class="code" href="string_8h.html#a6553654e51ce1b70a13759efcb54cbb6" title="Convert a fix32 value to string.">fix32ToStr</a>(<a class="code" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec);
+<a name="l00256"></a>00256 <span class="keywordtype">void</span> <a class="code" href="string_8h.html#a271a92ad68b7125bffe94c52c3e19f8e" title="Convert a fix16 value to string.">fix16ToStr</a>(<a class="code" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value, <span class="keywordtype">char</span> *str, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numdec);
+<a name="l00257"></a>00257 
+<a name="l00258"></a>00258 <span class="preprocessor">#endif // _STRING_H_</span>
+<a name="l00259"></a>00259 <span class="preprocessor"></span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="string_8h.html">string.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:35 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

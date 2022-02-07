@@ -36,6 +36,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -119,7 +120,7 @@ Defines</h2></td></tr>
  This actually happen when Z80 access the main BUS exactly at same time you trigger a DMA operation.<br/>
  If you are 100% sure that you are actually avoiding that case you may try to disable the flag (at your own risk though). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2adc6dcc736109045da97cc0d8c54244"></a><!-- doxytag: member="config.h::HALT_Z80_ON_IO" ref="a2adc6dcc736109045da97cc0d8c54244" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">HALT_Z80_ON_IO</a>&#160;&#160;&#160;0</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a2adc6dcc736109045da97cc0d8c54244">HALT_Z80_ON_IO</a>&#160;&#160;&#160;1</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to force Z80 halt during IO port (controller) accesses.<br/>
  Some Megadrive models (as some MD2) need it to prevent some possible (but very rare) Z80 corruption bugs (may happen when Z80 access the main BUS during IO port access from 68K). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d2163fee9102ccfe4da038b29df814e"></a><!-- doxytag: member="config.h::DMA_DISABLED" ref="a6d2163fee9102ccfe4da038b29df814e" args="" -->
@@ -131,13 +132,20 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a071a17c9240694ea053efd33130ad764">ENABLE_NEWLIB</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use newlib with SGDK.<br/>
  That will disable any standard methods from SGDK to replace them by newlib library implementation. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae567e22de980e82ed4be4028a55e049"></a><!-- doxytag: member="config.h::FAT16_SUPPORT" ref="aae567e22de980e82ed4be4028a55e049" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#aae567e22de980e82ed4be4028a55e049">FAT16_SUPPORT</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use FAT16 methods provided by Krik.<br/>
- This cost a bit more than 1 KB of RAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2bde168f01e48cef3f7e94ea91c3287"></a><!-- doxytag: member="config.h::ENABLE_LOGO" ref="ab2bde168f01e48cef3f7e94ea91c3287" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ab2bde168f01e48cef3f7e94ea91c3287">ENABLE_LOGO</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to have the kit intro logo. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab994ff5c1f0d832e364f82723aaf9e1b"></a><!-- doxytag: member="config.h::MODULE_EVERDRIVE" ref="ab994ff5c1f0d832e364f82723aaf9e1b" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ab994ff5c1f0d832e364f82723aaf9e1b">MODULE_EVERDRIVE</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use EVERDRIVE programming methods (provided by Krikzz).<br/>
+ <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a169e5932b65bfb7696b89126d8d44c72"></a><!-- doxytag: member="config.h::MODULE_FAT16" ref="a169e5932b65bfb7696b89126d8d44c72" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a169e5932b65bfb7696b89126d8d44c72">MODULE_FAT16</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use FAT16 methods for Everdrive cart (provided by Krikzz).<br/>
+ This cost a bit more than 1 KB of RAM. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94820bb8ad48091e615f56d0a7960e9f"></a><!-- doxytag: member="config.h::MODULE_MEGAWIFI" ref="a94820bb8ad48091e615f56d0a7960e9f" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a94820bb8ad48091e615f56d0a7960e9f">MODULE_MEGAWIFI</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to enable MegaWiFi functions and support code. <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Basic SGDK library configuration file. </p>
@@ -166,7 +174,7 @@ Defines</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Fri Jul 30 2021 16:00:36 for sgdk by&#160;
+      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
