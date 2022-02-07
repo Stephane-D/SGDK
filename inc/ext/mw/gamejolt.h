@@ -15,7 +15,7 @@
  * \author Jesus Alonso (doragasu)
  * \date 2020
  *
- * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
+ * \note This module requires setting MODULE_MEGAWIFI to 1 in config.h and
  * rebuilding the library (if you had to change them).
  * \note The module uses X Macros, making Doxygen documentation of some
  * elements a bit complicated. Sorry about that.
@@ -24,7 +24,9 @@
 #ifndef _GAMEJOLT_H_
 #define _GAMEJOLT_H_
 
-#include <types.h>
+#include "types.h"
+
+#if (MODULE_MEGAWIFI != 0)
 
 /// \brief Module error codes.
 ///
@@ -534,6 +536,8 @@ char *gj_friend_get_next(char *pos, char **user_id);
  ****************************************************************************/
 char *gj_request(const char **path, uint8_t num_paths, const char **key,
 		const char **value, uint8_t num_kv_pairs, uint32_t *out_len);
+
+#endif // MODULE_MEGAWIFI
 
 #endif /*_GAMEJOLT_H_*/
 

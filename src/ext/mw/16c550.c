@@ -1,4 +1,8 @@
-#include <ext/mw/16c550.h>
+#include "config.h"
+#include "ext/mw/16c550.h"
+
+
+#if (MODULE_MEGAWIFI != 0)
 
 /// Shadow copy of the UART registers
 UartShadow sh;
@@ -29,3 +33,4 @@ void uart_init(void) {
 	// (shame on Masami Ishikawa for not including a single interrupt line!).
 }
 
+#endif // MODULE_MEGAWIFI

@@ -16,7 +16,7 @@
  * \author Jesus Alonso (doragasu)
  * \date   2019
  * \note   Unfortunately the Megadrive does have neither an interrupt pin nor
- *         DMA threshold pins in the cartridge slot, so polling is the only 
+ *         DMA threshold pins in the cartridge slot, so polling is the only
  *         way. So you have
  *         Megadrive does not have an interrupt pin on the cart, implementing
  *         more efficient data transmission techniques will be tricky.
@@ -45,6 +45,8 @@
 
 #include "16c550.h"
 #include "mw-msg.h"
+
+#if (MODULE_MEGAWIFI != 0)
 
 /// LSD frame overhead in bytes
 #define LSD_OVERHEAD		4
@@ -173,6 +175,8 @@ void lsd_process(void);
 void lsd_line_sync(void);
 
 /** \} */
+
+#endif // MODULE_MEGAWIFI
 
 #endif //_LSD_H_
 

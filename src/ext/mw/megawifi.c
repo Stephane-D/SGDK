@@ -10,11 +10,12 @@
  *       channels, and is not currently doing it
  ****************************************************************************/
 
-#include <types.h>
-#include <string.h>
-#include <memory.h>
-#include <task.h>
-#include <ext/mw/megawifi.h>
+#include "genesis.h"
+
+
+#if (MODULE_MEGAWIFI != 0)
+
+#include "ext/mw/megawifi.h"
 
 /// Remove compiler warnings when not using a function parameter
 #define UNUSED_PARAM(x)		(void)x
@@ -1470,3 +1471,5 @@ enum mw_err mw_fw_upgrade(const char *name)
 
 	return MW_ERR_NONE;
 }
+
+#endif // MODULE_MEGAWIFI

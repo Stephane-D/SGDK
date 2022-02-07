@@ -92,13 +92,6 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to use FAT16 methods provided by Krik.<br>
- *      This cost a bit more than 1 KB of RAM.
- */
-#define FAT16_SUPPORT       0
-
-/**
- *  \brief
  *      Set it to 1 if you want to have the kit intro logo
  */
 #define ENABLE_LOGO         0
@@ -115,8 +108,26 @@
 
 /**
  *  \brief
+ *      Set it to 1 if you want to use EVERDRIVE programming methods (provided by Krikzz).<br>
+ */
+#define MODULE_EVERDRIVE    0
+
+/**
+ *  \brief
+ *      Set it to 1 if you want to use FAT16 methods for Everdrive cart (provided by Krikzz).<br>
+ *      This cost a bit more than 1 KB of RAM.
+ */
+#define MODULE_FAT16        0
+
+// FAT16 need EVERDRIVE
+#if ((MODULE_EVERDRIVE == 0) && (MODULE_FAT16 != 0))
+#error "Cannot enable FAT16 module without EVERDRIVE module"
+#endif
+
+/**
+ *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code
  */
-#define ENABLE_MEGAWIFI     0
+#define MODULE_MEGAWIFI     0
 
 #endif // _CONFIG_

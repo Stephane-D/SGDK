@@ -10,10 +10,15 @@
  * \todo Add more functions to extract data.
  ****************************************************************************/
 
-#include <types.h>
-#include <string.h>
-#include <ext/mw/jsmn.h>
-#include <ext/mw/json.h>
+#include "config.h"
+#include "types.h"
+#include "string.h"
+
+
+#if (MODULE_MEGAWIFI != 0)
+
+#include "ext/mw/jsmn.h"
+#include "ext/mw/json.h"
 
 int json_null_terminate(char *json_str, const jsmntok_t *json_tok, int num_tok)
 {
@@ -145,3 +150,4 @@ int json_bool_get(const char *json_str, const jsmntok_t *json_tok, int obj_idx)
 	}
 }
 
+#endif // MODULE_MEGAWIFI

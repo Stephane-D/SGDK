@@ -17,7 +17,9 @@
 #ifndef _MW_MSG_H_
 #define _MW_MSG_H_
 
-#include <types.h>
+#include "types.h"
+
+#if (MODULE_MEGAWIFI != 0)
 
 /// Macro for packing structures and enumerates
 #define PACKED		__attribute__((__packed__))
@@ -357,6 +359,8 @@ struct mw_reuse_payload {
 	/// Data payload
 	char payload[MW_CMD_MAX_BUFLEN - 4 - 2];
 };
+
+#endif // MODULE_MEGAWIFI
 
 #endif //_MW_MSG_H_
 

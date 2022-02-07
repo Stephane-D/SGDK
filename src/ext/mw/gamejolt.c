@@ -4,11 +4,16 @@
  * \author Jesus Alonso (doragasu)
  * \date 2020
  ****************************************************************************/
-#include <types.h>
-#include <string.h>
-#include <memory.h>
-#include <ext/mw/megawifi.h>
-#include <ext/mw/gamejolt.h>
+#include "config.h"
+#include "types.h"
+#include "string.h"
+#include "memory.h"
+
+
+#if (MODULE_MEGAWIFI != 0)
+
+#include "ext/mw/megawifi.h"
+#include "ext/mw/gamejolt.h"
 
 // I miss having stding.h sooooooo much
 #ifndef INT32_MAX
@@ -779,3 +784,5 @@ char *gj_friend_get_next(char *pos, char **user_id)
 	return decode_string(pos, "friend_id", user_id);
 }
 
+
+#endif // MODULE_MEGAWIFI

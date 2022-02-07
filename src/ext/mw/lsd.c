@@ -11,10 +11,15 @@
  *         more efficient data transmission techniques will be tricky.
  * \todo   Proper implementation of error handling.
  ****************************************************************************/
-#include <types.h>
-#include <string.h>
-#include <memory.h>
-#include <ext/mw/lsd.h>
+#include "config.h"
+#include "types.h"
+#include "string.h"
+#include "memory.h"
+
+
+#if (MODULE_MEGAWIFI != 0)
+
+#include "ext/mw/lsd.h"
 /// Uart used for LSD
 #define LSD_UART		0
 
@@ -365,3 +370,4 @@ void lsd_line_sync(void)
 	}
 }
 
+#endif // MODULE_MEGAWIFI

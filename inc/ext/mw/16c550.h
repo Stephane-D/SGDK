@@ -10,7 +10,9 @@
 #ifndef _16C550_H_
 #define _16C550_H_
 
-#include <types.h>
+#include "types.h"
+
+#if (MODULE_MEGAWIFI != 0)
 
 /// 16C550 UART base address
 #define UART_BASE		0xA130C1
@@ -173,6 +175,8 @@ void uart_init(void);
  * \brief Reset TX and RX FIFOs.
  ****************************************************************************/
 #define uart_reset_fifos()	uart_set_bits(FCR, 0x07)
+
+#endif // MODULE_MEGAWIFI
 
 #endif /*_16C550_H_*/
 

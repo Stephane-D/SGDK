@@ -19,7 +19,7 @@
  * \author Jesus Alonso (doragasu)
  * \date 2015
  *
- * \note This module requires setting ENABLE_MEGAWIFI to 1 in config.h and
+ * \note This module requires setting MODULE_MEGAWIFI to 1 in config.h and
  * rebuilding the library (if you had to change them).
  ****************************************************************************/
 
@@ -29,6 +29,9 @@
 #include "16c550.h"
 #include "mw-msg.h"
 #include "lsd.h"
+
+#if (MODULE_MEGAWIFI != 0)
+
 
 /// API version implemented, major number
 #define MW_API_VERSION_MAJOR	1
@@ -967,6 +970,8 @@ static inline enum lsd_status mw_cmd_recv(mw_cmd *rep, void *ctx,
 		lsd_recv_cb recv_cb) {
 	return lsd_recv(rep->packet, sizeof(mw_cmd), ctx, recv_cb);
 }
+
+#endif // MODULE_MEGAWIFI
 
 #endif /*_MEGAWIFI_H_*/
 
