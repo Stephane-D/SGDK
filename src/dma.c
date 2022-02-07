@@ -41,8 +41,7 @@ static u16 queueIndexLimit;
 static u16 queueTransferSize;
 
 // do not share (assembly methods)
-void flushQueue(u16 num);
-void flushQueueSafe(u16 num, u16 z80restore);
+extern void flushQueue(u16 num);
 
 
 void DMA_init()
@@ -244,25 +243,19 @@ void DMA_flushQueue()
         info++;
     }
 #else
-    u16 z80restore;
-
-    // define z80 BUSREQ restore state
-    if (Z80_isBusTaken()) z80restore = 0x0100;
-    else z80restore = 0x0000;
 
 #if (HALT_Z80_ON_DMA != 0)
-    vu16 *pw = (vu16*) Z80_HALT_PORT;
-
+    bool busTaken = Z80_isBusTaken();
     // disable Z80 before processing DMA
-    *pw = 0x0100;
+    if (!busTaken) Z80_requestBus(FALSE);
+#endif  // HALT_Z80_ON_DMA
 
     flushQueue(i);
 
-    // re-enable Z80 after all DMA (safer method)
-    *pw = z80restore;
-#else
-    flushQueueSafe(i, z80restore);
-#endif
+#if (HALT_Z80_ON_DMA != 0)
+    // re-enable Z80 after all DMA
+    if (!busTaken) Z80_releaseBus();
+#endif  // HALT_Z80_ON_DMA
 
 #endif  // DMA_DISABLED
 
@@ -642,13 +635,16 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     DMA_doCPUCopy(location, from, to, len, step);
 #else
     vu16 *pw;
-    vu16 *pwz;
     u32 cmd;
     u32 fromAddr;
     u32 newLen;
     u32 bankLimitB;
     u32 bankLimitW;
-    u16 z80restore;
+    vu32 cmdbuf[1];
+    u16* cmdbufp;
+#if (HALT_Z80_ON_DMA != 0)
+    bool busTaken;
+#endif  // HALT_Z80_ON_DMA
 
     // DMA works on 64 KW bank
     fromAddr = (u32) from;
@@ -670,10 +666,6 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
         if (step != -1)
             VDP_setAutoInc(step);
     }
-
-    // define z80 BUSREQ restore state
-    if (Z80_isBusTaken()) z80restore = 0x0100;
-    else z80restore = 0x0000;
 
     pw = (vu16*) GFX_CTRL_PORT;
 
@@ -705,39 +697,28 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
             break;
     }
 
-    pwz = (vu16*) Z80_HALT_PORT;
+    // force storing DMA command into memory
+    cmdbuf[0] = cmd;
 
-    {
-        vu32 cmdbuf[1];
-        u16* cmdbufp;
-
-        // force storing DMA command into memory
-        cmdbuf[0] = cmd;
-
-        // then force issuing DMA from memory word operand
-        cmdbufp = (u16*) cmdbuf;
-        // first command word
-        *pw = *cmdbufp++;
-
-        // DISABLE Z80
-        *pwz = 0x0100;
-#if (HALT_Z80_ON_DMA == 0)
-        // RE-ENABLE it immediately before trigger DMA
-        // We do that to avoid DMA failure on some MD
-        // when Z80 try to access 68k BUS at same time the DMA starts.
-        // BUS arbitrer lantecy will disable Z80 for a very small amont of time
-        // when DMA start, avoiding that situation to happen !
-        *pwz = z80restore;
-#endif
-
-        // trigger DMA (second word command wrote from memory to avoid possible failure on some MD)
-        *pw = *cmdbufp;
-    }
+    // then force issuing DMA from memory word operand
+    cmdbufp = (u16*) cmdbuf;
+    // first command word
+    *pw = *cmdbufp++;
 
 #if (HALT_Z80_ON_DMA != 0)
-    // re-enable Z80 after DMA (safer method)
-    *pwz = z80restore;
-#endif
+    busTaken = Z80_isBusTaken();
+    // disable Z80 before processing DMA
+    if (!busTaken) Z80_requestBus(FALSE);
+#endif  // HALT_Z80_ON_DMA
+
+    // trigger DMA (second word command wrote from memory to avoid possible failure on some MD)
+    *pw = *cmdbufp;
+
+#if (HALT_Z80_ON_DMA != 0)
+    // re-enable Z80 after DMA
+    if (!busTaken) Z80_releaseBus();
+#endif  // HALT_Z80_ON_DMA
+
 #endif  // DMA_DISABLED
 }
 
@@ -748,19 +729,18 @@ void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
     DMA_doCPUCopy(location, from, to, len, step);
 #else
     vu16 *pw;
-    vu16 *pwz;
     u32 cmd;
     u32 fromAddr;
-    u16 z80restore;
+    vu32 cmdbuf[1];
+    u16* cmdbufp;
+#if (HALT_Z80_ON_DMA != 0)
+    bool busTaken;
+#endif  // HALT_Z80_ON_DMA
 
     fromAddr = (u32) from;
 
     if (step != -1)
         VDP_setAutoInc(step);
-
-    // define z80 BUSREQ restore state
-    if (Z80_isBusTaken()) z80restore = 0x0100;
-    else z80restore = 0x0000;
 
     pw = (vu16*) GFX_CTRL_PORT;
 
@@ -792,39 +772,28 @@ void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
             break;
     }
 
-    pwz = (vu16*) Z80_HALT_PORT;
+    // force storing DMA command into memory
+    cmdbuf[0] = cmd;
 
-    {
-        vu32 cmdbuf[1];
-        u16* cmdbufp;
-
-        // force storing DMA command into memory
-        cmdbuf[0] = cmd;
-
-        // then force issuing DMA from memory word operand
-        cmdbufp = (u16*) cmdbuf;
-        // first command word
-        *pw = *cmdbufp++;
-
-        // DISABLE Z80
-        *pwz = 0x0100;
-#if (HALT_Z80_ON_DMA == 0)
-        // RE-ENABLE it immediately before trigger DMA
-        // We do that to avoid DMA failure on some MD
-        // when Z80 try to access 68k BUS at same time the DMA starts.
-        // BUS arbitrer lantecy will disable Z80 for a very small amont of time
-        // when DMA start, avoiding that situation to happen !
-        *pwz = z80restore;
-#endif
-
-        // trigger DMA (second word command wrote from memory to avoid possible failure on some MD)
-        *pw = *cmdbufp;
-    }
+    // then force issuing DMA from memory word operand
+    cmdbufp = (u16*) cmdbuf;
+    // first command word
+    *pw = *cmdbufp++;
 
 #if (HALT_Z80_ON_DMA != 0)
-    // re-enable Z80 after DMA (safer method)
-    *pwz = z80restore;
-#endif
+    busTaken = Z80_isBusTaken();
+    // disable Z80 before processing DMA
+    if (!busTaken) Z80_requestBus(FALSE);
+#endif  // HALT_Z80_ON_DMA
+
+    // trigger DMA (second word command wrote from memory to avoid possible failure on some MD)
+    *pw = *cmdbufp;
+
+#if (HALT_Z80_ON_DMA != 0)
+    // re-enable Z80 after DMA
+    if (!busTaken) Z80_releaseBus();
+#endif  // HALT_Z80_ON_DMA
+
 #endif  // DMA_DISABLED
 }
 
