@@ -33,8 +33,7 @@
  * \date 01/2022
  ****************************************************************************/
 
-#include <types.h>
-#include <genesis.h>
+#include "genesis.h"
 
 /// Counter to be incremented by background task
 static volatile uint32_t count = 0;
