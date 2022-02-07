@@ -5,6 +5,7 @@
  * \author doragasu
  *
  * This module define constantes for the task unit (see task.h file).
+ * This needs to be separated as we include it from task.a assembly file !
  */
 
 #ifndef __TASK_CST_H__
