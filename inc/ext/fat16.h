@@ -11,7 +11,7 @@
 #define _FAT16_H
 
 
-#if (FAT16_SUPPORT != 0)
+#if (MODULE_FAT16 != 0)
 
 #define FAT16_DIR_SIZE 32
 #define FAT16_TYPE_FILE  0x20
@@ -78,7 +78,7 @@ u8 fat16DeleteRecord(Fat16Record *rec);
 u8 fat16CreateRecord(Fat16Record *rec, Fat16Dir *dir);
 u8 fat16SkipSectors(Fat16File *file, u16 num);
 
-#endif  /* FAT16_SUPPORT */
+#endif  /* MODULE_FAT16 */
 
 
 #endif  /* _FAT16_H */

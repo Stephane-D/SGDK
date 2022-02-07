@@ -1,10 +1,10 @@
 #include "types.h"
 
-#include "fat16.h"
-#include "everdrive.h"
+#include "ext/fat16.h"
+#include "ext/everdrive.h"
 
 
-#if (FAT16_SUPPORT != 0)
+#if (MODULE_FAT16 != 0)
 
 void fat16loadRecord(Fat16Record *record, u8 *data);
 u8 fat16LoadFatTableSector(u32 sector_idx);
@@ -607,4 +607,4 @@ u8 fat16SetNextReadSector(Fat16File *file, u32 *addr) {
     return 0;
 }
 
-#endif  /* FAT16_SUPPORT */
+#endif  /* MODULE_FAT16 */
