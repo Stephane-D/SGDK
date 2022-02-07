@@ -52,8 +52,8 @@ public class LZ4W
      */
     public static byte[] pack(byte[] data, int start, boolean silent) throws IOException, IllegalArgumentException
     {
-        final DymamicByteArray result = new DymamicByteArray(data.length);
-        final DymamicByteArray literal = new DymamicByteArray(1024);
+        final DynamicByteArray result = new DynamicByteArray(data.length);
+        final DynamicByteArray literal = new DynamicByteArray(1024);
 
         statLiteralSize = new int[LITERAL_MAX_SIZE + 1];
         statMatchSize = new int[MATCH_LONG_MAX_SIZE + 1];
@@ -221,7 +221,7 @@ public class LZ4W
      */
     public static byte[] unpack(byte[] data, int start, byte[] verif, boolean silent)
     {
-        final DymamicByteArray result = new DymamicByteArray(32 * 1024);
+        final DynamicByteArray result = new DynamicByteArray(32 * 1024);
 
         // copy previous buffer
         result.write(data, 0, start);
@@ -490,7 +490,7 @@ public class LZ4W
         return (off - ind) - 1;
     }
 
-    private static int addSegment(DymamicByteArray result, DymamicByteArray literal, Match match, int offsetDiff)
+    private static int addSegment(DynamicByteArray result, DynamicByteArray literal, Match match, int offsetDiff)
             throws IllegalArgumentException
     {
         byte[] literalArray = literal.toByteArray();
@@ -658,7 +658,7 @@ public class LZ4W
         return result;
     }
 
-    private static void writeWordLE(DymamicByteArray dst, byte[] verif, int value)
+    private static void writeWordLE(DynamicByteArray dst, byte[] verif, int value)
     {
         writeWordLE(dst, value);
 
@@ -676,7 +676,7 @@ public class LZ4W
         }
     }
 
-    private static void writeWordLE(DymamicByteArray dst, int value)
+    private static void writeWordLE(DynamicByteArray dst, int value)
     {
         dst.write(value);
         dst.write(value >> 8);
@@ -788,14 +788,14 @@ public class LZ4W
         }
     }
 
-    static class DymamicByteArray extends ByteArrayOutputStream
+    static class DynamicByteArray extends ByteArrayOutputStream
     {
-        public DymamicByteArray()
+        public DynamicByteArray()
         {
             super();
         }
 
-        public DymamicByteArray(int size)
+        public DynamicByteArray(int size)
         {
             super(size);
         }
