@@ -286,7 +286,7 @@ void VDP_clearTextEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, Transfer
 void VDP_clearTextAreaEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h, TransferMethod tm)
 {
     u16 data[128];
-    u16 i, ya, len;
+    u16 i, ya;
     u16 pw, ph;
     u16 wa, ha;
 
@@ -316,7 +316,7 @@ void VDP_clearTextAreaEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 
     i = ha;
     while(i--)
         // VDP_setTileMapDataRowEx(..) take care of using temporary buffer to build the data so we are ok here
-        VDP_setTileMapDataRowEx(plane, data, basetile, ya++, x, len, tm);
+        VDP_setTileMapDataRowEx(plane, data, basetile, ya++, x, wa, tm);
 }
 
 void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y)
