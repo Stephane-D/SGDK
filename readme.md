@@ -43,12 +43,12 @@ It's important to know that SGDK heavily relies on _resources_ which are compile
 
 ### OTHERS TUTORIALS
 
-You can find a lot of tutorials online about SGDK but be careful, some are outdated or sometime just wrong.
-I really recommend to start from the [wiki](https://github.com/Stephane-D/SGDK/wiki) and which provide the basics to start but if you need more _visual_ and more complete tutorials you can give a try to these ones:
+You can find a lot of tutorials online about SGDK but be careful, some are outdated or sometime just wrong.<br>
+I really recommend to start from the [wiki](https://github.com/Stephane-D/SGDK/wiki) and which provide the basics to start but if you need more _visual_ and more complete tutorials you can give a try to these ones:<br>
 MD programming tutorials from Ohsat:<br>
 https://www.ohsat.com/tutorial/mdmisc/creating-graphics-for-md/<br>
 Very complete and visual tutorials from Danibus (spanish only):<br>
-https://danibus.wordpress.com/
+https://danibus.wordpress.com/<br>
  
 ## HELP AND SUPPORT
 
