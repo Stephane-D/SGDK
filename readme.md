@@ -37,15 +37,17 @@ Then when you feel ready you can go further and finally install SGDK :)
 You can find installation instructions and tutorials about how use SGDK on the wiki:<br>
 https://github.com/Stephane-D/SGDK/wiki
 
-Also SGDK comes with a doxygen documentation (generated from .h header files) which provides complete information about SGDK structures and functions description. You can find it in the _'doc'_ folder (open your local _doc/html/files.html_ in your browser).
+SGDK comes with a doxygen documentation (generated from .h header files) which provides description about SGDK structures and functions. You can find it in the _'doc'_ folder (open your local _doc/html/files.html_ in your browser).
 
-Another important point to know is that SGDK heavily relies on _resources_ which are compiled through _rescomp_ tool. You can read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to know which kind of resource you can use and how to declare them then you can check the *'sample'* folder from SGDK and in particular the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sonic) which is a good showcase of SGDK usage in general (functions and resources).
+It's important to know that SGDK heavily relies on _resources_ which are compiled through the _rescomp_ tool. You should read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to understand **which kind of resource you can use and how to declare them**. Then you can look at the *'sample'* folder from SGDK and in particular the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sonic) which is a good showcase of SGDK usage in general (functions and resources).
 
 ### OTHERS TUTORIALS
 
-You can also follow up-to-date and more complete online tutorials as this one (thanks to Ohsat for making them):<br>
-https://www.ohsat.com/tutorial/<br>
-You also have the great ones from Danibus (spanish only):<br>
+You can find a lot of tutorials online about SGDK but be careful, some are outdated or sometime just wrong.
+I really recommend to start from the [wiki](https://github.com/Stephane-D/SGDK/wiki) and which provide the basics to start but if you need more _visual_ and more complete tutorials you can give a try to these ones:
+MD programming tutorials from Ohsat:<br>
+https://www.ohsat.com/tutorial/mdmisc/creating-graphics-for-md/<br>
+Very complete and visual tutorials from Danibus (spanish only):<br>
 https://danibus.wordpress.com/
  
 ## HELP AND SUPPORT
