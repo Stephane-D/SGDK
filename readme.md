@@ -102,7 +102,8 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ## THANKS
 
-- Doragasu for the multi-tasking engine, MegaWifi support and others nice additions.
+- Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi support and others nice additions.
+- Sik for the multi-tasking base implementation and for all its unvaluable Plutidev Sega Mega Drive technical information source. 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
