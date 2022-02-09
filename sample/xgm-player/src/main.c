@@ -266,14 +266,14 @@ int main()
     XGM_setLoopNumber(loop);
     // get default tempo
     tempo = XGM_getMusicTempo();
-    if (IS_PALSYSTEM) tempoDef = 50;
+    if (IS_PAL_SYSTEM) tempoDef = 50;
     else tempoDef = 60;
     // enable delay to avoid DMA contention when PSG is used in music
     XGM_setForceDelayDMA(TRUE);
 
     // init some GFX var
-    tileIndexProgressBar = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile;
-    tileIndex = TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile + starfield.tileset->numTile;
+    tileIndexProgressBar = TILE_USER_INDEX + bg.tileset->numTile + music_logo.tileset->numTile;
+    tileIndex = TILE_USER_INDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile + starfield.tileset->numTile;
 
     bgTileMap = unpackTileMap(bg.tilemap, NULL);
 
@@ -601,11 +601,11 @@ static void drawStaticGUI()
     SYS_disableInts();
 
     // General GUI & logo
-    VDP_drawImageEx(WINDOW, &bg, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 0, FALSE, TRUE);
-    VDP_drawImageEx(WINDOW, &music_logo, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile), 21, 0, FALSE, TRUE);
+    VDP_drawImageEx(WINDOW, &bg, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(WINDOW, &music_logo, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, TILE_USER_INDEX + bg.tileset->numTile), 21, 0, FALSE, TRUE);
     VDP_drawImageEx(WINDOW, &progress_bar, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileIndexProgressBar), 9, 8, FALSE, TRUE);
     // starfield
-    VDP_drawImageEx(BG_B, &starfield, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile), 0, 0, FALSE, TRUE);
+    VDP_drawImageEx(BG_B, &starfield, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX + bg.tileset->numTile + music_logo.tileset->numTile + progress_bar.tileset->numTile), 0, 0, FALSE, TRUE);
 
     // prepare 'bitTileMap' buffer for chips state rendering
     i = 0;
@@ -653,24 +653,24 @@ static void drawPlayerControls()
     if (buttonsPressed & BUTTON_START)
     {
         // DPad control
-        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40 + 7, 6, 7, 6, CPU);
+        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 0, 2, 40 + 7, 6, 7, 6, CPU);
 
         // not playing
         if ((trackPlayed == -1) || paused)
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2), 0, 7, 6, CPU);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 7, 2, 21 + (7 * 2), 0, 7, 6, CPU);
         else
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + (7 * 2) + 7, 0, 7, 6, CPU);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 7, 2, 21 + (7 * 2) + 7, 0, 7, 6, CPU);
     }
     else
     {
         // DPad control
-        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 0, 2, 40, 6, 7, 6, CPU);
+        VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 0, 2, 40, 6, 7, 6, CPU);
 
         // not playing
         if ((trackPlayed == -1) || paused)
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21, 0, 7, 6, CPU);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 7, 2, 21, 0, 7, 6, CPU);
         else
-            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 7, 2, 21 + 7, 0, 7, 6, CPU);
+            VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 7, 2, 21 + 7, 0, 7, 6, CPU);
     }
 
     SYS_enableInts();
@@ -692,12 +692,12 @@ static void drawPlayerSettings()
 
     VDP_drawText(tempoStr, 17, 4);
     // refresh shuffle state
-    if (shuffle) VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 25, 6, 2, 1, CPU);
-    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 26, 8, 23, 6, 2, 1, CPU);
+    if (shuffle) VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 26, 8, 25, 6, 2, 1, CPU);
+    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 26, 8, 23, 6, 2, 1, CPU);
     // refresh loop state
     if (loop != MAX_LOOP) VDP_drawText(loopStr, 18, 6);
     // use infinite symbol from original image
-    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USERINDEX), 18, 6, 21, 6, 2, 1, CPU);
+    else VDP_setTileMapEx(WINDOW, bgTileMap, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_USER_INDEX), 18, 6, 21, 6, 2, 1, CPU);
 
     SYS_enableInts();
 }
@@ -1007,7 +1007,7 @@ static void drawTime(s32 time, u16 x, u16 y)
     if (time == -1) strcpy(str1, "--:--");
     else
     {
-        const u16 divider = (IS_PALSYSTEM) ? 50 : 60;
+        const u16 divider = (IS_PAL_SYSTEM) ? 50 : 60;
         u16 mn = time / (60 * divider);
         u16 sec = (time / divider) % 60;
 
@@ -1525,7 +1525,7 @@ static void doJoyActions()
                 else if (tempo > MAX_TEMPO) tempo = MAX_TEMPO;
 
                 XGM_setMusicTempo(tempo);
-                if (IS_PALSYSTEM) tempoDef = 50;
+                if (IS_PAL_SYSTEM) tempoDef = 50;
                 else tempoDef = 60;
 
                 // refresh player settings
@@ -1606,7 +1606,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             else if (tempo > MAX_TEMPO) tempo = MAX_TEMPO;
 
             XGM_setMusicTempo(tempo);
-            if (IS_PALSYSTEM) tempoDef = 50;
+            if (IS_PAL_SYSTEM) tempoDef = 50;
             else tempoDef = 60;
 
             refresh |= REFRESH_SETTING;

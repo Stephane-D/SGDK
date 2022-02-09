@@ -50,19 +50,19 @@ u32 getSubTickInternal(u16 blank, u16 vcnt, u32 vt)
     if (current < lastTick) current += 256;
     lastTick = current;
 
-    if (IS_PALSYSTEM) return current * 6;
+    if (IS_PAL_SYSTEM) return current * 6;
     else return current * 5;
 }
 
 u32 getSubTick()
 {
-    return getSubTickInternal(GET_VDPSTATUS(VDP_VBLANK_FLAG), GET_VCOUNTER, vtimer);
+    return getSubTickInternal(GET_VDP_STATUS(VDP_VBLANK_FLAG), GET_VCOUNTER, vtimer);
 }
 
 // return elapsed time from console reset (1/300 second based)
 u32 getTick()
 {
-    if (IS_PALSYSTEM) return vtimer * 6;
+    if (IS_PAL_SYSTEM) return vtimer * 6;
     else return vtimer * 5;
 }
 

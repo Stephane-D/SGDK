@@ -30,7 +30,7 @@ int main()
 
 static void fastStarFieldFX()
 {
-    u16 vramIndex = TILE_USERINDEX;
+    u16 vramIndex = TILE_USER_INDEX;
     s16 i, ns, s;
 
     SYS_disableInts();

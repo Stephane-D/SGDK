@@ -30,7 +30,7 @@ int main()
     SYS_showFrameLoad(TRUE);
 
     // Setup graphics
-    VDP_drawImageEx(BG_A, &bg_img, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX), 0, 8, FALSE, TRUE);
+    VDP_drawImageEx(BG_A, &bg_img, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 8, FALSE, TRUE);
 
     // Fade in graphics
     PAL_fadeIn(0, 15, bg_img.palette->data, 30, TRUE);

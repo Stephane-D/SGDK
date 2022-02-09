@@ -209,50 +209,50 @@
  *  \brief
  *      Maximum number of tile in VRAM (related to TILE_SPACE).
  */
-#define TILE_MAXNUM             (TILE_SPACE / TILE_SIZE)
+#define TILE_MAX_NUM             (TILE_SPACE / TILE_SIZE)
 /**
  *  \brief
  *      Maximum tile index in VRAM (related to TILE_MAXNUM).
  */
-#define TILE_MAXINDEX           (TILE_MAXNUM - 1)
+#define TILE_MAX_INDEX           (TILE_MAXNUM - 1)
 /**
  *  \brief
  *      System base tile index in VRAM.
  */
-#define TILE_SYSTEMINDEX        0x0000
+#define TILE_SYSTEM_INDEX        0x0000
 /**
  *  \brief
  *      Number of system tile.
  */
-#define TILE_SYSTEMLENGTH       16
+#define TILE_SYSTEM_LENGTH       16
 /**
  *  \deprecated Use TILE_SYSTEMLENGTH instead.
  */
-#define TILE_SYSTEMLENGHT       TILE_SYSTEMLENGTH
+#define TILE_SYSTEM_LENGHT       TILE_SYSTEM_LENGTH
 /**
  *  \brief
  *      User base tile index.
  */
-#define TILE_USERINDEX          (TILE_SYSTEMINDEX + TILE_SYSTEMLENGTH)
+#define TILE_USER_INDEX          (TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH)
 /**
  *  \brief
  *      Font base tile index.
  */
-#define TILE_FONTINDEX          (TILE_MAXNUM - FONT_LEN)
+#define TILE_FONTINDEX          (TILE_MAX_NUM - FONT_LEN)
 /**
  *  \brief
  *      Sprite engine base tile index (equal TILE_FONTINDEX if Sprite Engine is not initialized).
  */
-#define TILE_SPRITEINDEX        (TILE_FONTINDEX - spriteVramSize)
+#define TILE_SPRITEINDEX        (TILE_FONT_INDEX - spriteVramSize)
 /**
  *  \brief
  *      Number of available user tile.
  */
-#define TILE_USERLENGTH         ((userTileMaxIndex - TILE_USERINDEX) + 1)
+#define TILE_USERLENGTH         ((userTileMaxIndex - TILE_USER_INDEX) + 1)
 /**
  *  \deprecated Use TILE_USERLENGTH instead.
  */
-#define TILE_USERLENGHT         TILE_USERLENGTH
+#define TILE_USERLENGHT         TILE_USER_LENGTH
 /**
  *  \brief
  *      Maximum tile index in VRAM reserved for user (for background and user managed sprites)
@@ -262,17 +262,17 @@
  *  \brief
  *      System tile address in VRAM.
  */
-#define TILE_SYSTEM             (TILE_SYSTEMINDEX * TILE_SIZE)
+#define TILE_SYSTEM             (TILE_SYSTEM_INDEX * TILE_SIZE)
 /**
  *  \brief
  *      User tile address in VRAM.
  */
-#define TILE_USER               (TILE_USERINDEX * TILE_SIZE)
+#define TILE_USER               (TILE_USER_INDEX * TILE_SIZE)
 /**
  *  \brief
  *      Font tile address in VRAM.
  */
-#define TILE_FONT               (TILE_FONTINDEX * TILE_SIZE)
+#define TILE_FONT               (TILE_FONT_INDEX * TILE_SIZE)
 
 /**
  *  \brief
@@ -364,12 +364,12 @@
  *  \brief
  *      Tests VDP status against specified flag (see VDP_XXX_FLAG).
  */
-#define GET_VDPSTATUS(flag)         ((*(vu16*)(GFX_CTRL_PORT)) & (flag))
+#define GET_VDP_STATUS(flag)         ((*(vu16*)(GFX_CTRL_PORT)) & (flag))
 /**
  *  \brief
  *      Tests if current system is a PAL system (50 Hz).
  */
-#define IS_PALSYSTEM                GET_VDPSTATUS(VDP_PALMODE_FLAG)
+#define IS_PAL_SYSTEM                GET_VDP_STATUS(VDP_PALMODE_FLAG)
 
 /**
  *  \brief

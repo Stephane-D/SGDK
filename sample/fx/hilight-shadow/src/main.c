@@ -15,9 +15,9 @@
 #define NUM_TILES_TILESET   2
 
 // Places where we place tiles in Genesis VRAM
-#define VRAM_POS_BRICK_A            TILE_USERINDEX + 0
-#define VRAM_POS_BRICK_B            TILE_USERINDEX + 1
-#define VRAM_POS_TILE_VOID          TILE_SYSTEMINDEX
+#define VRAM_POS_BRICK_A            TILE_USER_INDEX + 0
+#define VRAM_POS_BRICK_B            TILE_USER_INDEX + 1
+#define VRAM_POS_TILE_VOID          TILE_SYSTEM_INDEX
 
 // How many pixels bottom line is going to swing
 #define SPOTLIGHT_SWING_RANGE       50
@@ -110,11 +110,11 @@ int main()
     for(i = 0; i < NUM_SPRITES; i++)
     {
         *sp = 20 + (i * 10);
-        VDP_setSpriteFull((i * 2) + 0, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USERINDEX + 2), (i * 2) + 1);
+        VDP_setSpriteFull((i * 2) + 0, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USER_INDEX + 2), (i * 2) + 1);
         sp++;
 
         *sp = 300 - (i * 10);
-        VDP_setSpriteFull((i * 2) + 1, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USERINDEX + 3), (i == (NUM_SPRITES - 1))?0:(i * 2) + 2);
+        VDP_setSpriteFull((i * 2) + 1, *sp, 20 + (i * 8), SPRITE_SIZE(1, 1), TILE_ATTR_FULL(PAL3, 0, 0, 0, TILE_USER_INDEX + 3), (i == (NUM_SPRITES - 1))?0:(i * 2) + 2);
         sp++;
     }
 
@@ -127,8 +127,8 @@ int main()
 
     // Loading tile stuff and color data into VRAM/CRAM
     VDP_setPalette(PAL0, background_palette);
-    VDP_loadTileData(background_tileset, TILE_USERINDEX, NUM_TILES_TILESET, 1);
-    VDP_loadTileData(sprite_tileset, TILE_USERINDEX + 2, 2, 1);
+    VDP_loadTileData(background_tileset, TILE_USER_INDEX, NUM_TILES_TILESET, 1);
+    VDP_loadTileData(sprite_tileset, TILE_USER_INDEX + 2, 2, 1);
 
     VDP_updateSprites(NUM_SPRITES, TRUE);
 

@@ -93,7 +93,7 @@ void setupBackground()
             const s16 shift = (3 * y/h) % w;
             VDP_drawImageEx( BG_B,
                              &image_sgdk_logo,
-                             TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USERINDEX),
+                             TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX),
                              x+shift, y,
                              FALSE,
                              DMA );
@@ -312,7 +312,7 @@ int main()
             }
             continue;
         }
-        
+
         // Determine how many lines the wave advances
         wave += waveSpeed;
         u16 steps = fix16ToInt(wave);
@@ -324,7 +324,7 @@ int main()
         for (; steps > 0; steps--, wave -= FIX16(1.0))
         {
             angle += angularVelocity;
-            lineBuffer[224-steps] = fix16Add( FIX16(1.0), 
+            lineBuffer[224-steps] = fix16Add( FIX16(1.0),
                                               fix16Mul( amplitude,
                                                         sinFix16( fix16ToInt(angle) + 512 ) ) );
         }

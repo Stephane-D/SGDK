@@ -58,7 +58,7 @@ void PSG_setFrequency(u8 channel, u16 value)
     if (value)
     {
         // frequency to tone conversion
-        if (IS_PALSYSTEM) data = 3546893 / (value * 32);
+        if (IS_PAL_SYSTEM) data = 3546893 / (value * 32);
         else data = 3579545 / (value * 32);
     }
     else data = 0;

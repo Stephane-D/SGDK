@@ -6,7 +6,6 @@
 
 #include "memory.h"
 #include "vdp_pal.h"
-#include "vdp_dma.h"
 #include "dma.h"
 #include "tools.h"
 #include "mapper.h"

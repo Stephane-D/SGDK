@@ -3,7 +3,6 @@
 
 #include "vdp.h"
 
-#include "vdp_dma.h"
 #include "vdp_tile.h"
 #include "vdp_pal.h"
 #include "vdp_spr.h"
@@ -128,7 +127,7 @@ void VDP_init()
     VDP_setTextPriority(TRUE);
 
     // internal
-    curTileInd = TILE_USERINDEX;
+    curTileInd = TILE_USER_INDEX;
 }
 
 
@@ -143,7 +142,7 @@ void VDP_resetScreen()
 
      // system tiles (16 plain tile)
     i = 16;
-    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEMINDEX + i, 1, TRUE);
+    while(i--) VDP_fillTileData(i | (i << 4), TILE_SYSTEM_INDEX + i, 1, TRUE);
 
     PAL_setPalette(PAL0, palette_grey, CPU);
     PAL_setPalette(PAL1, palette_red, CPU);
@@ -201,7 +200,7 @@ void VDP_setReg(u16 reg, u8 value)
             break;
 
         case 0x01:
-            if (IS_PALSYSTEM)
+            if (IS_PAL_SYSTEM)
             {
                 v = value;
                 if (v & 0x08) screenHeight = 240;
@@ -325,7 +324,7 @@ void VDP_setEnable(u8 value)
 
 u16 VDP_getScanlineNumber()
 {
-    if IS_PALSYSTEM return 312;
+    if IS_PAL_SYSTEM return 312;
     else return 262;
 }
 
@@ -349,7 +348,7 @@ void VDP_setScreenHeight240()
 {
     vu16 *pw;
 
-    if (IS_PALSYSTEM)
+    if (IS_PAL_SYSTEM)
     {
         regValues[0x01] |= 0x08;
         screenHeight = 240;
@@ -821,12 +820,12 @@ void VDP_setWindowVPos(u16 down, u16 pos)
 
 void VDP_waitDMACompletion()
 {
-    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
+    while(GET_VDP_STATUS(VDP_DMABUSY_FLAG));
 }
 
 void VDP_waitFIFOEmpty()
 {
-    while(!GET_VDPSTATUS(VDP_FIFOEMPTY_FLAG));
+    while(!GET_VDP_STATUS(VDP_FIFOEMPTY_FLAG));
 }
 
 
@@ -839,7 +838,7 @@ bool VDP_waitVInt()
     const u32 t = vtimer;
     // store V-Counter and initial blank state
     const u16 vcnt = GET_VCOUNTER;
-    const u16 blank = GET_VDPSTATUS(VDP_VBLANK_FLAG);
+    const u16 blank = GET_VDP_STATUS(VDP_VBLANK_FLAG);
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
@@ -941,7 +940,7 @@ u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
     u16 result = vcnt;
 
     // adjust V-Counter to take care of blanking rollback
-    if (IS_PALSYSTEM)
+    if (IS_PAL_SYSTEM)
     {
         // blank adjustement
         if (blank && ((result >= 0xCA) || (result <= 0x0A))) result = 8;
@@ -963,7 +962,7 @@ u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt)
 
 u16 VDP_getAdjustedVCounter()
 {
-    return getAdjustedVCounterInternal(GET_VDPSTATUS(VDP_VBLANK_FLAG), GET_VCOUNTER);
+    return getAdjustedVCounterInternal(GET_VDP_STATUS(VDP_VBLANK_FLAG), GET_VCOUNTER);
 }
 
 

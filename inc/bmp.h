@@ -27,34 +27,34 @@
 #define _BMP_H_
 
 
-#define BMP_PLANWIDTH_SFT           planeWidthSft
-#define BMP_PLANHEIGHT_SFT          planeHeightSft
+#define BMP_PLANE_WIDTH_SFT         planeWidthSft
+#define BMP_PLANE_HEIGHT_SFT        planeHeightSft
 /**
  *  \brief
  *          Bitmap plane width (in tile)
  */
-#define BMP_PLANWIDTH               64
+#define BMP_PLANE_WIDTH             64
 /**
  *  \brief
  *          Bitmap plane height (in tile)
  */
-#define BMP_PLANHEIGHT              64
+#define BMP_PLANE_HEIGHT            64
 
-#define BMP_CELLWIDTH_SFT           5
+#define BMP_TILE_WIDTH_SFT          5
 /**
  *  \brief
  *          Bitmap width (in tile): 32
  */
-#define BMP_CELLWIDTH               (1 << BMP_CELLWIDTH_SFT)
+#define BMP_TILE_WIDTH              (1 << BMP_TILE_WIDTH_SFT)
+#define BMP_TILE_WIDTH_MASK         (BMP_TILE_WIDTH - 1)
 /**
  *  \brief
  *          Bitmap height (in tile): 20
  */
-#define BMP_CELLHEIGHT              20
-#define BMP_CELLWIDTHMASK           (BMP_CELLWIDTH - 1)
+#define BMP_TILE_HEIGHT             20
 
-#define BMP_CELLXOFFSET             (((screenWidth >> 3) - BMP_CELLWIDTH) / 2)
-#define BMP_CELLYOFFSET             (((screenHeight >> 3) - BMP_CELLHEIGHT) / 2)
+#define BMP_TILE_XOFFSET            (((screenWidth >> 3) - BMP_TILE_WIDTH) / 2)
+#define BMP_TILE_YOFFSET            (((screenHeight >> 3) - BMP_TILE_HEIGHT) / 2)
 
 #define BMP_XPIXPERTILE_SFT         3
 #define BMP_YPIXPERTILE_SFT         3
@@ -68,10 +68,10 @@
  *          Number of y pixel per tile: 8 pixels per tile.
  */
 #define BMP_YPIXPERTILE             (1 << BMP_YPIXPERTILE_SFT)
-#define BMP_XPIXPERTILEMASK         (BMP_XPIXPERTILE - 1)
-#define BMP_YPIXPERTILEMASK         (BMP_YPIXPERTILE - 1)
+#define BMP_XPIXPERTILE_MASK        (BMP_XPIXPERTILE - 1)
+#define BMP_YPIXPERTILE_MASK        (BMP_YPIXPERTILE - 1)
 
-#define BMP_WIDTH_SFT               (BMP_CELLWIDTH_SFT + BMP_XPIXPERTILE_SFT)
+#define BMP_WIDTH_SFT               (BMP_TILE_WIDTH_SFT + BMP_XPIXPERTILE_SFT)
 /**
  *  \brief
  *          Bitmap width (in pixel): 256
@@ -81,10 +81,10 @@
  *  \brief
  *          Bitmap height (in pixel): 160
  */
-#define BMP_HEIGHT                  (BMP_CELLHEIGHT * BMP_YPIXPERTILE)
+#define BMP_HEIGHT                  (BMP_TILE_HEIGHT * BMP_YPIXPERTILE)
 #define BMP_WIDTH_MASK              (BMP_WIDTH - 1)
 
-#define BMP_PITCH_SFT               (BMP_CELLWIDTH_SFT + 2)
+#define BMP_PITCH_SFT               (BMP_TILE_WIDTH_SFT + 2)
 /**
  *  \brief
  *          Bitmap scanline pitch (number of byte per scanline): 128
@@ -116,25 +116,25 @@
 /**
  *  \deprecated Use BMP_getPixelFast(..) instead (inlining make macro useless)
  */
-#define BMP_GETPIXEL(x, y)      BMP_getPixelFast(x, y)
+#define BMP_GETPIXEL(x, y)          BMP_getPixelFast(x, y)
 
 /**
  *  \deprecated Use BMP_setPixelFast(..) instead (inlining make macro useless)
  */
-#define BMP_SETPIXEL(x, y, col) BMP_setPixelFast(x, y, col)
+#define BMP_SETPIXEL(x, y, col)     BMP_setPixelFast(x, y, col)
 
 
-#define BMP_BASETILEINDEX       TILE_USERINDEX
+#define BMP_BASE_TILE_INDEX         TILE_USER_INDEX
 
-#define BMP_FB0TILEINDEX        BMP_BASETILEINDEX
-#define BMP_FB1TILEINDEX        (BMP_BASETILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
+#define BMP_FB0_TILE_INDEX          BMP_BASE_TILE_INDEX
+#define BMP_FB1_TILE_INDEX          (BMP_BASE_TILE_INDEX + (BMP_TILE_WIDTH * BMP_TILE_HEIGHT))
 
-#define BMP_FB0ENDTILEINDEX     (BMP_FB0TILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
-#define BMP_FB1ENDTILEINDEX     (BMP_FB1TILEINDEX + (BMP_CELLWIDTH * BMP_CELLHEIGHT))
+#define BMP_FB0_END_TILE_INDEX      (BMP_FB0_TILE_INDEX + (BMP_TILE_WIDTH * BMP_TILE_HEIGHT))
+#define BMP_FB1_END_TILE_INDEX      (BMP_FB1_TILE_INDEX + (BMP_TILE_WIDTH * BMP_TILE_HEIGHT))
 
-#define BMP_BASETILE            (BMP_BASETILEINDEX * 32)
-#define BMP_FB0TILE             (BMP_FB0TILEINDEX * 32)
-#define BMP_FB1TILE             (BMP_FB1TILEINDEX * 32)
+#define BMP_BASE_ADDR               (BMP_BASE_TILE_INDEX * 32)
+#define BMP_FB0_ADDR                (BMP_FB0_TILE_INDEX * 32)
+#define BMP_FB1_ADDR                (BMP_FB1_TILE_INDEX * 32)
 
 
 /**

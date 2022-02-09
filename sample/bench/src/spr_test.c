@@ -160,11 +160,11 @@ u16 executeSpritesTest(u16 *scores)
         spr->data = (u32) &objects[i];
         // disable automatic tile upload and manual VRAM tile position
         SPR_setAutoTileUpload(spr, FALSE);
-        SPR_setVRAMTileIndex(spr, TILE_USERINDEX);
+        SPR_setVRAMTileIndex(spr, TILE_USER_INDEX);
     }
 
     // preload animation tilesets
-    ind = TILE_USERINDEX;
+    ind = TILE_USER_INDEX;
     for(i = 0; i < flare_small.animations[0]->numFrame; i++)
     {
         TileSet* tileset = flare_small.animations[0]->frames[i]->tileset;
@@ -254,11 +254,11 @@ u16 executeSpritesTest(u16 *scores)
         spr->data = (u32) &objects[i];
         // disable automatic tile upload and manual VRAM tile position
         SPR_setAutoTileUpload(spr, FALSE);
-        SPR_setVRAMTileIndex(spr, TILE_USERINDEX);
+        SPR_setVRAMTileIndex(spr, TILE_USER_INDEX);
     }
 
     // preload animation tilesets
-    ind = TILE_USERINDEX;
+    ind = TILE_USER_INDEX;
     for(i = 0; i < flare_small.animations[0]->numFrame; i++)
     {
         TileSet* tileset = flare_small.animations[0]->frames[i]->tileset;
@@ -348,11 +348,11 @@ u16 executeSpritesTest(u16 *scores)
         spr->data = (u32) &objects[i];
         // disable automatic tile upload and set manual VRAM tile position
         SPR_setAutoTileUpload(spr, FALSE);
-        SPR_setVRAMTileIndex(spr, TILE_USERINDEX);
+        SPR_setVRAMTileIndex(spr, TILE_USER_INDEX);
     }
 
     // preload animation tilesets
-    ind = TILE_USERINDEX;
+    ind = TILE_USER_INDEX;
     for(i = 0; i < flare_big.animations[0]->numFrame; i++)
     {
         TileSet* tileset = flare_big.animations[0]->frames[i]->tileset;
@@ -411,7 +411,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // preload animation tilesets
-    ind = TILE_USERINDEX;
+    ind = TILE_USER_INDEX;
     for(i = 0; i < donut.animations[0]->numFrame; i++)
     {
         TileSet* tileset = donut.animations[0]->frames[i]->tileset;
@@ -782,7 +782,7 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
                 {
                     // disable automatic tile upload and manual VRAM tile position
                     SPR_setAutoTileUpload(spr, FALSE);
-                    SPR_setVRAMTileIndex(spr, TILE_USERINDEX);
+                    SPR_setVRAMTileIndex(spr, TILE_USER_INDEX);
                 }
 
                 // associate object to sprite

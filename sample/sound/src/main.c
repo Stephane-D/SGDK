@@ -580,13 +580,13 @@ static void vintEvent()
         switch(dmaMethod)
         {
             case 1:
-                DMA_doDma(VDP_DMA_VRAM, 0, 0x8000, (6 * 1024) / 2, 2);
+                DMA_doDma(DMA_VRAM, 0, 0x8000, (6 * 1024) / 2, 2);
                 break;
 
             case 2:
                 for(i = 0; i < 6; i++)
                 {
-                    DMA_doDma(VDP_DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
+                    DMA_doDma(DMA_VRAM, 0, 0x8000, 1024 / 2, 2);
                     waitSubTick(1);
                 }
                 break;
@@ -594,7 +594,7 @@ static void vintEvent()
             case 3:
                 for(i = 0; i < 16; i++)
                 {
-                    DMA_doDma(VDP_DMA_VRAM, 0, 0x8000, 256 / 2, 2);
+                    DMA_doDma(DMA_VRAM, 0, 0x8000, 256 / 2, 2);
                     waitSubTick(1);
                 }
                 break;

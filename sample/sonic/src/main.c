@@ -140,7 +140,7 @@ int main(u16 hard)
     VDP_setPaletteColors(0, (u16*) palette_black, 64);
 
     // load background tilesets in VRAM
-    ind = TILE_USERINDEX;
+    ind = TILE_USER_INDEX;
     bgBaseTileIndex[0] = ind;
     VDP_loadTileSet(&bga_tileset, ind, DMA);
     ind += bga_tileset.numTile;

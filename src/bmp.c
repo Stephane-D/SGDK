@@ -35,13 +35,13 @@
 #define WRITE_IS_FB0            (bmp_buffer_write == bmp_buffer_0)
 #define WRITE_IS_FB1            (bmp_buffer_write == bmp_buffer_1)
 
-#define GET_YOFFSET             ((HAS_DOUBLEBUFFER && READ_IS_FB1)?((BMP_PLANHEIGHT / 2) + 4):4)
+#define GET_YOFFSET             ((HAS_DOUBLEBUFFER && READ_IS_FB1)?((BMP_PLANE_HEIGHT / 2) + 4):4)
 
-#define BMP_PLAN_ADR            (*bmp_plan_adr)
+#define BMP_PLANE_ADDR          (*bmp_plane_addr)
 
-#define BMP_FB0TILEMAP_BASE     BMP_PLAN_ADR
-#define BMP_FB1TILEMAP_BASE     (BMP_PLAN_ADR + ((BMP_PLANWIDTH * (BMP_PLANHEIGHT / 2)) * 2))
-#define BMP_FBTILEMAP_OFFSET    (((BMP_PLANWIDTH * BMP_CELLYOFFSET) + BMP_CELLXOFFSET) * 2)
+#define BMP_FB0_TILEMAP_BASE    BMP_PLANE_ADDR
+#define BMP_FB1_TILEMAP_BASE    (BMP_PLANE_ADDR + ((BMP_PLANE_WIDTH * (BMP_PLANE_HEIGHT / 2)) * 2))
+#define BMP_FB_TILEMAP_OFFSET   (((BMP_PLANE_WIDTH * BMP_TILE_YOFFSET) + BMP_TILE_XOFFSET) * 2)
 
 
 #define NTSC_TILES_BW           7
@@ -59,7 +59,7 @@ static u8 *bmp_buffer_0;
 static u8 *bmp_buffer_1;
 
 VDPPlane bmp_plan;
-u16 *bmp_plan_adr;
+u16 *bmp_plane_addr;
 
 // internals
 static u16 flag;
@@ -93,15 +93,15 @@ void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
     {
         default:
         case BG_B:
-            bmp_plan_adr = &bgb_addr;
+            bmp_plane_addr = &bgb_addr;
             break;
 
         case BG_A:
-            bmp_plan_adr = &bga_addr;
+            bmp_plane_addr = &bga_addr;
             break;
 
         case WINDOW:
-            bmp_plan_adr = &window_addr;
+            bmp_plane_addr = &window_addr;
             break;
     }
 
@@ -1297,24 +1297,24 @@ static void initTilemap(u16 index)
     VDP_setAutoInc(2);
 
     // calculated
-    const u32 offset = BMP_FBTILEMAP_OFFSET;
+    const u32 offset = BMP_FB_TILEMAP_OFFSET;
 
     if (index == 0)
     {
-        addr_tilemap = BMP_FB0TILEMAP_BASE + offset;
-        tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB0TILEINDEX);
+        addr_tilemap = BMP_FB0_TILEMAP_BASE + offset;
+        tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB0_TILE_INDEX);
     }
     else
     {
-        addr_tilemap = BMP_FB1TILEMAP_BASE + offset;
-        tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB1TILEINDEX);
+        addr_tilemap = BMP_FB1_TILEMAP_BASE + offset;
+        tile_ind = TILE_ATTR_FULL(pal, prio, 0, 0, BMP_FB1_TILE_INDEX);
     }
 
     // point to vdp port
     plctrl = (u32 *) GFX_CTRL_PORT;
     pwdata = (u16 *) GFX_DATA_PORT;
 
-    i = BMP_CELLHEIGHT;
+    i = BMP_TILE_HEIGHT;
 
     while(i--)
     {
@@ -1322,7 +1322,7 @@ static void initTilemap(u16 index)
         *plctrl = GFX_WRITE_VRAM_ADDR(addr_tilemap);
 
         // write tilemap line to VDP
-        j = BMP_CELLWIDTH >> 3;
+        j = BMP_TILE_WIDTH >> 3;
 
         while(j--)
         {
@@ -1336,14 +1336,14 @@ static void initTilemap(u16 index)
             *pwdata = tile_ind++;
         }
 
-        addr_tilemap += BMP_PLANWIDTH * 2;
+        addr_tilemap += BMP_PLANE_WIDTH * 2;
     }
 }
 
 static void clearVRAMBuffer(u16 index)
 {
-    if (index) DMA_doVRamFill(BMP_FB1TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
-    else DMA_doVRamFill(BMP_FB0TILE, BMP_PITCH * BMP_HEIGHT, 0, 1);
+    if (index) DMA_doVRamFill(BMP_FB1_ADDR, BMP_PITCH * BMP_HEIGHT, 0, 1);
+    else DMA_doVRamFill(BMP_FB0_ADDR, BMP_PITCH * BMP_HEIGHT, 0, 1);
     VDP_waitDMACompletion();
 }
 
@@ -1382,7 +1382,7 @@ static void doFlip()
 
             // switch displayed buffer
             if (READ_IS_FB0) vscr = 0;
-            else vscr = (BMP_PLANHEIGHT * 8) / 2;
+            else vscr = (BMP_PLANE_HEIGHT * 8) / 2;
 
             VDP_setVerticalScroll(bmp_plan, vscr);
         }
@@ -1443,9 +1443,9 @@ static u16 doBlit()
     src = (u32 *) bmp_buffer_read;
 
     if (HAS_DOUBLEBUFFER && READ_IS_FB1)
-        addr_tile = BMP_FB1TILE;
+        addr_tile = BMP_FB1_ADDR;
     else
-        addr_tile = BMP_FB0TILE;
+        addr_tile = BMP_FB0_ADDR;
 
     /* point to vdp ctrl port */
     plctrl = (u32 *) GFX_CTRL_PORT;
@@ -1454,7 +1454,7 @@ static u16 doBlit()
     if (state & BMP_STAT_BLITTING)
     {
         // adjust tile address
-        addr_tile += pos_i * BMP_CELLWIDTH * 32;
+        addr_tile += pos_i * BMP_TILE_WIDTH * 32;
         // adjust src pointer
         src += pos_i * (BMP_YPIXPERTILE * (BMP_PITCH / 4));
 
@@ -1471,9 +1471,9 @@ static u16 doBlit()
         *plctrl = GFX_WRITE_VRAM_ADDR(addr_tile);
     }
 
-    const u16 remain = BMP_CELLHEIGHT - pos_i;
+    const u16 remain = BMP_TILE_HEIGHT - pos_i;
 
-    if (IS_PALSYSTEM)
+    if (IS_PAL_SYSTEM)
     {
         if (remain < PAL_TILES_BW) i = remain;
         else i = PAL_TILES_BW;
@@ -1502,7 +1502,7 @@ static u16 doBlit()
     }
 
     // blit not yet done
-    if (pos_i < BMP_CELLHEIGHT) return 0;
+    if (pos_i < BMP_TILE_HEIGHT) return 0;
 
     // blit done
     state &= ~BMP_STAT_BLITTING;

@@ -613,7 +613,7 @@ static void internal_reset()
 
     // safe to check for DMA completion before dealing with VDP (this also clear internal VDP latch)
     // WARNING: it's important to not access the VDP too soon or you can lock the system (it's why we do it just here) !
-    while(GET_VDPSTATUS(VDP_DMABUSY_FLAG));
+    while(GET_VDP_STATUS(VDP_DMABUSY_FLAG));
 
     // init part (always do MEM_init() first)
     MEM_init();
@@ -939,12 +939,12 @@ bool SYS_isInVInt()
 
 u16 SYS_isNTSC()
 {
-    return !IS_PALSYSTEM;
+    return !IS_PAL_SYSTEM;
 }
 
 u16 SYS_isPAL()
 {
-    return IS_PALSYSTEM;
+    return IS_PAL_SYSTEM;
 }
 
 

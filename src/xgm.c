@@ -428,7 +428,7 @@ u16 XGM_getMusicTempo()
 void XGM_setMusicTempo(u16 value)
 {
     xgmTempo = value;
-    if (IS_PALSYSTEM) xgmTempoDef = 50;
+    if (IS_PAL_SYSTEM) xgmTempoDef = 50;
     else xgmTempoDef = 60;
 }
 

@@ -398,14 +398,14 @@ bool SYS_isVIntAligned();
  *  \brief
  *      Return != 0 if we are on a NTSC system.
  *
- * Better to use the IS_PALSYSTEM
+ * Better to use the IS_PAL_SYSTEM
  */
 u16 SYS_isNTSC();
 /**
  *  \brief
  *      Return != 0 if we are on a PAL system.
  *
- * Better to use the IS_PALSYSTEM
+ * Better to use the IS_PAL_SYSTEM
  */
 u16 SYS_isPAL();
 
