@@ -33,7 +33,7 @@ void setupBackground()
         {
             VDP_drawImageEx( BG_B,
                              &image_sgdk_logo,
-                             TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USERINDEX),
+                             TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX),
                              x, y,
                              FALSE,
                              DMA );
