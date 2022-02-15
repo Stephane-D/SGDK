@@ -34,8 +34,11 @@ _Vecteurs_68K:
         dc.l     _Error_Exception, _Error_Exception, _Error_Exception, _Error_Exception
         dc.l     _Error_Exception, _Error_Exception, _Error_Exception, _Error_Exception
         dc.l     _Error_Exception, _Error_Exception, _Error_Exception, _Error_Exception
-        dc.l    _Error_Exception, _INT, _EXTINT, _INT
-        dc.l    _HINT
+        dc.l    _Error_Exception
+        dc.l    _INT
+        dc.l    _EXTINT
+        dc.l    _INT
+        dc.l    hintCaller
         dc.l    _INT
         dc.l    _VINT
         dc.l    _INT
@@ -228,13 +231,6 @@ _INT:
 _EXTINT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         move.l  eintCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_HINT:
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  hintCB, %a0
         jsr    (%a0)
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte

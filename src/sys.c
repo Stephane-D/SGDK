@@ -47,6 +47,17 @@
 #define LOAD_MEAN_FRAME_NUM         8
 
 
+typedef union
+{
+    u8 code[6];
+    struct
+    {
+        u16 jmpInst;
+        VoidCallback* addr;
+    };
+} InterruptCaller;
+
+
 // we don't want to share them
 extern u16 randbase;
 extern u16 currentDriver;
@@ -71,22 +82,22 @@ static void internal_reset();
 bool addFrameLoad(u16 frameLoad, u32 vtime);
 
 // exception callbacks
-VoidCallback *busErrorCB;
-VoidCallback *addressErrorCB;
-VoidCallback *illegalInstCB;
-VoidCallback *zeroDivideCB;
-VoidCallback *chkInstCB;
-VoidCallback *trapvInstCB;
-VoidCallback *privilegeViolationCB;
-VoidCallback *traceCB;
-VoidCallback *line1x1xCB;
-VoidCallback *errorExceptionCB;
-VoidCallback *intCB;
+__attribute__((externally_visible)) VoidCallback *busErrorCB;
+__attribute__((externally_visible)) VoidCallback *addressErrorCB;
+__attribute__((externally_visible)) VoidCallback *illegalInstCB;
+__attribute__((externally_visible)) VoidCallback *zeroDivideCB;
+__attribute__((externally_visible)) VoidCallback *chkInstCB;
+__attribute__((externally_visible)) VoidCallback *trapvInstCB;
+__attribute__((externally_visible)) VoidCallback *privilegeViolationCB;
+__attribute__((externally_visible)) VoidCallback *traceCB;
+__attribute__((externally_visible)) VoidCallback *line1x1xCB;
+__attribute__((externally_visible)) VoidCallback *errorExceptionCB;
+__attribute__((externally_visible)) VoidCallback *intCB;
 
 // user V-Int, H-Int and Ext-Int callbacks
-VoidCallback *vintCB;
-VoidCallback *hintCB;
-VoidCallback *eintCB;
+__attribute__((externally_visible)) VoidCallback *vintCB;
+__attribute__((externally_visible)) InterruptCaller hintCaller;
+__attribute__((externally_visible)) VoidCallback *eintCB;
 
 // user VBlank callbacks
 VoidCallback *vblankCB;
@@ -421,7 +432,7 @@ void _vint_dummy_callback()
 }
 
 // Dummy H-Int Callback
-void _hint_dummy_callback()
+HINTERRUPT_CALLBACK _hint_dummy_callback()
 {
     //
 }
@@ -594,7 +605,9 @@ static void internal_reset()
 
     vblankCB = _vblank_dummy_callback;
     vintCB = _vint_dummy_callback;
-    hintCB = _hint_dummy_callback;
+    // fast hint call (auto modified JMP instruction)
+    hintCaller.jmpInst = 0x4EF9;                // JMP (xxx).L
+    hintCaller.addr = _hint_dummy_callback;
     eintCB = _extint_dummy_callback;
     VBlankProcess = 0;
     intTrace = 0;
@@ -845,8 +858,8 @@ void SYS_setVIntCallback(VoidCallback *CB)
 
 void SYS_setHIntCallback(VoidCallback *CB)
 {
-    if (CB) hintCB = CB;
-    else hintCB = _hint_dummy_callback;
+    if (CB) hintCaller.addr = CB;
+    else hintCaller.addr = _hint_dummy_callback;
 }
 
 void SYS_setExtIntCallback(VoidCallback *CB)
@@ -855,15 +868,6 @@ void SYS_setExtIntCallback(VoidCallback *CB)
     else eintCB = _extint_dummy_callback;
 }
 
-void SYS_setVIntAligned(bool value)
-{
-    // deprecated
-}
-
-bool SYS_isVIntAligned()
-{
-    return FALSE;
-}
 
 void SYS_showFrameLoad(bool mean)
 {
@@ -910,27 +914,6 @@ void SYS_hideFrameLoad()
     // no need to write more
     *pw = vdpSprite->y;
 }
-
-u16 SYS_isInVIntCallback()
-{
-    return intTrace & IN_VINT;
-}
-
-u16 SYS_isInHIntCallback()
-{
-    return 0;
-}
-
-u16 SYS_isInExtIntCallback()
-{
-    return 0;
-}
-
-u16 SYS_isInInterrupt()
-{
-    return SYS_isInVInt();
-}
-
 
 bool SYS_isInVInt()
 {
