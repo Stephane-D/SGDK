@@ -85,19 +85,22 @@ void setupBackground()
     const u16 w = 64/8;
     const u16 h = 64/8;
 
+    VDP_loadTileSet(image_sgdk_logo.tileset, TILE_USER_INDEX, CPU);
     // Fill screen assuming 32 by 40 tiles
     for (u16 y=0; y<32; y+=h)
+    {
         for (s16 x=-w; x<40; x+=w)
         {
             // Shift each image row 3 tiles further
             const s16 shift = (3 * y/h) % w;
-            VDP_drawImageEx( BG_B,
-                             &image_sgdk_logo,
+            VDP_setTileMapEx(BG_B,
+                             image_sgdk_logo.tilemap,
                              TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX),
-                             x+shift, y,
-                             FALSE,
-                             DMA );
+                             x + shift, y,
+                             0, 0, w, h,
+                             CPU);
         }
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -227,22 +230,24 @@ int main()
     //  Interrupt handlers
     // -------------------------------------------------------------------------
 
-    static u8    lineDisplay  = 0; // line position on display screen
-    static fix16 lineGraphics = 0; // line position in graphics texture
-    static s16   lineBuffer[224];
+    static vu16   lineDisplay  = 0; // line position on display screen
+    static vfix16 lineGraphics = 0; // line position in graphics texture
+    static s16    lineBuffer[224];
 
     HINTERRUPT_CALLBACK HIntHandler()
     {
         // Set line to display
         VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
-
         // Determine next graphics line to display (+1 means image is unscaled)
         lineGraphics += lineBuffer[lineDisplay++];
     }
-    void VIntHandler()
+
+    void VBlankHandler()
     {
         // Make sure HInt always starts with line 0
         lineDisplay = lineGraphics = 0;
+        // reset v-scroll
+        VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
     }
 
     // -------------------------------------------------------------------------
@@ -266,7 +271,7 @@ int main()
 
     // Fade in graphics
     fadeInBlue(0,  15, palette_Font_Namco_Gradient.data, 8, 16);
-    fadeInBlue(16, 31, palette_sgdk_logo.data, 8, 16);
+    fadeInBlue(16, 31, image_sgdk_logo.palette->data, 8, 16);
 
     // Initialize line buffer (unscaled)
     memsetU16((u16*)lineBuffer, FIX16(1.0), 224);
@@ -274,8 +279,8 @@ int main()
     // Setup interrupt handlers
     SYS_disableInts();
     {
+        SYS_setVBlankCallback(VBlankHandler);
         SYS_setHIntCallback(HIntHandler);
-        SYS_setVBlankCallback(VIntHandler);
         VDP_setHIntCounter(0);
         VDP_setHInterrupt(1);
     }
@@ -291,7 +296,7 @@ int main()
     while (TRUE)
     {
         updateMenuState();     // Update menu text (not accessing VDP)
-        SYS_doVBlankProcess(); // Wait for vblank
+        SYS_doVBlankProcess(); // Wait for vblank and do SGDK vblank stuff
         updateMenuDisplay();   // Update VDP
 
         // Wave reset handling

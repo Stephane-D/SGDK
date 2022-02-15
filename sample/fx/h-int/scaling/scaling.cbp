@@ -52,6 +52,11 @@
 		<VirtualTargets>
 			<Add alias="All" targets="release;" />
 		</VirtualTargets>
+		<Unit filename="res/resources.res" />
+		<Unit filename="src/boot/rom_head.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/boot/sega.s" />
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -26,17 +26,18 @@ void setupBackground()
     const u16 w = 64/8;
     const u16 h = 64/8;
 
+    VDP_loadTileSet(image_sgdk_logo.tileset, TILE_USER_INDEX, CPU);
     // Fill screen assuming 32 by 40 tiles
     for (u16 y=0; y<32; y+=h)
     {
-        for (s16 x=-w; x<40; x+=w)
+        for (u16 x=0; x<40; x+=w)
         {
-            VDP_drawImageEx( BG_B,
-                             &image_sgdk_logo,
+            VDP_setTileMapEx(BG_B,
+                             image_sgdk_logo.tilemap,
                              TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX),
                              x, y,
-                             FALSE,
-                             DMA );
+                             0, 0, w, h,
+                             CPU);
         }
     }
 }
@@ -47,10 +48,11 @@ void setupBackground()
 //  Interrupt handlers
 // -------------------------------------------------------------------------
 
-static u8    lineDisplay  = 0;          // line position on display screen
-static fix16 lineGraphics = 0;          // line position in graphics texture
-static fix16 scroll       = 0;          // scrolling offset
-static fix16 scale        = FIX16(6.0); // scaling factor
+static vu16  lineDisplay   = 0;             // line position on display screen
+static vfix16 lineGraphics = 0;             // line position in graphics texture
+static fix16 scroll        = 0;             // scrolling offset
+static vfix16 scale        = FIX16(6.0);    // scaling factor
+
 
 HINTERRUPT_CALLBACK HIntHandler()
 {
@@ -67,9 +69,9 @@ HINTERRUPT_CALLBACK HIntHandler()
     scale -= max(scale >> 6, FIX16(0.02));
 }
 
-void VIntHandler()
+void VBlankHandler()
 {
-    // Make sure HInt always starts with line 0
+    // Reset to line 0
     lineDisplay = 0;
 
     // Reset first line we want to display
@@ -80,6 +82,9 @@ void VIntHandler()
 
     // Reset scaling factor
     scale = FIX16(6.0);
+
+    // Reset v-scroll
+    VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
  }
 
 // *****************************************************************************
@@ -104,15 +109,15 @@ int main()
     // Setup interrupt handlers
     SYS_disableInts();
     {
+        SYS_setVBlankCallback(VBlankHandler);
         SYS_setHIntCallback(HIntHandler);
-        SYS_setVBlankCallback(VIntHandler);
         VDP_setHIntCounter(0);
         VDP_setHInterrupt(1);
     }
     SYS_enableInts();
 
     // Fade in graphics
-    PAL_fadeIn(0, 15, palette_sgdk_logo.data, 32, FALSE);
+    PAL_fadeIn(0, 15, image_sgdk_logo.palette->data, 32, FALSE);
 
     //
     // Display loop
@@ -120,7 +125,7 @@ int main()
 
     while (TRUE)
     {
-        // Empty, because all work is done by the interrupt handlers
+        // Empty, because all work is done by the interrupt/vblank handlers
         SYS_doVBlankProcess();
     }
 }

@@ -52,6 +52,7 @@
 		<VirtualTargets>
 			<Add alias="All" targets="release;" />
 		</VirtualTargets>
+		<Unit filename="res/resources.res" />
 		<Unit filename="src/helpers.c">
 			<Option compilerVar="CC" />
 		</Unit>
