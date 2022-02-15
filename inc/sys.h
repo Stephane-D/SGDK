@@ -27,6 +27,9 @@
 #define ROM_SIZE                    ((ROM_END + ROM_ALIGN_MASK) & (~ROM_ALIGN_MASK))
 
 
+#define HINTERRUPT_CALLBACK         __attribute__ ((interrupt)) void
+
+
 // exist through rom_head.c
 typedef struct
 {
@@ -67,6 +70,7 @@ typedef enum
     ON_VBLANK ,         /** Start VBlank process on VBlank period, start immediatly in we are already in VBlank */
     ON_VBLANK_START     /** Start VBlank process on VBlank *start* period, means that we wait the next *start* of VBlank period if we missed it */
 } VBlankProcessTime;
+
 
 /**
  *  \brief
@@ -330,12 +334,17 @@ void SYS_setVBlankCallback(VoidCallback *CB);
 void SYS_setVIntCallback(VoidCallback *CB);
 /**
  *  \brief
- *      Set 'Horizontal Interrupt' callback method.
+ *      Set 'Horizontal Interrupt' callback method (need to be prefixed by HINTERRUPT_CALLBACK).
  *
  *  \param CB
  *      Pointer to the method to call on Horizontal Interrupt.<br>
- *      You can remove current callback by passing a null pointer here.
- *
+ *      You can remove current callback by passing a NULL pointer here.<br>
+ *      You need to prefix your hint method with <i>HINTERRUPT_CALLBACK</i>:<br>
+ *      <p>HINTERRUPT_CALLBACK myHIntFunction()
+ *      {
+ *          ...
+ *      }</p>
+ * <br>
  * Horizontal interrupt happen at the end of scanline display period right before Horizontal blank.<br>
  * This period is usually used to do mid frame changes (palette, scrolling or others raster effect).<br>
  * When you do that, don't forget to protect your VDP access from your main loop using
@@ -355,44 +364,12 @@ void SYS_setHIntCallback(VoidCallback *CB);
 void SYS_setExtIntCallback(VoidCallback *CB);
 
 /**
- *  \deprecated
- *      Use #SYS_isInVInt() instead
- */
-u16 SYS_isInVIntCallback();
-/**
- *  \deprecated
- *      Always return 0 now, you need to use your own flag to detect if you are processing a Horizontal interrupt
- */
-u16 SYS_isInHIntCallback();
-/**
- *  \deprecated
- *      Always return 0 now, you need to use your own flag to detect if you are processing an External interrupt
- */
-u16 SYS_isInExtIntCallback();
-/**
- *  \deprecated
- *      Use #SYS_isInVInt() instead, only vertical interrupt supported now
- */
-u16 SYS_isInInterrupt();
-
-/**
  *  \brief
  *      Return TRUE if we are in the V-Interrupt process.
  *
  * This method tests if we are currently processing a Vertical retrace interrupt (V-Int callback).
  */
 bool SYS_isInVInt();
-
-/**
- *  \deprecated
- *      Not anymore useful as #SYS_doVBlankProcess() handle that directly now
- */
-void SYS_setVIntAligned(bool value);
-/**
- *  \deprecated
- *      Not anymore useful as #SYS_doVBlankProcess() handle that directly now
- */
-bool SYS_isVIntAligned();
 
 /**
  *  \brief
