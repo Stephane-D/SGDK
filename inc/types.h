@@ -174,7 +174,6 @@ typedef s16 fix16;
  *      32 bits fixed point type.
  */
 typedef s32 fix32;
-
 /**
  *  \typedef f16
  *      16 bits fixed point type (short version).
@@ -185,6 +184,28 @@ typedef s16 f16;
  *      32 bits fixed point type (short version).
  */
 typedef s32 f32;
+
+/**
+ *  \typedef vfix16
+ *      volatile 16 bits fixed point type.
+ */
+typedef vs16 vfix16;
+/**
+ *  \typedef vfix32
+ *      volatile 32 bits fixed point type.
+ */
+typedef vs32 vfix32;
+/**
+ *  \typedef vf16
+ *      volatile 16 bits fixed point type (short version).
+ */
+typedef vs16 vf16;
+/**
+ *  \typedef vf32
+ *      volatile 32 bits fixed point type (short version).
+ */
+typedef vs32 vf32;
+
 
 
 #define FASTCALL
