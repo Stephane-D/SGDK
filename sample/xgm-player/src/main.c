@@ -194,7 +194,6 @@ int main()
     u16 i;
 
     SYS_disableInts();
-    SYS_setVIntAligned(FALSE);
 
     // clear all palette
     VDP_setPaletteColors(0, palette_black, 64);
@@ -1819,7 +1818,7 @@ void vint()
     dmawaitload = load >> 16;
 }
 
-void hint()
+HINTERRUPT_CALLBACK hint()
 {
     // set window visible from row 20 up to last row
     VDP_setWindowVPos(TRUE, 20);

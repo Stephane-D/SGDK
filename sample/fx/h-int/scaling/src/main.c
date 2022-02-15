@@ -52,7 +52,7 @@ static fix16 lineGraphics = 0;          // line position in graphics texture
 static fix16 scroll       = 0;          // scrolling offset
 static fix16 scale        = FIX16(6.0); // scaling factor
 
-void HIntHandler()
+HINTERRUPT_CALLBACK HIntHandler()
 {
     // Set line to display
     VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
@@ -104,10 +104,10 @@ int main()
     // Setup interrupt handlers
     SYS_disableInts();
     {
+        SYS_setHIntCallback(HIntHandler);
+        SYS_setVBlankCallback(VIntHandler);
         VDP_setHIntCounter(0);
         VDP_setHInterrupt(1);
-        SYS_setHIntCallback(HIntHandler);
-        SYS_setVIntCallback(VIntHandler);
     }
     SYS_enableInts();
 

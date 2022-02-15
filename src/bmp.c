@@ -1246,7 +1246,7 @@ void BMP_doVBlankProcess()
 }
 
 // called on h-interrupt
-static void hint()
+static HINTERRUPT_CALLBACK hint()
 {
     // vborder low
     if (phase == 0)
