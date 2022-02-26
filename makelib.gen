@@ -26,6 +26,7 @@ INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) 				\
 					 -DSGDK_GCC 					\
 					 -m68000 						\
+					 -mtune=68000 					\
 					 -Wall 							\
 					 -Wextra 						\
 					 -Wno-shift-negative-value 		\
@@ -46,7 +47,7 @@ release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB)\
 				-fno-unit-at-a-time 	\
 				-fomit-frame-pointer
 
-release: $(LIB)/libmd.a $(LIB)/libsys.a $(LIB)/libcpp.a
+release: $(INCLUDE_LIB)/genesis.h.gch $(LIB)/libmd.a $(LIB)/libsys.a $(LIB)/libcpp.a
 
 debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -ggdb -DDEBUG=1
 debug: $(LIB)/libmd_debug.a
@@ -153,6 +154,10 @@ $(SRC_LIB)/ext/cplusplus/supportcxx.o: $(SRC_LIB)/ext/cplusplus/supportcxx.cpp
 	@$(CXX) $(FLAGS_LIB) -c $< -o $@
 
 $(SRC_LIB)/ext/cplusplus/syscalls.o: $(SRC_LIB)/ext/cplusplus/syscalls.c
+	@$(ECHO) " CC $(notdir $<)"
+	@$(CC) $(FLAGS_LIB) -c $< -o $@
+
+$(INCLUDE_LIB)/genesis.h.gch: $(INCLUDE_LIB)/genesis.h
 	@$(ECHO) " CC $(notdir $<)"
 	@$(CC) $(FLAGS_LIB) -c $< -o $@
 
