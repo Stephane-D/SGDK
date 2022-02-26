@@ -37,12 +37,14 @@
     set "GDK=%str_MyCurrentDir%"
     set "GDK_WIN=%str_MyCurrentDir%"
     set "GDK=%GDK:\=/%"
+    set "XGCC_WIN=%GDK_WIN%\x68k-gcc\bin"
 
     if %GDK:~-1%==/ set "GDK=%GDK:~0,-1%"
     if %GDK_WIN:~-1%==\ set "GDK_WIN=%GDK_WIN:~0,-1%"
 
     echo GDK is %GDK%
     echo GDK_WIN is %GDK_WIN%
+    echo XGCC_WIN is %XGCC_WIN%
 
 :CHECKINGPATH
     echo.
@@ -66,13 +68,13 @@
 
     REM Assuming that the current directory exists since that is where this file is.
     set "PATH=%GDK_WIN%"
-    if EXIST %GDK_WIN%\bin set "PATH=%PATH%;%GDK_WIN%\bin"
+    if EXIST %GDK_WIN%\bin set "PATH=%PATH%;%GDK_WIN%\bin;%XGCC_WIN%"
     echo PATH = %PATH%
     goto CONTINUEAFTERCLEARQUESTION
 
 :NCLEARPATH
     set "TPATH=%GDK_WIN%"
-    if EXIST %GDK_WIN%\bin set "TPATH=%TPATH%;%GDK_WIN%\bin"
+    if EXIST %GDK_WIN%\bin set "TPATH=%TPATH%;%GDK_WIN%\bin;%XGCC_WIN%"
     set "PATH=%TPATH%;%PATH%"
     goto CONTINUEAFTERCLEARQUESTION
 
@@ -107,9 +109,15 @@
    
 	echo set GDK=%GDK%> make_cart.bat
 	echo set GDK_WIN=%GDK_WIN%>> make_cart.bat
+    echo set XGCC_WIN=%GDK_WIN%\x68k-gcc\bin>> make_cart.bat
 	echo set PATH=%PATH%>> make_cart.bat
 	echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen>> make_cart.bat
 	
+    echo set GDK=%GDK%> make_cart_cpp.bat
+    echo set GDK_WIN=%GDK_WIN%>> make_cart_cpp.bat
+    echo set XGCC_WIN=%GDK_WIN%\x68k-gcc\bin>> make_cart_cpp.bat
+    echo set PATH=%PATH%>> make_cart_cpp.bat
+    echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefilecpp.gen>> make_cart_cpp.bat
       
 :CLEANUP
 	echo.

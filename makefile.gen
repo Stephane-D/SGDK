@@ -53,9 +53,8 @@ DEFAULT_FLAGS 	:= $(EXTRA_FLAGS) 			 \
 				   -Wno-unused-parameter     \
 				   -fno-builtin 			 \
 				   -fdiagnostics-color=always\
-				   -ffunction-sections  	 \
+				   -ffunction-sections 		 \
 				   -fdata-sections 	  		 \
-				   -fshort-enums 			 \
 				   $(INCS)
 
 FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(SRC_LIB) -i$(INCLUDE_LIB)
@@ -67,8 +66,7 @@ release: FLAGS= $(DEFAULT_FLAGS) 		\
 				-fno-web 				\
 				-fno-gcse 				\
 				-fno-unit-at-a-time 	\
-				-fomit-frame-pointer   	\
-				-ffast-math
+				-fomit-frame-pointer
 
 release: LIBMD= $(LIB)/libmd.a
 release: pre-build out/rom.bin out/symbol.txt
@@ -85,7 +83,6 @@ asm: FLAGS= $(DEFAULT_FLAGS) 			\
 				-fno-gcse 				\
 				-fno-unit-at-a-time 	\
 				-fomit-frame-pointer   	\
-				-ffast-math 			\
 				-S
 
 asm: pre-build $(LSTS)
@@ -115,6 +112,10 @@ cleanres: cleantmp
 
 cleanobj:
 	@$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
+
+distclean: cleanobj cleanres cleanlst cleandep cleantmp
+	@$(RM) -f out.lst out/symbol.txt out/rom.nm out/rom.wch
+	@$(RM) -rf out/src out/res
 
 clean: cleanobj cleanres cleanlst cleandep
 	@$(ECHO) " Clean artifacts"

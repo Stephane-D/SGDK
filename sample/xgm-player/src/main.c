@@ -17,7 +17,7 @@
 
 #define PROGRESS_MAX        (14*4)
 
-#define	SCROLLV_LEN         224
+#define SCROLLV_LEN         224
 
 #define REFRESH_TRACKINFO   (1 << 0)
 #define REFRESH_TRACKLIST   (1 << 1)
@@ -180,11 +180,11 @@ static u16 needProgressUpload;
 static TileMap* bgTileMap;
 
 // tiles buffer for chips state rendering
-static u8 progressTileBuffer[32*15];
-static u8 z80TileBuffer[32*1*4];
-static u8 ymTileBuffer[32*(6*3)*4];
-static u8 pcmTileBuffer[32*(4*3)*4];
-static u8 psgTileBuffer[32*4*4];
+static u8 progressTileBuffer[32 * 15];
+static u8 z80TileBuffer[32 * 1 * 4];
+static u8 ymTileBuffer[32 * (6 * 3) * 4];
+static u8 pcmTileBuffer[32 * (4 * 3) * 4];
+static u8 psgTileBuffer[32 * 4 * 4];
 
 static u16 palette[64];
 
@@ -202,8 +202,8 @@ int main()
     VDP_setScreenWidth320();
     // enable hilight / shadow
     VDP_setHilightShadow(TRUE);
-	// set scrolling mode (line)
-	VDP_setScrollingMode(HSCROLL_LINE, VSCROLL_PLANE);
+    // set scrolling mode (line)
+    VDP_setScrollingMode(HSCROLL_LINE, VSCROLL_PLANE);
 
     // need to use H Int at line 128 for window reconfiguration
     VDP_setHInterrupt(TRUE);
@@ -225,8 +225,8 @@ int main()
     VDP_setTextPriority(TRUE);
 
     // clear HScroll table
-	DMA_doVRamFill(VDP_HSCROLL_TABLE, 224 * 4, 0, 1);
-	VDP_waitDMACompletion();
+    DMA_doVRamFill(VDP_HSCROLL_TABLE, 224 * 4, 0, 1);
+    VDP_waitDMACompletion();
 
     initZ80CPUMeter();
 
@@ -293,7 +293,7 @@ int main()
     YMPanSprites[3] = SPR_addSprite(&left_right, 32 + 72, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     YMPanSprites[4] = SPR_addSprite(&left_right, 32 + 95, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     YMPanSprites[5] = SPR_addSprite(&left_right, 32 + 119, 203, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
-    for(i = 0; i < 6; i++)
+    for (i = 0; i < 6; i++)
         SPR_setVisibility(YMPanSprites[i], VISIBLE);
     // prepare track list cursor
     trackListCursor = SPR_addSprite(&cursor, 0, 108, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
@@ -301,12 +301,12 @@ int main()
     // prepare track list shadow
     curTileIndexMesh = tileIndexShadowMaskOdd;
     trackListShadowTop[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowTop[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowTop[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowTop[1] = SPR_addSpriteEx(&shadow_mask_16, 8 + 128, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowTop[2] = SPR_addSpriteEx(&shadow_mask_7, 8 + 256, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
     trackListShadowBottom[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowBottom[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowBottom[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    for(i = 0; i < 3; i++)
+    trackListShadowBottom[1] = SPR_addSpriteEx(&shadow_mask_16, 8 + 128, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowBottom[2] = SPR_addSpriteEx(&shadow_mask_7, 8 + 256, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    for (i = 0; i < 3; i++)
     {
         SPR_setVisibility(trackListShadowTop[i], VISIBLE);
         SPR_setVisibility(trackListShadowBottom[i], VISIBLE);
@@ -347,7 +347,7 @@ int main()
 
     JOY_setEventHandler(joyEvent);
 
-    while(1)
+    while (1)
     {
         while (frameToParse > 0)
         {
@@ -394,7 +394,7 @@ int main()
         // alternate mesh
         if (curTileIndexMesh == tileIndexShadowMaskEven) curTileIndexMesh = tileIndexShadowMaskOdd;
         else curTileIndexMesh = tileIndexShadowMaskEven;
-        for(i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++)
         {
             SPR_setVRAMTileIndex(trackListShadowTop[i], curTileIndexMesh);
             SPR_setVRAMTileIndex(trackListShadowBottom[i], curTileIndexMesh);
@@ -530,7 +530,7 @@ static void buildShuffledList()
     u16 remaining;
 
     src = indexes;
-    for(i = 0; i < numMusic; i++)
+    for (i = 0; i < numMusic; i++)
         *src++ = i;
 
     dst = shuffledIndexes;
@@ -539,10 +539,10 @@ static void buildShuffledList()
 
     if (shuffle)
     {
-        while(remaining)
+        while (remaining)
         {
             // random list copy
-            u16* ind = &indexes[random() % remaining];
+            u16* ind = &indexes[getrandom() % remaining];
 
             dstInv[*ind] = dst - shuffledIndexes;
             *dst++ = *ind;
@@ -556,31 +556,10 @@ static void buildShuffledList()
     {
         src = indexes;
         // simple list copy
-        while(remaining--) *dst++ = *src++;
+        while (remaining--) *dst++ = *src++;
     }
 
     refresh |= REFRESH_TRACKLIST;
-
-/*
-    // sort test
-    void* list[numMusic];
-    void** listDst;
-
-    src = shuffledIndexes;
-    listDst = list;
-    for(i = 0; i < numMusic; i++)
-        *listDst++ = *src++;
-
-    KLog("Before sort:");
-    for(i = 0; i < numMusic; i++)
-        KLog_S2("Element ", i, " = ", list[i]);
-
-    qsort(list, numMusic, compareList);
-
-    KLog("After sort:");
-    for(i = 0; i < numMusic; i++)
-        KLog_S2("Element ", i, " = ", list[i]);
-*/
 }
 
 
@@ -610,21 +589,21 @@ static void drawStaticGUI()
     i = 0;
 
     // Z80 area
-    for(y = 0; y < 4; y++, i++)
+    for (y = 0; y < 4; y++, i++)
         VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 1, 21 + y);
     // YM area
-    for(x = 0; x < 6; x++)
-        for(sx = 0; sx < 3; sx++)
-            for(y = 0; y < 4; y++, i++)
+    for (x = 0; x < 6; x++)
+        for (sx = 0; sx < 3; sx++)
+            for (y = 0; y < 4; y++, i++)
                 VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 4 + (x * 3) + sx, 21 + y);
     // PCM area
-    for(x = 0; x < 4; x++)
-        for(sx = 0; sx < 3; sx++)
-            for(y = 0; y < 4; y++, i++)
+    for (x = 0; x < 4; x++)
+        for (sx = 0; sx < 3; sx++)
+            for (y = 0; y < 4; y++, i++)
                 VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 23 + (x * 3) + sx, 21 + y);
     // PSG area
-    for(x = 0; x < 4; x++)
-        for(y = 0; y < 4; y++, i++)
+    for (x = 0; x < 4; x++)
+        for (y = 0; y < 4; y++, i++)
             VDP_setTileMapXY(WINDOW, TILE_ATTR_FULL(PAL1, TRUE, FALSE, FALSE, tileIndex + i), 36 + x, 21 + y);
 
     // prepare progress bar rendering buffer
@@ -812,7 +791,7 @@ static void updateProgressBar(u16 level)
     // safe
     if (level > 58) level = 58;
 
-    while(curLevel < level)
+    while (curLevel < level)
     {
         dst[4] = col;
         *dst++ = col;
@@ -848,7 +827,7 @@ static void drawTrackInfo()
         len = strlen(trackInfo->trackName);
         if (len > 32)
         {
-            strncpy(str, trackInfo->trackName, min(len, 32-1));
+            strncpy(str, trackInfo->trackName, min(len, 32 - 1));
             strcat(str, ".");
         }
         else strcpy(str, trackInfo->trackName);
@@ -862,7 +841,7 @@ static void drawTrackInfo()
         len = strlen(trackInfo->gameName);
         if (len > 17)
         {
-            strncpy(str, trackInfo->gameName, min(len, 17-1));
+            strncpy(str, trackInfo->gameName, min(len, 17 - 1));
             strcat(str, ".");
         }
         else strcpy(str, trackInfo->gameName);
@@ -879,7 +858,7 @@ static void drawTrackInfo()
         len = strlen(trackInfo->authorName);
         if (len > 16)
         {
-            strncpy(str, trackInfo->authorName, min(len, 16-1));
+            strncpy(str, trackInfo->authorName, min(len, 16 - 1));
             strcat(str, ".");
         }
         else strcpy(str, trackInfo->authorName);
@@ -893,7 +872,7 @@ static void drawTrackInfo()
         len = strlen(trackInfo->date);
         if (len > 8)
         {
-            strncpy(str, trackInfo->date, min(len, 8-1));
+            strncpy(str, trackInfo->date, min(len, 8 - 1));
             strcat(str, ".");
         }
         else strcpy(str, trackInfo->date);
@@ -920,7 +899,7 @@ static void drawPlayList()
     if (trackInd < 0) trackInd += numMusic;
 
     num = 7;
-    while(num--)
+    while (num--)
     {
         drawShortTrackInfo(planInd, trackInd);
 
@@ -965,7 +944,7 @@ static void drawShortTrackInfo(s16 planIndex, u16 index)
     // copy track name (limit to 61 characters max)
     len = min(strlen(src), 61);
     i = len;
-    while(i--) *dst++ = *src++;
+    while (i--) *dst++ = *src++;
 
     // track name > 60 --> replace last character by '.'
     if (len > 60)
@@ -977,7 +956,7 @@ static void drawShortTrackInfo(s16 planIndex, u16 index)
     {
         // complete with blank
         i = 61 - len;
-        while(i--) *dst++ = ' ';
+        while (i--) *dst++ = ' ';
     }
     // end of text
     *dst = 0;
@@ -1096,7 +1075,7 @@ static void drawYMState()
     }
 
     c = 3;
-    while(c--)
+    while (c--)
     {
         const YM_SLOT *sl = &(ch->slots[0]);
         const u16 pan = (ch->pan >> 6) & 3;
@@ -1113,33 +1092,33 @@ static void drawYMState()
         panSpr++;
 
         s = 4;
-        while(s--)
+        while (s--)
         {
             u16 color1, color2;
             u16 freq;
 
-            switch(sl->out)
+            switch (sl->out)
             {
-                case 0:
-                    color1 = 0x6666;
-                    color2 = 0x7777;
-                    break;
+            case 0:
+                color1 = 0x6666;
+                color2 = 0x7777;
+                break;
 
-                case 1:
-                    color1 = 0x8888;
-                    color2 = 0x9999;
-                    break;
+            case 1:
+                color1 = 0x8888;
+                color2 = 0x9999;
+                break;
 
-                case 2:
-                    color1 = 0xAAAA;
-                    color2 = 0xBBBB;
-                    break;
+            case 2:
+                color1 = 0xAAAA;
+                color2 = 0xBBBB;
+                break;
 
-                case 3:
-                default:
-                    color1 = 0xCCCC;
-                    color2 = 0xDDDD;
-                    break;
+            case 3:
+            default:
+                color1 = 0xCCCC;
+                color2 = 0xDDDD;
+                break;
             }
 
             // bright = current env, dark = TL
@@ -1190,11 +1169,11 @@ static u8* drawPCM(u8* dst, u16 addr)
 
     // draw waveform (3 column per channel)
     i = 3;
-    while(i--)
+    while (i--)
     {
         // column
         x = 8;
-        while(x--)
+        while (x--)
         {
             u8* d;
             u16 y;
@@ -1346,7 +1325,7 @@ static void fillColumnYM(u16 x, u16 h1, u16 h2, u16 backColor, u16 firstColor, u
     h = 4 * 8;
 
     color = backColor;
-    while(h > h1)
+    while (h > h1)
     {
         *dst = color;
         dst += 2;
@@ -1354,7 +1333,7 @@ static void fillColumnYM(u16 x, u16 h1, u16 h2, u16 backColor, u16 firstColor, u
     }
 
     color = firstColor;
-    while(h > h2)
+    while (h > h2)
     {
         *dst = color;
         dst += 2;
@@ -1362,7 +1341,7 @@ static void fillColumnYM(u16 x, u16 h1, u16 h2, u16 backColor, u16 firstColor, u
     }
 
     color = secondColor;
-    while(h > 0)
+    while (h > 0)
     {
         *dst = color;
         dst += 2;
@@ -1380,21 +1359,21 @@ static void fillColumnZ80(u16 h1, u16 h2, u32 backColor, u32 firstColor, u32 sec
     h = 4 * 8;
 
     color = backColor;
-    while(h > h1)
+    while (h > h1)
     {
         *dst++ = color;
         h--;
     }
 
     color = firstColor;
-    while(h > h2)
+    while (h > h2)
     {
         *dst++ = color;
         h--;
     }
 
     color = secondColor;
-    while(h > 0)
+    while (h > 0)
     {
         *dst++ = color;
         h--;
@@ -1412,14 +1391,14 @@ static void fillColumnPSG(u16 x, u16 heigth, u32 backColor, u32 frontColor)
     h = 4 * 8;
 
     color = backColor;
-    while(h > heigth)
+    while (h > heigth)
     {
         *dst++ = color;
         h--;
     }
 
     color = frontColor;
-    while(h > 0)
+    while (h > 0)
     {
         *dst++ = color;
         h--;
@@ -1432,17 +1411,17 @@ static void initBGScroll()
     fix16* sf = scrollBF;
     fix16* ss = scrollSpeed;
 
-	// create the scrolling offset table
-	s = 1;
-	i = SCROLLV_LEN;
-	while(i--)
-	{
-		*sf++ = FIX16(0);
-		do ns = -((random() & 0x3F) + 10);
-		while(ns == s);
-		*ss++ = ns;
-		s = ns;
-	}
+    // create the scrolling offset table
+    s = 1;
+    i = SCROLLV_LEN;
+    while (i--)
+    {
+        *sf++ = FIX16(0);
+        do ns = -((getrandom() & 0x3F) + 10);
+        while (ns == s);
+        *ss++ = ns;
+        s = ns;
+    }
 }
 
 static void updateBGScroll()
@@ -1453,8 +1432,8 @@ static void updateBGScroll()
     fix16* ss = scrollSpeed;
 
     i = SCROLLV_LEN;
-	while(i--)
-	{
+    while (i--)
+    {
         *sf += *ss++;
         *s++ = fix16ToInt(*sf++);
     }

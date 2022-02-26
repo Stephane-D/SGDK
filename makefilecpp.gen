@@ -58,7 +58,6 @@ DEFAULT_FLAGS 	:= $(EXTRA_FLAGS) 			 \
 				   -fdiagnostics-color=always\
 				   -ffunction-sections  	 \
 				   -fdata-sections 	  		 \
-				   -fshort-enums 			 \
 				   -fno-strict-aliasing 	 \
 				   $(INCS) 					 \
 				   -L$(LIB)
@@ -129,6 +128,10 @@ cleanres: cleantmp
 
 cleanobj:
 	@$(RM) -f $(OBJS) out/sega.o out/rom_head.bin out/rom_head.o out/rom.out
+
+distclean: cleanobj cleanres cleanlst cleandep cleantmp
+	@$(RM) -f out.lst out/symbol.txt out/rom.nm out/rom.wch
+	@$(RM) -rf out/src out/res
 
 clean: cleanobj cleanres cleanlst cleandep
 	@$(ECHO) " Clean artifacts"

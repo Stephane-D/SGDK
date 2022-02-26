@@ -23,10 +23,10 @@ u16 executeBGTest(u16 *scores)
     xy = MEM_alloc(1000 * sizeof(Vect2D_s16));
 
     pos = xy;
-    for(i = 0; i < 1000; i++)
+    for (i = 0; i < 1000; i++)
     {
-        pos->x = random() % (40-13);
-        pos->y = random() % (28-2);
+        pos->x = getrandom() % (40 - 13);
+        pos->y = getrandom() % (28 - 2);
         pos->y += 2;
         pos++;
     }
@@ -39,12 +39,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("Draw text...", 2, 0);
     i = 10;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawText(str, pos->x, pos->y);
             pos++;
@@ -81,12 +81,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("Draw/clear text...", 2, 0);
     i = 10;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawText(str, pos->x, pos->y);
             pos++;
@@ -143,10 +143,10 @@ u16 executeBGTest(u16 *scores)
 
     // Image draw test
     pos = xy;
-    for(i = 0; i < 1000; i++)
+    for (i = 0; i < 1000; i++)
     {
-        pos->x = random() % (40-16);
-        pos->y = random() % (28-(8+2));
+        pos->x = getrandom() % (40 - 16);
+        pos->y = getrandom() % (28 - (8 + 2));
         pos->y += 2;
         pos++;
     }
@@ -155,12 +155,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("128x64 image draw (packed slow)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 300;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawImageEx(BG_A, &logo_med, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
@@ -197,12 +197,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("128x64 image draw (packed fast)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 800;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawImageEx(BG_A, &logo_med_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
@@ -241,12 +241,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("128x64 image draw (unpacked)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
@@ -288,12 +288,12 @@ u16 executeBGTest(u16 *scores)
     VDP_setPalette(PAL1, img->palette->data);
     i = 5;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;
@@ -328,10 +328,10 @@ u16 executeBGTest(u16 *scores)
     waitMs(5000);
 
     pos = xy;
-    for(i = 0; i < 1000; i++)
+    for (i = 0; i < 1000; i++)
     {
-        pos->x = random() % (40-8);
-        pos->y = random() % (28-(4+2));
+        pos->x = getrandom() % (40 - 8);
+        pos->y = getrandom() % (28 - (4 + 2));
         pos->y += 2;
         pos++;
     }
@@ -340,12 +340,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("64x32 image draw (packed slow)", 2, 0);
     i = 1;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawImageEx(BG_A, &logo_sm, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
@@ -383,12 +383,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("64x32 image draw (packed fast)", 2, 0);
     i = 2;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawImageEx(BG_A, &logo_sm_f, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
@@ -428,12 +428,12 @@ u16 executeBGTest(u16 *scores)
     VDP_drawText("64x32 image draw (unpacked)", 2, 0);
     i = 3;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_drawImageEx(BG_A, img, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, TRUE, TRUE);
             pos++;
@@ -476,12 +476,12 @@ u16 executeBGTest(u16 *scores)
     VDP_setPalette(PAL1, img->palette->data);
     i = 10;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         u16 j = 1000;
         pos = xy;
 
-        while(j)
+        while (j)
         {
             VDP_setTileMapEx(BG_A, img->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, TILE_USER_INDEX), pos->x, pos->y, 0, 0, img->tilemap->w, img->tilemap->h, CPU);
             pos++;

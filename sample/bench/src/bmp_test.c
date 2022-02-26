@@ -89,7 +89,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     i = 1000;
     start = getTimeAsFix32(FALSE);
-    while(i--) BMP_clear();
+    while (i--) BMP_clear();
     end = getTimeAsFix32(FALSE);
     BMP_end();
 
@@ -106,7 +106,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
-    while(i--)
+    while (i--)
     {
         Pixel *pix = pixels;
         u16 j = MAX_PIXEL;
@@ -114,7 +114,7 @@ u16 executeBMPTest(u16 *scores)
         initPixels(pixels, MAX_PIXEL);
 
         start = getTimeAsFix32(FALSE);
-        while(j)
+        while (j)
         {
             BMP_setPixel(pix->pt.x, pix->pt.y, pix->col);
             pix++;
@@ -159,7 +159,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
-    while(i--)
+    while (i--)
     {
         Pixel *pix = pixels;
         u16 j = MAX_PIXEL;
@@ -167,7 +167,7 @@ u16 executeBMPTest(u16 *scores)
         initPixels(pixels, MAX_PIXEL);
 
         start = getTimeAsFix32(FALSE);
-        while(j)
+        while (j)
         {
             BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
             pix++;
@@ -212,7 +212,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
-    while(i--)
+    while (i--)
     {
         initPixels(pixels, MAX_PIXEL);
 
@@ -238,7 +238,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
-    while(i--)
+    while (i--)
     {
         initPixels(pixels, MAX_PIXEL);
 
@@ -265,7 +265,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 60;
-    while(i--)
+    while (i--)
     {
         Line *lin = lines;
         u16 j = 80;
@@ -273,7 +273,7 @@ u16 executeBMPTest(u16 *scores)
         initLines(lines, 80, FALSE);
 
         start = getTimeAsFix32(FALSE);
-        while(j)
+        while (j)
         {
             if (BMP_clipLine(lin)) BMP_drawLine(lin);
             lin++;
@@ -319,7 +319,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 60;
-    while(i--)
+    while (i--)
     {
         Line *lin = lines;
         u16 j = 80;
@@ -327,7 +327,7 @@ u16 executeBMPTest(u16 *scores)
         initLines(lines, 80, TRUE);
 
         start = getTimeAsFix32(FALSE);
-        while(j)
+        while (j)
         {
             BMP_drawLine(lin++);
             BMP_drawLine(lin++);
@@ -363,7 +363,7 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 100;
-    while(i--)
+    while (i--)
     {
         Polygone *pol = polys;
         u16 j = 25;
@@ -371,7 +371,7 @@ u16 executeBMPTest(u16 *scores)
         initPolys(pts, pol, 0, 25);
 
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawPolygon(pol->pts, pol->numPts, pol->col);
             pol++;
@@ -397,22 +397,22 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 25;
-    while(i--)
+    while (i--)
     {
         Vect2D_s16 *pos;
         u16 j;
 
         // init image positions
-        for(j = 0; j < 5; j++)
+        for (j = 0; j < 5; j++)
         {
-            pts[j].x = random() % (256 - 128);
-            pts[j].y = random() % (160 - 64);
+            pts[j].x = getrandom() % (256 - 128);
+            pts[j].y = getrandom() % (160 - 64);
         }
 
         pos = pts;
         j = 5;
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawBitmap(&logo_med_bmp, pos->x, pos->y, FALSE);
             pos++;
@@ -438,22 +438,22 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 35;
-    while(i--)
+    while (i--)
     {
         Vect2D_s16 *pos;
         u16 j;
 
         // init image positions
-        for(j = 0; j < 8; j++)
+        for (j = 0; j < 8; j++)
         {
-            pts[j].x = random() % (256 - 128);
-            pts[j].y = random() % (160 - 64);
+            pts[j].x = getrandom() % (256 - 128);
+            pts[j].y = getrandom() % (160 - 64);
         }
 
         pos = pts;
         j = 8;
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawBitmap(&logo_med_bmp_f, pos->x, pos->y, FALSE);
             pos++;
@@ -481,22 +481,22 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 50;
-    while(i--)
+    while (i--)
     {
         Vect2D_s16 *pos;
         u16 j;
 
         // init image positions
-        for(j = 0; j < 10; j++)
+        for (j = 0; j < 10; j++)
         {
-            pts[j].x = random() % (256 - 128);
-            pts[j].y = random() % (160 - 64);
+            pts[j].x = getrandom() % (256 - 128);
+            pts[j].y = getrandom() % (160 - 64);
         }
 
         pos = pts;
         j = 10;
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawBitmap(bmp, pos->x, pos->y, FALSE);
             pos++;
@@ -523,22 +523,22 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 30;
-    while(i--)
+    while (i--)
     {
         Vect2D_s16 *pos;
         u16 j;
 
         // init image positions
-        for(j = 0; j < 10; j++)
+        for (j = 0; j < 10; j++)
         {
-            pts[j].x = random() % (256 - 64);
-            pts[j].y = random() % (160 - 32);
+            pts[j].x = getrandom() % (256 - 64);
+            pts[j].y = getrandom() % (160 - 32);
         }
 
         pos = pts;
         j = 10;
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawBitmap(&logo_sm_bmp, pos->x, pos->y, FALSE);
             pos++;
@@ -564,22 +564,22 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 50;
-    while(i--)
+    while (i--)
     {
         Vect2D_s16 *pos;
         u16 j;
 
         // init image positions
-        for(j = 0; j < 25; j++)
+        for (j = 0; j < 25; j++)
         {
-            pts[j].x = random() % (256 - 64);
-            pts[j].y = random() % (160 - 32);
+            pts[j].x = getrandom() % (256 - 64);
+            pts[j].y = getrandom() % (160 - 32);
         }
 
         pos = pts;
         j = 25;
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawBitmap(&logo_sm_bmp_f, pos->x, pos->y, FALSE);
             pos++;
@@ -607,22 +607,22 @@ u16 executeBMPTest(u16 *scores)
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 50;
-    while(i--)
+    while (i--)
     {
         Vect2D_s16 *pos;
         u16 j;
 
         // init image positions
-        for(j = 0; j < 30; j++)
+        for (j = 0; j < 30; j++)
         {
-            pts[j].x = random() % (256 - 64);
-            pts[j].y = random() % (160 - 32);
+            pts[j].x = getrandom() % (256 - 64);
+            pts[j].y = getrandom() % (160 - 32);
         }
 
         pos = pts;
         j = 30;
         start = getTimeAsFix32(FALSE);
-        while(j--)
+        while (j--)
         {
             BMP_drawBitmap(bmp, pos->x, pos->y, FALSE);
             pos++;
@@ -650,24 +650,24 @@ u16 executeBMPTest(u16 *scores)
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     time = FIX32(0);
     i = 4;
-    while(i--)
+    while (i--)
     {
         u16 j;
 
-        for(j = 32; j < 128; j++)
+        for (j = 32; j < 128; j++)
         {
             start = getTimeAsFix32(FALSE);
-            BMP_drawBitmapScaled(bmp, 128 - j, 80 - (j/2), j*2, j, FALSE);
+            BMP_drawBitmapScaled(bmp, 128 - j, 80 - (j / 2), j * 2, j, FALSE);
             end = getTimeAsFix32(FALSE);
             time += end - start;
             j += j >> 5;
             BMP_showFPS(FALSE);
             BMP_flip(FALSE);
         }
-        for(j = 127; j >= 32; j--)
+        for (j = 127; j >= 32; j--)
         {
             start = getTimeAsFix32(FALSE);
-            BMP_drawBitmapScaled(bmp, 128 - j, 80 - (j/2), j*2, j, FALSE);
+            BMP_drawBitmapScaled(bmp, 128 - j, 80 - (j / 2), j * 2, j, FALSE);
             end = getTimeAsFix32(FALSE);
             time += end - start;
             j -= j >> 5;
@@ -680,7 +680,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("64x32 image scaling", 2, 1);
-    *score = displayResult(2 * 2 * (128-32), time, 3) * 10;
+    *score = displayResult(2 * 2 * (128 - 32), time, 3) * 10;
     globalScore += *score++;
 
     waitMs(5000);
@@ -705,13 +705,13 @@ static void initPixels(Pixel *pixels, u16 num)
     u16 i = num;
     Pixel *p = pixels;
 
-    while(i--)
+    while (i--)
     {
-        const u16 r = random();
+        const u16 r = getrandom();
 
         p->pt.x = (r >> 8) & 0xFF;
         p->pt.y = (r & 0x7F) + ((r >> 4) & 0x1F);
-        p->col = random() & 0xF;
+        p->col = getrandom() & 0xF;
         p->col |= p->col << 4;
         p++;
     }
@@ -722,10 +722,10 @@ static void initLines(Line *lines, u16 num, u16 clipped)
     u16 i = num;
     Line *l = lines;
 
-    while(i--)
+    while (i--)
     {
-        const u16 r1 = random();
-        const u16 r2 = random();
+        const u16 r1 = getrandom();
+        const u16 r2 = getrandom();
 
         l->pt1.x = r1 >> 8;
         if (clipped) l->pt1.y = (r1 & 0x7F) + ((r1 >> 4) & 0x1F);
@@ -733,7 +733,7 @@ static void initLines(Line *lines, u16 num, u16 clipped)
         l->pt2.x = r2 >> 8;
         if (clipped) l->pt2.y = (r2 & 0x7F) + ((r2 >> 4) & 0x1F);
         else l->pt2.y = (r2 & 0xFF) - 64;
-        l->col = random() & 0xF;
+        l->col = getrandom() & 0xF;
         l->col |= l->col << 4;
         l++;
     }
@@ -747,16 +747,16 @@ static void initPolys(Vect2D_s16 *pts, Polygone *polys, u16 numPts, u16 num)
 
     if (numPts)
     {
-        while(i--)
+        while (i--)
         {
             do
             {
                 u16 j = numPts;
                 Vect2D_s16 *c = curPts;
 
-                while(j--)
+                while (j--)
                 {
-                    const u16 r = random();
+                    const u16 r = getrandom();
 
                     c->x = r >> 8;
                     // allow to handle clip
@@ -768,7 +768,7 @@ static void initPolys(Vect2D_s16 *pts, Polygone *polys, u16 numPts, u16 num)
 
             p->pts = curPts;
             p->numPts = numPts;
-            p->col = random() & 0xF;
+            p->col = getrandom() & 0xF;
             p->col |= p->col << 4;
 
             // next
@@ -778,19 +778,19 @@ static void initPolys(Vect2D_s16 *pts, Polygone *polys, u16 numPts, u16 num)
     }
     else
     {
-        while(i--)
+        while (i--)
         {
             // dynamic number of points (minimum = 3, maximum = 6)
-            numPts = (random() & 3) + 3;
+            numPts = (getrandom() & 3) + 3;
 
             do
             {
                 u16 j = numPts;
                 Vect2D_s16 *c = curPts;
 
-                while(j--)
+                while (j--)
                 {
-                    const u16 r = random();
+                    const u16 r = getrandom();
 
                     c->x = r >> 8;
                     // allow to handle clip
@@ -802,7 +802,7 @@ static void initPolys(Vect2D_s16 *pts, Polygone *polys, u16 numPts, u16 num)
 
             p->pts = curPts;
             p->numPts = numPts;
-            p->col = random() & 0xF;
+            p->col = getrandom() & 0xF;
             p->col |= p->col << 4;
 
             // next

@@ -3,9 +3,9 @@
 #include "main.h"
 
 
-#define RAND_32         (random() | (random() << 16))
-#define RAND_16         (random())
-#define RAND_8          (random() & 0xFF)
+#define RAND_32         (getrandom() | (getrandom() << 16))
+#define RAND_16         (getrandom())
+#define RAND_8          (getrandom() & 0xFF)
 #define FIX_RAND_32     0x957FBE6
 #define FIX_RAND_16     0x1DE7
 #define FIX_RAND_8      0xCE
@@ -69,7 +69,7 @@ u16 executeMathsBasicTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_add8reg(i);
 #else
-    while(i--)
+    while (i--)
     {
         d8 += _s8;
         d8 += _s8;
@@ -123,7 +123,7 @@ u16 executeMathsBasicTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_add16reg(i);
 #else
-    while(i--)
+    while (i--)
     {
         d16 += _s16;
         d16 += _s16;
@@ -177,7 +177,7 @@ u16 executeMathsBasicTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_add32reg(i);
 #else
-    while(i--)
+    while (i--)
     {
         d32 += _s32;
         d32 += _s32;
@@ -231,7 +231,7 @@ u16 executeMathsBasicTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_add8mem(ps8, pd8, i);
 #else
-    while(i--)
+    while (i--)
     {
         *pd8++ += *ps8++;
         *pd8++ += *ps8++;
@@ -286,7 +286,7 @@ u16 executeMathsBasicTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_add16mem(ps16, pd16, i);
 #else
-    while(i--)
+    while (i--)
     {
         *pd16++ += *ps16++;
         *pd16++ += *ps16++;
@@ -341,7 +341,7 @@ u16 executeMathsBasicTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_add32mem(ps32, pd32, i);
 #else
-    while(i--)
+    while (i--)
     {
         *pd32++ += *ps32++;
         *pd32++ += *ps32++;
@@ -446,7 +446,7 @@ u16 executeMathsAdvTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_mulu(_s16, d16, i);
 #else
-    while(i--)
+    while (i--)
     {
         d16 = mulu(_s16, d16);
         d16 = mulu(_s16, d16);
@@ -480,7 +480,7 @@ u16 executeMathsAdvTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_muls(_ss16, sd16, i);
 #else
-    while(i--)
+    while (i--)
     {
         sd16 = muls(_ss16, sd16);
         sd16 = muls(_ss16, sd16);
@@ -514,7 +514,7 @@ u16 executeMathsAdvTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_divu(d32, _s16, i);
 #else
-    while(i--)
+    while (i--)
     {
         d32 = divu(d32, _s16);
         d32 = divu(d32, _s16);
@@ -548,7 +548,7 @@ u16 executeMathsAdvTest(u16 *scores)
 #ifdef ENABLE_ASM
     bench_divs(sd32, _ss16, i);
 #else
-    while(i--)
+    while (i--)
     {
         sd32 = divs(sd32, _ss16);
         sd32 = divs(sd32, _ss16);
@@ -577,11 +577,11 @@ u16 executeMathsAdvTest(u16 *scores)
     // 3D maths tests
 
     // init points coordinates
-    for(i = 0; i < 1024; i++)
+    for (i = 0; i < 1024; i++)
     {
-        src_3D[i].x = random();
-        src_3D[i].y = random();
-        src_3D[i].z = random();
+        src_3D[i].x = getrandom();
+        src_3D[i].y = getrandom();
+        src_3D[i].z = getrandom();
     }
 
     M3D_reset();
@@ -596,7 +596,7 @@ u16 executeMathsAdvTest(u16 *scores)
     VDP_drawText("3D Transform for 1024 points (x50)", 2, y++);
     i = 50;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         M3D_transform(&transformation, src_3D, res_3D, 1024);
     }
@@ -608,7 +608,7 @@ u16 executeMathsAdvTest(u16 *scores)
     VDP_drawText("2D projection for 1024 points (x100)", 2, y++);
     i = 100;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         M3D_project_s16(res_3D, res_2D, 1024);
     }
@@ -620,7 +620,7 @@ u16 executeMathsAdvTest(u16 *scores)
     VDP_drawText("Transform + projection (x50)", 2, y++);
     i = 50;
     start = getTimeAsFix32(FALSE);
-    while(i--)
+    while (i--)
     {
         M3D_transform(&transformation, src_3D, res_3D, 1024);
         M3D_project_s16(res_3D, res_2D, 1024);

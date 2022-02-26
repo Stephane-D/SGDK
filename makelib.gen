@@ -31,7 +31,6 @@ DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) 				\
 					 -Wno-shift-negative-value 		\
 					 -fno-builtin 					\
 					 -Wno-unused-parameter  		\
-					 -fshort-enums 					\
 					 -fdiagnostics-color=always 	\
 					 $(INCS_LIB)
 
@@ -45,8 +44,7 @@ release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB)\
 				-fno-web 				\
 				-fno-gcse 				\
 				-fno-unit-at-a-time 	\
-				-fomit-frame-pointer   	\
-				-ffast-math
+				-fomit-frame-pointer
 
 release: $(LIB)/libmd.a $(LIB)/libsys.a $(LIB)/libcpp.a
 
@@ -61,7 +59,6 @@ asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) 	\
 				-fno-gcse 				\
 				-fno-unit-at-a-time 	\
 				-fomit-frame-pointer   	\
-				-ffast-math 			\
 				-S
 asm: $(LST_LIB)
 

@@ -28,7 +28,7 @@ static void updatePartic(_particule *part_pos, s16 num);
 static void drawPartic(_particule *part_pos, s16 num, u8 col);
 
 
-int main(u16 hard)
+int main(bool hard)
 {
     char col;
 
@@ -58,7 +58,7 @@ int main(u16 hard)
     initPartic(100);
 
     /* Do main job here */
-    while(1)
+    while (1)
     {
         char str[16];
 
@@ -207,7 +207,7 @@ static void initPartic(s16 num)
 
     i = num;
     p = partics;
-    while(i--)
+    while (i--)
     {
         p->pos.x = intToFix16(0);
         p->pos.y = intToFix16(0);
@@ -224,15 +224,15 @@ static void updatePartic(_particule *part, s16 num)
 
     i = num;
     p = part;
-    while(i--)
+    while (i--)
     {
         if ((p->pos.x >= intToFix16(BMP_WIDTH)) || (p->pos.x <= intToFix16(0)))
         {
             // re-init paticule
             p->pos.x = baseposx;
             p->pos.y = baseposy;
-            p->mov.x = intToFix16(1) - (random() & (FIX16_FRAC_MASK << 1));
-            p->mov.y = intToFix16(2) + (random() & (FIX16_FRAC_MASK << 3));
+            p->mov.x = intToFix16(1) - (getrandom() & (FIX16_FRAC_MASK << 1));
+            p->mov.y = intToFix16(2) + (getrandom() & (FIX16_FRAC_MASK << 3));
         }
         else if (p->pos.y <= intToFix16(0))
         {
@@ -241,8 +241,8 @@ static void updatePartic(_particule *part, s16 num)
                 // re-init paticule
                 p->pos.x = baseposx;
                 p->pos.y = baseposy;
-                p->mov.x = intToFix16(1) - (random() & (FIX16_FRAC_MASK << 1));
-                p->mov.y = intToFix16(2) + (random() & (FIX16_FRAC_MASK << 3));
+                p->mov.x = intToFix16(1) - (getrandom() & (FIX16_FRAC_MASK << 1));
+                p->mov.y = intToFix16(2) + (getrandom() & (FIX16_FRAC_MASK << 3));
             }
             else
             {
@@ -275,7 +275,7 @@ static void drawPartic(_particule *part, s16 num, u8 col)
     maxy = BMP_HEIGHT;
     p = part;
     pos = part_pos;
-    while(i--)
+    while (i--)
     {
         pos->x = fix16ToInt(p->pos.x);
         pos->y = maxy - fix16ToInt(p->pos.y);

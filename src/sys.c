@@ -125,6 +125,7 @@ static u16 cpuFrameLoad;
 static u32 frameCnt;
 static u32 lastSubTick;
 
+#if (ENABLE_CPLUSPLUS != 0)
 extern void (*__CTOR_LIST__)();
 void __do_global_constructors()
 {
@@ -138,6 +139,7 @@ void __do_global_constructors()
         constructor++;
     }
 }
+#endif
 
 static void addValueU8(char *dst, char *str, u8 value)
 {
@@ -585,10 +587,11 @@ void _start_entry()
             VDP_init();
         }
     }
-#endif
 
-    // call c++ constructors
+#endif
+#if (ENABLE_CPLUSPLUS != 0)
     __do_global_constructors();
+#endif
 
     // let's the fun go on !
     main(TRUE);

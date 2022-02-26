@@ -48,12 +48,12 @@ static void fastStarFieldFX()
 
     /* Create the scrolling offset table */
     s = 1;
-    for(i = 0; i < TABLE_LEN; i++)
+    for (i = 0; i < TABLE_LEN; i++)
     {
         scroll_PLAN_B_F[i] = FIX16(0);
         do
         {
-            ns = -((random() & 0x3F) + 10);
+            ns = -((getrandom() & 0x3F) + 10);
         }
         while (ns == s);
         scroll_speed[i] = ns;
@@ -62,7 +62,7 @@ static void fastStarFieldFX()
 
     // load tilesets
     Animation* anim = donut.animations[0];
-    for(i = 0; i < anim->numFrame; i++)
+    for (i = 0; i < anim->numFrame; i++)
     {
         TileSet* tileset = anim->frames[i]->tileset;
         VDP_loadTileSet(tileset, vramIndex, TRUE);
@@ -74,7 +74,7 @@ static void fastStarFieldFX()
     SPR_initEx(0);
 
     s = 0;
-    for(i = 0; i < MAX_DONUT; i++)
+    for (i = 0; i < MAX_DONUT; i++)
     {
         // create sprite
         Sprite* spr = SPR_addSprite(&donut, 0, 0, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, 0));
@@ -109,14 +109,14 @@ static void fastStarFieldFX()
     /*    Start !!!! */
     while (TRUE)
     {
-        for(i = 0; i < TABLE_LEN; i++)
+        for (i = 0; i < TABLE_LEN; i++)
         {
             scroll_PLAN_B_F[i] += scroll_speed[i];
             scroll_PLAN_B[i] = fix16ToInt(scroll_PLAN_B_F[i]) & 0x1FF;
         }
 
         /*    Animate the donuts */
-        for(i = 0; i < MAX_DONUT; i++)
+        for (i = 0; i < MAX_DONUT; i++)
         {
             Sprite *spr = sprites[i];
             const u16 frame = ((s >> 4) + i) & 0x7;

@@ -71,7 +71,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 40; i++)
+    for (i = 0; i < 40; i++)
     {
         Sprite* spr;
 
@@ -110,7 +110,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 40; i++)
+    for (i = 0; i < 40; i++)
     {
         Sprite* spr;
 
@@ -149,7 +149,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 40; i++)
+    for (i = 0; i < 40; i++)
     {
         Sprite* spr;
 
@@ -165,7 +165,7 @@ u16 executeSpritesTest(u16 *scores)
 
     // preload animation tilesets
     ind = TILE_USER_INDEX;
-    for(i = 0; i < flare_small.animations[0]->numFrame; i++)
+    for (i = 0; i < flare_small.animations[0]->numFrame; i++)
     {
         TileSet* tileset = flare_small.animations[0]->frames[i]->tileset;
 
@@ -202,7 +202,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 79; i++)
+    for (i = 0; i < 79; i++)
     {
         Sprite* spr;
 
@@ -243,7 +243,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 79; i++)
+    for (i = 0; i < 79; i++)
     {
         Sprite* spr;
 
@@ -259,7 +259,7 @@ u16 executeSpritesTest(u16 *scores)
 
     // preload animation tilesets
     ind = TILE_USER_INDEX;
-    for(i = 0; i < flare_small.animations[0]->numFrame; i++)
+    for (i = 0; i < flare_small.animations[0]->numFrame; i++)
     {
         TileSet* tileset = flare_small.animations[0]->frames[i]->tileset;
 
@@ -296,7 +296,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 40; i++)
+    for (i = 0; i < 40; i++)
     {
         Sprite* spr;
 
@@ -337,7 +337,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // initialize sprites
-    for(i = 0; i < 40; i++)
+    for (i = 0; i < 40; i++)
     {
         Sprite* spr;
 
@@ -353,7 +353,7 @@ u16 executeSpritesTest(u16 *scores)
 
     // preload animation tilesets
     ind = TILE_USER_INDEX;
-    for(i = 0; i < flare_big.animations[0]->numFrame; i++)
+    for (i = 0; i < flare_big.animations[0]->numFrame; i++)
     {
         TileSet* tileset = flare_big.animations[0]->frames[i]->tileset;
 
@@ -412,7 +412,7 @@ u16 executeSpritesTest(u16 *scores)
 
     // preload animation tilesets
     ind = TILE_USER_INDEX;
-    for(i = 0; i < donut.animations[0]->numFrame; i++)
+    for (i = 0; i < donut.animations[0]->numFrame; i++)
     {
         TileSet* tileset = donut.animations[0]->frames[i]->tileset;
 
@@ -534,13 +534,13 @@ static void initPartic(u16 num)
 
     i = num;
     sprite = sprites;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
         Object* o = (Object*) s->data;
 
-        o->mov.x = FIX16(2) - (random() & (FIX16_FRAC_MASK << 2));
-        o->mov.y = FIX16(2) + (random() & (FIX16_FRAC_MASK << 3));
+        o->mov.x = FIX16(2) - (getrandom() & (FIX16_FRAC_MASK << 2));
+        o->mov.y = FIX16(2) + (getrandom() & (FIX16_FRAC_MASK << 3));
         o->pos.x = baseposx + o->mov.x;
         o->pos.y = baseposy + o->mov.y;
         o->timer = i & 1;
@@ -563,7 +563,7 @@ static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc)
 
     i = num;
     sprite = sprites;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
         Object* o = (Object*) s->data;
@@ -581,30 +581,11 @@ static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc)
             }
 
             // re-init particle
-            o->mov.x = FIX16(2) - (random() & (FIX16_FRAC_MASK << 2));
-            o->mov.y = FIX16(2) + (random() & (FIX16_FRAC_MASK << 3));
+            o->mov.x = FIX16(2) - (getrandom() & (FIX16_FRAC_MASK << 2));
+            o->mov.y = FIX16(2) + (getrandom() & (FIX16_FRAC_MASK << 3));
             o->pos.x = baseposx + o->mov.x;
             o->pos.y = baseposy + o->mov.y;
         }
-//        else if (o->pos.y < miny)
-//        {
-//            if (o->mov.y > -(gravity << 4))
-//            {
-//                // re-init particle
-//                o->mov.x = FIX16(2) - (random() & (FIX16_FRAC_MASK << 2));
-//                o->mov.y = FIX16(2) + (random() & (FIX16_FRAC_MASK << 3));
-//                o->pos.x = baseposx + o->mov.x;
-//                o->pos.y = baseposy + o->mov.y;
-//            }
-//            else
-//            {
-//                // handle re-bound
-//                o->pos.x += o->mov.x;
-//                o->pos.y -= o->mov.y;
-//                o->mov.y = -o->mov.y;
-//                o->mov.y >>= 1;
-//            }
-//        }
         else
         {
             o->pos.x += o->mov.x;
@@ -657,7 +638,7 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
         if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
         else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
         else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
-    } while(getTime(TRUE) < endTime);
+    } while (getTime(TRUE) < endTime);
 
     return freeCpuTime >> 6;
 }
@@ -676,7 +657,7 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
     ts = ti >> 4;
     i = min(32, remaining);
     remaining -= i;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
 
@@ -700,7 +681,7 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
     ts = ti >> 4;
     i = min(16, remaining);
     remaining -= i;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
 
@@ -724,7 +705,7 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
     ts = ti >> 3;
     i = min(8, remaining);
     remaining -= i;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
 
@@ -737,7 +718,7 @@ static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
 
         SPR_setPosition(s, (160 - 16) + x, (112 - 16) + y);
 
-		SPR_setFrame(s, (ts + i) & 0x7);
+        SPR_setFrame(s, (ts + i) & 0x7);
         if (preloadedTiles)
             SPR_setVRAMTileIndex(s, tileIndexes[(ts + i) & 0x7]);
 
@@ -811,7 +792,7 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
 
         t -= 4;
         frame++;
-    } while(getTime(TRUE) < endTime);
+    } while (getTime(TRUE) < endTime);
 
     return freeCpuTime >> 6;
 }
@@ -823,17 +804,17 @@ static void initPos(u16 num)
 
     i = num;
     sprite = sprites;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
         Object* o = (Object*) s->data;
 
-        o->pos.x = FIX16(32 + (random() & 0xFF));
-        o->pos.y = FIX16((random() & 0x7F));
-        if (random() & 1) o->mov.x = (random() & 0xF) + FIX16(1);
-        else o->mov.x = -((random() & 0xF) + FIX16(1));
-        if (random() & 1) o->mov.y = (random() & 0x7) + FIX16(0.7);
-        else o->mov.y = -((random() & 0x7) + FIX16(0.7));
+        o->pos.x = FIX16(32 + (getrandom() & 0xFF));
+        o->pos.y = FIX16((getrandom() & 0x7F));
+        if (getrandom() & 1) o->mov.x = (getrandom() & 0xF) + FIX16(1);
+        else o->mov.x = -((getrandom() & 0xF) + FIX16(1));
+        if (getrandom() & 1) o->mov.y = (getrandom() & 0x7) + FIX16(0.7);
+        else o->mov.y = -((getrandom() & 0x7) + FIX16(0.7));
 
         sprite++;
     }
@@ -855,7 +836,7 @@ static void updatePos(u16 num)
 
     i = num;
     sprite = sprites;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
         Object* o = (Object*) s->data;
@@ -889,7 +870,7 @@ static void updateAnim(u16 num)
 
     i = num;
     sprite = sprites;
-    while(i--)
+    while (i--)
     {
         Sprite* s = *sprite;
         Object* o = (Object*) s->data;
@@ -934,7 +915,7 @@ static u16 execute(u16 time, u16 numSpr)
         else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
         else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
 
-    } while(getTime(TRUE) < endTime);
+    } while (getTime(TRUE) < endTime);
 
     return freeCpuTime >> 6;
 }
