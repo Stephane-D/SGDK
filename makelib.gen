@@ -7,40 +7,62 @@ endif
 
 include $(GDK)/common.mk
 
-SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
-SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*.c)
-SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*/*.c)
-SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
-SRC_LIB_S += $(wildcard $(SRC_LIB)/ext/*.s)
-SRC_LIB_S += $(wildcard $(SRC_LIB)/ext/*/*.s)
-SRC_LIB_S80 := $(wildcard $(SRC_LIB)/*.s80)
+SOURCES := $(shell $(FIND) $(SRC_LIB) -type d -wholename "$(SRC_LIB)/boot" -prune -o \
+			-type d -wholename "$(SRC_LIB)/ext/cplusplus" -prune -o -type f)
 
+SRC_LIB_C   := $(filter %.c, $(SOURCES))
+SRC_LIB_S   := $(filter %.s, $(SOURCES))
+SRC_LIB_S80 := $(filter %.s80, $(SOURCES))
 RES_LIB_RES := $(wildcard $(RES_LIB)/*.res)
 
-OBJ_LIB = $(RES_LIB_RES:.res=.o)
+OBJ_LIB := $(RES_LIB_RES:.res=.o)
 OBJ_LIB += $(SRC_LIB_S80:.s80=.o)
 OBJ_LIB += $(SRC_LIB_S:.s=.o)
 OBJ_LIB += $(SRC_LIB_C:.c=.o)
-
 DEP_LIB := $(OBJ_LIB:.o=.d)
-
--include $(DEP_LIB)
-
 LST_LIB := $(SRC_LIB_C:.c=.lst)
 
 INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
-DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -fno-builtin -Wno-unused-parameter $(INCS_LIB) -B$(BIN)
+DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) 				\
+					 -DSGDK_GCC 					\
+					 -m68000 						\
+					 -Wall 							\
+					 -Wextra 						\
+					 -Wno-shift-negative-value 		\
+					 -fno-builtin 					\
+					 -Wno-unused-parameter  		\
+					 -fshort-enums 					\
+					 -fdiagnostics-color=always 	\
+					 $(INCS_LIB)
+
 FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
-#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
-release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -flto
-release: $(LIB)/libmd.a
+release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB)\
+				-fuse-linker-plugin 	\
+				-flto 					\
+				-O3 					\
+				-fno-web 				\
+				-fno-gcse 				\
+				-fno-unit-at-a-time 	\
+				-fomit-frame-pointer   	\
+				-ffast-math
+
+release: $(LIB)/libmd.a $(LIB)/libsys.a $(LIB)/libcpp.a
 
 debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -ggdb -DDEBUG=1
 debug: $(LIB)/libmd_debug.a
 
-asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -S
+asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) 	\
+				-fuse-linker-plugin 	\
+				-flto 					\
+				-O3 					\
+				-fno-web 				\
+				-fno-gcse 				\
+				-fno-unit-at-a-time 	\
+				-fomit-frame-pointer   	\
+				-ffast-math 			\
+				-S
 asm: $(LST_LIB)
 
 
@@ -54,26 +76,28 @@ Asm: asm
 
 .PHONY: clean
 
-
 cleanlst:
-	$(RM) -f $(LST_LIB)
+	@$(RM) -f $(LST_LIB)
 
 cleandep:
-	$(RM) -f $(DEP_LIB)
+	@$(RM) -f $(DEP_LIB)
 
 cleanobj:
-	$(RM) -f $(OBJ_LIB)
+	@$(RM) -f $(OBJ_LIB) $(SRC_LIB)/ext/cplusplus/syscalls.o $(SRC_LIB)/ext/cplusplus/supportcxx.o
 
 cleanrelease: cleanobj cleandep cleanlst
-	$(RM) -f $(LIB)/libmd.a out.lst cmd_
+	@$(RM) -f $(LIB)/libmd.a $(LIB)/libsys.a $(LIB)/libcpp.a out.lst
 
 cleandebug: cleanobj cleandep cleanlst
-	$(RM) -f $(LIB)/libmd_debug.a out.lst cmd_
+	@$(RM) -f $(LIB)/libmd_debug.a out.lst
 
 cleanasm: cleanlst
 
+distclean: cleanobj cleandep cleanlst
+
 clean: cleanobj cleandep cleanlst
-	$(RM) -f $(LIB)/libmd.a $(LIB)/libmd_debug.a out.lst cmd_
+	@$(ECHO) " Clean artifacts"
+	@$(RM) -f $(LIB)/libmd.a $(LIB)/libmd_debug.a $(LIB)/libsys.a $(LIB)/libcpp.a out.lst
 
 cleanall: clean
 cleanAll: clean
@@ -85,35 +109,54 @@ cleanDebug: cleandebug
 cleanAsm: cleanasm
 
 
-$(LIB)/libmd.a: cmd_
-	$(AR) rs $(LIB)/libmd.a $(LTO_PLUGIN) @cmd_
-	$(RM) cmd_
+$(LIB)/libmd.a: $(OBJ_LIB)
+	@$(ECHO) " AR $(notdir $@)"
+	@$(AR) rcs $@ --plugin=$(PLUGIN) $^
 
-$(LIB)/libmd_debug.a: cmd_
-	$(AR) rs $(LIB)/libmd_debug.a $(LTO_PLUGIN) @cmd_
-	$(RM) cmd_
+$(LIB)/libmd_debug.a: $(OBJ_LIB)
+	@$(ECHO) " AR $(notdir $@)"
+	@$(AR) rcs $@ --plugin=$(PLUGIN) $^
 
-cmd_ : $(OBJ_LIB)
-	$(ECHO) "$(OBJ_LIB)" > cmd_
+$(LIB)/libsys.a: $(SRC_LIB)/ext/cplusplus/syscalls.o
+	@$(ECHO) " AR $(notdir $@)"
+	@$(AR) rcs $@ --plugin=$(PLUGIN) $^
 
+$(LIB)/libcpp.a: $(SRC_LIB)/ext/cplusplus/supportcxx.o
+	@$(ECHO) " AR $(notdir $@)"
+	@$(AR) rcs $@ --plugin=$(PLUGIN) $^
 
 %.lst: %.c
-	$(CC) $(FLAGS_LIB) -c $< -o $@
+	@$(ECHO) " CC $(notdir $<)"
+	@$(CC) $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.c
-	$(CC) $(FLAGS_LIB) -MMD -c $< -o $@
+	@$(ECHO) " CC $(notdir $<)"
+	@$(CC) $(FLAGS_LIB) -MMD -c $< -o $@
 
 %.o: %.s
-	$(CC) -x assembler-with-cpp -MMD $(FLAGS_LIB) -c $< -o $@
+	@$(ECHO) " AS $(notdir $<)"
+	@$(CC) -x assembler-with-cpp -MMD $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.rs
-	$(CC) -x assembler-with-cpp $(FLAGS_LIB) -c $*.rs -o $@
+	@$(ECHO) " RS $(notdir $<)"
+	@$(CC) -x assembler-with-cpp $(FLAGS_LIB) -c $*.rs -o $@
 
 %.rs: %.res
-	$(RESCOMP) $*.res $*.rs -dep $*.o
+	@$(RESCOMP) $*.res $*.rs -dep $*.o
 
 %.o80: %.s80
-	$(ASMZ80) $(FLAGSZ80_LIB) $< $@ out.lst
+	@$(ECHO) " Z80 $(notdir $<)"
+	@$(ASMZ80) $(FLAGSZ80_LIB) $< $@ out.lst
 
 %.s: %.o80
-	$(BINTOS) $<
+	@$(BINTOS) $<
+
+$(SRC_LIB)/ext/cplusplus/supportcxx.o: $(SRC_LIB)/ext/cplusplus/supportcxx.cpp
+	@$(ECHO) " CXX $(notdir $<)"
+	@$(CXX) $(FLAGS_LIB) -c $< -o $@
+
+$(SRC_LIB)/ext/cplusplus/syscalls.o: $(SRC_LIB)/ext/cplusplus/syscalls.c
+	@$(ECHO) " CC $(notdir $<)"
+	@$(CC) $(FLAGS_LIB) -c $< -o $@
+
+-include $(DEP_LIB)

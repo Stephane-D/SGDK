@@ -117,7 +117,7 @@ u16 bgBaseTileIndex[2];
 bool alternateScrollMethod;
 bool paused;
 
-int main(u16 hard)
+int main(bool hard)
 {
     u16 palette[64];
     u16 ind;
@@ -260,7 +260,7 @@ int main(u16 hard)
 
 //    reseted = FALSE;
 
-    while(TRUE)
+    while (TRUE)
     {
         handleInput();
 
@@ -391,7 +391,7 @@ static void updatePhysic()
     else enemiesPosX[0] -= FIX32(1.5);
     if (enemiesXOrder[1] > 0) enemiesPosX[1] += FIX32(0.7);
     else enemiesPosX[1] -= FIX32(0.7);
-    for(i = 0; i < 2; i++)
+    for (i = 0; i < 2; i++)
     {
         if ((enemiesPosX[i] >= MAX_POSX) || (enemiesPosX[i] <= MIN_POSX))
             enemiesXOrder[i] = -enemiesXOrder[i];
@@ -570,7 +570,7 @@ static void updateMap(VDPPlane plane, Map* map, s16 xmt, s16 ymt)
         cxmt += 21;
 
         // need to update map column on right
-        while(deltaX--)
+        while (deltaX--)
         {
             MAP_getTilemapRect(map, cxmt, ymt, 1, 16, TRUE, tilemapBuf + bufOffset);
             VDP_setTileMapDataColumnFast(plane, tilemapBuf + bufOffset, (cxmt * 2) + 0, ymt * 2, 16 * 2, DMA_QUEUE);
@@ -585,7 +585,7 @@ static void updateMap(VDPPlane plane, Map* map, s16 xmt, s16 ymt)
     else
     {
         // need to update map column on left
-        while(deltaX++)
+        while (deltaX++)
         {
             cxmt--;
             MAP_getTilemapRect(map, cxmt, ymt, 1, 16, TRUE, tilemapBuf + bufOffset);
@@ -604,7 +604,7 @@ static void updateMap(VDPPlane plane, Map* map, s16 xmt, s16 ymt)
         cymt += 16;
 
         // need to update map row on bottom
-        while(deltaY--)
+        while (deltaY--)
         {
             MAP_getTilemapRect(map, xmt, cymt, 21, 1, FALSE, tilemapBuf + bufOffset);
             VDP_setTileMapDataRow(plane, tilemapBuf + bufOffset, (cymt * 2) + 0, (xmt * 2), 21 * 2, DMA_QUEUE);
@@ -619,7 +619,7 @@ static void updateMap(VDPPlane plane, Map* map, s16 xmt, s16 ymt)
     else
     {
         // need to update map row on top
-        while(deltaY++)
+        while (deltaY++)
         {
             cymt--;
             MAP_getTilemapRect(map, xmt, cymt, 21, 1, FALSE, tilemapBuf + bufOffset);

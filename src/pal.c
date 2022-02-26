@@ -11,7 +11,7 @@
 #include "maths.h"
 
 #if (ENABLE_NEWLIB == 1)
-#include <string.h>	// For memcpy
+#include <string.h> // For memcpy
 #endif
 
 #define PALETTEFADE_FRACBITS    8
@@ -226,7 +226,7 @@ void PAL_getColors(u16 index, u16* dest, u16 count)
     u32* dl = (u32*) dest;
 
     u16 il = count >> 4;
-    while(il--)
+    while (il--)
     {
         *dl++ = *pl;
         *dl++ = *pl;
@@ -242,7 +242,7 @@ void PAL_getColors(u16 index, u16* dest, u16 count)
     u16* dw = (u16*) dl;
 
     u16 i = count & 0xF;
-    while(i--) *dw++ = *pw;
+    while (i--) *dw++ = *pw;
 }
 
 void PAL_getPalette(u16 numPal, u16* dest)
@@ -309,7 +309,7 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlan
     if (forceWaitVBlank) SYS_doVBlankProcess();
 
     // use DMA for long transfer
-    PAL_setColors(ind, src, len, (len > 16)?DMA:CPU);
+    PAL_setColors(ind, src, len, (len > 16) ? DMA : CPU);
 }
 
 //static void setFadePalette(u16 ind, const u16 *src, u16 len)
@@ -366,7 +366,7 @@ bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, 
     s16 *stepG = fadeSG;
     s16 *stepB = fadeSB;
 
-    while(len--)
+    while (len--)
     {
         const u16 s = *src++;
         const s16 RS = ((s & VDPPALETTE_REDMASK) >> VDPPALETTE_REDSFT) << PALETTEFADE_FRACBITS;
@@ -409,7 +409,7 @@ static bool doFadeStepInternal(bool forceWaitVBlank)
 
         // compute the next fade palette
         u16 i = fadeSize;
-        while(i--)
+        while (i--)
         {
             u16 col;
 
@@ -529,9 +529,9 @@ void PAL_fadeInAll(const u16* pal, u16 numFrame, bool async)
 }
 
 
-u16 PAL_isDoingFade()
+bool PAL_isDoingFade()
 {
-    return (VBlankProcess & PROCESS_PALETTE_FADING)?TRUE:FALSE;
+    return (VBlankProcess & PROCESS_PALETTE_FADING) ? TRUE : FALSE;
 }
 
 void PAL_waitFadeCompletion()

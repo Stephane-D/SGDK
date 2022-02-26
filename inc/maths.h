@@ -19,7 +19,7 @@ extern const fix16 log2tab16[0x10000];
 extern const fix16 log10tab16[0x10000];
 extern const fix16 sqrttab16[0x10000];
 
-
+#ifndef __cplusplus
 /**
  *  \brief
  *      Returns the lowest value between X an Y.
@@ -38,13 +38,14 @@ extern const fix16 sqrttab16[0x10000];
  */
 #define clamp(X, L, H)   (min(max((X), (L)), (H)))
 
-#if (ENABLE_NEWLIB == 0)
+//#if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Returns the absolute value of X.
  */
-#define abs(X)      (((X) < 0)?-(X):(X))
-#endif  // ENABLE_NEWLIB
+//#define abs(X)      (((X) < 0)?-(X):(X))
+//#endif  // ENABLE_NEWLIB
+#endif // avoid macro redefinition
 
 #ifndef PI
 /**

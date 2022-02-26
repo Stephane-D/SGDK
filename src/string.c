@@ -20,8 +20,8 @@
 #define P10 10000000000
 
 #if (ENABLE_NEWLIB == 0)
-static const char const uppercase_hexchars[] = "0123456789ABCDEF";
-static const char const lowercase_hexchars[] = "0123456789abcdef";
+static const char uppercase_hexchars[] = "0123456789ABCDEF";
+static const char lowercase_hexchars[] = "0123456789abcdef";
 #endif  // ENABLE_NEWLIB
 static const char digits[] =
     "0001020304050607080910111213141516171819"
@@ -146,7 +146,7 @@ char *strreplacechar(char *str, char oldc, char newc)
     char *s;
 
     s =  str;
-    while(*s)
+    while (*s)
     {
         if (*s == oldc)
             *s = newc;
@@ -186,7 +186,7 @@ u16 uintToStr(u32 value, char *str, u16 minsize)
         const u16 v1 = value / (u16) 10000;
         const u16 v2 = value % (u16) 10000;
 
-        len = uint16ToStr(v1, str, (minsize > 4)?(minsize - 4):1);
+        len = uint16ToStr(v1, str, (minsize > 4) ? (minsize - 4) : 1);
         len += uint16ToStr(v2, str + len, 4);
     }
     else len = uint16ToStr(value, str, minsize);
@@ -229,7 +229,7 @@ static u16 uint16ToStr(u16 value, char *str, u16 minsize)
     }
 
     // pad with '0'
-    while(dst != str) *--dst = '0';
+    while (dst != str) *--dst = '0';
 
     return length;
 }
@@ -245,7 +245,7 @@ u16 intToHex(u32 value, char *str, u16 minsize)
 
     src = &data[16];
     res = value;
-    left = (minsize > 15)?15:minsize;
+    left = (minsize > 15) ? 15 : minsize;
 
     cnt = 0;
     while (res)
@@ -270,7 +270,7 @@ u16 intToHex(u32 value, char *str, u16 minsize)
     }
 
     dst = str;
-    while(cnt--) *dst++ = *src++;
+    while (cnt--) *dst++ = *src++;
     *dst = 0;
 
     return dst - str;
@@ -298,7 +298,7 @@ void fix32ToStr(fix32 value, char *str, u16 numdec)
     {
         // need to add ending '0'
         dst += len;
-        while(len++ < numdec) *dst++ = '0';
+        while (len++ < numdec) *dst++ = '0';
         // mark end here
         *dst = 0;
     }
@@ -327,7 +327,7 @@ void fix16ToStr(fix16 value, char *str, u16 numdec)
     {
         // need to add ending '0'
         dst += len;
-        while(len++ < numdec) *dst++ = '0';
+        while (len++ < numdec) *dst++ = '0';
         // mark end here
         *dst = 0;
     }
@@ -355,7 +355,7 @@ static u16 skip_atoi(const char **s)
 {
     u16 i = 0;
 
-    while(isdigit(**s))
+    while (isdigit(**s))
         i = (i * 10) + *((*s)++) - '0';
 
     return i;
@@ -459,12 +459,12 @@ repeat:
         {
         case 'c':
             if (!left_align)
-                while(--field_width > 0)
+                while (--field_width > 0)
                     *str++ = ' ';
 
             *str++ = (unsigned char) va_arg(args, s32);
 
-            while(--field_width > 0)
+            while (--field_width > 0)
                 *str++ = ' ';
 
             continue;
@@ -478,13 +478,13 @@ repeat:
             len = strnlen(s, precision);
 
             if (!left_align)
-                while(len < field_width--)
+                while (len < field_width--)
                     *str++ = ' ';
 
             for (i = 0; i < len; ++i)
                 *str++ = *s++;
 
-            while(len < field_width--)
+            while (len < field_width--)
                 *str++ = ' ';
 
             continue;
@@ -514,7 +514,7 @@ hexa_conv:
             if (!num)
                 *--s = '0';
 
-            while(num)
+            while (num)
             {
                 *--s = hexchars[num & 0xF];
                 num >>= 4;
@@ -537,7 +537,7 @@ hexa_conv:
             if (!num)
                 *--s = '0';
 
-            while(num)
+            while (num)
             {
                 *--s = (num % 10) + 0x30;
                 num /= 10;
@@ -560,7 +560,7 @@ hexa_conv:
             {
                 num = 1;
 
-                while(i)
+                while (i)
                 {
                     *--s = 0x30 - (i % 10);
                     i /= 10;
@@ -570,7 +570,7 @@ hexa_conv:
             {
                 num = 0;
 
-                while(i)
+                while (i)
                 {
                     *--s = (i % 10) + 0x30;
                     i /= 10;
@@ -605,12 +605,12 @@ hexa_conv:
         {
             if (zero_pad)
             {
-                while(len < field_width--)
+                while (len < field_width--)
                     *str++ = '0';
             }
             else
             {
-                while(len < field_width--)
+                while (len < field_width--)
                     *str++ = ' ';
             }
         }
@@ -618,7 +618,7 @@ hexa_conv:
         for (i = 0; i < len; ++i)
             *str++ = *s++;
 
-        while(len < field_width--)
+        while (len < field_width--)
             *str++ = ' ';
     }
 

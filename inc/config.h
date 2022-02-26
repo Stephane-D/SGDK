@@ -43,11 +43,11 @@
  *      Set it to 1 to enable KDebug logging (Gens KMod) to log some errors (as memory allocation).
  */
 #if (DEBUG != 0)
-    #define LIB_DEBUG       1
+#define LIB_DEBUG       1
 #else
-    #define LIB_DEBUG       0
-    #undef LIB_LOG_LEVEL
-    #define LIB_LOG_LEVEL   LOG_LEVEL_DISABLE
+#define LIB_DEBUG       0
+#undef LIB_LOG_LEVEL
+#define LIB_LOG_LEVEL   LOG_LEVEL_DISABLE
 #endif
 
 /**
@@ -87,8 +87,9 @@
  *  \brief
  *      Set it to 1 if you want to use newlib with SGDK.<br>
  *      That will disable any standard methods from SGDK to replace them by newlib library implementation.
+ *      Needed for C++ support.
  */
-#define ENABLE_NEWLIB       0
+#define ENABLE_NEWLIB       1
 
 /**
  *  \brief

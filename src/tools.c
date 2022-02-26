@@ -12,6 +12,9 @@
 #include "mapper.h"
 #include "vdp.h"
 
+#if (ENABLE_NEWLIB == 1)
+#include <stdarg.h>
+#endif
 
 // forward
 static u16 getBitmapAllocSize(const Bitmap *bitmap);
@@ -31,7 +34,7 @@ void setRandomSeed(u16 seed)
     randbase = seed ^ 0xD94B;
 }
 
-u16 random()
+u16 getrandom()
 {
     randbase ^= (randbase >> 1) ^ GET_HVCOUNTER;
     randbase ^= (randbase << 1);
@@ -50,9 +53,9 @@ fix32 getFPS_f()
 }
 
 
-#if (ENABLE_NEWLIB == 0)
+//#if (ENABLE_NEWLIB == 0)
 extern u16 vsprintf(char *buf, const char *fmt, va_list args);
-#endif  // ENABLE_NEWLIB
+//#endif  // ENABLE_NEWLIB
 
 u16 kprintf(const char *fmt, ...)
 {
@@ -1123,7 +1126,7 @@ Image *unpackImage(const Image *src, Image *dest)
 
 u32 unpack(u16 compression, u8 *src, u8 *dest)
 {
-    switch(compression)
+    switch (compression)
     {
 //        case COMPRESSION_NONE:
 //            // cannot do anything...
@@ -1133,14 +1136,14 @@ u32 unpack(u16 compression, u8 *src, u8 *dest)
 //            memcpy(dest, &src[offset], size);
 //            break;
 
-        case COMPRESSION_APLIB:
-            return aplib_unpack(src, dest);
+    case COMPRESSION_APLIB:
+        return aplib_unpack(src, dest);
 
-        case COMPRESSION_LZ4W:
-            return lz4w_unpack(src, dest);
+    case COMPRESSION_LZ4W:
+        return lz4w_unpack(src, dest);
 
-        default:
-            return 0;
+    default:
+        return 0;
     }
 }
 

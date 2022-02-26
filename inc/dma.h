@@ -120,7 +120,8 @@ void DMA_initEx(u16 size, u16 capacity, u16 bufferSize);
  *  \see DMA_setAutoFlush()
  *  \see DMA_flushQueue()
  */
-u16 DMA_getAutoFlush();
+bool DMA_getAutoFlush();
+
 /**
  *  \brief
  *      If set to TRUE (default) then the DMA_flushQueue() method is automatically called at VBlank
@@ -130,6 +131,7 @@ u16 DMA_getAutoFlush();
  *  \see DMA_flushQueue()
  */
 void DMA_setAutoFlush(bool value);
+
 /**
  *  \brief
  *      Returns the maximum allowed number of pending transfer in the queue (allocated queue size).
@@ -137,6 +139,7 @@ void DMA_setAutoFlush(bool value);
  *  \see DMA_setMaxQueueSize()
  */
 u16 DMA_getMaxQueueSize();
+
 /**
  *  \brief
  *      Sets the maximum allowed number of pending transfer in the queue (allocated queue size).<br>
@@ -220,7 +223,7 @@ void DMA_setBufferSizeToDefault();
  *
  *  \see DMA_setIgnoreOverCapacity()
  */
-u16 DMA_getIgnoreOverCapacity();
+bool DMA_getIgnoreOverCapacity();
 /**
  *  \brief
  *      Set the "over capacity" DMA queue strategy (default is FALSE).

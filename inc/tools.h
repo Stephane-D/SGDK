@@ -55,7 +55,7 @@ void setRandomSeed(u16 seed);
  *  \brief
  *      Returns a random u16 integer value.
  */
-u16 random();
+u16 getrandom();
 
 /**
  *  \deprecated
@@ -441,7 +441,7 @@ void qsort_s32(s32 *data, u16 left, u16 right);
  *  \param cb
  *      comparator callback used to compare 2 objects.
  */
-void qsort(void** data, u16 len, _comparatorCallback* cb);
+void qsort_ptr(void** data, u16 len, _comparatorCallback* cb);
 
 
 

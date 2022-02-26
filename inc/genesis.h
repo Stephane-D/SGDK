@@ -3,6 +3,10 @@
 
 #define SGDK_VERSION    1.70
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 #define SGDK            TRUE
@@ -67,5 +71,10 @@
 #define logo_lib sgdk_logo
 #define font_lib font_default
 #define font_pal_lib font_pal_default
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif // _GENESIS_H_

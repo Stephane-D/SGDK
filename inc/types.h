@@ -10,6 +10,7 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+
 /**
  *  \brief
  *      FALSE define (equivalent to 0).
@@ -71,13 +72,14 @@
 #define MAX_S32 0x7FFFFFFF
 #endif
 
-
+#ifndef __cplusplus
 /**
  *  \typedef bool
  *      boolean type, to be used with TRUE and FALSE constant.
- *      (internally set as unsigned short)
+ *      (internally set as c99 _Bool native type)
  */
-typedef unsigned short bool;
+typedef _Bool bool;
+#endif
 
 /**
  *  \typedef s8

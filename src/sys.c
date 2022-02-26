@@ -103,7 +103,7 @@ __attribute__((externally_visible)) VoidCallback *eintCB;
 VoidCallback *vblankCB;
 
 // exception state consumes 78 bytes of memory
-__attribute__((externally_visible)) u32 registerState[8+8];
+__attribute__((externally_visible)) u32 registerState[8 + 8];
 __attribute__((externally_visible)) u32 pcState;
 __attribute__((externally_visible)) u32 addrState;
 __attribute__((externally_visible)) u16 ext1State;
@@ -125,6 +125,19 @@ static u16 cpuFrameLoad;
 static u32 frameCnt;
 static u32 lastSubTick;
 
+extern void (*__CTOR_LIST__)();
+void __do_global_constructors()
+{
+    void (**constructor)() = &__CTOR_LIST__;
+    u16 total = *(u16 *)constructor;
+    constructor++;
+    while (total)
+    {
+        (*constructor)();
+        total--;
+        constructor++;
+    }
+}
 
 static void addValueU8(char *dst, char *str, u8 value)
 {
@@ -257,7 +270,7 @@ static u16 showStackState(u16 pos)
     u32 *sp = (u32*) registerState[15];
 
     u16 i = 0;
-    while(i < 24)
+    while (i < 24)
     {
         strclr(s);
         addValueU8(s, "SP+", i * 4);
@@ -313,7 +326,7 @@ void _buserror_callback()
 
     showBusAddressErrorDump(5);
 
-    while(1);
+    while (1);
 }
 
 // address error default callback
@@ -325,7 +338,7 @@ void _addresserror_callback()
 
     showBusAddressErrorDump(5);
 
-    while(1);
+    while (1);
 }
 
 // illegal instruction exception default callback
@@ -337,7 +350,7 @@ void _illegalinst_callback()
 
     showException4WDump(5);
 
-    while(1);
+    while (1);
 }
 
 // division by zero exception default callback
@@ -349,7 +362,7 @@ void _zerodivide_callback()
 
     showExceptionDump(5);
 
-    while(1);
+    while (1);
 }
 
 // CHK instruction default callback
@@ -361,7 +374,7 @@ void _chkinst_callback()
 
     showException4WDump(12);
 
-    while(1);
+    while (1);
 }
 
 // TRAPV instruction default callback
@@ -373,7 +386,7 @@ void _trapvinst_callback()
 
     showException4WDump(5);
 
-    while(1);
+    while (1);
 }
 
 // privilege violation exception default callback
@@ -385,7 +398,7 @@ void _privilegeviolation_callback()
 
     showExceptionDump(5);
 
-    while(1);
+    while (1);
 }
 
 // trace default callback
@@ -409,7 +422,7 @@ void _errorexception_callback()
 
     showExceptionDump(5);
 
-    while(1);
+    while (1);
 }
 
 // level interrupt default callback
@@ -443,7 +456,6 @@ void _extint_dummy_callback()
     //
 }
 
-
 void _start_entry()
 {
     u32 banklimit;
@@ -454,7 +466,7 @@ void _start_entry()
     // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so the stack as well)
     dst = (u16*) RAM;
     len = 0x8000;
-    while(len--) *dst++ = 0;
+    while (len--) *dst++ = 0;
 
     // then do variables initialization (those which have specific value)
 
@@ -511,7 +523,7 @@ void _start_entry()
             // display logo (use BMP mode for that)
             BMP_init(TRUE, BG_A, PAL0, FALSE);
 
-    #if (ZOOMING_LOGO != 0)
+#if (ZOOMING_LOGO != 0)
             // init fade in to 30 step
             if (VDP_initFading(0, logo_pal->length - 1, palette_black, logo_pal->data, 30))
             {
@@ -519,7 +531,7 @@ void _start_entry()
                 u16 size = LOGO_SIZE;
 
                 // while zoom not completed
-                while(size > 0)
+                while (size > 0)
                 {
                     // sort of log decrease
                     if (size > 20) size = size - (size / 6);
@@ -539,12 +551,12 @@ void _start_entry()
                 }
 
                 // while fade not completed
-                while(VDP_doFadingStep());
+                while (VDP_doFadingStep());
             }
 
             // wait 1 second
             waitTick(TICKPERSECOND * 1);
-    #else
+#else
             // set palette 0 to black
             PAL_setPalette(PAL0, palette_black, CPU);
 
@@ -558,7 +570,7 @@ void _start_entry()
 
             // wait 1.5 second
             waitTick(TICKPERSECOND * 1.5);
-    #endif
+#endif
             // fade out logo
             PAL_fadeOutPalette(PAL0, 20, FALSE);
 
@@ -575,11 +587,14 @@ void _start_entry()
     }
 #endif
 
+    // call c++ constructors
+    __do_global_constructors();
+
     // let's the fun go on !
     main(TRUE);
 
     // for safety
-    while(TRUE) SYS_doVBlankProcess();
+    while (TRUE) SYS_doVBlankProcess();
 }
 
 void _reset_entry()
@@ -589,7 +604,7 @@ void _reset_entry()
     main(FALSE);
 
     // for safety
-    while(TRUE) SYS_doVBlankProcess();
+    while (TRUE) SYS_doVBlankProcess();
 }
 
 static void internal_reset()
@@ -600,7 +615,7 @@ static void internal_reset()
 #if (ENABLE_BANK_SWITCH != 0)
     // reset banks
     u16 len = 8;
-    while(--len) SYS_setBank(len, len);
+    while (--len) SYS_setBank(len, len);
 #endif
 
     vblankCB = _vblank_dummy_callback;
@@ -626,7 +641,7 @@ static void internal_reset()
 
     // safe to check for DMA completion before dealing with VDP (this also clear internal VDP latch)
     // WARNING: it's important to not access the VDP too soon or you can lock the system (it's why we do it just here) !
-    while(GET_VDP_STATUS(VDP_DMABUSY_FLAG));
+    while (GET_VDP_STATUS(VDP_DMABUSY_FLAG));
 
     // init part (always do MEM_init() first)
     MEM_init();
@@ -808,10 +823,10 @@ void SYS_disableInts()
     {
         if (disableIntStack <= 0)
             KLog_S1_("SYS_disableInts() fails: need ", (-disableIntStack) + 1, " more");
-    #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
         else
             KLog_S1("SYS_disableInts() info: inner call = ", disableIntStack);
-    #endif
+#endif
     }
 #endif
 }
@@ -836,10 +851,10 @@ void SYS_enableInts()
     {
         if (disableIntStack < 0)
             KLog_S1("SYS_enableInts() fails: already enabled = ", disableIntStack);
-    #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
         else
             KLog_S1_("SYS_enableInts() info: inner call, need ", disableIntStack, " more");
-    #endif
+#endif
     }
 #endif
 }
@@ -917,7 +932,7 @@ void SYS_hideFrameLoad()
 
 bool SYS_isInVInt()
 {
-    return (intTrace & IN_VINT)?TRUE:FALSE;
+    return (intTrace & IN_VINT) ? TRUE : FALSE;
 }
 
 u16 SYS_isNTSC()
@@ -1006,7 +1021,7 @@ bool addFrameLoad(u16 frameLoad, u32 vtime)
 
 u16 SYS_getCPULoad()
 {
-   return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 256);
+    return (cpuFrameLoad * ((u16) 100)) / (u16) (LOAD_MEAN_FRAME_NUM * 256);
 }
 
 
@@ -1016,23 +1031,23 @@ u16 SYS_computeChecksum()
     u32 chk;
 
     chk = 0;
-    for(adr = 0; adr < ROM_SIZE; adr += BANK_SIZE)
+    for (adr = 0; adr < ROM_SIZE; adr += BANK_SIZE)
     {
         // dword x8 checksum
         u16 len = BANK_SIZE / (4 * 8);
         // get source pointer
         u32* src = (u32 *) FAR(adr);
 
-        while(len--)
+        while (len--)
         {
-          chk ^= *src++;
-          chk ^= *src++;
-          chk ^= *src++;
-          chk ^= *src++;
-          chk ^= *src++;
-          chk ^= *src++;
-          chk ^= *src++;
-          chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
+            chk ^= *src++;
         }
     }
 
@@ -1057,5 +1072,5 @@ void SYS_die(char *err)
     VDP_drawText("cannot continue...", 4, 3);
     if (err) VDP_drawText(err, 0, 5);
 
-    while(1);
+    while (1);
 }

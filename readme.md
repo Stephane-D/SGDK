@@ -75,7 +75,7 @@ https://github.com/SONIC3D/gendev-macos
 
 ### DOCKER
 
-*A modern way to install it on any environement is to use Docker.*
+*A modern way to install it on any environment is to use Docker.*
 
 To build the `sgdk` base image:
 
