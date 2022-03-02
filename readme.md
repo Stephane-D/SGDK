@@ -100,6 +100,12 @@ You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK
 To go even further you can also install the VS extension made by zerasul:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
+## SUPPORT SGDK
+
+SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
+
+Thanks =) I wish you a great and happy coding time !
+
 ## THANKS
 
 - Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi support and others nice additions.
@@ -121,17 +127,16 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 - nolddor for fixes / contributions.
 - starling13 for fixes.
 - davidgf for its contributions (apultra tool, improved assembly LTO optimization).
-- Banshaku for its contribution on improving makefile and deps generation with rescomp.
-- Ohsat for making nice tutorials.
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
 - all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
 
-## SUPPORT SGDK
+## SPECIAL THANKS
 
-SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
-
-Thanks =) I wish you a great and happy coding time !
+Of course I thanks all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for
+my premium patreon supporters (100$ / month):
+- Bitmap Bureau (Xeno Crisis team)
+- Neofid Studios (Demons of Asteborg team)
 
 ## POWERED BY THE SGDK!
 
