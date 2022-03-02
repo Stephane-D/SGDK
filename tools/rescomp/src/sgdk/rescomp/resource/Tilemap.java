@@ -9,6 +9,8 @@ import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.rescomp.type.Tile;
+import sgdk.tool.ImageUtil;
+import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Tilemap extends Resource
 {
@@ -80,6 +82,41 @@ public class Tilemap extends Resource
     {
         return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heigthTile * 8, 0, 0, widthTile, heigthTile,
                 opt, compression);
+    }
+
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, String imgFile, TileOptimization tileOpt,
+            Compression compression) throws IOException
+    {
+        // retrieve basic infos about the image
+        final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
+
+        // check BPP is correct
+        if (imgInfo.bpp > 8)
+            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
+                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
+
+        // set width and height
+        final int w = imgInfo.w;
+        final int h = imgInfo.h;
+
+        // check size is correct
+        if ((w & 7) != 0)
+            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", should be a multiple of 8.");
+        if ((h & 7) != 0)
+            throw new IllegalArgumentException("'" + imgFile + "' height is '" + h + ", should be a multiple of 8.");
+
+        // get size in tile
+        final int wt = w / 8;
+        final int ht = h / 8;
+
+        // get image data
+        byte[] data = ImageUtil.getIndexedPixels(imgFile);
+        // convert to 8 bpp
+        data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
+
+        // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
+        // build TILEMAP with wanted compression
+        return Tilemap.getTilemap(id, tileset, mapBase, data, wt, ht, tileOpt, compression);
     }
 
     public final int w;

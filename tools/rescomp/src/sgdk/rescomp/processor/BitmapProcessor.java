@@ -26,7 +26,7 @@ public class BitmapProcessor implements Processor
             System.out.println("Wrong BITMAP definition");
             System.out.println("BITMAP name \"file\" [compression]");
             System.out.println("  name          Bitmap variable name");
-            System.out.println("  file          the image to convert to Bitmap structure (should be a 8bpp .bmp or .png)");
+            System.out.println("  file          the image to convert to Bitmap structure (indexed colors BMP or PNG image)");
             System.out.println("  compression   compression type, accepted values:");
             System.out.println("                 -1 / BEST / AUTO = use best compression");
             System.out.println("                  0 / NONE        = no compression (default)");

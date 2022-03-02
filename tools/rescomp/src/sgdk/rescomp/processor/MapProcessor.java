@@ -29,18 +29,14 @@ public class MapProcessor implements Processor
             System.out.println("Wrong MAP definition");
             System.out.println("MAP name \"file\" tileset_id [compression [mapbase]]");
             System.out.println("  name          Map variable name");
-            System.out.println(
-                    "  file          the map file to convert to Map structure (8bpp BMP or PNG image file, TMX Tiled file not yet supported)");
-            System.out
-                    .println("  tileset_id    base tileset resource to use (allow to share tileset with several map)");
+            System.out.println("  file          the map file to convert to Map structure (indexed color BMP or PNG image file, TMX Tiled file not yet supported)");
+            System.out.println("  tileset_id    base tileset resource to use (allow to share tileset with several map)");
             System.out.println("  compression   compression type, accepted values:");
             System.out.println("                 -1 / BEST / AUTO = use best compression");
             System.out.println("                  0 / NONE        = no compression (default)");
             System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println(
-                    "                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println(
-                    "  mapbase       define the base tilemap value, useful to set a default priority, palette and base tile index offset");
+            System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("  mapbase       define the base tilemap value, useful to set a default priority, palette and base tile index offset");
 
             return null;
         }

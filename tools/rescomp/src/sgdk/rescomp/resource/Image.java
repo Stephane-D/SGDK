@@ -52,14 +52,16 @@ public class Image extends Resource
         data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
 
         // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
-        // check if image try to use bit 6 (probably mean that we have too much colors in our image)
-        for (byte d : data)
-        {
-            // bit 6 used ?
-            if ((d & 0x40) != 0)
-                throw new IllegalArgumentException("'" + imgFile
-                        + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
-        }
+
+        // just ignore it..
+        // // check if image try to use bit 6 (probably mean that we have too much colors in our image)
+        // for (byte d : data)
+        // {
+        // // bit 6 used ?
+        // if ((d & 0x40) != 0)
+        // throw new IllegalArgumentException("'" + imgFile
+        // + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
+        // }
 
         // build TILESET with wanted compression
         tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht, tileOpt,

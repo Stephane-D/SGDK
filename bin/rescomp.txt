@@ -1,4 +1,4 @@
-ResComp 3.39b (January 2022)
+ResComp 3.40 (March 2022)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -14,9 +14,10 @@ Note that the header file (.h) is generated except if you use the -noheader para
 Supported resource type:
 - BITMAP    bitmapped image type resource, used for the Bitmap SGDK engine (do not use it as tile resource).
 - PALETTE   palette type resource, used as color input for Bitmap, Image or Sprite resource.
-- TILESET   tileset type resource, contains tiles data which are used by Image or Sprite resource.
-- MAP       map type resource, internally contains Palette, Tileset and encoded map optimized to draw large background/plane.
-- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data and can be used to draw a complete background (small).
+- TILESET   tileset type resource, contains tiles data which can be used / shared for TILEMAP and MAP resources.
+- TILEMAP   tilemap type resource, contains tilemap data. It can be used to draw an image or complete (small) plane background.
+- MAP       map type resource, internally contains Palette, Tileset and optimized encoded map to draw large background/plane.
+- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data and can be used to draw an image or complete (small) plane background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
 - XGM       XGM music type resource (.vgm or .xgm file), used to play music.
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
@@ -41,7 +42,7 @@ Syntax:
 PALETTE name file
 
     name            name of the output Bitmap structure
-    file            path of the input image file (should be 8bpp .bmp or .png) or .pal file
+    file            path of the input image file (indexed color BMP or PNG image) or .pal file
 
 
 BITMAP
@@ -53,7 +54,7 @@ Syntax:
 BITMAP name img_file [compression]
 
     name            name of the output Bitmap structure
-    img_file        path of the input image file (should be 8bpp .bmp or .png)
+    img_file        path of the input image file (indexed color BMP or PNG image)
     compression     compression type (use unpackBitmap(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
@@ -64,22 +65,54 @@ BITMAP name img_file [compression]
 TILESET
 -------
 Take an image as input and transform it in SGDK TileSet structure.
-TileSet is used as tiles source for Image and Sprite.
+TileSet is used as tiles source for Image, Map and Sprite resources.
 
 Syntax:
-TILESET name img_file [compression [opt]]
+TILESET name img_file [compression [mapopt]]
 
     name            name of the output TileSet structure
-    img_file        path of the input image file (should be 8bpp .bmp or .png)
+    img_file        path of the input image file (indexed color BMP or PNG image)
     compression     compression type (use unpackTileSet(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    opt             define the optimisation level, accepted values:
+    mapopt          define the optimisation level, accepted values:
                         0 / NONE        = no optimisation, each tile is unique
                         1 / ALL         = ignore duplicated and flipped tile (default)
                         2 / DUPLICATE   = ignore duplicated tile only
+
+
+TILEMAP
+-------
+Take an image as input and transform it in SGDK TileMap structure.
+TileMap is used to draw in background plane, it requires a tileset which can be shared with others tilemaps.
+TILEMAP resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
+
+Syntax:
+TILEMAP name img_file tileset_id [compression [mapopt [mapbase]]]
+
+    name            name of the output TileMap structure
+    img_file        path of the input image file (indexed color BMP or PNG image)
+    tileset_id      base tileset resource to use (allow to share tileset with several tilemaps)
+    compression     compression type (use unpackTileMap(..) to unpack), accepted values:
+                       -1 / BEST / AUTO = use best compression
+                        0 / NONE        = no compression (default)
+                        1 / APLIB       = aplib library (good compression ratio but slow)
+                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
+    mapopt          define the tilemap optimisation level, accepted values:
+                        0 / NONE        = no optimisation (each tile is unique)
+                        1 / ALL         = find duplicated and flipped tile (default)
+                        2 / DUPLICATE   = find duplicated tile only
+    mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                    Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+
+Tips:
+You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
+that all pixel from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
+    bit 6: should be 0 (not used)
+    bit 7: priority information (0=LOW 1=HIGH)
 
 
 MAP
@@ -92,7 +125,7 @@ Syntax:
 MAP name img_file tileset_id [compression [mapbase]]
 
     name            name of the output Map structure
-    img_file        path of the input image file (should be 8bpp .bmp or .png)
+    img_file        path of the input image file (indexed color BMP or PNG image)
     tileset_id      base tileset resource to use (allow to share tileset with several maps)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
@@ -113,7 +146,7 @@ that all pixel from a same tile (block of 8x8 pixels) use the same value otherwi
 IMAGE
 -----
 Take an image as input and transform it in SGDK Image structure.
-Image is used to directly draw image in background plan, it internally contains a Palette, TileSet and TileMap structure.
+Image is used to directly draw image in background plane, it internally contains a Palette, TileSet and TileMap structure.
 IMAGE resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
 Syntax:

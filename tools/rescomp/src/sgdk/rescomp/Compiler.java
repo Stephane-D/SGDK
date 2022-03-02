@@ -23,6 +23,7 @@ import sgdk.rescomp.processor.MapProcessor;
 import sgdk.rescomp.processor.NearProcessor;
 import sgdk.rescomp.processor.PaletteProcessor;
 import sgdk.rescomp.processor.SpriteProcessor;
+import sgdk.rescomp.processor.TilemapProcessor;
 import sgdk.rescomp.processor.TilesetProcessor;
 import sgdk.rescomp.processor.UngroupProcessor;
 import sgdk.rescomp.processor.WavProcessor;
@@ -64,6 +65,7 @@ public class Compiler
         resourceProcessors.add(new PaletteProcessor());
         resourceProcessors.add(new BitmapProcessor());
         resourceProcessors.add(new TilesetProcessor());
+        resourceProcessors.add(new TilemapProcessor());
         resourceProcessors.add(new MapProcessor());
         resourceProcessors.add(new ImageProcessor());
         resourceProcessors.add(new SpriteProcessor());
