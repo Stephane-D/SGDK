@@ -55,18 +55,7 @@ void setRandomSeed(u16 seed);
  *  \brief
  *      Returns a random u16 integer value.
  */
-u16 random();
-
-/**
- *  \deprecated
- *      Uses #SYS_getFPS() instead
- */
-u32 getFPS();
-/**
- *  \deprecated
- *      Uses #SYS_getFPSAsFloat() instead
- */
-fix32 getFPS_f();
+u16 random(void);
 
 
 /**
