@@ -4,7 +4,6 @@
 #include "vdp.h"
 
 #include "vdp_tile.h"
-#include "vdp_pal.h"
 #include "vdp_spr.h"
 #include "vdp_bg.h"
 

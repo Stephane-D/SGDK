@@ -7,7 +7,6 @@
 #include "tools.h"
 #include "string.h"
 #include "dma.h"
-#include "vdp_pal.h"
 #include "vdp_tile.h"
 
 #include "font.h"

@@ -6,7 +6,7 @@
 #include "memory.h"
 #include "mapper.h"
 #include "vdp.h"
-#include "vdp_pal.h"
+#include "vdp_bg.h"
 #include "vdp_spr.h"
 #include "psg.h"
 #include "ym2612.h"
@@ -16,9 +16,6 @@
 #include "bmp.h"
 #include "timer.h"
 #include "string.h"
-#include "vdp.h"
-#include "vdp_bg.h"
-#include "vdp_pal.h"
 #include "sound.h"
 #include "xgm.h"
 #include "dma.h"
@@ -513,7 +510,7 @@ void _start_entry()
 
     #if (ZOOMING_LOGO != 0)
             // init fade in to 30 step
-            if (VDP_initFading(0, logo_pal->length - 1, palette_black, logo_pal->data, 30))
+            if (PAL_initFading(0, logo_pal->length - 1, palette_black, logo_pal->data, 30))
             {
                 // prepare zoom
                 u16 size = LOGO_SIZE;
@@ -530,7 +527,7 @@ void _start_entry()
                     const u32 w = LOGO_SIZE - size;
 
                     // adjust palette for fade
-                    VDP_doFadingStep();
+                    PAL_doFadingStep();
 
                     // zoom logo
                     BMP_loadAndScaleBitmap(logo, 128 - (w >> 1), 80 - (w >> 1), w, w, FALSE);
@@ -539,7 +536,7 @@ void _start_entry()
                 }
 
                 // while fade not completed
-                while(VDP_doFadingStep());
+                while(PAL_doFadingStep());
             }
 
             // wait 1 second
@@ -642,7 +639,7 @@ static void internal_reset()
     Z80_init();
 
     // Sprite engine variables reset (we use to know if sprite engine is initialized)
-    spritesBank = NULL;
+    spritesPool = NULL;
     spriteVramSize = 0;
 
     // enable interrupts

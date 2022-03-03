@@ -9,7 +9,6 @@
 
 #include "vdp.h"
 #include "vdp_tile.h"
-#include "vdp_pal.h"
 #include "vdp_bg.h"
 
 #include "dma.h"
@@ -79,7 +78,7 @@ static void initTilemap(u16 index);
 static void clearVRAMBuffer(u16 index);
 static u16 doBlit();
 static void drawLine_old(u16 x1, u16 y1, s16 dx, s16 dy, s16 step_x, s16 step_y, u8 col);
-static void hint();
+static HINTERRUPT_CALLBACK hint();
 
 
 void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
