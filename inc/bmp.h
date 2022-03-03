@@ -263,14 +263,14 @@ void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority);
  *
  * Release memory used by software bitmap engine (~41 KB).
  */
-void BMP_end();
+void BMP_end(void);
 /**
  *  \brief
  *      Reset the software bitmap engine.
  *
  * Rebuild tilemap for bitmap engine and clear buffers.
  */
-void BMP_reset();
+void BMP_reset(void);
 /**
  *  \brief
  *      Enable back buffer preservation.
@@ -313,7 +313,7 @@ u16 BMP_flip(u16 async);
  *  \brief
  *      Clear bitmap buffer.
  */
-void BMP_clear();
+void BMP_clear(void);
 
 /**
  *  \brief
@@ -347,23 +347,23 @@ u8*  BMP_getReadPointer(u16 x, u16 y);
  *  \brief
  *      Return true (!= 0) if a flip request is pending.
  */
-u16  BMP_hasFlipRequestPending();
+u16  BMP_hasFlipRequestPending(void);
 /**
  *  \brief
  *      Wait until no more flip request is pending.
  */
-void BMP_waitWhileFlipRequestPending();
+void BMP_waitWhileFlipRequestPending(void);
 /**
  *  \brief
  *      Return true (!= 0) if a flip operation is in progress.
  */
-u16  BMP_hasFlipInProgess();
+u16  BMP_hasFlipInProgess(void);
 /**
  *  \brief
  *      Wait until the asynchronous flip operation is completed.<br>
  *      Blit operation is the bitmap buffer transfer to VRAM.<br>
  */
-void BMP_waitFlipComplete();
+void BMP_waitFlipComplete(void);
 
 /**
  *  \brief

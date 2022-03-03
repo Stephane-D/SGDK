@@ -240,7 +240,7 @@ void VDP_clearPlane(VDPPlane plane, bool wait);
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-VDPPlane VDP_getTextPlane();
+VDPPlane VDP_getTextPlane(void);
 /**
  *  \brief
  *      Returns the palette number used to display text.
@@ -248,7 +248,7 @@ VDPPlane VDP_getTextPlane();
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-u16 VDP_getTextPalette();
+u16 VDP_getTextPalette(void);
 /**
  *  \brief
  *      Returns the priority used to display text.
@@ -256,7 +256,7 @@ u16 VDP_getTextPalette();
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
  */
-u16 VDP_getTextPriority();
+u16 VDP_getTextPriority(void);
 
 /**
  *  \brief

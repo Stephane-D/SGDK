@@ -63,7 +63,7 @@ typedef struct
  *  \brief
  *      Reset math 3D engine (reset matrices and transformation parameters mainly).
  */
-void M3D_reset();
+void M3D_reset(void);
 
 /**
  *  \brief
@@ -74,7 +74,7 @@ void M3D_setLightEnabled(u16 enabled);
  *  \brief
  *      Get light transformation calculation enabled flag.
  */
-u16  M3D_getLightEnabled();
+u16  M3D_getLightEnabled(void);
 
 /**
  *  \brief

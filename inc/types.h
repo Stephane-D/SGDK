@@ -250,12 +250,12 @@ typedef struct
 } Circle;
 
 
-typedef void VoidCallback();
+typedef void VoidCallback(void);
 
 
-u8  getZeroU8();
-u16 getZeroU16();
-u32 getZeroU32();
+u8  getZeroU8(void);
+u16 getZeroU16(void);
+u32 getZeroU32(void);
 
 /**
  *  \brief

@@ -138,7 +138,7 @@
  *  \return
  *      Return non zero if PCM player is currently playing a sample
  */
-u8   SND_isPlaying_PCM();
+u8   SND_isPlaying_PCM(void);
 /**
  *  \brief
  *      Start playing a sample (Single channel PCM player driver).<br>
@@ -173,7 +173,7 @@ void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 
  *      Stop playing (Single channel PCM player driver).<br>
  *      No effect if no sample was currently playing.
  */
-void SND_stopPlay_PCM();
+void SND_stopPlay_PCM(void);
 
 
 // Z80_DRIVER_2ADPCM
@@ -331,7 +331,7 @@ u8   SND_getVolume_4PCM(const u16 channel);
 /**
  * \deprecated use XGM_isPlaying() instead
  */
-u8 SND_isPlaying_XGM();
+u8 SND_isPlaying_XGM(void);
 /**
  * \deprecated use XGM_startPlay(..) instead
  */
@@ -339,15 +339,15 @@ void SND_startPlay_XGM(const u8 *song);
 /**
  * \deprecated use XGM_stopPlay(..) instead
  */
-void SND_stopPlay_XGM();
+void SND_stopPlay_XGM(void);
 /**
  * \deprecated use XGM_pausePlay(..) instead
  */
-void SND_pausePlay_XGM();
+void SND_pausePlay_XGM(void);
 /**
  * \deprecated use XGM_resumePlay(..) instead
  */
-void SND_resumePlay_XGM();
+void SND_resumePlay_XGM(void);
 
 /**
  * \deprecated use XGM_isPlayingPCM(..) instead
@@ -373,7 +373,7 @@ void SND_stopPlayPCM_XGM(const u16 channel);
 /**
  * \deprecated use XGM_getMusicTempo(..) instead
  */
-u16 SND_getMusicTempo_XGM();
+u16 SND_getMusicTempo_XGM(void);
 /**
  * \deprecated use XGM_setMusicTempo(..) instead
  */
@@ -382,7 +382,7 @@ void SND_setMusicTempo_XGM(u16 value);
 /**
  * \deprecated use XGM_getManualSync(..) instead
  */
-u16 SND_getManualSync_XGM();
+u16 SND_getManualSync_XGM(void);
 /**
  * \deprecated use XGM_setManualSync(..) instead
  */
@@ -408,7 +408,7 @@ void SND_set68KBUSProtection_XGM(u8 value);
 /**
  * \deprecated use XGM_getForceDelayDMA(..) instead
  */
-u16 SND_getForceDelayDMA_XGM();
+u16 SND_getForceDelayDMA_XGM(void);
 /**
  * \deprecated use XGM_setForceDelayDMA(..) instead
  */
@@ -416,7 +416,7 @@ void SND_setForceDelayDMA_XGM(u16 value);
 /**
  * \deprecated use XGM_getCPULoad(..) instead
  */
-u32 SND_getCPULoad_XGM();
+u32 SND_getCPULoad_XGM(void);
 
 
 #endif // _SOUND_H_

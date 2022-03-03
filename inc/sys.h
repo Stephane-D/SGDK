@@ -158,21 +158,21 @@ extern VoidCallback *intCB;
  * Assert reset pin on the 68000 CPU.
  * This is needed to reset some attached hardware.
  */
-void SYS_assertReset();
+void SYS_assertReset(void);
 /**
  *  \brief
  *      Soft reset
  *
  * Software reset
  */
-void SYS_reset();
+void SYS_reset(void);
 /**
  *  \brief
  *      Hard reset
  *
  * Reset with forced hardware init and memory clear / reset operation.
  */
-void SYS_hardReset();
+void SYS_hardReset(void);
 
 /**
  *  \brief
@@ -191,7 +191,7 @@ void SYS_hardReset();
  * <br>
  * Note that VBlank process may be delayed to next VBlank if we missed the start of the VBlank period so that will cause a frame miss.
  */
-bool SYS_doVBlankProcess();
+bool SYS_doVBlankProcess(void);
 /**
  *  \brief
  *      Do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..)
@@ -230,7 +230,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime);
  *
  * See SYS_setInterruptMaskLevel() for more informations about interrupt mask level.
  */
-u16 SYS_getInterruptMaskLevel();
+u16 SYS_getInterruptMaskLevel(void);
 /**
  *  \brief
  *      Set interrupt mask level.
@@ -282,9 +282,9 @@ u16 SYS_getAndSetInterruptMaskLevel(u16 value);
  * but you may need it if your interrupts callback code does mess with VDP for instance.<br>
  * Note that you can nest #SYS_disableInts / #SYS_enableInts() calls.
  *
- * \see SYS_enableInts()
+ * \see SYS_enableInts(void)
  */
-void SYS_disableInts();
+void SYS_disableInts(void);
 /**
  *  \brief
  *      Re-enable interrupts (Vertical, Horizontal and External).
@@ -292,9 +292,9 @@ void SYS_disableInts();
  * This method is used to reenable interrupts after a call to #SYS_disableInts().<br>
  * Note that you can nest #SYS_disableInts / #SYS_enableInts() calls.
  *
- * \see SYS_disableInts()
+ * \see SYS_disableInts(void)
  */
-void SYS_enableInts();
+void SYS_enableInts(void);
 
 /**
  *  \brief
@@ -369,7 +369,7 @@ void SYS_setExtIntCallback(VoidCallback *CB);
  *
  * This method tests if we are currently processing a Vertical retrace interrupt (V-Int callback).
  */
-bool SYS_isInVInt();
+bool SYS_isInVInt(void);
 
 /**
  *  \brief
@@ -377,14 +377,14 @@ bool SYS_isInVInt();
  *
  * Better to use the IS_PAL_SYSTEM
  */
-u16 SYS_isNTSC();
+u16 SYS_isNTSC(void);
 /**
  *  \brief
  *      Return != 0 if we are on a PAL system.
  *
  * Better to use the IS_PAL_SYSTEM
  */
-u16 SYS_isPAL();
+u16 SYS_isPAL(void);
 
 /**
  *  \brief
@@ -393,7 +393,7 @@ u16 SYS_isPAL();
  * This function actually returns the number of time it was called in the last second.<br>
  * i.e: for benchmarking you should call this method only once per frame update.
  */
-u32 SYS_getFPS();
+u32 SYS_getFPS(void);
 /**
  *  \brief
  *      Returns number of Frame Per Second (fix32 form).
@@ -401,7 +401,7 @@ u32 SYS_getFPS();
  * This function actually returns the number of time it was called in the last second.<br>
  * i.e: for benchmarking you should call this method only once per frame update.
  */
-fix32 SYS_getFPSAsFloat();
+fix32 SYS_getFPSAsFloat(void);
 /**
  *  \brief
  *      Return an estimation of CPU frame load (in %)
@@ -409,10 +409,10 @@ fix32 SYS_getFPSAsFloat();
  * Return an estimation of CPU load (in %, mean value computed on 8 frames) based of idle time spent in #VDP_waitVSync() / #VDP_waitVInt() methods.<br>
  * The method can return value above 100% you CPU load is higher than 1 frame.
  *
- * \see VDP_waitVSync()
- * \see VDP_waitVInt()
+ * \see VDP_waitVSync(void)
+ * \see VDP_waitVInt(void)
  */
-u16 SYS_getCPULoad();
+u16 SYS_getCPULoad(void);
 /**
  *  \brief
  *      Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)
@@ -424,16 +424,16 @@ u16 SYS_getCPULoad();
  *  Note that internally sprite 0 is used to display to cursor (palette 0 and color 15) as it is not directly used by the Sprite Engine but
  *  if you're using the low level VDP sprite methods then you should know that sprite 0 will be used here.
  *
- * \see SYS_hideFrameLoad()
+ * \see SYS_hideFrameLoad(void)
  */
 void SYS_showFrameLoad(bool mean);
 /**
  *  \brief
  *      Hide the frame load cursor previously enabled using #SYS_showFrameLoad() method.
 
- * \see SYS_showFrameLoad()
+ * \see SYS_showFrameLoad(void)
  */
-void SYS_hideFrameLoad();
+void SYS_hideFrameLoad(void);
 
 
 /**
@@ -441,12 +441,12 @@ void SYS_hideFrameLoad();
  *      Computes full ROM checksum and return it.<br>
  *      The checksum is a custom fast 32 bit checksum converted to 16 bit at end
  */
-u16 SYS_computeChecksum();
+u16 SYS_computeChecksum(void);
 /**
  *  \brief
  *      Returns TRUE if ROM checksum is ok (correspond to rom_head.checksum field)
  */
-bool SYS_isChecksumOk();
+bool SYS_isChecksumOk(void);
 
 /**
  *  \brief

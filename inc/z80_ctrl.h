@@ -178,13 +178,13 @@
  *
  *  Request Z80 BUS and reset bank number.
  */
-void Z80_init();
+void Z80_init(void);
 
 /**
  *  \brief
  *      Return Z80 BUS taken state.
  */
-bool Z80_isBusTaken();
+bool Z80_isBusTaken(void);
 /**
  *  \brief
  *      Request Z80 BUS.
@@ -206,18 +206,18 @@ bool Z80_getAndRequestBus(bool wait);
  *  \brief
  *      Release Z80 BUS.
  */
-void Z80_releaseBus();
+void Z80_releaseBus(void);
 
 /**
  *  \brief
  *      Start Z80 reset.
  */
-void Z80_startReset();
+void Z80_startReset(void);
 /**
  *  \brief
  *      End Z80 reset.
  */
-void Z80_endReset();
+void Z80_endReset(void);
 
 /**
  *  \brief
@@ -301,12 +301,12 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  - #Z80_DRIVER_XGM<br>
  *  - #Z80_DRIVER_CUSTOM<br>
  */
-u16  Z80_getLoadedDriver();
+u16  Z80_getLoadedDriver(void);
 /**
  *  \brief
  *      Unload Z80 driver (actually clear Z80 ram).
  */
-void Z80_unloadDriver();
+void Z80_unloadDriver(void);
 /**
  *  \brief
  *      Load a Z80 driver.
@@ -337,7 +337,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size);
  *  \brief
  *      Return driver ready state (only for non custom driver).
  */
-u16  Z80_isDriverReady();
+u16  Z80_isDriverReady(void);
 
 
 #endif // _Z80_CTRL_H_

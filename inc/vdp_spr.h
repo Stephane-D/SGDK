@@ -90,13 +90,13 @@ extern s16 highestVDPSpriteIndex;
  *  \brief
  *      Clear all sprites and reset VDP sprite allocation (if any).
  */
-void VDP_resetSprites();
+void VDP_resetSprites(void);
 
 /**
  *  \brief
  *      Release all VDP sprite allocation
  */
-void VDP_releaseAllSprites();
+void VDP_releaseAllSprites(void);
 
 /**
  *  \brief
@@ -140,7 +140,7 @@ void VDP_releaseSprites(u16 index, u16 num);
  *  \see VDP_allocateSprites(..)
  *  \see VDP_releaseSprites(..)
  */
-u16 VDP_getAvailableSprites();
+u16 VDP_getAvailableSprites(void);
 /**
  *  \brief
  *      Compute and return the highest index of currently allocated VDP sprite.<br>
@@ -151,13 +151,13 @@ u16 VDP_getAvailableSprites();
  *  \see VDP_releaseSprites(..)
  *  \see highestVDPSpriteIndex
  */
-s16 VDP_refreshHighestAllocatedSpriteIndex();
+s16 VDP_refreshHighestAllocatedSpriteIndex(void);
 
 /**
  *  \brief
  *      Clear all sprites.
  */
-void VDP_clearSprites();
+void VDP_clearSprites(void);
 /**
  *  \brief
  *      Set a sprite (use sprite list cache).
@@ -176,8 +176,8 @@ void VDP_clearSprites();
  *      Sprite link (index of next sprite, 0 for end)<br>
  *      Be careful to not modify link made by VDP_allocateSprite(..), use VDP_setSprite(..) instead in that case.
  *
- *  \see VDP_setSprite()
- *  \see VDP_updateSprites()
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
  */
 void VDP_setSpriteFull(u16 index, s16 x, s16 y, u8 size, u16 attribut, u8 link);
 /**
@@ -195,8 +195,8 @@ void VDP_setSpriteFull(u16 index, s16 x, s16 y, u8 size, u16 attribut, u8 link);
  *  \param attribut
  *      Sprite tile attributes (see TILE_ATTR_FULL() macro).
  *
- *  \see VDP_setSpriteFull()
- *  \see VDP_updateSprites()
+ *  \see VDP_setSpriteFull(..)
+ *  \see VDP_updateSprites(..)
  */
 void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 attribut);
 /**
@@ -211,7 +211,7 @@ void VDP_setSprite(u16 index, s16 x, s16 y, u8 size, u16 attribut);
  *      Sprite position Y.
  *
  *  \see VDP_setSprite(..)
- *  \see VDP_updateSprites()
+ *  \see VDP_updateSprites(..)
  */
 void VDP_setSpritePosition(u16 index, s16 x, s16 y);
 /**
@@ -224,7 +224,7 @@ void VDP_setSpritePosition(u16 index, s16 x, s16 y);
  *      Sprite size (see SPRITE_SIZE() macro).
  *
  *  \see VDP_setSprite(..)
- *  \see VDP_updateSprites()
+ *  \see VDP_updateSprites(..)
  */
 void VDP_setSpriteSize(u16 index, u8 size);
 /**
@@ -237,7 +237,7 @@ void VDP_setSpriteSize(u16 index, u8 size);
  *      Sprite tile attributes (see TILE_ATTR_FULL() macro).
  *
  *  \see VDP_setSprite(..)
- *  \see VDP_updateSprites()
+ *  \see VDP_updateSprites(..)
  */
 void VDP_setSpriteAttribut(u16 index, u16 attribut);
 /**
@@ -250,7 +250,7 @@ void VDP_setSpriteAttribut(u16 index, u16 attribut);
  *      Sprite link (index of next sprite, 0 for end).
  *
  *  \see VDP_setSprite(..)
- *  \see VDP_updateSprites()
+ *  \see VDP_updateSprites(..)
  */
 void VDP_setSpriteLink(u16 index, u8 link);
 /**

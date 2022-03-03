@@ -45,14 +45,14 @@ extern vu32 vtimer;
  * <b>WARNING:</b> this function isn't accurate during VBlank (return fixed value for the whole VBlank).<br>
  * This is to avoid issue with the VCounter rollback during VBlank.
  */
-u32  getSubTick();
+u32  getSubTick(void);
 /**
  *  \brief
  *      Returns elapsed ticks from console reset.
  *
  * Returns elapsed ticks from console reset (1/300 second based).
  */
-u32  getTick();
+u32  getTick(void);
 
 /**
  *  \brief

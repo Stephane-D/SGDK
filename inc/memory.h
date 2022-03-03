@@ -166,17 +166,17 @@
  *  \brief
  *      Return available memory in bytes
  */
-u16  MEM_getFree();
+u16  MEM_getFree(void);
 /**
  *  \brief
  *      Return allocated memory in bytes
  */
-u16  MEM_getAllocated();
+u16  MEM_getAllocated(void);
 /**
  *  \brief
  *      Return largest free memory block in bytes
  */
-u16  MEM_getLargestFreeBlock();
+u16  MEM_getLargestFreeBlock(void);
 
 /**
  *  \brief
@@ -211,14 +211,14 @@ void* MEM_alloc(u16 size);
  *      Pack all free blocks and reset allocation search from start of heap.<br>
  *      You can call this method before trying to allocate small block of memory to reduce memory fragmentation.
  */
-void MEM_pack();
+void MEM_pack(void);
 /**
  *  \brief
  *      Show memory dump
  *
  * Do a memory dump in GensKMod console (useful for debugging).
  */
-void MEM_dump();
+void MEM_dump(void);
 
 #if (ENABLE_NEWLIB == 0)
 /**

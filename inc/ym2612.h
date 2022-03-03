@@ -21,7 +21,7 @@
  *  \brief
  *      Reset YM2612 chip
  */
-void YM2612_reset();
+void YM2612_reset(void);
 
 /**
  *  \brief
@@ -75,12 +75,12 @@ void YM2612_writeRegSafe(const u16 part, const u8 reg, const u8 data);
  *  \brief
  *      Enable YM2612 DAC.
  */
-void YM2612_enableDAC();
+void YM2612_enableDAC(void);
 /**
  *  \brief
  *      Disable YM2612 DAC.
  */
-void YM2612_disableDAC();
+void YM2612_disableDAC(void);
 
 
 #endif // _YM2612_H_

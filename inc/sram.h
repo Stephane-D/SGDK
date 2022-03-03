@@ -36,17 +36,17 @@
  *  \brief
  *      Enable SRAM in Read Write mode.
  */
-void SRAM_enable();
+void SRAM_enable(void);
 /**
  *  \brief
  *      Enable SRAM in Read Only mode.
  */
-void SRAM_enableRO();
+void SRAM_enableRO(void);
 /**
  *  \brief
  *      Disable SRAM.
  */
-void SRAM_disable();
+void SRAM_disable(void);
 
 /**
  *  \brief

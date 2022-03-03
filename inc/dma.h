@@ -90,7 +90,7 @@ extern u16* dmaDataBuffer;
  *
  * \see #DMA_initEx(..)
  */
-void DMA_init();
+void DMA_init(void);
 /**
  *  \brief
  *      Initialize the DMA queue sub system.
@@ -120,7 +120,7 @@ void DMA_initEx(u16 size, u16 capacity, u16 bufferSize);
  *  \see DMA_setAutoFlush()
  *  \see DMA_flushQueue()
  */
-u16 DMA_getAutoFlush();
+u16 DMA_getAutoFlush(void);
 /**
  *  \brief
  *      If set to TRUE (default) then the DMA_flushQueue() method is automatically called at VBlank
@@ -136,7 +136,7 @@ void DMA_setAutoFlush(bool value);
  *
  *  \see DMA_setMaxQueueSize()
  */
-u16 DMA_getMaxQueueSize();
+u16 DMA_getMaxQueueSize(void);
 /**
  *  \brief
  *      Sets the maximum allowed number of pending transfer in the queue (allocated queue size).<br>
@@ -154,17 +154,17 @@ void DMA_setMaxQueueSize(u16 value);
  *      Sets the maximum allowed number of pending transfer in the queue (allocated queue size) to default value (64).<br>
  *      <b>WARNING:</b> changing the queue size will clear the DMA queue.
  *
- *  \see DMA_setMaxQueueSize()
+ *  \see DMA_setMaxQueueSize(..)
  */
-void DMA_setMaxQueueSizeToDefault();
+void DMA_setMaxQueueSizeToDefault(void);
 /**
  *  \brief
  *      Returns the maximum allowed size (in bytes) to transfer per #DMA_flushQueue() call.<br>
  *      A value of 0 means there is no DMA limit.
  *
- *  \see DMA_setMaxTransferSize()
+ *  \see DMA_setMaxTransferSize(..)
  */
-u16 DMA_getMaxTransferSize();
+u16 DMA_getMaxTransferSize(void);
 /**
  *  \brief
  *      Sets the maximum amount of data (in bytes) to transfer per #DMA_flushQueue() call.<br>
@@ -175,7 +175,7 @@ u16 DMA_getMaxTransferSize();
  *      The maximum amount of data (in bytes) to transfer during DMA_flushQueue() operation.<br>
  *      Use <b>0</b> for no limit.
  *
- *  \see DMA_flushQueue()
+ *  \see DMA_flushQueue(void)
  */
 void DMA_setMaxTransferSize(u16 value);
 /**
@@ -184,15 +184,15 @@ void DMA_setMaxTransferSize(u16 value);
  *
  *  \see DMA_setMaxTransferSize()
  */
-void DMA_setMaxTransferSizeToDefault();
+void DMA_setMaxTransferSizeToDefault(void);
 /**
  *  \brief
  *      Returns the size (in bytes) of the temporary data buffer which can be used to store data
  *      that will be transferred through the DMA queue.
  *
- *  \see DMA_setBufferSize()
+ *  \see DMA_setBufferSize(void)
  */
-u16 DMA_getBufferSize();
+u16 DMA_getBufferSize(void);
 /**
  *  \brief
  *      Sets the size (in bytes) of the temporary data buffer which can be used to store data
@@ -203,24 +203,24 @@ u16 DMA_getBufferSize();
  *      The size of the temporary data buffer (in bytes).<br>
  *      Minimum allowed buffer size if 2048 (internals methods require a minimal buffer size)
  *
- *  \see DMA_getBufferSize()
- *  \see DMA_setBufferSizeToDefault()
+ *  \see DMA_getBufferSize(void)
+ *  \see DMA_setBufferSizeToDefault(void)
  */
 void DMA_setBufferSize(u16 value);
 /**
  *  \brief
  *      Sets the size (in bytes) of the temporary data buffer to default value (8 KB on NTSC system and 14 KB on PAL system).
  *
- *  \see DMA_setBufferSize()
+ *  \see DMA_setBufferSize(void)
  */
-void DMA_setBufferSizeToDefault();
+void DMA_setBufferSizeToDefault(void);
 /**
  *  \brief
  *      Return TRUE means that we ignore future DMA operation when we reach the maximum capacity (see #DMA_setIgnoreOverCapacity(..) method).
  *
- *  \see DMA_setIgnoreOverCapacity()
+ *  \see DMA_setIgnoreOverCapacity(void)
  */
-u16 DMA_getIgnoreOverCapacity();
+u16 DMA_getIgnoreOverCapacity(void);
 /**
  *  \brief
  *      Set the "over capacity" DMA queue strategy (default is FALSE).
@@ -236,9 +236,9 @@ void DMA_setIgnoreOverCapacity(bool value);
 /**
  *  \brief
  *      Clears the DMA queue (all queued operations are lost).<br>
- *  \see DMA_flushQueue()
+ *  \see DMA_flushQueue(void)
  */
-void DMA_clearQueue();
+void DMA_clearQueue(void);
 /**
  *  \brief
  *      Transfer the content of the DMA queue to the VDP:<br>
@@ -251,20 +251,20 @@ void DMA_clearQueue();
  *  \see DMA_queue(...)
  *  \see DMA_setAutoFlush(...)
  */
-void DMA_flushQueue();
+void DMA_flushQueue(void);
 
 /**
  *  \brief
  *      Returns the number of transfer currently pending in the DMA queue.
  */
-u16 DMA_getQueueSize();
+u16 DMA_getQueueSize(void);
 /**
  *  \brief
  *      Returns the size (in byte) of data to be transferred currently present in the DMA queue.<br>
  *      NTSC frame allows about 7.6 KB of data to be transferred during VBlank (in H40) while
  *      PAL frame allows about 17 KB (in H40).
  */
-u16 DMA_getQueueTransferSize();
+u16 DMA_getQueueTransferSize(void);
 
 /**
  *  \brief
@@ -535,7 +535,7 @@ void DMA_doVRamCopy(u16 from, u16 to, u16 len, s16 step);
  *  \brief
  *      Wait current DMA fill/copy operation to complete (same as #VDP_waitDMACompletion())
  */
-void DMA_waitCompletion();
+void DMA_waitCompletion(void);
 
 
 #endif // _DMA_H_

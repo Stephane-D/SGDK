@@ -151,7 +151,7 @@ typedef void JoyEventCallback(u16 joy, u16 changed, u16 state);
  *      Software and hardware controller port initialization (reset and devices detection).<br>
  *      Automatically called at SGDK initialization, no need to call it manually.
  */
-void JOY_init();
+void JOY_init(void);
 
 /**
  *  \brief
@@ -160,7 +160,7 @@ void JOY_init();
  *      It will reset the controller port state and perform device detectionSoftware and hardware controller port initialization.<br>
  *      Automatically called at SGDK initialization, no need to call it manually.
  */
-void JOY_reset();
+void JOY_reset(void);
 
 /**
  *  \brief
@@ -382,7 +382,7 @@ s16  JOY_writeJoypadY(u16 joy, u16 pos);
  *  \brief
  *      Wait until a button is pressed on any connected controller.
  */
-void JOY_waitPressBtn();
+void JOY_waitPressBtn(void);
 /**
  *  \brief
  *      Wait the specified amount of time or until a button is pressed on any connected controller.
@@ -469,7 +469,7 @@ u16 JOY_waitPressTime(u16 joy, u16 btn, u16 ms);
  *      By default the library update joypad state on V interrupt process.<br>
  *      Calling this method will force to update joypad state now.<br>
  */
-void JOY_update();
+void JOY_update(void);
 
 
 #endif // _JOY_H_
