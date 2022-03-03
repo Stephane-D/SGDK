@@ -15,6 +15,7 @@
 #include "vdp_tile.h"
 #include "vdp_spr.h"
 #include "pal.h"
+#include "pool.h"
 
 
 /**
@@ -366,9 +367,9 @@ typedef struct Sprite
 typedef void FrameChangeCallback(Sprite* sprite);
 
 /**
- * Sprites bank for the sprite engine
+ * Sprites object pool for the sprite engine
  */
-extern Sprite* spritesBank;
+extern Pool* spritesPool;
 /**
  * First allocated sprite (NULL if no sprite allocated)
  */
@@ -390,10 +391,10 @@ extern u16 spriteVramSize;
  *      Initialize the sprite engine using default parameters (420 reserved tiles in VRAM).<br>
  *      This also initialize the hardware sprite allocation system.
  *
- *  \see SPR_initEx()
- *  \see SPR_end()
+ *  \see SPR_initEx(void)
+ *  \see SPR_end(void)
  */
-void SPR_init();
+void SPR_init(void);
 /**
  *  \brief
  *      Init the Sprite engine with specified advanced parameters (VRAM allocation size and decompression buffer size).
@@ -405,8 +406,8 @@ void SPR_init();
  *      Initialize the sprite engine.<br>
  *      This allocates a VRAM region for sprite tiles and initialize hardware sprite allocation system.
  *
- *  \see SPR_init()
- *  \see SPR_end()
+ *  \see SPR_init(void)
+ *  \see SPR_end(void)
  */
 void SPR_initEx(u16 vramSize);
 /**
@@ -416,12 +417,12 @@ void SPR_initEx(u16 vramSize);
  *      End the sprite engine and release attached resources.<br>
  *      This releases the allocated VRAM region and hardware sprites.
  */
-void SPR_end();
+void SPR_end(void);
 /**
  *  \brief
  *      FALSE if sprite cache engine is not initialized, TRUE otherwise.
  */
-bool SPR_isInitialized();
+bool SPR_isInitialized(void);
 
 /**
  *  \brief
@@ -429,7 +430,7 @@ bool SPR_isInitialized();
  *
  *      This method releases all allocated sprites and their resources.
  */
-void SPR_reset();
+void SPR_reset(void);
 
 /**
  *  \brief
@@ -594,12 +595,12 @@ void SPR_releaseSprite(Sprite* sprite);
  *  \brief
  *      Returns the number of active sprite (number of sprite added with SPR_addSprite(..) or SPR_addSpriteEx(..) methods).
  */
-u16 SPR_getNumActiveSprite();
+u16 SPR_getNumActiveSprite(void);
 /**
  *  \brief
  *      Defragment allocated VRAM for sprites, that can help when sprite allocation fail (SPR_addSprite(..) or SPR_addSpriteEx(..) return <i>NULL</i>).
  */
-void SPR_defragVRAM();
+void SPR_defragVRAM(void);
 /**
  *  \brief
  *      Load all frames of SpriteDefinition (using DMA) at specified VRAM tile index and return the indexes table.<br>
@@ -931,7 +932,7 @@ bool SPR_computeVisibility(Sprite* sprite);
  *  This method allow to quickly hide all sprites (without releasing their resources).<br>
  *  Sprites can be displayed again just by calling SPR_update().
  */
-void SPR_clear();
+void SPR_clear(void);
 /**
  *  \brief
  *      Update and display the active list of sprite.
@@ -941,18 +942,18 @@ void SPR_clear();
  *
  *  \see #SPR_addSprite(..)
  */
-void SPR_update();
+void SPR_update(void);
 
 /**
  *  \brief
  *      Log the profil informations (when enabled) in the KMod message window.
  */
-void SPR_logProfil();
+void SPR_logProfil(void);
 /**
  *  \brief
  *      Log the sprites informations (when enabled) in the KMod message window.
  */
-void SPR_logSprites();
+void SPR_logSprites(void);
 
 
 #endif // _SPRITE_ENG_H_

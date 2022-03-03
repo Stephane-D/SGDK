@@ -8,6 +8,7 @@
 #include "vdp_spr.h"
 #include "dma.h"
 #include "memory.h"
+#include "pool.h"
 #include "vram.h"
 #include "tools.h"
 #include "mapper.h"
@@ -56,7 +57,6 @@ extern void updateUserTileMaxIndex();
 // forward
 static Sprite* allocateSprite(u16 head);
 static bool releaseSprite(Sprite* sprite);
-static bool isSpriteValid(Sprite* sprite);
 
 static void setVDPSpriteIndex(Sprite* sprite, u16 ind, u16 num);
 static u16 updateVisibility(Sprite* sprite, u16 status);
@@ -76,13 +76,8 @@ static void logSprite(Sprite* sprite);
 // starter VDP sprite - never visible (used for sprite sorting)
 static VDPSprite* starter;
 
-// allocated bank of sprites for the Sprite Engine
-Sprite* spritesBank;
-
-// used for sprite allocation
-static Sprite** allocStack;
-// point on top of the allocation stack (first available sprite)
-static Sprite** free;
+// pool of Sprite objects
+Pool* spritesPool;
 
 // pointer on first and last active sprite in the linked list
 Sprite* firstSprite;
@@ -129,10 +124,8 @@ void SPR_initEx(u16 vramSize)
     // end it first (if initialized)
     SPR_end();
 
-    // alloc sprites bank
-    spritesBank = MEM_alloc(MAX_SPRITE * sizeof(Sprite));
-    // allocation stack
-    allocStack = MEM_alloc(MAX_SPRITE * sizeof(Sprite*));
+    // create sprites object pool
+    spritesPool = POOL_create(MAX_SPRITE, sizeof(Sprite));
 
     size = vramSize ? vramSize : 420;
     // get start tile index for sprite data (reserve VRAM area just before system font)
@@ -169,11 +162,8 @@ void SPR_end()
         VDP_updateSprites(1, DMA_QUEUE_COPY);
 
         // release memory
-        MEM_free(spritesBank);
-        spritesBank = NULL;
-        MEM_free(allocStack);
-        allocStack = NULL;
-
+        POOL_destroy(spritesPool);
+        spritesPool = NULL;
         VRAM_releaseRegion(&vram);
         spriteVramSize = 0;
 
@@ -191,21 +181,13 @@ void SPR_end()
 
 bool SPR_isInitialized()
 {
-    return (spritesBank != NULL);
+    return (spritesPool != NULL);
 }
 
 void SPR_reset()
 {
-    u16 i;
-
-    // release and clear sprites data
-    memset(spritesBank, 0, sizeof(Sprite) * MAX_SPRITE);
-
-    // reset allocation stack
-    for(i = 0; i < MAX_SPRITE; i++)
-        allocStack[i] = &spritesBank[i];
-    // init free position
-    free = &allocStack[MAX_SPRITE];
+    // release all and clear sprites data
+    POOL_reset(spritesPool, TRUE);
 
     // no active sprites
     firstSprite = NULL;
@@ -218,8 +200,8 @@ void SPR_reset()
 
     // we reserve sprite 0 for sorting (cannot be used for display)
     starter = &vdpSpriteCache[VDP_allocateSprites(1)];
-    // hide it (already done by VDP_resetSprites)
-//    starter->y = 0;
+    // hide it (should be already done by VDP_resetSprites)
+    starter->y = 0;
 
 #ifdef SPR_PROFIL
     memset(profil_time, 0, sizeof(profil_time));
@@ -237,22 +219,21 @@ static Sprite* allocateSprite(u16 head)
 {
     Sprite* result;
 
+    // allocate
+    result = POOL_allocateObject(spritesPool);
     // enough sprite remaining ?
-    if (free == allocStack)
+    if (result == NULL)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KLog("SPR_internalAllocateSprite(): failed - no more available sprite !");
+        KLog("allocateSprite(): failed - no more available sprite !");
 #endif
 
         return NULL;
     }
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    KLog_U1("SPR_internalAllocateSprite(): success - allocating sprite at pos ", free[-1] - spritesBank);
+    KLog_U1("allocateSprite(): success - allocating sprite at pos ", spritesPool->free[-1] - spritesPool->bank);
 #endif // LIB_DEBUG
-
-    // allocate
-    result = *--free;
 
     if (head)
     {
@@ -293,11 +274,11 @@ static bool releaseSprite(Sprite* sprite)
         VDPSprite* lastVDPSprite;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-        KLog_U1("SPR_internalReleaseSprite: success - released sprite at pos ", sprite - spritesBank);
+        KLog_U1("releaseSprite: success - released sprite at pos ", sprite - spritesPool->bank);
 #endif // LIB_DEBUG
 
         // release sprite
-        *free++ = sprite;
+        POOL_releaseObject(spritesPool, sprite);
 
         // remove sprite from chained list
         prev = sprite->prev;
@@ -345,17 +326,18 @@ static bool releaseSprite(Sprite* sprite)
     return FALSE;
 }
 
+static bool isSpriteValid(Sprite* sprite, char* methodName)
+{
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-static bool isSpriteValid(Sprite* sprite)
-{
-    return sprite->status & ALLOCATED;
-}
-#else
-static bool isSpriteValid(Sprite* sprite)
-{
+    if (!sprite->status & ALLOCATED)
+    {
+        kprintf("%s: error - sprite at address %p is invalid (not allocated) !", sprite);
+        return FALSE;
+    }
+#endif
+
     return TRUE;
 }
-#endif
 
 Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag)
 {
@@ -547,7 +529,7 @@ void SPR_releaseSprite(Sprite* sprite)
 
 u16 SPR_getNumActiveSprite()
 {
-    return &allocStack[MAX_SPRITE] - free;
+    return POOL_getNumAllocated(spritesPool);
 }
 
 void SPR_defragVRAM()
@@ -673,10 +655,8 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     KLog_U1("SPR_setDefinition: #", getSpriteIndex(sprite));
 #endif // SPR_DEBUG
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setDefinition: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setDefinition"))
+        return FALSE;
 
     // nothing to do...
     if (sprite->definition == spriteDef) return TRUE;
@@ -774,10 +754,8 @@ void SPR_setPosition(Sprite* sprite, s16 x, s16 y)
     KLog_U3("SPR_setPosition: #", getSpriteIndex(sprite), "  X=", newx, " Y=", newy);
 #endif // SPR_DEBUG
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setPosition: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setPosition"))
+        return;
 
     if ((sprite->x != newx) || (sprite->y != newy))
     {
@@ -800,10 +778,8 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setHFlip: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setHFlip"))
+        return;
 
     u16 attr = sprite->attribut;
 
@@ -853,10 +829,8 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setVFlip: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setVFlip"))
+        return;
 
     u16 attr = sprite->attribut;
 
@@ -906,10 +880,8 @@ void SPR_setPriority(Sprite* sprite, u16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setPriority: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setPriority"))
+        return;
 
     const u16 attr = sprite->attribut;
 
@@ -952,10 +924,8 @@ void SPR_setPalette(Sprite* sprite, u16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setPalette: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setPalette"))
+        return;
 
     const u16 oldAttribut = sprite->attribut;
     const u16 newAttribut = (oldAttribut & (~TILE_ATTR_PALETTE_MASK)) | (value << TILE_ATTR_PALETTE_SFT);
@@ -978,10 +948,8 @@ void SPR_setDepth(Sprite* sprite, s16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setDepth: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setDepth"))
+        return;
 
     // depth changed ?
     if (sprite->depth != value)
@@ -1012,10 +980,8 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setAnimAndFrame: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setAnimAndFrame"))
+        return;
 
     if ((sprite->animInd != anim) || (sprite->frameInd != frame))
     {
@@ -1058,10 +1024,8 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setAnim: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setAnim"))
+        return;
 
     if (sprite->animInd != anim)
     {
@@ -1095,10 +1059,8 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setFrame: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setFrame"))
+        return;
 
     if (sprite->frameInd != frame)
     {
@@ -1129,6 +1091,9 @@ void SPR_nextFrame(Sprite* sprite)
 {
     START_PROFIL
 
+    if (!isSpriteValid(sprite, "SPR_nextFrame"))
+        return;
+
     const Animation *anim = sprite->animation;
     u16 frameInd = sprite->frameInd + 1;
 
@@ -1145,10 +1110,8 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setVRAMTileIndex: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setVRAMTileIndex"))
+        return FALSE;
 
     s16 newInd;
     u16 status = sprite->status;
@@ -1232,10 +1195,8 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setSpriteTableIndex: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setSpriteTableIndex"))
+        return FALSE;
 
     s16 newInd;
     u16 status = sprite->status;
@@ -1315,10 +1276,8 @@ bool SPR_setSpriteTableIndex(Sprite* sprite, s16 value)
 
 void SPR_setAutoTileUpload(Sprite* sprite, bool value)
 {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setAutoTileUpload: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setAutoTileUpload"))
+        return;
 
     if (value) sprite->status |= SPR_FLAG_AUTO_TILE_UPLOAD;
     else sprite->status &= ~SPR_FLAG_AUTO_TILE_UPLOAD;
@@ -1326,10 +1285,8 @@ void SPR_setAutoTileUpload(Sprite* sprite, bool value)
 
 void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value)
 {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setDelayedFrameUpdate: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setDelayedFrameUpdate"))
+        return;
 
     if (value) sprite->status &= ~SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE;
     else sprite->status |= SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE;
@@ -1337,10 +1294,8 @@ void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value)
 
 void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback)
 {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setFrameChangeCallback: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setFrameChangeCallback"))
+        return;
 
     sprite->onFrameChange = callback;
 }
@@ -1361,13 +1316,11 @@ SpriteVisibility SPR_getVisibility(Sprite* sprite)
 
 bool SPR_isVisible(Sprite* sprite, bool recompute)
 {
+    if (!isSpriteValid(sprite, "SPR_isVisible"))
+        return FALSE;
+
     if (recompute)
     {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        if (!isSpriteValid(sprite))
-            kprintf("SPR_isVisible: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
-
         u16 status = sprite->status;
 
         // update visibility if needed
@@ -1388,10 +1341,8 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
 {
     START_PROFIL
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!isSpriteValid(sprite))
-        kprintf("SPR_setVisibility: error - sprite at address %p is invalid (not allocated) !", sprite);
-#endif
+    if (!isSpriteValid(sprite, "SPR_setVisibility"))
+        return;
 
     u16 status = sprite->status;
 
