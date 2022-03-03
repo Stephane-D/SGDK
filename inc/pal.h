@@ -225,12 +225,33 @@ void PAL_setPaletteColorsDMA(u16 index, const Palette* pal);
  */
 void PAL_setPaletteDMA(u16 numPal, const u16* pal);
 
-
-// these functions should be private as they are called by PAL_fadeXXX functions internally
-// but they can be useful sometime for better control on the fading processus
+/**
+ *  \brief
+ *      Initialize a fading operation that will be manually controlled through #PAL_doFadeStep() calls
+ *
+ *  \param fromCol
+ *      Start color index for the fade operation (0-63).
+ *  \param toCol
+ *      End color index for the fade operation (0-63 and >= fromCol).
+ *  \param palSrc
+ *      Fade departure palette.
+ *  \param palDst
+ *      Fade arrival palette.
+ *  \param numFrame
+ *      Duration of palette fading in number of frame.
+ *
+ * \see PAL_doFadeStep(..)
+ */
 bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame);
-bool PAL_doFadeStep();
-
+/**
+ *  \brief
+ *      Update palette to process one iteration of current fade operation (see #PAL_initFade(..) method)
+ *
+ *  \return TRUE when fading operation is not yet complete, FALSE otherwise
+ *
+ * \see PAL_initFade(..)
+ */
+bool PAL_doFadeStep(void);
 
 /**
  *  \brief
@@ -449,17 +470,17 @@ void PAL_fadeInAll(const u16* pal, u16 numFrame, bool async);
  *  \brief
  *      Returns TRUE if currently doing a asynchronous fade operation.
  */
-bool PAL_isDoingFade();
+bool PAL_isDoingFade(void);
 /**
  *  \brief
  *      Wait for palette fading operation to complete (for asynchrone fading).
  */
-void PAL_waitFadeCompletion();
+void PAL_waitFadeCompletion(void);
 /**
  *  \brief
  *      Interrupt any asynchronous palette fading effect.
  */
-void PAL_interruptFade();
+void PAL_interruptFade(void);
 
 
 #endif // _VDP_PAL_H_
