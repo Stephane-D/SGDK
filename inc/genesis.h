@@ -16,6 +16,9 @@
 #include "memory.h"
 #include "tools.h"
 
+#include "pool.h"
+#include "object.h"
+
 #include "font.h"
 #include "string.h"
 
@@ -28,7 +31,6 @@
 #include "vdp_bg.h"
 #include "vdp_spr.h"
 #include "vdp_tile.h"
-#include "vdp_pal.h"
 
 #include "pal.h"
 

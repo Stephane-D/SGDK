@@ -137,7 +137,7 @@ int main(u16 hard)
     SPR_init();
 
     // set all palette to black
-    VDP_setPaletteColors(0, (u16*) palette_black, 64);
+    PAL_setColors(0, (u16*) palette_black, 64, CPU);
 
     // load background tilesets in VRAM
     ind = TILE_USER_INDEX;
