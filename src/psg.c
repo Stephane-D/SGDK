@@ -51,6 +51,14 @@ void PSG_setTone(u8 channel, u16 value)
     *pb = (value >> 4) & 0x3F;
 }
 
+void PSG_setToneLow(u8 channel, u8 value)
+{
+    vu8 *pb;
+
+    pb = (u8*) PSG_PORT;
+    *pb = 0x80 | ((channel & 3) << 5) | (value & 0xF);
+}
+
 void PSG_setFrequency(u8 channel, u16 value)
 {
     u16 data;
