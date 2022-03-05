@@ -196,7 +196,7 @@ int main()
     SYS_disableInts();
 
     // clear all palette
-    VDP_setPaletteColors(0, palette_black, 64);
+    PAL_setColors(0, palette_black, 64, CPU);
 
     // initialization
     VDP_setScreenWidth320();
@@ -343,7 +343,7 @@ int main()
     palette[63] = 0x000;
 
     // palette fading
-    VDP_fadeAll(palette_black, palette, 30, FALSE);
+    PAL_fadeAll(palette_black, palette, 30, FALSE);
 
     JOY_setEventHandler(joyEvent);
 
@@ -367,7 +367,7 @@ int main()
 
                 xgmOffset = 0;
                 YM_init(&ym);
-                PSG_init(&psg);
+                PSGState_init(&psg);
             }
 
             SYS_enableInts();

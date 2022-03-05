@@ -76,7 +76,7 @@ u16 executeBMPTest(u16 *scores)
     palette[14] = RGB24_TO_VDPCOLOR(0x800080);
     palette[15] = RGB24_TO_VDPCOLOR(0x808080);
 
-    VDP_setPalette(PAL1, palette);
+    PAL_setPalette(PAL1, palette, CPU);
 
     score = scores;
     globalScore = 0;
@@ -392,7 +392,7 @@ u16 executeBMPTest(u16 *scores)
     waitMs(4000);
     VDP_clearPlane(BG_A, TRUE);
 
-    VDP_setPalette(PAL1, logo_med_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_med_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
@@ -433,7 +433,7 @@ u16 executeBMPTest(u16 *scores)
     waitMs(4000);
     VDP_clearPlane(BG_A, TRUE);
 
-    VDP_setPalette(PAL1, logo_med_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_med_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
@@ -476,7 +476,7 @@ u16 executeBMPTest(u16 *scores)
 
     // unpack bitmap
     bmp = unpackBitmap(&logo_med_bmp, NULL);
-    VDP_setPalette(PAL1, logo_med_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_med_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
@@ -518,7 +518,7 @@ u16 executeBMPTest(u16 *scores)
     waitMs(4000);
     VDP_clearPlane(BG_A, TRUE);
 
-    VDP_setPalette(PAL1, logo_sm_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_sm_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
@@ -559,7 +559,7 @@ u16 executeBMPTest(u16 *scores)
     waitMs(4000);
     VDP_clearPlane(BG_A, TRUE);
 
-    VDP_setPalette(PAL1, logo_sm_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_sm_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
@@ -602,7 +602,7 @@ u16 executeBMPTest(u16 *scores)
 
     // unpack bitmap
     bmp = unpackBitmap(&logo_sm_bmp, NULL);
-    VDP_setPalette(PAL1, logo_sm_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_sm_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
@@ -646,7 +646,7 @@ u16 executeBMPTest(u16 *scores)
 
     // unpack bitmap
     bmp = unpackBitmap(&logo_med_x2_bmp, NULL);
-    VDP_setPalette(PAL1, logo_med_x2_bmp.palette->data);
+    PAL_setPalette(PAL1, logo_med_x2_bmp.palette->data, CPU);
     BMP_init(TRUE, BG_A, PAL1, FALSE);
     time = FIX32(0);
     i = 4;

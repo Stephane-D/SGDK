@@ -101,7 +101,7 @@ int main()
 
     // Setup VDP
     VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
-    VDP_setPaletteColors(0, palette_black, 64);
+    PAL_setColors(0, palette_black, 64, CPU);
 
     // Setup graphics
     setupBackground();

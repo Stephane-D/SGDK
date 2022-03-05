@@ -285,7 +285,7 @@ u16 executeBGTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("128x64 image draw (preloaded)", 2, 0);
     VDP_loadTileSet(img->tileset, TILE_USER, TRUE);
-    VDP_setPalette(PAL1, img->palette->data);
+    PAL_setPalette(PAL1, img->palette->data, CPU);
     i = 5;
     start = getTimeAsFix32(FALSE);
     while(i--)
@@ -372,7 +372,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    VDP_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL0, palette_grey, CPU);
     *score = displayResult(1000, end - start, 2);
     globalScore += *score++;
 
@@ -415,7 +415,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    VDP_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL0, palette_grey, CPU);
     *score = displayResult(2000, end - start, 2);
     globalScore += *score++;
 
@@ -460,7 +460,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    VDP_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL0, palette_grey, CPU);
     *score = displayResult(3000, end - start, 2);
     globalScore += *score++;
     MEM_free(img);
@@ -473,7 +473,7 @@ u16 executeBGTest(u16 *scores)
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("64x32 image draw (preloaded)", 2, 0);
     VDP_loadTileSet(img->tileset, TILE_USER, TRUE);
-    VDP_setPalette(PAL1, img->palette->data);
+    PAL_setPalette(PAL1, img->palette->data, CPU);
     i = 10;
     start = getTimeAsFix32(FALSE);
     while(i--)
@@ -508,7 +508,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    VDP_setPalette(PAL0, palette_grey);
+    PAL_setPalette(PAL0, palette_grey, CPU);
     *score = displayResult(10000, end - start, 2) / 5;
     globalScore += *score++;
     MEM_free(img);

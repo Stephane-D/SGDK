@@ -132,8 +132,8 @@ int main()
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
             params_value[i][j] = cur_cmd->params;
 
-    VDP_setPalette(PAL0, font_pal_lib.data);
-    VDP_setPaletteColor((PAL1 * 16) + 15, 0x0888);
+    PAL_setPalette(PAL0, font_pal_lib.data, CPU);
+    PAL_setColor((PAL1 * 16) + 15, 0x0888);
     VDP_setTextPalette(PAL0);
     VDP_drawText("Current Z80 driver", 10, 1);
     VDP_drawText("DMA Method:", 1, 26);

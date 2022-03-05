@@ -119,12 +119,12 @@ int main()
 
         JOY_waitPress(JOY_1, BUTTON_START);
         // fade text
-        VDP_fadeOut(15, 15, 30, FALSE);
+        PAL_fadeOut(15, 15, 30, FALSE);
         // clear text
         VDP_clearPlane(BG_A, TRUE);
 
         // reset text color to white
-        VDP_setPaletteColor(15, 0xEEE);
+        PAL_setColor(15, 0xEEE);
     }
 }
 
@@ -136,7 +136,7 @@ static void showIntroScreen()
     u16 col = 0xEEE;
 
     // set text color to black
-    VDP_setPaletteColor(15, 0x000);
+    PAL_setColor(15, 0x000);
 
     VDP_drawText("Total memory          65536 bytes", 0, 1);
     sprintf(str, "Free memory           %05u bytes", MEM_getFree());
@@ -151,7 +151,7 @@ static void showIntroScreen()
     VDP_drawText(str, 0, 6);
     sprintf(str, "  Memory manager      %05u bytes", (65536 - MEM_getFree()) - (((u16) ((u32)&_bend) & 0xFFFF) + STACK_SIZE + DMA_getBufferSize() + (u16) (DMA_getMaxQueueSize() * sizeof(DMAOpInfo))));
     VDP_drawText(str, 0, 7);
-    sprintf(str, "Free VRAM              %04d tiles", TILE_USERMAXINDEX);
+    sprintf(str, "Free VRAM              %04d tiles", TILE_USER_MAX_INDEX);
     VDP_drawText(str, 0, 9);
 
     // display test string
@@ -159,16 +159,16 @@ static void showIntroScreen()
     VDP_drawText("Press START to begin", 10, 16);
 
     // fade text color to white
-    VDP_fadeIn(15, 15, &col, 30, FALSE);
+    PAL_fadeIn(15, 15, &col, 30, FALSE);
     // wait for Start button pressed
     JOY_waitPress(JOY_1, BUTTON_START);
     // fade text
-    VDP_fadeOut(15, 15, 30, FALSE);
+    PAL_fadeOut(15, 15, 30, FALSE);
     // clear text
     VDP_clearPlane(BG_A, TRUE);
 
     // reset text color to white
-    VDP_setPaletteColor(15, 0xEEE);
+    PAL_setColor(15, 0xEEE);
 }
 
 static void preTest(char *title, s16 num)
@@ -177,7 +177,7 @@ static void preTest(char *title, s16 num)
     u16 col = 0xEEE;
 
     // set text color to black
-    VDP_setPaletteColor(15, 0x000);
+    PAL_setColor(15, 0x000);
 
     // display test string
     if (num == -1) strcpy(str, title);
@@ -185,16 +185,16 @@ static void preTest(char *title, s16 num)
     VDP_drawText(str, 1, 1);
 
     // fade text color to white
-    VDP_fadeIn(15, 15, &col, 30, FALSE);
+    PAL_fadeIn(15, 15, &col, 30, FALSE);
     // wait 3s
     waitMs(3000);
     // fade text
-    VDP_fadeOut(15, 15, 30, FALSE);
+    PAL_fadeOut(15, 15, 30, FALSE);
     // clear text
     VDP_clearPlane(BG_A, TRUE);
 
     // reset text color to white
-    VDP_setPaletteColor(15, 0xEEE);
+    PAL_setColor(15, 0xEEE);
 }
 
 static void postTest(char *title, u16 score, s16 num)
@@ -203,7 +203,7 @@ static void postTest(char *title, u16 score, s16 num)
     u16 col = 0xEEE;
 
     // set text color to black
-    VDP_setPaletteColor(15, 0x000);
+    PAL_setColor(15, 0x000);
 
     // display test string
     if (num == -1) strcpy(str, title);
@@ -213,16 +213,16 @@ static void postTest(char *title, u16 score, s16 num)
     VDP_drawText(str, 2, 3);
 
     // fade text color to white
-    VDP_fadeIn(15, 15, &col, 30, FALSE);
+    PAL_fadeIn(15, 15, &col, 30, FALSE);
     // wait 5s
     waitMs(5000);
     // fade text
-    VDP_fadeOut(15, 15, 30, FALSE);
+    PAL_fadeOut(15, 15, 30, FALSE);
     // clear text
     VDP_clearPlane(BG_A, TRUE);
 
     // reset text color to white
-    VDP_setPaletteColor(15, 0xEEE);
+    PAL_setColor(15, 0xEEE);
 }
 
 static void postResume(u32 score)
@@ -233,7 +233,7 @@ static void postResume(u32 score)
     u16 col = 0xEEE;
 
     // set text color to black
-    VDP_setPaletteColor(15, 0x000);
+    PAL_setColor(15, 0x000);
 
     // display test string
     sprintf(str, "%s score = %d", SGDK_BENCHMARK, (int) score);
@@ -271,5 +271,5 @@ static void postResume(u32 score)
     VDP_drawText(" PRESS START TO RESTART ALL TESTS", 1, 24);
 
     // fade text color to white
-    VDP_fadeIn(15, 15, &col, 30, FALSE);
+    PAL_fadeIn(15, 15, &col, 30, FALSE);
 }

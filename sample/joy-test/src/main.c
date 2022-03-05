@@ -15,9 +15,9 @@ int main()
     VDP_setScreenWidth320();
     VDP_setHInterrupt(0);
     VDP_setHilightShadow(0);
-    VDP_setPaletteColor(15+16, 0x0222);
+    PAL_setColor(15+16, 0x0222);
     VDP_setTextPalette(0);
-    VDP_setPaletteColor(0, 0x0882);
+    PAL_setColor(0, 0x0882);
 
     value = JOY_getPortType(PORT_1);
     switch (value)

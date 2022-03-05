@@ -235,8 +235,8 @@ static void vblank()
 
     if (int_frame == 2)
     {
-        VDP_setPalette(PAL0, pal_even);
-        fps = getFPS();
+        PAL_setPalette(PAL0, pal_even, CPU);
+        fps = SYS_getFPS();
     }
 
     // we have data to transfer --> start transfer
@@ -281,9 +281,9 @@ static void vblank()
         }
 
         // set first palette
-        VDP_setPalette(PAL0, pal_odd);
+        PAL_setPalette(PAL0, pal_odd, CPU);
         int_frame = 4;
-        fps = getFPS();
+        fps = SYS_getFPS();
 
         flip_done = TRUE;
     }

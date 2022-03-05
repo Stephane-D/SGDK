@@ -24,7 +24,7 @@ int main()
 {
     // Setup VDP
     VDP_setScrollingMode(HSCROLL_LINE, VSCROLL_PLANE);
-    VDP_setPaletteColors(0, palette_black, 64);
+    PAL_setColors(0, palette_black, 64, CPU);
 
     // because we like to have it =)
     SYS_showFrameLoad(TRUE);

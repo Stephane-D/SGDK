@@ -261,7 +261,7 @@ int main()
     // Setup VDP
     VDP_setHilightShadow(1);
     VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
-    VDP_setPaletteColors(0, palette_black, 64);
+    PAL_setColors(0, palette_black, 64, CPU);
     VDP_loadFontData(tileset_Font_Namco_Gradient.tiles, 96, CPU);
 
     // Setup graphics

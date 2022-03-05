@@ -126,7 +126,7 @@ int main()
     VDP_setHilightShadow(1);    // Hilight/shadow activation
 
     // Loading tile stuff and color data into VRAM/CRAM
-    VDP_setPalette(PAL0, background_palette);
+    PAL_setPalette(PAL0, background_palette, CPU);
     VDP_loadTileData(background_tileset, TILE_USER_INDEX, NUM_TILES_TILESET, 1);
     VDP_loadTileData(sprite_tileset, TILE_USER_INDEX + 2, 2, 1);
 

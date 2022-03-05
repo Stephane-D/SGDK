@@ -29,14 +29,14 @@ typedef struct
     Vect2D_f16 pos;
     Vect2D_f16 mov;
     u16 timer;
-} Object;
+} MovingObject;
 
 
 fix16 baseposx;
 fix16 baseposy;
 fix16 gravity;
 
-static Object objects[MAX_OBJECT];
+static MovingObject objects[MAX_OBJECT];
 static Sprite* sprites[MAX_OBJECT];
 static u16 palette[64];
 static u16 tileIndexes[64];
@@ -83,7 +83,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_small.palette->data);
+    PAL_setPalette(PAL1, flare_small.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
@@ -122,7 +122,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_small.palette->data);
+    PAL_setPalette(PAL1, flare_small.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
@@ -175,7 +175,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_small.palette->data);
+    PAL_setPalette(PAL1, flare_small.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
@@ -216,7 +216,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_small.palette->data);
+    PAL_setPalette(PAL1, flare_small.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
@@ -269,7 +269,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_small.palette->data);
+    PAL_setPalette(PAL1, flare_small.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 8);
@@ -310,7 +310,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_big.palette->data);
+    PAL_setPalette(PAL1, flare_big.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 16);
@@ -363,7 +363,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, flare_big.palette->data);
+    PAL_setPalette(PAL1, flare_big.palette->data, CPU);
 
     // init positions
     baseposx = FIX16((VDP_getScreenWidth() / 2) - 16);
@@ -390,7 +390,7 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // set palette
-    VDP_setPalette(PAL1, donut.palette->data);
+    PAL_setPalette(PAL1, donut.palette->data, CPU);
 
     // execute donut bench
     *scores = executeDonut(20, FALSE);
@@ -422,7 +422,7 @@ u16 executeSpritesTest(u16 *scores)
     }
 
     // set palette
-    VDP_setPalette(PAL1, donut.palette->data);
+    PAL_setPalette(PAL1, donut.palette->data, CPU);
 
     // execute particle bench
     *scores = executeDonut(20, TRUE);
@@ -488,7 +488,7 @@ u16 executeSpritesTest(u16 *scores)
 
     // set palette
     SYS_disableInts();
-    VDP_setPaletteColors(0, palette, 64);
+    PAL_setColors(0, palette, 64, CPU);
     SYS_enableInts();
 
     // execute sprite bench
@@ -537,7 +537,7 @@ static void initPartic(u16 num)
     while(i--)
     {
         Sprite* s = *sprite;
-        Object* o = (Object*) s->data;
+        MovingObject* o = (MovingObject*) s->data;
 
         o->mov.x = FIX16(2) - (random() & (FIX16_FRAC_MASK << 2));
         o->mov.y = FIX16(2) + (random() & (FIX16_FRAC_MASK << 3));
@@ -566,7 +566,7 @@ static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc)
     while(i--)
     {
         Sprite* s = *sprite;
-        Object* o = (Object*) s->data;
+        MovingObject* o = (MovingObject*) s->data;
 
         if ((o->pos.x < minx) || (o->pos.x > maxx) || (o->pos.y < miny))
         {
@@ -826,7 +826,7 @@ static void initPos(u16 num)
     while(i--)
     {
         Sprite* s = *sprite;
-        Object* o = (Object*) s->data;
+        MovingObject* o = (MovingObject*) s->data;
 
         o->pos.x = FIX16(32 + (random() & 0xFF));
         o->pos.y = FIX16((random() & 0x7F));
@@ -858,7 +858,7 @@ static void updatePos(u16 num)
     while(i--)
     {
         Sprite* s = *sprite;
-        Object* o = (Object*) s->data;
+        MovingObject* o = (MovingObject*) s->data;
 
         o->pos.x += o->mov.x;
         o->pos.y += o->mov.y;
@@ -892,7 +892,7 @@ static void updateAnim(u16 num)
     while(i--)
     {
         Sprite* s = *sprite;
-        Object* o = (Object*) s->data;
+        MovingObject* o = (MovingObject*) s->data;
         fix16 mx = o->mov.x;
 
         if ((mx != 0) || (o->mov.y != 0)) SPR_setAnim(s, 1);
@@ -943,7 +943,7 @@ static u16 execute(u16 time, u16 numSpr)
 static void handleInput()
 {
 #ifdef TEST_SPR
-    Object* o = (Object*) sprites[0]->data;
+    MovingObject* o = (MovingObject*) sprites[0]->data;
 
     u16 value = JOY_readJoypad(JOY_1);
 

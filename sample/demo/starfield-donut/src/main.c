@@ -99,7 +99,7 @@ static void fastStarFieldFX()
     // first update
     SPR_update();
 
-    VDP_setPalette(PAL2, donut.palette->data);
+    PAL_setPalette(PAL2, donut.palette->data, CPU);
 
     SYS_enableInts();
 

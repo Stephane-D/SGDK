@@ -22,8 +22,8 @@ void fadeInBlue(u16 fromcol, u16 tocol, const u16 *pal, u16 numframeBlue, u16 nu
         palBlue[i] = pal[i] & 0xF00;
 
     // First fade in blue part, then green and red
-    VDP_fadeIn(fromcol, tocol, palBlue, numframeBlue, FALSE);
-    VDP_fadeTo(fromcol, tocol, pal, numframeGreenRed, FALSE);
+    PAL_fadeIn(fromcol, tocol, palBlue, numframeBlue, FALSE);
+    PAL_fadeTo(fromcol, tocol, pal, numframeGreenRed, FALSE);
 }
 
 // -----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void initMenu(MenuItem* items, u16 num)
 
 void initMenuEx(MenuItem* items, u16 num, char* pointer)
 {
- 
+
     menuItems    = items;
     menuItemsNum = num;
     menuPointer  = pointer;
@@ -192,7 +192,7 @@ void updateMenuItems()
             if (item->type == MIT_BOOL)
                 *item->vbool.value = FALSE;
         }
-        
+
         menuButtonDelay = (menuJoyStateOld == 0) ? 20 : 5;
     }
     menuJoyStateOld = joyState;
