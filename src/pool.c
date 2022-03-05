@@ -4,8 +4,7 @@
 #include "pool.h"
 
 #include "memory.h"
-
-#include "kdebug.h"
+#include "tools.h"
 
 
 Pool* POOL_create(u16 size, u16 objectSize)

@@ -6,7 +6,7 @@
 #include "object.h"
 
 #include "memory.h"
-#include "kdebug.h"
+#include "tools.h"
 
 
 static void dummyObjectMethod(Object* obj);

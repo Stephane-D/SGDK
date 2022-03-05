@@ -274,7 +274,7 @@ static bool releaseSprite(Sprite* sprite)
         VDPSprite* lastVDPSprite;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-        KLog_U1("releaseSprite: success - released sprite at pos ", sprite - spritesPool->bank);
+        kprintf("releaseSprite: success - released sprite at pos %ld", sprite - (Sprite*) spritesPool->bank);
 #endif // LIB_DEBUG
 
         // release sprite
@@ -318,7 +318,7 @@ static bool releaseSprite(Sprite* sprite)
     }
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    KLog_U1_("SPR_internalReleaseSprite: failed - sprite at pos ", sprite - spritesBank, " is not allocated !");
+    kprintf("SPR_internalReleaseSprite: failed - sprite at pos %ld is not allocated !", sprite - (Sprite*) spritesPool->bank);
 #endif // LIB_DEBUG
 
     END_PROFIL(PROFIL_RELEASE_SPRITE)
@@ -329,9 +329,9 @@ static bool releaseSprite(Sprite* sprite)
 static bool isSpriteValid(Sprite* sprite, char* methodName)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    if (!sprite->status & ALLOCATED)
+    if (!(sprite->status & ALLOCATED))
     {
-        kprintf("%s: error - sprite at address %p is invalid (not allocated) !", sprite);
+        kprintf("%s: error - sprite at address %p is invalid (not allocated) !", methodName, sprite);
         return FALSE;
     }
 #endif
