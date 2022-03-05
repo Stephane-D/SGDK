@@ -129,7 +129,7 @@ void SPR_initEx(u16 vramSize)
 
     size = vramSize ? vramSize : 420;
     // get start tile index for sprite data (reserve VRAM area just before system font)
-    index = TILE_FONTINDEX - size;
+    index = TILE_FONT_INDEX - size;
 
     // and create a VRAM region for sprite tile allocation
     VRAM_createRegion(&vram, index, size);
@@ -542,8 +542,8 @@ void SPR_defragVRAM()
     VRAM_releaseRegion(&vram);
     // pack
     MEM_pack();
-    // and re-create it (useful if TILE_FONTINDEX changed, when we modify plane size for instance)
-    VRAM_createRegion(&vram, TILE_FONTINDEX - spriteVramSize, spriteVramSize);
+    // and re-create it (useful if TILE_FONT_INDEX changed, when we modify plane size for instance)
+    VRAM_createRegion(&vram, TILE_FONT_INDEX - spriteVramSize, spriteVramSize);
 
     // iterate over all sprites to re-allocate auto allocated VRAM
     sprite = firstSprite;

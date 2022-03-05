@@ -32,7 +32,7 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm)
 
 void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm)
 {
-    VDP_loadTileData(font, TILE_FONTINDEX, length, tm);
+    VDP_loadTileData(font, TILE_FONT_INDEX, length, tm);
 }
 
 u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
@@ -59,7 +59,7 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
 
 u16 VDP_loadFont(const TileSet *font, TransferMethod tm)
 {
-    return VDP_loadTileSet(font, TILE_FONTINDEX, tm);
+    return VDP_loadTileSet(font, TILE_FONT_INDEX, tm);
 }
 
 void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 h, u16 bmp_w)

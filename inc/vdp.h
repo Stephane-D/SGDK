@@ -209,55 +209,51 @@
  *  \brief
  *      Maximum number of tile in VRAM (related to TILE_SPACE).
  */
-#define TILE_MAX_NUM             (TILE_SPACE / TILE_SIZE)
+#define TILE_MAX_NUM            (TILE_SPACE / TILE_SIZE)
 /**
  *  \brief
  *      Maximum tile index in VRAM (related to TILE_MAXNUM).
  */
-#define TILE_MAX_INDEX           (TILE_MAXNUM - 1)
+#define TILE_MAX_INDEX          (TILE_MAXNUM - 1)
 /**
  *  \brief
  *      System base tile index in VRAM.
  */
-#define TILE_SYSTEM_INDEX        0x0000
+#define TILE_SYSTEM_INDEX       0x0000
 /**
  *  \brief
  *      Number of system tile.
  */
-#define TILE_SYSTEM_LENGTH       16
+#define TILE_SYSTEM_LENGTH      16
 /**
  *  \deprecated Use TILE_SYSTEMLENGTH instead.
  */
-#define TILE_SYSTEM_LENGHT       TILE_SYSTEM_LENGTH
+#define TILE_SYSTEM_LENGHT      TILE_SYSTEM_LENGTH
 /**
  *  \brief
  *      User base tile index.
  */
-#define TILE_USER_INDEX          (TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH)
+#define TILE_USER_INDEX         (TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH)
 /**
  *  \brief
  *      Font base tile index.
  */
-#define TILE_FONTINDEX          (TILE_MAX_NUM - FONT_LEN)
+#define TILE_FONT_INDEX         (TILE_MAX_NUM - FONT_LEN)
 /**
  *  \brief
  *      Sprite engine base tile index (equal TILE_FONTINDEX if Sprite Engine is not initialized).
  */
-#define TILE_SPRITEINDEX        (TILE_FONT_INDEX - spriteVramSize)
+#define TILE_SPRITE_INDEX       (TILE_FONT_INDEX - spriteVramSize)
 /**
  *  \brief
  *      Number of available user tile.
  */
-#define TILE_USERLENGTH         ((userTileMaxIndex - TILE_USER_INDEX) + 1)
-/**
- *  \deprecated Use TILE_USERLENGTH instead.
- */
-#define TILE_USERLENGHT         TILE_USER_LENGTH
+#define TILE_USER_LENGTH        ((userTileMaxIndex - TILE_USER_INDEX) + 1)
 /**
  *  \brief
  *      Maximum tile index in VRAM reserved for user (for background and user managed sprites)
  */
-#define TILE_USERMAXINDEX       userTileMaxIndex
+#define TILE_USER_MAX_INDEX     userTileMaxIndex
 /**
  *  \brief
  *      System tile address in VRAM.
@@ -501,14 +497,14 @@ void VDP_setReg(u16 reg, u8 value);
  *  \brief
  *      Returns VDP enable state.
  */
-u8   VDP_getEnable(void);
+bool VDP_getEnable(void);
 /**
  *  \brief
  *      Set VDP enable state.
  *
  *  You can temporary disable VDP to speed up VDP memory transfert.
  */
-void VDP_setEnable(u8 value);
+void VDP_setEnable(bool value);
 
 /**
  *  \brief

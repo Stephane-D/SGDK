@@ -304,12 +304,12 @@ void VDP_setReg(u16 reg, u8 value)
     *pw = 0x8000 | (reg << 8) | v;
 }
 
-u8 VDP_getEnable()
+bool VDP_getEnable()
 {
     return regValues[0x01] & 0x40;
 }
 
-void VDP_setEnable(u8 value)
+void VDP_setEnable(bool value)
 {
     vu16 *pw;
 
@@ -1000,7 +1000,7 @@ void VDP_showCPULoad()
 void updateUserTileMaxIndex()
 {
     // sprite engine always allocate VRAM just below FONT
-    userTileMaxIndex = TILE_FONTINDEX - spriteVramSize;
+    userTileMaxIndex = TILE_FONT_INDEX - spriteVramSize;
 }
 
 static void updateMapsAddress()

@@ -250,7 +250,7 @@ void VDP_drawTextEx(VDPPlane plane, const char *str, u16 basetile, u16 x, u16 y,
     d = data;
     i = len;
     while(i--)
-        *d++ = TILE_FONTINDEX + (*s++ - 32);
+        *d++ = TILE_FONT_INDEX + (*s++ - 32);
 
     // VDP_setTileMapDataRowEx(..) take care of using temporary buffer to build the data so we are ok here
     VDP_setTileMapDataRowEx(plane, data, basetile, y, x, len, tm);
@@ -405,7 +405,7 @@ bool VDP_drawBitmap(VDPPlane plane, const Bitmap *bitmap, u16 x, u16 y)
 
     numTile = mulu((bitmap->h + 7) >> 3, (bitmap->w + 7) >> 3);
     // not enough tiles to display the image, get back to first user index
-    if ((curTileInd + numTile) > TILE_USERMAXINDEX)
+    if ((curTileInd + numTile) > TILE_USER_MAX_INDEX)
         curTileInd = TILE_USER_INDEX;
 
     result = VDP_drawBitmapEx(plane, bitmap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE);
@@ -451,7 +451,7 @@ bool VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y)
 
     numTile = image->tileset->numTile;
     // not enough tiles to display the image, get back to first user index
-    if ((curTileInd + numTile) > TILE_USERMAXINDEX)
+    if ((curTileInd + numTile) > TILE_USER_MAX_INDEX)
         curTileInd = TILE_USER_INDEX;
 
     result = VDP_drawImageEx(plane, image, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, curTileInd), x, y, TRUE, DMA);

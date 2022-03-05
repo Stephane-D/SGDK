@@ -876,7 +876,7 @@ void SYS_showFrameLoad(bool mean)
     vdpSprite->y = 0;
     vdpSprite->size = SPRITE_SIZE(1, 1);
     // point on left cursor tile in font
-    vdpSprite->attribut = TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_FONTINDEX + 94);
+    vdpSprite->attribut = TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_FONT_INDEX + 94);
     vdpSprite->x = 0x80;
 
     // apply changes immediately in VRAM
