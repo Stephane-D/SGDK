@@ -54,17 +54,20 @@ typedef void ObjectCallback(Object* obj);
  *      Base object structure
  *
  *  \param state
- *      Object state
+ *      Object state, you can use it but preserv bit 15 as it's used internally to detect invalid object
+ *  \param type
+ *      Object type, can be used to recognize the underlying object / structure type.
  *  \param init
- *      Initialisation function callback, called only once after object creation
+ *      Initialisation function callback, should be only called once after object creation
  *  \param update
- *      Update function callback, usually called once per framecalled during
+ *      Update function callback, usually called once per frame
  *  \param end
- *      Ending function callback, called only once before object release
+ *      Ending function callback, should be only called once before object release
  */
 typedef struct Object_
 {
     u16 state;
+    u16 type;
     ObjectCallback* init;
     ObjectCallback* update;
     ObjectCallback* end;
@@ -114,6 +117,15 @@ void OBJ_release(Pool* pool, Object* obj);
 
 /**
  *  \brief
+ *      Iterate over all active object from the given object pool and call #update() method for each of them
+ *
+ *  \param pool
+ *      Object pool to iterate active object from
+ */
+void OBJ_updateAll(Pool* pool);
+
+/**
+ *  \brief
  *      Set the initialization method for the given object
  *
  *  \param obj
@@ -151,7 +163,6 @@ void OBJ_setUpdateMethod(Object* obj, ObjectCallback* updateMethod);
  *  \see OBJ_setUpdateMethod(..)
  */
 void OBJ_setEndMethod(Object* obj, ObjectCallback* endMethod);
-
 
 
 #endif // _OBJECT_H_

@@ -47,6 +47,11 @@ Object* OBJ_create(Pool* pool)
 
     // object is allocated
     result->state = OBJ_ALLOCATED;
+    // init
+    result->type = 0;
+    result->init = dummyObjectMethod;
+    result->update = dummyObjectMethod;
+    result->end = dummyObjectMethod;
 
     return result;
 }
@@ -81,6 +86,18 @@ void OBJ_setEndMethod(Object* obj, ObjectCallback* endMethod)
 
     if (endMethod != NULL) obj->end = endMethod;
     else obj->end = dummyObjectMethod;
+}
+
+void OBJ_updateAll(Pool* pool)
+{
+    Object** objects = (Object**) pool->allocStack;
+    u16 num = POOL_getNumAllocated(pool);
+
+    while(num--)
+    {
+        Object* object = *objects++;
+        object->update(object);
+    }
 }
 
 
