@@ -677,7 +677,7 @@ void SPR_setPosition(Sprite* sprite, s16 x, s16 y);
  *  \param value
  *      The horizontal flip attribut value (TRUE or FALSE)
  */
-void SPR_setHFlip(Sprite* sprite, u16 value);
+void SPR_setHFlip(Sprite* sprite, bool value);
 /**
  *  \brief
  *      Set sprite Vertical Flip attribut.
@@ -687,7 +687,7 @@ void SPR_setHFlip(Sprite* sprite, u16 value);
  *  \param value
  *      The vertical flip attribut value (TRUE or FALSE)
  */
-void SPR_setVFlip(Sprite* sprite, u16 value);
+void SPR_setVFlip(Sprite* sprite, bool value);
 /**
  *  \brief
  *      Set sprite Palette index to use.
@@ -707,7 +707,7 @@ void SPR_setPalette(Sprite* sprite, u16 value);
  *  \param value
  *      The priority attribut value (TRUE or FALSE)
  */
-void SPR_setPriority(Sprite* sprite, u16 value);
+void SPR_setPriority(Sprite* sprite, bool value);
 /**
  *  \deprecated
  *      Use #SPR_setPriority(..) instead

@@ -529,7 +529,7 @@ void PAL_fadeInAll(const u16* pal, u16 numFrame, bool async)
 }
 
 
-u16 PAL_isDoingFade()
+bool PAL_isDoingFade()
 {
     return (VBlankProcess & PROCESS_PALETTE_FADING)?TRUE:FALSE;
 }

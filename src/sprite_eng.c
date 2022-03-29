@@ -774,7 +774,7 @@ void SPR_setPosition(Sprite* sprite, s16 x, s16 y)
     END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
-void SPR_setHFlip(Sprite* sprite, u16 value)
+void SPR_setHFlip(Sprite* sprite, bool value)
 {
     START_PROFIL
 
@@ -825,7 +825,7 @@ void SPR_setHFlip(Sprite* sprite, u16 value)
     END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
-void SPR_setVFlip(Sprite* sprite, u16 value)
+void SPR_setVFlip(Sprite* sprite, bool value)
 {
     START_PROFIL
 
@@ -876,7 +876,7 @@ void SPR_setVFlip(Sprite* sprite, u16 value)
     END_PROFIL(PROFIL_SET_ATTRIBUTE)
 }
 
-void SPR_setPriority(Sprite* sprite, u16 value)
+void SPR_setPriority(Sprite* sprite, bool value)
 {
     START_PROFIL
 

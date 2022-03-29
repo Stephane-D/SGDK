@@ -73,13 +73,6 @@
 
 
 /**
- *  \typedef bool
- *      boolean type, to be used with TRUE and FALSE constant.
- *      (internally set as unsigned short)
- */
-typedef unsigned short bool;
-
-/**
  *  \typedef s8
  *      8 bits signed integer (equivalent to char).
  */
@@ -112,11 +105,12 @@ typedef unsigned short u16;
 typedef unsigned long u32;
 
 /**
- *  \typedef vbool
- *      volatile boolean type.
- *      (internally set as volatile unsigned short)
+ *  \typedef bool
+ *      boolean type, to be used with TRUE and FALSE constant.
+ *      (internally set as unsigned char)
  */
-typedef volatile u16 vbool;
+typedef u8 bool;
+
 /**
  *  \typedef vs8
  *      volatile 8 bits signed integer.
@@ -148,6 +142,13 @@ typedef volatile u16 vu16;
  *      volatile 32 bits unsigned integer.
  */
 typedef volatile u32 vu32;
+
+/**
+ *  \typedef vbool
+ *      volatile boolean type.
+ *      (internally set as volatile unsigned char)
+ */
+typedef vu8 vbool;
 
 
 #if !defined(uint8_t) && !defined(__int8_t_defined)
@@ -205,7 +206,6 @@ typedef vs16 vf16;
  *      volatile 32 bits fixed point type (short version).
  */
 typedef vs32 vf32;
-
 
 
 #define FASTCALL
