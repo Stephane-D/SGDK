@@ -15,7 +15,7 @@ static void dummyObjectMethod(Object* obj);
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
 static bool isAllocated(Object* obj)
 {
-    return obj->state & OBJ_ALLOCATED;
+    return obj->internalState & OBJ_ALLOCATED;
 }
 #endif
 
@@ -46,7 +46,7 @@ Object* OBJ_create(Pool* pool)
     if (result == NULL) return NULL;
 
     // object is allocated
-    result->state = OBJ_ALLOCATED;
+    result->internalState = OBJ_ALLOCATED;
     // init
     result->type = 0;
     result->init = dummyObjectMethod;
