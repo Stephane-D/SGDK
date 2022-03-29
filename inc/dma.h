@@ -37,8 +37,9 @@
 #define DMA_TRANSFER_CAPACITY_PAL_LOW   8000
 #define DMA_TRANSFER_CAPACITY_PAL_MAX   15000
 
-#define DMA_BUFFER_SIZE_NTSC            DMA_TRANSFER_CAPACITY_NTSC
-#define DMA_BUFFER_SIZE_PAL_LOW         DMA_TRANSFER_CAPACITY_PAL_LOW
+// better to allocate a bit more than DMA capacity
+#define DMA_BUFFER_SIZE_NTSC            8192
+#define DMA_BUFFER_SIZE_PAL_LOW         8192
 #define DMA_BUFFER_SIZE_PAL_MAX         (14 * 1024)
 #define DMA_BUFFER_SIZE_MIN             (2 * 1024)
 
@@ -120,7 +121,7 @@ void DMA_initEx(u16 size, u16 capacity, u16 bufferSize);
  *  \see DMA_setAutoFlush()
  *  \see DMA_flushQueue()
  */
-u16 DMA_getAutoFlush(void);
+bool DMA_getAutoFlush(void);
 /**
  *  \brief
  *      If set to TRUE (default) then the DMA_flushQueue() method is automatically called at VBlank
@@ -220,7 +221,7 @@ void DMA_setBufferSizeToDefault(void);
  *
  *  \see DMA_setIgnoreOverCapacity(void)
  */
-u16 DMA_getIgnoreOverCapacity(void);
+bool DMA_getIgnoreOverCapacity(void);
 /**
  *  \brief
  *      Set the "over capacity" DMA queue strategy (default is FALSE).
