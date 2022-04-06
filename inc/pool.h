@@ -23,11 +23,11 @@
  * POOL_release(bulletPool, bullet);
  * </pre>
  * <i>Pool</i> object is also very useful for fast iteration over allocated objects:<pre>
- * Bullet** bullets = bulletPool->allocStack;
+ * Bullet** bullets = POOL_getStackEnd(bulletPool);
  * u16 num = POOL_getNumAllocated(bulletPool);
  * while(num--)
  * {
- *    Bullet* bullet = *bullets++;
+ *    Bullet* bullet = *--bullets;
  *    // do whatever you need on your bullet
  *    ...
  * }</pre>
@@ -140,6 +140,15 @@ u16 POOL_getFree(Pool* pool);
  *      Object pool allocator
  */
 u16 POOL_getNumAllocated(Pool* pool);
+
+/**
+ *  \return
+ *      the end of alloc stack (useful to iterate over allocated object)
+ *
+ *  \param pool
+ *      Object pool allocator
+ */
+void** POOL_getStackEnd(Pool* pool);
 
 
 #endif // _POOL_H_

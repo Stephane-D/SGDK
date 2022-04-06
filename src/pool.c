@@ -151,3 +151,9 @@ u16 POOL_getNumAllocated(Pool* pool)
 {
     return pool->size - POOL_getFree(pool);
 }
+
+void** POOL_getStackEnd(Pool* pool)
+{
+    return pool->allocStack + pool->size;
+}
+

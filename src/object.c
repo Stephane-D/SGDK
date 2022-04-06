@@ -90,12 +90,12 @@ void OBJ_setEndMethod(Object* obj, ObjectCallback* endMethod)
 
 void OBJ_updateAll(Pool* pool)
 {
-    Object** objects = (Object**) pool->allocStack;
+    Object** objects = (Object**) POOL_getStackEnd(pool);
     u16 num = POOL_getNumAllocated(pool);
 
     while(num--)
     {
-        Object* object = *objects++;
+        Object* object = *--objects;
         object->update(object);
     }
 }
