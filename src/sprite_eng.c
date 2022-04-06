@@ -220,7 +220,7 @@ static Sprite* allocateSprite(u16 head)
     Sprite* result;
 
     // allocate
-    result = POOL_allocateObject(spritesPool);
+    result = POOL_allocate(spritesPool);
     // enough sprite remaining ?
     if (result == NULL)
     {
@@ -278,7 +278,7 @@ static bool releaseSprite(Sprite* sprite)
 #endif // LIB_DEBUG
 
         // release sprite
-        POOL_releaseObject(spritesPool, sprite);
+        POOL_release(spritesPool, sprite);
 
         // remove sprite from chained list
         prev = sprite->prev;

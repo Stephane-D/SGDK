@@ -98,19 +98,19 @@ void POOL_destroy(Pool* pool)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     else
     {
-        kprintf("OBJ_destroyPool(): error - trying to destroy a not allocated pool !");
+        kprintf("POOL_destroy(): error - trying to destroy a not allocated pool !");
     }
 #endif
 }
 
 
-void* POOL_allocateObject(Pool* pool)
+void* POOL_allocate(Pool* pool)
 {
     // pool is empty ?
     if (pool->free == pool->allocStack)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KLog("OBJ_allocateObject(): failed - no more available object !");
+        KLog("POOL_allocate(): failed - no more available object !");
 #endif
 
         return NULL;
@@ -120,19 +120,19 @@ void* POOL_allocateObject(Pool* pool)
     return *--(pool->free);
 }
 
-void POOL_releaseObject(Pool* pool, void* obj)
+void POOL_release(Pool* pool, void* obj)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (obj == NULL)
     {
-        KLog("OBJ_releaseObject(): failed - trying to release a NULL object !");
+        KLog("POOL_release(): failed - trying to release a NULL object !");
         return;
     }
 
     // above
     if (pool->free >= &pool->allocStack[pool->size])
     {
-        KLog("OBJ_releaseObject(): failed - pool doesn't contain any object !");
+        KLog("POOL_release(): failed - pool doesn't contain any object !");
         return;
     }
 #endif

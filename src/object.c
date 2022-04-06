@@ -15,7 +15,7 @@ static void dummyObjectMethod(Object* obj);
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
 static bool isAllocated(Object* obj)
 {
-    return obj->internalState & OBJ_ALLOCATED;
+    return (obj->internalState & OBJ_ALLOCATED) != 0;
 }
 #endif
 
@@ -41,7 +41,7 @@ Pool* OBJ_createObjectPool(u16 size, u16 objectSize)
 
 Object* OBJ_create(Pool* pool)
 {
-    Object* result = POOL_allocateObject(pool);
+    Object* result = POOL_allocate(pool);
 
     if (result == NULL) return NULL;
 
@@ -60,7 +60,7 @@ void OBJ_release(Pool* pool, Object* obj)
 {
     if (!checkValid(obj, "OBJ_release")) return;
 
-    POOL_releaseObject(pool, obj);
+    POOL_release(pool, obj);
 }
 
 
