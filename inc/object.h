@@ -8,20 +8,17 @@
  * It works in concert with the <i>pool.h</i> unit which provide dynamic object allocation.<br>
  * <br>
  * The idea of <i>Object</i> is that you can use it as base structure for your own object (entity, enemy, character, whatever you want..).<br>
- * To do that the idea is to declare your new object structure by embedding the Object into it and always at the first position:<pre>
+ * To do that the idea is to declare your new object structure by embedding the Object into it can be anonymous) and always at the first position:<pre>
  * struct entity_
  * {
- *     Object obj;
+ *     Object;
  *     f32 posX;
  *     f32 posY;
  *     Sprite* sprite;
  *     ...
  * };</pre>
  *
- * Doing that your Entity structure can be used through OBJ_xxx methods for will be acceptedYou can use <i>Pool</i> object to handle dynamic allocation from a fixed set of objects.<br>
- * For instance if you may need to handle dynamically bullets for your game and you want to have
- * at max 20 bullets, you can handle it that way:<br><pre>
-
+ * Doing that your Entity structure can be used through OBJ_xxx methods.
  */
 
 #ifndef _OBJECT_H_
@@ -91,7 +88,7 @@ Pool* OBJ_createObjectPool(u16 size, u16 objectSize);
 
 /**
  *  \brief
- *      Create a new objet from the given object pool
+ *      Create a new objet from the given object pool (object must extend basic #Object structure)
  *
  *  \param pool
  *      Object pool to allocate from (see pool.h unit)
@@ -104,12 +101,12 @@ Pool* OBJ_createObjectPool(u16 size, u16 objectSize);
 Object* OBJ_create(Pool* pool);
 /**
  *  \brief
- *      Release an objet from the given object pool
+ *      Release an objet from the given object pool (object must extend basic #Object structure)
  *
  *  \param pool
  *      Object pool allocator to release from (see pool.h unit)
  *  \param obj
- *      Object to release
+ *      Object to release (must extend basic #Object structure)
  *
  *  \see OBJ_create(..)
  */
