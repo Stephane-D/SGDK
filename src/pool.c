@@ -148,8 +148,6 @@ void POOL_release(Pool* pool, void* obj, bool maintainCoherency)
     // different from the one in place ?
     if (maintainCoherency && (prevObj != obj))
     {
-        kprintf("POOL_release(): replacing previous object");
-
         void** s = pool->free;
         u16 i = POOL_getNumAllocated(pool);
 
@@ -158,7 +156,6 @@ void POOL_release(Pool* pool, void* obj, bool maintainCoherency)
             // found the original object in alloc stack ?
             if (*s == obj)
             {
-                kprintf("found !");
                 // replace with the overwritten one so we can use stack iteration
                 *s = prevObj;
                 return;
