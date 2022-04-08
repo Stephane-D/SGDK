@@ -116,11 +116,12 @@ void* POOL_allocate(Pool* pool)
         return NULL;
     }
 
-    // allocate object
-    return *--(pool->free);
+    // allocate object and return it
+    --pool->free;
+    return *pool->free;
 }
 
-void POOL_release(Pool* pool, void* obj)
+void POOL_release(Pool* pool, void* obj, bool maintainCoherency)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (obj == NULL)
@@ -137,8 +138,36 @@ void POOL_release(Pool* pool, void* obj)
     }
 #endif
 
+    // get previous
+    void* prevObj = *pool->free;
+
     // release object
-    *(pool->free)++ = obj;
+    *pool->free = obj;
+    pool->free++;
+
+    // different from the one in place ?
+    if (maintainCoherency && (prevObj != obj))
+    {
+        kprintf("POOL_release(): replacing previous object");
+
+        void** s = pool->free;
+        u16 i = POOL_getNumAllocated(pool);
+
+        while(i--)
+        {
+            // found the original object in alloc stack ?
+            if (*s == obj)
+            {
+                kprintf("found !");
+                // replace with the overwritten one so we can use stack iteration
+                *s = prevObj;
+                return;
+            }
+
+            // next
+            s++;
+        }
+    }
 }
 
 
@@ -152,8 +181,26 @@ u16 POOL_getNumAllocated(Pool* pool)
     return pool->size - POOL_getFree(pool);
 }
 
-void** POOL_getStackEnd(Pool* pool)
+void** POOL_getFirst(Pool* pool)
 {
-    return pool->allocStack + pool->size;
+    // free point on last allocated object
+    return pool->free;
+}
+
+s16 POOL_find(Pool* pool, void* object)
+{
+    void** s = pool->free;
+    u16 i = POOL_getNumAllocated(pool);
+
+    while(i--)
+    {
+        // we found the object in alloc stack ? --> return its position
+        if (*s == object) return pool->size - (s - pool->allocStack);
+        // next
+        s++;
+    }
+
+    // not found
+    return -1;
 }
 

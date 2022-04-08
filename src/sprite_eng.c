@@ -277,8 +277,8 @@ static bool releaseSprite(Sprite* sprite)
         kprintf("releaseSprite: success - released sprite at pos %ld", sprite - (Sprite*) spritesPool->bank);
 #endif // LIB_DEBUG
 
-        // release sprite
-        POOL_release(spritesPool, sprite);
+        // release sprite (we don't need stack coherency here as we don't use stack iteration)
+        POOL_release(spritesPool, sprite, FALSE);
 
         // remove sprite from chained list
         prev = sprite->prev;

@@ -23,11 +23,11 @@
  * POOL_release(bulletPool, bullet);
  * </pre>
  * <i>Pool</i> object is also very useful for fast iteration over allocated objects:<pre>
- * Bullet** bullets = POOL_getStackEnd(bulletPool);
+ * Bullet** bullets = POOL_getFirst(bulletPool);
  * u16 num = POOL_getNumAllocated(bulletPool);
  * while(num--)
  * {
- *    Bullet* bullet = *--bullets;
+ *    Bullet* bullet = *bullets++;
  *    // do whatever you need on your bullet
  *    ...
  * }</pre>
@@ -119,10 +119,13 @@ void* POOL_allocate(Pool* pool);
  *      Object pool allocator
  *  \param obj
  *      Object to release
+ *  \param maintainCoherency
+ *      set it to <i>TRUE</i> if you want to keep coherency for stack iteration (#see POOL_getFirst()).<br>
+ *      Set it to <i>FALSE</i> for faster release process if you don't require object iteration through alloc stack.
  *
  *  \see POOL_allocate(..)
  */
-void POOL_release(Pool* pool, void* obj);
+void POOL_release(Pool* pool, void* obj, bool maintainCoherency);
 
 /**
  *  \return
@@ -143,12 +146,25 @@ u16 POOL_getNumAllocated(Pool* pool);
 
 /**
  *  \return
- *      the end of alloc stack (useful to iterate over allocated object)
+ *      the start position of allocated objects in the alloc stack (useful to iterate over all allocated objects)
  *
  *  \param pool
  *      Object pool allocator
+ *
+ *  \see POOL_getNumAllocated(..)
  */
-void** POOL_getStackEnd(Pool* pool);
+void** POOL_getFirst(Pool* pool);
+
+/**
+ *  \return
+ *      the position of an object in the alloc stack or -1 if the object isn't found (useful for debug purpose mainly)
+ *
+ *  \param pool
+ *      Object pool allocator
+ *  \param obj
+ *      Object to get slot position
+ */
+s16 POOL_find(Pool* pool, void* obj);
 
 
 #endif // _POOL_H_

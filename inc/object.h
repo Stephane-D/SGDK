@@ -107,17 +107,22 @@ Object* OBJ_create(Pool* pool);
  *      Object pool allocator to release from (see pool.h unit)
  *  \param obj
  *      Object to release (must extend basic #Object structure)
+ *  \param maintainCoherency
+ *      set it to <i>TRUE</i> if you want to keep coherency for stack iteration and use #OBJ_updateAll().<br>
+ *      Set it to <i>FALSE</i> for faster release process if you don't require object iteration through alloc stack.
  *
  *  \see OBJ_create(..)
+ *  \see OBJ_updateAll(..)
  */
-void OBJ_release(Pool* pool, Object* obj);
+void OBJ_release(Pool* pool, Object* obj, bool maintainCoherency);
 
 /**
  *  \brief
- *      Iterate over all active object from the given object pool and call #update() method for each of them
+ *      Iterate over all active objects from the given object pool and call #update() method for each of them.<br>
+ *      <b>WARNING:</b> You need to always set 'maintainCoherency' to <i>TRUE</i> when using OBJ_release(..) otherwise stack iteration won't work correctly.
  *
  *  \param pool
- *      Object pool to iterate active object from
+ *      Object pool to update all objects from.
  */
 void OBJ_updateAll(Pool* pool);
 
