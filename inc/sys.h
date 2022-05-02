@@ -315,7 +315,7 @@ void SYS_setVBlankCallback(VoidCallback *CB);
 
 /**
  *  \brief
- *      Set 'Vertical Interrupt' callback method.
+ *      Set 'Vertical Interrupt' callback method, prefer #SYS_setVBlankCallback(..) when possible.
  *
  *  \param CB
  *      Pointer to the method to call on Vertical Interrupt.<br>
