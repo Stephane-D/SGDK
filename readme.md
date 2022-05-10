@@ -3,17 +3,17 @@
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
 
-**SGDK** is a free development kit allowing to develop software in **C language** for the **Sega Mega Drive**.
+**SGDK** is a free development kit allowing development of software in **C language** for the **Sega Mega Drive**.
 It contains the development library itself (with the code sources) and some custom tools used to compile resources.
-SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate ROM image. Binaries (GCC 6.3) are provided for Windows OS for convenience but you need to install it by yourself for others operating systems.
-Note that SGDK also requires Java (custom tools need it) so you need to have Java installed on your system.
+SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate a ROM image. Binaries (GCC 6.3) are provided for Windows OS for convenience, but you need to install it by yourself for other operating systems.
+Note that SGDK also requires Java (custom tools require it), so you need to have Java installed on your system.
 
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
 GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see [COPYING.RUNTIME](COPYING.RUNTIME) file)
  
-## GET STARTED
+## GETTING STARTED
 
-First, you need to know that SGDK uses C language (assembly is also possible but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time than learning 'Sega Mega Drive' programming is definitely too difficult and you will end nowhere. It's also important to have, at least, a basic knowledge about the Sega Mega Drive hardware (specifically the video system). 
+First, you need to know that SGDK uses the C language (assembly is also possible, but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time as learning 'Sega Mega Drive' programming is definitely too difficult and you will end up getting nowhere. It's also important to have, at least, a basic knowledge of the Sega Mega Drive hardware (specifically the video system). 
 
 ### MEGA DRIVE TECHNICAL INFO REFERENCES
 
@@ -37,14 +37,14 @@ Then when you feel ready you can go further and finally install SGDK :)
 You can find installation instructions and tutorials about how use SGDK on the wiki:<br>
 https://github.com/Stephane-D/SGDK/wiki
 
-SGDK comes with a doxygen documentation (generated from .h header files) which provides description about SGDK structures and functions. You can find it in the _'doc'_ folder (open your local _doc/html/files.html_ in your browser).
+SGDK comes with doxygen documentation (generated from .h header files) which provides descriptions about SGDK structures and functions. You can find it in the _'doc'_ folder (open your local _doc/html/files.html_ in your browser).
 
-It's important to know that SGDK heavily relies on _resources_ which are compiled through the _rescomp_ tool. You should read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to understand **which kind of resource you can use and how to declare them**. Then you can look at the *'sample'* folder from SGDK and in particular the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sonic) which is a good showcase of SGDK usage in general (functions and resources).
+It's important to know that SGDK heavily relies on _resources_ which are compiled through the _rescomp_ tool. You should read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to understand **which kind of resources you can use and how to declare them**. Then you can look at the *'sample'* folder from SGDK and, in particular, the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/sonic) which is a good showcase of SGDK usage in general (functions and resources).
 
 ### OTHERS TUTORIALS
 
-You can find a lot of tutorials online about SGDK but be careful, some are outdated or sometime just wrong.<br>
-I really recommend to start from the [wiki](https://github.com/Stephane-D/SGDK/wiki) and which provide the basics to start but if you need more _visual_ and more complete tutorials you can give a try to these ones:<br>
+You can find a lot of tutorials online about SGDK but be careful, some are outdated or sometimes just wrong.<br>
+I really recommend starting from the [wiki](https://github.com/Stephane-D/SGDK/wiki) which provides the basics to start, but if you need more _visual_ and more complete tutorials you can give either of these a try:<br>
 MD programming tutorials from Ohsat:<br>
 https://www.ohsat.com/tutorial/mdmisc/creating-graphics-for-md/<br>
 Very complete and visual tutorials from Danibus (spanish only):<br>
@@ -52,7 +52,7 @@ https://danibus.wordpress.com/<br>
  
 ## HELP AND SUPPORT
 
-If you need help or support with SGDK, you can join the SGDK Discord server to get support:<br>
+If you need help or support with SGDK, you can join the SGDK Discord server:<br>
 https://discord.gg/xmnBWQS
 
 You can also go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:<br>
@@ -60,17 +60,17 @@ http://gendev.spritesmind.net/forum/
  
 ### MACOSX / LINUX
 
-Unix/Linux users should give a try to this very simple script allowing to use SGDK from Wine easily:<br>
+Unix/Linux users should give this very simple script a try, allowing you to use SGDK from Wine easily:<br>
 https://github.com/Franticware/SGDK_wine
 
-There is also the new and nice solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:<br>
+There is also a new solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:<br>
 https://github.com/v4ld3r5/sgdk_vscode_template
 
 Another great alternative is to use the complete _MarsDev_ environment developed by Andy Grind:
 https://github.com/andwn/marsdev
-It suppots all OSes, provides SGDK compatibility as well than 32X support so be sure to check it.
+It suppots all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out.
 
-MacOSX users also have access to SGDK with Gendev for MacOS from Sonic3D project:<br>
+MacOSX users also have access to SGDK with Gendev for MacOS from the Sonic3D project:<br>
 https://github.com/SONIC3D/gendev-macos
 
 ### DOCKER
@@ -88,23 +88,23 @@ And then to compile the local env, such as `samples` for example:
 
 Notes:
 
-- `$PWD` will not work on Windows, there `%CD%` has to be used instead.
+- `$PWD` will not work on Windows, `%CD%` has to be used instead.
 - To avoid writing `./out` files as root, execute the docker command as current user:
   `docker run --rm -v "$PWD":/src -u $(id -u):$(id -g) sgdk`
-- You can also try the alternate Doragasu docker solution which use native linux compiler (much faster):
+- You can also try the alternate Doragasu docker solution which uses a native linux compiler (much faster):
   https://gitlab.com/doragasu/docker-sgdk
  
 ### VISUAL STUDIO
 
-You can find a Visual Studio template into the 'vstudio' folder to facilate SGDK integration with VS.
-To go even further you can also install the VS extension made by zerasul:<br>
+You can find a Visual Studio template in the 'vstudio' folder to facilate SGDK integration with VS.
+Or, to take it even further, you can also install the VS extension made by zerasul:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ## SUPPORT SGDK
 
 SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
 
-Thanks =) I wish you a great and happy coding time !
+Thanks =) I wish you a great and happy time coding!
 
 ## THANKS
 
@@ -133,7 +133,7 @@ Thanks =) I wish you a great and happy coding time !
 
 ## SPECIAL THANKS
 
-Of course I thanks all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for
+Of course I thank all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for
 my premium patreon supporters (100$ / month):
 - Bitmap Bureau (Xeno Crisis team)
 - Neofid Studios (Demons of Asteborg team)
