@@ -71,8 +71,10 @@ s16       menuV           = 1;
 fix16     amplitude       = FIX16(AMPLITUDE_DEF);
 fix16     waveSpeed       = FIX16(WAVE_SPEED_DEF);
 fix16     angularVelocity = FIX16(ANGULAR_VELOCITY_DEF);
-bool      resetWave       = FALSE;
-bool      resetParameters = FALSE;
+
+// force word alignment as we will use a void* to access them from menu
+bool      resetWave         __attribute__ ((aligned (2)))  = FALSE;
+bool      resetParameters   __attribute__ ((aligned (2)))  = FALSE;
 
 // *****************************************************************************
 //
