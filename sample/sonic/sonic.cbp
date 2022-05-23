@@ -65,11 +65,19 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="res/gfx.h" />
-		<Unit filename="res/gfx.res" />
+		<Unit filename="inc/camera.h" />
+		<Unit filename="inc/entities.h" />
+		<Unit filename="inc/hud.h" />
+		<Unit filename="inc/level.h" />
+		<Unit filename="inc/player.h" />
+		<Unit filename="inc/sfx.h" />
+		<Unit filename="inc/utils.h" />
 		<Unit filename="res/gfx/bga.png" />
 		<Unit filename="res/gfx/bgb.png" />
 		<Unit filename="res/music/sonic1.vgm" />
+		<Unit filename="res/res_gfx.res" />
+		<Unit filename="res/res_sound.res" />
+		<Unit filename="res/res_sprite.res" />
 		<Unit filename="res/sfx/S1_die.wav" />
 		<Unit filename="res/sfx/S1_explode1.wav" />
 		<Unit filename="res/sfx/S1_explode2.wav" />
@@ -82,12 +90,29 @@
 		<Unit filename="res/sfx/S1_roll.wav" />
 		<Unit filename="res/sfx/S1_spinning.wav" />
 		<Unit filename="res/sfx/S1_stop.wav" />
-		<Unit filename="res/sound.h" />
-		<Unit filename="res/sound.res" />
-		<Unit filename="res/sprite.h" />
-		<Unit filename="res/sprite.res" />
 		<Unit filename="res/sprite/sonic.png" />
+		<Unit filename="src/camera.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/entities.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/hud.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/level.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/player.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/sfx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
@@ -99,10 +124,10 @@
 				<remote_debugging>
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
 				</remote_debugging>
-				<remote_debugging target="debug">
+				<remote_debugging target="release">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
 				</remote_debugging>
-				<remote_debugging target="release">
+				<remote_debugging target="debug">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
 				</remote_debugging>
 			</debugger>
