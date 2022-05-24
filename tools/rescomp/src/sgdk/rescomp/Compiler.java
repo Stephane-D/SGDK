@@ -2,18 +2,24 @@ package sgdk.rescomp;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import sgdk.rescomp.processor.AlignProcessor;
 import sgdk.rescomp.processor.BinProcessor;
@@ -48,6 +54,7 @@ import sgdk.tool.StringUtil;
 
 public class Compiler
 {
+    private final static String EXT_JAR_NAME = "rescomp_ext.jar";
     // private final static String REGEX_LETTERS = "[a-zA-Z]";
     // private final static String REGEX_ID = "\\b([A-Za-z][A-Za-z0-9_]*)\\b";
 
@@ -92,6 +99,16 @@ public class Compiler
         currentDir = FileUtil.getApplicationDirectory();
         // get input file directory
         resDir = FileUtil.getDirectory(fileName);
+
+        // load extensions
+        try
+        {
+            loadExtensions();
+        }
+        catch (IOException e)
+        {
+            System.err.println("Cannot load extension:" + e.getMessage());
+        }
 
         // reset resources / files lists
         resources.clear();
@@ -166,7 +183,11 @@ public class Compiler
             else
             {
                 addResource(resource);
-                System.out.println("'" + resource.id + "' raw size: " + resource.totalSize() + " bytes");
+                // show raw size
+                System.out.println(" '" + resource.id + "' raw size: " + resource.totalSize() + " bytes");
+                // show more infos for MAP type resource
+                if (resource instanceof sgdk.rescomp.resource.Map)
+                    System.out.println(resource.toString());
             }
         }
 
@@ -384,9 +405,8 @@ public class Compiler
             if (unpackedSize > 0)
                 System.out.println("  Unpacked: " + unpackedSize + " bytes");
             if (packedSize > 0)
-                System.out.println(
-                        "  Packed: " + packedSize + " bytes (" + Math.round((packedSize * 100f) / packedRawSize)
-                                + "% - origin size: " + packedRawSize + " bytes)");
+                System.out.println("  Packed: " + packedSize + " bytes (" + Math.round((packedSize * 100f) / packedRawSize) + "% - origin size: "
+                        + packedRawSize + " bytes)");
 
             int spriteMetaSize = 0;
             int miscMetaSize = 0;
@@ -422,8 +442,7 @@ public class Compiler
                 miscMetaSize += res.shallowSize();
 
             if (miscMetaSize > 0)
-                System.out.println(
-                        "Misc metadata (bitmap, image, tilemap, tileset, palette..): " + miscMetaSize + " bytes");
+                System.out.println("Misc metadata (bitmap, image, tilemap, tileset, palette..): " + miscMetaSize + " bytes");
 
             final int totalSize = unpackedSize + packedSize + spriteMetaSize + miscMetaSize;
             System.out.println("Total: " + totalSize + " bytes (" + Math.round(totalSize / 1024d) + " KB)");
@@ -467,6 +486,137 @@ public class Compiler
         }
 
         return true;
+    }
+
+    private static void loadExtensions() throws IOException
+    {
+        final File rescompExt = StringUtil.isEmpty(resDir) ? new File(EXT_JAR_NAME) : new File(resDir, EXT_JAR_NAME);
+
+        // found an extension ?
+        if (rescompExt.exists())
+        {
+            // build the class loader
+            final URLClassLoader classLoader = new URLClassLoader(new URL[] {rescompExt.toURI().toURL()}, Compiler.class.getClassLoader());
+
+            try
+            {
+                // get all classes from JAR file
+                for (String className : findClassNamesInJAR(rescompExt.getAbsolutePath()))
+                {
+                    try
+                    {
+                        // try to load class
+                        final Class<?> clazz = classLoader.loadClass(className);
+
+                        try
+                        {
+                            // is a processor class ?
+                            final Class<? extends Processor> processorClass = clazz.asSubclass(Processor.class);
+                            // create the processor
+                            final Processor processor = processorClass.newInstance();
+
+                            // and add to processor list
+                            resourceProcessors.add(processor);
+
+                            System.out.println("Extension '" + processor.getId() + "' loaded.");
+                        }
+                        catch (Throwable t)
+                        {
+                            // not a processor --> ignore
+                        }
+                    }
+                    catch (UnsupportedClassVersionError e)
+                    {
+                        System.err.println("Class '" + className + "' cannot be loaded: newer java required.");
+                    }
+                    catch (Throwable t)
+                    {
+                        System.err.println("Class '" + className + "' cannot be loaded:" + t.getMessage());
+                    }
+                }
+            }
+            finally
+            {
+                classLoader.close();
+            }
+        }
+    }
+
+    /**
+     * This method checks and transforms the filename of a potential {@link Class} given by <code>fileName</code>.<br>
+     * 
+     * @param fileName
+     *        is the filename.
+     * @return the according Java {@link Class#getName() class-name} for the given <code>fileName</code> if it is a
+     *         class-file that is no anonymous {@link Class}, else <code>null</code>.
+     */
+    private static String fixClassName(String fileName)
+    {
+        // replace path separator by package separator
+        String result = fileName.replace('/', '.');
+
+        // handle inner classes...
+        final int lastDollar = result.lastIndexOf('$');
+        if (lastDollar > 0)
+        {
+            char innerChar = result.charAt(lastDollar + 1);
+            // ignore anonymous inner class
+            if ((innerChar >= '0') && (innerChar <= '9'))
+                return null;
+        }
+
+        return result;
+    }
+
+    /**
+     * This method checks and transforms the filename of a potential {@link Class} given by <code>fileName</code>.
+     * 
+     * @param fileName
+     *        is the filename.
+     * @return the according Java {@link Class#getName() class-name} for the given <code>fileName</code> if it is a
+     *         class-file that is no anonymous {@link Class}, else <code>null</code>.
+     */
+    private static String filenameToClassname(String fileName)
+    {
+        // class file ?
+        if (fileName.toLowerCase().endsWith(".class"))
+            // remove ".class" extension and fix classname
+            return fixClassName(fileName.substring(0, fileName.length() - 6));
+
+        return null;
+    }
+
+    private static void addClassFileName(String fileName, Set<String> classSet, String prefix)
+    {
+        final String simpleClassName = filenameToClassname(fileName);
+
+        if (simpleClassName != null)
+            classSet.add(prefix + simpleClassName);
+    }
+
+    /**
+     * Search for all classes in JAR file
+     * 
+     * @throws IOException
+     */
+    private static Set<String> findClassNamesInJAR(String fileName) throws IOException
+    {
+        final Set<String> classes = new HashSet<>();
+
+        try (final JarFile jarFile = new JarFile(fileName))
+        {
+            final Enumeration<JarEntry> entries = jarFile.entries();
+
+            while (entries.hasMoreElements())
+            {
+                final JarEntry jarEntry = entries.nextElement();
+
+                if (!jarEntry.isDirectory())
+                    addClassFileName(jarEntry.getName(), classes, "");
+            }
+        }
+
+        return classes;
     }
 
     private static String getFixedPath(String path)
@@ -570,8 +720,7 @@ public class Compiler
             }
         }
         else
-            throw new IllegalArgumentException(
-                    "getBinResourcesOf(..) error: " + resourceType.getName() + " class type not expected !");
+            throw new IllegalArgumentException("getBinResourcesOf(..) error: " + resourceType.getName() + " class type not expected !");
 
         return result;
     }
@@ -587,17 +736,21 @@ public class Compiler
         return result;
     }
 
-    private static void exportResources(Collection<Resource> resourceCollection, ByteArrayOutputStream outB,
-            StringBuilder outS, StringBuilder outH) throws IOException
+    private static void exportResources(Collection<Resource> resourceCollection, ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH)
+            throws IOException
     {
         for (Resource res : resourceCollection)
             exportResource(res, outB, outS, outH);
     }
 
-    private static void exportResource(Resource resource, ByteArrayOutputStream outB, StringBuilder outS,
-            StringBuilder outH) throws IOException
+    private static void exportResource(Resource resource, ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH) throws IOException
     {
         resource.out(outB, outS, outH);
+    }
+
+    public static Resource findResource(Resource resource)
+    {
+        return resources.get(resource);
     }
 
     public static Resource addResource(Resource resource, boolean internal)
@@ -605,11 +758,8 @@ public class Compiler
         // internal resource ?
         if (internal)
         {
-            // mark as not global
-            resource.global = false;
-
             // check if we already have this resource
-            final Resource result = resources.get(resource);
+            final Resource result = findResource(resource);
 
             // return it if already exists
             if (result != null)
@@ -617,6 +767,9 @@ public class Compiler
                 // System.out.println("Duplicated resource found: " + resource.id + " = " + result.id);
                 return result;
             }
+
+            // mark as not global (internal)
+            resource.global = false;
         }
 
         // add resource
@@ -638,6 +791,9 @@ public class Compiler
 
     public static Resource getResourceById(String id)
     {
+        if (StringUtil.equals(id, "NULL"))
+            return null;
+
         for (Resource resource : resourcesList)
             if (resource.id.equals(id))
                 return resource;
@@ -679,15 +835,7 @@ public class Compiler
 
             return processor.execute(fields);
         }
-        catch (IOException e)
-        {
-            System.out.println();
-            System.err.println(e.getMessage());
-            System.err.println("Error: cannot compile resource '" + input + "'");
-            e.printStackTrace();
-            return null;
-        }
-        catch (IllegalArgumentException e)
+        catch (Exception e)
         {
             System.out.println();
             System.err.println(e.getMessage());
