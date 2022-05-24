@@ -1,7 +1,5 @@
 package sgdk.rescomp.processor;
 
-import java.io.IOException;
-
 import sgdk.rescomp.Compiler;
 import sgdk.rescomp.Processor;
 import sgdk.rescomp.Resource;
@@ -17,14 +15,14 @@ public class PaletteProcessor implements Processor
     }
 
     @Override
-    public Resource execute(String[] fields) throws IllegalArgumentException, IOException
+    public Resource execute(String[] fields) throws Exception
     {
         if (fields.length < 3)
         {
             System.out.println("Wrong PALETTE definition");
             System.out.println("PALETTE name file");
             System.out.println("  name       Palette variable name");
-            System.out.println("  file       path of the .pal or image file to convert to Palette structure (indexed colors BMP or PNG image)");
+            System.out.println("  file       path of the .pal or image file to convert to Palette structure (PAL file, BMP or PNG image file)");
 
             return null;
         }
