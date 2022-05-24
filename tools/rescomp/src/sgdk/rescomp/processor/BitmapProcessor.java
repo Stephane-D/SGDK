@@ -19,14 +19,14 @@ public class BitmapProcessor implements Processor
     }
 
     @Override
-    public Resource execute(String[] fields) throws IllegalArgumentException, IOException
+    public Resource execute(String[] fields) throws Exception
     {
         if (fields.length < 3)
         {
             System.out.println("Wrong BITMAP definition");
             System.out.println("BITMAP name \"file\" [compression]");
             System.out.println("  name          Bitmap variable name");
-            System.out.println("  file          the image to convert to Bitmap structure (indexed colors BMP or PNG image)");
+            System.out.println("  file          the image to convert to Bitmap structure (BMP or PNG image)");
             System.out.println("  compression   compression type, accepted values:");
             System.out.println("                 -1 / BEST / AUTO = use best compression");
             System.out.println("                  0 / NONE        = no compression (default)");

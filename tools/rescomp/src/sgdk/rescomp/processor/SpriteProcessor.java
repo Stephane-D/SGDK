@@ -23,14 +23,14 @@ public class SpriteProcessor implements Processor
     }
 
     @Override
-    public Resource execute(String[] fields) throws IllegalArgumentException, IOException
+    public Resource execute(String[] fields) throws Exception
     {
         if (fields.length < 5)
         {
             System.out.println("Wrong SPRITE definition");
             System.out.println("SPRITE name \"file\" width heigth [compression [time [collision [opt [iteration]]]]]");
             System.out.println("  name          Sprite variable name");
-            System.out.println("  file          the image file to convert to SpriteDefinition structure (indexed colors BMP or PNG image)");
+            System.out.println("  file          the image file to convert to SpriteDefinition structure (BMP or PNG image)");
             System.out.println("  width         width of a single sprite frame in tile");
             System.out.println("  height        heigth of a single sprite frame in tile");
             System.out.println("  compression   compression type, accepted values:");

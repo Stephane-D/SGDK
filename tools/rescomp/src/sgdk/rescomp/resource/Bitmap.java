@@ -19,43 +19,35 @@ public class Bitmap extends Resource
     public final Bin bin;
     public final Palette palette;
 
-    public Bitmap(String id, String imgFile, Compression compression) throws IOException, IllegalArgumentException
+    public Bitmap(String id, String imgFile, Compression compression) throws Exception
     {
         super(id);
 
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
 
-        // check BPP is correct
-        if (imgInfo.bpp > 8)
-            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
-                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
-
         // set width and height
         w = imgInfo.w;
-        h = imgInfo.h;
 
         // check width is correct
         if ((w & 1) == 1)
+            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", even width (multiple of 2) required.");
+
+        // get 8bpp pixels
+        byte[] data = Util.getImage8bpp(imgFile, false);
+
+        // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
+        h = data.length / w;
+
+        // find max color index
+        final int maxIndex = ArrayMath.max(data, false);
+        // not allowed here
+        if (maxIndex >= 16)
             throw new IllegalArgumentException(
-                    "'" + imgFile + "' width is '" + w + ", even width (multiple of 2) required.");
-
-        // get image data
-        byte[] data = ImageUtil.getIndexedPixels(imgFile);
-
-        // 8 bpp image ?
-        if (imgInfo.bpp > 4)
-        {
-            // find max color index
-            final int maxIndex = ArrayMath.max(data, false);
-            // not allowed here
-            if (maxIndex >= 16)
-                throw new IllegalArgumentException("'" + imgFile
-                        + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
-        }
+                    "'" + imgFile + "' uses color index >= 16, BITMAP resource requires image with a maximum of 16 colors (use 4bpp image instead if unsure)");
 
         // convert to 4 bpp
-        data = ImageUtil.convertTo4bpp(data, imgInfo.bpp);
+        data = ImageUtil.convertTo4bpp(data, 8);
 
         // build BIN (image data) with wanted compression
         bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression));

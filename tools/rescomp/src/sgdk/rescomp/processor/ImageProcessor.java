@@ -21,14 +21,14 @@ public class ImageProcessor implements Processor
     }
 
     @Override
-    public Resource execute(String[] fields) throws IllegalArgumentException, IOException
+    public Resource execute(String[] fields) throws Exception
     {
         if (fields.length < 3)
         {
             System.out.println("Wrong IMAGE definition");
             System.out.println("IMAGE name \"file\" [compression [mapopt [mapbase]]]");
             System.out.println("  name          Image variable name");
-            System.out.println("  file          the image to convert to Image structure (indexed colors BMP or PNG image)");
+            System.out.println("  file          path of the input image file (BMP or PNG image)");
             System.out.println("  compression   compression type, accepted values:");
             System.out.println("                 -1 / BEST / AUTO = use best compression");
             System.out.println("                  0 / NONE        = no compression (default)");

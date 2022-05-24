@@ -7,7 +7,6 @@ import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
-import sgdk.rescomp.type.Tile;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
@@ -19,56 +18,42 @@ public class Image extends Resource
     public final Tilemap tilemap;
     public final Palette palette;
 
-    public Image(String id, String imgFile, Compression compression, TileOptimization tileOpt, int mapBase)
-            throws IOException, IllegalArgumentException
+    public Image(String id, String imgFile, Compression compression, TileOptimization tileOpt, int mapBase) throws Exception
     {
         super(id);
 
+        // get 8bpp pixels and also check image dimension is aligned to tile
+        final byte[] image = Util.getImage8bpp(imgFile, true);
+
+        // happen when we couldn't retrieve palette data from RGB image
+        if (image == null)
+            throw new IllegalArgumentException(
+                    "RGB image '" + imgFile + "' does not contains palette data (see 'Important note about image format' in the rescomp.txt file");
+
+        // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
+        // check if image try to use bit 6 (probably mean that we have too much colors in our image)
+        for (byte d : image)
+        {
+            // bit 6 used ?
+            if ((d & 0x40) != 0)
+                throw new IllegalArgumentException(
+                        "'" + imgFile + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
+        }
+
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
-
-        // check BPP is correct
-        if (imgInfo.bpp > 8)
-            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
-                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
-
-        // set width and height
+        // width and height
         final int w = imgInfo.w;
-        final int h = imgInfo.h;
-
-        // check size is correct
-        if ((w & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", should be a multiple of 8.");
-        if ((h & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' height is '" + h + ", should be a multiple of 8.");
-
+        // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
+        final int h = image.length / w;
         // get size in tile
         final int wt = w / 8;
         final int ht = h / 8;
 
-        // get image data
-        byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8 bpp
-        data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
-
-        // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
-
-        // just ignore it..
-        // // check if image try to use bit 6 (probably mean that we have too much colors in our image)
-        // for (byte d : data)
-        // {
-        // // bit 6 used ?
-        // if ((d & 0x40) != 0)
-        // throw new IllegalArgumentException("'" + imgFile
-        // + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
-        // }
-
         // build TILESET with wanted compression
-        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", data, w, h, 0, 0, wt, ht, tileOpt,
-                (mapBase & Tile.TILE_INDEX_MASK) != 0, compression));
+        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht, tileOpt, compression, false));
         // build TILEMAP with wanted compression
-        tilemap = (Tilemap) addInternalResource(
-                Tilemap.getTilemap(id + "_tilemap", tileset, mapBase, data, wt, ht, tileOpt, compression));
+        tilemap = (Tilemap) addInternalResource(Tilemap.getTilemap(id + "_tilemap", tileset, mapBase, image, wt, ht, tileOpt, compression));
         // build PALETTE
         palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, 64, true));
 
