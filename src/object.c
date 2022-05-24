@@ -9,6 +9,7 @@
 #include "tools.h"
 
 
+// forward
 static void dummyObjectMethod(Object* obj);
 
 
