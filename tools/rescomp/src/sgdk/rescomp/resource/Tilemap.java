@@ -9,19 +9,19 @@ import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.rescomp.type.Tile;
+import sgdk.tool.ArrayUtil;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Tilemap extends Resource
 {
-    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int imageWidth,
-            int imageHeight, int startTileX, int startTileY, int widthTile, int heigthTile, TileOptimization opt,
-            Compression compression)
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY,
+            int widthTile, int heigthTile, TileOptimization opt, Compression compression)
     {
         final int w = widthTile;
         final int h = heigthTile;
 
-        final int mapBaseAttr = mapBase & (Tile.TILE_PRIORITY_MASK | Tile.TILE_VFLIP_MASK | Tile.TILE_HFLIP_MASK);
+        final boolean mapBasePrio = (mapBase & Tile.TILE_PRIORITY_MASK) != 0;
         final int mapBasePal = (mapBase & Tile.TILE_PALETTE_MASK) >> Tile.TILE_PALETTE_SFT;
         final int mapBaseTileInd = mapBase & Tile.TILE_INDEX_MASK;
         // we have a base offset --> we can use system plain tiles
@@ -40,7 +40,7 @@ public class Tilemap extends Resource
                 final int tj = j + startTileY;
 
                 // get tile
-                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, ti * 8, tj * 8);
+                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, ti * 8, tj * 8, 8);
                 int index;
                 TileEquality equality = TileEquality.NONE;
 
@@ -58,65 +58,49 @@ public class Tilemap extends Resource
                         index = tileset.getTileIndex(tile, opt);
                         // not found ? (should never happen)
                         if (index == -1)
-                            throw new RuntimeException(
-                                    "Can't find tile [" + ti + "," + tj + "] in tileset, something wrong happened...");
+                            throw new RuntimeException("Can't find tile [" + ti + "," + tj + "] in tileset, something wrong happened...");
 
                         // get equality info
-                        equality = tile.getEquality(tileset.tiles.get(index));
+                        equality = tile.getEquality(tileset.get(index));
                         // can add base index now
                         index += mapBaseTileInd;
                     }
                 }
 
                 // set tilemap
-                data[offset++] = (short) (mapBaseAttr
-                        | Tile.TILE_ATTR_FULL(mapBasePal + tile.pal, tile.prio, equality.vflip, equality.hflip, index));
+                data[offset++] = (short) Tile.TILE_ATTR_FULL(mapBasePal + tile.pal, mapBasePrio | tile.prio, equality.vflip, equality.hflip, index);
             }
         }
 
         return new Tilemap(id, data, w, h, compression);
     }
 
-    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int widthTile,
-            int heigthTile, TileOptimization opt, Compression compression)
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int widthTile, int heigthTile, TileOptimization opt,
+            Compression compression)
     {
-        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heigthTile * 8, 0, 0, widthTile, heigthTile,
-                opt, compression);
+        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heigthTile * 8, 0, 0, widthTile, heigthTile, opt, compression);
     }
 
-    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, String imgFile, TileOptimization tileOpt,
-            Compression compression) throws IOException
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, String imgFile, TileOptimization tileOpt, Compression compression)
+            throws Exception
     {
+        // get 8bpp pixels and also check image dimension is aligned to tile
+        final byte[] image = Util.getImage8bpp(imgFile, true);
+
+        // happen when we couldn't retrieve palette data from RGB image
+        if (image == null)
+            throw new IllegalArgumentException(
+                    "RGB image '" + imgFile + "' does not contains palette data (see 'Important note about image format' in the rescomp.txt file");
+
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
-
-        // check BPP is correct
-        if (imgInfo.bpp > 8)
-            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
-                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
-
-        // set width and height
         final int w = imgInfo.w;
-        final int h = imgInfo.h;
-
-        // check size is correct
-        if ((w & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", should be a multiple of 8.");
-        if ((h & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' height is '" + h + ", should be a multiple of 8.");
-
-        // get size in tile
-        final int wt = w / 8;
-        final int ht = h / 8;
-
-        // get image data
-        byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8 bpp
-        data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
+        // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
+        final int h = image.length / w;
 
         // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
         // build TILEMAP with wanted compression
-        return Tilemap.getTilemap(id, tileset, mapBase, data, wt, ht, tileOpt, compression);
+        return Tilemap.getTilemap(id, tileset, mapBase, image, w / 8, h / 8, tileOpt, compression);
     }
 
     public final int w;
@@ -134,16 +118,39 @@ public class Tilemap extends Resource
         this.h = h;
 
         // build BIN (tilemap data) with wanted compression
-        bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression, true));
+        final Bin binResource = new Bin(id + "_data", data, compression);
+
+        // add as resource (avoid duplicate)
+        bin = (Bin) addInternalResource(binResource);
 
         // compute hash code
         hc = bin.hashCode() ^ (w << 8) ^ (h << 16);
+    }
+
+    // public Tilemap(String id, Tilemap tilemap, Compression compression)
+    // {
+    // this(id, tilemap.getData(), tilemap.w, tilemap.h, compression, true);
+    // }
+    // }
+
+    public short[] getData()
+    {
+        return ArrayUtil.byteToShort(bin.data);
+    }
+
+    public void setData(short[] data)
+    {
+        if (data.length != (w * h))
+            throw new RuntimeException("Tilemap.setData(..): size do not match !");
+
+        ArrayUtil.shortToByte(data, 0, bin.data, 0, bin.data.length, false);
     }
 
     @Override
     public int internalHashCode()
     {
         return hc;
+
     }
 
     @Override
