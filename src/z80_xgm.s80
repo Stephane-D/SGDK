@@ -18,7 +18,7 @@
 ; HL  = sample source (in ROM)
 ; DE  = write buffer / XGM buffer
 ; BC  = counter
-; B = $80 (used for overflow and sample unsign)
+; C = $80 (used for overflow and sample unsign)
 ; IYH = temp value
 ; HL' = YMPORT1
 ; BC' = read buffer
