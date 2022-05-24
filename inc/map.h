@@ -55,10 +55,6 @@
  *      number of MetaTile
  *  \param numBlock
  *      number of Block (128x128 pixels chunk)
- *  \param palette
- *      Palette data.
- *  \param tileset
- *      TileSet data structure (contains tiles definition for the image).
  *  \param metaTiles
  *      metatiles definition, each metatile is encoded as 2x2 tiles block:<br>
  *      - b15: priority<br>
@@ -85,12 +81,10 @@ typedef struct
     u16 compression;
     u16 numMetaTile;
     u16 numBlock;
-    Palette *palette;
-    TileSet *tileset;
     u16 *metaTiles;
-    void *blocks;
-    void *blockIndexes;
-    u16 *blockRowOffsets;
+    void* blocks;
+    void* blockIndexes;
+    u16* blockRowOffsets;
 } MapDefinition;
 
 
@@ -147,10 +141,10 @@ typedef struct Map
 {
     u16 w;
     u16 h;
-    u16 *metaTiles;
-    void *blocks;
-    void *blockIndexes;
-    u16 *blockRowOffsets;
+    u16* metaTiles;
+    void* blocks;
+    void* blockIndexes;
+    u16* blockRowOffsets;
     VDPPlane plane;
     u16 baseTile;
     u32 posX;
