@@ -1,48 +1,85 @@
-ResComp 3.40 (March 2022)
+ResComp 3.50 (May 2022)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
-ResComp is part of SGDK (aka Sega Genesis Dev Kit) so refer to SGDK licence if needed.
-
+ResComp is part of SGDK (aka Sega Genesis Dev Kit) so refer to SGDK licence for licensing.
 It allows to compile different type of resource and output them in assembly source form (GAS format).
 
-Usage: rescomp resource.res [out.s] [-noheader]
+Usage
+-----
+rescomp input [output] [-noheader] [-dep <target_file>]
+    input: the input resource file (.res)
+    output: the asm output filename (if ommited then use input name with .s extension)
+    -noheader: specify that we don't want to generate the header file (.h)
+    -dep: generate dependencies file (.d) for make (experimental)
+        <target_file> allow to specify the target filename in the .d file (not the destination of the .d file itself)
+        
+Example:
+  rescomp resources.res outres.s
+  rescomp resources.res outres.s -noheader -dep
+  rescomp resources.res outres.s -dep out/res/gfx.o
 
-If output file is not specified it takes the same name as input with .s extension.
-Note that the header file (.h) is generated except if you use the -noheader parameter.
 
-Supported resource type:
+Supported resource type
+-----------------------
 - BITMAP    bitmapped image type resource, used for the Bitmap SGDK engine (do not use it as tile resource).
 - PALETTE   palette type resource, used as color input for Bitmap, Image or Sprite resource.
 - TILESET   tileset type resource, contains tiles data which can be used / shared for TILEMAP and MAP resources.
-- TILEMAP   tilemap type resource, contains tilemap data. It can be used to draw an image or complete (small) plane background.
-- MAP       map type resource, internally contains Palette, Tileset and optimized encoded map to draw large background/plane.
-- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data and can be used to draw an image or complete (small) plane background.
+- TILEMAP   tilemap type resource, contains tilemap data. It can be used to draw an image or complete (but small) plane background.
+- MAP       map type resource, optimized to draw large map / level.
+- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data. It can be used to draw an image or complete (but small) plane background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
 - XGM       XGM music type resource (.vgm or .xgm file), used to play music.
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
 - BIN       any binary data file which do not need any specific conversion or processing.
 
-Supported function:
-- ALIGN     align *binary* data for the whole resource file using
-- UNGROUP   by default rescomp will group data export by type, using UNGROUP allow to disable that feature.
-- NEAR      force all resources from the file to be exported as "not FAR" data.
-            Usually binary data are exported as "FAR" data by default, that means they are located in the end of the ROM and can require
-            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before all FAR data in the ROM.
+Supported function
+------------------
+- ALIGN     align *binary* data for the whole resource file
+- UNGROUP   by default rescomp will group data export by type, using "UNGROUP" allow to disable that feature.
+- NEAR      force all resources from the file to be exported as NEAR ("not FAR") data.
+            By default binary data are exported as "FAR" data, that means they are located in the end of the ROM and can require
+            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before "FAR" data in the ROM.
+
+Extensions
+----------
+Rescomp support custom resource using extensions.
+Making an extension is easy: just write your own resource type and its processor in Java and export compiled classes as 'rescomp_ext.jar'.
+Put the file in the same folder as the .res files you want to compile and rescomp should find it automatically !
+You can look at the sgdk.rescomp.resource.Palette and sgdk.rescomp.processor.PaletteProcessor source files to get an example
+about how to implement a Resource and a Processor :) Good luck !
+
+            
+Important note about image format
+---------------------------------
+Many resource types use image file as input and Rescomp now supports both RGB images and indexed color images :)
+Here're some important informations to know about how to use properly these 2 image formats:
+* RGB images
+  When using RGB image rescomp does not have any information about palette so they should be defined somewhere in the image.
+  Rescomp expect the palette to be located in the top-left part of the image where each color is defined by a 8x8 tile and each sub palette (16 colors) being
+  on a separate row of tiles. You need to have the 4 sub palettes (4x16 colors) in the image even if only the first one is really used (there is no reliable
+  way to detect automatically the number of palette row).
+  See the rgb_example.png image in the sample/sonic/res/gfx folder if you want an example.
+  Note that when processing the image rescomp will automatically remove the palette part of the image to not disturb process (not adding extra tiles for instance)
+  so you shouldn't put any tileset data in the right part of the palette rows.
+* Indexed color images
+  rescomp supports 8bpp, 4bpp, 2bpp and even 1bpp indexed color image and will always directly use the palette data from the image it's *very* important to
+  properly setup the palette in the image (color at position #0 is the transparent color). Some software as Asesprite let you to setup your palette as you require.
+  An advantage of using indexed colors is that you can use color >= 128 with 8bpp image to define the priority information (more detail about it in resource description).
+
 
 PALETTE
 -------
 Take a .pal file or an image as input and transform it in SGDK Palette structure.
-If the input image is 1 pixel heigth then the width is the palette size and pixel X represent color data at index X.
-In others cases the usual image palette data is used instead.
-
+See the note above about how palette is retrieved from RGB or indexed color images.
 Palette is used as color input for Bitmap, Image and Sprite resources.
 
 Syntax:
 PALETTE name file
 
     name            name of the output Bitmap structure
-    file            path of the input image file (indexed color BMP or PNG image) or .pal file
+    file            path of the input image file (BMP or PNG image) or PAL file (Paint Shop Pro palette)
+                        See the note about image format at the beginning of the file
 
 
 BITMAP
@@ -54,7 +91,8 @@ Syntax:
 BITMAP name img_file [compression]
 
     name            name of the output Bitmap structure
-    img_file        path of the input image file (indexed color BMP or PNG image)
+    img_file        path of the input image file (BMP or PNG image)
+                        See the note about image format at the beginning of the file
     compression     compression type (use unpackBitmap(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
@@ -64,28 +102,38 @@ BITMAP name img_file [compression]
 
 TILESET
 -------
-Take an image as input and transform it in SGDK TileSet structure.
-TileSet is used as tiles source for Image, Map and Sprite resources.
+Take an image or TSX file as input and transform it in SGDK TileSet structure.
+TileSet is used as tiles source for Image, Tilemap, Map and Sprite resources.
+If you use a real 'tileset format' image as input (as a font) then you should set 'opt' parameter to 'NONE'
+to avoid removing duplicated tiles (which may exist).
 
 Syntax:
-TILESET name img_file [compression [mapopt]]
+TILESET name file [compression [opt]]
 
     name            name of the output TileSet structure
-    img_file        path of the input image file (indexed color BMP or PNG image)
+    file            path of the input file (BMP, PNG image file or TSX Tiled file)
+                        See the note about image format at the beginning of the file
     compression     compression type (use unpackTileSet(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the optimisation level, accepted values:
+    opt             define the optimisation level, accepted values:
                         0 / NONE        = no optimisation, each tile is unique
                         1 / ALL         = ignore duplicated and flipped tile (default)
                         2 / DUPLICATE   = ignore duplicated tile only
-
+                        
+Tips:
+When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to
+ensure that all pixels from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw the tilemap / MAP.
+    bit 6: not used (ignored)
+    bit 7: priority information (0=LOW 1=HIGH)
+    
 
 TILEMAP
 -------
-Take an image as input and transform it in SGDK TileMap structure.
+Take an image or TMX file as input and transform it in SGDK TileMap structure.
 TileMap is used to draw in background plane, it requires a tileset which can be shared with others tilemaps.
 TILEMAP resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
@@ -93,54 +141,90 @@ Syntax:
 TILEMAP name img_file tileset_id [compression [mapopt [mapbase]]]
 
     name            name of the output TileMap structure
-    img_file        path of the input image file (indexed color BMP or PNG image)
-    tileset_id      base tileset resource to use (allow to share tileset with several tilemaps)
+    img_file        path of the input image file (BMP or PNG image file)
+                        See the note about image format at the beginning of the file
+    tileset_id      base tileset resource to use (allow to share tileset along several tilemaps)
     compression     compression type (use unpackTileMap(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the tilemap optimisation level, accepted values:
-                        0 / NONE        = no optimisation (each tile is unique)
+    mapopt          define the tilemap optimisation level (ignored for TMX file), accepted values:
+                        0 / NONE        = no optimisation, each tile is unique
                         1 / ALL         = find duplicated and flipped tile (default)
                         2 / DUPLICATE   = find duplicated tile only
     mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                    Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+                        Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+                                
+TILEMAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
+
+    name                name of the output TileMap structure
+    tmx_file            path of the input TMX file (TMX Tiled file)
+    layer_id            layer name we want to extract map data from.
+    ts_compression      compression type for tileset, accepted values:
+                           -1 / BEST / AUTO = use best compression
+                            0 / NONE        = no compression (default)
+                            1 / APLIB       = aplib library (good compression ratio but slow)
+                            2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
+    map_compression     compression type for map (same accepted values than 'ts_compression')
+    mapbase             define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                            Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
 
 Tips:
-You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
-that all pixel from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
-    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
-    bit 6: should be 0 (not used)
+When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to
+ensure that all pixels from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw the tilemap / MAP.
+    bit 6: not used (ignored)
     bit 7: priority information (0=LOW 1=HIGH)
+When using a TMX Tiled file you can define the priority information in different ways:
+- use 2 layers where the low priority layer's name is suffixed by ' low' and high prority layer is suffixed by ' high'
+- use 2 layers with the main layer define the map itself and a second layer suffixed by ' priority' containing the priority information (0/1)
 
 
 MAP
 ---
-Take an image as input and transform it in SGDK Map structure.
-Map is used to define a large background/plane data, it' different from the IMAGE resource as MAP uses a specific encoding
+Take an image or TMX file as input and transform it in SGDK Map structure.
+Map is used to define a large background/plane data, it's different from the IMAGE resource as MAP uses an advanced encoding
 so it can encode large background while taking much less ROM space than IMAGE resource so use it to handle large level.
 
 Syntax:
 MAP name img_file tileset_id [compression [mapbase]]
 
     name            name of the output Map structure
-    img_file        path of the input image file (indexed color BMP or PNG image)
-    tileset_id      base tileset resource to use (allow to share tileset with several maps)
+    img_file        path of the input image file (BMP or PNG image file)
+                        See the note about image format at the beginning of the file
+    tileset_id      base tileset resource to use (allow to share tileset along several tilemaps)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                    Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
+    mapbase        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                       Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
+                                
+MAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
+
+    name                name of the output Map structure
+    tmx_file            path of the input TMX file (TMX Tiled file)
+    layer_id            layer name we want to extract map data from.
+    ts_compression      compression type for tileset, accepted values:
+                           -1 / BEST / AUTO = use best compression
+                            0 / NONE        = no compression (default)
+                            1 / APLIB       = aplib library (good compression ratio but slow)
+                            2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
+    map_compression     compression type for map (same accepted values than 'ts_compression')
+    mapbase             define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                            Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
 
 Tips:
-You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
-that all pixel from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
-    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
-    bit 6: should be 0 (not used)
+When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to
+ensure that all pixels from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw the tilemap / MAP.
+    bit 6: not used (ignored)
     bit 7: priority information (0=LOW 1=HIGH)
+When using a TMX Tiled file you can define the priority information in different ways:
+- use 2 layers where the low priority layer's name is suffixed by ' low' and high prority layer is suffixed by ' high'
+- use 2 layers with the main layer define the map itself and a second layer suffixed by ' priority' containing the priority information (0/1)
 
 
 IMAGE
@@ -153,7 +237,8 @@ Syntax:
 IMAGE name img_file [compression [mapopt [mapbase]]]
 
     name            name of the output Image structure
-    img_file        path of the input image file (should be indexed colors image in .bmp or .png format)
+    img_file        path of the input image file (BMP or PNG image)
+                        See the note about image format at the beginning of the file
     compression     compression type (use unpackImage(..) to unpack), accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
@@ -167,10 +252,10 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
                     Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
 Tips:
-You can use the extra bits of 8 bit indexed image to specify extra information in the tilemap data but then you have to ensure
-that all pixel from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
-    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw your MAP.
-    bit 6: should be 0 (not used)
+When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to
+ensure that all pixels from a same tile (block of 8x8 pixels) use the same value otherwise rescomp will generate an error.
+    bit 4-5: palette index (0-3) so it allows to use the 4 available palettes to draw the tilemap / MAP.
+    bit 6: not used (ignored)
     bit 7: priority information (0=LOW 1=HIGH)
 
 
@@ -183,7 +268,8 @@ Syntax:
 SPRITE name img_file width heigth [compression [time [collision [opt [iteration]]]]]
 
     name            name of the output SpriteDefinition structure
-    img_file        path of the input image file (should be indexed colors image in .bmp or .png format)
+    img_file        path of the input image file (BMP or PNG image)
+                        See the note about image format at the beginning of the file
     width           width of a single sprite frame in tile (should be < 32)
     heigth          heigth of a single sprite frame in tile (should be < 32)
     compression     compression type, accepted values:
