@@ -30,14 +30,12 @@ public class Tile implements Comparable<Tile>
 
     public static int TILE_ATTR(int pal, int prio, int flipV, int flipH)
     {
-        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT)
-                + (prio << TILE_PRIORITY_SFT);
+        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT) + (prio << TILE_PRIORITY_SFT);
     }
 
     public static int TILE_ATTR_FULL(int pal, int prio, int flipV, int flipH, int index)
     {
-        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT)
-                + (prio << TILE_PRIORITY_SFT) + index;
+        return (flipH << TILE_HFLIP_SFT) + (flipV << TILE_VFLIP_SFT) + (pal << TILE_PALETTE_SFT) + (prio << TILE_PRIORITY_SFT) + index;
     }
 
     public static int TILE_ATTR(int pal, boolean prio, boolean flipV, boolean flipH)
@@ -56,20 +54,76 @@ public class Tile implements Comparable<Tile>
      * @param y
      *        Y position in pixel
      */
-    public static Tile getTile(byte[] image8bpp, int imgW, int imgH, int x, int y)
+    public static byte[] transformTile(byte[] tile8bpp, int size, boolean hflip, boolean vflip, boolean prio, byte[] destTile8bpp)
     {
-        final byte[] data = new byte[64];
+        int dstOffset = 0;
+        int baseOffset = vflip ? (size - 1) * size : 0;
 
-        int plainCol = -1;
-        boolean plain = true;
+        for (int j = 0; j < size; j++)
+        {
+            int offset = baseOffset + (hflip ? size - 1 : 0);
 
-        int pal = -1;
-        int prio = -1;
+            for (int i = 0; i < size; i++)
+            {
+                destTile8bpp[dstOffset++] = (byte) (tile8bpp[offset] | (prio?0x80:00));
+                if (hflip)
+                    offset--;
+                else
+                    offset++;
+            }
+
+            if (vflip)
+                baseOffset -= size;
+            else
+                baseOffset += size;
+        }
+
+        return destTile8bpp;
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static byte[] flipTile(byte[] tile8bpp, int size, boolean hflip, boolean vflip, boolean prio)
+    {
+        return transformTile(tile8bpp, size, hflip, vflip, prio, new byte[size * size]);
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static void copyTile(byte[] image8bpp, int imgW, byte[] tile8bpp, int x, int y, int size)
+    {
+        int dstOff = (y * imgW) + x;
+        int srcOff = 0;
+        for (int j = 0; j < size; j++)
+        {
+            for (int i = 0; i < size; i++)
+                image8bpp[dstOff++] = tile8bpp[srcOff++];
+
+            dstOff += imgW - size;
+        }
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static byte[] getImageTile(byte[] image8bpp, int imgW, int imgH, int x, int y, int size, byte[] destTile8bpp)
+    {
         int srcOff = (y * imgW) + x;
         int dstOff = 0;
-        for (int j = y; j < (y + 8); j++)
+        for (int j = y; j < (y + size); j++)
         {
-            for (int i = x; i < (x + 8); i++)
+            for (int i = x; i < (x + size); i++)
             {
                 final int pixel;
 
@@ -80,6 +134,72 @@ public class Tile implements Comparable<Tile>
                     pixel = 0;
                 srcOff++;
 
+                destTile8bpp[dstOff++] = (byte) pixel;
+            }
+
+            srcOff += imgW - size;
+        }
+
+        return destTile8bpp;
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static byte[] getImageTile(byte[] image8bpp, int imgW, int imgH, int x, int y, int size)
+    {
+        return getImageTile(image8bpp, imgW, imgH, x, y, size, new byte[size * size]);
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static byte[] getImageTile(byte[] image8bpp, int imgW, int imgH, int tileInd, int size, byte[] destTile8bpp)
+    {
+        final int wt = imgW / size;
+        return getImageTile(image8bpp, imgW, imgH, (tileInd % wt) * size, (tileInd / wt) * size, size, destTile8bpp);
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static byte[] getImageTile(byte[] image8bpp, int imgW, int imgH, int tileInd, int size)
+    {
+        final int wt = imgW / size;
+        return getImageTile(image8bpp, imgW, imgH, (tileInd % wt) * size, (tileInd / wt) * size, size, new byte[size * size]);
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static Tile getTile(byte[] image8bpp, int imgW, int imgH, int x, int y, int size)
+    {
+        final byte[] imageTile = getImageTile(image8bpp, imgW, imgH, x, y, size);
+        final byte[] data = new byte[size * size];
+
+        int plainCol = -1;
+        boolean plain = true;
+
+        int pal = -1;
+        int prio = -1;
+        int off = 0;
+        for (int j = 0; j < size; j++)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                final int pixel = imageTile[off];
                 final int color = pixel & 0xF;
 
                 // first pixel --> affect color
@@ -98,24 +218,23 @@ public class Tile implements Comparable<Tile>
                     // set palette
                     if (pal == -1)
                         pal = curPal;
-                    // test for difference only for not transparent pixel (simpler) 
+                    // test for difference only for not transparent pixel (simpler)
                     else if ((pal != curPal) && (color != 0))
-                        throw new IllegalArgumentException("Error: pixel at [" + i + "," + j
-                                + "] reference a different palette (" + curPal + " != " + pal + ").");
+                        throw new IllegalArgumentException(
+                                "Error: pixel at [" + (x + i) + "," + (y + j) + "] reference a different palette (" + curPal + " != " + pal + ").");
 
                     // set prio
                     if (prio == -1)
                         prio = curPrio;
-                    // test for difference only for not transparent pixel (simpler) 
+                    // test for difference only for not transparent pixel (simpler)
                     else if ((prio != curPrio) && (color != 0))
-                        throw new IllegalArgumentException("Error: pixel at [" + i + "," + j
-                                + "] reference a different priority (" + curPrio + " != " + prio + ").");
+                        throw new IllegalArgumentException(
+                                "Error: pixel at [" + (x + i) + "," + (y + j) + "] reference a different priority (" + curPrio + " != " + prio + ").");
                 }
 
-                data[dstOff++] = (byte) color;
+                data[off] = (byte) color;
+                off++;
             }
-
-            srcOff += imgW - 8;
         }
 
         // default palette and priority
@@ -124,10 +243,11 @@ public class Tile implements Comparable<Tile>
         if (prio == -1)
             prio = 0;
 
-        return new Tile(data, pal, prio != 0, plain ? plainCol : -1);
+        return new Tile(data, size, pal, prio != 0, plain ? plainCol : -1);
     }
 
     public final int[] data;
+    public final int size;
     public final int pal;
     public final int plain;
     public final boolean prio;
@@ -139,15 +259,16 @@ public class Tile implements Comparable<Tile>
 
     final int hc;
 
-    public Tile(int[] data, int pal, boolean prio, int plain)
+    public Tile(int[] data, int size, int pal, boolean prio, int plain)
     {
         super();
 
-        if (data.length != 8)
-            throw new IllegalArgumentException("new Tile(int[]) error: array lenght is != 8");
+        // 8 pixels of 4bpp per 'int' entry
+        if (data.length != ((size * size) / 8))
+            throw new IllegalArgumentException("new Tile(int[]) error: array lenght does not match tile size !");
 
-        // 8 lines of 8 pixels (4bpp)
         this.data = data;
+        this.size = size;
 
         this.pal = pal & 3;
         this.prio = prio;
@@ -169,24 +290,26 @@ public class Tile implements Comparable<Tile>
         vFlip = getFlipped(false, true);
         hvFlip = getFlipped(true, true);
 
-        hc = getHash(data) ^ getHash(hFlip) ^ getHash(vFlip) ^ getHash(hvFlip);
+        hc = getHash(data) + getHash(hFlip) + getHash(vFlip) + getHash(hvFlip);
     }
 
-    public Tile(byte[] pixel8bpp, int pal, boolean prio, int plain)
+    public Tile(byte[] pixel8bpp, int size, int pal, boolean prio, int plain)
     {
-        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)), pal, prio, plain);
+        this(ArrayUtil.byteToInt(ImageUtil.convertTo4bpp(pixel8bpp, 8)), size, pal, prio, plain);
     }
 
     public int getHash(int[] array)
     {
         int result = 0;
         for (int i = 0; i < array.length; i++)
-        {
-            final int d = array[i];
-            result ^= d;
-        }
+            result += array[i];
 
         return result;
+    }
+
+    public boolean isBlank()
+    {
+        return empty;
     }
 
     public boolean isPlain()
@@ -204,21 +327,36 @@ public class Tile implements Comparable<Tile>
 
     private int[] getFlipped(boolean hflip, boolean vflip)
     {
-        final int[] result = new int[8];
+        final int[] result = new int[data.length];
+        final int rowSize = (size / 8);
 
-        for (int i = 0; i < 8; i++)
+        int dstOffset = 0;
+        int baseOffset = vflip ? (size - 1) * rowSize : 0;
+
+        for (int j = 0; j < size; j++)
         {
-            int line;
+            int offset = baseOffset + (hflip ? rowSize - 1 : 0);
+
+            for (int i = 0; i < rowSize; i++)
+            {
+                if (hflip)
+                {
+                    result[dstOffset] = TypeUtil.swapNibble32(data[offset]);
+                    offset--;
+                }
+                else
+                {
+                    result[dstOffset] = data[offset];
+                    offset++;
+                }
+
+                dstOffset++;
+            }
 
             if (vflip)
-                line = 7 - i;
+                baseOffset -= rowSize;
             else
-                line = i;
-
-            if (hflip)
-                result[i] = TypeUtil.swapNibble32(data[line]);
-            else
-                result[i] = data[line];
+                baseOffset += rowSize;
         }
 
         return result;
@@ -227,7 +365,7 @@ public class Tile implements Comparable<Tile>
     public TileEquality getEquality(Tile tile)
     {
         // perfect equality
-        if ( Arrays.equals(tile.data, data))
+        if (Arrays.equals(tile.data, data))
             return TileEquality.EQUAL;
 
         // hflip
