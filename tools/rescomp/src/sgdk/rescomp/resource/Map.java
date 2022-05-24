@@ -19,6 +19,35 @@ import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Map extends Resource
 {
+    public static Map getMap(String id, String imgFile, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression) throws Exception
+    {
+        // get 8bpp pixels and also check image dimension is aligned to tile
+        final byte[] image = Util.getImage8bpp(imgFile, true);
+
+        // happen when we couldn't retrieve palette data from RGB image
+        if (image == null)
+            throw new IllegalArgumentException(
+                    "RGB image '" + imgFile + "' does not contains palette data (see 'Important note about image format' in the rescomp.txt file");
+
+        // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
+        // check if image try to use bit 6 (probably mean that we have too much colors in our image)
+        for (byte d : image)
+        {
+            // bit 6 used ?
+            if ((d & 0x40) != 0)
+                throw new IllegalArgumentException(
+                        "'" + imgFile + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
+        }
+
+        // retrieve basic infos about the image
+        final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
+        final int w = imgInfo.w;
+        // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
+        final int h = image.length / w;
+
+        return new Map(id, image, w, h, mapBase, metatileSize, tilesets, compression);
+    }
+
     public final int wb;
     public final int hb;
     public final Compression compression;
@@ -28,8 +57,7 @@ public class Map extends Resource
     public final List<MapBlock> mapBlocks;
     public final List<short[]> mapBlockIndexes;
     public final short[] mapBlockRowOffsets;
-    public final Tileset tileset;
-    public final Palette palette;
+    public final List<Tileset> tilesets;
 
     // binary data
     public final Bin metatilesBin;
@@ -37,56 +65,29 @@ public class Map extends Resource
     public final Bin mapBlockIndexesBin;
     public final Bin mapBlockRowOffsetsBin;
 
-    public Map(String id, String imgFile, int mapBase, int metatileSize, Tileset tileset, Compression compression)
+    public Map(String id, byte[] image8bpp, int imageWidth, int imageHeight, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression)
             throws IOException, IllegalArgumentException
     {
         super(id);
 
-        // retrieve basic infos about the image
-        final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
-
-        // check BPP is correct
-        if (imgInfo.bpp > 8)
-            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
-                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
-
-        // set width and height
-        final int w = imgInfo.w;
-        final int h = imgInfo.h;
-
-        // check size is correct
-        if ((w & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", should be a multiple of 8.");
-        if ((h & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' height is '" + h + ", should be a multiple of 8.");
-
         // get size in tile
-        final int wt = w / 8;
-        final int ht = h / 8;
+        final int wt = imageWidth / 8;
+        final int ht = imageHeight / 8;
 
-        // get image data
-        byte[] image = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8 bpp
-        image = ImageUtil.convertTo8bpp(image, imgInfo.bpp);
-
-        // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
-        // check if image try to use bit 6 (probably mean that we have too much colors in our image)
-        for (byte d : image)
-        {
-            // bit 6 used ?
-            if ((d & 0x40) != 0)
-                throw new IllegalArgumentException("'" + imgFile
-                        + "' has color index in [64..127] range, IMAGE resource requires image with a maximum of 64 colors");
-        }
-
-        // base pal attributes and base tile index offset
+        // base prio, pal attributes and base tile index offset
+        final boolean mapBasePrio = (mapBase & Tile.TILE_PRIORITY_MASK) != 0;
         final int mapBasePal = (mapBase & Tile.TILE_PALETTE_MASK) >> Tile.TILE_PALETTE_SFT;
         final int mapBaseTileInd = mapBase & Tile.TILE_INDEX_MASK;
         // store base tile index usage
         final boolean hasBaseTileIndex = mapBaseTileInd != 0;
 
         // store tileset
-        this.tileset = tileset;
+        this.tilesets = tilesets;
+
+        // add tileset resources (and replace by duplicate if found)
+        for (int t = 0; t < tilesets.size(); t++)
+            this.tilesets.set(t, (Tileset) addInternalResource(tilesets.get(t)));
+
         // store compression
         this.compression = compression;
 
@@ -94,6 +95,8 @@ public class Map extends Resource
         wb = (wt + 15) / 16;
         hb = (ht + 15) / 16;
 
+        // build global TILESET
+        final Tileset tileset = new Tileset(tilesets);
         // build METATILES
         metatiles = new ArrayList<>();
         // build MAPBLOCKS
@@ -138,13 +141,13 @@ public class Map extends Resource
                                 if ((ti >= wt) || (tj >= ht))
                                 {
                                     // use dummy tile
-                                    tile = new Tile(new byte[64], 0, false, -1);
+                                    tile = new Tile(new byte[64], 8, 0, false, -1);
                                     eq = TileEquality.NONE;
                                     index = 0;
                                 }
                                 else
                                 {
-                                    tile = Tile.getTile(image, wt * 8, ht * 8, ti * 8, tj * 8);
+                                    tile = Tile.getTile(image8bpp, wt * 8, ht * 8, ti * 8, tj * 8, 8);
 
                                     // we can use system tiles when we have a base tile offset
                                     if (hasBaseTileIndex && tile.isPlain())
@@ -158,12 +161,10 @@ public class Map extends Resource
                                         index = tileset.getTileIndex(tile, TileOptimization.ALL);
                                         // not found ? (should never happen)
                                         if (index == -1)
-                                            throw new RuntimeException("Can't find tile [" + ti + "," + tj
-                                                    + "] in tileset, something wrong happened...");
+                                            throw new RuntimeException("Can't find tile [" + ti + "," + tj + "] in tileset, something wrong happened...");
                                         // index > 2047 ? --> not allowed
                                         if (index > 2047)
-                                            throw new RuntimeException(
-                                                    "Can't have more than 2048 different tiles, try to reduce number of unique tile...");
+                                            throw new RuntimeException("Can't have more than 2048 different tiles, try to reduce number of unique tile...");
 
                                         // get equality info
                                         eq = tile.getEquality(tileset.get(index));
@@ -173,8 +174,7 @@ public class Map extends Resource
                                 }
 
                                 // set metatile attributes
-                                mt.set(mtsi++, (short) Tile.TILE_ATTR_FULL(mapBasePal + tile.pal, tile.prio, eq.vflip,
-                                        eq.hflip, index));
+                                mt.set(mtsi++, (short) Tile.TILE_ATTR_FULL(mapBasePal + tile.pal, mapBasePrio | tile.prio, eq.vflip, eq.hflip, index));
                             }
                         }
 
@@ -307,11 +307,7 @@ public class Map extends Resource
         }
 
         // build BIN (mapBlockRowOffsets data)
-        mapBlockRowOffsetsBin = (Bin) addInternalResource(
-                new Bin(id + "_mapBlockRowOffsets", mapBlockRowOffsets, Compression.NONE));
-
-        // build PALETTE
-        palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, 64, true));
+        mapBlockRowOffsetsBin = (Bin) addInternalResource(new Bin(id + "_mapBlockRowOffsets", mapBlockRowOffsets, Compression.NONE));
 
         // check if we can unpack the MAP
         if (compression != Compression.NONE)
@@ -338,14 +334,8 @@ public class Map extends Resource
                         + " bytes, you may not be able to unpack it.\nYou may remove compression from MAP resource definition");
         }
 
-        // display info about map encoding
-        System.out.println("MAP '" + id + "' details: " + metatiles.size() + " metatiles, " + mapBlocks.size()
-                + " blocks, block grid size = " + wb + " x " + hb + " - optimized = " + wb + " x "
-                + mapBlockIndexes.size());
-
         // compute hash code
-        hc = tileset.hashCode() ^ palette.hashCode() ^ metatilesBin.hashCode() ^ mapBlocksBin.hashCode()
-                ^ mapBlockIndexesBin.hashCode() ^ mapBlockRowOffsetsBin.hashCode();
+        hc = tileset.hashCode() ^ metatilesBin.hashCode() ^ mapBlocksBin.hashCode() ^ mapBlockIndexesBin.hashCode() ^ mapBlockRowOffsetsBin.hashCode();
     }
 
     public int getMetaTileIndex(Metatile metatile)
@@ -409,8 +399,7 @@ public class Map extends Resource
         if (obj instanceof Map)
         {
             final Map map = (Map) obj;
-            return palette.equals(map.palette) && metatiles.equals(map.metatiles) && mapBlocks.equals(map.mapBlocks)
-                    && mapBlockIndexesBin.equals(map.mapBlockIndexesBin)
+            return metatiles.equals(map.metatiles) && mapBlocks.equals(map.mapBlocks) && mapBlockIndexesBin.equals(map.mapBlockIndexesBin)
                     && Arrays.equals(mapBlockRowOffsets, map.mapBlockRowOffsets);
         }
 
@@ -426,8 +415,9 @@ public class Map extends Resource
     @Override
     public int totalSize()
     {
-        return palette.totalSize() + metatilesBin.totalSize() + mapBlocksBin.totalSize()
-                + mapBlockIndexesBin.totalSize() + mapBlockRowOffsetsBin.totalSize() + shallowSize();
+        int result = metatilesBin.totalSize() + mapBlocksBin.totalSize() + mapBlockIndexesBin.totalSize() + mapBlockRowOffsetsBin.totalSize() + shallowSize();
+
+        return result;
     }
 
     @Override
@@ -448,10 +438,6 @@ public class Map extends Resource
         outS.append("    dc.w    " + metatiles.size() + "\n");
         // set num mapblock
         outS.append("    dc.w    " + mapBlocks.size() + "\n");
-        // Palette pointer
-        outS.append("    dc.l    " + palette.id + "\n");
-        // Tileset pointer
-        outS.append("    dc.l    " + tileset.id + "\n");
         // set metatile data pointer
         outS.append("    dc.l    " + metatilesBin.id + "\n");
         // set mapblock data pointer
@@ -461,5 +447,13 @@ public class Map extends Resource
         // set mapBlockRowOffsets data pointer
         outS.append("    dc.l    " + mapBlockRowOffsetsBin.id + "\n");
         outS.append("\n");
+    }
+
+    @Override
+    public String toString()
+    {
+        // display info about map encoding
+        return "MAP '" + id + "' details: " + tilesets.size() + " tilesets, " + metatiles.size() + " metatiles, " + mapBlocks.size()
+                + " blocks, block grid size = " + wb + " x " + hb + " - optimized = " + wb + " x " + mapBlockIndexes.size();
     }
 }
