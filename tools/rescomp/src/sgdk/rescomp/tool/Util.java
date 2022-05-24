@@ -1,8 +1,11 @@
 package sgdk.rescomp.tool;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import sgdk.aplib.APJ;
 import sgdk.lz4w.LZ4W;
@@ -13,6 +16,8 @@ import sgdk.rescomp.type.Basics.SoundDriver;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.FileUtil;
+import sgdk.tool.ImageUtil;
+import sgdk.tool.ImageUtil.BasicImageInfo;
 import sgdk.tool.StringUtil;
 import sgdk.tool.SystemUtil;
 import sgdk.tool.TypeUtil;
@@ -20,6 +25,15 @@ import sgdk.tool.TypeUtil;
 public class Util
 {
     final static String[] formatAsm = {"b", "b", "w", "w", "d"};
+
+    public static <T> List<T> asList(T element)
+    {
+        final List<T> result = new ArrayList<>();
+
+        result.add(element);
+
+        return result;
+    }
 
     public static short toVDPColor(byte b, byte g, byte r)
     {
@@ -107,6 +121,60 @@ public class Util
         throw new IllegalArgumentException("Unrecognized sprite optimization: '" + text + "'");
     }
 
+    public static Color getColor(String string)
+    {
+        final int value = Integer.decode("0x" + string).intValue();
+        return new Color(value, true);
+    }
+
+    public static String getAdjustedPath(String path, String baseFile)
+    {
+        if (FileUtil.isAbsolutePath(path))
+            return path;
+
+        return FileUtil.getDirectory(baseFile) + path;
+    }
+
+    public static byte[] getImage8bpp(String imgFile, boolean checkTileAligned, boolean removeRGBPalette) throws Exception
+    {
+        // retrieve basic infos about the image
+        final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
+
+        // check size is correct
+        if (checkTileAligned)
+        {
+            if ((imgInfo.w & 7) != 0)
+                throw new IllegalArgumentException("'" + imgFile + "' width is '" + imgInfo.w + ", should be a multiple of 8.");
+            if ((imgInfo.h & 7) != 0)
+                throw new IllegalArgumentException("'" + imgFile + "' height is '" + imgInfo.h + ", should be a multiple of 8.");
+        }
+
+        // true color / RGB image ?
+        if (imgInfo.bpp > 8)
+        {
+            // throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp + " bpp format, only indexed
+            // images (8,4,2,1 bpp) are supported.");
+            return ImageUtil.convertRGBTo8bpp(imgFile, removeRGBPalette);
+        }
+
+        // get image data
+        final byte[] data = ImageUtil.getIndexedPixels(imgFile);
+        // convert to 8 bpp
+        return ImageUtil.convertTo8bpp(data, imgInfo.bpp);
+
+        // // find max color index, should be done after 8bpp conversion
+        // final int maxIndex = ArrayMath.max(data, false);
+        // // check if we are above the maximum palette size
+        // if (maxIndex >= maxPaletteSize)
+        // throw new IllegalArgumentException("'" + imgFile + "' uses color index >= " + maxPaletteSize
+        // + ", only image with a maximum of " + maxPaletteSize + " colors are accepted.");
+    }
+
+    public static byte[] getImage8bpp(String imgFile, boolean checkTileAligned) throws Exception
+    {
+        return getImage8bpp(imgFile, checkTileAligned, true);
+    }
+
     public static byte[] sizeAlign(byte[] data, int align, byte fill)
     {
         // compute alignment
@@ -138,8 +206,7 @@ public class Util
             outH.append("extern const " + type + " " + name + ";\n");
     }
 
-    public static void declArray(StringBuilder outS, StringBuilder outH, String type, String name, int size, int align,
-            boolean global)
+    public static void declArray(StringBuilder outS, StringBuilder outH, String type, String name, int size, int align, boolean global)
     {
         // asm declaration
         outS.append("    .align  " + ((align < 2) ? 2 : align) + "\n");
@@ -339,8 +406,19 @@ public class Util
         outB(out, data, 0);
     }
 
-    public static PackedData pack(byte[] data, Compression compression, ByteArrayOutputStream bin,
-            boolean forceSelectedCompression)
+    public static boolean isCompressionValuable(Compression compressionMethod, int compressedSize, int uncompressedSize)
+    {
+        final int minDiff = (compressionMethod == Compression.APLIB) ? 120 : 60;
+
+        if ((uncompressedSize - compressedSize) <= minDiff)
+            return false;
+
+        final double maxPourcentage = (compressionMethod == Compression.APLIB) ? 85 : 95;
+
+        return Math.round((compressedSize * 100f) / uncompressedSize) <= maxPourcentage;
+    }
+
+    public static PackedData pack(byte[] data, Compression compression, ByteArrayOutputStream bin, boolean forceSelectedCompression)
     {
         // nothing to do
         if (compression == Compression.NONE)
@@ -358,13 +436,12 @@ public class Util
             if (forceSelectedCompression)
             {
                 if (result == null)
-                    throw new RuntimeException(
-                            "Cannot use desired compression on resource ! Try removing compression.");
+                    throw new RuntimeException("Cannot use wanted compression on resource, try removing compression.");
             }
             else
             {
-                // error or no compression possible ? return origin data
-                if ((result == null) || (result.length >= data.length))
+                // error or no good compression ? return origin data
+                if ((result == null) || !isCompressionValuable(Compression.LZ4W, result.length, data.length))
                     return new PackedData(data, Compression.NONE);
             }
 
@@ -422,8 +499,7 @@ public class Util
                 if (forceSelectedCompression)
                 {
                     if (out == null)
-                        throw new RuntimeException(
-                                "Cannot use desired compression on resource ! Try removing compression.");
+                        throw new RuntimeException("Cannot use desired compression on resource ! Try removing compression.");
 
                     // directly return result
                     return new PackedData(out, comp);
@@ -453,7 +529,7 @@ public class Util
 
             if (results[compIndex] != null)
             {
-                if (sizes[compIndex] < minSize)
+                if (isCompressionValuable(comp, sizes[compIndex], sizes[0]) && (sizes[compIndex] < minSize))
                 {
                     minSize = sizes[compIndex];
                     result = results[compIndex];
@@ -489,8 +565,7 @@ public class Util
         FileUtil.delete(fout, false);
 
         // build complete command line
-        final String[] cmd = new String[] {"java", "-jar",
-                FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "apj.jar"), "p", fin, fout, "-s"};
+        final String[] cmd = new String[] {"java", "-jar", FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "apj.jar"), "p", fin, fout, "-s"};
 
         String cmdLine = "";
         for (String s : cmd)
@@ -548,8 +623,7 @@ public class Util
         FileUtil.delete(fout, false);
 
         // build complete command line
-        final String[] cmd = new String[] {"java", "-jar",
-                FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "lz4w.jar"), "p",
+        final String[] cmd = new String[] {"java", "-jar", FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "lz4w.jar"), "p",
                 (!StringUtil.isEmpty(prev) ? prev + "@" : "") + fin, fout, "-s"};
         // final String[] cmd = new String[] {"java", "-jar",
         // FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "lz4w.jar"), "p", fin, fout, "-s"};
@@ -582,8 +656,8 @@ public class Util
         FileUtil.delete(fout, false);
 
         // build complete command line
-        final String[] cmd = new String[] {FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "xgmtool"), fin, fout,
-                "-s", (timing == 0) ? "-n" : ((timing == 1) ? "-p" : ""), (options != null) ? options : ""};
+        final String[] cmd = new String[] {FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "xgmtool"), fin, fout, "-s",
+                (timing == 0) ? "-n" : ((timing == 1) ? "-p" : ""), (options != null) ? options : ""};
 
         String cmdLine = "";
         for (String s : cmd)
@@ -591,7 +665,7 @@ public class Util
         // just to remove the warning with unrecognized parameter
         while (cmdLine.endsWith(" "))
             cmdLine = StringUtil.removeLast(cmdLine, 1);
-        
+
         System.out.println("Executing " + cmdLine);
 
         // execute
