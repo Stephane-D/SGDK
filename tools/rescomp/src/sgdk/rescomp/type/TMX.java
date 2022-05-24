@@ -455,9 +455,9 @@ public class TMX
             final Map<TSXTileset, byte[]> tilesets = new HashMap<>();
 
             for (TSXTileset tileset : usedTilesets)
-                //tilesets.put(tileset, tileset.getTilesetImage8bpp(true));
+                tilesets.put(tileset, tileset.getTilesetImage8bpp(true));
                 // TODO: disable crop palette for DA game dev 
-                tilesets.put(tileset, tileset.getTilesetImage8bpp(false));
+                //tilesets.put(tileset, tileset.getTilesetImage8bpp(false));
 
             final byte[] baseTile = new byte[tileSize * tileSize];
             final byte[] transformedTile = new byte[tileSize * tileSize];
