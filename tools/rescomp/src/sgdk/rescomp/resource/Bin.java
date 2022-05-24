@@ -22,8 +22,7 @@ public class Bin extends Resource
 
     final int hc;
 
-    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far,
-            boolean embedded)
+    public Bin(String id, byte[] data, int align, int sizeAlign, int fill, Compression compression, boolean far, boolean embedded)
     {
         super(id);
 
@@ -95,8 +94,7 @@ public class Bin extends Resource
         if (obj instanceof Bin)
         {
             final Bin bin = (Bin) obj;
-            return (align == bin.align) && (wantedCompression == bin.wantedCompression)
-                    && Arrays.equals(data, bin.data);
+            return (align == bin.align) && (wantedCompression == bin.wantedCompression) && Arrays.equals(data, bin.data);
         }
 
         return false;
@@ -132,8 +130,12 @@ public class Bin extends Resource
         {
             System.out.print("'" + id + "' ");
 
-            switch (packedData.compression)
+            switch (doneCompression)
             {
+                case NONE:
+                    System.out.println("not packed (size = " + baseSize + ")");
+                    break;
+
                 case APLIB:
                     System.out.print("packed with APLIB, ");
                     break;
@@ -147,8 +149,8 @@ public class Bin extends Resource
                     break;
             }
 
-            System.out.println("size = " + packedSize + " (" + Math.round((packedSize * 100f) / baseSize)
-                    + "% - origin size = " + baseSize + ")");
+            if (doneCompression != Compression.NONE)
+                System.out.println("size = " + packedSize + " (" + Math.round((packedSize * 100f) / baseSize) + "% - origin size = " + baseSize + ")");
         }
 
         // output binary data (data alignment was done before)
