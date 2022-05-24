@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
@@ -12,88 +13,57 @@ import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.rescomp.type.Tile;
-import sgdk.tool.ArrayMath;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Tileset extends Resource
 {
-    public static Tileset getTileset(String id, String imgFile, Compression compression, TileOptimization tileOpt,
-            int maxPaletteSize) throws IOException, IllegalArgumentException
+    public static Tileset getTileset(String id, String imgFile, Compression compression, TileOptimization tileOpt, boolean addBlank)
+            throws Exception
     {
+        // get 8bpp pixels and also check image dimension is aligned to tile
+        final byte[] image = Util.getImage8bpp(imgFile, true);
+        
+        // happen when we couldn't retrieve palette data from RGB image
+        if (image == null)
+            throw new IllegalArgumentException(
+                    "RGB image '" + imgFile + "' does not contains palette data (see 'Important note about image format' in the rescomp.txt file");
+
         // retrieve basic infos about the image
         final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
-
-        // check BPP is correct
-        if (imgInfo.bpp > 8)
-            throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp
-                    + " bpp format, only indexed images (8,4,2,1 bpp) are supported.");
-
-        // set width and height
         final int w = imgInfo.w;
-        final int h = imgInfo.h;
+        // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
+        final int h = image.length / w;
 
-        // check size is correct
-        if ((w & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", should be a multiple of 8.");
-        if ((h & 7) != 0)
-            throw new IllegalArgumentException("'" + imgFile + "' height is '" + h + ", should be a multiple of 8.");
-
-        // get size in tile
-        final int wt = w / 8;
-        final int ht = h / 8;
-
-        // get image data
-        byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8 bpp
-        data = ImageUtil.convertTo8bpp(data, imgInfo.bpp);
-
-        // find max color index
-        final int maxIndex = ArrayMath.max(data, false);
-        // check if we are above the maximum palette size
-        if (maxIndex >= maxPaletteSize)
-            throw new IllegalArgumentException("'" + imgFile + "' uses color index >= " + maxPaletteSize
-                    + ", TILESET resource requires image with a maximum of " + maxPaletteSize + " colors.");
-
-        // build TILESET
-        return new Tileset(id, data, w, h, 0, 0, wt, ht, tileOpt, false, compression);
+        return new Tileset(id, image, w, h, 0, 0, w / 8, h / 8, tileOpt, compression, addBlank);
     }
 
     // tiles
-    final List<Tile> tiles;
+    final private List<Tile> tiles;
     final int hc;
 
     // binary data block (tiles)
     public final Bin bin;
 
-    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY,
-            int widthTile, int heightTile, TileOptimization opt, boolean ignorePlain, Compression compression)
+    // internals
+    final boolean isDuplicate;
+    final private java.util.Map<Tile, Integer> tileIndexesMap;
+    final private java.util.Map<Integer, List<Tile>> tileByHashcodeMap;
+
+    // special constructor for TSX (can have several tilesets for a single map)
+    public Tileset(List<Tileset> tilesets)
     {
-        super(id);
+        super("tilesets");
 
         tiles = new ArrayList<>();
+        tileIndexesMap = new HashMap<>();
+        tileByHashcodeMap = new HashMap<>();
+        isDuplicate = false;
 
-        // important to always use the same loop order when building Tileset and Tilemap/Map object
-        for (int j = 0; j < heightTile; j++)
-        {
-            for (int i = 0; i < widthTile; i++)
-            {
-                // get tile
-                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8,
-                        (j + startTileY) * 8);
-
-                // ignore plain tiles
-                if (ignorePlain && tile.isPlain())
-                    continue;
-
-                // find if tile already exist
-                final int index = getTileIndex(tile, opt);
-
-                // not found --> add it
-                if (index == -1)
-                    add(tile);
-            }
-        }
+        // don't optimize tileset
+        for (Tileset tileset : tilesets)
+            for (Tile tile : tileset.tiles)
+                add(tile);
 
         // build the binary bloc
         final int[] data = new int[tiles.size() * 8];
@@ -106,18 +76,76 @@ public class Tileset extends Resource
         }
 
         // build BIN (tiles data) with wanted compression
-        bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression));
+        bin = new Bin(id + "_data", data, Compression.NONE);
 
         // compute hash code
         hc = bin.hashCode();
     }
 
-    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, List<? extends Rectangle> sprites,
-            Compression compression)
+    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY, int widthTile, int heightTile,
+            TileOptimization opt, Compression compression, boolean addBlank)
+    {
+        super(id);
+
+        boolean hasBlank = false;
+
+        tiles = new ArrayList<>();
+        tileIndexesMap = new HashMap<>();
+        tileByHashcodeMap = new HashMap<>();
+
+        // important to always use the same loop order when building Tileset and Tilemap/Map object
+        for (int j = 0; j < heightTile; j++)
+        {
+            for (int i = 0; i < widthTile; i++)
+            {
+                // get tile
+                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8, (j + startTileY) * 8, 8);
+                // find if tile already exist
+                final int index = getTileIndex(tile, opt);
+
+                // blank tile
+                hasBlank |= tile.isBlank();
+
+                // not found --> add it
+                if (index == -1)
+                    add(tile);
+            }
+        }
+
+        // add a blank tile if not already present
+        if (!hasBlank && addBlank)
+            add(new Tile(new int[8], 8, 0, false, 0));
+
+        // build the binary bloc
+        final int[] data = new int[tiles.size() * 8];
+
+        int offset = 0;
+        for (Tile t : tiles)
+        {
+            System.arraycopy(t.data, 0, data, offset, 8);
+            offset += 8;
+        }
+
+        // build BIN (tiles data) with wanted compression
+        final Bin binResource = new Bin(id + "_data", data, compression);
+        // internal
+        binResource.global = false;
+        // keep track of duplicate bin resource here
+        isDuplicate = findResource(binResource) != null;
+        // add as resource (avoid duplicate)
+        bin = (Bin) addInternalResource(binResource);
+
+        // compute hash code
+        hc = bin.hashCode();
+    }
+
+    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, List<? extends Rectangle> sprites, Compression compression)
     {
         super(id);
 
         tiles = new ArrayList<>();
+        tileIndexesMap = new HashMap<>();
+        tileByHashcodeMap = new HashMap<>();
 
         for (Rectangle rect : sprites)
         {
@@ -128,7 +156,7 @@ public class Tileset extends Resource
             // important to respect sprite tile ordering (vertical)
             for (int i = 0; i < widthTile; i++)
                 for (int j = 0; j < heightTile; j++)
-                    add(Tile.getTile(image8bpp, imageWidth, imageHeight, rect.x + (i * 8), rect.y + (j * 8)));
+                    add(Tile.getTile(image8bpp, imageWidth, imageHeight, rect.x + (i * 8), rect.y + (j * 8), 8));
         }
 
         // build the binary bloc
@@ -142,7 +170,13 @@ public class Tileset extends Resource
         }
 
         // build BIN (tiles data) with wanted compression
-        bin = (Bin) addInternalResource(new Bin(id + "_data", data, compression));
+        final Bin binResource = new Bin(id + "_data", data, compression);
+        // internal
+        binResource.global = false;
+        // keep track of duplicate bin resource here
+        isDuplicate = findResource(binResource) != null;
+        // build BIN (tiles data) with wanted compression
+        bin = (Bin) addInternalResource(binResource);
 
         // compute hash code
         hc = bin.hashCode();
@@ -158,9 +192,27 @@ public class Tileset extends Resource
         return tiles.get(index);
     }
 
-    private void add(Tile tile)
+    public void add(Tile tile)
     {
+        // need to be called first
+        addInternal(tile);
         tiles.add(tile);
+    }
+
+    private void addInternal(Tile tile)
+    {
+        tileIndexesMap.put(tile, Integer.valueOf(tiles.size()));
+
+        final Integer hashKey = Integer.valueOf(tile.hashCode());
+        List<Tile> hashTiles = tileByHashcodeMap.get(hashKey);
+
+        if (hashTiles == null)
+        {
+            hashTiles = new ArrayList<>();
+            tileByHashcodeMap.put(hashKey, hashTiles);
+        }
+
+        hashTiles.add(tile);
     }
 
     public int getTileIndex(Tile tile, TileOptimization opt)
@@ -169,19 +221,44 @@ public class Tileset extends Resource
         if (opt == TileOptimization.NONE)
             return -1;
 
-        // always do a first pass for direct matching (preferred choice if possible)
-        for (int ind = 0; ind < tiles.size(); ind++)
-            if (tiles.get(ind).equals(tile))
-                return ind;
+        // fast perfect match test (preferred choice if possible)
+        final Integer key = tileIndexesMap.get(tile);
+        // found ? --> return index
+        if (key != null)
+            return key.intValue();
 
         // allow flip ?
         if (opt == TileOptimization.ALL)
         {
-            for (int ind = 0; ind < tiles.size(); ind++)
-                // found a flip equality ?
-                if (tiles.get(ind).getFlipEquality(tile) != TileEquality.NONE)
-                    return ind;
+            // get all tiles with same hash code
+            final List<Tile> hashTiles = tileByHashcodeMap.get(Integer.valueOf(tile.hashCode()));
+
+            // have some ?
+            if (hashTiles != null)
+            {
+                for (Tile t : hashTiles)
+                {
+                    // flipped version ?
+                    if (t.getFlipEquality(tile) != TileEquality.NONE)
+                        // return index of the original tile
+                        return tileIndexesMap.get(t).intValue();
+                }
+            }
         }
+
+        // // always do a first pass for direct matching (preferred choice if possible)
+        // for (int ind = 0; ind < tiles.size(); ind++)
+        // if (tiles.get(ind).equals(tile))
+        // return ind;
+        //
+        // // allow flip ?
+        // if (opt == TileOptimization.ALL)
+        // {
+        // for (int ind = 0; ind < tiles.size(); ind++)
+        // // found a flip equality ?
+        // if (tiles.get(ind).getFlipEquality(tile) != TileEquality.NONE)
+        // return ind;
+        // }
 
         // not found
         return -1;
