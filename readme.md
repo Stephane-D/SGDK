@@ -137,6 +137,7 @@ Of course I thank all my patreon for their continuous support but I want to dedi
 my premium patreon supporters (100$ / month):
 - Bitmap Bureau (Xeno Crisis team)
 - Neofid Studios (Demons of Asteborg team)
+- D I
 
 ## POWERED BY THE SGDK!
 
