@@ -116,7 +116,7 @@ static uint16_t concat_kv_pairs(const char **key, const char **value,
 	return pos;
 }
 
-int16_t mw_init(char *cmd_buf, uint16_t buf_len)
+int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 {
 	if (!cmd_buf || buf_len < MW_CMD_MIN_BUFLEN) {
 		return MW_ERR_BUFFER_TOO_SHORT;

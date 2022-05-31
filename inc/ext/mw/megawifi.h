@@ -140,7 +140,7 @@ enum mw_if_type {
  *
  * \return MW_ERR_NONE on success, other code on failure.
  ****************************************************************************/
-int16_t mw_init(char *cmd_buf, uint16_t buf_len);
+int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len);
 
 /************************************************************************//**
  * \brief Processes sends/receives pending data.
