@@ -38,31 +38,62 @@
  *      VDP sprite definition structure replicating VDP hardware sprite.
  *
  *  \param y
- *      Y position - 0x80 (0x80 = 0 on screen)
+ *      Y position - 0x80 (0x80 = 0 on screen). Valid values: [0 - 1023]
  *  \param size
  *      sprite size (see SPRITE_SIZE macro)
+ *    \param sizeH
+ *      horizontal size. Valid values: 0 -> 8, 1 -> 16, 2 -> 24, 3 -> 32
+ *    \param sizeV
+ *      vertical size. Valid values: 0 -> 8, 1 -> 16, 2 -> 24, 3 -> 32
  *  \param link
  *      sprite link, this information is used to define sprite drawing order (use 0 to force end of list)
- *  \param attr
+ *  \param attribut
  *      tile index and sprite attribut (priority, palette, H/V flip), see TILE_ATTR_FULL macro
+ *    \param priority
+ *      sprite priority. Valid values: 0 -> low, 1 -> high
+ *    \param palette
+ *      palette index. Valid values: [0, 3]
+ *    \param flipV
+ *      vertical flip. Valid values: 0 -> normal, 1 -> flipped
+ *    \param flipH
+ *      horizontal flip. Valid values: 0 -> normal, 1 -> flipped
+ *    \param tile
+ *      tile index. Valid values: [0, 2047]
  *  \param x
- *      X position - 0x80 (0x80 = 0 on screen)
+ *      X position - 0x80 (0x80 = 0 on screen). Valid values: [0 - 1023]
  */
-typedef struct
-{
-    s16 y;
-    union
-    {
+ #pragma pack(push, 1)
+
+typedef struct {
+    s16 y;  // 10 bits
+    union {
+        struct {
+            u16 unused1  : 4;
+            u16 sizeH    : 2;
+            u16 sizeV    : 2;
+            u16 unused2  : 1;
+            u16 linkData : 7;
+        };
         struct {
             u8 size;
             u8 link;
         };
         u16 size_link;
     };
-    u16 attribut;
-    s16 x;
+    union {
+        u16 attribut;
+        struct {
+            u16 priority : 1;
+            u16 palette  : 2;
+            u16 flipV    : 1;
+            u16 flipH    : 1;
+            u16 tile     : 11;
+        };
+    };
+    s16 x;  // 10 bits
 }  VDPSprite;
 
+#pragma pack(pop)
 
 /**
  *  \brief VDP sprite cache
