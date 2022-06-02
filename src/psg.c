@@ -6,7 +6,7 @@
 #include "vdp.h"
 
 
-void PSG_init()
+void PSG_reset()
 {
     vu8 *pb;
     u16 i;
@@ -24,6 +24,10 @@ void PSG_init()
     }
 }
 
+void PSG_init()
+{
+    PSG_reset();
+}
 
 void PSG_write(u8 data)
 {

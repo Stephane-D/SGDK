@@ -61,10 +61,15 @@
 
 
 /**
- *  \brief
- *      Initialize PSG chip
+ *  \deprecated use PSG_reset() instead
  */
 void PSG_init(void);
+
+/**
+ *  \brief
+ *      Reset PSG chip
+ */
+void PSG_reset(void);
 
 /**
  *  \brief
