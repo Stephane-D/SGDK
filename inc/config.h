@@ -133,7 +133,7 @@
  *  \brief
  *      Set it to 1 if you want to use the Fractal sound driver (provided by Aurora Fields).<br>
  */
-#define MODULE_FRACTAL      1
+#define MODULE_FRACTAL      0
 
 
 #endif // _CONFIG_
