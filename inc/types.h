@@ -150,6 +150,13 @@ typedef volatile u32 vu32;
  */
 typedef vu8 vbool;
 
+/**
+ *  \typedef p16
+ *      short pointer for fast 16 bit addressing (GCC does correctly cast that to pointer).
+ *      Limited to 0xFFFF8000-0x00007FFF memory region (first 32KB bank of ROM, and last 32KB of RAM)
+ */
+typedef s16 p16;
+
 
 #if !defined(uint8_t) && !defined(__int8_t_defined)
 #define uint8_t     u8
