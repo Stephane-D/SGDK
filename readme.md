@@ -102,9 +102,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ## SUPPORT SGDK
 
-SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
-
-Thanks =) I wish you a great and happy time coding!
+SGDK is completly free but you can support it on Patreon if you want: https://www.patreon.com/SGDK
 
 ## THANKS
 
@@ -135,6 +133,7 @@ Thanks =) I wish you a great and happy time coding!
 
 Of course I thank all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for
 my premium patreon supporters (100$ / month):
+
 - Bitmap Bureau (Xeno Crisis team)
 - Neofid Studios (Demons of Asteborg team)
 - D I
