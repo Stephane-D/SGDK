@@ -126,8 +126,14 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to enable MegaWiFi functions and support code
- */
+ *      Set it to 1 if you want to enable MegaWiFi functions and support code (provided by Jesus Alonso - doragasu) */
 #define MODULE_MEGAWIFI     0
+
+/**
+ *  \brief
+ *      Set it to 1 if you want to use the Fractal sound driver (provided by Aurora Fields).<br>
+ */
+#define MODULE_FRACTAL      1
+
 
 #endif // _CONFIG_
