@@ -20,29 +20,8 @@
 #ifndef _MEMORY_H_
 #define _MEMORY_H_
 
-
-/**
- *  \brief
- *      Define start of ROM region
- */
-#define ROM      0x00000000
-/**
- *  \brief
- *      Define start of RAM region
- */
-#define RAM      0xE0FF0000
-
-/**
- *  \brief
- *      Define memory allocated for stack (default = 0xA00)
- */
-#define STACK_SIZE      0x0A00
-/**
- *  \brief
- *      Define the memory high address limit for dynamic allocation
- */
-#define MEMORY_HIGH     (0xE1000000 - STACK_SIZE)
-
+// asics memory address definitions
+#include "memory_base.h"
 
 /**
  *  \brief
@@ -205,6 +184,23 @@ void MEM_free(void *ptr);
  * The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
  */
 void* MEM_alloc(u16 size);
+/**
+ *  \brief
+ *      Allocate memory block at a specific address (useful for short addressing or fixed low level working address)
+ *
+ *  \param addr
+ *      Address where we want to allocate memory
+ *  \param size
+ *      Number of bytes to allocate
+ *  \return
+ *      On success, a pointer to the memory block allocated by the function (should match the <i>addr</i> parameter).
+ *      The type of this pointer is always void*, which can be cast to the desired type of data pointer in order to be dereferenceable.
+ *      If the function failed to allocate the requested block of memory (or if specified size = 0), a <i>NULL</i> pointer is returned.
+ *
+ * Allocates a block of size bytes of memory at the given address, returning a pointer to the beginning of the block (equal to the address here).
+ * The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+ */
+ void* MEM_allocAt(u32 addr, u16 size);
 
 /**
  *  \brief
