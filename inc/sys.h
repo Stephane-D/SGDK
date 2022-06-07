@@ -22,7 +22,7 @@
 #define ROM_ALIGN                   (1 << ROM_ALIGN_BIT)
 #define ROM_ALIGN_MASK              (ROM_ALIGN - 1)
 
-#define ROM_START                   0
+#define ROM_START                   ROM
 #define ROM_END                     (((u32) &_stext) + ((u32) &_sdata))
 #define ROM_SIZE                    ((ROM_END + ROM_ALIGN_MASK) & (~ROM_ALIGN_MASK))
 
