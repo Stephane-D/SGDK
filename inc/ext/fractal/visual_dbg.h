@@ -41,12 +41,12 @@ typedef struct {
 typedef struct {
 	union {
 		u8 musicId;
-		Fractal_ChanneInfo* musicInfo;
+		Fractal_ChannelInfo* musicInfo;
 	};
 
 	union {
 		u8 sfxId;
-		Fractal_ChanneInfo* sfxInfo;
+		Fractal_ChannelInfo* sfxInfo;
 	};
 
 	union {
@@ -59,7 +59,7 @@ typedef struct {
 	u32 volumeVDPCommand;
 	u8 shortName[];
 
-} VISUAL_DBG_Channel;
+} VisualDbg_Channel;
 
 typedef struct {
 	u32* voiceTable;
@@ -83,7 +83,7 @@ typedef struct {
 	u8 intFlag;
 	u8 frameCounter;
 	u8 advanceMode;
-	u8 _unused1;
+	u8 _unused1;			// not used... yet!
 
 	union {
 		u8 graphPosition;
@@ -101,8 +101,8 @@ typedef struct {
 	u8 graphParam;
 	u8 selectedChannelEntry;
 
-	VISUAL_DBG_Channel* selectChannelAddress;
-	u16* selectChannelOffset;			// will point to VISUAL_DBG_Channel.sfxInfo or VISUAL_DBG_Channel.musicInfo
+	VisualDbg_Channel* selectChannelAddress;
+	u16* selectChannelOffset;			// will point to VisualDbg_Channel.sfxInfo or VisualDbg_Channel.musicInfo
 
 	union {
 		u8 modeId;
@@ -184,7 +184,10 @@ typedef struct {
 
 #if VISUAL_DEBUG
 
-/* noreturn */ void VisualDebugger(void* externalProcessor);
+// WARNING: doesn't actually work :(
+// v-int handler memory and Visual Debugger memor conflict causing a crash!!
+/* noreturn */ void VisualDbg_Run(void* externalProcessor);
+s8* VisualDbg_GetName(u16 sound);
 
 #endif
 

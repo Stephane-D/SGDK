@@ -55,11 +55,12 @@ void Fractal_Queue(u16 sound) {
 	);
 }
 
-void Fractal_UpdateMasterFraction() {
+void Fractal_SetMasterFraction(s16 frac) {
 	asm volatile (
+		"move.w %0,%%d0\n"
 		"jsr	dUpdateMasterFrac"
 		:
-		:
+		: "d" (frac)
 		: "a0", "a1", "d0", "d1", "cc", "memory"
 	);
 }
@@ -73,11 +74,13 @@ void Fractal_ForceFractionUpdate() {
 	);
 }
 
-void Fractal_UpdateMasterVolume() {
+void Fractal_SetMasterVolume(s16 main, s16 psg) {
 	asm volatile (
+		"move.w %0,%%d0\n"
+		"move.w %1,%%d1\n"
 		"jsr	dUpdateMasterVol"
 		:
-		:
+		: "d" (main), "d" (psg)
 		: "a0", "a1", "d0", "d1", "cc", "memory"
 	);
 }
@@ -91,11 +94,12 @@ void Fractal_ForceVolumeUpdate() {
 	);
 }
 
-void Fractal_UpdateMasterTempo() {
+void Fractal_SetMasterTempo(s16 tempo) {
 	asm volatile (
+		"move.w %0,%%d0\n"
 		"jsr	dUpdateMasterTempo"
 		:
-		:
+		: "d" (tempo)
 		: "a0", "a1", "d0", "d1", "cc", "memory"
 	);
 }
@@ -109,14 +113,23 @@ void Fractal_UpdateTempo() {
 	);
 }
 
+u8 Fractal_IsMuted(Fractal_ChannelMusic* channel) {
+	return channel->modeFlags & (1 << Fractal_ModeFlag_Muted);
+}
+
+void Fractal_ToggleMute(Fractal_ChannelMusic* channel) {
+	channel->trackFlags |= 1 << Fractal_TrackFlag_VolumeUpdate;
+	channel->modeFlags ^= 1 << Fractal_ModeFlag_Muted;
+}
+
 void Fractal_Mute(Fractal_ChannelMusic* channel) {
-	channel->modeFlags |= 1 << Fractal_TrackFlag_VolumeUpdate;
-	channel->trackFlags |= 1 << Fractal_ModeFlag_Muted;
+	channel->trackFlags |= 1 << Fractal_TrackFlag_VolumeUpdate;
+	channel->modeFlags |= 1 << Fractal_ModeFlag_Muted;
 }
 
 void Fractal_Unmute(Fractal_ChannelMusic* channel) {
-	channel->modeFlags |= 1 << Fractal_TrackFlag_VolumeUpdate;
-	channel->trackFlags &= ~(1 << Fractal_ModeFlag_Muted);
+	channel->trackFlags |= 1 << Fractal_TrackFlag_VolumeUpdate;
+	channel->modeFlags &= ~(1 << Fractal_ModeFlag_Muted);
 }
 
 #endif // MODULE_FRACTAL
