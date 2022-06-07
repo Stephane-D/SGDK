@@ -24,8 +24,8 @@ symbol.txt
 rom_head.bin
 **/Debug
 **/Release
-sega.s
-rom_head.c
+**/boot/sega.s
+**/boot/rom_head.c
 !src/boot/sega.s
 !src/boot/rom_head.c
 **/res/*.h
@@ -47,3 +47,4 @@ tools/rescomp/format
 tools/rescomp/rescomp.jar
 tools/xgm rom builder/bin
 **/.DS_Store
+tools/archives
