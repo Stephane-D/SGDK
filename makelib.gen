@@ -6,6 +6,7 @@ ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
 endif
 
 include $(GDK)/common.mk
+include $(GDK)/ext_lib.mk
 
 SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
 SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*.c)
