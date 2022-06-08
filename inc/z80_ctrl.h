@@ -339,5 +339,53 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size);
  */
 u16  Z80_isDriverReady(void);
 
+/**
+ *  \brief
+ *      Enable/disable 68K bus access protection from Z80 (can be used by any sound driver).
+ *
+ *  \param signalAddress
+ *      Z80 RAM address used (relative to the start of Z80 RAM) to set the BUS protection signal.<br>
+ *      Signal is set to 1 when main BUS should not be accesssed from Z80 (DMA operation in progess), set to 0 otherwise.
+ */
+void Z80_useBusProtection(u16 signalAddress);
+
+/**
+ *  \brief
+ *      Set temporary 68K BUS protection from Z80 (for sound driver supporting it).<br>
+ *      You should protect BUS Access during DMA and restore it after. Ex:<br>
+ *      Z80_setBusProtection(TRUE);
+ *      VDP_doVRamDMA(data, 0x1000, 0x100);
+ *      Z80_setBusProtection(FALSE);
+ *
+ *      This way the sound driver will *try* to avoid accessing the 68K BUS during DMA to
+ *      avoid execution interruption and so preserve PCM playback quality.<br>
+ *      Note that depending the sound driver, the success of the operation is not 100% garantee and can fails in some conditions
+ *      (heavy Z80 load, lot of PSG data in XGM music).<br>
+ *      For the XGM sound driver you can also use the #XGM_setForceDelayDMA() method to help improving the PCM playblack.
+ *
+ *  \see Z80_useBusProtection(..)
+ *  \see Z80_enableBusProtection(..)
+ *  \see Z80_disableBusProtection(..)
+ */
+void Z80_setBusProtection(bool value);
+/**
+ *  \brief
+ *      Enable temporary 68K BUS protection from Z80 (for sound driver supporting it). See #Z80_setBusProtection(..) for more info.
+ *
+ *  \see Z80_setBusProtection(..)
+ *  \see Z80_enableBusProtection(..)
+ *  \see Z80_disableBusProtection(..)
+ */
+void Z80_enableBusProtection();
+/**
+ *  \brief
+ *      Disable temporary 68K BUS protection from Z80 (for sound driver supporting it). See #Z80_setBusProtection(..) for more info.
+ *
+ *  \see Z80_setBusProtection(..)
+ *  \see Z80_enableBusProtection(..)
+ *  \see Z80_disableBusProtection(..)
+ */
+void Z80_disableBusProtection();
+
 
 #endif // _Z80_CTRL_H_

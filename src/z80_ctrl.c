@@ -29,6 +29,7 @@ extern vu16 VBlankProcess;
 
 u16 currentDriver;
 u16 driverFlags;
+u16 busProtectSignalAddress;
 
 
 // we don't want to share it
@@ -45,6 +46,7 @@ void Z80_init()
     // no loaded driver
     currentDriver = -1;
     driverFlags = 0;
+    busProtectSignalAddress = 0;
 
     // load null/dummy driver as it's important to have Z80 active (state is preserved)
     Z80_loadDriver(Z80_DRIVER_NULL, FALSE);
@@ -387,10 +389,14 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
             XGM_setMusicTempo(60);
             // reset load calculation
             XGM_resetLoadCalculation();
+            // set bus protection signal address
+            Z80_useBusProtection((Z80_DRV_PARAMS + 0x0D) & 0xFFFF);
             break;
 
         default:
             VBlankProcess &= ~PROCESS_XGM_TASK;
+            // no bus protection (signal address set to 0)
+            Z80_useBusProtection(0);
             break;
     }
 }
@@ -429,4 +435,40 @@ u16 Z80_isDriverReady()
     }
 
     return ret;
+}
+
+
+void Z80_useBusProtection(u16 signalAddress)
+{
+    busProtectSignalAddress = signalAddress;
+}
+
+void Z80_setBusProtection(bool value)
+{
+    vu8 *pb;
+
+    // bus protection not defined ? --> exist
+    if (busProtectSignalAddress == 0)
+        return;
+
+    SYS_disableInts();
+    bool busTaken = Z80_getAndRequestBus(TRUE);
+
+    // point to Z80 PROTECT parameter
+    pb = (u8 *) (Z80_RAM + busProtectSignalAddress);
+    *pb = value;
+
+    // release bus
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
+}
+
+void Z80_enableBusProtection()
+{
+    Z80_setBusProtection(TRUE);
+}
+
+void Z80_disableBusProtection()
+{
+    Z80_setBusProtection(FALSE);
 }
