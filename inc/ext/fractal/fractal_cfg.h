@@ -38,7 +38,7 @@
  *  \brief
  *      If special sound test variables are built into each channel. Affects chipVolume, chipFraction and chipFrequency. If disabled, uses less RAM but does not support these variables
  */
-#define FEATURE_SOUNDTEST		0|VISUAL_DEBUG
+#define FEATURE_SOUNDTEST		0+VISUAL_DEBUG
 /**
  *  \brief
  *      Determines stack depth for the channel. Remember, you must also update res/Fractal/Data.json5 to contain the stack depth as well. More depth uses more RAM, but allows for better compression of sound data.
