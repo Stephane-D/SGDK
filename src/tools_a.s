@@ -1,130 +1,130 @@
-# ---------------------------------------------------------------
-# Quicksort for MC68000
-# by Stephane Dallongeville @2016
-# original implementation by (c) 2014 Dale Whinham
-#
-# void qsort(void** src, u16 size, _comparatorCallback* cb);
-# ---------------------------------------------------------------
+// ---------------------------------------------------------------
+// Quicksort for MC68000
+// by Stephane Dallongeville @2016
+// original implementation by (c) 2014 Dale Whinham
+//
+// void qsort(void** src, u16 size, _comparatorCallback* cb);
+// ---------------------------------------------------------------
 
 #include "asm_mac.i"
 
 func qsort
     movem.l %a2-%a6,-(%sp)
 
-    move.l  24(%sp),%a2             | a2 = src
-    move.l  28(%sp),%d0             | d0 = size (limited to 0x3FFF)
-    move.l  32(%sp),%a6             | a6 = comparator
+    move.l  24(%sp),%a2             // a2 = src
+    move.l  28(%sp),%d0             // d0 = size (limited to 0x3FFF)
+    move.l  32(%sp),%a6             // a6 = comparator
 
     add.w   %d0,%d0
     add.w   %d0,%d0
-    lea     -4(%a2,%d0.w),%a3       | a3 = &src[size - 1]
+    lea     -4(%a2,%d0.w),%a3       // a3 = &src[size - 1]
 
-    bsr quicksort                   | start sort !
+    bsr quicksort                   // start sort !
 
     movem.l (%sp)+,%a2-%a6
     rts
 
-# ---------------------------------------------------------------
-# Quicksort
-# a2 - left pointer
-# a3 - right pointer
-# ---------------------------------------------------------------
+// ---------------------------------------------------------------
+// Quicksort
+// a2 - left pointer
+// a3 - right pointer
+// ---------------------------------------------------------------
 
 quicksort:
-    cmp.l   %a2,%a3                 | L >= R ?
-    ble     .endqsort               | done !
+    cmp.l   %a2,%a3                 // L >= R ?
+    ble     .endqsort               // done !
 
-    bsr     partition               | index of partition is in a1
+    bsr     partition               // index of partition is in a1
 
-    movem.l %a1-%a3,-(%sp)          | save P,L,R
+    movem.l %a1-%a3,-(%sp)          // save P,L,R
 
-    lea     -4(%a1),%a3             | R = P-1
+    lea     -4(%a1),%a3             // R = P-1
 
-    bsr     quicksort               | quicksort(L, P-1)
+    bsr     quicksort               // quicksort(L, P-1)
 
-    movem.l (%sp),%a1-%a3           | restore P,L,R
-    lea     4(%a1),%a2              | L = P+1
-    move.l  %a2,4(%sp)              | save changed L
+    movem.l (%sp),%a1-%a3           // restore P,L,R
+    lea     4(%a1),%a2              // L = P+1
+    move.l  %a2,4(%sp)              // save changed L
 
-    bsr     quicksort               | quicksort(P+1, R)
+    bsr     quicksort               // quicksort(P+1, R)
 
-    movem.l (%sp)+,%a1-%a3          | restore P,L,R
+    movem.l (%sp)+,%a1-%a3          // restore P,L,R
 
 .endqsort:
     rts
 
-# ---------------------------------------------------------------
-# Partition
-# a2 - left pointer
-# a3 - right pointer
-# return pivot in a1
-# ---------------------------------------------------------------
+// ---------------------------------------------------------------
+// Partition
+// a2 - left pointer
+// a3 - right pointer
+// return pivot in a1
+// ---------------------------------------------------------------
 partition:
-    move.l  %a2,%a4                 | a4 = L
-    move.l  %a3,%a5                 | a5 = R = P
+    move.l  %a2,%a4                 // a4 = L
+    move.l  %a3,%a5                 // a5 = R = P
 
-|    move.l  %a3,%d0
-|    add.l   %a2,%d0
-|    asr.l   %d0                     | d0 = P = (L+R)/2
-|    and.w   0xFFFC,%d0              | clear bit 0 & 1
-|    move.l  %d0,%a0                 | a0 = P
+//    move.l  %a3,%d0
+//    add.l   %a2,%d0
+//    asr.l   %d0                     // d0 = P = (L+R)/2
+//    and.w   0xFFFC,%d0              // clear bit 0 & 1
+//    move.l  %d0,%a0                 // a0 = P
 
-    move.l  (%a5),-(%sp)            | reserve space for comparator arguments, put (*L,*P) by default
+    move.l  (%a5),-(%sp)            // reserve space for comparator arguments, put (*L,*P) by default
     move.l  (%a4),-(%sp)
 
-    lea     -4(%a5),%a0             | tmp = next R
-    cmp.l   %a4,%a0                 | L >= R ?
-    ble     .finish                 | done !
+    lea     -4(%a5),%a0             // tmp = next R
+    cmp.l   %a4,%a0                 // L >= R ?
+    ble     .finish                 // done !
 
 .loop:
 .findleft:
-    move.l  (%a4)+,(%sp)            | first argument comparator = *L
-    jsr     (%a6)                   | compare
+    move.l  (%a4)+,(%sp)            // first argument comparator = *L
+    jsr     (%a6)                   // compare
 
-    tst.w   %d0                     | *L < *P
+    tst.w   %d0                     // *L < *P
     blt     .findleft
 
-    lea     -4(%a4),%a4             | L fix (put on value to swap)
+    lea     -4(%a4),%a4             // L fix (put on value to swap)
 
 .findright:
-    move.l  -(%a5),(%sp)            | first argument comparator = *R
-    jsr     (%a6)                   | compare
+    move.l  -(%a5),(%sp)            // first argument comparator = *R
+    jsr     (%a6)                   // compare
 
-    tst.w   %d0                     | *R > *P
+    tst.w   %d0                     // *R > *P
     bgt     .findright
 
-    cmp.l   %a4,%a5                 | L >= R ?
-    ble     .finish                 | done !
+    cmp.l   %a4,%a5                 // L >= R ?
+    ble     .finish                 // done !
 
-    move.l  (%a4),%d0               | swap *R / *L
-    move.l  (%a5),(%a4)+            | L++
+    move.l  (%a4),%d0               // swap *R / *L
+    move.l  (%a5),(%a4)+            // L++
     move.l  %d0,(%a5)
 
-    lea     -4(%a5),%a0             | tmp = next R
-    cmp.l   %a4,%a0                 | R > L ?
-    bhi     .loop                   | continue !
+    lea     -4(%a5),%a0             // tmp = next R
+    cmp.l   %a4,%a0                 // R > L ?
+    bhi     .loop                   // continue !
 
 .finish:
-    move.l  (%a4),%d0               | swap *L / *P
+    move.l  (%a4),%d0               // swap *L / *P
     move.l  (%a3),(%a4)
     move.l  %d0,(%a3)
 
-    move.l  %a4,%a1                 | a1 = L = new pivot
+    move.l  %a4,%a1                 // a1 = L = new pivot
 
-    lea     8(%sp),%sp              | release space for comparator arguments
+    lea     8(%sp),%sp              // release space for comparator arguments
     rts
 
 
-# -------------------------------------------------------------------------------------------------
-# Aplib decruncher for MC68000 "gcc version"
-# by MML 2010
-# Size optimized (164 bytes) by Franck "hitchhikr" Charlet.
-# More optimizations by r57shell.
-#
-# aplib_decrunch: A0 = Source / A1 = Destination / Returns unpacked size
-# u32 aplib_unpack(u8 *src, u8 *dest); /* c prototype */
-#
-# -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// Aplib decruncher for MC68000 "gcc version"
+// by MML 2010
+// Size optimized (164 bytes) by Franck "hitchhikr" Charlet.
+// More optimizations by r57shell.
+//
+// aplib_decrunch: A0 = Source / A1 = Destination / Returns unpacked size
+// u32 aplib_unpack(u8 *src, u8 *dest); /* c prototype */
+//
+// -------------------------------------------------------------------------------------------------
 
 func aplib_unpack
     movem.l 4(%a7),%a0-%a1
@@ -142,27 +142,27 @@ aplib_decrunch:
     move.b  (%a0)+,(%a1)+
 
 .next_sequence_init:
-    moveq   #2,%d1                  | Initialize LWM
+    moveq   #2,%d1                  // Initialize LWM
 
 .next_sequence:
     bsr.b   .get_bit
-    bcc.b   .copy_byte              | if bit sequence is %0..., then copy next byte
+    bcc.b   .copy_byte              // if bit sequence is %0..., then copy next byte
 
     bsr.b   .get_bit
-    bcc.b   .code_pair              | if bit sequence is %10..., then is a code pair
+    bcc.b   .code_pair              // if bit sequence is %10..., then is a code pair
 
-    moveq   #0,%d0                  | offset = 0 (eor.l %d0,%d0)
+    moveq   #0,%d0                  // offset = 0 (eor.l %d0,%d0)
     bsr.b   .get_bit
-    bcc.b   .short_match            | if bit sequence is %110..., then is a short match
+    bcc.b   .short_match            // if bit sequence is %110..., then is a short match
 
-    moveq   #4-1,%d5                | The sequence is %111..., the next 4 bits are the offset (0-15)
+    moveq   #4-1,%d5                // The sequence is %111..., the next 4 bits are the offset (0-15)
 .get_3_bits:
     bsr.b   .get_bit
-    roxl.l  #1,%d0                  | addx.l  %d0,%d0 <- my bug, Z flag only cleared, not SET
-    dbf     %d5,.get_3_bits         | (dbcc doesn't modify flags)
-    beq.b   .write_byte             | if offset == 0, then write 0x00
+    roxl.l  #1,%d0                  // addx.l  %d0,%d0 <- my bug, Z flag only cleared, not SET
+    dbf     %d5,.get_3_bits         // (dbcc doesn't modify flags)
+    beq.b   .write_byte             // if offset == 0, then write 0x00
 
-                                    | If offset != 0, then write the byte on destination - offset
+                                    // If offset != 0, then write the byte on destination - offset
     move.l  %a1,%a2
     suba.l  %d0,%a2
     move.b  (%a2),%d0
@@ -171,38 +171,38 @@ aplib_decrunch:
     move.b  %d0,(%a1)+
     bra.b   .next_sequence_init
 
-.short_match:                       | Short match %110...
-    moveq   #3,%d2                  | length = 3
-    move.b  (%a0)+,%d0              | Get offset (offset is 7 bits + 1 bit to mark if copy 2 or 3 bytes)
+.short_match:                       // Short match %110...
+    moveq   #3,%d2                  // length = 3
+    move.b  (%a0)+,%d0              // Get offset (offset is 7 bits + 1 bit to mark if copy 2 or 3 bytes)
     lsr.b   #1,%d0
-    beq.b   .end_decrunch           | if offset == 0, end of decrunching
+    beq.b   .end_decrunch           // if offset == 0, end of decrunching
     bcs.b   .domatch_new_lastpos
-    moveq   #2,%d2                  | length = 2
+    moveq   #2,%d2                  // length = 2
     bra.b   .domatch_new_lastpos
 
-.code_pair:                         | Code pair %10...
+.code_pair:                         // Code pair %10...
     bsr.b   .decode_gamma
-    sub.l   %d1,%d2                 | offset -= LWM
+    sub.l   %d1,%d2                 // offset -= LWM
     bne.b   .normal_code_pair
-    move.l  %d4,%d0                 | offset = old_offset
+    move.l  %d4,%d0                 // offset = old_offset
     bsr.b   .decode_gamma
     bra.b   .copy_code_pair
 
 .normal_code_pair:
-    subq.l  #1,%d2                  | offset -= 1
-    lsl.l   #8,%d2                  | offset << 8
-    move.b  (%a0)+,%d2              | get the least significant byte of the offset (16 bits)
+    subq.l  #1,%d2                  // offset -= 1
+    lsl.l   #8,%d2                  // offset << 8
+    move.b  (%a0)+,%d2              // get the least significant byte of the offset (16 bits)
     move.l  %d2,%d0
     bsr.b   .decode_gamma
-    cmp.l   %a3,%d0                 | >=32000
+    cmp.l   %a3,%d0                 // >=32000
     bge.b   .domatch_with_2inc
 
 .compare_1280:
-    cmp.l   %a4,%d0                 | >=1280 <32000
+    cmp.l   %a4,%d0                 // >=1280 <32000
     bge.b   .domatch_with_inc
 
 .compare_128:
-    cmp.l   %a5,%d0                 | >=128 <1280
+    cmp.l   %a5,%d0                 // >=128 <1280
     bge.b   .domatch_new_lastpos
 
 .domatch_with_2inc:
@@ -210,28 +210,28 @@ aplib_decrunch:
 .domatch_with_inc:
     addq.l  #1,%d2
 .domatch_new_lastpos:
-    move.l  %d0,%d4                 | old_offset = offset
+    move.l  %d0,%d4                 // old_offset = offset
 .copy_code_pair:
-    subq.l  #1,%d2                  | length--
+    subq.l  #1,%d2                  // length--
     move.l  %a1,%a2
     suba.l  %d0,%a2
 
 .loop_do_copy:
     move.b  (%a2)+,(%a1)+
     dbf     %d2,.loop_do_copy
-    moveq   #1,%d1                  | LWM = 1
-    bra.b   .next_sequence          | Process next sequence
+    moveq   #1,%d1                  // LWM = 1
+    bra.b   .next_sequence          // Process next sequence
 
-.get_bit:                           | Get bits from the crunched data (D3) and insert the most significant bit in the carry flag.
+.get_bit:                           // Get bits from the crunched data (D3) and insert the most significant bit in the carry flag.
     add.b   %d3,%d3
     bne.b   .still_bits_left
-    move.b  (%a0)+,%d3              | Read next crunched byte
+    move.b  (%a0)+,%d3              // Read next crunched byte
     addx.b  %d3,%d3
 
 .still_bits_left:
     rts
 
-.decode_gamma:                      | Decode values from the crunched data using gamma code
+.decode_gamma:                      // Decode values from the crunched data using gamma code
     moveq   #1,%d2
 
 .get_more_gamma:
@@ -243,34 +243,34 @@ aplib_decrunch:
 
 .end_decrunch:
     move.l %a1,%d0
-    sub.l %a6,%d0                   | d0 = unpacked size
+    sub.l %a6,%d0                   // d0 = unpacked size
 
     movem.l (%a7)+,%a2-%a6/%d2-%d5
     rts
 
 
-# ---------------------------------------------------------------------------
-# LZ4W unpacker for MC68000
-# by Stephane Dallongeville @2017
-#
-# lz4w_unpack_a: A0 = Source / A1 = Destination / Returns unpacked size
-# u16 lz4w_unpack(const u8 *src, u8 *dest);  /* c prototype */
-# ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// LZ4W unpacker for MC68000
+// by Stephane Dallongeville @2017
+//
+// lz4w_unpack_a: A0 = Source / A1 = Destination / Returns unpacked size
+// u16 lz4w_unpack(const u8 *src, u8 *dest);  /* c prototype */
+// ---------------------------------------------------------------------------
 
 func lz4w_unpack
-    move.l  4(%sp),%a0              | a0 = src
-    move.l  8(%sp),%a1              | a1 = dst
+    move.l  4(%sp),%a0              // a0 = src
+    move.l  8(%sp),%a1              // a1 = dst
 
 lz4w_unpack_a:
     movem.l %a2-%a4,-(%sp)
 
-    lea     .next,%a3               | used for fast jump
+    lea     .next,%a3               // used for fast jump
     moveq   #0,%d1
 
 .next:
     moveq   #0,%d0
-    move.b  (%a0)+,%d0              | d0 = literal & match length
-    move.b  (%a0)+,%d1              | d1 = match offset
+    move.b  (%a0)+,%d0              // d0 = literal & match length
+    move.b  (%a0)+,%d1              // d1 = match offset
 
     add.w   %d0,%d0
     add.w   %d0,%d0
@@ -1596,19 +1596,19 @@ lz4w_unpack_a:
 .lit2_mat0:
     move.l  (%a0)+,(%a1)+
 
-    tst.b   %d1                     | match offset null ?
-    jeq     .next                   | not a long match
+    tst.b   %d1                     // match offset null ?
+    jeq     .next                   // not a long match
 
 .long_match_1:
-    move.w  (%a0)+,%d0              | get long offset (already negated)
+    move.w  (%a0)+,%d0              // get long offset (already negated)
 
-    add.w   %d1,%d1                 |
-    add.w   %d1,%d1                 | len = len * 4 (for jump table)
+    add.w   %d1,%d1                 //
+    add.w   %d1,%d1                 // len = len * 4 (for jump table)
 
-    add.w   %d0,%d0                 | bit 15 contains ROM source info
+    add.w   %d0,%d0                 // bit 15 contains ROM source info
     jcs     .lm_rom
 
-    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+    lea     -2(%a1,%d0.w),%a2       // a2 = dst - (match offset + 2)
 
 .lm1_jump_base:
     move.l  (.lm_jump_table-.lm1_jump_base)-2(%pc,%d1.w),%a4
@@ -1631,39 +1631,39 @@ lz4w_unpack_a:
 .lit1_mat0:
     move.w  (%a0)+,(%a1)+
 
-    tst.b   %d1                     | match offset null ?
-    jeq     .next                   | not a long match
+    tst.b   %d1                     // match offset null ?
+    jeq     .next                   // not a long match
 
 .long_match_2:
-    move.w  (%a0)+,%d0              | get long offset (already negated)
+    move.w  (%a0)+,%d0              // get long offset (already negated)
 
-    add.w   %d1,%d1                 |
-    add.w   %d1,%d1                 | len = len * 4 (for jump table)
+    add.w   %d1,%d1                 //
+    add.w   %d1,%d1                 // len = len * 4 (for jump table)
 
-    add.w   %d0,%d0                 | bit 15 contains ROM source info
+    add.w   %d0,%d0                 // bit 15 contains ROM source info
     jcs     .lm_rom
 
-    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+    lea     -2(%a1,%d0.w),%a2       // a2 = dst - (match offset + 2)
 
 .lm2_jump_base:
     move.l  (.lm_jump_table-.lm2_jump_base)-2(%pc,%d1.w),%a4
     jmp     (%a4)
 
 
-.lit0_mat0:                         | special case of lit=0 and mat=0
-    tst.b   %d1                     | match offset null ?
-    jeq    .done                    | not a long match --> done
+.lit0_mat0:                         // special case of lit=0 and mat=0
+    tst.b   %d1                     // match offset null ?
+    jeq    .done                    // not a long match --> done
 
 .long_match_3:
-    move.w  (%a0)+,%d0              | get long offset (already negated)
+    move.w  (%a0)+,%d0              // get long offset (already negated)
 
-    add.w   %d1,%d1                 |
-    add.w   %d1,%d1                 | len = len * 4 (for jump table)
+    add.w   %d1,%d1                 //
+    add.w   %d1,%d1                 // len = len * 4 (for jump table)
 
-    add.w   %d0,%d0                 | bit 15 contains ROM source info
+    add.w   %d0,%d0                 // bit 15 contains ROM source info
     jcs     .lm_rom
 
-    lea     -2(%a1,%d0.w),%a2       | a2 = dst - (match offset + 2)
+    lea     -2(%a1,%d0.w),%a2       // a2 = dst - (match offset + 2)
 
 .lm3_jump_base:
     move.l  (.lm_jump_table-.lm3_jump_base)-2(%pc,%d1.w),%a4
@@ -1930,7 +1930,7 @@ lz4w_unpack_a:
     .long .lm_len_FF
 
 .lm_rom:
-    lea     -2(%a0,%d0.w),%a2       | a2 = src - (match offset + 2)
+    lea     -2(%a0,%d0.w),%a2       // a2 = src - (match offset + 2)
 
 .lmr_jump_base:
     move.l  (.lmr_jump_table-.lmr_jump_base)-2(%pc,%d1.w),%a4
@@ -2214,7 +2214,7 @@ lz4w_unpack_a:
 .lit0_mat1:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2240,7 +2240,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2264,7 +2264,7 @@ lz4w_unpack_a:
 .lit0_mat2:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2291,7 +2291,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2316,7 +2316,7 @@ lz4w_unpack_a:
 .lit0_mat3:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2344,7 +2344,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2370,7 +2370,7 @@ lz4w_unpack_a:
 .lit0_mat4:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2399,7 +2399,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2426,7 +2426,7 @@ lz4w_unpack_a:
 .lit0_mat5:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2456,7 +2456,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2484,7 +2484,7 @@ lz4w_unpack_a:
 .lit0_mat6:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2515,7 +2515,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2544,7 +2544,7 @@ lz4w_unpack_a:
 .lit0_mat7:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2576,7 +2576,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2606,7 +2606,7 @@ lz4w_unpack_a:
 .lit0_mat8:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2639,7 +2639,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2670,7 +2670,7 @@ lz4w_unpack_a:
 .lit0_mat9:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2704,7 +2704,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2736,7 +2736,7 @@ lz4w_unpack_a:
 .lit0_matA:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2771,7 +2771,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2804,7 +2804,7 @@ lz4w_unpack_a:
 .lit0_matB:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2840,7 +2840,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2874,7 +2874,7 @@ lz4w_unpack_a:
 .lit0_matC:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2911,7 +2911,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2946,7 +2946,7 @@ lz4w_unpack_a:
 .lit0_matD:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -2984,7 +2984,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -3020,7 +3020,7 @@ lz4w_unpack_a:
 .lit0_matE:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -3059,7 +3059,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -3096,7 +3096,7 @@ lz4w_unpack_a:
 .lit0_matF:
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -3136,7 +3136,7 @@ lz4w_unpack_a:
 
     add.w   %d1,%d1
     neg.w   %d1
-    lea     -2(%a1,%d1.w),%a2       | a2 = dst - ((match offset + 1) * 2)
+    lea     -2(%a1,%d1.w),%a2       // a2 = dst - ((match offset + 1) * 2)
 
     move.w  (%a2)+,(%a1)+
     move.w  (%a2)+,(%a1)+
@@ -3158,14 +3158,14 @@ lz4w_unpack_a:
     jmp     (%a3)
 
 .done:
-    move.w  (%a0)+,%d0              | need to copy a last byte ?
+    move.w  (%a0)+,%d0              // need to copy a last byte ?
     bpl.s   .no_byte
 
-    move.b  %d0,(%a1)+              | copy last byte
+    move.b  %d0,(%a1)+              // copy last byte
 .no_byte:
 
     move.l  %a1,%d0
-    sub.l   20(%sp),%d0             | return op - dest
+    sub.l   20(%sp),%d0             // return op - dest
 
     movem.l (%sp)+,%a2-%a4
     rts
