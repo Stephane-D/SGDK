@@ -682,19 +682,15 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         u16 dmaSize = DMA_getQueueTransferSize();
 #endif
 
-        // DMA protection for XGM driver
-        if (currentDriver == Z80_DRIVER_XGM)
-        {
-            XGM_set68KBUSProtection(TRUE);
+        // enable bus protection for Z80 before flushing DMA
+        Z80_enableBusProtection();
 
-            // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
-            if (XGM_getForceDelayDMA()) waitSubTick(10);
-            DMA_flushQueue();
+        // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
+        if ((currentDriver == Z80_DRIVER_XGM) && XGM_getForceDelayDMA()) waitSubTick(10);
+        DMA_flushQueue();
 
-            XGM_set68KBUSProtection(FALSE);
-        }
-        else
-            DMA_flushQueue();
+        // can disable bus protection
+        Z80_disableBusProtection();
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
         vcnt = GET_VCOUNTER;

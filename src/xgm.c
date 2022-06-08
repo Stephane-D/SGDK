@@ -359,22 +359,7 @@ void XGM_setLoopNumber(s8 value)
 
 void XGM_set68KBUSProtection(u8 value)
 {
-    vu8 *pb;
-
-    // nothing to do (driver should be loaded here)
-    if (currentDriver != Z80_DRIVER_XGM)
-        return;
-
-    SYS_disableInts();
-    bool busTaken = Z80_getAndRequestBus(TRUE);
-
-    // point to Z80 PROTECT parameter
-    pb = (u8 *) (Z80_DRV_PARAMS + 0x0D);
-    *pb = value;
-
-    // release bus
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    Z80_setBusProtection(value);
 }
 
 
