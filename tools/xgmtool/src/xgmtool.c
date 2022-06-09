@@ -172,11 +172,26 @@ int main(int argc, char *argv[ ])
             // VGM output
             if (!strcasecmp(outExt, "VGM"))
             {
-                // get byte array
-                outData = VGM_asByteArray(vgm, &outDataSize);
-                if (outData == NULL) exit(1);
-                // write to file
-                writeBinaryFile(outData, outDataSize, argv[2]);
+                if (argc >= 4)
+                {
+                    // get byte array
+                    unsigned char *outData2;
+                    int outDataSize2;
+
+                    outData = VGM_asByteArray2(vgm, &outDataSize, &outData2, &outDataSize2);
+                    if (outData == NULL) exit(1);
+
+                    // write to file
+                    writeBinaryFile(outData, outDataSize, argv[2]);
+                    writeBinaryFile(outData2, outDataSize2, argv[3]);
+                }
+                else {
+                    // get byte array
+                    outData = VGM_asByteArray(vgm, &outDataSize);
+                    if (outData == NULL) exit(1);
+                    // write to file
+                    writeBinaryFile(outData, outDataSize, argv[2]);
+                }
             }
             else
             {

@@ -53,6 +53,6 @@ Sample* VGM_getSample(VGM* vgm, int sampleOffset);
 void VGM_convertWaits(VGM* vgm);
 //void VGM_shiftSamples(VGM* vgm, int sft);
 unsigned char* VGM_asByteArray(VGM* vgm, int* outSize);
-
+unsigned char* VGM_asByteArray2(VGM* vgm, int* outSize, unsigned char **dataBl, int *dataBlSize);
 
 #endif // VGM_H_

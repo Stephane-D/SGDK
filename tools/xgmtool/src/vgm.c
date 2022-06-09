@@ -1810,3 +1810,200 @@ unsigned char* VGM_asByteArray(VGM* vgm, int* outSize)
 
     return array;
 }
+
+unsigned char* VGM_asByteArray2(VGM* vgm, int* outSize, unsigned char **dataBl, int *dataBlSize)
+{
+    int i;
+    int gd3Offset;
+    unsigned char byte;
+    FILE* f = fopen("tmp.bin", "wb+");
+
+    if (f == NULL)
+    {
+        printf("Error: cannot open file tmp.bin\n");
+        return NULL;
+    }
+
+    *dataBl = NULL;
+    *dataBlSize = 0;
+
+    // 00: VGM
+    fwrite("Vgm ", 1, 4, f);
+
+    // 04: len (reserve 4 bytes)
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 08: version 1.60
+    byte = 0x60;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x01;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    // 0C: SN76489 clock
+    byte = 0x99;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x9E;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x36;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    // 10: YM2413 clock
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 14: GD3 offset
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 18: total number of sample (44100 samples per second)
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 1C: loop offset
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 20: loop number of samples (44100 samples per second)
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 24: rate (50 or 60 Hz)
+    byte = vgm->rate;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 28: SN76489 flags
+    byte = 0x09;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x10;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    // 2C: YM2612 clock
+    byte = 0xB5;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x0A;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x75;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    // 30: YM2151 clock
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 34: VGM data offset
+    byte = 0x4C;
+    fwrite(&byte, 1, 1, f);
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 38: Sega PCM clock
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 3C: Sega PCM interface
+    byte = 0x00;
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    fwrite(&byte, 1, 1, f);
+    // 40-80
+    byte = 0x00;
+    for (i = 0x40; i < 0x80; i++)
+        fwrite(&byte, 1, 1, f);
+
+    VGMCommand* loopCommand = NULL;
+    int loopOffset = 0;
+    LList* l;
+
+    unsigned char *newDataBl = NULL;
+    int newDataBlSize = 0;
+
+    // write command (ignore loop markers)
+    l = vgm->commands;
+    while(l != NULL)
+    {
+        VGMCommand* command = l->element;
+
+        if (VGMCommand_isLoopStart(command))
+        {
+            loopCommand = command;
+            loopOffset = getFileSizeEx(f) - 0x1C;
+        }
+        else if (!VGMCommand_isLoopEnd(command))
+        {
+            if (VGMCommand_isDataBlock(command))
+            {
+                newDataBl = realloc(newDataBl, newDataBlSize + command->size);
+                memcpy(newDataBl + newDataBlSize, VGMCommand_asByteArray(command), command->size);
+                newDataBlSize += command->size;
+
+                l = l->next;
+                continue;
+            }
+
+            fwrite(VGMCommand_asByteArray(command), 1, command->size, f);
+        }
+
+        l = l->next;
+    }
+
+    // write GD3 tags if present
+    if (vgm->gd3)
+    {
+        // get GD3 offset
+        gd3Offset = getFileSizeEx(f);
+        unsigned char* data = GD3_asByteArray(vgm->gd3, &i);
+        fwrite(data, 1, i, f);
+    }
+
+    unsigned char* array = inEx(f, 0, getFileSizeEx(f), outSize);
+
+    fclose(f);
+
+    // set loop offset
+    if (loopCommand != NULL)
+    {
+        setInt(array, 0x1C, loopOffset);
+        setInt(array, 0x20, VGM_computeLenEx(vgm, loopCommand));
+    }
+    // set GD3 offset
+    if (vgm->gd3)
+        setInt(array, 0x14, gd3Offset - 0x14);
+
+    // set file size
+    setInt(array, 0x04, *outSize - 4);
+    // set len in sample
+    setInt(array, 0x18, VGM_computeLen(vgm) - 1);
+
+    *dataBl = newDataBl;
+    *dataBlSize = newDataBlSize;
+    return array;
+}
