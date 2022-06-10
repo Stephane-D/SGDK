@@ -1984,6 +1984,8 @@ unsigned char* VGM_asByteArray2(VGM* vgm, int* outSize, unsigned char **dataBl, 
         fwrite(data, 1, i, f);
     }
 
+    fflush(f);
+
     unsigned char* array = inEx(f, 0, getFileSizeEx(f), outSize);
 
     fclose(f);
