@@ -43,9 +43,6 @@ debug: $(LIB)/libmd_debug.a
 asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -S
 asm: $(LST_LIB)
 
-# better to include it after release rule definition
-include $(GDK)/ext_lib.mk
-
 all: release
 default: release
 
