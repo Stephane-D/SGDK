@@ -361,7 +361,7 @@ void Z80_useBusProtection(u16 signalAddress);
  *      avoid execution interruption and so preserve PCM playback quality.<br>
  *      Note that depending the sound driver, the success of the operation is not 100% garantee and can fails in some conditions
  *      (heavy Z80 load, lot of PSG data in XGM music).<br>
- *      For the XGM sound driver you can also use the #XGM_setForceDelayDMA() method to help improving the PCM playblack.
+ *      In that case you can also try to use the #Z80_setForceDelayDMA() method to help improving the PCM playblack.
  *
  *  \see Z80_useBusProtection(..)
  *  \see Z80_enableBusProtection(..)
@@ -387,5 +387,26 @@ void Z80_enableBusProtection();
  */
 void Z80_disableBusProtection();
 
+/**
+ *  \brief
+ *      Returns #TRUE if DMA delay is enabled to improve PCM playback.
+ *
+ *  \see Z80_setForceDelayDMA(bool)
+ */
+bool Z80_getForceDelayDMA(void);
+/**
+ *  \brief
+ *      This method can be used to improve the PCM playback during music play and while DMA queue is used.<br>
+ *      Even using the BUS protection with #Z80_setBusProtection you may still experience altered PCM playback.
+ *      With the XGM driver for instance this happens when music contains PSG data (Z80 requires the main BUS to access PSG).<br>
+ *      By delaying a bit the DMA execution from the DMA queue we let the Z80 to access main bus for a bit of time thus avoiding any stall.
+ *      The delay is about 3 scanlines so using the force delay DMA will reduce the DMA bandwidth for about 3 vblank lines.
+ *
+ *  \param value TRUE or FALSE
+ *
+ *  \see Z80_getForceDelayDMA()
+ *  \see Z80_setBusProtection()
+ */
+void Z80_setForceDelayDMA(bool value);
 
 #endif // _Z80_CTRL_H_

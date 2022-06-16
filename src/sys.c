@@ -686,7 +686,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         Z80_enableBusProtection();
 
         // delay enabled ? --> wait a bit to improve PCM playback (test on SOR2)
-        if ((currentDriver == Z80_DRIVER_XGM) && XGM_getForceDelayDMA()) waitSubTick(10);
+        if (Z80_getForceDelayDMA()) waitSubTick(10);
         DMA_flushQueue();
 
         // can disable bus protection

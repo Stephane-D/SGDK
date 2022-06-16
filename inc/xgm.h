@@ -15,13 +15,6 @@
 
 
 /**
- * Internal use
- */
-#define DRIVER_FLAG_MANUALSYNC_XGM  (1 << 0)
-#define DRIVER_FLAG_DELAYDMA_XGM    (1 << 1)
-
-
-/**
  * \brief
  *      Returns play music state (XGM music player driver).
  */
@@ -264,40 +257,24 @@ void XGM_setLoopNumber(s8 value);
 
 /**
  *  \brief
- *      Set temporary 68K BUS protection from Z80 (XGM music player driver).<br>
- *      You should protect BUS Access during DMA and restore it after:<br>
- *      XGM_set68KBUSProtection(TRUE);
- *      VDP_doVRamDMA(data, 0x1000, 0x100);
- *      XGM_set68KBUSProtection(FALSE);
- *
- *      This way the XGM driver will *try* to avoid using 68K BUS during DMA to
- *      avoid execution interruption and so preserve PCM playback quality.<br>
- *      Note that the success of the operation is not 100% garantee and can fails in some conditions
- *      (heavy Z80 load, lot of PSG data in XGM music), you can also improve the PCM playblack by using the #XGM_setForceDelayDMA() method.
+ *      Same as Z80_setBusProtection(..) (generic version of the method)
  *
  *  \see XGM_setForceDelayDMA(..)
  */
 void XGM_set68KBUSProtection(u8 value);
 /**
  *  \brief
- *      Returns #TRUE if DMA delay is enabled to improve PCM playback.
+ *      Same as Z80_getForceDelayDMA() (generic version of the method)
  *
  *  \see XGM_setForceDelayDMA()
  */
-u16 XGM_getForceDelayDMA(void);
+bool XGM_getForceDelayDMA(void);
 /**
  *  \brief
- *      This method can be used to improve the PCM playback during XGM music play and while DMA queue is used.<br>
- *      Even using the BUS protection with #XGM_set68KBUSProtection you may experience some altered PCM when the
- *      XGM music contains PSG data, this is because the Z80 uses the main BUS to access PSG.<br>
- *      By delaying a bit the DMA execution from the DMA queue we let the Z80 to execute all PSG commands and avoid any stall.
- *      The delay is about 3 scanlines so using the force delay DMA will reduce the DMA bandwidth for about 3 vblank lines.
- *
- *  \param value TRUE or FALSE
- *  \see XGM_getForceDelayDMA()
- *  \see XGM_set68KBUSProtection()
+ *      Same as Z80_getForceDelayDMA(..) (generic version of the method)
  */
-void XGM_setForceDelayDMA(u16 value);
+void XGM_setForceDelayDMA(bool value);
+
 /**
  *  \brief
  *      Returns an estimation of the Z80 CPU load (XGM driver).<br>

@@ -15,6 +15,10 @@
 #include "libres.h"
 
 
+// custom XGM flag (start at index 8)
+#define DRIVER_FLAG_MANUALSYNC_XGM  (1 << 8)
+
+
 // allow to access it without "public" share
 extern vu16 VBlankProcess;
 extern s16 currentDriver;
@@ -388,21 +392,14 @@ void XGM_setManualSync(u16 value)
     }
 }
 
-u16 XGM_getForceDelayDMA()
+bool XGM_getForceDelayDMA()
 {
-    return driverFlags & DRIVER_FLAG_DELAYDMA_XGM;
+    return Z80_getForceDelayDMA();
 }
 
-void XGM_setForceDelayDMA(u16 value)
+void XGM_setForceDelayDMA(bool value)
 {
-    // nothing to do
-    if (currentDriver != Z80_DRIVER_XGM)
-        return;
-
-    if (value)
-        driverFlags |= DRIVER_FLAG_DELAYDMA_XGM;
-    else
-        driverFlags &= ~DRIVER_FLAG_DELAYDMA_XGM;
+    Z80_setForceDelayDMA(value);
 }
 
 u16 XGM_getMusicTempo()

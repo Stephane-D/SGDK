@@ -24,6 +24,10 @@
 #include "smp_null_pcm.h"
 
 
+// driver(s) flags
+#define DRIVER_FLAG_DELAYDMA    (1 << 0)
+
+
 // we don't want to share it
 extern vu16 VBlankProcess;
 
@@ -383,7 +387,7 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
         // XGM driver
         case Z80_DRIVER_XGM:
             // using auto sync --> enable XGM task on VInt
-            if (!(driverFlags & DRIVER_FLAG_MANUALSYNC_XGM))
+            if (!XGM_getManualSync())
                 VBlankProcess |= PROCESS_XGM_TASK;
             // define default XGM tempo (always based on NTSC timing)
             XGM_setMusicTempo(60);
@@ -472,3 +476,15 @@ void Z80_disableBusProtection()
 {
     Z80_setBusProtection(FALSE);
 }
+
+bool Z80_getForceDelayDMA()
+{
+    return driverFlags & DRIVER_FLAG_DELAYDMA;
+}
+
+void Z80_setForceDelayDMA(bool value)
+{
+    if (value) driverFlags |= DRIVER_FLAG_DELAYDMA;
+    else driverFlags &= ~DRIVER_FLAG_DELAYDMA;
+}
+
