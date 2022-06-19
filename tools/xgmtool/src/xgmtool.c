@@ -8,6 +8,7 @@
 #include "../inc/vgm.h"
 #include "../inc/xgm.h"
 #include "../inc/xgc.h"
+#include "../inc/compress.h"
 
 #define SYSTEM_AUTO     -1
 #define SYSTEM_NTSC     0
@@ -139,7 +140,7 @@ int main(int argc, char *argv[ ])
     // VGM or empty (assumed as VGM)
     if (!strcasecmp(inExt, "VGM") || !strlen(inExt))
     {
-        if ((!strcasecmp(outExt, "VGM")) || (!strcasecmp(outExt, "XGM")) || (!strcasecmp(outExt, "BIN")) || (!strcasecmp(outExt, "XGC")))
+        if ((!strcasecmp(outExt, "VGM")) || (!strcasecmp(outExt, "XGM")) || (!strcasecmp(outExt, "BIN")) || (!strcasecmp(outExt, "XGC")) || (!strcasecmp(outExt, "ZGM")))
         {
             // VGM optimization
             int inDataSize;
@@ -177,6 +178,31 @@ int main(int argc, char *argv[ ])
                 if (outData == NULL) exit(1);
                 // write to file
                 writeBinaryFile(outData, outDataSize, argv[2]);
+            }
+            else if (!strcasecmp(outExt, "ZGM"))
+            {
+                // get byte array
+                unsigned char *outData2;
+                int outDataSize2;
+                unsigned char *lz;
+                int lzsize;
+                FILE *fp;
+
+                // split VGM command stream and PCM data blocks
+                outData = VGM_asByteArray2(vgm, &outDataSize, &outData2, &outDataSize2);
+                if (outData == NULL) exit(1);
+
+                // compress VGM stream
+                lzsize = lz77c_compress_buf(outData, outDataSize, (void **)&lz);
+                if (lz == NULL) exit(1);
+
+                // write to file
+                fp = fopen(argv[2], "wb");
+                fwrite(lz, 1, lzsize, fp);
+                fwrite(outData2, 1, outDataSize2, fp);
+                fclose(fp);
+
+                free(lz);
             }
             else
             {
