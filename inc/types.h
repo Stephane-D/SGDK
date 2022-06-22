@@ -109,7 +109,9 @@ typedef unsigned long u32;
  *      boolean type, to be used with TRUE and FALSE constant.
  *      (internally set as unsigned char)
  */
+#ifndef __cplusplus
 typedef u8 bool;
+#endif
 
 /**
  *  \typedef vs8
