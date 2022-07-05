@@ -48,7 +48,7 @@ typedef s16 _comparatorCallback(void* o1, void* o2);
 
 /**
  *  \brief
- *      Set the randomizer seed (to allow reproductible value if we are lucky with HV counter :p)
+ *      Set the randomizer seed (to allow different reproductible series)
  */
 void setRandomSeed(u16 seed);
 /**

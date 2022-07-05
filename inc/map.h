@@ -177,6 +177,7 @@ typedef struct Map
  *      Accepted values are:<br>
  *      - BG_A<br>
  *      - BG_B<br>
+ *      If you want to use the map for collision or special behavior (using the MAP_getTile(..) method) then you can just let this parameter to 0.
  *  \param baseTile
  *      Used to provide base tile index and base palette index (see TILE_ATTR_FULL() macro).<br>
  *      Note that you can also use it to force HIGH priority but in that case your map should only contains LOW priority tiles

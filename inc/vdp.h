@@ -241,7 +241,7 @@
 #define TILE_FONT_INDEX         (TILE_MAX_NUM - FONT_LEN)
 /**
  *  \brief
- *      Sprite engine base tile index (equal TILE_FONTINDEX if Sprite Engine is not initialized).
+ *      Sprite engine base tile index (equal TILE_FONT_INDEX if Sprite Engine is not initialized).
  */
 #define TILE_SPRITE_INDEX       (TILE_FONT_INDEX - spriteVramSize)
 /**
