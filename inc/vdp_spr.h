@@ -62,8 +62,6 @@
  *  \param x
  *      X position - 0x80 (0x80 = 0 on screen). Valid values: [0 - 1023]
  */
- #pragma pack(push, 1)
-
 typedef struct {
     s16 y;  // 10 bits
     union {
@@ -93,7 +91,6 @@ typedef struct {
     s16 x;  // 10 bits
 }  VDPSprite;
 
-#pragma pack(pop)
 
 /**
  *  \brief VDP sprite cache
