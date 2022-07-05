@@ -131,7 +131,8 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to use the Fractal sound driver (provided by Aurora Fields).<br>
+ *      Set it to 1 if you want to use the Fractal sound driver from Aurora Fields.<br>
+ *      Note that you need to install the module first before enable it (https://gitlab.com/Natsumi/Fractal-Sound)
  */
 #define MODULE_FRACTAL      0
 
