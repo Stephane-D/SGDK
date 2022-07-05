@@ -1,7 +1,7 @@
 #ifndef _GENESIS_H_
 #define _GENESIS_H_
 
-#define SGDK_VERSION    1.70
+#define SGDK_VERSION    1.71
 
 #include "types.h"
 
@@ -63,6 +63,11 @@
 
 #if (MODULE_MEGAWIFI != 0)
 #include "ext/mw/megawifi.h"
+#endif
+
+#if (MODULE_FRACTAL != 0)
+#include "ext/fractal/fractal.h"
+#include "ext/fractal/visual_dbg.h"
 #endif
 
 // preserve compatibility with old resources name
