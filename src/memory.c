@@ -8,7 +8,10 @@
 #include "string.h"
 #include "kdebug.h"
 #include "tools.h"
+
+#if (MODULE_FRACTAL != 0)
 #include "ext/fractal/fractal.h"
+#endif
 
 #define USED        1
 
