@@ -225,7 +225,7 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
  *      - DMA_QUEUE_COPY
  *
  *  This fonction permits to replace system font by user font.<br>
- *  The font tile data are loaded to TILE_FONTINDEX and can contains FONT_LEN characters at max.<br>
+ *  The font tile data are loaded to TILE_FONT_INDEX and can contains FONT_LEN characters at max.<br>
  *  Each character should fit in one tile (8x8 pixels bloc).<br>
  *  See also VDP_loadFont(..) and VDP_loadTileData(..)
  */
@@ -250,7 +250,7 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm);
  *      FALSE if there is not enough memory to unpack the specified font (only if compression was enabled).
  *
  *  This fonction permits to replace system font by user font.<br>
- *  The font tile data are loaded to TILE_FONTINDEX and can contains FONT_LEN characters at max.<br>
+ *  The font tile data are loaded to TILE_FONT_INDEX and can contains FONT_LEN characters at max.<br>
  *  Each character should fit in one tile (8x8 pixels bloc).<br>
  *  See also VDP_loadFontData(..)
  */
