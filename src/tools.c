@@ -21,20 +21,24 @@ static Bitmap *allocateBitmapInternal(void *adr);
 static TileSet *allocateTileSetInternal(void *adr);
 static TileMap *allocateTileMapInternal(void *adr);
 
-// internal
-u16 randbase;
+// default seed (can e done only once so initialized variable is ok)
+static u16 randbase = 0xC427;
+// needed for seed reset on player input
+bool randomSeedSet = FALSE;
 
 
 void setRandomSeed(u16 seed)
 {
     // xor it with a random value to avoid 0 value
     randbase = seed ^ 0xD94B;
+    randomSeedSet = TRUE;
 }
 
 u16 random()
 {
-    randbase ^= (randbase >> 1) ^ GET_HVCOUNTER;
-    randbase ^= (randbase << 1);
+    randbase ^= (randbase >> 5);
+    randbase ^= (randbase << 9);
+    randbase ^= (randbase >> 7);
 
     return randbase;
 }

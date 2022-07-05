@@ -55,10 +55,7 @@ typedef union
 } InterruptCaller;
 
 
-// we don't want to share them
-extern u16 randbase;
-extern u16 currentDriver;
-// last V-Counter on VDP_waitVSync() / VDP_waitVInt() call
+// last V-Counter on VDP_waitVSync() / VDP_waitVInt() call (don't want to share it)
 extern u16 lastVCnt;
 
 // extern library callback function (we don't want to share them)
@@ -477,8 +474,7 @@ void _start_entry()
     // initialize "initialized variables"
     memcpyU16(dst, FAR(src), len);
 
-    // initialize random number generator
-    setRandomSeed(0xC427);
+    // reset vtimer
     vtimer = 0;
 
     // default interrupt callback

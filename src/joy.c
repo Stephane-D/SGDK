@@ -7,11 +7,15 @@
 #include "joy.h"
 #include "sys.h"
 #include "vdp.h"
+#include "tools.h"
 #include "z80_ctrl.h"
 
 
 #define JOY_TYPE_SHIFT          12
 
+
+// don't want to share it
+extern bool randomSeedSet;
 
 static vu8 joyType[8];
 static vu16 joyState[8];
@@ -1279,4 +1283,15 @@ void JOY_update()
 
     /* restore ints */
     SYS_enableInts();
+
+    // random seed not yet set ?
+    if (!randomSeedSet)
+    {
+        // button pressed ? --> set random seed from elapsed time (using tick is enough)
+        if (joyState[JOY_1] || joyState[JOY_2])
+        {
+            u16 tick = getTick();
+            setRandomSeed((tick << 0) ^ (tick << 8));
+        }
+    }
 }
