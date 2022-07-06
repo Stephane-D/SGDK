@@ -1,8 +1,9 @@
 package sgdk.rescomp.type;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -41,7 +42,7 @@ public class TSX
     {
         public final String file;
         public final int startTileIndex;
-        public  int tileSize;
+        public int tileSize;
         public int imageTileWidth;
         public int imageTileHeigt;
         public int numTile;
@@ -51,10 +52,10 @@ public class TSX
         public TSXTileset(String tmxFile, int startInd, Element tilesetElement) throws Exception
         {
             super();
-            
+
             file = tmxFile;
             startTileIndex = startInd;
-           
+
             load(tilesetElement);
         }
 
@@ -62,13 +63,13 @@ public class TSX
         {
             if (!FileUtil.exists(tsxFile))
                 throw new FileNotFoundException("TSX file '" + tsxFile + " not found !");
-            
+
             file = tsxFile;
             startTileIndex = startInd;
 
             load(XMLUtil.getRootElement(XMLUtil.loadDocument(file)));
         }
-        
+
         private void load(Element tilesetElement) throws Exception
         {
             // check this is the tileset node
@@ -107,23 +108,24 @@ public class TSX
             numTile = imageTileWidth * imageTileHeigt;
 
             transparentColor = XMLUtil.getAttributeIntValue(imageElement, ATTR_TRANS, 0);
-            tilesetImagePath = XMLUtil.getAttributeValue(imageElement, ATTR_SOURCE, "");        }
+            tilesetImagePath = XMLUtil.getAttributeValue(imageElement, ATTR_SOURCE, "");
+        }
 
         public boolean containsTile(int tileInd)
         {
             return (tileInd >= startTileIndex) && (tileInd < (startTileIndex + numTile));
         }
 
-        public String getTilesetPath() throws FileNotFoundException
+        public String getTilesetPath()
         {
             return Util.getAdjustedPath(tilesetImagePath, file);
         }
 
         // return optimized tilset
-        public Tileset getTileset(String id, Compression compression) throws Exception
+        public Tileset getTileset(String id, Compression compression, boolean temp) throws Exception
         {
-            // always add a blank tile if not resent for TSX tileset (Tiled does not count it)
-            return Tileset.getTileset(id, getTilesetPath(), compression, TileOptimization.ALL, true);
+            // always add a blank tile if not present for TSX tileset (Tiled does not count it)
+            return Tileset.getTileset(id, getTilesetPath(), compression, TileOptimization.ALL, true, temp);
         }
 
         public byte[] getTilesetImage8bpp(boolean cropPalette) throws Exception
@@ -139,9 +141,29 @@ public class TSX
         }
 
         @Override
+        public int hashCode()
+        {
+            return getTilesetPath().hashCode() ^ (numTile << 16) ^ (startTileIndex << 0) ^ tileSize ^ imageTileHeigt ^ imageTileWidth;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj instanceof TSXTileset)
+            {
+                final TSXTileset tsxTileset = (TSXTileset) obj;
+
+                return tsxTileset.getTilesetPath().equals(getTilesetPath()) && (tsxTileset.numTile == numTile) && (tsxTileset.startTileIndex == startTileIndex)
+                        && (tsxTileset.tileSize == tileSize) && (tsxTileset.imageTileHeigt == imageTileHeigt) && (tsxTileset.imageTileWidth == imageTileWidth);
+            }
+
+            return super.equals(obj);
+        }
+
+        @Override
         public String toString()
         {
-            return "tileSize=" + tileSize + " - startInd=" + startTileIndex + " - numTile=" + numTile;
+            return "Tileset '" + FileUtil.getFileName(file) + " - tileSize=" + tileSize + " - startInd=" + startTileIndex + " - numTile=" + numTile;
         }
 
         @Override
@@ -149,6 +171,26 @@ public class TSX
         {
             return Integer.compare(startTileIndex, t.startTileIndex);
         }
+    }
+
+    public static List<Tileset> getTilesets(List<TSXTileset> tsxTilesets, String baseId, Compression compression, boolean temp) throws Exception
+    {
+        final List<Tileset> tilesets = new ArrayList<>();
+
+        int ind = 0;
+        // special case where we have empty tileset
+        if (tsxTilesets.isEmpty())
+        {
+            // create a tileset containing only a blank tile
+            tilesets.add(new Tileset(baseId + "_tileset"));
+        }
+        else
+        {
+            for (TSXTileset tsxTileset : tsxTilesets)
+                tilesets.add(tsxTileset.getTileset(baseId + "_tileset" + ind++, compression, temp));
+        }
+
+        return tilesets;
     }
 
     public static String getTSXTilesetPath(String file) throws Exception
