@@ -984,12 +984,12 @@ Map *allocateMap(const MapDefinition *mapDef)
     u16 blockIndexesSize;
 
     // metaTiles compression
-    if ((compression >> 0) & 0xF) != COMPRESSION_NONE) metaTilesSize = mapDef->numMetaTile * 4 * 2;
+    if (((compression >> 0) & 0xF) != COMPRESSION_NONE) metaTilesSize = mapDef->numMetaTile * 4 * 2;
     // use direct reference
     else metaTilesSize = 0;
 
     // blocks data compression
-    if ((compression >> 4) & 0xF) != COMPRESSION_NONE)
+    if (((compression >> 4) & 0xF) != COMPRESSION_NONE)
     {
         blocksSize = mapDef->numBlock * 8 * 8;
         if (mapDef->numMetaTile > 256) blocksSize *= 2;
@@ -998,7 +998,7 @@ Map *allocateMap(const MapDefinition *mapDef)
     else blocksSize = 0;
 
     // blocks indexes data compression
-    if ((compression >> 8) & 0xF) != COMPRESSION_NONE)
+    if (((compression >> 8) & 0xF) != COMPRESSION_NONE)
     {
         blockIndexesSize = mapDef->w * mapDef->hp;
         if (mapDef->numBlock > 256) blockIndexesSize *= 2;
