@@ -51,7 +51,7 @@ typedef void ObjectCallback(Object* obj);
  *      Base object structure
  *
  *  \param internalState
- *      Object internal state, you can use it but you should preserv bit 15 as it's used internally to detect invalid object
+ *      Object internal state, you can use it but you should save bit 15 as it's used internally to detect invalid object
  *  \param type
  *      Object type, can be used to recognize the underlying object / structure type.
  *  \param init
