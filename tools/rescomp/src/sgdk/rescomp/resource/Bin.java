@@ -2,7 +2,9 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -98,6 +100,12 @@ public class Bin extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override

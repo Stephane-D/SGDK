@@ -2,6 +2,10 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -86,6 +90,12 @@ public class Bitmap extends Resource
     public int totalSize()
     {
         return bin.totalSize() + palette.totalSize() + shallowSize();
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return Arrays.asList(bin);
     }
 
     @Override

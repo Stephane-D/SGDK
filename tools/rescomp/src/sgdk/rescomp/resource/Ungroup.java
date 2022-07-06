@@ -2,6 +2,8 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
 
@@ -27,6 +29,12 @@ public class Ungroup extends Resource
     public boolean internalEquals(Object obj)
     {
         return (obj instanceof Ungroup);
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override

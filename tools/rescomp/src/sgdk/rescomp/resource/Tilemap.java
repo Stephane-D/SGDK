@@ -2,6 +2,8 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -163,6 +165,12 @@ public class Tilemap extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return Arrays.asList(bin);
     }
 
     @Override

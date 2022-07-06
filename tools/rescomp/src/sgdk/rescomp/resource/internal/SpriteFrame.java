@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
+import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.SpriteCutter;
 import sgdk.rescomp.tool.Util;
@@ -112,7 +113,7 @@ public class SpriteFrame extends Resource
 
         // build tileset
         tileset = (Tileset) addInternalResource(
-                new Tileset(id + "_tileset", frameImage, wf * 8, hf * 8, sprites, compression));
+                new Tileset(id + "_tileset", frameImage, wf * 8, hf * 8, sprites, compression, false));
 
         final Collision coll;
 
@@ -212,6 +213,12 @@ public class SpriteFrame extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override

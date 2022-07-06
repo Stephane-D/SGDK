@@ -3,6 +3,7 @@ package sgdk.rescomp.resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
@@ -133,6 +134,12 @@ public class Sprite extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override

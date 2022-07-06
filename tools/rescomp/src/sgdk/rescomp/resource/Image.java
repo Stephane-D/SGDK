@@ -2,6 +2,9 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.tool.Util;
@@ -51,7 +54,7 @@ public class Image extends Resource
         final int ht = h / 8;
 
         // build TILESET with wanted compression
-        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht, tileOpt, compression, false));
+        tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", image, w, h, 0, 0, wt, ht, tileOpt, compression, false, false));
         // build TILEMAP with wanted compression
         tilemap = (Tilemap) addInternalResource(Tilemap.getTilemap(id + "_tilemap", tileset, mapBase, image, wt, ht, tileOpt, compression));
         // build PALETTE
@@ -87,6 +90,12 @@ public class Image extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override

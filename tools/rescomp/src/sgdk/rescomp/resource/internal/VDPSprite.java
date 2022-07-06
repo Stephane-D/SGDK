@@ -2,8 +2,11 @@ package sgdk.rescomp.resource.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
+import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.SpriteCell;
 
@@ -23,8 +26,7 @@ public class VDPSprite extends Resource
         super(id);
 
         if ((offX < 0) || (offX > 255) || (offY < 0) || (offY > 255))
-            throw new IllegalArgumentException(
-                    "Error: sprite '" + id + "' offset X / Y is out of range (< 0 or > 255)");
+            throw new IllegalArgumentException("Error: sprite '" + id + "' offset X / Y is out of range (< 0 or > 255)");
         // if ((offX < -128) || (offX > 127) || (offY < -128) || (offY > 127))
         // throw new IllegalArgumentException(
         // "Error: sprite '" + id + "' offset X / Y is out of range (< -128 or > 127)");
@@ -62,12 +64,17 @@ public class VDPSprite extends Resource
         if (obj instanceof VDPSprite)
         {
             final VDPSprite vdpSprite = (VDPSprite) obj;
-            return (offsetX == vdpSprite.offsetX) && (offsetY == vdpSprite.offsetY) && (wt == vdpSprite.wt)
-                    && (ht == vdpSprite.ht) && (offsetXFlip == vdpSprite.offsetXFlip)
-                    && (offsetYFlip == vdpSprite.offsetYFlip);
+            return (offsetX == vdpSprite.offsetX) && (offsetY == vdpSprite.offsetY) && (wt == vdpSprite.wt) && (ht == vdpSprite.ht)
+                    && (offsetXFlip == vdpSprite.offsetXFlip) && (offsetYFlip == vdpSprite.offsetYFlip);
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override

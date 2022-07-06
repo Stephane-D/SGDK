@@ -2,8 +2,11 @@ package sgdk.rescomp.resource.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import sgdk.rescomp.Resource;
+import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Box;
 import sgdk.rescomp.type.Basics.Circle;
@@ -56,6 +59,12 @@ public class Collision extends Resource
         }
 
         return false;
+    }
+    
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     public void outCollision(CollisionBase c, ByteArrayOutputStream outB, StringBuilder outS, StringBuilder outH,

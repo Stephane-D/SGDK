@@ -61,6 +61,6 @@ public class TilesetProcessor implements Processor
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
 
-        return Tileset.getTileset(id, tsx ? TSX.getTSXTilesetPath(fileIn) : fileIn, compression, opt, tsx);
+        return Tileset.getTileset(id, tsx ? TSX.getTSXTilesetPath(fileIn) : fileIn, compression, opt, tsx, false);
     }
 }

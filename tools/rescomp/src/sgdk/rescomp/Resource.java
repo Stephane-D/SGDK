@@ -2,6 +2,9 @@ package sgdk.rescomp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+
+import sgdk.rescomp.resource.Bin;
 
 public abstract class Resource
 {
@@ -29,6 +32,8 @@ public abstract class Resource
     {
         return Compiler.findResource(resource);
     }
+
+    public abstract List<Bin> getInternalBinResources();
 
     public abstract int internalHashCode();
 

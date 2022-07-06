@@ -12,6 +12,7 @@ import java.util.Set;
 
 import sgdk.rescomp.Compiler;
 import sgdk.rescomp.Resource;
+import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
@@ -160,6 +161,12 @@ public class SpriteAnimation extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return new ArrayList<>();
     }
 
     @Override
