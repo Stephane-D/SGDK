@@ -1,16 +1,24 @@
 package sgdk.rescomp.type;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import sgdk.rescomp.resource.Tileset;
+import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.TSX.TSXTileset;
+import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
 import sgdk.tool.XMLUtil;
 
