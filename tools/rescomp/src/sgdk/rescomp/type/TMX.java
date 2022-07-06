@@ -1,24 +1,16 @@
 package sgdk.rescomp.type;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import sgdk.rescomp.resource.Tileset;
-import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.TSX.TSXTileset;
-import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
 import sgdk.tool.XMLUtil;
 
@@ -237,11 +229,9 @@ public class TMX
 
                     if (axeflip)
                     {
-                        // throw new Exception("Unsupported rotated tile found at [" + x + "," + y + "] in TMX file: " +
-                        // file);
-                        // System.out.println("WARNING: unsupported rotated tile found at [" + x + "," + y + "] in TMX
-                        // file: " + file);
-                        vflip = true;
+                        // TODO: re-enable warning for non DA game
+                        System.out.println("WARNING: unsupported rotated tile found at [" + x + "," + y + "] in TMX file: " + file);
+                        //vflip = true;
                     }
 
                     // we can guess that tile index is never higher than 2^24
@@ -269,6 +259,10 @@ public class TMX
             // sort on startTileIndex
             if (usedTilesets.size() > 1)
                 Collections.sort(usedTilesets);
+
+            // System.out.println("TMX map '" + file + "' is using " + usedTilesetsSet.size() + " tilesets:");
+            // for (TSXTileset tileset : usedTilesetsSet)
+            // System.out.println(tileset);
         }
 
         private TSXTileset getTSXTilesetFor(int tileInd)
@@ -278,6 +272,11 @@ public class TMX
                     return tileset;
 
             return null;
+        }
+
+        public List<Tileset> getTilesets(String baseId, Compression compression, boolean temp) throws Exception
+        {
+            return TSX.getTilesets(usedTilesets, baseId, compression, temp);
         }
 
         // public Tilemap getTilemap(int mapBase) throws Exception
@@ -373,17 +372,6 @@ public class TMX
         // return result;
         // }
 
-        public List<Tileset> getTilesets(String baseId, Compression compression) throws Exception
-        {
-            final List<Tileset> tilesets = new ArrayList<>();
-
-            int ind = 0;
-            for (TSXTileset tsxTileset : usedTilesets)
-                tilesets.add(tsxTileset.getTileset(baseId + "_tileset" + ind++, compression));
-
-            return tilesets;
-        }
-
         // public int getTilesetImageHeight()
         // {
         // int totalTile = 0;
@@ -456,8 +444,8 @@ public class TMX
 
             for (TSXTileset tileset : usedTilesets)
                 tilesets.put(tileset, tileset.getTilesetImage8bpp(true));
-                // TODO: disable crop palette for DA game dev 
-                //tilesets.put(tileset, tileset.getTilesetImage8bpp(false));
+            // TODO: disable crop palette for DA game dev
+            // tilesets.put(tileset, tileset.getTilesetImage8bpp(false));
 
             final byte[] baseTile = new byte[tileSize * tileSize];
             final byte[] transformedTile = new byte[tileSize * tileSize];
