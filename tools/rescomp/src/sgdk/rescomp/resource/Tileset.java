@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,12 +19,12 @@ import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Tileset extends Resource
 {
-    public static Tileset getTileset(String id, String imgFile, Compression compression, TileOptimization tileOpt, boolean addBlank)
+    public static Tileset getTileset(String id, String imgFile, Compression compression, TileOptimization tileOpt, boolean addBlank, boolean temp)
             throws Exception
     {
         // get 8bpp pixels and also check image dimension is aligned to tile
         final byte[] image = Util.getImage8bpp(imgFile, true);
-        
+
         // happen when we couldn't retrieve palette data from RGB image
         if (image == null)
             throw new IllegalArgumentException(
@@ -35,7 +36,7 @@ public class Tileset extends Resource
         // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
         final int h = image.length / w;
 
-        return new Tileset(id, image, w, h, 0, 0, w / 8, h / 8, tileOpt, compression, addBlank);
+        return new Tileset(id, image, w, h, 0, 0, w / 8, h / 8, tileOpt, compression, addBlank, temp);
     }
 
     // tiles
@@ -75,7 +76,37 @@ public class Tileset extends Resource
             offset += 8;
         }
 
-        // build BIN (tiles data) with wanted compression
+        // build BIN (tiles data) - no stored as this is a temporary tileset
+        bin = new Bin(id + "_data", data, Compression.NONE);
+
+        // compute hash code
+        hc = bin.hashCode();
+    }
+
+    // special constructor for TSX (single blank tile tileset)
+    public Tileset(String id)
+    {
+        super(id);
+
+        tiles = new ArrayList<>();
+        tileIndexesMap = new HashMap<>();
+        tileByHashcodeMap = new HashMap<>();
+        isDuplicate = false;
+
+        // just add a blank tile
+        add(new Tile(new int[8], 8, 0, false, 0));
+
+        // build the binary bloc
+        final int[] data = new int[tiles.size() * 8];
+
+        int offset = 0;
+        for (Tile t : tiles)
+        {
+            System.arraycopy(t.data, 0, data, offset, 8);
+            offset += 8;
+        }
+
+        // build BIN (tiles data) resource (temporary tileset so don't add as internal resource)
         bin = new Bin(id + "_data", data, Compression.NONE);
 
         // compute hash code
@@ -83,7 +114,7 @@ public class Tileset extends Resource
     }
 
     public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY, int widthTile, int heightTile,
-            TileOptimization opt, Compression compression, boolean addBlank)
+            TileOptimization opt, Compression compression, boolean addBlank, boolean temp)
     {
         super(id);
 
@@ -130,16 +161,26 @@ public class Tileset extends Resource
         final Bin binResource = new Bin(id + "_data", data, compression);
         // internal
         binResource.global = false;
-        // keep track of duplicate bin resource here
-        isDuplicate = findResource(binResource) != null;
-        // add as resource (avoid duplicate)
-        bin = (Bin) addInternalResource(binResource);
+
+        // temporary tileset --> don't store the bin data
+        if (temp)
+        {
+            isDuplicate = false;
+            bin = binResource;
+        }
+        else
+        {
+            // keep track of duplicate bin resource here
+            isDuplicate = findResource(binResource) != null;
+            // add as resource (avoid duplicate)
+            bin = (Bin) addInternalResource(binResource);
+        }
 
         // compute hash code
         hc = bin.hashCode();
     }
 
-    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, List<? extends Rectangle> sprites, Compression compression)
+    public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, List<? extends Rectangle> sprites, Compression compression, boolean temp)
     {
         super(id);
 
@@ -173,10 +214,20 @@ public class Tileset extends Resource
         final Bin binResource = new Bin(id + "_data", data, compression);
         // internal
         binResource.global = false;
-        // keep track of duplicate bin resource here
-        isDuplicate = findResource(binResource) != null;
-        // build BIN (tiles data) with wanted compression
-        bin = (Bin) addInternalResource(binResource);
+
+        // temporary tileset --> don't store the bin data
+        if (temp)
+        {
+            isDuplicate = false;
+            bin = binResource;
+        }
+        else
+        {
+            // keep track of duplicate bin resource here
+            isDuplicate = findResource(binResource) != null;
+            // add as resource (avoid duplicate)
+            bin = (Bin) addInternalResource(binResource);
+        }
 
         // compute hash code
         hc = bin.hashCode();
@@ -280,6 +331,12 @@ public class Tileset extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return Arrays.asList(bin);
     }
 
     @Override
