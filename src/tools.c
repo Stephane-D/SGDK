@@ -977,26 +977,34 @@ Image *allocateImage(const Image *image)
 Map *allocateMap(const MapDefinition *mapDef)
 {
     u16 baseSize = sizeof(Map);
+    u16 compression = mapDef->compression;
+
     u16 metaTilesSize;
     u16 blocksSize;
     u16 blockIndexesSize;
 
-    // need to allocate memory for packed data buffers
-    if (mapDef->compression != COMPRESSION_NONE)
+    // metaTiles compression
+    if ((compression >> 0) & 0xF) != COMPRESSION_NONE) metaTilesSize = mapDef->numMetaTile * 4 * 2;
+    // use direct reference
+    else metaTilesSize = 0;
+
+    // blocks data compression
+    if ((compression >> 4) & 0xF) != COMPRESSION_NONE)
     {
-        metaTilesSize = mapDef->numMetaTile * 4 * 2;
         blocksSize = mapDef->numBlock * 8 * 8;
         if (mapDef->numMetaTile > 256) blocksSize *= 2;
+    }
+    // use direct reference
+    else blocksSize = 0;
+
+    // blocks indexes data compression
+    if ((compression >> 8) & 0xF) != COMPRESSION_NONE)
+    {
         blockIndexesSize = mapDef->w * mapDef->hp;
         if (mapDef->numBlock > 256) blockIndexesSize *= 2;
     }
-    else
-    {
-        // can use direct reference
-        metaTilesSize = 0;
-        blocksSize = 0;
-        blockIndexesSize = 0;
-    }
+    // use direct reference
+    else blockIndexesSize = 0;
 
     const void *adr = MEM_alloc(baseSize + metaTilesSize + blocksSize + blockIndexesSize);
 
