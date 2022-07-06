@@ -58,7 +58,7 @@ LST:= $(SRC_C:.c=.lst)
 LSTS:= $(addprefix out/, $(LST))
 
 INCS:= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(INCLUDE_LIB) -I$(RES_LIB)
-DEFAULT_FLAGS= $(EXTRA_FLAGS) -Wa,--register-prefix-optional -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -fms-extensions $(INCS) -B$(BIN)
+DEFAULT_FLAGS= $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -fms-extensions $(INCS) -B$(BIN)
 FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
@@ -163,11 +163,11 @@ out/%.o: %.c
 
 out/%.o: %.s
 	$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp $(FLAGS) -MMD -c $< -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS) -MMD -c $< -o $@
 
 out/%.o: %.rs
 	$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp $(FLAGS) -c $*.rs -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS) -c $*.rs -o $@
 	$(CP) $*.d out/$*.d
 	$(RM) $*.d
 

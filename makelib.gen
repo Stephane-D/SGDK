@@ -29,7 +29,7 @@ DEP_LIB := $(OBJ_LIB:.o=.d)
 LST_LIB := $(SRC_LIB_C:.c=.lst)
 
 INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
-DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -Wa,--register-prefix-optional -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-unused-parameter -fno-builtin -fms-extensions $(INCS_LIB) -B$(BIN)
+DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-unused-parameter -fno-builtin -fms-extensions $(INCS_LIB) -B$(BIN)
 FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 
@@ -103,10 +103,10 @@ cmd_ : $(OBJ_LIB)
 	$(CC) $(FLAGS_LIB) -MMD -c $< -o $@
 
 %.o: %.s
-	$(CC) -x assembler-with-cpp -MMD $(FLAGS_LIB) -c $< -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or -MMD $(FLAGS_LIB) -c $< -o $@
 
 %.o: %.rs
-	$(CC) -x assembler-with-cpp $(FLAGS_LIB) -c $*.rs -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS_LIB) -c $*.rs -o $@
 
 %.rs: %.res
 	$(RESCOMP) $*.res $*.rs -dep $*.o
