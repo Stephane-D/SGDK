@@ -87,15 +87,11 @@ public class TilemapProcessor implements Processor
             // build TMX map
             final TMXMap tmxMap = new TMXMap(fileIn, layerName);
             // get tilesets for this TMX map
-            final List<Tileset> tilesets = tmxMap.getTilesets(id, tileSetCompression);
-
-            // Tilemap doesn't support multiple tileset
-            if (tilesets.size() > 1)
-                throw new InvalidParameterException("TILEMAP resource definition does not support TMX Map using several tilesets (single tileset only) !");
+            final List<Tileset> tilesets = tmxMap.getTilesets(id, tileSetCompression, false);
 
             // then build TileMap from TMX Map
-            return Tilemap.getTilemap(id, tilesets.get(0), mapBase, tmxMap.getMapImage(), (tmxMap.w * tmxMap.tileSize) / 8, (tmxMap.h * tmxMap.tileSize) / 8,
-                    TileOptimization.ALL, mapCompression);
+            return Tilemap.getTilemap(id, new Tileset(tilesets), mapBase, tmxMap.getMapImage(), (tmxMap.w * tmxMap.tileSize) / 8,
+                    (tmxMap.h * tmxMap.tileSize) / 8, TileOptimization.ALL, mapCompression);
         }
         else
         // image file

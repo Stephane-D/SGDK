@@ -83,8 +83,8 @@ public class MapProcessor implements Processor
             // build TMX map
             final TMXMap tmxMap = new TMXMap(fileIn, layerName);
             // then build MAP from TMX Map
-            return new Map(id, tmxMap.getMapImage(), tmxMap.w * tmxMap.tileSize, tmxMap.h * tmxMap.tileSize, mapBase, 2, tmxMap.getTilesets(id, tileSetCompression),
-                    mapCompression);
+            return new Map(id, tmxMap.getMapImage(), tmxMap.w * tmxMap.tileSize, tmxMap.h * tmxMap.tileSize, mapBase, 2, tmxMap.getTilesets(id, tileSetCompression, false),
+                    mapCompression, true);
         }
         else
         // image file
@@ -105,7 +105,7 @@ public class MapProcessor implements Processor
                 mapBase = StringUtil.parseInt(fields[5], 0);
 
             // build MAP from an image
-            return Map.getMap(id, fileIn, mapBase, 2, Util.asList(tileset), compression);
+            return Map.getMap(id, fileIn, mapBase, 2, Util.asList(tileset), compression, true);
         }
     }
 }
