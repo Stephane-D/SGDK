@@ -1,7 +1,6 @@
 package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +18,7 @@ import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Map extends Resource
 {
-    public static Map getMap(String id, String imgFile, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression) throws Exception
+    public static Map getMap(String id, String imgFile, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression, boolean addTileset) throws Exception
     {
         // get 8bpp pixels and also check image dimension is aligned to tile
         final byte[] image = Util.getImage8bpp(imgFile, true);
@@ -45,7 +44,7 @@ public class Map extends Resource
         // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
         final int h = image.length / w;
 
-        return new Map(id, image, w, h, mapBase, metatileSize, tilesets, compression);
+        return new Map(id, image, w, h, mapBase, metatileSize, tilesets, compression, addTileset);
     }
 
     public final int wb;
@@ -65,8 +64,8 @@ public class Map extends Resource
     public final Bin mapBlockIndexesBin;
     public final Bin mapBlockRowOffsetsBin;
 
-    public Map(String id, byte[] image8bpp, int imageWidth, int imageHeight, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression)
-            throws IOException, IllegalArgumentException
+    public Map(String id, byte[] image8bpp, int imageWidth, int imageHeight, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression,
+            boolean addTileset) throws IllegalArgumentException
     {
         super(id);
 
@@ -85,8 +84,11 @@ public class Map extends Resource
         this.tilesets = tilesets;
 
         // add tileset resources (and replace by duplicate if found)
-        for (int t = 0; t < tilesets.size(); t++)
-            this.tilesets.set(t, (Tileset) addInternalResource(tilesets.get(t)));
+        if (addTileset)
+        {
+            for (int t = 0; t < tilesets.size(); t++)
+                this.tilesets.set(t, (Tileset) addInternalResource(tilesets.get(t)));
+        }
 
         // store compression
         this.compression = compression;
@@ -306,7 +308,7 @@ public class Map extends Resource
             mapBlockIndexesBin = (Bin) addInternalResource(new Bin(id + "_mapBlockIndexes", mbiData, compression));
         }
 
-        // build BIN (mapBlockRowOffsets data)
+        // build BIN (mapBlockRowOffsets data) - never compressed (not worthing it)
         mapBlockRowOffsetsBin = (Bin) addInternalResource(new Bin(id + "_mapBlockRowOffsets", mapBlockRowOffsets, Compression.NONE));
 
         // check if we can unpack the MAP
@@ -404,6 +406,12 @@ public class Map extends Resource
         }
 
         return false;
+    }
+
+    @Override
+    public List<Bin> getInternalBinResources()
+    {
+        return Arrays.asList(metatilesBin, mapBlocksBin, mapBlockIndexesBin, mapBlockRowOffsetsBin);
     }
 
     @Override
