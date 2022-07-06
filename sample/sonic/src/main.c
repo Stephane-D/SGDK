@@ -19,7 +19,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state);
 static void vblank();
 
 
-int main(u16 hard)
+int main(bool hard)
 {
     u16 palette[64];
     u16 ind;
