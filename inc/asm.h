@@ -36,6 +36,7 @@
     #define ENUM_END(enum_name)
 #else
     #define ENUM_BEGIN typedef enum {
+    #define ENUM_BEGIN_EX(tmpName) typedef enum tmpName {
     #define ENUM_VAL(name) name,
     #define ENUM_VALASSIGN(name, value) name = value,
     #define ENUM_END(enum_name) } enum_name;
