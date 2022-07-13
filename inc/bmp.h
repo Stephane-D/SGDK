@@ -131,10 +131,12 @@
 
 #define BMP_FB0_END_TILE_INDEX      (BMP_FB0_TILE_INDEX + (BMP_TILE_WIDTH * BMP_TILE_HEIGHT))
 #define BMP_FB1_END_TILE_INDEX      (BMP_FB1_TILE_INDEX + (BMP_TILE_WIDTH * BMP_TILE_HEIGHT))
+#define BMP_END_TILE_INDEX          BMP_FB1_END_TILE_INDEX
 
 #define BMP_BASE_ADDR               (BMP_BASE_TILE_INDEX * 32)
 #define BMP_FB0_ADDR                (BMP_FB0_TILE_INDEX * 32)
 #define BMP_FB1_ADDR                (BMP_FB1_TILE_INDEX * 32)
+#define BMP_END_ADDR                (BMP_END_TILE_INDEX * 32)
 
 
 /**
