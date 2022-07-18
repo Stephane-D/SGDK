@@ -36,6 +36,8 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import com.sun.org.apache.xalan.internal.xsltc.cmdline.Compile;
+
 /**
  * Image utilities class.
  * 
@@ -1335,9 +1337,8 @@ public class ImageUtil
         }
 
         // remove palette data
-        // TODO: uncomment for release
-//        if (cropPalette)
-//            result = getSubImage(result, new Dimension(w, h), new Rectangle(0, 4 * 8, w, h - (4 * 8)));
+        if (cropPalette)
+            result = getSubImage(result, new Dimension(w, h), new Rectangle(0, 4 * 8, w, h - (4 * 8)));
 
         return result;
     }
