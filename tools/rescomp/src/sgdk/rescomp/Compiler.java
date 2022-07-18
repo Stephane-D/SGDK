@@ -92,6 +92,9 @@ public class Compiler
     public final static Set<String> resourcesFile = new HashSet<>();
 
     public static boolean extensionsLoaded = false;
+    
+    // TODO: set that to false on release 
+    public static boolean DAGame = false;
 
     public static boolean compile(String fileName, String fileNameOut, boolean header, String depTarget)
     {

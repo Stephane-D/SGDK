@@ -151,11 +151,7 @@ public class Util
 
         // true color / RGB image ?
         if (imgInfo.bpp > 8)
-        {
-            // throw new IllegalArgumentException("'" + imgFile + "' is in " + imgInfo.bpp + " bpp format, only indexed
-            // images (8,4,2,1 bpp) are supported.");
             return ImageUtil.convertRGBTo8bpp(imgFile, removeRGBPalette);
-        }
 
         // get image data
         final byte[] data = ImageUtil.getIndexedPixels(imgFile);
@@ -168,11 +164,6 @@ public class Util
         // if (maxIndex >= maxPaletteSize)
         // throw new IllegalArgumentException("'" + imgFile + "' uses color index >= " + maxPaletteSize
         // + ", only image with a maximum of " + maxPaletteSize + " colors are accepted.");
-    }
-
-    public static byte[] getImage8bpp(String imgFile, boolean checkTileAligned) throws Exception
-    {
-        return getImage8bpp(imgFile, checkTileAligned, true);
     }
 
     public static byte[] sizeAlign(byte[] data, int align, byte fill)

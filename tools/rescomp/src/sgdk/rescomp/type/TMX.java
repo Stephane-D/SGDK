@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import sgdk.rescomp.Compiler;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
@@ -237,9 +238,11 @@ public class TMX
 
                     if (axeflip)
                     {
-                        // TODO: re-enable warning for non DA game
-                        System.out.println("WARNING: unsupported rotated tile found at [" + x + "," + y + "] in TMX file: " + file);
-                        //vflip = true;
+                        if (!Compiler.DAGame)
+                            System.out.println("WARNING: unsupported rotated tile found at [" + x + "," + y + "] in TMX file: " + file);
+                        // assume vflip for DA
+                        else
+                            vflip = true;
                     }
 
                     // we can guess that tile index is never higher than 2^24
@@ -451,9 +454,7 @@ public class TMX
             final Map<TSXTileset, byte[]> tilesets = new HashMap<>();
 
             for (TSXTileset tileset : usedTilesets)
-                tilesets.put(tileset, tileset.getTilesetImage8bpp(true));
-            // TODO: disable crop palette for DA game dev
-            // tilesets.put(tileset, tileset.getTilesetImage8bpp(false));
+                tilesets.put(tileset, tileset.getTilesetImage8bpp(Compiler.DAGame ? false : true));
 
             final byte[] baseTile = new byte[tileSize * tileSize];
             final byte[] transformedTile = new byte[tileSize * tileSize];
