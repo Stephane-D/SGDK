@@ -764,10 +764,10 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         }
 
         // write immediately in VRAM the sprite position change
-        vu16* pw = (u16 *) GFX_DATA_PORT;
-        vu32* pl = (u32 *) GFX_CTRL_PORT;
+        vu16* pw = (u16 *) VDP_DATA_PORT;
+        vu32* pl = (u32 *) VDP_CTRL_PORT;
 
-        *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+        *pl = VDP_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
         *pw = vdpSprite->y;
     }
 
@@ -872,11 +872,11 @@ void SYS_showFrameLoad(bool mean)
     vdpSprite->x = 0x80;
 
     // apply changes immediately in VRAM
-    vu16* pw = (u16 *) GFX_DATA_PORT;
-    vu32* pl = (u32 *) GFX_CTRL_PORT;
+    vu16* pw = (u16 *) VDP_DATA_PORT;
+    vu32* pl = (u32 *) VDP_CTRL_PORT;
 
     // prepare write to sprite #0
-    *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+    *pl = VDP_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
 
     // write fields in correct order
     *pw = vdpSprite->y;
@@ -895,11 +895,11 @@ void SYS_hideFrameLoad()
     vdpSprite->y = 0;
 
     // apply changes immediately in VRAM
-    vu16* pw = (u16 *) GFX_DATA_PORT;
-    vu32* pl = (u32 *) GFX_CTRL_PORT;
+    vu16* pw = (u16 *) VDP_DATA_PORT;
+    vu32* pl = (u32 *) VDP_CTRL_PORT;
 
     // prepare write to sprite #0
-    *pl = GFX_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
+    *pl = VDP_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
     // no need to write more
     *pw = vdpSprite->y;
 }

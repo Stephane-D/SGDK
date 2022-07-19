@@ -38,13 +38,13 @@ void VDP_setHorizontalScroll(VDPPlane plane, s16 value)
     u16 addr;
 
     /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
+    pw = (u16 *) VDP_DATA_PORT;
+    pl = (u32 *) VDP_CTRL_PORT;
 
     addr = VDP_HSCROLL_TABLE;
     if (plane == BG_B) addr += 2;
 
-    *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
+    *pl = VDP_WRITE_VRAM_ADDR((u32) addr);
     *pw = value;
 }
 
@@ -92,13 +92,13 @@ void VDP_setVerticalScroll(VDPPlane plane, s16 value)
     u16 addr;
 
     /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
+    pw = (u16 *) VDP_DATA_PORT;
+    pl = (u32 *) VDP_CTRL_PORT;
 
     addr = 0;
     if (plane == BG_B) addr += 2;
 
-    *pl = GFX_WRITE_VSRAM_ADDR((u32) addr);
+    *pl = VDP_WRITE_VSRAM_ADDR((u32) addr);
     *pw = value;
 }
 
@@ -136,32 +136,32 @@ bool VDP_doVBlankScrollProcess()
     u16 addr;
 
     /* Point to vdp port */
-    pw = (u16 *) GFX_DATA_PORT;
-    pl = (u32 *) GFX_CTRL_PORT;
+    pw = (u16 *) VDP_DATA_PORT;
+    pl = (u32 *) VDP_CTRL_PORT;
 
     addr = VDP_HSCROLL_TABLE;
     if (hscroll_update & 1)
     {
-        *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *pl = VDP_WRITE_VRAM_ADDR((u32) addr);
         *pw = hscroll[0];
     }
     addr += 2;
     if (hscroll_update & 2)
     {
-        *pl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *pl = VDP_WRITE_VRAM_ADDR((u32) addr);
         *pw = hscroll[1];
     }
 
     addr = 0;
     if (vscroll_update & 1)
     {
-        *pl = GFX_WRITE_VSRAM_ADDR((u32) addr);
+        *pl = VDP_WRITE_VSRAM_ADDR((u32) addr);
         *pw = vscroll[0];
     }
     addr += 2;
     if (vscroll_update & 2)
     {
-        *pl = GFX_WRITE_VSRAM_ADDR((u32) addr);
+        *pl = VDP_WRITE_VSRAM_ADDR((u32) addr);
         *pw = vscroll[1];
     }
 

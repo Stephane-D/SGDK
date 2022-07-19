@@ -210,9 +210,9 @@ u16 PAL_getColor(u16 index)
 {
     const u16 addr = index * 2;
 
-    *((vu32*) GFX_CTRL_PORT) = GFX_READ_CRAM_ADDR((u32)addr);
+    *((vu32*) VDP_CTRL_PORT) = VDP_READ_CRAM_ADDR((u32)addr);
 
-    return *((vu16*) GFX_DATA_PORT);
+    return *((vu16*) VDP_DATA_PORT);
 }
 
 void PAL_getColors(u16 index, u16* dest, u16 count)
@@ -220,9 +220,9 @@ void PAL_getColors(u16 index, u16* dest, u16 count)
     VDP_setAutoInc(2);
 
     const u16 addr = index * 2;
-    *((vu32*) GFX_CTRL_PORT) = GFX_READ_CRAM_ADDR((u32)addr);
+    *((vu32*) VDP_CTRL_PORT) = VDP_READ_CRAM_ADDR((u32)addr);
 
-    vu32* pl = (u32*) GFX_DATA_PORT;
+    vu32* pl = (u32*) VDP_DATA_PORT;
     u32* dl = (u32*) dest;
 
     u16 il = count >> 4;
@@ -250,9 +250,9 @@ void PAL_getPalette(u16 numPal, u16* dest)
     VDP_setAutoInc(2);
 
     const u16 addr = numPal * (16 * 2);
-    *((vu32*) GFX_CTRL_PORT) = GFX_READ_CRAM_ADDR((u32)addr);
+    *((vu32*) VDP_CTRL_PORT) = VDP_READ_CRAM_ADDR((u32)addr);
 
-    vu32* pl = (u32*) GFX_DATA_PORT;
+    vu32* pl = (u32*) VDP_DATA_PORT;
     u32* d = (u32*) dest;
 
     *d++ = *pl;
@@ -269,8 +269,8 @@ void PAL_setColor(u16 index, u16 value)
 {
     const u16 addr = index * 2;
 
-    *((vu32*) GFX_CTRL_PORT) = GFX_WRITE_CRAM_ADDR((u32)addr);
-    *((vu16*) GFX_DATA_PORT) = value;
+    *((vu32*) VDP_CTRL_PORT) = VDP_WRITE_CRAM_ADDR((u32)addr);
+    *((vu16*) VDP_DATA_PORT) = value;
 }
 
 void PAL_setColors(u16 index, const u16* pal, u16 count, TransferMethod tm)

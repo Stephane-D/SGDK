@@ -114,12 +114,12 @@ void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
     VDP_setAutoInc(2);
 
     /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
+    pldata = (u32 *) VDP_DATA_PORT;
 
     addr = planeAddr + (ind * 2);
 
-    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
+    *plctrl = VDP_WRITE_VRAM_ADDR(addr);
 
     const u32 tile32 = ((u32) tile << 16) | tile;
 
@@ -132,7 +132,7 @@ void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
         *pldata = tile32;
     }
 
-    pwdata = (u16 *) GFX_DATA_PORT;
+    pwdata = (u16 *) VDP_DATA_PORT;
 
     i = num & 7;
     while (i--) *pwdata = tile;
@@ -159,10 +159,10 @@ void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind,
     addr = planeAddr + (ind * 2);
 
     /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
+    pwdata = (u16 *) VDP_DATA_PORT;
 
-    *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+    *plctrl = VDP_WRITE_VRAM_ADDR((u32) addr);
 
     // we can increment both index and palette
     baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);
@@ -191,13 +191,13 @@ void VDP_setTileMapXY(VDPPlane plane, u16 tile, u16 x, u16 y)
     u16 addr;
 
     /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
+    pwdata = (u16 *) VDP_DATA_PORT;
 
     // get address
     addr = VDP_getPlaneAddress(plane, x, y);
 
-    *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+    *plctrl = VDP_WRITE_VRAM_ADDR((u32) addr);
     *pwdata = tile;
 }
 
@@ -218,9 +218,9 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
     VDP_setAutoInc(2);
 
     /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pldata = (u32 *) GFX_DATA_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
+    pldata = (u32 *) VDP_DATA_PORT;
+    pwdata = (u16 *) VDP_DATA_PORT;
 
     addr = VDP_getPlaneAddress(plane, x, y);
     width = (plane == WINDOW)?windowWidth:planeWidth;
@@ -230,7 +230,7 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
     i = h;
     while (i--)
     {
-        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *plctrl = VDP_WRITE_VRAM_ADDR((u32) addr);
 
         j = w >> 3;
         while (j--)
@@ -260,8 +260,8 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
     VDP_setAutoInc(2);
 
     /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
+    pwdata = (u16 *) VDP_DATA_PORT;
 
     addr = VDP_getPlaneAddress(plane, x, y);
     width = (plane == WINDOW)?windowWidth:planeWidth;
@@ -270,7 +270,7 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
     i = h;
     while (i--)
     {
-        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *plctrl = VDP_WRITE_VRAM_ADDR((u32) addr);
 
         j = w;
         while (j--) *pwdata = tile++;
@@ -577,10 +577,10 @@ static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u1
         VDP_setAutoInc(pw * 2);
 
         /* point to vdp port */
-        plctrl = (u32 *) GFX_CTRL_PORT;
-        pwdata = (u16 *) GFX_DATA_PORT;
+        plctrl = (u32 *) VDP_CTRL_PORT;
+        pwdata = (u16 *) VDP_DATA_PORT;
 
-        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *plctrl = VDP_WRITE_VRAM_ADDR((u32) addr);
 
         src = (u16*) data;
         i = h >> 2;
@@ -657,10 +657,10 @@ static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile
         VDP_setAutoInc(pw * 2);
 
         /* point to vdp port */
-        plctrl = (u32 *) GFX_CTRL_PORT;
-        pwdata = (u16 *) GFX_DATA_PORT;
+        plctrl = (u32 *) VDP_CTRL_PORT;
+        pwdata = (u16 *) VDP_DATA_PORT;
 
-        *plctrl = GFX_WRITE_VRAM_ADDR((u32) addr);
+        *plctrl = VDP_WRITE_VRAM_ADDR((u32) addr);
 
         // we can increment both index and palette
         baseinc = basetile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK);

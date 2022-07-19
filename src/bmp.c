@@ -1310,15 +1310,15 @@ static void initTilemap(u16 index)
     }
 
     // point to vdp port
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
+    pwdata = (u16 *) VDP_DATA_PORT;
 
     i = BMP_TILE_HEIGHT;
 
     while(i--)
     {
         // set destination address for tilemap
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr_tilemap);
+        *plctrl = VDP_WRITE_VRAM_ADDR(addr_tilemap);
 
         // write tilemap line to VDP
         j = BMP_TILE_WIDTH >> 3;
@@ -1447,7 +1447,7 @@ static u16 doBlit()
         addr_tile = BMP_FB0_ADDR;
 
     /* point to vdp ctrl port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
+    plctrl = (u32 *) VDP_CTRL_PORT;
 
     // previous blit not completed ?
     if (state & BMP_STAT_BLITTING)
@@ -1458,7 +1458,7 @@ static u16 doBlit()
         src += pos_i * (BMP_YPIXPERTILE * (BMP_PITCH / 4));
 
         // set destination address for tile
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr_tile);
+        *plctrl = VDP_WRITE_VRAM_ADDR(addr_tile);
     }
     else
     {
@@ -1467,7 +1467,7 @@ static u16 doBlit()
         pos_i = 0;
 
         // set destination address for tile
-        *plctrl = GFX_WRITE_VRAM_ADDR(addr_tile);
+        *plctrl = VDP_WRITE_VRAM_ADDR(addr_tile);
     }
 
     const u16 remain = BMP_TILE_HEIGHT - pos_i;
@@ -1487,7 +1487,7 @@ static u16 doBlit()
     pos_i += i;
 
     /* point to vdp data port */
-    pldata = (u32 *) GFX_DATA_PORT;
+    pldata = (u32 *) VDP_DATA_PORT;
 
     while(i--)
     {

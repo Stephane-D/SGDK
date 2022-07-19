@@ -67,7 +67,7 @@ typedef struct
     u16 regLenH;        // ((newLen >> 8) & 0xFF) | 0x9400;
     u32 regAddrMStep;   // (((addr << 7) & 0xFF0000) | 0x96008F00) + step;
     u32 regAddrHAddrL;  // ((addr >> 1) & 0x7F00FF) | 0x97009500;
-    u32 regCtrlWrite;   // GFX_DMA_VRAMCOPY_ADDR(to)
+    u32 regCtrlWrite;   // VDP_DMA_VRAMCOPY_ADDR(to)
 } DMAOpInfo;
 
 
