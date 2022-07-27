@@ -556,6 +556,15 @@ public class StringUtil
     }
 
     /**
+     * Returns a string representation of the <code>double</code> argument
+     * with specified number of decimal.
+     */
+    public static String toString(double value, int numDecimal)
+    {
+        return Double.toString(TypeUtil.round(value, numDecimal));
+    }
+
+    /**
      * Return a string representation of the byte array argument.
      */
     public static String toString(byte[] value)
@@ -691,8 +700,7 @@ public class StringUtil
      */
     public static boolean containHtmlCR(String text)
     {
-        return (text.indexOf("<br>") != -1) || (text.indexOf("<BR>") != -1) || (text.indexOf("<br/>") != -1)
-                || (text.indexOf("<BR/>") != -1);
+        return (text.indexOf("<br>") != -1) || (text.indexOf("<BR>") != -1) || (text.indexOf("<br/>") != -1) || (text.indexOf("<BR/>") != -1);
     }
 
     /**
@@ -721,8 +729,7 @@ public class StringUtil
 
             while (index != -1)
             {
-                result = result.substring(0, index) + "<b>" + result.substring(index, index + keywordLen) + "</b>"
-                        + result.substring(index + keywordLen);
+                result = result.substring(0, index) + "<b>" + result.substring(index, index + keywordLen) + "</b>" + result.substring(index + keywordLen);
 
                 if (ignoreCase)
                     index = result.toLowerCase().indexOf(key, index + keywordLen + 6);
