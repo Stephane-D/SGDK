@@ -35,9 +35,13 @@ FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
 release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -flto
+release: CFLAGS_LIB= $(FLAGS_LIB)
+release: AFLAGS_LIB= $(FLAGS_LIB)
 release: $(LIB)/libmd.a
 
-debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -ggdb -DDEBUG=1
+debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -DDEBUG=1
+debug: CFLAGS_LIB= $(FLAGS_LIB) -ggdb
+debug: AFLAGS_LIB= $(FLAGS_LIB)
 debug: $(LIB)/libmd_debug.a
 
 asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -S
@@ -97,16 +101,16 @@ cmd_ : $(OBJ_LIB)
 
 
 %.lst: %.c
-	$(CC) $(FLAGS_LIB) -c $< -o $@
+	$(CC) $(CFLAGS_LIB) -c $< -o $@
 
 %.o: %.c
-	$(CC) $(FLAGS_LIB) -MMD -c $< -o $@
+	$(CC) $(CFLAGS_LIB) -MMD -c $< -o $@
 
 %.o: %.s
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or -MMD $(FLAGS_LIB) -c $< -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or -MMD $(AFLAGS_LIB) -c $< -o $@
 
 %.o: %.rs
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS_LIB) -c $*.rs -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $*.rs -o $@
 
 %.rs: %.res
 	$(RESCOMP) $*.res $*.rs -dep $*.o

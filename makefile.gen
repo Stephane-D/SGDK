@@ -63,11 +63,15 @@ FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(SRC_LIB) -i$(INCLUDE_LIB)
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
 release: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer -flto
+release: CFLAGS= $(FLAGS)
+release: AFLAGS= $(FLAGS)
 release: LIBMD= $(LIB)/libmd.a
 release: pre-build out/rom.bin out/symbol.txt
 #release: $(info $$var is [${SRC_C}])
 
-debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
+debug: FLAGS= $(DEFAULT_FLAGS) -O1 -DDEBUG=1
+debug: CFLAGS= $(FLAGS) -ggdb
+debug: AFLAGS= $(FLAGS)
 debug: LIBMD= $(LIB)/libmd_debug.a
 debug: pre-build out/rom.bin out/rom.out out/symbol.txt
 
@@ -138,13 +142,13 @@ out/cmd_: $(OBJS)
 	$(ECHO) "$(OBJS)" > out/cmd_
 
 out/sega.o: $(SRC)/boot/sega.s out/rom_head.bin
-	$(CC) -x assembler-with-cpp $(DEFAULT_FLAGS) -c $(SRC)/boot/sega.s -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $(SRC)/boot/sega.s -o $@
 
 out/rom_head.bin: out/rom_head.o
 	$(OBJCPY) -O binary $< $@
 
 out/rom_head.o: $(SRC)/boot/rom_head.c
-	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(SRC)/boot/sega.s: $(SRC_LIB)/boot/sega.s
 	$(CP) $< $@
@@ -155,19 +159,19 @@ $(SRC)/boot/rom_head.c: $(SRC_LIB)/boot/rom_head.c
 
 out/%.lst: %.c
 	$(MKDIR) -p $(dir $@)
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 out/%.o: %.c
 	$(MKDIR) -p $(dir $@)
-	$(CC) $(FLAGS) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) -MMD -c $< -o $@
 
 out/%.o: %.s
 	$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS) -MMD -c $< -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -MMD -c $< -o $@
 
 out/%.o: %.rs
 	$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS) -c $*.rs -o $@
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $*.rs -o $@
 	$(CP) $*.d out/$*.d
 	$(RM) $*.d
 
