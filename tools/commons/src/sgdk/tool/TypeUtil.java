@@ -216,6 +216,15 @@ public class TypeUtil
     }
 
     /**
+     * Round specified value to specified number of decimal.
+     */
+    public static double round(double d, int numDecimal)
+    {
+        final double pow = Math.pow(10, numDecimal);
+        return Math.round(d * pow) / pow;
+    }
+
+    /**
      * Swap all nibbles in given 32bit int
      */
     public static int swapNibble32(int value)
