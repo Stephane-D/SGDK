@@ -210,48 +210,78 @@ public class Util
             outH.append("extern const " + type + " " + name + "[" + size + "];\n");
     }
 
+    // public static void outS(StringBuilder out, byte[] data, int intSize)
+    // {
+    // int offset = 0;
+    // // align remain on word
+    // int remain = ((data.length + 1) / 2) * 2;
+    // int adjIntSize = (intSize < 2) ? 2 : intSize;
+    //
+    // while (remain > 0)
+    // {
+    // out.append(" dc." + formatAsm[adjIntSize] + " ");
+    //
+    // for (int i = 0; i < Math.min(16, remain) / adjIntSize; i++)
+    // {
+    // if (i > 0)
+    // out.append(", ");
+    //
+    // out.append("0x");
+    //
+    // if (intSize == 1)
+    // {
+    // // we cannot use byte data because of GCC bugs with -G parameter
+    // out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 0]), 2));
+    //
+    // if ((offset + 1) >= data.length)
+    // out.append("00");
+    // else
+    // out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 1]), 2));
+    //
+    // offset += adjIntSize;
+    // }
+    // else
+    // {
+    // offset += adjIntSize;
+    //
+    // for (int j = 0; j < adjIntSize; j++)
+    // out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset - (j + 1)]), 2));
+    // }
+    // }
+    //
+    // out.append("\n");
+    // remain -= 16;
+    // }
+    // }
+
     public static void outS(StringBuilder out, byte[] data, int intSize)
     {
         int offset = 0;
-        // align remain on word
-        int remain = ((data.length + 1) / 2) * 2;
-        int adjIntSize = (intSize < 2) ? 2 : intSize;
+        int remain = data.length;
 
         while (remain > 0)
         {
-            out.append("    dc." + formatAsm[adjIntSize] + "    ");
+            out.append("    dc." + formatAsm[intSize] + "    ");
 
-            for (int i = 0; i < Math.min(16, remain) / adjIntSize; i++)
+            for (int i = 0; i < Math.min(16, remain) / intSize; i++)
             {
                 if (i > 0)
                     out.append(", ");
 
                 out.append("0x");
 
-                if (intSize == 1)
-                {
-                    // we cannot use byte data because of GCC bugs with -G parameter
-                    out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 0]), 2));
-
-                    if ((offset + 1) >= data.length)
-                        out.append("00");
-                    else
-                        out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset + 1]), 2));
-
-                    offset += adjIntSize;
-                }
-                else
-                {
-                    offset += adjIntSize;
-
-                    for (int j = 0; j < adjIntSize; j++)
-                        out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset - (j + 1)]), 2));
-                }
+                offset += intSize;
+                for (int j = 0; j < intSize; j++)
+                    out.append(StringUtil.toHexaString(TypeUtil.unsign(data[offset - (j + 1)]), 2));
             }
 
             out.append("\n");
             remain -= 16;
         }
+
+        // better to pad data to word
+        if ((intSize == 1) && ((data.length & 1) != 0))
+            out.append("    dc.b    0x00\n");
     }
 
     public static byte[] in(String fin)

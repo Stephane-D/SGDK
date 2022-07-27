@@ -1,4 +1,4 @@
-ResComp 3.50 (May 2022)
+ResComp 3.60 (July 2022)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -25,7 +25,7 @@ Supported resource type
 - BITMAP    bitmapped image type resource, used for the Bitmap SGDK engine (do not use it as tile resource).
 - PALETTE   palette type resource, used as color input for Bitmap, Image or Sprite resource.
 - TILESET   tileset type resource, contains tiles data which can be used / shared for TILEMAP and MAP resources.
-- TILEMAP   tilemap type resource, contains tilemap data. It can be used to draw an image or complete (but small) plane background.
+- TILEMAP   tilemap type resource, contains raw tilemap data. It can be used to draw an image or complete (but small) plane background.
 - MAP       map type resource, optimized to draw large map / level.
 - IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data. It can be used to draw an image or complete (but small) plane background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
@@ -47,7 +47,7 @@ Rescomp support custom resource using extensions.
 Making an extension is easy: just write your own resource type and its processor in Java and export compiled classes as 'rescomp_ext.jar'.
 Put the file in the same folder as the .res files you want to compile and rescomp should find it automatically !
 You can look at the sgdk.rescomp.resource.Palette and sgdk.rescomp.processor.PaletteProcessor source files to get an example
-about how to implement a Resource and a Processor :) Good luck !
+about how to implement a Resource and a Processor :)
 
             
 Important note about image format
@@ -70,7 +70,7 @@ Here're some important informations to know about how to use properly these 2 im
 
 PALETTE
 -------
-Take a .pal file or an image as input and transform it in SGDK Palette structure.
+Take a .pal file or an image as input and transform it into SGDK Palette structure.
 See the note above about how palette is retrieved from RGB or indexed color images.
 Palette is used as color input for Bitmap, Image and Sprite resources.
 
@@ -84,7 +84,7 @@ PALETTE name file
 
 BITMAP
 ------
-Take an image as input and transform it in SGDK Bitmap structure.
+Take an image as input and transform it into SGDK Bitmap structure.
 Bitmap image structure is used for the SGDK BMP (bitmap) engine, do not use it for tiled image.
 
 Syntax:
@@ -102,7 +102,7 @@ BITMAP name img_file [compression]
 
 TILESET
 -------
-Take an image or TSX file as input and transform it in SGDK TileSet structure.
+Take an image or TSX file as input and transform it into SGDK TileSet structure.
 TileSet is used as tiles source for Image, Tilemap, Map and Sprite resources.
 If you use a real 'tileset format' image as input (as a font) then you should set 'opt' parameter to 'NONE'
 to avoid removing duplicated tiles (which may exist).
@@ -133,7 +133,7 @@ ensure that all pixels from a same tile (block of 8x8 pixels) use the same value
 
 TILEMAP
 -------
-Take an image or TMX file as input and transform it in SGDK TileMap structure.
+Take an image or a TMX file as input and transform it into SGDK TileMap structure.
 TileMap is used to draw in background plane, it requires a tileset which can be shared with others tilemaps.
 TILEMAP resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
@@ -149,7 +149,7 @@ TILEMAP name img_file tileset_id [compression [mapopt [mapbase]]]
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the tilemap optimisation level (ignored for TMX file), accepted values:
+    mapopt          define the tilemap optimisation level, accepted values:
                         0 / NONE        = no optimisation, each tile is unique
                         1 / ALL         = find duplicated and flipped tile (default)
                         2 / DUPLICATE   = find duplicated tile only
@@ -159,7 +159,7 @@ TILEMAP name img_file tileset_id [compression [mapopt [mapbase]]]
 TILEMAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
 
     name                name of the output TileMap structure
-    tmx_file            path of the input TMX file (TMX Tiled file)
+    tmx_file            path of the input TMX file (TMX Tiled file with CSV encoded map data)
     layer_id            layer name we want to extract map data from.
     ts_compression      compression type for tileset, accepted values:
                            -1 / BEST / AUTO = use best compression
@@ -183,7 +183,7 @@ When using a TMX Tiled file you can define the priority information in different
 
 MAP
 ---
-Take an image or TMX file as input and transform it in SGDK Map structure.
+Take an image or TMX file as input and transform it into SGDK Map structure.
 Map is used to define a large background/plane data, it's different from the IMAGE resource as MAP uses an advanced encoding
 so it can encode large background while taking much less ROM space than IMAGE resource so use it to handle large level.
 
@@ -205,7 +205,7 @@ MAP name img_file tileset_id [compression [mapbase]]
 MAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
 
     name                name of the output Map structure
-    tmx_file            path of the input TMX file (TMX Tiled file)
+    tmx_file            path of the input TMX file (TMX Tiled file with CSV encoded map data)
     layer_id            layer name we want to extract map data from.
     ts_compression      compression type for tileset, accepted values:
                            -1 / BEST / AUTO = use best compression
@@ -227,9 +227,56 @@ When using a TMX Tiled file you can define the priority information in different
 - use 2 layers with the main layer define the map itself and a second layer suffixed by ' priority' containing the priority information (0/1)
 
 
+OBJECTS
+-------
+Take a TMX file as input and transform it into an array of Object (array of pointer).
+These objects can be used to define almost anything you want to attach to a specific MAP (entities, events, actions... whatever we can think of).
+Objects are built using the object layers of Tiled TMX file. These Tiled objects has some default attributes: 'id', 'type', 'name', 'x' and 'y':
+- 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want (see below).
+- 'type' is only used as type filter (see the optional 'type' parameter below) and not exported as field but you can define
+   your own custom 'type' field (as an integer) if needed.
+- 'name' can be exported as it is in string format, for that you need to add a custom 'name' field.
+   If the custom 'name' field value is empty then the object name field value is used instead.
+- 'x' and 'y' reprensent the object position on the map and can be exported in any number format.
+   As for the 'name' field, you need to add custom 'x' and 'y' fields to enable 'x' and 'y' values export.
+   If the custom 'x' and 'y' fields value is 0 then the object 'x' and 'y' fields value is used instead.
+
+Since Tiled 1.8 you can define your own Object type and add custom fields to them where each custom field has a type and a value.
+This feature is really useful to define your own custom objects and so to import them in your project through rescomp.
+Here's the accepted SGDK type(s) for each Tiled type:
+  Tiled   SGDK
+  bool    bool
+  color   u32
+  float   f32, f16, s32, u32, s16, u16
+  file    NOT SUPPORTED
+  int     f32, f16, s32, u32, s16, u16, s8, u8
+  Object  object (internally void*)
+  string  string (internally char*)
+  Enum    u8, u16, u32
+  
+As you can see, you can also use your own enumerations in which case you need to save them as number instead (not string)
+and make sure they perfectly match your C enums (also be careful about the allocated type size for your enum, default is u8).
+
+Syntax:
+OBJECTS name tmx_file layer_id field_defs [declType [typeFilter]]
+
+    name                name of the output array Objects structure
+    tmx_file            path of the input TMX file (TMX Tiled file)
+    layer_id            object group/layer name we want to extract object from.
+    field_defs          name and type of fields we want to extract (also define the order of extraction) in <name>:<type> format.
+                            Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object
+                            Some examples of 'field_defs' declaration:
+                                "type:u16;name:string;x:f32;y:f32"
+                                "type:u16;power:s8;visible:bool"
+                            Note that not found fields are just ignored so you can extract different object types easily.
+    declType            declaration type for objects (default is "void").
+                            By default object array is untyped (void) but you can specify your own type if you want ("Object", "Entity", ...)
+    typeFilter          define a type filter if we only want to extract Tiled objects of a specific type (see above).
+
+
 IMAGE
 -----
-Take an image as input and transform it in SGDK Image structure.
+Take an image as input and transform it into SGDK Image structure.
 Image is used to directly draw image in background plane, it internally contains a Palette, TileSet and TileMap structure.
 IMAGE resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
@@ -261,7 +308,7 @@ ensure that all pixels from a same tile (block of 8x8 pixels) use the same value
 
 SPRITE
 ------
-Take an image as input and transform it in SGDK SpriteDefinition structure.
+Take an image as input and transform it into SGDK SpriteDefinition structure.
 SpriteDefinition is used to draw, animate and manage sprites, it internally contains severals TileSet, Palette and Animation structures.
 
 Syntax:
@@ -303,7 +350,7 @@ Some informations about how SpriteDefinition is generated from the input image:
 
 XGM
 ---
-Take a .vgm or .xgm music file as input and transform it in binary format usable with the SGDK SND_startPlay_XGM(..) methods.
+Take a .vgm or .xgm music file as input and transform it into binary format usable with the SGDK SND_startPlay_XGM(..) methods.
 The XGM driver supports music play along 4 PCM channels mixing (100% running on Z80 cpu).
 
 Syntax:
@@ -353,7 +400,7 @@ WAV name wav_file driver [out_rate [far]]
 
 BIN
 ---
-Take any data file as input and transform it in binary data array accessible through SGDK.
+Take any data file as input and transform it into binary data array accessible through SGDK.
 
 Syntax:
 BIN name file [align [salign [fill [compression [far]]]]]

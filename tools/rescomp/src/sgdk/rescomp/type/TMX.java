@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,8 @@ import sgdk.rescomp.Compiler;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.SFieldDef.SGDKObjectType;
+import sgdk.rescomp.type.TFieldDef.TiledObjectType;
 import sgdk.rescomp.type.TSX.TSXTileset;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
@@ -31,6 +34,8 @@ public class TMX
     static final String ID_DATA = "data";
     static final String ID_OBJECTGROUP = "objectgroup";
     static final String ID_OBJECT = "object";
+    static final String ID_PROPERTIES = "properties";
+    static final String ID_PROPERTY = "property";
     static final String ID_TEXT = "text";
 
     static final String ATTR_ID = "id";
@@ -51,11 +56,14 @@ public class TMX
     static final String ATTR_TYPE = "type";
     static final String ATTR_X = "x";
     static final String ATTR_Y = "y";
+    static final String ATTR_PROPERTYTYPE = "propertytype";
+    static final String ATTR_VALUE = "value";
 
     static final String ATTR_VALUE_ORTHOGONAL = "orthogonal";
     static final String ATTR_VALUE_RIGHT_DOWN = "right-down";
     static final String ATTR_VALUE_CSV = "csv";
     static final String ATTR_VALUE_TEXT = "text";
+    static final String ATTR_VALUE_CLASS = "class";
 
     static final String SUFFIX_PRIORITY = " priority";
     static final String SUFFIX_LOW_PRIORITY = " low";
@@ -166,13 +174,13 @@ public class TMX
             final int[] mapData2;
 
             // single layer definition ?
-            boolean singleLayer = hasLayer(layers, layerName);
+            boolean singleLayer = hasElementNamed(layers, layerName);
 
             if (singleLayer)
             {
-                final Element mainLayer = getLayer(layers, layerName);
+                final Element mainLayer = getElementNamed(layers, layerName);
                 // try to get priority layer
-                final Element priorityLayer = getLayer(layers, layerName + SUFFIX_PRIORITY);
+                final Element priorityLayer = getElementNamed(layers, layerName + SUFFIX_PRIORITY);
 
                 // get map data in mapData1
                 mapData1 = getMapData(mainLayer, w, h, file);
@@ -182,8 +190,8 @@ public class TMX
             else
             {
                 // use alternate priority definition
-                final Element lowPriorityLayer = getLayer(layers, layerName + SUFFIX_LOW_PRIORITY);
-                final Element highPriorityLayer = getLayer(layers, layerName + SUFFIX_HIGH_PRIORITY);
+                final Element lowPriorityLayer = getElementNamed(layers, layerName + SUFFIX_LOW_PRIORITY);
+                final Element highPriorityLayer = getElementNamed(layers, layerName + SUFFIX_HIGH_PRIORITY);
 
                 if ((lowPriorityLayer == null) || (highPriorityLayer == null))
                     throw new Exception("No layer '" + layerName + "' found in TMX file: " + file);
@@ -508,23 +516,158 @@ public class TMX
         }
     }
 
-    static String getAttribute(Element element, String attrName, String def)
+    public static class TMXObjects
     {
-        return XMLUtil.getAttributeValue(element, attrName, def).toLowerCase();
+        public final String file;
+        public final String layerName;
+        public final List<SObject> objects;
+
+        public TMXObjects(String file, String layerName, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
+        {
+            if (!FileUtil.exists(file))
+                throw new FileNotFoundException("TMX file '" + file + " not found !");
+
+            this.file = file;
+            this.layerName = layerName;
+            objects = new ArrayList<>();
+
+            final Document doc = XMLUtil.loadDocument(file);
+            final Element mapElement = XMLUtil.getRootElement(doc);
+
+            // check this is the map node
+            if (!mapElement.getNodeName().toLowerCase().equals(ID_MAP))
+                throw new Exception("Expected " + ID_MAP + " root node in TMX file: " + file + ", " + mapElement.getNodeName() + " found.");
+
+            final List<Element> objectGroups = XMLUtil.getElements(mapElement, ID_OBJECTGROUP);
+            if (objectGroups.isEmpty())
+                throw new Exception("No object layer found in TMX file: " + file);
+
+            final Element group = getElementNamed(objectGroups, layerName);
+
+            if (group == null)
+                throw new Exception("No object layer '" + layerName + "' found in TMX file: " + file);
+
+            // base object file name
+            final String baseObjectName = FileUtil.getFileName(file, false) + "_object";
+            final Map<String, TField> tFields = new HashMap<>();
+            final List<Element> objectElements = XMLUtil.getElements(group, ID_OBJECT);
+
+            // get all objects
+            for (Element objectElement : objectElements)
+            {
+                final String objectType = getAttribute(objectElement, ATTR_TYPE, "");
+
+                // type filter enabled and not matching type ? --> next object
+                if (!StringUtil.isEmpty(typeFilter) && !StringUtil.equals(objectType, typeFilter))
+                    continue;
+
+                // clear field list
+                tFields.clear();
+
+                final int id = XMLUtil.getAttributeIntValue(objectElement, ATTR_ID, 0);
+                final double x = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_X, 0d);
+                final double y = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_Y, 0d);
+
+//                // X attribute exists ? --> add the field
+//                if (XMLUtil.getAttribute(objectElement, ATTR_X) != null)
+//                    tFields.put(ATTR_X, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
+//                // Y attribute exists ? --> add the field
+//                if (XMLUtil.getAttribute(objectElement, ATTR_Y) != null)
+//                    tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
+//                // NAME attribute exists ? --> add the field
+//                if (XMLUtil.getAttribute(objectElement, ATTR_NAME) != null)
+//                    tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));
+
+                // get all properties
+                final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
+
+                // build all fields from the properties
+                for (Element property : propertyElements)
+                {
+                    final String name = getAttribute(property, ATTR_NAME, "");
+                    final String type = getAttribute(property, ATTR_TYPE, "");
+                    final String propertyType = getAttribute(property, ATTR_PROPERTYTYPE, "");
+                    final String value = getAttribute(property, ATTR_VALUE, "");
+                    
+                    // specific 'name' field with empty value ? --> use object 'name' field value
+                    if (StringUtil.equals(name, ATTR_NAME) && StringUtil.isEmpty(value))
+                        tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));
+                    // specific 'x' field with 0 value ? --> use object 'x' field value
+                    else if (StringUtil.equals(name, ATTR_X) && StringUtil.equals(value, "0"))
+                        tFields.put(ATTR_X, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
+                    // specific 'y' field with 0 value ? --> use object 'x' field value
+                    else if (StringUtil.equals(name, ATTR_Y) && StringUtil.equals(value, "0"))
+                        tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
+                    // empty type but defined property type ? --> enum type
+                    else if (StringUtil.isEmpty(type) && !StringUtil.isEmpty(propertyType))
+                        tFields.put(name, new TField(name, TiledObjectType.ENUM, value));
+                    else
+                        tFields.put(name, new TField(name, TiledObjectType.fromString(type), value));
+                }
+
+                // create object
+                final SObject object = new SObject(id, baseObjectName, objectType, x, y);
+                // iterate over field definitions (allow good ordering of fields)
+                for (String fieldName : fieldDefs.keySet())
+                {
+                    // find field declaration
+                    final TField field = tFields.get(fieldName);
+
+                    // we have the field ? --> add it to the object
+                    if (field != null)
+                        object.addField(field.toSField(baseObjectName, fieldDefs.get(fieldName)));
+                }
+
+                // finally add the object
+                objects.add(object);
+            }
+        }
+
+        private List<Element> getProperties(Element objectElement, List<Element> result)
+        {
+            final Element properties = XMLUtil.getElement(objectElement, ID_PROPERTIES);
+
+            // no more properties
+            if (properties == null)
+                return result;
+
+            for (Element propertyElement : XMLUtil.getElements(properties, ID_PROPERTY))
+            {
+                // is it a class (object) property ? --> get its properties
+                if (StringUtil.equals(getAttribute(propertyElement, ATTR_TYPE, "").toLowerCase(), ATTR_VALUE_CLASS))
+                    getProperties(propertyElement, result);
+                else
+                    // just add the property
+                    result.add(propertyElement);
+            }
+
+            return result;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Object layer=" + layerName + " number of object=" + objects.size();
+        }
     }
 
-    static Element getLayer(List<Element> layers, String name)
+    static String getAttribute(Element element, String attrName, String def)
+    {
+        return XMLUtil.getAttributeValue(element, attrName, def);
+    }
+
+    static Element getElementNamed(List<Element> layers, String name)
     {
         for (Element element : layers)
-            if (StringUtil.equals(getAttribute(element, ATTR_NAME, ""), name.toLowerCase()))
+            if (StringUtil.equals(getAttribute(element, ATTR_NAME, "").toLowerCase(), name.toLowerCase()))
                 return element;
 
         return null;
     }
 
-    static boolean hasLayer(List<Element> layers, String name)
+    static boolean hasElementNamed(List<Element> layers, String name)
     {
-        return getLayer(layers, name) != null;
+        return getElementNamed(layers, name) != null;
     }
 
     static Element getElement(Node node, String name, String file) throws Exception
@@ -539,7 +682,7 @@ public class TMX
 
     static void checkAttributValue(Element element, String attrName, String value, String def, String file) throws Exception
     {
-        final String attrValue = getAttribute(element, attrName, def);
+        final String attrValue = getAttribute(element, attrName, def).toLowerCase();
 
         if (!StringUtil.equals(attrValue, value))
             throw new Exception("'" + attrValue + "' " + attrName + " not supported (" + def + " expected) in TMX file: " + file);

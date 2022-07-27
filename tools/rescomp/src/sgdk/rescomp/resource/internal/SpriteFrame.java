@@ -271,5 +271,4 @@ public class SpriteFrame extends Resource
 
         outS.append("\n");
     }
-
 }
