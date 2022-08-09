@@ -148,7 +148,7 @@ out/rom_head.bin: out/rom_head.o
 	$(OBJCPY) -O binary $< $@
 
 out/rom_head.o: $(SRC)/boot/rom_head.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
 
 $(SRC)/boot/sega.s: $(SRC_LIB)/boot/sega.s
 	$(CP) $< $@
