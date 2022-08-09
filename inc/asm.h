@@ -20,7 +20,7 @@
 #define REG2VAR_L(reg, var)       asm ("move.l %/"reg", %0" : "=r" (var))
 
 // enumeration helper for GAS
-#ifdef __ASSEMBLY__
+#if defined(__ASSEMBLY__) || defined(__ASSEMBLER__)
 
   .set last_enum_value, 0
   .macro enum_val name
@@ -29,6 +29,7 @@
   .endm
 
     #define ENUM_BEGIN  .set last_enum_value, 0
+    #define ENUM_BEGIN_EX(tmpName)  .set last_enum_value, 0
     #define ENUM_VAL(name) enum_val name
     #define ENUM_VALASSIGN(name, value)            \
       .set last_enum_value, value                 ;\
