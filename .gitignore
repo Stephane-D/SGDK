@@ -24,10 +24,6 @@ symbol.txt
 rom_head.bin
 **/Debug
 **/Release
-**/boot/sega.s
-**/boot/rom_head.c
-!src/boot/sega.s
-!src/boot/rom_head.c
 **/res/*.h
 res/libres.s
 !res/libres.h
