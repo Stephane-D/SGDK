@@ -6,7 +6,7 @@
 
 void inGameJoyEvent(u16 joy, u16 changed, u16 state);
 
-int main(u16 resetType) {
+int main(bool resetType) {
 	//Soft resets don't clear RAM, this can bring some bugs so we hard reset every time we detect a soft reset
 	if (!resetType)
 		SYS_hardReset();
@@ -33,7 +33,7 @@ int main(u16 resetType) {
 		SPR_update();
 		SYS_doVBlankProcess();
 	}
-	
+
 	return 0;
 }
 
