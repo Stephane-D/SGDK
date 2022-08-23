@@ -209,8 +209,10 @@ public class Tile implements Comparable<Tile>
                 else if (plainCol != color)
                     plain = false;
 
-                // not a transparent pixel ?
-                if (color != 0)
+                // handle extended attributes only for non transparent pixel (except in case of plain transparent tile)
+                final boolean handleAttr = (color != 0) || plain;
+                
+                if (handleAttr)
                 {
                     final int curPal = (pixel >> 4) & 3;
                     final int curPrio = (pixel >> 7) & 1;
@@ -219,7 +221,7 @@ public class Tile implements Comparable<Tile>
                     if (pal == -1)
                         pal = curPal;
                     // test for difference only for not transparent pixel (simpler)
-                    else if ((pal != curPal) && (color != 0))
+                    else if (pal != curPal)
                         throw new IllegalArgumentException(
                                 "Error: pixel at [" + (x + i) + "," + (y + j) + "] reference a different palette (" + curPal + " != " + pal + ").");
 
@@ -227,7 +229,7 @@ public class Tile implements Comparable<Tile>
                     if (prio == -1)
                         prio = curPrio;
                     // test for difference only for not transparent pixel (simpler)
-                    else if ((prio != curPrio) && (color != 0))
+                    else if (prio != curPrio)
                         throw new IllegalArgumentException(
                                 "Error: pixel at [" + (x + i) + "," + (y + j) + "] reference a different priority (" + curPrio + " != " + prio + ").");
                 }
