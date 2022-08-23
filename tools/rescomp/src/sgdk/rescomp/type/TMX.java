@@ -247,7 +247,8 @@ public class TMX
                     if (axeflip)
                     {
                         if (!Compiler.DAGame)
-                            System.out.println("WARNING: unsupported rotated tile found at [" + x + "," + y + "] in TMX file: " + file);
+                            System.out.println(
+                                    "WARNING: unsupported rotated tile found at [" + x + "," + y + "] in layer '" + layerName + "' of TMX file: " + file);
                         // assume vflip for DA
                         else
                             vflip = true;
@@ -262,8 +263,15 @@ public class TMX
                         final TSXTileset tileset = getTSXTilesetFor(tileInd);
 
                         if (tileset == null)
-                            throw new Exception(
-                                    "Tile [" + x + "," + y + "] is referencing an invalid index (" + tileInd + " is outside available tiles range)");
+                            throw new Exception("Tile [" + x + "," + y + "] of layer '" + layerName + "' is referencing an invalid index (" + tileInd
+                                    + " is outside available tiles range)");
+
+                        // common mistake so better to check
+                        if (Compiler.DAGame)
+                        {
+                            if (tileset.file.contains("Gamefield"))
+                                throw new Exception("Tile [" + x + "," + y + "]  of layer '" + layerName + "' is referencing the Gamefield overlay tileset !)");
+                        }
 
                         usedTilesetsSet.add(tileset);
                     }
@@ -279,9 +287,12 @@ public class TMX
             if (usedTilesets.size() > 1)
                 Collections.sort(usedTilesets);
 
-            // System.out.println("TMX map '" + file + "' is using " + usedTilesetsSet.size() + " tilesets:");
-            // for (TSXTileset tileset : usedTilesetsSet)
-            // System.out.println(tileset);
+            if (Compiler.DAGame)
+            {
+                System.out.println("TMX map '" + file + "' layer '" + layerName + "' is using " + usedTilesetsSet.size() + " tilesets:");
+                for (TSXTileset tileset : usedTilesetsSet)
+                    System.out.println(tileset);
+            }
         }
 
         private TSXTileset getTSXTilesetFor(int tileInd)
@@ -568,15 +579,15 @@ public class TMX
                 final double x = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_X, 0d);
                 final double y = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_Y, 0d);
 
-//                // X attribute exists ? --> add the field
-//                if (XMLUtil.getAttribute(objectElement, ATTR_X) != null)
-//                    tFields.put(ATTR_X, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
-//                // Y attribute exists ? --> add the field
-//                if (XMLUtil.getAttribute(objectElement, ATTR_Y) != null)
-//                    tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
-//                // NAME attribute exists ? --> add the field
-//                if (XMLUtil.getAttribute(objectElement, ATTR_NAME) != null)
-//                    tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));
+                // // X attribute exists ? --> add the field
+                // if (XMLUtil.getAttribute(objectElement, ATTR_X) != null)
+                // tFields.put(ATTR_X, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
+                // // Y attribute exists ? --> add the field
+                // if (XMLUtil.getAttribute(objectElement, ATTR_Y) != null)
+                // tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
+                // // NAME attribute exists ? --> add the field
+                // if (XMLUtil.getAttribute(objectElement, ATTR_NAME) != null)
+                // tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));
 
                 // get all properties
                 final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
@@ -588,7 +599,7 @@ public class TMX
                     final String type = getAttribute(property, ATTR_TYPE, "");
                     final String propertyType = getAttribute(property, ATTR_PROPERTYTYPE, "");
                     final String value = getAttribute(property, ATTR_VALUE, "");
-                    
+
                     // specific 'name' field with empty value ? --> use object 'name' field value
                     if (StringUtil.equals(name, ATTR_NAME) && StringUtil.isEmpty(value))
                         tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));

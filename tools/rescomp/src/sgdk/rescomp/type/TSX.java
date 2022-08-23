@@ -163,7 +163,7 @@ public class TSX
         @Override
         public String toString()
         {
-            return "Tileset '" + FileUtil.getFileName(file) + " - tileSize=" + tileSize + " - startInd=" + startTileIndex + " - numTile=" + numTile;
+            return "Tileset '" + FileUtil.getFileName(tilesetImagePath) + " - tileSize=" + tileSize + " - startInd=" + startTileIndex + " - numTile=" + numTile;
         }
 
         @Override
