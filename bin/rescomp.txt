@@ -239,7 +239,7 @@ Objects are built using the object layers of Tiled TMX file. These Tiled objects
    If the custom 'name' field value is empty then the object name field value is used instead.
 - 'x' and 'y' reprensent the object position on the map and can be exported in any number format.
    As for the 'name' field, you need to add custom 'x' and 'y' fields to enable 'x' and 'y' values export.
-   If the custom 'x' and 'y' fields value is 0 then the object 'x' and 'y' fields value is used instead.
+   If the custom 'x' (or 'y') field value is 0 then the object 'x' (or 'y') field value is used instead.
 
 Since Tiled 1.8 you can define your own Object type and add custom fields to them where each custom field has a type and a value.
 This feature is really useful to define your own custom objects and so to import them in your project through rescomp.
