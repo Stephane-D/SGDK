@@ -314,6 +314,125 @@ VDPSprite* VDP_linkSprites(u16 index, u16 num);
  *  \see VDP_refreshHighestAllocatedSpriteIndex()
  */
 void VDP_updateSprites(u16 num, TransferMethod tm);
-
+/**
+ *  \brief
+ *      Set sprite priority (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param priority
+ *      sprite priority. Valid values: 0 -> low, 1 -> high
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
+ */
+void VDP_setSpritePriority(u16 index, bool priority);
+/**
+ *  \brief
+ *      Get sprite priority (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ */
+bool VDP_getSpritePriority(u16 index);
+/**
+ *  \brief
+ *      Set sprite palette (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param palette
+ *      palette index. Valid values: [0, 3]
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
+ */
+void VDP_setSpritePalette(u16 index, u16 palette);
+/**
+ *  \brief
+ *      Get sprite palette (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ */
+u16 VDP_getSpritePalette(u16 index);
+/**
+ *  \brief
+ *      Set sprite horizontal and vertical flip (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param flipH
+ *      Horizontal flip. Valid values: 0 -> normal, 1 -> flipped.
+ *  \param flipV
+ *      Vertical flip. Valid values: 0 -> normal, 1 -> flipped.
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
+ */
+void VDP_setSpriteFlip(u16 index, bool flipH, bool flipV);
+/**
+ *  \brief
+ *      Set sprite horizontal flip (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param flipH
+ *      Horizontal flip. Valid values: 0 -> normal, 1 -> flipped.
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
+ */
+void VDP_setSpriteFlipH(u16 index, bool flipH);
+/**
+ *  \brief
+ *      Set sprite vertical flip (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param flipV
+ *      Vertical flip. Valid values: 0 -> normal, 1 -> flipped.
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
+ */
+void VDP_setSpriteFlipV(u16 index, bool flipV);
+/**
+ *  \brief
+ *      Get sprite horizontal flip (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ */
+bool VDP_getSpriteFlipH(u16 index);
+/**
+ *  \brief
+ *      Get sprite vertical flip (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ */
+bool VDP_getSpriteFlipV(u16 index);
+/**
+ *  \brief
+ *      Set sprite tile index (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ *  \param tile
+ *      Tile index. Valid values: [0, 2047].
+ *
+ *  \see VDP_setSprite(..)
+ *  \see VDP_updateSprites(..)
+ */
+void VDP_setSpriteTile(u16 index, u16 tile);
+/**
+ *  \brief
+ *      Get sprite tile index (use sprite list cache).
+ *
+ *  \param index
+ *      Index of the sprite to modify attributes (should be < MAX_VDP_SPRITE).
+ */
+u16 VDP_getSpriteTile(u16 index);
 
 #endif // _VDP_SPR_H_
