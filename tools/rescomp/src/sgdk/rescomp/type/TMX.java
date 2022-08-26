@@ -54,6 +54,7 @@ public class TMX
     static final String ATTR_ENCODING = "encoding";
     static final String ATTR_VISIBLE = "visible";
     static final String ATTR_TYPE = "type";
+    static final String ATTR_CLASS = "class";
     static final String ATTR_X = "x";
     static final String ATTR_Y = "y";
     static final String ATTR_PROPERTYTYPE = "propertytype";
@@ -566,7 +567,10 @@ public class TMX
             // get all objects
             for (Element objectElement : objectElements)
             {
-                final String objectType = getAttribute(objectElement, ATTR_TYPE, "");
+                // Tiled <= 1.8 uses 'type' for object type
+                String objectType = getAttribute(objectElement, ATTR_TYPE, "");
+                // Tiled > 1.8 uses 'class' for object type
+                if (StringUtil.isEmpty(objectType)) objectType = getAttribute(objectElement, ATTR_CLASS, "");
 
                 // type filter enabled and not matching type ? --> next object
                 if (!StringUtil.isEmpty(typeFilter) && !StringUtil.equals(objectType, typeFilter))
