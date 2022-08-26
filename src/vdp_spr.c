@@ -233,6 +233,63 @@ void VDP_updateSprites(u16 num, TransferMethod tm)
     DMA_transfer(tm, DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, (sizeof(VDPSprite) * num) / 2, 2);
 }
 
+void VDP_setSpritePriority(u16 index, bool priority)
+{
+    vdpSpriteCache[index].priority = priority;
+}
+
+bool VDP_getSpritePriority(u16 index)
+{
+    return vdpSpriteCache[index].priority == 1;
+}
+
+void VDP_setSpritePalette(u16 index, u16 palette)
+{
+    vdpSpriteCache[index].palette = palette;
+}
+
+u16 VDP_getSpritePalette(u16 index)
+{
+    return vdpSpriteCache[index].palette;
+}
+
+void VDP_setSpriteFlip(u16 index, bool flipH, bool flipV)
+{
+    VDPSprite *sprite = &vdpSpriteCache[index];
+    sprite->flipH = flipH;
+    sprite->flipV = flipV;
+}
+
+void VDP_setSpriteFlipH(u16 index, bool flipH)
+{
+    vdpSpriteCache[index].flipH = flipH;
+}
+
+void VDP_setSpriteFlipV(u16 index, bool flipV)
+{
+    vdpSpriteCache[index].flipH = flipV;
+}
+
+bool VDP_getSpriteFlipH(u16 index)
+{
+    return vdpSpriteCache[index].flipH != 0;
+}
+
+bool VDP_getSpriteFlipV(u16 index)
+{
+    return vdpSpriteCache[index].flipV != 0;
+}
+
+void VDP_setSpriteTile(u16 index, u16 tile)
+{
+    vdpSpriteCache[index].tile = tile;
+}
+
+u16 VDP_getSpriteTile(u16 index)
+{
+    return vdpSpriteCache[index].tile;
+}
+
 void logVDPSprite(u16 index)
 {
     char str[64];
