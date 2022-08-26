@@ -36,8 +36,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import com.sun.org.apache.xalan.internal.xsltc.cmdline.Compile;
-
 /**
  * Image utilities class.
  * 
@@ -691,8 +689,20 @@ public class ImageUtil
     public static int[] getRGBA8888PaletteFromTiles(String filename) throws Exception
     {
         final BasicImageInfo imageInfo = getBasicInfo(filename);
-        // get all palette from RGB image, palette[64] contains possible alternate backdrop color
-        final int[] result = getRGBA8888PaletteFromTiles(getARGBPixels(filename), imageInfo.w, imageInfo.h);
+        // get ARGB pixels
+        final int[] argbPixels = getARGBPixels(filename);
+
+        final int[] result;
+        try
+        {
+            // get all palette from RGB image, palette[64] contains possible alternate backdrop color
+            result = getRGBA8888PaletteFromTiles(argbPixels, imageInfo.w, imageInfo.h);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.getMessage() + " - File: '" + filename + "'");
+        }
+
         // replace by alternate backdrop color
         result[0] = result[64];
         // remove last entry
@@ -1158,8 +1168,17 @@ public class ImageUtil
 
         // get ARGB pixels
         final int[] argbPixels = getARGBPixels(filename);
-        // retrieve the palette (ABGR8888 format)
-        final int[] palette = getRGBA8888PaletteFromTiles(argbPixels, w, h);
+
+        final int[] palette;
+        try
+        {
+            // retrieve the palette (ABGR8888 format)
+            palette = getRGBA8888PaletteFromTiles(argbPixels, w, h);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.getMessage() + " - File: '" + filename + "'");
+        }
 
         if (palette == null)
             return null;
