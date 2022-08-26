@@ -142,10 +142,10 @@ public class SField extends SFieldDef
 
         // object pointer ?
         if (isPointer())
-            outS.append("    dc.l    " + (StringUtil.isEmpty(value) ? "0" : value) + "\n");
+            outS.append("    dc.l    " + (StringUtil.isEmpty(value) ? "0" : value) + "\t\t// " + name + "\n");
         else
             // string
-            outS.append("    dc.l    " + name + "\n");
+            outS.append("    dc.l    " + name + "\t\t// " + name + "\n");
     }
 
     public void outIntData(StringBuilder outS)
@@ -160,19 +160,19 @@ public class SField extends SFieldDef
             case F32:
             case S32:
             case U32:
-                outS.append("    dc.l    " + sVal + "\n");
+                outS.append("    dc.l    " + sVal + "\t\t// " + name + "\n");
                 break;
 
             case F16:
             case S16:
             case U16:
-                outS.append("    dc.w    " + sVal + "\n");
+                outS.append("    dc.w    " + sVal + "\t\t// " + name + "\n");
                 break;
 
             case S8:
             case U8:
             case BOOL:
-                outS.append("    dc.b    " + sVal + "\n");
+                outS.append("    dc.b    " + sVal + "\t\t// " + name + "\n");
                 break;
 
             default:
@@ -181,7 +181,7 @@ public class SField extends SFieldDef
 
         // padding ?
         if (padding)
-            outS.append("    dc.b    0\n");
+            outS.append("    dc.b    0\t\t// padding\n");
     }
 
     // public void outIntData(ByteArrayOutputStream out)
