@@ -587,7 +587,8 @@ public class TMX
                 // tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
                 // // NAME attribute exists ? --> add the field
                 // if (XMLUtil.getAttribute(objectElement, ATTR_NAME) != null)
-                // tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));
+                // tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement,
+                // ATTR_NAME, "object_" + id)));
 
                 // get all properties
                 final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
@@ -627,6 +628,19 @@ public class TMX
                     // we have the field ? --> add it to the object
                     if (field != null)
                         object.addField(field.toSField(baseObjectName, fieldDefs.get(fieldName)));
+                    else
+                    // field not found ?
+                    {
+                        // patch for DA game to fix Tiled export bug
+                        if (Compiler.DAGame)
+                        {
+                            final int numField = object.fields.size();
+                            // current field is 'next' and we had a previous 'waitId' field ?
+                            // --> add 'next' field with NULL value
+                            if (StringUtil.equals(fieldName, "next") && (numField > 0) && StringUtil.equals(object.fields.get(numField - 1).name, "waitId"))
+                                object.addField(new SField("next", SGDKObjectType.OBJECT, ""));
+                        }
+                    }
                 }
 
                 // finally add the object
@@ -660,6 +674,7 @@ public class TMX
         {
             return "Object layer=" + layerName + " number of object=" + objects.size();
         }
+
     }
 
     static String getAttribute(Element element, String attrName, String def)
