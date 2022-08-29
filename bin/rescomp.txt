@@ -235,11 +235,10 @@ Objects are built using the object layers of Tiled TMX file. These Tiled objects
 - 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want (see below).
 - 'type' is only used as type filter (see the optional 'type' parameter below) and not exported as field but you can define
    your own custom 'type' field (as an integer) if needed.
-- 'name' can be exported as it is in string format, for that you need to add a custom 'name' field.
-   If the custom 'name' field value is empty then the object name field value is used instead.
+- 'name' can be exported as it is in string format.
+  To enable export of the field, you need to add a custom boolean 'exportName' field and set its value to 'true'.
 - 'x' and 'y' reprensent the object position on the map and can be exported in any number format.
-   As for the 'name' field, you need to add custom 'x' and 'y' fields to enable 'x' and 'y' values export.
-   If the custom 'x' (or 'y') field value is 0 then the object 'x' (or 'y') field value is used instead.
+  To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
 
 Since Tiled 1.8 you can define your own Object type and add custom fields to them where each custom field has a type and a value.
 This feature is really useful to define your own custom objects and so to import them in your project through rescomp.
@@ -268,7 +267,7 @@ OBJECTS name tmx_file layer_id field_defs [declType [typeFilter]]
                             Some examples of 'field_defs' declaration:
                                 "type:u16;name:string;x:f32;y:f32"
                                 "type:u16;power:s8;visible:bool"
-                            Note that not found fields are just ignored so you can extract different object types easily.
+                            Note that not found fields are just ignored so you can extract different object types at same time easily.
     declType            declaration type for objects (default is "void").
                             By default object array is untyped (void) but you can specify your own type if you want ("Object", "Entity", ...)
     typeFilter          define a type filter if we only want to extract Tiled objects of a specific type (see above).

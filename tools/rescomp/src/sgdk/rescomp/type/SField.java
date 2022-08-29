@@ -4,8 +4,8 @@ import sgdk.tool.StringUtil;
 
 public class SField extends SFieldDef
 {
-    final String value;
-    final Long longValue;
+    final public String value;
+    final public Long longValue;
     boolean padding;
 
     public SField(String name, SGDKObjectType type, String value) throws Exception

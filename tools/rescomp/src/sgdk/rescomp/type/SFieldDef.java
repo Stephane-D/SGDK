@@ -117,8 +117,8 @@ public class SFieldDef
         }
     }
 
-    final String name;
-    final SGDKObjectType type;
+    final public String name;
+    final public SGDKObjectType type;
 
     public SFieldDef(String name, SGDKObjectType type)
     {

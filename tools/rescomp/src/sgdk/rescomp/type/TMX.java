@@ -65,6 +65,8 @@ public class TMX
     static final String ATTR_VALUE_CSV = "csv";
     static final String ATTR_VALUE_TEXT = "text";
     static final String ATTR_VALUE_CLASS = "class";
+    static final String ATTR_VALUE_EXPORT_NAME = "exportname";
+    static final String ATTR_VALUE_EXPORT_POSITION = "exportposition";
 
     static final String SUFFIX_PRIORITY = " priority";
     static final String SUFFIX_LOW_PRIORITY = " low";
@@ -570,7 +572,8 @@ public class TMX
                 // Tiled <= 1.8 uses 'type' for object type
                 String objectType = getAttribute(objectElement, ATTR_TYPE, "");
                 // Tiled > 1.8 uses 'class' for object type
-                if (StringUtil.isEmpty(objectType)) objectType = getAttribute(objectElement, ATTR_CLASS, "");
+                if (StringUtil.isEmpty(objectType))
+                    objectType = getAttribute(objectElement, ATTR_CLASS, "");
 
                 // type filter enabled and not matching type ? --> next object
                 if (!StringUtil.isEmpty(typeFilter) && !StringUtil.equals(objectType, typeFilter))
@@ -582,17 +585,7 @@ public class TMX
                 final int id = XMLUtil.getAttributeIntValue(objectElement, ATTR_ID, 0);
                 final double x = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_X, 0d);
                 final double y = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_Y, 0d);
-
-                // // X attribute exists ? --> add the field
-                // if (XMLUtil.getAttribute(objectElement, ATTR_X) != null)
-                // tFields.put(ATTR_X, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
-                // // Y attribute exists ? --> add the field
-                // if (XMLUtil.getAttribute(objectElement, ATTR_Y) != null)
-                // tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
-                // // NAME attribute exists ? --> add the field
-                // if (XMLUtil.getAttribute(objectElement, ATTR_NAME) != null)
-                // tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement,
-                // ATTR_NAME, "object_" + id)));
+                final String objectName = getAttribute(objectElement, ATTR_NAME, "object_" + id);
 
                 // get all properties
                 final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
@@ -600,25 +593,34 @@ public class TMX
                 // build all fields from the properties
                 for (Element property : propertyElements)
                 {
-                    final String name = getAttribute(property, ATTR_NAME, "");
+                    // always take the lower case version for name
+                    final String name = getAttribute(property, ATTR_NAME, "").toLowerCase();
                     final String type = getAttribute(property, ATTR_TYPE, "");
                     final String propertyType = getAttribute(property, ATTR_PROPERTYTYPE, "");
                     final String value = getAttribute(property, ATTR_VALUE, "");
 
-                    // specific 'name' field with empty value ? --> use object 'name' field value
-                    if (StringUtil.equals(name, ATTR_NAME) && StringUtil.isEmpty(value))
-                        tFields.put(ATTR_NAME, new TField(ATTR_NAME, TiledObjectType.STRING, getAttribute(objectElement, ATTR_NAME, "object_" + id)));
-                    // specific 'x' field with 0 value ? --> use object 'x' field value
-                    else if (StringUtil.equals(name, ATTR_X) && StringUtil.equals(value, "0"))
-                        tFields.put(ATTR_X, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
-                    // specific 'y' field with 0 value ? --> use object 'x' field value
-                    else if (StringUtil.equals(name, ATTR_Y) && StringUtil.equals(value, "0"))
-                        tFields.put(ATTR_Y, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
+                    // export name field ?
+                    if (StringUtil.equals(name, ATTR_VALUE_EXPORT_NAME))
+                    {
+                        // set to true ? --> add 'name' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                            addField(objectName, tFields, new TField(ATTR_NAME, TiledObjectType.STRING, objectName));
+                    }
+                    // export position field ?
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_POSITION))
+                    {
+                        // set to true ? --> add object 'x' and 'y' fields
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                        {
+                            addField(objectName, tFields, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
+                            addField(objectName, tFields, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
+                        }
+                    }
                     // empty type but defined property type ? --> enum type
                     else if (StringUtil.isEmpty(type) && !StringUtil.isEmpty(propertyType))
-                        tFields.put(name, new TField(name, TiledObjectType.ENUM, value));
+                        addField(objectName, tFields, new TField(name, TiledObjectType.ENUM, value));
                     else
-                        tFields.put(name, new TField(name, TiledObjectType.fromString(type), value));
+                        addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
 
                 // create object
@@ -650,6 +652,20 @@ public class TMX
                 // finally add the object
                 objects.add(object);
             }
+        }
+
+        private boolean addField(String objectName, Map<String, TField> fields, TField field)
+        {
+            if (fields.containsKey(field.name))
+            {
+                System.out.println("Warning: Object '" + objectName + "' already has a field named '" + field.name + "', new field ignored...");
+                return false;
+            }
+
+            // add field
+            fields.put(field.name, field);
+
+            return true;
         }
 
         private List<Element> getProperties(Element objectElement, List<Element> result)

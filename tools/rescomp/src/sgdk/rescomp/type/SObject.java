@@ -22,7 +22,7 @@ public class SObject
     // internal
     private int off;
 
-    final List<SField> fields;
+    final public List<SField> fields;
 
     public SObject(int id, String baseName, String type, double x, double y)
     {
@@ -38,8 +38,32 @@ public class SObject
         off = 0;
     }
 
+    public int getFieldIndex(String fieldName)
+    {
+        int result = 0;
+
+        for (SField field : fields)
+        {
+            if (StringUtil.equals(fieldName, field.name))
+                return result;
+            
+            result++;
+        }
+
+        // not found
+        return -1;
+    }
+
+    public boolean hasField(String fieldName)
+    {
+        return getFieldIndex(fieldName) != -1;
+    }
+
     public void addField(SField sField)
     {
+        if (hasField(sField.name))
+            System.out.println("Warning: Object '" + getName() + "' already has a field named '" + sField.name + "', new field ignored...");
+
         // set padding to last added field
         if (((off & 1) != 0) && (sField.type.size() > 1))
         {
@@ -54,6 +78,19 @@ public class SObject
     public String getName()
     {
         return baseName + "_" + id;
+    }
+
+    public long getFieldLongValue(String fieldName)
+    {
+        final int ind = getFieldIndex(fieldName);
+        if (ind == -1)
+            return 0L;
+
+        final Long result = fields.get(ind).longValue;
+        if (result == null)
+            return 0L;
+
+        return result.longValue();
     }
 
     public int size()
