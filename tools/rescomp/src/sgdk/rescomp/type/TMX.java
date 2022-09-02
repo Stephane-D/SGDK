@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -67,6 +68,10 @@ public class TMX
     static final String ATTR_VALUE_CLASS = "class";
     static final String ATTR_VALUE_EXPORT_NAME = "exportname";
     static final String ATTR_VALUE_EXPORT_POSITION = "exportposition";
+    static final String ATTR_VALUE_EXPORT_TILE_INDEX = "exporttileindex";
+
+    // keep it lower case
+    static final String FIELD_TILE_INDEX = "tileindex";
 
     static final String SUFFIX_PRIORITY = " priority";
     static final String SUFFIX_LOW_PRIORITY = " low";
@@ -552,6 +557,22 @@ public class TMX
             if (!mapElement.getNodeName().toLowerCase().equals(ID_MAP))
                 throw new Exception("Expected " + ID_MAP + " root node in TMX file: " + file + ", " + mapElement.getNodeName() + " found.");
 
+            final int tw = XMLUtil.getAttributeIntValue(mapElement, ATTR_TILEWIDTH, 0);
+            final int th = XMLUtil.getAttributeIntValue(mapElement, ATTR_TILEHEIGHT, 0);
+
+            if (tw != th)
+                throw new Exception("Non square tile not supported (" + tw + " x " + th + ") in TMX file: " + file);
+            if ((tw & 7) != 0)
+                throw new Exception("Unsuported tile size (should be a multiple of 8) in TMX file: " + file);
+            if ((tw < 8) || (tw > 32))
+                throw new Exception(tw + " x " + th + " tile size not supported (only 8x8 to 32x32 allowed) in TMX file: " + file);
+
+            final int tileSize = tw;
+            final int mapWidth = XMLUtil.getAttributeIntValue(mapElement, ATTR_WIDTH, 0);
+
+            if (mapWidth == 0)
+                throw new Exception("Null map width in TMX file: " + file);
+
             final List<Element> objectGroups = XMLUtil.getElements(mapElement, ID_OBJECTGROUP);
             if (objectGroups.isEmpty())
                 throw new Exception("No object layer found in TMX file: " + file);
@@ -609,11 +630,23 @@ public class TMX
                     // export position field ?
                     else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_POSITION))
                     {
-                        // set to true ? --> add object 'x' and 'y' fields
+                        // set to true ? --> add 'x' and 'y' fields
                         if (StringUtil.equals(value.toLowerCase(), "true"))
                         {
                             addField(objectName, tFields, new TField(ATTR_X, TiledObjectType.FLOAT, Double.toString(x)));
                             addField(objectName, tFields, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
+                        }
+                    }
+                    // export tile index field ?
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_TILE_INDEX))
+                    {
+                        // set to true ? --> add 'tileIndex' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                        {
+                            // compute tile index
+                            final int tileIndex = (((int) x) / tileSize) + ((((int) y) / tileSize) * mapWidth);
+                            // add field
+                            addField(objectName, tFields, new TField(FIELD_TILE_INDEX, TiledObjectType.INT, Double.toString(tileIndex)));
                         }
                     }
                     // empty type but defined property type ? --> enum type
@@ -643,7 +676,7 @@ public class TMX
                             final int numField = object.fields.size();
                             // current field is 'next' and we had a previous 'waitId' field ?
                             // --> add 'next' field with NULL value
-                            if (StringUtil.equals(fieldName, "next") && (numField > 0) && StringUtil.equals(object.fields.get(numField - 1).name, "waitId"))
+                            if (StringUtil.equals(fieldName, "next") && (numField > 0) && StringUtil.equals(object.fields.get(numField - 1).name, "waitid"))
                                 object.addField(new SField("next", SGDKObjectType.OBJECT, ""));
                         }
                     }
@@ -652,6 +685,9 @@ public class TMX
                 // finally add the object
                 objects.add(object);
             }
+
+            // sort objects on tile index (if it exists)
+            Collections.sort(objects, new TileIndexComparator());
         }
 
         private boolean addField(String objectName, Map<String, TField> fields, TField field)
@@ -695,6 +731,14 @@ public class TMX
             return "Object layer=" + layerName + " number of object=" + objects.size();
         }
 
+        static class TileIndexComparator implements Comparator<SObject>
+        {
+            @Override
+            public int compare(SObject o1, SObject o2)
+            {
+                return Long.compare(o1.getFieldLongValue(FIELD_TILE_INDEX), o2.getFieldLongValue(FIELD_TILE_INDEX));
+            }
+        }
     }
 
     static String getAttribute(Element element, String attrName, String def)

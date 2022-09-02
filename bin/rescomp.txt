@@ -231,18 +231,9 @@ OBJECTS
 -------
 Take a TMX file as input and transform it into an array of Object (array of pointer).
 These objects can be used to define almost anything you want to attach to a specific MAP (entities, events, actions... whatever we can think of).
-Objects are built using the object layers of Tiled TMX file. These Tiled objects has some default attributes: 'id', 'type', 'name', 'x' and 'y':
-- 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want (see below).
-- 'type' is only used as type filter (see the optional 'type' parameter below) and not exported as field but you can define
-   your own custom 'type' field (as an integer) if needed.
-- 'name' can be exported as it is in string format.
-  To enable export of the field, you need to add a custom boolean 'exportName' field and set its value to 'true'.
-- 'x' and 'y' reprensent the object position on the map and can be exported in any number format.
-  To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
-
-Since Tiled 1.8 you can define your own Object type and add custom fields to them where each custom field has a type and a value.
-This feature is really useful to define your own custom objects and so to import them in your project through rescomp.
-Here's the accepted SGDK type(s) for each Tiled type:
+Objects are built using the object layers of Tiled TMX file and since Tiled 1.8 you can define your own Object type letting you to build your own
+custom objects that you can import through rescomp.
+Here's the accepted SGDK type(s) for each 'Tiled' type:
   Tiled   SGDK
   bool    bool
   color   u32
@@ -253,19 +244,31 @@ Here's the accepted SGDK type(s) for each Tiled type:
   string  string (internally char*)
   Enum    u8, u16, u32
   
-As you can see, you can also use your own enumerations in which case you need to save them as number instead (not string)
-and make sure they perfectly match your C enums (also be careful about the allocated type size for your enum, default is u8).
+As you can see, you can also use your own enumerations in which case you need to save them as number instead (not string).
+and make sure they perfectly match your C enums (be careful about the allocated type size for your enum, default is u32 with GCC).
+
+The Tiled objects has some default attributes: 'id', 'type', 'name', 'x' and 'y' that you can use:
+- 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want.
+- 'type' is only used as type filter (see the optional 'typeFilter' parameter below) and not exported as field but you can define
+   your own custom 'type' field (as an integer) if needed.
+- 'name' can be exported as it is in string format.
+  To enable export of the field, you need to add a custom boolean 'exportName' field and set its value to 'true'.
+- 'x' and 'y' define the object position on the map and can be exported in any number format.
+  To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
+  You can also enable export of the tile index value corresponding to: x + (y * map_width)) in 'tileIndex' field by adding a custom boolean
+  'exportTileIndex' field and setting its value to 'true'.
+  When you enable the 'tileIndex' export then objects are sorted (ascending order) on the tile index value allowing fast tile index based searchs.
 
 Syntax:
 OBJECTS name tmx_file layer_id field_defs [declType [typeFilter]]
 
     name                name of the output array Objects structure
     tmx_file            path of the input TMX file (TMX Tiled file)
-    layer_id            object group/layer name we want to extract object from.
-    field_defs          name and type of fields we want to extract (also define the order of extraction) in <name>:<type> format.
+    layer_id            object group/layer name we want to export object from.
+    field_defs          name and type of fields we want to export (also define the order of extraction) in <name>:<type> format.
                             Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object
                             Some examples of 'field_defs' declaration:
-                                "type:u16;name:string;x:f32;y:f32"
+                                "type:u16;name:string;x:f32;y:f32;tileindex:u32"
                                 "type:u16;power:s8;visible:bool"
                             Note that not found fields are just ignored so you can extract different object types at same time easily.
     declType            declaration type for objects (default is "void").
