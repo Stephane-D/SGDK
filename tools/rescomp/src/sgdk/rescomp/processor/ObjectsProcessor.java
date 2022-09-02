@@ -32,8 +32,8 @@ public class ObjectsProcessor implements Processor
             if (values.length != 2)
                 throw new Exception("Error: invalid field definition '" + def + "', name and type should be separated by ':' character");
 
-            final String fieldName = values[0].trim();
-            final String fieldType = values[1].trim();
+            final String fieldName = values[0].trim().toLowerCase();
+            final String fieldType = values[1].trim().toLowerCase();
 
             if (StringUtil.isEmpty(fieldName))
                 throw new Exception("Error: invalid field definition '" + def + "', field name is empty");
