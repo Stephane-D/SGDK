@@ -87,6 +87,7 @@ public class SFieldDef
         @Override
         public String toString()
         {
+            // important to keep everything lower case
             switch (this)
             {
                 case U8:
