@@ -26,6 +26,11 @@
 
 
 /**
+ * \brief Initialize the task sub system (reset internal variables).
+ */
+void TSK_init();
+
+/**
  * \brief Configure the user task callback function.<br>
  *  Must be set with a not NULL callback before calling any TSK_xxx functions.
  *

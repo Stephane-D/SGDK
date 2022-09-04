@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "sram.h"
 #include "sprite_eng.h"
+#include "task.h"
 
 #include "tools.h"
 #include "kdebug.h"
@@ -628,6 +629,7 @@ static void internal_reset()
     dmaDataBuffer = NULL;
     DMA_init();
     DMA_setMaxTransferSizeToDefault();
+    TSK_init();
     VDP_init();
     PSG_init();
     JOY_init();
