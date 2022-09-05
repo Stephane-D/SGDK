@@ -49,6 +49,29 @@ MD programming tutorials from Ohsat:<br>
 https://www.ohsat.com/tutorial/mdmisc/creating-graphics-for-md/<br>
 Very complete and visual tutorials from Danibus (spanish only):<br>
 https://danibus.wordpress.com/<br>
+
+### USEFUL TOOLS
+
+Here's a list of useful tools when it comes to create your assets:
+
+#### Graphics
+
+* [Asesprite](https://www.aseprite.org/)
+* [Graphics gale](https://graphicsgale.com/)
+* [Pro Motion](https://www.cosmigo.com/)
+
+#### Map / Level
+
+* [16Tile: SGDK specific tile map editor)](https://allone-works.itch.io/16tile)
+* [Tiled: Tile map editor, supported by SGDK resource compiler tool](https://www.mapeditor.org/)
+* [LDTK: Tile map editor, support Tiled formats](https://deepnight.net/tools/ldtk-2d-level-editor/)
+* [Ogmo: Another tile map editor](https://ogmo-editor-3.github.io/)
+
+#### Music / sound
+
+* [Deflemask: music tracker supporting several system as the Sega Mega Drive](https://www.deflemask.com/)
+* [Furnace: new music tracker supporting many systems](https://github.com/tildearrow/furnace)
+
  
 ## HELP AND SUPPORT
 
@@ -102,7 +125,7 @@ https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ## SUPPORT SGDK
 
-SGDK is completly free but you can support it on Patreon if you want: https://www.patreon.com/SGDK
+SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
 
 ## THANKS
 
@@ -131,12 +154,12 @@ SGDK is completly free but you can support it on Patreon if you want: https://ww
 
 ## SPECIAL THANKS
 
-Of course I thank all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for
-my premium patreon supporters (100$ / month):
+Of course I thank all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for generous donation from:
 
 - Bitmap Bureau (Xeno Crisis team)
 - Neofid Studios (Demons of Asteborg team)
 - Dmitry (D I)
+- Rajen Savjani
 
 ## POWERED BY THE SGDK!
 
