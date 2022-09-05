@@ -154,12 +154,12 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 
 ## SPECIAL THANKS
 
-Of course I thank all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for
-my premium patreon supporters (100$ / month):
+Of course I thank all my patreon for their continuous support but I want to dedicace a very special and warmfull thanks for generous donation from:
 
 - Bitmap Bureau (Xeno Crisis team)
 - Neofid Studios (Demons of Asteborg team)
 - Dmitry (D I)
+- Rajen Savjani
 
 ## POWERED BY THE SGDK!
 
