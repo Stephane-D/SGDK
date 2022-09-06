@@ -279,6 +279,8 @@ public class TMX
                         {
                             if (tileset.file.contains("Gamefield"))
                                 throw new Exception("Tile [" + x + "," + y + "]  of layer '" + layerName + "' is referencing the Gamefield overlay tileset !)");
+                            if (tileset.file.contains("DMA"))
+                                throw new Exception("Tile [" + x + "," + y + "]  of layer '" + layerName + "' is referencing the Gamefield overlay tileset !)");
                         }
 
                         usedTilesetsSet.add(tileset);

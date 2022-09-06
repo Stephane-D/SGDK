@@ -764,7 +764,7 @@ public class Compiler
         }
         catch (Exception e)
         {
-            System.out.println();
+            System.err.println();
             System.err.println(e.getMessage());
             System.err.println("Error: cannot compile resource '" + input + "'");
             e.printStackTrace();

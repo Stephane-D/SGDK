@@ -700,7 +700,7 @@ public class ImageUtil
         }
         catch (Exception e)
         {
-            throw new Exception(e.getMessage() + " - File: '" + filename + "'");
+            throw new Exception(e.getMessage() + "\nFile: '" + filename + "'");
         }
 
         // replace by alternate backdrop color
@@ -1177,7 +1177,7 @@ public class ImageUtil
         }
         catch (Exception e)
         {
-            throw new Exception(e.getMessage() + " - File: '" + filename + "'");
+            throw new Exception(e.getMessage() + "\nFile: '" + filename + "'");
         }
 
         if (palette == null)
