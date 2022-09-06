@@ -59,6 +59,7 @@ Here's a list of useful tools when it comes to create your assets:
 * [Asesprite](https://www.aseprite.org/)
 * [Graphics gale](https://graphicsgale.com/)
 * [Pro Motion](https://www.cosmigo.com/)
+* [Grafx2](http://grafx2.chez.com/)
 
 #### Map / Level
 
