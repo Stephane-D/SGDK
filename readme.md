@@ -6,7 +6,7 @@ Github: https://github.com/Stephane-D/SGDK
 **SGDK** is a free development kit allowing development of software in **C language** for the **Sega Mega Drive**.
 It contains the development library itself (with the code sources) and some custom tools used to compile resources.
 SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate a ROM image. Binaries (GCC 6.3) are provided for Windows OS for convenience, but you need to install it by yourself for other operating systems.
-Note that SGDK also requires Java (custom tools require it) so you need to have Java installed on your system.
+Note that SGDK also requires Java (custom tools require it), so you need to have Java installed on your system.
 
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
 GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see [COPYING.RUNTIME](COPYING.RUNTIME) file)
@@ -60,18 +60,19 @@ Here's a list of useful tools when it comes to create your assets:
 * [Graphics gale](https://graphicsgale.com/)
 * [Pro Motion](https://www.cosmigo.com/)
 * [Grafx2](http://grafx2.chez.com/)
+* [Palette quantizer](https://rilden.github.io/tiledpalettequant/): powerful tool to convert your image with palette palette constraints
 
 #### Map / Level
 
-* [16Tile: SGDK specific tile map editor)](https://allone-works.itch.io/16tile)
-* [Tiled: Tile map editor, supported by SGDK resource compiler tool](https://www.mapeditor.org/)
-* [LDTK: Tile map editor, support Tiled formats](https://deepnight.net/tools/ldtk-2d-level-editor/)
-* [Ogmo: Another tile map editor](https://ogmo-editor-3.github.io/)
+* [16Tile](https://allone-works.itch.io/16tile): SGDK specific tile map editor
+* [Tiled](https://www.mapeditor.org/): Tile map editor, supported by SGDK resource compiler tool
+* [LDTK](https://deepnight.net/tools/ldtk-2d-level-editor/): New but powerful tile map editor (support Tiled formats as well)
+* [Ogmo](https://ogmo-editor-3.github.io/): Another tile map editor
 
 #### Music / sound
 
-* [Deflemask: music tracker supporting several system as the Sega Mega Drive](https://www.deflemask.com/)
-* [Furnace: new music tracker supporting many systems](https://github.com/tildearrow/furnace)
+* [Deflemask](https://www.deflemask.com/): music tracker supporting several system as the Sega Mega Drive
+* [Furnace](https://github.com/tildearrow/furnace): new music tracker supporting many systems
 
  
 ## HELP AND SUPPORT
