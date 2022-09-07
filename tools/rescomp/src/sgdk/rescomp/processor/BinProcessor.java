@@ -23,19 +23,17 @@ public class BinProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong BIN definition");
-            System.out.println("BIN name file [align [salign [fill [compression [far]]]]]");
+            System.out.println("BIN name file [align [size_align [fill [compression [far]]]]]");
             System.out.println("  name          BIN data variable name");
             System.out.println("  file          path of the data file to convert to binary data array");
             System.out.println("  align         memory address alignment for generated data array (default is 2)");
-            System.out.println("  salign        size alignment for the generated data array (default is 2)");
+            System.out.println("  size_align    size alignment for the generated data array (default is 2)");
             System.out.println("  fill          fill value for the size alignment (default is 0)");
             System.out.println("  compression   compression type, accepted values:");
-            System.out.println("                  0 / NONE        = no compression (default)");
-            System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println(
-                    "                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println(
-                    "  far           'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = TRUE)");
+            System.out.println("                    0 / NONE        = no compression (default)");
+            System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("  far           'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = TRUE)");
 
             return null;
         }

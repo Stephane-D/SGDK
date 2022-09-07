@@ -64,21 +64,19 @@ public class ObjectsProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong OBJECTS definition");
-            System.out.println("OBJECTS name tmx_file layer_id field_defs [type]");
-            System.out.println("name                name of the output array Objects structure");
-            System.out.println("tmx_file            path of the input TMX file (TMX Tiled file)");
-            System.out.println("layer_id            object group/layer name we want to extract object from.");
-            System.out.println("field_defs          name and type of fields we want to extract (also define the order of extraction) in <name>:<type> format.");
-            System.out.println(
-                    "                       Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object");
-            System.out.println("                        Some examples of 'field_defs' declaration:");
-            System.out.println("                            \"type:u16;name:string;x:f32;y:f32\"");
-            System.out.println("                            \"type:u16;power:s8;visible:bool\"");
-            System.out.println("                        Not found fields are just ignored so you can extract different object types easily.");
-            System.out.println("declType            declaration type for objects (default is \"void\").");
-            System.out.println(
-                    "                        By default object array is untyped (void) but you can specify your own type if you want (\"Object\", \"Entity\", ...)");
-            System.out.println("typeFilter          define a type filter if we only want to extract Tiled objects of a specific type (see above).");
+            System.out.println("OBJECTS name tmx_file layer_id field_defs [decl_type [type_filter]]");
+            System.out.println("name            name of the output array Objects structure");
+            System.out.println("tmx_file        path of the input TMX file (TMX Tiled file)");
+            System.out.println("layer_id        object group/layer name we want to extract object from.");
+            System.out.println("field_defs      name and type of fields we want to extract (also define the order of extraction) in <name>:<type> format.");
+            System.out.println("                    Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object");
+            System.out.println("                    Some examples of 'field_defs' declaration:");
+            System.out.println("                        \"type:u16;name:string;x:f32;y:f32;tileindex:u32\"");
+            System.out.println("                        \"type:u16;power:s8;visible:bool\"");
+            System.out.println("                    Not found fields are just ignored so you can extract different object types easily.");
+            System.out.println("decl_type       declaration type for objects (default is \"void\").");
+            System.out.println("                    By default object array is untyped (void) but you can specify your own type if you want (\"Object\", \"Entity\", ...)");
+            System.out.println("type_filter     define a type filter if we only want to extract Tiled objects of a specific type.");
 
             return null;
         }

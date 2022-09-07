@@ -28,14 +28,14 @@ public class TilesetProcessor implements Processor
             System.out.println("  name          Tileset variable name");
             System.out.println("  file          path of the input file (BMP, PNG image file or TSX Tiled file)");
             System.out.println("  compression   compression type, accepted values:");
-            System.out.println("                 -1 / BEST / AUTO = use best compression");
-            System.out.println("                  0 / NONE        = no compression (default)");
-            System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("                   -1 / BEST / AUTO = use best compression");
+            System.out.println("                    0 / NONE        = no compression (default)");
+            System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  opt           define the optimisation level, accepted values:");
-            System.out.println("                  0 / NONE        = no optimisation, each tile is unique (default for TSX file)");
-            System.out.println("                  1 / ALL         = ignore duplicated and flipped tile (default for image file)");
-            System.out.println("                  2 / DUPLICATE   = ignore duplicated tile only");
+            System.out.println("                    0 / NONE        = no optimisation, each tile is unique (default for TSX file)");
+            System.out.println("                    1 / ALL         = ignore duplicated and flipped tile (default for image file)");
+            System.out.println("                    2 / DUPLICATE   = ignore duplicated tile only");
 
             return null;
         }

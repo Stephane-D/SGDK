@@ -29,22 +29,22 @@ public class TilemapProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong TILEMAP definition");
-            System.out.println("TILEMAP name \"img_file\" tileset_id [compression [mapopt [mapbase]]]");
+            System.out.println("TILEMAP name \"img_file\" tileset_id [compression [map_opt [map_base]]]");
             System.out.println("  name          Tilemap variable name");
             System.out.println("  file          path of the input image file (BMP or PNG image file)");
             System.out.println("  tileset_id    base tileset resource to use (allow to share tileset along several maps)");
             System.out.println("  compression   compression type, accepted values:");
-            System.out.println("                    -1 / BEST / AUTO = use best compression");
-            System.out.println("                     0 / NONE        = no compression (default)");
-            System.out.println("                     1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println("                     2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println("  mapopt        define the map optimisation level, accepted values:");
-            System.out.println("                     0 / NONE        = no optimisation, each tile is unique");
-            System.out.println("                     1 / ALL         = find duplicate and flipped tile (default)");
-            System.out.println("                     2 / DUPLICATE   = find duplicate tile only");
-            System.out.println("  mapbase       define the base tilemap value, useful to set a default priority, palette and base tile index offset");
+            System.out.println("                   -1 / BEST / AUTO = use best compression");
+            System.out.println("                    0 / NONE        = no compression (default)");
+            System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("  map_opt       define the map optimisation level, accepted values:");
+            System.out.println("                    0 / NONE        = no optimisation, each tile is unique");
+            System.out.println("                    1 / ALL         = find duplicate and flipped tile (default)");
+            System.out.println("                    2 / DUPLICATE   = find duplicate tile only");
+            System.out.println("  map_base      define the base tilemap value, useful to set a default priority, palette and base tile index offset");
             System.out.println();
-            System.out.println("TILEMAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [mapbase]]]");
+            System.out.println("TILEMAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [map_base]]]");
             System.out.println("  name              Tilemap variable name");
             System.out.println("  tmx_file          path of the input TMX file (TMX Tiled file)");
             System.out.println("  layer_id          layer name we want to extract map data from.");
@@ -54,7 +54,7 @@ public class TilemapProcessor implements Processor
             System.out.println("                        1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println("                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  map_compression   compression type for map (same accepted values then 'ts_compression')");
-            System.out.println("  mapbase           define the base tilemap value, useful to set a default priority, palette and base tile index offset.");
+            System.out.println("  map_base          define the base tilemap value, useful to set a default priority, palette and base tile index offset.");
 
             return null;
         }

@@ -61,7 +61,7 @@ public class Tileset extends Resource
         tileByHashcodeMap = new HashMap<>();
         isDuplicate = false;
 
-        // don't optimize tileset
+        // !! don't optimize tilesets (important to preserve tile indexes here) !!
         for (Tileset tileset : tilesets)
             for (Tile tile : tileset.tiles)
                 add(tile);
@@ -252,6 +252,8 @@ public class Tileset extends Resource
 
     private void addInternal(Tile tile)
     {
+        // better to keep first index if duplicated (should not be really useful)..
+        // if (!tileIndexesMap.containsKey(tile))
         tileIndexesMap.put(tile, Integer.valueOf(tiles.size()));
 
         final Integer hashKey = Integer.valueOf(tile.hashCode());

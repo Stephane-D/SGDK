@@ -34,17 +34,17 @@ public class SpriteProcessor implements Processor
             System.out.println("  width         width of a single sprite frame in tile");
             System.out.println("  height        heigth of a single sprite frame in tile");
             System.out.println("  compression   compression type, accepted values:");
-            System.out.println("                 -1 / BEST / AUTO = use best compression");
-            System.out.println("                  0 / NONE        = no compression (default)");
-            System.out.println("                  1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println("                  2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("                   -1 / BEST / AUTO = use best compression");
+            System.out.println("                    0 / NONE        = no compression (default)");
+            System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  time          display frame time in 1/60 of second (time between each animation frame)");
             System.out.println("  collision     collision type: CIRCLE, BOX or NONE (BOX by default)");
             System.out.println("  opt           sprite cutting optimization strategy, accepted values:");
-            System.out.println("                  0 / BALANCED  = balance between used tiles and hardware sprites (default)");
-            System.out.println("                  1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles");
-            System.out.println("                  2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)");
-            System.out.println("                  3 / NONE      = no optimization (cover the whole sprite frame)");
+            System.out.println("                    0 / BALANCED  = balance between used tiles and hardware sprites (default)");
+            System.out.println("                    1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles");
+            System.out.println("                    2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)");
+            System.out.println("                    3 / NONE      = no optimization (cover the whole sprite frame)");
             System.out.println("  iteration     number of iteration for sprite cutting optimization (default = 500000)");
 
             return null;

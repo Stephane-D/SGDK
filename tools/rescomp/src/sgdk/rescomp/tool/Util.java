@@ -157,13 +157,6 @@ public class Util
         final byte[] data = ImageUtil.getIndexedPixels(imgFile);
         // convert to 8 bpp
         return ImageUtil.convertTo8bpp(data, imgInfo.bpp);
-
-        // // find max color index, should be done after 8bpp conversion
-        // final int maxIndex = ArrayMath.max(data, false);
-        // // check if we are above the maximum palette size
-        // if (maxIndex >= maxPaletteSize)
-        // throw new IllegalArgumentException("'" + imgFile + "' uses color index >= " + maxPaletteSize
-        // + ", only image with a maximum of " + maxPaletteSize + " colors are accepted.");
     }
 
     public static byte[] sizeAlign(byte[] data, int align, byte fill)

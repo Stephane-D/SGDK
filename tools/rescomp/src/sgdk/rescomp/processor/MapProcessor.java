@@ -27,20 +27,20 @@ public class MapProcessor implements Processor
         if (fields.length < 4)
         {
             System.out.println("Wrong MAP definition");
-            System.out.println("MAP name \"img_file\" tileset_id [compression [mapbase]]");
+            System.out.println("MAP name \"img_file\" tileset_id [compression [map_base]]");
             System.out.println("  name          Map variable name");
             System.out.println("  img_file      path of the input image file (BMP or PNG image file)");
             System.out.println("  tileset_id    base tileset resource to use (allow to share tileset along several maps)");
             System.out.println("  compression   compression type, accepted values:");
-            System.out.println("                    -1 / BEST / AUTO = use best compression");
-            System.out.println("                     0 / NONE        = no compression (default)");
-            System.out.println("                     1 / APLIB       = aplib library (good compression ratio but slow)");
-            System.out.println("                     2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
-            System.out.println("  mapbase       define the base tilemap value, useful to set a default priority, palette and base tile index offset");
+            System.out.println("                   -1 / BEST / AUTO = use best compression");
+            System.out.println("                    0 / NONE        = no compression (default)");
+            System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
+            System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
+            System.out.println("  map_base      define the base tilemap value, useful to set a default priority, palette and base tile index offset");
             System.out.println(
                     "                    Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.");
             System.out.println();
-            System.out.println("MAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [mapbase]]]");
+            System.out.println("MAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [map_base]]]");
             System.out.println("  name              Map variable name");
             System.out.println("  tmx_file          path of the input TMX file (TMX Tiled file)");
             System.out.println("  layer_id          layer name we want to extract map data from.");
@@ -50,7 +50,7 @@ public class MapProcessor implements Processor
             System.out.println("                        1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println("                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  map_compression   compression type for map (same accepted values then 'ts_compression')");
-            System.out.println("  mapbase           define the base tilemap value, useful to set a default priority, palette and base tile index offset");
+            System.out.println("  map_base          define the base tilemap value, useful to set a default priority, palette and base tile index offset");
 
             return null;
         }

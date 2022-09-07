@@ -72,6 +72,8 @@ public class TMX
 
     // keep it lower case
     static final String FIELD_TILE_INDEX = "tileindex";
+    static final String FIELD_INDEX = "index";
+    static final String FIELD_IND = "ind";
 
     static final String SUFFIX_PRIORITY = " priority";
     static final String SUFFIX_LOW_PRIORITY = " low";
@@ -689,7 +691,7 @@ public class TMX
             }
 
             // sort objects on tile index (if it exists)
-            Collections.sort(objects, new TileIndexComparator());
+            Collections.sort(objects, new ObjectComparator());
         }
 
         private boolean addField(String objectName, Map<String, TField> fields, TField field)
@@ -733,12 +735,23 @@ public class TMX
             return "Object layer=" + layerName + " number of object=" + objects.size();
         }
 
-        static class TileIndexComparator implements Comparator<SObject>
+        static class ObjectComparator implements Comparator<SObject>
         {
             @Override
             public int compare(SObject o1, SObject o2)
             {
-                return Long.compare(o1.getFieldLongValue(FIELD_TILE_INDEX), o2.getFieldLongValue(FIELD_TILE_INDEX));
+                int result;
+
+                // sort first on 'index' field
+                result = Long.compare(o1.getFieldLongValue(FIELD_INDEX), o2.getFieldLongValue(FIELD_INDEX));
+                // then sort on 'ind' field
+                if (result == 0)
+                    result = Long.compare(o1.getFieldLongValue(FIELD_IND), o2.getFieldLongValue(FIELD_IND));
+                // then sort on 'tileindex' field
+                if (result == 0)
+                    result = Long.compare(o1.getFieldLongValue(FIELD_TILE_INDEX), o2.getFieldLongValue(FIELD_TILE_INDEX));
+
+                return result;
             }
         }
     }

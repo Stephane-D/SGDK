@@ -48,8 +48,7 @@ public class WavProcessor implements Processor
             System.out.println("                It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.");
             System.out.println("  out_rate  output PCM rate (only used for Z80_DRIVER_PCM driver)");
             System.out.println("              By default the default WAV output rate is used.");
-            System.out.println(
-                    "  far           'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = TRUE)");
+            System.out.println("  far      'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = TRUE)");
 
             return null;
         }

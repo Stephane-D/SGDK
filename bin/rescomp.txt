@@ -138,7 +138,7 @@ TileMap is used to draw in background plane, it requires a tileset which can be 
 TILEMAP resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
 Syntax:
-TILEMAP name img_file tileset_id [compression [mapopt [mapbase]]]
+TILEMAP name img_file tileset_id [compression [map_opt [map_base]]]
 
     name            name of the output TileMap structure
     img_file        path of the input image file (BMP or PNG image file)
@@ -149,14 +149,14 @@ TILEMAP name img_file tileset_id [compression [mapopt [mapbase]]]
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the tilemap optimisation level, accepted values:
+    map_opt         define the tilemap optimisation level, accepted values:
                         0 / NONE        = no optimisation, each tile is unique
                         1 / ALL         = find duplicated and flipped tile (default)
                         2 / DUPLICATE   = find duplicated tile only
-    mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+    map_base        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                         Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
                                 
-TILEMAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
+TILEMAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
 
     name                name of the output TileMap structure
     tmx_file            path of the input TMX file (TMX Tiled file with CSV encoded map data)
@@ -167,7 +167,7 @@ TILEMAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
                             1 / APLIB       = aplib library (good compression ratio but slow)
                             2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     map_compression     compression type for map (same accepted values than 'ts_compression')
-    mapbase             define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+    map_base            define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                             Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
 
 Tips:
@@ -188,7 +188,7 @@ Map is used to define a large background/plane data, it's different from the IMA
 so it can encode large background while taking much less ROM space than IMAGE resource so use it to handle large level.
 
 Syntax:
-MAP name img_file tileset_id [compression [mapbase]]
+MAP name img_file tileset_id [compression [map_base]]
 
     name            name of the output Map structure
     img_file        path of the input image file (BMP or PNG image file)
@@ -199,10 +199,10 @@ MAP name img_file tileset_id [compression [mapbase]]
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapbase        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                       Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
+    map_base        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+                        Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
                                 
-MAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
+MAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
 
     name                name of the output Map structure
     tmx_file            path of the input TMX file (TMX Tiled file with CSV encoded map data)
@@ -213,7 +213,7 @@ MAP name tmx_file layer_id [ts_compression [map_compression [mapbase]]]
                             1 / APLIB       = aplib library (good compression ratio but slow)
                             2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     map_compression     compression type for map (same accepted values than 'ts_compression')
-    mapbase             define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+    map_base            define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                             Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
 
 Tips:
@@ -229,10 +229,11 @@ When using a TMX Tiled file you can define the priority information in different
 
 OBJECTS
 -------
-Take a TMX file as input and transform it into an array of Object (array of pointer).
+Take a TMX file as input and transform it into an array of Object (actually an array of object pointer).
 These objects can be used to define almost anything you want to attach to a specific MAP (entities, events, actions... whatever we can think of).
 Objects are built using the object layers of Tiled TMX file and since Tiled 1.8 you can define your own Object type letting you to build your own
 custom objects that you can import through rescomp.
+
 Here's the accepted SGDK type(s) for each 'Tiled' type:
   Tiled   SGDK
   bool    bool
@@ -244,23 +245,20 @@ Here's the accepted SGDK type(s) for each 'Tiled' type:
   string  string (internally char*)
   Enum    u8, u16, u32
   
-As you can see, you can also use your own enumerations in which case you need to save them as number instead (not string).
-and make sure they perfectly match your C enums (be careful about the allocated type size for your enum, default is u32 with GCC).
+As you can see, you can also use your own enumerations in which case you need to save them as number instead (not string) and make
+sure they perfectly match your C enums (be careful about the allocated type size for your enum, default is u32 with GCC).
 
 The Tiled objects has some default attributes: 'id', 'type', 'name', 'x' and 'y' that you can use:
 - 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want.
-- 'type' is only used as type filter (see the optional 'typeFilter' parameter below) and not exported as field but you can define
-   your own custom 'type' field (as an integer) if needed.
-- 'name' can be exported as it is in string format.
-  To enable export of the field, you need to add a custom boolean 'exportName' field and set its value to 'true'.
+- 'type' is only used as type filter (see the optional 'type_filter' parameter below) and not exported as field but you can define
+  your own custom 'type' field (as an integer) if needed.
+- 'name' can be exported in string format.
+  To enable export of that field you need to add a custom boolean 'exportName' field and set its value to 'true'.
 - 'x' and 'y' define the object position on the map and can be exported in any number format.
   To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
-  You can also enable export of the tile index value corresponding to: x + (y * map_width)) in 'tileIndex' field by adding a custom boolean
-  'exportTileIndex' field and setting its value to 'true'.
-  When you enable the 'tileIndex' export then objects are sorted (ascending order) on the tile index value allowing fast tile index based searchs.
-
+  
 Syntax:
-OBJECTS name tmx_file layer_id field_defs [declType [typeFilter]]
+OBJECTS name tmx_file layer_id field_defs [decl_type [type_filter]]
 
     name                name of the output array Objects structure
     tmx_file            path of the input TMX file (TMX Tiled file)
@@ -271,9 +269,15 @@ OBJECTS name tmx_file layer_id field_defs [declType [typeFilter]]
                                 "type:u16;name:string;x:f32;y:f32;tileindex:u32"
                                 "type:u16;power:s8;visible:bool"
                             Note that not found fields are just ignored so you can extract different object types at same time easily.
-    declType            declaration type for objects (default is "void").
+    decl_type           declaration type for objects (default is "void").
                             By default object array is untyped (void) but you can specify your own type if you want ("Object", "Entity", ...)
-    typeFilter          define a type filter if we only want to extract Tiled objects of a specific type (see above).
+    type_filter         define a type filter if we only want to extract Tiled objects of a specific type (see above).
+
+Tips:
+- You can use an integer 'index' or 'ind' field to sort your objects (ascending order).
+- You can export the tile index value corresponding to: x + (y * map_width)) in 'tileIndex' field by adding a custom boolean
+  'exportTileIndex' field and setting its value to 'true'. When you enable the 'tileIndex' export then objects are sorted (ascending order)
+  on the tile index value allowing fast tile index based searchs (be careful: 'index' or 'ind' fields has priority for sorting if they exist).
 
 
 IMAGE
@@ -283,7 +287,7 @@ Image is used to directly draw image in background plane, it internally contains
 IMAGE resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
 Syntax:
-IMAGE name img_file [compression [mapopt [mapbase]]]
+IMAGE name img_file [compression [map_opt [map_base]]]
 
     name            name of the output Image structure
     img_file        path of the input image file (BMP or PNG image)
@@ -293,11 +297,11 @@ IMAGE name img_file [compression [mapopt [mapbase]]]
                         0 / NONE        = no compression (default)
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
-    mapopt          define the tilemap optimisation level, accepted values:
+    map_opt         define the tilemap optimisation level, accepted values:
                         0 / NONE        = no optimisation (each tile is unique)
                         1 / ALL         = find duplicated and flipped tile (default)
                         2 / DUPLICATE   = find duplicated tile only
-    mapbase         define the base tilemap value, useful to set a default priority, palette and base tile index offset.
+    map_base        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                     Using a base tile index offset (static tile allocation) allow to use the faster VDP_xxxTileMapxxx(..) functions.
 
 Tips:
@@ -405,12 +409,12 @@ BIN
 Take any data file as input and transform it into binary data array accessible through SGDK.
 
 Syntax:
-BIN name file [align [salign [fill [compression [far]]]]]
+BIN name file [align [size_align [fill [compression [far]]]]]
 
     name            BIN data variable name
     file            path of the data file to convert to binary data array
     align           memory address alignment for generated data array (default is 2)
-    salign          size alignment for the generated data array (default is 2)
+    size_align      size alignment for the generated data array (default is 2)
     fill            fill value for the size alignment (default is 0)
     compression     compression type, accepted values:
                         0 / NONE        = no compression

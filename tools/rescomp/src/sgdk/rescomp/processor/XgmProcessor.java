@@ -26,16 +26,14 @@ public class XgmProcessor implements Processor
         {
             System.out.println("Wrong XGM definition");
             System.out.println("XGM name file [timing [options]]");
-            System.out.println("  name\t\tXGM music variable name");
-            System.out.println("  file\tpath of the .vgm or .xgm music file to convert to binary data array");
-            System.out.println("  timing\tdefine the XGM base timing");
-            System.out
-                    .println("      \t -1 (default) = AUTO (NTSC or PAL depending the information in source VGM file)");
-            System.out.println("      \t  0 = NTSC (XGM is generated for NTSC system)");
-            System.out.println("      \t  1 = PAL (XGM is generated for PAL system)");
-            System.out.println("  options\toptionals parameters for xgmtool");
-            System.out.println(
-                    "      \t ex: \"-dr -di\" to disable some sample auto process (see xgmtool to get more info)");
+            System.out.println("  name      XGM music variable name");
+            System.out.println("  file      path of the .vgm or .xgm music file to convert to binary data array");
+            System.out.println("  timing    define the XGM base timing");
+            System.out.println("               -1 (default) = AUTO (NTSC or PAL depending the information in source VGM file)");
+            System.out.println("                0 = NTSC (XGM is generated for NTSC system)");
+            System.out.println("                1 = PAL (XGM is generated for PAL system)");
+            System.out.println("  options   optionals parameters for xgmtool");
+            System.out.println("                ex: \"-dr -di\" to disable some sample auto process (see xgmtool to get more info)");
 
             return null;
         }
