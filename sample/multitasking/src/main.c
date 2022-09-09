@@ -101,7 +101,7 @@ static void fg_tsk(void)
 }
 
 /// Entry point
-int main(uint16_t __attribute__((unused)) hard)
+int main(bool hard)
 {
 	// Configure vertical blanking interrupt callback
 	SYS_setVIntCallback(vint_cb);

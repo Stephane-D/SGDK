@@ -113,7 +113,7 @@ static void hint();
 extern s16 xgmTempoCnt;
 
 // make it in a volatile variable so compiler won't optimize to constant in code
-vu16 numMusic = 13;
+vu16 numMusic = 14;
 
 // track infos cache
 static XD3 trackInfos[MAX_MUSIC];
