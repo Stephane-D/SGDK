@@ -1,4 +1,4 @@
-# SGDK 1.70 (february 2022)
+# SGDK 1.80 (september 2022)
 #### Copyright 2022 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
@@ -52,9 +52,9 @@ https://danibus.wordpress.com/<br>
 
 ### USEFUL TOOLS
 
-Here's a list of useful tools when it comes to create your assets:
+Here's a list of useful tools to help you creating your assets:
 
-#### Graphics
+#### Pixel art / Sprite
 
 * [Asesprite](https://www.aseprite.org/)
 * [Graphics gale](https://graphicsgale.com/)
@@ -73,7 +73,8 @@ Here's a list of useful tools when it comes to create your assets:
 
 * [Deflemask](https://www.deflemask.com/): music tracker supporting several system as the Sega Mega Drive
 * [Furnace](https://github.com/tildearrow/furnace): new music tracker supporting many systems
-
+* [Wavosaur](https://www.wavosaur.com/): wave sound editor (windows only)
+* [Audacity](https://www.audacityteam.org/): wave sound editor (all OS)
  
 ## HELP AND SUPPORT
 
@@ -149,10 +150,10 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.
 - starling13 for fixes.
-- davidgf for its contributions (apultra tool, improved assembly LTO optimization).
+- davidgf for its contributions (improved assembly LTO optimization).
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
-- all those i forgot and generally all people helping by providing support, reporting bugs and supporting SGDK in any way !
+- all those i forgot and generally all people helping by providing support, reporting bugs, adding samples and supporting SGDK in any way !
 
 ## SPECIAL THANKS
 
