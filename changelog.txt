@@ -1,4 +1,80 @@
-SGDK 1.70 (February 2022)
+SGDK 1.80 (September 2022)
+--------------------------
+
+COMPILER
+* RESCOMP
+ - added new OBJECTS resource (see rescomp.txt for more infos)
+ - added new TILEMAP resource (see rescomp.txt for more infos)
+ - added Tiled TMX map and object support (TILEMAP, MAP and OBJECT resources)
+ - added Tiled TSX tileset support (TILESET resource)
+ - added global RGB image support (see rescompt.txt for more infos)
+ - added .pal file and RGB image support for PALETTE resource
+ - added extension support so you can add your own custom resource (see rescomp.txt for more infos)
+ - better management of duplicated resources
+ - better compression logic (don't compress if gain is too low)
+ - better logic for extended attributes from tile (MAP and TILEMAP resources)
+ - improved tile indexing performance
+ - improved compilation reports
+ - some tweaks and fixes
+* XGMTOOL
+ - added support to split VGM and PCM streams in VGM file (Thanks to Vic_)
+ - added ZGM (compressed VGM) export support (Thanks to Vic_, useful for 32X dev)
+* MAKEFILE
+ - added '-fms-extensions' flag to allow usage of anonymous embeded structures and enums
+ - added '--register-prefix-optional,--bitwise-or' flags to help with assembly code (can use '|' as OR operator)
+ - added 'ext.mk' and 'ext_lib.mk' files for makefile extension and customization
+ - removed '-ggdb' flag for .s files compilation. It makes AS crashing when using 'dc.b' data declaration.
+* README
+ - added 'useful tools' section
+ - some rewrites and tweaks (thanks to MrBen89)
+ - updated tutorial section
+ - updated thanks section
+ - added special thanks section
+
+LIBRARY
+* OBJECT
+ - added new 'pool' unit for easy and fast object pool management
+ - added new 'object' unit for easy general object implementation
+* VDP
+ - renamed many constants for better cohenrency in naming convention (ex: TILE_USERINDEX --> TILE_USER_INDEX)
+ - renamed all GFX_xxx constants to VDP_xxx 
+ - added bit fields to VDPSprite structure for easier field manipulation (thanks to Carlos Aragones)
+ - added many methods to manipulate these fields (thanks to Carlos Aragones)
+* MAP
+ - removed 'palette' and 'tileset' fields from Map structure (better to handle that externally)
+ - fixed allocateMap(..) method
+* MEM
+ - added MEM_allocAt(..) function to allocate memory at a fixed address
+ - splitted memory.h file --> memory.h and memory_base.h (easier to include in .s file)
+* SYS
+ - faster H-int callback implementation (callback method need to be prefixed with HINTERRUPT_CALLBACK now)
+ - added TSK_init() method for easier proper multi tasking system initialization 
+ - modified random() implementation to allow reproducible numbers sequence
+* Z80
+ - added generic and customizable Z80 bus protection methods (Z80_useBusProtection / Z80_setBusProtection)
+ - added generic Z80_setForceDelayDMA() so it can be used by all sound driver (not only reserved to XGM sound driver)
+* SOUND
+ - added Fractal sound driver support (https://gitlab.com/Natsumi/Fractal-Sound)
+ - added PSG_setToneLow(..) method (only set low part of tone register)
+ - renamed PSG_init() --> PSG_reset()
+* TYPE
+ - added volatile fix16/fix32 type (vfix16, vfix32, vf16, vf32)
+ - changed 'bool' to 'u8' instead of 'u16' (don't waste RAM / ROM :p)
+ - added p16 type (short pointer for low ROM / high RAM address)
+* DMA
+ - increased a bit default DMA buffer size
+* added macros to create 'enum' compatible with assembly (.s) files
+* documentation fixes / cleanups / updates
+* removed old deprecated units and headers (vdp_pal and vdp_dma)
+* general cleanup, some refactoring..
+
+SAMPLE
+* rewrote 'sonic' sample with better separation of different units.
+* added new 'platformer' sample (thanks to Gerard Gascon).
+* tweaked/fixed 'scaling' and 'wobble' samples (using the new fast h-int call)
+ 
+ 
+ SGDK 1.70 (February 2022)
 -------------------------
 
 COMPILER
@@ -8,7 +84,6 @@ COMPILER
  - fixed a small bug preventing having a transparent tile with high priority or palette index > 0
  - fixed a bug with 'opt' set to NONE in SPRITE resource
  - fixed illegal sun 'WaveFileReader' class usage for WAV file resampling operation
-* APJ
 * MAKEFILE
  - added 'EXTRA_FLAGS' entry to makefiles so we can use custom extra compilation flags
  - added 'SGDK_GCC' define to identify SGDK compilation toolchain if needed (when used in larger build frameworks)
