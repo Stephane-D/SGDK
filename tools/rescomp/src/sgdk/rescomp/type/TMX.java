@@ -694,7 +694,7 @@ public class TMX
             Collections.sort(objects, new ObjectComparator());
         }
 
-        private boolean addField(String objectName, Map<String, TField> fields, TField field)
+        private static boolean addField(String objectName, Map<String, TField> fields, TField field)
         {
             if (fields.containsKey(field.name))
             {
