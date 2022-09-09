@@ -108,10 +108,10 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of timer. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#a7f3fc01775a7f724229817e60eea7367">getSubTick</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns elapsed subticks from console reset.  <a href="#a7f3fc01775a7f724229817e60eea7367"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#abd9ad6320b8bc696941881efe90b8838">getTick</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns elapsed ticks from console reset.  <a href="#abd9ad6320b8bc696941881efe90b8838"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#aee49759133f0865af797da75c37477b5">getSubTick</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns elapsed subticks from console reset.  <a href="#aee49759133f0865af797da75c37477b5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#a23ff2b273085b78a4fe8c9d177b715ec">getTick</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns elapsed ticks from console reset.  <a href="#a23ff2b273085b78a4fe8c9d177b715ec"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#a52fe9422554dc2d90d4087e96397ceb5">getTime</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromTick)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns elapsed time from console reset.  <a href="#a52fe9422554dc2d90d4087e96397ceb5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="timer_8h.html#a3a8230c180bda89126329f32e522cbcb">getTimeAsFix32</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromTick)</td></tr>
@@ -138,13 +138,14 @@ Variables</h2></td></tr>
 <p>This unit provides basic timer functions (useful for profiling).<br/>
  This unit uses V-Int to count frame so disabling V-Int will make timer methods to not work anymore. </p>
 </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a7f3fc01775a7f724229817e60eea7367"></a><!-- doxytag: member="timer.h::getSubTick" ref="a7f3fc01775a7f724229817e60eea7367" args="()" -->
+<a class="anchor" id="aee49759133f0865af797da75c37477b5"></a><!-- doxytag: member="timer.h::getSubTick" ref="aee49759133f0865af797da75c37477b5" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getSubTick </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -159,13 +160,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="abd9ad6320b8bc696941881efe90b8838"></a><!-- doxytag: member="timer.h::getTick" ref="abd9ad6320b8bc696941881efe90b8838" args="()" -->
+<a class="anchor" id="a23ff2b273085b78a4fe8c9d177b715ec"></a><!-- doxytag: member="timer.h::getTick" ref="a23ff2b273085b78a4fe8c9d177b715ec" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getTick </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -376,7 +378,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="timer_8h.html">timer.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

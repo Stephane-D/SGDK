@@ -88,23 +88,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>Memory handling methods.  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &quot;<a class="el" href="memory__base_8h_source.html">memory_base.h</a>&quot;</code><br/>
+</div>
 <p><a href="memory_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a408c4c066164afa1b6aa3f804c3d3528"></a><!-- doxytag: member="memory.h::ROM" ref="a408c4c066164afa1b6aa3f804c3d3528" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a408c4c066164afa1b6aa3f804c3d3528">ROM</a>&#160;&#160;&#160;0x00000000</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define start of ROM region. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60a6bc58d166c2eefc6a59b6c0d172e8"></a><!-- doxytag: member="memory.h::RAM" ref="a60a6bc58d166c2eefc6a59b6c0d172e8" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a60a6bc58d166c2eefc6a59b6c0d172e8">RAM</a>&#160;&#160;&#160;0xE0FF0000</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define start of RAM region. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6423a880df59733d2d9b509c7718d3a9"></a><!-- doxytag: member="memory.h::STACK_SIZE" ref="a6423a880df59733d2d9b509c7718d3a9" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a6423a880df59733d2d9b509c7718d3a9">STACK_SIZE</a>&#160;&#160;&#160;0x0A00</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define memory allocated for stack (default = 0xA00) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88bbbe6208ac1a0cbcc31e190f0c066e"></a><!-- doxytag: member="memory.h::MEMORY_HIGH" ref="a88bbbe6208ac1a0cbcc31e190f0c066e" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a88bbbe6208ac1a0cbcc31e190f0c066e">MEMORY_HIGH</a>&#160;&#160;&#160;(0xE1000000 - STACK_SIZE)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the memory high address limit for dynamic allocation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a751cc354d474774ed6915953a3285c2b"></a><!-- doxytag: member="memory.h::GET_DWORDFROMPBYTE" ref="a751cc354d474774ed6915953a3285c2b" args="(src)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a751cc354d474774ed6915953a3285c2b">GET_DWORDFROMPBYTE</a>(src)&#160;&#160;&#160;((src[0] &lt;&lt; 24) | (src[1] &lt;&lt; 16) | (src[2] &lt;&lt; 8) | (src[3] &lt;&lt; 0))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get u32 from u8 array (BigEndian order). <br/></td></tr>
@@ -141,25 +130,27 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>free</b>(x)&#160;&#160;&#160;MEM_free(x)</td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1ac07b7c57fea157ad50bbe5ccac598"></a><!-- doxytag: member="memory.h::MEM_getFree" ref="af1ac07b7c57fea157ad50bbe5ccac598" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#af1ac07b7c57fea157ad50bbe5ccac598">MEM_getFree</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1046681eb96b853a986edcd8aa524d1"></a><!-- doxytag: member="memory.h::MEM_getFree" ref="af1046681eb96b853a986edcd8aa524d1" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#af1046681eb96b853a986edcd8aa524d1">MEM_getFree</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return available memory in bytes. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1250b3e8ead220dde254871d92e2d43"></a><!-- doxytag: member="memory.h::MEM_getAllocated" ref="ab1250b3e8ead220dde254871d92e2d43" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#ab1250b3e8ead220dde254871d92e2d43">MEM_getAllocated</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc654d1422e49582037fa6724624d192"></a><!-- doxytag: member="memory.h::MEM_getAllocated" ref="abc654d1422e49582037fa6724624d192" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#abc654d1422e49582037fa6724624d192">MEM_getAllocated</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return allocated memory in bytes. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53d42cc37cfcf79cd1e2be5cff9cbc2d"></a><!-- doxytag: member="memory.h::MEM_getLargestFreeBlock" ref="a53d42cc37cfcf79cd1e2be5cff9cbc2d" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a53d42cc37cfcf79cd1e2be5cff9cbc2d">MEM_getLargestFreeBlock</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d5db9917df8bf8b7a75cad30624e61c"></a><!-- doxytag: member="memory.h::MEM_getLargestFreeBlock" ref="a3d5db9917df8bf8b7a75cad30624e61c" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a3d5db9917df8bf8b7a75cad30624e61c">MEM_getLargestFreeBlock</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return largest free memory block in bytes. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a387e9ad01cd0ef43525665d14d0c5edd">MEM_free</a> (void *ptr)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Deallocate space in memory.  <a href="#a387e9ad01cd0ef43525665d14d0c5edd"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#ac5af5520a6c36967fe5f82f86223773f">MEM_alloc</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate memory block.  <a href="#ac5af5520a6c36967fe5f82f86223773f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9bf3d758a7c5d2948b5cba5a6846d86f"></a><!-- doxytag: member="memory.h::MEM_pack" ref="a9bf3d758a7c5d2948b5cba5a6846d86f" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a9bf3d758a7c5d2948b5cba5a6846d86f">MEM_pack</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#ad35e8b194659d2dc827a2750d23e9202">MEM_allocAt</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> addr, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate memory block at a specific address (useful for short addressing or fixed low level working address)  <a href="#ad35e8b194659d2dc827a2750d23e9202"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a15d8b6b403cf58d7e63d9433c6784b"></a><!-- doxytag: member="memory.h::MEM_pack" ref="a1a15d8b6b403cf58d7e63d9433c6784b" args="(void)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a1a15d8b6b403cf58d7e63d9433c6784b">MEM_pack</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pack all free blocks and reset allocation search from start of heap.<br/>
  You can call this method before trying to allocate small block of memory to reduce memory fragmentation. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#aac1bd7b07a50fc2b29a7480fe648f4ce">MEM_dump</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Show memory dump.  <a href="#aac1bd7b07a50fc2b29a7480fe648f4ce"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a6b6655c217217d5fc00e320e342686c6">MEM_dump</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Show memory dump.  <a href="#a6b6655c217217d5fc00e320e342686c6"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#a293dba0e709cf6885aa051621ee6050e">memset</a> (void *to, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill block of memory.  <a href="#a293dba0e709cf6885aa051621ee6050e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memory_8h.html#ae4155406de019c90e3740da23709a6b3">memsetU16</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
@@ -439,7 +430,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000092">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000064">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -473,7 +464,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000093">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000065">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -507,7 +498,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000094">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000066">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -541,7 +532,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000089">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a293dba0e709cf6885aa051621ee6050e" title="Fill block of memory.">memset(void *to, u8 value, u16 len)</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000061">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a293dba0e709cf6885aa051621ee6050e" title="Fill block of memory.">memset(void *to, u8 value, u16 len)</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -575,7 +566,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000090">Deprecated:</a></b></dt><dd>Uses memsetU16(void *to, u16 value, u16 len) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000062">Deprecated:</a></b></dt><dd>Uses memsetU16(void *to, u16 value, u16 len) instead. </dd></dl>
 
 </div>
 </div>
@@ -609,7 +600,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000091">Deprecated:</a></b></dt><dd>Uses memsetU32(void *to, u32 value, u16 len) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000063">Deprecated:</a></b></dt><dd>Uses memsetU32(void *to, u32 value, u16 len) instead. </dd></dl>
 
 </div>
 </div>
@@ -640,13 +631,52 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
 
 </div>
 </div>
-<a class="anchor" id="aac1bd7b07a50fc2b29a7480fe648f4ce"></a><!-- doxytag: member="memory.h::MEM_dump" ref="aac1bd7b07a50fc2b29a7480fe648f4ce" args="()" -->
+<a class="anchor" id="ad35e8b194659d2dc827a2750d23e9202"></a><!-- doxytag: member="memory.h::MEM_allocAt" ref="ad35e8b194659d2dc827a2750d23e9202" args="(u32 addr, u16 size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* MEM_allocAt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
+          <td class="paramname"><em>addr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Allocate memory block at a specific address (useful for short addressing or fixed low level working address) </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">addr</td><td>Address where we want to allocate memory </td></tr>
+    <tr><td class="paramname">size</td><td>Number of bytes to allocate </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>On success, a pointer to the memory block allocated by the function (should match the <em>addr</em> parameter). The type of this pointer is always void*, which can be cast to the desired type of data pointer in order to be dereferenceable. If the function failed to allocate the requested block of memory (or if specified size = 0), a <em>NULL</em> pointer is returned.</dd></dl>
+<p>Allocates a block of size bytes of memory at the given address, returning a pointer to the beginning of the block (equal to the address here). The content of the newly allocated block of memory is not initialized, remaining with indeterminate values. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6b6655c217217d5fc00e320e342686c6"></a><!-- doxytag: member="memory.h::MEM_dump" ref="a6b6655c217217d5fc00e320e342686c6" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void MEM_dump </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -760,7 +790,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000087">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000059">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -794,7 +824,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000088">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000060">Deprecated:</a></b></dt><dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -935,7 +965,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="memo
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="memory_8h.html">memory.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

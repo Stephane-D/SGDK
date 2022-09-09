@@ -375,7 +375,7 @@ Functions</h2></td></tr>
 </td></tr>
     <tr><td class="paramname">ind</td><td>Tile index where to start clear. </td></tr>
     <tr><td class="paramname">num</td><td>Number of tile to clear. </td></tr>
-    <tr><td class="paramname">wait</td><td>Wait the operation to complete when set to TRUE otherwise it returns immediately but then you will require to wait for DMA completion (<a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a>) before accessing the VDP.</td></tr>
+    <tr><td class="paramname">wait</td><td>Wait the operation to complete when set to TRUE otherwise it returns immediately but then you will require to wait for DMA completion (<a class="el" href="dma_8h.html#a341c446dfc714c6f5577722d0840bf5d" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a>) before accessing the VDP.</td></tr>
   </table>
   </dd>
 </dl>
@@ -494,9 +494,9 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>Value (byte) used to fill VRAM tile data. </td></tr>
-    <tr><td class="paramname">index</td><td>Tile index where start tile data fill (use TILE_USERINDEX as base user index). </td></tr>
+    <tr><td class="paramname">index</td><td>Tile index where start tile data fill (use TILE_USER_INDEX as base user index). </td></tr>
     <tr><td class="paramname">num</td><td>Number of tile to fill. </td></tr>
-    <tr><td class="paramname">wait</td><td>Wait the operation to complete when set to TRUE otherwise it returns immediately but then you will require to wait for DMA completion (<a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a>) before accessing the VDP.</td></tr>
+    <tr><td class="paramname">wait</td><td>Wait the operation to complete when set to TRUE otherwise it returns immediately but then you will require to wait for DMA completion (<a class="el" href="dma_8h.html#a341c446dfc714c6f5577722d0840bf5d" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a>) before accessing the VDP.</td></tr>
   </table>
   </dd>
 </dl>
@@ -825,7 +825,7 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">data</td><td>Pointer to 4bpp bitmap tile data. </td></tr>
-    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USERINDEX as base user index). </td></tr>
+    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USER_INDEX as base user index). </td></tr>
     <tr><td class="paramname">w</td><td>Width of bitmap region to load (in tile). </td></tr>
     <tr><td class="paramname">h</td><td>Heigh of bitmap region to load (in tile). </td></tr>
     <tr><td class="paramname">bmp_w</td><td>Width of bitmap (in tile), it can differ from 'w' parameter.</td></tr>
@@ -898,7 +898,7 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">data</td><td>Pointer to 4bpp bitmap tile data. </td></tr>
-    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USERINDEX as base user index). </td></tr>
+    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USER_INDEX as base user index). </td></tr>
     <tr><td class="paramname">x</td><td>X start position of bitmap region to load (in tile). </td></tr>
     <tr><td class="paramname">y</td><td>Y start position of bitmap region to load (in tile). </td></tr>
     <tr><td class="paramname">w</td><td>Width of bitmap region to load (in tile). </td></tr>
@@ -961,7 +961,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if there is not enough memory to unpack the specified font (only if compression was enabled).</dd></dl>
 <p>This fonction permits to replace system font by user font.<br/>
- The font tile data are loaded to TILE_FONTINDEX and can contains FONT_LEN characters at max.<br/>
+ The font tile data are loaded to TILE_FONT_INDEX and can contains FONT_LEN characters at max.<br/>
  Each character should fit in one tile (8x8 pixels bloc).<br/>
  See also VDP_loadFontData(..) </p>
 
@@ -1020,7 +1020,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>This fonction permits to replace system font by user font.<br/>
- The font tile data are loaded to TILE_FONTINDEX and can contains FONT_LEN characters at max.<br/>
+ The font tile data are loaded to TILE_FONT_INDEX and can contains FONT_LEN characters at max.<br/>
  Each character should fit in one tile (8x8 pixels bloc).<br/>
  See also VDP_loadFont(..) and VDP_loadTileData(..) </p>
 
@@ -1067,7 +1067,7 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">data</td><td>Pointer to tile data. </td></tr>
-    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USERINDEX as base user index). </td></tr>
+    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USER_INDEX as base user index). </td></tr>
     <tr><td class="paramname">num</td><td>Number of tile to load. </td></tr>
     <tr><td class="paramname">tm</td><td>Transfer method.<br/>
  Accepted values are:<br/>
@@ -1127,7 +1127,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">tileset</td><td>Pointer to <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> structure.<br/>
  The <a class="el" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a> is unpacked "on-the-fly" if needed (require some memory).<br/>
  Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first. </td></tr>
-    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USERINDEX as base user index). </td></tr>
+    <tr><td class="paramname">index</td><td>Tile index where start tile data load (use TILE_USER_INDEX as base user index). </td></tr>
     <tr><td class="paramname">tm</td><td>Transfer method.<br/>
  Accepted values are:<br/>
 <ul>
@@ -1192,7 +1192,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000101">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp__tile_8h.html#a9d98608e515881a1178be95461d7a6b3" title="Load tilemap region.">VDP_setTileMap()</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp__tile_8h.html#a9d98608e515881a1178be95461d7a6b3" title="Load tilemap region.">VDP_setTileMap()</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -1262,7 +1262,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000102">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp__tile_8h.html#a9290082779c8344362f6ca5dab754003" title="Load tilemap region at specified plane position.">VDP_setTileMapEx()</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp__tile_8h.html#a9290082779c8344362f6ca5dab754003" title="Load tilemap region at specified plane position.">VDP_setTileMapEx()</a> instead. </dd></dl>
 
 </div>
 </div>
@@ -2872,7 +2872,7 @@ VDP_setMapColumnEx() </dd>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__tile_8h.html">vdp_tile.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

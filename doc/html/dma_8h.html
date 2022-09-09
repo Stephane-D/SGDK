@@ -102,6 +102,8 @@ Classes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">DMA transfer definition (used for DMA queue)  <a href="struct_d_m_a_op_info.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1dffac5fd5848b73687d1118dadda5f9"></a><!-- doxytag: member="dma.h::_DMA_H_" ref="a1dffac5fd5848b73687d1118dadda5f9" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>_DMA_H_</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80fa205e121ddbeea81d7768480ed755"></a><!-- doxytag: member="dma.h::DMA_VRAM" ref="a80fa205e121ddbeea81d7768480ed755" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a80fa205e121ddbeea81d7768480ed755">DMA_VRAM</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VRAM destination for DMA operation. <br/></td></tr>
@@ -122,9 +124,9 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a670745c78ce35de567a854d47837c70d"></a><!-- doxytag: member="dma.h::DMA_TRANSFER_CAPACITY_PAL_MAX" ref="a670745c78ce35de567a854d47837c70d" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_TRANSFER_CAPACITY_PAL_MAX</b>&#160;&#160;&#160;15000</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9bc2a0edbdf548767fab36c65876a00"></a><!-- doxytag: member="dma.h::DMA_BUFFER_SIZE_NTSC" ref="aa9bc2a0edbdf548767fab36c65876a00" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_BUFFER_SIZE_NTSC</b>&#160;&#160;&#160;DMA_TRANSFER_CAPACITY_NTSC</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_BUFFER_SIZE_NTSC</b>&#160;&#160;&#160;8192</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a62dcb10e0a3451cebd1189dbe1acc0e0"></a><!-- doxytag: member="dma.h::DMA_BUFFER_SIZE_PAL_LOW" ref="a62dcb10e0a3451cebd1189dbe1acc0e0" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_BUFFER_SIZE_PAL_LOW</b>&#160;&#160;&#160;DMA_TRANSFER_CAPACITY_PAL_LOW</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_BUFFER_SIZE_PAL_LOW</b>&#160;&#160;&#160;8192</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af35c274a71e8350f977fc5536b70dfbe"></a><!-- doxytag: member="dma.h::DMA_BUFFER_SIZE_PAL_MAX" ref="af35c274a71e8350f977fc5536b70dfbe" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DMA_BUFFER_SIZE_PAL_MAX</b>&#160;&#160;&#160;(14 * 1024)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acfc53e6baa13b2c9604ad35883845d26"></a><!-- doxytag: member="dma.h::DMA_BUFFER_SIZE_MIN" ref="acfc53e6baa13b2c9604ad35883845d26" args="" -->
@@ -139,55 +141,55 @@ Enumerations</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VRAM transfer method.  <a href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ad145c739ae51c66c65af00c00392426a">DMA_init</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the DMA queue sub system with default settings.  <a href="#ad145c739ae51c66c65af00c00392426a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aa66c347825b338e479bcda339736f4af">DMA_init</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the DMA queue sub system with default settings.  <a href="#aa66c347825b338e479bcda339736f4af"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a44a8cf5fbca105c5c263bbcd5839b648">DMA_initEx</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> capacity, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> bufferSize)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the DMA queue sub system.  <a href="#a44a8cf5fbca105c5c263bbcd5839b648"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a3f78a14fab51ee0d5a5f3236cfa49246">DMA_getAutoFlush</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns TRUE if the <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue.  <a href="#a3f78a14fab51ee0d5a5f3236cfa49246"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ac34a5303e3718eda8ddd1fb36b64c1bc">DMA_getAutoFlush</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns TRUE if the <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue.  <a href="#ac34a5303e3718eda8ddd1fb36b64c1bc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aced967ee6e88c810b0f752c41f8a2105">DMA_setAutoFlush</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">If set to TRUE (default) then the <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue otherwise you have to call the <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method by yourself.  <a href="#aced967ee6e88c810b0f752c41f8a2105"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a8002c2510c193c58c95419205955e0f1">DMA_getMaxQueueSize</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum allowed number of pending transfer in the queue (allocated queue size).  <a href="#a8002c2510c193c58c95419205955e0f1"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">If set to TRUE (default) then the <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue otherwise you have to call the <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method by yourself.  <a href="#aced967ee6e88c810b0f752c41f8a2105"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aae3bd06e5f02a682beaa42ba133ef1c2">DMA_getMaxQueueSize</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum allowed number of pending transfer in the queue (allocated queue size).  <a href="#aae3bd06e5f02a682beaa42ba133ef1c2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a86e7f19825d04a8a0f2b224f9b64eaed">DMA_setMaxQueueSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum allowed number of pending transfer in the queue (allocated queue size).<br/>
  <b>WARNING:</b> changing the queue size will clear the DMA queue.  <a href="#a86e7f19825d04a8a0f2b224f9b64eaed"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a455cfa5a38ad54e955386cc615968f63">DMA_setMaxQueueSizeToDefault</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a60a3ca884dbb63b22747cccaf693c5a6">DMA_setMaxQueueSizeToDefault</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum allowed number of pending transfer in the queue (allocated queue size) to default value (64).<br/>
- <b>WARNING:</b> changing the queue size will clear the DMA queue.  <a href="#a455cfa5a38ad54e955386cc615968f63"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#af0591045f3dd75f8e6f189a89587811d">DMA_getMaxTransferSize</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum allowed size (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
- A value of 0 means there is no DMA limit.  <a href="#af0591045f3dd75f8e6f189a89587811d"></a><br/></td></tr>
+ <b>WARNING:</b> changing the queue size will clear the DMA queue.  <a href="#a60a3ca884dbb63b22747cccaf693c5a6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a6464d787d8717695154d8599500cd518">DMA_getMaxTransferSize</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum allowed size (in bytes) to transfer per <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
+ A value of 0 means there is no DMA limit.  <a href="#a6464d787d8717695154d8599500cd518"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a40f7f6c1d079bce13f16800f86401a05">DMA_setMaxTransferSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum amount of data (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum amount of data (in bytes) to transfer per <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
  VBlank period allows to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br/>
  By default there is no size limit (0)  <a href="#a40f7f6c1d079bce13f16800f86401a05"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ab57a5f92ebf1608cd0320882b3d57c09">DMA_setMaxTransferSizeToDefault</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum amount of data (in bytes) to default value (7.2 KB on NTSC system and 15 KB on PAL system).  <a href="#ab57a5f92ebf1608cd0320882b3d57c09"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a710d69abcda6e72d2c62e9c6e917a06f">DMA_getBufferSize</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size (in bytes) of the temporary data buffer which can be used to store data that will be transferred through the DMA queue.  <a href="#a710d69abcda6e72d2c62e9c6e917a06f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a602d95b2bb09c45431a9959325caeb9b">DMA_setMaxTransferSizeToDefault</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum amount of data (in bytes) to default value (7.2 KB on NTSC system and 15 KB on PAL system).  <a href="#a602d95b2bb09c45431a9959325caeb9b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a84f5df558474aaec46c968469dbe327a">DMA_getBufferSize</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size (in bytes) of the temporary data buffer which can be used to store data that will be transferred through the DMA queue.  <a href="#a84f5df558474aaec46c968469dbe327a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ae4e6993ef78e3fc98d654156c6150bfb">DMA_setBufferSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the size (in bytes) of the temporary data buffer which can be used to store data that will be transferred through the DMA queue.<br/>
  <b>WARNING:</b> changing the buffer size will clear the DMA queue.  <a href="#ae4e6993ef78e3fc98d654156c6150bfb"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a7c13b9d4e40f2fe44bcff507e5cf99b7">DMA_setBufferSizeToDefault</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the size (in bytes) of the temporary data buffer to default value (8 KB on NTSC system and 14 KB on PAL system).  <a href="#a7c13b9d4e40f2fe44bcff507e5cf99b7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a520b961ff7fdd6d4c0dfc04902a09950">DMA_getIgnoreOverCapacity</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return TRUE means that we ignore future DMA operation when we reach the maximum capacity (see <a class="el" href="dma_8h.html#a553f875c4603a7f5ad6f84bb945ee347" title="Set the &quot;over capacity&quot; DMA queue strategy (default is FALSE).">DMA_setIgnoreOverCapacity</a>(..) method).  <a href="#a520b961ff7fdd6d4c0dfc04902a09950"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a2ba12f9129497e48fb10e5b121039a6c">DMA_setBufferSizeToDefault</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the size (in bytes) of the temporary data buffer to default value (8 KB on NTSC system and 14 KB on PAL system).  <a href="#a2ba12f9129497e48fb10e5b121039a6c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a4458022298c229667e30b468408c8c6d">DMA_getIgnoreOverCapacity</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return TRUE means that we ignore future DMA operation when we reach the maximum capacity (see <a class="el" href="dma_8h.html#a553f875c4603a7f5ad6f84bb945ee347" title="Set the &quot;over capacity&quot; DMA queue strategy (default is FALSE).">DMA_setIgnoreOverCapacity</a>(..) method).  <a href="#a4458022298c229667e30b468408c8c6d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a553f875c4603a7f5ad6f84bb945ee347">DMA_setIgnoreOverCapacity</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the "over capacity" DMA queue strategy (default is FALSE).  <a href="#a553f875c4603a7f5ad6f84bb945ee347"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a6f0144fc374e2ad40942aa1611f05fe3">DMA_clearQueue</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a5c4c3f8df58bef9e308466912cbcb5e8">DMA_clearQueue</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the DMA queue (all queued operations are lost).<br/>
-  <a href="#a6f0144fc374e2ad40942aa1611f05fe3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f">DMA_flushQueue</a> ()</td></tr>
+  <a href="#a5c4c3f8df58bef9e308466912cbcb5e8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61">DMA_flushQueue</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Transfer the content of the DMA queue to the VDP:<br/>
  Each pending DMA operation is sent to the VDP and processed as quickly as possible.<br/>
  This method returns when all DMA operations present in the queue has been transferred (or when maximum capacity has been reached).<br/>
- Note that this method is automatically called at VBlank time and you shouldn't call yourself except if you want to process it before vblank (if you manually extend blank period with h-int for instance) in which case you can disable the auto flush feature (see DMA_setAutoFlush(...))  <a href="#a17d3b25af3c1ce3dfe3457524f48069f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2415fb8d52144a7c6d2b55fafd8977dc"></a><!-- doxytag: member="dma.h::DMA_getQueueSize" ref="a2415fb8d52144a7c6d2b55fafd8977dc" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a2415fb8d52144a7c6d2b55fafd8977dc">DMA_getQueueSize</a> ()</td></tr>
+ Note that this method is automatically called at VBlank time and you shouldn't call yourself except if you want to process it before vblank (if you manually extend blank period with h-int for instance) in which case you can disable the auto flush feature (see DMA_setAutoFlush(...))  <a href="#a392fd6e61eb97f8accc4e504a502bd61"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec459ee487ec4a9e343ede78dbfaec6c"></a><!-- doxytag: member="dma.h::DMA_getQueueSize" ref="aec459ee487ec4a9e343ede78dbfaec6c" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aec459ee487ec4a9e343ede78dbfaec6c">DMA_getQueueSize</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of transfer currently pending in the DMA queue. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6fba3d9226d6a090bbc642298a9b0a1"></a><!-- doxytag: member="dma.h::DMA_getQueueTransferSize" ref="aa6fba3d9226d6a090bbc642298a9b0a1" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aa6fba3d9226d6a090bbc642298a9b0a1">DMA_getQueueTransferSize</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad19829d6440bdcd4accfd7e7769a46ae"></a><!-- doxytag: member="dma.h::DMA_getQueueTransferSize" ref="ad19829d6440bdcd4accfd7e7769a46ae" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#ad19829d6440bdcd4accfd7e7769a46ae">DMA_getQueueTransferSize</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size (in byte) of data to be transferred currently present in the DMA queue.<br/>
  NTSC frame allows about 7.6 KB of data to be transferred during VBlank (in H40) while PAL frame allows about 17 KB (in H40). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a5f9f1860394cfeee3a978d4e631ee31a">DMA_allocateTemp</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len)</td></tr>
@@ -226,9 +228,9 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do VRAM DMA fill operation.  <a href="#a9b41128bc1718e9006a1d6152638bc8a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#aa12867eb4ae5e0ddad4086ee564cfa5b">DMA_doVRamCopy</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> to, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> step)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Do VRAM DMA copy operation.  <a href="#aa12867eb4ae5e0ddad4086ee564cfa5b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4edc7297e8050aea2fc7118217026d88"></a><!-- doxytag: member="dma.h::DMA_waitCompletion" ref="a4edc7297e8050aea2fc7118217026d88" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88">DMA_waitCompletion</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait current DMA fill/copy operation to complete (same as <a class="el" href="vdp_8h.html#aefb8190a24577aa5156ca24c5f8d43eb" title="Wait for DMA operation to complete.">VDP_waitDMACompletion()</a>) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a341c446dfc714c6f5577722d0840bf5d"></a><!-- doxytag: member="dma.h::DMA_waitCompletion" ref="a341c446dfc714c6f5577722d0840bf5d" args="(void)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dma_8h.html#a341c446dfc714c6f5577722d0840bf5d">DMA_waitCompletion</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait current DMA fill/copy operation to complete (same as <a class="el" href="vdp_8h.html#ab440205a234866c0c0bd73991eeae242" title="Wait for DMA operation to complete.">VDP_waitDMACompletion()</a>) <br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1aff8646444028d4d674bbb77cb8573"></a><!-- doxytag: member="dma.h::dmaQueues" ref="af1aff8646444028d4d674bbb77cb8573" args="" -->
@@ -419,19 +421,20 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>TRUE if we have enough capacity, FALSE otherwise </dd></dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#af0591045f3dd75f8e6f189a89587811d" title="Returns the maximum allowed size (in bytes) to transfer per DMA_flushQueue() call.  A value of 0 means there is no DMA limit.">DMA_getMaxTransferSize</a>(..) </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a6464d787d8717695154d8599500cd518" title="Returns the maximum allowed size (in bytes) to transfer per DMA_flushQueue() call.  A value of 0 means there is no DMA limit.">DMA_getMaxTransferSize</a>(..) </dd>
 <dd>
 <a class="el" href="dma_8h.html#a104f614c51da00bd66e6a949b8f35169" title="Queues the specified DMA transfer operation in the DMA queue.  The idea of the DMA queue is to burst ...">DMA_queueDma</a>(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a6f0144fc374e2ad40942aa1611f05fe3"></a><!-- doxytag: member="dma.h::DMA_clearQueue" ref="a6f0144fc374e2ad40942aa1611f05fe3" args="()" -->
+<a class="anchor" id="a5c4c3f8df58bef9e308466912cbcb5e8"></a><!-- doxytag: member="dma.h::DMA_clearQueue" ref="a5c4c3f8df58bef9e308466912cbcb5e8" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void DMA_clearQueue </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -441,7 +444,7 @@ Variables</h2></td></tr>
 
 <p>Clears the DMA queue (all queued operations are lost).<br/>
  </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue(void)</a> </dd></dl>
 
 </div>
 </div>
@@ -858,13 +861,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a17d3b25af3c1ce3dfe3457524f48069f"></a><!-- doxytag: member="dma.h::DMA_flushQueue" ref="a17d3b25af3c1ce3dfe3457524f48069f" args="()" -->
+<a class="anchor" id="a392fd6e61eb97f8accc4e504a502bd61"></a><!-- doxytag: member="dma.h::DMA_flushQueue" ref="a392fd6e61eb97f8accc4e504a502bd61" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void DMA_flushQueue </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -882,13 +886,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3f78a14fab51ee0d5a5f3236cfa49246"></a><!-- doxytag: member="dma.h::DMA_getAutoFlush" ref="a3f78a14fab51ee0d5a5f3236cfa49246" args="()" -->
+<a class="anchor" id="ac34a5303e3718eda8ddd1fb36b64c1bc"></a><!-- doxytag: member="dma.h::DMA_getAutoFlush" ref="ac34a5303e3718eda8ddd1fb36b64c1bc" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getAutoFlush </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> DMA_getAutoFlush </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -896,20 +901,21 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Returns TRUE if the <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue. </p>
+<p>Returns TRUE if the <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue. </p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#aced967ee6e88c810b0f752c41f8a2105" title="If set to TRUE (default) then the DMA_flushQueue() method is automatically called at VBlank to proces...">DMA_setAutoFlush()</a> </dd>
 <dd>
-<a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> </dd></dl>
+<a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a710d69abcda6e72d2c62e9c6e917a06f"></a><!-- doxytag: member="dma.h::DMA_getBufferSize" ref="a710d69abcda6e72d2c62e9c6e917a06f" args="()" -->
+<a class="anchor" id="a84f5df558474aaec46c968469dbe327a"></a><!-- doxytag: member="dma.h::DMA_getBufferSize" ref="a84f5df558474aaec46c968469dbe327a" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getBufferSize </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -918,17 +924,18 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Returns the size (in bytes) of the temporary data buffer which can be used to store data that will be transferred through the DMA queue. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#ae4e6993ef78e3fc98d654156c6150bfb" title="Sets the size (in bytes) of the temporary data buffer which can be used to store data that will be tr...">DMA_setBufferSize()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>DMA_setBufferSize(void) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a520b961ff7fdd6d4c0dfc04902a09950"></a><!-- doxytag: member="dma.h::DMA_getIgnoreOverCapacity" ref="a520b961ff7fdd6d4c0dfc04902a09950" args="()" -->
+<a class="anchor" id="a4458022298c229667e30b468408c8c6d"></a><!-- doxytag: member="dma.h::DMA_getIgnoreOverCapacity" ref="a4458022298c229667e30b468408c8c6d" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getIgnoreOverCapacity </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> DMA_getIgnoreOverCapacity </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -937,17 +944,18 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Return TRUE means that we ignore future DMA operation when we reach the maximum capacity (see <a class="el" href="dma_8h.html#a553f875c4603a7f5ad6f84bb945ee347" title="Set the &quot;over capacity&quot; DMA queue strategy (default is FALSE).">DMA_setIgnoreOverCapacity</a>(..) method). </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a553f875c4603a7f5ad6f84bb945ee347" title="Set the &quot;over capacity&quot; DMA queue strategy (default is FALSE).">DMA_setIgnoreOverCapacity()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>DMA_setIgnoreOverCapacity(void) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a8002c2510c193c58c95419205955e0f1"></a><!-- doxytag: member="dma.h::DMA_getMaxQueueSize" ref="a8002c2510c193c58c95419205955e0f1" args="()" -->
+<a class="anchor" id="aae3bd06e5f02a682beaa42ba133ef1c2"></a><!-- doxytag: member="dma.h::DMA_getMaxQueueSize" ref="aae3bd06e5f02a682beaa42ba133ef1c2" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getMaxQueueSize </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -960,13 +968,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af0591045f3dd75f8e6f189a89587811d"></a><!-- doxytag: member="dma.h::DMA_getMaxTransferSize" ref="af0591045f3dd75f8e6f189a89587811d" args="()" -->
+<a class="anchor" id="a6464d787d8717695154d8599500cd518"></a><!-- doxytag: member="dma.h::DMA_getMaxTransferSize" ref="a6464d787d8717695154d8599500cd518" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> DMA_getMaxTransferSize </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -974,19 +983,20 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Returns the maximum allowed size (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
+<p>Returns the maximum allowed size (in bytes) to transfer per <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
  A value of 0 means there is no DMA limit. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a40f7f6c1d079bce13f16800f86401a05" title="Sets the maximum amount of data (in bytes) to transfer per DMA_flushQueue() call.  VBlank period allo...">DMA_setMaxTransferSize()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a40f7f6c1d079bce13f16800f86401a05" title="Sets the maximum amount of data (in bytes) to transfer per DMA_flushQueue() call.  VBlank period allo...">DMA_setMaxTransferSize</a>(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ad145c739ae51c66c65af00c00392426a"></a><!-- doxytag: member="dma.h::DMA_init" ref="ad145c739ae51c66c65af00c00392426a" args="()" -->
+<a class="anchor" id="aa66c347825b338e479bcda339736f4af"></a><!-- doxytag: member="dma.h::DMA_init" ref="aa66c347825b338e479bcda339736f4af" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void DMA_init </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1035,10 +1045,10 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">size</td><td>The queue size (0 = default size = 64, min size = 20). </td></tr>
-    <tr><td class="paramname">capacity</td><td>The maximum allowed size (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call (0 = default = no limit).<br/>
+    <tr><td class="paramname">capacity</td><td>The maximum allowed size (in bytes) to transfer per <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call (0 = default = no limit).<br/>
  Depending the current selected strategy, furthers transfers can be ignored (by default all transfers are done whatever is the limit). See the <a class="el" href="dma_8h.html#a553f875c4603a7f5ad6f84bb945ee347" title="Set the &quot;over capacity&quot; DMA queue strategy (default is FALSE).">DMA_setIgnoreOverCapacity</a>(..) method to change the strategy to adopt when capacity limit is reached. </td></tr>
     <tr><td class="paramname">bufferSize</td><td>Size of the buffer (in bytes) to store temporary data that will be transferred through the DMA queue (0 = default size = 8192 on NTSC and 14336 on PAL).<br/>
- The buffer should be big enough to contains all temporary that you need to store before next <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.</td></tr>
+ The buffer should be big enough to contains all temporary that you need to store before next <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1210,8 +1220,8 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>If set to TRUE (default) then the <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue otherwise you have to call the <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method by yourself. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> </dd></dl>
+<p>If set to TRUE (default) then the <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method is automatically called at VBlank to process DMA operations pending in the queue otherwise you have to call the <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> method by yourself. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> </dd></dl>
 
 </div>
 </div>
@@ -1239,19 +1249,20 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a710d69abcda6e72d2c62e9c6e917a06f" title="Returns the size (in bytes) of the temporary data buffer which can be used to store data that will be...">DMA_getBufferSize()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a84f5df558474aaec46c968469dbe327a" title="Returns the size (in bytes) of the temporary data buffer which can be used to store data that will be...">DMA_getBufferSize(void)</a> </dd>
 <dd>
-<a class="el" href="dma_8h.html#a7c13b9d4e40f2fe44bcff507e5cf99b7" title="Sets the size (in bytes) of the temporary data buffer to default value (8 KB on NTSC system and 14 KB...">DMA_setBufferSizeToDefault()</a> </dd></dl>
+<a class="el" href="dma_8h.html#a2ba12f9129497e48fb10e5b121039a6c" title="Sets the size (in bytes) of the temporary data buffer to default value (8 KB on NTSC system and 14 KB...">DMA_setBufferSizeToDefault(void)</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7c13b9d4e40f2fe44bcff507e5cf99b7"></a><!-- doxytag: member="dma.h::DMA_setBufferSizeToDefault" ref="a7c13b9d4e40f2fe44bcff507e5cf99b7" args="()" -->
+<a class="anchor" id="a2ba12f9129497e48fb10e5b121039a6c"></a><!-- doxytag: member="dma.h::DMA_setBufferSizeToDefault" ref="a2ba12f9129497e48fb10e5b121039a6c" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void DMA_setBufferSizeToDefault </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1260,7 +1271,7 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Sets the size (in bytes) of the temporary data buffer to default value (8 KB on NTSC system and 14 KB on PAL system). </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#ae4e6993ef78e3fc98d654156c6150bfb" title="Sets the size (in bytes) of the temporary data buffer which can be used to store data that will be tr...">DMA_setBufferSize()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>DMA_setBufferSize(void) </dd></dl>
 
 </div>
 </div>
@@ -1309,19 +1320,20 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a8002c2510c193c58c95419205955e0f1" title="Returns the maximum allowed number of pending transfer in the queue (allocated queue size)...">DMA_getMaxQueueSize()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#aae3bd06e5f02a682beaa42ba133ef1c2" title="Returns the maximum allowed number of pending transfer in the queue (allocated queue size)...">DMA_getMaxQueueSize()</a> </dd>
 <dd>
-<a class="el" href="dma_8h.html#a455cfa5a38ad54e955386cc615968f63" title="Sets the maximum allowed number of pending transfer in the queue (allocated queue size) to default va...">DMA_setMaxQueueSizeToDefault()</a> </dd></dl>
+<a class="el" href="dma_8h.html#a60a3ca884dbb63b22747cccaf693c5a6" title="Sets the maximum allowed number of pending transfer in the queue (allocated queue size) to default va...">DMA_setMaxQueueSizeToDefault()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a455cfa5a38ad54e955386cc615968f63"></a><!-- doxytag: member="dma.h::DMA_setMaxQueueSizeToDefault" ref="a455cfa5a38ad54e955386cc615968f63" args="()" -->
+<a class="anchor" id="a60a3ca884dbb63b22747cccaf693c5a6"></a><!-- doxytag: member="dma.h::DMA_setMaxQueueSizeToDefault" ref="a60a3ca884dbb63b22747cccaf693c5a6" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void DMA_setMaxQueueSizeToDefault </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1331,7 +1343,7 @@ Variables</h2></td></tr>
 
 <p>Sets the maximum allowed number of pending transfer in the queue (allocated queue size) to default value (64).<br/>
  <b>WARNING:</b> changing the queue size will clear the DMA queue. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a86e7f19825d04a8a0f2b224f9b64eaed" title="Sets the maximum allowed number of pending transfer in the queue (allocated queue size)...">DMA_setMaxQueueSize()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a86e7f19825d04a8a0f2b224f9b64eaed" title="Sets the maximum allowed number of pending transfer in the queue (allocated queue size)...">DMA_setMaxQueueSize</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -1350,27 +1362,28 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Sets the maximum amount of data (in bytes) to transfer per <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
+<p>Sets the maximum amount of data (in bytes) to transfer per <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> call.<br/>
  VBlank period allows to transfer up to 7.2 KB on NTSC system and 15 KB on PAL system.<br/>
  By default there is no size limit (0) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">value</td><td>The maximum amount of data (in bytes) to transfer during <a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> operation.<br/>
+    <tr><td class="paramname">value</td><td>The maximum amount of data (in bytes) to transfer during <a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> operation.<br/>
  Use <b>0</b> for no limit.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a17d3b25af3c1ce3dfe3457524f48069f" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="dma_8h.html#a392fd6e61eb97f8accc4e504a502bd61" title="Transfer the content of the DMA queue to the VDP:  Each pending DMA operation is sent to the VDP and ...">DMA_flushQueue(void)</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ab57a5f92ebf1608cd0320882b3d57c09"></a><!-- doxytag: member="dma.h::DMA_setMaxTransferSizeToDefault" ref="ab57a5f92ebf1608cd0320882b3d57c09" args="()" -->
+<a class="anchor" id="a602d95b2bb09c45431a9959325caeb9b"></a><!-- doxytag: member="dma.h::DMA_setMaxTransferSizeToDefault" ref="a602d95b2bb09c45431a9959325caeb9b" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void DMA_setMaxTransferSizeToDefault </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1478,7 +1491,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="dma_8h.html">dma.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -93,28 +93,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a14e479b408a089d87b0d40e15dd99f48">DRIVER_FLAG_MANUALSYNC_XGM</a>&#160;&#160;&#160;(1 &lt;&lt; 0)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affdd891b1e1ce78e385c76be27a0bf70"></a><!-- doxytag: member="xgm.h::DRIVER_FLAG_DELAYDMA_XGM" ref="affdd891b1e1ce78e385c76be27a0bf70" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DRIVER_FLAG_DELAYDMA_XGM</b>&#160;&#160;&#160;(1 &lt;&lt; 1)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d">XGM_nextFrame</a>()&#160;&#160;&#160;XGM_nextXFrame(1)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify the Z80 a new frame just happened (XGM music player driver).  <a href="#a640c992fde66716a21c259b497adf98d"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9d4225ad20bed9dc7c72802b6d85328f"></a><!-- doxytag: member="xgm.h::XGM_isPlaying" ref="a9d4225ad20bed9dc7c72802b6d85328f" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a9d4225ad20bed9dc7c72802b6d85328f">XGM_isPlaying</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c4b275cb04dc98d9d51b04e1e1cd208"></a><!-- doxytag: member="xgm.h::XGM_isPlaying" ref="a3c4b275cb04dc98d9d51b04e1e1cd208" args="(void)" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a3c4b275cb04dc98d9d51b04e1e1cd208">XGM_isPlaying</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns play music state (XGM music player driver). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a6c9a3bf84dde1b65d38f6ea4ce65a362">XGM_startPlay</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *song)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start playing the specified XGM track (XGM music player driver).  <a href="#a6c9a3bf84dde1b65d38f6ea4ce65a362"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a4661ed2a7bf80905335861f0550e57cc">XGM_startPlay_FAR</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *song, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> size)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="xgm_8h.html#a6c9a3bf84dde1b65d38f6ea4ce65a362" title="Start playing the specified XGM track (XGM music player driver).">XGM_startPlay</a>(..) except it supports music accessible through bank switch.  <a href="#a4661ed2a7bf80905335861f0550e57cc"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a00e8cc267ce9301beb17bf2cf9662d71">XGM_stopPlay</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop playing music (XGM music player driver).  <a href="#a00e8cc267ce9301beb17bf2cf9662d71"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584">XGM_pausePlay</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
- Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#a8a0eda7746cc40e0642b3fab58d79584"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c">XGM_resumePlay</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a1a6609c19da89f0d048046677fd86518">XGM_stopPlay</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop playing music (XGM music player driver).  <a href="#a1a6609c19da89f0d048046677fd86518"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584">XGM_pausePlay</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#a3b4f4bdd59728f4b28e2cf01cb762336" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
+ Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#a8499c4ee66d175e9b1f6d8e7ee7a4584"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a3b4f4bdd59728f4b28e2cf01cb762336">XGM_resumePlay</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br/>
- Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#adfcc6dfd90ee5311c04cfd7947f7c32c"></a><br/></td></tr>
+ Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#a3b4f4bdd59728f4b28e2cf01cb762336"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a3446bcd38404e76b891dd4652f8568d8">XGM_isPlayingPCM</a> (const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel_mask)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return play status of specified PCM channel (XGM music player driver).  <a href="#a3446bcd38404e76b891dd4652f8568d8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a9203faa0b1ebfe1f264095affc4b9562">XGM_setPCM</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> id, const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, const <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len)</td></tr>
@@ -130,20 +127,20 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a54ea961467892bb1232c535af317fb05">XGM_stopPlayPCM</a> (const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop play PCM on specified channel (XGM music player driver).<br/>
  No effect if no sample was currently playing on this channel.  <a href="#a54ea961467892bb1232c535af317fb05"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a917a5da737badb6591cb5a76585ac9ad">XGM_getElapsed</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a6c91e18cbd21eff429448c6a0affbdd9">XGM_getElapsed</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the elapsed play time since the last <a class="el" href="xgm_8h.html#a6c9a3bf84dde1b65d38f6ea4ce65a362" title="Start playing the specified XGM track (XGM music player driver).">XGM_startPlay</a>(..) call.<br/>
- The returned value is in music frame which can be 50/60 per second depending the base music play rate (NTSC/PAL).  <a href="#a917a5da737badb6591cb5a76585ac9ad"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#aaf398bd127f974895a8b6b3042c1a99a">XGM_getMusicTempo</a> ()</td></tr>
+ The returned value is in music frame which can be 50/60 per second depending the base music play rate (NTSC/PAL).  <a href="#a6c91e18cbd21eff429448c6a0affbdd9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#ae7dd366acac2520b68daa6ebb4020fc3">XGM_getMusicTempo</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current music tempo (in tick per second).<br/>
  Default value is 60 or 50 depending the system is NTSC or PAL.<br/>
  This method is meaningful only if you use the automatic music sync mode (see <a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> method) which is the default mode.<br/>
- Note that using specific tempo (not 60 or 50) will affect performance of DMA contention and external command parsing so it's recommended to stand with default one.  <a href="#aaf398bd127f974895a8b6b3042c1a99a"></a><br/></td></tr>
+ Note that using specific tempo (not 60 or 50) will affect performance of DMA contention and external command parsing so it's recommended to stand with default one.  <a href="#ae7dd366acac2520b68daa6ebb4020fc3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a0c8bcd5a25ed74ee379b2c415a25e95d">XGM_setMusicTempo</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the music tempo (in tick per second).<br/>
  Default value is 60 or 50 depending the system is NTSC or PAL. This method is meaningful only if you use the automatic music sync mode (see <a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> method) which is the default mode.<br/>
  Note that using specific tempo (not 60 or 50) can completely distord FM instruments sound and affect performance of DMA contention and external command parsing so it's recommended to stand with default one.  <a href="#a0c8bcd5a25ed74ee379b2c415a25e95d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#aef580c937fc13c77d6940fa1f4f5a516">XGM_getManualSync</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns manual sync mode state of XGM driver (by default auto sync is used).  <a href="#aef580c937fc13c77d6940fa1f4f5a516"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#aabd461cf356576e4e117180aa497020d">XGM_getManualSync</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns manual sync mode state of XGM driver (by default auto sync is used).  <a href="#aabd461cf356576e4e117180aa497020d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa">XGM_setManualSync</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set manual sync mode of XGM driver (by default auto sync is used).  <a href="#ac749922b1e66baf6a7e86e0277cf90fa"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#acc620b1aa0f67a88a2757184409b418e">XGM_nextXFrame</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num)</td></tr>
@@ -153,19 +150,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the loop number for music with loop command.<br/>
  Default value is -1 for pseudo unfinite (255) loops plays. A value of 0 means single play without any loop, 1 = single play + 1 loop... <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246">XGM_set68KBUSProtection</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set temporary 68K BUS protection from Z80 (XGM music player driver).<br/>
- You should protect BUS Access during DMA and restore it after:<br/>
- XGM_set68KBUSProtection(TRUE); <a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959">VDP_doVRamDMA(data, 0x1000, 0x100)</a>; XGM_set68KBUSProtection(FALSE);.  <a href="#a09d28faaea58861315be8021cfe29246"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#ad9dc54c2a7cd28a45c94df19a02b6477">XGM_getForceDelayDMA</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="types_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d" title="TRUE define (equivalent to 1).">TRUE</a> if DMA delay is enabled to improve PCM playback.  <a href="#ad9dc54c2a7cd28a45c94df19a02b6477"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7">XGM_setForceDelayDMA</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This method can be used to improve the PCM playback during XGM music play and while DMA queue is used.<br/>
- Even using the BUS protection with <a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Set temporary 68K BUS protection from Z80 (XGM music player driver).  You should protect BUS Access d...">XGM_set68KBUSProtection</a> you may experience some altered PCM when the XGM music contains PSG data, this is because the Z80 uses the main BUS to access PSG.<br/>
- By delaying a bit the DMA execution from the DMA queue we let the Z80 to execute all PSG commands and avoid any stall. The delay is about 3 scanlines so using the force delay DMA will reduce the DMA bandwidth for about 3 vblank lines.  <a href="#a073c7829b30f3065a3fa11a4320901e7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64e735e6a2de4aef7a93ae48e6a85457"></a><!-- doxytag: member="xgm.h::XGM_getCPULoad" ref="a64e735e6a2de4aef7a93ae48e6a85457" args="()" -->
-<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a64e735e6a2de4aef7a93ae48e6a85457">XGM_getCPULoad</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as Z80_setBusProtection(..) (generic version of the method)  <a href="#a09d28faaea58861315be8021cfe29246"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#aab0385d404945269ffa03179b789618b">XGM_getForceDelayDMA</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="z80__ctrl_8h.html#a8a684f505b776406f4bd279ea88bc43a" title="Returns TRUE if DMA delay is enabled to improve PCM playback.">Z80_getForceDelayDMA()</a> (generic version of the method)  <a href="#aab0385d404945269ffa03179b789618b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acac84b30f17551fd2479e8d2b8ec3803"></a><!-- doxytag: member="xgm.h::XGM_setForceDelayDMA" ref="acac84b30f17551fd2479e8d2b8ec3803" args="(bool value)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#acac84b30f17551fd2479e8d2b8ec3803">XGM_setForceDelayDMA</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as Z80_getForceDelayDMA(..) (generic version of the method) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a9ab2616f73fc25af47ac04d0e54f04"></a><!-- doxytag: member="xgm.h::XGM_getCPULoad" ref="a4a9ab2616f73fc25af47ac04d0e54f04" args="(void)" -->
+<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a4a9ab2616f73fc25af47ac04d0e54f04">XGM_getCPULoad</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an estimation of the Z80 CPU load (XGM driver).<br/>
- The low 16 bits returns the estimated Z80 CPU load where the high 16 bits returns the part spent waiting in the DMA contention (see <a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Set temporary 68K BUS protection from Z80 (XGM music player driver).  You should protect BUS Access d...">XGM_set68KBUSProtection</a> method).<br/>
+ The low 16 bits returns the estimated Z80 CPU load where the high 16 bits returns the part spent waiting in the DMA contention (see <a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Same as Z80_setBusProtection(..) (generic version of the method)">XGM_set68KBUSProtection</a> method).<br/>
  The method computes CPU load mean over 32 frames and so it's important to call it at each frame (on VInt for instance) to get meaningful value.<br/>
  Note that it returns CPU load only for the XGM music parsing part as PCM channel mixing is always ON.<br/>
  Idle usage is 40% on NTSC and 30% on PAL, 100% usage usually mean overrun and may result in music slowdown and incorrect PCM operations. <br/></td></tr>
@@ -179,20 +173,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
  It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br/>
  The driver is designed to avoid DMA contention when possible (depending CPU load). </p>
 </div><hr/><h2>Define Documentation</h2>
-<a class="anchor" id="a14e479b408a089d87b0d40e15dd99f48"></a><!-- doxytag: member="xgm.h::DRIVER_FLAG_MANUALSYNC_XGM" ref="a14e479b408a089d87b0d40e15dd99f48" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DRIVER_FLAG_MANUALSYNC_XGM&#160;&#160;&#160;(1 &lt;&lt; 0)</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Internal use </p>
-
-</div>
-</div>
 <a class="anchor" id="a640c992fde66716a21c259b497adf98d"></a><!-- doxytag: member="xgm.h::XGM_nextFrame" ref="a640c992fde66716a21c259b497adf98d" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -212,25 +192,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
  To fix that issue and also to offer more flexibility the music timing should now be handled by the 68k.<br/>
  By default this method is called automatically by SGDK at V-Int time but you can decide to handle sync manually (see XGM_setManualSync(..) method).<br/>
  When you are in manual sync you normally should call this method once per frame (in the V-Int callback for instance) but you are free to play with it to increase or decrease music tempo.<br/>
- Note that it's better to call this method a bit before (3/4 scanlines should be fine) doing DMA operation for best main bus contention protection (see <a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Set temporary 68K BUS protection from Z80 (XGM music player driver).  You should protect BUS Access d...">XGM_set68KBUSProtection()</a> and <a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA()</a> methods).</p>
+ Note that it's better to call this method a bit before (3/4 scanlines should be fine) doing DMA operation for best main bus contention protection (see <a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Same as Z80_setBusProtection(..) (generic version of the method)">XGM_set68KBUSProtection()</a> and <a class="el" href="xgm_8h.html#acac84b30f17551fd2479e8d2b8ec3803" title="Same as Z80_getForceDelayDMA(..) (generic version of the method)">XGM_setForceDelayDMA()</a> methods).</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync</a>(..) </dd>
 <dd>
 <a class="el" href="xgm_8h.html#acc620b1aa0f67a88a2757184409b418e" title="Same as XGM_nextFrame() except you can specify the numer of frame.">XGM_nextXFrame</a>(..) </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Set temporary 68K BUS protection from Z80 (XGM music player driver).  You should protect BUS Access d...">XGM_set68KBUSProtection</a>(..) </dd>
+<a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Same as Z80_setBusProtection(..) (generic version of the method)">XGM_set68KBUSProtection</a>(..) </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA</a>(..) </dd></dl>
+<a class="el" href="xgm_8h.html#acac84b30f17551fd2479e8d2b8ec3803" title="Same as Z80_getForceDelayDMA(..) (generic version of the method)">XGM_setForceDelayDMA</a>(..) </dd></dl>
 
 </div>
 </div>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a917a5da737badb6591cb5a76585ac9ad"></a><!-- doxytag: member="xgm.h::XGM_getElapsed" ref="a917a5da737badb6591cb5a76585ac9ad" args="()" -->
+<a class="anchor" id="a6c91e18cbd21eff429448c6a0affbdd9"></a><!-- doxytag: member="xgm.h::XGM_getElapsed" ref="a6c91e18cbd21eff429448c6a0affbdd9" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> XGM_getElapsed </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -246,13 +227,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 
 </div>
 </div>
-<a class="anchor" id="ad9dc54c2a7cd28a45c94df19a02b6477"></a><!-- doxytag: member="xgm.h::XGM_getForceDelayDMA" ref="ad9dc54c2a7cd28a45c94df19a02b6477" args="()" -->
+<a class="anchor" id="aab0385d404945269ffa03179b789618b"></a><!-- doxytag: member="xgm.h::XGM_getForceDelayDMA" ref="aab0385d404945269ffa03179b789618b" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> XGM_getForceDelayDMA </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> XGM_getForceDelayDMA </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -260,18 +242,19 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </div>
 <div class="memdoc">
 
-<p>Returns <a class="el" href="types_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d" title="TRUE define (equivalent to 1).">TRUE</a> if DMA delay is enabled to improve PCM playback. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA()</a> </dd></dl>
+<p>Same as <a class="el" href="z80__ctrl_8h.html#a8a684f505b776406f4bd279ea88bc43a" title="Returns TRUE if DMA delay is enabled to improve PCM playback.">Z80_getForceDelayDMA()</a> (generic version of the method) </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#acac84b30f17551fd2479e8d2b8ec3803" title="Same as Z80_getForceDelayDMA(..) (generic version of the method)">XGM_setForceDelayDMA()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aef580c937fc13c77d6940fa1f4f5a516"></a><!-- doxytag: member="xgm.h::XGM_getManualSync" ref="aef580c937fc13c77d6940fa1f4f5a516" args="()" -->
+<a class="anchor" id="aabd461cf356576e4e117180aa497020d"></a><!-- doxytag: member="xgm.h::XGM_getManualSync" ref="aabd461cf356576e4e117180aa497020d" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> XGM_getManualSync </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -280,17 +263,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 <div class="memdoc">
 
 <p>Returns manual sync mode state of XGM driver (by default auto sync is used). </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>XGM_setManualSync(void) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aaf398bd127f974895a8b6b3042c1a99a"></a><!-- doxytag: member="xgm.h::XGM_getMusicTempo" ref="aaf398bd127f974895a8b6b3042c1a99a" args="()" -->
+<a class="anchor" id="ae7dd366acac2520b68daa6ebb4020fc3"></a><!-- doxytag: member="xgm.h::XGM_getMusicTempo" ref="ae7dd366acac2520b68daa6ebb4020fc3" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> XGM_getMusicTempo </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -302,9 +286,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
  Default value is 60 or 50 depending the system is NTSC or PAL.<br/>
  This method is meaningful only if you use the automatic music sync mode (see <a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> method) which is the default mode.<br/>
  Note that using specific tempo (not 60 or 50) will affect performance of DMA contention and external command parsing so it's recommended to stand with default one. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync</a>(..) </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a0c8bcd5a25ed74ee379b2c415a25e95d" title="Set the music tempo (in tick per second).  Default value is 60 or 50 depending the system is NTSC or ...">XGM_setMusicTempo()</a> </dd></dl>
+<a class="el" href="xgm_8h.html#a0c8bcd5a25ed74ee379b2c415a25e95d" title="Set the music tempo (in tick per second).  Default value is 60 or 50 depending the system is NTSC or ...">XGM_setMusicTempo</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -363,13 +347,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 
 </div>
 </div>
-<a class="anchor" id="a8a0eda7746cc40e0642b3fab58d79584"></a><!-- doxytag: member="xgm.h::XGM_pausePlay" ref="a8a0eda7746cc40e0642b3fab58d79584" args="()" -->
+<a class="anchor" id="a8499c4ee66d175e9b1f6d8e7ee7a4584"></a><!-- doxytag: member="xgm.h::XGM_pausePlay" ref="a8499c4ee66d175e9b1f6d8e7ee7a4584" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void XGM_pausePlay </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -377,21 +362,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </div>
 <div class="memdoc">
 
-<p>Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
+<p>Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#a3b4f4bdd59728f4b28e2cf01cb762336" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
  Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#adfcc6dfd90ee5311c04cfd7947f7c32c" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a3b4f4bdd59728f4b28e2cf01cb762336" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a00e8cc267ce9301beb17bf2cf9662d71" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd></dl>
+<a class="el" href="xgm_8h.html#a1a6609c19da89f0d048046677fd86518" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="adfcc6dfd90ee5311c04cfd7947f7c32c"></a><!-- doxytag: member="xgm.h::XGM_resumePlay" ref="adfcc6dfd90ee5311c04cfd7947f7c32c" args="()" -->
+<a class="anchor" id="a3b4f4bdd59728f4b28e2cf01cb762336"></a><!-- doxytag: member="xgm.h::XGM_resumePlay" ref="a3b4f4bdd59728f4b28e2cf01cb762336" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void XGM_resumePlay </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -401,7 +387,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 
 <p>Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br/>
  Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
 <dd>
 <a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d" title="Notify the Z80 a new frame just happened (XGM music player driver).">XGM_nextFrame</a> </dd></dl>
 
@@ -422,42 +408,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </div>
 <div class="memdoc">
 
-<p>Set temporary 68K BUS protection from Z80 (XGM music player driver).<br/>
- You should protect BUS Access during DMA and restore it after:<br/>
- XGM_set68KBUSProtection(TRUE); <a class="el" href="vdp__dma_8h.html#a0806f0a5e7e102869a653e0a8d573959">VDP_doVRamDMA(data, 0x1000, 0x100)</a>; XGM_set68KBUSProtection(FALSE);. </p>
-<p>This way the XGM driver will *try* to avoid using 68K BUS during DMA to avoid execution interruption and so preserve PCM playback quality.<br/>
- Note that the success of the operation is not 100% garantee and can fails in some conditions (heavy Z80 load, lot of PSG data in XGM music), you can also improve the PCM playblack by using the <a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA()</a> method.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a073c7829b30f3065a3fa11a4320901e7" title="This method can be used to improve the PCM playback during XGM music play and while DMA queue is used...">XGM_setForceDelayDMA</a>(..) </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a073c7829b30f3065a3fa11a4320901e7"></a><!-- doxytag: member="xgm.h::XGM_setForceDelayDMA" ref="a073c7829b30f3065a3fa11a4320901e7" args="(u16 value)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void XGM_setForceDelayDMA </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>value</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>This method can be used to improve the PCM playback during XGM music play and while DMA queue is used.<br/>
- Even using the BUS protection with <a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Set temporary 68K BUS protection from Z80 (XGM music player driver).  You should protect BUS Access d...">XGM_set68KBUSProtection</a> you may experience some altered PCM when the XGM music contains PSG data, this is because the Z80 uses the main BUS to access PSG.<br/>
- By delaying a bit the DMA execution from the DMA queue we let the Z80 to execute all PSG commands and avoid any stall. The delay is about 3 scanlines so using the force delay DMA will reduce the DMA bandwidth for about 3 vblank lines. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">value</td><td>TRUE or FALSE </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ad9dc54c2a7cd28a45c94df19a02b6477" title="Returns TRUE if DMA delay is enabled to improve PCM playback.">XGM_getForceDelayDMA()</a> </dd>
-<dd>
-<a class="el" href="xgm_8h.html#a09d28faaea58861315be8021cfe29246" title="Set temporary 68K BUS protection from Z80 (XGM music player driver).  You should protect BUS Access d...">XGM_set68KBUSProtection()</a> </dd></dl>
+<p>Same as Z80_setBusProtection(..) (generic version of the method) </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#acac84b30f17551fd2479e8d2b8ec3803" title="Same as Z80_getForceDelayDMA(..) (generic version of the method)">XGM_setForceDelayDMA</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -483,9 +435,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#aef580c937fc13c77d6940fa1f4f5a516" title="Returns manual sync mode state of XGM driver (by default auto sync is used).">XGM_getManualSync()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#aabd461cf356576e4e117180aa497020d" title="Returns manual sync mode state of XGM driver (by default auto sync is used).">XGM_getManualSync(void)</a> </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d" title="Notify the Z80 a new frame just happened (XGM music player driver).">XGM_nextFrame()</a> </dd></dl>
+<a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d" title="Notify the Z80 a new frame just happened (XGM music player driver).">XGM_nextFrame(void)</a> </dd></dl>
 
 </div>
 </div>
@@ -507,9 +459,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 <p>Set the music tempo (in tick per second).<br/>
  Default value is 60 or 50 depending the system is NTSC or PAL. This method is meaningful only if you use the automatic music sync mode (see <a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> method) which is the default mode.<br/>
  Note that using specific tempo (not 60 or 50) can completely distord FM instruments sound and affect performance of DMA contention and external command parsing so it's recommended to stand with default one. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync()</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#ac749922b1e66baf6a7e86e0277cf90fa" title="Set manual sync mode of XGM driver (by default auto sync is used).">XGM_setManualSync</a>(..) </dd>
 <dd>
-<a class="el" href="xgm_8h.html#aaf398bd127f974895a8b6b3042c1a99a" title="Get the current music tempo (in tick per second).  Default value is 60 or 50 depending the system is ...">XGM_getMusicTempo()</a> </dd></dl>
+<a class="el" href="xgm_8h.html#ae7dd366acac2520b68daa6ebb4020fc3" title="Get the current music tempo (in tick per second).  Default value is 60 or 50 depending the system is ...">XGM_getMusicTempo(void)</a> </dd></dl>
 
 </div>
 </div>
@@ -631,9 +583,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a00e8cc267ce9301beb17bf2cf9662d71" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a1a6609c19da89f0d048046677fd86518" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
+<a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
 <dd>
 <a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d" title="Notify the Z80 a new frame just happened (XGM music player driver).">XGM_nextFrame</a> </dd>
 <dd>
@@ -676,9 +628,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a6c9a3bf84dde1b65d38f6ea4ce65a362" title="Start playing the specified XGM track (XGM music player driver).">XGM_startPlay</a> </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a00e8cc267ce9301beb17bf2cf9662d71" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd>
+<a class="el" href="xgm_8h.html#a1a6609c19da89f0d048046677fd86518" title="Stop playing music (XGM music player driver).">XGM_stopPlay</a> </dd>
 <dd>
-<a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
+<a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
 <dd>
 <a class="el" href="xgm_8h.html#a640c992fde66716a21c259b497adf98d" title="Notify the Z80 a new frame just happened (XGM music player driver).">XGM_nextFrame</a> </dd></dl>
 
@@ -735,13 +687,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 
 </div>
 </div>
-<a class="anchor" id="a00e8cc267ce9301beb17bf2cf9662d71"></a><!-- doxytag: member="xgm.h::XGM_stopPlay" ref="a00e8cc267ce9301beb17bf2cf9662d71" args="()" -->
+<a class="anchor" id="a1a6609c19da89f0d048046677fd86518"></a><!-- doxytag: member="xgm.h::XGM_stopPlay" ref="a1a6609c19da89f0d048046677fd86518" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void XGM_stopPlay </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -750,7 +703,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 <div class="memdoc">
 
 <p>Stop playing music (XGM music player driver). </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a8a0eda7746cc40e0642b3fab58d79584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd></dl>
 
 </div>
 </div>
@@ -790,7 +743,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="xgm_8h.html">xgm.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

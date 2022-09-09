@@ -89,23 +89,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00025"></a>00025 <span class="preprocessor">#include &quot;<a class="code" href="task__cst_8h.html" title="User task constantes definition.">task_cst.h</a>&quot;</span>
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 
-<a name="l00034"></a>00034 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#a7d32caeead8504a111a92399d472c5b0" title="Configure the user task callback function.  Must be set with a not NULL callback before calling any T...">TSK_userSet</a>(VoidCallback *task);
-<a name="l00035"></a>00035 
-<a name="l00040"></a>00040 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#abba13a3c891e3714d53c906239bf5983" title="Stop the user task.  This has the same effect than using TSK_setUser(NULL).">TSK_stop</a>();
-<a name="l00041"></a>00041 
-<a name="l00047"></a>00047 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#a61b1da4d642cd8ea3eb533844747fc7b" title="Yield from supervisor task to user task. The user task will resume and will use all the available CPU...">TSK_userYield</a>(<span class="keywordtype">void</span>);
-<a name="l00048"></a>00048 
-<a name="l00061"></a>00061 <span class="keywordtype">bool</span> <a class="code" href="task_8h.html#ac7bee0d65012001b13e1f3209cdd9061" title="Block supervisor task and resume user task. Supervisor task will not resume execution until TSK_super...">TSK_superPend</a>(<a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> wait);
-<a name="l00062"></a>00062 
-<a name="l00070"></a>00070 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#affb5cc5edf8b22d47abe8b92893fc037" title="Resume a blocked supervisor task. Must be called from user task.">TSK_superPost</a>(<span class="keywordtype">bool</span> immediate);
-<a name="l00071"></a>00071 
-<a name="l00072"></a>00072 <span class="preprocessor">#endif </span><span class="comment">/*__TASK_H__*/</span>
+<a name="l00031"></a>00031 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#a45cd621c6b4c91c9028019752d6c0503" title="Initialize the task sub system (reset internal variables).">TSK_init</a>();
+<a name="l00032"></a>00032 
+<a name="l00039"></a>00039 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#a7d32caeead8504a111a92399d472c5b0" title="Configure the user task callback function.  Must be set with a not NULL callback before calling any T...">TSK_userSet</a>(VoidCallback *task);
+<a name="l00040"></a>00040 
+<a name="l00045"></a>00045 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#ab1643ceea50393530b282dc0e4681f5b" title="Stop the user task.  This has the same effect than using TSK_setUser(NULL).">TSK_stop</a>(<span class="keywordtype">void</span>);
+<a name="l00046"></a>00046 
+<a name="l00052"></a>00052 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#a61b1da4d642cd8ea3eb533844747fc7b" title="Yield from supervisor task to user task. The user task will resume and will use all the available CPU...">TSK_userYield</a>(<span class="keywordtype">void</span>);
+<a name="l00053"></a>00053 
+<a name="l00066"></a>00066 <span class="keywordtype">bool</span> <a class="code" href="task_8h.html#ac7bee0d65012001b13e1f3209cdd9061" title="Block supervisor task and resume user task. Supervisor task will not resume execution until TSK_super...">TSK_superPend</a>(<a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> wait);
+<a name="l00067"></a>00067 
+<a name="l00075"></a>00075 <span class="keywordtype">void</span> <a class="code" href="task_8h.html#affb5cc5edf8b22d47abe8b92893fc037" title="Resume a blocked supervisor task. Must be called from user task.">TSK_superPost</a>(<span class="keywordtype">bool</span> immediate);
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077 <span class="preprocessor">#endif </span><span class="comment">/*__TASK_H__*/</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="task_8h.html">task.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

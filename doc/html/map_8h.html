@@ -113,9 +113,9 @@ Functions</h2></td></tr>
  When you're done with the map just use MEM_free(map) to release it.  <a href="#ae6caf599926a96c6625000328b8cd296"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#aa1fb89c58b51a5e7e274b2d607960744">MAP_scrollTo</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> x, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> y)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Scroll map to specified position.<br/>
- The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks).<br/>
+ The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#a753b47efe923d70d7c897a5b433efdc4" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks).<br/>
  WARNING: first MAP_scrollTo(..) call will do a full plane update, for a 64x32 sized plane this represents 4KB of data.<br/>
- That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> in between.  <a href="#aa1fb89c58b51a5e7e274b2d607960744"></a><br/></td></tr>
+ That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling <a class="el" href="sys_8h.html#a753b47efe923d70d7c897a5b433efdc4" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> in between.  <a href="#aa1fb89c58b51a5e7e274b2d607960744"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#a29e8597ab70262c730dbcaa32088c3d3">MAP_scrollToEx</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> x, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> y, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> forceRedraw)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Exactly as <a class="el" href="map_8h.html#aa1fb89c58b51a5e7e274b2d607960744" title="Scroll map to specified position.  The fonction takes care of updating the VDP tilemap which will be ...">MAP_scrollTo</a>(..) except we can force complete map drawing.  <a href="#a29e8597ab70262c730dbcaa32088c3d3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="map_8h.html#ad963c9683530a15354b6560c38568ea3">MAP_getMetaTile</a> (<a class="el" href="struct_map.html">Map</a> *map, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
@@ -241,7 +241,7 @@ Functions</h2></td></tr>
 <li>BG_A<br/>
 </li>
 <li>BG_B<br/>
- </li>
+ If you want to use the map for collision or special behavior (using the MAP_getTile(..) method) then you can just let this parameter to 0. </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">baseTile</td><td>Used to provide base tile index and base palette index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro).<br/>
@@ -578,9 +578,9 @@ Functions</h2></td></tr>
 <div class="memdoc">
 
 <p>Scroll map to specified position.<br/>
- The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks).<br/>
+ The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then VDP background scrolling is automatically set on VBlank (into the <a class="el" href="sys_8h.html#a753b47efe923d70d7c897a5b433efdc4" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> tasks).<br/>
  WARNING: first MAP_scrollTo(..) call will do a full plane update, for a 64x32 sized plane this represents 4KB of data.<br/>
- That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling <a class="el" href="sys_8h.html#aa1b966e61dccc6b5ee67cb877afe910d" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> in between. </p>
+ That means you can't initialize 2 MAPs in the same frame (limited to 7.2 KB of data per frame) so take care of calling <a class="el" href="sys_8h.html#a753b47efe923d70d7c897a5b433efdc4" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a> in between. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">map</td><td><a class="el" href="struct_map.html" title="Map structure containing information for large background/plane update based on MapDefinition.">Map</a> structure containing map information. </td></tr>
@@ -649,7 +649,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="map_8h.html">map.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

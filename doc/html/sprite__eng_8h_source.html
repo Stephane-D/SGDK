@@ -89,204 +89,205 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00015"></a>00015 <span class="preprocessor">#include &quot;<a class="code" href="vdp__tile_8h.html" title="VDP General Tile / Tilemap operations.">vdp_tile.h</a>&quot;</span>
 <a name="l00016"></a>00016 <span class="preprocessor">#include &quot;<a class="code" href="vdp__spr_8h.html" title="VDP Sprite support.">vdp_spr.h</a>&quot;</span>
 <a name="l00017"></a>00017 <span class="preprocessor">#include &quot;<a class="code" href="pal_8h.html" title="Palette support (herited from vdp_pal.h unit)">pal.h</a>&quot;</span>
-<a name="l00018"></a>00018 
+<a name="l00018"></a>00018 <span class="preprocessor">#include &quot;<a class="code" href="pool_8h.html" title="Pool object management unit.">pool.h</a>&quot;</span>
 <a name="l00019"></a>00019 
-<a name="l00024"></a><a class="code" href="sprite__eng_8h.html#ad3d82c84bad35b71a46d7c92acb9d715">00024</a> <span class="preprocessor">#define COLLISION_TYPE_NONE     0</span>
-<a name="l00025"></a>00025 <span class="preprocessor"></span>
-<a name="l00029"></a><a class="code" href="sprite__eng_8h.html#a56299cc694c2f02a2757c4ef70bb54f9">00029</a> <span class="preprocessor">#define COLLISION_TYPE_BOX      1</span>
-<a name="l00030"></a>00030 <span class="preprocessor"></span>
-<a name="l00034"></a><a class="code" href="sprite__eng_8h.html#aee3b0990161602e8e9a20c8686c085bc">00034</a> <span class="preprocessor">#define COLLISION_TYPE_CIRCLE   2</span>
-<a name="l00035"></a>00035 <span class="preprocessor"></span>
-<a name="l00041"></a><a class="code" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0">00041</a> <span class="preprocessor">#define SPR_FLAG_INSERT_HEAD                    0x4000</span>
-<a name="l00042"></a>00042 <span class="preprocessor"></span>
-<a name="l00048"></a><a class="code" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166">00048</a> <span class="preprocessor">#define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x2000</span>
-<a name="l00049"></a>00049 <span class="preprocessor"></span>
-<a name="l00053"></a><a class="code" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757">00053</a> <span class="preprocessor">#define SPR_FLAG_AUTO_VRAM_ALLOC                0x1000</span>
-<a name="l00054"></a>00054 <span class="preprocessor"></span>
-<a name="l00058"></a><a class="code" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39">00058</a> <span class="preprocessor">#define SPR_FLAG_AUTO_SPRITE_ALLOC              0x0800</span>
-<a name="l00059"></a>00059 <span class="preprocessor"></span>
-<a name="l00063"></a><a class="code" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5">00063</a> <span class="preprocessor">#define SPR_FLAG_AUTO_TILE_UPLOAD               0x0400</span>
-<a name="l00064"></a>00064 <span class="preprocessor"></span>
-<a name="l00068"></a><a class="code" href="sprite__eng_8h.html#a2835792f6efc1489feb58abc15a310c5">00068</a> <span class="preprocessor">#define SPR_FLAG_AUTO_VISIBILITY                0x0200</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>
-<a name="l00075"></a><a class="code" href="sprite__eng_8h.html#a1d4d3e5f40a12a457c83e8ed564777f0">00075</a> <span class="preprocessor">#define SPR_FLAG_FAST_AUTO_VISIBILITY           0x0100</span>
-<a name="l00076"></a>00076 <span class="preprocessor"></span>
-<a name="l00081"></a><a class="code" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">00081</a> <span class="preprocessor">#define SPR_FLAG_MASK                           (SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)</span>
-<a name="l00082"></a>00082 <span class="preprocessor"></span>
-<a name="l00087"></a><a class="code" href="sprite__eng_8h.html#a64468da518c5199db61c840ed64a3d35">00087</a> <span class="preprocessor">#define SPR_MIN_DEPTH       (-0x8000)</span>
-<a name="l00088"></a>00088 <span class="preprocessor"></span>
-<a name="l00092"></a><a class="code" href="sprite__eng_8h.html#a5c27798bbfca646b588f4c5f2a926be4">00092</a> <span class="preprocessor">#define SPR_MAX_DEPTH       0x7FFF</span>
-<a name="l00093"></a>00093 <span class="preprocessor"></span>
-<a name="l00098"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">00098</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
-<a name="l00099"></a>00099 {
-<a name="l00100"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8abb22a6fcb7f208995b092f12d388786c">00100</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8abb22a6fcb7f208995b092f12d388786c">VISIBLE</a>,        
-<a name="l00101"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a41ae0a505430bf564b119bc82db7592d">00101</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a41ae0a505430bf564b119bc82db7592d">HIDDEN</a>,         
-<a name="l00102"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61">00102</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61">AUTO_FAST</a>,      
-<a name="l00103"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b">00103</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b">AUTO_SLOW</a>,      
-<a name="l00104"></a>00104 } <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8" title="Sprite visibility enumeration.">SpriteVisibility</a>;
-<a name="l00105"></a>00105 
-<a name="l00119"></a><a class="code" href="struct_box_collision.html">00119</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00120"></a>00120 {
-<a name="l00121"></a>00121     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> x;
-<a name="l00122"></a>00122     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> y;
-<a name="l00123"></a>00123     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> w;
-<a name="l00124"></a>00124     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> h;
-<a name="l00125"></a>00125 } <a class="code" href="struct_box_collision.html" title="Simple Box structure for collision.">BoxCollision</a>;
-<a name="l00126"></a>00126 
-<a name="l00138"></a><a class="code" href="struct_circle_collision.html">00138</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00139"></a>00139 {
-<a name="l00140"></a>00140     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> x;
-<a name="l00141"></a>00141     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> y;
-<a name="l00142"></a>00142     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ray;
-<a name="l00143"></a>00143 } <a class="code" href="struct_circle_collision.html" title="Simple Circle structure (can be used for collision detection)">CircleCollision</a>;
-<a name="l00144"></a>00144 
-<a name="l00165"></a><a class="code" href="struct__collision.html">00165</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__collision.html">_collision</a>
-<a name="l00166"></a>00166 {
-<a name="l00167"></a>00167     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> typeHit;
-<a name="l00168"></a>00168     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> typeAttack;
-<a name="l00169"></a>00169     <span class="keyword">union</span>
-<a name="l00170"></a>00170     {
-<a name="l00171"></a>00171         <a class="code" href="struct_box_collision.html" title="Simple Box structure for collision.">BoxCollision</a> box;
-<a name="l00172"></a>00172         <a class="code" href="struct_circle_collision.html" title="Simple Circle structure (can be used for collision detection)">CircleCollision</a> circle;
-<a name="l00173"></a>00173     } hit;
-<a name="l00174"></a>00174     <span class="keyword">union</span>
-<a name="l00175"></a>00175     {
-<a name="l00176"></a>00176         <a class="code" href="struct_box_collision.html" title="Simple Box structure for collision.">BoxCollision</a> box;
-<a name="l00177"></a>00177         <a class="code" href="struct_circle_collision.html" title="Simple Circle structure (can be used for collision detection)">CircleCollision</a> circle;
-<a name="l00178"></a>00178     } attack;
-<a name="l00179"></a>00179 } <a class="code" href="struct_collision.html" title="Collision definition union.">Collision</a>;
-<a name="l00180"></a>00180 
-<a name="l00198"></a><a class="code" href="struct_frame_v_d_p_sprite.html">00198</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00199"></a>00199 {
-<a name="l00200"></a>00200     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> numTile;
-<a name="l00201"></a>00201     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetY;          <span class="comment">// respect VDP sprite field order</span>
-<a name="l00202"></a>00202     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetYFlip;
-<a name="l00203"></a>00203     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size;
-<a name="l00204"></a>00204     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetX;
-<a name="l00205"></a>00205     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetXFlip;
-<a name="l00206"></a>00206 }  <a class="code" href="struct_frame_v_d_p_sprite.html" title="Single VDP sprite info structure for sprite animation frame.">FrameVDPSprite</a>;
-<a name="l00207"></a>00207 
-<a name="l00223"></a><a class="code" href="struct_animation_frame.html">00223</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00224"></a>00224 {
-<a name="l00225"></a>00225     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> numSprite;
-<a name="l00226"></a>00226     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> timer;
-<a name="l00227"></a>00227     <a class="code" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a>* tileset;                   <span class="comment">// TODO: have a tileset per VDP sprite --&gt; probably not a good idea performance wise</span>
-<a name="l00228"></a>00228     <a class="code" href="struct_collision.html" title="Collision definition union.">Collision</a>* collision;               <span class="comment">// Require many DMA queue operations and fast DMA flush as well, also bring extra computing in calculating delayed update</span>
-<a name="l00229"></a>00229     <a class="code" href="struct_frame_v_d_p_sprite.html" title="Single VDP sprite info structure for sprite animation frame.">FrameVDPSprite</a> frameVDPSprites[];
-<a name="l00230"></a>00230 } <a class="code" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a>;
-<a name="l00231"></a>00231 
-<a name="l00243"></a><a class="code" href="struct_animation.html">00243</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00244"></a>00244 {
-<a name="l00245"></a>00245     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> numFrame;
-<a name="l00246"></a>00246     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> loop;
-<a name="l00247"></a>00247     <a class="code" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a>** frames;
-<a name="l00248"></a>00248 } <a class="code" href="struct_animation.html" title="Sprite animation structure.">Animation</a>;
-<a name="l00249"></a>00249 
-<a name="l00271"></a><a class="code" href="struct_sprite_definition.html">00271</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
-<a name="l00272"></a>00272 {
-<a name="l00273"></a>00273     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w;
-<a name="l00274"></a>00274     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h;
-<a name="l00275"></a>00275     <a class="code" href="struct_palette.html" title="Palette structure contains color data.">Palette</a>* palette;
-<a name="l00276"></a>00276     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numAnimation;
-<a name="l00277"></a>00277     <a class="code" href="struct_animation.html" title="Sprite animation structure.">Animation</a>** animations;
-<a name="l00278"></a>00278     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maxNumTile;
-<a name="l00279"></a>00279     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maxNumSprite;
-<a name="l00280"></a>00280 } <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>;
-<a name="l00281"></a>00281 
-<a name="l00331"></a><a class="code" href="struct_sprite.html">00331</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>
-<a name="l00332"></a>00332 {
-<a name="l00333"></a>00333     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> status;
-<a name="l00334"></a>00334     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> visibility;
-<a name="l00335"></a>00335     <span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* definition;
-<a name="l00336"></a>00336     void (*onFrameChange)(<span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00337"></a>00337     <a class="code" href="struct_animation.html" title="Sprite animation structure.">Animation</a>* animation;
-<a name="l00338"></a>00338     <a class="code" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a>* frame;
-<a name="l00339"></a>00339     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> animInd;
-<a name="l00340"></a>00340     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frameInd;
-<a name="l00341"></a>00341     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> timer;
-<a name="l00342"></a>00342     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x;
-<a name="l00343"></a>00343     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y;
-<a name="l00344"></a>00344     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> depth;
-<a name="l00345"></a>00345     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut;
-<a name="l00346"></a>00346     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDPSpriteIndex;
-<a name="l00347"></a>00347     <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>* lastVDPSprite;
-<a name="l00348"></a>00348     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> lastNumSprite;
-<a name="l00349"></a>00349     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> spriteToHide;
-<a name="l00350"></a>00350     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> data;
-<a name="l00351"></a>00351     <span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* prev;
-<a name="l00352"></a>00352     <span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* next;
-<a name="l00353"></a>00353 } <a class="code" href="sprite__eng_8h.html#ab1686e881087d6370cd9ddebea2ce6d4" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>;
-<a name="l00354"></a>00354 
-<a name="l00366"></a><a class="code" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">00366</a> <span class="keyword">typedef</span> <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f" title="Sprite frame change event callback. ">FrameChangeCallback</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00367"></a>00367 
-<a name="l00371"></a>00371 <span class="keyword">extern</span> <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* spritesBank;
-<a name="l00375"></a>00375 <span class="keyword">extern</span> <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* firstSprite;
-<a name="l00379"></a>00379 <span class="keyword">extern</span> <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* lastSprite;
-<a name="l00383"></a>00383 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteVramSize;
-<a name="l00384"></a>00384 
+<a name="l00020"></a>00020 
+<a name="l00025"></a><a class="code" href="sprite__eng_8h.html#ad3d82c84bad35b71a46d7c92acb9d715">00025</a> <span class="preprocessor">#define COLLISION_TYPE_NONE     0</span>
+<a name="l00026"></a>00026 <span class="preprocessor"></span>
+<a name="l00030"></a><a class="code" href="sprite__eng_8h.html#a56299cc694c2f02a2757c4ef70bb54f9">00030</a> <span class="preprocessor">#define COLLISION_TYPE_BOX      1</span>
+<a name="l00031"></a>00031 <span class="preprocessor"></span>
+<a name="l00035"></a><a class="code" href="sprite__eng_8h.html#aee3b0990161602e8e9a20c8686c085bc">00035</a> <span class="preprocessor">#define COLLISION_TYPE_CIRCLE   2</span>
+<a name="l00036"></a>00036 <span class="preprocessor"></span>
+<a name="l00042"></a><a class="code" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0">00042</a> <span class="preprocessor">#define SPR_FLAG_INSERT_HEAD                    0x4000</span>
+<a name="l00043"></a>00043 <span class="preprocessor"></span>
+<a name="l00049"></a><a class="code" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166">00049</a> <span class="preprocessor">#define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x2000</span>
+<a name="l00050"></a>00050 <span class="preprocessor"></span>
+<a name="l00054"></a><a class="code" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757">00054</a> <span class="preprocessor">#define SPR_FLAG_AUTO_VRAM_ALLOC                0x1000</span>
+<a name="l00055"></a>00055 <span class="preprocessor"></span>
+<a name="l00059"></a><a class="code" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39">00059</a> <span class="preprocessor">#define SPR_FLAG_AUTO_SPRITE_ALLOC              0x0800</span>
+<a name="l00060"></a>00060 <span class="preprocessor"></span>
+<a name="l00064"></a><a class="code" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5">00064</a> <span class="preprocessor">#define SPR_FLAG_AUTO_TILE_UPLOAD               0x0400</span>
+<a name="l00065"></a>00065 <span class="preprocessor"></span>
+<a name="l00069"></a><a class="code" href="sprite__eng_8h.html#a2835792f6efc1489feb58abc15a310c5">00069</a> <span class="preprocessor">#define SPR_FLAG_AUTO_VISIBILITY                0x0200</span>
+<a name="l00070"></a>00070 <span class="preprocessor"></span>
+<a name="l00076"></a><a class="code" href="sprite__eng_8h.html#a1d4d3e5f40a12a457c83e8ed564777f0">00076</a> <span class="preprocessor">#define SPR_FLAG_FAST_AUTO_VISIBILITY           0x0100</span>
+<a name="l00077"></a>00077 <span class="preprocessor"></span>
+<a name="l00082"></a><a class="code" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">00082</a> <span class="preprocessor">#define SPR_FLAG_MASK                           (SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)</span>
+<a name="l00083"></a>00083 <span class="preprocessor"></span>
+<a name="l00088"></a><a class="code" href="sprite__eng_8h.html#a64468da518c5199db61c840ed64a3d35">00088</a> <span class="preprocessor">#define SPR_MIN_DEPTH       (-0x8000)</span>
+<a name="l00089"></a>00089 <span class="preprocessor"></span>
+<a name="l00093"></a><a class="code" href="sprite__eng_8h.html#a5c27798bbfca646b588f4c5f2a926be4">00093</a> <span class="preprocessor">#define SPR_MAX_DEPTH       0x7FFF</span>
+<a name="l00094"></a>00094 <span class="preprocessor"></span>
+<a name="l00099"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8">00099</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
+<a name="l00100"></a>00100 {
+<a name="l00101"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8abb22a6fcb7f208995b092f12d388786c">00101</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8abb22a6fcb7f208995b092f12d388786c">VISIBLE</a>,        
+<a name="l00102"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a41ae0a505430bf564b119bc82db7592d">00102</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a41ae0a505430bf564b119bc82db7592d">HIDDEN</a>,         
+<a name="l00103"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61">00103</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6c41f437582bd2a4799f3e2c7d650e61">AUTO_FAST</a>,      
+<a name="l00104"></a><a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b">00104</a>     <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8a6dafb7768d8bacdad22026ada3362d0b">AUTO_SLOW</a>,      
+<a name="l00105"></a>00105 } <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8" title="Sprite visibility enumeration.">SpriteVisibility</a>;
+<a name="l00106"></a>00106 
+<a name="l00120"></a><a class="code" href="struct_box_collision.html">00120</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00121"></a>00121 {
+<a name="l00122"></a>00122     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> x;
+<a name="l00123"></a>00123     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> y;
+<a name="l00124"></a>00124     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> w;
+<a name="l00125"></a>00125     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> h;
+<a name="l00126"></a>00126 } <a class="code" href="struct_box_collision.html" title="Simple Box structure for collision.">BoxCollision</a>;
+<a name="l00127"></a>00127 
+<a name="l00139"></a><a class="code" href="struct_circle_collision.html">00139</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00140"></a>00140 {
+<a name="l00141"></a>00141     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> x;
+<a name="l00142"></a>00142     <a class="code" href="types_8h.html#a8183072ed84abc0729df0f585ef37555">s8</a> y;
+<a name="l00143"></a>00143     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> ray;
+<a name="l00144"></a>00144 } <a class="code" href="struct_circle_collision.html" title="Simple Circle structure (can be used for collision detection)">CircleCollision</a>;
+<a name="l00145"></a>00145 
+<a name="l00166"></a><a class="code" href="struct__collision.html">00166</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__collision.html">_collision</a>
+<a name="l00167"></a>00167 {
+<a name="l00168"></a>00168     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> typeHit;
+<a name="l00169"></a>00169     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> typeAttack;
+<a name="l00170"></a>00170     <span class="keyword">union</span>
+<a name="l00171"></a>00171     {
+<a name="l00172"></a>00172         <a class="code" href="struct_box_collision.html" title="Simple Box structure for collision.">BoxCollision</a> box;
+<a name="l00173"></a>00173         <a class="code" href="struct_circle_collision.html" title="Simple Circle structure (can be used for collision detection)">CircleCollision</a> circle;
+<a name="l00174"></a>00174     } hit;
+<a name="l00175"></a>00175     <span class="keyword">union</span>
+<a name="l00176"></a>00176     {
+<a name="l00177"></a>00177         <a class="code" href="struct_box_collision.html" title="Simple Box structure for collision.">BoxCollision</a> box;
+<a name="l00178"></a>00178         <a class="code" href="struct_circle_collision.html" title="Simple Circle structure (can be used for collision detection)">CircleCollision</a> circle;
+<a name="l00179"></a>00179     } attack;
+<a name="l00180"></a>00180 } <a class="code" href="struct_collision.html" title="Collision definition union.">Collision</a>;
+<a name="l00181"></a>00181 
+<a name="l00199"></a><a class="code" href="struct_frame_v_d_p_sprite.html">00199</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00200"></a>00200 {
+<a name="l00201"></a>00201     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> numTile;
+<a name="l00202"></a>00202     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetY;          <span class="comment">// respect VDP sprite field order</span>
+<a name="l00203"></a>00203     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetYFlip;
+<a name="l00204"></a>00204     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> size;
+<a name="l00205"></a>00205     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetX;
+<a name="l00206"></a>00206     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> offsetXFlip;
+<a name="l00207"></a>00207 }  <a class="code" href="struct_frame_v_d_p_sprite.html" title="Single VDP sprite info structure for sprite animation frame.">FrameVDPSprite</a>;
+<a name="l00208"></a>00208 
+<a name="l00224"></a><a class="code" href="struct_animation_frame.html">00224</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00225"></a>00225 {
+<a name="l00226"></a>00226     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> numSprite;
+<a name="l00227"></a>00227     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> timer;
+<a name="l00228"></a>00228     <a class="code" href="struct_tile_set.html" title="Tile set structure which contains tiles definition.  Use the unpackTileSet() method to unpack if comp...">TileSet</a>* tileset;                   <span class="comment">// TODO: have a tileset per VDP sprite --&gt; probably not a good idea performance wise</span>
+<a name="l00229"></a>00229     <a class="code" href="struct_collision.html" title="Collision definition union.">Collision</a>* collision;               <span class="comment">// Require many DMA queue operations and fast DMA flush as well, also bring extra computing in calculating delayed update</span>
+<a name="l00230"></a>00230     <a class="code" href="struct_frame_v_d_p_sprite.html" title="Single VDP sprite info structure for sprite animation frame.">FrameVDPSprite</a> frameVDPSprites[];
+<a name="l00231"></a>00231 } <a class="code" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a>;
+<a name="l00232"></a>00232 
+<a name="l00244"></a><a class="code" href="struct_animation.html">00244</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00245"></a>00245 {
+<a name="l00246"></a>00246     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> numFrame;
+<a name="l00247"></a>00247     <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> loop;
+<a name="l00248"></a>00248     <a class="code" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a>** frames;
+<a name="l00249"></a>00249 } <a class="code" href="struct_animation.html" title="Sprite animation structure.">Animation</a>;
+<a name="l00250"></a>00250 
+<a name="l00272"></a><a class="code" href="struct_sprite_definition.html">00272</a> <span class="keyword">typedef</span> <span class="keyword">struct</span>
+<a name="l00273"></a>00273 {
+<a name="l00274"></a>00274     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w;
+<a name="l00275"></a>00275     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h;
+<a name="l00276"></a>00276     <a class="code" href="struct_palette.html" title="Palette structure contains color data.">Palette</a>* palette;
+<a name="l00277"></a>00277     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numAnimation;
+<a name="l00278"></a>00278     <a class="code" href="struct_animation.html" title="Sprite animation structure.">Animation</a>** animations;
+<a name="l00279"></a>00279     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maxNumTile;
+<a name="l00280"></a>00280     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> maxNumSprite;
+<a name="l00281"></a>00281 } <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>;
+<a name="l00282"></a>00282 
+<a name="l00332"></a><a class="code" href="struct_sprite.html">00332</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>
+<a name="l00333"></a>00333 {
+<a name="l00334"></a>00334     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> status;
+<a name="l00335"></a>00335     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> visibility;
+<a name="l00336"></a>00336     <span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* definition;
+<a name="l00337"></a>00337     void (*onFrameChange)(<span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00338"></a>00338     <a class="code" href="struct_animation.html" title="Sprite animation structure.">Animation</a>* animation;
+<a name="l00339"></a>00339     <a class="code" href="struct_animation_frame.html" title="Sprite animation frame structure.">AnimationFrame</a>* frame;
+<a name="l00340"></a>00340     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> animInd;
+<a name="l00341"></a>00341     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frameInd;
+<a name="l00342"></a>00342     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> timer;
+<a name="l00343"></a>00343     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x;
+<a name="l00344"></a>00344     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y;
+<a name="l00345"></a>00345     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> depth;
+<a name="l00346"></a>00346     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut;
+<a name="l00347"></a>00347     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDPSpriteIndex;
+<a name="l00348"></a>00348     <a class="code" href="struct_v_d_p_sprite.html" title="VDP sprite definition structure replicating VDP hardware sprite.">VDPSprite</a>* lastVDPSprite;
+<a name="l00349"></a>00349     <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> lastNumSprite;
+<a name="l00350"></a>00350     <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> spriteToHide;
+<a name="l00351"></a>00351     <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> data;
+<a name="l00352"></a>00352     <span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* prev;
+<a name="l00353"></a>00353     <span class="keyword">struct </span><a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* next;
+<a name="l00354"></a>00354 } <a class="code" href="sprite__eng_8h.html#ab1686e881087d6370cd9ddebea2ce6d4" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>;
+<a name="l00355"></a>00355 
+<a name="l00367"></a><a class="code" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f">00367</a> <span class="keyword">typedef</span> <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f" title="Sprite frame change event callback. ">FrameChangeCallback</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00368"></a>00368 
+<a name="l00372"></a>00372 <span class="keyword">extern</span> <a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* <a class="code" href="sprite__eng_8h.html#a57c86816f26f8ffa2ecaa46798329725">spritesPool</a>;
+<a name="l00376"></a>00376 <span class="keyword">extern</span> <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* <a class="code" href="sprite__eng_8h.html#a8f52e18717357ee667565f4aa087c31e">firstSprite</a>;
+<a name="l00380"></a>00380 <span class="keyword">extern</span> <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* <a class="code" href="sprite__eng_8h.html#ab6b973085a740f846f3d62dd01a9ad07">lastSprite</a>;
+<a name="l00384"></a>00384 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sprite__eng_8h.html#a6c07bb0777a434f9078e6cd395ceaf58">spriteVramSize</a>;
 <a name="l00385"></a>00385 
-<a name="l00396"></a>00396 <span class="keywordtype">void</span> SPR_init();
-<a name="l00411"></a>00411 <span class="keywordtype">void</span> SPR_initEx(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vramSize);
-<a name="l00419"></a>00419 <span class="keywordtype">void</span> SPR_end();
-<a name="l00424"></a>00424 <span class="keywordtype">bool</span> SPR_isInitialized();
-<a name="l00425"></a>00425 
-<a name="l00432"></a>00432 <span class="keywordtype">void</span> SPR_reset();
-<a name="l00433"></a>00433 
-<a name="l00483"></a>00483 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* SPR_addSpriteEx(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag);
-<a name="l00508"></a>00508 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* SPR_addSprite(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
-<a name="l00556"></a>00556 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* SPR_addSpriteExSafe(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag);
-<a name="l00579"></a>00579 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* SPR_addSpriteSafe(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
-<a name="l00580"></a>00580 
-<a name="l00592"></a>00592 <span class="keywordtype">void</span> SPR_releaseSprite(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00597"></a>00597 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> SPR_getNumActiveSprite();
-<a name="l00602"></a>00602 <span class="keywordtype">void</span> SPR_defragVRAM();
-<a name="l00631"></a>00631 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>** SPR_loadAllFrames(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* sprDef, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* totalNumTile);
-<a name="l00632"></a>00632 
-<a name="l00647"></a>00647 <span class="keywordtype">bool</span> SPR_setDefinition(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef);
-<a name="l00652"></a>00652 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> SPR_getPositionX(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00657"></a>00657 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> SPR_getPositionY(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00669"></a>00669 <span class="keywordtype">void</span> SPR_setPosition(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y);
-<a name="l00679"></a>00679 <span class="keywordtype">void</span> SPR_setHFlip(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00689"></a>00689 <span class="keywordtype">void</span> SPR_setVFlip(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00699"></a>00699 <span class="keywordtype">void</span> SPR_setPalette(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00709"></a>00709 <span class="keywordtype">void</span> SPR_setPriority(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00714"></a>00714 <span class="keywordtype">void</span> SPR_setPriorityAttribut(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00727"></a>00727 <span class="keywordtype">void</span> SPR_setDepth(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
-<a name="l00732"></a>00732 <span class="keywordtype">void</span> SPR_setZ(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
-<a name="l00736"></a>00736 <span class="keywordtype">void</span> SPR_setAlwaysOnTop(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00748"></a>00748 <span class="keywordtype">void</span> SPR_setAnimAndFrame(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame);
-<a name="l00758"></a>00758 <span class="keywordtype">void</span> SPR_setAnim(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim);
-<a name="l00768"></a>00768 <span class="keywordtype">void</span> SPR_setFrame(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame);
-<a name="l00776"></a>00776 <span class="keywordtype">void</span> SPR_nextFrame(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00777"></a>00777 
-<a name="l00792"></a>00792 <span class="keywordtype">bool</span> SPR_setVRAMTileIndex(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
-<a name="l00810"></a>00810 <span class="keywordtype">bool</span> SPR_setSpriteTableIndex(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
-<a name="l00821"></a>00821 <span class="keywordtype">void</span> SPR_setAutoTileUpload(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
-<a name="l00834"></a>00834 <span class="keywordtype">void</span> SPR_setDelayedFrameUpdate(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
-<a name="l00850"></a>00850 <span class="keywordtype">void</span> SPR_setFrameChangeCallback(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f" title="Sprite frame change event callback. ">FrameChangeCallback</a>* callback);
-<a name="l00851"></a>00851 
-<a name="l00870"></a>00870 <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8" title="Sprite visibility enumeration.">SpriteVisibility</a> SPR_getVisibility(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00888"></a>00888 <span class="keywordtype">bool</span> SPR_isVisible(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> recompute);
-<a name="l00889"></a>00889 
-<a name="l00913"></a>00913 <span class="keywordtype">void</span> SPR_setVisibility(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8" title="Sprite visibility enumeration.">SpriteVisibility</a> value);
-<a name="l00917"></a>00917 <span class="keywordtype">void</span> SPR_setAlwaysVisible(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00921"></a>00921 <span class="keywordtype">void</span> SPR_setNeverVisible(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
-<a name="l00925"></a>00925 <span class="keywordtype">bool</span> SPR_computeVisibility(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
-<a name="l00926"></a>00926 
-<a name="l00934"></a>00934 <span class="keywordtype">void</span> SPR_clear();
-<a name="l00944"></a>00944 <span class="keywordtype">void</span> SPR_update();
-<a name="l00945"></a>00945 
-<a name="l00950"></a>00950 <span class="keywordtype">void</span> SPR_logProfil();
-<a name="l00955"></a>00955 <span class="keywordtype">void</span> SPR_logSprites();
-<a name="l00956"></a>00956 
+<a name="l00386"></a>00386 
+<a name="l00397"></a>00397 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a134393ba1d0e406ddda4a3e4ed34cd3e" title="Initialize the Sprite engine with default parameters.">SPR_init</a>(<span class="keywordtype">void</span>);
+<a name="l00412"></a>00412 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a54f00b28a0ab0bdb97abce4189b240fc" title="Init the Sprite engine with specified advanced parameters (VRAM allocation size and decompression buf...">SPR_initEx</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vramSize);
+<a name="l00420"></a>00420 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#affbe2b4c6a56a8728aae48ccf9a81ac2" title="End the Sprite engine.">SPR_end</a>(<span class="keywordtype">void</span>);
+<a name="l00425"></a>00425 <span class="keywordtype">bool</span> <a class="code" href="sprite__eng_8h.html#a9ee158d639ff57a8c9880d2bc1295687" title="FALSE if sprite cache engine is not initialized, TRUE otherwise.">SPR_isInitialized</a>(<span class="keywordtype">void</span>);
+<a name="l00426"></a>00426 
+<a name="l00433"></a>00433 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#afc6c7ab3f3374ff48b71dbcac79f55b1" title="Reset the Sprite engine. ">SPR_reset</a>(<span class="keywordtype">void</span>);
+<a name="l00434"></a>00434 
+<a name="l00484"></a>00484 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* <a class="code" href="sprite__eng_8h.html#a78e283f11115b0f36701fe7833bd124a" title="Adds a new sprite with specified parameters and returns it.">SPR_addSpriteEx</a>(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag);
+<a name="l00509"></a>00509 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* <a class="code" href="sprite__eng_8h.html#a94ccee731dbfa40d6ae185a484bad7b0" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSprite</a>(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
+<a name="l00557"></a>00557 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* <a class="code" href="sprite__eng_8h.html#ac5fad357734dc048fd5066d3ef02debf" title="Adds a new sprite with specified parameters and returns it.">SPR_addSpriteExSafe</a>(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> spriteIndex, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> flag);
+<a name="l00580"></a>00580 <a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* <a class="code" href="sprite__eng_8h.html#a538de73de8a9c6cf3502401cb2bd18c3" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSpriteSafe</a>(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> attribut);
+<a name="l00581"></a>00581 
+<a name="l00593"></a>00593 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a0e22c7988eafb8ce819582d77bdcdbec" title="Release the specified sprite (no more visible and release its resources).">SPR_releaseSprite</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00598"></a>00598 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sprite__eng_8h.html#a960278abf40809911c67c662d9bbe4a8" title="Returns the number of active sprite (number of sprite added with SPR_addSprite(..) or SPR_addSpriteEx...">SPR_getNumActiveSprite</a>(<span class="keywordtype">void</span>);
+<a name="l00603"></a>00603 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a1825e6dbb09a8e552b0bedc821165b6a" title="Defragment allocated VRAM for sprites, that can help when sprite allocation fail (SPR_addSprite(..) or SPR_addSpriteEx(..) return NULL).">SPR_defragVRAM</a>(<span class="keywordtype">void</span>);
+<a name="l00632"></a>00632 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>** <a class="code" href="sprite__eng_8h.html#a5d6d1d715769af4df2c9855d1d1973b6" title="Load all frames of SpriteDefinition (using DMA) at specified VRAM tile index and return the indexes t...">SPR_loadAllFrames</a>(<span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* sprDef, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* totalNumTile);
+<a name="l00633"></a>00633 
+<a name="l00648"></a>00648 <span class="keywordtype">bool</span> <a class="code" href="sprite__eng_8h.html#ac100abd8f7a492453c7c79bb4dfcea11" title="Set the Sprite Definition.">SPR_setDefinition</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keyword">const</span> <a class="code" href="struct_sprite_definition.html" title="Sprite definition structure.">SpriteDefinition</a>* spriteDef);
+<a name="l00653"></a>00653 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="sprite__eng_8h.html#a43dafb098b1775da9cf20bc51ccb9c5b" title="Get sprite position X.">SPR_getPositionX</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00658"></a>00658 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="sprite__eng_8h.html#a5bdc0c12cbf190dad1cca2e4b506df8c" title="Get sprite position Y.">SPR_getPositionY</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00670"></a>00670 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#ae7d28372a873a655c2f7de88963a0d8a" title="Set sprite position.">SPR_setPosition</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> x, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> y);
+<a name="l00680"></a>00680 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a0b18acebbdcc0a86361e3f08be066bf1" title="Set sprite Horizontal Flip attribut.">SPR_setHFlip</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
+<a name="l00690"></a>00690 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a0b2f3a0928aceb6a244f72da99acaddd" title="Set sprite Vertical Flip attribut.">SPR_setVFlip</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
+<a name="l00700"></a>00700 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#aba19c8cb2e9144a25b08b20b4d12df41" title="Set sprite Palette index to use.">SPR_setPalette</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00710"></a>00710 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a03275096f187a64406f5fc3bd332462f" title="Set sprite Priority attribut.">SPR_setPriority</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
+<a name="l00715"></a>00715 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a05f54d36b5649b37d770cb6dc873378f">SPR_setPriorityAttribut</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00728"></a>00728 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
+<a name="l00733"></a>00733 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#ab8edd601ed056f5e7cb7fa44c5e9fc2d" title="Same as SPR_setDepth(..)">SPR_setZ</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
+<a name="l00737"></a>00737 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#aaaf5d7636687419ef7a8d6ec3ba4d7c8">SPR_setAlwaysOnTop</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00749"></a>00749 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a7f4d357bbe7a3b5e88d0adc6d7209575" title="Set current sprite animation and frame.">SPR_setAnimAndFrame</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame);
+<a name="l00759"></a>00759 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a2f86e3e794df170352a5409cdaf64b95" title="Set current sprite animation.">SPR_setAnim</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim);
+<a name="l00769"></a>00769 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a5b992fb79ffb269f8eaaf55e121dc7ea" title="Set current sprite frame.">SPR_setFrame</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame);
+<a name="l00777"></a>00777 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#aafd20fc33df8a81fc5675e132833e8a8" title="Pass to the next sprite frame.">SPR_nextFrame</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00778"></a>00778 
+<a name="l00793"></a>00793 <span class="keywordtype">bool</span> <a class="code" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3" title="Set the VRAM tile position reserved for this sprite.">SPR_setVRAMTileIndex</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
+<a name="l00811"></a>00811 <span class="keywordtype">bool</span> <a class="code" href="sprite__eng_8h.html#a9b1da6feff3d9f3d9febb0884ff25f1b" title="Set the VDP sprite index to use for this sprite.">SPR_setSpriteTableIndex</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value);
+<a name="l00822"></a>00822 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a198bc55589dad6b74ad6fa593b6b35d0" title="Enable/disable the automatic upload of sprite tiles data into VRAM.">SPR_setAutoTileUpload</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
+<a name="l00835"></a>00835 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#abcc0480baf7470a71de6b8d01cb4343e" title="Enable/disable the delayed frame update.">SPR_setDelayedFrameUpdate</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> value);
+<a name="l00851"></a>00851 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="sprite__eng_8h.html#a8066e165338e0b3365328ffd288dd29f" title="Sprite frame change event callback. ">FrameChangeCallback</a>* callback);
+<a name="l00852"></a>00852 
+<a name="l00871"></a>00871 <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8" title="Sprite visibility enumeration.">SpriteVisibility</a> <a class="code" href="sprite__eng_8h.html#ae97c00e7a9dee82f518627550183e2e7" title="Return the visibility state for this sprite.  WARNING: this is different from SPR_isVisible(..) method, possible value are:  SpriteVisibility.VISIBLE = sprite is visible  SpriteVisibility.HIDDEN = sprite is not visible  SpriteVisibility.AUTO_FAST = visibility is automatically computed - global visibility (only using sprite X position)  SpriteVisibility.AUTO_SLOW = visibility is automatically computed - per hardware sprite visibility (only using sprite X position) ">SPR_getVisibility</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00889"></a>00889 <span class="keywordtype">bool</span> <a class="code" href="sprite__eng_8h.html#afd03d00ed3be960a396081a8b5f03a71" title="Return the visible state for this sprite (meaningful only if AUTO visibility is enabled, see SPR_setVisibility(..) method). ">SPR_isVisible</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <span class="keywordtype">bool</span> recompute);
+<a name="l00890"></a>00890 
+<a name="l00914"></a>00914 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="sprite__eng_8h.html#a91bab69b7e2921de87dce78b1a4b58f8" title="Sprite visibility enumeration.">SpriteVisibility</a> value);
+<a name="l00918"></a>00918 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#ad0c8ca6c151a3a4f410a7ea3b42fd8a0">SPR_setAlwaysVisible</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00922"></a>00922 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#aaef30cc5900d691eefe5e38f625fe914">SPR_setNeverVisible</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
+<a name="l00926"></a>00926 <span class="keywordtype">bool</span> <a class="code" href="sprite__eng_8h.html#ae7ed2668e777d3f326b62b680d26076e">SPR_computeVisibility</a>(<a class="code" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a>* sprite);
+<a name="l00927"></a>00927 
+<a name="l00935"></a>00935 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a9e320252ac0f2461084f2cba90ea79b6" title="Clear all displayed sprites.">SPR_clear</a>(<span class="keywordtype">void</span>);
+<a name="l00945"></a>00945 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a6803cbed46d5a5acfe4a1309ca5ed755" title="Update and display the active list of sprite.">SPR_update</a>(<span class="keywordtype">void</span>);
+<a name="l00946"></a>00946 
+<a name="l00951"></a>00951 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a840cd100b5ebe03f415856eaf8ec0ca4" title="Log the profil informations (when enabled) in the KMod message window.">SPR_logProfil</a>(<span class="keywordtype">void</span>);
+<a name="l00956"></a>00956 <span class="keywordtype">void</span> <a class="code" href="sprite__eng_8h.html#a4b895f18aa94fb06753309281b22e9ec" title="Log the sprites informations (when enabled) in the KMod message window.">SPR_logSprites</a>(<span class="keywordtype">void</span>);
 <a name="l00957"></a>00957 
-<a name="l00958"></a>00958 <span class="preprocessor">#endif // _SPRITE_ENG_H_</span>
+<a name="l00958"></a>00958 
+<a name="l00959"></a>00959 <span class="preprocessor">#endif // _SPRITE_ENG_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sprite__eng_8h.html">sprite_eng.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

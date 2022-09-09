@@ -95,15 +95,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d449dbdbe6d6fab619aeb79df669482"></a><!-- doxytag: member="vdp.h::GFX_DATA_PORT" ref="a5d449dbdbe6d6fab619aeb79df669482" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5d449dbdbe6d6fab619aeb79df669482">GFX_DATA_PORT</a>&#160;&#160;&#160;0xC00000</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af25e39e450f3dab28ced3410d09a724f"></a><!-- doxytag: member="vdp.h::VDP_DATA_PORT" ref="af25e39e450f3dab28ced3410d09a724f" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af25e39e450f3dab28ced3410d09a724f">VDP_DATA_PORT</a>&#160;&#160;&#160;0xC00000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP Data port address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60ae80b65f7f3474bbc2a1bef30ee434"></a><!-- doxytag: member="vdp.h::GFX_CTRL_PORT" ref="a60ae80b65f7f3474bbc2a1bef30ee434" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a60ae80b65f7f3474bbc2a1bef30ee434">GFX_CTRL_PORT</a>&#160;&#160;&#160;0xC00004</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43c7208da604ffd6142c4e51723a9ac7"></a><!-- doxytag: member="vdp.h::VDP_CTRL_PORT" ref="a43c7208da604ffd6142c4e51723a9ac7" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a43c7208da604ffd6142c4e51723a9ac7">VDP_CTRL_PORT</a>&#160;&#160;&#160;0xC00004</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP Control port address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6dc8286621a038d46b40288fcd3a9238"></a><!-- doxytag: member="vdp.h::GFX_HVCOUNTER_PORT" ref="a6dc8286621a038d46b40288fcd3a9238" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6dc8286621a038d46b40288fcd3a9238">GFX_HVCOUNTER_PORT</a>&#160;&#160;&#160;0xC00008</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6fd7212ab170a443763ee2b15c0b4eec"></a><!-- doxytag: member="vdp.h::VDP_HVCOUNTER_PORT" ref="a6fd7212ab170a443763ee2b15c0b4eec" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6fd7212ab170a443763ee2b15c0b4eec">VDP_HVCOUNTER_PORT</a>&#160;&#160;&#160;0xC00008</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP HV counter port address. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5d449dbdbe6d6fab619aeb79df669482">GFX_DATA_PORT</a>&#160;&#160;&#160;VDP_DATA_PORT</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a60ae80b65f7f3474bbc2a1bef30ee434">GFX_CTRL_PORT</a>&#160;&#160;&#160;VDP_CTRL_PORT</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6dc8286621a038d46b40288fcd3a9238">GFX_HVCOUNTER_PORT</a>&#160;&#160;&#160;VDP_HVCOUNTER_PORT</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60a6e3f489df52c8de7ee7f979257e6b"></a><!-- doxytag: member="vdp.h::VDP_FIFOEMPTY_FLAG" ref="a60a6e3f489df52c8de7ee7f979257e6b" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a60a6e3f489df52c8de7ee7f979257e6b">VDP_FIFOEMPTY_FLAG</a>&#160;&#160;&#160;(1 &lt;&lt; 9)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP FIFO empty flag. <br/></td></tr>
@@ -194,43 +197,42 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf336af2110de222d6ae9d2a522597fa"></a><!-- doxytag: member="vdp.h::TILE_SPACE" ref="abf336af2110de222d6ae9d2a522597fa" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#abf336af2110de222d6ae9d2a522597fa">TILE_SPACE</a>&#160;&#160;&#160;VDP_MAPS_START</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Space in byte for tile in VRAM (tile space ends where tilemaps starts) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd87774b106e4044bccd121ba2c50a40"></a><!-- doxytag: member="vdp.h::TILE_MAXNUM" ref="acd87774b106e4044bccd121ba2c50a40" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#acd87774b106e4044bccd121ba2c50a40">TILE_MAXNUM</a>&#160;&#160;&#160;(TILE_SPACE / TILE_SIZE)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a70be66576659061fb546cbeca202c0a8"></a><!-- doxytag: member="vdp.h::TILE_MAX_NUM" ref="a70be66576659061fb546cbeca202c0a8" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a70be66576659061fb546cbeca202c0a8">TILE_MAX_NUM</a>&#160;&#160;&#160;(TILE_SPACE / TILE_SIZE)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of tile in VRAM (related to TILE_SPACE). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a859f97271ba27497b4e3e15a258606a7"></a><!-- doxytag: member="vdp.h::TILE_MAXINDEX" ref="a859f97271ba27497b4e3e15a258606a7" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a859f97271ba27497b4e3e15a258606a7">TILE_MAXINDEX</a>&#160;&#160;&#160;(TILE_MAXNUM - 1)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c02f91726533c7a4df31d051e13a8a1"></a><!-- doxytag: member="vdp.h::TILE_MAX_INDEX" ref="a5c02f91726533c7a4df31d051e13a8a1" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5c02f91726533c7a4df31d051e13a8a1">TILE_MAX_INDEX</a>&#160;&#160;&#160;(TILE_MAXNUM - 1)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum tile index in VRAM (related to TILE_MAXNUM). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bb3e895a9ee750478c8408713739d09"></a><!-- doxytag: member="vdp.h::TILE_SYSTEMINDEX" ref="a6bb3e895a9ee750478c8408713739d09" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6bb3e895a9ee750478c8408713739d09">TILE_SYSTEMINDEX</a>&#160;&#160;&#160;0x0000</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7583679604b3adf4b65fbabe653979fc"></a><!-- doxytag: member="vdp.h::TILE_SYSTEM_INDEX" ref="a7583679604b3adf4b65fbabe653979fc" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7583679604b3adf4b65fbabe653979fc">TILE_SYSTEM_INDEX</a>&#160;&#160;&#160;0x0000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">System base tile index in VRAM. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46982e93be4c22117b2c34c341d4fbde"></a><!-- doxytag: member="vdp.h::TILE_SYSTEMLENGTH" ref="a46982e93be4c22117b2c34c341d4fbde" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a46982e93be4c22117b2c34c341d4fbde">TILE_SYSTEMLENGTH</a>&#160;&#160;&#160;16</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9bc91be83b3006d2b451d5d20f11c517"></a><!-- doxytag: member="vdp.h::TILE_SYSTEM_LENGTH" ref="a9bc91be83b3006d2b451d5d20f11c517" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9bc91be83b3006d2b451d5d20f11c517">TILE_SYSTEM_LENGTH</a>&#160;&#160;&#160;16</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of system tile. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ad0195876622b609b7780c70477340826">TILE_SYSTEMLENGHT</a>&#160;&#160;&#160;TILE_SYSTEMLENGTH</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6f2dc0d2a91d3fa0665b606591b5104"></a><!-- doxytag: member="vdp.h::TILE_USERINDEX" ref="ab6f2dc0d2a91d3fa0665b606591b5104" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab6f2dc0d2a91d3fa0665b606591b5104">TILE_USERINDEX</a>&#160;&#160;&#160;(TILE_SYSTEMINDEX + TILE_SYSTEMLENGTH)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a52e41f780a406576cb0c48a63586c57b">TILE_SYSTEM_LENGHT</a>&#160;&#160;&#160;TILE_SYSTEM_LENGTH</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73b5d7ac3deeb0e220a84b7a8c1beda7"></a><!-- doxytag: member="vdp.h::TILE_USER_INDEX" ref="a73b5d7ac3deeb0e220a84b7a8c1beda7" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a73b5d7ac3deeb0e220a84b7a8c1beda7">TILE_USER_INDEX</a>&#160;&#160;&#160;(TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">User base tile index. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4bc0d5b47958f86d2808f4c514783a4a"></a><!-- doxytag: member="vdp.h::TILE_FONTINDEX" ref="a4bc0d5b47958f86d2808f4c514783a4a" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4bc0d5b47958f86d2808f4c514783a4a">TILE_FONTINDEX</a>&#160;&#160;&#160;(TILE_MAXNUM - FONT_LEN)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a155727d745da7dfea8cd1eee6a13f3b6"></a><!-- doxytag: member="vdp.h::TILE_FONT_INDEX" ref="a155727d745da7dfea8cd1eee6a13f3b6" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a155727d745da7dfea8cd1eee6a13f3b6">TILE_FONT_INDEX</a>&#160;&#160;&#160;(TILE_MAX_NUM - FONT_LEN)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Font base tile index. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0165afa29e400fa1eb2a3b199b3b996"></a><!-- doxytag: member="vdp.h::TILE_SPRITEINDEX" ref="ae0165afa29e400fa1eb2a3b199b3b996" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae0165afa29e400fa1eb2a3b199b3b996">TILE_SPRITEINDEX</a>&#160;&#160;&#160;(TILE_FONTINDEX - <a class="el" href="sprite__eng_8h.html#a6c07bb0777a434f9078e6cd395ceaf58">spriteVramSize</a>)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine base tile index (equal TILE_FONTINDEX if <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine is not initialized). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac149a6347ea7afecb802ac017b144224"></a><!-- doxytag: member="vdp.h::TILE_USERLENGTH" ref="ac149a6347ea7afecb802ac017b144224" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac149a6347ea7afecb802ac017b144224">TILE_USERLENGTH</a>&#160;&#160;&#160;((userTileMaxIndex - TILE_USERINDEX) + 1)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a957d0943d4c0f11126df3a0f872157e6"></a><!-- doxytag: member="vdp.h::TILE_SPRITE_INDEX" ref="a957d0943d4c0f11126df3a0f872157e6" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a957d0943d4c0f11126df3a0f872157e6">TILE_SPRITE_INDEX</a>&#160;&#160;&#160;(TILE_FONT_INDEX - <a class="el" href="sprite__eng_8h.html#a6c07bb0777a434f9078e6cd395ceaf58">spriteVramSize</a>)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine base tile index (equal TILE_FONT_INDEX if <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine is not initialized). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a546b8c825945d20a4958944e2b736419"></a><!-- doxytag: member="vdp.h::TILE_USER_LENGTH" ref="a546b8c825945d20a4958944e2b736419" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a546b8c825945d20a4958944e2b736419">TILE_USER_LENGTH</a>&#160;&#160;&#160;((userTileMaxIndex - TILE_USER_INDEX) + 1)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of available user tile. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a00c8f6aa061b3c0d28ca334448ec3e65">TILE_USERLENGHT</a>&#160;&#160;&#160;TILE_USERLENGTH</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1dd96b6bb178af312b86be90bac434a2"></a><!-- doxytag: member="vdp.h::TILE_USERMAXINDEX" ref="a1dd96b6bb178af312b86be90bac434a2" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1dd96b6bb178af312b86be90bac434a2">TILE_USERMAXINDEX</a>&#160;&#160;&#160;userTileMaxIndex</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ec701a20daa0eeeecdcf6f79eadc4f4"></a><!-- doxytag: member="vdp.h::TILE_USER_MAX_INDEX" ref="a9ec701a20daa0eeeecdcf6f79eadc4f4" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9ec701a20daa0eeeecdcf6f79eadc4f4">TILE_USER_MAX_INDEX</a>&#160;&#160;&#160;userTileMaxIndex</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum tile index in VRAM reserved for user (for background and user managed sprites) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3841b9a934469c3e420e96c5806c3219"></a><!-- doxytag: member="vdp.h::TILE_SYSTEM" ref="a3841b9a934469c3e420e96c5806c3219" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3841b9a934469c3e420e96c5806c3219">TILE_SYSTEM</a>&#160;&#160;&#160;(TILE_SYSTEMINDEX * TILE_SIZE)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3841b9a934469c3e420e96c5806c3219">TILE_SYSTEM</a>&#160;&#160;&#160;(TILE_SYSTEM_INDEX * TILE_SIZE)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">System tile address in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a966f75c20bdddf26c089b97568c4f3e0"></a><!-- doxytag: member="vdp.h::TILE_USER" ref="a966f75c20bdddf26c089b97568c4f3e0" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a966f75c20bdddf26c089b97568c4f3e0">TILE_USER</a>&#160;&#160;&#160;(TILE_USERINDEX * TILE_SIZE)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a966f75c20bdddf26c089b97568c4f3e0">TILE_USER</a>&#160;&#160;&#160;(TILE_USER_INDEX * TILE_SIZE)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">User tile address in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a353e5df0da79ac9b48fec3d441696b07"></a><!-- doxytag: member="vdp.h::TILE_FONT" ref="a353e5df0da79ac9b48fec3d441696b07" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a353e5df0da79ac9b48fec3d441696b07">TILE_FONT</a>&#160;&#160;&#160;(TILE_FONTINDEX * TILE_SIZE)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a353e5df0da79ac9b48fec3d441696b07">TILE_FONT</a>&#160;&#160;&#160;(TILE_FONT_INDEX * TILE_SIZE)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Font tile address in VRAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46990eca1236a3d98355bb9c3bb0ace6"></a><!-- doxytag: member="vdp.h::PAL0" ref="a46990eca1236a3d98355bb9c3bb0ace6" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a46990eca1236a3d98355bb9c3bb0ace6">PAL0</a>&#160;&#160;&#160;0</td></tr>
@@ -244,50 +246,62 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3a84415f3c7eaa5b0caf50130df46a5"></a><!-- doxytag: member="vdp.h::PAL3" ref="ae3a84415f3c7eaa5b0caf50130df46a5" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae3a84415f3c7eaa5b0caf50130df46a5">PAL3</a>&#160;&#160;&#160;3</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> 3. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba069a21b888548a41d038d5ed4e335f"></a><!-- doxytag: member="vdp.h::GFX_READ_VRAM_ADDR" ref="aba069a21b888548a41d038d5ed4e335f" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aba069a21b888548a41d038d5ed4e335f">GFX_READ_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x00))</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0d8887ddb0fe7fa0b5c48891cf97ac7"></a><!-- doxytag: member="vdp.h::VDP_READ_VRAM_ADDR" ref="af0d8887ddb0fe7fa0b5c48891cf97ac7" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af0d8887ddb0fe7fa0b5c48891cf97ac7">VDP_READ_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x00))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to read specified VRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66a21e7204b0aeb0cdb09ccb05611104"></a><!-- doxytag: member="vdp.h::GFX_READ_CRAM_ADDR" ref="a66a21e7204b0aeb0cdb09ccb05611104" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a66a21e7204b0aeb0cdb09ccb05611104">GFX_READ_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x20)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af876df5e9ed2fb62aee3a3b2d5606ae5"></a><!-- doxytag: member="vdp.h::VDP_READ_CRAM_ADDR" ref="af876df5e9ed2fb62aee3a3b2d5606ae5" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af876df5e9ed2fb62aee3a3b2d5606ae5">VDP_READ_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x20)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to read specified CRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21cff5ef6923b8e88fd6fdfdbc0dd073"></a><!-- doxytag: member="vdp.h::GFX_READ_VSRAM_ADDR" ref="a21cff5ef6923b8e88fd6fdfdbc0dd073" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a21cff5ef6923b8e88fd6fdfdbc0dd073">GFX_READ_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x10)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45b4531656ab1d3b63fa284246f04410"></a><!-- doxytag: member="vdp.h::VDP_READ_VSRAM_ADDR" ref="a45b4531656ab1d3b63fa284246f04410" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410">VDP_READ_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x10)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to read specified VSRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf7dd60220cf3d6ec21c804f4a89f25d"></a><!-- doxytag: member="vdp.h::GFX_WRITE_VRAM_ADDR" ref="aaf7dd60220cf3d6ec21c804f4a89f25d" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aaf7dd60220cf3d6ec21c804f4a89f25d">GFX_WRITE_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x00))</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a16ff3788c4e0b08c02c8c03c8da8e72a"></a><!-- doxytag: member="vdp.h::VDP_WRITE_VRAM_ADDR" ref="a16ff3788c4e0b08c02c8c03c8da8e72a" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a16ff3788c4e0b08c02c8c03c8da8e72a">VDP_WRITE_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x00))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to write at specified VRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afda52b5a4e05203a70ec53f79b673b7a"></a><!-- doxytag: member="vdp.h::GFX_WRITE_CRAM_ADDR" ref="afda52b5a4e05203a70ec53f79b673b7a" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#afda52b5a4e05203a70ec53f79b673b7a">GFX_WRITE_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0xC000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x00)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d3395f0c240aae67eaffac1269518a1"></a><!-- doxytag: member="vdp.h::VDP_WRITE_CRAM_ADDR" ref="a1d3395f0c240aae67eaffac1269518a1" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1d3395f0c240aae67eaffac1269518a1">VDP_WRITE_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0xC000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x00)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to write at specified CRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af46a673b4ed666b47281b84a899e9d83"></a><!-- doxytag: member="vdp.h::GFX_WRITE_VSRAM_ADDR" ref="af46a673b4ed666b47281b84a899e9d83" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af46a673b4ed666b47281b84a899e9d83">GFX_WRITE_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x10)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a906c7c50f3c18bbb59bace55eb6ce2dc"></a><!-- doxytag: member="vdp.h::VDP_WRITE_VSRAM_ADDR" ref="a906c7c50f3c18bbb59bace55eb6ce2dc" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc">VDP_WRITE_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x10)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to write at specified VSRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afca99ca5282dc63028b1044dcf9ebf27"></a><!-- doxytag: member="vdp.h::GFX_DMA_VRAM_ADDR" ref="afca99ca5282dc63028b1044dcf9ebf27" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#afca99ca5282dc63028b1044dcf9ebf27">GFX_DMA_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x80))</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a5e869153ef327d51d442d4802f5eb3"></a><!-- doxytag: member="vdp.h::VDP_DMA_VRAM_ADDR" ref="a9a5e869153ef327d51d442d4802f5eb3" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9a5e869153ef327d51d442d4802f5eb3">VDP_DMA_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x80))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to issue a DMA transfert to specified VRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a377e840d162f9bcefd2231cc6d6bff23"></a><!-- doxytag: member="vdp.h::GFX_DMA_CRAM_ADDR" ref="a377e840d162f9bcefd2231cc6d6bff23" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a377e840d162f9bcefd2231cc6d6bff23">GFX_DMA_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0xC000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x80)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a6336a6fa031853ef44c054a7d24b5b"></a><!-- doxytag: member="vdp.h::VDP_DMA_CRAM_ADDR" ref="a8a6336a6fa031853ef44c054a7d24b5b" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8a6336a6fa031853ef44c054a7d24b5b">VDP_DMA_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0xC000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x80)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to issue a DMA transfert to specified CRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82d443708a76bcdc48583ecfc89628bb"></a><!-- doxytag: member="vdp.h::GFX_DMA_VSRAM_ADDR" ref="a82d443708a76bcdc48583ecfc89628bb" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a82d443708a76bcdc48583ecfc89628bb">GFX_DMA_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x90)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26eb6aef0ef7b9e8a0b531d7d8cbedb7"></a><!-- doxytag: member="vdp.h::VDP_DMA_VSRAM_ADDR" ref="a26eb6aef0ef7b9e8a0b531d7d8cbedb7" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7">VDP_DMA_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x90)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to issue a DMA transfert to specified VSRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab404249b792c6e9b7c5cf074eebba449"></a><!-- doxytag: member="vdp.h::GFX_DMA_VRAMCOPY_ADDR" ref="ab404249b792c6e9b7c5cf074eebba449" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab404249b792c6e9b7c5cf074eebba449">GFX_DMA_VRAMCOPY_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0xC0))</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aececd479f9187438f4396754210a07a4"></a><!-- doxytag: member="vdp.h::VDP_DMA_VRAMCOPY_ADDR" ref="aececd479f9187438f4396754210a07a4" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aececd479f9187438f4396754210a07a4">VDP_DMA_VRAMCOPY_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0xC0))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to issue a DMA VRAM copy to specified VRAM address. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45bc32412ab5e53e61fbf0df4999258a"></a><!-- doxytag: member="vdp.h::GFX_VERT_SCROLL" ref="a45bc32412ab5e53e61fbf0df4999258a" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a45bc32412ab5e53e61fbf0df4999258a">GFX_VERT_SCROLL</a>(adr)&#160;&#160;&#160;GFX_WRITE_VSRAM_ADDR(adr)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to write in vertical scroll table (same as GFX_WRITE_VSRAM_ADDR). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5253c7d9eca206ab8173d294e74adbae"></a><!-- doxytag: member="vdp.h::GFX_HORZ_SCROLL" ref="a5253c7d9eca206ab8173d294e74adbae" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5253c7d9eca206ab8173d294e74adbae">GFX_HORZ_SCROLL</a>(adr)&#160;&#160;&#160;GFX_WRITE_VRAM_ADDR(VDP_SCROLL_H + (adr))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to write in horizontal scroll table (same as GFX_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr)). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3da41e4fb7f1cfea2997f6d9b8dc7ef2"></a><!-- doxytag: member="vdp.h::GET_VDPSTATUS" ref="a3da41e4fb7f1cfea2997f6d9b8dc7ef2" args="(flag)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3da41e4fb7f1cfea2997f6d9b8dc7ef2">GET_VDPSTATUS</a>(flag)&#160;&#160;&#160;((*(<a class="el" href="types_8h.html#a3396f31b4073f1a08f7332ca05419a03">vu16</a>*)(GFX_CTRL_PORT)) &amp; (flag))</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05b2d1e04f693321b9cbcb0907a1c34b"></a><!-- doxytag: member="vdp.h::VDP_VERT_SCROLL" ref="a05b2d1e04f693321b9cbcb0907a1c34b" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a05b2d1e04f693321b9cbcb0907a1c34b">VDP_VERT_SCROLL</a>(adr)&#160;&#160;&#160;VDP_WRITE_VSRAM_ADDR(adr)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to write in vertical scroll table (same as VDP_WRITE_VSRAM_ADDR). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abaf9a4581d581851eee5d3be9c132a53"></a><!-- doxytag: member="vdp.h::VDP_HORZ_SCROLL" ref="abaf9a4581d581851eee5d3be9c132a53" args="(adr)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#abaf9a4581d581851eee5d3be9c132a53">VDP_HORZ_SCROLL</a>(adr)&#160;&#160;&#160;VDP_WRITE_VRAM_ADDR(VDP_SCROLL_H + (adr))</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to write in horizontal scroll table (same as VDP_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr)). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aba069a21b888548a41d038d5ed4e335f">GFX_READ_VRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_READ_VRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a66a21e7204b0aeb0cdb09ccb05611104">GFX_READ_CRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_READ_CRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a21cff5ef6923b8e88fd6fdfdbc0dd073">GFX_READ_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_READ_VSRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aaf7dd60220cf3d6ec21c804f4a89f25d">GFX_WRITE_VRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_WRITE_VRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#afda52b5a4e05203a70ec53f79b673b7a">GFX_WRITE_CRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_WRITE_CRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af46a673b4ed666b47281b84a899e9d83">GFX_WRITE_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_WRITE_VSRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#afca99ca5282dc63028b1044dcf9ebf27">GFX_DMA_VRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_DMA_VRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a377e840d162f9bcefd2231cc6d6bff23">GFX_DMA_CRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_DMA_CRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a82d443708a76bcdc48583ecfc89628bb">GFX_DMA_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;VDP_DMA_VSRAM_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab404249b792c6e9b7c5cf074eebba449">GFX_DMA_VRAMCOPY_ADDR</a>(adr)&#160;&#160;&#160;VDP_DMA_VRAMCOPY_ADDR(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a45bc32412ab5e53e61fbf0df4999258a">GFX_VERT_SCROLL</a>(adr)&#160;&#160;&#160;VDP_VERT_SCROLL(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5253c7d9eca206ab8173d294e74adbae">GFX_HORZ_SCROLL</a>(adr)&#160;&#160;&#160;VDP_HORZ_SCROLL(adr)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6d6b45ae9394df2800782789d60b855"></a><!-- doxytag: member="vdp.h::GET_VDP_STATUS" ref="aa6d6b45ae9394df2800782789d60b855" args="(flag)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aa6d6b45ae9394df2800782789d60b855">GET_VDP_STATUS</a>(flag)&#160;&#160;&#160;((*(<a class="el" href="types_8h.html#a3396f31b4073f1a08f7332ca05419a03">vu16</a>*)(VDP_CTRL_PORT)) &amp; (flag))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests VDP status against specified flag (see VDP_XXX_FLAG). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e153d07962eb823ef5244cff0033a90"></a><!-- doxytag: member="vdp.h::IS_PALSYSTEM" ref="a0e153d07962eb823ef5244cff0033a90" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a0e153d07962eb823ef5244cff0033a90">IS_PALSYSTEM</a>&#160;&#160;&#160;GET_VDPSTATUS(VDP_PALMODE_FLAG)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab26f1e79c03bd2c15f4efb32b1da6b7"></a><!-- doxytag: member="vdp.h::IS_PAL_SYSTEM" ref="aab26f1e79c03bd2c15f4efb32b1da6b7" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aab26f1e79c03bd2c15f4efb32b1da6b7">IS_PAL_SYSTEM</a>&#160;&#160;&#160;GET_VDP_STATUS(VDP_PALMODE_FLAG)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if current system is a PAL system (50 Hz). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7363a0876b266cc1e155cc59810b8be"></a><!-- doxytag: member="vdp.h::GET_HVCOUNTER" ref="ab7363a0876b266cc1e155cc59810b8be" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab7363a0876b266cc1e155cc59810b8be">GET_HVCOUNTER</a>&#160;&#160;&#160;(*(<a class="el" href="types_8h.html#a3396f31b4073f1a08f7332ca05419a03">vu16</a>*)(GFX_HVCOUNTER_PORT))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab7363a0876b266cc1e155cc59810b8be">GET_HVCOUNTER</a>&#160;&#160;&#160;(*(<a class="el" href="types_8h.html#a3396f31b4073f1a08f7332ca05419a03">vu16</a>*)(VDP_HVCOUNTER_PORT))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns HV counter. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac69376053d6d014d22556f340ec8757c"></a><!-- doxytag: member="vdp.h::GET_HCOUNTER" ref="ac69376053d6d014d22556f340ec8757c" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac69376053d6d014d22556f340ec8757c">GET_HCOUNTER</a>&#160;&#160;&#160;(GET_HVCOUNTER &amp; 0xFF)</td></tr>
@@ -304,70 +318,70 @@ Enumerations</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to define on which plane to work (used by some methods). <br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7345ee2c2e6270fcdfb218298566186d">VDP_init</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the whole VDP sub system.  <a href="#a7345ee2c2e6270fcdfb218298566186d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#acbb3529f5c7d26499b3d4a0e62007f5a">VDP_resetScreen</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset background planes and palettes.  <a href="#acbb3529f5c7d26499b3d4a0e62007f5a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6bc6e196500571d95c129c563191ac25">VDP_init</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the whole VDP sub system.  <a href="#a6bc6e196500571d95c129c563191ac25"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a2cee2af0e3da5b4bb437940a16e7ec30">VDP_resetScreen</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset background planes and palettes.  <a href="#a2cee2af0e3da5b4bb437940a16e7ec30"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9ce7e4dd92c2dd50dae1b1a33cb96bca">VDP_getReg</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VDP register value.  <a href="#a9ce7e4dd92c2dd50dae1b1a33cb96bca"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6d0b327444609dcef40f54f26437cce4">VDP_setReg</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> reg, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP register value.  <a href="#a6d0b327444609dcef40f54f26437cce4"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad7afae25b5d9eb9d4c8c51a15935e277"></a><!-- doxytag: member="vdp.h::VDP_getEnable" ref="ad7afae25b5d9eb9d4c8c51a15935e277" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ad7afae25b5d9eb9d4c8c51a15935e277">VDP_getEnable</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa935c56a67f388af18ff5445fcb8903f"></a><!-- doxytag: member="vdp.h::VDP_getEnable" ref="aa935c56a67f388af18ff5445fcb8903f" args="(void)" -->
+<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aa935c56a67f388af18ff5445fcb8903f">VDP_getEnable</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns VDP enable state. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a0b3f9d0ad0a3803feca1b8aa22d8028a">VDP_setEnable</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP enable state.  <a href="#a0b3f9d0ad0a3803feca1b8aa22d8028a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a0113ce2aa7675146b2eeb86a4fec339a">VDP_getScanlineNumber</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of total scanline.  <a href="#a0113ce2aa7675146b2eeb86a4fec339a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1c0d801e09ec825961b2f5d2b20a49ea">VDP_getScreenHeight</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns vertical screen resolution.  <a href="#a1c0d801e09ec825961b2f5d2b20a49ea"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#abccccf1377d10b531425a62d561f688e">VDP_setScreenHeight224</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set vertical resolution to 224 pixels.  <a href="#abccccf1377d10b531425a62d561f688e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6eaaecd4997e32eb7aa84292c3eb4abe">VDP_setScreenHeight240</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set vertical resolution to 240 pixels.  <a href="#a6eaaecd4997e32eb7aa84292c3eb4abe"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a03bd91c06075930b2bb2a37830c1aa1e">VDP_getScreenWidth</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns horizontal screen resolution.  <a href="#a03bd91c06075930b2bb2a37830c1aa1e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9868e7c4356b37b34bf54fee6828a4f5"></a><!-- doxytag: member="vdp.h::VDP_setScreenWidth256" ref="a9868e7c4356b37b34bf54fee6828a4f5" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9868e7c4356b37b34bf54fee6828a4f5">VDP_setScreenWidth256</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a96d001591b447c507fbd9a4d1f444a9a">VDP_setEnable</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP enable state.  <a href="#a96d001591b447c507fbd9a4d1f444a9a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6b90d8601d02583cff85ac8dbe5500c6">VDP_getScanlineNumber</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of total scanline.  <a href="#a6b90d8601d02583cff85ac8dbe5500c6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a74368da53553887f4fbd3de289a20398">VDP_getScreenHeight</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns vertical screen resolution.  <a href="#a74368da53553887f4fbd3de289a20398"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a55c87823d4f983e358461f049bdeecb3">VDP_setScreenHeight224</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set vertical resolution to 224 pixels.  <a href="#a55c87823d4f983e358461f049bdeecb3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af816f67873d73828c69864adb0e09066">VDP_setScreenHeight240</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set vertical resolution to 240 pixels.  <a href="#af816f67873d73828c69864adb0e09066"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aac58c34267f6158bdd62a27e9f3a518f">VDP_getScreenWidth</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns horizontal screen resolution.  <a href="#aac58c34267f6158bdd62a27e9f3a518f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac6427fbe68d7df84b318f2a1439d1f96"></a><!-- doxytag: member="vdp.h::VDP_setScreenWidth256" ref="ac6427fbe68d7df84b318f2a1439d1f96" args="(void)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac6427fbe68d7df84b318f2a1439d1f96">VDP_setScreenWidth256</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set horizontal resolution to 256 pixels. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cdcddf2dfbd7f392f3d521aeba416a8"></a><!-- doxytag: member="vdp.h::VDP_setScreenWidth320" ref="a7cdcddf2dfbd7f392f3d521aeba416a8" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7cdcddf2dfbd7f392f3d521aeba416a8">VDP_setScreenWidth320</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8616aa06f1e46d82a675232610ebaedd"></a><!-- doxytag: member="vdp.h::VDP_setScreenWidth320" ref="a8616aa06f1e46d82a675232610ebaedd" args="(void)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8616aa06f1e46d82a675232610ebaedd">VDP_setScreenWidth320</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set horizontal resolution to 320 pixels. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1bdd9773d0d91814d3cb98ac08ce08f2"></a><!-- doxytag: member="vdp.h::VDP_getPlaneWidth" ref="a1bdd9773d0d91814d3cb98ac08ce08f2" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1bdd9773d0d91814d3cb98ac08ce08f2">VDP_getPlaneWidth</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec99d3ae8032d622428bdf09862b7887"></a><!-- doxytag: member="vdp.h::VDP_getPlaneWidth" ref="aec99d3ae8032d622428bdf09862b7887" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aec99d3ae8032d622428bdf09862b7887">VDP_getPlaneWidth</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return background plane width (in tile). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a041df052687062ff701a0eb1a92d11c4"></a><!-- doxytag: member="vdp.h::VDP_getPlaneHeight" ref="a041df052687062ff701a0eb1a92d11c4" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a041df052687062ff701a0eb1a92d11c4">VDP_getPlaneHeight</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac856f6755a96564c35aebbf53ca90a3b"></a><!-- doxytag: member="vdp.h::VDP_getPlaneHeight" ref="ac856f6755a96564c35aebbf53ca90a3b" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac856f6755a96564c35aebbf53ca90a3b">VDP_getPlaneHeight</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return background plane height (in tile). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe">VDP_setPlaneSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> setupVram)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set background plane size (in tile).<br/>
  WARNING: take attention to properly setup VRAM so tilemaps has enough space.  <a href="#ad46064f4e0eb6c7359e3a107cbed9fbe"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a692b0e6c1e5346a58322ecb5a35f8c49">VDP_setPlanSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a246782f31e06f1c4f4e78ebad78dcce1">VDP_getHorizontalScrollingMode</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plane horizontal scrolling mode.  <a href="#a246782f31e06f1c4f4e78ebad78dcce1"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a58829d25cd93168db1b132b7d5e78418">VDP_getVerticalScrollingMode</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plane vertical scrolling mode.  <a href="#a58829d25cd93168db1b132b7d5e78418"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae6da2e8c5b1a2f0f58c96733a5bfd6e3">VDP_getHorizontalScrollingMode</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plane horizontal scrolling mode.  <a href="#ae6da2e8c5b1a2f0f58c96733a5bfd6e3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af14abb71c0edc92a8e82087eb889770c">VDP_getVerticalScrollingMode</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns plane vertical scrolling mode.  <a href="#af14abb71c0edc92a8e82087eb889770c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac0caefa37ccea591c081e69de7caf48c">VDP_setScrollingMode</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> hscroll, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> vscroll)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set plane scrolling mode.  <a href="#ac0caefa37ccea591c081e69de7caf48c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38e61b2a2b06031415115e7faa44a521"></a><!-- doxytag: member="vdp.h::VDP_getBackgroundColor" ref="a38e61b2a2b06031415115e7faa44a521" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a38e61b2a2b06031415115e7faa44a521">VDP_getBackgroundColor</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bc37a5ca4c863c9aa513f519a2b9fef"></a><!-- doxytag: member="vdp.h::VDP_getBackgroundColor" ref="a3bc37a5ca4c863c9aa513f519a2b9fef" args="(void)" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3bc37a5ca4c863c9aa513f519a2b9fef">VDP_getBackgroundColor</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the background color index. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abcd72ebb58ac96787807a968f80476ed"></a><!-- doxytag: member="vdp.h::VDP_setBackgroundColor" ref="abcd72ebb58ac96787807a968f80476ed" args="(u8 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#abcd72ebb58ac96787807a968f80476ed">VDP_setBackgroundColor</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the background color index. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1312a0dc4f9c1cbe2f8b0b9da13c9a09"></a><!-- doxytag: member="vdp.h::VDP_getAutoInc" ref="a1312a0dc4f9c1cbe2f8b0b9da13c9a09" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1312a0dc4f9c1cbe2f8b0b9da13c9a09">VDP_getAutoInc</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1568833dc8d7a52029ea3a11c58655a4"></a><!-- doxytag: member="vdp.h::VDP_getAutoInc" ref="a1568833dc8d7a52029ea3a11c58655a4" args="(void)" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1568833dc8d7a52029ea3a11c58655a4">VDP_getAutoInc</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns auto increment register value. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e745d29389298b2a3c4ebdc38c177c0"></a><!-- doxytag: member="vdp.h::VDP_setAutoInc" ref="a3e745d29389298b2a3c4ebdc38c177c0" args="(u8 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3e745d29389298b2a3c4ebdc38c177c0">VDP_setAutoInc</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set auto increment register value. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ea62d50886724c4f73e0a6832b503f6"></a><!-- doxytag: member="vdp.h::VDP_getDMAEnabled" ref="a6ea62d50886724c4f73e0a6832b503f6" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6ea62d50886724c4f73e0a6832b503f6">VDP_getDMAEnabled</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa386e5c1e9f8b58f6eda6c0d7221b4fe"></a><!-- doxytag: member="vdp.h::VDP_getDMAEnabled" ref="aa386e5c1e9f8b58f6eda6c0d7221b4fe" args="(void)" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aa386e5c1e9f8b58f6eda6c0d7221b4fe">VDP_getDMAEnabled</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns DMA enabled state. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7f22fce440398b421d38a4fe61bd4a6d">VDP_setDMAEnabled</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set DMA enabled state.  <a href="#a7f22fce440398b421d38a4fe61bd4a6d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9985da41f3ce68f953fbc87f261f93d0"></a><!-- doxytag: member="vdp.h::VDP_getHVLatching" ref="a9985da41f3ce68f953fbc87f261f93d0" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9985da41f3ce68f953fbc87f261f93d0">VDP_getHVLatching</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5bfc9079b19f752040c1a60f4d32c6a1"></a><!-- doxytag: member="vdp.h::VDP_getHVLatching" ref="a5bfc9079b19f752040c1a60f4d32c6a1" args="(void)" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5bfc9079b19f752040c1a60f4d32c6a1">VDP_getHVLatching</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns HV counter latching on INT2 (used for light gun) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a52ac795bc29bd3eab88ff525b100bf01">VDP_setHVLatching</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set HV counter latching on INT2 (used for light gun)  <a href="#a52ac795bc29bd3eab88ff525b100bf01"></a><br/></td></tr>
@@ -378,28 +392,28 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a002987d1c2379698f996ae9d5408aaa9"></a><!-- doxytag: member="vdp.h::VDP_setHilightShadow" ref="a002987d1c2379698f996ae9d5408aaa9" args="(u8 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a002987d1c2379698f996ae9d5408aaa9">VDP_setHilightShadow</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable Hilight / Shadow effect. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f54475d3af2700abfad09e1e3a79aa7"></a><!-- doxytag: member="vdp.h::VDP_getHIntCounter" ref="a7f54475d3af2700abfad09e1e3a79aa7" args="()" -->
-<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7f54475d3af2700abfad09e1e3a79aa7">VDP_getHIntCounter</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9032ca023b746a6fffe44ff282e8d7e0"></a><!-- doxytag: member="vdp.h::VDP_getHIntCounter" ref="a9032ca023b746a6fffe44ff282e8d7e0" args="(void)" -->
+<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9032ca023b746a6fffe44ff282e8d7e0">VDP_getHIntCounter</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Horizontal interrupt counter value. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a104e6d70f2e9dff5e20fdb011552adf3">VDP_setHIntCounter</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set Horizontal interrupt counter value.  <a href="#a104e6d70f2e9dff5e20fdb011552adf3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30f0e1fa17d334c719fa04abec92be51"></a><!-- doxytag: member="vdp.h::VDP_getBGAAddress" ref="a30f0e1fa17d334c719fa04abec92be51" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51">VDP_getBGAAddress</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89bad8fd6ce45c310c454d29ae70895a"></a><!-- doxytag: member="vdp.h::VDP_getBGAAddress" ref="a89bad8fd6ce45c310c454d29ae70895a" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a89bad8fd6ce45c310c454d29ae70895a">VDP_getBGAAddress</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of BG A tilemap. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e2a9f8e00402607bd1b14dfc1b2d02d"></a><!-- doxytag: member="vdp.h::VDP_getBGBAddress" ref="a7e2a9f8e00402607bd1b14dfc1b2d02d" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d">VDP_getBGBAddress</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8eb5aae56c10ba7a59a734045efd9ff8"></a><!-- doxytag: member="vdp.h::VDP_getBGBAddress" ref="a8eb5aae56c10ba7a59a734045efd9ff8" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8eb5aae56c10ba7a59a734045efd9ff8">VDP_getBGBAddress</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of BG B tilemap. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a6c5331dddbbd3e7e47812b23a27c1b7e">VDP_getAPlanAddress</a> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7889e3313763eb5b25fa76c9d6920dcf">VDP_getBPlanAddress</a> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7dbb7ca74519f6b4052649eb9b1116dc"></a><!-- doxytag: member="vdp.h::VDP_getWindowAddress" ref="a7dbb7ca74519f6b4052649eb9b1116dc" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc">VDP_getWindowAddress</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a3e10e973b380091e93771728f9b2d033">VDP_getAPlanAddress</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a081df2f2b2c6c2828eef631af0939d76">VDP_getBPlanAddress</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae58c52ccd92cb55fe3d3c32388b1e945"></a><!-- doxytag: member="vdp.h::VDP_getWindowAddress" ref="ae58c52ccd92cb55fe3d3c32388b1e945" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae58c52ccd92cb55fe3d3c32388b1e945">VDP_getWindowAddress</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of Window tilemap. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8c5cffc7652b8d9c1f2585f059b00b6b">VDP_getWindowPlanAddress</a> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab855f50da58b5b40349eedf830f396d7"></a><!-- doxytag: member="vdp.h::VDP_getSpriteListAddress" ref="ab855f50da58b5b40349eedf830f396d7" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab855f50da58b5b40349eedf830f396d7">VDP_getSpriteListAddress</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac413d85176153efd16c9dc548260547c">VDP_getWindowPlanAddress</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f3ba78845191d526851cdf2efe5ca1a"></a><!-- doxytag: member="vdp.h::VDP_getSpriteListAddress" ref="a4f3ba78845191d526851cdf2efe5ca1a" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4f3ba78845191d526851cdf2efe5ca1a">VDP_getSpriteListAddress</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> list. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac93008561bd3fa36e6562387ae1921e7"></a><!-- doxytag: member="vdp.h::VDP_getHScrollTableAddress" ref="ac93008561bd3fa36e6562387ae1921e7" args="()" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ac93008561bd3fa36e6562387ae1921e7">VDP_getHScrollTableAddress</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adab43cb7dcaf499ec318675af2a18ac5"></a><!-- doxytag: member="vdp.h::VDP_getHScrollTableAddress" ref="adab43cb7dcaf499ec318675af2a18ac5" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#adab43cb7dcaf499ec318675af2a18ac5">VDP_getHScrollTableAddress</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VRAM address (location) of H SCroll table. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a368d0330d36c7f2801b88e6dbeb9e23a"></a><!-- doxytag: member="vdp.h::VDP_setBGAAddress" ref="a368d0330d36c7f2801b88e6dbeb9e23a" args="(u16 value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a">VDP_setBGAAddress</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
@@ -449,25 +463,25 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the window Horizontal position.  <a href="#a6e57b8c2e7ea714e8f850bebf9e1164c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8b0428a8582b2818500a04c93232ada8">VDP_setWindowVPos</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> down, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> pos)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the window Vertical position.  <a href="#a8b0428a8582b2818500a04c93232ada8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aefb8190a24577aa5156ca24c5f8d43eb">VDP_waitDMACompletion</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for DMA operation to complete.  <a href="#aefb8190a24577aa5156ca24c5f8d43eb"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5ab03e66954736fa94c248d689f930f"></a><!-- doxytag: member="vdp.h::VDP_waitFIFOEmpty" ref="aa5ab03e66954736fa94c248d689f930f" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aa5ab03e66954736fa94c248d689f930f">VDP_waitFIFOEmpty</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab440205a234866c0c0bd73991eeae242">VDP_waitDMACompletion</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for DMA operation to complete.  <a href="#ab440205a234866c0c0bd73991eeae242"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1830a03c57697fa4a46d19b031e570fb"></a><!-- doxytag: member="vdp.h::VDP_waitFIFOEmpty" ref="a1830a03c57697fa4a46d19b031e570fb" args="(void)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1830a03c57697fa4a46d19b031e570fb">VDP_waitFIFOEmpty</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for VDP FIFO to be empty. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a95669875c2ba5eaf567140e19daf14ed">VDP_waitVInt</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next Vertical Interruption.  <a href="#a95669875c2ba5eaf567140e19daf14ed"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae7cbd2b260d6dfb844f2596b80382479">VDP_waitVInt</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next Vertical Interruption.  <a href="#ae7cbd2b260d6dfb844f2596b80382479"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab6ab006d4d6596a34a4293d26b36da91">VDP_waitVBlank</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> forceNext)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next vertical blank period (same as <a class="el" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800" title="Wait for Vertical Synchro.">VDP_waitVSync()</a>)  <a href="#ab6ab006d4d6596a34a4293d26b36da91"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800">VDP_waitVSync</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for Vertical Synchro.  <a href="#a4dc7f2db473482ec13878d77aabab800"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next vertical blank period (same as <a class="el" href="vdp_8h.html#a72f0d3287626224f8618a9a4a446d0f0" title="Wait for Vertical Synchro.">VDP_waitVSync()</a>)  <a href="#ab6ab006d4d6596a34a4293d26b36da91"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a72f0d3287626224f8618a9a4a446d0f0">VDP_waitVSync</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for Vertical Synchro.  <a href="#a72f0d3287626224f8618a9a4a446d0f0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a45631e49e5dbd94a6402a7b863e1857d">VDP_waitVActive</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> forceNext)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for next vertical active area (end of vertical blank period)  <a href="#a45631e49e5dbd94a6402a7b863e1857d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a78e58a2fd3120b7e6356985aa1f48181">VDP_getAdjustedVCounter</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an enhanced V Counter representation.  <a href="#a78e58a2fd3120b7e6356985aa1f48181"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8dff77e10806fa810fe27e0bd0d8a54b">VDP_getAdjustedVCounter</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an enhanced V Counter representation.  <a href="#a8dff77e10806fa810fe27e0bd0d8a54b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#adbdb6ea2d08c4f7a90e827c8541c3e35">VDP_showFPS</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> asFloat)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Display number of Frame Per Second.  <a href="#adbdb6ea2d08c4f7a90e827c8541c3e35"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9a34ca5b3eeffe50e0ad36d071510a55">VDP_showCPULoad</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Display the estimated CPU load (in %).  <a href="#a9a34ca5b3eeffe50e0ad36d071510a55"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#abb58c3818828573e2ee48a96997fb9a3">VDP_showCPULoad</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Display the estimated CPU load (in %).  <a href="#abb58c3818828573e2ee48a96997fb9a3"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5892a729da53f6e06f6aa467a19f6c46"></a><!-- doxytag: member="vdp.h::window_addr" ref="a5892a729da53f6e06f6aa467a19f6c46" args="" -->
@@ -525,31 +539,275 @@ Variables</h2></td></tr>
  If you don't respect that you may get in troubles as SGDK expect it ;) </li>
 </ul>
 </div><hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ad0195876622b609b7780c70477340826"></a><!-- doxytag: member="vdp.h::TILE_SYSTEMLENGHT" ref="ad0195876622b609b7780c70477340826" args="" -->
+<a class="anchor" id="a60ae80b65f7f3474bbc2a1bef30ee434"></a><!-- doxytag: member="vdp.h::GFX_CTRL_PORT" ref="a60ae80b65f7f3474bbc2a1bef30ee434" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define TILE_SYSTEMLENGHT&#160;&#160;&#160;TILE_SYSTEMLENGTH</td>
+          <td class="memname">#define GFX_CTRL_PORT&#160;&#160;&#160;VDP_CTRL_PORT</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000043">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a43c7208da604ffd6142c4e51723a9ac7" title="VDP Control port address.">VDP_CTRL_PORT</a> instead </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a00c8f6aa061b3c0d28ca334448ec3e65"></a><!-- doxytag: member="vdp.h::TILE_USERLENGHT" ref="a00c8f6aa061b3c0d28ca334448ec3e65" args="" -->
+<a class="anchor" id="a5d449dbdbe6d6fab619aeb79df669482"></a><!-- doxytag: member="vdp.h::GFX_DATA_PORT" ref="a5d449dbdbe6d6fab619aeb79df669482" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define TILE_USERLENGHT&#160;&#160;&#160;TILE_USERLENGTH</td>
+          <td class="memname">#define GFX_DATA_PORT&#160;&#160;&#160;VDP_DATA_PORT</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000044">Deprecated:</a></b></dt><dd>Use TILE_USERLENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000009">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af25e39e450f3dab28ced3410d09a724f" title="VDP Data port address.">VDP_DATA_PORT</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a377e840d162f9bcefd2231cc6d6bff23"></a><!-- doxytag: member="vdp.h::GFX_DMA_CRAM_ADDR" ref="a377e840d162f9bcefd2231cc6d6bff23" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_DMA_CRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_DMA_CRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000024">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a8a6336a6fa031853ef44c054a7d24b5b" title="Set VDP command to issue a DMA transfert to specified CRAM address.">VDP_DMA_CRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afca99ca5282dc63028b1044dcf9ebf27"></a><!-- doxytag: member="vdp.h::GFX_DMA_VRAM_ADDR" ref="afca99ca5282dc63028b1044dcf9ebf27" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_DMA_VRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_DMA_VRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000023">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a9a5e869153ef327d51d442d4802f5eb3" title="Set VDP command to issue a DMA transfert to specified VRAM address.">VDP_DMA_VRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab404249b792c6e9b7c5cf074eebba449"></a><!-- doxytag: member="vdp.h::GFX_DMA_VRAMCOPY_ADDR" ref="ab404249b792c6e9b7c5cf074eebba449" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_DMA_VRAMCOPY_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_DMA_VRAMCOPY_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000026">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#aececd479f9187438f4396754210a07a4" title="Set VDP command to issue a DMA VRAM copy to specified VRAM address.">VDP_DMA_VRAMCOPY_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a82d443708a76bcdc48583ecfc89628bb"></a><!-- doxytag: member="vdp.h::GFX_DMA_VSRAM_ADDR" ref="a82d443708a76bcdc48583ecfc89628bb" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_DMA_VSRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_DMA_VSRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000025">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7" title="Set VDP command to issue a DMA transfert to specified VSRAM address.">VDP_DMA_VSRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5253c7d9eca206ab8173d294e74adbae"></a><!-- doxytag: member="vdp.h::GFX_HORZ_SCROLL" ref="a5253c7d9eca206ab8173d294e74adbae" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_HORZ_SCROLL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_HORZ_SCROLL(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000028">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#abaf9a4581d581851eee5d3be9c132a53" title="Helper to write in horizontal scroll table (same as VDP_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr))...">VDP_HORZ_SCROLL</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6dc8286621a038d46b40288fcd3a9238"></a><!-- doxytag: member="vdp.h::GFX_HVCOUNTER_PORT" ref="a6dc8286621a038d46b40288fcd3a9238" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_HVCOUNTER_PORT&#160;&#160;&#160;VDP_HVCOUNTER_PORT</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a6fd7212ab170a443763ee2b15c0b4eec" title="VDP HV counter port address.">VDP_HVCOUNTER_PORT</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a66a21e7204b0aeb0cdb09ccb05611104"></a><!-- doxytag: member="vdp.h::GFX_READ_CRAM_ADDR" ref="a66a21e7204b0aeb0cdb09ccb05611104" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_READ_CRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_READ_CRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000018">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af876df5e9ed2fb62aee3a3b2d5606ae5" title="Set VDP command to read specified CRAM address.">VDP_READ_CRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aba069a21b888548a41d038d5ed4e335f"></a><!-- doxytag: member="vdp.h::GFX_READ_VRAM_ADDR" ref="aba069a21b888548a41d038d5ed4e335f" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_READ_VRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_READ_VRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000017">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af0d8887ddb0fe7fa0b5c48891cf97ac7" title="Set VDP command to read specified VRAM address.">VDP_READ_VRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a21cff5ef6923b8e88fd6fdfdbc0dd073"></a><!-- doxytag: member="vdp.h::GFX_READ_VSRAM_ADDR" ref="a21cff5ef6923b8e88fd6fdfdbc0dd073" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_READ_VSRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_READ_VSRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000019">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410" title="Set VDP command to read specified VSRAM address.">VDP_READ_VSRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a45bc32412ab5e53e61fbf0df4999258a"></a><!-- doxytag: member="vdp.h::GFX_VERT_SCROLL" ref="a45bc32412ab5e53e61fbf0df4999258a" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_VERT_SCROLL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_VERT_SCROLL(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000027">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a05b2d1e04f693321b9cbcb0907a1c34b" title="Helper to write in vertical scroll table (same as VDP_WRITE_VSRAM_ADDR).">VDP_VERT_SCROLL</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afda52b5a4e05203a70ec53f79b673b7a"></a><!-- doxytag: member="vdp.h::GFX_WRITE_CRAM_ADDR" ref="afda52b5a4e05203a70ec53f79b673b7a" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_WRITE_CRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_WRITE_CRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000021">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1d3395f0c240aae67eaffac1269518a1" title="Set VDP command to write at specified CRAM address.">VDP_WRITE_CRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaf7dd60220cf3d6ec21c804f4a89f25d"></a><!-- doxytag: member="vdp.h::GFX_WRITE_VRAM_ADDR" ref="aaf7dd60220cf3d6ec21c804f4a89f25d" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_WRITE_VRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_WRITE_VRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000020">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a16ff3788c4e0b08c02c8c03c8da8e72a" title="Set VDP command to write at specified VRAM address.">VDP_WRITE_VRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af46a673b4ed666b47281b84a899e9d83"></a><!-- doxytag: member="vdp.h::GFX_WRITE_VSRAM_ADDR" ref="af46a673b4ed666b47281b84a899e9d83" args="(adr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GFX_WRITE_VSRAM_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">adr</td><td>)</td>
+          <td>&#160;&#160;&#160;VDP_WRITE_VSRAM_ADDR(adr)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000022">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc" title="Set VDP command to write at specified VSRAM address.">VDP_WRITE_VSRAM_ADDR</a> instead </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a52e41f780a406576cb0c48a63586c57b"></a><!-- doxytag: member="vdp.h::TILE_SYSTEM_LENGHT" ref="a52e41f780a406576cb0c48a63586c57b" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TILE_SYSTEM_LENGHT&#160;&#160;&#160;TILE_SYSTEM_LENGTH</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000016">Deprecated:</a></b></dt><dd>Use TILE_SYSTEMLENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -563,7 +821,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000039">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
 
 </div>
 </div>
@@ -577,7 +835,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000040">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000013">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
 
 </div>
 </div>
@@ -591,7 +849,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000041">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000014">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
 
 </div>
 </div>
@@ -605,18 +863,19 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000042">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000015">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
 
 </div>
 </div>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a78e58a2fd3120b7e6356985aa1f48181"></a><!-- doxytag: member="vdp.h::VDP_getAdjustedVCounter" ref="a78e58a2fd3120b7e6356985aa1f48181" args="()" -->
+<a class="anchor" id="a8dff77e10806fa810fe27e0bd0d8a54b"></a><!-- doxytag: member="vdp.h::VDP_getAdjustedVCounter" ref="a8dff77e10806fa810fe27e0bd0d8a54b" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getAdjustedVCounter </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -630,47 +889,50 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6c5331dddbbd3e7e47812b23a27c1b7e"></a><!-- doxytag: member="vdp.h::VDP_getAPlanAddress" ref="a6c5331dddbbd3e7e47812b23a27c1b7e" args="()" -->
+<a class="anchor" id="a3e10e973b380091e93771728f9b2d033"></a><!-- doxytag: member="vdp.h::VDP_getAPlanAddress" ref="a3e10e973b380091e93771728f9b2d033" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getAPlanAddress </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000046">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a30f0e1fa17d334c719fa04abec92be51" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000030">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a89bad8fd6ce45c310c454d29ae70895a" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7889e3313763eb5b25fa76c9d6920dcf"></a><!-- doxytag: member="vdp.h::VDP_getBPlanAddress" ref="a7889e3313763eb5b25fa76c9d6920dcf" args="()" -->
+<a class="anchor" id="a081df2f2b2c6c2828eef631af0939d76"></a><!-- doxytag: member="vdp.h::VDP_getBPlanAddress" ref="a081df2f2b2c6c2828eef631af0939d76" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getBPlanAddress </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000047">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7e2a9f8e00402607bd1b14dfc1b2d02d" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000031">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a8eb5aae56c10ba7a59a734045efd9ff8" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a246782f31e06f1c4f4e78ebad78dcce1"></a><!-- doxytag: member="vdp.h::VDP_getHorizontalScrollingMode" ref="a246782f31e06f1c4f4e78ebad78dcce1" args="()" -->
+<a class="anchor" id="ae6da2e8c5b1a2f0f58c96733a5bfd6e3"></a><!-- doxytag: member="vdp.h::VDP_getHorizontalScrollingMode" ref="ae6da2e8c5b1a2f0f58c96733a5bfd6e3" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getHorizontalScrollingMode </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -710,13 +972,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0113ce2aa7675146b2eeb86a4fec339a"></a><!-- doxytag: member="vdp.h::VDP_getScanlineNumber" ref="a0113ce2aa7675146b2eeb86a4fec339a" args="()" -->
+<a class="anchor" id="a6b90d8601d02583cff85ac8dbe5500c6"></a><!-- doxytag: member="vdp.h::VDP_getScanlineNumber" ref="a6b90d8601d02583cff85ac8dbe5500c6" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getScanlineNumber </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -729,13 +992,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1c0d801e09ec825961b2f5d2b20a49ea"></a><!-- doxytag: member="vdp.h::VDP_getScreenHeight" ref="a1c0d801e09ec825961b2f5d2b20a49ea" args="()" -->
+<a class="anchor" id="a74368da53553887f4fbd3de289a20398"></a><!-- doxytag: member="vdp.h::VDP_getScreenHeight" ref="a74368da53553887f4fbd3de289a20398" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getScreenHeight </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -749,13 +1013,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a03bd91c06075930b2bb2a37830c1aa1e"></a><!-- doxytag: member="vdp.h::VDP_getScreenWidth" ref="a03bd91c06075930b2bb2a37830c1aa1e" args="()" -->
+<a class="anchor" id="aac58c34267f6158bdd62a27e9f3a518f"></a><!-- doxytag: member="vdp.h::VDP_getScreenWidth" ref="aac58c34267f6158bdd62a27e9f3a518f" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getScreenWidth </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -768,13 +1033,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a58829d25cd93168db1b132b7d5e78418"></a><!-- doxytag: member="vdp.h::VDP_getVerticalScrollingMode" ref="a58829d25cd93168db1b132b7d5e78418" args="()" -->
+<a class="anchor" id="af14abb71c0edc92a8e82087eb889770c"></a><!-- doxytag: member="vdp.h::VDP_getVerticalScrollingMode" ref="af14abb71c0edc92a8e82087eb889770c" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> VDP_getVerticalScrollingMode </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -788,30 +1054,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8c5cffc7652b8d9c1f2585f059b00b6b"></a><!-- doxytag: member="vdp.h::VDP_getWindowPlanAddress" ref="a8c5cffc7652b8d9c1f2585f059b00b6b" args="()" -->
+<a class="anchor" id="ac413d85176153efd16c9dc548260547c"></a><!-- doxytag: member="vdp.h::VDP_getWindowPlanAddress" ref="ac413d85176153efd16c9dc548260547c" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> VDP_getWindowPlanAddress </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000048">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a7dbb7ca74519f6b4052649eb9b1116dc" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000032">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ae58c52ccd92cb55fe3d3c32388b1e945" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7345ee2c2e6270fcdfb218298566186d"></a><!-- doxytag: member="vdp.h::VDP_init" ref="a7345ee2c2e6270fcdfb218298566186d" args="()" -->
+<a class="anchor" id="a6bc6e196500571d95c129c563191ac25"></a><!-- doxytag: member="vdp.h::VDP_init" ref="a6bc6e196500571d95c129c563191ac25" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_init </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -820,17 +1088,18 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Initialize the whole VDP sub system. </p>
-<p>Reset VDP registers, reset sprites then call <a class="el" href="vdp_8h.html#acbb3529f5c7d26499b3d4a0e62007f5a" title="Reset background planes and palettes.">VDP_resetScreen()</a> to reset BG and palettes. </p>
+<p>Reset VDP registers, reset sprites then call <a class="el" href="vdp_8h.html#a2cee2af0e3da5b4bb437940a16e7ec30" title="Reset background planes and palettes.">VDP_resetScreen()</a> to reset BG and palettes. </p>
 
 </div>
 </div>
-<a class="anchor" id="acbb3529f5c7d26499b3d4a0e62007f5a"></a><!-- doxytag: member="vdp.h::VDP_resetScreen" ref="acbb3529f5c7d26499b3d4a0e62007f5a" args="()" -->
+<a class="anchor" id="a2cee2af0e3da5b4bb437940a16e7ec30"></a><!-- doxytag: member="vdp.h::VDP_resetScreen" ref="a2cee2af0e3da5b4bb437940a16e7ec30" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_resetScreen </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -857,7 +1126,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000049">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000033">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -875,7 +1144,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000050">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000034">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -899,14 +1168,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0b3f9d0ad0a3803feca1b8aa22d8028a"></a><!-- doxytag: member="vdp.h::VDP_setEnable" ref="a0b3f9d0ad0a3803feca1b8aa22d8028a" args="(u8 value)" -->
+<a class="anchor" id="a96d001591b447c507fbd9a4d1f444a9a"></a><!-- doxytag: member="vdp.h::VDP_setEnable" ref="a96d001591b447c507fbd9a4d1f444a9a" args="(bool value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setEnable </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1071,7 +1340,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000045">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000029">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1140,13 +1409,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="abccccf1377d10b531425a62d561f688e"></a><!-- doxytag: member="vdp.h::VDP_setScreenHeight224" ref="abccccf1377d10b531425a62d561f688e" args="()" -->
+<a class="anchor" id="a55c87823d4f983e358461f049bdeecb3"></a><!-- doxytag: member="vdp.h::VDP_setScreenHeight224" ref="a55c87823d4f983e358461f049bdeecb3" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setScreenHeight224 </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1159,13 +1429,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6eaaecd4997e32eb7aa84292c3eb4abe"></a><!-- doxytag: member="vdp.h::VDP_setScreenHeight240" ref="a6eaaecd4997e32eb7aa84292c3eb4abe" args="()" -->
+<a class="anchor" id="af816f67873d73828c69864adb0e09066"></a><!-- doxytag: member="vdp.h::VDP_setScreenHeight240" ref="af816f67873d73828c69864adb0e09066" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setScreenHeight240 </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1285,7 +1556,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000051">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000035">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1325,13 +1596,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9a34ca5b3eeffe50e0ad36d071510a55"></a><!-- doxytag: member="vdp.h::VDP_showCPULoad" ref="a9a34ca5b3eeffe50e0ad36d071510a55" args="()" -->
+<a class="anchor" id="abb58c3818828573e2ee48a96997fb9a3"></a><!-- doxytag: member="vdp.h::VDP_showCPULoad" ref="abb58c3818828573e2ee48a96997fb9a3" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_showCPULoad </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1341,7 +1613,7 @@ Variables</h2></td></tr>
 
 <p>Display the estimated CPU load (in %). </p>
 <p>This function actually display an estimation of the CPU load (in %) for the last frame.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a0cab55e25824806a19c4b0e64cc42b3c" title="Return an estimation of CPU frame load (in %)">SYS_getCPULoad()</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sys_8h.html#a8d25b812d3e84e3a61a317f2494332cd" title="Return an estimation of CPU frame load (in %)">SYS_getCPULoad()</a> </dd></dl>
 
 </div>
 </div>
@@ -1369,17 +1641,18 @@ Variables</h2></td></tr>
 </dl>
 <p>This function actually display the number of time it was called in the last second.<br/>
  i.e: for benchmarking you should call this method only once per frame update.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="tools_8h.html#a929644fdd85f57b686a71e0243d89f94">getFPS</a>(..) </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>#getFPS(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aefb8190a24577aa5156ca24c5f8d43eb"></a><!-- doxytag: member="vdp.h::VDP_waitDMACompletion" ref="aefb8190a24577aa5156ca24c5f8d43eb" args="()" -->
+<a class="anchor" id="ab440205a234866c0c0bd73991eeae242"></a><!-- doxytag: member="vdp.h::VDP_waitDMACompletion" ref="ab440205a234866c0c0bd73991eeae242" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_waitDMACompletion </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1388,7 +1661,7 @@ Variables</h2></td></tr>
 <div class="memdoc">
 
 <p>Wait for DMA operation to complete. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000052">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a4edc7297e8050aea2fc7118217026d88" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000036">Deprecated:</a></b></dt><dd>Use <a class="el" href="dma_8h.html#a341c446dfc714c6f5577722d0840bf5d" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd></dl>
 
 </div>
 </div>
@@ -1433,7 +1706,7 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Wait for next vertical blank period (same as <a class="el" href="vdp_8h.html#a4dc7f2db473482ec13878d77aabab800" title="Wait for Vertical Synchro.">VDP_waitVSync()</a>) </p>
+<p>Wait for next vertical blank period (same as <a class="el" href="vdp_8h.html#a72f0d3287626224f8618a9a4a446d0f0" title="Wait for Vertical Synchro.">VDP_waitVSync()</a>) </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>TRUE if a frame miss was detected (more than 1 frame elapsed since last call)</dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
@@ -1445,13 +1718,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a95669875c2ba5eaf567140e19daf14ed"></a><!-- doxytag: member="vdp.h::VDP_waitVInt" ref="a95669875c2ba5eaf567140e19daf14ed" args="()" -->
+<a class="anchor" id="ae7cbd2b260d6dfb844f2596b80382479"></a><!-- doxytag: member="vdp.h::VDP_waitVInt" ref="ae7cbd2b260d6dfb844f2596b80382479" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> VDP_waitVInt </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1465,13 +1739,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4dc7f2db473482ec13878d77aabab800"></a><!-- doxytag: member="vdp.h::VDP_waitVSync" ref="a4dc7f2db473482ec13878d77aabab800" args="()" -->
+<a class="anchor" id="a72f0d3287626224f8618a9a4a446d0f0"></a><!-- doxytag: member="vdp.h::VDP_waitVSync" ref="a72f0d3287626224f8618a9a4a446d0f0" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> VDP_waitVSync </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1587,7 +1862,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp_8h.html">vdp.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

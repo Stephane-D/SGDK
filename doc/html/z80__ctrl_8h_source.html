@@ -153,41 +153,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00172"></a>00172 <span class="preprocessor">#define Z80_DRIVER_DEFAULT              Z80_DRIVER_XGM</span>
 <a name="l00173"></a>00173 <span class="preprocessor"></span>
 <a name="l00174"></a>00174 
-<a name="l00181"></a>00181 <span class="keywordtype">void</span> Z80_init();
+<a name="l00181"></a>00181 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a8302cd6e69f0c3b2552e42e428c4a854" title="Initialize Z80 sub system.">Z80_init</a>(<span class="keywordtype">void</span>);
 <a name="l00182"></a>00182 
-<a name="l00187"></a>00187 <span class="keywordtype">bool</span> Z80_isBusTaken();
-<a name="l00194"></a>00194 <span class="keywordtype">void</span> Z80_requestBus(<span class="keywordtype">bool</span> wait);
-<a name="l00203"></a>00203 <span class="keywordtype">bool</span> Z80_getAndRequestBus(<span class="keywordtype">bool</span> wait);
+<a name="l00187"></a>00187 <span class="keywordtype">bool</span> <a class="code" href="z80__ctrl_8h.html#a33b93d6117c44d96631b3f06f4f671dd" title="Return Z80 BUS taken state.">Z80_isBusTaken</a>(<span class="keywordtype">void</span>);
+<a name="l00194"></a>00194 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a31ff1129c52a4aec2ae35aa37f4aaa9a" title="Request Z80 BUS.">Z80_requestBus</a>(<span class="keywordtype">bool</span> wait);
+<a name="l00203"></a>00203 <span class="keywordtype">bool</span> <a class="code" href="z80__ctrl_8h.html#a636bf7a214dfa953cb20d6554d497e68" title="Request Z80 BUS if not yet taken.">Z80_getAndRequestBus</a>(<span class="keywordtype">bool</span> wait);
 <a name="l00204"></a>00204 
-<a name="l00209"></a>00209 <span class="keywordtype">void</span> Z80_releaseBus();
+<a name="l00209"></a>00209 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a954db566ccf901c7b86dddafbe91605d" title="Release Z80 BUS.">Z80_releaseBus</a>(<span class="keywordtype">void</span>);
 <a name="l00210"></a>00210 
-<a name="l00215"></a>00215 <span class="keywordtype">void</span> Z80_startReset();
-<a name="l00220"></a>00220 <span class="keywordtype">void</span> Z80_endReset();
+<a name="l00215"></a>00215 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#ae8415e82946692ddd0af1bab1284bbb2" title="Start Z80 reset.">Z80_startReset</a>(<span class="keywordtype">void</span>);
+<a name="l00220"></a>00220 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#ab34eb85ece212250e598caee30eafe4b" title="End Z80 reset.">Z80_endReset</a>(<span class="keywordtype">void</span>);
 <a name="l00221"></a>00221 
-<a name="l00228"></a>00228 <span class="keywordtype">void</span> Z80_setBank(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> bank);
+<a name="l00228"></a>00228 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a645b38fdc3290f81055a8a6c7e1dbb98" title="Set Z80 memory bank.">Z80_setBank</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> bank);
 <a name="l00229"></a>00229 
-<a name="l00240"></a>00240 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> Z80_read(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> addr);
-<a name="l00253"></a>00253 <span class="keywordtype">void</span> Z80_write(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> addr, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
+<a name="l00240"></a>00240 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="z80__ctrl_8h.html#a2baf78028dc5bc32218bfb40d767836b" title="Read Z80 memory (Z80_RAM).">Z80_read</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> addr);
+<a name="l00253"></a>00253 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#acc156b6878a131bba4de834b4457aef1" title="Write to Z80 memory (Z80_RAM).">Z80_write</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> addr, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value);
 <a name="l00254"></a>00254 
-<a name="l00265"></a>00265 <span class="keywordtype">void</span> Z80_clear(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dest, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <span class="keyword">const</span> <span class="keywordtype">bool</span> resetz80);
-<a name="l00278"></a>00278 <span class="keywordtype">void</span> Z80_upload(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dest, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *data, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <span class="keyword">const</span> <span class="keywordtype">bool</span> resetz80);
-<a name="l00290"></a>00290 <span class="keywordtype">void</span> Z80_download(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *dest, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00265"></a>00265 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#ab20cbc2f8977200fd9e770758c30ef8a" title="Clear Z80 memory.">Z80_clear</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dest, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <span class="keyword">const</span> <span class="keywordtype">bool</span> resetz80);
+<a name="l00278"></a>00278 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a5b4c24d795748930d94f474513baf0a2" title="Upload data in Z80 memory.">Z80_upload</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dest, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *data, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <span class="keyword">const</span> <span class="keywordtype">bool</span> resetz80);
+<a name="l00290"></a>00290 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a3fc34a4b1435ab20e3ae76e5999fef3f" title="Read data from Z80 memory.">Z80_download</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> from, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *dest, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
 <a name="l00291"></a>00291 
-<a name="l00304"></a>00304 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  Z80_getLoadedDriver();
-<a name="l00309"></a>00309 <span class="keywordtype">void</span> Z80_unloadDriver();
-<a name="l00324"></a>00324 <span class="keywordtype">void</span> Z80_loadDriver(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> driver, <span class="keyword">const</span> <span class="keywordtype">bool</span> waitReady);
-<a name="l00334"></a>00334 <span class="keywordtype">void</span> Z80_loadCustomDriver(<span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *drv, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00304"></a>00304 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="z80__ctrl_8h.html#ae81f2da219bd6a18e7b2cd1e3ee6d0d1" title="Return currently loaded Z80 driver.">Z80_getLoadedDriver</a>(<span class="keywordtype">void</span>);
+<a name="l00309"></a>00309 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a628051b7f2d4642e579afdd7b3df482c" title="Unload Z80 driver (actually clear Z80 ram).">Z80_unloadDriver</a>(<span class="keywordtype">void</span>);
+<a name="l00324"></a>00324 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a0221edeac540731f42c91c36738b2f78" title="Load a Z80 driver.">Z80_loadDriver</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> driver, <span class="keyword">const</span> <span class="keywordtype">bool</span> waitReady);
+<a name="l00334"></a>00334 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a1fd7832b72fc6b74786e89eec023d205" title="Load a custom Z80 driver.">Z80_loadCustomDriver</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *drv, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
 <a name="l00335"></a>00335 
-<a name="l00340"></a>00340 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  Z80_isDriverReady();
+<a name="l00340"></a>00340 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="z80__ctrl_8h.html#a528e392bd1c38838b999cec0c7c3cffc" title="Return driver ready state (only for non custom driver).">Z80_isDriverReady</a>(<span class="keywordtype">void</span>);
 <a name="l00341"></a>00341 
-<a name="l00342"></a>00342 
-<a name="l00343"></a>00343 <span class="preprocessor">#endif // _Z80_CTRL_H_</span>
+<a name="l00350"></a>00350 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#ade6f376dede4e83db0d11538707f0253" title="Enable/disable 68K bus access protection from Z80 (can be used by any sound driver).">Z80_useBusProtection</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> signalAddress);
+<a name="l00351"></a>00351 
+<a name="l00370"></a>00370 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#ac35398433808fa62266db71cd42363e1" title="Set temporary 68K BUS protection from Z80 (for sound driver supporting it).  You should protect BUS A...">Z80_setBusProtection</a>(<span class="keywordtype">bool</span> value);
+<a name="l00379"></a>00379 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#ac712da703199a7a60773a65aebde02ee" title="Enable temporary 68K BUS protection from Z80 (for sound driver supporting it). See Z80_setBusProtecti...">Z80_enableBusProtection</a>();
+<a name="l00388"></a>00388 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a12a2c7da51fe666b3138324fb9cf770a" title="Disable temporary 68K BUS protection from Z80 (for sound driver supporting it). See Z80_setBusProtect...">Z80_disableBusProtection</a>();
+<a name="l00389"></a>00389 
+<a name="l00396"></a>00396 <span class="keywordtype">bool</span> <a class="code" href="z80__ctrl_8h.html#a8a684f505b776406f4bd279ea88bc43a" title="Returns TRUE if DMA delay is enabled to improve PCM playback.">Z80_getForceDelayDMA</a>(<span class="keywordtype">void</span>);
+<a name="l00410"></a>00410 <span class="keywordtype">void</span> <a class="code" href="z80__ctrl_8h.html#a2d28b57c4aa9338e6034922c8372a82f" title="This method can be used to improve the PCM playback during music play and while DMA queue is used...">Z80_setForceDelayDMA</a>(<span class="keywordtype">bool</span> value);
+<a name="l00411"></a>00411 
+<a name="l00412"></a>00412 <span class="preprocessor">#endif // _Z80_CTRL_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="z80__ctrl_8h.html">z80_ctrl.h</a>      </li>
-      <li class="footer">Generated on Mon Feb 7 2022 14:48:00 for sgdk by&#160;
+      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
