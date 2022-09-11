@@ -7,7 +7,7 @@ COMPILER
  - added new TILEMAP resource (see rescomp.txt for more infos)
  - added Tiled TMX map and object support (TILEMAP, MAP and OBJECT resources)
  - added Tiled TSX tileset support (TILESET resource)
- - added global RGB image support (see rescompt.txt for more infos)
+ - added global RGB image support (see rescomp.txt for more infos)
  - added .pal file and RGB image support for PALETTE resource
  - added extension support so you can add your own custom resource (see rescomp.txt for more infos)
  - better management of duplicated resources
@@ -20,7 +20,7 @@ COMPILER
  - added support to split VGM and PCM streams in VGM file (Thanks to Vic_)
  - added ZGM (compressed VGM) export support (Thanks to Vic_, useful for 32X dev)
 * MAKEFILE
- - added '-fms-extensions' flag to allow usage of anonymous embeded structures and enums
+ - added '-fms-extensions' flag to allow usage of anonymous embedded structures and enums
  - added '--register-prefix-optional,--bitwise-or' flags to help with assembly code (can use '|' as OR operator)
  - added 'ext.mk' and 'ext_lib.mk' files for makefile extension and customization
  - removed '-ggdb' flag for .s files compilation. It makes AS crashing when using 'dc.b' data declaration.
@@ -36,7 +36,7 @@ LIBRARY
  - added new 'pool' unit for easy and fast object pool management
  - added new 'object' unit for easy general object implementation
 * VDP
- - renamed many constants for better cohenrency in naming convention (ex: TILE_USERINDEX --> TILE_USER_INDEX)
+ - renamed many constants for better coherency in naming convention (ex: TILE_USERINDEX --> TILE_USER_INDEX)
  - renamed all GFX_xxx constants to VDP_xxx 
  - added bit fields to VDPSprite structure for easier field manipulation (thanks to Carlos Aragones)
  - added many methods to manipulate these fields (thanks to Carlos Aragones)
@@ -63,8 +63,8 @@ LIBRARY
  - added p16 type (short pointer for low ROM / high RAM address)
 * DMA
  - increased a bit default DMA buffer size
-* added macros to create 'enum' compatible with assembly (.s) files
-* documentation fixes / cleanups / updates
+* added macros to create 'enum' type compatible with assembly (.s) files
+* several documentation fixes / cleanups / updates
 * removed old deprecated units and headers (vdp_pal and vdp_dma)
 * general cleanup, some refactoring..
 
@@ -72,6 +72,11 @@ SAMPLE
 * rewrote 'sonic' sample with better separation of different units.
 * added new 'platformer' sample (thanks to Gerard Gascon).
 * tweaked/fixed 'scaling' and 'wobble' samples (using the new fast h-int call)
+
+SGDK 1.80 MIGRATION NOTE
+* Add extra '_' character on some constantes (i.e: TILE_USERINDEX --> TILE_USER_INDEX; TILE_FONTINDEX --> TILE_FONT_INDEX; ...)
+* Replace all GFX_xxx constants with VDP_xxx
+* Add HINTERRUPT_CALLBACK keyword before your hint callback method (see 'scaling' sample for an example)
  
  
  SGDK 1.70 (February 2022)
