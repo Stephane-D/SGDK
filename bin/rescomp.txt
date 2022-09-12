@@ -356,7 +356,7 @@ Some informations about how SpriteDefinition is generated from the input image:
 
 XGM
 ---
-Take a .vgm or .xgm music file as input and transform it into binary format usable with the SGDK SND_startPlay_XGM(..) methods.
+Take a .vgm or .xgm music file as input and transform it into binary format usable with the SGDK XGM_startPlay(..) methods.
 The XGM driver supports music play along 4 PCM channels mixing (100% running on Z80 cpu).
 
 Syntax:
@@ -374,7 +374,7 @@ XGM name file [timing [options]]
 
 WAV
 ---
-Take a .wav sound file as input and transform it to in binary format usable with one of the SGDK PCM driver.
+Take a .wav sound file as input and transform it into binary format usable with one of the SGDK PCM drivers.
 
 Syntax:
 WAV name wav_file driver [out_rate [far]]
@@ -393,12 +393,12 @@ WAV name wav_file driver [out_rate [far]]
                         2 / 3 / 4PCM
                             4 channels 8 bits signed sample driver with volume support.
                             It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.
-                            with volume support (16 levels du to memory limitation).
+                            with volume support (16 levels due to memory limitation).
                             Method to use: SND_startPlay_4PCM_ENV(..)
                         4 / 5 / XGM
                             XGM music with 4 channels 8 bits samples driver.
                             It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
-                            Methods to use: SND_setPCM_XGM(..) and SND_startPlayPCM_XGM(..)
+                            Methods to use: XGM_setPCM(..) and XGM_startPlayPCM(..)
     out_rate        output PCM rate (required for Z80_DRIVER_PCM driver, ignored for others)
                         By default the default driver output rate is used.
     far             'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = FALSE)
