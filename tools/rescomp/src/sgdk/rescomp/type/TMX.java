@@ -74,6 +74,7 @@ public class TMX
     static final String FIELD_TILE_INDEX = "tileindex";
     static final String FIELD_INDEX = "index";
     static final String FIELD_IND = "ind";
+    static final String FIELD_ID = "id";
 
     static final String SUFFIX_PRIORITY = " priority";
     static final String SUFFIX_LOW_PRIORITY = " low";
@@ -82,21 +83,6 @@ public class TMX
     static final int TMX_HFLIP = (1 << 31);
     static final int TMX_VFLIP = (1 << 30);
     static final int TMX_AXE_FLIP = (1 << 29);
-
-    // <map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="40" height="14"
-    // tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#e00080" nextlayerid="15" nextobjectid="6">
-    // <tileset firstgid="1" source="../tsx/Forest.tsx"/>
-    // <tileset firstgid="392" source="../tsx/Bathing_Spot.tsx"/>
-    // <layer id="1" name="B Background" width="40" height="14">
-    // <data encoding="csv">
-    // 715,715,715,715,715,715,715,604,604,604,604,604,715,715,715,604,604,604,744,124,125,126,2147483774,2147483773,2147483774,125,126,126,2147483774,2147483773,2147483772,124,125,126,2147483774,2147483773,2147483772,124,125,126
-    // </data>
-    // </layer>
-    // <objectgroup id="7" name="_DEV_Comments" visible="0" locked="1">
-    // <object id="4" name="Beast" type="Text" x="239.333" y="-172.167" width="147" height="30">
-    // <text wrap="1">Beasts</text>
-    // </object>
-    // </objectgroup>
 
     public static class TMXMap
     {
@@ -750,6 +736,9 @@ public class TMX
                 // then sort on 'tileindex' field
                 if (result == 0)
                     result = Long.compare(o1.getFieldLongValue(FIELD_TILE_INDEX), o2.getFieldLongValue(FIELD_TILE_INDEX));
+                // then sort on 'id' field
+                if (result == 0)
+                    result = Long.compare(o1.getFieldLongValue(FIELD_ID), o2.getFieldLongValue(FIELD_ID));
 
                 return result;
             }

@@ -27,7 +27,8 @@ Supported resource type
 - TILESET   tileset type resource, contains tiles data which can be used / shared for TILEMAP and MAP resources.
 - TILEMAP   tilemap type resource, contains raw tilemap data. It can be used to draw an image or complete (but small) plane background.
 - MAP       map type resource, optimized to draw large map / level.
-- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data. It can be used to draw an image or complete (but small) plane background.
+- IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data. It can be used to draw an image or complete (but small)
+            plane background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
 - XGM       XGM music type resource (.vgm or .xgm file), used to play music.
 - WAV       WAV sound type resource (.wav file), used to play sample sound data.
@@ -39,7 +40,8 @@ Supported function
 - UNGROUP   by default rescomp will group data export by type, using "UNGROUP" allow to disable that feature.
 - NEAR      force all resources from the file to be exported as NEAR ("not FAR") data.
             By default binary data are exported as "FAR" data, that means they are located in the end of the ROM and can require
-            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before "FAR" data in the ROM.
+            bankswitch mechanism if the ROM is larger than 4MB. Using "NEAR" force all binary data from the file to be located before "FAR" data
+            in the ROM.
 
 Extensions
 ----------
@@ -56,16 +58,17 @@ Many resource types use image file as input and Rescomp now supports both RGB im
 Here're some important informations to know about how to use properly these 2 image formats:
 * RGB images
   When using RGB image rescomp does not have any information about palette so they should be defined somewhere in the image.
-  Rescomp expect the palette to be located in the top-left part of the image where each color is defined by a 8x8 tile and each sub palette (16 colors) being
-  on a separate row of tiles. You need to have the 4 sub palettes (4x16 colors) in the image even if only the first one is really used (there is no reliable
-  way to detect automatically the number of palette row).
-  See the rgb_example.png image in the sample/sonic/res/gfx folder if you want an example.
-  Note that when processing the image rescomp will automatically remove the palette part of the image to not disturb process (not adding extra tiles for instance)
-  so you shouldn't put any tileset data in the right part of the palette rows.
+  Rescomp expect the palette to be located in the top-left part of the image where each color is defined by a 8x8 tile and each sub palette
+  (16 colors) being on a separate row of tiles. You need to have the 4 sub palettes (4x16 colors) in the image even if only the first one is
+  really used (there is no reliable way to detect automatically the number of palette row).
+  See the rgb_example.png image in the 'sample/sonic/res/gfx' folder if you want an example.
+  Note that when processing the image rescomp will automatically remove the palette part of the image to not disturb process (not adding extra
+  tiles for instance) so you shouldn't put any tileset data in the right part of the palette rows.
 * Indexed color images
-  rescomp supports 8bpp, 4bpp, 2bpp and even 1bpp indexed color image and will always directly use the palette data from the image it's *very* important to
-  properly setup the palette in the image (color at position #0 is the transparent color). Some software as Asesprite let you to setup your palette as you require.
-  An advantage of using indexed colors is that you can use color >= 128 with 8bpp image to define the priority information (more detail about it in resource description).
+  rescomp supports 8bpp, 4bpp, 2bpp and even 1bpp indexed color image and will always directly use the palette data from the image so it's
+  *very* important to properly setup the palette in the image (color at position #0 is the transparent color). Some softwares as Asesprite let
+  you setup your palette as you wish. An advantage of using indexed colors is that you can use color >= 128 with 8bpp images to define priority
+  information (more detail about it in resource description).
 
 
 PALETTE
@@ -274,10 +277,10 @@ OBJECTS name tmx_file layer_id field_defs [decl_type [type_filter]]
     type_filter         define a type filter if we only want to extract Tiled objects of a specific type (see above).
 
 Tips:
-- You can use an integer 'index' or 'ind' field to sort your objects (ascending order).
-- You can export the tile index value corresponding to: x + (y * map_width)) in 'tileIndex' field by adding a custom boolean
-  'exportTileIndex' field and setting its value to 'true'. When you enable the 'tileIndex' export then objects are sorted (ascending order)
-  on the tile index value allowing fast tile index based searchs (be careful: 'index' or 'ind' fields has priority for sorting if they exist).
+- Objects are sorted (ascending order) using the values of these fields (in this order): 'index', 'ind', 'tileIndex', 'id' .
+- You can export the tile index value corresponding to x + (y * map_width)) in 'tileIndex' field by adding a custom boolean 'exportTileIndex'
+  field with value set to 'true'. When you enable the 'tileIndex' export then objects are sorted (ascending order) using the field value
+  allowing fast tile index based searchs (be careful: 'index' or 'ind' fields has priority for sorting if they exist).
 
 
 IMAGE
