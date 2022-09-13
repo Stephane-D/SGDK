@@ -232,7 +232,7 @@ static Sprite* allocateSprite(u16 head)
     }
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    KLog_U1("allocateSprite(): success - allocating sprite at pos ", spritesPool->free[-1] - spritesPool->bank);
+    kprintf("allocateSprite(): success - allocating sprite at pos %d", POOL_find(spritesPool, result));
 #endif // LIB_DEBUG
 
     if (head)
@@ -274,7 +274,7 @@ static bool releaseSprite(Sprite* sprite)
         VDPSprite* lastVDPSprite;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-        kprintf("releaseSprite: success - released sprite at pos %ld", sprite - (Sprite*) spritesPool->bank);
+        kprintf("releaseSprite: success - released sprite at pos %d", POOL_find(spritesPool, sprite));
 #endif // LIB_DEBUG
 
         // release sprite (we don't need stack coherency here as we don't use stack iteration)
@@ -318,7 +318,7 @@ static bool releaseSprite(Sprite* sprite)
     }
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-    kprintf("SPR_internalReleaseSprite: failed - sprite at pos %ld is not allocated !", sprite - (Sprite*) spritesPool->bank);
+    kprintf("SPR_internalReleaseSprite: failed - sprite at address %p is not allocated !", sprite);
 #endif // LIB_DEBUG
 
     END_PROFIL(PROFIL_RELEASE_SPRITE)
