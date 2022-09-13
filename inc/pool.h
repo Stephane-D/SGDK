@@ -117,7 +117,7 @@ void* POOL_allocate(Pool* pool);
  *
  *  \param pool
  *      Object pool allocator
- *  \param obj
+ *  \param object
  *      Object to release
  *  \param maintainCoherency
  *      set it to <i>TRUE</i> if you want to keep coherency for stack iteration (#see POOL_getFirst()).<br>
@@ -125,7 +125,7 @@ void* POOL_allocate(Pool* pool);
  *
  *  \see POOL_allocate(..)
  */
-void POOL_release(Pool* pool, void* obj, bool maintainCoherency);
+void POOL_release(Pool* pool, void* object, bool maintainCoherency);
 
 /**
  *  \return
@@ -161,10 +161,10 @@ void** POOL_getFirst(Pool* pool);
  *
  *  \param pool
  *      Object pool allocator
- *  \param obj
+ *  \param object
  *      Object to get slot position
  */
-s16 POOL_find(Pool* pool, void* obj);
+s16 POOL_find(Pool* pool, void* object);
 
 
 #endif // _POOL_H_

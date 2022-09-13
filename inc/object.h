@@ -105,7 +105,7 @@ Object* OBJ_create(Pool* pool);
  *
  *  \param pool
  *      Object pool allocator to release from (see pool.h unit)
- *  \param obj
+ *  \param object
  *      Object to release (must extend basic #Object structure)
  *  \param maintainCoherency
  *      set it to <i>TRUE</i> if you want to keep coherency for stack iteration and use #OBJ_updateAll().<br>
@@ -114,7 +114,7 @@ Object* OBJ_create(Pool* pool);
  *  \see OBJ_create(..)
  *  \see OBJ_updateAll(..)
  */
-void OBJ_release(Pool* pool, Object* obj, bool maintainCoherency);
+void OBJ_release(Pool* pool, Object* object, bool maintainCoherency);
 
 /**
  *  \brief
@@ -130,7 +130,7 @@ void OBJ_updateAll(Pool* pool);
  *  \brief
  *      Set the initialization method for the given object
  *
- *  \param obj
+ *  \param object
  *      Object to set <i>init</i> method for
  *  \param initMethod
  *      the method to set for object initialization (should be called after object creation)
@@ -138,12 +138,12 @@ void OBJ_updateAll(Pool* pool);
  *  \see OBJ_setUpdateMethod(..)
  *  \see OBJ_setEndMethod(..)
  */
-void OBJ_setInitMethod(Object* obj, ObjectCallback* initMethod);
+void OBJ_setInitMethod(Object* object, ObjectCallback* initMethod);
 /**
  *  \brief
  *      Set the update method for the given object
  *
- *  \param obj
+ *  \param object
  *      Object to set <i>update</i> method for
  *  \param initMethod
  *      the method to set for object update (should be called once per frame)
@@ -151,12 +151,12 @@ void OBJ_setInitMethod(Object* obj, ObjectCallback* initMethod);
  *  \see OBJ_setInitMethod(..)
  *  \see OBJ_setEndMethod(..)
  */
-void OBJ_setUpdateMethod(Object* obj, ObjectCallback* updateMethod);
+void OBJ_setUpdateMethod(Object* object, ObjectCallback* updateMethod);
 /**
  *  \brief
  *      Set the ending method for the given object
  *
- *  \param obj
+ *  \param object
  *      Object to set <i>end</i> method for
  *  \param initMethod
  *      the method to set for object destruction (should be called just before object is released)
@@ -164,7 +164,7 @@ void OBJ_setUpdateMethod(Object* obj, ObjectCallback* updateMethod);
  *  \see OBJ_setInitMethod(..)
  *  \see OBJ_setUpdateMethod(..)
  */
-void OBJ_setEndMethod(Object* obj, ObjectCallback* endMethod);
+void OBJ_setEndMethod(Object* object, ObjectCallback* endMethod);
 
 
 #endif // _OBJECT_H_
