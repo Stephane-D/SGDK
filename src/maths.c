@@ -7,17 +7,17 @@
 #include "vdp.h"
 
 
-u32 mulu(u16 op1, u16 op2)
+FORCE_INLINE u32 mulu(u16 op1, u16 op2)
 {
     return op1 * op2;
 }
 
-s32 muls(s16 op1, s16 op2)
+FORCE_INLINE s32 muls(s16 op1, s16 op2)
 {
     return op1 * op2;
 }
 
-//u32 mulu(u16 op1, u16 op2)
+//FORCE_INLINE u32 mulu(u16 op1, u16 op2)
 //{
 //    u32 result = op1;
 //    asm ("mulu.w %1, %0"
@@ -27,7 +27,7 @@ s32 muls(s16 op1, s16 op2)
 //    return result;
 //}
 //
-//s32 muls(s16 op1, s16 op2)
+//FORCE_INLINE s32 muls(s16 op1, s16 op2)
 //{
 //    s32 result = op1;
 //    asm ("muls.w %1, %0"
@@ -37,7 +37,7 @@ s32 muls(s16 op1, s16 op2)
 //    return result;
 //}
 
-u16 divu(u32 op1, u16 op2)
+FORCE_INLINE u16 divu(u32 op1, u16 op2)
 {
     u32 result = op1;
     asm ("divu.w %1, %0"
@@ -47,7 +47,7 @@ u16 divu(u32 op1, u16 op2)
     return result;
 }
 
-s16 divs(s32 op1, s16 op2)
+FORCE_INLINE s16 divs(s32 op1, s16 op2)
 {
     s32 result = op1;
     asm ("divs.w %1, %0"
@@ -57,7 +57,7 @@ s16 divs(s32 op1, s16 op2)
     return result;
 }
 
-u16 modu(u32 op1, u16 op2)
+FORCE_INLINE u16 modu(u32 op1, u16 op2)
 {
     u32 result = op1;
     asm ("divu.w %1, %0\n"
@@ -68,7 +68,7 @@ u16 modu(u32 op1, u16 op2)
     return result;
 }
 
-s16 mods(s32 op1, s16 op2)
+FORCE_INLINE s16 mods(s32 op1, s16 op2)
 {
     s32 result = op1;
     asm ("divs.w %1, %0\n"
@@ -79,7 +79,7 @@ s16 mods(s32 op1, s16 op2)
     return result;
 }
 
-u32 divmodu(u32 op1, u16 op2)
+FORCE_INLINE u32 divmodu(u32 op1, u16 op2)
 {
     u32 result = op1;
     asm ("divu.w %1, %0"
@@ -89,7 +89,7 @@ u32 divmodu(u32 op1, u16 op2)
     return result;
 }
 
-s32 divmods(s32 op1, s16 op2)
+FORCE_INLINE s32 divmods(s32 op1, s16 op2)
 {
     s32 result = op1;
     asm ("divs.w %1, %0"
@@ -97,6 +97,193 @@ s32 divmods(s32 op1, s16 op2)
          : "d" (op2)
          : "cc");
     return result;
+}
+
+
+FORCE_INLINE fix16 intToFix16(s16 value)
+{
+    return value << FIX16_FRAC_BITS;
+}
+
+FORCE_INLINE s16 fix16ToInt(fix16 value)
+{
+    return value >> FIX16_FRAC_BITS;
+}
+
+FORCE_INLINE fix16 fix16Round(fix16 value)
+{
+    if (FIX16(value) > FIX16(0.5))
+        return fix16Int(value + FIX16(1));
+
+    return fix16Int(value);
+}
+
+FORCE_INLINE s16 fix16ToRoundedInt(fix16 value)
+{
+    if (FIX16(value) > FIX16(0.5))
+        return fix16ToInt(value) + 1;
+
+    return fix16ToInt(value);
+}
+
+FORCE_INLINE fix16 fix16Frac(fix16 value)
+{
+    return value & FIX16_FRAC_MASK;
+}
+
+FORCE_INLINE fix16 fix16Int(fix16 value)
+{
+    return value & FIX16_INT_MASK;
+}
+
+FORCE_INLINE fix16 fix16Add(fix16 val1, fix16 val2)
+{
+    return val1 + val2;
+}
+
+FORCE_INLINE fix16 fix16Sub(fix16 val1, fix16 val2)
+{
+    return val1 - val2;
+}
+
+FORCE_INLINE fix16 fix16Neg(fix16 value)
+{
+    return 0 - value;
+}
+
+FORCE_INLINE fix16 fix16Mul(fix16 val1, fix16 val2)
+{
+    return muls(val1, val2) >> FIX16_FRAC_BITS;
+}
+
+FORCE_INLINE fix16 fix16Div(fix16 val1, fix16 val2)
+{
+    return divs(val1 << FIX16_FRAC_BITS, val2);
+}
+
+FORCE_INLINE fix16 fix16Avg(fix16 val1, fix16 val2)
+{
+    return (val1 + val2) >> 1;
+}
+
+FORCE_INLINE fix16 fix16Log2(fix16 value)
+{
+    return log2tab16[value];
+}
+
+FORCE_INLINE fix16 fix16Log10(fix16 value)
+{
+    return log10tab16[value];
+}
+
+FORCE_INLINE fix16 fix16Sqrt(fix16 value)
+{
+    return sqrttab16[value];
+}
+
+FORCE_INLINE fix16 sinFix16(u16 value)
+{
+    return sintab16[value & 1023];
+}
+
+FORCE_INLINE fix16 cosFix16(u16 value)
+{
+    return sintab16[(value + 256) & 1023];
+}
+
+
+FORCE_INLINE fix32 intToFix32(s32 value)
+{
+    return value << FIX32_FRAC_BITS;
+}
+
+FORCE_INLINE s32 fix32ToInt(fix32 value)
+{
+    return value >> FIX32_FRAC_BITS;
+}
+
+FORCE_INLINE fix32 fix32Round(fix32 value)
+{
+    if (fix32Frac(value) > FIX32(0.5))
+        return fix32Int(value + FIX32(1));
+
+    return fix32Int(value);
+}
+
+FORCE_INLINE s32 fix32ToRoundedInt(fix32 value)
+{
+    if (fix32Frac(value) > FIX32(0.5))
+        return fix32ToInt(value) + 1;
+
+    return fix32ToInt(value);
+}
+
+FORCE_INLINE fix32 fix32Frac(fix32 value)
+{
+    return value & FIX32_FRAC_MASK;
+}
+
+FORCE_INLINE fix32 fix32Int(fix32 value)
+{
+    return value & FIX32_INT_MASK;
+}
+
+FORCE_INLINE fix32 fix32Add(fix32 val1, fix32 val2)
+{
+    return val1 + val2;
+}
+
+FORCE_INLINE fix32 fix32Sub(fix32 val1, fix32 val2)
+{
+    return val1 - val2;
+}
+
+FORCE_INLINE fix32 fix32Neg(fix32 value)
+{
+    return 0 - value;
+}
+
+FORCE_INLINE fix32 fix32Mul(fix32 val1, fix32 val2)
+{
+    fix32 v1 = val1 >> (FIX32_FRAC_BITS / 2);
+    fix32 v2 = val2 >> (FIX32_FRAC_BITS / 2);
+
+    return v1 * v2;
+}
+
+FORCE_INLINE fix32 fix32Div(fix32 val1, fix32 val2)
+{
+    fix32 v1 = val1 << (FIX32_FRAC_BITS / 2);
+    fix32 v2 = val2 >> (FIX32_FRAC_BITS / 2);
+
+    return v1 / v2;
+}
+
+FORCE_INLINE fix32 fix32Avg(fix32 val1, fix32 val2)
+{
+    return (val1 + val2) >> 1;
+}
+
+
+FORCE_INLINE fix16 fix32ToFix16(fix32 value)
+{
+    return value >> (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
+}
+
+FORCE_INLINE fix32 fix16ToFix32(fix16 value)
+{
+    return value << (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
+}
+
+
+FORCE_INLINE fix32 sinFix32(u16 value)
+{
+    return sintab32[value & 1023];
+}
+
+FORCE_INLINE fix32 cosFix32(u16 value)
+{
+    return sintab32[(value + 256) & 1023];
 }
 
 
@@ -154,7 +341,7 @@ u32 getApproximatedDistance(s32 dx, s32 dy)
     if (dx < 0) dx = -dx;
     if (dy < 0) dy = -dy;
 
-    if (dx < dy )
+    if (dx < dy)
     {
         min = dx;
         max = dy;
@@ -165,9 +352,15 @@ u32 getApproximatedDistance(s32 dx, s32 dy)
         max = dx;
     }
 
-    // coefficients equivalent to ( 123/128 * max ) and ( 51/128 * min )
+    // coefficients equivalent to ((123/128) * max) and ((51/128) * min)
     return ((max << 8) + (max << 3) - (max << 4) - (max << 1) +
              (min << 7) - (min << 5) + (min << 3) - (min << 1)) >> 8;
+}
+
+u32 getApproximatedDistanceV(V2s32* v2)
+{
+    return getApproximatedDistance(v2->x, v2->y);
+
 }
 
 s32 getApproximatedLog2(s32 value)

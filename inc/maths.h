@@ -55,96 +55,18 @@ extern const fix16 sqrttab16[0x10000];
 #endif
 
 
-#define FIX32_INT_BITS              22
-#define FIX32_FRAC_BITS             (32 - FIX32_INT_BITS)
-
-#define FIX32_INT_MASK              (((1 << FIX32_INT_BITS) - 1) << FIX32_FRAC_BITS)
-#define FIX32_FRAC_MASK             ((1 << FIX32_FRAC_BITS) - 1)
-
-/**
- *  \brief
- *      Convert specified value to fix32.
- *
- *  EX:<br>
- *      f32 v = FIX32(34.567);
- */
-#define FIX32(value)                ((fix32) ((value) * (1 << FIX32_FRAC_BITS)))
-
-/**
- *  \brief
- *      Convert integer to fix32.
- */
-#define intToFix32(value)           ((fix32) ((value) << FIX32_FRAC_BITS))
-/**
- *  \brief
- *      Convert fix32 to integer.
- */
-#define fix32ToInt(value)           ((s32) ((value) >> FIX32_FRAC_BITS))
-
-/**
- *  \brief
- *      Round the specified value to nearest integer (fix32).
- */
-#define fix32Round(value)           \
-    ((fix32Frac(value) > FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value))
-
-/**
- *  \brief
- *      Round and convert the specified fix32 value to integer.
- */
-#define fix32ToRoundedInt(value)    \
-    ((fix32Frac(value) > FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value))
-
-/**
- *  \brief
- *      Return fractional part of the specified value (fix32).
- */
-#define fix32Frac(value)            ((value) & FIX32_FRAC_MASK)
-/**
- *  \brief
- *      Return integer part of the specified value (fix32).
- */
-#define fix32Int(value)             ((value) & FIX32_INT_MASK)
-
-/**
- *  \brief
- *      Compute and return the result of the addition of val1 and val2 (fix32).
- */
-#define fix32Add(val1, val2)        ((val1) + (val2))
-/**
- *  \brief
- *      Compute and return the result of the substraction of val2 from val1 (fix32).
- */
-#define fix32Sub(val1, val2)        ((val1) - (val2))
-/**
- *  \brief
- *      Return negate of specified value (fix32).
- */
-#define fix32Neg(value)             (0 - (value))
-
-/**
- *  \brief
- *      Compute and return the result of the multiplication of val1 and val2 (fix32).<br>
- *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
- */
-#define fix32Mul(val1, val2)        (((val1) >> (FIX32_FRAC_BITS / 2)) * ((val2) >> (FIX32_FRAC_BITS / 2)))
-/**
- *  \brief
- *      Compute and return the result of the division of val1 by val2 (fix32).<br>
- *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
- */
-#define fix32Div(val1, val2)        (((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
-/**
- *  \brief
- *      Compute and return the result of the average of val1 by val2 (fix32).
- */
-#define fix32Avg(val1, val2)        (((val1) + (val2)) >> 1)
-
 #define FIX16_INT_BITS              10
 #define FIX16_FRAC_BITS             (16 - FIX16_INT_BITS)
 
 #define FIX16_INT_MASK              (((1 << FIX16_INT_BITS) - 1) << FIX16_FRAC_BITS)
 #define FIX16_FRAC_MASK             ((1 << FIX16_FRAC_BITS) - 1)
+
+
+#define FIX32_INT_BITS              22
+#define FIX32_FRAC_BITS             (32 - FIX32_INT_BITS)
+
+#define FIX32_INT_MASK              (((1 << FIX32_INT_BITS) - 1) << FIX32_FRAC_BITS)
+#define FIX32_FRAC_MASK             ((1 << FIX32_FRAC_BITS) - 1)
 
 /**
  *  \brief
@@ -157,125 +79,12 @@ extern const fix16 sqrttab16[0x10000];
 
 /**
  *  \brief
- *      Convert integer to fix16.
+ *      Convert specified value to fix32.
+ *
+ *  EX:<br>
+ *      f32 v = FIX32(34.567);
  */
-#define intToFix16(value)           ((fix16) ((value) << FIX16_FRAC_BITS))
-/**
- *  \brief
- *      Convert fix16 to integer.
- */
-#define fix16ToInt(value)           ((s16) ((value) >> FIX16_FRAC_BITS))
-
-/**
- *  \brief
- *      Round the specified value to nearest integer (fix16).
- */
-#define fix16Round(value)           \
-    ((fix16Frac(value) > FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))
-
-/**
- *  \brief
- *      Round and convert the specified fix16 value to integer.
- */
-#define fix16ToRoundedInt(value)    \
-    ((fix16Frac(value) > FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value))
-
-/**
- *  \brief
- *      Return fractional part of the specified value (fix16).
- */
-#define fix16Frac(value)            ((value) & FIX16_FRAC_MASK)
-/**
- *  \brief
- *      Return integer part of the specified value (fix16).
- */
-#define fix16Int(value)             ((value) & FIX16_INT_MASK)
-
-/**
- *  \brief
- *      Compute and return the result of the addition of val1 and val2 (fix16).
- */
-#define fix16Add(val1, val2)        ((val1) + (val2))
-/**
- *  \brief
- *      Compute and return the result of the substraction of val2 from val1 (fix16).
- */
-#define fix16Sub(val1, val2)        ((val1) - (val2))
-/**
- *  \brief
- *      Return negate of specified value (fix16).
- */
-#define fix16Neg(value)             (0 - (value))
-
-/**
- *  \brief
- *      Compute and return the result of the multiplication of val1 and val2 (fix16).
- */
-#define fix16Mul(val1, val2)        (muls(val1, val2) >> FIX16_FRAC_BITS)
-/**
- *  \brief
- *      Compute and return the result of the division of val1 by val2 (fix16).
- */
-#define fix16Div(val1, val2)        (divs(val1 << FIX16_FRAC_BITS, val2))
-/**
- *  \brief
- *      Compute and return the result of the average of val1 by val2 (fix16).
- */
-#define fix16Avg(val1, val2)        (((val1) + (val2)) >> 1)
-
-/**
- *  \brief
- *      Compute and return the result of the Log2 of specified value (fix16).
- */
-#define fix16Log2(v)                log2tab16[v]
-/**
- *  \brief
- *      Compute and return the result of the Log10 of specified value (fix16).
- */
-#define fix16Log10(v)               log10tab16[v]
-/**
- *  \brief
- *      Compute and return the result of the root square of specified value (fix16).
- */
-#define fix16Sqrt(v)                sqrttab16[v]
-
-
-/**
- *  \brief
- *      Convert specified fix32 value to fix16.
- */
-#define fix32ToFix16(value)         (((value) << FIX16_FRAC_BITS) >> FIX32_FRAC_BITS)
-/**
- *  \brief
- *      Convert specified fix16 value to fix32.
- */
-#define fix16ToFix32(value)         (((value) << FIX32_FRAC_BITS) >> FIX16_FRAC_BITS)
-
-/**
- *  \brief
- *      Compute sinus of specified value and return it as fix32.<br>
- *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
- */
-#define sinFix32(value)             sintab32[(value) & 1023]
-/**
- *  \brief
- *      Compute cosinus of specified value and return it as fix32.<br>
- *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
- */
-#define cosFix32(value)             sintab32[((value) + 256) & 1023]
-
-/**
- *  \brief
- *      Compute sinus of specified value and return it as fix16.<br>
- *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
- */
-#define sinFix16(value)             sintab16[(value) & 1023]
-/**
- *  \brief
- *      Compute cosinus of specified value and return it as fix16.<br>
- *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
- */
-#define cosFix16(value)             sintab16[((value) + 256) & 1023]
+#define FIX32(value)                ((fix32) ((value) * (1 << FIX32_FRAC_BITS)))
 
 
 // 2D STUFF
@@ -692,6 +501,191 @@ u32 divmodu(u32 op1, u16 op2);
  */
 s32 divmods(s32 op1, s16 op2);
 
+
+/**
+ *  \brief
+ *      Convert integer to fix16.
+ */
+fix16 intToFix16(s16 value);
+/**
+ *  \brief
+ *      Convert fix16 to integer.
+ */
+s16 fix16ToInt(fix16 value);
+/**
+ *  \brief
+ *      Convert specified fix16 value to fix32.
+ */
+fix32 fix16ToFix32(fix16 value);
+
+/**
+ *  \brief
+ *      Round the specified value to nearest integer (fix16).
+ */
+fix16 fix16Round(fix16 value);
+/**
+ *  \brief
+ *      Round and convert the specified fix16 value to integer.
+ */
+s16 fix16ToRoundedInt(fix16 value);
+/**
+ *  \brief
+ *      Return fractional part of the specified value (fix16).
+ */
+fix16 fix16Frac(fix16 value);
+/**
+ *  \brief
+ *      Return integer part of the specified value (fix16).
+ */
+fix16 fix16Int(fix16 value);
+
+/**
+ *  \brief
+ *      Compute and return the result of the addition of val1 and val2 (fix16).
+ */
+fix16 fix16Add(fix16 val1, fix16 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the substraction of val2 from val1 (fix16).
+ */
+fix16 fix16Sub(fix16 val1, fix16 val2);
+/**
+ *  \brief
+ *      Return negate of specified value (fix16).
+ */
+fix16 fix16Neg(fix16 value);
+
+/**
+ *  \brief
+ *      Compute and return the result of the multiplication of val1 and val2 (fix16).
+ */
+fix16 fix16Mul(fix16 val1, fix16 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the division of val1 by val2 (fix16).
+ */
+fix16 fix16Div(fix16 val1, fix16 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the average of val1 by val2 (fix16).
+ */
+fix16 fix16Avg(fix16 val1, fix16 val2);
+
+/**
+ *  \brief
+ *      Compute and return the result of the Log2 of specified value (fix16).
+ */
+fix16 fix16Log2(fix16 value);
+/**
+ *  \brief
+ *      Compute and return the result of the Log10 of specified value (fix16).
+ */
+fix16 fix16Log10(fix16 value);
+/**
+ *  \brief
+ *      Compute and return the result of the root square of specified value (fix16).
+ */
+fix16 fix16Sqrt(fix16 value);
+
+/**
+ *  \brief
+ *      Compute sinus of specified value and return it as fix16.<br>
+ *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
+ */
+fix16 sinFix16(u16 value);
+/**
+ *  \brief
+ *      Compute cosinus of specified value and return it as fix16.<br>
+ *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
+ */
+fix16 cosFix16(u16 value);
+
+
+/**
+ *  \brief
+ *      Convert integer to fix32.
+ */
+fix32 intToFix32(s32 value);
+/**
+ *  \brief
+ *      Convert fix32 to integer.
+ */
+s32 fix32ToInt(fix32 value);
+/**
+ *  \brief
+ *      Convert specified fix32 value to fix16.
+ */
+fix16 fix32ToFix16(fix32 value);
+
+/**
+ *  \brief
+ *      Round the specified value to nearest integer (fix32).
+ */
+fix32 fix32Round(fix32 value);
+/**
+ *  \brief
+ *      Round and convert the specified fix32 value to integer.
+ */
+s32 fix32ToRoundedInt(fix32 value);
+/**
+ *  \brief
+ *      Return fractional part of the specified value (fix32).
+ */
+fix32 fix32Frac(fix32 value);
+/**
+ *  \brief
+ *      Return integer part of the specified value (fix32).
+ */
+fix32 fix32Int(fix32 value);
+
+/**
+ *  \brief
+ *      Compute and return the result of the addition of val1 and val2 (fix32).
+ */
+fix32 fix32Add(fix32 val1, fix32 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the substraction of val2 from val1 (fix32).
+ */
+fix32 fix32Sub(fix32 val1, fix32 val2);
+/**
+ *  \brief
+ *      Return negate of specified value (fix32).
+ */
+fix32 fix32Neg(fix32 value);
+
+/**
+ *  \brief
+ *      Compute and return the result of the multiplication of val1 and val2 (fix32).<br>
+ *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
+ */
+fix32 fix32Mul(fix32 val1, fix32 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the division of val1 by val2 (fix32).<br>
+ *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
+ */
+fix32 fix32Div(fix32 val1, fix32 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the average of val1 by val2 (fix32).
+ */
+fix32 fix32Avg(fix32 val1, fix32 val2);
+
+/**
+ *  \brief
+ *      Compute sinus of specified value and return it as fix32.<br>
+ *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
+ */
+fix32 sinFix32(u16 value);
+/**
+ *  \brief
+ *      Compute cosinus of specified value and return it as fix32.<br>
+ *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
+ */
+fix32 cosFix32(u16 value);
+
+
 /**
  *  \brief
  *      Binary to Decimal conversion.
@@ -717,6 +711,15 @@ u32 distance_approx(s32 dx, s32 dy);
  *      delta Y.
  */
 u32 getApproximatedDistance(s32 dx, s32 dy);
+/**
+ *  \brief
+ *      Return euclidean distance approximation for specified vector.<br>
+ *      The returned distance is not 100% perfect but calculation is fast.
+ *
+ *  \param v
+ *      2D vector.
+ */
+u32 getApproximatedDistanceV(V2s32* v);
 /**
  *  \brief
  *      Return 16.16 fixed point *approximation* of log2 of the specified 16.16 fixed point value.

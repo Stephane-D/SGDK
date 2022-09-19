@@ -36,7 +36,7 @@
  *  \brief
  *      Define library log level (for debug build)
  */
-#define LIB_LOG_LEVEL       LOG_LEVEL_WARNING
+#define LIB_LOG_LEVEL       LOG_LEVEL_ERROR
 
 /**
  *  \brief
@@ -135,6 +135,13 @@
  *      Note that you need to install the module first before enable it (https://gitlab.com/Natsumi/Fractal-Sound)
  */
 #define MODULE_FRACTAL      0
+
+
+/**
+ *  \brief
+ *      To force method inlining (not sure that GCC does actually care of it)
+ */
+#define FORCE_INLINE        inline __attribute__((always_inline))
 
 
 #endif // _CONFIG_
