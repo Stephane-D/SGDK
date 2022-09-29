@@ -450,6 +450,7 @@ u16 executeSpritesTest(u16 *scores)
     waitMs(5000);
     SYS_disableInts();
     VDP_clearPlane(BG_A, TRUE);
+    PAL_setColors(0, palette_black, 64, CPU);
     SYS_enableInts();
 
     // create sprites structures
@@ -459,6 +460,7 @@ u16 executeSpritesTest(u16 *scores)
     andorSprite = SPR_addSprite(&andor_packed_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // desync frame timer so update happen on different frame
     haggarSprite->timer = 1;
@@ -487,6 +489,7 @@ u16 executeSpritesTest(u16 *scores)
     initPos(4);
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // prepare palettes
     memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
@@ -517,6 +520,7 @@ u16 executeSpritesTest(u16 *scores)
     waitMs(5000);
     SYS_disableInts();
     VDP_clearPlane(BG_A, TRUE);
+    PAL_setColors(0, palette_black, 64, CPU);
     SYS_enableInts();
 
     // create sprites structures
@@ -530,6 +534,7 @@ u16 executeSpritesTest(u16 *scores)
     andorSprite2 = SPR_addSprite(&andor_packed_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // desync frame timer so update happen on different frame
     guySprite2->timer = 1;
@@ -573,6 +578,7 @@ u16 executeSpritesTest(u16 *scores)
     initPos(8);
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // prepare palettes
     memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
@@ -603,6 +609,7 @@ u16 executeSpritesTest(u16 *scores)
     waitMs(5000);
     SYS_disableInts();
     VDP_clearPlane(BG_A, TRUE);
+    PAL_setColors(0, palette_black, 64, CPU);
     SYS_enableInts();
 
     // create sprites structures
@@ -612,6 +619,7 @@ u16 executeSpritesTest(u16 *scores)
     andorSprite = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // desync frame timer so update happen on different frame
     haggarSprite->timer = 1;
@@ -640,6 +648,7 @@ u16 executeSpritesTest(u16 *scores)
     initPos(4);
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // prepare palettes
     memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
@@ -670,6 +679,7 @@ u16 executeSpritesTest(u16 *scores)
     waitMs(5000);
     SYS_disableInts();
     VDP_clearPlane(BG_A, TRUE);
+    PAL_setColors(0, palette_black, 64, CPU);
     SYS_enableInts();
 
     // create sprites structures
@@ -683,6 +693,7 @@ u16 executeSpritesTest(u16 *scores)
     andorSprite2 = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // desync frame timer so update happen on different frame
     guySprite2->timer = 1;
@@ -726,6 +737,7 @@ u16 executeSpritesTest(u16 *scores)
     initPos(8);
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // prepare palettes
     memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
@@ -757,6 +769,7 @@ u16 executeSpritesTest(u16 *scores)
     waitMs(5000);
     SYS_disableInts();
     VDP_clearPlane(BG_A, TRUE);
+    PAL_setColors(0, palette_black, 64, CPU);
     SYS_enableInts();
 
     // create sprites structures
@@ -774,6 +787,7 @@ u16 executeSpritesTest(u16 *scores)
     codySprite5 = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // desync frame timer so update happen on different frame
     andorSprite->timer = 1;
@@ -833,6 +847,7 @@ u16 executeSpritesTest(u16 *scores)
     initPos(12);
 
     SPR_update();
+    SYS_doVBlankProcess();
 
     // prepare palettes
     memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
