@@ -59,7 +59,7 @@ public class SpriteAnimation extends Resource
             final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
 
             // try to search for duplicated frame first
-            SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision);
+            SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision, compression);
 
             // not found ? --> define new frame
             if (frame == null)
@@ -92,13 +92,13 @@ public class SpriteAnimation extends Resource
     }
 
     private SpriteFrame findExistingSpriteFrame(byte[] frameImage, Dimension dimension, int time,
-            CollisionType collision)
+            CollisionType collision, Compression compression)
     {
         for (Resource res : Compiler.getResources(SpriteFrame.class))
         {
             final SpriteFrame spriteFrame = (SpriteFrame) res;
 
-            if (checkEqual(spriteFrame, frameImage, dimension, time, collision))
+            if (checkEqual(spriteFrame, frameImage, dimension, time, collision, compression))
                 return spriteFrame;
         }
 
@@ -106,10 +106,11 @@ public class SpriteAnimation extends Resource
     }
 
     private boolean checkEqual(SpriteFrame spriteFrame, byte[] frameImage, Dimension dimension, int timer,
-            CollisionType collision)
+            CollisionType collision, Compression compression)
     {
-        return (SpriteFrame.computeFastHashcode(frameImage, dimension, timer, collision) == spriteFrame.fhc)
+        return (SpriteFrame.computeFastHashcode(frameImage, dimension, timer, collision, compression) == spriteFrame.fhc)
                 && Arrays.equals(frameImage, spriteFrame.frameImage)
+                && compression.equals(spriteFrame.compression)
                 && ((collision == spriteFrame.collisionType)
                         || ((collision != null) && (collision.equals(spriteFrame.collisionType)))
                                 && (timer == spriteFrame.timer));

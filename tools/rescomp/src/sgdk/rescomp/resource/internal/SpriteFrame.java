@@ -36,6 +36,7 @@ public class SpriteFrame extends Resource
     final byte[] frameImage;
     final Dimension frameDim;
     final CollisionType collisionType;
+    final Compression compression;
     final int fhc;
 
     /**
@@ -56,9 +57,10 @@ public class SpriteFrame extends Resource
         vdpSprites = new ArrayList<>();
         this.timer = timer;
         this.collisionType = collisionType;
+        this.compression = compression;
         this.frameImage = frameImage8bpp;
         this.frameDim = new Dimension(wf * 8, hf * 8);
-        this.fhc = computeFastHashcode(frameImage8bpp, frameDim, timer, collisionType);
+        this.fhc = computeFastHashcode(frameImage8bpp, frameDim, timer, collisionType, compression);
 
         // get optimized sprite list from the image frame
         List<SpriteCell> sprites;
@@ -174,10 +176,10 @@ public class SpriteFrame extends Resource
                 collisionType, compression, opt, optIteration);
     }
 
-    static int computeFastHashcode(byte[] frameImage8bpp, Dimension frameDim, int timer, CollisionType collision)
+    static int computeFastHashcode(byte[] frameImage8bpp, Dimension frameDim, int timer, CollisionType collision, Compression compression)
     {
         return (timer << 16) ^ ((collision != null) ? collision.hashCode() : 0) ^ Arrays.hashCode(frameImage8bpp)
-                ^ frameDim.hashCode();
+                ^ frameDim.hashCode() ^ compression.hashCode();
     }
 
     public int getNumSprite()
