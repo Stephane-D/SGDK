@@ -208,12 +208,9 @@ void DMA_flushQueue()
             i = queueIndexLimit;
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_U3_("DMA_flushQueue(..) warning: frame #", vtimer, " - transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, "), some transfers are ignored.");
+            KLog_U3_("DMA_flushQueue(..) warning: frame #", vtimer, " - transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, "), some transfers are ignored !");
 #endif
         }
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-        else KLog_U3_("DMA_flushQueue(..) warning: frame #", vtimer, " - transfer size is above ", maxTransferPerFrame, " bytes (", queueTransferSize, ").");
-#endif
     }
 
 #ifdef DMA_DEBUG
@@ -518,7 +515,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
         if (queueIndexLimit == 0)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_S4("DMA_queueDma(..) warning: transfer size limit raised for transfer #", queueIndex - 1, " on frame #", vtimer, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
+            KLog_S4("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, " on frame #", vtimer, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
 
             // store limit index
@@ -545,7 +542,7 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
     if (queueIndex >= queueSize)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        KDebug_Alert("DMA_queueDma(..) failed: queue is full ! Try to increase queue size using DMA_setMaxQueueSize(..)");
+        KDebug_Alert("DMA_queueDmaFast(..) failed: queue is full ! Try to increase queue size using DMA_setMaxQueueSize(..)");
 #endif
 
         // return FALSE as transfer will be ignored
@@ -568,32 +565,32 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
     // Trigger DMA
     switch(location)
     {
-    case DMA_VRAM:
-        info->regCtrlWrite = VDP_DMA_VRAM_ADDR((u32)to);
-#ifdef DMA_DEBUG
-        KLog_U4("DMA_queueDma: VRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
-#endif
-        // keep trace of transferred size
-        queueTransferSize += len << 1;
-        break;
+        case DMA_VRAM:
+            info->regCtrlWrite = VDP_DMA_VRAM_ADDR((u32)to);
+    #ifdef DMA_DEBUG
+            KLog_U4("DMA_queueDma: VRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
+    #endif
+            // keep trace of transferred size
+            queueTransferSize += len << 1;
+            break;
 
-    case DMA_CRAM:
-        info->regCtrlWrite = VDP_DMA_CRAM_ADDR((u32)to);
-#ifdef DMA_DEBUG
-        KLog_U4("DMA_queueDma: CRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
-#endif
-        // keep trace of transferred size (only half as CRAM trasnfer are 16 bit wide)
-        queueTransferSize += len;
-        break;
+        case DMA_CRAM:
+            info->regCtrlWrite = VDP_DMA_CRAM_ADDR((u32)to);
+    #ifdef DMA_DEBUG
+            KLog_U4("DMA_queueDma: CRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
+    #endif
+            // keep trace of transferred size (only half as CRAM trasnfer are 16 bit wide)
+            queueTransferSize += len;
+            break;
 
-    case DMA_VSRAM:
-        info->regCtrlWrite = VDP_DMA_VSRAM_ADDR((u32)to);
-#ifdef DMA_DEBUG
-        KLog_U4("DMA_queueDma: VSRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
-#endif
-        // keep trace of transferred size (only half as VSRAM trasnfer are 16 bit wide)
-        queueTransferSize += len;
-        break;
+        case DMA_VSRAM:
+            info->regCtrlWrite = VDP_DMA_VSRAM_ADDR((u32)to);
+    #ifdef DMA_DEBUG
+            KLog_U4("DMA_queueDma: VSRAM from=", fromAddr, " to=", to, " len=", len, " step=", step);
+    #endif
+            // keep trace of transferred size (only half as VSRAM trasnfer are 16 bit wide)
+            queueTransferSize += len;
+            break;
     }
 
     // pass to next index
@@ -610,9 +607,8 @@ bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
         if (queueIndexLimit == 0)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-            KLog_S4("DMA_queueDma(..) warning: transfer size limit raised on transfer #", queueIndex - 1, " on frame #", vtimer, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
+            KLog_S4("DMA_queueDmaFast(..) warning: transfer size limit raised on transfer #", queueIndex - 1, " on frame #", vtimer, ", current size = ", queueTransferSize, "  max allowed = ", maxTransferPerFrame);
 #endif
-
             // store limit index
             queueIndexLimit = queueIndex - 1;
 
