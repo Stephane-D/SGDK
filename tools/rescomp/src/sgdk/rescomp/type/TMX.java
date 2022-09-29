@@ -531,7 +531,7 @@ public class TMX
         public final String layerName;
         public final List<SObject> objects;
 
-        public TMXObjects(String file, String layerName, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
+        public TMXObjects(String baseId, String file, String layerName, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
         {
             if (!FileUtil.exists(file))
                 throw new FileNotFoundException("TMX file '" + file + " not found !");
@@ -573,7 +573,7 @@ public class TMX
                 throw new Exception("No object layer '" + layerName + "' found in TMX file: " + file);
 
             // base object file name
-            final String baseObjectName = FileUtil.getFileName(file, false) + "_object";
+            final String baseObjectName = baseId + "_object";
             final Map<String, TField> tFields = new HashMap<>();
             final List<Element> objectElements = XMLUtil.getElements(group, ID_OBJECT);
 

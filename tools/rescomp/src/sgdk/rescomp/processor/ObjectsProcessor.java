@@ -102,7 +102,7 @@ public class ObjectsProcessor implements Processor
         Compiler.addResourceFile(fileIn);
 
         // build TMX objects
-        final TMXObjects tmxObjects = new TMXObjects(fileIn, layerName, fieldDefsMap, typeFilter);
+        final TMXObjects tmxObjects = new TMXObjects(id, fileIn, layerName, fieldDefsMap, typeFilter);
         // build OBJECTS from TMX objects
         return new Objects(id, declType, tmxObjects.objects);
     }
