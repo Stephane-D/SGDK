@@ -91,6 +91,10 @@
 		<Unit filename="res/sfx/S1_spinning.wav" />
 		<Unit filename="res/sfx/S1_stop.wav" />
 		<Unit filename="res/sprite/sonic.png" />
+		<Unit filename="src/boot/rom_head.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/boot/sega.s" />
 		<Unit filename="src/camera.c">
 			<Option compilerVar="CC" />
 		</Unit>
