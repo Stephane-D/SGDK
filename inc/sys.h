@@ -413,6 +413,14 @@ fix32 SYS_getFPSAsFloat(void);
  * \see VDP_waitVInt(void)
  */
 u16 SYS_getCPULoad(void);
+
+/**
+ *  \brief
+ *      Returns TRUE if frame load is currently displayed, FALSE otherwise
+
+ * \see SYS_showFrameLoad(void)
+ */
+bool SYS_getShowFrameLoad();
 /**
  *  \brief
  *      Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)

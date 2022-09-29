@@ -860,6 +860,11 @@ void SYS_setExtIntCallback(VoidCallback *CB)
 }
 
 
+bool SYS_getShowFrameLoad()
+{
+    return (flags & SHOW_FRAME_LOAD)?TRUE:FALSE;
+}
+
 void SYS_showFrameLoad(bool mean)
 {
     if (mean) flags |= (SHOW_FRAME_LOAD | SHOW_FRAME_LOAD_MEAN);
