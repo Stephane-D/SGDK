@@ -71,7 +71,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    *score = displayResult(10000, end - start, 2);
+    *score = displayResult(10000, end - start, 2) / 16;
     globalScore += *score++;
 
     // wait 5 seconds
@@ -135,7 +135,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    *score = displayResult(10000, end - start, 2);
+    *score = displayResult(10000, end - start, 2) / 16;
     globalScore += *score++;
 
     // wait 5 seconds
@@ -187,7 +187,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    *score = displayResult(300, end - start, 2);
+    *score = displayResult(300, end - start, 2) * 4;
     globalScore += *score++;
 
     // wait 5 seconds
@@ -320,7 +320,7 @@ u16 executeBGTest(u16 *scores)
     }
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
-    *score = displayResult(5000, end - start, 2) / 5;
+    *score = displayResult(5000, end - start, 2) / 8;
     globalScore += *score++;
     MEM_free(img);
 
@@ -373,7 +373,7 @@ u16 executeBGTest(u16 *scores)
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
     PAL_setPalette(PAL0, palette_grey, CPU);
-    *score = displayResult(1000, end - start, 2);
+    *score = displayResult(1000, end - start, 2) * 2;
     globalScore += *score++;
 
     // wait 5 seconds
@@ -416,7 +416,7 @@ u16 executeBGTest(u16 *scores)
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
     PAL_setPalette(PAL0, palette_grey, CPU);
-    *score = displayResult(2000, end - start, 2);
+    *score = displayResult(2000, end - start, 2) / 2;
     globalScore += *score++;
 
     // wait 5 seconds
@@ -461,7 +461,7 @@ u16 executeBGTest(u16 *scores)
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
     PAL_setPalette(PAL0, palette_grey, CPU);
-    *score = displayResult(3000, end - start, 2);
+    *score = displayResult(3000, end - start, 2) / 2;
     globalScore += *score++;
     MEM_free(img);
 
@@ -509,7 +509,7 @@ u16 executeBGTest(u16 *scores)
     end = getTimeAsFix32(FALSE);
     VDP_clearPlane(BG_A, TRUE);
     PAL_setPalette(PAL0, palette_grey, CPU);
-    *score = displayResult(10000, end - start, 2) / 5;
+    *score = displayResult(10000, end - start, 2) / 8;
     globalScore += *score++;
     MEM_free(img);
 

@@ -109,7 +109,7 @@ u16 executeMathsBasicTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(2000000, end - start, y++, 0) / 1;
+    *score = displayResult(2000000, end - start, y++, 0) / 2;
     globalScore += *score++;
     y++;
 
@@ -163,7 +163,7 @@ u16 executeMathsBasicTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(2000000, end - start, y++, 0) / 1;
+    *score = displayResult(2000000, end - start, y++, 0) / 2;
     globalScore += *score++;
     y++;
 
@@ -274,7 +274,7 @@ u16 executeMathsBasicTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(1000000, end - start, y++, 0) / 1;
+    *score = displayResult(1000000, end - start, y++, 0) * 2;
     globalScore += *score++;
     y++;
 
@@ -329,7 +329,7 @@ u16 executeMathsBasicTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(1000000, end - start, y++, 0) / 1;
+    *score = displayResult(1000000, end - start, y++, 0) * 2;
     globalScore += *score++;
     y++;
 
@@ -384,7 +384,7 @@ u16 executeMathsBasicTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(1000000, end - start, y++, 0) / 1;
+    *score = displayResult(1000000, end - start, y++, 0) * 3;
     globalScore += *score++;
     y++;
     y++;
@@ -468,7 +468,7 @@ u16 executeMathsAdvTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(500000, end - start, y++, 0);
+    *score = displayResult(500000, end - start, y++, 0) * 2;
     globalScore += *score++;
     y++;
 
@@ -502,7 +502,7 @@ u16 executeMathsAdvTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(500000, end - start, y++, 0);
+    *score = displayResult(500000, end - start, y++, 0) * 2;
     globalScore += *score++;
     y++;
 
@@ -536,7 +536,7 @@ u16 executeMathsAdvTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(200000, end - start, y++, 0);
+    *score = displayResult(200000, end - start, y++, 0) * 3;
     globalScore += *score++;
     y++;
 
@@ -570,7 +570,7 @@ u16 executeMathsAdvTest(u16 *scores)
     }
 #endif // ENABLE_ASM
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(200000, end - start, y++, 0);
+    *score = displayResult(200000, end - start, y++, 0) * 3;
     globalScore += *score++;
     y++;
 
@@ -601,7 +601,7 @@ u16 executeMathsAdvTest(u16 *scores)
         M3D_transform(&transformation, src_3D, res_3D, 1024);
     }
     end = getTimeAsFix32(FALSE);
-    *score = displayResult3D(1024 * 50, end - start, y++, 0);
+    *score = displayResult3D(1024 * 50, end - start, y++, 0) * 1;
     globalScore += *score++;
     y++;
 
@@ -613,7 +613,7 @@ u16 executeMathsAdvTest(u16 *scores)
         M3D_project_s16(res_3D, res_2D, 1024);
     }
     end = getTimeAsFix32(FALSE);
-    *score = displayResult3D(1024 * 100, end - start, y++, 0);
+    *score = displayResult3D(1024 * 100, end - start, y++, 0) / 3;
     globalScore += *score++;
     y++;
 
@@ -626,7 +626,7 @@ u16 executeMathsAdvTest(u16 *scores)
         M3D_project_s16(res_3D, res_2D, 1024);
     }
     end = getTimeAsFix32(FALSE);
-    *score = displayResult3D(1024 * 50, end - start, y++, 0);
+    *score = displayResult3D(1024 * 50, end - start, y++, 0) * 1;
     globalScore += *score++;
     y++;
 

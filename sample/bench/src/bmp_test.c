@@ -95,7 +95,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Bitmap buffer clear", 2, 1);
-    *score = displayResult(1000, end - start, 3);
+    *score = displayResult(1000, end - start, 3) * 1;
     globalScore += *score++;
 
     VDP_drawText("Pixel draw safe (with clipping)", 2, 8);
@@ -148,7 +148,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Pixel draw safe (with clipping)", 2, 1);
-    *score = displayResult2(150 * MAX_PIXEL, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3) / 2;
     globalScore += *score++;
 
     VDP_drawText("Pixel draw fast (without clipping)", 2, 8);
@@ -201,7 +201,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Pixel draw fast (without clipping)", 2, 1);
-    *score = displayResult2(150 * MAX_PIXEL, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3) / 2;
     globalScore += *score++;
 
     VDP_drawText("Pixel draw array safe (with clip.)", 2, 8);
@@ -227,7 +227,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Pixel draw array safe (with clip.)", 2, 1);
-    *score = displayResult2(150 * MAX_PIXEL, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3) / 3;
     globalScore += *score++;
 
     VDP_drawText("Pixel draw array fast (without clip.)", 2, 8);
@@ -253,7 +253,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Pixel draw array fast (without clip.)", 2, 1);
-    *score = displayResult2(150 * MAX_PIXEL, time, 3);
+    *score = displayResult2(150 * MAX_PIXEL, time, 3) / 3;
     globalScore += *score++;
 
 
@@ -307,7 +307,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Line draw safe (with clipping)", 2, 1);
-    *score = displayResult3(60 * 80, time, 3);
+    *score = displayResult3(60 * 80, time, 3) * 2;
     globalScore += *score++;
 
 
@@ -351,7 +351,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Line draw fast (without clip.)", 2, 1);
-    *score = displayResult3(60 * 80, time, 3);
+    *score = displayResult3(60 * 80, time, 3) * 2;
     globalScore += *score++;
 
 
@@ -385,7 +385,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Polygon draw", 2, 1);
-    *score = displayResult(100 * 25, time, 3);
+    *score = displayResult(100 * 25, time, 3) / 2;
     globalScore += *score++;
 
     VDP_drawText("128x64 image draw (packed slow)", 2, 8);
@@ -426,7 +426,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("128x64 image draw (packed slow)", 2, 1);
-    *score = displayResult(25 * 5, time, 3);
+    *score = displayResult(25 * 5, time, 3) * 8;
     globalScore += *score++;
 
     VDP_drawText("128x64 image draw (packed fast)", 2, 8);
@@ -467,7 +467,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("128x64 image draw (packed fast)", 2, 1);
-    *score = displayResult(35 * 8, time, 3);
+    *score = displayResult(35 * 8, time, 3) * 3;
     globalScore += *score++;
 
     VDP_drawText("128x64 image draw (unpacked)", 2, 8);
@@ -511,7 +511,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("128x64 image draw (unpacked)", 2, 1);
-    *score = displayResult(50 * 10, time, 3);
+    *score = displayResult(50 * 10, time, 3) * 2;
     globalScore += *score++;
 
     VDP_drawText("64x32 image draw (packed slow)", 2, 8);
@@ -552,7 +552,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("64x32 image draw (packed slow)", 2, 1);
-    *score = displayResult(30 * 10, time, 3);
+    *score = displayResult(30 * 10, time, 3) * 3;
     globalScore += *score++;
 
     VDP_drawText("64x32 image draw (packed fast)", 2, 8);
@@ -593,7 +593,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("64x32 image draw (packed fast)", 2, 1);
-    *score = displayResult(50 * 25, time, 3);
+    *score = displayResult(50 * 25, time, 3) * 1;
     globalScore += *score++;
 
     VDP_drawText("64x32 image draw (unpacked)", 2, 8);
@@ -637,7 +637,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("64x32 image draw (unpacked)", 2, 1);
-    *score = displayResult(50 * 30, time, 3);
+    *score = displayResult(50 * 30, time, 3) / 2;
     globalScore += *score++;
 
     VDP_drawText("128x64 image scaling", 2, 8);
@@ -680,7 +680,7 @@ u16 executeBMPTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("64x32 image scaling", 2, 1);
-    *score = displayResult(2 * 2 * (128-32), time, 3) * 10;
+    *score = displayResult(2 * 2 * (128-32), time, 3) * 6;
     globalScore += *score++;
 
     waitMs(5000);

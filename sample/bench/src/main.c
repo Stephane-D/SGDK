@@ -3,7 +3,7 @@
 #include "gfx.h"
 
 
-#define SGDK_BENCHMARK      "SGDK benchmark v1.4"
+#define SGDK_BENCHMARK      "SGDK benchmark v1.5"
 
 #define MAX_TEST            9
 #define MAX_SUBTEST         16
@@ -212,10 +212,18 @@ static void postTest(char *title, u16 score, s16 num)
     sprintf(str, "Score = %d", score);
     VDP_drawText(str, 2, 3);
 
+    for(u16 i = 0; i < MAX_SUBTEST; i++)
+    {
+        if (detailledScores[num][i] == 0) break;
+
+        sprintf(str, "Test %d = %d", i + 1, detailledScores[num][i]);
+        VDP_drawText(str, 4, 5 + i);
+    }
+
     // fade text color to white
     PAL_fadeIn(15, 15, &col, 30, FALSE);
-    // wait 5s
-    waitMs(5000);
+    // wait 8s
+    waitMs(8000);
     // fade text
     PAL_fadeOut(15, 15, 30, FALSE);
     // clear text
@@ -265,7 +273,7 @@ static void postResume(u32 score)
     sprintf(str, "Bitmap mode score = %d", scores[testNum++]);
     VDP_drawText(str, 4, y);
     y += 2;
-    sprintf(str, "Sprite mode score = %d", scores[testNum++]);
+    sprintf(str, "Sprite score = %d", scores[testNum++]);
     VDP_drawText(str, 4, y);
 
     VDP_drawText(" PRESS START TO RESTART ALL TESTS", 1, 24);

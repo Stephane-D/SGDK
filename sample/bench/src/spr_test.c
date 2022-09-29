@@ -46,6 +46,16 @@ static Sprite *guySprite;
 static Sprite *codySprite;
 static Sprite *haggarSprite;
 static Sprite *andorSprite;
+static Sprite *guySprite2;
+static Sprite *codySprite2;
+static Sprite *haggarSprite2;
+static Sprite *andorSprite2;
+static Sprite *guySprite3;
+static Sprite *codySprite3;
+static Sprite *guySprite4;
+static Sprite *codySprite4;
+static Sprite *guySprite5;
+static Sprite *codySprite5;
 
 
 u16 executeSpritesTest(u16 *scores)
@@ -92,7 +102,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(40);
 
     // execute particle bench
-    *scores++ = executePartic(15, 40, FALSE, TRUE);
+    *scores = executePartic(15, 40, FALSE, TRUE) / 4;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -131,7 +141,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(40);
 
     // execute particle bench
-    *scores++ = executePartic(15, 40, FALSE, FALSE);
+    *scores = executePartic(15, 40, FALSE, FALSE) / 4;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -184,7 +194,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(40);
 
     // execute particle bench
-    *scores = executePartic(15, 40, TRUE, FALSE);
+    *scores = executePartic(15, 40, TRUE, FALSE) / 4;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -225,7 +235,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(79);
 
     // execute particle bench
-    *scores = executePartic(15, 79, FALSE, FALSE);
+    *scores = executePartic(15, 79, FALSE, FALSE) * 1;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -278,7 +288,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(79);
 
     // execute particle bench
-    *scores = executePartic(15, 79, TRUE, FALSE);
+    *scores = executePartic(15, 79, TRUE, FALSE) / 2;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -319,7 +329,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(40);
 
     // execute particle bench
-    *scores = executePartic(15, 40, FALSE, FALSE);
+    *scores = executePartic(15, 40, FALSE, FALSE) * 1;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -372,7 +382,7 @@ u16 executeSpritesTest(u16 *scores)
     initPartic(40);
 
     // execute particle bench
-    *scores = executePartic(15, 40, TRUE, FALSE);
+    *scores = executePartic(15, 40, TRUE, FALSE) / 4;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -393,7 +403,7 @@ u16 executeSpritesTest(u16 *scores)
     PAL_setPalette(PAL1, donut.palette->data, CPU);
 
     // execute donut bench
-    *scores = executeDonut(20, FALSE);
+    *scores = executeDonut(20, FALSE) / 2;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -425,7 +435,7 @@ u16 executeSpritesTest(u16 *scores)
     PAL_setPalette(PAL1, donut.palette->data, CPU);
 
     // execute particle bench
-    *scores = executeDonut(20, TRUE);
+    *scores = executeDonut(20, TRUE) / 4;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -434,7 +444,7 @@ u16 executeSpritesTest(u16 *scores)
     SPR_reset();
     SPR_clear();
     VDP_clearPlane(BG_A, TRUE);
-    VDP_drawText("Big sprites test...", 1, 2);
+    VDP_drawText("Compressed big sprites test (light)", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
@@ -443,16 +453,16 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // create sprites structures
-    guySprite = SPR_addSprite(&guy_sprite, 350, 120, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
-    codySprite = SPR_addSprite(&cody_sprite, 128, 300, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
-    haggarSprite = SPR_addSprite(&haggar_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
-    andorSprite = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    guySprite = SPR_addSprite(&guy_packed_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite = SPR_addSprite(&cody_packed_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite = SPR_addSprite(&haggar_packed_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite = SPR_addSprite(&andor_packed_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
 
     SPR_update();
 
     // desync frame timer so update happen on different frame
     haggarSprite->timer = 1;
-    codySprite->timer = 1;
+    andorSprite->timer = 2;
 
     // we want to compute per hardware sprite visibility for these sprites
     SPR_setVisibility(guySprite, AUTO_SLOW);
@@ -492,7 +502,353 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // execute sprite bench
-    *scores = execute(50, 4);
+    *scores = execute(25, 4) / 8;
+    globalScore += *scores++;
+    SPR_logProfil();
+
+    SYS_disableInts();
+    // reset sprite engine (release all allocated resources)
+    SPR_reset();
+    SPR_clear();
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_drawText("Compressed big sprites test (heavy) ", 1, 2);
+    SYS_enableInts();
+
+    waitMs(5000);
+    SYS_disableInts();
+    VDP_clearPlane(BG_A, TRUE);
+    SYS_enableInts();
+
+    // create sprites structures
+    guySprite = SPR_addSprite(&guy_packed_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite = SPR_addSprite(&cody_packed_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite = SPR_addSprite(&haggar_packed_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite = SPR_addSprite(&andor_packed_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    guySprite2 = SPR_addSprite(&guy_packed_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite2 = SPR_addSprite(&cody_packed_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite2 = SPR_addSprite(&haggar_packed_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite2 = SPR_addSprite(&andor_packed_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+
+    SPR_update();
+
+    // desync frame timer so update happen on different frame
+    guySprite2->timer = 1;
+    codySprite2->timer = 1;
+    haggarSprite2->timer = 1;
+    andorSprite->timer = 2;
+    andorSprite2->timer = 2;
+
+    // we want to compute per hardware sprite visibility for these sprites
+    SPR_setVisibility(guySprite, AUTO_SLOW);
+    SPR_setVisibility(codySprite, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite, AUTO_SLOW);
+    SPR_setVisibility(andorSprite, AUTO_SLOW);
+    SPR_setVisibility(guySprite2, AUTO_SLOW);
+    SPR_setVisibility(codySprite2, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite2, AUTO_SLOW);
+    SPR_setVisibility(andorSprite2, AUTO_SLOW);
+
+    SPR_update();
+    SYS_doVBlankProcess();
+
+    sprites[0] = guySprite;
+    sprites[1] = codySprite;
+    sprites[2] = haggarSprite;
+    sprites[3] = andorSprite;
+    sprites[4] = guySprite2;
+    sprites[5] = codySprite2;
+    sprites[6] = haggarSprite2;
+    sprites[7] = andorSprite2;
+
+    sprites[0]->data = (u32) &objects[0];
+    sprites[1]->data = (u32) &objects[1];
+    sprites[2]->data = (u32) &objects[2];
+    sprites[3]->data = (u32) &objects[3];
+    sprites[4]->data = (u32) &objects[4];
+    sprites[5]->data = (u32) &objects[5];
+    sprites[6]->data = (u32) &objects[6];
+    sprites[7]->data = (u32) &objects[7];
+
+    // init position for 8 sprites
+    initPos(8);
+
+    SPR_update();
+
+    // prepare palettes
+    memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
+    memcpy(&palette[16], cody_sprite.palette->data, 16 * 2);
+    memcpy(&palette[32], haggar_sprite.palette->data, 16 * 2);
+    memcpy(&palette[48], andor_sprite.palette->data, 16 * 2);
+    // keep background color black
+    palette[0] = 0;
+
+    // set palette
+    SYS_disableInts();
+    PAL_setColors(0, palette, 64, CPU);
+    SYS_enableInts();
+
+    // execute sprite bench
+    *scores = execute(25, 8) / 8;
+    globalScore += *scores++;
+    SPR_logProfil();
+
+    SYS_disableInts();
+    // reset sprite engine (release all allocated resources)
+    SPR_reset();
+    SPR_clear();
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_drawText("Big sprites test", 1, 2);
+    SYS_enableInts();
+
+    waitMs(5000);
+    SYS_disableInts();
+    VDP_clearPlane(BG_A, TRUE);
+    SYS_enableInts();
+
+    // create sprites structures
+    guySprite = SPR_addSprite(&guy_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite = SPR_addSprite(&cody_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite = SPR_addSprite(&haggar_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+
+    SPR_update();
+
+    // desync frame timer so update happen on different frame
+    haggarSprite->timer = 1;
+    andorSprite->timer = 2;
+
+    // we want to compute per hardware sprite visibility for these sprites
+    SPR_setVisibility(guySprite, AUTO_SLOW);
+    SPR_setVisibility(codySprite, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite, AUTO_SLOW);
+    SPR_setVisibility(andorSprite, AUTO_SLOW);
+
+    SPR_update();
+    SYS_doVBlankProcess();
+
+    sprites[0] = guySprite;
+    sprites[1] = codySprite;
+    sprites[2] = haggarSprite;
+    sprites[3] = andorSprite;
+
+    sprites[0]->data = (u32) &objects[0];
+    sprites[1]->data = (u32) &objects[1];
+    sprites[2]->data = (u32) &objects[2];
+    sprites[3]->data = (u32) &objects[3];
+
+    // init position for 4 sprites
+    initPos(4);
+
+    SPR_update();
+
+    // prepare palettes
+    memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
+    memcpy(&palette[16], cody_sprite.palette->data, 16 * 2);
+    memcpy(&palette[32], haggar_sprite.palette->data, 16 * 2);
+    memcpy(&palette[48], andor_sprite.palette->data, 16 * 2);
+    // keep background color black
+    palette[0] = 0;
+
+    // set palette
+    SYS_disableInts();
+    PAL_setColors(0, palette, 64, CPU);
+    SYS_enableInts();
+
+    // execute sprite bench
+    *scores = execute(25, 4) / 8;
+    globalScore += *scores++;
+    SPR_logProfil();
+
+    SYS_disableInts();
+    // reset sprite engine (release all allocated resources)
+    SPR_reset();
+    SPR_clear();
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_drawText("Big sprites test (heavy 1) ", 1, 2);
+    SYS_enableInts();
+
+    waitMs(5000);
+    SYS_disableInts();
+    VDP_clearPlane(BG_A, TRUE);
+    SYS_enableInts();
+
+    // create sprites structures
+    guySprite = SPR_addSprite(&guy_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite = SPR_addSprite(&cody_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite = SPR_addSprite(&haggar_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    guySprite2 = SPR_addSprite(&guy_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite2 = SPR_addSprite(&cody_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite2 = SPR_addSprite(&haggar_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite2 = SPR_addSprite(&andor_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+
+    SPR_update();
+
+    // desync frame timer so update happen on different frame
+    guySprite2->timer = 1;
+    codySprite2->timer = 1;
+    haggarSprite2->timer = 1;
+    andorSprite->timer = 2;
+    andorSprite2->timer = 2;
+
+    // we want to compute per hardware sprite visibility for these sprites
+    SPR_setVisibility(guySprite, AUTO_SLOW);
+    SPR_setVisibility(codySprite, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite, AUTO_SLOW);
+    SPR_setVisibility(andorSprite, AUTO_SLOW);
+    SPR_setVisibility(guySprite2, AUTO_SLOW);
+    SPR_setVisibility(codySprite2, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite2, AUTO_SLOW);
+    SPR_setVisibility(andorSprite2, AUTO_SLOW);
+
+    SPR_update();
+    SYS_doVBlankProcess();
+
+    sprites[0] = guySprite;
+    sprites[1] = codySprite;
+    sprites[2] = haggarSprite;
+    sprites[3] = andorSprite;
+    sprites[4] = guySprite2;
+    sprites[5] = codySprite2;
+    sprites[6] = haggarSprite2;
+    sprites[7] = andorSprite2;
+
+    sprites[0]->data = (u32) &objects[0];
+    sprites[1]->data = (u32) &objects[1];
+    sprites[2]->data = (u32) &objects[2];
+    sprites[3]->data = (u32) &objects[3];
+    sprites[4]->data = (u32) &objects[4];
+    sprites[5]->data = (u32) &objects[5];
+    sprites[6]->data = (u32) &objects[6];
+    sprites[7]->data = (u32) &objects[7];
+
+    // init position for 8 sprites
+    initPos(8);
+
+    SPR_update();
+
+    // prepare palettes
+    memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
+    memcpy(&palette[16], cody_sprite.palette->data, 16 * 2);
+    memcpy(&palette[32], haggar_sprite.palette->data, 16 * 2);
+    memcpy(&palette[48], andor_sprite.palette->data, 16 * 2);
+    // keep background color black
+    palette[0] = 0;
+
+    // set palette
+    SYS_disableInts();
+    PAL_setColors(0, palette, 64, CPU);
+    SYS_enableInts();
+
+    // execute sprite bench
+    *scores = execute(25, 8) / 8;
+    globalScore += *scores++;
+    SPR_logProfil();
+
+
+    SYS_disableInts();
+    // reset sprite engine (release all allocated resources)
+    SPR_reset();
+    SPR_clear();
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_drawText("Big sprites test (heavy 2) ", 1, 2);
+    SYS_enableInts();
+
+    waitMs(5000);
+    SYS_disableInts();
+    VDP_clearPlane(BG_A, TRUE);
+    SYS_enableInts();
+
+    // create sprites structures
+    guySprite = SPR_addSprite(&guy_slow_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    haggarSprite = SPR_addSprite(&haggar_slow_sprite, 0, 0, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+    andorSprite = SPR_addSprite(&andor_slow_sprite, 0, 0, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    guySprite2 = SPR_addSprite(&guy_slow_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite2 = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    guySprite3 = SPR_addSprite(&guy_slow_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite3 = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    guySprite4 = SPR_addSprite(&guy_slow_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite4 = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    guySprite5 = SPR_addSprite(&guy_slow_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+    codySprite5 = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+
+    SPR_update();
+
+    // desync frame timer so update happen on different frame
+    andorSprite->timer = 1;
+    guySprite2->timer = 1;
+    guySprite3->timer = 1;
+    codySprite2->timer = 2;
+    codySprite3->timer = 2;
+    guySprite4->timer = 2;
+    codySprite4->timer = 3;
+    guySprite5->timer = 3;
+    codySprite5->timer = 3;
+
+    // we want to compute per hardware sprite visibility for these sprites
+    SPR_setVisibility(guySprite, AUTO_SLOW);
+    SPR_setVisibility(codySprite, AUTO_SLOW);
+    SPR_setVisibility(haggarSprite, AUTO_SLOW);
+    SPR_setVisibility(andorSprite, AUTO_SLOW);
+    SPR_setVisibility(guySprite2, AUTO_SLOW);
+    SPR_setVisibility(codySprite2, AUTO_SLOW);
+    SPR_setVisibility(guySprite3, AUTO_SLOW);
+    SPR_setVisibility(codySprite3, AUTO_SLOW);
+    SPR_setVisibility(guySprite4, AUTO_SLOW);
+    SPR_setVisibility(codySprite4, AUTO_SLOW);
+    SPR_setVisibility(guySprite5, AUTO_SLOW);
+    SPR_setVisibility(codySprite5, AUTO_SLOW);
+
+    SPR_update();
+    SYS_doVBlankProcess();
+
+    sprites[0] = guySprite;
+    sprites[1] = codySprite;
+    sprites[2] = haggarSprite;
+    sprites[3] = andorSprite;
+    sprites[4] = guySprite2;
+    sprites[5] = codySprite2;
+    sprites[6] = guySprite3;
+    sprites[7] = codySprite3;
+    sprites[8] = guySprite4;
+    sprites[9] = codySprite4;
+    sprites[10] = guySprite5;
+    sprites[11] = codySprite5;
+
+    sprites[0]->data = (u32) &objects[0];
+    sprites[1]->data = (u32) &objects[1];
+    sprites[2]->data = (u32) &objects[2];
+    sprites[3]->data = (u32) &objects[3];
+    sprites[4]->data = (u32) &objects[4];
+    sprites[5]->data = (u32) &objects[5];
+    sprites[6]->data = (u32) &objects[6];
+    sprites[7]->data = (u32) &objects[7];
+    sprites[8]->data = (u32) &objects[8];
+    sprites[9]->data = (u32) &objects[9];
+    sprites[10]->data = (u32) &objects[10];
+    sprites[11]->data = (u32) &objects[11];
+
+    // init position for 12 sprites
+    initPos(12);
+
+    SPR_update();
+
+    // prepare palettes
+    memcpy(&palette[0], guy_sprite.palette->data, 16 * 2);
+    memcpy(&palette[16], cody_sprite.palette->data, 16 * 2);
+    memcpy(&palette[32], haggar_sprite.palette->data, 16 * 2);
+    memcpy(&palette[48], andor_sprite.palette->data, 16 * 2);
+    // keep background color black
+    palette[0] = 0;
+
+    // set palette
+    SYS_disableInts();
+    PAL_setColors(0, palette, 64, CPU);
+    SYS_enableInts();
+
+    // execute sprite bench
+    *scores = execute(25, 12) / 8;
     globalScore += *scores++;
     SPR_logProfil();
 
@@ -515,7 +871,9 @@ void init()
 //    DMA_setMaxTransferSize(7000);
 //    DMA_setBufferSize(16000);
     // init sprites engine
-    SPR_initEx(16 * (32 + 16 + 8));
+//    SPR_initEx(16 * (32 + 16 + 8));
+    // require about 1000 tiles to pass the last heavy big sprites test
+    SPR_initEx(1024);
     // VDP process done, we can re enable interrupts
     SYS_enableInts();
 }
@@ -654,12 +1012,15 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
         SYS_doVBlankProcess();
         cpuLoad = SYS_getCPULoad();
 
-        if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
-        else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
-        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
+        // 100 + (0-100)
+        if (cpuLoad < 100) freeCpuTime += 100 + (100 - cpuLoad);
+        // 50 + (0-50)
+        else if (cpuLoad < 200) freeCpuTime += 50 + ((200 - cpuLoad) >> 1);
+        // (0-50)
+        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 1;
     } while(getTime(TRUE) < endTime);
 
-    return freeCpuTime >> 6;
+    return freeCpuTime >> 8;
 }
 
 static void updateDonut(u16 num, u16 preloadedTiles, u16 time)
@@ -805,15 +1166,18 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         SYS_doVBlankProcess();
         cpuLoad = SYS_getCPULoad();
 
-        if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
-        else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
-        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
+        // 100 + (0-100)
+        if (cpuLoad < 100) freeCpuTime += 100 + (100 - cpuLoad);
+        // 50 + (0-50)
+        else if (cpuLoad < 200) freeCpuTime += 50 + ((200 - cpuLoad) >> 1);
+        // (0-50)
+        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 1;
 
         t -= 4;
         frame++;
     } while(getTime(TRUE) < endTime);
 
-    return freeCpuTime >> 6;
+    return freeCpuTime >> 8;
 }
 
 static void initPos(u16 num)
@@ -930,13 +1294,16 @@ static u16 execute(u16 time, u16 numSpr)
         SYS_doVBlankProcess();
         cpuLoad = SYS_getCPULoad();
 
-        if (cpuLoad < 100) freeCpuTime += 100 - cpuLoad;
-        else if (cpuLoad < 200) freeCpuTime += (200 - cpuLoad) >> 1;
-        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 2;
+        // 100 + (0-100)
+        if (cpuLoad < 100) freeCpuTime += 100 + (100 - cpuLoad);
+        // 50 + (0-50)
+        else if (cpuLoad < 200) freeCpuTime += 50 + ((200 - cpuLoad) >> 1);
+        // (0-50)
+        else if (cpuLoad < 300) freeCpuTime += (300 - cpuLoad) >> 1;
 
     } while(getTime(TRUE) < endTime);
 
-    return freeCpuTime >> 6;
+    return freeCpuTime >> 8;
 }
 
 

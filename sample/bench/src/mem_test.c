@@ -40,7 +40,7 @@ u16 executeMemsetTest(u16 *scores)
     start = getTimeAsFix32(FALSE);
     while(i--) memset(buffer, value, len);
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(50000 * 16, end - start, y++) / 2;
+    *score = displayResult(50000 * 16, end - start, y++) * 2;
     globalScore += *score++;
     y++;
 
@@ -80,7 +80,7 @@ u16 executeMemsetTest(u16 *scores)
     start = getTimeAsFix32(FALSE);
     while(i--) memset(buffer, value, (i & 0x3F) + 1);
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(32768 * (1 + 32), end - start, y++) / 2;
+    *score = displayResult(32768 * (1 + 32), end - start, y++) * 2;
     globalScore += *score++;
     y++;
 
@@ -134,7 +134,7 @@ u16 executeMemcpyTest(u16 *scores)
     start = getTimeAsFix32(FALSE);
     while(i--) memcpy(buffer + 8182, buffer, len);
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(50000 * 16, end - start, y++) / 1;
+    *score = displayResult(50000 * 16, end - start, y++) * 2;
     globalScore += *score++;
 
     y++;
@@ -194,7 +194,7 @@ u16 executeMemcpyTest(u16 *scores)
     start = getTimeAsFix32(FALSE);
     while(i--) memcpy(buffer + 8183, buffer, len);
     end = getTimeAsFix32(FALSE);
-    *score = displayResult(50000 * 16, end - start, y++) / 1;
+    *score = displayResult(50000 * 16, end - start, y++) * 2;
     globalScore += *score++;
     y++;
 
@@ -257,7 +257,7 @@ u16 executeMemAllocTest(u16 *scores)
         time += end - start;
         doRelease(1000, 16, allocs, FALSE);
     }
-    *score = displayResultAlloc(50000, time, y++);
+    *score = displayResultAlloc(50000, time, y++) * 1;
     globalScore += *score++;
     y++;
 
@@ -278,7 +278,7 @@ u16 executeMemAllocTest(u16 *scores)
         time += end - start;
         doRelease(100, 256, allocs, FALSE);
     }
-    *score = displayResultAlloc(50000, time, y++);
+    *score = displayResultAlloc(50000, time, y++) * 1;
     globalScore += *score++;
     y++;
 
@@ -294,7 +294,7 @@ u16 executeMemAllocTest(u16 *scores)
         end = getTimeAsFix32(FALSE);
         time += end - start;
     }
-    *score = displayResultAlloc(100000, time, y++);
+    *score = displayResultAlloc(100000, time, y++) / 3;
     globalScore += *score++;
     y++;
 
@@ -310,7 +310,7 @@ u16 executeMemAllocTest(u16 *scores)
         end = getTimeAsFix32(FALSE);
         time += end - start;
     }
-    *score = displayResultAlloc(100000, time, y++);
+    *score = displayResultAlloc(100000, time, y++) / 3;
     globalScore += *score++;
     y++;
 
@@ -432,7 +432,7 @@ u16 executeVRamAllocTest(u16 *scores)
         time += end - start;
         doVRamRelease(&region, 1000, 1, allocs, FALSE);
     }
-    *score = displayResultAlloc(50000, time, y++);
+    *score = displayResultAlloc(50000, time, y++) * 1;
     globalScore += *score++;
     y++;
 
@@ -453,7 +453,7 @@ u16 executeVRamAllocTest(u16 *scores)
         time += end - start;
         doVRamRelease(&region, 100, 8, allocs, FALSE);
     }
-    *score = displayResultAlloc(50000, time, y++);
+    *score = displayResultAlloc(50000, time, y++) * 1;
     globalScore += *score++;
     y++;
 
@@ -474,7 +474,7 @@ u16 executeVRamAllocTest(u16 *scores)
         time += end - start;
         doVRamRelease(&region, 10, 64, allocs, FALSE);
     }
-    *score = displayResultAlloc(50000, time, y++);
+    *score = displayResultAlloc(50000, time, y++) * 1;
     globalScore += *score++;
     y++;
 
@@ -490,7 +490,7 @@ u16 executeVRamAllocTest(u16 *scores)
         end = getTimeAsFix32(FALSE);
         time += end - start;
     }
-    *score = displayResultAlloc(100000, time, y++);
+    *score = displayResultAlloc(100000, time, y++) / 2;
     globalScore += *score++;
     y++;
 
@@ -506,7 +506,7 @@ u16 executeVRamAllocTest(u16 *scores)
         end = getTimeAsFix32(FALSE);
         time += end - start;
     }
-    *score = displayResultAlloc(100000, time, y++);
+    *score = displayResultAlloc(100000, time, y++) / 2;
     globalScore += *score++;
     y++;
 
@@ -522,7 +522,7 @@ u16 executeVRamAllocTest(u16 *scores)
         end = getTimeAsFix32(FALSE);
         time += end - start;
     }
-    *score = displayResultAlloc(100000, time, y++);
+    *score = displayResultAlloc(100000, time, y++) * 1;
     globalScore += *score++;
     y++;
 
@@ -535,7 +535,7 @@ u16 executeVRamAllocTest(u16 *scores)
         doVRamRelease(&region, 100, 8, allocs, FALSE);
     }
     end = getTimeAsFix32(FALSE);
-    *score = displayResultAlloc(50000, end - start, y++);
+    *score = displayResultAlloc(50000, end - start, y++) * 1;
     globalScore += *score++;
     y++;
 
