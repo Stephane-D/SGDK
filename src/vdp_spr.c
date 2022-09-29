@@ -10,8 +10,8 @@
 #include "memory.h"
 
 
-// important to have a global structure here (consumes 640 bytes of memory)
-VDPSprite vdpSpriteCache[MAX_VDP_SPRITE];
+// important to have a global structure here, 16 used for "overflow" with sprite engine (consumes 768 bytes of memory)
+VDPSprite vdpSpriteCache[SAT_MAX_SIZE + 16];
 // keep trace of last allocated sprite (for special operation as link)
 VDPSprite *lastAllocatedVDPSprite;
 // keep trace of highest index allocated since the last VDP_resetSprites() or VDP_releaseAllSprites.
@@ -19,7 +19,7 @@ VDPSprite *lastAllocatedVDPSprite;
 s16 highestVDPSpriteIndex;
 
 // used for VDP sprite allocation
-static VDPSprite *allocStack[MAX_VDP_SPRITE];
+static VDPSprite *allocStack[SAT_MAX_SIZE];
 // point on top of the allocation stack (first available VDP sprite)
 static VDPSprite **free;
 
@@ -37,10 +37,10 @@ void VDP_releaseAllSprites()
     u16 i;
 
     // reset allocation stack (important that first allocated sprite is sprite 0)
-    for(i = 0; i < MAX_VDP_SPRITE; i++)
-        allocStack[i] = &vdpSpriteCache[(MAX_VDP_SPRITE - 1) - i];
+    for(i = 0; i < SAT_MAX_SIZE; i++)
+        allocStack[i] = &vdpSpriteCache[(SAT_MAX_SIZE - 1) - i];
     // init free position
-    free = &allocStack[MAX_VDP_SPRITE];
+    free = &allocStack[SAT_MAX_SIZE];
 
     highestVDPSpriteIndex = -1;
 }
@@ -130,7 +130,7 @@ u16 VDP_getAvailableSprites()
 s16 VDP_refreshHighestAllocatedSpriteIndex()
 {
     s16 res = -1;
-    VDPSprite **top = &allocStack[MAX_VDP_SPRITE];
+    VDPSprite **top = &allocStack[SAT_MAX_SIZE];
 
     while(top > free)
     {
