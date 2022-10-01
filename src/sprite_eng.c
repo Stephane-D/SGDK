@@ -1370,23 +1370,24 @@ void SPR_update()
                         // next
                         frameSprite++;
 
-            #ifdef SPR_DEBUG
+#ifdef SPR_DEBUG
                         logVDPSprite(vdpSpriteInd - 1);
-            #endif // SPR_DEBUG
+#endif // SPR_DEBUG
                     }
                 }
                 else
                 {
                     while(num--)
                     {
-                        if (visibility & 1)
+                        // current sprite visibility bit is in high bit
+                        if (visibility & 0x8000)
                         {
                             if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                             else vdpSprite->y = sprite->y + frameSprite->offsetY;
-                            if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
-                            else vdpSprite->x = sprite->x + frameSprite->offsetX;
                             vdpSprite->size = frameSprite->size;
                             vdpSprite->attribut = attr;
+                            if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+                            else vdpSprite->x = sprite->x + frameSprite->offsetX;
                             vdpSprite->link = vdpSpriteInd++;
                             vdpSprite++;
                         }
@@ -1396,11 +1397,11 @@ void SPR_update()
                         // next
                         frameSprite++;
                         // next VDP sprite
-                        visibility >>= 1;
+                        visibility <<= 1;
 
-            #ifdef SPR_DEBUG
+#ifdef SPR_DEBUG
                         logVDPSprite(vdpSpriteInd - 1);
-            #endif // SPR_DEBUG
+#endif // SPR_DEBUG
                     }
                 }
             }
@@ -1413,20 +1414,20 @@ void SPR_update()
         sprite = sprite->next;
     }
 
+    // remove 1 to get number of hard sprite used
+    vdpSpriteInd--;
+
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     // not enough hardware sprite ?
     if (vdpSpriteInd > (VDP_getScreenWidth() >> 2))
         kprintf("SPR_update: not enough hardware sprite to display all active sprites, some sprites may miss !");
 #endif // LIB_DEBUG
 
-    // get number of consumed VDP sprite
-    u16 consumedVDPSprite = vdpSprite - vdpSpriteCache;
-
     // something to display ?
-    if (consumedVDPSprite > 0)
+    if (vdpSpriteInd > 0)
     {
         // send sprites to VRAM using DMA queue
-        DMA_queueDmaFast(DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, consumedVDPSprite * (sizeof(VDPSprite) / 2), 2);
+        DMA_queueDmaFast(DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, vdpSpriteInd * (sizeof(VDPSprite) / 2), 2);
         // get back to last sprite
         vdpSprite--;
         // mark as end
@@ -1518,8 +1519,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
         else
         {
             u16 num = frame->numSprite;
-            // start from the last one
-            FrameVDPSprite* frameSprite = &(frame->frameVDPSprites[num]);
+            FrameVDPSprite* frameSprite = frame->frameVDPSprites;
             visibility = 0;
 
             if (attr & TILE_ATTR_HFLIP_MASK)
@@ -1527,8 +1527,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                 // H flip
                 while(num--)
                 {
-                    // next
-                    frameSprite--;
+                    // need to be done first
                     visibility <<= 1;
 
                     s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
@@ -1537,14 +1536,16 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                     // compute visibility
                     if (((x + w) > xmin) && (x < xmax))
                         visibility |= 1;
+
+                    // next
+                    frameSprite++;
                 }
             }
             else
             {
                 while(num--)
                 {
-                    // next
-                    frameSprite--;
+                    // need to be done first
                     visibility <<= 1;
 
                     s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
@@ -1553,8 +1554,14 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                     // compute visibility
                     if (((x + w) > xmin) && (x < xmax))
                         visibility |= 1;
+
+                    // next
+                    frameSprite++;
                 }
             }
+
+            // so visibility is in high bits
+            visibility <<= (16 - frame->numSprite);
         }
     }
 
