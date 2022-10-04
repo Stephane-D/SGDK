@@ -10,8 +10,12 @@
  *       channels, and is not currently doing it
  ****************************************************************************/
 
-#include "genesis.h"
+#include "config.h"
+#include "types.h"
 
+#include "string.h"
+#include "memory.h"
+#include "task.h"
 
 #if (MODULE_MEGAWIFI != 0)
 

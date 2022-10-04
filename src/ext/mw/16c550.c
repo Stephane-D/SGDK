@@ -1,8 +1,8 @@
 #include "config.h"
-#include "ext/mw/16c550.h"
-
 
 #if (MODULE_MEGAWIFI != 0)
+
+#include "ext/mw/16c550.h"
 
 /// Shadow copy of the UART registers
 UartShadow sh;
