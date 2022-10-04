@@ -245,8 +245,9 @@ public class TMX
                         if (!Compiler.DAGame)
                             System.out.println(
                                     "WARNING: unsupported rotated tile found at [" + x + "," + y + "] in layer '" + layerName + "' of TMX file: " + file);
+
                         // assume vflip for DA
-                        else
+                        if (Compiler.DAGame)
                             vflip = true;
                     }
 
