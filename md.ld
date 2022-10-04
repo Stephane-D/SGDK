@@ -89,6 +89,7 @@ SECTIONS
     *(.got.plt) *(.got)
     *(.shdata)
     *(.data .data.*)
+    *(.ramprog .ramprog.*)
     _edata = .;
   } > ram
   _sdata = SIZEOF (.data);
