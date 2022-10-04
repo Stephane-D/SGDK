@@ -65,6 +65,11 @@
 #include "ext/mw/megawifi.h"
 #endif
 
+#if (MODULE_FLASHSAVE != 0)
+#include "ext/flash-save/flash.h"
+#include "ext/flash-save/saveman.h"
+#endif
+
 #if (MODULE_FRACTAL != 0)
 #include "ext/fractal/fractal.h"
 #include "ext/fractal/visual_dbg.h"

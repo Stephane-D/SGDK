@@ -131,6 +131,13 @@
 
 /**
  *  \brief
+ *      Set it to 1 if you want to enable Flash Save functions (provided by Jesus Alonso - doragasu)
+ *      There is no reason to disable it as it doesn't consume extra memory
+  */
+#define MODULE_FLASHSAVE    1
+
+/**
+ *  \brief
  *      Set it to 1 if you want to use the Fractal sound driver from Aurora Fields.<br>
  *      Note that you need to install the module first before enable it (https://gitlab.com/Natsumi/Fractal-Sound)
  */
