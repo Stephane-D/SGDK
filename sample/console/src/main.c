@@ -14,13 +14,10 @@
 // *****************************************************************************
 
 // SGDK
-#include <genesis.h>
+#include "genesis.h"
 
 // Resources
 #include "resources.h"
-
-// Console
-#include "ext/console.h"
 
 // stb
 #ifndef STB_SPRINTF_IMPLEMENTATION
