@@ -1359,10 +1359,10 @@ void SPR_update()
                         if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                         else vdpSprite->y = sprite->y + frameSprite->offsetY;
                         vdpSprite->size = frameSprite->size;
+                        vdpSprite->link = vdpSpriteInd++;
                         vdpSprite->attribut = attr;
                         if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
                         else vdpSprite->x = sprite->x + frameSprite->offsetX;
-                        vdpSprite->link = vdpSpriteInd++;
                         vdpSprite++;
 
                         // increment tile index in attribut field
@@ -1385,10 +1385,10 @@ void SPR_update()
                             if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                             else vdpSprite->y = sprite->y + frameSprite->offsetY;
                             vdpSprite->size = frameSprite->size;
+                            vdpSprite->link = vdpSpriteInd++;
                             vdpSprite->attribut = attr;
                             if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
                             else vdpSprite->x = sprite->x + frameSprite->offsetX;
-                            vdpSprite->link = vdpSpriteInd++;
                             vdpSprite++;
                         }
 

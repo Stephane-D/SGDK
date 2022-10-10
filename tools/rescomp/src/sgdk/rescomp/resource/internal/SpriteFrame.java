@@ -262,14 +262,9 @@ public class SpriteFrame extends Resource
         else
             outS.append("    dc.l    " + collision.id + "\n");
 
-        // array of VDPSrpite - respect VDP sprite field order: (numTile, offsetY, size, offsetX)
+        // array of VDPSprite
         for (VDPSprite sprite : vdpSprites)
-        {
-            outS.append("    dc.w    " + (((sprite.ht * sprite.wt) << 8) | ((sprite.offsetY << 0) & 0xFF)) + "\n");
-            outS.append(
-                    "    dc.w    " + ((sprite.offsetYFlip << 8) | ((sprite.getFormattedSize() << 0) & 0xFF)) + "\n");
-            outS.append("    dc.w    " + ((sprite.offsetX << 8) | ((sprite.offsetXFlip << 0) & 0xFF)) + "\n");
-        }
+            sprite.internalOutS(outS);
 
         outS.append("\n");
     }
