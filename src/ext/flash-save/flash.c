@@ -1,8 +1,8 @@
 #include "config.h"
-#include "types.h"
 
 #if (MODULE_FLASHSAVE != 0)
 
+#include "types.h"
 #include "ext/flash-save/flash.h"
 
 // Put function in .data (RAM) instead of the default .text

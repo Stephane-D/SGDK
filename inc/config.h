@@ -108,13 +108,13 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to use EVERDRIVE programming methods (provided by Krikzz).<br>
+ *      Set it to 1 if you want to use EVERDRIVE programming methods (written by Krikzz).
  */
 #define MODULE_EVERDRIVE    0
 
 /**
  *  \brief
- *      Set it to 1 if you want to use FAT16 methods for Everdrive cart (provided by Krikzz).<br>
+ *      Set it to 1 if you want to use FAT16 methods for Everdrive cart (written by Krikzz).<br>
  *      This cost a bit more than 1 KB of RAM.
  */
 #define MODULE_FAT16        0
@@ -126,15 +126,22 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to enable MegaWiFi functions and support code (provided by Jesus Alonso - doragasu) */
+ *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu) */
 #define MODULE_MEGAWIFI     0
 
 /**
  *  \brief
- *      Set it to 1 if you want to enable Flash Save functions (provided by Jesus Alonso - doragasu)
+ *      Set it to 1 if you want to enable Flash Save functions (written by Jesus Alonso - doragasu).<br>
  *      There is no reason to disable it as it doesn't consume extra memory
   */
 #define MODULE_FLASHSAVE    1
+
+/**
+ *  \brief
+ *      Set it to 1 if you want to enable the TTY text console module (written by Andreas Dietrich).<br>
+ *      It consume about 34 bytes of memory when enabled.
+  */
+#define MODULE_CONSOLE      0
 
 /**
  *  \brief

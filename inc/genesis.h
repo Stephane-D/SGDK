@@ -70,6 +70,10 @@
 #include "ext/flash-save/saveman.h"
 #endif
 
+#if (MODULE_CONSOLE != 0)
+#include "ext/console.h"
+#endif
+
 #if (MODULE_FRACTAL != 0)
 #include "ext/fractal/fractal.h"
 #include "ext/fractal/visual_dbg.h"

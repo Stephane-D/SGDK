@@ -26,6 +26,20 @@
 // *****************************************************************************
 
 // Console
+#include "config.h"
+
+#if (MODULE_CONSOLE != 0)
+
+#include "types.h"
+#include "vdp.h"
+#include "vdp_bg.h"
+#include "vdp_tile.h"
+#include "sys.h"
+#include "ym2612.h"
+#include "psg.h"
+#include "z80_ctrl.h"
+#include "memory.h"
+
 #include "ext/console.h"
 
 // *****************************************************************************
@@ -473,3 +487,5 @@ int CON_write(const char *fmt, ...)
 
     return len;
 }
+
+#endif // MODULE_CONSOLE

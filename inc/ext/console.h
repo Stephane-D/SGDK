@@ -1,4 +1,3 @@
-
 /**
  *  \file   console.h
  *  \brief  TTY text console
@@ -19,16 +18,22 @@
  *  be automatically reset before text is displayed (see assert macro below).
  */
 
-#pragma once
-
 // *****************************************************************************
 //
 //  Includes
 //
 // *****************************************************************************
 
-// SGDK
-#include <genesis.h>
+#include "config.h"
+
+#if (MODULE_CONSOLE != 0)
+
+#include "types.h"
+#include "string.h"
+#include "maths.h"
+#include "dma.h"
+
+#pragma once
 
 // *****************************************************************************
 //
@@ -390,3 +395,5 @@ V2u16 CON_getCursorPosition();
  */
 
 int CON_write(const char *fmt, ...)  __attribute__ ((format (printf, 1, 2)));
+
+#endif // MODULE_CONSOLE
