@@ -178,27 +178,27 @@ typedef struct _collision
  *  \brief
  *      Single VDP sprite info structure for sprite animation frame.
  *
- *  \param size
- *      sprite size (see SPRITE_SIZE macro)
- *  \param numTile
- *      number of tile for this VDP sprite (should be coherent with the given size field)
  *  \param offsetY
  *      Y offset for this VDP sprite relative to global Sprite position
  *  \param offsetYFlip
  *      Y offset (flip version) for this VDP sprite relative to global Sprite position
+ *  \param size
+ *      sprite size (see SPRITE_SIZE macro)
  *  \param offsetX
  *      X offset for this VDP sprite relative to global Sprite position
  *  \param offsetXFlip
  *      X offset (flip version) for this VDP sprite relative to global Sprite position
+ *  \param numTile
+ *      number of tile for this VDP sprite (should be coherent with the given size field)
  */
 typedef struct
 {
     u8 offsetY;          // respect VDP sprite field order, may help
     u8 offsetYFlip;
     u8 size;
-    u8 numTile;
     u8 offsetX;
     u8 offsetXFlip;
+    u8 numTile;
 }  FrameVDPSprite;
 
 /**

@@ -54,10 +54,10 @@ public class VDPSprite extends Resource
     
     void internalOutS(StringBuilder outS)
     {
-        // respect field order: (offsetY, offsetYFlip, size, numTile, offsetX, offsetXFlip)
+        // respect field order: offsetY, offsetYFlip, size, offsetX, offsetXFlip, numTile
         outS.append("    dc.w    " + ((offsetY << 8) | ((offsetYFlip << 0) & 0xFF)) + "\n");
-        outS.append("    dc.w    " + ((getFormattedSize() << 8) | (((ht * wt) << 0) & 0xFF)) + "\n");
-        outS.append("    dc.w    " + ((offsetX << 8) | ((offsetXFlip << 0) & 0xFF)) + "\n");
+        outS.append("    dc.w    " + ((getFormattedSize() << 8) | ((offsetX << 0) & 0xFF)) + "\n");
+        outS.append("    dc.w    " + ((offsetXFlip << 8) | (((ht * wt) << 0) & 0xFF)) + "\n");
     }
 
     @Override
@@ -110,13 +110,13 @@ public class VDPSprite extends Resource
         Util.decl(outS, outH, "FrameVDPSprite", id, 2, global);
 
         internalOutS(outS);
-        // write to binary buffer, respect field order: (offsetY, offsetYFlip, size, numTile, offsetX, offsetXFlip)
+        // write to binary buffer, respect field order: offsetY, offsetYFlip, size, offsetX, offsetXFlip, numTile
         outB.write(offsetY);
         outB.write(offsetYFlip);
         outB.write(getFormattedSize());
-        outB.write(ht * wt);
         outB.write(offsetX);
         outB.write(offsetXFlip);
+        outB.write(ht * wt);
 
         outS.append("\n");
     }
