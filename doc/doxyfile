@@ -188,7 +188,10 @@ INPUT                  = \
 	"..\..\src\object.c" \
 	"..\..\inc\maths3D.h" \
 	"..\..\src\tab_sqrt.c" \
-	"..\..\inc\ym2612.h" 
+	"..\..\inc\ym2612.h" \
+	"..\..\inc\ext\console.h" \
+	"..\..\src\ext\console.c" \
+	"..\..\inc\ext\stb\stb_sprintf.h"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
