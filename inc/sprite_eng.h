@@ -738,6 +738,7 @@ void SPR_setZ(Sprite* sprite, s16 value);
  *  \deprecated Use SPR_setDepth(SPR_MIN_DEPTH) instead
  */
 void SPR_setAlwaysOnTop(Sprite* sprite, u16 value);
+
 /**
  *  \brief
  *      Set current sprite animation and frame.
@@ -778,6 +779,15 @@ void SPR_setFrame(Sprite* sprite, s16 frame);
  *      Sprite to pass to next frame for
  */
 void SPR_nextFrame(Sprite* sprite);
+/**
+ *  \brief
+ *      Return TRUE if animation ended / looped.<br>
+ *      This can be used with the frame change callback (see #SPR_setFrameChangeCallback(..)) to detect
+ *      the end of sprite animation and do appropriate action if required.
+ *
+ *  \see #SPR_setFrameChangeCallback(..)
+ */
+bool SPR_getAnimationDone(Sprite* sprite);
 
 /**
  *  \brief

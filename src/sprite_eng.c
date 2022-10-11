@@ -45,6 +45,8 @@
 
 #define NEED_UPDATE                         0x000F
 
+#define STATE_LOOPED                        0x0010
+
 
 // shared from vdp_spr.c unit
 extern void logVDPSprite(u16 index);
@@ -288,6 +290,9 @@ static bool releaseSprite(Sprite* sprite)
         // update last sprite
         else lastSprite = prev;
 
+        // update used VDP sprite
+        usedVDPSprite -= sprite->definition->maxNumSprite;
+
         // not anymore allocated
         sprite->status &= ~ALLOCATED;
 
@@ -338,24 +343,26 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
         return NULL;
     }
 
+    // update used VDP sprite
+    usedVDPSprite += spriteDef->maxNumSprite;
+
     // VDP sprite check enable ?
     if (usedVDPSprite & CHECK_VDP_SPRITE)
     {
-        if ((usedVDPSprite + spriteDef->maxNumSprite) >= (VDP_getScreenWidth() >> 2))
+        if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-            kprintf("SPR_addSpriteEx failed: not enough hardware sprite (%d required but only %d remaining) !", spriteDef->maxNumSprite, (VDP_getScreenWidth() >> 2) - usedVDPSprite);
+            kprintf("SPR_addSpriteEx failed: not enough hardware sprite (missing %d sprites) !", (usedVDPSprite - (VDP_getScreenWidth() >> 2)) + 1);
 #endif
 
+            releaseSprite(sprite);
             return NULL;
         }
     }
 
-    usedVDPSprite += spriteDef->maxNumSprite;
-
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
     if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
-        kprintf("SPR_addSpriteEx warning: exceding maximum number of hardware sprite (currently used = %d)", usedVDPSprite);
+        kprintf("SPR_addSpriteEx warning: exceeding maximum number of hardware sprite (currently used = %d)", usedVDPSprite);
 #endif
 
     sprite->status = ALLOCATED | (flag & SPR_FLAG_MASK);
@@ -480,6 +487,8 @@ void SPR_releaseSprite(Sprite* sprite)
         KLog_U3("  released ", sprite->definition->maxNumTile, " tiles in VRAM at ", sprite->attribut & TILE_INDEX_MASK, ", remaining VRAM: ", VRAM_getFree(&vram));
 #endif // SPR_DEBUG
     }
+
+
 
     END_PROFIL(PROFIL_REMOVE_SPRITE)
 }
@@ -631,6 +640,33 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 
     // nothing to do...
     if (sprite->definition == spriteDef) return TRUE;
+
+    // update used VDP sprite
+    usedVDPSprite -= sprite->definition->maxNumSprite;
+    usedVDPSprite += spriteDef->maxNumSprite;
+
+    // VDP sprite check enable ?
+    if (usedVDPSprite & CHECK_VDP_SPRITE)
+    {
+        if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
+        {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+            kprintf("SPR_setDefinition failed: not enough hardware sprite for new definition (missing %d sprites) !", (usedVDPSprite - (VDP_getScreenWidth() >> 2)) + 1);
+#endif
+
+            // revert back used VDP sprite
+            usedVDPSprite -= spriteDef->maxNumSprite;
+            usedVDPSprite += sprite->definition->maxNumSprite;
+
+            // failed
+            return FALSE;
+        }
+    }
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+    if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
+        kprintf("SPR_setDefinition warning: exceeding maximum number of hardware sprite (currently used = %d)", usedVDPSprite);
+#endif
 
     u16 status = sprite->status;
     const u16 newNumTile = spriteDef->maxNumTile;
@@ -974,7 +1010,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         KLog_U2_("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0");
 #endif // SPR_DEBUG
 
-        sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_LOOPED) | NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1023,12 +1059,21 @@ void SPR_nextFrame(Sprite* sprite)
     u16 frameInd = sprite->frameInd + 1;
 
     if (frameInd >= anim->numFrame)
+    {
         frameInd = anim->loop;
+        // looped animation marker
+        sprite->status |= STATE_LOOPED;
+    }
 
     // set new frame
     SPR_setFrame(sprite, frameInd);
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
+}
+
+bool SPR_getAnimationDone(Sprite* sprite)
+{
+    return (sprite->status & STATE_LOOPED)?TRUE:FALSE;
 }
 
 bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
@@ -1325,36 +1370,61 @@ void SPR_update()
 
         u16 status = sprite->status;
 
-        // ! order is important !
+        // order is important: updateFrame first then updateVisibility
         if (status & NEED_FRAME_UPDATE)
             status = updateFrame(sprite, status);
         if (status & NEED_VISIBILITY_UPDATE)
             status = updateVisibility(sprite, status);
 
-        u16 visibility = sprite->visibility;
+        // sprite can have been released during updateFrame(..) using the frame change callback
+        // so we have to take care of that
+        u16 visibility = (status & ALLOCATED)?sprite->visibility:0;
 
-        // sprite visible ?
-        if (visibility)
+        // sprite visible and still in SAT limit ?
+        if (visibility && (vdpSpriteInd <= SAT_MAX_SIZE))
         {
-            // check that we are still in SAT limit
-            if (vdpSpriteInd <= 80)
+            if (status & NEED_TILES_UPLOAD)
             {
-                if (status & NEED_TILES_UPLOAD)
+                loadTiles(sprite);
+                // tiles upload and sprite table done
+                status &= ~NEED_TILES_UPLOAD;
+            }
+
+            // update SAT now
+            AnimationFrame* frame = sprite->frame;
+            FrameVDPSprite* frameSprite = frame->frameVDPSprites;
+            u16 attr = sprite->attribut;
+            s16 num = frame->numSprite;
+
+            if (visibility == VISIBILITY_ON)
+            {
+                while(num--)
                 {
-                    loadTiles(sprite);
-                    // tiles upload and sprite table done
-                    status &= ~NEED_TILES_UPLOAD;
+                    if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
+                    else vdpSprite->y = sprite->y + frameSprite->offsetY;
+                    vdpSprite->size = frameSprite->size;
+                    vdpSprite->link = vdpSpriteInd++;
+                    vdpSprite->attribut = attr;
+                    if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+                    else vdpSprite->x = sprite->x + frameSprite->offsetX;
+                    vdpSprite++;
+
+                    // increment tile index in attribut field
+                    attr += frameSprite->numTile;
+                    // next
+                    frameSprite++;
+
+#ifdef SPR_DEBUG
+                    logVDPSprite(vdpSpriteInd - 1);
+#endif // SPR_DEBUG
                 }
-
-                // update SAT now
-                AnimationFrame* frame = sprite->frame;
-                FrameVDPSprite* frameSprite = frame->frameVDPSprites;
-                u16 attr = sprite->attribut;
-                s16 num = frame->numSprite;
-
-                if (visibility == VISIBILITY_ON)
+            }
+            else
+            {
+                while(num--)
                 {
-                    while(num--)
+                    // current sprite visibility bit is in high bit
+                    if (visibility & 0x8000)
                     {
                         if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                         else vdpSprite->y = sprite->y + frameSprite->offsetY;
@@ -1364,52 +1434,24 @@ void SPR_update()
                         if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
                         else vdpSprite->x = sprite->x + frameSprite->offsetX;
                         vdpSprite++;
+                    }
 
-                        // increment tile index in attribut field
-                        attr += frameSprite->numTile;
-                        // next
-                        frameSprite++;
+                    // increment tile index in attribut field
+                    attr += frameSprite->numTile;
+                    // next
+                    frameSprite++;
+                    // next VDP sprite
+                    visibility <<= 1;
 
 #ifdef SPR_DEBUG
-                        logVDPSprite(vdpSpriteInd - 1);
+                    logVDPSprite(vdpSpriteInd - 1);
 #endif // SPR_DEBUG
-                    }
-                }
-                else
-                {
-                    while(num--)
-                    {
-                        // current sprite visibility bit is in high bit
-                        if (visibility & 0x8000)
-                        {
-                            if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
-                            else vdpSprite->y = sprite->y + frameSprite->offsetY;
-                            vdpSprite->size = frameSprite->size;
-                            vdpSprite->link = vdpSpriteInd++;
-                            vdpSprite->attribut = attr;
-                            if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
-                            else vdpSprite->x = sprite->x + frameSprite->offsetX;
-                            vdpSprite++;
-                        }
-
-                        // increment tile index in attribut field
-                        attr += frameSprite->numTile;
-                        // next
-                        frameSprite++;
-                        // next VDP sprite
-                        visibility <<= 1;
-
-#ifdef SPR_DEBUG
-                        logVDPSprite(vdpSpriteInd - 1);
-#endif // SPR_DEBUG
-                    }
                 }
             }
         }
 
-        // processes done !
+        // processes done
         sprite->status = status;
-
         // next sprite
         sprite = sprite->next;
     }
