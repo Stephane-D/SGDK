@@ -118,11 +118,12 @@ void OBJ_release(Pool* pool, Object* object, bool maintainCoherency);
 
 /**
  *  \brief
- *      Iterate over all active objects from the given object pool and call #update() method for each of them.<br>
- *      <b>WARNING:</b> You need to always set 'maintainCoherency' to <i>TRUE</i> when using OBJ_release(..) otherwise stack iteration won't work correctly.
+ *      Iterate over all active objects from the given object pool and call <i>update</i> method for each of them.<br>
  *
  *  \param pool
  *      Object pool to update all objects from.
+ *
+ *  \warning You need to always set 'maintainCoherency' to <i>TRUE</i> when using #OBJ_release(..) otherwise stack iteration won't work correctly.
  */
 void OBJ_updateAll(Pool* pool);
 
@@ -145,7 +146,7 @@ void OBJ_setInitMethod(Object* object, ObjectCallback* initMethod);
  *
  *  \param object
  *      Object to set <i>update</i> method for
- *  \param initMethod
+ *  \param updateMethod
  *      the method to set for object update (should be called once per frame)
  *
  *  \see OBJ_setInitMethod(..)
@@ -158,7 +159,7 @@ void OBJ_setUpdateMethod(Object* object, ObjectCallback* updateMethod);
  *
  *  \param object
  *      Object to set <i>end</i> method for
- *  \param initMethod
+ *  \param endMethod
  *      the method to set for object destruction (should be called just before object is released)
  *
  *  \see OBJ_setInitMethod(..)

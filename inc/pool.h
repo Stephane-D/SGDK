@@ -120,7 +120,7 @@ void* POOL_allocate(Pool* pool);
  *  \param object
  *      Object to release
  *  \param maintainCoherency
- *      set it to <i>TRUE</i> if you want to keep coherency for stack iteration (#see POOL_getFirst()).<br>
+ *      set it to <i>TRUE</i> if you want to keep coherency for stack iteration (see #POOL_getFirst()).<br>
  *      Set it to <i>FALSE</i> for faster release process if you don't require object iteration through alloc stack.
  *
  *  \see POOL_allocate(..)
