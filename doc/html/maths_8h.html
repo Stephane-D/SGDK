@@ -159,54 +159,6 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a598a3330b3c21701223ee0ca14316eca"></a><!-- doxytag: member="maths.h::PI" ref="a598a3330b3c21701223ee0ca14316eca" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a598a3330b3c21701223ee0ca14316eca">PI</a>&#160;&#160;&#160;3.14159265358979323846</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">PI number (3,1415..) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae96d294fad18c3f4828b9821fe189ed4"></a><!-- doxytag: member="maths.h::FIX32_INT_BITS" ref="ae96d294fad18c3f4828b9821fe189ed4" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_INT_BITS</b>&#160;&#160;&#160;22</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9bee777da6db057642705be0dd716c6"></a><!-- doxytag: member="maths.h::FIX32_FRAC_BITS" ref="af9bee777da6db057642705be0dd716c6" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_FRAC_BITS</b>&#160;&#160;&#160;(32 - FIX32_INT_BITS)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18ba5c783dc4901265b244edbb2d3a00"></a><!-- doxytag: member="maths.h::FIX32_INT_MASK" ref="a18ba5c783dc4901265b244edbb2d3a00" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_INT_MASK</b>&#160;&#160;&#160;(((1 &lt;&lt; FIX32_INT_BITS) - 1) &lt;&lt; FIX32_FRAC_BITS)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38cda65600b166e2d501f96bfeeb815d"></a><!-- doxytag: member="maths.h::FIX32_FRAC_MASK" ref="a38cda65600b166e2d501f96bfeeb815d" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_FRAC_MASK</b>&#160;&#160;&#160;((1 &lt;&lt; FIX32_FRAC_BITS) - 1)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a0bb7ef633c3b6bcff1903ed20b3917f8">FIX32</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>) ((value) * (1 &lt;&lt; FIX32_FRAC_BITS)))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix32.  <a href="#a0bb7ef633c3b6bcff1903ed20b3917f8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a0ad8ca409359839219bd8e31faac0c"></a><!-- doxytag: member="maths.h::intToFix32" ref="a7a0ad8ca409359839219bd8e31faac0c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a7a0ad8ca409359839219bd8e31faac0c">intToFix32</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>) ((value) &lt;&lt; FIX32_FRAC_BITS))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert integer to fix32. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aefa93759cc1ca56d6f934f50b26d81fd"></a><!-- doxytag: member="maths.h::fix32ToInt" ref="aefa93759cc1ca56d6f934f50b26d81fd" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aefa93759cc1ca56d6f934f50b26d81fd">fix32ToInt</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>) ((value) &gt;&gt; FIX32_FRAC_BITS))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix32 to integer. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add30d7e9eb8b9b058595f37edfc9868a"></a><!-- doxytag: member="maths.h::fix32Round" ref="add30d7e9eb8b9b058595f37edfc9868a" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#add30d7e9eb8b9b058595f37edfc9868a">fix32Round</a>(value)&#160;&#160;&#160;((fix32Frac(value) &gt; FIX32(0.5))?fix32Int(value + FIX32(1)) + 1:fix32Int(value))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round the specified value to nearest integer (fix32). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ea415481951a05473a6ee6b9a87896d"></a><!-- doxytag: member="maths.h::fix32ToRoundedInt" ref="a9ea415481951a05473a6ee6b9a87896d" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a9ea415481951a05473a6ee6b9a87896d">fix32ToRoundedInt</a>(value)&#160;&#160;&#160;((fix32Frac(value) &gt; FIX32(0.5))?fix32ToInt(value) + 1:fix32ToInt(value))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round and convert the specified fix32 value to integer. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94e95e216a3763c5cbbfb199a985c4c7"></a><!-- doxytag: member="maths.h::fix32Frac" ref="a94e95e216a3763c5cbbfb199a985c4c7" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a94e95e216a3763c5cbbfb199a985c4c7">fix32Frac</a>(value)&#160;&#160;&#160;((value) &amp; FIX32_FRAC_MASK)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return fractional part of the specified value (fix32). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64d7e29700aa0e4d1f3472ea04a28e51"></a><!-- doxytag: member="maths.h::fix32Int" ref="a64d7e29700aa0e4d1f3472ea04a28e51" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a64d7e29700aa0e4d1f3472ea04a28e51">fix32Int</a>(value)&#160;&#160;&#160;((value) &amp; FIX32_INT_MASK)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return integer part of the specified value (fix32). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45bb15ecf4dc90dd278044239342c670"></a><!-- doxytag: member="maths.h::fix32Add" ref="a45bb15ecf4dc90dd278044239342c670" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a45bb15ecf4dc90dd278044239342c670">fix32Add</a>(val1, val2)&#160;&#160;&#160;((val1) + (val2))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the addition of val1 and val2 (fix32). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8ead8adeade8883b4f22e52ad1ebd8b"></a><!-- doxytag: member="maths.h::fix32Sub" ref="ab8ead8adeade8883b4f22e52ad1ebd8b" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ab8ead8adeade8883b4f22e52ad1ebd8b">fix32Sub</a>(val1, val2)&#160;&#160;&#160;((val1) - (val2))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the substraction of val2 from val1 (fix32). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4a5532458ad72678a322a3d0a6478f6"></a><!-- doxytag: member="maths.h::fix32Neg" ref="ab4a5532458ad72678a322a3d0a6478f6" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ab4a5532458ad72678a322a3d0a6478f6">fix32Neg</a>(value)&#160;&#160;&#160;(0 - (value))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return negate of specified value (fix32). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad61311b71d7887aad07fe5e5f0dca76c"></a><!-- doxytag: member="maths.h::fix32Mul" ref="ad61311b71d7887aad07fe5e5f0dca76c" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ad61311b71d7887aad07fe5e5f0dca76c">fix32Mul</a>(val1, val2)&#160;&#160;&#160;(((val1) &gt;&gt; (FIX32_FRAC_BITS / 2)) * ((val2) &gt;&gt; (FIX32_FRAC_BITS / 2)))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the multiplication of val1 and val2 (fix32).<br/>
- WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92bedd35f292e0bfb024521e1b338ee9"></a><!-- doxytag: member="maths.h::fix32Div" ref="a92bedd35f292e0bfb024521e1b338ee9" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a92bedd35f292e0bfb024521e1b338ee9">fix32Div</a>(val1, val2)&#160;&#160;&#160;(((val1) &lt;&lt; (FIX32_FRAC_BITS / 2)) / ((val2) &gt;&gt; (FIX32_FRAC_BITS / 2)))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the division of val1 by val2 (fix32).<br/>
- WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed2dbc1fff889524be62dc412baa5c5d"></a><!-- doxytag: member="maths.h::fix32Avg" ref="aed2dbc1fff889524be62dc412baa5c5d" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aed2dbc1fff889524be62dc412baa5c5d">fix32Avg</a>(val1, val2)&#160;&#160;&#160;(((val1) + (val2)) &gt;&gt; 1)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the average of val1 by val2 (fix32). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5e886026faa364cc810e5e042a9f435"></a><!-- doxytag: member="maths.h::FIX16_INT_BITS" ref="ac5e886026faa364cc810e5e042a9f435" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX16_INT_BITS</b>&#160;&#160;&#160;10</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a359c469200a6a4fe5a1cfbe625234a30"></a><!-- doxytag: member="maths.h::FIX16_FRAC_BITS" ref="a359c469200a6a4fe5a1cfbe625234a30" args="" -->
@@ -215,75 +167,18 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX16_INT_MASK</b>&#160;&#160;&#160;(((1 &lt;&lt; FIX16_INT_BITS) - 1) &lt;&lt; FIX16_FRAC_BITS)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96f807dc586dcef51ab43fc164fe5056"></a><!-- doxytag: member="maths.h::FIX16_FRAC_MASK" ref="a96f807dc586dcef51ab43fc164fe5056" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX16_FRAC_MASK</b>&#160;&#160;&#160;((1 &lt;&lt; FIX16_FRAC_BITS) - 1)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae96d294fad18c3f4828b9821fe189ed4"></a><!-- doxytag: member="maths.h::FIX32_INT_BITS" ref="ae96d294fad18c3f4828b9821fe189ed4" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_INT_BITS</b>&#160;&#160;&#160;22</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9bee777da6db057642705be0dd716c6"></a><!-- doxytag: member="maths.h::FIX32_FRAC_BITS" ref="af9bee777da6db057642705be0dd716c6" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_FRAC_BITS</b>&#160;&#160;&#160;(32 - FIX32_INT_BITS)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18ba5c783dc4901265b244edbb2d3a00"></a><!-- doxytag: member="maths.h::FIX32_INT_MASK" ref="a18ba5c783dc4901265b244edbb2d3a00" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_INT_MASK</b>&#160;&#160;&#160;(((1 &lt;&lt; FIX32_INT_BITS) - 1) &lt;&lt; FIX32_FRAC_BITS)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38cda65600b166e2d501f96bfeeb815d"></a><!-- doxytag: member="maths.h::FIX32_FRAC_MASK" ref="a38cda65600b166e2d501f96bfeeb815d" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>FIX32_FRAC_MASK</b>&#160;&#160;&#160;((1 &lt;&lt; FIX32_FRAC_BITS) - 1)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aaf38619511c2a84d230051163c5af728">FIX16</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>) ((value) * (1 &lt;&lt; FIX16_FRAC_BITS)))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix16.  <a href="#aaf38619511c2a84d230051163c5af728"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a607f0764e3d3f146a04242431d33f041"></a><!-- doxytag: member="maths.h::intToFix16" ref="a607f0764e3d3f146a04242431d33f041" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a607f0764e3d3f146a04242431d33f041">intToFix16</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>) ((value) &lt;&lt; FIX16_FRAC_BITS))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert integer to fix16. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69ae914f50c3c78aca8f2f7141427d59"></a><!-- doxytag: member="maths.h::fix16ToInt" ref="a69ae914f50c3c78aca8f2f7141427d59" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a69ae914f50c3c78aca8f2f7141427d59">fix16ToInt</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>) ((value) &gt;&gt; FIX16_FRAC_BITS))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix16 to integer. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8c54f0b4fd1a806fe3b84161b6d482c"></a><!-- doxytag: member="maths.h::fix16Round" ref="ae8c54f0b4fd1a806fe3b84161b6d482c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ae8c54f0b4fd1a806fe3b84161b6d482c">fix16Round</a>(value)&#160;&#160;&#160;((fix16Frac(value) &gt; FIX16(0.5))?fix16Int(value + FIX16(1)) + 1:fix16Int(value))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round the specified value to nearest integer (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40bb16ce992aa996327619a3c5c84e4c"></a><!-- doxytag: member="maths.h::fix16ToRoundedInt" ref="a40bb16ce992aa996327619a3c5c84e4c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a40bb16ce992aa996327619a3c5c84e4c">fix16ToRoundedInt</a>(value)&#160;&#160;&#160;((fix16Frac(value) &gt; FIX16(0.5))?fix16ToInt(value) + 1:fix16ToInt(value))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round and convert the specified fix16 value to integer. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b09ffe4fce24a7280a628451c304984"></a><!-- doxytag: member="maths.h::fix16Frac" ref="a6b09ffe4fce24a7280a628451c304984" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a6b09ffe4fce24a7280a628451c304984">fix16Frac</a>(value)&#160;&#160;&#160;((value) &amp; FIX16_FRAC_MASK)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return fractional part of the specified value (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e00a3dc06b58efa40447eee307e26df"></a><!-- doxytag: member="maths.h::fix16Int" ref="a8e00a3dc06b58efa40447eee307e26df" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a8e00a3dc06b58efa40447eee307e26df">fix16Int</a>(value)&#160;&#160;&#160;((value) &amp; FIX16_INT_MASK)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return integer part of the specified value (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad5e72e5949d66b24b9daba3287cfa80f"></a><!-- doxytag: member="maths.h::fix16Add" ref="ad5e72e5949d66b24b9daba3287cfa80f" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ad5e72e5949d66b24b9daba3287cfa80f">fix16Add</a>(val1, val2)&#160;&#160;&#160;((val1) + (val2))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the addition of val1 and val2 (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab92f54a8d8808184b6ef4d52230e2a4d"></a><!-- doxytag: member="maths.h::fix16Sub" ref="ab92f54a8d8808184b6ef4d52230e2a4d" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ab92f54a8d8808184b6ef4d52230e2a4d">fix16Sub</a>(val1, val2)&#160;&#160;&#160;((val1) - (val2))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the substraction of val2 from val1 (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a201b2645f05a0b7794d331f675050170"></a><!-- doxytag: member="maths.h::fix16Neg" ref="a201b2645f05a0b7794d331f675050170" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a201b2645f05a0b7794d331f675050170">fix16Neg</a>(value)&#160;&#160;&#160;(0 - (value))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return negate of specified value (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10d9142c9e20c0e330e425dd6304f3c5"></a><!-- doxytag: member="maths.h::fix16Mul" ref="a10d9142c9e20c0e330e425dd6304f3c5" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a10d9142c9e20c0e330e425dd6304f3c5">fix16Mul</a>(val1, val2)&#160;&#160;&#160;(muls(val1, val2) &gt;&gt; FIX16_FRAC_BITS)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the multiplication of val1 and val2 (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c942e60981e2071901f84808c3807bf"></a><!-- doxytag: member="maths.h::fix16Div" ref="a2c942e60981e2071901f84808c3807bf" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a2c942e60981e2071901f84808c3807bf">fix16Div</a>(val1, val2)&#160;&#160;&#160;(divs(val1 &lt;&lt; FIX16_FRAC_BITS, val2))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the division of val1 by val2 (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac102124ca8ab852ea2fbf7865b5f2e1c"></a><!-- doxytag: member="maths.h::fix16Avg" ref="ac102124ca8ab852ea2fbf7865b5f2e1c" args="(val1, val2)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ac102124ca8ab852ea2fbf7865b5f2e1c">fix16Avg</a>(val1, val2)&#160;&#160;&#160;(((val1) + (val2)) &gt;&gt; 1)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the average of val1 by val2 (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63fd727afb56589db1b4fb7797f176a0"></a><!-- doxytag: member="maths.h::fix16Log2" ref="a63fd727afb56589db1b4fb7797f176a0" args="(v)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a63fd727afb56589db1b4fb7797f176a0">fix16Log2</a>(v)&#160;&#160;&#160;log2tab16[v]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the Log2 of specified value (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a418c4e16874e6acb6f7e491b71232f7a"></a><!-- doxytag: member="maths.h::fix16Log10" ref="a418c4e16874e6acb6f7e491b71232f7a" args="(v)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a418c4e16874e6acb6f7e491b71232f7a">fix16Log10</a>(v)&#160;&#160;&#160;log10tab16[v]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the Log10 of specified value (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a341001129c5cff4e166fba0decd81ac0"></a><!-- doxytag: member="maths.h::fix16Sqrt" ref="a341001129c5cff4e166fba0decd81ac0" args="(v)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a341001129c5cff4e166fba0decd81ac0">fix16Sqrt</a>(v)&#160;&#160;&#160;sqrttab16[v]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the root square of specified value (fix16). <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a8ba26f627cd4622d382a5332746153"></a><!-- doxytag: member="maths.h::fix32ToFix16" ref="a7a8ba26f627cd4622d382a5332746153" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a7a8ba26f627cd4622d382a5332746153">fix32ToFix16</a>(value)&#160;&#160;&#160;(((value) &lt;&lt; FIX16_FRAC_BITS) &gt;&gt; FIX32_FRAC_BITS)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified fix32 value to fix16. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca2979aaac92395577127e4f0199616c"></a><!-- doxytag: member="maths.h::fix16ToFix32" ref="aca2979aaac92395577127e4f0199616c" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aca2979aaac92395577127e4f0199616c">fix16ToFix32</a>(value)&#160;&#160;&#160;(((value) &lt;&lt; FIX32_FRAC_BITS) &gt;&gt; FIX16_FRAC_BITS)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified fix16 value to fix32. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a550edb74948fc3bf78fa8f073a379bf0"></a><!-- doxytag: member="maths.h::sinFix32" ref="a550edb74948fc3bf78fa8f073a379bf0" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a550edb74948fc3bf78fa8f073a379bf0">sinFix32</a>(value)&#160;&#160;&#160;sintab32[(value) &amp; 1023]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute sinus of specified value and return it as fix32.<br/>
- The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a466e10a1026fbb1ee88bdb6c29d0e51a"></a><!-- doxytag: member="maths.h::cosFix32" ref="a466e10a1026fbb1ee88bdb6c29d0e51a" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a466e10a1026fbb1ee88bdb6c29d0e51a">cosFix32</a>(value)&#160;&#160;&#160;sintab32[((value) + 256) &amp; 1023]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute cosinus of specified value and return it as fix32.<br/>
- The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0bc7dfe26589eb05f726116a00516dc"></a><!-- doxytag: member="maths.h::sinFix16" ref="ac0bc7dfe26589eb05f726116a00516dc" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ac0bc7dfe26589eb05f726116a00516dc">sinFix16</a>(value)&#160;&#160;&#160;sintab16[(value) &amp; 1023]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute sinus of specified value and return it as fix16.<br/>
- The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf03919bb01da4ba1b7085cfab29fde2"></a><!-- doxytag: member="maths.h::cosFix16" ref="abf03919bb01da4ba1b7085cfab29fde2" args="(value)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#abf03919bb01da4ba1b7085cfab29fde2">cosFix16</a>(value)&#160;&#160;&#160;sintab16[((value) + 256) &amp; 1023]</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute cosinus of specified value and return it as fix16.<br/>
- The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a0bb7ef633c3b6bcff1903ed20b3917f8">FIX32</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>) ((value) * (1 &lt;&lt; FIX32_FRAC_BITS)))</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix32.  <a href="#a0bb7ef633c3b6bcff1903ed20b3917f8"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b77230e6703913d9887b2c4ba602665"></a><!-- doxytag: member="maths.h::V2u16" ref="a7b77230e6703913d9887b2c4ba602665" args="" -->
@@ -364,12 +259,120 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divu instruction (unsigned 32/16=16:16) access using inline assembly to process op1/op2 operation and op1op2 at same time.  <a href="#aa88daac11d54ff8846ac726491e5cdfb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a4b1eae35655f7cca5d7b02ec71860ea2">divmods</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> op1, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> op2)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct divs instruction (signed 32/16=16:16) access using inline assembly to process op1/op2 operation and op1op2 at same time.  <a href="#a4b1eae35655f7cca5d7b02ec71860ea2"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea246712c83eee3385ad34de5a2781bd"></a><!-- doxytag: member="maths.h::intToFix16" ref="aea246712c83eee3385ad34de5a2781bd" args="(s16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aea246712c83eee3385ad34de5a2781bd">intToFix16</a> (<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert integer to fix16. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ad177b878375bb74b372c6b21185219"></a><!-- doxytag: member="maths.h::fix16ToInt" ref="a6ad177b878375bb74b372c6b21185219" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a6ad177b878375bb74b372c6b21185219">fix16ToInt</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix16 to integer. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f8f82b360648008267d1d0dc110e15c"></a><!-- doxytag: member="maths.h::fix16ToFix32" ref="a5f8f82b360648008267d1d0dc110e15c" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a5f8f82b360648008267d1d0dc110e15c">fix16ToFix32</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified fix16 value to fix32. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a714f1a00931798b46aae24731a8ca04b"></a><!-- doxytag: member="maths.h::fix16Round" ref="a714f1a00931798b46aae24731a8ca04b" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a714f1a00931798b46aae24731a8ca04b">fix16Round</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round the specified value to nearest integer (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d811e5271985d91057b82196029f8b7"></a><!-- doxytag: member="maths.h::fix16ToRoundedInt" ref="a6d811e5271985d91057b82196029f8b7" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a6d811e5271985d91057b82196029f8b7">fix16ToRoundedInt</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round and convert the specified fix16 value to integer. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6aef5deefa91415690bbce099b21d5b1"></a><!-- doxytag: member="maths.h::fix16Frac" ref="a6aef5deefa91415690bbce099b21d5b1" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a6aef5deefa91415690bbce099b21d5b1">fix16Frac</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return fractional part of the specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ac8ca380c7a5ca72bfe22e1537a8a92"></a><!-- doxytag: member="maths.h::fix16Int" ref="a2ac8ca380c7a5ca72bfe22e1537a8a92" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a2ac8ca380c7a5ca72bfe22e1537a8a92">fix16Int</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return integer part of the specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b3c5a94284c87344e2b9f086f3b57c3"></a><!-- doxytag: member="maths.h::fix16Add" ref="a7b3c5a94284c87344e2b9f086f3b57c3" args="(fix16 val1, fix16 val2)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a7b3c5a94284c87344e2b9f086f3b57c3">fix16Add</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val1, <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the addition of val1 and val2 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79582e3fb7dd7bcf0a0608b1d81a10eb"></a><!-- doxytag: member="maths.h::fix16Sub" ref="a79582e3fb7dd7bcf0a0608b1d81a10eb" args="(fix16 val1, fix16 val2)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a79582e3fb7dd7bcf0a0608b1d81a10eb">fix16Sub</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val1, <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the substraction of val2 from val1 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39127ef40009ca676c9284849323f149"></a><!-- doxytag: member="maths.h::fix16Neg" ref="a39127ef40009ca676c9284849323f149" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a39127ef40009ca676c9284849323f149">fix16Neg</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return negate of specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a646736bb48273f284d8ebffea515328b"></a><!-- doxytag: member="maths.h::fix16Mul" ref="a646736bb48273f284d8ebffea515328b" args="(fix16 val1, fix16 val2)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a646736bb48273f284d8ebffea515328b">fix16Mul</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val1, <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the multiplication of val1 and val2 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a19b854a8f7dcacf184a375aafc480b93"></a><!-- doxytag: member="maths.h::fix16Div" ref="a19b854a8f7dcacf184a375aafc480b93" args="(fix16 val1, fix16 val2)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a19b854a8f7dcacf184a375aafc480b93">fix16Div</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val1, <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the division of val1 by val2 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc05dc7161b65da60b7db24ad158be72"></a><!-- doxytag: member="maths.h::fix16Avg" ref="acc05dc7161b65da60b7db24ad158be72" args="(fix16 val1, fix16 val2)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#acc05dc7161b65da60b7db24ad158be72">fix16Avg</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val1, <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the average of val1 by val2 (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a516241b3236afccc9bd61f3359601eae"></a><!-- doxytag: member="maths.h::fix16Log2" ref="a516241b3236afccc9bd61f3359601eae" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a516241b3236afccc9bd61f3359601eae">fix16Log2</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the Log2 of specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a933bfe079ee1395b9a5fc7abd7a87c1d"></a><!-- doxytag: member="maths.h::fix16Log10" ref="a933bfe079ee1395b9a5fc7abd7a87c1d" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a933bfe079ee1395b9a5fc7abd7a87c1d">fix16Log10</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the Log10 of specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3524b12cd138be352dd277c8f7866b08"></a><!-- doxytag: member="maths.h::fix16Sqrt" ref="a3524b12cd138be352dd277c8f7866b08" args="(fix16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a3524b12cd138be352dd277c8f7866b08">fix16Sqrt</a> (<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the root square of specified value (fix16). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01808fa169f3ef8e782bf9dd1f78dfb5"></a><!-- doxytag: member="maths.h::sinFix16" ref="a01808fa169f3ef8e782bf9dd1f78dfb5" args="(u16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a01808fa169f3ef8e782bf9dd1f78dfb5">sinFix16</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute sinus of specified value and return it as fix16.<br/>
+ The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdc441530d3eff95fe15f7a8bdf5839c"></a><!-- doxytag: member="maths.h::cosFix16" ref="afdc441530d3eff95fe15f7a8bdf5839c" args="(u16 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#afdc441530d3eff95fe15f7a8bdf5839c">cosFix16</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute cosinus of specified value and return it as fix16.<br/>
+ The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40733dac4b00e5b2d0df7c1bd00f2499"></a><!-- doxytag: member="maths.h::intToFix32" ref="a40733dac4b00e5b2d0df7c1bd00f2499" args="(s32 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a40733dac4b00e5b2d0df7c1bd00f2499">intToFix32</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert integer to fix32. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e6641f93314e9195aa55b86f7468a9c"></a><!-- doxytag: member="maths.h::fix32ToInt" ref="a6e6641f93314e9195aa55b86f7468a9c" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a6e6641f93314e9195aa55b86f7468a9c">fix32ToInt</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert fix32 to integer. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca93f71f99ffc691f855e69ac351c665"></a><!-- doxytag: member="maths.h::fix32ToFix16" ref="aca93f71f99ffc691f855e69ac351c665" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aca93f71f99ffc691f855e69ac351c665">fix32ToFix16</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified fix32 value to fix16. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af27ee55006ff337e1b4773422608362d"></a><!-- doxytag: member="maths.h::fix32Round" ref="af27ee55006ff337e1b4773422608362d" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#af27ee55006ff337e1b4773422608362d">fix32Round</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round the specified value to nearest integer (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5da7c52c523739520720ff3db54e728"></a><!-- doxytag: member="maths.h::fix32ToRoundedInt" ref="ac5da7c52c523739520720ff3db54e728" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ac5da7c52c523739520720ff3db54e728">fix32ToRoundedInt</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round and convert the specified fix32 value to integer. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b723c1b1e885e06c3ae1e8e6105b477"></a><!-- doxytag: member="maths.h::fix32Frac" ref="a0b723c1b1e885e06c3ae1e8e6105b477" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a0b723c1b1e885e06c3ae1e8e6105b477">fix32Frac</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return fractional part of the specified value (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a32300c26ca305e20083bd9f87148da51"></a><!-- doxytag: member="maths.h::fix32Int" ref="a32300c26ca305e20083bd9f87148da51" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a32300c26ca305e20083bd9f87148da51">fix32Int</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return integer part of the specified value (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4051ab093b9c2808d4af8bdf9388efff"></a><!-- doxytag: member="maths.h::fix32Add" ref="a4051ab093b9c2808d4af8bdf9388efff" args="(fix32 val1, fix32 val2)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a4051ab093b9c2808d4af8bdf9388efff">fix32Add</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val1, <a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the addition of val1 and val2 (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42983ac90bd1dd653ad4a0769517a5fa"></a><!-- doxytag: member="maths.h::fix32Sub" ref="a42983ac90bd1dd653ad4a0769517a5fa" args="(fix32 val1, fix32 val2)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a42983ac90bd1dd653ad4a0769517a5fa">fix32Sub</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val1, <a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the substraction of val2 from val1 (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5174fb6fa9ea77ec86b2fa18a1bce42b"></a><!-- doxytag: member="maths.h::fix32Neg" ref="a5174fb6fa9ea77ec86b2fa18a1bce42b" args="(fix32 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a5174fb6fa9ea77ec86b2fa18a1bce42b">fix32Neg</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return negate of specified value (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4592e6339f64a280025958c6e1cfd6cd"></a><!-- doxytag: member="maths.h::fix32Mul" ref="a4592e6339f64a280025958c6e1cfd6cd" args="(fix32 val1, fix32 val2)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a4592e6339f64a280025958c6e1cfd6cd">fix32Mul</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val1, <a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the multiplication of val1 and val2 (fix32).<br/>
+ WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb102e3293ce339c1c2d57294c37e75c"></a><!-- doxytag: member="maths.h::fix32Div" ref="afb102e3293ce339c1c2d57294c37e75c" args="(fix32 val1, fix32 val2)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#afb102e3293ce339c1c2d57294c37e75c">fix32Div</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val1, <a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the division of val1 by val2 (fix32).<br/>
+ WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d74a1930ab90afca24e462ebd2ef213"></a><!-- doxytag: member="maths.h::fix32Avg" ref="a1d74a1930ab90afca24e462ebd2ef213" args="(fix32 val1, fix32 val2)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a1d74a1930ab90afca24e462ebd2ef213">fix32Avg</a> (<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val1, <a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> val2)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the result of the average of val1 by val2 (fix32). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a871ba18165e72f0d797127fb678a9ff3"></a><!-- doxytag: member="maths.h::sinFix32" ref="a871ba18165e72f0d797127fb678a9ff3" args="(u16 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a871ba18165e72f0d797127fb678a9ff3">sinFix32</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute sinus of specified value and return it as fix32.<br/>
+ The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb6e3379bd956cff2733c581e11f9864"></a><!-- doxytag: member="maths.h::cosFix32" ref="aeb6e3379bd956cff2733c581e11f9864" args="(u16 value)" -->
+<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#aeb6e3379bd956cff2733c581e11f9864">cosFix32</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute cosinus of specified value and return it as fix32.<br/>
+ The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#abbbce15df0c9773582c24e76d9435d1e">intToBCD</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary to Decimal conversion.  <a href="#abbbce15df0c9773582c24e76d9435d1e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a45eb4a206ea2f7aaaa20991f866f58c3">distance_approx</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5">getApproximatedDistance</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return euclidean distance approximation for specified vector.<br/>
  The returned distance is not 100% perfect but calculation is fast.  <a href="#a8c288389a266b9e3f5433c9e27629cc5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#adc3c1cdf443368f7aacc4d68a62d0b52">getApproximatedDistanceV</a> (<a class="el" href="struct_vect2_d__s32.html">V2s32</a> *v)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return euclidean distance approximation for specified vector.<br/>
+ The returned distance is not 100% perfect but calculation is fast.  <a href="#adc3c1cdf443368f7aacc4d68a62d0b52"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a106adf2151130b0e25436de93ca1b0d5">getApproximatedLog2</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return 16.16 fixed point *approximation* of log2 of the specified 16.16 fixed point value. Ex:<br/>
  getLog2(1 &lt;&lt; 16) = 0<br/>
@@ -473,7 +476,7 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000070">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000073">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -656,6 +659,32 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
   <table class="params">
     <tr><td class="paramname">dx</td><td>delta X. </td></tr>
     <tr><td class="paramname">dy</td><td>delta Y. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="adc3c1cdf443368f7aacc4d68a62d0b52"></a><!-- doxytag: member="maths.h::getApproximatedDistanceV" ref="adc3c1cdf443368f7aacc4d68a62d0b52" args="(V2s32 *v)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> getApproximatedDistanceV </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_vect2_d__s32.html">V2s32</a> *&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return euclidean distance approximation for specified vector.<br/>
+ The returned distance is not 100% perfect but calculation is fast. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>2D vector. </td></tr>
   </table>
   </dd>
 </dl>
@@ -924,7 +953,7 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="maths_8h.html">maths.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

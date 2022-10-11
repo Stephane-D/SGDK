@@ -121,14 +121,6 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>onFrameChange</b> )
 <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>depth</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9da94fc3c514e9d0beb4b9e614402a3e"></a><!-- doxytag: member="Sprite::attribut" ref="a9da94fc3c514e9d0beb4b9e614402a3e" args="" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>attribut</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34a928151c51a7f48a45ac1d755e7c8d"></a><!-- doxytag: member="Sprite::VDPSpriteIndex" ref="a34a928151c51a7f48a45ac1d755e7c8d" args="" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>VDPSpriteIndex</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab12097c9a9e8431ed58f9d413ad80647"></a><!-- doxytag: member="Sprite::lastVDPSprite" ref="ab12097c9a9e8431ed58f9d413ad80647" args="" -->
-<a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>lastVDPSprite</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd780880ba575ccb2a771d89885726fe"></a><!-- doxytag: member="Sprite::lastNumSprite" ref="acd780880ba575ccb2a771d89885726fe" args="" -->
-<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>lastNumSprite</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a01878aba4873910f605102891ec2bd"></a><!-- doxytag: member="Sprite::spriteToHide" ref="a0a01878aba4873910f605102891ec2bd" args="" -->
-<a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><b>spriteToHide</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae65a00b369af59b0bb4b633b81aaa90c"></a><!-- doxytag: member="Sprite::data" ref="ae65a00b369af59b0bb4b633b81aaa90c" args="" -->
 <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c09859f5f18f9d8272171eb43bf66e8"></a><!-- doxytag: member="Sprite::prev" ref="a2c09859f5f18f9d8272171eb43bf66e8" args="" -->
@@ -155,11 +147,6 @@ struct <a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class=
     <tr><td class="paramname">y</td><td>current sprite Y position on screen offseted by 0x80 (internal VDP position) </td></tr>
     <tr><td class="paramname">depth</td><td>current sprite depth (Z) position used for Z sorting </td></tr>
     <tr><td class="paramname">attribut</td><td>sprite specific attribut and allocated VRAM tile index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro) </td></tr>
-    <tr><td class="paramname">VDPSpriteIndex</td><td>index of first allocated VDP sprite (0 when no yet allocated)<br/>
- Number of allocated VDP sprite is defined by definition-&gt;maxNumSprite </td></tr>
-    <tr><td class="paramname">lastVDPSprite</td><td>Pointer to last VDP sprite used by this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (used internally to update link between sprite) </td></tr>
-    <tr><td class="paramname">lastNumSprite</td><td>the number of VDP sprite used by the current frame (internal) </td></tr>
-    <tr><td class="paramname">spriteToHide</td><td>internal </td></tr>
     <tr><td class="paramname">data</td><td>this is a free field for user data, use it for whatever you want (flags, pointer...) </td></tr>
     <tr><td class="paramname">prev</td><td>pointer on previous <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> in list </td></tr>
     <tr><td class="paramname">next</td><td>pointer on next <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> in list</td></tr>
@@ -175,7 +162,7 @@ struct <a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td><td class=
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="struct_sprite.html">Sprite</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:19 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:36 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

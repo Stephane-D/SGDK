@@ -115,17 +115,17 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Create and allocate the new object pool (this method is an alias of <a class="el" href="pool_8h.html#a797c853df941700cfe0771da90483178" title="Create and allocate a new object pool allocator.">POOL_create</a>(..))  <a href="#a4ec340c74c3cf8bb4636f3c6c8932dbc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_object__.html">Object</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a1238544fea02aec304f2da3bd79683d4">OBJ_create</a> (<a class="el" href="struct_pool.html">Pool</a> *pool)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new objet from the given object pool (object must extend basic <a class="el" href="object_8h.html#a32b67ad7134cd31b5ec5ed9c6a2d3978" title="Base object structure.">Object</a> structure)  <a href="#a1238544fea02aec304f2da3bd79683d4"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a685f69a4b95c11d0b462107a0a8afaca">OBJ_release</a> (<a class="el" href="struct_pool.html">Pool</a> *pool, <a class="el" href="struct_object__.html">Object</a> *obj, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> maintainCoherency)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release an objet from the given object pool (object must extend basic <a class="el" href="object_8h.html#a32b67ad7134cd31b5ec5ed9c6a2d3978" title="Base object structure.">Object</a> structure)  <a href="#a685f69a4b95c11d0b462107a0a8afaca"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a4ccf32eed5e3bcd6c91de29ff67cae1d">OBJ_release</a> (<a class="el" href="struct_pool.html">Pool</a> *pool, <a class="el" href="struct_object__.html">Object</a> *object, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> maintainCoherency)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release an objet from the given object pool (object must extend basic <a class="el" href="object_8h.html#a32b67ad7134cd31b5ec5ed9c6a2d3978" title="Base object structure.">Object</a> structure)  <a href="#a4ccf32eed5e3bcd6c91de29ff67cae1d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#aec234d1e900ae4043b7ea3b04290916a">OBJ_updateAll</a> (<a class="el" href="struct_pool.html">Pool</a> *pool)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate over all active objects from the given object pool and call #update() method for each of them.<br/>
- <b>WARNING:</b> You need to always set 'maintainCoherency' to <em>TRUE</em> when using OBJ_release(..) otherwise stack iteration won't work correctly.  <a href="#aec234d1e900ae4043b7ea3b04290916a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#abdc7ee6d9ab3e762d4aa456ebf6a5f3c">OBJ_setInitMethod</a> (<a class="el" href="struct_object__.html">Object</a> *obj, <a class="el" href="object_8h.html#a15b69418a2717503fa46e3e48760b392">ObjectCallback</a> *initMethod)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the initialization method for the given object.  <a href="#abdc7ee6d9ab3e762d4aa456ebf6a5f3c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a552c6474093742e3000920052e7f93a8">OBJ_setUpdateMethod</a> (<a class="el" href="struct_object__.html">Object</a> *obj, <a class="el" href="object_8h.html#a15b69418a2717503fa46e3e48760b392">ObjectCallback</a> *updateMethod)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the update method for the given object.  <a href="#a552c6474093742e3000920052e7f93a8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a7a178f65e80a4032c0036e3e76b25712">OBJ_setEndMethod</a> (<a class="el" href="struct_object__.html">Object</a> *obj, <a class="el" href="object_8h.html#a15b69418a2717503fa46e3e48760b392">ObjectCallback</a> *endMethod)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the ending method for the given object.  <a href="#a7a178f65e80a4032c0036e3e76b25712"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate over all active objects from the given object pool and call <em>update</em> method for each of them.<br/>
+  <a href="#aec234d1e900ae4043b7ea3b04290916a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a96e6c36ff7e2fcd644fdafc0301c7219">OBJ_setInitMethod</a> (<a class="el" href="struct_object__.html">Object</a> *object, <a class="el" href="object_8h.html#a15b69418a2717503fa46e3e48760b392">ObjectCallback</a> *initMethod)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the initialization method for the given object.  <a href="#a96e6c36ff7e2fcd644fdafc0301c7219"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a9de601d71bc7bc77480e8c6396f2efe6">OBJ_setUpdateMethod</a> (<a class="el" href="struct_object__.html">Object</a> *object, <a class="el" href="object_8h.html#a15b69418a2717503fa46e3e48760b392">ObjectCallback</a> *updateMethod)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the update method for the given object.  <a href="#a9de601d71bc7bc77480e8c6396f2efe6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="object_8h.html#a69bc553cdcbab77cc74ab86f72fb949d">OBJ_setEndMethod</a> (<a class="el" href="struct_object__.html">Object</a> *object, <a class="el" href="object_8h.html#a15b69418a2717503fa46e3e48760b392">ObjectCallback</a> *endMethod)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the ending method for the given object.  <a href="#a69bc553cdcbab77cc74ab86f72fb949d"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Base object management unit. </p>
@@ -216,7 +216,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the created object or NULL if an error occured (no more available object in pool or invalid pool). The returned object is initialized to 0</dd></dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a685f69a4b95c11d0b462107a0a8afaca" title="Release an objet from the given object pool (object must extend basic Object structure)">OBJ_release</a>(..) </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a4ccf32eed5e3bcd6c91de29ff67cae1d" title="Release an objet from the given object pool (object must extend basic Object structure)">OBJ_release</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -258,7 +258,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a685f69a4b95c11d0b462107a0a8afaca"></a><!-- doxytag: member="object.h::OBJ_release" ref="a685f69a4b95c11d0b462107a0a8afaca" args="(Pool *pool, Object *obj, bool maintainCoherency)" -->
+<a class="anchor" id="a4ccf32eed5e3bcd6c91de29ff67cae1d"></a><!-- doxytag: member="object.h::OBJ_release" ref="a4ccf32eed5e3bcd6c91de29ff67cae1d" args="(Pool *pool, Object *object, bool maintainCoherency)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -272,7 +272,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="struct_object__.html">Object</a> *&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
+          <td class="paramname"><em>object</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -293,19 +293,19 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>Object pool allocator to release from (see <a class="el" href="pool_8h.html" title="Pool object management unit.">pool.h</a> unit) </td></tr>
-    <tr><td class="paramname">obj</td><td>Object to release (must extend basic <a class="el" href="object_8h.html#a32b67ad7134cd31b5ec5ed9c6a2d3978" title="Base object structure.">Object</a> structure) </td></tr>
-    <tr><td class="paramname">maintainCoherency</td><td>set it to <em>TRUE</em> if you want to keep coherency for stack iteration and use <a class="el" href="object_8h.html#aec234d1e900ae4043b7ea3b04290916a" title="Iterate over all active objects from the given object pool and call #update() method for each of them...">OBJ_updateAll()</a>.<br/>
+    <tr><td class="paramname">object</td><td>Object to release (must extend basic <a class="el" href="object_8h.html#a32b67ad7134cd31b5ec5ed9c6a2d3978" title="Base object structure.">Object</a> structure) </td></tr>
+    <tr><td class="paramname">maintainCoherency</td><td>set it to <em>TRUE</em> if you want to keep coherency for stack iteration and use <a class="el" href="object_8h.html#aec234d1e900ae4043b7ea3b04290916a" title="Iterate over all active objects from the given object pool and call update method for each of them...">OBJ_updateAll()</a>.<br/>
  Set it to <em>FALSE</em> for faster release process if you don't require object iteration through alloc stack.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a1238544fea02aec304f2da3bd79683d4" title="Create a new objet from the given object pool (object must extend basic Object structure)">OBJ_create</a>(..) </dd>
 <dd>
-<a class="el" href="object_8h.html#aec234d1e900ae4043b7ea3b04290916a" title="Iterate over all active objects from the given object pool and call #update() method for each of them...">OBJ_updateAll</a>(..) </dd></dl>
+<a class="el" href="object_8h.html#aec234d1e900ae4043b7ea3b04290916a" title="Iterate over all active objects from the given object pool and call update method for each of them...">OBJ_updateAll</a>(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7a178f65e80a4032c0036e3e76b25712"></a><!-- doxytag: member="object.h::OBJ_setEndMethod" ref="a7a178f65e80a4032c0036e3e76b25712" args="(Object *obj, ObjectCallback *endMethod)" -->
+<a class="anchor" id="a69bc553cdcbab77cc74ab86f72fb949d"></a><!-- doxytag: member="object.h::OBJ_setEndMethod" ref="a69bc553cdcbab77cc74ab86f72fb949d" args="(Object *object, ObjectCallback *endMethod)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -313,7 +313,7 @@ Functions</h2></td></tr>
           <td class="memname">void OBJ_setEndMethod </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_object__.html">Object</a> *&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
+          <td class="paramname"><em>object</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -333,18 +333,18 @@ Functions</h2></td></tr>
 <p>Set the ending method for the given object. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">obj</td><td>Object to set <em>end</em> method for </td></tr>
-    <tr><td class="paramname">initMethod</td><td>the method to set for object destruction (should be called just before object is released)</td></tr>
+    <tr><td class="paramname">object</td><td>Object to set <em>end</em> method for </td></tr>
+    <tr><td class="paramname">endMethod</td><td>the method to set for object destruction (should be called just before object is released)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#abdc7ee6d9ab3e762d4aa456ebf6a5f3c" title="Set the initialization method for the given object.">OBJ_setInitMethod</a>(..) </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a96e6c36ff7e2fcd644fdafc0301c7219" title="Set the initialization method for the given object.">OBJ_setInitMethod</a>(..) </dd>
 <dd>
-<a class="el" href="object_8h.html#a552c6474093742e3000920052e7f93a8" title="Set the update method for the given object.">OBJ_setUpdateMethod</a>(..) </dd></dl>
+<a class="el" href="object_8h.html#a9de601d71bc7bc77480e8c6396f2efe6" title="Set the update method for the given object.">OBJ_setUpdateMethod</a>(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="abdc7ee6d9ab3e762d4aa456ebf6a5f3c"></a><!-- doxytag: member="object.h::OBJ_setInitMethod" ref="abdc7ee6d9ab3e762d4aa456ebf6a5f3c" args="(Object *obj, ObjectCallback *initMethod)" -->
+<a class="anchor" id="a96e6c36ff7e2fcd644fdafc0301c7219"></a><!-- doxytag: member="object.h::OBJ_setInitMethod" ref="a96e6c36ff7e2fcd644fdafc0301c7219" args="(Object *object, ObjectCallback *initMethod)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -352,7 +352,7 @@ Functions</h2></td></tr>
           <td class="memname">void OBJ_setInitMethod </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_object__.html">Object</a> *&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
+          <td class="paramname"><em>object</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -372,18 +372,18 @@ Functions</h2></td></tr>
 <p>Set the initialization method for the given object. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">obj</td><td>Object to set <em>init</em> method for </td></tr>
+    <tr><td class="paramname">object</td><td>Object to set <em>init</em> method for </td></tr>
     <tr><td class="paramname">initMethod</td><td>the method to set for object initialization (should be called after object creation)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a552c6474093742e3000920052e7f93a8" title="Set the update method for the given object.">OBJ_setUpdateMethod</a>(..) </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a9de601d71bc7bc77480e8c6396f2efe6" title="Set the update method for the given object.">OBJ_setUpdateMethod</a>(..) </dd>
 <dd>
-<a class="el" href="object_8h.html#a7a178f65e80a4032c0036e3e76b25712" title="Set the ending method for the given object.">OBJ_setEndMethod</a>(..) </dd></dl>
+<a class="el" href="object_8h.html#a69bc553cdcbab77cc74ab86f72fb949d" title="Set the ending method for the given object.">OBJ_setEndMethod</a>(..) </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a552c6474093742e3000920052e7f93a8"></a><!-- doxytag: member="object.h::OBJ_setUpdateMethod" ref="a552c6474093742e3000920052e7f93a8" args="(Object *obj, ObjectCallback *updateMethod)" -->
+<a class="anchor" id="a9de601d71bc7bc77480e8c6396f2efe6"></a><!-- doxytag: member="object.h::OBJ_setUpdateMethod" ref="a9de601d71bc7bc77480e8c6396f2efe6" args="(Object *object, ObjectCallback *updateMethod)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -391,7 +391,7 @@ Functions</h2></td></tr>
           <td class="memname">void OBJ_setUpdateMethod </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_object__.html">Object</a> *&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
+          <td class="paramname"><em>object</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -411,14 +411,14 @@ Functions</h2></td></tr>
 <p>Set the update method for the given object. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">obj</td><td>Object to set <em>update</em> method for </td></tr>
-    <tr><td class="paramname">initMethod</td><td>the method to set for object update (should be called once per frame)</td></tr>
+    <tr><td class="paramname">object</td><td>Object to set <em>update</em> method for </td></tr>
+    <tr><td class="paramname">updateMethod</td><td>the method to set for object update (should be called once per frame)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#abdc7ee6d9ab3e762d4aa456ebf6a5f3c" title="Set the initialization method for the given object.">OBJ_setInitMethod</a>(..) </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="object_8h.html#a96e6c36ff7e2fcd644fdafc0301c7219" title="Set the initialization method for the given object.">OBJ_setInitMethod</a>(..) </dd>
 <dd>
-<a class="el" href="object_8h.html#a7a178f65e80a4032c0036e3e76b25712" title="Set the ending method for the given object.">OBJ_setEndMethod</a>(..) </dd></dl>
+<a class="el" href="object_8h.html#a69bc553cdcbab77cc74ab86f72fb949d" title="Set the ending method for the given object.">OBJ_setEndMethod</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -437,14 +437,15 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Iterate over all active objects from the given object pool and call #update() method for each of them.<br/>
- <b>WARNING:</b> You need to always set 'maintainCoherency' to <em>TRUE</em> when using OBJ_release(..) otherwise stack iteration won't work correctly. </p>
+<p>Iterate over all active objects from the given object pool and call <em>update</em> method for each of them.<br/>
+ </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">pool</td><td>Object pool to update all objects from. </td></tr>
+    <tr><td class="paramname">pool</td><td>Object pool to update all objects from.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="warning"><dt><b>Warning:</b></dt><dd>You need to always set 'maintainCoherency' to <em>TRUE</em> when using <a class="el" href="object_8h.html#a4ccf32eed5e3bcd6c91de29ff67cae1d" title="Release an objet from the given object pool (object must extend basic Object structure)">OBJ_release</a>(..) otherwise stack iteration won't work correctly. </dd></dl>
 
 </div>
 </div>
@@ -453,7 +454,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="object_8h.html">object.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

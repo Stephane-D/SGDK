@@ -102,9 +102,9 @@ Classes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP sprite definition structure replicating VDP hardware sprite.  <a href="struct_v_d_p_sprite.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8527f39a469ac1c4cd0f6ced21151921"></a><!-- doxytag: member="vdp_spr.h::MAX_VDP_SPRITE" ref="a8527f39a469ac1c4cd0f6ced21151921" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a8527f39a469ac1c4cd0f6ced21151921">MAX_VDP_SPRITE</a>&#160;&#160;&#160;80</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of hardware sprite. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5a718661d3d196f48fe0c36bf3c7ad6"></a><!-- doxytag: member="vdp_spr.h::SAT_MAX_SIZE" ref="ab5a718661d3d196f48fe0c36bf3c7ad6" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#ab5a718661d3d196f48fe0c36bf3c7ad6">SAT_MAX_SIZE</a>&#160;&#160;&#160;80</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum size of <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Attribute Table (128 in VRAM but limited to 80 in VDP anyway) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a605aedd263c7cb685d023033a7d7b856">SPRITE_SIZE</a>(w, h)&#160;&#160;&#160;((((w) - 1) &lt;&lt; 2) | ((h) - 1))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to define sprite size in sprite definition structure.  <a href="#a605aedd263c7cb685d023033a7d7b856"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
@@ -116,11 +116,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#afe789d0b55a715852311dbf92c01eb37">VDP_releaseAllSprites</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release all VDP sprite allocation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba">VDP_allocateSprites</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the specified number of hardware VDP sprites and link them together.  <a href="#a5b9d601b4e96848e1232b592bad057ba"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the specified number of hardware VDP sprites and link them together.<br/>
+  <a href="#a5b9d601b4e96848e1232b592bad057ba"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a758f671284c304640676af27ce7c77ba">VDP_releaseSprites</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> num)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release specified number of VDP sprites.  <a href="#a758f671284c304640676af27ce7c77ba"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a284bb5e25e3e1078a01aac51fd33904e">VDP_getAvailableSprites</a> (void)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of available VDP sprite.  <a href="#a284bb5e25e3e1078a01aac51fd33904e"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of available VDP sprite from the SAT. <b>WARNING:</b> the SAT maximum size is 128 entries in VRAM <b>but</b> the VDP can only display up to 80 (H40 mode) or 64 sprites (H32 mode) at once on the screen.  <a href="#a284bb5e25e3e1078a01aac51fd33904e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#a28808e87500ff12c3e19e7d945907344">VDP_refreshHighestAllocatedSpriteIndex</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and return the highest index of currently allocated VDP sprite.<br/>
  A value of <em>-1</em> mean no VDP <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> are allocated.<br/>
@@ -169,8 +170,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get sprite tile index (use sprite list cache).  <a href="#a8dafb89bf5f3aa2359938bbb7f79c914"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae75c6877c027dcf38cffae8b81496191"></a><!-- doxytag: member="vdp_spr.h::vdpSpriteCache" ref="ae75c6877c027dcf38cffae8b81496191" args="[MAX_VDP_SPRITE]" -->
-<a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#ae75c6877c027dcf38cffae8b81496191">vdpSpriteCache</a> [MAX_VDP_SPRITE]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab527944fcaca0fb13fb62f75c0e02992"></a><!-- doxytag: member="vdp_spr.h::vdpSpriteCache" ref="ab527944fcaca0fb13fb62f75c0e02992" args="[SAT_MAX_SIZE+16]" -->
+<a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#ab527944fcaca0fb13fb62f75c0e02992">vdpSpriteCache</a> [SAT_MAX_SIZE+16]</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">VDP sprite cache. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af453ffc4cda22a0439abf11e4501e4dc"></a><!-- doxytag: member="vdp_spr.h::lastAllocatedVDPSprite" ref="af453ffc4cda22a0439abf11e4501e4dc" args="" -->
 <a class="el" href="struct_v_d_p_sprite.html">VDPSprite</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp__spr_8h.html#af453ffc4cda22a0439abf11e4501e4dc">lastAllocatedVDPSprite</a></td></tr>
@@ -242,7 +243,8 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Allocate the specified number of hardware VDP sprites and link them together. </p>
+<p>Allocate the specified number of hardware VDP sprites and link them together.<br/>
+ </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">num</td><td>Number of VDP sprite to allocate (need to be &gt; 0) </td></tr>
@@ -250,7 +252,8 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the first VDP sprite index where allocation was made.<br/>
- -1 if there is not enough available VDP sprite remaining.</dd></dl>
+ -1 if there is not enough available VDP sprite remaining.<br/>
+ <b>WARNING:</b> VDP can display up to 80 sprites at once on screen in H40 mode only, in H32 mode it's limited to 64 sprites even if we allow to allocate up to 80 (SAT size).</dd></dl>
 <p>This method allocates the specified number of VDP sprite and returns the index of the first allocated sprite in VDP sprite table (see vdpSpriteCache).<br/>
  Sprites are linked together using <em>link</em> field (last sprite ends with link 0).<br/>
  If there is not enough available VDP sprites the allocation operation fails and return -1. NOTE: The last sprite from the allocated list can be retrieved with <em>lastAllocatedVDPSprite</em>, this is to avoid parsing all the list to find it, if we want to link it to a specific sprite for instance.<br/>
@@ -274,8 +277,8 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return the number of available VDP sprite. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together.">VDP_allocateSprites</a>(..) </dd>
+<p>Returns the number of available VDP sprite from the SAT. <b>WARNING:</b> the SAT maximum size is 128 entries in VRAM <b>but</b> the VDP can only display up to 80 (H40 mode) or 64 sprites (H32 mode) at once on the screen. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together. ">VDP_allocateSprites</a>(..) </dd>
 <dd>
 <a class="el" href="vdp__spr_8h.html#a758f671284c304640676af27ce7c77ba" title="Release specified number of VDP sprites.">VDP_releaseSprites</a>(..) </dd></dl>
 
@@ -299,7 +302,7 @@ Variables</h2></td></tr>
 <p>Get sprite horizontal flip (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
   </table>
   </dd>
 </dl>
@@ -324,7 +327,7 @@ Variables</h2></td></tr>
 <p>Get sprite vertical flip (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
   </table>
   </dd>
 </dl>
@@ -349,7 +352,7 @@ Variables</h2></td></tr>
 <p>Get sprite palette (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
   </table>
   </dd>
 </dl>
@@ -374,7 +377,7 @@ Variables</h2></td></tr>
 <p>Get sprite priority (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
   </table>
   </dd>
 </dl>
@@ -399,7 +402,7 @@ Variables</h2></td></tr>
 <p>Get sprite tile index (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
   </table>
   </dd>
 </dl>
@@ -435,7 +438,7 @@ Variables</h2></td></tr>
  Links are created in simple ascending order (1 --&gt; 2 --&gt; 3 --&gt; ...) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the first sprite we want to link (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the first sprite we want to link (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">num</td><td>Number of link to create (if you want to link 2 sprites you should use 1 here) </td></tr>
   </table>
   </dd>
@@ -462,7 +465,7 @@ Variables</h2></td></tr>
 <p>Compute and return the highest index of currently allocated VDP sprite.<br/>
  A value of <em>-1</em> mean no VDP <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> are allocated.<br/>
  This value can be used to define the number of sprite to transfer with VDP_updateSprites(..) method. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together.">VDP_allocateSprites</a>(..) </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together. ">VDP_allocateSprites</a>(..) </dd>
 <dd>
 <a class="el" href="vdp__spr_8h.html#a758f671284c304640676af27ce7c77ba" title="Release specified number of VDP sprites.">VDP_releaseSprites</a>(..) </dd>
 <dd>
@@ -498,13 +501,13 @@ Variables</h2></td></tr>
 <p>Release specified number of VDP sprites. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>The index of the first VDP sprite to release (0 &lt;= index &lt; MAX_SPRITE) </td></tr>
+    <tr><td class="paramname">index</td><td>The index of the first VDP sprite to release (0 &lt;= index &lt; SAT_MAX_SIZE) </td></tr>
     <tr><td class="paramname">num</td><td>Number of VDP sprite to release (should be &gt; 0)</td></tr>
   </table>
   </dd>
 </dl>
 <p>This method release the specified number of VDP sprite from the specified index using the <em>link</em> field information to determine which sprites to release when more than 1 sprite is released.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together.">VDP_allocateSprites</a>(..) </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp__spr_8h.html#a5b9d601b4e96848e1232b592bad057ba" title="Allocate the specified number of hardware VDP sprites and link them together. ">VDP_allocateSprites</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -554,7 +557,7 @@ Variables</h2></td></tr>
 <p>Set a sprite (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to set (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to set (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">x</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position X on screen. </td></tr>
     <tr><td class="paramname">y</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position Y on screen. </td></tr>
     <tr><td class="paramname">size</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> size (see <a class="el" href="vdp__spr_8h.html#a605aedd263c7cb685d023033a7d7b856" title="Helper to define sprite size in sprite definition structure.">SPRITE_SIZE()</a> macro). </td></tr>
@@ -596,7 +599,7 @@ Variables</h2></td></tr>
 <p>Set sprite attributes (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">attribut</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> tile attributes (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro).</td></tr>
   </table>
   </dd>
@@ -641,7 +644,7 @@ Variables</h2></td></tr>
 <p>Set sprite horizontal and vertical flip (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">flipH</td><td>Horizontal flip. Valid values: 0 -&gt; normal, 1 -&gt; flipped. </td></tr>
     <tr><td class="paramname">flipV</td><td>Vertical flip. Valid values: 0 -&gt; normal, 1 -&gt; flipped.</td></tr>
   </table>
@@ -681,7 +684,7 @@ Variables</h2></td></tr>
 <p>Set sprite horizontal flip (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">flipH</td><td>Horizontal flip. Valid values: 0 -&gt; normal, 1 -&gt; flipped.</td></tr>
   </table>
   </dd>
@@ -720,7 +723,7 @@ Variables</h2></td></tr>
 <p>Set sprite vertical flip (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">flipV</td><td>Vertical flip. Valid values: 0 -&gt; normal, 1 -&gt; flipped.</td></tr>
   </table>
   </dd>
@@ -783,7 +786,7 @@ Variables</h2></td></tr>
 <p>Set a sprite (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to set (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to set (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">x</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position X on screen. </td></tr>
     <tr><td class="paramname">y</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position Y on screen. </td></tr>
     <tr><td class="paramname">size</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> size (see <a class="el" href="vdp__spr_8h.html#a605aedd263c7cb685d023033a7d7b856" title="Helper to define sprite size in sprite definition structure.">SPRITE_SIZE()</a> macro). </td></tr>
@@ -827,7 +830,7 @@ Variables</h2></td></tr>
 <p>Set sprite link (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify link (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify link (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">link</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> link (index of next sprite, 0 for end).</td></tr>
   </table>
   </dd>
@@ -866,7 +869,7 @@ Variables</h2></td></tr>
 <p>Set sprite palette (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">palette</td><td>palette index. Valid values: [0, 3]</td></tr>
   </table>
   </dd>
@@ -911,7 +914,7 @@ Variables</h2></td></tr>
 <p>Set sprite position (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify position (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify position (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">x</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position X. </td></tr>
     <tr><td class="paramname">y</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> position Y.</td></tr>
   </table>
@@ -951,7 +954,7 @@ Variables</h2></td></tr>
 <p>Set sprite priority (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">priority</td><td>sprite priority. Valid values: 0 -&gt; low, 1 -&gt; high</td></tr>
   </table>
   </dd>
@@ -990,7 +993,7 @@ Variables</h2></td></tr>
 <p>Set sprite size (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify size (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify size (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">size</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> size (see <a class="el" href="vdp__spr_8h.html#a605aedd263c7cb685d023033a7d7b856" title="Helper to define sprite size in sprite definition structure.">SPRITE_SIZE()</a> macro).</td></tr>
   </table>
   </dd>
@@ -1029,7 +1032,7 @@ Variables</h2></td></tr>
 <p>Set sprite tile index (use sprite list cache). </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; MAX_VDP_SPRITE). </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the sprite to modify attributes (should be &lt; SAT_MAX_SIZE). </td></tr>
     <tr><td class="paramname">tile</td><td>Tile index. Valid values: [0, 2047].</td></tr>
   </table>
   </dd>
@@ -1117,7 +1120,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp__spr_8h.html">vdp_spr.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

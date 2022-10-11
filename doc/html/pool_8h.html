@@ -105,12 +105,12 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the 'object' pool allocator.  <a href="#a2fc981198057975bc1b51bd9d1c64bef"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#a4d985884eae859438bc6717788b0cf9d">POOL_allocate</a> (<a class="el" href="struct_pool.html">Pool</a> *pool)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new 'object' from the specified object pool.  <a href="#a4d985884eae859438bc6717788b0cf9d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#a48e68a8fa17c76d3a20468f89f5589ca">POOL_release</a> (<a class="el" href="struct_pool.html">Pool</a> *pool, void *obj, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> maintainCoherency)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release an objet from the specified object pool.  <a href="#a48e68a8fa17c76d3a20468f89f5589ca"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#a55488257bfd770094d029697541e58cb">POOL_release</a> (<a class="el" href="struct_pool.html">Pool</a> *pool, void *object, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> maintainCoherency)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Release an objet from the specified object pool.  <a href="#a55488257bfd770094d029697541e58cb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#aeff4acaa71903ab679c917e1452afc5d">POOL_getFree</a> (<a class="el" href="struct_pool.html">Pool</a> *pool)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#aa24f92ece9ec336f05e6b642846107ad">POOL_getNumAllocated</a> (<a class="el" href="struct_pool.html">Pool</a> *pool)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#ac4ce07a8dd66c4902027b26492cf6a96">POOL_getFirst</a> (<a class="el" href="struct_pool.html">Pool</a> *pool)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#ac76243e59820e9804acac9ac689bac70">POOL_find</a> (<a class="el" href="struct_pool.html">Pool</a> *pool, void *obj)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pool_8h.html#a276ac3badf8c8401a331760b09ec7400">POOL_find</a> (<a class="el" href="struct_pool.html">Pool</a> *pool, void *object)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="struct_pool.html" title="Object pool allocator structure.">Pool</a> object management unit. </p>
@@ -166,7 +166,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the allocated object or NULL if an error occured (no more available object in pool or invalid pool)</dd></dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="pool_8h.html#a48e68a8fa17c76d3a20468f89f5589ca" title="Release an objet from the specified object pool.">POOL_release</a>(..) </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="pool_8h.html#a55488257bfd770094d029697541e58cb" title="Release an objet from the specified object pool.">POOL_release</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -236,7 +236,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac76243e59820e9804acac9ac689bac70"></a><!-- doxytag: member="pool.h::POOL_find" ref="ac76243e59820e9804acac9ac689bac70" args="(Pool *pool, void *obj)" -->
+<a class="anchor" id="a276ac3badf8c8401a331760b09ec7400"></a><!-- doxytag: member="pool.h::POOL_find" ref="a276ac3badf8c8401a331760b09ec7400" args="(Pool *pool, void *object)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -250,7 +250,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>obj</em>&#160;</td>
+          <td class="paramname"><em>object</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -264,7 +264,7 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>Object pool allocator </td></tr>
-    <tr><td class="paramname">obj</td><td>Object to get slot position </td></tr>
+    <tr><td class="paramname">object</td><td>Object to get slot position </td></tr>
   </table>
   </dd>
 </dl>
@@ -344,7 +344,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a48e68a8fa17c76d3a20468f89f5589ca"></a><!-- doxytag: member="pool.h::POOL_release" ref="a48e68a8fa17c76d3a20468f89f5589ca" args="(Pool *pool, void *obj, bool maintainCoherency)" -->
+<a class="anchor" id="a55488257bfd770094d029697541e58cb"></a><!-- doxytag: member="pool.h::POOL_release" ref="a55488257bfd770094d029697541e58cb" args="(Pool *pool, void *object, bool maintainCoherency)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -358,7 +358,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
+          <td class="paramname"><em>object</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -379,8 +379,8 @@ Functions</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>Object pool allocator </td></tr>
-    <tr><td class="paramname">obj</td><td>Object to release </td></tr>
-    <tr><td class="paramname">maintainCoherency</td><td>set it to <em>TRUE</em> if you want to keep coherency for stack iteration (#see <a class="el" href="pool_8h.html#ac4ce07a8dd66c4902027b26492cf6a96">POOL_getFirst()</a>).<br/>
+    <tr><td class="paramname">object</td><td>Object to release </td></tr>
+    <tr><td class="paramname">maintainCoherency</td><td>set it to <em>TRUE</em> if you want to keep coherency for stack iteration (see <a class="el" href="pool_8h.html#ac4ce07a8dd66c4902027b26492cf6a96">POOL_getFirst()</a>).<br/>
  Set it to <em>FALSE</em> for faster release process if you don't require object iteration through alloc stack.</td></tr>
   </table>
   </dd>
@@ -430,7 +430,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="pool_8h.html">pool.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

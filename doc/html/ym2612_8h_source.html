@@ -89,16 +89,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00017"></a><a class="code" href="ym2612_8h.html#a6b901cf6ea578670a66950255977d81c">00017</a> <span class="preprocessor">#define YM2612_BASEPORT     0xA04000</span>
 <a name="l00018"></a>00018 <span class="preprocessor"></span>
 <a name="l00019"></a>00019 
-<a name="l00024"></a>00024 <span class="keywordtype">void</span> YM2612_reset(<span class="keywordtype">void</span>);
+<a name="l00024"></a>00024 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#a44ad02a42563bc9a9a4bb8f19950e3ef" title="Reset YM2612 chip.">YM2612_reset</a>(<span class="keywordtype">void</span>);
 <a name="l00025"></a>00025 
-<a name="l00036"></a>00036 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   YM2612_read(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port);
-<a name="l00049"></a>00049 <span class="keywordtype">void</span> YM2612_write(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
-<a name="l00053"></a>00053 <span class="keywordtype">void</span> YM2612_writeSafe(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
-<a name="l00068"></a>00068 <span class="keywordtype">void</span> YM2612_writeReg(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> part, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> reg, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
-<a name="l00072"></a>00072 <span class="keywordtype">void</span> YM2612_writeRegSafe(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> part, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> reg, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
+<a name="l00036"></a>00036 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="ym2612_8h.html#afe46552fd893e230e05083a56ea945d1" title="Read YM2612 port.">YM2612_read</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port);
+<a name="l00049"></a>00049 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#adafc3ff2ca9acd711a9a600984bc7e27" title="Write YM2612 port.">YM2612_write</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
+<a name="l00053"></a>00053 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#a2460f52199e78bf12e5a6bf04f455aa9">YM2612_writeSafe</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
+<a name="l00068"></a>00068 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#a0a367a21f236802517c8c500a7585442" title="Set YM2612 register value.">YM2612_writeReg</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> part, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> reg, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
+<a name="l00072"></a>00072 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#ac4c82c0a98cca93e479a78cb7c97c843">YM2612_writeRegSafe</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> part, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> reg, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> data);
 <a name="l00073"></a>00073 
-<a name="l00078"></a>00078 <span class="keywordtype">void</span> YM2612_enableDAC(<span class="keywordtype">void</span>);
-<a name="l00083"></a>00083 <span class="keywordtype">void</span> YM2612_disableDAC(<span class="keywordtype">void</span>);
+<a name="l00078"></a>00078 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#a8493042cd02e244c21cf5da320db70b4" title="Enable YM2612 DAC.">YM2612_enableDAC</a>(<span class="keywordtype">void</span>);
+<a name="l00083"></a>00083 <span class="keywordtype">void</span> <a class="code" href="ym2612_8h.html#a421d28fc9e42a8be52d7d4fa737d2980" title="Disable YM2612 DAC.">YM2612_disableDAC</a>(<span class="keywordtype">void</span>);
 <a name="l00084"></a>00084 
 <a name="l00085"></a>00085 
 <a name="l00086"></a>00086 <span class="preprocessor">#endif // _YM2612_H_</span>
@@ -107,7 +107,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="ym2612_8h.html">ym2612.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

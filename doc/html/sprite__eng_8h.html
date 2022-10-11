@@ -130,19 +130,16 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aee3b0990161602e8e9a20c8686c085bc">COLLISION_TYPE_CIRCLE</a>&#160;&#160;&#160;2</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round circle collision type (<a class="el" href="struct_circle.html" title="Simple Circle structure.">Circle</a> structure) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad45753bdd9efccf1e4c8b904b53126e0"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_INSERT_HEAD" ref="ad45753bdd9efccf1e4c8b904b53126e0" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0">SPR_FLAG_INSERT_HEAD</a>&#160;&#160;&#160;0x4000</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Special flag to indicate that we want to add the sprite at position 0 (head) in the list<br/>
- instead of adding it in last position (default) <br/></td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0">SPR_FLAG_INSERT_HEAD</a>&#160;&#160;&#160;0x2000</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Special flag to indicate that we want to add the sprite at position 0 (head / top) in the list<br/>
+ instead of adding it in last / bottom position (default) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a260568f6bd86a22297a74b93f715b166"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE" ref="a260568f6bd86a22297a74b93f715b166" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166">SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE</a>&#160;&#160;&#160;0x2000</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166">SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE</a>&#160;&#160;&#160;0x1000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable delaying of frame update when we are running out of DMA capacity.<br/>
  By default we delay the frame update when DMA is already full so the frame update happen as soon we have enough DMA capacity to do it. This flag forces frame update to always happen immediately but that may cause graphical glitches. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a977f2941066277659d05eb247e5d5757"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_VRAM_ALLOC" ref="a977f2941066277659d05eb247e5d5757" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757">SPR_FLAG_AUTO_VRAM_ALLOC</a>&#160;&#160;&#160;0x1000</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757">SPR_FLAG_AUTO_VRAM_ALLOC</a>&#160;&#160;&#160;0x0800</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic VRAM allocation. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35e88e2bc35473300ec3f87251a27d39"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_SPRITE_ALLOC" ref="a35e88e2bc35473300ec3f87251a27d39" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39">SPR_FLAG_AUTO_SPRITE_ALLOC</a>&#160;&#160;&#160;0x0800</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic hardware sprite allocation. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a278911126652f8402cb2c7b01249e7f5"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_AUTO_TILE_UPLOAD" ref="a278911126652f8402cb2c7b01249e7f5" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5">SPR_FLAG_AUTO_TILE_UPLOAD</a>&#160;&#160;&#160;0x0400</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable automatic upload of sprite tiles data into VRAM. <br/></td></tr>
@@ -154,7 +151,7 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used).<br/>
  If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a606b4d7e71bfe2f14a6df4e8a9433309"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_MASK" ref="a606b4d7e71bfe2f14a6df4e8a9433309" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">SPR_FLAG_MASK</a>&#160;&#160;&#160;(SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">SPR_FLAG_MASK</a>&#160;&#160;&#160;(SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for sprite flag. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64468da518c5199db61c840ed64a3d35"></a><!-- doxytag: member="sprite_eng.h::SPR_MIN_DEPTH" ref="a64468da518c5199db61c840ed64a3d35" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a64468da518c5199db61c840ed64a3d35">SPR_MIN_DEPTH</a>&#160;&#160;&#160;(-0x8000)</td></tr>
@@ -208,6 +205,14 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a960278abf40809911c67c662d9bbe4a8"></a><!-- doxytag: member="sprite_eng.h::SPR_getNumActiveSprite" ref="a960278abf40809911c67c662d9bbe4a8" args="(void)" -->
 <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a960278abf40809911c67c662d9bbe4a8">SPR_getNumActiveSprite</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of active sprite (number of sprite added with SPR_addSprite(..) or SPR_addSpriteEx(..) methods). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9bce8a29f92320b7d14f47b123df2a3"></a><!-- doxytag: member="sprite_eng.h::SPR_getUsedVDPSprite" ref="aa9bce8a29f92320b7d14f47b123df2a3" args="(void)" -->
+<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aa9bce8a29f92320b7d14f47b123df2a3">SPR_getUsedVDPSprite</a> (void)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the (maximum) number of used VDP sprite from current active sprites (sum of maximum hardware sprite usage from all active sprites). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a076b3e8c59294b0e8c202a2bcdd3dce4">SPR_enableVDPSpriteChecking</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate that we want to prevent adding a new sprite if there is possibly not enough hardware sprite to display it (counting the maximum hardware sprite usage from all active sprites) and so this ensures to always display all of them.<br/>
+ By default the sprite engine allow to add a new sprite even if we may run out of hardware sprite to display all of them, that can lead to some sprite disappearence in some situations but ultimately it allows to handle more active sprites at once.  <a href="#a076b3e8c59294b0e8c202a2bcdd3dce4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#acc195710d7967402e4eb875ca7652cfc">SPR_disableVDPSpriteChecking</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate that we allow the sprite engine to add a new sprite even if we may run out of hardware sprite to display all of them, that can lead to some sprite disappearence in some situation but ultimately it allows to handle more active sprites at once (default behavior).  <a href="#acc195710d7967402e4eb875ca7652cfc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1825e6dbb09a8e552b0bedc821165b6a"></a><!-- doxytag: member="sprite_eng.h::SPR_defragVRAM" ref="a1825e6dbb09a8e552b0bedc821165b6a" args="(void)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a1825e6dbb09a8e552b0bedc821165b6a">SPR_defragVRAM</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Defragment allocated VRAM for sprites, that can help when sprite allocation fail (SPR_addSprite(..) or SPR_addSpriteEx(..) return <em>NULL</em>). <br/></td></tr>
@@ -247,10 +252,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spri
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current sprite frame.  <a href="#a5b992fb79ffb269f8eaaf55e121dc7ea"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aafd20fc33df8a81fc5675e132833e8a8">SPR_nextFrame</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass to the next sprite frame.  <a href="#aafd20fc33df8a81fc5675e132833e8a8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a8c86b9547c954f914123ce6d49f52626">SPR_getAnimationDone</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return TRUE if animation ended / looped.<br/>
+ This can be used with the frame change callback (see <a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..)) to detect the end of sprite animation and do appropriate action if required.  <a href="#a8c86b9547c954f914123ce6d49f52626"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3">SPR_setVRAMTileIndex</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the VRAM tile position reserved for this sprite.  <a href="#a0f9e5a58f7885f0535af1d554d23d2d3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a9b1da6feff3d9f3d9febb0884ff25f1b">SPR_setSpriteTableIndex</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the VDP sprite index to use for this sprite.  <a href="#a9b1da6feff3d9f3d9febb0884ff25f1b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a198bc55589dad6b74ad6fa593b6b35d0">SPR_setAutoTileUpload</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable/disable the automatic upload of sprite tiles data into VRAM.  <a href="#a198bc55589dad6b74ad6fa593b6b35d0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#abcc0480baf7470a71de6b8d01cb4343e">SPR_setDelayedFrameUpdate</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
@@ -352,11 +358,6 @@ Variables</h2></td></tr>
     <tr><td class="paramname">y</td><td>current sprite Y position on screen offseted by 0x80 (internal VDP position) </td></tr>
     <tr><td class="paramname">depth</td><td>current sprite depth (Z) position used for Z sorting </td></tr>
     <tr><td class="paramname">attribut</td><td>sprite specific attribut and allocated VRAM tile index (see <a class="el" href="vdp__tile_8h.html#a227664d5a689f3e02fc11c9fba95f84b" title="Encode tile attributes for tilemap data.">TILE_ATTR_FULL()</a> macro) </td></tr>
-    <tr><td class="paramname">VDPSpriteIndex</td><td>index of first allocated VDP sprite (0 when no yet allocated)<br/>
- Number of allocated VDP sprite is defined by definition-&gt;maxNumSprite </td></tr>
-    <tr><td class="paramname">lastVDPSprite</td><td>Pointer to last VDP sprite used by this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (used internally to update link between sprite) </td></tr>
-    <tr><td class="paramname">lastNumSprite</td><td>the number of VDP sprite used by the current frame (internal) </td></tr>
-    <tr><td class="paramname">spriteToHide</td><td>internal </td></tr>
     <tr><td class="paramname">data</td><td>this is a free field for user data, use it for whatever you want (flags, pointer...) </td></tr>
     <tr><td class="paramname">prev</td><td>pointer on previous <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> in list </td></tr>
     <tr><td class="paramname">next</td><td>pointer on next <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> in list</td></tr>
@@ -449,7 +450,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the new sprite or <em>NULL</em> if the operation failed (some logs can be generated in the KMod console in this case)</dd></dl>
 <p>By default the sprite uses automatic resources allocation (VRAM and hardware sprite) and visibility is set to ON.<br/>
- You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setSpriteTableIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br/>
+ You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br/>
  You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).<br/>
  IMPORTANT NOTE: sprite allocation can fail (return NULL) because of automatic VRAM allocation even if there is enough VRAM available, this can happen because of the VRAM fragmentation.<br/>
  You can use <a class="el" href="sprite__eng_8h.html#a538de73de8a9c6cf3502401cb2bd18c3" title="Adds a new sprite with auto resource allocation enabled and returns it.">SPR_addSpriteSafe</a>(..) method instead so it take care about VRAM fragmentation.</p>
@@ -528,16 +529,14 @@ Variables</h2></td></tr>
  If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite. You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br/>
  <a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757" title="Enable automatic VRAM allocation.">SPR_FLAG_AUTO_VRAM_ALLOC</a> = Enable automatic VRAM allocation (enabled by default)<br/>
  If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <em>attribut</em> parameter or by using the <a class="el" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3" title="Set the VRAM tile position reserved for this sprite.">SPR_setVRAMTileIndex</a>(..) method<br/>
- <a class="el" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39" title="Enable automatic hardware sprite allocation.">SPR_FLAG_AUTO_SPRITE_ALLOC</a> = Enable automatic hardware/VDP sprite allocation (enabled by default)<br/>
- If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <em>spriteIndex</em> parameter or by using the <a class="el" href="sprite__eng_8h.html#a9b1da6feff3d9f3d9febb0884ff25f1b" title="Set the VDP sprite index to use for this sprite.">SPR_setSpriteTableIndex</a>(..) method<br/>
  <a class="el" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5" title="Enable automatic upload of sprite tiles data into VRAM.">SPR_FLAG_AUTO_TILE_UPLOAD</a> = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br/>
  If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM (you can change this setting using <a class="el" href="sprite__eng_8h.html#a198bc55589dad6b74ad6fa593b6b35d0" title="Enable/disable the automatic upload of sprite tiles data into VRAM.">SPR_setAutoTileUpload</a>(..) method).<br/>
- <a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0" title="Special flag to indicate that we want to add the sprite at position 0 (head) in the list  instead of ...">SPR_FLAG_INSERT_HEAD</a> = Allow to insert the sprite at the start/head of the list.<br/>
+ <a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0" title="Special flag to indicate that we want to add the sprite at position 0 (head / top) in the list  inste...">SPR_FLAG_INSERT_HEAD</a> = Allow to insert the sprite at the start/head of the list.<br/>
  When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to <a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(<a class="el" href="sprite__eng_8h.html#a64468da518c5199db61c840ed64a3d35" title="Minimum depth for a sprite (always above others sprites)">SPR_MIN_DEPTH</a>))<br/>
  while default insertion position is at the end of the list (equivalent to <a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(<a class="el" href="sprite__eng_8h.html#a5c27798bbfca646b588f4c5f2a926be4" title="Maximum depth for a sprite (always below others sprites)">SPR_MAX_DEPTH</a>))<br/>
  <br/>
  It's recommended to use the following default settings:<br/>
- SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br/>
+ SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br/>
  </td></tr>
   </table>
   </dd>
@@ -623,16 +622,14 @@ Variables</h2></td></tr>
  If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite (scanline limit). You can set the automatic visibility computation by using SPR_setVisibility(..) method.<br/>
  <a class="el" href="sprite__eng_8h.html#a977f2941066277659d05eb247e5d5757" title="Enable automatic VRAM allocation.">SPR_FLAG_AUTO_VRAM_ALLOC</a> = Enable automatic VRAM allocation (enabled by default)<br/>
  If you don't set this flag you will have to manually define VRAM tile index position for this sprite with the <em>attribut</em> parameter or by using the <a class="el" href="sprite__eng_8h.html#a0f9e5a58f7885f0535af1d554d23d2d3" title="Set the VRAM tile position reserved for this sprite.">SPR_setVRAMTileIndex</a>(..) method<br/>
- <a class="el" href="sprite__eng_8h.html#a35e88e2bc35473300ec3f87251a27d39" title="Enable automatic hardware sprite allocation.">SPR_FLAG_AUTO_SPRITE_ALLOC</a> = Enable automatic hardware/VDP sprite allocation (enabled by default)<br/>
- If you don't set this flag you will have to manually define the hardware sprite table index to reserve with the <em>spriteIndex</em> parameter or by using the <a class="el" href="sprite__eng_8h.html#a9b1da6feff3d9f3d9febb0884ff25f1b" title="Set the VDP sprite index to use for this sprite.">SPR_setSpriteTableIndex</a>(..) method<br/>
  <a class="el" href="sprite__eng_8h.html#a278911126652f8402cb2c7b01249e7f5" title="Enable automatic upload of sprite tiles data into VRAM.">SPR_FLAG_AUTO_TILE_UPLOAD</a> = Enable automatic upload of sprite tiles data into VRAM (enabled by default)<br/>
  If you don't set this flag you will have to manually upload tiles data of sprite into the VRAM (you can change this setting using <a class="el" href="sprite__eng_8h.html#a198bc55589dad6b74ad6fa593b6b35d0" title="Enable/disable the automatic upload of sprite tiles data into VRAM.">SPR_setAutoTileUpload</a>(..) method).<br/>
- <a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0" title="Special flag to indicate that we want to add the sprite at position 0 (head) in the list  instead of ...">SPR_FLAG_INSERT_HEAD</a> = Allow to insert the sprite at the start/head of the list.<br/>
+ <a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0" title="Special flag to indicate that we want to add the sprite at position 0 (head / top) in the list  inste...">SPR_FLAG_INSERT_HEAD</a> = Allow to insert the sprite at the start/head of the list.<br/>
  When you use this flag the sprite will be inserted at the head of the list making it top most (equivalent to <a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(<a class="el" href="sprite__eng_8h.html#a64468da518c5199db61c840ed64a3d35" title="Minimum depth for a sprite (always above others sprites)">SPR_MIN_DEPTH</a>))<br/>
  while default insertion position is at the end of the list (equivalent to <a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(<a class="el" href="sprite__eng_8h.html#a5c27798bbfca646b588f4c5f2a926be4" title="Maximum depth for a sprite (always below others sprites)">SPR_MAX_DEPTH</a>))<br/>
  <br/>
  It's recommended to use the following default settings:<br/>
- SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br/>
+ SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD<br/>
  </td></tr>
   </table>
   </dd>
@@ -698,7 +695,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the new sprite or <em>NULL</em> if the operation failed (some logs can be generated in the KMod console in this case)</dd></dl>
 <p>By default the sprite uses automatic resources allocation (VRAM and hardware sprite) and visibility is set to ON.<br/>
- You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setSpriteTableIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br/>
+ You can change these defaults settings later by calling SPR_setVRAMTileIndex(..), SPR_setAutoTileUpload(..) and SPR_setVisibility(..) methods.<br/>
  You can release all sprite resources by using SPR_releaseSprite(..) or SPR_reset(..).&lt;</p>
 <dl class="see"><dt><b>See also:</b></dt><dd>SPR_addSpriteSafeEx(..) </dd>
 <dd>
@@ -743,7 +740,50 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Use SPR_isVisible(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000079">Deprecated:</a></b></dt><dd>Use SPR_isVisible(..) instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="acc195710d7967402e4eb875ca7652cfc"></a><!-- doxytag: member="sprite_eng.h::SPR_disableVDPSpriteChecking" ref="acc195710d7967402e4eb875ca7652cfc" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SPR_disableVDPSpriteChecking </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Indicate that we allow the sprite engine to add a new sprite even if we may run out of hardware sprite to display all of them, that can lead to some sprite disappearence in some situation but ultimately it allows to handle more active sprites at once (default behavior). </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a076b3e8c59294b0e8c202a2bcdd3dce4" title="Indicate that we want to prevent adding a new sprite if there is possibly not enough hardware sprite ...">SPR_enableVDPSpriteChecking</a>(..) </dd>
+<dd>
+SPR_getNumVDPSprite(..) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a076b3e8c59294b0e8c202a2bcdd3dce4"></a><!-- doxytag: member="sprite_eng.h::SPR_enableVDPSpriteChecking" ref="a076b3e8c59294b0e8c202a2bcdd3dce4" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SPR_enableVDPSpriteChecking </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Indicate that we want to prevent adding a new sprite if there is possibly not enough hardware sprite to display it (counting the maximum hardware sprite usage from all active sprites) and so this ensures to always display all of them.<br/>
+ By default the sprite engine allow to add a new sprite even if we may run out of hardware sprite to display all of them, that can lead to some sprite disappearence in some situations but ultimately it allows to handle more active sprites at once. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#acc195710d7967402e4eb875ca7652cfc" title="Indicate that we allow the sprite engine to add a new sprite even if we may run out of hardware sprit...">SPR_disableVDPSpriteChecking</a>(..) </dd>
+<dd>
+SPR_getNumVDPSprite(..) </dd></dl>
 
 </div>
 </div>
@@ -765,6 +805,27 @@ Variables</h2></td></tr>
 <p>End the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> engine. </p>
 <p>End the sprite engine and release attached resources.<br/>
  This releases the allocated VRAM region and hardware sprites. </p>
+
+</div>
+</div>
+<a class="anchor" id="a8c86b9547c954f914123ce6d49f52626"></a><!-- doxytag: member="sprite_eng.h::SPR_getAnimationDone" ref="a8c86b9547c954f914123ce6d49f52626" args="(Sprite *sprite)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_getAnimationDone </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramname"><em>sprite</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return TRUE if animation ended / looped.<br/>
+ This can be used with the frame change callback (see <a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..)) to detect the end of sprite animation and do appropriate action if required. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..) </dd></dl>
 
 </div>
 </div>
@@ -1053,7 +1114,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>Use SPR_setDepth(SPR_MIN_DEPTH) instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000076">Deprecated:</a></b></dt><dd>Use SPR_setDepth(SPR_MIN_DEPTH) instead </dd></dl>
 
 </div>
 </div>
@@ -1081,7 +1142,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000077">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
 
 </div>
 </div>
@@ -1454,7 +1515,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000078">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
 
 </div>
 </div>
@@ -1597,48 +1658,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a03275096f187a64406f5fc3bd332462f" title="Set sprite Priority attribut.">SPR_setPriority</a>(..) instead </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a9b1da6feff3d9f3d9febb0884ff25f1b"></a><!-- doxytag: member="sprite_eng.h::SPR_setSpriteTableIndex" ref="a9b1da6feff3d9f3d9febb0884ff25f1b" args="(Sprite *sprite, s16 value)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SPR_setSpriteTableIndex </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
-          <td class="paramname"><em>sprite</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Set the VDP sprite index to use for this sprite. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set the VDP <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> index for </td></tr>
-    <tr><td class="paramname">value</td><td>the index of the first sprite in the VDP sprite table used to display this <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> (should be &gt; 0 and &lt; 128).<br/>
- Use <b>-1</b> for auto allocation.<br/>
- </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>FALSE if auto allocation failed (can happen only if sprite is currently active), TRUE otherwise</dd></dl>
-<p>By default the <a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> Engine auto allocate VDP sprite but you can force manual allocation and fix the index of the first VDP sprite to use with this method.<br/>
- If you set the index manually you need to ensure you have enough available contiguous VDP sprites at this index so it can fit the current sprite requirement in VDP sprite. <b>WARNING: you cannot use sprite 0 as it is internally reserved.</b> </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000075">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a03275096f187a64406f5fc3bd332462f" title="Set sprite Priority attribut.">SPR_setPriority</a>(..) instead </dd></dl>
 
 </div>
 </div>
@@ -1851,7 +1871,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sprite__eng_8h.html">sprite_eng.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

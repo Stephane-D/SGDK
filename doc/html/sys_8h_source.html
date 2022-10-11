@@ -161,47 +161,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00168"></a>00168 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#aa5782fca78b4f2efe6c48e4103c51509" title="Soft reset.">SYS_reset</a>(<span class="keywordtype">void</span>);
 <a name="l00175"></a>00175 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#a5b65c43acff239a7ae711f8b14cbed0e" title="Hard reset.">SYS_hardReset</a>(<span class="keywordtype">void</span>);
 <a name="l00176"></a>00176 
-<a name="l00194"></a>00194 <span class="keywordtype">bool</span> SYS_doVBlankProcess(<span class="keywordtype">void</span>);
-<a name="l00225"></a>00225 <span class="keywordtype">bool</span> SYS_doVBlankProcessEx(<a class="code" href="sys_8h.html#ab430c96f46851da92937d54104c6635e" title="Define at which period to do VBlank process (see SYS_doVBlankProcess() method)">VBlankProcessTime</a> processTime);
+<a name="l00194"></a>00194 <span class="keywordtype">bool</span> <a class="code" href="sys_8h.html#a753b47efe923d70d7c897a5b433efdc4" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess</a>(<span class="keywordtype">void</span>);
+<a name="l00225"></a>00225 <span class="keywordtype">bool</span> <a class="code" href="sys_8h.html#abb71a9d2233dd1dda79dfeccb74c8ab5" title="Do all the VBlank processing (DMA transfers, XGM driver tempo, Joypad pooling..)">SYS_doVBlankProcessEx</a>(<a class="code" href="sys_8h.html#ab430c96f46851da92937d54104c6635e" title="Define at which period to do VBlank process (see SYS_doVBlankProcess() method)">VBlankProcessTime</a> processTime);
 <a name="l00226"></a>00226 
 <a name="l00233"></a>00233 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sys_8h.html#af8f4c24b1cce2cef131d0346b4fa6d5f" title="Return current interrupt mask level.">SYS_getInterruptMaskLevel</a>(<span class="keywordtype">void</span>);
 <a name="l00252"></a>00252 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#a810cfc8509ce88565fc002240539f9db" title="Set interrupt mask level.">SYS_setInterruptMaskLevel</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
 <a name="l00253"></a>00253 
 <a name="l00272"></a>00272 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sys_8h.html#a00419727f141d248e171b4f66320bf2c" title="Set the interrupt mask level to given value and return previous level.">SYS_getAndSetInterruptMaskLevel</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value);
 <a name="l00273"></a>00273 
-<a name="l00287"></a>00287 <span class="keywordtype">void</span> SYS_disableInts(<span class="keywordtype">void</span>);
-<a name="l00297"></a>00297 <span class="keywordtype">void</span> SYS_enableInts(<span class="keywordtype">void</span>);
+<a name="l00287"></a>00287 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#a463232079760831964d6231a7880dfa7" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts</a>(<span class="keywordtype">void</span>);
+<a name="l00297"></a>00297 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#a3a832a0d05ffe4e856ebc3dbd53438e2" title="Re-enable interrupts (Vertical, Horizontal and External).">SYS_enableInts</a>(<span class="keywordtype">void</span>);
 <a name="l00298"></a>00298 
-<a name="l00314"></a>00314 <span class="keywordtype">void</span> SYS_setVBlankCallback(VoidCallback *CB);
+<a name="l00314"></a>00314 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#aa8dccd62df36a5d1b54eb169053fbcaf" title="Set user &#39;Vertical Blank&#39; callback method.">SYS_setVBlankCallback</a>(VoidCallback *CB);
 <a name="l00315"></a>00315 
-<a name="l00334"></a>00334 <span class="keywordtype">void</span> SYS_setVIntCallback(VoidCallback *CB);
-<a name="l00353"></a>00353 <span class="keywordtype">void</span> SYS_setHIntCallback(VoidCallback *CB);
-<a name="l00364"></a>00364 <span class="keywordtype">void</span> SYS_setExtIntCallback(VoidCallback *CB);
+<a name="l00334"></a>00334 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#abc2725f07baaf70c775935a3878343a1" title="Set &#39;Vertical Interrupt&#39; callback method, prefer SYS_setVBlankCallback(..) when possible.">SYS_setVIntCallback</a>(VoidCallback *CB);
+<a name="l00353"></a>00353 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#a6804e7c1dab303971561691d0caf0d49" title="Set &#39;Horizontal Interrupt&#39; callback method (need to be prefixed by HINTERRUPT_CALLBACK).">SYS_setHIntCallback</a>(VoidCallback *CB);
+<a name="l00364"></a>00364 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#aa189958e09ac6e0b5ca069cd6a99e856" title="Set External interrupt callback method.">SYS_setExtIntCallback</a>(VoidCallback *CB);
 <a name="l00365"></a>00365 
-<a name="l00372"></a>00372 <span class="keywordtype">bool</span> SYS_isInVInt(<span class="keywordtype">void</span>);
+<a name="l00372"></a>00372 <span class="keywordtype">bool</span> <a class="code" href="sys_8h.html#adb5ccb95eb2b322ea1fb80d6871b82bc" title="Return TRUE if we are in the V-Interrupt process.">SYS_isInVInt</a>(<span class="keywordtype">void</span>);
 <a name="l00373"></a>00373 
-<a name="l00380"></a>00380 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> SYS_isNTSC(<span class="keywordtype">void</span>);
-<a name="l00387"></a>00387 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> SYS_isPAL(<span class="keywordtype">void</span>);
+<a name="l00380"></a>00380 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sys_8h.html#aff9750590a3aa05ba1dc9efa4529b00f" title="Return != 0 if we are on a NTSC system.">SYS_isNTSC</a>(<span class="keywordtype">void</span>);
+<a name="l00387"></a>00387 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sys_8h.html#a7f0520edbbd126d55d6840a7c9c474e1" title="Return != 0 if we are on a PAL system.">SYS_isPAL</a>(<span class="keywordtype">void</span>);
 <a name="l00388"></a>00388 
-<a name="l00396"></a>00396 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> SYS_getFPS(<span class="keywordtype">void</span>);
-<a name="l00404"></a>00404 <a class="code" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> SYS_getFPSAsFloat(<span class="keywordtype">void</span>);
-<a name="l00415"></a>00415 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> SYS_getCPULoad(<span class="keywordtype">void</span>);
-<a name="l00429"></a>00429 <span class="keywordtype">void</span> SYS_showFrameLoad(<span class="keywordtype">bool</span> mean);
-<a name="l00436"></a>00436 <span class="keywordtype">void</span> SYS_hideFrameLoad(<span class="keywordtype">void</span>);
-<a name="l00437"></a>00437 
-<a name="l00438"></a>00438 
-<a name="l00444"></a>00444 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> SYS_computeChecksum(<span class="keywordtype">void</span>);
-<a name="l00449"></a>00449 <span class="keywordtype">bool</span> SYS_isChecksumOk(<span class="keywordtype">void</span>);
-<a name="l00450"></a>00450 
-<a name="l00458"></a>00458 <span class="keywordtype">void</span> SYS_die(<span class="keywordtype">char</span> *err);
-<a name="l00459"></a>00459 
-<a name="l00460"></a>00460 <span class="preprocessor">#endif // _SYS_H_</span>
+<a name="l00396"></a>00396 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> <a class="code" href="sys_8h.html#a876843c56b6ea85412f677ac34826265" title="Returns number of Frame Per Second.">SYS_getFPS</a>(<span class="keywordtype">void</span>);
+<a name="l00404"></a>00404 <a class="code" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> <a class="code" href="sys_8h.html#a8efead9cf4b059b28449895f2ad0e656" title="Returns number of Frame Per Second (fix32 form).">SYS_getFPSAsFloat</a>(<span class="keywordtype">void</span>);
+<a name="l00415"></a>00415 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sys_8h.html#a8d25b812d3e84e3a61a317f2494332cd" title="Return an estimation of CPU frame load (in %)">SYS_getCPULoad</a>(<span class="keywordtype">void</span>);
+<a name="l00416"></a>00416 
+<a name="l00423"></a>00423 <span class="keywordtype">bool</span> <a class="code" href="sys_8h.html#ac6cb85c35f5fac38c07c786024e15f4d" title="Returns TRUE if frame load is currently displayed, FALSE otherwise.">SYS_getShowFrameLoad</a>();
+<a name="l00437"></a>00437 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#a7e50c065da5277fd1bf18056f89cb960" title="Show a cursor indicating current frame load level in scanline (top = 0% load, bottom = 100% load)...">SYS_showFrameLoad</a>(<span class="keywordtype">bool</span> mean);
+<a name="l00444"></a>00444 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#ab3b5aebd08e6d8d083de6b3b53badacd" title="Hide the frame load cursor previously enabled using SYS_showFrameLoad() method.">SYS_hideFrameLoad</a>(<span class="keywordtype">void</span>);
+<a name="l00445"></a>00445 
+<a name="l00446"></a>00446 
+<a name="l00452"></a>00452 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="sys_8h.html#a839015e76f97c2943ede31eb2ea7e41d" title="Computes full ROM checksum and return it.  The checksum is a custom fast 32 bit checksum converted to...">SYS_computeChecksum</a>(<span class="keywordtype">void</span>);
+<a name="l00457"></a>00457 <span class="keywordtype">bool</span> <a class="code" href="sys_8h.html#afa911fc0a8b9becca532a2d46381efe0" title="Returns TRUE if ROM checksum is ok (correspond to rom_head.checksum field)">SYS_isChecksumOk</a>(<span class="keywordtype">void</span>);
+<a name="l00458"></a>00458 
+<a name="l00466"></a>00466 <span class="keywordtype">void</span> <a class="code" href="sys_8h.html#abf16e3876c8375abef07da14d96d7ba9" title="Die with the specified error message.  Program execution is interrupted.">SYS_die</a>(<span class="keywordtype">char</span> *err);
+<a name="l00467"></a>00467 
+<a name="l00468"></a>00468 <span class="preprocessor">#endif // _SYS_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sys_8h.html">sys.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

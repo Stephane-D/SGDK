@@ -164,16 +164,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00141"></a>00141 <span class="preprocessor"></span><span class="preprocessor">#endif  // ENABLE_NEWLIB</span>
 <a name="l00142"></a>00142 <span class="preprocessor"></span>
 <a name="l00143"></a>00143 
-<a name="l00148"></a>00148 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="memory_8h.html#af1046681eb96b853a986edcd8aa524d1" title="Return available memory in bytes.">MEM_getFree</a>(<span class="keywordtype">void</span>);
-<a name="l00153"></a>00153 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="memory_8h.html#abc654d1422e49582037fa6724624d192" title="Return allocated memory in bytes.">MEM_getAllocated</a>(<span class="keywordtype">void</span>);
-<a name="l00158"></a>00158 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  <a class="code" href="memory_8h.html#a3d5db9917df8bf8b7a75cad30624e61c" title="Return largest free memory block in bytes.">MEM_getLargestFreeBlock</a>(<span class="keywordtype">void</span>);
+<a name="l00148"></a>00148 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  MEM_getFree(<span class="keywordtype">void</span>);
+<a name="l00153"></a>00153 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  MEM_getAllocated(<span class="keywordtype">void</span>);
+<a name="l00158"></a>00158 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>  MEM_getLargestFreeBlock(<span class="keywordtype">void</span>);
 <a name="l00159"></a>00159 
-<a name="l00171"></a>00171 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a387e9ad01cd0ef43525665d14d0c5edd" title="Deallocate space in memory.">MEM_free</a>(<span class="keywordtype">void</span> *ptr);
-<a name="l00186"></a>00186 <span class="keywordtype">void</span>* <a class="code" href="memory_8h.html#ac5af5520a6c36967fe5f82f86223773f" title="Allocate memory block.">MEM_alloc</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
-<a name="l00203"></a>00203  <span class="keywordtype">void</span>* <a class="code" href="memory_8h.html#ad35e8b194659d2dc827a2750d23e9202" title="Allocate memory block at a specific address (useful for short addressing or fixed low level working a...">MEM_allocAt</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> addr, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00171"></a>00171 <span class="keywordtype">void</span> MEM_free(<span class="keywordtype">void</span> *ptr);
+<a name="l00186"></a>00186 <span class="keywordtype">void</span>* MEM_alloc(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00203"></a>00203  <span class="keywordtype">void</span>* MEM_allocAt(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> addr, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
 <a name="l00204"></a>00204 
-<a name="l00210"></a>00210 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a1a15d8b6b403cf58d7e63d9433c6784b" title="Pack all free blocks and reset allocation search from start of heap.  You can call this method before...">MEM_pack</a>(<span class="keywordtype">void</span>);
-<a name="l00217"></a>00217 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a6b6655c217217d5fc00e320e342686c6" title="Show memory dump.">MEM_dump</a>(<span class="keywordtype">void</span>);
+<a name="l00210"></a>00210 <span class="keywordtype">void</span> MEM_pack(<span class="keywordtype">void</span>);
+<a name="l00217"></a>00217 <span class="keywordtype">void</span> MEM_dump(<span class="keywordtype">void</span>);
 <a name="l00218"></a>00218 
 <a name="l00219"></a>00219 <span class="preprocessor">#if (ENABLE_NEWLIB == 0)</span>
 <a name="l00220"></a>00220 <span class="preprocessor"></span>
@@ -188,15 +188,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00280"></a>00280 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy</a>(<span class="keywordtype">void</span> *to, <span class="keyword">const</span> <span class="keywordtype">void</span> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
 <a name="l00281"></a>00281 <span class="preprocessor">#endif  // ENABLE_NEWLIB</span>
 <a name="l00282"></a>00282 <span class="preprocessor"></span>
-<a name="l00286"></a>00286 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a07223805c62a6615057a38da2e6208a6">memcpyU16</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00290"></a>00290 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#ab212f3a38543454e669f7f63a27514a3">memcpyU32</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00286"></a>00286 <span class="keywordtype">void</span> memcpyU16(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00290"></a>00290 <span class="keywordtype">void</span> memcpyU32(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
 <a name="l00291"></a>00291 
-<a name="l00295"></a>00295 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a092c306ccba13e2970cece82dbf501a2">fastMemset</a>(<span class="keywordtype">void</span> *to, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00299"></a>00299 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#aa99a28ff0c620c28d5543e4e6fb08218">fastMemsetU16</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00303"></a>00303 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#ae31bba5d858e0d228bc3321301ef6c97">fastMemsetU32</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *to, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00307"></a>00307 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a743e3d1f88c4f7612950bab964035473">fastMemcpy</a>(<span class="keywordtype">void</span> *to, <span class="keyword">const</span> <span class="keywordtype">void</span> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00311"></a>00311 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a11dbbb94040958baf312b1f578e3f787">fastMemcpyU16</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
-<a name="l00315"></a>00315 <span class="keywordtype">void</span> <a class="code" href="memory_8h.html#a4e605e65fd0bc8b0cbbdfdaa458f7976">fastMemcpyU32</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00295"></a>00295 <span class="keywordtype">void</span> fastMemset(<span class="keywordtype">void</span> *to, <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00299"></a>00299 <span class="keywordtype">void</span> fastMemsetU16(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> value, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00303"></a>00303 <span class="keywordtype">void</span> fastMemsetU32(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *to, <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00307"></a>00307 <span class="keywordtype">void</span> fastMemcpy(<span class="keywordtype">void</span> *to, <span class="keyword">const</span> <span class="keywordtype">void</span> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00311"></a>00311 <span class="keywordtype">void</span> fastMemcpyU16(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
+<a name="l00315"></a>00315 <span class="keywordtype">void</span> fastMemcpyU32(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *to, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> *from, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> len);
 <a name="l00316"></a>00316 
 <a name="l00317"></a>00317 
 <a name="l00318"></a>00318 <span class="preprocessor">#endif // _MEMORY_H_</span>
@@ -205,7 +205,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="memory_8h.html">memory.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

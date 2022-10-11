@@ -105,7 +105,7 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a2e25fe130cf710da4ad800747fdd51f3">LOG_LEVEL_INFO</a>&#160;&#160;&#160;3</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Log for error, warning and info (as memory allocation) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e2996b9179e35f76960ab4f15f85d9c"></a><!-- doxytag: member="config.h::LIB_LOG_LEVEL" ref="a7e2996b9179e35f76960ab4f15f85d9c" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a7e2996b9179e35f76960ab4f15f85d9c">LIB_LOG_LEVEL</a>&#160;&#160;&#160;LOG_LEVEL_WARNING</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a7e2996b9179e35f76960ab4f15f85d9c">LIB_LOG_LEVEL</a>&#160;&#160;&#160;LOG_LEVEL_ERROR</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define library log level (for debug build) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77db44a872ff57297a7f770f1193f0f3"></a><!-- doxytag: member="config.h::LIB_DEBUG" ref="a77db44a872ff57297a7f770f1193f0f3" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a77db44a872ff57297a7f770f1193f0f3">LIB_DEBUG</a>&#160;&#160;&#160;0</td></tr>
@@ -137,19 +137,29 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to have the kit intro logo. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab994ff5c1f0d832e364f82723aaf9e1b"></a><!-- doxytag: member="config.h::MODULE_EVERDRIVE" ref="ab994ff5c1f0d832e364f82723aaf9e1b" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ab994ff5c1f0d832e364f82723aaf9e1b">MODULE_EVERDRIVE</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use EVERDRIVE programming methods (provided by Krikzz).<br/>
- <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use EVERDRIVE programming methods (written by Krikzz). <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a169e5932b65bfb7696b89126d8d44c72"></a><!-- doxytag: member="config.h::MODULE_FAT16" ref="a169e5932b65bfb7696b89126d8d44c72" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a169e5932b65bfb7696b89126d8d44c72">MODULE_FAT16</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use FAT16 methods for Everdrive cart (provided by Krikzz).<br/>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use FAT16 methods for Everdrive cart (written by Krikzz).<br/>
  This cost a bit more than 1 KB of RAM. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94820bb8ad48091e615f56d0a7960e9f"></a><!-- doxytag: member="config.h::MODULE_MEGAWIFI" ref="a94820bb8ad48091e615f56d0a7960e9f" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a94820bb8ad48091e615f56d0a7960e9f">MODULE_MEGAWIFI</a>&#160;&#160;&#160;0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to enable MegaWiFi functions and support code (provided by Jesus Alonso - doragasu) <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a109f389f55385d622875faabcdd26294"></a><!-- doxytag: member="config.h::MODULE_FLASHSAVE" ref="a109f389f55385d622875faabcdd26294" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a109f389f55385d622875faabcdd26294">MODULE_FLASHSAVE</a>&#160;&#160;&#160;1</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to enable Flash Save functions (written by Jesus Alonso - doragasu).<br/>
+ There is no reason to disable it as it doesn't consume extra memory. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66377016459a9c20400ea6f8dd3ec4d1"></a><!-- doxytag: member="config.h::MODULE_CONSOLE" ref="a66377016459a9c20400ea6f8dd3ec4d1" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a66377016459a9c20400ea6f8dd3ec4d1">MODULE_CONSOLE</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to enable the TTY text console module (written by Andreas Dietrich).<br/>
+ It consume about 34 bytes of memory when enabled. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abad68f20e0f26a72db721efc7964e24e"></a><!-- doxytag: member="config.h::MODULE_FRACTAL" ref="abad68f20e0f26a72db721efc7964e24e" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#abad68f20e0f26a72db721efc7964e24e">MODULE_FRACTAL</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use the Fractal sound driver from Aurora Fields.<br/>
  Note that you need to install the module first before enable it (<a href="https://gitlab.com/Natsumi/Fractal-Sound">https://gitlab.com/Natsumi/Fractal-Sound</a>) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac032d233a8ebfcd82fd49d0824eefb18"></a><!-- doxytag: member="config.h::FORCE_INLINE" ref="ac032d233a8ebfcd82fd49d0824eefb18" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ac032d233a8ebfcd82fd49d0824eefb18">FORCE_INLINE</a>&#160;&#160;&#160;inline __attribute__((always_inline))</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">To force method inlining (not sure that GCC does actually care of it) <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Basic SGDK library configuration file. </p>
@@ -178,7 +188,7 @@ Defines</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Sat Sep 10 2022 00:20:18 for sgdk by&#160;
+      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
