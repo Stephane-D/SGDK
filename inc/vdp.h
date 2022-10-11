@@ -1002,7 +1002,7 @@ u16 VDP_getAdjustedVCounter(void);
  * This function actually display the number of time it was called in the last second.<br>
  * i.e: for benchmarking you should call this method only once per frame update.
  *
- * \see #getFPS(..)
+ * \see #SYS_getFPS(..)
  */
 void VDP_showFPS(u16 asFloat);
 /**
