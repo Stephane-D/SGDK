@@ -1383,6 +1383,12 @@ void SPR_update()
         // sprite visible and still in SAT limit ?
         if (visibility && (vdpSpriteInd <= SAT_MAX_SIZE))
         {
+            static const u16 visibilityMask[16] =
+            {
+                0x8000, 0xC000, 0xE000, 0xF000, 0xF800, 0xFC00, 0xFE00, 0xFF00,
+                0xFF80, 0xFFC0, 0xFFE0, 0xFFF0, 0xFFF8, 0xFFFC, 0xFFFE, 0xFFFF
+            };
+
             if (status & NEED_TILES_UPLOAD)
             {
                 loadTiles(sprite);
@@ -1394,59 +1400,119 @@ void SPR_update()
             AnimationFrame* frame = sprite->frame;
             FrameVDPSprite* frameSprite = frame->frameVDPSprites;
             u16 attr = sprite->attribut;
-            s16 num = frame->numSprite;
 
-            if (visibility == VISIBILITY_ON)
+            // so visibility also allow to get the number of sprite
+            visibility &= visibilityMask[frame->numSprite - 1];
+
+            switch(attr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK))
             {
-                while(num--)
-                {
-                    if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
-                    else vdpSprite->y = sprite->y + frameSprite->offsetY;
-                    vdpSprite->size = frameSprite->size;
-                    vdpSprite->link = vdpSpriteInd++;
-                    vdpSprite->attribut = attr;
-                    if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
-                    else vdpSprite->x = sprite->x + frameSprite->offsetX;
-                    vdpSprite++;
-
-                    // increment tile index in attribut field
-                    attr += frameSprite->numTile;
-                    // next
-                    frameSprite++;
-
-#ifdef SPR_DEBUG
-                    logVDPSprite(vdpSpriteInd - 1);
-#endif // SPR_DEBUG
-                }
-            }
-            else
-            {
-                while(num--)
-                {
-                    // current sprite visibility bit is in high bit
-                    if (visibility & 0x8000)
+                case 0:
+                    while(visibility)
                     {
-                        if (attr & TILE_ATTR_VFLIP_MASK) vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
-                        else vdpSprite->y = sprite->y + frameSprite->offsetY;
-                        vdpSprite->size = frameSprite->size;
-                        vdpSprite->link = vdpSpriteInd++;
-                        vdpSprite->attribut = attr;
-                        if (attr & TILE_ATTR_HFLIP_MASK) vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
-                        else vdpSprite->x = sprite->x + frameSprite->offsetX;
-                        vdpSprite++;
-                    }
+                        // current sprite visibility bit is in high bit
+                        if (visibility & 0x8000)
+                        {
+                            vdpSprite->y = sprite->y + frameSprite->offsetY;
+                            vdpSprite->size = frameSprite->size;
+                            vdpSprite->link = vdpSpriteInd++;
+                            vdpSprite->attribut = attr;
+                            vdpSprite->x = sprite->x + frameSprite->offsetX;
+                            vdpSprite++;
+                        }
 
-                    // increment tile index in attribut field
-                    attr += frameSprite->numTile;
-                    // next
-                    frameSprite++;
-                    // next VDP sprite
-                    visibility <<= 1;
+                        // increment tile index in attribut field
+                        attr += frameSprite->numTile;
+                        // next
+                        frameSprite++;
+                        // next VDP sprite
+                        visibility <<= 1;
 
 #ifdef SPR_DEBUG
-                    logVDPSprite(vdpSpriteInd - 1);
+                        logVDPSprite(vdpSpriteInd - 1);
 #endif // SPR_DEBUG
-                }
+                    }
+                    break;
+
+                case TILE_ATTR_HFLIP_MASK:
+                    while(visibility)
+                    {
+                        // current sprite visibility bit is in high bit
+                        if (visibility & 0x8000)
+                        {
+                            vdpSprite->y = sprite->y + frameSprite->offsetY;
+                            vdpSprite->size = frameSprite->size;
+                            vdpSprite->link = vdpSpriteInd++;
+                            vdpSprite->attribut = attr;
+                            vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+                            vdpSprite++;
+                        }
+
+                        // increment tile index in attribut field
+                        attr += frameSprite->numTile;
+                        // next
+                        frameSprite++;
+                        // next VDP sprite
+                        visibility <<= 1;
+
+#ifdef SPR_DEBUG
+                        logVDPSprite(vdpSpriteInd - 1);
+#endif // SPR_DEBUG
+                    }
+                    break;
+
+                case TILE_ATTR_VFLIP_MASK:
+                    while(visibility)
+                    {
+                        // current sprite visibility bit is in high bit
+                        if (visibility & 0x8000)
+                        {
+                            vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
+                            vdpSprite->size = frameSprite->size;
+                            vdpSprite->link = vdpSpriteInd++;
+                            vdpSprite->attribut = attr;
+                            vdpSprite->x = sprite->x + frameSprite->offsetX;
+                            vdpSprite++;
+                        }
+
+                        // increment tile index in attribut field
+                        attr += frameSprite->numTile;
+                        // next
+                        frameSprite++;
+                        // next VDP sprite
+                        visibility <<= 1;
+
+#ifdef SPR_DEBUG
+                        logVDPSprite(vdpSpriteInd - 1);
+#endif // SPR_DEBUG
+                    }
+                    break;
+
+                case (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK):
+                    while(visibility)
+                    {
+                        // current sprite visibility bit is in high bit
+                        if (visibility & 0x8000)
+                        {
+                            vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
+                            vdpSprite->size = frameSprite->size;
+                            vdpSprite->link = vdpSpriteInd++;
+                            vdpSprite->attribut = attr;
+                            vdpSprite->x = sprite->x + frameSprite->offsetXFlip;
+                            vdpSprite++;
+                        }
+
+                        // increment tile index in attribut field
+                        attr += frameSprite->numTile;
+                        // next
+                        frameSprite++;
+                        // next VDP sprite
+                        visibility <<= 1;
+
+#ifdef SPR_DEBUG
+                        logVDPSprite(vdpSpriteInd - 1);
+#endif // SPR_DEBUG
+                    }
+                    break;
             }
         }
 
@@ -1468,12 +1534,21 @@ void SPR_update()
     // something to display ?
     if (vdpSpriteInd > 0)
     {
-        // send sprites to VRAM using DMA queue
-        DMA_queueDmaFast(DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, vdpSpriteInd * (sizeof(VDPSprite) / 2), 2);
         // get back to last sprite
         vdpSprite--;
         // mark as end
         vdpSprite->link = 0;
+        // send sprites to VRAM using DMA queue
+        DMA_queueDmaFast(DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, vdpSpriteInd * (sizeof(VDPSprite) / 2), 2);
+    }
+    // no sprite to display
+    else
+    {
+        // set 1st sprite off screen and mark as end
+        vdpSprite->y = 0;
+        vdpSprite->link = 0;
+        // send sprites to VRAM using DMA queue
+        DMA_queueDmaFast(DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, 1 * (sizeof(VDPSprite) / 2), 2);
     }
 
     END_PROFIL(PROFIL_UPDATE)
@@ -1520,86 +1595,155 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
     u16 visibility;
     const SpriteDefinition* sprDef = sprite->definition;
 
+    const u16 sw = screenWidth;
+    const u16 sh = screenHeight;
+    const u16 w = sprDef->w - 1;
+    const u16 h = sprDef->h - 1;
+    const u16 x = sprite->x - 0x80;
+    const u16 y = sprite->y - 0x80;
+
     // fast visibility computation ?
     if (status & SPR_FLAG_FAST_AUTO_VISIBILITY)
     {
-        const s16 x = sprite->x - 0x80;
-
-        // compute global visibility for sprite
-        if (((x + sprDef->w) > (s16) 0) && (x < (s16) screenWidth))
+        // compute global visibility for sprite (use unsigned for merged <0 test)
+        if (((u16)(x + w) < (u16)(sw + w)) && ((u16)(y + h) < (u16)(sh + h)))
             visibility = VISIBILITY_ON;
         else
             visibility = VISIBILITY_OFF;
 
 #ifdef SPR_DEBUG
-        KLog_S1("  updateVisibility (fast): global x=", x);
+        KLog_S2("  updateVisibility (fast): global x=", x, " y=", y);
         KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
 #endif // SPR_DEBUG
     }
     else
     {
-        AnimationFrame* frame = sprite->frame;
-
-        // attributes
-        u16 attr = sprite->attribut;
-        // xmin relative to sprite pos
-        const s16 xmin = 0x80 - sprite->x;
-        // xmax relative to sprite pos
-        const s16 xmax = screenWidth + xmin;
-        const s16 fw = sprDef->w;
-
 #ifdef SPR_DEBUG
-        KLog_S1("  updateVisibility (slow): global x=", sprite->x);
-        KLog_S1("    frame w=", fw);
+        KLog_S2("  updateVisibility (slow): global x=", x, " y=", y);
+        KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
         KLog_S2("    xmin=", xmin, " xmax=", xmax);
 #endif // SPR_DEBUG
 
-        // sprite is fully visible ? --> set all sprite visible
-        if ((xmin <= 0) && (xmax >= fw)) visibility = VISIBILITY_ON;
-        // sprite is fully hidden ? --> set all sprite to hidden
-        else if ((xmax < 0) || ((xmin - fw) > 0)) visibility = VISIBILITY_OFF;
+        // sprite is fully visible ? --> set all sprite visible (use unsigned for merged <0 test)
+        if ((x < (u16)(sw - w)) && (y < (u16)(sh - h)))
+        {
+            visibility = VISIBILITY_ON;
+
+#ifdef SPR_DEBUG
+            KLog_S2("  updateVisibility (slow): global x=", x, " y=", y);
+            KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
+            KLog_S4("    x=", x, " y=", y, " sw-w=", (u16)(sw-w), " sh-h=", (u16)(sh-h));
+            KLog("    full ON");
+#endif // SPR_DEBUG
+        }
+        // sprite is fully hidden ? --> set all sprite to hidden (use unsigned for merged <0 test)
+        else if (((u16)(x + w) >= (u16)(sw + w)) || ((u16)(y + h) >= (u16)(sh + h)))
+        {
+            visibility = VISIBILITY_OFF;
+
+#ifdef SPR_DEBUG
+            KLog_S2("  updateVisibility (slow): global x=", x, " y=", y);
+            KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
+            KLog_S4("    x+w=", (u16)(x+w), " y+h=", (u16)(y+h), " sw+w=", (u16)(sw+w), " sh+h=", (u16)(sh+h));
+            KLog("    full OFF");
+#endif // SPR_DEBUG
+        }
         else
         {
+            const u16 bx = x + 0x1F;    // max hardware sprite size = 32
+            const u16 by = y + 0x1F;
+            const u16 mx = sw + 0x1F;   // max hardware sprite size = 32
+            const u16 my = sh + 0x1F;
+
+            AnimationFrame* frame = sprite->frame;
             u16 num = frame->numSprite;
             FrameVDPSprite* frameSprite = frame->frameVDPSprites;
             visibility = 0;
 
-            if (attr & TILE_ATTR_HFLIP_MASK)
+#ifdef SPR_DEBUG
+            KLog_S2("  updateVisibility (slow): global x=", x, " y=", y);
+            KLog("    partial");
+            KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
+            KLog_S4("    bx=", bx, " by=", by, " mx=", mx, " my=", my);
+#endif
+
+            switch(sprite->attribut & (TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK))
             {
-                // H flip
-                while(num--)
-                {
-                    // need to be done first
-                    visibility <<= 1;
+                case 0:
+                    while(num--)
+                    {
+                        // need to be done first
+                        visibility <<= 1;
 
-                    s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
-                    s16 x = frameSprite->offsetXFlip;
+                        // compute visibility (use unsigned for merged <0 test)
+                        if (((u16)(frameSprite->offsetX + bx) < mx) && ((u16)(frameSprite->offsetY + by) < my))
+                            visibility |= 1;
 
-                    // compute visibility
-                    if (((x + w) > xmin) && (x < xmax))
-                        visibility |= 1;
+#ifdef SPR_DEBUG
+                        KLog_S4("    offx+bx=", (u16)(frameSprite->offsetX + bx), " offy+by=", (u16)(frameSprite->offsetY + by), " mx=", mx, " my=", my);
+#endif
 
-                    // next
-                    frameSprite++;
-                }
-            }
-            else
-            {
-                while(num--)
-                {
-                    // need to be done first
-                    visibility <<= 1;
+                        // next
+                        frameSprite++;
+                    }
+                    break;
 
-                    s16 w = ((frameSprite->size & 0x0C) << 1) + 8;
-                    s16 x = frameSprite->offsetX;
+                case TILE_ATTR_HFLIP_MASK:
+                    while(num--)
+                    {
+                        // need to be done first
+                        visibility <<= 1;
 
-                    // compute visibility
-                    if (((x + w) > xmin) && (x < xmax))
-                        visibility |= 1;
+                        // compute visibility (use unsigned for merged <0 test)
+                        if (((u16)(frameSprite->offsetXFlip + bx) < mx) && ((u16)(frameSprite->offsetY + by) < my))
+                            visibility |= 1;
 
-                    // next
-                    frameSprite++;
-                }
+#ifdef SPR_DEBUG
+                        KLog_S4("    offx+bx=", (u16)(frameSprite->offsetXFlip + bx), " offy+by=", (u16)(frameSprite->offsetY + by), " mx=", mx, " my=", my);
+#endif
+
+                        // next
+                        frameSprite++;
+                    }
+                    break;
+
+                case TILE_ATTR_VFLIP_MASK:
+                    while(num--)
+                    {
+                        // need to be done first
+                        visibility <<= 1;
+
+                        // compute visibility (use unsigned for merged <0 test)
+                        if (((u16)(frameSprite->offsetX + bx) < mx) && ((u16)(frameSprite->offsetYFlip + by) < my))
+                            visibility |= 1;
+
+#ifdef SPR_DEBUG
+                        KLog_S4("    offx+bx=", (u16)(frameSprite->offsetXFlip + bx), " offy+by=", (u16)(frameSprite->offsetYFlip + by), " mx=", mx, " my=", my);
+#endif
+
+                        // next
+                        frameSprite++;
+                    }
+                    break;
+
+                case TILE_ATTR_HFLIP_MASK | TILE_ATTR_VFLIP_MASK:
+                    while(num--)
+                    {
+                        // need to be done first
+                        visibility <<= 1;
+
+                        // compute visibility (use unsigned for merged <0 test)
+                        if (((u16)(frameSprite->offsetXFlip + bx) < mx) && ((u16)(frameSprite->offsetYFlip + by) < my))
+                            visibility |= 1;
+
+#ifdef SPR_DEBUG
+                        KLog_S4("    offx+bx=", (u16)(frameSprite->offsetXFlip + bx), " offy+by=", (u16)(frameSprite->offsetYFlip + by), " mx=", mx, " my=", my);
+#endif
+
+                        // next
+                        frameSprite++;
+                    }
+                    break;
             }
 
             // so visibility is in high bits
@@ -1642,7 +1786,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
         // not enough DMA capacity to transfer sprite tile data ?
         const u16 dmaCapacity = DMA_getMaxTransferSize();
 
-        if (dmaCapacity && (DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity)
+        if (dmaCapacity && ((DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity))
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
             KLog_U4_("Warning: sprite #", getSpriteIndex(sprite), " update delayed on frame #", vtimer, " - exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes");
@@ -1778,7 +1922,7 @@ static void loadTiles(Sprite* sprite)
         u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
         // unpack in temp buffer obtained from DMA queue
-        if (buf) unpack(compression, (u8*) FAR_SAFE(tileset->tiles, tileset->numTile * 32), buf);
+        if (buf) unpack(compression, (u8*) FAR_SAFE(tileset->tiles, lenInWord * 2), buf);
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         else KLog("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
 #endif
@@ -1798,7 +1942,7 @@ static void loadTiles(Sprite* sprite)
     else
     {
         // just queue DMA operation to transfer tileset data to VRAM
-        DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, tileset->numTile * 32), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, lenInWord * 2), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
 #ifdef SPR_DEBUG
         KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
