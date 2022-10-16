@@ -1,4 +1,3 @@
-
 /**
  *  \file   console.c
  *  \brief  TTY text console
@@ -16,7 +15,8 @@
  *  changed with CON_setTransferMethod()).
  *
  *  One of the use cases are assert messages. To this end, the Genesis state can
- *  be automatically reset before text is displayed (see assert macro below).
+ *  be automatically reset before text is displayed (see assert macro in
+ *  console.h).
  */
 
 // *****************************************************************************
@@ -25,7 +25,6 @@
 //
 // *****************************************************************************
 
-// Console
 #include "config.h"
 
 #if (MODULE_CONSOLE != 0)

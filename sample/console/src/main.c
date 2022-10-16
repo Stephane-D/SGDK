@@ -1,9 +1,11 @@
-
 // *****************************************************************************
 //
 //  Console example
 //
 //  Written in 2022 by Andreas Dietrich
+//
+//  To build this example set MODULE_CONSOLE to 1 in config.h and rebuild the
+//  SGDK library (build_lib.bat).
 //
 // *****************************************************************************
 
@@ -15,6 +17,10 @@
 
 // SGDK
 #include "genesis.h"
+
+#if (MODULE_CONSOLE == 0)
+#error "Set MODULE_CONSOLE to 1 in config.h and rebuild the SGDK library."
+#endif
 
 // Resources
 #include "resources.h"
@@ -97,11 +103,11 @@ void setupWindow()
     VDP_fillTileMapRect(
         WINDOW,
         TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, 8),
-		40-16,
-		0,
-		16,
-		28
-	);
+        40-16,
+        0,
+        16,
+        28
+    );
 }
 
 // -----------------------------------------------------------------------------

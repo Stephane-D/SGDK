@@ -83,7 +83,7 @@ typedef int (*vsnprintf_t)(char *buf, int count, const char *fmt, va_list args);
 
 #if defined(ENABLE_ASSERT_CHECKS) && !defined(NDEBUG)
 #define assert(condition)                                                              \
-    if (! (bool)(u32)(condition) )                                                     \
+    if ( !(condition) )                                                                \
     {                                                                                  \
         CON_reset();                                                                   \
         CON_systemResetOnNextWrite();                                                  \
