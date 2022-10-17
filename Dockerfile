@@ -24,6 +24,8 @@ ENV SGDK_DOCKER=y
 # Create wrappers to execute .exe files using wine
 RUN sed -i 's/\r$//' sgdk/bin/create-bin-wrappers.sh && \  
         chmod +x sgdk/bin/create-bin-wrappers.sh
+        
+RUN sgdk/bin/create-bin-wrappers.sh
 
 # Set-up mount point and make command
 VOLUME /src
