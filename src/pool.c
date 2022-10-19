@@ -151,20 +151,22 @@ void* POOL_allocate(Pool* pool)
 
 void POOL_release(Pool* pool, void* object, bool maintainCoherency)
 {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (object == NULL)
     {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KLog("POOL_release(): failed - trying to release a NULL object !");
+#endif
         return;
     }
 
     // above
     if (pool->free >= &pool->allocStack[pool->size])
     {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         KLog("POOL_release(): failed - pool doesn't contain any object !");
+#endif
         return;
     }
-#endif
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     kprintf("POOL_release: object at position %d released - remaining object = %d", POOL_find(pool, object), POOL_getFree(pool) + 1);
