@@ -76,6 +76,7 @@ public class TMX
     static final String FIELD_IND = "ind";
     static final String FIELD_ID = "id";
 
+    static final String SUFFIX_PRIORITY_SHORT = " prio";
     static final String SUFFIX_PRIORITY = " priority";
     static final String SUFFIX_LOW_PRIORITY = " low";
     static final String SUFFIX_HIGH_PRIORITY = " high";
@@ -176,7 +177,10 @@ public class TMX
             {
                 final Element mainLayer = getElementNamed(layers, layerName);
                 // try to get priority layer
-                final Element priorityLayer = getElementNamed(layers, layerName + SUFFIX_PRIORITY);
+                Element priorityLayer = getElementNamed(layers, layerName + SUFFIX_PRIORITY);
+                // try to get priority layer (with short id this time)
+                if (priorityLayer == null)
+                    priorityLayer = getElementNamed(layers, layerName + SUFFIX_PRIORITY_SHORT);
 
                 // get map data in mapData1
                 mapData1 = getMapData(mainLayer, w, h, file);
