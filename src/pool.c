@@ -153,17 +153,11 @@ void POOL_release(Pool* pool, void* object, bool maintainCoherency)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (object == NULL)
-    {
         KLog("POOL_release(): failed - trying to release a NULL object !");
-        return;
-    }
 
-    // above
+    // empty pool ?
     if (pool->free >= &pool->allocStack[pool->size])
-    {
         KLog("POOL_release(): failed - pool doesn't contain any object !");
-        return;
-    }
 #endif
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)

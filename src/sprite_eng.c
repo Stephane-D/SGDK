@@ -310,17 +310,12 @@ static bool releaseSprite(Sprite* sprite)
     return FALSE;
 }
 
-static bool isSpriteValid(Sprite* sprite, char* methodName)
+static void checkSpriteValid(Sprite* sprite, char* methodName)
 {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (!(sprite->status & ALLOCATED))
-    {
         kprintf("%s: error - sprite at address %p is invalid (not allocated) !", methodName, sprite);
-        return FALSE;
-    }
 #endif
-
-    return TRUE;
 }
 
 Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag)
@@ -635,8 +630,8 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     KLog_U1("SPR_setDefinition: #", getSpriteIndex(sprite));
 #endif // SPR_DEBUG
 
-    if (!isSpriteValid(sprite, "SPR_setDefinition"))
-        return FALSE;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setDefinition");
 
     // nothing to do...
     if (sprite->definition == spriteDef) return TRUE;
@@ -731,8 +726,8 @@ void SPR_setPosition(Sprite* sprite, s16 x, s16 y)
     KLog_U3("SPR_setPosition: #", getSpriteIndex(sprite), "  X=", newx, " Y=", newy);
 #endif // SPR_DEBUG
 
-    if (!isSpriteValid(sprite, "SPR_setPosition"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setPosition");
 
     if ((sprite->x != newx) || (sprite->y != newy))
     {
@@ -751,8 +746,8 @@ void SPR_setHFlip(Sprite* sprite, bool value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setHFlip"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setHFlip");
 
     u16 attr = sprite->attribut;
 
@@ -798,8 +793,8 @@ void SPR_setVFlip(Sprite* sprite, bool value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setVFlip"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setVFlip");
 
     u16 attr = sprite->attribut;
 
@@ -845,8 +840,8 @@ void SPR_setPriority(Sprite* sprite, bool value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setPriority"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setPriority");
 
     const u16 attr = sprite->attribut;
 
@@ -887,8 +882,8 @@ void SPR_setPalette(Sprite* sprite, u16 value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setPalette"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setPalette");
 
     const u16 oldAttribut = sprite->attribut;
     const u16 newAttribut = (oldAttribut & (~TILE_ATTR_PALETTE_MASK)) | (value << TILE_ATTR_PALETTE_SFT);
@@ -909,8 +904,8 @@ void SPR_setDepth(Sprite* sprite, s16 value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setDepth"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setDepth");
 
     // depth changed ?
     if (sprite->depth != value)
@@ -941,8 +936,8 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setAnimAndFrame"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setAnimAndFrame");
 
     if ((sprite->animInd != anim) || (sprite->frameInd != frame))
     {
@@ -985,8 +980,8 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setAnim"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setAnim");
 
     if (sprite->animInd != anim)
     {
@@ -1020,8 +1015,8 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setFrame"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setFrame");
 
     if (sprite->frameInd != frame)
     {
@@ -1052,8 +1047,8 @@ void SPR_nextFrame(Sprite* sprite)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_nextFrame"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_nextFrame");
 
     const Animation *anim = sprite->animation;
     u16 frameInd = sprite->frameInd + 1;
@@ -1080,8 +1075,8 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setVRAMTileIndex"))
-        return FALSE;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setVRAMTileIndex");
 
     s16 newInd;
     u16 status = sprite->status;
@@ -1161,8 +1156,8 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
 
 void SPR_setAutoTileUpload(Sprite* sprite, bool value)
 {
-    if (!isSpriteValid(sprite, "SPR_setAutoTileUpload"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setAutoTileUpload");
 
     if (value) sprite->status |= SPR_FLAG_AUTO_TILE_UPLOAD;
     else sprite->status &= ~SPR_FLAG_AUTO_TILE_UPLOAD;
@@ -1170,8 +1165,8 @@ void SPR_setAutoTileUpload(Sprite* sprite, bool value)
 
 void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value)
 {
-    if (!isSpriteValid(sprite, "SPR_setDelayedFrameUpdate"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setDelayedFrameUpdate");
 
     if (value) sprite->status &= ~SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE;
     else sprite->status |= SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE;
@@ -1179,8 +1174,8 @@ void SPR_setDelayedFrameUpdate(Sprite* sprite, bool value)
 
 void SPR_setFrameChangeCallback(Sprite* sprite, FrameChangeCallback* callback)
 {
-    if (!isSpriteValid(sprite, "SPR_setFrameChangeCallback"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setFrameChangeCallback");
 
     sprite->onFrameChange = callback;
 }
@@ -1201,8 +1196,8 @@ SpriteVisibility SPR_getVisibility(Sprite* sprite)
 
 bool SPR_isVisible(Sprite* sprite, bool recompute)
 {
-    if (!isSpriteValid(sprite, "SPR_isVisible"))
-        return FALSE;
+    // for debug
+    checkSpriteValid(sprite, "SPR_isVisible");
 
     if (recompute)
     {
@@ -1226,8 +1221,8 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
 {
     START_PROFIL
 
-    if (!isSpriteValid(sprite, "SPR_setVisibility"))
-        return;
+    // for debug
+    checkSpriteValid(sprite, "SPR_setVisibility");
 
     u16 status = sprite->status;
 
