@@ -579,6 +579,11 @@ void VDP_setReg(u16 reg, u8 value);
 bool VDP_getEnable(void);
 /**
  *  \brief
+ *      Returns VDP enable state.
+ */
+bool VDP_isEnable(void);
+/**
+ *  \brief
  *      Set VDP enable state.
  *
  *  You can temporary disable VDP to speed up VDP memory transfert.
