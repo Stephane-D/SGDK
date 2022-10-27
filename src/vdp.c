@@ -133,6 +133,10 @@ void VDP_init()
 void VDP_resetScreen()
 {
     u16 i;
+    bool enable = VDP_isEnable();
+
+    // for faster operation
+    VDP_setEnable(FALSE);
 
     // reset video memory (len = 0 is a special value to define 0x10000)
     DMA_doVRamFill(0, 0, 0, 1);
@@ -164,8 +168,10 @@ void VDP_resetScreen()
     }
 
     // load default font
-    if (!VDP_loadFont(&font_default, CPU))
+    if (!VDP_loadFont(&font_default, DMA))
     {
+        VDP_setEnable(TRUE);
+
         KLog("A fatal error occured (not enough memory to reset VDP) !");
 
         // fatal error --> die here (the font did not get loaded so maybe not really useful to show this message...)
@@ -177,6 +183,10 @@ void VDP_resetScreen()
         // stop here
         while(TRUE);
     }
+
+    // re-enable
+    if (enable)
+        VDP_setEnable(TRUE);
 }
 
 
@@ -307,6 +317,11 @@ void VDP_setReg(u16 reg, u8 value)
 bool VDP_getEnable()
 {
     return regValues[0x01] & 0x40;
+}
+
+bool VDP_isEnable()
+{
+    return VDP_getEnable();
 }
 
 void VDP_setEnable(bool value)
