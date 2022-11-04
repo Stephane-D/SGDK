@@ -1136,11 +1136,10 @@ public class ArrayUtil
     public static int readInt(byte[] array, int offset, boolean littleEndian)
     {
         if (littleEndian)
-            return ((array[offset + 0] & 0xFF) << 0) + ((array[offset + 1] & 0xFF) << 8)
-                    + ((array[offset + 2] & 0xFF) << 16) + ((array[offset + 3] & 0xFF) << 24);
+            return ((array[offset + 0] & 0xFF) << 0) + ((array[offset + 1] & 0xFF) << 8) + ((array[offset + 2] & 0xFF) << 16)
+                    + ((array[offset + 3] & 0xFF) << 24);
 
-        return ((array[offset + 0] & 0xFF) << 24) + ((array[offset + 1] & 0xFF) << 16)
-                + ((array[offset + 2] & 0xFF) << 8) + ((array[offset + 3] & 0xFF) << 0);
+        return ((array[offset + 0] & 0xFF) << 24) + ((array[offset + 1] & 0xFF) << 16) + ((array[offset + 2] & 0xFF) << 8) + ((array[offset + 3] & 0xFF) << 0);
     }
 
     /**
@@ -1150,17 +1149,17 @@ public class ArrayUtil
     {
         if (littleEndian)
         {
-            final int v1 = ((array[offset + 0] & 0xFF) << 0) + ((array[offset + 1] & 0xFF) << 8)
-                    + ((array[offset + 2] & 0xFF) << 16) + ((array[offset + 3] & 0xFF) << 24);
-            final int v2 = ((array[offset + 4] & 0xFF) << 0) + ((array[offset + 5] & 0xFF) << 8)
-                    + ((array[offset + 6] & 0xFF) << 16) + ((array[offset + 7] & 0xFF) << 24);
+            final int v1 = ((array[offset + 0] & 0xFF) << 0) + ((array[offset + 1] & 0xFF) << 8) + ((array[offset + 2] & 0xFF) << 16)
+                    + ((array[offset + 3] & 0xFF) << 24);
+            final int v2 = ((array[offset + 4] & 0xFF) << 0) + ((array[offset + 5] & 0xFF) << 8) + ((array[offset + 6] & 0xFF) << 16)
+                    + ((array[offset + 7] & 0xFF) << 24);
             return ((v1 & 0xFFFFFFFFL) << 0) + ((v2 & 0xFFFFFFFFL) << 32);
         }
 
-        final int v1 = ((array[offset + 0] & 0xFF) << 24) + ((array[offset + 1] & 0xFF) << 16)
-                + ((array[offset + 2] & 0xFF) << 8) + ((array[offset + 3] & 0xFF) << 0);
-        final int v2 = ((array[offset + 4] & 0xFF) << 24) + ((array[offset + 5] & 0xFF) << 16)
-                + ((array[offset + 6] & 0xFF) << 8) + ((array[offset + 7] & 0xFF) << 0);
+        final int v1 = ((array[offset + 0] & 0xFF) << 24) + ((array[offset + 1] & 0xFF) << 16) + ((array[offset + 2] & 0xFF) << 8)
+                + ((array[offset + 3] & 0xFF) << 0);
+        final int v2 = ((array[offset + 4] & 0xFF) << 24) + ((array[offset + 5] & 0xFF) << 16) + ((array[offset + 6] & 0xFF) << 8)
+                + ((array[offset + 7] & 0xFF) << 0);
         return ((v1 & 0xFFFFFFFFL) << 32) + ((v2 & 0xFFFFFFFFL) << 0);
     }
 
@@ -1630,8 +1629,7 @@ public class ArrayUtil
      * @param little
      *        little endian order
      */
-    public static double[] byteToDouble(byte[] in, int inOffset, double[] out, int outOffset, int length,
-            boolean little)
+    public static double[] byteToDouble(byte[] in, int inOffset, double[] out, int outOffset, int length, boolean little)
     {
         final int len = getCopyLengthInBytes(in, inOffset, out, outOffset, length) / 8;
         final double[] result = ArrayUtil.allocIfNull(out, outOffset + len);
@@ -1970,5 +1968,213 @@ public class ArrayUtil
     public static byte[] doubleToByte(double[] in)
     {
         return doubleToByte(in, 0, null, 0, -1, false);
+    }
+
+    /**
+     * @param array
+     *        1D array containing values to return as string
+     * @return Return the specified 1D array as string<br>
+     *         Default representation use ':' as separator character<br>
+     *         <br>
+     *         ex : [0,1,2,3,4] --&gt; "0:1:2:3:4"<br>
+     */
+    public static String arrayToString(Object array)
+    {
+        return arrayToString(array, false, false, ":", -1);
+    }
+
+    /**
+     * @param array
+     *        1D array containing values to return as string
+     * @param signed
+     *        input value are signed (only for integer data type)
+     * @param hexa
+     *        set value in resulting string in hexa decimal format (only for integer data type)
+     * @param separator
+     *        specify the separator to use between each array value in resulting string
+     * @param size
+     *        specify the number of significant number to display for float value (-1 means all)
+     * @return Return the specified 1D array as string<br>
+     *         ex : [0,1,2,3,4] --&gt; "0:1:2:3:4"<br>
+     *         ex : [Obj0,Obj1,Obj2,Obj3,Obj4] --&gt; "Obj0:Obj1:Obj2:Obj3:Obj4"<br>
+     */
+    public static String arrayToString(Object array, boolean signed, boolean hexa, String separator, int size)
+    {
+        final int len = getLength(array);
+        final StringBuilder result = new StringBuilder();
+        final int base = hexa ? 16 : 10;
+
+        if (array instanceof byte[])
+        {
+            if (signed)
+            {
+                final byte[] data = (byte[]) array;
+
+                if (len > 0)
+                    result.append(Integer.toString(data[0], base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Integer.toString(data[i], base));
+                }
+            }
+            else
+            {
+                final byte[] data = (byte[]) array;
+
+                if (len > 0)
+                    result.append(Integer.toString(data[0] & 0xFF, base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Integer.toString(data[i] & 0xFF, base));
+                }
+            }
+        }
+        else if (array instanceof short[])
+        {
+            if (signed)
+            {
+                final short[] data = (short[]) array;
+
+                if (len > 0)
+                    result.append(Integer.toString(data[0], base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Integer.toString(data[i], base));
+                }
+            }
+            else
+            {
+                final short[] data = (short[]) array;
+
+                if (len > 0)
+                    result.append(Integer.toString(data[0] & 0xFFFF, base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Integer.toString(data[i] & 0xFFFF, base));
+                }
+            }
+        }
+        else if (array instanceof int[])
+        {
+            if (signed)
+            {
+                final int[] data = (int[]) array;
+
+                if (len > 0)
+                    result.append(Integer.toString(data[0], base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Integer.toString(data[i], base));
+                }
+            }
+            else
+            {
+                final int[] data = (int[]) array;
+
+                if (len > 0)
+                    result.append(Long.toString(data[0] & 0xFFFFFFFFL, base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Long.toString(data[i] & 0xFFFFFFFFL, base));
+                }
+            }
+        }
+        else if (array instanceof long[])
+        {
+            if (signed)
+            {
+                final long[] data = (long[]) array;
+
+                if (len > 0)
+                    result.append(Long.toString(data[0], base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Long.toString(data[i], base));
+                }
+            }
+            else
+            {
+                final long[] data = (long[]) array;
+
+                // we lost highest bit as java doesn't have bigger than long type
+                if (len > 0)
+                    result.append(Long.toString(data[0] & 0x7FFFFFFFFFFFFFFFL, base));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Long.toString(data[i] & 0x7FFFFFFFFFFFFFFFL, base));
+                }
+            }
+        }
+        else if (array instanceof float[])
+        {
+            final float[] data = (float[]) array;
+
+            if (size == -1)
+            {
+                if (len > 0)
+                    result.append(data[0]);
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(data[i]);
+                }
+            }
+            else
+            {
+                if (len > 0)
+                    result.append(Double.toString(MathUtil.roundSignificant(data[0], size, true)));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Double.toString(MathUtil.roundSignificant(data[i], size, true)));
+                }
+            }
+        }
+        else if (array instanceof double[])
+        {
+            final double[] data = (double[]) array;
+
+            if (size == -1)
+            {
+                if (len > 0)
+                    result.append(data[0]);
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(data[i]);
+                }
+            }
+            else
+            {
+                if (len > 0)
+                    result.append(Double.toString(MathUtil.roundSignificant(data[0], size, true)));
+                for (int i = 1; i < len; i++)
+                {
+                    result.append(separator);
+                    result.append(Double.toString(MathUtil.roundSignificant(data[i], size, true)));
+                }
+            }
+        }
+        else
+        {
+            // generic method
+            if (len > 0)
+                result.append(Array.get(array, 0).toString());
+            for (int i = 1; i < len; i++)
+            {
+                result.append(separator);
+                result.append(Array.get(array, i).toString());
+            }
+        }
+
+        return result.toString();
     }
 }
