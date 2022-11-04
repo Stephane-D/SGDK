@@ -616,6 +616,32 @@ public class ImageUtil
         return ((DataBufferInt) db).getData();
     }
 
+    public static byte[] getImageAs8bpp(String imgFile, boolean checkTileAligned, boolean removeRGBPalette) throws Exception
+    {
+        // retrieve basic infos about the image
+        final BasicImageInfo imgInfo = getBasicInfo(imgFile);
+
+        // check size is correct
+        if (checkTileAligned)
+        {
+            if ((imgInfo.w & 7) != 0)
+                throw new IllegalArgumentException("'" + imgFile + "' width is '" + imgInfo.w + ", should be a multiple of 8.");
+            if ((imgInfo.h & 7) != 0)
+                throw new IllegalArgumentException("'" + imgFile + "' height is '" + imgInfo.h + ", should be a multiple of 8.");
+        }
+
+        // true color / RGB image ?
+        if (imgInfo.bpp > 8)
+            return convertRGBTo8bpp(imgFile, removeRGBPalette);
+        else
+        {
+            // get image data
+            final byte[] data = getIndexedPixels(imgFile);
+            // convert to 8 bpp
+            return convertTo8bpp(data, imgInfo.bpp);
+        }
+    }
+
     static Integer getTilePlainColor(int[] argbImage, int imgWidth, int xt, int yt)
     {
         int off = ((yt * 8) * imgWidth) + (xt * 8);
