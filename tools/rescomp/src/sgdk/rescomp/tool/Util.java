@@ -16,8 +16,6 @@ import sgdk.rescomp.type.Basics.SoundDriver;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.FileUtil;
-import sgdk.tool.ImageUtil;
-import sgdk.tool.ImageUtil.BasicImageInfo;
 import sgdk.tool.StringUtil;
 import sgdk.tool.SystemUtil;
 import sgdk.tool.TypeUtil;
@@ -133,30 +131,6 @@ public class Util
             return path;
 
         return FileUtil.getDirectory(baseFile) + path;
-    }
-
-    public static byte[] getImage8bpp(String imgFile, boolean checkTileAligned, boolean removeRGBPalette) throws Exception
-    {
-        // retrieve basic infos about the image
-        final BasicImageInfo imgInfo = ImageUtil.getBasicInfo(imgFile);
-
-        // check size is correct
-        if (checkTileAligned)
-        {
-            if ((imgInfo.w & 7) != 0)
-                throw new IllegalArgumentException("'" + imgFile + "' width is '" + imgInfo.w + ", should be a multiple of 8.");
-            if ((imgInfo.h & 7) != 0)
-                throw new IllegalArgumentException("'" + imgFile + "' height is '" + imgInfo.h + ", should be a multiple of 8.");
-        }
-
-        // true color / RGB image ?
-        if (imgInfo.bpp > 8)
-            return ImageUtil.convertRGBTo8bpp(imgFile, removeRGBPalette);
-
-        // get image data
-        final byte[] data = ImageUtil.getIndexedPixels(imgFile);
-        // convert to 8 bpp
-        return ImageUtil.convertTo8bpp(data, imgInfo.bpp);
     }
 
     public static byte[] sizeAlign(byte[] data, int align, byte fill)
