@@ -2,7 +2,6 @@ package sgdk.tool;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
@@ -12,8 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundUtil
 {
-    public static byte[] getRawDataFromWAV(String wavPath, int bits, int rate, boolean mono, boolean signed,
-            boolean bigEndian) throws UnsupportedAudioFileException, IOException
+    public static byte[] getRawDataFromWAV(String wavPath, int bits, int rate, boolean mono, boolean signed, boolean bigEndian)
+            throws UnsupportedAudioFileException, IOException
     {
         final File wavFile = new File(wavPath);
         final AudioInputStream wavInput = AudioSystem.getAudioInputStream(wavFile);
@@ -38,16 +37,15 @@ public class SoundUtil
         }
     }
 
-    public static AudioInputStream resample(AudioInputStream audioIn, int bits, int rate, boolean mono, boolean signed,
-            boolean bigEndian)
+    public static AudioInputStream resample(AudioInputStream audioIn, int bits, int rate, boolean mono, boolean signed, boolean bigEndian)
     {
         final AudioFormat audioInputFormat = audioIn.getFormat();
         final int channel = mono ? 1 : audioInputFormat.getChannels();
         final int adjRate = ((rate <= 0) ? (int) audioInputFormat.getSampleRate() : rate);
 
         // define target format
-        final AudioFormat dstFormat = new AudioFormat(signed ? Encoding.PCM_SIGNED : Encoding.PCM_UNSIGNED, adjRate,
-                bits, channel, ((bits + 7) / 8) * channel, adjRate, bigEndian);
+        final AudioFormat dstFormat = new AudioFormat(signed ? Encoding.PCM_SIGNED : Encoding.PCM_UNSIGNED, adjRate, bits, channel, ((bits + 7) / 8) * channel,
+                adjRate, bigEndian);
 
         if (!AudioSystem.isConversionSupported(dstFormat, audioInputFormat))
             return null;
