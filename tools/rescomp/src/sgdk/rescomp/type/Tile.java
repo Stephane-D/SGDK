@@ -98,14 +98,32 @@ public class Tile implements Comparable<Tile>
      * @param y
      *        Y position in pixel
      */
-    public static void copyTile(byte[] image8bpp, int imgW, byte[] tile8bpp, int x, int y, int size)
+    public static void setPrioTile(byte[] destImage8bpp, int imgW, int x, int y, int size)
+    {
+        int dstOff = (y * imgW) + x;
+        for (int j = 0; j < size; j++)
+        {
+            for (int i = 0; i < size; i++)
+                destImage8bpp[dstOff++] |= 0x80;
+
+            dstOff += imgW - size;
+        }
+    }
+
+    /**
+     * @param x
+     *        X position in pixel
+     * @param y
+     *        Y position in pixel
+     */
+    public static void copyTile(byte[] destImage8bpp, int imgW, byte[] tile8bpp, int x, int y, int size)
     {
         int dstOff = (y * imgW) + x;
         int srcOff = 0;
         for (int j = 0; j < size; j++)
         {
             for (int i = 0; i < size; i++)
-                image8bpp[dstOff++] = tile8bpp[srcOff++];
+                destImage8bpp[dstOff++] = tile8bpp[srcOff++];
 
             dstOff += imgW - size;
         }
