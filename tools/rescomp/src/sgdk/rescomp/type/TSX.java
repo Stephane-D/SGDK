@@ -12,6 +12,7 @@ import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
 import sgdk.tool.FileUtil;
+import sgdk.tool.ImageUtil;
 import sgdk.tool.StringUtil;
 import sgdk.tool.XMLUtil;
 
@@ -130,7 +131,7 @@ public class TSX
 
         public byte[] getTilesetImage8bpp(boolean cropPalette) throws Exception
         {
-            final byte[] result = Util.getImage8bpp(getTilesetPath(), true, cropPalette);
+            final byte[] result = ImageUtil.getImageAs8bpp(getTilesetPath(), true, cropPalette);
 
             // happen when we couldn't retrieve palette data from RGB image
             if (result == null)
