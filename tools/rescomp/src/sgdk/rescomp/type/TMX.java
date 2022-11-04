@@ -84,6 +84,7 @@ public class TMX
     static final int TMX_HFLIP = (1 << 31);
     static final int TMX_VFLIP = (1 << 30);
     static final int TMX_AXE_FLIP = (1 << 29);
+    static final int TMX_TILE_IND_MASK = 0x0FFFFFFF;
 
     public static class TMXMap
     {
@@ -95,6 +96,11 @@ public class TMX
         public final List<TSXTileset> tsxTilesets;
         public final List<TSXTileset> usedTilesets;
         public final int[] map;
+        // priority map is always 8x78 tile based
+        public final boolean[] prioMap;
+
+        // used internally
+        private final Map<TSXTileset, byte[]> prioTilesets;
 
         public TMXMap(String file, String layerName) throws Exception
         {
@@ -203,8 +209,21 @@ public class TMX
             }
 
             final Set<TSXTileset> usedTilesetsSet = new HashSet<>();
+            final Map<Integer, Integer> prioIndexesMap = new HashMap<>();
+
+            prioTilesets = new HashMap<>();
+
+            // initialize prio indexes map (tile index --> priority info in integer format)
+            prioIndexesMap.put(Integer.valueOf(0), Integer.valueOf(0));
+            prioIndexesMap.put(Integer.valueOf(-1), Integer.valueOf(-1));
+
+            // base tile (8x8) size
+            final int baseTileSize = (tileSize / 8);
 
             map = new int[mapData1.length];
+            // priority map is always 8x8 tile based
+            prioMap = new boolean[map.length * (baseTileSize * baseTileSize)];
+
             int ind = 0;
 
             for (int y = 0; y < h; y++)
@@ -212,7 +231,7 @@ public class TMX
                 for (int x = 0; x < w; x++)
                 {
                     final int v;
-                    final boolean prio;
+                    final int prio;
 
                     // single layer for map data
                     if (singleLayer)
@@ -220,7 +239,7 @@ public class TMX
                         // get map data
                         v = mapData1[ind];
                         // get prio data
-                        prio = mapData2[ind] != 0;
+                        prio = mapData2[ind];
                     }
                     // 2 layers (low and high prio)
                     else
@@ -229,17 +248,16 @@ public class TMX
                         if (mapData2[ind] != 0)
                         {
                             v = mapData2[ind];
-                            prio = true;
+                            prio = -1;
                         }
                         // use low prio map data
                         else
                         {
                             v = mapData1[ind];
-                            prio = false;
+                            prio = 0;
                         }
                     }
 
-                    // final boolean prio = prioData[ind] != 0;
                     final boolean hflip = (v & TMX_HFLIP) != 0;
                     boolean vflip = (v & TMX_VFLIP) != 0;
                     final boolean axeflip = (v & TMX_AXE_FLIP) != 0;
@@ -255,8 +273,12 @@ public class TMX
                             vflip = true;
                     }
 
-                    // we can guess that tile index is never higher than 2^24
-                    final int tileInd = v & 0xFFFFFF;
+                    final int tileInd = v & TMX_TILE_IND_MASK;
+
+                    // we check that tile index is not higher than 2^16 (we store extra attributes in upper word)
+                    if (tileInd > 0xFFFF)
+                        throw new Exception("Tile [" + x + "," + y + "] of layer '" + layerName + "' has an index > 65535 (" + v
+                                + "), maximum supported tile index is 65535");
 
                     // define used TSX tileset
                     if (tileInd != 0)
@@ -280,7 +302,50 @@ public class TMX
                     }
 
                     // store attributes in upper word
-                    map[ind++] = (Tile.TILE_ATTR_FULL(0, prio, vflip, hflip, 0) << 16) | tileInd;
+                    map[ind] = (Tile.TILE_ATTR_FULL(0, false, vflip, hflip, 0) << 16) | tileInd;
+
+                    // get priority data
+                    Integer prioData = prioIndexesMap.get(Integer.valueOf(prio));
+                    // not yet in the map ?
+                    if (prioData == null)
+                    {
+                        // get result
+                        prioData = Integer.valueOf(getPrio(prio, baseTileSize));
+                        // store it in map for next time
+                        prioIndexesMap.put(Integer.valueOf(prio), prioData);
+                    }
+
+                    // get priority data
+                    int data = prioData.intValue();
+
+                    // something to set ?
+                    if (data != 0)
+                    {
+                        // convert to 8x8 tile index
+                        int prioInd = ((y * w * baseTileSize) * baseTileSize) + (x * baseTileSize);
+                        // get mask to test next tile prio
+                        int mask = 1 << (baseTileSize * baseTileSize);
+
+                        // set priority data in priority map
+                        for (int j = 0; j < baseTileSize; j++)
+                        {
+                            for (int i = 0; i < baseTileSize; i++)
+                            {
+                                // set prio
+                                prioMap[prioInd] = (data & mask) != 0;
+
+                                // next tile
+                                mask >>= 1;
+                                prioInd++;
+                            }
+
+                            // next row
+                            prioInd += (w * baseTileSize) - baseTileSize;
+                        }
+                    }
+
+                    // next (meta) tile
+                    ind++;
                 }
             }
 
@@ -296,6 +361,74 @@ public class TMX
                 for (TSXTileset tileset : usedTilesetsSet)
                     System.out.println(tileset);
             }
+        }
+
+        private int getPrio(int ind, int baseTileSize) throws Exception
+        {
+            // special case of blank tile --> all LOW priority
+            if (ind == 0)
+                return 0;
+
+            final TSXTileset tsxTileset = getTSXTilesetFor(ind);
+
+            // not tileset found ? --> assume all HIGH priority
+            if (tsxTileset == null)
+                return -1;
+
+            // get tileset image
+            byte[] prioTileset = prioTilesets.get(tsxTileset);
+
+            // not yet set in map ?
+            if (prioTileset == null)
+            {
+                // load tileset
+                prioTileset = tsxTileset.getTilesetImage8bpp(Compiler.DAGame ? false : true);
+                // add it in map
+                prioTilesets.put(tsxTileset, prioTileset);
+            }
+
+            final int imgW = tsxTileset.imageTileWidth * tileSize;
+            final int imgH = tsxTileset.imageTileHeigt * tileSize;
+            final byte[] imageTile = new byte[8 * 8];
+
+            // get relative tile index
+            int adjTileInd = ind - tsxTileset.startTileIndex;
+            // get X / Y tile position
+            final int yt = adjTileInd / tsxTileset.imageTileWidth;
+            final int xt = adjTileInd % tsxTileset.imageTileWidth;
+            // convert to 8x8 tile index
+            adjTileInd = ((yt * tsxTileset.imageTileWidth * baseTileSize) * baseTileSize) + (xt * baseTileSize);
+            int result = 0;
+
+            // build prio data (8x8 tile based)
+            for (int j = 0; j < baseTileSize; j++)
+            {
+                for (int i = 0; i < baseTileSize; i++)
+                {
+                    // get tile
+                    Tile.getImageTile(prioTileset, imgW, imgH, adjTileInd, 8, imageTile);
+
+                    // check that tile is empty
+                    for (int d : imageTile)
+                    {
+                        // not empty ? --> set prio and stop
+                        if (d != 0)
+                        {
+                            result |= 1;
+                            break;
+                        }
+                    }
+
+                    // next tile
+                    result <<= 1;
+                    adjTileInd++;
+                }
+
+                // next row
+                adjTileInd += (imgW / 8) - baseTileSize;
+            }
+
+            return result;
         }
 
         private TSXTileset getTSXTilesetFor(int tileInd)
@@ -480,20 +613,21 @@ public class TMX
 
             final byte[] baseTile = new byte[tileSize * tileSize];
             final byte[] transformedTile = new byte[tileSize * tileSize];
+            // base tile (8x8) size
+            final int baseTileSize = (tileSize / 8);
 
-            int off = 0;
+            int ind = 0;
             for (int yt = 0; yt < h; yt++)
             {
                 for (int xt = 0; xt < w; xt++)
                 {
-                    final int tile = map[off++];
+                    final int tile = map[ind];
 
                     final int tileInd = tile & 0xFFFFFF;
                     final short tileAttr = (short) ((tile >> 16) & 0xFFFF);
 
                     final boolean hflip = (tileAttr & Tile.TILE_HFLIP_MASK) != 0;
                     final boolean vflip = (tileAttr & Tile.TILE_VFLIP_MASK) != 0;
-                    final boolean prio = (tileAttr & Tile.TILE_PRIORITY_MASK) != 0;
 
                     byte[] imageTile;
 
@@ -510,13 +644,37 @@ public class TMX
                         // get tile
                         imageTile = Tile.getImageTile(tilesets.get(tsxTileset), tsxTileset.imageTileWidth * tileSize, tsxTileset.imageTileHeigt * tileSize,
                                 tileInd - tsxTileset.startTileIndex, tileSize, baseTile);
-                        // need to transform ?
-                        if (hflip || vflip || prio)
-                            imageTile = Tile.transformTile(imageTile, tileSize, hflip, vflip, prio, transformedTile);
+                    }
+
+                    // need to transform ?
+                    if (hflip || vflip)
+                        imageTile = Tile.transformTile(imageTile, tileSize, hflip, vflip, false, transformedTile);
+
+                    // convert to 8x8 tile index
+                    int prioInd = ((yt * w * baseTileSize) * baseTileSize) + (xt * baseTileSize);
+
+                    // set priority
+                    for (int j = 0; j < baseTileSize; j++)
+                    {
+                        for (int i = 0; i < baseTileSize; i++)
+                        {
+                            // priority set on this tile ?
+                            if (prioMap[prioInd])
+                                Tile.setPrioTile(imageTile, tileSize, i * 8, j * 8, 8);
+
+                            // next tile
+                            prioInd++;
+                        }
+
+                        // next row
+                        prioInd += (w * baseTileSize) - baseTileSize;
                     }
 
                     // then copy tile
                     Tile.copyTile(mapImage, mapImageW, imageTile, xt * tileSize, yt * tileSize, tileSize);
+
+                    // next
+                    ind++;
                 }
             }
 
@@ -748,6 +906,7 @@ public class TMX
                 return result;
             }
         }
+
     }
 
     static String getAttribute(Element element, String attrName, String def)
