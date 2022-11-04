@@ -38,7 +38,7 @@ public class Bitmap extends Resource
             throw new IllegalArgumentException("'" + imgFile + "' width is '" + w + ", even width (multiple of 2) required.");
 
         // get 8bpp pixels
-        byte[] data = Util.getImage8bpp(imgFile, false, true);
+        byte[] data = ImageUtil.getImageAs8bpp(imgFile, false, true);
 
         // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
         h = data.length / w;

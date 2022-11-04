@@ -21,7 +21,7 @@ public class Map extends Resource
     public static Map getMap(String id, String imgFile, int mapBase, int metatileSize, List<Tileset> tilesets, Compression compression, boolean addTileset) throws Exception
     {
         // get 8bpp pixels and also check image dimension is aligned to tile
-        final byte[] image = Util.getImage8bpp(imgFile, true, true);
+        final byte[] image = ImageUtil.getImageAs8bpp(imgFile, true, true);
 
         // happen when we couldn't retrieve palette data from RGB image
         if (image == null)
@@ -143,7 +143,7 @@ public class Map extends Resource
                                 if ((ti >= wt) || (tj >= ht))
                                 {
                                     // use dummy tile
-                                    tile = new Tile(new byte[64], 8, 0, false, -1);
+                                    tile = new Tile(new byte[64], 8, 0, false, 0);
                                     eq = TileEquality.NONE;
                                     index = 0;
                                 }

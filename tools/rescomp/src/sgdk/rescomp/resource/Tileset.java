@@ -23,7 +23,7 @@ public class Tileset extends Resource
             throws Exception
     {
         // get 8bpp pixels and also check image dimension is aligned to tile
-        final byte[] image = Util.getImage8bpp(imgFile, true, true);
+        final byte[] image = ImageUtil.getImageAs8bpp(imgFile, true, true);
 
         // happen when we couldn't retrieve palette data from RGB image
         if (image == null)
