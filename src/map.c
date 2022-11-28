@@ -191,6 +191,12 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
     return result;
 }
 
+void MAP_release(Map* map)
+{
+    MEM_free(map);
+}
+
+
 void MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
 {
     bool redraw;

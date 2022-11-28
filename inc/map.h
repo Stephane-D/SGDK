@@ -188,6 +188,15 @@ Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile);
 
 /**
  *  \brief
+ *      Release the map and its resources (same as MEM_free(map))
+ *
+ *  \param map
+ *      the Map structure to release
+ */
+void MAP_release(Map* map);
+
+/**
+ *  \brief
  *      Scroll map to specified position.<br>
  *      The fonction takes care of updating the VDP tilemap which will be transfered by DMA queue then
  *      VDP background scrolling is automatically set on VBlank (into the SYS_doVBlankProcess() tasks).<br>
