@@ -691,7 +691,7 @@ public class Compiler
             // return it if already exists
             if (result != null)
             {
-                // System.out.println("Duplicated resource found: " + resource.id + " = " + result.id);
+                System.out.println("Info: '" + resource.id + "' has same content as '" + result.id + "'");
                 return result;
             }
 
