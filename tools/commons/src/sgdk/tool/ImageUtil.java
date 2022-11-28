@@ -1139,6 +1139,84 @@ public class ImageUtil
         return result;
     }
 
+    static byte[] convert2bppTo1bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length / 2];
+
+        for (int i = 0; i < data.length / 2; i++)
+        {
+            final byte b0 = (byte) ((data[(i * 2) + 0] >> 0) & 1);
+            final byte b1 = (byte) ((data[(i * 2) + 0] >> 2) & 1);
+            final byte b2 = (byte) ((data[(i * 2) + 0] >> 4) & 1);
+            final byte b3 = (byte) ((data[(i * 2) + 0] >> 6) & 1);
+            final byte b4 = (byte) ((data[(i * 2) + 1] >> 0) & 1);
+            final byte b5 = (byte) ((data[(i * 2) + 1] >> 2) & 1);
+            final byte b6 = (byte) ((data[(i * 2) + 1] >> 4) & 1);
+            final byte b7 = (byte) ((data[(i * 2) + 1] >> 6) & 1);
+
+            result[i] = (byte) ((b7 << 7) | (b6 << 6) | (b5 << 5) | (b4 << 4) | (b3 << 3) | (b2 << 2) | (b1 << 1) | (b0 << 0));
+        }
+
+        return result;
+    }
+
+    static byte[] convert4bppTo1bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length / 4];
+
+        for (int i = 0; i < data.length / 4; i++)
+        {
+            final byte b0 = (byte) ((data[(i * 4) + 0] >> 0) & 1);
+            final byte b1 = (byte) ((data[(i * 4) + 0] >> 4) & 1);
+            final byte b2 = (byte) ((data[(i * 4) + 1] >> 0) & 1);
+            final byte b3 = (byte) ((data[(i * 4) + 1] >> 4) & 1);
+            final byte b4 = (byte) ((data[(i * 4) + 2] >> 0) & 1);
+            final byte b5 = (byte) ((data[(i * 4) + 2] >> 4) & 1);
+            final byte b6 = (byte) ((data[(i * 4) + 3] >> 0) & 1);
+            final byte b7 = (byte) ((data[(i * 4) + 3] >> 4) & 1);
+
+            result[i] = (byte) ((b7 << 7) | (b6 << 6) | (b5 << 5) | (b4 << 4) | (b3 << 3) | (b2 << 2) | (b1 << 1) | (b0 << 0));
+        }
+
+        return result;
+    }
+
+    static byte[] convert8bppTo1bpp(byte[] data)
+    {
+        final byte[] result = new byte[data.length / 8];
+
+        for (int i = 0; i < data.length / 8; i++)
+        {
+            result[i] = (byte) ((data[(i * 8) + 0] & 1) << 7);
+            result[i] |= (byte) ((data[(i * 8) + 1] & 1) << 6);
+            result[i] |= (byte) ((data[(i * 8) + 2] & 1) << 5);
+            result[i] |= (byte) ((data[(i * 8) + 3] & 1) << 4);
+            result[i] |= (byte) ((data[(i * 8) + 4] & 1) << 3);
+            result[i] |= (byte) ((data[(i * 8) + 5] & 1) << 2);
+            result[i] |= (byte) ((data[(i * 8) + 6] & 1) << 1);
+            result[i] |= (byte) ((data[(i * 8) + 7] & 1) << 0);
+        }
+
+        return result;
+    }
+
+    public static byte[] convertTo1bpp(byte[] data, int inputBpp)
+    {
+        switch (inputBpp)
+        {
+            default:
+                throw new IllegalArgumentException("Not supported image data format (" + inputBpp + " bpp)");
+            case 1:
+                return data;
+            case 2:
+                return convert2bppTo1bpp(data);
+            case 4:
+                return convert4bppTo1bpp(data);
+            case 8:
+                return convert8bppTo1bpp(data);
+        }
+    }
+
     public static byte[] convertTo4bpp(byte[] data, int inputBpp)
     {
         switch (inputBpp)
