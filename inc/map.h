@@ -168,7 +168,7 @@ typedef struct Map
  *  \brief
  *      Create and return a Map structure required to use all MAP_xxx functions
  *      from a given MapDefinition.<br>
- *      When you're done with the map just use MEM_free(map) to release it.
+ *      When you're done with the map you shall use MAP_release(map) to release it.
  *
  *  \param mapDef
  *      MapDefinition structure containing background/plane data.
