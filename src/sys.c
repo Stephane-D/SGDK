@@ -877,19 +877,9 @@ void SYS_showFrameLoad(bool mean)
     // point on left cursor tile in font
     vdpSprite->attribut = TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_FONT_INDEX + 94);
     vdpSprite->x = 0x80;
-
-    // apply changes immediately in VRAM
-    vu16* pw = (u16 *) VDP_DATA_PORT;
-    vu32* pl = (u32 *) VDP_CTRL_PORT;
-
-    // prepare write to sprite #0
-    *pl = VDP_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
-
-    // write fields in correct order
-    *pw = vdpSprite->y;
-    *pw = vdpSprite->size_link;
-    *pw = vdpSprite->attribut;
-    *pw = vdpSprite->x;
+    
+    // update this single sprite entry
+    VDP_updateSprites(1, DMA_QUEUE);
 }
 
 void SYS_hideFrameLoad()
@@ -901,14 +891,8 @@ void SYS_hideFrameLoad()
     // hide it
     vdpSprite->y = 0;
 
-    // apply changes immediately in VRAM
-    vu16* pw = (u16 *) VDP_DATA_PORT;
-    vu32* pl = (u32 *) VDP_CTRL_PORT;
-
-    // prepare write to sprite #0
-    *pl = VDP_WRITE_VRAM_ADDR(VDP_SPRITE_TABLE);
-    // no need to write more
-    *pw = vdpSprite->y;
+    // update this single sprite entry
+    VDP_updateSprites(1, DMA_QUEUE);
 }
 
 bool SYS_isInVInt()
