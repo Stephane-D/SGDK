@@ -487,8 +487,6 @@ void SPR_releaseSprite(Sprite* sprite)
 #endif // SPR_DEBUG
     }
 
-
-
     END_PROFIL(PROFIL_REMOVE_SPRITE)
 }
 
@@ -1312,6 +1310,7 @@ void SPR_clear()
     u8 linkSave = vdpSpriteCache[0].link;
 
     VDP_clearSprites();
+    // *QUEUE_COPY* as we restore link right after
     VDP_updateSprites(1, DMA_QUEUE_COPY);
 
     // restore starter link
