@@ -157,16 +157,20 @@ void SPR_end()
 {
     if (SPR_isInitialized())
     {
+        // no active sprites
+        firstSprite = NULL;
+        lastSprite = NULL;
+
         // reset and clear VDP sprite
         VDP_resetSprites();
-        VDP_updateSprites(1, DMA_QUEUE_COPY);
+        VDP_updateSprites(1, DMA_QUEUE);
 
         // release memory
         POOL_destroy(spritesPool);
         spritesPool = NULL;
         VRAM_releaseRegion(&vram);
         spriteVramSize = 0;
-
+        
         // need to update user tile max index
         updateUserTileMaxIndex();
 
