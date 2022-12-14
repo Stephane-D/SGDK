@@ -62,25 +62,31 @@
  *  \param x
  *      X position - 0x80 (0x80 = 0 on screen). Valid values: [0 - 1023]
  */
-typedef struct {
+typedef struct
+{
     s16 y;  // 10 bits
-    union {
-        struct {
+    union
+    {
+        struct
+        {
             u16 unused1  : 4;
             u16 sizeH    : 2;
             u16 sizeV    : 2;
             u16 unused2  : 1;
             u16 linkData : 7;
         };
-        struct {
+        struct
+        {
             u8 size;
             u8 link;
         };
         u16 size_link;
     };
-    union {
+    union
+    {
         u16 attribut;
-        struct {
+        struct
+        {
             u16 priority : 1;
             u16 palette  : 2;
             u16 flipV    : 1;
