@@ -243,7 +243,7 @@
  */
 #define TILE_SYSTEM_LENGTH      16
 /**
- *  \deprecated Use TILE_SYSTEMLENGTH instead.
+ *  \deprecated Use TILE_SYSTEM_LENGTH instead.
  */
 #define TILE_SYSTEM_LENGHT      TILE_SYSTEM_LENGTH
 /**
