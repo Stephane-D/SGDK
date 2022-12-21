@@ -360,7 +360,7 @@ bool gj_trophy_add_achieved(const char *trophy_id)
 {
 	const char *path[4] = {"trophies", "add-achieved"};
 	const char *key[3] = {"username", "user_token", "trophy_id"};
-	const char *val[3] = {gj.username, gj.username, trophy_id};
+	const char *val[3] = {gj.username, gj.user_token, trophy_id};
 	uint32_t reply_len;
 
 	if (!trophy_id) {
