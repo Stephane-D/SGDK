@@ -33,8 +33,8 @@
 /// Tuned for 60 Hz, change it for PAL consoles
 #define MS_TO_FRAMES(ms)  ((((ms) * 60 / 500) + 1)/2)
 
-/// Command buffer
-static char cmd_buf[MW_BUFLEN];
+/// Command buffer. Must be word aligned
+static char cmd_buf[MW_BUFLEN] __attribute__((aligned(2)));
 
 /// UDP receive function callback
 static void udp_recv_cb(enum lsd_status stat, uint8_t ch,
