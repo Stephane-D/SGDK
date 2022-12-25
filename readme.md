@@ -107,6 +107,10 @@ To build the `sgdk` base image:
 
     docker build -t sgdk .
 
+To build the `sgdk` base image on mac with m1 chip:
+
+    docker build -t sgdk --file Dockerfile-m1 .
+
 And then to compile the local env, such as `samples` for example:
 
     cd sample/sonic
