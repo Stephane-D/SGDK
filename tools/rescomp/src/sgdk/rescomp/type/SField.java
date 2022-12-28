@@ -4,8 +4,16 @@ import sgdk.tool.StringUtil;
 
 public class SField extends SFieldDef
 {
+    static private int genId = 0;
+
+    static synchronized private int nextId()
+    {
+        return genId++;
+    }
+
     final public String value;
     final public Long longValue;
+    final int internalId;
     boolean padding;
 
     public SField(String name, SGDKObjectType type, String value) throws Exception
@@ -15,6 +23,9 @@ public class SField extends SFieldDef
         this.value = value;
         padding = false;
         longValue = computeLongValue();
+
+        // used to make string label uniq
+        internalId = nextId();
     }
 
     private Long computeLongValue() throws Exception
@@ -128,7 +139,7 @@ public class SField extends SFieldDef
         // align
         outS.append("    .align 2\n");
         // declare name
-        outS.append(name + ":\n");
+        outS.append(name + "_" + internalId + ":\n");
         // declare string
         outS.append("    .asciz \"" + value + "\"\n");
         outS.append("\n");
@@ -145,7 +156,7 @@ public class SField extends SFieldDef
             outS.append("    dc.l    " + (StringUtil.isEmpty(value) ? "0" : value) + "\t\t// " + name + "\n");
         else
             // string
-            outS.append("    dc.l    " + name + "\t\t// " + name + "\n");
+            outS.append("    dc.l    " + name + "_" + internalId + "\t\t// " + name + "\n");
     }
 
     public void outIntData(StringBuilder outS)

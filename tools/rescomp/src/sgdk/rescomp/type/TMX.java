@@ -69,6 +69,7 @@ public class TMX
     static final String ATTR_VALUE_EXPORT_NAME = "exportname";
     static final String ATTR_VALUE_EXPORT_POSITION = "exportposition";
     static final String ATTR_VALUE_EXPORT_TILE_INDEX = "exporttileindex";
+    static final String ATTR_VALUE_EXPORT_SIZE = "exportsize";
 
     // keep it lower case
     static final String FIELD_TILE_INDEX = "tileindex";
@@ -757,9 +758,11 @@ public class TMX
                 tFields.clear();
 
                 final int id = XMLUtil.getAttributeIntValue(objectElement, ATTR_ID, 0);
+                final String objectName = getAttribute(objectElement, ATTR_NAME, "object_" + id);
                 final double x = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_X, 0d);
                 final double y = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_Y, 0d);
-                final String objectName = getAttribute(objectElement, ATTR_NAME, "object_" + id);
+                final double w = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_WIDTH, 0d);
+                final double h = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_HEIGHT, 0d);
 
                 // get all properties
                 final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
@@ -790,6 +793,16 @@ public class TMX
                             addField(objectName, tFields, new TField(ATTR_Y, TiledObjectType.FLOAT, Double.toString(y)));
                         }
                     }
+                    // export size field ?
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_SIZE))
+                    {
+                        // set to true ? --> add 'width' and 'height' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                        {
+                            addField(objectName, tFields, new TField(ATTR_WIDTH, TiledObjectType.FLOAT, Double.toString(w)));
+                            addField(objectName, tFields, new TField(ATTR_HEIGHT, TiledObjectType.FLOAT, Double.toString(h)));
+                        }
+                    }
                     // export tile index field ?
                     else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_TILE_INDEX))
                     {
@@ -802,9 +815,16 @@ public class TMX
                             addField(objectName, tFields, new TField(FIELD_TILE_INDEX, TiledObjectType.INT, Double.toString(tileIndex)));
                         }
                     }
-                    // empty type but defined property type ? --> enum type
-                    else if (StringUtil.isEmpty(type) && !StringUtil.isEmpty(propertyType))
-                        addField(objectName, tFields, new TField(name, TiledObjectType.ENUM, value));
+                    // empty type ?
+                    else if (StringUtil.isEmpty(type))
+                    {
+                        // defined property type ? --> enum type
+                        if (!StringUtil.isEmpty(propertyType))
+                            addField(objectName, tFields, new TField(name, TiledObjectType.ENUM, value));
+                        // missing type ? --> assume string (Tiled does not set type for string)
+                        else
+                            addField(objectName, tFields, new TField(name, TiledObjectType.STRING, value));
+                    }
                     else
                         addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
