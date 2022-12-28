@@ -67,7 +67,7 @@ Here's a list of useful tools to help you creating your assets:
 * [16Tile](https://allone-works.itch.io/16tile): SGDK specific tile map editor
 * [Tiled](https://www.mapeditor.org/): Tile map editor, supported by SGDK resource compiler tool
 * [LDTK](https://deepnight.net/tools/ldtk-2d-level-editor/): New but powerful tile map editor (support Tiled formats as well)
-* [Ogmo](https://ogmo-editor-3.github.io/): Another tile map editor
+* [Ogmo](https://ogmo-editor-3.github.io/): Another nice and simple tile map editor
 
 #### Music / sound
 
