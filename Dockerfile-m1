@@ -1,0 +1,59 @@
+FROM ubuntu:latest
+
+# Set-up argument defaults
+ARG JDK_VER=11
+
+# Install supporting packages
+RUN apt-get update  \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  bash \
+  make \
+  git \
+  babeltrace \
+  rsync \
+  bison gcc g++ lhasa libgmp-dev libmpfr-dev libmpc-dev flex gettext texinfo \
+  openjdk-${JDK_VER}-jre-headless \
+  && rm -rf /var/lib/apt/lists/*
+
+# install GCC 6.3
+
+RUN cd /opt \
+    && curl -O http://barelyconsciousgames.com/m68k-toolchain-rpi.tar.gz \
+    && tar xvzf m68k-toolchain-rpi.tar.gz \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y libc6-armhf-cross \
+    && ln -s /usr/arm-linux-gnueabihf/lib/ld-linux-armhf.so.3 /lib/ \
+    && ln -s /usr/arm-linux-gnueabihf/lib/libm.so.6 /lib \
+    && ln -s /usr/arm-linux-gnueabihf/lib/libc.so.6 /lib \
+    && ln -s /usr/arm-linux-gnueabihf/lib/libdl.so.2 /lib \
+    && rm m68k-toolchain-rpi.tar.gz
+
+# Create sgdk unprivileged user
+RUN useradd -ms /bin/sh -d /sgdk sgdk
+
+# Set-up SGDK
+COPY . /sgdk
+ENV GDK=/sgdk
+ENV SGDK_DOCKER=n
+
+RUN cd /tmp \
+    && git clone https://github.com/istvan-v/sjasmep.git \
+    && cd sjasmep \
+    && make \
+    && mv sjasm /sgdk/bin
+
+ENV PATH="/opt/m68k-toolchain/bin:/sgdk/bin:${PATH}" 
+
+RUN cd /sgdk/tools/bintos \
+    && gcc -O2 -s src/bintos.c -o ../../bin/bintos
+
+RUN cd /sgdk/tools/xgmtool \
+    && gcc -fexpensive-optimizations -Os -s src/*.c -o ../../bin/xgmtool
+
+# Set-up mount point and make command
+VOLUME /src
+WORKDIR /src
+
+# Use sgdk user
+USER sgdk
+ENTRYPOINT [ "make", "-f", "/sgdk/makefile.gen" ]
