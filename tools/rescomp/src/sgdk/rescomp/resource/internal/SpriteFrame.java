@@ -49,8 +49,8 @@ public class SpriteFrame extends Resource
      * @param hf
      *        height of frame in tile
      */
-    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType,
-            Compression compression, OptimizationType opt, long optIteration)
+    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType, Compression compression, OptimizationType opt,
+            long optIteration)
     {
         super(id);
 
@@ -66,56 +66,73 @@ public class SpriteFrame extends Resource
         List<SpriteCell> sprites;
         final int numTile = wf * hf;
 
-        // not default value ? --> force slow optimization
-        if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
-            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, opt);
+        // special case of no optimization ? --> use default solution covering the whole sprite frame
+        if (opt == OptimizationType.NONE)
+            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.NONE);
         else
         {
-            // always start with the fast optimization first
-            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, opt);
+            // not default value ? --> force slow optimization
+            if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, opt);
+            else
+            {
+                // always start with the fast optimization first
+                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, opt);
 
-            // too many sprites used for this sprite with no optimization ? try sprite opti with fast opti
-            if ((sprites.size() > 16) && (opt == OptimizationType.NONE))
-                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE);
+                // too many sprites used for this sprite ? try fast sprite opti
+                if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
+                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE);
 
-            // too many sprites used for this sprite ? prefer better (but slower) sprite optimization
-            if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
-                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration,
-                        (opt == OptimizationType.NONE) ? OptimizationType.BALANCED : opt);
+                // still too many sprites used for this sprite ? try better (but slower) sprite optimization method
+                if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
+                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, opt);
+            }
+
+            // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of
+            // sprite)
+            if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, OptimizationType.MIN_SPRITE);
         }
-
-        // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of sprite)
-        if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
-            sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration,
-                    OptimizationType.MIN_SPRITE);
 
         // still above the limit (shouldn't be possible as max sprite size is 128x128) ? --> stop here :-(
         if (sprites.size() > 16)
             throw new IllegalArgumentException("Sprite frame '" + id + "' uses " + sprites.size()
-                    + " internal sprites, that is above the limit (16), try to reduce the sprite size or split it...");
+                    + " internal sprites, that is above the limit (16), try to reduce the sprite size or split it.");
 
-        // empty frame ?
-        if (sprites.isEmpty())
+        // special case of NONE optimization type
+        if ((!sprites.isEmpty()) && (opt == OptimizationType.NONE))
         {
-            // we can exit now, frame will be discarded anyway
-            collision = null;
-            tileset = null;
-            hc = 0;
+            // check if frame is empty or not
+            boolean empty = true;
+            for (byte b : frameImage)
+            {
+                if ((b & 0xF) != 0)
+                {
+                    empty = false;
+                    break;
+                }
+            }
 
-            return;
+            // empty frame ? --> clear sprite list
+            if (empty)
+                sprites.clear();
         }
 
-        int optNumTile = 0;
-        for (SpriteCell spr : sprites)
-            optNumTile += spr.numTile;
+        // empty frame --> empty tileset (single tile but not added in resource
+        if (sprites.isEmpty())
+            tileset = new Tileset();
+        else
+        {
+            int optNumTile = 0;
+            for (SpriteCell spr : sprites)
+                optNumTile += spr.numTile;
 
-        // shot info about this sprite frame
-        System.out
-                .println("Sprite frame '" + id + "' - " + sprites.size() + " VDP sprites and " + optNumTile + " tiles");
+            // shot info about this sprite frame
+            System.out.println("Sprite frame '" + id + "' - " + sprites.size() + " VDP sprites and " + optNumTile + " tiles");
 
-        // build tileset
-        tileset = (Tileset) addInternalResource(
-                new Tileset(id + "_tileset", frameImage, wf * 8, hf * 8, sprites, compression, false));
+            // build tileset
+            tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", frameImage, wf * 8, hf * 8, sprites, compression, false));
+        }
 
         final Collision coll;
 
@@ -154,8 +171,7 @@ public class SpriteFrame extends Resource
         for (SpriteCell sprite : sprites)
             vdpSprites.add(new VDPSprite(id + "_sprite" + ind++, sprite, wf, hf));
 
-        hc = (timer << 16) ^ tileset.hashCode() ^ vdpSprites.hashCode()
-                ^ ((collision != null) ? collision.hashCode() : 0);
+        hc = (timer << 16) ^ ((tileset != null) ? tileset.hashCode() : 0) ^ vdpSprites.hashCode() ^ ((collision != null) ? collision.hashCode() : 0);
     }
 
     /**
@@ -168,18 +184,17 @@ public class SpriteFrame extends Resource
      * @param hf
      *        height of frame in tile
      */
-    public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf,
-            int timer, CollisionType collisionType, Compression compression, OptimizationType opt, long optIteration)
+    public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf, int timer, CollisionType collisionType,
+            Compression compression, OptimizationType opt, long optIteration)
     {
-        this(id, ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8),
-                new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8)), wf, hf, timer,
-                collisionType, compression, opt, optIteration);
+        this(id, ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8)), wf,
+                hf, timer, collisionType, compression, opt, optIteration);
     }
 
     static int computeFastHashcode(byte[] frameImage8bpp, Dimension frameDim, int timer, CollisionType collision, Compression compression)
     {
-        return (timer << 16) ^ ((collision != null) ? collision.hashCode() : 0) ^ Arrays.hashCode(frameImage8bpp)
-                ^ frameDim.hashCode() ^ compression.hashCode();
+        return (timer << 16) ^ ((collision != null) ? collision.hashCode() : 0) ^ Arrays.hashCode(frameImage8bpp) ^ frameDim.hashCode()
+                ^ compression.hashCode();
     }
 
     public int getNumSprite()
@@ -189,7 +204,7 @@ public class SpriteFrame extends Resource
 
     public boolean isEmpty()
     {
-        return tileset == null;
+        return tileset.isEmpty();
     }
 
     public int getNumTile()
@@ -209,9 +224,8 @@ public class SpriteFrame extends Resource
         if (obj instanceof SpriteFrame)
         {
             final SpriteFrame spriteFrame = (SpriteFrame) obj;
-            return (timer == spriteFrame.timer) && tileset.equals(spriteFrame.tileset)
-                    && vdpSprites.equals(spriteFrame.vdpSprites) && ((collision == spriteFrame.collision)
-                            || ((collision != null) && collision.equals(spriteFrame.collision)));
+            return (timer == spriteFrame.timer) && tileset.equals(spriteFrame.tileset) && vdpSprites.equals(spriteFrame.vdpSprites)
+                    && ((collision == spriteFrame.collision) || ((collision != null) && collision.equals(spriteFrame.collision)));
         }
 
         return false;

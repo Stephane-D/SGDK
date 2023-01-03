@@ -83,6 +83,23 @@ public class Tileset extends Resource
         hc = bin.hashCode();
     }
 
+    // special constructor for empty / dummy tileset
+    public Tileset()
+    {
+        // so it refers NULL tileset
+        super("0");
+
+        tiles = new ArrayList<>();
+        tileIndexesMap = new HashMap<>();
+        tileByHashcodeMap = new HashMap<>();
+        isDuplicate = false;
+
+        // null bin
+        bin = null;
+        // hash code
+        hc = 0;
+    }
+
     // special constructor for TSX (single blank tile tileset)
     public Tileset(String id)
     {
@@ -236,6 +253,11 @@ public class Tileset extends Resource
     public int getNumTile()
     {
         return tiles.size();
+    }
+
+    public boolean isEmpty()
+    {
+        return getNumTile() == 0;
     }
 
     public Tile get(int index)

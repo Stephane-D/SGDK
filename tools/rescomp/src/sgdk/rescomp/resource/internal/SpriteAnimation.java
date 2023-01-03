@@ -72,15 +72,31 @@ public class SpriteAnimation extends Resource
                 System.out.println("Sprite frame at anim #" + animIndex + " frame #" + i + " is a duplicate of " + frame.id);
             }
 
-            // check if empty
-            if (!frame.isEmpty())
-            {
-                // add as internal resource (get duplicate if exist)
-                frame = (SpriteFrame) addInternalResource(frame);
-                // add frame
-                frames.add(frame);
-                frameSet.add(frame);
-            }
+            // add frame
+            frames.add(frame);
+        }
+        
+        // start from last frame and remove all trailing empty frames
+        for(int i = frames.size() - 1; i >= 0; i--)
+        {
+            // not empty ? --> stop here
+            if (!frames.get(i).isEmpty())
+                break;
+            
+            // remove frame
+            frames.remove(i);
+        }
+
+        // adding all valid frames finally
+        for (int i = 0; i < frames.size(); i++)
+        {
+            // add as internal resource (get duplicate if exist)
+            final SpriteFrame frame = (SpriteFrame) addInternalResource(frames.get(i));
+
+            // replace it in case we got a duplicate instead
+            frames.set(i, frame);
+            // add to frame set
+            frameSet.add(frame);
         }
 
         if (frames.size() > 255)
