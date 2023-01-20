@@ -135,16 +135,13 @@
 ; E    -> value
 ;
 ; write to YM2612 (no busy check)
-; = 26 cycles
+; = 18 cycles
 
             macro   writeYMFast
 
             LD      (HL), D         ; write address             ' 7     |
-            NOP                     ;                           ' 4     | 15
-            NOP                     ; wait a bit for YM         ' 4     |
-
-            INC     L               ; next port                 ' 4     |
-            LD      (HL), E         ; write value               ' 7     | 11
+            INC     L               ; next port                 ' 4     | 18
+            LD      (HL), E         ; write value               ' 7     |
 
             endm
 
@@ -375,7 +372,7 @@
             endm
 
             macro   wait7
-            LD      A, $0
+            OR      $0
             endm
 
             macro   wait8
@@ -388,8 +385,8 @@
             endm
 
             macro   wait10
-            JP      .loop
-.loop
+            JP      .go
+.go
             endm
 
             macro   wait11
@@ -398,8 +395,8 @@
             endm
 
             macro   wait12
-            JR      .loop
-.loop
+            JR      .go
+.go
             endm
 
             macro   wait13
@@ -443,8 +440,8 @@
             endm
 
             macro   wait21
-            wait12
-            wait9
+            PUSH AF
+            POP AF
             endm
 
             macro   wait22
@@ -463,8 +460,8 @@
             endm
 
             macro   wait25
-            wait18
-            wait7
+            wait21
+            wait4
             endm
 
             macro   wait26
@@ -527,8 +524,8 @@
             endm
 
             macro   wait38
-            wait27
-            wait11
+            EX (SP), HL
+            EX (SP), HL
             endm
 
             macro   wait39
@@ -547,8 +544,8 @@
             endm
 
             macro   wait42
-            wait34
-            wait8
+            wait38
+            wait4
             endm
 
             macro   wait43
@@ -567,13 +564,13 @@
             endm
 
             macro   wait46
-            wait34
-            wait12
+            wait38
+            wait8
             endm
 
             macro   wait47
-            wait34
-            wait13
+            wait38
+            wait9
             endm
 
             macro   wait48
@@ -587,7 +584,8 @@
             endm
 
             macro   wait50
-            wait2p16x 3
+            wait38
+            wait12
             endm
 
             macro   wait51
@@ -631,8 +629,8 @@
             endm
 
             macro   wait59
-            wait50
-            wait9
+            wait38
+            wait21
             endm
 
             macro   wait60
