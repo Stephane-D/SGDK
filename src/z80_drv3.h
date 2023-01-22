@@ -1,6 +1,6 @@
 #ifndef _Z80_DRV3_H_
 #define _Z80_DRV3_H_
 
-extern const u8 z80_drv3[0xA69];
+extern const u8 z80_drv3[0xA6C];
 
 #endif // _Z80_DRV3_H_
