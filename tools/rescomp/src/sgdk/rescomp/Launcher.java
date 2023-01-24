@@ -30,7 +30,7 @@ public class Launcher
                 depTarget = param;
         }
 
-        System.out.println("ResComp 3.64 - SGDK Resource Compiler - Copyright 2022 (Stephane Dallongeville)");
+        System.out.println("ResComp 3.65 - SGDK Resource Compiler - Copyright 2023 (Stephane Dallongeville)");
 
         if (fileName == null)
         {

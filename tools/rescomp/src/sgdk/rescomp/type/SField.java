@@ -52,7 +52,7 @@ public class SField extends SFieldDef
 
             v *= Math.pow(2, 6);
         }
-        else if (type == SGDKObjectType.F16)
+        else if (type == SGDKObjectType.F32)
         {
             // type checking (2^21)
             if ((v > 2097151.4d) || (v < -2097152.4d))
