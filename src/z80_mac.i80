@@ -440,8 +440,8 @@
             endm
 
             macro   wait21
-            PUSH AF
-            POP AF
+            wait12
+            wait9
             endm
 
             macro   wait22
@@ -524,8 +524,8 @@
             endm
 
             macro   wait38
-            EX (SP), HL
-            EX (SP), HL
+            wait24
+            wait14
             endm
 
             macro   wait39
@@ -544,8 +544,8 @@
             endm
 
             macro   wait42
-            wait38
-            wait4
+            wait34
+            wait8
             endm
 
             macro   wait43
@@ -564,13 +564,13 @@
             endm
 
             macro   wait46
-            wait38
-            wait8
+            wait34
+            wait12
             endm
 
             macro   wait47
-            wait38
-            wait9
+            wait34
+            wait13
             endm
 
             macro   wait48
@@ -584,8 +584,7 @@
             endm
 
             macro   wait50
-            wait38
-            wait12
+            wait2p16x 3
             endm
 
             macro   wait51
@@ -629,8 +628,8 @@
             endm
 
             macro   wait59
-            wait38
-            wait21
+            wait50
+            wait9
             endm
 
             macro   wait60
