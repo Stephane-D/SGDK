@@ -22,6 +22,8 @@ task_sr: .word 0x0400
 // User task program counter
 task_pc: .long 0x00000000
 
+    .align 2
+
 // User task registers saved on context switch
 task_regs: .fill UTSK_REGS_LEN, 1, 0
 
@@ -32,7 +34,7 @@ task_lock: .word 0
     .section .text
 
 /**
- * Initialize the task sub system (reset internal variables).
+ * Initialize the task sub system (reset internal variables)
  */
 func TSK_init
         move.w  #0x0400, task_sr
@@ -41,14 +43,13 @@ func TSK_init
 
         move.w  #(UTSK_REGS_LEN - 1), %d0
         moveq   #0, %d1
-        move.l  task_regs,%a0
+        lea     task_regs,%a0
 
 .loop:
         move.b  %d1, (%a0)+
         dbra    %d0, .loop
 
         rts
-
 
 /**
  * Configure the task used as user task. Must be invoked once before calling
@@ -59,7 +60,6 @@ func TSK_init
 func TSK_userSet
         move.l  4(%sp), task_pc
         rts
-
 
 /**
  * Stop the user task.
