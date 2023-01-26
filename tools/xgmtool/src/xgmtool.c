@@ -16,7 +16,7 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.73";
+const char* version = "1.74";
 int sys;
 bool silent;
 bool verbose;
@@ -39,6 +39,7 @@ int main(int argc, char *argv[ ])
         printf(" - Optimize and reduce size of Sega Megadrive VGM file\n");
         printf("   Note that it won't work correctly on VGM file which require sub frame accurate timing.\n");
         printf(" - Convert a Sega Megadrive VGM file to XGM file\n");
+        printf(" - Convert a Sega Megadrive VGM file to ZGM (compressed) file\n");
         printf(" - Convert a XGM file to Sega Megadrive VGM file\n");
         printf(" - Compile a XGM file into a binary file (XGC) ready to played by the Z80 XGM driver\n");
         printf(" - Convert a XGC binary file to XGM file (experimental)\n");
@@ -49,6 +50,9 @@ int main(int argc, char *argv[ ])
         printf("\n");
         printf("Convert VGM to XGM:\n");
         printf("  xgmtool input.vgm output.xgm\n");
+        printf("\n");
+        printf("Convert VGM to ZGM:\n");
+        printf("  xgmtool input.vgm output.zgm\n");
         printf("\n");
         printf("Convert and compile VGM to binary/XGC:\n");
         printf("  xgmtool input.vgm output.bin\n");

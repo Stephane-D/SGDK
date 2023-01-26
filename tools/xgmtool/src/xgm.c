@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <memory.h>
 
 #include "../inc/xgm.h"
