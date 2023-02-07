@@ -94,10 +94,10 @@ public class Tileset extends Resource
         tileByHashcodeMap = new HashMap<>();
         isDuplicate = false;
 
-        // null bin
-        bin = null;
+        // dummy bin
+        bin = new Bin("dummy", new byte[0], Compression.NONE);
         // hash code
-        hc = 0;
+        hc = bin.hashCode();
     }
 
     // special constructor for TSX (single blank tile tileset)

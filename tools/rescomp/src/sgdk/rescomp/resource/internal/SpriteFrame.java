@@ -118,7 +118,7 @@ public class SpriteFrame extends Resource
                 sprites.clear();
         }
 
-        // empty frame --> empty tileset (single tile but not added in resource
+        // empty frame --> empty tileset (single tile but not added in resource)
         if (sprites.isEmpty())
             tileset = new Tileset();
         else

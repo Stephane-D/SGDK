@@ -58,22 +58,26 @@ public class SpriteAnimation extends Resource
             // get image for this frame
             final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
 
-            // try to search for duplicated frame first
-            SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision, compression);
-
-            // not found ? --> define new frame
-            if (frame == null)
-            {
-                frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt,
-                        optIteration);
-            }
-            else
-            {
-                System.out.println("Sprite frame at anim #" + animIndex + " frame #" + i + " is a duplicate of " + frame.id);
-            }
-
+            // FIXME: why are we doing that ? duplicate resource optimization should be enough !
+//            // try to search for duplicated frame first
+//            SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision, compression);
+//
+//            // not found ? --> define new frame
+//            if (frame == null)
+//            {
+//                frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt,
+//                        optIteration);
+//            }
+//            else
+//            {
+//                System.out.println("Sprite frame at anim #" + animIndex + " frame #" + i + " is a duplicate of " + frame.id);
+//            }
+//
+//            // add frame
+//            frames.add(frame);
+            
             // add frame
-            frames.add(frame);
+            frames.add(new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt, optIteration));
         }
         
         // start from last frame and remove all trailing empty frames
