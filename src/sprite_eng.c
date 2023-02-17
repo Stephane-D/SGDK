@@ -170,7 +170,7 @@ void SPR_end()
         spritesPool = NULL;
         VRAM_releaseRegion(&vram);
         spriteVramSize = 0;
-        
+
         // need to update user tile max index
         updateUserTileMaxIndex();
 
@@ -348,20 +348,31 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
     // VDP sprite check enable ?
     if (usedVDPSprite & CHECK_VDP_SPRITE)
     {
-        if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
+        // isolate number of used VDP sprite
+        const u16 usedSpr = usedVDPSprite & ~CHECK_VDP_SPRITE;
+
+        if (usedSpr >= (VDP_getScreenWidth() >> 2))
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-            kprintf("SPR_addSpriteEx failed: not enough hardware sprite (missing %d sprites) !", (usedVDPSprite - (VDP_getScreenWidth() >> 2)) + 1);
+            kprintf("SPR_addSpriteEx failed: not enough hardware sprite (missing %d sprites) !", (usedSpr - (VDP_getScreenWidth() >> 2)) + 1);
 #endif
+
+            // revert
+            usedVDPSprite -= spriteDef->maxNumSprite;
 
             releaseSprite(sprite);
             return NULL;
         }
     }
-
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-    if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
-        kprintf("SPR_addSpriteEx warning: exceeding maximum number of hardware sprite (currently used = %d)", usedVDPSprite);
+    else
+    {
+        // isolate number of used VDP sprite
+        const u16 usedSpr = usedVDPSprite & ~CHECK_VDP_SPRITE;
+
+        if (usedSpr >= (VDP_getScreenWidth() >> 2))
+            kprintf("SPR_addSpriteEx warning: exceeding maximum number of hardware sprite (currently used = %d)", usedSpr);
+    }
 #endif
 
     sprite->status = ALLOCATED | (flag & SPR_FLAG_MASK);
@@ -645,10 +656,13 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
     // VDP sprite check enable ?
     if (usedVDPSprite & CHECK_VDP_SPRITE)
     {
-        if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
+        // isolate number of used VDP sprite
+        const u16 usedSpr = usedVDPSprite & ~CHECK_VDP_SPRITE;
+
+        if (usedSpr >= (VDP_getScreenWidth() >> 2))
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-            kprintf("SPR_setDefinition failed: not enough hardware sprite for new definition (missing %d sprites) !", (usedVDPSprite - (VDP_getScreenWidth() >> 2)) + 1);
+            kprintf("SPR_setDefinition failed: not enough hardware sprite for new definition (missing %d sprites) !", (usedSpr - (VDP_getScreenWidth() >> 2)) + 1);
 #endif
 
             // revert back used VDP sprite
@@ -659,10 +673,15 @@ bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
             return FALSE;
         }
     }
-
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-    if (usedVDPSprite >= (VDP_getScreenWidth() >> 2))
-        kprintf("SPR_setDefinition warning: exceeding maximum number of hardware sprite (currently used = %d)", usedVDPSprite);
+    else
+    {
+        // isolate number of used VDP sprite
+        const u16 usedSpr = usedVDPSprite & ~CHECK_VDP_SPRITE;
+
+        if (usedSpr >= (VDP_getScreenWidth() >> 2))
+            kprintf("SPR_setDefinition warning: exceeding maximum number of hardware sprite (currently used = %d)", usedSpr);
+    }
 #endif
 
     u16 status = sprite->status;
