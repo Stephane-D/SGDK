@@ -18,10 +18,10 @@ import sgdk.tool.ImageUtil.BasicImageInfo;
 public class Tilemap extends Resource
 {
     public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY,
-            int widthTile, int heigthTile, TileOptimization opt, Compression compression)
+            int widthTile, int heightTile, TileOptimization opt, Compression compression)
     {
         final int w = widthTile;
-        final int h = heigthTile;
+        final int h = heightTile;
 
         final boolean mapBasePrio = (mapBase & Tile.TILE_PRIORITY_MASK) != 0;
         final int mapBasePal = (mapBase & Tile.TILE_PALETTE_MASK) >> Tile.TILE_PALETTE_SFT;
@@ -77,10 +77,10 @@ public class Tilemap extends Resource
         return new Tilemap(id, data, w, h, compression);
     }
 
-    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int widthTile, int heigthTile, TileOptimization opt,
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int widthTile, int heightTile, TileOptimization opt,
             Compression compression)
     {
-        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heigthTile * 8, 0, 0, widthTile, heigthTile, opt, compression);
+        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heightTile * 8, 0, 0, widthTile, heightTile, opt, compression);
     }
 
     public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, String imgFile, TileOptimization tileOpt, Compression compression)

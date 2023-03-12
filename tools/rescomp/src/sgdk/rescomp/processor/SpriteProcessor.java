@@ -28,11 +28,11 @@ public class SpriteProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width heigth [compression [time [collision [opt [iteration]]]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [iteration]]]]]");
             System.out.println("  name          Sprite variable name");
             System.out.println("  file          the image file to convert to SpriteDefinition structure (BMP or PNG image)");
             System.out.println("  width         width of a single sprite frame in tile");
-            System.out.println("  height        heigth of a single sprite frame in tile");
+            System.out.println("  height        height of a single sprite frame in tile");
             System.out.println("  compression   compression type, accepted values:");
             System.out.println("                   -1 / BEST / AUTO = use best compression");
             System.out.println("                    0 / NONE        = no compression (default)");
@@ -61,7 +61,7 @@ public class SpriteProcessor implements Processor
         if ((wf < 1) || (hf < 1))
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width heigth [packed [time [collid]]]");
+            System.out.println("SPRITE name \"file\" width height [packed [time [collid]]]");
             System.out.println("  width and height (size of sprite frame) should be > 0");
 
             return null;
@@ -71,7 +71,7 @@ public class SpriteProcessor implements Processor
         if ((wf >= 32) || (hf >= 32))
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width heigth [packed [time [collid]]]");
+            System.out.println("SPRITE name \"file\" width height [packed [time [collid]]]");
             System.out.println("  width and height (size of sprite frame) should be < 32");
 
             return null;

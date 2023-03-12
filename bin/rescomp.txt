@@ -329,13 +329,13 @@ Take an image as input and transform it into SGDK SpriteDefinition structure.
 SpriteDefinition is used to draw, animate and manage sprites, it internally contains severals TileSet, Palette and Animation structures.
 
 Syntax:
-SPRITE name img_file width heigth [compression [time [collision [opt [iteration]]]]]
+SPRITE name img_file width height [compression [time [collision [opt [iteration]]]]]
 
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (BMP or PNG image)
                         See the note about image format at the beginning of the file
     width           width of a single sprite frame in tile (should be < 32)
-    heigth          heigth of a single sprite frame in tile (should be < 32)
+    height          height of a single sprite frame in tile (should be < 32)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
