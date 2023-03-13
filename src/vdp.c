@@ -17,6 +17,7 @@
 
 #include "font.h"
 #include "sprite_eng.h"
+#include "sprite_eng_legacy.h"
 
 
 #define WINDOW_DEFAULT          0xD000      // multiple of 0x1000 (0x0800 in H32)

@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "sram.h"
 #include "sprite_eng.h"
+#include "sprite_eng_legacy.h"
 #include "task.h"
 
 #include "tools.h"
@@ -877,7 +878,7 @@ void SYS_showFrameLoad(bool mean)
     // point on left cursor tile in font
     vdpSprite->attribut = TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_FONT_INDEX + 94);
     vdpSprite->x = 0x80;
-    
+
     // update this single sprite entry
     VDP_updateSprites(1, DMA_QUEUE);
 }
