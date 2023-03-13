@@ -1,13 +1,9 @@
 #include "config.h"
 #include "types.h"
 
-#include "vdp_bg.h"
-#include "sprite_eng.h"
-#include "bmp.h"
+#include "mapper.h"
 
 #include "tools.h"
-
-#include "mapper.h"
 
 
 #define NUM_BANK        8
