@@ -50,13 +50,14 @@ static Sprite *guySprite2;
 static Sprite *codySprite2;
 static Sprite *haggarSprite2;
 static Sprite *andorSprite2;
+#if !LEGACY_SPRITE_ENGINE
 static Sprite *guySprite3;
 static Sprite *codySprite3;
 static Sprite *guySprite4;
 static Sprite *codySprite4;
 static Sprite *guySprite5;
 static Sprite *codySprite5;
-
+#endif
 
 u16 executeSpritesTest(u16 *scores)
 {
@@ -673,7 +674,7 @@ u16 executeSpritesTest(u16 *scores)
     SPR_reset();
     SPR_clear();
     VDP_clearPlane(BG_A, TRUE);
-    VDP_drawText("Big sprites test (heavy 1) ", 1, 2);
+    VDP_drawText("Big sprites test (heavy) ", 1, 2);
     SYS_enableInts();
 
     waitMs(5000);
@@ -763,7 +764,10 @@ u16 executeSpritesTest(u16 *scores)
     SPR_reset();
     SPR_clear();
     VDP_clearPlane(BG_A, TRUE);
-    VDP_drawText("Big sprites test (heavy 2) ", 1, 2);
+    VDP_drawText("Big sprites test (super heavy)", 1, 2);
+#if LEGACY_SPRITE_ENGINE
+    VDP_drawText("Not supported with legacy sprite engine", 1, 3);
+#endif // LEGACY_SPRITE_ENGINE
     SYS_enableInts();
 
     waitMs(5000);
@@ -772,6 +776,7 @@ u16 executeSpritesTest(u16 *scores)
     PAL_setColors(0, palette_black, 64, CPU);
     SYS_enableInts();
 
+#if !LEGACY_SPRITE_ENGINE
     // create sprites structures
     guySprite = SPR_addSprite(&guy_slow_sprite, 0, 0, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
     codySprite = SPR_addSprite(&cody_slow_sprite, 0, 0, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
@@ -863,8 +868,9 @@ u16 executeSpritesTest(u16 *scores)
     SYS_enableInts();
 
     // execute sprite bench
-    *scores = execute(25, 12) / 8;
-    globalScore += *scores++;
+    execute(25, 12) / 8;
+#endif // LEGACY_SPRITE_ENGINE
+
     SPR_logProfil();
 
     SYS_disableInts();
