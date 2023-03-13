@@ -41,6 +41,7 @@
 
 #include "bmp.h"
 #include "sprite_eng.h"
+#include "sprite_eng_legacy.h"
 
 #include "sound.h"
 #include "xgm.h"
