@@ -1,18 +1,23 @@
 package sgdk.rescomp.resource;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
 import sgdk.rescomp.resource.internal.SpriteAnimation;
+import sgdk.rescomp.resource.internal.SpriteFrame;
+import sgdk.rescomp.resource.internal.VDPSprite;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ArrayMath;
+import sgdk.tool.FileUtil;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
@@ -27,6 +32,9 @@ public class Sprite extends Resource
     final int hc;
 
     public final Palette palette;
+
+    // for debug purpose
+    final boolean saveOptImg = false;
 
     public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision, OptimizationType opt,
             long optIteration) throws Exception
@@ -53,7 +61,7 @@ public class Sprite extends Resource
         if (image == null)
             throw new IllegalArgumentException(
                     "RGB image '" + imgFile + "' does not contains palette data (see 'Important note about image format' in the rescomp.txt file");
-        
+
         // find max color index
         final int maxIndex = ArrayMath.max(image, false);
         if (maxIndex >= 64)
@@ -90,9 +98,15 @@ public class Sprite extends Resource
         // build PALETTE
         palette = (Palette) addInternalResource(new Palette(id + "_palette", imgFile, palIndex * 16, 16, true));
 
+        // for debug purpose
+        final BufferedImage bufImg = ImageUtil.load(imgFile);
+        final Graphics2D g2 = bufImg.createGraphics();
+        g2.setColor(Color.pink);
+
         // get number of animation
         final int numAnim = ht / hf;
 
+        int yOff = 0;
         for (int i = 0; i < numAnim; i++)
         {
             // build sprite animation
@@ -104,6 +118,19 @@ public class Sprite extends Resource
                 // add as internal resource (get duplicate if exist)
                 animation = (SpriteAnimation) addInternalResource(animation);
 
+                if (saveOptImg)
+                {
+                    int xOff = 0;
+                    for (SpriteFrame frame : animation.frames)
+                    {
+                        for (VDPSprite spr : frame.vdpSprites)
+                            g2.drawRect(xOff + spr.offsetX, yOff + spr.offsetY, spr.wt * 8, spr.ht * 8);
+
+                        // for debug purpose
+                        xOff += wf * 8;
+                    }
+                }
+
                 // update maximum number of tile and sprite
                 maxNumTile = Math.max(maxNumTile, animation.getMaxNumTile());
                 maxNumSprite = Math.max(maxNumSprite, animation.getMaxNumSprite());
@@ -111,7 +138,16 @@ public class Sprite extends Resource
                 // add animation
                 animations.add(animation);
             }
+
+            // for debug purpose
+            yOff += hf * 8;
         }
+
+        g2.dispose();
+
+        // for debug purpose
+        if (saveOptImg)
+            ImageUtil.save(bufImg, "png", FileUtil.setExtension(imgFile, "") + "_opt.png");
 
         // compute hash code
         hc = (wf << 0) ^ (hf << 8) ^ (maxNumTile << 16) ^ (maxNumSprite << 24) ^ animations.hashCode() ^ palette.hashCode();
