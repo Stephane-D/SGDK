@@ -329,7 +329,7 @@ Take an image as input and transform it into SGDK SpriteDefinition structure.
 SpriteDefinition is used to draw, animate and manage sprites, it internally contains severals TileSet, Palette and Animation structures.
 
 Syntax:
-SPRITE name img_file width height [compression [time [collision [opt [opt_level]]]]]
+SPRITE name img_file width height [compression [time [collision [opt_type [opt_level]]]]]
 
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (BMP or PNG image)
@@ -344,14 +344,14 @@ SPRITE name img_file width height [compression [time [collision [opt [opt_level]
     time            display frame time in 1/60 of second (time between each animation frame)
                        If this value is set to 0 (default) then auto animation is disabled
     collision       collision type: CIRCLE, BOX or NONE (NONE by default)
-    opt             sprite cutting optimization strategy, accepted values:
+    opt_type        sprite cutting optimization strategy, accepted values:
                         0 / BALANCED  = balance between used tiles and hardware sprites (default)
                         1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles
                         2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)
                         3 / NONE      = no optimization (cover the whole sprite frame)
     opt_level       optimization level for the sprite cutting operation:
                         0 / FAST      = fast optimisation, good enough in general (default)
-                        1 / MEDIUM    = intermediate optimisation level, provide better results than FAST but ~5 time slower
+                        1 / MEDIUM    = intermediate optimisation level, provide better results than FAST but ~10 time slower
                         2 / SLOW      = advanced optimisation level using a genetic algorithm (80000 iterations), ~20 time slower than FAST
                         3 / MAX       = maximum optimisation level, genetic algorithm (500000 iterations), ~100 time slower than FAST
 
@@ -367,6 +367,7 @@ Some informations about how SpriteDefinition is generated from the input image:
 - rescomp try to optimize hardware sprites and vRAM usage by detecting empty areas in sprite frames.
 - rescomp detects frame copy inside an animation to generate the according animation sequence.
 - by default collision bounds are calculated by using 75% of the original sprite frame.
+
 Tips: When the 'opt_level' is set (non empty value) then rescomp will automatically generate an image saved as <input_image>_opt.png
 representing the processed sprite cutting operation.
 

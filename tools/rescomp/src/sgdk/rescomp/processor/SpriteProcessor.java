@@ -27,7 +27,7 @@ public class SpriteProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [opt_level]]]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt_type [opt_level]]]]]");
             System.out.println("  name          Sprite variable name");
             System.out.println("  file          the image file to convert to SpriteDefinition structure (BMP or PNG image)");
             System.out.println("  width         width of a single sprite frame in tile");
@@ -39,7 +39,7 @@ public class SpriteProcessor implements Processor
             System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  time          display frame time in 1/60 of second (time between each animation frame)");
             System.out.println("  collision     collision type: CIRCLE, BOX or NONE (BOX by default)");
-            System.out.println("  opt           sprite cutting optimization strategy, accepted values:");
+            System.out.println("  opt_type      sprite cutting optimization strategy, accepted values:");
             System.out.println("                    0 / BALANCED  = balance between used tiles and hardware sprites (default)");
             System.out.println("                    1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles");
             System.out.println("                    2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)");
@@ -64,7 +64,7 @@ public class SpriteProcessor implements Processor
         if ((wf < 1) || (hf < 1))
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [opt_level]]]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt_type [opt_level]]]]]");
             System.out.println("  width and height (size of sprite frame) should be > 0");
 
             return null;
@@ -74,7 +74,7 @@ public class SpriteProcessor implements Processor
         if ((wf >= 32) || (hf >= 32))
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [opt_level]]]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt_type [opt_level]]]]]");
             System.out.println("  width and height (size of sprite frame) should be < 32");
 
             return null;
