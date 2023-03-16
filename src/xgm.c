@@ -103,7 +103,7 @@ void XGM_startPlay(const u8 *song)
     }
 
     // upload sample id table (first entry is silent sample, we don't transfer it)
-    Z80_upload(0x1C00 + 4, ids, 0x100 - 4, FALSE);
+    Z80_upload(0x1C00 + 4, ids, 0x100 - 4);
 
     // get song address and bypass sample id table
     addr = ((u32) song) + 0x100;
