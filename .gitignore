@@ -17,6 +17,7 @@
 *.ini
 *.rs
 *.d
+**/.DS_Store
 **/.settings/**
 **/out/**
 !**/out/rom.bin
@@ -32,6 +33,7 @@ archive
 cb
 not needed
 sample/sound/loss
+tools/archives
 tools/extras
 tools/old
 tools/genesis_tools.workspace
@@ -42,5 +44,4 @@ tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
 tools/xgm rom builder/bin
-**/.DS_Store
-tools/archives
+src/z80_*.h
