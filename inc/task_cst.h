@@ -13,7 +13,7 @@
 
 /**
  *  \brief
- *      Byte length for the user task stack
+ *      Byte length for the user task stack (should be less than STACK_SIZE define din memory_base.h)
  */
 #define USER_STACK_LENGTH   512
 
