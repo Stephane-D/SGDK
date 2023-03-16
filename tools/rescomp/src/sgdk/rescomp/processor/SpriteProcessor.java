@@ -64,7 +64,7 @@ public class SpriteProcessor implements Processor
         if ((wf < 1) || (hf < 1))
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [packed [time [collid]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [opt_level]]]]]");
             System.out.println("  width and height (size of sprite frame) should be > 0");
 
             return null;
@@ -74,7 +74,7 @@ public class SpriteProcessor implements Processor
         if ((wf >= 32) || (hf >= 32))
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [packed [time [collid]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [opt_level]]]]]");
             System.out.println("  width and height (size of sprite frame) should be < 32");
 
             return null;
