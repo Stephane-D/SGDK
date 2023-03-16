@@ -52,47 +52,39 @@ rom_header:
         .incbin "out/rom_head.bin", 0, 0x100
 
 _Entry_Point:
+* disable interrupts
         move    #0x2700,%sr
-        tst.l   0xa10008
-        bne.s   SkipJoyDetect
 
-        tst.w   0xa1000c
+        move.l  #0xA11100,%a0
+        move.w  #0x0100,%d0
 
-SkipJoyDetect:
-        bne.s   SkipSetup
-
-        lea     Table,%a5
-        movem.w (%a5)+,%d5-%d7
-        movem.l (%a5)+,%a0-%a4
-* Check Version Number
-        move.b  -0x10ff(%a1),%d0
-        andi.b  #0x0f,%d0
-        beq.s   WrongVersion
-
-* Sega Security Code (SEGA)
-        move.l  #0x53454741,0x2f00(%a1)
-WrongVersion:
-* Read from the control port to cancel any pending read/write command
-        move.w  (%a4),%d0
+* stop Z80 (first thing to do)
+        move.w  %d0,0x0000(%a0)
+        move.w  %d0,0x0100(%a0)
 
 * Configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
         move    %sp, %usp
         sub     #USER_STACK_LENGTH, %sp
 
-        move.w  %d7,(%a1)
-        move.w  %d7,(%a2)
+        tst.l   0xa10008
+        bne.s   SkipInit
 
-* Jump to initialisation process now...
+        tst.w   0xa1000c
+        bne.s   SkipInit
 
+* Check Version Number
+        move.b  -0x10ff(%a0),%d0
+        andi.b  #0x0f,%d0
+        beq.s   NoTMSS
+
+* Sega Security Code (SEGA)
+        move.l  #0x53454741,0x2f00(%a0)
+
+NoTMSS:
         jmp     _start_entry
 
-SkipSetup:
+SkipInit:
         jmp     _reset_entry
-
-
-Table:
-        dc.w    0x8000,0x3fff,0x0100
-        dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
 
 
 *------------------------------------------------
