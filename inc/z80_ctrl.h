@@ -233,9 +233,9 @@ void Z80_setBank(const u16 bank);
  *  \param addr
  *      Address to read (relative to start of Z80_RAM).
  *
- *  You need to request Z80 BUS to access Z80 memory.
+ *  You need to request Z80 BUS before accessing Z80 memory.
  *
- *  \see Z80_requestBus(u16)
+ *  \see Z80_requestBus(bool)
  */
 u8 Z80_read(const u16 addr);
 /**
@@ -246,23 +246,21 @@ u8 Z80_read(const u16 addr);
  *  \param value
  *      Value to write.
  *
- *  You need to request Z80 BUS to access Z80 memory.
+ *  You need to request Z80 BUS before accessing Z80 memory.
  *
- *  \see Z80_requestBus(u16)
+ *  \see Z80_requestBus(bool)
  */
 void Z80_write(const u16 addr, const u8 value);
 
 /**
  *  \brief
  *      Clear Z80 memory.
- *  \param dest
- *      Destination address (Z80 memory).
- *  \param size
- *      Size in byte of region to clear.
- *  \param resetz80
- *      Reset Z80 if set to TRUE.
+ *
+ *  You need to request Z80 BUS before accessing Z80 memory.
+ *
+ *  \see Z80_requestBus(bool)
  */
-void Z80_clear(const u16 dest, const u16 size, const bool resetz80);
+void Z80_clear(void);
 /**
  *  \brief
  *      Upload data in Z80 memory.
@@ -275,7 +273,7 @@ void Z80_clear(const u16 dest, const u16 size, const bool resetz80);
  *  \param resetz80
  *      Reset Z80 if set to TRUE.
  */
-void Z80_upload(const u16 dest, const u8 *data, const u16 size, const bool resetz80);
+void Z80_upload(const u16 dest, const u8 *data, const u16 size);
 /**
  *  \brief
  *      Read data from Z80 memory.
@@ -304,7 +302,7 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
 u16  Z80_getLoadedDriver(void);
 /**
  *  \brief
- *      Unload Z80 driver (actually clear Z80 ram).
+ *      Unload Z80 driver (set NULL driver).
  */
 void Z80_unloadDriver(void);
 /**

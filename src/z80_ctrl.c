@@ -164,26 +164,26 @@ void Z80_write(const u16 addr, const u8 value)
 }
 
 
-void Z80_clear(const u16 to, const u16 size, const bool resetz80)
+void Z80_clear()
 {
-    Z80_requestBus(TRUE);
+    SYS_disableInts();
+    bool busTaken = Z80_getAndRequestBus(TRUE);
 
     const u8 zero = getZeroU8();
-    vu8* dst = (u8*) (Z80_RAM + to);
-    u16 len = size;
+    vu8* dst = (u8*) Z80_RAM;
+    u16 len = Z80_RAM_LEN;
 
     while(len--) *dst++ = zero;
 
-    if (resetz80) Z80_startReset();
-    Z80_releaseBus();
-    // wait bus released
-    while(Z80_isBusTaken());
-    if (resetz80) Z80_endReset();
+    // release bus
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
 }
 
-void Z80_upload(const u16 to, const u8 *from, const u16 size, const bool resetz80)
+void Z80_upload(const u16 to, const u8 *from, const u16 size)
 {
-    Z80_requestBus(TRUE);
+    SYS_disableInts();
+    bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // copy data to Z80 RAM (need to use byte copy here)
     u8* src = (u8*) from;
@@ -192,15 +192,14 @@ void Z80_upload(const u16 to, const u8 *from, const u16 size, const bool resetz8
 
     while(len--) *dst++ = *src++;
 
-    if (resetz80) Z80_startReset();
-    Z80_releaseBus();
-    // wait bus released
-    while(Z80_isBusTaken());
-    if (resetz80) Z80_endReset();
+    // release bus
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
 }
 
 void Z80_download(const u16 from, u8 *to, const u16 size)
 {
+    SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // copy data from Z80 RAM (need to use byte copy here)
@@ -210,8 +209,9 @@ void Z80_download(const u16 from, u8 *to, const u16 size)
 
     while(len--) *dst++ = *src++;
 
-    if (!busTaken)
-        Z80_releaseBus();
+    // release bus
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
 }
 
 
@@ -222,11 +222,8 @@ u16 Z80_getLoadedDriver()
 
 void Z80_unloadDriver()
 {
-    // already unloaded
-    if (currentDriver == Z80_DRIVER_NULL) return;
-
-    // clear Z80 RAM
-    Z80_clear(0, Z80_RAM_LEN, TRUE);
+    // load NULL driver
+    Z80_loadDriver(Z80_DRIVER_NULL, FALSE);
 
     currentDriver = Z80_DRIVER_NULL;
 
@@ -274,10 +271,23 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
             return;
     }
 
+    SYS_disableInts();
+    Z80_requestBus(TRUE);
+
+    // reset sound chips
+    YM2612_reset();
+    PSG_init();
+
     // clear z80 memory
-    Z80_clear(0, Z80_RAM_LEN, FALSE);
+    Z80_clear();
     // upload Z80 driver and reset Z80
-    Z80_upload(0, drv, len, TRUE);
+    Z80_upload(0, drv, len);
+
+    Z80_startReset();
+    Z80_releaseBus();
+    // wait a bit so Z80 reset completed
+    waitSubTick(50);
+    Z80_endReset();
 
     // driver initialisation
     switch(driver)
@@ -319,7 +329,7 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
 
         case Z80_DRIVER_4PCM:
             // load volume table
-            Z80_upload(0x1000, tab_vol, 0x1000, 0);
+            Z80_upload(0x1000, tab_vol, 0x1000);
 
             // misc parameters initialisation
             Z80_requestBus(TRUE);
@@ -337,10 +347,6 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
             break;
 
         case Z80_DRIVER_XGM:
-            // reset sound chips
-            YM2612_reset();
-            PSG_init();
-
             // misc parameters initialisation
             Z80_requestBus(TRUE);
             // point to Z80 sample id table (first entry = silent sample)
@@ -371,7 +377,7 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
                 // wait bus released
                 while(Z80_isBusTaken());
 
-                // just wait for it
+                // just wait for it (the function does request Z80 bus if needed)
                 while(!Z80_isDriverReady())
                     waitMs(1);
                 break;
@@ -403,20 +409,39 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
             Z80_useBusProtection(0);
             break;
     }
+
+    SYS_enableInts();
 }
 
 void Z80_loadCustomDriver(const u8 *drv, u16 size)
 {
+    // remove XGM task if present
+    VBlankProcess &= ~PROCESS_XGM_TASK;
+
+    SYS_disableInts();
+    Z80_requestBus(TRUE);
+
+    // reset sound chips
+    YM2612_reset();
+    PSG_init();
+
     // clear z80 memory
-    Z80_clear(0, Z80_RAM_LEN, FALSE);
+    Z80_clear();
     // upload Z80 driver and reset Z80
-    Z80_upload(0, drv, size, TRUE);
+    Z80_upload(0, drv, size);
+
+    Z80_startReset();
+    Z80_releaseBus();
+    // wait bus released
+    while(Z80_isBusTaken());
+    // wait a bit so Z80 reset completed
+    waitSubTick(50);
+    Z80_endReset();
 
     // custom driver set
     currentDriver = Z80_DRIVER_CUSTOM;
 
-    // remove XGM task if present
-    VBlankProcess &= ~PROCESS_XGM_TASK;
+    SYS_enableInts();
 }
 
 u16 Z80_isDriverReady()
@@ -428,8 +453,7 @@ u16 Z80_isDriverReady()
     pb = (u8 *) Z80_DRV_STATUS;
 
     // bus already taken ? just check status
-    if (Z80_isBusTaken())
-        ret = *pb & Z80_DRV_STAT_READY;
+    if (Z80_isBusTaken()) ret = *pb & Z80_DRV_STAT_READY;
     else
     {
         // take the bus, check status and release bus
