@@ -18,6 +18,11 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         BALANCED, MIN_SPRITE, MIN_TILE, NONE
     };
 
+    public static enum OptimizationLevel
+    {
+        FAST, MEDIUM, SLOW, MAX
+    };
+
     public static final Comparator<SpriteCell> sizeAndCoverageComparator = new Comparator<SpriteCell>()
     {
         @Override
@@ -246,7 +251,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
                 return 12d + (numTile * 1d) + (getWidth() / 32d);
 
             case MIN_TILE:
-                return 6d + (numTile * 3d) + (getWidth() / 32d);
+                return 6d + (numTile * 4d) + (getWidth() / 32d);
         }
 
         // return (1 / 10d);

@@ -16,6 +16,7 @@ import sgdk.rescomp.resource.Bin;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.SpriteCell.OptimizationLevel;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ImageUtil;
 
@@ -36,9 +37,10 @@ public class SpriteAnimation extends Resource
      *        width of frame in tile
      * @param hf
      *        height of frame in tile
+     * @param showCuttingResult
      */
-    public SpriteAnimation(String id, byte[] image8bpp, int w, int h, int animIndex, int wf, int hf, int time,
-            CollisionType collision, Compression compression, OptimizationType opt, long optIteration)
+    public SpriteAnimation(String id, byte[] image8bpp, int w, int h, int animIndex, int wf, int hf, int time, CollisionType collision, Compression compression,
+            OptimizationType optType, OptimizationLevel optLevel)
     {
         super(id);
 
@@ -59,34 +61,36 @@ public class SpriteAnimation extends Resource
             final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
 
             // FIXME: why are we doing that ? duplicate resource optimization should be enough !
-//            // try to search for duplicated frame first
-//            SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision, compression);
-//
-//            // not found ? --> define new frame
-//            if (frame == null)
-//            {
-//                frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt,
-//                        optIteration);
-//            }
-//            else
-//            {
-//                System.out.println("Sprite frame at anim #" + animIndex + " frame #" + i + " is a duplicate of " + frame.id);
-//            }
-//
-//            // add frame
-//            frames.add(frame);
-            
+            // // try to search for duplicated frame first
+            // SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision,
+            // compression);
+            //
+            // // not found ? --> define new frame
+            // if (frame == null)
+            // {
+            // frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt,
+            // optIteration);
+            // }
+            // else
+            // {
+            // System.out.println("Sprite frame at anim #" + animIndex + " frame #" + i + " is a duplicate of " +
+            // frame.id);
+            // }
+            //
+            // // add frame
+            // frames.add(frame);
+
             // add frame
-            frames.add(new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, opt, optIteration));
+            frames.add(new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, optType, optLevel));
         }
-        
+
         // start from last frame and remove all trailing empty frames
-        for(int i = frames.size() - 1; i >= 0; i--)
+        for (int i = frames.size() - 1; i >= 0; i--)
         {
             // not empty ? --> stop here
             if (!frames.get(i).isEmpty())
                 break;
-            
+
             // remove frame
             frames.remove(i);
         }
@@ -104,15 +108,13 @@ public class SpriteAnimation extends Resource
         }
 
         if (frames.size() > 255)
-            throw new IllegalArgumentException(
-                    "Sprite animation '" + id + "' has " + frames.size() + " frames (max = 255)");
+            throw new IllegalArgumentException("Sprite animation '" + id + "' has " + frames.size() + " frames (max = 255)");
 
         // compute hash code
         hc = loopIndex ^ frames.hashCode();
     }
 
-    private SpriteFrame findExistingSpriteFrame(byte[] frameImage, Dimension dimension, int time,
-            CollisionType collision, Compression compression)
+    private SpriteFrame findExistingSpriteFrame(byte[] frameImage, Dimension dimension, int time, CollisionType collision, Compression compression)
     {
         for (Resource res : Compiler.getResources(SpriteFrame.class))
         {
@@ -125,15 +127,11 @@ public class SpriteAnimation extends Resource
         return null;
     }
 
-    private boolean checkEqual(SpriteFrame spriteFrame, byte[] frameImage, Dimension dimension, int timer,
-            CollisionType collision, Compression compression)
+    private boolean checkEqual(SpriteFrame spriteFrame, byte[] frameImage, Dimension dimension, int timer, CollisionType collision, Compression compression)
     {
         return (SpriteFrame.computeFastHashcode(frameImage, dimension, timer, collision, compression) == spriteFrame.fhc)
-                && Arrays.equals(frameImage, spriteFrame.frameImage)
-                && compression.equals(spriteFrame.compression)
-                && ((collision == spriteFrame.collisionType)
-                        || ((collision != null) && (collision.equals(spriteFrame.collisionType)))
-                                && (timer == spriteFrame.timer));
+                && Arrays.equals(frameImage, spriteFrame.frameImage) && compression.equals(spriteFrame.compression) && ((collision == spriteFrame.collisionType)
+                        || ((collision != null) && (collision.equals(spriteFrame.collisionType))) && (timer == spriteFrame.timer));
     }
 
     public boolean isEmpty()
@@ -193,8 +191,7 @@ public class SpriteAnimation extends Resource
     @Override
     public String toString()
     {
-        return id + ": numFrame=" + frames.size() + " maxNumTile=" + getMaxNumTile() + " maxNumSprite="
-                + getMaxNumSprite();
+        return id + ": numFrame=" + frames.size() + " maxNumTile=" + getMaxNumTile() + " maxNumSprite=" + getMaxNumSprite();
     }
 
     @Override

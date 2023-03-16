@@ -18,13 +18,12 @@ import sgdk.rescomp.type.Basics.CollisionBase;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.SpriteCell;
+import sgdk.rescomp.type.SpriteCell.OptimizationLevel;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ImageUtil;
 
 public class SpriteFrame extends Resource
 {
-    public static final int DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION = 500000;
-
     public final List<VDPSprite> vdpSprites;
     public final Collision collision;
     public final Tileset tileset;
@@ -48,9 +47,10 @@ public class SpriteFrame extends Resource
      *        width of frame in tile
      * @param hf
      *        height of frame in tile
+     * @param showCut
      */
-    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType, Compression compression, OptimizationType opt,
-            long optIteration)
+    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType, Compression compression,
+            OptimizationType optType, OptimizationLevel optLevel)
     {
         super(id);
 
@@ -67,30 +67,40 @@ public class SpriteFrame extends Resource
         final int numTile = wf * hf;
 
         // special case of no optimization ? --> use default solution covering the whole sprite frame
-        if (opt == OptimizationType.NONE)
-            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.NONE);
+        if (optType == OptimizationType.NONE)
+            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.NONE, false);
         else
         {
-            // not default value ? --> force slow optimization
-            if (optIteration != SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION)
-                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, opt);
+            // slow optimization ?
+            if ((optLevel == OptimizationLevel.SLOW) || (optLevel == OptimizationLevel.MAX))
+            {
+                final int iteration = (optLevel == OptimizationLevel.SLOW) ? 80000 : 500000;
+
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, iteration, optType);
+
+                // above the limit of internal sprite ? force MIN_SPRITE optimization strategy
+                if ((sprites.size() > 16) && (optType != OptimizationType.MIN_SPRITE))
+                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, iteration, OptimizationType.MIN_SPRITE);
+            }
             else
             {
-                // always start with the fast optimization first
-                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, opt);
+                final boolean optBetter = optLevel == OptimizationLevel.MEDIUM;
 
-                // too many sprites used for this sprite ? try fast sprite opti
-                if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
-                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE);
+                // always start with the fast optimization first
+                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, optType, optBetter);
+
+                // too many sprites used for this sprite ? try MIN_SPRITE opt strategy
+                if ((sprites.size() > 16) && (optType != OptimizationType.MIN_SPRITE))
+                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE, optBetter);
+
+                // still too many sprites used for this sprite ? try MIN_SPRITE with optBetter option
+                if ((sprites.size() > 16) && (!optBetter))
+                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE, true);
 
                 // still too many sprites used for this sprite ? try better (but slower) sprite optimization method
                 if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
-                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, opt);
+                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, 100000, OptimizationType.MIN_SPRITE);
             }
-
-            // above the limit of internal sprite ? force alternative optimization strategy (minimize the number of sprite)
-            if ((sprites.size() > 16) && (opt != OptimizationType.MIN_SPRITE))
-                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, optIteration, OptimizationType.MIN_SPRITE);
         }
 
         // still above the limit ? --> stop here :-(
@@ -99,7 +109,7 @@ public class SpriteFrame extends Resource
                     + " internal sprites, that is above the limit (16), try to reduce the sprite size or split it.");
 
         // special case of NONE optimization type
-        if ((!sprites.isEmpty()) && (opt == OptimizationType.NONE))
+        if ((!sprites.isEmpty()) && (optType == OptimizationType.NONE))
         {
             // check if frame is empty or not
             boolean empty = true;
@@ -184,10 +194,10 @@ public class SpriteFrame extends Resource
      *        height of frame in tile
      */
     public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf, int timer, CollisionType collisionType,
-            Compression compression, OptimizationType opt, long optIteration)
+            Compression compression, OptimizationType optType, OptimizationLevel optLevel)
     {
         this(id, ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8)), wf,
-                hf, timer, collisionType, compression, opt, optIteration);
+                hf, timer, collisionType, compression, optType, optLevel);
     }
 
     static int computeFastHashcode(byte[] frameImage8bpp, Dimension frameDim, int timer, CollisionType collision, Compression compression)

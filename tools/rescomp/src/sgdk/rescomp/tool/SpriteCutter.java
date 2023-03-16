@@ -23,7 +23,8 @@ import sgdk.tool.ThreadUtil;
 
 public class SpriteCutter
 {
-    private static List<Solution> getFastOptimizedSolutions(byte[] image8bpp, Dimension imageDim, Rectangle frameBounds, OptimizationType optimizationType)
+    private static List<Solution> getFastOptimizedSolutions(byte[] image8bpp, Dimension imageDim, Rectangle frameBounds, OptimizationType optimizationType,
+            boolean betterOpt)
     {
         final List<Solution> result = new ArrayList<>();
         final SpriteCutter spriteCutter = new SpriteCutter(image8bpp, imageDim, frameBounds);
@@ -38,7 +39,17 @@ public class SpriteCutter
             for (int gridSize = 8; gridSize <= 32; gridSize += 24)
             {
                 // get best grid (minimum number of tile for region image covering)
-                final List<CellGrid> grids = spriteCutter.getBestGrids(gridSize, optimizationType);
+                final List<CellGrid> grids;
+
+                // take all grids
+                if (betterOpt)
+                    grids = spriteCutter.getBestGrids(gridSize, optimizationType);
+                else
+                {
+                    // only take the best guessed grid
+                    grids = new ArrayList<>();
+                    grids.add(spriteCutter.getBestGrid(gridSize, optimizationType));
+                }
 
                 for (CellGrid grid : grids)
                 {
@@ -60,7 +71,7 @@ public class SpriteCutter
                     }
                     catch (Exception e)
                     {
-                        // ignore solution when error occur (rare but can happen in some specific case) 
+                        // ignore solution when error occur (rare but can happen in some specific case)
                     }
                 }
             }
@@ -77,9 +88,9 @@ public class SpriteCutter
      * @see #startOptimization(Solution, int)
      * @see #getOptimizedSolution()
      */
-    public static List<SpriteCell> getFastOptimizedSpriteList(byte[] image8bpp, Dimension imageDim, OptimizationType optimizationType)
+    public static List<SpriteCell> getFastOptimizedSpriteList(byte[] image8bpp, Dimension imageDim, OptimizationType optimizationType, boolean betterOpt)
     {
-        return getFastOptimizedSpriteList(image8bpp, imageDim, new Rectangle(imageDim), optimizationType);
+        return getFastOptimizedSpriteList(image8bpp, imageDim, new Rectangle(imageDim), optimizationType, betterOpt);
     }
 
     /**
@@ -90,9 +101,10 @@ public class SpriteCutter
      * @see #startOptimization(Solution, int)
      * @see #getOptimizedSolution()
      */
-    public static List<SpriteCell> getFastOptimizedSpriteList(byte[] image8bpp, Dimension imageDim, Rectangle frameBounds, OptimizationType optimizationType)
+    public static List<SpriteCell> getFastOptimizedSpriteList(byte[] image8bpp, Dimension imageDim, Rectangle frameBounds, OptimizationType optimizationType,
+            boolean betterOpt)
     {
-        final List<Solution> solutions = getFastOptimizedSolutions(image8bpp, imageDim, frameBounds, optimizationType);
+        final List<Solution> solutions = getFastOptimizedSolutions(image8bpp, imageDim, frameBounds, optimizationType, betterOpt);
 
         if (solutions.isEmpty())
             return new ArrayList<>();
@@ -162,9 +174,11 @@ public class SpriteCutter
 
         for (int opt = 0; opt < 2; opt++)
         {
-            for (int gridSize = 8; gridSize <= 32; gridSize += 8)
+            // only need to use grid size of 8 or 32, intermediate doesn't not produce better result
+            // as we fuse adjacent cells when grid size = 8
+            for (int gridSize = 8; gridSize <= 32; gridSize += 24)
             {
-                // get best grid (minimum number of tile for region image covering)
+                // get best grids
                 final List<CellGrid> grids = spriteCutter.getBestGrids(gridSize, optimizationType);
 
                 for (CellGrid grid : grids)
@@ -190,20 +204,20 @@ public class SpriteCutter
                     }
                     catch (Exception e)
                     {
-                        // ignore solution when error occur (rare but can happen in some specific case) 
+                        // ignore solution when error occur (rare but can happen in some specific case)
                     }
                 }
             }
         }
 
-        // start optimization with a base of solution (less or more optimized)
+        // start optimization with a set of base solution (less or more optimized)
         spriteCutter.startOptimization(baseSolutions, optIteration);
 
         try
         {
             do
             {
-                Thread.sleep(100);
+                Thread.sleep(1);
             }
             while (!spriteCutter.isOptimizationDone());
         }
@@ -936,10 +950,10 @@ public class SpriteCutter
                     // add to list and to map
                     branches.add(result);
                     branchMap.put(id, result);
-
-                    curBranchId++;
                 }
             }
+
+            curBranchId++;
 
             return result;
         }
@@ -960,7 +974,8 @@ public class SpriteCutter
             }
         }
 
-        void addSolution(Integer branchId, Solution solution)
+        // important to synchronize it
+        synchronized void addSolution(Integer branchId, Solution solution)
         {
             // add only complete solution
             if (solution.isComplete())
@@ -978,46 +993,44 @@ public class SpriteCutter
         private void addNewTask()
         {
             final Runnable task;
-            final int size = branches.size();
 
-            // branch mutation
-            if ((Random.nextInt() & 0x1F) != 0)
+            synchronized (branches)
             {
-                final SolutionBranch branch;
-                final Solution solution;
-
-                synchronized (branches)
+                final int size = branches.size();
+                
+                // branch mutation
+                if ((Random.nextInt() & 0x1F) != 0)
                 {
+                    final SolutionBranch branch;
+                    final Solution solution;
+
                     branch = branches.get(curBranchTask);
                     solution = branch.getRandomSolution();
+
+                    // cell mutation
+                    task = new SolutionPartMutationBuilder(branch.id, solution, (Random.nextInt() & 3) + 1);
+                    // so we process each branch
+                    curBranchTask = (curBranchTask + 1) % size;
                 }
-
-                // cell mutation
-                task = new SolutionPartMutationBuilder(branch.id, solution, (Random.nextInt() & 3) + 1);
-                // so we process each branch
-                curBranchTask = (curBranchTask + 1) % size;
-            }
-            // new branch
-            else
-            {
-                final SolutionBranch branch1;
-                final SolutionBranch branch2;
-                final Solution solution1;
-                final Solution solution2;
-
-                synchronized (branches)
+                // new branch
+                else
                 {
+                    final SolutionBranch branch1;
+                    final SolutionBranch branch2;
+                    final Solution solution1;
+                    final Solution solution2;
+
                     branch1 = branches.get(Random.nextInt(size));
                     branch2 = branches.get(Random.nextInt(size));
                     solution1 = branch1.getRandomSolution();
                     solution2 = branch2.getRandomSolution();
+
+                    // mix mutation
+                    task = new SolutionMixMutationBuilder(Integer.valueOf(curBranchId), solution1, solution2);
+                    curBranchId++;
                 }
-
-                // mix mutation
-                task = new SolutionMixMutationBuilder(Integer.valueOf(curBranchId), solution1, solution2);
-                curBranchId++;
             }
-
+            
             executor.execute(task);
         }
     }

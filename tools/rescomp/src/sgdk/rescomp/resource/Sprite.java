@@ -15,6 +15,7 @@ import sgdk.rescomp.resource.internal.VDPSprite;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.SpriteCell.OptimizationLevel;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ArrayMath;
 import sgdk.tool.FileUtil;
@@ -33,11 +34,8 @@ public class Sprite extends Resource
 
     public final Palette palette;
 
-    // for debug purpose
-    final boolean saveOptImg = false;
-
-    public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision, OptimizationType opt,
-            long optIteration) throws Exception
+    public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision, OptimizationType optType,
+            OptimizationLevel optLevel, boolean showCut) throws Exception
     {
         super(id);
 
@@ -110,7 +108,7 @@ public class Sprite extends Resource
         for (int i = 0; i < numAnim; i++)
         {
             // build sprite animation
-            SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, image, wt, ht, i, wf, hf, time, collision, compression, opt, optIteration);
+            SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, image, wt, ht, i, wf, hf, time, collision, compression, optType, optLevel);
 
             // check if empty
             if (!animation.isEmpty())
@@ -118,7 +116,7 @@ public class Sprite extends Resource
                 // add as internal resource (get duplicate if exist)
                 animation = (SpriteAnimation) addInternalResource(animation);
 
-                if (saveOptImg)
+                if (showCut)
                 {
                     int xOff = 0;
                     for (SpriteFrame frame : animation.frames)
@@ -146,7 +144,7 @@ public class Sprite extends Resource
         g2.dispose();
 
         // for debug purpose
-        if (saveOptImg)
+        if (showCut)
             ImageUtil.save(bufImg, "png", FileUtil.setExtension(imgFile, "") + "_opt.png");
 
         // compute hash code

@@ -1,7 +1,5 @@
 package sgdk.rescomp.processor;
 
-import java.io.IOException;
-
 import sgdk.rescomp.Compiler;
 import sgdk.rescomp.Processor;
 import sgdk.rescomp.Resource;
@@ -10,6 +8,7 @@ import sgdk.rescomp.resource.internal.SpriteFrame;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.CollisionType;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.SpriteCell.OptimizationLevel;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
@@ -28,7 +27,7 @@ public class SpriteProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [iteration]]]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt [opt_level]]]]]");
             System.out.println("  name          Sprite variable name");
             System.out.println("  file          the image file to convert to SpriteDefinition structure (BMP or PNG image)");
             System.out.println("  width         width of a single sprite frame in tile");
@@ -45,7 +44,11 @@ public class SpriteProcessor implements Processor
             System.out.println("                    1 / SPRITE    = reduce the number of hardware sprite (using bigger sprite) at the expense of more used tiles");
             System.out.println("                    2 / TILE      = reduce the number of tiles at the expense of more hardware sprite (using smaller sprite)");
             System.out.println("                    3 / NONE      = no optimization (cover the whole sprite frame)");
-            System.out.println("  iteration     number of iteration for sprite cutting optimization (default = 500000)");
+            System.out.println("  opt_level     optimization level for the sprite cutting operation:");
+            System.out.println("                    FAST      = fast optimisation, good enough in general (default)");
+            System.out.println("                    MEDIUM    = intermediate optimisation level, provide better results than FAST but ~5 time slower");
+            System.out.println("                    SLOW      = advanced optimisation level using a genetic algorithm (80000 iterations), ~20 time slower than FAST");
+            System.out.println("                    MAX       = maximum optimisation level, genetic algorithm (500000 iterations), ~100 time slower than FAST");
 
             return null;
         }
@@ -92,15 +95,19 @@ public class SpriteProcessor implements Processor
         // get optimization value
         OptimizationType opt = OptimizationType.BALANCED;
         if (fields.length >= 9)
-            opt = Util.getSpriteOpt(fields[8]);
+            opt = Util.getSpriteOptType(fields[8]);
         // get max number of iteration
-        long iteration = SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION;
+        OptimizationLevel optLevel = OptimizationLevel.FAST;
+        boolean showCut = false;
         if (fields.length >= 10)
-            iteration = StringUtil.parseInt(fields[9], SpriteFrame.DEFAULT_SPRITE_OPTIMIZATION_NUM_ITERATION);
+        {
+            optLevel = Util.getSpriteOptLevel(fields[9]);
+            showCut = true;
+        }
 
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
-        
-        return new Sprite(id, fileIn, wf, hf, compression, time, collision, opt, iteration);
+
+        return new Sprite(id, fileIn, wf, hf, compression, time, collision, opt, optLevel, showCut);
     }
 }

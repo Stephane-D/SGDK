@@ -14,6 +14,7 @@ import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.PackedData;
 import sgdk.rescomp.type.Basics.SoundDriver;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.SpriteCell.OptimizationLevel;
 import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
@@ -103,7 +104,7 @@ public class Util
         throw new IllegalArgumentException("Unrecognized tilemap optimization: '" + text + "'");
     }
 
-    public static OptimizationType getSpriteOpt(String text)
+    public static OptimizationType getSpriteOptType(String text)
     {
         final String upText = text.toUpperCase();
 
@@ -116,7 +117,30 @@ public class Util
         if (StringUtil.equals(upText, "NONE") || StringUtil.equals(upText, "3"))
             return OptimizationType.NONE;
 
-        throw new IllegalArgumentException("Unrecognized sprite optimization: '" + text + "'");
+        throw new IllegalArgumentException("Unrecognized sprite optimization type: '" + text + "'");
+    }
+
+    public static OptimizationLevel getSpriteOptLevel(String text)
+    {
+        final String upText = text.toUpperCase();
+        final int value = StringUtil.parseInt(upText, -1);
+
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "FAST") || (value == 0))
+            return OptimizationLevel.FAST;
+        if (StringUtil.equals(upText, "MEDIUM") || (value == 1))
+            return OptimizationLevel.MEDIUM;
+        // for backward compatibility with iteration value
+        if (StringUtil.equals(upText, "MAX")  || (value > 200000))
+            return OptimizationLevel.MAX;
+        // for backward compatibility with iteration value
+        if (StringUtil.equals(upText, "SLOW") || (value >= 10000))
+            return OptimizationLevel.SLOW;
+        
+        // for backward compatibility with iteration value
+        if (value != -1)
+            return OptimizationLevel.FAST;
+
+        throw new IllegalArgumentException("Unrecognized sprite optimization level: '" + text + "'");
     }
 
     public static Color getColor(String string)
