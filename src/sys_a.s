@@ -1,4 +1,4 @@
-
+#include "task_cst.h"
 #include "asm_mac.i"
 
 func SYS_assertReset
@@ -9,12 +9,20 @@ func SYS_assertReset
 func SYS_reset
     move   #0x2700,%sr
     move.l (0),%a7
+
+    move    %sp, %usp
+    sub     #USER_STACK_LENGTH, %sp         // configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
+
     jmp     _reset_entry
 
 
 func SYS_hardReset
     move   #0x2700,%sr
     move.l (0),%a7
+
+    move    %sp, %usp
+    sub     #USER_STACK_LENGTH, %sp         // configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
+
     jmp    _start_entry
 
 

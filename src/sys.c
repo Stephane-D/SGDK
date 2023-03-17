@@ -447,6 +447,10 @@ void _start_entry()
     u16* dst;
     u16 len;
 
+    // stop Z80 (first thing to do)
+    *((u16*) Z80_HALT_PORT) = 0x0100;
+    *((u16*) Z80_RESET_PORT) = 0x0100;
+
     // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so the stack as well)
     dst = (u16*) RAM;
     len = 0x8000;
@@ -579,6 +583,10 @@ void _start_entry()
 
 void _reset_entry()
 {
+    // stop Z80 (first thing to do)
+    *((u16*) Z80_HALT_PORT) = 0x0100;
+    *((u16*) Z80_RESET_PORT) = 0x0100;
+
     internal_reset();
 
     main(FALSE);

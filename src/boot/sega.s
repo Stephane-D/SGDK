@@ -55,13 +55,6 @@ _Entry_Point:
 * disable interrupts
         move    #0x2700,%sr
 
-        move.l  #0xA11100,%a0
-        move.w  #0x0100,%d0
-
-* stop Z80 (first thing to do)
-        move.w  %d0,0x0000(%a0)
-        move.w  %d0,0x0100(%a0)
-
 * Configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
         move    %sp, %usp
         sub     #USER_STACK_LENGTH, %sp
@@ -73,6 +66,7 @@ _Entry_Point:
         bne.s   SkipInit
 
 * Check Version Number
+        move.l  #0xA11100,%a0
         move.b  -0x10ff(%a0),%d0
         andi.b  #0x0f,%d0
         beq.s   NoTMSS
