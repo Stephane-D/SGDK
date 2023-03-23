@@ -64,6 +64,12 @@
 
 /**
  *  \brief
+ *      Reset all banks to their initial / default value (automatically called at reset)
+ */
+void SYS_resetBanks();
+
+/**
+ *  \brief
  *      Returns the current bank of specified region index.
  *
  *  \param regionIndex the 512KB region index we want to get. Accepted values: 1-7 as region 0 (0x000000-0x07FFFF) is fixed.
@@ -155,5 +161,26 @@ void* SYS_getFarDataSafe(void* data, u32 size);
  */
 void* SYS_getFarDataSafeEx(void* data, u32 size, bool high);
 
+/**
+ *  \brief
+ *      Retrieve the value of the next used region for FAR access with bank switch if data is not already accessible.
+ *
+ * This method should really be used in very specific case to know which region (6 or 7) will be used for next FAR access through bank switch but more
+ * importantly eventually to save its state and restore it with #SYS_setNextFarAccessRegion(..) later if you need to temporary change banks.
+ *
+ *  \see SYS_setNextFarAccessRegion
+ */
+bool SYS_getNextFarAccessRegion();
+/**
+ *  \brief
+ *      Set the value of the next used region for FAR access with bank switch if data is not already accessible.
+ *
+ * This method should really be used in very specific case to set which region (6 or 7) will be used for next FAR access through bank switch.<br>
+ * It can also be used to restore internal state saved it through #SYS_getNextFarAccessRegion()
+ *
+ *  \see SYS_getNextFarAccessRegion
+ *  \see SYS_getFarDataEx
+ */
+void SYS_setNextFarAccessRegion(bool high);
 
 #endif // _MAPPER_H_

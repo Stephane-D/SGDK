@@ -10,8 +10,15 @@
 
 
 static u16 banks[NUM_BANK] = {0, 1, 2, 3, 4, 5, 6, 7};
-static u16 reg = 0;
+// next region access (FALSE = low region; TRUE = high region)
+bool region;
 
+void SYS_resetBanks()
+{
+    u16 len = 8;
+    while(--len) SYS_setBank(len, len);
+    region = FALSE;
+}
 
 u16 SYS_getBank(u16 regionIndex)
 {
@@ -50,34 +57,52 @@ static u32 setBank(u32 addr)
     // get 512 KB bank index
     const u16 bankIndex = (addr >> 19) & 0x3F;
 
-    // check if bank is already set ?
-    if (banks[6] == bankIndex)
+    // low region set last time ?
+    if (region)
     {
-        reg = 1;
-        return 0x300000;
-    }
-    if (banks[7] == bankIndex)
-    {
-        reg = 0;
-        return 0x380000;
-    }
+        // check if bank is already set on low region first
+        if (banks[6] == bankIndex)
+        {
+            // use high region next time
+            region = TRUE;
+            return 0x300000;
+        }
+        if (banks[7] == bankIndex)
+        {
+            // use low region next time
+            region = FALSE;
+            return 0x380000;
+        }
 
-    if (reg)    // use region 7
-    {
-        // set bank
+        // set bank through high region
         SYS_setBank(7, bankIndex);
-        // next time we will use other region
-        reg = 0;
+        // use low region next time
+        region = FALSE;
 
         // return bank address
         return 0x380000;
     }
-    else        // use region 6
+    // high region set last time ?
+    else
     {
-        // set bank
+        // check if bank is already set on high region first
+        if (banks[7] == bankIndex)
+        {
+            // use low region next time
+            region = FALSE;
+            return 0x380000;
+        }
+        if (banks[6] == bankIndex)
+        {
+            // use high region next time
+            region = TRUE;
+            return 0x300000;
+        }
+
+        // set bank through low region
         SYS_setBank(6, bankIndex);
-        // next time we will use other region
-        reg = 1;
+        // use high region next time
+        region = TRUE;
 
         // return bank address
         return 0x300000;
@@ -88,35 +113,28 @@ static u32 setBankEx(u32 addr, bool high)
 {
     // get 512 KB bank index
     const u16 bankIndex = (addr >> 19) & 0x3F;
-    const u16 bank = high?1:0;
 
     // check if bank is already set ?
-    if (banks[6 + bank] == bankIndex)
+    if (high)
     {
-        reg = 1 - bank;
-        return high?0x380000:0x300000;
-    }
+        // set bank through high region if needed
+        if (banks[7] != bankIndex)
+            SYS_setBank(7, bankIndex);
 
-    if (high)    // use region 7
-    {
-        // set bank
-        SYS_setBank(7, bankIndex);
-        // next time we will use other region
-        reg = 0;
-        // bank 6 point on same bank ? --> force reset so we will stay on bank 7 for this region
-        if (banks[6] == bankIndex) banks[6] = 0;
+        // use low region next time
+        region = FALSE;
 
         // return bank address
         return 0x380000;
     }
-    else        // use region 6
+    else
     {
-        // set bank
-        SYS_setBank(6, bankIndex);
-        // next time we will use other region
-        reg = 1;
-        // bank 7 point on same bank ? --> force reset so we will stay on bank 6 for this region
-        if (banks[7] == bankIndex) banks[7] = 0;
+        // set bank through low region if needed
+        if (banks[6] != bankIndex)
+            SYS_setBank(6, bankIndex);
+
+        // use high region next time
+        region = TRUE;
 
         // return bank address
         return 0x300000;
@@ -247,4 +265,14 @@ void* SYS_getFarDataSafeEx(void* data, u32 size, bool high)
 
     // use the simpler method
     return SYS_getFarDataEx(data, high);
+}
+
+bool SYS_getNextFarAccessRegion()
+{
+    return region;
+}
+
+void SYS_setNextFarAccessRegion(bool high)
+{
+    region = high;
 }
