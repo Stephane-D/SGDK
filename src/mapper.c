@@ -11,7 +11,8 @@
 
 static u16 banks[NUM_BANK] = {0, 1, 2, 3, 4, 5, 6, 7};
 // next region access (FALSE = low region; TRUE = high region)
-bool region;
+static bool region;
+
 
 void SYS_resetBanks()
 {
@@ -19,6 +20,7 @@ void SYS_resetBanks()
     while(--len) SYS_setBank(len, len);
     region = FALSE;
 }
+
 
 u16 SYS_getBank(u16 regionIndex)
 {
