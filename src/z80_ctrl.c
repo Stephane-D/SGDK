@@ -276,7 +276,7 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
 
     // reset sound chips
     YM2612_reset();
-    PSG_init();
+    PSG_reset();
 
     // clear z80 memory
     Z80_clear();
@@ -423,7 +423,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
 
     // reset sound chips
     YM2612_reset();
-    PSG_init();
+    PSG_reset();
 
     // clear z80 memory
     Z80_clear();

@@ -63,7 +63,7 @@
 /**
  *  \deprecated use PSG_reset() instead
  */
-void PSG_init(void);
+#define PSG_init()  _Pragma("GCC error \"This method is deprecated, use PSG_reset() instead.\"")
 
 /**
  *  \brief

@@ -876,7 +876,7 @@ void SPR_setPriority(Sprite* sprite, bool value)
             sprite->attribut = attr & (~TILE_ATTR_PRIORITY_MASK);
 
 #ifdef SPR_DEBUG
-            KLog_U1_("SPR_setPriorityAttribut: #", getSpriteIndex(sprite), " removed priority");
+            KLog_U1_("SPR_setPriority: #", getSpriteIndex(sprite), " removed priority");
 #endif // SPR_DEBUG
         }
     }
@@ -888,17 +888,12 @@ void SPR_setPriority(Sprite* sprite, bool value)
             sprite->attribut = attr | TILE_ATTR_PRIORITY_MASK;
 
 #ifdef SPR_DEBUG
-            KLog_U1_("SPR_setPriorityAttribut: #", getSpriteIndex(sprite), " added priority");
+            KLog_U1_("SPR_setPriority: #", getSpriteIndex(sprite), " added priority");
 #endif // SPR_DEBUG
         }
     }
 
     END_PROFIL(PROFIL_SET_ATTRIBUTE)
-}
-
-void SPR_setPriorityAttribut(Sprite* sprite, u16 value)
-{
-    SPR_setPriority(sprite, value);
 }
 
 void SPR_setPalette(Sprite* sprite, u16 value)
@@ -950,9 +945,9 @@ void SPR_setZ(Sprite* sprite, s16 value)
     SPR_setDepth(sprite, value);
 }
 
-void SPR_setAlwaysOnTop(Sprite* sprite, u16 value)
+void SPR_setAlwaysOnTop(Sprite* sprite)
 {
-    if (value) SPR_setDepth(sprite, SPR_MIN_DEPTH);
+    SPR_setDepth(sprite, SPR_MIN_DEPTH);
 }
 
 void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
@@ -1305,21 +1300,6 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value)
     sprite->status = status;
 
     END_PROFIL(PROFIL_SET_VISIBILITY)
-}
-
-void SPR_setAlwaysVisible(Sprite* sprite, u16 value)
-{
-    if (value) SPR_setVisibility(sprite, VISIBLE);
-}
-
-void SPR_setNeverVisible(Sprite* sprite, u16 value)
-{
-    if (value) SPR_setVisibility(sprite, HIDDEN);
-}
-
-bool SPR_computeVisibility(Sprite* sprite)
-{
-    return SPR_isVisible(sprite, TRUE);
 }
 
 

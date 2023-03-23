@@ -116,12 +116,11 @@
 /**
  *  \deprecated Use BMP_getPixelFast(..) instead (inlining make macro useless)
  */
-#define BMP_GETPIXEL(x, y)          BMP_getPixelFast(x, y)
-
+#define BMP_GETPIXEL(x, y)          _Pragma("GCC error \"This method is deprecated, use BMP_getPixelFast(..) instead.\"")
 /**
  *  \deprecated Use BMP_setPixelFast(..) instead (inlining make macro useless)
  */
-#define BMP_SETPIXEL(x, y, col)     BMP_setPixelFast(x, y, col)
+#define BMP_SETPIXEL(x, y, col)     _Pragma("GCC error \"This method is deprecated, use BMP_setPixelFast(..) instead.\"")
 
 
 #define BMP_BASE_TILE_INDEX         TILE_USER_INDEX
@@ -638,23 +637,23 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
  *  \deprecated
  *      Use BMP_drawBitmapData(..) instead.
  */
-void BMP_loadBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
+#define BMP_loadBitmapData(data, x, y, w, h, pitch)             _Pragma("GCC error \"This method is deprecated, use BMP_drawBitmapData(..) instead.\"")
 /**
  *  \deprecated
  *      Use BMP_drawBitmap(..) instead.
  */
-void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal);
+#define BMP_loadBitmap(bitmap, x, y, loadpal)                   _Pragma("GCC error \"This method is deprecated, use BMP_drawBitmap(..) instead.\"")
 /**
  *  \deprecated
  *      Use BMP_drawBitmapEx(..) instead.
  */
-void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal);
+#define BMP_loadAndScaleBitmap(bitmap, x, y, w, h, loadpal)     _Pragma("GCC error \"This method is deprecated, use BMP_drawBitmapScaled(..) instead.\"")
 
 /**
  *  \deprecated
  *      Uses bitmap->palette instead.
  */
-void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *pal);
+#define BMP_getBitmapPalette(bitmap, pal)                       _Pragma("GCC error \"This method is deprecated, use bitmap->palette instead.\"")
 
 /**
  *  \brief

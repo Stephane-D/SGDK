@@ -41,17 +41,18 @@
  *  \deprecated
  *      Use #VDP_DATA_PORT instead
  */
-#define GFX_DATA_PORT           VDP_DATA_PORT
+#define GFX_DATA_PORT           _Pragma("GCC error \"This definition is deprecated, use VDP_DATA_PORT instead.\"")
+
 /**
  *  \deprecated
  *      Use #VDP_CTRL_PORT instead
  */
-#define GFX_CTRL_PORT           VDP_CTRL_PORT
+#define GFX_CTRL_PORT           _Pragma("GCC error \"This definition is deprecated, use VDP_CTRL_PORT instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_HVCOUNTER_PORT instead
  */
-#define GFX_HVCOUNTER_PORT      VDP_HVCOUNTER_PORT
+#define GFX_HVCOUNTER_PORT      _Pragma("GCC error \"This definition is deprecated, use VDP_HVCOUNTER_PORT instead.\"")
 
 
 /**
@@ -109,17 +110,17 @@
  *  \deprecated
  *      Use VDP_BG_A instead
  */
-#define VDP_PLAN_A              VDP_BG_A
+#define VDP_PLAN_A              _Pragma("GCC error \"This definition is deprecated, use VDP_BG_A instead.\"")
 /**
  *  \deprecated
  *      Use VDP_BG_B instead
  */
-#define VDP_PLAN_B              VDP_BG_B
+#define VDP_PLAN_B              _Pragma("GCC error \"This definition is deprecated, use VDP_BG_B instead.\"")
 /**
  *  \deprecated
  *      Use VDP_WINDOW instead
  */
-#define VDP_PLAN_WINDOW         VDP_WINDOW
+#define VDP_PLAN_WINDOW         _Pragma("GCC error \"This definition is deprecated, use VDP_WINDOW instead.\"")
 
 /**
  *  \brief
@@ -182,7 +183,7 @@
  *  \deprecated
  *      Use VSCROLL_COLUMN instead
  */
-#define VSCROLL_2TILE           VSCROLL_COLUMN
+#define VSCROLL_2TILE           _Pragma("GCC error \"This definition is deprecated, use VSCROLL_COLUMN instead.\"")
 
 /**
  *  \brief
@@ -243,10 +244,6 @@
  */
 #define TILE_SYSTEM_LENGTH      16
 /**
- *  \deprecated Use TILE_SYSTEM_LENGTH instead.
- */
-#define TILE_SYSTEM_LENGHT      TILE_SYSTEM_LENGTH
-/**
  *  \brief
  *      User base tile index.
  */
@@ -271,6 +268,57 @@
  *      Maximum tile index in VRAM reserved for user (for background and user managed sprites)
  */
 #define TILE_USER_MAX_INDEX     userTileMaxIndex
+
+/**
+ *  \deprecated
+ *      Use TILE_MAX_NUM instead
+ */
+#define TILE_MAXNUM             _Pragma("GCC error \"This definition is deprecated, use TILE_MAX_NUM instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_MAX_INDEX instead
+ */
+#define TILE_MAXINDEX           _Pragma("GCC error \"This definition is deprecated, use TILE_MAX_INDEX instead.\"")
+/**
+ *  \deprecated Use TILE_SYSTEM_LENGTH instead.
+ */
+#define TILE_SYSTEM_LENGHT      _Pragma("GCC error \"This definition is deprecated, use TILE_SYSTEM_LENGTH instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_SYSTEM_LENGTH instead
+ */
+#define TILE_SYSTEMLENGTH       _Pragma("GCC error \"This definition is deprecated, use TILE_SYSTEM_LENGTH instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_SYSTEM_INDEX instead
+ */
+#define TILE_SYSTEMINDEX        _Pragma("GCC error \"This definition is deprecated, use TILE_SYSTEM_INDEX instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_USER_INDEX instead
+ */
+#define TILE_USERINDEX          _Pragma("GCC error \"This definition is deprecated, use TILE_USER_INDEX instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_FONT_INDEX instead
+ */
+#define TILE_FONTINDEX          _Pragma("GCC error \"This definition is deprecated, use TILE_FONT_INDEX instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_SPRITE_INDEX instead
+ */
+#define TILE_SPRITEINDEX        _Pragma("GCC error \"This definition is deprecated, use TILE_SPRITE_INDEX instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_USER_LENGTH instead
+ */
+#define TILE_USERLENGTH         _Pragma("GCC error \"This definition is deprecated, use TILE_USER_LENGTH instead.\"")
+/**
+ *  \deprecated
+ *      Use TILE_USER_MAX_INDEX instead
+ */
+#define TILE_USERMAXINDEX       _Pragma("GCC error \"This definition is deprecated, use TILE_USER_MAX_INDEX instead.\"")
+
 /**
  *  \brief
  *      System tile address in VRAM.
@@ -377,62 +425,62 @@
  *  \deprecated
  *      Use #VDP_READ_VRAM_ADDR instead
  */
-#define GFX_READ_VRAM_ADDR(adr)     VDP_READ_VRAM_ADDR(adr)
+#define GFX_READ_VRAM_ADDR(adr)     _Pragma("GCC error \"This definition is deprecated, use VDP_READ_VRAM_ADDR instead.\""))
 /**
  *  \deprecated
  *      Use #VDP_READ_CRAM_ADDR instead
  */
-#define GFX_READ_CRAM_ADDR(adr)     VDP_READ_CRAM_ADDR(adr)
+#define GFX_READ_CRAM_ADDR(adr)     _Pragma("GCC error \"This definition is deprecated, use VDP_READ_CRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_READ_VSRAM_ADDR instead
  */
-#define GFX_READ_VSRAM_ADDR(adr)    VDP_READ_VSRAM_ADDR(adr)
+#define GFX_READ_VSRAM_ADDR(adr)    _Pragma("GCC error \"This definition is deprecated, use VDP_READ_VSRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_WRITE_VRAM_ADDR instead
  */
-#define GFX_WRITE_VRAM_ADDR(adr)    VDP_WRITE_VRAM_ADDR(adr)
+#define GFX_WRITE_VRAM_ADDR(adr)    _Pragma("GCC error \"This definition is deprecated, use VDP_WRITE_VRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_WRITE_CRAM_ADDR instead
  */
-#define GFX_WRITE_CRAM_ADDR(adr)    VDP_WRITE_CRAM_ADDR(adr)
+#define GFX_WRITE_CRAM_ADDR(adr)    _Pragma("GCC error \"This definition is deprecated, use VDP_WRITE_CRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_WRITE_VSRAM_ADDR instead
  */
-#define GFX_WRITE_VSRAM_ADDR(adr)   VDP_WRITE_VSRAM_ADDR(adr)
+#define GFX_WRITE_VSRAM_ADDR(adr)   _Pragma("GCC error \"This definition is deprecated, use VDP_WRITE_VSRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_DMA_VRAM_ADDR instead
  */
-#define GFX_DMA_VRAM_ADDR(adr)      VDP_DMA_VRAM_ADDR(adr)
+#define GFX_DMA_VRAM_ADDR(adr)      _Pragma("GCC error \"This definition is deprecated, use VDP_DMA_VRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_DMA_CRAM_ADDR instead
  */
-#define GFX_DMA_CRAM_ADDR(adr)      VDP_DMA_CRAM_ADDR(adr)
+#define GFX_DMA_CRAM_ADDR(adr)      _Pragma("GCC error \"This definition is deprecated, use VDP_DMA_CRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_DMA_VSRAM_ADDR instead
  */
-#define GFX_DMA_VSRAM_ADDR(adr)     VDP_DMA_VSRAM_ADDR(adr)
+#define GFX_DMA_VSRAM_ADDR(adr)     _Pragma("GCC error \"This definition is deprecated, use VDP_DMA_VSRAM_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_DMA_VRAMCOPY_ADDR instead
  */
-#define GFX_DMA_VRAMCOPY_ADDR(adr)  VDP_DMA_VRAMCOPY_ADDR(adr)
+#define GFX_DMA_VRAMCOPY_ADDR(adr)  _Pragma("GCC error \"This definition is deprecated, use VDP_DMA_VRAMCOPY_ADDR instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_VERT_SCROLL instead
  */
-#define GFX_VERT_SCROLL(adr)        VDP_VERT_SCROLL(adr)
+#define GFX_VERT_SCROLL(adr)        _Pragma("GCC error \"This definition is deprecated, use VDP_VERT_SCROLL instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_HORZ_SCROLL instead
  */
-#define GFX_HORZ_SCROLL(adr)        VDP_HORZ_SCROLL(adr)
+#define GFX_HORZ_SCROLL(adr)        _Pragma("GCC error \"This definition is deprecated, use VDP_HORZ_SCROLL instead.\"")
 
 
 /**
@@ -668,7 +716,7 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram);
  *  \deprecated
  *      Use #VDP_setPlaneSize(..) instead.
  */
-void VDP_setPlanSize(u16 w, u16 h);
+#define VDP_setPlanSize(w, h)      _Pragma("GCC error \"This definition is deprecated, use VDP_setPlaneSize(..) instead.\"")
 
 /**
  *  \brief
@@ -804,12 +852,13 @@ u16 VDP_getBGBAddress(void);
  *  \deprecated
  *      Use #VDP_getBGAAddress(..) instead.
  */
-u16 VDP_getAPlanAddress(void);
+#define VDP_getAPlanAddress() _Pragma("GCC error \"This definition is deprecated, use VDP_getBGAAddress() instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_getBGBAddress(..) instead.
  */
-u16 VDP_getBPlanAddress(void);
+#define VDP_getBPlanAddress() _Pragma("GCC error \"This definition is deprecated, use VDP_getBGBAddress() instead.\"")
+
 /**
  *  \brief
  *      Get VRAM address (location) of Window tilemap.
@@ -819,7 +868,7 @@ u16 VDP_getWindowAddress(void);
  *  \deprecated
  *      Use #VDP_getWindowAddress(..) instead.
  */
-u16 VDP_getWindowPlanAddress(void);
+#define VDP_getWindowPlanAddress() _Pragma("GCC error \"This definition is deprecated, use VDP_getWindowAddress() instead.\"")
 /**
  *  \brief
  *      Get VRAM address (location) of Sprite list.
@@ -855,12 +904,14 @@ void VDP_setBGBAddress(u16 value);
  *  \deprecated
  *      Use #VDP_setBGAAddress(..) instead.
  */
-void VDP_setAPlanAddress(u16 value);
+#define VDP_setAPlanAddress(value)      \
+_Pragma("GCC error \"This definition is deprecated, use VDP_setBGAAddress(..) instead.\"")
 /**
  *  \deprecated
  *      Use #VDP_setBGBAddress(..) instead.
  */
-void VDP_setBPlanAddress(u16 value);
+#define VDP_setBPlanAddress(value)      \
+_Pragma("GCC error \"This definition is deprecated, use VDP_setBGBAddress(..) instead.\"")
 /**
  *  \brief
  *      Set VRAM address (location) of Window tilemap.<br>
@@ -875,7 +926,7 @@ void VDP_setWindowAddress(u16 value);
  *  \deprecated
  *      Use #VDP_setWindowAddress(..) instead.
  */
-void VDP_setWindowPlanAddress(u16 value);
+#define VDP_setWindowPlanAddress(value)     _Pragma("GCC error \"This definition is deprecated, use VDP_setWindowAddress(..) instead.\"")
 /**
  *  \brief
  *      Set VRAM address (location) of Sprite list.<br>
@@ -936,8 +987,7 @@ void VDP_setWindowVPos(u16 down, u16 pos);
 
 /**
  *  \brief
- *      Wait for DMA operation to complete.
- *  \deprecated Use #DMA_waitCompletion() instead
+ *      Wait for DMA operation to complete - same as #DMA_waitCompletion()
  */
 void VDP_waitDMACompletion(void);
 /**

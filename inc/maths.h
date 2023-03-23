@@ -699,7 +699,8 @@ u32 intToBCD(u32 value);
  *  \deprecated
  *      Use #getApproximatedDistance(..) instead.
  */
-u32 distance_approx(s32 dx, s32 dy);
+#define distance_approx(dx, dy) _Pragma("GCC error \"This method is deprecated, use getApproximatedDistance(..) instead.\"")
+
 /**
  *  \brief
  *      Return euclidean distance approximation for specified vector.<br>

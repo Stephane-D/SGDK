@@ -24,11 +24,6 @@ void PSG_reset()
     }
 }
 
-void PSG_init()
-{
-    PSG_reset();
-}
-
 void PSG_write(u8 data)
 {
     vu8 *pb;

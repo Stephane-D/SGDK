@@ -1162,26 +1162,6 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
     return TRUE;
 }
 
-void BMP_loadBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
-{
-    BMP_drawBitmapData(image, x, y, w, h, pitch);
-}
-
-void BMP_loadBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
-{
-    BMP_drawBitmap(bitmap, x, y, loadpal);
-}
-
-void BMP_loadAndScaleBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
-{
-    BMP_drawBitmapScaled(bitmap, x, y, w, h, loadpal);
-}
-
-void BMP_getBitmapPalette(const Bitmap *bitmap, u16 *dest)
-{
-    memcpy(dest, bitmap->palette, 16 * 2);
-}
-
 
 // works only for 8 bits image (x doubled)
 void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_wb, u16 dst_h, u16 dst_pitch)

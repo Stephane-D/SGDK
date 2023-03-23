@@ -331,92 +331,92 @@ u8   SND_getVolume_4PCM(const u16 channel);
 /**
  * \deprecated use XGM_isPlaying() instead
  */
-u8 SND_isPlaying_XGM(void);
+#define SND_isPlaying_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_isPlaying() instead.\"")
 /**
  * \deprecated use XGM_startPlay(..) instead
  */
-void SND_startPlay_XGM(const u8 *song);
+#define SND_startPlay_XGM(song)     _Pragma("GCC error \"This method is deprecated, use XGM_startPlay(..) instead.\"")
 /**
  * \deprecated use XGM_stopPlay(..) instead
  */
-void SND_stopPlay_XGM(void);
+#define SND_stopPlay_XGM()          _Pragma("GCC error \"This method is deprecated, use XGM_stopPlay() instead.\"")
 /**
  * \deprecated use XGM_pausePlay(..) instead
  */
-void SND_pausePlay_XGM(void);
+#define SND_pausePlay_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_pausePlay() instead.\"")
 /**
  * \deprecated use XGM_resumePlay(..) instead
  */
-void SND_resumePlay_XGM(void);
+#define SND_resumePlay_XGM()        _Pragma("GCC error \"This method is deprecated, use XGM_resumePlay() instead.\"")
 
 /**
  * \deprecated use XGM_isPlayingPCM(..) instead
  */
-u8 SND_isPlayingPCM_XGM(const u16 channel_mask);
+#define SND_isPlayingPCM_XGM(channel_mask)  _Pragma("GCC error \"This method is deprecated, use XGM_isPlayingPCM(..) instead.\"")
 /**
  * \deprecated use XGM_setPCM(..) instead
  */
-void SND_setPCM_XGM(const u8 id, const u8 *sample, const u32 len);
+#define SND_setPCM_XGM(id, sample, len)     _Pragma("GCC error \"This method is deprecated, use XGM_setPCM(..) instead.\"")
 /**
  * \deprecated use XGM_setPCMFast(..) instead
  */
-void SND_setPCMFast_XGM(const u8 id, const u8 *sample, const u32 len);
+#define SND_setPCMFast_XGM(id, sample, len) _Pragma("GCC error \"This method is deprecated, use XGM_setPCMFast(..) instead.\"")
 /**
  * \deprecated use XGM_startPlayPCM(..) instead
  */
-void SND_startPlayPCM_XGM(const u8 id, const u8 priority, const u16 channel);
+#define SND_startPlayPCM_XGM(id, prio, ch)  _Pragma("GCC error \"This method is deprecated, use XGM_startPlayPCM(..) instead.\"")
 /**
  * \deprecated use XGM_stopPlayPCM(..) instead
  */
-void SND_stopPlayPCM_XGM(const u16 channel);
+#define SND_stopPlayPCM_XGM(channel)        _Pragma("GCC error \"This method is deprecated, use XGM_stopPlayPCM(..) instead.\"")
 
 /**
  * \deprecated use XGM_getMusicTempo(..) instead
  */
-u16 SND_getMusicTempo_XGM(void);
+#define SND_getMusicTempo_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_getMusicTempo() instead.\"")
 /**
  * \deprecated use XGM_setMusicTempo(..) instead
  */
-void SND_setMusicTempo_XGM(u16 value);
+#define SND_setMusicTempo_XGM(value)    _Pragma("GCC error \"This method is deprecated, use XGM_setMusicTempo(..) instead.\"")
 
 /**
  * \deprecated use XGM_getManualSync(..) instead
  */
-u16 SND_getManualSync_XGM(void);
+#define SND_getManualSync_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_getManualSync() instead.\"")
 /**
  * \deprecated use XGM_setManualSync(..) instead
  */
-void SND_setManualSync_XGM(u16 value);
+#define SND_setManualSync_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_setManualSync() instead.\"")
 /**
  * \deprecated use XGM_nextFrame(..) instead
  */
-#define SND_nextFrame_XGM()  SND_nextXFrame_XGM(1)
+#define SND_nextFrame_XGM()             _Pragma("GCC error \"This method is deprecated, use XGM_nextFrame() instead.\"")
 /**
  * \deprecated use XGM_nextXFrame(..) instead
  */
-void SND_nextXFrame_XGM(u16 num);
+#define SND_nextXFrame_XGM(num)         _Pragma("GCC error \"This method is deprecated, use XGM_nextXFrame(..) instead.\"")
 
 /**
  * \deprecated use XGM_setLoopNumber(..) instead
  */
-void SND_setLoopNumber_XGM(u8 value);
+#define SND_setLoopNumber_XGM(value)    _Pragma("GCC error \"This method is deprecated, use XGM_setLoopNumber(..) instead.\"")
 
 /**
  * \deprecated use XGM_set68KBUSProtection(..) instead
  */
-void SND_set68KBUSProtection_XGM(u8 value);
+#define SND_set68KBUSProtection_XGM(value)  _Pragma("GCC error \"This method is deprecated, use XGM_set68KBUSProtection(..) instead.\"")
 /**
  * \deprecated use XGM_getForceDelayDMA(..) instead
  */
-u16 SND_getForceDelayDMA_XGM(void);
+#define SND_getForceDelayDMA_XGM()          _Pragma("GCC error \"This method is deprecated, use XGM_getForceDelayDMA() instead.\"")
 /**
  * \deprecated use XGM_setForceDelayDMA(..) instead
  */
-void SND_setForceDelayDMA_XGM(u16 value);
+#define SND_setForceDelayDMA_XGM(value)     _Pragma("GCC error \"This method is deprecated, use XGM_setForceDelayDMA(..) instead.\"")
 /**
  * \deprecated use XGM_getCPULoad(..) instead
  */
-u32 SND_getCPULoad_XGM(void);
+#define SND_getCPULoad_XGM()                _Pragma("GCC error \"This method is deprecated, use XGM_getCPULoad() instead.\"")
 
 
 #endif // _SOUND_H_

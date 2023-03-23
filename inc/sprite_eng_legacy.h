@@ -714,7 +714,7 @@ void SPR_setPriority(Sprite* sprite, bool value);
  *  \deprecated
  *      Use #SPR_setPriority(..) instead
  */
-void SPR_setPriorityAttribut(Sprite* sprite, u16 value);
+#define SPR_setPriorityAttribut(sprite, value)      _Pragma("GCC error \"This method is deprecated, use SPR_setPriority(..) instead.\"")
 /**
  *  \brief
  *      Set sprite depth (for sprite display ordering)
@@ -734,9 +734,16 @@ void SPR_setDepth(Sprite* sprite, s16 value);
  */
 void SPR_setZ(Sprite* sprite, s16 value);
 /**
- *  \deprecated Use SPR_setDepth(SPR_MIN_DEPTH) instead
+ *  \brief
+ *      Set sprite depth so it remains above others sprite - same as SPR_setDepth(SPR_MIN_DEPTH)
+ *
+ *  \param sprite
+ *      Sprite to set depth for
+ *
+ *  Sprite having lower depth are display in front of sprite with higher depth.<br>
+ *  The sprite is *immediately* sorted when its depth value is changed.
  */
-void SPR_setAlwaysOnTop(Sprite* sprite, u16 value);
+void SPR_setAlwaysOnTop(Sprite* sprite);
 /**
  *  \brief
  *      Set current sprite animation and frame.
@@ -917,15 +924,15 @@ void SPR_setVisibility(Sprite* sprite, SpriteVisibility value);
 /**
  *  \deprecated Use #SPR_setVisibility(..) method instead.
  */
-void SPR_setAlwaysVisible(Sprite* sprite, u16 value);
+#define SPR_setAlwaysVisible(sprite, value)     _Pragma("GCC error \"This method is deprecated, use SPR_setVisibility(..) instead.\"")
 /**
  *  \deprecated Use #SPR_setVisibility(..) method instead.
  */
-void SPR_setNeverVisible(Sprite* sprite, u16 value);
+#define SPR_setNeverVisible(sprite, value)      _Pragma("GCC error \"This method is deprecated, use SPR_setVisibility(..) instead.\"")
 /**
  *  \deprecated Use SPR_isVisible(..) instead.
  */
-bool SPR_computeVisibility(Sprite* sprite);
+#define SPR_computeVisibility(sprite)           _Pragma("GCC error \"This method is deprecated, use SPR_isVisible(sprite, TRUE) instead.\"")
 
 /**
  *  \brief

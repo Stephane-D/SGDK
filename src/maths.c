@@ -329,11 +329,6 @@ u32 intToBCD(u32 value)
     return res;
 }
 
-u32 distance_approx(s32 dx, s32 dy)
-{
-    return getApproximatedDistance(dx, dy);
-}
-
 u32 getApproximatedDistance(s32 dx, s32 dy)
 {
     u32 min, max;

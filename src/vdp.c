@@ -486,9 +486,9 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
             case 10:
                 // 2KB tilemap VRAM setup: 0xC000 --> 0xEFFF
                 // 0xD000-0xDFFF free
-                VDP_setBPlanAddress(0xC000);
+                VDP_setBGBAddress(0xC000);
                 VDP_setWindowAddress(0xC800);
-                VDP_setAPlanAddress(0xE000);
+                VDP_setBGAAddress(0xE000);
                 VDP_setSpriteListAddress(0xE800);
                 VDP_setHScrollTableAddress(0xEC00);
                 break;
@@ -496,9 +496,9 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
             case 11:
                 // 4KB tilemap VRAM setup: 0xC000 --> 0xFFFF
                 // 0xF700-0xFFFF free
-                VDP_setBPlanAddress(0xC000);
+                VDP_setBGBAddress(0xC000);
                 VDP_setWindowAddress(0xD000);
-                VDP_setAPlanAddress(0xE000);
+                VDP_setBGAAddress(0xE000);
                 VDP_setHScrollTableAddress(0xF000);
                 VDP_setSpriteListAddress(0xF400);
                 break;
@@ -509,18 +509,13 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
                 VDP_setSpriteListAddress(0xAC00);
                 VDP_setHScrollTableAddress(0xA800);
                 VDP_setWindowAddress(0xB000);
-                VDP_setBPlanAddress(0xC000);
-                VDP_setAPlanAddress(0xE000);
+                VDP_setBGBAddress(0xC000);
+                VDP_setBGAAddress(0xE000);
                 break;
         }
 
         updateMapsAddress();
     }
-}
-
-void VDP_setPlanSize(u16 w, u16 h)
-{
-    VDP_setPlaneSize(w, h, FALSE);
 }
 
 u8 VDP_getVerticalScrollingMode()
@@ -669,24 +664,9 @@ u16 VDP_getBGBAddress()
     return bgb_addr;
 }
 
-u16 VDP_getAPlanAddress()
-{
-    return VDP_getBGAAddress();
-}
-
-u16 VDP_getBPlanAddress()
-{
-    return VDP_getBGBAddress();
-}
-
 u16 VDP_getWindowAddress()
 {
     return window_addr;
-}
-
-u16 VDP_getWindowPlanAddress()
-{
-    return VDP_getWindowAddress();
 }
 
 u16 VDP_getSpriteListAddress()
@@ -726,16 +706,6 @@ void VDP_setBGBAddress(u16 value)
     *pw = 0x8400 | regValues[0x04];
 }
 
-void VDP_setAPlanAddress(u16 value)
-{
-    VDP_setBGAAddress(value);
-}
-
-void VDP_setBPlanAddress(u16 value)
-{
-    VDP_setBGBAddress(value);
-}
-
 void VDP_setWindowAddress(u16 value)
 {
     vu16 *pw;
@@ -750,11 +720,6 @@ void VDP_setWindowAddress(u16 value)
 
     pw = (u16 *) VDP_CTRL_PORT;
     *pw = 0x8300 | regValues[0x03];
-}
-
-void VDP_setWindowPlanAddress(u16 value)
-{
-    VDP_setWindowAddress(value);
 }
 
 void VDP_setSpriteListAddress(u16 value)

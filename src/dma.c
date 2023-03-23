@@ -412,7 +412,7 @@ bool DMA_copyAndQueueDma(u8 location, void* from, u16 to, u16 len, u16 step)
 #endif
 
     // do copy to temporal buffer (as from buffer may be modified in between)
-    memcpyU16(buffer, from, len * 2);
+    memcpy(buffer, from, len * 2);
 
     // try to queue the DMA transfer (we can use FAST version as source is always located in RAM)
     if (!DMA_queueDmaFast(location, buffer, to, len, step))

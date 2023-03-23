@@ -283,36 +283,35 @@ void memcpy(void *to, const void *from, u16 len);
 /**
  *  \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void memcpyU16(u16 *to, const u16 *from, u16 len);
+#define memcpyU16(to, from, len)        _Pragma("GCC error \"This method is deprecated, use memcpy(..) instead.\"")
 /**
  *  \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void memcpyU32(u32 *to, const u32 *from, u16 len);
-
+#define memcpyU32(to, from, len)        _Pragma("GCC error \"This method is deprecated, use memcpy(..) instead.\"")
 /**
  *  \deprecated Uses memset(void *to, u8 value, u16 len) instead.
  */
-void fastMemset(void *to, u8 value, u16 len);
+#define fastMemset(to, value, len)      _Pragma("GCC error \"This method is deprecated, use memset(..) instead.\"")
 /**
  *  \deprecated Uses memsetU16(void *to, u16 value, u16 len) instead.
  */
-void fastMemsetU16(u16 *to, u16 value, u16 len);
+#define fastMemsetU16(to, value, len)   _Pragma("GCC error \"This method is deprecated, use memsetU16(..) instead.\"")
 /**
  *  \deprecated Uses memsetU32(void *to, u32 value, u16 len) instead.
  */
-void fastMemsetU32(u32 *to, u32 value, u16 len);
+#define fastMemsetU32(to, value, len)   _Pragma("GCC error \"This method is deprecated, use memsetU32(..) instead.\"")
 /**
  *  \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void fastMemcpy(void *to, const void *from, u16 len);
+#define astMemcpy(to, from, len)        _Pragma("GCC error \"This method is deprecated, use memcpy(..) instead.\"")
 /**
  *  \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void fastMemcpyU16(u16 *to, const u16 *from, u16 len);
+#define fastMemcpyU16(to, from, len)    _Pragma("GCC error \"This method is deprecated, use memcpy(..) instead.\"")
 /**
  *  \deprecated Uses memcpy(void *to, const void *from, u16 len) instead.
  */
-void fastMemcpyU32(u32 *to, const u32 *from, u16 len);
+#define fastMemcpyU32(to, from, len)    _Pragma("GCC error \"This method is deprecated, use memcpy(..) instead.\"")
 
 
 #endif // _MEMORY_H_

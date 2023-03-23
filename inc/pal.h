@@ -213,17 +213,17 @@ void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm);
  *  \deprecated
  *      Use PAL_setColors(..) instead
  */
-void PAL_setColorsDMA(u16 index, const u16* pal, u16 count);
+#define PAL_setColorsDMA(index, pal, count)     _Pragma("GCC error \"This method is deprecated, use PAL_setColors(..) instead.\"")
 /**
  *  \deprecated
  *      Use PAL_setPaletteColors(..) instead
  */
-void PAL_setPaletteColorsDMA(u16 index, const Palette* pal);
+#define PAL_setPaletteColorsDMA(index, pal)     _Pragma("GCC error \"This method is deprecated, use PAL_setPaletteColors(..) instead.\"")
 /**
  *  \deprecated
  *      Use PAL_setPalette(..) instead
  */
-void PAL_setPaletteDMA(u16 numPal, const u16* pal);
+#define PAL_setPaletteDMA(numPal, pal)          _Pragma("GCC error \"This method is deprecated, use PAL_setPalette(..) instead.\"")
 
 /**
  *  \brief

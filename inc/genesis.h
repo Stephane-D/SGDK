@@ -31,6 +31,7 @@
 #include "vdp_bg.h"
 #include "vdp_spr.h"
 #include "vdp_tile.h"
+#include "vdp_pal.h"
 
 #include "pal.h"
 

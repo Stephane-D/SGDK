@@ -288,20 +288,6 @@ void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm)
     PAL_setColors(numPal * 16, pal, 16, tm);
 }
 
-void PAL_setColorsDMA(u16 index, const u16* pal, u16 count)
-{
-    PAL_setColors(index, pal, count, DMA);
-}
-
-void PAL_setPaletteColorsDMA(u16 index, const Palette* pal)
-{
-    PAL_setPaletteColors(index, pal, DMA);
-}
-
-void PAL_setPaletteDMA(u16 numPal, const u16* pal)
-{
-    PAL_setPalette(numPal * 16, pal, DMA);
-}
 
 static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlank)
 {

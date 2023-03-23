@@ -87,10 +87,6 @@
 #define PORT_TYPE_PAD           0x0D
 #define PORT_TYPE_UNKNOWN       0x0F
 #define PORT_TYPE_EA4WAYPLAY    0x10
-/**
- * \deprecated Use  PORT_TYPE_UNKNOWN instead
- */
-#define PORT_TYPE_UKNOWN        PORT_TYPE_UNKNOWN
 
 #define JOY_SUPPORT_OFF             0x00
 #define JOY_SUPPORT_3BTN            0x01

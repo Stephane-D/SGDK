@@ -54,7 +54,7 @@ void YM2612_write(const u16 port, const u8 data);
 /**
  *  \deprecated Use YM2612_write(..) method instead.
  */
-void YM2612_writeSafe(const u16 port, const u8 data);
+#define YM2612_writeSafe(port, data)        _Pragma("GCC error \"This definition is deprecated, use YM2612_write(..) instead.\"")
 /**
  *  \brief
  *      Set YM2612 register value.
@@ -70,7 +70,7 @@ void YM2612_writeReg(const u16 part, const u8 reg, const u8 data);
 /**
  *  \deprecated Use YM2612_writeReg(..) method instead.
  */
-void YM2612_writeRegSafe(const u16 part, const u8 reg, const u8 data);
+#define YM2612_writeRegSafe(part, reg, data)        _Pragma("GCC error \"This definition is deprecated, use YM2612_writeReg(..) instead.\"")
 
 /**
  *  \brief
