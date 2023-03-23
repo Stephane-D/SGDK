@@ -473,12 +473,12 @@ void _start_entry()
     if (len > banklimit)
     {
         // we first do the second bank part
-        memcpyU16(dst + banklimit, FAR(src + banklimit), len - banklimit);
+        memcpy(dst + banklimit, FAR(src + banklimit), len - banklimit);
         // adjust len
         len = banklimit;
     }
     // initialize "initialized variables"
-    memcpyU16(dst, FAR(src), len);
+    memcpy(dst, FAR(src), len);
 
     // reset vtimer
     vtimer = 0;
@@ -602,8 +602,7 @@ static void internal_reset()
 
 #if (ENABLE_BANK_SWITCH != 0)
     // reset banks
-    u16 len = 8;
-    while(--len) SYS_setBank(len, len);
+    SYS_resetBanks();
 #endif
 
     vblankCB = _vblank_dummy_callback;
@@ -640,7 +639,7 @@ static void internal_reset()
     DMA_setMaxTransferSizeToDefault();
     TSK_init();
     VDP_init();
-    PSG_init();
+    PSG_reset();
     JOY_init();
     // reseting z80 also reset the ym2612
     Z80_init();
