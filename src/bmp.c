@@ -1098,7 +1098,7 @@ void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     }
 }
 
-u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
+bool BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, bool loadpal)
 {
     u16 w, h;
 
@@ -1122,15 +1122,12 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)
 
     // load the palette
     if (loadpal)
-    {
-        const Palette *palette = bitmap->palette;
-        PAL_setPaletteColors(pal << 4, palette, CPU);
-    }
+        PAL_setPaletteColors(pal << 4, bitmap->palette, CPU);
 
     return TRUE;
 }
 
-u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)
+bool BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, bool loadpal)
 {
     u16 bmp_wb, bmp_h;
 
@@ -1154,10 +1151,7 @@ u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 l
 
     // load the palette
     if (loadpal)
-    {
-        const Palette *palette = bitmap->palette;
-        PAL_setPaletteColors(pal << 4, palette, CPU);
-    }
+        PAL_setPaletteColors(pal << 4, bitmap->palette, CPU);
 
     return TRUE;
 }

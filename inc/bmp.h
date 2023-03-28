@@ -596,14 +596,14 @@ void BMP_drawBitmapData(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch);
  *  \param y
  *      y coordinate.
  *  \param loadpal
- *      Load the bitmap palette information when non zero.
+ *      Load the bitmap palette information.
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Bitmap (only if compression was enabled).
  *
  * X coordinate is aligned to even value for performance reason.<br>
  * So BMP_drawBitmap(bitmap,0,0,TRUE) will produce same result as BMP_drawBitmap(bitmap,1,0,TRUE)
  */
-u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal);
+bool BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, bool loadpal);
 /**
  *  \brief
  *      Load and draw a Genesis Bitmap with specified dimension.<br>
@@ -624,14 +624,14 @@ u16 BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal);
  *  \param h
  *      final height.
  *  \param loadpal
- *      Load the bitmap palette information when non zero.
+ *      Load the bitmap palette information
  *  \return
  *      FALSE if there is not enough memory to unpack the specified Bitmap (only if compression was enabled).
  *
  * X coordinate as width are aligned to even values for performance reason.<br>
  * So BMP_drawBitmapScaled(bitmap,0,0,w,h,pal) will produce same result as BMP_drawBitmapScaled(bitmap,1,0,w,h,pal)
  */
-u16 BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal);
+bool BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, bool loadpal);
 
 /**
  *  \deprecated

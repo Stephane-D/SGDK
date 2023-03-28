@@ -512,7 +512,7 @@ void _start_entry()
 
     #if (ZOOMING_LOGO != 0)
             // init fade in to 30 step
-            if (PAL_initFading(0, logo_pal->length - 1, palette_black, logo_pal->data, 30))
+            if (PAL_initFade(0, logo_pal->length - 1, palette_black, logo_pal->data, 30))
             {
                 // prepare zoom
                 u16 size = LOGO_SIZE;
@@ -529,16 +529,16 @@ void _start_entry()
                     const u32 w = LOGO_SIZE - size;
 
                     // adjust palette for fade
-                    PAL_doFadingStep();
+                    PAL_doFadeStep();
 
                     // zoom logo
-                    BMP_loadAndScaleBitmap(logo, 128 - (w >> 1), 80 - (w >> 1), w, w, FALSE);
+                    BMP_drawBitmapScaled(logo, 128 - (w >> 1), 80 - (w >> 1), w, w, FALSE);
                     // flip to screen
                     BMP_flip(FALSE);
                 }
 
                 // while fade not completed
-                while(PAL_doFadingStep());
+                while(PAL_doFadeStep());
             }
 
             // wait 1 second
@@ -548,7 +548,7 @@ void _start_entry()
             PAL_setPalette(PAL0, palette_black, CPU);
 
             // don't load the palette immediatly
-            BMP_loadBitmap(logo, 128 - (LOGO_SIZE / 2), 80 - (LOGO_SIZE / 2), FALSE);
+            BMP_drawBitmap(logo, 128 - (LOGO_SIZE / 2), 80 - (LOGO_SIZE / 2), FALSE);
             // flip
             BMP_flip(0);
 
