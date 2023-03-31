@@ -75,7 +75,7 @@ static void logSprite(Sprite* sprite);
 // current usage of hardware sprite
 static s16 usedVDPSprite;
 
-// pool of Sprite objects
+// pool of Sprite objects (used to know if sprite engine is initialized)
 Pool* spritesPool;
 
 // pointer on first and last active sprite in the linked list
