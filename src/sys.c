@@ -630,6 +630,11 @@ static void internal_reset()
     // WARNING: it's important to not access the VDP too soon or you can lock the system (it's why we do it just here) !
     while(GET_VDP_STATUS(VDP_DMABUSY_FLAG));
 
+    // sprite engine variables reset (we use it to know if sprite engine is initialized)
+    // important to do it *before* VDP_init
+    spritesPool = NULL;
+    spriteVramSize = 0;
+
     // init part (always do MEM_init() first)
     MEM_init();
     // need to be reseted before first DMA_init()
@@ -644,9 +649,6 @@ static void internal_reset()
     // reseting z80 also reset the ym2612
     Z80_init();
 
-    // Sprite engine variables reset (we use to know if sprite engine is initialized)
-    spritesPool = NULL;
-    spriteVramSize = 0;
 
     // enable interrupts
     SYS_setInterruptMaskLevel(3);
