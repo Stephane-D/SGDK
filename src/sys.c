@@ -473,12 +473,12 @@ void _start_entry()
     if (len > banklimit)
     {
         // we first do the second bank part
-        memcpy(dst + banklimit, FAR(src + banklimit), len - banklimit);
+        memcpy(dst + banklimit, FAR(src + banklimit), (len - banklimit) * 2);
         // adjust len
         len = banklimit;
     }
     // initialize "initialized variables"
-    memcpy(dst, FAR(src), len);
+    memcpy(dst, FAR(src), len * 2);
 
     // reset vtimer
     vtimer = 0;
