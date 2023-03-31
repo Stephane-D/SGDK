@@ -33,7 +33,7 @@ extern u32 task_pc;
 extern bool addFrameLoad(u16 frameLoad, u32 vtime);
 
 // forward
-static void updateMapsAddress();
+static void updateMapsAddress(bool initializing);
 static bool computeFrameCPULoad(u16 blank, u16 vcnt, u32 vtime);
 u16 getAdjustedVCounterInternal(u16 blank, u16 vcnt);
 void updateUserTileMaxIndex();
@@ -114,7 +114,7 @@ void VDP_init()
 
     maps_addr = 0;
     // update minimum address of all tilemap/table (default is plane B)
-    updateMapsAddress();
+    updateMapsAddress(TRUE);
 
     // clear VRAM, reset palettes / default tiles / font and scroll mode
     VDP_resetScreen();
@@ -224,7 +224,7 @@ void VDP_setReg(u16 reg, u8 value)
             v = value & 0x38;
             // update plane address
             bga_addr = v * 0x400;
-            updateMapsAddress();
+            updateMapsAddress(FALSE);
             break;
 
         case 0x03:
@@ -233,14 +233,14 @@ void VDP_setReg(u16 reg, u8 value)
             // 32H mode
             else v = value & 0x3E;
             window_addr = v * 0x0400;
-            updateMapsAddress();
+            updateMapsAddress(FALSE);
             break;
 
         case 0x04:
             v = value & 0x7;
             // update text plane address
             bgb_addr = v * 0x2000;
-            updateMapsAddress();
+            updateMapsAddress(FALSE);
             break;
 
         case 0x05:
@@ -249,7 +249,7 @@ void VDP_setReg(u16 reg, u8 value)
             // 32H mode
             else v = value & 0x7F;
             slist_addr = v * 0x0200;
-            updateMapsAddress();
+            updateMapsAddress(FALSE);
             break;
 
         case 0x0C:
@@ -271,7 +271,7 @@ void VDP_setReg(u16 reg, u8 value)
         case 0x0D:
             v = value & 0x3F;
             hscrl_addr = v * 0x0400;
-            updateMapsAddress();
+            updateMapsAddress(FALSE);
             break;
 
         case 0x10:
@@ -514,7 +514,7 @@ void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
                 break;
         }
 
-        updateMapsAddress();
+        updateMapsAddress(FALSE);
     }
 }
 
@@ -685,7 +685,7 @@ void VDP_setBGAAddress(u16 value)
     vu16 *pw;
 
     bga_addr = value & 0xE000;
-    updateMapsAddress();
+    updateMapsAddress(FALSE);
 
     regValues[0x02] = bga_addr / 0x400;
 
@@ -698,7 +698,7 @@ void VDP_setBGBAddress(u16 value)
     vu16 *pw;
 
     bgb_addr = value & 0xE000;
-    updateMapsAddress();
+    updateMapsAddress(FALSE);
 
     regValues[0x04] = bgb_addr / 0x2000;
 
@@ -714,7 +714,7 @@ void VDP_setWindowAddress(u16 value)
     if (regValues[0x0C] & 0x81) window_addr = value & 0xF000;
     // 32H mode
     else window_addr = value & 0xF800;
-    updateMapsAddress();
+    updateMapsAddress(FALSE);
 
     regValues[0x03] = window_addr / 0x400;
 
@@ -730,7 +730,7 @@ void VDP_setSpriteListAddress(u16 value)
     if (regValues[0x0C] & 0x81) slist_addr = value & 0xFC00;
     // 32H mode
     else slist_addr = value & 0xFE00;
-    updateMapsAddress();
+    updateMapsAddress(FALSE);
 
     regValues[0x05] = slist_addr / 0x200;
 
@@ -743,7 +743,7 @@ void VDP_setHScrollTableAddress(u16 value)
     vu16 *pw;
 
     hscrl_addr = value & 0xFC00;
-    updateMapsAddress();
+    updateMapsAddress(FALSE);
 
     regValues[0x0D] = hscrl_addr / 0x400;
 
@@ -984,7 +984,7 @@ void updateUserTileMaxIndex()
     userTileMaxIndex = TILE_FONT_INDEX - spriteVramSize;
 }
 
-static void updateMapsAddress()
+static void updateMapsAddress(bool initializing)
 {
     u16 min_addr = window_addr;
 
@@ -997,13 +997,17 @@ static void updateMapsAddress()
     if (min_addr != maps_addr)
     {
         maps_addr = min_addr;
-        // reload default font as its VRAM address has changed
-        VDP_loadFont(&font_default, CPU);
         // update user max tile index
         updateUserTileMaxIndex();
 
-        // re-pack memory as VDP_lontFont allocate memory to unpack font
-        MEM_pack();
+        // initialization will load font afterward
+        if (!initializing)
+        {
+            // reload default font as its VRAM address has changed
+            VDP_loadFont(&font_default, CPU);
+            // re-pack memory as VDP_lontFont allocate memory to unpack font
+            MEM_pack();
+        }
 
         // sprite engine in use ? --> defrag VRAM (this will basically re-allocate all dynamically managed VRAM)
         if (SPR_isInitialized())
