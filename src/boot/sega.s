@@ -59,6 +59,12 @@ _Entry_Point:
         move    %sp, %usp
         sub     #USER_STACK_LENGTH, %sp
 
+* Halt Z80 (need to be done as soon as possible on reset)
+        move.l  #0xA11100,%a0       /* Z80_HALT_PORT */
+        move.w  #0x0100,%d0
+        move.w  %d0,(%a0)           /* HALT Z80 */
+        move.w  %d0,0x0100(%a0)     /* END RESET Z80 */
+
         tst.l   0xa10008
         bne.s   SkipInit
 
@@ -66,7 +72,6 @@ _Entry_Point:
         bne.s   SkipInit
 
 * Check Version Number
-        move.l  #0xA11100,%a0
         move.b  -0x10ff(%a0),%d0
         andi.b  #0x0f,%d0
         beq.s   NoTMSS
