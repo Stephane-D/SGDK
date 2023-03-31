@@ -114,7 +114,7 @@ static u16* consoleGetFrameBuffer()
     {
         SYS_disableInts();
         YM2612_reset();
-        PSG_init();
+        PSG_reset();
         Z80_init();
         VDP_init();
 
@@ -182,7 +182,7 @@ static void consoleScroll()
         const u16 basetile = consoleGetBasetile();
 
         // Move upper part of buffer and clear last line
-        memcpyU16(dst, src, tiles);
+        memcpy(dst, src, tiles * 2);
         memsetU16(dst+tiles, basetile, m_consoleWidth);
     }
 }
