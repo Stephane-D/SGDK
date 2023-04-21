@@ -335,7 +335,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size);
  *  \brief
  *      Return driver ready state (only for non custom driver).
  */
-u16  Z80_isDriverReady(void);
+bool Z80_isDriverReady(void);
 
 /**
  *  \brief

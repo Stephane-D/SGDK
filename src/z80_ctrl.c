@@ -432,8 +432,6 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
 
     Z80_startReset();
     Z80_releaseBus();
-    // wait bus released
-    while(Z80_isBusTaken());
     // wait a bit so Z80 reset completed
     waitSubTick(50);
     Z80_endReset();
@@ -444,7 +442,7 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size)
     SYS_enableInts();
 }
 
-u16 Z80_isDriverReady()
+bool Z80_isDriverReady()
 {
     vu8 *pb;
     u8 ret;
@@ -458,7 +456,7 @@ u16 Z80_isDriverReady()
     {
         // take the bus, check status and release bus
         Z80_requestBus(TRUE);
-        ret = *pb & Z80_DRV_STAT_READY;
+        ret = (*pb & Z80_DRV_STAT_READY)?TRUE:FALSE;
         Z80_releaseBus();
     }
 
