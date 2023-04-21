@@ -67,7 +67,7 @@ void XGM_stopPlay(void);
 void XGM_pausePlay(void);
 /**
  * \brief
- *      Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br>
+ *      Resume playing music after pausing with #XGM_pausePlay (XGM music player driver).<br>
  *      Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect
  *      and some notes will miss until next key-on event occurs.
  *
