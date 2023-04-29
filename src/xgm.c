@@ -274,7 +274,7 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len)
     // point to sample id table
     vu8 *pb = (u8 *) (0xA01C00 + (id * 4));
     // sample address (with bank switch support)
-    u32 addr = FAR_SAFE(sample, size)
+    u32 addr = FAR_SAFE(sample, len);
 
     // write sample addr
     pb[0x00] = ((u32) addr) >> 8;
