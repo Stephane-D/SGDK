@@ -273,12 +273,40 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len)
 {
     // point to sample id table
     vu8 *pb = (u8 *) (0xA01C00 + (id * 4));
+
+    // write sample addr
+    pb[0x00] = ((u32) sample) >> 8;
+    pb[0x01] = ((u32) sample) >> 16;
+    pb[0x02] = len >> 8;
+    pb[0x03] = len >> 16;
+}
+
+void XGM_setPCM_FAR(const u8 id, const u8 *sample, const u32 len)
+{
+    SYS_disableInts();
+    bool busTaken = Z80_isBusTaken();
+
+    // load the appropriate driver if not already done
+    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+
+    Z80_requestBus(TRUE);
+
+    XGM_setPCMFast_FAR(id, sample, len);
+
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
+}
+
+void XGM_setPCMFast_FAR(const u8 id, const u8 *sample, const u32 len)
+{
+    // point to sample id table
+    vu8 *pb = (u8 *) (0xA01C00 + (id * 4));
     // sample address (with bank switch support)
     u32 addr = FAR_SAFE(sample, size)
 
     // write sample addr
-    pb[0x00] = ((u32) addr) >> 8;
-    pb[0x01] = ((u32) addr) >> 16;
+    pb[0x00] = addr >> 8;
+    pb[0x01] = addr >> 16;
     pb[0x02] = len >> 8;
     pb[0x03] = len >> 16;
 }
