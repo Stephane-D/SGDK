@@ -854,11 +854,13 @@ bool VDP_waitVBlank(bool forceNext)
     const u16 blank = *pw & VDP_VBLANK_FLAG;
     // have an user task (multitasking) ?
     const bool yield_to_user = (task_pc != NULL);
+    // VDP enable
+    const bool enabled = VDP_isEnable();
     // save it (used to diplay frame load)
     lastVCnt = vcnt;
 
     // we want to wait for next start of VBlank ? (only if no multitasking)
-    if (forceNext && blank && !yield_to_user)
+    if (forceNext && blank && enabled && !yield_to_user)
     {
         // wait end of vblank if already in vblank
         while (*pw & VDP_VBLANK_FLAG);
@@ -870,8 +872,8 @@ bool VDP_waitVBlank(bool forceNext)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
     if (late)
     {
-        // we cannot detect late frame if HV latching is enabled..
-        if (!VDP_getHVLatching())
+        // we cannot detect late frame if VDP is disabled or HV latching is enabled
+        if (enabled && !VDP_getHVLatching())
         {
             if (forceNext)
                 KLog_U2("Warning: frame missed detection on frame #", vtimer, " - V-Counter = ", vcnt);
@@ -899,8 +901,12 @@ void VDP_waitVActive(bool forceNext)
         // wait end of vactive if already in vactive
         while (!(*pw & VDP_VBLANK_FLAG));
     }
-    // wait end of vblank
-    while (*pw & VDP_VBLANK_FLAG);
+    // we stay blank forever if VDP is disabled..
+    if (VDP_isEnable())
+    {
+        // wait end of vblank
+        while (*pw & VDP_VBLANK_FLAG);
+    }
 }
 
 bool VDP_waitVSync()
