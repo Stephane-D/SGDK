@@ -256,6 +256,11 @@ void JOY_reset()
 }
 
 
+JoyEventCallback* JOY_getEventHandler()
+{
+    return joyEventCB;
+}
+
 void JOY_setEventHandler(JoyEventCallback *CB)
 {
     joyEventCB = CB;
