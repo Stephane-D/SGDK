@@ -780,7 +780,7 @@ public class ImageUtil
                     r = Integer.parseInt(rgba[0]);
                     g = Integer.parseInt(rgba[1]);
                     b = Integer.parseInt(rgba[2]);
-                    a = (rgba.length > 3) ? Integer.parseInt(rgba[3]) : 0xFF;
+                    a = (rgba.length > 3) ? StringUtil.parseInt(rgba[3], 0xFF) : 0xFF;
                 }
 
                 result[i] = (a << 24) | (b << 16) | (g << 8) | (r << 0);
