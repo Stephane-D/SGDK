@@ -9,7 +9,7 @@
  * You can use <i>Pool</i> object to handle dynamic allocation from a fixed set of objects.<br>
  * For instance if you may need to handle dynamically bullets for your game and you want to have
  * at max 20 bullets, you can handle it that way:<pre>
- * Pool* bulletPool POOL_create(20, sizeof(Bullet));
+ * Pool* bulletPool = POOL_create(20, sizeof(Bullet));
  * ...
  * // create a new bullet
  * Bullet* bullet = POOL_allocate(bulletPool);
@@ -46,7 +46,8 @@
  *      bank data
  *  \param allocStack
  *      allocation stack used for fast allocate / release operation
- *  \param ree      point on first available object in the allocation stack
+ *  \param free
+ *      point on first available object in the allocation stack
  *  \param objectSize
  *      size of a single object (in bytes)
  *  \param size
