@@ -988,7 +988,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         KLog_U3("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame);
 #endif // SPR_DEBUG
 
-        sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_LOOPED) | NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1055,7 +1055,7 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
         KLog_U2("SPR_setFrame: #", getSpriteIndex(sprite), "  frame=", frame);
 #endif // SPR_DEBUG
 
-        sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_LOOPED) | NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
