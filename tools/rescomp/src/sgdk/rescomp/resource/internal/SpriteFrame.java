@@ -127,9 +127,9 @@ public class SpriteFrame extends Resource
                 sprites.clear();
         }
 
-        // empty frame --> empty tileset (single tile but not added in resource)
+        // empty frame --> empty tileset
         if (sprites.isEmpty())
-            tileset = new Tileset();
+            tileset = (Tileset) addInternalResource(new Tileset());
         else
         {
             int optNumTile = 0;
