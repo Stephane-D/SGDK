@@ -83,11 +83,10 @@ public class Tileset extends Resource
         hc = bin.hashCode();
     }
 
-    // special constructor for empty / dummy tileset
+    // special constructor for empty tileset
     public Tileset()
     {
-        // so it refers NULL tileset
-        super("0");
+        super("empty_tileset");
 
         tiles = new ArrayList<>();
         tileIndexesMap = new HashMap<>();
@@ -95,7 +94,7 @@ public class Tileset extends Resource
         isDuplicate = false;
 
         // dummy bin
-        bin = new Bin("dummy", new byte[0], Compression.NONE);
+        bin = new Bin("empty_bin", new byte[0], Compression.NONE);
         // hash code
         hc = bin.hashCode();
     }
