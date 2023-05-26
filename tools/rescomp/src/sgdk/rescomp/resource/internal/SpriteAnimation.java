@@ -50,17 +50,34 @@ public class SpriteAnimation extends Resource
         // default loop index
         loopIndex = 0;
 
+        final Dimension imageDim = new Dimension(w * 8, h * 8);
         // get max number of frame
-        final int numFrame = w / wf;
+        final int maxFrame = w / wf;
 
+        // find last non transparent frame
+        int f = maxFrame - 1;
+        while (f >= 0)
+        {
+            // define frame bounds
+            final Rectangle frameBounds = new Rectangle((f * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
+            // not transparent ? --> stop here
+            if (!ImageUtil.isTransparent(image8bpp, imageDim, frameBounds))
+                break;
+            
+            f--;
+        }
+        
+        // number of frame to process
+        final int numFrame = f + 1;
+        
         for (int i = 0; i < numFrame; i++)
         {
             // define frame bounds
             final Rectangle frameBounds = new Rectangle((i * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
             // get image for this frame
             final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
-
-            // FIXME: why are we doing that ? duplicate resource optimization should be enough !
+            
+            // FIXME: why are we doing that ? duplicate resource optimization should be enough
             // // try to search for duplicated frame first
             // SpriteFrame frame = findExistingSpriteFrame(frameImage, frameBounds.getSize(), time, collision,
             // compression);
@@ -80,30 +97,13 @@ public class SpriteAnimation extends Resource
             // // add frame
             // frames.add(frame);
 
-            // add frame
-            frames.add(new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, optType, optLevel));
-        }
-
-        // start from last frame and remove all trailing empty frames
-        for (int i = frames.size() - 1; i >= 0; i--)
-        {
-            // not empty ? --> stop here
-            if (!frames.get(i).isEmpty())
-                break;
-
-            // remove frame
-            frames.remove(i);
-        }
-
-        // adding all valid frames finally
-        for (int i = 0; i < frames.size(); i++)
-        {
+            // create sprite frame
+            SpriteFrame frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, optType, optLevel);
             // add as internal resource (get duplicate if exist)
-            final SpriteFrame frame = (SpriteFrame) addInternalResource(frames.get(i));
-
-            // replace it in case we got a duplicate instead
-            frames.set(i, frame);
-            // add to frame set
+            frame = (SpriteFrame) addInternalResource(frame);
+            
+            // add the new sprite frame
+            frames.add(frame);
             frameSet.add(frame);
         }
 
