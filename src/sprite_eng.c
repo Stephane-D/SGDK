@@ -1382,10 +1382,11 @@ void SPR_update()
         // sprite visible and still in SAT limit ?
         if (visibility && (vdpSpriteInd <= SAT_MAX_SIZE))
         {
-            static const u16 visibilityMask[16] =
+            static const u16 visibilityMask[17] =
             {
-                0x8000, 0xC000, 0xE000, 0xF000, 0xF800, 0xFC00, 0xFE00, 0xFF00,
-                0xFF80, 0xFFC0, 0xFFE0, 0xFFF0, 0xFFF8, 0xFFFC, 0xFFFE, 0xFFFF
+                0x0000, 0x8000, 0xC000, 0xE000, 0xF000, 0xF800, 0xFC00, 0xFE00,
+                0xFF00, 0xFF80, 0xFFC0, 0xFFE0, 0xFFF0, 0xFFF8, 0xFFFC, 0xFFFE,
+                0xFFFF
             };
 
             if (status & NEED_TILES_UPLOAD)
@@ -1401,7 +1402,7 @@ void SPR_update()
             u16 attr = sprite->attribut;
 
             // so visibility also allow to get the number of sprite
-            visibility &= visibilityMask[frame->numSprite - 1];
+            visibility &= visibilityMask[frame->numSprite];
 
             switch(attr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK))
             {
@@ -1909,43 +1910,48 @@ static void loadTiles(Sprite* sprite)
     START_PROFIL
 
     TileSet* tileset = sprite->frame->tileset;
-    u16 compression = tileset->compression;
     u16 lenInWord = (tileset->numTile * 32) / 2;
 
-    // TODO: separate tileset per VDP sprite and only unpack/upload visible VDP sprite (using visibility) to VRAM
-
-    // need unpacking ?
-    if (compression != COMPRESSION_NONE)
+    // need to test for empty tileset (blank frame)
+    if (lenInWord)
     {
-        // get buffer and send to DMA queue
-        u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        u16 compression = tileset->compression;
 
-        // unpack in temp buffer obtained from DMA queue
-        if (buf) unpack(compression, (u8*) FAR_SAFE(tileset->tiles, lenInWord * 2), buf);
+        // TODO: separate tileset per VDP sprite and only unpack/upload visible VDP sprite (using visibility) to VRAM
+
+        // need unpacking ?
+        if (compression != COMPRESSION_NONE)
+        {
+            // get buffer and send to DMA queue
+            u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+
+            // unpack in temp buffer obtained from DMA queue
+            if (buf) unpack(compression, (u8*) FAR_SAFE(tileset->tiles, lenInWord * 2), buf);
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        else KLog("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
+            else KLog("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
 #endif
 
 #ifdef SPR_DEBUG
-        char str1[32];
-        char str2[8];
+            char str1[32];
+            char str2[8];
 
-        intToHex((u32) buf, str2, 4);
-        strcpy(str1, " at ");
-        strcat(str1, str2);
+            intToHex((u32) buf, str2, 4);
+            strcpy(str1, " at ");
+            strcat(str1, str2);
 
-        KLog_U1_("  loadTiles: unpack tileset, numTile= ", tileset->numTile, str1);
-        KLog_U2("    Queue DMA: to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
+            KLog_U1_("  loadTiles: unpack tileset, numTile= ", tileset->numTile, str1);
+            KLog_U2("    Queue DMA: to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
 #endif // SPR_DEBUG
-    }
-    else
-    {
-        // just queue DMA operation to transfer tileset data to VRAM
-        DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, lenInWord * 2), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        }
+        else
+        {
+            // just queue DMA operation to transfer tileset data to VRAM
+            DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, lenInWord * 2), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
 #ifdef SPR_DEBUG
-        KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
+            KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
 #endif // SPR_DEBUG
+        }
     }
 
     END_PROFIL(PROFIL_LOADTILES)
