@@ -229,12 +229,12 @@ u16 VRAM_getFree(VRAMRegion *region);
 u16 VRAM_getAllocated(VRAMRegion *region);
 /**
  *  \brief
- *      Return the largest free block index in the specified VRAM region.
+ *      Return the largest free block size (in tile) in the specified VRAM region.
  *
  *  \param region
  *      VRAM region
  *  \return
- *      the largest free block index in the specified VRAM region.
+ *      the largest free block size (in tile) in the specified VRAM region.
  */
 u16 VRAM_getLargestFreeBlock(VRAMRegion *region);
 
