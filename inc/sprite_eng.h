@@ -428,9 +428,6 @@ void SPR_reset(void);
  *      default Y position.
  *  \param attribut
  *      sprite attribut (see TILE_ATTR() macro).
- *  \param spriteIndex
- *      index of the first sprite in the VDP sprite table used to display this Sprite (should be in [1..79] range.<br>
- *      IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <i>flags</i> parameter).<br>
  *  \param flag
  *      specific settings for this sprite:<br>
  *      #SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE = Disable delaying of frame update when we are running out of DMA capacity.<br>
@@ -463,7 +460,7 @@ void SPR_reset(void);
  *  \see SPR_addSpriteExSafe(..)
  *  \see SPR_releaseSprite(..)
  */
-Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag);
+Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 flag);
 /**
  *  \brief
  *      Adds a new sprite with auto resource allocation enabled and returns it.
@@ -501,9 +498,6 @@ Sprite* SPR_addSprite(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attri
  *      default Y position.
  *  \param attribut
  *      sprite attribut (see TILE_ATTR() macro).
- *  \param spriteIndex
- *      index of the first sprite in the VDP sprite table used to display this Sprite (should be > 0 and < 128).<br>
- *      IMPORTANT: this value is used only if you use manual VDP Sprite allocation (see the <i>flag</i> parameter).<br>
  *  \param flag
  *      specific settings for this sprite:<br>
  *      #SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE = Disable delaying of frame update when we are running out of DMA capacity.<br>
@@ -534,7 +528,7 @@ Sprite* SPR_addSprite(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attri
  *  \see SPR_addSpriteEx(..)
  *  \see SPR_releaseSprite(..)
  */
-Sprite* SPR_addSpriteExSafe(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag);
+Sprite* SPR_addSpriteExSafe(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 flag);
 /**
  *  \brief
  *      Adds a new sprite with auto resource allocation enabled and returns it.
@@ -581,6 +575,17 @@ u16 SPR_getNumActiveSprite(void);
  *      Returns the (maximum) number of used VDP sprite from current active sprites (sum of maximum hardware sprite usage from all active sprites).
  */
 u16 SPR_getUsedVDPSprite(void);
+/**
+ *  \brief
+ *      Returns the current remaining free VRAM (in tile) for the sprite engine.
+ */
+u16 SPR_getFreeVRAM(void);
+/**
+ *  \brief
+ *      Return the current largest free VRAM block size (in tile) for the sprite engine.
+ */
+u16 SPR_getLargestFreeVRAMBlock(void);
+
 /**
  *  \brief
  *      Indicate that we want to prevent adding a new sprite if there is possibly not enough hardware sprite to display it

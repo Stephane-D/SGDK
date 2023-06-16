@@ -324,7 +324,7 @@ static void checkSpriteValid(Sprite* sprite, char* methodName)
 #endif
 }
 
-Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag)
+Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 flag)
 {
     START_PROFIL
 
@@ -437,12 +437,12 @@ Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 att
 
 Sprite* SPR_addSprite(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut)
 {
-    return SPR_addSpriteEx(spriteDef, x, y, attribut, 0, SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+    return SPR_addSpriteEx(spriteDef, x, y, attribut, SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
 }
 
-Sprite* SPR_addSpriteExSafe(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 spriteIndex, u16 flag)
+Sprite* SPR_addSpriteExSafe(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 flag)
 {
-    Sprite* result = SPR_addSpriteEx(spriteDef, x, y, attribut, spriteIndex, flag);
+    Sprite* result = SPR_addSpriteEx(spriteDef, x, y, attribut, flag);
 
     // allocation failed ?
     if (result == NULL)
@@ -450,7 +450,7 @@ Sprite* SPR_addSpriteExSafe(const SpriteDefinition* spriteDef, s16 x, s16 y, u16
         // try to defragment VRAM, it can help
         SPR_defragVRAM();
         // VRAM is now defragmented, so allocation should pass this time
-        result = SPR_addSpriteEx(spriteDef, x, y, attribut, spriteIndex, flag);
+        result = SPR_addSpriteEx(spriteDef, x, y, attribut, flag);
     }
 
     return result;
@@ -511,6 +511,16 @@ u16 SPR_getNumActiveSprite()
 u16 SPR_getUsedVDPSprite(void)
 {
     return usedVDPSprite & ~CHECK_VDP_SPRITE;
+}
+
+u16 SPR_getFreeVRAM(void)
+{
+    return VRAM_getFree(&vram);
+}
+
+u16 SPR_getLargestFreeVRAMBlock(void)
+{
+    return VRAM_getLargestFreeBlock(&vram);
 }
 
 void SPR_enableVDPSpriteChecking()
