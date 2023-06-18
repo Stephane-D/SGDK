@@ -68,6 +68,7 @@ Here's a list of useful tools to help you creating your assets:
 * [Tiled](https://www.mapeditor.org/): Tile map editor, supported by SGDK resource compiler tool
 * [LDTK](https://deepnight.net/tools/ldtk-2d-level-editor/): New but powerful tile map editor (support Tiled formats as well)
 * [Ogmo](https://ogmo-editor-3.github.io/): Another nice and simple tile map editor
+* [Palette merger](https://github.com/bolon667/paletteMergerForSGDK): A tool allowing to easily change tile palette index and priority
 
 #### Music / sound
 
