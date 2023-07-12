@@ -114,6 +114,20 @@
 
 #endif // ENABLE_LOGO
 
+
+/**
+ *  \brief
+ *      To force method inlining (not sure that GCC does actually care of it)
+ */
+#define FORCE_INLINE            inline __attribute__((always_inline))
+
+/**
+ *  \brief
+ *      To force no inlining for this method
+ */
+#define NO_INLINE               __attribute__ ((noinline))
+
+
 /**
  *  \brief
  *      Set it to 1 if you want to use EVERDRIVE programming methods (written by Krikzz).
@@ -157,13 +171,6 @@
  *      Note that you need to install the module first before enable it (https://gitlab.com/Natsumi/Fractal-Sound)
  */
 #define MODULE_FRACTAL          0
-
-
-/**
- *  \brief
- *      To force method inlining (not sure that GCC does actually care of it)
- */
-#define FORCE_INLINE            inline __attribute__((always_inline))
 
 
 #endif // _CONFIG_
