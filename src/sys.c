@@ -232,7 +232,7 @@ static u16 showValueU32U32U32(char *str1, u32 value1, char *str2, u32 value2, ch
 //    return pos + 1;
 //}
 
-static u16 showRegisterState(u16 pos)
+static NO_INLINE u16 showRegisterState(u16 pos)
 {
     u16 y = pos;
 
@@ -246,7 +246,7 @@ static u16 showRegisterState(u16 pos)
     return y;
 }
 
-static u16 showStackState(u16 pos)
+static NO_INLINE u16 showStackState(u16 pos)
 {
     char s[64];
     u16 y = pos;
@@ -265,7 +265,7 @@ static u16 showStackState(u16 pos)
     return y;
 }
 
-static u16 showExceptionDump(u16 pos)
+static NO_INLINE u16 showExceptionDump(u16 pos)
 {
     u16 y = pos;
 
@@ -276,7 +276,7 @@ static u16 showExceptionDump(u16 pos)
     return y;
 }
 
-static u16 showException4WDump(u16 pos)
+static NO_INLINE u16 showException4WDump(u16 pos)
 {
     u16 y = pos;
 
@@ -287,7 +287,7 @@ static u16 showException4WDump(u16 pos)
     return y;
 }
 
-static u16 showBusAddressErrorDump(u16 pos)
+static NO_INLINE u16 showBusAddressErrorDump(u16 pos)
 {
     u16 y = pos;
 
@@ -301,7 +301,7 @@ static u16 showBusAddressErrorDump(u16 pos)
 
 
 // bus error default callback
-void _buserror_callback()
+void NO_INLINE _buserror_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -313,7 +313,7 @@ void _buserror_callback()
 }
 
 // address error default callback
-void _addresserror_callback()
+void NO_INLINE _addresserror_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -325,7 +325,7 @@ void _addresserror_callback()
 }
 
 // illegal instruction exception default callback
-void _illegalinst_callback()
+void NO_INLINE _illegalinst_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -337,7 +337,7 @@ void _illegalinst_callback()
 }
 
 // division by zero exception default callback
-void _zerodivide_callback()
+void NO_INLINE _zerodivide_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -361,7 +361,7 @@ void _chkinst_callback()
 }
 
 // TRAPV instruction default callback
-void _trapvinst_callback()
+void NO_INLINE _trapvinst_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -373,7 +373,7 @@ void _trapvinst_callback()
 }
 
 // privilege violation exception default callback
-void _privilegeviolation_callback()
+void NO_INLINE _privilegeviolation_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -385,19 +385,19 @@ void _privilegeviolation_callback()
 }
 
 // trace default callback
-void _trace_callback()
+void NO_INLINE _trace_callback()
 {
 
 }
 
 // line 1x1x exception default callback
-void _line1x1x_callback()
+void NO_INLINE _line1x1x_callback()
 {
 
 }
 
 // error exception default callback
-void _errorexception_callback()
+void NO_INLINE _errorexception_callback()
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
@@ -409,20 +409,20 @@ void _errorexception_callback()
 }
 
 // level interrupt default callback
-void _int_callback()
+void NO_INLINE _int_callback()
 {
     //
 }
 
 
 // Dummy V-Blank Callback
-void _vblank_dummy_callback()
+void NO_INLINE _vblank_dummy_callback()
 {
     //
 }
 
 // Dummy V-Int Callback
-void _vint_dummy_callback()
+void NO_INLINE _vint_dummy_callback()
 {
     //
 }
@@ -434,13 +434,13 @@ HINTERRUPT_CALLBACK _hint_dummy_callback()
 }
 
 // Dummy Ext-Int Callback
-void _extint_dummy_callback()
+void NO_INLINE _extint_dummy_callback()
 {
     //
 }
 
 
-void _start_entry()
+void NO_INLINE _start_entry()
 {
     u32 banklimit;
     u16* src;
@@ -581,7 +581,7 @@ void _start_entry()
     while(TRUE) SYS_doVBlankProcess();
 }
 
-void _reset_entry()
+void NO_INLINE _reset_entry()
 {
     // stop Z80 (first thing to do)
     *((u16*) Z80_HALT_PORT) = 0x0100;
@@ -595,7 +595,7 @@ void _reset_entry()
     while(TRUE) SYS_doVBlankProcess();
 }
 
-static void internal_reset()
+static void NO_INLINE internal_reset()
 {
     // disable SRAM just in case (if it was enabled on reset)
     SRAM_disable();
@@ -659,7 +659,7 @@ bool SYS_doVBlankProcess()
     return SYS_doVBlankProcessEx(ON_VBLANK_START);
 }
 
-bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
+bool NO_INLINE SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 {
     if (processTime != IMMEDIATELY)
     {
@@ -787,6 +787,11 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
     JOY_update();
 
     return TRUE;
+}
+
+bool SYS_nextFrame(void)
+{
+    return SYS_doVBlankProcess();
 }
 
 void SYS_disableInts()
@@ -1000,7 +1005,7 @@ u16 SYS_getCPULoad()
 }
 
 
-u16 SYS_computeChecksum()
+u16 NO_INLINE SYS_computeChecksum()
 {
     u32 adr;
     u32 chk;

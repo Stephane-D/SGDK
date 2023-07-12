@@ -226,6 +226,14 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime);
 
 /**
  *  \brief
+ *      Alias for #SYS_doVBlankProcess(void)
+ *
+ *  \see SYS_doVBlankProcess(void)
+ */
+bool SYS_nextFrame(void);
+
+/**
+ *  \brief
  *      Return current interrupt mask level.
  *
  * See SYS_setInterruptMaskLevel() for more informations about interrupt mask level.
