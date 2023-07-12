@@ -505,46 +505,46 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
         {
             if (changed & state & BUTTON_X)
             {
-                SND_setPCM_XGM(64, snare1_14k, sizeof(snare1_14k));
-                SND_startPlayPCM_XGM(64, 10, SOUND_PCM_CH2);
+                XGM_setPCM(64, snare1_14k, sizeof(snare1_14k));
+                XGM_startPlayPCM(64, 10, SOUND_PCM_CH2);
             }
             if (changed & state & BUTTON_Y)
             {
-                SND_setPCM_XGM(65, hat1_14k, sizeof(hat1_14k));
-                //SND_setPCM_XGM(65, f_voice1_14k, sizeof(f_voice1_14k));
-                SND_startPlayPCM_XGM(65, 10, SOUND_PCM_CH3);
+                XGM_setPCM(65, hat1_14k, sizeof(hat1_14k));
+                //SND_setPCM(65, f_voice1_14k, sizeof(f_voice1_14k));
+                XGM_startPlayPCM(65, 10, SOUND_PCM_CH3);
             }
             if (changed & state & BUTTON_Z)
             {
-                SND_setPCM_XGM(66, cri_14k, sizeof(cri_14k));
-//                SND_setPCM_XGM(66, loop1_14k, sizeof(loop1_14k));
-                SND_startPlayPCM_XGM(66, 10, SOUND_PCM_CH4);
+                XGM_setPCM(66, cri_14k, sizeof(cri_14k));
+//                SND_setPCM(66, loop1_14k, sizeof(loop1_14k));
+                XGM_startPlayPCM(66, 10, SOUND_PCM_CH4);
             }
 
             if (changed & state & BUTTON_A)
             {
-                if (SND_isPlaying_XGM()) SND_stopPlay_XGM();
-                else SND_startPlay_XGM(sor2_xgm);
+                if (XGM_isPlaying()) XGM_stopPlay();
+                else XGM_startPlay(sor2_xgm);
             }
             if (changed & state & BUTTON_B)
             {
-                if (SND_isPlaying_XGM()) SND_stopPlay_XGM();
-                else SND_startPlay_XGM(bapcm_xgm);
+                if (XGM_isPlaying()) XGM_stopPlay();
+                else XGM_startPlay(bapcm_xgm);
             }
             if (changed & state & BUTTON_C)
             {
-                if (SND_isPlaying_XGM()) SND_stopPlay_XGM();
+                if (XGM_isPlaying()) XGM_stopPlay();
                 else
-//                SND_startPlay_XGM(toystory);
-                SND_startPlay_XGM(midnight);
+//                SND_startPlay(toystory);
+                XGM_startPlay(midnight);
             }
 
             if (changed & state & BUTTON_START)
             {
-                if (SND_isPlaying_XGM())
-                    SND_pausePlay_XGM();
+                if (XGM_isPlaying())
+                    XGM_pausePlay();
                 else
-                    SND_resumePlay_XGM();
+                    XGM_resumePlay();
             }
 
             break;
@@ -571,7 +571,7 @@ static void vintEvent()
 
     // set BUS protection for XGM driver
     if (driver->id == Z80_DRIVER_XGM)
-        SND_set68KBUSProtection_XGM(TRUE);
+        XGM_set68KBUSProtection(TRUE);
 
     in = GET_VCOUNTER;
 
@@ -608,10 +608,10 @@ static void vintEvent()
         u16 load;
 
         // remove BUS protection for XGM driver
-        SND_set68KBUSProtection_XGM(FALSE);
+        XGM_set68KBUSProtection(FALSE);
 
         // get Z80 cpu estimated load
-        load = SND_getCPULoad_XGM();
+        load = XGM_getCPULoad();
 
         uintToStr(load, str, 3);
         strcat(str, " %");
