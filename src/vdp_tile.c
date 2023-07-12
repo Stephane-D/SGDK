@@ -103,7 +103,7 @@ void VDP_clearTileMap(u16 planeAddr, u16 ind, u16 num, bool wait)
         VDP_waitDMACompletion();
 }
 
-void VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
+void NO_INLINE VDP_fillTileMap(u16 planeAddr, u16 tile, u16 ind, u16 num)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -144,7 +144,7 @@ void VDP_setTileMapData(u16 planeAddr, const u16 *data, u16 ind, u16 num, u16 vr
     DMA_transfer(tm, DMA_VRAM, (void*) data,  planeAddr + (ind * 2), num, vramStep);
 }
 
-void VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num, u16 vramStep)
+void NO_INLINE VDP_setTileMapDataEx(u16 planeAddr, const u16 *data, u16 basetile, u16 ind, u16 num, u16 vramStep)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -206,7 +206,7 @@ void VDP_clearTileMapRect(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)
     VDP_fillTileMapRect(plane, 0, x, y, w, h);
 }
 
-void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
+void NO_INLINE VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
 {
     vu32 *plctrl;
     vu32 *pldata;
@@ -248,7 +248,7 @@ void VDP_fillTileMapRect(VDPPlane plane, u16 tile, u16 x, u16 y, u16 w, u16 h)
     }
 }
 
-void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h)
+void NO_INLINE VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -280,7 +280,7 @@ void VDP_fillTileMapRectInc(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u
 }
 
 
-void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
+void NO_INLINE VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
     const u16* src = data;
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
@@ -361,7 +361,7 @@ void VDP_setTileMapDataRect(VDPPlane plane, const u16 *data, u16 x, u16 y, u16 w
     }
 }
 
-void VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
+void NO_INLINE VDP_setTileMapDataRectEx(VDPPlane plane, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h, u16 wm, TransferMethod tm)
 {
     const u16* src = data;
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
@@ -448,7 +448,7 @@ static void setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 x, u
     DMA_transfer(tm, DMA_VRAM, (void*) data, VDP_getPlaneAddress(plane, x, row), w, 2);
 }
 
-static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
+static void NO_INLINE setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
 {
     const u16 addr = VDP_getPlaneAddress(plane, x, row);
 
@@ -527,7 +527,7 @@ void VDP_setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 
 }
 
 
-static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+static void NO_INLINE setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
     const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;
@@ -605,7 +605,7 @@ static void setTileMapDataColumn(VDPPlane plane, const u16 *data, u16 column, u1
     }
 }
 
-static void setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
+static void NO_INLINE setTileMapDataColumnEx(VDPPlane plane, const u16 *data, u16 basetile, u16 column, u16 y, u16 h, u16 wm, TransferMethod tm)
 {
     const u16 addr = VDP_getPlaneAddress(plane, column, y);
     const u16 pw = (plane == WINDOW)?windowWidth:planeWidth;

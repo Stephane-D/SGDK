@@ -19,7 +19,7 @@ static void writeChannelReg(u16 port, u8 ch, u8 reg, u8 value)
     YM2612_write((port * 2) + 1, value);
 }
 
-void YM2612_reset()
+void NO_INLINE YM2612_reset()
 {
     u16 p, ch, sl;
     u16 busTaken;

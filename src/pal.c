@@ -327,7 +327,7 @@ static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlan
 //}
 
 
-bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame)
+bool NO_INLINE PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame)
 {
     // can't do a fade on 0 frame !
     if (numFrame == 0) return FALSE;
@@ -376,7 +376,7 @@ bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, 
     return TRUE;
 }
 
-static bool doFadeStepInternal(bool forceWaitVBlank)
+static bool NO_INLINE doFadeStepInternal(bool forceWaitVBlank)
 {
     // not yet done ?
     if (--fadeCounter >= 0)

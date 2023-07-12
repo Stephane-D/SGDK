@@ -115,7 +115,7 @@ static u32 profil_time[20];
 #endif
 
 
-void SPR_initEx(u16 vramSize)
+void NO_INLINE SPR_initEx(u16 vramSize)
 {
     u16 index;
     u16 size;
@@ -155,7 +155,7 @@ void SPR_init()
     SPR_initEx(420);
 }
 
-void SPR_end()
+void NO_INLINE SPR_end()
 {
     if (SPR_isInitialized())
     {
@@ -324,7 +324,7 @@ static void checkSpriteValid(Sprite* sprite, char* methodName)
 #endif
 }
 
-Sprite* SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 flag)
+Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 y, u16 attribut, u16 flag)
 {
     START_PROFIL
 
@@ -534,7 +534,7 @@ void SPR_disableVDPSpriteChecking()
     usedVDPSprite &= ~CHECK_VDP_SPRITE;
 }
 
-void SPR_defragVRAM()
+void NO_INLINE SPR_defragVRAM()
 {
     START_PROFIL
 
@@ -581,7 +581,7 @@ void SPR_defragVRAM()
     END_PROFIL(PROFIL_VRAM_DEFRAG)
 }
 
-u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
+u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
 {
     u16 numFrameTot = 0;
     u16 numTileTot = 0;
@@ -647,7 +647,7 @@ u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNum
 }
 
 
-bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
+bool NO_INLINE SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 {
     START_PROFIL
 
@@ -1222,7 +1222,7 @@ SpriteVisibility SPR_getVisibility(Sprite* sprite)
     else return HIDDEN;
 }
 
-bool SPR_isVisible(Sprite* sprite, bool recompute)
+bool NO_INLINE SPR_isVisible(Sprite* sprite, bool recompute)
 {
     // for debug
     checkSpriteValid(sprite, "SPR_isVisible");
@@ -1330,7 +1330,7 @@ void SPR_clear()
     END_PROFIL(PROFIL_CLEAR)
 }
 
-void SPR_update()
+void NO_INLINE SPR_update()
 {
     START_PROFIL
 

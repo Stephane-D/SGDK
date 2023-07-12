@@ -40,7 +40,7 @@ u16 busProtectSignalAddress;
 extern void XGM_resetLoadCalculation();
 
 
-void Z80_init()
+void NO_INLINE Z80_init()
 {
     // request Z80 bus
     Z80_requestBus(TRUE);
@@ -164,7 +164,7 @@ void Z80_write(const u16 addr, const u8 value)
 }
 
 
-void Z80_clear()
+void NO_INLINE Z80_clear()
 {
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
@@ -180,7 +180,7 @@ void Z80_clear()
     SYS_enableInts();
 }
 
-void Z80_upload(const u16 to, const u8 *from, const u16 size)
+void NO_INLINE Z80_upload(const u16 to, const u8 *from, const u16 size)
 {
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
@@ -197,7 +197,7 @@ void Z80_upload(const u16 to, const u8 *from, const u16 size)
     SYS_enableInts();
 }
 
-void Z80_download(const u16 from, u8 *to, const u16 size)
+void NO_INLINE Z80_download(const u16 from, u8 *to, const u16 size)
 {
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
@@ -231,7 +231,7 @@ void Z80_unloadDriver()
     VBlankProcess &= ~PROCESS_XGM_TASK;
 }
 
-void Z80_loadDriver(const u16 driver, const bool waitReady)
+void NO_INLINE Z80_loadDriver(const u16 driver, const bool waitReady)
 {
     const u8 *drv;
     u16 len;
@@ -413,7 +413,7 @@ void Z80_loadDriver(const u16 driver, const bool waitReady)
     SYS_enableInts();
 }
 
-void Z80_loadCustomDriver(const u8 *drv, u16 size)
+void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
 {
     // remove XGM task if present
     VBlankProcess &= ~PROCESS_XGM_TASK;
@@ -469,7 +469,7 @@ void Z80_useBusProtection(u16 signalAddress)
     busProtectSignalAddress = signalAddress;
 }
 
-void Z80_setBusProtection(bool value)
+void NO_INLINE Z80_setBusProtection(bool value)
 {
     vu8 *pb;
 

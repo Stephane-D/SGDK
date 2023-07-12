@@ -18,7 +18,7 @@
 // single channel 8 bits signed sample driver
 ///////////////////////////////////////////////////////////////
 
-u8 SND_isPlaying_PCM()
+u8 NO_INLINE SND_isPlaying_PCM()
 {
     vu8 *pb;
     u8 ret;
@@ -38,7 +38,7 @@ u8 SND_isPlaying_PCM()
     return ret;
 }
 
-void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 pan, const u8 loop)
+void NO_INLINE SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 pan, const u8 loop)
 {
     vu8 *pb;
     u32 addr;
@@ -78,7 +78,7 @@ void SND_startPlay_PCM(const u8 *sample, const u32 len, const u8 rate, const u8 
     Z80_releaseBus();
 }
 
-void SND_stopPlay_PCM()
+void NO_INLINE SND_stopPlay_PCM()
 {
     vu8 *pb;
     u32 addr;
@@ -113,7 +113,7 @@ void SND_stopPlay_PCM()
 // 2 channels 4 bits ADPCM sample driver
 ///////////////////////////////////////////////////////////////
 
-u8 SND_isPlaying_2ADPCM(const u16 channel_mask)
+u8 NO_INLINE SND_isPlaying_2ADPCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
@@ -133,7 +133,7 @@ u8 SND_isPlaying_2ADPCM(const u16 channel_mask)
     return ret;
 }
 
-void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop)
+void NO_INLINE SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop)
 {
     vu8 *pb;
     u8 status;
@@ -190,7 +190,7 @@ void SND_startPlay_2ADPCM(const u8 *sample, const u32 len, const u16 channel, co
     Z80_releaseBus();
 }
 
-void SND_stopPlay_2ADPCM(const u16 channel)
+void NO_INLINE SND_stopPlay_2ADPCM(const u16 channel)
 {
     vu8 *pb;
     u32 addr;
@@ -225,7 +225,7 @@ void SND_stopPlay_2ADPCM(const u16 channel)
 // 4 channels 8 bits signed sample driver with volume support
 ///////////////////////////////////////////////////////////////
 
-u8 SND_isPlaying_4PCM(const u16 channel_mask)
+u8 NO_INLINE SND_isPlaying_4PCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
@@ -245,7 +245,7 @@ u8 SND_isPlaying_4PCM(const u16 channel_mask)
     return ret;
 }
 
-void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop)
+void NO_INLINE SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, const u8 loop)
 {
     vu8 *pb;
     u8 status;
@@ -302,7 +302,7 @@ void SND_startPlay_4PCM(const u8 *sample, const u32 len, const u16 channel, cons
     Z80_releaseBus();
 }
 
-void SND_stopPlay_4PCM(const u16 channel)
+void NO_INLINE SND_stopPlay_4PCM(const u16 channel)
 {
     vu8 *pb;
     u32 addr;
@@ -332,7 +332,7 @@ void SND_stopPlay_4PCM(const u16 channel)
     Z80_releaseBus();
 }
 
-void SND_setVolume_4PCM(const u16 channel, const u8 volume)
+void NO_INLINE SND_setVolume_4PCM(const u16 channel, const u8 volume)
 {
     vu8 *pb;
 
@@ -349,7 +349,7 @@ void SND_setVolume_4PCM(const u16 channel, const u8 volume)
     Z80_releaseBus();
 }
 
-u8 SND_getVolume_4PCM(const u16 channel)
+u8 NO_INLINE SND_getVolume_4PCM(const u16 channel)
 {
     vu8 *pb;
     u8 volume;

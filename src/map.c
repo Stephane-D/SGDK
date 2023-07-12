@@ -54,7 +54,7 @@ static void getMetaTilemapRect_MTI16_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u
 static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 
 
-Map* MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
+Map* NO_INLINE MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseTile)
 {
     Map* result = allocateMap(mapDef);
 
@@ -197,7 +197,7 @@ void MAP_release(Map* map)
 }
 
 
-void MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
+void NO_INLINE MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
 {
     bool redraw;
 

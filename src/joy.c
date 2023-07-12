@@ -45,7 +45,7 @@ void JOY_init()
     JOY_reset();
 }
 
-void JOY_reset()
+void NO_INLINE JOY_reset()
 {
     vu8 *pb;
     u8 a, b;
@@ -307,7 +307,7 @@ static void externalIntCB()
 }
 
 
-void JOY_setSupport(u16 port, u16 support)
+void NO_INLINE JOY_setSupport(u16 port, u16 support)
 {
     if (port > PORT_2) return;
 
@@ -1150,7 +1150,7 @@ static u16 readTrackball(u16 port)
 }
 
 
-void JOY_update()
+void NO_INLINE JOY_update()
 {
     u16 val;
     u16 newstate;

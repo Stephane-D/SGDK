@@ -81,7 +81,7 @@ static void drawLine_old(u16 x1, u16 y1, s16 dx, s16 dy, s16 step_x, s16 step_y,
 static HINTERRUPT_CALLBACK hint();
 
 
-void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
+void NO_INLINE BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
 {
     flag = (double_buffer) ? BMP_FLAG_DOUBLEBUFFER : 0;
     bmp_plan = plane;
@@ -110,7 +110,7 @@ void BMP_init(u16 double_buffer, VDPPlane plane, u16 palette, u16 priority)
     BMP_reset();
 }
 
-void BMP_end()
+void NO_INLINE BMP_end()
 {
     // cancel interrupt processing
     SYS_setHIntCallback(NULL);
@@ -153,7 +153,7 @@ void BMP_end()
 //    SYS_enableInts();
 }
 
-void BMP_reset()
+void NO_INLINE BMP_reset()
 {
     // cancel bitmap interrupt processing
     SYS_setHIntCallback(NULL);
@@ -261,7 +261,7 @@ void BMP_waitFlipComplete()
 }
 
 
-u16 BMP_flip(u16 async)
+u16 NO_INLINE BMP_flip(u16 async)
 {
     // wait until pending flip is processed
     BMP_waitWhileFlipRequestPending();
@@ -1069,7 +1069,7 @@ void BMP_drawLine_old(Line *l)
 //}
 
 
-void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
+void NO_INLINE BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
 {
     // pixel out screen ?
     if ((x >= BMP_WIDTH) || (y >= BMP_HEIGHT))
@@ -1098,7 +1098,7 @@ void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u32 pitch)
     }
 }
 
-bool BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, bool loadpal)
+bool NO_INLINE BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, bool loadpal)
 {
     u16 w, h;
 
@@ -1127,7 +1127,7 @@ bool BMP_drawBitmap(const Bitmap *bitmap, u16 x, u16 y, bool loadpal)
     return TRUE;
 }
 
-bool BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, bool loadpal)
+bool NO_INLINE BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, bool loadpal)
 {
     u16 bmp_wb, bmp_h;
 
@@ -1158,7 +1158,7 @@ bool BMP_drawBitmapScaled(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, bool
 
 
 // works only for 8 bits image (x doubled)
-void BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_wb, u16 dst_h, u16 dst_pitch)
+void NO_INLINE BMP_scale(const u8 *src_buf, u16 src_wb, u16 src_h, u16 src_pitch, u8 *dst_buf, u16 dst_wb, u16 dst_h, u16 dst_pitch)
 {
     const s32 yd = mulu(divu(src_h, dst_h), src_wb) - src_wb;
     const u16 yr = modu(src_h, dst_h);
@@ -1259,7 +1259,7 @@ static HINTERRUPT_CALLBACK hint()
 // internals helper methods
 ///////////////////////////
 
-static void initTilemap(u16 index)
+static void NO_INLINE initTilemap(u16 index)
 {
     vu32 *plctrl;
     vu16 *pwdata;
@@ -1402,7 +1402,7 @@ static void doFlip()
     TRANSFER((8 * x) + 6)   \
     TRANSFER((8 * x) + 7)
 
-static u16 doBlit()
+static u16 NO_INLINE doBlit()
 {
     static u16 pos_i;
     vu32 *plctrl;
