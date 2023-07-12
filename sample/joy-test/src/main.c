@@ -126,7 +126,7 @@ static void showPortState()
             case PORT_TYPE_PAD:
                 VDP_drawText("Pad       ", posX, posY);
                 break;
-            case PORT_TYPE_UKNOWN:
+            case PORT_TYPE_UNKNOWN:
                 VDP_drawText("Unknown   ", posX, posY);
                 break;
             case PORT_TYPE_EA4WAYPLAY:

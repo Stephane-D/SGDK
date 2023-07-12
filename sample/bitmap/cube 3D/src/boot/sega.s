@@ -52,47 +52,38 @@ rom_header:
         .incbin "out/rom_head.bin", 0, 0x100
 
 _Entry_Point:
+* disable interrupts
         move    #0x2700,%sr
-        tst.l   0xa10008
-        bne.s   SkipJoyDetect
-
-        tst.w   0xa1000c
-
-SkipJoyDetect:
-        bne.s   SkipSetup
-
-        lea     Table,%a5
-        movem.w (%a5)+,%d5-%d7
-        movem.l (%a5)+,%a0-%a4
-* Check Version Number
-        move.b  -0x10ff(%a1),%d0
-        andi.b  #0x0f,%d0
-        beq.s   WrongVersion
-
-* Sega Security Code (SEGA)
-        move.l  #0x53454741,0x2f00(%a1)
-WrongVersion:
-* Read from the control port to cancel any pending read/write command
-        move.w  (%a4),%d0
 
 * Configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
         move    %sp, %usp
         sub     #USER_STACK_LENGTH, %sp
 
-        move.w  %d7,(%a1)
-        move.w  %d7,(%a2)
+* Halt Z80 (need to be done as soon as possible on reset)
+        move.l  #0xA11100,%a0       /* Z80_HALT_PORT */
+        move.w  #0x0100,%d0
+        move.w  %d0,(%a0)           /* HALT Z80 */
+        move.w  %d0,0x0100(%a0)     /* END RESET Z80 */
 
-* Jump to initialisation process now...
+        tst.l   0xa10008
+        bne.s   SkipInit
 
+        tst.w   0xa1000c
+        bne.s   SkipInit
+
+* Check Version Number
+        move.b  -0x10ff(%a0),%d0
+        andi.b  #0x0f,%d0
+        beq.s   NoTMSS
+
+* Sega Security Code (SEGA)
+        move.l  #0x53454741,0x2f00(%a0)
+
+NoTMSS:
         jmp     _start_entry
 
-SkipSetup:
+SkipInit:
         jmp     _reset_entry
-
-
-Table:
-        dc.w    0x8000,0x3fff,0x0100
-        dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
 
 
 *------------------------------------------------

@@ -11,7 +11,7 @@ void loadDriver()
     u32 addr;
 
     // upload Z80 driver and reset Z80
-    Z80_upload(0, z80_drv, sizeof(z80_drv), TRUE);
+    Z80_upload(0, z80_drv, sizeof(z80_drv));
 
     // misc parameters initialisation
     Z80_requestBus(TRUE);
@@ -56,15 +56,9 @@ void loadDriver()
 void startPlay(const u8 *sample, const u32 len, const u8 loop)
 {
     vu8 *pb;
-    u8 status;
     u32 addr;
 
     Z80_requestBus(TRUE);
-
-    // point to Z80 status
-    pb = (u8 *) Z80_DRV_STATUS;
-    // get status
-    status = *pb;
 
     // point to Z80 base parameters
     pb = (u8 *) Z80_DRV_PARAMS;
