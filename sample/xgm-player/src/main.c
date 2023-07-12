@@ -300,12 +300,12 @@ int main()
     SPR_setVisibility(trackListCursor, VISIBLE);
     // prepare track list shadow
     curTileIndexMesh = tileIndexShadowMaskOdd;
-    trackListShadowTop[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowTop[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowTop[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowBottom[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowBottom[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
-    trackListShadowBottom[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0, SPR_FLAG_AUTO_SPRITE_ALLOC);
+    trackListShadowTop[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0);
+    trackListShadowTop[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0);
+    trackListShadowTop[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 100, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, curTileIndexMesh), 0);
+    trackListShadowBottom[0] = SPR_addSpriteEx(&shadow_mask_16, 8, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0);
+    trackListShadowBottom[1] = SPR_addSpriteEx(&shadow_mask_16, 8+128, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0);
+    trackListShadowBottom[2] = SPR_addSpriteEx(&shadow_mask_7, 8+256, 132, TILE_ATTR_FULL(PAL3, TRUE, TRUE, FALSE, curTileIndexMesh), 0);
     for(i = 0; i < 3; i++)
     {
         SPR_setVisibility(trackListShadowTop[i], VISIBLE);
