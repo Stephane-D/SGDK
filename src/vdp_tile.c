@@ -448,7 +448,7 @@ static void setTileMapDataRow(VDPPlane plane, const u16 *data, u16 row, u16 x, u
     DMA_transfer(tm, DMA_VRAM, (void*) data, VDP_getPlaneAddress(plane, x, row), w, 2);
 }
 
-static void NO_INLINE setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
+static void setTileMapDataRowEx(VDPPlane plane, const u16 *data, u16 basetile, u16 row, u16 x, u16 w, TransferMethod tm)
 {
     const u16 addr = VDP_getPlaneAddress(plane, x, row);
 
@@ -850,7 +850,6 @@ bool VDP_setTileMapRowEx(VDPPlane plane, const TileMap *tilemap, u16 basetile, u
 
     return TRUE;
 }
-
 
 
 bool VDP_setTileMapColumn(VDPPlane plane, const TileMap *tilemap, u16 column, u16 y, u16 h, TransferMethod tm)
