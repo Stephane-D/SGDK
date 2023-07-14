@@ -93,8 +93,8 @@ static void setCameraPosition(s16 x, s16 y)
 }
 
 
-void CAMERA_handleInput(u16 value)
+void CAMERA_doJoyAction(u16 joy, u16 changed, u16 state)
 {
-    if (value & BUTTON_X) alternateScrollMethod = TRUE;
-    else alternateScrollMethod = FALSE;
+    if (changed & state & BUTTON_MODE)
+        alternateScrollMethod = alternateScrollMethod?FALSE:TRUE;
 }

@@ -126,7 +126,6 @@ static void handleInput()
     {
         // can affect gameplay
         PLAYER_handleInput(value);
-        CAMERA_handleInput(value);
     }
 }
 
@@ -142,8 +141,9 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     // can't do more in paused state
     if (paused) return;
 
-    // handle player joy actions
+    // handle player / camera joy actions
     PLAYER_doJoyAction(joy, changed, state);
+    CAMERA_doJoyAction(joy, changed, state);
 }
 
 static void vblank()
