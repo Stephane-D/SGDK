@@ -35,13 +35,9 @@
 
 
 #define IN_VINT                     1
-//#define IN_HINT                     2
-//#define IN_EXTINT                   4
 
 #define SHOW_FRAME_LOAD             (1 << 0)
-#define SHOW_FRAME_LOAD_MEAN        (2 << 0)
-
-#define VINT_ALLOWED_LINE_DELAY     4
+#define SHOW_FRAME_LOAD_MEAN        (1 << 1)
 
 #define LOAD_MEAN_FRAME_NUM         8
 
