@@ -3,9 +3,9 @@
 #include "gfx.h"
 
 
-#define SGDK_BENCHMARK      "SGDK benchmark v1.5"
+#define SGDK_BENCHMARK      "SGDK benchmark v1.6"
 
-#define MAX_TEST            9
+#define MAX_TEST            10
 #define MAX_SUBTEST         16
 
 
@@ -26,6 +26,7 @@ u16 executeMathsBasicTest(u16 *scores);
 u16 executeMathsAdvTest(u16 *scores);
 u16 executeBGTest(u16 *scores);
 u16 executeBMPTest(u16 *scores);
+u16 executeMapTest(u16 *scores);
 u16 executeSpritesTest(u16 *scores);
 
 
@@ -105,6 +106,13 @@ int main()
         score = executeBMPTest(detailledScores[testNum]);
         scores[testNum] = score;
         postTest("Bitmap mode test", score, testNum);
+        globalScore += score;
+        testNum++;
+
+        preTest("Large scroll test", testNum);
+        score = executeMapTest(detailledScores[testNum]);
+        scores[testNum] = score;
+        postTest("Large scroll test", score, testNum);
         globalScore += score;
         testNum++;
 
@@ -273,10 +281,13 @@ static void postResume(u32 score)
     sprintf(str, "Bitmap mode score = %d", scores[testNum++]);
     VDP_drawText(str, 4, y);
     y += 2;
+    sprintf(str, "Large scrolling score = %d", scores[testNum++]);
+    VDP_drawText(str, 4, y);
+    y += 2;
     sprintf(str, "Sprite score = %d", scores[testNum++]);
     VDP_drawText(str, 4, y);
 
-    VDP_drawText(" PRESS START TO RESTART ALL TESTS", 1, 24);
+    VDP_drawText(" PRESS START TO RESTART ALL TESTS", 1, 25);
 
     // fade text color to white
     PAL_fadeIn(15, 15, &col, 30, FALSE);

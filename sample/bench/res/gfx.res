@@ -9,3 +9,9 @@ BITMAP logo_sm_bmp "md_jap_logo_small.png" BEST
 BITMAP logo_med_x2_bmp "md_jap_logo_med_x2.png" BEST
 BITMAP logo_med_bmp_f "md_jap_logo_med.png" FAST
 BITMAP logo_sm_bmp_f "md_jap_logo_small.png" FAST
+
+PALETTE bg_palette "S1_GHZ1_FG.png"
+TILESET bga_tileset "S1_GHZ1_FG.png" BEST ALL
+TILESET bgb_tileset "S1_GHZ1_BG.png" BEST ALL
+MAP bga_map "S1_GHZ1_FG.png" bga_tileset BEST 0
+MAP bgb_map "S1_GHZ1_BG.png" bgb_tileset BEST 0
