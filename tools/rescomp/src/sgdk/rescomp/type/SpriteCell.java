@@ -253,13 +253,6 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
             case MIN_TILE:
                 return 6d + (numTile * 4d) + (getWidth() / 32d);
         }
-
-        // return (1 / 10d);
-        // return (numTile / 20d) + (1 / 8d) + ((region.width / 8) / 10d);
-        // return (numTile / 20d) + (1 / 8d);
-        // return (numTile / 20d) + (1 / 50d);
-        // return (numTile / 20d);
-        // return (numTile / 20d) + (1 / 10d);
     }
 
     public double getCoverage()
