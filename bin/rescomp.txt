@@ -1,4 +1,4 @@
-ResComp 3.68 (May 2023)
+ResComp 3.70 (July 2023)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -352,8 +352,8 @@ SPRITE name img_file width height [compression [time [collision [opt_type [opt_l
     opt_level       optimization level for the sprite cutting operation:
                         0 / FAST      = fast optimisation, good enough in general (default)
                         1 / MEDIUM    = intermediate optimisation level, provide better results than FAST but ~10 time slower
-                        2 / SLOW      = advanced optimisation level using a genetic algorithm (80000 iterations), ~20 time slower than FAST
-                        3 / MAX       = maximum optimisation level, genetic algorithm (500000 iterations), ~100 time slower than FAST
+                        2 / SLOW      = advanced optimisation level using a genetic algorithm (80000 iterations), ~25 time slower than FAST
+                        3 / MAX       = maximum optimisation level, genetic algorithm (500000 iterations), ~150 time slower than FAST
 
 Some informations about how SpriteDefinition is generated from the input image:
 - input image dimension should be aligned on tile (multiple of 8).
