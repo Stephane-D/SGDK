@@ -74,7 +74,7 @@ public class SpriteFrame extends Resource
             // slow optimization ?
             if ((optLevel == OptimizationLevel.SLOW) || (optLevel == OptimizationLevel.MAX))
             {
-                final int iteration = (optLevel == OptimizationLevel.SLOW) ? 80000 : 500000;
+                final int iteration = (optLevel == OptimizationLevel.SLOW) ? 500000 : 5000000;
 
                 sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, iteration, optType);
 
