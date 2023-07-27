@@ -226,9 +226,9 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime);
 
 /**
  *  \brief
- *      <i>End the current frame</i> (alias for #SYS_doVBlankProcess(void)).
+ *      End the current frame (alias for #SYS_doVBlankProcess(void)).
  *
- *  <i>End the current frame and does all the internal SGDK process (DMA flush, VDP data upload, async palette fade, scroll update..)
+ *  End the current frame and does all the internal SGDK process (DMA flush, VDP data upload, async palette fade, scroll update..)
  *
  *  \see SYS_doVBlankProcess(void)
  */

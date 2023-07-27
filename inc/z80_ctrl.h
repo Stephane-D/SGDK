@@ -270,8 +270,6 @@ void Z80_clear(void);
  *      Data to upload.
  *  \param size
  *      Size in byte of data to upload.
- *  \param resetz80
- *      Reset Z80 if set to TRUE.
  */
 void Z80_upload(const u16 dest, const u8 *data, const u16 size);
 /**
