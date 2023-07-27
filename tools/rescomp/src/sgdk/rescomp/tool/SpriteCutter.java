@@ -217,7 +217,7 @@ public class SpriteCutter
         {
             do
             {
-                Thread.sleep(1);
+                Thread.sleep(10);
             }
             while (!spriteCutter.isOptimizationDone());
         }
@@ -632,6 +632,14 @@ public class SpriteCutter
                 addSolution(base);
             }
 
+            public Solution getRandomGoodSolution()
+            {
+                synchronized (solutions)
+                {
+                    return solutions.get(Random.nextInt(Math.min(solutions.size(), 10)));
+                }
+            }
+
             public Solution getRandomSolution()
             {
                 synchronized (solutions)
@@ -842,15 +850,14 @@ public class SpriteCutter
             this.maxIteration = numIteration;
 
             globalBestScore = Double.MAX_VALUE;
-            numWorker = SystemUtil.getNumberOfCPUs();
-            executor = new ThreadPoolExecutor(numWorker, numWorker * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+            numWorker = SystemUtil.getNumberOfCPUs() * 2;
+            executor = new ThreadPoolExecutor(numWorker, numWorker * 4, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
             workImagePool = new Stack<>();
             branches = new ArrayList<>();
             branchMap = new HashMap<>();
 
-            // build the work image pool (should never need more than numWorker * 2 but just for
-            // safety)
-            for (int i = 0; i < numWorker * 4; i++)
+            // build the work image pool (should never need more than numWorker * 2 but just for safety)
+            for (int i = 0; i < numWorker * 8; i++)
                 workImagePool.push(new byte[image.length]);
 
             curBranchTask = 0;
@@ -917,8 +924,6 @@ public class SpriteCutter
                     else
                         break;
                 }
-
-                ThreadUtil.sleep(0);
             }
 
             executor.shutdown();
@@ -999,7 +1004,7 @@ public class SpriteCutter
                 final int size = branches.size();
                 
                 // branch mutation
-                if ((Random.nextInt() & 0x1F) != 0)
+                if ((Random.nextInt() & 0xF) != 0)
                 {
                     final SolutionBranch branch;
                     final Solution solution;
@@ -1020,10 +1025,22 @@ public class SpriteCutter
                     final Solution solution1;
                     final Solution solution2;
 
-                    branch1 = branches.get(Random.nextInt(size));
-                    branch2 = branches.get(Random.nextInt(size));
-                    solution1 = branch1.getRandomSolution();
-                    solution2 = branch2.getRandomSolution();
+                    // mix with best solutions
+                    if (Random.nextBoolean())
+                    {
+                        branch1 = branches.get(Random.nextInt(Math.min(size, 50)));
+                        branch2 = branches.get(Random.nextInt(Math.min(size, 50)));
+                        solution1 = branch1.getRandomGoodSolution();
+                        solution2 = branch2.getRandomGoodSolution();
+                    }
+                    else
+                    // pure random mix
+                    {
+                        branch1 = branches.get(Random.nextInt(size));
+                        branch2 = branches.get(Random.nextInt(size));
+                        solution1 = branch1.getRandomSolution();
+                        solution2 = branch2.getRandomSolution();
+                    }
 
                     // mix mutation
                     task = new SolutionMixMutationBuilder(Integer.valueOf(curBranchId), solution1, solution2);
