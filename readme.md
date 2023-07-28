@@ -1,5 +1,5 @@
-# SGDK 1.80 (september 2022)
-#### Copyright 2022 Stephane Dallongeville
+# SGDK 1.90 (July 2023)
+#### Copyright 2023 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
 
