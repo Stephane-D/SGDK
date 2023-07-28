@@ -1,3 +1,99 @@
+SGDK 1.90 (July 2023)
+---------------------
+
+COMPILER
+* RESCOMP
+ - MAP: added support for 8x8 tile priority information for TMX maps (was fixed to TMX map tile size before)
+ - OBJECT: objects are now sorted on 'id' field by default (if it exists)
+ - OBJECT: added 'width' and 'height' fields export
+ - OBJECT: fixed 'name' field export
+ - OBJECT: fixed bug with f32 field value
+ - SPRITE: added support for empty frame in the middle of a sprite animation
+ - SPRITE: fixed bug with dummy empty frame when NONE optimisation level selected
+ - SPRITE: fixed a small bug in sprite frame duplicate detection
+ - SPRITE: added new optimization level for cutting process (replaced 'iteration' with 'optLevel')
+ - SPRITE: several fixes / improvements to sprite cutting algorithm
+ - PAL: better JASC .pal file support
+ - fixed a small bug with empty / dummy tileset
+ - added info in output log for duplicated objects
+ - rescomp.txt documentation updated and fixes
+ - several others tweaks and fixes
+* XGMTOOL
+ - fixed compilation on linux (thanks to Andrew DeRosier)
+ - updated XGMTool binary to support ZGM output
+* MAKEFILE
+ - made ext.mk optional
+* LINK
+ - added .ramprog section for easier moving code into RAM
+* DOCKER
+ - fixed windows docker build container (thanks to Allion Benjamin)
+ - removed wine32 dependency, support Apple M1 (arm64) and native tools too
+* README
+ - fixed assembly (asm target) generation
+ - added links + smalls updates here and there
+
+LIBRARY
+* SPRITE:
+ Rewrote the sprite engine to get rid of hardware sprite allocation (note that the legacy sprite engine
+ is still accessible through the config.h file as it can be useful for sprite multiplexing).
+ - better hardware sprite usage
+ - general simplification of the API
+ - lighter 'Sprite' structure
+ - re-introduced Y position in visibility computation
+ - lot of optimisations done to maintain same or get higher level of performance
+ - added SPR_getAnimationDone(..) method to know if current playing animation reached the last frame
+ - added SPR_getUsedVDPSprite() method to know how many hardware sprite are currently in use.
+ - added SPR_enableVDPSpriteChecking() / SPR_disableVDPSpriteChecking() methods
+ - added SPR_getFreeVRAM() and SPR_getLargestFreeVRAMBlock() methods
+ - keep same behavior in debug / release build
+* OBJECT
+ - small fix in POOL_find(..) method
+* MATH
+ - transformed some macros to methods for better type checking (can also help the compiler)
+* CONSOLE 
+ - added TTY console support (added as module - thanks to Andreas Dietrich for it)
+* VDP
+ - modified MAX_VDP_SPRITE to SAT_MAX_SIZE as max displayable sprite depend from horizontal reolution
+ - disable VDP during VDP_resetScreen() process (faster operation)
+ - small fix on VDP_waitVSync() and VDP_waitVActive() methods to take care of VDP disable state
+* SYS
+ - added SYS_nextFrame() method (just an alias to SYS_doVBlankProcess)
+ - added SYS_resetBanks(), SYS_getNextFarAccessRegion() and SYS_setNextFarAccessRegion() methods
+ - fixed a bug with soft reset + general safer soft reset operation
+ - added SYS_getShowFrameLoad() method
+ - fixed small bug in TSK_init()
+* Z80
+ - several fixes and method updates for safer operation
+* SOUND
+ - added XGM_setPCM_FAR(..) and XGM_setPCMFast_FAR(..) to allow playing PCM through bank switch
+ - added YM2612_readStatus() method
+* JOY
+ - added JOY_getEventHandler() method (useful for saving / restoring callback)
+* SAVE
+ - added flash save support (added as module - thanks to doragasu for it)
+* MISC
+ - tweaked / improved readability of lz4w_unpack (thanks to HpMan)
+* deprecated methods and definitions now generate compilation error
+* added NO_INLINE definition when we want to force no inlining
+* forced NO_INLINE on some larges functions to avoid code growing too much
+* added megaWifi README file
+* documentation updates
+* smalls fixes, general cleanup, some refactoring..
+
+SAMPLE
+* BENCHMARK
+ - added new large scroll performance test
+ - added new big sprite tests
+ - reworked scoring (making it not comparable to previous versions unfortunately)
+ - small fixes
+* updated samples to last SGDK
+
+SGDK 1.90 MIGRATION NOTE
+
+* Removed 'resetz80' parameter from Z80_upload(..) function (it's always reseted now)
+* Z80_clear(..) doesn't take any parameters now (it always clears all the Z80 RAM now)
+ 
+ 
 SGDK 1.80 (September 2022)
 --------------------------
 
