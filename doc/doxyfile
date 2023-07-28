@@ -96,106 +96,108 @@ WARN_LOGFILE            = "D:\apps\SGDK\cb\doc\doxygen.log"
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = \
-	"..\..\src\psg.c" \
-	"..\..\inc\font.h" \
-	"..\..\inc\task_cst.h" \
-	"..\..\src\z80_ctrl.c" \
-	"..\..\src\joy.c" \
-	"..\..\src\object.c" \
-	"..\..\inc\joy.h" \
-	"..\..\inc\pool.h" \
-	"..\..\src\ext\console.c" \
-	"..\..\src\tab_sqrt.c" \
-	"..\..\inc\ext\mw\gamejolt.h" \
-	"..\..\inc\smp_null_pcm.h" \
-	"..\..\src\timer.c" \
-	"..\..\inc\ext\mw\megawifi.h" \
-	"..\..\inc\sys.h" \
-	"..\..\inc\ext\mw\jsmn.h" \
-	"..\..\inc\tools.h" \
-	"..\..\src\ext\flash-save\saveman.c" \
-	"..\..\src\tools.c" \
-	"..\..\inc\ext\mw\json.h" \
-	"..\..\inc\tab_cnv.h" \
-	"..\..\src\ext\mw\lsd.c" \
-	"..\..\inc\kdebug.h" \
-	"..\..\src\maths.c" \
 	"..\..\inc\vdp_spr.h" \
-	"..\..\src\xgm.c" \
-	"..\..\inc\pal.h" \
-	"..\..\res\libres.h" \
-	"..\..\src\sound.c" \
-	"..\..\src\memory.c" \
-	"..\..\inc\smp_null.h" \
-	"..\..\src\map.c" \
-	"..\..\inc\memory.h" \
 	"..\..\src\sram.c" \
-	"..\..\src\maths3D.c" \
+	"..\..\src\types.c" \
+	"..\..\inc\smp_null_pcm.h" \
+	"..\..\src\asm_mac.cpp" \
+	"..\..\inc\sys.h" \
+	"..\..\src\pool.c" \
+	"..\..\inc\task_cst.h" \
+	"..\..\src\dma.c" \
+	"..\..\src\boot\rom_head.c" \
+	"..\..\inc\vram.h" \
+	"..\..\res\libres.h" \
+	"..\..\src\ext\mw\json.c" \
+	"..\..\inc\ext\mw\json.h" \
+	"..\..\src\tab_sqrt.c" \
+	"..\..\inc\xgm.h" \
+	"..\..\src\ext\fat16.c" \
+	"..\..\inc\ext\mw\megawifi.h" \
+	"..\..\inc\tools.h" \
+	"..\..\inc\genesis.h" \
+	"..\..\src\tab_sin.c" \
 	"..\..\inc\sound.h" \
 	"..\..\src\mapper.c" \
-	"..\..\inc\asm.h" \
-	"..\..\inc\xgm.h" \
-	"..\..\src\string.c" \
-	"..\..\src\boot\rom_head.c" \
-	"..\..\inc\types.h" \
-	"..\..\inc\bmp.h" \
-	"..\..\src\pal.c" \
-	"..\..\inc\vdp_tile.h" \
-	"..\..\src\sys.c" \
 	"..\..\inc\config.h" \
-	"..\..\inc\memory_base.h" \
-	"..\..\src\sprite_eng.c" \
-	"..\..\inc\ym2612.h" \
-	"..\..\src\tab_log10.c" \
-	"..\..\inc\dma.h" \
-	"..\..\inc\ext\console.h" \
 	"..\..\inc\timer.h" \
-	"..\..\src\tab_log2.c" \
-	"..\..\src\asm_mac.cpp" \
-	"..\..\inc\z80_ctrl.h" \
-	"..\..\src\bmp.c" \
-	"..\..\src\vdp.c" \
-	"..\..\inc\maths3D.h" \
-	"..\..\src\dma.c" \
-	"..\..\src\pool.c" \
-	"..\..\inc\vram.h" \
-	"..\..\src\ext\everdrive.c" \
+	"..\..\src\sprite_eng.c" \
 	"..\..\inc\ext\everdrive.h" \
-	"..\..\src\vram.c" \
-	"..\..\inc\ext\flash-save\flash.h" \
-	"..\..\src\ext\fat16.c" \
-	"..\..\inc\ext\fat16.h" \
-	"..\..\src\tab_vol.c" \
-	"..\..\inc\ext\mw\mw-msg.h" \
-	"..\..\inc\tab_vol.h" \
+	"..\..\inc\vdp_tile.h" \
 	"..\..\src\ext\flash-save\flash.c" \
-	"..\..\src\types.c" \
-	"..\..\inc\ext\stb\stb_sprintf.h" \
-	"..\..\inc\vdp.h" \
-	"..\..\inc\map.h" \
-	"..\..\inc\string.h" \
-	"..\..\src\ext\mw\16c550.c" \
-	"..\..\src\tab_sin.c" \
-	"..\..\inc\ext\mw\lsd.h" \
-	"..\..\inc\object.h" \
-	"..\..\src\ext\mw\gamejolt.c" \
-	"..\..\src\vdp_spr.c" \
-	"..\..\inc\ext\flash-save\saveman.h" \
-	"..\..\inc\sram.h" \
+	"..\..\src\string.c" \
 	"..\..\src\tab_cnv.c" \
-	"..\..\inc\mapper.h" \
-	"..\..\inc\task.h" \
-	"..\..\inc\maths.h" \
 	"..\..\inc\psg.h" \
-	"..\..\src\ext\mw\json.c" \
-	"..\..\src\vdp_bg.c" \
-	"..\..\inc\genesis.h" \
-	"..\..\inc\vdp_bg.h" \
+	"..\..\src\ext\mw\gamejolt.c" \
+	"..\..\inc\ext\mw\gamejolt.h" \
+	"..\..\inc\memory.h" \
+	"..\..\src\ext\mw\megawifi.c" \
+	"..\..\inc\ext\console.h" \
+	"..\..\src\map.c" \
+	"..\..\inc\ext\mw\lsd.h" \
+	"..\..\inc\task.h" \
+	"..\..\src\ext\console.c" \
+	"..\..\inc\joy.h" \
+	"..\..\inc\ym2612.h" \
+	"..\..\src\maths3D.c" \
+	"..\..\inc\ext\fat16.h" \
 	"..\..\src\vdp_tile.c" \
+	"..\..\inc\kdebug.h" \
+	"..\..\inc\map.h" \
+	"..\..\src\ext\mw\16c550.c" \
 	"..\..\inc\ext\mw\16c550.h" \
+	"..\..\src\z80_ctrl.c" \
+	"..\..\inc\sprite_eng_legacy.h" \
+	"..\..\src\tab_log2.c" \
+	"..\..\inc\object.h" \
+	"..\..\src\ext\everdrive.c" \
+	"..\..\inc\ext\mw\mw-msg.h" \
+	"..\..\inc\tab_cnv.h" \
+	"..\..\src\sys.c" \
 	"..\..\inc\sprite_eng.h" \
+	"..\..\src\ext\mw\lsd.c" \
+	"..\..\inc\asm.h" \
+	"..\..\src\vdp_bg.c" \
+	"..\..\inc\maths3D.h" \
+	"..\..\inc\mapper.h" \
+	"..\..\src\joy.c" \
+	"..\..\src\xgm.c" \
+	"..\..\inc\string.h" \
+	"..\..\inc\maths.h" \
+	"..\..\inc\bmp.h" \
+	"..\..\src\timer.c" \
+	"..\..\inc\types.h" \
+	"..\..\inc\z80_ctrl.h" \
+	"..\..\src\ext\flash-save\saveman.c" \
+	"..\..\inc\dma.h" \
+	"..\..\src\tools.c" \
+	"..\..\inc\pal.h" \
+	"..\..\src\maths.c" \
+	"..\..\src\tab_log10.c" \
+	"..\..\inc\memory_base.h" \
+	"..\..\src\memory.c" \
+	"..\..\src\vdp.c" \
+	"..\..\inc\pool.h" \
+	"..\..\src\vram.c" \
+	"..\..\inc\smp_null.h" \
+	"..\..\src\object.c" \
+	"..\..\inc\ext\flash-save\flash.h" \
+	"..\..\src\tab_vol.c" \
+	"..\..\inc\sram.h" \
+	"..\..\src\bmp.c" \
+	"..\..\src\pal.c" \
+	"..\..\inc\ext\stb\stb_sprintf.h" \
+	"..\..\src\vdp_spr.c" \
+	"..\..\inc\tab_vol.h" \
+	"..\..\src\sound.c" \
+	"..\..\inc\font.h" \
 	"..\..\src\ym2612.c" \
-	"..\..\src\ext\mw\megawifi.c" 
+	"..\..\inc\vdp.h" \
+	"..\..\src\sprite_eng_legacy.c" \
+	"..\..\inc\ext\mw\jsmn.h" \
+	"..\..\inc\vdp_bg.h" \
+	"..\..\src\psg.c" \
+	"..\..\inc\ext\flash-save\saveman.h" 
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO

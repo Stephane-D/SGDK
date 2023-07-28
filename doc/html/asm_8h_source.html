@@ -87,13 +87,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00011"></a>00011 <span class="preprocessor"></span><span class="preprocessor">#define _ASM_H_</span>
 <a name="l00012"></a>00012 <span class="preprocessor"></span>
 <a name="l00013"></a>00013 
-<a name="l00014"></a>00014 <span class="preprocessor">#define VAR2REG_B(var, reg)       asm (&quot;move.b %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;)</span>
-<a name="l00015"></a>00015 <span class="preprocessor"></span><span class="preprocessor">#define VAR2REG_W(var, reg)       asm (&quot;move.w %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;)</span>
-<a name="l00016"></a>00016 <span class="preprocessor"></span><span class="preprocessor">#define VAR2REG_L(var, reg)       asm (&quot;move.l %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;)</span>
+<a name="l00014"></a>00014 <span class="preprocessor">#define VAR2REG_B(var, reg)       asm volatile (&quot;move.b %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;);</span>
+<a name="l00015"></a>00015 <span class="preprocessor"></span><span class="preprocessor">#define VAR2REG_W(var, reg)       asm volatile (&quot;move.w %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;);</span>
+<a name="l00016"></a>00016 <span class="preprocessor"></span><span class="preprocessor">#define VAR2REG_L(var, reg)       asm volatile (&quot;move.l %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;);</span>
 <a name="l00017"></a>00017 <span class="preprocessor"></span>
-<a name="l00018"></a>00018 <span class="preprocessor">#define REG2VAR_B(reg, var)       asm (&quot;move.b %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var))</span>
-<a name="l00019"></a>00019 <span class="preprocessor"></span><span class="preprocessor">#define REG2VAR_W(reg, var)       asm (&quot;move.w %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var))</span>
-<a name="l00020"></a>00020 <span class="preprocessor"></span><span class="preprocessor">#define REG2VAR_L(reg, var)       asm (&quot;move.l %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var))</span>
+<a name="l00018"></a>00018 <span class="preprocessor">#define REG2VAR_B(reg, var)       asm volatile (&quot;move.b %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var));</span>
+<a name="l00019"></a>00019 <span class="preprocessor"></span><span class="preprocessor">#define REG2VAR_W(reg, var)       asm volatile (&quot;move.w %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var));</span>
+<a name="l00020"></a>00020 <span class="preprocessor"></span><span class="preprocessor">#define REG2VAR_L(reg, var)       asm volatile (&quot;move.l %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var));</span>
 <a name="l00021"></a>00021 <span class="preprocessor"></span>
 <a name="l00022"></a>00022 <span class="comment">// enumeration helper for GAS</span>
 <a name="l00023"></a>00023 <span class="preprocessor">#if defined(__ASSEMBLY__) || defined(__ASSEMBLER__)</span>
@@ -131,7 +131,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="asm_8h.html">asm.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

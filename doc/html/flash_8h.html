@@ -127,10 +127,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="flas
 <div class="textblock"><p>Low level NOR flash read/erase/write interface. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Jesus Alonso (doragasu) </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>08/2022</dd></dl>
-<p>This module allows reading, erasing and writing data from/to the cartridge flash chip. It should work with any flash chip compatible with the AMD format, and implementing a CFI interface. It has been tested successfully with S29GL032 and W29GL032C chips. Also it is required that the cart has the #WE line connected to the flash chip (that should be the case on most flash carts, but is not guaranteed).</p>
+<p>This module allows reading, erasing and writing data from/to the cartridge flash chip. It should work with any flash chip compatible with the AMD format, and implementing a CFI interface. It has been tested successfully with S29GL032 and W29GL032C chips. Also it is required that the cart has the WE line connected to the flash chip (that should be the case on most flash carts, but is not guaranteed).</p>
 <dl class="note"><dt><b>Note:</b></dt><dd>The module has some limitations: addresses must be even, data pointers must be word aligned, and some functions (<a class="el" href="flash_8h.html#a657aa34ab6dc1b40662457a4388dca53" title="Initialise flash chip. Call this function only once, before any other function in the module...">flash_init()</a>, <a class="el" href="flash_8h.html#a6d85856dc11782ae47613eb94a645974" title="Erases a flash sector. Erased sectors will be read as 0xFF.">flash_sector_erase()</a> and <a class="el" href="flash_8h.html#a555b964d28e88d97dc9a91da99d0961a" title="Programs (writes) a data buffer to the specified flash address.">flash_program()</a>) must be run with interrupts disabled and Z80 stopped. Please also take into account that flash suffers from wear, so if you use this e.g. for saving data, avoid saving very frequently and/or implement a wear leveling algorithm to avoid damaging the chip.</dd>
 <dd>
-Although it is not a requirement for this module to work, it is strongly recommended that the cart you use also has the #RESET pin connected to the console #RESET signal. Otherwise, if the user pushes the RESET button while the flash chip is being erased/programmed, the machine will most likely freeze, requiring another press of the RESET button or a power cycle. </dd></dl>
+Although it is not a requirement for this module to work, it is strongly recommended that the cart you use also has the RESET pin connected to the console RESET signal. Otherwise, if the user pushes the RESET button while the flash chip is being erased/programmed, the machine will most likely freeze, requiring another press of the RESET button or a power cycle. </dd></dl>
 </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="afbb96a77e71d5b9b3f7c5931244e5b2a"></a><!-- doxytag: member="flash.h::flash_copy" ref="afbb96a77e71d5b9b3f7c5931244e5b2a" args="(uint32_t dst, uint32_t src, uint16_t len)" -->
 <div class="memitem">
@@ -406,7 +406,7 @@ This function must be called with interrupts disabled and Z80 stopped.</dd></dl>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="flash_8h.html">flash.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

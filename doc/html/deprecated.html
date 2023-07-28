@@ -76,406 +76,436 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Deprecated List </div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="_deprecated000040"></a> </p>
+<div class="textblock"><p><a class="anchor" id="_deprecated000031"></a> </p>
 <dl>
-<dt>Member <a class="el" href="bmp_8h.html#a7d40f7e18eadb55904e11dd1f796109a">BMP_getBitmapPalette</a> (const <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> *bitmap, u16 *pal) </dt>
+<dt>Member <a class="el" href="memory_8h.html#ad93044401d2be9e5db3f71094e4e9986">astMemcpy</a> (to, from, len) </dt>
+<dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000046"></a> </p>
+<dl>
+<dt>Member <a class="el" href="bmp_8h.html#a1f181fb0dbf2edfc8d261d1e3ae2d067">BMP_getBitmapPalette</a> (bitmap, pal) </dt>
 <dd>Uses bitmap-&gt;palette instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000035"></a> </p>
+<p><a class="anchor" id="_deprecated000041"></a> </p>
 <dl>
 <dt>Member <a class="el" href="bmp_8h.html#a2d3bdc311f0d1df3dfc1dc73e5d052f6">BMP_GETPIXEL</a> (x, y) </dt>
 <dd>Use BMP_getPixelFast(..) instead (inlining make macro useless) </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000039"></a> </p>
+<p><a class="anchor" id="_deprecated000045"></a> </p>
 <dl>
-<dt>Member <a class="el" href="bmp_8h.html#a4858f4c9b675a7a2c7c181738f5385cf">BMP_loadAndScaleBitmap</a> (const <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal) </dt>
+<dt>Member <a class="el" href="bmp_8h.html#a9460b9ec1e152266f59a471f934bd7a5">BMP_loadAndScaleBitmap</a> (bitmap, x, y, w, h, loadpal) </dt>
 <dd>Use BMP_drawBitmapEx(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000038"></a> </p>
+<p><a class="anchor" id="_deprecated000044"></a> </p>
 <dl>
-<dt>Member <a class="el" href="bmp_8h.html#a32343a871485930e104ca5182f2bea70">BMP_loadBitmap</a> (const <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> *bitmap, u16 x, u16 y, u16 loadpal) </dt>
+<dt>Member <a class="el" href="bmp_8h.html#a0de7b8f2daa889388078bf65679d7e90">BMP_loadBitmap</a> (bitmap, x, y, loadpal) </dt>
 <dd>Use BMP_drawBitmap(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000037"></a> </p>
+<p><a class="anchor" id="_deprecated000043"></a> </p>
 <dl>
-<dt>Member <a class="el" href="bmp_8h.html#ace7837a79fc77148476e4607bd8607c6">BMP_loadBitmapData</a> (const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch) </dt>
+<dt>Member <a class="el" href="bmp_8h.html#a82b104afe57b1f738e53d83613dd4d2c">BMP_loadBitmapData</a> (data, x, y, w, h, pitch) </dt>
 <dd>Use BMP_drawBitmapData(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000036"></a> </p>
+<p><a class="anchor" id="_deprecated000042"></a> </p>
 <dl>
 <dt>Member <a class="el" href="bmp_8h.html#a464f404fb34afb1b270fdc8a4571d255">BMP_SETPIXEL</a> (x, y, col) </dt>
 <dd>Use BMP_setPixelFast(..) instead (inlining make macro useless) </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000073"></a> </p>
+<p><a class="anchor" id="_deprecated000040"></a> </p>
 <dl>
-<dt>Member <a class="el" href="maths_8h.html#a45eb4a206ea2f7aaaa20991f866f58c3">distance_approx</a> (s32 dx, s32 dy) </dt>
+<dt>Member <a class="el" href="maths_8h.html#ad90474eee33795e4e7ffed6624533fe3">distance_approx</a> (dx, dy) </dt>
 <dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000011"></a> </p>
+<p><a class="anchor" id="_deprecated000032"></a> </p>
 <dl>
-<dt>Member <a class="el" href="memory_8h.html#a743e3d1f88c4f7612950bab964035473">fastMemcpy</a> (void *to, const void *from, u16 len) </dt>
+<dt>Member <a class="el" href="memory_8h.html#a71eafdc235f858fbf5213469bd5ad86c">fastMemcpyU16</a> (to, from, len) </dt>
 <dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000012"></a> </p>
+<p><a class="anchor" id="_deprecated000033"></a> </p>
 <dl>
-<dt>Member <a class="el" href="memory_8h.html#a11dbbb94040958baf312b1f578e3f787">fastMemcpyU16</a> (u16 *to, const u16 *from, u16 len) </dt>
+<dt>Member <a class="el" href="memory_8h.html#a867b723f2a733a9f258de61786ff514f">fastMemcpyU32</a> (to, from, len) </dt>
 <dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000013"></a> </p>
+<p><a class="anchor" id="_deprecated000028"></a> </p>
 <dl>
-<dt>Member <a class="el" href="memory_8h.html#a4e605e65fd0bc8b0cbbdfdaa458f7976">fastMemcpyU32</a> (u32 *to, const u32 *from, u16 len) </dt>
-<dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000008"></a> </p>
-<dl>
-<dt>Member <a class="el" href="memory_8h.html#a092c306ccba13e2970cece82dbf501a2">fastMemset</a> (void *to, u8 value, u16 len) </dt>
+<dt>Member <a class="el" href="memory_8h.html#a2625a0e92785a1b9a155b9ecfd9712bc">fastMemset</a> (to, value, len) </dt>
 <dd>Uses <a class="el" href="memory_8h.html#a293dba0e709cf6885aa051621ee6050e" title="Fill block of memory.">memset(void *to, u8 value, u16 len)</a> instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000009"></a> </p>
+<p><a class="anchor" id="_deprecated000029"></a> </p>
 <dl>
-<dt>Member <a class="el" href="memory_8h.html#aa99a28ff0c620c28d5543e4e6fb08218">fastMemsetU16</a> (u16 *to, u16 value, u16 len) </dt>
+<dt>Member <a class="el" href="memory_8h.html#a9f24b498b558fa826f415fb5d5305f92">fastMemsetU16</a> (to, value, len) </dt>
 <dd>Uses memsetU16(void *to, u16 value, u16 len) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000010"></a> </p>
+<p><a class="anchor" id="_deprecated000030"></a> </p>
 <dl>
-<dt>Member <a class="el" href="memory_8h.html#ae31bba5d858e0d228bc3321301ef6c97">fastMemsetU32</a> (u32 *to, u32 value, u16 len) </dt>
+<dt>Member <a class="el" href="memory_8h.html#a3de30c8678c9cee3b0451f6e8706b96b">fastMemsetU32</a> (to, value, len) </dt>
 <dd>Uses memsetU32(void *to, u32 value, u16 len) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000046"></a> </p>
+<p><a class="anchor" id="_deprecated000051"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a60ae80b65f7f3474bbc2a1bef30ee434">GFX_CTRL_PORT</a>  </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a43c7208da604ffd6142c4e51723a9ac7" title="VDP Control port address.">VDP_CTRL_PORT</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000045"></a> </p>
+<p><a class="anchor" id="_deprecated000050"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a5d449dbdbe6d6fab619aeb79df669482">GFX_DATA_PORT</a>  </dt>
 <dd>Use <a class="el" href="vdp_8h.html#af25e39e450f3dab28ced3410d09a724f" title="VDP Data port address.">VDP_DATA_PORT</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000060"></a> </p>
+<p><a class="anchor" id="_deprecated000074"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a377e840d162f9bcefd2231cc6d6bff23">GFX_DMA_CRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a8a6336a6fa031853ef44c054a7d24b5b" title="Set VDP command to issue a DMA transfert to specified CRAM address.">VDP_DMA_CRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000059"></a> </p>
+<p><a class="anchor" id="_deprecated000073"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#afca99ca5282dc63028b1044dcf9ebf27">GFX_DMA_VRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a9a5e869153ef327d51d442d4802f5eb3" title="Set VDP command to issue a DMA transfert to specified VRAM address.">VDP_DMA_VRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000062"></a> </p>
+<p><a class="anchor" id="_deprecated000076"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#ab404249b792c6e9b7c5cf074eebba449">GFX_DMA_VRAMCOPY_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#aececd479f9187438f4396754210a07a4" title="Set VDP command to issue a DMA VRAM copy to specified VRAM address.">VDP_DMA_VRAMCOPY_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000061"></a> </p>
+<p><a class="anchor" id="_deprecated000075"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a82d443708a76bcdc48583ecfc89628bb">GFX_DMA_VSRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7" title="Set VDP command to issue a DMA transfert to specified VSRAM address.">VDP_DMA_VSRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000064"></a> </p>
+<p><a class="anchor" id="_deprecated000078"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a5253c7d9eca206ab8173d294e74adbae">GFX_HORZ_SCROLL</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#abaf9a4581d581851eee5d3be9c132a53" title="Helper to write in horizontal scroll table (same as VDP_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr))...">VDP_HORZ_SCROLL</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000047"></a> </p>
+<p><a class="anchor" id="_deprecated000052"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a6dc8286621a038d46b40288fcd3a9238">GFX_HVCOUNTER_PORT</a>  </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a6fd7212ab170a443763ee2b15c0b4eec" title="VDP HV counter port address.">VDP_HVCOUNTER_PORT</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000054"></a> </p>
+<p><a class="anchor" id="_deprecated000068"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a66a21e7204b0aeb0cdb09ccb05611104">GFX_READ_CRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#af876df5e9ed2fb62aee3a3b2d5606ae5" title="Set VDP command to read specified CRAM address.">VDP_READ_CRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000053"></a> </p>
+<p><a class="anchor" id="_deprecated000067"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#aba069a21b888548a41d038d5ed4e335f">GFX_READ_VRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#af0d8887ddb0fe7fa0b5c48891cf97ac7" title="Set VDP command to read specified VRAM address.">VDP_READ_VRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000055"></a> </p>
+<p><a class="anchor" id="_deprecated000069"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a21cff5ef6923b8e88fd6fdfdbc0dd073">GFX_READ_VSRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410" title="Set VDP command to read specified VSRAM address.">VDP_READ_VSRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000063"></a> </p>
+<p><a class="anchor" id="_deprecated000077"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a45bc32412ab5e53e61fbf0df4999258a">GFX_VERT_SCROLL</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a05b2d1e04f693321b9cbcb0907a1c34b" title="Helper to write in vertical scroll table (same as VDP_WRITE_VSRAM_ADDR).">VDP_VERT_SCROLL</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000057"></a> </p>
+<p><a class="anchor" id="_deprecated000071"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#afda52b5a4e05203a70ec53f79b673b7a">GFX_WRITE_CRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a1d3395f0c240aae67eaffac1269518a1" title="Set VDP command to write at specified CRAM address.">VDP_WRITE_CRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000056"></a> </p>
+<p><a class="anchor" id="_deprecated000070"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#aaf7dd60220cf3d6ec21c804f4a89f25d">GFX_WRITE_VRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a16ff3788c4e0b08c02c8c03c8da8e72a" title="Set VDP command to write at specified VRAM address.">VDP_WRITE_VRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000058"></a> </p>
+<p><a class="anchor" id="_deprecated000072"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#af46a673b4ed666b47281b84a899e9d83">GFX_WRITE_VSRAM_ADDR</a> (adr) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc" title="Set VDP command to write at specified VSRAM address.">VDP_WRITE_VSRAM_ADDR</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000002"></a> </p>
+<p><a class="anchor" id="_deprecated000001"></a> </p>
 <dl>
 <dt>Member <a class="el" href="tools_8h.html#ad927d196467eeb89c3d6c30ab3051985">KLog</a> (char *text) </dt>
 <dd>Use kprintf(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000006"></a> </p>
-<dl>
-<dt>Member <a class="el" href="memory_8h.html#a07223805c62a6615057a38da2e6208a6">memcpyU16</a> (u16 *to, const u16 *from, u16 len) </dt>
-<dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000007"></a> </p>
-<dl>
-<dt>Member <a class="el" href="memory_8h.html#ab212f3a38543454e669f7f63a27514a3">memcpyU32</a> (u32 *to, const u32 *from, u16 len) </dt>
-<dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000003"></a> </p>
-<dl>
-<dt>Member <a class="el" href="pal_8h.html#a91136291475340058b0edb2596292465">PAL_setColorsDMA</a> (u16 index, const u16 *pal, u16 count) </dt>
-<dd>Use PAL_setColors(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000004"></a> </p>
-<dl>
-<dt>Member <a class="el" href="pal_8h.html#a93428fe7fbec7dc667cd6a380bcc27a5">PAL_setPaletteColorsDMA</a> (u16 index, const <a class="el" href="struct_palette.html" title="Palette structure contains color data.">Palette</a> *pal) </dt>
-<dd>Use PAL_setPaletteColors(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000005"></a> </p>
-<dl>
-<dt>Member <a class="el" href="pal_8h.html#aea1c0c5b7f7362f2cb09a180687b62cb">PAL_setPaletteDMA</a> (u16 numPal, const u16 *pal) </dt>
-<dd>Use PAL_setPalette(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000001"></a> </p>
-<dl>
-<dt>Member <a class="el" href="joy_8h.html#a81baaa8c28f517c590f9a3d586b6b7d0">PORT_TYPE_UKNOWN</a>  </dt>
-<dd>Use PORT_TYPE_UNKNOWN instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000074"></a> </p>
-<dl>
-<dt>Member <a class="el" href="psg_8h.html#a494b818e9d26dea8d41c25bbd6726cc1">PSG_init</a> (void) </dt>
-<dd>use <a class="el" href="psg_8h.html#acec016ec934cd9cd0339b7a7b66a562e" title="Reset PSG chip.">PSG_reset()</a> instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000034"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#a2366c104ecce83723a6b3b1121d4ddc5">SND_getCPULoad_XGM</a> (void) </dt>
-<dd>use XGM_getCPULoad(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000032"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#a0c4608fd29c50aad9a75847e0a0cd47b">SND_getForceDelayDMA_XGM</a> (void) </dt>
-<dd>use XGM_getForceDelayDMA(..) instead </dd>
-</dl>
 <p><a class="anchor" id="_deprecated000026"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#afdd14765216756e60e80ae1d794c901d">SND_getManualSync_XGM</a> (void) </dt>
-<dd>use XGM_getManualSync(..) instead </dd>
+<dt>Member <a class="el" href="memory_8h.html#a915bbb1e4f0e98e2359bc11b2b556246">memcpyU16</a> (to, from, len) </dt>
+<dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000024"></a> </p>
+<p><a class="anchor" id="_deprecated000027"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a69cf377fd63c8f10347d1ecd5e4bbbca">SND_getMusicTempo_XGM</a> (void) </dt>
-<dd>use XGM_getMusicTempo(..) instead </dd>
+<dt>Member <a class="el" href="memory_8h.html#a6eb37317823baee3b7e2a4b1351a2128">memcpyU32</a> (to, from, len) </dt>
+<dd>Uses <a class="el" href="memory_8h.html#a22db39a7414d2e45acb5b69a351e49b8" title="Copy block of memory.">memcpy(void *to, const void *from, u16 len)</a> instead. </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000047"></a> </p>
+<dl>
+<dt>Member <a class="el" href="pal_8h.html#ac0032f9631d8b1c32ef337aa27967a84">PAL_setColorsDMA</a> (index, pal, count) </dt>
+<dd>Use PAL_setColors(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000048"></a> </p>
+<dl>
+<dt>Member <a class="el" href="pal_8h.html#a1ff33db8e2579be6ac151de462c915c0">PAL_setPaletteColorsDMA</a> (index, pal) </dt>
+<dd>Use PAL_setPaletteColors(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000049"></a> </p>
+<dl>
+<dt>Member <a class="el" href="pal_8h.html#aba40122b916f1fbdaade1ae974ad2839">PAL_setPaletteDMA</a> (numPal, pal) </dt>
+<dd>Use PAL_setPalette(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000025"></a> </p>
+<dl>
+<dt>Member <a class="el" href="psg_8h.html#ab8f4788a9aa5f6f691af006398dff5e8">PSG_init</a> () </dt>
+<dd>use <a class="el" href="psg_8h.html#acec016ec934cd9cd0339b7a7b66a562e" title="Reset PSG chip.">PSG_reset()</a> instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000022"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a16624731bb5cbb5c84dd3677f841365f">SND_getCPULoad_XGM</a> () </dt>
+<dd>use XGM_getCPULoad(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000020"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a7c1a341a431cc46201ef0793665866f0">SND_getForceDelayDMA_XGM</a> () </dt>
+<dd>use XGM_getForceDelayDMA(..) instead </dd>
 </dl>
 <p><a class="anchor" id="_deprecated000014"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a85ce2c7958998e90515b016e728d8e5a">SND_isPlaying_XGM</a> (void) </dt>
+<dt>Member <a class="el" href="sound_8h.html#a9431c9e229cc4315464bb6fc1a46f11e">SND_getManualSync_XGM</a> () </dt>
+<dd>use XGM_getManualSync(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000012"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a92bd2c79aae7d0d9e2c272691e9bb4cb">SND_getMusicTempo_XGM</a> () </dt>
+<dd>use XGM_getMusicTempo(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000002"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#aa48b76488b3beae737c6d2972a4b610c">SND_isPlaying_XGM</a> () </dt>
 <dd>use <a class="el" href="xgm_8h.html#a3c4b275cb04dc98d9d51b04e1e1cd208" title="Returns play music state (XGM music player driver).">XGM_isPlaying()</a> instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000019"></a> </p>
+<p><a class="anchor" id="_deprecated000007"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a3b01b68e4378182f36d10ff78bd6ca15">SND_isPlayingPCM_XGM</a> (const u16 channel_mask) </dt>
+<dt>Member <a class="el" href="sound_8h.html#a94d52ee7751d9898ff21525fdc3eceb1">SND_isPlayingPCM_XGM</a> (channel_mask) </dt>
 <dd>use XGM_isPlayingPCM(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000028"></a> </p>
+<p><a class="anchor" id="_deprecated000016"></a> </p>
 <dl>
 <dt>Member <a class="el" href="sound_8h.html#a08f1f50634969073a8302c35f63b7278">SND_nextFrame_XGM</a> () </dt>
 <dd>use XGM_nextFrame(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000029"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#a7fdf38a93633dc2e5ddb581957a96992">SND_nextXFrame_XGM</a> (u16 num) </dt>
-<dd>use XGM_nextXFrame(..) instead </dd>
-</dl>
 <p><a class="anchor" id="_deprecated000017"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a5dc859dd8b88a1879f9b2ab6ee6a7f23">SND_pausePlay_XGM</a> (void) </dt>
+<dt>Member <a class="el" href="sound_8h.html#ad9bdbf14ce6a73d2d109c001dbfb599f">SND_nextXFrame_XGM</a> (num) </dt>
+<dd>use XGM_nextXFrame(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000005"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a23d470a6a4d2d53e8243676aff276d93">SND_pausePlay_XGM</a> () </dt>
 <dd>use XGM_pausePlay(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000018"></a> </p>
+<p><a class="anchor" id="_deprecated000006"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a147ecbd4ece2d103c0d57e7c590ae8ae">SND_resumePlay_XGM</a> (void) </dt>
+<dt>Member <a class="el" href="sound_8h.html#a44a3e4e13fbd8d01d6b326c010225552">SND_resumePlay_XGM</a> () </dt>
 <dd>use XGM_resumePlay(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000031"></a> </p>
+<p><a class="anchor" id="_deprecated000019"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a5b69a5173becc4e016e12bf8988e0ac0">SND_set68KBUSProtection_XGM</a> (u8 value) </dt>
+<dt>Member <a class="el" href="sound_8h.html#adaee1a038844bdc48d5b7887a78ecf9e">SND_set68KBUSProtection_XGM</a> (value) </dt>
 <dd>use XGM_set68KBUSProtection(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000033"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#acebf210f509a7763e8c5045101453b0c">SND_setForceDelayDMA_XGM</a> (u16 value) </dt>
-<dd>use XGM_setForceDelayDMA(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000030"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#aa8629c6e2cd37ffef5a1093799b935d8">SND_setLoopNumber_XGM</a> (u8 value) </dt>
-<dd>use XGM_setLoopNumber(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000027"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#ab487c2d44234599e0252ea93b69c1f1b">SND_setManualSync_XGM</a> (u16 value) </dt>
-<dd>use XGM_setManualSync(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000025"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#a71c3c452cdf4c37cd8878b5200b707ba">SND_setMusicTempo_XGM</a> (u16 value) </dt>
-<dd>use XGM_setMusicTempo(..) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000020"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sound_8h.html#acafbb3742f2a7799178766f6856ec717">SND_setPCM_XGM</a> (const u8 id, const u8 *sample, const u32 len) </dt>
-<dd>use XGM_setPCM(..) instead </dd>
 </dl>
 <p><a class="anchor" id="_deprecated000021"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#af8a84cb96111eca13bb2fa950a938e67">SND_setPCMFast_XGM</a> (const u8 id, const u8 *sample, const u32 len) </dt>
-<dd>use XGM_setPCMFast(..) instead </dd>
+<dt>Member <a class="el" href="sound_8h.html#a254217b82fb6bead1b5e17f8248d1559">SND_setForceDelayDMA_XGM</a> (value) </dt>
+<dd>use XGM_setForceDelayDMA(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000018"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a7f9762b358c7a495d5ea2ef7dfd3facb">SND_setLoopNumber_XGM</a> (value) </dt>
+<dd>use XGM_setLoopNumber(..) instead </dd>
 </dl>
 <p><a class="anchor" id="_deprecated000015"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a312009315c34a76541da6b48bf8f9b68">SND_startPlay_XGM</a> (const u8 *song) </dt>
+<dt>Member <a class="el" href="sound_8h.html#a54116f59153579f54b0a6110f217e89a">SND_setManualSync_XGM</a> () </dt>
+<dd>use XGM_setManualSync(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000013"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a19109238515608468139d960a7a505b2">SND_setMusicTempo_XGM</a> (value) </dt>
+<dd>use XGM_setMusicTempo(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000008"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#ae57bf0162ca77b3c44580a2655f98155">SND_setPCM_XGM</a> (id, sample, len) </dt>
+<dd>use XGM_setPCM(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000009"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a708581c52ae7746bb53aafea2d2f145f">SND_setPCMFast_XGM</a> (id, sample, len) </dt>
+<dd>use XGM_setPCMFast(..) instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000003"></a> </p>
+<dl>
+<dt>Member <a class="el" href="sound_8h.html#a906cbd978ff24e9a984d5b58443ecf78">SND_startPlay_XGM</a> (song) </dt>
 <dd>use XGM_startPlay(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000022"></a> </p>
+<p><a class="anchor" id="_deprecated000010"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a514b697ccfed5f14006ca78051cba778">SND_startPlayPCM_XGM</a> (const u8 id, const u8 priority, const u16 channel) </dt>
+<dt>Member <a class="el" href="sound_8h.html#a4c2203a0eb3da1c3106bb115e47a62a5">SND_startPlayPCM_XGM</a> (id, prio, ch) </dt>
 <dd>use XGM_startPlayPCM(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000016"></a> </p>
+<p><a class="anchor" id="_deprecated000004"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#a84555a46a569bf5642144fe2ee3e93c2">SND_stopPlay_XGM</a> (void) </dt>
+<dt>Member <a class="el" href="sound_8h.html#afffd88fe171cfc74c555ea141abc3181">SND_stopPlay_XGM</a> () </dt>
 <dd>use XGM_stopPlay(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000023"></a> </p>
+<p><a class="anchor" id="_deprecated000011"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sound_8h.html#af86985462ed3cc1610a90025e8cf38d8">SND_stopPlayPCM_XGM</a> (const u16 channel) </dt>
+<dt>Member <a class="el" href="sound_8h.html#aefe1afd029653bfa71cccaebd49c17ed">SND_stopPlayPCM_XGM</a> (channel) </dt>
 <dd>use XGM_stopPlayPCM(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000079"></a> </p>
+<p><a class="anchor" id="_deprecated000039"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sprite__eng_8h.html#ae7ed2668e777d3f326b62b680d26076e">SPR_computeVisibility</a> (<a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> *sprite) </dt>
+<dt>Member <a class="el" href="sprite__eng_8h.html#ade1f9105b885d87986a6a1d84f838606">SPR_computeVisibility</a> (sprite) </dt>
 <dd>Use SPR_isVisible(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000076"></a> </p>
+<p><a class="anchor" id="_deprecated000037"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sprite__eng_8h.html#aaaf5d7636687419ef7a8d6ec3ba4d7c8">SPR_setAlwaysOnTop</a> (<a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> *sprite, u16 value) </dt>
-<dd>Use SPR_setDepth(SPR_MIN_DEPTH) instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000077"></a> </p>
-<dl>
-<dt>Member <a class="el" href="sprite__eng_8h.html#ad0c8ca6c151a3a4f410a7ea3b42fd8a0">SPR_setAlwaysVisible</a> (<a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> *sprite, u16 value) </dt>
+<dt>Member <a class="el" href="sprite__eng_8h.html#abc2ccc13828fd858072e576a95ec9417">SPR_setAlwaysVisible</a> (sprite, value) </dt>
 <dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000078"></a> </p>
+<p><a class="anchor" id="_deprecated000038"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sprite__eng_8h.html#aaef30cc5900d691eefe5e38f625fe914">SPR_setNeverVisible</a> (<a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> *sprite, u16 value) </dt>
+<dt>Member <a class="el" href="sprite__eng_8h.html#ac6eb13c0a7154b4adee078c414e96e50">SPR_setNeverVisible</a> (sprite, value) </dt>
 <dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000075"></a> </p>
+<p><a class="anchor" id="_deprecated000036"></a> </p>
 <dl>
-<dt>Member <a class="el" href="sprite__eng_8h.html#a05f54d36b5649b37d770cb6dc873378f">SPR_setPriorityAttribut</a> (<a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> *sprite, u16 value) </dt>
+<dt>Member <a class="el" href="sprite__eng_8h.html#af9175eb1a3f694b0d13c923101327625">SPR_setPriorityAttribut</a> (sprite, value) </dt>
 <dd>Use <a class="el" href="sprite__eng_8h.html#a03275096f187a64406f5fc3bd332462f" title="Set sprite Priority attribut.">SPR_setPriority</a>(..) instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000052"></a> </p>
+<p><a class="anchor" id="_deprecated000063"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#a4bc0d5b47958f86d2808f4c514783a4a">TILE_FONTINDEX</a>  </dt>
+<dd>Use TILE_FONT_INDEX instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000058"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#a859f97271ba27497b4e3e15a258606a7">TILE_MAXINDEX</a>  </dt>
+<dd>Use TILE_MAX_INDEX instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000057"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#acd87774b106e4044bccd121ba2c50a40">TILE_MAXNUM</a>  </dt>
+<dd>Use TILE_MAX_NUM instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000064"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#ae0165afa29e400fa1eb2a3b199b3b996">TILE_SPRITEINDEX</a>  </dt>
+<dd>Use TILE_SPRITE_INDEX instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000059"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a52e41f780a406576cb0c48a63586c57b">TILE_SYSTEM_LENGHT</a>  </dt>
 <dd>Use TILE_SYSTEM_LENGTH instead. </dd>
 </dl>
+<p><a class="anchor" id="_deprecated000061"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#a6bb3e895a9ee750478c8408713739d09">TILE_SYSTEMINDEX</a>  </dt>
+<dd>Use TILE_SYSTEM_INDEX instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000060"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#a46982e93be4c22117b2c34c341d4fbde">TILE_SYSTEMLENGTH</a>  </dt>
+<dd>Use TILE_SYSTEM_LENGTH instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000062"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#ab6f2dc0d2a91d3fa0665b606591b5104">TILE_USERINDEX</a>  </dt>
+<dd>Use TILE_USER_INDEX instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000065"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#ac149a6347ea7afecb802ac017b144224">TILE_USERLENGTH</a>  </dt>
+<dd>Use TILE_USER_LENGTH instead </dd>
+</dl>
 <p><a class="anchor" id="_deprecated000066"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#a3e10e973b380091e93771728f9b2d033">VDP_getAPlanAddress</a> (void) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#a1dd96b6bb178af312b86be90bac434a2">TILE_USERMAXINDEX</a>  </dt>
+<dd>Use TILE_USER_MAX_INDEX instead </dd>
+</dl>
+<p><a class="anchor" id="_deprecated000080"></a> </p>
+<dl>
+<dt>Member <a class="el" href="vdp_8h.html#a560bd8bb753abf3e0bd2422c421786ba">VDP_getAPlanAddress</a> () </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a89bad8fd6ce45c310c454d29ae70895a" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000067"></a> </p>
+<p><a class="anchor" id="_deprecated000081"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#a081df2f2b2c6c2828eef631af0939d76">VDP_getBPlanAddress</a> (void) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#aeece4d1f088ceb400b51c4bb58cb86ff">VDP_getBPlanAddress</a> () </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a8eb5aae56c10ba7a59a734045efd9ff8" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000068"></a> </p>
+<p><a class="anchor" id="_deprecated000082"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#ac413d85176153efd16c9dc548260547c">VDP_getWindowPlanAddress</a> (void) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#af02d1647a4168dd860d0448d7abdc5f9">VDP_getWindowPlanAddress</a> () </dt>
 <dd>Use <a class="el" href="vdp_8h.html#ae58c52ccd92cb55fe3d3c32388b1e945" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000048"></a> </p>
+<p><a class="anchor" id="_deprecated000053"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a7814b5440d8c1abac2d3b713da9e661e">VDP_PLAN_A</a>  </dt>
 <dd>Use VDP_BG_A instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000049"></a> </p>
+<p><a class="anchor" id="_deprecated000054"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#aad093d575e8a3b56a7aad71005928d2e">VDP_PLAN_B</a>  </dt>
 <dd>Use VDP_BG_B instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000050"></a> </p>
+<p><a class="anchor" id="_deprecated000055"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#accbf240474704163a78d290de2ea6418">VDP_PLAN_WINDOW</a>  </dt>
 <dd>Use VDP_WINDOW instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000069"></a> </p>
+<p><a class="anchor" id="_deprecated000083"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#a5c9e0ae9a36332d334b4ce5a388d047a">VDP_setAPlanAddress</a> (u16 value) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#ab41bdc7ea5012fffb38791cbb555127d">VDP_setAPlanAddress</a> (value) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000070"></a> </p>
+<p><a class="anchor" id="_deprecated000084"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#afb80485408f0cce3c0745fc122114f79">VDP_setBPlanAddress</a> (u16 value) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#ac4e7f1801826846b4f302c90fd6a950f">VDP_setBPlanAddress</a> (value) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000041"></a> </p>
+<p><a class="anchor" id="_deprecated000023"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp__tile_8h.html#a37e1285552a03b549ff3f257be75c743">VDP_setMap</a> (VDPPlane plane, const <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> *tilemap, u16 basetile, u16 x, u16 y) </dt>
 <dd>Use <a class="el" href="vdp__tile_8h.html#a9d98608e515881a1178be95461d7a6b3" title="Load tilemap region.">VDP_setTileMap()</a> instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000042"></a> </p>
+<p><a class="anchor" id="_deprecated000024"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp__tile_8h.html#a37ed670d285e4a8a266b69de02c1ebce">VDP_setMapEx</a> (VDPPlane plane, const <a class="el" href="struct_tile_map.html" title="TileMap structure which contains tilemap background definition.  Use the unpackTileMap() method to un...">TileMap</a> *tilemap, u16 basetile, u16 x, u16 y, u16 xm, u16 ym, u16 wm, u16 hm) </dt>
 <dd>Use <a class="el" href="vdp__tile_8h.html#a9290082779c8344362f6ca5dab754003" title="Load tilemap region at specified plane position.">VDP_setTileMapEx()</a> instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000065"></a> </p>
+<p><a class="anchor" id="_deprecated000079"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#a692b0e6c1e5346a58322ecb5a35f8c49">VDP_setPlanSize</a> (u16 w, u16 h) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#ac0711915cd05f03e28b5bb2cb70fa657">VDP_setPlanSize</a> (w, h) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000071"></a> </p>
+<p><a class="anchor" id="_deprecated000085"></a> </p>
 <dl>
-<dt>Member <a class="el" href="vdp_8h.html#a43c8dc47075db8250040db50b2e6fa6f">VDP_setWindowPlanAddress</a> (u16 value) </dt>
+<dt>Member <a class="el" href="vdp_8h.html#a5d4463fc0fb89b156c3b523d8beb00a0">VDP_setWindowPlanAddress</a> (value) </dt>
 <dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000072"></a> </p>
-<dl>
-<dt>Member <a class="el" href="vdp_8h.html#ab440205a234866c0c0bd73991eeae242">VDP_waitDMACompletion</a> (void) </dt>
-<dd>Use <a class="el" href="dma_8h.html#a341c446dfc714c6f5577722d0840bf5d" title="Wait current DMA fill/copy operation to complete (same as VDP_waitDMACompletion())">DMA_waitCompletion()</a> instead </dd>
-</dl>
-<p><a class="anchor" id="_deprecated000051"></a> </p>
+<p><a class="anchor" id="_deprecated000056"></a> </p>
 <dl>
 <dt>Member <a class="el" href="vdp_8h.html#a0ced6dcbc646649d30d3ca8836fa3476">VSCROLL_2TILE</a>  </dt>
 <dd>Use VSCROLL_COLUMN instead </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000044"></a> </p>
+<p><a class="anchor" id="_deprecated000035"></a> </p>
 <dl>
-<dt>Member <a class="el" href="ym2612_8h.html#ac4c82c0a98cca93e479a78cb7c97c843">YM2612_writeRegSafe</a> (const u16 part, const u8 reg, const u8 data) </dt>
+<dt>Member <a class="el" href="ym2612_8h.html#ace93e2c0cb097aaf2b91b6aa125514e4">YM2612_writeRegSafe</a> (part, reg, data) </dt>
 <dd>Use YM2612_writeReg(..) method instead. </dd>
 </dl>
-<p><a class="anchor" id="_deprecated000043"></a> </p>
+<p><a class="anchor" id="_deprecated000034"></a> </p>
 <dl>
-<dt>Member <a class="el" href="ym2612_8h.html#a2460f52199e78bf12e5a6bf04f455aa9">YM2612_writeSafe</a> (const u16 port, const u8 data) </dt>
+<dt>Member <a class="el" href="ym2612_8h.html#a146041b1311fb1d780db6033f587f6e7">YM2612_writeSafe</a> (port, data) </dt>
 <dd>Use YM2612_write(..) method instead. </dd>
 </dl>
 </div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:36 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

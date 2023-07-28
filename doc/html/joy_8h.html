@@ -184,7 +184,6 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>PORT_TYPE_UNKNOWN</b>&#160;&#160;&#160;0x0F</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44bc606162e3c2bb8f25c2b4cb9698e5"></a><!-- doxytag: member="joy.h::PORT_TYPE_EA4WAYPLAY" ref="a44bc606162e3c2bb8f25c2b4cb9698e5" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>PORT_TYPE_EA4WAYPLAY</b>&#160;&#160;&#160;0x10</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a81baaa8c28f517c590f9a3d586b6b7d0">PORT_TYPE_UKNOWN</a>&#160;&#160;&#160;PORT_TYPE_UNKNOWN</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aedfb0b04c08d5d1f0fafc531932caf2e"></a><!-- doxytag: member="joy.h::JOY_SUPPORT_OFF" ref="aedfb0b04c08d5d1f0fafc531932caf2e" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>JOY_SUPPORT_OFF</b>&#160;&#160;&#160;0x00</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a594509b3ad6219340a7d1c608f177715"></a><!-- doxytag: member="joy.h::JOY_SUPPORT_3BTN" ref="a594509b3ad6219340a7d1c608f177715" args="" -->
@@ -223,11 +222,17 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#ab6327762980c6e5335c96de156498867">JOY_reset</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the controller sub system.<br/>
   <a href="#ab6327762980c6e5335c96de156498867"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a0198a273994b03bd4ecf69669e799e9d">JOY_getEventHandler</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current set callback function for controller state change.<br/>
+ <br/>
+ SGDK provides an event system to detect state change on controller.<br/>
+ It internally updates controllers state at each V Blank period and fire an event if a state change is detected.<br/>
+  <a href="#a0198a273994b03bd4ecf69669e799e9d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a8812d0aecb9f032f429dd45138777fef">JOY_setEventHandler</a> (<a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a> *CB)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the callback function for controller state changed.<br/>
  <br/>
- SGDK provides facilities to detect state change on controller.<br/>
- It update controllers state at each V Blank period and fire event if a state change is detected.<br/>
+ SGDK provides an event system to detect state change on controller.<br/>
+ It internally updates controllers state at each V Blank period and fire an event if a state change is detected.<br/>
   <a href="#a8812d0aecb9f032f429dd45138777fef"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="joy_8h.html#a2849113e4a8af7ca42ab59c4bf4fae8d">JOY_setSupport</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> port, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> support)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set peripheral support for the specified port.<br/>
@@ -315,22 +320,7 @@ Stephane Dallongeville </dd></dl>
  Note that mice are enabled by default by <a class="el" href="joy_8h.html#ab28c3e1b3cf39437be09919fb78a364c" title="Initialize the controller sub system. ">JOY_init()</a> and will return emulated pad values for reading the port as if it were a controller.<br/>
  This allows using a mouse as a pad for SGDK games. However, mice use a little more overhead than pads, so a game that doesn't use mice as mice and wants every last scrap of speed should check if mice are connected and turn them off to get just that extra little bit of speed.<br/>
  If you have an existing SGDK based game that needs every last bit of speed and doesn't check for mice, unplug any mice for extra speed. Mice are only enabled if detected. </p>
-</div><hr/><h2>Define Documentation</h2>
-<a class="anchor" id="a81baaa8c28f517c590f9a3d586b6b7d0"></a><!-- doxytag: member="joy.h::PORT_TYPE_UKNOWN" ref="a81baaa8c28f517c590f9a3d586b6b7d0" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PORT_TYPE_UKNOWN&#160;&#160;&#160;PORT_TYPE_UNKNOWN</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Use PORT_TYPE_UNKNOWN instead </dd></dl>
-
-</div>
-</div>
-<hr/><h2>Typedef Documentation</h2>
+</div><hr/><h2>Typedef Documentation</h2>
 <a class="anchor" id="a4f83081825a2a980a01ce9ff78ccfa41"></a><!-- doxytag: member="joy.h::JoyEventCallback" ref="a4f83081825a2a980a01ce9ff78ccfa41" args="(u16 joy, u16 changed, u16 state)" -->
 <div class="memitem">
 <div class="memproto">
@@ -380,6 +370,30 @@ Stephane Dallongeville </dd></dl>
 </div>
 </div>
 <hr/><h2>Function Documentation</h2>
+<a class="anchor" id="a0198a273994b03bd4ecf69669e799e9d"></a><!-- doxytag: member="joy.h::JOY_getEventHandler" ref="a0198a273994b03bd4ecf69669e799e9d" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="joy_8h.html#a4f83081825a2a980a01ce9ff78ccfa41">JoyEventCallback</a>* JOY_getEventHandler </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the current set callback function for controller state change.<br/>
+ <br/>
+ SGDK provides an event system to detect state change on controller.<br/>
+ It internally updates controllers state at each V Blank period and fire an event if a state change is detected.<br/>
+ </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The current set callback method on joy state change.<br/>
+ </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a7454525213d2183c17cd6af476c33152"></a><!-- doxytag: member="joy.h::JOY_getJoypadType" ref="a7454525213d2183c17cd6af476c33152" args="(u16 joy)" -->
 <div class="memitem">
 <div class="memproto">
@@ -667,8 +681,8 @@ Stephane Dallongeville </dd></dl>
 
 <p>Set the callback function for controller state changed.<br/>
  <br/>
- SGDK provides facilities to detect state change on controller.<br/>
- It update controllers state at each V Blank period and fire event if a state change is detected.<br/>
+ SGDK provides an event system to detect state change on controller.<br/>
+ It internally updates controllers state at each V Blank period and fire an event if a state change is detected.<br/>
  </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
@@ -969,7 +983,7 @@ Stephane Dallongeville </dd></dl>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="joy_8h.html">joy.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

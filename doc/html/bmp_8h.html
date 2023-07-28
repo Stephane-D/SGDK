@@ -176,8 +176,8 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa962019afba13821244d0be3b503bf9a"></a><!-- doxytag: member="bmp.h::BMP_GENBMP16_IMAGE" ref="aa962019afba13821244d0be3b503bf9a" args="(genbmp16)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#aa962019afba13821244d0be3b503bf9a">BMP_GENBMP16_IMAGE</a>(genbmp16)&#160;&#160;&#160;(&amp;((genbmp16)[18]))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return pointer to image data of genesis bitmap 16 object. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a2d3bdc311f0d1df3dfc1dc73e5d052f6">BMP_GETPIXEL</a>(x, y)&#160;&#160;&#160;BMP_getPixelFast(x, y)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a464f404fb34afb1b270fdc8a4571d255">BMP_SETPIXEL</a>(x, y, col)&#160;&#160;&#160;BMP_setPixelFast(x, y, col)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a2d3bdc311f0d1df3dfc1dc73e5d052f6">BMP_GETPIXEL</a>(x, y)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_getPixelFast(..) instead.\&quot;&quot;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a464f404fb34afb1b270fdc8a4571d255">BMP_SETPIXEL</a>(x, y, col)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_setPixelFast(..) instead.\&quot;&quot;)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adfaba7c397a9ef571fdf8553243f92bd"></a><!-- doxytag: member="bmp.h::BMP_BASE_TILE_INDEX" ref="adfaba7c397a9ef571fdf8553243f92bd" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>BMP_BASE_TILE_INDEX</b>&#160;&#160;&#160;TILE_USER_INDEX</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0093b740650d0a9f20fd5414c07baabe"></a><!-- doxytag: member="bmp.h::BMP_FB0_TILE_INDEX" ref="a0093b740650d0a9f20fd5414c07baabe" args="" -->
@@ -198,6 +198,10 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>BMP_FB1_ADDR</b>&#160;&#160;&#160;(BMP_FB1_TILE_INDEX * 32)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb70fcfa2d111d9933622cff3ea2140c"></a><!-- doxytag: member="bmp.h::BMP_END_ADDR" ref="abb70fcfa2d111d9933622cff3ea2140c" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>BMP_END_ADDR</b>&#160;&#160;&#160;(BMP_END_TILE_INDEX * 32)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a82b104afe57b1f738e53d83613dd4d2c">BMP_loadBitmapData</a>(data, x, y, w, h, pitch)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_drawBitmapData(..) instead.\&quot;&quot;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a0de7b8f2daa889388078bf65679d7e90">BMP_loadBitmap</a>(bitmap, x, y, loadpal)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_drawBitmap(..) instead.\&quot;&quot;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a9460b9ec1e152266f59a471f934bd7a5">BMP_loadAndScaleBitmap</a>(bitmap, x, y, w, h, loadpal)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_drawBitmapScaled(..) instead.\&quot;&quot;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a1f181fb0dbf2edfc8d261d1e3ae2d067">BMP_getBitmapPalette</a>(bitmap, pal)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use bitmap-&gt;palette instead.\&quot;&quot;)</td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#ac9ed26c726263bd9140ad843aea145c4">BMP_init</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> double_buffer, <a class="el" href="vdp_8h.html#a2e4eaa8c8f7f7c32c8021105122f98f8">VDPPlane</a> plane, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> palette, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> priority)</td></tr>
@@ -269,16 +273,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_
  Use the BMP_isPolygonCulled(..) method to test if polygon should be draw or not.  <a href="#a6bde0c097db5a271b132610a69c8bdd1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a7c3c27f436e1ed6ac9bee8cbb3ff3cd9">BMP_drawBitmapData</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *data, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> pitch)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw the specified 4BPP bitmap data.  <a href="#a7c3c27f436e1ed6ac9bee8cbb3ff3cd9"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a36a6eec847346c4928a061ab6274ab63">BMP_drawBitmap</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a59ff5e97867269b6e8a7f6727306e9d1">BMP_drawBitmap</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> loadpal)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a Genesis <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a>.<br/>
-  <a href="#a36a6eec847346c4928a061ab6274ab63"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a5fa9f1e756f2dff90e44fcc05602b3b3">BMP_drawBitmapScaled</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
+  <a href="#a59ff5e97867269b6e8a7f6727306e9d1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a6f2b5a88811bbc249ef773e82c99a528">BMP_drawBitmapScaled</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> loadpal)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Load and draw a Genesis <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> with specified dimension.<br/>
-  <a href="#a5fa9f1e756f2dff90e44fcc05602b3b3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#ace7837a79fc77148476e4607bd8607c6">BMP_loadBitmapData</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *data, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> pitch)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a32343a871485930e104ca5182f2bea70">BMP_loadBitmap</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a4858f4c9b675a7a2c7c181738f5385cf">BMP_loadAndScaleBitmap</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> w, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> loadpal)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#a7d40f7e18eadb55904e11dd1f796109a">BMP_getBitmapPalette</a> (const <a class="el" href="struct_bitmap.html">Bitmap</a> *bitmap, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *pal)</td></tr>
+  <a href="#a6f2b5a88811bbc249ef773e82c99a528"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bmp_8h.html#aa93e0a853117f3a062cf2cb4e844713e">BMP_scale</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *src_buf, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> src_wb, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> src_h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> src_pitch, <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *dst_buf, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dst_wb, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dst_h, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> dst_pitch)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale the specified source bitmap image to specified dimension.<br/>
   <a href="#aa93e0a853117f3a062cf2cb4e844713e"></a><br/></td></tr>
@@ -305,6 +305,34 @@ Variables</h2></td></tr>
  With extended blank bitmap buffer can be transferred to VRAM 20 times per second in NTSC<br/>
  and 25 time per second in PAL. </p>
 </div><hr/><h2>Define Documentation</h2>
+<a class="anchor" id="a1f181fb0dbf2edfc8d261d1e3ae2d067"></a><!-- doxytag: member="bmp.h::BMP_getBitmapPalette" ref="a1f181fb0dbf2edfc8d261d1e3ae2d067" args="(bitmap, pal)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP_getBitmapPalette</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">bitmap, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pal&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use bitmap-&gt;palette instead.\&quot;&quot;)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000046">Deprecated:</a></b></dt><dd>Uses bitmap-&gt;palette instead. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a2d3bdc311f0d1df3dfc1dc73e5d052f6"></a><!-- doxytag: member="bmp.h::BMP_GETPIXEL" ref="a2d3bdc311f0d1df3dfc1dc73e5d052f6" args="(x, y)" -->
 <div class="memitem">
 <div class="memproto">
@@ -324,12 +352,156 @@ Variables</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;BMP_getPixelFast(x, y)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_getPixelFast(..) instead.\&quot;&quot;)</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000035">Deprecated:</a></b></dt><dd>Use BMP_getPixelFast(..) instead (inlining make macro useless) </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000041">Deprecated:</a></b></dt><dd>Use BMP_getPixelFast(..) instead (inlining make macro useless) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9460b9ec1e152266f59a471f934bd7a5"></a><!-- doxytag: member="bmp.h::BMP_loadAndScaleBitmap" ref="a9460b9ec1e152266f59a471f934bd7a5" args="(bitmap, x, y, w, h, loadpal)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP_loadAndScaleBitmap</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">bitmap, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">y, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">w, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">h, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">loadpal&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_drawBitmapScaled(..) instead.\&quot;&quot;)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000045">Deprecated:</a></b></dt><dd>Use BMP_drawBitmapEx(..) instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0de7b8f2daa889388078bf65679d7e90"></a><!-- doxytag: member="bmp.h::BMP_loadBitmap" ref="a0de7b8f2daa889388078bf65679d7e90" args="(bitmap, x, y, loadpal)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP_loadBitmap</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">bitmap, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">y, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">loadpal&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_drawBitmap(..) instead.\&quot;&quot;)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000044">Deprecated:</a></b></dt><dd>Use BMP_drawBitmap(..) instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a82b104afe57b1f738e53d83613dd4d2c"></a><!-- doxytag: member="bmp.h::BMP_loadBitmapData" ref="a82b104afe57b1f738e53d83613dd4d2c" args="(data, x, y, w, h, pitch)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP_loadBitmapData</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">y, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">w, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">h, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pitch&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_drawBitmapData(..) instead.\&quot;&quot;)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000043">Deprecated:</a></b></dt><dd>Use BMP_drawBitmapData(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -358,12 +530,12 @@ Variables</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;BMP_setPixelFast(x, y, col)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use BMP_setPixelFast(..) instead.\&quot;&quot;)</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000036">Deprecated:</a></b></dt><dd>Use BMP_setPixelFast(..) instead (inlining make macro useless) </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000042">Deprecated:</a></b></dt><dd>Use BMP_setPixelFast(..) instead (inlining make macro useless) </dd></dl>
 
 </div>
 </div>
@@ -463,12 +635,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a36a6eec847346c4928a061ab6274ab63"></a><!-- doxytag: member="bmp.h::BMP_drawBitmap" ref="a36a6eec847346c4928a061ab6274ab63" args="(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)" -->
+<a class="anchor" id="a59ff5e97867269b6e8a7f6727306e9d1"></a><!-- doxytag: member="bmp.h::BMP_drawBitmap" ref="a59ff5e97867269b6e8a7f6727306e9d1" args="(const Bitmap *bitmap, u16 x, u16 y, bool loadpal)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> BMP_drawBitmap </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> BMP_drawBitmap </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_bitmap.html">Bitmap</a> *&#160;</td>
           <td class="paramname"><em>bitmap</em>, </td>
@@ -488,7 +660,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>loadpal</em>&#160;</td>
         </tr>
         <tr>
@@ -511,7 +683,7 @@ Variables</h2></td></tr>
  The <a class="el" href="struct_bitmap.html" title="Genesis 4bpp Bitmap structure definition.  Use the unpackBitmap() method to unpack if compression is ...">Bitmap</a> is unpacked "on the fly" if needed (require some memory). </td></tr>
     <tr><td class="paramname">x</td><td>X coordinate (should be an even value). </td></tr>
     <tr><td class="paramname">y</td><td>y coordinate. </td></tr>
-    <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information when non zero. </td></tr>
+    <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information. </td></tr>
   </table>
   </dd>
 </dl>
@@ -587,12 +759,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5fa9f1e756f2dff90e44fcc05602b3b3"></a><!-- doxytag: member="bmp.h::BMP_drawBitmapScaled" ref="a5fa9f1e756f2dff90e44fcc05602b3b3" args="(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)" -->
+<a class="anchor" id="a6f2b5a88811bbc249ef773e82c99a528"></a><!-- doxytag: member="bmp.h::BMP_drawBitmapScaled" ref="a6f2b5a88811bbc249ef773e82c99a528" args="(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, bool loadpal)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> BMP_drawBitmapScaled </td>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> BMP_drawBitmapScaled </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_bitmap.html">Bitmap</a> *&#160;</td>
           <td class="paramname"><em>bitmap</em>, </td>
@@ -624,7 +796,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>loadpal</em>&#160;</td>
         </tr>
         <tr>
@@ -649,7 +821,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">y</td><td>y coordinate. </td></tr>
     <tr><td class="paramname">w</td><td>final width. </td></tr>
     <tr><td class="paramname">h</td><td>final height. </td></tr>
-    <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information when non zero. </td></tr>
+    <tr><td class="paramname">loadpal</td><td>Load the bitmap palette information </td></tr>
   </table>
   </dd>
 </dl>
@@ -826,34 +998,6 @@ Variables</h2></td></tr>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="bmp_8h.html#afc6e58b8eeace49f18a74b60bb24f517" title="Return true (!= 0) if a flip request is pending.">BMP_hasFlipRequestPending()</a> </dd>
 <dd>
 <a class="el" href="bmp_8h.html#a7aae76062fb1204605536c2163345258" title="Wait until no more flip request is pending.">BMP_waitWhileFlipRequestPending()</a> </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a7d40f7e18eadb55904e11dd1f796109a"></a><!-- doxytag: member="bmp.h::BMP_getBitmapPalette" ref="a7d40f7e18eadb55904e11dd1f796109a" args="(const Bitmap *bitmap, u16 *pal)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BMP_getBitmapPalette </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_bitmap.html">Bitmap</a> *&#160;</td>
-          <td class="paramname"><em>bitmap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> *&#160;</td>
-          <td class="paramname"><em>pal</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000040">Deprecated:</a></b></dt><dd>Uses bitmap-&gt;palette instead. </dd></dl>
 
 </div>
 </div>
@@ -1110,150 +1254,6 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>1 if polygon is culled (should not be draw) and 0 otherwise.<br/>
  </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a4858f4c9b675a7a2c7c181738f5385cf"></a><!-- doxytag: member="bmp.h::BMP_loadAndScaleBitmap" ref="a4858f4c9b675a7a2c7c181738f5385cf" args="(const Bitmap *bitmap, u16 x, u16 y, u16 w, u16 h, u16 loadpal)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BMP_loadAndScaleBitmap </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_bitmap.html">Bitmap</a> *&#160;</td>
-          <td class="paramname"><em>bitmap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>x</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>y</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>w</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>h</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>loadpal</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000039">Deprecated:</a></b></dt><dd>Use BMP_drawBitmapEx(..) instead. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a32343a871485930e104ca5182f2bea70"></a><!-- doxytag: member="bmp.h::BMP_loadBitmap" ref="a32343a871485930e104ca5182f2bea70" args="(const Bitmap *bitmap, u16 x, u16 y, u16 loadpal)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BMP_loadBitmap </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_bitmap.html">Bitmap</a> *&#160;</td>
-          <td class="paramname"><em>bitmap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>x</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>y</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>loadpal</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000038">Deprecated:</a></b></dt><dd>Use BMP_drawBitmap(..) instead. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ace7837a79fc77148476e4607bd8607c6"></a><!-- doxytag: member="bmp.h::BMP_loadBitmapData" ref="ace7837a79fc77148476e4607bd8607c6" args="(const u8 *data, u16 x, u16 y, u16 w, u16 h, u32 pitch)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BMP_loadBitmapData </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>x</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>y</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>w</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
-          <td class="paramname"><em>h</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td>
-          <td class="paramname"><em>pitch</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000037">Deprecated:</a></b></dt><dd>Use BMP_drawBitmapData(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1690,7 +1690,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="bmp_8h.html">bmp.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

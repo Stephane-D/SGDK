@@ -6,12 +6,12 @@ var NAVTREE =
       [ "Deprecated List", "deprecated.html", null ]
     ] ],
     [ "Modules", "modules.html", [
-      [ "gamejolt", "group__gamejolt.html", null ],
-      [ "megawifi", "group__megawifi.html", null ],
       [ "json", "group__json.html", null ],
-      [ "mw-msg", "group__mw-msg.html", null ],
+      [ "megawifi", "group__megawifi.html", null ],
+      [ "gamejolt", "group__gamejolt.html", null ],
       [ "lsd", "group__lsd.html", null ],
-      [ "16c550", "group___c550.html", null ]
+      [ "16c550", "group___c550.html", null ],
+      [ "mw-msg", "group__mw-msg.html", null ]
     ] ],
     [ "Class List", "annotated.html", [
       [ "_collision", "struct__collision.html", null ],
@@ -109,6 +109,7 @@ var NAVTREE =
       [ "smp_null_pcm.h", null, null ],
       [ "sound.h", "sound_8h.html", null ],
       [ "sprite_eng.h", "sprite__eng_8h.html", null ],
+      [ "sprite_eng_legacy.h", "sprite__eng__legacy_8h.html", null ],
       [ "sram.h", "sram_8h.html", null ],
       [ "stb_sprintf.h", null, null ],
       [ "string.h", "string_8h.html", null ],

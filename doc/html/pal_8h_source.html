@@ -130,10 +130,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00193"></a>00193 <span class="keywordtype">void</span> <a class="code" href="pal_8h.html#a6a52ac7e59b0235a430ec88a702ff231" title="Write the given Palette RGB colors into CRAM for the specified palette entries.">PAL_setPaletteColors</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <span class="keyword">const</span> <a class="code" href="struct_palette.html" title="Palette structure contains color data.">Palette</a>* pal, <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm);
 <a name="l00210"></a>00210 <span class="keywordtype">void</span> <a class="code" href="pal_8h.html#a2b681402f605e31ff1d07121dff08944" title="Set a complete palette (16 colors) into CRAM.">PAL_setPalette</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numPal, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* pal, <a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm);
 <a name="l00211"></a>00211 
-<a name="l00216"></a>00216 <span class="keywordtype">void</span> <a class="code" href="pal_8h.html#a91136291475340058b0edb2596292465">PAL_setColorsDMA</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* pal, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> count);
-<a name="l00221"></a>00221 <span class="keywordtype">void</span> <a class="code" href="pal_8h.html#a93428fe7fbec7dc667cd6a380bcc27a5">PAL_setPaletteColorsDMA</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index, <span class="keyword">const</span> <a class="code" href="struct_palette.html" title="Palette structure contains color data.">Palette</a>* pal);
-<a name="l00226"></a>00226 <span class="keywordtype">void</span> <a class="code" href="pal_8h.html#aea1c0c5b7f7362f2cb09a180687b62cb">PAL_setPaletteDMA</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numPal, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* pal);
-<a name="l00227"></a>00227 
+<a name="l00216"></a><a class="code" href="pal_8h.html#ac0032f9631d8b1c32ef337aa27967a84">00216</a> <span class="preprocessor">#define PAL_setColorsDMA(index, pal, count)     _Pragma(&quot;GCC error \&quot;This method is deprecated, use PAL_setColors(..) instead.\&quot;&quot;)</span>
+<a name="l00217"></a>00217 <span class="preprocessor"></span>
+<a name="l00221"></a><a class="code" href="pal_8h.html#a1ff33db8e2579be6ac151de462c915c0">00221</a> <span class="preprocessor">#define PAL_setPaletteColorsDMA(index, pal)     _Pragma(&quot;GCC error \&quot;This method is deprecated, use PAL_setPaletteColors(..) instead.\&quot;&quot;)</span>
+<a name="l00222"></a>00222 <span class="preprocessor"></span>
+<a name="l00226"></a><a class="code" href="pal_8h.html#aba40122b916f1fbdaade1ae974ad2839">00226</a> <span class="preprocessor">#define PAL_setPaletteDMA(numPal, pal)          _Pragma(&quot;GCC error \&quot;This method is deprecated, use PAL_setPalette(..) instead.\&quot;&quot;)</span>
+<a name="l00227"></a>00227 <span class="preprocessor"></span>
 <a name="l00245"></a>00245 <span class="keywordtype">bool</span> <a class="code" href="pal_8h.html#ab9e1abd3305ff8b213d7218e8e54862b" title="Initialize a fading operation that will be manually controlled through PAL_doFadeStep() calls...">PAL_initFade</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromCol, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> toCol, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* palSrc, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>* palDst, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numFrame);
 <a name="l00254"></a>00254 <span class="keywordtype">bool</span> <a class="code" href="pal_8h.html#a64d1f2baa76fb4707f649074cfdf685f" title="Update palette to process one iteration of current fade operation (see PAL_initFade(..) method)">PAL_doFadeStep</a>(<span class="keywordtype">void</span>);
 <a name="l00255"></a>00255 
@@ -163,7 +165,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="pal_8h.html">pal.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

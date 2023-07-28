@@ -108,7 +108,7 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vram_8h.html#ad4c2a32ffe22a8b4e085c43b8b48c895">VRAM_getAllocated</a> (<a class="el" href="struct_v_r_a_m_region.html">VRAMRegion</a> *region)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of allocated tile in the specified VRAM region.  <a href="#ad4c2a32ffe22a8b4e085c43b8b48c895"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vram_8h.html#a60f670e7c071ee25996d87c0d9565f65">VRAM_getLargestFreeBlock</a> (<a class="el" href="struct_v_r_a_m_region.html">VRAMRegion</a> *region)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the largest free block index in the specified VRAM region.  <a href="#a60f670e7c071ee25996d87c0d9565f65"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the largest free block size (in tile) in the specified VRAM region.  <a href="#a60f670e7c071ee25996d87c0d9565f65"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vram_8h.html#aa38eb68653103ca3124e6785c66f75eb">VRAM_alloc</a> (<a class="el" href="struct_v_r_a_m_region.html">VRAMRegion</a> *region, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to allocate the specified number of tile in the given VRAM region and return its index.  <a href="#aa38eb68653103ca3124e6785c66f75eb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vram_8h.html#a98374c886ffbdf6c5a177f774c1cd0d7">VRAM_free</a> (<a class="el" href="struct_v_r_a_m_region.html">VRAMRegion</a> *region, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> index)</td></tr>
@@ -426,14 +426,14 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Return the largest free block index in the specified VRAM region. </p>
+<p>Return the largest free block size (in tile) in the specified VRAM region. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">region</td><td>VRAM region </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>the largest free block index in the specified VRAM region. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the largest free block size (in tile) in the specified VRAM region. </dd></dl>
 
 </div>
 </div>
@@ -469,7 +469,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vram_8h.html">vram.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

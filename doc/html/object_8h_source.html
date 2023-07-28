@@ -108,16 +108,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00071"></a>00071 } <a class="code" href="object_8h.html#a32b67ad7134cd31b5ec5ed9c6a2d3978" title="Base object structure.">Object</a>;
 <a name="l00072"></a>00072 
 <a name="l00073"></a>00073 
-<a name="l00087"></a>00087 <a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* OBJ_createObjectPool(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> objectSize);
+<a name="l00087"></a>00087 <a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* <a class="code" href="object_8h.html#a4ec340c74c3cf8bb4636f3c6c8932dbc" title="Create and allocate the new object pool (this method is an alias of POOL_create(..))">OBJ_createObjectPool</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> objectSize);
 <a name="l00088"></a>00088 
-<a name="l00101"></a>00101 <a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* OBJ_create(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
-<a name="l00117"></a>00117 <span class="keywordtype">void</span> OBJ_release(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <span class="keywordtype">bool</span> maintainCoherency);
+<a name="l00101"></a>00101 <a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <a class="code" href="object_8h.html#a1238544fea02aec304f2da3bd79683d4" title="Create a new objet from the given object pool (object must extend basic Object structure)">OBJ_create</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00117"></a>00117 <span class="keywordtype">void</span> <a class="code" href="object_8h.html#a4ccf32eed5e3bcd6c91de29ff67cae1d" title="Release an objet from the given object pool (object must extend basic Object structure)">OBJ_release</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <span class="keywordtype">bool</span> maintainCoherency);
 <a name="l00118"></a>00118 
-<a name="l00128"></a>00128 <span class="keywordtype">void</span> OBJ_updateAll(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00128"></a>00128 <span class="keywordtype">void</span> <a class="code" href="object_8h.html#aec234d1e900ae4043b7ea3b04290916a" title="Iterate over all active objects from the given object pool and call update method for each of them...">OBJ_updateAll</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
 <a name="l00129"></a>00129 
-<a name="l00142"></a>00142 <span class="keywordtype">void</span> OBJ_setInitMethod(<a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <a class="code" href="object_8h.html#a15b69418a2717503fa46e3e48760b392" title="Object function callback.">ObjectCallback</a>* initMethod);
-<a name="l00155"></a>00155 <span class="keywordtype">void</span> OBJ_setUpdateMethod(<a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <a class="code" href="object_8h.html#a15b69418a2717503fa46e3e48760b392" title="Object function callback.">ObjectCallback</a>* updateMethod);
-<a name="l00168"></a>00168 <span class="keywordtype">void</span> OBJ_setEndMethod(<a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <a class="code" href="object_8h.html#a15b69418a2717503fa46e3e48760b392" title="Object function callback.">ObjectCallback</a>* endMethod);
+<a name="l00142"></a>00142 <span class="keywordtype">void</span> <a class="code" href="object_8h.html#a96e6c36ff7e2fcd644fdafc0301c7219" title="Set the initialization method for the given object.">OBJ_setInitMethod</a>(<a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <a class="code" href="object_8h.html#a15b69418a2717503fa46e3e48760b392" title="Object function callback.">ObjectCallback</a>* initMethod);
+<a name="l00155"></a>00155 <span class="keywordtype">void</span> <a class="code" href="object_8h.html#a9de601d71bc7bc77480e8c6396f2efe6" title="Set the update method for the given object.">OBJ_setUpdateMethod</a>(<a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <a class="code" href="object_8h.html#a15b69418a2717503fa46e3e48760b392" title="Object function callback.">ObjectCallback</a>* updateMethod);
+<a name="l00168"></a>00168 <span class="keywordtype">void</span> <a class="code" href="object_8h.html#a69bc553cdcbab77cc74ab86f72fb949d" title="Set the ending method for the given object.">OBJ_setEndMethod</a>(<a class="code" href="struct_object__.html" title="Base object structure.">Object</a>* <span class="keywordtype">object</span>, <a class="code" href="object_8h.html#a15b69418a2717503fa46e3e48760b392" title="Object function callback.">ObjectCallback</a>* endMethod);
 <a name="l00169"></a>00169 
 <a name="l00170"></a>00170 
 <a name="l00171"></a>00171 <span class="preprocessor">#endif // _OBJECT_H_</span>
@@ -126,7 +126,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="object_8h.html">object.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -109,6 +109,9 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>FAR_SAFE</b>(data, size)&#160;&#160;&#160;data</td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad5b95f2d133a60284c4a21d07553fe9f"></a><!-- doxytag: member="mapper.h::SYS_resetBanks" ref="ad5b95f2d133a60284c4a21d07553fe9f" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#ad5b95f2d133a60284c4a21d07553fe9f">SYS_resetBanks</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset all banks to their initial / default value (automatically called at reset) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#ab4822912ad9431772cfecd6cee658784">SYS_getBank</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> regionIndex)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current bank of specified region index.  <a href="#ab4822912ad9431772cfecd6cee658784"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#a48c54175e83a58e50f896518addb0773">SYS_setBank</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> regionIndex, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> bankIndex)</td></tr>
@@ -123,6 +126,10 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Make the given binary data ressource accessible and return a pointer to it (safe version with possible bank crossing)  <a href="#a847063999d4dccfdb5cc183c174a4a01"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#a7ed70399173c4ec61702409ade6000ed">SYS_getFarDataSafeEx</a> (void *data, <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> size, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> high)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Make the given binary data ressource accessible and return a pointer to it (safe version with possible bank crossing)  <a href="#a7ed70399173c4ec61702409ade6000ed"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#a0e4a42f41c22d77b402c5d20fd026a5c">SYS_getNextFarAccessRegion</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the value of the next used region for FAR access with bank switch if data is not already accessible.  <a href="#a0e4a42f41c22d77b402c5d20fd026a5c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mapper_8h.html#a57e99ba27d0e6ba2dd2ddd5bdbac4223">SYS_setNextFarAccessRegion</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> high)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value of the next used region for FAR access with bank switch if data is not already accessible.  <a href="#a57e99ba27d0e6ba2dd2ddd5bdbac4223"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Mapper / bank switch methods. </p>
@@ -370,6 +377,26 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a0e4a42f41c22d77b402c5d20fd026a5c"></a><!-- doxytag: member="mapper.h::SYS_getNextFarAccessRegion" ref="a0e4a42f41c22d77b402c5d20fd026a5c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> SYS_getNextFarAccessRegion </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Retrieve the value of the next used region for FAR access with bank switch if data is not already accessible. </p>
+<p>This method should really be used in very specific case to know which region (6 or 7) will be used for next FAR access through bank switch but more importantly eventually to save its state and restore it with <a class="el" href="mapper_8h.html#a57e99ba27d0e6ba2dd2ddd5bdbac4223" title="Set the value of the next used region for FAR access with bank switch if data is not already accessib...">SYS_setNextFarAccessRegion</a>(..) later if you need to temporary change banks.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="mapper_8h.html#a57e99ba27d0e6ba2dd2ddd5bdbac4223" title="Set the value of the next used region for FAR access with bank switch if data is not already accessib...">SYS_setNextFarAccessRegion</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a53ce13e6d6381675305c87399367ca75"></a><!-- doxytag: member="mapper.h::SYS_isCrossingBank" ref="a53ce13e6d6381675305c87399367ca75" args="(void *data, u32 size)" -->
 <div class="memitem">
 <div class="memproto">
@@ -444,12 +471,36 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a57e99ba27d0e6ba2dd2ddd5bdbac4223"></a><!-- doxytag: member="mapper.h::SYS_setNextFarAccessRegion" ref="a57e99ba27d0e6ba2dd2ddd5bdbac4223" args="(bool high)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SYS_setNextFarAccessRegion </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>high</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set the value of the next used region for FAR access with bank switch if data is not already accessible. </p>
+<p>This method should really be used in very specific case to set which region (6 or 7) will be used for next FAR access through bank switch.<br/>
+ It can also be used to restore internal state saved it through <a class="el" href="mapper_8h.html#a0e4a42f41c22d77b402c5d20fd026a5c" title="Retrieve the value of the next used region for FAR access with bank switch if data is not already acc...">SYS_getNextFarAccessRegion()</a></p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="mapper_8h.html#a0e4a42f41c22d77b402c5d20fd026a5c" title="Retrieve the value of the next used region for FAR access with bank switch if data is not already acc...">SYS_getNextFarAccessRegion</a> </dd>
+<dd>
+<a class="el" href="mapper_8h.html#a7e9524ff91af527cfd998f2a68bd0f32" title="Make the given binary data ressource accessible and return a pointer to it.">SYS_getFarDataEx</a> </dd></dl>
+
+</div>
+</div>
 </div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="mapper_8h.html">mapper.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

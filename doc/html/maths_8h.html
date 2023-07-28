@@ -179,6 +179,7 @@ Defines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix16.  <a href="#aaf38619511c2a84d230051163c5af728"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a0bb7ef633c3b6bcff1903ed20b3917f8">FIX32</a>(value)&#160;&#160;&#160;((<a class="el" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a>) ((value) * (1 &lt;&lt; FIX32_FRAC_BITS)))</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert specified value to fix32.  <a href="#a0bb7ef633c3b6bcff1903ed20b3917f8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#ad90474eee33795e4e7ffed6624533fe3">distance_approx</a>(dx, dy)&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use getApproximatedDistance(..) instead.\&quot;&quot;)</td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b77230e6703913d9887b2c4ba602665"></a><!-- doxytag: member="maths.h::V2u16" ref="a7b77230e6703913d9887b2c4ba602665" args="" -->
@@ -366,7 +367,6 @@ Functions</h2></td></tr>
  The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#abbbce15df0c9773582c24e76d9435d1e">intToBCD</a> (<a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary to Decimal conversion.  <a href="#abbbce15df0c9773582c24e76d9435d1e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a45eb4a206ea2f7aaaa20991f866f58c3">distance_approx</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5">getApproximatedDistance</a> (<a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dx, <a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a> dy)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return euclidean distance approximation for specified vector.<br/>
  The returned distance is not 100% perfect but calculation is fast.  <a href="#a8c288389a266b9e3f5433c9e27629cc5"></a><br/></td></tr>
@@ -409,6 +409,34 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
  You can find a tutorial about how use maths with SGDK <a href="http://code.google.com/p/sgdk/wiki/SGDK_Math">here</a>.<br/>
  </p>
 </div><hr/><h2>Define Documentation</h2>
+<a class="anchor" id="ad90474eee33795e4e7ffed6624533fe3"></a><!-- doxytag: member="maths.h::distance_approx" ref="ad90474eee33795e4e7ffed6624533fe3" args="(dx, dy)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define distance_approx</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">dx, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">dy&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;_Pragma(&quot;GCC error \&quot;This method is deprecated, use getApproximatedDistance(..) instead.\&quot;&quot;)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000040">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aaf38619511c2a84d230051163c5af728"></a><!-- doxytag: member="maths.h::FIX16" ref="aaf38619511c2a84d230051163c5af728" args="(value)" -->
 <div class="memitem">
 <div class="memproto">
@@ -452,34 +480,6 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
 </div>
 </div>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a45eb4a206ea2f7aaaa20991f866f58c3"></a><!-- doxytag: member="maths.h::distance_approx" ref="a45eb4a206ea2f7aaaa20991f866f58c3" args="(s32 dx, s32 dy)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> distance_approx </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td>
-          <td class="paramname"><em>dx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="types_8h.html#aca9534476a3263a18b575bceb396f561">s32</a>&#160;</td>
-          <td class="paramname"><em>dy</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000073">Deprecated:</a></b></dt><dd>Use <a class="el" href="maths_8h.html#a8c288389a266b9e3f5433c9e27629cc5" title="Return euclidean distance approximation for specified vector.  The returned distance is not 100% perf...">getApproximatedDistance</a>(..) instead. </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a4b1eae35655f7cca5d7b02ec71860ea2"></a><!-- doxytag: member="maths.h::divmods" ref="a4b1eae35655f7cca5d7b02ec71860ea2" args="(s32 op1, s16 op2)" -->
 <div class="memitem">
 <div class="memproto">
@@ -953,7 +953,7 @@ const <a class="el" href="types_8h.html#ad58c7ae5c2d4caa87a28a44922de08d5">fix16
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="maths_8h.html">maths.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

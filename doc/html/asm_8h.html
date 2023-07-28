@@ -93,17 +93,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a406f726e737fff1c6e23243cd90648c0"></a><!-- doxytag: member="asm.h::VAR2REG_B" ref="a406f726e737fff1c6e23243cd90648c0" args="(var, reg)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>VAR2REG_B</b>(var, reg)&#160;&#160;&#160;asm (&quot;move.b %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>VAR2REG_B</b>(var, reg)&#160;&#160;&#160;asm volatile (&quot;move.b %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;);</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9feecca9dace320528f5ed89ecfd0e89"></a><!-- doxytag: member="asm.h::VAR2REG_W" ref="a9feecca9dace320528f5ed89ecfd0e89" args="(var, reg)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>VAR2REG_W</b>(var, reg)&#160;&#160;&#160;asm (&quot;move.w %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>VAR2REG_W</b>(var, reg)&#160;&#160;&#160;asm volatile (&quot;move.w %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;);</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f5be4aafd07d6c8cacd88218764b908"></a><!-- doxytag: member="asm.h::VAR2REG_L" ref="a8f5be4aafd07d6c8cacd88218764b908" args="(var, reg)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>VAR2REG_L</b>(var, reg)&#160;&#160;&#160;asm (&quot;move.l %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>VAR2REG_L</b>(var, reg)&#160;&#160;&#160;asm volatile (&quot;move.l %0, %/&quot;reg&quot;&quot; :: &quot;r&quot; (var) : &quot;&quot;reg&quot;&quot;);</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a14a4bc5d3604b5cc1082d6f73a8c6f5e"></a><!-- doxytag: member="asm.h::REG2VAR_B" ref="a14a4bc5d3604b5cc1082d6f73a8c6f5e" args="(reg, var)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>REG2VAR_B</b>(reg, var)&#160;&#160;&#160;asm (&quot;move.b %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>REG2VAR_B</b>(reg, var)&#160;&#160;&#160;asm volatile (&quot;move.b %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var));</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf967644f6c2f19179d5a813e18b3302"></a><!-- doxytag: member="asm.h::REG2VAR_W" ref="aaf967644f6c2f19179d5a813e18b3302" args="(reg, var)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>REG2VAR_W</b>(reg, var)&#160;&#160;&#160;asm (&quot;move.w %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>REG2VAR_W</b>(reg, var)&#160;&#160;&#160;asm volatile (&quot;move.w %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var));</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59815f676dc7256863b10f7bb902b83d"></a><!-- doxytag: member="asm.h::REG2VAR_L" ref="a59815f676dc7256863b10f7bb902b83d" args="(reg, var)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>REG2VAR_L</b>(reg, var)&#160;&#160;&#160;asm (&quot;move.l %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>REG2VAR_L</b>(reg, var)&#160;&#160;&#160;asm volatile (&quot;move.l %/&quot;reg&quot;, %0&quot; : &quot;=r&quot; (var));</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fcbb58b00096791bc1ec556c3903e5a"></a><!-- doxytag: member="asm.h::ENUM_BEGIN" ref="a8fcbb58b00096791bc1ec556c3903e5a" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>ENUM_BEGIN</b>&#160;&#160;&#160;typedef enum {</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4e4e18c86cac6175598f74ae880990b"></a><!-- doxytag: member="asm.h::ENUM_BEGIN_EX" ref="ad4e4e18c86cac6175598f74ae880990b" args="(tmpName)" -->
@@ -129,7 +129,7 @@ Defines</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="asm_8h.html">asm.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -121,7 +121,7 @@ Functions</h2></td></tr>
  You can use <em><a class="el" href="struct_pool.html" title="Object pool allocator structure.">Pool</a></em> object to handle dynamic allocation from a fixed set of objects.<br/>
  For instance if you may need to handle dynamically bullets for your game and you want to have at max 20 bullets, you can handle it that way:</p>
 <pre>
- Pool* bulletPool POOL_create(20, sizeof(Bullet));
+ Pool* bulletPool = POOL_create(20, sizeof(Bullet));
  ...
  // create a new bullet
  Bullet* bullet = POOL_allocate(bulletPool);
@@ -430,7 +430,7 @@ Functions</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="pool_8h.html">pool.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

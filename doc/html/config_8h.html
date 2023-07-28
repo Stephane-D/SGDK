@@ -126,6 +126,11 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d2163fee9102ccfe4da038b29df814e"></a><!-- doxytag: member="config.h::DMA_DISABLED" ref="a6d2163fee9102ccfe4da038b29df814e" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a6d2163fee9102ccfe4da038b29df814e">DMA_DISABLED</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to completely disable DMA transfers (for testing purpose) and replace them with (slower) software CPU copy. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd776f86a050b018af09fc788aa500a1"></a><!-- doxytag: member="config.h::LEGACY_SPRITE_ENGINE" ref="acd776f86a050b018af09fc788aa500a1" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#acd776f86a050b018af09fc788aa500a1">LEGACY_SPRITE_ENGINE</a>&#160;&#160;&#160;0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use the old sprite engine instead of the new one.<br/>
+ The old sprite engine allow to access or change the internal VDP sprite indexes, this can be useful in some situations (as sprite multiplexing).<br/>
+ The new sprite engine provide better VDP sprite usage in general allowing to display a bit more sprites in practice. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a8e5f37f8dd287ef08c10552d637738a7">ENABLE_BANK_SWITCH</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 to enable automatic bank switch using official SEGA mapper for ROM &gt; 4MB.  <a href="#a8e5f37f8dd287ef08c10552d637738a7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a071a17c9240694ea053efd33130ad764"></a><!-- doxytag: member="config.h::ENABLE_NEWLIB" ref="a071a17c9240694ea053efd33130ad764" args="" -->
@@ -135,6 +140,12 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2bde168f01e48cef3f7e94ea91c3287"></a><!-- doxytag: member="config.h::ENABLE_LOGO" ref="ab2bde168f01e48cef3f7e94ea91c3287" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ab2bde168f01e48cef3f7e94ea91c3287">ENABLE_LOGO</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to have the kit intro logo. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac032d233a8ebfcd82fd49d0824eefb18"></a><!-- doxytag: member="config.h::FORCE_INLINE" ref="ac032d233a8ebfcd82fd49d0824eefb18" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ac032d233a8ebfcd82fd49d0824eefb18">FORCE_INLINE</a>&#160;&#160;&#160;inline __attribute__((always_inline))</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">To force method inlining (not sure that GCC does actually care of it) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5ce7bd7fe4169a9f709815f03f9870b"></a><!-- doxytag: member="config.h::NO_INLINE" ref="ab5ce7bd7fe4169a9f709815f03f9870b" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ab5ce7bd7fe4169a9f709815f03f9870b">NO_INLINE</a>&#160;&#160;&#160;__attribute__ ((noinline))</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">To force no inlining for this method. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab994ff5c1f0d832e364f82723aaf9e1b"></a><!-- doxytag: member="config.h::MODULE_EVERDRIVE" ref="ab994ff5c1f0d832e364f82723aaf9e1b" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ab994ff5c1f0d832e364f82723aaf9e1b">MODULE_EVERDRIVE</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use EVERDRIVE programming methods (written by Krikzz). <br/></td></tr>
@@ -157,9 +168,6 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#abad68f20e0f26a72db721efc7964e24e">MODULE_FRACTAL</a>&#160;&#160;&#160;0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set it to 1 if you want to use the Fractal sound driver from Aurora Fields.<br/>
  Note that you need to install the module first before enable it (<a href="https://gitlab.com/Natsumi/Fractal-Sound">https://gitlab.com/Natsumi/Fractal-Sound</a>) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac032d233a8ebfcd82fd49d0824eefb18"></a><!-- doxytag: member="config.h::FORCE_INLINE" ref="ac032d233a8ebfcd82fd49d0824eefb18" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#ac032d233a8ebfcd82fd49d0824eefb18">FORCE_INLINE</a>&#160;&#160;&#160;inline __attribute__((always_inline))</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">To force method inlining (not sure that GCC does actually care of it) <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Basic SGDK library configuration file. </p>
@@ -188,7 +196,7 @@ Defines</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="config_8h.html">config.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -110,7 +110,7 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pause playing music, music can be resumed by calling <a class="el" href="xgm_8h.html#a3b4f4bdd59728f4b28e2cf01cb762336" title="Resume playing music after pausing with XGM_pausePlay (XGM music player driver).  Note that due to th...">XGM_resumePlay</a> (XGM music player driver).<br/>
  Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#a8499c4ee66d175e9b1f6d8e7ee7a4584"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a3b4f4bdd59728f4b28e2cf01cb762336">XGM_resumePlay</a> (void)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br/>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume playing music after pausing with <a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> (XGM music player driver).<br/>
  Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs.  <a href="#a3b4f4bdd59728f4b28e2cf01cb762336"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a3446bcd38404e76b891dd4652f8568d8">XGM_isPlayingPCM</a> (const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel_mask)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return play status of specified PCM channel (XGM music player driver).  <a href="#a3446bcd38404e76b891dd4652f8568d8"></a><br/></td></tr>
@@ -120,6 +120,12 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a0f22f83f4c2fbebf4b51a4f87c193a3f">XGM_setPCMFast</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> id, const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, const <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="xgm_8h.html#a9203faa0b1ebfe1f264095affc4b9562" title="Declare a new PCM sample (maximum = 255) for the XGM music player driver.  Sample id &lt; 64 are reserve...">XGM_setPCM</a> but fast version.<br/>
  This method assume that XGM driver is loaded and that 68000 has access to Z80 bus.  <a href="#a0f22f83f4c2fbebf4b51a4f87c193a3f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ea1aa6f7005216d235c82b83322e65f"></a><!-- doxytag: member="xgm.h::XGM_setPCM_FAR" ref="a9ea1aa6f7005216d235c82b83322e65f" args="(const u8 id, const u8 *sample, const u32 len)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a9ea1aa6f7005216d235c82b83322e65f">XGM_setPCM_FAR</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> id, const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, const <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="xgm_8h.html#a9203faa0b1ebfe1f264095affc4b9562" title="Declare a new PCM sample (maximum = 255) for the XGM music player driver.  Sample id &lt; 64 are reserve...">XGM_setPCM</a>(..) allowing PCM access through bank switch. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1cb09f538c42b879ecc2d01f1e94ed86"></a><!-- doxytag: member="xgm.h::XGM_setPCMFast_FAR" ref="a1cb09f538c42b879ecc2d01f1e94ed86" args="(const u8 id, const u8 *sample, const u32 len)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a1cb09f538c42b879ecc2d01f1e94ed86">XGM_setPCMFast_FAR</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> id, const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, const <a class="el" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="xgm_8h.html#a0f22f83f4c2fbebf4b51a4f87c193a3f" title="Same as XGM_setPCM but fast version.  This method assume that XGM driver is loaded and that 68000 has...">XGM_setPCMFast</a>(..) allowing PCM access through bank switch. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_8h.html#a5dbd3b8171aca6cc18e8c83719ec2785">XGM_startPlayPCM</a> (const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> id, const <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> priority, const <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Play a PCM sample on specified channel (XGM music player driver).<br/>
  If a sample was currently playing on this channel then priority of the newer sample should be are compared then it's stopped and the new sample is played instead.<br/>
@@ -385,7 +391,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
 </div>
 <div class="memdoc">
 
-<p>Resume playing music after pausing with XGM_pausePlay (XGM music player driver).<br/>
+<p>Resume playing music after pausing with <a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> (XGM music player driver).<br/>
  Note that due to the nature of the music chip (FM synthesis), resume play operation will never be perfect and some notes will miss until next key-on event occurs. </p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="xgm_8h.html#a8499c4ee66d175e9b1f6d8e7ee7a4584" title="Pause playing music, music can be resumed by calling XGM_resumePlay (XGM music player driver)...">XGM_pausePlay</a> </dd>
 <dd>
@@ -743,7 +749,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xgm_
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="xgm_8h.html">xgm.h</a>      </li>
-      <li class="footer">Generated on Tue Oct 11 2022 17:32:35 for sgdk by&#160;
+      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
