@@ -206,7 +206,7 @@ public class TMX
                 // get low priority map data in mapData1
                 mapData1 = getMapData(lowPriorityLayer, w, h, file);
                 // get high priority map data in mapData2
-                mapData2 = getMapData(lowPriorityLayer, w, h, file);
+                mapData2 = getMapData(highPriorityLayer, w, h, file);
             }
 
             final Set<TSXTileset> usedTilesetsSet = new HashSet<>();
