@@ -106,11 +106,7 @@ https://github.com/SONIC3D/gendev-macos
 
 To build the `sgdk` base image:
 
-    docker build -t sgdk .
-
-To build the `sgdk` base image on mac with m1 chip:
-
-    docker build -t sgdk --file Dockerfile-m1 .
+    docker build -t m68k-gcc -f toolchain.Dockerfile . && docker build -t sgdk .
 
 And then to compile the local env, such as `samples` for example:
 
