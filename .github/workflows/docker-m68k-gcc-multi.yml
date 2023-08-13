@@ -2,7 +2,7 @@ name: Multi-platform toolchain image
 
 on:
   #   paths:
-  #     - gcc.Dockerfile
+  #     - deps/gcc.Dockerfile
   workflow_dispatch:
   push:
     branches:
@@ -15,7 +15,7 @@ on:
         - 'master'
         - 'v*'
 env:
-  REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/m68k-gcc
+  REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
 
 jobs:
   build:
@@ -65,7 +65,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v4.1.1
         with:
-          file: github-actions-test.Dockerfile 
+          file: /deps/github-actions-test.Dockerfile 
           context: .
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -95,7 +95,7 @@ jobs:
       - build
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v2.1.1
+        uses: actions/download-artifact@v3.0.2
         with:
           name: digests
           path: /tmp/digests
@@ -108,6 +108,14 @@ jobs:
         uses: docker/metadata-action@v4.6.0
         with:
           images: ${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
 
       - name: Login to GHCR
         uses: docker/login-action@v2.2.0
