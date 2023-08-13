@@ -5,12 +5,13 @@ env:
   DOCKERFILE: github-actions-test.Dockerfile
 
 on:
-  paths:
-    - ${{ env.DOCKERFILE }}
-    - .github/workflows/docker-m68k-gcc-multi.yml
+
 
   workflow_dispatch:
   push:
+    paths:
+      - ${{ env.DOCKERFILE }}
+      - .github/workflows/docker-m68k-gcc-multi.yml
     branches:
       - 'master'
       - 'v*'
