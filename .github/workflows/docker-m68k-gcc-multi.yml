@@ -1,8 +1,14 @@
 name: Multi-platform toolchain image
 
+env:
+  REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
+  DOCKERFILE: github-actions-test.Dockerfile
+
 on:
-  #   paths:
-  #     - deps/gcc.Dockerfile
+  paths:
+    - ${{ env.DOCKERFILE }}
+    - .github/workflows/docker-m68k-gcc-multi.yml
+
   workflow_dispatch:
   push:
     branches:
@@ -14,8 +20,7 @@ on:
       branches:
         - 'master'
         - 'v*'
-env:
-  REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
+
 
 jobs:
   build:
@@ -65,7 +70,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v4.1.1
         with:
-          file: /deps/github-actions-test.Dockerfile 
+          file: ${{ env.DOCKERFILE }}
           context: .
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
