@@ -24,7 +24,8 @@ on:
       - 'doc/**'
       - 'vstudio/**'
       - 'bin/**'
-      - 'sample//**'
+      - 'sample/**'
+      - '**.md'
     branches:
       - 'master'
     tags:
