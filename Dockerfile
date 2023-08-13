@@ -1,7 +1,8 @@
 ARG ALPINE_VERSION=3.18.3
 ARG JDK_VER=11
 
-FROM m68k-gcc as build
+ARG BASE_IMAGE=ghcr.io/Stephane-D/sgdk-m68k-gcc
+FROM $BASE_IMAGE
 ARG JDK_VER
 
 RUN apk add --no-cache build-base git openjdk${JDK_VER}-jre-headless
@@ -52,11 +53,6 @@ RUN addgroup -S sgdk && adduser -S sgdk -G sgdk -h $SGDK_PATH
 COPY --from=build --chown=sgdk:sgdk $SGDK_PATH $SGDK_PATH
 
 ENV PATH="/$SGDK_PATH/bin:${PATH}"
-
-# Remove me when common.mk file is fixed
-ENV SGDK_DOCKER=n
-
-
 
 # Set-up mount point and make command
 VOLUME /src
