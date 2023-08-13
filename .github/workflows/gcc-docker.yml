@@ -1,5 +1,4 @@
-name: Multi-platform toolchain image
-
+name: gcc-docker
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
   DOCKERFILE: github-actions-test.Dockerfile
@@ -9,17 +8,14 @@ on:
   push:
     paths:
       - github-actions-test.Dockerfile
-      - .github/workflows/docker-m68k-gcc-multi.yml
+      - .github/workflows/gcc-docker.yml
     branches:
       - 'master'
-      - 'v*'
     tags:
       - 'v*'
     pull_request:
       branches:
         - 'master'
-        - 'v*'
-
 
 jobs:
   build:
@@ -137,3 +133,4 @@ jobs:
         name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+
