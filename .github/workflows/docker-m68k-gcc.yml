@@ -9,9 +9,9 @@ on:
     tags:
       - 'v*'
     pull_request:
-    branches:
-      - 'master'
-      - 'v*'
+      branches:
+        - 'master'
+        - 'v*'
 
 permissions: 
   contents: read
