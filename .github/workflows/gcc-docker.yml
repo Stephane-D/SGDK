@@ -1,4 +1,7 @@
 name: gcc-docker
+concurrency:
+  group: ${{ github.ref }}-docker
+  cancel-in-progress: true
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
   DOCKERFILE: github-actions-test.Dockerfile

@@ -1,4 +1,7 @@
 name: sgdk-docker
+concurrency:
+  group: ${{ github.ref }}-docker
+  cancel-in-progress: false
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.actor }}/sgdk
