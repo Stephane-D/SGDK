@@ -26,8 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Install package
-        run: |
-          sudo apt-get -y doxygen graphviz
+        run: sudo apt-get install doxygen graphviz
       - name: Checkout
         uses: actions/checkout@v3.5.3
       - name: Build Github Pages

@@ -1,4 +1,5 @@
 name: sgdk-docker
+
 concurrency:
   group: ${{ github.ref }}-docker
   cancel-in-progress: false
@@ -17,9 +18,13 @@ on:
     types:
       - completed
   push:
-    # paths:
-    #   - github-actions-test.Dockerfile
-    #   - .github/workflows/gcc-docker.yml
+    paths-ignore:
+      - '.github/**'
+      - 'deployment/**'
+      - 'doc/**'
+      - 'vstudio/**'
+      - 'bin/**'
+      - 'sample//**'
     branches:
       - 'master'
     tags:
