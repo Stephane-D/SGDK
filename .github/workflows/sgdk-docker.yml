@@ -6,12 +6,24 @@ env:
   DOCKERFILE: github-actions-test2.Dockerfile
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["gcc-docker"]
     branches:
       - 'master'
     types:
       - completed
+  push:
+    # paths:
+    #   - github-actions-test.Dockerfile
+    #   - .github/workflows/gcc-docker.yml
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+    pull_request:
+      branches:
+        - 'master'
 
 
 jobs:
