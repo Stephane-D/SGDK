@@ -1,0 +1,53 @@
+name: publish-docs
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["gcc-docker"]
+    branches:
+      - 'master'
+    types:
+      - completed
+  push:
+    # paths:
+    #   - github-actions-test.Dockerfile
+    #   - .github/workflows/gcc-docker.yml
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+    pull_request:
+      branches:
+        - 'master'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Install package
+        run: |
+          sudo apt-get -y doxygen graphviz
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+      - name: Build Github Pages
+        working-directory: deployment
+        run: doxygen Doxyfile
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2.0.0
+        with:
+          path: ./deployment/html
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2.0.4

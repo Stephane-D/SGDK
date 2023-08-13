@@ -45,3 +45,5 @@ tools/rescomp/format
 tools/rescomp/rescomp.jar
 tools/xgm rom builder/bin
 src/z80_*.h
+
+/deployment/html

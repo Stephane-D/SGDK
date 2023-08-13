@@ -11,14 +11,6 @@ on:
   push:
     paths:
       - github-actions-test.Dockerfile
-      - .github/workflows/gcc-docker.yml
-    branches:
-      - 'master'
-    tags:
-      - 'v*'
-    pull_request:
-      branches:
-        - 'master'
 
 jobs:
   build:

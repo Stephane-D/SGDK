@@ -2,7 +2,7 @@ ARG ALPINE_VERSION=3.18.3
 ARG JDK_VER=11
 
 ARG BASE_IMAGE=ghcr.io/Stephane-D/sgdk-m68k-gcc
-FROM $BASE_IMAGE
+FROM $BASE_IMAGE as build
 ARG JDK_VER
 
 RUN apk add --no-cache build-base git openjdk${JDK_VER}-jre-headless
