@@ -104,13 +104,13 @@ https://github.com/SONIC3D/gendev-macos
 
 *A modern way to install it on any environement is to use Docker.*
 
-To build the `sgdk` base image:
+To download the `sgdk` base image:
 
-    docker build -t sgdk .
+     docker pull ghcr.io/Stephane-D/sgdk
 
-To build the `sgdk` base image on mac with m1 chip:
+Or build the it:
 
-    docker build -t sgdk --file Dockerfile-m1 .
+     docker build -t sgdk .
 
 And then to compile the local env, such as `samples` for example:
 
