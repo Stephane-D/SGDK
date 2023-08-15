@@ -12,9 +12,9 @@ env:
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["gcc-docker"]
+    workflows: [ "gcc-docker" ]
     branches:
-      - 'master'
+      - '*'
     types:
       - completed
   push:
@@ -27,12 +27,9 @@ on:
       - 'sample/**'
       - '**.md'
     branches:
-      - 'master'
+      - '*'
     tags:
       - 'v*'
-    pull_request:
-      branches:
-        - 'master'
 
 
 jobs:
@@ -105,7 +102,7 @@ jobs:
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
-  
+
   merge:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest

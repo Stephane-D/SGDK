@@ -1,23 +1,19 @@
 # Ignore non-build related directories
-/.git/
 /doc/
 /sample/
 /vstudio/
 /.*/
 
 #prebuilds
-**.exe
-**.dll
 /lib/
 /out/
+/bin/
 # Ignore non-build related files
 .*
 .DS_Store
-/build_adv.bat
-/build_lib.bat
+/*.bat
 /changelog.txt
 /COPYING.RUNTIME
 /Dockerfile
-/Dockerfile-m1
 /license.txt
 /readme.md

@@ -26,6 +26,11 @@ ENV BUILDDIR="$BASEDIR/build"
 ENV INSTALLDIR="$BASEDIR/install"
 ENV STAGINGDIR="$BASEDIR/staging"
 
+RUN mkdir -p "$SRCDIR"
+RUN mkdir -p "$BUILDDIR"
+RUN mkdir -p "$INSTALLDIR"
+RUN mkdir -p "$STAGINGDIR"
+
 WORKDIR $SRCDIR
 RUN wget http://ftp.gnu.org/gnu/binutils/${BINUTILS}.tar.xz -O - | tar -xJ
 RUN wget http://ftp.gnu.org/gnu/gcc/${GCC}/${GCC}.tar.bz2  -O - | tar -xj
@@ -34,23 +39,11 @@ RUN wget http://ftp.gnu.org/gnu/mpc/${MPC}.tar.gz  -O - | tar -xz
 RUN wget http://ftp.gnu.org/gnu/gmp/${GMP}.tar.xz  -O - | tar -xJ
 RUN wget ftp://sourceware.org/pub/newlib/${NEWLIB}.tar.gz  -O - | tar -xz
 
-
 RUN apk add --no-cache bash build-base zlib-dev
 
-
-
-
-# TODO DELETE THOSE
-RUN mkdir -p "$SRCDIR"
-RUN mkdir -p "$BUILDDIR"
-RUN mkdir -p "$INSTALLDIR"
-RUN mkdir -p "$STAGINGDIR"
-
-
-
-
-
-### Building binutils ###
+#################################################################################
+##########################    Building binutils    ##############################
+#################################################################################
 WORKDIR $BUILDDIR/$BINUTILS
 RUN $SRCDIR/$BINUTILS/configure \
 	--prefix=/usr \
@@ -59,28 +52,24 @@ RUN $SRCDIR/$BINUTILS/configure \
 	--with-cpu=$TARGET_CPU \
 	--disable-nls
 
-RUN make -j$(nproc)
+RUN make -j"$(nproc)"
 RUN make prefix=$INSTALLDIR/$BINUTILS/usr install
 RUN rm -rf $INSTALLDIR/$BINUTILS/usr/share
 RUN rm $INSTALLDIR/$BINUTILS/usr/lib/bfd-plugins/libdep.so
 RUN cp -r $INSTALLDIR/$BINUTILS/usr/ $STAGINGDIR
 RUN cp -r $INSTALLDIR/$BINUTILS/usr/* /usr/
-
-
-
-
-### Building GCC bootstrap ###"
+#################################################################################
+#########################    Building GCC bootstrap    ##########################
+#################################################################################
 WORKDIR $SRCDIR/$GCC
 RUN ln -fs ../$MPFR mpfr
 RUN ln -fs ../$MPC mpc
 RUN ln -fs ../$GMP gmp
 
 WORKDIR $BUILDDIR/$GCC-bootstrap
-
 # These flags are required to build older versions of GCC
-ENV CFLAGS="$CFLAGS -Wno-implicit-fallthrough -Wno-cast-function-type -fpermissive" 
+ENV CFLAGS="$CFLAGS -Wno-implicit-fallthrough -Wno-cast-function-type -fpermissive"
 ENV CXXFLAGS="$CXXFLAGS -Wno-implicit-fallthrough -Wno-cast-function-type -fpermissive"
-
 RUN $SRCDIR/$GCC/configure \
 	--prefix=/usr \
 	--target=$TARGET \
@@ -93,15 +82,13 @@ RUN $SRCDIR/$GCC/configure \
 	--disable-shared \
 	--disable-nls
 
-RUN make -j$(nproc) all-gcc
+RUN make -j"$(nproc)" all-gcc
 RUN make DESTDIR="$INSTALLDIR/$GCC-bootstrap" install-strip-gcc
 RUN rm -rf "$INSTALLDIR/$GCC-bootstrap/usr/share"
 RUN cp -r "$INSTALLDIR/$GCC-bootstrap/usr/"* /usr/
-
-
-
-
-### Building $NEWLIB ###
+#################################################################################
+#############################    Building NewLib    #############################
+#################################################################################
 WORKDIR $BUILDDIR/$NEWLIB
 ENV CFLAGS_FOR_TARGET="-Os -g -ffunction-sections -fdata-sections -fomit-frame-pointer -ffast-math"
 
@@ -114,17 +101,15 @@ RUN "$SRCDIR/$NEWLIB/configure" \
 	--with-cpu=$TARGET_CPU \
 	--disable-nls
 
-RUN make -j$(nproc)
+RUN make -j"$(nproc)"
 RUN DESTDIR=$INSTALLDIR/$NEWLIB make install
 RUN cp -r "$INSTALLDIR/$NEWLIB/usr/" "$STAGINGDIR"
 RUN cp -r "$INSTALLDIR/$NEWLIB/usr/"* /usr/
-ENV CFLAGS_FOR_TARGET=
-
-
-
-
-### Building final $GCC ###
-WORKDIR "$BUILDDIR/$GCC"
+ENV CFLAGS_FOR_TARGET=""
+#################################################################################
+############################    Building final GCC    ###########################
+#################################################################################
+WORKDIR $BUILDDIR/$GCC
 
 RUN "$SRCDIR/$GCC/configure" \
 	--prefix=/usr \
@@ -138,7 +123,7 @@ RUN "$SRCDIR/$GCC/configure" \
 	--disable-shared \
 	--disable-nls
 
-RUN make -j$(nproc)
+RUN make -j"$(nproc)"
 RUN make DESTDIR="$INSTALLDIR/$GCC" install-strip
 RUN rm -rf "$INSTALLDIR/$GCC/usr/share"
 RUN rm "$INSTALLDIR/$GCC/usr/lib/libcc1.so"
@@ -146,15 +131,10 @@ RUN rm "$INSTALLDIR/$GCC/usr/lib/libcc1.so.0"
 RUN rm "$INSTALLDIR/$GCC/usr/lib/libcc1.so.0.0.0"
 
 RUN cp -ar "$INSTALLDIR/$GCC/usr/" "$STAGINGDIR"
-# WORKDIR $BASEDIR
-# COPY build_toolchain . 
-# RUN ./build_toolchain
 
-# Second stage, just create the m68k user and copy the built files
-FROM alpine:$ALPINE_VERSION 
+
+# Second stage, just  copy the built files
+FROM scratch
 ARG BASEDIR
-
-COPY --from=build $BASEDIR/staging/usr/ /usr/
-WORKDIR m68k 
-COPY --from=build $BASEDIR/staging/usr/ .
-
+WORKDIR /m68k
+COPY --from=build $BASEDIR/staging/usr/ ./
