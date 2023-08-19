@@ -10,10 +10,10 @@ Note that SGDK also requires Java (custom tools require it), so you need to have
 
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
 GCC compiler and libgcc are under GNU license (GPL3) and any software build from it (as the SGDK library) is under the GCC runtime library exception license (see [COPYING.RUNTIME](COPYING.RUNTIME) file)
- 
+
 ## GETTING STARTED
 
-First, you need to know that SGDK uses the C language (assembly is also possible, but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time as learning 'Sega Mega Drive' programming is definitely too difficult and you will end up getting nowhere. It's also important to have, at least, a basic knowledge of the Sega Mega Drive hardware (specifically the video system). 
+First, you need to know that SGDK uses the C language (assembly is also possible, but not necessary) so it's highly recommended to be familiar with C programming before trying to develop with SGDK. Learning C language at same time as learning 'Sega Mega Drive' programming is definitely too difficult and you will end up getting nowhere. It's also important to have, at least, a basic knowledge of the Sega Mega Drive hardware (specifically the video system).
 
 ### MEGA DRIVE TECHNICAL INFO REFERENCES
 
@@ -30,7 +30,7 @@ https://www.copetti.org/projects/consoles/mega-drive-genesis
 * Genesis Software Manual which contains absolutely everything you need to know about the Sega Mega Drive:<br>
 https://segaretro.org/images/a/a2/Genesis_Software_Manual.pdf
 
-### INSTALLATION AND DOCUMENTATION 
+### INSTALLATION AND DOCUMENTATION
 
 Then when you feel ready you can go further and finally install SGDK :)
 
@@ -76,7 +76,7 @@ Here's a list of useful tools to help you creating your assets:
 * [Furnace](https://github.com/tildearrow/furnace): new music tracker supporting many systems
 * [Wavosaur](https://www.wavosaur.com/): wave sound editor (windows only)
 * [Audacity](https://www.audacityteam.org/): wave sound editor (all OS)
- 
+
 ## HELP AND SUPPORT
 
 If you need help or support with SGDK, you can join the SGDK Discord server:<br>
@@ -84,7 +84,7 @@ https://discord.gg/xmnBWQS
 
 You can also go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:<br>
 http://gendev.spritesmind.net/forum/
- 
+
 ### MACOSX / LINUX
 
 Unix/Linux users should give this very simple script a try, allowing you to use SGDK from Wine easily:<br>
@@ -107,6 +107,7 @@ https://github.com/SONIC3D/gendev-macos
 To download the `sgdk` base image:
 
      docker pull ghcr.io/Stephane-D/sgdk
+     docker tag ghcr.io/Stephane-D/sgdk sgdk
 
 Or build the it:
 
@@ -124,13 +125,13 @@ Notes:
   `docker run --rm -v "$PWD":/src -u $(id -u):$(id -g) sgdk`
 - You can also try the alternate Doragasu docker solution which uses a native linux compiler (much faster):
   https://gitlab.com/doragasu/docker-sgdk
- 
+
 ### VISUAL STUDIO
 
 You can find a Visual Studio template in the 'vstudio' folder to facilate SGDK integration with VS.
 Or, to take it even further, you can also install the VS extension made by zerasul:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
- 
+
 ## SUPPORT SGDK
 
 SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
@@ -138,7 +139,7 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 ## THANKS
 
 - Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi, flash save support and others nice additions.
-- Sik for the multi-tasking base implementation and for all its unvaluable Plutidev Sega Mega Drive technical information source. 
+- Sik for the multi-tasking base implementation and for all its unvaluable Plutidev Sega Mega Drive technical information source.
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
@@ -174,19 +175,19 @@ Of course I thank all my patreon for their continuous support but I want to dedi
 These projects are known to be based on the SGDK _(non-exhaustive list)_:
 
 ![alt text](doc/img/game_tanzer.gif)
- 
+
 Tanzer by [Mega Cat Studios](https://megacatstudios.com/products/tanzer-sega-genesis)
 
 ![alt text](doc/img/demo_masiaka.gif)
- 
+
 MASIAKA by [Resistance](https://www.pouet.net/prod.php?which=71543)
 
 ![alt text](doc/img/game_xenocrisis.gif)
- 
+
 Xeno Crisis by the [Bitmap Bureau](https://www.bitmapbureau.com/)
 
 ![alt text](doc/img/game_doa.gif)
- 
+
 Demons of Asteborg [Neofid Studios](https://neofid-studios.com/)
 
 ### Random list of SGDK-powered games and demos
@@ -212,3 +213,4 @@ Demons of Asteborg [Neofid Studios](https://neofid-studios.com/)
 * [ThunderCats MD](https://github.com/mxfolken/thundercats_megadrive) by Rolando Fernández Benavidez.
 * [Travel](https://www.pouet.net/prod.php?which=65975) by Resistance
 * [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the GGJ 2017
+
