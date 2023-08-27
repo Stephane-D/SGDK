@@ -112,7 +112,7 @@ FORCE_INLINE s16 fix16ToInt(fix16 value)
 
 FORCE_INLINE fix16 fix16Round(fix16 value)
 {
-    if (FIX16(value) > FIX16(0.5))
+    if (fix16Frac(value) > FIX16(0.5))
         return fix16Int(value + FIX16(1));
 
     return fix16Int(value);
