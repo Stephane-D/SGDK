@@ -4,7 +4,7 @@
 #include "maths.h"
 
 // only for positives values
-const fix16 sqrttab16[0x10000] =
+const fix16 sqrttab_f16[0x10000] =
 {
     0, 8, 11, 13, 16, 17, 19, 21,
     22, 24, 25, 26, 27, 28, 29, 30,

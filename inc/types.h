@@ -176,43 +176,64 @@ typedef s16 p16;
 
 /**
  *  \typedef fix16
- *      16 bits fixed point type.
+ *      16 bits fixed point (10.6) type
  */
 typedef s16 fix16;
 /**
  *  \typedef fix32
- *      32 bits fixed point type.
+ *      32 bits fixed point (22.10) type
  */
 typedef s32 fix32;
 /**
  *  \typedef f16
- *      16 bits fixed point type (short version).
+ *      16 bits fixed point (10.6) type - short version
  */
 typedef s16 f16;
 /**
  *  \typedef f32
- *      32 bits fixed point type (short version).
+ *      32 bits fixed point (22.10) type - short version
  */
 typedef s32 f32;
 
 /**
+ *  \typedef fastfix16
+ *      "fast" 16 bits fixed point (8.8) type
+ */
+typedef s16 fastfix16;
+/**
+ *  \typedef fastfix32
+ *      "fast" 32 bits fixed point (16.16) type
+ */
+typedef s32 fastfix32;
+/**
+ *  \typedef ff16
+ *      "fast" 16 bits fixed point (8.8) type - short version
+ */
+typedef s16 ff16;
+/**
+ *  \typedef ff32
+ *      "fast" 32 bits fixed point (16.16) type - short version
+ */
+typedef s32 ff32;
+
+/**
  *  \typedef vfix16
- *      volatile 16 bits fixed point type.
+ *      volatile 16 bits fixed point (10.6) type.
  */
 typedef vs16 vfix16;
 /**
  *  \typedef vfix32
- *      volatile 32 bits fixed point type.
+ *      volatile 32 bits fixed point (22.10) type.
  */
 typedef vs32 vfix32;
 /**
  *  \typedef vf16
- *      volatile 16 bits fixed point type (short version).
+ *      volatile 16 bits fixed point (10.6) type - short version
  */
 typedef vs16 vf16;
 /**
  *  \typedef vf32
- *      volatile 32 bits fixed point type (short version).
+ *      volatile 32 bits fixed point (22.10) type - short version
  */
 typedef vs32 vf32;
 

@@ -3,7 +3,7 @@
 
 #include "maths.h"
 
-const fix32 sintab32[1024] = {
+const fix32 sintab_f32[1024] = {
 	FIX32(0.0000),		// 0
 	FIX32(0.0061),		// 1
 	FIX32(0.0123),		// 2
@@ -1030,7 +1030,7 @@ const fix32 sintab32[1024] = {
 	FIX32(-0.0061),		// 1023
 };
 
-const fix16 sintab16[1024] = {
+const fix16 sintab_f16[1024] = {
 	FIX16(0.0000),		// 0
 	FIX16(0.0061),		// 1
 	FIX16(0.0123),		// 2

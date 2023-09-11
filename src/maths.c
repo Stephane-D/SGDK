@@ -130,20 +130,6 @@ FORCE_INLINE fix16 fix16Int(fix16 value)
     return value & FIX16_INT_MASK;
 }
 
-FORCE_INLINE fix16 fix16Add(fix16 val1, fix16 val2)
-{
-    return val1 + val2;
-}
-
-FORCE_INLINE fix16 fix16Sub(fix16 val1, fix16 val2)
-{
-    return val1 - val2;
-}
-
-FORCE_INLINE fix16 fix16Neg(fix16 value)
-{
-    return 0 - value;
-}
 
 FORCE_INLINE fix16 fix16Mul(fix16 val1, fix16 val2)
 {
@@ -160,29 +146,30 @@ FORCE_INLINE fix16 fix16Avg(fix16 val1, fix16 val2)
     return (val1 + val2) >> 1;
 }
 
+
 FORCE_INLINE fix16 fix16Log2(fix16 value)
 {
-    return log2tab16[value];
+    return log2tab_f16[value];
 }
 
 FORCE_INLINE fix16 fix16Log10(fix16 value)
 {
-    return log10tab16[value];
+    return log10tab_f16[value];
 }
 
 FORCE_INLINE fix16 fix16Sqrt(fix16 value)
 {
-    return sqrttab16[value];
+    return sqrttab_f16[value];
 }
 
 FORCE_INLINE fix16 sinFix16(u16 value)
 {
-    return sintab16[value & 1023];
+    return sintab_f16[value & 1023];
 }
 
 FORCE_INLINE fix16 cosFix16(u16 value)
 {
-    return sintab16[(value + 256) & 1023];
+    return sintab_f16[(value + 256) & 1023];
 }
 
 
@@ -198,18 +185,12 @@ FORCE_INLINE s32 fix32ToInt(fix32 value)
 
 FORCE_INLINE fix32 fix32Round(fix32 value)
 {
-    if (fix32Frac(value) > FIX32(0.5))
-        return fix32Int(value + FIX32(1));
-
-    return fix32Int(value);
+    return fix32Int(value + (FIX32(0.5) - 1));
 }
 
 FORCE_INLINE s32 fix32ToRoundedInt(fix32 value)
 {
-    if (fix32Frac(value) > FIX32(0.5))
-        return fix32ToInt(value) + 1;
-
-    return fix32ToInt(value);
+    return fix32ToInt(value + (FIX32(0.5) - 1));
 }
 
 FORCE_INLINE fix32 fix32Frac(fix32 value)
@@ -222,20 +203,6 @@ FORCE_INLINE fix32 fix32Int(fix32 value)
     return value & FIX32_INT_MASK;
 }
 
-FORCE_INLINE fix32 fix32Add(fix32 val1, fix32 val2)
-{
-    return val1 + val2;
-}
-
-FORCE_INLINE fix32 fix32Sub(fix32 val1, fix32 val2)
-{
-    return val1 - val2;
-}
-
-FORCE_INLINE fix32 fix32Neg(fix32 value)
-{
-    return 0 - value;
-}
 
 FORCE_INLINE fix32 fix32Mul(fix32 val1, fix32 val2)
 {
@@ -272,12 +239,101 @@ FORCE_INLINE fix32 fix16ToFix32(fix16 value)
 
 FORCE_INLINE fix32 sinFix32(u16 value)
 {
-    return sintab32[value & 1023];
+    return sintab_f32[value & 1023];
 }
 
 FORCE_INLINE fix32 cosFix32(u16 value)
 {
-    return sintab32[(value + 256) & 1023];
+    return sintab_f32[(value + 256) & 1023];
+}
+
+
+FORCE_INLINE fastfix16 intToFastFix16(s16 value)
+{
+    return value << FASTFIX16_FRAC_BITS;
+}
+
+FORCE_INLINE s16 fastFix16ToInt(fastfix16 value)
+{
+    return value >> FASTFIX16_FRAC_BITS;
+}
+
+FORCE_INLINE fastfix16 fastFix16Round(fastfix16 value)
+{
+    return fastFix16Int(value + (FASTFIX16(0.5) - 1));
+}
+
+FORCE_INLINE s16 fastFix16ToRoundedInt(fastfix16 value)
+{
+    return fastFix16ToInt(value + (FASTFIX16(0.5) - 1));
+}
+
+FORCE_INLINE fastfix16 fastFix16Frac(fastfix16 value)
+{
+    return value & FASTFIX16_FRAC_MASK;
+}
+
+FORCE_INLINE fastfix16 fastFix16Int(fastfix16 value)
+{
+    return value & FASTFIX16_INT_MASK;
+}
+
+
+FORCE_INLINE fastfix16 fastFix16Mul(fastfix16 val1, fastfix16 val2)
+{
+     return muls(val1, val2) >> FASTFIX16_FRAC_BITS;
+}
+
+FORCE_INLINE fastfix16 fastFix16Div(fastfix16 val1, fastfix16 val2)
+{
+     return divs(val1 << FASTFIX16_FRAC_BITS, val2);
+}
+
+
+FORCE_INLINE fastfix32 intToFastFix32(s16 value)
+{
+    return value << FASTFIX32_FRAC_BITS;
+}
+
+FORCE_INLINE s16 fastFix32ToInt(fastfix32 value)
+{
+    return value >> FASTFIX32_FRAC_BITS;
+}
+
+FORCE_INLINE fastfix32 fastFix32Round(fastfix32 value)
+{
+    return fastFix32Int(value + (FASTFIX32(0.5) - 1));
+}
+
+FORCE_INLINE s32 fastFix32ToRoundedInt(fastfix32 value)
+{
+    return fastFix32ToInt(value + (FASTFIX32(0.5) - 1));
+}
+
+FORCE_INLINE fastfix32 fastFix32Frac(fastfix32 value)
+{
+    return value & FASTFIX32_FRAC_MASK;
+}
+
+FORCE_INLINE fastfix32 fastFix32Int(fastfix32 value)
+{
+    return value & FASTFIX32_INT_MASK;
+}
+
+FORCE_INLINE fastfix32 fastFix32Mul(fastfix32 val1, fastfix32 val2)
+{
+    fastfix32 v1 = val1 >> (FASTFIX32_FRAC_BITS / 2);
+    fastfix32 v2 = val2 >> (FASTFIX32_FRAC_BITS / 2);
+
+    return v1 * v2;
+}
+
+FORCE_INLINE fastfix32 fastFix32Div(fastfix32 val1, fastfix32 val2)
+{
+    fastfix32 v1 = val1 << (FASTFIX32_FRAC_BITS / 2);
+    fastfix32 v2 = val2 >> (FASTFIX32_FRAC_BITS / 2);
+
+    return v1 / v2;
 }
 
 

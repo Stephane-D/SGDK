@@ -12,12 +12,12 @@
 #define _MATHS_H_
 
 
-extern const fix32 sintab32[1024];
-extern const fix16 sintab16[1024];
+extern const fix32 sintab_f32[1024];
+extern const fix16 sintab_f16[1024];
 
-extern const fix16 log2tab16[0x10000];
-extern const fix16 log10tab16[0x10000];
-extern const fix16 sqrttab16[0x10000];
+extern const fix16 log2tab_f16[0x10000];
+extern const fix16 log10tab_f16[0x10000];
+extern const fix16 sqrttab_f16[0x10000];
 
 
 /**
@@ -68,6 +68,21 @@ extern const fix16 sqrttab16[0x10000];
 #define FIX32_INT_MASK              (((1 << FIX32_INT_BITS) - 1) << FIX32_FRAC_BITS)
 #define FIX32_FRAC_MASK             ((1 << FIX32_FRAC_BITS) - 1)
 
+
+#define FASTFIX16_INT_BITS          8
+#define FASTFIX16_FRAC_BITS         (16 - FASTFIX16_INT_BITS)
+
+#define FASTFIX16_INT_MASK          (((1 << FASTFIX16_INT_BITS) - 1) << FASTFIX16_FRAC_BITS)
+#define FASTFIX16_FRAC_MASK         ((1 << FASTFIX16_FRAC_BITS) - 1)
+
+
+#define FASTFIX32_INT_BITS          16
+#define FASTFIX32_FRAC_BITS         (32 - FASTFIX32_INT_BITS)
+
+#define FASTFIX32_INT_MASK          (((1 << FASTFIX32_INT_BITS) - 1) << FASTFIX32_FRAC_BITS)
+#define FASTFIX32_FRAC_MASK         ((1 << FASTFIX32_FRAC_BITS) - 1)
+
+
 /**
  *  \brief
  *      Convert specified value to fix16
@@ -85,6 +100,24 @@ extern const fix16 sqrttab16[0x10000];
  *      f32 v = FIX32(34.567);
  */
 #define FIX32(value)                ((fix32) ((value) * (1 << FIX32_FRAC_BITS)))
+
+/**
+ *  \brief
+ *      Convert specified value to "fast" fix16
+ *
+ *  EX:<br>
+ *      ff16 v = FASTFIX16(-27.12);
+ */
+#define FASTFIX16(value)                ((fastfix16) ((value) * (1 << FASTFIX16_FRAC_BITS)))
+
+/**
+ *  \brief
+ *      Convert specified value to "fast" fix32.
+ *
+ *  EX:<br>
+ *      ff32 v = FASTFIX32(34.567);
+ */
+#define FASTFIX32(value)                ((fastfix32) ((value) * (1 << FASTFIX32_FRAC_BITS)))
 
 
 // 2D STUFF
@@ -539,21 +572,9 @@ fix16 fix16Frac(fix16 value);
  */
 fix16 fix16Int(fix16 value);
 
-/**
- *  \brief
- *      Compute and return the result of the addition of val1 and val2 (fix16).
- */
-fix16 fix16Add(fix16 val1, fix16 val2);
-/**
- *  \brief
- *      Compute and return the result of the substraction of val2 from val1 (fix16).
- */
-fix16 fix16Sub(fix16 val1, fix16 val2);
-/**
- *  \brief
- *      Return negate of specified value (fix16).
- */
-fix16 fix16Neg(fix16 value);
+#define fix16Add(a, b)      _Pragma("GCC error \"This method is deprecated, simply use '+' operator to add fix16 values together.\"")
+#define fix16Sub(a, b)      _Pragma("GCC error \"This method is deprecated, simply use '-' operator to subtract fix16 values.\"")
+#define fix16Neg(a)         _Pragma("GCC error \"This method is deprecated, simply use '0 - value' to get the negative fix16 value.\"")
 
 /**
  *  \brief
@@ -638,21 +659,9 @@ fix32 fix32Frac(fix32 value);
  */
 fix32 fix32Int(fix32 value);
 
-/**
- *  \brief
- *      Compute and return the result of the addition of val1 and val2 (fix32).
- */
-fix32 fix32Add(fix32 val1, fix32 val2);
-/**
- *  \brief
- *      Compute and return the result of the substraction of val2 from val1 (fix32).
- */
-fix32 fix32Sub(fix32 val1, fix32 val2);
-/**
- *  \brief
- *      Return negate of specified value (fix32).
- */
-fix32 fix32Neg(fix32 value);
+#define fix32Add(a, b)      _Pragma("GCC error \"This method is deprecated, simply use '+' operator to add fix32 values together.\"")
+#define fix32Sub(a, b)      _Pragma("GCC error \"This method is deprecated, simply use '-' operator to subtract fix32 values.\"")
+#define fix32Neg(a)         _Pragma("GCC error \"This method is deprecated, simply use '0 - value' to get the negative fix32 value.\"")
 
 /**
  *  \brief
@@ -684,6 +693,103 @@ fix32 sinFix32(u16 value);
  *      The input value is an integer defined as [0..1024] range corresponding to radian [0..2PI] range.
  */
 fix32 cosFix32(u16 value);
+
+
+
+
+
+/**
+ *  \brief
+ *      Convert integer to fastfix16.
+ */
+fastfix16 intToFastFix16(s16 value);
+/**
+ *  \brief
+ *      Convert fastfix16 to integer.
+ */
+s16 fastFix16ToInt(fastfix16 value);
+
+/**
+ *  \brief
+ *      Round the specified value to nearest integer (fastfix16).
+ */
+fastfix16 fastFix16Round(fastfix16 value);
+/**
+ *  \brief
+ *      Round and convert the specified fastfix16 value to integer (fastfix16).
+ */
+s16 fastFix16ToRoundedInt(fastfix16 value);
+/**
+ *  \brief
+ *      Return fractional part of the specified value (fastfix16).
+ */
+fastfix16 fastFix16Frac(fastfix16 value);
+/**
+ *  \brief
+ *      Return integer part of the specified value (fastfix16).
+ */
+fastfix16 fastFix16Int(fastfix16 value);
+
+/**
+ *  \brief
+ *      Compute and return the result of the multiplication of val1 and val2 (fastfix16).
+ */
+fastfix16 fastFix16Mul(fastfix16 val1, fastfix16 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the division of val1 by val2 (fastfix16).
+ */
+fastfix16 fastFix16Div(fastfix16 val1, fastfix16 val2);
+
+
+/**
+ *  \brief
+ *      Convert integer to fastfix32.
+ */
+fastfix32 intToFastFix32(s16 value);
+/**
+ *  \brief
+ *      Convert fastfix32 to integer.
+ */
+s16 fastFix32ToInt(fastfix32 value);
+
+/**
+ *  \brief
+ *      Round the specified value to nearest integer (fastfix32).
+ */
+fastfix32 fastFix32Round(fastfix32 value);
+/**
+ *  \brief
+ *      Round and convert the specified fastfix32 value to integer.
+ */
+s32 fastFix32ToRoundedInt(fastfix32 value);
+/**
+ *  \brief
+ *      Return fractional part of the specified value (fastfix32).
+ */
+fastfix32 fastFix32Frac(fastfix32 value);
+/**
+ *  \brief
+ *      Return integer part of the specified value (fastfix32).
+ */
+fastfix32 fastFix32Int(fastfix32 value);
+
+/**
+ *  \brief
+ *      Compute and return the result of the multiplication of val1 and val2 (fastfix32).<br>
+ *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
+ */
+fastfix32 fastFix32Mul(fastfix32 val1, fastfix32 val2);
+/**
+ *  \brief
+ *      Compute and return the result of the division of val1 by val2 (fastfix32).<br>
+ *      WARNING: result can easily overflow so its recommended to stick with fix16 type for mul and div operations.
+ */
+fastfix32 fastFix32Div(fastfix32 val1, fastfix32 val2);
+
+
+
+
 
 
 /**
