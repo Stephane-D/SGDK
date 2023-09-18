@@ -76,6 +76,15 @@ Here's a list of useful tools to help you creating your assets:
 * [Furnace](https://github.com/tildearrow/furnace): new music tracker supporting many systems
 * [Wavosaur](https://www.wavosaur.com/): wave sound editor (windows only)
 * [Audacity](https://www.audacityteam.org/): wave sound editor (all OS)
+
+#### Alternates sound drivers
+
+SGDK sound drivers may not fit your needs so it's important to know that some alternatives exist:
+* [MDSDRV](https://github.com/superctr/MDSDRV): powerful sound driver support FM & PSG SFX, pitchable PCM playback...
+* [Echo](https://github.com/sikthehedgehog/Echo): another sound driver supporting FM & PSG SFX and working 100% on Z80 CPU.
+* [MiniMusic](https://github.com/sikthehedgehog/minimusic): a tiny Z80 sound driver for Mega Drive that runs entirely off Z80 RAM
+and doesn't access the cartridge slot.
+ 
  
 ## HELP AND SUPPORT
 
@@ -95,7 +104,7 @@ https://github.com/v4ld3r5/sgdk_vscode_template
 
 Another great alternative is to use the complete _MarsDev_ environment developed by Andy Grind:
 https://github.com/andwn/marsdev
-It suppots all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out.
+It supports all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out.
 
 MacOSX users also have access to SGDK with Gendev for MacOS from the Sonic3D project:<br>
 https://github.com/SONIC3D/gendev-macos
@@ -142,7 +151,8 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
-- Gunpog for making the new SGDK logo.
+- Gunpog for making the 'cute' SGDK logo.
+- Adrian Spoz for making the 'profesionnal' SGDK logo.
 - Vojtěch Salajka for the script allowing to use SGDK easily from Wine (Linux/Unix but may work on OSX too).
 - Daniel Valdivieso for another Wine based solution to use SGDK on multi-OS (including a VSCode template).
 - Andy Grind for the MarsDev project allowing to use SGDK on any OS and also supporting 32X dev.
