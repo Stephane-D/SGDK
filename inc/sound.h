@@ -25,6 +25,9 @@
  * <b>Z80_DRIVER_XGM</b><br>
  * eXtended VGM music player driver.<br>
  * <i>Moved to xgm.h unit</i>
+ *<br>
+ * Note that SGDK sound drivers may not fit your needs so it's important to know<br>
+ * that some alternatives sound drivers exist (see SGDK readme.md for more info)
  */
 
 #ifndef _SOUND_H_
