@@ -370,7 +370,7 @@
  *  \brief
  *      Set VDP command to read specified VSRAM address.
  */
-#define VDP_READ_VSRAM_ADDR(adr)    (((0x0000 + ((adr) & 0x3F)) << 16) + 0x10)
+#define VDP_READ_VSRAM_ADDR(adr)    (((0x0000 + ((adr) & 0x7F)) << 16) + 0x10)
 
 /**
  *  \brief
@@ -386,7 +386,7 @@
  *  \brief
  *      Set VDP command to write at specified VSRAM address.
  */
-#define VDP_WRITE_VSRAM_ADDR(adr)   (((0x4000 + ((adr) & 0x3F)) << 16) + 0x10)
+#define VDP_WRITE_VSRAM_ADDR(adr)   (((0x4000 + ((adr) & 0x7F)) << 16) + 0x10)
 
 /**
  *  \brief
@@ -402,7 +402,7 @@
  *  \brief
  *      Set VDP command to issue a DMA transfert to specified VSRAM address.
  */
-#define VDP_DMA_VSRAM_ADDR(adr)     (((0x4000 + ((adr) & 0x3F)) << 16) + 0x90)
+#define VDP_DMA_VSRAM_ADDR(adr)     (((0x4000 + ((adr) & 0x7F)) << 16) + 0x90)
 
 /**
  *  \brief

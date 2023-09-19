@@ -4,7 +4,7 @@
 #include "maths.h"
 
 // only for positives values
-const fix16 log2tab16[0x10000] =
+const fix16 log2tab_f16[0x10000] =
 {
     0, -384, -320, -282, -256, -235, -218, -204,
     -192, -181, -171, -162, -154, -147, -140, -133,
