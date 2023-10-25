@@ -212,7 +212,7 @@ u16 PAL_getColor(u16 index)
 
     *((vu32*) VDP_CTRL_PORT) = VDP_READ_CRAM_ADDR((u32)addr);
 
-    return *((vu16*) VDP_DATA_PORT);
+    return (*((vu16*) VDP_DATA_PORT)) & VDPPALETTE_COLORMASK;
 }
 
 void PAL_getColors(u16 index, u16* dest, u16 count)
@@ -224,25 +224,27 @@ void PAL_getColors(u16 index, u16* dest, u16 count)
 
     vu32* pl = (u32*) VDP_DATA_PORT;
     u32* dl = (u32*) dest;
+    u32 mask32 = (VDPPALETTE_COLORMASK << 16) | (VDPPALETTE_COLORMASK << 0);
 
     u16 il = count >> 4;
     while(il--)
     {
-        *dl++ = *pl;
-        *dl++ = *pl;
-        *dl++ = *pl;
-        *dl++ = *pl;
-        *dl++ = *pl;
-        *dl++ = *pl;
-        *dl++ = *pl;
-        *dl++ = *pl;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
+        *dl++ = *pl & mask32;
     }
 
     vu16* pw = (u16*) pl;
     u16* dw = (u16*) dl;
+    u16 mask16 = VDPPALETTE_COLORMASK;
 
     u16 i = count & 0xF;
-    while(i--) *dw++ = *pw;
+    while(i--) *dw++ = *pw & mask16;
 }
 
 void PAL_getPalette(u16 numPal, u16* dest)
@@ -254,15 +256,16 @@ void PAL_getPalette(u16 numPal, u16* dest)
 
     vu32* pl = (u32*) VDP_DATA_PORT;
     u32* d = (u32*) dest;
+    u32 mask32 = (VDPPALETTE_COLORMASK << 16) | (VDPPALETTE_COLORMASK << 0);
 
-    *d++ = *pl;
-    *d++ = *pl;
-    *d++ = *pl;
-    *d++ = *pl;
-    *d++ = *pl;
-    *d++ = *pl;
-    *d++ = *pl;
-    *d++ = *pl;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
+    *d++ = *pl & mask32;
 }
 
 void PAL_setColor(u16 index, u16 value)
