@@ -520,16 +520,13 @@ public class SpriteCutter
 
             final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
 
-            for (int i = 0; i < 2; i++)
+            // rebuild solution while optimize cell position to avoid as much sprite overdraw as possible
+            reset();
+            // start from largest cell
+            for (SpriteCell cell : cellsCopy)
             {
-                // rebuild solution while optimize cell position to avoid as much sprite overdraw as possible
-                reset();
-                // start from largest cell
-                for (SpriteCell cell : cellsCopy)
-                {
-                    cell.optimizeOverdraw(dim, cellsCopy);
-                    addCell(cell);
-                }
+                cell.optimizeOverdraw(dim, cellsCopy);
+                addCell(cell);
             }
         }
 
@@ -582,14 +579,34 @@ public class SpriteCutter
 
         public void fastOptimize()
         {
-            for (int i = 0; i < 2; i++)
+            double score;
+            double newScore = getScore();
+            double conv = 1d;
+            
+            do
             {
+                score = newScore;
+                
+                // first iteration from coverage image
                 optimizeMerge();
                 optimizePos();
-                optimizeSize((i & 1) == 0);
+                optimizeSize(false);
                 fixPos();
                 optimizeOverdraw();
+                // second iteration from origin image
+                optimizeMerge();
+                optimizePos();
+                optimizeSize(true);
+                fixPos();
+                optimizeOverdraw();
+                
+                newScore = getScore();
+                
+                // compute convergence (to avoid death lock with oscillating score)
+                conv /= 2;
+                conv += score - newScore;
             }
+            while ((newScore != score) && (Math.abs(conv) > 0.0005d));
         }
 
         public void showInfo()
