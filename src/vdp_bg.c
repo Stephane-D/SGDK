@@ -276,7 +276,7 @@ void VDP_clearTextEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, Transfer
         len = pw - x;
 
     // prepare the data
-    memsetU16(data, 0, len);
+    memsetU16(data, TILE_FONT_INDEX, len);
 
     // VDP_setTileMapDataRowEx(..) take care of using temporary buffer to build the data so we are ok here
     VDP_setTileMapDataRowEx(plane, data, basetile, y, x, len, tm);
@@ -309,7 +309,7 @@ void VDP_clearTextAreaEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 
         ha = ph - y;
 
     // prepare the data
-    memsetU16(data, 0, wa);
+    memsetU16(data, TILE_FONT_INDEX, wa);
 
     ya = y;
     i = ha;
@@ -343,7 +343,7 @@ void VDP_clearTextBG(VDPPlane plane, u16 x, u16 y, u16 w)
     if (wa > (pw - x))
         wa = pw - x;
 
-    VDP_fillTileMapRect(plane, 0, x, y, wa, 1);
+    VDP_fillTileMapRect(plane, TILE_FONT_INDEX, x, y, wa, 1);
 }
 
 void VDP_clearTextAreaBG(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)
@@ -369,12 +369,12 @@ void VDP_clearTextAreaBG(VDPPlane plane, u16 x, u16 y, u16 w, u16 h)
     if (ha > (ph - y))
         ha = ph - y;
 
-    VDP_fillTileMapRect(plane, 0, x, y, wa, ha);
+    VDP_fillTileMapRect(plane, TILE_FONT_INDEX, x, y, wa, ha);
 }
 
 void VDP_clearTextLineBG(VDPPlane plane, u16 y)
 {
-    VDP_fillTileMapRect(plane, 0, 0, y, (plane == WINDOW)?windowWidth:planeWidth, 1);
+    VDP_fillTileMapRect(plane, TILE_FONT_INDEX, 0, y, (plane == WINDOW)?windowWidth:planeWidth, 1);
 }
 
 void VDP_drawText(const char *str, u16 x, u16 y)
