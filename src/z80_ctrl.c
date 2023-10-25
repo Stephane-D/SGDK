@@ -473,7 +473,7 @@ void NO_INLINE Z80_setBusProtection(bool value)
 {
     vu8 *pb;
 
-    // bus protection not defined ? --> exist
+    // bus protection not defined ? --> exit
     if (busProtectSignalAddress == 0)
         return;
 
