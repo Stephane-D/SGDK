@@ -98,7 +98,7 @@ public class SpriteFrame extends Resource
                     sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE, true);
 
                 // still too many sprites used for this sprite ? try better (but slower) sprite optimization method
-                if ((sprites.size() > 16) || ((numTile > 64) && (sprites.size() > (numTile / 8))))
+                if (sprites.size() > 16)
                     sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, 100000, OptimizationType.MIN_SPRITE);
             }
         }

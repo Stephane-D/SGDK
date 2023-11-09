@@ -606,7 +606,7 @@ public class SpriteCutter
                 conv /= 2;
                 conv += score - newScore;
             }
-            while ((newScore != score) && (Math.abs(conv) > 0.0005d));
+            while ((newScore != score) && (Math.abs(conv) > 0.05d));
         }
 
         public void showInfo()
