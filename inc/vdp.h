@@ -791,7 +791,7 @@ u8 VDP_getDMAEnabled(void);
  *
  *  Note that by default SGDK always enable DMA (there is no reason to disable it)
  */
-void VDP_setDMAEnabled(u8 value);
+void VDP_setDMAEnabled(bool value);
 /**
  *  \brief
  *      Returns HV counter latching on INT2 (used for light gun)
@@ -803,26 +803,33 @@ u8 VDP_getHVLatching(void);
  *
  *  You can ask the HV Counter to fix its value on INT2 for accurate light gun positionning.
  */
-void VDP_setHVLatching(u8 value);
+void VDP_setHVLatching(bool value);
+/**
+ *  \brief
+ *      Enable or Disable Vertical interrupt (it's *strongly* recommanded to keep it enabled).
+ *
+ *  \see VDP_setHInterrupt()
+ */
+void VDP_setVInterrupt(bool value);
 /**
  *  \brief
  *      Enable or Disable Horizontal interrupt.
  *
  *  \see VDP_setHIntCounter()
  */
-void VDP_setHInterrupt(u8 value);
+void VDP_setHInterrupt(bool value);
 /**
  *  \brief
  *      Enable or Disable External interrupt.
  *
  *  \see VDP_setExtIntCounter()
  */
-void VDP_setExtInterrupt(u8 value);
+void VDP_setExtInterrupt(bool value);
 /**
  *  \brief
  *      Enable or Disable Hilight / Shadow effect.
  */
-void VDP_setHilightShadow(u8 value);
+void VDP_setHilightShadow(bool value);
 
 /**
  *  \brief

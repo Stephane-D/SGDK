@@ -89,7 +89,7 @@ void NO_INLINE VDP_init()
     lastVCnt = 0;
 
     regValues[0x00] = 0x04;
-    regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, VBL, DMA + VCell size */
+    regValues[0x01] = 0x74;                     /* reg. 1 - Enable display, V-Int, DMA + VCell size */
     regValues[0x02] = bga_addr / 0x400;         /* reg. 2 - Plane A = $E000 */
     regValues[0x03] = window_addr / 0x400;      /* reg. 3 - Window  = $D000 */
     regValues[0x04] = bgb_addr / 0x2000;        /* reg. 4 - Plane B = $C000 */
@@ -577,7 +577,7 @@ u8 VDP_getDMAEnabled()
     return regValues[0x01] & 0x10;
 }
 
-void VDP_setDMAEnabled(u8 value)
+void VDP_setDMAEnabled(bool value)
 {
     vu16 *pw;
 
@@ -593,7 +593,7 @@ u8 VDP_getHVLatching()
     return regValues[0x00] & 0x02;
 }
 
-void VDP_setHVLatching(u8 value)
+void VDP_setHVLatching(bool value)
 {
     vu16 *pw;
 
@@ -604,7 +604,18 @@ void VDP_setHVLatching(u8 value)
     *pw = 0x8000 | regValues[0x00];
 }
 
-void VDP_setHInterrupt(u8 value)
+void VDP_setVInterrupt(bool value)
+{
+    vu16 *pw;
+
+    if (value) regValues[0x01] |= 0x20;
+    else regValues[0x01] &= ~0x20;
+
+    pw = (u16 *) VDP_CTRL_PORT;
+    *pw = 0x8100 | regValues[0x01];
+}
+
+void VDP_setHInterrupt(bool value)
 {
     vu16 *pw;
 
@@ -615,7 +626,7 @@ void VDP_setHInterrupt(u8 value)
     *pw = 0x8000 | regValues[0x00];
 }
 
-void VDP_setExtInterrupt(u8 value)
+void VDP_setExtInterrupt(bool value)
 {
     vu16 *pw;
 
@@ -626,7 +637,7 @@ void VDP_setExtInterrupt(u8 value)
     *pw = 0x8B00 | regValues[0x0B];
 }
 
-void VDP_setHilightShadow(u8 value)
+void VDP_setHilightShadow(bool value)
 {
     vu16 *pw;
 
