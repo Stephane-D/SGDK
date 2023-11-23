@@ -443,10 +443,6 @@ void NO_INLINE _start_entry()
     u16* dst;
     u16 len;
 
-    // stop Z80 (first thing to do)
-    *((u16*) Z80_HALT_PORT) = 0x0100;
-    *((u16*) Z80_RESET_PORT) = 0x0100;
-
     // clear all RAM (DO NOT USE FUNCTION HERE as we clear all RAM so the stack as well)
     dst = (u16*) RAM;
     len = 0x8000;
@@ -579,10 +575,6 @@ void NO_INLINE _start_entry()
 
 void NO_INLINE _reset_entry()
 {
-    // stop Z80 (first thing to do)
-    *((u16*) Z80_HALT_PORT) = 0x0100;
-    *((u16*) Z80_RESET_PORT) = 0x0100;
-
     internal_reset();
 
     main(FALSE);
@@ -697,9 +689,11 @@ bool NO_INLINE SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         Z80_disableBusProtection();
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        KLog_U1_("Info: transfer =", dmaSize, " bytes");
+
         vcnt = GET_VCOUNTER;
 
-        // above scanline 2 ? better to warn about DMA overrun..
+        // above scanline 2 ? better to warn about DMA overrun
         if ((vcnt < 224) && (vcnt > 2))
             KLog_U3("Warning: DMA task (", dmaSize, " bytes) completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
 #endif
