@@ -104,13 +104,29 @@ typedef unsigned short u16;
  */
 typedef unsigned long u32;
 
+#if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || (__STDC_VERSION__ < 202300L))
+
 /**
  *  \typedef bool
- *      boolean type, to be used with TRUE and FALSE constant.
+ *      boolean type, to be used with TRUE/true and FALSE/false constants.
  *      (internally set as unsigned char)
  */
-#ifndef __cplusplus
 typedef u8 bool;
+/**
+ *  \brief
+ *      false define (equivalent to 0).
+ */
+#ifndef false
+#define false   FALSE
+#endif
+/**
+ *  \brief
+ *      true define (equivalent to 1).
+ */
+#ifndef true
+#define true    TRUE
+#endif
+
 #endif
 
 /**
