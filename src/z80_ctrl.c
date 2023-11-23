@@ -9,6 +9,7 @@
 #include "timer.h"
 #include "sys.h"
 #include "vdp.h"
+#include "tools.h"
 #include "sound.h"
 #include "xgm.h"
 
@@ -469,20 +470,19 @@ void Z80_useBusProtection(u16 signalAddress)
     busProtectSignalAddress = signalAddress;
 }
 
-void NO_INLINE Z80_setBusProtection(bool value)
+void Z80_setBusProtection(bool value)
 {
-    vu8 *pb;
-
     // bus protection not defined ? --> exit
-    if (busProtectSignalAddress == 0)
+    if (!busProtectSignalAddress)
         return;
+
+    // point to Z80 PROTECT parameter
+    vu8* pb = (vu8*) (Z80_RAM + busProtectSignalAddress);
 
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
 
-    // point to Z80 PROTECT parameter
-    pb = (u8 *) (Z80_RAM + busProtectSignalAddress);
-    *pb = value;
+    *pb = value?1:0;
 
     // release bus
     if (!busTaken) Z80_releaseBus();
@@ -509,4 +509,3 @@ void Z80_setForceDelayDMA(bool value)
     if (value) driverFlags |= DRIVER_FLAG_DELAYDMA;
     else driverFlags &= ~DRIVER_FLAG_DELAYDMA;
 }
-

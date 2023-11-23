@@ -350,7 +350,7 @@ void Z80_useBusProtection(u16 signalAddress);
  *      Set temporary 68K BUS protection from Z80 (for sound driver supporting it).<br>
  *      You should protect BUS Access during DMA and restore it after. Ex:<br>
  *      Z80_setBusProtection(TRUE);
- *      VDP_doVRamDMA(data, 0x1000, 0x100);
+ *      DMA_doDma(VRAM, data, 0x1000, 0x100, 2);
  *      Z80_setBusProtection(FALSE);
  *
  *      This way the sound driver will *try* to avoid accessing the 68K BUS during DMA to
