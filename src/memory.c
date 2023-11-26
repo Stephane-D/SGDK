@@ -267,7 +267,7 @@ u16 MEM_getAllocated()
     return res;
 }
 
-void* MEM_alloc(u16 size)
+NO_INLINE void* MEM_alloc(u16 size)
 {
     u16* p;
     u16 adjsize;
@@ -311,7 +311,7 @@ void* MEM_alloc(u16 size)
     if (remaining > 0) *free = remaining;
     else
     {
-        // no more space in bloc so we have to find the next free bloc
+        // no more space in block so we have to find the next free bloc
         u16 *newfree = free;
         u16 bloc;
 
@@ -332,7 +332,7 @@ void* MEM_alloc(u16 size)
     return p;
 }
 
-void* MEM_allocAt(u32 addr, u16 size)
+NO_INLINE void* MEM_allocAt(u32 addr, u16 size)
 {
     u16* p;
     u16 adjsize;
@@ -348,7 +348,7 @@ void* MEM_allocAt(u32 addr, u16 size)
     {
         p = packEx(addr, adjsize);
 
-        // block not available enough memory
+        // block has not enough memory
         if (p == NULL)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
@@ -373,7 +373,7 @@ void* MEM_allocAt(u32 addr, u16 size)
     if (remaining > 0) *free = remaining;
     else
     {
-        // no more space in bloc so we have to find the next free bloc
+        // no more space in block so we have to find the next free bloc
         u16 *newfree = free;
         u16 bloc;
 
@@ -417,7 +417,7 @@ void MEM_free(void *ptr)
     }
 }
 
-void MEM_pack()
+NO_INLINE void MEM_pack()
 {
     u16 *b;
     u16 *best;
@@ -470,7 +470,7 @@ void MEM_pack()
 }
 
 
-void MEM_dump()
+NO_INLINE void MEM_dump()
 {
     char str[40];
     char strNum[16];
@@ -625,15 +625,20 @@ static u16* packEx(u32 addr, u16 nsize)
                     // test if the block is where we want
                     if ((baddr <= addr) && ((baddr + bsize) >= (addr + nsize)))
                     {
-                        // free space before wanted block
                         u16 delta = addr - baddr;
 
-                        // change available size for previous block
-                        if (baddr < addr)
+                        // free space before wanted block ? --> split block
+                        if (delta)
+                        {
+                            // change available size for previous block
                             *best = delta;
+                            // move on desired block
+                            best += delta >> 1;
+                            // set free space here
+                            *best = bsize - delta;
+                        }
 
-                        // that should match addr
-                        return best + (delta >> 1);
+                        return best;
                     }
                 }
 
@@ -665,7 +670,29 @@ static u16* packEx(u32 addr, u16 nsize)
 
         // return it if greater than what we're looking for
         if (bsize >= nsize)
-            return best;
+        {
+            // get block address
+            u32 baddr = (u32) best;
+
+            // test if the block is where we want
+            if ((baddr <= addr) && ((baddr + bsize) >= (addr + nsize)))
+            {
+                u16 delta = addr - baddr;
+
+                // free space before wanted block ? --> split block
+                if (delta)
+                {
+                    // change available size for previous block
+                    *best = delta;
+                    // move on desired block
+                    best += delta >> 1;
+                    // set free space here
+                    *best = bsize - delta;
+                }
+
+                return best;
+            }
+        }
     }
 
     return NULL;
