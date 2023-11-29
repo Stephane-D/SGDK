@@ -689,8 +689,6 @@ bool NO_INLINE SYS_doVBlankProcessEx(VBlankProcessTime processTime)
         Z80_disableBusProtection();
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
-        KLog_U1_("Info: transfer =", dmaSize, " bytes");
-
         vcnt = GET_VCOUNTER;
 
         // above scanline 2 ? better to warn about DMA overrun
