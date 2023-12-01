@@ -41,7 +41,14 @@
  *      Special flag to indicate that we want to add the sprite at position 0 (head / top) in the list<br>
  *      instead of adding it in last / bottom position (default)
  */
-#define SPR_FLAG_INSERT_HEAD                    0x2000
+#define SPR_FLAG_INSERT_HEAD                    0x4000
+/**
+ *  \brief
+ *      Disable animation auto loop..<br>
+ *      By default animation always restart fater the last frame has been played.
+ *      This flag prevent the animation to restart and so the animation end on the last frame forever (see #SPR_getAnimationDone(..))
+ */
+#define SPR_FLAG_DISABLE_ANIMATION_LOOP         0x2000
 /**
  *  \brief
  *      Disable delaying of frame update when we are running out of DMA capacity.<br>
@@ -68,7 +75,7 @@
  *  \brief
  *      Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used).<br>
  *      If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal
- *      hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite.
+ *      hardware sprite. This result in faster visibility computation at the expense of using extra (wasting) hardware sprites.
  */
 #define SPR_FLAG_FAST_AUTO_VISIBILITY           0x0100
 
@@ -214,7 +221,7 @@ typedef struct
  *  \param tileset
  *      tileset containing tiles for this animation frame (ordered for sprite)
  *  \param collision
- *      collision structure
+ *      collision structure (not used currently)
  *  \param frameSprites
  *      array of VDP sprites info composing the frame
  */
@@ -746,12 +753,21 @@ void SPR_setZ(Sprite* sprite, s16 value);
  *      Set sprite depth so it remains above others sprite - same as SPR_setDepth(SPR_MIN_DEPTH)
  *
  *  \param sprite
- *      Sprite to set depth for
+ *      Sprite to change depth for
  *
- *  Sprite having lower depth are display in front of sprite with higher depth.<br>
- *  The sprite is *immediately* sorted when its depth value is changed.
+ *  \see SPR_setDepth(Sprite*)
  */
 void SPR_setAlwaysOnTop(Sprite* sprite);
+/**
+ *  \brief
+ *      Set sprite depth so it remains behind others sprite - same as SPR_setDepth(SPR_MAX_DEPTH)
+ *
+ *  \param sprite
+ *      Sprite to change depth for
+ *
+ *  \see SPR_setDepth(Sprite*)
+ */
+void SPR_setAlwaysAtBottom(Sprite* sprite);
 
 /**
  *  \brief
@@ -793,13 +809,27 @@ void SPR_setFrame(Sprite* sprite, s16 frame);
  *      Sprite to pass to next frame for
  */
 void SPR_nextFrame(Sprite* sprite);
+
+/**
+ *  \brief
+ *      Enable/disable animation loop (default is on).<br>
+ *      When disable the sprite will stay on the last animation frame forever when animation ended instead of restarting it.
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable animation loop for.
+ *
+ *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
+ *  \see #SPR_getAnimationDone(Sprite*)
+ */
+void SPR_setAnimationLoop(Sprite* sprite, bool value);
 /**
  *  \brief
  *      Return TRUE if animation ended / looped.<br>
  *      This can be used with the frame change callback (see #SPR_setFrameChangeCallback(..)) to detect
  *      the end of sprite animation and do appropriate action if required.
  *
- *  \see #SPR_setFrameChangeCallback(..)
+ *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
+ *  \see #SPR_setAnimationLoop(Sprite*)
  */
 bool SPR_getAnimationDone(Sprite* sprite);
 

@@ -47,7 +47,7 @@
 
 #define NEED_UPDATE                         0x000F
 
-#define STATE_LOOPED                        0x0010
+#define STATE_ANIMATION_DONE                0x0010
 
 
 // shared from vdp_spr.c unit
@@ -401,9 +401,8 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
 
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
-    // depending sprite position (first or last) we set its default depth
-    if (flag & SPR_FLAG_INSERT_HEAD) sprite->depth = SPR_MIN_DEPTH >> 1;
-    else sprite->depth = SPR_MAX_DEPTH >> 1;
+    // default depth
+    sprite->depth = 0;
 
     // auto VRAM alloc enabled ?
     if (flag & SPR_FLAG_AUTO_VRAM_ALLOC)
@@ -960,6 +959,11 @@ void SPR_setAlwaysOnTop(Sprite* sprite)
     SPR_setDepth(sprite, SPR_MIN_DEPTH);
 }
 
+void SPR_setAlwaysAtBottom(Sprite* sprite)
+{
+    SPR_setDepth(sprite, SPR_MAX_DEPTH);
+}
+
 void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 {
     START_PROFIL
@@ -998,7 +1002,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         KLog_U3("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame);
 #endif // SPR_DEBUG
 
-        sprite->status = (sprite->status & ~STATE_LOOPED) | NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1033,7 +1037,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         KLog_U2_("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0");
 #endif // SPR_DEBUG
 
-        sprite->status = (sprite->status & ~STATE_LOOPED) | NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1083,9 +1087,15 @@ void SPR_nextFrame(Sprite* sprite)
 
     if (frameInd >= anim->numFrame)
     {
-        frameInd = anim->loop;
-        // looped animation marker
-        sprite->status |= STATE_LOOPED;
+        u16 status = sprite->status;
+
+        // no loop ? --> stay on last frame
+        if (status & SPR_FLAG_DISABLE_ANIMATION_LOOP) frameInd = anim->numFrame - 1;
+        // loop
+        else frameInd = anim->loop;
+
+        // animation done marker
+        sprite->status = status | STATE_ANIMATION_DONE;
     }
 
     // set new frame
@@ -1094,9 +1104,22 @@ void SPR_nextFrame(Sprite* sprite)
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
 
+void SPR_setAnimationLoop(Sprite* sprite, bool value)
+{
+    // for debug
+    checkSpriteValid(sprite, "SPR_setAnimationLoop");
+
+    if (value) sprite->status &= ~SPR_FLAG_DISABLE_ANIMATION_LOOP;
+    else sprite->status |= SPR_FLAG_DISABLE_ANIMATION_LOOP;
+}
+
+
 bool SPR_getAnimationDone(Sprite* sprite)
 {
-    return (sprite->status & STATE_LOOPED)?TRUE:FALSE;
+    // for debug
+    checkSpriteValid(sprite, "SPR_getAnimationDone");
+
+    return (sprite->status & STATE_ANIMATION_DONE)?TRUE:FALSE;
 }
 
 bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
