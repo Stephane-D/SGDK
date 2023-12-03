@@ -1087,15 +1087,26 @@ void SPR_nextFrame(Sprite* sprite)
 
     if (frameInd >= anim->numFrame)
     {
-        u16 status = sprite->status;
-
-        // no loop ? --> stay on last frame
-        if (status & SPR_FLAG_DISABLE_ANIMATION_LOOP) frameInd = anim->numFrame - 1;
-        // loop
-        else frameInd = anim->loop;
-
         // animation done marker
-        sprite->status = status | STATE_ANIMATION_DONE;
+        sprite->status |= STATE_ANIMATION_DONE;
+
+        // no loop ?
+        if (sprite->status & SPR_FLAG_DISABLE_ANIMATION_LOOP)
+        {
+            // prevent further animation
+            sprite->timer = 0;
+
+            // frame change event handler defined ? --> call it now so we let user now about STATE_ANIMATION_DONE
+            if (sprite->onFrameChange)
+                sprite->onFrameChange(sprite);
+
+            // can quit now
+            END_PROFIL(PROFIL_SET_ANIM_FRAME)
+            return;
+        }
+
+        // loop
+        frameInd = anim->loop;
     }
 
     // set new frame
