@@ -9,6 +9,8 @@
 
 Pool* POOL_create(u16 size, u16 objectSize)
 {
+    // word align object size
+    const u16 adjObjectSize = (objectSize + 1) & 0xFFFE;
     // create the pool
     Pool* result = MEM_alloc(sizeof(Pool));
 
@@ -16,18 +18,18 @@ Pool* POOL_create(u16 size, u16 objectSize)
     if (result == NULL)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        kprintf("POOL_create(%d, %d) error: not enough memory (free = %d, largest block = %d)", size, objectSize, MEM_getFree() & 0xFFFF, MEM_getLargestFreeBlock() & 0XFFFF);
+        kprintf("POOL_create(%d, %d) error: not enough memory (free = %d, largest block = %d)", size, adjObjectSize, MEM_getFree() & 0xFFFF, MEM_getLargestFreeBlock() & 0XFFFF);
 #endif
         return NULL;
     }
 
-    // allocate bank
-    result->bank = MEM_alloc(size * objectSize);
+    // allocate bank (we use objectSize + 2 as we store the object index before the object)
+    result->bank = MEM_alloc(size * (adjObjectSize + 2));
     // can't allocate ? --> and return NULL
     if (result->bank == NULL)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        kprintf("POOL_create(%d, %d) error: not enough memory (free = %d, largest block = %d)", size, objectSize, MEM_getFree() & 0xFFFF, MEM_getLargestFreeBlock() & 0XFFFF);
+        kprintf("POOL_create(%d, %d) error: not enough memory (free = %d, largest block = %d, required = %d)", size, adjObjectSize, MEM_getFree() & 0xFFFF, MEM_getLargestFreeBlock() & 0XFFFF, size * (adjObjectSize + 2));
 #endif
 
         // release pool
@@ -43,7 +45,7 @@ Pool* POOL_create(u16 size, u16 objectSize)
     if (result->allocStack == NULL)
     {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        kprintf("POOL_create(%d, %d) error: not enough memory (free = %d, largest block = %d)", size, objectSize, MEM_getFree() & 0xFFFF, MEM_getLargestFreeBlock() & 0XFFFF);
+        kprintf("POOL_create(%d, %d) error: not enough memory (free = %d, largest block = %d)", size, adjObjectSize, MEM_getFree() & 0xFFFF, MEM_getLargestFreeBlock() & 0XFFFF);
 #endif
 
         // release bank & pool
@@ -55,12 +57,12 @@ Pool* POOL_create(u16 size, u16 objectSize)
     }
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    kprintf("Object pool succefully created - number of object = %d - object size = %d (free memory = %d)", size, objectSize, MEM_getFree() & 0xFFFF);
+    kprintf("Object pool succefully created - number of object = %d - object size = %d (free memory = %d)", size, adjObjectSize, MEM_getFree() & 0xFFFF);
 #endif
 
     // set size
     result->size = size;
-    result->objectSize = objectSize;
+    result->objectSize = adjObjectSize;
 
     POOL_reset(result, TRUE);
 
@@ -70,22 +72,27 @@ Pool* POOL_create(u16 size, u16 objectSize)
 void POOL_reset(Pool* pool, bool clear)
 {
     u16 i;
+    u16 ind;
     u16 os;
-    u8* d;
+    u16* d;
     void** s;
 
     // clear bank
     if (clear)
-        memset(pool->bank, 0, pool->size * pool->objectSize);
+        memset(pool->bank, 0, pool->size * (pool->objectSize + 2));
 
     // reset allocation stack
     s = pool->allocStack;
     d = pool->bank;
-    os = pool->objectSize;
+    // as we use u16 pointer
+    os = pool->objectSize >> 1;
     i = pool->size;
+    ind = 0;
     while(i--)
     {
-        // set alloc stack pointer
+        // store the object index before the object
+        *d++ = ind++;
+        // set current object pointer
         *s++ = d;
         // point on next object
         d += os;
@@ -154,7 +161,6 @@ void POOL_release(Pool* pool, void* object, bool maintainCoherency)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
     if (object == NULL)
         KLog("POOL_release(): failed - trying to release a NULL object !");
-
     // empty pool ?
     if (pool->free >= &pool->allocStack[pool->size])
         KLog("POOL_release(): failed - pool doesn't contain any object !");
@@ -174,22 +180,20 @@ void POOL_release(Pool* pool, void* object, bool maintainCoherency)
     // different from the one in place ?
     if (maintainCoherency && (prevObject != object))
     {
-        void** s = pool->free;
-        u16 i = POOL_getNumAllocated(pool);
+        // get object index
+        u16* objectIndexP = ((u16*)object) - 1;
+        u16 objectIndex = *objectIndexP;
 
-        while(i--)
-        {
-            // found the original object in alloc stack ?
-            if (*s == object)
-            {
-                // replace with the overwritten one so we can use stack iteration
-                *s = prevObject;
-                return;
-            }
+        // replace with the overwritten one so we can use stack iteration
+        pool->allocStack[objectIndex] = prevObject;
 
-            // next
-            s++;
-        }
+        // get previous object index
+        u16* prevObjectIndexP = ((u16*)prevObject) - 1;
+        u16 prevObjectIndex = *prevObjectIndexP;
+
+        // swap indexes
+        *prevObjectIndexP = objectIndex;
+        *objectIndexP = prevObjectIndex;
     }
 }
 
