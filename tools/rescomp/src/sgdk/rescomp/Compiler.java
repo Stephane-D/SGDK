@@ -125,7 +125,7 @@ public class Compiler
             return false;
         }
 
-        int lineCnt = 1;
+        int lineCnt = 0;
         int align = -1;
         boolean group = true;
         boolean near = false;
@@ -758,7 +758,7 @@ public class Compiler
             }
 
             System.out.println("Resource: " + input);
-            System.out.print("--> executing plugin " + type + "...");
+            System.out.println("--> executing plugin " + type + "...");
 
             return processor.execute(fields);
         }
