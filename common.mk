@@ -46,7 +46,7 @@ else
 		LIBGCC := $(LIB)/libgcc.a
 	else
 		# Native Linux
-		PREFIX := m68k-elf-
+		PREFIX ?= m68k-elf-
 		SHELL = sh
 		RM = rm
 		CP = cp

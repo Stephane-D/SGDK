@@ -140,7 +140,7 @@ out/symbol.txt: out/rom.out
 	$(NM) $(LTO_PLUGIN) -n out/rom.out > out/symbol.txt
 
 out/rom.out: out/sega.o out/cmd_ $(LIBMD)
-	$(CC) -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIBGCC) -o out/rom.out -Wl,--gc-sections
+	$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIBGCC) -o out/rom.out -Wl,--gc-sections -flto
 	$(RM) out/cmd_
 
 out/cmd_: $(OBJS)
