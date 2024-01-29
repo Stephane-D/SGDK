@@ -49,6 +49,8 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="inc/camera.h" />
+		<Unit filename="inc/level.h" />
 		<Unit filename="inc/main.h" />
 		<Unit filename="res/andor.png" />
 		<Unit filename="res/cody.png" />
@@ -66,7 +68,16 @@
 		<Unit filename="src/bmp_test.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/camera.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/level.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/map_test.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/math_test.c">
@@ -86,10 +97,10 @@
 				<remote_debugging>
 					<options conn_type="-1" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
-				<remote_debugging target="debug">
+				<remote_debugging target="release">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
-				<remote_debugging target="release">
+				<remote_debugging target="debug">
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="6868" />
 				</remote_debugging>
 			</debugger>
