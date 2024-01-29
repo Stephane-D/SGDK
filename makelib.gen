@@ -7,15 +7,17 @@ endif
 
 include $(GDK)/common.mk
 
-SRC_LIB_C := $(wildcard $(SRC_LIB)/*.c)
-SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*.c)
-SRC_LIB_C += $(wildcard $(SRC_LIB)/ext/*/*.c)
-SRC_LIB_S := $(wildcard $(SRC_LIB)/*.s)
-SRC_LIB_S += $(wildcard $(SRC_LIB)/ext/*.s)
-SRC_LIB_S += $(wildcard $(SRC_LIB)/ext/*/*.s)
-SRC_LIB_S80 := $(wildcard $(SRC_LIB)/*.s80)
-SRC_LIB_S80 += $(wildcard $(SRC_LIB)/ext/*.s80)
-SRC_LIB_S80 += $(wildcard $(SRC_LIB)/ext/*/*.s80)
+SRC_LIB_C = $(wildcard $(SRC_LIB)/*.c)
+SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*.c)
+SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*/*.c)
+SRC_LIB_C := $(filter-out $(SRC_LIB)/boot/rom_head.c, $(SRC_LIB_C))
+SRC_LIB_S = $(wildcard $(SRC_LIB)/*.s)
+SRC_LIB_S += $(wildcard $(SRC_LIB)/*/*.s)
+SRC_LIB_S += $(wildcard $(SRC_LIB)/*/*/*.s)
+SRC_LIB_S := $(filter-out $(SRC_LIB)/boot/sega.s, $(SRC_LIB_S))
+SRC_LIB_S80 = $(wildcard $(SRC_LIB)/*.s80)
+SRC_LIB_S80 += $(wildcard $(SRC_LIB)/*/*.s80)
+SRC_LIB_S80 += $(wildcard $(SRC_LIB)/*/*/*.s80)
 
 RES_LIB_RES := $(wildcard $(RES_LIB)/*.res)
 
@@ -32,7 +34,7 @@ LST_LIB := $(SRC_LIB_C:.c=.lst)
 
 INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negative-value -Wno-unused-parameter -fno-builtin -fms-extensions $(INCS_LIB) -B$(BIN)
-FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
+FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB) -i$(INCLUDE_LIB)/snd
 
 
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
