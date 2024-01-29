@@ -188,6 +188,12 @@ typedef s16 p16;
 #define uint32_t    u32
 #define int32_t     s32
 #endif
+#if !defined(size_t)
+#define size_t      u32
+#endif
+#if !defined(ptrdiff_t)
+#define ptrdiff_t   u32
+#endif
 
 
 /**
