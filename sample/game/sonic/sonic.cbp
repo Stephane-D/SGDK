@@ -70,7 +70,6 @@
 		<Unit filename="inc/hud.h" />
 		<Unit filename="inc/level.h" />
 		<Unit filename="inc/player.h" />
-		<Unit filename="inc/sfx.h" />
 		<Unit filename="inc/utils.h" />
 		<Unit filename="res/gfx/bga.png" />
 		<Unit filename="res/gfx/bgb.png" />
@@ -111,9 +110,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/player.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src/sfx.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/utils.c">

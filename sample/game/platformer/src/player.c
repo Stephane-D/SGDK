@@ -167,7 +167,7 @@ void updatePlayer() {
 	//Apply gravity with a terminal velocity
 	if (!playerBody.onGround && !playerBody.climbingStair) {
 		if (fix16ToInt(playerBody.velocity.fixY) <= playerBody.maxFallSpeed) {
-			playerBody.velocity.fixY = fix16Add(playerBody.velocity.fixY, gravityScale);
+			playerBody.velocity.fixY = playerBody.velocity.fixY + gravityScale;
 		}else {
 			playerBody.velocity.fixY = FIX16(playerBody.maxFallSpeed);
 		}
@@ -190,7 +190,7 @@ void updatePlayer() {
 	playerBody.position.x = playerBody.globalPosition.x - cameraPosition.x;
 	playerBody.position.y = playerBody.globalPosition.y - cameraPosition.y;
 	SPR_setPosition(playerBody.sprite, playerBody.position.x, playerBody.position.y);
-	
+
 	//Update the player animations
 	updateAnimations();
 
@@ -337,7 +337,7 @@ void checkCollisions() {
 	minTilePos = posToTile(newVector2D_s16(playerBounds.min.x, playerBounds.min.y));
 	maxTilePos = posToTile(newVector2D_s16(playerBounds.max.x - 1, playerBounds.max.y));
 	tileBoundDifference = newVector2D_u16(maxTilePos.x - minTilePos.x, maxTilePos.y - minTilePos.y);
-	
+
 	bool onStair = FALSE;
 
 	//To avoid having troubles with player snapping to ground ignoring the upward velocity, we separate top and bottom collisions depending on the velocity

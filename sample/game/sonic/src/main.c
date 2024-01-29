@@ -5,7 +5,6 @@
 #include "hud.h"
 #include "level.h"
 #include "camera.h"
-#include "sfx.h"
 
 #include "res_gfx.h"
 #include "res_sound.h"
@@ -31,10 +30,8 @@ int main(bool hard)
     // set all palette to black
     PAL_setColors(0, (u16*) palette_black, 64, CPU);
 
-    // init SFX
-    SFX_init();
     // start music
-    XGM_startPlay(sonic_music);
+    XGM2_play(sonic_music);
 
     // need to increase a bit DMA buffer size to init both plan tilemap and sprites
     DMA_setBufferSize(10000);

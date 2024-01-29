@@ -4,10 +4,10 @@
 
 #include "level.h"
 #include "camera.h"
-#include "sfx.h"
 #include "utils.h"
 
 #include "res_sprite.h"
+#include "res_sound.h"
 
 
 #define ANIM_STAND          0
@@ -131,7 +131,7 @@ void PLAYER_update(void)
         {
             if (player->animInd != ANIM_BRAKE)
             {
-                XGM_startPlayPCM(SFX_STOP, 1, SOUND_PCM_CH2);
+                XGM2_playPCM(sonic_stop_sfx, sizeof(sonic_stop_sfx), SOUND_PCM_CH3);
                 SPR_setAnim(player, ANIM_BRAKE);
             }
         }
@@ -178,7 +178,7 @@ void PLAYER_doJoyAction(u16 joy, u16 changed, u16 state)
         if (movY == 0)
         {
             movY = -jumpSpeed;
-            XGM_startPlayPCM(SFX_JUMP, 1, SOUND_PCM_CH2);
+            XGM2_playPCM(sonic_jump_sfx, sizeof(sonic_jump_sfx), SOUND_PCM_CH2);
         }
     }
 }
