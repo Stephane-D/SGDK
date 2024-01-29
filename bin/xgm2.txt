@@ -1,0 +1,327 @@
+XGM2 Driver
+-------------
+The XGM name stands for "eXtended Genesis Music", the XGM2 driver is a music driver developed specifically for the Sega Megadrive/Genesis system.
+The XGM2 driver has be developed to replace the previous XGM driver, mainly to reduce its music data footprint (~30% of original XGM size for FM/PSG data),
+to improve PCM latency and add envelop support (FM and PSG only).
+
+As the previous XGM driver, it runs at 100% on the Z80 CPU and left the 68000 free for others tasks.
+It supports both FM and PSG chip and allow up to 3 PCM channels (8 bits signed data) through software mixing in the FM DAC in replacement
+of the 6th FM channel. So at best you can have 5FM + 3PCM + 4PSG = 12 channels.
+
+PCM playback rate is fixed to ~13.3 Khz (full speed) or ~6.65Khz (half speed) and can be selected on a channel basis.
+'half speed' mode allows to reduce ROM usage for samples which don't require high sampling rate.
+Again as the previous XGM driver, SFX are supported only through PCM channels (no FM or PSG SFX support)
+and that first channel is generally reserved for music so prefer to use the second or third channel for SFX.
+
+This driver is part of SGDK (https://github.com/Stephane-D/SGDK) by Stephane dallongeville (2024).
+
+XGM v2 file format specifications
+---------------------------------
+
+The file extension for XGM2 file is .xgm, compiled XGM file (ready to use by the Z80 driver) extension is .xgc
+Any tracker aiming to support XGM2 export music file format should use this document as reference.
+Note that XGM2 files (.xgm or .xgc) can be produced from Mega Drive VGM file by using the 'xgm2tool' software included in SGDK.
+
+File format (multi bytes value are in little endian format by default)
+----------------------------------------------------------------------
+Address                 Size    Description
+$0000                      4    XGM2 file ident, should be "XGM2" (not present on compiled XGM)
+$0004                      1    Version information (0x10 currently)
+$0005                      1    Format description
+                                bit #0: NTSC / PAL information: 0=NTSC  1=PAL
+                                  This field is used to determine how interpret the frame wait command.
+                                  In NTSC mode a frame wait command is equivalent to 1/60 of second.
+                                  In PAL mode a frame wait command is equivalent to 1/50 of second.
+                                bit #1: Multi track file: 0=No 1=Yes
+                                  When we have a multi track file, we will have a track id table following the sample id table and
+                                  the sample id table size is 504 bytes instead of 248 bytes.
+                                bit #2: GD3 tags: 0=No 1=Yes
+                                  If present the GD3 (XD3 when packing is enabled) tags are located after music data 
+                                bit #3: packed FM / PSG / GD3 data blocks: 0=No 1=Yes
+                                bit #4-7: reserved
+$0006                      2    SLEN: Sample data bloc size / 256 (ex: $0200 means 512*256 = 131072 bytes)
+$0008                      2    FMLEN: FM music data block size / 256 (ex: $0040 means 64*256 = 16384 bytes)
+$000A                      2    PSGLEN: PSG music data block size / 256 (ex: $0020 means 32*256 = 8192 bytes)
+$000C                248/504    SID: Sample id table.
+                                  This table contain the address for all samples (size = 248 bytes or 504 bytes for multi track file)
+                                  The music samples are allocated from entry #1 of the table where each entry of the table
+                                  consist of 2 bytes representing the sample address / 256:
+                                    entry+$0: sample address / 256
+                                  We don't need the low 8 bits information as each sample have its address aligned on 256 bytes.
+                                  Sample size is deducted using the next sample address (we have a dummy last sample for last size).
+                                  The sample address is relative to the start of the SDAT (Sample data block)
+                                  An empty entry should have address value set to $FFFF.
+                                  Note that internally (Z80 driver) the sample id table is 512 bytes length but first entry is reserved
+                                  for STOP PCM command and the last 12 bytes are used for the PCM SFX (3 channels):
+                                    SID+$000: cannot be used / reserved for stop PCM command
+                                    SID+$1F4: channel 0 SFX sample address / 256
+                                    SID+$1F6: channel 0 SFX sample len / 64
+                                    SID+$1F8: channel 1 SFX sample address / 256
+                                    SID+$1FA: channel 1 SFX sample len / 64
+                                    SID+$1FC: channel 2 SFX sample address / 256
+                                    SID+$1FE: channel 2 SFX sample len / 64
+                                  That means you cannot use full 252 entries of the 504 bytes table for multi track, only 249 at max
+                                  (or 248 if we don't count the last dummy sample to get length of last sample) is possible.
+---- optional (multi tracks only) -----
+$0X04                    256    FMID: FM music id table
+                                  This table contain the start address for FM music data tracks (128 entries = 256 bytes)
+                                  Each entry of the table consist of 2 bytes representing the address / 256:
+                                    entry+$0: FM music data block address / 256
+                                  We don't need the low 8 bits information as each data block have its address and size aligned on 256 bytes.
+                                  The track address is relative to the start of the FMDAT (FM music data block)
+                                  An empty entry should have its address set to $FFFF.
+$0X04                    256    PSGID: PSG music id table
+                                  This table contain the start address of PSG music data for all tracks (128 entries = 256 bytes)
+                                  Each entry of the table consist of 2 bytes representing the address / 256:
+                                    entry+$0: PSG music data block address / 256
+                                  We don't need the low 8 bits information as each data block have its address and size aligned on 256 bytes.
+                                  The track address is relative to the start of the PSGDAT (PSG music data block)
+                                  An empty entry should have its address set to $FFFF.
+----------- end optional  -------------
+$0X04                   SLEN    SDAT: Sample data block, contains all sample data (8 bits signed format)
+                                  The size of this block is variable and is determined by the SLEN field.
+                                  If field SLEN = $0000 the bloc is empty and so completely ignored.
+                                  As explained in the 'Sample id table' field, sample size is aligned to 256 bytes so is the block size.  
+$0X04+SLEN              FMLEN   FMDAT: FM music data block. It contains the XGM FM music data (see the XGM FM command description below).
+$0X04+SLEN+FMLEN        PSGLEN  PSGDAT: PSG music data block. It contains the XGM PSG music data (see the XGM PSG command description below).
+
+only if GD3 tags are enable:
+---- optional (multi tracks only) -----
+$0X04+SLEN+FMLEN+PSGLEN  256    GID: GD3 id table.
+                                  This table contain the start address for the GD3 tags tracks (128 entries = 256 bytes)
+                                  Each entry of the table consist of 2 bytes representing the GD3 tags address.
+                                  2 bytes is enough as we don't expect all GD3 tags to be more than 65536 bytes
+                                  The GD3 tags address is relative to the start of the GDAT (GD3 tags data block)
+----------- end optional  -------------
+$0X04+SLEN+FMLEN+PSGLEN  xxx    GDAT: GD3 tags data block (XD3 when packed, close to GD3 format spec on http://www.smspower.org/uploads/Music/gd3spec100.txt)
+
+
+XGM FM command description
+--------------------------
+Value         Size    Description
+$0x              1    End of frame - short wait
+                        x = number of frame to wait - 1 (if x == 2 then we wait 3 frames, max = 0xE = 15 frames)
+$0F xx           2    End of frame - long Wait
+                        xx = number of frame to wait - 16 (if xx == 00 then we wait 16 frames, max = 0xFF = 271 frames)
+
+$1x id           2    PCM play command
+                        x = channel number / priority
+                          b1-b0 = channel number (0-2), the driver allow to play up to 3 PCM at same time.
+                          b2 = half speed play (0 = full speed, 1 = half speed)
+                          b3 = priority (0 = low priority, 1 = high priority)
+                        id = sample id. Reference the sample id table to get address and size of sample.
+                          sample address = (sampleIdTable[((id-1)*2) + 0] << 8) + (sampleIdTable[((id-1)*2) + 1] << 16)
+                          sample size = next_sample_address - sample_address
+                          Note that we use (id-1) as value 0 is a special value used to stop a PCM channel.
+
+$2x data      1+30    YM2612 load instrument
+                        x = channel number / port
+                          b1-b0 = channel number (0-2)
+                          b2 = port (0-1)
+                        data = data to write to slot registers (30 bytes: 28 bytes SL + 2 bytes CH)
+
+$3x yyyy       1+2    YM2612 frequency set + key OFF/ON
+                        x = channel number and extra
+                          b1-b0 = channel number / slot number (0-2 for channel, 0-3 for slot)
+                          b2 = port (0-1)
+                          b3 = channel 3 mode (0: normal mode; 1: special mode in which case b1-b0 represents slot number)
+                        yyyy = key off/on + 14 bit frequency write (high byte first)
+                          b13-b0 = frequency (14 bit)
+                          b14 = key off before set
+                          b15 = key on after set
+
+$4x              1    YM2612 key OFF/ON ($28)
+                        x = channel number / port
+                          b1-b0 = channel number (0-2 for channel)
+                          b2 = port (0-1)
+                          b3 = OFF/ON all operators (0=OFF; 1=ON)
+
+$5x              1    YM2612 key sequence ($28)
+                        x = channel number / port
+                          b1-b0 = channel number (0-2 for channel)
+                          b2 = port (0-1)
+                          b3 = OFF/ON sequence (0=OFF-ON; 1=ON-OFF)
+
+$6x              1    YM2612 port 0 panning
+                        x = channel number / panning
+                          b1-b0 = channel number (0-2 for channel)
+                          b2-b3 = panning (0=OFF; 1=RIGHT; 2=LEFT; 3=CENTER) 
+                          
+$7x              1    YM2612 port 1 panning
+                        x = channel number / panning
+                          b1-b0 = channel number (0-2 for channel)
+                          b3-b2 = panning (0=OFF; 1=RIGHT; 2=LEFT; 3=CENTER) 
+
+$8x yyyy       1+2    YM2612 frequency set + key OFF/ON + end of frame
+                        x = channel number and extra
+                          b1-b0 = channel number / slot number (0-2 for channel, 0-3 for slot)
+                          b2 = port (0-1)
+                          b3 = channel 3 mode (0: normal mode; 1: special mode in which case b1-b0 represents slot number)
+                        yyyy = key off/on + 14 bit frequency write (high byte first)
+                          b13-b0 = frequency (14 bit)
+                          b14 = key off before set
+                          b15 = key on after set
+
+$9x yy           2    YM2612 TL set
+                        x = channel number / slot number
+                          b1-b0 = channel number (0-2)
+                          b3-b2 = slot number (0-3)
+                        yy = TL value & port
+                          b0 = port (0-1)
+                          b7-b1 = TL value
+                          
+$Ax yy           2    YM2612 frequency delta
+                        x = channel number and extra
+                          b1-b0 = channel number / slot number (0-2 for channel, 0-3 for slot)
+                          b2 = port (0-1)
+                          b3 = channel 3 mode (0: normal mode; 1: special mode in which case b1-b0 represents slot number)
+                        yy = frequency delta
+                          b0 = operation (0 = add delta, 1 = sub delta)
+                          b7-b1 = delta - 1 (1-128)
+              
+$Bx yy           2    YM2612 frequency delta + end of frame
+                        x = channel number and extra
+                          b1-b0 = channel number / slot number (0-2 for channel, 0-3 for slot)
+                          b2 = port (0-1)
+                          b3 = channel 3 mode (0: normal mode; 1: special mode in which case b1-b0 represents slot number)
+                        yy = frequency delta
+                          b0 = operation (0 = add delta, 1 = sub delta)
+                          b7-b1 = delta - 1 (1-128)
+
+$Cx yy           2    YM2612 TL delta
+                        x = channel number / slot number
+                          b1-b0 = channel number (0-2)
+                          b3-b2 = slot number (0-3)
+                        yy = TL delta & port
+                          b0 = port (0-1)
+                          b1 = operation (0 = add delta, 1 = sub delta)
+                          b7-b2 = delta - 1 (1-64)
+
+$Dx yy           2    YM2612 TL delta + end of frame
+                        x = channel number / slot number
+                          b1-b0 = channel number (0-2)
+                          b3-b2 = slot number (0-3)
+                        yy = TL delta & port
+                          b0 = port (0-1)
+                          b1 = operation (0 = add delta, 1 = sub delta)
+                          b7-b2 = delta - 1 (1-64)
+                          
+$Ex data  1+2(x+1)    YM2612 general register write
+                        x = port / number of register write - 1
+                          b2-b0 = number of write - 1 (0 = 1 write, 1 = 2 writes..)
+                          b3 = port (0-1)
+                        data = data to write
+                          entry+$00: register number
+                          entry+$01: register value
+                          
+$F0              1    Frame splitter (for too long frame) - increment 'frame to process' counter
+
+$F8 xx           2    YM2612 advanced $28 (key) register write (not ALL OFF/ON)
+                        xx = data to write to $28 register
+$F9 xx           2    YM2612 register $22 (LFO) write
+                        xx = data to write to $22 register
+$FA              1    YM2612 register $27.6 = 1 (CH3 special mode enable)
+$FB              1    YM2612 register $27.6 = 0 (CH3 special mode disable)
+$FC              1    YM2612 register $2B = 80 (DAC enable)
+$FD              1    YM2612 register $2B = 00 (DAC disable)
+
+$FF dddddd       4    Loop / end command, always located at the end the music data block.
+                      Used for FM music looping sequence:
+                        dddddd = address where to loop relative to the start of music data bloc (-1 = no loop)
+
+
+XGM PSG command description
+---------------------------
+Value         Size    Description
+$0x              1    End of frame - short wait
+                        x = number of frame to wait - 1 (if x == 2 then we wait 3 frames, max = 0xD = 14 frames)
+$0E xx           2    End of frame - long Wait
+                        xx = number of frame to wait - 15 (if x == 00 then we wait 15 frames, max = 0xFF = 270 frames)
+$0F dddddd       4    Loop / end command, always located at the end the music data block.
+                      Used for PSG music looping sequence:
+                        dddddd = address where to loop relative to the start of PSG music data bloc (-1 = no loop)
+
+$1x yy           2    PSG freq/tone low update + end of frame
+                        x = channel + end of frame
+                          b3-b1 = not used
+                          b0 = end of frame
+                        yy = direct write value (contains low part of tone data and channel)
+                          
+$2x yy           2    PSG freq/tone update
+                        x = channel + tone data (high part)
+                          b1-b0 = tone data b9-b8
+                          b3-b2 = channel - if channel = 3 then only b0-b3 are used for tone (single register write)
+                        yy = tone data (low part)
+                          b7-b0 = tone data b7-b0
+
+$3x yy           2    PSG freq/tone update + end of frame
+                        x = channel + tone data (high part)
+                          b1-b0 = tone data b9-b8
+                          b3-b2 = channel - if channel = 3 then only b0-b3 are used for tone (single register write)
+                        yy = tone data (low part)
+                          b7-b0 = tone data b7-b0
+
+$4x              1    PSG ch0 freq/tone delta 
+                        x = wait + op + tone delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+$5x              1    PSG ch1 freq/tone delta 
+                        x = wait + op + tone delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+$6x              1    PSG ch2 freq/tone delta 
+                        x = wait + op + tone delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+$7x              1    PSG ch3 freq/tone delta 
+                        x = wait + op + tone delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+                          
+$8x              1    PSG ch0 vol/env update
+                        x = env
+$9x              1    PSG ch1 vol/env update
+                        x = env
+$Ax              1    PSG ch2 vol/env update
+                        x = env
+$Bx              1    PSG ch3 vol/env update
+                        x = env
+                        
+$Cx              1    PSG ch0 vol/env delta
+                        x = wait + op + env delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+$Dx              1    PSG ch1 vol/env delta
+                        x = wait + op + env delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+$Ex              1    PSG ch2 vol/env delta
+                        x = wait + op + env delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+$Fx              1    PSG ch3 vol/env delta
+                        x = wait + op + env delta
+                          b1-b0 = delta - 1 (1-4)
+                          b2 = operation (0 = add delta, 1 = sub delta)
+                          b3 = end of frame
+
+
+Compression description for Packed data stream (FM / PSG)
+---------------------------------------------------------
+Streams are compressed using a classic LZ compression scheme.
+
+Input stream block format:
+LLLMMMMM [oooooooo] <literal_data>
+ - LLL = literal size (0 = no literal)
+ - MMMMM = match size (0 = no match)
+ - if (LLL > 0) --> literal size (1-7), literal data follow (after match offset if present)
+ - if (MMMMM == 1) --> special function: 256 bytes page cross on next block (set Z80 bank)
+ - if (MMMMM >= 2) --> match size (2-31), next byte represent match offset b7-b0 (0-255)
+ - if (LLL == 0) && (MMMMM == 0) --> end of block

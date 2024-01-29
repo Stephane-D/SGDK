@@ -1,0 +1,114 @@
+; ##############################  functions  ################################
+
+
+; sampleOutputDirectFastFunc
+; --------------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; Output a sample to the DAC not checking for elapsed timer
+; 28 cycles before writing YM
+;
+; = 36 cycles + 27 (CALL+RET) = 63 cycles - ~206 cycles remaining for other tasks
+
+sampleOutputDirectFastFunc
+
+            sampleOutputDirectFast
+
+            RET
+
+
+; sampleOutputNoIntDirectFastFunc
+; -------------------------------
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; Output a sample to the DAC not checking for elapsed timer
+; 15 cycles before writing YM
+;
+; = 44 cycles + 27 (CALL+RET) = 71 cycles - ~198 cycles remaining for others tasks
+
+sampleOutputNoIntDirectFastFunc
+
+            sampleOutputNoIntDirectFast
+
+            RET
+
+
+; sampleOutputDirectFunc
+; ----------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; Output a sample to the DAC not checking for elapsed timer but still resetting the timer
+; 11 cycles before writing YM
+;
+; = 61 cycles + 27 (CALL+RET) = 88 cycles - ~181 cycles remaining for other tasks
+
+sampleOutputDirectFunc
+
+            sampleOutputDirect
+
+            RET
+
+
+; sampleOutputNoIntDirectFunc
+; ---------------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; Output a sample to the DAC not checking for elapsed timer but still resetting the timer
+; 15 cycles before writing YM
+;
+; = 69 cycles + 27 (CALL+RET) = 96 cycles - ~173 cycles remaining for others tasks
+
+sampleOutputNoIntDirectFunc
+
+            sampleOutputNoIntDirect
+
+            RET
+
+
+; sampleOutputNoIntSafeFunc
+; -------------------------
+; timer A res  ->  IXL
+; YMPORT0      ->  HL'
+; YMPORT1      ->  DE'
+; read buffer  ->  BC' ->  read buffer
+;
+; wait until sample timer elapsed and output a sample to the DAC
+; 39 cycles before writing YM
+;
+; = 93 + 27 cycles (CALL+RET) = 120 cycles - ~149 cycles remaining for others tasks
+
+sampleOutputNoIntSafeFunc
+
+            sampleOutputNoIntSafe
+
+            RET
+
+
+; setBankForPCM
+; -------------
+; bank (b15-b22) --> A
+;                    BC ->  point on bank register
+;
+; set bank register and save it into 'BANK_SAVE''
+;
+; = 122 + 27 cycles (CALL+RET) = 149 cycles
+
+setBankForPCM
+
+            LD  (BANK_SAVE), A          ; save bank value           ' 13    |
+            DI                          ;                           ' 4     |
+            setBank_BC                  ; set bank for src          ' 101   | 122
+            EI                          ;                           ' 4     |
+
+            RET

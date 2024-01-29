@@ -1,0 +1,43 @@
+; ###########################      macro       ##############################
+
+
+; PSG_updateEnv
+; -------------
+; attenuation   --> E                   ; 0-F
+; PSGPORT       --> HL
+;                   A   --> ?
+;
+; Apply attenuation on envelop for given channel
+; 55 cycles
+
+            macro PSG_updateEnv ch
+
+            LD      A, (PSG_STATE_ENV+ch)   ; A = PSG env           ' 13    |
+            ADD     E                       ; A = env + att         ' 4     |
+            CP      $10                 ; if !(A < $10)             ' 7     | (31)
+            JR      C, .ok              ;                           ' 7     |
+
+            LD      A, $F               ;     A = $F                ' 7     | (38)
+
+.ok
+            OR      ((ch << 5) + $90)   ; A = $90 | (ch << 5) | env ' 7     |
+            LD      (HL), A             ; store env                 ' 7+3   | 17 (55)
+
+            endm
+
+
+; isPSGComBufferEmpty
+; -------------------
+;           HL  --> ?
+;           A   --> ?
+;
+; (A == 0) or Z flag set = PSG com buffer empty
+; 30 cycles
+
+            macro isPSGComBufferEmpty
+
+            LD      A, (PSG_BUF_RD_POS) ;                           ' 13    |
+            LD      HL, PSG_BUF_WR_POS  ;                           ' 10    | 30
+            SUB     (HL)                ; PSG com buffer empty ?    ' 7     |
+
+            endm

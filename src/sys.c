@@ -16,8 +16,8 @@
 #include "bmp.h"
 #include "timer.h"
 #include "string.h"
-#include "sound.h"
-#include "xgm.h"
+#include "snd/sound.h"
+#include "snd/xgm.h"
 #include "dma.h"
 #include "sram.h"
 #include "sprite_eng.h"
@@ -57,10 +57,12 @@ typedef union
 extern u16 lastVCnt;
 
 // extern library callback function (we don't want to share them)
-extern void BMP_doVBlankProcess();
-extern void XGM_doVBlankProcess();
-extern bool MAP_doVBlankProcess();
-extern bool VDP_doVBlankScrollProcess();
+extern void BMP_doVBlankProcess(void);
+extern void XGM_doVBlankProcess(void);
+extern bool MAP_doVBlankProcess(void);
+extern bool VDP_doVBlankScrollProcess(void);
+extern bool XGM2_doVBlankFadeProcess(void);
+
 
 // we don't want to share that method
 extern void MEM_init();
@@ -731,6 +733,12 @@ bool NO_INLINE SYS_doVBlankProcessEx(VBlankProcessTime processTime)
                 KLog_U2("Warning: Palette fade task completed outside VBlank area. Scanline after completion = ", vcnt, " on frame #", vtimer);
         }
 #endif
+    }
+
+    // XGM2 fade process
+    if (vbp & PROCESS_XGM2_FADE_TASK)
+    {
+        if (!XGM2_doVBlankFadeProcess()) vbp &= ~PROCESS_XGM2_FADE_TASK;
     }
 
     // store back

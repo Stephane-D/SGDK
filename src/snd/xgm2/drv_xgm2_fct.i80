@@ -1,0 +1,620 @@
+; ##############################  functions  ################################
+
+; process68KCommands_noPSG
+; ------------------------
+;               HL  --> ?
+;               BC  --> ?
+;               DE  --> ?
+;               IY  --> ?
+;               IXH --> ?
+;               A   --> ?
+;
+; process 68K commands which does not require accessing PSG
+; = 0 cycles
+
+process68KCommands_noPSG                    ; call                      ' 17
+
+            LD      HL, ACCESS              ;                           ' 10    |
+            SET     ACCESS_CMD, (HL)        ; process PCM commands      ' 15    | 25 (42)
+
+            LD      A, (COMMAND)            ;                           ' 13    |
+            LD      B, A                    ; B = command               ' 4     |
+            LD      A, (STATUS)             ;                           ' 13    | 34 (76)
+            LD      C, A                    ; C = status                ' 4     |
+
+            handlePCMCommand 0              ; handle play PCM0 command  ' 18    |
+            handlePCMCommand 1              ; handle play PCM1 command  ' 18    | 54  (130)
+            handlePCMCommand 2              ; handle play PCM2 command  ' 18    |
+
+            BIT     CMD_RESUME_SFT, B       ; resume command ?          ' 8     |
+            JP      Z, .no_resume           ;                           ' 10    | 18 (148)
+
+; COMMAND b3 = resume play
+; ------------------------
+
+            SET     STAT_PLAY_SFT, C        ; set play state            ' 8     | (156)
+
+            SAMPLE_OUTPUT_FASTCALL          ;
+
+            CALL    FM_unmute               ; unmute FM                 ' 20
+
+            LD      HL, PSG_CMD_REQUEST         ;                       ' 10    |
+            SET     PSG_UNMUTE_REQ_SFT, (HL)    ; request unmute PSG    ' 15    | 25 (45)
+
+            JP      .done_play_commands_no_so   ;                       ' 10    | (55)
+
+.no_resume                                  ;                           ' 148
+            BIT     CMD_PLAY_SFT, B         ; play command ?            ' 8     |
+            JR      Z, .no_play             ;                           ' 10    | 18 (166)
+
+; COMMAND b4 = start play       STATUS b4 = XGM playing
+; -----------------------
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    FM_mute                 ; mute FM                   ' 146
+
+            LD      HL, PSG_CMD_REQUEST     ;                           ' 10    |
+            SET     PSG_MUTE_REQ_SFT, (HL)  ; request mute PSG          ' 15    | 25 (171)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      HL, (PLAY_ARG_PSG_ADDR) ;                           ' 16    | (16)
+
+            LD      (PSG_START_ADDR), HL    ;                           ' 16    |
+            XOR     A                       ;                           ' 4     |
+            LD      (PSG_CUR_ADDR), A       ;                           ' 13    | 49 (65)
+            LD      (PSG_CUR_ADDR + 1), HL  ; set PSG stream addr       ' 16    |
+
+            LD      HL, (PLAY_ARG_FM_ADDR)  ;                           ' 16    | (81)
+
+            LD      (FM_START_ADDR), HL     ;                           ' 16    |
+            XOR     A                       ;                           ' 4     |
+            LD      (FM_CUR_ADDR), A        ;                           ' 13    | 49 (130)
+            LD      (FM_CUR_ADDR + 1), HL   ; set FM stream addr        ' 16    |
+
+            LD      A, (PLAY_ARG_LOOP)      ;                           ' 13    |
+            LD      (REMAINING_LOOP), A     ; reset loop counter        ' 13    | 26 (156)
+
+            SET     STAT_PLAY_SFT, C        ; set playing state         ' 8     | (164)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      A, H                    ;                           ' 4     |
+            OR      L                       ; FM_START_ADDR = 0 ?       ' 4     | (15)
+            JR      Z, .stopped             ;   --> stop command        ' 7     |
+
+.really_playing
+            XOR     A                           ;                       ' 4     |
+            LD      H, A                        ;                       ' 4     |
+            LD      L, A                        ;                       ' 4     |
+            LD      (PENDING_FRAME_FRAC), HL    ; reset PENDING_FRAME   ' 16    |
+            LD      (ELAPSED_FRAME+0), HL       ; reset ELAPSED_FRAME   ' 16    |
+            LD      (ELAPSED_FRAME+2), A        ;                       ' 13    |
+            LD      (MISSED_FRAME), A           ; reset MISSED FRAME    ' 13    | 134 (149)
+            LD      (FM_BUF_RD_POS), HL         ; reset read/write pos  ' 16    |
+            LD      (FM_WAIT_FRAME), HL         ; reset wait            ' 16    |
+            LD      (PSG_BUF_RD_POS), HL        ; reset read/write pos  ' 16    |
+            LD      (PSG_WAIT_FRAME), HL        ; reset wait            ' 16    |
+
+            JP      .done_play_commands         ;                       ' 10    | (159)
+
+.stopped                                        ;                       ' 20
+            RES     STAT_PLAY_SFT, C            ; not playing           ' 8     | 18 (38)
+            JP      .done_play_commands_no_so   ;                       ' 10    |
+
+.no_play                                        ;                       ' 166
+            SAMPLE_OUTPUT_FASTCALL
+
+            BIT     CMD_PAUSE_SFT, B             ; pause play command ? ' 8     | (15)
+            JR      Z, .done_play_commands_no_so ;                      ' 7     |
+
+; COMMAND - pause/stop play
+; -----------------------
+
+            CALL    FM_mute                 ; mute FM                   ' 146
+
+            LD      HL, PSG_CMD_REQUEST     ;                           ' 10    |
+            SET     PSG_MUTE_REQ_SFT, (HL)  ; request mute PSG          ' 15    | 25 (171)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            RES     STAT_PLAY_SFT, C            ; not playing           ' 8     |
+            LD      HL, 0                       ;                       ' 10    |
+            LD      (PENDING_FRAME_FRAC), HL    ; reset PENDING_FRAME   ' 16    | (46)
+            JR      .done_play_commands_no_so   ;                       ' 12    |
+
+.done_play_commands                         ;                           ' 159
+            SAMPLE_OUTPUT_FASTCALL
+
+.done_play_commands_no_so                   ;                           ' 55
+            BIT     CMD_SET_VOL_FM_SFT, B   ; set FM volume ?           ' 8    | (73)
+            JP      Z, .no_FM_volume        ;                           ' 10   |
+
+; COMMAND - set volume FM
+; -----------------------
+
+            LD      A, (FM_ARG_VOLUME)      ; A = FM volume             ' 13    | (86)
+            CALL    FM_setAttenuation       ; set volume                ' 155
+
+            SAMPLE_OUTPUT_FASTCALL
+
+.no_FM_volume                               ;                           ' 73
+            LD      A, B                    ; A = command               ' 4     |
+            AND     $80                     ; clear done commands       ' 7     |
+            LD      (COMMAND), A            ; write back COMMAND        ' 13    | 41 (114)
+            LD      A, C                    ; A = status                ' 4     |
+            LD      (STATUS), A             ; write back STATUS         ' 13    |
+
+            LD      HL, ACCESS              ;                           ' 10    |
+            RES     ACCESS_CMD, (HL)        ; Z80 done process commands ' 15    | 25 (139)
+
+            JP      sampleOutputFunc        ; sampleOutputFunc returns to caller
+
+
+; process68KCommands_PSG
+; ----------------------
+;               HL  --> ?
+;               BC  --> ?
+;               DE  --> ?
+;               IY  --> ?
+;               IXH --> ?
+;               A   --> ?
+;
+; process 68K commands which require accessing PSG
+; = 0 cycles
+
+process68KCommands_PSG                          ; call                      ' 17
+
+            LD      HL, PSG_CMD_REQUEST         ;                           ' 10    |
+            BIT     PSG_MUTE_REQ_SFT, (HL)      ; mute for PSG requested ?  ' 12    | 29 (46)
+            JR      Z, .no_mute                 ;                           ' 7     |
+
+            CALL    PSG_mute                    ;                           ' 89    |
+            LD      HL, PSG_CMD_REQUEST         ;                           ' 10    | 99 (145)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+.no_mute                                        ;                           ' 51
+            BIT     PSG_UNMUTE_REQ_SFT, (HL)    ; unmute for PSG request ?  ' 12    |
+            JR      Z, .no_unmute               ;                           ' 7     | 19 (70)
+
+            CALL    PSG_unmute                  ;                           ' 120   |
+
+            LD      HL, PSG_CMD_REQUEST         ;                           ' 10    | (130)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+.no_unmute                                      ;                           ' 75
+            XOR     A                           ;                           ' 4    | 11 (86)
+            LD      (HL), A                     ; done                      ' 7    |
+
+            LD      HL, ACCESS                  ;                           ' 10    |
+            SET     ACCESS_CMD, (HL)            ; Z80 process SET VOLUME    ' 15    | 25 (111)
+
+            LD      HL, COMMAND                 ;                           ' 10    |
+            BIT     CMD_SET_VOL_PSG_SFT, (HL)   ; set PSG volume ?          ' 12    | 29 (140)
+            JR      Z, .no_PSG_volume           ;                           ' 7     |
+
+; COMMAND - set volume PSG
+; ------------------------
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            RES     CMD_SET_VOL_PSG_SFT, (HL)   ; clear set PSG volume com  ' 15    |
+            LD      A, (PSG_ARG_VOLUME)         ; load PSG volume arg       ' 13    | (28)
+
+            CALL    PSG_setAttenuation          ;                           ' 120
+
+.no_PSG_volume                                  ;                           ' 145
+            LD      HL, ACCESS                  ;                           ' 10    |
+            RES     ACCESS_CMD, (HL)            ; done process SET VOLUME   ' 15    | 25 (170)
+
+            JP      sampleOutputFunc            ; output sample and RET
+
+
+; unpackCmds
+; ----------
+; src.LM    --> HL  --> src.LM          ; packed commands source buffer (b15-b0)
+; src.H     --> IXH --> src.H           ; high byte (b23-b16) of source buffer
+; dst       --> DE  --> dst             ; destination circular buffer
+;               A   --> ?
+;               A'  --> ?
+;               BC  --> ?
+;               IYL --> ?
+;
+; unpack source command buffer in destination circular command buffer
+; 155 cycles max between each sampleOutputWFunc call.
+; X samples
+
+unpackCmds                              ; call                      ' 17
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | (15)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | 20 (37)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            setBank_BC                  ; set bank for src          ' 101   | (138)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (146)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            JP      .same_bank          ; bank just set             ' 10
+
+.loop
+            sampleOutput                ;                           ' +     |
+
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | (18)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (36)
+            JR      NC, .same_H         ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   increment src.H         ' 8     |
+            EX      AF, AF'             ;   A' = new src.b15        ' 4     |
+            LD      A, IXH              ;   A = bit 16-23           ' 8     | 34 (70)
+            RLCA                        ;   A = bit 15-22           ' 4     |
+            JP      .set_bank           ;                           ' 10    |
+
+.same_H                                 ;                           ' 41
+            EX      AF, AF'             ; A' = new src.b15          ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     |
+            SCF                         ; carry = 1                 ' 4     | 27 (68)
+            RLA                         ; A = bit 15-22             ' 4     |
+            wait7                       ;                           ' 7     |
+
+.set_bank                               ;                           ' 70
+            setBank_BC                  ; set bank for src          ' 101   |
+            LD      H, $80              ; H = $80 (bank access)     ' 7     | 108 (178)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+.same_bank                              ;                           ' 18
+            LD      A, (HL)             ; A = next byte             ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      B, A                ; save in B                 ' 8     |
+            RLCA                        ;                           ' 4     |
+            RLCA                        ;                           ' 4     | 53 (71)
+            RLCA                        ;                           ' 4     |
+            AND     $7                  ; A = lit size              ' 7     |
+            JP      Z, .no_lit          ;                           ' 10    |
+
+.lit
+            LD      C, A                ; C = lit size              ' 4     |
+            LD      A, B                ; A = block header          ' 4     |
+            AND     $1F                 ; A = mat size              ' 7     | 23 (94)
+            LD      IYL, A              ; IYL = mat size            ' 8     |
+
+            LD      B, 0                ; B = 0                     ' 7     |
+            LD      A, E                ; A = dest.L                ' 4     |
+            CP      256-7               ; < 249 (D won't change) ?  ' 7     | 25 (119)
+            JR      C, .fast_lit        ;                           ' 7     |
+
+.slow_lit
+            LD      A, (HL)             ; #1                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     |
+            INC     E                   ;                           ' 4     | 38 (157)
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .lit_done        ;                           ' 7     |
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      A, (HL)             ; #2                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     |
+            INC     E                   ;                           ' 4     | (38)
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .lit_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #3                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     |
+            INC     E                   ;                           ' 4     | 38 (76)
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .lit_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #4                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     |
+            INC     E                   ;                           ' 4     | 38 (114)
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .lit_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #5                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     |
+            INC     E                   ;                           ' 4     | 38 (152)
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .lit_done        ;                           ' 7     |
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      A, (HL)             ; #6                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     |
+            INC     E                   ;                           ' 4     | (38)
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .lit_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #7                        ' 7+3   |
+            INC     HL                  ;                           ' 6     |
+            LD      (DE), A             ;                           ' 7     | 37 (75)
+            INC     E                   ;                           ' 4     |
+            JP      .lit_done           ;                           ' 10    |
+
+.fast_lit
+            sampleOutput
+
+            LDIR                        ; copy literal              ' xx    | (24*6+19=163)
+
+.lit_done
+            LD      A, IYL              ; A = match len             ' 8     |
+            CP      2                   ; (match len < 2) ?         ' 7     | 25 (188)
+            JP      C, .loop            ;   --> next                ' 10    |
+
+            LD      C, A                ; C = match len             ' 8     | (193)
+
+.do_mat
+            sampleOutput
+
+            LD      A, (HL)             ; A = next byte = matoff    ' 7+3   | (16)
+            INC     HL                  ;                           ' 6     |
+
+            PUSH    HL                  ; save HL (src)             ' 11    | (26)
+
+            ADD     E                   ; A = dest + match offset   ' 4     |
+            LD      H, D                ;                           ' 4     | 12 (38)
+            LD      L, A                ; HL = &dst[off] = src      ' 4     |
+
+            LD      B, 7                ; B = 7 (num byte per loop) ' 7     |
+            LD      A, C                ; A = match len             ' 4     |
+            CP      B                   ; < B ?                     ' 4     | 22 (60)
+            JR      C, .mat_last        ;                           ' 7     |
+
+.mat_copy_block
+            LD      A, (HL)             ; #1                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 22 (82)
+            INC     E                   ;                           ' 4     |
+
+            LD      A, (HL)             ; #2                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 22 (104)
+            INC     E                   ;                           ' 4     |
+
+            LD      A, (HL)             ; #3                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | (126)
+            INC     E                   ;                           ' 4     |
+
+            LD      A, (HL)             ; #4                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | (148)
+            INC     E                   ;                           ' 4     |
+
+            LD      A, (HL)             ; #5                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | (170)
+            INC     E                   ;                           ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      A, (HL)             ; #6                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | (22)
+            INC     E                   ;                           ' 4     |
+
+            LD      A, (HL)             ; #7                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | (44)
+            INC     E                   ;                           ' 4     |
+
+            LD      A, C                ;                           ' 4     |
+            SUB     B                   ; match len -= block size   ' 4     | 12 (56)
+            LD      C, A                ;                           ' 4     |
+
+            JR      Z, .mat_done        ; done                      ' 7     | (63)
+
+            CP      B                   ; match len >= block size ? ' 4     |
+            JP      NC, .mat_copy_block ;   --> copy next block     ' 10    | 14 (77)
+
+.mat_last                               ;
+            LD      A, (HL)             ; #1                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 33 (110)
+            INC     E                   ;                           ' 4     |
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .mat_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #2                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 33 (143)
+            INC     E                   ;                           ' 4     |
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .mat_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #3                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 33 (176)
+            INC     E                   ;                           ' 4     |
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .mat_done        ;                           ' 7     |
+
+            sampleOutput
+
+            LD      A, (HL)             ; #4                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | (33)
+            INC     E                   ;                           ' 4     |
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .mat_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #5                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 33 (66)
+            INC     E                   ;                           ' 4     |
+            DEC     C                   ;                           ' 4     |
+            JR      Z, .mat_done        ;                           ' 7     |
+
+            LD      A, (HL)             ; #6                        ' 7     |
+            INC     L                   ;                           ' 4     |
+            LD      (DE), A             ;                           ' 7     | 22 (99)
+            INC     E                   ;                           ' 4     |
+
+.mat_done                               ;                           ' 181
+            POP     HL                  ; restore HL (src)          ' 11    |
+            JP      .loop               ; next                      ' 10    | 21 (202)
+
+.no_lit                                 ;                           ' 71
+            LD      A, B                ; A = block header          ' 4     |
+            AND     $1F                 ; A = mat size              ' 7     | 18 (89)
+            JR      Z, .end_block       ; (mat size == 0) --> end   ' 7     |
+
+            CP      1                   ; (mat size == 1) ?         ' 7     |
+            JP      Z, .loop            ;   --> cross bank, next    ' 10    | 17 (106)
+
+.no_lit_mat
+            LD      C, A                ; C = match len             ' 4     | 21 (127)
+            JP      .do_mat             ; do match copy             ' 10    |
+
+.end_block                              ;                           ' 94
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (112)
+            JP      NZ, .same_bank_end  ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (130)
+            JR      NC, .same_H_end     ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (138)
+
+.same_H_end
+            LD      H, A                ; restore H                 ' 4     | 4 (142)
+
+            JP      sampleOutputFunc    ; return
+
+.same_bank_end                          ;                           ' 112
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (132)
+            LD      H, A                ; restore H                 ' 4     |
+
+            JP      sampleOutputFunc    ; return
+
+
+; waitDMA
+; -------
+waitDMA                                         ;                           ' 17
+
+            LD      B, 0                        ; clear B                   ' 7     |
+            LD      HL, IN_DMA                  ; HL point on IN_DMA        ' 17    | (41)
+
+.loop
+            BIT     0, (HL)                     ; DMA done ?                ' 12    |
+            JP      Z, .dma_done                ;                           ' 10    | 22 (63)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            INC     B                           ; count wait DMA sample     ' 4     |
+            JP      .loop                       ;                           ' 10    | (14)
+
+.dma_done                                       ;                           ' 63
+            LD      HL, DMA_WAIT_TIME_TMP       ;                           ' 10    |
+            LD      (HL), B                     ; store wait DMA            ' 7     | 17 (80)
+
+            RET                                 ;                           ' 10    | (90)
+
+
+; setBankBC_func
+; --------------
+; bank (b15-b22) --> A
+;                    BC ->  point on bank register
+;
+; set bank register
+;
+; = 101 + 27 cycles (CALL+RET) = 128 cycles
+
+setBankBC_func
+
+            setBank_BC                  ; set bank for src          ' 101
+
+            RET
+
+
+; wait27_func
+; -----------
+
+wait27_func                             ;                           ' 17
+            RET                         ; done                      ' 10    | (34)
+
+
+; wait31_func
+; -----------
+
+wait31_func                             ;                           ' 17
+            NOP                         ;                           ' 4
+            RET                         ; done                      ' 10    | (31)
+
+
+; wait34_func
+; -----------
+;           --> F   --> ?
+
+wait34_func                             ;                           ' 17
+            wait7                       ;                           ' 7     |
+            RET                         ; done                      ' 10    | (34)
+
+
+; wait37_func
+; -----------
+
+wait37_func                             ;                           ' 17
+            wait10                       ;                          ' 10    |
+            RET                         ; done                      ' 10    | (37)
+
+
+; wait46_func
+; -----------
+
+wait46_func                             ;                           ' 17
+            wait19                      ;                           ' 19    |
+            RET                         ; done                      ' 10    | (46)
+
+
+; wait50_func
+; -----------
+
+wait50_func                             ;                           ' 17
+            wait23                      ;                           ' 23    |
+            RET                         ; done                      ' 10    | (50)
+
+
+; wait54_func
+; -----------
+
+wait54_func                             ;                           ' 17
+            CALL    wait27_func         ;                           ' 27    |
+            RET                         ; done                      ' 10    | (54)
+
+
+; wait73_func
+; -----------
+
+wait73_func                             ;                           ' 17
+            CALL    wait46_func         ;                           ' 46    |
+            RET                         ; done                      ' 10    | (73)
+
+
+; wait81_func
+; -----------
+
+wait81_func                             ;                           ' 17
+            CALL    wait54_func         ;                           ' 54    |
+            RET                         ; done                      ' 10    | (81)

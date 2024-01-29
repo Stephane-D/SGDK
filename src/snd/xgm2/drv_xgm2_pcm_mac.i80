@@ -1,0 +1,1444 @@
+; ###########################      macro       ##############################
+
+
+; sampleOutputDirectFast
+; ----------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; Output a sample to the DAC
+; 11 cycles before writing YM
+;
+; = 36 cycles - ~233 cycles remaining for other tasks
+
+            macro sampleOutputDirectFast
+
+            EXX                     ;                           ' 4     | (4)
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (32)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (36)
+
+            endm
+
+
+; sampleOutputNoIntDirectFast
+; ---------------------------
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; wait until sample timer elapsed and output a sample to the DAC
+; 15 cycles before writing YM
+;
+; = 44 cycles - ~225 cycles remaining for others tasks
+
+            macro sampleOutputNoIntDirectFast
+
+            DI                      ; disable ints              ' 4     |
+            EXX                     ;                           ' 4     | (8)
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (36)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (44)
+            EI                      ; enable ints               ' 4     |
+
+            endm
+
+
+; sampleOutputDirect
+; ------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; Output a sample to the DAC
+; 11 cycles before writing YM
+;
+; = 61 cycles - ~208 cycles remaining for other tasks
+
+            macro sampleOutputDirect
+
+            EXX                     ;                           ' 4     | (4)
+
+            LD      (HL), 0x27      ; timer register            ' 10    |
+            LD      A, IXL          ; A = timer A res           ' 8     | 25 (29)
+            LD      (DE), A         ; reset timer A             ' 7     |
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (57)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (61)
+
+            endm
+
+
+; sampleOutputNoIntDirect
+; -----------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; wait until sample timer elapsed and output a sample to the DAC
+; 15 cycles before writing YM
+;
+; = 69 cycles - ~200 cycles remaining for others tasks
+
+            macro sampleOutputNoIntDirect
+
+            DI                      ; disable ints              ' 4     |
+            EXX                     ;                           ' 4     | (8)
+
+            LD      (HL), 0x27      ; timer register            ' 10    |
+            LD      A, IXL          ; A = timer A res           ' 8     | 25 (33)
+            LD      (DE), A         ; reset timer A             ' 7     |
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (61)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (69)
+            EI                      ; enable ints               ' 4     |
+
+            endm
+
+
+; sampleOutput
+; ------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; wait until sample timer elapsed and output a sample to the DAC
+; 19 cycles before writing YM
+;
+; = 80+ cycles - ~189 cycles remaining for others tasks
+
+            macro sampleOutput
+
+            EXX                     ;                           ' 4     | (4)
+
+            LD      A, IXL          ; A = timer A res           ' 8     |
+            LD      (HL), 0x27      ; timer register            ' 10    | 18 (22)
+
+.wait
+            BIT     0, (HL)         ; timer A not yet elapsed ? ' 12    |
+            JR      Z, .wait        ; --> wait                  ' 7     | 19 (41)
+
+            LD      (DE), A         ; reset timer A             ' 7     | (48)
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (76)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (80)
+
+            endm
+
+
+; sampleOutputNoInt
+; -----------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; wait until sample timer elapsed and output a sample to the DAC
+; 23 cycles before writing YM
+;
+; = 88+ cycles - ~181 cycles remaining for others tasks
+
+            macro sampleOutputNoInt
+
+            DI                      ; disable ints              ' 4     |
+            EXX                     ;                           ' 4     | (8)
+
+            LD      A, IXL          ; A = timer A res           ' 8     |
+            LD      (HL), 0x27      ; timer register            ' 10    | 18 (26)
+
+.wait
+            BIT     0, (HL)         ; timer A not yet elapsed ? ' 12    |
+            JR      Z, .wait        ; --> wait                  ' 7     | 19 (45)
+
+            LD      (DE), A         ; reset timer A             ' 7     | (52)
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (80)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (88)
+            EI                      ; enable ints               ' 4     |
+
+            endm
+
+
+; sampleOutputNoIntSafe
+; ---------------------
+; timer A res   -->  IXL
+; YMPORT0       -->  HL'
+; YMPORT1       -->  DE'
+; read buffer   -->  BC'    -->  read buffer
+;
+; wait until sample timer elapsed and output a sample to the DAC
+; 39 cycles before writing YM
+;
+; = 93+ cycles - ~176 cycles remaining for others tasks
+
+            macro sampleOutputNoIntSafe
+
+.wait
+            LD      A, (YMPORT0)    ; A = YM status             ' 13    |
+            RRA                     ; timer A overflow ?        ' 4     | (24)
+            JR      NC, .wait       ;                           ' 7     |
+
+            DI                      ; disable ints              ' 4     |
+            EXX                     ;                           ' 4     | 8 (32)
+
+            LD      (HL), 0x27      ; timer register            ' 10    |
+            LD      A, IXL          ; A = timer A res           ' 8     | 25 (57)
+            LD      (DE), A         ; reset timer A             ' 7     |
+
+            LD      A, (BC)         ; read sample from buffer   ' 7     |
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
+            INC     C               ; increment read address    ' 4     | 28 (85)
+            LD      (DE), A         ; play sample               ' 7     |
+
+            EXX                     ;                           ' 4     | (93)
+            EI                      ; enable ints               ' 4     |
+
+            endm
+
+
+; getRemainingSample
+; ------------------
+; current read position --> D
+;                           A   --> ?
+;
+; Get remaining sample in PCM buffer
+; = 17 cycles
+
+            macro getRemainingSample
+
+            LD      A, (PCM_WRITE_POS)      ; current PCM write pos     ' 13    | 17
+            SUB     D                       ; subtract curr read pos    ' 4     |
+
+            endm
+
+
+; isPCMLessThan
+; -------------
+; current read position --> D
+;                           A   --> ?
+;
+; Carry is set if less than <num> bytes of PCM sample remains in PCM buffer
+; = 24 cycles
+
+            macro isPCMLessThan num
+
+            getRemainingSample              ;                           ' 17    | 24
+            CP      num                     ;                           ' 7     |
+
+            endm
+
+
+; isPCMEmpty
+; ----------
+; current read position --> D
+;                           A   --> ?
+;
+; Carry is set if less than 64 bytes of PCM sample remains in PCM buffer (empty)
+; = 24 cycles
+
+            macro isPCMEmpty
+
+            isPCMLessThan 64                ;                           ' 24
+
+            endm
+
+
+; isPCMNotFull
+; ------------
+; current read position --> D
+;                           A   --> ?
+;
+; Carry is set if less than 192 bytes of PCM sample remains in PCM buffer (not full)
+; = 24 cycles
+
+            macro isPCMNotFull
+
+            isPCMLessThan 192               ;                           ' 24
+
+            endm
+
+
+; handlePCMCommand
+; ----------------
+; command       --> B
+; status        --> C   --> status
+;                   HL  --> ?
+;                   A   --> ?
+;
+; handle PCM play/stop command
+; = 18 cycles / 1 sample
+
+            macro   handlePCMCommand   ch
+
+            BIT     CMD_PCM_SFT+ch, B       ; play PCM ch command ?     ' 8     |
+            JP      Z, .no_play             ;                           ' 10    | (18)
+
+            LD      A, (PCM_ARG+ch)             ;                       ' 13    |
+            LD      (PCM_PRIO_EXT+(ch*8)), A    ; set PCM params        ' 13    | 26 (44)
+
+            LD      HL, (PCM_ADDR_ARG+(ch*4))   ; get PCM addr          ' 16    |
+            LD      A, H                        ;                       ' 4     |
+            OR      L                           ;                       ' 4     | 31 (75)
+            JR      NZ, .play                   ; not stop play ?       ' 7     |
+
+            RES     STAT_PCM_SFT+ch, C      ; clear play status         ' 8     | 20 (95)
+            JR      .done                   ; done                      ' 12    |
+
+.play                                       ;                           ' 80
+            SET     STAT_PCM_SFT+ch, C      ; set play status           ' 8     | (88)
+
+            XOR     A                           ;                       ' 4     |
+            LD      (PCM_ADDR+(ch*8)+0), A      ;                       ' 13    | 33 (121)
+            LD      (PCM_ADDR+(ch*8)+1), HL     ; set sample address    ' 16    |
+
+            LD      HL, (PCM_LEN_ARG+(ch*4))    ;                       ' 16    |
+            LD      (PCM_LEN+(ch*8)), HL        ; set sample len        ' 16    | 32 (153)
+
+.done
+            SAMPLE_OUTPUT_FASTCALL
+
+.no_play                                    ;                           ' 18
+
+            endm
+
+
+; updatePCM
+; ---------
+; sample source.ML  --> HL  --> ?
+; sample source.H   --> IXH
+;                       A   --> ?
+;
+; update PCM vars after buffer fill
+; 1 or 2 samples
+
+            macro updatePCM   ch
+
+            DI                                  ; protect from ints     ' 4     |
+            LD      A, (PCM_PRIO_EXT+(ch*8))    ; A = PCM params        ' 13    |
+            LD      B, A                        ; B = PCM params        ' 4     | (36)
+            AND     $10                         ;                       ' 8     |
+            JR      NZ, .params_changed         ; params changed ?      ' 7     |
+
+            LD      (PCM_ADDR+(ch*8)+0), HL     ; store PCM src.ML      ' 16    | (52)
+
+            LD      HL, (PCM_LEN+(ch*8))        ; get remaining PCM len ' 16    |
+            DEC     HL                          ; decrement it          ' 6     | 22 (74)
+
+            LD      A, H                        ;                       ' 4     |
+            OR      L                           ;                       ' 4     | 15 (89)
+            JR      NZ, .no_end                 ; end ? -> reset        ' 7     |
+
+.end
+            LD      A, B                        ; B = PCM params        ' 4     |
+            ADD     A                           ; carry = loop          ' 4     | 15 (104)
+            JR      C, .loop                    ; loop ?                ' 7     |
+
+.no_loop
+            LD      HL, STATUS                  ;                       ' 10    |
+            RES     STAT_PCM_SFT+ch, (HL)       ; clear play status     ' 15    | 37 (141)
+            JR      .done                       ;                       ' 12    |
+
+.no_end                                         ;                       ' 94
+            LD      (PCM_LEN+(ch*8)), HL        ; save len              ' 16    |
+            LD      A, IXH                      ; IXH = PCM src.H       ' 8     |
+            LD      (PCM_ADDR+(ch*8)+2), A      ; store it              ' 13    | 49 (143)
+            JR      .done                       ;                       ' 12    |
+
+.params_changed                                 ;                       ' 41
+            LD      A, B                        ; A = PCM params        ' 4     |
+            AND     $EF                         ; can remove flag       ' 7     |
+            LD      (PCM_PRIO_EXT+(ch*8)), A    ; A = PCM params        ' 13    | 36 (77)
+            JR      .done                       ; don't update addr/len ' 12    |
+
+.loop                                           ;                       ' 109
+            EI                                  ;                       ' 4     | (113)
+            CALL    sampleOutputNoIntSafeFunc
+
+            NOP                                 ; can interrupts here   ' 4     |
+            DI                                  ; disable ints          ' 4     |
+            LD      HL, ACCESS                  ; protect arg access    ' 10    | (33)
+            SET     ACCESS_PCM_ARG, (HL)        ; access PCM args       ' 15    |
+
+            LD      HL, (PCM_ADDR_ARG+(ch*4))   ; --> reset PCM addr    ' 16    | 32 (65)
+            LD      (PCM_ADDR+(ch*8)+1), HL     ;                       ' 16    |
+
+            LD      HL, (PCM_LEN_ARG+(ch*4))    ; --> reset PCM len     ' 16    |
+            LD      (PCM_LEN+(ch*8)), HL        ;                       ' 16    | 32 (97)
+
+            LD      HL, ACCESS                  ; protect arg access    ' 10    |
+            RES     ACCESS_PCM_ARG, (HL)        ; done access PCM args  ' 15    | 25 (121)
+
+            XOR     A                           ; --> reset PCM addr H  ' 4     | 17 (139)
+            LD      (PCM_ADDR+(ch*8)+0), A      ;                       ' 13    |
+
+.done                                           ;                       ' 143
+            EI                                  ; enable ints           ' 4     | (147)
+            CALL    sampleOutputNoIntSafeFunc
+
+            endm
+
+
+; clearPCM1
+; ---------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $00                           ->  A
+;
+; clear 1 sample in output buffer
+; = 11 cycles
+
+            macro clearPCM1
+
+            LD      (DE), A         ; store it in write buffer  ' 7     | (11)
+            INC     E               ; next (dest)               ' 4     |
+
+            endm                    ;                           ' 11
+
+
+; clearPCM2
+; ---------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $00                           ->  A
+;
+; clear 2 samples in output buffer
+; = 22 cycles
+
+            macro clearPCM2
+
+            clearPCM1               ; clear 2 samples           ' 11
+            clearPCM1               ;                           ' 11
+
+            endm                    ;                           ' 22
+
+
+; clearPCM4
+; ---------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $00                           ->  A
+;
+; clear 4 samples in output buffer
+; = 44 cycles
+
+            macro clearPCM4
+
+            clearPCM2               ; clear 4 samples           ' 22
+            clearPCM2               ;                           ' 22
+
+            endm                    ;                           ' 44
+
+
+; clearPCM8
+; ----------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $00                           ->  A
+;
+; clear 8 samples in output buffer
+; = 88 cycles
+
+            macro clearPCM8
+
+            clearPCM4               ; clear 8 samples           ' 44
+            clearPCM4               ;                           ' 44
+
+            endm                    ;                           ' 88
+
+
+; unsignPCM1
+; ----------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $80                           ->  C
+;
+; unsign 1 sample in output buffer
+; = 22 cycles
+
+            macro unsignPCM1
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     C               ; unsign                    ' 4     |
+            LD      (DE), A         ; store it in write buffer  ' 7     | (22)
+            INC     E               ; next (dest)               ' 4     |
+
+            endm                    ;                           ' 22
+
+
+; unsignPCM2
+; ----------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $80                           ->  C
+;
+; unsign 2 samples in output buffer
+; = 44 cycles
+
+            macro unsignPCM2
+
+            unsignPCM1              ; unsign 2 samples          ' 22
+            unsignPCM1              ;                           ' 22
+
+            endm                    ;                           ' 44
+
+
+; unsignPCM4
+; ----------
+; point to write buffer         ->  DE  ->  point to write buffer
+; $80                           ->  C
+;
+; unsign 4 samples in output buffer
+; = 88 cycles
+
+            macro unsignPCM4
+
+            unsignPCM2              ; unsign 4 samples          ' 44
+            unsignPCM2              ;                           ' 44
+
+            endm                    ;                           ' 88
+
+
+; writePCM1
+; ---------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; number of write remaining     ->  BC  ->  number of write remaining
+;
+; read 1 sample from rom and write them in output buffer
+; = 19 cycles
+
+            macro writePCM1
+
+            LDI                     ; write 1 sample            ' 16+3  | (19)
+
+            endm
+
+
+; writePCM2
+; ---------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; number of write remaining     ->  BC  ->  number of write remaining
+;
+; read 2 sample from rom and write them in output buffer
+; = 38 cycles
+
+            macro writePCM2
+
+            writePCM1               ; write 2 samples           ' 19
+            writePCM1               ;                           ' 19
+
+            endm
+
+
+; writePCM4
+; ---------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; number of write remaining     ->  BC  ->  number of write remaining
+;
+; read 4 samples from rom and write them in output buffer
+; = 76 cycles
+
+            macro writePCM4
+
+            writePCM2               ; write 4 samples           ' 38
+            writePCM2               ;                           ' 38
+
+            endm
+
+
+; writePCM8
+; ---------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; number of write remaining     ->  BC  ->  number of write remaining
+;
+; read 4 samples from rom and write them in output buffer
+; = 152 cycles
+
+            macro writePCM8
+
+            writePCM4               ; write 8 samples           ' 76
+            writePCM4               ;                           ' 76
+
+            endm
+
+
+; writePCM2HS
+; -----------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+;
+; read 1 sample from rom and write it twice in output buffer (half speed playback speed)
+; = 36 cycles
+
+            macro writePCM2HS
+
+            LD      A, (HL)         ; read 1 sample from ROM    ' 7+3   |
+            INC     L               ;                           ' 4     | (14)
+
+            LD      (DE), A         ; 1st write                 ' 7     |
+            INC     E               ;                           ' 4     |
+            LD      (DE), A         ; 2nd write                 ' 7     | 22 (36)
+            INC     E               ;                           ' 4     |
+
+            endm
+
+
+; writePCM4HS
+; -----------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+;
+; read 2 samples from rom and write them twice in output buffer (half speed playback speed)
+; = 72 cycles
+
+            macro writePCM4HS
+
+            writePCM2HS             ; write 4 samples           ' 36
+            writePCM2HS             ;                           ' 36
+
+            endm
+
+
+; writePCM8HS
+; -----------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+;
+; read 4 samples from rom and write them twice in output buffer (half speed playback speed)
+; = 144 cycles
+
+            macro writePCM8HS
+
+            writePCM4HS             ; write 8 samples           ' 72
+            writePCM4HS             ;                           ' 72
+
+            endm
+
+
+; mixPCM1
+; -------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 1 sample and mix it in output buffer
+; = 42 cycles (+8 when overflow)
+
+            macro mixPCM1
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     (HL)            ; mix with sample source    ' 7+3   | (27)
+            JP      PO, .ok         ; check overflow            ' 10    |
+
+            SBC     A               ; fix overflow              ' 4     |
+            XOR     C               ; A = $7F/$80               ' 4     | +8
+
+.ok
+            LD      (DE), A         ; store it in write buffer  ' 7     |
+            INC     E               ; next (dest)               ' 4     | 15 (42)
+            INC     L               ; next (source)             ' 4     |
+
+            endm                    ;                           ' 42 (+8)
+
+
+; mixPCM2
+; -------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 4 samples and mix them in output buffer
+; = 84 cycles (+16 max)
+
+            macro mixPCM2
+
+            mixPCM1                 ; mix 2 samples             ' 42
+            mixPCM1                 ;                           ' 42
+
+            endm                    ;                           ' 84 (+16)
+
+
+; mixPCM4
+; -------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 4 samples and mix them in output buffer
+; = 168 cycles (+32 max)
+
+            macro mixPCM4
+
+            mixPCM2                 ; mix 4 samples             ' 84
+            mixPCM2                 ;                           ' 84
+
+            endm                    ;                           ' 168 (+32)
+
+
+; mixFirstPCMHS
+; -------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 1 sample and mix it in output buffer (half speed playback speed)
+; = 38 cycles (+8 when overflow)
+
+            macro mixFirstPCMHS
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     (HL)            ; mix with sample source    ' 7+3   | (27)
+            JP      PO, .ok         ; check overflow            ' 10    |
+
+            SBC     A               ; fix overflow              ' 4     |
+            XOR     C               ; A = $7F/$80               ' 4     | +8
+
+.ok
+            LD      (DE), A         ; store it in write buffer  ' 7     |
+            INC     E               ; next (dest)               ' 4     | 11 (38)
+
+            endm                    ;                           ' 38 (+8)
+
+
+; mixSecondPCMHS
+; --------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 1 sample and mix it in output buffer (half speed playback speed)
+; = 42 cycles (+8 when overflow)
+
+            macro mixSecondPCMHS
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     (HL)            ; mix with sample source    ' 7+3   | (27)
+            JP      PO, .ok         ; check overflow            ' 10    |
+
+            SBC     A               ; fix overflow              ' 4     |
+            XOR     C               ; A = $7F/$80               ' 4     | +8
+
+.ok
+            LD      (DE), A         ; store it in write buffer  ' 7     |
+            INC     E               ; next (dest)               ' 4     | 11 (38)
+
+            INC     L               ; next (source)             ' 4     | (42)
+
+            endm                    ;                           ' 42 (+16)
+
+
+; mixPCM2HS
+; ---------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 1 sample and mix it twice in output buffer (half speed playback speed)
+; = 80 cycles (+16 when overflow)
+
+            macro mixPCM2HS
+
+            mixFirstPCMHS           ; mix first sample          ' 38    |
+            mixSecondPCMHS          ; mix second sample         ' 42    | (80)
+
+            endm                    ;                           ' 80 (+16)
+
+
+; mixPCM4HS
+; ---------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $7F                           ->  C
+;
+; read 2 samples and mix them twice in output buffer (half speed playback speed)
+; = 160 cycles (+32 max)
+
+            macro mixPCM4HS
+
+            mixPCM2HS               ; mix 4 samples (HalfSpeed)     ' 80
+            mixPCM2HS               ;                               ' 80
+
+            endm                    ;                               ' 160 (+44)
+
+
+; mixUnsignPCM1
+; -------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $807F                         ->  BC
+;
+; read 1 sample and mix it with output buffer, then unsign it
+; = 46 (+8 when overflow)
+
+            macro mixUnsignPCM1
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     (HL)            ; mix with sample source    ' 7+3   | (27)
+            JP      PO, .ok         ; check overflow            ' 10    |
+
+            SBC     A               ; fix overflow              ' 4     |
+            XOR     C               ; A = $7F/$80               ' 4     | +8
+
+.ok
+            ADD     B               ; unsign                    ' 4     |
+
+            LD      (DE), A         ; store it in write buffer  ' 7     |
+            INC     E               ; next (dest)               ' 4     | 19 (46)
+            INC     L               ; next (source)             ' 4     |
+
+            endm                    ;                           ' 46 (+8)
+
+
+; mixUnsignPCM2
+; -------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $807F                         ->  BC
+;
+; read 2 samples and mix them in output buffer, then unsign them
+; = 92 (+16 when overflow)
+
+            macro mixUnsignPCM2
+
+            mixUnsignPCM1           ; mix and unsign 2 samples      ' 46
+            mixUnsignPCM1           ;                               ' 46
+
+            endm                    ;                               ' 92 (+16)
+
+
+; mixUnsignPCM3
+; -------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $807F                         ->  BC
+;
+; read 3 samples and mix them in output buffer, then unsign them
+; = 138 (+24 when overflow)
+
+            macro mixUnsignPCM3
+
+            mixUnsignPCM2           ; mix and unsign 3 samples      ' 92
+            mixUnsignPCM1           ;                               ' 46
+
+            endm                    ;                               ' 138 (+24)
+
+
+; mixUnsignPCM4
+; -------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $807F                         ->  BC
+;
+; read 3 samples and mix them in output buffer, then unsign them
+; = 184 (+32 when overflow)
+
+            macro mixUnsignPCM4
+
+            mixUnsignPCM2           ; mix and unsign 4 samples      ' 92
+            mixUnsignPCM2           ;                               ' 92
+
+            endm                    ;                               ' 184 (+32)
+
+
+; mixUnsignPCM2HS
+; ---------------
+; point to sample source (ROM)  ->  HL  ->  point to sample source (ROM)
+; point to write buffer         ->  DE  ->  point to write buffer
+; $807F                         ->  BC
+;
+; read 1 sample and mix it twice in output buffer (half speed playback speed), then unsign it
+; = 88 cycles (+16 when overflow)
+
+            macro mixUnsignPCM2HS
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     (HL)            ; mix with sample source    ' 7+3   | (27)
+            JP      PO, .ok1        ; check overflow            ' 10    |
+
+            SBC     A               ; fix overflow              ' 4     |
+            XOR     C               ; A = $7F/$80               ' 4     | +8
+
+.ok1
+            ADD     B               ; unsign                    ' 4     |
+            LD      (DE), A         ; store it in write buffer  ' 7     | 15 (42)
+            INC     E               ; next (dest)               ' 4     |
+
+            LD      A, (DE)         ; read 1 sample from write  ' 7     |
+            ADD     (HL)            ; mix with sample source    ' 7+3   | 27 (69)
+            JP      PO, .ok2        ; check overflow            ' 10    |
+
+            SBC     A               ; fix overflow              ' 4     |
+            XOR     C               ; A = $7F/$80               ' 4     | +8
+
+.ok2
+            ADD     B               ; unsign                    ' 4     |
+            LD      (DE), A         ; store it in write buffer  ' 7     | 15 (84)
+            INC     E               ; next (dest)               ' 4     |
+
+            INC     L               ; next (source)             ' 4     | (88)
+
+            endm                    ;                           ' 88 (+16)
+
+
+; mixUnsignPCM4HS
+; ---------------
+; point to sample source (ROM)  ->  DE  ->  point to sample source (ROM)
+; point to write buffer         ->  HL  ->  point to write buffer
+; $807F                         ->  BC
+;
+; read 2 samples and mix them twice in output buffer (half speed playback speed), then unsign them
+; = 176 cycles (+44 max)
+
+            macro mixUnsignPCM4HS
+
+            mixUnsignPCM2HS         ; mix and unsign 4 samples (HalfSpeed)  ' 88
+            mixUnsignPCM2HS         ;                                       ' 88
+
+            endm                    ;                                       ' 176 (+44)
+
+
+; clearPCMBuffer
+; --------------
+; dst       --> DE  --> dst
+;               A   --> ?
+;               B   --> ?
+;
+; clear 64 bytes of destination PCM buffer
+; 5 samples
+
+            macro clearPCMBuffer
+
+            LD      B, 4                ; 4*16 = 64 bytes cleared   ' 7     | (7)
+
+            CALL    sampleOutputNoIntSafeFunc
+            JP      .first
+
+.loop
+            sampleOutputNoIntDirect
+
+.first
+            XOR     A                   ; A = 0                     ' 4     |
+            clearPCM8                   ; clear 16 bytes            ' 88    | (180)
+            clearPCM8                   ;                           ' 88    |
+
+            wait7                       ; sync                      ' 7     |
+            DJNZ    .loop               ;                           ' 13    | 20 (200)
+
+            CALL    sampleOutputNoIntDirectFunc
+
+            endm                        ;                           ' 0
+
+
+; unsignPCMBuffer
+; ---------------
+; dst       --> DE  --> dst
+;               A   --> ?
+;               BC  --> ?
+;
+; unsign 64 bytes of destination PCM buffer
+; 8 samples + 22 cycles
+
+            macro unsignPCMBuffer
+
+            LD      BC, $0780           ; 7*9 = 63 bytes unsigned   ' 10    | (10)
+
+            CALL    sampleOutputNoIntSafeFunc
+            JP      .first
+
+.loop
+            sampleOutputNoIntDirectFast
+
+.first
+            unsignPCM4                  ;                           ' 88    |
+            unsignPCM4                  ;                           ' 88    | (198)
+            unsignPCM1                  ;                           ' 22    |
+
+            wait14                      ; sync                      ' 14    |
+            DJNZ    .loop               ;                           ' 13    | 27 (225)
+
+            CALL    sampleOutputNoIntDirectFunc
+            unsignPCM1                  ;                           ' 22    |
+
+            endm                        ;                           ' 22
+
+
+; fillPCMBuffer
+; -------------
+; src.LM    --> HL  --> src.LM          ; source buffer LM bytes (b15-b0)
+; src.H     --> IXH --> src.H           ; source buffer H byte (b23-b16)
+; dst       --> DE  --> dst             ; destination PCM circular buffer
+;               BC  --> ?
+;               A   --> ?
+;               A'  --> ?
+;
+; fill 64 bytes in destination PCM buffer from source ROM buffer
+; 7 samples + 154 cycles
+
+            macro fillPCMBuffer
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | (15)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | 20 (37)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            CALL    setBankForPCM       ; set bank for src          ' 149   | (186)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (194)
+
+            LD      BC, 60              ; 6x10=60 transfered bytes  ' 10    | (204)
+                                        ; (LDI instruction used)
+
+.loop
+            sampleOutputNoIntDirect
+            writePCM8                   ; copy 10 bytes             ' 152   |
+            writePCM2                   ;                           ' 38    | (200)
+            JP      PE, .loop           ;                           ' 10    |
+
+.done
+            CALL    sampleOutputNoIntDirectFunc
+
+            writePCM4                   ; missing 4 bytes           ' 76    | (76)
+
+            LD      A, E                ; check if DE overflowed    ' 4     |
+            OR      A                   ; E == 0 ?                  ' 4     | 15 (91)
+            JR      NZ, .de_ok          ; --> decrement D           ' 7     |
+
+            DEC     D                   ;                           ' 4     | (95)
+
+.de_ok                                  ;                           ' 96
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (114)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (132)
+            JR      NZ, .reset_H        ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (140)
+
+.reset_H
+            LD      H, A                ; new H                     ' 4     |
+            JP      .end                ; done                      ' 10    | 14 (154)
+
+.same_bank                              ;                           ' 114
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (134)
+            LD      H, A                ; restore H                 ' 4     |
+
+.end
+
+            endm                        ;                           ' 154
+
+
+; fillPCMBufferHS
+; ---------------
+; src.LM    --> HL  --> src.LM          ; source buffer LM bytes (b15-b0)
+; src.H     --> IXH --> src.H           ; source buffer H byte (b23-b16)
+; dst       --> DE  --> dst             ; destination PCM circular buffer
+;               B   --> ?
+;               A   --> ?
+;               A'  --> ?
+;
+; fill 64 bytes in destination PCM buffer from source ROM buffer (hasf speed version)
+; 7 samples + 150 cycles
+
+            macro fillPCMBufferHS
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | (15)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | 20 (37)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            CALL    setBankForPCM       ; set bank for src          ' 149   | (186)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (194)
+
+            LD      B, 6                ; 6*10=60 transfered bytes  ' 7     | (201)
+
+.loop
+            sampleOutputNoIntDirect
+
+            writePCM8HS                 ; copy 8 bytes              ' 144   |
+            writePCM2HS                 ;                           ' 36    |
+            wait7                       ; sync                      ' 7     | (200)
+            DJNZ    .loop               ;                           ' 13    |
+
+.done
+            CALL    sampleOutputNoIntDirectFunc
+
+            writePCM4HS                 ;                           ' 72    | (72)
+
+            LD      A, L                ; check if changing H       ' 4     |
+            OR      A                   ; (L == 0) ?                ' 4     | 15 (87)
+            JR      NZ, .same_H         ;   --> inc H               ' 7     |
+
+            INC     H                   ; inc H                     ' 4     | (91)
+
+.same_H                                 ;                           ' 92
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (110)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (128)
+            JR      NZ, .reset_H        ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (136)
+
+.reset_H
+            LD      H, A                ; new H                     ' 4     |
+            JP      .end                ; done                      ' 10    | 14 (150)
+
+.same_bank                              ;                           ' 110
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (130)
+            LD      H, A                ; restore H                 ' 4     |
+
+.end
+
+            endm                        ;                           ' 150
+
+
+; mixPCMBuffer
+; ------------
+; src.LM    --> HL  --> src.LM          ; source buffer LM bytes (b15-b0)
+; src.H     --> IXH --> src.H           ; source buffer H byte (b23-b16)
+; dst       --> DE  --> dst             ; destination PCM circular buffer
+;               BC  --> ?
+;               A   --> ?
+;               A'  --> ?
+;
+; mix 64 bytes in destination PCM buffer from source ROM buffer
+; 14 samples + 78 cycles
+
+            macro mixPCMBuffer          ;                           ' 139
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | 15 (154)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | (20)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            CALL    setBankForPCM       ; set bank for src          ' 149   | (169)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (177)
+
+            LD      B, 12               ; 12*5=60 transfered bytes  ' 7     |
+            LD      C, $7F              ;                           ' 7     | 14 (191)
+
+            CALL    wait27_func         ; sync                      ' 27    | (218)
+
+.loop
+            sampleOutputNoIntDirectFast
+
+            mixPCM4                     ; 5 bytes per loop          ' 168   |
+            mixPCM1                     ;                           ' 42    |
+            DJNZ    .loop               ;                           ' 13    | (223) -2 cycles here
+
+.done
+            sampleOutputNoIntDirectFast
+
+            mixPCM4                     ;                           ' 168   |
+
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+
+            LD      A, L                ; check if changing H       ' 4     |
+            OR      A                   ; (L == 0) ?                ' 4     | (15)
+            JR      NZ, .same_H         ;   --> inc H               ' 7     |
+
+            INC     H                   ; inc H                     ' 4     | (19)
+
+.same_H                                 ;                           ' 20
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (38)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (56)
+            JR      NZ, .reset_H        ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (64)
+
+.reset_H
+            LD      H, A                ; new H                     ' 4     |
+            JP      .end                ; done                      ' 10    | 14 (78)
+
+.same_bank                              ;                           ' 38
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (58)
+            LD      H, A                ; restore H                 ' 4     |
+
+.end
+
+            endm                        ;                           ' 78
+
+
+; mixPCMBufferHS
+; --------------
+; src.LM    --> HL  --> src.LM          ; source buffer LM bytes (b15-b0)
+; src.H     --> IXH --> src.H           ; source buffer H byte (b23-b16)
+; dst       --> DE  --> dst             ; destination PCM circular buffer
+;               BC  --> ?
+;               A   --> ?
+;               A'  --> ?
+;
+; mix 64 bytes in destination PCM buffer from source ROM buffer (half speed)
+; 13 samples + 237 cycles (some cycles lost here)
+
+            macro mixPCMBufferHS        ;                           ' 139
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | 15 (154)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | (20)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            CALL    setBankForPCM       ; set bank for src          ' 149   | (169)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (177)
+
+            LD      BC, $067F           ; 6*10=60 transfered bytes  ' 10    | (187)
+
+            CALL    wait27_func         ; sync                      ' 27    | (214)
+
+.loop
+            CALL    sampleOutputNoIntDirectFastFunc
+
+            mixPCM4HS                   ;                           ' 160   |
+            mixFirstPCMHS               ;                           ' 38    | (198)
+
+            sampleOutputNoIntDirectFast
+
+            mixSecondPCMHS              ;                           ' 42    |
+            mixPCM4HS                   ;                           ' 160   | (212)
+            wait10                      ; sync                      ' 10    |
+
+            DJNZ    .loop               ;                           ' 13    | (225)
+
+.done
+            sampleOutputNoIntDirectFast
+
+            mixPCM4HS                   ;                           ' 160   |
+
+            LD      A, L                ; check if changing H       ' 4     |
+            OR      A                   ; (L == 0) ?                ' 4     | 15 (175)
+            JR      NZ, .same_H         ;   --> inc H               ' 7     |
+
+            INC     H                   ; inc H                     ' 4     | (179)
+
+.same_H                                 ;                           ' 20
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (197)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (215)
+            JR      NZ, .reset_H        ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (223)
+
+.reset_H
+            LD      H, A                ; new H                     ' 4     |
+            JP      .end                ; done                      ' 10    | 14 (237)
+
+.same_bank                              ;                           ' 197
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (217)
+            LD      H, A                ; restore H                 ' 4     |
+
+.end
+
+            endm                        ;                           ' 237
+
+
+; mixUnsignPCMBuffer
+; ------------------
+; src.LM    --> HL  --> src.LM          ; source buffer LM bytes (b15-b0)
+; src.H     --> IXH --> src.H           ; source buffer H byte (b23-b16)
+; dst       --> DE  --> dst             ; destination PCM circular buffer
+;               BC  --> ?
+;               A   --> ?
+;               IYL --> ?
+;               A'  --> ?
+;
+; mix 64 bytes in destination PCM buffer from source ROM buffer
+; 17 samples + 78 cycles
+
+            macro mixUnsignPCMBuffer    ;                           ' 141
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | 15 (156)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | (20)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            CALL    setBankForPCM       ; set bank for src          ' 149   | (169)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (177)
+
+            LD      BC, $807F           ; for fast unsign           ' 10    |
+            LD      IYL, 16             ; 16*4=64 bytes             ' 10    | 20 (197)
+
+.loop
+            sampleOutputNoIntDirect
+
+            mixUnsignPCM4               ;                           ' 184   |
+            DEC     IYL                 ;                           ' 8     |
+            JP      NZ, .loop           ;                           ' 10    | (202) +2 cycles per loop
+
+.done
+            CALL    sampleOutputNoIntDirectFunc
+
+            LD      A, L                ; check if changing H       ' 4     |
+            OR      A                   ; (L == 0) ?                ' 4     | (15)
+            JR      NZ, .same_H         ;   --> inc H               ' 7     |
+
+            INC     H                   ; inc H                     ' 4     | (19)
+
+.same_H                                 ;                           ' 20
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (38)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (56)
+            JR      NZ, .reset_H        ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (64)
+
+.reset_H
+            LD      H, A                ; new H                     ' 4     |
+            JP      .end                ; done                      ' 10    | 14 (78)
+
+.same_bank                              ;                           ' 38
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (58)
+            LD      H, A                ; restore H                 ' 4     |
+
+.end
+
+            endm                        ;                           ' 124
+
+
+; mixUnsignPCMBufferHS
+; --------------------
+; src.LM    --> HL  --> src.LM          ; source buffer LM bytes (b15-b0)
+; src.H     --> IXH --> src.H           ; source buffer H byte (b23-b16)
+; dst       --> DE  --> dst             ; destination PCM circular buffer
+;               BC  --> ?
+;               A   --> ?
+;               IYL --> ?
+;               A'  --> ?
+;
+; mix 64 bytes in destination PCM buffer from source ROM buffer
+; 17 samples + 78 cycles
+
+            macro mixUnsignPCMBufferHS  ;                           ' 141
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            AND     $80                 ; A = bit 15                ' 7     | 15 (156)
+            EX      AF, AF'             ; save src.b15 in A'        ' 4     |
+
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+
+            LD      A, H                ; A = bit 8-15              ' 4     |
+            RLA                         ; C flag = bit 15           ' 4     |
+            LD      A, IXH              ; A = bit 16-23             ' 8     | (20)
+            RLA                         ; A = bit 15-22             ' 4     |
+
+            CALL    setBankForPCM       ; set bank for src          ' 149   | (169)
+            SET     7, H                ; H |= $80 (bank access)    ' 8     | (177)
+
+            LD      BC, $807F           ; for fast unsign           ' 10    |
+            LD      IYL, 16             ; 16*4=64 bytes             ' 10    | 20 (197)
+
+.loop
+            sampleOutputNoIntDirect
+
+            mixUnsignPCM4HS             ;                           ' 176   |
+            wait7                       ;                           ' 7     |
+            DEC     IYL                 ;                           ' 8     |
+            JP      NZ, .loop           ;                           ' 10    | (201) +1 cycle per loop here
+
+.done
+            CALL    sampleOutputNoIntDirectFunc
+
+            LD      A, L                ; check if changing H       ' 4     |
+            OR      A                   ; (L == 0) ?                ' 4     | (15)
+            JR      NZ, .same_H         ;   --> inc H               ' 7     |
+
+            INC     H                   ; inc H                     ' 4     | (19)
+
+.same_H                                 ;                           ' 20
+            LD      A, H                ; check if changing bank    ' 4     |
+            OR      L                   ; (HL == 0) ?               ' 4     | 18 (38)
+            JP      NZ, .same_bank      ;  --> change bank          ' 10    |
+
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            ADD     $80                 ; change bank               ' 7     | 18 (56)
+            JR      NZ, .reset_H        ; (new src.b15 == 0) ?      ' 7     |
+
+            INC     IXH                 ;   --> increment src.H     ' 8     | (64)
+
+.reset_H
+            LD      H, A                ; new H                     ' 4     |
+            JP      .end                ; done                      ' 10    | 14 (78)
+
+.same_bank                              ;                           ' 38
+            RES     7, H                ; H &= $7F                  ' 8     |
+            EX      AF, AF'             ; A.b7 = src.b15            ' 4     |
+            OR      H                   ; A.b7 = src.b15 | H        ' 4     | 20 (58)
+            LD      H, A                ; restore H                 ' 4     |
+
+.end
+
+            endm                        ;                           ' 78
