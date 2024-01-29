@@ -1,0 +1,98 @@
+;*******************************************************************************
+; GetWordFromList
+; Reads a 16-bit value from a list of values.
+;-------------------------------------------------------------------------------
+; input a ..... index
+; input hl .... pointer to list
+;-------------------------------------------------------------------------------
+; output hl ... word read from it
+;-------------------------------------------------------------------------------
+; modifies .... a,de,hl
+;*******************************************************************************
+
+GetWordFromList:
+    ld      e, a                        ; Extend index to 16-bit
+    ld      d, 0
+    
+    add     hl, de                      ; Add it to the base address twice to
+    add     hl, de                        ; compute the pointer to the word
+    
+    ld      e, (hl)                     ; Read word
+    inc     hl
+    ld      d, (hl)
+    
+    ex      de, hl                      ; Return word in HL
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; GetTrackState
+; Helper function to convert the track state offset (as in FMCHAN_TRACK and
+; PSGCHAN_TRACK) into a full pointer to the track state.
+;-------------------------------------------------------------------------------
+; input e ..... offset for track state
+;-------------------------------------------------------------------------------
+; output ix ... pointer to track state
+;-------------------------------------------------------------------------------
+; modifies .... de, ix
+;*******************************************************************************
+
+GetTrackStateAddr:
+    ld      d, 0                        ; Extend offset to 16-bit
+    ld      ix, TrackData               ; Base address for tracks
+    add     ix, de                      ; Compute pointer
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; GetTrackInstrument
+; Gets a pointer to the current instrument for a track.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+;-------------------------------------------------------------------------------
+; output de ... pointer to instrument data
+;-------------------------------------------------------------------------------
+; modifies .... a,de,hl
+;*******************************************************************************
+
+GetTrackInstrument:
+    ld      a, (ix+TRACK_INSTRUMENT)    ; Get current instrument ID
+    
+    or      a                           ; Instrument ID 0 is reserved for the
+    jr      z, GetNullInstrument          ; "null" instrument (used to stop a
+                                          ; channel)
+    
+    dec     a                           ; Instrument list starts at ID = 1
+    ld      hl, (InstrumentList)        ; Pointer to instrument list
+    call    GetWordFromList             ; Retrieve pointer to instrument
+    ex      de, hl                      ; Return pointer in DE
+    
+    ret                                 ; End of subroutine
+
+GetNullInstrument:
+    ld      de, NullInstrument          ; ID 0 = null instrument
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; GetTrackPitch
+; Gets the actual pitch of a track (with transpose applied), and splits it into
+; octave and semitone. Used by the code that deals with the hardware.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+;-------------------------------------------------------------------------------
+; output a .... semitone
+; output c .... octave
+;-------------------------------------------------------------------------------
+; modifies .... a,bc
+;*******************************************************************************
+
+GetTrackPitch:
+    ld      a, (ix+TRACK_PITCH)         ; Get current pitch and add the
+    add     a, (ix+TRACK_TRANSPOSE)       ; transpose to it
+    
+    ld      bc, $0CFF                   ; Divide the pitch by 12 in order to
+SplitPitch:                               ; get the semitones (remaineder) and
+    inc     c                             ; octave (quotient)
+    sub     b
+    jr      nc, SplitPitch
+    add     b
+    
+    ret                                 ; End of subroutine

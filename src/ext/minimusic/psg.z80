@@ -1,0 +1,231 @@
+;*******************************************************************************
+; UpdatePsgChan
+;
+; Called every tick (after the tracks are updated) to update a PSG channel
+; (except for the pitch). It looks at the attached track's state to see if
+; anything changed, updates the ADSR envelope and writes to the hardware its
+; new volume.
+;
+; For pitch updates, see UpdatePsgFreq for square channels and UpdatePsgNoise
+; for the noise channel.
+;-------------------------------------------------------------------------------
+; input iy .... pointer to PSG channel state
+;-------------------------------------------------------------------------------
+; output ix ... pointer to track state
+;-------------------------------------------------------------------------------
+; modifies .... all but iy
+;*******************************************************************************
+
+UpdatePsgChan:
+    ld      e, (iy+PSGCHAN_TRACK)       ; Get pointer to the track associated
+    call    GetTrackStateAddr             ; with this channel
+    
+    bit     FLAG_INSTRUMENT, (ix+TRACK_FLAGS)   ; Requested new PSG instrument?
+    jr      z, NoPsgVoiceLoad
+    
+    call    GetTrackInstrument          ; Get pointer to instrument
+    ex      de, hl                      ; We need it in HL for LDIR
+    
+    push    iy                          ; Copy the PSG instrument into the
+    pop     de                            ; PSG channel state
+    ld      bc, 6
+    ldir
+NoPsgVoiceLoad:
+    
+    ld      a, (ix+TRACK_FLAGS)                 ; Get flags
+    rrca                                        ; Ignore keying?
+    jr      c, NoPsgKeyOn
+    rrca                                        ; Requested key-off?
+    jr      nc, NoPsgKeyOff
+    ld      (iy+PSGCHAN_PHASE), ADSR_RELEASE    ; Set envelope to release
+NoPsgKeyOff:
+    rrca                                        ; Requested key-on?
+    jr      nc, NoPsgKeyOn
+    ld      (iy+PSGCHAN_PHASE), ADSR_ATTACK     ; Set envelope to attack
+NoPsgKeyOn:
+    
+    call    UpdateAdsr                  ; Update envelope
+    
+    ld      a, (ix+TRACK_VOLUME)        ; Get track attenuation
+    
+    cp      40                          ; Would it be too quiet? (we check for
+    jr      c, PsgNotTooQuiet             ; this to prevent overflow in the
+    ld      a, 40                         ; conversion below)
+PsgNotTooQuiet:
+    
+    ld      b, a                        ; We work with -0.75dB attenuation
+    add     a, b                          ; steps but ADSR works in -0.125dB
+    add     a, b                          ; steps, so convert it to the ADSR
+    add     a, a                          ; unit (bonus: keep the precision)
+    
+    sub     (iy+PSGCHAN_LEVEL)          ; Mix with ADSR envelope level
+    inc     a                             ; Note that ADSR works with *volume*
+                                          ; rather than attenuation, so we need
+                                          ; to substract instead of add, and do
+                                          ; INC because we need the one's
+                                          ; complement (we're doing X + ~Y,
+                                          ; not X - Y)
+    
+    jr      c, PsgNotTooQuiet2          ; Did it get too quiet? Clamp it
+    ld      a, $FF                        ; Note that INC A will *not* change
+PsgNotTooQuiet2:                          ; the carry flag, so this will work
+    
+    scf                                 ; Set bit to write attenuation register
+    rra                                 ; PSG works in -2dB attenuation steps
+    rrca                                  ; so now convert it to that
+    rrca
+    rrca
+    and     $1F                         ; Filter out irrelevant bits
+    or      (iy+PSGCHAN_BITS)           ; Set command bits for PSG channel
+    ld      (PsgPort), a                ; Send command to PSG
+    
+    ld      a, 1<<FLAG_PITCH            ; Acknowledge all flags except the pitch
+    and     (ix+TRACK_FLAGS)              ; one (which is handled separately)
+    ld      (ix+TRACK_FLAGS), a
+    
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; UpdatePsgFreq
+; Recomputes the frequency to use for a square PSG channel and sends the result
+; to the hardware. Meant to be used right after UpdatePsgChan.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input iy .... pointer to PSG channel state
+;-------------------------------------------------------------------------------
+; modifies .... all but ix,iy
+;*******************************************************************************
+
+UpdatePsgFreq:
+    call    GetTrackPitch               ; Get pitch to use
+                                          ; A = semitone
+                                          ; C = octave
+    
+    ld      hl, PsgFreqTable            ; Get frequency for this semitone
+    call    GetWordFromList               ; into HL
+    
+    ld      b, c                        ; Divide the frequency by 2 for each
+    inc     b                             ; octave (PSG's frequencies increase
+PsgFreqShift:                             ; *down*) to get the actual frequency
+    srl     h                             ; to write.
+    rr      l                             ; The frequencies in the table are
+    djnz    PsgFreqShift                  ; premultiplied by 2 to compensate
+                                          ; for the excess iteration when the
+                                          ; loop starts.
+    
+    ld      de, PsgPort                 ; Pointer to PSG port
+    
+    ld      a, l                        ; Isolate bottom 4 bits
+    and     $0F
+    or      (iy+PSGCHAN_BITS)           ; Mix with command bits for channel
+    ld      (de), a                     ; Send 1st byte to PSG
+    
+    ld      a, l                        ; Isolate next 4 bits
+    and     $F0
+    or      h                           ; Merge with remaining 2 bits
+    rrca                                ; Shift them into place
+    rrca
+    rrca
+    rrca
+    ld      (de), a                     ; Send 2nd byte to PSG
+    
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; UpdatePsgNoise
+; Sends the current noise type for the noise PSG channel to the hardware. Meant
+; to be used right after UpdatePsgChan.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input iy .... pointer to PSG channel state
+;-------------------------------------------------------------------------------
+; modifies .... all but ix,iy
+;*******************************************************************************
+
+UpdatePsgNoise:
+    bit     FLAG_PITCH,(ix+TRACK_FLAGS) ; Writing the noise type will reset the
+    ret     z                             ; noise's phase, so don't do it unless
+    res     FLAG_PITCH,(ix+TRACK_FLAGS)   ; it actually changed
+    
+    ld      a, (ix+TRACK_PITCH)         ; Get track pitch
+    and     $07                         ; Treat it like a noise value as-is
+                                          ; (instead of a semitone)
+    or      $E0                         ; Set bits for noise command
+    ld      (PsgPort), a                ; Send command to PSG
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; UpdateAdsr
+; Ticks the ADSR envelope for a PSG channel.
+;-------------------------------------------------------------------------------
+; input iy ... pointer to PSG channel state
+;-------------------------------------------------------------------------------
+; modifies ... a
+;*******************************************************************************
+
+UpdateAdsr:
+    ld      a, (iy+PSGCHAN_PHASE)       ; Set up jump handler for the current
+    ld      (UpdateAdsr_Jump+1), a        ; envelope phase
+    ld      a, (iy+PSGCHAN_LEVEL)       ; Get current envelope level
+UpdateAdsr_Jump:
+    jr      $                           ; Jump to the current phase's handler
+    
+    jr      UpdateAdsr_Attack           ; ADSR_ATTACK
+    jr      UpdateAdsr_Decay            ; ADSR_DECAY
+    jr      UpdateAdsr_Sustain          ; ADSR_SUSTAIN
+    jr      UpdateAdsr_Release          ; ADSR_RELEASE
+    
+UpdateAdsr_Zero:
+    xor     a                           ; Went below 0, cap it to 0...
+UpdateAdsr_End:
+    ld      (iy+PSGCHAN_LEVEL), a       ; Store new level
+    ret                                 ; End of subroutine
+    
+UpdateAdsr_Attack:
+    add     a, (iy+PSGCHAN_AR)          ; Increase level by AR
+    jr      c, UpdateAdsr_AttackEnd     ; Overflowed above maximum?
+    cp      (iy+PSGCHAN_TL)             ; Did it go past TL?
+    jr      c, UpdateAdsr_End           ; If not, still in attack
+UpdateAdsr_AttackEnd:
+    ld      a, (iy+PSGCHAN_TL)              ; Cap to TL level
+    ld      (iy+PSGCHAN_PHASE), ADSR_DECAY  ; Switch to decay phase
+    jr      UpdateAdsr_End
+    
+UpdateAdsr_Decay:
+    sub     (iy+PSGCHAN_DR)             ; Decrease level by DR
+    jr      c, UpdateAdsr_Zero          ; Overflowed below minimum?
+    cp      (iy+PSGCHAN_SL)             ; Did it go past SL?
+    jr      nc, UpdateAdsr_End          ; If not, still in decay
+    ld      (iy+PSGCHAN_PHASE),ADSR_SUSTAIN ; Switch to sustain phase
+    jr      UpdateAdsr_End
+    
+UpdateAdsr_Sustain:
+    sub     (iy+PSGCHAN_SR)             ; Decrease level by SR
+    jr      c, UpdateAdsr_Zero          ; Overflowed below minimum?
+    jr      UpdateAdsr_End              ; Nope, keep decaying as-is
+    
+UpdateAdsr_Release:
+    sub     (iy+PSGCHAN_RR)             ; Decrease level by RR
+    jr      c, UpdateAdsr_Zero          ; Overflowed below minimum?
+    jr      UpdateAdsr_End              ; Nope, keep decaying as-is
+
+;*******************************************************************************
+; MutePsg
+; Mutes all PSG channels immediately. This by-passes the PSG channel state, so
+; the next call to UpdatePsg will immediately restore sound to a channel.
+;-------------------------------------------------------------------------------
+; modifies ... hl
+;*******************************************************************************
+
+MutePsg:
+    ld      hl, PsgChanData+PSGCHAN_RR  ; Pointer to ADSR data to modify
+    ld      de, SIZEOF_PSGCHAN-1        ; Distance between two channels
+    ld      b, NUM_PSGCHAN              ; Loop through all PSG channels
+MutePsgLoop:
+    ld      (hl), $FF                   ; Set RR to maximum
+    inc     hl                          ; Move pointer to current level
+    ld      (hl), $00                   ; Set level to minimum
+    add     hl, de                      ; Advance pointer to next RR
+    
+    djnz    MutePsgLoop                 ; Process next channel
+    ret                                 ; End of subroutine

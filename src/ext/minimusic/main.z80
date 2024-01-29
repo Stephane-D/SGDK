@@ -1,0 +1,433 @@
+;*******************************************************************************
+; Init
+; Initializes the sound driver and the hardware.
+;-------------------------------------------------------------------------------
+; continues in IdleLoop
+;*******************************************************************************
+
+Init:
+    ld      sp, 800h                    ; Set up stack
+    
+    ld      a, YMREG_TIMERB             ; Set up timer B frequency
+    ld      (YmAddr1), a                  ; It defaults to around the NTSC
+    ld      a, $C8                        ; refresh rate and is the speed at
+    ld      (YmData1), a                  ; which the tracks tick
+    
+    ld      b, 9                        ; 32X PSG fix (see 32X tech bulletin
+    ld      hl, BankPort                  ; #22), the 68000 bank must not point
+SetLastBankLoop:                          ; to any cartridge slot or 32X area
+    ld      (hl), l                       ; when accessing PSG. Since this
+    djnz    SetLastBankLoop               ; driver never accesses the cartridge
+                                          ; we'll just point it to work RAM
+                                          ; permanently.
+    
+    ld      a, YMREG_MODE               ; Start up timer B
+    ld      (YmAddr1), a
+    ld      a, YMACK_TIMERB
+    ld      (YmData1), a
+    
+    ; fallthrough to IdleLoop...
+
+;*******************************************************************************
+; IdleLoop
+; Main loop for the sound driver. It stays here until something needs attention.
+;*******************************************************************************
+
+IdleLoop:
+    ld      a, (Command)                ; Did the 68000 send us a command?
+    or      a
+    call    nz, ProcessCommand
+    
+    ld      a, (YmAddr1)                ; Did timer B tick yet?
+    rra                                   ; If not, keep waiting until it does
+    rra                                   ; Otherwise, it's time to update the
+    jr      nc, IdleLoop                  ; tracks
+    
+    ld      a, YMREG_MODE               ; Acknowledge timer B
+    ld      (YmAddr1), a
+    ld      a, YMACK_TIMERB
+    ld      (YmData1), a
+    
+    call    RemapToBgmOrSfx             ; Assign channels that may be shared by
+                                          ; BGM and SFX to the correct tracks
+                                          ; before proceeding
+    
+    ld      ix, SfxTrackData_Psg4       ; Pointer to last track
+    ld      b, NUM_TRACKS               ; Loop through all tracks (in reverse)
+UpdateTrackCount: equ $-1               ; <-- How many tracks to process?
+UpdateTrackLoop:
+    call    UpdateTrack                 ; Update this track
+    ld      de, -SIZEOF_TRACK           ; Pointer to previous track
+    add     ix, de
+    djnz    UpdateTrackLoop             ; Keep looping
+    
+    ld      iy, FmChanData              ; Pointer to 1st FM channel
+    ld      b, NUM_FMCHAN               ; Loop through all FM channels
+UpdateFmChanLoop:
+    push    bc                          ; Save loop pointer
+    call    UpdateFmChan                ; Update FM channel
+    ld      de, SIZEOF_FMCHAN           ; Pointer to next channel
+    add     iy, de
+    pop     bc                          ; Restore loop pointer
+    djnz    UpdateFmChanLoop            ; Keep looping
+    
+    ld      iy, PsgChanData             ; Pointer to 1st PSG channel
+    ld      b, NUM_PSGCHAN-1            ; Loop through all PSG channels except
+UpdatePsgChanLoop:                        ; the noise one
+    push    bc                          ; Save loop pointer
+    call    UpdatePsgChan               ; Update PSG channel
+    call    UpdatePsgFreq
+    ld      de, SIZEOF_PSGCHAN          ; Pointer to next channel
+    add     iy, de
+    pop     bc                          ; Restore loop pointer
+    djnz    UpdatePsgChanLoop           ; Keep looping
+    
+    call    UpdatePsgChan               ; Update PSG noise channel (which
+    call    UpdatePsgNoise                ; doesn't use frequency but treats
+                                          ; the pitch as a noise value as-is)
+    
+    ld      bc, (NUM_BGMTRACKS<<8)|$01      ; Check if BGM is playing by
+    ld      hl, BgmTrackData+TRACK_ADDR_HI    ; comparing the address of every
+    ld      de, SIZEOF_TRACK                  ; track with the driver's address
+BgmCheckLoop:                                 ; range (if it's inside the driver
+    ld      a, (hl)                           ; then it's within the stop code)
+    cp      $800>>8                           ;
+    jr      nc, BgmIsPlaying                  ; TO-DO: find a way to do this
+    add     hl, de                            ; that takes up less space.
+    djnz    BgmCheckLoop
+    dec     c
+    
+BgmIsPlaying:
+    ld      a, c                        ; Store result in the status flags
+    ld      (Status), a                   ; $00 = BGM not playing
+                                          ; $01 = BGM playing
+    
+    jr      IdleLoop                    ; Back to idling
+
+;*******************************************************************************
+; ProcessCommand
+; Executes a command sent by the 68000.
+;-------------------------------------------------------------------------------
+; input a ..... command sent
+;-------------------------------------------------------------------------------
+; modifies .... all
+;*******************************************************************************
+
+ProcessCommand:
+    cp      FIRST_CMD                   ; Special command?
+    jr      nc, ProcessCommandEx
+    
+    dec     a                           ; Play BGM?
+    ld      hl, NumBgm
+    cp      (hl)
+    jp      c, PlayBgm
+    
+    sub     (hl)                        ; Play SFX?
+    inc     hl
+    cp      (hl)
+    jp      c, PlaySfx
+    
+EndOfCommand:
+    ld      hl, (Command2)              ; Pop off the 1st command from the
+    ld      (Command), hl                 ; queue, and make room for a new
+    xor     a                             ; 3rd command
+    ld      (Command3), a
+    
+    ret                                 ; Back to the idle loop (if there was
+                                          ; another command pending, it'll be
+                                          ; processed immediately)
+    
+ProcessCommandEx:
+    sub     $FD                         ; Use the jump table below to process
+    add     a, a                          ; the command
+    ld      ($+4), a
+    jr      $
+    
+    jr      Unpause                     ; $FD - Unpause music
+    jr      Pause                       ; $FE - Pause music
+    jr      StopAllSoundCmd             ; $FF - Stop music
+
+;*******************************************************************************
+; StopAllSoundCmd
+; Processes a 68000 command to stop all sound.
+;-------------------------------------------------------------------------------
+; continues in EndOfCommand, then returns to idle loop
+;*******************************************************************************
+
+StopAllSoundCmd:
+    call    StopAllSound                ; This is a wrapper for that subroutine
+    jr      EndOfCommand                ; End of command, do clean-up
+
+;-------------------------------------------------------------------------------
+
+StopAllSound:
+    ld      hl, TrackData               ; Pointer to 1st track state
+    ld      b, NUM_TRACKS               ; Loop through all tracks
+StopAllTracksLoop:
+    push    bc                          ; Save loop counter
+    ld      de, DefaultEndSfx           ; Track that stops all sound
+    call    InitTrack                   ; Initialize track with that
+    pop     bc                          ; Restore loop counter
+    djnz    StopAllTracksLoop           ; Go for next track
+    
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; Pause
+; Processes a 68000 command to pause playback.
+;-------------------------------------------------------------------------------
+; continues in EndOfCommand, then returns to idle loop
+;*******************************************************************************
+
+Pause:
+    ld      hl, SfxTrackData            ; Pointer to 1st SFX track
+    ld      b, NUM_SFXTRACKS            ; Number of SFX tracks
+    call    StopAllTracksLoop           ; Stop all the SFX tracks
+    
+    ld      a, NUM_SFXTRACKS            ; Change the update loop to only process
+    ld      (UpdateTrackCount), a         ; the SFX tracks (we need to keep this
+                                          ; in case a SFX is played *after* we
+                                          ; pause music)
+    
+    call    MuteFm                      ; Mute all the channels
+    call    MutePsg
+    
+    jr      EndOfCommand                ; End of command, do clean-up
+
+;*******************************************************************************
+; Unpause
+; Processes a 68000 command to unpause playback.
+;-------------------------------------------------------------------------------
+; continues in EndOfCommand, then returns to idle loop
+;*******************************************************************************
+
+Unpause:
+    ld      hl, TrackData+TRACK_FLAGS   ; Mark all tracks as needing a full
+    ld      de, SIZEOF_TRACK              ; refresh
+    ld      b, NUM_TRACKS
+UnpauseTrackLoop:
+    ld      (hl), FLAGMASK_REFRESH
+    add     hl, de
+    djnz    UnpauseTrackLoop
+    
+    ld      a, NUM_TRACKS               ; Change the update loop to process all
+    ld      (UpdateTrackCount), a         ; the tracks again
+    
+    jr      EndOfCommand                ; End of command, do clean-up
+
+;*******************************************************************************
+; PlayBgm
+; Processes a 68000 command to play a BGM.
+;-------------------------------------------------------------------------------
+; input a .... BGM ID, counting from 0
+;-------------------------------------------------------------------------------
+; continues in Unpause, then EndOfCommand, then returns to idle loop
+;*******************************************************************************
+
+PlayBgm:
+    push    af                          ; First stop anything that was playing
+    call    StopAllSound
+    pop     af
+    
+    ld      hl, (BgmList)               ; Get pointer to the BGM data
+    call    GetWordFromList
+    
+DoPlayBgm:
+    exx                                 ; Set up FM tracks, if any
+    ld      hl, BgmTrackData_Fm1
+    call    InitBgmDoLoop
+    
+    exx                                 ; Set up PSG tracks, if any
+    ld      hl, BgmTrackData_Psg1
+    call    InitBgmDoLoop
+    
+    jr      Unpause                     ; Just in case, unpause the driver
+
+;-------------------------------------------------------------------------------
+
+InitBgmDoLoop:
+    exx
+    
+    ; b = loop counter
+    ; de = scratch
+    ; hl = pointer to BGM header data
+    ; a' = scratch (modified by InitTrack)
+    ; bc' = scratch (modified by InitTrack)
+    ; de' = scratch (argument to InitTrack)
+    ; hl' = pointer to track state
+    
+    ld      b, (hl)                     ; Get how many channels
+    inc     hl
+    inc     b                           ; Skip to the end of the loop (this
+    jr      InitBgmLoopEnd                ; will handle the 0 channel case)
+InitBgmLoop:
+    ld      e, (hl)                     ; Get pointer to track data
+    inc     hl
+    ld      d, (hl)
+    inc     hl
+    
+    push    de                          ; We need it in DE' since we don't want
+    exx                                   ; to stomp on the data pointer or the
+    pop     de                            ; loop counter
+    
+    call    InitTrack                   ; Initialize track
+    exx                                 ; Back to main registers
+InitBgmLoopEnd:
+    djnz    InitBgmLoop                 ; Set up next track
+    ret                                 ; Back to subroutine
+
+;*******************************************************************************
+; PlaySfx
+; Processes a 68000 command to play a SFX.
+;-------------------------------------------------------------------------------
+; input a .... SFX ID, counting from 0
+;-------------------------------------------------------------------------------
+; continues in EndOfCommand, then returns to idle loop
+;*******************************************************************************
+
+PlaySfx:
+    ; a = SFX priority
+    ; b = loop counter
+    ; c = SFX channel flags
+    ; hl = pointer to SFX header
+    ; hl' = pointer to SFX track
+    ; iy = pointer to SFX priorities
+    ; de, a', bc', de', ix = scratch
+    
+    ld      iy, SfxPriority-1           ; List of SFX channel priorities
+                                          ; The -1 is needed because we always
+                                          ; increment before using the pointer
+    
+    ld      hl, SfxTrackData            ; Pointer to SFX tracks
+    exx                                 ; Keep it in the alternate register set
+                                          ; (since InitTrack stomps over most
+                                          ; registers)
+    
+    ld      hl, (SfxList)               ; Get pointer to the SFX data
+    call    GetWordFromList
+    
+    ld      c, (hl)                     ; Get channel flags
+    inc     hl                            ; bit 0 = use FM channel 5
+                                          ; bit 1 = use FM channel 6
+                                          ; bit 2 = use PSG channel 3
+                                          ; bit 3 = use PSG channel 4
+    
+    ld      a, c                        ; Get SFX priority
+    or      $0F                           ; Priority is OR'd with $0F so we
+                                          ; can distinguish priority 0 ($0F)
+                                          ; from unused channel ($00) while
+                                          ; still filtering out the flags
+    
+    ld      b, 4                        ; Loop through all possible channels
+InitSfxLoop:
+    inc     iy                          ; Point to this channel's priority
+    
+    rr      c                           ; Check if next channel is used
+    jr      nc, SkipSfxChan             ; No? Skip all this then
+    
+    ld      e, (hl)                     ; Read pointer to track data for this
+    inc     hl                            ; channel
+    ld      d, (hl)
+    inc     hl
+    
+    cp      (iy+0)                      ; Is this channel already taken by a
+    jr      c, SkipSfxChan                ; higher priority SFX? If so, also
+                                          ; skip over it
+    
+    ld      (iy+0), a                   ; Claim the channel by writing the new
+                                          ; priority
+    
+    push    de                          ; Move pointer to the alternate register
+    exx                                   ; set where we can call InitTrack
+    pop     de
+    
+    ex      af, af'                     ; Save priority
+    call    InitTrack                   ; Initialize the track
+    ex      af, af'                     ; Restore priority
+    
+    push    hl                          ; Replace default loop with one that
+    pop     ix                            ; will restore the channel to BGM
+    ld      (ix+TRACK_LOOP_LO-SIZEOF_TRACK), DefaultEndSfx&$FF
+    ld      (ix+TRACK_LOOP_HI-SIZEOF_TRACK), DefaultEndSfx>>8
+    
+    jr      InitSfxLoopEnd              ; Skip to end of loop
+    
+SkipSfxChan:
+    exx                                 ; Advance track pointer since we didn't
+    ld      de, SIZEOF_TRACK              ; call InitTrack to do it for us
+    add     hl, de
+    
+InitSfxLoopEnd:
+    exx                                 ; Back to main register set
+    djnz    InitSfxLoop                 ; Go check next channel
+    jp      EndOfCommand                ; End of command, do clean-up
+
+;*******************************************************************************
+; RemapToBgmOrSfx
+; Checks which channels are under SFX control or not, and assigns their tracks
+; accordingly.
+;-------------------------------------------------------------------------------
+; modifies .... all
+;*******************************************************************************
+
+RemapToBgmOrSfx:
+    ld      iy, RemapTable+1            ; Table with all the assignment info.
+                                          ; The +1 is because when we index
+                                          ; whether it's a BGM or SFX track
+                                          ; we use offsets 0 and -1, so we need
+                                          ; to compensate for it.
+    
+    ld      hl, SfxPriority             ; List of SFX channel priorities
+    ld      b, 4                        ; Loop through all SFX channels
+RemapLoop:
+    xor     a                           ; Check if this channel's priority is 0
+    sub     (hl)                          ; (priority is 0 when a channel is not
+    sbc     a, a                          ; under SFX control)
+                                          ; A =  0 when under BGM control
+                                          ; A = -1 when under SFX control
+    
+    ld      (RemapWhich), a             ; Get which track to assign to this
+    ld      a, (iy+0)                     ; channel based on the above check
+RemapWhich: equ $-1
+    
+    ld      e, (iy+1)                   ; Get pointer to variable keeping the
+    ld      d, (iy+2)                     ; offset to the track
+    
+    ex      de, hl                      ; Check if the channel is already
+    cp      (hl)                          ; assigned to this track or not (if
+    ex      de, hl                        ; already assigned then do nothing)
+    jr      z, NoRemapNeeded
+    
+    ld      (de), a                     ; Store new assignment
+    
+    ld      e, a                        ; Set the track's flags to refresh the
+    call    GetTrackStateAddr             ; whole channel
+    ld      (ix+TRACK_FLAGS), FLAGMASK_REFRESH
+    
+NoRemapNeeded:
+    ld      de, 4                       ; Advance table pointer
+    add     iy, de
+    
+    inc     hl                          ; Advance priority pointer
+    djnz    RemapLoop                   ; Go check next channel
+    
+    ret                                 ; End of subroutine
+
+;-------------------------------------------------------------------------------
+
+RemapTable:
+    db      SfxTrackData_Fm5-TrackData
+    db      BgmTrackData_Fm5-TrackData
+    dw      FmChanData_Fm5+FMCHAN_TRACK
+    
+    db      SfxTrackData_Fm6-TrackData
+    db      BgmTrackData_Fm6-TrackData
+    dw      FmChanData_Fm6+FMCHAN_TRACK
+    
+    db      SfxTrackData_Psg3-TrackData
+    db      BgmTrackData_Psg3-TrackData
+    dw      PsgChanData_Psg3+PSGCHAN_TRACK
+    
+    db      SfxTrackData_Psg4-TrackData
+    db      BgmTrackData_Psg4-TrackData
+    dw      PsgChanData_Psg4+PSGCHAN_TRACK

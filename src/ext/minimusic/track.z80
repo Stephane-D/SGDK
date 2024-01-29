@@ -1,0 +1,398 @@
+;*******************************************************************************
+; InitTrack
+; Initializes a track. It will start playing from the beginning on next tick.
+;-------------------------------------------------------------------------------
+; input hl .... pointer to track state
+; input de .... pointer to track data
+;-------------------------------------------------------------------------------
+; output hl ... pointer to next track state
+;-------------------------------------------------------------------------------
+; modifies .... a,bc,de,hl
+;*******************************************************************************
+
+InitTrack:
+    ld      (hl), e                     ; Store track start address as the
+    inc     hl                            ; return address so the init routine
+    ld      (hl), d                       ; knows where to jump when it's done
+    inc     hl
+    
+    ex      de, hl                      ; Copy default values for the track
+    ld      hl, TrackInitData             ; state
+    ld      bc, SIZEOF_TRACK-2
+    ldir
+    
+    ex      de, hl                      ; Return pointer for convenience (this
+                                          ; is useful for init loops)
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; SetNoteLen
+; Handles the note length opcodes.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+; input a .....
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a
+;*******************************************************************************
+
+SetNoteLen:
+    sub     $7F                         ; Get length in ticks
+    ld      (ix+TRACK_NOTELEN), a       ; Store new note length
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; KeyOn
+; Handles the key-on opcodes.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+; input a ..... new pitch (in semitones)
+;-------------------------------------------------------------------------------
+; modifies .... a,de,hl
+;-------------------------------------------------------------------------------
+; note: breaks out of the update loop
+;*******************************************************************************
+
+KeyOn:
+    ld      (ix+TRACK_PITCH), a         ; Store new pitch
+    set     FLAG_PITCH,(ix+TRACK_FLAGS) ; Need to recompute frequency
+    set     FLAG_KEYON,(ix+TRACK_FLAGS) ; Request key-on
+    
+    ; fallthrough to KeyOff...
+
+;*******************************************************************************
+; KeyOff
+; Handles the key-off opcodes.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de,hl
+;-------------------------------------------------------------------------------
+; note: breaks out of the update loop
+;*******************************************************************************
+
+KeyOff:
+    set     FLAG_KEYOFF, (ix+TRACK_FLAGS)   ; Request key-off
+    
+    ld      a, (ix+TRACK_NOTELEN)       ; Set up note delay
+    ld      (ix+TRACK_WAIT), a
+    ld      (ix+TRACK_ADDR_LO), e       ; Save current address
+    ld      (ix+TRACK_ADDR_HI), d
+    
+    pop     hl                          ; Don't return to process loop
+    ret                                 ; End of processing
+
+;*******************************************************************************
+; CancelKey
+; Handles the cancel key opcode.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;*******************************************************************************
+
+CancelKey:
+    set     FLAG_CANCELKEY,(ix+TRACK_FLAGS) ; Request to ignore key-on/off
+    ret                                     ; Process next opcode
+
+;*******************************************************************************
+; StartOfLoop
+; Sets up the main loop point here.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;*******************************************************************************
+
+StartOfLoop:
+    ld      (ix+TRACK_LOOP_LO), e       ; Store new main loop point
+    ld      (ix+TRACK_LOOP_HI), d
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; EndOfLoop
+; Jumps back to the main loop point.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;*******************************************************************************
+
+EndOfLoop:
+    ld      e, (ix+TRACK_LOOP_LO)       ; Reload main loop point
+    ld      d, (ix+TRACK_LOOP_HI)
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; StartOfSubLoop
+; Sets up the sub-loop point here.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de
+;*******************************************************************************
+
+StartOfSubLoop:
+    ld      a, (de)                     ; Get number of iterations
+    inc     de
+    ld      (ix+TRACK_SUBCOUNT), a      ; Store number of iterations
+    ld      (ix+TRACK_SUBADDR_LO), e    ; Store new sub-loop point
+    ld      (ix+TRACK_SUBADDR_HI), d
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; EndOfSubLoop
+; Jumps back to the sub-loop point if there are any iterations left.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de
+;*******************************************************************************
+
+EndOfSubLoop:
+    dec     (ix+TRACK_SUBCOUNT)         ; Any iterations left?
+    ret     z                           ; If not, move onwards
+    ld      e, (ix+TRACK_SUBADDR_LO)    ; Jump to sub-loop point
+    ld      d, (ix+TRACK_SUBADDR_HI)
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; ByteCall, WordCall
+; Handle the call to subroutine opcodes.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de,hl
+;*******************************************************************************
+
+ByteCall:
+    ex      de, hl                      ; Read the offset to the subroutine
+    ld      a, (hl)
+    inc     hl
+    
+    ld      e, a                        ; Sign extend it to 16-bit
+    add     a, a
+    sbc     a, a
+    ld      d, a
+    
+    jr      DoJumpToCall
+
+WordCall:
+    ex      de, hl                      ; Read the offset to the subroutine
+    ld      e, (hl)
+    inc     hl
+    ld      d, (hl)
+    inc     hl
+    
+DoJumpToCall:
+    ld      (ix+TRACK_RET_LO), l        ; Store return address
+    ld      (ix+TRACK_RET_HI), h
+    
+    add     hl, de                      ; Compute destination address
+    ex      de, hl                      ; Put address where it belongs
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; ReturnFromSub
+; Handles the return from subroutine opcode.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... de
+;*******************************************************************************
+
+ReturnFromSub:
+    ld      e, (ix+TRACK_RET_LO)        ; Jump to where we left off
+    ld      d, (ix+TRACK_RET_HI)
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; UpdateTrack
+; Advances a track by "one tick". If it's still waiting it does nothing,
+; otherwise it processes opcodes until the next wait point.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+;-------------------------------------------------------------------------------
+; modifies .... a,de,hl
+;*******************************************************************************
+
+UpdateTrack:
+    dec     (ix+TRACK_WAIT)             ; Still waiting?
+    ret     nz
+    ld      e, (ix+TRACK_ADDR_LO)       ; Get address of next opcode to
+    ld      d, (ix+TRACK_ADDR_HI)         ; process and resume from there
+    
+    ld      hl, $                       ; Push the current address so we can
+    push    hl                            ; keep looping by using RET (which
+                                          ; is a single-byte instruction)
+    
+    ld      a, (de)                     ; Read next opcode to execute
+    inc     de
+    
+    cp      $80
+    jr      nc, SetNoteLen              ; Is it note length?
+    cp      $60
+    jr      c, KeyOn                    ; Is it key-on?
+    jr      z, KeyOff                   ; Is it key-off?
+    
+    sub     $61                         ; Not one of the common opcodes, use
+    add     a, a                          ; the jump table below to process
+    ld      ($+4), a                      ; it instead
+    jr      $
+    
+    jr      CancelKey                   ; OP_CANCELKEY
+    jr      StartOfLoop                 ; OP_LOOP
+    jr      EndOfLoop                   ; OP_END
+    jr      StartOfSubLoop              ; OP_SUBLOOP
+    jr      EndOfSubLoop                ; OP_SUBEND
+    jr      ByteCall                    ; OP_CALL_B
+    jr      WordCall                    ; OP_CALL_W
+    jr      ReturnFromSub               ; OP_RETURN
+    jr      SetInstrument               ; OP_INSTRUMENT
+    jr      SetTransposeAbs             ; OP_TRANSP_ABS
+    jr      SetTransposeRel             ; OP_TRANSP_REL
+    jr      SetVolumeAbs                ; OP_VOLUME_ABS
+    jr      SetVolumeRel                ; OP_VOLUME_REL
+    jr      SetPan                      ; OP_PAN/OP_NOISE
+    jr      ReturnChanToBgm             ; OP_SFXEND
+
+;*******************************************************************************
+; SetInstrument
+; Handle the set instrument opcode.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de
+;*******************************************************************************
+
+SetInstrument:
+    ld      a, (de)                             ; Get new instrument ID
+    inc     de                                  ; Advance current address
+    ld      (ix+TRACK_INSTRUMENT), a            ; Store new instrument ID
+    set     FLAG_INSTRUMENT, (ix+TRACK_FLAGS)   ; Have to load new values
+    ret                                         ; Process next opcode
+
+;*******************************************************************************
+; SetTransposeAbs, SetTransposeRel
+; Handle the set transpose opcodes (absolute and relative, respectively).
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de
+;*******************************************************************************
+
+SetTransposeRel:
+    ld      a, (de)                     ; Get transpose to add
+    add     (ix+TRACK_TRANSPOSE)        ; Mix it with current transpose
+    
+SetTransposeEnd:
+    inc     de                          ; Advance current address
+    ld      (ix+TRACK_TRANSPOSE), a     ; Store new transpose
+    ret                                 ; Process next opcode
+    
+SetTransposeAbs:
+    ld      a, (de)                     ; Get new transpose
+    jr      SetTransposeEnd             ; Use that value as-is
+
+;*******************************************************************************
+; SetVolumeAbs, SetVolumeRel
+; Handle the set attenuation opcodes (absolute and relative, respectively).
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de
+;*******************************************************************************
+
+SetVolumeRel:
+    ld      a, (de)                     ; Get attenuation to add
+    add     (ix+TRACK_VOLUME)           ; Mix it with current attenuation
+    
+SetVolumeEnd:
+    inc     de                          ; Advance current address
+    ld      (ix+TRACK_VOLUME), a        ; Store new attenuation
+    set     FLAG_VOLUME, (ix+TRACK_FLAGS) ; Request to update channel
+    ret                                 ; Process next opcode
+    
+SetVolumeAbs:
+    ld      a, (de)                     ; Get new attenuation
+    jr      SetVolumeEnd                ; Use that value as-is
+
+;*******************************************************************************
+; SetPan
+; Handle the set panning opcode.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input de .... pointer to this opcode
+;-------------------------------------------------------------------------------
+; output de ... pointer to next opcode
+;-------------------------------------------------------------------------------
+; modifies .... a,de
+;*******************************************************************************
+
+SetPan:
+    ld      a, (de)                     ; Get pan setting
+    inc     de                          ; Advance current address
+    ld      (ix+TRACK_PAN), a           ; Store new pan setting
+    set     FLAG_PAN, (ix+TRACK_FLAGS)  ; Request to update channel
+    ret                                 ; Process next opcode
+
+;*******************************************************************************
+; ReturnChanToBgm
+; Internal opcode, returns a SFX channel back to BGM.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+;-------------------------------------------------------------------------------
+; modifies .... a,hl
+;*******************************************************************************
+
+ReturnChanToBgm:
+    db      $DD,$7D ; ld a,ixl          ; Make the track pointer relative to the
+    sub     SfxTrackData&$FF              ; subset of SFX tracks so we can count
+                                          ; which SFX track it is below.
+                                          ; The pointer is 16-bit, but overflow
+                                          ; will ensure the offset is correct.
+    
+    cp      NUM_SFXTRACKS*SIZEOF_TRACK  ; Make the command do nothing if it
+    ret     nc                            ; ends up being executed by a BGM
+                                          ; track (this helps reduce the amount
+                                          ; of code needed by StopAllSound)
+    
+    ld      hl, SfxPriority-1           ; Count tracks to figure out to which
+SfxChanFromTrack:                         ; SFX channel this track belongs so
+    inc     hl                            ; we get a pointer to its priority
+    sub     SIZEOF_TRACK
+    jr      nc, SfxChanFromTrack
+    
+    ld      (hl), 0                     ; Reset priority (mark as unused), the
+                                          ; channel will be returned back to
+                                          ; the BGM track the next time that
+                                          ; RemapToBgmOrSfx is called
+    
+    ret                                 ; Process next opcode
