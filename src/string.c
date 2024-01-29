@@ -20,8 +20,8 @@
 #define P10 10000000000
 
 #if (ENABLE_NEWLIB == 0)
-static const char const uppercase_hexchars[] = "0123456789ABCDEF";
-static const char const lowercase_hexchars[] = "0123456789abcdef";
+static const char uppercase_hexchars[] = "0123456789ABCDEF";
+static const char lowercase_hexchars[] = "0123456789abcdef";
 #endif  // ENABLE_NEWLIB
 static const char digits[] =
     "0001020304050607080910111213141516171819"
