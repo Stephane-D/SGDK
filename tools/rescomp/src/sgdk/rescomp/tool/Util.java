@@ -48,15 +48,26 @@ public class Util
     {
         final String upText = text.toUpperCase();
 
-        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "PCM") || StringUtil.equals(upText, "0"))
+        if (StringUtil.isEmpty(upText) || StringUtil.equals(upText, "PCM") || StringUtil.equals(upText, "DEFAULT"))
             return SoundDriver.PCM;
-        if (StringUtil.equals(upText, "2ADPCM") || StringUtil.equals(upText, "1"))
+        if (StringUtil.equals(upText, "DPCM2"))
             return SoundDriver.DPCM2;
-        if (StringUtil.equals(upText, "4PCM") || StringUtil.equals(upText, "2") || StringUtil.equals(upText, "3"))
+        if (StringUtil.equals(upText, "PCM4"))
             return SoundDriver.PCM4;
-        if (StringUtil.equals(upText, "XGM") || StringUtil.equals(upText, "4") || StringUtil.equals(upText, "5"))
+        if (StringUtil.equals(upText, "XGM"))
             return SoundDriver.XGM;
+        if (StringUtil.equals(upText, "XGM2"))
+            return SoundDriver.XGM2;
 
+        if (StringUtil.equals(upText, "0"))
+            throw new IllegalArgumentException("'" + text + "' is not anymore recognized as valid sound driver, use 'PCM' instead.");
+        if (StringUtil.equals(upText, "1"))
+            throw new IllegalArgumentException("'" + text + "' is not anymore recognized as valid sound driver, use 'DPCM2' instead.");
+        if (StringUtil.equals(upText, "2"))
+            throw new IllegalArgumentException("'" + text + "' is not anymore recognized as valid sound driver, use 'PCM4' instead.");
+        if (StringUtil.equals(upText, "3") || StringUtil.equals(upText, "4") || StringUtil.equals(upText, "5"))
+            throw new IllegalArgumentException("'" + text + "' is not anymore recognized as valid sound driver, use 'XGM' instead.");
+        
         throw new IllegalArgumentException("Unrecognized sound driver: '" + text + "'");
     }
 
@@ -682,6 +693,44 @@ public class Util
 
         // execute
         final Process p = SystemUtil.exec(cmd, true);
+
+        try
+        {
+            // wait for execution
+            p.waitFor();
+        }
+        catch (InterruptedException e)
+        {
+            // ignore
+        }
+
+        // file exist --> ok
+        return FileUtil.exists(fout);
+    }
+
+    public static boolean xgm2tool(List<String> fins, String fout, String options)
+    {
+        // better to remove output file
+        FileUtil.delete(fout, false);
+
+        // build complete command line
+        final List<String> cmd = new ArrayList<>();
+        cmd.add("java");
+        cmd.add("-jar");
+        cmd.add(FileUtil.adjustPath(sgdk.rescomp.Compiler.currentDir, "xgm2tool.jar"));
+        for(String fin: fins)
+            cmd.add(fin);
+        cmd.add(fout);
+        if (!StringUtil.isEmpty(options))
+            cmd.add(options);
+        cmd.add("-s");
+
+        final String cmdLine = String.join(" ", cmd).trim();
+
+        System.out.println("Executing " + cmdLine);
+
+        // execute
+        final Process p = SystemUtil.exec(cmd.toArray(new String[cmd.size()]), true);
 
         try
         {

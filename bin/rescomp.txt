@@ -1,4 +1,4 @@
-ResComp 3.72 (November 2023)
+ResComp 3.81 (January 2024)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -61,7 +61,7 @@ Here're some important informations to know about how to use properly these 2 im
   Rescomp expect the palette to be located in the top-left part of the image where each color is defined by a 8x8 tile and each sub palette
   (16 colors) being on a separate row of tiles. You need to have the 4 sub palettes (4x16 colors) in the image even if only the first one is
   really used (there is no reliable way to detect automatically the number of palette row).
-  See the rgb_example.png image in the 'sample/sonic/res/gfx' folder if you want an example.
+  See the rgb_example.png image in the 'sample/game/sonic/res/gfx' folder if you want an example.
   Note that when processing the image rescomp will automatically remove the palette part of the image to not disturb process (not adding extra
   tiles for instance) so you shouldn't put any tileset data in the right part of the palette rows.
 * Indexed color images
@@ -140,7 +140,7 @@ Take an image or a TMX file as input and transform it into SGDK TileMap structur
 TileMap is used to draw in background plane, it requires a tileset which can be shared with others tilemaps.
 TILEMAP resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
-Syntax:
+Syntax (image file input):
 TILEMAP name img_file tileset_id [compression [map_opt [map_base]]]
 
     name            name of the output TileMap structure
@@ -159,6 +159,7 @@ TILEMAP name img_file tileset_id [compression [map_opt [map_base]]]
     map_base        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
                         Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
                                 
+Syntax (TMX tiled file input):
 TILEMAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
 
     name                name of the output TileMap structure
@@ -374,7 +375,7 @@ representing the processed sprite cutting operation.
 
 XGM
 ---
-Take a .vgm or .xgm music file as input and transform it into binary format usable with the SGDK XGM_startPlay(..) methods.
+Take a VGM or XGM music file as input and transform it into binary format usable with the SGDK XGM_startPlay(..) methods.
 The XGM driver supports music play along 4 PCM channels mixing (100% running on Z80 cpu).
 
 Syntax:
@@ -389,6 +390,32 @@ XGM name file [timing [options]]
     options         optional(s) parameter(s) for xgmtool
                         ex: "-dr -di" to disable some sample auto process (see xgmtool to get more info)
 
+XGM2
+----
+Take a VGM music file as input and transform it into binary format usable with the SGDK XGM2_play(..) or XGM2_playTrack(..) methods.
+The XGM2 driver supports music play along 3 PCM channels mixing (100% running on Z80 cpu) with adjustable volume (FM and PSG only).
+
+Syntax for single track XGM:
+XGM2 name file [options]
+
+    name            XGM2 music variable name
+    file            path of the .vgm music file to convert in compiled XGM2 file
+    options         optional(s) parameter(s) for xgm2Tool
+                        Should always start with '-' character otherwise it won't be recognized
+                        ex: "-dr -di" to disable some samples auto process (see xgm2tool to get more info)
+    
+Syntax for multi tracks XGM2 - allow PCM sharing:
+XGM2 name file1 [file2] [...] [options]
+
+    name            XGM2 music variable name
+    file(s)         path(s) of the .vgm music file(s) to convert to compiled XGM2 file
+                        ex1: "music.vgm"
+                        ex2: "music1.vgm" "music2.vgm" ...
+                        ex3: "*.vgm\"
+    options         optional(s) parameter(s) for xgm2Tool
+                        Should always start with '-' character otherwise it won't be recognized
+                        ex: "-dr -di" to disable some samples auto process (see xgm2tool to get more info)
+
 
 WAV
 ---
@@ -398,28 +425,32 @@ Syntax:
 WAV name wav_file driver [out_rate [far]]
 
     name            variable name
-    file            path of the .wav file (will be automatically converted to 8 bits signed PCM at needed rate)
+    file            path of the .wav file (will be automatically converted int the correct format)
     driver          specify the Z80 driver to use:
-                        0 / PCM
-                            Single channel 8 bits signed sample driver.
+                        PCM / DEFAULT (0 value is not anymore accepted)
+                            Single PCM channel sound driver.
                             It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
-                            Method to use: SND_startPlay_PCM(..)
-                        1 / 2ADPCM
-                            2 channels 4 bits ADPCM sample driver.
-                            It can mix up to 2 ADCPM samples at a fixed 22050 Hz rate.
-                            Method to use: SND_startPlay_2ADPCM(..)
-                        2 / 3 / 4PCM
-                            4 channels 8 bits signed sample driver with volume support.
-                            It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate.
-                            with volume support (16 levels due to memory limitation).
-                            Method to use: SND_startPlay_4PCM_ENV(..)
-                        4 / 5 / XGM
-                            XGM music with 4 channels 8 bits samples driver.
-                            It supports 4 PCM SFX at a fixed 14 Khz rate while playing XGM music.
+                            Method to use: SND_PCM_startPlay(..)
+                        DPCM2 (2ADPCM and 1 are not anymore accepted)
+                            2 PCM channels DPCM sound driver.
+                            It can mix up to 2 (4 bit) DCPM samples at a fixed 22050 Hz rate.
+                            Method to use: SND_DPCM2_startPlay(..)
+                        PCM4 (2 and 3 are not anymore accepted)
+                            4 PCM channels sample sound driver with volume support.
+                            It can mix up to 4 samples (8 bit signed) at a fixed 16 Khz rate with 16 levels of volume.
+                            Method to use: SND_PCM4_startPlay(..)
+                        XGM (4 and 5 are not anymore accepted)
+                            XGM music sound driver.
+                            It can mix up to 4 samples (8 bit signed) at a fixed 14 Khz rate while playing XGM music.
                             Methods to use: XGM_setPCM(..) and XGM_startPlayPCM(..)
-    out_rate        output PCM rate (required for Z80_DRIVER_PCM driver, ignored for others)
-                        By default the default driver output rate is used.
-    far             'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = FALSE)
+                        XGM2
+                            XGM music sound driver.
+                            It can mix up to 3 samples (8 bit signed) at either 13.3 Khz or 6.65 Khz while playing XGM music.
+                            Methods to use: XGM2_playPCM(..)
+    out_rate        output PCM rate, this parameter is meaningful only for PCM and XGM2 driver.
+                        PCM driver accepts following values: 8000, 11025, 13400, 16000, 22050, 32000 (default is 16000 if omitted)
+                        XGM2 driver accepts only 6650 or 13300 (default is 13300 if omitted).
+    far             'far' binary data flag to put it at the end of the ROM (useful for bank switch, default = TRUE)
 
 
 BIN
