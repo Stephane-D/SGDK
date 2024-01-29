@@ -10,23 +10,10 @@
 #include "sys.h"
 #include "vdp.h"
 #include "tools.h"
-#include "sound.h"
-#include "xgm.h"
-
-// Z80 drivers
-#include "z80_drv0.h"
-#include "z80_drv1.h"
-#include "z80_drv2.h"
-#include "z80_drv3.h"
-#include "z80_xgm.h"
-
-#include "tab_vol.h"
-#include "smp_null.h"
-#include "smp_null_pcm.h"
 
 
 // driver(s) flags
-#define DRIVER_FLAG_DELAYDMA    (1 << 0)
+#define DRIVER_FLAG_DELAY_DMA    (1 << 0)
 
 
 // we don't want to share it
@@ -37,8 +24,20 @@ u16 driverFlags;
 u16 busProtectSignalAddress;
 
 
-// we don't want to share it
-extern void XGM_resetLoadCalculation();
+// we don't want to share them
+extern void SND_NULL_unloadDriver(void);
+extern void SND_PCM_unloadDriver(void);
+extern void SND_DPCM2_unloadDriver(void);
+extern void SND_PCM4_unloadDriver(void);
+extern void XGM_unloadDriver(void);
+extern void XGM2_unloadDriver(void);
+
+extern void SND_NULL_loadDriver(void);
+extern void SND_PCM_loadDriver(const bool waitReady);
+extern void SND_DPCM2_loadDriver(const bool waitReady);
+extern void SND_PCM4_loadDriver(const bool waitReady);
+extern void XGM_loadDriver(const bool waitReady);
+extern void XGM2_loadDriver(const bool waitReady);
 
 
 void NO_INLINE Z80_init()
@@ -223,202 +222,36 @@ u16 Z80_getLoadedDriver()
 
 void Z80_unloadDriver()
 {
+    switch(currentDriver)
+    {
+        case Z80_DRIVER_PCM:
+            SND_PCM_unloadDriver();
+            break;
+
+        case Z80_DRIVER_DPCM2:
+            SND_DPCM2_unloadDriver();
+            break;
+
+        case Z80_DRIVER_PCM4:
+            SND_PCM4_unloadDriver();
+            break;
+
+        case Z80_DRIVER_XGM:
+            XGM_unloadDriver();
+            break;
+
+        case Z80_DRIVER_XGM2:
+            XGM2_unloadDriver();
+            break;
+    }
+
     // load NULL driver
-    Z80_loadDriver(Z80_DRIVER_NULL, FALSE);
-
+    SND_NULL_loadDriver();
     currentDriver = Z80_DRIVER_NULL;
-
-    // remove XGM task if present
-    VBlankProcess &= ~PROCESS_XGM_TASK;
 }
 
-void NO_INLINE Z80_loadDriver(const u16 driver, const bool waitReady)
+void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
 {
-    const u8 *drv;
-    u16 len;
-
-    // already loaded
-    if (currentDriver == driver) return;
-
-    switch(driver)
-    {
-        case Z80_DRIVER_NULL:
-            drv = z80_drv0;
-            len = sizeof(z80_drv0);
-            break;
-
-        case Z80_DRIVER_PCM:
-            drv = z80_drv1;
-            len = sizeof(z80_drv1);
-            break;
-
-        case Z80_DRIVER_2ADPCM:
-            drv = z80_drv2;
-            len = sizeof(z80_drv2);
-            break;
-
-        case Z80_DRIVER_4PCM:
-            drv = z80_drv3;
-            len = sizeof(z80_drv3);
-            break;
-
-        case Z80_DRIVER_XGM:
-            drv = z80_xgm;
-            len = sizeof(z80_xgm);
-            break;
-
-        default:
-            // no valid driver to load
-            return;
-    }
-
-    SYS_disableInts();
-    Z80_requestBus(TRUE);
-
-    // reset sound chips
-    YM2612_reset();
-    PSG_reset();
-
-    // clear z80 memory
-    Z80_clear();
-    // upload Z80 driver and reset Z80
-    Z80_upload(0, drv, len);
-
-    Z80_startReset();
-    Z80_releaseBus();
-    // wait a bit so Z80 reset completed
-    waitSubTick(50);
-    Z80_endReset();
-
-    // driver initialisation
-    switch(driver)
-    {
-        vu8 *pb;
-        u32 addr;
-
-        case Z80_DRIVER_2ADPCM:
-            // misc parameters initialisation
-            Z80_requestBus(TRUE);
-            // point to Z80 null sample parameters
-            pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
-
-            addr = (u32) smp_null_pcm;
-            // null sample address (128 bytes aligned)
-            pb[0] = addr >> 7;
-            pb[1] = addr >> 15;
-            // null sample length (128 bytes aligned)
-            pb[2] = sizeof(smp_null_pcm) >> 7;
-            pb[3] = sizeof(smp_null_pcm) >> 15;
-            Z80_releaseBus();
-            break;
-
-        case Z80_DRIVER_PCM:
-            // misc parameters initialisation
-            Z80_requestBus(TRUE);
-            // point to Z80 null sample parameters
-            pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
-
-            addr = (u32) smp_null;
-            // null sample address (256 bytes aligned)
-            pb[0] = addr >> 8;
-            pb[1] = addr >> 16;
-            // null sample length (256 bytes aligned)
-            pb[2] = sizeof(smp_null) >> 8;
-            pb[3] = sizeof(smp_null) >> 16;
-            Z80_releaseBus();
-            break;
-
-        case Z80_DRIVER_4PCM:
-            // load volume table
-            Z80_upload(0x1000, tab_vol, 0x1000);
-
-            // misc parameters initialisation
-            Z80_requestBus(TRUE);
-            // point to Z80 null sample parameters
-            pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
-
-            addr = (u32) smp_null;
-            // null sample address (256 bytes aligned)
-            pb[4] = addr >> 8;
-            pb[5] = addr >> 16;
-            // null sample length (256 bytes aligned)
-            pb[6] = sizeof(smp_null) >> 8;
-            pb[7] = sizeof(smp_null) >> 16;
-            Z80_releaseBus();
-            break;
-
-        case Z80_DRIVER_XGM:
-            // misc parameters initialisation
-            Z80_requestBus(TRUE);
-            // point to Z80 sample id table (first entry = silent sample)
-            pb = (u8 *) (0xA01C00);
-
-            addr = (u32) smp_null;
-            // null sample address (256 bytes aligned)
-            pb[0] = addr >> 8;
-            pb[1] = addr >> 16;
-            // null sample length (256 bytes aligned)
-            pb[2] = sizeof(smp_null) >> 8;
-            pb[3] = sizeof(smp_null) >> 16;
-            Z80_releaseBus();
-            break;
-    }
-
-    // wait driver for being ready
-    if (waitReady)
-    {
-        switch(driver)
-        {
-            // drivers supporting ready status
-            case Z80_DRIVER_2ADPCM:
-            case Z80_DRIVER_PCM:
-            case Z80_DRIVER_4PCM:
-            case Z80_DRIVER_XGM:
-                Z80_releaseBus();
-                // wait bus released
-                while(Z80_isBusTaken());
-
-                // just wait for it (the function does request Z80 bus if needed)
-                while(!Z80_isDriverReady())
-                    waitMs(1);
-                break;
-        }
-    }
-
-    // new driver set
-    currentDriver = driver;
-
-    // post init stuff
-    switch(driver)
-    {
-        // XGM driver
-        case Z80_DRIVER_XGM:
-            // using auto sync --> enable XGM task on VInt
-            if (!XGM_getManualSync())
-                VBlankProcess |= PROCESS_XGM_TASK;
-            // define default XGM tempo (always based on NTSC timing)
-            XGM_setMusicTempo(60);
-            // reset load calculation
-            XGM_resetLoadCalculation();
-            // set bus protection signal address
-            Z80_useBusProtection((Z80_DRV_PARAMS + 0x0D) & 0xFFFF);
-            break;
-
-        default:
-            VBlankProcess &= ~PROCESS_XGM_TASK;
-            // no bus protection (signal address set to 0)
-            Z80_useBusProtection(0);
-            break;
-    }
-
-    SYS_enableInts();
-}
-
-void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
-{
-    // remove XGM task if present
-    VBlankProcess &= ~PROCESS_XGM_TASK;
-
     SYS_disableInts();
     Z80_requestBus(TRUE);
 
@@ -436,30 +269,71 @@ void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
     // wait a bit so Z80 reset completed
     waitSubTick(50);
     Z80_endReset();
-
-    // custom driver set
-    currentDriver = Z80_DRIVER_CUSTOM;
-
     SYS_enableInts();
 }
 
+void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
+{
+    Z80_unloadDriver();
+    Z80_loadDriverInternal(drv, size);
+
+    // custom driver set
+    currentDriver = Z80_DRIVER_CUSTOM;
+}
+
+void NO_INLINE Z80_loadDriver(const u16 driver, const bool waitReady)
+{
+    // already loaded
+    if (currentDriver == driver) return;
+
+    Z80_unloadDriver();
+
+    switch(driver)
+    {
+        case Z80_DRIVER_NULL:
+            SND_NULL_loadDriver();
+            break;
+
+        case Z80_DRIVER_PCM:
+            SND_PCM_loadDriver(waitReady);
+            break;
+
+        case Z80_DRIVER_DPCM2:
+            SND_DPCM2_loadDriver(waitReady);
+            break;
+
+        case Z80_DRIVER_PCM4:
+            SND_PCM4_loadDriver(waitReady);
+            break;
+
+        case Z80_DRIVER_XGM:
+            XGM_loadDriver(waitReady);
+            break;
+
+        case Z80_DRIVER_XGM2:
+            XGM2_loadDriver(waitReady);
+            break;
+    }
+
+    // new driver set
+    currentDriver = driver;
+}
+
+
 bool Z80_isDriverReady()
 {
-    vu8 *pb;
-    u8 ret;
-
     // point to Z80 status
-    pb = (u8 *) Z80_DRV_STATUS;
+    vu8* pb = (vu8*) Z80_DRV_STATUS;
 
-    // bus already taken ? just check status
-    if (Z80_isBusTaken()) ret = *pb & Z80_DRV_STAT_READY;
-    else
-    {
-        // take the bus, check status and release bus
-        Z80_requestBus(TRUE);
-        ret = (*pb & Z80_DRV_STAT_READY)?TRUE:FALSE;
-        Z80_releaseBus();
-    }
+    SYS_disableInts();
+    // request Z80 BUS
+    bool busTaken = Z80_getAndRequestBus(TRUE);
+
+    // ready status
+    bool ret = (*pb & Z80_DRV_STAT_READY)?TRUE:FALSE;
+
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
 
     return ret;
 }
@@ -501,11 +375,11 @@ void Z80_disableBusProtection()
 
 bool Z80_getForceDelayDMA()
 {
-    return driverFlags & DRIVER_FLAG_DELAYDMA;
+    return driverFlags & DRIVER_FLAG_DELAY_DMA;
 }
 
 void Z80_setForceDelayDMA(bool value)
 {
-    if (value) driverFlags |= DRIVER_FLAG_DELAYDMA;
-    else driverFlags &= ~DRIVER_FLAG_DELAYDMA;
+    if (value) driverFlags |= DRIVER_FLAG_DELAY_DMA;
+    else driverFlags &= ~DRIVER_FLAG_DELAY_DMA;
 }
