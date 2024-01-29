@@ -1,0 +1,41 @@
+; ############################ define ##############################
+
+YMPORT0     EQU     $4000           ; YM2612 port 0
+YMPORT1     EQU     $4001           ; YM2612 port 1
+YMPORT2     EQU     $4002           ; YM2612 port 2
+YMPORT3     EQU     $4003           ; YM2612 port 3
+VDPSTATUS_H EQU     $7F04           ; VDP status port high
+VDPSTATUS_L EQU     $7F05           ; VDP status port low
+VCOUNTER    EQU     $7F08           ; V counter
+HCOUNTER    EQU     $7F09           ; H counter
+PSGPORT     EQU     $7F11           ; PSG port
+BANKREG     EQU     $6000           ; bank register
+
+COMPLAY_SFT EQU     0               ; start play command
+COMSTOP_SFT EQU     4               ; stop play command
+
+STATPLAY_SFT  EQU   0               ; playing status
+STATREADY_SFT EQU   7               ; driver ready status
+
+CH0_SFT     EQU     0               ; channel 0
+CH1_SFT     EQU     1               ; channel 1
+CH2_SFT     EQU     2               ; channel 2
+CH3_SFT     EQU     3               ; channel 3
+
+COMPLAY     EQU     1<<COMPLAY_SFT
+COMSTOP     EQU     1<<COMSTOP_SFT
+
+STATPLAY    EQU     1<<STATPLAY_SFT
+STATREADY   EQU     1<<STATREADY_SFT
+
+CH0         EQU     1<<CH0_SFT
+CH1         EQU     1<<CH1_SFT
+CH2         EQU     1<<CH2_SFT
+CH3         EQU     1<<CH3_SFT
+
+
+; ########################### variable #############################
+
+COMMAND     EQU     $0100           ; command from 68K
+STATUS      EQU     $0102           ; status from Z80
+PARAMS      EQU     $0104           ; parameters (68K and Z80)

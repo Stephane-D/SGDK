@@ -1,0 +1,83 @@
+; ########################### function #############################
+
+; initDAC
+; -----------
+; HL <-  YMPORT0
+; DE <-  $2A80
+;
+; prepare DAC for output
+
+initDAC
+            LD      DE, $2B80
+            CALL    writeYM0        ; enable DAC
+            LD      DE, $2A80
+            CALL    writeYM0        ; DAC data to silent
+            RET
+
+; writeYM0 / writeYM1
+; -------------------
+; D   -> address
+; E   -> value
+; HL <-  YMPORT0 / YMPORT2
+;
+; write to YM2612 (safe)
+; 81 cycles
+
+writeYM0                            ;                           ' 17
+            LD      HL, YMPORT0     ; HL = YM port 0            ' 10    | (27)
+
+.wait
+            BIT     7, (HL)         ; test YM not busy          ' 12    |
+            JR      NZ, .wait       ;                           ' 7     | 19 (46)
+
+            LD      L, $0           ; HL = YM port 0            ' 7     |
+            LD      (HL), D         ; write address             ' 7     |
+            INC     L               ; next port                 ' 4     | 25 (71)
+            LD      (HL), E         ; write value               ' 7     |
+
+            RET                     ; end                       ' 10    | (81)
+
+
+writeYM1                            ;                           ' 17
+            LD      HL, YMPORT0     ; HL = YM port 0            ' 10    | (27)
+
+.wait
+            BIT     7, (HL)         ; test YM not busy          ' 12    |
+            JR      NZ, .wait       ;                           ' 7     | 19 (46)
+
+            LD      L, $2           ; HL = YM port 2            ' 7     |
+            LD      (HL), D         ; write address             ' 7     | 25 (71)
+            INC     L               ; HL = YM port 3            ' 4     |
+            LD      (HL), E         ; write value               ' 7     |
+
+            RET                     ; end                       ' 10    | (81)
+
+
+; writeYM0Fast / writeYM1Fast
+; ---------------------------
+; D   -> address
+; E   -> value
+; HL <-  YMPORT0 / YMPORT2
+;
+; write to YM2612
+; 55 cycles
+
+writeYM0Fast                        ;                           ' 17
+
+            LD      HL, YMPORT0     ; HL = YM port 0            ' 10    |
+            LD      (HL), D         ; write address             ' 7     |
+            INC     L               ; next port                 ' 4     | 28 (45)
+            LD      (HL), E         ; write value               ' 7     |
+
+            RET                     ; end                       ' 10    | (55)
+
+
+writeYM1Fast                        ;                           ' 17
+
+            LD      HL, YMPORT2     ; HL = YM port 2            ' 10    |
+            LD      (HL), D         ; write address             ' 7     |
+            INC     L               ; next port                 ' 4     | 28 (45)
+            LD      (HL), E         ; write value               ' 7     |
+
+            RET                     ; end                       ' 10    | (55)
+

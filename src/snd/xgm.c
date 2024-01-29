@@ -1,14 +1,17 @@
 #include "config.h"
 #include "types.h"
 
-#include "xgm.h"
-
 #include "z80_ctrl.h"
-#include "smp_null.h"
+
+#include "snd/sound.h"
+#include "snd/xgm.h"
+#include "snd/drv_xgm.h"
+#include "snd/smp_null.h"
+
 #include "sys.h"
+#include "timer.h"
 #include "mapper.h"
 
-//// just to get xgmstop resource
 #include "vdp.h"
 #include "bmp.h"
 #include "vdp_tile.h"
@@ -39,13 +42,65 @@ static u16 xgmWaitMean;
 
 // set next frame helper
 static void setNextXFrame(u16 num, bool set);
+static void resetLoadCalculation();
 
+// we don't want to share it
+extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 
 // Z80_DRIVER_XGM
 // XGM driver
 ///////////////////////////////////////////////////////////////
 
-u8 NO_INLINE XGM_isPlaying()
+void NO_INLINE XGM_loadDriver(const bool waitReady)
+{
+    Z80_loadDriverInternal(drv_xgm, sizeof(drv_xgm));
+
+    SYS_disableInts();
+
+    // misc parameters initialisation
+    Z80_requestBus(TRUE);
+    // point to Z80 sample id table (first entry = silent sample)
+    vu8 *pb = (u8 *) (0xA01C00);
+
+    u32 addr = (u32) smp_null;
+    // null sample address (256 bytes aligned)
+    pb[0] = addr >> 8;
+    pb[1] = addr >> 16;
+    // null sample length (256 bytes aligned)
+    pb[2] = sizeof(smp_null) >> 8;
+    pb[3] = sizeof(smp_null) >> 16;
+    Z80_releaseBus();
+
+    // wait driver for being ready
+    if (waitReady)
+    {
+        while(!Z80_isDriverReady())
+            waitMs(1);
+    }
+
+    // using auto sync --> enable XGM task on VInt
+    if (!XGM_getManualSync())
+        VBlankProcess |= PROCESS_XGM_TASK;
+    // define default XGM tempo (always based on NTSC timing)
+    XGM_setMusicTempo(60);
+    // reset load calculation
+    resetLoadCalculation();
+    // set bus protection signal address
+    Z80_useBusProtection((Z80_DRV_PARAMS + 0x0D) & 0xFFFF);
+
+    SYS_enableInts();
+}
+
+void NO_INLINE XGM_unloadDriver(void)
+{
+    // remove XGM vblank / vint task
+    VBlankProcess &= ~PROCESS_XGM_TASK;
+    // remove bus protection (signal address set to 0)
+    Z80_useBusProtection(0);
+}
+
+
+bool NO_INLINE XGM_isPlaying(void)
 {
     vu8 *pb;
     u8 ret;
@@ -311,7 +366,7 @@ void XGM_setPCMFast_FAR(const u8 id, const u8 *sample, const u32 len)
     pb[0x03] = len >> 16;
 }
 
-void NO_INLINE XGM_startPlayPCM(const u8 id, const u8 priority, const u16 channel)
+void NO_INLINE XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMChannel channel)
 {
     vu8 *pb;
 
@@ -339,7 +394,7 @@ void NO_INLINE XGM_startPlayPCM(const u8 id, const u8 priority, const u16 channe
     SYS_enableInts();
 }
 
-void NO_INLINE XGM_stopPlayPCM(const u16 channel)
+void NO_INLINE XGM_stopPlayPCM(const SoundPCMChannel channel)
 {
     vu8 *pb;
 
@@ -389,7 +444,7 @@ void NO_INLINE XGM_setLoopNumber(s8 value)
     SYS_enableInts();
 }
 
-void XGM_set68KBUSProtection(u8 value)
+void XGM_set68KBUSProtection(bool value)
 {
     Z80_setBusProtection(value);
 }
@@ -400,7 +455,7 @@ u16 XGM_getManualSync()
     return driverFlags & DRIVER_FLAG_MANUALSYNC_XGM;
 }
 
-void XGM_setManualSync(u16 value)
+void XGM_setManualSync(const bool value)
 {
     // nothing to do
     if (currentDriver != Z80_DRIVER_XGM)
@@ -425,7 +480,7 @@ bool XGM_getForceDelayDMA()
     return Z80_getForceDelayDMA();
 }
 
-void XGM_setForceDelayDMA(bool value)
+void XGM_setForceDelayDMA(const bool value)
 {
     Z80_setForceDelayDMA(value);
 }
@@ -435,7 +490,7 @@ u16 XGM_getMusicTempo()
     return xgmTempo;
 }
 
-void XGM_setMusicTempo(u16 value)
+void XGM_setMusicTempo(const u16 value)
 {
     xgmTempo = value;
     if (IS_PAL_SYSTEM) xgmTempoDef = 50;
@@ -527,7 +582,7 @@ u32 NO_INLINE XGM_getCPULoad()
     return load | ((u32) (xgmWaitMean >> 5) << 16);
 }
 
-void XGM_resetLoadCalculation()
+static void resetLoadCalculation()
 {
     u16 i;
     u16 *s1;
@@ -547,7 +602,7 @@ void XGM_resetLoadCalculation()
     xgmWaitMean = 0;
 }
 
-void NO_INLINE setNextXFrame(u16 num, bool set)
+static void NO_INLINE setNextXFrame(u16 num, bool set)
 {
     vu16 *pw_bus;
     vu16 *pw_reset;
@@ -586,7 +641,7 @@ void NO_INLINE setNextXFrame(u16 num, bool set)
     else *pb += num;
 }
 
-void XGM_nextXFrame(u16 num)
+void XGM_nextXFrame(const u16 num)
 {
     // nothing to do (driver should be loaded here)
     if (currentDriver != Z80_DRIVER_XGM)

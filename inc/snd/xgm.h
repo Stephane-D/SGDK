@@ -15,10 +15,116 @@
 
 
 /**
+ * \deprecated use XGM_isPlaying() instead
+ */
+#define SND_isPlaying_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_isPlaying() instead.\"")
+/**
+ * \deprecated use XGM_startPlay(..) instead
+ */
+#define SND_startPlay_XGM(song)     _Pragma("GCC error \"This method is deprecated, use XGM_startPlay(..) instead.\"")
+/**
+ * \deprecated use XGM_stopPlay(..) instead
+ */
+#define SND_stopPlay_XGM()          _Pragma("GCC error \"This method is deprecated, use XGM_stopPlay() instead.\"")
+/**
+ * \deprecated use XGM_pausePlay(..) instead
+ */
+#define SND_pausePlay_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_pausePlay() instead.\"")
+/**
+ * \deprecated use XGM_resumePlay(..) instead
+ */
+#define SND_resumePlay_XGM()        _Pragma("GCC error \"This method is deprecated, use XGM_resumePlay() instead.\"")
+
+/**
+ * \deprecated use XGM_isPlayingPCM(..) instead
+ */
+#define SND_isPlayingPCM_XGM(channel_mask)  _Pragma("GCC error \"This method is deprecated, use XGM_isPlayingPCM(..) instead.\"")
+/**
+ * \deprecated use XGM_setPCM(..) instead
+ */
+#define SND_setPCM_XGM(id, sample, len)     _Pragma("GCC error \"This method is deprecated, use XGM_setPCM(..) instead.\"")
+/**
+ * \deprecated use XGM_setPCMFast(..) instead
+ */
+#define SND_setPCMFast_XGM(id, sample, len) _Pragma("GCC error \"This method is deprecated, use XGM_setPCMFast(..) instead.\"")
+/**
+ * \deprecated use XGM_startPlayPCM(..) instead
+ */
+#define SND_startPlayPCM_XGM(id, prio, ch)  _Pragma("GCC error \"This method is deprecated, use XGM_startPlayPCM(..) instead.\"")
+/**
+ * \deprecated use XGM_stopPlayPCM(..) instead
+ */
+#define SND_stopPlayPCM_XGM(channel)        _Pragma("GCC error \"This method is deprecated, use XGM_stopPlayPCM(..) instead.\"")
+
+/**
+ * \deprecated use XGM_getMusicTempo(..) instead
+ */
+#define SND_getMusicTempo_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_getMusicTempo() instead.\"")
+/**
+ * \deprecated use XGM_setMusicTempo(..) instead
+ */
+#define SND_setMusicTempo_XGM(value)    _Pragma("GCC error \"This method is deprecated, use XGM_setMusicTempo(..) instead.\"")
+
+/**
+ * \deprecated use XGM_getManualSync(..) instead
+ */
+#define SND_getManualSync_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_getManualSync() instead.\"")
+/**
+ * \deprecated use XGM_setManualSync(..) instead
+ */
+#define SND_setManualSync_XGM()         _Pragma("GCC error \"This method is deprecated, use XGM_setManualSync() instead.\"")
+/**
+ * \deprecated use XGM_nextFrame(..) instead
+ */
+#define SND_nextFrame_XGM()             _Pragma("GCC error \"This method is deprecated, use XGM_nextFrame() instead.\"")
+/**
+ * \deprecated use XGM_nextXFrame(..) instead
+ */
+#define SND_nextXFrame_XGM(num)         _Pragma("GCC error \"This method is deprecated, use XGM_nextXFrame(..) instead.\"")
+
+/**
+ * \deprecated use XGM_setLoopNumber(..) instead
+ */
+#define SND_setLoopNumber_XGM(value)    _Pragma("GCC error \"This method is deprecated, use XGM_setLoopNumber(..) instead.\"")
+
+/**
+ * \deprecated use XGM_set68KBUSProtection(..) instead
+ */
+#define SND_set68KBUSProtection_XGM(value)  _Pragma("GCC error \"This method is deprecated, use XGM_set68KBUSProtection(..) instead.\"")
+/**
+ * \deprecated use XGM_getForceDelayDMA(..) instead
+ */
+#define SND_getForceDelayDMA_XGM()          _Pragma("GCC error \"This method is deprecated, use XGM_getForceDelayDMA() instead.\"")
+/**
+ * \deprecated use XGM_setForceDelayDMA(..) instead
+ */
+#define SND_setForceDelayDMA_XGM(value)     _Pragma("GCC error \"This method is deprecated, use XGM_setForceDelayDMA(..) instead.\"")
+/**
+ * \deprecated use XGM_getCPULoad(..) instead
+ */
+#define SND_getCPULoad_XGM()                _Pragma("GCC error \"This method is deprecated, use XGM_getCPULoad() instead.\"")
+
+
+/**
+ *  \brief
+ *      Load the XGM sound driver.
+ *
+ *      Don't use this method directly, use #Z80_loadDriver(..) instead.
+ */
+void XGM_loadDriver(const bool waitReady);
+/**
+ *  \brief
+ *      Unload the XGM sound driver.
+ *
+ *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
+ */
+void XGM_unloadDriver(void);
+
+/**
  * \brief
  *      Returns play music state (XGM music player driver).
  */
-u8 XGM_isPlaying(void);
+bool XGM_isPlaying(void);
 /**
  *  \brief
  *      Start playing the specified XGM track (XGM music player driver).
@@ -88,7 +194,7 @@ void XGM_resumePlay(void);
  *      #SOUND_PCM_CH4_MSK    = channel 4<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
- *      <code>isPlayingPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
+ *      <code>XGM_isPlayingPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
  *      will actually return play state for channel 1 and channel 2.
  *
  *  \return
@@ -155,26 +261,26 @@ void XGM_setPCMFast_FAR(const u8 id, const u8 *sample, const u32 len);
  *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br>
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
  *  \param channel
- *      Channel where we want to play sample.<br>
+ *      Channel where we want to play sample, accepted values are:<br>
  *      #SOUND_PCM_CH1    = channel 1 (usually used by music)<br>
  *      #SOUND_PCM_CH2    = channel 2<br>
  *      #SOUND_PCM_CH3    = channel 3<br>
  *      #SOUND_PCM_CH4    = channel 4<br>
  */
-void XGM_startPlayPCM(const u8 id, const u8 priority, const u16 channel);
+void XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMChannel channel);
 /**
  *  \brief
  *      Stop play PCM on specified channel (XGM music player driver).<br>
  *      No effect if no sample was currently playing on this channel.
  *
  *  \param channel
- *      Channel we want to stop.<br>
+ *      Channel we want to stop, accepted values are:<br>
  *      #SOUND_PCM_CH1    = channel 1<br>
  *      #SOUND_PCM_CH2    = channel 2<br>
  *      #SOUND_PCM_CH3    = channel 3<br>
  *      #SOUND_PCM_CH4    = channel 4<br>
  */
-void XGM_stopPlayPCM(const u16 channel);
+void XGM_stopPlayPCM(const SoundPCMChannel channel);
 
 /**
  *  \brief
@@ -210,7 +316,7 @@ u16 XGM_getMusicTempo(void);
  *  \see XGM_setManualSync(..)
  *  \see XGM_getMusicTempo(void)
  */
-void XGM_setMusicTempo(u16 value);
+void XGM_setMusicTempo(const u16 value);
 
 /**
  *  \brief
@@ -227,7 +333,7 @@ u16 XGM_getManualSync(void);
  *  \see XGM_getManualSync(void)
  *  \see XGM_nextFrame(void)
  */
-void XGM_setManualSync(u16 value);
+void XGM_setManualSync(const bool value);
 /**
  *  \brief
  *      Notify the Z80 a new frame just happened (XGM music player driver).
@@ -255,7 +361,7 @@ void XGM_setManualSync(u16 value);
  *
  * \see XGM_nextFrame(..)
  */
-void XGM_nextXFrame(u16 num);
+void XGM_nextXFrame(const u16 num);
 
 /**
  *  \brief
@@ -263,7 +369,7 @@ void XGM_nextXFrame(u16 num);
  *      Default value is -1 for pseudo unfinite (255) loops plays.
  *      A value of 0 means single play without any loop, 1 = single play + 1 loop...
  */
-void XGM_setLoopNumber(s8 value);
+void XGM_setLoopNumber(const s8 value);
 
 /**
  *  \brief
@@ -271,7 +377,7 @@ void XGM_setLoopNumber(s8 value);
  *
  *  \see XGM_setForceDelayDMA(..)
  */
-void XGM_set68KBUSProtection(u8 value);
+void XGM_set68KBUSProtection(const bool value);
 /**
  *  \brief
  *      Same as Z80_getForceDelayDMA() (generic version of the method)
@@ -281,9 +387,9 @@ void XGM_set68KBUSProtection(u8 value);
 bool XGM_getForceDelayDMA(void);
 /**
  *  \brief
- *      Same as Z80_getForceDelayDMA(..) (generic version of the method)
+ *      Same as Z80_setForceDelayDMA(..) (generic version of the method)
  */
-void XGM_setForceDelayDMA(bool value);
+void XGM_setForceDelayDMA(const bool value);
 
 /**
  *  \brief
