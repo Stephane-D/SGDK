@@ -318,7 +318,7 @@ void NO_INLINE XGM2_load(const u8 *song)
 
 void XGM2_load_FAR(const u8 *song, const u32 len)
 {
-    XGM2_load(FAR_SAFE(song, size));
+    XGM2_load(FAR_SAFE(song, len));
 }
 
 void NO_INLINE XGM2_playTrack(const u16 track)
