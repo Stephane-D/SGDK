@@ -97,20 +97,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00063"></a>00063 } <a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>;
 <a name="l00064"></a>00064 
 <a name="l00065"></a>00065 
-<a name="l00080"></a>00080 <a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* POOL_create(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> objectSize);
-<a name="l00090"></a>00090 <span class="keywordtype">void</span> POOL_destroy(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00080"></a>00080 <a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* <a class="code" href="pool_8h.html#a797c853df941700cfe0771da90483178" title="Create and allocate a new object pool allocator.">POOL_create</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> objectSize);
+<a name="l00090"></a>00090 <span class="keywordtype">void</span> <a class="code" href="pool_8h.html#a5f4e9b2d559c91515ec924742bbc5a4b" title="Release the specified object pool allocator.">POOL_destroy</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
 <a name="l00091"></a>00091 
-<a name="l00101"></a>00101 <span class="keywordtype">void</span> POOL_reset(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <span class="keywordtype">bool</span> clear);
+<a name="l00101"></a>00101 <span class="keywordtype">void</span> <a class="code" href="pool_8h.html#a2fc981198057975bc1b51bd9d1c64bef" title="Reset the &#39;object&#39; pool allocator.">POOL_reset</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <span class="keywordtype">bool</span> clear);
 <a name="l00102"></a>00102 
-<a name="l00114"></a>00114 <span class="keywordtype">void</span>* POOL_allocate(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
-<a name="l00129"></a>00129 <span class="keywordtype">void</span> POOL_release(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <span class="keywordtype">void</span>* <span class="keywordtype">object</span>, <span class="keywordtype">bool</span> maintainCoherency);
+<a name="l00114"></a>00114 <span class="keywordtype">void</span>* <a class="code" href="pool_8h.html#a4d985884eae859438bc6717788b0cf9d" title="Allocate a new &#39;object&#39; from the specified object pool.">POOL_allocate</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00129"></a>00129 <span class="keywordtype">void</span> <a class="code" href="pool_8h.html#a55488257bfd770094d029697541e58cb" title="Release an objet from the specified object pool.">POOL_release</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <span class="keywordtype">void</span>* <span class="keywordtype">object</span>, <span class="keywordtype">bool</span> maintainCoherency);
 <a name="l00130"></a>00130 
-<a name="l00138"></a>00138 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> POOL_getFree(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
-<a name="l00146"></a>00146 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> POOL_getNumAllocated(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00138"></a>00138 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="pool_8h.html#aeff4acaa71903ab679c917e1452afc5d">POOL_getFree</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00146"></a>00146 <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> <a class="code" href="pool_8h.html#aa24f92ece9ec336f05e6b642846107ad">POOL_getNumAllocated</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
 <a name="l00147"></a>00147 
-<a name="l00157"></a>00157 <span class="keywordtype">void</span>** POOL_getFirst(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
+<a name="l00157"></a>00157 <span class="keywordtype">void</span>** <a class="code" href="pool_8h.html#ac4ce07a8dd66c4902027b26492cf6a96">POOL_getFirst</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool);
 <a name="l00158"></a>00158 
-<a name="l00168"></a>00168 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> POOL_find(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <span class="keywordtype">void</span>* <span class="keywordtype">object</span>);
+<a name="l00168"></a>00168 <a class="code" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> <a class="code" href="pool_8h.html#a276ac3badf8c8401a331760b09ec7400">POOL_find</a>(<a class="code" href="struct_pool.html" title="Object pool allocator structure.">Pool</a>* pool, <span class="keywordtype">void</span>* <span class="keywordtype">object</span>);
 <a name="l00169"></a>00169 
 <a name="l00170"></a>00170 
 <a name="l00171"></a>00171 <span class="preprocessor">#endif // _POOL_H_</span>
@@ -119,7 +119,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="pool_8h.html">pool.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:37 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

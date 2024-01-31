@@ -106,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00041"></a>00041 <span class="comment">//</span>
 <a name="l00042"></a>00042 <span class="comment">// *****************************************************************************</span>
 <a name="l00043"></a>00043 
-<a name="l00045"></a>00045 <span class="preprocessor">#define ENABLE_ASSERT_CHECKS</span>
+<a name="l00045"></a><a class="code" href="console_8h.html#a5a3fe0a9f0a366b49815f42640205963">00045</a> <span class="preprocessor">#define ENABLE_ASSERT_CHECKS</span>
 <a name="l00046"></a>00046 <span class="preprocessor"></span>
 <a name="l00047"></a>00047 <span class="comment">// *****************************************************************************</span>
 <a name="l00048"></a>00048 <span class="comment">//</span>
@@ -114,88 +114,85 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00050"></a>00050 <span class="comment">//</span>
 <a name="l00051"></a>00051 <span class="comment">// *****************************************************************************</span>
 <a name="l00052"></a>00052 
-<a name="l00053"></a>00053 <span class="keyword">typedef</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> size_t;
-<a name="l00054"></a>00054 <span class="keyword">typedef</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> ptrdiff_t;
-<a name="l00055"></a>00055 
-<a name="l00057"></a>00057 <span class="keyword">typedef</span> int (*vsprintf_t)(<span class="keywordtype">char</span> *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, va_list args);
-<a name="l00059"></a>00059 <span class="keyword">typedef</span> int (*vsnprintf_t)(<span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> count, <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, va_list args);
-<a name="l00060"></a>00060 
-<a name="l00061"></a>00061 <span class="comment">// *****************************************************************************</span>
-<a name="l00062"></a>00062 <span class="comment">//</span>
-<a name="l00063"></a>00063 <span class="comment">//  Macros</span>
-<a name="l00064"></a>00064 <span class="comment">//</span>
-<a name="l00065"></a>00065 <span class="comment">// *****************************************************************************</span>
-<a name="l00066"></a>00066 
-<a name="l00068"></a>00068 <span class="preprocessor">#define str(s) xstr(s)</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>
-<a name="l00070"></a>00070 <span class="preprocessor">#define xstr(s) #s</span>
-<a name="l00071"></a>00071 <span class="preprocessor"></span>
-<a name="l00084"></a>00084 <span class="preprocessor">#if defined(ENABLE_ASSERT_CHECKS) &amp;&amp; !defined(NDEBUG)</span>
-<a name="l00085"></a>00085 <span class="preprocessor"></span><span class="preprocessor">#define assert(condition)                                                              \</span>
-<a name="l00086"></a>00086 <span class="preprocessor">    if ( !(condition) )                                                                \</span>
-<a name="l00087"></a>00087 <span class="preprocessor">    {                                                                                  \</span>
-<a name="l00088"></a>00088 <span class="preprocessor">        CON_reset();                                                                   \</span>
-<a name="l00089"></a>00089 <span class="preprocessor">        CON_systemResetOnNextWrite();                                                  \</span>
-<a name="l00090"></a>00090 <span class="preprocessor">        CON_write(__FILE__&quot;:&quot;str(__LINE__)&quot;: Assertion \&#39;&quot;str(condition)&quot;\&#39; failed.&quot;); \</span>
-<a name="l00091"></a>00091 <span class="preprocessor">        while (TRUE);                                                                  \</span>
-<a name="l00092"></a>00092 <span class="preprocessor">    }</span>
-<a name="l00093"></a>00093 <span class="preprocessor"></span><span class="preprocessor">#else</span>
-<a name="l00094"></a>00094 <span class="preprocessor"></span><span class="preprocessor">#define assert(condition)</span>
-<a name="l00095"></a>00095 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00096"></a>00096 <span class="preprocessor"></span>
-<a name="l00104"></a>00104 <span class="preprocessor">#define ASSERT(condition) assert(condition)</span>
-<a name="l00105"></a>00105 <span class="preprocessor"></span>
-<a name="l00106"></a>00106 <span class="comment">// *****************************************************************************</span>
-<a name="l00107"></a>00107 <span class="comment">//</span>
-<a name="l00108"></a>00108 <span class="comment">//  Function Declarations</span>
-<a name="l00109"></a>00109 <span class="comment">//</span>
-<a name="l00110"></a>00110 <span class="comment">// *****************************************************************************</span>
-<a name="l00111"></a>00111 
-<a name="l00112"></a>00112 <span class="comment">// -----------------------------------------------------------------------------</span>
-<a name="l00113"></a>00113 <span class="comment">// printf functions</span>
-<a name="l00114"></a>00114 <span class="comment">// -----------------------------------------------------------------------------</span>
-<a name="l00115"></a>00115 
-<a name="l00146"></a>00146 <span class="keywordtype">int</span> CON_sprintf(<span class="keywordtype">char</span>* buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, ...)  __attribute__ ((format (printf, 2, 3)));
-<a name="l00147"></a>00147 
-<a name="l00182"></a>00182 <span class="keywordtype">int</span> CON_snprintf(<span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span> count, const <span class="keywordtype">char</span> *fmt, ...)  __attribute__ ((format (printf, 3, 4)));
-<a name="l00183"></a>00183 
-<a name="l00201"></a>00201 <span class="keywordtype">void</span> CON_setVsprintf(vsprintf_t vsprintf_func);
-<a name="l00202"></a>00202 
-<a name="l00220"></a>00220 <span class="keywordtype">void</span> CON_setVsnprintf(vsnprintf_t vsnprintf_func);
-<a name="l00221"></a>00221 
-<a name="l00222"></a>00222 <span class="comment">// -----------------------------------------------------------------------------</span>
-<a name="l00223"></a>00223 <span class="comment">// Console setup</span>
-<a name="l00224"></a>00224 <span class="comment">// -----------------------------------------------------------------------------</span>
-<a name="l00225"></a>00225 
-<a name="l00243"></a>00243 <span class="keywordtype">void</span> CON_setConsoleSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> left, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> top, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> width, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> height);
-<a name="l00244"></a>00244 
-<a name="l00267"></a>00267 <span class="keywordtype">void</span> CON_setLineBufferSize(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
-<a name="l00268"></a>00268 
-<a name="l00288"></a>00288 <span class="keywordtype">void</span> CON_setTransferMethod(<a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm);
-<a name="l00289"></a>00289 
-<a name="l00301"></a>00301 <span class="keywordtype">void</span> CON_reset();
-<a name="l00302"></a>00302 
-<a name="l00317"></a>00317 <span class="keywordtype">void</span> CON_systemResetOnNextWrite();
-<a name="l00318"></a>00318 
-<a name="l00319"></a>00319 <span class="comment">// -----------------------------------------------------------------------------</span>
-<a name="l00320"></a>00320 <span class="comment">// Console write functions</span>
-<a name="l00321"></a>00321 <span class="comment">// -----------------------------------------------------------------------------</span>
-<a name="l00322"></a>00322 
-<a name="l00332"></a>00332 <span class="keywordtype">void</span> CON_clear();
-<a name="l00333"></a>00333 
-<a name="l00348"></a>00348 <span class="keywordtype">void</span> CON_setCursorPosition(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y);
-<a name="l00349"></a>00349 
-<a name="l00359"></a>00359 <a class="code" href="struct_vect2_d__u16.html" title="2D Vector structure - u16 type.">V2u16</a> CON_getCursorPosition();
-<a name="l00360"></a>00360 
-<a name="l00397"></a>00397 <span class="keywordtype">int</span> CON_write(const <span class="keywordtype">char</span> *fmt, ...)  __attribute__ ((format (printf, 1, 2)));
-<a name="l00398"></a>00398 
-<a name="l00399"></a>00399 <span class="preprocessor">#endif // MODULE_CONSOLE</span>
+<a name="l00054"></a><a class="code" href="console_8h.html#a0ca1990f2c616d660b86c3109084f177">00054</a> <span class="keyword">typedef</span> int (*<a class="code" href="console_8h.html#a0ca1990f2c616d660b86c3109084f177" title="Callback prototype for a vsprintf() function using va_list.">vsprintf_t</a>)(<span class="keywordtype">char</span> *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, va_list args);
+<a name="l00056"></a><a class="code" href="console_8h.html#afb6f065a16a9c1c1b667c3ad0c0e7275">00056</a> <span class="keyword">typedef</span> int (*<a class="code" href="console_8h.html#afb6f065a16a9c1c1b667c3ad0c0e7275" title="Callback prototype for a vsnprintf() function using va_list.">vsnprintf_t</a>)(<span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> count, <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, va_list args);
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058 <span class="comment">// *****************************************************************************</span>
+<a name="l00059"></a>00059 <span class="comment">//</span>
+<a name="l00060"></a>00060 <span class="comment">//  Macros</span>
+<a name="l00061"></a>00061 <span class="comment">//</span>
+<a name="l00062"></a>00062 <span class="comment">// *****************************************************************************</span>
+<a name="l00063"></a>00063 
+<a name="l00065"></a><a class="code" href="console_8h.html#ad8ab729381f270b100f3d05b6c6676fc">00065</a> <span class="preprocessor">#define str(s) xstr(s)</span>
+<a name="l00066"></a>00066 <span class="preprocessor"></span>
+<a name="l00067"></a><a class="code" href="console_8h.html#aeec40e2b433cc2844853d184006edff0">00067</a> <span class="preprocessor">#define xstr(s) #s</span>
+<a name="l00068"></a>00068 <span class="preprocessor"></span>
+<a name="l00081"></a>00081 <span class="preprocessor">#if defined(ENABLE_ASSERT_CHECKS) &amp;&amp; !defined(NDEBUG)</span>
+<a name="l00082"></a><a class="code" href="console_8h.html#acdcc5aaebf3f273c1762f24a6ece2e5e">00082</a> <span class="preprocessor"></span><span class="preprocessor">#define assert(condition)                                                              \</span>
+<a name="l00083"></a>00083 <span class="preprocessor">    if ( !(condition) )                                                                \</span>
+<a name="l00084"></a>00084 <span class="preprocessor">    {                                                                                  \</span>
+<a name="l00085"></a>00085 <span class="preprocessor">        CON_reset();                                                                   \</span>
+<a name="l00086"></a>00086 <span class="preprocessor">        CON_systemResetOnNextWrite();                                                  \</span>
+<a name="l00087"></a>00087 <span class="preprocessor">        CON_write(__FILE__&quot;:&quot;str(__LINE__)&quot;: Assertion \&#39;&quot;str(condition)&quot;\&#39; failed.&quot;); \</span>
+<a name="l00088"></a>00088 <span class="preprocessor">        while (TRUE);                                                                  \</span>
+<a name="l00089"></a>00089 <span class="preprocessor">    }</span>
+<a name="l00090"></a>00090 <span class="preprocessor"></span><span class="preprocessor">#else</span>
+<a name="l00091"></a>00091 <span class="preprocessor"></span><span class="preprocessor">#define assert(condition)</span>
+<a name="l00092"></a>00092 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00093"></a>00093 <span class="preprocessor"></span>
+<a name="l00101"></a><a class="code" href="console_8h.html#ac22830a985e1daed0c9eadba8c6f606e">00101</a> <span class="preprocessor">#define ASSERT(condition) assert(condition)</span>
+<a name="l00102"></a>00102 <span class="preprocessor"></span>
+<a name="l00103"></a>00103 <span class="comment">// *****************************************************************************</span>
+<a name="l00104"></a>00104 <span class="comment">//</span>
+<a name="l00105"></a>00105 <span class="comment">//  Function Declarations</span>
+<a name="l00106"></a>00106 <span class="comment">//</span>
+<a name="l00107"></a>00107 <span class="comment">// *****************************************************************************</span>
+<a name="l00108"></a>00108 
+<a name="l00109"></a>00109 <span class="comment">// -----------------------------------------------------------------------------</span>
+<a name="l00110"></a>00110 <span class="comment">// printf functions</span>
+<a name="l00111"></a>00111 <span class="comment">// -----------------------------------------------------------------------------</span>
+<a name="l00112"></a>00112 
+<a name="l00143"></a>00143 <span class="keywordtype">int</span> <a class="code" href="console_8h.html#a415f0b50df56b3b3722b2bcaec015d24" title="Standard C library sprintf function.">CON_sprintf</a>(<span class="keywordtype">char</span>* buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *fmt, ...)  __attribute__ ((format (printf, 2, 3)));
+<a name="l00144"></a>00144 
+<a name="l00179"></a>00179 <span class="keywordtype">int</span> <a class="code" href="console_8h.html#a188542b29dbc4cf1847b9c8a2403211f" title="Standard C library snprintf function.">CON_snprintf</a>(<span class="keywordtype">char</span>* buf, <span class="keywordtype">int</span> count, const <span class="keywordtype">char</span> *fmt, ...)  __attribute__ ((format (printf, 3, 4)));
+<a name="l00180"></a>00180 
+<a name="l00198"></a>00198 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#aa90431e8383faa4f86f7dc11101eba82" title="Register a standard vsprintf function as callback for CON_sprintf()">CON_setVsprintf</a>(<a class="code" href="console_8h.html#a0ca1990f2c616d660b86c3109084f177" title="Callback prototype for a vsprintf() function using va_list.">vsprintf_t</a> vsprintf_func);
+<a name="l00199"></a>00199 
+<a name="l00217"></a>00217 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#aa9957c2192f191bc1b0158a20a148138" title="Register a standard vsnprintf function as callback for CON_snprintf()">CON_setVsnprintf</a>(<a class="code" href="console_8h.html#afb6f065a16a9c1c1b667c3ad0c0e7275" title="Callback prototype for a vsnprintf() function using va_list.">vsnprintf_t</a> vsnprintf_func);
+<a name="l00218"></a>00218 
+<a name="l00219"></a>00219 <span class="comment">// -----------------------------------------------------------------------------</span>
+<a name="l00220"></a>00220 <span class="comment">// Console setup</span>
+<a name="l00221"></a>00221 <span class="comment">// -----------------------------------------------------------------------------</span>
+<a name="l00222"></a>00222 
+<a name="l00240"></a>00240 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#a39e61ea3f563fde51d9a5f57db879ecc" title="Set the size of the console window.">CON_setConsoleSize</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> left, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> top, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> width, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> height);
+<a name="l00241"></a>00241 
+<a name="l00264"></a>00264 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#af7ba6607c72a1f8fd882be28714a40d1" title="Set the size of the character line buffer.">CON_setLineBufferSize</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size);
+<a name="l00265"></a>00265 
+<a name="l00285"></a>00285 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#ae365fa43dd65b0234d6650c0d24610c1" title="Set the transfer method used to upload the console tile buffer to VDP RAM.">CON_setTransferMethod</a>(<a class="code" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481" title="VRAM transfer method.">TransferMethod</a> tm);
+<a name="l00286"></a>00286 
+<a name="l00298"></a>00298 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#a1139cd53e9739553324ebe7b4b79c0f6" title="Reset the console.">CON_reset</a>();
+<a name="l00299"></a>00299 
+<a name="l00314"></a>00314 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#a5c1d65e7dc89d154a78df417452de457" title="Reset the system to the SGDK default state when CON_write() is called next time.">CON_systemResetOnNextWrite</a>();
+<a name="l00315"></a>00315 
+<a name="l00316"></a>00316 <span class="comment">// -----------------------------------------------------------------------------</span>
+<a name="l00317"></a>00317 <span class="comment">// Console write functions</span>
+<a name="l00318"></a>00318 <span class="comment">// -----------------------------------------------------------------------------</span>
+<a name="l00319"></a>00319 
+<a name="l00329"></a>00329 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#a4af497f093e3a7c08509e3376f76b4d3" title="Clear the console window.">CON_clear</a>();
+<a name="l00330"></a>00330 
+<a name="l00345"></a>00345 <span class="keywordtype">void</span> <a class="code" href="console_8c.html#a25b786f70813ef5682c0b530b044abae" title="Set a new cursor position.">CON_setCursorPosition</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y);
+<a name="l00346"></a>00346 
+<a name="l00356"></a>00356 <a class="code" href="struct_vect2_d__u16.html" title="2D Vector structure - u16 type.">V2u16</a> <a class="code" href="console_8c.html#a6bd61a866e15b018296e2e690de16458" title="Return the current cursor position.">CON_getCursorPosition</a>();
+<a name="l00357"></a>00357 
+<a name="l00394"></a>00394 <span class="keywordtype">int</span> <a class="code" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write</a>(const <span class="keywordtype">char</span> *fmt, ...)  __attribute__ ((format (printf, 1, 2)));
+<a name="l00395"></a>00395 
+<a name="l00396"></a>00396 <span class="preprocessor">#endif // MODULE_CONSOLE</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="console_8h.html">console.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:37 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

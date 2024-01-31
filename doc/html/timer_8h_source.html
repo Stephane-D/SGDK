@@ -98,18 +98,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00037"></a>00037 <span class="keyword">extern</span> <a class="code" href="types_8h.html#a6eba899871b8afc6b03e239d11cbe4a5">vu32</a> vtimer;
 <a name="l00038"></a>00038 
 <a name="l00039"></a>00039 
-<a name="l00048"></a>00048 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  <a class="code" href="timer_8h.html#aee49759133f0865af797da75c37477b5" title="Returns elapsed subticks from console reset.">getSubTick</a>(<span class="keywordtype">void</span>);
-<a name="l00055"></a>00055 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  <a class="code" href="timer_8h.html#a23ff2b273085b78a4fe8c9d177b715ec" title="Returns elapsed ticks from console reset.">getTick</a>(<span class="keywordtype">void</span>);
+<a name="l00048"></a>00048 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  getSubTick(<span class="keywordtype">void</span>);
+<a name="l00055"></a>00055 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  getTick(<span class="keywordtype">void</span>);
 <a name="l00056"></a>00056 
-<a name="l00066"></a>00066 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  <a class="code" href="timer_8h.html#a52fe9422554dc2d90d4087e96397ceb5" title="Returns elapsed time from console reset.">getTime</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromTick);
-<a name="l00077"></a>00077 <a class="code" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> <a class="code" href="timer_8h.html#a3a8230c180bda89126329f32e522cbcb" title="Returns elapsed time in second from console reset.">getTimeAsFix32</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromTick);
+<a name="l00066"></a>00066 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  getTime(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromTick);
+<a name="l00077"></a>00077 <a class="code" href="types_8h.html#a7470dd593b8647d2e9fcb1e94b1025c9">fix32</a> getTimeAsFix32(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> fromTick);
 <a name="l00078"></a>00078 
-<a name="l00086"></a>00086 <span class="keywordtype">void</span> <a class="code" href="timer_8h.html#a3d86ff97f39920ab158c54b428d4df7c" title="Start internal timer (0 &lt;= numtimer &lt; MAXTIMER)">startTimer</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numTimer);
-<a name="l00098"></a>00098 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  <a class="code" href="timer_8h.html#ae87bd4b7d5dd6cc2b6ce74d6c8e910e8" title="Get elapsed subticks for specified timer.">getTimer</a>(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numTimer, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> restart);
+<a name="l00086"></a>00086 <span class="keywordtype">void</span> startTimer(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numTimer);
+<a name="l00098"></a>00098 <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a>  getTimer(<a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> numTimer, <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> restart);
 <a name="l00099"></a>00099 
-<a name="l00109"></a>00109 <span class="keywordtype">void</span> <a class="code" href="timer_8h.html#ae3137afb6e906f124388e489a1d8b2cb" title="Wait for a certain amount of subticks (1/76800 second based).">waitSubTick</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> subtick);
-<a name="l00119"></a>00119 <span class="keywordtype">void</span> <a class="code" href="timer_8h.html#a8eca7c2d21d8f3612fb7f0072f3dc5a1" title="Wait for a certain amount of ticks (1/300 second based).">waitTick</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> tick);
-<a name="l00129"></a>00129 <span class="keywordtype">void</span> <a class="code" href="timer_8h.html#a4a9f46b1bf1b1cddeafbbddded10a8a1" title="Wait for a certain amount of millisecond.">waitMs</a>(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> ms);
+<a name="l00109"></a>00109 <span class="keywordtype">void</span> waitSubTick(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> subtick);
+<a name="l00119"></a>00119 <span class="keywordtype">void</span> waitTick(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> tick);
+<a name="l00129"></a>00129 <span class="keywordtype">void</span> waitMs(<a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> ms);
 <a name="l00130"></a>00130 
 <a name="l00131"></a>00131 
 <a name="l00132"></a>00132 <span class="preprocessor">#endif // _TIMER_H_</span>
@@ -118,7 +118,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="timer_8h.html">timer.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

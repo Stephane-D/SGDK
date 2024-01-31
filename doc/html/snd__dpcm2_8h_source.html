@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>sgdk: smp_null_pcm.h Source File</title>
+<title>sgdk: snd_dpcm2.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/search.js"></script>
@@ -74,26 +74,36 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-  initNavTree('smp__null__pcm_8h.html','');
+  initNavTree('snd__dpcm2_8h.html','');
 </script>
 <div id="doc-content">
 <div class="header">
   <div class="headertitle">
-<div class="title">smp_null_pcm.h</div>  </div>
+<div class="title">snd_dpcm2.h</div>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#ifndef _SMP_NULL_PCM_H_</span>
-<a name="l00002"></a>00002 <span class="preprocessor"></span><span class="preprocessor">#define _SMP_NULL_PCM_H_</span>
-<a name="l00003"></a>00003 <span class="preprocessor"></span>
-<a name="l00004"></a>00004 <span class="keyword">extern</span> <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> smp_null_pcm[0x80];
-<a name="l00005"></a>00005 
-<a name="l00006"></a>00006 <span class="preprocessor">#endif // _SMP_NULL_PCM_H_</span>
+<a href="snd__dpcm2_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
+<a name="l00016"></a>00016 <span class="preprocessor">#ifndef _SND_DPCM2_H_</span>
+<a name="l00017"></a>00017 <span class="preprocessor"></span><span class="preprocessor">#define _SND_DPCM2_H_</span>
+<a name="l00018"></a>00018 <span class="preprocessor"></span>
+<a name="l00019"></a>00019 <span class="preprocessor">#define SND_isPlaying_2ADPCM    _Pragma(&quot;GCC error \&quot;This method is deprecated, use SND_DPCM2_isPlaying instead.\&quot;&quot;)</span>
+<a name="l00020"></a>00020 <span class="preprocessor"></span><span class="preprocessor">#define SND_startPlay_2ADPCM    _Pragma(&quot;GCC error \&quot;This method is deprecated, use SND_DPCM2_startPlay instead.\&quot;&quot;)</span>
+<a name="l00021"></a>00021 <span class="preprocessor"></span><span class="preprocessor">#define SND_stopPlay_2ADPCM     _Pragma(&quot;GCC error \&quot;This method is deprecated, use SND_DPCM2_stopPlay instead.\&quot;&quot;)</span>
+<a name="l00022"></a>00022 <span class="preprocessor"></span>
+<a name="l00029"></a>00029 <span class="keywordtype">void</span> SND_DPCM2_loadDriver(<span class="keyword">const</span> <span class="keywordtype">bool</span> waitReady);
+<a name="l00036"></a>00036 <span class="keywordtype">void</span> SND_DPCM2_unloadDriver(<span class="keywordtype">void</span>);
+<a name="l00037"></a>00037 
+<a name="l00054"></a>00054 <span class="keywordtype">bool</span> <a class="code" href="snd__dpcm2_8h.html#aa6564aa2855663f378d751818470dd54" title="Return play status of specified channel (2 channels ADPCM player driver).">SND_DPCM2_isPlaying</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel_mask);
+<a name="l00075"></a>00075 <span class="keywordtype">void</span> <a class="code" href="snd__dpcm2_8h.html#aa075e0c8f188a7455b3c5a5896a4b756" title="Start playing a sample on specified channel (2 channels ADPCM player driver).  If a sample was curren...">SND_DPCM2_startPlay</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len, <span class="keyword">const</span> <a class="code" href="sound_8h.html#a874540c4b30b79490fc7d498caf6b24b" title="Sound PCM channel enum.">SoundPCMChannel</a> channel, <span class="keyword">const</span> <span class="keywordtype">bool</span> loop);
+<a name="l00086"></a>00086 <span class="keywordtype">void</span> <a class="code" href="snd__dpcm2_8h.html#a4f39548e0d430dc37555b705171d28a8" title="Stop playing the specified channel (2 channels ADPCM player driver).  No effect if no sample was curr...">SND_DPCM2_stopPlay</a>(<span class="keyword">const</span> <a class="code" href="sound_8h.html#a874540c4b30b79490fc7d498caf6b24b" title="Sound PCM channel enum.">SoundPCMChannel</a> channel);
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088 <span class="preprocessor">#endif // _SND_DPCM2_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
-      <li class="navelem"><b>smp_null_pcm.h</b>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
+      <li class="navelem"><a class="el" href="snd__dpcm2_8h.html">snd_dpcm2.h</a>      </li>
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>
