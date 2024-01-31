@@ -188,10 +188,10 @@ void XGM_resumePlay(void);
  *
  *  \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      #SOUND_PCM_CH1_MSK    = channel 1<br>
- *      #SOUND_PCM_CH2_MSK    = channel 2<br>
- *      #SOUND_PCM_CH3_MSK    = channel 3<br>
- *      #SOUND_PCM_CH4_MSK    = channel 4<br>
+ *      SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      SOUND_PCM_CH3_MSK    = channel 3<br>
+ *      SOUND_PCM_CH4_MSK    = channel 4<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>XGM_isPlayingPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -262,10 +262,10 @@ void XGM_setPCMFast_FAR(const u8 id, const u8 *sample, const u32 len);
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
  *  \param channel
  *      Channel where we want to play sample, accepted values are:<br>
- *      #SOUND_PCM_CH1    = channel 1 (usually used by music)<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
+ *      SOUND_PCM_CH1    = channel 1 (usually used by music)<br>
+ *      SOUND_PCM_CH2    = channel 2<br>
+ *      SOUND_PCM_CH3    = channel 3<br>
+ *      SOUND_PCM_CH4    = channel 4<br>
  */
 void XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMChannel channel);
 /**
@@ -275,10 +275,10 @@ void XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMChannel chan
  *
  *  \param channel
  *      Channel we want to stop, accepted values are:<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
+ *      SOUND_PCM_CH1    = channel 1<br>
+ *      SOUND_PCM_CH2    = channel 2<br>
+ *      SOUND_PCM_CH3    = channel 3<br>
+ *      SOUND_PCM_CH4    = channel 4<br>
  */
 void XGM_stopPlayPCM(const SoundPCMChannel channel);
 

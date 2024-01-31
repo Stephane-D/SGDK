@@ -47,7 +47,7 @@ bool XGM2_isPlaying(void);
  *  \see XGM2_stop
  *  \see XGM2_load_FAR
  */
-void XGM2_load(const u8 *xgm2);
+void XGM2_load(const u8 *song);
 /**
  *  \brief
  *      Same as #XGM2_load(..) except it supports access through bank switch
@@ -61,7 +61,7 @@ void XGM2_load(const u8 *xgm2);
  *  \see XGM2_stop
  *  \see XGM2_load
  */
-void XGM2_load_FAR(const u8 *xgm2, const u32 len);
+void XGM2_load_FAR(const u8 *song, const u32 len);
 /**
  *  \brief
  *      Start playing the specified track (need to call XGM2_load(..) first)
@@ -138,9 +138,9 @@ void XGM2_resume(void);
  *
  *  \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      #SOUND_PCM_CH1_MSK    = channel 1<br>
- *      #SOUND_PCM_CH2_MSK    = channel 2<br>
- *      #SOUND_PCM_CH3_MSK    = channel 3<br>
+ *      SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      SOUND_PCM_CH3_MSK    = channel 3<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>isPlayingPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -167,10 +167,10 @@ u8 XGM2_isPlayingPCM(const u16 channel_mask);
  *      (SGDK automatically adjust WAV resource size as needed)
  *  \param channel
  *      Channel to use to play sample.<br>
- *      #SOUND_PCM_CH_AUTO = auto selection from current channel usage<br>
- *      #SOUND_PCM_CH1     = channel 1 (usually used by music)<br>
- *      #SOUND_PCM_CH2     = channel 2<br>
- *      #SOUND_PCM_CH3     = channel 3<br>
+ *      SOUND_PCM_CH_AUTO = auto selection from current channel usage<br>
+ *      SOUND_PCM_CH1     = channel 1 (usually used by music)<br>
+ *      SOUND_PCM_CH2     = channel 2<br>
+ *      SOUND_PCM_CH3     = channel 3<br>
  *
  *  \see XGM2_playPCMEx
  *  \see XGM2_stopPCM
@@ -191,10 +191,10 @@ void XGM2_playPCM(const u8 *sample, const u32 len, const SoundPCMChannel channel
  *      (SGDK automatically adjust WAV resource size as needed)
  *  \param channel
  *      Channel to use to play sample.<br>
- *      #SOUND_PCM_CH_AUTO = auto selection from current channel usage<br>
- *      #SOUND_PCM_CH1     = channel 1 (usually used by music)<br>
- *      #SOUND_PCM_CH2     = channel 2<br>
- *      #SOUND_PCM_CH3     = channel 3<br>
+ *      SOUND_PCM_CH_AUTO = auto selection from current channel usage<br>
+ *      SOUND_PCM_CH1     = channel 1 (usually used by music)<br>
+ *      SOUND_PCM_CH2     = channel 2<br>
+ *      SOUND_PCM_CH3     = channel 3<br>
  *  \param priority
  *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br>
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
@@ -215,9 +215,9 @@ void XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMChannel chann
  *
  *  \param channel
  *      Channel we want to stop.<br>
- *      #SOUND_PCM_CH1 = channel 1<br>
- *      #SOUND_PCM_CH2 = channel 2<br>
- *      #SOUND_PCM_CH3 = channel 3<br>
+ *      SOUND_PCM_CH1 = channel 1<br>
+ *      SOUND_PCM_CH2 = channel 2<br>
+ *      SOUND_PCM_CH3 = channel 3<br>
  *
  *  \see XGM2_playPCM
  *  \see XGM2_isPlayingPCM
@@ -289,12 +289,12 @@ void XGM2_setLoopNumber(const s8 value);
 
 /**
  *  \brief
- *      Return the elapsed play time since the last #XGM2_startPlay(..) call.<br>
+ *      Return the elapsed play time since the last #XGM2_play(..) call.<br>
  *      The returned value is in music frame which can be 50/60 per second depending the base music play rate (NTSC/PAL).
  *
- *  \see XGM2_play
- *  \see XGM2_playTrack
- *  \see XGM2_setMusicTempo
+ *  \see XGM2_play(..)
+ *  \see XGM2_playTrack(..)
+ *  \see XGM2_setMusicTempo(..)
  */
 u32 XGM2_getElapsed(void);
 
@@ -360,7 +360,7 @@ bool XGM2_isPAL(const u8 *xgm2);
 u16 XGM2_getCPULoad(const bool mean);
 /**
  *  \brief
- *      Returns an estimation of the Z80 CPU time spent in waiting for DMA completion (see #XGM2_set68KBUSProtection method).
+ *      Returns an estimation of the Z80 CPU time spent in waiting for DMA completion (see #Z80_setBusProtection(bool) method).
 *
  *  \param mean
  *      if set to TRUE then return a mean wait computed on the last 8 frames otherwise return instant last frame DMA wait

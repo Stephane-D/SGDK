@@ -817,6 +817,8 @@ void SPR_nextFrame(Sprite* sprite);
  *
  *  \param sprite
  *      Sprite we want to enable/disable animation loop for.
+ *  \param value
+ *      TRUE to enable animation loop (default), FALSE otherwise
  *
  *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
  *  \see #SPR_getAnimationDone(Sprite*)
@@ -829,7 +831,7 @@ void SPR_setAnimationLoop(Sprite* sprite, bool value);
  *      the end of sprite animation and do appropriate action if required.
  *
  *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
- *  \see #SPR_setAnimationLoop(Sprite*)
+ *  \see #SPR_setAnimationLoop(Sprite*, bool)
  */
 bool SPR_getAnimationDone(Sprite* sprite);
 

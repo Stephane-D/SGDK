@@ -80,18 +80,18 @@ bool SND_PCM_isPlaying(void);
  *      SGDK automatically adjust resource size as needed
  *  \param rate
  *      Playback rate :<br>
- *      #SND_PCM_RATE_32000 = 32 Khz (best quality but take lot of rom space)<br>
- *      #SND_PCM_RATE_22050 = 22 Khz<br>
- *      #SND_PCM_RATE_16000 = 16 Khz<br>
- *      #SND_PCM_RATE_13400 = 13.4 Khz<br>
- *      #SND_PCM_RATE_11025 = 11 Khz<br>
- *      #SND_PCM_RATE_8000  = 8 Khz (worst quality but take less rom place)<br>
+ *      SOUND_PCM_RATE_32000 = 32 Khz (best quality but take lot of rom space)<br>
+ *      SOUND_PCM_RATE_22050 = 22 Khz<br>
+ *      SOUND_PCM_RATE_16000 = 16 Khz<br>
+ *      SOUND_PCM_RATE_13400 = 13.4 Khz<br>
+ *      SOUND_PCM_RATE_11025 = 11 Khz<br>
+ *      SOUND_PCM_RATE_8000  = 8 Khz (worst quality but take less rom place)<br>
  *  \param pan
  *      Panning :<br>
- *      #SOUND_PAN_NONE   = mute<br>
- *      #SOUND_PAN_LEFT   = play on left speaker<br>
- *      #SOUND_PAN_RIGHT  = play on right speaker<br>
- *      #SOUND_PAN_CENTER = play on both speaker<br>
+ *      SOUND_PAN_NONE   = mute<br>
+ *      SOUND_PAN_LEFT   = play on left speaker<br>
+ *      SOUND_PAN_RIGHT  = play on right speaker<br>
+ *      SOUND_PAN_CENTER = play on both speaker<br>
  *  \param loop
  *      Loop flag.<br>
  *      If TRUE then the sample will be played in loop (else sample is played only once).

@@ -261,7 +261,7 @@ bool XGM2_isPlaying(void)
     return ret;
 }
 
-void NO_INLINE XGM2_load(const u8 *xgm2)
+void NO_INLINE XGM2_load(const u8 *song)
 {
     u8 ids[249*2];
     u16 i;
@@ -270,15 +270,15 @@ void NO_INLINE XGM2_load(const u8 *xgm2)
     Z80_loadDriver(Z80_DRIVER_XGM2, TRUE);
 
     // set current XGM
-    currentXGM = xgm2;
+    currentXGM = song;
 
     // sample offset
-    u32 sampleOff = (u32) xgm2;
+    u32 sampleOff = (u32) song;
     // num max sample
     u16 maxSample;
 
     // multi tracks ?
-    if (xgm2[1] & XGM2_MULTI_TRACK_FLAG)
+    if (song[1] & XGM2_MULTI_TRACK_FLAG)
     {
         sampleOff += 0x400;
         // only 500 bytes of the SID table can be used as the last 12 bytes are used for SFX
@@ -298,8 +298,8 @@ void NO_INLINE XGM2_load(const u8 *xgm2)
         u32 addr;
 
         // sample address in sample id table data
-        addr = xgm2[8 + (i * 2) + 0] << 0;
-        addr |= xgm2[8 + (i * 2) + 1] << 8;
+        addr = song[8 + (i * 2) + 0] << 0;
+        addr |= song[8 + (i * 2) + 1] << 8;
 
         // no more sample ? stop here
         if (addr == 0xFFFF) break;
@@ -316,9 +316,9 @@ void NO_INLINE XGM2_load(const u8 *xgm2)
     Z80_upload(XGM2_SID_TABLE & 0xFFFF, ids, i * 2);
 }
 
-void XGM2_load_FAR(const u8 *xgm2, const u32 len)
+void XGM2_load_FAR(const u8 *song, const u32 len)
 {
-    XGM2_load(FAR_SAFE(xgm2, size));
+    XGM2_load(FAR_SAFE(song, size));
 }
 
 void NO_INLINE XGM2_playTrack(const u16 track)

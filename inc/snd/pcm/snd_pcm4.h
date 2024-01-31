@@ -52,10 +52,10 @@ void SND_PCM4_unloadDriver(void);
  *
  *  \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      #SOUND_PCM_CH1_MSK    = channel 1<br>
- *      #SOUND_PCM_CH2_MSK    = channel 2<br>
- *      #SOUND_PCM_CH3_MSK    = channel 3<br>
- *      #SOUND_PCM_CH4_MSK    = channel 4<br>
+ *      SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      SOUND_PCM_CH3_MSK    = channel 3<br>
+ *      SOUND_PCM_CH4_MSK    = channel 4<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>SND_PCM4_isPlaying(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -78,11 +78,11 @@ bool SND_PCM4_isPlaying(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  *  \param channel
  *      Channel where we want to play sample, accepted values are:<br>
- *      #SOUND_PCM_CH_AUTO  = auto selection from current channel usage<br>
- *      #SOUND_PCM_CH1      = channel 1<br>
- *      #SOUND_PCM_CH2      = channel 2<br>
- *      #SOUND_PCM_CH3      = channel 3<br>
- *      #SOUND_PCM_CH4      = channel 4<br>
+ *      SOUND_PCM_CH_AUTO  = auto selection from current channel usage<br>
+ *      SOUND_PCM_CH1      = channel 1<br>
+ *      SOUND_PCM_CH2      = channel 2<br>
+ *      SOUND_PCM_CH3      = channel 3<br>
+ *      SOUND_PCM_CH4      = channel 4<br>
  *  \param loop
  *      Loop flag.<br>
  *      If TRUE then the sample will be played in loop (else sample is played only once).
@@ -95,10 +95,10 @@ void SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPCMChannel c
  *
  *  \param channel
  *      Channel we want to stop, accepted values are:<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
+ *      SOUND_PCM_CH1    = channel 1<br>
+ *      SOUND_PCM_CH2    = channel 2<br>
+ *      SOUND_PCM_CH3    = channel 3<br>
+ *      SOUND_PCM_CH4    = channel 4<br>
  */
 void SND_PCM4_stopPlay(const SoundPCMChannel channel);
 /**
@@ -107,10 +107,10 @@ void SND_PCM4_stopPlay(const SoundPCMChannel channel);
  *
  *  \param channel
  *      Channel we want to set envelop, accepted values are:<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
+ *      SOUND_PCM_CH1    = channel 1<br>
+ *      SOUND_PCM_CH2    = channel 2<br>
+ *      SOUND_PCM_CH3    = channel 3<br>
+ *      SOUND_PCM_CH4    = channel 4<br>
  *  \param volume
  *      Volume to set: 16 possible level from 0 (minimum) to 15 (maximum).
  */
@@ -121,10 +121,10 @@ void SND_PCM4_setVolume(const SoundPCMChannel channel, const u8 volume);
  *
  *  \param channel
  *      Channel we want to retrieve envelop level, accepted values are:<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
- *      #SOUND_PCM_CH3    = channel 3<br>
- *      #SOUND_PCM_CH4    = channel 4<br>
+ *      SOUND_PCM_CH1    = channel 1<br>
+ *      SOUND_PCM_CH2    = channel 2<br>
+ *      SOUND_PCM_CH3    = channel 3<br>
+ *      SOUND_PCM_CH4    = channel 4<br>
  *  \return
  *      Envelop of specified channel.<br>
  *      The returned value is comprised between 0 (quiet) to 15 (loud).

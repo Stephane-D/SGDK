@@ -41,8 +41,8 @@ void SND_DPCM2_unloadDriver(void);
  *
  *  \param channel_mask
  *      Channel(s) we want to retrieve play state.<br>
- *      #SOUND_PCM_CH1_MSK    = channel 1<br>
- *      #SOUND_PCM_CH2_MSK    = channel 2<br>
+ *      SOUND_PCM_CH1_MSK    = channel 1<br>
+ *      SOUND_PCM_CH2_MSK    = channel 2<br>
  *      <br>
  *      You can combine mask to retrieve state of severals channels at once:<br>
  *      <code>isPlaying_2ADPCM(SOUND_PCM_CH1_MSK | SOUND_PCM_CH2_MSK)</code><br>
@@ -65,9 +65,9 @@ bool SND_DPCM2_isPlaying(const u16 channel_mask);
  *      SGDK automatically adjust resource size as needed
  *  \param channel
  *      Channel where we want to play sample, accepted values are:<br>
- *      #SOUND_PCM_CH_AUTO  = auto selection from current channel usage<br>
- *      #SOUND_PCM_CH1      = channel 1<br>
- *      #SOUND_PCM_CH2      = channel 2<br>
+ *      SOUND_PCM_CH_AUTO  = auto selection from current channel usage<br>
+ *      SOUND_PCM_CH1      = channel 1<br>
+ *      SOUND_PCM_CH2      = channel 2<br>
  *  \param loop
  *      Loop flag.<br>
  *      If TRUE then the sample will be played in loop (else sample is played only once).
@@ -80,8 +80,8 @@ void SND_DPCM2_startPlay(const u8 *sample, const u32 len, const SoundPCMChannel 
  *
  *  \param channel
  *      Channel we want to stop, accepted values are:<br>
- *      #SOUND_PCM_CH1    = channel 1<br>
- *      #SOUND_PCM_CH2    = channel 2<br>
+ *      SOUND_PCM_CH1    = channel 1<br>
+ *      SOUND_PCM_CH2    = channel 2<br>
  */
 void SND_DPCM2_stopPlay(const SoundPCMChannel channel);
 
