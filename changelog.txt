@@ -39,7 +39,7 @@ LIBRARY
  - removed z80 halt on reset (already done in sega.s boot)
 * SOUND
  - major refactor in sound drivers structure
- - added new XGM2 sound driver (XGM2_xxx methods)
+ - added new XGM2 sound driver - beta (XGM2_xxx methods)
  - added 'minimusic' sound driver from Sik
  - removed fractal driver support (driver is discontinued) and enable conso…
 * TYPE
