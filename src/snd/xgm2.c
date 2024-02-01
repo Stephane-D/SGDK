@@ -329,7 +329,7 @@ void NO_INLINE XGM2_playTrack(const u16 track)
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     // trying to play no existing track ?
     if (!(currentXGM[1] & XGM2_MULTI_TRACK_FLAG) && (track > 0))
-        kprintf("XGM2_playTrack() error: cannot play track %d on a single track XGM file");
+        kprintf("XGM2_playTrack() error: cannot play track %d on a single track XGM file", track);
 #endif
 
     u32 offset;
