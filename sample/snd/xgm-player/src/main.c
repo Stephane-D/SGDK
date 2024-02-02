@@ -7,7 +7,6 @@
 #include "xd3.h"
 #include "log_tab.h"
 
-#include "smp_null.h"
 #include "music.h"
 #include "gfx.h"
 

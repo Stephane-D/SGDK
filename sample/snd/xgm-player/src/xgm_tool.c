@@ -1,7 +1,6 @@
 #include "genesis.h"
 
 #include "xd3.h"
-#include "xgm.h"
 #include "ym_state.h"
 #include "psg_state.h"
 
