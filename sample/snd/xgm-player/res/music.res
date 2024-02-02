@@ -12,8 +12,8 @@ XGM xgm_11 "bonus.vgm"
 XGM xgm_12 "Icecap.vgm"
 XGM xgm_13 "shinobi01.vgm"
 XGM xgm_test "pantry.vgm"
-WAV pcm_hat1 "hat1.wav" 5
-WAV pcm_hat2 "hat2.wav" 5
-WAV pcm_voice "voice.wav" 5
-WAV pcm_snare1 "snare1.wav" 5
-WAV pcm_snare2 "snare2.wav" 5
+WAV pcm_hat1 "hat1.wav" XGM
+WAV pcm_hat2 "hat2.wav" XGM
+WAV pcm_voice "voice.wav" XGM
+WAV pcm_snare1 "snare1.wav" XGM
+WAV pcm_snare2 "snare2.wav" XGM
