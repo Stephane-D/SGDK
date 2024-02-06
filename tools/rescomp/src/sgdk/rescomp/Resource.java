@@ -28,6 +28,12 @@ public abstract class Resource
         return Compiler.addResource(resource, true);
     }
 
+    public static Resource addResource(Resource resource)
+    {
+        // add this resource as 'global' resource
+        return Compiler.addResource(resource, false);
+    }
+
     public static Resource findResource(Resource resource)
     {
         return Compiler.findResource(resource);

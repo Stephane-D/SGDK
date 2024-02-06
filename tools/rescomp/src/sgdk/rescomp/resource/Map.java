@@ -87,7 +87,7 @@ public class Map extends Resource
         if (addTileset)
         {
             for (int t = 0; t < tilesets.size(); t++)
-                this.tilesets.set(t, (Tileset) addInternalResource(tilesets.get(t)));
+                this.tilesets.set(t, (Tileset) addResource(tilesets.get(t)));
         }
 
         // store compression
