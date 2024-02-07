@@ -1,0 +1,363 @@
+;*******************************************************************************
+; UpdateFmChan
+;
+; Called every tick (after the tracks are updated) to update a YM2612 channel.
+; It looks at the attached track's state and writes to the hardware whatever has
+; changed since the last update.
+;-------------------------------------------------------------------------------
+; input iy .... pointer to FM channel state
+;-------------------------------------------------------------------------------
+; modifies .... all but iy
+;*******************************************************************************
+
+UpdateFmChan:
+    ld      h, YmAddr1>>8               ; We're going to access the YM2612
+                                          ; through HL. Sometimes we need to
+                                          ; change which port to access but
+                                          ; the upper byte of the address stays
+                                          ; the same, so put it into H now.
+    
+    ld      e, (iy+FMCHAN_TRACK)        ; Get pointer to the track associated
+    call    GetTrackStateAddr             ; with this channel
+    
+    ld      a, (ix+TRACK_FLAGS)         ; Get flags
+    rrca                                ; Is keying canceled?
+    jr      c, NoFmKeyOff                 ; If so, skip this
+    rrca                                ; Requested key-off?
+    ld      a, $00                        ; Mask = all slots off
+    call    c, DoFmKey                    ; If so, do key-off
+NoFmKeyOff:
+    
+    ld      l, (iy+FMCHAN_PORT)             ; The following stuff is done on
+                                              ; different banks depending on
+                                              ; which channel it is
+    
+    bit     FLAG_INSTRUMENT,(ix+TRACK_FLAGS); Need to load new instrument?
+    call    nz, LoadFmVoice
+    bit     FLAG_VOLUME, (ix+TRACK_FLAGS)   ; Need to recompute TL values?
+    call    nz, UpdateFmVol
+    bit     FLAG_PITCH, (ix+TRACK_FLAGS)    ; Need to recompute frequency?
+    call    nz, UpdateFmFreq
+    bit     FLAG_PAN, (ix+TRACK_FLAGS)      ; Need to update panning?
+    call    nz, UpdateFmPan
+    
+    ld      a, (ix+TRACK_FLAGS)         ; Get flags
+    rrca                                ; Is keying canceled?
+    jr      c, NoFmKeyOn                  ; If so, skip this
+    rrca                                ; Skip key-off flag
+    rrca                                ; Requested key-on?
+    ld      a, $F0                        ; Mask = all slots on
+    call    c, DoFmKey                    ; If so, do key-on
+NoFmKeyOn:
+    
+    ld      (ix+TRACK_FLAGS), 0         ; Acknowledge all the flags
+    ret                                 ; Done with this channel
+
+;*******************************************************************************
+; DoFmKey
+; Performs key-on/off for a FM channel.
+;-------------------------------------------------------------------------------
+; input iy .... pointer to FM channel state
+; input h ..... pointer to YmAddr1 (upper byte)
+; input a ..... $00 = key-off, $F0 = key-on
+;-------------------------------------------------------------------------------
+; output hl ... pointer to YmAddr1
+;-------------------------------------------------------------------------------
+; modifies .... a,hl
+;*******************************************************************************
+
+DoFmKey:
+    ld      l, YmAddr1&$FF              ; Key is always done in bank 1
+                                          ; regardless of channel
+    
+    ld      (hl), YMREG_KEY             ; Write register number
+    or      (iy+FMCHAN_KEY)             ; OR mask with the channel bits
+    inc     hl
+    ld      (hl), a                     ; Write register value
+    dec     hl
+    
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; LoadFmVoice
+; Called by the FM update code to load a new FM instrument. Slow!!
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input iy .... pointer to FM channel state
+; input hl .... pointer to YmAddr1 for ch1-ch3
+;               pointer to YmAddr2 for ch4-ch6
+;-------------------------------------------------------------------------------
+; modifies .... a,bc,de,bc',de',hl'
+;*******************************************************************************
+
+LoadFmVoice:
+    ; register usage because this subroutine is a mess:
+    ;
+    ;  a  = scratch
+    ;  b  = loop counter
+    ;  c  = register number
+    ; hl  = pointer to YM2612 port
+    ; ix  = pointer to track state
+    ; iy  = pointer to FM channel state
+    ; bc' = scratch (stomped on by LDI)
+    ; de' = pointer to instrument
+    ; hl' = scratch (used as pointer)
+    
+    set     FLAG_VOLUME, (ix+TRACK_FLAGS)   ; TL registers need to be recomputed
+                                              ; as well but we won't touch them,
+                                              ; request the volume code do that
+    exx
+    call    GetTrackInstrument          ; Get pointer to the instrument data
+    exx
+    
+    ld      a, YMREG_MUL                ; Get base register number for this
+    add     a, (iy+FMCHAN_BASE)           ; FM channel
+    ld      c, a
+    
+    add     a, YMREG_ALGO-YMREG_MUL     ; Algorithm register number
+    ld      (hl), a                     ; Write register number
+    exx
+    ld      a, (de)                     ; Get algorithm and feedback
+    inc     de                          ; Advance address
+    exx
+    inc     hl
+    ld      (hl), a                     ; Write algorithm and feedback
+    dec     hl
+    
+    and     $07                         ; Isolate algorithm alone
+    
+    exx
+    add     a, InstrumentTLMask&$FF     ; Retrieve the bitmask of which
+    ld      l, a                          ; slots have their TL affected by
+    adc     a, InstrumentTLMask>>8        ; attenuation and store it in the
+    sub     l                             ; channel state
+    ld      h, a
+    ld      a, (hl)
+    ld      (iy+FMCHAN_TLMASK), a
+    exx
+    
+    ld      b, 4                        ; Write MUL/DT registers
+    call    LoadFmVoice_Loop
+    
+    exx
+    push    iy                          ; Copy the TL values into the FM
+    pop     hl                            ; channel state, they'll be written
+    ex      de, hl                        ; later by the attenuation code
+    ldi
+    ldi
+    ldi
+    ldi
+    ex      de, hl
+    exx
+    
+    ld      a, YMREG_AR-YMREG_TL        ; Adjust the register number to account
+    add     a, c                          ; for the skipped writes from above
+    ld      c, a
+    
+    ld      b, 20                       ; Write remaining registers
+LoadFmVoice_Loop:
+    exx
+    ld      a, (de)                     ; Get next value to write
+    inc     de                          ; Advance address
+    exx
+    
+    ld      (hl), c                     ; Write register number
+    inc     hl
+    ld      (hl), a                     ; Write register
+    dec     hl
+    
+    inc     c                           ; Increment register number
+    inc     c
+    inc     c
+    inc     c
+    
+    djnz    LoadFmVoice_Loop            ; Go for next register
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; UpdateFmVol
+;
+; Recomputes the TL registers for a FM channel to apply the track's attenuation.
+; The actual values depend on the current instrument (the FM channel state keeps
+; track of the required information).
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input iy .... pointer to FM channel state
+; input hl .... pointer to YmAddr1 for ch1-ch3
+;               pointer to YmAddr2 for ch4-ch6
+;-------------------------------------------------------------------------------
+; modifies .... a,bc,de,bc',de',hl'
+;*******************************************************************************
+
+UpdateFmVol:
+    push    iy                          ; Get pointer to all TL values for
+    pop     de                            ; the current instrument
+    
+    ld      a, YMREG_TL                 ; Determine register number for the
+    add     a, (iy+FMCHAN_BASE)           ; TL values for this channel
+    ld      c, a
+    
+    exx
+    ld      e, (iy+FMCHAN_TLMASK)       ; Mask of which TL values to change
+    ld      b, (ix+TRACK_VOLUME)        ; Get attenuation from track
+    ld      c, $7F                      ; Maximum allowed value for TL
+    exx
+    
+    ld      b, 4                        ; Loop through all slots
+UpdateFmVolLoop:
+    ld      a, (de)                     ; Get base TL value for this slot
+    inc     de                            ; (for attenuation = 0)
+    
+    exx
+    rr      e                           ; Should we touch this TL value?
+    jr      nc, UpdateFmVolOk             ; If not, leave it as-is
+    
+    add     a, b                        ; Add attenuation from track
+    cp      c                           ; Is it too quiet?
+    jr      c, UpdateFmVolOk              ; If not, use result as-is
+    ld      a, c                          ; If yes, make it mute instead
+UpdateFmVolOk:
+    exx
+    
+    ld      (hl), c                     ; Write register number
+    inc     hl
+    ld      (hl), a                     ; Write new TL value
+    dec     hl
+    
+    inc     c                           ; Next register number (and burn a
+    inc     c                             ; few cycles meanwhile)
+    inc     c
+    inc     c
+    
+    djnz    UpdateFmVolLoop             ; Go for next slot
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; UpdateFmFreq
+; Recomputes and updates the frequency for a YM2612 channel.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input iy .... pointer to FM channel state
+; input hl .... pointer to YmAddr1 for ch1-ch3
+;               pointer to YmAddr2 for ch4-ch6
+;-------------------------------------------------------------------------------
+; modifies .... a,bc,de,bc',de',hl'
+;*******************************************************************************
+
+UpdateFmFreq:
+    ld      a, YMREG_FREQ_HI            ; Get register number for the frequency
+    add     a, (iy+FMCHAN_BASE)           ; values for this channel
+    ld      b, a
+    
+    exx                                 ; We'll work on the alternate registers
+    call    GetTrackPitch               ; Get pitch to use
+                                          ; A = semitone
+                                          ; C = octave
+    
+    ld      hl, FmFreqTable             ; Get frequency for this semitone
+    call    GetWordFromList               ; into HL
+    
+    ld      a, c                        ; Get octave
+    add     a, a                        ; Put octave bits where they belong
+    add     a, a
+    add     a, a
+    or      h                           ; Merge with upper bits of frequency
+    
+    exx                                 ; Back to normal registers
+    ld      (hl), b                     ; Write register number
+    inc     hl
+    ld      (hl), a                     ; Write upper byte of frequency
+    dec     hl
+    
+    exx                                 ; Get lower byte of frequency
+    ld      a, l
+    exx
+    
+    dec     b                           ; Get register number for low byte
+    dec     b                             ; of frequency (and help burn a few
+    dec     b                             ; more cycles we need)
+    dec     b
+    
+    push    hl                          ; Still not slow enough...
+    pop     hl
+    
+    ld      (hl), b                     ; Write register number
+    inc     hl
+    ld      (hl), a                     ; Write lower byte of frequency
+    dec     hl
+    
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; UpdateFmPan
+; Updates the pan setting for a YM2612 channel.
+;-------------------------------------------------------------------------------
+; input ix .... pointer to track state
+; input iy .... pointer to FM channel state
+; input hl .... pointer to YmAddr1 for ch1-ch3
+;               pointer to YmAddr2 for ch4-ch6
+;-------------------------------------------------------------------------------
+; modifies .... a
+;*******************************************************************************
+
+UpdateFmPan:
+    ld      a, YMREG_PAN                ; Get register number to write
+    add     (iy+FMCHAN_BASE)
+    ld      (hl), a                     ; Write register number
+    
+    ld      a, (ix+TRACK_PAN)           ; Get new pan setting
+    inc     hl
+    ld      (hl), a                     ; Write new pan setting
+    dec     hl
+    
+    ret                                 ; End of subroutine
+
+;*******************************************************************************
+; MuteFm
+; Mutes all the FM channels immediately. This modifies the instruments on the
+; hardware side but not the FM state side, to resume playback make sure to mark
+; the FLAG_INSTRUMENT flag and call UpdateFmChan to reload the instrument.
+;-------------------------------------------------------------------------------
+; modifies ... all
+;*******************************************************************************
+
+MuteFm:
+    ld      hl, YmAddr2                 ; Set up RR of ch4-ch6
+    call    MuteFmRR
+    ld      l, YmAddr1&$FF              ; Set up RR of ch1-ch3
+    call    MuteFmRR
+    
+    ld      bc, 7<<8                    ; B = loop counter
+                                        ; C = channel to key-off
+MuteFmKeyLoop:
+    ld      (hl), YMREG_KEY             ; Write register number
+    inc     hl                          ; Point to data port
+    ld      (hl), c                     ; Tell it to key-off this channel
+    dec     hl                          ; Point back to address port
+    
+    ex      (sp), hl                    ; Waste a lot of cycles (we need 80
+    ex      (sp), hl                      ; cycles in total, including the
+    ex      (sp), hl                      ; DEC HL, INC C and DJNZ)
+    ex      (sp), hl
+    
+    inc     c                           ; Increase channel number
+    djnz    MuteFmKeyLoop               ; Go for next channel
+    ret                                 ; End of subroutine
+
+;-------------------------------------------------------------------------------
+
+MuteFmRR:
+    ld      bc, (16<<8)|YMREG_RR        ; B = loop counter
+                                        ; C = register number
+MuteFmRRLoop:
+    ld      (hl), c                     ; Write register number
+    inc     hl                          ; Point to data port
+    ld      (hl), $0F                   ; Write register value (max. RR)
+    dec     hl                          ; Point back to address port
+    
+    push    hl                          ; Waste a few cycles
+    pop     hl
+    
+    inc     c                           ; Increase register number
+    djnz    MuteFmRRLoop                ; Go write next RR register
+    ret                                 ; Back to subroutine

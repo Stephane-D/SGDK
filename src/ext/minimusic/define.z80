@@ -1,0 +1,173 @@
+;*******************************************************************************
+; Addresses for the fields in the header for the sound data
+;*******************************************************************************
+
+NumBgm:             equ $0800   ; Number of BGM IDs (max = 127?)
+NumSfx:             equ $0801   ; Number of SFX IDs (max = 127?)
+BgmList:            equ $0802   ; Pointer to BGM list
+SfxList:            equ $0804   ; Pointer to SFX list
+InstrumentList:     equ $0806   ; Pointer to instrument list
+
+;*******************************************************************************
+; Hardware port addresses
+;*******************************************************************************
+
+YmAddr1:            equ $4000   ; YM2612 bank 1 address port
+YmData1:            equ $4001   ; YM2612 bank 1 data port
+YmAddr2:            equ $4002   ; YM2612 bank 2 address port
+YmData2:            equ $4003   ; YM2612 bank 2 data port
+
+PsgPort:            equ $7F11   ; PSG port
+
+BankPort:           equ $6001   ; Bank switching port (actually $6000 but this
+                                  ; lets us write 1 to the bottom bit by reusing
+                                  ; the L register since the port responds to
+                                  ; the whole $60xx range)
+
+;*******************************************************************************
+; State kept for each track
+;*******************************************************************************
+
+TRACK_ADDR_LO:          equ 0   ; Current address
+TRACK_ADDR_HI:          equ 1
+TRACK_LOOP_LO:          equ 2   ; Main loop address
+TRACK_LOOP_HI:          equ 3
+TRACK_FLAGS:            equ 4   ; Hardware refresh flags (see FLAG_*)
+TRACK_WAIT:             equ 5   ; Ticks to wait before resuming
+TRACK_RET_LO:           equ 6   ; Return address for subroutines
+TRACK_RET_HI:           equ 7
+TRACK_SUBCOUNT:         equ 8   ; Sub-loop iteration count
+TRACK_SUBADDR_LO:       equ 9   ; Sub-loop address
+TRACK_SUBADDR_HI:       equ 10
+TRACK_NOTELEN:          equ 11  ; Ticks that next key-on/off will last
+TRACK_INSTRUMENT:       equ 12  ; Current instrument ID
+TRACK_PITCH:            equ 13  ; Current pitch (in semitones)
+TRACK_TRANSPOSE:        equ 14  ; Current transpose (in semitones)
+TRACK_VOLUME:           equ 15  ; Current attenutaion (in -0.75dB steps)
+TRACK_PAN:              equ 16  ; Bit 7: left channel, bit 6: right channel
+
+SIZEOF_TRACK:           equ 17  ; Size of the state for one track
+
+NUM_BGMTRACKS:          equ 10  ; Number of tracks we keep track of
+NUM_SFXTRACKS:          equ 4
+NUM_TRACKS:             equ NUM_BGMTRACKS+NUM_SFXTRACKS
+
+;*******************************************************************************
+; Track flags (see TRACK_FLAGS) used to keep track of when a change in the
+; track state needs to be reflected in the hardware.
+;*******************************************************************************
+
+FLAG_KEYOFF:            equ 1   ; Issue key-off
+FLAG_KEYON:             equ 2   ; Issue key-on
+FLAG_CANCELKEY:         equ 0   ; Ignore the above two
+FLAG_INSTRUMENT:        equ 4   ; Load new instrument values
+FLAG_PITCH:             equ 5   ; Update channel frequency
+FLAG_VOLUME:            equ 6   ; Update channel attenuation
+FLAG_PAN:               equ 7   ; Update channel panning
+
+FLAGMASK_REFRESH:       equ $F2 ; Write this value to force a channel refresh
+
+;*******************************************************************************
+; State kept for each FM channel
+;*******************************************************************************
+
+FMCHAN_TL_S1:           equ 0   ; Instrument TL for slot S1
+FMCHAN_TL_S3:           equ 1   ; Instrument TL for slot S3
+FMCHAN_TL_S2:           equ 2   ; Instrument TL for slot S2
+FMCHAN_TL_S4:           equ 3   ; Instrument TL for slot S4
+FMCHAN_TLMASK:          equ 4   ; Mask of which TL values to update
+FMCHAN_PORT:            equ 5   ; Lower byte of port address to access
+FMCHAN_BASE:            equ 6   ; Register number offset for this channel
+FMCHAN_KEY:             equ 7   ; Bit pattern to use for key-off/on
+FMCHAN_TRACK:           equ 8   ; Pointer to track state (offset)
+
+SIZEOF_FMCHAN:          equ 9   ; Size of the state for one FM channel
+NUM_FMCHAN:             equ 6   ; Number of FM channels
+
+;*******************************************************************************
+; State kept for each PSG channel
+;*******************************************************************************
+
+PSGCHAN_TL:             equ 0   ; Total level (AR → DR transition)
+PSGCHAN_SL:             equ 1   ; Sustain level (DR → SR transition)
+PSGCHAN_AR:             equ 2   ; Attack date
+PSGCHAN_DR:             equ 3   ; Decay rate
+PSGCHAN_SR:             equ 4   ; Sustain rate
+PSGCHAN_RR:             equ 5   ; Release rate
+PSGCHAN_LEVEL:          equ 6   ; Current ADSR level
+PSGCHAN_PHASE:          equ 7   ; Current ADSR phase (see ADSR_*)
+PSGCHAN_BITS:           equ 8   ; Bitmask for commands for this channel
+PSGCHAN_TRACK:          equ 9   ; Pointer to track state (offset)
+
+SIZEOF_PSGCHAN:         equ 10  ; Size of the state for one PSG channel
+NUM_PSGCHAN:            equ 4   ; Number of PSG channels
+
+;*******************************************************************************
+; Possible phases for an ADSR envelope (see PSGCHAN_PHASE)
+;*******************************************************************************
+
+ADSR_ATTACK:            equ 0   ; Attack phase
+ADSR_DECAY:             equ 2   ; Decay phase
+ADSR_SUSTAIN:           equ 4   ; Sustain phase
+ADSR_RELEASE:           equ 6   ; Release phase
+
+;*******************************************************************************
+; Track opcode numbers
+;*******************************************************************************
+
+OP_KEYOFF:              equ $60     ; Key-off
+OP_CANCELKEY:           equ $61     ; Cancel next key
+OP_LOOP:                equ $62     ; Start of main loop
+OP_END:                 equ $63     ; End of main loop
+OP_SUBLOOP:             equ $64     ; Start of sub-loop
+OP_SUBEND:              equ $65     ; End of sub-loop
+OP_CALL_B:              equ $66     ; Call to subroutine (8-bit offset)
+OP_CALL_W:              equ $67     ; Call to subroutine (16-bit offset)
+OP_RETURN:              equ $68     ; Return from subroutine
+OP_INSTRUMENT:          equ $69     ; Set instrument
+OP_TRANSP_ABS:          equ $6A     ; Set transpose (absolute)
+OP_TRANSP_REL:          equ $6B     ; Set transpose (relative)
+OP_VOLUME_ABS:          equ $6C     ; Set attenuation (absolute)
+OP_VOLUME_REL:          equ $6D     ; Set attenuation (relative)
+OP_PAN:                 equ $6E     ; Set panning
+OP_NOISE:               equ $6E     ; Set PSG noise mode
+
+OP_ENDSFX:              equ $6F     ; [internal] Return channel to BGM
+
+;*******************************************************************************
+; 68000 special command numbers
+;*******************************************************************************
+
+FIRST_CMD:              equ $FD     ; Lowest command number
+
+CMD_UNPAUSE:            equ $FD     ; Resume music
+CMD_PAUSE:              equ $FE     ; Pause music
+CMD_STOP:               equ $FF     ; Stop music
+
+;*******************************************************************************
+; YM2612 register numbers
+;*******************************************************************************
+
+YMREG_TIMERA_HI:        equ $24     ; Timer A frequency (bits 9-2)
+YMREG_TIMERA_LO:        equ $25     ; Timer A frequency (bits 1-0)
+YMREG_TIMERB:           equ $26     ; Timer B frequency
+YMREG_MODE:             equ $27     ; Timer control and ch3 mode
+YMREG_KEY:              equ $28     ; Key-on/off control
+
+YMREG_MUL:              equ $30     ; MUL and DT
+YMREG_TL:               equ $40     ; TL
+YMREG_AR:               equ $50     ; AR and KS
+YMREG_DR:               equ $60     ; DR and AM
+YMREG_SR:               equ $70     ; SR
+YMREG_RR:               equ $80     ; RR and SL
+YMREG_SSGEG:            equ $90     ; SSG-EG
+
+YMREG_FREQ_LO:          equ $A0     ; Frequency (low byte)
+YMREG_FREQ_HI:          equ $A4     ; Frequency (high byte)
+YMREG_ALGO:             equ $B0     ; Algorithm and feedback
+YMREG_PAN:              equ $B4     ; Pan, PMS and AMS
+
+YMACK_NONE:             equ $0F     ; Don't acknowledge timers
+YMACK_TIMERA:           equ $1F     ; Acknowledge timer A
+YMACK_TIMERB:           equ $2F     ; Acknowledge timer B
+YMACK_BOTH:             equ $3F     ; Acknowledge both timers

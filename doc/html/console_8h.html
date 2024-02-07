@@ -78,6 +78,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
 <div id="doc-content">
 <div class="header">
+  <div class="summary">
+<a href="#define-members">Defines</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">console.h File Reference</div>  </div>
 </div>
@@ -86,23 +90,582 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>TTY text console.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="config_8h_source.html">config.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="types_8h_source.html">types.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="string_8h_source.html">string.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="maths_8h_source.html">maths.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="dma_8h_source.html">dma.h</a>&quot;</code><br/>
 </div>
 <p><a href="console_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr><td colspan="2"><h2><a name="define-members"></a>
+Defines</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a3fe0a9f0a366b49815f42640205963"></a><!-- doxytag: member="console.h::ENABLE_ASSERT_CHECKS" ref="a5a3fe0a9f0a366b49815f42640205963" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a5a3fe0a9f0a366b49815f42640205963">ENABLE_ASSERT_CHECKS</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Comment out to disable asserts. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8ab729381f270b100f3d05b6c6676fc"></a><!-- doxytag: member="console.h::str" ref="ad8ab729381f270b100f3d05b6c6676fc" args="(s)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#ad8ab729381f270b100f3d05b6c6676fc">str</a>(s)&#160;&#160;&#160;xstr(s)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper macro to stringify numbers. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeec40e2b433cc2844853d184006edff0"></a><!-- doxytag: member="console.h::xstr" ref="aeec40e2b433cc2844853d184006edff0" args="(s)" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#aeec40e2b433cc2844853d184006edff0">xstr</a>(s)&#160;&#160;&#160;#s</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper macro. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#acdcc5aaebf3f273c1762f24a6ece2e5e">assert</a>(condition)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert a condition.  <a href="#acdcc5aaebf3f273c1762f24a6ece2e5e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#ac22830a985e1daed0c9eadba8c6f606e">ASSERT</a>(condition)&#160;&#160;&#160;assert(condition)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert a condition.  <a href="#ac22830a985e1daed0c9eadba8c6f606e"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ca1990f2c616d660b86c3109084f177"></a><!-- doxytag: member="console.h::vsprintf_t" ref="a0ca1990f2c616d660b86c3109084f177" args=")(char *buf, const char *fmt, va_list args)" -->
+typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a0ca1990f2c616d660b86c3109084f177">vsprintf_t</a> )(char *buf, const char *fmt, va_list args)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback prototype for a vsprintf() function using va_list. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb6f065a16a9c1c1b667c3ad0c0e7275"></a><!-- doxytag: member="console.h::vsnprintf_t" ref="afb6f065a16a9c1c1b667c3ad0c0e7275" args=")(char *buf, int count, const char *fmt, va_list args)" -->
+typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#afb6f065a16a9c1c1b667c3ad0c0e7275">vsnprintf_t</a> )(char *buf, int count, const char *fmt, va_list args)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback prototype for a vsnprintf() function using va_list. <br/></td></tr>
+<tr><td colspan="2"><h2><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a415f0b50df56b3b3722b2bcaec015d24">CON_sprintf</a> (char *buf, const char *fmt,...) __attribute__((format(printf</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard C library sprintf function.  <a href="#a415f0b50df56b3b3722b2bcaec015d24"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a188542b29dbc4cf1847b9c8a2403211f">CON_snprintf</a> (char *buf, int count, const char *fmt,...) __attribute__((format(printf</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard C library snprintf function.  <a href="#a188542b29dbc4cf1847b9c8a2403211f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int int void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a67b110acadb1309acf7c8fa85292534e">CON_setVsprintf</a> (<a class="el" href="console_8h.html#a0ca1990f2c616d660b86c3109084f177">vsprintf_t</a> vsprintf_func)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a standard vsprintf function as callback for <a class="el" href="console_8h.html#a415f0b50df56b3b3722b2bcaec015d24" title="Standard C library sprintf function.">CON_sprintf()</a>  <a href="#a67b110acadb1309acf7c8fa85292534e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#aa9957c2192f191bc1b0158a20a148138">CON_setVsnprintf</a> (<a class="el" href="console_8h.html#afb6f065a16a9c1c1b667c3ad0c0e7275">vsnprintf_t</a> vsnprintf_func)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a standard vsnprintf function as callback for <a class="el" href="console_8h.html#a188542b29dbc4cf1847b9c8a2403211f" title="Standard C library snprintf function.">CON_snprintf()</a>  <a href="#aa9957c2192f191bc1b0158a20a148138"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a39e61ea3f563fde51d9a5f57db879ecc">CON_setConsoleSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> left, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> top, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> width, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> height)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the size of the console window.  <a href="#a39e61ea3f563fde51d9a5f57db879ecc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#af7ba6607c72a1f8fd882be28714a40d1">CON_setLineBufferSize</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> size)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the size of the character line buffer.  <a href="#af7ba6607c72a1f8fd882be28714a40d1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#ae365fa43dd65b0234d6650c0d24610c1">CON_setTransferMethod</a> (<a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a> tm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the transfer method used to upload the console tile buffer to VDP RAM.  <a href="#ae365fa43dd65b0234d6650c0d24610c1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a1139cd53e9739553324ebe7b4b79c0f6">CON_reset</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the console.  <a href="#a1139cd53e9739553324ebe7b4b79c0f6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a5c1d65e7dc89d154a78df417452de457">CON_systemResetOnNextWrite</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the system to the SGDK default state when <a class="el" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write()</a> is called next time.  <a href="#a5c1d65e7dc89d154a78df417452de457"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a4af497f093e3a7c08509e3376f76b4d3">CON_clear</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the console window.  <a href="#a4af497f093e3a7c08509e3376f76b4d3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a25b786f70813ef5682c0b530b044abae">CON_setCursorPosition</a> (<a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> x, <a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> y)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a new cursor position.  <a href="#a25b786f70813ef5682c0b530b044abae"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_vect2_d__u16.html">V2u16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a6bd61a866e15b018296e2e690de16458">CON_getCursorPosition</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current cursor position.  <a href="#a6bd61a866e15b018296e2e690de16458"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5">CON_write</a> (const char *fmt,...) __attribute__((format(printf</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a C-string to the console window.  <a href="#a5fdc0e4bbbacc69b8f7caa76c59348a5"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>TTY text console. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Andreas Dietrich </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>09/2022</dd></dl>
 <p>This unit provides a simple TTY text console. Characters are written as a stream, where lines are automatically wrapped if the horizontal border of the screen is reached. When at the bottom of the screen window, the console content is moved up by one text line and a blank row is inserted.</p>
-<p>Per default, the console occupies a standad screen of 40x28 tiles. All text attributes, such as font, palette, plane etc., are taken from SGDK text settings. Screen updates are done using DMA transfer mode (which can be changed with CON_setTransferMethod()).</p>
+<p>Per default, the console occupies a standad screen of 40x28 tiles. All text attributes, such as font, palette, plane etc., are taken from SGDK text settings. Screen updates are done using DMA transfer mode (which can be changed with <a class="el" href="console_8c.html#ae365fa43dd65b0234d6650c0d24610c1" title="Set the transfer method used to upload the console tile buffer to VDP RAM.">CON_setTransferMethod()</a>).</p>
 <p>One of the use cases are assert messages. To this end, the Genesis state can be automatically reset before text is displayed (see assert macro below). </p>
-</div></div>
+</div><hr/><h2>Define Documentation</h2>
+<a class="anchor" id="acdcc5aaebf3f273c1762f24a6ece2e5e"></a><!-- doxytag: member="console.h::assert" ref="acdcc5aaebf3f273c1762f24a6ece2e5e" args="(condition)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define assert</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">condition</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( !(condition) )                                                                \
+    {                                                                                  \
+        <a class="code" href="console_8c.html#a1139cd53e9739553324ebe7b4b79c0f6" title="Reset the console.">CON_reset</a>();                                                                   \
+        <a class="code" href="console_8c.html#a5c1d65e7dc89d154a78df417452de457" title="Reset the system to the SGDK default state when CON_write() is called next time.">CON_systemResetOnNextWrite</a>();                                                  \
+        <a class="code" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write</a>(__FILE__<span class="stringliteral">&quot;:&quot;</span><a class="code" href="console_8h.html#ad8ab729381f270b100f3d05b6c6676fc" title="Helper macro to stringify numbers.">str</a>(__LINE__)<span class="stringliteral">&quot;: Assertion \&#39;&quot;</span><a class="code" href="console_8h.html#ad8ab729381f270b100f3d05b6c6676fc" title="Helper macro to stringify numbers.">str</a>(condition)<span class="stringliteral">&quot;\&#39; failed.&quot;</span>); \
+        <span class="keywordflow">while</span> (<a class="code" href="types_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d" title="TRUE define (equivalent to 1).">TRUE</a>);                                                                  \
+    }
+</pre></div>
+<p>Assert a condition. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>Expression that must evaluate to TRUE, otherwise an error error message in printed to the console. This will also reset the system to the SGDK default state.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Can be disabled by undefining ENABLE_ASSERT_CHECKS or by defining NDEBUG. </p>
+
+</div>
+</div>
+<a class="anchor" id="ac22830a985e1daed0c9eadba8c6f606e"></a><!-- doxytag: member="console.h::ASSERT" ref="ac22830a985e1daed0c9eadba8c6f606e" args="(condition)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ASSERT</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">condition</td><td>)</td>
+          <td>&#160;&#160;&#160;assert(condition)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Assert a condition. </p>
+<p>Uppercase version. Same as <a class="el" href="console_8h.html#acdcc5aaebf3f273c1762f24a6ece2e5e" title="Assert a condition.">assert()</a>. </p>
+
+</div>
+</div>
+<hr/><h2>Function Documentation</h2>
+<a class="anchor" id="a4af497f093e3a7c08509e3376f76b4d3"></a><!-- doxytag: member="console.h::CON_clear" ref="a4af497f093e3a7c08509e3376f76b4d3" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Clear the console window. </p>
+<p>This clears the console window by filling it with space characters. It is assumed that the first tile of the font is a space character. DMA settings apply here as well. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6bd61a866e15b018296e2e690de16458"></a><!-- doxytag: member="console.h::CON_getCursorPosition" ref="a6bd61a866e15b018296e2e690de16458" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_vect2_d__u16.html">V2u16</a> CON_getCursorPosition </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return the current cursor position. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>A 2D vector containing the current (x,y) position of the cursor, where (0,0) means the top/left corner of the console window. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1139cd53e9739553324ebe7b4b79c0f6"></a><!-- doxytag: member="console.h::CON_reset" ref="a1139cd53e9739553324ebe7b4b79c0f6" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_reset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Reset the console. </p>
+<p>This function is a shortcut for:</p>
+<p>CON_setConsoleSize(0, 0, 40, 28); <br/>
+ CON_setLineBufferSize(160); <br/>
+ CON_setTransferMethod(DMA); </p>
+
+</div>
+</div>
+<a class="anchor" id="a39e61ea3f563fde51d9a5f57db879ecc"></a><!-- doxytag: member="console.h::CON_setConsoleSize" ref="a39e61ea3f563fde51d9a5f57db879ecc" args="(u16 left, u16 top, u16 width, u16 height)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_setConsoleSize </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>left</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>top</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set the size of the console window. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">left</td><td>Position of the leftmost window column in tiles. Default is 0. </td></tr>
+    <tr><td class="paramname">top</td><td>Position of the topmost window row in tiles. Default is 0. </td></tr>
+    <tr><td class="paramname">width</td><td>Width of the console window in tiles. Default is 40. </td></tr>
+    <tr><td class="paramname">height</td><td>Height of the console window in tiles. Default is 28.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If either width or height are 0 then <a class="el" href="vdp_8h.html#aac58c34267f6158bdd62a27e9f3a518f" title="Returns horizontal screen resolution.">VDP_getScreenWidth()</a> and <a class="el" href="vdp_8h.html#a74368da53553887f4fbd3de289a20398" title="Returns vertical screen resolution.">VDP_getScreenHeight()</a> will be used to determine suitable default values. </p>
+
+</div>
+</div>
+<a class="anchor" id="a25b786f70813ef5682c0b530b044abae"></a><!-- doxytag: member="console.h::CON_setCursorPosition" ref="a25b786f70813ef5682c0b530b044abae" args="(u16 x, u16 y)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_setCursorPosition </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>y</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set a new cursor position. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>New cursor x position. </td></tr>
+    <tr><td class="paramname">y</td><td>New cursor y position.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This function specifies a new column and row for the cursor. This is the position where the next character will appear when <a class="el" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write()</a> is processed. A position of (0,0) relates to the tile in the top/left corner. </p>
+
+</div>
+</div>
+<a class="anchor" id="af7ba6607c72a1f8fd882be28714a40d1"></a><!-- doxytag: member="console.h::CON_setLineBufferSize" ref="af7ba6607c72a1f8fd882be28714a40d1" args="(u16 size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_setLineBufferSize </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a>&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set the size of the character line buffer. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>Buffer size in bytes. This is the number of characters the buffer can hold including a terminating null-character.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sets the size of the character buffer that is used internally to compose the formatted output string which is printed on the console.</p>
+<p>Upon calling <a class="el" href="console_8c.html#af7ba6607c72a1f8fd882be28714a40d1" title="Set the size of the character line buffer.">CON_setLineBufferSize()</a>, the previous line buffer memory is immedieately freed. The new buffer will be allocated once the next call to <a class="el" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write()</a> occurs.</p>
+<p>Per default, the buffer size is set to 160 characters. Note that if only a vsprintf function is registered (see <a class="el" href="console_8c.html#aa90431e8383faa4f86f7dc11101eba82" title="Register a standard vsprintf function as callback for CON_sprintf()">CON_setVsprintf()</a>), the user is responsible for making sure a call to <a class="el" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write()</a> does not exceed the line buffer. In case a vsnprintf function is registered (see <a class="el" href="console_8c.html#aa9957c2192f191bc1b0158a20a148138" title="Register a standard vsnprintf function as callback for CON_snprintf()">CON_setVsnprintf()</a>), it will automtically check the buffer size and prevent overflows. </p>
+
+</div>
+</div>
+<a class="anchor" id="ae365fa43dd65b0234d6650c0d24610c1"></a><!-- doxytag: member="console.h::CON_setTransferMethod" ref="ae365fa43dd65b0234d6650c0d24610c1" args="(TransferMethod tm)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_setTransferMethod </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="dma_8h.html#a8914f69bb5412daf6b28aff2702bf481">TransferMethod</a>&#160;</td>
+          <td class="paramname"><em>tm</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set the transfer method used to upload the console tile buffer to VDP RAM. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tm</td><td>Transfer method. <br/>
+ Accepted values are: <br/>
+<ul>
+<li>CPU <br/>
+</li>
+<li>DMA <br/>
+</li>
+<li>DMA_QUEUE <br/>
+</li>
+<li>DMA_QUEUE_COPY</li>
+</ul>
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This sets the transfer method used with <a class="el" href="vdp__tile_8h.html#a97e005c240493df1c72cd33c0e668d6b" title="Set tilemap data for specified region.">VDP_setTileMapDataRect()</a>. The default value is DMA, which will cause an immediate upload. Note that when DMA_QUEUE or DMA_QUEUE_COPY is used, the user is responsible for triggering DMA upload, e.g., by calling <a class="el" href="sys_8h.html#a753b47efe923d70d7c897a5b433efdc4" title="Wait for start of VBlank and do all the VBlank processing (DMA transfers, XGM driver tempo...">SYS_doVBlankProcess()</a>. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa9957c2192f191bc1b0158a20a148138"></a><!-- doxytag: member="console.h::CON_setVsnprintf" ref="aa9957c2192f191bc1b0158a20a148138" args="(vsnprintf_t vsnprintf_func)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_setVsnprintf </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="console_8h.html#afb6f065a16a9c1c1b667c3ad0c0e7275">vsnprintf_t</a>&#160;</td>
+          <td class="paramname"><em>vsnprintf_func</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Register a standard vsnprintf function as callback for <a class="el" href="console_8h.html#a188542b29dbc4cf1847b9c8a2403211f" title="Standard C library snprintf function.">CON_snprintf()</a> </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vsnprintf_func</td><td>Function pointer to a standard C library vsnprintf function</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Registers a callback function that will be wrapped by <a class="el" href="console_8h.html#a188542b29dbc4cf1847b9c8a2403211f" title="Standard C library snprintf function.">CON_snprintf()</a>. The funcion supplied needs to be a vsnprintf function that takes va_list as arguments, defined as follows:</p>
+<p>typedef int (*vsnprintf_t)(char *buf, int count, const char *fmt, va_list args);</p>
+<p>A possible implementation is stbsp_vsnprintf() (<a href="http://github.com/nothings/stb">http://github.com/nothings/stb</a>). </p>
+
+</div>
+</div>
+<a class="anchor" id="a67b110acadb1309acf7c8fa85292534e"></a><!-- doxytag: member="console.h::CON_setVsprintf" ref="a67b110acadb1309acf7c8fa85292534e" args="(vsprintf_t vsprintf_func)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int int void CON_setVsprintf </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="console_8h.html#a0ca1990f2c616d660b86c3109084f177">vsprintf_t</a>&#160;</td>
+          <td class="paramname"><em>vsprintf_func</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Register a standard vsprintf function as callback for <a class="el" href="console_8h.html#a415f0b50df56b3b3722b2bcaec015d24" title="Standard C library sprintf function.">CON_sprintf()</a> </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vsprintf_func</td><td>Function pointer to a standard C library vsprintf function</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Registers a callback function that will be wrapped by <a class="el" href="console_8h.html#a415f0b50df56b3b3722b2bcaec015d24" title="Standard C library sprintf function.">CON_sprintf()</a>. The funcion supplied needs to be a vsprintf function that takes va_list as arguments, defined as follows:</p>
+<p>typedef int (*vsprintf_t)(char *buf, const char *fmt, va_list args);</p>
+<p>Possible implementations are SGDK's vsprintf() or alternatively stbsp_vsprintf() (<a href="http://github.com/nothings/stb">http://github.com/nothings/stb</a>). </p>
+
+</div>
+</div>
+<a class="anchor" id="a188542b29dbc4cf1847b9c8a2403211f"></a><!-- doxytag: member="console.h::CON_snprintf" ref="a188542b29dbc4cf1847b9c8a2403211f" args="(char *buf, int count, const char *fmt,...) __attribute__((format(printf" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int int CON_snprintf </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Standard C library snprintf function. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>Pointer to the buffer where the resulting C-string is stored. </td></tr>
+    <tr><td class="paramname">count</td><td>Maximum number of bytes to be used in the buffer. The generated string has a length of at most count-1, leaving space for the additional terminating null-character. </td></tr>
+    <tr><td class="paramname">fmt</td><td>C-string that contains the text to be written. It can optionally contain embedded format specifiers that are replaced by the values specified in subsequent additional arguments and formatted as requested. (See <a href="https://en.wikipedia.org/wiki/Printf_format_string">https://en.wikipedia.org/wiki/Printf_format_string</a>) </td></tr>
+    <tr><td class="paramname">...</td><td>(additional arguments) The function may expect a sequence of additional arguments, each containing a value to be used to replace a format specifier in the format string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The total number of characters written is returned. This count does not include the additional null-character automatically appended at the end of the string.</dd></dl>
+<p>Composes a string that would result from using a standard C library printf function. In case fmt includes format specifiers (beginning with %), the additional arguments are formatted and inserted in the resulting string replacing their respective specifiers.</p>
+<p>This function is a wrapper for a vsnprintf type function. Per default no function is registered. <a class="el" href="console_8c.html#aa9957c2192f191bc1b0158a20a148138" title="Register a standard vsnprintf function as callback for CON_snprintf()">CON_setVsnprintf()</a> can be used to register an implementation, e.g., stbsp_vsnprintf(). </p>
+
+</div>
+</div>
+<a class="anchor" id="a415f0b50df56b3b3722b2bcaec015d24"></a><!-- doxytag: member="console.h::CON_sprintf" ref="a415f0b50df56b3b3722b2bcaec015d24" args="(char *buf, const char *fmt,...) __attribute__((format(printf" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CON_sprintf </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Standard C library sprintf function. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>Pointer to the buffer where the resulting C-string is stored. </td></tr>
+    <tr><td class="paramname">fmt</td><td>C-string that contains the text to be written. It can optionally contain embedded format specifiers that are replaced by the values specified in subsequent additional arguments and formatted as requested. (See <a href="https://en.wikipedia.org/wiki/Printf_format_string">https://en.wikipedia.org/wiki/Printf_format_string</a>) </td></tr>
+    <tr><td class="paramname">...</td><td>(additional arguments) The function may expect a sequence of additional arguments, each containing a value to be used to replace a format specifier in the format string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The total number of characters written is returned. This count does not include the additional null-character automatically appended at the end of the string.</dd></dl>
+<p>Composes a string that would result from using a standard C library printf function. In case fmt includes format specifiers (beginning with %), the additional arguments are formatted and inserted in the resulting string replacing their respective specifiers.</p>
+<p>This function is a wrapper for a vsprintf type function. Per default SGDK's built-in vsprintf() is used. <a class="el" href="console_8c.html#aa90431e8383faa4f86f7dc11101eba82" title="Register a standard vsprintf function as callback for CON_sprintf()">CON_setVsprintf()</a> can be used to register another implementation, e.g., stbsp_vsprintf(). </p>
+
+</div>
+</div>
+<a class="anchor" id="a5c1d65e7dc89d154a78df417452de457"></a><!-- doxytag: member="console.h::CON_systemResetOnNextWrite" ref="a5c1d65e7dc89d154a78df417452de457" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CON_systemResetOnNextWrite </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Reset the system to the SGDK default state when <a class="el" href="console_8h.html#a5fdc0e4bbbacc69b8f7caa76c59348a5" title="Write a C-string to the console window.">CON_write()</a> is called next time. </p>
+<p>To reset the system the following SGDK functions will be called:</p>
+<ul>
+<li><a class="el" href="sys_8h.html#a463232079760831964d6231a7880dfa7" title="Disable interrupts (Vertical, Horizontal and External).">SYS_disableInts()</a> <br/>
+</li>
+<li><a class="el" href="ym2612_8h.html#a44ad02a42563bc9a9a4bb8f19950e3ef" title="Reset YM2612 chip.">YM2612_reset()</a> <br/>
+</li>
+<li><a class="el" href="psg_8h.html#ab8f4788a9aa5f6f691af006398dff5e8">PSG_init()</a> <br/>
+</li>
+<li><a class="el" href="z80__ctrl_8h.html#a8302cd6e69f0c3b2552e42e428c4a854" title="Initialize Z80 sub system.">Z80_init()</a> <br/>
+</li>
+<li><a class="el" href="vdp_8h.html#a6bc6e196500571d95c129c563191ac25" title="Initialize the whole VDP sub system.">VDP_init()</a> </li>
+</ul>
+
+</div>
+</div>
+<a class="anchor" id="a5fdc0e4bbbacc69b8f7caa76c59348a5"></a><!-- doxytag: member="console.h::CON_write" ref="a5fdc0e4bbbacc69b8f7caa76c59348a5" args="(const char *fmt,...) __attribute__((format(printf" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CON_write </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Write a C-string to the console window. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fmt</td><td>C-string that contains the text to be written. It can optionally contain embedded format specifiers that are replaced by the values specified in subsequent additional arguments and formatted as requested. (See <a href="https://en.wikipedia.org/wiki/Printf_format_string">https://en.wikipedia.org/wiki/Printf_format_string</a>) </td></tr>
+    <tr><td class="paramname">...</td><td>(additional arguments) The function may expect a sequence of additional arguments, each containing a value to be used to replace a format specifier in the format string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The total number of characters written is returned. This count does not include the additional null-character automatically appended at the end of the string.</dd></dl>
+<p>This function writes a C-string into the console window where lines are automatically wrapped if the horizontal border of the screen is reached. When at the bottom of the screen window, the console content is moved up by one text line and a blank row is inserted.</p>
+<p>Internally it uses either vsprintf or vsnprintf functions that have been registered with <a class="el" href="console_8c.html#aa90431e8383faa4f86f7dc11101eba82" title="Register a standard vsprintf function as callback for CON_sprintf()">CON_setVsprintf()</a> or <a class="el" href="console_8c.html#aa9957c2192f191bc1b0158a20a148138" title="Register a standard vsnprintf function as callback for CON_snprintf()">CON_setVsnprintf()</a>, respectively.</p>
+<p>While processing the string, this function evaluates and executes escape control sequences. The following control characters are supported:</p>
+<ul>
+<li>\b : backspace <br/>
+</li>
+<li>\n : new line (line feed) <br/>
+</li>
+<li>\r : carriage return <br/>
+</li>
+<li>\t : horizontal tab <br/>
+</li>
+<li>\v : vertical tab </li>
+</ul>
+
+</div>
+</div>
+</div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="console_8h.html">console.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

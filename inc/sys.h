@@ -16,6 +16,7 @@
 #define PROCESS_DMA_TASK            (1 << 2)
 #define PROCESS_XGM_TASK            (1 << 3)
 #define PROCESS_VDP_SCROLL_TASK     (1 << 4)
+#define PROCESS_XGM2_FADE_TASK      (1 << 5)
 
 
 #define ROM_ALIGN_BIT               17

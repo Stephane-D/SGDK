@@ -9,10 +9,6 @@
 #include "kdebug.h"
 #include "tools.h"
 
-#if (MODULE_FRACTAL != 0)
-#include "ext/fractal/fractal.h"
-#endif
-
 #define USED        1
 
 
@@ -170,13 +166,6 @@ void MEM_init()
 
     // define available memory (sizeof(u16) is the memory reserved to indicate heap end)
     len = MEMORY_HIGH - (h + sizeof(u16));
-
-#if (MODULE_FRACTAL != 0)
-    // reserve fixed block of memory for Fractal sound driver in high memory area
-    len -= sizeof(Fractal_Data);
-    // align on word
-    len &= 0xFFFE;
-#endif
 
     // define heap
     heap = (u16*) h;

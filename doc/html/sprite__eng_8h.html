@@ -130,9 +130,13 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aee3b0990161602e8e9a20c8686c085bc">COLLISION_TYPE_CIRCLE</a>&#160;&#160;&#160;2</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Round circle collision type (<a class="el" href="struct_circle.html" title="Simple Circle structure.">Circle</a> structure) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad45753bdd9efccf1e4c8b904b53126e0"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_INSERT_HEAD" ref="ad45753bdd9efccf1e4c8b904b53126e0" args="" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0">SPR_FLAG_INSERT_HEAD</a>&#160;&#160;&#160;0x2000</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#ad45753bdd9efccf1e4c8b904b53126e0">SPR_FLAG_INSERT_HEAD</a>&#160;&#160;&#160;0x4000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Special flag to indicate that we want to add the sprite at position 0 (head / top) in the list<br/>
  instead of adding it in last / bottom position (default) <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39911fc58020b354e424ee5860366e4a"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_DISABLE_ANIMATION_LOOP" ref="a39911fc58020b354e424ee5860366e4a" args="" -->
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a39911fc58020b354e424ee5860366e4a">SPR_FLAG_DISABLE_ANIMATION_LOOP</a>&#160;&#160;&#160;0x2000</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable animation auto loop..<br/>
+ By default animation always restart fater the last frame has been played. This flag prevent the animation to restart and so the animation end on the last frame forever (see <a class="el" href="sprite__eng_8h.html#a8c86b9547c954f914123ce6d49f52626" title="Return TRUE if animation ended / looped.  This can be used with the frame change callback (see SPR_se...">SPR_getAnimationDone</a>(..)) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a260568f6bd86a22297a74b93f715b166"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE" ref="a260568f6bd86a22297a74b93f715b166" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a260568f6bd86a22297a74b93f715b166">SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE</a>&#160;&#160;&#160;0x1000</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable delaying of frame update when we are running out of DMA capacity.<br/>
@@ -149,7 +153,7 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d4d3e5f40a12a457c83e8ed564777f0"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_FAST_AUTO_VISIBILITY" ref="a1d4d3e5f40a12a457c83e8ed564777f0" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a1d4d3e5f40a12a457c83e8ed564777f0">SPR_FLAG_FAST_AUTO_VISIBILITY</a>&#160;&#160;&#160;0x0100</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable fast visibility calculation (only meaningful if SPR_FLAG_AUTO_VISIBILITY is used).<br/>
- If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of some waste of hardware sprite. <br/></td></tr>
+ If you set this flag the automatic visibility calculation will be done globally for the (meta) sprite and not per internal hardware sprite. This result in faster visibility computation at the expense of using extra (wasting) hardware sprites. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a606b4d7e71bfe2f14a6df4e8a9433309"></a><!-- doxytag: member="sprite_eng.h::SPR_FLAG_MASK" ref="a606b4d7e71bfe2f14a6df4e8a9433309" args="" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a606b4d7e71bfe2f14a6df4e8a9433309">SPR_FLAG_MASK</a>&#160;&#160;&#160;(SPR_FLAG_INSERT_HEAD | SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_FAST_AUTO_VISIBILITY)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for sprite flag. <br/></td></tr>
@@ -254,6 +258,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spri
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="sprite__eng_8h.html#ad3fde63ad9fcb617293cdabde09bbb1f" title="Set sprite depth (for sprite display ordering)">SPR_setDepth</a>(..) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a8c43d9dc709a4fdc0b3a15798fe701ba">SPR_setAlwaysOnTop</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite depth so it remains above others sprite - same as SPR_setDepth(SPR_MIN_DEPTH)  <a href="#a8c43d9dc709a4fdc0b3a15798fe701ba"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#acb38088caea6f1f794bca54862e6f866">SPR_setAlwaysAtBottom</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sprite depth so it remains behind others sprite - same as SPR_setDepth(SPR_MAX_DEPTH)  <a href="#acb38088caea6f1f794bca54862e6f866"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a7f4d357bbe7a3b5e88d0adc6d7209575">SPR_setAnimAndFrame</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> frame)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current sprite animation and frame.  <a href="#a7f4d357bbe7a3b5e88d0adc6d7209575"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a2f86e3e794df170352a5409cdaf64b95">SPR_setAnim</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#ad54124d5ddef23f4d85df6f12e3501a4">s16</a> anim)</td></tr>
@@ -262,6 +268,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spri
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current sprite frame.  <a href="#a5b992fb79ffb269f8eaaf55e121dc7ea"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#aafd20fc33df8a81fc5675e132833e8a8">SPR_nextFrame</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass to the next sprite frame.  <a href="#aafd20fc33df8a81fc5675e132833e8a8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a205b5a46de10c193b6caf4303207a1bb">SPR_setAnimationLoop</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite, <a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable/disable animation loop (default is on).<br/>
+ When disable the sprite will stay on the last animation frame forever when animation ended instead of restarting it.  <a href="#a205b5a46de10c193b6caf4303207a1bb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sprite__eng_8h.html#a8c86b9547c954f914123ce6d49f52626">SPR_getAnimationDone</a> (<a class="el" href="struct_sprite.html">Sprite</a> *sprite)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return TRUE if animation ended / looped.<br/>
  This can be used with the frame change callback (see <a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..)) to detect the end of sprite animation and do appropriate action if required.  <a href="#a8c86b9547c954f914123ce6d49f52626"></a><br/></td></tr>
@@ -325,7 +334,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000039">Deprecated:</a></b></dt><dd>Use SPR_isVisible(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000013">Deprecated:</a></b></dt><dd>Use SPR_isVisible(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -353,7 +362,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000037">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
 
 </div>
 </div>
@@ -381,7 +390,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000038">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a5775e4ee57393b47f3c2995b8a65abb1" title="Set the visibility state for this sprite.">SPR_setVisibility</a>(..) method instead. </dd></dl>
 
 </div>
 </div>
@@ -409,7 +418,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000036">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a03275096f187a64406f5fc3bd332462f" title="Set sprite Priority attribut.">SPR_setPriority</a>(..) instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use <a class="el" href="sprite__eng_8h.html#a03275096f187a64406f5fc3bd332462f" title="Set sprite Priority attribut.">SPR_setPriority</a>(..) instead </dd></dl>
 
 </div>
 </div>
@@ -899,7 +908,9 @@ SPR_getNumVDPSprite(..) </dd></dl>
 
 <p>Return TRUE if animation ended / looped.<br/>
  This can be used with the frame change callback (see <a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..)) to detect the end of sprite animation and do appropriate action if required. </p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a62e13ffd44ebe9f84178a78e3ffb9032" title="Set the frame change event callback for this sprite.">SPR_setFrameChangeCallback</a>(..) </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a39911fc58020b354e424ee5860366e4a" title="Disable animation auto loop..  By default animation always restart fater the last frame has been play...">SPR_FLAG_DISABLE_ANIMATION_LOOP</a> </dd>
+<dd>
+<a class="el" href="sprite__eng_8h.html#a205b5a46de10c193b6caf4303207a1bb" title="Enable/disable animation loop (default is on).  When disable the sprite will stay on the last animati...">SPR_setAnimationLoop(Sprite*, bool)</a> </dd></dl>
 
 </div>
 </div>
@@ -1164,6 +1175,32 @@ SPR_getNumVDPSprite(..) </dd></dl>
 
 </div>
 </div>
+<a class="anchor" id="acb38088caea6f1f794bca54862e6f866"></a><!-- doxytag: member="sprite_eng.h::SPR_setAlwaysAtBottom" ref="acb38088caea6f1f794bca54862e6f866" args="(Sprite *sprite)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SPR_setAlwaysAtBottom </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramname"><em>sprite</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set sprite depth so it remains behind others sprite - same as SPR_setDepth(SPR_MAX_DEPTH) </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to change depth for</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>SPR_setDepth(Sprite*) </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a8c43d9dc709a4fdc0b3a15798fe701ba"></a><!-- doxytag: member="sprite_eng.h::SPR_setAlwaysOnTop" ref="a8c43d9dc709a4fdc0b3a15798fe701ba" args="(Sprite *sprite)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1182,12 +1219,11 @@ SPR_getNumVDPSprite(..) </dd></dl>
 <p>Set sprite depth so it remains above others sprite - same as SPR_setDepth(SPR_MIN_DEPTH) </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to set depth for</td></tr>
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> to change depth for</td></tr>
   </table>
   </dd>
 </dl>
-<p><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> having lower depth are display in front of sprite with higher depth.<br/>
- The sprite is *immediately* sorted when its depth value is changed. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd>SPR_setDepth(Sprite*) </dd></dl>
 
 </div>
 </div>
@@ -1267,6 +1303,46 @@ SPR_getNumVDPSprite(..) </dd></dl>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a205b5a46de10c193b6caf4303207a1bb"></a><!-- doxytag: member="sprite_eng.h::SPR_setAnimationLoop" ref="a205b5a46de10c193b6caf4303207a1bb" args="(Sprite *sprite, bool value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SPR_setAnimationLoop </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_sprite.html">Sprite</a> *&#160;</td>
+          <td class="paramname"><em>sprite</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Enable/disable animation loop (default is on).<br/>
+ When disable the sprite will stay on the last animation frame forever when animation ended instead of restarting it. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sprite</td><td><a class="el" href="struct_sprite.html" title="Sprite structure used by the Sprite Engine to store state for a sprite.  WARNING: always use the SPR_...">Sprite</a> we want to enable/disable animation loop for. </td></tr>
+    <tr><td class="paramname">value</td><td>TRUE to enable animation loop (default), FALSE otherwise</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="sprite__eng_8h.html#a39911fc58020b354e424ee5860366e4a" title="Disable animation auto loop..  By default animation always restart fater the last frame has been play...">SPR_FLAG_DISABLE_ANIMATION_LOOP</a> </dd>
+<dd>
+<a class="el" href="sprite__eng_8h.html#a8c86b9547c954f914123ce6d49f52626" title="Return TRUE if animation ended / looped.  This can be used with the frame change callback (see SPR_se...">SPR_getAnimationDone(Sprite*)</a> </dd></dl>
 
 </div>
 </div>
@@ -1860,7 +1936,7 @@ SPR_getNumVDPSprite(..) </dd></dl>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sprite__eng_8h.html">sprite_eng.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

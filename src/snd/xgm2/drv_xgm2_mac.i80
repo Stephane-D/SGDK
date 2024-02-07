@@ -1,0 +1,133 @@
+; #############################    macro    #################################
+
+; readCmdBuf
+; ----------
+; cmd buf   --> BC  --> cmd buf
+;               A   --> value
+;
+; read 1 byte from command buffer
+; = 11 cycles
+
+            macro   readCmdBuf
+
+            LD      A, (BC)         ;                       ' 7     |
+            INC     C               ; next                  ' 4     | 11
+
+            endm
+
+
+; readBeU16CmdBuf
+; ---------------
+; cmd buf   --> BC  --> cmd buf
+;               A   --> ?
+;               HL  --> value
+;
+; read big endian u16 (2 bytes) from command buffer
+; = 30 cycles
+
+            macro   readBeU16CmdBuf
+
+            readCmdBuf              ;                       ' 11     |
+            LD      H, A            ;                       ' 4      |
+            readCmdBuf              ;                       ' 11     | 30
+            LD      L, A            ;                       ' 4      |
+
+            endm
+
+
+; readBeU16CmdBuf_DE
+; ------------------
+; cmd buf   --> BC  --> cmd buf
+;               A   --> ?
+;               DE  --> value
+;
+; read big endian u16 (2 bytes) from command buffer
+; = 30 cycles
+
+            macro   readBeU16CmdBuf_DE
+
+            readCmdBuf              ;                       ' 11     |
+            LD      D, A            ;                       ' 4      |
+            readCmdBuf              ;                       ' 11     | 30
+            LD      E, A            ;                       ' 4      |
+
+            endm
+
+
+; readU24CmdBuf
+; -------------
+; cmd buf   --> BC  --> cmd buf
+;               HL  --> low word value
+;               A   --> high byte value
+;
+; read u24 (3 bytes) from command buffer
+; = 41 cycles
+
+            macro   readU24CmdBuf
+
+            readCmdBuf              ;                       ' 11     |
+            LD      L, A            ;                       ' 4      |
+            readCmdBuf              ;                       ' 11     | 41
+            LD      H, A            ;                       ' 4      |
+            readCmdBuf              ;                       ' 11     |
+
+            endm
+
+
+; readU24CmdBuf_DE
+; ----------------
+; cmd buf   --> BC  --> cmd buf
+;               DE  --> low word value
+;               A   --> high byte value
+;
+; read u24 (3 bytes) from command buffer
+; = 41 cycles
+
+            macro   readU24CmdBuf_DE
+
+            readCmdBuf              ;                       ' 11     |
+            LD      E, A            ;                       ' 4      |
+            readCmdBuf              ;                       ' 11     | 41
+            LD      D, A            ;                       ' 4      |
+            readCmdBuf              ;                       ' 11     |
+
+            endm
+
+
+; hasEmptyComBuffer
+; -----------------
+;           HL  --> ?
+;           A   --> ?
+;
+; (A == 0) or Z flag set = FM or PSG com buffer empty
+; up to 67 cycles
+
+            macro hasEmptyComBuffer
+
+            isFMComBufferEmpty          ;                           ' 30    |
+            JR      Z, .end             ;                           ' 7     | 37
+
+            isPSGComBufferEmpty         ;                           ' 30    | (67)
+
+.end
+
+            endm
+
+
+; logRemainingSamples
+; -------------------
+;           A   --> ?
+;           D   --> ?
+;
+; log number of remaining sample in PCM buffer
+
+            macro logRemainingSamples var
+
+            EXX                                     ;
+            LD      A, C                            ; A = curr played sample index
+            EXX                                     ;
+            LD      D, A
+            getRemainingSample
+            LD      (var), A                        ; save duration in sample
+
+            endm

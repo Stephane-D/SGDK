@@ -1,0 +1,530 @@
+; ##############################  functions  ################################
+
+
+; PSG_mute
+; --------
+;               A   --> ?
+;               HL  --> ?
+;
+; mute all PSG channels
+; 89 cycles
+
+PSG_mute                                ; call                      ' 17
+
+            LD      HL, PSGPORT         ;                           ' 10    | (27)
+
+            LD      (HL), $9F           ; set ch0 silent            ' 10+3  |
+            LD      (HL), $BF           ; set ch1 silent            ' 10+3  |
+            LD      (HL), $DF           ; set ch2 silent            ' 10+3  | 52 (79)
+            LD      (HL), $FF           ; set ch3 silent            ' 10+3  |
+
+            RET                         ; done                      ' 10    | (89)
+
+
+; PSG_unmute
+; ----------
+;               A   --> ?
+;               E   --> ?
+;               HL  --> ?
+;
+; unmute all PSG channels
+; 1 sample + 120 cycles
+
+PSG_unmute                              ; call                      ' 17
+
+            LD      HL, PSG_ATT         ; HL = PSG_ATT              ' 10    |
+            LD      E, (HL)             ; E = PSG attenuation       ' 7     | 17 (34)
+
+            JP      PSG_updateAllEnv    ;                           ' 1s + 120 cyles
+
+
+; PSG_setAttenuation
+; ------------------
+; new PSG att.  --> A   --> ?           ; 0-F
+;                   E   --> new PSG att.
+;                   HL  --> PSGPORT
+;
+; set the new PSG attenuation level
+; 1 sample + 120 cycles
+
+PSG_setAttenuation                      ; call                      ' 17
+
+            LD      HL, PSG_ATT         ;                           ' 10    |
+            CP      (HL)                ; A == PSG_ATT ?            ' 7     | 22 (39)
+            RET     Z                   ; --> exit                  ' 5     |
+
+            LD      (HL), A             ; save new PSG_ATT          ' 7     |
+            LD      E, A                ; E = attenuation           ' 4     | 11 (50)
+
+            ; don't need to call PSG_updateAllEnv here as env is often updated on PSG
+            ; that avoid bug when changing PSG vol while music is off (does an unmute)
+
+            RET                         ; done                      ' 10    | (120)
+
+
+; PSG_updateAllEnv
+; ----------------
+; attenuation   --> E                   ; 0-F
+;                   A   --> ?
+;                   HL  --> PSGPORT
+;
+; update envelop for all PSG channels
+; 1 sample + 120 cycles
+
+PSG_updateAllEnv                        ; cont                      ' 50
+
+            LD      HL, PSGPORT         ; HL = PSG port             ' 10    | (60)
+
+            PSG_updateEnv 0             ; update env for ch0        ' 55    | (115)
+            PSG_updateEnv 1             ; update env for ch1        ' 55    | (170)
+
+            SAMPLE_OUTPUT_FASTCALL      ; +                         '
+
+            PSG_updateEnv 2             ; update env for ch2        ' 55    |
+            PSG_updateEnv 3             ; update env for ch3        ' 55    | (110)
+
+            RET                         ; done                      ' 10    | (120)
+
+
+; PSG_nextFrame
+; -------------
+;               HL  --> ?
+;               BC  --> ?
+;               DE  --> ?
+;               IY  --> ?
+;               IXH --> ?
+;               A   --> ?
+;
+; process PSG command for next frame
+
+PSG_nextFrame                               ; call                      ' 17
+
+            LD      HL, (PSG_WAIT_FRAME)    ;                           ' 16    |
+            LD      A, H                    ;                           ' 4     |
+            OR      L                       ;                           ' 4     | 34 (51)
+            JP      Z, .process             ; if (psgWait)              ' 10    |
+
+            DEC     HL                      ;   psgWait--;              ' 6     |
+            LD      (PSG_WAIT_FRAME), HL    ;   return;                 ' 16    | 32 (83)
+            RET                             ;                           ' 10    |
+
+.process                                    ;                           ' 51
+            LD      B, PSG_COM_BUFFER_H     ;                           ' 7     |
+            LD      A, (PSG_BUF_RD_POS)     ;                           ' 13    | 24 (75)
+            LD      C, A                    ; BC = &src                 ' 4     |
+
+PSG_nextFrame_loop
+            sampleOutput
+
+            readCmdBuf                      ; A = command               ' 11    | (15)
+            LD      D, A                    ; D = command               ' 4     |
+
+            AND     $F0                     ; isolate command group     ' 7     | (22)
+
+            JP      M, PSG_com_8x_Fx        ; group 8x-Fx ?             ' 10    |
+            JR      Z, PSG_com_0x           ; group 0x ?                ' 7     | 17 (39)
+
+PSG_com_1x_7x
+            CP      $40                     ;                           ' 7     |
+            JP      NC, PSG_com_4x_7x       ; group 4x-7x ?             ' 10    | 17 (56)
+
+PSG_com_1x_3x
+            CP      $10                     ;                           ' 7     |
+            JP      Z, PSG_com_1x           ; group 1x ?                ' 10    | 17 (73)
+
+PSG_com_2x_3x
+
+PSGCom_setFreq                              ;                           ' 73
+;-------------
+            LD      HL, PSG_nextFrame_loop  ;                           ' 10    |
+            BIT     4, D                    ; has waitFrame flag ?      ' 8     | 25 (98)
+            JR      Z, .no_wait             ;  --> change JP dest       ' 7     |
+
+            LD      HL, PSG_nextFrame_done  ;                           ' 10    | (108)
+
+.no_wait
+            PUSH    HL                      ; set RET address           ' 11    | (119)
+
+            LD      A, D                    ; com | (ch << 2) | freqH   ' 4     |
+            AND     $0C                     ; ch << 2                   ' 7     |
+            RRCA                            ; ch << 1                   ' 4     | 33 (152)
+            ADD     PSG_STATE_FREQ&$FF      ; &PSG_STATE_FREQ_L[ch]     ' 7     |
+            LD      L, A                    ;                           ' 4     |
+            LD      H, PSG_STATE_FREQ>>8    ; HL = &PSG_STATE_FREQ[ch]  ' 7     |
+
+            readCmdBuf                  ; A = freqL                 ' 11    |
+            LD      E, A                ; E = freqL                 ' 4     | 15 (167)
+
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            LD      (HL), E             ; store freq value          ' 7     |
+            INC     L                   ; (low byte then high byte) ' 4     | (18)
+            LD      (HL), D             ;                           ' 7     |
+
+            LD      A, D                ; A = (ch << 2) | freqH     ' 4     |
+            AND     $0C                 ; A.b32 = channel           ' 7     |
+            RLCA                        ;                           ' 4     |
+            RLCA                        ;                           ' 4     | 27 (45)
+            RLCA                        ; A.b65 = channel           ' 4     |
+            LD      H, A                ; H.b65 = channel           ' 4     |
+
+            LD      A, E                ; A = freqL                 ' 4     |
+            AND     $0F                 ; A = freqL & 0x0F          ' 7     |
+            OR      $80                 ;                           ' 7     | 22 (67)
+            OR      H                   ; A = $80 | (ch << 5) | fr  ' 4     |
+
+            LD      HL, PSGPORT         ;                           ' 10    |
+            LD      (HL), A             ; write freq low part       ' 7+3   | 20 (87)
+
+            LD      A, E                ; A = freqL                 ' 4     |
+            AND     $F0                 ; A = freqL & 0xF0          ' 7     |
+            RR      D                   ; D >> 1                    ' 8     |
+            RRA                         ; A = D.b0-(freqL>>1)       ' 4     | 43 (130)
+            RR      D                   ; D >> 1                    ' 8     |
+            RRA                         ; A = D.b10-(freqL>>2)      ' 4     |
+            RRCA                        ;                           ' 4     |
+            RRCA                        ; A = 00-(D.b10)-(freqL>>4) ' 4     |
+
+            LD      (HL), A             ; write freq high part      ' 7+3   | (140)
+
+            RET                         ; next                      ' 10    | (150)
+
+
+PSG_com_0x                              ;                           ' 44
+;---------
+            LD      A, D                ; com | wait                ' 4     |
+            AND     $0F                 ; isolate wait              ' 7     | 11 (55)
+
+            CP      $0E                 ;                           ' 7     |
+            JR      Z, PSGCom_longWait  ;  --> long wait cmd        ' 7     | 21 (76)
+            JR      C, PSGCom_shortWait ;  --> short wait cmd       ' 7     |
+
+PSGCOM_loop                             ;                           ' 76
+;----------
+            readU24CmdBuf_DE            ;                           ' 41    | (117)
+
+            LD      H, A                ; H = A                     ' 4     |
+            AND     D                   ;                           ' 4     |
+            AND     E                   ;                           ' 4     | 26 (143)
+            CP      $FF                 ; loop point = $FFFFFF ?    ' 7     |
+            JR      Z, .no_loop1        ;                           ' 7     |
+
+            LD      A, H                ; restore A = high byte     ' 4     |
+            LD      HL, PSG_CUR_ADDR+0  ;                           ' 10    | 21 (164)
+            LD      (HL), E             ; store low byte            ' 7     |
+
+            LD      E, D                ;                           ' 4     |
+            LD      D, A                ; DE = loop.b23-b8          ' 4     | 8 (172)
+
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            LD      HL, (PSG_START_ADDR)    ; get start PSG address ' 16    |
+            ADD     HL, DE                  ; add loop point        ' 11    | (43)
+            LD      (PSG_CUR_ADDR+1), HL    ; store                 ' 16    |
+
+            LD      HL, REMAINING_LOOP      ;                       ' 10    |
+            LD      A, (HL)                 ; A = remaining loop    ' 7     | 28 (71)
+            OR      A                       ; A == 0 ?              ' 4     |
+            JR      Z, .no_loop2            ;   --> no loop         ' 7     |
+
+            CP      $FF                     ; A == $FF ?            ' 7     |
+            JR      Z, .infinite_loop       ;   --> infinite loop   ' 7     | 14 (85)
+
+            DEC     A                       ; loop--                ' 4     |
+            LD      (HL), A                 ; store it              ' 7     | 11 (96)
+
+.infinite_loop
+            JP      PSG_nextFrame_done      ; done                  ' 10    | (106)
+
+.no_loop1                                   ;                       ' 148
+            SAMPLE_OUTPUT_FASTCALL
+
+.no_loop2                                   ;                       ' 76
+            LD      HL, STATUS              ;                       ' 10    |
+            RES     STAT_PLAY_SFT, (HL)     ; clear play status     ' 15    | 25 (101)
+
+            LD      HL, 0                       ; clear             ' 10    |
+            LD      (PENDING_FRAME_FRAC), HL    ; pending frames    ' 16    | 26 (127)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    FM_mute                 ; mute FM               ' 146
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    PSG_mute                ; mute PSG              ' 89
+
+            JP      PSG_nextFrame_done      ; done                  ' 10    | (99)
+
+
+PSGCom_longWait                         ;                           ' 74
+;--------------
+            LD      H, 0                ; H = wait.H                ' 7     |
+            readCmdBuf                  ; A = wait.L                ' 11    |
+            ADD     14                  ;                           ' 7     | 32 (106)
+            JR      NC, .byte_wait      ; wait >= 256 ?             ' 7     |
+
+            INC     H                   ; --> inc wait.H            ' 4     | (110)
+
+.byte_wait                                  ;                       ' 111
+            LD      L, A                    ;                       ' 4     | 20 (131)
+            LD      (PSG_WAIT_FRAME), HL    ; store as 16 bit       ' 16    |
+
+            JP      PSG_nextFrame_done      ; done                  ' 10    | (141)
+
+
+PSGCom_shortWait                        ;                           ' 81
+;---------------
+            LD      (PSG_WAIT_FRAME), A ;                           ' 13    | (94)
+
+            JP      PSG_nextFrame_done  ; done                      ' 10    | (104)
+
+
+PSG_com_1x
+;---------
+
+PSG_setFreqLow                              ;                       ' 75
+;-------------
+            LD      HL, PSG_nextFrame_loop  ; return address        ' 10    |
+            BIT     0, D                    ; has waitFrame flag ?  ' 8     | 25 (81)
+            JR      Z, .no_wait             ;  --> change JP dest   ' 7     |
+
+            LD      HL, PSG_nextFrame_done  ;                       ' 10    | (110)
+
+.no_wait
+            PUSH    HL                      ;                           ' 11    | (121)
+
+            readCmdBuf                      ; A = PSG write value       ' 11    |
+            LD      D, A                    ; save in D                 ' 4     | 15 (136)
+
+            LD      (PSGPORT), A            ; write freq low part       ' 13+3  | 16 (152)
+
+            SAMPLE_OUTPUT_FASTCALL          ;
+
+            LD      A, D                    ; (ch << 5) | low freq      ' 4     |
+            RRA                             ; ch << 4                   ' 4     |
+            RRA                             ; ch << 3                   ' 4     |
+            RRA                             ; ch << 2                   ' 4     |
+            RRA                             ; ch << 1                   ' 4     | (45)
+            AND     $06                     ; isolate channel           ' 7     |
+            ADD     PSG_STATE_FREQ&$FF      ; &PSG_STATE_FREQ_L[ch]     ' 7     |
+            LD      L, A                    ;                           ' 4     |
+            LD      H, PSG_STATE_FREQ>>8    ; HL = &PSG_STATE_FREQ[ch]  ' 7     |
+
+            LD      A, (HL)                 ; A = freq.L                ' 7     |
+            AND     $F0                     ; A = freq.L & 0xF0         ' 7     | 18 (63)
+            LD      E, A                    ; E = freq.L & 0xF0         ' 4     |
+
+            LD      A, D                    ; (ch << 5) | low freq      ' 4     |
+            AND     $0F                     ; A = freq low (b0-b3)      ' 7     | 15 (78)
+            OR      E                       ; A = freq.L                ' 4     |
+
+            LD      (HL), A                 ; store freq.L              ' 7     | (85)
+
+            RET                             ; done                      ' 10    | (95)
+
+
+PSG_com_4x_7x
+;------------
+
+PSGCom_setFreqD                             ;                           ' 56
+;--------------
+            LD      HL, PSG_nextFrame_loop  ; return address            ' 10    |
+            BIT     3, D                    ; has waitFrame flag ?      ' 8     | 25 (81)
+            JR      Z, .no_wait             ;  --> change JP dest       ' 7     |
+
+            LD      HL, PSG_nextFrame_done  ;                           ' 10    | (110)
+
+.no_wait
+            PUSH    HL                      ; set RET address           ' 11    | (102)
+
+            LD      A, D                    ; (ch << 4) | xx            ' 4     |
+            RRA                             ; ch << 3                   ' 4     |
+            RRA                             ; ch << 2                   ' 4     |
+            RRA                             ; ch << 1                   ' 4     | 41 (143)
+            AND     $06                     ; isolate channel           ' 7     |
+            ADD     PSG_STATE_FREQ&$FF      ; &PSG_STATE_FREQ_L[ch]     ' 7     |
+            LD      L, A                    ;                           ' 4     |
+            LD      H, PSG_STATE_FREQ>>8    ; HL = &PSG_STATE_FREQ[ch]  ' 7     |
+
+            BIT     2, D                    ; positive delta ?          ' 8     | 15 (158)
+            JR      Z, .positive_delta      ;                           ' 7     |
+
+.negative_delta
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            LD      A, D                ; xx | op | delta           ' 4     |
+            AND     3                   ;                           ' 7     |
+            INC     A                   ; A = delta                 ' 4     |
+            LD      E, A                ; E = delta                 ' 4     |
+            LD      A, (HL)             ; A = curr freq L           ' 7     | (52)
+            SUB     E                   ; A = freq - delta          ' 4     |
+            LD      (HL), A             ; store freq L              ' 7     |
+            LD      E, A                ; E = new freq L            ' 4     |
+            INC     L                   ;                           ' 4     |
+            JR      NC, .op_done        ;                           ' 7     |
+
+            DEC     (HL)                ; dec freq H                ' 11    | (63)
+
+.op_done                                ;                           ' 65
+            LD      A, D                ; A = (ch << 4) | xx        ' 4     |
+            AND     $30                 ; A = ch << 4               ' 7     |
+            ADD     A                   ; A = ch << 5               ' 4     | 26 (91)
+            OR      $80                 ; A = $80 |(ch << 5)        ' 7     |
+            LD      D, A                ; D = $80 |(ch << 5)        ' 4     |
+
+            LD      A, E                ; A = freqL                 ' 4     |
+            AND     $0F                 ; A = freqL & 0x0F          ' 7     | 15 (106)
+            OR      D                   ; A = $80 | (ch << 5) | FL  ' 4     |
+
+            LD      D, (HL)             ; E = freq H                ' 7     | (113)
+
+            LD      HL, PSGPORT         ;                           ' 10    |
+            LD      (HL), A             ; write freq low part       ' 7+3   | 20 (133)
+
+            LD      A, E                ; A = freqL                 ' 4     |
+            AND     $F0                 ; A = freqL & 0xF0          ' 7     |
+            RR      D                   ; D >> 1                    ' 8     |
+            RRA                         ; A = D.b0-(freqL>>1)       ' 4     | 43 (176)
+            RR      D                   ; D >> 1                    ' 8     |
+            RRA                         ; A = D.b10-(freqL>>2)      ' 4     |
+            RRCA                        ;                           ' 4     |
+            RRCA                        ; A = 00-(D.b10)-(freq/>>4) ' 4     |
+
+            LD      (HL), A             ; write freq high part      ' 7+3   | (186)
+
+            RET                         ; done                      ' 10    | (196)     +6 cycles heres
+
+.positive_delta                         ;                           ' 167
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            LD      A, D                ; xx | op | delta           ' 4     |
+            AND     3                   ;                           ' 7     |
+            INC     A                   ; A = delta                 ' 4     |
+            ADD     (HL)                ; A = freq + delta          ' 7     |
+            LD      (HL), A             ; store freq L              ' 7     | (44)
+            LD      E, A                ; E = new freq L            ' 4     |
+            INC     L                   ;                           ' 4     |
+            JR      NC, .op_done        ;                           ' 7     |
+
+            INC     (HL)                ; inc freq H                ' 11    | 21 (65)
+            JP      .op_done            ;                           ' 10    |
+
+
+PSG_com_8x_Fx                           ;                           ' 32
+;------------
+            ADD     A                   ;                           ' 4     |
+            JP      M, PSG_com_Cx_Fx    ; group Cx-Fx ?             ' 10    | 14 (46)
+
+PSG_setEnv
+;---------
+            LD      A, D                ; (ch << 4) | env           ' 4     |
+            AND     $30                 ; ch << 4                   ' 7     |
+            RRA                         ; ch << 3                   ' 4     |
+            RRA                         ; ch << 2                   ' 4     |
+            RRA                         ; ch << 1                   ' 4     | 45 (91)
+            RRA                         ; ch << 0                   ' 4     |
+            ADD     PSG_STATE_ENV&$FF   ; &PSG_STATE_ENV_L[ch]      ' 7     |
+            LD      L, A                ;                           ' 4     |
+            LD      H, PSG_STATE_ENV>>8 ; HL = &PSG_STATE_ENV[ch]   ' 7     |
+
+            LD      A, D                ; (ch << 4) | env           ' 4     |
+            AND     $0F                 ; A = env                   ' 7     | 18 (109)
+            LD      (HL), A             ; store env level for ch    ' 7     |
+
+            LD      HL, PSG_ATT         ; HL = &PSG_ATT             ' 10    |
+            ADD     (HL)                ; A = env + vol             ' 7     |
+            CP      $10                 ; if !(A < $10)             ' 7     | 31 (140)
+            JR      C, .ok              ;                           ' 7     |
+
+            LD      A, $F               ;     A = $F                ' 7     | (147)
+
+.ok
+            LD      E, A                ; E = adjusted env          ' 4     |
+            LD      A, D                ; (ch << 4) | env           ' 4     |
+            AND     $30                 ; (ch << 4)                 ' 7     |
+            ADD     A                   ; (ch << 5)                 ' 4     | 46 (193)
+            OR      $90                 ; $90 | (ch << 4)           ' 7     |
+            OR      E                   ; $90 | (ch << 4) | adjEnv  ' 4     |
+            LD      (PSGPORT), A        ; store env                 ' 13+3  |
+
+            JP      PSG_nextFrame_loop  ; next                      ' 10    | (203) +13 cycles here
+                                        ; maybe accept spending an extra sample output call here
+
+
+PSG_com_Cx_Fx                               ;                           ' 46
+;------------
+
+PSG_setEnvD
+;----------
+            LD      HL, PSG_nextFrame_loop  ; return address            ' 10    |
+            BIT     3, D                    ; has waitFrame flag ?      ' 8     | 25 (71)
+            JR      Z, .no_wait             ;  --> change JP dest       ' 7     |
+
+            LD      HL, PSG_nextFrame_done  ;                           ' 10    | (81)
+
+.no_wait
+            PUSH    HL                      ; set RET address           ' 11    | (92)
+
+            LD      A, D                ; (ch << 4) | env           ' 4     |
+            AND     $30                 ; ch << 4                   ' 7     |
+            RRA                         ; ch << 3                   ' 4     |
+            RRA                         ; ch << 2                   ' 4     |
+            RRA                         ; ch << 1                   ' 4     | 45 (137)
+            RRA                         ; ch << 0                   ' 4     |
+            ADD     PSG_STATE_ENV&$FF   ; &PSG_STATE_ENV_L[ch]      ' 7     |
+            LD      L, A                ;                           ' 4     |
+            LD      H, PSG_STATE_ENV>>8 ; HL = &PSG_STATE_ENV[ch]   ' 7     |
+
+            BIT     2, D                ; positive delta ?          ' 8     | 15 (151)
+            JR      Z, .positive_delta  ;                           ' 7     |
+
+.negative_delta
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            LD      A, D                ; xx | op | delta           ' 4     |
+            AND     3                   ;                           ' 7     |
+            INC     A                   ; A = delta                 ' 4     |
+            LD      E, A                ; E = delta                 ' 4     | (30)
+            LD      A, (HL)             ; A = curr env level        ' 7     |
+            SUB     E                   ; A = env - delta           ' 4     |
+
+.apply_att                              ;                           ' 32
+            LD      (HL), A             ; store env level           ' 7     | (39)
+
+            LD      HL, PSG_ATT         ; HL = &PSG_ATT             ' 10    |
+            ADD     (HL)                ; A = env + vol             ' 7     |
+            CP      $10                 ; if !(A < $10)             ' 7     | 31 (70)
+            JR      C, .ok              ;                           ' 7     |
+
+            LD      A, $F               ;     A = $F                ' 7     | (77)
+
+.ok
+            LD      E, A                ; E = adjusted env          ' 4     |
+            LD      A, D                ; (ch << 4) | env           ' 4     |
+            AND     $30                 ; (ch << 4)                 ' 7     |
+            ADD     A                   ; (ch << 5)                 ' 4     | 46 (123)
+            OR      $90                 ; $90 | (ch << 4)           ' 7     |
+            OR      E                   ; $90 | (ch << 4) | adjEnv  ' 4     |
+            LD      (PSGPORT), A        ; store env                 ' 13+3  |
+
+            RET                         ; done                      ' 10    | (133)
+
+.positive_delta                         ;                           ' 156
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            LD      A, D                ; xx | op | delta           ' 4     |
+            AND     3                   ;                           ' 7     |
+            INC     A                   ; A = delta                 ' 4     |
+            ADD     (HL)                ; A = env + delta           ' 7     | (32)
+            JP      .apply_att          ;                           ' 10    |
+
+
+PSG_nextFrame_done
+            sampleOutput
+
+            LD      A, C                    ; A = &src                  ' 4     |
+            LD      (PSG_BUF_RD_POS), A     ; save &src                 ' 13    | (17)
+
+            RET                             ;                           ' 10    | (27)
+

@@ -6,10 +6,10 @@ var NAVTREE =
       [ "Deprecated List", "deprecated.html", null ]
     ] ],
     [ "Modules", "modules.html", [
-      [ "json", "group__json.html", null ],
-      [ "megawifi", "group__megawifi.html", null ],
       [ "gamejolt", "group__gamejolt.html", null ],
+      [ "megawifi", "group__megawifi.html", null ],
       [ "lsd", "group__lsd.html", null ],
+      [ "json", "group__json.html", null ],
       [ "16c550", "group___c550.html", null ],
       [ "mw-msg", "group__mw-msg.html", null ]
     ] ],
@@ -99,6 +99,7 @@ var NAVTREE =
       [ "megawifi.h", "megawifi_8h.html", null ],
       [ "memory.h", "memory_8h.html", null ],
       [ "memory_base.h", "memory__base_8h.html", null ],
+      [ "minimus.h", null, null ],
       [ "mw-msg.h", "mw-msg_8h.html", null ],
       [ "object.h", "object_8h.html", null ],
       [ "pal.h", "pal_8h.html", null ],
@@ -106,7 +107,10 @@ var NAVTREE =
       [ "psg.h", "psg_8h.html", null ],
       [ "saveman.h", "saveman_8h.html", null ],
       [ "smp_null.h", null, null ],
-      [ "smp_null_pcm.h", null, null ],
+      [ "smp_null_dpcm.h", null, null ],
+      [ "snd_dpcm2.h", "snd__dpcm2_8h.html", null ],
+      [ "snd_pcm.h", "snd__pcm_8h.html", null ],
+      [ "snd_pcm4.h", "snd__pcm4_8h.html", null ],
       [ "sound.h", "sound_8h.html", null ],
       [ "sprite_eng.h", "sprite__eng_8h.html", null ],
       [ "sprite_eng_legacy.h", "sprite__eng__legacy_8h.html", null ],
@@ -127,6 +131,7 @@ var NAVTREE =
       [ "vdp_tile.h", "vdp__tile_8h.html", null ],
       [ "vram.h", "vram_8h.html", null ],
       [ "xgm.h", "xgm_8h.html", null ],
+      [ "xgm2.h", "xgm2_8h.html", null ],
       [ "ym2612.h", "ym2612_8h.html", null ],
       [ "z80_ctrl.h", "z80__ctrl_8h.html", null ]
     ] ],

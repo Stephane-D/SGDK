@@ -1,0 +1,148 @@
+;*******************************************************************************
+; State for all tracks (see TRACK_* for format)
+;*******************************************************************************
+
+    macro UninitTrack
+    dw  DefaultEndBgm       ; TRACK_ADDR_* ("no loop" point)
+    dw  DefaultEndBgm       ; TRACK_LOOP_* ("no loop" point)
+    db  FLAGMASK_REFRESH    ; TRACK_FLAGS (set all the defaults)
+    db  $FF                 ; TRACK_WAIT (slowest wait possible)
+    ds  SIZEOF_TRACK-7
+    db  $C0                 ; TRACK_PAN (both speakers on)
+    endm
+
+TrackData:
+
+BgmTrackData:
+BgmTrackData_Fm1:       UninitTrack     ; BGM FM channel 1
+BgmTrackData_Fm2:       UninitTrack     ; BGM FM channel 2
+BgmTrackData_Fm3:       UninitTrack     ; BGM FM channel 3
+BgmTrackData_Fm4:       UninitTrack     ; BGM FM channel 4
+BgmTrackData_Fm5:       UninitTrack     ; BGM FM channel 5
+BgmTrackData_Fm6:       UninitTrack     ; BGM FM channel 6
+BgmTrackData_Psg1:      UninitTrack     ; BGM PSG channel 1
+BgmTrackData_Psg2:      UninitTrack     ; BGM PSG channel 2
+BgmTrackData_Psg3:      UninitTrack     ; BGM PSG channel 3
+BgmTrackData_Psg4:      UninitTrack     ; BGM PSG channel 4
+
+SfxTrackData:
+SfxTrackData_Fm5:       UninitTrack     ; SFX FM channel 5
+SfxTrackData_Fm6:       UninitTrack     ; SFX FM channel 6
+SfxTrackData_Psg3:      UninitTrack     ; SFX PSG channel 3
+SfxTrackData_Psg4:      UninitTrack     ; SFX PSG channel 4
+
+;*******************************************************************************
+; Table with the default state for a newly initialized track. It includes
+; everything except the start address (which is written manually during init)
+;*******************************************************************************
+
+TrackInitData:
+    dw  DefaultEndBgm       ; TRACK_LOOP_* ("no loop" point)
+    db  FLAGMASK_REFRESH    ; TRACK_FLAGS (refresh everything)
+    db  $01                 ; TRACK_WAIT (start immediately)
+    ds  SIZEOF_TRACK-7
+    db  $C0                 ; TRACK_PAN (both speakers on)
+
+;*******************************************************************************
+; State for all YM2612 channels (see FMCHAN_* for format)
+;*******************************************************************************
+
+FmChanData:
+FmChanData_Fm1: db $7F,$7F,$7F,$7F,0, 0,0,0, BgmTrackData_Fm1-TrackData
+FmChanData_Fm2: db $7F,$7F,$7F,$7F,0, 0,1,1, BgmTrackData_Fm2-TrackData
+FmChanData_Fm3: db $7F,$7F,$7F,$7F,0, 0,2,2, BgmTrackData_Fm3-TrackData
+FmChanData_Fm4: db $7F,$7F,$7F,$7F,0, 2,0,4, BgmTrackData_Fm4-TrackData
+FmChanData_Fm5: db $7F,$7F,$7F,$7F,0, 2,1,5, BgmTrackData_Fm5-TrackData
+FmChanData_Fm6: db $7F,$7F,$7F,$7F,0, 2,2,6, BgmTrackData_Fm6-TrackData
+
+;*******************************************************************************
+; State for all PSG channels (see PSGCHAN_* for format)
+;*******************************************************************************
+
+PsgChanData:
+PsgChanData_Psg1: db $00,$00,$FF,$FF,$FF,$FF, $00,ADSR_RELEASE, $80, BgmTrackData_Psg1-TrackData
+PsgChanData_Psg2: db $00,$00,$FF,$FF,$FF,$FF, $00,ADSR_RELEASE, $A0, BgmTrackData_Psg2-TrackData
+PsgChanData_Psg3: db $00,$00,$FF,$FF,$FF,$FF, $00,ADSR_RELEASE, $C0, BgmTrackData_Psg3-TrackData
+PsgChanData_Psg4: db $00,$00,$FF,$FF,$FF,$FF, $00,ADSR_RELEASE, $E0, BgmTrackData_Psg4-TrackData
+
+;*******************************************************************************
+; SFX priority of every allocatable channel
+; 0 means channel unused by SFX. Other values mean channel used by SFX, with
+; higher values being higher priority.
+;*******************************************************************************
+
+SfxPriority:
+    db 0,0,0,0
+
+;*******************************************************************************
+; YM2612 and PSG frequency values corresponding to each semitone in an octave.
+;-------------------------------------------------------------------------------
+; note: PSG frequency values are multiplied by 2 because the code that scales
+; it to the intended octave overshoots by one octave.
+;*******************************************************************************
+
+FmFreqTable:
+    dw  644, 681, 722, 765
+    dw  810, 858, 910, 964
+    dw  1021, 1081, 1146, 1214
+
+PsgFreqTable:
+    dw  851*2, 803*2, 758*2, 715*2
+    dw  675*2, 637*2, 601*2, 568*2
+    dw  536*2, 506*2, 477*2, 450*2
+
+;*******************************************************************************
+; InstrumentTLMask
+; List of bitmasks indicating which slots' TL are affected during attentuation
+; computation for each algorithm.
+;-------------------------------------------------------------------------------
+; bit 0 = set if S1's TL is affected
+; bit 1 = set if S3's TL is affected
+; bit 2 = set if S2's TL is affected
+; bit 3 = set if S4's TL is affected
+;*******************************************************************************
+
+InstrumentTLMask:
+    db      $08,$08,$08,$08,$0C,$0E,$0E,$0F
+
+;*******************************************************************************
+; DefaultEndBgm, DefaultEndSfx
+;
+; If a track never sets the main loop point and executes OP_END, it will be
+; sent here instead (the default main loop point is here). This is how we
+; implement a track coming to a stop when no loop point is set. In the case of
+; SFX, it also tells it to return the channel back to BGM control.
+;*******************************************************************************
+
+DefaultEndSfx:
+    db      OP_ENDSFX                   ; Return channel to SFX
+    
+    db      OP_INSTRUMENT,0             ; Set instrument 0 to mute the channel
+                                          ; directly with the key-off below.
+                                          ; Note that it will be still updated
+                                          ; despite returning the channel back
+                                          ; because remapping happens before
+                                          ; this but hardware updates happen
+                                          ; after this.
+    ; fallthrough...
+
+DefaultEndBgm:
+    db      OP_KEYOFF                   ; Stop the current note
+    db      OP_END                      ; Keep stuck here
+
+;*******************************************************************************
+; NullInstrument
+; An instrument used to mute channels. It tries to decay the ADSR envelope as
+; quickly as possible, while also being reusable for both FM and PSG. It's
+; assigned to instrument #0 in tracks.
+;*******************************************************************************
+
+NullInstrument:
+    db      $00                         ; Algorithm
+    db      $00,$00,$FF,$FF             ; MUL and DT
+    db      $FF,$FF,$00,$7F             ; TL
+    db      $1F,$1F,$1F,$1F             ; AR and KS
+    db      $1F,$1F,$1F,$1F             ; DR and AM
+    db      $1F,$1F,$1F,$1F             ; SR
+    db      $0F,$0F,$0F,$0F             ; RR and SL
+    db      $00,$00,$00,$00             ; SSG-EG

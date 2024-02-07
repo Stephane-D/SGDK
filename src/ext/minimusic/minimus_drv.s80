@@ -1,0 +1,17 @@
+    ; The following bytes are reserved for communication with the 68000, when
+    ; the Z80 boots it'll skip over them. NOP's opcode is $00.
+    
+Command:        nop                     ; Command queue used to request playing
+Command2:       nop                       ; music or sound effects.
+Command3:       nop
+
+Status:         nop                     ; MiniMusic status to report back what
+                                          ; the driver is currently doing.
+
+    include "define.z80"
+    include "main.z80"
+    include "util.z80"
+    include "track.z80"
+    include "fm.z80"
+    include "psg.z80"
+    include "data.z80"

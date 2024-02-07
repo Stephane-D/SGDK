@@ -1,0 +1,235 @@
+; ###########################      macro       ##############################
+
+
+; loadInstSetRegNext
+; ------------------
+; src       --> BC  --> src
+; YMPORT    --> HL
+; channel   --> E                       ; 0-2
+;               A   --> ?
+;
+; set next reg (load inst)
+; 58 cycles
+
+            macro loadInstSetRegNext reg
+
+            LD      A, reg              ; A = base reg              ' 7     |
+            ADD     E                   ; A = reg                   ' 4     | (11)
+
+            LD      (HL), A             ; YM #0 = reg               ' 7     |
+            INC     L                   ;                           ' 4     | 11 (22)
+
+            LD      A, (BC)             ; A = *src                  ' 7     |
+            LD      (HL), A             ; YM #1 = value             ' 7     | 18 (40)
+            DEC     L                   ;                           ' 4     |
+
+            INC     C                   ; src++                     ' 4     |
+            wait14                      ; wait for FM               ' 14    | 18 (58)
+
+            endm
+
+
+; loadInstSetInternalNext
+; -----------------------
+; src       --> BC  --> src
+; FM state  --> IY
+;
+; set next reg (load inst)
+; 30 cycles
+
+            macro loadInstSetInternalNext off
+
+            readCmdBuf                  ; A = *src++                ' 11
+            LD      (IY+off), A         ; FM state = value          ' 19    | (30)
+
+            endm
+
+
+; FM_key
+; ------
+; key value --> A
+;               HL  --> YMPORT0
+;
+; key FM channel
+; 31 cycles
+
+            macro FM_key
+
+            LD      HL, YMPORT0         ; HL point on YM port0      ' 10    |
+            LD      (HL), $28           ; key reg                   ' 10    | 31
+            INC     L                   ; next port                 ' 4     |
+            LD      (HL), A             ; write value               ' 7     |
+
+            endm                        ; done                      ' 31
+
+
+; FM_enableCH3Spe
+; ---------------
+;           IXL --> reg27
+;           HL  --> YMPORT1
+;
+; enable special mode for CH3
+; 45 cycles
+
+            macro FM_enableCH3Spe
+
+            LD      HL, YMPORT0         ;                           ' 10    |
+            LD      (HL), $27           ; prepare $27 update        ' 10    |
+            INC     L                   ; next                      ' 4     | (45)
+            LD      (HL), $45           ; enable CH2 spe mode       ' 10    |
+            LD      IXL, $55            ; save in IXL (reg27 copy)  ' 11    |
+
+            endm
+
+
+; FM_disableCH3Spe
+; ----------------
+;           IXL --> reg27
+;           HL  --> YMPORT1
+;
+; disable special mode for CH3
+; 45 cycles
+
+            macro FM_disableCH3Spe
+
+            LD      HL, YMPORT0         ;                           ' 10    |
+            LD      (HL), $27           ; prepare $27 update        ' 10    |
+            INC     L                   ; next                      ' 4     | (45)
+            LD      (HL), $05           ; disable CH2 spe mode      ' 10    |
+            LD      IXL, $15            ; save in IXL (reg27 copy)  ' 11    |
+
+            endm
+
+
+; updateTLFast
+; ------------
+; YMPORT        --> HL
+; &FMSTATE[r]   --> IY
+; baseReg       --> E
+; TL            --> D
+;                   A   --> ?
+;
+; update TL register value (prepared version)
+; 77 cycles
+
+            macro updateTLFast off
+
+            LD      A, E                        ; A = base reg          ' 4     |
+            ADD     $40+off                     ; TL reg                ' 7     |
+            LD      (HL), A                     ; write YM reg TL addr  ' 7     | (22)
+            INC     L                           ; next                  ' 4     |
+
+            LD      A, D                        ; A = TL                ' 4     |
+            ADD     (IY+FM_STATE_OP_ATT+off)    ; A = TL + slot att.    ' 19    |
+            CP      $80                         ; if !(A < $80)         ' 7     | 37 (59)
+            JR      C, .tl_ok                   ;                       ' 7     |
+
+            LD      A, $7F                      ;    A = $7F            ' 7     | (66)
+
+.tl_ok
+            LD      (HL), A                     ; write YM TL reg val   ' 7     | (77)
+            DEC     L                           ; prev                  ' 4     |
+
+            endm
+
+
+; updateTL
+; --------
+; YMPORT        --> HL
+; &FMSTATE[r]   --> IY
+; baseReg       --> E
+;                   D   --> TL
+;                   A   --> ?
+;
+; update TL register value
+; 96 cycles
+
+            macro updateTL off
+
+            LD      D, (IY+FM_STATE_OP_TL+off)  ; D = TL                ' 19    |
+            updateTLFast off                    ; update TL reg         ' 77    | 96
+
+            endm
+
+
+; updateSLRRFast
+; --------------
+; YMPORT        --> HL
+; &FMSTATE[r]   --> IY
+; baseReg       --> E
+; SLRR          --> D   --> ?
+;                   A   --> ?
+;                   A'  --> ?
+;
+; update SLRR register value (prepared version)
+; 126 cycles
+
+            macro updateSLRRFast off
+
+            LD      A, E                        ; A = base reg          ' 4     |
+            ADD     $80+off                     ; SLRR reg              ' 7     |
+            LD      (HL), A                     ; write YM reg TL addr  ' 7     | (22)
+            INC     L                           ; next                  ' 4     |
+
+            LD      A, D                        ; A = SLRR              ' 4     |
+            EX      AF, AF'                     ; A' = SLRR             ' 4     | 8 (30)
+
+            LD      A, D                        ; A = SLRR              ' 4     |
+            AND     $0F                         ; A = RR                ' 7     |
+            LD      D, A                        ; store RR in D         ' 4     | 15 (45)
+
+            EX      AF, AF'                     ; A = SLRR              ' 4     |
+            RRCA                                ;                       ' 4     | 15 (60)
+            AND     $78                         ; A = SL formated as TL ' 7     |
+
+            ADD     (IY+FM_STATE_OP_ATT+off)    ; A = SL + slot att.    ' 19    |
+            CP      $79                         ; if !(A < $79)         ' 7     | 33 (93)
+            JR      C, .slrr_ok                 ;                       ' 7     |
+
+            LD      A, $78                      ;         A = $78       ' 7     | (100)
+
+.slrr_ok
+            AND     $78                         ; keep only valid part  ' 7     |
+            ADD     A                           ; set back to SL format ' 4     |
+            OR      D                           ; A = new SLRR          ' 4     | 26 (126)
+            LD      (HL), A                     ; write YM TL reg val   ' 7     |
+            DEC     L                           ; prev                  ' 4     |
+
+            endm
+
+
+; updateSLRR
+; ----------
+; YMPORT        --> HL
+; &FMSTATE[r]   --> IY
+; baseReg       --> E
+;                   D   --> ?
+;                   A   --> ?
+;                   A'  --> ?
+;
+; update SLRR register value
+; 145 cycles
+
+            macro updateSLRR off
+
+            LD      D, (IY+FM_STATE_OP_SLRR+off)    ; D = SLRR          ' 19    |
+            updateSLRRFast off                      ; update SLRR reg   ' 126   | 145
+
+            endm
+
+
+; isFMComBufferEmpty
+; ------------------
+;           HL  --> ?
+;           A   --> ?
+;
+; (A == 0) or Z flag set = FM com buffer empty
+; 30 cycles
+
+            macro isFMComBufferEmpty
+
+            LD      A, (FM_BUF_RD_POS)  ;                       ' 13    |
+            LD      HL, FM_BUF_WR_POS   ;                       ' 10    | 30
+            SUB     (HL)                ; FM com buf empty ?    ' 7     |
+
+            endm

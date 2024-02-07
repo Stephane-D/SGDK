@@ -4,7 +4,7 @@
  *  \author Stephane Dallongeville
  *  \date 08/2011
  *
- * This unit provides Z80 access from the YM2612 :<br>
+ * This unit provides Z80 access from the YM2612:<br>
  * - enable / disable Z80<br>
  * - request / release Z80 BUS<br>
  * - upload / download data to / from Z80 memory<br>
@@ -102,32 +102,16 @@
  */
 #define Z80_DRV_STAT_READY              (1 << Z80_DRV_STAT_READY_SFT)
 
-// channel definition
-#define Z80_DRV_CH0_SFT                 0
-#define Z80_DRV_CH1_SFT                 1
-#define Z80_DRV_CH2_SFT                 2
-#define Z80_DRV_CH3_SFT                 3
 
-/**
- *  \brief
- *      Z80 default driver channel 0 id.
- */
-#define Z80_DRV_CH0                     (1 << Z80_DRV_CH0_SFT)
-/**
- *  \brief
- *      Z80 default driver channel 1 id.
- */
-#define Z80_DRV_CH1                     (1 << Z80_DRV_CH1_SFT)
-/**
- *  \brief
- *      Z80 default driver channel 2 id.
- */
-#define Z80_DRV_CH2                     (1 << Z80_DRV_CH2_SFT)
-/**
- *  \brief
- *      Z80 default driver channel 3 id.
- */
-#define Z80_DRV_CH3                     (1 << Z80_DRV_CH3_SFT)
+#define Z80_DRV_CH0_SFT                 _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH1 instead.\"")
+#define Z80_DRV_CH1_SFT                 _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH2 instead.\"")
+#define Z80_DRV_CH2_SFT                 _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH3 instead.\"")
+#define Z80_DRV_CH3_SFT                 _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH4 instead.\"")
+
+#define Z80_DRV_CH0                     _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH1_MSK instead.\"")
+#define Z80_DRV_CH1                     _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH2_MSK instead.\"")
+#define Z80_DRV_CH2                     _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH3_MSK instead.\"")
+#define Z80_DRV_CH3                     _Pragma("GCC error \"This method is deprecated, use SOUND_PCM_CH4_MSK instead.\"")
 
 
 /**
@@ -146,15 +130,14 @@
  *      2 channels PCM sample player Z80 driver.<br>
  *      It can mix 2 samples (4 bit PCM) at a fixed 22 Khz rate.
  */
-#define Z80_DRIVER_2ADPCM               2
+#define Z80_DRIVER_DPCM2                2
 /**
  *  \brief
  *      4 channels sample player Z80 driver with envelop control.<br>
  *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br>
  *      and handle volume (16 levels) for each channel.
  */
-#define Z80_DRIVER_4PCM                 4
-#define Z80_DRIVER_4PCM_ENV             Z80_DRIVER_4PCM
+#define Z80_DRIVER_PCM4                 3
 /**
  *  \brief
  *      eXtended VGM music player driver.<br>
@@ -162,14 +145,25 @@
  *      It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br>
  *      The driver is designed to avoid DMA contention when possible (depending CPU load).
  */
-#define Z80_DRIVER_XGM                  5
+#define Z80_DRIVER_XGM                  4
+/**
+ *  \brief
+ *      eXtended VGM music player driver version 2.<br>
+ *      This driver takes VGM (or XGM2) file as input to play music.<br>
+ *      It supports 3 PCM channels at either 13.3 Khz or 6.65 Khz and envelop control for both FM and PSG.<br>
+ *      It allows to play SFX through PCM with 16 level of priority.<br>
+ *      The driver supports renforced protection against DMA contention.
+ */
+#define Z80_DRIVER_XGM2                 5
 /**
  *  \brief
  *      CUSTOM Z80 driver.
  */
 #define Z80_DRIVER_CUSTOM               -1
 
-#define Z80_DRIVER_DEFAULT              Z80_DRIVER_XGM
+
+#define Z80_DRIVER_4PCM_ENV             _Pragma("GCC error \"This definition is deprecated, use Z80_DRIVER_PCM4 instead.\"")
+#define Z80_DRIVER_2ADPCM               _Pragma("GCC error \"This definition is deprecated, use Z80_DRIVER_DPCM2 instead.\"")
 
 
 /**
@@ -292,9 +286,10 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  Possible returned values are:<br>
  *  - #Z80_DRIVER_NULL<br>
  *  - #Z80_DRIVER_PCM<br>
- *  - #Z80_DRIVER_2ADPCM<br>
- *  - #Z80_DRIVER_4PCM<br>
+ *  - #Z80_DRIVER_DPCM2<br>
+ *  - #Z80_DRIVER_PCM4<br>
  *  - #Z80_DRIVER_XGM<br>
+ *  - #Z80_DRIVER_XGM2<br>
  *  - #Z80_DRIVER_CUSTOM<br>
  */
 u16  Z80_getLoadedDriver(void);
@@ -311,9 +306,10 @@ void Z80_unloadDriver(void);
  *      Driver to load, possible values are:<br>
  *      - #Z80_DRIVER_NULL<br>
  *      - #Z80_DRIVER_PCM<br>
- *      - #Z80_DRIVER_2ADPCM<br>
- *      - #Z80_DRIVER_4PCM<br>
+ *      - #Z80_DRIVER_DPCM2<br>
+ *      - #Z80_DRIVER_PCM4<br>
  *      - #Z80_DRIVER_XGM<br>
+ *      - #Z80_DRIVER_XGM2<br>
  *  \param waitReady
  *      Wait for driver to be ready.
  */

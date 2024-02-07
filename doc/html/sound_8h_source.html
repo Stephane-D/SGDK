@@ -83,129 +83,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <a href="sound_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
-<a name="l00030"></a>00030 <span class="preprocessor">#ifndef _SOUND_H_</span>
-<a name="l00031"></a>00031 <span class="preprocessor"></span><span class="preprocessor">#define _SOUND_H_</span>
-<a name="l00032"></a>00032 <span class="preprocessor"></span>
-<a name="l00033"></a>00033 
-<a name="l00038"></a><a class="code" href="sound_8h.html#afb75b5fa26b28b6a83387d2977e6d786">00038</a> <span class="preprocessor">#define SOUND_PCM_CH_AUTO   0xFF</span>
-<a name="l00039"></a>00039 <span class="preprocessor"></span>
-<a name="l00044"></a><a class="code" href="sound_8h.html#a2160fc5a6b171154759a3af5bd139c73">00044</a> <span class="preprocessor">#define SOUND_PCM_CH1       Z80_DRV_CH0_SFT</span>
-<a name="l00045"></a>00045 <span class="preprocessor"></span>
-<a name="l00049"></a><a class="code" href="sound_8h.html#a95db57f49f8a2fc948fd70ae82735d3a">00049</a> <span class="preprocessor">#define SOUND_PCM_CH2       Z80_DRV_CH1_SFT</span>
-<a name="l00050"></a>00050 <span class="preprocessor"></span>
-<a name="l00054"></a><a class="code" href="sound_8h.html#a5e82bbc48267d16c7e73b3e0eeebf693">00054</a> <span class="preprocessor">#define SOUND_PCM_CH3       Z80_DRV_CH2_SFT</span>
-<a name="l00055"></a>00055 <span class="preprocessor"></span>
-<a name="l00059"></a><a class="code" href="sound_8h.html#a51a991a68874e0fa36567ee94617c2da">00059</a> <span class="preprocessor">#define SOUND_PCM_CH4       Z80_DRV_CH3_SFT</span>
-<a name="l00060"></a>00060 <span class="preprocessor"></span>
-<a name="l00065"></a><a class="code" href="sound_8h.html#a38883db6ec938518d241833494ebc0a4">00065</a> <span class="preprocessor">#define SOUND_PCM_CH1_MSK   Z80_DRV_CH0</span>
-<a name="l00066"></a>00066 <span class="preprocessor"></span>
-<a name="l00070"></a><a class="code" href="sound_8h.html#ac01265e4e27761284a3d2532c6e51456">00070</a> <span class="preprocessor">#define SOUND_PCM_CH2_MSK   Z80_DRV_CH1</span>
-<a name="l00071"></a>00071 <span class="preprocessor"></span>
-<a name="l00075"></a><a class="code" href="sound_8h.html#a37e5564a0281b0e8cf65be2330e0393f">00075</a> <span class="preprocessor">#define SOUND_PCM_CH3_MSK   Z80_DRV_CH2</span>
-<a name="l00076"></a>00076 <span class="preprocessor"></span>
-<a name="l00080"></a><a class="code" href="sound_8h.html#a04d181860b3bab7a707db0d95e5432cf">00080</a> <span class="preprocessor">#define SOUND_PCM_CH4_MSK   Z80_DRV_CH3</span>
-<a name="l00081"></a>00081 <span class="preprocessor"></span>
-<a name="l00087"></a><a class="code" href="sound_8h.html#a236a4bb68ce6b2aaa147494f35d9cec3">00087</a> <span class="preprocessor">#define SOUND_RATE_32000    0</span>
-<a name="l00088"></a>00088 <span class="preprocessor"></span>
-<a name="l00093"></a><a class="code" href="sound_8h.html#a6dc2e152e1ef4a31859fc9420d25b4a1">00093</a> <span class="preprocessor">#define SOUND_RATE_22050    1</span>
-<a name="l00094"></a>00094 <span class="preprocessor"></span>
-<a name="l00098"></a><a class="code" href="sound_8h.html#aa2dc9b468eb1b31e3b563e1fe2c3aa03">00098</a> <span class="preprocessor">#define SOUND_RATE_16000    2</span>
-<a name="l00099"></a>00099 <span class="preprocessor"></span>
-<a name="l00104"></a><a class="code" href="sound_8h.html#a51ad3990fe47205a29d48d893c6ed53d">00104</a> <span class="preprocessor">#define SOUND_RATE_13400    3</span>
-<a name="l00105"></a>00105 <span class="preprocessor"></span>
-<a name="l00109"></a><a class="code" href="sound_8h.html#ae7fbf81272f2a60778ac3b8376b18edb">00109</a> <span class="preprocessor">#define SOUND_RATE_11025    4</span>
-<a name="l00110"></a>00110 <span class="preprocessor"></span>
-<a name="l00115"></a><a class="code" href="sound_8h.html#ab48756313d481f2778c0e2841dd4622a">00115</a> <span class="preprocessor">#define SOUND_RATE_8000     5</span>
-<a name="l00116"></a>00116 <span class="preprocessor"></span>
-<a name="l00121"></a><a class="code" href="sound_8h.html#acd0fd351e8b0a860ae49f6680d966611">00121</a> <span class="preprocessor">#define SOUND_PAN_LEFT      0x80</span>
-<a name="l00122"></a>00122 <span class="preprocessor"></span>
-<a name="l00126"></a><a class="code" href="sound_8h.html#af7efd8b724da63ac007a3f53ace5b2af">00126</a> <span class="preprocessor">#define SOUND_PAN_RIGHT     0x40</span>
-<a name="l00127"></a>00127 <span class="preprocessor"></span>
-<a name="l00131"></a><a class="code" href="sound_8h.html#ab9185408c2ccc63c8719679ced59c4cf">00131</a> <span class="preprocessor">#define SOUND_PAN_CENTER    0xC0</span>
-<a name="l00132"></a>00132 <span class="preprocessor"></span>
-<a name="l00133"></a>00133 
-<a name="l00141"></a>00141 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="sound_8h.html#af727ba3d10b4abfcdeb13cc42f8fb1f6" title="Return play status (Single channel PCM player driver).">SND_isPlaying_PCM</a>(<span class="keywordtype">void</span>);
-<a name="l00170"></a>00170 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#ae3bf89672dd5194d6defd6a10517b5ca" title="Start playing a sample (Single channel PCM player driver).  If a sample was currently playing then it...">SND_startPlay_PCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> rate, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> pan, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> loop);
-<a name="l00176"></a>00176 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#a4ce9cd809d508aa62068e7af88377509" title="Stop playing (Single channel PCM player driver).  No effect if no sample was currently playing...">SND_stopPlay_PCM</a>(<span class="keywordtype">void</span>);
-<a name="l00177"></a>00177 
-<a name="l00178"></a>00178 
-<a name="l00179"></a>00179 <span class="comment">// Z80_DRIVER_2ADPCM</span>
-<a name="l00180"></a>00180 
-<a name="l00197"></a>00197 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> <a class="code" href="sound_8h.html#af5b68d795694847a494dd9bd82514750" title="Return play status of specified channel (2 channels ADPCM player driver).">SND_isPlaying_2ADPCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel_mask);
-<a name="l00218"></a>00218 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#a8e6b520677418c100cc0fe5de2bac756" title="Start playing a sample on specified channel (2 channels ADPCM player driver).  If a sample was curren...">SND_startPlay_2ADPCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> loop);
-<a name="l00229"></a>00229 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#a2ae074e897980afb3a18966175c4c39b" title="Stop playing the specified channel (2 channels ADPCM player driver).  No effect if no sample was curr...">SND_stopPlay_2ADPCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel);
-<a name="l00230"></a>00230 
-<a name="l00231"></a>00231 
-<a name="l00232"></a>00232 <span class="comment">// Z80_DRIVER_4PCM</span>
-<a name="l00233"></a>00233 
-<a name="l00252"></a>00252 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="sound_8h.html#a1741a62c372163fe2999b156c7f0c906" title="Return play status of specified channel (4 channels PCM player driver).">SND_isPlaying_4PCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel_mask);
-<a name="l00275"></a>00275 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#a29d5bf2df680e97baec19bf56dbbc20d" title="Start playing a sample on specified channel (4 channels PCM player driver).  If a sample was currentl...">SND_startPlay_4PCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> *sample, <span class="keyword">const</span> <a class="code" href="types_8h.html#a449a74b72ed931d627eca7efcc6f8c9d">u32</a> len, <span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> loop);
-<a name="l00288"></a>00288 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#a8e4053aa583d1610ec80270fb560e8c7" title="Stop playing the specified channel (4 channels PCM player driver).  No effect if no sample was curren...">SND_stopPlay_4PCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel);
-<a name="l00302"></a>00302 <span class="keywordtype">void</span> <a class="code" href="sound_8h.html#a4da8318d0dbe962b81cf2e12937ef54b" title="Change envelop / volume of specified channel (4 channels PCM player driver).">SND_setVolume_4PCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel, <span class="keyword">const</span> <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> volume);
-<a name="l00317"></a>00317 <a class="code" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>   <a class="code" href="sound_8h.html#aae4bcd5fa42daf1e24038c6da9b40625" title="Return envelop / volume level of specified channel (4 channels PCM player driver).">SND_getVolume_4PCM</a>(<span class="keyword">const</span> <a class="code" href="types_8h.html#a8aa9149a22317014c683c48cebd8cfef">u16</a> channel);
-<a name="l00318"></a>00318 
-<a name="l00319"></a>00319 
-<a name="l00320"></a>00320 <span class="comment">// just to preserve backward compatibility</span>
-<a name="l00321"></a>00321 <span class="preprocessor">#define SND_isPlaying_4PCM_ENV      SND_isPlaying_4PCM</span>
-<a name="l00322"></a>00322 <span class="preprocessor"></span><span class="preprocessor">#define SND_startPlay_4PCM_ENV      SND_startPlay_4PCM</span>
-<a name="l00323"></a>00323 <span class="preprocessor"></span><span class="preprocessor">#define SND_stopPlay_4PCM_ENV       SND_stopPlay_4PCM</span>
-<a name="l00324"></a>00324 <span class="preprocessor"></span><span class="preprocessor">#define SND_getVolume_4PCM_ENV      SND_getVolume_4PCM</span>
-<a name="l00325"></a>00325 <span class="preprocessor"></span><span class="preprocessor">#define SND_setVolume_4PCM_ENV      SND_setVolume_4PCM</span>
-<a name="l00326"></a>00326 <span class="preprocessor"></span>
-<a name="l00327"></a>00327 
-<a name="l00328"></a>00328 
-<a name="l00329"></a>00329 <span class="comment">// Z80_DRIVER_XGM</span>
-<a name="l00330"></a>00330 
-<a name="l00334"></a><a class="code" href="sound_8h.html#aa48b76488b3beae737c6d2972a4b610c">00334</a> <span class="preprocessor">#define SND_isPlaying_XGM()         _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_isPlaying() instead.\&quot;&quot;)</span>
-<a name="l00335"></a>00335 <span class="preprocessor"></span>
-<a name="l00338"></a><a class="code" href="sound_8h.html#a906cbd978ff24e9a984d5b58443ecf78">00338</a> <span class="preprocessor">#define SND_startPlay_XGM(song)     _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_startPlay(..) instead.\&quot;&quot;)</span>
-<a name="l00339"></a>00339 <span class="preprocessor"></span>
-<a name="l00342"></a><a class="code" href="sound_8h.html#afffd88fe171cfc74c555ea141abc3181">00342</a> <span class="preprocessor">#define SND_stopPlay_XGM()          _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_stopPlay() instead.\&quot;&quot;)</span>
-<a name="l00343"></a>00343 <span class="preprocessor"></span>
-<a name="l00346"></a><a class="code" href="sound_8h.html#a23d470a6a4d2d53e8243676aff276d93">00346</a> <span class="preprocessor">#define SND_pausePlay_XGM()         _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_pausePlay() instead.\&quot;&quot;)</span>
-<a name="l00347"></a>00347 <span class="preprocessor"></span>
-<a name="l00350"></a><a class="code" href="sound_8h.html#a44a3e4e13fbd8d01d6b326c010225552">00350</a> <span class="preprocessor">#define SND_resumePlay_XGM()        _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_resumePlay() instead.\&quot;&quot;)</span>
-<a name="l00351"></a>00351 <span class="preprocessor"></span>
-<a name="l00355"></a><a class="code" href="sound_8h.html#a94d52ee7751d9898ff21525fdc3eceb1">00355</a> <span class="preprocessor">#define SND_isPlayingPCM_XGM(channel_mask)  _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_isPlayingPCM(..) instead.\&quot;&quot;)</span>
-<a name="l00356"></a>00356 <span class="preprocessor"></span>
-<a name="l00359"></a><a class="code" href="sound_8h.html#ae57bf0162ca77b3c44580a2655f98155">00359</a> <span class="preprocessor">#define SND_setPCM_XGM(id, sample, len)     _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_setPCM(..) instead.\&quot;&quot;)</span>
-<a name="l00360"></a>00360 <span class="preprocessor"></span>
-<a name="l00363"></a><a class="code" href="sound_8h.html#a708581c52ae7746bb53aafea2d2f145f">00363</a> <span class="preprocessor">#define SND_setPCMFast_XGM(id, sample, len) _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_setPCMFast(..) instead.\&quot;&quot;)</span>
-<a name="l00364"></a>00364 <span class="preprocessor"></span>
-<a name="l00367"></a><a class="code" href="sound_8h.html#a4c2203a0eb3da1c3106bb115e47a62a5">00367</a> <span class="preprocessor">#define SND_startPlayPCM_XGM(id, prio, ch)  _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_startPlayPCM(..) instead.\&quot;&quot;)</span>
-<a name="l00368"></a>00368 <span class="preprocessor"></span>
-<a name="l00371"></a><a class="code" href="sound_8h.html#aefe1afd029653bfa71cccaebd49c17ed">00371</a> <span class="preprocessor">#define SND_stopPlayPCM_XGM(channel)        _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_stopPlayPCM(..) instead.\&quot;&quot;)</span>
-<a name="l00372"></a>00372 <span class="preprocessor"></span>
-<a name="l00376"></a><a class="code" href="sound_8h.html#a92bd2c79aae7d0d9e2c272691e9bb4cb">00376</a> <span class="preprocessor">#define SND_getMusicTempo_XGM()         _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_getMusicTempo() instead.\&quot;&quot;)</span>
-<a name="l00377"></a>00377 <span class="preprocessor"></span>
-<a name="l00380"></a><a class="code" href="sound_8h.html#a19109238515608468139d960a7a505b2">00380</a> <span class="preprocessor">#define SND_setMusicTempo_XGM(value)    _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_setMusicTempo(..) instead.\&quot;&quot;)</span>
-<a name="l00381"></a>00381 <span class="preprocessor"></span>
-<a name="l00385"></a><a class="code" href="sound_8h.html#a9431c9e229cc4315464bb6fc1a46f11e">00385</a> <span class="preprocessor">#define SND_getManualSync_XGM()         _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_getManualSync() instead.\&quot;&quot;)</span>
-<a name="l00386"></a>00386 <span class="preprocessor"></span>
-<a name="l00389"></a><a class="code" href="sound_8h.html#a54116f59153579f54b0a6110f217e89a">00389</a> <span class="preprocessor">#define SND_setManualSync_XGM()         _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_setManualSync() instead.\&quot;&quot;)</span>
-<a name="l00390"></a>00390 <span class="preprocessor"></span>
-<a name="l00393"></a><a class="code" href="sound_8h.html#a08f1f50634969073a8302c35f63b7278">00393</a> <span class="preprocessor">#define SND_nextFrame_XGM()             _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_nextFrame() instead.\&quot;&quot;)</span>
-<a name="l00394"></a>00394 <span class="preprocessor"></span>
-<a name="l00397"></a><a class="code" href="sound_8h.html#ad9bdbf14ce6a73d2d109c001dbfb599f">00397</a> <span class="preprocessor">#define SND_nextXFrame_XGM(num)         _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_nextXFrame(..) instead.\&quot;&quot;)</span>
-<a name="l00398"></a>00398 <span class="preprocessor"></span>
-<a name="l00402"></a><a class="code" href="sound_8h.html#a7f9762b358c7a495d5ea2ef7dfd3facb">00402</a> <span class="preprocessor">#define SND_setLoopNumber_XGM(value)    _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_setLoopNumber(..) instead.\&quot;&quot;)</span>
-<a name="l00403"></a>00403 <span class="preprocessor"></span>
-<a name="l00407"></a><a class="code" href="sound_8h.html#adaee1a038844bdc48d5b7887a78ecf9e">00407</a> <span class="preprocessor">#define SND_set68KBUSProtection_XGM(value)  _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_set68KBUSProtection(..) instead.\&quot;&quot;)</span>
-<a name="l00408"></a>00408 <span class="preprocessor"></span>
-<a name="l00411"></a><a class="code" href="sound_8h.html#a7c1a341a431cc46201ef0793665866f0">00411</a> <span class="preprocessor">#define SND_getForceDelayDMA_XGM()          _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_getForceDelayDMA() instead.\&quot;&quot;)</span>
-<a name="l00412"></a>00412 <span class="preprocessor"></span>
-<a name="l00415"></a><a class="code" href="sound_8h.html#a254217b82fb6bead1b5e17f8248d1559">00415</a> <span class="preprocessor">#define SND_setForceDelayDMA_XGM(value)     _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_setForceDelayDMA(..) instead.\&quot;&quot;)</span>
-<a name="l00416"></a>00416 <span class="preprocessor"></span>
-<a name="l00419"></a><a class="code" href="sound_8h.html#a16624731bb5cbb5c84dd3677f841365f">00419</a> <span class="preprocessor">#define SND_getCPULoad_XGM()                _Pragma(&quot;GCC error \&quot;This method is deprecated, use XGM_getCPULoad() instead.\&quot;&quot;)</span>
-<a name="l00420"></a>00420 <span class="preprocessor"></span>
-<a name="l00421"></a>00421 
-<a name="l00422"></a>00422 <span class="preprocessor">#endif // _SOUND_H_</span>
+<a name="l00010"></a>00010 <span class="preprocessor">#ifndef _SOUND_H_</span>
+<a name="l00011"></a>00011 <span class="preprocessor"></span><span class="preprocessor">#define _SOUND_H_</span>
+<a name="l00012"></a>00012 <span class="preprocessor"></span>
+<a name="l00017"></a><a class="code" href="sound_8h.html#a874540c4b30b79490fc7d498caf6b24b">00017</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
+<a name="l00018"></a>00018 {
+<a name="l00019"></a>00019     SOUND_PCM_CH_AUTO = -1,       <span class="comment">// auto-select</span>
+<a name="l00020"></a>00020     SOUND_PCM_CH1 = 0,            <span class="comment">// channel 1</span>
+<a name="l00021"></a>00021     SOUND_PCM_CH2,                <span class="comment">// channel 2</span>
+<a name="l00022"></a>00022     SOUND_PCM_CH3,                <span class="comment">// channel 3</span>
+<a name="l00023"></a>00023     SOUND_PCM_CH4,                <span class="comment">// channel 4</span>
+<a name="l00024"></a>00024 } <a class="code" href="sound_8h.html#a874540c4b30b79490fc7d498caf6b24b" title="Sound PCM channel enum.">SoundPCMChannel</a>;
+<a name="l00025"></a>00025 
+<a name="l00030"></a><a class="code" href="sound_8h.html#aa9ac62787313ad3aa8cd5efb72915f49">00030</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
+<a name="l00031"></a>00031 {
+<a name="l00032"></a>00032     SOUND_PAN_NONE = 0x00,        <span class="comment">// mute</span>
+<a name="l00033"></a>00033     SOUND_PAN_RIGHT = 0x40,       <span class="comment">// right speaker only</span>
+<a name="l00034"></a>00034     SOUND_PAN_LEFT = 0x80,        <span class="comment">// left speaker only</span>
+<a name="l00035"></a>00035     SOUND_PAN_CENTER = 0xC0       <span class="comment">// center (both speakers)</span>
+<a name="l00036"></a>00036 } <a class="code" href="sound_8h.html#aa9ac62787313ad3aa8cd5efb72915f49" title="Sound panning enum.">SoundPanning</a>;
+<a name="l00037"></a>00037 
+<a name="l00042"></a><a class="code" href="sound_8h.html#a38883db6ec938518d241833494ebc0a4">00042</a> <span class="preprocessor">#define SOUND_PCM_CH1_MSK   (1 &lt;&lt; SOUND_PCM_CH1)</span>
+<a name="l00043"></a>00043 <span class="preprocessor"></span>
+<a name="l00047"></a><a class="code" href="sound_8h.html#ac01265e4e27761284a3d2532c6e51456">00047</a> <span class="preprocessor">#define SOUND_PCM_CH2_MSK   (1 &lt;&lt; SOUND_PCM_CH2)</span>
+<a name="l00048"></a>00048 <span class="preprocessor"></span>
+<a name="l00052"></a><a class="code" href="sound_8h.html#a37e5564a0281b0e8cf65be2330e0393f">00052</a> <span class="preprocessor">#define SOUND_PCM_CH3_MSK   (1 &lt;&lt; SOUND_PCM_CH3)</span>
+<a name="l00053"></a>00053 <span class="preprocessor"></span>
+<a name="l00057"></a><a class="code" href="sound_8h.html#a04d181860b3bab7a707db0d95e5432cf">00057</a> <span class="preprocessor">#define SOUND_PCM_CH4_MSK   (1 &lt;&lt; SOUND_PCM_CH4)</span>
+<a name="l00058"></a>00058 <span class="preprocessor"></span>
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060 <span class="preprocessor">#define SOUND_PCM_AUTO      _Pragma(&quot;GCC error \&quot;This method is deprecated, use SOUND_PCM_CH_AUTO instead.\&quot;&quot;)</span>
+<a name="l00061"></a>00061 <span class="preprocessor"></span>
+<a name="l00062"></a>00062 
+<a name="l00069"></a>00069 <span class="keywordtype">void</span> SND_NULL_loadDriver(<span class="keywordtype">void</span>);
+<a name="l00076"></a>00076 <span class="keywordtype">void</span> SND_NULL_unloadDriver(<span class="keywordtype">void</span>);
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079 <span class="preprocessor">#endif // _SOUND_H_</span>
 </pre></div></div>
 </div>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="sound_8h.html">sound.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

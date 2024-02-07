@@ -1,3 +1,69 @@
+SGDK 2.00 (January 2024)
+------------------------
+
+COMPILER
+* added new xgm2tool
+* RESCOMP
+ - added new XGM2 resource type
+ - MAP: fixed TMX high priority layer definition from "<layer name> high" (thanks cidoku)
+ - TILESET: fixed a small bug with empty tileset
+ - SPRITE: small improvement in sprite cutting processing
+ - changed sound drivers name
+ - improved clarity of console output (thanks danielt3)
+* MAKEFILE
+ - improved support for newer Linux based GCC (thanks Craig Hackney)
+ - support for deeper file structure
+* README
+ - added alternates sound drivers references
+
+LIBRARY
+* SPRITE
+ - sprites are now initialized with an intermediate depth level (leave more freedom for afterward depth adjustment)
+ - added SPR_setAnimationLoop(..) method to enable/disable animation loop
+ - added SPR_setAlwaysAtBottom(..) method because why not ^^
+* OBJECT
+ - optimized object release operation when maintaining coherency
+* MATH
+ - refactoring / improvements on fix16 / fix32 operations
+ - added fastfix16 (ff16) and fastfix32 (ff32) types
+* MEM
+ - fixed MEM_allocAt(..) function
+* VDP
+ - fixed VDP VSRAM read / write / DMA command
+ - text clear operation is now done by using the 'space' char instead of tile #0
+ - added VDP_setVInterrupt(bool) method to enable/disable V-Interrupt
+ - small fix on RGB24_TO_VDPCOLOR(..) macro (thanks Werton)
+* PAL
+ - PAL_getColor(..) / PAL_getPalette(..) / PAL_getColors(..) return forced RGB333 value (undefined bits are set to 0)
+* SYS
+ - removed z80 halt on reset (already done in sega.s boot)
+* SOUND
+ - major refactor in sound drivers structure
+ - added new XGM2 sound driver - beta (XGM2_xxx methods)
+ - added 'minimusic' sound driver from Sik
+ - removed fractal driver support (driver is discontinued) and enable conso…
+* TYPE
+ - fixed bool declaration to be compliant with C23
+ - added size_t and ptrdiff_t definitions
+* 'console' module is now enabled by default
+* added new SGDK logo from Adrian Spoz (thanks for making it !)
+* smalls fixes, general cleanup, some refactoring..
+
+SAMPLE
+* moved 'sonic' and 'platformer' samples into 'sample/game' folder
+* moved 'sound' sample into 'sample/snd/sound-test' and moved 'xgm-player' into 'sample/snd'
+* moved 'console' and 'multitasking' samples into 'sample/sys' folder
+* renamed 'bench' sample to 'benchmark'
+* updated samples to last SGDK
+
+SGDK 2.00 MIGRATION NOTE
+
+* SND_xxx_<DRV> methods --> SND_<DRV>_xxx
+* SND_xxx_XGM methods removed (use XGM_xxx methods instead)
+* Z80_DRIVER_2ADPCM --> Z80_DRIVER_DPCM2
+* Z80_DRIVER_4PCM  --> Z80_DRIVER_PCM4
+ 
+ 
 SGDK 1.90 (July 2023)
 ---------------------
 

@@ -50,9 +50,6 @@
 //
 // *****************************************************************************
 
-typedef u32 size_t;
-typedef u32 ptrdiff_t;
-
 /// Callback prototype for a vsprintf() function using va_list
 typedef int (*vsprintf_t)(char *buf, const char *fmt, va_list args);
 /// Callback prototype for a vsnprintf() function using va_list

@@ -34,6 +34,7 @@ import sgdk.rescomp.processor.TilemapProcessor;
 import sgdk.rescomp.processor.TilesetProcessor;
 import sgdk.rescomp.processor.UngroupProcessor;
 import sgdk.rescomp.processor.WavProcessor;
+import sgdk.rescomp.processor.Xgm2Processor;
 import sgdk.rescomp.processor.XgmProcessor;
 import sgdk.rescomp.resource.Align;
 import sgdk.rescomp.resource.Bin;
@@ -79,6 +80,7 @@ public class Compiler
         resourceProcessors.add(new SpriteProcessor());
         resourceProcessors.add(new WavProcessor());
         resourceProcessors.add(new XgmProcessor());
+        resourceProcessors.add(new Xgm2Processor());
     }
 
     // shared directory informations

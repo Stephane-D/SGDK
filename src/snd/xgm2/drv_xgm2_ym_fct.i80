@@ -1,0 +1,1755 @@
+; ##############################  functions  ################################
+
+; FM_mute
+; -------
+;               A   --> ?
+;               HL  --> ?
+;               DE  --> ?
+;
+; Mute all FM channels (169 cycles max between each SAMPLE_OUTPUT_FASTCALL)
+; 11 samples + 146 cycles
+
+FM_mute                                 ; CALL                      ' 17
+
+            PUSH    BC                  ; save BC                   ' 11    | (28)
+
+            LD      HL, YMPORT0         ; HL = YM port 0            ' 10    | 20 (48)
+            LD      DE, YMPORT1         ; DE = YM port 1            ' 10    |
+
+            CALL    setMaxSLRR          ; (4)                       ' 153
+
+            SAMPLE_OUTPUT_FASTCALL      ; (5)                       ' +     |
+
+            LD      HL, YMPORT2         ; HL = YM port 2            ' 10    | (20)
+            LD      DE, YMPORT3         ; DE = YM port 3            ' 10    |
+
+            CALL    setMaxSLRR          ; (9)                       ' 153
+
+            POP     BC                  ; restore BC                ' 10    | (163)
+
+            SAMPLE_OUTPUT_FASTCALL      ; (10)                      ' +     |
+
+            LD      HL, YMPORT0         ; HL point on YM port0      ' 10    |
+            LD      (HL), $28           ; key reg                   ' 10    | (24)
+            INC     L                   ; HL point on YM port1      ' 4     |
+
+            LD      (HL), $00           ; key off ch0               ' 10    |
+            CALL    wait46_func         ; wait FM                   ' 46    | 56 (80)
+
+            LD      (HL), $01           ; key off ch1               ' 10    |
+            CALL    wait46_func         ; wait FM                   ' 46    | 56 (136)
+
+            LD      (HL), $02           ; key off ch2               ' 10    |
+            DEC     L                   ; HL point on YM port0      ' 4     | 14 (150)
+
+            SAMPLE_OUTPUT_FASTCALL      ; (11)                      ' +     |
+
+            LD      (HL), $28           ; key reg                   ' 10    | (14)
+            INC     L                   ; HL point on YM port1      ' 4     |
+
+            LD      (HL), $04           ; key off ch3               ' 10    |
+            CALL    wait46_func         ; wait FM                   ' 46    | 56 (70)
+
+            LD      (HL), $05           ; key off ch4               ' 10    |
+            CALL    wait46_func         ; wait FM                   ' 46    | 56 (126)
+
+            LD      (HL), $06           ; key off ch5               ' 10    | (136)
+
+            RET                         ;                           ' 10    | (146)
+
+
+; setMaxSLRR
+; ----------
+; YMPORT0/2 --> HL
+; YMPORT1/3 --> DE
+;               BC  --> ?
+;               A   --> ?
+;
+; set max SLRR for given YM part
+; 4 samples + 153 cycles
+
+setMaxSLRR                              ; CALL                      ' 17
+
+            LD      B, 4                ; num slot                  ' 7     |
+            LD      C, $80              ; C = base SLRR reg         ' 7     | 14 (31)
+
+.loop
+            SAMPLE_OUTPUT_FASTCALL      ;                           ' +     |
+
+            LD      A, $FF              ; A = max SLRR              ' 7     | (7)
+
+            LD      (HL), C             ; SLRR reg ch0 opx          ' 7     |
+            LD      (DE), A             ; max SLRR                  ' 7     | 52 (59)
+            INC     C                   ;                           ' 4     |
+            CALL    wait34_func         ; wait FM                   ' 34    |
+
+            LD      (HL), C             ; SLRR reg ch1 opx          ' 7     |
+            LD      (DE), A             ; max SLRR                  ' 7     | 52 (111)
+            INC     C                   ;                           ' 4     |
+            CALL    wait34_func         ; wait FM                   ' 34    |
+
+            LD      (HL), C             ; SLRR reg ch2 opx          ' 7     |
+            LD      (DE), A             ; max SLRR                  ' 7     | 22 (133)
+            INC     C                   ;                           ' 4     |
+            INC     C                   ;                           ' 4     |
+
+            DJNZ    .loop               ;                           ' 13    | (146)
+
+            RET                         ;                           ' 10    | (153)
+
+
+; FM_unmute
+; ---------
+;               HL  --> YMPORT+1
+;               IY  --> &FMSTATE[r]
+;               DE  --> ?
+;               A   --> ?
+;               A'  --> ?
+;
+; Restore muted FM channels (restore SLRR state)
+; 163 cycles max between each sampleOutputWIntFunc CALL
+; 26 samples + 20 cycles
+
+FM_unmute                               ; CALL                      ' 17
+
+            PUSH    BC                  ;                           ' 11    | (28)
+
+            LD      HL, YMPORT0         ;                           ' 10    |
+            LD      IY, FM0_STATE       ;                           ' 14    | 24 (52)
+
+            CALL    .unmuteX            ;                           ' 13s
+
+            LD      L, YMPORT_BASE_L+2  ;                           ' 7     |
+            LD      IYL, FM1_STATE_L    ;                           ' 11    | 18 (28)
+
+            CALL    .unmuteX            ;                           ' 13s
+
+            POP     BC                  ;                           ' 10    |
+            RET                         ;                           ' 10    | 20
+
+
+; unmuteX
+; -------
+; YMPORT    --> HL
+; FMSTATEx  --> IY
+;               BC  --> ?
+;               DE  --> ?
+;               A   --> ?
+;               A'  --> ?
+;
+; Restore muted FM channels (restore SLRR state) on a single port
+; 13 samples
+
+.unmuteX                                ; CALL                      ' 52+17 | (69)
+
+            LD      E, 0                ; E = base reg              ' 7     |
+            LD      C, 4                ; C = num slot              ' 7     | 14 (83)
+
+.loop_sl
+            LD      B, 3                ; B = num ch                ' 7     | (90)
+
+.loop_ch
+            sampleOutput                ;                           ' +
+
+            updateSLRR 0                ;                           ' 145   | (145)
+
+            INC     E                   ;                           ' 4     |
+            INC     IYL                 ;                           ' 8     | 25 (170)
+            DJNZ    .loop_ch            ;                           ' 13    |
+
+            INC     E                   ;                           ' 4     |
+            INC     IYL                 ;                           ' 8     |
+            DEC     C                   ;                           ' 4     | 26 (196)
+            JP      NZ, .loop_sl        ;                           ' 10    |
+
+            JP      sampleOutputFunc    ;                           ' +
+
+
+; FM_loadInst
+; -----------
+; cmd buf       --> BC  --> cmd buf
+; channel       --> E   --> ?           ; 0-2
+; YMPORT        --> HL  --> ?
+; &FM_STATE[ch] --> IY  --> ?
+;                   A   --> ?
+;                   IXH --> ?
+;
+; load FM instrument
+; 16 samples + 73 cycles
+
+FM_loadInst                             ; JP                        ' 100
+
+; 30-3F (MUL/DT)
+            loadInstSetRegNext $30      ;                           ' 58    | (158)
+
+            SAMPLE_OUTPUT_FASTCALL      ; (1)
+
+            loadInstSetRegNext $34      ;                           ' 58    |
+            loadInstSetRegNext $38      ;                           ' 58    | (174)
+            loadInstSetRegNext $3C      ;                           ' 58    |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (2)
+
+; 40-4F (TL)
+            loadInstSetInternalNext (FM_STATE_OP_TL + $0)   ;       ' 30    |
+            loadInstSetInternalNext (FM_STATE_OP_TL + $4)   ;       ' 30    | (120)
+            loadInstSetInternalNext (FM_STATE_OP_TL + $8)   ;       ' 30    |
+            loadInstSetInternalNext (FM_STATE_OP_TL + $C)   ;       ' 30    |
+
+; 50-5F (AR/RS)
+            loadInstSetRegNext $50      ;                           ' 58    | (178)
+
+            sampleOutput                ; (3)
+
+            loadInstSetRegNext $54      ;                           ' 58    |
+            loadInstSetRegNext $58      ;                           ' 58    | (174)
+            loadInstSetRegNext $5C      ;                           ' 58    |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (4)
+
+; 60-6F (DR/AM)
+            loadInstSetRegNext $60      ;                           ' 58    |
+            loadInstSetRegNext $64      ;                           ' 58    | (174)
+            loadInstSetRegNext $68      ;                           ' 58    |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (5)
+
+            loadInstSetRegNext $6C      ;                           ' 58    | (58)
+
+; 70-7F (SR)
+            loadInstSetRegNext $70      ;                           ' 58    | 116 (174)
+            loadInstSetRegNext $74      ;                           ' 58    |
+
+            sampleOutput                ; (6)
+
+            loadInstSetRegNext $78      ;                           ' 58    | (116)
+            loadInstSetRegNext $7C      ;                           ' 58    |
+
+; 80-8F (SL/RR)
+            loadInstSetInternalNext (FM_STATE_OP_SLRR + $0)     ;   ' 30    |
+            loadInstSetInternalNext (FM_STATE_OP_SLRR + $4)     ;   ' 30    | 60 (176)
+
+            SAMPLE_OUTPUT_FASTCALL      ; (7)
+
+            loadInstSetInternalNext (FM_STATE_OP_SLRR + $8)     ;   ' 30    | (60)
+            loadInstSetInternalNext (FM_STATE_OP_SLRR + $C)     ;   ' 30    |
+
+; 90-9F (SSG-EG)
+            loadInstSetRegNext $90      ;                           ' 58    |
+            loadInstSetRegNext $94      ;                           ' 58    | 116 (176)
+
+            sampleOutput                ; (8)
+
+            loadInstSetRegNext $98      ;                           ' 58    |
+            loadInstSetRegNext $9C      ;                           ' 58    | (116)
+
+; B0 (Feedback/Algo)
+
+            LD      A, $B0              ; A = base reg (FB/algo)    ' 7     |
+            ADD     E                   ; A = reg for channel       ' 4     | 11 (127)
+
+            LD      (HL), A             ; YM #0 = reg               ' 7     |
+            INC     L                   ;                           ' 4     | 11 (138)
+
+            readCmdBuf                  ; A = *src (FB/algo value)  ' 11    |
+            LD      (HL), A             ; YM #1 = value             ' 7     | 22 (160)
+            DEC     L                   ;                           ' 4     |
+
+            AND     $7                          ; A = algo          ' 7     |
+            LD      (IY+FM_STATE_CH_ALGO), A    ; store algo        ' 19    | 30 (190)
+
+            sampleOutput                ; (9)
+
+            CALL    FM_updateAtt        ; update attenuation for ch ' 6s + 155
+
+            SAMPLE_OUTPUT_FASTCALL      ; (16)
+
+; B4 (panning/AMS/PMS)
+
+            LD      A, $B4              ; A = base reg (pan/AMS..)  ' 7     |
+            ADD     E                   ; A = reg for channel       ' 4     | (11)
+
+            LD      (HL), A             ; YM #0 = reg               ' 7     |
+            INC     L                   ;                           ' 4     | 11 (22)
+
+            readCmdBuf                  ; A = *src (pan/AMS value)  ' 11    |
+            LD      (HL), A             ; YM #1 = value             ' 7     | 22 (44)
+            DEC     L                   ;                           ' 4     |
+
+            LD      (IY+FM_STATE_CH_PAN), A     ; FM state = value  ' 19    | (63)
+
+            JP      FM_nextFrame_loop   ; next command              ' 10    | (73)
+
+
+; FM_setAttenuation
+; -----------------
+; attenuation   --> A   --> ?
+;                   HL  --> ?
+;                   IY  --> ?
+;                   DE  --> ?
+;                   A'  --> ?
+;
+; set the volume / attenuation for all FM channels
+; 42 samples + 155 cycles !
+
+FM_setAttenuation                       ; CALL                      ' 86+17 | (103)
+
+            LD      HL, FM_ATT          ;                           ' 10    |
+            CP      (HL)                ; A == FM_ATT ?             ' 7     | 22 (125)
+            RET     Z                   ; --> exit                  ' 5     |
+
+            LD      (HL), A             ; save new FM_ATT           ' 7     | (132)
+
+            LD      HL, YMPORT0         ;                           ' 10    |
+            LD      IY, FM0_STATE+0     ; ch0                       ' 14    | 24 (156)
+            LD      E, 0                ; E = ch0                   ' 7     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (1)
+
+            CALL    FM_updateAtt        ; update ch0 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch1                       ' 8     | 12 (167)
+            INC     E                   ; E = ch1                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (8)
+
+            CALL    FM_updateAtt        ; update ch1 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch2                       ' 8     | 12 (167)
+            INC     E                   ; E = ch2                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (15)
+
+            CALL    FM_updateAtt        ; update ch2 attenuation    ' 6s + 155
+
+            LD      HL, YMPORT2         ;                           ' 10    |
+            LD      IYL, FM1_STATE_L+0  ; ch0                       ' 11    | 28 (183)
+            LD      E, 0                ; E = ch0                   ' 7     |
+
+            CALL    sampleOutputDirectFunc      ; (22)
+
+            CALL    FM_updateAtt        ; update ch3 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch1                       ' 8     | 12 (167)
+            INC     E                   ; E = ch1                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (29)
+
+            CALL    FM_updateAtt        ; update ch4 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch2                       ' 8     | 12 (167)
+            INC     E                   ; E = ch2                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (37)
+
+            JP      FM_updateAtt        ; update ch5 attenuation    ' 6s + 155
+
+
+; FM_updateAtt
+; ------------
+; YMPORT        --> HL
+; &FMSTATE[ch]  --> IY
+; channel       --> E
+;                   D   --> ?
+;                   A   --> ?
+;                   A'  --> ?
+;
+; Update attenuation for given channel
+; Be careful to slot order oddity: 0-2-1-3
+; 6 samples + 155 cycles
+
+FM_updateAtt                                    ; CALL              ' 17
+            LD      A, (IY+FM_STATE_CH_ALGO)    ; A = algo          ' 19    | (36)
+
+            CP      4                           ; algo < 4   ?      ' 7     |
+            JR      C, .algo_0123               ; --> algo_0123     ' 7     | 21 (57)
+            JR      Z, .algo_4                  ; --> algo_4        ' 7     |
+
+.algo_567
+            CP      7                           ; algo == 7 ?       ' 7     |
+            LD      A, [FM_ATT]                 ; A = FM att        ' 13    | 27 (84)
+            JR      Z, .algo_7                  ; --> goto algo_7   ' 7     |
+
+.algo_56
+            LD      (IY+FM_STATE_OP_ATT+0), 0   ; set slot att      ' 19    |
+            JP      .algo_7_1                   ; next              ' 10    | 29 (113)
+
+.algo_0123                                      ;                   ' 55
+            LD      A, [FM_ATT]                 ; A = FM att        ' 13    |
+            LD      (IY+FM_STATE_OP_ATT+0), 0   ; set slot att      ' 19    |
+            LD      (IY+FM_STATE_OP_ATT+4), 0   ; set slot att      ' 19    | 80 (135)
+            LD      (IY+FM_STATE_OP_ATT+8), 0   ; set slot att      ' 19    |
+            JP      .algo_7_3                   ; next              ' 10    |
+
+.algo_4                                         ;                   ' 62
+            LD      A, [FM_ATT]                 ; A = FM att        ' 13    |
+            LD      (IY+FM_STATE_OP_ATT+0), 0   ; set slot att      ' 19    |
+            LD      (IY+FM_STATE_OP_ATT+4), 0   ; set slot att      ' 19    | 80 (142)
+            LD      (IY+FM_STATE_OP_ATT+8), A   ; set slot att      ' 19    |
+            JP      .algo_7_3                   ; next              ' 10    |
+
+.algo_7                                         ;                   ' 89
+            LD      (IY+FM_STATE_OP_ATT+0), A   ; set slot att      ' 19    | (108)
+
+.algo_7_1                                       ;                   ' 113
+            LD      (IY+FM_STATE_OP_ATT+4), A   ; set slot att      ' 19    |
+            LD      (IY+FM_STATE_OP_ATT+8), A   ; set slot att      ' 19    | 38 (151)
+
+.algo_7_3                                       ;                   '
+            LD      (IY+FM_STATE_OP_ATT+12), A  ; set slot att      ' 19    | (170)
+
+.algo_doneSS
+            SAMPLE_OUTPUT_FASTCALL
+
+            updateTL 0                          ; update TL slot 0  ' 96    |
+            updateTL 4                          ; update TL slot 1  ' 96    | (192)
+
+            sampleOutput
+
+            updateTL 8                          ; update TL slot 2  ' 96    | (192)
+            updateTL 12                         ; update TL slot 3  ' 96    |
+
+            sampleOutput
+
+            updateSLRR 0                        ; update SLRR sl 0  ' 145   | (145)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            updateSLRR 4                        ; update SLRR sl 1  ' 145   | (145)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            updateSLRR 8                        ; update SLRR sl 2  ' 145   | (145)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            updateSLRR 12                       ; update SLRR sl 3  ' 145   | (145)
+
+            RET                                 ;                   ' 10    | (155)
+
+
+; FM_keyFunc
+; ----------
+; key value --> A
+;               HL  --> YMPORT0
+;
+; key FM channel
+; 58 cycles
+
+FM_keyFunc                              ; CALL                      ' 17    | (17)
+
+            FM_key                      ;                           ' 31    | (48)
+
+            RET                         ;                           ' 10    | (58)
+
+
+; updateTLFastFunc
+; ----------------
+; YMPORT        --> HL
+; &FMSTATE[r]   --> IY
+; baseReg       --> E
+; TL            --> D
+;                   A   --> ?
+;
+; update TL register value (fast version)
+; 104 cycles
+
+updateTLFastFunc                        ; CALL                      ' 17
+
+            updateTLFast 0              ;                           ' 77 (94)
+
+            RET                         ;                           ' 10 (104)
+
+
+; updateTLFunc
+; ------------
+; YMPORT        --> HL
+; &FMSTATE[r]   --> IY
+; baseReg       --> E
+;                   D   --> TL
+;                   A   --> ?
+;
+; update TL register value
+; 123 cycles
+
+updateTLFunc                            ; CALL                      ' 17
+
+            updateTL 0                  ;                           ' 96 (113)
+
+            RET                         ;                           ' 10 (123)
+
+
+; FM_nextFrame
+; ------------
+;               HL  --> ?
+;               BC  --> ?
+;               DE  --> ?
+;               IY  --> ?
+;               IXH --> ?
+;               A   --> ?
+;
+; process FM command for next frame
+
+FM_nextFrame                                    ; CALL                          ' (17)
+
+            LD      HL, ACCESS                  ; set Z80 writing time mutex    ' 10    |
+            SET     ACCESS_WR_TIME, (HL)        ; prevent 68k reading partial   ' 15    | 25 (42)
+
+            LD      HL, (ELAPSED_FRAME)         ; increment elapsed frame       ' 16    |
+            INC     HL                          ; low 16 bit                    ' 6     | 38 (80)
+            LD      (ELAPSED_FRAME), HL         ;                               ' 16    |
+
+            LD      A, H                        ; low 16 bit overflow ?         ' 4     |
+            OR      L                           ;                               ' 4     | 15 (95)
+            JR      NZ, .elapsed_done           ;                               ' 7     |
+
+            LD      HL, ELAPSED_FRAME+2         ; increment high byte           ' 10    |
+            INC     (HL)                        ; low 16 bit                    ' 11    | +21
+
+.elapsed_done
+            LD      HL, ACCESS              ;                           ' 10    |
+            RES     ACCESS_WR_TIME, (HL)    ; done writing time         ' 15    | 25 (120)
+
+            LD      HL, (FM_WAIT_FRAME)     ;                           ' 16    |
+            LD      A, H                    ;                           ' 4     |
+            OR      L                       ;                           ' 4     | 34 (154)
+            JP      Z, .process             ; if (fmWait)               ' 10    |
+
+            DEC     HL                      ;   fmWait--;               ' 6     |
+            LD      (FM_WAIT_FRAME), HL     ;                           ' 16    | 22 (176)
+
+            JP      sampleOutputFunc        ;   return;
+
+.process                                    ;                           ' 154
+            LD      B, FM_COM_BUFFER_H      ;                           ' 7     |
+            LD      A, (FM_BUF_RD_POS)      ;                           ' 13    | 24 (178)
+            LD      C, A                    ; BC = &src                 ' 4     |
+
+FM_nextFrame_loop
+            sampleOutput
+
+            readCmdBuf                      ; A = command               ' 11    | (11)
+
+            LD      H, (FM_JUMP_TABLE >> 9) ;                           ' 7     |
+            LD      L, A                    ;                           ' 4     | 22 (33)
+            ADD     HL, HL                  ; HL = &com_addr            ' 11    |
+
+            LD      D, (HL)                 ; D = com_addr_low          ' 7     |
+            INC     L                       ;                           ' 4     |
+            LD      H, (HL)                 ; H = com_addr_high         ' 7     | 26 (59)
+            LD      L, D                    ; HL = com_addr             ' 4     |
+            JP      (HL)                    ;                           ' 4     |
+
+
+FMCom_waitShort                             ;                           ' 59
+;--------------
+FMCom_wait1
+FMCom_wait2
+FMCom_wait3
+FMCom_wait4
+FMCom_wait5
+FMCom_wait6
+FMCom_wait7
+FMCom_wait8
+FMCom_wait9
+FMCom_wait10
+FMCom_wait11
+FMCom_wait12
+FMCom_wait13
+FMCom_wait14
+FMCom_wait15
+
+            AND     $F                      ;                           ' 7     |
+            LD      (FM_WAIT_FRAME), A      ;                           ' 13    | 20 (79)
+
+            JP      FM_nextFrame_done       ; done                      ' 10    | (89)
+
+
+FMCom_waitLong                              ;                           ' 59
+;-------------
+            readCmdBuf                      ; A = wait                  ' 11    |
+            ADD     15                      ;                           ' 7     | 25 (74)
+            JR      NC, .byte_wait          ; wait < 256 ?              ' 7     |
+
+            LD      H, 1                    ; >= 256 frames             ' 7     |
+            LD      L, A                    ;                           ' 4     | 27 (101)
+            LD      (FM_WAIT_FRAME), HL     ; store as 16 bit           ' 16    |
+
+            JP      FM_nextFrame_done       ; done                      ' 10    | (111)
+
+.byte_wait                                  ;                           ' 79
+            LD      (FM_WAIT_FRAME), A      ;                           ' 13    | (92)
+
+            JP      FM_nextFrame_done       ; done                      ' 10    | (102)
+
+
+FMCom_playPCM                                       ;                   ' 59
+;------------
+FMCom_playPCM0
+FMCom_playPCM0_S
+FMCom_playPCM0_P
+FMCom_playPCM0_SP
+            EX      AF, AF'                         ; A' = cmd          ' 4     |
+            LD      A, $C6 | (CMD_PCM0_SFT << 3)    ; SET X, (HL)       ' 7     |
+            LD      (FM_playPCM.set_com+4), A       ;                   ' 13    | 44 (103)
+            LD      DE, PCM0_ADDR_ARG               ; DE = PCM_ADDR_ARG ' 10    |
+            JP      FM_playPCM                      ; do PCM            ' 10    |
+
+FMCom_playPCM1
+FMCom_playPCM1_S
+FMCom_playPCM1_P
+FMCom_playPCM1_SP
+            EX      AF, AF'                         ; A' = cmd          ' 4     |
+            LD      A, $C6 | (CMD_PCM1_SFT << 3)    ; SET X, (HL)       ' 7     |
+            LD      (FM_playPCM.set_com+4), A       ;                   ' 13    | 44 (103)
+            LD      DE, PCM1_ADDR_ARG               ; DE = PCM_ADDR_ARG ' 10    |
+            JP      FM_playPCM                      ; do PCM            ' 10    |
+
+FMCom_playPCM2
+FMCom_playPCM2_S
+FMCom_playPCM2_P
+FMCom_playPCM2_SP
+            EX      AF, AF'                         ; A' = cmd          ' 4     |
+            LD      A, $C6 | (CMD_PCM2_SFT << 3)    ; SET X, (HL)       ' 7     |
+            LD      (FM_playPCM.set_com+4), A       ;                   ' 13    | 44 (103)
+            LD      DE, PCM2_ADDR_ARG               ; DE = PCM_ADDR_ARG ' 10    |
+            JP      FM_playPCM                      ; do PCM            ' 10    |
+
+FM_playPCM
+            readCmdBuf                      ; A = PCM id                ' 11    | (114)
+
+            OR      A                       ; id == 0 ?                 ' 4     |
+            JR      Z, .stop_PCM            ; --> stop PCM              ' 7     | 11 (125)
+
+            DEC     A                       ; id--                      ' 4     |
+            PUSH    BC                      ; save BC                   ' 10    | 14 (139)
+
+            LD      H, SID_TABLE_H >> 1     ; H = SID_TABLE_H >> 1      ' 7     |
+            LD      L, A                    ; L = id                    ' 4     | 22 (161)
+            ADD     HL, HL                  ; HL = &(sample_addr)       ' 11    |
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      C, (HL)                 ; C = sample_addr.L         ' 7     |
+            INC     L                       ; next                      ' 4     | (22)
+            LD      B, (HL)                 ; BC = sample_addr          ' 7     |
+            INC     L                       ; next                      ' 4     |
+
+            LD      A, (HL)                 ; A = next_sample_addr.L    ' 7     |
+            INC     L                       ;                           ' 4     |
+            LD      H, (HL)                 ; H = next_sample_addr.H    ' 7     | 22 (44)
+            LD      L, A                    ; HL = next_sample addr     ' 4     |
+
+            EX      DE, HL                  ; HL = &PCM_ADDR_ARG        ' 4     |
+            LD      (HL), C                 ; PCM_ADDR_ARG.L = C        ' 7     |
+            INC     L                       ; next                      ' 4     |
+            LD      (HL), B                 ; PCM_ADDR_ARG= sample addr ' 7     | 30 (74)
+            INC     L                       ; next                      ' 4     |
+            EX      DE, HL                  ; DE = &PCM_LEN_ARG         ' 4     |
+
+            SBC     HL, BC                  ; HL = sample_len / 256     ' 15    |
+            ADD     HL, HL                  ;                           ' 11    | 37 (111)
+            ADD     HL, HL                  ; HL = sample_len / 64      ' 11    |
+
+            EX      DE, HL                  ; HL = &PCM_LEN_ARG         ' 4     |
+            LD      (HL), E                 ; PCM_LEN_ARG.L = E         ' 7     |
+            INC     L                       ; next                      ' 4     | 22 (133)
+            LD      (HL), D                 ; PCM_LEN_ARG = DE          ' 7     |
+
+            POP     BC                      ; restore BC                ' 10    | (143)
+
+            EX      AF, AF'                 ; A.b2=half_speed A.b3=prio ' 4     |
+            LD      D, A                    ; D.b2=half_speed D.b3=prio ' 4     | 8 (151)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      A, D                    ; A.b01=channel             ' 4     |
+            AND     3                       ; A = channel               ' 7     |
+            ADD     (PCM0_ARG & $FF)        ;                           ' 7     | (29)
+            LD      H, (PCM0_ARG >> 8)      ;                           ' 7     |
+            LD      L, A                    ; HL = &PCM_ARG             ' 4     |
+
+            LD      A, D                    ; A.b2=half_speed A.b3=prio ' 4     |
+            AND     $8                      ; A = prio * 8              ' 7     |
+            OR      $17                     ; A = prio ($7/$F) | $10    ' 7     | 33 (62)
+            BIT     2, D                    ; Zflag = half_speed        ' 8     |
+            JR      Z, .norm_speed          ; half speed ?              ' 7     |
+
+            OR      $40                     ; A |= half speed flag      ' 7     | (69)
+
+.norm_speed
+            LD      (HL), A                 ; PCM_ARG = A               ' 7     |
+            JP      .set_com                ; set command               ' 10    | 17 (86)
+
+.stop_PCM                                   ;                           ' 131
+            XOR     A                       ;                           ' 4     |
+            LD      (DE), A                 ; PCM_ADDR_ARG.L = 0        ' 7     |
+            INC     E                       ; next                      ' 4     | 22 (153)
+            LD      (DE), A                 ; PCM_ADDR_ARG.H = 0        ' 7     |
+
+.set_com
+            LD      HL, COMMAND             ; HL = &command             ' 10    | (163)
+            SET     0, (HL)                 ; set play PCMx command     ' 15    | (178)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (188)
+
+
+FMCom_loadInst
+;-------------
+FMCom_loadInst0_CH0                         ;                           ' 59
+            LD      HL, YMPORT0             ; HL = YM port              ' 10    |
+            LD      IY, FM0_STATE+0         ; IY = &FM_STATE[ch]        ' 14    |
+            LD      E, 0                    ; E = channel               ' 7     | 41 (100)
+            JP      FM_loadInst             ; load inst                 ' 10    |
+
+FMCom_loadInst0_CH1                         ;                           ' 59
+            LD      HL, YMPORT0             ; HL = YM port              ' 10    |
+            LD      IY, FM0_STATE+1         ; IY = &FM_STATE[ch]        ' 14    |
+            LD      E, 1                    ; E = channel               ' 7     | 41 (100)
+            JP      FM_loadInst             ; load inst                 ' 10    |
+
+FMCom_loadInst0_CH2                         ;                           ' 59
+            LD      HL, YMPORT0             ; HL = YM port              ' 10    |
+            LD      IY, FM0_STATE+2         ; IY = &FM_STATE[ch]        ' 14    |
+            LD      E, 2                    ; E = channel               ' 7     | 41 (100)
+            JP      FM_loadInst             ; load inst                 ' 10    |
+
+FMCom_loadInst1_CH0                         ;                           ' 59
+            LD      HL, YMPORT2             ; HL = YM port              ' 10    |
+            LD      IY, FM1_STATE+0         ; IY = &FM_STATE[ch]        ' 14    |
+            LD      E, 0                    ; E = channel               ' 7     | 41 (100)
+            JP      FM_loadInst             ; load inst                 ' 10    |
+
+FMCom_loadInst1_CH1                         ;                           ' 59
+            LD      HL, YMPORT2             ; HL = YM port              ' 10    |
+            LD      IY, FM1_STATE+1         ; IY = &FM_STATE[ch]        ' 14    |
+            LD      E, 1                    ; E = channel               ' 7     | 41 (100)
+            JP      FM_loadInst             ; load inst                 ' 10    |
+
+FMCom_loadInst1_CH2                         ;                           ' 59
+            LD      HL, YMPORT2             ; HL = YM port              ' 10    |
+            LD      IY, FM1_STATE+2         ; IY = &FM_STATE[ch]        ' 14    |
+            LD      E, 2                    ; E = channel               ' 7     | 41 (100)
+            JP      FM_loadInst             ; load inst                 ' 10    |
+
+
+FMCom_key                                   ;                           ' 59
+;--------
+FMCom_key_OFF
+            AND     7                       ; A = port & channel        ' 7     | (66)
+
+            CALL    FM_keyFunc              ; key off                   ' 58    | (124)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (134)
+
+FMCom_key_ON
+            AND     7                       ; A = port & channel        ' 7     |
+            OR      $F0                     ; A = key on                ' 7     | 14 (73)
+
+            CALL    FM_keyFunc              ; key on                    ' 58    | (131)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (141)
+
+
+FMCom_keySeq
+;-----------
+FMCom_keySeq_OFFON
+            AND     7                       ; A = port & channel        ' 7     | (66)
+
+            FM_key                          ; key off                   ' 31    | (97)
+
+            OR      $F0                     ; A = key on                ' 7     |
+            CALL    wait27_func             ; wait for FM               ' 27    | 34 (131)
+
+            FM_key                          ; key on                    ' 31    | (162)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (172)
+
+FMCom_keySeq_ONOFF
+            AND     7                       ; A = port & channel        ' 7     | 14 (73)
+            OR      $F0                     ; A = key on                ' 7     |
+
+            FM_key                          ; key on                    ' 31    | (104)
+
+            AND     7                       ; A = port & channel        ' 7     |
+            CALL    wait27_func             ; wait for FM               ' 27    | 34 (138)
+
+            FM_key                          ; key off                   ' 31    | (169)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (179)
+
+
+FMCom_setPan0                               ;                           ' 59
+;------------
+FMCom_setPan0_CH0_OFF
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $00B4               ; pan = off; pan reg ch0    ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH1_OFF
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $00B5               ; pan = off; pan reg ch1    ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH2_OFF
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $00B6               ; pan = off; pan reg ch2    ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH0_R
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $40B4               ; pan = R; pan reg ch0      ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH1_R
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $40B5               ; pan = R; pan reg ch1      ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH2_R
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $40B6               ; pan = R; pan reg ch2      ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH0_L
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $80B4               ; pan = L; pan reg ch0      ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH1_L
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $80B5               ; pan = L; pan reg ch1      ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH2_L
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $80B6               ; pan = L; pan reg ch2      ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH0_LR
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $C0B4               ; pan = LR; pan reg ch0     ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH1_LR
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $C0B5               ; pan = LR; pan reg ch1     ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FMCom_setPan0_CH2_LR
+            LD      HL, FM0_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $C0B6               ; pan = LR; pan reg ch2     ' 10    | 30 (89)
+            JP      FM_setPan0              ;                           ' 10    |
+
+FM_setPan0                                  ;                           ' 89
+            LD      IY, YMPORT0             ; IY = YM port              ' 14    | 24 (113)
+            JP      FM_setPan               ;                           ' 10    |
+
+
+FMCom_setPan1                               ;                           ' 59
+;------------
+FMCom_setPan1_CH0_OFF
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $00B4               ; pan = off; pan reg ch0    ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH1_OFF
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $00B5               ; pan = off; pan reg ch1    ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH2_OFF
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $00B6               ; pan = off; pan reg ch2    ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH0_R
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $40B4               ; pan = R; pan reg ch0      ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH1_R
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $40B5               ; pan = R; pan reg ch1      ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH2_R
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $40B6               ; pan = R; pan reg ch2      ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH0_L
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $80B4               ; pan = L; pan reg ch0      ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH1_L
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $80B5               ; pan = L; pan reg ch1      ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH2_L
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $80B6               ; pan = L; pan reg ch2      ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH0_LR
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 0     ;           ' 10    |
+            LD      DE, $C0B4               ; pan = LR; pan reg ch0     ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH1_LR
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 1     ;           ' 10    |
+            LD      DE, $C0B5               ; pan = LR; pan reg ch1     ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FMCom_setPan1_CH2_LR
+            LD      HL, FM1_STATE + FM_STATE_CH_PAN + 2     ;           ' 10    |
+            LD      DE, $C0B6               ; pan = LR; pan reg ch2     ' 10    | 30 (89)
+            JP      FM_setPan1              ;                           ' 10    |
+
+FM_setPan1                                  ;                           ' 89
+            LD      IY, YMPORT2             ; IY = YM port              ' 14    | 24 (113)
+            JP      FM_setPan               ;                           ' 10    |
+
+
+FM_setPan                                   ;                           ' 113
+            LD      A, (HL)                 ; A = saved pan reg value   ' 7     |
+            AND     $3F                     ; keep low part             ' 7     |
+            OR      D                       ; (reg & 0x3F) | (pan << 6) ' 4     | 25 (138)
+            LD      (HL), A                 ; saved new pan value       ' 7     |
+
+            LD      (IY+0), E               ; write reg                 ' 19    | 38 (176)
+            LD      (IY+1), A               ; write value               ' 19    |
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (186)
+
+
+FMCom_setFreq                               ;                           ' 59
+;------------
+FMCom_setFreq0_CH0
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreq0                         ;               ' 10    |
+
+FMCom_setFreq0_CH1
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreq0                         ;               ' 10    |
+
+FMCom_setFreq0_CH2
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+4    ; HL = freq var ' 10    |
+            JP      FM_setFreq0                         ;               ' 10    |
+
+FMCom_setFreq1_CH0
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreq1                         ;               ' 10    |
+
+FMCom_setFreq1_CH1
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreq1                         ;               ' 10    |
+
+FMCom_setFreq1_CH2
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+4    ;               ' 10    |
+            JP      FM_setFreq1                         ;               ' 10    |
+
+FM_setFreq0                             ;                           ' 100
+            AND     3                   ; A = channel               ' 7     |
+            EX      AF, AF'             ; A' = channel              ' 4     | 41 (141)
+            readBeU16CmdBuf_DE          ; DE = freq                 ' 30    |
+
+            LD      (HL), E             ; store freq value          ' 7     |
+            INC     L                   ; (low byte then high byte) ' 4     | 18 (159)
+            LD      (HL), D             ;                           ' 7     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (1)                       ' +
+
+            EX      AF, AF'             ; A = channel               ' 4     |
+            BIT     6, D                ; pre key off ?             ' 8     | (19)
+            JR      Z, .no_key_off      ;                           ' 7     |
+
+            FM_key                      ; do key off                ' 31    | (50)
+
+.no_key_off
+            LD      HL, YMPORT0         ;                           ' 10    | (60)
+
+            ADD     $A4                 ; A = freq H reg addr       ' 7     |
+            LD      (HL), A             ; write reg addr            ' 7     | 18 (78)
+            INC     L                   ; next port                 ' 4     |
+
+            LD      (HL), D             ; write reg value           ' 7     |
+            DEC     L                   ; prev port                 ' 4     |
+            SUB     4                   ; A = freq L reg addr       ' 7     | 25 (103)
+            wait7                       ; wait for FM               ' 7     |
+
+            LD      (HL), A             ; write reg addr            ' 7     |
+            INC     L                   ; next port                 ' 4     | 18 (121)
+            LD      (HL), E             ; write reg value           ' 7     |
+
+            BIT     7, D                ; post key on ?             ' 8     |
+            RET     Z                   ;                           ' 5     | 13 (134)
+
+            XOR     $50                 ; $Ax ^ $50 = $Fx = key on  ' 7     |
+            FM_key                      ; do key on                 ' 31    | 38 (172)
+
+            RET                         ;                           ' 10    | (182)
+
+
+FM_setFreq1                             ;                           ' 100
+            AND     3                   ; A = channel               ' 7     |
+            OR      4                   ; A = channel | 4 (port 1)  ' 7     |
+            EX      AF, AF'             ; A' = channel              ' 4     | 48 (148)
+            readBeU16CmdBuf_DE          ; DE = freq                 ' 30    |
+
+            LD      (HL), E             ; store freq value          ' 7     |
+            INC     L                   ; (low byte then high byte) ' 4     | 18 (166)
+            LD      (HL), D             ;                           ' 7     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (1)                       ' +
+
+            EX      AF, AF'             ; A = channel               ' 4     |
+            BIT     6, D                ; pre key off ?             ' 8     | (19)
+            JR      Z, .no_key_off      ;                           ' 7     |
+
+            FM_key                      ; do key off                ' 31    | (50)
+
+.no_key_off
+            LD      HL, YMPORT2         ;                           ' 10    | (60)
+
+            ADD     $A0                 ; A = freq H reg addr       ' 7     |
+            LD      (HL), A             ; write reg addr            ' 7     | 18 (78)
+            INC     L                   ; next port                 ' 4     |
+
+            LD      (HL), D             ; write reg value           ' 7     |
+            DEC     L                   ; prev port                 ' 4     |
+            SUB     4                   ; A = freq L reg addr       ' 7     | 25 (103)
+            wait7                       ; wait for FM               ' 7     |
+
+            LD      (HL), A             ; write reg addr            ' 7     |
+            INC     L                   ; next port                 ' 4     | 18 (121)
+            LD      (HL), E             ; write reg value           ' 7     |
+
+            BIT     7, D                ; post key on ?             ' 8     |
+            RET     Z                   ;                           ' 5     | 13 (134)
+
+            XOR     $54                 ; $Ax ^ $54 = $Fx = key on  ' 7     |
+            FM_key                      ; do key on                 ' 31    | 38 (172)
+
+            RET                         ;                           ' 10    | (182)
+
+
+FMCom_setFreq0_CH2_SL1
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
+            JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
+
+FMCom_setFreq0_CH2_SL2
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
+            JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
+
+FMCom_setFreq0_CH2_SL3
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
+            JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
+
+FM_setFreq0_CH2_SL                          ;                       ' 100
+            AND     3                       ; A = slot              ' 7     |
+            EX      AF, AF'                 ; A' = slot             ' 4     | 41 (141)
+            readBeU16CmdBuf_DE              ; DE = freq             ' 30    |
+
+            LD      (HL), E             ; store freq value          ' 7     |
+            INC     L                   ; (low byte then high byte) ' 4     | 18 (159)
+            LD      (HL), D             ;                           ' 7     |
+
+            LD      HL, YMPORT0         ;                           ' 10    | (169)
+
+            SAMPLE_OUTPUT_FASTCALL      ; (1)
+
+            EX      AF, AF'             ; A = channel               ' 4     | (4)
+
+            ADD     $AC                 ; A = freq H reg addr       ' 7     |
+            LD      (HL), A             ; write reg addr            ' 7     | 18 (22)
+            INC     L                   ; next port                 ' 4     |
+
+            LD      (HL), D             ; write reg value           ' 7     |
+            DEC     L                   ; prev port                 ' 4     |
+            SUB     4                   ; A = freq L reg addr       ' 7     | 25 (47)
+            wait7                       ; wait for FM               ' 7     |
+
+            LD      (HL), A             ; write reg addr            ' 7     |
+            INC     L                   ; next port                 ' 4     | 18 (65)
+            LD      (HL), E             ; write reg value           ' 7     |
+
+            RET                         ;                           ' 10    | (75)
+
+
+FMCom_setFreq_W                             ;                           ' 59
+;--------------
+FMCom_setFreq0_CH0_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreq0                         ;               ' 10    |
+
+FMCom_setFreq0_CH1_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreq0                         ;               ' 10    |
+
+FMCom_setFreq0_CH2_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+4    ; HL = freq var ' 10    |
+            JP      FM_setFreq0                         ;               ' 10    |
+
+FMCom_setFreq1_CH0_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreq1                         ;               ' 10    |
+
+FMCom_setFreq1_CH1_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreq1                         ;               ' 10    |
+
+FMCom_setFreq1_CH2_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+4    ;               ' 10    |
+            JP      FM_setFreq1                         ;               ' 10    |
+
+FMCom_setFreq0_CH2_SL1_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
+            JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
+
+FMCom_setFreq0_CH2_SL2_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
+            JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
+
+FMCom_setFreq0_CH2_SL3_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
+            JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
+
+
+FMCom_setFreqDelta                          ;                           ' 59
+;-----------------
+FMCom_setFreqD0_CH0
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreqD0                        ;               ' 10    |
+
+FMCom_setFreqD0_CH1
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreqD0                        ;               ' 10    |
+
+FMCom_setFreqD0_CH2
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+4    ; HL = freq var ' 10    |
+            JP      FM_setFreqD0                        ;               ' 10    |
+
+FMCom_setFreqD1_CH0
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreqD1                        ;               ' 10    |
+
+FMCom_setFreqD1_CH1
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreqD1                        ;               ' 10    |
+
+FMCom_setFreqD1_CH2
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+4    ;               ' 10    |
+            JP      FM_setFreqD1                        ;               ' 10    |
+
+FM_setFreqD0                                ;                           ' 100
+            AND     3                       ; A = channel               ' 7     |
+            EX      AF, AF'                 ; A' = channel              ' 4     |
+            LD      A, 0                    ; code auto modification    ' 7     |
+            LD      (FM_setFreqD.ym_port_set+1), A      ; YMPORT0       ' 13    | 61 (161)
+            LD      A, $A4                              ;               ' 7     |
+            LD      (FM_setFreqD.reg_set+1), A          ; freq ch       ' 13    |
+            JP      FM_setFreqD                         ;               ' 10    |
+
+FM_setFreqD1                                ;                           ' 100
+            AND     3                       ; A = channel               ' 7     |
+            EX      AF, AF'                 ; A' = channel              ' 4     |
+            LD      A, 2                    ; code auto modification    ' 7     |
+            LD      (FM_setFreqD.ym_port_set+1), A      ; YMPORT2       ' 13    | 61 (161)
+            LD      A, $A4                              ;               ' 7     |
+            LD      (FM_setFreqD.reg_set+1), A          ; freq ch       ' 13    |
+            JP      FM_setFreqD                         ;               ' 10    |
+
+FM_setFreqD                             ;                           ' 161
+            SAMPLE_OUTPUT_FASTCALL      ; (1)
+
+            readCmdBuf                  ; A = data                  ' 11    | (11)
+
+            RRA                         ; A.b0 = op                 ' 4     |
+            JR      C, .sub             ; sub op ?                  ' 7     | 11 (22)
+
+.add
+            AND     $7F                 ; clear b7                  ' 7     |
+            INC     A                   ; A = freq delta            ' 4     |
+            ADD     (HL)                ; A = new freq L            ' 11    |
+            LD      (HL), A             ; store freq L              ' 7     |
+            LD      E, A                ; E = new freq L            ' 4     | 44 (66)
+            INC     L                   ;                           ' 4     |
+            JR      NC, .op_done        ;                           ' 7     |
+
+            INC     (HL)                ; inc freq H                ' 11    | 21  (87)
+            JP      .op_done            ;                           ' 10    |
+
+.sub                                    ;                           ' 27
+            AND     $7F                 ; clear b7                  ' 7     |
+            INC     A                   ; A = freq delta            ' 4     |
+            LD      E, A                ; E = freq delta            ' 4     |
+            LD      A, (HL)             ; A = cur freq L            ' 7     | 48 (75)
+            SUB     E                   ; A = new freq L            ' 4     |
+            LD      (HL), A             ; store freq L              ' 7     |
+            LD      E, A                ; E = new freq L            ' 4     |
+            INC     L                   ;                           ' 4     |
+            JR      NC, .op_done        ;                           ' 7     |
+
+            DEC     (HL)                ; dec freq H                ' 11    |  (86)
+
+.op_done                                ;                           ' 87
+            LD      D, (HL)             ; D = cur freq H            ' 7     |
+            EX      AF, AF'             ; A = channel               ' 4     | 11 (98)
+
+.ym_port_set
+            LD      HL, YMPORT0         ;                           ' 10    | (108)
+
+.reg_set
+            ADD     $A4                 ; A = freq H reg addr       ' 7     |
+            LD      (HL), A             ; write reg addr            ' 7     | 18 (126)
+            INC     L                   ; next port                 ' 4     |
+
+            LD      (HL), D             ; write reg value           ' 7     |
+            DEC     L                   ; prev port                 ' 4     |
+            SUB     4                   ; A = freq L reg addr       ' 7     | 25 (151)
+            wait7                       ; wait for FM               ' 7     |
+
+            LD      (HL), A             ; write reg addr            ' 7     |
+            INC     L                   ; next port                 ' 4     | 18 (169)
+            LD      (HL), E             ; write reg value           ' 7     |
+
+            RET                         ;                           ' 10    | (179)
+
+
+FMCom_setFreqD0_CH2_SL1
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
+            JP      FM_setFreqD0_CH2_SL                 ;               ' 10    |
+
+FMCom_setFreqD0_CH2_SL2
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
+            JP      FM_setFreqD0_CH2_SL                 ;               ' 10    |
+
+FMCom_setFreqD0_CH2_SL3
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
+            JP      FM_setFreqD0_CH2_SL                 ;               ' 10    |
+
+FM_setFreqD0_CH2_SL                         ;                           ' 100
+            AND     3                       ; A = channel               ' 7     |
+            EX      AF, AF'                 ; A' = channel              ' 4     |
+            LD      A, 0                    ; code auto modification    ' 7     |
+            LD      (FM_setFreqD.ym_port_set+1), A      ; YMPORT0       ' 13    | 61 (161)
+            LD      A, $AC                              ;               ' 7     |
+            LD      (FM_setFreqD.reg_set+1), A          ; freq sl       ' 13    |
+            JP      FM_setFreqD                         ;               ' 10    |
+
+
+FMCom_setFreqDelta_W                        ;                           ' 59
+;-------------------
+FMCom_setFreqD0_CH0_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreqD0                        ;               ' 10    |
+
+FMCom_setFreqD0_CH1_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreqD0                        ;               ' 10    |
+
+FMCom_setFreqD0_CH2_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH_FREQ+4    ; HL = freq var ' 10    |
+            JP      FM_setFreqD0                        ;               ' 10    |
+
+FMCom_setFreqD1_CH0_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+0    ; HL = freq var ' 10    |
+            JP      FM_setFreqD1                        ;               ' 10    |
+
+FMCom_setFreqD1_CH1_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+2    ; HL = freq var ' 10    |
+            JP      FM_setFreqD1                        ;               ' 10    |
+
+FMCom_setFreqD1_CH2_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM1_STATE+FM_STATE_CH_FREQ+4    ;               ' 10    |
+            JP      FM_setFreqD1                        ;               ' 10    |
+
+FMCom_setFreqD0_CH2_SL1_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
+            JP      FM_setFreqD0_CH2_SL                 ;               ' 10    |
+
+FMCom_setFreqD0_CH2_SL2_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
+            JP      FM_setFreqD0_CH2_SL                 ;               ' 10    |
+
+FMCom_setFreqD0_CH2_SL3_W
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
+            JP      FM_setFreqD0_CH2_SL                 ;               ' 10    |
+
+
+FMCom_setTL                                 ;                           ' 59
+;----------
+FMCom_setTL_CH0_SL0
+FMCom_setTL_CH1_SL0
+FMCom_setTL_CH2_SL0
+FMCom_setTL_CH0_SL1
+FMCom_setTL_CH1_SL1
+FMCom_setTL_CH2_SL1
+FMCom_setTL_CH0_SL2
+FMCom_setTL_CH1_SL2
+FMCom_setTL_CH2_SL2
+FMCom_setTL_CH0_SL3
+FMCom_setTL_CH1_SL3
+FMCom_setTL_CH2_SL3
+            AND     $F                      ; keep channel and slot     ' 7     |
+            LD      E, A                    ; save in E (base reg)      ' 4     | 22 (81)
+            LD      IYH, FM_STATE_H         ; base FM state H           ' 11    |
+
+            readCmdBuf                      ; A = data                  ' 11    | (92)
+
+            RRA                             ; A >>= 1 (b7 = 0)          ' 4     |
+            LD      D, A                    ; D = TL value              ' 4     | 15 (107)
+            JR      C, .port1               ; data.b0 = port            ' 7     |
+
+.port0
+            LD      A, FM0_STATE_L          ; base FM state L           ' 7     |
+            ADD     E                       ; A = &FM_STATE[ch]         ' 4     | 21 (128)
+            LD      HL, YMPORT0             ; HL = YM0                  ' 10    |
+
+            JP      .setTL                  ;                           ' 10    | (138)
+
+.port1                                      ;                           ' 112
+            LD      A, FM1_STATE_L          ; base FM state L           ' 7     |
+            ADD     E                       ; A = &FM_STATE[ch]         ' 4     | 21 (133)
+            LD      HL, YMPORT2             ; HL = YM2                  ' 10    |
+
+.setTL                                      ;                           ' 138
+            LD      IYL, A                  ; IY = &FM_STATE[ch]        ' 8     | (146)
+
+            SAMPLE_OUTPUT_FASTCALL          ;                           ' +
+
+            LD      (IY+FM_STATE_OP_TL), D  ; save TL state             ' 19    |
+            CALL    updateTLFastFunc        ; update TL                 ' 104   | (123)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (133)
+
+
+FMCom_setTLDelta                            ;                           ' 59
+;---------------
+FMCom_setTLD_CH0_SL0
+FMCom_setTLD_CH1_SL0
+FMCom_setTLD_CH2_SL0
+FMCom_setTLD_CH0_SL1
+FMCom_setTLD_CH1_SL1
+FMCom_setTLD_CH2_SL1
+FMCom_setTLD_CH0_SL2
+FMCom_setTLD_CH1_SL2
+FMCom_setTLD_CH2_SL2
+FMCom_setTLD_CH0_SL3
+FMCom_setTLD_CH1_SL3
+FMCom_setTLD_CH2_SL3
+
+            LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
+            PUSH    HL                      ; set as return address     ' 11    | 31 (80)
+            JP      FM_setTLDelta           ;                           ' 10    |
+
+FM_setTLDelta                               ;                           ' 80
+            AND     $F                      ; keep channel and slot     ' 7     |
+            LD      E, A                    ; save in E (base reg)      ' 4     | 22 (102)
+            LD      IYH, FM_STATE_H         ; base FM state H           ' 11    |
+
+            readCmdBuf                      ; A = data                  ' 11    | (113)
+
+            RRA                             ; A >>= 1                   ' 4     |
+            LD      D, A                    ; D = data                  ' 4     | 18 (131)
+            JP      C, .port1               ; data.b0 = port            ' 10    |
+
+.port0
+            LD      A, FM0_STATE_L          ; base FM state L           ' 7     |
+            ADD     E                       ; A = &FM_STATE[ch]         ' 4     | 33 (164)
+            LD      IYL, A                  ; IY = &FM_STATE[ch]        ' 8     |
+            LD      HL, YMPORT0             ; HL = YM0                  ' 10    |
+
+            SAMPLE_OUTPUT_FASTCALL          ;                           ' +
+
+            LD      A, D                    ; A = data                  ' 4     |
+            RRA                             ; A >>= 1                   ' 4     | (18)
+            JP      C, .p0sub               ; data.b1 = op              ' 10    |
+
+.p0add
+            AND     $3F                     ;                           ' 7     |
+            INC     A                       ; A = TL delta              ' 4     |
+            ADD     (IY+FM_STATE_OP_TL)     ; add to current TL         ' 19    | 53 (71)
+            LD      (IY+FM_STATE_OP_TL), A  ; save TL state             ' 19    |
+            LD      D, A                    ; D = new TL                ' 4     |
+
+            JP      updateTLFastFunc        ; update TL, RET to (SP)    ' 104-7 | (168)
+
+.p0sub                                      ;                           ' 18
+            AND     $3F                     ;                           ' 7     |
+            INC     A                       ; A = TL delta              ' 4     |
+            LD      D, A                    ; D = TL delta              ' 4     | 61 (79)
+            LD      A, (IY+FM_STATE_OP_TL)  ; A  current TL             ' 19    |
+            SUB     D                       ; sub from current TL       ' 4     |
+            LD      (IY+FM_STATE_OP_TL), A  ; save TL state             ' 19    |
+            LD      D, A                    ; D = new TL                ' 4     |
+
+            JP      updateTLFastFunc        ; update TL, RET to (SP)    ' 104-7 | (176)
+
+.port1                                      ;                           ' 131
+            LD      A, FM1_STATE_L          ; base FM state L           ' 7     |
+            ADD     E                       ; A = &FM_STATE[ch]         ' 4     | 33 (164)
+            LD      IYL, A                  ; IY = &FM_STATE[ch]        ' 8     |
+            LD      HL, YMPORT2             ; HL = YM2                  ' 10    |
+
+            SAMPLE_OUTPUT_FASTCALL          ;                           ' +
+
+            LD      A, D                    ; A = data                  ' 4     |
+            RRA                             ; A >>= 1                   ' 4     | (18)
+            JP      C, .p1sub               ; data.b1 = op              ' 10    |
+
+.p1add
+            AND     $3F                     ;                           ' 7     |
+            INC     A                       ; A = TL delta              ' 4     |
+            ADD     (IY+FM_STATE_OP_TL)     ; add to current TL         ' 19    | 53 (71)
+            LD      (IY+FM_STATE_OP_TL), A  ; save TL state             ' 19    |
+            LD      D, A                    ; D = new TL                ' 4     |
+
+            JP      updateTLFastFunc        ; update TL, RET to (SP)    ' 104-7 | (168)
+
+.p1sub                                      ;                           ' 18
+            AND     $3F                     ;                           ' 7     |
+            INC     A                       ; A = TL delta              ' 4     |
+            LD      D, A                    ; D = TL delta              ' 4     | 61 (79)
+            LD      A, (IY+FM_STATE_OP_TL)  ; A  current TL             ' 19    |
+            SUB     D                       ; sub from current TL       ' 4     |
+            LD      (IY+FM_STATE_OP_TL), A  ; save TL state             ' 19    |
+            LD      D, A                    ; D = new TL                ' 4     |
+
+            JP      updateTLFastFunc        ; update TL, RET to (SP)    ' 104-7 | (176)
+
+
+FMCom_setTLDelta_W                          ;                           ' 59
+;-----------------
+FMCom_setTLD_CH0_SL0_W
+FMCom_setTLD_CH1_SL0_W
+FMCom_setTLD_CH2_SL0_W
+FMCom_setTLD_CH0_SL1_W
+FMCom_setTLD_CH1_SL1_W
+FMCom_setTLD_CH2_SL1_W
+FMCom_setTLD_CH0_SL2_W
+FMCom_setTLD_CH1_SL2_W
+FMCom_setTLD_CH2_SL2_W
+FMCom_setTLD_CH0_SL3_W
+FMCom_setTLD_CH1_SL3_W
+FMCom_setTLD_CH2_SL3_W
+
+            LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
+            PUSH    HL                      ; set as return address     ' 11    | 31 (70)
+            JP      FM_setTLDelta           ;                           ' 10    |
+
+
+FMCom_setRegs                               ;                           ' 59
+;------------
+FMCom_setRegs0_N1
+FMCom_setRegs0_N2
+FMCom_setRegs0_N3
+FMCom_setRegs0_N4
+FMCom_setRegs0_N5
+FMCom_setRegs0_N6
+FMCom_setRegs0_N7
+FMCom_setRegs0_N8
+            AND     7                       ;                           ' 7     |
+            INC     A                       ;                           ' 4     |
+            LD      IXH, A                  ; IXH = (cmd & 7) +1 = num  ' 8     | 46 (105)
+            LD      HL, YMPORT0             ; HL = YM port              ' 10    |
+            LD      A, FM0_STATE_L          ; code auto modificaton     ' 7     |
+            JP      FM_setRegs              ;                           ' 10    |
+
+FMCom_setRegs1_N1
+FMCom_setRegs1_N2
+FMCom_setRegs1_N3
+FMCom_setRegs1_N4
+FMCom_setRegs1_N5
+FMCom_setRegs1_N6
+FMCom_setRegs1_N7
+FMCom_setRegs1_N8
+            AND     7                       ;                           ' 7     |
+            INC     A                       ;                           ' 4     |
+            LD      IXH, A                  ; IXH = (cmd & 7) +1 = num  ' 8     | 46 (105)
+            LD      HL, YMPORT2             ; HL = YM port              ' 10    |
+            LD      A, FM1_STATE_L          ; code auto modificaton     ' 7     |
+            JP      FM_setRegs              ;                           ' 10    |
+
+FM_setRegs                                  ;                           ' 105
+            LD      IYH, FM_STATE_H                         ; set IY    ' 11    |
+            LD      (FM_setRegs.set_slrr_fm_state_l+1), A   ;           ' 13    |
+            LD      (FM_setRegs.set_algo_fm_state_l+1), A   ;           ' 13    | 50 (155)
+            LD      (FM_setRegs.set_pan_fm_state_l+1), A    ;           ' 13    |
+
+.loop
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            readCmdBuf                  ; A = reg                   ' 11    |
+            LD      E, A                ; E = reg                   ' 4     | (15)
+
+            AND     $FC                 ; A = reg & $FC             ' 7     |
+            CP      $B0                 ;                           ' 7     |
+            JR      Z, .set_algo        ; == $B0 ? --> set algo     ' 7     | 28 (43)
+            JR      NC, .set_pan        ; == $B4 ? --> set pan      ' 7     |
+
+            AND     $F0                 ; A = reg & $F0             ' 7     |
+            CP      $80                 ;                           ' 7     | 21 (64)
+            JR      Z, .set_slrr        ; == $80 ? --> set slrr     ' 7     |
+                                        ;   others ? --> reg set
+.set
+            LD      (HL), E             ; write reg                 ' 7     | 11 (75)
+            INC     L                   ;                           ' 4     |
+
+            readCmdBuf                  ; A = value                 ' 11    |
+            LD      (HL), A             ; write value               ' 7     | 22 (97)
+            DEC     L                   ;                           ' 4     |
+
+            DEC     IXH                 ; num--                     ' 8     | 18 (115)
+            JP      NZ, .loop           ; while(num--);             ' 10    |
+
+            JP      FM_nextFrame_loop   ; next                      ' 10    | (125)
+
+.set_slrr                               ;                           ' 69
+            LD      A, E                ; A = reg                   ' 4     |
+            AND     $F                  ; A = base reg (slot*4+ch)  ' 7     |
+            LD      E, A                ; E = base reg              ' 4     | 30 (99)
+
+.set_slrr_fm_state_l
+            ADD     FM_STATE_L          ; A = &FM_STATE[sl+ch]      ' 7     |
+            LD      IYL, A              ; IY = &FM_STATE[sl+ch]     ' 8     |
+
+            readCmdBuf                  ; A = value                 ' 11    |
+            LD      D, A                ; D = SLRR                  ' 4     | 15 (114)
+
+            LD      (IY+FM_STATE_OP_SLRR), D    ; store SLRR value  ' 19    | (133)
+
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            updateSLRRFast 0            ;                           ' 126   | (126)
+
+            DEC     IXH                 ; num--                     ' 8     | 18 (144)
+            JP      NZ, .loop           ; while(num--);             ' 10    |
+
+            JP      FM_nextFrame_loop   ; next                      ' 10    | (154)
+
+.set_algo                               ;                           ' 41
+            LD      D, E                ; D = reg                   ' 4     | (45)
+
+            LD      A, E                ; A = reg                   ' 4     |
+            AND     $3                  ; A = base reg (ch)         ' 7     | 15 (60)
+            LD      E, A                ; E = base reg (ch)         ' 4     |
+
+.set_algo_fm_state_l
+            ADD     FM_STATE_L          ; A = &FM_STATE[ch]         ' 7     | 15 (75)
+            LD      IYL, A              ; IY = &FM_STATE[ch]        ' 8     |
+
+            LD      (HL), D             ; write reg                 ' 7     | 11 (86)
+            INC     L                   ;                           ' 4     |
+
+            readCmdBuf                  ; A = value                 ' 11    |
+            LD      (HL), A             ; write value               ' 7     | 22 (108)
+            DEC     L                   ;                           ' 4     |
+
+            AND     $7                          ; A = algo          ' 7     |
+            LD      (IY+FM_STATE_CH_ALGO), A    ; store algo        ' 19    | 26 (134)
+
+            SAMPLE_OUTPUT_FASTCALL      ;
+
+            CALL    FM_updateAtt        ; update attenuation for ch ' 6s + 155
+
+            DEC     IXH                 ; num--                     ' 8     | 18 (173)
+            JP      NZ, .loop           ; while(num--);             ' 10    |
+
+            JP      FM_nextFrame_loop   ; next                      ' 10    | (183)
+
+.set_pan                                ;                           ' 48
+            LD      A, E                ; A = reg                   ' 4     |
+            AND     $3                  ; A = base reg (ch)         ' 7     |
+.set_pan_fm_state_l
+            ADD     FM_STATE_L          ; A = &FM_STATE[ch]         ' 7     |
+            LD      IYL, A              ; IY = &FM_STATE[ch]        ' 8     |
+
+            LD      (HL), E             ; write reg                 ' 7     | 11 (75)
+            INC     L                   ;                           ' 4     |
+
+            readCmdBuf                  ; A = value                 ' 11    |
+            LD      (HL), A             ; write value               ' 7     | 22 (97)
+            DEC     L                   ;                           ' 4     |
+
+            LD      (IY+FM_STATE_CH_PAN), A     ; store PAN+FMS     ' 19    | (63)
+
+            DEC     IXH                 ; num--                     ' 8     | 18 (115)
+            JP      NZ, .loop           ; while(num--);             ' 10    |
+
+            JP      FM_nextFrame_loop   ; next                      ' 10    | (125)
+
+
+FMCom_frameDelay                            ;                           ' 59
+;---------------
+
+; fixme: this will desync FM and PSG streams
+;            LD      HL, PENDING_FRAME       ; HL = &PENDING_FRAME       ' 10    |
+;            INC     (HL)                    ; PENDING_FRAME++           ' 11    | 31
+
+            JP      FM_nextFrame_done       ; next                      ' 10    |
+
+
+FMCom_keyAdv                                ;                           ' 59
+;-----------
+            readCmdBuf                      ; A = key data              ' 11    | (70)
+
+            CALL    FM_keyFunc              ; key adv                   ' 58    | (128)
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (138)
+
+
+FMCom_LFO                                   ;                           ' 59
+;--------
+            readCmdBuf                      ; A = key data              ' 11    |
+
+            LD      HL, YMPORT0             ;                           ' 10    |
+            LD      (HL), $22               ;                           ' 10    |
+            INC     L                       ; next port                 ' 4     | 18
+            LD      (HL), A                 ; write value               ' 7     |
+
+            JP      FM_nextFrame_loop       ; next                      ' 10    |
+
+
+FMCom_enableCH2SpeMode                      ;                           ' 59
+;---------------------
+            FM_enableCH3Spe                 ;                           ' 45
+            JP      FM_nextFrame_loop       ; next                      ' 10    |
+
+
+FMCom_disableCH2SpeMode                     ;                           ' 59
+;----------------------
+            FM_disableCH3Spe                ;                           ' 45
+            JP      FM_nextFrame_loop       ; next                      ' 10    |
+
+
+FMCom_enableDAC                             ;                           ' 59
+;--------------
+            LD      HL, DAC_ENABLE          ;                           ' 10    |
+            LD      (HL), $80               ;                           ' 10    |
+            JP      FM_nextFrame_loop       ; next                      ' 10    |
+
+
+FMCom_disableDAC                            ;                           ' 59
+;---------------
+            LD      HL, DAC_ENABLE          ;                           ' 10    |
+            LD      (HL), $00               ;                           ' 10    |
+            JP      FM_nextFrame_loop       ; next                      ' 10    |
+
+
+FMCom_loop                                  ;                           ' 59
+;---------
+            readU24CmdBuf_DE                ;                           ' 41    | (100)
+
+            LD      H, A                    ; H = A                     ' 4     |
+            AND     D                       ;                           ' 4     |
+            AND     E                       ;                           ' 4     | 26 (126)
+            CP      $FF                     ; loop point = $FFFFFF ?    ' 7     |
+            JR      Z, .no_loop             ;                           ' 7     |
+
+            LD      A, H                    ; restore A = high byte     ' 4     |
+            LD      HL, FM_CUR_ADDR+0       ;                           ' 10    | 21 (147)
+            LD      (HL), E                 ; store low byte            ' 7     |
+
+            LD      E, D                    ;                           ' 4     |
+            LD      D, A                    ; DE = loop.b23-b8          ' 4     | 8 (155)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      HL, (FM_START_ADDR)     ; get start FM address      ' 16    |
+            ADD     HL, DE                  ; add loop point            ' 11    | (43)
+            LD      (FM_CUR_ADDR+1), HL     ; store                     ' 16    |
+
+; we handle remaining loop and clear playing state on PSG frame
+
+.no_loop                                    ;                           ' 131
+            JP      FM_nextFrame_done       ; done                      ' 10    | (106)
+
+
+FMCom_null                                  ;                           ' 59
+;---------
+ JP FMCom_null
+
+
+FM_nextFrame_done
+            sampleOutput
+
+            LD      A, C                    ; A = &src                  ' 4     |
+            LD      (FM_BUF_RD_POS), A      ; save &src                 ' 13    | (17)
+
+            RET                             ;                           ' 10    | (27)

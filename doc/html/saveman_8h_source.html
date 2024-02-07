@@ -89,23 +89,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00065"></a>00065 <span class="preprocessor">#include &quot;<a class="code" href="types_8h.html" title="Types definition.">types.h</a>&quot;</span>
 <a name="l00066"></a>00066 
 <a name="l00071"></a>00071 <span class="keyword">enum</span> {
-<a name="l00072"></a><a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a8f58745625a80b05e34dfaf2405477d7">00072</a>         <a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a8f58745625a80b05e34dfaf2405477d7" title="Invalid parameter in function call.">SM_STAT_PARAM_ERR</a> = -3,   
-<a name="l00073"></a><a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a9812c9de7d103a0fc16c04fdd6521349">00073</a>         <a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a9812c9de7d103a0fc16c04fdd6521349" title="Flash chip hardware related error.">SM_STAT_HW_ERR</a> = -2,      
-<a name="l00074"></a><a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a21188001758b83ffe2b2aef3acc1fc39">00074</a>         <a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a21188001758b83ffe2b2aef3acc1fc39" title="Generic error.">SM_STAT_ERR</a> = -1,         
-<a name="l00075"></a><a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a67bdb3762b1e6c3df99eefc7e8e578d1">00075</a>         <a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409a67bdb3762b1e6c3df99eefc7e8e578d1" title="Success.">SM_STAT_OK</a> = 0,           
-<a name="l00076"></a><a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409ad9e4b0748c1aaaab37f4f076fd08c111">00076</a>         <a class="code" href="saveman_8h.html#adb49720dc49f7d4e4cf9adbf2948e409ad9e4b0748c1aaaab37f4f076fd08c111" title="Success, chip has no data saved.">SM_STAT_WARN_NO_DATA</a> = 1, 
+<a name="l00072"></a><a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba8f58745625a80b05e34dfaf2405477d7">00072</a>         <a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba8f58745625a80b05e34dfaf2405477d7" title="Invalid parameter in function call.">SM_STAT_PARAM_ERR</a> = -3,   
+<a name="l00073"></a><a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba9812c9de7d103a0fc16c04fdd6521349">00073</a>         <a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba9812c9de7d103a0fc16c04fdd6521349" title="Flash chip hardware related error.">SM_STAT_HW_ERR</a> = -2,      
+<a name="l00074"></a><a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba21188001758b83ffe2b2aef3acc1fc39">00074</a>         <a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba21188001758b83ffe2b2aef3acc1fc39" title="Generic error.">SM_STAT_ERR</a> = -1,         
+<a name="l00075"></a><a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba67bdb3762b1e6c3df99eefc7e8e578d1">00075</a>         <a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55ba67bdb3762b1e6c3df99eefc7e8e578d1" title="Success.">SM_STAT_OK</a> = 0,           
+<a name="l00076"></a><a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55bad9e4b0748c1aaaab37f4f076fd08c111">00076</a>         <a class="code" href="saveman_8h.html#a06fc87d81c62e9abb8790b6e5713c55bad9e4b0748c1aaaab37f4f076fd08c111" title="Success, chip has no data saved.">SM_STAT_WARN_NO_DATA</a> = 1, 
 <a name="l00077"></a>00077 };
-<a name="l00109"></a>00109 int16_t sm_init(uint8_t num_slots, uint32_t max_length_restrict);
+<a name="l00109"></a>00109 int16_t <a class="code" href="saveman_8h.html#aea5aa44166712ef212ea531afb132aaa" title="Initialise save manager module. Must be called once before invoking any other function in the module...">sm_init</a>(uint8_t num_slots, uint32_t max_length_restrict);
 <a name="l00110"></a>00110 
-<a name="l00115"></a>00115 <span class="keywordtype">void</span> sm_deinit(<span class="keywordtype">void</span>);
+<a name="l00115"></a>00115 <span class="keywordtype">void</span> <a class="code" href="saveman_8h.html#ab82cb9f2900320362ae3da11b5fae4bd" title="Deinitialises save manager module. Usually you do not have to use this function.">sm_deinit</a>(<span class="keywordtype">void</span>);
 <a name="l00116"></a>00116 
-<a name="l00132"></a>00132 int16_t sm_load(uint8_t slot, <span class="keywordtype">void</span> *save_data, uint16_t len);
+<a name="l00132"></a>00132 int16_t <a class="code" href="saveman_8h.html#a0c9087501542b3e56d11423691517ad3" title="Load previously saved data for the specified slot.">sm_load</a>(uint8_t slot, <span class="keywordtype">void</span> *save_data, uint16_t len);
 <a name="l00133"></a>00133 
-<a name="l00150"></a>00150 int16_t sm_save(uint8_t slot, <span class="keyword">const</span> <span class="keywordtype">void</span> *save_data, uint16_t len);
+<a name="l00150"></a>00150 int16_t <a class="code" href="saveman_8h.html#a403471888fcf12c2a05ffbd5e9f793e3" title="Save data to the specified slot.">sm_save</a>(uint8_t slot, <span class="keyword">const</span> <span class="keywordtype">void</span> *save_data, uint16_t len);
 <a name="l00151"></a>00151 
-<a name="l00165"></a>00165 int16_t sm_delete(uint8_t slot);
+<a name="l00165"></a>00165 int16_t <a class="code" href="saveman_8h.html#aecbfbe454f6a346bff62c20bb16e9200" title="Delete data from specified slot.">sm_delete</a>(uint8_t slot);
 <a name="l00166"></a>00166 
-<a name="l00179"></a>00179 int16_t sm_clear(uint8_t num_slots);
+<a name="l00179"></a>00179 int16_t <a class="code" href="saveman_8h.html#a8f81af86413768eb71f02b10a0dbde24" title="Deletes all save data from all save slots, and reinitializes the module to support the requested numb...">sm_clear</a>(uint8_t num_slots);
 <a name="l00180"></a>00180 
 <a name="l00181"></a>00181 <span class="preprocessor">#endif</span>
 </pre></div></div>
@@ -113,7 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="saveman_8h.html">saveman.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

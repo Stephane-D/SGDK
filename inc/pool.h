@@ -70,7 +70,7 @@ typedef struct
  *  \param size
  *      the capacity of the pool (in number of object)
  *  \param objectSize
- *      the size of a single object (usually you should use sizeof(Struct) here)
+ *      the size of a single object (usually you should use sizeof(Struct) here, always aligned on 2)
  *
  *  \return the new created object pool or NULL if there is not enough memory available for that.
  *

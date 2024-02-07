@@ -262,7 +262,7 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#af876df5e9ed2fb62aee3a3b2d5606ae5">VDP_READ_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x20)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to read specified CRAM address. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45b4531656ab1d3b63fa284246f04410"></a><!-- doxytag: member="vdp.h::VDP_READ_VSRAM_ADDR" ref="a45b4531656ab1d3b63fa284246f04410" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410">VDP_READ_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x10)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410">VDP_READ_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x0000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x10)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to read specified VSRAM address. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a16ff3788c4e0b08c02c8c03c8da8e72a"></a><!-- doxytag: member="vdp.h::VDP_WRITE_VRAM_ADDR" ref="a16ff3788c4e0b08c02c8c03c8da8e72a" args="(adr)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a16ff3788c4e0b08c02c8c03c8da8e72a">VDP_WRITE_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x00))</td></tr>
@@ -271,7 +271,7 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a1d3395f0c240aae67eaffac1269518a1">VDP_WRITE_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0xC000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x00)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to write at specified CRAM address. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a906c7c50f3c18bbb59bace55eb6ce2dc"></a><!-- doxytag: member="vdp.h::VDP_WRITE_VSRAM_ADDR" ref="a906c7c50f3c18bbb59bace55eb6ce2dc" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc">VDP_WRITE_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x10)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc">VDP_WRITE_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x10)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to write at specified VSRAM address. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a5e869153ef327d51d442d4802f5eb3"></a><!-- doxytag: member="vdp.h::VDP_DMA_VRAM_ADDR" ref="a9a5e869153ef327d51d442d4802f5eb3" args="(adr)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9a5e869153ef327d51d442d4802f5eb3">VDP_DMA_VRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0x80))</td></tr>
@@ -280,7 +280,7 @@ Defines</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a8a6336a6fa031853ef44c054a7d24b5b">VDP_DMA_CRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0xC000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x80)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to issue a DMA transfert to specified CRAM address. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26eb6aef0ef7b9e8a0b531d7d8cbedb7"></a><!-- doxytag: member="vdp.h::VDP_DMA_VSRAM_ADDR" ref="a26eb6aef0ef7b9e8a0b531d7d8cbedb7" args="(adr)" -->
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7">VDP_DMA_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3F)) &lt;&lt; 16) + 0x90)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7">VDP_DMA_VSRAM_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x7F)) &lt;&lt; 16) + 0x90)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set VDP command to issue a DMA transfert to specified VSRAM address. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aececd479f9187438f4396754210a07a4"></a><!-- doxytag: member="vdp.h::VDP_DMA_VRAMCOPY_ADDR" ref="aececd479f9187438f4396754210a07a4" args="(adr)" -->
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aececd479f9187438f4396754210a07a4">VDP_DMA_VRAMCOPY_ADDR</a>(adr)&#160;&#160;&#160;(((0x4000 + ((adr) &amp; 0x3FFF)) &lt;&lt; 16) + (((adr) &gt;&gt; 14) | 0xC0))</td></tr>
@@ -396,19 +396,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa386e5c1e9f8b58f6eda6c0d7221b4fe"></a><!-- doxytag: member="vdp.h::VDP_getDMAEnabled" ref="aa386e5c1e9f8b58f6eda6c0d7221b4fe" args="(void)" -->
 <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#aa386e5c1e9f8b58f6eda6c0d7221b4fe">VDP_getDMAEnabled</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns DMA enabled state. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a7f22fce440398b421d38a4fe61bd4a6d">VDP_setDMAEnabled</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set DMA enabled state.  <a href="#a7f22fce440398b421d38a4fe61bd4a6d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ad29af709591ee5a677fa6fb5af8015ad">VDP_setDMAEnabled</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set DMA enabled state.  <a href="#ad29af709591ee5a677fa6fb5af8015ad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5bfc9079b19f752040c1a60f4d32c6a1"></a><!-- doxytag: member="vdp.h::VDP_getHVLatching" ref="a5bfc9079b19f752040c1a60f4d32c6a1" args="(void)" -->
 <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a5bfc9079b19f752040c1a60f4d32c6a1">VDP_getHVLatching</a> (void)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns HV counter latching on INT2 (used for light gun) <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a52ac795bc29bd3eab88ff525b100bf01">VDP_setHVLatching</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set HV counter latching on INT2 (used for light gun)  <a href="#a52ac795bc29bd3eab88ff525b100bf01"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a29fb3e82bf904d2ee77e7b63f56b40c4">VDP_setHInterrupt</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable Horizontal interrupt.  <a href="#a29fb3e82bf904d2ee77e7b63f56b40c4"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a97449faee3b78cf8891a36491f343b25">VDP_setExtInterrupt</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable External interrupt.  <a href="#a97449faee3b78cf8891a36491f343b25"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a002987d1c2379698f996ae9d5408aaa9"></a><!-- doxytag: member="vdp.h::VDP_setHilightShadow" ref="a002987d1c2379698f996ae9d5408aaa9" args="(u8 value)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a002987d1c2379698f996ae9d5408aaa9">VDP_setHilightShadow</a> (<a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a> value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4070f535729f03fe33e999a56b6f6f2e">VDP_setHVLatching</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set HV counter latching on INT2 (used for light gun)  <a href="#a4070f535729f03fe33e999a56b6f6f2e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a4ce069e42e1994959ba11c9897946abf">VDP_setVInterrupt</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable Vertical interrupt (it's *strongly* recommanded to keep it enabled).  <a href="#a4ce069e42e1994959ba11c9897946abf"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a231f8133b066e92447e1a1dd4d7ce692">VDP_setHInterrupt</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable Horizontal interrupt.  <a href="#a231f8133b066e92447e1a1dd4d7ce692"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ab184911babdbbd7f7a81d2b1034eaa58">VDP_setExtInterrupt</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable External interrupt.  <a href="#ab184911babdbbd7f7a81d2b1034eaa58"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9ee0adbde6ec1e0229fc4a774647624"></a><!-- doxytag: member="vdp.h::VDP_setHilightShadow" ref="ae9ee0adbde6ec1e0229fc4a774647624" args="(bool value)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#ae9ee0adbde6ec1e0229fc4a774647624">VDP_setHilightShadow</a> (<a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a> value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or Disable Hilight / Shadow effect. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9032ca023b746a6fffe44ff282e8d7e0"></a><!-- doxytag: member="vdp.h::VDP_getHIntCounter" ref="a9032ca023b746a6fffe44ff282e8d7e0" args="(void)" -->
 <a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vdp_8h.html#a9032ca023b746a6fffe44ff282e8d7e0">VDP_getHIntCounter</a> (void)</td></tr>
@@ -562,7 +564,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000051">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a43c7208da604ffd6142c4e51723a9ac7" title="VDP Control port address.">VDP_CTRL_PORT</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000046">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a43c7208da604ffd6142c4e51723a9ac7" title="VDP Control port address.">VDP_CTRL_PORT</a> instead </dd></dl>
 
 </div>
 </div>
@@ -576,7 +578,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000050">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af25e39e450f3dab28ced3410d09a724f" title="VDP Data port address.">VDP_DATA_PORT</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000045">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af25e39e450f3dab28ced3410d09a724f" title="VDP Data port address.">VDP_DATA_PORT</a> instead </dd></dl>
 
 </div>
 </div>
@@ -594,7 +596,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000074">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a8a6336a6fa031853ef44c054a7d24b5b" title="Set VDP command to issue a DMA transfert to specified CRAM address.">VDP_DMA_CRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000069">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a8a6336a6fa031853ef44c054a7d24b5b" title="Set VDP command to issue a DMA transfert to specified CRAM address.">VDP_DMA_CRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -612,7 +614,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000073">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a9a5e869153ef327d51d442d4802f5eb3" title="Set VDP command to issue a DMA transfert to specified VRAM address.">VDP_DMA_VRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000068">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a9a5e869153ef327d51d442d4802f5eb3" title="Set VDP command to issue a DMA transfert to specified VRAM address.">VDP_DMA_VRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -630,7 +632,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000076">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#aececd479f9187438f4396754210a07a4" title="Set VDP command to issue a DMA VRAM copy to specified VRAM address.">VDP_DMA_VRAMCOPY_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000071">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#aececd479f9187438f4396754210a07a4" title="Set VDP command to issue a DMA VRAM copy to specified VRAM address.">VDP_DMA_VRAMCOPY_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -648,7 +650,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000075">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7" title="Set VDP command to issue a DMA transfert to specified VSRAM address.">VDP_DMA_VSRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000070">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a26eb6aef0ef7b9e8a0b531d7d8cbedb7" title="Set VDP command to issue a DMA transfert to specified VSRAM address.">VDP_DMA_VSRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -666,7 +668,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000078">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#abaf9a4581d581851eee5d3be9c132a53" title="Helper to write in horizontal scroll table (same as VDP_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr))...">VDP_HORZ_SCROLL</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000073">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#abaf9a4581d581851eee5d3be9c132a53" title="Helper to write in horizontal scroll table (same as VDP_WRITE_VRAM_ADDR(VDP_SCROLL_H + adr))...">VDP_HORZ_SCROLL</a> instead </dd></dl>
 
 </div>
 </div>
@@ -680,7 +682,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000052">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a6fd7212ab170a443763ee2b15c0b4eec" title="VDP HV counter port address.">VDP_HVCOUNTER_PORT</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000047">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a6fd7212ab170a443763ee2b15c0b4eec" title="VDP HV counter port address.">VDP_HVCOUNTER_PORT</a> instead </dd></dl>
 
 </div>
 </div>
@@ -698,7 +700,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000068">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af876df5e9ed2fb62aee3a3b2d5606ae5" title="Set VDP command to read specified CRAM address.">VDP_READ_CRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000063">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af876df5e9ed2fb62aee3a3b2d5606ae5" title="Set VDP command to read specified CRAM address.">VDP_READ_CRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -716,7 +718,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000067">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af0d8887ddb0fe7fa0b5c48891cf97ac7" title="Set VDP command to read specified VRAM address.">VDP_READ_VRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000062">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#af0d8887ddb0fe7fa0b5c48891cf97ac7" title="Set VDP command to read specified VRAM address.">VDP_READ_VRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -734,7 +736,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000069">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410" title="Set VDP command to read specified VSRAM address.">VDP_READ_VSRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000064">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a45b4531656ab1d3b63fa284246f04410" title="Set VDP command to read specified VSRAM address.">VDP_READ_VSRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -752,7 +754,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000077">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a05b2d1e04f693321b9cbcb0907a1c34b" title="Helper to write in vertical scroll table (same as VDP_WRITE_VSRAM_ADDR).">VDP_VERT_SCROLL</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000072">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a05b2d1e04f693321b9cbcb0907a1c34b" title="Helper to write in vertical scroll table (same as VDP_WRITE_VSRAM_ADDR).">VDP_VERT_SCROLL</a> instead </dd></dl>
 
 </div>
 </div>
@@ -770,7 +772,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000071">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1d3395f0c240aae67eaffac1269518a1" title="Set VDP command to write at specified CRAM address.">VDP_WRITE_CRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000066">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1d3395f0c240aae67eaffac1269518a1" title="Set VDP command to write at specified CRAM address.">VDP_WRITE_CRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -788,7 +790,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000070">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a16ff3788c4e0b08c02c8c03c8da8e72a" title="Set VDP command to write at specified VRAM address.">VDP_WRITE_VRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000065">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a16ff3788c4e0b08c02c8c03c8da8e72a" title="Set VDP command to write at specified VRAM address.">VDP_WRITE_VRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -806,7 +808,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000072">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc" title="Set VDP command to write at specified VSRAM address.">VDP_WRITE_VSRAM_ADDR</a> instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000067">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a906c7c50f3c18bbb59bace55eb6ce2dc" title="Set VDP command to write at specified VSRAM address.">VDP_WRITE_VSRAM_ADDR</a> instead </dd></dl>
 
 </div>
 </div>
@@ -820,7 +822,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000063">Deprecated:</a></b></dt><dd>Use TILE_FONT_INDEX instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000058">Deprecated:</a></b></dt><dd>Use TILE_FONT_INDEX instead </dd></dl>
 
 </div>
 </div>
@@ -834,7 +836,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000058">Deprecated:</a></b></dt><dd>Use TILE_MAX_INDEX instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000053">Deprecated:</a></b></dt><dd>Use TILE_MAX_INDEX instead </dd></dl>
 
 </div>
 </div>
@@ -848,7 +850,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000057">Deprecated:</a></b></dt><dd>Use TILE_MAX_NUM instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000052">Deprecated:</a></b></dt><dd>Use TILE_MAX_NUM instead </dd></dl>
 
 </div>
 </div>
@@ -862,7 +864,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000064">Deprecated:</a></b></dt><dd>Use TILE_SPRITE_INDEX instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000059">Deprecated:</a></b></dt><dd>Use TILE_SPRITE_INDEX instead </dd></dl>
 
 </div>
 </div>
@@ -876,7 +878,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000059">Deprecated:</a></b></dt><dd>Use TILE_SYSTEM_LENGTH instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000054">Deprecated:</a></b></dt><dd>Use TILE_SYSTEM_LENGTH instead. </dd></dl>
 
 </div>
 </div>
@@ -890,7 +892,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000061">Deprecated:</a></b></dt><dd>Use TILE_SYSTEM_INDEX instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000056">Deprecated:</a></b></dt><dd>Use TILE_SYSTEM_INDEX instead </dd></dl>
 
 </div>
 </div>
@@ -904,7 +906,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000060">Deprecated:</a></b></dt><dd>Use TILE_SYSTEM_LENGTH instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000055">Deprecated:</a></b></dt><dd>Use TILE_SYSTEM_LENGTH instead </dd></dl>
 
 </div>
 </div>
@@ -918,7 +920,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000062">Deprecated:</a></b></dt><dd>Use TILE_USER_INDEX instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000057">Deprecated:</a></b></dt><dd>Use TILE_USER_INDEX instead </dd></dl>
 
 </div>
 </div>
@@ -932,7 +934,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000065">Deprecated:</a></b></dt><dd>Use TILE_USER_LENGTH instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000060">Deprecated:</a></b></dt><dd>Use TILE_USER_LENGTH instead </dd></dl>
 
 </div>
 </div>
@@ -946,7 +948,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000066">Deprecated:</a></b></dt><dd>Use TILE_USER_MAX_INDEX instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000061">Deprecated:</a></b></dt><dd>Use TILE_USER_MAX_INDEX instead </dd></dl>
 
 </div>
 </div>
@@ -963,7 +965,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000080">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a89bad8fd6ce45c310c454d29ae70895a" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000075">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a89bad8fd6ce45c310c454d29ae70895a" title="Get VRAM address (location) of BG A tilemap.">VDP_getBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -980,7 +982,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000081">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a8eb5aae56c10ba7a59a734045efd9ff8" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000076">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a8eb5aae56c10ba7a59a734045efd9ff8" title="Get VRAM address (location) of BG B tilemap.">VDP_getBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -997,7 +999,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000082">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ae58c52ccd92cb55fe3d3c32388b1e945" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000077">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ae58c52ccd92cb55fe3d3c32388b1e945" title="Get VRAM address (location) of Window tilemap.">VDP_getWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1011,7 +1013,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000053">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000048">Deprecated:</a></b></dt><dd>Use VDP_BG_A instead </dd></dl>
 
 </div>
 </div>
@@ -1025,7 +1027,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000054">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000049">Deprecated:</a></b></dt><dd>Use VDP_BG_B instead </dd></dl>
 
 </div>
 </div>
@@ -1039,7 +1041,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000055">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000050">Deprecated:</a></b></dt><dd>Use VDP_WINDOW instead </dd></dl>
 
 </div>
 </div>
@@ -1057,7 +1059,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000083">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000078">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a368d0330d36c7f2801b88e6dbeb9e23a" title="Set VRAM address (location) of BG A tilemap. The address should be at multiple of $2000    Ex:  VDP_s...">VDP_setBGAAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1075,7 +1077,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000084">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000079">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a111fd5c20e11199f3000e5495974c364" title="Set VRAM address (location) of BG B tilemap.  The address should be at multiple of $2000    Ex:  VDP_...">VDP_setBGBAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1103,7 +1105,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000079">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000074">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#ad46064f4e0eb6c7359e3a107cbed9fbe" title="Set background plane size (in tile).  WARNING: take attention to properly setup VRAM so tilemaps has ...">VDP_setPlaneSize</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1121,7 +1123,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000085">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000080">Deprecated:</a></b></dt><dd>Use <a class="el" href="vdp_8h.html#a1eae215e64454a3ed819f39509e824e1" title="Set VRAM address (location) of Window tilemap.  The address should be at multiple of $1000 in H40 and...">VDP_setWindowAddress</a>(..) instead. </dd></dl>
 
 </div>
 </div>
@@ -1135,7 +1137,7 @@ Variables</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000056">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000051">Deprecated:</a></b></dt><dd>Use VSCROLL_COLUMN instead </dd></dl>
 
 </div>
 </div>
@@ -1330,14 +1332,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7f22fce440398b421d38a4fe61bd4a6d"></a><!-- doxytag: member="vdp.h::VDP_setDMAEnabled" ref="a7f22fce440398b421d38a4fe61bd4a6d" args="(u8 value)" -->
+<a class="anchor" id="ad29af709591ee5a677fa6fb5af8015ad"></a><!-- doxytag: member="vdp.h::VDP_setDMAEnabled" ref="ad29af709591ee5a677fa6fb5af8015ad" args="(bool value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setDMAEnabled </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1370,14 +1372,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a97449faee3b78cf8891a36491f343b25"></a><!-- doxytag: member="vdp.h::VDP_setExtInterrupt" ref="a97449faee3b78cf8891a36491f343b25" args="(u8 value)" -->
+<a class="anchor" id="ab184911babdbbd7f7a81d2b1034eaa58"></a><!-- doxytag: member="vdp.h::VDP_setExtInterrupt" ref="ab184911babdbbd7f7a81d2b1034eaa58" args="(bool value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setExtInterrupt </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1411,14 +1413,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a29fb3e82bf904d2ee77e7b63f56b40c4"></a><!-- doxytag: member="vdp.h::VDP_setHInterrupt" ref="a29fb3e82bf904d2ee77e7b63f56b40c4" args="(u8 value)" -->
+<a class="anchor" id="a231f8133b066e92447e1a1dd4d7ce692"></a><!-- doxytag: member="vdp.h::VDP_setHInterrupt" ref="a231f8133b066e92447e1a1dd4d7ce692" args="(bool value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setHInterrupt </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1431,14 +1433,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a52ac795bc29bd3eab88ff525b100bf01"></a><!-- doxytag: member="vdp.h::VDP_setHVLatching" ref="a52ac795bc29bd3eab88ff525b100bf01" args="(u8 value)" -->
+<a class="anchor" id="a4070f535729f03fe33e999a56b6f6f2e"></a><!-- doxytag: member="vdp.h::VDP_setHVLatching" ref="a4070f535729f03fe33e999a56b6f6f2e" args="(bool value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void VDP_setHVLatching </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="types_8h.html#ab9f930ae0484417a1883fd3f7cdb490e">u8</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1657,6 +1659,26 @@ Variables</h2></td></tr>
 <dd>
 <a class="el" href="vdp__bg_8h.html#a4e71b64bebe1c5b15b381a2314a010ec" title="Set plane vertical scroll (2-Tiles scroll mode). 2 vertical scroll modes are supported: ...">VDP_setVerticalScrollTile()</a> to set vertical scroll offset(s) in mode 2-tile.<br/>
  </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4ce069e42e1994959ba11c9897946abf"></a><!-- doxytag: member="vdp.h::VDP_setVInterrupt" ref="a4ce069e42e1994959ba11c9897946abf" args="(bool value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VDP_setVInterrupt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="types_8h.html#af6a258d8f3ee5206d682d799316314b1">bool</a>&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Enable or Disable Vertical interrupt (it's *strongly* recommanded to keep it enabled). </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="vdp_8h.html#a231f8133b066e92447e1a1dd4d7ce692" title="Enable or Disable Horizontal interrupt.">VDP_setHInterrupt()</a> </dd></dl>
 
 </div>
 </div>
@@ -1978,7 +2000,7 @@ Variables</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="vdp_8h.html">vdp.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:56 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:38 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

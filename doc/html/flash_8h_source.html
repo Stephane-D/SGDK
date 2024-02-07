@@ -102,21 +102,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00055"></a>00055         uint16_t num_regions;          <span class="comment">//&lt; Number of regions in chip</span>
 <a name="l00056"></a>00056         <span class="keyword">struct </span><a class="code" href="structflash__region.html" title="Metadata of a flash region, consisting of several sectors. /.">flash_region</a> region[FLASH_REGION_MAX]; <span class="comment">//&lt; Region data array</span>
 <a name="l00057"></a>00057 };
-<a name="l00067"></a>00067 int16_t flash_init(<span class="keywordtype">void</span>);
+<a name="l00067"></a>00067 int16_t <a class="code" href="flash_8h.html#a657aa34ab6dc1b40662457a4388dca53" title="Initialise flash chip. Call this function only once, before any other function in the module...">flash_init</a>(<span class="keywordtype">void</span>);
 <a name="l00068"></a>00068 
-<a name="l00072"></a>00072 <span class="keywordtype">void</span> flash_deinit(<span class="keywordtype">void</span>);
+<a name="l00072"></a>00072 <span class="keywordtype">void</span> <a class="code" href="flash_8h.html#ac74e7d0e8b61ccb32eba152a23aacce7" title="Deinitialise flash chip.">flash_deinit</a>(<span class="keywordtype">void</span>);
 <a name="l00073"></a>00073 
-<a name="l00079"></a>00079 <span class="keyword">const</span> <span class="keyword">struct </span><a class="code" href="structflash__chip.html" title="Metadata of a flash chip, describing memory layout.">flash_chip</a> *flash_metadata_get(<span class="keywordtype">void</span>);
+<a name="l00079"></a>00079 <span class="keyword">const</span> <span class="keyword">struct </span><a class="code" href="structflash__chip.html" title="Metadata of a flash chip, describing memory layout.">flash_chip</a> *<a class="code" href="flash_8h.html#a2a985f8d615ef37f8992318c0fc1e639" title="Get chip metadata.">flash_metadata_get</a>(<span class="keywordtype">void</span>);
 <a name="l00080"></a>00080 
-<a name="l00095"></a>00095 uint32_t flash_sector_erase(uint32_t addr);
+<a name="l00095"></a>00095 uint32_t <a class="code" href="flash_8h.html#a6d85856dc11782ae47613eb94a645974" title="Erases a flash sector. Erased sectors will be read as 0xFF.">flash_sector_erase</a>(uint32_t addr);
 <a name="l00096"></a>00096 
-<a name="l00115"></a>00115 uint16_t flash_program(uint32_t addr, <span class="keyword">const</span> uint8_t *data, uint16_t len);
+<a name="l00115"></a>00115 uint16_t <a class="code" href="flash_8h.html#a555b964d28e88d97dc9a91da99d0961a" title="Programs (writes) a data buffer to the specified flash address.">flash_program</a>(uint32_t addr, <span class="keyword">const</span> uint8_t *data, uint16_t len);
 <a name="l00116"></a>00116 
-<a name="l00130"></a>00130 int16_t flash_read(uint32_t addr, uint8_t *data, uint16_t len);
+<a name="l00130"></a>00130 int16_t <a class="code" href="flash_8h.html#ae808a5bf1adcc250c060e242f897a73f" title="Reads data from the specified flash address.">flash_read</a>(uint32_t addr, uint8_t *data, uint16_t len);
 <a name="l00131"></a>00131 
-<a name="l00148"></a>00148 int16_t flash_copy(uint32_t dst, uint32_t src, uint16_t len);
+<a name="l00148"></a>00148 int16_t <a class="code" href="flash_8h.html#afbb96a77e71d5b9b3f7c5931244e5b2a" title="Copy data from a flash region to other region also in flash.">flash_copy</a>(uint32_t dst, uint32_t src, uint16_t len);
 <a name="l00149"></a>00149 
-<a name="l00162"></a>00162 int16_t flash_sector_limits(uint32_t addr, uint32_t *start, uint32_t *next);
+<a name="l00162"></a>00162 int16_t <a class="code" href="flash_8h.html#ad608ef73b288c97fb42c6f3fbc8991bf" title="Obtains the sector limits (start of sector, start of next sector) corresponding to the specified addr...">flash_sector_limits</a>(uint32_t addr, uint32_t *start, uint32_t *next);
 <a name="l00163"></a>00163 
 <a name="l00164"></a>00164 <span class="preprocessor">#endif</span>
 </pre></div></div>
@@ -124,7 +124,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
       <li class="navelem"><a class="el" href="flash_8h.html">flash.h</a>      </li>
-      <li class="footer">Generated on Thu Jul 27 2023 23:19:55 for sgdk by&#160;
+      <li class="footer">Generated on Wed Jan 31 2024 23:59:37 for sgdk by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </li>
     </ul>

@@ -32,7 +32,7 @@ public class XgmProcessor implements Processor
             System.out.println("               -1 (default) = AUTO (NTSC or PAL depending the information in source VGM file)");
             System.out.println("                0 = NTSC (XGM is generated for NTSC system)");
             System.out.println("                1 = PAL (XGM is generated for PAL system)");
-            System.out.println("  options   optionals parameters for xgmtool");
+            System.out.println("  options   optional(s) parameter(s) for xgmtool");
             System.out.println("                ex: \"-dr -di\" to disable some sample auto process (see xgmtool to get more info)");
 
             return null;

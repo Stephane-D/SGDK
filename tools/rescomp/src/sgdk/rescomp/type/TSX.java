@@ -183,7 +183,7 @@ public class TSX
         if (tsxTilesets.isEmpty())
         {
             // create a tileset containing only a blank tile
-            tilesets.add(new Tileset(baseId + "_tileset"));
+            tilesets.add(new Tileset(baseId + "_tileset", true));
         }
         else
         {

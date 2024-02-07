@@ -1,7 +1,7 @@
 #ifndef _GENESIS_H_
 #define _GENESIS_H_
 
-#define SGDK_VERSION    1.90
+#define SGDK_VERSION    2.00
 
 #include "types.h"
 
@@ -44,11 +44,19 @@
 #include "sprite_eng.h"
 #include "sprite_eng_legacy.h"
 
-#include "sound.h"
-#include "xgm.h"
 #include "z80_ctrl.h"
 #include "ym2612.h"
 #include "psg.h"
+
+#include "snd/sound.h"
+#include "snd/xgm.h"
+#include "snd/xgm2.h"
+#include "snd/smp_null.h"
+#include "snd/smp_null_dpcm.h"
+#include "snd/pcm/snd_pcm.h"
+#include "snd/pcm/snd_dpcm2.h"
+#include "snd/pcm/snd_pcm4.h"
+
 #include "joy.h"
 #include "timer.h"
 
@@ -74,11 +82,6 @@
 
 #if (MODULE_CONSOLE != 0)
 #include "ext/console.h"
-#endif
-
-#if (MODULE_FRACTAL != 0)
-#include "ext/fractal/fractal.h"
-#include "ext/fractal/visual_dbg.h"
 #endif
 
 // preserve compatibility with old resources name

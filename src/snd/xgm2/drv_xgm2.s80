@@ -1,0 +1,983 @@
+; eXtended Genesis Music v2.0 (XGM) Z80 driver - Stephane Dallongeville @2023
+;
+; XGM driver is a music driver developed specifically for the Sega Megadrive/Genesis system.
+; The XGM v2 driver has be developed to replace the previous XGM v1.0 driver, mainly to reduce music data space, improve PCM latency and
+; add important missing features as envelop support and (if possible) FM/PSG SFX.
+;
+; As the previous XGM driver, it runs at 100% on the Z80 CPU and left the 68000 free for others tasks.
+; It has been designed to keep CPU decoding resource reasonnable and provide small data size (about half the size of original XGM and about 1/3 of VGM file).
+; It supports both FM and PSG chip and allow up to 3 PCM channels (8 bits signed) with adjustable playback rate up to ~13.3 Khz.
+; PCM samples does not have any size limitation, the only restriction is that they should have their address and size aligned to 256 bytes.
+; These 3 PCM channels are obtained by software mixing in the FM DAC in replacement of the 6th FM channel so at best you can have 5FM + 3PCM + 4PSG = 12 channels.
+;
+; The PCM playback rate can be modified from ~2Khz to ~13.3Khz but it's recommended to keep the original value (13.3 Khz) as all PCM channels share the same playback rate.
+; Example of possible playback playback rate:
+;  - 13.3 Khz
+;  - 10.65 Khz
+;  - 8.87 KHz
+;  - 7.6 KHz
+;  - 6.65 KHz
+;  - 5.9 Khz
+;  - ...
+;
+; Note that it's possible to enable half speed PCM playback:
+; For instance if PCM playback rate is set to 13.3 Khz, then you can play PCM at full rate (13.3 Khz) or half rate (13.3 / 2 = 6.65 Khz)
+; This feature allows to limit ROM usage for samples which don't need high playback rate.
+; PCM can be 4bit ADPCM compressed or 8bit RAW, also they can be looped from a loop point (64 bytes aligned).
+;
+; The driver supports playing SFX through PCM channels, note that normally channel 0 is reserved for music so prefer channel 1 or channel 2 for SFX.
+; Ideally the driver would also support FM and PSG SFX.
+;
+; Allowing a maximum of 13.3Khz PCM playback mean we have ~269 cycles per sample output which consist of:
+; - handle PCM sync
+; - read 4 samples from the rom and mix them into the write ring buffer
+; - read 1 sample from read ring buffer and output it to the DAC
+; - handle loop
+; - unpack XGM data / parse and execute XGM commands / handle extern commands
+;
+; Z80 V-interrupt stays active for about ~229 cycles
+;
+; PCM output already cost a huge 79/87 cycles (100/108 cycles for fast functions) leaving only about 190/182 cycles (169/161 when function used) for others tasks :'(
+; Also FM write can take a lot of time as YM2612 requires up to 53 Z80 cycles to acknowledge data register write.
+; Hopefully address register write only requires 6 Z80 cycles and DAC / Timer reset writes are fast too:
+; 17 YM cycles (8 Z80 cycles) between writing the address and data --> measured: 6 Z80 cycles seems to be enough
+; no wait between writes to addresses $21-$2F except $28
+; ~112 YM cycles (53 Z80 cycles) between writes to $28
+; 83 YM cycles (39 Z80 cycles) between writes to addresses $30-$9E
+; 47 YM cycles (22 Z80 cycles) between writes to addresses $A0-$B6
+;
+; BASE YM frequency:
+;   NTSC: 7670453/144 = 53267 Hz
+;   PAL:  7600489/144 = 52781 Hz
+;
+; Timer A is used for sample playback: PCM clock = base_FM_clock / (1024 - TimerA)
+;  By defaut we set Timer A = 1020 ($3FC)
+;  - NTSC: 53267 / (1024-1020) = 53267 / 4 = ~13317 Hz ~ 222 samples / frame
+;  - PAL: 52781 / (1024-1020) = 52781 / 4 = ~13195 Hz ~ 264 samples / frame
+;  So we assume it to be ~13300 Hz (pitch get a bit lower on PAL system but we don't care)
+;  Using 1021 for timer A would allow 17755 Hz PCM --> too high for driver playback so max is 13300 Hz.
+;  - PCM sample rate can be modified (by changing timer A setting) from ~2Khz to ~13.3Khz:
+;    1018 = ~10650 Hz; 1017 = ~8870 Hz; 1016 = ~7600 Hz; 1015 = ~6650 Hz; 1014 = ~5900 Hz; 1013 = ~5320 Hz
+;  - allow half speed playback for PCM: 13300 Hz / 6650 Hz (copy twice on mix buffer for ~7Khz)
+;
+;
+; register usage
+; --------------
+; HL  = sample source (in ROM)
+; DE  = write buffer / XGM buffer
+; BC  = counter
+; C   = $80 (used for overflow and sample unsign)
+; IXL = CH3 mode | 0x1F (timer A reset write)
+; IXH = free usage
+; IY  = base YMState / free usage
+;
+; HL' = YMPORT0
+; DE' = YMPORT1
+; BC' = read buffer
+
+
+; ###########################    const / var   ##############################
+
+            INCLUDE "z80_def.i80"   ; basic definitions
+
+; COMMAND     EQU     $0100         ; command from 68K
+; STATUS      EQU     $0102         ; status from Z80
+; PARAMS      EQU     $0104         ; parameters (68K and Z80)
+; VARS        EQU     $0110         ; variables (Z80)
+;
+;
+; COMMAND b0/b1/b2 = start PCM0/PCM1/PCM2    -    STATUS b0/b1/b2 = PCM0/PCM1/PCM2 playing
+; ----------------------------------------------------------------------------------------
+; This command use PCMx_ARG (priority, id, half speed and loop for PCMx)
+;
+; if (id == 0)
+; --> play silent sample. Set priority to 0 and set PCMx_PLAY_STAT to 0
+; if (id != 0)
+;   if (priority < current priority)
+;   --> do nothing
+;   if (priority >= current priority)
+;   --> play sample #id. Set new priority and set PCMx_PLAY_STAT to 1
+;
+; COMMAND b3 = resume play
+; ------------------------
+; No argument, setting this command clear previous PAUSE_PLAY command.
+;
+; if (XGM_ADDR_ARG == 0)
+; --> do nothing
+; if (XGM_ADDR_ARG != 0)
+; --> resume play, set PLAY_STAT to 1
+;
+; COMMAND b4 = start play XGM    -   STATUS b4 = XGM playing
+; ----------------------------------------------------------
+; This command use XGM_ADDR_ARG (XGM track addr) and XGM_ID_ARG (XGM sub track id)
+; Setting this command clear previous PAUSE_PLAY / RESUME_PLAY commands.
+; This command always start by doing a PAUSE_PLAY command internally to set YM/PSG to silent
+; in case we were already playing a music.
+;
+; if (XGM_ADDR_ARG == 0)
+; --> assume a STOP_PLAY command: we set XGM ADDR to 0 and only execute the PAUSE_PLAY command. Set PLAY_STAT to 0
+; if (XGM_ADDR_ARG != 0)
+; --> start new PLAY command: do PAUSE_PLAY, update XGM ADDR to new address. Set PLAY_STAT to 1
+;
+; COMMAND b5 = pause play
+; -----------------------
+; No argument, setting this command clear previous RESUME_PLAY command.
+; Put YM and PSG in silent state. Set PLAY_STAT to 0
+;
+; COMMAND b6 = set volume FM
+; --------------------------
+; This command use FM_ARG_VOLUME (FM channels envelop level)
+;
+; COMMAND b7 = set volume PSG
+; ---------------------------
+; This command use PSG_ARG_VOLUME (PSG channels envelop level)
+;
+;
+; COMMAND b0 = play PCM0        STATUS b0 = PCM0 playing
+; COMMAND b1 = play PCM1        STATUS b1 = PCM1 playing
+; COMMAND b2 = play PCM2        STATUS b2 = PCM2 playing
+; COMMAND b3 = resume play
+; COMMAND b4 = start play       STATUS b4 = XGM FM stream playing
+; COMMAND b5 = pause play
+; COMMAND b6 = set volume FM
+; COMMAND b7 = set volume PSG   STATUS b7 = driver ready
+
+YMPORT_BASE_H       EQU     $40             ; YM2612 port high byte
+YMPORT_BASE_L       EQU     $00             ; YM2612 port default low byte
+
+CMD_PCM_SFT         EQU     0               ; base PCM play command bit
+CMD_PCM0_SFT        EQU     0               ; PCM0 play command bit
+CMD_PCM1_SFT        EQU     1               ; PCM1 play command bit
+CMD_PCM2_SFT        EQU     2               ; PCM2 play command bit
+CMD_RESUME_SFT      EQU     3               ; music resume play command bit
+CMD_PLAY_SFT        EQU     4               ; music start play command bit
+CMD_PAUSE_SFT       EQU     5               ; music pause play command bit
+CMD_SET_VOL_FM_SFT  EQU     6               ; set FM volume command bit
+CMD_SET_VOL_PSG_SFT EQU     7               ; set PSG volume command bit
+
+CMD_PCM0_MSK        EQU     1 << CMD_PCM0_SFT
+CMD_PCM1_MSK        EQU     1 << CMD_PCM1_SFT
+CMD_PCM2_MSK        EQU     1 << CMD_PCM2_SFT
+CMD_RESUME_MSK      EQU     1 << CMD_RESUME_SFT
+CMD_PLAY_MSK        EQU     1 << CMD_PLAY_SFT
+CMD_PAUSE_MSK       EQU     1 << CMD_PAUSE_SFT
+CMD_SET_VOL_FM_MSK  EQU     1 << CMD_SET_VOL_FM_SFT
+CMD_SET_VOL_PSG_MSK EQU     1 << CMD_SET_VOL_PSG_SFT
+
+STAT_PCM_SFT        EQU     0               ; base PCM play status bit
+STAT_PCM0_SFT       EQU     0               ; PCM0 play status bit
+STAT_PCM1_SFT       EQU     1               ; PCM1 play status bit
+STAT_PCM2_SFT       EQU     2               ; PCM2 play status bit
+STAT_PLAY_SFT       EQU     4               ; music stream play status bit
+STAT_READY_SFT      EQU     7               ; driver ready status bit
+
+STAT_PCM0_MSK       EQU     1 << STAT_PCM0_SFT
+STAT_PCM1_MSK       EQU     1 << STAT_PCM1_SFT
+STAT_PCM2_MSK       EQU     1 << STAT_PCM2_SFT
+STAT_PLAY_MSK       EQU     1 << STAT_PLAY_SFT
+STAT_READY_MSK      EQU     1 << STAT_READY_SFT
+
+STAT_READY          EQU     STAT_READY_MSK
+
+PLAY_ARG_FM_ADDR    EQU     PARAMS+$00      ; FM stream address (b8-b23)
+PLAY_ARG_PSG_ADDR   EQU     PARAMS+$02      ; PSG stream address (b8-b23)
+PLAY_ARG_LOOP       EQU     PARAMS+$04      ; number of loop (0 = no loop, 255 = infinite)
+
+PCM_ARG             EQU     PARAMS+$05      ; base PCM arg: b0-b3 = priority (0 to 15); b6 = half speed; b7 = loop
+PCM0_ARG            EQU     PARAMS+$05      ; PCM0 arg: b0-b3 = priority (0 to 15); b6 = half speed; b7 = loop
+PCM1_ARG            EQU     PARAMS+$06      ; PCM1 arg: b0-b3 = priority (0 to 15); b6 = half speed; b7 = loop
+PCM2_ARG            EQU     PARAMS+$07      ; PCM2 arg: b0-b3 = priority (0 to 15); b6 = half speed; b7 = loop
+
+FM_ARG_VOLUME       EQU     PARAMS+$08      ; FM volume: 0x00 to 0x7F where 0x00 is maximum volume and 0x7F is silent (attenuation)
+PSG_ARG_VOLUME      EQU     PARAMS+$09      ; PSG volume: 0x0 to 0xF where 0x0 is maximum volume and 0xF is silent (attenuation)
+
+TEMPO_ARG_INC_FRAC  EQU     PARAMS+$0A      ; frame increment at each vsync (fractional part)
+TEMPO_ARG_INC       EQU     PARAMS+$0B      ; frame increment at each vsync
+
+VARS                EQU     $0110           ; PARAMS+$0C
+
+FM0_STATE           EQU     VARS+$00        ; FM0 state ($48 bytes len) - addr = $110
+FM1_STATE           EQU     VARS+$80        ; FM1 state ($48 bytes len) - addr = $190
+
+FM_STATE_H          EQU     (FM0_STATE >> 8)    ; FM register state start - high byte = $01
+FM_STATE_L          EQU     (FM0_STATE & $FF)   ; FM register state start - low byte = $10
+FM0_STATE_H         EQU     (FM0_STATE >> 8)    ; FM0 register state start - high byte = $01
+FM0_STATE_L         EQU     (FM0_STATE & $FF)   ; FM0 register state start - low byte = $10
+FM1_STATE_H         EQU     (FM1_STATE >> 8)    ; FM1 register state start - high byte = $01
+FM1_STATE_L         EQU     (FM1_STATE & $FF)   ; FM1 register state start - low byte = $90
+
+FM_STATE_LEN        EQU     $48
+
+FM_STATE_CH_FREQ    EQU     $00             ; FM channel frequency register state (4*2 bytes)
+FM_STATE_CH2_FREQ   EQU     $08             ; FM channel frequency register state for CH2 special mode (4*2 bytes)
+FM_STATE_CH_ALGO    EQU     $10             ; FM channel algo register state (4 bytes)
+FM_STATE_CH_PAN     EQU     $14             ; FM channel pan register state (4 bytes)
+FM_STATE_OP_TL      EQU     $18             ; FM slot/op TL register state (4*4 bytes organized as (op*4)+ch)
+FM_STATE_OP_SLRR    EQU     $28             ; FM slot/op SL/RR register state (4*4 bytes organized as (op*4)+ch)
+FM_STATE_OP_ATT     EQU     $38             ; FM slot/op attenuation level (4*4 bytes organized as (op*4)+ch)
+
+ACCESS_CMD          EQU     0
+ACCESS_PCM_ARG      EQU     1
+ACCESS_WR_TIME      EQU     2
+ACCESS_RD_TEMPO     EQU     3
+
+ACCESS              EQU     VARS+$50        ; b0 = Z80 is processing 68k commands (reading params / clearing commands / writing status)
+                                            ;      68k should wait before issuing / modifying commands / reading status
+                                            ; b1 = Z80 is writing ELAPSED_FRAME timestamp (multi byte write)
+                                            ;      68k should wait before reading it
+                                            ; b2 = Z80 is reading TEMPO parameter (multi byte param)
+                                            ;      68k should wait before writing it
+IN_DMA              EQU     VARS+$51        ; b0 = DMA operation in progress - read only from z80
+                                            ;      Z80 cannot access 68k BUS when the bit is set
+
+REMAINING_LOOP      EQU     VARS+$52        ; remaining loop for XGM play (255 = infinite)
+PENDING_FRAME_FRAC  EQU     VARS+$53        ; contains number of XGM frame to process (fractional part)
+PENDING_FRAME       EQU     VARS+$54        ; contains number of XGM frame to process
+ELAPSED_FRAME       EQU     VARS+$55        ; elapsed frames since music start play (in frames), encoded on 24 bit
+MISSED_FRAME        EQU     VARS+$58        ; missed frames since music start play (in frames), encoded on 16 bit
+
+DAC_ENABLE          EQU     VARS+$59        ; DAC enable state
+FM_ATT              EQU     VARS+$5A        ; FM attenuation level ($00-$7F, default = $00)
+PSG_ATT             EQU     VARS+$5B        ; PSG attenuation level ($00-$0F, default = $00)
+
+STREAM_START_ADDR   EQU     $00             ; music data start addr (bit8 --> bit23)
+STREAM_CUR_ADDR     EQU     $02             ; music data current internal addr (bit0 --> bit23)
+STREAM_BUF_RD_POS   EQU     $06             ; buffer write position (256 bytes circular buffer)
+STREAM_BUF_WR_POS   EQU     $07             ; buffer read position (256 bytes circular buffer)
+STREAM_WAIT_FRAME   EQU     $08             ; number of frame to wait for stream process (16 bit value)
+
+FM_STREAM_VARS      EQU     VARS+$5C        ; FM stream vars  ($5C-$65 = 10 bytes)
+PSG_STREAM_VARS     EQU     VARS+$66        ; PSG stream vars ($66-$6F = 10 bytes)
+
+FM_START_ADDR       EQU     (FM_STREAM_VARS + STREAM_START_ADDR)
+FM_CUR_ADDR         EQU     (FM_STREAM_VARS + STREAM_CUR_ADDR)
+FM_BUF_RD_POS       EQU     (FM_STREAM_VARS + STREAM_BUF_RD_POS)
+FM_BUF_WR_POS       EQU     (FM_STREAM_VARS + STREAM_BUF_WR_POS)
+FM_WAIT_FRAME       EQU     (FM_STREAM_VARS + STREAM_WAIT_FRAME)
+
+PSG_START_ADDR      EQU     (PSG_STREAM_VARS + STREAM_START_ADDR)
+PSG_CUR_ADDR        EQU     (PSG_STREAM_VARS + STREAM_CUR_ADDR)
+PSG_BUF_RD_POS      EQU     (PSG_STREAM_VARS + STREAM_BUF_RD_POS)
+PSG_BUF_WR_POS      EQU     (PSG_STREAM_VARS + STREAM_BUF_WR_POS)
+PSG_WAIT_FRAME      EQU     (PSG_STREAM_VARS + STREAM_WAIT_FRAME)
+
+PSG_STATE_FREQ      EQU     VARS+$70        ; PSG frequency reg state (4 x 16bit)
+PSG_STATE_ENV       EQU     VARS+$78        ; PSG env reg state (4 x 8bit)
+
+PSG_MUTE_REQ_SFT    EQU     0               ; PSG mute request command
+PSG_UNMUTE_REQ_SFT  EQU     1               ; PSG unmute request command
+
+PSG_CMD_REQUEST     EQU     VARS+$7C        ; request PSG commands: b0 = mute; b1 = unmute
+
+PCM_VARS            EQU     VARS+$D0        ; PCM vars ($D0-$E7 = 8 bytes per channel * 3 = 24 bytes)
+
+PCM_ADDR_OFF        EQU     $00             ; PCM internal addr - 3 bytes (b0-b23 with b0-b5 = 0)
+PCM_LEN_OFF         EQU     $03             ; PCM internal len - 2 bytes (b6-b21)
+PCM_PRIO_EXT_OFF    EQU     $05             ; b0-b3 = priority (0-15); b4 = params changed; b6 = half speed; b7 = loop
+
+PCM_ADDR            EQU     (PCM_VARS + PCM_ADDR_OFF)
+PCM_LEN             EQU     (PCM_VARS + PCM_LEN_OFF)
+PCM_PRIO_EXT        EQU     (PCM_VARS + PCM_PRIO_EXT_OFF)
+
+PCM0_VARS           EQU     PCM_VARS+0      ; PCM0 vars (8 bytes per channel)
+PCM1_VARS           EQU     PCM_VARS+8      ; PCM1 vars (8 bytes per channel)
+PCM2_VARS           EQU     PCM_VARS+16     ; PCM2 vars (8 bytes per channel)
+
+PCM0_ADDR           EQU     (PCM0_VARS + PCM_ADDR_OFF)
+PCM0_LEN            EQU     (PCM0_VARS + PCM_LEN_OFF)
+PCM0_PRIO_EXT       EQU     (PCM0_VARS + PCM_PRIO_EXT_OFF)
+PCM1_ADDR           EQU     (PCM1_VARS + PCM_ADDR_OFF)
+PCM1_LEN            EQU     (PCM1_VARS + PCM_LEN_OFF)
+PCM1_PRIO_EXT       EQU     (PCM1_VARS + PCM_PRIO_EXT_OFF)
+PCM2_ADDR           EQU     (PCM2_VARS + PCM_ADDR_OFF)
+PCM2_LEN            EQU     (PCM2_VARS + PCM_LEN_OFF)
+PCM2_PRIO_EXT       EQU     (PCM2_VARS + PCM_PRIO_EXT_OFF)
+
+PCM_WRITE_POS       EQU     VARS+$E8        ; PCM buffer write position (256 bytes circular buffer = 4 x 64 bytes segment)
+DAC_ENABLED_CNT     EQU     VARS+$E9        ; DAC enabled counter (set to 4 when PCM is playing then decreased each PCM fill loop)
+BANK_SAVE           EQU     VARS+$EA        ; save for bank register value (PCM mixing)
+
+IDLE_TIME           EQU     VARS+$EB        ; idle time counter of last frame (idle wait in number of PCM sample)
+DMA_WAIT_TIME       EQU     VARS+$EC        ; wait time counter of last frame (IN_DMA wait in number of PCM sample)
+IDLE_TIME_TMP       EQU     VARS+$ED        ; current idle time counter
+DMA_WAIT_TIME_TMP   EQU     VARS+$EE        ; current wait time counter
+
+DEBUG0              EQU     FM0_STATE+$48   ; debug space 0 (reserve 8 bytes for that)
+DEBUG1              EQU     FM1_STATE+$48   ; debug space 1 (reserve 8 bytes for that)
+
+PCM_SAMPLE_IND      EQU     (DEBUG0 + $00)  ; sample index on current frame
+PLAYED_SAMPLES      EQU     (DEBUG0 + $01)  ; number of samples played on last frame
+FRAME_COUNT         EQU     (DEBUG0 + $02)  ; number of interrupt since driver init
+XGM2_PROCESS_TIME   EQU     (DEBUG1 + $00)  ; process duration profiling
+
+
+; end of variables
+; -----------------------------------------------------
+
+
+PCM_BUFFER_H        EQU     $19             ; PCM ring buffer (4 x 64 bytes)
+FM_COM_BUFFER_H     EQU     $1A             ; FM ring command buffer (size = $100)
+PSG_COM_BUFFER_H    EQU     $1B             ; PSG ring command buffer (size = $100)
+SID_TABLE_H         EQU     $1C             ; Sample id table (size = $200)
+FM_JUMP_TABLE_H     EQU     $1E             ; FM command jump table (size = $200)
+
+PCM_BUFFER          EQU     (PCM_BUFFER_H << 8)
+FM_COM_BUFFER       EQU     (FM_COM_BUFFER_H << 8)
+PSG_COM_BUFFER      EQU     (PSG_COM_BUFFER_H << 8)
+SID_TABLE           EQU     (SID_TABLE_H << 8)
+FM_JUMP_TABLE       EQU     (FM_JUMP_TABLE_H << 8)
+
+STACK               EQU     $100            ; stack pointer just above vars ($100)
+
+
+; cannot use forward reference
+PCM_ADDR_ARG        EQU     SID_TABLE+$1F4  ; base PCM SFX sample address / 256
+PCM_LEN_ARG         EQU     SID_TABLE+$1F6  ; base PCM SFX sample len / 64
+PCM0_ADDR_ARG       EQU     SID_TABLE+$1F4  ; PCM0 SFX sample address / 256
+PCM0_LEN_ARG        EQU     SID_TABLE+$1F6  ; PCM0 SFX sample len / 64
+PCM1_ADDR_ARG       EQU     SID_TABLE+$1F8  ; PCM1 SFX sample address / 256
+PCM1_LEN_ARG        EQU     SID_TABLE+$1FA  ; PCM1 SFX sample len / 64
+PCM2_ADDR_ARG       EQU     SID_TABLE+$1FC  ; PCM2 SFX sample address / 256
+PCM2_LEN_ARG        EQU     SID_TABLE+$1FE  ; PCM2 SFX sample len / 64
+
+
+; #############################    define   #################################
+
+
+            DEFINE SAMPLE_OUTPUT_FASTCALL           RST $8
+            DEFINE SAMPLE_OUTPUT_NOINT_FASTCALL     RST $20
+
+
+; #############################    macro    #################################
+
+            INCLUDE "z80_mac.i80"           ; basic macros
+
+            INCLUDE "drv_xgm2_mac.i80"      ; driver macros
+            INCLUDE "drv_xgm2_pcm_mac.i80"  ; PCM macros
+            INCLUDE "drv_xgm2_ym_mac.i80"   ; FM macros
+            INCLUDE "drv_xgm2_psg_mac.i80"  ; PSG macros
+
+
+; ###########################       init       ##############################
+
+            ORG     $0000
+
+init
+            DI                      ; disable ints
+            JP      start           ; jump to start
+
+
+; ###########################   fastcall #1    ##############################
+
+            BLOCK   $0008-$
+
+; RST $8 - 79 cycles + 21 cycles (RST+RET) = 100 cycles
+
+sampleOutputFunc
+
+            sampleOutput
+
+            RET
+
+
+; ###########################   fastcall #2    ##############################
+
+            BLOCK   $0020-$
+
+; RST $20 - 87 cycles + 21 cycles (RST+RET) = 108 cycles
+
+sampleOutputNoIntFunc
+
+            sampleOutputNoInt
+
+            RET
+
+
+; ###########################   V-interrupt   ##############################
+
+            BLOCK   $0038-$
+
+interrupt                                           ; VInt process
+
+            DI
+
+            PUSH    AF
+
+            SAMPLE_OUTPUT_FASTCALL                  ;
+
+            PUSH    BC                              ;                               ' 11    |
+            PUSH    DE                              ;                               ' 11    |
+            PUSH    HL                              ;                               ' 11    |
+            PUSH    IX                              ;                               ' 15    | (79)
+            PUSH    IY                              ;                               ' 15    |
+            EX      AF, AF'                         ;                               ' 4     |
+            PUSH    AF                              ; we also need to save AF'      ' 11    |
+
+            LD      HL, (FRAME_COUNT)               ;                               ' 16    |
+            INC     HL                              ; frame counter                 ' 6     | 38 (117)
+            LD      (FRAME_COUNT), HL               ;                               ' 16    |
+
+            EXX                                     ;                               ' 4     |
+            LD      A, C                            ; A = curr played sample index  ' 4     |
+            EXX                                     ;                               ' 4     | 16 (133)
+            LD      D, A                            ; D = curr played sample index  ' 4     |
+
+            LD      HL, PCM_SAMPLE_IND              ;                               ' 10    |
+            SUB     (HL)                            ; A = num sample played         ' 7     | 37 (170)
+            LD      (HL), D                         ; save curr played sample index ' 7     |
+            LD      (PLAYED_SAMPLES), A             ; save number of sample played  ' 13    |
+
+            SAMPLE_OUTPUT_FASTCALL                  ;
+
+            XOR     A                               ;                               ' 4     |
+            LD      HL, DMA_WAIT_TIME_TMP           ;                               ' 10    | (14)
+
+            LD      B, (HL)                         ; B = dma wait of last frame    ' 7     | 14 (28)
+            LD      (HL), A                         ; reset it                      ' 7     |
+
+            DEC     L                               ;                               ' 4     |
+            LD      C, (HL)                         ; C = idle time of last frame   ' 7     | 18 (46)
+            LD      (HL), A                         ; reset it                      ' 7     |
+
+            DEC     L                               ;                               ' 4     |
+            LD      (HL), B                         ; set current DMA wait          ' 7     |
+            DEC     L                               ;                               ' 4     | 22 (68)
+            LD      (HL), C                         ; set current idle time         ' 7     |
+
+            LD      A, (STATUS)                     ;                               ' 13    |
+            AND     STAT_PLAY_MSK                   ;                               ' 7     | 30 (98)
+            JP      Z, .not_playing                 ; not playing --> bypass        ' 10    |
+
+            LD      HL, ACCESS                      ;                               ' 10    |
+            SET     ACCESS_RD_TEMPO, (HL)           ; now reading tempo params      ' 15    |
+            LD      BC, (TEMPO_ARG_INC_FRAC)        ; BC = tempo                    ' 20    | 60 (158)
+            RES     ACCESS_RD_TEMPO, (HL)           ; done reading tempo            ' 15    |
+
+            SAMPLE_OUTPUT_FASTCALL                  ;
+
+            LD      HL, (PENDING_FRAME_FRAC)        ; HL = pending frame            ' 16    |
+            ADD     HL, BC                          ; pending frame += tempo        ' 11    | (43)
+            LD      (PENDING_FRAME_FRAC), HL        ; store it                      ' 16    |
+
+            LD      A, H                            ; A = num of frame to process   ' 4     |
+            OR      A                               ;                               ' 4     | 18 (61)
+            JP      Z, .not_playing                 ; A >= 1 ?                      ' 10    |
+
+            isPCMLessThan 150                       ; D should contain sample index ' 24    |
+            JP      NC, .playing                    ; PCM buffer need fill ?        ' 10    | 34 (95)
+
+.cannot_play
+            LD      HL, MISSED_FRAME                ;                               ' 10    |
+            INC     (HL)                            ; --> missed_frame++            ' 11    | 21 (116)
+
+.not_playing
+            SAMPLE_OUTPUT_FASTCALL                  ;
+
+            CALL    process68KCommands_noPSG        ; process 68k commands (no PSG)
+            CALL    waitDMA                         ;                               ' 90
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    process68KCommands_PSG          ; just process 68k PSG commands
+
+            JP      .fill_buffers                   ;                               ' (10)
+
+.playing                                            ;                               ' 95
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    FM_nextFrame                    ; process 1 FM frame            ' 27
+            CALL    process68KCommands_noPSG        ; process 68k commands (no PSG)
+
+            LD      HL, PENDING_FRAME               ;                               ' 10    |
+            DEC     (HL)                            ; pending_frame--               ' 11    | (21)
+
+            CALL    waitDMA                         ;                               ' 90    | (111)
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    PSG_nextFrame                   ; process 1 PSG frame           ' 27
+            CALL    process68KCommands_PSG          ; just process 68k PSG commands
+
+            JP      .fill_buffers                   ;                               ' 10
+
+
+; we reserve $100-$1FF area for variables
+; #######################################
+
+
+            BLOCK   $0200-$
+
+.process_music_frames
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    FM_nextFrame                    ; process 1 FM frame            ' 27
+            CALL    PSG_nextFrame                   ; process 1 PSG frame           ' 27
+
+.fill_buffers
+            LD      A, (STATUS)                     ;                               ' 13    |
+            AND     STAT_PLAY_MSK                   ;                               ' 7     | 30 (57)
+            JP      Z, .done                        ; not playing ? --> done        ' 10    |
+
+.check_FM_buffer
+            isFMComBufferEmpty                      ;                               ' 30    |
+            JP      NZ, .check_PSG_buffer           ;                               ' 10    | 40 (97)
+
+            LD      D, FM_COM_BUFFER_H              ;                               ' 7     |
+            LD      E, (HL)                         ; DE = FM buf dest              ' 7     |
+            LD      HL, (FM_CUR_ADDR)               ; HL = FM buf src.ML            ' 16    | 51 (148)
+            LD      A, (FM_CUR_ADDR+2)              ;                               ' 13    |
+            LD      IXH, A                          ; IXH = FM buf src.H            ' 8     |
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            CALL    unpackCmds                      ; --> fill FM buffer            ' 0
+
+            LD      (FM_CUR_ADDR), HL               ; save updated src pos          ' 16    |
+            LD      A, IXH                          ;                               ' 8     |
+            LD      (FM_CUR_ADDR+2), A              ;                               ' 13    | (54)
+            LD      A, E                            ;                               ' 4     |
+            LD      (FM_BUF_WR_POS), A              ; save new write_pos            ' 13    |
+
+.check_PSG_buffer                                   ;                               ' 97
+            isPSGComBufferEmpty                     ;                               ' 30    |
+            JP      NZ, .psg_buffer_ok              ;                               ' 10    | 40 (137)
+
+            LD      D, PSG_COM_BUFFER_H             ;                               ' 7     |
+            LD      E, (HL)                         ; DE = PSG buf dest             ' 7     |
+            LD      HL, (PSG_CUR_ADDR)              ; HL = PSG buf src.ML           ' 16    | 51 (188)
+            LD      A, (PSG_CUR_ADDR+2)             ;                               ' 13    |
+            LD      IXH, A                          ; IXH = FM buf src.H            ' 8     |
+
+            sampleOutput
+
+            CALL    unpackCmds                      ; --> fill PSG buffer           ' 0
+
+            LD      (PSG_CUR_ADDR), HL              ; save updated src pos          ' 16    |
+            LD      A, IXH                          ;                               ' 8     |
+            LD      (PSG_CUR_ADDR+2), A             ;                               ' 13    |
+            LD      A, E                            ;                               ' 4     | (54)
+            LD      (PSG_BUF_WR_POS), A             ; save new write_pos            ' 13    |
+
+.psg_buffer_ok                                      ;                               ' 137
+            EXX                                     ;                               ' 4     |
+            LD      A, C                            ; A = curr played sample index  ' 4     |
+            EXX                                     ;                               ' 4     | 16 (153)
+            LD      D, A                            ; D = curr played sample index  ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      HL, PENDING_FRAME               ; num of frame to process       ' 10    |
+            DEC     (HL)                            ; < 0 ?                         ' 11    | (31)
+            JP      M, .done_pre                    ;  --> we're done               ' 10    |
+
+            isPCMLessThan 140                       ; need PCM fill ?               ' 24    |
+            JR      C, .done                        ;  --> stop here                ' 7     | 31 (62)
+
+            JP      .process_music_frames           ;                               ' 10    | (72)
+
+.done_pre                                           ;                               ' 31
+            INC     (HL)                            ; set back to 0                 ' 11    | (42)
+
+.done
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      A, (BANK_SAVE)                  ; restore bank register         ' 13    |
+            setBankFast                             ;                               ' 97    | 110
+
+.done_fast
+            POP     AF                              ; we also need to restore AF'   ' 10    |
+            EX      AF, AF'                         ;                               ' 4     |
+            POP     IY                              ;                               ' 14    |
+            POP     IX                              ;                               ' 14    | 72 (182)
+            POP     HL                              ;                               ' 10    |
+            POP     DE                              ;                               ' 10    |
+            POP     BC                              ;                               ' 10    |
+
+            sampleOutput
+
+            POP     AF
+
+            EI
+            RETI
+
+
+; ###########################       main       ##############################
+
+;            BLOCK   $0200-$
+
+start
+            LD      SP, STACK               ; setup stack
+            IM      $01                     ; set int mode 1
+
+            XOR     A
+            LD      (STATUS), A             ; driver not ready
+            LD      (COMMAND), A            ; command cleared
+
+            LD      HL, PARAMS
+            LD      A, $00
+            LD      B, $200-PARAMS          ; clear PARAMS up to $200
+
+cp_loop
+            LD      (HL), A                 ; clear parameters and variables
+            INC     HL
+            DJNZ    cp_loop
+
+            LD      HL, PCM_BUFFER
+            LD      A, $80                  ; $80 = silent sample ($00-$FF = unsigned sample)
+            LD      B, $00                  ; 256 bytes to clear
+
+cb_loop
+            LD      (HL), A                 ; initialise PCM buffer to silent
+            INC     HL
+            DJNZ    cb_loop
+
+            XOR     A                       ; initialise PCM buffer read / write position
+            LD      (PCM_WRITE_POS), A      ; write pos start on seg #0
+            LD      BC, PCM_BUFFER+64       ; BC' = read pos start on seg #1
+            LD      HL, YMPORT0             ; HL' point to YMPORT0
+            LD      DE, YMPORT1             ; DE' point to YMPORT1
+            EXX
+
+            LD      A, 64
+            LD      (PCM_SAMPLE_IND), A                 ; start read PCM pos
+
+            LD      A, $C0                              ; initialise FM panning state to LR
+            LD      HL, FM0_STATE+FM_STATE_CH_PAN
+
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+
+            LD      HL, FM1_STATE+FM_STATE_CH_PAN
+
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+
+            LD      A, $0F                              ; initialize PSG env state to silent
+            LD      HL, PSG_STATE_ENV
+
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+            INC     L
+            LD      (HL), A
+
+            LD      DE, $24FF               ; TIMER A - MSB = $FF ($FF<<2 = $3FC)
+            CALL    writeYM0
+            LD      DE, $2500               ; TIMER A - LSB = $00 ($3FC+0 = $3FC)
+            CALL    writeYM0                ; Timer A set for ~13300 Hz
+            LD      DE, $2715               ;
+            CALL    writeYM0                ; Enable timer A, Reset timer A
+
+            LD      IXL, $15                ; IXL = CH3 mode | 0x15 (timer A enable & reset write)
+
+            XOR     A
+            LD      (FM_BUF_RD_POS), A
+            LD      (FM_BUF_WR_POS), A      ; init FM command buffer RD/WR pointers (empty buffer)
+            LD      (PSG_BUF_RD_POS), A
+            LD      (PSG_BUF_WR_POS), A     ; init PSG command buffer RD/WR pointers (empty buffer)
+
+            LD      A, 1
+            LD      (TEMPO_ARG_INC), A      ; init tempo
+
+            CALL    FM_mute                 ; mute FM
+            CALL    PSG_mute                ; mute PSG
+
+            LD      A, STAT_READY
+            LD      (STATUS), A             ; driver ready :)
+            EI                              ; enable interrupts
+
+
+; main loop is busy filling the PCM buffers
+
+main_loop
+
+            CALL    sampleOutputNoIntSafeFunc
+
+; fill PCM buffer here
+; --------------------
+
+; #PCM0
+; -----
+
+pcm0
+            LD      HL, PCM_WRITE_POS       ;                       ' 10    |
+            LD      D, PCM_BUFFER_H         ;                       ' 7     | (24)
+            LD      E, (HL)                 ; DE = PCM dest         ' 7     |
+
+            LD      HL, STATUS              ;                       ' 10    |
+            BIT     STAT_PCM0_SFT, (HL)     ; PCM0 playing ?        ' 12    | 29 (53)
+            JR      NZ, .play               ;                       ' 7     |
+
+.silent
+            clearPCMBuffer                  ; just clear PCM buffer
+            JP      pcm1
+
+.play                                       ;                       ' 58
+            LD      A, 4                    ;                       ' 7     |
+            LD      (DAC_ENABLED_CNT), A    ; reset DAC en. counter ' 13    | 20 (78)
+
+            DI                              ; protect PCM vars acc. ' 4     |
+            LD      HL, (PCM0_ADDR+0)       ; HL = PCM src.ML       ' 16    |
+            LD      A, (PCM0_ADDR+2)        ;                       ' 13    | 41 (119)
+            LD      IXH, A                  ; IXH = FM buf src.H    ' 8     |
+
+            LD      A, (PCM0_PRIO_EXT)      ; A.b6 = half speed     ' 13    |
+            EI                              ;                       ' 4     |
+            ADD     A                       ; A.b7 = half speed     ' 4     | 31 (150)
+            JP      M, .play_hs             ;                       ' 10    |
+
+.play_norm                                  ; 150
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+            fillPCMBuffer                   ; 154
+            JP      .done                   ; 164
+
+.play_hs                                    ; 150
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+            fillPCMBufferHS                 ; 150
+
+.done
+            SAMPLE_OUTPUT_NOINT_FASTCALL
+            updatePCM 0                     ;
+
+; #PCM1
+; -----
+
+pcm1
+            LD      HL, STATUS              ;                       ' 10    |
+            BIT     STAT_PCM1_SFT, (HL)     ; PCM1 not playing ?    ' 12    | (32)
+            JP      Z, pcm2                 ;   --> next            ' 10    |
+
+.play
+            LD      A, E                    ;                       ' 4     |
+            SUB     64                      ;                       ' 7     | 15 (47)
+            LD      E, A                    ; DE = PCM dest         ' 4     |
+
+            LD      A, 4                    ;                       ' 7     |
+            LD      (DAC_ENABLED_CNT), A    ; reset DAC en. counter ' 13    | 20 (67)
+
+            DI                              ; protect PCM vars acc. ' 4     |
+            LD      HL, (PCM1_ADDR+0)       ; HL = PCM src.ML       ' 16    |
+            LD      A, (PCM1_ADDR+2)        ;                       ' 13    | 41 (108)
+            LD      IXH, A                  ; IXH = FM buf src.H    ' 8     |
+
+            LD      A, (PCM1_PRIO_EXT)      ; A.b6 = half speed     ' 13    |
+            EI                              ;                       ' 4     |
+            ADD     A                       ; A.b7 = half speed     ' 4     | 31 (139)
+            JP      M, .play_hs             ;                       ' 10    |
+
+.play_norm
+            mixPCMBuffer
+            JP      .done
+
+.play_hs                                    ;                       ' 111
+            mixPCMBufferHS
+
+.done
+            CALL    sampleOutputNoIntSafeFunc
+            updatePCM 1                     ;                       ' 42
+
+; #PCM2
+; -----
+
+pcm2
+            LD      A, E                    ;                       ' 4     |
+            SUB     64                      ;                       ' 7     | (15)
+            LD      E, A                    ; DE = PCM dest         ' 4     |
+
+            LD      HL, STATUS              ;                       ' 10    |
+            BIT     STAT_PCM2_SFT, (HL)     ; PCM2 playing ?        ' 12    | 29 (44)
+            JR      NZ, .play               ;                       ' 7     |
+
+.silent
+            unsignPCMBuffer                 ; just unsign PCM buffer
+            JP      PCM_done
+
+.play                                       ;                       ' 49
+            LD      A, 4                    ;                       ' 7     |
+            LD      (DAC_ENABLED_CNT), A    ; reset DAC en. counter ' 13    | 20 (69)
+
+            DI                              ; protect PCM vars acc. ' 4     |
+            LD      HL, (PCM2_ADDR+0)       ; HL = PCM src.ML       ' 16    |
+            LD      A, (PCM2_ADDR+2)        ;                       ' 13    | 41 (110)
+            LD      IXH, A                  ; IXH = FM buf src.H    ' 8     |
+
+            LD      A, (PCM2_PRIO_EXT)      ; A.b6 = half speed     ' 13    |
+            EI                              ;                       ' 4     |
+            ADD     A                       ; A.b7 = half speed     ' 4     | 31 (141)
+            JP      M, .play_hs             ;                       ' 10    |
+
+.play_norm
+            mixUnsignPCMBuffer
+            JP      .done
+
+.play_hs                                    ;                       ' 113
+            mixUnsignPCMBufferHS
+
+.done
+            CALL    sampleOutputNoIntSafeFunc
+            updatePCM 2                     ;                       ' 42
+
+PCM_done
+            LD      HL, PCM_WRITE_POS       ;                       ' 10    |
+            LD      (HL), E                 ; update PCM write pos  ' 7     | 17 (59)
+
+            LD      A, (DAC_ENABLED_CNT)    ; DAC enabled counter   ' 13    |
+            OR      A                       ; > 0 ?                 ' 4     | 24 (83)
+            JR      NZ, .force_dac_on       ;   --> force DAC on    ' 7     |
+
+            LD      A, (DAC_ENABLE)         ; A = DAC_ENABLE        ' 13    |
+            JP      .set_dac_enabled        ;                       ' 10    | 23 (106)
+
+.force_dac_on                               ;                       ' 88
+            DEC     A                       ; decrement counter     ' 4     |
+            LD      (DAC_ENABLED_CNT), A    ; save                  ' 13    | 17 (105)
+
+            LD      A, $80                  ; A = DAC on            ' 7     | (112)
+
+.set_dac_enabled
+            LD      HL, YMPORT0             ; HL = YM port 0        ' 10    |
+            LD      (HL), $2B               ; DAC enabled reg       ' 7     |
+            INC     L                       ; next port             ' 4     | 28 (140)
+            LD      (HL), A                 ; write value           ' 7     |
+
+
+; IDLE LOOP
+; ---------
+
+idle_loop
+            CALL    sampleOutputNoIntSafeFunc
+
+            DI                              ;                           ' 4     |
+            EXX                             ;                           ' 4     |
+            LD      A, C                    ; A = curr read sample pos  ' 4     | (20)
+            EXX                             ;                           ' 4     |
+            EI                              ;                           ' 4     |
+
+            LD      D, A                    ; D = curr read sample pos  ' 4     | (24)
+
+            isPCMNotFull                    ; PCM buffer not full ?     ' 24    |
+            JP      C, main_loop            ;  --> fill PCM buffer      ' 10    | 34 (58)
+
+            LD      HL, IDLE_TIME_TMP       ; increment idle loop       ' 10    |
+            INC     (HL)                    ;                           ' 11    | 21 (79)
+
+            JP      idle_loop               ;                           ' 10    | (89)
+
+
+; ##############################  functions  ################################
+
+            INCLUDE "z80_fct.i80"           ; basic functions
+
+            INCLUDE "drv_xgm2_fct.i80"      ; driver functions
+            INCLUDE "drv_xgm2_pcm_fct.i80"  ; PCM functions
+            INCLUDE "drv_xgm2_ym_fct.i80"   ; FM functions
+            INCLUDE "drv_xgm2_psg_fct.i80"  ; PSG functions
+
+
+; #############################  FM jump table   ################################
+
+            BLOCK   FM_JUMP_TABLE-$
+
+            DW      FMCom_wait1, FMCom_wait2, FMCom_wait3, FMCom_wait4                                  ; 00-0E
+            DW      FMCom_wait5, FMCom_wait6, FMCom_wait7, FMCom_wait8
+            DW      FMCom_wait9, FMCom_wait10, FMCom_wait11, FMCom_wait12
+            DW      FMCom_wait13, FMCom_wait14, FMCom_wait15
+
+            DW      FMCom_waitLong                                                                      ; 0F
+
+            DW      FMCom_playPCM0, FMCom_playPCM1, FMCom_playPCM2, FMCom_null                          ; 10-1F
+            DW      FMCom_playPCM0_S, FMCom_playPCM1_S, FMCom_playPCM2_S, FMCom_null
+            DW      FMCom_playPCM0_P, FMCom_playPCM1_P, FMCom_playPCM2_P, FMCom_null
+            DW      FMCom_playPCM0_SP, FMCom_playPCM1_SP, FMCom_playPCM2_SP, FMCom_null
+
+            DW      FMCom_loadInst0_CH0, FMCom_loadInst0_CH1, FMCom_loadInst0_CH2, FMCom_null           ; 20-2F
+            DW      FMCom_loadInst1_CH0, FMCom_loadInst1_CH1, FMCom_loadInst1_CH2, FMCom_null
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null
+
+            DW      FMCom_setFreq0_CH0, FMCom_setFreq0_CH1, FMCom_setFreq0_CH2, FMCom_null              ; 30-3F
+            DW      FMCom_setFreq1_CH0, FMCom_setFreq1_CH1, FMCom_setFreq1_CH2, FMCom_null
+            DW      FMCom_setFreq0_CH2_SL1, FMCom_setFreq0_CH2_SL2, FMCom_setFreq0_CH2_SL3, FMCom_null
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null
+
+            DW      FMCom_key_OFF, FMCom_key_OFF, FMCom_key_OFF, FMCom_null                             ; 40-4F
+            DW      FMCom_key_OFF, FMCom_key_OFF, FMCom_key_OFF, FMCom_null
+            DW      FMCom_key_ON, FMCom_key_ON, FMCom_key_ON, FMCom_null
+            DW      FMCom_key_ON, FMCom_key_ON, FMCom_key_ON, FMCom_null
+
+            DW      FMCom_keySeq_OFFON, FMCom_keySeq_OFFON, FMCom_keySeq_OFFON, FMCom_null              ; 50-5F
+            DW      FMCom_keySeq_OFFON, FMCom_keySeq_OFFON, FMCom_keySeq_OFFON, FMCom_null
+            DW      FMCom_keySeq_ONOFF, FMCom_keySeq_ONOFF, FMCom_keySeq_ONOFF, FMCom_null
+            DW      FMCom_keySeq_ONOFF, FMCom_keySeq_ONOFF, FMCom_keySeq_ONOFF, FMCom_null
+
+            DW      FMCom_setPan0_CH0_OFF, FMCom_setPan0_CH1_OFF, FMCom_setPan0_CH2_OFF, FMCom_null     ; 60-6F
+            DW      FMCom_setPan0_CH0_R, FMCom_setPan0_CH1_R, FMCom_setPan0_CH2_R, FMCom_null
+            DW      FMCom_setPan0_CH0_L, FMCom_setPan0_CH1_L, FMCom_setPan0_CH2_L, FMCom_null
+            DW      FMCom_setPan0_CH0_LR, FMCom_setPan0_CH1_LR, FMCom_setPan0_CH2_LR, FMCom_null
+
+            DW      FMCom_setPan1_CH0_OFF, FMCom_setPan1_CH1_OFF, FMCom_setPan1_CH2_OFF, FMCom_null     ; 70-7F
+            DW      FMCom_setPan1_CH0_R, FMCom_setPan1_CH1_R, FMCom_setPan1_CH2_R, FMCom_null
+            DW      FMCom_setPan1_CH0_L, FMCom_setPan1_CH1_L, FMCom_setPan1_CH2_L, FMCom_null
+            DW      FMCom_setPan1_CH0_LR, FMCom_setPan1_CH1_LR, FMCom_setPan1_CH2_LR, FMCom_null
+
+            DW      FMCom_setFreq0_CH0_W, FMCom_setFreq0_CH1_W, FMCom_setFreq0_CH2_W, FMCom_null        ; 80-8F
+            DW      FMCom_setFreq1_CH0_W, FMCom_setFreq1_CH1_W, FMCom_setFreq1_CH2_W, FMCom_null
+            DW      FMCom_setFreq0_CH2_SL1_W, FMCom_setFreq0_CH2_SL2_W, FMCom_setFreq0_CH2_SL3_W, FMCom_null
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null
+
+            DW      FMCom_setTL_CH0_SL0, FMCom_setTL_CH1_SL0, FMCom_setTL_CH2_SL0, FMCom_null           ; 90-9F
+            DW      FMCom_setTL_CH0_SL1, FMCom_setTL_CH1_SL1, FMCom_setTL_CH2_SL1, FMCom_null
+            DW      FMCom_setTL_CH0_SL2, FMCom_setTL_CH1_SL2, FMCom_setTL_CH2_SL2, FMCom_null
+            DW      FMCom_setTL_CH0_SL3, FMCom_setTL_CH1_SL3, FMCom_setTL_CH2_SL3, FMCom_null
+
+            DW      FMCom_setFreqD0_CH0, FMCom_setFreqD0_CH1, FMCom_setFreqD0_CH2, FMCom_null           ; A0-AF
+            DW      FMCom_setFreqD1_CH0, FMCom_setFreqD1_CH1, FMCom_setFreqD1_CH2, FMCom_null
+            DW      FMCom_setFreqD0_CH2_SL1, FMCom_setFreqD0_CH2_SL2, FMCom_setFreqD0_CH2_SL3, FMCom_null
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null
+
+            DW      FMCom_setFreqD0_CH0_W, FMCom_setFreqD0_CH1_W, FMCom_setFreqD0_CH2_W, FMCom_null     ; B0-BF
+            DW      FMCom_setFreqD1_CH0_W, FMCom_setFreqD1_CH1_W, FMCom_setFreqD1_CH2_W, FMCom_null
+            DW      FMCom_setFreqD0_CH2_SL1_W, FMCom_setFreqD0_CH2_SL2_W, FMCom_setFreqD0_CH2_SL3_W, FMCom_null
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null
+
+            DW      FMCom_setTLD_CH0_SL0, FMCom_setTLD_CH1_SL0, FMCom_setTLD_CH2_SL0, FMCom_null        ; C0-CF
+            DW      FMCom_setTLD_CH0_SL1, FMCom_setTLD_CH1_SL1, FMCom_setTLD_CH2_SL1, FMCom_null
+            DW      FMCom_setTLD_CH0_SL2, FMCom_setTLD_CH1_SL2, FMCom_setTLD_CH2_SL2, FMCom_null
+            DW      FMCom_setTLD_CH0_SL3, FMCom_setTLD_CH1_SL3, FMCom_setTLD_CH2_SL3, FMCom_null
+
+            DW      FMCom_setTLD_CH0_SL0_W, FMCom_setTLD_CH1_SL0_W, FMCom_setTLD_CH2_SL0_W, FMCom_null  ; D0-DF
+            DW      FMCom_setTLD_CH0_SL1_W, FMCom_setTLD_CH1_SL1_W, FMCom_setTLD_CH2_SL1_W, FMCom_null
+            DW      FMCom_setTLD_CH0_SL2_W, FMCom_setTLD_CH1_SL2_W, FMCom_setTLD_CH2_SL2_W, FMCom_null
+            DW      FMCom_setTLD_CH0_SL3_W, FMCom_setTLD_CH1_SL3_W, FMCom_setTLD_CH2_SL3_W, FMCom_null
+
+            DW      FMCom_setRegs0_N1, FMCom_setRegs0_N2, FMCom_setRegs0_N3, FMCom_setRegs0_N4          ; E0-EF
+            DW      FMCom_setRegs0_N5, FMCom_setRegs0_N6, FMCom_setRegs0_N7, FMCom_setRegs0_N8
+            DW      FMCom_setRegs1_N1, FMCom_setRegs1_N2, FMCom_setRegs1_N3, FMCom_setRegs1_N4
+            DW      FMCom_setRegs1_N5, FMCom_setRegs1_N6, FMCom_setRegs1_N7, FMCom_setRegs1_N8
+
+            DW      FMCom_frameDelay                                                                    ; F0
+
+            DW      FMCom_null, FMCom_null, FMCom_null                                                  ; F1-F3
+            DW      FMCom_null, FMCom_null, FMCom_null, FMCom_null                                      ; F4-F7
+
+            DW      FMCom_keyAdv                                                                        ; F8
+            DW      FMCom_LFO                                                                           ; F9
+            DW      FMCom_enableCH2SpeMode                                                              ; FA
+            DW      FMCom_disableCH2SpeMode                                                             ; FB
+            DW      FMCom_enableDAC                                                                     ; FC
+            DW      FMCom_disableDAC                                                                    ; FD
+
+            DW      FMCom_null                                                                          ; FE
+
+            DW      FMCom_loop                                                                          ; FF
+
+
+            END
