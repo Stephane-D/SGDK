@@ -72,6 +72,13 @@
 #define XGM2_PSG_BUF_WR             (Z80_DRV_VARS + 0x6D)
 #define XGM2_PSG_WAIT_FRM           (Z80_DRV_VARS + 0x6E)
 
+#define XGM2_PCM_PARAM_BASE         (Z80_DRV_VARS + 0xD0)
+#define XGM2_PCM_PARAM_LEN          8
+
+#define XGM2_PCM_ADDR_INT           (XGM2_PCM_PARAM_BASE + 0)
+#define XGM2_PCM_LEN_INT            (XGM2_PCM_PARAM_BASE + 3)
+#define XGM2_PCM_PRIO_EXT_INT       (XGM2_PCM_PARAM_BASE + 5)
+
 #define XGM2_IDLE_TIME              (Z80_DRV_VARS + 0xEB)       // idle loop counter (idle wait in number of PCM sample)
 #define XGM2_DMA_WAIT_TIME          (Z80_DRV_VARS + 0xEC)       // wait loop counter (IN_DMA wait in number of PCM sample)
 
@@ -183,12 +190,10 @@ static u16 xgm2WaitTabInd;
 static u16 xgm2IdleMean;
 static u16 xgm2WaitMean;
 
-// for auto channel selection
-static u16 lastUsedPCMChannel;
-
 // forward
 static bool getAccess(const u8 flag);
 static void initLoadCalculation(void);
+static s16 getPCMChannel(const u8 priority);
 static void setMusicTempo(const u16 value);
 static void setLoopNumber(const s8 value);
 static void setFMVolume(const u16 value);
@@ -519,51 +524,83 @@ u8 XGM2_isPlayingPCM(const u16 channel_mask)
     return ret;
 }
 
-// get best PCM channel to play a new sample
-static u16 getPCMChannel(void)
+static s16 getPCMChannel(const u8 priority)
 {
-    // point to Z80 status
-    vu8* pb = (vu8*) Z80_DRV_STATUS;
-
     SYS_disableInts();
     // request Z80 BUS
     bool busTaken = Z80_getAndRequestBus(TRUE);
 
     // play status
+    vu8* pb = (vu8*) Z80_DRV_STATUS;
     u8 status = *pb & XGM2_STATUS_PLAYING_PCM_ALL;
+    u8 prios[3];
+
+    // play priorities
+    pb = (vu8*) (XGM2_PCM_PRIO_EXT_INT + (XGM2_PCM_PARAM_LEN * 0));
+    prios[0] = *pb & 0xF;
+    pb = (vu8*) (XGM2_PCM_PRIO_EXT_INT + (XGM2_PCM_PARAM_LEN * 1));
+    prios[1] = *pb & 0xF;
+    pb = (vu8*) (XGM2_PCM_PRIO_EXT_INT + (XGM2_PCM_PARAM_LEN * 2));
+    prios[2] = *pb & 0xF;
 
     if (!busTaken) Z80_releaseBus();
     SYS_enableInts();
 
-    // use channel 3 first
+    // try channel 3 first if free (lower CPU usage)
     if (!(status & XGM2_STATUS_PLAYING_PCM3)) return SOUND_PCM_CH3;
-    // use channel 2 as channel 1 can be used for music
+    // the try channel 2 as channel 1 can be used for music
     if (!(status & XGM2_STATUS_PLAYING_PCM2)) return SOUND_PCM_CH2;
-    // use channel 1 in last
-    if (!(status & XGM2_STATUS_PLAYING_PCM1)) return SOUND_PCM_CH1;
 
-    // no free channel ? use channel 3 if not last used
-    if (lastUsedPCMChannel != SOUND_PCM_CH3)  return SOUND_PCM_CH3;
+    // then compare channel 3 priority
+    if (prios[2] <= priority) return SOUND_PCM_CH3;
+    // then compare channel 2 priority
+    if (prios[1] <= priority) return SOUND_PCM_CH2;
 
-    // otherwise use channel 2 (channel 1 is used for music probably so better to not use it)
-    return SOUND_PCM_CH2;
+    // try channel 1 in last (can be used for music)
+    if (!(status & XGM2_STATUS_PLAYING_PCM2)) return SOUND_PCM_CH1;
+    if (prios[0] <= priority) return SOUND_PCM_CH1;
+
+    // can't play
+    return -1;
 }
 
-void NO_INLINE XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 priority, const bool halfRate, const bool loop)
+bool NO_INLINE XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 priority, const bool halfRate, const bool loop)
 {
+
     // load the appropriate driver if not already done
     Z80_loadDriver(Z80_DRIVER_XGM2, TRUE);
 
     // get channel
-    const u16 ch = (channel == SOUND_PCM_CH_AUTO)?getPCMChannel():channel;
-    // keep track of last used channel
-    lastUsedPCMChannel = ch;
+    const s16 ch = (channel == SOUND_PCM_CH_AUTO)?getPCMChannel(priority):channel;
+    // no available channel ? --> exit
+    if (ch == -1) return FALSE;
 
     // request Z80 bus access
     const bool busTaken = getAccess(XGM2_ACCESS_CMD_MSK | XGM2_ACCESS_PCM_ARG_MSK);
+    vu8* pb;
+
+    // manual channel selection ? --> test if available
+    if (channel != SOUND_PCM_CH_AUTO)
+    {
+        // get channel play status
+        pb = (vu8*) Z80_DRV_STATUS;
+        u8 playing = *pb & (1 << ch);
+        // get channel priority
+        pb = (vu8*) (XGM2_PCM_PRIO_EXT_INT + (XGM2_PCM_PARAM_LEN * ch));
+        u8 prio = *pb & 0xF;
+
+        // channel playing and prio > new prio ? --> cannot play on this channel
+        if (playing && (prio > priority))
+        {
+            if (!busTaken) Z80_releaseBus();
+            SYS_enableInts();
+
+            return FALSE;
+        }
+    }
 
     // get slot address in sample id table (use the 3 last slots which aren't used by music)
-    vu8* pb = (vu8*) (XGM2_PCM_ADDR_ARG_BASE + (ch * 4));
+    pb = (vu8*) (XGM2_PCM_ADDR_ARG_BASE + (ch * 4));
     // write sample addr
     *pb++ = ((u32) sample) >> 8;
     *pb++ = ((u32) sample) >> 16;
@@ -583,11 +620,13 @@ void NO_INLINE XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMCha
 
     if (!busTaken) Z80_releaseBus();
     SYS_enableInts();
+
+    return TRUE;
 }
 
-void XGM2_playPCM(const u8 *sample, const u32 len, const SoundPCMChannel channel)
+bool XGM2_playPCM(const u8 *sample, const u32 len, const SoundPCMChannel channel)
 {
-    XGM2_playPCMEx(sample, len, channel, 8, FALSE, FALSE);
+    return XGM2_playPCMEx(sample, len, channel, 6, FALSE, FALSE);
 }
 
 void XGM2_stopPCM(const SoundPCMChannel channel)

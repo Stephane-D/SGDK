@@ -157,7 +157,7 @@ u8 XGM2_isPlayingPCM(const u16 channel_mask);
 /**
  *  \brief
  *      Play a PCM sample on specified channel (XGM2 music player driver).<br>
- *      The method automatically select the channel to use.
+ *      The method use a default priority value of 6 which is below the minimum music PCM priority (7)
  *
  *  \param sample
  *      Sample address, should be 256 bytes boundary aligned<br>
@@ -171,12 +171,13 @@ u8 XGM2_isPlayingPCM(const u16 channel_mask);
  *      SOUND_PCM_CH1     = channel 1 (usually used by music)<br>
  *      SOUND_PCM_CH2     = channel 2<br>
  *      SOUND_PCM_CH3     = channel 3<br>
+ *  \return FALSE if there is no channel available to play the PCM, TRUE otherwise
  *
  *  \see XGM2_playPCMEx
  *  \see XGM2_stopPCM
  *  \see XGM2_isPlayingPCM
  */
-void XGM2_playPCM(const u8 *sample, const u32 len, const SoundPCMChannel channel);
+bool XGM2_playPCM(const u8 *sample, const u32 len, const SoundPCMChannel channel);
 /**
  *  \brief
  *      Play a PCM sample on specified channel (XGM2 music player driver).<br>
@@ -196,18 +197,19 @@ void XGM2_playPCM(const u8 *sample, const u32 len, const SoundPCMChannel channel
  *      SOUND_PCM_CH2     = channel 2<br>
  *      SOUND_PCM_CH3     = channel 3<br>
  *  \param priority
- *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one.<br>
+ *      Value should go from 0 to 15 where 0 is lowest priority and 15 the highest one (music PCM priority can either be set to 7 or 15).<br>
  *      If the channel was already playing the priority is used to determine if the new SFX should replace the current one (new priority >= old priority).
  *  \param halfRate
  *      Set to TRUE to play the sample at half rate (6.65 Khz) instead of default 13.3 Khz
  *  \param loop
  *      Set to TRUE to enable looping sample play
+ *  \return FALSE if there is no channel available to play the PCM, TRUE otherwise
  *
  *  \see XGM2_playPCM
  *  \see XGM2_stopPCM
  *  \see XGM2_isPlayingPCM
  */
-void XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 priority, const bool halfRate, const bool loop);
+bool XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 priority, const bool halfRate, const bool loop);
 /**
  *  \brief
  *      Stop play PCM on specified channel (XGM2 music player driver).<br>
