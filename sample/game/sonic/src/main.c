@@ -30,9 +30,6 @@ int main(bool hard)
     // set all palette to black
     PAL_setColors(0, (u16*) palette_black, 64, CPU);
 
-    // start music
-    XGM2_play(sonic_music);
-
     // need to increase a bit DMA buffer size to init both plan tilemap and sprites
     DMA_setBufferSize(10000);
     DMA_setMaxTransferSize(10000);
@@ -53,6 +50,10 @@ int main(bool hard)
     SPR_update();
     // and init map
     SYS_doVBlankProcess();
+
+    // start music
+    XGM2_play(sonic_music);
+    XGM2_fadeIn(30);
 
     // can restore default DMA buffer size
     DMA_setBufferSizeToDefault();
