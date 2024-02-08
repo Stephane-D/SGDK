@@ -655,6 +655,10 @@ static void doFade(const u16 fmVolStart, const u16 fmVolEnd, const u16 psgVolSta
     fadeCount = frame;
     fadeEndProcess = fep;
 
+    // init fade
+    setFMVolume(fix16ToInt(fadeFMVol));
+    setPSGVolume(fix16ToInt(fadePSGVol));
+
     // add task for vblank process
     VBlankProcess |= PROCESS_XGM2_FADE_TASK;
 }
