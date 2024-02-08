@@ -87,7 +87,13 @@ public class Map extends Resource
         if (addTileset)
         {
             for (int t = 0; t < tilesets.size(); t++)
-                this.tilesets.set(t, (Tileset) addInternalResource(tilesets.get(t)));
+            {
+                final Tileset tileset = tilesets.get(t);
+                // already exist ? --> add internally (so we will use the duplicate instead)
+                if (findResource(tileset) != null) this.tilesets.set(t, (Tileset) addInternalResource(tileset));
+                // add globally as there is no way to access them for TMX Map 
+                else this.tilesets.set(t, (Tileset) addResource(tileset));
+            }
         }
 
         // store compression

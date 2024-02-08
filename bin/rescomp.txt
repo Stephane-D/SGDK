@@ -1,4 +1,4 @@
-ResComp 3.81 (January 2024)
+ResComp 3.82 (February 2024)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
