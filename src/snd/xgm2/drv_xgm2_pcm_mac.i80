@@ -18,8 +18,8 @@
             EXX                     ;                           ' 4     | (4)
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
-            LD      (HL), 0x2A      ; DAC register              ' 10    |
             INC     C               ; increment read address    ' 4     | 28 (32)
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
             LD      (DE), A         ; play sample               ' 7     |
 
             EXX                     ;                           ' 4     | (36)
@@ -44,8 +44,8 @@
             EXX                     ;                           ' 4     | (8)
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
-            LD      (HL), 0x2A      ; DAC register              ' 10    |
             INC     C               ; increment read address    ' 4     | 28 (36)
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
             LD      (DE), A         ; play sample               ' 7     |
 
             EXX                     ;                           ' 4     | (44)
@@ -70,13 +70,13 @@
 
             EXX                     ;                           ' 4     | (4)
 
-            LD      (HL), 0x27      ; timer register            ' 10    |
-            LD      A, IXL          ; A = timer A res           ' 8     | 25 (29)
+            LD      A, IXL          ; A = timer A res           ' 8     |
+            LD      (HL), 0x27      ; timer register            ' 10    | 25 (29)
             LD      (DE), A         ; reset timer A             ' 7     |
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
-            LD      (HL), 0x2A      ; DAC register              ' 10    |
             INC     C               ; increment read address    ' 4     | 28 (57)
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
             LD      (DE), A         ; play sample               ' 7     |
 
             EXX                     ;                           ' 4     | (61)
@@ -101,13 +101,13 @@
             DI                      ; disable ints              ' 4     |
             EXX                     ;                           ' 4     | (8)
 
-            LD      (HL), 0x27      ; timer register            ' 10    |
-            LD      A, IXL          ; A = timer A res           ' 8     | 25 (33)
+            LD      A, IXL          ; A = timer A res           ' 8     |
+            LD      (HL), 0x27      ; timer register            ' 10    | 25 (33)
             LD      (DE), A         ; reset timer A             ' 7     |
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
-            LD      (HL), 0x2A      ; DAC register              ' 10    |
             INC     C               ; increment read address    ' 4     | 28 (61)
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
             LD      (DE), A         ; play sample               ' 7     |
 
             EXX                     ;                           ' 4     | (69)
@@ -132,14 +132,14 @@
 
             EXX                     ;                           ' 4     | (4)
 
-            LD      A, IXL          ; A = timer A res           ' 8     |
-            LD      (HL), 0x27      ; timer register            ' 10    | 18 (22)
+            LD      A, IXL          ; A = timer A res           ' 8     | (12)
 
 .wait
             BIT     0, (HL)         ; timer A not yet elapsed ? ' 12    |
-            JR      Z, .wait        ; --> wait                  ' 7     | 19 (41)
+            JR      Z, .wait        ; --> wait                  ' 7     | 19 (31)
 
-            LD      (DE), A         ; reset timer A             ' 7     | (48)
+            LD      (HL), 0x27      ; timer register            ' 10    |
+            LD      (DE), A         ; reset timer A             ' 7     | 17 (48)
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
             LD      (HL), 0x2A      ; DAC register              ' 10    |
@@ -168,14 +168,14 @@
             DI                      ; disable ints              ' 4     |
             EXX                     ;                           ' 4     | (8)
 
-            LD      A, IXL          ; A = timer A res           ' 8     |
-            LD      (HL), 0x27      ; timer register            ' 10    | 18 (26)
+            LD      A, IXL          ; A = timer A res           ' 8     | (16)
 
 .wait
             BIT     0, (HL)         ; timer A not yet elapsed ? ' 12    |
-            JR      Z, .wait        ; --> wait                  ' 7     | 19 (45)
+            JR      Z, .wait        ; --> wait                  ' 7     | 19 (35)
 
-            LD      (DE), A         ; reset timer A             ' 7     | (52)
+            LD      (HL), 0x27      ; timer register            ' 10    |
+            LD      (DE), A         ; reset timer A             ' 7     | 17 (52)
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
             LD      (HL), 0x2A      ; DAC register              ' 10    |
@@ -210,13 +210,13 @@
             DI                      ; disable ints              ' 4     |
             EXX                     ;                           ' 4     | 8 (32)
 
-            LD      (HL), 0x27      ; timer register            ' 10    |
-            LD      A, IXL          ; A = timer A res           ' 8     | 25 (57)
+            LD      A, IXL          ; A = timer A res           ' 8     |
+            LD      (HL), 0x27      ; timer register            ' 10    | 25 (57)
             LD      (DE), A         ; reset timer A             ' 7     |
 
             LD      A, (BC)         ; read sample from buffer   ' 7     |
-            LD      (HL), 0x2A      ; DAC register              ' 10    |
             INC     C               ; increment read address    ' 4     | 28 (85)
+            LD      (HL), 0x2A      ; DAC register              ' 10    |
             LD      (DE), A         ; play sample               ' 7     |
 
             EXX                     ;                           ' 4     | (93)
