@@ -261,9 +261,10 @@ void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
 
     // clear z80 memory
     Z80_clear();
-    // upload Z80 driver and reset Z80
+    // upload Z80 driver
     Z80_upload(0, drv, size);
 
+    // reset Z80
     Z80_startReset();
     Z80_releaseBus();
     // wait a bit so Z80 reset completed
