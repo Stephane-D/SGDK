@@ -794,15 +794,6 @@ fastfix32 fastFix32Div(fastfix32 val1, fastfix32 val2);
 
 /**
  *  \brief
- *      Binary to Decimal conversion.
- *
- *  \param value
- *      Value to convert.
- */
-u32 intToBCD(u32 value);
-
-/**
- *  \brief
  *      Convert u16 to BCD.
  *
  *  \param value
