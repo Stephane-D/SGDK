@@ -338,14 +338,16 @@ FORCE_INLINE fastfix32 fastFix32Div(fastfix32 val1, fastfix32 val2)
 
 u32 u16ToBCD(u16 value)
 {
+    u16 v = value;
     u32 res = 0;
-    u8 multiplier = 0;
 
-    while (value)
+    while (v)
     {
-        res |= modu(value, 10) << multiplier;
-        value = divu(value, 10);
-        multiplier += 4;
+        const u32 dm = divmodu(v, 100);
+        const u16 m = dm >> 16;
+        const u16 d = dm;
+        res = (res << 8) | cnv_bcd_tab[m];
+        v = d;
     }
 
     return res;
@@ -354,16 +356,16 @@ u32 u16ToBCD(u16 value)
 u32 u32ToBCD(u32 value)
 {
     if (value > 99999999) return 0x99999999;
-    if (value < 100) return cnv_bcd_tab[value];
 
+    u32 v = value;
     u32 res = 0;
-    u8 multiplier = 0;
 
-    while (value)
+    while (v)
     {
-        res |= (value % 10) << multiplier;
-        value /= 10;
-        multiplier += 4;
+        const u16 m = v % 100;
+        const u16 d = v / 100;
+        res = (res << 8) | cnv_bcd_tab[m];
+        v = d;
     }
 
     return res;
