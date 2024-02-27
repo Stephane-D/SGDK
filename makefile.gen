@@ -141,7 +141,6 @@ out/symbol.txt: out/rom.out
 
 out/rom.out: out/sega.o out/cmd_ $(LIBMD)
 	$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib out/sega.o @out/cmd_ $(LIBMD) $(LIBGCC) -o out/rom.out -Wl,--gc-sections -flto
-	$(RM) out/cmd_
 
 out/cmd_: $(OBJS)
 	$(ECHO) "$(OBJS)" > out/cmd_

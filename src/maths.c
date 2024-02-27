@@ -339,36 +339,41 @@ FORCE_INLINE fastfix32 fastFix32Div(fastfix32 val1, fastfix32 val2)
 u32 u16ToBCD(u16 value)
 {
     u16 v = value;
-    u32 res = 0;
+    u32 res;
 
-    while (v)
+    if (v >= 100)
     {
         const u32 dm = divmodu(v, 100);
         const u16 m = dm >> 16;
-        const u16 d = dm;
-        res = (res << 8) | cnv_bcd_tab[m];
-        v = d;
+        v = dm;
+        res = cnv_bcd_tab[m];
     }
+    else return cnv_bcd_tab[v];
 
-    return res;
+    if (v >= 100)
+    {
+        const u32 dm = divmodu(v, 100);
+        const u16 m = dm >> 16;
+        v = dm;
+        res |= cnv_bcd_tab[m] << 8;
+    }
+    else return (res | (cnv_bcd_tab[v] << 8));
+
+    return (res | (cnv_bcd_tab[v] << 16));
 }
 
 u32 u32ToBCD(u32 value)
 {
     if (value > 99999999) return 0x99999999;
 
-    u32 v = value;
-    u32 res = 0;
-
-    while (v)
+    if (value >= 65536)
     {
-        const u16 m = v % 100;
-        const u16 d = v / 100;
-        res = (res << 8) | cnv_bcd_tab[m];
-        v = d;
+        const u16 m = value % 10000;
+        const u16 d = value / 10000;
+        return (u16ToBCD(d) << 16) | u16ToBCD(m);
     }
 
-    return res;
+    return u16ToBCD(value);
 }
 
 u32 getApproximatedDistance(s32 dx, s32 dy)
