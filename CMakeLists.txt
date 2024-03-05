@@ -100,10 +100,11 @@ endforeach()
 # Rules to build resources
 foreach(res_source ${RESSRC})
   string(REGEX REPLACE "[.]s" ".h" res_header ${res_source})
+  string(REGEX REPLACE "[.]s" ".res" res ${res_source})
   add_custom_command(
     OUTPUT ${res_source} ${res_header}
-    COMMAND ${RESCOMP} ${PROJECT_SOURCE_DIR}/res/libres.res
-    DEPENDS ${PROJECT_SOURCE_DIR}/res/libres.res XGMTOOL)
+    COMMAND ${RESCOMP} ${res}
+    DEPENDS ${res} XGMTOOL)
 endforeach()
 
 add_library(md STATIC ${SRC_LIB_C} ${SRC_LIB_S} ${Z80SRC} ${RESSRC})
