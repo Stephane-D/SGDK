@@ -186,13 +186,16 @@ $(OUT)/rom_head.o: $(SRC)/boot/rom_head.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
 
-$(SRC)/boot/sega.s: $(SRC_LIB)/boot/sega.s
-	$(MKDIR) -p $(dir $@)
-	$(CP) $< $@
+# SRC_LIB files are "order-only" deps, right of the pipe.  This means we will
+# never overwrite the file in SRC, even if SRC_LIB is newer.
 
-$(SRC)/boot/rom_head.c: $(SRC_LIB)/boot/rom_head.c
+$(SRC)/boot/sega.s: | $(SRC_LIB)/boot/sega.s
 	$(MKDIR) -p $(dir $@)
-	$(CP) $< $@
+	$(CP) $| $@
+
+$(SRC)/boot/rom_head.c: | $(SRC_LIB)/boot/rom_head.c
+	$(MKDIR) -p $(dir $@)
+	$(CP) $| $@
 
 $(OUT)/%.lst: %.c
 	$(MKDIR) -p $(dir $@)
