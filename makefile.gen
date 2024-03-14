@@ -24,6 +24,7 @@ SRC_S= $(wildcard *.s)
 SRC_S+= $(wildcard $(SRC)/*.s)
 SRC_S+= $(wildcard $(SRC)/*/*.s)
 SRC_S+= $(wildcard $(SRC)/*/*/*.s)
+SRC_S:= $(filter-out $(SRC)/boot/sega.s,$(SRC_S))
 SRC_ASM= $(wildcard *.asm)
 SRC_ASM+= $(wildcard $(SRC)/*.asm)
 SRC_ASM+= $(wildcard $(SRC)/*/*.asm)
@@ -136,7 +137,7 @@ cleanobj:
 .PHONY: cleanobj
 
 clean: cleanobj cleanres cleanlst cleandep
-	$(RM) -f out.lst $(OUT)/cmd_ $(OUT)/symbol.txt $(OUT)/rom.nm $(OUT)/rom.wch $(OUT)/rom.bin
+	$(RM) -f $(OUT)/out.lst $(OUT)/cmd_ $(OUT)/symbol.txt $(OUT)/rom.nm $(OUT)/rom.wch $(OUT)/rom.bin
 .PHONY: clean
 
 cleanrelease: clean
@@ -174,8 +175,9 @@ $(OUT)/cmd_: $(OBJS)
 	$(MKDIR) -p $(dir $@)
 	$(ECHO) "$(OBJS)" > $(OUT)/cmd_
 
-$(OUT)/sega.o: $(OUT)/boot/sega.s $(OUT)/rom_head.bin
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $(OUT)/boot/sega.s -o $@
+# NOTE: sega.s references rom_head.bin internally.
+$(OUT)/sega.o: $(SRC)/boot/sega.s $(OUT)/rom_head.bin
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $(SRC)/boot/sega.s -o $@
 
 $(OUT)/rom_head.bin: $(OUT)/rom_head.o
 	$(OBJCPY) -O binary $< $@
@@ -184,8 +186,7 @@ $(OUT)/rom_head.o: $(SRC)/boot/rom_head.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
 
-$(OUT)/boot/sega.s: $(SRC_LIB)/boot/sega.s
-	$(ECHO) $@
+$(SRC)/boot/sega.s: $(SRC_LIB)/boot/sega.s
 	$(MKDIR) -p $(dir $@)
 	$(CP) $< $@
 
@@ -218,7 +219,7 @@ $(OUT)/%.o: %.rs
 	$(MACCER) -o $@ $<
 
 %.o80: %.s80
-	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
+	$(ASMZ80) $(FLAGSZ80) $< $@ $(OUT)/out.lst
 
 %.s: %.o80
 	$(BINTOS) $<
