@@ -489,13 +489,21 @@ interrupt                                           ; VInt process
             CALL    process68KCommands_noPSG        ; process 68k commands (no PSG)
 
             LD      HL, PENDING_FRAME               ;                               ' 10    |
-            DEC     (HL)                            ; pending_frame--               ' 11    | (21)
+            LD      A, (HL)                         ; A = pending frame             ' 7     |
+            DEC     A                               ; A--                           ' 4     | 31
+            JP      M, .play_reset                  ; just got stop/start play com  ' 10    |
 
-            CALL    waitDMA                         ;                               ' 90    | (111)
+            LD      (HL), A                         ; pending_frame--               ' 7     | (38)
+
+.play_reset
+            EX      AF, AF'                         ; F' = S flag                   ' 4     | (42)
+
+            CALL    waitDMA                         ;                               ' 90    | (132)
 
             SAMPLE_OUTPUT_FASTCALL
 
-            CALL    PSG_nextFrame                   ; process 1 PSG frame           ' 27
+            EX      AF, AF'                         ; F = S flag                    ' 4
+            CALL    P, PSG_nextFrame                ; process 1 PSG frame if play   ' 27
             CALL    process68KCommands_PSG          ; just process 68k PSG commands
 
             JP      .fill_buffers                   ;                               ' 10
