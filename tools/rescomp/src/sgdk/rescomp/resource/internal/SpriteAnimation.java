@@ -63,19 +63,34 @@ public class SpriteAnimation extends Resource
             // not transparent ? --> stop here
             if (!ImageUtil.isTransparent(image8bpp, imageDim, frameBounds))
                 break;
-            
+
             f--;
         }
-        
+
         // number of frame to process
         final int numFrame = f + 1;
-        
+
         for (int i = 0; i < numFrame; i++)
         {
             // define frame bounds
             final Rectangle frameBounds = new Rectangle((i * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
             // get image for this frame
             final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
+
+            // search for duplicate consecutive frames
+            int duplicate = 0;
+            for (int j = i + 1; j < numFrame; j++)
+            {
+                final Rectangle nextBounds = new Rectangle((j * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
+                final byte[] nextImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), nextBounds);
+
+                // different ? --> stop here
+                if (!Arrays.equals(frameImage, nextImage))
+                    break;
+                
+                // found duplicate
+                duplicate++;
+            }
             
             // FIXME: why are we doing that ? duplicate resource optimization should be enough
             // // try to search for duplicated frame first
@@ -97,11 +112,13 @@ public class SpriteAnimation extends Resource
             // // add frame
             // frames.add(frame);
 
-            // create sprite frame
-            SpriteFrame frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time, collision, compression, optType, optLevel);
+            // create sprite frame ('timer' is augmented by number of duplicate)
+            SpriteFrame frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time * (duplicate + 1), collision, compression, optType, optLevel);
             // add as internal resource (get duplicate if exist)
             frame = (SpriteFrame) addInternalResource(frame);
-            
+            // bypass duplicates
+            i += duplicate;
+
             // add the new sprite frame
             frames.add(frame);
             frameSet.add(frame);

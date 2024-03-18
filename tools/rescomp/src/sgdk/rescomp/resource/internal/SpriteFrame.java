@@ -64,7 +64,6 @@ public class SpriteFrame extends Resource
 
         // get optimized sprite list from the image frame
         List<SpriteCell> sprites;
-        final int numTile = wf * hf;
 
         // special case of no optimization ? --> use default solution covering the whole sprite frame
         if (optType == OptimizationType.NONE)
