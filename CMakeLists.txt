@@ -1,14 +1,20 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(md C ASM)
-
 # Set the compiler prefix
 if(DEFINED ENV{PREFIX})
   set(PREFIX "$ENV{PREFIX}")
 endif()
 
+# Set the compiler/assembler name
+set(CMAKE_C_COMPILER ${PREFIX}gcc)
+set(CMAKE_ASM_COMPILER ${PREFIX}gcc)
+set(CMAKE_AR ${PREFIX}ar)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+
+project(md C ASM)
+
 # Check for sjasm submodule
-if(NOT IS_DIRECTORY "${PROJECT_SOURCE_DIR}/tools/sjasm")
+if(NOT IS_DIRECTORY "${PROJECT_SOURCE_DIR}/tools/sjasm/Sjasm")
   find_package(Git)
   if(Git_FOUND)
     execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init
@@ -39,11 +45,6 @@ ExternalProject_Add(
   INSTALL_COMMAND install ${PROJECT_SOURCE_DIR}/tools/sjasm/Sjasm/sjasm
                   ${PROJECT_SOURCE_DIR}/bin
   BUILD_ALWAYS TRUE)
-
-# Set the compiler/assembler name
-set(CMAKE_C_COMPILER ${PREFIX}gcc)
-set(CMAKE_ASM_COMPILER ${PREFIX}gcc)
-set(CMAKE_AR ${PREFIX}ar)
 
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 include_directories(${PROJECT_SOURCE_DIR}/res)
