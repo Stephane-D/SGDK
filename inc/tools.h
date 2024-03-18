@@ -38,12 +38,12 @@
  *  \brief
  *      Simple cycle counter tool from BlastEm - start cycle count (see #BLASTEM_PROFIL_END)
  */
-#define BLASTEM_PROFIL_START    VDP_setReg(0x9F, 0xC0)
+#define BLASTEM_PROFIL_START    VDP_setReg(0x9F, 0xC0);
 /**
  *  \brief
  *      Simple cycle counter tool from BlastEm - stop cycle count and display result in console
  */
-#define BLASTEM_PROFIL_END      VDP_setReg(0x9F, 0x00)
+#define BLASTEM_PROFIL_END      VDP_setReg(0x9F, 0x00);
 
 
 /**
