@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
 <jardesc>
     <jar path="Rescomp/rescomp.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/Rescomp/export.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
@@ -12,11 +12,11 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{APJ.java"/>
-        <javaElement handleIdentifier="=Rescomp/src"/>
         <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitReader.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{DynamicByteArray.java"/>
         <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitWriter.java"/>
-        <javaElement handleIdentifier="=Commons/src"/>
+        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{DynamicByteArray.java"/>
         <javaElement handleIdentifier="=LZ4W Packer/src&lt;sgdk.lz4w{LZ4W.java"/>
+        <javaElement handleIdentifier="=Commons/src"/>
+        <javaElement handleIdentifier="=Rescomp/src"/>
     </selectedElements>
 </jardesc>

@@ -1,4 +1,4 @@
-ResComp 3.82 (February 2024)
+ResComp 3.83 (March 2024)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -330,7 +330,7 @@ Take an image as input and transform it into SGDK SpriteDefinition structure.
 SpriteDefinition is used to draw, animate and manage sprites, it internally contains severals TileSet, Palette and Animation structures.
 
 Syntax:
-SPRITE name img_file width height [compression [time [collision [opt_type [opt_level]]]]]
+SPRITE name img_file width height [compression [time [collision [opt_type [opt_level [opt_duplicate]]]]]]
 
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (BMP or PNG image)
@@ -355,6 +355,11 @@ SPRITE name img_file width height [compression [time [collision [opt_type [opt_l
                         1 / MEDIUM    = intermediate optimisation level, provide better results than FAST but ~10 time slower
                         2 / SLOW      = advanced optimisation level using a genetic algorithm (80000 iterations), ~25 time slower than FAST
                         3 / MAX       = maximum optimisation level, genetic algorithm (500000 iterations), ~150 time slower than FAST
+    opt_duplicate   enabled optimization of consecutive duplicated frames by removing them and increasing animation time to compensante.
+                        FALSE  = no optimization (default)
+                                 Note that duplicated frames pixel data are still removed by rescomp binary blob optimizer.
+                        TRUE   = only the first instance of duplicated frames is kept and 'timer' value is increased to compensate the removed frames time.
+                                 Note that it *does* change the 'animation.numFrame' information so beware of that when enabling this optimization.
 
 Some informations about how SpriteDefinition is generated from the input image:
 - input image dimension should be aligned on tile (multiple of 8).

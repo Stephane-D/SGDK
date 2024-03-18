@@ -40,7 +40,7 @@ public class SpriteAnimation extends Resource
      * @param showCuttingResult
      */
     public SpriteAnimation(String id, byte[] image8bpp, int w, int h, int animIndex, int wf, int hf, int time, CollisionType collision, Compression compression,
-            OptimizationType optType, OptimizationLevel optLevel)
+            OptimizationType optType, OptimizationLevel optLevel, boolean optDuplicate)
     {
         super(id);
 
@@ -77,19 +77,23 @@ public class SpriteAnimation extends Resource
             // get image for this frame
             final byte[] frameImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), frameBounds);
 
-            // search for duplicate consecutive frames
             int duplicate = 0;
-            for (int j = i + 1; j < numFrame; j++)
+            // duplicate optimization enabled ?
+            if (optDuplicate)
             {
-                final Rectangle nextBounds = new Rectangle((j * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
-                final byte[] nextImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), nextBounds);
-
-                // different ? --> stop here
-                if (!Arrays.equals(frameImage, nextImage))
-                    break;
-                
-                // found duplicate
-                duplicate++;
+                // search for duplicate consecutive frames
+                for (int j = i + 1; j < numFrame; j++)
+                {
+                    final Rectangle nextBounds = new Rectangle((j * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8);
+                    final byte[] nextImage = ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), nextBounds);
+    
+                    // different ? --> stop here
+                    if (!Arrays.equals(frameImage, nextImage))
+                        break;
+                    
+                    // found duplicate
+                    duplicate++;
+                }
             }
             
             // FIXME: why are we doing that ? duplicate resource optimization should be enough

@@ -27,7 +27,7 @@ public class SpriteProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong SPRITE definition");
-            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt_type [opt_level]]]]]");
+            System.out.println("SPRITE name \"file\" width height [compression [time [collision [opt_type [opt_level [opt_duplicate]]]]]]");
             System.out.println("  name          Sprite variable name");
             System.out.println("  file          the image file to convert to SpriteDefinition structure (BMP or PNG image)");
             System.out.println("  width         width of a single sprite frame in tile");
@@ -49,6 +49,11 @@ public class SpriteProcessor implements Processor
             System.out.println("                    MEDIUM    = intermediate optimisation level, provide better results than FAST but ~5 time slower");
             System.out.println("                    SLOW      = advanced optimisation level using a genetic algorithm (80000 iterations), ~20 time slower than FAST");
             System.out.println("                    MAX       = maximum optimisation level, genetic algorithm (500000 iterations), ~100 time slower than FAST");
+            System.out.println("  opt_duplicate enabled optimization of consecutive duplicated frames by removing them and increasing animation time to compensante.");
+            System.out.println("                    FALSE     = no optimization (default)");
+            System.out.println("                                Note that duplicated frames pixel data are still removed by rescomp binary blob optimizer");
+            System.out.println("                    TRUE      = only the first instance of consecutive duplicated frames is kept and 'timer' value is increased to compensate the removed frames time.");
+            System.out.println("                                Note that it *does* change the 'animation.numFrame' information so beware of that when enabling this optimization.");
 
             return null;
         }
@@ -104,10 +109,13 @@ public class SpriteProcessor implements Processor
             optLevel = Util.getSpriteOptLevel(fields[9]);
             showCut = true;
         }
+        boolean optDuplicate = false;
+        if (fields.length >= 11)
+            optDuplicate = Boolean.parseBoolean(fields[10]);
 
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
 
-        return new Sprite(id, fileIn, wf, hf, compression, time, collision, opt, optLevel, showCut);
+        return new Sprite(id, fileIn, wf, hf, compression, time, collision, opt, optLevel, showCut, optDuplicate);
     }
 }

@@ -35,7 +35,7 @@ public class Sprite extends Resource
     public final Palette palette;
 
     public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision, OptimizationType optType,
-            OptimizationLevel optLevel, boolean showCut) throws Exception
+            OptimizationLevel optLevel, boolean showCut, boolean optDuplicate) throws Exception
     {
         super(id);
 
@@ -108,7 +108,7 @@ public class Sprite extends Resource
         for (int i = 0; i < numAnim; i++)
         {
             // build sprite animation
-            SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, image, wt, ht, i, wf, hf, time, collision, compression, optType, optLevel);
+            SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, image, wt, ht, i, wf, hf, time, collision, compression, optType, optLevel, optDuplicate);
 
             // check if empty
             if (!animation.isEmpty())
