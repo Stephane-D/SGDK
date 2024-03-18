@@ -1,0 +1,114 @@
+name: sgdk-docker
+
+concurrency:
+  group: ${{ github.ref }}-sgdk-docker
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch: # Allows for manual triggering.
+  pull_request: # Trigger for pull requests.
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - master
+  push: # Trigger when pushed to master.
+    branches:
+      - 'master'
+    paths-ignore:
+      - 'vstudio/**'
+      - 'bin/**'
+      - 'sample/**'
+      - '**.md'
+
+env:
+  # TODO: arm64 images are currently disabled because they keep hanging in the
+  # GitHub Actions environment.
+  #PLATFORMS: linux/amd64,linux/arm64
+  PLATFORMS: linux/amd64
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # TODO: arm64 images are currently disabled because they keep hanging in
+      # the GitHub Actions environment.
+      #- name: Set up QEMU
+      #  uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR (only on push event)
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if GCC Dockerfile has changed
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+        with:
+          files_yaml: |
+            gcc:
+              - deps/gcc.Dockerfile
+
+      - name: Build m68k GCC (only if changed)
+        if: steps.changed-files.outputs.gcc_any_changed == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          file: deps/gcc.Dockerfile
+          context: deps/
+          platforms: ${{ env.PLATFORMS }}
+          tags: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest
+          push: false
+          load: true
+
+      # Push is a separate step so the build logs are clearly separate from the
+      # push logs.
+      - name: Push m68k GCC (only if changed, only on push event)
+        if: steps.changed-files.outputs.gcc_any_changed == 'true' && github.event_name == 'push'
+        run: |
+          docker image push ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest
+
+      # Right after forking SGDK, the fork will not have a GCC image.
+      # We may need to fetch the latest from upstream before building SGDK.
+      - name: Bootstrap m68k GCC
+        if: steps.changed-files.outputs.gcc_any_changed == 'false'
+        run: |
+          # Pull from the user's fork, fall back to the upstream repo.
+          if ! docker pull ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest; then
+            docker pull ghcr.io/stephane-d/sgdk-m68k-gcc:latest
+            docker tag ghcr.io/stephane-d/sgdk-m68k-gcc:latest \
+                       ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest
+            # Note that we are not pushing the upstream version to the fork.
+            # The workflow will update the fork if/when the GCC Dockerfile
+            # changes in "master", even if those changes come from upstream.
+          fi
+
+      - name: Build SGDK
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile
+          context: .
+          platforms: ${{ env.PLATFORMS }}
+          build-args: |
+            BASE_IMAGE=ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
+          tags: ghcr.io/${{ github.actor }}/sgdk:latest
+          push: false
+          load: true
+
+      # Push is a separate step so the build logs are clearly separate from the
+      # push logs.
+      - name: Push SGDK (only on push event)
+        if: github.event_name == 'push'
+        run: |
+          docker image push ghcr.io/${{ github.actor }}/sgdk:latest

@@ -1,4 +1,4 @@
-﻿package sgdk.aplib;
+package sgdk.aplib;
 
 import java.io.File;
 import java.io.IOException;
