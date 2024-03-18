@@ -66,7 +66,7 @@ add_compile_options(
   -nodefaultlibs)
 
 add_compile_options(
-  "$<$<CONFIG:Release,>:-fuse-linker-plugin;-fno-web;-fno-gcse;-fno-unit-at-a-time;-fomit-frame-pointer;-ffat-lto-objects;-flto>"
+  "$<$<CONFIG:Release,>:-fuse-linker-plugin;-fno-web;-fno-gcse;-fomit-frame-pointer;-ffat-lto-objects;-flto>"
   "$<$<CONFIG:Debug>:-O0;-DDEBUG=1>"
   "$<$<COMPILE_LANGUAGE:ASM>:-xassembler-with-cpp;-Wa,-I${PROJECT_SOURCE_DIR};-Wa,--register-prefix-optional,--bitwise-or>"
 )
