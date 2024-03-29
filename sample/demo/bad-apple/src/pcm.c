@@ -1,5 +1,4 @@
 #include "genesis.h"
-#include "smp_null_pcm.h"
 
 #include "pcm.h"
 #include "z80_drv.h"
@@ -19,13 +18,13 @@ void loadDriver()
     // point to Z80 null sample parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x20);
 
-    addr = (u32) smp_null_pcm;
+    addr = (u32) smp_null_dpcm;
     // null sample address (128 bytes aligned)
     pb[0] = addr >> 7;
     pb[1] = addr >> 15;
     // null sample length (128 bytes aligned)
-    pb[2] = sizeof(smp_null_pcm) >> 7;
-    pb[3] = sizeof(smp_null_pcm) >> 15;
+    pb[2] = sizeof(smp_null_dpcm) >> 7;
+    pb[3] = sizeof(smp_null_dpcm) >> 15;
 
     Z80_releaseBus();
     // wait bus released
@@ -96,13 +95,13 @@ void stopPlay()
     // point to Z80 internal parameters
     pb = (u8 *) (Z80_DRV_PARAMS + 0x10);
 
-    addr = (u32) smp_null_pcm;
+    addr = (u32) smp_null_dpcm;
     // sample address (128 bytes aligned)
     pb[0] = addr >> 7;
     pb[1] = addr >> 15;
     // sample length (128 bytes aligned)
-    pb[2] = sizeof(smp_null_pcm) >> 7;
-    pb[3] = sizeof(smp_null_pcm) >> 15;
+    pb[2] = sizeof(smp_null_dpcm) >> 7;
+    pb[3] = sizeof(smp_null_dpcm) >> 15;
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;

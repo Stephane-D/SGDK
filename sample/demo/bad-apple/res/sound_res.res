@@ -1,3 +1,3 @@
 NEAR
 
-WAV music music.wav 2ADPCM 13000
+WAV music music.wav DPCM2 13000
