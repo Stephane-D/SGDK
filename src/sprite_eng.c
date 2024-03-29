@@ -401,8 +401,9 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
 
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
-    // default depth
-    sprite->depth = 0;
+    // depending sprite position (first or last) we set its default depth
+    if (flag & SPR_FLAG_INSERT_HEAD) sprite->depth = SPR_MIN_DEPTH;
+    else sprite->depth = SPR_MAX_DEPTH;
 
     // auto VRAM alloc enabled ?
     if (flag & SPR_FLAG_AUTO_VRAM_ALLOC)
