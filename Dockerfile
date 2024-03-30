@@ -25,29 +25,14 @@ RUN jlink \
 
 # Stage One - build all tools and libs for SGDK
 FROM jre-minimal as build
-RUN apk add --no-cache build-base git
+RUN apk add --no-cache build-base git cmake ninja
 
 # Set-up environment and folders
 ENV SGDK_PATH=/sgdk
 RUN mkdir -p $SGDK_PATH/bin
 
-# Building sjasm
-ENV SJASMEP_DIR="/tmp/sjasmep"
-RUN git clone https://github.com/istvan-v/sjasmep.git $SJASMEP_DIR
-WORKDIR $SJASMEP_DIR
-RUN make
-RUN mv $SJASMEP_DIR/sjasm $SGDK_PATH/bin/
-
 # Get SGDK sources
-COPY . /sgdk
-
-# Building bintos
-WORKDIR $SGDK_PATH/tools/bintos
-RUN gcc -O2 -s src/bintos.c -o $SGDK_PATH/bin/bintos
-
-# Building xgmtool
-WORKDIR $SGDK_PATH/tools/xgmtool
-RUN gcc -fexpensive-optimizations -Os -s src/*.c -o $SGDK_PATH/bin/xgmtool
+COPY . $SGDK_PATH
 
 # Building apj.jar
 WORKDIR $SGDK_PATH/tools/apj/src
@@ -72,19 +57,29 @@ RUN find . -name "*.java" | xargs javac
 RUN echo -e "Main-Class: sgdk.rescomp.Launcher\nClass-Path: apj.jar lz4w.jar" > Manifest.txt
 RUN jar cfm $SGDK_PATH/bin/rescomp.jar Manifest.txt  .
 
+# Building xgm2tool.jar
+WORKDIR $SGDK_PATH/tools/xgm2tool/src
+ENV CLASSPATH="$SGDK_PATH/bin/apj.jar:$SGDK_PATH/bin/lz4w.jar:$SGDK_PATH/tools/xgm2tool/src"
+RUN cp -r $SGDK_PATH/tools/commons/src/sgdk .
+RUN cp -r $SGDK_PATH/tools/musicg/src/com .
+RUN cp -r $SGDK_PATH/tools/musicg/graphic .
+RUN find . -name "*.java" | xargs javac
+RUN echo -e "Main-Class: sgdk.xgm2tool.Launcher\nClass-Path: apj.jar lz4w.jar" > Manifest.txt
+RUN jar cfm $SGDK_PATH/bin/xgm2tool.jar Manifest.txt  .
+
 # Copy m68k compiler from base image
 COPY --from=m68k-files /m68k/ /usr/
 ENV PATH="$SGDK_PATH/bin:${PATH}"
 
-# Build SGDK libraries
-WORKDIR $SGDK_PATH
-RUN mkdir lib
-#build libmd.a
-RUN make -f makelib.gen release
-#build libmd_debug.a
-RUN make -f makelib.gen debug
-RUN rm -rf $SGDK_PATH/tools
+# 32-bit not supported on Alpine, this may have side-effects
+RUN sed -i /-m32/d $SGDK_PATH/tools/xgmtool/src/CMakeLists.txt
+ENV PREFIX=m68k-elf-
+RUN cmake -G Ninja -S $SGDK_PATH -B $SGDK_PATH/build_release -DCMAKE_BUILD_TYPE=Release && cmake --build $SGDK_PATH/build_release
+RUN cmake -G Ninja -S $SGDK_PATH -B $SGDK_PATH/build_debug -DCMAKE_BUILD_TYPE=Debug && cmake --build $SGDK_PATH/build_debug
 
+RUN rm -rf $SGDK_PATH/tools
+RUN rm -rf $SGDK_PATH/build_release
+RUN rm -rf $SGDK_PATH/build_debug
 
 # Stage Two - copy tools into a clean image
 FROM alpine:$ALPINE_VERSION
