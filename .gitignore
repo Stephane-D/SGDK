@@ -28,7 +28,6 @@ rom_head.bin
 **/res/*.h
 res/libres.s
 !res/libres.h
-src/z80_*.s
 archive
 cb
 not needed
@@ -39,11 +38,9 @@ tools/old
 tools/genesis_tools.workspace
 tools/emu
 tools/lz4w/test
-tools/lz4w/bin
 tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
-tools/xgm rom builder/bin
-src/z80_*.h
+tools/xgm rom builder
 /.idea
 *.iml
