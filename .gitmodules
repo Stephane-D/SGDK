@@ -1,6 +1,0 @@
-[submodule "tools/sjasm"]
-	path = tools/sjasm
-	url = https://github.com/Konamiman/Sjasm.git
-[submodule "tools/musicg"]
-	path = tools/musicg
-	url = https://github.com/loisaidasam/musicg
