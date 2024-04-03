@@ -61,8 +61,6 @@ RUN jar cfm $SGDK_PATH/bin/rescomp.jar Manifest.txt  .
 WORKDIR $SGDK_PATH/tools/xgm2tool/src
 ENV CLASSPATH="$SGDK_PATH/bin/apj.jar:$SGDK_PATH/bin/lz4w.jar:$SGDK_PATH/tools/xgm2tool/src"
 RUN cp -r $SGDK_PATH/tools/commons/src/sgdk .
-RUN cp -r $SGDK_PATH/tools/musicg/src/com .
-RUN cp -r $SGDK_PATH/tools/musicg/graphic .
 RUN find . -name "*.java" | xargs javac
 RUN echo -e "Main-Class: sgdk.xgm2tool.Launcher\nClass-Path: apj.jar lz4w.jar" > Manifest.txt
 RUN jar cfm $SGDK_PATH/bin/xgm2tool.jar Manifest.txt  .
