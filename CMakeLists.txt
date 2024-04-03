@@ -31,7 +31,7 @@ ExternalProject_Add(
   CONFIGURE_COMMAND ""
   DOWNLOAD_COMMAND ""
   BUILD_COMMAND make -C ${PROJECT_SOURCE_DIR}/tools/sjasm/src
-  INSTALL_COMMAND install ${PROJECT_SOURCE_DIR}/tools/sjasm/sjasm ${PROJECT_SOURCE_DIR}/bin
+  INSTALL_COMMAND install ${PROJECT_SOURCE_DIR}/tools/sjasm/src/sjasm ${PROJECT_SOURCE_DIR}/bin
   BUILD_ALWAYS TRUE)
 
 include_directories(${PROJECT_SOURCE_DIR}/inc)
