@@ -13,17 +13,6 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 project(md C ASM)
 
-# Check for sjasm submodule
-if(NOT IS_DIRECTORY "${PROJECT_SOURCE_DIR}/tools/sjasm/Sjasm")
-  find_package(Git)
-  if(Git_FOUND)
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init
-                            --recursive ${PROJECT_SOURCE_DIR})
-  else()
-    message(CHECK_FAIL "Could not find git executable")
-  endif()
-endif()
-
 include(ExternalProject)
 ExternalProject_Add(
   BINTOS
@@ -41,9 +30,8 @@ ExternalProject_Add(
   SJASM
   CONFIGURE_COMMAND ""
   DOWNLOAD_COMMAND ""
-  BUILD_COMMAND make -C ${PROJECT_SOURCE_DIR}/tools/sjasm/Sjasm
-  INSTALL_COMMAND install ${PROJECT_SOURCE_DIR}/tools/sjasm/Sjasm/sjasm
-                  ${PROJECT_SOURCE_DIR}/bin
+  BUILD_COMMAND make -C ${PROJECT_SOURCE_DIR}/tools/sjasm/src
+  INSTALL_COMMAND install ${PROJECT_SOURCE_DIR}/tools/sjasm/sjasm ${PROJECT_SOURCE_DIR}/bin
   BUILD_ALWAYS TRUE)
 
 include_directories(${PROJECT_SOURCE_DIR}/inc)
