@@ -52,8 +52,21 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
+          # Here github.actor is used without converting to lowercase, because
+          # it's the login name, not the package name.
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute ghcr org name
+        # github.actor may be mixed case.  While GitHub Actions is
+        # case-insensitive when comparing strings, GHCR requires a lowercase
+        # name.
+        run: |
+          ACTOR="${{github.actor}}"
+          # The bash expansion below lowercases the variable, which we then
+          # write to the GitHub Actions environment for subsequent steps to
+          # use.
+          echo "GHCR_ORG=${ACTOR,,}}" >> "$GITHUB_ENV"
 
       - name: Check if GCC Dockerfile has changed
         id: changed-files
@@ -61,7 +74,10 @@ jobs:
         with:
           files_yaml: |
             gcc:
-              - deps/gcc.Dockerfile
+              # If the Dockerfile, sample configs, or this workflow changed,
+              # rebuild GCC.
+              - deps/**
+              - .github/workflows/sgdk-docker.yml
 
       - name: Build m68k GCC (only if changed)
         if: steps.changed-files.outputs.gcc_any_changed == 'true'
@@ -70,7 +86,7 @@ jobs:
           file: deps/gcc.Dockerfile
           context: deps/
           platforms: ${{ env.PLATFORMS }}
-          tags: ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest
+          tags: ghcr.io/${{ env.GHCR_ORG }}/sgdk-m68k-gcc:latest
           push: false
           load: true
 
@@ -79,7 +95,7 @@ jobs:
       - name: Push m68k GCC (only if changed, only on push event)
         if: steps.changed-files.outputs.gcc_any_changed == 'true' && github.event_name == 'push'
         run: |
-          docker image push ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest
+          docker image push ghcr.io/${{ env.GHCR_ORG }}/sgdk-m68k-gcc:latest
 
       # Right after forking SGDK, the fork will not have a GCC image.
       # We may need to fetch the latest from upstream before building SGDK.
@@ -87,10 +103,10 @@ jobs:
         if: steps.changed-files.outputs.gcc_any_changed == 'false'
         run: |
           # Pull from the user's fork, fall back to the upstream repo.
-          if ! docker pull ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest; then
+          if ! docker pull ghcr.io/${{ env.GHCR_ORG }}/sgdk-m68k-gcc:latest; then
             docker pull ghcr.io/stephane-d/sgdk-m68k-gcc:latest
             docker tag ghcr.io/stephane-d/sgdk-m68k-gcc:latest \
-                       ghcr.io/${{ github.actor }}/sgdk-m68k-gcc:latest
+                       ghcr.io/${{ env.GHCR_ORG }}/sgdk-m68k-gcc:latest
             # Note that we are not pushing the upstream version to the fork.
             # The workflow will update the fork if/when the GCC Dockerfile
             # changes in "master", even if those changes come from upstream.
@@ -103,8 +119,8 @@ jobs:
           context: .
           platforms: ${{ env.PLATFORMS }}
           build-args: |
-            BASE_IMAGE=ghcr.io/${{ github.actor }}/sgdk-m68k-gcc
-          tags: ghcr.io/${{ github.actor }}/sgdk:latest
+            BASE_IMAGE=ghcr.io/${{ env.GHCR_ORG }}/sgdk-m68k-gcc
+          tags: ghcr.io/${{ env.GHCR_ORG }}/sgdk:latest
           push: false
           load: true
 
@@ -113,4 +129,4 @@ jobs:
       - name: Push SGDK (only on push event)
         if: github.event_name == 'push'
         run: |
-          docker image push ghcr.io/${{ github.actor }}/sgdk:latest
+          docker image push ghcr.io/${{ env.GHCR_ORG }}/sgdk:latest
