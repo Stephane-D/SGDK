@@ -493,6 +493,9 @@ public class XGCPacker
             // frame size is big enough and we are aligned on the end of frame ?
             if ((frameSize >= FRAME_MIN_SIZE) && (ind == nextFrameOffset))
             {
+                if (frameSize >= FRAME_MAX_SIZE)
+                    throw new RuntimeException("Error: max frame size reached at frame #" + (frameInd - 1));
+                
                 if (frameSize > 128)
                 {
                     if (Launcher.verbose)

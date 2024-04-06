@@ -17,7 +17,7 @@ import sgdk.xgm2tool.tool.Util;
 
 public class Launcher extends JFrame
 {
-    final static String VERSION = "1.00";
+    final static String VERSION = "1.01";
 
     final static int SYSTEM_AUTO = -1;
     final static int SYSTEM_NTSC = 0;
