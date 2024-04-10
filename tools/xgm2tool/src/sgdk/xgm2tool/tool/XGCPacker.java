@@ -18,7 +18,7 @@ public class XGCPacker
     public final static int FRAME_MIN_SIZE = 32;
     public final static int FRAME_MAX_SIZE = 256;
     // to lower unpacking time
-//    public final static int FRAME_MAX_SIZE = 128;
+    // public final static int FRAME_MAX_SIZE = 128;
 
     static class DynamicByteArray extends ByteArrayOutputStream
     {
@@ -320,7 +320,7 @@ public class XGCPacker
         int ind = startInd;
         final int maxOff = curOffset + FRAME_MAX_SIZE;
 
-        while ((ind < frameOffsets.size()) && (frameOffsets.get(ind).intValue() <= maxOff))
+        while ((ind < frameOffsets.size()) && (frameOffsets.get(ind).intValue() < maxOff))
             ind++;
 
         return frameOffsets.get(Math.max(--ind, startInd)).intValue();
@@ -379,7 +379,7 @@ public class XGCPacker
         else
         {
             matchLen[0]++;
-            
+
             // write literal data only if not empty
             if (literalData.length > 0)
             {
@@ -493,9 +493,10 @@ public class XGCPacker
             // frame size is big enough and we are aligned on the end of frame ?
             if ((frameSize >= FRAME_MIN_SIZE) && (ind == nextFrameOffset))
             {
+                // that shouldn't happen but just in case !
                 if (frameSize >= FRAME_MAX_SIZE)
                     throw new RuntimeException("Error: max frame size reached at frame #" + (frameInd - 1));
-                
+
                 if (frameSize > 128)
                 {
                     if (Launcher.verbose)
