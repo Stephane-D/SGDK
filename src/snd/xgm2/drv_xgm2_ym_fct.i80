@@ -1051,19 +1051,19 @@ FM_setFreq1                             ;                           ' 100
 FMCom_setFreq0_CH2_SL1
             LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
             PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
-            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
             JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
 
 FMCom_setFreq0_CH2_SL2
             LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
             PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
-            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
             JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
 
 FMCom_setFreq0_CH2_SL3
             LD      HL, FM_nextFrame_loop   ; HL = FM_nextFrame_loop    ' 10    |
             PUSH    HL                      ; FM_nextFrame_loop as RET  ' 11    | 41 (100)
-            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
             JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
 
 FM_setFreq0_CH2_SL                          ;                       ' 100
@@ -1138,19 +1138,19 @@ FMCom_setFreq1_CH2_W
 FMCom_setFreq0_CH2_SL1_W
             LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
             PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
-            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+0   ; HL = freq var ' 10    |
             JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
 
 FMCom_setFreq0_CH2_SL2_W
             LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
             PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
-            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+2   ; HL = freq var ' 10    |
             JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
 
 FMCom_setFreq0_CH2_SL3_W
             LD      HL, FM_nextFrame_done   ; HL = FM_nextFrame_done    ' 10    |
             PUSH    HL                      ; FM_nextFrame_done as RET  ' 11    | 41 (100)
-            LD      HL, FM1_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
+            LD      HL, FM0_STATE+FM_STATE_CH2_FREQ+4   ; HL = freq var ' 10    |
             JP      FM_setFreq0_CH2_SL                  ;               ' 10    |
 
 
