@@ -848,12 +848,13 @@ public class XGM
         XGMFMCommand lastKeyOFF = null;
         XGMFMCommand lastKeyON = null;
 
-        // safe key-on combine (start from last frame)
+        // safe key-on combine (start from end of frame)
         for (int c = fmChannelCommands.size() - 1; c >= 0; c--)
         {
             final XGMFMCommand com = fmChannelCommands.get(c);
 
-            if (com.isYMFreqWrite())
+            // the driver does not support key on/off on setFreq special
+            if (com.isYMFreqWrite() && !com.isYMFreqSpecialWrite())
             {
                 if (canCombine)
                 {
@@ -869,16 +870,18 @@ public class XGM
             }
             else if (com.isYMKeyOFFWrite())
                 canCombine = false;
-            else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMLoadInst() || com.isYMWrite())
+            else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMKeySequence() || com.isYMLoadInst() || com.isYMWrite())
                 canCombine = false;
         }
 
-        // safe key-off combine (start from first frame)
+        canCombine = false;
+        // safe key-off combine (start from beginning of frame)
         for (int c = 0; c < fmChannelCommands.size(); c++)
         {
             final XGMFMCommand com = fmChannelCommands.get(c);
 
-            if (com.isYMFreqWrite())
+            // the driver does not support key on/off on setFreq special
+            if (com.isYMFreqWrite() && !com.isYMFreqSpecialWrite())
             {
                 if (canCombine)
                 {
@@ -894,7 +897,7 @@ public class XGM
             }
             else if (com.isYMKeyONWrite())
                 canCombine = false;
-            else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMLoadInst() || com.isYMWrite())
+            else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMKeySequence() || com.isYMLoadInst() || com.isYMWrite())
                 canCombine = false;
         }
 
@@ -921,7 +924,7 @@ public class XGM
                 hasKeyOn = true;
                 lastKeyON = com;
             }
-            else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMLoadInst() || com.isYMWrite())
+            else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMKeySequence() || com.isYMLoadInst() || com.isYMWrite())
             {
                 // not yet meet the set freq command ? --> cancel combination
                 if (setFreq == null)
@@ -930,7 +933,8 @@ public class XGM
                     canCombineON = false;
                 }
             }
-            else if (com.isYMFreqWrite())
+            // the driver does not support key on/off on setFreq special
+            else if (com.isYMFreqWrite() && !com.isYMFreqSpecialWrite())
             {
                 setFreq = com;
                 if (com.isYMFreqWithKeyON())
