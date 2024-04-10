@@ -596,7 +596,9 @@ interrupt                                           ; VInt process
             POP     AF                              ; we also need to restore AF'   ' 10    |
             EX      AF, AF'                         ;                               ' 4     |
             POP     IY                              ;                               ' 14    |
-            POP     IX                              ;                               ' 14    | 72 (182)
+            LD      A, IXL                          ;                               ' 8     |
+            POP     IX                              ;                               ' 14    | 88 (198)
+            LD      IXL, A                          ; preserve IXL                  ' 8     |
             POP     HL                              ;                               ' 10    |
             POP     DE                              ;                               ' 10    |
             POP     BC                              ;                               ' 10    |
