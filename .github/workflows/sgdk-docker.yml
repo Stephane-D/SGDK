@@ -47,6 +47,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          # Without this option, an image built by one step is not available
+          # locally for the next step.
+          driver: docker
 
       - name: Login to GHCR (only on push event)
         if: github.event_name == 'push'
