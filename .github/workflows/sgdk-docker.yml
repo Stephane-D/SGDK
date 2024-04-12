@@ -52,21 +52,19 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          # Here github.actor is used without converting to lowercase, because
-          # it's the login name, not the package name.
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Compute ghcr org name
-        # github.actor may be mixed case.  While GitHub Actions is
+        # github.repository_owner may be mixed case.  While GitHub Actions is
         # case-insensitive when comparing strings, GHCR requires a lowercase
         # name.
         run: |
-          ACTOR="${{github.actor}}"
+          ORG="${{github.repository_owner}}"
           # The bash expansion below lowercases the variable, which we then
           # write to the GitHub Actions environment for subsequent steps to
           # use.
-          echo "GHCR_ORG=${ACTOR,,}}" >> "$GITHUB_ENV"
+          echo "GHCR_ORG=${ORG,,}}" >> "$GITHUB_ENV"
 
       - name: Check if GCC Dockerfile has changed
         id: changed-files
