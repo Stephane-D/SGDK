@@ -65,7 +65,7 @@ jobs:
           # The bash expansion below lowercases the variable, which we then
           # write to the GitHub Actions environment for subsequent steps to
           # use.
-          echo "GHCR_ORG=${ORG,,}}" >> "$GITHUB_ENV"
+          echo "GHCR_ORG=${ORG,,}" >> "$GITHUB_ENV"
 
       - name: Check if GCC Dockerfile has changed
         id: changed-files
