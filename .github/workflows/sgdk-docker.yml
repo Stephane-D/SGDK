@@ -37,7 +37,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'true'
           fetch-depth: 2
 
       # TODO: arm64 images are currently disabled because they keep hanging in
