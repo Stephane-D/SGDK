@@ -168,7 +168,7 @@ $(OUT)/symbol.txt: $(OUT)/rom.out
 
 $(OUT)/rom.out: $(OUT)/sega.o $(OUT)/cmd_ $(LIBMD)
 	$(MKDIR) -p $(dir $@)
-	$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib $(OUT)/sega.o @$(OUT)/cmd_ $(LIBMD) $(LIBGCC) -o $(OUT)/rom.out -Wl,--gc-sections -flto
+	$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib $(OUT)/sega.o @$(OUT)/cmd_ -L$(LIB) $(LIBMD) $(LIBGCC) -o $(OUT)/rom.out -Wl,--gc-sections -flto
 	$(RM) $(OUT)/cmd_
 
 $(OUT)/cmd_: $(OBJS)
