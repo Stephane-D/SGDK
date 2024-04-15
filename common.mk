@@ -2,6 +2,7 @@
 
 BIN := $(GDK)/bin
 LIB := $(GDK)/lib
+export PATH := $(BIN):$(PATH)
 
 SRC_LIB := $(GDK)/src
 RES_LIB := $(GDK)/res
