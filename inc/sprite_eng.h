@@ -334,7 +334,7 @@ typedef struct Sprite
     AnimationFrame* frame;
     s16 animInd;
     s16 frameInd;
-    u16 timer;
+    s16 timer;
     s16 x;
     s16 y;
     s16 depth;
@@ -812,8 +812,27 @@ void SPR_nextFrame(Sprite* sprite);
 
 /**
  *  \brief
+ *      Enable/disable auto animation (default is on).<br>
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable auto animation.
+ *  \param value
+ *      TRUE to enable auto animation (default), FALSE otherwise
+ *
+ *  \see #SPR_getAutoAnimation(Sprite*)
+ */
+void SPR_setAutoAnimation(Sprite* sprite, bool value);
+/**
+ *  \brief
+ *      Return TRUE if auto animation is enabled, FALSE otherwise.
+ *
+ *  \see #SPR_setAnimationLoop(Sprite*, bool)
+ */
+bool SPR_getAutoAnimation(Sprite* sprite);
+/**
+ *  \brief
  *      Enable/disable animation loop (default is on).<br>
- *      When disable the sprite will stay on the last animation frame forever when animation ended instead of restarting it.
+ *      When disable the sprite will stay on the last animation frame when animation ended instead of restarting it.
  *
  *  \param sprite
  *      Sprite we want to enable/disable animation loop for.
