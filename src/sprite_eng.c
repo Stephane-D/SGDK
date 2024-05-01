@@ -997,7 +997,8 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         sprite->animation = animation;
 
         // set timer to 0 to prevent auto animation to change frame in between
-        sprite->timer = 0;
+        if (sprite->timer > 0)
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
         KLog_U3("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame);
@@ -1032,7 +1033,8 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         sprite->animation = sprite->definition->animations[anim];
 
         // set timer to 0 to prevent auto animation to change frame in between
-        sprite->timer = 0;
+        if (sprite->timer > 0)
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
         KLog_U2_("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0");
@@ -1064,7 +1066,8 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
         sprite->frameInd = frame;
 
         // set timer to 0 to prevent auto animation to change frame in between
-        sprite->timer = 0;
+        if (sprite->timer > 0)
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
         KLog_U2("SPR_setFrame: #", getSpriteIndex(sprite), "  frame=", frame);
@@ -1095,7 +1098,7 @@ void SPR_nextFrame(Sprite* sprite)
         if (sprite->status & SPR_FLAG_DISABLE_ANIMATION_LOOP)
         {
             // prevent further animation
-            sprite->timer = 0;
+            SPR_setAutoAnimation(sprite, FALSE);
 
             // frame change event handler defined ? --> call it now so we let user now about STATE_ANIMATION_DONE
             if (sprite->onFrameChange)
@@ -1114,6 +1117,28 @@ void SPR_nextFrame(Sprite* sprite)
     SPR_setFrame(sprite, frameInd);
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
+}
+
+void SPR_setAutoAnimation(Sprite* sprite, bool value)
+{
+    if (value)
+    {
+        // disabled ? --> reset timer to current frame timer
+        if (sprite->timer == -1)
+            sprite->timer = sprite->frame->timer;
+    }
+    else
+    {
+        // enabled ? --> disable it
+        if (sprite->timer != -1)
+            sprite->timer = -1;
+    }
+}
+
+bool SPR_getAutoAnimation(Sprite* sprite)
+{
+    return (sprite->timer != -1)?TRUE:FALSE;
+
 }
 
 void SPR_setAnimationLoop(Sprite* sprite, bool value)
@@ -1390,7 +1415,7 @@ void NO_INLINE SPR_update()
     // iterate over all sprites
     while(sprite)
     {
-        u16 timer = sprite->timer;
+        s16 timer = sprite->timer;
 
 #ifdef SPR_DEBUG
         char str1[32];
@@ -1404,7 +1429,7 @@ void NO_INLINE SPR_update()
 #endif // SPR_DEBUG
 
         // handle frame animation
-        if (timer)
+        if (timer > 0)
         {
             // timer elapsed --> next frame
             if (--timer == 0) SPR_nextFrame(sprite);
@@ -1849,7 +1874,8 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     // set frame
     sprite->frame = frame;
     // init timer for this frame
-    sprite->timer = frame->timer;
+    if (SPR_getAutoAnimation(sprite))
+        sprite->timer = frame->timer;
 
     // frame change event handler defined ? --> call it
     if (sprite->onFrameChange)

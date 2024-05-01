@@ -605,8 +605,17 @@ bool NO_INLINE XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMCha
     *pb++ = ((u32) sample) >> 8;
     *pb++ = ((u32) sample) >> 16;
     // write sample len
-    *pb++ = len >> 6;
-    *pb   = len >> 14;
+    if (halfRate)
+    {
+        // len x2 for half rate (as we play both sample twice)
+        *pb++ = len >> 5;
+        *pb   = len >> 13;
+    }
+    else
+    {
+        *pb++ = len >> 6;
+        *pb   = len >> 14;
+    }
 
     // point to Z80 PCM parameter
     pb = (vu8*) (XGM2_PCM_ARG_BASE + ch);
