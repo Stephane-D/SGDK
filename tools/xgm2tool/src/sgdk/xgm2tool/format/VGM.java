@@ -684,7 +684,7 @@ public class VGM
         while (off < offsetEnd)
         {
             // check for loop start
-            if ((loopTimeSt == -1) && (loopStart != 0) && (off >= loopStart) && (loopLenInSample != 0))
+            if ((loopTimeSt == -1) && (loopStart != 0) && (off >= loopStart))
             {
                 commands.add(new VGMCommand.LoopStartCommand());
                 loopTimeSt = time;
