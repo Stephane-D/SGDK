@@ -17,7 +17,7 @@ import sgdk.xgm2tool.tool.Util;
 
 public class Launcher extends JFrame
 {
-    final static String VERSION = "1.02";
+    final static String VERSION = "1.03";
 
     final static int SYSTEM_AUTO = -1;
     final static int SYSTEM_NTSC = 0;
@@ -285,7 +285,7 @@ public class Launcher extends JFrame
 
     private static void showUsage()
     {
-        System.out.println("XGM2Tool 1.0 - Stephane Dallongeville - copyright 2024");
+        System.out.println("XGM2Tool " + VERSION + " - Stephane Dallongeville - copyright 2024");
         System.out.println("");
         System.out.println("Usage: java -jar xgmtool.jar inputFile(s) outputFile <options>");
         System.out.println("");

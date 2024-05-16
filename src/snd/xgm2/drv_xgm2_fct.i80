@@ -41,7 +41,7 @@ process68KCommands_noPSG                    ; call                      ' 17
             LD      HL, PSG_CMD_REQUEST         ;                       ' 10    |
             SET     PSG_UNMUTE_REQ_SFT, (HL)    ; request unmute PSG    ' 15    | 25 (45)
 
-            JP      .done_play_commands_no_so   ;                       ' 10    | (55)
+            JP      .done_play_commands     ;                       ' 10    | (55)
 
 .no_resume                                  ;                           ' 148
             BIT     CMD_PLAY_SFT, B         ; play command ?            ' 8     |
@@ -97,17 +97,21 @@ process68KCommands_noPSG                    ; call                      ' 17
             LD      (PSG_BUF_RD_POS), HL        ; reset read/write pos  ' 16    |
             LD      (PSG_WAIT_FRAME), HL        ; reset wait            ' 16    |
 
-            JP      .done_play_commands         ;                       ' 10    | (159)
+            SAMPLE_OUTPUT_FASTCALL
+
+            LD      HL, DAC_ENABLE              ; reset DAC state       ' 10    |
+            LD      (HL), $80                   ;                       ' 10    | (30)
+            JP      .done_play_commands         ;                       ' 10    |
 
 .stopped                                        ;                       ' 20
             RES     STAT_PLAY_SFT, C            ; not playing           ' 8     | 18 (38)
-            JP      .done_play_commands_no_so   ;                       ' 10    |
+            JP      .done_play_commands         ;                       ' 10    |
 
 .no_play                                        ;                       ' 166
             SAMPLE_OUTPUT_FASTCALL
 
             BIT     CMD_PAUSE_SFT, B             ; pause play command ? ' 8     | (15)
-            JR      Z, .done_play_commands_no_so ;                      ' 7     |
+            JR      Z, .done_play_commands       ;                      ' 7     |
 
 ; COMMAND - pause/stop play
 ; -----------------------
@@ -122,12 +126,8 @@ process68KCommands_noPSG                    ; call                      ' 17
             RES     STAT_PLAY_SFT, C            ; not playing           ' 8     |
             LD      HL, 0                       ;                       ' 10    |
             LD      (PENDING_FRAME_FRAC), HL    ; reset PENDING_FRAME   ' 16    | (46)
-            JR      .done_play_commands_no_so   ;                       ' 12    |
 
-.done_play_commands                         ;                           ' 159
-            SAMPLE_OUTPUT_FASTCALL
-
-.done_play_commands_no_so                   ;                           ' 55
+.done_play_commands                         ;                           ' 55
             BIT     CMD_SET_VOL_FM_SFT, B   ; set FM volume ?           ' 8    | (73)
             JP      Z, .no_FM_volume        ;                           ' 10   |
 
