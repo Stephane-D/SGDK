@@ -347,13 +347,13 @@ static void tasking_init(void)
 static void init(void)
 {
 	// Initialize MegaWiFi
-	mw_init(cmd_buf, MW_BUFLEN);
+	mw_init((u16*) cmd_buf, MW_BUFLEN);
 	// Initialize multitasking (for WiFi background checks)
 	tasking_init();
 }
 
 /// Entry point
-int main(u16 hard)
+int main(bool hard)
 {
 	UNUSED_PARAM(hard);
 	bool err;

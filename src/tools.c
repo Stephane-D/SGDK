@@ -55,14 +55,14 @@ fix32 getFPS_f()
 
 
 #if (ENABLE_NEWLIB == 0)
-extern u16 vsprintf(char *buf, const char *fmt, va_list args);
+extern int vsprintf(char *buf, const char *fmt, va_list args);
 #endif  // ENABLE_NEWLIB
 
-u16 kprintf(const char *fmt, ...)
+int kprintf(const char *fmt, ...)
 {
     char buffer[256];
     va_list args;
-    u16 i;
+    int i;
 
     va_start(args, fmt);
     i = vsprintf(buffer, fmt, args);

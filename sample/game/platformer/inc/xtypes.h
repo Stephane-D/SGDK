@@ -1,4 +1,5 @@
 #pragma once
+
 #include <genesis.h>
 
 #define clamp01(X)   (min(max((X), (0)), (1)))
@@ -6,17 +7,17 @@
 typedef struct {
 	u8 x;
 	u8 y;
-}Vect2D_u8;
+} Vect2D_u8;
 
 typedef struct {
 	s8 x;
 	s8 y;
-}Vect2D_s8;
+} Vect2D_s8;
 
 typedef struct {
 	Vect2D_s16 min;
 	Vect2D_s16 max;
-}AABB;
+} AABB;
 
 AABB newAABB(s16 x1, s16 x2, s16 y1, s16 y2);
 

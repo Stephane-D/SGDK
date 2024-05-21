@@ -331,9 +331,7 @@ int main()
         for (; steps > 0; steps--, wave -= FIX16(1.0))
         {
             angle += angularVelocity;
-            lineBuffer[224-steps] = fix16Add( FIX16(1.0),
-                                              fix16Mul( amplitude,
-                                                        sinFix16( fix16ToInt(angle) + 512 ) ) );
+            lineBuffer[224-steps] = FIX16(1.0) + fix16Mul(amplitude, sinFix16(fix16ToInt(angle) + 512));
         }
     }
 }

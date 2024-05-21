@@ -1,8 +1,8 @@
-#include "../inc/camera.h"
+#include "camera.h"
 
-#include "../inc/global.h"
+#include "global.h"
 
-#include "../res/resources.h"
+#include "resources.h"
 
 Vect2D_s16 cameraPosition;
 

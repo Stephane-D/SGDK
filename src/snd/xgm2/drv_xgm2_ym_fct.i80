@@ -1195,20 +1195,20 @@ FMCom_setFreqD1_CH2
 FM_setFreqD0                                ;                           ' 100
             AND     3                       ; A = channel               ' 7     |
             EX      AF, AF'                 ; A' = channel              ' 4     |
-            LD      A, 0                    ; code auto modification    ' 7     |
-            LD      (FM_setFreqD.ym_port_set+1), A      ; YMPORT0       ' 13    | 61 (161)
-            LD      A, $A4                              ;               ' 7     |
-            LD      (FM_setFreqD.reg_set+1), A          ; freq ch       ' 13    |
-            JP      FM_setFreqD                         ;               ' 10    |
+            LD      A, 0                    ; code auto modification    ' 7     | 28 (128)
+            JP      FM_setFreqDPre          ;                           ' 10    |
+
 
 FM_setFreqD1                                ;                           ' 100
             AND     3                       ; A = channel               ' 7     |
             EX      AF, AF'                 ; A' = channel              ' 4     |
-            LD      A, 2                    ; code auto modification    ' 7     |
-            LD      (FM_setFreqD.ym_port_set+1), A      ; YMPORT2       ' 13    | 61 (161)
-            LD      A, $A4                              ;               ' 7     |
+            LD      A, 2                    ; code auto modification    ' 7     | 28 (128)
+            JP      FM_setFreqDPre          ;                           ' 10    |
+
+FM_setFreqDPre                             ;                            ' 128
+            LD      (FM_setFreqD.ym_port_set+1), A      ; YMPORTx       ' 13    |
+            LD      A, $A4                              ;               ' 7     | 33 (161)
             LD      (FM_setFreqD.reg_set+1), A          ; freq ch       ' 13    |
-            JP      FM_setFreqD                         ;               ' 10    |
 
 FM_setFreqD                             ;                           ' 161
             SAMPLE_OUTPUT_FASTCALL      ; (1)
@@ -1471,7 +1471,7 @@ FM_setTLDelta                               ;                           ' 80
 
             LD      A, D                    ; A = data                  ' 4     |
             RRA                             ; A >>= 1                   ' 4     | (18)
-            JP      C, .p1sub               ; data.b1 = op              ' 10    |
+            JP      C, .p0sub               ; data.b1 = op              ' 10    |
 
 .p1add
             AND     $3F                     ;                           ' 7     |
@@ -1481,17 +1481,6 @@ FM_setTLDelta                               ;                           ' 80
             LD      D, A                    ; D = new TL                ' 4     |
 
             JP      updateTLFastFunc        ; update TL, RET to (SP)    ' 104-7 | (168)
-
-.p1sub                                      ;                           ' 18
-            AND     $3F                     ;                           ' 7     |
-            INC     A                       ; A = TL delta              ' 4     |
-            LD      D, A                    ; D = TL delta              ' 4     | 61 (79)
-            LD      A, (IY+FM_STATE_OP_TL)  ; A  current TL             ' 19    |
-            SUB     D                       ; sub from current TL       ' 4     |
-            LD      (IY+FM_STATE_OP_TL), A  ; save TL state             ' 19    |
-            LD      D, A                    ; D = new TL                ' 4     |
-
-            JP      updateTLFastFunc        ; update TL, RET to (SP)    ' 104-7 | (176)
 
 
 FMCom_setTLDelta_W                          ;                           ' 59

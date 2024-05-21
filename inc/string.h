@@ -147,7 +147,7 @@ char* strcat(char *dest, const char *src);
  *  formatted and inserted in the resulting string replacing their respective specifiers
  *
  */
-u16 sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+int sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
 
 #endif  // ENABLE_NEWLIB
 

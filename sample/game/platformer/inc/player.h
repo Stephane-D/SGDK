@@ -3,7 +3,7 @@
 #include <genesis.h>
 
 #include "physics.h"
-#include "types.h"
+#include "xtypes.h"
 #include "camera.h"
 #include "levelgenerator.h"
 

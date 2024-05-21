@@ -2,7 +2,7 @@
 
 #include <genesis.h>
 
-#include "types.h"
+#include "xtypes.h"
 #include "player.h"
 #include "physics.h"
 #include "levels.h"

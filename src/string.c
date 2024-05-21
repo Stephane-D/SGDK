@@ -361,7 +361,7 @@ static u16 skip_atoi(const char **s)
     return i;
 }
 
-u16 vsprintf(char *buf, const char *fmt, va_list args)
+int vsprintf(char *buf, const char *fmt, va_list args)
 {
     char tmp_buffer[14];
     s32 i;
@@ -627,10 +627,10 @@ hexa_conv:
     return str - buf;
 }
 
-u16 sprintf(char *buffer, const char *fmt, ...)
+int sprintf(char *buffer, const char *fmt, ...)
 {
     va_list args;
-    u16 i;
+    int i;
 
     va_start(args, fmt);
     i = vsprintf(buffer, fmt, args);

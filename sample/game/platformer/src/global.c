@@ -1,4 +1,6 @@
-#include "../inc/global.h"
+#include "global.h"
+
+InputType input;
 
 //Global constant that could be used in other files
 const fix16 gravityScale = FIX16(0.5);

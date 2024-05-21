@@ -1,4 +1,4 @@
-#include "../inc/map.h"
+#include "map.h"
 
 const Vect2D_s16 levelStartPos = { 74, 665 };
 

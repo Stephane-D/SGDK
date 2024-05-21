@@ -1,4 +1,4 @@
-#include "../inc/physics.h"
+#include "physics.h"
 
 //Used to get the left edge of a tile by inputting the tile position
 u16 getTileLeftEdge(u16 x) {

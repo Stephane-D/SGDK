@@ -1,8 +1,8 @@
-#include "../inc/levelgenerator.h"
+#include "levelgenerator.h"
 
-#include "../res/resources.h"
-#include "../inc/global.h"
-#include "../inc/map.h"
+#include "resources.h"
+#include "global.h"
+#include "map.h"
 
 //Dynamic 2D array where we store the collision map data
 //We could read that directly from ROM but in the long term it's cleaner and/or more performant

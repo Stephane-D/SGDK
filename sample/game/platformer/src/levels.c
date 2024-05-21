@@ -1,10 +1,10 @@
-#include "../inc/levels.h"
+#include "levels.h"
 
-#include "../inc/levelgenerator.h"
-#include "../inc/map.h"
-#include "../inc/global.h"
+#include "levelgenerator.h"
+#include "map.h"
+#include "global.h"
 
-#include "../res/resources.h"
+#include "resources.h"
 
 void loadLevel() {
 	//Setup the level background with the MAP tool from SGDK
