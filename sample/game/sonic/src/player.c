@@ -178,7 +178,7 @@ void PLAYER_doJoyAction(u16 joy, u16 changed, u16 state)
         if (movY == 0)
         {
             movY = -jumpSpeed;
-            XGM2_playPCM(sonic_jump_sfx, sizeof(sonic_jump_sfx), SOUND_PCM_CH2);
+            XGM2_playPCMEx(sonic_jump_sfx, sizeof(sonic_jump_sfx), SOUND_PCM_CH2, 15, TRUE, FALSE);
         }
     }
 }

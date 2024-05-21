@@ -15,6 +15,9 @@
 #define GRAVITY_DEFAULT     FIX32(0.32)
 
 
+// player (sonic) sprite
+extern Sprite* player;
+
 // physic settings
 extern fix32 maxSpeed;
 extern fix32 jumpSpeed;
