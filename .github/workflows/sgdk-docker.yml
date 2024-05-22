@@ -2,7 +2,7 @@ name: sgdk-docker
 
 concurrency:
   group: ${{ github.ref }}-sgdk-docker
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   workflow_dispatch: # Allows for manual triggering.
