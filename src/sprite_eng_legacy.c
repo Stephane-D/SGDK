@@ -49,6 +49,7 @@
 
 #define NEED_UPDATE                         0x001F
 
+#define STATE_ANIMATION_DONE                0x0020
 
 // shared from vdp_spr.c unit
 extern void logVDPSprite(u16 index);
@@ -155,7 +156,7 @@ void SPR_init()
     SPR_initEx(420);
 }
 
-void SPR_end()
+void NO_INLINE SPR_end()
 {
     if (SPR_isInitialized())
     {
@@ -973,6 +974,11 @@ void SPR_setAlwaysOnTop(Sprite* sprite)
     SPR_setDepth(sprite, SPR_MIN_DEPTH);
 }
 
+void SPR_setAlwaysAtBottom(Sprite* sprite)
+{
+    SPR_setDepth(sprite, SPR_MAX_DEPTH);
+}
+
 void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
 {
     START_PROFIL
@@ -1005,13 +1011,15 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         sprite->animation = animation;
 
         // set timer to 0 to prevent auto animation to change frame in between
-        sprite->timer = 0;
+        if (sprite->timer > 0)
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
         KLog_U3("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame);
 #endif // SPR_DEBUG
 
-        sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
+        //sprite->status |= NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1040,13 +1048,15 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         sprite->animation = sprite->definition->animations[anim];
 
         // set timer to 0 to prevent auto animation to change frame in between
-        sprite->timer = 0;
+        if (sprite->timer > 0)
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
         KLog_U2_("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0");
 #endif // SPR_DEBUG
 
-        sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
+        //sprite->status |= NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1072,7 +1082,8 @@ void SPR_setFrame(Sprite* sprite, s16 frame)
         sprite->frameInd = frame;
 
         // set timer to 0 to prevent auto animation to change frame in between
-        sprite->timer = 0;
+        if (sprite->timer > 0)
+            sprite->timer = 0;
 
 #ifdef SPR_DEBUG
         KLog_U2("SPR_setFrame: #", getSpriteIndex(sprite), "  frame=", frame);
@@ -1094,14 +1105,89 @@ void SPR_nextFrame(Sprite* sprite)
     const Animation *anim = sprite->animation;
     u16 frameInd = sprite->frameInd + 1;
 
-    if (frameInd >= anim->numFrame)
+     if (frameInd >= anim->numFrame)
+    {
+        // animation done marker
+        sprite->status |= STATE_ANIMATION_DONE;
+
+        // no loop ?
+        if (sprite->status & SPR_FLAG_DISABLE_ANIMATION_LOOP)
+        {
+            // prevent further animation
+            SPR_setAutoAnimation(sprite, FALSE);
+
+            // frame change event handler defined ? --> call it now so we let user now about STATE_ANIMATION_DONE
+            if (sprite->onFrameChange)
+                sprite->onFrameChange(sprite);
+
+            // can quit now
+            END_PROFIL(PROFIL_SET_ANIM_FRAME)
+            return;
+        }
+
+        // loop
         frameInd = anim->loop;
+    }
 
     // set new frame
     SPR_setFrame(sprite, frameInd);
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
+
+void SPR_setAutoAnimation(Sprite* sprite, bool value)
+{
+    if (value)
+    {
+        // disabled ? --> reset timer to current frame timer
+        if (sprite->timer == -1)
+            sprite->timer = sprite->frame->timer;
+    }
+    else
+    {
+        // enabled ? --> disable it
+        if (sprite->timer != -1)
+            sprite->timer = -1;
+    }
+
+#ifdef SPR_DEBUG
+    KLog_U2("SPR_setAutoAnimation: #", getSpriteIndex(sprite), " AutoAnimation=", value);
+#endif // SPR_DEBUG
+
+}
+
+bool SPR_getAutoAnimation(Sprite* sprite)
+{
+    return (sprite->timer != -1)?TRUE:FALSE;
+
+}
+
+void SPR_setAnimationLoop(Sprite* sprite, bool value)
+{
+    // for debug
+    if (!isSpriteValid(sprite, "SPR_setAnimationLoop"))
+        return;
+
+    if (value) sprite->status &= ~SPR_FLAG_DISABLE_ANIMATION_LOOP;
+    else sprite->status |= SPR_FLAG_DISABLE_ANIMATION_LOOP;
+
+#ifdef SPR_DEBUG
+    KLog_U2("SPR_setAnimationLoop: #", getSpriteIndex(sprite), " loop=", value);
+#endif // SPR_DEBUG
+
+}
+
+
+bool SPR_getAnimationDone(Sprite* sprite)
+{
+    // for debug
+    if (!isSpriteValid(sprite, "SPR_getAnimationDone"))
+        return FALSE;
+
+    return (sprite->status & STATE_ANIMATION_DONE)?TRUE:FALSE;
+    //return sprite->frameInd >= sprite->animation->numFrame;
+}
+
 
 bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
 {
@@ -1449,7 +1535,7 @@ void NO_INLINE SPR_update()
     sprite = firstSprite;
     while(sprite)
     {
-        u16 timer = sprite->timer;
+        s16 timer = sprite->timer;
 
 #ifdef SPR_DEBUG
         char str1[32];
@@ -1463,7 +1549,7 @@ void NO_INLINE SPR_update()
 #endif // SPR_DEBUG
 
         // handle frame animation
-        if (timer)
+        if (timer > 0)
         {
             // timer elapsed --> next frame
             if (--timer == 0) SPR_nextFrame(sprite);
@@ -1744,7 +1830,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
         // not enough DMA capacity to transfer sprite tile data ?
         const u16 dmaCapacity = DMA_getMaxTransferSize();
 
-        if (dmaCapacity && (DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity)
+        if (dmaCapacity && ((DMA_getQueueTransferSize() + (frame->tileset->numTile * 32)) > dmaCapacity))
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
             KLog_U4_("Warning: sprite #", getSpriteIndex(sprite), " update delayed on frame #", vtimer, " - exceeding DMA capacity: ", DMA_getQueueTransferSize(), " bytes already queued and require ", frame->tileset->numTile * 32, " more bytes");
@@ -1774,7 +1860,8 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     sprite->frame = frame;
 
     // init timer for this frame
-    sprite->timer = frame->timer;
+    if (SPR_getAutoAnimation(sprite))
+      sprite->timer = frame->timer;
 
     // frame change event handler defined ? --> call it
     if (sprite->onFrameChange)
@@ -1998,44 +2085,47 @@ static void loadTiles(Sprite* sprite)
     START_PROFIL
 
     TileSet* tileset = sprite->frame->tileset;
-    u16 compression = tileset->compression;
     u16 lenInWord = (tileset->numTile * 32) / 2;
-
-    // TODO: separate tileset per VDP sprite and only unpack/upload visible VDP sprite (using visibility) to VRAM
-
-    // need unpacking ?
-    if (compression != COMPRESSION_NONE)
+    // need to test for empty tileset (blank frame)
+    if (lenInWord)
     {
-        // get buffer and send to DMA queue
-        u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+        u16 compression = tileset->compression;
 
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        if (!buf) KLog("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
-        else
-#endif
-            // unpack in temp buffer obtained from DMA queue
-            unpack(compression, (u8*) FAR_SAFE(tileset->tiles, tileset->numTile * 32), buf);
+        // TODO: separate tileset per VDP sprite and only unpack/upload visible VDP sprite (using visibility) to VRAM
 
-#ifdef SPR_DEBUG
-        char str1[32];
-        char str2[8];
+      // need unpacking ?
+      if (compression != COMPRESSION_NONE)
+      {
+          // get buffer and send to DMA queue
+          u8* buf = DMA_allocateAndQueueDma(DMA_VRAM, (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
 
-        intToHex((u32) buf, str2, 4);
-        strcpy(str1, " at ");
-        strcat(str1, str2);
+              // unpack in temp buffer obtained from DMA queue
+              if (buf) unpack(compression, (u8*) FAR_SAFE(tileset->tiles, lenInWord * 2), buf);
+  #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+              else KLog("  loadTiles: unpack tileset failed (DMA temporary buffer is full)");
+  #endif
 
-        KLog_U1_("  loadTiles: unpack tileset, numTile= ", tileset->numTile, str1);
-        KLog_U2("    Queue DMA: to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
-#endif // SPR_DEBUG
-    }
-    else
-    {
-        // just queue DMA operation to transfer tileset data to VRAM
-        DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, tileset->numTile * 32), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+  #ifdef SPR_DEBUG
+          char str1[32];
+          char str2[8];
 
-#ifdef SPR_DEBUG
-        KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
-#endif // SPR_DEBUG
+          intToHex((u32) buf, str2, 4);
+          strcpy(str1, " at ");
+          strcat(str1, str2);
+
+          KLog_U1_("  loadTiles: unpack tileset, numTile= ", tileset->numTile, str1);
+          KLog_U2("    Queue DMA: to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
+  #endif // SPR_DEBUG
+      }
+      else
+      {
+          // just queue DMA operation to transfer tileset data to VRAM
+          DMA_queueDma(DMA_VRAM, FAR_SAFE(tileset->tiles, lenInWord * 2), (sprite->attribut & TILE_INDEX_MASK) * 32, lenInWord, 2);
+
+  #ifdef SPR_DEBUG
+          KLog_U3("  loadTiles - queue DMA: from=", (u32) tileset->tiles, " to=", (sprite->attribut & TILE_INDEX_MASK) * 32, " size in word=", lenInWord);
+  #endif // SPR_DEBUG
+      }
     }
 
     END_PROFIL(PROFIL_LOADTILES)
