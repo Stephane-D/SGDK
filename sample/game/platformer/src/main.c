@@ -1,8 +1,8 @@
 #include <genesis.h>
 
-#include "../inc/levels.h"
-#include "../inc/camera.h"
-#include "../inc/player.h"
+#include "levels.h"
+#include "camera.h"
+#include "player.h"
 
 void inGameJoyEvent(u16 joy, u16 changed, u16 state);
 

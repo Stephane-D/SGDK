@@ -13,13 +13,15 @@
 #define LADDER_TILE 2
 #define ONE_WAY_PLATFORM_TILE 4
 
-extern const fix16 gravityScale;
-
-struct {
+typedef struct {
 	u16 joy;
 	u16 changed;
 	u16 state;
-}input;
+} InputType;
+
+extern InputType input;
+
+extern const fix16 gravityScale;
 
 extern Map* bga;
 

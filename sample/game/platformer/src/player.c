@@ -1,9 +1,9 @@
-#include "../inc/player.h"
+#include "player.h"
 
-#include "../inc/global.h"
-#include "../inc/map.h"
+#include "global.h"
+#include "map.h"
 
-#include "../res/resources.h"
+#include "resources.h"
 
 struct pBody playerBody;
 

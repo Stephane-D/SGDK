@@ -72,7 +72,7 @@
 		<Unit filename="inc/map.h" />
 		<Unit filename="inc/physics.h" />
 		<Unit filename="inc/player.h" />
-		<Unit filename="inc/types.h" />
+		<Unit filename="inc/xtypes.h" />
 		<Unit filename="res/images/level.png" />
 		<Unit filename="res/images/player.png" />
 		<Unit filename="res/resources.res" />
@@ -102,7 +102,7 @@
 		<Unit filename="src/player.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/types.c">
+		<Unit filename="src/xtypes.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
@@ -129,6 +129,7 @@
 					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
 				</remote_debugging>
 			</debugger>
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

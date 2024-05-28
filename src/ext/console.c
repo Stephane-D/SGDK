@@ -48,7 +48,7 @@
 // *****************************************************************************
 
 // SGDK vsprintf() used as default
-extern u16 vsprintf(char *buf, const char *fmt, va_list args);
+extern int vsprintf(char *buf, const char *fmt, va_list args);
 
 // *****************************************************************************
 //

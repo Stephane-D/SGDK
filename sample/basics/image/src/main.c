@@ -41,7 +41,7 @@ int main(bool hard)
 
     while(TRUE)
     {
-        VDP_waitVInt();
+        SYS_doVBlankProcess();
     }
 
     return 0;

@@ -95,7 +95,7 @@ u16 random(void);
  *  Note that internally a buffer of 255 characters is allocated so consider this limitation !
  *
  */
-u16 kprintf(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+int kprintf(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
 
 /**
  *  \brief

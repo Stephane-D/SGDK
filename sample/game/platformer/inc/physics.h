@@ -2,7 +2,7 @@
 
 #include <genesis.h>
 
-#include "types.h"
+#include "xtypes.h"
 
 u16 getTileLeftEdge(u16 x);
 u16 getTileRightEdge(u16 x);

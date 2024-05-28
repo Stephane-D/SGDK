@@ -1,4 +1,4 @@
-#include "../inc/types.h"
+#include "xtypes.h"
 
 AABB newAABB(s16 x1, s16 x2, s16 y1, s16 y2) {
 	return (AABB) { {x1, y1}, { x2, y2 } };

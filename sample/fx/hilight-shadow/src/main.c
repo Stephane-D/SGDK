@@ -75,7 +75,7 @@ const u16 background_palette[16] = {
 #define InitializeSpeedTable(); \
     line_speed_data[0] = FIX16(0.05); \
     for(i = 1; i < NUM_LINES; i++) \
-       line_speed_data[i] = fix16Add(line_speed_data[i-1], FIX16(0.02));
+       line_speed_data[i] = line_speed_data[i-1] + FIX16(0.02);
 
 //=============================================================================
 // MAIN =======================================================================
@@ -144,7 +144,7 @@ int main()
         for(i = 0; i < NUM_LINES; i++)
         {
             // Sum the speed value
-            line_scroll_data[i] = fix16Add(line_scroll_data[i], line_speed_data[i]);
+            line_scroll_data[i] = line_scroll_data[i] + line_speed_data[i];
 
             // Rebound when movement of bottom line reaches its left or right boundary
             if(line_scroll_data[NUM_LINES-1] >= FIX16(SPOTLIGHT_SWING_RANGE)
