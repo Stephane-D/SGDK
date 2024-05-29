@@ -321,6 +321,9 @@ u16 DMA_getQueueTransferSize()
 
 bool DMA_transfer(TransferMethod tm, u8 location, void* from, u16 to, u16 len, u16 step)
 {
+    // nothing to do (avoid transfering 65536 words when len = 0)
+    if (!len) return TRUE;
+
     switch(tm)
     {
         // default = CPU transfer
