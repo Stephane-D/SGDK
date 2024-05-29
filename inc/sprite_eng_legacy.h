@@ -55,7 +55,7 @@
  *      By default we delay the frame update when DMA is already full so the frame update happen as soon we have enough DMA capacity to do it.
  *      This flag forces frame update to always happen immediately but that may cause graphical glitches.
  */
-#define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x8000
+#define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x0080
 /**
  *  \brief
  *      Enable automatic VRAM allocation
