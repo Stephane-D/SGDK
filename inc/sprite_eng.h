@@ -768,7 +768,6 @@ void SPR_setAlwaysOnTop(Sprite* sprite);
  *  \see SPR_setDepth(Sprite*)
  */
 void SPR_setAlwaysAtBottom(Sprite* sprite);
-
 /**
  *  \brief
  *      Set current sprite animation and frame.
@@ -809,7 +808,6 @@ void SPR_setFrame(Sprite* sprite, s16 frame);
  *      Sprite to pass to next frame for
  */
 void SPR_nextFrame(Sprite* sprite);
-
 /**
  *  \brief
  *      Enable/disable auto animation (default is on).<br>
@@ -853,7 +851,6 @@ void SPR_setAnimationLoop(Sprite* sprite, bool value);
  *  \see #SPR_setAnimationLoop(Sprite*, bool)
  */
 bool SPR_getAnimationDone(Sprite* sprite);
-
 /**
  *  \brief
  *      Set the VRAM tile position reserved for this sprite.

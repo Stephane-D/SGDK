@@ -44,11 +44,18 @@
 #define SPR_FLAG_INSERT_HEAD                    0x4000
 /**
  *  \brief
+ *      Disable animation auto loop..<br>
+ *      By default animation always restart fater the last frame has been played.
+ *      This flag prevent the animation to restart and so the animation end on the last frame forever (see #SPR_getAnimationDone(..))
+ */
+#define SPR_FLAG_DISABLE_ANIMATION_LOOP         0x2000
+/**
+ *  \brief
  *      Disable delaying of frame update when we are running out of DMA capacity.<br>
  *      By default we delay the frame update when DMA is already full so the frame update happen as soon we have enough DMA capacity to do it.
  *      This flag forces frame update to always happen immediately but that may cause graphical glitches.
  */
-#define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x2000
+#define SPR_FLAG_DISABLE_DELAYED_FRAME_UPDATE   0x0080
 /**
  *  \brief
  *      Enable automatic VRAM allocation
@@ -219,7 +226,7 @@ typedef struct
  *  \param tileset
  *      tileset containing tiles for this animation frame (ordered for sprite)
  *  \param collision
- *      collision structure
+ *      collision structure (not used currently)
  *  \param frameSprites
  *      array of VDP sprites info composing the frame
  */
@@ -341,7 +348,7 @@ typedef struct Sprite
     AnimationFrame* frame;
     s16 animInd;
     s16 frameInd;
-    u16 timer;
+    s16 timer;
     s16 x;
     s16 y;
     s16 depth;
@@ -746,6 +753,16 @@ void SPR_setZ(Sprite* sprite, s16 value);
 void SPR_setAlwaysOnTop(Sprite* sprite);
 /**
  *  \brief
+ *      Set sprite depth so it remains behind others sprite - same as SPR_setDepth(SPR_MAX_DEPTH)
+ *
+ *  \param sprite
+ *      Sprite to change depth for
+ *
+ *  \see SPR_setDepth(Sprite*)
+ */
+void SPR_setAlwaysAtBottom(Sprite* sprite);
+/**
+ *  \brief
  *      Set current sprite animation and frame.
  *
  *  \param sprite
@@ -784,7 +801,49 @@ void SPR_setFrame(Sprite* sprite, s16 frame);
  *      Sprite to pass to next frame for
  */
 void SPR_nextFrame(Sprite* sprite);
-
+/**
+ *  \brief
+ *      Enable/disable auto animation (default is on).<br>
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable auto animation.
+ *  \param value
+ *      TRUE to enable auto animation (default), FALSE otherwise
+ *
+ *  \see #SPR_getAutoAnimation(Sprite*)
+ */
+void SPR_setAutoAnimation(Sprite* sprite, bool value);
+/**
+ *  \brief
+ *      Return TRUE if auto animation is enabled, FALSE otherwise.
+ *
+ *  \see #SPR_setAnimationLoop(Sprite*, bool)
+ */
+bool SPR_getAutoAnimation(Sprite* sprite);
+/**
+ *  \brief
+ *      Enable/disable animation loop (default is on).<br>
+ *      When disable the sprite will stay on the last animation frame when animation ended instead of restarting it.
+ *
+ *  \param sprite
+ *      Sprite we want to enable/disable animation loop for.
+ *  \param value
+ *      TRUE to enable animation loop (default), FALSE otherwise
+ *
+ *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
+ *  \see #SPR_getAnimationDone(Sprite*)
+ */
+void SPR_setAnimationLoop(Sprite* sprite, bool value);
+/**
+ *  \brief
+ *      Return TRUE if animation ended / looped.<br>
+ *      This can be used with the frame change callback (see #SPR_setFrameChangeCallback(..)) to detect
+ *      the end of sprite animation and do appropriate action if required.
+ *
+ *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
+ *  \see #SPR_setAnimationLoop(Sprite*, bool)
+ */
+bool SPR_getAnimationDone(Sprite* sprite);
 /**
  *  \brief
  *      Set the VRAM tile position reserved for this sprite.
