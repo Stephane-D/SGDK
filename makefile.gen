@@ -65,7 +65,7 @@ DEFAULT_FLAGS= $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-shift-negati
 FLAGSZ80:= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(SRC_LIB) -i$(INCLUDE_LIB) -i$(INCLUDE_LIB)/snd
 
 #release: FLAGS= $(DEFAULT_FLAGS) -Os -fomit-frame-pointer -fuse-linker-plugin -flto
-release: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fomit-frame-pointer -flto
+release: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
 release: CFLAGS= $(FLAGS)
 release: AFLAGS= $(FLAGS)
 release: LIBMD= $(LIB)/libmd.a
@@ -168,7 +168,7 @@ $(OUT)/symbol.txt: $(OUT)/rom.out
 
 $(OUT)/rom.out: $(OUT)/sega.o $(OUT)/cmd_ $(LIBMD)
 	$(MKDIR) -p $(dir $@)
-	$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib $(OUT)/sega.o @$(OUT)/cmd_ $(LIBMD) $(LIBGCC) -o $(OUT)/rom.out -Wl,--gc-sections -flto
+	$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib $(OUT)/sega.o @$(OUT)/cmd_ $(LIBMD) $(LIBGCC) -o $(OUT)/rom.out -Wl,--gc-sections -flto -flto=auto -ffat-lto-objects
 	$(RM) $(OUT)/cmd_
 
 $(OUT)/cmd_: $(OBJS)

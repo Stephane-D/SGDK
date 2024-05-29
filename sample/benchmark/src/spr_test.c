@@ -867,8 +867,8 @@ u16 executeSpritesTest(u16 *scores)
     PAL_setColors(0, palette, 64, CPU);
     SYS_enableInts();
 
-    // execute sprite bench
-    execute(25, 12) / 8;
+    // execute sprite bench (result not used in score)
+    execute(25, 12);
 #endif // LEGACY_SPRITE_ENGINE
 
     SPR_logProfil();
