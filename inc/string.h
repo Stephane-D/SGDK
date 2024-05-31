@@ -122,6 +122,31 @@ char* strncpy(char *dest, const char *src, u16 len);
  * Appends the source string to the destination string.
  */
 char* strcat(char *dest, const char *src);
+
+/**
+ *  \brief
+ *      Composes a string with the same text that would be printed if format was used on printf,
+ *      but instead of being printed, the content is stored as a C string in the buffer pointed by str.
+ *
+ *  \param buf
+ *      Destination string (it must be large enough to receive result).
+ *  \param fmt
+ *      C string that contains the text to be written to destination string.<br />
+ *      It can optionally contain embedded format specifiers.
+ *  \param args
+ *      Optional argument(s). Depending on the format string, the function may expect a sequence of additional arguments,<br>
+ *      each containing a value to be used to replace a format specifier in the format string.
+ *
+ *      There should be at least as many of these arguments as the number of values specified in the format specifiers.<br>
+ *      Additional arguments are ignored by the function.
+ *
+ *  \return On success, the total number of characters written is returned..
+ *
+ *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br>
+ *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
+ *  formatted and inserted in the resulting string replacing their respective specifiers
+ */
+int vsprintf(char *buffer, const char *fmt, va_list args);
 /**
  *  \brief
  *      Composes a string with the same text that would be printed if format was used on printf,
@@ -145,9 +170,8 @@ char* strcat(char *dest, const char *src);
  *  Copy the string pointed by 'fmt' param to the 'buffer' param.<br>
  *  If 'fmt' includes format specifiers (subsequences beginning with %), the additional arguments following format are
  *  formatted and inserted in the resulting string replacing their respective specifiers
- *
  */
-int sprintf(char *buffer,const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+int sprintf(char *buffer, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
 
 #endif  // ENABLE_NEWLIB
 

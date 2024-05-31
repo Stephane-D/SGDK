@@ -54,10 +54,6 @@ fix32 getFPS_f()
 }
 
 
-#if (ENABLE_NEWLIB == 0)
-extern int vsprintf(char *buf, const char *fmt, va_list args);
-#endif  // ENABLE_NEWLIB
-
 int kprintf(const char *fmt, ...)
 {
     char buffer[256];
