@@ -560,6 +560,8 @@ FMCom_wait14
 FMCom_wait15
 
             AND     $F                      ;                           ' 7     |
+
+FMCom_waitByte
             LD      (FM_WAIT_FRAME), A      ;                           ' 13    | 20 (79)
 
             JP      FM_nextFrame_done       ; done                      ' 10    | (89)
@@ -569,18 +571,13 @@ FMCom_waitLong                              ;                           ' 59
 ;-------------
             readCmdBuf                      ; A = wait                  ' 11    |
             ADD     15                      ;                           ' 7     | 25 (74)
-            JR      NC, .byte_wait          ; wait < 256 ?              ' 7     |
+            JR      NC, FMCom_waitByte      ; wait < 256 ?              ' 7     |
 
             LD      H, 1                    ; >= 256 frames             ' 7     |
             LD      L, A                    ;                           ' 4     | 27 (101)
             LD      (FM_WAIT_FRAME), HL     ; store as 16 bit           ' 16    |
 
             JP      FM_nextFrame_done       ; done                      ' 10    | (111)
-
-.byte_wait                                  ;                           ' 79
-            LD      (FM_WAIT_FRAME), A      ;                           ' 13    | (92)
-
-            JP      FM_nextFrame_done       ; done                      ' 10    | (102)
 
 
 FMCom_playPCM                                       ;                   ' 59
@@ -736,47 +733,35 @@ FMCom_loadInst1_CH2                         ;                           ' 59
 FMCom_key                                   ;                           ' 59
 ;--------
 FMCom_key_OFF
-            AND     7                       ; A = port & channel        ' 7     | (66)
-
-            CALL    FM_keyFunc              ; key off                   ' 58    | (124)
-
-            JP      FM_nextFrame_loop       ; next                      ' 10    | (134)
+            AND     7                       ; A = port & channel / off  ' 7     |
+            JR      FMCom_doKey             ;                           ' 12    | 19 (78)
 
 FMCom_key_ON
             AND     7                       ; A = port & channel        ' 7     |
-            OR      $F0                     ; A = key on                ' 7     | 14 (73)
-
-            CALL    FM_keyFunc              ; key on                    ' 58    | (131)
-
-            JP      FM_nextFrame_loop       ; next                      ' 10    | (141)
+            OR      $F0                     ; A = key on                ' 7     | 26 (85)
+            JR      FMCom_doKey             ;                           ' 12    |
 
 
 FMCom_keySeq
 ;-----------
 FMCom_keySeq_OFFON
-            AND     7                       ; A = port & channel        ' 7     | (66)
-
-            FM_key                          ; key off                   ' 31    | (97)
-
-            OR      $F0                     ; A = key on                ' 7     |
-            CALL    wait27_func             ; wait for FM               ' 27    | 34 (131)
-
-            FM_key                          ; key on                    ' 31    | (162)
-
-            JP      FM_nextFrame_loop       ; next                      ' 10    | (172)
+            AND     7                       ; A = port & channel        ' 7     |
+            JP      FMCom_doKeySeq          ; key off / on              ' 10    | 17 (76)
 
 FMCom_keySeq_ONOFF
             AND     7                       ; A = port & channel        ' 7     | 14 (73)
-            OR      $F0                     ; A = key on                ' 7     |
+            OR      $F0                     ; A = key on / off          ' 7     |
 
-            FM_key                          ; key on                    ' 31    | (104)
+FMCom_doKeySeq                              ;                           ' 76
+            FM_key                          ; key on                    ' 31    | (107)
 
-            AND     7                       ; A = port & channel        ' 7     |
-            CALL    wait27_func             ; wait for FM               ' 27    | 34 (138)
+            XOR     $F0                     ; reverse keys              ' 7     |
+            CALL    wait27_func             ; wait for FM               ' 27    | 34 (141)
 
-            FM_key                          ; key off                   ' 31    | (169)
+FMCom_doKey                                 ;                           ' 
+            FM_key                          ; key                       ' 31    | (172)
 
-            JP      FM_nextFrame_loop       ; next                      ' 10    | (179)
+            JP      FM_nextFrame_loop       ; next                      ' 10    | (182)
 
 
 FMCom_setPan0                               ;                           ' 59
@@ -1197,7 +1182,6 @@ FM_setFreqD0                                ;                           ' 100
             EX      AF, AF'                 ; A' = channel              ' 4     |
             LD      A, 0                    ; code auto modification    ' 7     | 28 (128)
             JP      FM_setFreqDPre          ;                           ' 10    |
-
 
 FM_setFreqD1                                ;                           ' 100
             AND     3                       ; A = channel               ' 7     |
