@@ -1136,7 +1136,7 @@ void VGM_cleanCommands(VGM* vgm)
             command = com->element;
 
             // keep data block, stream commands and other misc commands
-            if (VGMCommand_isDataBlock(command) || VGMCommand_isStream(command) || VGMCommand_isLoopStart(command) || VGMCommand_isLoopEnd(command))
+            if (VGMCommand_isDataBlock(command) || VGMCommand_isStream(command) || VGMCommand_isLoopStart(command) || VGMCommand_isLoopEnd(command) || (keepRF5C68Cmds && VGMCommand_isRF5C68Control(command)))
             {
                 optimizedCommands = insertAfterLList(optimizedCommands, command);
                 // loop start ? -->
