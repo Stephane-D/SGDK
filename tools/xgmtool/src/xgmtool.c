@@ -16,7 +16,7 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.74";
+const char* version = "1.75";
 int sys;
 bool silent;
 bool verbose;
@@ -32,7 +32,7 @@ int main(int argc, char *argv[ ])
 
     if (argc < 3)
     {
-        printf("XGMTool %s - Stephane Dallongeville - copyright 2020\n", version);
+        printf("XGMTool %s - Stephane Dallongeville - copyright 2024\n", version);
         printf("\n");
         printf("Usage: xgmtool inputFile outputFile <options>\n");
         printf("XGMTool can do the following operations:\n");
@@ -132,7 +132,7 @@ int main(int argc, char *argv[ ])
             sys = SYSTEM_NTSC;
         else if (!strcasecmp(argv[i], "-p"))
             sys = SYSTEM_PAL;
-	else if (!strcasecmp(argv[i], "-r"))
+        else if (!strcasecmp(argv[i], "-r"))
             keepRF5C68Cmds = true;
         else
             printf("Warning: option %s not recognized (ignored)\n", argv[i]);
