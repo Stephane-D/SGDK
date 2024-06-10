@@ -483,6 +483,11 @@ bool VGMCommand_isSame(VGMCommand* source, VGMCommand* com)
     return !memcmp(&(source->data[source->offset]), &(com->data[com->offset]), source->size);
 }
 
+bool VGMCommand_isRF5C68Control(VGMCommand* source)
+{
+    return source->command == VGM_WRITE_RF5C68;
+}
+
 bool VGMCommand_contains(LList* commands, VGMCommand* command)
 {
     LList* l = commands;

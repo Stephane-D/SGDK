@@ -23,6 +23,7 @@
 #define VGM_LOOP_START          0x30
 #define VGM_LOOP_END            0x31
 
+#define VGM_WRITE_RF5C68        0xB0
 
 typedef struct
 {
@@ -92,6 +93,7 @@ int VGMCommand_getStreamFrenquency(VGMCommand* source);
 int VGMCommand_getStreamSampleAddress(VGMCommand* source);
 int VGMCommand_getStreamSampleSize(VGMCommand* source);
 bool VGMCommand_isSame(VGMCommand* source, VGMCommand* com);
+bool VGMCommand_isRF5C68Control(VGMCommand* source);
 
 bool VGMCommand_contains(LList* commands, VGMCommand* command);
 VGMCommand* VGMCommand_getKeyOnCommand(LList* commands, int channel);
