@@ -16,7 +16,7 @@
 #define SYSTEM_PAL      1
 
 
-const char* version = "1.75";
+const char* version = "1.76";
 int sys;
 bool silent;
 bool verbose;
