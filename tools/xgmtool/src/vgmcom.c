@@ -485,7 +485,7 @@ bool VGMCommand_isSame(VGMCommand* source, VGMCommand* com)
 
 bool VGMCommand_isRF5C68Control(VGMCommand* source)
 {
-    return source->command == VGM_WRITE_RF5C68;
+    return source->command == VGM_WRITE_RF5C68 || source->command == VGM_WRITE_RF5C164;
 }
 
 bool VGMCommand_contains(LList* commands, VGMCommand* command)

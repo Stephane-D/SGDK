@@ -24,6 +24,7 @@
 #define VGM_LOOP_END            0x31
 
 #define VGM_WRITE_RF5C68        0xB0
+#define VGM_WRITE_RF5C164       0xB1
 
 typedef struct
 {

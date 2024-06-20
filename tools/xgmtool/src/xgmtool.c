@@ -80,7 +80,7 @@ int main(int argc, char *argv[ ])
         printf("-di\tdisable PCM sample auto ignore (it can help when PCM are not properly extracted).\n");
         printf("-dr\tdisable PCM sample rate auto fix (it can help when PCM are not properly extracted).\n");
         printf("-dd\tdisable delayed KEY OFF event when we have KEY ON/OFF in a single frame (it can fix incorrect instrument sound).\n");
-        printf("-r\tkeep RF5C68 register write commands.\n");
+        printf("-r\tkeep RF5C68 and RF5C164 register write commands.\n");
 
         exit(1);
     }
