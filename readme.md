@@ -136,6 +136,12 @@ Notes:
 - You can also try the alternate Doragasu docker solution which uses a native linux compiler (much faster):
   https://gitlab.com/doragasu/docker-sgdk
  
+### AWS
+
+Yes you're reading correctly, thanks to Matthew Nimmo you can even now use SGDK from AWS ^^
+Here's the link to his blog which explain how to do that:
+https://community.aws/content/2hZInsYwWX8cYEAIFKquutVoYQj/how-to-build-retro-games-in-aws-using-sega-genesis-development-kit-sgdk
+
 ### VISUAL STUDIO
 
 You can find a Visual Studio template in the 'vstudio' folder to facilate SGDK integration with VS.
