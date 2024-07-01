@@ -127,7 +127,8 @@ public class SpriteFrame extends Resource
         }
 
         // empty frame --> empty tileset
-        if (sprites.isEmpty()) tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", false));
+        if (sprites.isEmpty())
+            tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", false));
         else
         {
             int optNumTile = 0;
@@ -214,6 +215,17 @@ public class SpriteFrame extends Resource
         return tileset.isEmpty();
     }
 
+    public boolean isOptimisable()
+    {
+        if (vdpSprites.size() == 1)
+        {
+            final VDPSprite vdpSprite = vdpSprites.get(0);
+            return ((vdpSprite.wt * 8) == frameDim.width) && ((vdpSprite.ht * 8) == frameDim.height) && (vdpSprite.offsetX == 0) && (vdpSprite.offsetY == 0);
+        }
+        
+        return false;
+    }
+
     public int getNumTile()
     {
         return isEmpty() ? 0 : tileset.getNumTile();
@@ -274,7 +286,8 @@ public class SpriteFrame extends Resource
         // AnimationFrame structure
         Util.decl(outS, outH, "AnimationFrame", id, 2, global);
         // number of sprite / timer info
-        outS.append("    dc.w    " + ((getNumSprite() << 8) | ((timer << 0) & 0xFF)) + "\n");
+        int numSprite = isOptimisable() ? -1 : getNumSprite(); 
+        outS.append("    dc.w    " + (((numSprite << 8) & 0xFF00) | ((timer << 0) & 0xFF)) + "\n");
         // set tileset pointer
         outS.append("    dc.l    " + tileset.id + "\n");
         // set collision pointer
