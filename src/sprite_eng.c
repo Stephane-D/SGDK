@@ -1473,7 +1473,7 @@ void NO_INLINE SPR_update()
             s8 numSprite = frame->numSprite;
 
             // special case of single VDP sprite with size aligned to sprite size (no offset, no flip calculation required)
-            if (numSprite == -1)
+            if (numSprite < 0)
             {
                 vdpSprite->y = sprite->y;
                 vdpSprite->size = frameSprite->size;
@@ -1743,7 +1743,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
             s8 num = frame->numSprite;
 
             // special case of single VDP sprite with size aligned to sprite size (no offset, no flip calculation required)
-            if (num == -1) visibility = ((bx < mx) && (by < my))?0x8000:0;
+            if (num < 0) visibility = ((bx < mx) && (by < my))?0x8000:0;
             else
             {
                 FrameVDPSprite* frameSprite = frame->frameVDPSprites;
