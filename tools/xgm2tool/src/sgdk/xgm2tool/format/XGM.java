@@ -1239,10 +1239,14 @@ public class XGM
             // optimized command is not the last frame command ?
             if ((indOpt != -1) && (indOpt != (frameCommands.size() - 2)))
             {
-                // swap with last command
-                final int ind1 = FMcommands.indexOf(frameCommands.get(indOpt));
+                final XGMFMCommand comOpt = frameCommands.get(indOpt);
+                final int ind1 = FMcommands.indexOf(comOpt);
                 final int ind2 = FMcommands.indexOf(frameCommands.get(frameCommands.size() - 2));
-                Collections.swap(FMcommands, ind1, ind2);
+
+                // move to last command (don't swap)                
+                FMcommands.add(ind2 + 1, comOpt);
+                FMcommands.remove(ind1);               
+                // Collections.swap(FMcommands, ind1, ind2);
             }
         }
 
