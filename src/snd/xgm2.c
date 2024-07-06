@@ -192,6 +192,7 @@ static u16 xgm2WaitMean;
 
 // forward
 static bool getAccess(const u8 flag);
+static void releaseAccess(const bool busTaken);
 static void initLoadCalculation(void);
 static s16 getPCMChannel(const u8 priority);
 static void setMusicTempo(const u16 value);
@@ -260,8 +261,7 @@ bool XGM2_isPlaying(void)
     // play status
     bool ret = (*pb & XGM2_STATUS_PLAYING)?TRUE:FALSE;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     return ret;
 }
@@ -281,6 +281,10 @@ void NO_INLINE XGM2_load(const u8 *song)
     u32 sampleOff = (u32) song;
     // num max sample
     u16 maxSample;
+
+    // PAL timing ?
+    if (song[1] & XGM2_PAL_FLAG) setMusicTempo(50);
+    else setMusicTempo(60);
 
     // multi tracks ?
     if (song[1] & XGM2_MULTI_TRACK_FLAG)
@@ -391,8 +395,7 @@ void NO_INLINE XGM2_playTrack(const u16 track)
     // set play XGM2 command (and clear pause/resume if any)
     *pb = (*pb & ~(XGM2_COM_RESUME_PLAY | XGM2_COM_PAUSE_PLAY)) | XGM2_COM_START_PLAY;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     // need to restore FM and PSG volumes
     if (restoreVolume)
@@ -437,8 +440,7 @@ void NO_INLINE XGM2_stop(void)
     // set play XGM2 command (and clear pause/resume if any)
     *pb = (*pb & ~(XGM2_COM_RESUME_PLAY | XGM2_COM_PAUSE_PLAY)) | XGM2_COM_START_PLAY;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 }
 
 void NO_INLINE XGM2_pause(void)
@@ -460,8 +462,7 @@ void NO_INLINE XGM2_pause(void)
         *pb = (*pb & ~(XGM2_COM_RESUME_PLAY | XGM2_COM_START_PLAY)) | XGM2_COM_PAUSE_PLAY;
     }
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 }
 
 void NO_INLINE XGM2_resume(void)
@@ -491,8 +492,7 @@ void NO_INLINE XGM2_resume(void)
         }
     }
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     // need to restore FM and PSG volumes
     if (restoreVolume)
@@ -518,8 +518,7 @@ u8 XGM2_isPlayingPCM(const u16 channel_mask)
     // play status
     u8 ret = *pb & channel_mask;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     return ret;
 }
@@ -543,8 +542,7 @@ static s16 getPCMChannel(const u8 priority)
     pb = (vu8*) (XGM2_PCM_PRIO_EXT_INT + (XGM2_PCM_PARAM_LEN * 2));
     prios[2] = *pb & 0xF;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     // try channel 3 first if free (lower CPU usage)
     if (!(status & XGM2_STATUS_PLAYING_PCM3)) return SOUND_PCM_CH3;
@@ -592,9 +590,7 @@ bool NO_INLINE XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMCha
         // channel playing and prio > new prio ? --> cannot play on this channel
         if (playing && (prio > priority))
         {
-            if (!busTaken) Z80_releaseBus();
-            SYS_enableInts();
-
+            releaseAccess(busTaken);
             return FALSE;
         }
     }
@@ -627,8 +623,7 @@ bool NO_INLINE XGM2_playPCMEx(const u8 *sample, const u32 len, const SoundPCMCha
     // set play PCM channel command
     *pb |= (XGM2_COM_PLAY_PCM_BASE << ch);
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     return TRUE;
 }
@@ -760,8 +755,7 @@ static void NO_INLINE setLoopNumber(const s8 value)
     // set loop argument (0 = no loop, 0xFF = infinite)
     *pb = value;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 }
 
 void XGM2_setLoopNumber(s8 value)
@@ -794,8 +788,7 @@ static void NO_INLINE setMusicTempo(const u16 value)
     // set tempo integer part first
     *pb = adjTempo >> 8;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 }
 
 void XGM2_setMusicTempo(const u16 value)
@@ -823,8 +816,7 @@ u32 NO_INLINE XGM2_getElapsed(void)
     *dst++ = *pb++;
     *dst = *pb;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     u32 result = (values[0] << 0) | (values[1] << 8) | ((u32) values[2] << 16);
 
@@ -849,8 +841,7 @@ static void NO_INLINE setFMVolume(u16 value)
     // set FM volume XGM2 command
     *pb |= XGM2_COM_SET_VOLUME_FM;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 }
 
 static void NO_INLINE setPSGVolume(u16 value)
@@ -868,8 +859,7 @@ static void NO_INLINE setPSGVolume(u16 value)
     // set PSG volume XGM2 command
     *pb |= XGM2_COM_SET_VOLUME_PSG;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 }
 
 
@@ -913,8 +903,7 @@ u16 NO_INLINE XGM2_getCPULoad(const bool mean)
     // get idle
     u16 idle = *pb;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     if (mean)
     {
@@ -948,8 +937,7 @@ u16 NO_INLINE XGM2_getDMAWaitTime(const bool mean)
     // get dma wait
     u16 dmaWait = *pb;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     if (mean)
     {
@@ -982,8 +970,7 @@ u16 NO_INLINE XGM2_getDebugFrameCounter(void)
 
     u16 frameCounter = pb[0] | (pb[1] << 8);
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     return frameCounter;
 }
@@ -1000,8 +987,7 @@ u16 NO_INLINE XGM2_getDebugPCMRate(void)
     // the value give the number of played sample per frame
     u8 playedSamplesPerFrame = *pb;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     // compute playback rate
     return mulu(playedSamplesPerFrame, IS_PAL_SYSTEM?50:60);
@@ -1020,8 +1006,7 @@ u8 NO_INLINE XGM2_getDebugMissedFrames(void)
     // get missed frames (8 bit value, not really important)
     u8 result = *pb;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     return result;
 }
@@ -1037,8 +1022,7 @@ u8 NO_INLINE XGM2_getDebugProcessDuration(const u16 ind)
 
     u8 processDuration = *pb;
 
-    if (!busTaken) Z80_releaseBus();
-    SYS_enableInts();
+    releaseAccess(busTaken);
 
     return processDuration;
 }
@@ -1070,6 +1054,12 @@ static bool getAccess(const u8 flag)
     }
 
     return busTaken;
+}
+
+static void releaseAccess(const bool busTaken)
+{
+    if (!busTaken) Z80_releaseBus();
+    SYS_enableInts();
 }
 
 static void initLoadCalculation(void)
