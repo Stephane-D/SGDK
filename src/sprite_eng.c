@@ -1445,20 +1445,9 @@ void NO_INLINE SPR_update()
         if (status & NEED_VISIBILITY_UPDATE)
             status = updateVisibility(sprite, status);
 
-        // sprite can have been released during updateFrame(..) using the frame change callback
-        // so we have to take care of that
-        u16 visibility = (status & ALLOCATED)?sprite->visibility:0;
-
-        // sprite visible and still in SAT limit ?
-        if (visibility && (vdpSpriteInd <= SAT_MAX_SIZE))
+        // sprite visible and still allocated (can be released during updateFrame(..) with the frame change callback) with enough entry in SAT ?
+        if (sprite->visibility && (status & ALLOCATED) && (vdpSpriteInd <= SAT_MAX_SIZE))
         {
-            static const u16 visibilityMask[17] =
-            {
-                0x0000, 0x8000, 0xC000, 0xE000, 0xF000, 0xF800, 0xFC00, 0xFE00,
-                0xFF00, 0xFF80, 0xFFC0, 0xFFE0, 0xFFF0, 0xFFF8, 0xFFFC, 0xFFFE,
-                0xFFFF
-            };
-
             if (status & NEED_TILES_UPLOAD)
             {
                 loadTiles(sprite);
@@ -1484,8 +1473,15 @@ void NO_INLINE SPR_update()
             }
             else
             {
+                static const u16 visibilityMask[17] =
+                {
+                    0x0000, 0x8000, 0xC000, 0xE000, 0xF000, 0xF800, 0xFC00, 0xFE00,
+                    0xFF00, 0xFF80, 0xFFC0, 0xFFE0, 0xFFF0, 0xFFF8, 0xFFFC, 0xFFFE,
+                    0xFFFF
+                };
+
                 // so visibility also allow to get the number of sprite
-                visibility &= visibilityMask[(u8) numSprite];
+                s16 visibility = (s16)(sprite->visibility & visibilityMask[(u8) numSprite]);
 
                 switch(attr & (TILE_ATTR_VFLIP_MASK | TILE_ATTR_HFLIP_MASK))
                 {
@@ -1493,7 +1489,7 @@ void NO_INLINE SPR_update()
                         while(visibility)
                         {
                             // current sprite visibility bit is in high bit
-                            if (visibility & 0x8000)
+                            if (visibility < 0)
                             {
                                 vdpSprite->y = sprite->y + frameSprite->offsetY;
                                 vdpSprite->size = frameSprite->size;
@@ -1520,7 +1516,7 @@ void NO_INLINE SPR_update()
                         while(visibility)
                         {
                             // current sprite visibility bit is in high bit
-                            if (visibility & 0x8000)
+                            if (visibility < 0)
                             {
                                 vdpSprite->y = sprite->y + frameSprite->offsetY;
                                 vdpSprite->size = frameSprite->size;
@@ -1547,7 +1543,7 @@ void NO_INLINE SPR_update()
                         while(visibility)
                         {
                             // current sprite visibility bit is in high bit
-                            if (visibility & 0x8000)
+                            if (visibility < 0)
                             {
                                 vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                                 vdpSprite->size = frameSprite->size;
@@ -1574,7 +1570,7 @@ void NO_INLINE SPR_update()
                         while(visibility)
                         {
                             // current sprite visibility bit is in high bit
-                            if (visibility & 0x8000)
+                            if (visibility < 0)
                             {
                                 vdpSprite->y = sprite->y + frameSprite->offsetYFlip;
                                 vdpSprite->size = frameSprite->size;
@@ -1985,7 +1981,7 @@ static Sprite* sortSprite(Sprite* sprite)
     const s16 sdepth = sprite->depth;
 
 #ifdef SPR_DEBUG
-    KLog_U2("Start depth compare for sprite #", getSpriteIndex(sprite), " VDP Sprite Ind=", sprite->VDPSpriteIndex);
+    KLog_U2("Start depth compare for sprite #", getSpriteIndex(sprite));
 #endif // SPR_DEBUG
 
     // find position forward first
