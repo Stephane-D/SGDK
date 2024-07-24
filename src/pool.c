@@ -185,7 +185,7 @@ void POOL_release(Pool* pool, void* object, bool maintainCoherency)
         u16 objectIndex = *objectIndexP;
 
         // replace with the overwritten one so we can use stack iteration
-        pool->allocStack[objectIndex] = prevObject;
+        pool->free[objectIndex] = prevObject;
 
         // get previous object index
         u16* prevObjectIndexP = ((u16*)prevObject) - 1;
