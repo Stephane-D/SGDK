@@ -1042,6 +1042,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
 
         sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
     }
+    else sprite->status = (sprite->status & ~STATE_ANIMATION_DONE); //to allow for manual reset of aniamtion done check even on single anim sprites
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
 }
