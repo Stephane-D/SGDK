@@ -286,7 +286,7 @@ public class SpriteFrame extends Resource
         // AnimationFrame structure
         Util.decl(outS, outH, "AnimationFrame", id, 2, global);
         // number of sprite / timer info
-        int numSprite = isOptimisable() ? -1 : getNumSprite(); 
+        int numSprite = isOptimisable() ? 0x81 : getNumSprite(); 
         outS.append("    dc.w    " + (((numSprite << 8) & 0xFF00) | ((timer << 0) & 0xFF)) + "\n");
         // set tileset pointer
         outS.append("    dc.l    " + tileset.id + "\n");

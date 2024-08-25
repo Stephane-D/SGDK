@@ -1746,7 +1746,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
         else if ((xmax < 0) || ((xmin - fw) > 0)) visibility = VISIBILITY_OFF;
         else
         {
-            u16 num = (frame->numSprite < 0)?1:frame->numSprite;
+            u16 num = frame->numSprite & 0x7F;
             // start from the last one
             FrameVDPSprite* frameSprite = &(frame->frameVDPSprites[num]);
             visibility = 0;
@@ -1846,7 +1846,7 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     }
 
     // detect if we need to hide some VDP sprite
-    s16 currentNumSprite = (frame->numSprite < 0)?1:frame->numSprite;
+    s16 currentNumSprite = frame->numSprite & 0x7F;
 
     // adjust number of sprite to hide
     sprite->spriteToHide += sprite->lastNumSprite - currentNumSprite;
@@ -1902,7 +1902,7 @@ static void updateSpriteTableAll(Sprite* sprite)
     visibility = sprite->visibility;
     attr = sprite->attribut;
     frame = sprite->frame;
-    num = (frame->numSprite < 0)?1:frame->numSprite;
+    num = frame->numSprite & 0x7F;
     frameSprite = frame->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
@@ -1990,7 +1990,7 @@ static void updateSpriteTablePos(Sprite* sprite)
     visibility = sprite->visibility;
     attr = sprite->attribut;
     frame = sprite->frame;
-    num = (frame->numSprite < 0)?1:frame->numSprite;
+    num = frame->numSprite & 0x7F;
     frameSprite = frame->frameVDPSprites;
     vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
 
@@ -2063,7 +2063,7 @@ static void updateSpriteTableHide(Sprite* sprite)
 
     VDPSprite* vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
     // don't forget to hide sprites that were used by previous frame
-    s16 num = (sprite->frame->numSprite < 0)?1:sprite->frame->numSprite;
+    s16 num = sprite->frame->numSprite & 0x7F;
 
     if (sprite->spriteToHide > 0) num += sprite->spriteToHide;
 

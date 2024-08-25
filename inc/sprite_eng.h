@@ -215,7 +215,8 @@ typedef struct
  *      Sprite animation frame structure.
  *
  *  \param numSprite
- *      number of VDP sprite which compose this frame (-1 is a special value when we have a single optimisable VDP sprite)
+ *      number of VDP sprite which compose this frame.
+ *      bit 7 is used as a special flag for the sprite engine so always use 'numSprite & 0x7F' to just retrieve the number of sprite
  *  \param timer
  *      active time for this frame (in 1/60 of second)
  *  \param tileset
