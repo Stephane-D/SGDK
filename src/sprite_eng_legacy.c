@@ -2063,7 +2063,7 @@ static void updateSpriteTableHide(Sprite* sprite)
 
     VDPSprite* vdpSprite = &vdpSpriteCache[sprite->VDPSpriteIndex];
     // don't forget to hide sprites that were used by previous frame
-    s16 num = (frame->numSprite < 0)?1:frame->numSprite;
+    s16 num = (sprite->frame->numSprite < 0)?1:sprite->frame->numSprite;
 
     if (sprite->spriteToHide > 0) num += sprite->spriteToHide;
 
