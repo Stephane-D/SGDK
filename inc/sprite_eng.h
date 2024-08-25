@@ -227,7 +227,7 @@ typedef struct
  */
 typedef struct
 {
-    u8 numSprite;
+    s8 numSprite;
     u8 timer;
     TileSet* tileset;                   // TODO: have a tileset per VDP sprite --> probably not a good idea performance wise
     Collision* collision;               // Require many DMA queue operations and fast DMA flush as well, also bring extra computing in calculating delayed update
