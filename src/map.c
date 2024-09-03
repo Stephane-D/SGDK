@@ -98,9 +98,14 @@ Map* NO_INLINE MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseT
     result->plane = plane;
     // keep only base index and base palette
     result->baseTile = baseTile & (TILE_INDEX_MASK | TILE_ATTR_PALETTE_MASK | TILE_ATTR_PRIORITY_MASK);
-    // mark for init
-    result->planeWidthMask = 0;
-    result->planeHeightMask = 0;
+    // init plane dimension
+    result->planeWidth = planeWidth;
+    result->planeHeight = planeHeight;
+    result->planeWidthMaskAdj = (planeWidth >> 1) - 1;
+    result->planeHeightMaskAdj = (planeHeight >> 1) - 1;
+    result->planeWidthSftAdj = planeWidthSft + 2;
+    // need full update on start
+    result->firstUpdate = TRUE;
 
     // prepare function pointers
     if (mapDef->numMetaTile > 256)
@@ -188,6 +193,10 @@ Map* NO_INLINE MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseT
         }
     }
 
+    // patch callbacks
+    result->patchMapDataColumnCB = NULL;
+    result->patchMapDataRowCB = NULL;
+
     return result;
 }
 
@@ -199,18 +208,9 @@ void MAP_release(Map* map)
 
 void NO_INLINE MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
 {
-    bool redraw;
+    bool redraw = forceRedraw || map->firstUpdate;
 
-    // first scroll ?
-    if (map->planeWidthMask == 0)
-    {
-        // init plane dimension
-        map->planeWidthMask = (planeWidth >> 1) - 1;
-        map->planeHeightMask = (planeHeight >> 1) - 1;
-        // force complete redraw
-        redraw = TRUE;
-    }
-    else redraw = forceRedraw;
+    map->firstUpdate = FALSE;
 
     if (redraw)
     {
@@ -336,7 +336,7 @@ static void updateMap(Map* map, s16 xt, s16 yt)
         // need to update map column on right
         while(deltaX--)
         {
-            setMapColumn(map, cxt & map->planeWidthMask, cxt, yt);
+            setMapColumn(map, cxt & map->planeWidthMaskAdj, cxt, yt);
             cxt++;
         }
     }
@@ -346,7 +346,7 @@ static void updateMap(Map* map, s16 xt, s16 yt)
         while(deltaX++)
         {
             cxt--;
-            setMapColumn(map, cxt & map->planeWidthMask, cxt, yt);
+            setMapColumn(map, cxt & map->planeWidthMaskAdj, cxt, yt);
         }
     }
 
@@ -358,7 +358,7 @@ static void updateMap(Map* map, s16 xt, s16 yt)
         // need to update map row on bottom
         while(deltaY--)
         {
-            setMapRow(map, cyt & map->planeHeightMask, xt, cyt);
+            setMapRow(map, cyt & map->planeHeightMaskAdj, xt, cyt);
             cyt++;
         }
     }
@@ -368,7 +368,7 @@ static void updateMap(Map* map, s16 xt, s16 yt)
         while(deltaY++)
         {
             cyt--;
-            setMapRow(map, cyt & map->planeHeightMask, xt, cyt);
+            setMapRow(map, cyt & map->planeHeightMaskAdj, xt, cyt);
         }
     }
 
@@ -386,7 +386,7 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
     u16 start = GET_VCOUNTER;
 #endif
 
-    const u16 ph = planeHeight;
+    const u16 ph = map->planeHeight;
 
     // allocate temp buffer for tilemap
     u16* buf = DMA_allocateTemp(ph * 2);
@@ -402,7 +402,7 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
     // VRAM destination address
     const u16 vramAddr = ((map->plane == BG_A)?VDP_BG_A:VDP_BG_B) + (column * 4);
     // get plane width * 2
-    const u16 pw2 = planeWidth * 2;
+    const u16 pw2 = map->planeWidth * 2;
 
     // queue DMA (first column)
     DMA_queueDmaFast(DMA_VRAM, buf, vramAddr + 0, ph, pw2);
@@ -417,9 +417,9 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
     // 16 metatile = 32 tiles = 256 pixels (full screen height + 16 pixels)
     const u16 h = 16;
     // clip Y against plane size
-    const u16 yAdj = y & map->planeHeightMask;
+    const u16 yAdj = y & map->planeHeightMaskAdj;
     // get plane height
-    const u16 ph2 = map->planeHeightMask + 1;
+    const u16 ph2 = map->planeHeightMaskAdj + 1;
 
     // larger than plane height ? --> need to split
     if ((yAdj + h) > ph2)
@@ -445,7 +445,7 @@ static void setMapRow(Map *map, u16 row, u16 x, u16 y)
     u16 start = GET_VCOUNTER;
 #endif
 
-    const u16 pw = planeWidth;
+    const u16 pw = map->planeWidth;
 
     // allocate temp buffer for tilemap
     u16* buf = DMA_allocateTemp(pw * 2);
@@ -459,7 +459,7 @@ static void setMapRow(Map *map, u16 row, u16 x, u16 y)
 #endif
 
     // VRAM destination address
-    const u16 vramAddr = ((map->plane == BG_A)?VDP_BG_A:VDP_BG_B) + (row << (planeWidthSft + 2));
+    const u16 vramAddr = ((map->plane == BG_A)?VDP_BG_A:VDP_BG_B) + (row << map->planeWidthSftAdj);
 
     // queue DMA (first row)
     DMA_queueDmaFast(DMA_VRAM, buf, vramAddr + (pw * 0), pw, 2);
@@ -474,9 +474,9 @@ static void setMapRow(Map *map, u16 row, u16 x, u16 y)
     // 21 metatile = 42 tiles = 336 pixels (full screen width + 16 pixels)
     u16 w = 21;
     // clip X against plane size
-    const u16 xAdj = x & map->planeWidthMask;
-    // get plane width
-    const u16 pw2 = map->planeWidthMask + 1;
+    const u16 xAdj = x & map->planeWidthMaskAdj;
+    // get plane width (metatile)
+    const u16 pw2 = map->planeWidthMaskAdj + 1;
 
     // larger than plane width ? --> need to split
     if ((xAdj + w) > pw2)
@@ -500,6 +500,13 @@ static void prepareMapDataColumn(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u
 
     map->prepareMapDataColumnCB(map, bufCol1, bufCol2, xm, ym, height);
 
+    // patch data callback set ?
+    if (map->patchMapDataColumnCB != NULL)
+    {
+        map->patchMapDataColumnCB(map, bufCol1, (xm * 2) + 0, ym * 2, height * 2);
+        map->patchMapDataColumnCB(map, bufCol2, (xm * 2) + 1, ym * 2, height * 2);
+    }
+
 #ifdef MAP_PROFIL
     u16 end = GET_VCOUNTER;
     KLog_S2("prepareMapDataColumn - duration=", end - start, " h=", height);
@@ -513,6 +520,13 @@ static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 
 #endif
 
     map->prepareMapDataRowCB(map, bufRow1, bufRow2, xm, ym, width);
+
+    // patch data callback set ?
+    if (map->patchMapDataRowCB != NULL)
+    {
+        map->patchMapDataRowCB(map, bufRow1, xm * 2, (ym * 2) + 0, width * 2);
+        map->patchMapDataRowCB(map, bufRow2, xm * 2, (ym * 2) + 1, width * 2);
+    }
 
 #ifdef MAP_PROFIL
     u16 end = GET_VCOUNTER;
@@ -1885,6 +1899,63 @@ static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, 
             yb = (yb + 1) & map->hMask;
             // get block data pointer
             block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
+        }
+    }
+}
+
+
+void MAP_overridePlaneSize(Map* map, u16 w, u16 h)
+{
+    // only 32, 64 or 128 accepted here
+    if (w & 0x80)
+    {
+        map->planeWidth = 128;
+        map->planeWidthMaskAdj = (128 >> 1) - 1;
+        map->planeWidthSftAdj = 7 + 2;
+
+        // plane height fixed to 32
+        map->planeHeight = 32;
+        map->planeHeightMaskAdj = (32 >> 1) - 1;
+    }
+    else if (w & 0x40)
+    {
+        map->planeWidth = 64;
+        map->planeWidthMaskAdj = (64 >> 1) - 1;
+        map->planeWidthSftAdj = 6 + 2;
+
+        // only 64 or 32 accepted for plane height
+        if (h & 0x40)
+        {
+            map->planeHeight = 64;
+            map->planeHeightMaskAdj = (64 >> 1) - 1;
+        }
+        else
+        {
+            map->planeHeight = 32;
+            map->planeHeightMaskAdj = (32 >> 1) - 1;
+        }
+    }
+    else
+    {
+        map->planeWidth = 32;
+        map->planeWidthMaskAdj = (32 >> 1) - 1;
+        map->planeWidthSftAdj = 5 + 2;
+
+        // plane height can be 128, 64 or 32
+        if (h & 0x80)
+        {
+            map->planeHeight = 128;
+            map->planeHeightMaskAdj = (128 >> 1) - 1;
+        }
+        else if (h & 0x40)
+        {
+            map->planeHeight = 64;
+            map->planeHeightMaskAdj = (64 >> 1) - 1;
+        }
+        else
+        {
+            map->planeHeight = 32;
+            map->planeHeightMaskAdj = (32 >> 1) - 1;
         }
     }
 }

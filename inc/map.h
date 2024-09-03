@@ -151,14 +151,20 @@ typedef struct Map
     u32 posY;
     u16 wMask;
     u16 hMask;
-    u16 planeWidthMask;
-    u16 planeHeightMask;
+    u16 planeWidth;
+    u16 planeHeight;
+    u16 planeWidthMaskAdj;
+    u16 planeHeightMaskAdj;
+    u16 planeWidthSftAdj;
+    u16 firstUpdate;
     u16 lastXT;
     u16 lastYT;
     u16 hScrollTable[240];
     u16 vScrollTable[20];
     void (*prepareMapDataColumnCB)(struct Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u16 ym, u16 height);
     void (*prepareMapDataRowCB)(struct Map *map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 ym, u16 width);
+    void (*patchMapDataColumnCB)(struct Map *map, u16 *buf, u16 x, u16 y, u16 height);
+    void (*patchMapDataRowCB)(struct Map *map, u16 *buf, u16 x, u16 y, u16 width);
     u16  (*getMetaTileCB)(struct Map *map, u16 x, u16 y);
     void (*getMetaTilemapRectCB)(struct Map *map, u16 x, u16 y, u16 w, u16 h, u16* dest);
 } Map;
@@ -340,6 +346,20 @@ void MAP_getMetaTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, u16* dest);
  *  \see #MAP_getMetaTilemapRect(..)
  */
 void MAP_getTilemapRect(Map* map, u16 x, u16 y, u16 w, u16 h, bool column, u16* dest);
+
+/**
+ *  \brief
+ *      Override the system (VDP) plane size for this map (should be called after MAP_create(..))<br>
+ *      Useful if you have VDP plane size set to 64x64 but you want to use 64x32 for a plane so you can use spare VRAM for something else.
+ *
+ *  \param map
+ *      source Map structure we want to override VDP tilemap size for.
+ *  \param w
+ *      tilemap width (32, 64 or 128)
+ *  \param h
+ *      tilemap height (32, 64 or 128)
+ */
+void MAP_overridePlaneSize(Map* map, u16 w, u16 h);
 
 
 #endif // _MAP_H_
