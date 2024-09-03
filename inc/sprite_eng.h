@@ -811,7 +811,7 @@ void SPR_setFrame(Sprite* sprite, s16 frame);
 void SPR_nextFrame(Sprite* sprite);
 /**
  *  \brief
- *      Enable/disable auto animation (default is on).<br>
+ *      Enable/disable auto animation for the current animation (default is on).<br>
  *
  *  \param sprite
  *      Sprite we want to enable/disable auto animation.

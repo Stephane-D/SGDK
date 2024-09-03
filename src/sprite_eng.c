@@ -97,7 +97,7 @@ u16 spriteVramSize;
 #define PROFIL_SET_DEF                  4
 #define PROFIL_SET_ATTRIBUTE            5
 #define PROFIL_SET_ANIM_FRAME           6
-#define PROFIL_SET_VRAM_OR_SPRIND       7
+#define PROFIL_SET_VRAM_IND             7
 #define PROFIL_SET_VISIBILITY           8
 #define PROFIL_CLEAR                    9
 #define PROFIL_UPDATE                   10
@@ -1121,6 +1121,9 @@ void SPR_nextFrame(Sprite* sprite)
 
 void SPR_setAutoAnimation(Sprite* sprite, bool value)
 {
+    // for debug
+    checkSpriteValid(sprite, "SPR_setAutoAnimation");
+
     if (value)
     {
         // disabled ? --> reset timer to current frame timer
@@ -1129,16 +1132,17 @@ void SPR_setAutoAnimation(Sprite* sprite, bool value)
     }
     else
     {
-        // enabled ? --> disable it
-        if (sprite->timer != -1)
-            sprite->timer = -1;
+        // disable it
+        sprite->timer = -1;
     }
 }
 
 bool SPR_getAutoAnimation(Sprite* sprite)
 {
-    return (sprite->timer != -1)?TRUE:FALSE;
+    // for debug
+    checkSpriteValid(sprite, "SPR_getAutoAnimation");
 
+    return (sprite->timer != -1)?TRUE:FALSE;
 }
 
 void SPR_setAnimationLoop(Sprite* sprite, bool value)
@@ -1190,7 +1194,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
         // nothing to do --> just return TRUE
         else
         {
-            END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
+            END_PROFIL(PROFIL_SET_VRAM_IND)
 
             return TRUE;
         }
@@ -1216,7 +1220,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
                 // save status and return FALSE
                 sprite->status = status;
 
-                END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
+                END_PROFIL(PROFIL_SET_VRAM_IND)
 
                 return FALSE;
             }
@@ -1237,7 +1241,7 @@ bool SPR_setVRAMTileIndex(Sprite* sprite, s16 value)
     // save status
     sprite->status = status;
 
-    END_PROFIL(PROFIL_SET_VRAM_OR_SPRIND)
+    END_PROFIL(PROFIL_SET_VRAM_IND)
 
     return TRUE;
 }
@@ -1642,7 +1646,7 @@ void SPR_logProfil()
     KLog_U2x(4, "Alloc=", profil_time[PROFIL_ALLOCATE_SPRITE], " Release=", profil_time[PROFIL_RELEASE_SPRITE]);
     KLog_U2x(4, "Add=", profil_time[PROFIL_ADD_SPRITE], " Remove=", profil_time[PROFIL_REMOVE_SPRITE]);
     KLog_U2x(4, "Set Def.=", profil_time[PROFIL_SET_DEF], " Set Attr.=", profil_time[PROFIL_SET_ATTRIBUTE]);
-    KLog_U2x(4, "Set Anim & Frame=", profil_time[PROFIL_SET_ANIM_FRAME], " Set VRAM & Sprite Ind=", profil_time[PROFIL_SET_VRAM_OR_SPRIND]);
+    KLog_U2x(4, "Set Anim & Frame=", profil_time[PROFIL_SET_ANIM_FRAME], " Set VRAM Ind=", profil_time[PROFIL_SET_VRAM_IND]);
     KLog_U2x(4, "Set Visibility=", profil_time[PROFIL_SET_VISIBILITY], "  Clear=", profil_time[PROFIL_CLEAR]);
     KLog_U1x(4, "Sort Sprite list=", profil_time[PROFIL_SORT]);
     KLog_U1x_(4, " Update all=", profil_time[PROFIL_UPDATE], " -------------");
