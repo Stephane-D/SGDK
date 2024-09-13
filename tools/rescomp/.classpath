@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Commons"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LZ4W Packer"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/APJ Packer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/commons"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/lz4w"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/apj"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

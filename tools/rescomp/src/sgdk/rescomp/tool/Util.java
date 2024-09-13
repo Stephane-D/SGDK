@@ -212,6 +212,14 @@ public class Util
             outH.append("extern const " + type + " " + name + "[" + size + "];\n");
     }
 
+    public static void declArrayEnd(StringBuilder outS, StringBuilder outH, String type, String name, int size, int align, boolean global)
+    {
+        // asm size label
+        if (global)
+            outS.append("    .global " + name + "_size\n");
+        outS.append(name + "_size = .-" + name + "\n");
+    }
+
     // public static void outS(StringBuilder out, byte[] data, int intSize)
     // {
     // int offset = 0;

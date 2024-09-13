@@ -1,22 +1,22 @@
-<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="Rescomp/rescomp.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/Rescomp/export.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="rescomp/rescomp.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/rescomp/export.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
-    <manifest generateManifest="true" mainClassHandleIdentifier="=Rescomp/src&lt;sgdk.rescomp{Launcher.java[Launcher" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+    <manifest generateManifest="true" mainClassHandleIdentifier="=rescomp/src&lt;sgdk.rescomp{Launcher.java[Launcher" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
         <sealing sealJar="false">
             <packagesToSeal/>
             <packagesToUnSeal/>
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{APJ.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitReader.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{BitWriter.java"/>
-        <javaElement handleIdentifier="=APJ Packer/src&lt;sgdk.aplib{DynamicByteArray.java"/>
-        <javaElement handleIdentifier="=LZ4W Packer/src&lt;sgdk.lz4w{LZ4W.java"/>
-        <javaElement handleIdentifier="=Commons/src"/>
-        <javaElement handleIdentifier="=Rescomp/src"/>
+        <javaElement handleIdentifier="=apj/src&lt;sgdk.aplib{APJ.java"/>
+        <javaElement handleIdentifier="=apj/src&lt;sgdk.aplib{BitReader.java"/>
+        <javaElement handleIdentifier="=apj/src&lt;sgdk.aplib{BitWriter.java"/>
+        <javaElement handleIdentifier="=apj/src&lt;sgdk.aplib{DynamicByteArray.java"/>
+        <javaElement handleIdentifier="=lz4w/src&lt;sgdk.lz4w{LZ4W.java"/>
+        <javaElement handleIdentifier="=commons/src"/>
+        <javaElement handleIdentifier="=rescomp/src"/>
     </selectedElements>
 </jardesc>
