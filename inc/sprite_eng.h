@@ -844,14 +844,14 @@ bool SPR_getAutoAnimation(Sprite* sprite);
 void SPR_setAnimationLoop(Sprite* sprite, bool value);
 /**
  *  \brief
- *      Return TRUE if animation ended / looped.<br>
- *      This can be used with the frame change callback (see #SPR_setFrameChangeCallback(..)) to detect
- *      the end of sprite animation and do appropriate action if required.
+ *      Return TRUE if the sprite reached the last frame of the current animation.<br>
+ *      When auto animation is enabled (see SPR_setAutoAnimation(..)) the function returns TRUE only when we reach
+ *      the last *tick* of the last animation frame.<br>
+ *      When auto animation is disabled the function returns TRUE as soon we are on last animation frame.
  *
- *  \see SPR_FLAG_DISABLE_ANIMATION_LOOP
- *  \see #SPR_setAnimationLoop(Sprite*, bool)
+ *  \see #SPR_setAutoAnimation(Sprite*, bool)
  */
-bool SPR_getAnimationDone(Sprite* sprite);
+bool SPR_isAnimationDone(Sprite* sprite);
 /**
  *  \brief
  *      Set the VRAM tile position reserved for this sprite.

@@ -49,7 +49,6 @@
 
 #define NEED_UPDATE                         0x001F
 
-#define STATE_ANIMATION_DONE                0x0020
 
 // shared from vdp_spr.c unit
 extern void logVDPSprite(u16 index);
@@ -1018,8 +1017,7 @@ void SPR_setAnimAndFrame(Sprite* sprite, s16 anim, s16 frame)
         KLog_U3("SPR_setAnimAndFrame: #", getSpriteIndex(sprite), " anim=", anim, " frame=", frame);
 #endif // SPR_DEBUG
 
-        sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
-        //sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status |= NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1055,8 +1053,7 @@ void SPR_setAnim(Sprite* sprite, s16 anim)
         KLog_U2_("SPR_setAnim: #", getSpriteIndex(sprite), " anim=", anim, " frame=0");
 #endif // SPR_DEBUG
 
-        sprite->status = (sprite->status & ~STATE_ANIMATION_DONE) | NEED_FRAME_UPDATE;
-        //sprite->status |= NEED_FRAME_UPDATE;
+        sprite->status |= NEED_FRAME_UPDATE;
     }
 
     END_PROFIL(PROFIL_SET_ANIM_FRAME)
@@ -1105,21 +1102,11 @@ void SPR_nextFrame(Sprite* sprite)
     const Animation *anim = sprite->animation;
     u16 frameInd = sprite->frameInd + 1;
 
-     if (frameInd >= anim->numFrame)
+    if (frameInd >= anim->numFrame)
     {
-        // animation done marker
-        sprite->status |= STATE_ANIMATION_DONE;
-
         // no loop ?
         if (sprite->status & SPR_FLAG_DISABLE_ANIMATION_LOOP)
         {
-            // prevent further animation
-            SPR_setAutoAnimation(sprite, FALSE);
-
-            // frame change event handler defined ? --> call it now so we let user now about STATE_ANIMATION_DONE
-            if (sprite->onFrameChange)
-                sprite->onFrameChange(sprite);
-
             // can quit now
             END_PROFIL(PROFIL_SET_ANIM_FRAME)
             return;
@@ -1137,29 +1124,34 @@ void SPR_nextFrame(Sprite* sprite)
 
 void SPR_setAutoAnimation(Sprite* sprite, bool value)
 {
+    // for debug
+    if (!isSpriteValid(sprite, "SPR_setAutoAnimation"))
+        return;
+
     if (value)
     {
-        // disabled ? --> reset timer to current frame timer
+        // currently disabled ? --> reset timer to current frame timer
         if (sprite->timer == -1)
             sprite->timer = sprite->frame->timer;
     }
     else
     {
-        // enabled ? --> disable it
-        if (sprite->timer != -1)
-            sprite->timer = -1;
+        // disable it
+        sprite->timer = -1;
     }
 
 #ifdef SPR_DEBUG
     KLog_U2("SPR_setAutoAnimation: #", getSpriteIndex(sprite), " AutoAnimation=", value);
 #endif // SPR_DEBUG
-
 }
 
 bool SPR_getAutoAnimation(Sprite* sprite)
 {
-    return (sprite->timer != -1)?TRUE:FALSE;
+    // for debug
+    if (!isSpriteValid(sprite, "SPR_getAutoAnimation"))
+        return FALSE;
 
+    return (sprite->timer != -1)?TRUE:FALSE;
 }
 
 void SPR_setAnimationLoop(Sprite* sprite, bool value)
@@ -1174,18 +1166,16 @@ void SPR_setAnimationLoop(Sprite* sprite, bool value)
 #ifdef SPR_DEBUG
     KLog_U2("SPR_setAnimationLoop: #", getSpriteIndex(sprite), " loop=", value);
 #endif // SPR_DEBUG
-
 }
 
-
-bool SPR_getAnimationDone(Sprite* sprite)
+bool SPR_isAnimationDone(Sprite* sprite)
 {
     // for debug
-    if (!isSpriteValid(sprite, "SPR_getAnimationDone"))
+    if (!isSpriteValid(sprite, "SPR_isAnimationDone"))
         return FALSE;
 
-    return (sprite->status & STATE_ANIMATION_DONE)?TRUE:FALSE;
-    //return sprite->frameInd >= sprite->animation->numFrame;
+    // last tick on last animation frame
+    return (sprite->timer <= 1) && (sprite->frameInd == (sprite->animation->numFrame - 1));
 }
 
 
