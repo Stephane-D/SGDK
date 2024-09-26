@@ -772,8 +772,6 @@ u16 XGM2_getMusicTempo(void)
 
 static void NO_INLINE setMusicTempo(const u16 value)
 {
-    if (Z80_getLoadedDriver() != Z80_DRIVER_XGM2) return;
-
     xgm2Tempo = value;
     // compute tempo
     u16 adjTempo = divu(value << 8, IS_PAL_SYSTEM?50:60);
