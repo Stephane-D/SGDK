@@ -193,9 +193,8 @@ Map* NO_INLINE MAP_create(const MapDefinition* mapDef, VDPPlane plane, u16 baseT
         }
     }
 
-    // patch callbacks
-    result->patchMapDataColumnCB = NULL;
-    result->patchMapDataRowCB = NULL;
+    // patch callback
+    result->mapDataPatchCB = NULL;
 
     return result;
 }
@@ -501,10 +500,10 @@ static void prepareMapDataColumn(Map *map, u16 *bufCol1, u16 *bufCol2, u16 xm, u
     map->prepareMapDataColumnCB(map, bufCol1, bufCol2, xm, ym, height);
 
     // patch data callback set ?
-    if (map->patchMapDataColumnCB != NULL)
+    if (map->mapDataPatchCB != NULL)
     {
-        map->patchMapDataColumnCB(map, bufCol1, (xm * 2) + 0, ym * 2, height * 2);
-        map->patchMapDataColumnCB(map, bufCol2, (xm * 2) + 1, ym * 2, height * 2);
+        map->mapDataPatchCB(map, bufCol1, (xm * 2) + 0, ym * 2, COLUMN_UPDATE, height * 2);
+        map->mapDataPatchCB(map, bufCol2, (xm * 2) + 1, ym * 2, COLUMN_UPDATE, height * 2);
     }
 
 #ifdef MAP_PROFIL
@@ -522,10 +521,10 @@ static void prepareMapDataRow(Map* map, u16 *bufRow1, u16 *bufRow2, u16 xm, u16 
     map->prepareMapDataRowCB(map, bufRow1, bufRow2, xm, ym, width);
 
     // patch data callback set ?
-    if (map->patchMapDataRowCB != NULL)
+    if (map->mapDataPatchCB != NULL)
     {
-        map->patchMapDataRowCB(map, bufRow1, xm * 2, (ym * 2) + 0, width * 2);
-        map->patchMapDataRowCB(map, bufRow2, xm * 2, (ym * 2) + 1, width * 2);
+        map->mapDataPatchCB(map, bufRow1, xm * 2, (ym * 2) + 0, ROW_UPDATE, width * 2);
+        map->mapDataPatchCB(map, bufRow2, xm * 2, (ym * 2) + 1, ROW_UPDATE, width * 2);
     }
 
 #ifdef MAP_PROFIL
@@ -1901,6 +1900,12 @@ static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, 
             block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
         }
     }
+}
+
+
+void MAP_setDataPatchCallback(Map* map, MapDataPatchCallback *CB)
+{
+    map->mapDataPatchCB = CB;
 }
 
 
