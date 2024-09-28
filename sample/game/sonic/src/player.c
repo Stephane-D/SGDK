@@ -173,7 +173,7 @@ void PLAYER_handleInput(u16 value)
 
 void PLAYER_doJoyAction(u16 joy, u16 changed, u16 state)
 {
-    if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_X | BUTTON_Y | BUTTON_Z))
+    if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C))
     {
         if (movY == 0)
         {

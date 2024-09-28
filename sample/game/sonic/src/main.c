@@ -139,9 +139,10 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     // can't do more in paused state
     if (paused) return;
 
-    // handle player / camera joy actions
+    // handle player / camera / level joy actions
     PLAYER_doJoyAction(joy, changed, state);
     CAMERA_doJoyAction(joy, changed, state);
+    LEVEL_doJoyAction(joy, changed, state);
 }
 
 static void vblank()

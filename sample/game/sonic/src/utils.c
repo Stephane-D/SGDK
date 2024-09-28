@@ -13,4 +13,3 @@ void setSpritePosition(Sprite* sprite, s16 x, s16 y)
         SPR_setPosition(sprite, x, y);
     }
 }
-

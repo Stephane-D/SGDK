@@ -23,7 +23,7 @@ void LEVEL_updateMapAlternate(VDPPlane plane, Map* map, s16 xmt, s16 ymt);
 void LEVEL_updateVDPScroll();
 
 void LEVEL_onVBlank(void);
-void LEVEL_handleInput(u16 value);
+void LEVEL_doJoyAction(u16 joy, u16 changed, u16 state);
 
 
 #endif // _LEVEL_H_
