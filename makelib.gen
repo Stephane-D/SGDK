@@ -28,14 +28,19 @@ OBJ_LIB += $(SRC_LIB_C:.c=.o)
 
 DEP_LIB := $(OBJ_LIB:.o=.d)
 
--include $(DEP_LIB)
-
 LST_LIB := $(SRC_LIB_C:.c=.lst)
 
 INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-array-bounds -Wno-shift-negative-value -Wno-unused-parameter -fno-builtin -fms-extensions -ffunction-sections -fdata-sections $(INCS_LIB) -B$(BIN)
 FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB) -i$(INCLUDE_LIB)/snd
 
+all: release
+default: release
+Default: release
+
+Debug: debug
+Release: release
+Asm: asm
 
 #release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto -flto=auto -ffat-lto-objects
 release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
@@ -53,16 +58,9 @@ asm: CFLAGS_LIB= $(FLAGS_LIB)
 asm: AFLAGS_LIB= $(FLAGS_LIB)
 asm: $(LST_LIB)
 
-all: release
-default: release
-
-Default: release
-Debug: debug
-Release: release
-Asm: asm
-
 .PHONY: clean
 
+-include $(DEP_LIB)
 
 cleanlst:
 	$(RM) -f $(LST_LIB)
