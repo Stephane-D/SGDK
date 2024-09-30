@@ -1,3 +1,6 @@
+all: release
+default: release
+
 MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
 
@@ -107,9 +110,6 @@ $(SRC)/main.c:
 ifneq ("$(wildcard $(GDK)/ext.mk)","")
     include $(GDK)/ext.mk
 endif
-
-all: release
-default: release
 
 Default: release
 Debug: debug
