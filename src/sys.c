@@ -529,10 +529,12 @@ void NO_INLINE _start_entry()
                     BMP_drawBitmapScaled(logo, 128 - (w >> 1), 80 - (w >> 1), w, w, FALSE);
                     // flip to screen
                     BMP_flip(FALSE);
+                    // so palette fade is done
+                    DMA_flushQueue();
                 }
 
                 // while fade not completed
-                while(PAL_doFadeStep());
+                PAL_waitFadeCompletion();
             }
 
             // wait 1 second

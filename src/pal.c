@@ -201,11 +201,6 @@ static u16 fadeSize;
 static s16 fadeCounter;
 
 
-// forward
-static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlank);
-static bool doFadeStepInternal(bool forceWaitVBlank);
-
-
 u16 PAL_getColor(u16 index)
 {
     const u16 addr = index * 2;
@@ -292,44 +287,6 @@ void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm)
 }
 
 
-static void setFadePalette(u16 ind, const u16 *src, u16 len, bool forceWaitVBlank)
-{
-    // be sure that we are during vblank
-    if (forceWaitVBlank) SYS_doVBlankProcess();
-
-    // use DMA for long transfer
-    PAL_setColors(ind, src, len, (len > 16)?DMA:CPU);
-}
-
-//static void setFadePalette(u16 ind, const u16 *src, u16 len)
-//{
-//    static u32 lastVTimer = 0;
-//
-//    // we are inside VInt callback --> just set palette colors immediately
-//    if (SYS_isInVIntCallback())
-//    {
-//        // use DMA for long transfer
-//        if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
-//        else PAL_setColors(ind, src, len);
-//    }
-//    else
-//    {
-//        // be sure to wait at least 1 frame between set fade palette call
-//        if (lastVTimer == vtimer) VDP_waitVSync();
-//
-//        // disable interrupts to not conflict with VInt accesses
-//        SYS_disableInts();
-//        // use DMA for long transfer
-//        if (len > 16) DMA_doDma(DMA_CRAM, (u32) src, ind * 2, len, 2);
-//        else PAL_setColors(ind, src, len);
-//        SYS_enableInts();
-//
-//        // keep track of last update
-//        lastVTimer = vtimer;
-//    }
-//}
-
-
 bool NO_INLINE PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame)
 {
     // can't do a fade on 0 frame !
@@ -376,66 +333,51 @@ bool NO_INLINE PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16
         *stepB++ = divs(BD - BS, numFrame);
     }
 
+    // set current palette on next vblank
+    PAL_setColors(fadeInd, fadeCurrentPal, fadeSize, DMA_QUEUE);
+
     return TRUE;
 }
 
-static bool NO_INLINE doFadeStepInternal(bool forceWaitVBlank)
+bool NO_INLINE PAL_doFadeStep(void)
 {
-    // not yet done ?
-    if (--fadeCounter >= 0)
+    // prepare fade palette for next frame
+    s16* palR = fadeR;
+    s16* palG = fadeG;
+    s16* palB = fadeB;
+    s16* stepR = fadeSR;
+    s16* stepG = fadeSG;
+    s16* stepB = fadeSB;
+    u16* dst = fadeCurrentPal;
+
+    // compute the next fade palette
+    u16 i = fadeSize;
+    while(i--)
     {
-        // set current fade palette
-        setFadePalette(fadeInd, fadeCurrentPal, fadeSize, forceWaitVBlank);
+        u16 col;
 
-        // then prepare fade palette for next frame
-        s16* palR = fadeR;
-        s16* palG = fadeG;
-        s16* palB = fadeB;
-        s16* stepR = fadeSR;
-        s16* stepG = fadeSG;
-        s16* stepB = fadeSB;
-        u16* dst = fadeCurrentPal;
+        const u16 R = *palR + *stepR++;
+        const u16 G = *palG + *stepG++;
+        const u16 B = *palB + *stepB++;
 
-        // compute the next fade palette
-        u16 i = fadeSize;
-        while(i--)
-        {
-            u16 col;
+        *palR++ = R;
+        *palG++ = G;
+        *palB++ = B;
 
-            const u16 R = *palR + *stepR++;
-            const u16 G = *palG + *stepG++;
-            const u16 B = *palB + *stepB++;
+        col = ((R >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
+        col |= ((G >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
+        col |= ((B >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
 
-            *palR++ = R;
-            *palG++ = G;
-            *palB++ = B;
-
-            col = ((R >> PALETTEFADE_FRACBITS) << VDPPALETTE_REDSFT) & VDPPALETTE_REDMASK;
-            col |= ((G >> PALETTEFADE_FRACBITS) << VDPPALETTE_GREENSFT) & VDPPALETTE_GREENMASK;
-            col |= ((B >> PALETTEFADE_FRACBITS) << VDPPALETTE_BLUESFT) & VDPPALETTE_BLUEMASK;
-
-            *dst++ = col;
-        }
-
-        // not yet done
-        return TRUE;
+        *dst++ = col;
     }
-    else
-    {
-        // last step --> we can just set the final fade palette
-        setFadePalette(fadeInd, fadeEndPal, fadeSize, forceWaitVBlank);
 
-        // done
-        return FALSE;
-    }
+    // schedule palette transfer on next vblank
+    PAL_setColors(fadeInd, fadeCurrentPal, fadeSize, DMA_QUEUE);
+
+    return (--fadeCounter > 0);
 }
 
-bool PAL_doFadeStep()
-{
-    return doFadeStepInternal(FALSE);
-}
-
-void PAL_interruptFade()
+void PAL_interruptFade(void)
 {
     VBlankProcess &= ~PROCESS_PALETTE_FADING;
 }
@@ -449,8 +391,12 @@ void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 
     if (async) VBlankProcess |= PROCESS_PALETTE_FADING;
     else
     {
-        // process fading immediatly with forced VBlank wait
-        while (doFadeStepInternal(TRUE));
+        // process fading immediately
+        do
+        {
+            SYS_doVBlankProcess();
+        }
+        while (PAL_doFadeStep());
     }
 }
 
@@ -525,10 +471,6 @@ bool PAL_isDoingFade()
 
 void PAL_waitFadeCompletion()
 {
-    if (PAL_isDoingFade())
-    {
-        // need to do VBlank process otherwise we can wait a long time for completion ^^
-        while (VBlankProcess & PROCESS_PALETTE_FADING)
-            SYS_doVBlankProcess();
-    }
+    // need to do VBlank process otherwise we can wait a long time for completion ^^
+    while (PAL_isDoingFade()) SYS_doVBlankProcess();
 }
