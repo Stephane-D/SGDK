@@ -766,7 +766,7 @@ public class ImageUtil
 
             for (int i = 0; i < size; i++)
             {
-                final String rgba[] = br.readLine().split(" ");
+                final String rgba[] = br.readLine().replaceAll("#[0-9a-fA-F]+", "").split("\\s+");
 
                 final int r, g, b, a;
 
