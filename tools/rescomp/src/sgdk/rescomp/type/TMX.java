@@ -825,6 +825,10 @@ public class TMX
                         else
                             addField(objectName, tFields, new TField(name, TiledObjectType.STRING, value));
                     }
+                    // bool type ?
+                    else if (TiledObjectType.fromString(type) == TiledObjectType.BOOL)   
+                        // replace value "true" by "1" or "false" by "0" and add field
+                        addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), StringUtil.equals(value.toLowerCase(), "true") ? "1":"0"));                          
                     else
                         addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
