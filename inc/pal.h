@@ -241,17 +241,28 @@ void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm);
  *      Duration of palette fading in number of frame.
  *
  * \see PAL_doFadeStep(..)
+ * \see PAL_isManualFadeDone(..)
  */
 bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame);
 /**
  *  \brief
  *      Update palette to process one iteration of current fade operation (see #PAL_initFade(..) method)
  *
- *  \return TRUE when fading operation is not yet complete, FALSE otherwise
+ *  \return TRUE if fading operation is not yet complete, FALSE otherwise
  *
  * \see PAL_initFade(..)
+ * \see PAL_isManualFadeDone(..)
  */
 bool PAL_doFadeStep(void);
+/**
+ *  \brief
+ *      Returns TRUE if the *manual* fading operation is complete, FALSE otherwise.<br>
+ *      WARNING: This method is not related to #PAL_isDoingFade() which is about *asynchronous* fading process.
+ *
+ * \see PAL_initFade(..)
+ * \see PAL_doFadeStep(..)
+ */
+bool PAL_isManualFadeDone(void);
 
 /**
  *  \brief
@@ -468,12 +479,13 @@ void PAL_fadeInAll(const u16* pal, u16 numFrame, bool async);
 
 /**
  *  \brief
- *      Returns TRUE if currently doing a asynchronous fade operation.
+ *      Returns TRUE if we are currently doing an asynchronous palette fading operation.<br>
+ *      WARNING: This method is not related to #PAL_isManualFadeDone() which is about *manual fading* processed with #PAL_doFadeStep()
  */
 bool PAL_isDoingFade(void);
 /**
  *  \brief
- *      Wait for palette fading operation to complete (for asynchrone fading).
+ *      Wait for (asynchronous) palette fading operation to complete.
  */
 void PAL_waitFadeCompletion(void);
 /**

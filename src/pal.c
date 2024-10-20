@@ -377,9 +377,9 @@ bool NO_INLINE PAL_doFadeStep(void)
     return (--fadeCounter > 0);
 }
 
-void PAL_interruptFade(void)
+bool PAL_isManualFadeDone(void)
 {
-    VBlankProcess &= ~PROCESS_PALETTE_FADING;
+    return (fadeCounter > 0)?TRUE:FALSE;
 }
 
 void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame, bool async)
@@ -473,4 +473,9 @@ void PAL_waitFadeCompletion()
 {
     // need to do VBlank process otherwise we can wait a long time for completion ^^
     while (PAL_isDoingFade()) SYS_doVBlankProcess();
+}
+
+void PAL_interruptFade(void)
+{
+    VBlankProcess &= ~PROCESS_PALETTE_FADING;
 }
