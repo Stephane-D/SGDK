@@ -379,7 +379,7 @@ bool NO_INLINE PAL_doFadeStep(void)
 
 bool PAL_isManualFadeDone(void)
 {
-    return (fadeCounter > 0)?TRUE:FALSE;
+    return (fadeCounter > 0) ? FALSE : TRUE;
 }
 
 void PAL_fade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame, bool async)
