@@ -1155,7 +1155,7 @@ bool SPR_isAnimationDone(Sprite* sprite)
     // for debug
     checkSpriteValid(sprite, "SPR_getAnimationDone");
 
-    // last tick on last animation frame
+    // last tick on last animation frame (use <= 1 so it also works when AutoAnimation is disabled)
     return (sprite->timer <= 1) && (sprite->frameInd == (sprite->animation->numFrame - 1));
 }
 
@@ -1889,9 +1889,6 @@ static u16 updateFrame(Sprite* sprite, u16 status)
 
     // set frame
     sprite->frame = frame;
-    // init timer for this frame
-    if (SPR_getAutoAnimation(sprite))
-        sprite->timer = frame->timer;
 
     // frame change event handler defined ? --> call it
     if (sprite->onFrameChange)
@@ -1901,6 +1898,10 @@ static u16 updateFrame(Sprite* sprite, u16 status)
         sprite->onFrameChange(sprite);
         status = sprite->status;
     }
+
+    // init timer for this frame *after* calling callback (this allows SPR_isAnimationDone(..) to correctly report TRUE when animation is done)
+    if (SPR_getAutoAnimation(sprite))
+        sprite->timer = frame->timer;
 
     // require tile data upload
     if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
