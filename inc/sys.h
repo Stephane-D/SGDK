@@ -27,7 +27,28 @@
 #define ROM_END                     (((u32) &_stext) + ((u32) &_sdata))
 #define ROM_SIZE                    ((ROM_END + ROM_ALIGN_MASK) & (~ROM_ALIGN_MASK))
 
+/**
+ *  \brief
+ *      To force method inlining (not sure that GCC does actually care of it)
+ */
+#define FORCE_INLINE                inline __attribute__((always_inline))
 
+/**
+ *  \brief
+ *      To force no inlining for this method
+ */
+#define NO_INLINE                   __attribute__ ((noinline))
+
+/**
+ *  \brief
+ *      Put function in .data (RAM) instead of the default .text
+ */
+#define RAM_SECT                    __attribute__((section(".ramprog")))
+
+/**
+ *  \brief
+ *      Declare function for the hint callback (generate a RTE to return from interrupt instead of RTS)
+ */
 #define HINTERRUPT_CALLBACK         __attribute__ ((interrupt)) void
 
 

@@ -1,5 +1,6 @@
 #include "config.h"
 #include "types.h"
+#include "sys.h"
 
 #include "ym2612.h"
 

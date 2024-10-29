@@ -3,12 +3,8 @@
 #if (MODULE_FLASHSAVE != 0)
 
 #include "types.h"
+#include "sys.h"
 #include "ext/flash-save/flash.h"
-
-// Put function in .data (RAM) instead of the default .text
-#define RAM_SECT __attribute__((section(".ramprog")))
-// Avoid function to be inlined by compiler
-#define NO_INL __attribute__((noinline))
 
 // Base address for the CFI data
 #define CFI_BASE 0x10
@@ -65,7 +61,7 @@ RAM_SECT static void data_poll(uint32_t addr, uint16_t data)
 }
 
 // buf must be 45 byte long or greater
-RAM_SECT NO_INL static void cfi_read(uint8_t *buf)
+RAM_SECT NO_INLINE static void cfi_read(uint8_t *buf)
 {
 	// CFI Query
 	// NOTE: all chips I have seen accept the CFI Query command while in
@@ -160,7 +156,7 @@ int16_t flash_read(uint32_t addr, uint8_t *data, uint16_t len)
 	return wlen<<1;
 }
 
-RAM_SECT NO_INL static void word_program(uint32_t addr, uint16_t value)
+RAM_SECT NO_INLINE static void word_program(uint32_t addr, uint16_t value)
 {
 	unlock();
 	bus_write8(0xAAB, 0xA0);
@@ -188,7 +184,7 @@ RAM_SECT static void erase_unlock(void)
 	bus_write8(0x555, 0x55);
 }
 
-RAM_SECT NO_INL static void sect_erase(uint32_t addr)
+RAM_SECT NO_INLINE static void sect_erase(uint32_t addr)
 {
 	erase_unlock();
 	bus_write8(addr + 1, 0x30);
