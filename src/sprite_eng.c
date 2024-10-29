@@ -1153,7 +1153,7 @@ void SPR_setAnimationLoop(Sprite* sprite, bool value)
 bool SPR_isAnimationDone(Sprite* sprite)
 {
     // for debug
-    checkSpriteValid(sprite, "SPR_getAnimationDone");
+    checkSpriteValid(sprite, "SPR_isAnimationDone");
 
     // last tick on last animation frame (use <= 1 so it also works when AutoAnimation is disabled)
     return (sprite->timer <= 1) && (sprite->frameInd == (sprite->animation->numFrame - 1));
