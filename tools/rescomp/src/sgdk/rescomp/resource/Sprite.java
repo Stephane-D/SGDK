@@ -34,7 +34,7 @@ public class Sprite extends Resource
 
     public final Palette palette;
 
-    public Sprite(String id, String imgFile, int wf, int hf, Compression compression, int time, CollisionType collision, OptimizationType optType,
+    public Sprite(String id, String imgFile, int wf, int hf, Compression compression, String time, CollisionType collision, OptimizationType optType,
             OptimizationLevel optLevel, boolean showCut, boolean optDuplicate) throws Exception
     {
         super(id);
@@ -105,10 +105,18 @@ public class Sprite extends Resource
         final int numAnim = ht / hf;
 
         int yOff = 0;
+
+        String[] arrOfStr = time.split("\\|");
+        String time_tmp;
         for (int i = 0; i < numAnim; i++)
         {
+            if(arrOfStr.length > 1)
+                time_tmp = arrOfStr[i];
+            else{
+                time_tmp = arrOfStr[0];
+            }
             // build sprite animation
-            SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, image, wt, ht, i, wf, hf, time, collision, compression, optType, optLevel, optDuplicate);
+            SpriteAnimation animation = new SpriteAnimation(id + "_animation" + i, image, wt, ht, i, wf, hf, time_tmp, collision, compression, optType, optLevel, optDuplicate);
 
             // check if empty
             if (!animation.isEmpty())
