@@ -115,8 +115,8 @@ https://github.com/SONIC3D/gendev-macos
 
 To download the `sgdk` base image:
 
-     docker pull ghcr.io/Stephane-D/sgdk
-     docker tag ghcr.io/Stephane-D/sgdk sgdk
+     docker pull ghcr.io/stephane-d/sgdk
+     docker tag ghcr.io/stephane-d/sgdk sgdk
 
 Or build it:
 
