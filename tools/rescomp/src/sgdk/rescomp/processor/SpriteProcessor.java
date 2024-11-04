@@ -90,9 +90,10 @@ public class SpriteProcessor implements Processor
         if (fields.length >= 6)
             compression = Util.getCompression(fields[5]);
         // get frame time
-        int time = 0;
+        String time = "";
         if (fields.length >= 7)
-            time = StringUtil.parseInt(fields[6], 0);
+            time = fields[6];
+            //time = StringUtil.parseInt(fields[6], 0);
         // get collision value
         CollisionType collision = CollisionType.NONE;
         if (fields.length >= 8)
