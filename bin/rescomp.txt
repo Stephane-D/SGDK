@@ -343,11 +343,11 @@ SPRITE name img_file width height [compression [time [collision [opt_type [opt_l
                         1 / APLIB       = aplib library (good compression ratio but slow, don't use it for streamed sprite)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast, recommended for streamed sprite)
     time            display frame time in 1/60 of second (time between each animation frame)
-                        If this value is set to 0 (default) then auto animation is disabled
-                        It can be set globally (single value) or independently for each frame of each animation
-                        Example for a sprite sheet of 3 animations x 5 frames
-                        [[3,3,3,4,4][4,5,5][2,3,3,4]]"
-                        As you can see you can have empty value for empty frame
+                        If this value is set to 0 (default) then auto animation is disabled.
+                        It can be either set globally (single value) or independently for each frame of each animation.
+                        Example for 3 anim x 5 frame sprite sheet:
+                        [[3,3,3,4,4][4,5,5][2,3,3,4]]
+                        No space allowed ! And you can have empty value for empty frame.
     collision       collision type: CIRCLE, BOX or NONE (NONE by default)
     opt_type        sprite cutting optimization strategy, accepted values:
                         0 / BALANCED  = balance between used tiles and hardware sprites (default)
