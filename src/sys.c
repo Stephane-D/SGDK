@@ -1042,13 +1042,27 @@ bool SYS_isChecksumOk()
 }
 
 
-void SYS_die(char *err)
+void SYS_die(char *err, ...)
 {
     SYS_setInterruptMaskLevel(7);
     VDP_init();
-    VDP_drawText("A fatal error occured !", 2, 2);
-    VDP_drawText("cannot continue...", 4, 3);
-    if (err) VDP_drawText(err, 0, 5);
+    VDP_setBackgroundColor(63);
+    VDP_drawText("A fatal error occured!", 9, 2);
+    VDP_drawText("cannot continue...", 11, 3);
+    
+    u8 y = 5;
 
+    va_list argptr;
+    va_start(argptr, err);
+
+    const char* str = err;
+    while (str != NULL)
+    {
+        VDP_drawText(str, 1, y);
+        str = va_arg(argptr, const char*);
+        y++;
+    }
+    va_end(argptr);
+    
     while(1);
 }
