@@ -489,10 +489,11 @@ bool SYS_isChecksumOk(void);
 /**
  *  \brief
  *      Die with the specified error message.<br>
- *      Program execution is interrupted.
- *
+ *      Program execution is interrupted.<br>
+ *      Accepts a list of strings. The list must end with a NULL value.
+ * 
  * This actually display an error message and program ends execution.
  */
-void SYS_die(char *err);
+void SYS_die(char *err, ...);
 
 #endif // _SYS_H_
