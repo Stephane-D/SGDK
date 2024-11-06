@@ -341,6 +341,10 @@ bool NO_INLINE PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16
 
 bool NO_INLINE PAL_doFadeStep(void)
 {
+    // fading is done? --> exit
+    if (fadeCounter <= 0)
+        return FALSE;
+    
     // prepare fade palette for next frame
     s16* palR = fadeR;
     s16* palG = fadeG;
