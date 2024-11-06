@@ -38,6 +38,11 @@ public class SpriteProcessor implements Processor
             System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  time          display frame time in 1/60 of second (time between each animation frame)");
+            System.out.println("                    If this value is set to 0 (default) then auto animation is disabled");
+            System.out.println("                    It can be set globally (single value) or independently for each frame of each animation");
+            System.out.println("                    Example for a sprite sheet of 3 animations x 5 frames:");
+            System.out.println("                    [[3,3,3,4,4][4,5,5][2,3,3,4]]");
+            System.out.println("                    As you can see you can have empty value for empty frame");
             System.out.println("  collision     collision type: CIRCLE, BOX or NONE (BOX by default)");
             System.out.println("  opt_type      sprite cutting optimization strategy, accepted values:");
             System.out.println("                    0 / BALANCED  = balance between used tiles and hardware sprites (default)");
@@ -90,9 +95,9 @@ public class SpriteProcessor implements Processor
         if (fields.length >= 6)
             compression = Util.getCompression(fields[5]);
         // get frame time
-        int time = 0;
+        int[][] time = new int[][] {{ 0 }};
         if (fields.length >= 7)
-            time = StringUtil.parseInt(fields[6], 0);
+            time = StringUtil.parseIntArray2D(fields[6], new int[][] {{ 0 }});
         // get collision value
         CollisionType collision = CollisionType.NONE;
         if (fields.length >= 8)
