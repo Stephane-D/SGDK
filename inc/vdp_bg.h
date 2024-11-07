@@ -502,6 +502,29 @@ void VDP_clearTextLineBG(VDPPlane plane, u16 y);
  *  \see VDP_setTextPlane(..)
  */
 void VDP_drawText(const char *str, u16 x, u16 y);
+
+/**
+ *  \brief
+ *      Clears the field of characters and draws new text.<br>
+ *      If the new line is shorter than the one previously drawn in this place, the old characters will be removed.<br>
+ *      This function works significantly faster than calling VDP_clearText() and then VDP_drawText(). It is suitable when a lot of updating information needs to be displayed on the screen.
+ *
+ *  \param str
+ *      String to draw. For correct operation, it must not exceed 20 characters.
+ *  \param maxLength
+ *      Maximum string length. For correct operation, it must not exceed 20 characters.
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
+ *
+ *  \see VDP_drawText(..)
+ *  \see VDP_clearText(..)
+ *  \see VDP_setTextPalette(..)
+ *  \see VDP_setTextPriority(..)
+ *  \see VDP_setTextPlane(..)
+ */
+void VDP_drawTextClear(const char* str, u8 maxLength, u16 x, u16 y);
 /**
  *  \brief
  *      Clear a single line portion of text.
