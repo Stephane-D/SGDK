@@ -329,7 +329,7 @@ void VDP_setTextPriority(u16 prio);
  *  \see VDP_setTextPriority(..)
  *  \see VDP_setTextPlane(..)
  */
-void VDP_drawTextEx(VDPPlane plane, const char *str, u16 basetile, u16 x, u16 y, TransferMethod tm);
+void VDP_drawTextEx(VDPPlane plane, const char* str, u16 basetile, u16 x, u16 y, TransferMethod tm);
 /**
  *  \brief
  *      Clear a single line portion of text (advanced method).
@@ -417,7 +417,7 @@ void VDP_clearTextAreaEx(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 
  *  \see VDP_setTextPriority(..)
  *  \see VDP_setTextPlane(..)
  */
-void VDP_drawTextBG(VDPPlane plane, const char *str, u16 x, u16 y);
+void VDP_drawTextBG(VDPPlane plane, const char* str, u16 x, u16 y);
 /**
  *  \brief
  *      Clear a single line portion of text.
@@ -501,22 +501,23 @@ void VDP_clearTextLineBG(VDPPlane plane, u16 y);
  *  \see VDP_setTextPriority(..)
  *  \see VDP_setTextPlane(..)
  */
-void VDP_drawText(const char *str, u16 x, u16 y);
+void VDP_drawText(const char* str, u16 x, u16 y);
 
 /**
  *  \brief
- *      Clears the field of characters and draws new text.<br>
+ *      Draw text and clear remaining unused space.<br>
  *      If the new line is shorter than the one previously drawn in this place, the old characters will be removed.<br>
- *      This function works significantly faster than calling VDP_clearText() and then VDP_drawText(). It is suitable when a lot of updating information needs to be displayed on the screen.
+ *      This function works significantly faster than calling VDP_clearText() and then VDP_drawText().
+ *      It is suitable when a lot of updating information needs to be displayed on the screen.
  *
  *  \param str
- *      String to draw. For correct operation, it must not exceed 20 characters.
- *  \param maxLength
- *      Maximum string length. For correct operation, it must not exceed 20 characters.
+ *      String to draw. For correct operation, it must not exceed 40 characters.
  *  \param x
  *      X position (in tile).
  *  \param y
  *      y position (in tile).
+ *  \param len
+ *      Fixed string length. For correct operation, it must not exceed 40 characters.
  *
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
@@ -524,7 +525,7 @@ void VDP_drawText(const char *str, u16 x, u16 y);
  *  \see VDP_setTextPriority(..)
  *  \see VDP_setTextPlane(..)
  */
-void VDP_drawTextClear(const char* str, u8 maxLength, u16 x, u16 y);
+void VDP_drawTextFill(const char* str, u16 x, u16 y, u16 len);
 /**
  *  \brief
  *      Clear a single line portion of text.
