@@ -382,6 +382,51 @@ void VDP_drawText(const char *str, u16 x, u16 y)
     VDP_drawTextBG(text_plan, str, x, y);
 }
 
+void VDP_drawTextClear(const char* str, u8 maxLength, u16 x, u16 y)
+{
+    static const char *spaceStrings[] = {
+        "",
+        " ",
+        "  ",
+        "   ",
+        "    ",
+        "     ",
+        "      ",
+        "       ",
+        "        ",
+        "         ",
+        "          ",
+        "           ",
+        "            ",
+        "             ",
+        "              ",
+        "               ",
+        "                ",
+        "                 ",
+        "                  ",
+        "                   ",
+        "                    "
+    };
+    char result[maxLength + 1];
+    char *spaces = spaceStrings[maxLength - strlen(str)];
+    char *dst = result;
+    const char *src;
+
+    src = str;
+    while (*src) {
+        *dst++ = *src++;
+    }
+    
+    src = spaces;
+    while (*src) {
+        *dst++ = *src++;
+    }
+
+    *dst = '\0';
+
+    VDP_drawText(result, x, y);
+}
+
 void VDP_clearText(u16 x, u16 y, u16 w)
 {
     VDP_clearTextBG(text_plan, x, y, w);
