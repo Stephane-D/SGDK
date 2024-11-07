@@ -395,9 +395,8 @@ void VDP_drawTextFill(const char* str, u16 x, u16 y, u16 len)
     // revert '\0' terminator
     --dst;
 
-    // fill size
     u16 strSize = dst - fixedStr;
-    // remaining space ?
+    // remaining space to fill ?
     if (strSize < len)
     {
         // append space chars
