@@ -39,7 +39,7 @@ public class SpriteAnimation extends Resource
      *        height of frame in tile
      * @param showCuttingResult
      */
-    public SpriteAnimation(String id, byte[] image8bpp, int w, int h, int animIndex, int wf, int hf, int time, CollisionType collision, Compression compression,
+    public SpriteAnimation(String id, byte[] image8bpp, int w, int h, int animIndex, int wf, int hf, int[] time, CollisionType collision, Compression compression,
             OptimizationType optType, OptimizationLevel optLevel, boolean optDuplicate)
     {
         super(id);
@@ -117,7 +117,7 @@ public class SpriteAnimation extends Resource
             // frames.add(frame);
 
             // create sprite frame ('timer' is augmented by number of duplicate)
-            SpriteFrame frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time * (duplicate + 1), collision, compression, optType, optLevel);
+            SpriteFrame frame = new SpriteFrame(id + "_frame" + i, frameImage, wf, hf, time[Math.min(time.length - 1, i)] * (duplicate + 1), collision, compression, optType, optLevel);
             // add as internal resource (get duplicate if exist)
             frame = (SpriteFrame) addInternalResource(frame);
             // bypass duplicates
