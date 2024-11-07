@@ -37,6 +37,7 @@ u16 executeBGTest(u16 *scores)
 
     VDP_clearPlane(BG_A, TRUE);
     VDP_drawText("Draw text...", 2, 0);
+
     i = 10;
     start = getTimeAsFix32(FALSE);
     while(i--)
@@ -129,7 +130,6 @@ u16 executeBGTest(u16 *scores)
             pos++;
             VDP_clearText(pos->x, pos->y, 13);
             pos++;
-
             j -= 10;
         }
     }
