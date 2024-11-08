@@ -387,11 +387,10 @@ void VDP_drawTextFill(const char* str, u16 x, u16 y, u16 len)
     char fixedStr[len + 1];
     char* dst = fixedStr;
     const char* src;
-    u16 ind;
 
     src = str;
     // copy str
-    while ((*dst++ = *src++)) ind++;
+    while ((*dst++ = *src++));
     // revert '\0' terminator
     --dst;
 
