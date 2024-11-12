@@ -1134,7 +1134,7 @@ bool SPR_getAutoAnimation(Sprite* sprite)
     // for debug
     checkSpriteValid(sprite, "SPR_getAutoAnimation");
 
-    return (sprite->timer != -1)?TRUE:FALSE;
+    return (sprite->timer == -1)?FALSE:TRUE;
 }
 
 void SPR_setAnimationLoop(Sprite* sprite, bool value)
@@ -1897,11 +1897,17 @@ static u16 updateFrame(Sprite* sprite, u16 status)
         sprite->status = status;
         sprite->onFrameChange(sprite);
         status = sprite->status;
-    }
 
-    // init timer for this frame *after* calling callback (this allows SPR_isAnimationDone(..) to correctly report TRUE when animation is done)
-    if (SPR_getAutoAnimation(sprite))
-        sprite->timer = frame->timer;
+        // init timer for this frame *after* callback call and only if auto animation is enabled and timer was not manually changed in callback
+        if (sprite->timer == 0)
+            sprite->timer = frame->timer;
+    }
+    else
+    {
+        // init timer for this frame *after* callback call to allow SPR_isAnimationDone(..) to correctly report TRUE when animation is done in the callbacnk
+        if (SPR_getAutoAnimation(sprite))
+            sprite->timer = frame->timer;
+    }
 
     // require tile data upload
     if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
