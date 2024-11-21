@@ -834,6 +834,11 @@ void VDP_setWindowOnRight(u16 cols)
     VDP_setWindowHPos(true, (screenWidth / 16) - cols);
 }
 
+void VDP_setWindowFullScreen()
+{
+    VDP_setWindowVPos(false, screenHeight / 8);
+}
+
 void VDP_waitDMACompletion()
 {
     while(GET_VDP_STATUS(VDP_DMABUSY_FLAG));

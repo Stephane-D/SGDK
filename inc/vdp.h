@@ -1028,6 +1028,11 @@ void VDP_setWindowOnLeft(u16 cols);
  *      The number of columns, expressed in double tiles.
  */
 void VDP_setWindowOnRight(u16 cols);
+/**
+ *  \brief
+ *      Positions the window to full screen.
+ */
+void VDP_setWindowFullScreen();
 
 /**
  *  \brief
