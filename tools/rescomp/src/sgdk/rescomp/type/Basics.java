@@ -19,6 +19,11 @@ public class Basics
         NONE, ALL, DUPLICATE_ONLY
     }
 
+    public static enum TileOrdering
+    {
+        ROW, COLUMN
+    };
+
     public static enum TileEquality
     {
         NONE, EQUAL, VFLIP(false, true), HFLIP(true, false), HVFLIP(true, true);

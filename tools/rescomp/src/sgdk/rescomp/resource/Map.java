@@ -10,6 +10,7 @@ import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.MapBlock;
 import sgdk.rescomp.type.Metatile;
 import sgdk.rescomp.type.Tile;
@@ -116,7 +117,6 @@ public class Map extends Resource
         // set to -1 to mark that it's not yet set (we shouldn't never meet an offset of 65535 realistically)
         Arrays.fill(mapBlockRowOffsets, (short) -1);
 
-        // important to always use the same loop order when building Tileset and Tilemap object
         for (int j = 0; j < hb; j++)
         {
             int mbrii = 0;

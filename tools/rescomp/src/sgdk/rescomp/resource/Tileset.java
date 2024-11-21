@@ -1,6 +1,9 @@
 package sgdk.rescomp.resource;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,14 +16,17 @@ import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.Tile;
+import sgdk.tool.ArrayUtil;
+import sgdk.tool.FileUtil;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.ImageUtil.BasicImageInfo;
 
 public class Tileset extends Resource
 {
-    public static Tileset getTileset(String id, String imgFile, Compression compression, TileOptimization tileOpt, boolean addBlank, boolean temp)
-            throws Exception
+    public static Tileset getTileset(String id, String imgFile, Compression compression, TileOptimization tileOpt, boolean addBlank, boolean temp,
+            TileOrdering order, boolean export) throws Exception
     {
         // get 8bpp pixels and also check image dimension is aligned to tile
         final byte[] image = ImageUtil.getImageAs8bpp(imgFile, true, true);
@@ -36,7 +42,31 @@ public class Tileset extends Resource
         // we determine 'h' from data length and 'w' as we can crop image vertically to remove palette data
         final int h = image.length / w;
 
-        return new Tileset(id, image, w, h, 0, 0, w / 8, h / 8, tileOpt, compression, addBlank, temp);
+        final Tileset result = new Tileset(id, image, w, h, 0, 0, w / 8, h / 8, tileOpt, compression, addBlank, temp, order);
+
+        // export tileset to PNG ?
+        if (export)
+        {
+            // get the tileset image (8bpp format)
+            final byte[] tilesetImage = result.getTilesetImage();
+
+            // get the palette
+            int[] palette = (imgInfo.bpp > 8) ? ImageUtil.getRGBA8888PaletteFromTiles(imgFile) : ImageUtil.getRGBA8888PaletteFromIndColImage(imgFile);
+            // need to convert back to ABGR format
+            palette = ImageUtil.ARGBtoABGR(palette);
+            // create the IndexColorModel
+            final IndexColorModel cm = new IndexColorModel(8, 16, palette, 0, false, 0, DataBuffer.TYPE_BYTE);
+
+            // width is fixed to 16*8 (128) pixels, easy to get the height
+            final int imgH = tilesetImage.length / (16 * 8);
+            // create the BufferedImage
+            final BufferedImage exportImage = ImageUtil.createIndexedImage(16 * 8, imgH, cm, tilesetImage);
+
+            // save it
+            ImageUtil.save(exportImage, "png", FileUtil.setExtension(imgFile, "-tileset-export.png"));
+        }
+
+        return result;
     }
 
     // tiles
@@ -76,7 +106,7 @@ public class Tileset extends Resource
             offset += 8;
         }
 
-        // build BIN (tiles data) - no stored as this is a temporary tileset
+        // build BIN (tiles data) - not stored as this is a temporary tileset
         bin = new Bin(id + "_data", data, Compression.NONE);
 
         // compute hash code
@@ -110,15 +140,15 @@ public class Tileset extends Resource
         isDuplicate = false;
 
         final int[] data;
-        
+
         if (blankTile)
         {
             // just add a blank tile
             add(new Tile(new int[8], 8, 0, false, 0));
-    
+
             // build the binary bloc
             data = new int[tiles.size() * 8];
-    
+
             int offset = 0;
             for (Tile t : tiles)
             {
@@ -126,7 +156,8 @@ public class Tileset extends Resource
                 offset += 8;
             }
         }
-        else data = new int[0];
+        else
+            data = new int[0];
 
         // build BIN (tiles data) resource (temporary tileset so don't add as internal resource)
         bin = new Bin(id + "_data", data, Compression.NONE);
@@ -136,7 +167,7 @@ public class Tileset extends Resource
     }
 
     public Tileset(String id, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY, int widthTile, int heightTile,
-            TileOptimization opt, Compression compression, boolean addBlank, boolean temp)
+            TileOptimization opt, Compression compression, boolean addBlank, boolean temp, TileOrdering order)
     {
         super(id);
 
@@ -146,22 +177,45 @@ public class Tileset extends Resource
         tileIndexesMap = new HashMap<>();
         tileByHashcodeMap = new HashMap<>();
 
-        // important to always use the same loop order when building Tileset and Tilemap/Map object
-        for (int j = 0; j < heightTile; j++)
+        // important to always use the **same loop order** when building Tileset and Tilemap/Map object
+        if (order == TileOrdering.ROW)
+        {
+            for (int j = 0; j < heightTile; j++)
+            {
+                for (int i = 0; i < widthTile; i++)
+                {
+                    // get tile
+                    final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8, (j + startTileY) * 8, 8);
+                    // find if tile already exist
+                    final int index = getTileIndex(tile, opt);
+
+                    // blank tile
+                    hasBlank |= tile.isBlank();
+
+                    // not found --> add it
+                    if (index == -1)
+                        add(tile);
+                }
+            }
+        }
+        else
         {
             for (int i = 0; i < widthTile; i++)
             {
-                // get tile
-                final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8, (j + startTileY) * 8, 8);
-                // find if tile already exist
-                final int index = getTileIndex(tile, opt);
+                for (int j = 0; j < heightTile; j++)
+                {
+                    // get tile
+                    final Tile tile = Tile.getTile(image8bpp, imageWidth, imageHeight, (i + startTileX) * 8, (j + startTileY) * 8, 8);
+                    // find if tile already exist
+                    final int index = getTileIndex(tile, opt);
 
-                // blank tile
-                hasBlank |= tile.isBlank();
+                    // blank tile
+                    hasBlank |= tile.isBlank();
 
-                // not found --> add it
-                if (index == -1)
-                    add(tile);
+                    // not found --> add it
+                    if (index == -1)
+                        add(tile);
+                }
             }
         }
 
@@ -342,6 +396,32 @@ public class Tileset extends Resource
 
         // not found
         return -1;
+    }
+
+    public byte[] getTilesetImage()
+    {
+        final int w = 16;
+        final int h = (tiles.size() + 15) / w;
+        final int imgW = w * 8;
+        final int imgH = h * 8;
+        final byte[] tilesetImage = new byte[imgW * imgH];
+
+        int ind = 0;
+        for (int y = 0; y < imgH; y += 8)
+        {
+            for (int x = 0; x < imgW; x += 8)
+            {
+                final Tile tile = tiles.get(ind);
+                final byte[] imageTile = ImageUtil.convertTo8bpp(ArrayUtil.intToByte(tile.data), 4);
+                // then copy tile
+                Tile.copyTile(tilesetImage, imgW, imageTile, x, y, 8);
+                // next
+                if (++ind >= tiles.size())
+                    return tilesetImage;
+            }
+        }
+
+        return tilesetImage;
     }
 
     @Override

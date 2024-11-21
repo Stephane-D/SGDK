@@ -11,6 +11,7 @@ import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.TMX.TMXMap;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
@@ -29,7 +30,7 @@ public class TilemapProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong TILEMAP definition");
-            System.out.println("TILEMAP name \"img_file\" tileset_id [compression [map_opt [map_base]]]");
+            System.out.println("TILEMAP name \"img_file\" tileset_id [compression [map_opt [map_base [ordering]]]]");
             System.out.println("  name          Tilemap variable name");
             System.out.println("  file          path of the input image file (BMP or PNG image file)");
             System.out.println("  tileset_id    base tileset resource to use (allow to share tileset along several maps)");
@@ -43,8 +44,11 @@ public class TilemapProcessor implements Processor
             System.out.println("                    1 / ALL         = find duplicate and flipped tile (default)");
             System.out.println("                    2 / DUPLICATE   = find duplicate tile only");
             System.out.println("  map_base      define the base tilemap value, useful to set a default priority, palette and base tile index offset");
+            System.out.println("  ordering      define the tilemap process order, accepted values:");
+            System.out.println("                    ROW             = process per row (default)");
+            System.out.println("                    COLUMN          = process per column");
             System.out.println();
-            System.out.println("TILEMAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [map_base]]]");
+            System.out.println("TILEMAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [map_base [ordering]]]]");
             System.out.println("  name              Tilemap variable name");
             System.out.println("  tmx_file          path of the input TMX file (TMX Tiled file)");
             System.out.println("  layer_id          layer name we want to extract map data from.");
@@ -55,6 +59,9 @@ public class TilemapProcessor implements Processor
             System.out.println("                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  map_compression   compression type for map (same accepted values then 'ts_compression')");
             System.out.println("  map_base          define the base tilemap value, useful to set a default priority, palette and base tile index offset.");
+            System.out.println("  ordering          define the tilemap process order, accepted values:");
+            System.out.println("                        ROW             = process per row (default)");
+            System.out.println("                        COLUMN          = process per column");
 
             return null;
         }
@@ -83,17 +90,21 @@ public class TilemapProcessor implements Processor
             int mapBase = 0;
             if (fields.length >= 7)
                 mapBase = StringUtil.parseInt(fields[6], 0);
+            // get tile ordering value
+            TileOrdering order = TileOrdering.ROW;
+            if (fields.length >= 8)
+                order = Util.getTileOrdering(fields[7]);
 
             // build TMX map
             final TMXMap tmxMap = new TMXMap(fileIn, layerName);
             // get tilesets for this TMX map
-            final List<Tileset> tilesets = tmxMap.getTilesets(id, tileSetCompression, false);
+            final List<Tileset> tilesets = tmxMap.getTilesets(id, tileSetCompression, false, order);
 
             // then build TileMap from TMX Map
             return Tilemap.getTilemap(id, new Tileset(tilesets), mapBase, tmxMap.getMapImage(), (tmxMap.w * tmxMap.tileSize) / 8,
-                    (tmxMap.h * tmxMap.tileSize) / 8, TileOptimization.ALL, mapCompression);
+                    (tmxMap.h * tmxMap.tileSize) / 8, TileOptimization.ALL, mapCompression, order);
         }
-        else
+
         // image file
         {
             // get packed value
@@ -108,6 +119,10 @@ public class TilemapProcessor implements Processor
             int mapBase = 0;
             if (fields.length >= 7)
                 mapBase = StringUtil.parseInt(fields[6], 0);
+            // get tile ordering value
+            TileOrdering order = TileOrdering.ROW;
+            if (fields.length >= 8)
+                order = Util.getTileOrdering(fields[7]);
 
             // get tileset
             final Tileset tileset = (Tileset) Compiler.getResourceById(fields[3]);
@@ -115,7 +130,7 @@ public class TilemapProcessor implements Processor
             if (tileset == null)
                 throw new InvalidParameterException("TILEMAP resource definition error: Tileset '" + fields[3] + "' not found !");
 
-            return Tilemap.getTilemap(id, tileset, mapBase, fileIn, tileOpt, compression);
+            return Tilemap.getTilemap(id, tileset, mapBase, fileIn, tileOpt, compression, order);
         }
     }
 }

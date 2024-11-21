@@ -9,6 +9,7 @@ import sgdk.rescomp.resource.Map;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.TMX.TMXMap;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
@@ -37,10 +38,9 @@ public class MapProcessor implements Processor
             System.out.println("                    1 / APLIB       = aplib library (good compression ratio but slow)");
             System.out.println("                    2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  map_base      define the base tilemap value, useful to set a default priority, palette and base tile index offset");
-            System.out.println(
-                    "                    Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.");
+            System.out.println("                    using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.");
             System.out.println();
-            System.out.println("MAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [map_base]]]");
+            System.out.println("MAP name \"tmx_file\" \"layer_id\" [ts_compression [map_compression [map_base [ordering]]]]");
             System.out.println("  name              Map variable name");
             System.out.println("  tmx_file          path of the input TMX file (TMX Tiled file)");
             System.out.println("  layer_id          layer name we want to extract map data from.");
@@ -51,6 +51,10 @@ public class MapProcessor implements Processor
             System.out.println("                        2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)");
             System.out.println("  map_compression   compression type for map (same accepted values then 'ts_compression')");
             System.out.println("  map_base          define the base tilemap value, useful to set a default priority, palette and base tile index offset");
+            System.out.println("                        using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.");
+            System.out.println("  ordering          define the map process order, accepted values:");
+            System.out.println("                        ROW             = process per row (default)");
+            System.out.println("                        COLUMN          = process per column");
 
             return null;
         }
@@ -79,14 +83,18 @@ public class MapProcessor implements Processor
             int mapBase = 0;
             if (fields.length >= 7)
                 mapBase = StringUtil.parseInt(fields[6], 0);
+            // get tile ordering value
+            TileOrdering order = TileOrdering.ROW;
+            if (fields.length >= 8)
+                order = Util.getTileOrdering(fields[7]);
 
             // build TMX map
             final TMXMap tmxMap = new TMXMap(fileIn, layerName);
             // then build MAP from TMX Map
-            return new Map(id, tmxMap.getMapImage(), tmxMap.w * tmxMap.tileSize, tmxMap.h * tmxMap.tileSize, mapBase, 2, tmxMap.getTilesets(id, tileSetCompression, false),
-                    mapCompression, true);
+            return new Map(id, tmxMap.getMapImage(), tmxMap.w * tmxMap.tileSize, tmxMap.h * tmxMap.tileSize, mapBase, 2,
+                           tmxMap.getTilesets(id, tileSetCompression, false, order), mapCompression, true);
         }
-        else
+
         // image file
         {
             // get tileset

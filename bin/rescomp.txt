@@ -1,4 +1,4 @@
-ResComp 3.87 (November 2024)
+ResComp 3.90 (November 2024)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -111,7 +111,7 @@ If you use a real 'tileset format' image as input (as a font) then you should se
 to avoid removing duplicated tiles (which may exist).
 
 Syntax:
-TILESET name file [compression [opt]]
+TILESET name file [compression [opt [ordering [export]]]]
 
     name            name of the output TileSet structure
     file            path of the input file (BMP, PNG image file or TSX Tiled file)
@@ -125,6 +125,12 @@ TILESET name file [compression [opt]]
                         0 / NONE        = no optimisation, each tile is unique
                         1 / ALL         = ignore duplicated and flipped tile (default)
                         2 / DUPLICATE   = ignore duplicated tile only
+    ordering        define the tile process order, accepted values:
+                        ROW             = process per row (default)
+                        COLUMN          = process per column
+    export          enable the tileset PNG export, accept values:
+                        0 / FALSE       = no PNG export (default)
+                        1 / TRUE        = optimized tileset is export to PNG format '<file>-tileset-export.png'
                         
 Tips:
 When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to
@@ -141,7 +147,7 @@ TileMap is used to draw in background plane, it requires a tileset which can be 
 TILEMAP resource isn't meant to be used to store large background level (eat too much space), use MAP resource for that.
 
 Syntax (image file input):
-TILEMAP name img_file tileset_id [compression [map_opt [map_base]]]
+TILEMAP name img_file tileset_id [compression [map_opt [map_base [ordering]]]]
 
     name            name of the output TileMap structure
     img_file        path of the input image file (BMP or PNG image file)
@@ -157,7 +163,10 @@ TILEMAP name img_file tileset_id [compression [map_opt [map_base]]]
                         1 / ALL         = find duplicated and flipped tile (default)
                         2 / DUPLICATE   = find duplicated tile only
     map_base        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                        Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+                        using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+    ordering        define the tilemap process order, accepted values:
+                        ROW             = process per row (default)
+                        COLUMN          = process per column
                                 
 Syntax (TMX tiled file input):
 TILEMAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
@@ -172,7 +181,10 @@ TILEMAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
                             2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     map_compression     compression type for map (same accepted values than 'ts_compression')
     map_base            define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                            Using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+                            using a base tile index offset (static tile allocation) allow to use the faster VDP_setTileMapxxx(..) functions.
+    ordering            define the tilemap process order, accepted values:
+                            ROW             = process per row (default)
+                            COLUMN          = process per column
 
 Tips:
 When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to
@@ -207,9 +219,9 @@ MAP name img_file tileset_id [compression [map_base]]
                         1 / APLIB       = aplib library (good compression ratio but slow)
                         2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     map_base        define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                        Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
+                        using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
                                 
-MAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
+MAP name tmx_file layer_id [ts_compression [map_compression [map_base [ordering]]]]
 
     name                name of the output Map structure
     tmx_file            path of the input TMX file (TMX Tiled file with CSV encoded map data)
@@ -221,7 +233,10 @@ MAP name tmx_file layer_id [ts_compression [map_compression [map_base]]]
                             2 / FAST / LZ4W = custom lz4 compression (average compression ratio but fast)
     map_compression     compression type for map (same accepted values than 'ts_compression')
     map_base            define the base tilemap value, useful to set a default priority, palette and base tile index offset.
-                            Using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
+                            using a base tile index offset (static tile allocation) allow to use faster MAP decoding function internally.
+    ordering            define the map process order, accepted values:
+                            ROW             = process per row (default)
+                            COLUMN          = process per column
 
 Tips:
 When using a 8bpp indexed image as input you can use the extra bits of palette to provide extra information for the TILEMAP data but you have to

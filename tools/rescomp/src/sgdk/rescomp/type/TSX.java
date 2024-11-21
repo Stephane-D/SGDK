@@ -11,6 +11,7 @@ import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.tool.FileUtil;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.StringUtil;
@@ -123,10 +124,10 @@ public class TSX
         }
 
         // return optimized tilset
-        public Tileset getTileset(String id, Compression compression, boolean temp) throws Exception
+        public Tileset getTileset(String id, Compression compression, boolean temp, TileOrdering order) throws Exception
         {
             // always add a blank tile if not present for TSX tileset (Tiled does not count it)
-            return Tileset.getTileset(id, getTilesetPath(), compression, TileOptimization.ALL, true, temp);
+            return Tileset.getTileset(id, getTilesetPath(), compression, TileOptimization.ALL, true, temp, order, false);
         }
 
         public byte[] getTilesetImage8bpp(boolean cropPalette) throws Exception
@@ -174,7 +175,7 @@ public class TSX
         }
     }
 
-    public static List<Tileset> getTilesets(List<TSXTileset> tsxTilesets, String baseId, Compression compression, boolean temp) throws Exception
+    public static List<Tileset> getTilesets(List<TSXTileset> tsxTilesets, String baseId, Compression compression, boolean temp, TileOrdering order) throws Exception
     {
         final List<Tileset> tilesets = new ArrayList<>();
 
@@ -188,7 +189,7 @@ public class TSX
         else
         {
             for (TSXTileset tsxTileset : tsxTilesets)
-                tilesets.add(tsxTileset.getTileset(baseId + "_tileset" + ind++, compression, temp));
+                tilesets.add(tsxTileset.getTileset(baseId + "_tileset" + ind++, compression, temp, order));
         }
 
         return tilesets;

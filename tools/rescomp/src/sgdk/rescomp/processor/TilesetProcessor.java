@@ -7,8 +7,10 @@ import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.TSX;
 import sgdk.tool.FileUtil;
+import sgdk.tool.StringUtil;
 
 public class TilesetProcessor implements Processor
 {
@@ -24,7 +26,7 @@ public class TilesetProcessor implements Processor
         if (fields.length < 3)
         {
             System.out.println("Wrong TILESET definition");
-            System.out.println("TILESET name \"file\" [compression [opt]]");
+            System.out.println("TILESET name \"file\" [compression [opt [ordering [export]]]]");
             System.out.println("  name          Tileset variable name");
             System.out.println("  file          path of the input file (BMP, PNG image file or TSX Tiled file)");
             System.out.println("  compression   compression type, accepted values:");
@@ -36,6 +38,12 @@ public class TilesetProcessor implements Processor
             System.out.println("                    0 / NONE        = no optimisation, each tile is unique (default for TSX file)");
             System.out.println("                    1 / ALL         = ignore duplicated and flipped tile (default for image file)");
             System.out.println("                    2 / DUPLICATE   = ignore duplicated tile only");
+            System.out.println("  ordering      define the tile process order, accepted values:");
+            System.out.println("                    ROW             = process per row (default)");
+            System.out.println("                    COLUMN          = process per column");
+            System.out.println("  export        enable the tileset PNG export, accept values:");
+            System.out.println("                    0 / FALSE       = no PNG export (default)");
+            System.out.println("                    1 / TRUE        = optimized tileset is export to PNG format '<file>-tileset-export.png'");
 
             return null;
         }
@@ -57,10 +65,18 @@ public class TilesetProcessor implements Processor
         // force ALL for TSX format
         if (!tsx && (fields.length >= 5))
             opt = Util.getTileOpt(fields[4]);
+        // get tile ordering value
+        TileOrdering order = TileOrdering.ROW;
+        if (fields.length >= 6)
+            order = Util.getTileOrdering(fields[5]);
+        // PNG export
+        boolean export = false;
+        if (fields.length >= 7)
+            export = StringUtil.parseBoolean(fields[6], false);
 
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
 
-        return Tileset.getTileset(id, tsx ? TSX.getTSXTilesetPath(fileIn) : fileIn, compression, opt, tsx, false);
+        return Tileset.getTileset(id, tsx ? TSX.getTSXTilesetPath(fileIn) : fileIn, compression, opt, tsx, false, order, export);
     }
 }

@@ -10,6 +10,7 @@ import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
 import sgdk.rescomp.type.Basics.TileEquality;
 import sgdk.rescomp.type.Basics.TileOptimization;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.Tile;
 import sgdk.tool.ArrayUtil;
 import sgdk.tool.ImageUtil;
@@ -18,7 +19,7 @@ import sgdk.tool.ImageUtil.BasicImageInfo;
 public class Tilemap extends Resource
 {
     public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int imageWidth, int imageHeight, int startTileX, int startTileY,
-            int widthTile, int heightTile, TileOptimization opt, Compression compression)
+            int widthTile, int heightTile, TileOptimization opt, Compression compression, TileOrdering order)
     {
         final int w = widthTile;
         final int h = heightTile;
@@ -32,7 +33,6 @@ public class Tilemap extends Resource
         final short[] data = new short[w * h];
 
         int offset = 0;
-        // important to always use the same loop order when building Tileset and Tilemap object
         for (int j = 0; j < h; j++)
         {
             for (int i = 0; i < w; i++)
@@ -48,7 +48,17 @@ public class Tilemap extends Resource
 
                 // if no optimization, just use current offset as index
                 if (opt == TileOptimization.NONE)
-                    index = offset + mapBaseTileInd;
+                {
+                    // important to respect tile ordering when computing index
+                    if (order == TileOrdering.ROW)
+                    {
+                        index = ((j * w) + i) + mapBaseTileInd;
+                    }
+                    else
+                    {
+                        index = ((i * h) + j) + mapBaseTileInd;
+                    }
+                }
                 else
                 {
                     // use system tiles for plain tiles if possible
@@ -78,12 +88,12 @@ public class Tilemap extends Resource
     }
 
     public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, byte[] image8bpp, int widthTile, int heightTile, TileOptimization opt,
-            Compression compression)
+            Compression compression, TileOrdering order)
     {
-        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heightTile * 8, 0, 0, widthTile, heightTile, opt, compression);
+        return getTilemap(id, tileset, mapBase, image8bpp, widthTile * 8, heightTile * 8, 0, 0, widthTile, heightTile, opt, compression, order);
     }
 
-    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, String imgFile, TileOptimization tileOpt, Compression compression)
+    public static Tilemap getTilemap(String id, Tileset tileset, int mapBase, String imgFile, TileOptimization tileOpt, Compression compression, TileOrdering order)
             throws Exception
     {
         // get 8bpp pixels and also check image dimension is aligned to tile
@@ -102,7 +112,7 @@ public class Tilemap extends Resource
 
         // b0-b3 = pixel data; b4-b5 = palette index; b7 = priority bit
         // build TILEMAP with wanted compression
-        return Tilemap.getTilemap(id, tileset, mapBase, image, w / 8, h / 8, tileOpt, compression);
+        return Tilemap.getTilemap(id, tileset, mapBase, image, w / 8, h / 8, tileOpt, compression, order);
     }
 
     public final int w;

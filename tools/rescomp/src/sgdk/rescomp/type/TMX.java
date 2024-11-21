@@ -20,6 +20,7 @@ import sgdk.rescomp.Compiler;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.Basics.TileOrdering;
 import sgdk.rescomp.type.SFieldDef.SGDKObjectType;
 import sgdk.rescomp.type.TFieldDef.TiledObjectType;
 import sgdk.rescomp.type.TSX.TSXTileset;
@@ -441,9 +442,9 @@ public class TMX
             return null;
         }
 
-        public List<Tileset> getTilesets(String baseId, Compression compression, boolean temp) throws Exception
+        public List<Tileset> getTilesets(String baseId, Compression compression, boolean temp, TileOrdering order) throws Exception
         {
-            return TSX.getTilesets(usedTilesets, baseId, compression, temp);
+            return TSX.getTilesets(usedTilesets, baseId, compression, temp, order);
         }
 
         // public Tilemap getTilemap(int mapBase) throws Exception
