@@ -625,11 +625,11 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
     // store total num tile if needed
     if (totalNumTile) *totalNumTile = numTileTot;
 
+    // allocate result table indexes[numAnim][numFrame]
+    u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
     // used to detect duplicate
     TileSet** tilesets = MEM_alloc(numFrameTot * sizeof(TileSet*));
     u16* tilesetIndexes = MEM_alloc(numFrameTot * sizeof(u16));
-    // allocate result table indexes[numAnim][numFrame]
-    u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
 
     // not enough memory
     if ((tilesets == NULL) || (tilesetIndexes == NULL) || (indexes == NULL))
