@@ -514,8 +514,9 @@ public class StringUtil
 	        	
 	        	return result;
 	        }
+	        
 	        // assume single value as single entry array
-	        else return new int[] { Integer.parseInt(s) };
+	        return new int[] { Integer.parseInt(s) };
         }
         catch (NumberFormatException E)
         {
@@ -556,8 +557,9 @@ public class StringUtil
 	        	
 	        	return result;
 	        }
+	        
 	        // assume single value as single entry 2D array
-	        else return new int[][] {{ Integer.parseInt(s) }};
+	        return new int[][] {{ Integer.parseInt(s) }};
         }
         catch (NumberFormatException E)
         {

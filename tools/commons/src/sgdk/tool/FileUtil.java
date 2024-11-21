@@ -92,7 +92,7 @@ public class FileUtil
 
         final int dotIndex = result.lastIndexOf(".");
         // ensure we are modifying an extension
-        if (dotIndex >= 0 && (len - dotIndex) <= 5)
+        if ((dotIndex >= 0) && ((len - dotIndex) <= 5))
         {
             // we consider that an extension starting with a digit is not an extension
             if (((dotIndex + 1) == len) || !Character.isDigit(result.charAt(dotIndex + 1)))

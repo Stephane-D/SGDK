@@ -633,13 +633,11 @@ public class ImageUtil
         // true color / RGB image ?
         if (imgInfo.bpp > 8)
             return convertRGBTo8bpp(imgFile, removeRGBPalette);
-        else
-        {
-            // get image data
-            final byte[] data = getIndexedPixels(imgFile);
-            // convert to 8 bpp
-            return convertTo8bpp(data, imgInfo.bpp);
-        }
+
+        // get image data
+        final byte[] data = getIndexedPixels(imgFile);
+        // convert to 8 bpp
+        return convertTo8bpp(data, imgInfo.bpp);
     }
 
     static Integer getTilePlainColor(int[] argbImage, int imgWidth, int xt, int yt)
@@ -1010,6 +1008,30 @@ public class ImageUtil
         // this is the same operation (exchange R and B components)
         return ARGBtoABGR(color);
     }
+    
+    /**
+     * Convert a ARGB (0xAARRGGBB) color to a ABGR (0xAABBGGRR) color
+     */
+    public static int[] ARGBtoABGR(int[] palette)
+    {
+        final int[] result = new int[palette.length];
+        
+        for(int i = 0; i < palette.length; i++)
+            result[i] = ARGBtoABGR(palette[i]);
+        
+        return result;
+    }
+
+    public static int[] ABGRtoARGB(int[] palette)
+    {
+        final int[] result = new int[palette.length];
+        
+        for(int i = 0; i < palette.length; i++)
+            result[i] = ABGRtoARGB(palette[i]);
+        
+        return result;
+    }
+
 
     /**
      * Returns RGBA4444 palette (0xABGR)
