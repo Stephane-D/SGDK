@@ -579,6 +579,27 @@ void NO_INLINE SPR_defragVRAM()
     END_PROFIL(PROFIL_VRAM_DEFRAG)
 }
 
+static u16 getTilesetIndex(TileSet** tilesets, u16* indexes, TileSet* tileset, u16 index)
+{
+    TileSet** t = tilesets;
+    u16* i = indexes;
+
+    // try fo find if tileset already exist
+    while(*t)
+    {
+        // find the tileset, return its index
+        if (*t == tileset) return *i;
+        // next
+        t++; i++;
+    }
+
+    // set new tileset index
+    *t = tileset;
+    *i = index;
+
+    return index;
+}
+
 u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
 {
     u16 numFrameTot = 0;
@@ -604,8 +625,25 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
     // store total num tile if needed
     if (totalNumTile) *totalNumTile = numTileTot;
 
+    // used to detect duplicate
+    TileSet** tilesets = MEM_alloc(numFrameTot * sizeof(TileSet*));
+    u16* tilesetIndexes = MEM_alloc(numFrameTot * sizeof(u16));
     // allocate result table indexes[numAnim][numFrame]
     u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
+
+    // not enough memory
+    if ((tilesets == NULL) || (tilesetIndexes == NULL) || (indexes == NULL))
+    {
+        if (tilesets) MEM_free(tilesets);
+        if (tilesetIndexes) MEM_free(tilesetIndexes);
+        if (indexes) MEM_free(indexes);
+
+        return NULL;
+    }
+
+    // clear tilesets table
+    memset(tilesets, 0, numFrameTot * sizeof(TileSet*));
+
     // store pointer
     u16** result = indexes;
     // init frames indexes pointer
@@ -613,7 +651,6 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
 
     // start index
     u16 tileInd = index;
-
     anim = sprDef->animations;
 
     for(u16 indAnim = 0; indAnim < numAnimation; indAnim++)
@@ -627,19 +664,28 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
         for(u16 indFrame = 0; indFrame < numFrame; indFrame++)
         {
             const TileSet* tileset = (*frame)->tileset;
+            const u16 ind = getTilesetIndex(tilesets, tilesetIndexes, (TileSet*) tileset, tileInd);
 
-            // load tileset
-            VDP_loadTileSet(tileset, tileInd, DMA);
+            // new tileset ?
+            if (ind == tileInd)
+            {
+                // load tileset
+                VDP_loadTileSet(tileset, tileInd, DMA);
+                // next tileset
+                tileInd += tileset->numTile;
+            }
             // store frame tile index
-            *indFrames++ = tileInd;
-            // next tileset
-            tileInd += tileset->numTile;
+            *indFrames++ = ind;
             // next frame
             frame++;
         }
 
         anim++;
     }
+
+    MEM_free(tilesets);
+    MEM_free(tilesetIndexes);
+    MEM_pack();
 
     return result;
 }
