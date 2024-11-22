@@ -641,7 +641,6 @@ static void NO_INLINE internal_reset()
     // reseting z80 also reset the ym2612
     Z80_init();
 
-
     // enable interrupts
     SYS_setInterruptMaskLevel(3);
 }
@@ -1049,7 +1048,7 @@ void SYS_die(char *err, ...)
     VDP_setBackgroundColor(63);
     VDP_drawText("A fatal error occured!", 9, 2);
     VDP_drawText("cannot continue...", 11, 3);
-    
+
     u8 y = 5;
 
     va_list argptr;
@@ -1063,6 +1062,6 @@ void SYS_die(char *err, ...)
         y++;
     }
     va_end(argptr);
-    
+
     while(1);
 }
