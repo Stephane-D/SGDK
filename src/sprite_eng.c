@@ -88,6 +88,7 @@ u16 spriteVramSize;
 
 #ifdef SPR_PROFIL
 
+
 #define PROFIL_ALLOCATE_SPRITE          0
 #define PROFIL_RELEASE_SPRITE           1
 #define PROFIL_ADD_SPRITE               2
@@ -622,9 +623,6 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
         anim++;
     }
 
-    // store total num tile if needed
-    if (totalNumTile) *totalNumTile = numTileTot;
-
     // allocate result table indexes[numAnim][numFrame]
     u16** indexes = MEM_alloc((numAnimation * sizeof(u16*)) + (numFrameTot * sizeof(u16)));
     // used to detect duplicate
@@ -634,6 +632,7 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
     // not enough memory
     if ((tilesets == NULL) || (tilesetIndexes == NULL) || (indexes == NULL))
     {
+        if (totalNumTile) *totalNumTile = 0;
         if (tilesets) MEM_free(tilesets);
         if (tilesetIndexes) MEM_free(tilesetIndexes);
         if (indexes) MEM_free(indexes);
@@ -682,6 +681,9 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
 
         anim++;
     }
+
+    // store total num tile (discarding duplicated tilesets)
+    if (totalNumTile) *totalNumTile = (tileInd - index);
 
     MEM_free(tilesets);
     MEM_free(tilesetIndexes);
