@@ -991,6 +991,48 @@ void VDP_setWindowHPos(u16 right, u16 pos);
  *      The Vertical position of the window in 1 tile unit (8 pixels).
  */
 void VDP_setWindowVPos(u16 down, u16 pos);
+/**
+ *  \brief
+ *      Turns off the window.
+ */
+void VDP_setWindowOff();
+/**
+ *  \brief
+ *      Positions the window from the top edge of the screen by the specified number of rows (tiles).
+ *
+ *  \param rows
+ *      The number of rows, expressed in tiles.
+ */
+void VDP_setWindowOnTop(u16 rows);
+/**
+ *  \brief
+ *      Positions the window from the bottom edge of the screen by the specified number of rows (tiles).
+ *
+ *  \param rows
+ *      The number of rows, expressed in tiles.
+ */
+void VDP_setWindowOnBottom(u16 rows);
+/**
+ *  \brief
+ *      Positions the window from the left edge of the screen by the specified number of columns, each 2 tiles wide (16 pixels).
+ *
+ *  \param cols
+ *      The number of columns, expressed in double tiles.
+ */
+void VDP_setWindowOnLeft(u16 cols);
+/**
+ *  \brief
+ *      Positions the window from the right edge of the screen by the specified number of columns, each 2 tiles wide (16 pixels).
+ *
+ *  \param cols
+ *      The number of columns, expressed in double tiles.
+ */
+void VDP_setWindowOnRight(u16 cols);
+/**
+ *  \brief
+ *      Positions the window to full screen.
+ */
+void VDP_setWindowFullScreen();
 
 /**
  *  \brief
