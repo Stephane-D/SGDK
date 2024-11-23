@@ -404,7 +404,7 @@ int main()
         if (bgEnabled) updateBGScroll();
 
 //        SYS_disableInts();
-//        VDP_showFPS(FALSE);
+//        VDP_showFPS(FALSE, 1, 1);
 //        SYS_enableInts();
 
 //        VDP_setBackgroundColor(3);

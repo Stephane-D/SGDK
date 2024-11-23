@@ -505,6 +505,36 @@ void VDP_drawText(const char* str, u16 x, u16 y);
 
 /**
  *  \brief
+ *      Draw text in specified plane and clear remaining unused space.<br>
+ *      If the new line is shorter than the one previously drawn in this place, the old characters will be removed.<br>
+ *      This function works significantly faster than calling VDP_clearText() and then VDP_drawText().
+ *      It is suitable when a lot of updating information needs to be displayed on the screen.
+ *
+ *  \param plane
+ *      Plane where we want to draw text.<br>
+ *      Accepted values are:<br>
+ *      - BG_A<br>
+ *      - BG_B<br>
+ *      - WINDOW<br>
+ *  \param str
+ *      String to draw. For correct operation, it must not exceed 40 characters.
+ *  \param x
+ *      X position (in tile).
+ *  \param y
+ *      y position (in tile).
+ *  \param len
+ *      Fixed string length. For correct operation, it must not exceed 40 characters.
+ *
+ *  \see VDP_drawText(..)
+ *  \see VDP_clearText(..)
+ *  \see VDP_setTextPalette(..)
+ *  \see VDP_setTextPriority(..)
+ *  \see VDP_setTextPlane(..)
+ */
+void VDP_drawTextBGFill(VDPPlane plane, const char* str, u16 x, u16 y, u16 len);
+
+/**
+ *  \brief
  *      Draw text and clear remaining unused space.<br>
  *      If the new line is shorter than the one previously drawn in this place, the old characters will be removed.<br>
  *      This function works significantly faster than calling VDP_clearText() and then VDP_drawText().

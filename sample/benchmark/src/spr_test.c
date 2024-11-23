@@ -1028,8 +1028,8 @@ static u16 executePartic(u16 time, u16 numPartic, u16 preloadedTiles, u16 reallo
         // update sprites
         SPR_update();
 
-        VDP_showFPS(FALSE);
-        VDP_showCPULoad();
+        VDP_showFPS(FALSE, 1, 1);
+        VDP_showCPULoad(1, 2);
         SYS_doVBlankProcess();
         cpuLoad = SYS_getCPULoad();
 
@@ -1181,8 +1181,8 @@ static u16 executeDonut(u16 time, u16 preloadedTiles)
         // update sprites
         SPR_update();
 
-        VDP_showFPS(FALSE);
-        VDP_showCPULoad();
+        VDP_showFPS(FALSE, 1, 1);
+        VDP_showCPULoad(1, 2);
 
         SYS_doVBlankProcess();
         cpuLoad = SYS_getCPULoad();
@@ -1310,8 +1310,8 @@ static u16 execute(u16 time, u16 numSpr)
         // update sprites
         SPR_update();
 
-        VDP_showFPS(FALSE);
-        VDP_showCPULoad();
+        VDP_showFPS(FALSE, 1, 1);
+        VDP_showCPULoad(1, 2);
         SYS_doVBlankProcess();
         cpuLoad = SYS_getCPULoad();
 

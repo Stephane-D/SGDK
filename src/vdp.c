@@ -993,35 +993,33 @@ u16 VDP_getAdjustedVCounter()
 }
 
 
-void VDP_showFPS(u16 asFloat)
+void VDP_showFPS(u16 asFloat, u16 x, u16 y)
 {
     char str[16];
 
     if (asFloat)
     {
         fix32ToStr(SYS_getFPSAsFloat(), str, 1);
-        VDP_clearText(2, 1, 5);
+        // display FPS
+        VDP_drawTextFill(str, x, y, 4);
     }
     else
     {
         uintToStr(SYS_getFPS(), str, 1);
-        VDP_clearText(2, 1, 2);
+        // display FPS
+        VDP_drawTextFill(str, x, y, 2);
     }
-
-    // display FPS
-    VDP_drawText(str, 1, 1);
 }
 
-void VDP_showCPULoad()
+void VDP_showCPULoad(u16 x, u16 y)
 {
     char str[16];
 
     uintToStr(SYS_getCPULoad(), str, 1);
     strcat(str, "%");
 
-    VDP_clearText(2, 2, 4);
-    // display FPS
-    VDP_drawText(str, 1, 2);
+    // display CPU load
+    VDP_drawTextFill(str, x, y, 4);
 }
 
 

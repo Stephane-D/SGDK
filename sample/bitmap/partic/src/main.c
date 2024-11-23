@@ -73,7 +73,7 @@ int main(bool hard)
             BMP_waitWhileFlipRequestPending();
 
             // can now draw text
-            BMP_showFPS(0);
+            BMP_showFPS(FALSE, 1, 1);
 
             // display particul number
             intToStr(numpartic, str, 1);

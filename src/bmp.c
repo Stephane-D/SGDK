@@ -306,24 +306,23 @@ void BMP_clearTextLine(u16 y)
 }
 
 
-void BMP_showFPS(u16 float_display)
+void BMP_showFPS(u16 float_display, u16 x, u16 y)
 {
     char str[16];
-    const u16 y = GET_YOFFSET + 1;
+    y = GET_YOFFSET + y;
 
     if (float_display)
     {
         fix32ToStr(SYS_getFPSAsFloat(), str, 1);
-        VDP_clearTextBG(bmp_plan, 2, y, 5);
+        // display FPS
+        VDP_drawTextBGFill(bmp_plan, str, x, y, 4);
     }
     else
     {
         uintToStr(SYS_getFPS(), str, 1);
-        VDP_clearTextBG(bmp_plan, 2, y, 2);
+        // display FPS
+        VDP_drawTextBGFill(bmp_plan, str, x, y, 2);
     }
-
-    // display FPS
-    VDP_drawTextBG(bmp_plan, str, 1, y);
 }
 
 
