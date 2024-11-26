@@ -1102,22 +1102,31 @@ u16 VDP_getAdjustedVCounter(void);
  *
  *  \param asFloat
  *      Display in float number format.
+ *  \param x
+ *      X coordinate (in tile).
+ *  \param y
+ *      y coordinate (in tile).
  *
  * This function actually display the number of time it was called in the last second.<br>
  * i.e: for benchmarking you should call this method only once per frame update.
  *
  * \see #SYS_getFPS(..)
  */
-void VDP_showFPS(u16 asFloat);
+void VDP_showFPS(u16 asFloat, u16 x, u16 y);
 /**
  *  \brief
  *      Display the estimated CPU load (in %).
+ * 
+*  \param x
+ *      X coordinate (in tile).
+ *  \param y
+ *      y coordinate (in tile).
  *
  * This function actually display an estimation of the CPU load (in %) for the last frame.
  *
  * \see #SYS_getCPULoad()
  */
-void VDP_showCPULoad(void);
+void VDP_showCPULoad(u16 x, u16 y);
 
 
 #endif // _VDP_H_

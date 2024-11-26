@@ -93,7 +93,7 @@ int main()
 
         // ensure previous flip buffer request has been started
 //        BMP_waitWhileFlipRequestPending();
-        BMP_showFPS(1);
+        BMP_showFPS(TRUE, 1, 1);
 
         BMP_clear();
 

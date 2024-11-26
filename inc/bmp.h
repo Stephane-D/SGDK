@@ -405,8 +405,12 @@ void BMP_clearTextLine(u16 y);
  *
  *  \param float_display
  *      If this value is true (!= 0) the frame rate is displayed as float (else it's integer).
+ *  \param x
+ *      X coordinate (in tile).
+ *  \param y
+ *      y coordinate (in tile).
  */
-void BMP_showFPS(u16 float_display);
+void BMP_showFPS(u16 float_display, u16 x, u16 y);
 
 /**
  *  \brief

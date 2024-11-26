@@ -382,7 +382,7 @@ void VDP_drawText(const char* str, u16 x, u16 y)
     VDP_drawTextBG(text_plan, str, x, y);
 }
 
-void VDP_drawTextFill(const char* str, u16 x, u16 y, u16 len)
+void VDP_drawTextBGFill(VDPPlane plane, const char* str, u16 x, u16 y, u16 len)
 {
     char fixedStr[len + 1];
     char* dst = fixedStr;
@@ -405,7 +405,12 @@ void VDP_drawTextFill(const char* str, u16 x, u16 y, u16 len)
     // set back terminator char
     *dst = '\0';
 
-    VDP_drawText(fixedStr, x, y);
+    VDP_drawTextBG(plane, fixedStr, x, y);
+}
+
+void VDP_drawTextFill(const char* str, u16 x, u16 y, u16 len)
+{
+    VDP_drawTextBGFill(text_plan, str, x, y, len);
 }
 
 void VDP_clearText(u16 x, u16 y, u16 w)

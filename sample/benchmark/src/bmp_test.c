@@ -661,7 +661,7 @@ u16 executeBMPTest(u16 *scores)
             end = getTimeAsFix32(FALSE);
             time += end - start;
             j += j >> 5;
-            BMP_showFPS(FALSE);
+            BMP_showFPS(FALSE, 1, 1);
             BMP_flip(FALSE);
         }
         for(j = 127; j >= 32; j--)
@@ -671,7 +671,7 @@ u16 executeBMPTest(u16 *scores)
             end = getTimeAsFix32(FALSE);
             time += end - start;
             j -= j >> 5;
-            BMP_showFPS(FALSE);
+            BMP_showFPS(FALSE, 1, 1);
             BMP_flip(FALSE);
         }
     }

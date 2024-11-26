@@ -131,7 +131,7 @@ static void fastStarFieldFX()
         SPR_update();
 
 //        SYS_disableInts();
-//        VDP_showFPS(FALSE);
+//        VDP_showFPS(FALSE, 1, 1);
 //        SYS_enableInts();
 
         //VDP_waitVSync();
