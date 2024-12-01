@@ -26,12 +26,13 @@
 #ifndef _MEGAWIFI_H_
 #define _MEGAWIFI_H_
 
-#include "16c550.h"
+#if (MODULE_EVERDRIVE == 0 && MW_IMPLEMENTATION == MW_IMP_DEFAULT)
+	#include "16c550.h"
+#elif (MODULE_EVERDRIVE == 1 && MW_IMPLEMENTATION == MW_IMP_EVERDRIVE_X7)
+	#include "ssf.h"
+#endif
 #include "mw-msg.h"
 #include "lsd.h"
-
-#if (MODULE_MEGAWIFI != 0)
-
 
 /// API version implemented, major number
 #define MW_API_VERSION_MAJOR	1
@@ -970,8 +971,6 @@ static inline enum lsd_status mw_cmd_recv(mw_cmd *rep, void *ctx,
 		lsd_recv_cb recv_cb) {
 	return lsd_recv(rep->packet, sizeof(mw_cmd), ctx, recv_cb);
 }
-
-#endif // MODULE_MEGAWIFI
 
 #endif /*_MEGAWIFI_H_*/
 

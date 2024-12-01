@@ -43,7 +43,11 @@
 #ifndef _LSD_H_
 #define _LSD_H_
 
-#include "16c550.h"
+#if (MODULE_EVERDRIVE == 0 && MW_IMPLEMENTATION == MW_IMP_DEFAULT)
+	#include "16c550.h"
+#elif (MODULE_EVERDRIVE == 1 && MW_IMPLEMENTATION == MW_IMP_EVERDRIVE_X7)
+	#include "ssf.h"
+#endif
 #include "mw-msg.h"
 
 #if (MODULE_MEGAWIFI != 0)

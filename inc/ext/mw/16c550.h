@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI != 0 && MW_IMPLEMENTATION == MW_IMP_DEFAULT)
 
 /// 16C550 UART base address
 #define UART_BASE		0xA130C1
