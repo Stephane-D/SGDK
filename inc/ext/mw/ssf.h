@@ -50,6 +50,8 @@
 #define SSF_CTRL_W 0x2000 //ROM memory write protection
 #define SSF_CTRL_L 0x1000 //led
 
+#define UART_SPR UART_DATA
+
 #define UART_STE_WR_RDY 2//usb write ready bit
 #define UART_STE_RD_RDY 4//usb read ready bit
 
