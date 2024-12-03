@@ -138,10 +138,8 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 	uart_clr_bits(MCR, MW__PRG | MW__PD);
 
 	// Try accessing UART scratch pad register to see if it is installed
-	UART_SPR = 0x55;
-	if (UART_SPR != 0x55) return MW_ERR;
-	UART_SPR = 0xAA;
-	if (UART_SPR != 0xAA) return MW_ERR;
+	uart_test(UART_SPR, 0x55);
+	uart_test(UART_SPR, 0xAA);
 
 	// Enable control channel
 	lsd_ch_enable(MW_CTRL_CH);

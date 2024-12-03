@@ -176,6 +176,15 @@ void uart_init(void);
  ****************************************************************************/
 #define uart_reset_fifos()	uart_set_bits(FCR, 0x07)
 
+/************************************************************************//**
+ * \brief Test Connection with registers
+ *
+ * \param[in] reg Register to modify
+ * \param[in] val Bits set in val, will be readed from reg register.
+ ****************************************************************************/
+#define uart_test(reg, val) reg = val; \
+                            if (reg != val) return MW_ERR
+
 #endif // MODULE_MEGAWIFI
 
 #endif /*_16C550_H_*/

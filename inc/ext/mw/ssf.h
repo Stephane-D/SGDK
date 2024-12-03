@@ -131,6 +131,14 @@ void uart_init(void);
 #define uart_clr_bits(reg, val)	while(0)
 
 /************************************************************************//**
+ * \brief Test Connection with registers
+ *
+ * \param[in] reg Register to modify
+ * \param[in] val Bits set in val, will be readed from reg register.
+ ****************************************************************************/
+#define uart_test(reg, val) while(0)
+
+/************************************************************************//**
  * \brief Reset TX and RX FIFOs.
  ****************************************************************************/
 #define uart_reset_fifos()	while(0)
