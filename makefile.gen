@@ -81,11 +81,12 @@ release: $(OUT)/rom.bin $(OUT)/symbol.txt
 #release: $(info $$var is [${SRC_C}])
 
 debug: FLAGS= $(DEFAULT_FLAGS) -O1 -DDEBUG=1
-debug: CFLAGS= $(FLAGS) -ggdb
+debug: CFLAGS= $(FLAGS) -ggdb -g
 debug: AFLAGS= $(FLAGS)
 debug: LIBMD= $(LIB)/libmd_debug.a
 debug: $(OUT)/rom.bin $(OUT)/rom.out $(OUT)/symbol.txt
-.PHONY: debug
+debug: injectSymbolsInROM
+.PHONY: debug injectSymbolsInROM
 
 asm: FLAGS= $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fomit-frame-pointer -S
 asm: CFLAGS= $(FLAGS)
@@ -159,12 +160,15 @@ cleanAsm: cleanasm
 .PHONY: cleanRelease cleanDebug cleanAsm
 
 
-$(OUT)/rom.bin: $(OUT)/rom.out
+injectSymbolsInROM:	$(OUT)/rom.bin $(OUT)/rom.out $(OUT)/symbol.txt
+	$(CONVSYM) $(OUT)/symbol.txt $(OUT)/rom.bin -in txt -inopt "/fmt='%X %*[tTtBbCcDd] %511s' /offsetFirst+" -range 0 FFFFFF -a -ref @MDDBG__SymbolDataPtr
+
+$(OUT)/rom.bin: $(OUT)/rom.out $(OUT)/symbol.txt
 	$(OBJCPY) -O binary $(OUT)/rom.out $(OUT)/rom.bin
 	$(SIZEBND) $(OUT)/rom.bin -sizealign 131072 -checksum
 
 $(OUT)/symbol.txt: $(OUT)/rom.out
-	$(NM) $(LTO_PLUGIN) -n $(OUT)/rom.out > $(OUT)/symbol.txt
+	$(NM) $(LTO_PLUGIN) -nl $(OUT)/rom.out > $(OUT)/symbol.txt
 
 $(OUT)/rom.out: $(OUT)/sega.o $(OUT)/cmd_ $(LIBMD)
 	$(MKDIR) -p $(dir $@)
