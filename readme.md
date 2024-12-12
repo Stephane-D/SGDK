@@ -1,4 +1,7 @@
 # SGDK 2.00 (January 2024)
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e5a92824f1534736ac99e7240145b877)](https://app.codacy.com/gh/Stephane-D/SGDK?utm_source=github.com&utm_medium=referral&utm_content=Stephane-D/SGDK&utm_campaign=Badge_Grade)
+
 #### Copyright 2024 Stephane Dallongeville
 Patreon: https://www.patreon.com/SGDK<br>
 Github: https://github.com/Stephane-D/SGDK
