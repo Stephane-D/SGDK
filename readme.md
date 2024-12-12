@@ -157,6 +157,7 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi, flash save support and others nice additions.
 - Sik for the multi-tasking base implementation and for all its unvaluable Plutidev Sega Mega Drive technical information source. 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
+- Vladikcomper for the powerful error handler capable of displaying human readable backtrace informations :)
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gligli for building and providing GCC 6.3 for Windows.
 - Gunpog for making the 'cute' SGDK logo.
@@ -176,7 +177,7 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - davidgf for its contributions (improved assembly LTO optimization).
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
 - Vetea and Studio Vetea Discord people in general for their support and kindness.
-- all those i forgot and generally all people helping by providing support, reporting bugs, adding samples and supporting SGDK in any way !
+- all those I forgot and generally all people who contributed in any form to SGDK !
 
 ## SPECIAL THANKS
 
