@@ -65,6 +65,11 @@ RUN find . -name "*.java" | xargs javac
 RUN echo -e "Main-Class: sgdk.xgm2tool.Launcher\nClass-Path: apj.jar lz4w.jar" > Manifest.txt
 RUN jar cfm $SGDK_PATH/bin/xgm2tool.jar Manifest.txt  .
 
+# Building convsym
+WORKDIR $SGDK_PATH/tools/convsym
+RUN make
+RUN cp build/convsym $SGDK_PATH/bin/convsym
+
 # Copy m68k compiler from base image
 COPY --from=m68k-files /m68k/ /usr/
 ENV PATH="$SGDK_PATH/bin:${PATH}"
