@@ -165,7 +165,7 @@ padROM:	$(OUT)/rom.bin
 	$(SIZEBND) $(OUT)/rom.bin -sizealign 131072 -checksum
 
 injectSymbolsInROM:	$(OUT)/rom.bin $(OUT)/rom.out $(OUT)/symbol.txt
-	$(CONVSYM) $(OUT)/symbol.txt $(OUT)/rom.bin -in txt -inopt "/fmt='%X %*[TtBbCcDd] %511s' /offsetFirst+" -range 0 FFFFFF -a -ref @MDDBG__SymbolDataPtr
+	$(CONVSYM) $(OUT)/symbol.txt $(OUT)/rom.bin -in txt -inopt " /fmt='%X %*[TtBbCcDd] %511s' /offsetFirst+" -range 0 FFFFFF -a -ref @MDDBG__SymbolDataPtr
 
 $(OUT)/rom.bin: $(OUT)/rom.out $(OUT)/symbol.txt
 	$(OBJCPY) -O binary $(OUT)/rom.out $(OUT)/rom.bin
