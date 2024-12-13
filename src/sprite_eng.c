@@ -1208,9 +1208,9 @@ bool SPR_isAnimationDone(Sprite* sprite)
     // for debug
     checkSpriteValid(sprite, "SPR_isAnimationDone");
 
-    // check for animation done state (mainly used for frame change callback) or
+    // when we are in the frame change callback we need to test for the 'animation done state'
     return (sprite->status & STATE_ANIMATION_DONE) ||
-            // if we are on last tick from last frame (if auto animation is disabled then only test for last frame)
+            // otherwise we just check if we are on last frame tick (if auto animation is disabled then only test for last frame)
            ((sprite->frameInd == (sprite->animation->numFrame - 1)) && ((sprite->timer == 1) || (sprite->timer == -1)));
 }
 
