@@ -17,6 +17,9 @@
 *.ini
 *.rs
 *.d
+/.idea
+*.iml
+.vscode
 **/.DS_Store
 **/.settings/**
 **/out/**
@@ -42,5 +45,3 @@ tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
 tools/xgm rom builder
-/.idea
-*.iml
