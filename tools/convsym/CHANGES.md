@@ -1,6 +1,13 @@
 
 # ConvSym version history
 
+### Version 2.12.1 (2024-12-14)
+
+* `deb2` output format:
+	- Fixed an edge-case bug where if one block is too large and symbol heap exceeds 64 kb, all further blocks are skipped.
+
+* Improve README, including some wording and terminology (e.g. "input/output parsers" -> "input/output formats").
+
 ### Version 2.12 (2024-12-11)
 
 * Added support for symbol references instead of raw offsets in `-ref` and `-org` options:
@@ -14,7 +21,7 @@
 
 * Added new `txt` input parser to parse arbitrary text files; ConvSym can now parse SGDK's `symbols.txt` file.
 
-* `asm` and `log` output parsers:
+* `asm` and `log` output formats:
   - Implement proper options support in `-outopt`. You can configure line format as `-outopt "/fmt='format-string'"` now (legacy `-outopt "format-string"` syntax is preserved). This goes in line with the new `txt` parser (which also has `/fmt` option among others and will allow to add additional options in the future;
   - Warn if line format string is incorrect (e.g. too few arguments specified).
 
@@ -24,7 +31,7 @@
 * `as_lst_exp` input parser:
   - Show a warning that `-inopt` is unsupported if user tries to set it.
 
-* `deb2` and `deb1` output parsers:
+* `deb2` and `deb1` output formats:
   - Made tree flattening algorithm introduced in 2.10 deterministic.
 
 * Document all default parser options in ConvSym's usage message (printed when invoked without arguments), document `-debug` option.
@@ -33,12 +40,12 @@
 
 * Added `-addprefix` option to prepend any string to output symbols.
 
-* `deb2` and `deb1` output parsers:
+* `deb2` and `deb1` output formats:
   - Fixed a rare symbol encoding issue where data with unusual entropy would produce long prefix trees with some codes exceeding 16-bits. Respective characters (usually extremely rare) would then fail to decode properly corrupting a small set of symbol texts. A custom tree rebalancing algorithm was implemented to fix trees with codes longer than 16-bit;
   - Fixed a minor memory leak (<2 kb in a lifetime) on nodes in encoding function;
   - Fixed a tiny (several bytes) memory leak due to an unreleased file handle.
 
-* `asm` and `log` output parsers:
+* `asm` and `log` output formats:
   - Properly report I/O error if output file couldn't be opened.
 
 ### Version 2.9.1 (2023-03-22)
@@ -67,7 +74,7 @@
 
 ### Version 2.7.1 (2022-07-23)
 
-* Fix incorrect newlines produced by `log` and `asm` output parsers on Windows;
+* Fix incorrect newlines produced by `log` and `asm` output formats on Windows;
 * Fix a minor memory leak when a parser crashes;
 * Overall stability and portability improvements.
 
@@ -75,7 +82,7 @@
 
 * Added support for multiple labels sharing the same offset for all input and output wrappers;
 
-* `deb1` and `deb2` output parsers:
+* `deb1` and `deb2` output formats:
 	- Add "/favorLastLabels" option, which toggles choosing last labels when there are multiple labels at the same offset (first labels are preferred otherwise).
 
 ### Version 2.6 (2021-02-01)
@@ -93,10 +100,10 @@
 	- Fixed a bug that prevented offsets >=$80000000 to be added due to incorrect signed boundary check;
 	- When several labels occur on the same offset, use the last label met, not the first;
 	- Track last global label name correctly (it previously didn't update the label when it was filtered via boundary or other checks).
-* `deb1` output parser:
+* `deb1` output format:
 	- Fix memory corruption when symbol map requires more than 64 memory blocks;
 	- Explicitly limit symbols map to 64 blocks, display an error when overflow was about to occur.
-* `deb2` output parser:
+* `deb2` output format:
 	- Fix infinite loop when the full the last block id was 0xFFFF;
 	- Limit symbols map to 256 blocks, display error if more blocks were requested.
 
