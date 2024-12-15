@@ -4,6 +4,7 @@
  * Output wrapper for the Debug Information format version 2.0	*
  * ------------------------------------------------------------	*/
 
+#include <cassert>
 #include <map>
 #include <cstdint>
 #include <string>
@@ -27,13 +28,15 @@ struct Output__Deb2 : public OutputWrapper {
 	 * Main function that generates the output
 	 */
 	void parse(
-		std::multimap<uint32_t, std::string>& SymbolList,
+		std::multimap<uint32_t, std::string>& symbols,
 		const char * fileName,
 		uint32_t appendOffset = 0,
 		uint32_t pointerOffset = 0,
 		const char * opts = "",
 		bool alignOnAppend = true
 	) {
+		assert(!symbols.empty());
+
 		auto output = OutputWrapper::setupOutput( fileName, appendOffset, pointerOffset, alignOnAppend );
 
 		/* Parse options from "-inopt" agrument's value */
@@ -50,7 +53,7 @@ struct Output__Deb2 : public OutputWrapper {
 		output->writeBEWord(0xDEB2);
 
 		/* Allocate space for blocks offsets table */
-		auto lastSymbolPtr = SymbolList.rbegin();
+		auto lastSymbolPtr = symbols.rbegin();
 		uint16_t lastBlock = (lastSymbolPtr->first) >> 16;
 
 		if (lastBlock > 0xFF) {		// blocks index table is limited to $100 entries (which is enough to cover all the 24-bit addressable space)
@@ -73,11 +76,11 @@ struct Output__Deb2 : public OutputWrapper {
 
 		/* Generate table of character frequencies based on symbol names */
 		uint32_t freqTable[0x100] = { 0 };
-		for ( auto& Symbol : SymbolList ) {
-			for ( auto& Character : Symbol.second ) {
-				freqTable[ (int)Character ]++;
+		for (auto& symbol : symbols) {
+			for (auto& character : symbol.second) {
+				freqTable[(int)character]++;
 			}
-			freqTable[ 0x00 ]++;	// include null-terminator
+			freqTable[0x00]++;	// include null-terminator
 			// TODOh: Guess whether NULL will be appended to the string of specified length
 		}
 
@@ -104,16 +107,16 @@ struct Output__Deb2 : public OutputWrapper {
 		/* ------------------------------------- */
 
 		{
-			IO::Log( IO::debug, "Generating symbol data blocks...");
+			IO::Log(IO::debug, "Generating symbol data blocks...");
 
-			auto symbolPtr = SymbolList.begin();
+			auto symbolPtr = symbols.begin();
 			struct SymbolRecord { uint16_t offset; uint16_t symbolDataPtr; };
 
 			/* For 64kb block within symbols range */
-			for ( uint16_t block = 0x00; block <= lastBlock; block++ ) { 
+			for (uint16_t block = 0x00; block <= lastBlock; block++) { 
 				/* Align block on even address */
-				if ( output->getCurrentOffset() & 1 ) {
-					output->writeByte( 0x00 );
+				if (output->getCurrentOffset() & 1) {
+					output->writeByte(0x00);
 				}
 
 				uint32_t loc_Block = output->getCurrentOffset();	// remember offset, where this block starts ...
@@ -122,16 +125,20 @@ struct Output__Deb2 : public OutputWrapper {
 				std::vector<SymbolRecord> offsetsData;
 
 				/* For every symbol within the block ... */
-				for ( ; (symbolPtr->first>>16) == block && (symbolPtr != SymbolList.cend()); ++symbolPtr ) {
+				for (; (symbolPtr->first>>16) <= block && (symbolPtr != symbols.cend()); ++symbolPtr) {
+					if ((symbolPtr->first>>16) < block) {
+						continue;
+					}
 
 					/* 
 					 * For records with the same offsets, fetch only the last or the first processed symbol,
 					 * depending "favor last labels" option ...
 					 */
-					if ( (optFavorLastLabels && std::next(symbolPtr) != SymbolList.end()
+					if ((optFavorLastLabels && std::next(symbolPtr) != symbols.end()
 							&& std::next(symbolPtr)->first == symbolPtr->first) ||
-						 (!optFavorLastLabels && symbolPtr != SymbolList.begin()
-							&& std::prev(symbolPtr)->first == symbolPtr->first)) {
+						 (!optFavorLastLabels && symbolPtr != symbols.begin()
+							&& std::prev(symbolPtr)->first == symbolPtr->first)
+					) {
 						continue;
 					}
 

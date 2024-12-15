@@ -31,7 +31,7 @@ int main (int argc, const char ** argv) {
 	/* Provide help if no sufficient arguments were passed */
 	if (argc<2) {
 		printf(
-			"ConvSym utility version 2.12\n"
+			"ConvSym utility version 2.12.1\n"
 			"(c) 2016-2024, vladikcomper\n"
 			"\n"
 			"Command line arguments:\n"
@@ -55,7 +55,7 @@ int main (int argc, const char ** argv) {
 			"    Default: deb2\n"
 			"\n"
 			"  -inopt [options]\n"
-			"    Additional options specific for the input parser. See README for more information.\n"
+			"    Additional options specific for the input format. See README for more information.\n"
 			"    Default options (depending on -in [format]):\n"
 			"      -in asm68k_sym -inopt \"/localSign=@ /localJoin=. /processLocals+\"\n"
 			"      -in asm68k_lst -inopt \"/localSign=@ /localJoin=. /ignoreMacroDefs+ /ignoreMacroExp- /addMacrosAsOpcodes+ /processLocals+\"\n"
@@ -64,7 +64,7 @@ int main (int argc, const char ** argv) {
 			"      -in txt -inopt \"/fmt='%%s %%X' /offsetFirst-\"\n"
 			"\n"
 			"  -outopt [options]\n"
-			"    Additional options specific for the output parser. See README for more information.\n"
+			"    Additional options specific for the output format. See README for more information.\n"
 			"    Default options (depending on -out [format]):\n"
 			"      -out deb2 -outopt \"/favorLastLabels-\"\n"
 			"      -out deb1 -outopt \"/favorLastLabels-\"\n"
