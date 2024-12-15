@@ -7,21 +7,31 @@ func SYS_assertReset
 
 
 func SYS_reset
-    move   #0x2700,%sr
-    move.l (0),%a7
+    move    #0x2700,%sr
+    move.l  (0),%a7
 
     move    %sp, %usp
     sub     #USER_STACK_LENGTH, %sp         // configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
+
+    move.l  #0xA11100,%a0       /* Z80_HALT_PORT */
+    move.w  #0x0100,%d0
+    move.w  %d0,(%a0)           /* HALT Z80 */
+    move.w  %d0,0x0100(%a0)     /* END RESET Z80 */
 
     jmp     _reset_entry
 
 
 func SYS_hardReset
-    move   #0x2700,%sr
-    move.l (0),%a7
+    move    #0x2700,%sr
+    move.l  (0),%a7
 
     move    %sp, %usp
     sub     #USER_STACK_LENGTH, %sp         // configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
+
+    move.l  #0xA11100,%a0       /* Z80_HALT_PORT */
+    move.w  #0x0100,%d0
+    move.w  %d0,(%a0)           /* HALT Z80 */
+    move.w  %d0,0x0100(%a0)     /* END RESET Z80 */
 
     jmp    _start_entry
 
