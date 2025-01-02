@@ -4,6 +4,7 @@
  * Output wrapper for the Debug Information format version 1.0	*
  * ------------------------------------------------------------	*/
 
+#include <cassert>
 #include <map>
 #include <cstdint>
 #include <string>
@@ -26,13 +27,15 @@ struct Output__Deb1 : public OutputWrapper {
 	 * Main function that generates the output
 	 */
 	void parse(
-		std::multimap<uint32_t, std::string>& SymbolList,
+		std::multimap<uint32_t, std::string>& symbols,
 		const char * fileName,
 		uint32_t appendOffset = 0,
 		uint32_t pointerOffset = 0,
 		const char * opts = "",
 		bool alignOnAppend = true
 	) {
+		assert(!symbols.empty());
+
 		auto output = OutputWrapper::setupOutput(fileName, appendOffset, pointerOffset, alignOnAppend);
 
 		/* Parse options from "-inopt" agrument's value */
@@ -49,7 +52,7 @@ struct Output__Deb1 : public OutputWrapper {
 		output->writeBEWord(0xDEB1);
 
 		/* Allocate space for blocks offsets table */
-		auto lastSymbolPtr = SymbolList.rbegin();
+		auto lastSymbolPtr = symbols.rbegin();
 		uint16_t lastBlock = (lastSymbolPtr->first) >> 16;
 
 		if (lastBlock > 63) {		// blocks index table is limited to $40 entries (which is only enough to ROM section)
@@ -71,7 +74,7 @@ struct Output__Deb1 : public OutputWrapper {
 
 		/* Generate table of character frequencies based on symbol names */
 		uint32_t freqTable[0x100] = { 0 };
-		for ( auto& symbol : SymbolList ) {
+		for (auto& symbol : symbols) {
 			for (auto& character : symbol.second) {
 				freqTable[(int)character]++;
 			}
@@ -96,15 +99,15 @@ struct Output__Deb1 : public OutputWrapper {
 		/* ------------------------------------- */
 
 		{
-			IO::Log( IO::debug, "Generating symbol data blocks...");
+			IO::Log(IO::debug, "Generating symbol data blocks...");
 
-			auto SymbolPtr = SymbolList.begin();
+			auto symbolPtr = symbols.begin();
 
 			/* For 64kb block within symbols range */
 			for (uint16_t block = 0x00; block <= lastBlock; block++) {
 
 				/* Align block on even address */
-				if ( output->getCurrentOffset() & 1 ) {
+				if (output->getCurrentOffset() & 1) {
 					output->writeByte(0x00);
 				}
 
@@ -115,47 +118,50 @@ struct Output__Deb1 : public OutputWrapper {
 				std::vector<uint8_t> symbolsData;
 
 				/* For every symbol within the block ... */
-				for (; block == (SymbolPtr->first>>16) && (SymbolPtr != SymbolList.cend()); ++SymbolPtr) {
-					IO::Log( IO::debug, "\t%08X\t%s", SymbolPtr->first, SymbolPtr->second.c_str() );
+				for (; (symbolPtr->first>>16) <= block && (symbolPtr != symbols.cend()); ++symbolPtr) {
+					if ((symbolPtr->first>>16) < block) {
+						continue;
+					}
+
+					IO::Log( IO::debug, "\t%08X\t%s", symbolPtr->first, symbolPtr->second.c_str() );
 
 					/* 
 					 * For records with the same offsets, fetch only the last or the first processed symbol,
 					 * depending "favor last labels" option ...
 					 */
-					if ( (optFavorLastLabels && std::next(SymbolPtr) != SymbolList.end()
-								&& std::next(SymbolPtr)->first == SymbolPtr->first) ||
-						 (!optFavorLastLabels && SymbolPtr != SymbolList.begin()
-								&& std::prev(SymbolPtr)->first == SymbolPtr->first) ) {
+					if ( (optFavorLastLabels && std::next(symbolPtr) != symbols.end()
+								&& std::next(symbolPtr)->first == symbolPtr->first) ||
+						 (!optFavorLastLabels && symbolPtr != symbols.begin()
+								&& std::prev(symbolPtr)->first == symbolPtr->first) ) {
 						continue;
 					}
 
-					BitStream SymbolsHeap;
+					BitStream symbolHeap;
 
 					/* Add offset to the offsets block */
-					offsetsData.push_back(swap16((uint16_t)SymbolPtr->first & 0xFFFF));
+					offsetsData.push_back(swap16((uint16_t)symbolPtr->first & 0xFFFF));
 
 					/* Encode each symbol character with the generated Huffman-codes and store it in the bitsteam */
-					for (auto& Character : SymbolPtr->second) {
+					for (auto& Character : symbolPtr->second) {
 						auto *record = characterToRecord[(int)Character];
-						SymbolsHeap.pushCode(record->code, record->codeLength);
+						symbolHeap.pushCode(record->code, record->codeLength);
 					}
 
 					/* Finally, add null-terminator */
 					{
 						auto *record = characterToRecord[0x00];
-						SymbolsHeap.pushCode(record->code, record->codeLength);
+						symbolHeap.pushCode(record->code, record->codeLength);
 					}
 
 					/* Push this symbol to the data buffer */
-					symbolsData.push_back(SymbolsHeap.size() + 1);	// write down symbols size
-					for (auto t = SymbolsHeap.begin(); t != SymbolsHeap.end(); t++) {
+					symbolsData.push_back(symbolHeap.size() + 1);	// write down symbols size
+					for (auto t = symbolHeap.begin(); t != symbolHeap.end(); t++) {
 						symbolsData.push_back(*t);
 					}
 				}
 
 				/* Write offsets block and their corresponding encoded symbols heap */
-				if ( offsetsData.size() > 0 ) {
-
+				if (offsetsData.size() > 0) {
 					/* Add zero offset to finalize the block */
 					offsetsData.push_back(0x0000);
 					
