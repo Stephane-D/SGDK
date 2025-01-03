@@ -37,7 +37,7 @@
  *  \brief
  *      To force no inlining for this method
  */
-#define NO_INLINE                   __attribute__ ((noinline))
+#define NO_INLINE                   __attribute__((noinline))
 
 /**
  *  \brief
@@ -49,7 +49,7 @@
  *  \brief
  *      Declare function for the hint callback (generate a RTE to return from interrupt instead of RTS)
  */
-#define HINTERRUPT_CALLBACK         __attribute__ ((interrupt)) void
+#define HINTERRUPT_CALLBACK         __attribute__((interrupt)) void
 
 
 // exist through rom_head.c

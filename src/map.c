@@ -13,6 +13,11 @@
 //#define MAP_DEBUG
 //#define MAP_PROFIL
 
+// max screen width = 320   - (320 / 16) = 20
+#define COLUMN_AHEAD    (20 + 1)
+// max screen heigth = 240  - (240 / 16) = 15
+#define ROW_AHEAD       (15 + 1)
+
 
 // we don't want to share it
 extern vu16 VBlankProcess;
@@ -295,34 +300,34 @@ static void updateMap(Map* map, s16 xt, s16 yt)
 #endif
 
     // clip to 16 metatiles row max (full screen update)
-    if (deltaY > 16)
+    if (deltaY > ROW_AHEAD)
     {
-        cyt += deltaY - 16;
-        deltaY = 16;
+        cyt += deltaY - ROW_AHEAD;
+        deltaY = ROW_AHEAD;
         // as we have a full screen update, we don't need column update then
         deltaX = 0;
     }
     // clip to 16 metatiles row max (full screen update)
-    else if (deltaY < -16)
+    else if (deltaY < -ROW_AHEAD)
     {
-        cyt += deltaY + 16;
-        deltaY = -16;
+        cyt += deltaY + ROW_AHEAD;
+        deltaY = -ROW_AHEAD;
         // as we have a full screen update, we don't need column update then
         deltaX = 0;
     }
     // clip to 21 metatiles column max (full screen update)
-    else if (deltaX > 21)
+    else if (deltaX > COLUMN_AHEAD)
     {
-        cxt += deltaX - 21;
-        deltaX = 21;
+        cxt += deltaX - COLUMN_AHEAD;
+        deltaX = COLUMN_AHEAD;
         // as we have a full screen update, we don't need row update then
         deltaY = 0;
     }
     // clip to 21 metatiles column max (full screen update)
-    else if (deltaX < -21)
+    else if (deltaX < -COLUMN_AHEAD)
     {
-        cxt += deltaX + 21;
-        deltaX = -21;
+        cxt += deltaX + COLUMN_AHEAD;
+        deltaX = -COLUMN_AHEAD;
         // as we have a full screen update, we don't need row update then
         deltaY = 0;
     }
@@ -330,7 +335,7 @@ static void updateMap(Map* map, s16 xt, s16 yt)
     if (deltaX > 0)
     {
         // update on right
-        cxt += 21;
+        cxt += COLUMN_AHEAD;
 
         // need to update map column on right
         while(deltaX--)
@@ -352,7 +357,7 @@ static void updateMap(Map* map, s16 xt, s16 yt)
     if (deltaY > 0)
     {
         // update on bottom
-        cyt += 16;
+        cyt += ROW_AHEAD;
 
         // need to update map row on bottom
         while(deltaY--)
@@ -414,7 +419,7 @@ static void setMapColumn(Map *map, u16 column, u16 x, u16 y)
 #endif
 
     // 16 metatile = 32 tiles = 256 pixels (full screen height + 16 pixels)
-    const u16 h = 16;
+    const u16 h = ROW_AHEAD;
     // clip Y against plane size
     const u16 yAdj = y & map->planeHeightMaskAdj;
     // get plane height
@@ -471,7 +476,7 @@ static void setMapRow(Map *map, u16 row, u16 x, u16 y)
 #endif
 
     // 21 metatile = 42 tiles = 336 pixels (full screen width + 16 pixels)
-    u16 w = 21;
+    u16 w = COLUMN_AHEAD;
     // clip X against plane size
     const u16 xAdj = x & map->planeWidthMaskAdj;
     // get plane width (metatile)
