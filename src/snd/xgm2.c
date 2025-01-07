@@ -649,7 +649,7 @@ static void doFade(const u16 fmVolStart, const u16 fmVolEnd, const u16 psgVolSta
     f16 fmVolEndF = intToFix16(fmVolEnd);
     f16 psgVolEndF = intToFix16(psgVolEnd);
     // we use "/ 2" as we alternate PSG and FM volume update on fading
-    f16 frameF = intToFix16(frame / 2);
+    f16 frameF = intToFix16(frame) / 2;
 
     // set fade process variables
     fadeFMVol = fmVolStartF;
@@ -824,6 +824,7 @@ u32 NO_INLINE XGM2_getElapsed(void)
     return result;
 }
 
+
 static void NO_INLINE setFMVolume(u16 value)
 {
     // request Z80 bus access
@@ -859,7 +860,6 @@ static void NO_INLINE setPSGVolume(u16 value)
 
     releaseAccess(busTaken);
 }
-
 
 void XGM2_setFMVolume(const u16 value)
 {
