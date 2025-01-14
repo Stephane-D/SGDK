@@ -40,22 +40,47 @@
 /// API version implemented, minor number
 #define MW_API_VERSION_MINOR	5
 
-/// Timeout for standard commands in milliseconds
-#define MW_COMMAND_TOUT_MS	1000
-/// Timeout for TCP connections
-#define MW_CONNECT_TOUT_MS	10000
-/// Timeout for HTTP open command in milliseconds
-#define MW_HTTP_OPEN_TOUT_MS	10000
-/// Timeout for the AP scan command in milliseconds
-#define MW_SCAN_TOUT_MS		10000
-/// Timeout for the AP associate command in milliseconds
-#define MW_ASSOC_TOUT_MS	20000
-/// Time to sleep before waiting for assoc in milliseconds
-#define MW_ASSOC_WAIT_SLEEP_MS	5000
-/// Timeout for upgrade command in milliseconds
-#define MW_UPGRADE_TOUT_MS	180000
-/// Milliseconds between status polls while in wm_ap_assoc_wait()
-#define MW_STAT_POLL_MS		250
+#if (MODULE_EVERDRIVE == 0 && MW_IMPLEMENTATION == MW_IMP_DEFAULT)
+
+	/// Length of the wflash buffer
+	#define MW_BUFLEN	1460
+	/// Timeout for standard commands in milliseconds
+	#define MW_COMMAND_TOUT_MS	1000
+	/// Timeout for TCP connections
+	#define MW_CONNECT_TOUT_MS	10000
+	/// Timeout for HTTP open command in milliseconds
+	#define MW_HTTP_OPEN_TOUT_MS	10000
+	/// Timeout for the AP scan command in milliseconds
+	#define MW_SCAN_TOUT_MS		10000
+	/// Timeout for the AP associate command in milliseconds
+	#define MW_ASSOC_TOUT_MS	20000
+	/// Time to sleep before waiting for assoc in milliseconds
+	#define MW_ASSOC_WAIT_SLEEP_MS	5000
+	/// Timeout for upgrade command in milliseconds
+	#define MW_UPGRADE_TOUT_MS	180000
+	/// Milliseconds between status polls while in wm_ap_assoc_wait()
+	#define MW_STAT_POLL_MS		250
+#elif (MODULE_EVERDRIVE == 1 && MW_IMPLEMENTATION == MW_IMP_EVERDRIVE_X7)	
+
+	/// Length of the wflash buffer
+	#define MW_BUFLEN	1436
+	/// Timeout for standard commands in milliseconds
+	#define MW_COMMAND_TOUT_MS	10000
+	/// Timeout for TCP connections
+	#define MW_CONNECT_TOUT_MS	100000
+	/// Timeout for HTTP open command in milliseconds
+	#define MW_HTTP_OPEN_TOUT_MS	100000
+	/// Timeout for the AP scan command in milliseconds
+	#define MW_SCAN_TOUT_MS		1000000
+	/// Timeout for the AP associate command in milliseconds
+	#define MW_ASSOC_TOUT_MS	200000
+	/// Time to sleep before waiting for assoc in milliseconds
+	#define MW_ASSOC_WAIT_SLEEP_MS	50000
+	/// Timeout for upgrade command in milliseconds
+	#define MW_UPGRADE_TOUT_MS	1800000
+	/// Milliseconds between status polls while in wm_ap_assoc_wait()
+	#define MW_STAT_POLL_MS		2500
+#endif
 
 /// Error codes for MegaWiFi API functions
 enum mw_err {
