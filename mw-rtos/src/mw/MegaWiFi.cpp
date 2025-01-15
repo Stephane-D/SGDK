@@ -16,7 +16,6 @@ int MegaWiFi::MwInit() {
 	int i;
 	
 	instance_p = this;
-	sntp_set_time_sync_notification_cb(MegaWiFi::time_sync_cb);
 
 	memset(&d, 0, sizeof(d));
 
@@ -86,11 +85,9 @@ int MegaWiFi::MwInit() {
         ESP_LOGE(MW_TAG,"fatal error during initialization");
         return 1;
 	}
-	// Initialize SNTP
-	// TODO: Maybe this should be moved to the "READY" state
+	//Pre Initialize SNTP 
 	sntp_setoperatingmode(SNTP_OPMODE_POLL);
-	sntp_set_config();
-	sntp_init();
+	sntp_set_time_sync_notification_cb(MegaWiFi::time_sync_cb);
 	// Initialize LSD layer (will create receive task among other stuff).
     ESP_LOGD(MW_TAG,"Init LSD");
 	lsd->LsdInit(d.q, d.qtx);
@@ -381,7 +378,9 @@ void MegaWiFi::ap_join_ev_handler(struct net_event *net)
 		case IP_EVENT_STA_GOT_IP:
 			addr.addr = net->got_ip.ip_info.ip.addr;
 			ESP_LOGI(MW_TAG,"got IP: %s, READY!", ip4addr_ntoa(&addr));
-			d.s.sys_stat = MW_ST_READY;
+			d.s.sys_stat = MW_ST_READY;			
+			sntp_set_config();
+			sntp_init();
 			d.s.online = TRUE;
 			break;
 
@@ -394,6 +393,7 @@ void MegaWiFi::ap_join_ev_handler(struct net_event *net)
 			d.n_reassoc++;
 			ESP_LOGE(MW_TAG,"Disconnect %d, reason : %d", d.n_reassoc,
 					net->sta_disconnected.reason);
+			sntp_stop();
 			if (d.n_reassoc < MW_REASSOC_MAX) {
 				esp_wifi_connect();
 			} else {
@@ -442,6 +442,15 @@ void MegaWiFi::MwSetDefaultCfg(void) {
 	cfg.defaultAp = -1;
 	// Default WiFi config, from menuconfig parameters
 	cfg.wifi.ampdu_rx_enable = WIFI_AMPDU_RX_ENABLED;
+
+	// Copy the default timezone and NTP servers
+	*(1 + StrCpyDst(1 + StrCpyDst(1 + StrCpyDst(1 + StrCpyDst(cfg.ntpPool,
+		MW_TZ_DEF), MW_SNTP_SERV_0), MW_SNTP_SERV_1), MW_SNTP_SERV_2)) =
+		'\0';
+	cfg.ntpPoolLen = sizeof(MW_TZ_DEF) + sizeof(MW_SNTP_SERV_0) +
+		sizeof(MW_SNTP_SERV_1) + sizeof(MW_SNTP_SERV_2) + 1;
+	strcpy(cfg.serverUrl, MW_SERVER_DEFAULT);
+	cfg.ap[0].phy = cfg.ap[1].phy = cfg.ap[2].phy = MW_PHY_PROTO_DEF;
 }
 
 #define WIFI_CFG_FROM_NVS(param)	wifi_cfg.param = cfg.wifi.param

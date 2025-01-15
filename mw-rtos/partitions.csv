@@ -9,15 +9,6 @@ user_data,      0x40,   0x00,       0x220000,   0x1E0000,
 coredump,       data,   coredump,   0xFF0000,   0x10000,
 
 
-
-#ota_0,         app,    ota_0,      0x10000,    0x100000,
-#mw_cfg,        0x40,   1,          0x110000,   0x8000,
-#cert,          0x40,   2,          0x118000,   0x8000,
-#ota_1,         app,    ota_1,      0x120000,   0x100000,
-#user_data,     0x40,   0,          0x220000,   0x1E0000,
-
-
-
 #cert,	        0x40,	0x02,	    0x10000,	0x8000,
 #mw_cfg,	    0x40,	0x01,	    0x18000,	0x8000,
 #ota_0,	        app,	ota_0,	    0x20000,	0x540000,

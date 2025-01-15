@@ -82,9 +82,6 @@
 /// Length of the flash chip (4 megabytes for the ESP-12 modules.
 #define FLASH_LENGTH		(4*1024*1024)
 
-/// Maximum number of supported SNTP servers
-//#define SNTP_MAX_SERVERS	3
-
 /// Default timezone
 #define MW_TZ_DEF		"GMT"
 /// Default NTP server 0
