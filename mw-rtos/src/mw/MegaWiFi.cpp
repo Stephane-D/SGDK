@@ -1,23 +1,23 @@
 #include "mw/MegaWiFi.h"
 #define LOG_LOCAL_LEVEL CORE_DEBUG_LEVEL //CORE_DEBUG_LEVEL
 
-static void time_sync_cb(struct timeval *tv)
+void MegaWiFi::time_sync_cb(struct timeval *tv)
 {
-	
+        UNUSED_PARAM(tv);
+
+        if (instance_p) {
+			instance_p->d.s.dt_ok = true;
+			ESP_LOGI(MW_TAG, "date/time set");
+		}
 }
 
 int MegaWiFi::MwInit() {
 	MwFsmMsg m;
 	int i;
-    /** 
-	sntp_set_time_sync_notification_cb([this](struct timeval *tv){
-        UNUSED_PARAM(tv);
+	
+	instance_p = this;
+	sntp_set_time_sync_notification_cb(MegaWiFi::time_sync_cb);
 
-        d.s.dt_ok = TRUE;
-
-        ESP_LOGI(MW_TAG,"date/time set");
-    });
-    */
 	memset(&d, 0, sizeof(d));
 
 	http = new Http(this->lsd);

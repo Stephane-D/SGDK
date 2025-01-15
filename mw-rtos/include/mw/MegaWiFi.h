@@ -364,6 +364,8 @@ public:
     } MwData;
     /** \} */
 
+    MwData d;
+
     LSD* lsd = new LSD();
     Http* http = NULL;
     GameApi* ga = NULL;
@@ -399,7 +401,6 @@ private:
     /// Configuration data
     MwNvCfg cfg;
     /// Module static data
-    MwData d;
     /// Temporal data buffer for data forwarding
     /// \todo FIXME This buffer is used by MwFsmSckTsk, and by the HTTP module.
     /// Access should be synchronized, and it is not.
@@ -437,4 +438,7 @@ private:
     static void txTask(void *pvParameters);
     static int MwCmdInList(uint8_t cmd, const uint32_t list[2]);
     static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+    static void time_sync_cb(struct timeval *tv);
 };
+
+static MegaWiFi *instance_p = NULL;
