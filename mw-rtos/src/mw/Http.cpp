@@ -379,8 +379,10 @@ esp_http_client_handle_t Http::http_init_int(const char *url, const char *cert_p
         esp_http_client_config_t config = {
             .url = url,
             .cert_pem = cert_pem,
-            .timeout_ms = 60000	// 1 minute default timeout
+            .timeout_ms = 60000//,	// 1 minute default timeout
+           // .transport_type = HTTP_TRANSPORT_OVER_SSL
         };
+
         if (event_cb) {
             config.event_handler = event_cb;
         }
