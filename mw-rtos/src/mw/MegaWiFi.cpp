@@ -97,15 +97,12 @@ int MegaWiFi::MwInit() {
 	// Send the init done message
 	m.e = MW_EV_INIT_DONE;
 	xQueueSend(d.q, &m, portMAX_DELAY);
-/**
 	// Start the one-shot inactivity sleep timer
+	/*
 	d.tim = xTimerCreate("SLEEP", MW_SLEEP_TIMER_MS / portTICK_PERIOD_MS,
-			pdFALSE, (void*) 0, [this](TimerHandle_t xTimer){
-            UNUSED_PARAM(xTimer);
-            deep_sleep();
-        });
+			pdFALSE, (void*) 0, sleep_timer_cb);
 	xTimerStart(d.tim, MW_SLEEP_TIMER_MS / portTICK_PERIOD_MS);
- */
+	*/
 	return 0;
 }
 
@@ -642,13 +639,11 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 		case MW_CMD_VERSION:
 			ESP_LOGI(MW_TAG,"CHEKING VERSION!");
 			// Cancel sleep timer
-			/*
             if (d.tim) {
 				xTimerStop(d.tim, 0);
 				xTimerDelete(d.tim, 0);
 				d.tim = NULL;
 			}
-            */
 			reply.cmd = MW_CMD_OK;
 			reply.datalen = ByteSwapWord(3 + sizeof(MW_FW_VARIANT));
 			reply.data[0] = MW_FW_VERSION_MAJOR;
@@ -955,6 +950,15 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 			}
 			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
 			break;
+		case MW_CMD_SLEEP:
+			// No reply, wakeup continues from user_init()
+			deep_sleep();
+			ESP_LOGI(MW_TAG,"Entering deep sleep");
+			esp_deep_sleep(0);
+			// As it takes a little for the module to enter deep
+			// sleep, stay here for a while
+			vTaskDelayMs(60000);
+			// fallthrough
 		case MW_CMD_HTTP_URL_SET:
 			if (http->http_url_set((const char*)c->data)) {
 				reply.cmd = htons(MW_CMD_ERROR);
@@ -1820,3 +1824,18 @@ int MegaWiFi::MwFsmTcpBind(MwMsgBind *b) {
 
 	return 0;
 }
+
+void MegaWiFi::deep_sleep(void)
+{
+	ESP_LOGI(MW_TAG,"Entering deep sleep");
+	disconnect();
+	esp_deep_sleep_start();
+}
+
+void MegaWiFi::sleep_timer_cb(TimerHandle_t xTimer)
+{
+	UNUSED_PARAM(xTimer);
+
+	if(instance_p)instance_p->deep_sleep();
+}
+

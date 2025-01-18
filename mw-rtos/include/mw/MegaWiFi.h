@@ -163,7 +163,7 @@
 #define MW_CMD_GAMERTAG_GET		 35	///< Gets a stored gamertag
 #define MW_CMD_LOG				 36	///< Write LOG information
 #define MW_CMD_FACTORY_RESET		 37	///< Set all settings to default
-//#define MW_CMD_SLEEP				 38	///< Set the module to sleep mode
+#define MW_CMD_SLEEP				 38	///< Set the module to sleep mode
 #define MW_CMD_HTTP_URL_SET			 39	///< Set HTTP URL for request
 #define MW_CMD_HTTP_METHOD_SET		 40	///< Set HTTP request method
 #define MW_CMD_HTTP_CERT_QUERY		 41	///< Query the X.509 hash of cert
@@ -426,7 +426,7 @@ private:
     int parse_game_request(struct mw_ga_request *req, MwCmd *reply);
     void parse_game_add_keyval(const char *data, MwCmd *reply);
     void SetIpCfg(int slot);
-    // void deep_sleep(void);
+    void deep_sleep(void);
     void disconnect(void);
     void close_all(void);
 
@@ -436,6 +436,8 @@ private:
     static int MwCmdInList(uint8_t cmd, const uint32_t list[2]);
     static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
     static void time_sync_cb(struct timeval *tv);
+    static void sleep_timer_cb(TimerHandle_t xTimer);
+
 };
 
 static MegaWiFi *instance_p = NULL;

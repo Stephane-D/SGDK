@@ -247,7 +247,7 @@ void MegaDeviceX7::inTransferCallback(usb_transfer_t *transfer)
     int totalBytes = transfer->actual_num_bytes;
     uint8_t* buffer = transfer->data_buffer;
     MegaDeviceX7 *megaDevice = (MegaDeviceX7 *)transfer->context;
-    if(transfer->actual_num_bytes > 1 && transfer->data_buffer[0]==0x31 && transfer->data_buffer[1]==0x60){ //SKIP USB HEADER 0x31 0x60        
+    if(transfer->actual_num_bytes > 1 && transfer->data_buffer[0]==0x31 && (transfer->data_buffer[1]==0x60 || transfer->data_buffer[1]==0x00)){ //SKIP USB HEADER 0x31 0x60        
         totalBytes = totalBytes - 2;
         buffer = transfer->data_buffer + 2;
     }
