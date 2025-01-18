@@ -20,9 +20,9 @@ void UDP_paint(bool repaint){
     if(repaint){
         clearScreen();        
         VDP_drawText("UDP Test", 1u, 2u);
-        VDP_drawText("Press START to launch", 1u, 3u);
-        VDP_drawText("Press A to return", 1u, 4u);
-        VDP_drawText("Press C to reuse", 1u, 5u);
+        VDP_drawText("Press START to launch", 0u, 3u);
+        VDP_drawText("Press A to return", 0u, 4u);
+        VDP_drawText("Press C to reuse", 0u, 5u);
     }
 }
 

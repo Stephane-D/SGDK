@@ -24,8 +24,8 @@ void CONFIG_CERT_paint(bool repaint){
         sprintf(buffer, "Store Cert Hash: %08lx", hash);        
         VDP_drawText(buffer, 0u, 2u);
         VDP_drawText("Press START to Set Cert", 0u, 4u);
-        VDP_drawText("Press A to return", 0u, 7u);
-        VDP_drawText("Press B to clear Cert", 0u, 6u);
+        VDP_drawText("Press A to return", 0u, 6u);
+        VDP_drawText("Press B to clear Cert", 0u, 7u);
         sprintf(buffer, "Cert Hash: %08lx  len: %u", cert_hash, cert_len);        
         VDP_drawText(buffer, 0u, 9u);
         CONFIG_CERT_paint_cert(cert, cert_len, 11u);
@@ -44,7 +44,7 @@ void CONFIG_CERT_paint_cert(const char *cert, u16 len, u8 line){
             cicles++;
         }
     }
-    VDP_drawText(cert, 0u, 8u);
+    VDP_drawText("...", 0u, line);
 }
 
 bool CONFIG_CERT_doAction(u16 button, u8 max_option){    
@@ -66,5 +66,5 @@ void CONFIG_CERT_clear(){
     char mycert[20];
     memset(&mycert, 0,20);
     int rety = 3;
-    while(mw_http_cert_set(0, mycert, 20) && rety--);
+    while(mw_http_cert_set(23, mycert, 20) && rety--);
 }
