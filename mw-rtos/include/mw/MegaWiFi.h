@@ -443,4 +443,4 @@ private:
 
 };
 
-static MegaWiFi *instance_p = NULL;
+static MegaWiFi *mw = new MegaWiFi();

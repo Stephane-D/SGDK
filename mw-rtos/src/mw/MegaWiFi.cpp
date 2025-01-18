@@ -4,19 +4,14 @@
 void MegaWiFi::time_sync_cb(struct timeval *tv)
 {
         UNUSED_PARAM(tv);
-
-        if (instance_p) {
-			instance_p->d.s.dt_ok = true;
-			ESP_LOGI(MW_TAG, "date/time set");
-		}
+		mw->d.s.dt_ok = true;
+		ESP_LOGI(MW_TAG, "date/time set");
 }
 
 int MegaWiFi::MwInit() {
 	MwFsmMsg m;
 	int i;
 	
-	instance_p = this;
-
 	memset(&d, 0, sizeof(d));
 
 	http = new Http(this->lsd);
@@ -1888,7 +1883,7 @@ void MegaWiFi::sleep_timer_cb(TimerHandle_t xTimer)
 {
 	UNUSED_PARAM(xTimer);
 
-	if(instance_p)instance_p->deep_sleep();
+	mw->deep_sleep();
 }
 
 void MegaWiFi::print_flash_id()
