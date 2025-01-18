@@ -35,13 +35,7 @@
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_sleep.h>
-
-// Flash manipulation
-//#include <nvs.h>
-//#include <nvs_flash.h>
 #include <esp_partition.h>
-//#include "flash.h"
-
 #include <esp_log.h>
 
 #define MW_TAG "MEGAWIFI"
@@ -54,6 +48,8 @@
 #include "mw/Http.h"
 #include "mw/net_util.h"
 #include "mw/game_api.h"
+#include "mw/flash.h"
+#include "mw/upgrade.h"
 
 /// Major firmware version
 #define MW_FW_VERSION_MAJOR	1
@@ -151,10 +147,10 @@
 #define MW_CMD_SNTP_CFG_GET		 23 ///< Get SNTP configuration
 #define MW_CMD_DATETIME			 24	///< Get date and time
 #define MW_CMD_DT_SET			 25	///< Set date and time
-//#define MW_CMD_FLASH_WRITE	 26	///< Write to WiFi module flash
-//#define MW_CMD_FLASH_READ		 27	///< Read from WiFi module flash
-//#define MW_CMD_FLASH_ERASE     28	///< Erase sector from WiFi flash
-//#define MW_CMD_FLASH_ID 		 29	///< Get WiFi flash chip identifiers
+#define MW_CMD_FLASH_WRITE	     26	///< Write to WiFi module flash
+#define MW_CMD_FLASH_READ		 27	///< Read from WiFi module flash
+#define MW_CMD_FLASH_ERASE       28	///< Erase sector from WiFi flash
+#define MW_CMD_FLASH_ID 		 29	///< Get WiFi flash chip identifiers
 #define MW_CMD_SYS_STAT			 30	///< Get system status
 #define MW_CMD_DEF_CFG_SET		 31	///< Set default configuration
 #define MW_CMD_HRNG_GET			 32	///< Gets random numbers
@@ -179,8 +175,8 @@
 #define MW_CMD_WIFI_ADV_GET			 51	///< Get advanced WiFi parameters
 #define MW_CMD_WIFI_ADV_SET			 52	///< Set advanced WiFi parameters
 #define MW_CMD_NV_CFG_SAVE		 	 53	///< Save non-volatile config
-//#define MW_CMD_UPGRADE_LIST		     54	///< Get firmware upgrade versions
-//#define MW_CMD_UPGRADE_PERFORM		 55	///< Start firmware upgrade
+#define MW_CMD_UPGRADE_LIST		     54	///< Get firmware upgrade versions
+#define MW_CMD_UPGRADE_PERFORM		 55	///< Start firmware upgrade
 #define MW_CMD_GAME_ENDPOINT_SET	 56	///< Set game API endpoint
 #define MW_CMD_GAME_KEYVAL_ADD		 57	///< Add key/value appended to requests
 #define MW_CMD_GAME_REQUEST		     58	///< Perform a game API request
@@ -214,6 +210,8 @@ const static uint32_t idleCmdMask[2] = {(uint32_t)(
     (1<<MW_CMD_DEF_AP_CFG_GET)        | (1<<MW_CMD_AP_JOIN)             |
     (1<<MW_CMD_SNTP_CFG)              | (1<<MW_CMD_SNTP_CFG_GET)        |
     (1<<MW_CMD_DATETIME)              | (1<<MW_CMD_DT_SET)              |
+	(1<<MW_CMD_FLASH_WRITE)           | (1<<MW_CMD_FLASH_READ)          |
+	(1<<MW_CMD_FLASH_ERASE)           | (1<<MW_CMD_FLASH_ID)            |
     (1<<MW_CMD_SYS_STAT)              | (1<<MW_CMD_DEF_CFG_SET)),(uint32_t)(
     (1<<(MW_CMD_HRNG_GET - 32))       | (1<<(MW_CMD_BSSID_GET - 32))    |
     (1<<(MW_CMD_GAMERTAG_SET - 32))   | (1<<(MW_CMD_GAMERTAG_GET - 32)) |
@@ -251,6 +249,7 @@ const static uint32_t readyCmdMask[2] = {(uint32_t)(
     (1<<(MW_CMD_HTTP_CLEANUP - 32))  | (1<<(MW_CMD_SERVER_URL_GET - 32)) |
     (1<<(MW_CMD_SERVER_URL_SET - 32))| (1<<(MW_CMD_WIFI_ADV_GET - 32))   |
     (1<<(MW_CMD_WIFI_ADV_SET - 32))  | (1<<(MW_CMD_NV_CFG_SAVE - 32))    |
+	(1<<(MW_CMD_UPGRADE_LIST - 32))  | (1<<(MW_CMD_UPGRADE_PERFORM - 32))|
     (1<<(MW_CMD_GAME_ENDPOINT_SET - 32))| (1<<(MW_CMD_GAME_KEYVAL_ADD - 32))|
     (1<<(MW_CMD_GAME_REQUEST - 32)))
 };
@@ -367,6 +366,8 @@ public:
     Http* http = NULL;
     GameApi* ga = NULL;
     Led* led = NULL;
+    Flash* flash = new Flash();
+    Upgrade* upgrade = new Upgrade();
     MegaWiFi(){};
 
     int MwInit();
@@ -415,6 +416,7 @@ private:
     int build_scan_reply(const wifi_ap_record_t *ap, uint8_t n_aps, uint8_t *data);
     void log_ip_cfg(MwMsgIpCfg *ip);
     void rand_fill(uint8_t *buf, uint16_t len);
+    void print_flash_id(void);
     void sntp_config_set(const char *data, uint16_t len, MwCmd *reply);
     int mw_nv_cfg_save(void);
     int http_parse_finish(MwCmd *reply);
@@ -425,6 +427,7 @@ private:
     void parse_game_endpoint_set(const char *data, MwCmd *reply);
     int parse_game_request(struct mw_ga_request *req, MwCmd *reply);
     void parse_game_add_keyval(const char *data, MwCmd *reply);
+    void parse_upgrade(const char *name, MwCmd *reply);
     void SetIpCfg(int slot);
     void deep_sleep(void);
     void disconnect(void);

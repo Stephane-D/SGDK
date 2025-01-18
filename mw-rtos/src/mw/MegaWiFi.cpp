@@ -23,6 +23,11 @@ int MegaWiFi::MwInit() {
 	ga = new GameApi(this->http);
     led = new Led(&(this->d.s));
 
+	if (flash->flash_init()) {
+		ESP_LOGE(MW_TAG,"could not initialize user data partition");
+		return 1;
+	}
+
 	if (http->http_module_init((char*)buf)) {
 		ESP_LOGE(MW_TAG,"http module initialization failed");
 		return 1;
@@ -38,6 +43,8 @@ int MegaWiFi::MwInit() {
 		ESP_LOGE(MW_TAG,"config length too big (%d)", sizeof(MwNvCfg));
 		return 1;
 	}
+	print_flash_id();
+
 	// Load configuration from flash
 	MwCfgLoad();
 	wifi_cfg_log();
@@ -869,6 +876,40 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 			ESP_LOGE(MW_TAG,"DT_SET unimplemented");
 			break;
 
+		case MW_CMD_FLASH_WRITE:
+			if (flash->flash_write(ntohl(c->flData.addr),
+						len - sizeof(uint32_t),
+						(char*)c->flData.data)) {
+				reply.cmd = ByteSwapWord(MW_CMD_ERROR);
+			}
+			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
+			break;
+
+		case MW_CMD_FLASH_READ:
+			c->flRange.addr = ntohl(c->flRange.addr);
+			c->flRange.len = ntohs(c->flRange.len);
+			if (flash->flash_read(c->flRange.addr, c->flRange.len,
+						(char*)reply.data)) {
+				reply.cmd = ByteSwapWord(MW_CMD_ERROR);
+				c->flRange.len = 0;
+			}
+			lsd->LsdSend((uint8_t*)&reply, c->flRange.len + MW_CMD_HEADLEN, 0);
+			break;
+
+		case MW_CMD_FLASH_ERASE:
+			if (flash->flash_erase(ntohs(c->flSect))) {
+				reply.cmd = ByteSwapWord(MW_CMD_ERROR);
+			}
+			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
+			break;
+
+		case MW_CMD_FLASH_ID:
+			reply.flash_id.device = htons(d.flash_dev);
+			reply.flash_id.manufacturer = d.flash_man;
+			reply.datalen = htons(3);
+			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN + 3, 0);
+			break;
+
 		case MW_CMD_SYS_STAT:
 			MwSysStatFill(&reply);
 			ESP_LOGI(MW_TAG,"%02X %02X %02X %02X", reply.data[0], reply.data[1],
@@ -1044,7 +1085,18 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 		case MW_CMD_WIFI_ADV_SET:
 			parse_wifi_adv_set(&c->wifi_adv_cfg, &reply);
 			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
+			break;		
+
+		case MW_CMD_UPGRADE_LIST:
+			// TODO
+			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
 			break;
+
+		case MW_CMD_UPGRADE_PERFORM:
+			parse_upgrade((char*)c->data, &reply);
+			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
+			break;
+
 		case MW_CMD_GAME_ENDPOINT_SET:
 			parse_game_endpoint_set((char*)c->data, &reply);
 			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
@@ -1839,3 +1891,28 @@ void MegaWiFi::sleep_timer_cb(TimerHandle_t xTimer)
 	if(instance_p)instance_p->deep_sleep();
 }
 
+void MegaWiFi::print_flash_id()
+{
+	uint32_t id, len;
+	char *byte = (char*)&id;
+
+	// Using NULL as spi chip, gets the default one
+	esp_flash_read_id(NULL, &id);
+	esp_flash_get_physical_size(NULL, &len);
+
+	d.flash_man = byte[0];
+	d.flash_dev = (byte[1]<<8) | byte[2];
+
+	ESP_LOGI(MW_TAG,"flash manufacturer: %02"PRIX8", device %04"PRIX16,d.flash_man, d.flash_dev);
+	ESP_LOGI(MW_TAG,"SPI chip length: %"PRIu32, len);
+}
+
+void MegaWiFi::parse_upgrade(const char *name, MwCmd *reply)
+{
+	esp_err_t err;
+
+	err = upgrade->upgrade_firmware(cfg.serverUrl, name);
+	if (err) {
+		reply->cmd = htons(MW_CMD_ERROR);
+	}
+}
