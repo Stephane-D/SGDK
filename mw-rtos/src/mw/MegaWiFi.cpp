@@ -200,21 +200,17 @@ size_t MegaWiFi::MwFsm(MwFsmMsg *msg) {
 					rep->datalen = ByteSwapWord(2 + sizeof(MW_FW_VARIANT) - 1);
 					rep->data[0] = MW_FW_VERSION_MAJOR;
 					rep->data[1] = MW_FW_VERSION_MINOR;
-					memcpy(rep->data + 2, MW_FW_VARIANT,
-							sizeof(MW_FW_VARIANT) - 1);
+					memcpy(rep->data + 2, MW_FW_VARIANT, sizeof(MW_FW_VARIANT) - 1);
 					data_out_len = lsd->LsdSend((uint8_t*)rep, ByteSwapWord(rep->datalen) +
 							MW_CMD_HEADLEN, 0);
 				} else if (MW_CMD_SYS_STAT == (b->cmd.cmd>>8)) {
 					rep = (MwCmd*)msg->d;
 					rep->cmd = MW_CMD_OK;
 					MwSysStatFill(rep);
-					ESP_LOGD(MW_TAG,"%02X %02X %02X %02X", rep->data[0],
-							rep->data[1], rep->data[2], rep->data[3]);
-					data_out_len = lsd->LsdSend((uint8_t*)rep, sizeof(MwMsgSysStat) + MW_CMD_HEADLEN,
-							0);
+					ESP_LOGD(MW_TAG,"%02X %02X %02X %02X", rep->data[0], rep->data[1], rep->data[2], rep->data[3]);
+					data_out_len = lsd->LsdSend((uint8_t*)rep, sizeof(MwMsgSysStat) + MW_CMD_HEADLEN, 0);
 				} else {
-					ESP_LOGE(MW_TAG,"Command %d not allowed on AP_JOIN state",
-							b->cmd.cmd>>8);
+					ESP_LOGE(MW_TAG,"Command %d not allowed on AP_JOIN state", b->cmd.cmd>>8);
 				}
 			}
 			break;

@@ -166,7 +166,7 @@ void LSD::LsdRecv(const uint8_t *data, size_t data_len){
 	xSemaphoreTake(lsdData.sem, portMAX_DELAY);
 	for (size_t i = 0; i<data_len; i++) {
 		recv = data[i];		
-	    ESP_LOGD(LSD_TAG,"LsdRecv: %x", recv);
+	    ESP_LOGD(LSD_TAG,"pos: %u len: %u LsdRecv: %x", pos, RXB.len, recv);
 		switch (lsdData.rxs) {
 			case LSD_ST_IDLE:			// Do nothing!
 				break;

@@ -209,7 +209,7 @@ void Http::http_cert_flash_write(const char *data, uint16_t len)
         return;
     }
 
-    ESP_LOGD(HTTP_TAG,"write %" PRIu16 " cert bytes", len);
+    ESP_LOGI(HTTP_TAG,"write %" PRIu16 " cert bytes. writen %d remaining %d bytes", len, written, d.remaining);
     // Note we are using d.remaining as total (it is not decremented
     // each time we write data)
     to_write = MIN(d.remaining - written, len);
@@ -227,11 +227,15 @@ void Http::http_cert_flash_write(const char *data, uint16_t len)
 
     if (written >= d.remaining) {
         // Write certificate hash
-        esp_partition_write(d.p, 0, &d.hash_tmp, sizeof(uint32_t));
+        err = esp_partition_write(d.p, 0, &d.hash_tmp, sizeof(uint32_t));
         d.s = MW_HTTP_ST_IDLE;
-        ESP_LOGI(HTTP_TAG,"certificate %08"PRIx32" stored", d.hash_tmp);
-        if (to_write < len) {
-            ESP_LOGW(HTTP_TAG,"ignoring %d certificate bytes", len - to_write);
+        if(err){
+            ESP_LOGE(HTTP_TAG,"flash store failed");
+        }else{
+            ESP_LOGI(HTTP_TAG,"certificate %08"PRIx32" stored", d.hash_tmp);
+            if (to_write < len) {
+                ESP_LOGW(HTTP_TAG,"ignoring %d certificate bytes", len - to_write);
+            }
         }
         lsd->LsdChDisable(MW_HTTP_CH);
     }
