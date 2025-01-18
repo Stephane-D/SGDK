@@ -23,6 +23,8 @@
 #include "mw-api/udp.h"
 #include "mw-api/datetime.h"
 #include "mw-api/random.h"
+#include "mw-api/flash.h"
+#include "mw-api/upgrade.h"
 
 #if (MODULE_MEGAWIFI == 0)
 #error "Set MODULE_MEGAWIFI to 1 in config.h and rebuild the library"
@@ -47,9 +49,11 @@ static void printMainMenu(bool repaint){
         VDP_drawText("Show Configurations", 1u, 1u);
         VDP_drawText("DateTime Test", 1u, 2u);
         VDP_drawText("Random Test", 1u, 3u);
-        VDP_drawText("TCP Test", 1u, 4u);
-        VDP_drawText("HTTP Test", 1u, 5u);
-        VDP_drawText("UDP Test", 1u, 6u);
+        VDP_drawText("Flash Test", 1u, 4u);
+        VDP_drawText("Upgrade Test", 1u, 5u);
+        VDP_drawText("TCP Test", 1u, 6u);
+        VDP_drawText("HTTP Test", 1u, 7u);
+        VDP_drawText("UDP Test", 1u, 8u);
         VDP_drawText("Option:   Ciclo: ", 15u, 28u);
     }
 
@@ -66,8 +70,8 @@ static bool doActionMainMenu(u16 button){
         }
         break;
     case BUTTON_DOWN:    
-        if(option < 6u){
-            option = option+1u % 6u;
+        if(option < 8u){
+            option = option+1u % 8u;
             return TRUE;
         }
         break;
@@ -83,12 +87,18 @@ static bool doActionMainMenu(u16 button){
             RND_start();
             break;
         case 3U:
-            TCP_start();
+            FLASH_start();
             break;
         case 4U:
-            HTTP_start();
+            UPGRADE_start();
             break;
         case 5U:
+            TCP_start();
+            break;
+        case 6U:
+            HTTP_start();
+            break;
+        case 7U:
             UDP_start();
             break;
         default:

@@ -32,10 +32,10 @@ void CONFIG_SLOT_paint(bool repaint){
         s16 slotDefault = mw_def_ap_cfg_get();
         sprintf(buffer, "Default Slot: %d", slotDefault);
         VDP_drawText(buffer, 1u, (u16)10);
-        VDP_drawText("Press Start to Configure Slot", 1u, (u16)16);
-        VDP_drawText("Press A to Return", 1u, (u16)17);
-        VDP_drawText("Press B associate/des to AP from Slot", 1u, (u16)18);
-        VDP_drawText("Press C to Set Default AP Config Slot", 1u, (u16)19);
+        VDP_drawText("Press Start to Configure Slot", 0u, (u16)16);
+        VDP_drawText("Press A to Return", 0u, (u16)17);
+        VDP_drawText("Press B associate/des to AP from Slot", 0u, (u16)18);
+        VDP_drawText("Press C to Set Default AP Config Slot", 0u, (u16)19);
         repaint = false;
     }
 }

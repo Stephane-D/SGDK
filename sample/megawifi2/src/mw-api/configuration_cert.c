@@ -10,7 +10,6 @@ void CONFIG_CERT_start(){
         CONFIG_CERT_paint(repaint);
         button = readButton(JOY_1);
         repaint = CONFIG_CERT_doAction(button, 2);
-        VDP_drawText("*", 0u, option + 5);
         print();
     }while(button != BUTTON_A);
 
@@ -24,12 +23,12 @@ void CONFIG_CERT_paint(bool repaint){
         u32 hash = mw_http_cert_query();
         sprintf(buffer, "Store Cert Hash: %08lx", hash);        
         VDP_drawText(buffer, 0u, 2u);
-        VDP_drawText("Pulse START to Set Cert", 1u, 3u);
-        VDP_drawText("Pulse C to clear Cert", 1u, 4u);
-        VDP_drawText("Pulse A to return", 1u, 5u);
+        VDP_drawText("Press START to Set Cert", 0u, 4u);
+        VDP_drawText("Press A to return", 0u, 7u);
+        VDP_drawText("Press B to clear Cert", 0u, 6u);
         sprintf(buffer, "Cert Hash: %08lx  len: %u", cert_hash, cert_len);        
-        VDP_drawText(buffer, 0u, 7u);
-        CONFIG_CERT_paint_cert(cert, cert_len, 8u);
+        VDP_drawText(buffer, 0u, 9u);
+        CONFIG_CERT_paint_cert(cert, cert_len, 11u);
         repaint = false;
     }
 }

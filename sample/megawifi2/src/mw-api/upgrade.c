@@ -1,30 +1,30 @@
-#include "mw-api/configuration.h"
+#include "mw-api/upgrade.h"
 
-void CONFIG_start(){
+void UPGRADE_start(){
     u16 button;
     bool repaint = TRUE;
     option = 0;    
     do{
-        CONFIG_paint(repaint);
+        UPGRADE_paint(repaint);
         button = readButton(JOY_1);
-        repaint = CONFIG_doAction(button, 2u);
+        repaint = UPGRADE_doAction(button, 2u);
         VDP_drawText("*", 0u, option + 2);
         print();
     }while(button != BUTTON_A);
 
 }
 
-void CONFIG_paint(bool repaint){
+void UPGRADE_paint(bool repaint){
     if(repaint){
         clearScreen();        
-        VDP_drawText("Slots Configuration", 1u, 2u);
-        VDP_drawText("Cert Configuration", 1u, 3u);
-        VDP_drawText("Press START to selec", 0u, 4u);
-        VDP_drawText("Press A to return", 0u, 5u);
+        VDP_drawText("List Firmwares", 1u, 2u);
+        VDP_drawText("Upgrade", 1u, 3u);
+        VDP_drawText("Press START to select", 0u, 3u);
+        VDP_drawText("Press A to return", 0u, 4u);
     }
 }
 
-bool CONFIG_doAction(u16 button, u8 max_option){    
+bool UPGRADE_doAction(u16 button, u8 max_option){    
     switch (button){
     case BUTTON_UP:
         VDP_drawText(" ", 0u, option + 2);
@@ -41,10 +41,10 @@ bool CONFIG_doAction(u16 button, u8 max_option){
     case BUTTON_START:{
         switch(option){
             case 0:
-                CONFIG_SLOT_start((u8)option);
+                //mw_fw_list(); //NOT IMPLEMENTED ON SGDK
             break;
             case 1:
-                CONFIG_CERT_start((u8)option);
+                //mw_fw_upgrade();
             break;
             default:
         }

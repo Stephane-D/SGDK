@@ -18,8 +18,8 @@ void DT_paint(bool repaint){
     if(repaint){
         clearScreen();        
         VDP_drawText("DT Test", 1u, 2u);
-        VDP_drawText("Pulse START to launch", 1u, 3u);
-        VDP_drawText("Pulse A to return", 1u, 4u);
+        VDP_drawText("Press START to launch", 0u, 3u);
+        VDP_drawText("Press A to return", 0u, 4u);
     }
 }
 

@@ -53,7 +53,7 @@ u8 CONFIG_AP_paint(bool repaint, char* ap_data, u16 apLength, u8 page, u8 total_
         }while(pos && pos < apLength && count < AP_MAX_ITEMS_PER_PAGE);
         max_option = count - 1;
         VDP_drawText("*", 0, option + 1U);        
-        VDP_drawText("Pulse A to return", 1u, AP_MAX_ITEMS_PER_PAGE + 2u);
+        VDP_drawText("Press A to return", 0u, AP_MAX_ITEMS_PER_PAGE + 2u);
         repaint = FALSE;
     }
     
