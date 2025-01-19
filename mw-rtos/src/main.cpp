@@ -11,10 +11,12 @@
 #define DAEMON_TASK_PRIORITY    2
 #define CLASS_TASK_PRIORITY     3
 
+MegaWiFi* megaWiFi;
 
 void setup() {
+    megaWiFi = new MegaWiFi();
     esp_log_level_set("*", ESP_LOG_DEBUG); 
-    mw->MwInit();
+    megaWiFi->MwInit();
 	ESP_LOGD(MEGA_DEVICE_TAG, "Init done!");
 }
 
@@ -22,7 +24,7 @@ void loop() {
     SemaphoreHandle_t signaling_sem = xSemaphoreCreateBinary();
 
     MegaDeviceX7::MegaDeviceX7TaskParam mdx7TaskParam = {
-        mw, signaling_sem
+        megaWiFi, signaling_sem
     };
 
     TaskHandle_t daemon_task_hdl;

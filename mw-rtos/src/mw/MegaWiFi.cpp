@@ -4,8 +4,10 @@
 void MegaWiFi::time_sync_cb(struct timeval *tv)
 {
         UNUSED_PARAM(tv);
-		mw->d.s.dt_ok = true;
-		ESP_LOGI(MW_TAG, "date/time set");
+		if(p_instance){
+			p_instance->d.s.dt_ok = true;
+			ESP_LOGI(MW_TAG, "date/time set");
+		}
 }
 
 int MegaWiFi::MwInit() {
@@ -17,6 +19,8 @@ int MegaWiFi::MwInit() {
 	http = new Http(this->lsd);
 	ga = new GameApi(this->http);
     led = new Led(&(this->d.s));
+
+	p_instance = this;
 
 	if (flash->flash_init()) {
 		ESP_LOGE(MW_TAG,"could not initialize user data partition");
@@ -1878,8 +1882,8 @@ void MegaWiFi::deep_sleep(void)
 void MegaWiFi::sleep_timer_cb(TimerHandle_t xTimer)
 {
 	UNUSED_PARAM(xTimer);
-
-	mw->deep_sleep();
+	if(p_instance)
+		p_instance->deep_sleep();
 }
 
 void MegaWiFi::print_flash_id()
