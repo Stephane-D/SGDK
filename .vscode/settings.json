@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.embeddedhtml": "html",
-        "megawifi.h": "c",
-        "ssf.h": "c"
-    }
-}
