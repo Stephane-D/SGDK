@@ -54,6 +54,8 @@
 #define MW_ASSOC_WAIT_SLEEP_MS	5000
 /// Timeout for upgrade command in milliseconds
 #define MW_UPGRADE_TOUT_MS	180000
+/// Timeout for ping command in milliseconds
+#define MW_PING_TOUT_MS	30000
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
 #define MW_STAT_POLL_MS		250
 
@@ -946,6 +948,18 @@ int16_t mw_ga_request(enum mw_http_method method, const char **path,
  * \return Status of the send procedure.
  ****************************************************************************/
 enum mw_err mw_fw_upgrade(const char *name);
+
+/************************************************************************//**
+ * \brief Run ICMP requesto to domain.
+ *
+ * \param[in] domain Domain to ICMP request.
+ *                 E.g. "www.example.com"
+ * \param[in] retries retries to ICMP request
+ *                 E.g. 5
+ *
+ * \return Status of the send procedure.
+ ****************************************************************************/
+struct mw_ping_response *mw_ping(const char* domain, u8 retries);
 
 /****** THE FOLLOWING COMMANDS ARE LOWER LEVEL AND USUALLY NOT NEEDED ******/
 

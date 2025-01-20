@@ -310,6 +310,18 @@ struct mw_ga_request {
 	char req[];		///< Request data
 };
 
+struct mw_ping_request{
+	uint8_t retries;
+	char domain[64];
+};
+
+struct mw_ping_response{
+	bool finish;
+	uint8_t ok;
+	uint8_t fail;
+	char domain[64];
+};
+
 /// Command sent to system FSM
 typedef union mw_cmd {
 	char packet[MW_CMD_MAX_BUFLEN + 2 * sizeof(uint16_t)];	///< Packet raw data
@@ -334,6 +346,8 @@ typedef union mw_cmd {
 			struct mw_msg_flash_data fl_data;	///< Flash memory data
 			struct mw_msg_flash_range fl_range;	///< Flash memory range
 			struct mw_msg_bind bind;		///< Bind message
+			struct mw_ping_request ping;    ///< Ping message
+			struct mw_ping_response pingResponse;    ///< Ping message
 			union mw_msg_sys_stat sys_stat;		///< System status
 			struct mw_gamertag_set_msg gamertag_set;///< Gamertag set
 			struct mw_gamertag gamertag_get;	///< Gamertag get

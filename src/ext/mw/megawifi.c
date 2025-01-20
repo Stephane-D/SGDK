@@ -1474,4 +1474,28 @@ enum mw_err mw_fw_upgrade(const char *name)
 	return MW_ERR_NONE;
 }
 
+struct mw_ping_response *mw_ping(const char* domain, u8 retries)
+{
+	enum mw_err err;
+
+	if (!d.mw_ready) {
+		return NULL;
+	}
+
+	if (!domain) {
+		return NULL;
+	}
+
+	d.cmd->cmd = MW_CMD_PING;
+	d.cmd->data_len = sizeof(struct mw_ping_request);
+	strcpy(d.cmd->ping.domain, domain);
+	d.cmd->ping.retries = retries;
+	err = mw_command(MW_CONNECT_TOUT * retries);
+	if (err) {
+		return NULL;
+	}
+
+	return &d.cmd->pingResponse;
+}
+
 #endif // MODULE_MEGAWIFI

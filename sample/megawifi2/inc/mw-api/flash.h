@@ -4,8 +4,8 @@
 #include "genesis.h"
 #include "utils.h"
 
-static u8 manufacturer;
-static u16 device;
+static u8 manufacturer  __attribute__((unused));
+static u16 device  __attribute__((unused));
 
 void FLASH_start();
 

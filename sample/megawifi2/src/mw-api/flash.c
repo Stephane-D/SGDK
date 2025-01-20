@@ -27,7 +27,7 @@ void FLASH_paint(bool repaint){
         VDP_drawText("Press A to return", 0u, 7u);
 
         if(manufacturer && device){
-            sprintf(buffer, "Manufacturer: %2u Device: %4u");
+            sprintf(buffer, "Manufacturer: %2u Device: %4u", manufacturer, device);
             VDP_drawText(buffer, 0u, 9u);
         }
     }
@@ -64,12 +64,12 @@ bool FLASH_doAction(u16 button, u8 max_option){
                 if(!response){
                     println("FLASH READ 0x0000 1024B FAIL"); 
                 }else{
-                    paint_long_char(response, 1024U, 11u);
+                    paint_long_char((const char *)response, 1024U, 11u);
                 }
                 break;
             }                
             case 2:
-                mw_flash_write(0x0000, "DATA STORE ON FLASS", 20);
+                mw_flash_write(0x0000, (u8 *)"DATA STORE ON FLASS", 20);
             break;
             case 3:
                 mw_flash_sector_erase(0);
