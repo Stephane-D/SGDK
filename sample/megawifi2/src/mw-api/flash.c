@@ -25,10 +25,17 @@ void FLASH_paint(bool repaint){
         VDP_drawText("Erase Flash", 1u, 5u);
         VDP_drawText("Press Start to exec", 0u, 6u);
         VDP_drawText("Press A to return", 0u, 7u);
+
+        if(manufacturer && device){
+            sprintf(buffer, "Manufacturer: %2u Device: %4u");
+            VDP_drawText(buffer, 0u, 9u);
+        }
     }
 }
 
 bool FLASH_doAction(u16 button, u8 max_option){    
+
+    enum mw_err err;
     switch (button){
     case BUTTON_UP:
         VDP_drawText(" ", 0u, option + 2);
@@ -45,20 +52,30 @@ bool FLASH_doAction(u16 button, u8 max_option){
     case BUTTON_START:{
         switch(option){
             case 0:
-                //mw_flash_id_get();  
+                err = mw_flash_id_get(&manufacturer, &device); 
+                if(err){
+                    println("FLASH GET IDS FAIL      "); 
+                }else{
+                    return TRUE;
+                }
             break;
-            case 1:
-                //mw_flash_read();
-            break;
+            case 1:{
+                u8* response = mw_flash_read(0x0000, 1024U);
+                if(!response){
+                    println("FLASH READ 0x0000 1024B FAIL"); 
+                }else{
+                    paint_long_char(response, 1024U, 11u);
+                }
+                break;
+            }                
             case 2:
-                //mw_flash_write();
+                mw_flash_write(0x0000, "DATA STORE ON FLASS", 20);
             break;
             case 3:
-                //mw_flash_sector_erase();
+                mw_flash_sector_erase(0);
             break;
             default:
         }
-        return TRUE;
     }
     default:
     }    

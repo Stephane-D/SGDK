@@ -146,3 +146,17 @@ void printStatus(union mw_msg_sys_stat * status){
     SYS_doVBlankProcess();
 }
 
+
+
+void paint_long_char(const char *cert, u16 len, u8 line){
+    u16 from = 0;
+    u8 cicles = 0;
+    for(u16 i = 0; i < len && cicles < 5; i++){
+        if(cert[i] == '\n' || (i + 1) % 40u == 0 || i == len - 1u){            
+            VDP_drawText(cert + from, 0u, line++);
+            from = i + 1;
+            cicles++;
+        }
+    }
+    VDP_drawText("...", 0u, line);
+}

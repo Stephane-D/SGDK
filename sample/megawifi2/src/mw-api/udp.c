@@ -10,7 +10,6 @@ void UDP_start(){
         UDP_paint(repaint);
         button = readButton(JOY_1);
         repaint = UDP_doAction(button, 0);
-        VDP_drawText("*", 0u, option + 5);
         print();
     }while(button != BUTTON_A);
 
@@ -22,7 +21,7 @@ void UDP_paint(bool repaint){
         VDP_drawText("UDP Test", 1u, 2u);
         VDP_drawText("Press START to launch", 0u, 3u);
         VDP_drawText("Press A to return", 0u, 4u);
-        VDP_drawText("Press C to reuse", 0u, 5u);
+        VDP_drawText("Press B to reuse", 0u, 5u);
     }
 }
 
@@ -31,7 +30,7 @@ bool UDP_doAction(u16 button, u8 max_option){
     case BUTTON_START:
         UDP_normal_test();
 		break;
-	case BUTTON_C:
+	case BUTTON_B:
         UDP_reuse_test();
 		break;
     default:
@@ -74,28 +73,29 @@ void UDP_normal_test(void) {
 	char line[40];
 	int16_t len = sizeof(line);
 	uint8_t ch = 1;
+	enum mw_err err = MW_ERR_NONE, errS = MW_ERR_NONE, errR = MW_ERR_NONE;
 
 	// Make sure you are listening on the target address, e.g. with command:
 	// $ nc -lu 12345
 	println("Send to UDP 12345, waiting for reply");
 	// Send UDP data to peer and wait for reply. Localhost works only when
 	// using emulators, so change IP as needed when using the real thing.
-	if (mw_udp_set(ch, "127.0.0.1", "12345", NULL)) {
-		goto err;
-	}
-	mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, TSK_PEND_FOREVER);
-	mw_recv_sync(&ch, line, &len, TSK_PEND_FOREVER);
+	err = mw_udp_set(ch, "127.0.0.1", "12345", NULL);
+	if (err) goto err;
+	errS = mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, TSK_PEND_FOREVER);
+	errR = mw_recv_sync(&ch, line, &len, TSK_PEND_FOREVER);
 	line[min(39, len)] = '\0';
 	if (1 == ch) {
-		println("Got UDP reply:");
-		println(line);
+		VDP_drawText("Got UDP reply:", 0u, 7u);
+        paint_long_char(line, len, 8u);
 	}
 	mw_close(ch);
 
 	return;
 
 err:
-	println("UDP test failed!");
+	sprintf(buffer, "MW-ERROR: %u MW-ES: %u MW-ER: %u", err, errS, errR);
+	println(buffer);
 	mw_close(ch);
 }
 
@@ -103,11 +103,27 @@ err:
 /// and receive the echo e.g. by running command: $ nc -u <MEGAWIFI_IP_ADDR> 8007
 void UDP_reuse_test(void) {
 	struct mw_reuse_payload *pkt = (struct mw_reuse_payload * const)cmd_buf;
+	
+	enum mw_err err = MW_ERR_NONE;
+	enum lsd_status errR = LSD_STAT_COMPLETE;
 
 	// You can send text and get the echo e.g. by:
 	// nc -u <dest_ip> 8007
 	println("Doing echo on UDP port 8007");
+	print();
+	delay_ms(1000);
 	// Start UDP echo task
-	mw_udp_set(2, NULL, NULL, "8007");
-	mw_udp_reuse_recv(pkt, MW_BUFLEN, NULL, udp_recv_cb);
+	err = mw_udp_set(2, NULL, NULL, "8007");
+	if (err) goto err;
+	println("Receiving from UDP 8007, waiting for reply");
+	print();
+	delay_ms(1000);
+	errR = mw_udp_reuse_recv(pkt, MW_BUFLEN, NULL, udp_recv_cb);
+	if (errR) goto err;
+	paint_long_char(pkt->payload, MW_CMD_MAX_BUFLEN - 4 - 2, 11u);	
+	return;
+
+err:	
+	sprintf(buffer, "MW-ERROR: %u LSD-ER: %d", err, errR);
+	println(buffer);
 }

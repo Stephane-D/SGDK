@@ -9,10 +9,13 @@ static int http_recv(uint32_t len)
 	uint32_t recvd = 0;
 	uint8_t ch = MW_HTTP_CH;
 
-	// For the test, just read and discard the data
+	u8 line = 11u;
+
 	while (recvd < len && !err) {
 		recv_last = MW_BUFLEN;
 		err = mw_recv_sync(&ch, cmd_buf, &recv_last, TSK_PEND_FOREVER) != MW_ERR_NONE;
+		paint_long_char(cmd_buf, recv_last - recvd, line);
+		line++;
 		recvd += recv_last;
 	}
 
@@ -77,22 +80,22 @@ void HTTP_test(const char* url, bool ssl) {
 		CONFIG_CERT_clear();
 	}
 
-	println("Setting URL");
+	println("Setting URL               ");
 	print();
 	delay_ms(1000);
 	err = mw_http_url_set(url); 
 	if (err) goto err_out;
-	println("Setting Method");
+	println("Setting Method            ");
 	print();
 	delay_ms(1000);
 	err = mw_http_method_set(MW_HTTP_METHOD_GET);
 	if (err) goto err_out;
-	println("Open URL");
+	println("Open URL                  ");
 	print();
 	delay_ms(1000);
 	err = mw_http_open(0);
 	if (err) goto err_out;
-	println("Finish URL");
+	println("Finish URL                ");
 	print();
 	delay_ms(1000);
 	errHttp = mw_http_finish(&len, MS_TO_FRAMES(20000));
@@ -100,7 +103,7 @@ void HTTP_test(const char* url, bool ssl) {
 	if (len) {
 		if (http_recv(len)) goto err_out;
 	}
-	println("HTTP test SUCCESS");
+	println("HTTP test SUCCESS         ");
 	return;
 err_out:
 	sprintf(buffer, "MW-ERROR: %u HTTP-ERROR: %d", err, errHttp);

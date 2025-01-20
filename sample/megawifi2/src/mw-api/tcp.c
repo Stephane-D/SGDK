@@ -10,7 +10,6 @@ void TCP_start(){
         TCP_paint(repaint);
         button = readButton(JOY_1);
         repaint = TCP_doAction(button, 0);
-        VDP_drawText("*", 0u, option + 5);
         print();
     }while(button != BUTTON_A);
 
@@ -22,6 +21,7 @@ void TCP_paint(bool repaint){
         VDP_drawText("TCP Test", 1u, 2u);
         VDP_drawText("Press START to launch", 0u, 3u);
         VDP_drawText("Press A to return", 0u, 4u);
+        VDP_drawText("Press B to TCP SERVER", 0u, 5u);
     }
 }
 
@@ -29,6 +29,10 @@ bool TCP_doAction(u16 button, u8 max_option){
     switch (button){
     case BUTTON_START:{
         TCP_test();
+        break;
+    }
+    case BUTTON_B:{
+        TCP_test_server();
     }
     default:
     }    
@@ -41,18 +45,44 @@ void TCP_test() {
 	enum mw_err err;
 
 	// Connect to www.example.com on port 80
-	println("Connecting to www.example.com");
+	println("Connecting to www.example.com");    
+	print();
+	delay_ms(1000);
 	err = mw_tcp_connect(1, "www.example.com", "80", NULL);
-	if (err != MW_ERR_NONE) {
-		println("TCP test FAILED");
-		goto out;
-	}
-	println("DONE!");
-	println(NULL);
+	if (err) {
+		println("TCP test FAILED              ");
+	}else{
+	    println("TCP test SUCCESS             ");
+    }	
+    //mw_send_sync(1,"a", 1, MS_TO_FRAMES(1000));
+    //mw_recv_sync(1);
+	mw_tcp_disconnect(1);
+}
 
-	println("TCP test SUCCESS");
-
-out:
-	println("TCP test ERROR");
-	mw_close(1);
+void TCP_test_server(){
+	println("Creating Server on port 80");
+    print();
+    delay_ms(1000);   
+	enum mw_err err = mw_tcp_bind(1u, 80u);
+    if(err){
+	    println("Creating Server FAILED ");
+        return;
+    }else{
+	    println("Creating Server OK     ");
+    }
+    print();
+    delay_ms(1000);   
+	println("Waiting connections...     ");
+    print();
+    s16 buf_len;
+    u8 ch;
+    err = mw_recv_sync(&ch, cmd_buf, &buf_len, 1000);
+    if(err){
+	    println("Receving FAILED         ");
+        return;
+    }else{
+	    println("Receving OK            ");
+	    paint_long_char(cmd_buf, buf_len, 11u);
+    }
+    mw_tcp_disconnect(1u);
 }

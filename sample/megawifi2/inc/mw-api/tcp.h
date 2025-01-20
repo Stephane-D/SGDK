@@ -12,4 +12,6 @@ bool TCP_doAction(u16 button, u8 max_option);
 
 void TCP_test();
 
+void TCP_test_server();
+
 #endif // _TCP_H_

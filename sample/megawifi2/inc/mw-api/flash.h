@@ -4,6 +4,9 @@
 #include "genesis.h"
 #include "utils.h"
 
+static u8 manufacturer;
+static u16 device;
+
 void FLASH_start();
 
 void FLASH_paint(bool repaint);

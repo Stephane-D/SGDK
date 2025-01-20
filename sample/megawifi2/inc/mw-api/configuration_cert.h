@@ -9,8 +9,6 @@ void CONFIG_CERT_start();
 
 void CONFIG_CERT_paint(bool repaint);
 
-void CONFIG_CERT_paint_cert(const char *cert, u16 len, u8 line);
-
 bool CONFIG_CERT_doAction(u16 button, u8 max_option);
 
 void CONFIG_CERT_clear();

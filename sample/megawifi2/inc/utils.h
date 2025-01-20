@@ -56,6 +56,7 @@ static char cmd_buf[MW_BUFLEN] __attribute__((unused));
 void clearScreen();
 void println(const char *str);
 void print();
+void paint_long_char(const char *cert, u16 len, u8 line);
 u16 readButton(u16 joy);
 int readText(char* buffer, size_t lengthMax);
 void delay_ms(u16 milliseconds);
