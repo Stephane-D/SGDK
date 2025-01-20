@@ -50,13 +50,14 @@
 #include "mw/game_api.h"
 #include "mw/flash.h"
 #include "mw/upgrade.h"
+#include "mw/ping.h"
 
 /// Major firmware version
 #define MW_FW_VERSION_MAJOR	1
 /// Minor firmware version
-#define MW_FW_VERSION_MINOR	5
+#define MW_FW_VERSION_MINOR	6
 /// Minor firmware version
-#define MW_FW_VERSION_MICRO	1
+#define MW_FW_VERSION_MICRO	0
 /// Firmware variant, "std" for standard version
 #define MW_FW_VARIANT	"es3"
 
@@ -72,8 +73,6 @@
 #define MW_FSM_QUEUE_LEN	8
 /// Maximum number of simultaneous TCP connections
 #define MW_MAX_SOCK		2
-/// Maximum length of the default server
-#define MW_SERVER_DEFAULT_MAXLEN	64
 
 /// Length of the flash chip (4 megabytes for the ESP-12 modules.
 #define FLASH_LENGTH		(4*1024*1024)
@@ -238,6 +237,8 @@ const static uint32_t readyCmdMask[2] = {(uint32_t)(
     (1<<MW_CMD_SOCK_STAT)            | (1<<MW_CMD_PING)                  |
     (1<<MW_CMD_SNTP_CFG)             | (1<<MW_CMD_SNTP_CFG_GET)          |
     (1<<MW_CMD_DATETIME)             | (1<<MW_CMD_DT_SET)                |
+	(1<<MW_CMD_FLASH_WRITE)          | (1<<MW_CMD_FLASH_READ)            |
+	(1<<MW_CMD_FLASH_ERASE)          | (1<<MW_CMD_FLASH_ID)              |
     (1<<MW_CMD_SYS_STAT)             | (1<<MW_CMD_DEF_CFG_SET)),(uint32_t)(
     (1<<(MW_CMD_HRNG_GET - 32))      | (1<<(MW_CMD_BSSID_GET - 32))      |
     (1<<(MW_CMD_GAMERTAG_SET - 32))  | (1<<(MW_CMD_GAMERTAG_GET - 32))   |
@@ -326,6 +327,8 @@ public:
     typedef struct {
         /// System status
         MwMsgSysStat s;
+        //ping status;
+        MwMsgPingStat pingStat;
         /// Sockets associated with each channel. NOTE: the index to this array
         /// must be the channel number minus 1 (as channel 0 is the control
         /// channel and has no socket associated).
@@ -363,6 +366,7 @@ public:
     MwData d;
 
     LSD* lsd = new LSD();
+    Ping* ping = new Ping();
     Http* http = NULL;
     GameApi* ga = NULL;
     Led* led = NULL;
@@ -405,7 +409,6 @@ private:
     uint8_t buf[LSD_MAX_LEN];
 
     esp_err_t wifi_init();
-    void reply_set_ok_empty(MwCmd *reply);
     void sntp_set_config(void);
     int tokens_get(const char *in, const char *token[], int token_max, uint16_t *len_total);
     void wifi_cfg_log(void);
@@ -433,6 +436,8 @@ private:
     void disconnect(void);
     void close_all(void);
 
+    static void reply_set_ok_empty(MwCmd *reply);
+
     static void MwFsmTsk(void *pvParameters);
     static void MwFsmSockTsk(void *pvParameters);
     static void txTask(void *pvParameters);
@@ -440,6 +445,7 @@ private:
     static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
     static void time_sync_cb(struct timeval *tv);
     static void sleep_timer_cb(TimerHandle_t xTimer);
+    static void mw_ping_cb(Ping::MwPingResult result, void *args);
 
 };
 

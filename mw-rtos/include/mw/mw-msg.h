@@ -25,6 +25,8 @@
 #define MW_CTRL_CH			0
 /// Channel used for HTTP requests and cert sets
 #define MW_HTTP_CH			LSD_MAX_CH - 1
+/// Maximum length of the default server
+#define MW_SERVER_DEFAULT_MAXLEN	64
 
 /** \addtogroup MwApi MwEvent Events parsed by the system FSM.
  *  \{ */
@@ -194,6 +196,13 @@ typedef union {
 } MwMsgSysStat;
 /** \} */
 
+typedef struct {
+	uint8_t finish;
+	uint8_t ok;
+	uint8_t fail;
+	char domain[MW_SERVER_DEFAULT_MAXLEN];
+}MwMsgPingStat;
+
 enum mw_http_req_type {
 		MW_HTTP_NONE = 0,
 		MW_HTTP_GET,
@@ -212,6 +221,11 @@ typedef struct {
 	// both address and URI, MW_CMD_MAX_BUFLEN - 6 - 6 - 4 - 1
 	char addr_plus_uri[];
 } MwMsgHttpReq;
+
+typedef struct {
+	uint8_t retries;
+	char domain[MW_SERVER_DEFAULT_MAXLEN];
+} MwMsgPing;
 
 /** \} *//** \addtogroup MwApi MwCmd Command sent to system FSM
  *  \{ */
@@ -233,6 +247,7 @@ typedef struct {
 		MwMsgFlashRange flRange;
 		MwMsgBind bind;
 		MwMsgSysStat sysStat;
+		MwMsgPing ping;
 		struct mw_gamertag_set_msg gamertag_set;///< Gamertag set
 		struct mw_gamertag gamertag_get;	///< Gamertag get
 		struct mw_wifi_adv_cfg wifi_adv_cfg;
@@ -261,8 +276,9 @@ typedef struct {
 	void *d;			///< Pointer to data related to event.
 } MwFsmMsg;
 /** \} */
+
+
 typedef struct {
 	uint8_t* buffer;
 	size_t size;
 }MegaDeviceX7TxMsg;
-

@@ -1,4 +1,5 @@
 #pragma once
+#include <WiFiUdp.h> //WOKAROUND PARA LOS DATOS s16
 #include <netdb.h>
 #include "util.h"
 
