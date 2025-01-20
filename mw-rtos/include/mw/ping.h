@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi RTOS.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #pragma once
 #include "mw/net_util.h"
 #include "ping/ping_sock.h"

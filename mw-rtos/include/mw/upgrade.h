@@ -36,6 +36,15 @@ const char cert[] = "-----BEGIN CERTIFICATE-----\n"
 /// Endpoint for update API
 #define UPDATE_EP "/mw_update/"
 
+/****************************************************************************
+ * \brief MegaWiFi RTOS.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #define URL_MAX_LEN 255
 
 #define UPGRADE_TAG "UPGRADE"

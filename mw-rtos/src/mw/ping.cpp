@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi RTOS.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #include "mw/ping.h"
 #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE //CORE_DEBUG_LEVEL
 

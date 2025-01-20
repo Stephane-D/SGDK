@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi2 example.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #include "mw-api/configuration_slot.h"
 
 void CONFIG_SLOT_start(){

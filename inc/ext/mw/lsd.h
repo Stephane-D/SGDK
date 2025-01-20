@@ -14,7 +14,8 @@
  * specified callback is run.
  *
  * \author Jesus Alonso (doragasu)
- * \date   2019
+ * \author Juan Antonio (PaCHoN)
+ * \date   2019~2025
  * \note   Unfortunately the Megadrive does have neither an interrupt pin nor
  *         DMA threshold pins in the cartridge slot, so polling is the only
  *         way. So you have

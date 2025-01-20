@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi2 example.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #ifndef _FLASH_H_
 #define _FLASH_H_
 

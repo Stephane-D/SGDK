@@ -17,8 +17,9 @@
  * prepended to the payload.
  *
  * \author Jesus Alonso (doragasu)
- * \date 2015
- *
+ * \author Juan Antonio (PaCHoN)
+ * \date 2025
+ * 
  * \note This module requires setting MODULE_MEGAWIFI to 1 in config.h and
  * rebuilding the library (if you had to change them).
  ****************************************************************************/

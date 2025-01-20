@@ -1,18 +1,30 @@
 /****************************************************************************
- * \brief MegaWiFi example.
+ * \brief MegaWiFi2 example.
  *
  * This example demonstrates the following:
  * - How to initialize MegaWiFi
- * - How to do TCP connections
+ * - How to configurate MegaWiFi and manage Certs
+ * - How to do ICMP tests
+ * - How to do TCP connections and TCP server
  * - How to do HTTP queries
- * - How to get the date/time (synchronized to NTP servers)
  * - How to send and receive data using UDP protocol
+ * - How to get the date/time (synchronized to NTP servers)
+ * - How to get random numbers
+ * - How to work with flash store
+ * - How to get MegaWiFi Firmware updates
  *
  * To build this example set MODULE_MEGAWIFI to 1 in config.h and
  * rebuild the library.
+ * You can use: 
+ * - MW_IMPLEMENTATION to MW_IMP_EVERDRIVE_X7 
+ * - MODULE_EVERDRIVE to 1 
+ * - ENABLE_BANK_SWITCH to 1
+ * in config.h to use everdive and MegaWifi Addon
  *
+ * \author Juan Antonio (PaCHoN)
  * \author Jesus Alonso (doragasu)
- * \date 01/2022
+ * 
+ * \date 01/2025
  ****************************************************************************/
 
 #include "genesis.h"

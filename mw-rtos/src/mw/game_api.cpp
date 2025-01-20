@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi RTOS.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #include <string.h>
 #include <mbedtls/sha1.h>
 #include "mw/game_api.h"

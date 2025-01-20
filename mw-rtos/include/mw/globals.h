@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi RTOS.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #pragma once
 /// Base physical address for the SPI flash chip
 #define SPI_FLASH_BASE	0x40200000  // 

@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi RTOS.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #include "mw/MegaWiFi.h"
 #define LOG_LOCAL_LEVEL CORE_DEBUG_LEVEL //CORE_DEBUG_LEVEL
 

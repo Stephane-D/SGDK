@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi2 example.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #include "mw-api/configuration_ap.h"
 
 void CONFIG_AP_paintApData(struct mw_ap_data apData, u8 line){

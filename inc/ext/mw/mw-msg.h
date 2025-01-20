@@ -12,7 +12,8 @@
  * is not directly used by the application, but by megawifi internally.
  *
  * \author Jesus Alonso (doragasu)
- * \date 2015~2019
+ * \author Juan Antonio (PaCHoN)
+ * \date 2015~2025
  ****************************************************************************/
 #ifndef _MW_MSG_H_
 #define _MW_MSG_H_

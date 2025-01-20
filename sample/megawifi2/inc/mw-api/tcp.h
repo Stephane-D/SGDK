@@ -1,3 +1,12 @@
+/****************************************************************************
+ * \brief MegaWiFi2 example.
+ * 
+ * \author Juan Antonio (PaCHoN) 
+ * \author Jesus Alonso (doragasu)
+ * 
+ * \date 01/2025
+ ****************************************************************************/
+
 #ifndef _TCP_H_
 #define _TCP_H_
 

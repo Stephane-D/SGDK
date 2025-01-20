@@ -2,7 +2,8 @@
  * \brief MeGaWiFi API implementation.
  *
  * \author Jesus Alonso (doragasu)
- * \date 2015
+ * \author Juan Antonio (PaCHoN)
+ * \date 2025
  *
  * \note Module is not reentrant.
  *

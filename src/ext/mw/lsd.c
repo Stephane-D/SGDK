@@ -4,7 +4,8 @@
  *         data link.
  *
  * \author Jesus Alonso (doragasu)
- * \date   2016
+ * \author Juan Antonio (PaCHoN)
+ * \date   2016~2025
  * \todo   Implement UART RTS/CTS handshaking.
  * \todo   Current implementation uses polling. Unfortunately as the Genesis/
  *         Megadrive does not have an interrupt pin on the cart, implementing

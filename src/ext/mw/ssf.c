@@ -1,3 +1,12 @@
+/************************************************************************
+ * \brief Simple SSF driver.
+ *
+ * \author Juan Antonio Ruiz (PaCHoN)
+ * \date   2024
+ * \defgroup SSF SSF
+ * \brief
+ *      SSF Implementation.
+*************************************** */
 #include "config.h"
 
 #if (MODULE_MEGAWIFI != 0 && MW_IMP_EVERDRIVE_X7)
