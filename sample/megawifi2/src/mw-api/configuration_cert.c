@@ -19,7 +19,7 @@ void CONFIG_CERT_paint(bool repaint){
     if(repaint){
         clearScreen();
         println("Checking Cert...");
-        delay_ms(500);
+        delay_ms(DEFAULT_DELAY);
         u32 hash = mw_http_cert_query();
         sprintf(buffer, "Store Cert Hash: %08lx", hash);        
         VDP_drawText(buffer, 0u, 2u);
