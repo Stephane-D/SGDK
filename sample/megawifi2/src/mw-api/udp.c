@@ -82,8 +82,8 @@ void UDP_normal_test(void) {
 	// using emulators, so change IP as needed when using the real thing.
 	err = mw_udp_set(ch, "127.0.0.1", "12345", NULL);
 	if (err) goto err;
-	errS = mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, TSK_PEND_FOREVER);
-	errR = mw_recv_sync(&ch, line, &len, TSK_PEND_FOREVER);
+	errS = mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, 1000);
+	errR = mw_recv_sync(&ch, line, &len, 1000);
 	line[min(39, len)] = '\0';
 	if (1 == ch) {
 		VDP_drawText("Got UDP reply:", 0u, 7u);
@@ -121,9 +121,11 @@ void UDP_reuse_test(void) {
 	errR = mw_udp_reuse_recv(pkt, MW_BUFLEN, NULL, udp_recv_cb);
 	if (errR) goto err;
 	paint_long_char(pkt->payload, MW_CMD_MAX_BUFLEN - 4 - 2, 11u);	
+	mw_close(2);
 	return;
 
 err:	
 	sprintf(buffer, "MW-ERROR: %u LSD-ER: %d", err, errR);
 	println(buffer);
+	mw_close(2);
 }
