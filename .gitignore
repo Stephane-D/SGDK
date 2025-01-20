@@ -44,3 +44,4 @@ tools/rescomp/rescomp.jar
 tools/xgm rom builder
 /.idea
 *.iml
+.vscode
