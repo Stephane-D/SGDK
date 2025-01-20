@@ -54,7 +54,8 @@ bool FLASH_doAction(u16 button, u8 max_option){
             case 0:
                 err = mw_flash_id_get(&manufacturer, &device); 
                 if(err){
-                    println("FLASH GET IDS FAIL      "); 
+                    sprintf(buffer, "MW-ERROR: %u      ", err);
+                    println(buffer);
                 }else{
                     return TRUE;
                 }
@@ -69,10 +70,18 @@ bool FLASH_doAction(u16 button, u8 max_option){
                 break;
             }                
             case 2:
-                mw_flash_write(0x0000, (u8 *)"DATA STORE ON FLASS", 20);
+                err = mw_flash_write(0x0000, (u8 *)"DATA STORE ON FLASS", 20);
+                if(err){
+                    sprintf(buffer, "MW-ERROR: %u      ", err);
+                    println(buffer);
+                }
             break;
             case 3:
-                mw_flash_sector_erase(0);
+                err = mw_flash_sector_erase(0);
+                if(err){
+                    sprintf(buffer, "MW-ERROR: %u      ", err);
+                    println(buffer);
+                }
             break;
             default:
         }

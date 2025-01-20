@@ -180,7 +180,7 @@ int main(bool hard)
 	bool err;
 	init();
 	err = megawifi_init();
-    delay_ms(1000);
+    delay_ms(DEFAULT_DELAY);
 	if (!err) {        
         union mw_msg_sys_stat *status;
         while(!(status = mw_sys_stat_get()));

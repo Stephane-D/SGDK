@@ -47,14 +47,14 @@ void TCP_test() {
 	// Connect to www.example.com on port 80
 	println("Connecting to www.example.com");    
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	err = mw_tcp_connect(1, "www.example.com", "80", NULL);
 	if (err) {
 		println("TCP test FAILED              ");
 	}else{
 	    println("TCP test SUCCESS             ");
     }	
-    //mw_send_sync(1,"a", 1, MS_TO_FRAMES(1000));
+    //mw_send_sync(1,"a", 1, MS_TO_FRAMES(DEFAULT_MW_DELAY));
     //mw_recv_sync(1);
 	mw_tcp_disconnect(1);
 }
@@ -62,27 +62,25 @@ void TCP_test() {
 void TCP_test_server(){
 	println("Creating Server on port 80");
     print();
-    delay_ms(1000);   
+    delay_ms(DEFAULT_DELAY);   
 	enum mw_err err = mw_tcp_bind(1u, 80u);
-    if(err){
-	    println("Creating Server FAILED ");
-        return;
-    }else{
-	    println("Creating Server OK     ");
-    }
+    if(err)goto err;
+	println("Creating Server OK     ");
     print();
-    delay_ms(1000);   
+    delay_ms(DEFAULT_DELAY);   
 	println("Waiting connections...     ");
     print();
     s16 buf_len;
     u8 ch;
-    err = mw_recv_sync(&ch, cmd_buf, &buf_len, 1000);
-    if(err){
-	    println("Receving FAILED         ");
-        return;
-    }else{
-	    println("Receving OK            ");
-	    paint_long_char(cmd_buf, buf_len, 11u);
-    }
+    err = mw_recv_sync(&ch, cmd_buf, &buf_len, DEFAULT_MW_DELAY);
+    if(err)goto err;
+    println("Receving OK            ");
+    paint_long_char(cmd_buf, buf_len, 11u);
     mw_tcp_disconnect(1u);
+    return;
+err:
+    sprintf(buffer, "MW-ERROR: %u      ", err);
+	println(buffer);
+    mw_tcp_disconnect(1u);
+
 }

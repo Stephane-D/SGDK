@@ -82,22 +82,22 @@ void HTTP_test(const char* url, bool ssl) {
 
 	println("Setting URL               ");
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	err = mw_http_url_set(url); 
 	if (err) goto err_out;
 	println("Setting Method            ");
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	err = mw_http_method_set(MW_HTTP_METHOD_GET);
 	if (err) goto err_out;
 	println("Open URL                  ");
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	err = mw_http_open(0);
 	if (err) goto err_out;
 	println("Finish URL                ");
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	errHttp = mw_http_finish(&len, MS_TO_FRAMES(20000));
 	if (errHttp < 100) goto err_out;
 	if (len) {

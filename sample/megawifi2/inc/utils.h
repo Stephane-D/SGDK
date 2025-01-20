@@ -3,6 +3,9 @@
 
 #include "genesis.h"
 
+#define DEFAULT_DELAY 500
+#define DEFAULT_MW_DELAY 1000
+
 /// Shut compiler warnings for unused parameters
 #define UNUSED_PARAM(par) (void)(par)
 

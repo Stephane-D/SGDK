@@ -82,8 +82,8 @@ void UDP_normal_test(void) {
 	// using emulators, so change IP as needed when using the real thing.
 	err = mw_udp_set(ch, "127.0.0.1", "12345", NULL);
 	if (err) goto err;
-	errS = mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, 1000);
-	errR = mw_recv_sync(&ch, line, &len, 1000);
+	errS = mw_send_sync(ch, "MegaWiFi UDP test!\n", 20, DEFAULT_MW_DELAY);
+	errR = mw_recv_sync(&ch, line, &len, DEFAULT_MW_DELAY);
 	line[min(39, len)] = '\0';
 	if (1 == ch) {
 		VDP_drawText("Got UDP reply:", 0u, 7u);
@@ -111,13 +111,13 @@ void UDP_reuse_test(void) {
 	// nc -u <dest_ip> 8007
 	println("Doing echo on UDP port 8007");
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	// Start UDP echo task
 	err = mw_udp_set(2, NULL, NULL, "8007");
 	if (err) goto err;
 	println("Receiving from UDP 8007, waiting for reply");
 	print();
-	delay_ms(1000);
+	delay_ms(DEFAULT_DELAY);
 	errR = mw_udp_reuse_recv(pkt, MW_BUFLEN, NULL, udp_recv_cb);
 	if (errR) goto err;
 	paint_long_char(pkt->payload, MW_CMD_MAX_BUFLEN - 4 - 2, 11u);	
