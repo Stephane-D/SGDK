@@ -81,7 +81,7 @@ void CONFIG_SLOT_toogleConnection(){
         if(status->online){
             println("Disconecting... ");            
             SYS_doVBlankProcess();
-            mw_sleep(MS_TO_FRAMES(1000));
+            mw_sleep(MS_TO_FRAMES(DEFAULT_MW_DELAY));
             while (!mw_ap_disassoc());    
             println("Disconected     ");            
             SYS_doVBlankProcess();  
@@ -89,7 +89,7 @@ void CONFIG_SLOT_toogleConnection(){
             struct mw_ip_cfg *ipConf;
             println("AP Connecting...");            
             SYS_doVBlankProcess();
-            mw_sleep(MS_TO_FRAMES(1000));    
+            mw_sleep(MS_TO_FRAMES(DEFAULT_MW_DELAY));    
             int i =3;
             println("AP Waiting...   ");            
             SYS_doVBlankProcess();  

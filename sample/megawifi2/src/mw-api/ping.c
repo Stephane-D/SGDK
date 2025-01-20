@@ -39,7 +39,10 @@ bool PING_doAction(u16 button, u8 max_option){
 void PING_test()
 {
 	struct mw_ping_response *ping_response;
-
+    
+    println("PING to www.example.com ...");
+    print();
+    delay_ms(DEFAULT_DELAY);
 	ping_response = mw_ping("www.example.com", 5u);
     if(ping_response){
         sprintf(buffer, "Finish: %u, ok: %u fail: %u", ping_response->finish, ping_response->ok, ping_response->fail);
