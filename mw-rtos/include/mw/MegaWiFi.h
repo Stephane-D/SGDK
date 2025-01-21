@@ -438,6 +438,7 @@ private:
     int parse_game_request(struct mw_ga_request *req, MwCmd *reply);
     void parse_game_add_keyval(const char *data, MwCmd *reply);
     void parse_upgrade(const char *name, MwCmd *reply);
+    void parse_upgrade_list(const char *data, MwCmd *reply);
     void SetIpCfg(int slot);
     void deep_sleep(void);
     void disconnect(void);

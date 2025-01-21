@@ -1475,6 +1475,30 @@ enum mw_err mw_fw_upgrade(const char *name)
 	return MW_ERR_NONE;
 }
 
+enum mw_err mw_fw_list_upgrades(uint8_t page, uint8_t size, uint8_t offset, char **listUpgrades, uint8_t *len, uint8_t *total)
+{
+	enum mw_err err;
+
+	if (!d.mw_ready) {
+		return MW_ERR_NOT_READY;
+	}
+
+	d.cmd->cmd = MW_CMD_UPGRADE_LIST;
+	d.cmd->data[0] = page;
+	d.cmd->data[1] = size;
+	d.cmd->data[2] = offset;
+	d.cmd->data_len = 3;
+	err = mw_command(MW_UPGRADE_TOUT);
+	if (err) {
+		return MW_ERR;
+	}
+	
+	*listUpgrades = d.cmd->ug_list_response.payload;
+	*len = d.cmd->ug_list_response.len;
+	*total = d.cmd->ug_list_response.total;
+	return MW_ERR_NONE;
+}
+
 struct mw_ping_response *mw_ping(const char* domain, u8 retries)
 {
 	enum mw_err err;
@@ -1496,7 +1520,7 @@ struct mw_ping_response *mw_ping(const char* domain, u8 retries)
 		return NULL;
 	}
 
-	return &d.cmd->pingResponse;
+	return &d.cmd->ping_response;
 }
 
 #endif // MODULE_MEGAWIFI

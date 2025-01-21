@@ -13,6 +13,10 @@
 #include "genesis.h"
 #include "utils.h"
 
+static char *listUpgrades __attribute__((unused)) = NULL;
+static uint8_t len __attribute__((unused)) = 0;
+static uint8_t total __attribute__((unused)) = 0;
+
 void UPGRADE_start();
 
 void UPGRADE_paint(bool repaint);

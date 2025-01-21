@@ -1096,8 +1096,8 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 			break;		
 
 		case MW_CMD_UPGRADE_LIST:
-			// TODO
-			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
+			parse_upgrade_list((char*)c->data, &reply);
+			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN + ByteSwapWord(reply.datalen), 0);
 			break;
 
 		case MW_CMD_UPGRADE_PERFORM:
@@ -1913,6 +1913,23 @@ void MegaWiFi::print_flash_id()
 
 	ESP_LOGI(MW_TAG,"flash manufacturer: %02"PRIX8", device %04"PRIX16,d.flash_man, d.flash_dev);
 	ESP_LOGI(MW_TAG,"SPI chip length: %"PRIu32, len);
+}
+
+void MegaWiFi::parse_upgrade_list(const char *data, MwCmd *reply)
+{
+	esp_err_t err;
+	uint16_t dataLen = (uint16_t)data[1] * (uint16_t)MAX_UPGRADE_NAME_LEN;
+	char buff[dataLen];
+	uint8_t len, total; 
+	err = upgrade->list_upgrade_firmware(cfg.serverUrl, (uint8_t)data[0], (uint8_t)data[1], (uint8_t)data[2], buff, &len, &total);
+	if (err) {
+		reply->cmd = htons(MW_CMD_ERROR);
+	}else{
+		reply->datalen = ByteSwapWord(dataLen);
+		reply->data[0] = ByteSwapWord((uint16_t)total);
+		reply->data[2] = ByteSwapWord((uint16_t)len);
+		memcpy(reply->data + 4, (uint8_t*)(buff), dataLen);
+	}	
 }
 
 void MegaWiFi::parse_upgrade(const char *name, MwCmd *reply)

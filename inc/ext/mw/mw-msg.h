@@ -322,6 +322,12 @@ struct mw_ping_response{
     uint32_t total_time_ms;
 };
 
+struct mw_upgrade_list_response{
+	uint16_t total;
+	uint16_t len;
+    char *payload;
+};
+
 /// Command sent to system FSM
 typedef union mw_cmd {
 	char packet[MW_CMD_MAX_BUFLEN + 2 * sizeof(uint16_t)];	///< Packet raw data
@@ -347,7 +353,8 @@ typedef union mw_cmd {
 			struct mw_msg_flash_range fl_range;	///< Flash memory range
 			struct mw_msg_bind bind;		///< Bind message
 			struct mw_ping_request ping;    ///< Ping message
-			struct mw_ping_response pingResponse;    ///< Ping message
+			struct mw_ping_response ping_response;    ///< Ping message
+			struct mw_upgrade_list_response ug_list_response;    ///< Ping message
 			union mw_msg_sys_stat sys_stat;		///< System status
 			struct mw_gamertag_set_msg gamertag_set;///< Gamertag set
 			struct mw_gamertag gamertag_get;	///< Gamertag get

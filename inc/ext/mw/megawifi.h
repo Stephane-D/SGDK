@@ -941,6 +941,20 @@ int16_t mw_ga_request(enum mw_http_method method, const char **path,
 		int16_t tout_frames);
 
 /************************************************************************//**
+ * \brief List available upgrades WiFi module firmware.
+ *
+ * \param[in] page           Page of list
+ * \param[in] page_size      Page size of list
+ * \param[in] offset         Offset number
+ * \param[out] listUpgrades  Pointer to list of char*
+ * \param[out] len 			 Result length
+ * \param[out] total         Total elements
+ *
+ * \return Status of the send procedure.
+ ****************************************************************************/
+enum mw_err mw_fw_list_upgrades(uint8_t page, uint8_t size, uint8_t offset, char **listUpgrades, uint8_t *len, uint8_t *total);
+
+/************************************************************************//**
  * \brief Over-The-Air upgrade WiFi module firmware.
  *
  * \param[in] name Name of the firmware blob to upgrade.

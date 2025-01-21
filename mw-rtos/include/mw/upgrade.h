@@ -48,13 +48,18 @@ const char cert[] = "-----BEGIN CERTIFICATE-----\n"
 #define URL_MAX_LEN 255
 
 #define UPGRADE_TAG "UPGRADE"
+#define MAX_UPGRADE_NAME_LEN 64
 
 class Upgrade {
 public:
 
 	Upgrade(){};
 
+	esp_http_client_handle_t httpHandle;
+
 	esp_https_ota_handle_t *handle;
+	
+	esp_err_t list_upgrade_firmware(const char *server, uint8_t page, uint8_t pageSize, uint8_t offset, const char *firmwares, uint8_t *count, uint8_t *total);
 
 	esp_err_t upgrade_firmware(const char *server, const char *name);
 
