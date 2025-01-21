@@ -45,3 +45,4 @@ tools/xgm rom builder
 /.idea
 *.iml
 .vscode
+!**/platformio.ini
