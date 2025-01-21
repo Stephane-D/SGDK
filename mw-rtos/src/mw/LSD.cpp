@@ -64,7 +64,7 @@ size_t LSD::LsdSend(const uint8_t *data, uint16_t len, uint8_t ch) {
 
     // Copiar datos al buffer de salida
     memcpy(TXB.data, scratch, sizeof(scratch));
-    memcpy((TXB.data + sizeof(scratch)), data, len);
+    memcpy(TXB.data + sizeof(scratch), data, len);
     TXB.data[sizeof(scratch) + len] = scratch[0]; 
 
 	m.buffer = TXB.data;

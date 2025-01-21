@@ -70,11 +70,11 @@ bool FLASH_doAction(u16 button, u8 max_option){
                 }
             break;
             case 1:{
-                u8* response = mw_flash_read(0x0000, 1024U);
+                u8* response = mw_flash_read(0x0000, 512U);
                 if(!response){
-                    println("FLASH READ 0x0000 1024B FAIL"); 
+                    println("FLASH READ 0x0000 512B FAIL"); 
                 }else{
-                    paint_long_char((const char *)response, 1024U, 11u);
+                    paint_long_char((const char *)response, 512U, 11u);
                 }
                 break;
             }                
