@@ -23,18 +23,27 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         FAST, MEDIUM, SLOW, MAX
     };
 
-    public static final Comparator<SpriteCell> sizeAndCoverageComparator = new Comparator<SpriteCell>()
+//    public static final Comparator<SpriteCell> sizeAndCoverageComparator = new Comparator<SpriteCell>()
+//    {
+//        @Override
+//        public int compare(SpriteCell o1, SpriteCell o2)
+//        {
+//            int result = Integer.compare(o1.numTile, o2.numTile);
+//
+//            if (result == 0)
+//                result = java.lang.Double.compare(o1.getCoverage(), o2.getCoverage());
+//
+//            // we want ascending order
+//            return -result;
+//        }
+//    };
+
+    public static final Comparator<SpriteCell> sizeComparator = new Comparator<SpriteCell>()
     {
         @Override
         public int compare(SpriteCell o1, SpriteCell o2)
         {
-            int result = Integer.compare(o1.numTile, o2.numTile);
-
-            if (result == 0)
-                result = java.lang.Double.compare(o1.getCoverage(), o2.getCoverage());
-
-            // we want ascending order
-            return -result;
+            return -Integer.compare(o1.numTile, o2.numTile);
         }
     };
 
@@ -236,7 +245,7 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
 
     public double getScore()
     {
-        return getBaseScore() + (getCoveragePenalty() / 10d);
+        return getBaseScore(); // + (getCoveragePenalty() / 10d);
     }
 
     public double getBaseScore()
@@ -254,7 +263,13 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
                 return 6d + (numTile * 4d) + (getWidth() / 32d);
         }
     }
-
+    
+    public int getOverdraw(SpriteCell cell)
+    {
+        Rectangle r = intersection(cell);
+        return r.height * r.width;        
+    }
+    
     public double getCoverage()
     {
         if (coveredPix == -1)
@@ -263,10 +278,10 @@ public class SpriteCell extends Rectangle implements Comparable<SpriteCell>
         return (double) coveredPix / (double) (numTile * 64);
     }
 
-    public double getCoveragePenalty()
-    {
-        return 1d - getCoverage();
-    }
+//    public double getCoveragePenalty()
+//    {
+//        return 1d - getCoverage();
+//    }
 
     public boolean optimizeOverdraw(Dimension imageDim, List<SpriteCell> allSpr)
     {
