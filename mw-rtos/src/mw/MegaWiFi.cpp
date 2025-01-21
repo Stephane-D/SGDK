@@ -912,9 +912,9 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 			break;
 
 		case MW_CMD_FLASH_ID:
-			reply.flash_id.device = htons(d.flash_dev);
+			reply.flash_id.device = ByteSwapWord(d.flash_dev);
 			reply.flash_id.manufacturer = d.flash_man;
-			reply.datalen = htons(3);
+			reply.datalen = ByteSwapWord(3u);
 			lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN + 3, 0);
 			break;
 

@@ -36,7 +36,7 @@ void FLASH_paint(bool repaint){
         VDP_drawText("Press A to return", 0u, 7u);
 
         if(manufacturer && device){
-            sprintf(buffer, "Manufacturer: %2u Device: %4u", manufacturer, device);
+            sprintf(buffer, "Manufacturer: %2X Device: %4X", manufacturer, device);
             VDP_drawText(buffer, 0u, 9u);
         }
     }
