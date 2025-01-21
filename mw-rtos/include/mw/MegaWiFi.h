@@ -336,8 +336,6 @@ public:
     typedef struct {
         /// System status
         MwMsgSysStat s;
-        //ping status;
-        MwMsgPingStat pingStat;
         /// Sockets associated with each channel. NOTE: the index to this array
         /// must be the channel number minus 1 (as channel 0 is the control
         /// channel and has no socket associated).

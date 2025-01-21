@@ -54,7 +54,7 @@ void PING_test()
     delay_ms(DEFAULT_DELAY);
 	ping_response = mw_ping("www.example.com", 5u);
     if(ping_response){
-        sprintf(buffer, "Finish: %u, ok: %u fail: %u", ping_response->finish, ping_response->ok, ping_response->fail);
+        sprintf(buffer, "t: %2lu, r: %2lu ms: %5lu", ping_response->transmitted, ping_response->received, ping_response->total_time_ms);
 	    println(buffer);
     }else{
 	    println("FAIL PING to www.example.com");

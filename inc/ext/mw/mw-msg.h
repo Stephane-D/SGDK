@@ -317,10 +317,9 @@ struct mw_ping_request{
 };
 
 struct mw_ping_response{
-	bool finish;
-	uint8_t ok;
-	uint8_t fail;
-	char domain[64];
+	uint32_t transmitted;
+    uint32_t received;
+    uint32_t total_time_ms;
 };
 
 /// Command sent to system FSM

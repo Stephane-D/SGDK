@@ -109,7 +109,7 @@ int MegaWiFi::MwInit() {
 	lsd->LsdChEnable(MW_CTRL_CH);
 	ga->ga_init();
     led->led_init();
-	ping->init(this, mw_ping_cb);
+	ping->init(NULL, mw_ping_cb);
 	// Send the init done message
 	m.e = MW_EV_INIT_DONE;
 	xQueueSend(d.q, &m, portMAX_DELAY);
@@ -850,11 +850,7 @@ size_t MegaWiFi::MwFsmCmdProc(MwCmd *c, uint16_t totalLen) {
 
 		case MW_CMD_PING:
 			ESP_LOGI(MW_TAG,"Requesting Ping");
-			d.pingStat.fail = 0;
-			d.pingStat.ok = 0;
-			d.pingStat.finish = FALSE;			
-			strncpy(d.pingStat.domain, c->ping.domain, MW_SERVER_DEFAULT_MAXLEN);
-			if (ping->ping(d.pingStat.domain, c->ping.retries)) {
+			if (ping->ping(c->ping.domain, c->ping.retries)) {
 				reply.cmd = ByteSwapWord(MW_CMD_ERROR);
 				lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN, 0);
 			}
@@ -1930,21 +1926,21 @@ void MegaWiFi::parse_upgrade(const char *name, MwCmd *reply)
 }
 
  void MegaWiFi::mw_ping_cb(Ping::MwPingResult result, void *args){
-	MegaWiFi *mw = (MegaWiFi *)args;
+	MwMsgPingStat* stat = (MwMsgPingStat*)args;
 	static MwCmd reply;
 	switch(result){
 		case Ping::MwPingResult::MW_PING_RESULT_END:
-			reply_set_ok_empty(&reply);
-			mw->d.pingStat.finish = TRUE;	
+			reply_set_ok_empty(&reply);	
 			reply.datalen = ByteSwapWord(sizeof(MwMsgPingStat));
-			memcpy(reply.data, (uint8_t*)(&(mw->d.pingStat)), sizeof(MwMsgPingStat) - 1);
-			mw->lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN + sizeof(MwMsgPingStat), 0);
+			stat->received = htonl(stat->received);
+			stat->total_time_ms = htonl(stat->total_time_ms);
+			stat->transmitted = htonl(stat->transmitted);
+			memcpy(reply.data, (uint8_t*)(args), sizeof(MwMsgPingStat));
+			p_instance->lsd->LsdSend((uint8_t*)&reply, MW_CMD_HEADLEN + sizeof(MwMsgPingStat), 0);
 		break;
 		case Ping::MwPingResult::MW_PING_RESULT_SUCCESS:
-			mw->d.pingStat.ok++;
 		break;
 		case Ping::MwPingResult::MW_PING_RESULT_TIMEOUT:
-			mw->d.pingStat.fail++;
 		break;
 	}
  }

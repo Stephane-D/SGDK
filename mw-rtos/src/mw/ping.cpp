@@ -75,13 +75,11 @@ void Ping::test_on_ping_timeout(esp_ping_handle_t hdl, void *args)
 
 void Ping::test_on_ping_end(esp_ping_handle_t hdl, void *args)
 {
-    uint32_t transmitted;
-    uint32_t received;
-    uint32_t total_time_ms;
+    MwMsgPingStat stat;
 
-    esp_ping_get_profile(hdl, ESP_PING_PROF_REQUEST, &transmitted, sizeof(transmitted));
-    esp_ping_get_profile(hdl, ESP_PING_PROF_REPLY, &received, sizeof(received));
-    esp_ping_get_profile(hdl, ESP_PING_PROF_DURATION, &total_time_ms, sizeof(total_time_ms));
-    ESP_LOGI(PING_TAG,"%d packets transmitted, %d received, time %dms\n", transmitted, received, total_time_ms);
-    mw_cb(MW_PING_RESULT_END, args);
+    esp_ping_get_profile(hdl, ESP_PING_PROF_REQUEST, &(stat.transmitted), sizeof(stat.transmitted));
+    esp_ping_get_profile(hdl, ESP_PING_PROF_REPLY, &(stat.received), sizeof(stat.received));
+    esp_ping_get_profile(hdl, ESP_PING_PROF_DURATION, &(stat.total_time_ms), sizeof(stat.total_time_ms));
+    ESP_LOGI(PING_TAG,"%d packets transmitted, %d received, time %dms\n", stat.transmitted, stat.received, stat.total_time_ms);
+    mw_cb(MW_PING_RESULT_END, &stat);
 }

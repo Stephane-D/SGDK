@@ -206,10 +206,9 @@ typedef union {
 /** \} */
 
 typedef struct {
-	uint8_t finish;
-	uint8_t ok;
-	uint8_t fail;
-	char domain[MW_SERVER_DEFAULT_MAXLEN];
+	uint32_t transmitted;
+    uint32_t received;
+    uint32_t total_time_ms;
 }MwMsgPingStat;
 
 enum mw_http_req_type {

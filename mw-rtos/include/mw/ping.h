@@ -8,8 +8,9 @@
  ****************************************************************************/
 
 #pragma once
-#include "mw/net_util.h"
 #include "ping/ping_sock.h"
+#include "mw/net_util.h"
+#include "mw/mw-msg.h"
 
 #define PING_TAG "PING"
 
