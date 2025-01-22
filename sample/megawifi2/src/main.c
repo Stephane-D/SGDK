@@ -179,6 +179,8 @@ static void tasking_init(void)
 /// Global initialization
 static void init(void)
 {
+    // initialization
+    VDP_setScreenWidth320();
 	// Initialize MegaWiFi
 	mw_init((u16*) cmd_buf, MW_BUFLEN);
 	// Initialize multitasking (for WiFi background checks)

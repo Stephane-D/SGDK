@@ -144,12 +144,7 @@ void printStatus(union mw_msg_sys_stat * status){
         if(status->sys_stat == MW_ST_READY){            
             VDP_drawText("READY", 5u, 27u);
         }else{
-            u16 oldColors[16]; 
-            PAL_getColors(VDP_getTextPalette(), oldColors, 16);
-            PAL_setColors(VDP_getTextPalette(), palette_red, 16, CPU);
-            //PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFF0000));
             VDP_drawText("NO CON", 5u, 27u);
-            PAL_setColors(VDP_getTextPalette(), oldColors, 16, CPU);
         }
     }
     SYS_doVBlankProcess();
