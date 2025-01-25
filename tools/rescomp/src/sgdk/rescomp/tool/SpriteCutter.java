@@ -61,8 +61,6 @@ public class SpriteCutter
                         final Solution solution = spriteCutter.getSolution(grid, optimizationType);
                         // fast optimization
                         solution.fastOptimize();
-                        // fix positions
-//                        solution.fixPos();
 
                         // add the solution
                         if (!solution.cells.isEmpty())
@@ -552,7 +550,7 @@ public class SpriteCutter
             // start from largest cell
             for (SpriteCell cell : cellsCopy)
             {
-                cell.optimizeOverdraw(dim, cellsCopy);
+                cell.optimizeOverdraw(image, dim, cellsCopy);
                 addCell(cell);
             }
         }
@@ -606,6 +604,9 @@ public class SpriteCutter
 
         public void fastOptimize()
         {
+            // keep sprites inside frame box 
+            fixPos();
+
             double score;
             double minScore = getScore();
             Solution bestSolution = new Solution(this);
@@ -617,8 +618,8 @@ public class SpriteCutter
                 optimizeMerge();
                 optimizePos();
                 optimizeSize(false);
-                fixPos();
                 optimizeOverdraw();
+                fixPos();
 
                 score = getScore();
                 if (score < minScore)
@@ -636,8 +637,8 @@ public class SpriteCutter
                 optimizeMerge();
                 optimizePos();
                 optimizeSize(true);
-                fixPos();
                 optimizeOverdraw();
+                fixPos();
 
                 score = getScore();
                 if (score < minScore)

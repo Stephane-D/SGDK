@@ -936,6 +936,28 @@ public class ImageUtil
 
         return false;
     }
+    
+    public static Rectangle getOpaqueRect(byte[] image8bpp, Dimension imageDim, Rectangle region)
+    {
+        Rectangle adjRegion = region.intersection(new Rectangle(imageDim));
+        Rectangle result = new Rectangle(0, 0, -1, -1);
+        Rectangle pt = new Rectangle(0, 0, 1, 1);
+        
+        for(int j = adjRegion.y; j < (adjRegion.y + adjRegion.height); j++)
+        {
+            int offset = j * imageDim.width;
+            for(int i = adjRegion.x; i < (adjRegion.x + adjRegion.width); i++)
+            {
+                if (image8bpp[offset + i] != 0)
+                {
+                    pt.setLocation(i, j);
+                    result.add(pt);
+                }
+            }
+        }
+        
+        return result;
+    }
 
     /**
      * Returns used palette index
