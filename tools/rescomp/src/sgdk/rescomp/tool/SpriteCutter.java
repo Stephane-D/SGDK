@@ -19,7 +19,6 @@ import sgdk.rescomp.type.SpriteCell.OptimizationType;
 import sgdk.tool.ImageUtil;
 import sgdk.tool.Random;
 import sgdk.tool.SystemUtil;
-import sgdk.tool.ThreadUtil;
 
 public class SpriteCutter
 {
@@ -62,8 +61,6 @@ public class SpriteCutter
                         final Solution solution = spriteCutter.getSolution(grid, optimizationType);
                         // fast optimization
                         solution.fastOptimize();
-                        // fix positions
-                        solution.fixPos();
 
                         // add the solution
                         if (!solution.cells.isEmpty())
@@ -253,6 +250,14 @@ public class SpriteCutter
             this(new byte[image.length]);
         }
 
+        public Solution(Solution solution)
+        {
+            this();
+
+            for (SpriteCell cell : solution.cells)
+                addCell(new SpriteCell(cell, cell.opt));
+        }
+
         public Solution(CellGrid grid, OptimizationType opt)
         {
             this();
@@ -330,6 +335,24 @@ public class SpriteCutter
             return remainingPixToCover <= 0;
         }
 
+        public int getSpriteOverdraw()
+        {
+            int result = 0;
+
+            for (SpriteCell curCell : cells)
+            {
+                for (SpriteCell otherCell : cells)
+                {
+                    if (curCell != otherCell)
+                    {
+                        result += curCell.getOverdraw(otherCell);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public double getScore()
         {
             // not yet complete
@@ -342,6 +365,8 @@ public class SpriteCutter
 
                 for (SpriteCell cell : cells)
                     result += cell.getScore();
+
+                result += getSpriteOverdraw() / 3000d;
 
                 // if more than 16 sprites (not allowed) we set a penalty
                 if (cells.size() > 16)
@@ -363,20 +388,20 @@ public class SpriteCutter
             return isComplete();
         }
 
-        private boolean rebuildCoverage(List<SpriteCell> sprcells)
-        {
-            // rebuild solution and coverage
-            reset();
-            for (SpriteCell sc : sprcells)
-                addCell(sc);
+        // private boolean rebuildCoverage(List<SpriteCell> sprcells)
+        // {
+        // // rebuild solution and coverage
+        // reset();
+        // for (SpriteCell sc : sprcells)
+        // addCell(sc);
+        //
+        // return isComplete();
+        // }
 
-            return isComplete();
-        }
-
-        private boolean rebuildCoverage()
-        {
-            return rebuildCoverage(new ArrayList<>(cells));
-        }
+        // private boolean rebuildCoverage()
+        // {
+        // return rebuildCoverage(new ArrayList<>(cells));
+        // }
 
         private void rebuildWithout(SpriteCell cell)
         {
@@ -490,7 +515,7 @@ public class SpriteCutter
         public void optimizeMerge()
         {
             // sort cells on their size and coverage
-            Collections.sort(cells, SpriteCell.sizeAndCoverageComparator);
+            Collections.sort(cells, SpriteCell.sizeComparator);
 
             final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
 
@@ -502,7 +527,7 @@ public class SpriteCutter
         private void optimizePos()
         {
             // sort cells on their size and coverage
-            Collections.sort(cells, SpriteCell.sizeAndCoverageComparator);
+            Collections.sort(cells, SpriteCell.sizeComparator);
 
             final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
 
@@ -516,7 +541,7 @@ public class SpriteCutter
         private void optimizeOverdraw()
         {
             // sort cells on their size and coverage
-            Collections.sort(cells, SpriteCell.sizeAndCoverageComparator);
+            Collections.sort(cells, SpriteCell.sizeComparator);
 
             final List<SpriteCell> cellsCopy = new ArrayList<>(cells);
 
@@ -525,7 +550,7 @@ public class SpriteCutter
             // start from largest cell
             for (SpriteCell cell : cellsCopy)
             {
-                cell.optimizeOverdraw(dim, cellsCopy);
+                cell.optimizeOverdraw(image, dim, cellsCopy);
                 addCell(cell);
             }
         }
@@ -552,7 +577,7 @@ public class SpriteCutter
                 score = newScore;
 
                 // sort cells on their size and coverage
-                Collections.sort(cells, SpriteCell.sizeAndCoverageComparator);
+                Collections.sort(cells, SpriteCell.sizeComparator);
 
                 // optimize each cell independently (starting from smallest cell)
                 for (int i = cells.size() - 1; i >= 0; i--)
@@ -579,34 +604,56 @@ public class SpriteCutter
 
         public void fastOptimize()
         {
+            // keep sprites inside frame box 
+            fixPos();
+
             double score;
-            double newScore = getScore();
-            double conv = 1d;
-            
-            do
+            double minScore = getScore();
+            Solution bestSolution = new Solution(this);
+            int conv = 0;
+
+            while (true)
             {
-                score = newScore;
-                
                 // first iteration from coverage image
                 optimizeMerge();
                 optimizePos();
                 optimizeSize(false);
-                fixPos();
                 optimizeOverdraw();
+                fixPos();
+
+                score = getScore();
+                if (score < minScore)
+                {
+                    minScore = score;
+                    bestSolution.rebuildFrom(cells);
+                    conv = 0;
+                }
+
+                // stop if we reached a minimum
+                if (conv++ >= 3)
+                    break;
+
                 // second iteration from origin image
                 optimizeMerge();
                 optimizePos();
                 optimizeSize(true);
-                fixPos();
                 optimizeOverdraw();
-                
-                newScore = getScore();
-                
-                // compute convergence (to avoid death lock with oscillating score)
-                conv /= 2;
-                conv += score - newScore;
+                fixPos();
+
+                score = getScore();
+                if (score < minScore)
+                {
+                    minScore = score;
+                    bestSolution.rebuildFrom(cells);
+                    conv = 0;
+                }
+
+                // stop if we reached a minimum
+                if (conv++ >= 3)
+                    break;
             }
-            while ((newScore != score) && (Math.abs(conv) > 0.05d));
+
+            rebuildFrom(bestSolution.cells);
         }
 
         public void showInfo()
@@ -1019,7 +1066,7 @@ public class SpriteCutter
             synchronized (branches)
             {
                 final int size = branches.size();
-                
+
                 // branch mutation
                 if ((Random.nextInt() & 0xF) != 0)
                 {
@@ -1064,7 +1111,7 @@ public class SpriteCutter
                     curBranchId++;
                 }
             }
-            
+
             executor.execute(task);
         }
     }
