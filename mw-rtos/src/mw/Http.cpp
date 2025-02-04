@@ -22,8 +22,15 @@ int Http::http_module_init(char *data_buf)
             MW_CERT_PART_LABEL);
 
     if (!d.p) {
+        ESP_LOGE(HTTP_TAG,"unable to find cert partition");
         return 1;
     }
+	const esp_err_t err = esp_partition_mmap(d.p, 0, d.p->size,
+			SPI_FLASH_MMAP_DATA, &d.p_map, &d.h_map);
+	if (err) {
+		ESP_LOGE(HTTP_TAG,"unable to map cert partition: %s", esp_err_to_name(err));
+		return 2;
+	}
 
     d.buf = data_buf;
 
@@ -44,7 +51,7 @@ esp_http_client_handle_t Http::http_init(const char *url,
                     cert_len, cert[0]);     
             cert = NULL;       
         }
-
+         ESP_LOG_BUFFER_CHAR_LEVEL(HTTP_TAG,cert, cert_len, ESP_LOG_INFO);
         return http_init_int(url, cert, event_cb);
     }
 

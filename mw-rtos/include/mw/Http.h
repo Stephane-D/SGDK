@@ -15,6 +15,7 @@
 #include <esp_http_client.h>
 
 #include "mw/mw-msg.h"
+#include <esp_spi_flash.h>
 #include <esp_partition.h>
 #include <string.h>
 #include "globals.h"
@@ -27,7 +28,7 @@
 #define CERT_LEN_OFF	sizeof(uint32_t)
 #define CERT_OFF	(2 * sizeof(uint32_t))
 
-#define CERT_P_PTR(type, off)	((type*)SPI_FLASH_ADDR((d.p->address + (off))))
+#define CERT_P_PTR(type, off)	((type*)(d.p_map + (off)))
 
 class Http {
 public:
@@ -56,6 +57,10 @@ public:
         uint32_t hash_tmp;
         /// Partition with the certificate
         const esp_partition_t *p;
+    	/// Handle to the partition memory map
+    	spi_flash_mmap_handle_t h_map;
+    	/// Pointer to the memory mapped partition
+    	const void *p_map;
         /// Buffer used to send/recv HTTP data
         char *buf;
     };

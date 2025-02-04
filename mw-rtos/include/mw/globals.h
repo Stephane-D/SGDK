@@ -8,10 +8,6 @@
  ****************************************************************************/
 
 #pragma once
-/// Base physical address for the SPI flash chip
-#define SPI_FLASH_BASE	0x40200000  // 
-/// Compute the physical address for the specified SPI flash cip address
-#define SPI_FLASH_ADDR(flash_addr)	(SPI_FLASH_BASE + (flash_addr))
 
 /// Number of bits of a flash sector
 #define MW_FLASH_SECT_BITS		12
