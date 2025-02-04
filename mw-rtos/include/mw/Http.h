@@ -28,7 +28,7 @@
 #define CERT_LEN_OFF	sizeof(uint32_t)
 #define CERT_OFF	(2 * sizeof(uint32_t))
 
-#define CERT_P_PTR(type, off)	((type*)(d.p_map + (off)))
+#define CERT_P_PTR(type, off)	((type*)(d.p_map) + off)
 
 class Http {
 public:
