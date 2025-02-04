@@ -89,7 +89,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH      1
+#define ENABLE_BANK_SWITCH      0
 
 /**
  *  \brief
@@ -119,7 +119,7 @@
  *  \brief
  *      Set it to 1 if you want to use EVERDRIVE programming methods (written by Krikzz).
  */
-#define MODULE_EVERDRIVE        1
+#define MODULE_EVERDRIVE        0
 
 /**
  *  \brief
@@ -136,7 +136,7 @@
 /**
  *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu) */
-#define MODULE_MEGAWIFI         1
+#define MODULE_MEGAWIFI         0
 
 /**
  *  \brief
@@ -150,7 +150,7 @@
  *      Set it to 1 if you want to enable the TTY text console module (written by Andreas Dietrich).<br>
  *      It consume about 34 bytes of memory when enabled.
   */
-#define MODULE_CONSOLE          1
+#define MODULE_CONSOLE          0
 
 
 #endif // _CONFIG_
