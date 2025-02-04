@@ -89,7 +89,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH      1
+#define ENABLE_BANK_SWITCH      0
 
 /**
  *  \brief
@@ -119,7 +119,7 @@
  *  \brief
  *      Set it to 1 if you want to use EVERDRIVE programming methods (written by Krikzz).
  */
-#define MODULE_EVERDRIVE        1
+#define MODULE_EVERDRIVE        0
 
 /**
  *  \brief
@@ -137,33 +137,6 @@
  *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu) */
 #define MODULE_MEGAWIFI         1
-
-/**
- *  \brief
- *      Implementation of MEGAWIFI default using 16c550 chipset.
- */
-#define MW_IMP_DEFAULT          0
-
-/**
- *  \brief
- *      Implementation of MEGAWIFI with Everdrive X7.
- */
-#define MW_IMP_EVERDRIVE_X7     1
-
-/**
- *  \brief
- *      Implementation of MEGAWIFI with Everdrive PRO
- */
-#define MW_IMP_EVERDRIVE_PRO    2
-
-
-/**
- *  \brief
- *      Implementation to use MEGAWIFI. Use MW_IMP_DEFAULT, MW_IMP_EVERDRIVE_X7 or MW_IMP_EVERDRIVE_PRO. 
- *      Default MW_IMP_DEFAULT.
- */
-
-#define MW_IMPLEMENTATION MW_IMP_EVERDRIVE_X7
 
 /**
  *  \brief

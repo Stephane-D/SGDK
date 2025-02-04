@@ -9,7 +9,7 @@
 *************************************** */
 #include "config.h"
 
-#if (MODULE_MEGAWIFI != 0 && MW_IMP_EVERDRIVE_X7)
+#if (MODULE_MEGAWIFI && MODULE_EVERDRIVE)
 
 #include "ext/mw/ssf.h"
 

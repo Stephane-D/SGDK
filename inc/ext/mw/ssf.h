@@ -22,7 +22,7 @@
 #include "config.h"
 #include "types.h"
 
-#if (MODULE_MEGAWIFI != 0 && MW_IMPLEMENTATION == MW_IMP_EVERDRIVE_X7)
+#if (MODULE_MEGAWIFI && MODULE_EVERDRIVE)
 //#define SSF_CTRL_P 0x8000 //register accesss protection bit. should be set, otherwise register will ignore any attempts to write
 //#define SSF_CTRL_X 0x4000 //32x mode
 //#define SSF_CTRL_W 0x2000 //ROM memory write protection

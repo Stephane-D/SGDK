@@ -16,7 +16,6 @@
  * To build this example set MODULE_MEGAWIFI to 1 in config.h and
  * rebuild the library.
  * You can use: 
- * - MW_IMPLEMENTATION to MW_IMP_EVERDRIVE_X7 
  * - MODULE_EVERDRIVE to 1 
  * - ENABLE_BANK_SWITCH to 1
  * in config.h to use everdive and MegaWifi Addon
