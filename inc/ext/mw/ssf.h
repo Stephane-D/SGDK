@@ -17,12 +17,12 @@
  *        C SD card type. 0=SD, 1=SDHC. Not used on WIFI.
 *************************************** */
 #ifndef _SSF_H_
-#define _SSF_H_
+#define _SSF_H
 
 #include "config.h"
 #include "types.h"
 
-#if (MODULE_MEGAWIFI && MODULE_EVERDRIVE)
+#if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 1)
 //#define SSF_CTRL_P 0x8000 //register accesss protection bit. should be set, otherwise register will ignore any attempts to write
 //#define SSF_CTRL_X 0x4000 //32x mode
 //#define SSF_CTRL_W 0x2000 //ROM memory write protection

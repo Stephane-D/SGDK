@@ -364,7 +364,7 @@ enum lsd_status lsd_recv_sync(char *buf, uint16_t *len, uint8_t *ch)
 
 void lsd_line_sync(void)
 {
-#if (MW_IMPLEMENTATION == MW_IMP_DEFAULT)
+#if (MODULE_EVERDRIVE == 0)
 	for (int i = 0; i < 256; i++) {
 		if (uart_tx_ready()) {
 			uart_putc(0x55);
