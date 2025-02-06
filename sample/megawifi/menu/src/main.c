@@ -17,6 +17,7 @@
  * rebuild the library.
  * You can use: 
  * - MODULE_EVERDRIVE to 1 
+ * - ENABLE_BANK_SWITCH to 1
  * in config.h to use everdive and MegaWifi Addon
  *
  * \author Juan Antonio (PaCHoN)
