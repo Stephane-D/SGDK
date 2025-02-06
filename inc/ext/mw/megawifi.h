@@ -60,10 +60,10 @@
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
 #define MW_STAT_POLL_MS		250
 
-#if (MODULE_EVERDRIVE == 0 && MW_IMPLEMENTATION == MW_IMP_DEFAULT)
+#if (MODULE_EVERDRIVE == 0)
 	/// Length of the wflash buffer
 	#define MW_BUFLEN	1460
-#elif (MODULE_EVERDRIVE == 1 && MW_IMPLEMENTATION == MW_IMP_EVERDRIVE_X7)	
+#elif (MODULE_EVERDRIVE == 1)	
 	/// Length of the wflash buffer
 	#define MW_BUFLEN	1436
 #endif
