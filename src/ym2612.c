@@ -39,7 +39,7 @@ void NO_INLINE YM2612_reset()
     YM2612_write(0, 0x2B);
     YM2612_write(1, 0x00);
 
-    for(p = 0; p < 1; p++)
+    for(p = 0; p < 2; p++)
     {
         for(ch = 0; ch < 3; ch++)
         {
@@ -63,7 +63,7 @@ void NO_INLINE YM2612_reset()
         }
     }
 
-    for(p = 0; p < 1; p++)
+    for(p = 0; p < 2; p++)
     {
         for(ch = 0; ch < 3; ch++)
         {
