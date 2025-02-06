@@ -370,7 +370,7 @@ void lsd_line_sync(void)
 			uart_putc(0x55);
 		}
 	}
-#endif // MODULE_MEGAWIFI
+#endif
 }
 
 #endif // MODULE_MEGAWIFI

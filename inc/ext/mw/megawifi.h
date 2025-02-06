@@ -27,7 +27,7 @@
 #ifndef _MEGAWIFI_H_
 #define _MEGAWIFI_H_
 
-#if MODULE_EVERDRIVE
+#if (MODULE_EVERDRIVE == 1)
 	#include "ssf.h"
 #else
 	#include "16c550.h"
