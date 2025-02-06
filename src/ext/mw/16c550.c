@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if (MODULE_MEGAWIFI != 0 && MODULE_EVERDRIVE == 0)
+#if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 0)
 
 #include "ext/mw/16c550.h"
 

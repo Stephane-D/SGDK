@@ -18,7 +18,7 @@
 #include "memory.h"
 #include "task.h"
 
-#if MODULE_MEGAWIFI
+#if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/megawifi.h"
 

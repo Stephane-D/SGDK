@@ -44,14 +44,14 @@
 #ifndef _LSD_H_
 #define _LSD_H_
 
-#if (MODULE_MEGAWIFI != 0 && MODULE_EVERDRIVE == 0)
+#if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 0)
 	#include "16c550.h"
-#elif (MODULE_MEGAWIFI != 0 && MODULE_EVERDRIVE == 1)
+#elif (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 1)
 	#include "ssf.h"
 #endif
 #include "mw-msg.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 /// LSD frame overhead in bytes
 #define LSD_OVERHEAD		4
