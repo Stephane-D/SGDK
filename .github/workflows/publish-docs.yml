@@ -1,0 +1,58 @@
+name: publish-docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+      - 'doxygen'
+    tags:
+      - 'v*'
+env:
+  DOXYGEN_VERSION: 1.9.7
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Install package
+        run: sudo apt-get install graphviz
+      - name: Cache Doxygen
+        id: cache-doxygen
+        uses: actions/cache@v3
+        with:
+          path: ~/doxygen-${{ env.DOXYGEN_VERSION }}
+          key: doxygen-${{ env.DOXYGEN_VERSION }}
+      - if: ${{ steps.cache-doxygen.outputs.cache-hit != 'true' }}
+        name: Install Doxygen
+        run: |
+          wget https://www.doxygen.nl/files/doxygen-${{ env.DOXYGEN_VERSION }}.linux.bin.tar.gz -O - | tar  -xz
+          mv doxygen-${{ env.DOXYGEN_VERSION }} ~/doxygen-${{ env.DOXYGEN_VERSION }}
+      - name: Add Doxygen to Path
+        run : echo '~/doxygen-${{ env.DOXYGEN_VERSION }}/bin' >> $GITHUB_PATH
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+      - name: Download css file
+        run: |
+          wget https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-sidebar-only.css -P deployment/resources/
+          wget https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome.css -P  deployment/resources/
+      - name: Build Github Pages
+        working-directory: deployment
+        run: doxygen Doxyfile
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2.0.0
+        with:
+          path: ./deployment/html
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2.0.4
