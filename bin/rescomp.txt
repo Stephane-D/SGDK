@@ -1,4 +1,4 @@
-ResComp 3.90 (November 2024)
+ResComp 3.92 (January 2025)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -247,9 +247,9 @@ ensure that all pixels from a same tile (block of 8x8 pixels) use the same value
 When using a TMX Tiled file you can define the priority information in different ways:
 - use 2 layers where the low priority layer's name is suffixed by ' low' and high prority layer is suffixed by ' high'
 - use 2 layers with the main layer define the map itself and a second layer suffixed by ' priority' containing the priority information (0/1)
-Note that it's always possible to set priority on a 8x8 tile basis using the second method by using the tileset information:
-- full transparent 8x8 tile is considered as LOW priority
-- 8x8 tile containing at least 1 non transparent pixel is considered as HIGH priority
+  Note that it's possible to set priority on a 8x8 tile basis using the second method by using the tileset information:
+  - full transparent 8x8 tile is considered as LOW priority  
+  - 8x8 tile containing at least 1 non transparent pixel is considered as HIGH priority
 
 
 OBJECTS

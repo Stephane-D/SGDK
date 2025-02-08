@@ -49,6 +49,8 @@
 
 #define NEED_UPDATE                         0x001F
 
+#define STATE_ANIMATION_DONE                0x0020
+
 
 // shared from vdp_spr.c unit
 extern void logVDPSprite(u16 index);
@@ -1161,6 +1163,8 @@ void SPR_nextFrame(Sprite* sprite)
 
         // loop
         frameInd = anim->loop;
+        // set animation done state (allows SPR_isAnimationDone(..) to correctly report state when called from frame change callback)
+        sprite->status |= STATE_ANIMATION_DONE;
     }
 
     // set new frame
@@ -1221,8 +1225,10 @@ bool SPR_isAnimationDone(Sprite* sprite)
     if (!isSpriteValid(sprite, "SPR_isAnimationDone"))
         return FALSE;
 
-    // last tick on last animation frame (use <= 1 so it also works when AutoAnimation is disabled)
-    return (sprite->timer <= 1) && (sprite->frameInd == (sprite->animation->numFrame - 1));
+    // check for animation done state (mainly used for frame change callback) or
+    return (sprite->status & STATE_ANIMATION_DONE) ||
+            // if we are on last tick from last frame (if auto animation is disabled then only test for last frame)
+           ((sprite->frameInd == (sprite->animation->numFrame - 1)) && ((sprite->timer == 1) || (sprite->timer == -1)));
 }
 
 
@@ -1895,6 +1901,9 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     sprite->lastNumSprite = currentNumSprite;
     // set frame
     sprite->frame = frame;
+    // init timer for this frame *before* frame change callback so it can modify change it if needed.
+    if (SPR_getAutoAnimation(sprite))
+        sprite->timer = frame->timer;
 
     // frame change event handler defined ? --> call it
     if (sprite->onFrameChange)
@@ -1905,10 +1914,6 @@ static u16 updateFrame(Sprite* sprite, u16 status)
         status = sprite->status;
     }
 
-    // init timer for this frame *after* calling callback (this allows SPR_isAnimationDone(..) to correctly report TRUE when animation is done)
-    if (SPR_getAutoAnimation(sprite))
-        sprite->timer = frame->timer;
-
     // require tile data upload
     if (status & SPR_FLAG_AUTO_TILE_UPLOAD)
         status |= NEED_TILES_UPLOAD;
@@ -1916,8 +1921,8 @@ static u16 updateFrame(Sprite* sprite, u16 status)
     if (status & SPR_FLAG_AUTO_VISIBILITY)
         status |= NEED_VISIBILITY_UPDATE;
 
-    // frame update done
-    status &= ~NEED_FRAME_UPDATE;
+    // frame update done, also clear ANIMATION_DONE state
+    status &= ~(NEED_FRAME_UPDATE | STATE_ANIMATION_DONE);
 
     END_PROFIL(PROFIL_UPDATE_FRAME)
 

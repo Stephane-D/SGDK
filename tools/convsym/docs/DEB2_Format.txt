@@ -1,0 +1,58 @@
+
+---------------------------------------
+Debug Information version 2.0 format
+Created and documented by Vladikcomper
+---------------------------------------
+
+The debug information data includes 3 base sections, as listed below:
+	1. Header
+	2. Huffman decoding table
+	3. Blocks
+
+----------
+1. Header
+----------
+
+	$00	.w	Version token, should contain $DEB2 so the format is recognized as valid
+	$02	.w	Relative* pointer to the Huffman decoding table
+
+	Below this and before the Huffman decoding table, there is array of blocks pointers, the layout is demonstrated below:
+
+	$04	.l	Relative pointer to block $00 data (covers offsets $0 - $FFFF) or zero if the block has no symbols
+	$06	.l	Relative pointer to block $01 data (covers offsets $10000 - $1FFFF) or zero if the block has no symbols
+	...
+
+	Block pointer table notes:
+	1) The number of blocks is determined by the ConvSym utility based on symbol with the greatest offset found within the valid memory range (its value shouldn't exceed the ROM size).
+	2) Each block covers the respective 64 kb section of ROM: block $00 is the first 64kb, block $01 is the second 64kb, etc.
+	4) As stated above, if the block doesn't happen to include any symbols, the pointer is zeroed to indicate this.
+
+	*) Pointer is relative to its own offset, not the offset of the section itself. E.g. pointer containing $0020 means the data is $20 bytes below the location, where the pointer itself was read from. Pointers are also considered to be unsigned, meaning that $FFFE (-$0002 in signed form) actually adds $FFFE to the location, and not subtracts $0002 from it.
+
+---------------------------
+2. Huffman decoding table
+---------------------------
+
+	This table is used to decode Huffman-compressed symbol data. The table consists of the records with the following format:
+	
+	$00	.w	Code
+	$02	.b	Code length
+	$03	.b	Decoded character
+
+	Note that all entries must be sorted ascendingly by the code field, to make faster search possible.
+
+-----------
+3. Blocks
+-----------
+
+	Each 64kb block structure starts with the word, specifying the length of the main data structures describing each symbol within the block:
+
+	$00	.w	Relative pointer to the symbols heap
+
+	Below this and before the heap follows the array of symbol structures, each record having the following format:
+	
+	$00	.w	Lower 16-bit of symbol offset (higher 16-bits are determined by the block number itself)
+	$02	.w	Pointer to the encoded symbol text, relative to the symbols heap start
+	
+	Corresponding symbol texts are usually stored in a so-called "symbols heap", which should be located right after structures array.
+

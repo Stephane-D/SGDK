@@ -52,47 +52,38 @@ rom_header:
         .incbin "out/rom_head.bin", 0, 0x100
 
 _Entry_Point:
+* disable interrupts
         move    #0x2700,%sr
-        tst.l   0xa10008
-        bne.s   SkipJoyDetect
-
-        tst.w   0xa1000c
-
-SkipJoyDetect:
-        bne.s   SkipSetup
-
-        lea     Table,%a5
-        movem.w (%a5)+,%d5-%d7
-        movem.l (%a5)+,%a0-%a4
-* Check Version Number
-        move.b  -0x10ff(%a1),%d0
-        andi.b  #0x0f,%d0
-        beq.s   WrongVersion
-
-* Sega Security Code (SEGA)
-        move.l  #0x53454741,0x2f00(%a1)
-WrongVersion:
-* Read from the control port to cancel any pending read/write command
-        move.w  (%a4),%d0
 
 * Configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
         move    %sp, %usp
         sub     #USER_STACK_LENGTH, %sp
 
-        move.w  %d7,(%a1)
-        move.w  %d7,(%a2)
+* Halt Z80 (need to be done as soon as possible on reset)
+        move.l  #0xA11100,%a0       /* Z80_HALT_PORT */
+        move.w  #0x0100,%d0
+        move.w  %d0,(%a0)           /* HALT Z80 */
+        move.w  %d0,0x0100(%a0)     /* END RESET Z80 */
 
-* Jump to initialisation process now...
+        tst.l   0xa10008
+        bne.s   SkipInit
 
+        tst.w   0xa1000c
+        bne.s   SkipInit
+
+* Check Version Number
+        move.b  -0x10ff(%a0),%d0
+        andi.b  #0x0f,%d0
+        beq.s   NoTMSS
+
+* Sega Security Code (SEGA)
+        move.l  #0x53454741,0x2f00(%a0)
+
+NoTMSS:
         jmp     _start_entry
 
-SkipSetup:
+SkipInit:
         jmp     _reset_entry
-
-
-Table:
-        dc.w    0x8000,0x3fff,0x0100
-        dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
 
 
 *------------------------------------------------
@@ -100,126 +91,6 @@ Table:
 *       interrupt functions
 *
 *------------------------------------------------
-
-registersDump:
-        move.l %d0,registerState+0
-        move.l %d1,registerState+4
-        move.l %d2,registerState+8
-        move.l %d3,registerState+12
-        move.l %d4,registerState+16
-        move.l %d5,registerState+20
-        move.l %d6,registerState+24
-        move.l %d7,registerState+28
-        move.l %a0,registerState+32
-        move.l %a1,registerState+36
-        move.l %a2,registerState+40
-        move.l %a3,registerState+44
-        move.l %a4,registerState+48
-        move.l %a5,registerState+52
-        move.l %a6,registerState+56
-        move.l %a7,registerState+60
-        rts
-
-busAddressErrorDump:
-        move.w 4(%sp),ext1State
-        move.l 6(%sp),addrState
-        move.w 10(%sp),ext2State
-        move.w 12(%sp),srState
-        move.l 14(%sp),pcState
-        jmp registersDump
-
-exception4WDump:
-        move.w 4(%sp),srState
-        move.l 6(%sp),pcState
-        move.w 10(%sp),ext1State
-        jmp registersDump
-
-exceptionDump:
-        move.w 4(%sp),srState
-        move.l 6(%sp),pcState
-        jmp registersDump
-
-
-_Bus_Error:
-        jsr busAddressErrorDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  busErrorCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Address_Error:
-        jsr busAddressErrorDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  addressErrorCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Illegal_Instruction:
-        jsr exception4WDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  illegalInstCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Zero_Divide:
-        jsr exceptionDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  zeroDivideCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Chk_Instruction:
-        jsr exception4WDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  chkInstCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Trapv_Instruction:
-        jsr exception4WDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  trapvInstCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Privilege_Violation:
-        jsr exceptionDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  privilegeViolationCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Trace:
-        jsr exceptionDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  traceCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Line_1010_Emulation:
-_Line_1111_Emulation:
-        jsr exceptionDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  line1x1xCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
-
-_Error_Exception:
-        jsr exceptionDump
-        movem.l %d0-%d1/%a0-%a1,-(%sp)
-        move.l  errorExceptionCB, %a0
-        jsr    (%a0)
-        movem.l (%sp)+,%d0-%d1/%a0-%a1
-        rte
 
 _INT:
         movem.l %d0-%d1/%a0-%a1,-(%sp)

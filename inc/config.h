@@ -82,6 +82,16 @@
 #define LEGACY_SPRITE_ENGINE    0
 
 /**
+ * \brief
+ *      Set it to 1 to use the original SGDK's error handling screen and vectors.<br>
+ *      Otherwise error handler from the MD Debugger project is used, which supports source code symbols with "debug" build proifle and backtrace.<br>
+ *
+ *      The new error handler, however, completely takes over exception vectors and doesn't allow to set your own callbacks for errors (e.g. addressErrorCB).<br>
+ *      If you rely on callbacks to override error handling behavior, consider using legacy system instead.
+ */
+#define LEGACY_ERROR_HANDLER    0
+
+/**
  *  \brief
  *      Set it to 1 to enable automatic bank switch using official SEGA mapper for ROM > 4MB.
  *

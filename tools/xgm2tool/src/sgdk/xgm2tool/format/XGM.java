@@ -906,7 +906,7 @@ public class XGM
         boolean canCombineON = false;
         XGMFMCommand setFreq = null;
 
-        // isolated key-on / key-off combine
+        // isolated key-off/on sequence combine
         for (XGMFMCommand com : fmChannelCommands)
         {
             if (com.isYMKeyOFFWrite())
@@ -926,12 +926,26 @@ public class XGM
             }
             else if (com.isYMSetTL() || com.isYMKeyAdvWrite() || com.isYMKeySequence() || com.isYMLoadInst() || com.isYMWrite())
             {
-                // not yet meet the set freq command ? --> cancel combination
-                if (setFreq == null)
+                // meet a set freq command ? --> combine now
+                if (setFreq != null)
                 {
-                    canCombineOFF = false;
-                    canCombineON = false;
+                    if (canCombineOFF)
+                    {
+                        setFreq.setYMFreqKeyOFF();
+                        lastKeyOFF.setDummy();
+                    }
+                    if (canCombineON)
+                    {
+                        setFreq.setYMFreqKeyON();
+                        lastKeyON.setDummy();
+                    }
                 }
+                
+                // done
+                canCombineOFF = false;
+                canCombineON = false;
+                setFreq = null;
+                hasKeyOn = false;
             }
             // the driver does not support key on/off on setFreq special
             else if (com.isYMFreqWrite() && !com.isYMFreqSpecialWrite())
@@ -942,14 +956,15 @@ public class XGM
             }
         }
 
+        // last set Freq to combine ?
         if (setFreq != null)
         {
-            if (canCombineOFF && !setFreq.isYMFreqWithKeyOFF())
+            if (canCombineOFF)
             {
                 setFreq.setYMFreqKeyOFF();
                 lastKeyOFF.setDummy();
             }
-            if (canCombineON && !setFreq.isYMFreqWithKeyON())
+            if (canCombineON)
             {
                 setFreq.setYMFreqKeyON();
                 lastKeyON.setDummy();

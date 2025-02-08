@@ -44,8 +44,8 @@
 #define SPR_FLAG_INSERT_HEAD                    0x4000
 /**
  *  \brief
- *      Disable animation auto loop..<br>
- *      By default animation always restart fater the last frame has been played.
+ *      Disable animation auto loop.<br>
+ *      By default animation always restart after the last frame has been played.
  *      This flag prevent the animation to restart and so the animation end on the last frame forever (see #SPR_getAnimationDone(..))
  */
 #define SPR_FLAG_DISABLE_ANIMATION_LOOP         0x2000
@@ -844,8 +844,8 @@ bool SPR_getAutoAnimation(Sprite* sprite);
 void SPR_setAnimationLoop(Sprite* sprite, bool value);
 /**
  *  \brief
- *      Return TRUE if the sprite reached the last frame of the current animation.<br>
- *      When auto animation is enabled (see SPR_setAutoAnimation(..)) the function returns TRUE only when we reach
+ *      Returns TRUE if the sprite reached the end of the current animation.<br>
+ *      When auto animation is enabled (see SPR_setAutoAnimation(..)) the function returns TRUE only when we reached
  *      the last *tick* of the last animation frame.<br>
  *      When auto animation is disabled the function returns TRUE as soon we are on last animation frame.
  *

@@ -25,18 +25,20 @@ public class VDPSprite extends Resource
     {
         super(id);
 
-        if ((offX < 0) || (offX > 255) || (offY < 0) || (offY > 255))
-            throw new IllegalArgumentException("Error: sprite '" + id + "' offset X / Y is out of range (< 0 or > 255)");
-        // if ((offX < -128) || (offX > 127) || (offY < -128) || (offY > 127))
-        // throw new IllegalArgumentException(
-        // "Error: sprite '" + id + "' offset X / Y is out of range (< -128 or > 127)");
-
         this.offsetX = offX;
         this.offsetY = offY;
         this.wt = w;
         this.ht = h;
         this.offsetXFlip = (wf * 8) - (offX + (w * 8));
         this.offsetYFlip = (hf * 8) - (offY + (h * 8));
+
+        if ((offsetX < 0) || (offsetX > 255) || (offsetY < 0) || (offsetY > 255))
+            throw new IllegalArgumentException("Error: sprite '" + id + "' offset X / Y is out of range (< 0 or > 255)");
+        if ((offsetXFlip < 0) || (offsetXFlip > 255) || (offsetYFlip < 0) || (offsetYFlip > 255))
+            throw new IllegalArgumentException("Error: sprite '" + id + "' flipped offset X / Y is out of range (< 0 or > 255)");
+        // if ((offX < -128) || (offX > 127) || (offY < -128) || (offY > 127))
+        // throw new IllegalArgumentException(
+        // "Error: sprite '" + id + "' offset X / Y is out of range (< -128 or > 127)");
 
         // compute hash code
         hc = (offsetX << 0) ^ (offsetXFlip << 0) ^ (offsetY << 8) ^ (offsetYFlip << 8) ^ (wt << 16) ^ (ht << 24);

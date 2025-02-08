@@ -75,7 +75,8 @@ static void internal_reset();
 // this one can't be static (used by vdp.c)
 bool addFrameLoad(u16 frameLoad, u32 vtime);
 
-// exception callbacks
+#if LEGACY_ERROR_HANDLER
+// exception callbacks (legacy error handler)
 __attribute__((externally_visible)) VoidCallback *busErrorCB;
 __attribute__((externally_visible)) VoidCallback *addressErrorCB;
 __attribute__((externally_visible)) VoidCallback *illegalInstCB;
@@ -86,23 +87,24 @@ __attribute__((externally_visible)) VoidCallback *privilegeViolationCB;
 __attribute__((externally_visible)) VoidCallback *traceCB;
 __attribute__((externally_visible)) VoidCallback *line1x1xCB;
 __attribute__((externally_visible)) VoidCallback *errorExceptionCB;
-__attribute__((externally_visible)) VoidCallback *intCB;
 
-// user V-Int, H-Int and Ext-Int callbacks
-__attribute__((externally_visible)) VoidCallback *vintCB;
-__attribute__((externally_visible)) InterruptCaller hintCaller;
-__attribute__((externally_visible)) VoidCallback *eintCB;
-
-// user VBlank callbacks
-VoidCallback *vblankCB;
-
-// exception state consumes 78 bytes of memory
+// exception state consumes 78 bytes of memory (legacy error handler)
 __attribute__((externally_visible)) u32 registerState[8+8];
 __attribute__((externally_visible)) u32 pcState;
 __attribute__((externally_visible)) u32 addrState;
 __attribute__((externally_visible)) u16 ext1State;
 __attribute__((externally_visible)) u16 ext2State;
 __attribute__((externally_visible)) u16 srState;
+#endif
+
+// user V-Int, H-Int, Ext-Int and Int callbacks
+__attribute__((externally_visible)) VoidCallback *vintCB;
+__attribute__((externally_visible)) InterruptCaller hintCaller;
+__attribute__((externally_visible)) VoidCallback *eintCB;
+__attribute__((externally_visible)) VoidCallback *intCB;
+
+// user VBlank callbacks
+VoidCallback *vblankCB;
 
 __attribute__((externally_visible)) vu16 VBlankProcess;
 __attribute__((externally_visible)) vu16 intTrace;
@@ -119,6 +121,7 @@ static u16 cpuFrameLoad;
 static u32 frameCnt;
 static u32 lastSubTick;
 
+#if LEGACY_ERROR_HANDLER
 
 static void addValueU8(char *dst, char *str, u8 value)
 {
@@ -405,6 +408,7 @@ void NO_INLINE _errorexception_callback()
 
     while(1);
 }
+#endif /* LEGACY_ERROR_HANDLER */
 
 // level interrupt default callback
 void NO_INLINE _int_callback()
@@ -477,6 +481,7 @@ void NO_INLINE _start_entry()
     // reset vtimer
     vtimer = 0;
 
+#if LEGACY_ERROR_HANDLER
     // default interrupt callback
     busErrorCB = _buserror_callback;
     addressErrorCB = _addresserror_callback;
@@ -488,6 +493,8 @@ void NO_INLINE _start_entry()
     traceCB = _trace_callback;
     line1x1xCB = _line1x1x_callback;
     errorExceptionCB = _errorexception_callback;
+#endif
+
     intCB = _int_callback;
 
     internal_reset();

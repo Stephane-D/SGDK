@@ -2437,7 +2437,7 @@ com_loop                                ; 7E                        ' 80
             INC     E                   ; next param                ' 4     |
             LD      (XGM_ADDR+2), A     ; set new XGM addr (H)      ' 13    |
 
-            XOR     A                   ; force end frame fter loop ' 4     |
+            XOR     A                   ; force end frame           ' 4     |
             LD      (DE), A             ; after loop taken          ' 7     | 11 (249)
 
             JP      execute_xgm         ; +5 cycles delay here..    ' 10    | (254+5)

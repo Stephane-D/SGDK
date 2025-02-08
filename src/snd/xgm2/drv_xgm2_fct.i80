@@ -100,7 +100,7 @@ process68KCommands_noPSG                    ; call                      ' 17
             SAMPLE_OUTPUT_FASTCALL
 
             LD      HL, DAC_ENABLE              ; reset DAC state       ' 10    |
-            LD      (HL), $80                   ;                       ' 10    | (30)
+            LD      (HL), $00                   ; disable by default    ' 10    | (30)
             JP      .done_play_commands         ;                       ' 10    |
 
 .stopped                                        ;                       ' 20

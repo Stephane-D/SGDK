@@ -332,7 +332,7 @@ public class ImageUtil
     /**
      * Scale an image with specified size.
      */
-    public static BufferedImage scale(Image image, int width, int height)
+    public static BufferedImage scale(Image image, int width, int height, boolean filter)
     {
         if (image != null)
         {
@@ -340,7 +340,7 @@ public class ImageUtil
             final Graphics2D g = result.createGraphics();
 
             g.setComposite(AlphaComposite.Src);
-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, filter ? RenderingHints.VALUE_INTERPOLATION_BILINEAR : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
             g.drawImage(image, 0, 0, width, height, null);
             g.dispose();
 
@@ -348,6 +348,14 @@ public class ImageUtil
         }
 
         return null;
+    }
+
+    /**
+     * Scale an image with specified size.
+     */
+    public static BufferedImage scale(Image image, int width, int height)
+    {
+    	return scale(image, width, height, true);
     }
 
     /**
@@ -927,6 +935,28 @@ public class ImageUtil
         }
 
         return false;
+    }
+    
+    public static Rectangle getOpaqueRect(byte[] image8bpp, Dimension imageDim, Rectangle region)
+    {
+        Rectangle adjRegion = region.intersection(new Rectangle(imageDim));
+        Rectangle result = new Rectangle(0, 0, -1, -1);
+        Rectangle pt = new Rectangle(0, 0, 1, 1);
+        
+        for(int j = adjRegion.y; j < (adjRegion.y + adjRegion.height); j++)
+        {
+            int offset = j * imageDim.width;
+            for(int i = adjRegion.x; i < (adjRegion.x + adjRegion.width); i++)
+            {
+                if (image8bpp[offset + i] != 0)
+                {
+                    pt.setLocation(i, j);
+                    result.add(pt);
+                }
+            }
+        }
+        
+        return result;
     }
 
     /**

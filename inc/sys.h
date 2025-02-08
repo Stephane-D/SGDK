@@ -37,7 +37,7 @@
  *  \brief
  *      To force no inlining for this method
  */
-#define NO_INLINE                   __attribute__ ((noinline))
+#define NO_INLINE                   __attribute__((noinline))
 
 /**
  *  \brief
@@ -49,7 +49,7 @@
  *  \brief
  *      Declare function for the hint callback (generate a RTE to return from interrupt instead of RTS)
  */
-#define HINTERRUPT_CALLBACK         __attribute__ ((interrupt)) void
+#define HINTERRUPT_CALLBACK         __attribute__((interrupt)) void
 
 
 // exist through rom_head.c
@@ -93,7 +93,7 @@ typedef enum
     ON_VBLANK_START     /** Start VBlank process on VBlank *start* period, means that we wait the next *start* of VBlank period if we missed it */
 } VBlankProcessTime;
 
-
+#if LEGACY_ERROR_HANDLER
 /**
  *  \brief
  *      Bus error interrupt callback.
@@ -164,6 +164,8 @@ extern VoidCallback *line1x1xCB;
  * You can modify it to use your own callback (for debug purpose).
  */
 extern VoidCallback *errorExceptionCB;
+#endif
+
 /**
  *  \brief
  *      Level interrupt callback.

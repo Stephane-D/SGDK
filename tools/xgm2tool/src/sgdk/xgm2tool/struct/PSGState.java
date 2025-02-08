@@ -124,24 +124,37 @@ public class PSGState
 
     public boolean isSame(PSGState state, int ind, int typ)
     {
-        if ((init[ind][typ] == false) && (state.init[ind][typ] == false))
+    	// consider same if 'state' is not initialised here
+        if (!state.init[ind][typ])
             return true;
+        // consider different if we are not initialised here while 'state' is
+        if (!init[ind][typ])
+            return false;
 
         return init[ind][typ] && (state.get(ind, typ) == get(ind, typ));
     }
 
     public boolean isLowSame(PSGState state, int ind, int typ)
     {
-        if ((init[ind][typ] == false) && (state.init[ind][typ] == false))
+    	// consider same if 'state' is not initialised here
+        if (!state.init[ind][typ])
             return true;
+        // consider different if we are not initialised here while 'state' is
+        if (!init[ind][typ])
+            return false;
 
         return init[ind][typ] && ((state.get(ind, typ) & 0xF) == (get(ind, typ) & 0xF));
     }
 
     public boolean isHighSame(PSGState state, int ind, int typ)
     {
-        if ((init[ind][typ] == false) && (state.init[ind][typ] == false))
+    	// consider same if 'state' is not initialised here
+        if (!state.init[ind][typ])
             return true;
+        // consider different if we are not initialised here while 'state' is
+        if (!init[ind][typ])
+            return false;
+
 
         return init[ind][typ] && ((state.get(ind, typ) & 0x3F0) == (get(ind, typ) & 0x3F0));
     }

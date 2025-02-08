@@ -19,6 +19,7 @@ ifeq ($(OS),Windows_NT)
 	LD:= $(BIN)/ld
 	NM:= $(BIN)/nm
 	OBJCPY := $(BIN)/objcopy
+	CONVSYM := $(BIN)/convsym
 	ASMZ80 := $(BIN)/sjasm
 	MACCER := $(BIN)/mac68k
 	BINTOS := $(BIN)/bintos
@@ -37,6 +38,7 @@ else
 	LD := $(PREFIX)ld
 	NM := $(PREFIX)nm
 	OBJCPY := $(PREFIX)objcopy
+	CONVSYM := convsym
 	ASMZ80 := sjasm
 	MACCER := mac68k
 	BINTOS := bintos
