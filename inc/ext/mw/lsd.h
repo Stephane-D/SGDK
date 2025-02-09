@@ -14,7 +14,8 @@
  * specified callback is run.
  *
  * \author Jesus Alonso (doragasu)
- * \date   2019
+ * \author Juan Antonio (PaCHoN)
+ * \date   2019~2025
  * \note   Unfortunately the Megadrive does have neither an interrupt pin nor
  *         DMA threshold pins in the cartridge slot, so polling is the only
  *         way. So you have
@@ -43,10 +44,14 @@
 #ifndef _LSD_H_
 #define _LSD_H_
 
-#include "16c550.h"
+#if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 0)
+	#include "16c550.h"
+#elif (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 1)
+	#include "ssf.h"
+#endif
 #include "mw-msg.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 /// LSD frame overhead in bytes
 #define LSD_OVERHEAD		4

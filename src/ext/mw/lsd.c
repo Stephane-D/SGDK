@@ -4,7 +4,8 @@
  *         data link.
  *
  * \author Jesus Alonso (doragasu)
- * \date   2016
+ * \author Juan Antonio (PaCHoN)
+ * \date   2016~2025
  * \todo   Implement UART RTS/CTS handshaking.
  * \todo   Current implementation uses polling. Unfortunately as the Genesis/
  *         Megadrive does not have an interrupt pin on the cart, implementing
@@ -17,7 +18,7 @@
 #include "memory.h"
 
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/lsd.h"
 /// Uart used for LSD
@@ -363,11 +364,13 @@ enum lsd_status lsd_recv_sync(char *buf, uint16_t *len, uint8_t *ch)
 
 void lsd_line_sync(void)
 {
+#if (MODULE_EVERDRIVE == 0)
 	for (int i = 0; i < 256; i++) {
 		if (uart_tx_ready()) {
 			uart_putc(0x55);
 		}
 	}
+#endif
 }
 
 #endif // MODULE_MEGAWIFI
