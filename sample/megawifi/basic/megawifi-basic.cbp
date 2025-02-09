@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="megawifi" />
+		<Option title="megawifi - basic" />
 		<Option makefile="D:/apps/SGDK/makefile.gen" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="0" />

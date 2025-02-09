@@ -21,9 +21,6 @@
 #error "Set MODULE_MEGAWIFI to 1 in config.h and rebuild the library"
 #endif
 
-/// Length of the wflash buffer
-#define MW_BUFLEN	1460
-
 /// TCP port to use (set to Megadrive release year ;-)
 #define MW_CH_PORT 	1985
 
