@@ -17,8 +17,9 @@
  * prepended to the payload.
  *
  * \author Jesus Alonso (doragasu)
- * \date 2015
- *
+ * \author Juan Antonio (PaCHoN)
+ * \date 2025
+ * 
  * \note This module requires setting MODULE_MEGAWIFI to 1 in config.h and
  * rebuilding the library (if you had to change them).
  ****************************************************************************/
@@ -26,12 +27,13 @@
 #ifndef _MEGAWIFI_H_
 #define _MEGAWIFI_H_
 
-#include "16c550.h"
+#if (MODULE_EVERDRIVE == 1)
+	#include "ssf.h"
+#else
+	#include "16c550.h"
+#endif
 #include "mw-msg.h"
 #include "lsd.h"
-
-#if (MODULE_MEGAWIFI != 0)
-
 
 /// API version implemented, major number
 #define MW_API_VERSION_MAJOR	1
@@ -53,8 +55,18 @@
 #define MW_ASSOC_WAIT_SLEEP_MS	5000
 /// Timeout for upgrade command in milliseconds
 #define MW_UPGRADE_TOUT_MS	180000
+/// Timeout for ping command in milliseconds
+#define MW_PING_TOUT_MS	30000
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
 #define MW_STAT_POLL_MS		250
+
+#if (MODULE_EVERDRIVE == 0)
+	/// Length of the wflash buffer
+	#define MW_BUFLEN	1460
+#elif (MODULE_EVERDRIVE == 1)	
+	/// Length of the wflash buffer
+	#define MW_BUFLEN	1436
+#endif
 
 /// Error codes for MegaWiFi API functions
 enum mw_err {
@@ -929,6 +941,20 @@ int16_t mw_ga_request(enum mw_http_method method, const char **path,
 		int16_t tout_frames);
 
 /************************************************************************//**
+ * \brief List available upgrades WiFi module firmware.
+ *
+ * \param[in] page           Page of list
+ * \param[in] page_size      Page size of list
+ * \param[in] offset         Offset number
+ * \param[out] listUpgrades  Pointer to list of char*
+ * \param[out] len 			 Result length
+ * \param[out] total         Total elements
+ *
+ * \return Status of the send procedure.
+ ****************************************************************************/
+enum mw_err mw_fw_list_upgrades(uint8_t page, uint8_t size, uint8_t offset, char **listUpgrades, uint8_t *len, uint8_t *total);
+
+/************************************************************************//**
  * \brief Over-The-Air upgrade WiFi module firmware.
  *
  * \param[in] name Name of the firmware blob to upgrade.
@@ -937,6 +963,18 @@ int16_t mw_ga_request(enum mw_http_method method, const char **path,
  * \return Status of the send procedure.
  ****************************************************************************/
 enum mw_err mw_fw_upgrade(const char *name);
+
+/************************************************************************//**
+ * \brief Run ICMP requesto to domain.
+ *
+ * \param[in] domain Domain to ICMP request.
+ *                 E.g. "www.example.com"
+ * \param[in] retries retries to ICMP request
+ *                 E.g. 5
+ *
+ * \return Status of the send procedure.
+ ****************************************************************************/
+struct mw_ping_response *mw_ping(const char* domain, u8 retries);
 
 /****** THE FOLLOWING COMMANDS ARE LOWER LEVEL AND USUALLY NOT NEEDED ******/
 
@@ -970,8 +1008,6 @@ static inline enum lsd_status mw_cmd_recv(mw_cmd *rep, void *ctx,
 		lsd_recv_cb recv_cb) {
 	return lsd_recv(rep->packet, sizeof(mw_cmd), ctx, recv_cb);
 }
-
-#endif // MODULE_MEGAWIFI
 
 #endif /*_MEGAWIFI_H_*/
 

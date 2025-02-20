@@ -2,7 +2,8 @@
  * \brief MeGaWiFi API implementation.
  *
  * \author Jesus Alonso (doragasu)
- * \date 2015
+ * \author Juan Antonio (PaCHoN)
+ * \date 2025
  *
  * \note Module is not reentrant.
  *
@@ -17,7 +18,7 @@
 #include "memory.h"
 #include "task.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/megawifi.h"
 
@@ -138,10 +139,8 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 	uart_clr_bits(MCR, MW__PRG | MW__PD);
 
 	// Try accessing UART scratch pad register to see if it is installed
-	UART_SPR = 0x55;
-	if (UART_SPR != 0x55) return MW_ERR;
-	UART_SPR = 0xAA;
-	if (UART_SPR != 0xAA) return MW_ERR;
+	uart_test(UART_SPR, 0x55);
+	uart_test(UART_SPR, 0xAA);
 
 	// Enable control channel
 	lsd_ch_enable(MW_CTRL_CH);
@@ -1474,6 +1473,54 @@ enum mw_err mw_fw_upgrade(const char *name)
 	}
 
 	return MW_ERR_NONE;
+}
+
+enum mw_err mw_fw_list_upgrades(uint8_t page, uint8_t size, uint8_t offset, char **listUpgrades, uint8_t *len, uint8_t *total)
+{
+	enum mw_err err;
+
+	if (!d.mw_ready) {
+		return MW_ERR_NOT_READY;
+	}
+
+	d.cmd->cmd = MW_CMD_UPGRADE_LIST;
+	d.cmd->data[0] = page;
+	d.cmd->data[1] = size;
+	d.cmd->data[2] = offset;
+	d.cmd->data_len = 3;
+	err = mw_command(MW_UPGRADE_TOUT);
+	if (err) {
+		return MW_ERR;
+	}
+	
+	*listUpgrades = d.cmd->ug_list_response.payload;
+	*len = d.cmd->ug_list_response.len;
+	*total = d.cmd->ug_list_response.total;
+	return MW_ERR_NONE;
+}
+
+struct mw_ping_response *mw_ping(const char* domain, u8 retries)
+{
+	enum mw_err err;
+
+	if (!d.mw_ready) {
+		return NULL;
+	}
+
+	if (!domain) {
+		return NULL;
+	}
+
+	d.cmd->cmd = MW_CMD_PING;
+	d.cmd->data_len = sizeof(struct mw_ping_request);
+	strcpy(d.cmd->ping.domain, domain);
+	d.cmd->ping.retries = retries;
+	err = mw_command(MW_CONNECT_TOUT * retries);
+	if (err) {
+		return NULL;
+	}
+
+	return &d.cmd->ping_response;
 }
 
 #endif // MODULE_MEGAWIFI

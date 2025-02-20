@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 0)
 
 /// 16C550 UART base address
 #define UART_BASE		0xA130C1
@@ -175,6 +175,15 @@ void uart_init(void);
  * \brief Reset TX and RX FIFOs.
  ****************************************************************************/
 #define uart_reset_fifos()	uart_set_bits(FCR, 0x07)
+
+/************************************************************************//**
+ * \brief Test Connection with registers
+ *
+ * \param[in] reg Register to modify
+ * \param[in] val Bits set in val, will be readed from reg register.
+ ****************************************************************************/
+#define uart_test(reg, val) reg = val; \
+                            if (reg != val) return MW_ERR
 
 #endif // MODULE_MEGAWIFI
 

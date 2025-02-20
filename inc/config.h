@@ -145,22 +145,23 @@
 
 /**
  *  \brief
- *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu) */
+ *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
+ */
 #define MODULE_MEGAWIFI         0
 
 /**
  *  \brief
  *      Set it to 1 if you want to enable Flash Save functions (written by Jesus Alonso - doragasu).<br>
  *      There is no reason to disable it as it doesn't consume extra memory
-  */
+ */
 #define MODULE_FLASHSAVE        1
 
 /**
  *  \brief
  *      Set it to 1 if you want to enable the TTY text console module (written by Andreas Dietrich).<br>
  *      It consume about 34 bytes of memory when enabled.
-  */
-#define MODULE_CONSOLE          1
+ */
+#define MODULE_CONSOLE          0
 
 
 #endif // _CONFIG_

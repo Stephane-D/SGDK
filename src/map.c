@@ -584,10 +584,8 @@ static void prepareMapDataColumn_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2, 
         *d1++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -647,10 +645,8 @@ static void prepareMapDataColumn_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol2,
         *d1++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -710,10 +706,8 @@ static void prepareMapDataColumn_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol2,
         *d1++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -773,10 +767,8 @@ static void prepareMapDataColumn_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCol2
         *d1++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -839,10 +831,8 @@ static void prepareMapDataColumnEx_MTI8_BI8(Map *map, u16 *bufCol1, u16 *bufCol2
         *d1++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -905,10 +895,8 @@ static void prepareMapDataColumnEx_MTI8_BI16(Map *map, u16 *bufCol1, u16 *bufCol
         *d1++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -971,10 +959,8 @@ static void prepareMapDataColumnEx_MTI16_BI8(Map *map, u16 *bufCol1, u16 *bufCol
         *d1++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -1037,10 +1023,8 @@ static void prepareMapDataColumnEx_MTI16_BI16(Map *map, u16 *bufCol1, u16 *bufCo
         *d1++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
@@ -1095,10 +1079,8 @@ static void prepareMapDataRow_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u16
         *d2++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1153,10 +1135,8 @@ static void prepareMapDataRow_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u1
         *d2++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1211,10 +1191,8 @@ static void prepareMapDataRow_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u1
         *d2++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1269,10 +1247,8 @@ static void prepareMapDataRow_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, u
         *d2++ = *metaTile++;
         *d2++ = *metaTile;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1330,10 +1306,8 @@ static void prepareMapDataRowEx_MTI8_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, u
         *d2++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1391,10 +1365,8 @@ static void prepareMapDataRowEx_MTI8_BI16(Map* map, u16 *bufRow1, u16 *bufRow2, 
         *d2++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1452,10 +1424,8 @@ static void prepareMapDataRowEx_MTI16_BI8(Map* map, u16 *bufRow1, u16 *bufRow2, 
         *d2++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1513,10 +1483,8 @@ static void prepareMapDataRowEx_MTI16_BI16(Map* map, u16 *bufRow1, u16 *bufRow2,
         *d2++ = *metaTile++ + baseAttr;
         *d2++ = *metaTile + baseAttr;
 
-        // next metatile
-        xi++;
-        // new block ?
-        if (xi == 8)
+        // next metatile X is a new block ?
+        if (++xi == 8)
         {
             xi = 0;
             // next column
@@ -1660,27 +1628,28 @@ static void getMetaTilemapRect_MTI8_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u1
     u8* blockIndexes = map->blockIndexes;
     u8* blocks = map->blocks;
 
-    // start y position inside block
-    u16 yi = y & 7;
-    u16 hi = h;
-
     // block X position
     u16 xb = (x / 8) & map->wMask;
     // block Y position
     u16 yb = (y / 8) & map->hMask;
-    // get first block data pointer
-    u8* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
-    // add Y offset
-    block += yi * 8;
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
 
     // remain metatile ?
     while(hi--)
     {
+        // x block position
+        u16 xbi = xb;
         // start x position inside block
         u16 xi = x & 7;
+        // get block data pointer
+        u8* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
         u16 wi = w;
 
-        // block start X offset
+        // add Y offset
+        block += yi * 8;
+        // add X offset
         block += xi;
 
         // remain metatile ?
@@ -1689,31 +1658,25 @@ static void getMetaTilemapRect_MTI8_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u1
             // store metatile attribute; next col
             *dest++ = *block++;
 
-            // next metatile X
-            xi++;
-            // new block ?
-            if (xi == 8)
+            // next metatile X is a new block ?
+            if (++xi == 8)
             {
                 xi = 0;
                 // next column
-                xb = (xb + 1) & map->wMask;
+                xbi = (xbi + 1) & map->wMask;
                 // get block data pointer
-                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
+                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
                 // add Y offset
                 block += yi * 8;
             }
         }
 
-        // next metatile Y
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
             yb = (yb + 1) & map->hMask;
-            // get block data pointer
-            block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
         }
     }
 }
@@ -1723,27 +1686,28 @@ static void getMetaTilemapRect_MTI8_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u
     u16* blockIndexes = map->blockIndexes;
     u8* blocks = map->blocks;
 
-    // start y position inside block
-    u16 yi = y & 7;
-    u16 hi = h;
-
     // block X position
     u16 xb = (x / 8) & map->wMask;
     // block Y position
     u16 yb = (y / 8) & map->hMask;
-    // get first block data pointer
-    u8* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
-    // add Y offset
-    block += yi * 8;
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
 
     // remain metatile ?
     while(hi--)
     {
+        // x block position
+        u16 xbi = xb;
         // start x position inside block
         u16 xi = x & 7;
+        // get first block data pointer
+        u8* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
         u16 wi = w;
 
-        // block start X offset
+        // add Y offset
+        block += yi * 8;
+        // add X offset
         block += xi;
 
         // remain metatile ?
@@ -1752,31 +1716,25 @@ static void getMetaTilemapRect_MTI8_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, u
             // store metatile attribute; next col
             *dest++ = *block++;
 
-            // next metatile X
-            xi++;
-            // new block ?
-            if (xi == 8)
+            // next metatile X is a new block ?
+            if (++xi == 8)
             {
                 xi = 0;
                 // next column
-                xb = (xb + 1) & map->wMask;
+                xbi = (xbi + 1) & map->wMask;
                 // get block data pointer
-                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
+                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
                 // add Y offset
                 block += yi * 8;
             }
         }
 
-        // next metatile Y
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
             yb = (yb + 1) & map->hMask;
-            // get block data pointer
-            block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
         }
     }
 }
@@ -1786,27 +1744,28 @@ static void getMetaTilemapRect_MTI16_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u
     u8* blockIndexes = map->blockIndexes;
     u16* blocks = map->blocks;
 
-    // start y position inside block
-    u16 yi = y & 7;
-    u16 hi = h;
-
     // block X position
     u16 xb = (x / 8) & map->wMask;
     // block Y position
     u16 yb = (y / 8) & map->hMask;
-    // get first block data pointer
-    u16* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
-    // add Y offset
-    block += yi * 8;
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
 
     // remain metatile ?
     while(hi--)
     {
+        // x block position
+        u16 xbi = xb;
         // start x position inside block
         u16 xi = x & 7;
+        // get first block data pointer
+        u16* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
         u16 wi = w;
 
-        // block start X offset
+        // add Y offset
+        block += yi * 8;
+        // add X offset
         block += xi;
 
         // remain metatile ?
@@ -1815,31 +1774,25 @@ static void getMetaTilemapRect_MTI16_BI8(Map* map, u16 x, u16 y, u16 w, u16 h, u
             // store metatile attribute; next col
             *dest++ = *block++;
 
-            // next metatile X
-            xi++;
-            // new block ?
-            if (xi == 8)
+            // next metatile X is a new block ?
+            if (++xi == 8)
             {
                 xi = 0;
                 // next column
-                xb = (xb + 1) & map->wMask;
+                xbi = (xbi + 1) & map->wMask;
                 // get block data pointer
-                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
+                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
                 // add Y offset
                 block += yi * 8;
             }
         }
 
-        // next metatile Y
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
             yb = (yb + 1) & map->hMask;
-            // get block data pointer
-            block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
         }
     }
 }
@@ -1849,27 +1802,28 @@ static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, 
     u16* blockIndexes = map->blockIndexes;
     u16* blocks = map->blocks;
 
-    // start y position inside block
-    u16 yi = y & 7;
-    u16 hi = h;
-
     // block X position
     u16 xb = (x / 8) & map->wMask;
     // block Y position
     u16 yb = (y / 8) & map->hMask;
-    // get first block data pointer
-    u16* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
-    // add Y offset
-    block += yi * 8;
+    // start y position inside block
+    u16 yi = y & 7;
+    u16 hi = h;
 
     // remain metatile ?
     while(hi--)
     {
+        // x block position
+        u16 xbi = xb;
         // start x position inside block
         u16 xi = x & 7;
+        // get first block data pointer
+        u16* block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
         u16 wi = w;
 
-        // block start X offset
+        // add Y offset
+        block += yi * 8;
+        // add X offset
         block += xi;
 
         // remain metatile ?
@@ -1878,31 +1832,25 @@ static void getMetaTilemapRect_MTI16_BI16(Map* map, u16 x, u16 y, u16 w, u16 h, 
             // store metatile attribute; next col
             *dest++ = *block++;
 
-            // next metatile X
-            xi++;
-            // new block ?
-            if (xi == 8)
+            // next metatile X is a new block ?
+            if (++xi == 8)
             {
                 xi = 0;
                 // next column
-                xb = (xb + 1) & map->wMask;
+                xbi = (xbi + 1) & map->wMask;
                 // get block data pointer
-                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
+                block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xbi]];
                 // add Y offset
                 block += yi * 8;
             }
         }
 
-        // next metatile Y
-        yi++;
-        // new block ?
-        if (yi == 8)
+        // next metatile Y is a new block ?
+        if (++yi == 8)
         {
             yi = 0;
             // next row
             yb = (yb + 1) & map->hMask;
-            // get block data pointer
-            block = &blocks[8 * 8 * blockIndexes[map->blockRowOffsets[yb] + xb]];
         }
     }
 }
