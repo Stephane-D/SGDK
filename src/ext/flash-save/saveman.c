@@ -41,7 +41,7 @@
 #define ALLOC(len) MEM_alloc(len)
 #define DEALLOC(chunk) do{MEM_free(chunk);}while(0)
 #define CRITICAL_ENTER SYS_disableInts();const bool z80_taken=Z80_getAndRequestBus(TRUE)
-#define CRITICAL_EXIT if (z80_taken) Z80_releaseBus();SYS_enableInts()
+#define CRITICAL_EXIT if (!z80_taken) Z80_releaseBus();SYS_enableInts()
 
 // Magic number at the beginning of sectors
 #define MAGIC_NUM 0x44534D21
@@ -388,7 +388,7 @@ int16_t sm_init(uint8_t num_slots, uint32_t max_length_restrict)
 	if (!sm) {
 		// Don't forget to also allocate cur_blob for each slot
 		sm = ALLOC(sizeof(struct save_manager) +
-				num_slots * sizeof(uint16_t));
+				num_slots * sizeof(uint32_t));
 		if (!sm) {
 			return SM_STAT_HW_ERR;
 		}
