@@ -64,7 +64,7 @@ public class ObjectsProcessor implements Processor
         if (fields.length < 5)
         {
             System.out.println("Wrong OBJECTS definition");
-            System.out.println("OBJECTS name tmx_file layer_id field_defs [decl_type [type_filter]]");
+            System.out.println("OBJECTS name tmx_file layer_id field_defs [sortby:<field>] [decl_type [type_filter]]");
             System.out.println("name            name of the output array Objects structure");
             System.out.println("tmx_file        path of the input TMX file (TMX Tiled file)");
             System.out.println("layer_id        object group/layer name we want to extract object from.");
@@ -74,6 +74,7 @@ public class ObjectsProcessor implements Processor
             System.out.println("                        \"type:u16;name:string;x:f32;y:f32;tileindex:u32\"");
             System.out.println("                        \"type:u16;power:s8;visible:bool\"");
             System.out.println("                    Not found fields are just ignored so you can extract different object types easily.");
+            System.out.println("sortby          optional, field name to sort objects by. e.g. \"sortby:x\" to sort objects by x position.");
             System.out.println("decl_type       declaration type for objects (default is \"void\").");
             System.out.println("                    By default object array is untyped (void) but you can specify your own type if you want (\"Object\", \"Entity\", ...)");
             System.out.println("type_filter     define a type filter if we only want to extract Tiled objects of a specific type.");
@@ -89,20 +90,31 @@ public class ObjectsProcessor implements Processor
         final String layerName = fields[3];
         // get fields definition value
         final String fieldDefs = fields[4];
-        String declType = "";
-        if (fields.length >= 6)
-            declType = fields[5];
-        String typeFilter = "";
-        if (fields.length >= 7)
-            typeFilter = fields[6];
 
+        int index = 5;
+        String sortBy = "";
+
+        if (index < fields.length && fields[index].startsWith("sortby:"))
+        {
+            sortBy = fields[index++].substring(7);
+        }
+
+        // Index could be 5 or 6 depending on if sortby is present
+        String declType = "";
+        String typeFilter = "";
+        if (index < fields.length)
+        {
+            declType = fields[index++];
+            if (index < fields.length)
+                typeFilter = fields[index++];
+        }
         final LinkedHashMap<String, SGDKObjectType> fieldDefsMap = buildFieldDefsMap(fieldDefs);
 
         // add resource file (used for deps generation)
         Compiler.addResourceFile(fileIn);
 
         // build TMX objects
-        final TMXObjects tmxObjects = new TMXObjects(id, fileIn, layerName, fieldDefsMap, typeFilter);
+        final TMXObjects tmxObjects = new TMXObjects(id, fileIn, layerName, sortBy, fieldDefsMap, typeFilter);
         // build OBJECTS from TMX objects
         return new Objects(id, declType, tmxObjects.objects);
     }
