@@ -1,4 +1,4 @@
-ResComp 3.92 (January 2025)
+ResComp 3.93 (February 2025)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -285,11 +285,12 @@ The Tiled objects has some default attributes that you can use:
   To enable export of these fields, you need to add a custom boolean 'exportSize' field and set its value to 'true'.
   
 Syntax:
-OBJECTS name tmx_file layer_id field_defs [decl_type [type_filter]]
+OBJECTS name tmx_file layer_id field_defs [sortby:<field>] [decl_type [type_filter]]
 
     name                name of the output array Objects structure
     tmx_file            path of the input TMX file (TMX Tiled file)
     layer_id            object group/layer name we want to export object from.
+    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     field_defs          name and type of fields we want to export (also define the order of extraction) in <name>:<type> format.
                             Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object
                             Some examples of 'field_defs' declaration:
@@ -301,7 +302,7 @@ OBJECTS name tmx_file layer_id field_defs [decl_type [type_filter]]
     type_filter         define a type filter if we only want to extract Tiled objects of a specific type (see above).
 
 Tips:
-- Objects are sorted (ascending order) using the values of these fields (in this order): 'index', 'ind', 'tileIndex', 'id' .
+- When 'sortby' is not used, objects are sorted (ascending order) using the values of these fields (in this order): 'index', 'ind', 'tileIndex', 'id'.
 - You can export the tile index value corresponding to x + (y * map_width)) in 'tileIndex' field by adding a custom boolean 'exportTileIndex'
   field with value set to 'true'. When you enable the 'tileIndex' export then objects are sorted (ascending order) using the field value
   allowing fast tile index based searchs (be careful: 'index' or 'ind' fields has priority for sorting if they exist).
