@@ -696,7 +696,7 @@ public class TMX
         public final String layerName;
         public final List<SObject> objects;
 
-        public TMXObjects(String baseId, String file, String layerName, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
+        public TMXObjects(String baseId, String file, String layerName, String sortBy, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
         {
             if (!FileUtil.exists(file))
                 throw new FileNotFoundException("TMX file '" + file + " not found !");
@@ -865,7 +865,7 @@ public class TMX
             }
 
             // sort objects on tile index (if it exists)
-            Collections.sort(objects, new ObjectComparator());
+            Collections.sort(objects, new ObjectComparator(sortBy));
         }
 
         private static boolean addField(String objectName, Map<String, TField> fields, TField field)
@@ -911,23 +911,37 @@ public class TMX
 
         static class ObjectComparator implements Comparator<SObject>
         {
+            String sortBy;
+
+            ObjectComparator(String sortBy)
+            {
+                this.sortBy = sortBy;
+            }
+
             @Override
             public int compare(SObject o1, SObject o2)
             {
                 int result;
 
-                // sort first on 'index' field
-                result = Long.compare(o1.getFieldLongValue(FIELD_INDEX), o2.getFieldLongValue(FIELD_INDEX));
-                // then sort on 'ind' field
-                if (result == 0)
-                    result = Long.compare(o1.getFieldLongValue(FIELD_IND), o2.getFieldLongValue(FIELD_IND));
-                // then sort on 'tileindex' field
-                if (result == 0)
-                    result = Long.compare(o1.getFieldLongValue(FIELD_TILE_INDEX), o2.getFieldLongValue(FIELD_TILE_INDEX));
-                // then sort on 'id' field
-                if (result == 0)
-                    result = Long.compare(o1.getFieldLongValue(FIELD_ID), o2.getFieldLongValue(FIELD_ID));
-
+                if (StringUtil.isEmpty(sortBy))
+                {
+                    // sort first on 'index' field
+                    result = Long.compare(o1.getFieldLongValue(FIELD_INDEX), o2.getFieldLongValue(FIELD_INDEX));
+                    // then sort on 'ind' field
+                    if (result == 0)
+                        result = Long.compare(o1.getFieldLongValue(FIELD_IND), o2.getFieldLongValue(FIELD_IND));
+                    // then sort on 'tileindex' field
+                    if (result == 0)
+                        result = Long.compare(o1.getFieldLongValue(FIELD_TILE_INDEX), o2.getFieldLongValue(FIELD_TILE_INDEX));
+                    // then sort on 'id' field
+                    if (result == 0)
+                        result = Long.compare(o1.getFieldLongValue(FIELD_ID), o2.getFieldLongValue(FIELD_ID));
+                }
+                else
+                {
+                    // sort by user specified field
+                    result = Long.compare(o1.getFieldLongValue(sortBy), o2.getFieldLongValue(sortBy));
+                }
                 return result;
             }
         }
