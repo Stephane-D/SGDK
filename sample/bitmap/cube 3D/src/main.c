@@ -4,15 +4,6 @@
 
 #define MAX_POINTS  256
 
-
-extern Mat3D_f16 MatInv;
-extern Mat3D_f16 Mat;
-
-//Vect3D_f16 pts_3D[MAX_POINTS];
-//Vect2D_s16 pts_2D[MAX_POINTS];
-//Vect3D_f16 vtab_3D[MAX_POINTS];
-//Vect2D_s16 vtab_2D[MAX_POINTS];
-
 Vect3D_f16* pts_3D;
 Vect2D_s16* pts_2D;
 Vect3D_f16* vtab_3D;
@@ -23,9 +14,7 @@ Translation3D translation;
 Transformation3D transformation;
 
 Vect3D_f16 rotstep;
-
 fix16 camdist;
-
 u16 flatDrawing;
 
 
@@ -67,6 +56,8 @@ int main()
     M3D_setLightEnabled(1);
     M3D_setLightXYZ(FIX16(0.9), FIX16(0.9), FIX16(-0.9));
 
+    memset(&transformation, 0, sizeof(transformation));
+    memset(&rotstep, 0, sizeof(rotstep));
     // allocate translation and rotation structure
     M3D_setTransform(&transformation, &translation, &rotation);
     M3D_setTranslation(&transformation, FIX16(0), FIX16(0), FIX16(20));
@@ -87,6 +78,13 @@ int main()
         rotation.x += rotstep.x;
         rotation.y += rotstep.y;
         rotation.z += rotstep.z;
+        // clamp angle to 0-360
+        if (rotation.x >= FIX16(360.0)) rotation.x -= FIX16(360.0);
+        if (rotation.y >= FIX16(360.0)) rotation.y -= FIX16(360.0);
+        if (rotation.z >= FIX16(360.0)) rotation.z -= FIX16(360.0);
+        if (rotation.x < 0) rotation.x += FIX16(360.0);
+        if (rotation.y < 0) rotation.y += FIX16(360.0);
+        if (rotation.z < 0) rotation.z += FIX16(360.0);
         transformation.rebuildMat = 1;
 
         updatePointsPos();
@@ -143,9 +141,9 @@ void drawPoints(u8 col)
             *pt_dst++ = pts_2D[*poly_ind++];
             *pt_dst = pts_2D[*poly_ind++];
 
-            dp = fix16Mul(transformation.lightInv.x, norm->x) +
-                 fix16Mul(transformation.lightInv.y, norm->y) +
-                 fix16Mul(transformation.lightInv.z, norm->z);
+            dp = F16_mul(transformation.lightInv.x, norm->x) +
+                 F16_mul(transformation.lightInv.y, norm->y) +
+                 F16_mul(transformation.lightInv.z, norm->z);
             norm++;
 
             if (dp > 0) col += (dp >> (FIX16_FRAC_BITS - 2));
@@ -183,25 +181,25 @@ void doActionJoy(u8 numjoy, u16 value)
         if (value & BUTTON_UP)
         {
             if (value & BUTTON_A) translation.y += FIX16(0.2);
-            else rotstep.x += FIX16(0.05);
+            else rotstep.x += FIX16(0.2);
         }
 
         if (value & BUTTON_DOWN)
         {
             if (value & BUTTON_A) translation.y -= FIX16(0.2);
-            else rotstep.x -= FIX16(0.05);
+            else rotstep.x -= FIX16(0.2);
         }
 
         if (value & BUTTON_LEFT)
         {
             if (value & BUTTON_A) translation.x -= FIX16(0.2);
-            else rotstep.y += FIX16(0.05);
+            else rotstep.y += FIX16(0.2);
         }
 
         if (value & BUTTON_RIGHT)
         {
             if (value & BUTTON_A) translation.x += FIX16(0.2);
-            else rotstep.y -= FIX16(0.05);
+            else rotstep.y -= FIX16(0.2);
         }
 
         if (value & BUTTON_Y)

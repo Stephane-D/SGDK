@@ -97,7 +97,7 @@ void ENTITIES_update(void)
 void ENTITIES_updateScreenPosition()
 {
     for(u16 i = 0; i < NUM_ENEMY; i++)
-        setSpritePosition(enemies[i], fix32ToInt(enemiesPosX[i]) - camPosX, fix32ToInt(enemiesPosY[i]) - camPosY);
+        setSpritePosition(enemies[i], F32_toInt(enemiesPosX[i]) - camPosX, F32_toInt(enemiesPosY[i]) - camPosY);
 }
 
 

@@ -90,7 +90,7 @@ int main()
 
         // update scroll from fix16 scroll table
         for(u16 i = 0; i < 224; i++)
-            scrollI[i] = fix16ToInt(scroll[i]);
+            scrollI[i] = F16_toInt(scroll[i]);
 
         // update line scroll using DMA queue
         VDP_setHorizontalScrollLine(BG_A, 0, scrollI, 224, DMA_QUEUE);
@@ -113,9 +113,9 @@ static void initScrollTables()
     {
         f16 f;
 
-        f = intToFix16(i - 64);
-        f = fix16Mul(FIX16(SCROLL_OFFSET_SPEED), f);
-        f = fix16Div(f, FIX16(SCROLL_HEIGHT));
+        f = FIX16(i - 64);
+        f = F16_mul(FIX16(SCROLL_OFFSET_SPEED), f);
+        f = F16_div(f, FIX16(SCROLL_HEIGHT));
         f += FIX16(SCROLL_BASE_SPEED);
 
         scrollSpeed[i] = f;
@@ -130,13 +130,13 @@ static void initScrollTables()
     {
         f32 f;
 
-        f = intToFix32(i - 64);
-        f = fix32Mul(FIX32(SCROLL_OFFSET_SPEED), f);
+        f = FIX32(i - 64);
+        f = F32_mul(FIX32(SCROLL_OFFSET_SPEED), f);
         f += FIX32(SCROLL_BASE_SPEED * SCROLL_HEIGHT);
-        f = fix32Mul(FIX32(SCROLL_WIDTH / SCROLL_END_SPEED), f);
-        f = fix32Div(f, FIX32(SCROLL_HEIGHT));
+        f = F32_mul(FIX32(SCROLL_WIDTH / SCROLL_END_SPEED), f);
+        f = F32_div(f, FIX32(SCROLL_HEIGHT));
 
-        scrollLoop[i] = fix32ToFix16(f);
+        scrollLoop[i] = F32_toFix16(f);
     }
     for(i = 64 + SCROLL_HEIGHT; i < 224; i++)
         scrollLoop[i] = FIX16(SCROLL_WIDTH);

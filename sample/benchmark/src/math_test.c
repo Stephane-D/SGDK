@@ -591,7 +591,7 @@ u16 executeMathsAdvTest(u16 *scores)
     M3D_setTransform(&transformation, &translation, &rotation);
     M3D_resetTransform(&transformation);
     M3D_setTranslation(&transformation, FIX16(1.5), FIX16(-2.5), FIX16(20));
-    M3D_setRotation(&transformation, FIX16(1.5), FIX16(2.4), FIX16(3.2));
+    M3D_setRotation(&transformation, 15, 65, 230);
 
     VDP_drawText("3D Transform for 1024 points (x50)", 2, y++);
     i = 50;
@@ -650,9 +650,9 @@ static u32 displayResult(u32 op, fix32 time, u16 y, u32 dirty)
     fix32 speedKop;
 
     fix32ToStr(time, timeStr, 2);
-    speedKop = intToFix32(op / 4096);
+    speedKop = FIX32(op / 4096);
     // get speed in Kb/s
-    speedKop = fix32Div(speedKop, time);
+    speedKop = F32_div(speedKop, time);
     // put it in speedStr
     fix32ToStr(speedKop * 4, speedStr, 2);
 
@@ -665,7 +665,7 @@ static u32 displayResult(u32 op, fix32 time, u16 y, u32 dirty)
     // display test string
     VDP_drawText(str, 3, y);
 
-    return fix32ToInt(speedKop);
+    return F32_toInt(speedKop);
 }
 
 static u32 displayResult3D(u32 op, fix32 time, u16 y, u32 dirty)
@@ -676,11 +676,11 @@ static u32 displayResult3D(u32 op, fix32 time, u16 y, u32 dirty)
     fix32 speedKop;
 
     fix32ToStr(time, timeStr, 2);
-    speedKop = intToFix32(op / 100);
+    speedKop = FIX32(op / 100);
     // get number of points computed per second
-    speedKop = fix32Div(speedKop, time);
+    speedKop = F32_div(speedKop, time);
     // put it in speedStr
-    intToStr(fix32ToRoundedInt(speedKop) * 100, speedStr, 1);
+    intToStr(F32_toRoundedInt(speedKop) * 100, speedStr, 1);
 
     strcpy(str, "Elapsed time = ");
     strcat(str, timeStr);
@@ -691,5 +691,5 @@ static u32 displayResult3D(u32 op, fix32 time, u16 y, u32 dirty)
     // display test string
     VDP_drawText(str, 3, y);
 
-    return fix32ToInt(speedKop);
+    return F32_toInt(speedKop);
 }

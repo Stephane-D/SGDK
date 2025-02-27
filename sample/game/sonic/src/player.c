@@ -156,7 +156,7 @@ void PLAYER_update(void)
 
 void PLAYER_updateScreenPosition(void)
 {
-    setSpritePosition(player, fix32ToInt(posX) - camPosX, fix32ToInt(posY) - camPosY);
+    setSpritePosition(player, F32_toInt(posX) - camPosX, F32_toInt(posY) - camPosY);
 }
 
 

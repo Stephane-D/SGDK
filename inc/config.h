@@ -161,7 +161,7 @@
  *      Set it to 1 if you want to enable the TTY text console module (written by Andreas Dietrich).<br>
  *      It consume about 34 bytes of memory when enabled.
  */
-#define MODULE_CONSOLE          0
+#define MODULE_CONSOLE          1
 
 
 #endif // _CONFIG_

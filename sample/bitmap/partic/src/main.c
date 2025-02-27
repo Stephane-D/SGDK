@@ -51,8 +51,8 @@ int main(bool hard)
     col = 0xFF;
 
     /* Initialise particules */
-    baseposx = intToFix16(BMP_WIDTH / 2);
-    baseposy = intToFix16(BMP_HEIGHT / 2);
+    baseposx = FIX16(BMP_WIDTH / 2);
+    baseposy = FIX16(BMP_HEIGHT / 2);
     gravity = FIX16(0.4);
 
     initPartic(100);
@@ -145,19 +145,19 @@ static void handleInput()
     {
         if (value & BUTTON_UP)
         {
-            if (baseposy < intToFix16(BMP_HEIGHT - 10)) baseposy += FIX16(5.0);
+            if (baseposy < FIX16(BMP_HEIGHT - 10)) baseposy += FIX16(5.0);
         }
         if (value & BUTTON_DOWN)
         {
-            if (baseposy > intToFix16(10)) baseposy -= FIX16(5.0);
+            if (baseposy > FIX16(10)) baseposy -= FIX16(5.0);
         }
         if (value & BUTTON_LEFT)
         {
-            if (baseposx > intToFix16(10)) baseposx -= FIX16(3.5);
+            if (baseposx > FIX16(10)) baseposx -= FIX16(3.5);
         }
         if (value & BUTTON_RIGHT)
         {
-            if (baseposx < intToFix16(BMP_WIDTH - 10)) baseposx += FIX16(3.5);
+            if (baseposx < FIX16(BMP_WIDTH - 10)) baseposx += FIX16(3.5);
         }
     }
 }
@@ -209,10 +209,10 @@ static void initPartic(s16 num)
     p = partics;
     while(i--)
     {
-        p->pos.x = intToFix16(0);
-        p->pos.y = intToFix16(0);
-        p->mov.x = intToFix16(0);
-        p->mov.y = intToFix16(0);
+        p->pos.x = FIX16(0);
+        p->pos.y = FIX16(0);
+        p->mov.x = FIX16(0);
+        p->mov.y = FIX16(0);
         p++;
     }
 }
@@ -226,23 +226,23 @@ static void updatePartic(_particule *part, s16 num)
     p = part;
     while(i--)
     {
-        if ((p->pos.x >= intToFix16(BMP_WIDTH)) || (p->pos.x <= intToFix16(0)))
+        if ((p->pos.x >= FIX16(BMP_WIDTH)) || (p->pos.x <= FIX16(0)))
         {
             // re-init paticule
             p->pos.x = baseposx;
             p->pos.y = baseposy;
-            p->mov.x = intToFix16(1) - (random() & (FIX16_FRAC_MASK << 1));
-            p->mov.y = intToFix16(2) + (random() & (FIX16_FRAC_MASK << 3));
+            p->mov.x = FIX16(1) - (random() & (FIX16_FRAC_MASK << 1));
+            p->mov.y = FIX16(2) + (random() & (FIX16_FRAC_MASK << 3));
         }
-        else if (p->pos.y <= intToFix16(0))
+        else if (p->pos.y <= FIX16(0))
         {
             if (p->mov.y > -(gravity << 3))
             {
                 // re-init paticule
                 p->pos.x = baseposx;
                 p->pos.y = baseposy;
-                p->mov.x = intToFix16(1) - (random() & (FIX16_FRAC_MASK << 1));
-                p->mov.y = intToFix16(2) + (random() & (FIX16_FRAC_MASK << 3));
+                p->mov.x = FIX16(1) - (random() & (FIX16_FRAC_MASK << 1));
+                p->mov.y = FIX16(2) + (random() & (FIX16_FRAC_MASK << 3));
             }
             else
             {
@@ -277,8 +277,8 @@ static void drawPartic(_particule *part, s16 num, u8 col)
     pos = part_pos;
     while(i--)
     {
-        pos->x = fix16ToInt(p->pos.x);
-        pos->y = maxy - fix16ToInt(p->pos.y);
+        pos->x = F16_toInt(p->pos.x);
+        pos->y = maxy - F16_toInt(p->pos.y);
 
         p++;
         pos++;

@@ -996,7 +996,7 @@ static void updatePartic(u16 num, u16 preloadedTiles, u16 realloc)
         if (o->timer >= 10) o->timer = 0;
 
         // update sprite position
-        SPR_setPosition(s, fix16ToInt(o->pos.x), 224 - fix16ToInt(o->pos.y));
+        SPR_setPosition(s, F16_toInt(o->pos.x), 224 - F16_toInt(o->pos.y));
         // animate (30 FPS)
         if (o->timer & 1)
         {
@@ -1259,9 +1259,9 @@ static void updatePos(u16 num)
 #endif
 
         // set sprite position
-        SPR_setPosition(s, fix16ToInt(o->pos.x), fix16ToInt(o->pos.y));
+        SPR_setPosition(s, F16_toInt(o->pos.x), F16_toInt(o->pos.y));
         // set sprite depth
-        SPR_setDepth(s, (300 - fix16ToInt(o->pos.y)) >> 4);
+        SPR_setDepth(s, (300 - F16_toInt(o->pos.y)) >> 4);
 
         sprite++;
     }
