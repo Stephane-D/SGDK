@@ -152,7 +152,7 @@ int main()
                line_speed_data[i] *= -1;
 
             // An auxiliar "regular integer" buffer is needed for VDP_setHorizontalScrollLine
-            aux[i] = fix16ToInt(line_scroll_data[i]);
+            aux[i] = F16_toInt(line_scroll_data[i]);
 
         }// end for(NUM_LINES)
 

@@ -83,9 +83,9 @@ func M3D_project_f16
     lea context3D,%a2
 
     move.w (%a2)+,%d5
-    lsl.w #5,%d5                            // d5 = centerX = intToFix16(viewport.x / 2)
+    lsl.w #5,%d5                            // d5 = centerX = FIX16(viewport.x / 2)
     move.w (%a2)+,%d6
-    lsl.w #5,%d6                            // d6 = centerY = intToFix16(viewport.y / 2)
+    lsl.w #5,%d6                            // d6 = centerY = FIX16(viewport.y / 2)
     moveq #0,%d4
     move.w (%a2),%d4                        // d4 = camDist
 
@@ -106,7 +106,7 @@ func M3D_project_f16
     jle .L30                                //   {
 
     move.l %a3,%d3
-    divs.w %d2,%d3                          //       d3 = scale = fix16Div(camDist, camDist + z)
+    divs.w %d2,%d3                          //       d3 = scale = F16_div(camDist, camDist + z)
 
     muls.w %d3,%d0
     asr.l #6,%d0
@@ -174,7 +174,7 @@ func M3D_project_s16
     jle .L38                                //   {
 
     move.l %a3,%d3
-    divs.w %d2,%d3                          //       d3 = scale = fix16Div((camDist << (4 + 2)), zi)
+    divs.w %d2,%d3                          //       d3 = scale = F16_div((camDist << (4 + 2)), zi)
 
     muls.w %d3,%d0
     swap %d0

@@ -85,7 +85,7 @@ int main(bool hard)
             // update player first
             PLAYER_update();
             // then set camera from player position
-            CAMERA_centerOn(fix32ToInt(posX), fix32ToInt(posY));
+            CAMERA_centerOn(F32_toInt(posX), F32_toInt(posY));
 
             // then we can update entities
             ENTITIES_update();

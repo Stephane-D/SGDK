@@ -947,7 +947,7 @@ fillEdge:
     .long .fe_fill_160
 
 .fe_fill_160:
-    move.w %d7,(%a1)+           // *src++ = fix16ToInt(x);
+    move.w %d7,(%a1)+           // *src++ = F16_toInt(x);
     addx.l %d0,%d7              //  x += step;
 .fe_fill_159:
     move.w %d7,(%a1)+

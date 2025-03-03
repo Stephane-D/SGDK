@@ -239,7 +239,7 @@ int main()
     HINTERRUPT_CALLBACK HIntHandler()
     {
         // Set line to display
-        VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
+        VDP_setVerticalScroll(BG_B, F16_toInt(lineGraphics) - lineDisplay);
         // Determine next graphics line to display (+1 means image is unscaled)
         lineGraphics += lineBuffer[lineDisplay++];
     }
@@ -249,7 +249,7 @@ int main()
         // Make sure HInt always starts with line 0
         lineDisplay = lineGraphics = 0;
         // reset v-scroll
-        VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
+        VDP_setVerticalScroll(BG_B, F16_toInt(lineGraphics) - lineDisplay);
     }
 
     // -------------------------------------------------------------------------
@@ -322,7 +322,7 @@ int main()
 
         // Determine how many lines the wave advances
         wave += waveSpeed;
-        u16 steps = fix16ToInt(wave);
+        u16 steps = F16_toInt(wave);
 
         // Shift buffer to advance wave
         memcpy(lineBuffer, lineBuffer+steps, (224-steps)*2);
@@ -331,7 +331,7 @@ int main()
         for (; steps > 0; steps--, wave -= FIX16(1.0))
         {
             angle += angularVelocity;
-            lineBuffer[224-steps] = FIX16(1.0) + fix16Mul(amplitude, sinFix16(fix16ToInt(angle) + 512));
+            lineBuffer[224-steps] = FIX16(1.0) + F16_mul(amplitude, sinFix16(F16_toInt(angle) + 512));
         }
     }
 }

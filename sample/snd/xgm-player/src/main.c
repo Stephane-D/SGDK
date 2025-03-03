@@ -1455,7 +1455,7 @@ static void updateBGScroll()
 	while(i--)
 	{
         *sf += *ss++;
-        *s++ = fix16ToInt(*sf++);
+        *s++ = F16_toInt(*sf++);
     }
 }
 

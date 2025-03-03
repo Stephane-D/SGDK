@@ -644,24 +644,24 @@ static void doFade(const u16 fmVolStart, const u16 fmVolEnd, const u16 psgVolSta
 {
     if (frame == 0) return;
 
-    f16 fmVolStartF = intToFix16(fmVolStart);
-    f16 psgVolStartF = intToFix16(psgVolStart);
-    f16 fmVolEndF = intToFix16(fmVolEnd);
-    f16 psgVolEndF = intToFix16(psgVolEnd);
+    f16 fmVolStartF = FIX16(fmVolStart);
+    f16 psgVolStartF = FIX16(psgVolStart);
+    f16 fmVolEndF = FIX16(fmVolEnd);
+    f16 psgVolEndF = FIX16(psgVolEnd);
     // we use "/ 2" as we alternate PSG and FM volume update on fading
-    f16 frameF = intToFix16(frame) / 2;
+    f16 frameF = FIX16(frame) / 2;
 
     // set fade process variables
     fadeFMVol = fmVolStartF;
     fadePSGVol = psgVolStartF;
-    fadeFMVolStep = fix16Div(fmVolEndF - fmVolStartF, frameF);
-    fadePSGVolStep = fix16Div(psgVolEndF - psgVolStartF, frameF);
+    fadeFMVolStep = F16_div(fmVolEndF - fmVolStartF, frameF);
+    fadePSGVolStep = F16_div(psgVolEndF - psgVolStartF, frameF);
     fadeCount = frame;
     fadeEndProcess = fep;
 
     // init fade
-    setFMVolume(fix16ToInt(fadeFMVol));
-    setPSGVolume(fix16ToInt(fadePSGVol));
+    setFMVolume(F16_toInt(fadeFMVol));
+    setPSGVolume(F16_toInt(fadePSGVol));
 
     // add task for vblank process
     VBlankProcess |= PROCESS_XGM2_FADE_TASK;
@@ -706,12 +706,12 @@ bool XGM2_doVBlankFadeProcess(void)
     if (fadeCount & 1)
     {
         fadeFMVol += fadeFMVolStep;
-        setFMVolume(fix16ToInt(fadeFMVol));
+        setFMVolume(F16_toInt(fadeFMVol));
     }
     else
     {
         fadePSGVol += fadePSGVolStep;
-        setPSGVolume(fix16ToInt(fadePSGVol));
+        setPSGVolume(F16_toInt(fadePSGVol));
     }
 
     // mark volume need to be restored

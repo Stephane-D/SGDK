@@ -83,7 +83,7 @@ void playerInputChanged() {
 				}
 			}else if (playerBody.jumping && playerBody.velocity.fixY < 0) {
 				//If the button is released we remove half of the velocity
-				playerBody.velocity.fixY = fix16Mul(playerBody.velocity.fixY, FIX16(.5));
+				playerBody.velocity.fixY = F16_mul(playerBody.velocity.fixY, FIX16(.5));
 			}
 		}
 
@@ -161,12 +161,12 @@ void updatePlayer() {
 			else
 				playerBody.velocity.fixX = 0;
 		}
-		playerBody.velocity.x = clamp(fix16ToInt(playerBody.velocity.fixX), -playerBody.speed, playerBody.speed);
+		playerBody.velocity.x = clamp(F16_toInt(playerBody.velocity.fixX), -playerBody.speed, playerBody.speed);
 	}
 
 	//Apply gravity with a terminal velocity
 	if (!playerBody.onGround && !playerBody.climbingStair) {
-		if (fix16ToInt(playerBody.velocity.fixY) <= playerBody.maxFallSpeed) {
+		if (F16_toInt(playerBody.velocity.fixY) <= playerBody.maxFallSpeed) {
 			playerBody.velocity.fixY = playerBody.velocity.fixY + gravityScale;
 		}else {
 			playerBody.velocity.fixY = FIX16(playerBody.maxFallSpeed);
@@ -175,7 +175,7 @@ void updatePlayer() {
 
 	//Once all the input-related have been calculated, we apply the velocities to the global positions
 	playerBody.globalPosition.x += playerBody.velocity.x;
-	playerBody.globalPosition.y += fix16ToInt(playerBody.velocity.fixY);
+	playerBody.globalPosition.y += F16_toInt(playerBody.velocity.fixY);
 
 	//Now we can check for collisions and correct those positions
 	checkCollisions();
@@ -256,7 +256,7 @@ void checkCollisions() {
 
 	//We can see this variables as a way to avoid thinking that a ground tile is a wall tile
 	//Skin width (yIntVelocity) changes depending on the vertical velocity
-	s16 yIntVelocity = fix16ToRoundedInt(playerBody.velocity.fixY);
+	s16 yIntVelocity = F16_toRoundedInt(playerBody.velocity.fixY);
 	s16 playerHeadPos = playerBody.aabb.min.y - yIntVelocity + playerBody.globalPosition.y;
 	s16 playerFeetPos = playerBody.aabb.max.y - yIntVelocity + playerBody.globalPosition.y;
 

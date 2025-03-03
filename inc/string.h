@@ -252,6 +252,20 @@ u16 intToHex(u32 value, char *str, u16 minsize);
 
 /**
  *  \brief
+ *      Convert a fix16 value to string.
+ *
+ *  \param value
+ *      The fix16 value to convert to string.
+ *  \param str
+ *      Destination string (it must be large enough to receive result).
+ *  \param numdec
+ *      Number of wanted decimal.
+ *
+ * Converts the specified fix16 value to string.<br>
+ */
+void fix16ToStr(fix16 value, char *str, u16 numdec);
+/**
+ *  \brief
  *      Convert a fix32 value to string.
  *
  *  \param value
@@ -266,18 +280,16 @@ u16 intToHex(u32 value, char *str, u16 minsize);
 void fix32ToStr(fix32 value, char *str, u16 numdec);
 /**
  *  \brief
- *      Convert a fix16 value to string.
- *
- *  \param value
- *      The fix16 value to convert to string.
- *  \param str
- *      Destination string (it must be large enough to receive result).
- *  \param numdec
- *      Number of wanted decimal.
- *
- * Converts the specified fix16 value to string.<br>
+ *      Same as fix16ToStr(..)
+ *  \see fix16ToStr
  */
-void fix16ToStr(fix16 value, char *str, u16 numdec);
+void F16_toStr(fix16 value, char *str, u16 numdec);
+/**
+ *  \brief
+ *      Same as fix32ToStr(..)
+ *  \see fix32ToStr
+ */
+void F32_toStr(fix32 value, char *str, u16 numdec);
 
 #endif // _STRING_H_
 

@@ -176,7 +176,7 @@ static void refreshDriverInfos()
         case Z80_DRIVER_XGM:
             if (musicSize)
             {
-                fix32ToStr(intToFix32(musicSize / 1024), size, 1);
+                fix32ToStr(FIX32(musicSize / 1024), size, 1);
                 sprintf(str, "Music size = %s KB", size);
                 VDP_drawText(str, 2, 7);
             }
@@ -185,7 +185,7 @@ static void refreshDriverInfos()
         case Z80_DRIVER_XGM2:
             if (musicSize)
             {
-                fix32ToStr(intToFix32(musicSize / 1024), size, 1);
+                fix32ToStr(FIX32(musicSize / 1024), size, 1);
                 sprintf(str, "Music size = %s KB", size);
                 VDP_drawText(str, 2, 7);
             }

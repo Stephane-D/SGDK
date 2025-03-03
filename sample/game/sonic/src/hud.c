@@ -92,11 +92,11 @@ static void updateBar(Sprite* bar, f32 min, f32 max, f32 current)
     f32 levelf;
     s16 leveli;
 
-    levelf = fix32Mul(current, FIX32(16));
-    levelf = fix32Div(levelf, (max - min));
+    levelf = F32_mul(current, FIX32(16));
+    levelf = F32_div(levelf, (max - min));
     levelf -= min;
 
-    leveli = fix32ToInt(levelf);
+    leveli = F32_toInt(levelf);
     if (leveli < 0) leveli = 0;
     else if (leveli > 16) leveli = 16;
 

@@ -112,7 +112,7 @@ static void fastStarFieldFX()
         for(i = 0; i < TABLE_LEN; i++)
         {
             scroll_PLAN_B_F[i] += scroll_speed[i];
-            scroll_PLAN_B[i] = fix16ToInt(scroll_PLAN_B_F[i]) & 0x1FF;
+            scroll_PLAN_B[i] = F16_toInt(scroll_PLAN_B_F[i]) & 0x1FF;
         }
 
         /*    Animate the donuts */

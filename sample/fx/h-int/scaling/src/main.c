@@ -57,7 +57,7 @@ static vfix16 scale        = FIX16(6.0);    // scaling factor
 HINTERRUPT_CALLBACK HIntHandler()
 {
     // Set line to display
-    VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
+    VDP_setVerticalScroll(BG_B, F16_toInt(lineGraphics) - lineDisplay);
 
     // Determine next graphics line to display (+1 means image is unscaled)
     lineGraphics += scale;
@@ -84,7 +84,7 @@ void VBlankHandler()
     scale = FIX16(6.0);
 
     // Reset v-scroll
-    VDP_setVerticalScroll(BG_B, fix16ToInt(lineGraphics) - lineDisplay);
+    VDP_setVerticalScroll(BG_B, F16_toInt(lineGraphics) - lineDisplay);
  }
 
 // *****************************************************************************

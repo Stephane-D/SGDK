@@ -821,11 +821,11 @@ static u16 displayResult(u32 op, fix32 time, u16 y)
     fix32 speed;
 
     fix32ToStr(time, timeStr, 2);
-    speed = intToFix32(op);
+    speed = FIX32(op);
     // get speed in op/s
-    speed = fix32Div(speed, time);
+    speed = F32_div(speed, time);
     // put it in speedStr
-    intToStr(fix32ToRoundedInt(speed), speedStr, 1);
+    intToStr(F32_toRoundedInt(speed), speedStr, 1);
 
     strcpy(str, "Elapsed time = ");
     strcat(str, timeStr);
@@ -836,7 +836,7 @@ static u16 displayResult(u32 op, fix32 time, u16 y)
     // display test string
     VDP_drawText(str, 3, y);
 
-    return fix32ToInt(speed);
+    return F32_toInt(speed);
 }
 
 static u16 displayResult2(u32 op, fix32 time, u16 y)
@@ -847,11 +847,11 @@ static u16 displayResult2(u32 op, fix32 time, u16 y)
     fix32 speed;
 
     fix32ToStr(time, timeStr, 2);
-    speed = intToFix32(op / 100);
+    speed = FIX32(op / 100);
     // get speed in op/s
-    speed = fix32Div(speed, time);
+    speed = F32_div(speed, time);
     // put it in speedStr
-    intToStr(fix32ToRoundedInt(speed) * 100, speedStr, 1);
+    intToStr(F32_toRoundedInt(speed) * 100, speedStr, 1);
 
     strcpy(str, "Elapsed time = ");
     strcat(str, timeStr);
@@ -862,7 +862,7 @@ static u16 displayResult2(u32 op, fix32 time, u16 y)
     // display test string
     VDP_drawText(str, 3, y);
 
-    return fix32ToInt(speed);
+    return F32_toInt(speed);
 }
 
 static u16 displayResult3(u32 op, fix32 time, u16 y)
@@ -873,11 +873,11 @@ static u16 displayResult3(u32 op, fix32 time, u16 y)
     fix32 speed;
 
     fix32ToStr(time, timeStr, 2);
-    speed = intToFix32(op / 10);
+    speed = FIX32(op / 10);
     // get speed in op/s
-    speed = fix32Div(speed, time);
+    speed = F32_div(speed, time);
     // put it in speedStr
-    intToStr(fix32ToRoundedInt(speed) * 10, speedStr, 1);
+    intToStr(F32_toRoundedInt(speed) * 10, speedStr, 1);
 
     strcpy(str, "Elapsed time = ");
     strcat(str, timeStr);
@@ -888,5 +888,5 @@ static u16 displayResult3(u32 op, fix32 time, u16 y)
     // display test string
     VDP_drawText(str, 3, y);
 
-    return fix32ToInt(speed);
+    return F32_toInt(speed);
 }

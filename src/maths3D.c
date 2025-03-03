@@ -131,7 +131,7 @@ void M3D_setTranslation(Transformation3D* t, fix16 x, fix16 y, fix16 z)
 }
 
 void M3D_setRotation(Transformation3D* t, fix16 x, fix16 y, fix16 z)
-{
+{    
     Rotation3D* rot = t->rotation;
 
     if ((rot->x != x) || (rot->y != y) || (rot->z != z))
@@ -257,36 +257,44 @@ void M3D_buildMat3D(Transformation3D* t)
 
 void M3D_buildMat3DOnly(Transformation3D* t)
 {
-    fix16 sx, sy, sz;
-    fix16 cx, cy, cz;
-    fix16 sxsy, cxsy;
-
     Rotation3D* rot = t->rotation;
+    // get angles in degree (fix16 format)
+    fix16 rx = rot->x;
+    fix16 ry = rot->y;
+    fix16 rz = rot->z;
 
-    cx = rot->x;
-    cy = rot->y;
-    cz = rot->z;
+    // normalize rotation angles
+    if (rx >= FIX16(360)) rx -= FIX16(360);
+    else if (rx < 0) rx += FIX16(360);
+    if (ry >= FIX16(360)) ry -= FIX16(360);
+    else if (ry < 0) ry += FIX16(360);
+    if (rz >= FIX16(360)) rz -= FIX16(360);
+    else if (rz < 0) rz += FIX16(360);
+    // store back after normalization
+    rot->x = rx;
+    rot->y = ry;
+    rot->z = rz;
 
-    sx = sinFix16(cx);
-    sy = sinFix16(cy);
-    sz = sinFix16(cz);
-    cx = cosFix16(cx);
-    cy = cosFix16(cy);
-    cz = cosFix16(cz);
+    fix16 sx = F16_sin(rx);
+    fix16 sy = F16_sin(ry);
+    fix16 sz = F16_sin(rz);
+    fix16 cx = F16_cos(rx);
+    fix16 cy = F16_cos(ry);
+    fix16 cz = F16_cos(rz);
 
-    t->mat.a.x = fix16Mul(cy, cz);
-    t->mat.b.x = -fix16Mul(cy, sz);
+    t->mat.a.x = F16_mul(cy, cz);
+    t->mat.b.x = -F16_mul(cy, sz);
     t->mat.c.x = sy;
 
-    sxsy = fix16Mul(sx, sy);
+    fix16 sxsy = F16_mul(sx, sy);
     t->mat.a.y = ((sxsy * cz) + (cx * sz)) >> FIX16_FRAC_BITS;
     t->mat.b.y = ((cx * cz) - (sxsy * sz)) >> FIX16_FRAC_BITS;
-    t->mat.c.y = -fix16Mul(sx, cy);
+    t->mat.c.y = -F16_mul(sx, cy);
 
-    cxsy = fix16Mul(cx, sy);
+    fix16 cxsy = F16_mul(cx, sy);
     t->mat.a.z = ((sx * sz) - (cxsy * cz)) >> FIX16_FRAC_BITS;
     t->mat.b.z = ((cxsy * sz) + (sx * cz)) >> FIX16_FRAC_BITS;
-    t->mat.c.z = fix16Mul(cx, cy);
+    t->mat.c.z = F16_mul(cx, cy);
 
     // matrix built
     t->rebuildMat = 0;
@@ -399,9 +407,9 @@ void M3D_rotateInv(Transformation3D* t, const V3f16* src, V3f16* dest)
 //        const fix16 sy = *s++;
 //        const fix16 sz = *s++;
 //
-//        *d++ = fix16Mul(sx, t->mat.a.x) + fix16Mul(sy, t->mat.a.y) + fix16Mul(sz, t->mat.a.z) + tx;
-//        *d++ = fix16Mul(sx, t->mat.b.x) + fix16Mul(sy, t->mat.b.y) + fix16Mul(sz, t->mat.b.z) + ty;
-//        *d++ = fix16Mul(sx, t->mat.c.x) + fix16Mul(sy, t->mat.c.y) + fix16Mul(sz, t->mat.c.z) + tz;
+//        *d++ = F16_mul(sx, t->mat.a.x) + F16_mul(sy, t->mat.a.y) + F16_mul(sz, t->mat.a.z) + tx;
+//        *d++ = F16_mul(sx, t->mat.b.x) + F16_mul(sy, t->mat.b.y) + F16_mul(sz, t->mat.b.z) + ty;
+//        *d++ = F16_mul(sx, t->mat.c.x) + F16_mul(sy, t->mat.c.y) + F16_mul(sz, t->mat.c.z) + tz;
 //    }
 //}
 //
@@ -423,9 +431,9 @@ void M3D_rotateInv(Transformation3D* t, const V3f16* src, V3f16* dest)
 //    {
 //        if ((zi = (s->z + camDist)) >= 0)
 //        {
-//            zi = fix16Div(camDist, zi);
-//            d->x = wi + fix16Mul(s->x >> 1, zi);
-//            d->y = hi - fix16Mul(s->y, zi);
+//            zi = F16_div(camDist, zi);
+//            d->x = wi + F16_mul(s->x >> 1, zi);
+//            d->y = hi - F16_mul(s->y, zi);
 //        }
 //        else
 //        {
@@ -456,9 +464,9 @@ void M3D_rotateInv(Transformation3D* t, const V3f16* src, V3f16* dest)
 //    {
 //        if ((zi = (s->z + camDist)) >= 0)
 //        {
-//            zi = fix16Div(camDist, zi);
-//            d->x = wi + fix16ToInt(fix16Mul(s->x >> 1, zi));
-//            d->y = hi - fix16ToInt(fix16Mul(s->y, zi));
+//            zi = F16_div(camDist, zi);
+//            d->x = wi + F16_toInt(F16_mul(s->x >> 1, zi));
+//            d->y = hi - F16_toInt(F16_mul(s->y, zi));
 //        }
 //        else
 //        {

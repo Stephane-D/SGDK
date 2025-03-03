@@ -531,10 +531,10 @@ static u32 displayResult(u32 op, fix32 time, u16 y)
     u32 speed;
 
     fix32ToStr(time, timeStr, 2);
-    speedOp = intToFix32(op >> 4);
+    speedOp = FIX32(op >> 4);
     // get number of points computed per second
-    speedOp = fix32Div(speedOp, time);
-    speed = fix32ToRoundedInt(speedOp << 4);
+    speedOp = F32_div(speedOp, time);
+    speed = F32_toRoundedInt(speedOp << 4);
     // put it in speedStr
     intToStr(speed, speedStr, 1);
 
