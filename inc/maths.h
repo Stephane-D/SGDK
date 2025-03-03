@@ -447,6 +447,16 @@ s16 F16_toInt(fix16 value);
 fix32 F16_toFix32(fix16 value);
 /**
  *  \brief
+ *      Convert specified fix16 value to fastfix16.
+ */
+fastfix16 F16_toFastFix16(fix16 value);
+/**
+ *  \brief
+ *      Convert specified fix16 value to fastfix32.
+ */
+fastfix32 F16_toFastFix32(fix16 value);
+/**
+ *  \brief
  *      Return fractional part of the specified value (fix16).
  */
 fix16 F16_frac(fix16 value);
@@ -644,6 +654,16 @@ s32 F32_toInt(fix32 value);
 fix16 F32_toFix16(fix32 value);
 /**
  *  \brief
+ *      Convert specified fix32 value to fastfix16.
+ */
+fastfix16 F32_toFastFix16(fix32 value);
+/**
+ *  \brief
+ *      Convert specified fix32 value to fastfix32.
+ */
+fastfix32 F32_toFastFix32(fix32 value);
+/**
+ *  \brief
  *      Return fractional part of the specified value (fix32).
  */
 fix32 F32_frac(fix32 value);
@@ -733,7 +753,21 @@ fix32 cosFix32(u16 value);
  *      Convert fastfix16 to integer.
  */
 s16 FF16_toInt(fastfix16 value);
-
+/**
+ *  \brief
+ *      Convert fastfix16 to fix16.
+ */
+fix16 FF16_toFix16(fastfix16 value);
+/**
+ *  \brief
+ *      Convert fastfix16 to fix32.
+ */
+fix32 FF16_toFix32(fastfix16 value);
+/**
+ *  \brief
+ *      Convert fastfix16 to fastfix32.
+ */
+fastfix32 FF16_toFastFix32(fastfix16 value);
 /**
  *  \brief
  *      Return fractional part of the specified value (fastfix16).
@@ -792,6 +826,21 @@ fastfix32 FF32_fromInt(s16 value);
  *      Convert fastfix32 to integer.
  */
 s16 FF32_toInt(fastfix32 value);
+/**
+ *  \brief
+ *      Convert fastfix32 to fix16.
+ */
+fix16 FF32_toFix16(fastfix32 value);
+/**
+ *  \brief
+ *      Convert fastfix32 to fix32.
+ */
+fix32 FF32_toFix32(fastfix32 value);
+/**
+ *  \brief
+ *      Convert fastfix32 to fastfix16.
+ */
+fastfix16 FF32_toFastFix16(fastfix32 value);
 /**
  *  \brief
  *      Return fractional part of the specified value (fastfix32).

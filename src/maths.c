@@ -293,6 +293,16 @@ FORCE_INLINE fix32 F16_toFix32(fix16 value)
     return value << (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
 }
 
+FORCE_INLINE fastfix16 F16_toFastFix16(fix16 value)
+{
+    return value << (FASTFIX16_FRAC_BITS - FIX16_FRAC_BITS);
+}
+
+FORCE_INLINE fastfix32 F16_toFastFix32(fix16 value)
+{
+    return value << (FASTFIX32_FRAC_BITS - FIX16_FRAC_BITS);
+}
+
 FORCE_INLINE fix16 F16_frac(fix16 value)
 {
     return value & FIX16_FRAC_MASK;
@@ -519,6 +529,16 @@ FORCE_INLINE fix16 F32_toFix16(fix32 value)
     return value >> (FIX32_FRAC_BITS - FIX16_FRAC_BITS);
 }
 
+FORCE_INLINE fastfix16 F32_toFastFix16(fix32 value)
+{
+    return value >> (FIX32_FRAC_BITS - FASTFIX16_FRAC_BITS);
+}
+
+FORCE_INLINE fastfix32 F32_toFastFix32(fix32 value)
+{
+    return value << (FASTFIX32_FRAC_BITS - FIX32_FRAC_BITS);
+}
+
 FORCE_INLINE fix32 F32_frac(fix32 value)
 {
     return value & FIX32_FRAC_MASK;
@@ -607,6 +627,21 @@ FORCE_INLINE s16 FF16_toInt(fastfix16 value)
     return value >> FASTFIX16_FRAC_BITS;
 }
 
+FORCE_INLINE fix16 FF16_toFix16(fastfix16 value)
+{
+    return value >> (FASTFIX16_FRAC_BITS - FIX16_FRAC_BITS);
+}
+
+FORCE_INLINE fix32 FF16_toFix32(fastfix16 value)
+{
+    return value << (FIX32_FRAC_BITS - FASTFIX16_FRAC_BITS);
+}
+
+FORCE_INLINE fastfix32 FF16_toFastFix32(fastfix16 value)
+{
+    return value << (FASTFIX32_FRAC_BITS - FASTFIX16_FRAC_BITS);
+}
+
 FORCE_INLINE fastfix16 FF16_frac(fastfix16 value)
 {
     return value & FASTFIX16_FRAC_MASK;
@@ -651,6 +686,21 @@ FORCE_INLINE fastfix32 FF32_fromInt(s16 value)
 FORCE_INLINE s16 FF32_toInt(fastfix32 value)
 {
     return value >> FASTFIX32_FRAC_BITS;
+}
+
+FORCE_INLINE fix16 FF32_toFix16(fastfix32 value)
+{
+    return value >> (FASTFIX32_FRAC_BITS - FIX16_FRAC_BITS);
+}
+
+FORCE_INLINE fix32 FF32_toFix32(fastfix32 value)
+{
+    return value >> (FASTFIX32_FRAC_BITS - FIX32_FRAC_BITS);
+}
+
+FORCE_INLINE fastfix16 FF32_toFastFix16(fastfix32 value)
+{
+    return value >> (FASTFIX32_FRAC_BITS - FASTFIX16_FRAC_BITS);
 }
 
 FORCE_INLINE fastfix32 FF32_frac(fastfix32 value)
