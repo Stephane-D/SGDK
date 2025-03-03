@@ -67,12 +67,12 @@ extern int vsprintf(char *buf, const char *fmt, va_list args);
 static bool m_consoleDoBufferReset = TRUE;
 static bool m_consoleDoSystemReset = FALSE;
 
-static u16 m_consoleX      =  0;
-static u16 m_consoleY      =  0;
-static u16 m_consoleLeft   =  0;
-static u16 m_consoleTop    =  0;
-static u16 m_consoleWidth  = 40;
-static u16 m_consoleHeight = 28;
+static u8 m_consoleX      =  0;
+static u8 m_consoleY      =  0;
+static u8 m_consoleLeft   =  0;
+static u8 m_consoleTop    =  0;
+static u8 m_consoleWidth  = 40;
+static u8 m_consoleHeight = 28;
 
 static TransferMethod m_consoleTransferMethod = DMA;
 
@@ -228,7 +228,7 @@ static void consoleCarriageReturn()
 
 static void consoleHorizontalTab()
 {
-    // Move cursor to next tab positon.
+    // Move cursor to next tab position.
     // This is the next position divisible by CONSOLE_TAB_SIZE.
     m_consoleX = min((m_consoleX/CONSOLE_TAB_SIZE + 1) * CONSOLE_TAB_SIZE,
                       m_consoleWidth-1);
