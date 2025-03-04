@@ -1,0 +1,75 @@
+name: publish-doxygen
+
+on:
+  workflow_dispatch:  # Allows manual trigger of the workflow
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+
+# Requires Github: Settings->Pages: Build and deployment Source set to be "Github Actions"
+
+env:
+  # Used to find the download link:
+  # https://www.doxygen.nl/files/doxygen-X.XX.X.linux.bin.tar.gz
+  # Version # updated on: 2025.02.28
+  DOXYGEN_VERSION: 1.13.2
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      # Step to cleanup previous deployments to prevent stacking of old deployments
+      - name: 🗑 Cleanup deployments
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
+
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      # Step to checkout the SGDK repository 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: SGDK
+          fetch-depth: 1
+
+      # Step to install Graphviz for generating code flow charts with Doxygen
+      - name: Install Graphviz
+        run: sudo apt-get install graphviz -y
+
+      # Step to download and install Doxygen
+      - name: Download and Install Doxygen
+        run: |
+          wget https://www.doxygen.nl/files/doxygen-${{ env.DOXYGEN_VERSION }}.linux.bin.tar.gz -O - | tar -xz
+          mv doxygen* ~/doxygen
+
+      # Step to generate Doxygen HTML documentation
+      - name: Generate Doxygen files
+        run: ~/doxygen/bin/doxygen ./SGDK/doc/doxyconfig
+
+      # Step to upload the generated files as an artifact
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/doxygen/html
+
+  deploy:
+    needs: build  # Ensures that the deploy job runs after the build job completes
+    permissions:
+      pages: write  # Grant permission to write to GitHub Pages
+      id-token: write  # Grant permission for id-token usage
+
+    environment:
+      name: github-pages  # The environment name for deployment
+      url: ${{ steps.deployment.outputs.page_url }}  # URL of the deployed pages
+
+    runs-on: ubuntu-latest
+    steps:
+      # Step to deploy the generated Doxygen files to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
