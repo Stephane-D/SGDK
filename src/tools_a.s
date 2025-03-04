@@ -121,7 +121,7 @@ partition:
 ;// Size optimized (164 bytes) by Franck "hitchhikr" Charlet.
 ;// More optimizations by r57shell.
 ;//
-;// aplib_decrunch: A0 = Source / A1 = Destination / Returns unpacked size
+;// aplib_decrunch: A0 = Source / A1 = Destination / D0 Returns unpacked size
 ;// u32 aplib_unpack(u8 *src, u8 *dest); /* c prototype */
 ;//
 ;// -------------------------------------------------------------------------------------------------
@@ -252,9 +252,9 @@ aplib_decrunch:
 ;// ---------------------------------------------------------------------------
 ;// LZ4W unpacker for MC68000
 ;// by Stephane Dallongeville @2017
-;// decomp code tweaked by HpMan
+;// decomp code tweaked by HpMan, optimized further by Malachi
 ;//
-;// lz4w_unpack_a: A0 = Source / A1 = Destination / Returns unpacked size
+;// lz4w_unpack_a: A0 = Source / A1 = Destination / D0 Returns unpacked size
 ;// u16 lz4w_unpack(const u8 *src, u8 *dest);  /* c prototype */
 ;// ---------------------------------------------------------------------------
 
@@ -271,15 +271,12 @@ aplib_decrunch:
   .endm
 
 func lz4w_unpack
-    move.l  4(%sp),%a0              ;// a0 = src
-    move.l  8(%sp),%a1              ;// a1 = dst
+    movem.l 4(%sp),%a0-%a1          ;// a0 = src, // a1 = dst
 
 lz4w_unpack_a:
-    movem.l  a2-a4, -(sp)
+    movem.l  a1-a4, -(sp)           ;// save dst for lz4w_unpack_a
 
     lea  .jump_table(pc), a3        ;// for LZ4W_NEXT macro
-
-.next:
     LZ4W_NEXT
 
 .jump_table:
@@ -322,7 +319,19 @@ lz4w_unpack_a:
 .lm_len_00:
     move.w  (a2)+, (a1)+
     move.w  (a2)+, (a1)+
-    LZ4W_NEXT
+    ;// .next was moved it here for .s branching range
+    ;// Additionally, all branches to .next have d1 already cleared.
+    ;// The easiest way to take advantage of that, is to inline the macro..
+    moveq  #0, d1
+.next:
+    moveq  #0, d0
+    move.b  (a0)+, d0               ;// d0 = literal & match length
+    move.b  (a0)+, d1               ;// d1 = match offset
+
+    add.w  d0, d0
+    add.w  d0, d0
+    move.l  (a3,d0.w), a4
+    jmp  (a4)
 
 .litE_mat0:  move.l  (a0)+, (a1)+
 .litC_mat0:  move.l  (a0)+, (a1)+
@@ -331,13 +340,11 @@ lz4w_unpack_a:
 .lit6_mat0:  move.l  (a0)+, (a1)+
 .lit4_mat0:  move.l  (a0)+, (a1)+
 .lit2_mat0:  move.l  (a0)+, (a1)+
-    tst.b  d1                       ;// match offset null ?
-    beq  .next                      ;// not a long match
+    add.w  d1, d1                   ;// len = len * 2, match offset null ?
+    beq.s  .next                    ;// not a long match
 
 .long_match_1:
     move.w  (a0)+, d0               ;// get long offset (already negated)
-
-    add.w  d1, d1                   ;// len = len * 2
 
     add.w  d0, d0                   ;// bit 15 contains ROM source info
     bcs.s  .lm_rom
@@ -355,14 +362,11 @@ lz4w_unpack_a:
 .lit5_mat0:  move.l  (a0)+, (a1)+
 .lit3_mat0:  move.l  (a0)+, (a1)+
 .lit1_mat0:  move.w  (a0)+, (a1)+
-
-    tst.b  d1                       ;// match offset null ?
-    beq  .next                      ;// not a long match
+    add.w  d1, d1                   ;// len = len * 2, match offset null ?
+    beq.s  .next                    ;// not a long match
 
 .long_match_2:
     move.w  (a0)+, d0               ;// get long offset (already negated)
-
-    add.w  d1, d1                   ;// len = len * 2
 
     add.w  d0, d0                   ;// bit 15 contains ROM source info
     bcs.s  .lm_rom
@@ -373,13 +377,11 @@ lz4w_unpack_a:
     jmp  (a4)
 
 .lit0_mat0:                         ;// special case of lit=0 and mat=0
-    tst.b  d1                       ;// match offset null ?
-    beq  .done                      ;// not a long match --> done
+    add.w  d1, d1                   ;// len = len * 2, match offset null ?
+    beq.s  .done                    ;// not a long match --> done
 
 .long_match_3:
     move.w  (a0)+, d0               ;// get long offset (already negated)
-
-    add.w  d1, d1                   ;// len = len * 2
 
     add.w  d0, d0                   ;// bit 15 contains ROM source info
     bcs.s  .lm_rom
@@ -394,6 +396,17 @@ lz4w_unpack_a:
     lea  -2(a0,d0.w), a2            ;// a2 = src - (match offset + 2)
     move.l  .lmr_jump_table(pc,d1.w), a4
     jmp     (a4)
+
+.done:
+    move.w  (a0)+, d0               ;// need to copy a last byte ?
+    bpl.s  .no_byte
+    move.b  d0, (a1)+               ;// copy last byte
+.no_byte:
+    move.l  a1, d0
+    sub.l   (sp)+, d0               ;// return op - dest
+
+    movem.l (sp)+, a2-a4
+    rts
 
 .lmr_jump_table:
   .long  .lmr_len_00-0x00, .lmr_len_01-0x00, .lmr_len_00-0x02, .lmr_len_01-0x02, .lmr_len_00-0x04, .lmr_len_01-0x04, .lmr_len_00-0x06, .lmr_len_01-0x06, .lmr_len_00-0x08, .lmr_len_01-0x08, .lmr_len_00-0x0a, .lmr_len_01-0x0a, .lmr_len_00-0x0c, .lmr_len_01-0x0c, .lmr_len_00-0x0e, .lmr_len_01-0x0e
@@ -724,14 +737,3 @@ lz4w_unpack_a:
 .lit3_matF:  move.l  (a0)+, (a1)+
 .lit1_matF:  move.w  (a0)+, (a1)+
     COPY_MATCH 15
-
-.done:
-    move.w  (a0)+, d0               ;// need to copy a last byte ?
-    bpl.s  .no_byte
-    move.b  d0, (a1)+               ;// copy last byte
-.no_byte:
-    move.l  a1, d0
-    sub.l  20(sp), d0               ;// return op - dest
-
-    movem.l (sp)+, a2-a4
-    rts
