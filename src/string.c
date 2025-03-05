@@ -378,7 +378,7 @@ void fastFix32ToStr(fastfix32 value, char *str, u16 numdec)
     *dst++ = '.';
     
     // get fractional part
-    const u16 frac = mulu((u16) FF16_frac(v), 10000) >> FASTFIX32_FRAC_BITS;
+    const u16 frac = mulu((u16) FF32_frac(v), 10000) >> FASTFIX32_FRAC_BITS;
     u16 len = uint16ToStr(frac, dst, 4);
     
     if (len < numdec)
