@@ -393,6 +393,11 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
     sprite->definition = spriteDef;
     sprite->onFrameChange = NULL;
 
+    // A newly allocated sprite may have a value leftover
+    // in this field from a previously released sprite and
+    // if it's -1 frame update will be disabled.
+    sprite->timer = 0;
+
 //    FIXME: not needed
 //    sprite->animation = NULL;
     sprite->frame = NULL;
