@@ -393,11 +393,6 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
     sprite->definition = spriteDef;
     sprite->onFrameChange = NULL;
 
-    // A newly allocated sprite may have a value leftover
-    // in this field from a previously released sprite and
-    // if it's -1 frame update will be disabled.
-    sprite->timer = 0;
-
 //    FIXME: not needed
 //    sprite->animation = NULL;
     sprite->frame = NULL;
@@ -405,6 +400,9 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
     sprite->animInd = -1;
     sprite->frameInd = -1;
 //    sprite->seqInd = -1;
+
+    // may not be reset in SPR_setAnimAndFrame(..) so we have to reset it here
+    sprite->timer = 0;
 
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
