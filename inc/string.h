@@ -280,6 +280,34 @@ void fix16ToStr(fix16 value, char *str, u16 numdec);
 void fix32ToStr(fix32 value, char *str, u16 numdec);
 /**
  *  \brief
+ *      Convert a fastfix16 value to string.
+ *
+ *  \param value
+ *      The fastfix16 value to convert to string.
+ *  \param str
+ *      Destination string (it must be large enough to receive result).
+ *  \param numdec
+ *      Number of wanted decimal.
+ *
+ * Converts the specified fastfix16 value to string.<br>
+ */
+void fastFix16ToStr(fastfix16 value, char *str, u16 numdec);
+/**
+ *  \brief
+ *      Convert a fastfix32 value to string.
+ *
+ *  \param value
+ *      The fastfix32 value to convert to string.
+ *  \param str
+ *      Destination string (it must be large enough to receive result).
+ *  \param numdec
+ *      Number of wanted decimal.
+ *
+ * Converts the specified fastfix32 value to string.<br>
+ */
+void fastFix32ToStr(fastfix32 value, char *str, u16 numdec);
+/**
+ *  \brief
  *      Same as fix16ToStr(..)
  *  \see fix16ToStr
  */
@@ -290,6 +318,18 @@ void F16_toStr(fix16 value, char *str, u16 numdec);
  *  \see fix32ToStr
  */
 void F32_toStr(fix32 value, char *str, u16 numdec);
+/**
+ *  \brief
+ *      Same as fastFix16ToStr(..)
+ *  \see fastFix16ToStr
+ */
+void FF16_toStr(fastfix16 value, char *str, u16 numdec);
+/**
+ *  \brief
+ *      Same as fastFix32ToStr(..)
+ *  \see fastFix32ToStr
+ */
+void FF32_toStr(fastfix32 value, char *str, u16 numdec);
 
 #endif // _STRING_H_
 
