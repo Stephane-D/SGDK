@@ -105,10 +105,10 @@
     echo.
     echo ============================================
    
-	echo set GDK=%GDK%> make_cart.bat
-	echo set GDK_WIN=%GDK_WIN%>> make_cart.bat
-	echo set PATH=%PATH%>> make_cart.bat
-	echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen>> make_cart.bat
+	echo set GDK=%GDK%> make_rom.bat
+	echo set GDK_WIN=%GDK_WIN%>> make_rom.bat
+	echo set PATH=%PATH%>> make_rom.bat
+	echo %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen>> make_rom.bat
 	
       
 :CLEANUP

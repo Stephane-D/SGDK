@@ -500,13 +500,13 @@ void F16_movePointEx(fix16 *x2, fix16 *y2, fix16 x1, fix16 y1, fix16 ang, fix16 
 FORCE_INLINE fix16 sinFix16(u16 value)
 {
     // convert [0..1024[ to [0..360[
-    return F16_sin(FIX16(divu(mulu(value & 1023, 360), 1024)));
+    return F16_sin(FIX16(mulu(value & 1023, 360) >> 10));
 }
 
 FORCE_INLINE fix16 cosFix16(u16 value)
 {
     // convert [0..1024[ to [0..360[
-    return F16_cos(FIX16(divu(mulu(value & 1023, 360), 1024)));
+    return F16_cos(FIX16(mulu(value & 1023, 360) >> 10));
 }
 
 
