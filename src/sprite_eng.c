@@ -406,6 +406,9 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
     sprite->frameInd = -1;
 //    sprite->seqInd = -1;
 
+    // may not be reset in SPR_setAnimAndFrame(..) so we have to reset it here
+    sprite->timer = 0;
+
     sprite->x = x + 0x80;
     sprite->y = y + 0x80;
     // depending sprite position (first or last) we set its default depth
