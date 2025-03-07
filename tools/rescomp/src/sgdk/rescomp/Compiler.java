@@ -208,7 +208,8 @@ public class Compiler
             headerName = headerName.toUpperCase();
 
             outH.append("#ifndef _" + headerName + "_H_\n");
-            outH.append("#define _" + headerName + "_H_\n\n");
+            outH.append("#define _" + headerName + "_H_\n");
+            outH.append("#include <genesis.h>\n\n");
 
             // -- BINARY SECTION --
 
