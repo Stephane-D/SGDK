@@ -39,7 +39,7 @@
 #define MAX_U8  0xFF
 #endif
 #ifndef MIN_S8
-#define MIN_S8  -0x80
+#define MIN_S8  (-0x80)
 #endif
 #ifndef MAX_S8
 #define MAX_S8  0x7F
@@ -52,7 +52,7 @@
 #define MAX_U16 0xFFFF
 #endif
 #ifndef MIN_S16
-#define MIN_S16 -0x8000
+#define MIN_S16 (-0x8000)
 #endif
 #ifndef MAX_S16
 #define MAX_S16 0x7FFF
@@ -65,7 +65,7 @@
 #define MAX_U32 0xFFFFFFFF
 #endif
 #ifndef MIN_S32
-#define MIN_S32 -0x80000000
+#define MIN_S32 (-0x80000000)
 #endif
 #ifndef MAX_S32
 #define MAX_S32 0x7FFFFFFF
