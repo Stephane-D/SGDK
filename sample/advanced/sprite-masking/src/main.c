@@ -5,11 +5,11 @@
 //  that intersect with a horizontal rectangle/line of a given height and width in the screen width.
 //
 //  To do this, a masking sprite is used (of the required height and minimum width of 8 pixels),
-//  which is placed outside the visible part of the screen. The parts of the selected Sprites (how to see rule #4)
+//  which is placed outside the visible part of the screen. The parts of the selected sprites (how to do see rule #4)
 //  that are in the visible part of the screen on the same horizontal line with the masking sprite and
 //  have a depth greater than the masking sprite will be hidden.
 //
-//  THE NEXT RULES MUST be FOLLOWED:
+//  THE NEXT RULES MUST BE FOLLOWED:
 //  1. masking sprite must have X POSITION == -128
 //  2. there must be at least 1 sprite (helper sprite) at the same Y POSITION as the masking sprite, and X POSITION > X POSITION than masking sprite
 //  3. this helper sprite must have SPRITE DEPTH < SPRITE DEPTH of masking sprite
