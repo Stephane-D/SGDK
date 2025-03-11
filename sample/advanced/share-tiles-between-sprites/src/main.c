@@ -1,3 +1,13 @@
+// *****************************************************************************
+//  Share tiles between sprites example
+//
+//  Shared tiles between sprites is a technique that allows you not to load the same tiles
+//  of each the similar sprites to the VRAM, but to use one set of tiles for the several sprite,
+//  which reduces the consumption of VRAM
+//
+//  writen by werton playskin 03/2025
+// *****************************************************************************
+
 #include <genesis.h>
 #include "res/res_sprite.h"
 
