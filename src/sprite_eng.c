@@ -1738,6 +1738,7 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
     u16 visibility;
     const SpriteDefinition* sprDef = sprite->definition;
 
+    // we use 'unsigned' on purpose here to get merged <0 test
     const u16 sw = screenWidth;
     const u16 sh = screenHeight;
     const u16 w = sprDef->w - 1;
@@ -1748,8 +1749,8 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
     // fast visibility computation ?
     if (status & SPR_FLAG_FAST_AUTO_VISIBILITY)
     {
-        // compute global visibility for sprite (use unsigned for merged <0 test)
-        if (((u16)(x + w) < (u16)(sw + w)) && ((u16)(y + h) < (u16)(sh + h)))
+        // compute global visibility for sprite ('unsigned' allow merged <0 test)
+        if (((x + w) < (sw + w)) && ((y + h) < (sh + h)))
             visibility = VISIBILITY_ON;
         else
             visibility = VISIBILITY_OFF;
@@ -1767,27 +1768,27 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
         KLog_S2("    xmin=", xmin, " xmax=", xmax);
 #endif // SPR_DEBUG
 
-        // sprite is fully visible ? --> set all sprite visible (use unsigned for merged <0 test)
-        if ((x < (u16)(sw - w)) && (y < (u16)(sh - h)))
+        // sprite is fully visible ? --> set all sprite visible ('unsigned' allow merged <0 test)
+        if ((x < (sw - w)) && (y < (sh - h)))
         {
             visibility = VISIBILITY_ON;
 
 #ifdef SPR_DEBUG
             KLog_S2("  updateVisibility (slow): global x=", x, " y=", y);
             KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
-            KLog_S4("    x=", x, " y=", y, " sw-w=", (u16)(sw-w), " sh-h=", (u16)(sh-h));
+            KLog_S4("    x=", x, " y=", y, " sw-w=", sw - w, " sh-h=", sh - h);
             KLog("    full ON");
 #endif // SPR_DEBUG
         }
-        // sprite is fully hidden ? --> set all sprite to hidden (use unsigned for merged <0 test)
-        else if (((u16)(x + w) >= (u16)(sw + w)) || ((u16)(y + h) >= (u16)(sh + h)))
+        // sprite is fully hidden ? --> set all sprite to hidden ('unsigned' allow merged <0 test)
+        else if (((x + w) >= (sw + w)) || ((y + h) >= (sh + h)))
         {
             visibility = VISIBILITY_OFF;
 
 #ifdef SPR_DEBUG
             KLog_S2("  updateVisibility (slow): global x=", x, " y=", y);
             KLog_S2("    frame w=", sprDef->w, " h=", sprDef->h);
-            KLog_S4("    x+w=", (u16)(x+w), " y+h=", (u16)(y+h), " sw+w=", (u16)(sw+w), " sh+h=", (u16)(sh+h));
+            KLog_S4("    x+w=", x + w, " y+h=", y + h, " sw+w=", sw + w, " sh+h=", sh + h);
             KLog("    full OFF");
 #endif // SPR_DEBUG
         }
@@ -1823,8 +1824,8 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                             // need to be done first
                             visibility <<= 1;
 
-                            // compute visibility (use unsigned for merged <0 test)
-                            if (((u16)(frameSprite->offsetX + bx) < mx) && ((u16)(frameSprite->offsetY + by) < my))
+                            // compute visibility ('unsigned' allow merged <0 test)
+                            if (((frameSprite->offsetX + bx) < mx) && ((frameSprite->offsetY + by) < my))
                                 visibility |= 1;
 
 #ifdef SPR_DEBUG
@@ -1842,8 +1843,8 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                             // need to be done first
                             visibility <<= 1;
 
-                            // compute visibility (use unsigned for merged <0 test)
-                            if (((u16)(frameSprite->offsetXFlip + bx) < mx) && ((u16)(frameSprite->offsetY + by) < my))
+                            // compute visibility ('unsigned' allow merged <0 test)
+                            if (((frameSprite->offsetXFlip + bx) < mx) && ((frameSprite->offsetY + by) < my))
                                 visibility |= 1;
 
 #ifdef SPR_DEBUG
@@ -1861,8 +1862,8 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                             // need to be done first
                             visibility <<= 1;
 
-                            // compute visibility (use unsigned for merged <0 test)
-                            if (((u16)(frameSprite->offsetX + bx) < mx) && ((u16)(frameSprite->offsetYFlip + by) < my))
+                            // compute visibility ('unsigned' allow merged <0 test)
+                            if (((frameSprite->offsetX + bx) < mx) && ((frameSprite->offsetYFlip + by) < my))
                                 visibility |= 1;
 
 #ifdef SPR_DEBUG
@@ -1880,12 +1881,12 @@ static u16 updateVisibility(Sprite* sprite, u16 status)
                             // need to be done first
                             visibility <<= 1;
 
-                            // compute visibility (use unsigned for merged <0 test)
-                            if (((u16)(frameSprite->offsetXFlip + bx) < mx) && ((u16)(frameSprite->offsetYFlip + by) < my))
+                            // compute visibility ('unsigned' allow merged <0 test)
+                            if (((frameSprite->offsetXFlip + bx) < mx) && ((frameSprite->offsetYFlip + by) < my))
                                 visibility |= 1;
 
 #ifdef SPR_DEBUG
-                            KLog_S4("    offx+bx=", (u16)(frameSprite->offsetXFlip + bx), " offy+by=", (u16)(frameSprite->offsetYFlip + by), " mx=", mx, " my=", my);
+                            KLog_S4("    offx+bx=", (frameSprite->offsetXFlip + bx), " offy+by=", (frameSprite->offsetYFlip + by), " mx=", mx, " my=", my);
 #endif
 
                             // next

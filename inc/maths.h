@@ -182,6 +182,26 @@ typedef struct
 
 /**
  *  \brief
+ *      2D Vector structure - ff16 (fastfix16) type.
+ */
+typedef struct
+{
+    fastfix16 x;
+    fastfix16 y;
+} Vect2D_ff16;
+
+/**
+ *  \brief
+ *      2D Vector structure - ff32 (fastfix32) type.
+ */
+typedef struct
+{
+    fastfix32 x;
+    fastfix32 y;
+} Vect2D_ff32;
+
+/**
+ *  \brief
  *      2x2 Matrice structure - f16 (fix16) type.<br>
  *      Internally uses 2 2D vectors.
  */
@@ -202,6 +222,27 @@ typedef struct
     Vect2D_f32 b;
 } Mat2D_f32;
 
+/**
+ *  \brief
+ *      2x2 Matrice structure - ff16 (fastfix16) type.<br>
+ *      Internally uses 2 2D vectors.
+ */
+typedef struct
+{
+    Vect2D_ff16 a;
+    Vect2D_ff16 b;
+} Mat2D_ff16;
+
+/**
+ *  \brief
+ *      2x2 Matrice structure - ff32 (fastfix32) type.<br>
+ *      Internally uses 2 2D vectors.
+ */
+typedef struct
+{
+    Vect2D_ff32 a;
+    Vect2D_ff32 b;
+} Mat2D_ff32;
 
 // short alias
 
@@ -229,7 +270,14 @@ typedef Vect2D_f16 V2f16;
  *  \brief alias for Vect2D_f32
  */
 typedef Vect2D_f32 V2f32;
-
+/**
+ *  \brief alias for Vect2D_ff16
+ */
+typedef Vect2D_ff16 V2ff16;
+/**
+ *  \brief alias for Vect2D_ff32
+ */
+typedef Vect2D_ff32 V2ff32;
 /**
  *  \brief alias for Mat2D_f16
  */
@@ -238,7 +286,14 @@ typedef Mat2D_f16 M2f16;
  *  \brief alias for Mat2D_f32
  */
 typedef Mat2D_f32 M2f32;
-
+/**
+ *  \brief alias for Mat2D_ff16
+ */
+typedef Mat2D_ff16 M2ff16;
+/**
+ *  \brief alias for Mat2D_ff32
+ */
+typedef Mat2D_ff32 M2ff32;
 
 ///////////////////////////////////////////////
 //  Basic math functions
