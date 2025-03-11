@@ -24,8 +24,6 @@ Sprite *replicaSprites[REPLICA_COUNT];
 // define empty pointer to 2D array of u16 for storing VRAM tile indexes of primary sprite
 u16 **frameIndexes;
 
-s16 GetVRAMTileIndex(const Sprite *sprite);
-
 // synchronizes the animation of the replicated sprites by the primary sprite
 void SyncReplicaSpritesToSprite(Sprite *sprite, s16 tileIndex)
 {
