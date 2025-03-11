@@ -11,8 +11,11 @@
 #include <genesis.h>
 #include "res/res_sprite.h"
 
+// Change to 0 for steaming frames, else all frames of animation to VRAM
+#define LOAD_ALL_FRAMES_TO_VRAM     1
+
 // number of replica sprites
-#define REPLICA_COUNT     10
+#define REPLICA_COUNT               10
 
 // define Sprite pointers for primary and replica sprites
 Sprite *primarySprite;
@@ -21,24 +24,45 @@ Sprite *replicaSprites[REPLICA_COUNT];
 // define empty pointer to 2D array of u16 for storing VRAM tile indexes of primary sprite
 u16 **frameIndexes;
 
-// this function updates the VRAM tile index for the current frame of the primary and replicated sprites,
-// and synchronizes the animation of the replicated sprites with the primary sprite
-void SyncReplicaSpritesToPrimarySprite(Sprite *sprite)
+s16 GetVRAMTileIndex(const Sprite *sprite);
+
+// synchronizes the animation of the replicated sprites by the primary sprite
+void SyncReplicaSpritesToSprite(Sprite *sprite, s16 tileIndex)
+{
+    for (u16 i = 0; i < REPLICA_COUNT; i++) {
+        // sync animation index of replica sprite to primary sprite
+        SPR_setAnim(replicaSprites[i], sprite->animInd);
+        // sync VRAM tile index of replica sprite with VRAM tile index of primary sprite
+        SPR_setVRAMTileIndex(replicaSprites[i], tileIndex);
+    }
+}
+
+// updates the VRAM tile indexes for the primary sprite
+// and sync replica sprites to primary sprite
+// for FULL LOADED frames
+void UpdateSpritesTileIndexesFullLoaded(Sprite *sprite)
 {
     // get the VRAM tile index for the current frame of the primary sprite
     s16 tileIndex = (s16) frameIndexes[sprite->animInd][sprite->frameInd];
     
     // set VRAM tile index for primary sprite
     SPR_setVRAMTileIndex(sprite, tileIndex);
-    
-    for (u16 i = 0; i < REPLICA_COUNT; i++) {
-        // sync VRAM tile index of replica sprite with VRAM tile index of primary sprite
-        SPR_setVRAMTileIndex(replicaSprites[i], tileIndex);
-        
-        // sync animation index of replica sprite to primary sprite
-        SPR_setAnim(replicaSprites[i], sprite->animInd);
-    }
+
+    // sync replica sprites to primary sprite
+    SyncReplicaSpritesToSprite(sprite, tileIndex);
 }
+
+// sync replica sprites to primary sprite
+// for STREAMED frames
+void UpdateSpritesTileIndexesSteamed(Sprite *sprite)
+{
+    // get the VRAM tile index for the current frame of the primary sprite
+    s16 tileIndex = (s16) (sprite->attribut & TILE_INDEX_MASK);
+
+    // sync replica sprites to primary sprite
+    SyncReplicaSpritesToSprite(sprite, tileIndex);
+}
+
 
 int main(bool hardReset)
 {
@@ -53,7 +77,8 @@ int main(bool hardReset)
     
     // create variable for containing number of tiles
     u16 numTile;
-    
+
+#if LOAD_ALL_FRAMES_TO_VRAM
     // load all frames of target SpriteDefinition to VRAM and got pointer to
     // dynamically allocated 2D array of VRAM tile indexes (like frameIndexes[anim][frame])
     frameIndexes = SPR_loadAllFrames(&sonicSpriteDef, TILE_USER_INDEX, &numTile);
@@ -62,14 +87,22 @@ int main(bool hardReset)
     // (default flag for SPR_addSprite is SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
     primarySprite = SPR_addSpriteEx(&sonicSpriteDef, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE), SPR_FLAG_AUTO_VISIBILITY);
     
+    // set primarySprite on frame change callback
+    SPR_setFrameChangeCallback(primarySprite, UpdateSpritesTileIndexesFullLoaded);
+#else
+    // create primary sprite with settings of "auto vram allocation" & "auto tile upload" to off
+    // (default flag for SPR_addSprite is SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
+    primarySprite = SPR_addSprite(&sonicSpriteDef, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
+    
+    // set primarySprite on frame change callback
+    SPR_setFrameChangeCallback(primarySprite, UpdateSpritesTileIndexesSteamed);
+#endif
+    
     // create replica sprites with settings of "auto vram allocation" & "auto tile upload" to off
     // and offset of X position by 30 pixels
     for (u16 i = 0; i < REPLICA_COUNT; i++) {
         replicaSprites[i] = SPR_addSpriteEx(&sonicSpriteDef, 30 * i, 50, TILE_ATTR(PAL0, TRUE, FALSE, FALSE), SPR_FLAG_AUTO_VISIBILITY);
     }
-    
-    // set primarySprite on frame change callback
-    SPR_setFrameChangeCallback(primarySprite, SyncReplicaSpritesToPrimarySprite);
     
     // load palette
     PAL_setPalette(PAL0, sonicSpriteDef.palette->data, CPU);
