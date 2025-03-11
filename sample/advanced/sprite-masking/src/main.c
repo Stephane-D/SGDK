@@ -11,7 +11,7 @@
 //
 //  THE NEXT RULES MUST BE FOLLOWED:
 //  1. masking sprite must have X POSITION == -128
-//  2. there must be at least 1 sprite (helper sprite) at the same Y POSITION as the masking sprite, and X POSITION > X POSITION than masking sprite
+//  2. there must be at least 1 sprite (helper sprite) at the same Y POSITION as the masking sprite, and X POSITION != X POSITION than masking sprite
 //  3. this helper sprite must have SPRITE DEPTH < SPRITE DEPTH of masking sprite
 //  4. masking sprite must have SPRITE DEPTH > SPRITE DEPTH of sprites that must be masked (otherwise, these sprites will not be masked)
 //
@@ -68,7 +68,7 @@ int main(bool hardReset)
     // --------------------------------------------------------------------------------------------------------------------
     // SPRITE MASKING RULES:
     // 1. spriteMask must have X POSITION == -128
-    // 2. there must be at least 1 sprite (let it be spriteMaskHelper) at the same Y POSITION as the spriteMask, and X POSITION > X POSITION than spriteMask
+    // 2. there must be at least 1 sprite (let it be spriteMaskHelper) at the same Y POSITION as the spriteMask, and X POSITION != X POSITION than spriteMask
     // 3. spriteMaskHelper must have SPRITE DEPTH < SPRITE DEPTH of spriteMask
     // 4. spriteMask must have SPRITE DEPTH > SPRITE DEPTH of sprites that must be masked (otherwise, these sprites will not be masked)
     // --------------------------------------------------------------------------------------------------------------------
