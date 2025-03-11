@@ -11,7 +11,7 @@
 #include <genesis.h>
 #include "res/res_sprite.h"
 
-// Change to 0 for steaming frames, else all frames of animation to VRAM
+// сhange to 0 for streaming frames, else all frames will be loaded to VRAM
 #define LOAD_ALL_FRAMES_TO_VRAM     1
 
 // number of replica sprites
