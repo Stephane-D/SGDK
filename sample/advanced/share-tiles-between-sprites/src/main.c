@@ -19,7 +19,7 @@ void SyncReplicaSpritesToPrimarySprite(Sprite *sprite)
     s16 tileIndex = (s16) frameIndexes[sprite->animInd][sprite->frameInd];
     
     // set VRAM tile index for primary sprite
-    SPR_setVRAMTileIndex(sprite, (s16) tileIndex);
+    SPR_setVRAMTileIndex(sprite, tileIndex);
     
     for (u16 i = 0; i < REPLICA_COUNT; i++) {
         // sync VRAM tile index of replica sprite with VRAM tile index of primary sprite
@@ -49,11 +49,11 @@ int main(bool hardReset)
     frameIndexes = SPR_loadAllFrames(&sonicSpriteDef, TILE_USER_INDEX, &numTile);
     
     // create primary sprite with settings of "auto vram allocation" & "auto tile upload" to off
-    // (default flag is SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
+    // (default flag for SPR_addSprite is SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
     primarySprite = SPR_addSpriteEx(&sonicSpriteDef, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE), SPR_FLAG_AUTO_VISIBILITY);
     
     // create replica sprites with settings of "auto vram allocation" & "auto tile upload" to off
-    // and offset of X position y 30 pixels
+    // and offset of X position by 30 pixels
     for (u16 i = 0; i < REPLICA_COUNT; i++) {
         replicaSprites[i] = SPR_addSpriteEx(&sonicSpriteDef, 30 * i, 50, TILE_ATTR(PAL0, TRUE, FALSE, FALSE), SPR_FLAG_AUTO_VISIBILITY);
     }
