@@ -22,6 +22,7 @@ Sprite *primarySprite;
 Sprite *replicaSprites[REPLICA_COUNT];
 
 // define empty pointer to 2D array of u16 for storing VRAM tile indexes of primary sprite
+// (used for preloaded frames only)
 u16 **frameIndexes;
 
 // synchronizes the animation of the replicated sprites by the primary sprite
@@ -38,25 +39,25 @@ void SyncReplicaSpritesToSprite(Sprite *sprite, s16 tileIndex)
 // updates the VRAM tile indexes for the primary sprite
 // and sync replica sprites to primary sprite
 // for FULL LOADED frames
-void UpdateSpritesTileIndexesFullLoaded(Sprite *sprite)
+void UpdateSpritesTileIndexesForFullLoadedFrames(Sprite *sprite)
 {
     // get the VRAM tile index for the current frame of the primary sprite
     s16 tileIndex = (s16) frameIndexes[sprite->animInd][sprite->frameInd];
     
     // set VRAM tile index for primary sprite
     SPR_setVRAMTileIndex(sprite, tileIndex);
-
+    
     // sync replica sprites to primary sprite
     SyncReplicaSpritesToSprite(sprite, tileIndex);
 }
 
 // sync replica sprites to primary sprite
 // for STREAMED frames
-void UpdateSpritesTileIndexesSteamed(Sprite *sprite)
+void UpdateSpritesTileIndexesForStreamedFrames(Sprite *sprite)
 {
     // get the VRAM tile index for the current frame of the primary sprite
     s16 tileIndex = (s16) (sprite->attribut & TILE_INDEX_MASK);
-
+    
     // sync replica sprites to primary sprite
     SyncReplicaSpritesToSprite(sprite, tileIndex);
 }
@@ -78,22 +79,21 @@ int main(bool hardReset)
 
 #if LOAD_ALL_FRAMES_TO_VRAM
     // load all frames of target SpriteDefinition to VRAM and got pointer to
-    // dynamically allocated 2D array of VRAM tile indexes (like frameIndexes[anim][frame])
+    // dynamically allocated 2D array of VRAM tile indexes (frameIndexes[anim][frame])
     frameIndexes = SPR_loadAllFrames(&sonicSpriteDef, TILE_USER_INDEX, &numTile);
     
-    // create primary sprite with settings of "auto vram allocation" & "auto tile upload" to off
-    // (default flag for SPR_addSprite is SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
+    // create a primary sprite with disabled settings - "SPR_FLAG_AUTO_VRAM_ALLOC" & "SPR_FLAG_AUTO_TILE_UPLOAD"
+    // (default flag for SPR_addSprite is "SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD")
     primarySprite = SPR_addSpriteEx(&sonicSpriteDef, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE), SPR_FLAG_AUTO_VISIBILITY);
     
-    // set primarySprite on frame change callback
-    SPR_setFrameChangeCallback(primarySprite, UpdateSpritesTileIndexesFullLoaded);
+    // set up the callback, which will update the tile indexes of the sprites on frame changing
+    SPR_setFrameChangeCallback(primarySprite, UpdateSpritesTileIndexesForFullLoadedFrames);
 #else
-    // create primary sprite with settings of "auto vram allocation" & "auto tile upload" to off
-    // (default flag for SPR_addSprite is SPR_FLAG_AUTO_VISIBILITY | SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD)
+    // create primary sprite with streamed frames
     primarySprite = SPR_addSprite(&sonicSpriteDef, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     
-    // set primarySprite on frame change callback
-    SPR_setFrameChangeCallback(primarySprite, UpdateSpritesTileIndexesSteamed);
+    // set up the callback, which will update the tile indexes of the sprites on frame changing
+    SPR_setFrameChangeCallback(primarySprite, UpdateSpritesTileIndexesForStreamedFrames);
 #endif
     
     // create replica sprites with settings of "auto vram allocation" & "auto tile upload" to off
@@ -113,10 +113,12 @@ int main(bool hardReset)
         SPR_update();
         SYS_doVBlankProcess();
     }
-    
+
+#if LOAD_ALL_FRAMES_TO_VRAM
     // these lines are unreachable here, but don't forgot to free memory when frameTable is no longer needed,
     // otherwise you'll get a memory leak
     MEM_free(frameIndexes);
+#endif
     
     // also, don't forget to free up the memory from the sprites.
     SPR_releaseSprite(primarySprite);
