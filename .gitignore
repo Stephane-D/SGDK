@@ -20,6 +20,7 @@
 /.idea
 *.iml
 .vscode
+**/cmd_
 **/.DS_Store
 **/.settings/**
 **/out/**
