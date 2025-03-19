@@ -408,8 +408,11 @@ void PAL_fadeTo(u16 fromCol, u16 toCol, const u16* pal, u16 numFrame, bool async
 {
     u16 tmp_pal[64];
 
-    // read current palette
+    // read current palette (better to disable interrupts to avoid issue with raster effects)
+    SYS_disableInts();
     PAL_getColors(fromCol, tmp_pal, (toCol - fromCol) + 1);
+    SYS_enableInts();
+
     // do the fade
     PAL_fade(fromCol, toCol, tmp_pal, pal, numFrame, async);
 }
