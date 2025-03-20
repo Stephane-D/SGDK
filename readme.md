@@ -1,11 +1,11 @@
-# SGDK 2.00 (January 2024)
-#### Copyright 2024 Stephane Dallongeville
-Patreon: https://www.patreon.com/SGDK<br>
-Github: https://github.com/Stephane-D/SGDK
+# SGDK 2.10 (March 2025)
+#### Copyright 2025 Stephane Dallongeville
+Github: https://github.com/Stephane-D/SGDK<br>
+Patreon: https://www.patreon.com/SGDK
 
 **SGDK** is a free development kit allowing development of software in **C language** for the **Sega Mega Drive**.
 It contains the development library itself (with the code sources) and some custom tools used to compile resources.
-SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate a ROM image. Binaries (GCC 13.2) are provided for Windows OS for convenience, but you need to install it by yourself for other operating systems.
+SGDK uses the GCC compiler (m68k-elf target) and the libgcc to generate a ROM image. Binaries (GCC 13.2) are provided for Windows OS for convenience, but you need to install it by yourself for other operating systems (more infos about it in *HELP AND SUPPORT* section).
 Note that SGDK also requires Java (custom tools require it), so you need to have Java installed on your system.
 
 SGDK library and custom tools are distributed under the MIT license (see [license.txt](license.txt) file).
@@ -37,18 +37,22 @@ Then when you feel ready you can go further and finally install SGDK :)
 You can find installation instructions and tutorials about how use SGDK on the wiki:<br>
 https://github.com/Stephane-D/SGDK/wiki
 
-SGDK comes with doxygen documentation (generated from .h header files) which provides descriptions about SGDK structures and functions. You can find it in the _'doc'_ folder (open your local _doc/html/files.html_ in your browser).
+SGDK also comes with doxygen documentation (generated from .h header files) which provides descriptions about all SGDK structures and functions:<br>
+http://stephane-d.github.io/SGDK/
 
 It's important to know that SGDK heavily relies on _resources_ which are compiled through the _rescomp_ tool. You should read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to understand **which kind of resources you can use and how to declare them**. Then you can look at the *'sample'* folder from SGDK and, in particular, the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/game/sonic) which is a good showcase of SGDK usage in general (functions and resources).
 
 ### OTHERS TUTORIALS
 
-You can find a lot of tutorials online about SGDK but be careful, some are outdated or sometimes just wrong.<br>
-I really recommend starting from the [wiki](https://github.com/Stephane-D/SGDK/wiki) which provides the basics to start, but if you need more _visual_ and more complete tutorials you can give either of these a try:<br>
+You can find a lot of tutorials online about SGDK but be careful, some are outdated and/or they contains errors.<br>
+I really recommend starting from the [wiki](https://github.com/Stephane-D/SGDK/wiki) which provides the basics to start.<br>
+Then if you need more _visual_ and complete tutorials you can give either of these a try:<br>
 MD programming tutorials from Ohsat:<br>
 https://www.ohsat.com/tutorial/mdmisc/creating-graphics-for-md/<br>
 Very complete and visual tutorials from Danibus (spanish only):<br>
 https://danibus.wordpress.com/<br>
+Youtube tutorial series from Pigsy:<br>
+https://www.youtube.com/watch?v=BnGqc5OTTY4&list=PL1xqkpO_SvY2_rSwHTBIBxXMqmek--GAb<br>
 
 ### USEFUL TOOLS
 
@@ -60,7 +64,7 @@ Here's a list of useful tools to help you creating your assets:
 * [Graphics gale](https://graphicsgale.com/)
 * [Pro Motion](https://www.cosmigo.com/)
 * [Grafx2](http://grafx2.chez.com/)
-* [Palette quantizer](https://rilden.github.io/tiledpalettequant/): powerful tool to convert your image with palette palette constraints
+* [Palette quantizer](https://rilden.github.io/tiledpalettequant/): powerful online tool to convert your image within the Sega Mega Drive palette constraints
 
 #### Map / Level
 
@@ -94,59 +98,43 @@ https://discord.gg/xmnBWQS
 You can also go to the Spritesmind forum which is dedicated to Sega Mega Drive development and has a specific section for SGDK:<br>
 http://gendev.spritesmind.net/forum/
  
-### MACOSX / LINUX
+### LINUX / MACOSX
 
-Unix/Linux users should give this very simple script a try, allowing you to use SGDK from Wine easily:<br>
+There are several solutions to get SGDK working on Linux, here's a list of some of them:<br>
+
+* Very simple script from Vojtěch Salajka allowing you to use SGDK from Wine easily:<br>
 https://github.com/Franticware/SGDK_wine
 
-There is also a new solution proposed by Daniel Valdivieso to use SGDK with VSCode under any OS using Wine:<br>
-https://github.com/v4ld3r5/sgdk_vscode_template
+* The SGDK Helper from tlsa allows you to use SGDK both from a native or a container environment:<br>
+https://github.com/tlsa/sgdk-helper
 
-Another great alternative is to use the complete _MarsDev_ environment developed by Andy Grind:
+* Another great alternative is to use the complete _MarsDev_ environment developed by Andy Grind:<br>
 https://github.com/andwn/marsdev
-It supports all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out.
+It supports all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out !
 
-MacOSX users also have access to SGDK with Gendev for MacOS from the Sonic3D project:<br>
+* MacOSX users also have access to this specific solution from Sonic3D (probably a bit outdated though):<br>
 https://github.com/SONIC3D/gendev-macos
 
 ### DOCKER
 
-*A modern way to install it on any environement is to use Docker.*
-
-To download the `sgdk` base image:
-
-     docker pull ghcr.io/stephane-d/sgdk
-     docker tag ghcr.io/stephane-d/sgdk sgdk
-
-Or build it:
-
-     docker build -t ghcr.io/stephane-d/sgdk-m68k-gcc:latest -f deps/gcc.Dockerfile deps/
-     docker build -t sgdk .
-
-And then to compile the local env, such as `samples` for example:
-
-    cd sample/game/sonic
-    docker run --rm -v "$PWD":/src sgdk
-
-Notes:
-
-- `$PWD` will not work on Windows, `%CD%` has to be used instead.
-- To avoid writing `./out` files as root, execute the docker command as current user:
-  `docker run --rm -v "$PWD":/src -u $(id -u):$(id -g) sgdk`
-- You can also try the alternate Doragasu docker solution which uses a native linux compiler (much faster):
-  https://gitlab.com/doragasu/docker-sgdk
+SGDK doesn't provide anymore any integrated Docker solution as the Doragasu docker solution is just better, faster and simpler to use (native linux compiler):<br>
+https://gitlab.com/doragasu/docker-sgdk
  
+### VS CODE
+
+Almost everyone is now using VSCode editor and the nice extension made by zerasul called *Genesis-Code* makes SGDK integration even smoother:<br>
+https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
+Just install and setup it (the SGDK and Gens emulator paths mainly) and you're ready to use it !<br>
+Type *Genesis* in the command palette (Ctrl+Shift+P shortcut) to see all commands supported by the extension :)
+SGDK also now integrates a VSCode template located in _project/template_ folders so you can just create a copy of this folder (for instance _project/test_) and open it in VSCode to start your own project.<br>
+You should have auto-completion for SGDK methods and be able to build your project using Ctrl+F9 if you properly setup the *Genesis-Code* extension.
+
 ### AWS
 
-Yes you're reading correctly, thanks to Matthew Nimmo you can even now use SGDK from AWS ^^
-Here's the link to his blog which explain how to do that:
+Yes you're reading correctly, thanks to Matthew Nimmo you can even now use SGDK from AWS !<br>
+Here's the link to his blog which explain how to do that:<br>
 https://community.aws/content/2hZInsYwWX8cYEAIFKquutVoYQj/how-to-build-retro-games-in-aws-using-sega-genesis-development-kit-sgdk
 
-### VISUAL STUDIO
-
-You can find a Visual Studio template in the 'vstudio' folder to facilate SGDK integration with VS.
-Or, to take it even further, you can also install the VS extension made by zerasul:<br>
-https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
  
 ## SUPPORT SGDK
 
@@ -154,21 +142,16 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 
 ## THANKS
 
-- Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi, flash save support and others nice additions.
+- Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi, flash save support, docker and others nice additions.
 - Sik for the multi-tasking base implementation and for all its unvaluable Plutidev Sega Mega Drive technical information source. 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Vladikcomper for the powerful error handler capable of displaying human readable backtrace informations :)
 - Astrofra for the starfield donut sample and the revamped readme ;)
-- Gligli for building and providing GCC 6.3 for Windows.
 - Gunpog for making the 'cute' SGDK logo.
 - Adrian Spoz for making the 'profesionnal' SGDK logo.
 - Vojtěch Salajka for the script allowing to use SGDK easily from Wine (Linux/Unix but may work on OSX too).
-- Daniel Valdivieso for another Wine based solution to use SGDK on multi-OS (including a VSCode template).
 - Andy Grind for the MarsDev project allowing to use SGDK on any OS and also supporting 32X dev.
-- Kubilus for the GenDev Linux port of SGDK.
 - Sonic3D for the GenDev OSX port of SGDK.
-- Vladimir Kryvian for Visual Studio support and template.
-- Steve Schnepp for Docker support.
 - Andreas Dietrich for the nice Wobbler & scaling effect samples.
 - clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
@@ -176,7 +159,6 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - starling13 for fixes.
 - davidgf for its contributions (improved assembly LTO optimization).
 - ShiningBzh / Jeremy and Kentosama for their precious help in testing.
-- Vetea and Studio Vetea Discord people in general for their support and kindness.
 - all those I forgot and generally all people who contributed in any form to SGDK !
 
 ## SPECIAL THANKS
