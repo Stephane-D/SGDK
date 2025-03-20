@@ -38,19 +38,7 @@ public class SpriteFrame extends Resource
     final Compression compression;
     final int fhc;
 
-    /**
-     * @param w
-     *        width of image in tile
-     * @param h
-     *        height of image in tile
-     * @param wf
-     *        width of frame in tile
-     * @param hf
-     *        height of frame in tile
-     * @param showCut
-     */
-    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType, Compression compression,
-            OptimizationType optType, OptimizationLevel optLevel)
+    public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType, Compression compression, List<SpriteCell> sprites)
     {
         super(id);
 
@@ -62,73 +50,14 @@ public class SpriteFrame extends Resource
         this.frameDim = new Dimension(wf * 8, hf * 8);
         this.fhc = computeFastHashcode(frameImage8bpp, frameDim, timer, collisionType, compression);
 
-        // get optimized sprite list from the image frame
-        List<SpriteCell> sprites;
-
-        // special case of no optimization ? --> use default solution covering the whole sprite frame
-        if (optType == OptimizationType.NONE)
-            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.NONE, false);
-        else
-        {
-            // slow optimization ?
-            if ((optLevel == OptimizationLevel.SLOW) || (optLevel == OptimizationLevel.MAX))
-            {
-                final int iteration = (optLevel == OptimizationLevel.SLOW) ? 500000 : 5000000;
-
-                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, iteration, optType);
-
-                // above the limit of internal sprite ? force MIN_SPRITE optimization strategy
-                if ((sprites.size() > 16) && (optType != OptimizationType.MIN_SPRITE))
-                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, iteration, OptimizationType.MIN_SPRITE);
-            }
-            else
-            {
-                final boolean optBetter = optLevel == OptimizationLevel.MEDIUM;
-
-                // always start with the fast optimization first
-                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, optType, optBetter);
-
-                // too many sprites used for this sprite ? try MIN_SPRITE opt strategy
-                if ((sprites.size() > 16) && (optType != OptimizationType.MIN_SPRITE))
-                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE, optBetter);
-
-                // still too many sprites used for this sprite ? try MIN_SPRITE with optBetter option
-                if ((sprites.size() > 16) && !optBetter)
-                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage, frameDim, OptimizationType.MIN_SPRITE, true);
-
-                // still too many sprites used for this sprite ? try better (but slower) sprite optimization method
-                if (sprites.size() > 16)
-                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage, frameDim, 100000, OptimizationType.MIN_SPRITE);
-            }
-        }
-
-        // still above the limit ? --> stop here :-(
-        if (sprites.size() > 16)
-            throw new IllegalArgumentException("Sprite frame '" + id + "' uses " + sprites.size()
-                    + " internal sprites, that is above the limit (16), try to reduce the sprite size or split it.");
-
-        // special case of NONE optimization type
-        if ((!sprites.isEmpty()) && (optType == OptimizationType.NONE))
-        {
-            // check if frame is empty or not
-            boolean empty = true;
-            for (byte b : frameImage)
-            {
-                if ((b & 0xF) != 0)
-                {
-                    empty = false;
-                    break;
-                }
-            }
-
-            // empty frame ? --> clear sprite list
-            if (empty)
-                sprites.clear();
-        }
-
         // empty frame --> empty tileset
         if (sprites.isEmpty())
+        {
+            // shot info about this sprite frame
+            System.out.println("Sprite frame '" + id + "' is empty");
+
             tileset = (Tileset) addInternalResource(new Tileset(id + "_tileset", false));
+        }
         else
         {
             int optNumTile = 0;
@@ -191,6 +120,23 @@ public class SpriteFrame extends Resource
      *        width of frame in tile
      * @param hf
      *        height of frame in tile
+     * @param showCut
+     */
+	public SpriteFrame(String id, byte[] frameImage8bpp, int wf, int hf, int timer, CollisionType collisionType, Compression compression,
+            OptimizationType optType, OptimizationLevel optLevel)
+    {
+        this(id, frameImage8bpp, wf, hf, timer, collisionType, compression, computeSpriteCutting(id, frameImage8bpp, wf, hf, optType, optLevel));
+    }
+
+    /**
+     * @param w
+     *        width of image in tile
+     * @param h
+     *        height of image in tile
+     * @param wf
+     *        width of frame in tile
+     * @param hf
+     *        height of frame in tile
      */
     public SpriteFrame(String id, byte[] image8bpp, int w, int h, int frameIndex, int animIndex, int wf, int hf, int timer, CollisionType collisionType,
             Compression compression, OptimizationType optType, OptimizationLevel optLevel)
@@ -198,11 +144,90 @@ public class SpriteFrame extends Resource
         this(id, ImageUtil.getSubImage(image8bpp, new Dimension(w * 8, h * 8), new Rectangle((frameIndex * wf) * 8, (animIndex * hf) * 8, wf * 8, hf * 8)), wf,
                 hf, timer, collisionType, compression, optType, optLevel);
     }
+    
+    static List<SpriteCell> computeSpriteCutting(String id, byte[] frameImage8bpp, int wf, int hf, OptimizationType optType, OptimizationLevel optLevel) throws UnsupportedOperationException
+    {
+        List<SpriteCell> sprites;
+        final Dimension frameDim = new Dimension(wf * 8, hf * 8);
+
+        // special case of no optimization ? --> use default solution covering the whole sprite frame
+        if (optType == OptimizationType.NONE)
+            sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage8bpp, frameDim, OptimizationType.NONE, false);
+        else
+        {
+            // slow optimization ?
+            if ((optLevel == OptimizationLevel.SLOW) || (optLevel == OptimizationLevel.MAX))
+            {
+                final int iteration = (optLevel == OptimizationLevel.SLOW) ? 500000 : 5000000;
+
+                sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage8bpp, frameDim, iteration, optType);
+
+                // above the limit of internal sprite ? force MIN_SPRITE optimization strategy
+                if ((sprites.size() > 16) && (optType != OptimizationType.MIN_SPRITE))
+                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage8bpp, frameDim, iteration, OptimizationType.MIN_SPRITE);
+            }
+            else
+            {
+                final boolean optBetter = optLevel == OptimizationLevel.MEDIUM;
+
+                // always start with the fast optimization first
+                sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage8bpp, frameDim, optType, optBetter);
+
+                // too many sprites used for this sprite ? try MIN_SPRITE opt strategy
+                if ((sprites.size() > 16) && (optType != OptimizationType.MIN_SPRITE))
+                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage8bpp, frameDim, OptimizationType.MIN_SPRITE, optBetter);
+
+                // still too many sprites used for this sprite ? try MIN_SPRITE with optBetter option
+                if ((sprites.size() > 16) && !optBetter)
+                    sprites = SpriteCutter.getFastOptimizedSpriteList(frameImage8bpp, frameDim, OptimizationType.MIN_SPRITE, true);
+
+                // still too many sprites used for this sprite ? try better (but slower) sprite optimization method
+                if (sprites.size() > 16)
+                    sprites = SpriteCutter.getSlowOptimizedSpriteList(frameImage8bpp, frameDim, 100000, OptimizationType.MIN_SPRITE);
+            }
+        }
+
+        // still above the limit ? --> stop here :-(
+        if (sprites.size() > 16)
+            throw new UnsupportedOperationException("Sprite frame '" + id + "' uses " + sprites.size()
+                    + " internal sprites, that is above the limit (16), try to reduce the sprite size or split it.");
+
+        // special case of NONE optimization type
+        if ((!sprites.isEmpty()) && (optType == OptimizationType.NONE))
+        {
+            // check if frame is empty or not
+            boolean empty = true;
+            for (byte b : frameImage8bpp)
+            {
+                if ((b & 0xF) != 0)
+                {
+                    empty = false;
+                    break;
+                }
+            }
+
+            // empty frame ? --> clear sprite list
+            if (empty)
+                sprites.clear();
+        }
+        
+        return sprites;
+    }
 
     static int computeFastHashcode(byte[] frameImage8bpp, Dimension frameDim, int timer, CollisionType collision, Compression compression)
     {
         return (timer << 16) ^ ((collision != null) ? collision.hashCode() : 0) ^ Arrays.hashCode(frameImage8bpp) ^ frameDim.hashCode()
                 ^ compression.hashCode();
+    }
+    
+    public List<SpriteCell> getSprites()
+    {
+        List<SpriteCell> result = new ArrayList<SpriteCell>();
+        
+        for(VDPSprite sprite: vdpSprites)
+        	result.add(new SpriteCell(sprite.offsetX, sprite.offsetY, sprite.wt * 8, sprite.ht * 8, OptimizationType.BALANCED));
+
+        return result;
     }
 
     public int getNumSprite()
