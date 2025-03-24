@@ -36,8 +36,8 @@ static void fastStarFieldFX()
     SYS_disableInts();
 
     VDP_setPlaneSize(64, 32, TRUE);
-    VDP_clearPlane(BG_A, 0);
-    VDP_clearPlane(BG_B, 0);
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_clearPlane(BG_B, TRUE);
 
     /* Draw the foreground */
     VDP_drawImageEx(BG_B, &starfield, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, vramIndex), 0, 0, TRUE, FALSE);
