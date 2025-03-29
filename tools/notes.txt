@@ -1,0 +1,1 @@
+If you don't want to code a sprite editor, there's Flex2 with custom sprite format support. For level editing, there's SonLVL, which is extensible as well

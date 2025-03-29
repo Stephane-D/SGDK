@@ -40,7 +40,6 @@ Use the following command to execute it: java -jar lz4w.jar
 
 LZ4W format description
 -----------------------
-0000-xxxx: LZ4W compressed blocks
 
 Each block consists of a 16 bit block header optionally followed by a literal data block and an optional
 long offset word for long match block.
@@ -62,8 +61,8 @@ OOOOOOOO = match offset - 1 (in word)           if (OOOOOOOO == 0) then we have 
     OOOOOOOO = match length - 2 (in word)       if (OOOOOOOO == 1) then we have a match length of 3 words
     the next word *after* literal data block become the match offset - 1 (in word)
     Match offset in encoded as follow: XOOOOOOO OOOOOOOO
-    - if (X == 0) the match comes from current data block (RAM)
-    - if (X == 1) the match comes from a previous data block (stored in ROM)
+    - if (X == 0) the match comes from the decompressed data block/stream (RAM)
+    - if (X == 1) the match comes from the compressed data block/stream (ROM)
 
 ending block
 ------------

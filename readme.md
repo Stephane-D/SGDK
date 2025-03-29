@@ -37,7 +37,7 @@ Then when you feel ready you can go further and finally install SGDK :)
 You can find installation instructions and tutorials about how use SGDK on the wiki:<br>
 https://github.com/Stephane-D/SGDK/wiki
 
-SGDK also comes with doxygen documentation (generated from .h header files) which provides descriptions about all SGDK structures and functions:<br>
+SGDK also comes with an online doxygen documentation (generated from .h header files) which provides descriptions for all SGDK structures and functions:<br>
 http://stephane-d.github.io/SGDK/
 
 It's important to know that SGDK heavily relies on _resources_ which are compiled through the _rescomp_ tool. You should read the [rescomp.txt](https://raw.githubusercontent.com/Stephane-D/SGDK/master/bin/rescomp.txt) file to understand **which kind of resources you can use and how to declare them**. Then you can look at the *'sample'* folder from SGDK and, in particular, the [sonic sample](https://github.com/Stephane-D/SGDK/tree/master/sample/game/sonic) which is a good showcase of SGDK usage in general (functions and resources).
@@ -56,7 +56,7 @@ https://www.youtube.com/watch?v=BnGqc5OTTY4&list=PL1xqkpO_SvY2_rSwHTBIBxXMqmek--
 
 ### USEFUL TOOLS
 
-Here's a list of useful tools to help you creating your assets:
+Here's a list of useful tools that will help you to create your assets:
 
 #### Pixel art / Sprite
 
@@ -117,17 +117,16 @@ https://github.com/SONIC3D/gendev-macos
 
 ### DOCKER
 
-SGDK doesn't provide anymore any integrated Docker solution as the Doragasu docker solution is just better, faster and simpler to use (native linux compiler):<br>
+SGDK doesn't provide anymore any integrated Docker solution as the Doragasu docker solution seems better, faster and simpler to use (native linux compiler):<br>
 https://gitlab.com/doragasu/docker-sgdk
  
 ### VS CODE
 
-Almost everyone is now using VSCode editor and the nice extension made by zerasul called *Genesis-Code* makes SGDK integration even smoother:<br>
+Almost everyone now use VSCode editor and the nice extension made by zerasul called *Genesis-Code* makes SGDK integration even smoother:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
-Just install and setup it (the SGDK and Gens emulator paths mainly) and you're ready to use it !<br>
-Type *Genesis* in the command palette (Ctrl+Shift+P shortcut) to see all commands supported by the extension :)
-SGDK also now integrates a VSCode template located in _project/template_ folders so you can just create a copy of this folder (for instance _project/test_) and open it in VSCode to start your own project.<br>
-You should have auto-completion for SGDK methods and be able to build your project using Ctrl+F9 if you properly setup the *Genesis-Code* extension.
+Just install and setup it as it's detailled on the extension page ('GDK/SGDK' and 'Gens' emulator paths mainly) and you're ready to use it :)<br>
+You can type *Genesis* in the command palette (Ctrl+Shift+P shortcut) to see all commands supported by the extension.<br>
+SGDK also now integrates a VSCode template located in _project/template_ folder so you can just create a copy of this folder (for instance _project/test_) and open it in VSCode to start your own project.
 
 ### AWS
 

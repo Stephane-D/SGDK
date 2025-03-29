@@ -1,3 +1,5 @@
+#include <genesis.h>
+
 #ifndef _RES_LIBRES_H_
 #define _RES_LIBRES_H_
 

@@ -43,9 +43,7 @@ int main(bool hardReset)
     // disable interrupt when accessing VDP
     SYS_disableInts();
 
-    VDP_setPlaneSize(64, 32, TRUE);
-    VDP_clearPlane(BG_A, 0);
-    VDP_clearPlane(BG_B, 0);
+    VDP_setTextPalette(PAL2);
 
     u16 vramIndex = TILE_USER_INDEX;
 
@@ -83,10 +81,9 @@ int main(bool hardReset)
         animateStarfield();
         animateDonut();
 
-        VDP_setTextPalette(PAL2);
         VDP_showCPULoad(0, 0);
 
-        // udpate sprites
+        // update sprites
         SPR_update();
         // wait for the end of frame and do all the vblank process
         SYS_doVBlankProcess();
@@ -113,7 +110,7 @@ static u16 loadStarField(u16 vramIndex)
         scroll_PLAN_B_F[i] = FIX16(0);
         do
         {
-            ns = -((random() & 0x3F) + 10);
+            ns = -((random() & 0x7F) + 10);
         }
         while (ns == s);
         scroll_speed[i] = ns;
@@ -170,7 +167,7 @@ static void animateStarfield()
     for(s16 i = 0; i < TABLE_LEN; i++)
     {
         scroll_PLAN_B_F[i] += scroll_speed[i];
-        scroll_PLAN_B[i] = F16_toInt(scroll_PLAN_B_F[i]) & 0x1FF;
+        scroll_PLAN_B[i] = F16_toInt(scroll_PLAN_B_F[i]);
     }
 
     // send hscroll table to VDP using DMA queue (will be done on vblank by SYS_doVBlankProcess())
