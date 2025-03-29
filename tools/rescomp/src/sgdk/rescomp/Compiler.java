@@ -422,48 +422,42 @@ public class Compiler
         if (rescompExt.exists())
         {
             // build the class loader
-            final URLClassLoader classLoader = new URLClassLoader(new URL[] {rescompExt.toURI().toURL()}, Compiler.class.getClassLoader());
+            @SuppressWarnings("resource")
+			final URLClassLoader classLoader = new URLClassLoader(new URL[] {rescompExt.toURI().toURL()}, Compiler.class.getClassLoader());
 
-            try
+            // get all classes from JAR file
+            for (String className : findClassNamesInJAR(rescompExt.getAbsolutePath()))
             {
-                // get all classes from JAR file
-                for (String className : findClassNamesInJAR(rescompExt.getAbsolutePath()))
+                try
                 {
+                    // try to load class
+                    final Class<?> clazz = classLoader.loadClass(className);
+
                     try
                     {
-                        // try to load class
-                        final Class<?> clazz = classLoader.loadClass(className);
+                        // is a processor class ?
+                        final Class<? extends Processor> processorClass = clazz.asSubclass(Processor.class);
+                        // create the processor
+                        final Processor processor = processorClass.newInstance();
 
-                        try
-                        {
-                            // is a processor class ?
-                            final Class<? extends Processor> processorClass = clazz.asSubclass(Processor.class);
-                            // create the processor
-                            final Processor processor = processorClass.newInstance();
+                        // and add to processor list
+                        resourceProcessors.add(processor);
 
-                            // and add to processor list
-                            resourceProcessors.add(processor);
-
-                            System.out.println("Extension '" + processor.getId() + "' loaded.");
-                        }
-                        catch (Throwable t)
-                        {
-                            // not a processor --> ignore
-                        }
-                    }
-                    catch (UnsupportedClassVersionError e)
-                    {
-                        System.err.println("Class '" + className + "' cannot be loaded: newer java required.");
+                        System.out.println("Extension '" + processor.getId() + "' loaded.");
                     }
                     catch (Throwable t)
                     {
-                        System.err.println("Class '" + className + "' cannot be loaded:" + t.getMessage());
+                        // not a processor --> ignore
                     }
                 }
-            }
-            finally
-            {
-                classLoader.close();
+                catch (UnsupportedClassVersionError e)
+                {
+                    System.err.println("Class '" + className + "' cannot be loaded: newer java required.");
+                }
+                catch (Throwable t)
+                {
+                    System.err.println("Class '" + className + "' cannot be loaded:" + t.getMessage());
+                }
             }
         }
     }
