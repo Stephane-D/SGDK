@@ -96,8 +96,8 @@ public class Compiler
     public final static Set<String> resourcesFile = new HashSet<>();
 
     public static boolean extensionsLoaded = false;
-    
-    // TODO: set that to false on release 
+
+    // TODO: set that to false on release
     public static boolean DAGame = false;
 
     public static boolean compile(String fileName, String fileNameOut, boolean header, String depTarget)
@@ -207,7 +207,7 @@ public class Compiler
             headerName += "_" + FileUtil.getFileName(fileNameOut, false);
             headerName = headerName.toUpperCase();
 
-            outH.append("#include <genesis.h>\n\n");            
+            outH.append("#include <genesis.h>\n\n");
             outH.append("#ifndef _" + headerName + "_H_\n");
             outH.append("#define _" + headerName + "_H_\n\n");
 
@@ -251,7 +251,8 @@ public class Compiler
 
             // get all non BIN resources
             final List<Resource> nonBinResources = getNonBinResources();
-            // get non BIN resources for VDPSprite and Collision (they can be compressed as binary data doesn't store any pointer/reference)
+            // get non BIN resources for VDPSprite and Collision (they can be compressed as binary data doesn't store
+            // any pointer/reference)
             final List<Resource> vdpSpriteResources = getResources(VDPSprite.class);
             final List<Resource> collisionResources = getResources(Collision.class);
 
@@ -423,7 +424,7 @@ public class Compiler
         {
             // build the class loader
             @SuppressWarnings("resource")
-			final URLClassLoader classLoader = new URLClassLoader(new URL[] {rescompExt.toURI().toURL()}, Compiler.class.getClassLoader());
+            final URLClassLoader classLoader = new URLClassLoader(new URL[] {rescompExt.toURI().toURL()}, Compiler.class.getClassLoader());
 
             // get all classes from JAR file
             for (String className : findClassNamesInJAR(rescompExt.getAbsolutePath()))
@@ -794,7 +795,7 @@ public class Compiler
                 if (resourceType.equalsIgnoreCase(rp.getId()))
                     return rp;
         }
-        
+
         return null;
     }
 }
