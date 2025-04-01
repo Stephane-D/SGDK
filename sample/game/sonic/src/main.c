@@ -134,6 +134,8 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     {
         paused = !paused;
         HUD_setVisibility(paused);
+
+        asm("illegal");
     }
 
     // can't do more in paused state
