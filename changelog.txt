@@ -96,7 +96,8 @@ LIBRARY
 
 SAMPLE
 * added MAP patching example (press button Y to enable / disable it) in 'sonic' sample
-* added sprite tiles sharing, sprite masking and tile animation examples in 'sample/advanced' folder (thanks werton)
+* added sprite tiles sharing and tile animation examples in 'sample/advanced' folder (thanks werton)
+* added sprite masking example in 'sample/fx' folder (thanks werton)
 * updated MegaWifi samples
 * updated samples to last SGDK
 
