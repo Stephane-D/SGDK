@@ -96,7 +96,7 @@ public class SpriteAnimation extends Resource
                 }
             }
             
-            // try to search for a duplicated sprite mask to we can re-use the previous sprite cutting without processing a new one
+            // try to search for a duplicated sprite mask so we can re-use the previous sprite cutting
             SpriteFrame frame = findMatchingSpriteFrameMask(frameImage, frameBounds.getSize());
             // found it ?
             if (frame != null)
