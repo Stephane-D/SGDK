@@ -1,4 +1,4 @@
-# SGDK 2.10 (March 2025)
+# SGDK 2.11 (April 2025)
 #### Copyright 2025 Stephane Dallongeville
 Github: https://github.com/Stephane-D/SGDK<br>
 Patreon: https://www.patreon.com/SGDK

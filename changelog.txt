@@ -1,3 +1,11 @@
+SGDK 2.11 (April 2025)
+----------------------
+
+LIBRARY
+* fixed incorrect naming of maths methods leading to errors when using F16_computePosition(..) and F16_computePositionEx(..)
+* renamed V2D_F16_movePoint(..) / V2D_F16_movePointEx(..) --> V2D_F16_computePosition(..) / V2D_F16_computePositionEx(..)
+
+
 SGDK 2.10 (April 2025)
 ----------------------
 
