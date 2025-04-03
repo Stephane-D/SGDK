@@ -81,7 +81,7 @@ LIBRARY
  - added coordinates parameters for VDP_showFPS(), VDP_showCPULoad() and BMP_showFPS() methods
  - added VDP_drawTextFill(..) function
 * SYS
- - new error handler with backtrace and symbol support (thanks to Vic for it) !
+ - new error handler with backtrace and symbol support (thanks to Vladikcomper for it) !
  - tried to mitigate as much as possible HALT_Z80_ON_IO effect on PCM playback (shortened Z80 interruptions time)
  - SYS_die(..) function supports an extra message parameter
  - halt Z80 on SYS_reset() / SYS_hardReset()
@@ -164,7 +164,7 @@ LIBRARY
  - major refactor in sound drivers structure
  - added new XGM2 sound driver - beta (XGM2_xxx methods)
  - added 'minimusic' sound driver from Sik
- - removed fractal driver support (driver is discontinued) and enable conso…
+ - removed fractal driver support (driver is discontinued) and enable consoÂ…
 * TYPE
  - fixed bool declaration to be compliant with C23
  - added size_t and ptrdiff_t definitions
@@ -404,7 +404,7 @@ LIBRARY
  - added getNextPow2(..) method
  - added casting to int to fix conversion (safer)
 * SYS
- - added VDP_setExtInterrupt(..) method and fixed ext interrupt enable stat…
+ - added VDP_setExtInterrupt(..) method and fixed ext interrupt enable statÂ…
  - added new kprintf(..) method for easier KMod debug logging
  - minor tweak on mapper banking logic
 * DMA
