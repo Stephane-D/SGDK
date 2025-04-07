@@ -1,4 +1,4 @@
-# SGDK 2.10 (March 2025)
+# SGDK 2.11 (April 2025)
 #### Copyright 2025 Stephane Dallongeville
 Github: https://github.com/Stephane-D/SGDK<br>
 Patreon: https://www.patreon.com/SGDK
@@ -152,6 +152,7 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - Andy Grind for the MarsDev project allowing to use SGDK on any OS and also supporting 32X dev.
 - Sonic3D for the GenDev OSX port of SGDK.
 - Andreas Dietrich for the nice Wobbler & scaling effect samples.
+- werton for the numerous fixes / contributions.
 - clbr for various contributions.
 - jgyllinsky for providing / improving build batches.
 - nolddor for fixes / contributions.

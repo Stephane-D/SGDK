@@ -634,7 +634,7 @@ fix16 F16_getAngle(fix16 x1, fix16 y1, fix16 x2, fix16 y2);
  *  \brief
  *      Compute the new position of the point defined by (x1, y1) by moving it by the given 'distance' in the 'angle' direction
  *      and store the result in (x2, y2).
- * 
+ *
  *  \param x2
  *      new X position
  *  \param y2
@@ -653,7 +653,7 @@ void F16_computePosition(fix16 *x2, fix16 *y2, fix16 x1, fix16 y1, fix16 ang, fi
  *  \brief
  *      Compute the new position of the point defined by (x1, y1) by moving it by the given 'distance' in the 'angle' direction
  *      and store the result in (x2, y2).
-* 
+ *
  *  \param x2
  *      new X position
  *  \param y2
@@ -666,12 +666,12 @@ void F16_computePosition(fix16 *x2, fix16 *y2, fix16 x1, fix16 y1, fix16 ang, fi
  *      angle in degree
  *  \param dist
  *      distance to move
- *  \param cosAdj
- *      cosine adjustment
- *  \param sinAdj
- *      sine adjustment
-*/
-void F16_computePositionEx(fix16 *x2, fix16 *y2, fix16 x1, fix16 y1, fix16 ang, fix16 dist, fix16 cosAdj, fix16 sinAdj);
+ *  \param cosMul
+ *      cosine multiplier factor (default = FIX16(1))
+ *  \param sinMul
+ *      sine multiplier factor (default = FIX16(1))
+ */
+void F16_computePositionEx(fix16 *x2, fix16 *y2, fix16 x1, fix16 y1, fix16 ang, fix16 dist, fix16 cosMul, fix16 sinMul);
 
 
 // Deprecated functions
@@ -960,6 +960,41 @@ fastfix32 FF32_getLog2Fast(fastfix32 value);
 
 /**
  *  \brief
+ *      Compute and return the angle in degree (fix16) between the 2 points pt1 and pt2.
+ */
+fix16 V2D_F16_getAngle(V2f16* pt1, V2f16* pt2);
+
+/**
+ *  \brief
+ *      Compute the new position of the point 'pt' by moving it by the given 'distance' in the 'angle' direction.
+ *
+ *  \param pt
+ *      point to move
+ *  \param ang
+ *      angle in degree
+ *  \param dist
+ *      distance to move
+ */
+void V2D_F16_computePosition(V2f16* pt, fix16 ang, fix16 dist);
+/**
+ *  \brief
+ *      Compute the new position of the point 'pt' by moving it by the given 'distance' in the 'angle' direction.
+ *
+ *  \param pt
+ *      point to move
+ *  \param ang
+ *      angle in degree
+ *  \param dist
+ *      distance to move
+ *  \param cosMul
+ *      cosine multiplier factor (default = FIX16(1))
+ *  \param sinMul
+ *      sine multiplier factor (default = FIX16(1))
+ */
+void V2D_F16_computePositionEx(V2f16* pt, fix16 ang, fix16 dist, fix16 cosMul, fix16 sinMUl);
+
+/**
+ *  \brief
  *      Return euclidean distance approximation for specified vector.<br>
  *      The returned distance is not 100% perfect but calculation is fast.
  *
@@ -967,42 +1002,6 @@ fastfix32 FF32_getLog2Fast(fastfix32 value);
  *      2D vector.
  */
 u32 V2D_S32_getApproximatedDistance(V2s32* v);
-
-/**
- *  \brief
- *      Compute and return the angle in degree (fix16) between the 2 points pt1 and pt2.
- */
-fix16 V2D_F16_getAngle(V2f16* pt1, V2f16* pt2);
-
-/**
- *  \brief
- *      Move the given point by the given 'distance' in the 'angle' direction.
- * 
- *  \param pt
- *      point to move
- *  \param ang
- *      angle in degree
- *  \param dist
- *      distance to move
- */
-void V2D_F16_movePoint(V2f16* pt, fix16 ang, fix16 dist);
-/**
- *  \brief
- *      Compute the new position of the point defined by (x1, y1) by moving it by the given 'distance' in the 'angle' direction
- *      and store the resultin (x2, y2).
-* 
- *  \param pt
- *      point to move
- *  \param ang
- *      angle in degree
- *  \param dist
- *      distance to move
- *  \param cosAdj
- *      cosine adjustment
- *  \param sinAdj
- *      sine adjustment
-*/
-void V2D_F16_movePointEx(V2f16* pt, fix16 ang, fix16 dist, fix16 cosAdj, fix16 sinAdj);
 
 
 // Deprecated functions

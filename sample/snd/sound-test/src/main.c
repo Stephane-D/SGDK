@@ -601,7 +601,7 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
             if (changed & state & BUTTON_X)
             {
                 XGM2_playPCM(snare1_13k, sizeof(snare1_13k), SOUND_PCM_CH1);
-//                XGM2_playPCM(sonic_jump_13k, sizeof(sonic_jump_13k), SOUND_PCM_CH1);
+//                XGM2_playPCM(india_13k, sizeof(india_13k), SOUND_PCM_CH1);
             }
             if (changed & state & BUTTON_Y)
             {

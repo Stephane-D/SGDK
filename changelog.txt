@@ -1,3 +1,126 @@
+SGDK 2.11 (April 2025)
+----------------------
+
+LIBRARY
+* fixed incorrect naming of maths methods leading to errors when using F16_computePosition(..) and F16_computePositionEx(..)
+* renamed V2D_F16_movePoint(..) / V2D_F16_movePointEx(..) --> V2D_F16_computePosition(..) / V2D_F16_computePositionEx(..)
+
+
+SGDK 2.10 (April 2025)
+----------------------
+
+COMPILER
+* updated GCC to version 13.2 (sometime throw error messages about cached files which can be ignored)
+* removed Docker files (see notes about Docker in readme.md file)
+* removed vstudio template
+* removed 'sjasm' and 'musicg' git submodules (version fixed in SGDK)
+* added VSCode template
+* automated doxygen documentation generation with GitHub Action (doxygen is now online, see readme.md for more info)
+* XGM2TOOL
+ - fixed max frame limit
+ - fixed special mode / frequencies preservation
+ - fixed keys op packing
+ - fixed a bug with loop point
+ - fixed a bug where START/STOP PCM commands could be swapped
+ - fixed a bug in initial PSG state 
+ - integrated 'musicg' library sources in XGM2Tool
+* XGMTOOL
+ - added support to recognize commands from RF5C68 and RF5C164 chips (Sega-CD PCM chip)
+* RESCOMP
+ - added special marker to enable optimization for specific single VDP sprite
+ - added array format support for the animation 'time' field for SPRITE resource (allow defining time on a frame basis)
+ - added new 'ordering' option for TILESET, TILEMAP and MAP resources
+ - added new 'export' option for TILESET resource
+ - added new 'sortby' option for OBJECTS resource (thanks Iratahack)
+ - fixed Object boolean fields export
+ - improved (again) sprite cutting process
+ - avoid re-processing sprite cutting process on duplicated frames
+ - now also export binary array size (label form)
+ - added support for ProMotion NG JASC .pal file
+ - fixed cutting PNG export
+ - keep class loader open when loading rescomp_ext.jar extensions to allow correct import of dependencies
+* MAKEFILE
+ - re-introduced deps + added '-ffunction-sections' and '-fdata-sections' flags
+ - fixed default targets
+ - cleanup and small fixes
+* README
+ - updated notes about Doxygen documentation, Docker and VSCode
+ - fixed broken links
+ - added AWS tutorial link
+
+LIBRARY
+* SPRITE
+ - added SPR_setAutoAnimation(..)/SPR_getAutoAnimation(..) to enable/disable auto animation.
+ - optimized handling of simple sprite (sprite using only a single hardware sprite which fit frame size)
+ - renamed SPR_getAnimationDone() --> SPR_isAnimationDone() and changed a bit the logic behind it
+ - SPR_loadAllFrame(..) now detects duplicated tilesets and only load them once in VRAM (make the method a bit slower though)
+ - fixed auto loop
+ - updated legacy sprite engine to include the new features of the new sprite engine
+ - minors tweaks
+* DMA
+ - fixed transfer size of 0 (do not transfer anything instead of transferring 65536 words) 
+* MAP
+ - added MapDataPatchCallback(..) allowing easier map data patching / dynamic map
+ - fixed a bug in MAP_getMetaTilemapRect(..) when crossing block in X dimension
+ - added MAP_overridePlaneSize(..) methods to allow overriding plane size internally
+ - added 'COLUMN_AHEAD' and 'ROW_AHEAD' definitions so we can easily customize them if needed
+* SOUND
+ - fixed a small bug with half rate PCM play (XGM2)
+ - fixed DAC state on start play music (XGM2)
+ - adjust music tempo depending PAL or NTSC track info (XGM2)
+ - many bug fixes in XGM2 sound driver
+ - fix YM2612 reset
+* PAL
+ - simplified / improved a bit palette fading process to avoid palette transfer outside vblank
+ - added PAL_isManualFadeDone() method (let you know if manual fading process is complete)
+ - fixed color overflow in PAL_doFadeStep(..)
+ - fixed synchronous palette fading (last palette update was sometime missing)
+ - protect from interrupts on palette read operation (often cause issues with raster effects)
+* VDP
+ - added user friendly setWindowXXX(...), VDP_setWindowOff() and VDP_setWindowFullScreen() methods
+ - added coordinates parameters for VDP_showFPS(), VDP_showCPULoad() and BMP_showFPS() methods
+ - added VDP_drawTextFill(..) function
+* SYS
+ - new error handler with backtrace and symbol support (thanks to Vladikcomper for it) !
+ - tried to mitigate as much as possible HALT_Z80_ON_IO effect on PCM playback (shortened Z80 interruptions time)
+ - SYS_die(..) function supports an extra message parameter
+ - halt Z80 on SYS_reset() / SYS_hardReset()
+* MATH - WARNING: major revamping (thanks to Daniel Moura the initial PR)
+ - all fix16, fix32, fastfix16, fastfix32 functions has been renamed and are now prefixed with F16_, F32_ , FF16_, FF32_
+ - M3D_setRotation(..) is now taking rotation angles *in degree*
+ - added new F16_tan(..), F16_atan(..) and F16_atan2(..) trigonometric functions
+ - added F16_getAngle(..) function to find angle between 2 points
+ - added F16_computePosition(..) to compute point position from 'origin', 'angle' and 'distance'
+ - added conversion functions between fastfix16, fastfix32, fix16 and fix32 types (thanks werton)
+ - added typedef structures: Vect2D_ff16, Vect2D_ff32, Mat2D_ff16, Mat2D_ff32, V2ff16, V2ff32, M2ff16 and M2ff32 (thanks werton)
+* MODULE / ENTENSION
+ - added support for MegaWifi everdrive x7
+ - fixed a bug with flash-save
+* optimized a bit LZ4W decompressor (thanks Malachi)
+* vsprintf(..) function is now visible
+* added string conversion functions for ff16 and ff32 types
+* added RAM_SECT definition (used to force a function to be located in RAM)
+* smalls tweaks, optimizations and cleanup
+
+SAMPLE
+* added MAP patching example (press button Y to enable / disable it) in 'sonic' sample
+* added sprite tiles sharing and tile animation examples in 'sample/advanced' folder (thanks werton)
+* added sprite masking example in 'sample/fx' folder (thanks werton)
+* updated MegaWifi samples
+* updated samples to last SGDK
+
+MIGRATION NOTE
+* SPR_getAnimationDone() --> SPR_isAnimationDone() (the logic changed quite a bit, don't forget to read the documentation)
+* All fix16, fix32, fastfix16, fastfix32 functions has been renamed and are now prefixed with F16_, F32_ , FF16_, FF32_
+ - intToFix16(x) is simply replaced by FIX16(x) or F16(x)
+ - fix16ToInt(x) --> F16_toInt(..)
+ - fix16Rount(x) --> F16_round(..)
+ - fix16ToFix32(x) --> F16_toFix32(..)
+ - fix32ToFix16(x) --> F32_toFix16(..)
+ - ...
+* M3D_setRotation(..) is now taking rotation angles *in degree* (fix16 format)
+ 
+ 
 SGDK 2.00 (January 2024)
 ------------------------
 
@@ -41,7 +164,7 @@ LIBRARY
  - major refactor in sound drivers structure
  - added new XGM2 sound driver - beta (XGM2_xxx methods)
  - added 'minimusic' sound driver from Sik
- - removed fractal driver support (driver is discontinued) and enable conso…
+ - removed fractal driver support (driver is discontinued) and enable consoÂ…
 * TYPE
  - fixed bool declaration to be compliant with C23
  - added size_t and ptrdiff_t definitions
@@ -281,7 +404,7 @@ LIBRARY
  - added getNextPow2(..) method
  - added casting to int to fix conversion (safer)
 * SYS
- - added VDP_setExtInterrupt(..) method and fixed ext interrupt enable stat…
+ - added VDP_setExtInterrupt(..) method and fixed ext interrupt enable statÂ…
  - added new kprintf(..) method for easier KMod debug logging
  - minor tweak on mapper banking logic
 * DMA

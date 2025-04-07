@@ -16,7 +16,6 @@ XGM2 sonic1_xgm2 "sonic1.vgm"
 
 WAV india_8k "india_8k.wav" PCM 8000
 WAV india_11k "india_11k.wav" PCM 11025
-WAV india_13k "india_13k.wav" PCM 13400
 WAV india_16k "india_16k.wav" PCM 16000
 WAV india_22k "india_22k.wav" PCM 22050
 WAV india_32k "india_32k.wav" PCM 32000
@@ -32,8 +31,6 @@ WAV hat2_16k "hat2.wav" PCM4
 WAV snare1_16k "snare1.wav" PCM4
 WAV snare2_16k "snare2.wav" PCM4
 
-WAV explode_u8k "explode.wav" XGM
-
 WAV sonic_jump_14k "S1_jump.wav" XGM
 WAV sonic_stop_14k "S1_stop.wav" XGM
 WAV loop1_14k "loop1.wav" XGM
@@ -47,3 +44,4 @@ WAV loop1_13k "loop1.wav" XGM2
 WAV hat1_13k "hat1.wav" XGM2
 WAV snare1_13k "snare1.wav" XGM2
 WAV cri_13k "cri.wav" XGM2
+WAV india_13k "india_13k.wav" XGM2
