@@ -1,7 +1,7 @@
 #ifndef _GENESIS_H_
 #define _GENESIS_H_
 
-#define SGDK_VERSION    2.11
+#define SGDK_VERSION    2.12
 
 #include "types.h"
 

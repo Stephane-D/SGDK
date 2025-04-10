@@ -1,7 +1,9 @@
-
+#include "config.h"
 #include "asm_mac.i"
 
-func memset_
+#if (ENABLE_NEWLIB == 0)
+func memset
+#endif
     move.w  14(%sp),%d0         // d0 = len
     jeq     .L02
 
@@ -191,7 +193,9 @@ func memsetU32
     rts
 
 
-func memcpy_
+#if (ENABLE_NEWLIB == 0)
+func memcpy
+#endif
     move.w  14(%sp),%d0         // d0 = len
     jeq     .L82
 
