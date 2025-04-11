@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "sgdk",
+            "includePath": [
+		        "${workspaceFolder}/inc", 
+		        "${workspaceFolder}/res"
+		    ],
+            "browse" : {
+                "limitSymbolsToIncludedHeaders" : true,
+                "databaseFilename" : ""
+            }
+        }
+    ],
+    "version": 4
+}

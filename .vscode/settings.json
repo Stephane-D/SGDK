@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "**/*.d": true,
+        "**/*.dll": true,
+        "**/*.exe": true,
+        "**/*.jar": true,
+        "**/*.o": true,
+        "archive/**": true,
+        "cb/**": true,
+        "tools/archives": true
+    }
+}

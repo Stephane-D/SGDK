@@ -147,25 +147,23 @@ extern u32 _bend;
 
  // forward
 static u16* pack(u16 nsize);
-static u16* packEx(u32 addr, u16 nsize);
 
 static u16* free;
 static u16* heap;
+static u16* heapEnd;
+static bool needPack;
 
 void MEM_init()
 {
-    u32 h;
-    u32 len;
-
     // point to end of bss (start of heap)
-    h = (u32)&_bend;
+    u32 h = (u32)&_bend;
     // 2 bytes aligned
     h += 1;
     h >>= 1;
     h <<= 1;
 
     // define available memory (sizeof(u16) is the memory reserved to indicate heap end)
-    len = MEMORY_HIGH - (h + sizeof(u16));
+    u32 len = MEMORY_HIGH - (h + sizeof(u16));
 
     // define heap
     heap = (u16*) h;
@@ -178,25 +176,22 @@ void MEM_init()
 
     // free memory: whole heap
     free = heap;
-
-    // mark end of heap memory
-    heap[len >> 1] = 0;
+    // mark end of heap memory (free block with size 0)
+    heapEnd = heap + (len >> 1);
+    *heapEnd = 0;
+    needPack = FALSE;
 }
 
 u16 MEM_getFree()
 {
-    u16* b;
+    u16* b = heap;
+    u16 res = 0;
     u16 bsize;
-    u16 res;
 
-    b = heap;
-    res = 0;
-
-    while ((bsize = *b))
+    while ((bsize = *b) != 0)
     {
         // memory block not used --> add available size to result
-        if (!(bsize & USED))
-            res += bsize;
+        if (!(bsize & USED)) res += bsize;
 
         // pass to next block
         b += bsize >> 1;
@@ -207,16 +202,12 @@ u16 MEM_getFree()
 
 u16 MEM_getLargestFreeBlock()
 {
-    u16* b;
+    u16* b = heap;
+    u16 res = 0;
+    u16 csize = 0;
     u16 bsize;
-    u16 csize;
-    u16 res;
 
-    b = heap;
-    res = 0;
-    csize = 0;
-
-    while ((bsize = *b))
+    while ((bsize = *b) != 0)
     {
         // memory block is used --> reset cumulated size
         if (bsize & USED) csize = 0;
@@ -236,18 +227,14 @@ u16 MEM_getLargestFreeBlock()
 
 u16 MEM_getAllocated()
 {
-    u16* b;
+    u16* b = heap;
+    u16 res = 0;
     u16 bsize;
-    u16 res;
 
-    b = heap;
-    res = 0;
-
-    while ((bsize = *b))
+    while ((bsize = *b) != 0)
     {
         // memory block used --> add allocated size to result
-        if (bsize & USED)
-            res += bsize & ~USED;
+        if (bsize & USED) res += bsize & ~USED;
 
         // pass to next block
         b += bsize >> 1;
@@ -258,20 +245,16 @@ u16 MEM_getAllocated()
 
 NO_INLINE void* MEM_alloc(u16 size)
 {
-    u16* p;
-    u16 adjsize;
-    u16 remaining;
-
     if (size == 0)
         return 0;
 
+    u16* p;
     // 2 bytes aligned
-    adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
+    u16 adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
 
     if (adjsize > *free)
     {
         p = pack(adjsize);
-
         // no enough memory
         if (p == NULL)
         {
@@ -287,15 +270,33 @@ NO_INLINE void* MEM_alloc(u16 size)
 
         free = p;
     }
+    // at this point we can allocate memory
     else
-        // at this point we can allocate memory
+    {
+        // check if we need to pack memory
+        if (needPack)
+        {
+            MEM_pack();
+            needPack = FALSE;
+
+            // find the first big enough free block if needed
+            while (adjsize > *free)
+            {
+                // next block
+                free += *free >> 1;
+                // bypass used blocks
+                while(*free & USED) free += *free >> 1;
+            }
+        }
+
         p = free;
+    }
 
     // set free to next free block
     free += adjsize >> 1;
 
     // get remaining (old - allocated)
-    remaining = *p - adjsize;
+    u16 remaining = *p - adjsize;
     // adjust remaining free space
     if (remaining > 0) *free = remaining;
     else
@@ -323,117 +324,56 @@ NO_INLINE void* MEM_alloc(u16 size)
 
 NO_INLINE void* MEM_allocAt(u32 addr, u16 size)
 {
-    u16* p;
-    u16 adjsize;
-    u16 remaining;
-
     if (size == 0)
         return 0;
 
     // 2 bytes aligned
-    adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
+    u16 adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
 
-    if (adjsize > *free)
-    {
-        p = packEx(addr, adjsize);
+    u16* found = NULL;
+    u16* b = heap;
+    u16* best = b;
+    u16 bsize = 0;
+    u16 psize;
 
-        // block has not enough memory
-        if (p == NULL)
-        {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-            kprintf("MEM_allocEx(%8lx, %d) failed: wanted block is not available", addr, size);
-#endif
-
-            return NULL;
-        }
-
-        free = p;
-    }
-    else
-        // at this point we can allocate memory
-        p = free;
-
-    // set free to next free block
-    free += adjsize >> 1;
-
-    // get remaining (old - allocated)
-    remaining = *p - adjsize;
-    // adjust remaining free space
-    if (remaining > 0) *free = remaining;
-    else
-    {
-        // no more space in block so we have to find the next free bloc
-        u16 *newfree = free;
-        u16 bloc;
-
-        while((bloc = *newfree) & USED)
-            newfree += bloc >> 1;
-
-        free = newfree;
-    }
-
-    // set block size, mark as used and point to free region
-    *p++ = adjsize | USED;
-
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-    kprintf("MEM_allocEx(%8lx, %d) success: %lx - remaining = %d", addr, size, (u32) p, MEM_getFree());
-#endif
-
-    // return block
-    return p;
-}
-
-void MEM_free(void *ptr)
-{
-    // valid block ?
-    if (ptr)
-    {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-        // not in use ?
-        if (!(((u16*)ptr)[-1] & USED))
-        {
-            kprintf("MEM_free(%lx) failed: block is not allocated !", (u32) ptr);
-            return;
-        }
-#endif
-
-        // mark block as no more used
-        ((u16*)ptr)[-1] &= ~USED;
-
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
-        kprintf("MEM_free(%lx) --> remaining = %d", (u32) ptr, MEM_getFree());
-#endif
-    }
-}
-
-NO_INLINE void MEM_pack()
-{
-    u16 *b;
-    u16 *best;
-    u16 bsize, psize;
-    bool first;
-
-    b = heap;
-    best = b;
-    bsize = 0;
-    first = TRUE;
-
-    while ((psize = *b))
+    while ((psize = *b) != 0)
     {
         if (psize & USED)
         {
+            // we cumulated free blocks ?
             if (bsize != 0)
             {
-                // first free block found ?
-                if (first)
-                {
-                    // reset next free block
-                    free = best;
-                    first = FALSE;
-                }
-
-                // store packed free memory for this block
+                // store packed free size
                 *best = bsize;
+
+                // get block address
+                u32 baddr = (u32) best;
+                // block address still valid ?
+                if (baddr <= addr)
+                {
+                    // test if the block contains the block we want
+                    if ((baddr + bsize) >= (addr + adjsize))
+                    {
+                        u16 delta = addr - baddr;
+                        // free space before wanted block ? --> split block
+                        if (delta)
+                        {
+                            // change available size for previous block
+                            *best = delta;
+                            // move on desired block
+                            best += delta >> 1;
+                            // set free space here
+                            *best = bsize - delta;
+                        }
+
+                        // found a matching block --> stop here
+                        found = best;
+                        break;
+                    }
+                }
+                // block address not valid anymore --> stop here 
+                else break;
+
                 // reset packed free size
                 bsize = 0;
             }
@@ -455,24 +395,176 @@ NO_INLINE void MEM_pack()
     }
 
     // last free block update
-    if (bsize != 0) *best = bsize;
+    if (bsize != 0)
+    {
+        // store packed free size
+        *best = bsize;
+
+        // not yet found a matching block ?
+        if (found == NULL)
+        {
+            // get block address
+            u32 baddr = (u32) best;
+            // block address is valid ?
+            if (baddr <= addr)
+            {
+                // test if the block contains the block we want
+                if ((baddr + bsize) >= (addr + adjsize))
+                {
+                    u16 delta = addr - baddr;
+                    // free space before wanted block ? --> split block
+                    if (delta)
+                    {
+                        // change available size for previous block
+                        *best = delta;
+                        // move on desired block
+                        best += delta >> 1;
+                        // set free space here
+                        *best = bsize - delta;
+                    }
+
+                    // found a matching block
+                    found = best;
+                }
+            }
+        }
+    }
+
+    if (found == NULL)
+    {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+        kprintf("MEM_allocEx(%8lx, %d) failed: wanted block is not available", addr, size);
+#endif
+        return NULL;
+    }
+
+    free = found;
+    // set free to next free block
+    free += adjsize >> 1;
+
+    // get remaining (old - allocated)
+    u16 remaining = *found - adjsize;
+    // adjust remaining free space
+    if (remaining > 0) *free = remaining;
+    else
+    {
+        // no more space in block so we have to find the next free bloc
+        u16 *newfree = free;
+        u16 bloc;
+
+        while((bloc = *newfree) & USED)
+            newfree += bloc >> 1;
+
+        free = newfree;
+    }
+
+    // set block size, mark as used and point to free region
+    *found++ = adjsize | USED;
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
+    kprintf("MEM_allocEx(%8lx, %d) success: %lx - remaining = %d", addr, size, (u32) found, MEM_getFree());
+#endif
+
+    // return block
+    return found;
+}
+
+void MEM_free(void *ptr)
+{
+    // valid block ?
+    if (ptr)
+    {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+        // not in use ?
+        if (!(((u16*)ptr)[-1] & USED))
+        {
+            kprintf("MEM_free(%lx) failed: block is not allocated !", (u32) ptr);
+            return;
+        }
+#endif
+
+        // mark block as no more used
+        ((u16*)ptr)[-1] &= ~USED;
+        // request packing on next allocation
+        needPack = TRUE;
+
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
+        kprintf("MEM_free(%lx) --> remaining = %d", (u32) ptr, MEM_getFree());
+#endif
+    }
+    else
+    {
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+        kprintf("MEM_free(NULL) failed: tried to release a NULL pointer !");
+#endif
+    }
+}
+
+NO_INLINE void MEM_pack()
+{
+    u16* b = heap;
+    u16* best = b;
+    u16 bsize = 0;
+    u16* nfree = NULL;
+    u16 psize;
+
+    while ((psize = *b) != 0)
+    {
+        if (psize & USED)
+        {
+            if (bsize != 0)
+            {
+                // store packed free memory for this block
+                *best = bsize;
+                // reset packed free size
+                bsize = 0;
+                // first free block found ? --> reset new 'free' block
+                if (nfree == NULL) nfree = best;
+            }
+
+            // point to next memory block
+            b += psize >> 1;
+            // remember it in case it becomes free
+            best = b;
+        }
+        else
+        {
+            // increment free size
+            bsize += psize;
+            // clear this memory block as it will be packed
+            *b = 0;
+            // point to next memory block
+            b += psize >> 1;
+        }
+    }
+
+    // last free block update
+    if (bsize != 0)
+    {
+        *best = bsize;
+        // first free block found ? --> reset new 'free' block
+        if (nfree == NULL) nfree = best;
+    }
+
+    // store new 'free' 
+    if (nfree != NULL) free = nfree;
+    // no more free memory
+    else free = heapEnd;
 }
 
 
 NO_INLINE void MEM_dump()
 {
-    char str[40];
-    char strNum[16];
-    u16 *b;
-    u16 psize;
-    u16 memused;
-    u16 memfree;
-
     KDebug_Alert("Memory dump:");
     KDebug_Alert(" Used blocks:");
 
-    b = heap;
-    memused = 0;
+    char str[40];
+    char strNum[16];
+
+    u16 *b = heap;
+    u16 memused = 0;
+    u16 psize;
+
     while ((psize = *b))
     {
         if (psize & USED)
@@ -496,7 +588,7 @@ NO_INLINE void MEM_dump()
     KDebug_Alert(" Free blocks:");
 
     b = heap;
-    memfree = 0;
+    u16 memfree = 0;
     while ((psize = *b))
     {
         if (!(psize & USED))
@@ -524,17 +616,14 @@ NO_INLINE void MEM_dump()
 }
 
 /*
- * Pack free block and return first matching free block.
+ * Pack free blocks and return first free block matching size
  */
 static u16* pack(u16 nsize)
 {
-    u16 *b;
-    u16 *best;
-    u16 bsize, psize;
-
-    b = heap;
-    best = b;
-    bsize = 0;
+    u16* b = heap;
+    u16* best = b;
+    u16 bsize = 0;
+    u16 psize;
 
     while ((psize = *b))
     {
@@ -582,124 +671,3 @@ static u16* pack(u16 nsize)
 
     return NULL;
 }
-
-/*
- * Pack free block and return first matching free block.
- */
-static u16* packEx(u32 addr, u16 nsize)
-{
-    u16 *b;
-    u16 *best;
-    u16 bsize, psize;
-
-    b = heap;
-    best = b;
-    bsize = 0;
-
-    while ((psize = *b))
-    {
-        if (psize & USED)
-        {
-            if (bsize != 0)
-            {
-                // store packed free size
-                *best = bsize;
-
-                // greater than what we're looking for ?
-                if (bsize >= nsize)
-                {
-                    // get block address
-                    u32 baddr = (u32) best;
-
-                    // test if the block is where we want
-                    if ((baddr <= addr) && ((baddr + bsize) >= (addr + nsize)))
-                    {
-                        u16 delta = addr - baddr;
-
-                        // free space before wanted block ? --> split block
-                        if (delta)
-                        {
-                            // change available size for previous block
-                            *best = delta;
-                            // move on desired block
-                            best += delta >> 1;
-                            // set free space here
-                            *best = bsize - delta;
-                        }
-
-                        return best;
-                    }
-                }
-
-                // reset packed free size
-                bsize = 0;
-            }
-
-            // point to next memory block
-            b += psize >> 1;
-            // remember it in case it becomes free
-            best = b;
-        }
-        else
-        {
-            // increment free size
-            bsize += psize;
-            // clear this memory block as it will be packed
-            *b = 0;
-            // point to next memory block
-            b += psize >> 1;
-        }
-    }
-
-    // last free block update
-    if (bsize != 0)
-    {
-        // store packed free size
-        *best = bsize;
-
-        // return it if greater than what we're looking for
-        if (bsize >= nsize)
-        {
-            // get block address
-            u32 baddr = (u32) best;
-
-            // test if the block is where we want
-            if ((baddr <= addr) && ((baddr + bsize) >= (addr + nsize)))
-            {
-                u16 delta = addr - baddr;
-
-                // free space before wanted block ? --> split block
-                if (delta)
-                {
-                    // change available size for previous block
-                    *best = delta;
-                    // move on desired block
-                    best += delta >> 1;
-                    // set free space here
-                    *best = bsize - delta;
-                }
-
-                return best;
-            }
-        }
-    }
-
-    return NULL;
-}
-
-
-#if (ENABLE_NEWLIB == 0)
-extern void memset_(void *to, u8 value, u16 len);
-
-void __attribute__ ((noinline, used)) memset(void *to, u8 value, u16 len)
-{
-    memset_(to, value, len);
-}
-
-extern void memcpy_(void *to, const void *from, u16 len);
-
-void __attribute__ ((noinline, used)) memcpy(void *to, const void *from, u16 len)
-{
-    memcpy_(to, from, len);
-}
-#endif  // ENABLE_NEWLIB

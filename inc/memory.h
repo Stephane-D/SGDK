@@ -205,7 +205,8 @@ void* MEM_alloc(u16 size);
 /**
  *  \brief
  *      Pack all free blocks and reset allocation search from start of heap.<br>
- *      You can call this method before trying to allocate small block of memory to reduce memory fragmentation.
+ *      You can call this method before trying to allocate small block of memory to reduce memory fragmentation.<br>
+ *      Note that since SGDK 2.12 the memory manager is doing "auto packing" operation so you don't need to call this method anymore.
  */
 void MEM_pack(void);
 /**
