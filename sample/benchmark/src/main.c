@@ -140,24 +140,30 @@ int main()
 static void showIntroScreen()
 {
     char str[64];
-
     u16 col = 0xEEE;
+    u32 systemMem = 0x10000;
+    u16 freeMem = MEM_getFree();
+    u16 usedMem = (u16)(systemMem - freeMem);
+    u16 staticAllocation = (u16)(u32)&_bend;
+    u16 stackSize = (u16) STACK_SIZE;
+    u16 dmaBuffersSize = DMA_getBufferSize() + (u16) (DMA_getMaxQueueSize() * sizeof(DMAOpInfo));
 
     // set text color to black
     PAL_setColor(15, 0x000);
 
-    VDP_drawText("Total memory          65536 bytes", 0, 1);
-    sprintf(str, "Free memory           %05u bytes", MEM_getFree());
+    sprintf(str, "Total memory          %05lu bytes", systemMem);
+    VDP_drawText(str, 0, 1);
+    sprintf(str, "Free memory           %05u bytes", freeMem);
     VDP_drawText(str, 0, 2);
-    sprintf(str, "Used memory           %05u bytes", 65536 - MEM_getFree());
+    sprintf(str, "Used memory           %05u bytes", usedMem);
     VDP_drawText(str, 0, 3);
-    sprintf(str, "  Static allocation   %05u bytes", (u16) ((u32)&_bend) & 0xFFFF);
+    sprintf(str, "  Static allocation   %05u bytes", staticAllocation);
     VDP_drawText(str, 0, 4);
-    sprintf(str, "  Stack size          %05u bytes", (u16) STACK_SIZE);
+    sprintf(str, "  Stack size          %05u bytes", stackSize);
     VDP_drawText(str, 0, 5);
-    sprintf(str, "  DMA queue & buffer  %05u bytes", DMA_getBufferSize() + (u16) (DMA_getMaxQueueSize() * sizeof(DMAOpInfo)));
+    sprintf(str, "  DMA queue & buffer  %05u bytes", dmaBuffersSize);
     VDP_drawText(str, 0, 6);
-    sprintf(str, "  Memory manager      %05u bytes", (65536 - MEM_getFree()) - (((u16) ((u32)&_bend) & 0xFFFF) + STACK_SIZE + DMA_getBufferSize() + (u16) (DMA_getMaxQueueSize() * sizeof(DMAOpInfo))));
+    sprintf(str, "  Memory manager      %05u bytes", usedMem - (staticAllocation + stackSize + dmaBuffersSize));
     VDP_drawText(str, 0, 7);
     sprintf(str, "Free VRAM              %04d tiles", TILE_USER_MAX_INDEX);
     VDP_drawText(str, 0, 9);
@@ -165,6 +171,8 @@ static void showIntroScreen()
     // display test string
     VDP_drawText(SGDK_BENCHMARK, 10, 14);
     VDP_drawText("Press START to begin", 10, 16);
+
+    MEM_checkIntegrity();
 
     // fade text color to white
     PAL_fadeIn(15, 15, &col, 30, FALSE);
