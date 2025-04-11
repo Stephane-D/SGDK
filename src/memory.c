@@ -163,7 +163,7 @@ void MEM_init()
     h <<= 1;
 
     // define available memory (sizeof(u16) is the memory reserved to indicate heap end)
-    u32 len = MEMORY_HIGH - (h + sizeof(u16));
+    u16 len = (u16)(MEMORY_HIGH - (h + sizeof(u16)));
 
     // define heap
     heap = (u16*) h;
@@ -552,6 +552,51 @@ NO_INLINE void MEM_pack()
     else free = heapEnd;
 }
 
+
+NO_INLINE bool MEM_checkIntegrity()
+{
+    bool result = TRUE;
+
+    // point to end of bss (start of heap)
+    u32 h = (u32)&_bend;
+    // 2 bytes aligned
+    h += 1;
+    h >>= 1;
+    h <<= 1;
+    // size of heap available for dynamic memory allocation
+    u16 len = (u16)(MEMORY_HIGH - (h + sizeof(u16)));
+
+    if ((MEM_getFree() + MEM_getAllocated()) != len)
+    {
+        KDebug_Alert("MEM_checkIntegrity: memory size mismatch !");
+        KDebug_Alert("Total memory:");
+        kprintf("%05d", len);
+        KDebug_Alert("  Free memory:");
+        kprintf("  %05d", MEM_getFree());
+        KDebug_Alert("  Allocated memory:");
+        kprintf("  %05d", MEM_getAllocated());
+        result = FALSE;
+    }
+
+    u32 stackAdr = SYS_getStackPointer();
+    // check if stack pointer is outside its range
+    if (stackAdr < MEMORY_HIGH)
+    {
+        KDebug_Alert("MEM_checkIntegrity: stack overflow !");
+        KDebug_Alert("Stack pointer:");
+        kprintf("%08lx", stackAdr);
+        result = FALSE;
+    }
+    else if (stackAdr >= (MEMORY_HIGH + STACK_SIZE))
+    {
+        KDebug_Alert("MEM_checkIntegrity: stack underflow !");
+        KDebug_Alert("Stack pointer:");
+        kprintf("%08lx", stackAdr);
+        result = FALSE;
+    }
+
+    return result;
+}
 
 NO_INLINE void MEM_dump()
 {
