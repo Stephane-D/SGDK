@@ -147,7 +147,7 @@ SGDK is completly free but you can support it on Patreon: https://www.patreon.co
 - Vladikcomper for the powerful error handler capable of displaying human readable backtrace informations :)
 - Astrofra for the starfield donut sample and the revamped readme ;)
 - Gunpog for making the 'cute' SGDK logo.
-- Adrian Spoz for making the 'profesionnal' SGDK logo.
+- Adrian Spoz for making the 'professional' SGDK logo.
 - Vojtěch Salajka for the script allowing to use SGDK easily from Wine (Linux/Unix but may work on OSX too).
 - Andy Grind for the MarsDev project allowing to use SGDK on any OS and also supporting 32X dev.
 - Sonic3D for the GenDev OSX port of SGDK.
