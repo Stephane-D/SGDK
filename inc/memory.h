@@ -209,6 +209,16 @@ void* MEM_alloc(u16 size);
  *      Note that since SGDK 2.12 the memory manager is doing "auto packing" operation so you don't need to call this method anymore.
  */
 void MEM_pack(void);
+
+/**
+ *  \brief
+ *      Performs a integrity test on memory manager and stack pointer.<br>
+ *      Note that the method may not detect all possible corruption but if it fails then for sure
+ *      you have a memory corruption somewhere.
+ *
+ * Return FALSE if the test integrity failed (some logs are generated)
+ */
+bool MEM_checkIntegrity();
 /**
  *  \brief
  *      Show memory dump

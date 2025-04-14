@@ -260,6 +260,12 @@ bool SYS_nextFrame(void);
 
 /**
  *  \brief
+ *      Returns the current value of the stack pointer register (A7)
+ */
+u32 SYS_getStackPointer();
+
+/**
+ *  \brief
  *      Return current interrupt mask level.
  *
  * See SYS_setInterruptMaskLevel() for more informations about interrupt mask level.

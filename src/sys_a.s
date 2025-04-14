@@ -36,6 +36,11 @@ func SYS_hardReset
     jmp    _start_entry
 
 
+func SYS_getStackPointer
+    move.l  %a7,%d0
+    rts
+
+
 func SYS_getInterruptMaskLevel
     move.w  %sr,%d0
     andi.w  #0x0700,%d0
@@ -65,3 +70,5 @@ func SYS_getAndSetInterruptMaskLevel
     lsr.w   #8,%d0
     andi.w  #0x07,%d0                       // d0 = previous interrupt mask
     rts
+
+
