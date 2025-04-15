@@ -7,6 +7,23 @@ endif
 
 include $(GDK)/common.mk
 
+ifeq ($(MAKECMDGOALS),debug)
+  OUT_DIR := out/debug
+else ifeq ($(MAKECMDGOALS),Debug)
+  OUT_DIR := out/debug
+else ifeq ($(MAKECMDGOALS),asm)
+  OUT_DIR := out/asm
+else ifeq ($(MAKECMDGOALS),Asm)
+  OUT_DIR := out/asm
+else ifeq ($(MAKECMDGOALS),clean-debug)
+  OUT_DIR := out/debug
+else ifeq ($(MAKECMDGOALS),clean-asm)
+  OUT_DIR := out/asm
+else
+  OUT_DIR := out/release
+endif
+
+
 SRC_LIB_C = $(wildcard $(SRC_LIB)/*.c)
 SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*.c)
 SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*/*.c)
@@ -21,29 +38,44 @@ SRC_LIB_S80 += $(wildcard $(SRC_LIB)/*/*/*.s80)
 
 RES_LIB_RES := $(wildcard $(RES_LIB)/*.res)
 
-OBJ_LIB = $(RES_LIB_RES:.res=.o)
-OBJ_LIB += $(SRC_LIB_S80:.s80=.o)
-OBJ_LIB += $(SRC_LIB_S:.s=.o)
-OBJ_LIB += $(SRC_LIB_C:.c=.o)
+OBJS_LIB = $(RES_LIB_RES:.res=.o)
+OBJS_LIB += $(SRC_LIB_S80:.s80=.o)
+OBJS_LIB += $(SRC_LIB_S:.s=.o)
+OBJS_LIB += $(SRC_LIB_C:.c=.o)
 
-DEP_LIB := $(OBJ_LIB:.o=.d)
+LSTS_LIB := $(SRC_LIB_C:.c=.lst)
 
-LST_LIB := $(SRC_LIB_C:.c=.lst)
+OBJS_LIB := $(addprefix $(OUT_DIR)/, $(OBJS_LIB))
+LSTS_LIB := $(addprefix $(OUT_DIR)/, $(LSTS_LIB))
 
-INCS_LIB := -I$(INCLUDE_LIB) -I$(SRC_LIB) -I$(RES_LIB)
+
+INCS_LIB := -I$(INC_LIB) -I$(OUT_DIR)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-array-bounds -Wno-shift-negative-value -Wno-unused-parameter -fno-builtin -fms-extensions -ffunction-sections -fdata-sections $(INCS_LIB) -B$(BIN)
-FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB) -i$(INCLUDE_LIB)/snd
+FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INC_LIB) -i$(INC_LIB)/snd -i$(OUT_DIR)
 
-all: release
+.PHONY: default
+.PHONY: all
+.PHONY: release
+.PHONY: Release
+.PHONY: debug
+.PHONY: Debug
+.PHONY: asm
+.PHONY: Asm
+.PHONY: clean
+.PHONY: clean-release
+.PHONY: clean-debug
+.PHONY: clean-asm
+.PHONY: clean-all
+
 default: release
-Default: release
+all: release
+clean: clean-all
 
-Debug: debug
 Release: release
+Debug: debug
 Asm: asm
 
-#release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -Os -fomit-frame-pointer -fuse-linker-plugin -flto -flto=auto -ffat-lto-objects
-release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
+release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
 release: CFLAGS_LIB= $(FLAGS_LIB)
 release: AFLAGS_LIB= $(FLAGS_LIB)
 release: $(LIB)/libmd.a
@@ -53,74 +85,71 @@ debug: CFLAGS_LIB= $(FLAGS_LIB) -ggdb
 debug: AFLAGS_LIB= $(FLAGS_LIB)
 debug: $(LIB)/libmd_debug.a
 
-asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fomit-frame-pointer -S
+asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
 asm: CFLAGS_LIB= $(FLAGS_LIB)
 asm: AFLAGS_LIB= $(FLAGS_LIB)
-asm: $(LST_LIB)
+asm: $(OBJS_LIB) $(LSTS_LIB)
+	$(RM) -f $(OBJS_LIB)
 
-.PHONY: clean
+clean-all:
+	$(RM) -r -f out
 
--include $(DEP_LIB)
+clean-release: clean-task
+clean-debug: clean-task
+clean-asm: clean-task
 
-cleanlst:
-	$(RM) -f $(LST_LIB)
-
-cleandep:
-	$(RM) -f $(DEP_LIB)
-
-cleanobj:
-	$(RM) -f $(OBJ_LIB)
-
-cleanrelease: cleanobj cleandep cleanlst
-	$(RM) -f $(LIB)/libmd.a out.lst cmd_
-
-cleandebug: cleanobj cleandep cleanlst
-	$(RM) -f $(LIB)/libmd_debug.a out.lst cmd_
-
-cleanasm: cleanlst
-
-clean: cleanobj cleandep cleanlst
-	$(RM) -f $(LIB)/libmd.a $(LIB)/libmd_debug.a out.lst cmd_
-
-cleanall: clean
-cleanAll: clean
-cleandefault: clean
-cleanDefault: clean
-
-cleanRelease: cleanrelease
-cleanDebug: cleandebug
-cleanAsm: cleanasm
+clean-task:
+	$(RM) -r -f $(OUT_DIR)
+.PHONY: clean-task
 
 
-$(LIB)/libmd.a: cmd_
-	$(AR) rs $(LIB)/libmd.a $(LTO_PLUGIN) @cmd_
-	$(RM) cmd_
+$(LIB)/libmd.a: $(OUT_DIR)/libmd.a
+	$(CP) $(OUT_DIR)/libmd.a $(LIB)/libmd.a
 
-$(LIB)/libmd_debug.a: cmd_
-	$(AR) rs $(LIB)/libmd_debug.a $(LTO_PLUGIN) @cmd_
-	$(RM) cmd_
+$(LIB)/libmd_debug.a: $(OUT_DIR)/libmd.a
+	$(CP) $(OUT_DIR)/libmd.a $(LIB)/libmd_debug.a
 
-cmd_ : $(OBJ_LIB)
-	$(ECHO) "$(OBJ_LIB)" > cmd_
+$(OUT_DIR)/libmd.a: $(OUT_DIR)/cmd_
+	$(AR) rs $(OUT_DIR)/libmd.a $(LTO_PLUGIN) @$(OUT_DIR)/cmd_
+	$(RM) $(OUT_DIR)/cmd_
+
+$(OUT_DIR)/cmd_: $(OBJS_LIB)
+	$(ECHO) "$(OBJS_LIB)" > $(OUT_DIR)/cmd_
 
 
-%.lst: %.c
+# source compilation
+$(OUT_DIR)/%.o: %.c
+	@$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS_LIB) -c $< -o $@
 
-%.o: %.c
-	$(CC) $(CFLAGS_LIB) -MMD -c $< -o $@
+$(OUT_DIR)/%.o: %.s
+	@$(MKDIR) -p $(dir $@)
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $< -o $@
 
-%.o: %.s
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or -MMD $(AFLAGS_LIB) -c $< -o $@
+$(OUT_DIR)/%.rs: %.res
+	@$(MKDIR) -p $(dir $@)
+	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs
 
-%.o: %.rs
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $*.rs -o $@
+$(OUT_DIR)/%.o80: %.s80
+	@$(MKDIR) -p $(dir $@)
+	$(ASMZ80) $(FLAGSZ80_LIB) $< $@ $(OUT_DIR)/out.lst
 
-%.rs: %.res
-	$(RESCOMP) $*.res $*.rs -dep $*.o
 
-%.o80: %.s80
-	$(ASMZ80) $(FLAGSZ80_LIB) $< $@ out.lst
+# listing files
+$(OUT_DIR)/%.lst: %.c
+	@$(MKDIR) -p $(dir $@)
+	$(CC) $(CFLAGS_LIB) -S -c $< -o $@
 
-%.s: %.o80
+
+# intermediate files
+$(OUT_DIR)/%.o: $(OUT_DIR)/%.s
+	@$(MKDIR) -p $(dir $@)
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $< -o $@
+
+$(OUT_DIR)/%.o: $(OUT_DIR)/%.rs
+	@$(MKDIR) -p $(dir $@)
+	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $< -o $@
+
+$(OUT_DIR)/%.s: $(OUT_DIR)/%.o80
+	@$(MKDIR) -p $(dir $@)
 	$(BINTOS) $<

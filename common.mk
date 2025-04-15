@@ -5,7 +5,7 @@ LIB := $(GDK)/lib
 
 SRC_LIB := $(GDK)/src
 RES_LIB := $(GDK)/res
-INCLUDE_LIB := $(GDK)/inc
+INC_LIB := $(GDK)/inc
 
 ifeq ($(OS),Windows_NT)
 	# Native Windows
