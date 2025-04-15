@@ -199,8 +199,6 @@ $(OUT_DIR)/%.o: %.s $(DEP_DIR)/%.d
 $(OUT_DIR)/%.rs: %.res $(DEP_DIR)/%.d
 	@$(MKDIR) -p $(dir $@)
 	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs
-	@$(CP) $(OUT_DIR)/$*.h $*.h 
-	@$(RM) $(OUT_DIR)/$*.h
 
 $(OUT_DIR)/%.s: %.asm
 	@$(MKDIR) -p $(dir $@)
@@ -230,8 +228,6 @@ $(DEP_DIR)/%.d: %.res
 	@$(MKDIR) -p $(dir $@)
 	@$(MKDIR) -p $(dir $(OUT_DIR)/$*.o)
 	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs -dep $(OUT_DIR)/$*.o
-	@$(CP) $(OUT_DIR)/$*.h $*.h 
-	@$(RM) $(OUT_DIR)/$*.h
 	@$(CP) $(OUT_DIR)/$*.d $(DEP_DIR)/$*.d
 	@$(RM) $(OUT_DIR)/$*.d
 
