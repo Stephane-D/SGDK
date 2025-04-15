@@ -10,7 +10,7 @@
 #ifndef _FLASH_H_
 #define _FLASH_H_
 
-#include "genesis.h"
+#include <genesis.h>
 #include "utils.h"
 
 static u8 manufacturer  __attribute__((unused));

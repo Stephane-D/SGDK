@@ -10,7 +10,7 @@
 #ifndef _CONFIGURATION_H_
 #define _CONFIGURATION_H_
 
-#include "genesis.h"
+#include <genesis.h>
 #include "utils.h"
 #include "mw-api/configuration_slot.h"
 #include "mw-api/configuration_cert.h"

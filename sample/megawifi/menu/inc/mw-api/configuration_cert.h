@@ -10,7 +10,7 @@
 #ifndef _CONFIGURATION_CERT_H_
 #define _CONFIGURATION_CERT_H_
 
-#include "genesis.h"
+#include <genesis.h>
 #include "utils.h"
 #include "random.h"
 

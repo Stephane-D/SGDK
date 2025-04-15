@@ -10,7 +10,7 @@
 #ifndef _UPGRADE_H_
 #define _UPGRADE_H_
 
-#include "genesis.h"
+#include <genesis.h>
 #include "utils.h"
 
 static char *listUpgrades __attribute__((unused)) = NULL;
