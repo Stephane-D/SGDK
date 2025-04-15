@@ -277,7 +277,6 @@ NO_INLINE void* MEM_alloc(u16 size)
         if (needPack)
         {
             MEM_pack();
-            needPack = FALSE;
 
             // find the first big enough free block if needed
             while (adjsize > *free)
@@ -550,6 +549,8 @@ NO_INLINE void MEM_pack()
     if (nfree != NULL) free = nfree;
     // no more free memory
     else free = heapEnd;
+
+    needPack = FALSE;
 }
 
 
