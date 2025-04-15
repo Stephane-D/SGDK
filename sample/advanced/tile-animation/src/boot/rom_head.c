@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include <genesis.h>
 
 __attribute__((externally_visible))
 const ROMHeader rom_header = {
