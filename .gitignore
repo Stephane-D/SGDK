@@ -20,7 +20,8 @@
 **/cmd_
 **/.DS_Store
 **/.settings/**
-**/out/**
+**/out
+!out/**/res/*.h
 !**/out/rom.bin
 !**/out/release/rom.bin
 **/symbol.txt
