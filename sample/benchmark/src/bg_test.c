@@ -1,7 +1,7 @@
 #include <genesis.h>
 
-#include "main.h"
-#include "gfx.h"
+#include "inc/main.h"
+#include "res/gfx.h"
 
 
 // forward

@@ -1,6 +1,6 @@
 #include <genesis.h>
 
-#include "main.h"
+#include "inc/main.h"
 
 
 #define RAND_32         (random() | (random() << 16))

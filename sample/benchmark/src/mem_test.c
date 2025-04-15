@@ -1,7 +1,7 @@
 #include <genesis.h>
 #include <kdebug.h>
 
-#include "main.h"
+#include "inc/main.h"
 
 
 // forward

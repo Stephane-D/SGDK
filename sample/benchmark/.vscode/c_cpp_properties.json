@@ -4,9 +4,9 @@
             "name": "sgdk",
             "includePath": [
                 "${workspaceFolder}/../../inc",
-                "${workspaceFolder}/../../res",
                 "${workspaceFolder}/inc",
-                "${workspaceFolder}/res"
+                "${workspaceFolder}/res",
+                "${workspaceFolder}",
             ]
         }
     ],
