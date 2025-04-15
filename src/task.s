@@ -1,6 +1,5 @@
-#include "task_cst.h"
-
 #include "asm_mac.i"
+#include "task_cst.h"
 
 // required by the V-Int handler of sega.s boot file (probable need a better way of doing that)
     .globl  task_sr

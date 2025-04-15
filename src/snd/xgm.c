@@ -5,7 +5,7 @@
 
 #include "snd/sound.h"
 #include "snd/xgm.h"
-#include "snd/drv_xgm.h"
+#include "src/snd/drv_xgm.h"
 #include "snd/smp_null.h"
 
 #include "sys.h"
@@ -15,7 +15,7 @@
 #include "vdp.h"
 #include "bmp.h"
 #include "vdp_tile.h"
-#include "libres.h"
+#include "res/libres.h"
 
 
 // custom XGM flag (start at index 8)

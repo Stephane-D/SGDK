@@ -28,12 +28,12 @@
 #define _MEGAWIFI_H_
 
 #if (MODULE_EVERDRIVE == 1)
-	#include "ssf.h"
+	#include "ext/mw/ssf.h"
 #else
-	#include "16c550.h"
+	#include "ext/mw/16c550.h"
 #endif
-#include "mw-msg.h"
-#include "lsd.h"
+#include "ext/mw/mw-msg.h"
+#include "ext/mw/lsd.h"
 
 /// API version implemented, major number
 #define MW_API_VERSION_MAJOR	1

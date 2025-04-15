@@ -15,7 +15,7 @@
 #include "vdp.h"
 #include "bmp.h"
 #include "vdp_tile.h"
-#include "libres.h"
+#include "res/libres.h"
 
 
 #endif // _FONT_H_

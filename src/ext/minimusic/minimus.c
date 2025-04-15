@@ -3,7 +3,7 @@
 #include "types.h"
 
 #include "ext/minimusic/minimus.h"
-#include "ext/minimusic/minimus_drv.h"
+#include "src/ext/minimusic/minimus_drv.h"
 
 #define MEMORY_BARRIER() MINIMUSIC_MEMORY_BARRIER()
 #define WASTE_TIME() for (int16_t i = 0x100; i >= 0; i--) { MEMORY_BARRIER(); }

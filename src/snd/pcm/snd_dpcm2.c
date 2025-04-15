@@ -5,7 +5,7 @@
 
 #include "snd/sound.h"
 #include "snd/pcm/snd_dpcm2.h"
-#include "snd/pcm/drv_dpcm2.h"
+#include "src/snd/pcm/drv_dpcm2.h"
 #include "snd/smp_null_dpcm.h"
 
 #include "timer.h"

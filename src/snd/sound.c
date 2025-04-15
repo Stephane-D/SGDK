@@ -4,7 +4,8 @@
 #include "z80_ctrl.h"
 
 #include "snd/sound.h"
-#include "snd/drv_null.h"
+// auto-generated
+#include "src/snd/drv_null.h"
 
 #include "ym2612.h"
 #include "psg.h"
