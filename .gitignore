@@ -21,9 +21,9 @@
 **/.DS_Store
 **/.settings/**
 **/out
-!out/**/res/*.h
 !**/out/rom.bin
 !**/out/release/rom.bin
+!**/out/release/res/*.h
 **/symbol.txt
 **/rom_head.bin
 **/Debug
