@@ -1,26 +1,27 @@
-MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
-MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
-
-ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
-    GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
+# we need to launch library compilation from SGDK folder
+ifneq ($(wildcard ./bin/rescomp.jar),)
+	GDK := .
+else
+    $(warning You should build the library from SGDK folder using 'bin/make -f makelib.gen' command.)
+    $(error Cannot find SGDK environment !)
 endif
 
 include $(GDK)/common.mk
 
 ifeq ($(MAKECMDGOALS),debug)
-  OUT_DIR := out/debug
+    OUT_DIR := out/debug
 else ifeq ($(MAKECMDGOALS),Debug)
-  OUT_DIR := out/debug
+    OUT_DIR := out/debug
 else ifeq ($(MAKECMDGOALS),asm)
-  OUT_DIR := out/asm
+    OUT_DIR := out/asm
 else ifeq ($(MAKECMDGOALS),Asm)
-  OUT_DIR := out/asm
+    OUT_DIR := out/asm
 else ifeq ($(MAKECMDGOALS),clean-debug)
-  OUT_DIR := out/debug
+    OUT_DIR := out/debug
 else ifeq ($(MAKECMDGOALS),clean-asm)
-  OUT_DIR := out/asm
+    OUT_DIR := out/asm
 else
-  OUT_DIR := out/release
+    OUT_DIR := out/release
 endif
 
 
@@ -75,19 +76,19 @@ Release: release
 Debug: debug
 Asm: asm
 
-release: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
-release: CFLAGS_LIB= $(FLAGS_LIB)
-release: AFLAGS_LIB= $(FLAGS_LIB)
+release: FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
+release: CFLAGS_LIB := $(FLAGS_LIB)
+release: AFLAGS_LIB := $(FLAGS_LIB)
 release: $(LIB)/libmd.a
 
-debug: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O1 -DDEBUG=1
-debug: CFLAGS_LIB= $(FLAGS_LIB) -ggdb
-debug: AFLAGS_LIB= $(FLAGS_LIB)
+debug: FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O1 -DDEBUG=1
+debug: CFLAGS_LIB := $(FLAGS_LIB) -ggdb
+debug: AFLAGS_LIB := $(FLAGS_LIB)
 debug: $(LIB)/libmd_debug.a
 
-asm: FLAGS_LIB= $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
-asm: CFLAGS_LIB= $(FLAGS_LIB)
-asm: AFLAGS_LIB= $(FLAGS_LIB)
+asm: FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
+asm: CFLAGS_LIB := $(FLAGS_LIB)
+asm: AFLAGS_LIB := $(FLAGS_LIB)
 asm: $(OBJS_LIB) $(LSTS_LIB)
 	$(RM) -f $(OBJS_LIB)
 
