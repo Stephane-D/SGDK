@@ -1,8 +1,12 @@
+# get makefile path in unix format
 MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
 
-ifneq ("$(wildcard $(MAKEFILE_DIR)bin/rescomp.jar)","")
-    GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
+# test if we have access to SGDK environment, if so we can override the GDK var
+ifneq ($(wildcard $(MAKEFILE_DIR)bin/rescomp.jar),)
+	GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
+else
+    $(warning Cannot find SGDK environment !)
 endif
 
 include $(GDK)/common.mk
@@ -74,10 +78,9 @@ LSTS := $(addprefix $(OUT_DIR)/, $(LSTS))
 DEPS := $(addprefix $(DEP_DIR)/, $(DEPS))
 
 
-INCS := -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB) 
+INCS := -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB)
 DEFAULT_FLAGS := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -fdiagnostics-color=always -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -ffunction-sections -fdata-sections -fms-extensions -B$(BIN)
-Z80_FLAGS := -i. -i$(SRC_DIR) -i$(INC_DIR) -i$(RES_DIR) -i$(OUT_DIR) -i$(SRC_LIB) -i$(INC_LIB) -i$(INC_LIB)/snd -i$(OUT_DIR_LIB) 
-
+Z80_FLAGS := -i. -i$(SRC_DIR) -i$(INC_DIR) -i$(RES_DIR) -i$(OUT_DIR) -i$(SRC_LIB) -i$(INC_LIB) -i$(INC_LIB)/snd -i$(OUT_DIR_LIB)
 
 .PHONY: default
 .PHONY: all
@@ -99,8 +102,7 @@ all: release
 Release: release
 Debug: debug
 Asm: asm
-clean: clean-release
-clean-all: clean-release clean-debug clean-asm
+clean: clean-all
 
 
 # include ext.mk if it exists (better to do it after first / default definition)
@@ -109,29 +111,32 @@ ifneq ("$(wildcard $(GDK)/ext.mk)","")
 endif
 
 
-release: FLAGS = $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
-release: CFLAGS = $(FLAGS)
-release: AFLAGS = $(FLAGS)
-release: LIBMD = $(LIB)/libmd.a
+release: FLAGS := $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
+release: CFLAGS := $(FLAGS)
+release: AFLAGS := $(FLAGS)
+release: LIBMD := $(LIB)/libmd.a
 release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 release: padROM
 .PHONY: padROM
 
-debug: FLAGS = $(INCS) $(DEFAULT_FLAGS) -O1 -DDEBUG=1
-debug: CFLAGS = $(FLAGS) -ggdb -g
-debug: AFLAGS = $(FLAGS)
-debug: LIBMD = $(LIB)/libmd_debug.a
+debug: FLAGS := $(INCS) $(DEFAULT_FLAGS) -O1 -DDEBUG=1
+debug: CFLAGS := $(FLAGS) -ggdb -g
+debug: AFLAGS := $(FLAGS)
+debug: LIBMD := $(LIB)/libmd_debug.a
 debug: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 debug: injectSymbolsInROM
 debug: padROM
 .PHONY: injectSymbolsInROM padROM
 
-asm: FLAGS = $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
-asm: CFLAGS = $(FLAGS)
-asm: AFLAGS = $(FLAGS)
-asm: LIBMD = $(LIB)/libmd.a
+asm: FLAGS := $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
+asm: CFLAGS := $(FLAGS)
+asm: AFLAGS := $(FLAGS)
+asm: LIBMD := $(LIB)/libmd.a
 asm: $(OBJS) $(LSTS)
 	$(RM) -f $(OBJS)
+
+clean-all:
+	$(RM) -r -f out
 
 clean-release: clean-task
 clean-debug: clean-task
@@ -144,6 +149,7 @@ clean-task:
 
 padROM:	$(OUT_DIR)/rom.bin
 	$(SIZEBND) $(OUT_DIR)/rom.bin -sizealign 131072 -checksum
+	@$(CP) $(OUT_DIR)/rom.bin out/rom.bin
 
 injectSymbolsInROM:	$(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 	$(CONVSYM) $(OUT_DIR)/symbol.txt $(OUT_DIR)/rom.bin -in txt -inopt " /fmt='%X %*[TtBbCcDd] %511s' /offsetFirst+" -range 0 FFFFFF -a -ref @MDDBG__SymbolDataPtr
@@ -199,6 +205,8 @@ $(OUT_DIR)/%.o: %.s $(DEP_DIR)/%.d
 $(OUT_DIR)/%.rs: %.res $(DEP_DIR)/%.d
 	@$(MKDIR) -p $(dir $@)
 	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs
+	@$(CP) $(OUT_DIR)/$*.h $*.h
+	@$(RM) $(OUT_DIR)/$*.h
 
 $(OUT_DIR)/%.s: %.asm
 	@$(MKDIR) -p $(dir $@)
@@ -228,6 +236,8 @@ $(DEP_DIR)/%.d: %.res
 	@$(MKDIR) -p $(dir $@)
 	@$(MKDIR) -p $(dir $(OUT_DIR)/$*.o)
 	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs -dep $(OUT_DIR)/$*.o
+	@$(CP) $(OUT_DIR)/$*.h $*.h
+	@$(RM) $(OUT_DIR)/$*.h
 	@$(CP) $(OUT_DIR)/$*.d $(DEP_DIR)/$*.d
 	@$(RM) $(OUT_DIR)/$*.d
 
