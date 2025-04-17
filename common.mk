@@ -1,11 +1,27 @@
 # Common definitions
 
-BIN := $(GDK)/bin
-LIB := $(GDK)/lib
+ifeq ($(GDK),)
+	BIN := bin
+	LIB := lib
 
-SRC_LIB := $(GDK)/src
-RES_LIB := $(GDK)/res
-INC_LIB := $(GDK)/inc
+	SRC_LIB := src
+	RES_LIB := res
+	INC_LIB := inc
+else ifeq ($(GDK),.)
+	BIN := bin
+	LIB := lib
+
+	SRC_LIB := src
+	RES_LIB := res
+	INC_LIB := inc
+else
+	BIN := $(GDK)/bin
+	LIB := $(GDK)/lib
+
+	SRC_LIB := $(GDK)/src
+	RES_LIB := $(GDK)/res
+	INC_LIB := $(GDK)/inc
+endif
 
 ifeq ($(OS),Windows_NT)
 	# Native Windows
