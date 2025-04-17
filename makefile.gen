@@ -11,24 +11,30 @@ endif
 
 include $(GDK)/common.mk
 
+BUILD_TYPE := release
+ifeq ($(MAKECMDGOALS),debug)
+  	BUILD_TYPE := debug
+else ifeq ($(MAKECMDGOALS),Debug)
+  	BUILD_TYPE := debug
+else ifeq ($(MAKECMDGOALS),clean-debug)
+  	BUILD_TYPE := debug
+else ifeq ($(MAKECMDGOALS),asm)
+  	BUILD_TYPE := asm
+else ifeq ($(MAKECMDGOALS),Asm)
+  	BUILD_TYPE := asm
+else ifeq ($(MAKECMDGOALS),clean-asm)
+  	BUILD_TYPE := asm
+endif
+
+CLEAN := FALSE
+ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
+	CLEAN := TRUE
+endif
+
 SRC_DIR := src
 RES_DIR := res
 INC_DIR := inc
-ifeq ($(MAKECMDGOALS),debug)
-  OUT_DIR := out/debug
-else ifeq ($(MAKECMDGOALS),Debug)
-  OUT_DIR := out/debug
-else ifeq ($(MAKECMDGOALS),asm)
-  OUT_DIR := out/asm
-else ifeq ($(MAKECMDGOALS),Asm)
-  OUT_DIR := out/asm
-else ifeq ($(MAKECMDGOALS),clean-debug)
-  OUT_DIR := out/debug
-else ifeq ($(MAKECMDGOALS),clean-asm)
-  OUT_DIR := out/asm
-else
-  OUT_DIR := out/release
-endif
+OUT_DIR := out/$(BUILD_TYPE)
 DEP_DIR = $(OUT_DIR)/_deps
 OUT_DIR_LIB := $(GDK)/$(OUT_DIR)
 
@@ -57,30 +63,46 @@ SRC_S80 := $(SRC_S80)
 RES_RES = $(wildcard *.res)
 RES_RES += $(wildcard $(RES_DIR)/*.res)
 RES_RES := $(RES_RES)
-RES_H   := $(RES_RES:.res=.h)
-RES_RS  := $(RES_RES:.res=.rs)
-RES_RS  := $(addprefix $(OUT_DIR)/, $(RES_RS))
 
 OBJS = $(RES_RES:.res=.o)
 OBJS += $(SRC_S80:.s80=.o)
 OBJS += $(SRC_ASM:.asm=.o)
 OBJS += $(SRC_S:.s=.o)
 OBJS += $(SRC_C:.c=.o)
+OBJS := $(addprefix $(OUT_DIR)/, $(OBJS))
 
 LSTS := $(SRC_C:.c=.lst)
+LSTS := $(addprefix $(OUT_DIR)/, $(LSTS))
 
 DEPS = $(RES_RES:.res=.d)
 DEPS += $(SRC_S:.s=.d)
 DEPS += $(SRC_C:.c=.d)
-
-OBJS := $(addprefix $(OUT_DIR)/, $(OBJS))
-LSTS := $(addprefix $(OUT_DIR)/, $(LSTS))
 DEPS := $(addprefix $(DEP_DIR)/, $(DEPS))
-
 
 INCS := -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB)
 DEFAULT_FLAGS := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -fdiagnostics-color=always -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -ffunction-sections -fdata-sections -fms-extensions -B$(BIN)
 Z80_FLAGS := -i. -i$(SRC_DIR) -i$(INC_DIR) -i$(RES_DIR) -i$(OUT_DIR) -i$(SRC_LIB) -i$(INC_LIB) -i$(INC_LIB)/snd -i$(OUT_DIR_LIB)
+
+ifeq ($(BUILD_TYPE),debug)
+	# debug
+	FLAGS := $(INCS) $(DEFAULT_FLAGS) -O1 -DDEBUG=1
+	CFLAGS := $(FLAGS) -ggdb -g
+	AFLAGS := -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS)
+	LIBMD := $(LIB)/libmd_debug.a
+else ifeq ($(BUILD_TYPE),asm)
+	# asm
+	FLAGS := $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
+	CFLAGS := $(FLAGS)
+	AFLAGS := -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS)
+	LIBMD := $(LIB)/libmd.a
+else
+	# release
+	FLAGS := $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
+	CFLAGS := $(FLAGS)
+	AFLAGS := -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS)
+	LIBMD := $(LIB)/libmd.a
+endif
+
 
 .PHONY: default
 .PHONY: all
@@ -96,44 +118,29 @@ Z80_FLAGS := -i. -i$(SRC_DIR) -i$(INC_DIR) -i$(RES_DIR) -i$(OUT_DIR) -i$(SRC_LIB
 .PHONY: clean-asm
 .PHONY: clean-all
 
+clean: clean-all
 default: release
 all: release
-
-Release: release
-Debug: debug
-Asm: asm
-clean: clean-all
-
 
 # include ext.mk if it exists (better to do it after first / default definition)
 ifneq ("$(wildcard $(GDK)/ext.mk)","")
     include $(GDK)/ext.mk
 endif
 
+Release: release
+Debug: debug
+Asm: asm
 
-release: FLAGS := $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
-release: CFLAGS := $(FLAGS)
-release: AFLAGS := $(FLAGS)
-release: LIBMD := $(LIB)/libmd.a
-release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
+release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt 
 release: padROM
 .PHONY: padROM
 
-debug: FLAGS := $(INCS) $(DEFAULT_FLAGS) -O1 -DDEBUG=1
-debug: CFLAGS := $(FLAGS) -ggdb -g
-debug: AFLAGS := $(FLAGS)
-debug: LIBMD := $(LIB)/libmd_debug.a
 debug: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 debug: injectSymbolsInROM
 debug: padROM
-.PHONY: injectSymbolsInROM padROM
+.PHONY: injectSymbolsInROM
 
-asm: FLAGS := $(INCS) $(DEFAULT_FLAGS) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
-asm: CFLAGS := $(FLAGS)
-asm: AFLAGS := $(FLAGS)
-asm: LIBMD := $(LIB)/libmd.a
 asm: $(OBJS) $(LSTS)
-	$(RM) -f $(OBJS)
 
 clean-all:
 	$(RM) -r -f out
@@ -172,7 +179,7 @@ $(OUT_DIR)/cmd_: $(OBJS)
 
 # NOTE: sega.s references out/rom_head.bin internally
 $(OUT_DIR)/sega.o: $(SRC_DIR)/boot/sega.s out/rom_head.bin
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $(SRC_DIR)/boot/sega.s -o $@
+	$(CC) $(AFLAGS) -c $(SRC_DIR)/boot/sega.s -o $@
 
 # NOTE: rom_head.bin need to be located in 'out' folder as it's referenced by boot/sega.s
 out/rom_head.bin: $(OUT_DIR)/rom_head.o
@@ -200,7 +207,7 @@ $(OUT_DIR)/%.o: %.c $(DEP_DIR)/%.d
 
 $(OUT_DIR)/%.o: %.s $(DEP_DIR)/%.d
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $< -o $@
+	$(CC) $(AFLAGS) -c $< -o $@
 
 $(OUT_DIR)/%.rs: %.res $(DEP_DIR)/%.d
 	@$(MKDIR) -p $(dir $@)
@@ -226,11 +233,11 @@ $(OUT_DIR)/%.lst: %.c $(DEP_DIR)/%.d
 # deps files
 $(DEP_DIR)/%.d: %.c
 	@$(MKDIR) -p $(dir $@)
-	$(CC) $(INCS) -B$(BIN) $< -E -MG -MM -MP -MT $(OUT_DIR)/$*.o -MF $(DEP_DIR)/$*.d
+	$(CC) $(CFLAGS) $< -E -MG -MM -MP -MT $(OUT_DIR)/$*.o -MF $(DEP_DIR)/$*.d
 
 $(DEP_DIR)/%.d: %.s
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) $< -E -MG -MM -MP -MT $(OUT_DIR)/$*.o -MF $(DEP_DIR)/$*.d
+	$(CC) $(AFLAGS) $< -E -MG -MM -MP -MT $(OUT_DIR)/$*.o -MF $(DEP_DIR)/$*.d
 
 $(DEP_DIR)/%.d: %.res
 	@$(MKDIR) -p $(dir $@)
@@ -245,15 +252,17 @@ $(DEP_DIR)/%.d: %.res
 # intermediates files
 $(OUT_DIR)/%.o: $(OUT_DIR)%.s
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $< -o $@
+	$(CC) $(AFLAGS) -c $< -o $@
 
 $(OUT_DIR)/%.o: $(OUT_DIR)/%.rs 
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -c $< -o $@
+	$(CC) $(AFLAGS) -c $< -o $@
 
 $(OUT_DIR)/%.s: $(OUT_DIR)/%.o80
 	@$(MKDIR) -p $(dir $@)
 	$(BINTOS) $<
 
 
+ifeq ($(CLEAN),FALSE)
 -include $(DEPS)
+endif

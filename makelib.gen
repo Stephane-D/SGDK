@@ -8,22 +8,22 @@ endif
 
 include $(GDK)/common.mk
 
+BUILD_TYPE := release
 ifeq ($(MAKECMDGOALS),debug)
-    OUT_DIR := out/debug
+  	BUILD_TYPE := debug
 else ifeq ($(MAKECMDGOALS),Debug)
-    OUT_DIR := out/debug
-else ifeq ($(MAKECMDGOALS),asm)
-    OUT_DIR := out/asm
-else ifeq ($(MAKECMDGOALS),Asm)
-    OUT_DIR := out/asm
+  	BUILD_TYPE := debug
 else ifeq ($(MAKECMDGOALS),clean-debug)
-    OUT_DIR := out/debug
+  	BUILD_TYPE := debug
+else ifeq ($(MAKECMDGOALS),asm)
+  	BUILD_TYPE := asm
+else ifeq ($(MAKECMDGOALS),Asm)
+  	BUILD_TYPE := asm
 else ifeq ($(MAKECMDGOALS),clean-asm)
-    OUT_DIR := out/asm
-else
-    OUT_DIR := out/release
+  	BUILD_TYPE := asm
 endif
 
+OUT_DIR := out/$(BUILD_TYPE)
 
 SRC_LIB_C = $(wildcard $(SRC_LIB)/*.c)
 SRC_LIB_C += $(wildcard $(SRC_LIB)/*/*.c)
@@ -43,16 +43,31 @@ OBJS_LIB = $(RES_LIB_RES:.res=.o)
 OBJS_LIB += $(SRC_LIB_S80:.s80=.o)
 OBJS_LIB += $(SRC_LIB_S:.s=.o)
 OBJS_LIB += $(SRC_LIB_C:.c=.o)
+OBJS_LIB := $(addprefix $(OUT_DIR)/, $(OBJS_LIB))
 
 LSTS_LIB := $(SRC_LIB_C:.c=.lst)
-
-OBJS_LIB := $(addprefix $(OUT_DIR)/, $(OBJS_LIB))
 LSTS_LIB := $(addprefix $(OUT_DIR)/, $(LSTS_LIB))
-
 
 INCS_LIB := -I$(INC_LIB) -I$(OUT_DIR)
 DEFAULT_FLAGS_LIB := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -Wall -Wextra -Wno-array-bounds -Wno-shift-negative-value -Wno-unused-parameter -fno-builtin -fms-extensions -ffunction-sections -fdata-sections $(INCS_LIB) -B$(BIN)
 FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INC_LIB) -i$(INC_LIB)/snd -i$(OUT_DIR)
+
+ifeq ($(BUILD_TYPE),debug)
+	# debug
+	FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O1 -DDEBUG=1
+	CFLAGS_LIB := $(FLAGS_LIB) -ggdb
+	AFLAGS_LIB := -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS_LIB)
+else ifeq ($(BUILD_TYPE),asm)
+	# asm
+	FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
+	CFLAGS_LIB := $(FLAGS_LIB)
+	AFLAGS_LIB := -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS_LIB)
+else
+	# release
+	FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
+	CFLAGS_LIB := $(FLAGS_LIB)
+	AFLAGS_LIB := -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(FLAGS_LIB)
+endif
 
 .PHONY: default
 .PHONY: all
@@ -76,21 +91,11 @@ Release: release
 Debug: debug
 Asm: asm
 
-release: FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer -flto -flto=auto -ffat-lto-objects
-release: CFLAGS_LIB := $(FLAGS_LIB)
-release: AFLAGS_LIB := $(FLAGS_LIB)
 release: $(LIB)/libmd.a
 
-debug: FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O1 -DDEBUG=1
-debug: CFLAGS_LIB := $(FLAGS_LIB) -ggdb
-debug: AFLAGS_LIB := $(FLAGS_LIB)
 debug: $(LIB)/libmd_debug.a
 
-asm: FLAGS_LIB := $(DEFAULT_FLAGS_LIB) -O3 -fuse-linker-plugin -fno-web -fno-gcse -fno-tree-loop-ivcanon -fomit-frame-pointer
-asm: CFLAGS_LIB := $(FLAGS_LIB)
-asm: AFLAGS_LIB := $(FLAGS_LIB)
 asm: $(OBJS_LIB) $(LSTS_LIB)
-	$(RM) -f $(OBJS_LIB)
 
 clean-all:
 	$(RM) -r -f out
@@ -125,7 +130,7 @@ $(OUT_DIR)/%.o: %.c
 
 $(OUT_DIR)/%.o: %.s
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $< -o $@
+	$(CC) $(AFLAGS_LIB) -c $< -o $@
 
 $(OUT_DIR)/%.rs: %.res
 	@$(MKDIR) -p $(dir $@)
@@ -145,11 +150,11 @@ $(OUT_DIR)/%.lst: %.c
 # intermediate files
 $(OUT_DIR)/%.o: $(OUT_DIR)/%.s
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $< -o $@
+	$(CC) $(AFLAGS_LIB) -c $< -o $@
 
 $(OUT_DIR)/%.o: $(OUT_DIR)/%.rs
 	@$(MKDIR) -p $(dir $@)
-	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS_LIB) -c $< -o $@
+	$(CC) $(AFLAGS_LIB) -c $< -o $@
 
 $(OUT_DIR)/%.s: $(OUT_DIR)/%.o80
 	@$(MKDIR) -p $(dir $@)
