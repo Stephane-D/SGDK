@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pools" />
+		<Option makefile="D:/apps/SGDK/makefile.gen" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="0" />
+		<Option compiler="smd_compiler_sgdk_current" />
+		<MakeCommands>
+			<Build command="" />
+			<CompileFile command="" />
+			<Clean command="" />
+			<DistClean command="" />
+			<AskRebuildNeeded command="" />
+			<SilentBuild command=" &gt; $(CMD_NULL)" />
+		</MakeCommands>
+		<Build>
+			<Target title="debug">
+				<Option output="out/temp.out" prefix_auto="0" extension_auto="0" />
+				<Option object_output="." />
+				<Option deps_output="." />
+				<Option type="1" />
+				<Option compiler="smd_compiler_sgdk_current" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean $target" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="release">
+				<Option output="out/temp.bin" prefix_auto="0" extension_auto="0" />
+				<Option object_output="." />
+				<Option deps_output="." />
+				<Option type="1" />
+				<Option compiler="smd_compiler_sgdk_current" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean $target" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="cmake-build-debug/CMakeFiles/3.30.5/CompilerIdC/CMakeCCompilerId.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="out/res/resources.d" />
+		<Unit filename="out/src/main.d" />
+		<Unit filename="res/resources.h" />
+		<Unit filename="res/resources.res" />
+		<Unit filename="src/boot/rom_head.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/boot/sega.s" />
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+			<debugger>
+				<remote_debugging>
+					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
+				</remote_debugging>
+				<remote_debugging target="release">
+					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
+				</remote_debugging>
+				<remote_debugging target="debug">
+					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="1234" />
+				</remote_debugging>
+			</debugger>
+			<editor_config active="1" use_tabs="0" tab_indents="1" tab_width="4" indent="4" eol_mode="2" />
+			<envvars set="sgdk_current" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

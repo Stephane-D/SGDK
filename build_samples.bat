@@ -20,6 +20,10 @@ SET "GDK_WIN=%cd%"
 @cd %GDK_WIN%\sample\basics\image
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
+@ECHO Building basics\pools...
+@cd %GDK_WIN%\sample\basics\pools
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
 @ECHO Building benchmark...
 @cd %GDK_WIN%\sample\benchmark
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
