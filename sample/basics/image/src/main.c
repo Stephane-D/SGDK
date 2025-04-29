@@ -1,7 +1,6 @@
 #include <genesis.h>
 
 #include "gfx.h"
-#include "dma.h"
 
 int main(bool hard)
 {

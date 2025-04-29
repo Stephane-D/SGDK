@@ -45,11 +45,11 @@
 #define _LSD_H_
 
 #if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 0)
-	#include "16c550.h"
+	#include "ext/mw/16c550.h"
 #elif (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 1)
-	#include "ssf.h"
+	#include "ext/mw/ssf.h"
 #endif
-#include "mw-msg.h"
+#include "ext/mw/mw-msg.h"
 
 #if (MODULE_MEGAWIFI == 1)
 

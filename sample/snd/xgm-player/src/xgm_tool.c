@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include <genesis.h>
 
 #include "xd3.h"
 #include "ym_state.h"

@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include <genesis.h>
 
 #include "pcm.h"
 #include "z80_drv.h"

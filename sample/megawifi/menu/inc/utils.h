@@ -10,7 +10,7 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include "genesis.h"
+#include <genesis.h>
 
 #define DEFAULT_DELAY 500
 #define DEFAULT_MW_DELAY 1000

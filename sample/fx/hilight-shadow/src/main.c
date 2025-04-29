@@ -2,7 +2,7 @@
   DEMO TEST SPOTLIGHT EFFECT (LINE SCROLL + SHADOW MODE)
 
 ******************************************************************************/
-#include "genesis.h"
+#include <genesis.h>
 
 // CONSTANTS ==================================================================
 

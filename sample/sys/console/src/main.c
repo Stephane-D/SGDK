@@ -16,7 +16,7 @@
 // *****************************************************************************
 
 // SGDK
-#include "genesis.h"
+#include <genesis.h>
 
 #if (MODULE_CONSOLE == 0)
 #error "Set MODULE_CONSOLE to 1 in config.h and rebuild the SGDK library."

@@ -1,8 +1,8 @@
-#include "genesis.h"
+#include <genesis.h>
 
-#include "level.h"
+#include "inc/level.h"
 
-#include "gfx.h"
+#include "res/gfx.h"
 
 
 // used for alternate map update mode

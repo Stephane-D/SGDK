@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include <genesis.h>
 
 // log table for YM freq display
 const u8 log_tab[1024] =

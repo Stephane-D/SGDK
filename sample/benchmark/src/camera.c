@@ -1,7 +1,7 @@
-#include "genesis.h"
+#include <genesis.h>
 
-#include "camera.h"
-#include "level.h"
+#include "inc/camera.h"
+#include "inc/level.h"
 
 
 // absolute camera position (pixel)

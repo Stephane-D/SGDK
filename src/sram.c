@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include "config.h"
 
 #include "sram.h"
 

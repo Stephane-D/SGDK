@@ -1,10 +1,10 @@
 #include <genesis.h>
 
-#include "main.h"
-#include "level.h"
-#include "camera.h"
+#include "inc/main.h"
+#include "inc/level.h"
+#include "inc/camera.h"
 
-#include "gfx.h"
+#include "res/gfx.h"
 
 
 // forward

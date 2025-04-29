@@ -10,7 +10,7 @@
 #ifndef _RANDOM_H_
 #define _RANDOM_H_
 
-#include "genesis.h"
+#include <genesis.h>
 #include "utils.h"
 
 void RND_start();

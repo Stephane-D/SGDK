@@ -15,7 +15,7 @@
  * \date 01/2022
  ****************************************************************************/
 
-#include "genesis.h"
+#include <genesis.h>
 
 #if (MODULE_MEGAWIFI == 0)
 #error "Set MODULE_MEGAWIFI to 1 in config.h and rebuild the library"

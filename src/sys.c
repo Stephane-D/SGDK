@@ -30,7 +30,7 @@
 #if (ENABLE_LOGO != 0)
 #define LOGO_SIZE                   64
 
-#include "libres.h"
+#include "res/libres.h"
 #endif
 
 

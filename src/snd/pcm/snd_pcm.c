@@ -4,7 +4,7 @@
 #include "z80_ctrl.h"
 #include "snd/sound.h"
 #include "snd/pcm/snd_pcm.h"
-#include "snd/pcm/drv_pcm.h"
+#include "src/snd/pcm/drv_pcm.h"
 #include "snd/smp_null.h"
 
 #include "timer.h"

@@ -10,7 +10,7 @@
 #ifndef _CONFIGURATION_AP_H_
 #define _CONFIGURATION_AP_H_
 
-#include "genesis.h"
+#include <genesis.h>
 #include "utils.h"
 
 #define AP_MAX_ITEMS_PER_PAGE  20

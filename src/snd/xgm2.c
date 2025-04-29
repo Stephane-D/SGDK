@@ -5,7 +5,7 @@
 
 #include "snd/sound.h"
 #include "snd/xgm2.h"
-#include "snd/xgm2/drv_xgm2.h"
+#include "src/snd/xgm2/drv_xgm2.h"
 
 #include "sys.h"
 #include "timer.h"

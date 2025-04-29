@@ -1,7 +1,7 @@
 #include <genesis.h>
 
-#include "gfx.h"
-#include "spr_res.h"
+#include "res/gfx.h"
+#include "res/spr_res.h"
 
 //#define TEST_SPR
 #define MAX_OBJECT      80

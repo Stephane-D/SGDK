@@ -4,7 +4,7 @@
  * modified by Stef
  */
 
-#include "genesis.h"
+#include <genesis.h>
 #include "gfx.h"
 
 #define    TABLE_LEN       220

@@ -1,6 +1,6 @@
 #include <genesis.h>
 
-#include "gfx.h"
+#include "res/gfx.h"
 
 
 #define SGDK_BENCHMARK      "SGDK benchmark v1.6"

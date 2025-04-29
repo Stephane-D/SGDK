@@ -17,20 +17,18 @@
 *.ini
 *.rs
 *.d
-/.idea
-*.iml
 **/cmd_
 **/.DS_Store
 **/.settings/**
-**/out/**
+**/out
+**/res/*.h
 !**/out/rom.bin
-symbol.txt
-rom_head.bin
+!out/release/res/*.h
+!out/debug/res/*.h
+**/symbol.txt
+**/rom_head.bin
 **/Debug
 **/Release
-**/res/*.h
-res/libres.s
-!res/libres.h
 archive
 cb
 not needed
@@ -45,3 +43,4 @@ tools/lz4w/lz4w.jar
 tools/rescomp/format
 tools/rescomp/rescomp.jar
 tools/xgm rom builder
+project/test

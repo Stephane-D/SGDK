@@ -26,7 +26,7 @@
 
 /// Hides jsmn API definitions to avoid linking errors
 #define JSMN_STATIC
-#include "jsmn.h"
+#include "ext/mw/jsmn.h"
 
 /// Macro to extract the item (as string) from a token. Requires the json_str
 /// to have the null terminations added by json_null_terminate().

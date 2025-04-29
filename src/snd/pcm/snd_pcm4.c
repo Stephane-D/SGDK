@@ -5,7 +5,7 @@
 
 #include "snd/sound.h"
 #include "snd/pcm/snd_pcm4.h"
-#include "snd/pcm/drv_pcm4.h"
+#include "src/snd/pcm/drv_pcm4.h"
 #include "snd/pcm/tab_vol.h"
 #include "snd/smp_null.h"
 
