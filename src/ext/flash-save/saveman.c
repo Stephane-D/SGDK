@@ -139,7 +139,8 @@ static int16_t sector_addrs_set(uint32_t max_length_restrict)
 
 static int16_t sector_init(uint16_t sect_num, uint8_t num_slots)
 {
-	struct sector_hdr hdr = {
+	// Mark struct as volatile to prevent compiler reordering writes
+	volatile struct sector_hdr hdr = {
 		.magic = MAGIC_NUM,
 		.num_slots = num_slots,
 		.reserved = 0xFF
@@ -198,7 +199,7 @@ static uint16_t safe_sect_erase(uint32_t addr)
 // first position free if the zone is not erased
 static uint32_t erase_check(uint32_t start_addr, uint32_t limit_addr)
 {
-	uint16_t *pos = (uint16_t*)start_addr;
+	volatile uint16_t *pos = (uint16_t*)start_addr;
 	uint16_t *end = (uint16_t*)limit_addr;
 	uint32_t result = 0;
 
@@ -504,7 +505,7 @@ static int16_t sector_cross_begin(uint8_t slot)
 
 static int16_t blob_save(uint8_t slot, const void *save_data, uint16_t len)
 {
-	struct save_blob *blob = (struct save_blob*)sm->last_addr;
+	volatile struct save_blob *blob = (struct save_blob*)sm->last_addr;
 
 	CRITICAL_ENTER;
 	// Write data
@@ -513,7 +514,8 @@ static int16_t blob_save(uint8_t slot, const void *save_data, uint16_t len)
 
 	// Write metadata header, first length, then slot and done flag
 	if (!err) {
-		struct save_blob hdr = {
+		// Mark struct as volatile to prevent compiler reordering writes
+		volatile struct save_blob hdr = {
 			.slot = slot,
 			.flags = 0xFF,
 			.save_len = len
