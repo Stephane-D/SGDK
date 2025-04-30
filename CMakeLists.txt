@@ -37,6 +37,7 @@ ExternalProject_Add(
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 include_directories(${PROJECT_SOURCE_DIR}/res)
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR})
 
 set(RESCOMP java -jar ${PROJECT_SOURCE_DIR}/bin/rescomp.jar)
 set(ASMZ80 ${PROJECT_SOURCE_DIR}/bin/sjasm -q)
