@@ -25,7 +25,6 @@
 #define PLAYER_WIDTH                    24          // Player object width
 #define PLAYER_SPAWN_POS_X              0           // Player spawn x position
 #define PLAYER_SPAWN_POS_Y              32          // Player spawn y position
-#define PLAYER_WIDTH                    24          // Player object width
 #define PLAYER_RESPAWN_DELAY            60          // Frames before respawn
 #define PROJECTILE_COOLDOWN_TIMER       12          // Frames between player shots
 #define PROJECTILE_SPEED                FIX16(10)   // Projectile movement speed
