@@ -32,43 +32,43 @@
 #define NULL    0
 #endif
 
-#ifndef MIN_U8
-#define MIN_U8  0x00
+#ifndef U8_MIN
+#define U8_MIN  ((u8) 0x00)
 #endif
-#ifndef MAX_U8
-#define MAX_U8  0xFF
+#ifndef U8_MAX
+#define U8_MAX  ((u8) 0xFF)
 #endif
-#ifndef MIN_S8
-#define MIN_S8  (-0x80)
+#ifndef S8_MIN
+#define S8_MIN  ((s8) (-0x80))
 #endif
-#ifndef MAX_S8
-#define MAX_S8  0x7F
-#endif
-
-#ifndef MIN_U16
-#define MIN_U16 0x0000
-#endif
-#ifndef MAX_U16
-#define MAX_U16 0xFFFF
-#endif
-#ifndef MIN_S16
-#define MIN_S16 (-0x8000)
-#endif
-#ifndef MAX_S16
-#define MAX_S16 0x7FFF
+#ifndef S8_MAX
+#define S8_MAX  ((s8) 0x7F)
 #endif
 
-#ifndef MIN_U32
-#define MIN_U32 0x0000
+#ifndef U16_MIN
+#define U16_MIN ((u16) 0x0000)
 #endif
-#ifndef MAX_U32
-#define MAX_U32 0xFFFFFFFF
+#ifndef U16_MAX
+#define U16_MAX ((u16) 0xFFFF)
 #endif
-#ifndef MIN_S32
-#define MIN_S32 (-0x80000000)
+#ifndef S16_MIN
+#define S16_MIN ((s16) (-0x8000))
 #endif
-#ifndef MAX_S32
-#define MAX_S32 0x7FFFFFFF
+#ifndef S16_MAX
+#define S16_MAX ((s16) 0x7FFF)
+#endif
+
+#ifndef U32_MIN
+#define U32_MIN ((u32) 0x00000000)
+#endif
+#ifndef U32_MAX
+#define U32_MAX ((u32) 0xFFFFFFFF)
+#endif
+#ifndef S32_MIN
+#define S32_MIN ((s32) (-0x80000000))
+#endif
+#ifndef S32_MAX
+#define S32_MAX ((s32) 0x7FFFFFFF)
 #endif
 
 
@@ -103,6 +103,13 @@ typedef unsigned short u16;
  *      32 bits unsigned integer (equivalent to unsigned long).
  */
 typedef unsigned long u32;
+
+/**
+ *  \typedef size_t
+ *      size type (equivalent to unsigned long).
+ */
+ typedef unsigned long size_t;
+
 
 #if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || (__STDC_VERSION__ < 202300L))
 
@@ -308,67 +315,6 @@ typedef void VoidCallback(void);
 u8  getZeroU8(void);
 u16 getZeroU16(void);
 u32 getZeroU32(void);
-
-/**
- *  \brief
- *      ROL instruction for byte (8 bit) value
- *
- *  \param value
- *      value to apply bit rotation
- *  \param number
- *      number of bit rotation
- */
-u8  rol8(u8 value, u16 number);
-/**
- *  \brief
- *      ROL instruction for short (16 bit) value
- *
- *  \param value
- *      value to apply bit rotation
- *  \param number
- *      number of bit rotation
- */
-u16 rol16(u16 value, u16 number);
-/**
- *  \brief
- *      ROL instruction for long (32 bit) value
- *
- *  \param value
- *      value to apply bit rotation
- *  \param number
- *      number of bit rotation
- */
-u32 rol32(u32 value, u16 number);
-/**
- *  \brief
- *      ROR instruction for byte (8 bit) value
- *
- *  \param value
- *      value to apply bit rotation
- *  \param number
- *      number of bit rotation
- */
-u8  ror8(u8 value, u16 number);
-/**
- *  \brief
- *      ROR instruction for short (16 bit) value
- *
- *  \param value
- *      value to apply bit rotation
- *  \param number
- *      number of bit rotation
- */
-u16 ror16(u16 value, u16 number);
-/**
- *  \brief
- *      ROR instruction for long (32 bit) value
- *
- *  \param value
- *      value to apply bit rotation
- *  \param number
- *      number of bit rotation
- */
-u32 ror32(u32 value, u16 number);
 
 
 #endif // _TYPES_H_
