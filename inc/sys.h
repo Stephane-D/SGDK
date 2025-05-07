@@ -51,6 +51,12 @@
  */
 #define HINTERRUPT_CALLBACK         __attribute__((interrupt)) void
 
+/**
+ *  \brief
+ *      Macro for packing structures and enumerates
+ */
+#define PACKED		                __attribute__((__packed__))
+
 
 // exist through rom_head.c
 typedef struct
