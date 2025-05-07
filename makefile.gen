@@ -6,7 +6,7 @@ MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
 ifneq ($(wildcard $(MAKEFILE_DIR)bin/rescomp.jar),)
 	GDK := $(patsubst %/,%,$(MAKEFILE_DIR))
 else
-    $(warning Cannot find SGDK environment !)
+    $(warning Cannot find SGDK environment ! Current folder = '${MAKEFILE_DIR}')
 endif
 
 include $(GDK)/common.mk

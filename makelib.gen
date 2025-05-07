@@ -2,8 +2,7 @@
 ifneq ($(wildcard ./bin/rescomp.jar),)
 	GDK := .
 else
-    $(warning You should build the library from SGDK folder using 'bin/make -f makelib.gen' command.)
-    $(error Cannot find SGDK environment !)
+    $(error You should build the library *FROM THE SGDK FOLDER* using 'bin/make -f makelib.gen' command)
 endif
 
 include $(GDK)/common.mk
