@@ -717,3 +717,18 @@ static u16* pack(u16 nsize)
 
     return NULL;
 }
+
+#if (ENABLE_NEWLIB == 0)
+s8 memcmp(const void* pointer1, const void* pointer2, size_t len)
+{
+	s8 result = 0;
+    const u8* m1 = (const u8*)pointer1;
+    const u8* m2 = (const u8*)pointer2;
+	for (size_t i = 0; i < len && !result; i++) {
+		result = *m1++ - *m2++;
+	}
+
+	return result;
+}
+#endif
+
