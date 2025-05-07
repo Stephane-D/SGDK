@@ -144,7 +144,7 @@ void ReleaseResources()
     MEM_free(frameIndexes);
 #endif
     
-    // Release all master sprite
+    // Release master sprite
     SPR_releaseSprite(masterSprite);
     
     // Release all child sprites
