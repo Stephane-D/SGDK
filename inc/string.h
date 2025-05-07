@@ -19,7 +19,7 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
-#if (ENABLE_NEWLIB == 0) || !defined(ENABLE_NEWLIB)
+#if (ENABLE_NEWLIB == 0)
 
 /**
  *  \brief
@@ -79,7 +79,7 @@ u16 strnlen(const char *str, u16 maxlen);
  * If they are equal to each other, it continues with the following pairs until
  * the characters differ or until a terminating null-character is reached.
  */
-s16 strcmp(const char *str1, const char *str2);
+s8 strcmp(const char *str1, const char *str2);
 
 /**
  *  \brief
@@ -122,6 +122,20 @@ char* strncpy(char *dest, const char *src, u16 len);
  * Appends the source string to the destination string.
  */
 char* strcat(char *dest, const char *src);
+/**
+ *  \brief
+ *      Search for a character in the specified string.
+ *
+ *  \param dest
+ *      Destination string (it must be large enough to receive appending).
+ *  \param src
+ *      Source string.
+ *  \return pointer on destination string.
+ *
+ * Returns a pointer to the first occurrence of <i>c</i> in the given string.<br>
+ * The function returns NULL if the specified character is not found.
+ */
+char* strchr(const char *from, char c);
 
 /**
  *  \brief
