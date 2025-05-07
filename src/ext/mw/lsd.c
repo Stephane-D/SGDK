@@ -18,7 +18,7 @@
 #include "memory.h"
 
 
-#if (MODULE_MEGAWIFI == 1)
+#if (MODULE_MEGAWIFI != 0)
 
 #include "ext/mw/lsd.h"
 /// Uart used for LSD

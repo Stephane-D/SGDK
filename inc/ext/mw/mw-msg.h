@@ -19,11 +19,7 @@
 #define _MW_MSG_H_
 
 #include "types.h"
-
-#if (MODULE_MEGAWIFI != 0)
-
-/// Macro for packing structures and enumerates
-#define PACKED		__attribute__((__packed__))
+#include "sys.h"
 
 /// Maximum buffer length (bytes)
 #define MW_MSG_MAX_BUFLEN	512
@@ -123,7 +119,13 @@ enum PACKED mw_security {
 	MW_SEC_WPA_PSK,		///< WPA PSK security
 	MW_SEC_WPA2_PSK,	///< WPA2 PSK security
 	MW_SEC_WPA_WPA2_PSK,	///< WPA or WPA2 security
-	MW_SEC_UNKNOWN		///< Unknown security
+	MW_SEC_WPA2_ENTERPRISE,	///< WPA2 Enterprise security
+	MW_SEC_WPA3_PSK,	///< WPA3 PSK security
+	MW_SEC_WPA2_WPA3_PSK,	///< WPA2 or WPA3 security
+	MW_SEC_WAPI_PSK,	///< WAPI PSK security
+	MW_SEC_OWE,		///< OWE security
+	MW_SEC_UNKNOWN,		///< Unknown security
+	__MW_SEC_MAX
 };
 
 /// WiFi PHY configuration for the connection to the AP
@@ -380,8 +382,6 @@ struct mw_reuse_payload {
 	/// Data payload
 	char payload[MW_CMD_MAX_BUFLEN - 4 - 2];
 };
-
-#endif // MODULE_MEGAWIFI
 
 #endif //_MW_MSG_H_
 

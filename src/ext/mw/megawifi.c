@@ -16,23 +16,15 @@
 
 #include "string.h"
 #include "memory.h"
+#include "maths.h"
 #include "task.h"
 
-#if (MODULE_MEGAWIFI == 1)
+#if (MODULE_MEGAWIFI != 0)
 
 #include "ext/mw/megawifi.h"
 
 /// Remove compiler warnings when not using a function parameter
 #define UNUSED_PARAM(x)		(void)x
-
-#if !defined(MAX)
-/// Returns the maximum of two numbers
-#define MAX(a, b)	((a)>(b)?(a):(b))
-#endif
-#if !defined(MIN)
-/// Returns the minimum of two numbers
-#define MIN(a, b)	((a)<(b)?(a):(b))
-#endif
 
 // Should consider if console is PAL or NTSC
 #define MS_TO_FRAMES(ms)	(((ms)*60/500 + 1)/2)
@@ -136,7 +128,7 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 	// Keep WiFi module in reset
 	mw_module_reset();
 	// Power down and Program not active (required for the module to boot)
-	uart_clr_bits(MCR, MW__PRG | MW__PD);
+	uart_clr_bits(MCR, MW__PRG);
 
 	// Try accessing UART scratch pad register to see if it is installed
 	uart_test(UART_SPR, 0x55);
@@ -258,7 +250,7 @@ enum mw_err mw_send_sync(uint8_t ch, const char *data, uint16_t len,
 	uint16_t sent = 0;
 
 	while (sent < len) {
-		to_send = MIN(len - sent, d.buf_len);
+		to_send = min(len - sent, d.buf_len);
 		lsd_send(ch, data + sent, to_send, NULL, cmd_send_cb);
 		tout = TSK_superPend(tout_frames);
 		if (tout) {
@@ -280,6 +272,7 @@ enum mw_err mw_detect(uint8_t *major, uint8_t *minor, char **variant)
 	TSK_superPend(MS_TO_FRAMES(30));
 	mw_module_start();
 	TSK_superPend(MS_TO_FRAMES(1000));
+	uart_set_bits(MCR, MW__PRG);
 
 	do {
 		retries--;
