@@ -73,6 +73,37 @@ const fix32 trigtab_f32[(90 * 4) + 1] =
 };
 
 
+FORCE_INLINE u8 rol8(u8 value, u16 number)
+{
+   return (value << number) | (value >> (8 - number));
+}
+
+FORCE_INLINE u16 rol16(u16 value, u16 number)
+{
+   return (value << number) | (value >> (16 - number));
+}
+
+FORCE_INLINE u32 rol32(u32 value, u16 number)
+{
+   return (value << number) | (value >> (32 - number));
+}
+
+FORCE_INLINE u8 ror8(u8 value, u16 number)
+{
+   return (value >> number) | (value << (8 - number));
+}
+
+FORCE_INLINE u16 ror16(u16 value, u16 number)
+{
+   return (value >> number) | (value << (16 - number));
+}
+
+FORCE_INLINE u32 ror32(u32 value, u16 number)
+{
+   return (value >> number) | (value << (32 - number));
+}
+
+
 FORCE_INLINE u32 mulu(u16 op1, u16 op2)
 {
     return op1 * op2;

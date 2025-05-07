@@ -328,6 +328,67 @@ typedef Mat2D_ff32 M2ff32;
 
 /**
  *  \brief
+ *      ROL instruction for byte (8 bit) value
+ *
+ *  \param value
+ *      value to apply bit rotation
+ *  \param number
+ *      number of bit rotation
+ */
+u8  rol8(u8 value, u16 number);
+/**
+ *  \brief
+ *      ROL instruction for short (16 bit) value
+ *
+ *  \param value
+ *      value to apply bit rotation
+ *  \param number
+ *      number of bit rotation
+ */
+u16 rol16(u16 value, u16 number);
+/**
+ *  \brief
+ *      ROL instruction for long (32 bit) value
+ *
+ *  \param value
+ *      value to apply bit rotation
+ *  \param number
+ *      number of bit rotation
+ */
+u32 rol32(u32 value, u16 number);
+/**
+ *  \brief
+ *      ROR instruction for byte (8 bit) value
+ *
+ *  \param value
+ *      value to apply bit rotation
+ *  \param number
+ *      number of bit rotation
+ */
+u8  ror8(u8 value, u16 number);
+/**
+ *  \brief
+ *      ROR instruction for short (16 bit) value
+ *
+ *  \param value
+ *      value to apply bit rotation
+ *  \param number
+ *      number of bit rotation
+ */
+u16 ror16(u16 value, u16 number);
+/**
+ *  \brief
+ *      ROR instruction for long (32 bit) value
+ *
+ *  \param value
+ *      value to apply bit rotation
+ *  \param number
+ *      number of bit rotation
+ */
+u32 ror32(u32 value, u16 number);
+
+/**
+ *  \brief
  *      16x16=32 unsigned multiplication. Force GCC to use proper 68000 <i>mulu</i> instruction.
  *
  *  \param op1
