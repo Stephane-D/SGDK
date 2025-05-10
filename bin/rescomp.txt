@@ -290,13 +290,13 @@ OBJECTS name tmx_file layer_id field_defs [sortby:<field>] [decl_type [type_filt
     name                name of the output array Objects structure
     tmx_file            path of the input TMX file (TMX Tiled file)
     layer_id            object group/layer name we want to export object from.
-    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     field_defs          name and type of fields we want to export (also define the order of extraction) in <name>:<type> format.
                             Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object
                             Some examples of 'field_defs' declaration:
                                 "type:u16;name:string;x:f32;y:f32;tileindex:u32"
                                 "type:u16;power:s8;visible:bool"
                             Note that not found fields are just ignored so you can extract different object types at same time easily.
+    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     decl_type           declaration type for objects (default is "void").
                             By default object array is untyped (void) but you can specify your own type if you want ("Object", "Entity", ...)
     type_filter         define a type filter if we only want to extract Tiled objects of a specific type (see above).
