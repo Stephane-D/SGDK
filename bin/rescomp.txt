@@ -274,11 +274,14 @@ As you can see, you can also use your own enumerations in which case you need to
 sure they perfectly match your C enums (be careful about the allocated type size for your enum, default is u32 with GCC).
 
 The Tiled objects has some default attributes that you can use:
-- 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want.
+- 'id' define the unique object identifier can be exported in any number format.
+  To enable export of that field you need to add a custom boolean 'exportId' field and set its value to 'true'.
 - 'type' is only used as type filter (see the optional 'type_filter' parameter below) and not exported as field but you can define
   your own custom 'type' field (as an integer) if needed.
 - 'name' can be exported in string format.
   To enable export of that field you need to add a custom boolean 'exportName' field and set its value to 'true'.
+- 'visible' can be exported in boolean format.
+  To enable export of that field you need to add a custom boolean 'exportVisible' field and set its value to 'true'.  
 - 'x' and 'y' define the object position on the map and can be exported in any number format.
   To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
 - 'width' and 'height' (only for shape objects) define the shape dimensionand can be exported in any number format.
@@ -290,13 +293,13 @@ OBJECTS name tmx_file layer_id field_defs [sortby:<field>] [decl_type [type_filt
     name                name of the output array Objects structure
     tmx_file            path of the input TMX file (TMX Tiled file)
     layer_id            object group/layer name we want to export object from.
-    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     field_defs          name and type of fields we want to export (also define the order of extraction) in <name>:<type> format.
                             Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object
                             Some examples of 'field_defs' declaration:
                                 "type:u16;name:string;x:f32;y:f32;tileindex:u32"
                                 "type:u16;power:s8;visible:bool"
                             Note that not found fields are just ignored so you can extract different object types at same time easily.
+    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     decl_type           declaration type for objects (default is "void").
                             By default object array is untyped (void) but you can specify your own type if you want ("Object", "Entity", ...)
     type_filter         define a type filter if we only want to extract Tiled objects of a specific type (see above).
