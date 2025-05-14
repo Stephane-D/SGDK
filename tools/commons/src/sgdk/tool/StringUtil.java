@@ -398,6 +398,17 @@ public class StringUtil
     }
 
     /**
+     * Checks if string matches format <digits><tag> (e.g. "125p").
+     * Tag comparison is case-sensitive. Returns false for invalid inputs.
+     */
+    public static boolean isTaggedNumber(String s, String tag) {
+        if (s == null || tag == null || StringUtil.isEmpty(s) || StringUtil.isEmpty(tag)) {
+            return false;
+        }
+        return s.matches("\\d+" + Pattern.quote(tag));
+    }
+    
+    /**
      * Try to parse a boolean from the specified String and returns it.
      * Return 'def' is we can't parse any boolean from the string.
      */
@@ -565,6 +576,20 @@ public class StringUtil
         {
             return def;
         }
+    }
+        
+    /**
+     * Try to parse a tagged number from the string and return its integer value.
+     * The string should be in format: <digits><tag> (e.g. "125p")
+     * Returns 'def' if the string is invalid or doesn't match the format.
+     */
+    public static Integer parseTaggedInt(String s, String tag, int def)
+    {
+    	if (isTaggedNumber(s, tag)) {
+    		return Integer.parseInt(s.split(tag)[0]);
+    	}
+    	
+    	return def;
     }
     
     /**

@@ -1,4 +1,4 @@
-ResComp 3.95 (March 2025)
+ResComp 3.96 (May 2025)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -351,8 +351,8 @@ SPRITE name img_file width height [compression [time [collision [opt_type [opt_l
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (BMP or PNG image)
                         See the note about image format at the beginning of the file
-    width           width of a single sprite frame in tile (should be < 32)
-    height          height of a single sprite frame in tile (should be < 32)
+    width           width of a single sprite frame in tile (should be < 32), or in pixels (should be a multiple of 8 with 'p' postfix, like 32p or 32P), or number of frames in width (with 'f' postfix, like 4f or 4F)    
+    height          height of a single sprite frame in tile (should be < 32), or in pixels (should be a multiple of 8 with 'p' postfix, like 16p or 16P), or number of frames in height (with 'f' postfix, like 1f or 1F)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)
