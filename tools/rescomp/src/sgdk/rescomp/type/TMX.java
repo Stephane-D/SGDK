@@ -55,6 +55,7 @@ public class TMX
     static final String ATTR_FIRSTGID = "firstgid";
     static final String ATTR_ENCODING = "encoding";
     static final String ATTR_VISIBLE = "visible";
+    static final String ATTR_TEXT = "text";
     static final String ATTR_TYPE = "type";
     static final String ATTR_CLASS = "class";
     static final String ATTR_X = "x";
@@ -73,6 +74,7 @@ public class TMX
     static final String ATTR_VALUE_EXPORT_SIZE = "exportsize";
     static final String ATTR_VALUE_EXPORT_VISIBLE = "exportvisible";
     static final String ATTR_VALUE_EXPORT_ID = "exportid";
+    static final String ATTR_VALUE_EXPORT_TEXT = "exporttext";
 
     // keep it lower case
     static final String FIELD_TILE_INDEX = "tileindex";
@@ -767,7 +769,11 @@ public class TMX
                 final double w = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_WIDTH, 0d);
                 final double h = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_HEIGHT, 0d);
                 final String visible = getAttribute(objectElement, ATTR_VISIBLE, "1");
-
+                
+                // get text from the built-in text group if it exists (only for text objects)
+                //(this is not the same as the text property)
+                final String text = getText(objectElement);
+                
                 // get all properties
                 final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
 
@@ -833,7 +839,14 @@ public class TMX
                         // set to true ? --> add 'visible' field
                         if (StringUtil.equals(value.toLowerCase(), "true"))
                             addField(objectName, tFields, new TField(ATTR_VISIBLE, TiledObjectType.BOOL, visible));
-                    }                    
+                    }       
+                    // export text field ?
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_TEXT))
+                    {
+                        // set to true ? --> add 'text' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                            addField(objectName, tFields, new TField(ATTR_TEXT, TiledObjectType.STRING, text));
+                    }                         
                     // empty type ?
                     else if (StringUtil.isEmpty(type))
                     {
@@ -851,6 +864,7 @@ public class TMX
                     else
                         addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
+
 
                 // create object
                 final SObject object = new SObject(id, baseObjectName, objectType, x, y);
@@ -921,6 +935,17 @@ public class TMX
             return result;
         }
 
+        private String getText(Element objectElement)
+        {
+            final Element text = XMLUtil.getElement(objectElement, ID_TEXT);
+
+            // no text
+            if (text == null)
+                return "";
+
+            return XMLUtil.getValue(text, "");
+        }
+        
         @Override
         public String toString()
         {
