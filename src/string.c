@@ -42,10 +42,11 @@ static u16 skip_atoi(const char **s);
 u16 strlen(const char *str)
 {
     const char *src = str;
+    u16 result = 0;
 
-    while (*src) src++;
+    while (*src++) result++;
 
-    return (u16)(src - str);
+    return result;
 }
 
 u16 strnlen(const char *str, u16 maxlen)
@@ -88,10 +89,14 @@ char* strncpy(char *to, const char *from, u16 len)
     char *dst = to;
     u16 i = len;
 
-    while ((*dst++ = *src++) && i) i--;
+    while (i && *src)
+    {
+        *dst++ = *src++;
+        i--;
+    }
 
     // end string by null character
-    if (i) *dst = 0;
+    *dst = 0;
 
     return to;
 }

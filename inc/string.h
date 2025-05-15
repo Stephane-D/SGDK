@@ -83,7 +83,7 @@ s8 strcmp(const char *str1, const char *str2);
 
 /**
  *  \brief
- *      Copy a string.
+ *      Copies a string.
  *
  *  \param dest
  *      Destination string (it must be large enough to receive the copy).
@@ -96,7 +96,7 @@ s8 strcmp(const char *str1, const char *str2);
 char* strcpy(char *dest, const char *src);
 /**
  *  \brief
- *      Copy the first 'len' character of string.
+ *      Copies the first 'len' characters of string.
  *
  *  \param dest
  *      Destination string (its size must be >= (len + 1)).
@@ -106,7 +106,7 @@ char* strcpy(char *dest, const char *src);
  *      Maximum number of character to copy.
  *  \return pointer on destination string.
  *
- * Copies the source string to destination.
+ * Copies the first 'len' characters source string to destination.
  */
 char* strncpy(char *dest, const char *src, u16 len);
 /**
