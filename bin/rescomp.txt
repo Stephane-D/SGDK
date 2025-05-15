@@ -1,4 +1,4 @@
-ResComp 3.96 (May 2025)
+ResComp 3.97 (May 2025)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -286,7 +286,9 @@ The Tiled objects has some default attributes that you can use:
   To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
 - 'width' and 'height' (only for shape objects) define the shape dimensionand can be exported in any number format.
   To enable export of these fields, you need to add a custom boolean 'exportSize' field and set its value to 'true'.
-  
+- 'text' (only for text objects) define the text content can be exported in string format.
+  To enable export of these fields, you need to add a custom boolean 'exportText' field and set its value to 'true'.
+    
 Syntax:
 OBJECTS name tmx_file layer_id field_defs [sortby:<field>] [decl_type [type_filter]]
 
