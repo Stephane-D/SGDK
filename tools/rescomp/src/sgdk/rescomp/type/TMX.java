@@ -941,9 +941,9 @@ public class TMX
 
             // no text
             if (text == null)
-                return null;
+                return "";
 
-            return XMLUtil.getValue(text, "");;
+            return XMLUtil.getValue(text, "");
         }
         
         @Override
