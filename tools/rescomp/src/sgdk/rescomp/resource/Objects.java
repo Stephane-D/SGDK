@@ -34,19 +34,19 @@ public class Objects extends Resource
         
         // Cross-checking all SObjects and resolving object field references
         for (List<SObject> objectsInFile : objectsByFile.values()) {
-	    	for (int i = 0; i < objectsInFile.size(); i++) {
-	    		
-	    	    SObject sobject = objectsInFile.get(i);
-	   
-	    	    for (int j = i + 1; j < objectsInFile.size(); j++) {
-	    	    	
-	    	        SObject externalObject = objectsInFile.get(j);
-	    	        // update the value of the object field if the id matches
-	    	        sobject.updateObjectFieldsReferencesTo(externalObject);
-	    	        // checking for backward linking
-	    	        externalObject.updateObjectFieldsReferencesTo(sobject); 
-	    	    }
-	    	}
+            for (int i = 0; i < objectsInFile.size(); i++) {
+                
+                SObject sobject = objectsInFile.get(i);
+       
+                for (int j = i + 1; j < objectsInFile.size(); j++) {
+                    
+                    SObject externalObject = objectsInFile.get(j);
+                    // update the value of the object field if the id matches
+                    sobject.updateObjectFieldsReferencesTo(externalObject);
+                    // checking for backward linking
+                    externalObject.updateObjectFieldsReferencesTo(sobject); 
+                }
+            }
         }
     }
     

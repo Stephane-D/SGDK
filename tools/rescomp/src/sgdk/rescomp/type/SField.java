@@ -234,13 +234,13 @@ public class SField extends SFieldDef
 
     public void changeValueToIfContainId(String newValue, int id)
     {
-    	final int containedIntValue = StringUtil.parseInt(value, 0);
-    	
-    	if (containedIntValue == 0)
-    		return;
+        final int containedIntValue = StringUtil.parseInt(value, 0);
+        
+        if (containedIntValue == 0)
+            return;
 
-    	if (containedIntValue == id)
-    		setValue(newValue);
+        if (containedIntValue == id)
+            setValue(newValue);
     }
     
     @Override
@@ -251,6 +251,6 @@ public class SField extends SFieldDef
     
     private void setValue(String newValue)
     {
-    	value = newValue;
+        value = newValue;
     }
 }

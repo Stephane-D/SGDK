@@ -14,7 +14,7 @@ import sgdk.tool.StringUtil;
  */
 public class SObject
 {
-	final String file;
+    final String file;
     final int id;
     final String baseName;
     final String type;
@@ -68,16 +68,16 @@ public class SObject
         }
     }
 
-	public List<SField> getFieldsOfType(SGDKObjectType type) {
-		List<SField> objectFields = new ArrayList<>();
+    public List<SField> getFieldsOfType(SGDKObjectType type) {
+           List<SField> objectFields = new ArrayList<>();
         
         for (SField field : fields) {
             if (field.type == type) {
                 objectFields.add(field);
             }
         }
-		return objectFields;
-	}
+        return objectFields;
+    }
         
     public boolean hasField(String fieldName)
     {

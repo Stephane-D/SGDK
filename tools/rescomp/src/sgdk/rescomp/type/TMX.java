@@ -704,8 +704,8 @@ public class TMX
 
         public static void resolveObjectsReferencesInResourceList(List<Resource> resourcesList)
         {
-        	// Cross-checking all SObjects and resolving object field references
-          	Objects.resolveObjectsReferencesInReosurceList(resourcesList);
+            // Cross-checking all SObjects and resolving object field references
+            Objects.resolveObjectsReferencesInReosurceList(resourcesList);
         }
         
         public TMXObjects(String baseId, String file, String layerName, String sortBy, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
@@ -800,7 +800,7 @@ public class TMX
                     {
                         // set to true ? --> add 'id' field
                         if (StringUtil.equals(value.toLowerCase(), "true"))
-                        	addField(objectName, tFields, new TField(ATTR_ID, TiledObjectType.INT, Integer.toString(id)));
+                            addField(objectName, tFields, new TField(ATTR_ID, TiledObjectType.INT, Integer.toString(id)));
                     }                    
                     // export name field ?
                     else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_NAME))
@@ -870,7 +870,7 @@ public class TMX
                         // replace value "true" by "1" or "false" by "0" and add field
                         addField(objectName, tFields, new TField(name, TiledObjectType.BOOL, StringUtil.equals(value.toLowerCase(), "true") ? "1":"0"));
                     else
-                    	addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
+                        addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
 
 

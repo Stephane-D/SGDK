@@ -190,8 +190,8 @@ public class Compiler
             }
         }
 
-    	// Cross-checking all SObjects and resolving object field references
-      	TMXObjects.resolveObjectsReferencesInResourceList(resourcesList);
+        // Cross-checking all SObjects and resolving object field references
+          TMXObjects.resolveObjectsReferencesInResourceList(resourcesList);
      
         // separate output
         System.out.println();
