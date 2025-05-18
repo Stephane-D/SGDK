@@ -15,23 +15,7 @@ public class Objects extends Resource
 {
     final String type;
     final List<SObject> objects;
-
     final int hc;
-
-    public static List<SObject> extractObjectsFromResourceList(List<Resource> resourcesList)
-    {
-        // Create Objects list
-        List<SObject> objectsList = new ArrayList<>();
-        
-        // Extract and Objects from resource list
-        for (Resource resource : resourcesList) {
-            if (resource instanceof Objects) {
-            	objectsList.addAll(((Objects) resource).objects);
-            }
-        }
-            	
-        return objectsList;
-    }       
     
     public static void resolveObjectsReferencesInReosurceList(List<Resource> resourcesList)
     {

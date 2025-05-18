@@ -190,11 +190,9 @@ public class Compiler
             }
         }
 
-      	// Extract and create Objects list from resource list
     	// Cross-checking all SObjects and resolving object field references
       	TMXObjects.resolveObjectsReferencesInResourceList(resourcesList);
-      	
-      
+     
         // separate output
         System.out.println();
 
