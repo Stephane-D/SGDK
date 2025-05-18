@@ -28,13 +28,13 @@ public class TField extends TFieldDef
             if (StringUtil.parseInt(value, 0) == 0)
                 adjVal = "";
             else
-                // get referenced object name as value
-                adjVal = baseObjectName + "_" + value;
+                // temporarily save only the id of the reference object, since its base_name is not yet known for sure if it is an external object
+                adjVal = value;            
         }
 
         return new SField(name, sgdkType, adjVal);
     }
-
+    
     @Override
     public String toString()
     {

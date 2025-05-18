@@ -2,6 +2,8 @@ package sgdk.rescomp.resource;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import sgdk.rescomp.Resource;
@@ -16,6 +18,54 @@ public class Objects extends Resource
 
     final int hc;
 
+    public static List<SObject> extractObjectsFromResourceList(List<Resource> resourcesList)
+    {
+        // Create Objects list
+        List<SObject> objectsList = new ArrayList<>();
+        
+        // Extract and Objects from resource list
+        for (Resource resource : resourcesList) {
+            if (resource instanceof Objects) {
+            	objectsList.addAll(((Objects) resource).objects);
+            }
+        }
+            	
+        return objectsList;
+    }       
+    
+    public static void resolveObjectsReferencesInReosurceList(List<Resource> resourcesList)
+    {
+
+        Map<String, List<SObject>> objectsByFile = new HashMap<>();
+
+        // Extract objects from resources, taking into account the files, and put them in a hash map
+        for (Resource resource : resourcesList) {
+            if (resource instanceof Objects) {
+                for (SObject obj : ((Objects) resource).objects) {
+                    objectsByFile.computeIfAbsent(obj.getFileName(), k -> new ArrayList<>())
+                                .add(obj);
+                }
+            }
+        }
+        
+        // Cross-checking all SObjects and resolving object field references
+        for (List<SObject> objectsInFile : objectsByFile.values()) {
+	    	for (int i = 0; i < objectsInFile.size(); i++) {
+	    		
+	    	    SObject sobject = objectsInFile.get(i);
+	   
+	    	    for (int j = i + 1; j < objectsInFile.size(); j++) {
+	    	    	
+	    	        SObject externalObject = objectsInFile.get(j);
+	    	        // update the value of the object field if the id matches
+	    	        sobject.updateObjectFieldsReferencesTo(externalObject);
+	    	        // checking for backward linking
+	    	        externalObject.updateObjectFieldsReferencesTo(sobject); 
+	    	    }
+	    	}
+        }
+    }
+    
     public Objects(String id, String type, List<SObject> objects)
     {
         super(id);
@@ -26,12 +76,12 @@ public class Objects extends Resource
         // compute hash code
         hc = type.hashCode() ^ objects.hashCode();
     }
-    
+        
     public int size()
     {
         return objects.size();
     }
-
+        
     @Override
     public int internalHashCode()
     {

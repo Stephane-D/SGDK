@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import sgdk.rescomp.type.SFieldDef.SGDKObjectType;
 import sgdk.tool.StringUtil;
 
 /**
@@ -13,6 +14,7 @@ import sgdk.tool.StringUtil;
  */
 public class SObject
 {
+	final String file;
     final int id;
     final String baseName;
     final String type;
@@ -24,11 +26,12 @@ public class SObject
 
     final public List<SField> fields;
 
-    public SObject(int id, String baseName, String type, double x, double y)
+    public SObject(String file, int id, String baseName, String type, double x, double y)
     {
         super();
 
         this.id = id;
+        this.file = file;
         this.baseName = baseName;
         this.type = type;
         this.x = x;
@@ -53,7 +56,29 @@ public class SObject
         // not found
         return -1;
     }
+    
+    public void updateObjectFieldsReferencesTo(SObject linkedObject)
+    {
+        List<SField> objectFields = getFieldsOfType(SGDKObjectType.OBJECT);
+        
+        String reference = linkedObject.baseName + "_" + linkedObject.id;
 
+        for (SField field : objectFields) {
+            field.changeValueToIfContainId(reference, linkedObject.id);
+        }
+    }
+
+	public List<SField> getFieldsOfType(SGDKObjectType type) {
+		List<SField> objectFields = new ArrayList<>();
+        
+        for (SField field : fields) {
+            if (field.type == type) {
+                objectFields.add(field);
+            }
+        }
+		return objectFields;
+	}
+        
     public boolean hasField(String fieldName)
     {
         return getFieldIndex(fieldName) != -1;
@@ -79,7 +104,12 @@ public class SObject
     {
         return baseName + "_" + id;
     }
-
+    
+    public String getFileName()
+    {
+        return file;
+    }
+    
     public long getFieldLongValue(String fieldName)
     {
         final int ind = getFieldIndex(fieldName);

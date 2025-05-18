@@ -11,11 +11,11 @@ public class SField extends SFieldDef
         return genId++;
     }
 
-    final public String value;
     final public Long longValue;
     final int internalId;
     boolean padding;
-
+    private String value;
+    
     public SField(String name, SGDKObjectType type, String value) throws Exception
     {
         super(name, type);
@@ -233,9 +233,25 @@ public class SField extends SFieldDef
     // out.write(0);
     // }
 
+    public void changeValueToIfContainId(String newValue, int id)
+    {
+    	final int containedIntValue = StringUtil.parseInt(value, 0);
+    	
+    	if (containedIntValue == 0)
+    		return;
+
+    	if (containedIntValue == id)
+    		setValue(newValue);
+    }
+    
     @Override
     public String toString()
     {
         return name + ":" + type + " = " + value;
+    }
+    
+    private void setValue(String newValue)
+    {
+    	value = newValue;
     }
 }
