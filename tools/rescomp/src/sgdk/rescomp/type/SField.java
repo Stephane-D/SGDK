@@ -5,17 +5,16 @@ import sgdk.tool.StringUtil;
 public class SField extends SFieldDef
 {
     static private int genId = 0;
-
-    static synchronized private int nextId()
-    {
-        return genId++;
-    }
-
     final public Long longValue;
     final int internalId;
     boolean padding;
     private String value;
     
+    static synchronized private int nextId()
+    {
+        return genId++;
+    }
+
     public SField(String name, SGDKObjectType type, String value) throws Exception
     {
         super(name, type);
