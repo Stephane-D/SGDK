@@ -17,6 +17,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import sgdk.rescomp.Compiler;
+import sgdk.rescomp.Resource;
+import sgdk.rescomp.resource.Objects;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
@@ -700,6 +702,12 @@ public class TMX
         public final String layerName;
         public final List<SObject> objects;
 
+        public static void resolveObjectsReferencesInResourceList(List<Resource> resourcesList)
+        {
+            // Cross-checking all SObjects and resolving object field references
+            Objects.resolveObjectsReferencesInReosurceList(resourcesList);
+        }
+        
         public TMXObjects(String baseId, String file, String layerName, String sortBy, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
         {
             if (!FileUtil.exists(file))
@@ -792,7 +800,7 @@ public class TMX
                     {
                         // set to true ? --> add 'id' field
                         if (StringUtil.equals(value.toLowerCase(), "true"))
-                        	addField(objectName, tFields, new TField(ATTR_ID, TiledObjectType.INT, Integer.toString(id)));
+                            addField(objectName, tFields, new TField(ATTR_ID, TiledObjectType.INT, Integer.toString(id)));
                     }                    
                     // export name field ?
                     else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_NAME))
@@ -860,14 +868,14 @@ public class TMX
                     // bool type ?
                     else if (TiledObjectType.fromString(type) == TiledObjectType.BOOL)   
                         // replace value "true" by "1" or "false" by "0" and add field
-                        addField(objectName, tFields, new TField(name, TiledObjectType.BOOL, StringUtil.equals(value.toLowerCase(), "true") ? "1":"0"));                          
+                        addField(objectName, tFields, new TField(name, TiledObjectType.BOOL, StringUtil.equals(value.toLowerCase(), "true") ? "1":"0"));
                     else
                         addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
 
 
                 // create object
-                final SObject object = new SObject(id, baseObjectName, objectType, x, y);
+                final SObject object = new SObject(file, id, baseObjectName, objectType, x, y);
                 // iterate over field definitions (allow good ordering of fields)
                 for (String fieldName : fieldDefs.keySet())
                 {
@@ -945,13 +953,13 @@ public class TMX
 
             return XMLUtil.getValue(text, "");
         }
-        
+                
         @Override
         public String toString()
         {
             return "Object layer=" + layerName + " number of object=" + objects.size();
         }
-
+                
         static class ObjectComparator implements Comparator<SObject>
         {
             String sortBy;
@@ -1019,7 +1027,7 @@ public class TMX
 
         return result;
     }
-
+    
     static void checkAttributValue(Element element, String attrName, String value, String def, String file) throws Exception
     {
         final String attrValue = getAttribute(element, attrName, def).toLowerCase();
