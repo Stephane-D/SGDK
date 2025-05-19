@@ -50,7 +50,7 @@ import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.resource.internal.SpriteFrame;
 import sgdk.rescomp.resource.internal.VDPSprite;
 import sgdk.rescomp.type.Basics.Compression;
-import sgdk.rescomp.type.TMX.TMXObjects;
+import sgdk.rescomp.type.TMX;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
 
@@ -191,7 +191,7 @@ public class Compiler
         }
 
         // Cross-checking all SObjects and resolving object field references
-          TMXObjects.resolveObjectsReferencesInResourceList(resourcesList);
+        TMX.TMXObjects.resolveObjectsReferencesInResourceList(resourcesList);
      
         // separate output
         System.out.println();
