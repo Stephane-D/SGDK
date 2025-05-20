@@ -27,6 +27,7 @@ Supported resource type
 - TILESET   tileset type resource, contains tiles data which can be used / shared for TILEMAP and MAP resources.
 - TILEMAP   tilemap type resource, contains raw tilemap data. It can be used to draw an image or complete (but small) plane background.
 - MAP       map type resource, optimized to draw large map / level.
+- OBJECTS   objects type resource, contains an array of custom Tiled map Objects, can be used to define almost anything you want to attach to a specific MAP.
 - IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data. It can be used to draw an image or complete (but small)
             plane background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
