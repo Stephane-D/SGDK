@@ -44,11 +44,16 @@ typedef struct
  *  \param unload
  *      Function pointer to the unload routine.<br>
  *      May be NULL or empty.
+ *  \param vBlankProcess
+ *      Function pointer to the VBlank processing routine.<br>
+ *      Called once per VBlank when the driver is active.<br>
+ *      May be NULL or empty.
  */
 typedef struct
 {
     void (*load)(const Z80DriverBoot boot);
     void (*unload)(void);
+    void (*vBlankProcess)(void);
 } Z80Driver;
 
 

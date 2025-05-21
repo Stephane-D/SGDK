@@ -61,7 +61,7 @@ extern void BMP_doVBlankProcess(void);
 extern void XGM_doVBlankProcess(void);
 extern bool MAP_doVBlankProcess(void);
 extern bool VDP_doVBlankScrollProcess(void);
-extern bool XGM2_doVBlankFadeProcess(void);
+extern void Z80_loadedDriverDoVBlankProcessInternal(void);
 
 
 // we don't want to share that method
@@ -743,14 +743,11 @@ bool NO_INLINE SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 #endif
     }
 
-    // XGM2 fade process
-    if (vbp & PROCESS_XGM2_FADE_TASK)
-    {
-        if (!XGM2_doVBlankFadeProcess()) vbp &= ~PROCESS_XGM2_FADE_TASK;
-    }
-
     // store back
     VBlankProcess = vbp;
+
+    // driver process
+    Z80_loadedDriverDoVBlankProcessInternal();
 
     // user VBlank callback
     (*vblankCB)();

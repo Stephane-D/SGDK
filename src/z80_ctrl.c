@@ -35,7 +35,7 @@ void NO_INLINE Z80_init()
 
     // no loaded driver
     // temporary driver to ensure the NULL driver is not treated as loaded; will be overwritten by Z80_loadDriver
-    currentDriver = &(Z80Driver){emptyDriverLoad, NULL};
+    currentDriver = &(Z80Driver){emptyDriverLoad, NULL, NULL};
     driverFlags = 0;
     busProtectSignalAddress = 0;
 
@@ -205,6 +205,14 @@ void NO_INLINE Z80_download(const u16 from, u8 *to, const u16 size)
 const Z80Driver* Z80_getLoadedDriver(void)
 {
     return currentDriver;
+}
+
+void Z80_loadedDriverDoVBlankProcessInternal(void)
+{
+    if (currentDriver != NULL && currentDriver->vBlankProcess != NULL)
+    {
+        currentDriver->vBlankProcess();
+    }
 }
 
 void Z80_unloadDriver(void)
