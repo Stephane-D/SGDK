@@ -26,7 +26,7 @@ typedef struct
 
 typedef struct
 {
-    const u16 id;
+    const Z80Driver* id;
     const char name[DRIVER_NAME_LEN];
     const u16 num_cmd;
     const cmd_def cmds[MAX_CMD];
@@ -171,25 +171,23 @@ static void refreshDriverInfos()
     char str[40];
 
     // extra infos
-    switch(driver->id)
+    if (driver->id == Z80_DRIVER_XGM)
     {
-        case Z80_DRIVER_XGM:
-            if (musicSize)
-            {
-                fix32ToStr(FIX32(musicSize / 1024), size, 1);
-                sprintf(str, "Music size = %s KB", size);
-                VDP_drawText(str, 2, 7);
-            }
-            break;
-
-        case Z80_DRIVER_XGM2:
-            if (musicSize)
-            {
-                fix32ToStr(FIX32(musicSize / 1024), size, 1);
-                sprintf(str, "Music size = %s KB", size);
-                VDP_drawText(str, 2, 7);
-            }
-            break;
+        if (musicSize)
+        {
+            fix32ToStr(FIX32(musicSize / 1024), size, 1);
+            sprintf(str, "Music size = %s KB", size);
+            VDP_drawText(str, 2, 7);
+        }
+    }
+    else if (driver->id == Z80_DRIVER_XGM2)
+    {
+        if (musicSize)
+        {
+            fix32ToStr(FIX32(musicSize / 1024), size, 1);
+            sprintf(str, "Music size = %s KB", size);
+            VDP_drawText(str, 2, 7);
+        }
     }
 }
 
@@ -251,46 +249,43 @@ static void refreshDriverCmd()
     VDP_clearTileMapRect(BG_A, 0, 12, 40, 14);
     setTextPalette(1);
 
-    switch(driver->id)
+    if (driver->id == Z80_DRIVER_PCM)
     {
-        case Z80_DRIVER_PCM:
-            VDP_drawText("press A to start/end playback", 1, 12);
-            break;
+        VDP_drawText("press A to start/end playback", 1, 12);
+    }
+    else if (driver->id == Z80_DRIVER_DPCM2)
+    {
+        VDP_drawText("press A to start/end channel 1", 1, 12);
+        VDP_drawText("press B to start/end channel 2", 1, 13);
+    }
+    else if (driver->id == Z80_DRIVER_PCM4)
+    {
+        VDP_drawText("press A to start/end channel 1", 1, 12);
+        VDP_drawText("press B to start/end channel 2", 1, 13);
+        VDP_drawText("press C to start/end channel 3", 1, 14);
+        VDP_drawText("press START to start/end channel 4", 1, 15);
+    }
+    else if ((driver->id == Z80_DRIVER_XGM) || (driver->id == Z80_DRIVER_XGM2))
+    {
+        VDP_drawText("press A to play Streets Of Rage 2 XGM", 1, 12);
+        VDP_drawText("press B to play Bad Apple (PCM) XGM", 1, 13);
+        VDP_drawText("press C to play Midnight Resistance XGM", 1, 14);
+        VDP_drawText("press START to pause/resume XGM music", 1, 15);
 
-        case Z80_DRIVER_DPCM2:
-            VDP_drawText("press A to start/end channel 1", 1, 12);
-            VDP_drawText("press B to start/end channel 2", 1, 13);
-            break;
+        if (driver->id == Z80_DRIVER_XGM)
+        {
+            VDP_drawText("press X to play PCM SFX ch 2", 1, 17);
+            VDP_drawText("press Y to play PCM SFX ch 3", 1, 18);
+            VDP_drawText("press Z to play PCM SFX ch 4", 1, 19);
+        }
+        else
+        {
+            VDP_drawText("press X to play PCM SFX ch 1", 1, 17);
+            VDP_drawText("press Y to play PCM SFX ch 2", 1, 18);
+            VDP_drawText("press Z to play PCM SFX ch 3", 1, 19);
+        }
 
-        case Z80_DRIVER_PCM4:
-            VDP_drawText("press A to start/end channel 1", 1, 12);
-            VDP_drawText("press B to start/end channel 2", 1, 13);
-            VDP_drawText("press C to start/end channel 3", 1, 14);
-            VDP_drawText("press START to start/end channel 4", 1, 15);
-            break;
-
-        case Z80_DRIVER_XGM:
-        case Z80_DRIVER_XGM2:
-            VDP_drawText("press A to play Streets Of Rage 2 XGM", 1, 12);
-            VDP_drawText("press B to play Bad Apple (PCM) XGM", 1, 13);
-            VDP_drawText("press C to play Midnight Resistance XGM", 1, 14);
-            VDP_drawText("press START to pause/resume XGM music", 1, 15);
-
-            if (driver->id == Z80_DRIVER_XGM)
-            {
-                VDP_drawText("press X to play PCM SFX ch 2", 1, 17);
-                VDP_drawText("press Y to play PCM SFX ch 3", 1, 18);
-                VDP_drawText("press Z to play PCM SFX ch 4", 1, 19);
-            }
-            else
-            {
-                VDP_drawText("press X to play PCM SFX ch 1", 1, 17);
-                VDP_drawText("press Y to play PCM SFX ch 2", 1, 18);
-                VDP_drawText("press Z to play PCM SFX ch 3", 1, 19);
-            }
-
-            VDP_drawText("Z80 CPU load:", 1, 21);
-            break;
+        VDP_drawText("Z80 CPU load:", 1, 21);
     }
 }
 
@@ -441,208 +436,195 @@ static void joyEvent(u16 joy, u16 changed, u16 state)
     const u16 loop = params_value[driver_ind][0]->value;
 
     // driver commands
-    switch(driver->id)
+    if (driver->id == Z80_DRIVER_PCM)
     {
-        case Z80_DRIVER_PCM:
+        const u16 pan = params_value[driver_ind][1]->value;
+
+        if (changed & state & BUTTON_A)
         {
-            const u16 pan = params_value[driver_ind][1]->value;
-
-            if (changed & state & BUTTON_A)
+            if (SND_PCM_isPlaying())
+                SND_PCM_stopPlay();
+            else
             {
-                if (SND_PCM_isPlaying())
-                    SND_PCM_stopPlay();
-                else
+                // RATE parameter value
+                switch(params_value[driver_ind][2]->value)
                 {
-                    // RATE parameter value
-                    switch(params_value[driver_ind][2]->value)
-                    {
-                        case SOUND_PCM_RATE_8000:
-                            SND_PCM_startPlay(india_8k, sizeof(india_8k), SOUND_PCM_RATE_8000, pan, loop);
-                            break;
+                    case SOUND_PCM_RATE_8000:
+                        SND_PCM_startPlay(india_8k, sizeof(india_8k), SOUND_PCM_RATE_8000, pan, loop);
+                        break;
 
-                        case SOUND_PCM_RATE_11025:
-                            SND_PCM_startPlay(india_11k, sizeof(india_11k), SOUND_PCM_RATE_11025, pan, loop);
-                            break;
+                    case SOUND_PCM_RATE_11025:
+                        SND_PCM_startPlay(india_11k, sizeof(india_11k), SOUND_PCM_RATE_11025, pan, loop);
+                        break;
 
-                        case SOUND_PCM_RATE_13400:
-                            SND_PCM_startPlay(india_13k, sizeof(india_13k), SOUND_PCM_RATE_13400, pan, loop);
-                            break;
+                    case SOUND_PCM_RATE_13400:
+                        SND_PCM_startPlay(india_13k, sizeof(india_13k), SOUND_PCM_RATE_13400, pan, loop);
+                        break;
 
-                        case SOUND_PCM_RATE_16000:
-                            SND_PCM_startPlay(india_16k, sizeof(india_16k), SOUND_PCM_RATE_16000, pan, loop);
-                            break;
+                    case SOUND_PCM_RATE_16000:
+                        SND_PCM_startPlay(india_16k, sizeof(india_16k), SOUND_PCM_RATE_16000, pan, loop);
+                        break;
 
-                        case SOUND_PCM_RATE_22050:
-                            SND_PCM_startPlay(india_22k, sizeof(india_22k), SOUND_PCM_RATE_22050, pan, loop);
-                            break;
+                    case SOUND_PCM_RATE_22050:
+                        SND_PCM_startPlay(india_22k, sizeof(india_22k), SOUND_PCM_RATE_22050, pan, loop);
+                        break;
 
-                        case SOUND_PCM_RATE_32000:
-                            SND_PCM_startPlay(india_32k, sizeof(india_32k), SOUND_PCM_RATE_32000, pan, loop);
-                            break;
-                    }
+                    case SOUND_PCM_RATE_32000:
+                        SND_PCM_startPlay(india_32k, sizeof(india_32k), SOUND_PCM_RATE_32000, pan, loop);
+                        break;
                 }
             }
-            break;
+        }
+    }
+    else if (driver->id == Z80_DRIVER_DPCM2)
+    {
+        if (changed & state & BUTTON_A)
+        {
+            if (SND_DPCM2_isPlaying(SOUND_PCM_CH1_MSK))
+                SND_DPCM2_stopPlay(SOUND_PCM_CH1);
+            else
+                SND_DPCM2_startPlay(india_pcm_22k, sizeof(india_pcm_22k), SOUND_PCM_CH1, loop);
         }
 
-        case Z80_DRIVER_DPCM2:
+        if (changed & state & BUTTON_B)
         {
-            if (changed & state & BUTTON_A)
-            {
-                if (SND_DPCM2_isPlaying(SOUND_PCM_CH1_MSK))
-                    SND_DPCM2_stopPlay(SOUND_PCM_CH1);
-                else
-                    SND_DPCM2_startPlay(india_pcm_22k, sizeof(india_pcm_22k), SOUND_PCM_CH1, loop);
-            }
+            if (SND_DPCM2_isPlaying(SOUND_PCM_CH2_MSK))
+                SND_DPCM2_stopPlay(SOUND_PCM_CH2);
+            else
+                SND_DPCM2_startPlay(loop3_pcm_22k, sizeof(loop3_pcm_22k), SOUND_PCM_CH2, loop);
+        }
+    }
+    else if (driver->id == Z80_DRIVER_PCM4)
+    {
+        // set volume values for driver PCM4_ENV
+        SND_PCM4_setVolume(SOUND_PCM_CH1, params_value[driver_ind][1]->value);
+        SND_PCM4_setVolume(SOUND_PCM_CH2, params_value[driver_ind][2]->value);
+        SND_PCM4_setVolume(SOUND_PCM_CH3, params_value[driver_ind][3]->value);
+        SND_PCM4_setVolume(SOUND_PCM_CH4, params_value[driver_ind][4]->value);
 
-            if (changed & state & BUTTON_B)
-            {
-                if (SND_DPCM2_isPlaying(SOUND_PCM_CH2_MSK))
-                    SND_DPCM2_stopPlay(SOUND_PCM_CH2);
-                else
-                    SND_DPCM2_startPlay(loop3_pcm_22k, sizeof(loop3_pcm_22k), SOUND_PCM_CH2, loop);
-            }
-            break;
+        if (changed & state & BUTTON_START)
+        {
+            if (SND_PCM4_isPlaying(SOUND_PCM_CH4_MSK))
+                SND_PCM4_stopPlay(SOUND_PCM_CH4);
+            else
+                SND_PCM4_startPlay(loop2_16k, sizeof(loop2_16k), SOUND_PCM_CH4, loop);
         }
 
-        case Z80_DRIVER_PCM4:
+        if (changed & state & BUTTON_A)
         {
-            // set volume values for driver PCM4_ENV
-            SND_PCM4_setVolume(SOUND_PCM_CH1, params_value[driver_ind][1]->value);
-            SND_PCM4_setVolume(SOUND_PCM_CH2, params_value[driver_ind][2]->value);
-            SND_PCM4_setVolume(SOUND_PCM_CH3, params_value[driver_ind][3]->value);
-            SND_PCM4_setVolume(SOUND_PCM_CH4, params_value[driver_ind][4]->value);
-
-            if (changed & state & BUTTON_START)
-            {
-                if (SND_PCM4_isPlaying(SOUND_PCM_CH4_MSK))
-                    SND_PCM4_stopPlay(SOUND_PCM_CH4);
-                else
-                    SND_PCM4_startPlay(loop2_16k, sizeof(loop2_16k), SOUND_PCM_CH4, loop);
-            }
-
-            if (changed & state & BUTTON_A)
-            {
-                if (SND_PCM4_isPlaying(SOUND_PCM_CH1_MSK))
-                    SND_PCM4_stopPlay(SOUND_PCM_CH1);
-                else
-                    SND_PCM4_startPlay(hat2_16k, sizeof(hat2_16k), SOUND_PCM_CH1, loop);
-            }
-
-            if (changed & state & BUTTON_B)
-            {
-                if (SND_PCM4_isPlaying(SOUND_PCM_CH2_MSK))
-                    SND_PCM4_stopPlay(SOUND_PCM_CH2);
-                else
-                    SND_PCM4_startPlay(snare2_16k, sizeof(snare2_16k), SOUND_PCM_CH2, loop);
-            }
-
-            if (changed & state & BUTTON_C)
-            {
-                if (SND_PCM4_isPlaying(SOUND_PCM_CH3_MSK))
-                    SND_PCM4_stopPlay(SOUND_PCM_CH3);
-                else
-                    SND_PCM4_startPlay(hat1_16k, sizeof(hat1_16k), SOUND_PCM_CH3, loop);
-            }
-
-            break;
+            if (SND_PCM4_isPlaying(SOUND_PCM_CH1_MSK))
+                SND_PCM4_stopPlay(SOUND_PCM_CH1);
+            else
+                SND_PCM4_startPlay(hat2_16k, sizeof(hat2_16k), SOUND_PCM_CH1, loop);
         }
 
-        case Z80_DRIVER_XGM:
+        if (changed & state & BUTTON_B)
         {
-            if (changed & state & BUTTON_X)
-            {
-                XGM_setPCM(64, snare1_14k, sizeof(snare1_14k));
-//                XGM_setPCM(64, sonic_jump_14k, sizeof(sonic_jump_14k));
-                XGM_startPlayPCM(64, 10, SOUND_PCM_CH2);
-            }
-            if (changed & state & BUTTON_Y)
-            {
-                XGM_setPCM(65, hat1_14k, sizeof(hat1_14k));
-//                XGM_setPCM(65, sonic_stop_14k, sizeof(sonic_stop_14k));
-                XGM_startPlayPCM(65, 10, SOUND_PCM_CH3);
-            }
-            if (changed & state & BUTTON_Z)
-            {
-                XGM_setPCM(66, cri_14k, sizeof(cri_14k));
-                XGM_startPlayPCM(66, 10, SOUND_PCM_CH4);
-            }
-
-            if (changed & state & BUTTON_A)
-            {
-                if (XGM_isPlaying()) XGM_stopPlay();
-                else XGM_startPlay(sor2_xgm);
-                musicSize = sizeof(sor2_xgm);
-            }
-            if (changed & state & BUTTON_B)
-            {
-                if (XGM_isPlaying()) XGM_stopPlay();
-                else XGM_startPlay(bapcm_xgm);
-                musicSize = sizeof(bapcm_xgm);
-            }
-            if (changed & state & BUTTON_C)
-            {
-                if (XGM_isPlaying()) XGM_stopPlay();
-                else XGM_startPlay(midnight_xgm);
-//                XGM_startPlay(toystory_xgm);
-                musicSize = sizeof(midnight_xgm);
-            }
-
-            if (changed & state & BUTTON_START)
-            {
-                if (XGM_isPlaying()) XGM_pausePlay();
-                else XGM_resumePlay();
-            }
-            break;
+            if (SND_PCM4_isPlaying(SOUND_PCM_CH2_MSK))
+                SND_PCM4_stopPlay(SOUND_PCM_CH2);
+            else
+                SND_PCM4_startPlay(snare2_16k, sizeof(snare2_16k), SOUND_PCM_CH2, loop);
         }
 
-        case Z80_DRIVER_XGM2:
+        if (changed & state & BUTTON_C)
         {
-            if (changed & state & BUTTON_X)
-            {
-                XGM2_playPCM(snare1_13k, sizeof(snare1_13k), SOUND_PCM_CH1);
-//                XGM2_playPCM(india_13k, sizeof(india_13k), SOUND_PCM_CH1);
-            }
-            if (changed & state & BUTTON_Y)
-            {
-                XGM2_playPCM(hat1_13k, sizeof(hat1_13k), SOUND_PCM_CH2);
-//                XGM2_playPCM(sonic_stop_13k, sizeof(sonic_stop_13k), SOUND_PCM_CH2);
-            }
-            if (changed & state & BUTTON_Z)
-            {
-                XGM2_playPCM(cri_13k, sizeof(cri_13k), SOUND_PCM_CH3);
-            }
+            if (SND_PCM4_isPlaying(SOUND_PCM_CH3_MSK))
+                SND_PCM4_stopPlay(SOUND_PCM_CH3);
+            else
+                SND_PCM4_startPlay(hat1_16k, sizeof(hat1_16k), SOUND_PCM_CH3, loop);
+        }
+    }
+    else if (driver->id == Z80_DRIVER_XGM)
+    {
+        if (changed & state & BUTTON_X)
+        {
+            XGM_setPCM(64, snare1_14k, sizeof(snare1_14k));
+            // XGM_setPCM(64, sonic_jump_14k, sizeof(sonic_jump_14k));
+            XGM_startPlayPCM(64, 10, SOUND_PCM_CH2);
+        }
+        if (changed & state & BUTTON_Y)
+        {
+            XGM_setPCM(65, hat1_14k, sizeof(hat1_14k));
+            // XGM_setPCM(65, sonic_stop_14k, sizeof(sonic_stop_14k));
+            XGM_startPlayPCM(65, 10, SOUND_PCM_CH3);
+        }
+        if (changed & state & BUTTON_Z)
+        {
+            XGM_setPCM(66, cri_14k, sizeof(cri_14k));
+            XGM_startPlayPCM(66, 10, SOUND_PCM_CH4);
+        }
 
-            if (changed & state & BUTTON_A)
-            {
-                if (XGM2_isPlaying()) XGM2_stop();
-                else XGM2_play(sor2_xgm2);
-                musicSize = sizeof(sor2_xgm2);
-            }
-            if (changed & state & BUTTON_B)
-            {
-                if (XGM2_isPlaying()) XGM2_stop();
-                else XGM2_play(bapcm_xgm2);
-                musicSize = sizeof(bapcm_xgm2);
-            }
-            if (changed & state & BUTTON_C)
-            {
-                if (XGM2_isPlaying()) XGM2_stop();
-                else XGM2_play(midnight_xgm2);
-//                XGM_startPlay(toystory);
-                musicSize = sizeof(midnight_xgm2);
-            }
+        if (changed & state & BUTTON_A)
+        {
+            if (XGM_isPlaying()) XGM_stopPlay();
+            else XGM_startPlay(sor2_xgm);
+            musicSize = sizeof(sor2_xgm);
+        }
+        if (changed & state & BUTTON_B)
+        {
+            if (XGM_isPlaying()) XGM_stopPlay();
+            else XGM_startPlay(bapcm_xgm);
+            musicSize = sizeof(bapcm_xgm);
+        }
+        if (changed & state & BUTTON_C)
+        {
+            if (XGM_isPlaying()) XGM_stopPlay();
+            else XGM_startPlay(midnight_xgm);
+            // XGM_startPlay(toystory_xgm);
+            musicSize = sizeof(midnight_xgm);
+        }
 
-            if (changed & state & BUTTON_START)
+        if (changed & state & BUTTON_START)
+        {
+            if (XGM_isPlaying()) XGM_pausePlay();
+            else XGM_resumePlay();
+        }
+    }
+    else if (driver->id == Z80_DRIVER_XGM2)
+    {
+        if (changed & state & BUTTON_X)
+        {
+            XGM2_playPCM(snare1_13k, sizeof(snare1_13k), SOUND_PCM_CH1);
+            // XGM2_playPCM(india_13k, sizeof(india_13k), SOUND_PCM_CH1);
+        }
+        if (changed & state & BUTTON_Y)
+        {
+            XGM2_playPCM(hat1_13k, sizeof(hat1_13k), SOUND_PCM_CH2);
+            // XGM2_playPCM(sonic_stop_13k, sizeof(sonic_stop_13k), SOUND_PCM_CH2);
+        }
+        if (changed & state & BUTTON_Z)
+        {
+            XGM2_playPCM(cri_13k, sizeof(cri_13k), SOUND_PCM_CH3);
+        }
+
+        if (changed & state & BUTTON_A)
+        {
+            if (XGM2_isPlaying()) XGM2_stop();
+            else XGM2_play(sor2_xgm2);
+            musicSize = sizeof(sor2_xgm2);
+        }
+        if (changed & state & BUTTON_B)
+        {
+            if (XGM2_isPlaying()) XGM2_stop();
+            else XGM2_play(bapcm_xgm2);
+            musicSize = sizeof(bapcm_xgm2);
+        }
+        if (changed & state & BUTTON_C)
+        {
+            if (XGM2_isPlaying()) XGM2_stop();
+            else XGM2_play(midnight_xgm2);
+            // XGM_startPlay(toystory);
+            musicSize = sizeof(midnight_xgm2);
+        }
+
+        if (changed & state & BUTTON_START)
+        {
+            if (XGM2_isPlaying()) XGM2_fadeOutAndPause(30);
+            else
             {
-                if (XGM2_isPlaying()) XGM2_fadeOutAndPause(30);
-                else
-                {
-                    XGM2_resume();
-                    XGM2_fadeIn(30);
-                }
+                XGM2_resume();
+                XGM2_fadeIn(30);
             }
-            break;
         }
     }
 
