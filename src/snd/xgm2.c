@@ -160,9 +160,6 @@ const u8 psgVolTable[100] =
 };
 
 
-// allow to access it without "public" share
-extern vu16 VBlankProcess;
-
 // current loaded XGM track
 static const u8* currentXGM;
 
@@ -175,6 +172,7 @@ static u16 psgVol;
 static bool restoreVolume;
 
 // fade vars
+static bool fadeEnabled;
 static f16 fadeFMVol;
 static f16 fadePSGVol;
 static f16 fadeFMVolStep;
@@ -201,21 +199,24 @@ static void setFMVolume(const u16 value);
 static void setPSGVolume(const u16 value);
 static void doFade(const u16 fmVolStart, const u16 fmVolEnd, const u16 psgVolStart, const u16 psgVolEnd, const u16 frame, const FadeEndProcess fep);
 
-// we don't want to share it
-extern void Z80_loadDriverInternal(const u8 *drv, const u16 size);
-
 // Z80_DRIVER_XGM2
 // XGM2 driver
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE XGM2_loadDriver(bool waitReady)
+// forward
+static void XGM2_doVBlankFadeProcess(void);
+
+
+const Z80Driver XGM2_driver = {.load = XGM2_loadDriver, .unload = XGM2_unloadDriver, .vBlankProcess=XGM2_doVBlankFadeProcess};
+
+void NO_INLINE XGM2_loadDriver(const Z80DriverBoot boot)
 {
-    Z80_loadDriverInternal(drv_xgm2, sizeof(drv_xgm2));
+    boot.loader(drv_xgm2, sizeof(drv_xgm2));
 
     SYS_disableInts();
 
     // wait driver for being ready
-    if (waitReady)
+    if (boot.waitReady)
     {
         // wait driver ready
         while(!Z80_isDriverReady())
@@ -243,6 +244,8 @@ void NO_INLINE XGM2_unloadDriver(void)
 {
     // remove bus protection (signal address set to 0)
     Z80_useBusProtection(0);
+
+    fadeEnabled = FALSE;
 }
 
 
@@ -663,14 +666,14 @@ static void doFade(const u16 fmVolStart, const u16 fmVolEnd, const u16 psgVolSta
     setFMVolume(F16_toInt(fadeFMVol));
     setPSGVolume(F16_toInt(fadePSGVol));
 
-    // add task for vblank process
-    VBlankProcess |= PROCESS_XGM2_FADE_TASK;
+    // enable vblank process
+    fadeEnabled = TRUE;
 }
 
 
 bool XGM2_isProcessingFade(void)
 {
-    return (VBlankProcess & PROCESS_XGM2_FADE_TASK)?TRUE:FALSE;
+    return fadeEnabled;
 }
 
 void XGM2_fadeIn(const u16 frame)
@@ -698,8 +701,10 @@ void XGM2_fadeTo(const u16 toFMVolume, const u16 toPSGVolume, const u16 frame)
     doFade(fmVol, toFMVolume, psgVol, toPSGVolume, frame, DO_NOTHING);
 }
 
-bool XGM2_doVBlankFadeProcess(void)
+static void XGM2_doVBlankFadeProcess(void)
 {
+    if (!XGM2_isProcessingFade()) return;
+
     fadeCount--;
 
     // we do that to lower a bit Z80 CPU processing for volume fade effect
@@ -737,10 +742,8 @@ bool XGM2_doVBlankFadeProcess(void)
         }
 
         // done
-        return FALSE;
+        fadeEnabled = FALSE;
     }
-
-    return TRUE;
 }
 
 

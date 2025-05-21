@@ -17,6 +17,9 @@
 #ifndef _SND_PCM_H_
 #define _SND_PCM_H_
 
+#include "snd/z80_driver.h"
+#include "snd/sound.h"
+
 /**
  *  \brief
  *      PCM sample rate values
@@ -44,16 +47,32 @@ typedef enum
 #define SND_startPlay_PCM   _Pragma("GCC error \"This method is deprecated, use SND_PCM_startPlay instead.\"")
 #define SND_stopPlay_PCM    _Pragma("GCC error \"This method is deprecated, use SND_PCM_stopPlay instead.\"")
 
+
+extern const Z80Driver SND_PCM_driver;
 /**
  *  \brief
- *      Load the Z80_DRIVER_PCM sound driver.
+ *      Variable rate sample player Z80 driver.<br>
+ *      It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
+ */
+#define Z80_DRIVER_PCM (&SND_PCM_driver)
+/**
+ *  \brief
+ *      Retrieve the Z80 PCM driver instance.
+ *
+ *  \return
+ *      Pointer to the Z80Driver instance representing the Z80 PCM driver.
+ */
+const Z80Driver* SND_PCM_getDriver(void);
+/**
+ *  \brief
+ *      Load the PCM sound driver.
  *
  *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
-void SND_PCM_loadDriver(const bool waitReady);
+void SND_PCM_loadDriver(const Z80DriverBoot boot);
 /**
  *  \brief
- *      Unload the Z80_DRIVER_PCM sound driver.
+ *      Unload the PCM sound driver.
  *
  *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
  */

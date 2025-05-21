@@ -16,20 +16,30 @@
 #ifndef _SND_DPCM2_H_
 #define _SND_DPCM2_H_
 
+#include "snd/z80_driver.h"
+#include "snd/sound.h"
+
 #define SND_isPlaying_2ADPCM    _Pragma("GCC error \"This method is deprecated, use SND_DPCM2_isPlaying instead.\"")
 #define SND_startPlay_2ADPCM    _Pragma("GCC error \"This method is deprecated, use SND_DPCM2_startPlay instead.\"")
 #define SND_stopPlay_2ADPCM     _Pragma("GCC error \"This method is deprecated, use SND_DPCM2_stopPlay instead.\"")
 
+extern const Z80Driver SND_DPCM2_driver;
 /**
  *  \brief
- *      Load the Z80_DRIVER_DPCM2 sound driver.
+ *      2 channels PCM sample player Z80 driver.<br>
+ *      It can mix 2 samples (4 bit PCM) at a fixed 22 Khz rate.
+ */
+#define Z80_DRIVER_DPCM2 (&SND_DPCM2_driver)
+/**
+ *  \brief
+ *      Load the DPCM2 sound driver.
  *
  *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
-void SND_DPCM2_loadDriver(const bool waitReady);
+void SND_DPCM2_loadDriver(const Z80DriverBoot boot);
 /**
  *  \brief
- *      Unload the Z80_DRIVER_DPCM2 sound driver.
+ *      Unload the DPCM2 sound driver.
  *
  *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
  */

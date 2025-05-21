@@ -16,6 +16,9 @@
 #define _Z80_CTRL_H_
 
 
+#include "snd/z80_driver.h"
+
+
 #define Z80_HALT_PORT                   0xA11100
 #define Z80_RESET_PORT                  0xA11200
 
@@ -116,54 +119,16 @@
 
 /**
  *  \brief
- *      NULL Z80 driver.
- */
-#define Z80_DRIVER_NULL                 0
-/**
- *  \brief
- *      Variable rate sample player Z80 driver.<br>
- *      It can play a sample (8 bit signed) from 8 Khz up to 32 Khz rate.
- */
-#define Z80_DRIVER_PCM                  1
-/**
- *  \brief
- *      2 channels PCM sample player Z80 driver.<br>
- *      It can mix 2 samples (4 bit PCM) at a fixed 22 Khz rate.
- */
-#define Z80_DRIVER_DPCM2                2
-/**
- *  \brief
- *      4 channels sample player Z80 driver with envelop control.<br>
- *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br>
- *      and handle volume (16 levels) for each channel.
- */
-#define Z80_DRIVER_PCM4                 3
-/**
- *  \brief
- *      eXtended VGM music player driver.<br>
- *      This driver takes VGM (or XGM) file as input to play music.<br>
- *      It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br>
- *      The driver is designed to avoid DMA contention when possible (depending CPU load).
- */
-#define Z80_DRIVER_XGM                  4
-/**
- *  \brief
- *      eXtended VGM music player driver version 2.<br>
- *      This driver takes VGM (or XGM2) file as input to play music.<br>
- *      It supports 3 PCM channels at either 13.3 Khz or 6.65 Khz and envelop control for both FM and PSG.<br>
- *      It allows to play SFX through PCM with 16 level of priority.<br>
- *      The driver supports renforced protection against DMA contention.
- */
-#define Z80_DRIVER_XGM2                 5
-/**
- *  \brief
  *      CUSTOM Z80 driver.
  */
-#define Z80_DRIVER_CUSTOM               -1
+#define Z80_DRIVER_CUSTOM               _Pragma("GCC error \"This definition is deprecated, use a Z80Driver struct instead.\"")
 
 
 #define Z80_DRIVER_4PCM_ENV             _Pragma("GCC error \"This definition is deprecated, use Z80_DRIVER_PCM4 instead.\"")
 #define Z80_DRIVER_2ADPCM               _Pragma("GCC error \"This definition is deprecated, use Z80_DRIVER_DPCM2 instead.\"")
+
+
+#define Z80_loadCustomDriver(drv, size) _Pragma("GCC error \"This method is deprecated, use a Z80Driver struct instead.\"")
 
 
 /**
@@ -281,18 +246,10 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
 
 /**
  *  \brief
- *      Return currently loaded Z80 driver.
- *
- *  Possible returned values are:<br>
- *  - #Z80_DRIVER_NULL<br>
- *  - #Z80_DRIVER_PCM<br>
- *  - #Z80_DRIVER_DPCM2<br>
- *  - #Z80_DRIVER_PCM4<br>
- *  - #Z80_DRIVER_XGM<br>
- *  - #Z80_DRIVER_XGM2<br>
- *  - #Z80_DRIVER_CUSTOM<br>
+ *      Return currently loaded Z80 driver.<br>
+ *      Useful to check the identity of the loaded driver.
  */
-u16  Z80_getLoadedDriver(void);
+const Z80Driver* Z80_getLoadedDriver(void);
 /**
  *  \brief
  *      Unload Z80 driver (set NULL driver).
@@ -300,34 +257,20 @@ u16  Z80_getLoadedDriver(void);
 void Z80_unloadDriver(void);
 /**
  *  \brief
- *      Load a Z80 driver.
+ *      Load a Z80 driver.<br>
+ *      If the requested driver is already loaded, the function returns immediately.<br>
+ *      Otherwise, the current driver is unloaded before loading the new one.
  *
  *  \param driver
- *      Driver to load, possible values are:<br>
- *      - #Z80_DRIVER_NULL<br>
- *      - #Z80_DRIVER_PCM<br>
- *      - #Z80_DRIVER_DPCM2<br>
- *      - #Z80_DRIVER_PCM4<br>
- *      - #Z80_DRIVER_XGM<br>
- *      - #Z80_DRIVER_XGM2<br>
+ *      Pointer to the Z80Driver to load, or NULL to load the null driver.
  *  \param waitReady
  *      Wait for driver to be ready.
  */
-void Z80_loadDriver(const u16 driver, const bool waitReady);
-/**
- *  \brief
- *      Load a custom Z80 driver.
- *
- *  \param drv
- *      Pointer to the driver binary to load.
- *  \param size
- *      Size (in bytes) of the driver binary.
- */
-void Z80_loadCustomDriver(const u8 *drv, u16 size);
+void Z80_loadDriver(const Z80Driver* driver, const bool waitReady);
 
 /**
  *  \brief
- *      Return driver ready state (only for non custom driver).
+ *      Return driver ready state.
  */
 bool Z80_isDriverReady(void);
 

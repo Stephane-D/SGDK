@@ -13,6 +13,8 @@
 #ifndef _XGM_H_
 #define _XGM_H_
 
+#include "snd/z80_driver.h"
+#include "snd/sound.h"
 
 /**
  * \deprecated use XGM_isPlaying() instead
@@ -105,13 +107,22 @@
 #define SND_getCPULoad_XGM()                _Pragma("GCC error \"This method is deprecated, use XGM_getCPULoad() instead.\"")
 
 
+extern const Z80Driver XGM_driver;
+/**
+ *  \brief
+ *      eXtended VGM music player driver.<br>
+ *      This driver takes VGM (or XGM) file as input to play music.<br>
+ *      It supports 4 PCM channels at a fixed 14 Khz and allows to play SFX through PCM with 16 level of priority.<br>
+ *      The driver is designed to avoid DMA contention when possible (depending CPU load).
+ */
+#define Z80_DRIVER_XGM (&XGM_driver)
 /**
  *  \brief
  *      Load the XGM sound driver.
  *
  *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
-void XGM_loadDriver(const bool waitReady);
+void XGM_loadDriver(const Z80DriverBoot boot);
 /**
  *  \brief
  *      Unload the XGM sound driver.

@@ -19,6 +19,9 @@
 #ifndef _SND_PCM4_H_
 #define _SND_PCM4_H_
 
+#include "snd/z80_driver.h"
+#include "snd/sound.h"
+
 #define SND_isPlaying_4PCM_ENV      _Pragma("GCC error \"This method is deprecated, use SND_PCM4_isPlaying instead.\"")
 #define SND_startPlay_4PCM_ENV      _Pragma("GCC error \"This method is deprecated, use SND_PCM4_startPlay instead.\"")
 #define SND_stopPlay_4PCM_ENV       _Pragma("GCC error \"This method is deprecated, use SND_PCM4_stopPlay instead.\"")
@@ -31,16 +34,24 @@
 #define SND_getVolume_4PCM          _Pragma("GCC error \"This method is deprecated, use SND_PCM4_getVolume instead.\"")
 #define SND_setVolume_4PCM          _Pragma("GCC error \"This method is deprecated, use SND_PCM4_setVolume instead.\"")
 
+extern const Z80Driver SND_PCM4_driver;
 /**
  *  \brief
- *      Load the Z80_DRIVER_PCM4 sound driver.
+ *      4 channels sample player Z80 driver with envelop control.<br>
+ *      It can mix 4 samples (8 bit signed) at a fixed 16 Khz rate<br>
+ *      and handle volume (16 levels) for each channel.
+ */
+#define Z80_DRIVER_PCM4 (&SND_PCM4_driver)
+/**
+ *  \brief
+ *      Load the PCM4 sound driver.
  *
  *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
-void SND_PCM4_loadDriver(const bool waitReady);
+void SND_PCM4_loadDriver(const Z80DriverBoot boot);
 /**
  *  \brief
- *      Unload the Z80_DRIVER_PCM4 sound driver.
+ *      Unload the PCM4 sound driver.
  *
  *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
  */
