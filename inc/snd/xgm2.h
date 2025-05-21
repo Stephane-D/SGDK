@@ -14,14 +14,26 @@
 #ifndef _XGM2_H_
 #define _XGM2_H_
 
+#include "snd/z80_driver.h"
+#include "snd/sound.h"
 
+extern const Z80Driver XGM2_driver;
+/**
+ *  \brief
+ *      eXtended VGM music player driver version 2.<br>
+ *      This driver takes VGM (or XGM2) file as input to play music.<br>
+ *      It supports 3 PCM channels at either 13.3 Khz or 6.65 Khz and envelop control for both FM and PSG.<br>
+ *      It allows to play SFX through PCM with 16 level of priority.<br>
+ *      The driver supports renforced protection against DMA contention.
+ */
+#define Z80_DRIVER_XGM2 (&XGM2_driver)
 /**
  *  \brief
  *      Load the XGM2 sound driver.
  *
  *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
-void XGM2_loadDriver(bool waitReady);
+void XGM2_loadDriver(const Z80DriverBoot boot);
 /**
  *  \brief
  *      Unload the XGM2 sound driver.

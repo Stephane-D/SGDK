@@ -24,7 +24,6 @@
 
 // allow to access it without "public" share
 extern vu16 VBlankProcess;
-extern s16 currentDriver;
 extern u16 driverFlags;
 
 // specific for the XGM driver
@@ -44,16 +43,15 @@ static u16 xgmWaitMean;
 static void setNextXFrame(u16 num, bool set);
 static void resetLoadCalculation();
 
-// we don't want to share it
-extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
-
 // Z80_DRIVER_XGM
 // XGM driver
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE XGM_loadDriver(const bool waitReady)
+const Z80Driver XGM_driver = {.load = XGM_loadDriver, .unload = XGM_unloadDriver};
+
+void NO_INLINE XGM_loadDriver(const Z80DriverBoot boot)
 {
-    Z80_loadDriverInternal(drv_xgm, sizeof(drv_xgm));
+    boot.loader(drv_xgm, sizeof(drv_xgm));
 
     SYS_disableInts();
 
@@ -72,7 +70,7 @@ void NO_INLINE XGM_loadDriver(const bool waitReady)
     Z80_releaseBus();
 
     // wait driver for being ready
-    if (waitReady)
+    if (boot.waitReady)
     {
         while(!Z80_isDriverReady())
             waitMs(1);
@@ -458,7 +456,7 @@ u16 XGM_getManualSync()
 void XGM_setManualSync(const bool value)
 {
     // nothing to do
-    if (currentDriver != Z80_DRIVER_XGM)
+    if (Z80_getLoadedDriver() != Z80_DRIVER_XGM)
         return;
 
     if (value)
@@ -505,7 +503,7 @@ u32 NO_INLINE XGM_getElapsed()
     u32 result;
 
     // nothing to do (driver should be loaded here)
-    if (currentDriver != Z80_DRIVER_XGM)
+    if (Z80_getLoadedDriver() != Z80_DRIVER_XGM)
         return 0;
 
     SYS_disableInts();
@@ -541,7 +539,7 @@ u32 NO_INLINE XGM_getCPULoad()
     s16 load;
 
     // nothing to do (driver should be loaded here)
-    if (currentDriver != Z80_DRIVER_XGM)
+    if (Z80_getLoadedDriver() != Z80_DRIVER_XGM)
         return 0;
 
     SYS_disableInts();
@@ -644,7 +642,7 @@ static void NO_INLINE setNextXFrame(u16 num, bool set)
 void XGM_nextXFrame(const u16 num)
 {
     // nothing to do (driver should be loaded here)
-    if (currentDriver != Z80_DRIVER_XGM)
+    if (Z80_getLoadedDriver() != Z80_DRIVER_XGM)
         return;
 
     SYS_disableInts();

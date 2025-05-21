@@ -62,6 +62,11 @@ typedef enum
 
 /**
  *  \brief
+ *      NULL Z80 driver.
+ */
+#define Z80_DRIVER_NULL (NULL)
+/**
+ *  \brief
  *      Load the dummy Z80 driver.
  *
  *      Don't use this method directly, use #Z80_loadDriver(..) instead.

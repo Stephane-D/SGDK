@@ -14,16 +14,15 @@
 #include "sys.h"
 
 
-// we don't want to share it
-extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
-
 // Z80_DRIVER_PCM4
 // 4 channels 8 bits signed sample driver with volume support
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE SND_PCM4_loadDriver(const bool waitReady)
+const Z80Driver SND_PCM4_driver = {.load = SND_PCM4_loadDriver, .unload = SND_PCM4_unloadDriver};
+
+void NO_INLINE SND_PCM4_loadDriver(const Z80DriverBoot boot)
 {
-    Z80_loadDriverInternal(drv_pcm4, sizeof(drv_pcm4));
+    boot.loader(drv_pcm4, sizeof(drv_pcm4));
 
     SYS_disableInts();
 
@@ -45,7 +44,7 @@ void NO_INLINE SND_PCM4_loadDriver(const bool waitReady)
     Z80_releaseBus();
 
     // wait driver for being ready
-    if (waitReady)
+    if (boot.waitReady)
     {
         // just wait for it (the function does request Z80 bus if needed)
         while(!Z80_isDriverReady())

@@ -2,6 +2,7 @@
 #include "types.h"
 
 #include "z80_ctrl.h"
+#include "snd/sound.h"
 
 #include "ym2612.h"
 #include "psg.h"
@@ -16,29 +17,14 @@
 #define DRIVER_FLAG_DELAY_DMA    (1 << 0)
 
 
-// we don't want to share it
-extern vu16 VBlankProcess;
-
-u16 currentDriver;
+static const Z80Driver* currentDriver;
 u16 driverFlags;
 u16 busProtectSignalAddress;
 
-
-// we don't want to share them
-extern void SND_NULL_unloadDriver(void);
-extern void SND_PCM_unloadDriver(void);
-extern void SND_DPCM2_unloadDriver(void);
-extern void SND_PCM4_unloadDriver(void);
-extern void XGM_unloadDriver(void);
-extern void XGM2_unloadDriver(void);
-
-extern void SND_NULL_loadDriver(void);
-extern void SND_PCM_loadDriver(const bool waitReady);
-extern void SND_DPCM2_loadDriver(const bool waitReady);
-extern void SND_PCM4_loadDriver(const bool waitReady);
-extern void XGM_loadDriver(const bool waitReady);
-extern void XGM2_loadDriver(const bool waitReady);
-
+static void emptyDriverLoad(const Z80DriverBoot boot)
+{
+    (void)boot;
+}
 
 void NO_INLINE Z80_init()
 {
@@ -48,7 +34,8 @@ void NO_INLINE Z80_init()
     Z80_setBank(0);
 
     // no loaded driver
-    currentDriver = -1;
+    // temporary driver to ensure the NULL driver is not treated as loaded; will be overwritten by Z80_loadDriver
+    currentDriver = &(Z80Driver){emptyDriverLoad, NULL};
     driverFlags = 0;
     busProtectSignalAddress = 0;
 
@@ -215,42 +202,28 @@ void NO_INLINE Z80_download(const u16 from, u8 *to, const u16 size)
 }
 
 
-u16 Z80_getLoadedDriver()
+const Z80Driver* Z80_getLoadedDriver(void)
 {
     return currentDriver;
 }
 
-void Z80_unloadDriver()
+void Z80_unloadDriver(void)
 {
-    switch(currentDriver)
+    if (currentDriver != NULL)
     {
-        case Z80_DRIVER_PCM:
-            SND_PCM_unloadDriver();
-            break;
-
-        case Z80_DRIVER_DPCM2:
-            SND_DPCM2_unloadDriver();
-            break;
-
-        case Z80_DRIVER_PCM4:
-            SND_PCM4_unloadDriver();
-            break;
-
-        case Z80_DRIVER_XGM:
-            XGM_unloadDriver();
-            break;
-
-        case Z80_DRIVER_XGM2:
-            XGM2_unloadDriver();
-            break;
+        if (currentDriver->unload != NULL)
+        {
+            currentDriver->unload();
+        }
     }
+    // else: SND_NULL_unloadDriver
 
     // load NULL driver
     SND_NULL_loadDriver();
     currentDriver = Z80_DRIVER_NULL;
 }
 
-void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
+static void NO_INLINE Z80_loadDriverInternal(const u8* driver, const u16 size)
 {
     SYS_disableInts();
     Z80_requestBus(TRUE);
@@ -262,7 +235,7 @@ void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
     // clear z80 memory
     Z80_clear();
     // upload Z80 driver
-    Z80_upload(0, drv, size);
+    Z80_upload(0, driver, size);
 
     // reset Z80
     Z80_startReset();
@@ -273,50 +246,21 @@ void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
     SYS_enableInts();
 }
 
-void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
-{
-    Z80_unloadDriver();
-    Z80_loadDriverInternal(drv, size);
-
-    // custom driver set
-    currentDriver = Z80_DRIVER_CUSTOM;
-}
-
-void NO_INLINE Z80_loadDriver(const u16 driver, const bool waitReady)
+void NO_INLINE Z80_loadDriver(const Z80Driver* driver, const bool waitReady)
 {
     // already loaded
     if (currentDriver == driver) return;
 
     Z80_unloadDriver();
 
-    switch(driver)
-    {
-        case Z80_DRIVER_NULL:
-            SND_NULL_loadDriver();
-            break;
+    // NULL driver is already loaded on Z80_unloadDriver()
+    if (driver == NULL) return;
 
-        case Z80_DRIVER_PCM:
-            SND_PCM_loadDriver(waitReady);
-            break;
+    const Z80DriverBoot boot = {
+        .waitReady = waitReady,
+        .loader = Z80_loadDriverInternal};
 
-        case Z80_DRIVER_DPCM2:
-            SND_DPCM2_loadDriver(waitReady);
-            break;
-
-        case Z80_DRIVER_PCM4:
-            SND_PCM4_loadDriver(waitReady);
-            break;
-
-        case Z80_DRIVER_XGM:
-            XGM_loadDriver(waitReady);
-            break;
-
-        case Z80_DRIVER_XGM2:
-            XGM2_loadDriver(waitReady);
-            break;
-    }
-
-    // new driver set
+    driver->load(boot);
     currentDriver = driver;
 }
 

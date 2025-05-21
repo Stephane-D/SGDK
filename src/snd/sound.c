@@ -43,4 +43,5 @@ void NO_INLINE SND_NULL_loadDriver()
 void NO_INLINE SND_NULL_unloadDriver()
 {
     // nothing to do here
+    // call in Z80_unloadDriver if unloading logic is added later
 }

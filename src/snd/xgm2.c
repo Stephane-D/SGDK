@@ -201,21 +201,20 @@ static void setFMVolume(const u16 value);
 static void setPSGVolume(const u16 value);
 static void doFade(const u16 fmVolStart, const u16 fmVolEnd, const u16 psgVolStart, const u16 psgVolEnd, const u16 frame, const FadeEndProcess fep);
 
-// we don't want to share it
-extern void Z80_loadDriverInternal(const u8 *drv, const u16 size);
-
 // Z80_DRIVER_XGM2
 // XGM2 driver
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE XGM2_loadDriver(bool waitReady)
+const Z80Driver XGM2_driver = {.load = XGM2_loadDriver, .unload = XGM2_unloadDriver};
+
+void NO_INLINE XGM2_loadDriver(const Z80DriverBoot boot)
 {
-    Z80_loadDriverInternal(drv_xgm2, sizeof(drv_xgm2));
+    boot.loader(drv_xgm2, sizeof(drv_xgm2));
 
     SYS_disableInts();
 
     // wait driver for being ready
-    if (waitReady)
+    if (boot.waitReady)
     {
         // wait driver ready
         while(!Z80_isDriverReady())

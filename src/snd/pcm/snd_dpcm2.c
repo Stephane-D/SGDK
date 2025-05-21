@@ -13,16 +13,15 @@
 #include "sys.h"
 
 
-// we don't want to share it
-extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
-
 // Z80_DRIVER_DPCM2
 // 2 channels 4 bits DPCM sample driver
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE SND_DPCM2_loadDriver(const bool waitReady)
+const Z80Driver SND_DPCM2_driver = {.load = SND_DPCM2_loadDriver, .unload = SND_DPCM2_unloadDriver};
+
+void NO_INLINE SND_DPCM2_loadDriver(const Z80DriverBoot boot)
 {
-    Z80_loadDriverInternal(drv_dpcm2, sizeof(drv_dpcm2));
+    boot.loader(drv_dpcm2, sizeof(drv_dpcm2));
 
     SYS_disableInts();
 
@@ -41,7 +40,7 @@ void NO_INLINE SND_DPCM2_loadDriver(const bool waitReady)
     Z80_releaseBus();
 
     // wait driver for being ready
-    if (waitReady)
+    if (boot.waitReady)
     {
         while(!Z80_isDriverReady())
             waitMs(1);

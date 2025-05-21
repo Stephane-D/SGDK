@@ -12,16 +12,15 @@
 #include "sys.h"
 
 
-// we don't want to share it
-extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
-
 // Z80_DRIVER_PCM
 // single channel 8 bits signed sample driver
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE SND_PCM_loadDriver(const bool waitReady)
+const Z80Driver SND_PCM_driver = {.load = SND_PCM_loadDriver, .unload = SND_PCM_unloadDriver};
+
+void NO_INLINE SND_PCM_loadDriver(const Z80DriverBoot boot)
 {
-    Z80_loadDriverInternal(drv_pcm, sizeof(drv_pcm));
+    boot.loader(drv_pcm, sizeof(drv_pcm));
 
     SYS_disableInts();
 
@@ -40,7 +39,7 @@ void NO_INLINE SND_PCM_loadDriver(const bool waitReady)
     Z80_releaseBus();
 
     // wait driver for being ready
-    if (waitReady)
+    if (boot.waitReady)
     {
         while(!Z80_isDriverReady())
             waitMs(1);
