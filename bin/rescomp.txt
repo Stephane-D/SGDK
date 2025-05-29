@@ -1,4 +1,4 @@
-ResComp 3.95 (March 2025)
+ResComp 3.98 (May 2025)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -27,6 +27,7 @@ Supported resource type
 - TILESET   tileset type resource, contains tiles data which can be used / shared for TILEMAP and MAP resources.
 - TILEMAP   tilemap type resource, contains raw tilemap data. It can be used to draw an image or complete (but small) plane background.
 - MAP       map type resource, optimized to draw large map / level.
+- OBJECTS   objects type resource, contains an array of custom Tiled map Objects, can be used to define almost anything you want to attach to a specific MAP.
 - IMAGE     image type resource, internally contains Palette, Tileset and Tilemap data. It can be used to draw an image or complete (but small)
             plane background.
 - SPRITE    sprite type resource, used to handle sprites with the SGDK Sprite engine.
@@ -274,29 +275,34 @@ As you can see, you can also use your own enumerations in which case you need to
 sure they perfectly match your C enums (be careful about the allocated type size for your enum, default is u32 with GCC).
 
 The Tiled objects has some default attributes that you can use:
-- 'id' is used internally by rescomp and Tiled and not exported as field, but you can define your own custom 'id' field if you want.
+- 'id' define the unique object identifier can be exported in any number format.
+  To enable export of that field you need to add a custom boolean 'exportId' field and set its value to 'true'.
 - 'type' is only used as type filter (see the optional 'type_filter' parameter below) and not exported as field but you can define
   your own custom 'type' field (as an integer) if needed.
 - 'name' can be exported in string format.
   To enable export of that field you need to add a custom boolean 'exportName' field and set its value to 'true'.
+- 'visible' can be exported in boolean format.
+  To enable export of that field you need to add a custom boolean 'exportVisible' field and set its value to 'true'.  
 - 'x' and 'y' define the object position on the map and can be exported in any number format.
   To enable export of these fields, you need to add a custom boolean 'exportPosition' field and set its value to 'true'.
 - 'width' and 'height' (only for shape objects) define the shape dimensionand can be exported in any number format.
   To enable export of these fields, you need to add a custom boolean 'exportSize' field and set its value to 'true'.
-  
+- 'text' (only for text objects) define the text content can be exported in string format.
+  To enable export of these fields, you need to add a custom boolean 'exportText' field and set its value to 'true'.
+    
 Syntax:
 OBJECTS name tmx_file layer_id field_defs [sortby:<field>] [decl_type [type_filter]]
 
     name                name of the output array Objects structure
     tmx_file            path of the input TMX file (TMX Tiled file)
     layer_id            object group/layer name we want to export object from.
-    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     field_defs          name and type of fields we want to export (also define the order of extraction) in <name>:<type> format.
                             Field type can be any of the usual SGDK base type: u8, s8, u16, s16, u32, s32, f16, f32, bool, string, object
                             Some examples of 'field_defs' declaration:
                                 "type:u16;name:string;x:f32;y:f32;tileindex:u32"
                                 "type:u16;power:s8;visible:bool"
                             Note that not found fields are just ignored so you can extract different object types at same time easily.
+    sortby              field name to sort objects by. e.g. "sortby:x" to sort objects by x position.
     decl_type           declaration type for objects (default is "void").
                             By default object array is untyped (void) but you can specify your own type if you want ("Object", "Entity", ...)
     type_filter         define a type filter if we only want to extract Tiled objects of a specific type (see above).
@@ -351,8 +357,8 @@ SPRITE name img_file width height [compression [time [collision [opt_type [opt_l
     name            name of the output SpriteDefinition structure
     img_file        path of the input image file (BMP or PNG image)
                         See the note about image format at the beginning of the file
-    width           width of a single sprite frame in tile (should be < 32)
-    height          height of a single sprite frame in tile (should be < 32)
+    width           width of a single sprite frame in tile (should be < 32), or in pixels (should be a multiple of 8 with 'p' postfix, like 32p or 32P), or number of frames in width (with 'f' postfix, like 4f or 4F)    
+    height          height of a single sprite frame in tile (should be < 32), or in pixels (should be a multiple of 8 with 'p' postfix, like 16p or 16P), or number of frames in height (with 'f' postfix, like 1f or 1F)
     compression     compression type, accepted values:
                        -1 / BEST / AUTO = use best compression
                         0 / NONE        = no compression (default)

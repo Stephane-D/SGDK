@@ -22,8 +22,6 @@
 
 #include "types.h"
 
-#if (MODULE_MEGAWIFI != 0)
-
 /// Hides jsmn API definitions to avoid linking errors
 #define JSMN_STATIC
 #include "ext/mw/jsmn.h"
@@ -117,8 +115,6 @@ int json_key_search(const char *key, const char *json_str,
  * \return 1 if true, 0 if false, less than 0 if token is not a proper boolean.
  ****************************************************************************/
 int json_bool_get(const char *json_str, const jsmntok_t *json_tok, int obj_idx);
-
-#endif // MODULE_MEGAWIFI
 
 #endif /*_JSON_H_*/
 

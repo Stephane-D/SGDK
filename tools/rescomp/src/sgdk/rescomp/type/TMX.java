@@ -17,6 +17,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import sgdk.rescomp.Compiler;
+import sgdk.rescomp.Resource;
+import sgdk.rescomp.resource.Objects;
 import sgdk.rescomp.resource.Tileset;
 import sgdk.rescomp.tool.Util;
 import sgdk.rescomp.type.Basics.Compression;
@@ -55,6 +57,7 @@ public class TMX
     static final String ATTR_FIRSTGID = "firstgid";
     static final String ATTR_ENCODING = "encoding";
     static final String ATTR_VISIBLE = "visible";
+    static final String ATTR_TEXT = "text";
     static final String ATTR_TYPE = "type";
     static final String ATTR_CLASS = "class";
     static final String ATTR_X = "x";
@@ -71,6 +74,9 @@ public class TMX
     static final String ATTR_VALUE_EXPORT_POSITION = "exportposition";
     static final String ATTR_VALUE_EXPORT_TILE_INDEX = "exporttileindex";
     static final String ATTR_VALUE_EXPORT_SIZE = "exportsize";
+    static final String ATTR_VALUE_EXPORT_VISIBLE = "exportvisible";
+    static final String ATTR_VALUE_EXPORT_ID = "exportid";
+    static final String ATTR_VALUE_EXPORT_TEXT = "exporttext";
 
     // keep it lower case
     static final String FIELD_TILE_INDEX = "tileindex";
@@ -696,6 +702,12 @@ public class TMX
         public final String layerName;
         public final List<SObject> objects;
 
+        public static void resolveObjectsReferencesInResourceList(List<Resource> resourcesList)
+        {
+            // Cross-checking all SObjects and resolving object field references
+            Objects.resolveObjectsReferencesInReosurceList(resourcesList);
+        }
+        
         public TMXObjects(String baseId, String file, String layerName, String sortBy, LinkedHashMap<String, SGDKObjectType> fieldDefs, String typeFilter) throws Exception
         {
             if (!FileUtil.exists(file))
@@ -764,7 +776,12 @@ public class TMX
                 final double y = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_Y, 0d);
                 final double w = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_WIDTH, 0d);
                 final double h = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_HEIGHT, 0d);
-
+                final String visible = getAttribute(objectElement, ATTR_VISIBLE, "1");
+                
+                // get text from the built-in text group if it exists (only for text objects)
+                //(this is not the same as the text property)
+                final String text = getText(objectElement);
+                
                 // get all properties
                 final List<Element> propertyElements = getProperties(objectElement, new ArrayList<Element>());
 
@@ -777,8 +794,16 @@ public class TMX
                     final String propertyType = getAttribute(property, ATTR_PROPERTYTYPE, "");
                     final String value = getAttribute(property, ATTR_VALUE, "");
 
+                    
+                    // export id field ?
+                    if (StringUtil.equals(name, ATTR_VALUE_EXPORT_ID))
+                    {
+                        // set to true ? --> add 'id' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                            addField(objectName, tFields, new TField(ATTR_ID, TiledObjectType.INT, Integer.toString(id)));
+                    }                    
                     // export name field ?
-                    if (StringUtil.equals(name, ATTR_VALUE_EXPORT_NAME))
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_NAME))
                     {
                         // set to true ? --> add 'name' field
                         if (StringUtil.equals(value.toLowerCase(), "true"))
@@ -816,6 +841,20 @@ public class TMX
                             addField(objectName, tFields, new TField(FIELD_TILE_INDEX, TiledObjectType.INT, Double.toString(tileIndex)));
                         }
                     }
+                    // export visible field ?
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_VISIBLE))
+                    {
+                        // set to true ? --> add 'visible' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                            addField(objectName, tFields, new TField(ATTR_VISIBLE, TiledObjectType.BOOL, visible));
+                    }       
+                    // export text field ?
+                    else if (StringUtil.equals(name, ATTR_VALUE_EXPORT_TEXT))
+                    {
+                        // set to true ? --> add 'text' field
+                        if (StringUtil.equals(value.toLowerCase(), "true"))
+                            addField(objectName, tFields, new TField(ATTR_TEXT, TiledObjectType.STRING, text));
+                    }                         
                     // empty type ?
                     else if (StringUtil.isEmpty(type))
                     {
@@ -829,13 +868,14 @@ public class TMX
                     // bool type ?
                     else if (TiledObjectType.fromString(type) == TiledObjectType.BOOL)   
                         // replace value "true" by "1" or "false" by "0" and add field
-                        addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), StringUtil.equals(value.toLowerCase(), "true") ? "1":"0"));                          
+                        addField(objectName, tFields, new TField(name, TiledObjectType.BOOL, StringUtil.equals(value.toLowerCase(), "true") ? "1":"0"));
                     else
                         addField(objectName, tFields, new TField(name, TiledObjectType.fromString(type), value));
                 }
 
+
                 // create object
-                final SObject object = new SObject(id, baseObjectName, objectType, x, y);
+                final SObject object = new SObject(file, id, baseObjectName, objectType, x, y);
                 // iterate over field definitions (allow good ordering of fields)
                 for (String fieldName : fieldDefs.keySet())
                 {
@@ -903,12 +943,23 @@ public class TMX
             return result;
         }
 
+        private String getText(Element objectElement)
+        {
+            final Element text = XMLUtil.getElement(objectElement, ID_TEXT);
+
+            // no text
+            if (text == null)
+                return "";
+
+            return XMLUtil.getValue(text, "");
+        }
+                
         @Override
         public String toString()
         {
             return "Object layer=" + layerName + " number of object=" + objects.size();
         }
-
+                
         static class ObjectComparator implements Comparator<SObject>
         {
             String sortBy;
@@ -976,7 +1027,7 @@ public class TMX
 
         return result;
     }
-
+    
     static void checkAttributValue(Element element, String attrName, String value, String def, String file) throws Exception
     {
         final String attrValue = getAttribute(element, attrName, def).toLowerCase();

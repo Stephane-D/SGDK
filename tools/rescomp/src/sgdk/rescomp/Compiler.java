@@ -50,6 +50,7 @@ import sgdk.rescomp.resource.internal.SpriteAnimation;
 import sgdk.rescomp.resource.internal.SpriteFrame;
 import sgdk.rescomp.resource.internal.VDPSprite;
 import sgdk.rescomp.type.Basics.Compression;
+import sgdk.rescomp.type.TMX;
 import sgdk.tool.FileUtil;
 import sgdk.tool.StringUtil;
 
@@ -131,7 +132,7 @@ public class Compiler
         int align = -1;
         boolean group = true;
         boolean near = false;
-
+        
         // process input resource file line by line
         for (String l : lines)
         {
@@ -189,6 +190,9 @@ public class Compiler
             }
         }
 
+        // Cross-checking all SObjects and resolving object field references
+        TMX.TMXObjects.resolveObjectsReferencesInResourceList(resourcesList);
+     
         // separate output
         System.out.println();
 

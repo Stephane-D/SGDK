@@ -44,14 +44,17 @@
 #ifndef _LSD_H_
 #define _LSD_H_
 
-#if (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 0)
-	#include "ext/mw/16c550.h"
-#elif (MODULE_MEGAWIFI == 1 && MODULE_EVERDRIVE == 1)
+#include "config.h"
+#include "types.h"
+
+#if (MODULE_EVERDRIVE != 0)
+	// use the everdrive uart 
 	#include "ext/mw/ssf.h"
+#else
+	// use the default 16c550 uart
+	#include "ext/mw/16c550.h"
 #endif
 #include "ext/mw/mw-msg.h"
-
-#if (MODULE_MEGAWIFI == 1)
 
 /// LSD frame overhead in bytes
 #define LSD_OVERHEAD		4
@@ -179,8 +182,7 @@ void lsd_process(void);
  ****************************************************************************/
 void lsd_line_sync(void);
 
-#endif // MODULE_MEGAWIFI
+/** \} */
 
 #endif //_LSD_H_
 
-/** \} */

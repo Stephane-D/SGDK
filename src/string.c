@@ -41,47 +41,43 @@ static u16 skip_atoi(const char **s);
 #if (ENABLE_NEWLIB == 0)
 u16 strlen(const char *str)
 {
-    const char *src;
+    const char *src = str;
+    u16 result = 0;
 
-    src = str;
-    while (*src++);
+    while (*src++) result++;
 
-    return (src - str) - 1;
+    return result;
 }
 
 u16 strnlen(const char *str, u16 maxlen)
 {
-    const char *src;
+    const char *src = str;
+    u16 i = maxlen;
 
-    for (src = str; maxlen-- && *src != '\0'; ++src)
-        /* nothing */;
+    while(*src++ && i) i--;
 
-    return src - str;
+    return maxlen - i;
 }
 
-s16 strcmp(const char *str1, const char *str2)
+s8 strcmp(const char *str1, const char *str2)
 {
     const u8 *p1 = (const u8*) str1;
     const u8 *p2 = (const u8*) str2;
-    u8 c1, c2;
 
-    do
+    while(*p1 && (*p1 == *p2))
     {
-        c1 = *p1++;
-        c2 = *p2++;
+        p1++;
+        p2++;
     }
-    while (c1 && (c1 == c2));
 
-    return c1 - c2;
+    return *p1 - *p2;
 }
 
 char* strcpy(char *to, const char *from)
 {
-    const char *src;
-    char *dst;
+    const char *src = from;
+    char *dst = to;
 
-    src = from;
-    dst = to;
     while ((*dst++ = *src++));
 
     return to;
@@ -89,17 +85,18 @@ char* strcpy(char *to, const char *from)
 
 char* strncpy(char *to, const char *from, u16 len)
 {
-    const char *src;
-    char *dst;
-    u16 i;
+    const char *src = from;
+    char *dst = to;
+    u16 i = len;
 
-    src = from;
-    dst = to;
-    i = 0;
-    while ((i++ < len) && (*dst++ = *src++));
+    while (i && *src)
+    {
+        *dst++ = *src++;
+        i--;
+    }
 
     // end string by null character
-    if (i > len) *dst = 0;
+    *dst = 0;
 
     return to;
 }
@@ -120,17 +117,22 @@ char* strncpy(char *to, const char *from, u16 len)
 
 char* strcat(char *to, const char *from)
 {
-    const char *src;
-    char *dst;
+    const char *src = from;
+    char *dst = to;
 
-    src = from;
-    dst = to;
-    while (*dst++);
-
-    --dst;
+    while (*dst) dst++;
     while ((*dst++ = *src++));
 
     return to;
+}
+
+char* strchr(const char *from, char c)
+{
+    const char *src = from;
+
+	while (*src && (*src != c)) src++;
+
+    return (*src == c) ? (char*)src : NULL;
 }
 #endif  // ENABLE_NEWLIB
 

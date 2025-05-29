@@ -15,12 +15,6 @@
 #include "ext/mw/megawifi.h"
 #include "ext/mw/gamejolt.h"
 
-// I miss having stding.h sooooooo much
-#ifndef INT32_MAX
-// 2^31 - 1
-#define INT32_MAX 2147483647
-#endif
-
 // Macro to fill optional parameters for requests
 #define FILL_OPTION(key, value, index, item) \
 	if (item) { \
@@ -52,30 +46,6 @@ struct {
 	enum gj_error error;
 } gj = {};
 
-// memcmp not available on SGDK
-static int8_t _memcmp(const char *m1, const char *m2, int16_t len)
-{
-	int8_t dif = 0;
-	for (int16_t i = 0; i < len && !dif; i++) {
-		dif = m1[i] - m2[i];
-	}
-
-	return dif;
-}
-
-// strchr not available on SGDK
-static char *_strchr(const char *s, int c)
-{
-	while (*s) {
-		if (*s == (char)c) {
-			return (char*)s;
-		}
-		s++;
-	}
-
-	return NULL;
-}
-
 // If there is a match, *value is set to the match, and the pointer to the next
 // line is returned. If the match is on last line, NULL is returned. If there
 // is no match, or there is an error, *value is set to NULL and NULL is
@@ -89,13 +59,13 @@ static char *val_get(char *line, const char *key, char **value)
 	if (!line) {
 		goto out;
 	}
-	if (_memcmp(line, key, len) || ':' != line[len] ||
+	if (memcmp(line, key, len) || ':' != line[len] ||
 			'"' != line[len + 1]) {
 		goto out;
 	}
 
 	val = line + len + 2;
-	endval = _strchr(val, '"');
+	endval = strchr(val, '"');
 	if (!endval) {
 		val = NULL;
 		goto out;
@@ -219,7 +189,7 @@ char *gj_request(const char **path, uint8_t num_paths, const char **key,
 	}
 	// If chunked response, limit to the buffer length minus 1
 	// character for proper string termination
-	if (INT32_MAX == *out_len) {
+	if (S32_MAX == *out_len) {
 		*out_len = gj.buf_len - 1U;
 	}
 
@@ -556,7 +526,7 @@ char *gj_data_store_keys_fetch(const char *pattern, bool user_store)
 		return NULL;
 	}
 	// On empty list, "keys" is returned instead of a "key" array.
-	if (0 == _memcmp(result, "keys:", 5)) {
+	if (0 == memcmp(result, "keys:", 5)) {
 		*result = '\0';
 	}
 	return result;
