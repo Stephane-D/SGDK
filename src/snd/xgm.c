@@ -51,7 +51,7 @@ extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 // XGM driver
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE XGM_loadDriver(const bool waitReady)
+NO_INLINE void XGM_loadDriver(const bool waitReady)
 {
     Z80_loadDriverInternal(drv_xgm, sizeof(drv_xgm));
 
@@ -91,7 +91,7 @@ void NO_INLINE XGM_loadDriver(const bool waitReady)
     SYS_enableInts();
 }
 
-void NO_INLINE XGM_unloadDriver(void)
+NO_INLINE void XGM_unloadDriver(void)
 {
     // remove XGM vblank / vint task
     VBlankProcess &= ~PROCESS_XGM_TASK;
@@ -100,7 +100,7 @@ void NO_INLINE XGM_unloadDriver(void)
 }
 
 
-bool NO_INLINE XGM_isPlaying(void)
+NO_INLINE bool XGM_isPlaying(void)
 {
     vu8 *pb;
     u8 ret;
@@ -124,7 +124,7 @@ bool NO_INLINE XGM_isPlaying(void)
     return ret;
 }
 
-void NO_INLINE XGM_startPlay(const u8 *song)
+NO_INLINE void XGM_startPlay(const u8 *song)
 {
     u8 ids[0x100-4];
     u32 addr;
@@ -196,7 +196,7 @@ void XGM_startPlay_FAR(const u8 *song, u32 size)
     XGM_startPlay(FAR_SAFE(song, size));
 }
 
-void NO_INLINE XGM_stopPlay()
+NO_INLINE void XGM_stopPlay()
 {
     vu8 *pb;
     u32 addr;
@@ -233,7 +233,7 @@ void NO_INLINE XGM_stopPlay()
     SYS_enableInts();
 }
 
-void NO_INLINE XGM_pausePlay()
+NO_INLINE void XGM_pausePlay()
 {
     vu8 *pb;
 
@@ -257,7 +257,7 @@ void NO_INLINE XGM_pausePlay()
     SYS_enableInts();
 }
 
-void NO_INLINE XGM_resumePlay()
+NO_INLINE void XGM_resumePlay()
 {
     vu8 *pb;
 
@@ -284,7 +284,7 @@ void NO_INLINE XGM_resumePlay()
     SYS_enableInts();
 }
 
-u8 NO_INLINE XGM_isPlayingPCM(const u16 channel_mask)
+NO_INLINE u8 XGM_isPlayingPCM(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
@@ -308,7 +308,7 @@ u8 NO_INLINE XGM_isPlayingPCM(const u16 channel_mask)
     return ret;
 }
 
-void NO_INLINE XGM_setPCM(const u8 id, const u8 *sample, const u32 len)
+NO_INLINE void XGM_setPCM(const u8 id, const u8 *sample, const u32 len)
 {
     SYS_disableInts();
     bool busTaken = Z80_isBusTaken();
@@ -336,7 +336,7 @@ void XGM_setPCMFast(const u8 id, const u8 *sample, const u32 len)
     pb[0x03] = len >> 16;
 }
 
-void NO_INLINE XGM_setPCM_FAR(const u8 id, const u8 *sample, const u32 len)
+NO_INLINE void XGM_setPCM_FAR(const u8 id, const u8 *sample, const u32 len)
 {
     SYS_disableInts();
     bool busTaken = Z80_isBusTaken();
@@ -366,7 +366,7 @@ void XGM_setPCMFast_FAR(const u8 id, const u8 *sample, const u32 len)
     pb[0x03] = len >> 16;
 }
 
-void NO_INLINE XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMChannel channel)
+NO_INLINE void XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMChannel channel)
 {
     vu8 *pb;
 
@@ -394,7 +394,7 @@ void NO_INLINE XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMCh
     SYS_enableInts();
 }
 
-void NO_INLINE XGM_stopPlayPCM(const SoundPCMChannel channel)
+NO_INLINE void XGM_stopPlayPCM(const SoundPCMChannel channel)
 {
     vu8 *pb;
 
@@ -422,7 +422,7 @@ void NO_INLINE XGM_stopPlayPCM(const SoundPCMChannel channel)
     SYS_enableInts();
 }
 
-void NO_INLINE XGM_setLoopNumber(s8 value)
+NO_INLINE void XGM_setLoopNumber(s8 value)
 {
     vu8 *pb;
 
@@ -497,7 +497,7 @@ void XGM_setMusicTempo(const u16 value)
     else xgmTempoDef = 60;
 }
 
-u32 NO_INLINE XGM_getElapsed()
+NO_INLINE u32 XGM_getElapsed()
 {
     vu8 *pb;
     u8 *dst;
@@ -532,7 +532,7 @@ u32 NO_INLINE XGM_getElapsed()
     return result;
 }
 
-u32 NO_INLINE XGM_getCPULoad()
+NO_INLINE u32 XGM_getCPULoad()
 {
     vu8 *pb;
     u16 idle;
@@ -602,7 +602,7 @@ static void resetLoadCalculation()
     xgmWaitMean = 0;
 }
 
-static void NO_INLINE setNextXFrame(u16 num, bool set)
+static NO_INLINE void setNextXFrame(u16 num, bool set)
 {
     vu16 *pw_bus;
     vu16 *pw_reset;
@@ -659,7 +659,7 @@ void XGM_nextXFrame(const u16 num)
 }
 
 // VInt processing for XGM driver
-void NO_INLINE XGM_doVBlankProcess()
+NO_INLINE void XGM_doVBlankProcess()
 {
     s16 cnt = xgmTempoCnt;
     u16 step = xgmTempoDef;

@@ -49,7 +49,7 @@ void DMA_init()
     DMA_initEx(0, -1, 0);
 }
 
-void NO_INLINE DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
+NO_INLINE void DMA_initEx(u16 size, u16 capacity, u16 bufferSize)
 {
     // -1/65535 means no limit
     maxTransferPerFrame = capacity;
@@ -451,7 +451,7 @@ bool DMA_queueDma(u8 location, void* from, u16 to, u16 len, u16 step)
     return DMA_queueDmaFast(location, from, to, newLen, step);
 }
 
-bool NO_INLINE DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
+NO_INLINE bool DMA_queueDmaFast(u8 location, void* from, u16 to, u16 len, u16 step)
 {
     u32 fromAddr;
     DMAOpInfo *info;
@@ -563,7 +563,7 @@ void DMA_doDma(u8 location, void* from, u16 to, u16 len, s16 step)
     DMA_doDmaFast(location, from, to, newLen, step);
 }
 
-void NO_INLINE DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
+NO_INLINE void DMA_doDmaFast(u8 location, void* from, u16 to, u16 len, s16 step)
 {
 #if (DMA_DISABLED != 0)
     // DMA disabled --> replace with software copy
@@ -660,7 +660,7 @@ void DMA_doCPUCopy(u8 location, void* from, u16 to, u16 len, s16 step)
     DMA_doCPUCopyDirect(cmd, from, len, step);
 }
 
-void NO_INLINE DMA_doCPUCopyDirect(u32 cmd, void* from, u16 len, s16 step)
+NO_INLINE void DMA_doCPUCopyDirect(u32 cmd, void* from, u16 len, s16 step)
 {
     vu32 *plctrl;
     vu16 *pwdata;

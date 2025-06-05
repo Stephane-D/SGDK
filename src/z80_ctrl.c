@@ -40,7 +40,7 @@ extern void XGM_loadDriver(const bool waitReady);
 extern void XGM2_loadDriver(const bool waitReady);
 
 
-void NO_INLINE Z80_init()
+NO_INLINE void Z80_init()
 {
     // request Z80 bus
     Z80_requestBus(TRUE);
@@ -164,7 +164,7 @@ void Z80_write(const u16 addr, const u8 value)
 }
 
 
-void NO_INLINE Z80_clear()
+NO_INLINE void Z80_clear()
 {
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
@@ -180,7 +180,7 @@ void NO_INLINE Z80_clear()
     SYS_enableInts();
 }
 
-void NO_INLINE Z80_upload(const u16 to, const u8 *from, const u16 size)
+NO_INLINE void Z80_upload(const u16 to, const u8 *from, const u16 size)
 {
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
@@ -197,7 +197,7 @@ void NO_INLINE Z80_upload(const u16 to, const u8 *from, const u16 size)
     SYS_enableInts();
 }
 
-void NO_INLINE Z80_download(const u16 from, u8 *to, const u16 size)
+NO_INLINE void Z80_download(const u16 from, u8 *to, const u16 size)
 {
     SYS_disableInts();
     bool busTaken = Z80_getAndRequestBus(TRUE);
@@ -250,7 +250,7 @@ void Z80_unloadDriver()
     currentDriver = Z80_DRIVER_NULL;
 }
 
-void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
+NO_INLINE void Z80_loadDriverInternal(const u8 *drv, u16 size)
 {
     SYS_disableInts();
     Z80_requestBus(TRUE);
@@ -273,7 +273,7 @@ void NO_INLINE Z80_loadDriverInternal(const u8 *drv, u16 size)
     SYS_enableInts();
 }
 
-void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
+NO_INLINE void Z80_loadCustomDriver(const u8 *drv, u16 size)
 {
     Z80_unloadDriver();
     Z80_loadDriverInternal(drv, size);
@@ -282,7 +282,7 @@ void NO_INLINE Z80_loadCustomDriver(const u8 *drv, u16 size)
     currentDriver = Z80_DRIVER_CUSTOM;
 }
 
-void NO_INLINE Z80_loadDriver(const u16 driver, const bool waitReady)
+NO_INLINE void Z80_loadDriver(const u16 driver, const bool waitReady)
 {
     // already loaded
     if (currentDriver == driver) return;

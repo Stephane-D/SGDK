@@ -210,7 +210,7 @@ void MAP_release(Map* map)
 }
 
 
-void NO_INLINE MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
+NO_INLINE void MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw)
 {
     bool redraw = forceRedraw || map->firstUpdate;
 
