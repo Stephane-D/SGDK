@@ -619,9 +619,46 @@ void SPR_disableVDPSpriteChecking();
  *      Defragment allocated VRAM for sprites, that can help when sprite allocation fail (SPR_addSprite(..) or SPR_addSpriteEx(..) return <i>NULL</i>).
  */
 void SPR_defragVRAM(void);
+
 /**
  *  \brief
- *      Load all frames of SpriteDefinition (using DMA) at specified VRAM tile index and return the indexes table.<br>
+ *      Load all frames of SpriteDefinition using DMA at specified VRAM tile index and return the indexes table.<br>
+ *      <b>WARNING: This function should be call at init/loading time as it can be quite long (several frames)</b>
+ *
+ *  \param sprDef
+ *      the SpriteDefinition we want to load frame data in VRAM.
+ *  \param index
+ *      the tile position in VRAM where we will upload all sprite frame tiles data.
+ *  \param totalNumTile
+ *      if not NULL then the function will store here the total number of tile used to load all animation frames.
+  *  \param tm
+ *      Transfer method to upload sprite frame data.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY<br>
+*
+ *   Load all frames of spriteDef at specified VRAM tile index and return the indexes table.<br>
+ *   The returned index table is a dynamically allocated 2D table[anim][frame] so you need to release it using #MEM_free(..)
+ *   when you don't need the table anymore.<br>
+ *   You can use the frame change callback (see #SPR_setFrameChangeCallback(..)) to automatically update the VRAM index using the indexes table:<br>
+ *   <code>frameIndexes = SPR_loadAllFrames(sprite->definition, ind);<br>
+ *   SPR_setFrameChangeCallback(sprite, &frameChanged);<br>
+ *   ....<br>
+ *   void frameChanged(Sprite* sprite)<br>
+ *   {<br>
+ *       u16 tileIndex = frameIndexes[sprite->animInd][sprite->frameInd];<br>
+ *       SPR_setVRAMTileIndex(sprite, tileIndex);<br>
+ *   }</code>
+ *
+ *  \return the 2D indexes table or NULL if there is not enough memory to allocate the table.
+ *  \see SPR_setFrameChangeCallback(...);
+ */
+u16** SPR_loadAllFramesEx(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile, TransferMethod tm);
+/**
+ *  \brief
+ *      Same as all frames of SpriteDefinition at specified VRAM tile index and return the indexes table.<br>
  *      <b>WARNING: This function should be call at init/loading time as it can be quite long (several frames)</b>
  *
  *  \param sprDef
@@ -648,6 +685,45 @@ void SPR_defragVRAM(void);
  *  \see SPR_setFrameChangeCallback(...);
  */
 u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile);
+/**
+ *  \brief
+ *      Same as #SPR_loadAllFrames(..) but only computes the indexes table without actually loading the Sprite frame data to VRAM (see #SPR_loadAllTiles(..) for that).
+ *
+ *  \param sprDef
+ *      the SpriteDefinition we want to compute the indexes table.
+ *  \param index
+ *      the tile position in VRAM where we want to upload all sprite frame data (note that VRAM data upload won't be done here).
+ *  \param totalNumTile
+ *      if not NULL then the function will store here the total number of tile used to load all animation frames.
+ *
+ *  \return the 2D indexes table or NULL if there is not enough memory to allocate the table.
+ *  \see SPR_loadAllFrames(...)
+ *  \see SPR_loadAllTiles(...)
+ */
+u16** SPR_loadAllIndexes(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile);
+/**
+ *  \brief
+ *      Same as #SPR_loadAllFrames(..) but only perform the Sprite tile data upload process, SPR_loadAllIndexes(..) should be called first to compute the indexes table.
+ *
+ *  \param sprDef
+ *      the SpriteDefinition we want to load frame data in VRAM.
+ *  \param index
+ *      the tile position in VRAM where we will upload all sprite frame tiles data.
+ *  \param index
+ *      the 2D indexes table providing the tile index position in VRAM for each sprite frame (previously build using #SPR_loadAllIndexes(..) method).
+ *  \param tm
+ *      Transfer method to upload sprite frame data.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY<br>
+ *
+ *  \return the number of tile uploaded to VRAM.
+ *  \see SPR_loadAllFrames(...)
+ *  \see SPR_loadAllIndexes(...)
+ */
+u16 SPR_loadAllTiles(const SpriteDefinition* sprDef, u16 index, u16** indexes, const TransferMethod tm);
 
 /**
  *  \brief
