@@ -120,7 +120,7 @@ static u32 profil_time[20];
 #endif
 
 
-void NO_INLINE SPR_initEx(u16 vramSize)
+NO_INLINE void SPR_initEx(u16 vramSize)
 {
     u16 index;
     u16 size;
@@ -157,7 +157,7 @@ void SPR_init()
     SPR_initEx(420);
 }
 
-void NO_INLINE SPR_end()
+NO_INLINE void SPR_end()
 {
     if (SPR_isInitialized())
     {
@@ -536,7 +536,7 @@ u16 SPR_getNumActiveSprite()
     return POOL_getNumAllocated(spritesPool);
 }
 
-void NO_INLINE SPR_defragVRAM()
+NO_INLINE void SPR_defragVRAM()
 {
     START_PROFIL
 
@@ -606,7 +606,7 @@ static u16 getTilesetIndex(TileSet** tilesets, u16* indexes, TileSet* tileset, u
     return index;
 }
 
-u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
+NO_INLINE u16** SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16* totalNumTile)
 {
     u16 numFrameTot = 0;
     u16 numTileTot = 0;
@@ -698,7 +698,7 @@ u16** NO_INLINE SPR_loadAllFrames(const SpriteDefinition* sprDef, u16 index, u16
 }
 
 
-bool NO_INLINE SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
+NO_INLINE bool SPR_setDefinition(Sprite* sprite, const SpriteDefinition* spriteDef)
 {
     START_PROFIL
 
@@ -1547,7 +1547,7 @@ void SPR_clear()
     END_PROFIL(PROFIL_CLEAR)
 }
 
-void NO_INLINE SPR_update()
+NO_INLINE void SPR_update()
 {
     START_PROFIL
 

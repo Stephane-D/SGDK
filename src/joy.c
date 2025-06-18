@@ -56,7 +56,7 @@ void JOY_init()
     JOY_reset();
 }
 
-void NO_INLINE JOY_reset()
+NO_INLINE void JOY_reset()
 {
     vu8 *pb;
     u8 a, b;
@@ -313,7 +313,7 @@ static void externalIntCB()
 }
 
 
-void NO_INLINE JOY_setSupport(u16 port, u16 support)
+NO_INLINE void JOY_setSupport(u16 port, u16 support)
 {
     Z80_STATE_DECL
 
@@ -1245,7 +1245,7 @@ static u16 readTrackball(u16 port)
 }
 
 
-void NO_INLINE JOY_update()
+NO_INLINE void JOY_update()
 {
     u16 support;
     u16 val;

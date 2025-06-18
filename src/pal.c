@@ -287,7 +287,7 @@ void PAL_setPalette(u16 numPal, const u16* pal, TransferMethod tm)
 }
 
 
-bool NO_INLINE PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame)
+NO_INLINE bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16* palDst, u16 numFrame)
 {
     // can't do a fade on 0 frame !
     if (numFrame == 0) return FALSE;
@@ -339,7 +339,7 @@ bool NO_INLINE PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16
     return TRUE;
 }
 
-bool NO_INLINE PAL_doFadeStep(void)
+NO_INLINE bool PAL_doFadeStep(void)
 {
     // fading is done? --> exit
     if (fadeCounter <= 0)

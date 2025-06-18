@@ -17,7 +17,7 @@
 // dummy sound driver, Z80 waiting in an idle loop
 //////////////////////////////////////////////////
 
-void NO_INLINE SND_NULL_loadDriver()
+NO_INLINE void SND_NULL_loadDriver()
 {
     SYS_disableInts();
     Z80_requestBus(TRUE);
@@ -40,7 +40,7 @@ void NO_INLINE SND_NULL_loadDriver()
     SYS_enableInts();
 }
 
-void NO_INLINE SND_NULL_unloadDriver()
+NO_INLINE void SND_NULL_unloadDriver()
 {
     // nothing to do here
 }

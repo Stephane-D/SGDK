@@ -248,14 +248,30 @@ NO_INLINE void* MEM_alloc(u16 size)
     if (size == 0)
         return 0;
 
-    u16* p;
+    u16* p = free;
     // 2 bytes aligned
     u16 adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
 
-    if (adjsize > *free)
+    // current free block size is not big enough ?
+    if (adjsize > *p)
     {
-        p = pack(adjsize);
-        // no enough memory
+        // go to next block
+        p += *p >> 1;
+        // bypass used blocks
+        while(*p & USED) p += *p >> 1;
+
+        // find the first big enough free block
+        while (*p && (adjsize > *p))
+        {
+            // next block
+            p += *p >> 1;
+            // bypass used blocks
+            while(*p & USED) p += *p >> 1;
+        }
+        
+        // reached end of heap ? --> try to pack memory
+        if (*p == 0) p = pack(adjsize);
+        // not enough memory
         if (p == NULL)
         {
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
@@ -268,7 +284,6 @@ NO_INLINE void* MEM_alloc(u16 size)
             return NULL;
         }
 
-        free = p;
     }
     // at this point we can allocate memory
     else
@@ -278,13 +293,14 @@ NO_INLINE void* MEM_alloc(u16 size)
         {
             MEM_pack();
 
+            p = free;
             // find the first big enough free block if needed
-            while (adjsize > *free)
+            while (adjsize > *p)
             {
                 // next block
-                free += *free >> 1;
+                p += *p >> 1;
                 // bypass used blocks
-                while(*free & USED) free += *free >> 1;
+                while(*p & USED) p += *p >> 1;
             }
         }
 
@@ -292,7 +308,7 @@ NO_INLINE void* MEM_alloc(u16 size)
     }
 
     // set free to next free block
-    free += adjsize >> 1;
+    free = p + (adjsize >> 1);
 
     // get remaining (old - allocated)
     u16 remaining = *p - adjsize;

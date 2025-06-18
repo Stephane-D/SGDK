@@ -21,7 +21,7 @@ extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 // 4 channels 8 bits signed sample driver with volume support
 ///////////////////////////////////////////////////////////////
 
-void NO_INLINE SND_PCM4_loadDriver(const bool waitReady)
+NO_INLINE void SND_PCM4_loadDriver(const bool waitReady)
 {
     Z80_loadDriverInternal(drv_pcm4, sizeof(drv_pcm4));
 
@@ -55,13 +55,13 @@ void NO_INLINE SND_PCM4_loadDriver(const bool waitReady)
     SYS_enableInts();
 }
 
-void NO_INLINE SND_PCM4_unloadDriver(void)
+NO_INLINE void SND_PCM4_unloadDriver(void)
 {
     // nothing to do here
 }
 
 
-bool NO_INLINE SND_PCM4_isPlaying(const u16 channel_mask)
+NO_INLINE bool SND_PCM4_isPlaying(const u16 channel_mask)
 {
     vu8 *pb;
     u8 ret;
@@ -81,7 +81,7 @@ bool NO_INLINE SND_PCM4_isPlaying(const u16 channel_mask)
     return ret;
 }
 
-void NO_INLINE SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 loop)
+NO_INLINE void SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 loop)
 {
     vu8 *pb;
     u8 status;
@@ -138,7 +138,7 @@ void NO_INLINE SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPC
     Z80_releaseBus();
 }
 
-void NO_INLINE SND_PCM4_stopPlay(const SoundPCMChannel channel)
+NO_INLINE void SND_PCM4_stopPlay(const SoundPCMChannel channel)
 {
     vu8 *pb;
     u32 addr;
@@ -168,7 +168,7 @@ void NO_INLINE SND_PCM4_stopPlay(const SoundPCMChannel channel)
     Z80_releaseBus();
 }
 
-void NO_INLINE SND_PCM4_setVolume(const SoundPCMChannel channel, const u8 volume)
+NO_INLINE void SND_PCM4_setVolume(const SoundPCMChannel channel, const u8 volume)
 {
     vu8 *pb;
 
@@ -185,7 +185,7 @@ void NO_INLINE SND_PCM4_setVolume(const SoundPCMChannel channel, const u8 volume
     Z80_releaseBus();
 }
 
-u8 NO_INLINE SND_PCM4_getVolume(const SoundPCMChannel channel)
+NO_INLINE u8 SND_PCM4_getVolume(const SoundPCMChannel channel)
 {
     vu8 *pb;
     u8 volume;

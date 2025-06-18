@@ -62,7 +62,7 @@ u16 windowWidthSft;
 u16 lastVCnt;
 
 
-void NO_INLINE VDP_init()
+NO_INLINE void VDP_init()
 {
     vu16 *pw;
     u16 i;
@@ -131,7 +131,7 @@ void NO_INLINE VDP_init()
 }
 
 
-void NO_INLINE VDP_resetScreen()
+NO_INLINE void VDP_resetScreen()
 {
     u16 i;
     bool enable = VDP_isEnable();
@@ -415,7 +415,7 @@ u16 VDP_getPlaneHeight()
     return planeHeight;
 }
 
-void NO_INLINE VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
+NO_INLINE void VDP_setPlaneSize(u16 w, u16 h, bool setupVram)
 {
     vu16 *pw;
     u16 v = 0;
@@ -850,7 +850,7 @@ void VDP_waitFIFOEmpty()
 }
 
 
-bool NO_INLINE VDP_waitVInt()
+NO_INLINE bool VDP_waitVInt()
 {
     // in VInt --> return
     if (SYS_isInVInt()) return FALSE;
@@ -884,7 +884,7 @@ bool NO_INLINE VDP_waitVInt()
 }
 
 
-bool NO_INLINE VDP_waitVBlank(bool forceNext)
+NO_INLINE bool VDP_waitVBlank(bool forceNext)
 {
     vu16 *pw = (u16 *) VDP_CTRL_PORT;
 
