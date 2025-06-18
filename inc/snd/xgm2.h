@@ -18,17 +18,8 @@
 /**
  *  \brief
  *      Load the XGM2 sound driver.
- *
- *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
 void XGM2_loadDriver(bool waitReady);
-/**
- *  \brief
- *      Unload the XGM2 sound driver.
- *
- *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
- */
-void XGM2_unloadDriver(void);
 
 /**
  * \brief

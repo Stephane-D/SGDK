@@ -12,7 +12,8 @@
 #include "sys.h"
 
 
-// we don't want to share it
+// we don't want to share them
+extern s16 currentDriver;
 extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 
 // Z80_DRIVER_PCM
@@ -21,6 +22,9 @@ extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 
 NO_INLINE void SND_PCM_loadDriver(const bool waitReady)
 {
+    // already loaded
+    if (currentDriver == Z80_DRIVER_PCM) return;
+
     Z80_loadDriverInternal(drv_pcm, sizeof(drv_pcm));
 
     SYS_disableInts();
@@ -47,6 +51,9 @@ NO_INLINE void SND_PCM_loadDriver(const bool waitReady)
     }
 
     SYS_enableInts();
+
+    // driver loaded
+    currentDriver = Z80_DRIVER_PCM;
 }
 
 NO_INLINE void SND_PCM_unloadDriver(void)
@@ -60,7 +67,7 @@ NO_INLINE bool SND_PCM_isPlaying(void)
     u8 ret;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
+    SND_PCM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -80,7 +87,7 @@ NO_INLINE void SND_PCM_startPlay(const u8 *sample, const u32 len, const SoundPcm
     u32 addr;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
+    SND_PCM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -120,7 +127,7 @@ NO_INLINE void SND_PCM_stopPlay(void)
     u32 addr;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM, TRUE);
+    SND_PCM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 

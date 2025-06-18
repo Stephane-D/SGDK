@@ -58,10 +58,8 @@ extern u16 lastVCnt;
 
 // extern library callback function (we don't want to share them)
 extern void BMP_doVBlankProcess(void);
-extern void XGM_doVBlankProcess(void);
 extern bool MAP_doVBlankProcess(void);
 extern bool VDP_doVBlankScrollProcess(void);
-extern bool XGM2_doVBlankFadeProcess(void);
 
 
 // we don't want to share that method
@@ -106,7 +104,7 @@ __attribute__((externally_visible)) VoidCallback *intCB;
 // user VBlank callbacks
 VoidCallback *vblankCB;
 
-__attribute__((externally_visible)) vu16 VBlankProcess;
+__attribute__((externally_visible)) u16 VBlankProcess;
 __attribute__((externally_visible)) vu16 intTrace;
 
 // need to be accessed from external
@@ -411,32 +409,13 @@ NO_INLINE void _errorexception_callback()
 #endif /* LEGACY_ERROR_HANDLER */
 
 // level interrupt default callback
-NO_INLINE void _int_callback()
+static void _int_callback()
 {
     //
 }
 
-
-// Dummy V-Blank Callback
-NO_INLINE void _vblank_dummy_callback()
-{
-    //
-}
-
-// Dummy V-Int Callback
-NO_INLINE void _vint_dummy_callback()
-{
-    //
-}
-
-// Dummy H-Int Callback
-HINTERRUPT_CALLBACK _hint_dummy_callback()
-{
-    //
-}
-
-// Dummy Ext-Int Callback
-NO_INLINE void _extint_dummy_callback()
+// Empty Callback
+static void _empty_callback()
 {
     //
 }
@@ -604,12 +583,12 @@ static NO_INLINE void internal_reset()
     SYS_resetBanks();
 #endif
 
-    vblankCB = _vblank_dummy_callback;
-    vintCB = _vint_dummy_callback;
+    vblankCB = _empty_callback;
+    vintCB = _empty_callback;
     // fast hint call (auto modified JMP instruction)
     hintCaller.jmpInst = 0x4EF9;                // JMP (xxx).L
-    hintCaller.addr = _hint_dummy_callback;
-    eintCB = _extint_dummy_callback;
+    hintCaller.addr = _empty_callback;
+    eintCB = _empty_callback;
     VBlankProcess = 0;
     intTrace = 0;
     intLevelSave = 0;
@@ -743,12 +722,6 @@ NO_INLINE bool SYS_doVBlankProcessEx(VBlankProcessTime processTime)
 #endif
     }
 
-    // XGM2 fade process
-    if (vbp & PROCESS_XGM2_FADE_TASK)
-    {
-        if (!XGM2_doVBlankFadeProcess()) vbp &= ~PROCESS_XGM2_FADE_TASK;
-    }
-
     // store back
     VBlankProcess = vbp;
 
@@ -857,25 +830,25 @@ void SYS_enableInts()
 void SYS_setVBlankCallback(VoidCallback *CB)
 {
     if (CB) vblankCB = CB;
-    else vblankCB = _vblank_dummy_callback;
+    else vblankCB = _empty_callback;
 }
 
 void SYS_setVIntCallback(VoidCallback *CB)
 {
     if (CB) vintCB = CB;
-    else vintCB = _vint_dummy_callback;
+    else vintCB = _empty_callback;
 }
 
 void SYS_setHIntCallback(VoidCallback *CB)
 {
     if (CB) hintCaller.addr = CB;
-    else hintCaller.addr = _hint_dummy_callback;
+    else hintCaller.addr = _empty_callback;
 }
 
 void SYS_setExtIntCallback(VoidCallback *CB)
 {
     if (CB) eintCB = CB;
-    else eintCB = _extint_dummy_callback;
+    else eintCB = _empty_callback;
 }
 
 
