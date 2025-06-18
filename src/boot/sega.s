@@ -142,12 +142,10 @@ no_user_task:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
         ori.w   #0x0001, intTrace           /* in V-Int */
         addq.l  #1, vtimer                  /* increment frame counter (more a vint counter) */
-        btst    #3, VBlankProcess+1         /* PROCESS_XGM_TASK ? (use VBlankProcess+1 as btst is a byte operation) */
-        beq.s   no_xgm_task
 
-        jsr     XGM_doVBlankProcess         /* do XGM vblank task */
+        move.l  z80VIntCB, %a0              /* load Z80 V-Int handler */
+        jsr     (%a0)                       /* call user callback */
 
-no_xgm_task:
         btst    #1, VBlankProcess+1         /* PROCESS_BITMAP_TASK ? (use VBlankProcess+1 as btst is a byte operation) */
         beq.s   no_bmp_task
 
@@ -155,7 +153,7 @@ no_xgm_task:
 
 no_bmp_task:
         move.l  vintCB, %a0                 /* load user callback */
-        jsr    (%a0)                        /* call user callback */
+        jsr     (%a0)                       /* call user callback */
         andi.w  #0xFFFE, intTrace           /* out V-Int */
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte

@@ -23,7 +23,6 @@
 
 
 // allow to access it without "public" share
-extern vu16 VBlankProcess;
 extern s16 currentDriver;
 extern u16 driverFlags;
 
@@ -43,6 +42,7 @@ static u16 xgmWaitMean;
 // set next frame helper
 static void setNextXFrame(u16 num, bool set);
 static void resetLoadCalculation();
+static void vintProcess();
 
 // we don't want to share it
 extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
@@ -53,6 +53,9 @@ extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 
 NO_INLINE void XGM_loadDriver(const bool waitReady)
 {
+    // already loaded
+    if (currentDriver == Z80_DRIVER_XGM) return;
+
     Z80_loadDriverInternal(drv_xgm, sizeof(drv_xgm));
 
     SYS_disableInts();
@@ -79,8 +82,7 @@ NO_INLINE void XGM_loadDriver(const bool waitReady)
     }
 
     // using auto sync --> enable XGM task on VInt
-    if (!XGM_getManualSync())
-        VBlankProcess |= PROCESS_XGM_TASK;
+    Z80_setVIntCallback(XGM_getManualSync() ? NULL : &vintProcess);
     // define default XGM tempo (always based on NTSC timing)
     XGM_setMusicTempo(60);
     // reset load calculation
@@ -89,14 +91,9 @@ NO_INLINE void XGM_loadDriver(const bool waitReady)
     Z80_useBusProtection((Z80_DRV_PARAMS + 0x0D) & 0xFFFF);
 
     SYS_enableInts();
-}
 
-NO_INLINE void XGM_unloadDriver(void)
-{
-    // remove XGM vblank / vint task
-    VBlankProcess &= ~PROCESS_XGM_TASK;
-    // remove bus protection (signal address set to 0)
-    Z80_useBusProtection(0);
+    // driver loaded
+    currentDriver = Z80_DRIVER_XGM;
 }
 
 
@@ -109,7 +106,7 @@ NO_INLINE bool XGM_isPlaying(void)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     // point to Z80 status
     pb = (u8 *) Z80_DRV_STATUS;
@@ -135,7 +132,7 @@ NO_INLINE void XGM_startPlay(const u8 *song)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     // prepare sample id table
     for(i = 0; i < 0x3F; i++)
@@ -205,7 +202,7 @@ NO_INLINE void XGM_stopPlay()
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -241,7 +238,7 @@ NO_INLINE void XGM_pausePlay()
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -265,7 +262,7 @@ NO_INLINE void XGM_resumePlay()
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -293,7 +290,7 @@ NO_INLINE u8 XGM_isPlayingPCM(const u16 channel_mask)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -314,7 +311,7 @@ NO_INLINE void XGM_setPCM(const u8 id, const u8 *sample, const u32 len)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -342,7 +339,7 @@ NO_INLINE void XGM_setPCM_FAR(const u8 id, const u8 *sample, const u32 len)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -374,7 +371,7 @@ NO_INLINE void XGM_startPlayPCM(const u8 id, const u8 priority, const SoundPCMCh
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -402,7 +399,7 @@ NO_INLINE void XGM_stopPlayPCM(const SoundPCMChannel channel)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -430,7 +427,7 @@ NO_INLINE void XGM_setLoopNumber(s8 value)
     bool busTaken = Z80_isBusTaken();
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_XGM, TRUE);
+    XGM_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -465,13 +462,13 @@ void XGM_setManualSync(const bool value)
     {
         driverFlags |= DRIVER_FLAG_MANUALSYNC_XGM;
         // remove VInt XGM process
-        VBlankProcess &= ~PROCESS_XGM_TASK;
+        Z80_setVIntCallback(NULL);
     }
     else
     {
         driverFlags &= ~DRIVER_FLAG_MANUALSYNC_XGM;
         // set VInt XGM process
-        VBlankProcess |= PROCESS_XGM_TASK;
+        Z80_setVIntCallback(&vintProcess);
     }
 }
 
@@ -658,8 +655,9 @@ void XGM_nextXFrame(const u16 num)
     SYS_enableInts();
 }
 
+
 // VInt processing for XGM driver
-NO_INLINE void XGM_doVBlankProcess()
+static void vintProcess()
 {
     s16 cnt = xgmTempoCnt;
     u16 step = xgmTempoDef;

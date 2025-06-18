@@ -63,17 +63,8 @@ typedef enum
 /**
  *  \brief
  *      Load the dummy Z80 driver.
- *
- *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
 void SND_NULL_loadDriver(void);
-/**
- *  \brief
- *      Unload the dummy Z80 driver.
- *
- *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
- */
-void SND_NULL_unloadDriver(void);
 
 
 #endif // _SOUND_H_

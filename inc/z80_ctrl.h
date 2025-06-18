@@ -292,28 +292,18 @@ void Z80_download(const u16 from, u8 *dest, const u16 size);
  *  - #Z80_DRIVER_XGM2<br>
  *  - #Z80_DRIVER_CUSTOM<br>
  */
-u16  Z80_getLoadedDriver(void);
+s16  Z80_getLoadedDriver(void);
 /**
  *  \brief
- *      Unload Z80 driver (set NULL driver).
+ *      Unload Z80 driver (set the NULL driver).
  */
 void Z80_unloadDriver(void);
+
 /**
- *  \brief
- *      Load a Z80 driver.
- *
- *  \param driver
- *      Driver to load, possible values are:<br>
- *      - #Z80_DRIVER_NULL<br>
- *      - #Z80_DRIVER_PCM<br>
- *      - #Z80_DRIVER_DPCM2<br>
- *      - #Z80_DRIVER_PCM4<br>
- *      - #Z80_DRIVER_XGM<br>
- *      - #Z80_DRIVER_XGM2<br>
- *  \param waitReady
- *      Wait for driver to be ready.
+ *  \deprecated Use the dedicated loadDriver(..) method (as XGM_loadDriver(..) for instance)
  */
-void Z80_loadDriver(const u16 driver, const bool waitReady);
+#define Z80_loadDriver(driver, waitReady)   _Pragma("GCC error \"This method is deprecated, directly use the dedicated driver 'loadDriver' method (as XGM_loadDriver(..) for instance).\"")
+
 /**
  *  \brief
  *      Load a custom Z80 driver.
@@ -330,6 +320,32 @@ void Z80_loadCustomDriver(const u8 *drv, u16 size);
  *      Return driver ready state (only for non custom driver).
  */
 bool Z80_isDriverReady(void);
+
+/**
+ *  \brief
+ *      Get the Z80 task 'Vertical interrupt' callback method.
+ *
+ *  \return the pointer of the method called on Vertical interrupt period or NULL if no method are set
+ *
+ * \see Z80_setVIntCallback(VoidCallback *CB);
+ */
+VoidCallback* Z80_getVIntCallback(void);
+/**
+ *  \brief
+ *      Set the Z80 task 'Vertical interrupt' callback method.
+ *
+ *  \param CB
+ *      Pointer to the method to call on Vertical interrupt period.<br>
+ *      You can remove current callback by passing a <i>NULL</i> pointer here.
+ *
+ * Vertical interrupt happen at the end of display period at the start of the vertical blank period.<br>
+ * The only things that SGDK always handle from the vint callback is sound driver task as music tempo or Bitmap engine phase reset.<br>
+ * It's recommended to keep your code as fast as possible as it will eat precious VBlank time, nor you should touch the VDP from your Vint callback
+ * otherwise you will need to protect any VDP accesses from your main loop (which is painful).
+ *
+ * \see SYS_setVIntCallback(VoidCallback* CB);
+ */
+void Z80_setVIntCallback(VoidCallback* CB);
 
 /**
  *  \brief

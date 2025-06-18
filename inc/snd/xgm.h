@@ -108,17 +108,8 @@
 /**
  *  \brief
  *      Load the XGM sound driver.
- *
- *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
 void XGM_loadDriver(const bool waitReady);
-/**
- *  \brief
- *      Unload the XGM sound driver.
- *
- *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
- */
-void XGM_unloadDriver(void);
 
 /**
  * \brief

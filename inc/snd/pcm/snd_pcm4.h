@@ -34,17 +34,8 @@
 /**
  *  \brief
  *      Load the Z80_DRIVER_PCM4 sound driver.
- *
- *      Don't use this method directly, use #Z80_loadDriver(..) instead.
  */
 void SND_PCM4_loadDriver(const bool waitReady);
-/**
- *  \brief
- *      Unload the Z80_DRIVER_PCM4 sound driver.
- *
- *      Don't use this method directly, use #Z80_unloadDriver(..) instead.
- */
-void SND_PCM4_unloadDriver(void);
 
 /**
  *  \brief

@@ -13,34 +13,21 @@
 #include "sys.h"
 
 
+// we don't want to share them
+extern s16 currentDriver;
+extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
+
 // Z80_DRIVER_NULL
 // dummy sound driver, Z80 waiting in an idle loop
 //////////////////////////////////////////////////
 
 NO_INLINE void SND_NULL_loadDriver()
 {
-    SYS_disableInts();
-    Z80_requestBus(TRUE);
+    // already loaded
+    if (currentDriver == Z80_DRIVER_NULL) return;
 
-    // reset sound chips
-    YM2612_reset();
-    PSG_reset();
+    Z80_loadDriverInternal(drv_null, sizeof(drv_null));
 
-    // clear z80 memory
-    Z80_clear();
-    // upload Z80 driver and reset Z80
-    Z80_upload(0, drv_null, sizeof(drv_null));
-
-    Z80_startReset();
-    Z80_releaseBus();
-    // wait a bit so Z80 reset completed
-    waitSubTick(50);
-    Z80_endReset();
-
-    SYS_enableInts();
-}
-
-NO_INLINE void SND_NULL_unloadDriver()
-{
-    // nothing to do here
+    // driver loaded
+    currentDriver = Z80_DRIVER_NULL;
 }

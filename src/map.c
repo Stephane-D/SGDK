@@ -19,10 +19,6 @@
 #define ROW_AHEAD       (15 + 1)
 
 
-// we don't want to share it
-extern vu16 VBlankProcess;
-
-
 // forward
 static void updateMap(Map *map, s16 xt, s16 yt);
 static void setMapColumn(Map *map, u16 column, u16 x, u16 y);

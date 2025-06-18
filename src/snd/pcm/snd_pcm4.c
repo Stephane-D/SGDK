@@ -14,7 +14,8 @@
 #include "sys.h"
 
 
-// we don't want to share it
+// we don't want to share them
+extern s16 currentDriver;
 extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 
 // Z80_DRIVER_PCM4
@@ -23,6 +24,9 @@ extern void Z80_loadDriverInternal(const u8 *drv, u16 size);
 
 NO_INLINE void SND_PCM4_loadDriver(const bool waitReady)
 {
+    // already loaded
+    if (currentDriver == Z80_DRIVER_PCM4) return;
+
     Z80_loadDriverInternal(drv_pcm4, sizeof(drv_pcm4));
 
     SYS_disableInts();
@@ -53,6 +57,9 @@ NO_INLINE void SND_PCM4_loadDriver(const bool waitReady)
     }
 
     SYS_enableInts();
+
+    // driver loaded
+    currentDriver = Z80_DRIVER_PCM4;
 }
 
 NO_INLINE void SND_PCM4_unloadDriver(void)
@@ -67,7 +74,7 @@ NO_INLINE bool SND_PCM4_isPlaying(const u16 channel_mask)
     u8 ret;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM4, TRUE);
+    SND_PCM4_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -89,7 +96,7 @@ NO_INLINE void SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPC
     u32 addr;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM4, TRUE);
+    SND_PCM4_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -144,7 +151,7 @@ NO_INLINE void SND_PCM4_stopPlay(const SoundPCMChannel channel)
     u32 addr;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM4, TRUE);
+    SND_PCM4_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -173,7 +180,7 @@ NO_INLINE void SND_PCM4_setVolume(const SoundPCMChannel channel, const u8 volume
     vu8 *pb;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM4, TRUE);
+    SND_PCM4_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 
@@ -191,7 +198,7 @@ NO_INLINE u8 SND_PCM4_getVolume(const SoundPCMChannel channel)
     u8 volume;
 
     // load the appropriate driver if not already done
-    Z80_loadDriver(Z80_DRIVER_PCM4, TRUE);
+    SND_PCM4_loadDriver(TRUE);
 
     Z80_requestBus(TRUE);
 

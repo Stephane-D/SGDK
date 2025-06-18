@@ -14,9 +14,7 @@
 #define PROCESS_PALETTE_FADING      (1 << 0)
 #define PROCESS_BITMAP_TASK         (1 << 1)
 #define PROCESS_DMA_TASK            (1 << 2)
-#define PROCESS_XGM_TASK            (1 << 3)
-#define PROCESS_VDP_SCROLL_TASK     (1 << 4)
-#define PROCESS_XGM2_FADE_TASK      (1 << 5)
+#define PROCESS_VDP_SCROLL_TASK     (1 << 3)
 
 
 #define ROM_ALIGN_BIT               17
@@ -258,7 +256,7 @@ bool SYS_doVBlankProcessEx(VBlankProcessTime processTime);
  *  \brief
  *      End the current frame (alias for #SYS_doVBlankProcess(void)).
  *
- *  End the current frame and does all the internal SGDK process (DMA flush, VDP data upload, async palette fade, scroll update..)
+ *  End the current frame and does all the internal SGDK VBlank process (DMA flush, VDP data upload, async palette fade, scroll update..)
  *
  *  \see SYS_doVBlankProcess(void)
  */
@@ -505,7 +503,7 @@ bool SYS_isChecksumOk(void);
  *      Die with the specified error message.<br>
  *      Program execution is interrupted.<br>
  *      Accepts a list of strings. The list must end with a NULL value.
- * 
+ *
  * This actually display an error message and program ends execution.
  */
 void SYS_die(char *err, ...);
