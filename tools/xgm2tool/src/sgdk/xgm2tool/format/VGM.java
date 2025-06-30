@@ -1309,7 +1309,7 @@ public class VGM
         VGMCommand command;
         int startInd;
         int endInd;
-
+        
         startInd = 0;
         while (true)
         {
@@ -1330,6 +1330,22 @@ public class VGM
 
             psgState = new PSGState(psgOldState);
             ymState = new YM2612State(ymOldState);
+            
+            // first frame ? --> reset special FM feature state (otherwise they may be not properly reseted on start play)
+            if (startInd == 0)
+            {
+                // LFO
+                ymState.set(0, 0x22, 0);
+                // FM2 SPE mode / CSM
+                ymState.set(0, 0x27, 0);
+                // default panning
+                ymState.set(0, 0xB4, 0xC0);
+                ymState.set(0, 0xB5, 0xC0);
+                ymState.set(0, 0xB6, 0xC0);
+                ymState.set(1, 0xB4, 0xC0);
+                ymState.set(1, 0xB5, 0xC0);
+                ymState.set(1, 0xB6, 0xC0);
+            }
 
             // clear frame sets
             optimizedCommands.clear();

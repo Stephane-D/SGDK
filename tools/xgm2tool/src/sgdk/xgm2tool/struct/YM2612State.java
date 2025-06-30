@@ -168,7 +168,38 @@ public class YM2612State
     {
         final List<VGMCommand> result = new ArrayList<VGMCommand>();
 
-        // do dual reg first
+        // do global registers first
+        for (int port = 0; port < 2; port++)
+        {
+            for (int reg = 0; reg < 0x30; reg++)
+            {
+                // can ignore or special case of KEY ON/OFF register
+                if (canIgnore(port, reg) || ((port == 0) && (reg == 0x28)))
+                    continue;
+                // ignore timer write
+                if (ignoreTimerWrites && ((port == 0) && ((reg == 0x24) || (reg == 0x25) || (reg == 0x26))))
+                    continue;
+                // ignore timer write (special case of 0X27 register)
+                if (ignoreTimerWrites && ((port == 0) && (reg == 0x27)))
+                {
+                    // not initialized --> can ignore 
+                    if (!state.init[port][reg])
+                        continue;
+                    // old was initialized but value is unchanged for FM2_SPE/CSM mode ? --> ignore
+                    if (init[port][reg] && ((registers[0][0x27] & 0xC0) == (state.registers[0][0x27] & 0xC0))) 
+                        continue;
+                }
+                // ignore dual reg
+                if (getDualReg(reg) != null)
+                    continue;
+
+                // value is different --> add command
+                if (isDiff(state, port, reg))
+                    result.add(VGMCommand.createYMCommand(port, reg, state.get(port, reg)));
+            }
+        }
+
+        // then do dual registers
         for (int i = 0; i < duals.length; i++)
         {
             final int[] dual = duals[i];
@@ -196,30 +227,6 @@ public class YM2612State
 
         for (int port = 0; port < 2; port++)
         {
-            for (int reg = 0; reg < 0x30; reg++)
-            {
-                // can ignore or special case of KEY ON/OFF register
-                if (canIgnore(port, reg) || ((port == 0) && (reg == 0x28)))
-                    continue;
-                // ignore timer write
-                if (ignoreTimerWrites && ((port == 0) && ((reg == 0x24) || (reg == 0x25) || (reg == 0x26))))
-                    continue;
-                // ignore timer write (special case of 0X27 register)
-                if (ignoreTimerWrites && ((port == 0) && (reg == 0x27)))
-                {
-                    // same value for spe/CSM mode ? --> ignore
-                    if ((registers[0][0x27] & 0xC0) == (state.registers[0][0x27] & 0xC0))
-                        continue;
-                }
-                // ignore dual reg
-                if (getDualReg(reg) != null)
-                    continue;
-
-                // value is different --> add command
-                if (isDiff(state, port, reg))
-                    result.add(VGMCommand.createYMCommand(port, reg, state.get(port, reg)));
-            }
-
             for (int reg = 0x30; reg < 0xA0; reg += 0x10)
             {
                 for (int ch = 0; ch < 3; ch++)
