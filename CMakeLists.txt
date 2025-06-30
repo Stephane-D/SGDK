@@ -53,7 +53,9 @@ add_compile_options(
   -Wno-unused-parameter
   -fno-builtin
   -nostdlib
-  -nodefaultlibs)
+  -nodefaultlibs
+  -ffunction-sections
+  -fdata-sections)
 
 add_compile_options(
   "$<$<CONFIG:Release,>:-fuse-linker-plugin;-fno-web;-fno-gcse;-fomit-frame-pointer;-ffat-lto-objects;-flto>"
