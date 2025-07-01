@@ -145,7 +145,7 @@ Debug: debug
 Asm: asm
 clean: clean-all
 
-release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt 
+release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 release: padROM
 .PHONY: padROM
 
@@ -163,7 +163,7 @@ clean-release: clean-task
 clean-debug: clean-task
 clean-asm: clean-task
 
-clean-task: 
+clean-task:
 	$(RM) -r -f $(OUT_DIR)
 .PHONY: clean-task
 
@@ -193,8 +193,8 @@ $(OUT_DIR)/cmd_: $(OBJS)
 
 # NOTE: sega.s references out/rom_header.bin internally
 $(OUT_DIR)/sega.o: out/rom_header.bin
-	$(MKDIR) -p $(dir $@)
-	$(RM) -r -f $(SRC_DIR)/boot		# just in case we forgot to delete it
+	@$(MKDIR) -p $(dir $@)
+	@$(RM) -r -f $(SRC_DIR)/boot
 	$(CP) $(SRC_LIB)/boot/sega.s $(OUT_DIR)/sega.s
 	$(CC) $(AFLAGS) -c $(OUT_DIR)/sega.s -o $@
 
@@ -209,7 +209,7 @@ $(OUT_DIR)/rom_header.o: $(SRC_DIR)/rom_header.c
 # SRC_LIB files are "order-only" deps, right of the pipe.  This means we will never overwrite the file in SRC_DIR, even if SRC_LIB is newer.
 
 $(SRC_DIR)/rom_header.c: | $(SRC_LIB)/boot/rom_header.c
-	$(MKDIR) -p $(dir $@)
+	@$(MKDIR) -p $(dir $@)
 	$(CP) $| $@
 
 
