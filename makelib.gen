@@ -116,7 +116,7 @@ $(LIB)/libmd_debug.a: $(OUT_DIR)/libmd.a
 
 $(OUT_DIR)/libmd.a: $(OUT_DIR)/cmd_
 	$(AR) rs $(OUT_DIR)/libmd.a $(LTO_PLUGIN) @$(OUT_DIR)/cmd_
-	$(RM) $(OUT_DIR)/cmd_
+	@$(RM) $(OUT_DIR)/cmd_
 
 $(OUT_DIR)/cmd_: $(OBJS_LIB)
 	$(ECHO) "$(OBJS_LIB)" > $(OUT_DIR)/cmd_
@@ -131,30 +131,19 @@ $(OUT_DIR)/%.o: %.s
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(AFLAGS_LIB) -c $< -o $@
 
-$(OUT_DIR)/%.rs: %.res
+$(OUT_DIR)/%.o: %.res
 	@$(MKDIR) -p $(dir $@)
 	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs
+	$(CC) $(AFLAGS_LIB) -c $(OUT_DIR)/$*.rs -o $@
 
-$(OUT_DIR)/%.o80: %.s80
+$(OUT_DIR)/%.o: %.s80
 	@$(MKDIR) -p $(dir $@)
-	$(ASMZ80) $(FLAGSZ80_LIB) $< $@ $(OUT_DIR)/out.lst
+	$(ASMZ80) $(FLAGSZ80_LIB) $< $(OUT_DIR)/$*.o80 $(OUT_DIR)/out.lst
+	$(BINTOS) $(OUT_DIR)/$*.o80 $(OUT_DIR)/$*.s
+	$(CC) $(AFLAGS_LIB) -c $(OUT_DIR)/$*.s -o $@
 
 
 # listing files
 $(OUT_DIR)/%.lst: %.c
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS_LIB) -S -c $< -o $@
-
-
-# intermediate files
-$(OUT_DIR)/%.o: $(OUT_DIR)/%.s
-	@$(MKDIR) -p $(dir $@)
-	$(CC) $(AFLAGS_LIB) -c $< -o $@
-
-$(OUT_DIR)/%.o: $(OUT_DIR)/%.rs
-	@$(MKDIR) -p $(dir $@)
-	$(CC) $(AFLAGS_LIB) -c $< -o $@
-
-$(OUT_DIR)/%.s: $(OUT_DIR)/%.o80
-	@$(MKDIR) -p $(dir $@)
-	$(BINTOS) $<
