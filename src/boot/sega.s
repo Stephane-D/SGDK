@@ -49,7 +49,7 @@ _Vecteurs_68K:
         dc.l    _INT,_INT,_INT,_INT,_INT,_INT,_INT,_INT
 
 rom_header:
-        .incbin "out/rom_head.bin", 0, 0x100
+        .incbin "out/rom_header.bin", 0, 0x100
 
 _Entry_Point:
 * disable interrupts
