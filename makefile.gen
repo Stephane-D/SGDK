@@ -43,26 +43,40 @@ SRC_C = $(wildcard *.c)
 SRC_C += $(wildcard $(SRC_DIR)/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*.c)
-SRC_C := $(filter-out $(SRC_DIR)/boot/rom_head.c,$(SRC_C))
+SRC_C += $(wildcard $(SRC_DIR)/*/*/*/*.c)
+SRC_C += $(wildcard $(SRC_DIR)/*/*/*/*/*.c)
+SRC_C := $(filter-out $(SRC_DIR)/rom_header.c,$(SRC_C))
 SRC_S = $(wildcard *.s)
 SRC_S += $(wildcard $(SRC_DIR)/*.s)
 SRC_S += $(wildcard $(SRC_DIR)/*/*.s)
 SRC_S += $(wildcard $(SRC_DIR)/*/*/*.s)
-SRC_S := $(filter-out $(SRC_DIR)/boot/sega.s,$(SRC_S))
+SRC_S += $(wildcard $(SRC_DIR)/*/*/*/*.s)
+SRC_S += $(wildcard $(SRC_DIR)/*/*/*/*/*.s)
 SRC_ASM = $(wildcard *.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*/*.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*/*/*.asm)
+SRC_ASM += $(wildcard $(SRC_DIR)/*/*/*/*.asm)
+SRC_ASM += $(wildcard $(SRC_DIR)/*/*/*/*/*.asm)
 SRC_ASM := $(SRC_ASM)
 SRC_S80 = $(wildcard *.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*/*.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*/*/*.s80)
+SRC_S80 += $(wildcard $(SRC_DIR)/*/*/*/*.s80)
+SRC_S80 += $(wildcard $(SRC_DIR)/*/*/*/*/*.s80)
 SRC_S80 := $(SRC_S80)
 
 RES_RES = $(wildcard *.res)
 RES_RES += $(wildcard $(RES_DIR)/*.res)
+RES_RES += $(wildcard $(RES_DIR)/*/*.res)
+RES_RES += $(wildcard $(RES_DIR)/*/*/*.res)
+RES_RES += $(wildcard $(RES_DIR)/*/*/*/*.res)
+RES_RES += $(wildcard $(RES_DIR)/*/*/*/*/*.res)
 RES_RES := $(RES_RES)
+
+RES_O = $(RES_RES:.res=.o)
+RES_O := $(addprefix $(OUT_DIR)/, $(RES_O))
 
 OBJS = $(RES_RES:.res=.o)
 OBJS += $(SRC_S80:.s80=.o)
@@ -177,30 +191,29 @@ $(OUT_DIR)/cmd_: $(OBJS)
 	@$(MKDIR) -p $(dir $@)
 	$(ECHO) "$(OBJS)" > $(OUT_DIR)/cmd_
 
-# NOTE: sega.s references out/rom_head.bin internally
-$(OUT_DIR)/sega.o: $(SRC_DIR)/boot/sega.s out/rom_head.bin
-	$(CC) $(AFLAGS) -c $(SRC_DIR)/boot/sega.s -o $@
+# NOTE: sega.s references out/rom_header.bin internally
+$(OUT_DIR)/sega.o: out/rom_header.bin
+	$(MKDIR) -p $(dir $@)
+	$(RM) -r -f $(SRC_DIR)/boot		# just in case we forgot to delete it
+	$(CP) $(SRC_LIB)/boot/sega.s $(OUT_DIR)/sega.s
+	$(CC) $(AFLAGS) -c $(OUT_DIR)/sega.s -o $@
 
 # NOTE: rom_head.bin need to be located in 'out' folder as it's referenced by boot/sega.s
-out/rom_head.bin: $(OUT_DIR)/rom_head.o
+out/rom_header.bin: $(OUT_DIR)/rom_header.o
 	$(OBJCPY) -O binary $< $@
 
-$(OUT_DIR)/rom_head.o: $(SRC_DIR)/boot/rom_head.c
+$(OUT_DIR)/rom_header.o: $(SRC_DIR)/rom_header.c
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(INCS) $(DEFAULT_FLAGS) -c $< -o $@
 
 # SRC_LIB files are "order-only" deps, right of the pipe.  This means we will never overwrite the file in SRC_DIR, even if SRC_LIB is newer.
 
-$(SRC_DIR)/boot/sega.s: | $(SRC_LIB)/boot/sega.s
-	$(MKDIR) -p $(dir $@)
-	$(CP) $| $@
-
-$(SRC_DIR)/boot/rom_head.c: | $(SRC_LIB)/boot/rom_head.c
+$(SRC_DIR)/rom_header.c: | $(SRC_LIB)/boot/rom_header.c
 	$(MKDIR) -p $(dir $@)
 	$(CP) $| $@
 
 
-# source compilation
+# source / resource compilation
 $(OUT_DIR)/%.o: %.c $(DEP_DIR)/%.d
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -209,19 +222,26 @@ $(OUT_DIR)/%.o: %.s $(DEP_DIR)/%.d
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(AFLAGS) -c $< -o $@
 
-$(OUT_DIR)/%.rs: %.res $(DEP_DIR)/%.d
+$(OUT_DIR)/%.o: %.asm
 	@$(MKDIR) -p $(dir $@)
-	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs
+	$(MACCER) -o $(OUT_DIR)/$*.s $<
+	$(CC) $(AFLAGS) -c $(OUT_DIR)/$*.s -o $@
+
+$(OUT_DIR)/%.o: %.s80
+	@$(MKDIR) -p $(dir $@)
+	$(ASMZ80) $(Z80_FLAGS) $< $(OUT_DIR)/$*.o80 $(OUT_DIR)/out.lst
+	$(BINTOS) $(OUT_DIR)/$*.o80 $(OUT_DIR)/$*.s
+	$(CC) $(AFLAGS) -c  $(OUT_DIR)/$*.s -o $@
+
+$(OUT_DIR)/%.o: %.res
+	@$(MKDIR) -p $(dir $@)
+	@$(MKDIR) -p $(dir $(DEP_DIR)/$*.d)
+	$(RESCOMP) $< $(OUT_DIR)/$*.s -dep $(OUT_DIR)/$*.o
+	@$(CP) $(OUT_DIR)/$*.d $(DEP_DIR)/$*.d
+	@$(RM) $(OUT_DIR)/$*.d
 	@$(CP) $(OUT_DIR)/$*.h $*.h
 	@$(RM) $(OUT_DIR)/$*.h
-
-$(OUT_DIR)/%.s: %.asm
-	@$(MKDIR) -p $(dir $@)
-	$(MACCER) -o $@ $<
-
-$(OUT_DIR)/%.o80: %.s80
-	@$(MKDIR) -p $(dir $@)
-	$(ASMZ80) $(Z80_FLAGS) $< $@ $(OUT_DIR)/out.lst
+	$(CC) $(AFLAGS) -c $(OUT_DIR)/$*.s -o $@
 
 
 # listing files
@@ -230,37 +250,14 @@ $(OUT_DIR)/%.lst: %.c $(DEP_DIR)/%.d
 	$(CC) $(CFLAGS) -S -c $< -o $@
 
 
-# deps files
-$(DEP_DIR)/%.d: %.c
+# deps files (we want resource to be generated first)
+$(DEP_DIR)/%.d: %.c $(RES_O)
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS) $< -E -MG -MM -MP -MT $(OUT_DIR)/$*.o -MF $(DEP_DIR)/$*.d
 
 $(DEP_DIR)/%.d: %.s
 	@$(MKDIR) -p $(dir $@)
 	$(CC) $(AFLAGS) $< -E -MG -MM -MP -MT $(OUT_DIR)/$*.o -MF $(DEP_DIR)/$*.d
-
-$(DEP_DIR)/%.d: %.res
-	@$(MKDIR) -p $(dir $@)
-	@$(MKDIR) -p $(dir $(OUT_DIR)/$*.o)
-	$(RESCOMP) $*.res $(OUT_DIR)/$*.rs -dep $(OUT_DIR)/$*.o
-	@$(CP) $(OUT_DIR)/$*.h $*.h
-	@$(RM) $(OUT_DIR)/$*.h
-	@$(CP) $(OUT_DIR)/$*.d $(DEP_DIR)/$*.d
-	@$(RM) $(OUT_DIR)/$*.d
-
-
-# intermediates files
-$(OUT_DIR)/%.o: $(OUT_DIR)%.s
-	@$(MKDIR) -p $(dir $@)
-	$(CC) $(AFLAGS) -c $< -o $@
-
-$(OUT_DIR)/%.o: $(OUT_DIR)/%.rs 
-	@$(MKDIR) -p $(dir $@)
-	$(CC) $(AFLAGS) -c $< -o $@
-
-$(OUT_DIR)/%.s: $(OUT_DIR)/%.o80
-	@$(MKDIR) -p $(dir $@)
-	$(BINTOS) $<
 
 
 ifeq ($(CLEAN),FALSE)
