@@ -10,10 +10,10 @@
 		<MakeCommands>
 			<Build command="$make -f $makefile" />
 			<CompileFile command="$make -f $makefile $file" />
-			<Clean command="$make -f $makefile clean" />
+			<Clean command="$make -f $makefile clean-$target" />
 			<DistClean command="$make -f $makefile clean" />
 			<AskRebuildNeeded command="$make -q -f $makefile $target" />
-			<SilentBuild command="$make -s -f $makefile $target" />
+			<SilentBuild command="$make -f $makefile &gt; $(CMD_NULL)" />
 		</MakeCommands>
 		<Build>
 			<Target title="debug">
@@ -26,7 +26,7 @@
 				<MakeCommands>
 					<Build command="$make -f $makefile debug" />
 					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
+					<Clean command="$make -f $makefile clean-$target" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile debug &gt; $(CMD_NULL)" />
@@ -42,7 +42,7 @@
 				<MakeCommands>
 					<Build command="$make -f $makefile release" />
 					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
+					<Clean command="$make -f $makefile clean-$target" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile release &gt; $(CMD_NULL)" />

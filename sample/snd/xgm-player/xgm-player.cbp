@@ -7,6 +7,14 @@
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="sega_genesis_compiler" />
+		<MakeCommands>
+			<Build command="$make -f $makefile $target" />
+			<CompileFile command="$make -f $makefile $file" />
+			<Clean command="$make -f $makefile clean-$target" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="$make -q -f $makefile $target" />
+			<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+		</MakeCommands>
 		<Build>
 			<Target title="release">
 				<Option output="xgmplayer" prefix_auto="1" extension_auto="1" />
@@ -21,18 +29,26 @@
 					<Add option="-s" />
 				</Linker>
 				<MakeCommands>
-					<Build command="$make -f $makefile" />
+					<Build command="$make -f $makefile $target" />
 					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
+					<Clean command="$make -f $makefile clean-$target" />
 					<DistClean command="$make -f $makefile clean" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -s -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="debug">
 				<Option output="xgmplayer" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="sega_genesis_compiler" />
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean-$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 		</Build>
 		<Compiler>
@@ -64,9 +80,6 @@
 		<Unit filename="res/music.res">
 			<Option target="release" />
 		</Unit>
-		<Unit filename="src/boot/rom_head.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="src/log_tab.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -77,6 +90,9 @@
 		<Unit filename="src/psg_state.c">
 			<Option compilerVar="CC" />
 			<Option target="release" />
+		</Unit>
+		<Unit filename="src/rom_header.c">
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/tracklist.c">
 			<Option compilerVar="CC" />

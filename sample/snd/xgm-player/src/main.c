@@ -105,7 +105,7 @@ static void updateListScroll();
 static void doJoyActions();
 static void joyEvent(u16 joy, u16 changed, u16 state);
 static void vint();
-static void hint();
+static HINTERRUPT_CALLBACK hint();
 
 
 // get access to XGM driver timer
@@ -325,10 +325,10 @@ int main()
     drawPlayerSettings();
     drawPlayerControls();
 
-    SYS_enableInts();
-
     SYS_setVIntCallback(vint);
     SYS_setHIntCallback(hint);
+
+    SYS_enableInts();
 
     // prepare palettes
     memcpy(&palette[0 * 16], bg.palette->data, 15 * 2);

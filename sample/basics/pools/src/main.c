@@ -101,7 +101,7 @@ typedef struct
 {
     Player player;                  // Player object
     EnemyWave wave;                 // Current enemy wave state
-    
+
     // Declaring pools for game objects
     Pool *projectilePool;           // Projectiles object pool
     Pool *enemyPool;                // Enemies object pool
@@ -145,7 +145,7 @@ int main(bool hardReset)
 {
     if (!hardReset)
         SYS_hardReset();
-    
+
     Game_Init();
     Game_MainLoop();
     return 0;
@@ -172,16 +172,16 @@ void Game_MainLoop()
 void Game_Init()
 {
     // Initialize systems
-    Z80_loadDriver(Z80_DRIVER_XGM2, TRUE);
+    XGM2_loadDriver(TRUE);
     JOY_init();
     SPR_init();
-    
+
     // Load sprite palettes and set the text palette
     PAL_setPalette(PAL1, player_sprite.palette->data, DMA);
     PAL_setPalette(PAL2, explosion_sprite.palette->data, DMA);
     PAL_setPalette(PAL3, enemy_sprite.palette->data, DMA);
     VDP_setTextPalette(PAL1);
-    
+
     // Initialize game objects
     Game_CreateObjectsPools();
     Player_Create();
@@ -196,7 +196,7 @@ void Game_CreateObjectsPools()
     game.enemyPool = POOL_create(ENEMIES_IN_POOL, sizeof(Enemy));
     game.projectilePool = POOL_create(PROJECTILES_IN_POOL, sizeof(Projectile));
     game.explosionPool = POOL_create(EXPLOSION_IN_POOL, sizeof(GameObject));
-    
+
     // ================================== Pool usage =======================================
     // Here we iterate through all object in each pool, and initialize objects with initial
     // data (including creating sprites for each object in the pool, so as not to do this
@@ -208,14 +208,14 @@ void Game_CreateObjectsPools()
         GameObject_Create((GameObject *) projectile, &projectile_sprite, PAL1, 0, 0, PROJECTILE_WIDTH, PROJECTILE_HEIGHT);
         SPR_setVisibility(projectile->sprite, HIDDEN);
     }
-    
+
     // Iterate through all objects in enemyPool and init enemy
     FOREACH_IN_POOL(Enemy, enemy, game.enemyPool)
     {
         GameObject_Create((GameObject *) enemy, &enemy_sprite, PAL3, 0, 0, ENEMY_SIZE, ENEMY_SIZE);
         SPR_setVisibility(enemy->sprite, HIDDEN);
     }
-    
+
     // Iterate through all objects in explosionPool and init explosion
     FOREACH_IN_POOL(GameObject, explosion, game.explosionPool)
     {
@@ -234,11 +234,11 @@ void Game_UpdateEnemies()
     {
         if (!enemy)
             continue;
-        
+
         // Move enemy left
         enemy->x -= ENEMY_SPEED;
         SPR_setPosition(enemy->sprite, F16_toInt(enemy->x), F16_toInt(enemy->y));
-        
+
         // Remove if off-screen left
         if (F16_toInt(enemy->x) < -ENEMY_SIZE)
             GameObject_Release((GameObject *) enemy, game.enemyPool);
@@ -254,11 +254,11 @@ void Game_UpdateExplosions()
     {
         if (!explosion)
             continue;
-        
+
         // Update position and check animation completion
         SPR_setPosition(explosion->sprite, F16_toInt(explosion->x), F16_toInt(explosion->y));
         explosion->x += ENEMY_SPEED;
-        
+
         // Return object back to pool if animation finished
         if (SPR_isAnimationDone(explosion->sprite))
             GameObject_Release(explosion, game.explosionPool);
@@ -274,11 +274,11 @@ void Game_UpdateProjectiles()
     {
         if (!projectile)
             continue;
-        
+
         // Move projectile right
         projectile->x += PROJECTILE_SPEED;
         SPR_setPosition(projectile->sprite, F16_toInt(projectile->x), F16_toInt(projectile->y));
-        
+
         // Remove if off-screen
         if (projectile->x > FIX16(VDP_getScreenWidth()))
             GameObject_Release((GameObject *) projectile, game.projectilePool);
@@ -294,18 +294,18 @@ void Game_UpdateProjectilesCollision()
     {
         if (!enemy)
             continue;
-        
+
         // ================================== Pool usage =======================================
         // Iterate through all activ(allocated) projectiles
         FOREACH_ALLOCATED_IN_POOL(Projectile, projectile, game.projectilePool)
         {
             if (!projectile)
                 continue;
-            
+
             // Skip if no collision
             if (!GameObject_IsCollided((GameObject *) projectile, (GameObject *) (GameObject *) enemy))
                 continue;
-            
+
             // Handle projectile collision with enemy
             GameObject_ReleaseWithExplode((GameObject *) enemy, game.enemyPool);
             GameObject_Release((GameObject *) projectile, game.projectilePool);
@@ -320,7 +320,7 @@ void Game_DrawUI()
     static char str1[30];
     static char str2[30];
     static char str3[30];
-    
+
     // ================================== Pool usage =======================================
     // Draw the number of allocated / free objects for each pool
     sprintf(str1, "projectiles  %02d / %02d", POOL_getNumAllocated(game.projectilePool),
@@ -329,7 +329,7 @@ void Game_DrawUI()
             POOL_getFree(game.enemyPool));
     sprintf(str3, "explosions   %02d / %02d", POOL_getNumAllocated(game.explosionPool),
             POOL_getFree(game.explosionPool));
-    
+
     VDP_drawTextBG(BG_B, "objects allocated / free", 15, 0);
     VDP_drawTextBG(BG_B, str2, 17, 1);
     VDP_drawTextBG(BG_B, str3, 17, 2);
@@ -342,11 +342,11 @@ void GameObject_Create(GameObject *object, const SpriteDefinition *spriteDef, u1
 {
     // Create new sprite
     object->sprite = SPR_addSprite(spriteDef, x, y, TILE_ATTR(pal, FALSE, FALSE, FALSE));
-    
+
     // Set object properties
     object->w = w;
     object->h = h;
-    
+
     GameObject_Init(object, x, y);
 }
 
@@ -354,11 +354,11 @@ void GameObject_Create(GameObject *object, const SpriteDefinition *spriteDef, u1
 void GameObject_Init(GameObject *object, s16 x, s16 y)
 {
     SPR_setPosition(object->sprite, x, y);
-    
+
     // Reset sprite animation state
     SPR_setVisibility(object->sprite, VISIBLE);
     SPR_setFrame(object->sprite, 0);
-    
+
     // Set object properties
     object->x = FIX16(x);
     object->y = FIX16(y);
@@ -368,7 +368,7 @@ void GameObject_Init(GameObject *object, s16 x, s16 y)
 void GameObject_Release(GameObject *gameObject, Pool *pool)
 {
     SPR_setVisibility(gameObject->sprite, HIDDEN);
-    
+
     // ================================== Pool usage =======================================
     // Return object back to pool
     POOL_release(pool, gameObject, TRUE);
@@ -388,10 +388,10 @@ FORCE_INLINE bool GameObject_IsCollided(GameObject *obj1, GameObject *obj2)
 {
     if (obj1->y > obj2->y + FIX16(obj2->h) || obj1->y + FIX16(obj1->h) < obj2->y)
         return FALSE;
-    
+
     if (obj1->x + FIX16(obj1->w) < obj2->x || obj1->x > obj2->x + FIX16(obj2->w))
         return FALSE;
-    
+
     return TRUE;
 }
 
@@ -422,7 +422,7 @@ void Player_Update()
             Player_UpdatePosition();
             Player_UpdateCollision();
             break;
-            
+
             // Dead/respawning state
         case PL_STATE_DIED:
             Player_TryRespawn();
@@ -436,7 +436,7 @@ void Player_Explode()
     // Create explosion effect and hide player
     Explosion_Spawn(F16_toInt(game.player.x), F16_toInt(game.player.y));
     SPR_setVisibility(game.player.sprite, HIDDEN);
-    
+
     // Set respawn timer and change state
     game.player.respawnTimer = PLAYER_RESPAWN_DELAY;
     game.player.state = PL_STATE_DIED;
@@ -448,12 +448,12 @@ void Player_TryShoot()
     // Check if still on cooldown
     if (game.player.coolDownTimer--)
         return;
-    
+
     // Reset cooldown and spawn two projectiles
     game.player.coolDownTimer = PROJECTILE_COOLDOWN_TIMER;
     Projectile_Spawn(F16_toInt(game.player.x), F16_toInt(game.player.y));
     Projectile_Spawn(F16_toInt(game.player.x), F16_toInt(game.player.y) + PLAYER_WIDTH / 2);
-    
+
     // Play shooting sound
     XGM2_playPCM(xpcm_shoot, sizeof(xpcm_shoot), SOUND_PCM_CH2);
 }
@@ -471,7 +471,7 @@ void Player_UpdatePosition()
     // Clamp position to screen boundaries
     game.player.x = clamp(game.player.x, FIX16(0), FIX16(VDP_getScreenWidth() - game.player.w));
     game.player.y = clamp(game.player.y, FIX16(0), FIX16(VDP_getScreenHeight() - game.player.h));
-    
+
     // Update sprite position
     SPR_setPosition(game.player.sprite, F16_toInt(game.player.x), F16_toInt(game.player.y));
 }
@@ -485,11 +485,11 @@ void Player_UpdateCollision()
     {
         if (!enemy)
             continue;
-        
+
         // Skip if no collision detected
         if (!GameObject_IsCollided((GameObject *) &game.player, (GameObject *) enemy))
             continue;
-        
+
         // Handle player collision with enemy
         GameObject_ReleaseWithExplode((GameObject *) enemy, game.enemyPool);
         Player_Explode();
@@ -500,19 +500,19 @@ void Player_UpdateCollision()
 void Player_UpdateInput()
 {
     u16 input = JOY_readJoypad(0);
-    
+
     // Horizontal movement
     if (input & BUTTON_LEFT)
         game.player.x -= PLAYER_SPEED;
     else if (input & BUTTON_RIGHT)
         game.player.x += PLAYER_SPEED;
-    
+
     // Vertical movement with animation
     if (input & BUTTON_UP)
         game.player.y -= PLAYER_SPEED;
     else if (input & BUTTON_DOWN)
         game.player.y += PLAYER_SPEED;
-    
+
     // Shooting input
     if (input & BUTTON_A)
         Player_TryShoot();
@@ -524,11 +524,11 @@ void Enemy_Spawn(s16 x, s16 y)
     // ================================== Pool usage =======================================
     // Allocate enemy from pool
     Enemy *enemy = (Enemy *) POOL_allocate(game.enemyPool);
-    
+
     // Exit function if no avaliable objects
     if (!enemy)
         return;
-    
+
     // Initialize enemy properties
     GameObject_Init((GameObject *) enemy, x, y);
 }
@@ -549,16 +549,16 @@ void EnemyWave_Update()
         game.wave.waveDelay--;
         return;
     }
-    
+
     // Wait if between enemy spawns
     if (game.wave.enemyDelay--)
         return;
-    
+
     // Reset spawn delay and spawn two new enemies
     game.wave.enemyDelay = ENEMY_DELAY;
     Enemy_Spawn(VDP_getScreenWidth(), ENEMY_WAVE_OFFSET_Y);
     Enemy_Spawn(VDP_getScreenWidth(), VDP_getScreenHeight() - ENEMY_SIZE - ENEMY_WAVE_OFFSET_Y);
-    
+
     // Decrease remaining enemies and reset wave if complete
     game.wave.enemyCount -= 2;
     if (!game.wave.enemyCount)
@@ -571,11 +571,11 @@ void Projectile_Spawn(s16 x, s16 y)
     // ================================== Pool usage =======================================
     // Allocate projectile from pool
     Projectile *projectile = (Projectile *) POOL_allocate(game.projectilePool);
-    
+
     // Exit function if no available objects
     if (!projectile)
         return;
-    
+
     // Initialize projectile properties
     GameObject_Init((GameObject *) projectile, x, y);
     SPR_setAlwaysOnTop(projectile->sprite);
@@ -587,16 +587,16 @@ void Explosion_Spawn(s16 x, s16 y)
     // ================================== Pool usage =======================================
     // Allocate explosion object from pool
     GameObject *explosion = (GameObject *) POOL_allocate(game.explosionPool);
-    
+
     // Exit function if no available objects
     if (!explosion)
         return;
-    
+
     // Initialize explosion properties
     GameObject_Init(explosion, x - EXPLOSION_SIZE / 2, y);
     SPR_setAlwaysOnTop(explosion->sprite);
     SPR_setAnimationLoop(explosion->sprite, FALSE);
-    
+
     // Play explosion sound
     XGM2_playPCM(xpcm_explosion, sizeof(xpcm_explosion), SOUND_PCM_CH3);
 }
