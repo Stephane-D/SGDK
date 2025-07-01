@@ -101,7 +101,7 @@ public class Compiler
     // TODO: set that to false on release
     public static boolean DAGame = false;
 
-    public static boolean compile(String fileName, String fileNameOut, boolean header, String depTarget)
+    public static boolean compile(String fileName, String fileNameOut, boolean asm, boolean header, String depTarget)
     {
         // get application directory
         // currentDir = new File("").getAbsolutePath();
@@ -390,9 +390,12 @@ public class Compiler
         try
         {
             // save .s file
-            out = new BufferedWriter(new FileWriter(fileNameOut));
-            out.write(outS.toString());
-            out.close();
+            if (asm)
+            {
+	            out = new BufferedWriter(new FileWriter(fileNameOut));
+	            out.write(outS.toString());
+	            out.close();
+            }
             // save .h file
             if (header)
             {
