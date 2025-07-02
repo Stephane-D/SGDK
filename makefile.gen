@@ -194,7 +194,6 @@ $(OUT_DIR)/cmd_: $(OBJS)
 # NOTE: sega.s references out/rom_header.bin internally
 $(OUT_DIR)/sega.o: out/rom_header.bin
 	@$(MKDIR) -p $(dir $@)
-	@$(RM) -r -f $(SRC_DIR)/boot
 	$(CP) $(SRC_LIB)/boot/sega.s $(OUT_DIR)/sega.s
 	$(CC) $(AFLAGS) -c $(OUT_DIR)/sega.s -o $@
 
