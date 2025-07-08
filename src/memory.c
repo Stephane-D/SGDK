@@ -145,7 +145,8 @@ extern u32 _bend;
  *
  */
 
- // forward
+// forward
+// static void packBlock(u16* block);
 static u16* pack(u16 nsize);
 
 static u16* free;
@@ -248,18 +249,16 @@ NO_INLINE void* MEM_alloc(u16 size)
     if (size == 0)
         return 0;
 
+    // pack memory if requested
+    if (needPack) MEM_pack();
+
     u16* p = free;
     // 2 bytes aligned
     u16 adjsize = (size + sizeof(u16) + 1) & 0xFFFE;
 
-    // current free block size is not big enough ?
+    // block is not big enough ?
     if (adjsize > *p)
     {
-        // go to next block
-        p += *p >> 1;
-        // bypass used blocks
-        while(*p & USED) p += *p >> 1;
-
         // find the first big enough free block
         while (*p && (adjsize > *p))
         {
@@ -268,43 +267,25 @@ NO_INLINE void* MEM_alloc(u16 size)
             // bypass used blocks
             while(*p & USED) p += *p >> 1;
         }
-        
-        // reached end of heap ? --> try to pack memory
-        if (*p == 0) p = pack(adjsize);
-        // not enough memory
-        if (p == NULL)
+
+        // reached end of heap ?
+        if (*p == 0)
         {
-#if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
-            if (size > MEM_getFree())
-                KLog_U2_("MEM_alloc(", size, ") failed: no enough free memory (free = ", MEM_getFree(), ")");
-            else
-                KLog_U3_("MEM_alloc(", size, ") failed: cannot find a big enough memory block (largest free block = ", MEM_getLargestFreeBlock(), " - free = ", MEM_getFree(), ")");
-#endif
-
-            return NULL;
-        }
-
-    }
-    // at this point we can allocate memory
-    else
-    {
-        // check if we need to pack memory
-        if (needPack)
-        {
-            MEM_pack();
-
-            p = free;
-            // find the first big enough free block if needed
-            while (adjsize > *p)
+            // try to pack memory
+            p = pack(adjsize);
+            // not enough memory
+            if (p == NULL)
             {
-                // next block
-                p += *p >> 1;
-                // bypass used blocks
-                while(*p & USED) p += *p >> 1;
+    #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
+                if (size > MEM_getFree())
+                    KLog_U2_("MEM_alloc(", size, ") failed: no enough free memory (free = ", MEM_getFree(), ")");
+                else
+                    KLog_U3_("MEM_alloc(", size, ") failed: cannot find a big enough memory block (largest free block = ", MEM_getLargestFreeBlock(), " - free = ", MEM_getFree(), ")");
+    #endif
+
+                return NULL;
             }
         }
-
-        p = free;
     }
 
     // set free to next free block
@@ -386,7 +367,7 @@ NO_INLINE void* MEM_allocAt(u32 addr, u16 size)
                         break;
                     }
                 }
-                // block address not valid anymore --> stop here 
+                // block address not valid anymore --> stop here
                 else break;
 
                 // reset packed free size
@@ -489,17 +470,22 @@ void MEM_free(void *ptr)
     // valid block ?
     if (ptr)
     {
+        // get block header
+        u16* block = &((u16*)ptr)[-1];
+
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_ERROR)
         // not in use ?
-        if (!(((u16*)ptr)[-1] & USED))
+        if (!(*block & USED))
         {
             kprintf("MEM_free(%lx) failed: block is not allocated !", (u32) ptr);
             return;
         }
 #endif
 
-        // mark block as no more used
-        ((u16*)ptr)[-1] &= ~USED;
+        // mark block as free
+        *block &= ~USED;
+        // pack block
+        // packBlock(block);
         // request packing on next allocation
         needPack = TRUE;
 
@@ -561,7 +547,7 @@ NO_INLINE void MEM_pack()
         if (nfree == NULL) nfree = best;
     }
 
-    // store new 'free' 
+    // store new 'free'
     if (nfree != NULL) free = nfree;
     // no more free memory
     else free = heapEnd;
@@ -676,6 +662,30 @@ NO_INLINE void MEM_dump()
     KDebug_Alert("Total free:");
     KDebug_AlertNumber(memfree);
 }
+
+
+/*
+ * Pack current block
+ */
+//static void packBlock(u16* block)
+//{
+//    u16* b = block;
+//    u16 bsize = 0;
+//    u16 psize = *b;
+//
+//    do
+//    {
+//        // increment free size
+//        bsize += psize;
+//        // clear this memory block as it will be packed
+//        *b = 0;
+//        // point to next memory block
+//        b += psize >> 1;
+//    } while ((psize = *b) && !(psize & USED));
+//
+//    // store packed free size
+//    *block = bsize;
+//}
 
 /*
  * Pack free blocks and return first free block matching size
