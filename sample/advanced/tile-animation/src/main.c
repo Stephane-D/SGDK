@@ -1,5 +1,5 @@
 // *****************************************************************************
-//  Tile animation example
+//  Tile Animation Sample
 //
 //  This example shows one way how you can implement animated tiles on BG plane.
 //  To do this, we perform the following actions:
