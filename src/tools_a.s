@@ -266,36 +266,291 @@ aplib_decrunch:
 
     add.w  d0, d0
     add.w  d0, d0
-    move.l  (a3,d0.w), a4
-    jmp  (a4)
+    jmp  (a3,d0.w)
   .endm
 
 func lz4w_unpack
-    movem.l 4(%sp),%a0-%a1          ;// a0 = src, // a1 = dst
+    movem.l 4(sp), a0-a1          ;// a0 = src, // a1 = dst
 
 lz4w_unpack_a:
-    movem.l  a1-a4, -(sp)           ;// save dst for lz4w_unpack_a
+    movem.l  a1-a3, -(sp)           ;// save dst for lz4w_unpack_a
 
     lea  .jump_table(pc), a3        ;// for LZ4W_NEXT macro
     LZ4W_NEXT
 
 .jump_table:
-  .long  .lit0_mat0, .lit0_mat1, .lit0_mat2, .lit0_mat3, .lit0_mat4, .lit0_mat5, .lit0_mat6, .lit0_mat7, .lit0_mat8, .lit0_mat9, .lit0_matA, .lit0_matB, .lit0_matC, .lit0_matD, .lit0_matE, .lit0_matF
-  .long  .lit1_mat0, .lit1_mat1, .lit1_mat2, .lit1_mat3, .lit1_mat4, .lit1_mat5, .lit1_mat6, .lit1_mat7, .lit1_mat8, .lit1_mat9, .lit1_matA, .lit1_matB, .lit1_matC, .lit1_matD, .lit1_matE, .lit1_matF
-  .long  .lit2_mat0, .lit2_mat1, .lit2_mat2, .lit2_mat3, .lit2_mat4, .lit2_mat5, .lit2_mat6, .lit2_mat7, .lit2_mat8, .lit2_mat9, .lit2_matA, .lit2_matB, .lit2_matC, .lit2_matD, .lit2_matE, .lit2_matF
-  .long  .lit3_mat0, .lit3_mat1, .lit3_mat2, .lit3_mat3, .lit3_mat4, .lit3_mat5, .lit3_mat6, .lit3_mat7, .lit3_mat8, .lit3_mat9, .lit3_matA, .lit3_matB, .lit3_matC, .lit3_matD, .lit3_matE, .lit3_matF
-  .long  .lit4_mat0, .lit4_mat1, .lit4_mat2, .lit4_mat3, .lit4_mat4, .lit4_mat5, .lit4_mat6, .lit4_mat7, .lit4_mat8, .lit4_mat9, .lit4_matA, .lit4_matB, .lit4_matC, .lit4_matD, .lit4_matE, .lit4_matF
-  .long  .lit5_mat0, .lit5_mat1, .lit5_mat2, .lit5_mat3, .lit5_mat4, .lit5_mat5, .lit5_mat6, .lit5_mat7, .lit5_mat8, .lit5_mat9, .lit5_matA, .lit5_matB, .lit5_matC, .lit5_matD, .lit5_matE, .lit5_matF
-  .long  .lit6_mat0, .lit6_mat1, .lit6_mat2, .lit6_mat3, .lit6_mat4, .lit6_mat5, .lit6_mat6, .lit6_mat7, .lit6_mat8, .lit6_mat9, .lit6_matA, .lit6_matB, .lit6_matC, .lit6_matD, .lit6_matE, .lit6_matF
-  .long  .lit7_mat0, .lit7_mat1, .lit7_mat2, .lit7_mat3, .lit7_mat4, .lit7_mat5, .lit7_mat6, .lit7_mat7, .lit7_mat8, .lit7_mat9, .lit7_matA, .lit7_matB, .lit7_matC, .lit7_matD, .lit7_matE, .lit7_matF
-  .long  .lit8_mat0, .lit8_mat1, .lit8_mat2, .lit8_mat3, .lit8_mat4, .lit8_mat5, .lit8_mat6, .lit8_mat7, .lit8_mat8, .lit8_mat9, .lit8_matA, .lit8_matB, .lit8_matC, .lit8_matD, .lit8_matE, .lit8_matF
-  .long  .lit9_mat0, .lit9_mat1, .lit9_mat2, .lit9_mat3, .lit9_mat4, .lit9_mat5, .lit9_mat6, .lit9_mat7, .lit9_mat8, .lit9_mat9, .lit9_matA, .lit9_matB, .lit9_matC, .lit9_matD, .lit9_matE, .lit9_matF
-  .long  .litA_mat0, .litA_mat1, .litA_mat2, .litA_mat3, .litA_mat4, .litA_mat5, .litA_mat6, .litA_mat7, .litA_mat8, .litA_mat9, .litA_matA, .litA_matB, .litA_matC, .litA_matD, .litA_matE, .litA_matF
-  .long  .litB_mat0, .litB_mat1, .litB_mat2, .litB_mat3, .litB_mat4, .litB_mat5, .litB_mat6, .litB_mat7, .litB_mat8, .litB_mat9, .litB_matA, .litB_matB, .litB_matC, .litB_matD, .litB_matE, .litB_matF
-  .long  .litC_mat0, .litC_mat1, .litC_mat2, .litC_mat3, .litC_mat4, .litC_mat5, .litC_mat6, .litC_mat7, .litC_mat8, .litC_mat9, .litC_matA, .litC_matB, .litC_matC, .litC_matD, .litC_matE, .litC_matF
-  .long  .litD_mat0, .litD_mat1, .litD_mat2, .litD_mat3, .litD_mat4, .litD_mat5, .litD_mat6, .litD_mat7, .litD_mat8, .litD_mat9, .litD_matA, .litD_matB, .litD_matC, .litD_matD, .litD_matE, .litD_matF
-  .long  .litE_mat0, .litE_mat1, .litE_mat2, .litE_mat3, .litE_mat4, .litE_mat5, .litE_mat6, .litE_mat7, .litE_mat8, .litE_mat9, .litE_matA, .litE_matB, .litE_matC, .litE_matD, .litE_matE, .litE_matF
-  .long  .litF_mat0, .litF_mat1, .litF_mat2, .litF_mat3, .litF_mat4, .litF_mat5, .litF_mat6, .litF_mat7, .litF_mat8, .litF_mat9, .litF_matA, .litF_matB, .litF_matC, .litF_matD, .litF_matE, .litF_matF
+	;* why U no good macros, GCC? (╯‵□′)╯︵┻━┻
+	bra.w	.lit0_mat0
+	bra.w	.lit0_mat1
+	bra.w	.lit0_mat2
+	bra.w	.lit0_mat3
+	bra.w	.lit0_mat4
+	bra.w	.lit0_mat5
+	bra.w	.lit0_mat6
+	bra.w	.lit0_mat7
+	bra.w	.lit0_mat8
+	bra.w	.lit0_mat9
+	bra.w	.lit0_matA
+	bra.w	.lit0_matB
+	bra.w	.lit0_matC
+	bra.w	.lit0_matD
+	bra.w	.lit0_matE
+	bra.w	.lit0_matF
+
+	bra.w	.lit1_mat0
+	bra.w	.lit1_mat1
+	bra.w	.lit1_mat2
+	bra.w	.lit1_mat3
+	bra.w	.lit1_mat4
+	bra.w	.lit1_mat5
+	bra.w	.lit1_mat6
+	bra.w	.lit1_mat7
+	bra.w	.lit1_mat8
+	bra.w	.lit1_mat9
+	bra.w	.lit1_matA
+	bra.w	.lit1_matB
+	bra.w	.lit1_matC
+	bra.w	.lit1_matD
+	bra.w	.lit1_matE
+	bra.w	.lit1_matF
+
+	bra.w	.lit2_mat0
+	bra.w	.lit2_mat1
+	bra.w	.lit2_mat2
+	bra.w	.lit2_mat3
+	bra.w	.lit2_mat4
+	bra.w	.lit2_mat5
+	bra.w	.lit2_mat6
+	bra.w	.lit2_mat7
+	bra.w	.lit2_mat8
+	bra.w	.lit2_mat9
+	bra.w	.lit2_matA
+	bra.w	.lit2_matB
+	bra.w	.lit2_matC
+	bra.w	.lit2_matD
+	bra.w	.lit2_matE
+	bra.w	.lit2_matF
+
+	bra.w	.lit3_mat0
+	bra.w	.lit3_mat1
+	bra.w	.lit3_mat2
+	bra.w	.lit3_mat3
+	bra.w	.lit3_mat4
+	bra.w	.lit3_mat5
+	bra.w	.lit3_mat6
+	bra.w	.lit3_mat7
+	bra.w	.lit3_mat8
+	bra.w	.lit3_mat9
+	bra.w	.lit3_matA
+	bra.w	.lit3_matB
+	bra.w	.lit3_matC
+	bra.w	.lit3_matD
+	bra.w	.lit3_matE
+	bra.w	.lit3_matF
+
+	bra.w	.lit4_mat0
+	bra.w	.lit4_mat1
+	bra.w	.lit4_mat2
+	bra.w	.lit4_mat3
+	bra.w	.lit4_mat4
+	bra.w	.lit4_mat5
+	bra.w	.lit4_mat6
+	bra.w	.lit4_mat7
+	bra.w	.lit4_mat8
+	bra.w	.lit4_mat9
+	bra.w	.lit4_matA
+	bra.w	.lit4_matB
+	bra.w	.lit4_matC
+	bra.w	.lit4_matD
+	bra.w	.lit4_matE
+	bra.w	.lit4_matF
+
+	bra.w	.lit5_mat0
+	bra.w	.lit5_mat1
+	bra.w	.lit5_mat2
+	bra.w	.lit5_mat3
+	bra.w	.lit5_mat4
+	bra.w	.lit5_mat5
+	bra.w	.lit5_mat6
+	bra.w	.lit5_mat7
+	bra.w	.lit5_mat8
+	bra.w	.lit5_mat9
+	bra.w	.lit5_matA
+	bra.w	.lit5_matB
+	bra.w	.lit5_matC
+	bra.w	.lit5_matD
+	bra.w	.lit5_matE
+	bra.w	.lit5_matF
+
+	bra.w	.lit6_mat0
+	bra.w	.lit6_mat1
+	bra.w	.lit6_mat2
+	bra.w	.lit6_mat3
+	bra.w	.lit6_mat4
+	bra.w	.lit6_mat5
+	bra.w	.lit6_mat6
+	bra.w	.lit6_mat7
+	bra.w	.lit6_mat8
+	bra.w	.lit6_mat9
+	bra.w	.lit6_matA
+	bra.w	.lit6_matB
+	bra.w	.lit6_matC
+	bra.w	.lit6_matD
+	bra.w	.lit6_matE
+	bra.w	.lit6_matF
+
+	bra.w	.lit7_mat0
+	bra.w	.lit7_mat1
+	bra.w	.lit7_mat2
+	bra.w	.lit7_mat3
+	bra.w	.lit7_mat4
+	bra.w	.lit7_mat5
+	bra.w	.lit7_mat6
+	bra.w	.lit7_mat7
+	bra.w	.lit7_mat8
+	bra.w	.lit7_mat9
+	bra.w	.lit7_matA
+	bra.w	.lit7_matB
+	bra.w	.lit7_matC
+	bra.w	.lit7_matD
+	bra.w	.lit7_matE
+	bra.w	.lit7_matF
+
+	bra.w	.lit8_mat0
+	bra.w	.lit8_mat1
+	bra.w	.lit8_mat2
+	bra.w	.lit8_mat3
+	bra.w	.lit8_mat4
+	bra.w	.lit8_mat5
+	bra.w	.lit8_mat6
+	bra.w	.lit8_mat7
+	bra.w	.lit8_mat8
+	bra.w	.lit8_mat9
+	bra.w	.lit8_matA
+	bra.w	.lit8_matB
+	bra.w	.lit8_matC
+	bra.w	.lit8_matD
+	bra.w	.lit8_matE
+	bra.w	.lit8_matF
+
+	bra.w	.lit9_mat0
+	bra.w	.lit9_mat1
+	bra.w	.lit9_mat2
+	bra.w	.lit9_mat3
+	bra.w	.lit9_mat4
+	bra.w	.lit9_mat5
+	bra.w	.lit9_mat6
+	bra.w	.lit9_mat7
+	bra.w	.lit9_mat8
+	bra.w	.lit9_mat9
+	bra.w	.lit9_matA
+	bra.w	.lit9_matB
+	bra.w	.lit9_matC
+	bra.w	.lit9_matD
+	bra.w	.lit9_matE
+	bra.w	.lit9_matF
+
+	bra.w	.litA_mat0
+	bra.w	.litA_mat1
+	bra.w	.litA_mat2
+	bra.w	.litA_mat3
+	bra.w	.litA_mat4
+	bra.w	.litA_mat5
+	bra.w	.litA_mat6
+	bra.w	.litA_mat7
+	bra.w	.litA_mat8
+	bra.w	.litA_mat9
+	bra.w	.litA_matA
+	bra.w	.litA_matB
+	bra.w	.litA_matC
+	bra.w	.litA_matD
+	bra.w	.litA_matE
+	bra.w	.litA_matF
+
+	bra.w	.litB_mat0
+	bra.w	.litB_mat1
+	bra.w	.litB_mat2
+	bra.w	.litB_mat3
+	bra.w	.litB_mat4
+	bra.w	.litB_mat5
+	bra.w	.litB_mat6
+	bra.w	.litB_mat7
+	bra.w	.litB_mat8
+	bra.w	.litB_mat9
+	bra.w	.litB_matA
+	bra.w	.litB_matB
+	bra.w	.litB_matC
+	bra.w	.litB_matD
+	bra.w	.litB_matE
+	bra.w	.litB_matF
+
+	bra.w	.litC_mat0
+	bra.w	.litC_mat1
+	bra.w	.litC_mat2
+	bra.w	.litC_mat3
+	bra.w	.litC_mat4
+	bra.w	.litC_mat5
+	bra.w	.litC_mat6
+	bra.w	.litC_mat7
+	bra.w	.litC_mat8
+	bra.w	.litC_mat9
+	bra.w	.litC_matA
+	bra.w	.litC_matB
+	bra.w	.litC_matC
+	bra.w	.litC_matD
+	bra.w	.litC_matE
+	bra.w	.litC_matF
+
+	bra.w	.litD_mat0
+	bra.w	.litD_mat1
+	bra.w	.litD_mat2
+	bra.w	.litD_mat3
+	bra.w	.litD_mat4
+	bra.w	.litD_mat5
+	bra.w	.litD_mat6
+	bra.w	.litD_mat7
+	bra.w	.litD_mat8
+	bra.w	.litD_mat9
+	bra.w	.litD_matA
+	bra.w	.litD_matB
+	bra.w	.litD_matC
+	bra.w	.litD_matD
+	bra.w	.litD_matE
+	bra.w	.litD_matF
+
+	bra.w	.litE_mat0
+	bra.w	.litE_mat1
+	bra.w	.litE_mat2
+	bra.w	.litE_mat3
+	bra.w	.litE_mat4
+	bra.w	.litE_mat5
+	bra.w	.litE_mat6
+	bra.w	.litE_mat7
+	bra.w	.litE_mat8
+	bra.w	.litE_mat9
+	bra.w	.litE_matA
+	bra.w	.litE_matB
+	bra.w	.litE_matC
+	bra.w	.litE_matD
+	bra.w	.litE_matE
+	bra.w	.litE_matF
+
+	bra.w	.litF_mat0
+	bra.w	.litF_mat1
+	bra.w	.litF_mat2
+	bra.w	.litF_mat3
+	bra.w	.litF_mat4
+	bra.w	.litF_mat5
+	bra.w	.litF_mat6
+	bra.w	.litF_mat7
+	bra.w	.litF_mat8
+	bra.w	.litF_mat9
+	bra.w	.litF_matA
+	bra.w	.litF_matB
+	bra.w	.litF_matC
+	bra.w	.litF_matD
+	bra.w	.litF_matE
+	bra.w	.litF_matF
 
 
   .rept  127
@@ -330,8 +585,7 @@ lz4w_unpack_a:
 
     add.w  d0, d0
     add.w  d0, d0
-    move.l  (a3,d0.w), a4
-    jmp  (a4)
+    jmp    (a3,d0.w)
 
 .litE_mat0:  move.l  (a0)+, (a1)+
 .litC_mat0:  move.l  (a0)+, (a1)+
@@ -351,8 +605,7 @@ lz4w_unpack_a:
 
     lea  -2(a1,d0.w), a2            ;// a2 = dst - (match offset + 2)
     neg.w  d1
-    lea  .lm_len_00(pc,d1.w), a4
-    jmp  (a4)
+    jmp  .lm_len_00(pc,d1.w)
 
 .litF_mat0:  move.l  (a0)+, (a1)+
 .litD_mat0:  move.l  (a0)+, (a1)+
@@ -373,8 +626,7 @@ lz4w_unpack_a:
 
     lea  -2(a1,d0.w), a2            ;// a2 = dst - (match offset + 2)
     neg.w  d1
-    lea  .lm_len_00(pc,d1.w), a4
-    jmp  (a4)
+    jmp  .lm_len_00(pc,d1.w)
 
 .lit0_mat0:                         ;// special case of lit=0 and mat=0
     add.w  d1, d1                   ;// len = len * 2, match offset null ?
@@ -388,14 +640,12 @@ lz4w_unpack_a:
 
     lea  -2(a1,d0.w), a2            ;// a2 = dst - (match offset + 2)
     neg.w  d1
-    lea  .lm_len_00(pc,d1.w), a4
-    jmp  (a4)
+    jmp  .lm_len_00(pc,d1.w)
 
 .lm_rom:
     add.w  d1, d1                   ;// len = len * 4
     lea  -2(a0,d0.w), a2            ;// a2 = src - (match offset + 2)
-    move.l  .lmr_jump_table(pc,d1.w), a4
-    jmp     (a4)
+    jmp     .lmr_jump_table(pc,d1.w)
 
 .done:
     move.w  (a0)+, d0               ;// need to copy a last byte ?
@@ -405,26 +655,16 @@ lz4w_unpack_a:
     move.l  a1, d0
     sub.l   (sp)+, d0               ;// return op - dest
 
-    movem.l (sp)+, a2-a4
+    movem.l (sp)+, a2-a3
     rts
 
 .lmr_jump_table:
-  .long  .lmr_len_00-0x00, .lmr_len_01-0x00, .lmr_len_00-0x02, .lmr_len_01-0x02, .lmr_len_00-0x04, .lmr_len_01-0x04, .lmr_len_00-0x06, .lmr_len_01-0x06, .lmr_len_00-0x08, .lmr_len_01-0x08, .lmr_len_00-0x0a, .lmr_len_01-0x0a, .lmr_len_00-0x0c, .lmr_len_01-0x0c, .lmr_len_00-0x0e, .lmr_len_01-0x0e
-  .long  .lmr_len_00-0x10, .lmr_len_01-0x10, .lmr_len_00-0x12, .lmr_len_01-0x12, .lmr_len_00-0x14, .lmr_len_01-0x14, .lmr_len_00-0x16, .lmr_len_01-0x16, .lmr_len_00-0x18, .lmr_len_01-0x18, .lmr_len_00-0x1a, .lmr_len_01-0x1a, .lmr_len_00-0x1c, .lmr_len_01-0x1c, .lmr_len_00-0x1e, .lmr_len_01-0x1e
-  .long  .lmr_len_00-0x20, .lmr_len_01-0x20, .lmr_len_00-0x22, .lmr_len_01-0x22, .lmr_len_00-0x24, .lmr_len_01-0x24, .lmr_len_00-0x26, .lmr_len_01-0x26, .lmr_len_00-0x28, .lmr_len_01-0x28, .lmr_len_00-0x2a, .lmr_len_01-0x2a, .lmr_len_00-0x2c, .lmr_len_01-0x2c, .lmr_len_00-0x2e, .lmr_len_01-0x2e
-  .long  .lmr_len_00-0x30, .lmr_len_01-0x30, .lmr_len_00-0x32, .lmr_len_01-0x32, .lmr_len_00-0x34, .lmr_len_01-0x34, .lmr_len_00-0x36, .lmr_len_01-0x36, .lmr_len_00-0x38, .lmr_len_01-0x38, .lmr_len_00-0x3a, .lmr_len_01-0x3a, .lmr_len_00-0x3c, .lmr_len_01-0x3c, .lmr_len_00-0x3e, .lmr_len_01-0x3e
-  .long  .lmr_len_00-0x40, .lmr_len_01-0x40, .lmr_len_00-0x42, .lmr_len_01-0x42, .lmr_len_00-0x44, .lmr_len_01-0x44, .lmr_len_00-0x46, .lmr_len_01-0x46, .lmr_len_00-0x48, .lmr_len_01-0x48, .lmr_len_00-0x4a, .lmr_len_01-0x4a, .lmr_len_00-0x4c, .lmr_len_01-0x4c, .lmr_len_00-0x4e, .lmr_len_01-0x4e
-  .long  .lmr_len_00-0x50, .lmr_len_01-0x50, .lmr_len_00-0x52, .lmr_len_01-0x52, .lmr_len_00-0x54, .lmr_len_01-0x54, .lmr_len_00-0x56, .lmr_len_01-0x56, .lmr_len_00-0x58, .lmr_len_01-0x58, .lmr_len_00-0x5a, .lmr_len_01-0x5a, .lmr_len_00-0x5c, .lmr_len_01-0x5c, .lmr_len_00-0x5e, .lmr_len_01-0x5e
-  .long  .lmr_len_00-0x60, .lmr_len_01-0x60, .lmr_len_00-0x62, .lmr_len_01-0x62, .lmr_len_00-0x64, .lmr_len_01-0x64, .lmr_len_00-0x66, .lmr_len_01-0x66, .lmr_len_00-0x68, .lmr_len_01-0x68, .lmr_len_00-0x6a, .lmr_len_01-0x6a, .lmr_len_00-0x6c, .lmr_len_01-0x6c, .lmr_len_00-0x6e, .lmr_len_01-0x6e
-  .long  .lmr_len_00-0x70, .lmr_len_01-0x70, .lmr_len_00-0x72, .lmr_len_01-0x72, .lmr_len_00-0x74, .lmr_len_01-0x74, .lmr_len_00-0x76, .lmr_len_01-0x76, .lmr_len_00-0x78, .lmr_len_01-0x78, .lmr_len_00-0x7a, .lmr_len_01-0x7a, .lmr_len_00-0x7c, .lmr_len_01-0x7c, .lmr_len_00-0x7e, .lmr_len_01-0x7e
-  .long  .lmr_len_00-0x80, .lmr_len_01-0x80, .lmr_len_00-0x82, .lmr_len_01-0x82, .lmr_len_00-0x84, .lmr_len_01-0x84, .lmr_len_00-0x86, .lmr_len_01-0x86, .lmr_len_00-0x88, .lmr_len_01-0x88, .lmr_len_00-0x8a, .lmr_len_01-0x8a, .lmr_len_00-0x8c, .lmr_len_01-0x8c, .lmr_len_00-0x8e, .lmr_len_01-0x8e
-  .long  .lmr_len_00-0x90, .lmr_len_01-0x90, .lmr_len_00-0x92, .lmr_len_01-0x92, .lmr_len_00-0x94, .lmr_len_01-0x94, .lmr_len_00-0x96, .lmr_len_01-0x96, .lmr_len_00-0x98, .lmr_len_01-0x98, .lmr_len_00-0x9a, .lmr_len_01-0x9a, .lmr_len_00-0x9c, .lmr_len_01-0x9c, .lmr_len_00-0x9e, .lmr_len_01-0x9e
-  .long  .lmr_len_00-0xa0, .lmr_len_01-0xa0, .lmr_len_00-0xa2, .lmr_len_01-0xa2, .lmr_len_00-0xa4, .lmr_len_01-0xa4, .lmr_len_00-0xa6, .lmr_len_01-0xa6, .lmr_len_00-0xa8, .lmr_len_01-0xa8, .lmr_len_00-0xaa, .lmr_len_01-0xaa, .lmr_len_00-0xac, .lmr_len_01-0xac, .lmr_len_00-0xae, .lmr_len_01-0xae
-  .long  .lmr_len_00-0xb0, .lmr_len_01-0xb0, .lmr_len_00-0xb2, .lmr_len_01-0xb2, .lmr_len_00-0xb4, .lmr_len_01-0xb4, .lmr_len_00-0xb6, .lmr_len_01-0xb6, .lmr_len_00-0xb8, .lmr_len_01-0xb8, .lmr_len_00-0xba, .lmr_len_01-0xba, .lmr_len_00-0xbc, .lmr_len_01-0xbc, .lmr_len_00-0xbe, .lmr_len_01-0xbe
-  .long  .lmr_len_00-0xc0, .lmr_len_01-0xc0, .lmr_len_00-0xc2, .lmr_len_01-0xc2, .lmr_len_00-0xc4, .lmr_len_01-0xc4, .lmr_len_00-0xc6, .lmr_len_01-0xc6, .lmr_len_00-0xc8, .lmr_len_01-0xc8, .lmr_len_00-0xca, .lmr_len_01-0xca, .lmr_len_00-0xcc, .lmr_len_01-0xcc, .lmr_len_00-0xce, .lmr_len_01-0xce
-  .long  .lmr_len_00-0xd0, .lmr_len_01-0xd0, .lmr_len_00-0xd2, .lmr_len_01-0xd2, .lmr_len_00-0xd4, .lmr_len_01-0xd4, .lmr_len_00-0xd6, .lmr_len_01-0xd6, .lmr_len_00-0xd8, .lmr_len_01-0xd8, .lmr_len_00-0xda, .lmr_len_01-0xda, .lmr_len_00-0xdc, .lmr_len_01-0xdc, .lmr_len_00-0xde, .lmr_len_01-0xde
-  .long  .lmr_len_00-0xe0, .lmr_len_01-0xe0, .lmr_len_00-0xe2, .lmr_len_01-0xe2, .lmr_len_00-0xe4, .lmr_len_01-0xe4, .lmr_len_00-0xe6, .lmr_len_01-0xe6, .lmr_len_00-0xe8, .lmr_len_01-0xe8, .lmr_len_00-0xea, .lmr_len_01-0xea, .lmr_len_00-0xec, .lmr_len_01-0xec, .lmr_len_00-0xee, .lmr_len_01-0xee
-  .long  .lmr_len_00-0xf0, .lmr_len_01-0xf0, .lmr_len_00-0xf2, .lmr_len_01-0xf2, .lmr_len_00-0xf4, .lmr_len_01-0xf4, .lmr_len_00-0xf6, .lmr_len_01-0xf6, .lmr_len_00-0xf8, .lmr_len_01-0xf8, .lmr_len_00-0xfa, .lmr_len_01-0xfa, .lmr_len_00-0xfc, .lmr_len_01-0xfc, .lmr_len_00-0xfe, .lmr_len_01-0xfe
+	.set	_offset, 0
+	.rept	128
+	bra.w	.lmr_len_00-_offset
+	bra.w	.lmr_len_01-_offset
+	.set	_offset, _offset+2
+	.endr
 
 
   .macro  COPY_MATCH  count
