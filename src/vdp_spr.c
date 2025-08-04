@@ -267,7 +267,7 @@ void VDP_setSpriteFlipH(u16 index, bool flipH)
 
 void VDP_setSpriteFlipV(u16 index, bool flipV)
 {
-    vdpSpriteCache[index].flipH = flipV;
+    vdpSpriteCache[index].flipV = flipV;
 }
 
 bool VDP_getSpriteFlipH(u16 index)
