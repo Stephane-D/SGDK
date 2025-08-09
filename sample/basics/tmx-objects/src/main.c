@@ -1,5 +1,5 @@
 // *****************************************************************************
-//  TMX-Objects sample
+//  TMX-Objects Sample
 //
 //  This sample shows how you can load object data from TMX files (Tiled map format).
 //  It shows loading of built-in 'name', 'x', 'y', and various custom fields using Tiled
@@ -36,7 +36,8 @@ typedef enum
     TYPE_COUNT,
 } ObjectType;
 
-// Base object data properties
+// ---------------------- TMX Data Types used for import data from .tmx file and stored in rom --------------------------
+// Base object tmx data properties used for inheritance
 typedef struct
 {
     char *name;                 // Display name
@@ -55,7 +56,7 @@ typedef struct
 typedef struct
 {
     TMX_BaseObjectData;         // Base object properties
-    s16 hp;                     // Hit points (not used just for example)
+    s16 hp;                     // Hit points
 } TMX_ItemData;
 
 // Extended object data for actors
@@ -63,23 +64,13 @@ typedef struct
 {
     TMX_BaseObjectData;         // Base object properties
     char *phrase;               // Dialogue text
-    f32 speed;                  // Movement speed (not used just for example)
-    s16 hp;                     // Hit points (not used just for example)
+    f32 speed;                  // Movement speed
+    s16 hp;                     // Hit points
     void *target;               // Target reference
 } TMX_ActorData;
 
-// Base game object with sprite and data
-typedef struct
-{
-    union
-    {
-        TMX_BaseObjectData data; // Named access
-        TMX_BaseObjectData;      // Anonymous access
-    };
-    Sprite *sprite;              // Sprite reference
-} GameObject;
-
-// Game item object with sprite and data
+// ----------------------------- Game data types -------------------------------------------
+// Game item object with sprite and tmx item data
 typedef struct
 {
     union
@@ -90,7 +81,7 @@ typedef struct
     Sprite *sprite;             // Sprite reference
 } GameItem;
 
-// Game actor object with sprite and data
+// Game actor object with sprite and tmx actor data
 typedef struct
 {
     union
@@ -100,27 +91,7 @@ typedef struct
     };
     Sprite *sprite;             // Sprite reference
 } GameActor;
-
-// Item object extending GameItem
-typedef struct
-{
-    GameItem;                   // Inherits GameItem
-    u16 size;                   // Size property (not used just for example)
-} Item;
-
-// Player-specific object
-typedef struct
-{
-    GameActor;                  // Inherits GameActor
-    u16 lives;                  // Lives count (not used just for example)
-} Player;
-
-// Enemy-specific object
-typedef struct
-{
-    GameActor;                  // Inherits GameActor
-    V2ff32 wayPoint;            // Movement waypoint (not used just for example)
-} Enemy;
+// ------------------------------------------------------------------------------------------
 
 #include "objects.h"
 
@@ -136,9 +107,9 @@ typedef struct
 #define STR(x) #x
 
 // Game state variables
-static Player players[PLAYER_COUNT];
-static Enemy enemies[ENEMY_COUNT];
-static Item items[ITEM_COUNT];
+static GameActor players[PLAYER_COUNT];
+static GameActor enemies[ENEMY_COUNT];
+static GameItem items[ITEM_COUNT];
 static u16 selectedObjectIndex = 0;
 TMX_BaseObjectData *objectsList[OBJECTS_COUNT];
 
@@ -357,6 +328,9 @@ static void UI_DrawData(const TMX_BaseObjectData *object)
         
         case TYPE_ITEM:
             UI_DrawItemData((const TMX_ItemData *)object);
+            break;
+            
+        default:
             break;
     }
 }
