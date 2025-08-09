@@ -1,0 +1,22 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "objects_map.tmx": {
+            "scale": 3.4853125,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 159.95696225230878,
+                "y": 112.0416031561015
+            }
+        }
+    },
+    "openFiles": [
+    ],
+    "project": "stg_1.tiled-project",
+    "recentFiles": [
+        "objects_map.tmx"
+    ]
+}

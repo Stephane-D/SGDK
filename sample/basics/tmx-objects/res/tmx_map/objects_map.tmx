@@ -125,7 +125,7 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="ItemLayer">
-  <object id="6" name="Display" type="TMX_Item" x="228" y="168" width="32" height="32">
+  <object id="6" name="Display" type="TiledItem" x="228" y="168" width="32" height="32">
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="exportName" type="bool" value="true"/>
@@ -139,7 +139,7 @@
     <property name="type" type="int" propertytype="ObjectType" value="2"/>
    </properties>
   </object>
-  <object id="7" name="Display" type="TMX_Item" x="188" y="192" width="32" height="32">
+  <object id="7" name="Display" type="TiledItem" x="188" y="192" width="32" height="32">
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="exportName" type="bool" value="true"/>
