@@ -490,44 +490,53 @@ public class XGCPacker
             while ((nextFrameOffset < ind) && (frameInd < frameOffsets.size()))
                 nextFrameOffset = frameOffsets.get(frameInd++).intValue();
 
-            // frame size is big enough and we are aligned on the end of frame ?
-            if ((frameSize >= FRAME_MIN_SIZE) && (ind == nextFrameOffset))
+            // !! fatal error (should never happen) !!
+            if (frameSize >= FRAME_MAX_SIZE)
+                throw new RuntimeException("Error: max frame size reached at frame #" + (frameInd - 1));
+            
+            // aligned on the end of frame ?
+            boolean accept = (ind == nextFrameOffset);
+            if (accept) 
             {
-                // that shouldn't happen but just in case !
-                if (frameSize >= FRAME_MAX_SIZE)
-                    throw new RuntimeException("Error: max frame size reached at frame #" + (frameInd - 1));
-
-                if (frameSize > 128)
+                // frame size is big enough or we reached maximum allowed offset ?
+                accept &= (frameSize >= FRAME_MIN_SIZE) || (ind == maxNextFrameOffset); 
+                
+                if (accept)
+                {
+                    if (frameSize > 128)
+                    {
+                        if (Launcher.verbose)
+                            System.out.println("Warning: large frame at #" + (frameInd - 1) + " - size = " + frameSize);
+                    }
+    
+                    // literal not empty ? --> add literal block first
+                    if (literal.size() > 0)
+                        addBlock(result, literal, null, baseAlign);
+    
+                    // add end frame unpack block marker
+                    result.write(0);
+                    lastFrameStart = ind;
+    
+                    // get max next end frame offset
+                    maxNextFrameOffset = getMaxFrameOffsetFor(frameOffsets, frameInd, ind);
+                    // get next end frame offset
+                    while ((nextFrameOffset <= ind) && (frameInd < frameOffsets.size()))
+                        nextFrameOffset = frameOffsets.get(frameInd++).intValue();
+                }
+            }
+            
+            // was not accepted ?
+            if (!accept)
+            {
+                // above max frame offset ? --> cancel match so we can stop on next frame
+                if ((ind + blockSize) > maxNextFrameOffset)
                 {
                     if (Launcher.verbose)
-                        System.out.println("Warning: large frame at #" + (frameInd - 1) + " - size = " + frameSize);
+                        System.out.println("Info: cannot use match at offset =" + ind + " (len = " + blockSize + ") because of frame end alignement");
+
+                    match = null;
                 }
-
-                // literal not empty ? --> add literal block first
-                if (literal.size() > 0)
-                    addBlock(result, literal, null, baseAlign);
-
-                // add end frame unpack block marker
-                result.write(0);
-                lastFrameStart = ind;
-
-                // get max next end frame offset
-                maxNextFrameOffset = getMaxFrameOffsetFor(frameOffsets, frameInd, ind);
-                // get next end frame offset
-                while ((nextFrameOffset <= ind) && (frameInd < frameOffsets.size()))
-                    nextFrameOffset = frameOffsets.get(frameInd++).intValue();
             }
-            // above max frame offset ? --> cancel match so we can stop on next frame
-            else if ((ind + blockSize) > maxNextFrameOffset)
-            {
-                if (Launcher.verbose)
-                    System.out.println("Info: cannot use match at offset =" + ind + " (len = " + blockSize + ") because of frame end alignement");
-
-                match = null;
-            }
-            // above max frame size ? that shouldn't happen but just in case !
-            else if (frameSize >= FRAME_MAX_SIZE)
-                throw new RuntimeException("Error: max frame size reached at frame #" + (frameInd - 1));
 
             // match found ?
             if (match != null)
