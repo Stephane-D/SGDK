@@ -230,7 +230,7 @@ $(OUT_DIR)/%.o: %.s80
 	@$(MKDIR) -p $(dir $@)
 	$(ASMZ80) $(Z80_FLAGS) $< $(OUT_DIR)/$*.o80 $(OUT_DIR)/out.lst
 	$(BINTOS) $(OUT_DIR)/$*.o80 $(OUT_DIR)/$*.s
-	$(CC) $(AFLAGS) -c  $(OUT_DIR)/$*.s -o $@
+	$(CC) $(AFLAGS) -c $(OUT_DIR)/$*.s -o $@
 
 $(OUT_DIR)/%.o: %.res
 	@$(MKDIR) -p $(dir $@)
