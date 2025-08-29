@@ -133,7 +133,7 @@ int main()
 
     VDP_drawText("Press START to continue.", 2, 14);
 
-    PAL_fadeInPalette(PAL0, font_pal_lib.data, 20, FALSE);
+    PAL_fadeInPalette(PAL0, font_pal_default.data, 20, FALSE);
 
     JOY_waitPress(JOY_1, BUTTON_START);
 
@@ -180,7 +180,7 @@ int main()
     VDP_drawText("Hope you enjoyed :)", 5, 10);
     VDP_drawText("@2021  Stephane Dallongeville", 9, 27);
 
-    PAL_fadeInPalette(PAL0, font_pal_lib.data, 20, FALSE);
+    PAL_fadeInPalette(PAL0, font_pal_default.data, 20, FALSE);
 
     SYS_setVIntCallback(vblank);
 
