@@ -126,7 +126,7 @@ https://gitlab.com/doragasu/docker-sgdk
 Almost everyone now use VSCode editor and the nice extension made by zerasul called *Genesis-Code* makes SGDK integration even smoother:<br>
 https://marketplace.visualstudio.com/items?itemName=zerasul.genesis-code
 Just install and setup it as it's detailled on the extension page ('GDK/SGDK' and 'Gens' emulator paths mainly) and you're ready to use it :)<br>
-You can type *Genesis* in the command palette (Ctrl+Shift+P shortcut) to see all commands supported by the extension.<br>
+You can type *>Genesis* in the command palette (Ctrl+Shift+P shortcut) to see all commands supported by the extension.<br>
 SGDK also now integrates a VSCode template located in _project/template_ folder so you can just create a copy of this folder (for instance _project/test_) and open it in VSCode to start your own project.
 
 ### AWS
