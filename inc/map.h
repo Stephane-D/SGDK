@@ -276,22 +276,17 @@ void MAP_scrollToEx(Map* map, u32 x, u32 y, bool forceRedraw);
 
 /**
  *  \brief
- *      Returns given metatile attribute (a metatile is a block of 2x2 tiles = 16x16 pixels)
+ *      Returns metatile index / number at given position (a metatile is a block of 2x2 tiles = 16x16 pixels)
  *
  *  \param map
  *      source Map structure containing map information.
  *  \param x
- *      metatile X position
+ *      metatile X position (16x16 pixels block)
  *  \param y
- *      metatile Y position
+ *      metatile Y position (16x16 pixels block)
  *
  *  \return
- *      metatile attribute:<br>
- *      - b15: priority override<br>
- *      - b14-b13: free, can be used to encode collision info ?<br>
- *      - b12: combined vflip<br>
- *      - b11: combined hflip<br>
- *      - b10-b0: metatile index<br>
+ *      metatile index
  *
  *  \see #MAP_create(..)
  *  \see #MAP_getTile(..)
@@ -324,14 +319,14 @@ u16 MAP_getMetaTile(Map* map, u16 x, u16 y);
 u16 MAP_getTile(Map* map, u16 x, u16 y);
 /**
  *  \brief
- *      Returns metatiles attribute for the specified region (a metatile is a block of 2x2 tiles = 16x16 pixels)
+ *      Returns metatiles index for the specified region (a metatile is a block of 2x2 tiles = 16x16 pixels)
  *
  *  \param map
  *      source Map structure containing map information.
  *  \param x
- *      Region X start position (in metatile).
+ *      Region X start position (in metatile - 16x16 pixels block).
  *  \param y
- *      Region Y start position (in metatile).
+ *      Region Y start position (in metatile - 16x16 pixels block).
  *  \param w
  *      Region Width (in metatile).
  *  \param h
@@ -340,12 +335,7 @@ u16 MAP_getTile(Map* map, u16 x, u16 y);
  *      destination pointer receiving metatiles attribute data
  *
  *  \return
- *      metatiles attribute:<br>
- *      - b15: priority override<br>
- *      - b14-b13: free, can be used to encode collision info ?<br>
- *      - b12: combined vflip<br>
- *      - b11: combined hflip<br>
- *      - b10-b0: metatile index<br>
+ *      metatiles index
  *
  *  \see #MAP_create(..)
  *  \see #MAP_getTilemapRect(..)
