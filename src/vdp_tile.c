@@ -9,9 +9,10 @@
 #include "tools.h"
 #include "mapper.h"
 
-#include "font.h"
 #include "tab_cnv.h"
 #include "tools.h"
+
+#include "res/libres.h"
 
 
 // forward
@@ -35,7 +36,7 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm)
     VDP_loadTileData(font, TILE_FONT_INDEX, length, tm);
 }
 
-u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
+bool VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
 {
     // compressed tileset ?
     if (tileset->compression != COMPRESSION_NONE)
@@ -57,9 +58,14 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
     return TRUE;
 }
 
-u16 VDP_loadFont(const TileSet *font, TransferMethod tm)
+bool VDP_loadFont(const TileSet *font, TransferMethod tm)
 {
     return VDP_loadTileSet(font, TILE_FONT_INDEX, tm);
+}
+
+bool VDP_loadDefaultFont(TransferMethod tm)
+{
+    return VDP_loadFont(&font_default, tm);
 }
 
 void VDP_loadBMPTileDataEx(const u32 *data, u16 index, u16 x, u16 y, u16 w, u16 h, u16 bmp_w)

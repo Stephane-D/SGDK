@@ -9,7 +9,6 @@
 #include "dma.h"
 #include "vdp_tile.h"
 
-#include "font.h"
 #include "memory.h"
 #include "mapper.h"
 #include "sys.h"

@@ -206,11 +206,11 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm);
  *  ~90 bytes per scanline in software (during blanking)<br>
  *  ~190 bytes per scanline in hardware (during blanking)
  */
-u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
+bool VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
 /**
  *  \brief
  *      Load font tile data in VRAM.<br>
- *      Note that you should prefer the VDP_loadBMPFont(..) method to this one (easier to use).
+ *      Note that you should prefer the VDP_loadFont(..) method to this one (easier to use).
  *
  *  \param font
  *      Pointer to font tile data.
@@ -232,10 +232,10 @@ u16 VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
 void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm);
 /**
  *  \brief
- *      Load font from the specified TileSet structure.
+ *      Load font from the specified <i>Font</i> tileset in VRAM.
  *
  *  \param font
- *      TileSet containing the font.<br>
+ *      TileSet containing the font (should be 16*6 characters font, see SGDK default font at <i>res\image\font_default.png</i>).<br>
  *      The TileSet is unpacked "on-the-fly" if needed (require some memory).<br>
  *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
  *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
@@ -254,7 +254,26 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm);
  *  Each character should fit in one tile (8x8 pixels bloc).<br>
  *  See also VDP_loadFontData(..)
  */
-u16 VDP_loadFont(const TileSet *font, TransferMethod tm);
+bool VDP_loadFont(const TileSet *font, TransferMethod tm);
+/**
+ *  \brief
+ *      Load the default <i>Font</i> tileset in VRAM.
+ *
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *  \return
+ *      FALSE if there is not enough memory to unpack the specified font (only if compression was enabled).
+ *
+ *  The font tile data are loaded to TILE_FONT_INDEX and can contains FONT_LEN characters at max.<br>
+ *  Each character should fit in one tile (8x8 pixels bloc).<br>
+ *  See also VDP_loadFontData(..)
+ */
+bool VDP_loadDefaultFont(TransferMethod tm);
 
 /**
  *  \brief

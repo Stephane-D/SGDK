@@ -19,7 +19,6 @@
 #include "pool.h"
 #include "object.h"
 
-#include "font.h"
 #include "string.h"
 
 #include "tab_cnv.h"
@@ -32,14 +31,10 @@
 #include "vdp_spr.h"
 #include "vdp_tile.h"
 #include "vdp_pal.h"
-
 #include "pal.h"
-
 #include "vram.h"
 #include "dma.h"
-
 #include "map.h"
-
 #include "bmp.h"
 #include "sprite_eng.h"
 #include "sprite_eng_legacy.h"
@@ -87,6 +82,7 @@
 // preserve compatibility with old resources name
 #define logo_lib sgdk_logo
 #define font_lib font_default
+#define font_pal_default palette_grey
 #define font_pal_lib font_pal_default
 
 #endif // _GENESIS_H_

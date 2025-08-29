@@ -15,7 +15,6 @@
 #include "sys.h"
 #include "task.h"
 
-#include "font.h"
 #include "sprite_eng.h"
 #include "sprite_eng_legacy.h"
 
@@ -169,7 +168,7 @@ NO_INLINE void VDP_resetScreen()
     }
 
     // load default font
-    if (!VDP_loadFont(&font_default, DMA))
+    if (!VDP_loadDefaultFont(DMA))
     {
         VDP_setEnable(TRUE);
 
@@ -1049,7 +1048,7 @@ static void updateMapsAddress(bool initializing)
         if (!initializing)
         {
             // reload default font as its VRAM address has changed
-            VDP_loadFont(&font_default, CPU);
+            VDP_loadDefaultFont(CPU);
             // re-pack memory as VDP_lontFont allocate memory to unpack font
             MEM_pack();
         }
