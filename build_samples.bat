@@ -24,6 +24,10 @@ SET "GDK_WIN=%cd%"
 @cd %GDK_WIN%\sample\basics\pools
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
+@ECHO Building basics\tmx-map...
+@cd %GDK_WIN%\sample\basics\tmx-map
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
 @ECHO Building benchmark...
 @cd %GDK_WIN%\sample\benchmark
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
