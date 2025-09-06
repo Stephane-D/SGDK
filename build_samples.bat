@@ -24,6 +24,10 @@ SET "GDK_WIN=%cd%"
 @cd %GDK_WIN%\sample\basics\pools
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
+@ECHO Building basics\tmx-objects...
+@cd %GDK_WIN%\sample\basics\tmx-objects
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
 @ECHO Building basics\tmx-map...
 @cd %GDK_WIN%\sample\basics\tmx-map
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
@@ -70,6 +74,10 @@ SET "GDK_WIN=%cd%"
 
 @ECHO Building fx\sprite-masking...
 @cd %GDK_WIN%\sample\fx\sprite-masking
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
+@ECHO Building fx\silhouette...
+@cd %GDK_WIN%\sample\fx\silhouette
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
 @ECHO Building game\platformer...
