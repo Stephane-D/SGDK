@@ -1,7 +1,7 @@
 // *****************************************************************************
 //  TMX Map Sample
 //
-// This sample demonstrates loading Tiled TMX maps and one method of setting
+// This sample demonstrates loading Tiled TMX map and one method of setting
 // tile priority through priority layers on both BG planes.
 //
 // Notes:
@@ -22,7 +22,7 @@
 #define MAP_WIDTH               1280
 #define MAP_HEIGHT              592
 #define SCREEN_WIDTH            320
-#define SCREEN_HEIGTH           224
+#define SCREEN_HEIGHT           224
 
 #define PLAYER_SPRITE_WIDTH     64
 #define PLAYER_SPRITE_HEIGHT    56
@@ -51,10 +51,10 @@ Map *fgMap;
 Map *bgMap;
 
 // Forward declarations
-_Noreturn void MainLoop(void);
-void GameInit(void);
-void CameraUpdate(void);
-void InputUpdate(void);
+_Noreturn void MainLoop();
+void GameInit();
+void CameraUpdate();
+void InputUpdate();
 bool PlayerPositionUpdate();
 
 int main(bool hardReset)
@@ -71,24 +71,22 @@ int main(bool hardReset)
 void GameInit()
 {
     VDP_setScreenWidth320();
-    
-    // Set all palette to black
-    PAL_setColors(0, (u16 *) palette_black, 64, CPU);
-    
-    // Set the initial VRAM tile index from which we will load the first tileset
-    u16 nextToFillTileIndex = TILE_USER_INDEX;
-    
-    // Set the maximum number of tiles for the sprite engine,
-    // I set it to 40 because the rest went to the map's tilesets,
-    // which is very unoptimized for Genesis and consumes a lot of tiles
+
+    // Set the maximum number of tiles for the sprite engine.
+    // I set it to 40 because these beautiful background tilesets are not optimized for Genesis and consume tiles,
+    // while the sprite in the example is only one
+    // In a real project, you should optimize the tileset by reducing the number of unique tiles
     SPR_initEx(40);
     
     // Place player at screen center minus sprite offsets
     player.pos.x = SCREEN_WIDTH / 2 - PLAYER_SPRITE_WIDTH / 2;
-    player.pos.y = SCREEN_HEIGTH / 2 - PLAYER_SPRITE_HEIGHT / 2;
+    player.pos.y = SCREEN_HEIGHT / 2 - PLAYER_SPRITE_HEIGHT / 2;
     
     // Create player sprite with proper palette and attributes
     player.sprite = SPR_addSprite(&spr_def_player, player.pos.x, player.pos.y, TILE_ATTR(PAL2, FALSE, FALSE, TRUE));
+    
+    // Set the initial VRAM tile index from which we will load the first tileset
+    u16 nextToFillTileIndex = TILE_USER_INDEX;
     
     // Load tileset and create foreground map
     VDP_loadTileSet(&fg_tileset, nextToFillTileIndex, DMA);
@@ -121,8 +119,8 @@ _Noreturn void MainLoop()
         InputUpdate();              // Process player input
         if (PlayerPositionUpdate()) // Update player position
             CameraUpdate();         // Update camera position
-        SPR_update();               // Update sprite positions
-        SYS_doVBlankProcess();      // Wait for VBlank
+        SPR_update();               // Update sprites
+        SYS_doVBlankProcess();      // Wait for VBlank processes
     }
 }
 
@@ -139,15 +137,11 @@ bool PlayerPositionUpdate()
 
 void CameraUpdate()
 {
-    // store previous camera position
-    camera.prevPos = camera.pos;
-    
     // Calculate camera position centered on player and clamp to map bounds
-    // Use integer division for screen center; clamp ensures camera stays within map
     camera.pos.x = clamp(player.pos.x - SCREEN_WIDTH / 2, 0, MAP_WIDTH - SCREEN_WIDTH);
-    camera.pos.y = clamp(player.pos.y - SCREEN_HEIGTH / 2, 0, MAP_HEIGHT - SCREEN_HEIGTH);
+    camera.pos.y = clamp(player.pos.y - SCREEN_HEIGHT / 2, 0, MAP_HEIGHT - SCREEN_HEIGHT);
     
-    // Scroll foreground directly and background scaled down (parallax) using BG_SCROLL_SHIFT
+    // Scroll foreground directly and background scaled down (parallax)
     MAP_scrollTo(fgMap, camera.pos.x, camera.pos.y);
     MAP_scrollTo(bgMap, camera.pos.x >> BG_SCROLL_SHIFT, camera.pos.y >> BG_SCROLL_SHIFT);
 }
