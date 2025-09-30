@@ -139,7 +139,7 @@ int main()
         for(j = 0, cur_cmd = cur_driver->cmds; j < MAX_CMD; j++, cur_cmd++)
             params_value[i][j] = cur_cmd->params;
 
-    PAL_setPalette(PAL0, font_pal_default.data, CPU);
+    PAL_setPalette(PAL0, font_pal_default, CPU);
     PAL_setColor((PAL1 * 16) + 15, 0x0888);
     VDP_setTextPalette(PAL0);
     VDP_drawText("Current Z80 driver", 10, 1);
