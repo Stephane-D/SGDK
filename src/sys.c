@@ -420,6 +420,12 @@ static void _empty_callback()
     //
 }
 
+// Empty h-int Callback
+static HINTERRUPT_CALLBACK _empty_hint_callback()
+{
+    //
+}
+
 
 NO_INLINE void _start_entry()
 {
@@ -587,7 +593,7 @@ static NO_INLINE void internal_reset()
     vintCB = _empty_callback;
     // fast hint call (auto modified JMP instruction)
     hintCaller.jmpInst = 0x4EF9;                // JMP (xxx).L
-    hintCaller.addr = _empty_callback;
+    hintCaller.addr = _empty_hint_callback;
     eintCB = _empty_callback;
     VBlankProcess = 0;
     intTrace = 0;
@@ -842,7 +848,7 @@ void SYS_setVIntCallback(VoidCallback *CB)
 void SYS_setHIntCallback(VoidCallback *CB)
 {
     if (CB) hintCaller.addr = CB;
-    else hintCaller.addr = _empty_callback;
+    else hintCaller.addr = _empty_hint_callback;
 }
 
 void SYS_setExtIntCallback(VoidCallback *CB)
