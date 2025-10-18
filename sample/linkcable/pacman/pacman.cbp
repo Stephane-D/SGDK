@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pacman" />
+		<Option makefile="D:/apps/SGDK/makefile.gen" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="0" />
+		<Option compiler="sega_genesis_compiler" />
+		<MakeCommands>
+			<Build command="$make -f $makefile" />
+			<CompileFile command="$make -f $makefile $file" />
+			<Clean command="$make -f $makefile clean" />
+			<DistClean command="$make -f $makefile clean" />
+			<AskRebuildNeeded command="$make -q -f $makefile $target" />
+			<SilentBuild command="$make -s -f $makefile $target" />
+		</MakeCommands>
+		<Build>
+			<Target title="default">
+				<Option output="D:/Stef/dev/work/genesis/hseffect/out/hs_effect.bin" prefix_auto="0" extension_auto="0" />
+				<Option object_output="." />
+				<Option deps_output="." />
+				<Option type="1" />
+				<Option compiler="sega_genesis_compiler" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -s -f $makefile $target" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="default;" />
+		</VirtualTargets>
+		<Unit filename="res/resources.res" />
+		<Unit filename="res/bg/map.png" />
+		<Unit filename="res/bg/menu.png" />
+		<Unit filename="res/bg/sgdk.png" />
+		<Unit filename="res/sprite/cherry.png" />
+		<Unit filename="res/sprite/door.png" />
+		<Unit filename="res/sprite/pacgirl.png" />
+		<Unit filename="res/sprite/pacman.png" />
+		<Unit filename="res/sprite/pause.png" />
+		<Unit filename="res/sprite/red.png" />
+		<Unit filename="res/sprite/sonic.png" />
+		<Unit filename="res/sound/cherry.wav" />
+		<Unit filename="res/sound/connect.wav" />
+		<Unit filename="res/sound/disconnect.wav" />
+		<Unit filename="res/sound/eat.wav" />
+		<Unit filename="res/sound/eatred.wav" />
+		<Unit filename="res/sound/powerup.wav" />
+		<Unit filename="res/sound/sega.wav" />
+		<Unit filename="res/sound/shadow.wav" />
+		<Unit filename="res/sound/comicszone.vgm />
+		<Unit filename="res/sound/contrah.vgm />
+		<Unit filename="res/sound/fatality.vgm />
+		<Unit filename="res/sound/sonic.vgm />
+		<Unit filename="res/sound/victory.vgm />
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

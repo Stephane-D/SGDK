@@ -108,6 +108,9 @@ SET "GDK_WIN=%cd%"
 @cd %GDK_WIN%\sample\sys\multitasking
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
+@ECHO Building linkcable\pacman...
+@cd %GDK_WIN%\sample\linkcable\pacman
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
 @ECHO.
 @ECHO.
