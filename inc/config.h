@@ -163,5 +163,10 @@
  */
 #define MODULE_CONSOLE          1
 
+/**
+ *  \brief
+ *      Set it to 1 if you want to enable Link Cable Protocol functions (written by BlodTor)
+ */
+#define MODULE_LINK_CABLE       0
 
 #endif // _CONFIG_

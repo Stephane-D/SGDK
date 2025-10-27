@@ -79,6 +79,10 @@
 #include "ext/console.h"
 #endif
 
+#if (MODULE_LINK_CABLE != 0)
+#include "ext/link_cable.h"
+#endif
+
 // preserve compatibility with old resources name
 #define logo_lib sgdk_logo
 #define font_lib font_default
