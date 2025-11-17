@@ -2,7 +2,7 @@
  * This version is specifically created for SGDK as an example of a game using SEGA Link Cable!
  * You MUST set MODULE_LINK_CABLE to 1 in config.h and rebuild the library to build this project!
  *
- * Super Turbo MEGA Pac-Man v2.11
+ * Super Turbo MEGA Pac-Man v2.12
  * Pac-Man for Sega Mega Drive / Sega Genesis
  *
  * Two-player game, including network play capability on two consoles
@@ -410,9 +410,9 @@ void initControllerPort2() {
 		// Link Cable Protocol initialization
 		LCP_init();
 
-		// put OBJECT_TYPE_MASTER data type object with phrase "Pac-Girl" into buffer variable
+		// put OBJECT_TYPE_MASTER data type object with phrase "Pac-Girl" into transferObject variable
 		masterToTransferObject();
-		// add created object from buffer variable to packet for data transmission
+		// add created object from transferObject variable to packet for data transmission
 		LCP_objectToPacketForSend(transferObject, OBJECT_TYPE_MASTER, LINK_TYPES_LENGTH);
 
 		do {
@@ -466,9 +466,9 @@ void initControllerPort2() {
 		// since we failed to receive OBJECT_TYPE_SLAVE with phrase 'Pac-Man!' from another console
 		// try to receive data as slave console
 
-		// put OBJECT_TYPE_SLAVE data type object with phrase "Pac-Man!" into buffer variable
+		// put OBJECT_TYPE_SLAVE data type object with phrase "Pac-Man!" into transferObject variable
 		slaveToTransferObject();
-		// add created object from buffer variable to packet for data transmission
+		// add created object from transferObject variable to packet for data transmission
 		LCP_objectToPacketForSend(transferObject, OBJECT_TYPE_SLAVE , LINK_TYPES_LENGTH);
 		// now we have 2 objects in packet: both OBJECT_TYPE_MASTER and OBJECT_TYPE_SLAVE
 		// and in case our console receives packet from another, we will send both objects in packet to it
@@ -1924,6 +1924,13 @@ void actionsStateSelectPlayers() {
 
 		if (players != 2) {
 			// 1 player game selected (1 PLAYER)
+			
+			// the first player always controls Pac-Man in single-player mode
+			switchPlayers = P1_PACMAN__P2_PACGIRL;
+
+			// reset all inputs on 2nd controller
+			pad2 = 0;
+						
 			// display message that there is no connection with another console, playing single player
 			memcpy(gameModeText, TEXT_1P_NO_LINK, GAME_MODE_TEXT_SIZE);
 
@@ -1935,9 +1942,6 @@ void actionsStateSelectPlayers() {
 				// there is Link cable connection
 				// close port, data will no longer be sent via Link cable
 				LCP_close();
-
-				// reset all inputs on 2nd controller
-				pad2 = 0;
 
 				// protection against double start press
 				playersTime = 30;
