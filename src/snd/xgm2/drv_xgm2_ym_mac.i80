@@ -1,6 +1,66 @@
 ; ###########################      macro       ##############################
 
 
+; FM_updateAttenuation
+; -----------------
+;                   HL  --> ?
+;                   IY  --> ?
+;                   DE  --> ?
+;                   A   --> ?
+;                   A'  --> ?
+;
+; set the volume / attenuation for all FM channels
+; 42 samples + 155 cycles !
+
+            macro FM_updateAttenuation  ;                           ' 168
+
+            LD      HL, YMPORT0         ;                           ' 10    |
+            LD      IY, FM0_STATE+0     ; ch0                       ' 14    | 24 (192)
+            LD      E, 0                ; E = ch0                   ' 7     |
+
+            sampleOutput                ; (1)+3
+
+            CALL    FM_updateAttCh      ; update ch0 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch1                       ' 8     | 12 (167)
+            INC     E                   ; E = ch1                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (8)
+
+            CALL    FM_updateAttCh      ; update ch1 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch2                       ' 8     | 12 (167)
+            INC     E                   ; E = ch2                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (15)
+
+            CALL    FM_updateAttCh      ; update ch2 attenuation    ' 6s + 155
+
+            LD      HL, YMPORT2         ;                           ' 10    |
+            LD      IYL, FM1_STATE_L+0  ; ch0                       ' 11    | 28 (183)
+            LD      E, 0                ; E = ch0                   ' 7     |
+
+            CALL    sampleOutputDirectFunc      ; (22)
+
+            CALL    FM_updateAttCh      ; update ch3 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch1                       ' 8     | 12 (167)
+            INC     E                   ; E = ch1                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (29)
+
+            CALL    FM_updateAttCh      ; update ch4 attenuation    ' 6s + 155
+
+            INC     IYL                 ; ch2                       ' 8     | 12 (167)
+            INC     E                   ; E = ch2                   ' 4     |
+
+            SAMPLE_OUTPUT_FASTCALL      ; (37)
+
+            CALL    FM_updateAttCh      ; update ch5 attenuation    ' 6s + 155
+
+            endm
+
+
 ; loadInstSetRegNext
 ; ------------------
 ; src       --> BC  --> src

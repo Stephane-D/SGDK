@@ -33,52 +33,13 @@ PSG_mute                                ; call                      ' 17
 PSG_unmute                              ; call                      ' 17
 
             LD      HL, PSG_ATT         ; HL = PSG_ATT              ' 10    |
-            LD      E, (HL)             ; E = PSG attenuation       ' 7     | 17 (34)
+            LD      E, (HL)             ; E = PSG attenuation       ' 7     | 27 (44)
+            LD      HL, PSGPORT         ; HL = PSG port             ' 10    |
 
-            JP      PSG_updateAllEnv    ;                           ' 1s + 120 cyles
+            PSG_updateEnv 0             ; update env for ch0        ' 55    | (99)
+            PSG_updateEnv 1             ; update env for ch1        ' 55    | (154)
 
-
-; PSG_setAttenuation
-; ------------------
-; new PSG att.  --> A   --> ?           ; 0-F
-;                   E   --> new PSG att.
-;                   HL  --> PSGPORT
-;
-; set the new PSG attenuation level
-; 1 sample + 120 cycles
-
-PSG_setAttenuation                      ; call                      ' 17
-
-            LD      HL, PSG_ATT         ;                           ' 10    |
-            CP      (HL)                ; A == PSG_ATT ?            ' 7     | 22 (39)
-            RET     Z                   ; --> exit                  ' 5     |
-
-            LD      (HL), A             ; save new PSG_ATT          ' 7     |
-            LD      E, A                ; E = attenuation           ' 4     | 11 (50)
-
-            ; don't need to call PSG_updateAllEnv here as env is often updated on PSG
-            ; that avoid bug when changing PSG vol while music is off (does an unmute)
-
-            RET                         ; done                      ' 10    | (120)
-
-
-; PSG_updateAllEnv
-; ----------------
-; attenuation   --> E                   ; 0-F
-;                   A   --> ?
-;                   HL  --> PSGPORT
-;
-; update envelop for all PSG channels
-; 1 sample + 120 cycles
-
-PSG_updateAllEnv                        ; cont                      ' 50
-
-            LD      HL, PSGPORT         ; HL = PSG port             ' 10    | (60)
-
-            PSG_updateEnv 0             ; update env for ch0        ' 55    | (115)
-            PSG_updateEnv 1             ; update env for ch1        ' 55    | (170)
-
-            SAMPLE_OUTPUT_FASTCALL      ; +                         '
+            SAMPLE_OUTPUT_FASTCALL      ;                           '
 
             PSG_updateEnv 2             ; update env for ch2        ' 55    |
             PSG_updateEnv 3             ; update env for ch3        ' 55    | (110)

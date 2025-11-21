@@ -371,7 +371,7 @@ init
 
             BLOCK   $0008-$
 
-; RST $8 - 79 cycles + 21 cycles (RST+RET) = 100 cycles
+; RST $8 - 80 cycles + 21 cycles (RST+RET) = 101 cycles
 
 sampleOutputFunc
 
@@ -384,7 +384,7 @@ sampleOutputFunc
 
             BLOCK   $0020-$
 
-; RST $20 - 87 cycles + 21 cycles (RST+RET) = 108 cycles
+; RST $20 - 88 cycles + 21 cycles (RST+RET) = 109 cycles
 
 sampleOutputNoIntFunc
 

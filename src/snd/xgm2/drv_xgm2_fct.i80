@@ -41,7 +41,7 @@ process68KCommands_noPSG                    ; call                      ' 17
             LD      HL, PSG_CMD_REQUEST         ;                       ' 10    |
             SET     PSG_UNMUTE_REQ_SFT, (HL)    ; request unmute PSG    ' 15    | 25 (45)
 
-            JP      .done_play_commands     ;                       ' 10    | (55)
+            JP      .done_play_commands     ;                           ' 10    | (55)
 
 .no_resume                                  ;                           ' 148
             BIT     CMD_PLAY_SFT, B         ; play command ?            ' 8     |
@@ -121,35 +121,37 @@ process68KCommands_noPSG                    ; call                      ' 17
             LD      HL, PSG_CMD_REQUEST     ;                           ' 10    |
             SET     PSG_MUTE_REQ_SFT, (HL)  ; request mute PSG          ' 15    | 25 (171)
 
-            SAMPLE_OUTPUT_FASTCALL
+            SAMPLE_OUTPUT_FASTCALL          ; +3
 
             RES     STAT_PLAY_SFT, C            ; not playing           ' 8     |
-            LD      HL, 0                       ;                       ' 10    |
-            LD      (PENDING_FRAME_FRAC), HL    ; reset PENDING_FRAME   ' 16    | (46)
+            LD      HL, 0                       ;                       ' 10    | (34)
+            LD      (PENDING_FRAME_FRAC), HL    ; reset PENDING_FRAME   ' 16    | 
 
 .done_play_commands                         ;                           ' 55
-            BIT     CMD_SET_VOL_FM_SFT, B   ; set FM volume ?           ' 8    | (73)
-            JP      Z, .no_FM_volume        ;                           ' 10   |
+            LD      A, B                    ; A = command               ' 4     |
+            AND     $80                     ; clear done FM commands    ' 7     |
+            LD      (COMMAND), A            ; write back COMMAND        ' 13    | 41 (96)
+            LD      A, C                    ; A = status                ' 4     |
+            LD      (STATUS), A             ; write back STATUS         ' 13    |
+
+            LD      A, (FM_ARG_VOLUME)      ; A = FM volume             ' 13    | (109)
+
+            LD      HL, ACCESS              ;                           ' 10    |
+            RES     ACCESS_CMD, (HL)        ; Z80 done process commands ' 15    | 25 (134)
+
+            LD      HL, FM_ATT              ;                           ' 10    |
+            CP      (HL)                    ; A == FM_ATT ?             ' 7     | 27 (161)
+            JP      Z, sampleOutputFunc     ; nothing to do, returns    ' 10    |
 
 ; COMMAND - set volume FM
 ; -----------------------
 
-            LD      A, (FM_ARG_VOLUME)      ; A = FM volume             ' 13    | (86)
-            CALL    FM_setAttenuation       ; set volume                ' 155
+.set_FM_volume                              ;                           ' 161
+            LD      (HL), A                 ; save new FM_ATT           ' 7     | (168)
 
-            SAMPLE_OUTPUT_FASTCALL
+            FM_updateAttenuation            ; update volume             ' 42 samples + 155
 
-.no_FM_volume                               ;                           ' 73
-            LD      A, B                    ; A = command               ' 4     |
-            AND     $80                     ; clear done commands       ' 7     |
-            LD      (COMMAND), A            ; write back COMMAND        ' 13    | 41 (114)
-            LD      A, C                    ; A = status                ' 4     |
-            LD      (STATUS), A             ; write back STATUS         ' 13    |
-
-            LD      HL, ACCESS              ;                           ' 10    |
-            RES     ACCESS_CMD, (HL)        ; Z80 done process commands ' 15    | 25 (139)
-
-            JP      sampleOutputFunc        ; sampleOutputFunc returns to caller
+            JP      sampleOutputFunc        ; output sample and returns to caller
 
 
 ; process68KCommands_PSG
@@ -180,7 +182,6 @@ process68KCommands_PSG                          ; call                      ' 17
             JR      Z, .no_unmute               ;                           ' 7     | 19 (70)
 
             CALL    PSG_unmute                  ;                           ' 120   |
-
             LD      HL, PSG_CMD_REQUEST         ;                           ' 10    | (130)
 
             SAMPLE_OUTPUT_FASTCALL
@@ -192,25 +193,15 @@ process68KCommands_PSG                          ; call                      ' 17
             LD      HL, ACCESS                  ;                           ' 10    |
             SET     ACCESS_CMD, (HL)            ; Z80 process SET VOLUME    ' 15    | 25 (111)
 
+            LD      A, (PSG_ARG_VOLUME)         ; load PSG volume arg       ' 13    |
+            LD      (PSG_ATT), A                ; update PSG att            ' 13    | 51 (162)
             LD      HL, COMMAND                 ;                           ' 10    |
-            BIT     CMD_SET_VOL_PSG_SFT, (HL)   ; set PSG volume ?          ' 12    | 29 (140)
-            JR      Z, .no_PSG_volume           ;                           ' 7     |
-
-; COMMAND - set volume PSG
-; ------------------------
-
-            SAMPLE_OUTPUT_FASTCALL
-
             RES     CMD_SET_VOL_PSG_SFT, (HL)   ; clear set PSG volume com  ' 15    |
-            LD      A, (PSG_ARG_VOLUME)         ; load PSG volume arg       ' 13    | (28)
 
-            CALL    PSG_setAttenuation          ;                           ' 120
-
-.no_PSG_volume                                  ;                           ' 145
             LD      HL, ACCESS                  ;                           ' 10    |
-            RES     ACCESS_CMD, (HL)            ; done process SET VOLUME   ' 15    | 25 (170)
+            RES     ACCESS_CMD, (HL)            ; done process SET VOLUME   ' 15    | 25 (187)
 
-            JP      sampleOutputFunc            ; output sample and RET
+            JP      sampleOutputDirectFunc      ; output sample and RET
 
 
 ; unpackCmds
