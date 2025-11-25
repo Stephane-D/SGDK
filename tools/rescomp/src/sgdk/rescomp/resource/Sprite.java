@@ -181,7 +181,7 @@ public class Sprite extends Resource
     @Override
     public String toString()
     {
-        return id + ": wf=" + wf + " hf=" + hf + " numAnim=" + animations.size() + " maxNumTile=" + maxNumSprite + " maxNumSprite=" + maxNumSprite;
+        return id + ": wf=" + wf + " hf=" + hf + " numAnim=" + animations.size() + " maxNumTile=" + maxNumTile + " maxNumSprite=" + maxNumSprite;
     }
 
     @Override
