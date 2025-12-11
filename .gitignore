@@ -44,3 +44,6 @@ tools/rescomp/format
 tools/rescomp/rescomp.jar
 tools/xgm rom builder
 project/test
+tools/.gradle/
+tools/.project
+tools/build/
