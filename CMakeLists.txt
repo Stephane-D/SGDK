@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 
+project(md C ASM)
+
 # Set the compiler prefix
 if(DEFINED ENV{PREFIX})
-  set(PREFIX "$ENV{PREFIX}")
+    set(PREFIX "$ENV{PREFIX}")
+else()
+    set(PREFIX "m68k-elf-")
 endif()
 
 # Set the compiler/assembler name
@@ -11,27 +15,25 @@ set(CMAKE_ASM_COMPILER ${PREFIX}gcc)
 set(CMAKE_AR ${PREFIX}ar)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-project(md C ASM)
 
 include(ExternalProject)
 ExternalProject_Add(
   BINTOS
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/tools/bintos/src
-  BINARY_DIR ${PROJECT_SOURCE_DIR}/tools/bintos/src/build
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/tools/bintos
+  BINARY_DIR ${CMAKE_BINARY_DIR}/tools/bintos/build
   INSTALL_COMMAND install bintos ${PROJECT_SOURCE_DIR}/bin
   BUILD_ALWAYS TRUE)
 ExternalProject_Add(
   XGMTOOL
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/tools/xgmtool/src
-  BINARY_DIR ${PROJECT_SOURCE_DIR}/tools/xgmtool/src/build
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/tools/xgmtool
+  BINARY_DIR ${CMAKE_BINARY_DIR}/tools/xgmtool/build
   INSTALL_COMMAND install xgmtool ${PROJECT_SOURCE_DIR}/bin
   BUILD_ALWAYS TRUE)
 ExternalProject_Add(
   SJASM
-  CONFIGURE_COMMAND ""
-  DOWNLOAD_COMMAND ""
-  BUILD_COMMAND make -C ${PROJECT_SOURCE_DIR}/tools/sjasm/src
-  INSTALL_COMMAND install ${PROJECT_SOURCE_DIR}/tools/sjasm/src/sjasm ${PROJECT_SOURCE_DIR}/bin
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/tools/sjasm
+  BINARY_DIR ${CMAKE_BINARY_DIR}/tools/sjasm/build
+  INSTALL_COMMAND install sjasm ${PROJECT_SOURCE_DIR}/bin
   BUILD_ALWAYS TRUE)
 
 include_directories(${PROJECT_SOURCE_DIR}/inc)
@@ -78,10 +80,10 @@ string(REGEX REPLACE "[.]res" ".s;" RESSRC ${RES_LIB_RES})
 
 # Rules to build Z80 source code
 foreach(z80_source ${Z80SRC})
-  get_filename_component(file ${z80_source} NAME_WE)
-  get_filename_component(dir ${z80_source} DIRECTORY)
-  set(file ${dir}/${file})
-  add_custom_command(
+    get_filename_component(file ${z80_source} NAME_WE)
+    get_filename_component(dir ${z80_source} DIRECTORY)
+    set(file ${dir}/${file})
+    add_custom_command(
     OUTPUT ${z80_source}
     COMMAND ${ASMZ80} -i${PROJECT_SOURCE_DIR}/inc/snd ${file}.s80 ${file}.out &&
             ${BINTOS_EXE} ${file}.out ${file}.s
@@ -91,9 +93,9 @@ endforeach()
 
 # Rules to build resources
 foreach(res_source ${RESSRC})
-  string(REGEX REPLACE "[.]s" ".h" res_header ${res_source})
-  string(REGEX REPLACE "[.]s" ".res" res ${res_source})
-  add_custom_command(
+    string(REGEX REPLACE "[.]s" ".h" res_header ${res_source})
+    string(REGEX REPLACE "[.]s" ".res" res ${res_source})
+    add_custom_command(
     OUTPUT ${res_source} ${res_header}
     COMMAND ${RESCOMP} ${res}
     DEPENDS ${res} XGMTOOL)
