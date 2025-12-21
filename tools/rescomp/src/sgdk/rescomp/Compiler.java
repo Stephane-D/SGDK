@@ -103,6 +103,27 @@ public class Compiler
     // TODO: set that to false on release
     public static boolean DAGame = false;
 
+    //USED IN NEW IMPLEMENTATION
+    private static final List<URLClassLoader> activeClassLoaders = new ArrayList<>();
+
+    //Shutdown hook for proper cleanup (mayeb redundant since rescomp completely quits?)
+    private static final Thread SHUTDOWN_HOOK = new Thread(() -> {
+        if (activeClassLoaders.size() > 0) {
+            System.out.println("\n Shutting down extension ClassLoaders...");
+            int closedCount = 0;
+            for (URLClassLoader loader : activeClassLoaders) {
+                try {
+                    loader.close();
+                    closedCount++;
+                } catch (IOException e) {
+                    System.err.println("WARNING - Failed to close extension ClassLoader: " + e.getMessage());
+                }
+            }
+            activeClassLoaders.clear();
+            System.out.println(" - Closed " + closedCount + " extension ClassLoaders\n");
+        }
+    });
+
     public static boolean compile(String fileName, String fileNameOut, boolean asm, boolean header, String depTarget)
     {
         // get application directory
@@ -424,28 +445,7 @@ public class Compiler
         return true;
     }
 
-
     //NEW IMPLEMENTATION
-
-    private static final List<URLClassLoader> activeClassLoaders = new ArrayList<>();
-
-    //Shutdown hook for proper cleanup (mayeb redundant since rescomp completely quits?)
-    private static final Thread SHUTDOWN_HOOK = new Thread(() -> {
-        if (activeClassLoaders.size() > 0) {
-            System.out.println("\n Shutting down extension ClassLoaders...");
-            int closedCount = 0;
-            for (URLClassLoader loader : activeClassLoaders) {
-                try {
-                    loader.close();
-                    closedCount++;
-                } catch (IOException e) {
-                    System.err.println("WARNING - Failed to close extension ClassLoader: " + e.getMessage());
-                }
-            }
-            activeClassLoaders.clear();
-            System.out.println(" - Closed " + closedCount + " extension ClassLoaders\n");
-        }
-    });
 
     static {
         //REGISTER shutdown hook when class loads
@@ -485,15 +485,15 @@ public class Compiler
 
         if (rescompExt.exists())  // found legacy extension ?
         {
-            Load_Legacy_Extension(rescompExt);
+            loadLegacyExtension(rescompExt);
         }
         else //scan res dir for .jar files and use service loader
         {
-            Load_With_ServiceLoader();
+            loadWithServiceLoader();
         }
     }
 
-    private static void Load_With_ServiceLoader() {
+    private static void loadWithServiceLoader() {
 
         // Determine the directory to scan
         final File jarDir = StringUtil.isEmpty(resDir) ? new File(".") : new File(resDir);
@@ -781,7 +781,7 @@ public class Compiler
 
     //LEGACY IMPLEMENTATION
 
-    private static void Load_Legacy_Extension(File rescompExt) throws IOException {
+    private static void loadLegacyExtension(File rescompExt) throws IOException {
 
         // build the class loader
         final URLClassLoader classLoader = new URLClassLoader(new URL[] {rescompExt.toURI().toURL()}, Compiler.class.getClassLoader());
