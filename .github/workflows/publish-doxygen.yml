@@ -10,8 +10,8 @@ on:
 env:
   # Used to find the download link:
   # https://www.doxygen.nl/files/doxygen-X.XX.X.linux.bin.tar.gz
-  # Version # updated on: 2025.06.13
-  DOXYGEN_VERSION: 1.14.0
+  # Version # updated on: 2025.12.20
+  DOXYGEN_VERSION: 1.15.0
 
 jobs:
   cleanup:
@@ -19,8 +19,8 @@ jobs:
     permissions: write-all
 
     steps:
-      # Step to cleanup previous deployments to prevent stacking of old deployments
-      - name: 🗑 Cleanup deployments
+      # Step to clean up previous deployments to prevent stacking of old deployments
+      - name: Clean up deployments
         uses: strumwolf/delete-deployment-environment@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,8 +30,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps: 
-      # Step to checkout the SGDK repository 
-      - name: Checkout repository
+      # Step to check out the SGDK repository 
+      - name: Check out repository
         uses: actions/checkout@v3
         with:
           path: SGDK
