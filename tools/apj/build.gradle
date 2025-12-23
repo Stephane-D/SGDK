@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'sgdk.tools'
+version = '3.97'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
