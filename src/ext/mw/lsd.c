@@ -248,7 +248,6 @@ void lsd_init(void)
 	comm_init();
 	memset(&d, 0, sizeof(struct lsd_data));
 	d.rx.stat = LSD_RECV_IDLE;
-	lsd_line_sync();
 }
 
 int lsd_ch_enable(uint8_t ch)
@@ -359,15 +358,6 @@ enum lsd_status lsd_recv_sync(char *buf, uint16_t *len, uint8_t *ch)
 		return LSD_STAT_COMPLETE;
 	} else {
 		return LSD_STAT_ERROR;
-	}
-}
-
-void lsd_line_sync(void)
-{
-	for (int i = 0; i < 256; i++) {
-		if (comm_write_ready()) {
-			comm_write(0x55);
-		}
 	}
 }
 

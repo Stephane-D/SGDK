@@ -106,9 +106,6 @@ u16 ssf_ed_pro_get_tx_fifo_length(void){
 void ssf_ed_pro_reset(void){
     // No reset sequence needed for Everdrive Pro
 }
-void ssf_ed_pro_reset_fifos(void){
-    // No FIFO reset sequence needed for Everdrive Pro
-}
 void ssf_ed_pro_start(void){
     // No start sequence needed for Everdrive Pro
 }

@@ -651,16 +651,6 @@ enum mw_err mw_flash_write(uint32_t addr, uint8_t *data, uint16_t data_len);
 uint8_t *mw_flash_read(uint32_t addr, uint16_t data_len);
 
 /************************************************************************//**
- * \brief Puts the WiFi module in reset state.
- ****************************************************************************/
-#define mw_module_reset()	comm_reset()
-
-/************************************************************************//**
- * \brief Releases the module from reset state.
- ****************************************************************************/
-#define mw_module_start()	comm_start()
-
-/************************************************************************//**
  * \brief Set gamertag information for one slot.
  *
  * \param[in] slot     Slot to use (from 0 to 2).

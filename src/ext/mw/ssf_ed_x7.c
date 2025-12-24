@@ -75,9 +75,6 @@ u16 ssf_ed_x7_get_tx_fifo_length(void) {
 void ssf_ed_x7_reset(void) {
     // no reset sequence needed for Everdrive X7
 }
-void ssf_ed_x7_reset_fifos(void) {
-    // no fifo reset sequence needed for Everdrive X7
-}
 void ssf_ed_x7_start(void) {
     // no start sequence needed for Everdrive X7
 }

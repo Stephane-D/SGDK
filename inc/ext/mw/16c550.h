@@ -209,6 +209,15 @@ u16 uart_get_buff_length(void);
 
 u16 uart_get_tx_fifo_length(void);
 
+/************************************************************************//**
+ * \brief Sends syncrhonization frame.
+ *
+ * This function sends a chunk of 0x55 bytes to help physical layer to
+ * synchronize. It is usually not necessary to use this function, but might
+ * help some UART chips to compute an accurate clock.
+ ****************************************************************************/
+void uart_line_sync(void);
+
 #endif /*_16C550_H_*/
 
 /** \} */

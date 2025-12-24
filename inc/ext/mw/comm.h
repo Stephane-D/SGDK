@@ -15,10 +15,7 @@
 
 typedef enum COMMMode { Discovery, EverdrivePro, Everdrive, MegaWifiCart} COMMMode;
 
-void comm_reset(void);
-void comm_start(void);
 u16 comm_get_buffer_length(void);
-void comm_reset_fifos(void);
 u16 comm_get_tx_fifo_length(void);
 
 void comm_init(void);

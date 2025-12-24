@@ -166,15 +166,6 @@ enum lsd_status lsd_recv_sync(char *buf, uint16_t *len, uint8_t *ch);
  ****************************************************************************/
 void lsd_process(void);
 
-/************************************************************************//**
- * \brief Sends syncrhonization frame.
- *
- * This function sends a chunk of 0x55 bytes to help physical layer to
- * synchronize. It is usually not necessary to use this function, but might
- * help some UART chips to compute an accurate clock.
- ****************************************************************************/
-void lsd_line_sync(void);
-
 /** \} */
 
 #endif //_LSD_H_

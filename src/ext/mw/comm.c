@@ -15,7 +15,6 @@
 #define COMM_MS_TO_FRAMES(ms)	(((ms)*60/500 + 1)/2)
 
 #include "ext/mw/comm.h"
-#include "task.h"
 #include "ext/mw/16c550.h"
 #include "ext/mw/ssf_ed_x7.h"
 #include "ext/mw/ssf_ed_pro.h"
@@ -28,9 +27,6 @@ typedef struct CommVTable {
     u8 (*write_ready)(void);
     void (*write)(u8 data);
     
-    void (*reset)(void);
-    void (*reset_fifos)(void);
-    void (*start)(void);
     u16 (*get_buff_length)(void);
     u16 (*get_tx_fifo_length)(void);
 } CommVTable;
@@ -38,21 +34,18 @@ typedef struct CommVTable {
 static const CommVTable Everdrive_VTable
     = { ssf_ed_x7_init, ssf_ed_x7_is_present, ssf_ed_x7_read_ready,
           ssf_ed_x7_read, ssf_ed_x7_write_ready, ssf_ed_x7_write, 
-          ssf_ed_x7_reset, ssf_ed_x7_reset_fifos, 
-          ssf_ed_x7_start, ssf_ed_x7_get_buff_length,
+          ssf_ed_x7_get_buff_length,
           ssf_ed_x7_get_tx_fifo_length };
 
 static const CommVTable EverdrivePro_VTable
     = { ssf_ed_pro_init, ssf_ed_pro_is_present, ssf_ed_pro_read_ready,
           ssf_ed_pro_read, ssf_ed_pro_write_ready, ssf_ed_pro_write,
-          ssf_ed_pro_reset, ssf_ed_pro_reset_fifos, 
-          ssf_ed_pro_start, ssf_ed_pro_get_buff_length,
+          ssf_ed_pro_get_buff_length,
           ssf_ed_pro_get_tx_fifo_length };
 static const CommVTable MegaWifiCart_VTable
     = { uart_init, uart_is_present, uart_rx_ready,
           uart_getc, uart_tx_ready, uart_putc, 
-          uart_reset, uart_reset_fifos, 
-          uart_start, uart_get_buff_length,
+          uart_get_buff_length,
           uart_get_tx_fifo_length };
 
 static const CommVTable* commTypes[] = {
@@ -107,25 +100,6 @@ u16 comm_get_buffer_length(void) {
         return activeCommType->get_buff_length();
     }
     return 0;
-}
-
-void comm_reset(void) {
-    if (activeCommType != NULL) {
-        activeCommType->reset();
-    }
-}
-
-void comm_reset_fifos(void) {
-    if (activeCommType != NULL) {
-        activeCommType->reset_fifos();
-    }
-}
-
-void comm_start(void) {
-    if (activeCommType != NULL) {
-        TSK_superPend(COMM_MS_TO_FRAMES(30));
-        activeCommType->start();
-    }    
 }
 
 u16 comm_get_tx_fifo_length(void) {

@@ -125,9 +125,6 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 
 	lsd_init();
 
-	// Keep WiFi module in reset
-	mw_module_reset();	
-
 	// Enable control channel
 	lsd_ch_enable(MW_CTRL_CH);
 
@@ -262,13 +259,8 @@ enum mw_err mw_detect(uint8_t *major, uint8_t *minor, char **variant)
 	enum mw_err err;
 	uint8_t version[3];
 
-	
-	mw_module_start();
-	// Wait a bit and take module out of resest
-
 	do {
 		retries--;
-		comm_reset_fifos();
 		err = mw_version_get(version, variant);
 	} while (err != MW_ERR_NONE && retries);
 
