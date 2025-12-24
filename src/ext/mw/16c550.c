@@ -82,4 +82,13 @@ void uart_putc(u8 c)	{ UART_RHR = c; }
 u8 uart_getc()		{ return UART_RHR; }
 void uart_reset_fifos()	{ uart_set_bits(FCR, 0x07); }
 
+void uart_line_sync(void)
+{
+	for (int i = 0; i < 256; i++) {
+		if (uart_tx_ready()) {
+			uart_putc(0x55);
+		}
+	}
+}
+
 #endif // MODULE_MEGAWIFI
