@@ -148,7 +148,9 @@
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
  */
 #define MODULE_MEGAWIFI         0
-
+#if ((ENABLE_BANK_SWITCH == 0) && (MODULE_MEGAWIFI != 0))
+#error "Cannot enable MegaWiFi module without BANK SWITCH"
+#endif
 /**
  *  \brief
  *      Set it to 1 if you want to enable Flash Save functions (written by Jesus Alonso - doragasu).<br>
