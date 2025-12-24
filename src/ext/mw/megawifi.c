@@ -19,7 +19,7 @@
 #include "maths.h"
 #include "task.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/megawifi.h"
 
@@ -126,13 +126,7 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 	lsd_init();
 
 	// Keep WiFi module in reset
-	mw_module_reset();
-	// Power down and Program not active (required for the module to boot)
-	uart_clr_bits(MCR, MW__PRG);
-
-	// Try accessing UART scratch pad register to see if it is installed
-	uart_test(UART_SPR, 0x55);
-	uart_test(UART_SPR, 0xAA);
+	mw_module_reset();	
 
 	// Enable control channel
 	lsd_ch_enable(MW_CTRL_CH);
@@ -268,15 +262,13 @@ enum mw_err mw_detect(uint8_t *major, uint8_t *minor, char **variant)
 	enum mw_err err;
 	uint8_t version[3];
 
-	// Wait a bit and take module out of resest
-	TSK_superPend(MS_TO_FRAMES(30));
+	
 	mw_module_start();
-	TSK_superPend(MS_TO_FRAMES(1000));
-	uart_set_bits(MCR, MW__PRG);
+	// Wait a bit and take module out of resest
 
 	do {
 		retries--;
-		uart_reset_fifos();
+		comm_reset_fifos();
 		err = mw_version_get(version, variant);
 	} while (err != MW_ERR_NONE && retries);
 
