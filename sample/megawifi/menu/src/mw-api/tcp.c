@@ -84,7 +84,8 @@ void TCP_test_server(){
     err = mw_recv_sync(&ch, cmd_buf, &buf_len, DEFAULT_MW_DELAY);
     if(err)goto err;
     println("Receving OK            ");
-    paint_long_char(cmd_buf, buf_len, 11u);
+    u8 line = 11u;
+    paint_long_char(cmd_buf, buf_len, &(line));
     mw_tcp_disconnect(1u);
     return;
 err:

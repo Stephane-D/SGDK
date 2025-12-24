@@ -27,15 +27,9 @@
 #ifndef _MEGAWIFI_H_
 #define _MEGAWIFI_H_
 
-#if (MODULE_EVERDRIVE != 0)
-	// use the everdrive uart 
-	#include "ext/mw/ssf.h"
-#else
-	// use the default 16c550 uart
-	#include "ext/mw/16c550.h"
-#endif
 #include "ext/mw/mw-msg.h"
 #include "ext/mw/lsd.h"
+#include "ext/mw/comm.h"
 
 /// API version implemented, major number
 #define MW_API_VERSION_MAJOR	1
@@ -62,14 +56,6 @@
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
 #define MW_STAT_POLL_MS		250
 
-#if (MODULE_EVERDRIVE != 0)
-	/// Length of the wflash buffer
-	#define MW_BUFLEN	1436
-#else
-	/// Length of the wflash buffer
-	#define MW_BUFLEN	1460
-#endif
-
 /// Error codes for MegaWiFi API functions
 enum mw_err {
 	MW_ERR_NONE = 0,		///< No error (success)
@@ -95,14 +81,6 @@ enum mw_http_method {
     MW_HTTP_METHOD_OPTIONS,    ///< HTTP OPTIONS
     MW_HTTP_METHOD_MAX,
 };
-
-/** \addtogroup mw_ctrl_pins mw_ctrl_pins
- *  \brief Pins used to control WiFi module.
- *  \{ */
-#define MW__RESET UART_MCR__DTR   ///< Reset out.
-#define MW__PRG   UART_MCR__RTS   ///< Program out.
-#define MW__DCD   UART_MSR__DSR   ///< Data request in.
-/** \} */
 
 /// Maximum SSID length (including '\0').
 #define MW_SSID_MAXLEN		32
@@ -675,12 +653,12 @@ uint8_t *mw_flash_read(uint32_t addr, uint16_t data_len);
 /************************************************************************//**
  * \brief Puts the WiFi module in reset state.
  ****************************************************************************/
-#define mw_module_reset()	do{uart_set_bits(MCR, MW__RESET);}while(0)
+#define mw_module_reset()	comm_reset()
 
 /************************************************************************//**
  * \brief Releases the module from reset state.
  ****************************************************************************/
-#define mw_module_start()	do{uart_clr_bits(MCR, MW__RESET);}while(0)
+#define mw_module_start()	comm_start()
 
 /************************************************************************//**
  * \brief Set gamertag information for one slot.

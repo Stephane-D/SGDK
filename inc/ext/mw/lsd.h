@@ -46,14 +46,7 @@
 
 #include "config.h"
 #include "types.h"
-
-#if (MODULE_EVERDRIVE != 0)
-	// use the everdrive uart 
-	#include "ext/mw/ssf.h"
-#else
-	// use the default 16c550 uart
-	#include "ext/mw/16c550.h"
-#endif
+#include "ext/mw/comm.h"
 #include "ext/mw/mw-msg.h"
 
 /// LSD frame overhead in bytes
