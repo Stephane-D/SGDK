@@ -615,6 +615,8 @@ u8   VDP_getReg(u16 reg);
  *
  *  \param reg
  *      Register number we want to set value.
+ *      Note that setting bit 7 of register number (reg | 0x80) allows the value to be written to the VDP
+ *      without being 'cached' in the SGDK register array so VDP_getReg(reg) will return previous value.
  *  \param value
  *      value to set.
  */
@@ -1130,3 +1132,4 @@ void VDP_showCPULoad(u16 x, u16 y);
 
 
 #endif // _VDP_H_
+
