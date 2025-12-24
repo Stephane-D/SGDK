@@ -54,8 +54,6 @@ static u16 option __attribute__((unused)) = 0;
 static char buffer[128] __attribute__((unused));
 static long ciclo __attribute__((unused)) = 0;
 
-#define MW_BUFLEN 1500
-
 /// Command buffer. Must be word aligned
 static char cmd_buf[MW_BUFLEN] __attribute__((unused));
 
