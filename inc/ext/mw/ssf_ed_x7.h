@@ -64,9 +64,6 @@ bool ssf_ed_x7_read_ready(void);
 bool ssf_ed_x7_write_ready(void);
 u8 ssf_ed_x7_read(void);
 u16 ssf_ed_x7_get_buff_length(void);
-void ssf_ed_x7_reset(void);
-void ssf_ed_x7_reset_fifos(void);
-void ssf_ed_x7_start(void);
 u16 ssf_ed_x7_get_tx_fifo_length(void);
 
 /************************************************************************//**

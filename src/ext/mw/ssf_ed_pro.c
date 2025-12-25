@@ -103,11 +103,4 @@ u16 ssf_ed_pro_get_tx_fifo_length(void){
     return MW_EDPRO_TXFIFO_LEN;
 }
 
-void ssf_ed_pro_reset(void){
-    // No reset sequence needed for Everdrive Pro
-}
-void ssf_ed_pro_start(void){
-    // No start sequence needed for Everdrive Pro
-}
-
 #endif // MODULE_MEGAWIFI SSF IMPL

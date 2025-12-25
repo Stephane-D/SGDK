@@ -39,6 +39,7 @@ static const CommVTable EverdrivePro_VTable
           ssf_ed_pro_read, ssf_ed_pro_write_ready, ssf_ed_pro_write,
           ssf_ed_pro_get_buff_length,
           ssf_ed_pro_get_tx_fifo_length };
+          
 static const CommVTable MegaWifiCart_VTable
     = { uart_init, uart_is_present, uart_rx_ready,
           uart_getc, uart_tx_ready, uart_putc, 

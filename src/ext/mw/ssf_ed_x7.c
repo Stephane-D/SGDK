@@ -72,11 +72,4 @@ u16 ssf_ed_x7_get_tx_fifo_length(void) {
     return MW_EDX7_TXFIFO_LEN;
 }
 
-void ssf_ed_x7_reset(void) {
-    // no reset sequence needed for Everdrive X7
-}
-void ssf_ed_x7_start(void) {
-    // no start sequence needed for Everdrive X7
-}
-
 #endif // MODULE_MEGAWIFI SSF IMPL

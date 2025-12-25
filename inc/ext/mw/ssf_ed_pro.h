@@ -30,9 +30,6 @@ bool ssf_ed_pro_read_ready(void);
 bool ssf_ed_pro_write_ready(void);
 u8 ssf_ed_pro_read(void);
 u16 ssf_ed_pro_get_buff_length(void);
-void ssf_ed_pro_reset(void);
-void ssf_ed_pro_reset_fifos(void);
-void ssf_ed_pro_start(void);
 u16 ssf_ed_pro_get_tx_fifo_length(void);
 
 /************************************************************************//**
