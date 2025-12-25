@@ -15,6 +15,7 @@
 #include "ext/mw/16c550.h"
 #include "ext/mw/ssf_ed_x7.h"
 #include "ext/mw/ssf_ed_pro.h"
+#include "ext/mw/serial.h"
 
 typedef struct CommVTable {
     void (*init)(void);
@@ -46,13 +47,20 @@ static const CommVTable MegaWifiCart_VTable
           uart_get_buff_length,
           uart_get_tx_fifo_length };
 
+static const CommVTable Serial_VTable
+    = { serial_init, serial_is_present, serial_read_ready,
+          serial_read, serial_write_ready, serial_write, 
+          serial_get_buff_length,
+          serial_get_tx_fifo_length };
+
 static const CommVTable* commTypes[] = {
     &MegaWifiCart_VTable,
     &EverdrivePro_VTable,
     &Everdrive_VTable,
+    &Serial_VTable
 };
 
-#define COMM_TYPES 3
+#define COMM_TYPES 4
 
 static const CommVTable* activeCommType = NULL;
 
