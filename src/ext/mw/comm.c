@@ -11,9 +11,6 @@
 
 #if (MODULE_MEGAWIFI == 1)
 
-// Should consider if console is PAL or NTSC
-#define COMM_MS_TO_FRAMES(ms)	(((ms)*60/500 + 1)/2)
-
 #include "ext/mw/comm.h"
 #include "ext/mw/16c550.h"
 #include "ext/mw/ssf_ed_x7.h"

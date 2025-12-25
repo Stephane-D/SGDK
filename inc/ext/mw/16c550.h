@@ -11,6 +11,7 @@
 #define _16C550_H_
 
 #include "types.h"
+#include "mw-msg.h"
 
 /// 16C550 UART base address
 #define UART_BASE		0xA130C1

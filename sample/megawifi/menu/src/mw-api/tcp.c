@@ -63,7 +63,7 @@ void TCP_test() {
 	}else{
 	    println("TCP test SUCCESS             ");
     }	
-    //mw_send_sync(1,"a", 1, MS_TO_FRAMES(DEFAULT_MW_DELAY));
+    //mw_send_sync(1,"a", 1, MW_MS_TO_FRAMES(DEFAULT_MW_DELAY));
     //mw_recv_sync(1);
 	mw_tcp_disconnect(1);
 }

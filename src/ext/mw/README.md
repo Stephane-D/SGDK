@@ -411,7 +411,7 @@ static int http_finish(char *recv_buf, unsigned int *len)
 	enum mw_err err;
 	uint32_t content_len = 0;
 
-	err = mw_http_finish(&content_len, MS_TO_FRAMES(60000));
+	err = mw_http_finish(&content_len, MW_MS_TO_FRAMES(60000));
 	err = err >= 200 && err <= 300 ? 0 : err;
 	if (content_len > b.msg_buf_len) {
 		err = -1;
@@ -626,7 +626,7 @@ To initialize the API, you have to pass the endpoint, the game and user credenti
 ```C
 	if (gj_init("https://api.gamejolt.com/api/game/v1_2/", GJ_GAME_ID,
 				GJ_PRIV_KEY, username, user_token,
-				cmd_buf, MW_BUFLEN, MS_TO_FRAMES(30000))) {
+				cmd_buf, MW_BUFLEN, MW_MS_TO_FRAMES(30000))) {
 		// Handle init error
 	}
 ```

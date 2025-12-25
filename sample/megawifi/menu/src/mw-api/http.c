@@ -111,7 +111,7 @@ void HTTP_test(const char* url, bool ssl) {
 	println("Finish URL                ");
 	print();
 	delay_ms(DEFAULT_DELAY);
-	errHttp = mw_http_finish(&len, MS_TO_FRAMES(20000));
+	errHttp = mw_http_finish(&len, MW_MS_TO_FRAMES(20000));
 	if (errHttp < 100) goto err_out;
 	if (len) {
 		if (http_recv(len)) goto err_out;

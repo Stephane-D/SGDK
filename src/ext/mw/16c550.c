@@ -5,9 +5,6 @@
 #include "ext/mw/16c550.h"
 #include "task.h"
 
-// Should consider if console is PAL or NTSC
-#define UART_MS_TO_FRAMES(ms)	(((ms)*60/500 + 1)/2)
-
 /// Shadow copy of the UART registers
 UartShadow sh;
 
@@ -55,9 +52,9 @@ void uart_reset(void) {
 }
 
 void uart_start(void) {
-	TSK_superPend(MS_TO_FRAMES(30));
+	TSK_superPend(MW_MS_TO_FRAMES(30));
 	uart_clr_bits(MCR, MW__RESET);
-	TSK_superPend(UART_MS_TO_FRAMES(1000));
+	TSK_superPend(MW_MS_TO_FRAMES(1000));
 	uart_set_bits(MCR, MW__PRG);
 	uart_reset_fifos(); 
 }

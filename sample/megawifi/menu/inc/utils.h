@@ -18,9 +18,6 @@
 /// Shut compiler warnings for unused parameters
 #define UNUSED_PARAM(par) (void)(par)
 
-/// Tuned for 60 Hz, change it for PAL consoles
-#define MS_TO_FRAMES(ms)  ((((ms) * 60 / 500) + 1)/2)
-
 /// Certificate for www.example.org
 static const char cert[] = "-----BEGIN CERTIFICATE-----\n"
 "MIIDNDCCArmgAwIBAgIQYE2K+NALqHSLlVhTFyxfLjAKBggqhkjOPQQDAzBOMQsw\n"

@@ -65,7 +65,7 @@ static void drawAlphabet() {
 }
 
 void delay_ms(u16 milliseconds) {
-    u16 frames = MS_TO_FRAMES(milliseconds);
+    u16 frames = MW_MS_TO_FRAMES(milliseconds);
     for (u16 i = 0; i < frames; i++) {
         SYS_doVBlankProcess(); // Espera al siguiente VBlank
     }
