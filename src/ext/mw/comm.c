@@ -122,6 +122,8 @@ COMMMode comm_mode(void) {
         return EverdrivePro;
     } else if (activeCommType == &MegaWifiCart_VTable) {
         return MegaWifiCart;
+    }else if (activeCommType == &Serial_VTable) {
+        return Serial;
     }
     return Discovery;
 }
