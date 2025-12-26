@@ -73,7 +73,7 @@ static const CommVTable* commTypes[] = {
 #endif
 };
 
-#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_ED)      
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED)      
 #define COMM_TYPES 2
 #else
 #define COMM_TYPES 1
