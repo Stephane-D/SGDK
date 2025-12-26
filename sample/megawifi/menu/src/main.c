@@ -162,20 +162,7 @@ static bool megawifi_init(void)
 		line[17] = ver_major + '0';
 		line[19] = ver_minor + '0';
         memcpy(&(line[23]), variant, 3);
-        char * ppp = "UNK";
-        switch (comm_mode()){
-        case EverdrivePro:                
-            ppp = "EPr";
-            break;
-        case Everdrive:                
-            ppp = "Ex7";
-            break;    
-        case MegaWifiCart:
-            ppp = "MWC";
-            break;        
-        default:
-            break;
-        }
+        char * ppp = comm_mode();
         memcpy(&(line[10]), ppp, 3);
 		println(line);
 		ret = FALSE;

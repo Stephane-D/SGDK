@@ -13,8 +13,6 @@
 #include "types.h"
 /**************************************** */
 
-typedef enum COMMMode { Discovery, EverdrivePro, Everdrive, MegaWifiCart, Serial } COMMMode;
-
 u16 comm_get_buffer_length(void);
 u16 comm_get_tx_fifo_length(void);
 
@@ -23,6 +21,6 @@ void comm_write(u8 data);
 bool comm_read_ready(void);
 bool comm_write_ready(void);
 u8 comm_read(void);
-COMMMode comm_mode(void);
+char* comm_mode(void);
 #endif /*_COMM_H_*/
 

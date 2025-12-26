@@ -148,9 +148,17 @@
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
  */
 #define MODULE_MEGAWIFI         0
-#if ((ENABLE_BANK_SWITCH == 0) && (MODULE_MEGAWIFI != 0))
+#if MODULE_MEGAWIFI
+
+#define MEGAWIFI_IMPLEMENTATION_CROSS    0    // Cross (Serial)
+#define MEGAWIFI_IMPLEMENTATION_MW_CART  1    // MegaWiFi Cart: Defined to use MegaWiFi Cart distributions
+#define MEGAWIFI_IMPLEMENTATION_ED       2    // EverDrive: Defined to use EverDrive distributions (testing purposes)
+#define MEGAWIFI_IMPLEMENTATION       MEGAWIFI_IMPLEMENTATION_CROSS
+
+#if ((ENABLE_BANK_SWITCH == 0) && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED))
 #error "Cannot enable MegaWiFi module without BANK SWITCH"
 #endif
+#endif // MODULE_MEGAWIFI
 /**
  *  \brief
  *      Set it to 1 if you want to enable Flash Save functions (written by Jesus Alonso - doragasu).<br>

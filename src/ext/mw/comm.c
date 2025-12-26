@@ -12,10 +12,15 @@
 #if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/comm.h"
+
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CART)
 #include "ext/mw/16c550.h"
+#elif (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED)
 #include "ext/mw/ssf_ed_x7.h"
 #include "ext/mw/ssf_ed_pro.h"
+#else // MEGAWIFI_IMPLEMENTATION_CROSS
 #include "ext/mw/serial.h"
+#endif
 
 typedef struct CommVTable {
     void (*init)(void);
@@ -27,40 +32,52 @@ typedef struct CommVTable {
     
     u16 (*get_buff_length)(void);
     u16 (*get_tx_fifo_length)(void);
+    char* mode;
 } CommVTable;
 
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED)
 static const CommVTable Everdrive_VTable
     = { ssf_ed_x7_init, ssf_ed_x7_is_present, ssf_ed_x7_read_ready,
           ssf_ed_x7_read, ssf_ed_x7_write_ready, ssf_ed_x7_write, 
           ssf_ed_x7_get_buff_length,
-          ssf_ed_x7_get_tx_fifo_length };
+          ssf_ed_x7_get_tx_fifo_length, "Ex7" };
 
 static const CommVTable EverdrivePro_VTable
     = { ssf_ed_pro_init, ssf_ed_pro_is_present, ssf_ed_pro_read_ready,
           ssf_ed_pro_read, ssf_ed_pro_write_ready, ssf_ed_pro_write,
           ssf_ed_pro_get_buff_length,
-          ssf_ed_pro_get_tx_fifo_length };
-          
+          ssf_ed_pro_get_tx_fifo_length, "EPr" };
+#endif // MEGAWIFI_IMPLEMENTATION_ED
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CART)
 static const CommVTable MegaWifiCart_VTable
     = { uart_init, uart_is_present, uart_rx_ready,
           uart_getc, uart_tx_ready, uart_putc, 
           uart_get_buff_length,
-          uart_get_tx_fifo_length };
-
+          uart_get_tx_fifo_length, "MwC" };
+#endif // MEGAWIFI_IMPLEMENTATION_MW_CART
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_CROSS)
 static const CommVTable Serial_VTable
     = { serial_init, serial_is_present, serial_read_ready,
           serial_read, serial_write_ready, serial_write, 
           serial_get_buff_length,
-          serial_get_tx_fifo_length };
-
+          serial_get_tx_fifo_length, "Pt2" };
+#endif // MEGAWIFI_IMPLEMENTATION_CROSS
 static const CommVTable* commTypes[] = {
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CART)
     &MegaWifiCart_VTable,
+#elif (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED)   
     &EverdrivePro_VTable,
     &Everdrive_VTable,
+#elif (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_CROSS)
     &Serial_VTable
+#endif
 };
 
-#define COMM_TYPES 4
+#if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_ED)      
+#define COMM_TYPES 2
+#else
+#define COMM_TYPES 1
+#endif
 
 static const CommVTable* activeCommType = NULL;
 
@@ -115,17 +132,11 @@ u16 comm_get_tx_fifo_length(void) {
     return 0;
 }
 
-COMMMode comm_mode(void) {
-    if (activeCommType == &Everdrive_VTable) {
-        return Everdrive;
-    } else if (activeCommType == &EverdrivePro_VTable) {
-        return EverdrivePro;
-    } else if (activeCommType == &MegaWifiCart_VTable) {
-        return MegaWifiCart;
-    }else if (activeCommType == &Serial_VTable) {
-        return Serial;
+char* comm_mode(void) {
+    if (activeCommType != NULL) {
+        return activeCommType->mode;
     }
-    return Discovery;
+    return "Dis";
 }
 
 #endif // MODULE_MEGAWIFI COMM IMPL

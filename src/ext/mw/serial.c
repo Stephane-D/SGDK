@@ -1,3 +1,6 @@
+#include "config.h"
+
+#if (MODULE_MEGAWIFI  && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CROSS))
 #include "ext/mw/serial.h"
 
 static IoPort io_port;
@@ -187,3 +190,4 @@ u16 serial_get_buff_length(void){
 u16 serial_get_tx_fifo_length(void){
     return SERIAL_TXFIFO_LEN;
 }
+#endif // MODULE_MEGAWIFI COMM IMPL
