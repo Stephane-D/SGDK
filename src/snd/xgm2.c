@@ -562,7 +562,7 @@ static s16 getPCMChannel(const u8 priority)
     if (prios[1] <= priority) return SOUND_PCM_CH2;
 
     // try channel 1 in last (can be used for music)
-    if (!(status & XGM2_STATUS_PLAYING_PCM2)) return SOUND_PCM_CH1;
+    if (!(status & XGM2_STATUS_PLAYING_PCM1)) return SOUND_PCM_CH1;
     if (prios[0] <= priority) return SOUND_PCM_CH1;
 
     // can't play
