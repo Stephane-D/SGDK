@@ -16,6 +16,12 @@
 
 #include "tools.h"
 
+// memory functions are provided in <string.h> when using newlib
+#if (ENABLE_NEWLIB != 0)
+#include "string.h"
+#endif
+
+
 
 #define Z80_DRV_VARS                (Z80_RAM + 0x110)
 
