@@ -8,7 +8,7 @@
  * cartridge flash chip. It should work with any flash chip compatible with
  * the AMD format, and implementing a CFI interface. It has been tested
  * successfully with S29GL032 and W29GL032C chips. Also it is required that
- * the cart has the WE line connected to the flash chip (that should be the
+ * the cart has the #WE line connected to the flash chip (that should be the
  * case on most flash carts, but is not guaranteed).
  *
  * \note The module has some limitations: addresses must be even, data pointers
@@ -19,8 +19,8 @@
  * a wear leveling algorithm to avoid damaging the chip.
  *
  * \note Although it is not a requirement for this module to work, it is
- * strongly recommended that the cart you use also has the RESET pin connected
- * to the console RESET signal. Otherwise, if the user pushes the RESET
+ * strongly recommended that the cart you use also has the #RESET pin connected
+ * to the console #RESET signal. Otherwise, if the user pushes the RESET
  * button while the flash chip is being erased/programmed, the machine will
  * most likely freeze, requiring another press of the RESET button or a power
  * cycle.
