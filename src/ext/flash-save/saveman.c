@@ -111,26 +111,29 @@ static uint16_t save_data_off(void)
 	return align(sizeof(struct sector_hdr), 2);
 }
 
-static int16_t sector_addrs_set(uint32_t max_length_restrict)
+static int16_t sector_addrs_set(void)
 {
-	const struct flash_chip *flash = flash_metadata_get();
+	volatile const uint32_t *range = (uint32_t*)0x1B4;
 
-	if (!max_length_restrict) {
-		max_length_restrict = MIN(flash->len, 0x400000);
-	}
-	// We allocate the last two sectors
-	flash_sector_limits(max_length_restrict - 1, &sm->sect[1].addr,
-			&sm->sect[1].limit);
-	// Sector end should match restricted length
-	if (sm->sect[1].limit != max_length_restrict) {
-		return SM_STAT_PARAM_ERR;
-	}
+	const uint32_t start = range[0];
+	const uint32_t end = range[1];
+	// Verify the range indicated in the header corresponds
+	// to two adjacent sectors
+	flash_sector_limits(start, &sm->sect[0].addr, &sm->sect[0].limit);
+	flash_sector_limits(end, &sm->sect[1].addr, &sm->sect[1].limit);
 
-	uint32_t sector_len = sm->sect[1].limit - sm->sect[1].addr;
-	flash_sector_limits(sm->sect[1].addr - 1, &sm->sect[0].addr,
-			&sm->sect[0].limit);
-	// This driver requires both sectors to have the same length
-	if (sector_len != sm->sect[1].addr - sm->sect[0].addr) {
+	// Checks that start address matches first sector start address, that
+	// end address matches second sector end address, that both sectors are
+	// are adjacent (first sector limit matches second sector start) and
+	// that both sectors are the same length.
+	// TODO We could maybe relax the requirement of both sectors having to
+	// be adjacent, but this is currently not supported.
+	if (sm->sect[0].addr != start ||
+			sm->sect[0].limit != sm->sect[1].addr ||
+			sm->sect[1].limit != (end + 1) ||
+			(sm->sect[0].limit - sm->sect[0].addr) !=
+			(sm->sect[1].limit - sm->sect[1].addr)) {
+		// Specified range does not match chip sector configuration
 		return SM_STAT_PARAM_ERR;
 	}
 
@@ -380,7 +383,7 @@ static int16_t savedata_probe(uint8_t num_slots)
 	return err;
 }
 
-int16_t sm_init(uint8_t num_slots, uint32_t max_length_restrict)
+int16_t sm_init(uint8_t num_slots)
 {
 	// We require num_slots to be between 1 and 254
 	if (0 == num_slots || 0xFF == num_slots) {
@@ -403,7 +406,7 @@ int16_t sm_init(uint8_t num_slots, uint32_t max_length_restrict)
 		return SM_STAT_HW_ERR;
 	}
 
-	err = sector_addrs_set(max_length_restrict);
+	err = sector_addrs_set();
 	if (err) {
 		return err;
 	}

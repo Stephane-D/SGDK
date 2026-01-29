@@ -9,10 +9,14 @@
 // Base address for the CFI data
 #define CFI_BASE 0x10
 
+// CFI buffer length
+#define CFI_BUF_LEN 64
+
 // Offset in the CFI data buffer
 #define CFI_LENGTH_OFF (0x27 - CFI_BASE)
 #define CFI_NUM_REGIONS_OFF (0x2C - CFI_BASE)
 #define CFI_REGION_DATA_OFF (0x2D - CFI_BASE)
+#define CFI_BOOT_SECT_TYPE_OFF (0x4F - CFI_BASE)
 
 static struct flash_chip flash = {};
 
@@ -60,7 +64,7 @@ RAM_SECT static void data_poll(uint32_t addr, uint16_t data)
 	while (bus_read16(addr) != data);
 }
 
-// buf must be 45 byte long or greater
+// buf must be CFI_BUF_LEN or greater
 RAM_SECT NO_INLINE static void cfi_read(uint8_t *buf)
 {
 	// CFI Query
@@ -68,8 +72,8 @@ RAM_SECT NO_INLINE static void cfi_read(uint8_t *buf)
 	// autoselect mode, but entering autoselect is not required.
 	bus_write8(0xAB, 0x98);
 
-	// Read from 0x10 to 0x3C (45 bytes) in byte mode
-	for (uint16_t i = 0, addr = 0x21 ; i < 45; i++, addr += 2) {
+	// Read CFI_BUF_LEN bytes starting from 0x10 (up to 0x50) in byte mode
+	for (uint16_t i = 0, addr = 0x21 ; i < CFI_BUF_LEN; i++, addr += 2) {
 		buf[i] = bus_read8(addr);
 	}
 
@@ -77,14 +81,40 @@ RAM_SECT NO_INLINE static void cfi_read(uint8_t *buf)
 	reset();
 }
 
-static int16_t metadata_populate(const uint8_t *cfi)
+// For top boot devices only
+static int16_t metadata_populate_top(const uint8_t *cfi)
 {
-	flash.len = 1<<cfi[CFI_LENGTH_OFF];
-	flash.num_regions = cfi[CFI_NUM_REGIONS_OFF];
+	uint32_t start_addr = flash.len;
+	const uint8_t *cfi_reg = cfi + CFI_REGION_DATA_OFF;
 
+	for (int16_t i = flash.num_regions - 1; i >= 0; i--) {
+		struct flash_region *reg = &flash.region[i];
+
+		reg->num_sectors = *cfi_reg++ + 1;;
+		reg->num_sectors |= 256 * *cfi_reg++;
+		reg->sector_len = *cfi_reg++;
+		reg->sector_len |= 256 * *cfi_reg++;
+
+		start_addr -= reg->num_sectors * (reg->sector_len * 256);
+		reg->start_addr = start_addr;
+	}
+
+	// We should have used all the chip, and thus start address should be 0
+	if (0 != start_addr) {
+		return -1;
+	}
+
+	return 0;
+}
+
+// For bottom boot and also regular sector devices
+static int16_t metadata_populate_bot(const uint8_t *cfi)
+{
 	uint32_t start_addr = 0;
 	const uint8_t *cfi_reg = cfi + CFI_REGION_DATA_OFF;
-	for (uint16_t i = 0; i < flash.num_regions; i++) {
+
+	// Bottom boot or regular sectors
+	for (int16_t i = 0; i < flash.num_regions; i++) {
 		struct flash_region *reg = &flash.region[i];
 
 		reg->start_addr = start_addr;
@@ -104,17 +134,36 @@ static int16_t metadata_populate(const uint8_t *cfi)
 	return 0;
 }
 
+static int16_t metadata_populate(const uint8_t *cfi)
+{
+	int16_t err;
+	flash.len = 1<<cfi[CFI_LENGTH_OFF];
+	flash.num_regions = cfi[CFI_NUM_REGIONS_OFF];
+
+	// Top boot devices (0x03) require populating the metadata from top
+	// (in reverse order), thus we have to use specific function versions
+	if (0x03 == cfi[CFI_BOOT_SECT_TYPE_OFF]) {
+		err = metadata_populate_top(cfi);
+	} else {
+		err = metadata_populate_bot(cfi);
+	}
+
+
+	return err;
+}
+
 int16_t flash_init(void)
 {
 	static const uint8_t cfi_check[] = {
-		0x51, 0x52, 0x59, 0x02, 0x00
+		0x51, 0x52, 0x59, 0x02, 0x00, 0x40, 0x00
 	};
-	uint8_t cfi[45];
+	uint8_t cfi[CFI_BUF_LEN];
 
 	// Read CFI data
 	cfi_read(cfi);
 
-	// Check response contains QRY and algorithm is AMD compatible
+	// Check response contains QRY, algorithm is AMD compatible
+	// and contains an extended query table at 0x40
 	for (uint16_t i = 0; i < sizeof(cfi_check); i++) {
 		if (cfi[i] != cfi_check[i]) {
 			// No flash chip installed, or chip not supported
