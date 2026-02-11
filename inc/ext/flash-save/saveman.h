@@ -82,13 +82,6 @@ enum {
  * any other function in the module.
  *
  * \param[in] num_slots Number of save slots to support.
- * \param[in] max_length_restrict Maximum flash length the module can use. The
- *            module uses the last two sectors available. If you set this to 0,
- *            the module defaults to use the last two sectors in the 4 MiB
- *            range. But if you want to restrict it e.g. to 2 MiB to use a
- *            smaller chip, you can set it e.g. to 0x200000. This can also be
- *            used to alloc the smaller sectors in the flash chip, by pointing
- *            to the end of two of these sectors.
  *
  * \return Status code:
  * - SM_STAT_OK if initialisation was successful and flash has data to load.
@@ -100,13 +93,16 @@ enum {
  *
  * \note This function internally calls flash_init(), you must not call it
  * by yourself.
- * \note This function halts Z80 and disables interrupts until it done.
- * \warning This module uses the last two sectors available in the specified
- * range. Typically this is from 0x3E0000 to 0x3FFFFF for the default value of
- * max_length_restrict set to 0. You must make sure there is no code in that
- * area, or it will be erased by this module!
+ * \note This function halts Z80 and disables interrupts until done.
+ * \note This module uses the two adjacent sectors in the memory range
+ * specified in the ROM header at offset 0x1B4. If the range does not exactly
+ * match two flash adjacents sectors, function will return SM_STAT_PARAM_ERR.
+ * Make sure you read and understand the save manager README.md file.
+ * \warning The two flash sectors used by this module must not have code. If
+ * there is code in there, it will be deleted. Don't make your game erase
+ * itself!
  */
-int16_t sm_init(uint8_t num_slots, uint32_t max_length_restrict);
+int16_t sm_init(uint8_t num_slots);
 
 /**
  * \brief Deinitialises save manager module. Usually you do not have to use

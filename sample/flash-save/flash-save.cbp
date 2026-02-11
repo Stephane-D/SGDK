@@ -36,7 +36,6 @@
 		<VirtualTargets>
 			<Add alias="All" targets="default;" />
 		</VirtualTargets>
-		<Unit filename="inc/lipsum.h" />
 		<Unit filename="src/boot/rom_head.c">
 			<Option compilerVar="CC" />
 		</Unit>
