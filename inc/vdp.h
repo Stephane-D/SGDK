@@ -3,6 +3,8 @@
  *  \brief VDP main
  *  \author Stephane Dallongeville
  *  \date 08/2011
+ *  \addtogroup VDP VDP
+ *  \{ 
  *
  * This unit provides general VDP (Video Display Processor) methods:<br>
  * - initialisation<br>
@@ -1130,6 +1132,6 @@ void VDP_showFPS(u16 asFloat, u16 x, u16 y);
  */
 void VDP_showCPULoad(u16 x, u16 y);
 
-
 #endif // _VDP_H_
 
+/** \} */
