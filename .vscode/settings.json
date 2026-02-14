@@ -8,5 +8,6 @@
         "archive/**": true,
         "cb/**": true,
         "tools/archives": true
-    }
+    },
+    "terminal.integrated.defaultProfile.windows": "Command Prompt"
 }

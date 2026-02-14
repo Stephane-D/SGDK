@@ -138,7 +138,7 @@ https://community.aws/content/2hZInsYwWX8cYEAIFKquutVoYQj/how-to-build-retro-gam
  
 ## SUPPORT SGDK
 
-SGDK is completly free but you can support it on Patreon: https://www.patreon.com/SGDK
+SGDK is free but you can support it on Patreon: https://www.patreon.com/SGDK
 
 ## THANKS
 
