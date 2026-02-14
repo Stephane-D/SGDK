@@ -4,6 +4,10 @@
 #include <stdbool.h>
 #include <vdp.h>
 
+#if (MODULE_SERIAL == 0)
+#error "Set MODULE_SERIAL to 1 in config.h and rebuild the library"
+#endif
+
 const u16 BUFFER_MIN_Y = 6;
 const u16 BUFFER_MAX_X = 39;
 const u16 BUFFER_MAX_LINES = 6;
