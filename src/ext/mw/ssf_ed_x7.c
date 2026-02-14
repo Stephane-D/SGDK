@@ -9,7 +9,7 @@
 *************************************** */
 #include "config.h"
 
-#if (MODULE_MEGAWIFI == 1 && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED))
+#if (MODULE_MEGAWIFI == 1 && (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_ED))
 
 #include "ext/mw/ssf_ed_x7.h"
 

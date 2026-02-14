@@ -156,17 +156,21 @@
 #define MODULE_MEGAWIFI         0
 #if MODULE_MEGAWIFI
 
-#define MEGAWIFI_IMPLEMENTATION_CROSS    0    // Cross (Serial)
-#define MEGAWIFI_IMPLEMENTATION_MW_CART  1    // MegaWiFi Cart: Defined to use MegaWiFi Cart distributions
-#define MEGAWIFI_IMPLEMENTATION_ED       2    // EverDrive: Defined to use EverDrive distributions (testing purposes)
-#define MEGAWIFI_IMPLEMENTATION       MEGAWIFI_IMPLEMENTATION_CROSS
+#define MEGAWIFI_IMPLEMENTATION_CROSS    0x01    // Cross (Serial)
+#define MEGAWIFI_IMPLEMENTATION_MW_CART  0x02    // MegaWiFi Cart: Defined to use MegaWiFi Cart distributions
+#define MEGAWIFI_IMPLEMENTATION_ED       0x04    // EverDrive: Defined to use EverDrive distributions (testing purposes)
+#define MEGAWIFI_IMPLEMENTATION       (MEGAWIFI_IMPLEMENTATION_CROSS | MEGAWIFI_IMPLEMENTATION_ED) // Set the implementation to use
+// Caution USING BOTH MW_CART AND EVERDRIVE IMPLEMENTATIONS MAY CAUSE ISSUES AS THEY BOTH USE SAME COMM VTABLE STRUCTURE
+// MAKE SURE TO TEST PROPERLY IF YOU ENABLE BOTH IMPLEMENTATIONS
 
 // Check that if using cross implementation, serial module is enabled
-// FAT16 need EVERDRIVE
-#if ((MODULE_SERIAL == 0) && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_CROSS))
+// Serial module is required for cross implementation
+#if ((MODULE_SERIAL == 0) && (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_CROSS))
 #error "Cannot enable MegaWiFi cross implementation without SERIAL module"
 #endif
-#if ((ENABLE_BANK_SWITCH == 0) && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED))
+// Check that if using EverDrive implementation, EverDrive module is enabled
+// Switching banks is required for EverDrive implementation
+#if ((ENABLE_BANK_SWITCH == 0) && (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_ED))
 #error "Cannot enable MegaWiFi module without BANK SWITCH"
 #endif
 
