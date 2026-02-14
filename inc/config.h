@@ -99,7 +99,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH      1
+#define ENABLE_BANK_SWITCH      0
 
 /**
  *  \brief
@@ -147,13 +147,13 @@
  *  \brief
  *      Set it to 1 if you want to use PORT_2 or PORT_EXT as Serial port COMM.
  */
-#define MODULE_SERIAL            1
+#define MODULE_SERIAL            0
 
 /**
  *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
  */
-#define MODULE_MEGAWIFI         1
+#define MODULE_MEGAWIFI         0
 #if MODULE_MEGAWIFI
 
 #define MEGAWIFI_IMPLEMENTATION_CROSS    0    // Cross (Serial)
