@@ -38,7 +38,7 @@
 #define MW_API_VERSION_MINOR	5
 
 /// Timeout for standard commands in milliseconds
-#define MW_COMMAND_TOUT_MS	1000
+#define MW_COMMAND_TOUT_MS	2000
 /// Timeout for TCP connections
 #define MW_CONNECT_TOUT_MS	10000
 /// Timeout for HTTP open command in milliseconds

@@ -206,10 +206,6 @@ void uart_reset(void);
 
 void uart_start(void);
 
-u16 uart_get_buff_length(void);
-
-u16 uart_get_tx_fifo_length(void);
-
 /************************************************************************//**
  * \brief Sends syncrhonization frame.
  *

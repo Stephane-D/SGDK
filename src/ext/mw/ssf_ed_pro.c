@@ -95,12 +95,4 @@ u8 ssf_ed_pro_read(void){
 void ssf_ed_pro_init(void) {
 }
 
-u16 ssf_ed_pro_get_buff_length(void){
-    return MW_EDPRO_BUFLEN;
-}
-
-u16 ssf_ed_pro_get_tx_fifo_length(void){
-    return MW_EDPRO_TXFIFO_LEN;
-}
-
 #endif // MODULE_MEGAWIFI SSF IMPL

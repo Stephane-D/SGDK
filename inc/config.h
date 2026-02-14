@@ -99,7 +99,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH      0
+#define ENABLE_BANK_SWITCH      1
 
 /**
  *  \brief
@@ -145,9 +145,15 @@
 
 /**
  *  \brief
+ *      Set it to 1 if you want to use PORT_2 or PORT_EXT as Serial port COMM.
+ */
+#define MODULE_SERIAL            1
+
+/**
+ *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
  */
-#define MODULE_MEGAWIFI         0
+#define MODULE_MEGAWIFI         1
 #if MODULE_MEGAWIFI
 
 #define MEGAWIFI_IMPLEMENTATION_CROSS    0    // Cross (Serial)
@@ -155,9 +161,15 @@
 #define MEGAWIFI_IMPLEMENTATION_ED       2    // EverDrive: Defined to use EverDrive distributions (testing purposes)
 #define MEGAWIFI_IMPLEMENTATION       MEGAWIFI_IMPLEMENTATION_CROSS
 
+// Check that if using cross implementation, serial module is enabled
+// FAT16 need EVERDRIVE
+#if ((MODULE_SERIAL == 0) && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_CROSS))
+#error "Cannot enable MegaWiFi cross implementation without SERIAL module"
+#endif
 #if ((ENABLE_BANK_SWITCH == 0) && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED))
 #error "Cannot enable MegaWiFi module without BANK SWITCH"
 #endif
+
 #endif // MODULE_MEGAWIFI
 /**
  *  \brief

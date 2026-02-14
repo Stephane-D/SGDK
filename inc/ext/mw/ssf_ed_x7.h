@@ -63,8 +63,6 @@ void ssf_ed_x7_write(u8 data);
 bool ssf_ed_x7_read_ready(void);
 bool ssf_ed_x7_write_ready(void);
 u8 ssf_ed_x7_read(void);
-u16 ssf_ed_x7_get_buff_length(void);
-u16 ssf_ed_x7_get_tx_fifo_length(void);
 
 /************************************************************************//**
  * \brief Initializes the driver on Everdrive X7.

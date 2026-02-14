@@ -19,7 +19,7 @@
 #include "ext/mw/ssf_ed_x7.h"
 #include "ext/mw/ssf_ed_pro.h"
 #else // MEGAWIFI_IMPLEMENTATION_CROSS
-#include "ext/mw/serial.h"
+#include "ext/serial/serial.h"
 #endif
 
 typedef struct CommVTable {
@@ -30,8 +30,8 @@ typedef struct CommVTable {
     u8 (*write_ready)(void);
     void (*write)(u8 data);
     
-    u16 (*get_buff_length)(void);
-    u16 (*get_tx_fifo_length)(void);
+    u16 buff_length;
+    u16 fifo_length;
     char* mode;
 } CommVTable;
 
@@ -39,30 +39,30 @@ typedef struct CommVTable {
 static const CommVTable Everdrive_VTable
     = { ssf_ed_x7_init, ssf_ed_x7_is_present, ssf_ed_x7_read_ready,
           ssf_ed_x7_read, ssf_ed_x7_write_ready, ssf_ed_x7_write, 
-          ssf_ed_x7_get_buff_length,
-          ssf_ed_x7_get_tx_fifo_length, "Ex7" };
+          MW_EDX7_BUFLEN,
+          MW_EDX7_TXFIFO_LEN, "Ex7" };
 
 static const CommVTable EverdrivePro_VTable
     = { ssf_ed_pro_init, ssf_ed_pro_is_present, ssf_ed_pro_read_ready,
           ssf_ed_pro_read, ssf_ed_pro_write_ready, ssf_ed_pro_write,
-          ssf_ed_pro_get_buff_length,
-          ssf_ed_pro_get_tx_fifo_length, "EPr" };
+          MW_EDPRO_BUFLEN,
+          MW_EDPRO_TXFIFO_LEN, "EPr" };
 #endif // MEGAWIFI_IMPLEMENTATION_ED
 #if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CART)
 static const CommVTable MegaWifiCart_VTable
     = { uart_init, uart_is_present, uart_rx_ready,
           uart_getc, uart_tx_ready, uart_putc, 
-          uart_get_buff_length,
-          uart_get_tx_fifo_length, "MwC" };
+          UART_BUFLEN,
+          UART_TX_FIFO_LEN, "MwC" };
 #endif // MEGAWIFI_IMPLEMENTATION_MW_CART
 #if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_CROSS)
 static const CommVTable Serial_VTable
     = { serial_init, serial_is_present, serial_read_ready,
           serial_read, serial_write_ready, serial_write, 
-          serial_get_buff_length,
-          serial_get_tx_fifo_length, "Pt2" };
+          SERIAL_BUFLEN,
+          SERIAL_TXFIFO_LEN, "Pt2" };
 #endif // MEGAWIFI_IMPLEMENTATION_CROSS
-static const CommVTable* commTypes[] = {
+static const CommVTable* const commTypes[] = {
 #if (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CART)
     &MegaWifiCart_VTable,
 #elif (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_ED)   
@@ -120,14 +120,14 @@ void comm_write(u8 data) {
 
 u16 comm_get_buffer_length(void) {
     if (activeCommType != NULL) {
-        return activeCommType->get_buff_length();
+        return activeCommType->buff_length;
     }
     return 0;
 }
 
 u16 comm_get_tx_fifo_length(void) {
     if (activeCommType != NULL) {
-        return activeCommType->get_tx_fifo_length();
+        return activeCommType->fifo_length;
     }
     return 0;
 }

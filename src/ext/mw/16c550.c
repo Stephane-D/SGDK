@@ -59,13 +59,6 @@ void uart_start(void) {
 	uart_reset_fifos(); 
 }
 
-u16 uart_get_buff_length(void) {
-	return UART_BUFLEN;
-}
-
-u16 uart_get_tx_fifo_length(void) {
-	return UART_TX_FIFO_LEN;
-}
 bool uart_is_present(void){
 	// Try accessing UART scratch pad register to see if it is installed
 	uart_test(UART_SPR, 0x55);

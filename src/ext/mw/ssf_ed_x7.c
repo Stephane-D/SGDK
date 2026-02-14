@@ -64,12 +64,4 @@ void ssf_ed_x7_init(void) {
     for (u8 i = 1; i < 8; i++)ssf_set_rom_bank(i, i);
 }
 
-u16 ssf_ed_x7_get_buff_length(void) {
-    return MW_EDX7_BUFLEN;
-}
-
-u16 ssf_ed_x7_get_tx_fifo_length(void) {
-    return MW_EDX7_TXFIFO_LEN;
-}
-
 #endif // MODULE_MEGAWIFI SSF IMPL

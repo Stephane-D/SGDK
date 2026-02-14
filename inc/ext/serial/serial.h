@@ -51,6 +51,7 @@
  *      
  *      | FTDI Cable   | Mega Drive Port Pin |
  *      | ------------ | ------------------- |
+ *      | Red (VCC)    | 5 (5v)              |
  *      | Orange (TXD) | 9 (Rx)              |
  *      | Yellow (RXD) | 6 (Tx)              |
  *      | Black (GND)  | 8 (Gnd)             |
@@ -89,31 +90,24 @@
 #define VDP_IE2 0x08
 #define INT_MASK_LEVEL_ENABLE_ALL 1
 
-#define SERIAL_BUFLEN	4096
-#define SERIAL_BUF_CAPACITY (SERIAL_BUFLEN - 1)
-#define SERIAL_TXFIFO_LEN 512
+#define SERIAL_BUFLEN	1
+#define SERIAL_TXFIFO_LEN 1
 
 typedef enum IoPort {
     IoPort_Ext,
     IoPort_Ctrl2
 } IoPort;
 
-typedef enum { RING_BUF_OK = 0, RING_BUF_EMPTY, RING_BUF_FULL, RING_BUF_ERROR } ring_buf_status_t;
-
 bool serial_is_present(void);
 void serial_write(u8 data);
 bool serial_read_ready(void);
 bool serial_write_ready(void);
 u8 serial_read(void);
-u16 serial_get_buff_length(void);
-u16 serial_get_tx_fifo_length(void);
-
-/************************************************************************//**
- * \brief Initializes the driver on Everdrive PRO.
- ****************************************************************************/
 void serial_init(void);
 
 void serial_reset_fifos(void);
 u16 serial_baud_rate(void);
+u8 serial_get_sctrl(void);
+void serial_set_sctrl(u8 value);
 
 #endif /*_SERIAL_H_*/
