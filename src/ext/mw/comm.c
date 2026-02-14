@@ -65,6 +65,7 @@ static const CommVTable Serial_VTable
           SERIAL_BUFLEN,
           SERIAL_TXFIFO_LEN, "Pt2" };
 #endif // MEGAWIFI_IMPLEMENTATION_CROSS
+static const CommVTable* const commTypes[] = {
 #if (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_MW_CART)
     &MegaWifiCart_VTable,
 #endif
