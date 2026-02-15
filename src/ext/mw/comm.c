@@ -25,20 +25,7 @@
 #include "ext/serial/serial.h"
 #endif
 
-typedef struct CommVTable {
-    void (*init)(void);
-    bool (*is_present)(void);
-    u8 (*read_ready)(void);
-    u8 (*read)(void);
-    u8 (*write_ready)(void);
-    void (*write)(u8 data);
-    
-    u16 buff_length;
-    u16 fifo_length;
-    char* mode;
-} CommVTable;
-
-static const CommVTable commTypes[] = {
+static const CommDriver commTypes[] = {
 
 #if (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_MW_CART)
     { uart_init, uart_is_present, uart_rx_ready,
@@ -66,11 +53,11 @@ static const CommVTable commTypes[] = {
 
 #define COMM_TYPES sizeof(commTypes) / sizeof(commTypes[0])
 
-static const CommVTable* activeCommType = NULL;
+static const CommDriver* activeCommType = NULL;
 
 void comm_init(void) {
     for (u8 i = 0; i < COMM_TYPES; i++) {
-        const CommVTable* type = &commTypes[i];
+        const CommDriver* type = &commTypes[i];
         if (type->is_present()) {
             type->init();
             activeCommType = type;
@@ -119,11 +106,19 @@ u16 comm_get_tx_fifo_length(void) {
     return 0;
 }
 
-char* comm_mode(void) {
-    if (activeCommType != NULL) {
-        return activeCommType->mode;
+const CommDriver* comm_get_driver(void) {
+    return activeCommType;
+}
+
+size_t comm_get_drivers( const CommDriver** drivers) {
+    if (drivers != NULL) {
+        *drivers = commTypes;
     }
-    return "Dis";
+    return COMM_TYPES;
+}
+
+void comm_set_driver(const CommDriver* driver) {
+    activeCommType = driver;
 }
 
 #endif // MODULE_MEGAWIFI COMM IMPL

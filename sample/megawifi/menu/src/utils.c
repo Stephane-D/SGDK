@@ -132,8 +132,6 @@ int readText(char* buffer, size_t lengthMax){
 
 void print(){
     ciclo++;
-    sprintf(buffer, "%2u", option);
-    VDP_drawText(buffer, 1u, 27u);
     sprintf(buffer, "%6lu", ciclo);
     VDP_drawText(buffer, 25u, 27u);
     SYS_doVBlankProcess();
@@ -141,11 +139,14 @@ void print(){
 
 void printStatus(union mw_msg_sys_stat * status){    
     if(status!=NULL){
-        if(status->sys_stat == MW_ST_READY){            
-            VDP_drawText("READY", 5u, 27u);
+        if(status->sys_stat == MW_ST_READY){     
+            VDP_setTextPalette(PAL2);       
+            VDP_drawText("     READY      ", 0, 27u);
         }else{
-            VDP_drawText("NO CON", 5u, 27u);
+            VDP_setTextPalette(PAL1);
+            VDP_drawText("     NO CON     ", 0, 27u);
         }
+        VDP_setTextPalette(PAL0);
     }
     SYS_doVBlankProcess();
 }

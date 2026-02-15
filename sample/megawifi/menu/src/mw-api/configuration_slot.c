@@ -9,7 +9,10 @@
 
 #include "mw-api/configuration_slot.h"
 
-void CONFIG_SLOT_start(){
+static union mw_msg_sys_stat **_status;
+
+void CONFIG_SLOT_start(union mw_msg_sys_stat **status){
+    _status = status;
     u16 button;
     bool repaint = TRUE;
     option = 0;    
@@ -23,12 +26,16 @@ void CONFIG_SLOT_start(){
 
 }
 
+void paintConfigureSlot(){    
+    VDP_drawText("Press Start to Configure Slot", 0u, (u16)16);
+}
+
 void CONFIG_SLOT_paint(bool repaint){
     char *ssid, *pass;
     enum mw_phy_type phyType;
     if(repaint){
         clearScreen();
-        println("Searching Configs...");
+        println("Searching Configs...    ");
         int i = 0;
         for(i = 0; i < MW_NUM_CFG_SLOTS; i++){
             while(mw_ap_cfg_get((u8)i, &ssid, &pass, &phyType));
@@ -41,7 +48,7 @@ void CONFIG_SLOT_paint(bool repaint){
         s16 slotDefault = mw_def_ap_cfg_get();
         sprintf(buffer, "Default Slot: %d", slotDefault);
         VDP_drawText(buffer, 1u, (u16)10);
-        VDP_drawText("Press Start to Configure Slot", 0u, (u16)16);
+        paintConfigureSlot();
         VDP_drawText("Press A to Return", 0u, (u16)17);
         VDP_drawText("Press B associate/des to AP from Slot", 0u, (u16)18);
         VDP_drawText("Press C to Set Default AP Config Slot", 0u, (u16)19);
@@ -65,9 +72,9 @@ bool CONFIG_SLOT_doAction(u16 button, u8 max_option){
         break;
     case BUTTON_B:{
         CONFIG_SLOT_toogleConnection();
-        union mw_msg_sys_stat *status;
-        while (!(status = mw_sys_stat_get()));
-        printStatus(status);
+        while (!(*_status = mw_sys_stat_get()));
+        printStatus(*_status);
+        paintConfigureSlot();
         break;
     }
     case BUTTON_C:
@@ -75,7 +82,11 @@ bool CONFIG_SLOT_doAction(u16 button, u8 max_option){
         mw_cfg_save();
         return TRUE;
     case BUTTON_START:
-        CONFIG_AP_start((u8)option);
+        if((*_status)->sys_stat == MW_ST_READY){
+            println("Plase disconect before search AP");
+        }else{  
+            CONFIG_AP_start((u8)option);
+        }
         return TRUE;
     default:
     }    
@@ -84,23 +95,22 @@ bool CONFIG_SLOT_doAction(u16 button, u8 max_option){
 
 void CONFIG_SLOT_toogleConnection(){
     
-        union mw_msg_sys_stat *status;
-        while (!(status = mw_sys_stat_get()));
-        printStatus(status);        
-        if(status->online){
-            println("Disconecting... ");            
+        while (!(*_status = mw_sys_stat_get()));
+        printStatus(*_status);        
+        if((*_status)->online){
+            println("Disconecting...     ");            
             SYS_doVBlankProcess();
             mw_sleep(MW_MS_TO_FRAMES(DEFAULT_MW_DELAY));
             while (!mw_ap_disassoc());    
-            println("Disconected     ");            
+            println("Disconected         ");            
             SYS_doVBlankProcess();  
         }else{
             struct mw_ip_cfg *ipConf;
-            println("AP Connecting...");            
+            println("AP Connecting...    ");            
             SYS_doVBlankProcess();
             mw_sleep(MW_MS_TO_FRAMES(DEFAULT_MW_DELAY));    
             int i =3;
-            println("AP Waiting...   ");            
+            println("AP Waiting...       ");            
             SYS_doVBlankProcess();  
             while(mw_ap_assoc((u8)option) && i--){
                 sprintf(buffer, "%d", i);
@@ -109,10 +119,10 @@ void CONFIG_SLOT_toogleConnection(){
             }
             i =3;
             if(mw_ap_assoc_wait(MW_MS_TO_FRAMES(60000))){
-                println("ERROR         ");   
+                println("ERROR             ");   
                 SYS_doVBlankProcess();  
             }else{ 
-                println("Checking IP...");            
+                println("Checking IP...    ");            
                 SYS_doVBlankProcess();
                 while(mw_ip_current(&ipConf));           
                 sprintf(buffer, "IP: %u.%u.%u.%u", ipConf->addr.byte[0], ipConf->addr.byte[1], ipConf->addr.byte[2], ipConf->addr.byte[3]);
@@ -125,7 +135,7 @@ void CONFIG_SLOT_toogleConnection(){
                 VDP_drawText(buffer, 0u, 24u);  
                 sprintf(buffer, "MK: %u.%u.%u.%u", ipConf->mask.byte[0], ipConf->mask.byte[1], ipConf->mask.byte[2], ipConf->mask.byte[3]); 
                 VDP_drawText(buffer, 0u, 25u);  
-                println("IP Checked    ");      
+                println("IP Checked         ");      
                 SYS_doVBlankProcess();
             }  
         }

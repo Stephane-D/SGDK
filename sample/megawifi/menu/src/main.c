@@ -54,6 +54,7 @@ static void idle_tsk(void)
 	}
 }
 
+union mw_msg_sys_stat *status;
 static void printMainMenu(bool repaint){
     if (repaint){
         clearScreen();
@@ -90,7 +91,7 @@ static bool doActionMainMenu(u16 button){
     case BUTTON_START:
         switch (option){
         case 0U:
-            CONFIG_start();
+            CONFIG_start(&status);
             break;
         case 1U:
             DT_start();
@@ -141,33 +142,58 @@ static void run_app(void)
 
 /// MegaWiFi initialization
 /// Returns true on error
-static bool megawifi_init(void)
+static enum mw_err megawifi_init(void)
 {
 	uint8_t ver_major = 0, ver_minor = 0;
 	char *variant = NULL;
 	enum mw_err err;
 	char line[] = "MegaWiFi  PPP   vX.Y - zzz";
-	bool ret;
 
-	// Try detecting the module
-	err = mw_detect(&ver_major, &ver_minor, &variant);
+    // Could be detected X7, EPro or MWCART and is conected By port 2
+    const CommDriver* drivers = NULL;
+    size_t num_drivers = comm_get_drivers(&drivers);
+    const CommDriver* activeDriver = comm_get_driver();
+    u8 activeIndex =0;
+    for (size_t i = 0; i < num_drivers; i++) {
+        if (drivers[i].mode == activeDriver->mode) {
+            activeIndex = i;
+            break;
+        }
+    }
 
-	if (MW_ERR_NONE != err) {
-		// Megawifi not found
-		println("MegaWiFi not found!");
-		ret = TRUE;
-	} else {
-		// Megawifi found
-		line[17] = ver_major + '0';
-		line[19] = ver_minor + '0';
+    // Try detecting the module
+    err = mw_detect(&ver_major, &ver_minor, &variant);
+    if (MW_ERR_NONE != err && activeIndex < num_drivers ) {
+        // Megawifi not found, try with next driver, SERIAL driver is the last precedence
+        // for compatibility with EV and MWCART implementations
+        do{
+            activeIndex++;
+            if (activeIndex >= num_drivers) {
+                break;
+            }
+            activeDriver = &drivers[activeIndex];
+            if (activeDriver->is_present()) {
+                activeDriver->init();
+                comm_set_driver(activeDriver);
+                err = mw_detect(&ver_major, &ver_minor, &variant);
+            }
+        } while (MW_ERR_NONE != err && activeIndex < num_drivers);
+    }
+    // Finally show result on screen
+    if (MW_ERR_NONE != err) {
+        // Megawifi not found
+        println("MegaWiFi not found!");
+    } else {
+        // Megawifi found
+        line[17] = ver_major + '0';
+        line[19] = ver_minor + '0';
         memcpy(&(line[23]), variant, 3);
-        char * ppp = comm_mode();
+        char * ppp = comm_get_driver()->mode;
         memcpy(&(line[10]), ppp, 3);
-		println(line);
-		ret = FALSE;
-	}
+        println(line);
+    }
 
-	return ret;
+	return err;
 }
 
 /// Set idle task that polls WiFi module
@@ -194,9 +220,8 @@ int main(bool hard)
 	bool err;
 	init();
 	err = megawifi_init();
-    delay_ms(DEFAULT_DELAY);
+    waitMs(2000);
 	if (!err) {        
-        union mw_msg_sys_stat *status;
         while(!(status = mw_sys_stat_get()));
         printStatus(status);
 		run_app();

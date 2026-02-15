@@ -13,6 +13,19 @@
 #include "types.h"
 /**************************************** */
 
+typedef struct CommDriver {
+    void (*init)(void);
+    bool (*is_present)(void);
+    u8 (*read_ready)(void);
+    u8 (*read)(void);
+    u8 (*write_ready)(void);
+    void (*write)(u8 data);
+    
+    u16 buff_length;
+    u16 fifo_length;
+    char* mode;
+} CommDriver;
+
 /**
  * \brief Get the current receive buffer length.
  * \return Number of bytes available to read in the receive buffer.
@@ -58,9 +71,23 @@ bool comm_write_ready(void);
 u8 comm_read(void);
 
 /**
- * \brief Get the current COMM operation mode.
+ * \brief Get the current COMM driver.
  * \return A string describing the current communication mode.
  */
-char* comm_mode(void);
+const CommDriver* comm_get_driver(void);
+
+/**
+ * \brief Get the list of available COMM drivers.
+ * \return The number of available COMM drivers and a pointer to the array of CommDriver structures.
+ */
+size_t comm_get_drivers(const CommDriver** drivers);
+
+/**
+ * \brief Set the active COMM driver.
+ * \param driver Pointer to the CommDriver structure to set as active.
+ */
+void comm_set_driver(const CommDriver* driver);
+
+
 #endif /*_COMM_H_*/
 
