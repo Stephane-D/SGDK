@@ -1,0 +1,14 @@
+[package]
+name = "sgdk-commons"
+version.workspace = true
+edition.workspace = true
+description = "Shared utilities for SGDK tools"
+
+[lib]
+name = "commons"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+byteorder = { workspace = true }

@@ -15,7 +15,6 @@
 *.lst
 *.class
 *.ini
-*.rs
 *.d
 **/cmd_
 **/.DS_Store
@@ -47,3 +46,4 @@ project/test
 tools/.gradle/
 tools/.project
 tools/build/
+tools/target/

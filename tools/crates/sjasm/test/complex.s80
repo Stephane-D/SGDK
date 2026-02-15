@@ -1,0 +1,90 @@
+; More complete Z80 test with various features
+
+YMPORT0     EQU     $4000
+STATUS      EQU     $0102
+COMMAND     EQU     $0100
+
+        ORG     $0000
+
+init
+        DI
+        LD      SP, $2000
+        IM      1
+
+        ; Test various LD variants
+        LD      A, $80
+        LD      (STATUS), A
+        XOR     A
+        LD      (COMMAND), A
+
+        ; Test 16-bit loads
+        LD      HL, $1234
+        LD      DE, $5678
+        LD      BC, $9ABC
+
+        ; Test ALU ops
+        ADD     A, B
+        SUB     C
+        AND     D
+        OR      E
+        CP      H
+        ADC     A, L
+
+        ; Test indexed
+        LD      IX, $1000
+        LD      (IX+5), A
+        LD      A, (IX+10)
+
+        ; Test shifts/rotates
+        SLA     A
+        SRL     B
+        RR      C
+        RL      D
+
+        ; Test bit ops
+        BIT     3, A
+        SET     7, B
+        RES     0, C
+
+        ; Test PUSH/POP
+        PUSH    AF
+        PUSH    BC
+        PUSH    DE
+        PUSH    HL
+        POP     HL
+        POP     DE
+        POP     BC
+        POP     AF
+
+        ; Test I/O
+        IN      A, ($BF)
+        OUT     ($BF), A
+
+        ; More control flow
+        CALL    subroutine
+        JR      NZ, skip
+        NOP
+skip
+        DJNZ    skip
+
+        ; Test conditional jumps
+        JP      Z, init
+        JP      NZ, init
+        RET
+
+subroutine
+        LD      A, (HL)
+        INC     HL
+        OR      A
+        RET     Z
+        RET
+
+        BLOCK   $0080-$
+
+        ; INT handler
+int_handler
+        PUSH    AF
+        POP     AF
+        RETI
+
+.end

@@ -1,0 +1,14 @@
+[package]
+name = "sgdk-sizebnd"
+version.workspace = true
+edition.workspace = true
+description = "ROM size alignment and checksum tool for SGDK"
+
+[[bin]]
+name = "sizebnd"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+anyhow = { workspace = true }
+byteorder = { workspace = true }

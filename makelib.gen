@@ -1,8 +1,8 @@
 # we need to launch library compilation from SGDK folder
-ifneq ($(wildcard ./bin/rescomp.jar),)
-	GDK := .
+ifneq ($(wildcard ./src/sys.c),)
+        GDK := .
 else
-    $(error You should build the library *FROM THE SGDK FOLDER* using 'bin/make -f makelib.gen' command)
+    $(error You should build the library *FROM THE SGDK FOLDER* using 'make -f makelib.gen' command)
 endif
 
 include $(GDK)/common.mk

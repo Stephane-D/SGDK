@@ -1,0 +1,28 @@
+[package]
+name = "sgdk-rescomp"
+version.workspace = true
+edition.workspace = true
+description = "SGDK Resource Compiler - converts images, sounds and data into Mega Drive format"
+
+[lib]
+name = "rescomp"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rescomp"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+thiserror = { workspace = true }
+byteorder = { workspace = true }
+commons = { package = "sgdk-commons", path = "../commons" }
+apj = { package = "sgdk-apj", path = "../apj" }
+lz4w = { package = "sgdk-lz4w", path = "../lz4w" }
+image = { version = "0.25", default-features = false, features = ["png", "bmp"] }
+png = "0.17"
+hound = "3.5"
+roxmltree = "0.20"
+rayon = "1.10"
+linked-hash-map = "0.5"

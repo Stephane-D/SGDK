@@ -62,7 +62,13 @@ else
 	LIBGCC := -lgcc
 endif
 
-JAVA := java
 ECHO := echo
-SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
-RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+
+ifeq ($(OS),Windows_NT)
+	JAVA := java
+	SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
+	RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+else
+	SIZEBND := sizebnd
+	RESCOMP := rescomp
+endif

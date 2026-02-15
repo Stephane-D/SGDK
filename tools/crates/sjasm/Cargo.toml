@@ -1,0 +1,14 @@
+[package]
+name = "sjasm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "SjASM Z80 Assembler - Rust port"
+
+[[bin]]
+name = "sjasm"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
