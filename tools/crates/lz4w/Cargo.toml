@@ -1,0 +1,18 @@
+[package]
+name = "sgdk-lz4w"
+version.workspace = true
+edition.workspace = true
+description = "LZ4W compression library and CLI for SGDK"
+
+[lib]
+name = "lz4w"
+path = "src/lib.rs"
+
+[[bin]]
+name = "lz4w"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+thiserror = { workspace = true }

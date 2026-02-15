@@ -1,0 +1,17 @@
+[package]
+name = "xgmtool"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "VGM/XGM/XGC converter for Sega Genesis/Mega Drive sound data"
+
+[[bin]]
+name = "xgmtool"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+anyhow = { workspace = true }
+byteorder = { workspace = true }
+thiserror = { workspace = true }

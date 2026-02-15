@@ -1,0 +1,18 @@
+[package]
+name = "sgdk-apj"
+version.workspace = true
+edition.workspace = true
+description = "APlib compression library and CLI for SGDK"
+
+[lib]
+name = "apj"
+path = "src/lib.rs"
+
+[[bin]]
+name = "apj"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+thiserror = { workspace = true }

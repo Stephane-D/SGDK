@@ -1,0 +1,19 @@
+; Simple Z80 test
+        ORG     $0000
+
+start
+        DI
+        LD      SP, $2000
+        IM      1
+        LD      A, $80
+        XOR     A
+        NOP
+        HALT
+
+loop
+        JP      loop
+
+        BLOCK   $0038-$
+
+int_handler
+        RETI

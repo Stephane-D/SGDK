@@ -1,0 +1,15 @@
+[package]
+name = "xgm2tool"
+version = "0.1.0"
+edition = "2021"
+description = "XGM2 tool - VGM/XGM2/XGC2 converter for Sega Mega Drive"
+
+[[bin]]
+name = "xgm2tool"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+anyhow = { workspace = true }
+byteorder = { workspace = true }
+thiserror = { workspace = true }
