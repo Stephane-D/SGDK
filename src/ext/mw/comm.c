@@ -41,23 +41,23 @@ typedef struct CommVTable {
 static const CommVTable commTypes[] = {
 
 #if (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_MW_CART)
-{ uart_init, uart_is_present, uart_rx_ready,
+    { uart_init, uart_is_present, uart_rx_ready,
           uart_getc, uart_tx_ready, uart_putc, 
           UART_BUFLEN,
           UART_TX_FIFO_LEN, "MwC" },
 #endif // MEGAWIFI_IMPLEMENTATION_MW_CART
 #if (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_ED)
-{ ssf_ed_x7_init, ssf_ed_x7_is_present, ssf_ed_x7_read_ready,
+    { ssf_ed_x7_init, ssf_ed_x7_is_present, ssf_ed_x7_read_ready,
           ssf_ed_x7_read, ssf_ed_x7_write_ready, ssf_ed_x7_write, 
           MW_EDX7_BUFLEN,
           MW_EDX7_TXFIFO_LEN, "Ex7" },
-{ ssf_ed_pro_init, ssf_ed_pro_is_present, ssf_ed_pro_read_ready,
+     { ssf_ed_pro_init, ssf_ed_pro_is_present, ssf_ed_pro_read_ready,
           ssf_ed_pro_read, ssf_ed_pro_write_ready, ssf_ed_pro_write,
           MW_EDPRO_BUFLEN,
           MW_EDPRO_TXFIFO_LEN, "EPr" },
 #endif // MEGAWIFI_IMPLEMENTATION_ED
 #if (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_CROSS)
-{ serial_init, serial_is_present, serial_read_ready,
+    { serial_init, serial_is_present, serial_read_ready,
           serial_read, serial_write_ready, serial_write, 
           SERIAL_BUFLEN,
           SERIAL_TXFIFO_LEN, "Pt2" },
