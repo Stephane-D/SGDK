@@ -96,7 +96,8 @@ void UDP_normal_test(void) {
 	line[min(39, len)] = '\0';
 	if (1 == ch) {
 		VDP_drawText("Got UDP reply:", 0u, 7u);
-        paint_long_char(line, len, 8u);
+		u8 lin = 8u;
+        paint_long_char(line, len, &lin);
 	}
 	mw_close(ch);
 
@@ -129,7 +130,8 @@ void UDP_reuse_test(void) {
 	delay_ms(DEFAULT_DELAY);
 	errR = mw_udp_reuse_recv(pkt, MW_BUFLEN, NULL, udp_recv_cb);
 	if (errR) goto err;
-	paint_long_char(pkt->payload, MW_CMD_MAX_BUFLEN - 4 - 2, 11u);	
+	u8 lin = 11u;
+	paint_long_char(pkt->payload, MW_CMD_MAX_BUFLEN - 4 - 2, &lin);	
 	mw_close(2);
 	return;
 

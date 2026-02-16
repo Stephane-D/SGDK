@@ -27,9 +27,6 @@
 /// Shut compiler warnings for unused parameters
 #define UNUSED_PARAM(par) (void)(par)
 
-/// Tuned for 60 Hz, change it for PAL consoles
-#define MS_TO_FRAMES(ms)  ((((ms) * 60 / 500) + 1)/2)
-
 /// Command buffer. Must be word aligned
 static char cmd_buf[MW_BUFLEN] __attribute__((aligned(2)));
 
@@ -205,7 +202,7 @@ static void http_test(void)
 	if (mw_http_url_set("https://www.example.com") ||
 			mw_http_method_set(MW_HTTP_METHOD_GET) ||
 			mw_http_open(0) ||
-			mw_http_finish(&len, MS_TO_FRAMES(20000)) < 100) {
+			mw_http_finish(&len, MW_MS_TO_FRAMES(20000)) < 100) {
 		goto err_out;
 	}
 	if (len) {
@@ -275,7 +272,7 @@ static void run_test(void)
 	if (err != MW_ERR_NONE) {
 		goto err;
 	}
-	err = mw_ap_assoc_wait(MS_TO_FRAMES(30000));
+	err = mw_ap_assoc_wait(MW_MS_TO_FRAMES(30000));
 	if (err != MW_ERR_NONE) {
 		goto err;
 	}

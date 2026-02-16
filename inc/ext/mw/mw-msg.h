@@ -23,6 +23,9 @@
 
 /// Maximum buffer length (bytes)
 #define MW_MSG_MAX_BUFLEN	512
+#define MW_MS_TO_FRAMES(ms)	(((ms)*60/500 + 1)/2)
+
+#define MW_BUFLEN 1500
 
 /// Command header length (command code and data length fields).
 #define MW_CMD_HEADLEN		(2 * sizeof(uint16_t))

@@ -13,19 +13,23 @@
 /// Receives data from the HTTP test
 static int http_recv(uint32_t len)
 {
-	int16_t recv_last;
+	int16_t recv_last = MW_BUFLEN;
 	int err = FALSE;
 	uint32_t recvd = 0;
 	uint8_t ch = MW_HTTP_CH;
 
-	u8 line = 11u;
-
-	while (recvd < len && !err) {
+	u8 line = 10u;
+	sprintf(buffer, "Receiving %lu bytes", len);
+	VDP_drawText(buffer, 0u, line++);
+	while (recvd < len && !err && recv_last) {
 		recv_last = MW_BUFLEN;
 		err = mw_recv_sync(&ch, cmd_buf, &recv_last, TSK_PEND_FOREVER) != MW_ERR_NONE;
-		paint_long_char(cmd_buf, recv_last - recvd, line);
-		line++;
+		if(recv_last)paint_long_char(cmd_buf, recv_last, &line);
 		recvd += recv_last;
+	}
+	if(recv_last == 0 && recvd < len){
+		sprintf(buffer, "HTTP recv incomplete: %lu/%lu", recvd, len);
+		VDP_drawText(buffer, 0u, line++);
 	}
 
 	return err;
@@ -107,7 +111,7 @@ void HTTP_test(const char* url, bool ssl) {
 	println("Finish URL                ");
 	print();
 	delay_ms(DEFAULT_DELAY);
-	errHttp = mw_http_finish(&len, MS_TO_FRAMES(20000));
+	errHttp = mw_http_finish(&len, MW_MS_TO_FRAMES(20000));
 	if (errHttp < 100) goto err_out;
 	if (len) {
 		if (http_recv(len)) goto err_out;

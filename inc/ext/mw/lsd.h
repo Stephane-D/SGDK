@@ -46,14 +46,7 @@
 
 #include "config.h"
 #include "types.h"
-
-#if (MODULE_EVERDRIVE != 0)
-	// use the everdrive uart 
-	#include "ext/mw/ssf.h"
-#else
-	// use the default 16c550 uart
-	#include "ext/mw/16c550.h"
-#endif
+#include "ext/mw/comm.h"
 #include "ext/mw/mw-msg.h"
 
 /// LSD frame overhead in bytes
@@ -172,15 +165,6 @@ enum lsd_status lsd_recv_sync(char *buf, uint16_t *len, uint8_t *ch);
  * lsd_send() and lsd_receive() functions.
  ****************************************************************************/
 void lsd_process(void);
-
-/************************************************************************//**
- * \brief Sends syncrhonization frame.
- *
- * This function sends a chunk of 0x55 bytes to help physical layer to
- * synchronize. It is usually not necessary to use this function, but might
- * help some UART chips to compute an accurate clock.
- ****************************************************************************/
-void lsd_line_sync(void);
 
 /** \} */
 

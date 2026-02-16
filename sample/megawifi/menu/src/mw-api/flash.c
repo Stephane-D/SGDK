@@ -74,7 +74,8 @@ bool FLASH_doAction(u16 button, u8 max_option){
                 if(!response){
                     println("FLASH READ 0x0000 512B FAIL"); 
                 }else{
-                    paint_long_char((const char *)response, 512U, 11u);
+                    u8 line = 11u;
+                    paint_long_char((const char *)response, 512U, &(line));
                 }
                 break;
             }                

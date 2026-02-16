@@ -37,7 +37,8 @@ void CONFIG_CERT_paint(bool repaint){
         VDP_drawText("Press B to clear Cert", 0u, 7u);
         sprintf(buffer, "Cert Hash: %08lx  len: %u", cert_hash, cert_len);        
         VDP_drawText(buffer, 0u, 9u);
-        paint_long_char(cert, cert_len, 11u);
+        u8 line = 11u;
+        paint_long_char(cert, cert_len, &line);
         repaint = false;
     }
 }
