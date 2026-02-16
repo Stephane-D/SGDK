@@ -54,7 +54,6 @@ static void idle_tsk(void)
 	}
 }
 
-union mw_msg_sys_stat *status;
 static void printMainMenu(bool repaint){
     if (repaint){
         clearScreen();
@@ -91,7 +90,7 @@ static bool doActionMainMenu(u16 button){
     case BUTTON_START:
         switch (option){
         case 0U:
-            CONFIG_start(&status);
+            CONFIG_start();
             break;
         case 1U:
             DT_start();
@@ -140,6 +139,7 @@ static void run_app(void)
     }
 }
 
+union mw_msg_sys_stat *status;
 /// MegaWiFi initialization
 /// Returns true on error
 static enum mw_err megawifi_init(void)

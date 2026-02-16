@@ -15,7 +15,7 @@
 #include "mw-api/configuration_slot.h"
 #include "mw-api/configuration_cert.h"
 
-void CONFIG_start(union mw_msg_sys_stat ** status);
+void CONFIG_start();
 
 void CONFIG_paint(bool repaint);
 

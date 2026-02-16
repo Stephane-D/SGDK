@@ -9,10 +9,7 @@
 
 #include "mw-api/configuration.h"
 
-static union mw_msg_sys_stat **_status;
-
-void CONFIG_start(union mw_msg_sys_stat ** status){
-    _status = status;
+void CONFIG_start(){
     u16 button;
     bool repaint = TRUE;
     option = 0;    
@@ -53,7 +50,7 @@ bool CONFIG_doAction(u16 button, u8 max_option){
     case BUTTON_START:{
         switch(option){
             case 0:
-                CONFIG_SLOT_start(_status);
+                CONFIG_SLOT_start();
             break;
             case 1:
                 CONFIG_CERT_start();

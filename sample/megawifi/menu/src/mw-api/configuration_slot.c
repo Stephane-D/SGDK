@@ -9,10 +9,7 @@
 
 #include "mw-api/configuration_slot.h"
 
-static union mw_msg_sys_stat **_status;
-
-void CONFIG_SLOT_start(union mw_msg_sys_stat **status){
-    _status = status;
+void CONFIG_SLOT_start(){
     u16 button;
     bool repaint = TRUE;
     option = 0;    
@@ -24,10 +21,6 @@ void CONFIG_SLOT_start(union mw_msg_sys_stat **status){
         print();
     }while(button != BUTTON_A);
 
-}
-
-void paintConfigureSlot(){    
-    VDP_drawText("Press Start to Configure Slot", 0u, (u16)16);
 }
 
 void CONFIG_SLOT_paint(bool repaint){
@@ -48,12 +41,19 @@ void CONFIG_SLOT_paint(bool repaint){
         s16 slotDefault = mw_def_ap_cfg_get();
         sprintf(buffer, "Default Slot: %d", slotDefault);
         VDP_drawText(buffer, 1u, (u16)10);
-        paintConfigureSlot();
         VDP_drawText("Press A to Return", 0u, (u16)17);
         VDP_drawText("Press B associate/des to AP from Slot", 0u, (u16)18);
         VDP_drawText("Press C to Set Default AP Config Slot", 0u, (u16)19);
         repaint = false;
     }
+        union mw_msg_sys_stat *status;
+        while (!(status = mw_sys_stat_get()));
+        if(status->sys_stat != MW_ST_READY){     
+            VDP_drawText("Press Start to Configure Slot", 0u, (u16)16);
+        }else{
+            VDP_drawText("Disconnect with B to configure", 0u, (u16)16);
+        }
+        printStatus(status);
 }
 
 bool CONFIG_SLOT_doAction(u16 button, u8 max_option){    
@@ -72,9 +72,7 @@ bool CONFIG_SLOT_doAction(u16 button, u8 max_option){
         break;
     case BUTTON_B:{
         CONFIG_SLOT_toogleConnection();
-        while (!(*_status = mw_sys_stat_get()));
-        printStatus(*_status);
-        paintConfigureSlot();
+        CONFIG_SLOT_paint(false);
         break;
     }
     case BUTTON_C:
@@ -82,10 +80,10 @@ bool CONFIG_SLOT_doAction(u16 button, u8 max_option){
         mw_cfg_save();
         return TRUE;
     case BUTTON_START:
-        if((*_status)->sys_stat == MW_ST_READY){
-            println("Plase disconect before search AP");
-        }else{  
-            CONFIG_AP_start((u8)option);
+        union mw_msg_sys_stat *status;
+        while (!(status = mw_sys_stat_get()));
+        if(status->sys_stat == MW_ST_IDLE){
+          CONFIG_AP_start((u8)option);
         }
         return TRUE;
     default:
@@ -95,9 +93,10 @@ bool CONFIG_SLOT_doAction(u16 button, u8 max_option){
 
 void CONFIG_SLOT_toogleConnection(){
     
-        while (!(*_status = mw_sys_stat_get()));
-        printStatus(*_status);        
-        if((*_status)->online){
+        union mw_msg_sys_stat *status;
+        while (!(status = mw_sys_stat_get()));
+        printStatus(status);        
+        if(status->online){
             println("Disconecting...     ");            
             SYS_doVBlankProcess();
             mw_sleep(MW_MS_TO_FRAMES(DEFAULT_MW_DELAY));
