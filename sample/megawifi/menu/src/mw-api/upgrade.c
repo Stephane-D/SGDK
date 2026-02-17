@@ -27,7 +27,7 @@ void UPGRADE_paint(bool repaint){
     if(repaint){
         clearScreen();        
         VDP_drawText("List Firmwares", 1u, 2u);
-        VDP_drawText("Upgrade", 1u, 3u);
+        VDP_drawText("Upgrade (CAN TAKE 10 MIN. BE PATIENT)", 1u, 3u);
         VDP_drawText("Press START to select", 0u, 4u);
         VDP_drawText("Press A to return", 0u, 5u);
     }

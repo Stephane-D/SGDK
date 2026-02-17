@@ -50,7 +50,7 @@
 /// Time to sleep before waiting for assoc in milliseconds
 #define MW_ASSOC_WAIT_SLEEP_MS	5000
 /// Timeout for upgrade command in milliseconds
-#define MW_UPGRADE_TOUT_MS	180000
+#define MW_UPGRADE_TOUT_MS	600000
 /// Timeout for ping command in milliseconds
 #define MW_PING_TOUT_MS	30000
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
