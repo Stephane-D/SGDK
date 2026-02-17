@@ -59,7 +59,7 @@ bool UPGRADE_doAction(u16 button, u8 max_option){
                     println("Upgrade Error");
                 }else{
                     VDP_clearTextArea(0, 9, 40, 10);
-                    println("Upgrade OK");
+                    println("Upgrade OK   ");
                     memcpy(listUpgrades, tmp, len);
                     char buffer[6] = {0};
                     sprintf(buffer, "%2u", total); 
