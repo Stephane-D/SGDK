@@ -1467,8 +1467,8 @@ enum mw_err mw_fw_list_upgrades(uint8_t page, uint8_t size, uint8_t offset, char
 	if (err) {
 		return MW_ERR;
 	}
-	
-	*listUpgrades = d.cmd->ug_list_response.payload;
+
+	*listUpgrades = d.cmd->data+4;
 	*len = d.cmd->ug_list_response.len;
 	*total = d.cmd->ug_list_response.total;
 	return MW_ERR_NONE;
