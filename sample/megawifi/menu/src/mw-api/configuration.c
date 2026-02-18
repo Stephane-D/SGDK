@@ -50,10 +50,10 @@ bool CONFIG_doAction(u16 button, u8 max_option){
     case BUTTON_START:{
         switch(option){
             case 0:
-                CONFIG_SLOT_start((u8)option);
+                CONFIG_SLOT_start();
             break;
             case 1:
-                CONFIG_CERT_start((u8)option);
+                CONFIG_CERT_start();
             break;
             default:
         }

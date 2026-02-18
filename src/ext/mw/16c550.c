@@ -1,8 +1,9 @@
 #include "config.h"
 
-#if ((MODULE_MEGAWIFI != 0) && (MODULE_EVERDRIVE == 0))
+#if (MODULE_MEGAWIFI  && (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_MW_CART))
 
 #include "ext/mw/16c550.h"
+#include "task.h"
 
 /// Shadow copy of the UART registers
 UartShadow sh;
@@ -31,6 +32,53 @@ void uart_init(void) {
 	// Ready to go! Interrupt and DMA modes were not configured since the
 	// Megadrive console lacks interrupt/DMA control pins on cart connector
 	// (shame on Masami Ishikawa for not including a single interrupt line!).
+
+    uart_line_sync();
+
+    uart_reset();
+	//// Power down and Program not active (required for the module to boot)
+	uart_clr_bits(MCR, MW__PRG);
+//
+	//// Try accessing UART scratch pad register to see if it is installed
+	//uart_test(UART_SPR, 0x55); //return MW_ERR
+	//uart_test(UART_SPR, 0xAA);
+	//// Wait a bit and take module out of resest
+	
+	uart_start(); 
+}
+
+void uart_reset(void) {
+	uart_set_bits(MCR, MW__RESET);
+}
+
+void uart_start(void) {
+	TSK_superPend(MW_MS_TO_FRAMES(30));
+	uart_clr_bits(MCR, MW__RESET);
+	TSK_superPend(MW_MS_TO_FRAMES(1000));
+	uart_set_bits(MCR, MW__PRG);
+	uart_reset_fifos(); 
+}
+
+bool uart_is_present(void){
+	// Try accessing UART scratch pad register to see if it is installed
+	uart_test(UART_SPR, 0x55);
+	bool res1 = UART_SPR == 0x55;
+	uart_test(UART_SPR, 0xAA);
+	return res1 && UART_SPR == 0xAA;
+}
+bool uart_tx_ready()	{ return UART_LSR & 0x20; }
+bool uart_rx_ready()	{ return UART_LSR & 0x01; }
+void uart_putc(u8 c)	{ UART_RHR = c; }
+u8 uart_getc()		{ return UART_RHR; }
+void uart_reset_fifos()	{ uart_set_bits(FCR, 0x07); }
+
+void uart_line_sync(void)
+{
+	for (int i = 0; i < 256; i++) {
+		if (uart_tx_ready()) {
+			uart_putc(0x55);
+		}
+	}
 }
 
 #endif // MODULE_MEGAWIFI

@@ -18,7 +18,7 @@
 #include "memory.h"
 
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/lsd.h"
 /// Uart used for LSD
@@ -121,7 +121,7 @@ static void recv_add(uint8_t recv)
 
 static void process_recv(void)
 {
-	uint8_t recv = uart_getc();
+	uint8_t recv = comm_read();
 
 	switch (d.rx.stat) {
 	case LSD_RECV_STX:	// Wait for STX to arrive
@@ -191,29 +191,29 @@ static void process_send(void)
 {
 	switch (d.tx.stat) {
 	case LSD_SEND_STX:
-		uart_putc(LSD_STX_ETX);
+		comm_write(LSD_STX_ETX);
 		d.tx.stat = LSD_SEND_CH_LENH;
 		break;
 
 	case LSD_SEND_CH_LENH:
-		uart_putc((d.tx.ch<<4) | (d.tx.total>>8));
+		comm_write((d.tx.ch<<4) | (d.tx.total>>8));
 		d.tx.stat = LSD_SEND_LEN;
 		break;
 
 	case LSD_SEND_LEN:
-		uart_putc(d.tx.total & 0xFF);
+		comm_write(d.tx.total & 0xFF);
 		d.tx.stat = LSD_SEND_DATA;
 		break;
 
 	case LSD_SEND_DATA:
-		uart_putc(d.tx.buf[d.tx.pos++]);
+		comm_write(d.tx.buf[d.tx.pos++]);
 		if (d.tx.pos >= d.tx.total) {
 			d.tx.stat = LSD_SEND_ETX;
 		}
 		break;
 
 	case LSD_SEND_ETX:
-		uart_putc(LSD_STX_ETX);
+		comm_write(LSD_STX_ETX);
 		send_complete();
 		break;
 	default:
@@ -227,15 +227,15 @@ void lsd_process(void)
 
 	do {
 		active = FALSE;
-		if (d.rx.stat > LSD_RECV_IDLE && uart_rx_ready()) {
+		if (d.rx.stat > LSD_RECV_IDLE && comm_read_ready()) {
 			active = TRUE;
-			while (d.rx.stat > LSD_RECV_IDLE && uart_rx_ready()) {
+			while (d.rx.stat > LSD_RECV_IDLE && comm_read_ready()) {
 				process_recv();
 			}
 		}
-		if (d.tx.stat > LSD_SEND_IDLE && uart_tx_ready()) {
+		if (d.tx.stat > LSD_SEND_IDLE && comm_write_ready()) {
 			active = TRUE;
-			for (int i = 0; i < UART_TX_FIFO_LEN &&
+			for (int i = 0; i < comm_get_tx_fifo_length() &&
 					d.tx.stat > LSD_SEND_IDLE; i++) {
 				process_send();
 			}
@@ -245,10 +245,9 @@ void lsd_process(void)
 
 void lsd_init(void)
 {
-	uart_init();
+	comm_init();
 	memset(&d, 0, sizeof(struct lsd_data));
 	d.rx.stat = LSD_RECV_IDLE;
-	lsd_line_sync();
 }
 
 int lsd_ch_enable(uint8_t ch)
@@ -360,17 +359,6 @@ enum lsd_status lsd_recv_sync(char *buf, uint16_t *len, uint8_t *ch)
 	} else {
 		return LSD_STAT_ERROR;
 	}
-}
-
-void lsd_line_sync(void)
-{
-#if (MODULE_EVERDRIVE == 0)
-	for (int i = 0; i < 256; i++) {
-		if (uart_tx_ready()) {
-			uart_putc(0x55);
-		}
-	}
-#endif
 }
 
 #endif // MODULE_MEGAWIFI

@@ -2,10 +2,10 @@
 
 __attribute__((externally_visible))
 const ROMHeader rom_header = {
-#if (ENABLE_BANK_SWITCH != 0)
-    "SEGA SSF        ",
-#elif (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI  && (MEGAWIFI_IMPLEMENTATION == MEGAWIFI_IMPLEMENTATION_MW_CART))
     "SEGA MEGAWIFI   ",
+#elif (ENABLE_BANK_SWITCH != 0)
+    "SEGA SSF        ",
 #else
     "SEGA MEGA DRIVE ",
 #endif

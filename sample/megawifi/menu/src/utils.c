@@ -65,7 +65,7 @@ static void drawAlphabet() {
 }
 
 void delay_ms(u16 milliseconds) {
-    u16 frames = MS_TO_FRAMES(milliseconds);
+    u16 frames = MW_MS_TO_FRAMES(milliseconds);
     for (u16 i = 0; i < frames; i++) {
         SYS_doVBlankProcess(); // Espera al siguiente VBlank
     }
@@ -132,8 +132,6 @@ int readText(char* buffer, size_t lengthMax){
 
 void print(){
     ciclo++;
-    sprintf(buffer, "%2u", option);
-    VDP_drawText(buffer, 1u, 27u);
     sprintf(buffer, "%6lu", ciclo);
     VDP_drawText(buffer, 25u, 27u);
     SYS_doVBlankProcess();
@@ -141,26 +139,29 @@ void print(){
 
 void printStatus(union mw_msg_sys_stat * status){    
     if(status!=NULL){
-        if(status->sys_stat == MW_ST_READY){            
-            VDP_drawText("READY", 5u, 27u);
+        if(status->sys_stat == MW_ST_READY){     
+            VDP_setTextPalette(PAL2);       
+            VDP_drawText("     READY      ", 0, 27u);
         }else{
-            VDP_drawText("NO CON", 5u, 27u);
+            VDP_setTextPalette(PAL1);
+            VDP_drawText("     NO CON     ", 0, 27u);
         }
+        VDP_setTextPalette(PAL0);
     }
     SYS_doVBlankProcess();
 }
 
 
 
-void paint_long_char(const char *cert, u16 len, u8 line){
+void paint_long_char(const char *cert, u16 len, u8* line){
     u16 from = 0;
     u8 cicles = 0;
     for(u16 i = 0; i < len && cicles < 5; i++){
         if(cert[i] == '\n' || (i + 1) % 40u == 0 || i == len - 1u){            
-            VDP_drawText(cert + from, 0u, line++);
+            VDP_drawText(cert + from, 0u, (*line)++);
             from = i + 1;
             cicles++;
         }
     }
-    VDP_drawText("...", 0u, line);
+    VDP_drawText("...", 0u, (*line)++);
 }

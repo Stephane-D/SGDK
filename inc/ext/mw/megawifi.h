@@ -27,15 +27,9 @@
 #ifndef _MEGAWIFI_H_
 #define _MEGAWIFI_H_
 
-#if (MODULE_EVERDRIVE != 0)
-	// use the everdrive uart 
-	#include "ext/mw/ssf.h"
-#else
-	// use the default 16c550 uart
-	#include "ext/mw/16c550.h"
-#endif
 #include "ext/mw/mw-msg.h"
 #include "ext/mw/lsd.h"
+#include "ext/mw/comm.h"
 
 /// API version implemented, major number
 #define MW_API_VERSION_MAJOR	1
@@ -44,7 +38,7 @@
 #define MW_API_VERSION_MINOR	5
 
 /// Timeout for standard commands in milliseconds
-#define MW_COMMAND_TOUT_MS	1000
+#define MW_COMMAND_TOUT_MS	2000
 /// Timeout for TCP connections
 #define MW_CONNECT_TOUT_MS	10000
 /// Timeout for HTTP open command in milliseconds
@@ -56,19 +50,11 @@
 /// Time to sleep before waiting for assoc in milliseconds
 #define MW_ASSOC_WAIT_SLEEP_MS	5000
 /// Timeout for upgrade command in milliseconds
-#define MW_UPGRADE_TOUT_MS	180000
+#define MW_UPGRADE_TOUT_MS	600000
 /// Timeout for ping command in milliseconds
 #define MW_PING_TOUT_MS	30000
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
 #define MW_STAT_POLL_MS		250
-
-#if (MODULE_EVERDRIVE != 0)
-	/// Length of the wflash buffer
-	#define MW_BUFLEN	1436
-#else
-	/// Length of the wflash buffer
-	#define MW_BUFLEN	1460
-#endif
 
 /// Error codes for MegaWiFi API functions
 enum mw_err {
@@ -95,14 +81,6 @@ enum mw_http_method {
     MW_HTTP_METHOD_OPTIONS,    ///< HTTP OPTIONS
     MW_HTTP_METHOD_MAX,
 };
-
-/** \addtogroup mw_ctrl_pins mw_ctrl_pins
- *  \brief Pins used to control WiFi module.
- *  \{ */
-#define MW__RESET UART_MCR__DTR   ///< Reset out.
-#define MW__PRG   UART_MCR__RTS   ///< Program out.
-#define MW__DCD   UART_MSR__DSR   ///< Data request in.
-/** \} */
 
 /// Maximum SSID length (including '\0').
 #define MW_SSID_MAXLEN		32
@@ -671,16 +649,6 @@ enum mw_err mw_flash_write(uint32_t addr, uint8_t *data, uint16_t data_len);
  * \return Pointer to read data on success, or NULL if command failed.
  ****************************************************************************/
 uint8_t *mw_flash_read(uint32_t addr, uint16_t data_len);
-
-/************************************************************************//**
- * \brief Puts the WiFi module in reset state.
- ****************************************************************************/
-#define mw_module_reset()	do{uart_set_bits(MCR, MW__RESET);}while(0)
-
-/************************************************************************//**
- * \brief Releases the module from reset state.
- ****************************************************************************/
-#define mw_module_start()	do{uart_clr_bits(MCR, MW__RESET);}while(0)
 
 /************************************************************************//**
  * \brief Set gamertag information for one slot.

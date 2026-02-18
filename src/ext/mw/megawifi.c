@@ -19,7 +19,7 @@
 #include "maths.h"
 #include "task.h"
 
-#if (MODULE_MEGAWIFI != 0)
+#if (MODULE_MEGAWIFI == 1)
 
 #include "ext/mw/megawifi.h"
 
@@ -27,17 +27,15 @@
 #define UNUSED_PARAM(x)		(void)x
 
 // Should consider if console is PAL or NTSC
-#define MS_TO_FRAMES(ms)	(((ms)*60/500 + 1)/2)
 
-#define MW_COMMAND_TOUT		MS_TO_FRAMES(MW_COMMAND_TOUT_MS)
-#define MW_CONNECT_TOUT		MS_TO_FRAMES(MW_CONNECT_TOUT_MS)
-#define MW_SCAN_TOUT		MS_TO_FRAMES(MW_SCAN_TOUT_MS)
-#define MW_ASSOC_TOUT		MS_TO_FRAMES(MW_ASSOC_TOUT_MS)
-#define MW_ASSOC_WAIT_SLEEP	MS_TO_FRAMES(MW_ASSOC_WAIT_SLEEP_MS)
-#define MW_STAT_POLL_TOUT	MS_TO_FRAMES(MW_STAT_POLL_MS)
-#define MW_HTTP_OPEN_TOUT	MS_TO_FRAMES(MW_HTTP_OPEN_TOUT_MS)
-#define MW_UPGRADE_TOUT		MS_TO_FRAMES(MW_UPGRADE_TOUT_MS)
-
+#define MW_COMMAND_TOUT		MW_MS_TO_FRAMES(MW_COMMAND_TOUT_MS)
+#define MW_CONNECT_TOUT		MW_MS_TO_FRAMES(MW_CONNECT_TOUT_MS)
+#define MW_SCAN_TOUT		MW_MS_TO_FRAMES(MW_SCAN_TOUT_MS)
+#define MW_ASSOC_TOUT		MW_MS_TO_FRAMES(MW_ASSOC_TOUT_MS)
+#define MW_ASSOC_WAIT_SLEEP	MW_MS_TO_FRAMES(MW_ASSOC_WAIT_SLEEP_MS)
+#define MW_STAT_POLL_TOUT	MW_MS_TO_FRAMES(MW_STAT_POLL_MS)
+#define MW_HTTP_OPEN_TOUT	MW_MS_TO_FRAMES(MW_HTTP_OPEN_TOUT_MS)
+#define MW_UPGRADE_TOUT		MW_MS_TO_FRAMES(MW_UPGRADE_TOUT_MS)
 /*
  * The module assumes that once started, sending always succeeds, but uses
  * timers (when defined) for data reception.
@@ -124,15 +122,6 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len)
 	d.buf_len = buf_len;
 
 	lsd_init();
-
-	// Keep WiFi module in reset
-	mw_module_reset();
-	// Power down and Program not active (required for the module to boot)
-	uart_clr_bits(MCR, MW__PRG);
-
-	// Try accessing UART scratch pad register to see if it is installed
-	uart_test(UART_SPR, 0x55);
-	uart_test(UART_SPR, 0xAA);
 
 	// Enable control channel
 	lsd_ch_enable(MW_CTRL_CH);
@@ -268,15 +257,8 @@ enum mw_err mw_detect(uint8_t *major, uint8_t *minor, char **variant)
 	enum mw_err err;
 	uint8_t version[3];
 
-	// Wait a bit and take module out of resest
-	TSK_superPend(MS_TO_FRAMES(30));
-	mw_module_start();
-	TSK_superPend(MS_TO_FRAMES(1000));
-	uart_set_bits(MCR, MW__PRG);
-
 	do {
 		retries--;
-		uart_reset_fifos();
 		err = mw_version_get(version, variant);
 	} while (err != MW_ERR_NONE && retries);
 
@@ -1485,8 +1467,8 @@ enum mw_err mw_fw_list_upgrades(uint8_t page, uint8_t size, uint8_t offset, char
 	if (err) {
 		return MW_ERR;
 	}
-	
-	*listUpgrades = d.cmd->ug_list_response.payload;
+
+	*listUpgrades = (char*)d.cmd->data+4;
 	*len = d.cmd->ug_list_response.len;
 	*total = d.cmd->ug_list_response.total;
 	return MW_ERR_NONE;
