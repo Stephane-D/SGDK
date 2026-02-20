@@ -143,7 +143,7 @@ SGDK is free but you can support it on Patreon: https://www.patreon.com/SGDK
 ## THANKS
 
 - Doragasu for the multi-tasking engine (based on Sik implementation), MegaWifi, flash save support, docker and others nice additions.
-- Turasio and PaCHoN for their great work on MegaWifi Addon.
+- PaCHoN for its great work on MegaWifi Addon.
 - Sik for the multi-tasking base implementation and for all its unvaluable Plutidev Sega Mega Drive technical information source. 
 - Chilly Willy for making almost all the JOY / controller support in SGDK (and the joy test sample ^^).
 - Vladikcomper for the advanced error handler capable of displaying human readable backtrace informations :)
@@ -215,5 +215,6 @@ Demons of Asteborg [Neofid Studios](https://neofid-studios.com/)
 * [ThunderCats MD](https://github.com/mxfolken/thundercats_megadrive) by Rolando Fernández Benavidez.
 * [Travel](https://www.pouet.net/prod.php?which=65975) by Resistance
 * [Wacky Willy Weiner Sausage Surfer](https://globalgamejam.org/2017/games/wacky-willy-weiner-sausage-surfer) made for the GGJ 2017
+
 
 
