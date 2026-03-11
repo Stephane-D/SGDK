@@ -57,6 +57,7 @@ public class TMX
     static final String ATTR_FIRSTGID = "firstgid";
     static final String ATTR_ENCODING = "encoding";
     static final String ATTR_VISIBLE = "visible";
+    static final String ATTR_TEMPLATE = "template";
     static final String ATTR_TEXT = "text";
     static final String ATTR_TYPE = "type";
     static final String ATTR_CLASS = "class";
@@ -777,6 +778,13 @@ public class TMX
                 final double w = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_WIDTH, 0d);
                 final double h = XMLUtil.getAttributeDoubleValue(objectElement, ATTR_HEIGHT, 0d);
                 final String visible = getAttribute(objectElement, ATTR_VISIBLE, "1");
+                final String templateName = getAttribute(objectElement, ATTR_TEMPLATE, "");
+    
+                if (!StringUtil.isEmpty(templateName))
+                {
+                    System.out.println("Warning: template object '" + objectName + "' in layer '" + layerName + "' is not supported. Skipped.");
+                    continue;                    
+                }
                 
                 // get text from the built-in text group if it exists (only for text objects)
                 //(this is not the same as the text property)
