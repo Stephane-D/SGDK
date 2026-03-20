@@ -270,8 +270,9 @@ Here's the accepted SGDK type(s) for each 'Tiled' type:
   float  | f32, f16, s32, u32, s16, u16
   file   | NOT SUPPORTED
   int    | f32, f16, s32, u32, s16, u16, s8, u8
-  object | object (internally void*)
+  Object | object (internally void*)
   string | string (internally char*)
+  Enum   | u8, u16, u32
   list   | NOT SUPPORTED
   
 As you can see, you can also use your own enumerations in which case you need to save them as number (not string) and make
