@@ -4,7 +4,7 @@ public class TFieldDef
 {
     public static enum TiledObjectType
     {
-        INT, FLOAT, BOOL, STRING, COLOR, FILE, OBJECT, ENUM;
+        INT, FLOAT, BOOL, STRING, COLOR, FILE, OBJECT, ENUM, LIST;
 
         public static boolean isValid(String tiledType)
         {
@@ -51,6 +51,8 @@ public class TFieldDef
                     return "object";
                 case ENUM:
                     return "enum";
+                case LIST:
+                    return "list";                    
                 default:
                     return "";
             }
