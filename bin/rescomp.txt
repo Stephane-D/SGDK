@@ -1,4 +1,4 @@
-ResComp 3.98 (May 2025)
+ResComp 3.99 (March 2026)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -259,17 +259,20 @@ Take a TMX file as input and transform it into an array of Object (actually an a
 These objects can be used to define almost anything you want to attach to a specific MAP (entities, events, actions... whatever we can think of).
 Objects are built using the object layers of Tiled TMX file and since Tiled 1.8 you can define your own Object type letting you to build your own
 custom objects that you can import through rescomp.
+Note: objects created based on template files (.tx) are not supported and will be ignored.
 
 Here's the accepted SGDK type(s) for each 'Tiled' type:
-  Tiled   SGDK
-  bool    bool
-  color   u32
-  float   f32, f16, s32, u32, s16, u16
-  file    NOT SUPPORTED
-  int     f32, f16, s32, u32, s16, u16, s8, u8
-  Object  object (internally void*)
-  string  string (internally char*)
-  Enum    u8, u16, u32
+
+  Tiled  | SGDK
+  ---------------------------------------------
+  bool   | bool
+  color  | u32
+  float  | f32, f16, s32, u32, s16, u16
+  file   | NOT SUPPORTED
+  int    | f32, f16, s32, u32, s16, u16, s8, u8
+  object | object (internally void*)
+  string | string (internally char*)
+  list   | NOT SUPPORTED
   
 As you can see, you can also use your own enumerations in which case you need to save them as number (not string) and make
 sure they perfectly match your C enums (be careful about the allocated type size for your enum, default is u32 with GCC).
