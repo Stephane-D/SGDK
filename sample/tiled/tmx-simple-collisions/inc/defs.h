@@ -8,7 +8,9 @@
 #define PLAYER_AABB_BOTTOM          46
 
 // Player movement speed (in pixels per frame)
-#define PLAYER_MOVE_SPEED           2
+#define PLAYER_MOVE_SPEED_SLOW      1
+#define PLAYER_MOVE_SPEED_NORMAL    2
+#define PLAYER_MOVE_SPEED_FAST      4
 #define PLAYER_HURT_DELAY_FRAMES    40
 
 // Background scroll scale for far/background layer (shift right)

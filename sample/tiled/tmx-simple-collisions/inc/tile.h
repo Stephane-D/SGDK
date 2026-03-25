@@ -2,7 +2,7 @@
 #define HEADER_TILE
 
 #define COORD_SHIFTER      3
-#define MAP_TILE_SIZE      8
+#define MAP_TILE_SIZE      (1 << COORD_SHIFTER)
 
 // Get left edge of tile in pixels
 FORCE_INLINE u16 GetTilePosXLeft(u16 x)
@@ -29,7 +29,7 @@ FORCE_INLINE u16 GetTilePosYBottom(u16 y)
 }
 
 // Get tile indexes at pixels position
-FORCE_INLINE Vect2D_u16 GetTileIndexesAtPos(Vect2D_s16 position)
+FORCE_INLINE Vect2D_u16 GetTileIndexesAtPos(Vect2D_u16 position)
 {
     return (Vect2D_u16) {(position.x >> COORD_SHIFTER), (position.y >> COORD_SHIFTER)};
 }

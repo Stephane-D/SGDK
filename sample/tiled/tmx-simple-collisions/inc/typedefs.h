@@ -3,6 +3,7 @@
 
 #include <maths.h>
 
+// AABB helper struct
 typedef struct
 {
     s16 left;
@@ -11,19 +12,23 @@ typedef struct
     s16 bottom;
 } AABB_s16;
 
+// Range helper struct, used to store left-top and right-bottom coordinates of a rectangle area
 typedef struct
 {
     Vect2D_s16 leftTop;
     Vect2D_s16 rightBottom;
 } Range_s16;
 
+// Tile types for collision detection, defined in the TMX map's collision layer as tile indexes
 typedef enum
 {
+    TILE_ERROR = -1,
     TILE_EMPTY = 0,
     TILE_SOLID,
     TILE_DAMAGER,
 } TileType;
 
+// Directions for tile collision checks and movement restriction
 typedef enum
 {
     DIR_LEFT,
@@ -44,7 +49,7 @@ typedef enum
     DIR_RIGHT_DOWN,
 } DiagDirection;
 
-//
+// Forward declaration of GameObject to be used in function pointer typedef
 typedef struct GameObject GameObject;
 
 // Base struct for game objects (player, enemies, items, etc.)
@@ -57,6 +62,7 @@ typedef struct GameObject
     bool (*OnTileCollision)(GameObject *gameObject, TileType tileType);
 } GameObject;
 
+// Player states for handling different behaviors (e.g. normal, hurt)
 typedef enum
 {
     PL_STATE_NORMAL,
@@ -67,6 +73,7 @@ typedef enum
 typedef struct
 {
     GameObject;
+    s16 moveSpeed;
     u16 hurtStateDelay;
     PlayerState state;
 } Player;

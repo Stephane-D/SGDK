@@ -1,13 +1,22 @@
 #ifndef HEADER_PLAYER
 #define HEADER_PLAYER
 
+#include <genesis.h>
 #include "defs.h"
 #include "typedefs.h"
+#include "globals.h"
 
 
 // Global player instance
 extern Player player;
 
+// Player functions
+void Player_Init();
+void Player_Update();
+void Player_HandleInput();
+bool Player_UpdatePosition();
+void Player_UpdateState();
+void Player_UpdateSprite();
 
 
 // Position getters
@@ -90,9 +99,10 @@ FORCE_INLINE void Player_SetAabb(Range_s16 aabb)
     player.aabb = aabb;
 }
 
-// Player functions
-void Player_Init();
-void Player_Update();
-void Player_HandleInput();
-bool Player_UpdatePosition();
+// Move speed setter
+FORCE_INLINE void Player_SetMoveSpeed(s16 moveSpeed)
+{
+    player.moveSpeed = moveSpeed;
+}
+
 #endif //HEADER_PLAYER

@@ -1,14 +1,20 @@
 #include <genesis.h>
 #include "camera.h"
 #include "defs.h"
+#include "typedefs.h"
+#include "maps.h"
 #include "player.h"
 #include "tile.h"
+#include "globals.h"
+
 
 // Set max scroll area based on map size and screen size to prevent scrolling beyond map bounds
 void Camera_SetMaxScrollArea(u16 mapWidth, u16 mapHeight)
 {
-    camera.scrollSize.x = mapWidth * MAP_TILE_SIZE - VDP_getScreenWidth();
-    camera.scrollSize.y = mapHeight * MAP_TILE_SIZE - VDP_getScreenHeight();
+    // Calculate the maximum scrollable area based on map size and screen size,
+    // ensuring the camera doesn't scroll beyond the map bounds
+    camera.scrollSize.x = (s16)(mapWidth * MAP_TILE_SIZE - VDP_getScreenWidth());
+    camera.scrollSize.y = (s16)(mapHeight * MAP_TILE_SIZE - VDP_getScreenHeight());
 }
 
 // Camera update: center on player, clamp to map bounds, and scroll maps with parallax
@@ -23,4 +29,10 @@ void Camera_Update()
     MAP_scrollTo(bgMap, Camera_GetPosX() >> BG_SCROLL_SHIFT, Camera_GetPosY() >> BG_SCROLL_SHIFT);
 }
 
-
+// Initialize camera
+void Camera_Init()
+{
+    // Set max scroll area based on map size and screen size to prevent scrolling beyond map bounds
+    Camera_SetMaxScrollArea(collision_map.w, collision_map.h);
+    Camera_Update();
+}

@@ -36,6 +36,14 @@
 		<VirtualTargets>
 			<Add alias="All" targets="default;" />
 		</VirtualTargets>
+		<Unit filename="inc/camera.h" />
+		<Unit filename="inc/defs.h" />
+		<Unit filename="inc/game.h" />
+		<Unit filename="inc/globals.h" />
+		<Unit filename="inc/player.h" />
+		<Unit filename="inc/tile.h" />
+		<Unit filename="inc/tile_collision.h" />
+		<Unit filename="inc/typedefs.h" />
 		<Unit filename="res/maps.h" />
 		<Unit filename="res/maps.res" />
 		<Unit filename="res/sprites.h" />
@@ -43,28 +51,24 @@
 		<Unit filename="src/camera.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/camera.h" />
-		<Unit filename="src/defs.h" />
 		<Unit filename="src/game.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/game.h" />
+		<Unit filename="src/globals.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/player.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/player.h" />
 		<Unit filename="src/rom_header.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/tile.h" />
 		<Unit filename="src/tile_collision.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/tile_collision.h" />
-		<Unit filename="src/typedefs.h" />
 		<Extensions>
 			<DoxyBlocks>
 				<comment_style block="0" line="0" />
