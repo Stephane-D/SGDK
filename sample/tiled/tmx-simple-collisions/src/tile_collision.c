@@ -10,26 +10,38 @@ typedef struct {
     Vect2D_u16 sizeInTiles;
 } TilesRectRange;
 
-// Get tile type at given tile coordinates, return -1 if out of bounds
+// Get tile type at given tile coordinates
 FORCE_INLINE s16 CollisionMap_GetTileTypeAt(u16 x, u16 y)
 {
+    // Check if the given tile coordinates are out of bounds of the collision map, return -1 if they are
     if (x >= collision_map.w || y >= collision_map.h)
         return -1;
+    // Get the tile type at the given tile coordinates by accessing the collision map's tilemap array
     return (s16) *(collision_map.tilemap + collision_map.w * y + x);
 }
 
-// Get TilesRectRange data structure at given rectangle coordinates
+// Get the tile indexes of the rectangle area defined by left-top and right-bottom coordinates,
+// as well as its size in tiles
 TilesRectRange GetTilesRectRangeAtPos(s16 left, s16 top, s16 right, s16 bottom)
 {
-    Vect2D_u16 entityBB_leftTopTileIndexes = GetTileIndexesAtPos((Vect2D_s16) {left, top});
-    Vect2D_u16 entityBB_rightBottomTileIndex = GetTileIndexesAtPos((Vect2D_s16) {right, bottom});
+    // Clamp negative coordinates to 0 to prevent u16 wrap-around in GetTileIndexesAtPos
+    if (left   < 0) left   = 0;
+    if (top    < 0) top    = 0;
+    if (right  < 0) right  = 0;
+    if (bottom < 0) bottom = 0;
+
+    // Get tile indexes of the left-top and right-bottom corners of the rectangle
+    Vect2D_u16 entityBB_leftTopTileIndexes = GetTileIndexesAtPos((Vect2D_u16) {left, top});
+    Vect2D_u16 entityBB_rightBottomTileIndex = GetTileIndexesAtPos((Vect2D_u16) {right, bottom});
     
+    // Calculate the size of the rectangle in tiles by subtracting the left-top tile indexes
+    // from the right-bottom tile indexes and adding 1 (to include both edges)
     return (TilesRectRange) {
         .leftTopTileIndex = entityBB_leftTopTileIndexes,
         .rightBottomTileIndex = entityBB_rightBottomTileIndex,
         .sizeInTiles = (Vect2D_u16) {
-            entityBB_rightBottomTileIndex.x - entityBB_leftTopTileIndexes.x,
-            entityBB_rightBottomTileIndex.y - entityBB_leftTopTileIndexes.y
+            entityBB_rightBottomTileIndex.x - entityBB_leftTopTileIndexes.x + 1,
+            entityBB_rightBottomTileIndex.y - entityBB_leftTopTileIndexes.y + 1
         }
     };
 }
@@ -39,27 +51,36 @@ TilesRectRange GetTilesRectRangeAtPos(s16 left, s16 top, s16 right, s16 bottom)
 FORCE_INLINE static bool
 RestrictMovingLimitHorizontally(GameObject *object, u16 tileIndexX, u16 tileIndexY, HorDirection horDir, AABB_s16 *movingBoundLimitX)
 {
-    u16 tileType = CollisionMap_GetTileTypeAt(tileIndexX, tileIndexY);
+    // Get the tile type at the given tile coordinates, return -1 if out of bounds
+    s16 tileType = CollisionMap_GetTileTypeAt(tileIndexX, tileIndexY);
+
+    // If TILE_EMPTY or TILE_ERROR (out-of-bounds) then never restrict movement
+    if (tileType == TILE_EMPTY || tileType == TILE_ERROR)
+        return false;
+
+    // Let the object decide whether this tile type restricts its movement
+    if (object->OnTileCollision && !object->OnTileCollision(object, (TileType) tileType))
+        return false;
     
-    // If tile is TILE_EMPTY, it doesn't restrict movement, so return immediately
-    if (object->OnTileCollision)
-        if (!object->OnTileCollision(object, tileType))
-            return FALSE;
-    
+    // Get the world coordinates of the tile bounds to restrict movement accordingly
     Range_s16 wallTileBounds = GetTileBoundsInCoord(tileIndexX, tileIndexY);
     
+    // Restrict the moving limit in horizontal direction based
+    // on the tile bounds and movement direction
     if (horDir == DIR_RIGHT)
     {
+        // If the right of the moving limit is to the right of the left of the solid tile,
         if (movingBoundLimitX->right >= wallTileBounds.leftTop.x)
-            movingBoundLimitX->right = wallTileBounds.leftTop.x - 1;
+            movingBoundLimitX->right = (s16)(wallTileBounds.leftTop.x - 1);
     }
     else
     {
+        // If the left of the moving limit is to the left of the right of the solid tile,
         if (movingBoundLimitX->left <= wallTileBounds.rightBottom.x)
-            movingBoundLimitX->left = wallTileBounds.rightBottom.x + 1;
+            movingBoundLimitX->left = (s16)(wallTileBounds.rightBottom.x + 1);
     }
     
-    return TRUE;
+    return true;
 }
 
 // Restrict moving limit of the object by solid tile in vertical direction, return true if tile is solid
@@ -67,29 +88,33 @@ RestrictMovingLimitHorizontally(GameObject *object, u16 tileIndexX, u16 tileInde
 FORCE_INLINE static bool
 RestrictMovingLimitVertically(GameObject *object, u16 tileIndexX, u16 tileIndexY, VertDirection vertDir, AABB_s16 *movingBoundLimitY)
 {
+    // Get the tile type at the given tile coordinates, return -1 if out of bounds
     s16 tileType = CollisionMap_GetTileTypeAt(tileIndexX, tileIndexY);
     
-    // If tile is TILE_EMPTY, it doesn't restrict movement, so return immediately
-    if (object->OnTileCollision)
-        if (!object->OnTileCollision(object, tileType))
-            return FALSE;
+    // If TILE_EMPTY or TILE_ERROR (out-of-bounds) then never restrict movement
+    if (tileType == TILE_EMPTY || tileType == TILE_ERROR)
+        return false;
+
+    // Let the object decide whether this tile type restricts its movement
+    if (object->OnTileCollision && !object->OnTileCollision(object, (TileType) tileType))
+        return false;
     
+    // Get the world coordinates of the tile bounds to restrict movement accordingly
     if (vertDir == DIR_DOWN)
     {
         s16 solidTileTopPosY = (s16) GetTilePosYTop(tileIndexY);
         
         if (movingBoundLimitY->bottom >= solidTileTopPosY)
-            movingBoundLimitY->bottom = solidTileTopPosY - 1;
+            movingBoundLimitY->bottom = (s16)(solidTileTopPosY - 1);
     }
     else
     {
         s16 solidTileBottomPosY = (s16) GetTilePosYBottom(tileIndexY);
         
         if (movingBoundLimitY->top <= solidTileBottomPosY)
-            movingBoundLimitY->top = solidTileBottomPosY + 1;
-        
+            movingBoundLimitY->top = (s16)(solidTileBottomPosY + 1);
     }
-    return TRUE;
+    return true;
 }
 
 // Restrict moving limit of the object by solid tile in diagonal direction, return true if tile is solid
@@ -97,13 +122,18 @@ RestrictMovingLimitVertically(GameObject *object, u16 tileIndexX, u16 tileIndexY
 FORCE_INLINE static void
 RestrictMovingLimitDiagonally(GameObject *object, u16 tileIndexX, u16 tileIndexY, DiagDirection diagDirection, AABB_s16 *movingBoundLimitY)
 {
+    // Get the tile type at the given tile coordinates, return -1 if out of bounds
     s16 tileType = CollisionMap_GetTileTypeAt(tileIndexX, tileIndexY);
     
-    // If tile is TILE_EMPTY, it doesn't restrict movement, so return immediately
-    if (object->OnTileCollision)
-        if (!object->OnTileCollision(object, tileType))
-            return;
+    // If TILE_EMPTY or TILE_ERROR (out-of-bounds) then never restrict movement
+    if (tileType == TILE_EMPTY || tileType == TILE_ERROR)
+        return;
+
+    // Let the object decide whether this tile type restricts its movement
+    if (object->OnTileCollision && !object->OnTileCollision(object, (TileType) tileType))
+        return;
     
+    // Get the world coordinates of the tile bounds to restrict movement accordingly
     if (diagDirection == DIR_RIGHT_DOWN || diagDirection == DIR_LEFT_DOWN)
     {
         s16 solidTileTopPosY = (s16) GetTilePosYTop(tileIndexY);
@@ -124,20 +154,23 @@ RestrictMovingLimitDiagonally(GameObject *object, u16 tileIndexX, u16 tileIndexY
 // and restricts movement, false otherwise
 static bool GameObject_UpdateMovingLimitByHorizontalCast(GameObject *object, AABB_s16 *movingBoundLimitX, AABB_s16 castBox)
 {
+    // Get the tile indexes of the rectangle area defined by the cast box and its size in tiles
     TilesRectRange castedBoxTilesRectRange = GetTilesRectRangeAtPos(castBox.left, castBox.top,
                                                                     castBox.right, castBox.bottom);
-    bool result = FALSE;
+    bool result = false;
     
-    for (u16 i = 0; i <= castedBoxTilesRectRange.sizeInTiles.y; i++)
+    // Loop through the tiles in the casted box area in horizontal direction
+    // and check for solid tiles to restrict movement accordingly
+    for (u16 i = 0; i < castedBoxTilesRectRange.sizeInTiles.y; i++)
     {
         u16 nextInColumnTileIndexY = castedBoxTilesRectRange.leftTopTileIndex.y + i;
         
         if (object->velocity.x > 0)
-            result = RestrictMovingLimitHorizontally(object, castedBoxTilesRectRange.rightBottomTileIndex.x,
-                                                     nextInColumnTileIndexY, DIR_RIGHT, movingBoundLimitX);
+            result |= RestrictMovingLimitHorizontally(object, castedBoxTilesRectRange.rightBottomTileIndex.x,
+                                                      nextInColumnTileIndexY, DIR_RIGHT, movingBoundLimitX);
         else if (object->velocity.x < 0)
-            result = RestrictMovingLimitHorizontally(object, castedBoxTilesRectRange.leftTopTileIndex.x,
-                                                     nextInColumnTileIndexY, DIR_LEFT, movingBoundLimitX);
+            result |= RestrictMovingLimitHorizontally(object, castedBoxTilesRectRange.leftTopTileIndex.x,
+                                                      nextInColumnTileIndexY, DIR_LEFT, movingBoundLimitX);
     }
     return result;
 }
@@ -146,29 +179,36 @@ static bool GameObject_UpdateMovingLimitByHorizontalCast(GameObject *object, AAB
 // and restricts movement, false otherwise
 static bool GameObject_UpdateMovingLimitByVerticalCast(GameObject *object, AABB_s16 *movingBoundLimitY, AABB_s16 castBox)
 {
+    // Get the tile indexes of the rectangle area defined by the cast box and its size in tiles
     TilesRectRange castedBoxTilesRectRange = GetTilesRectRangeAtPos(castBox.left, castBox.top,
                                                                     castBox.right, castBox.bottom);
-    bool result = FALSE;
-    for (u16 i = 0; i <= castedBoxTilesRectRange.sizeInTiles.x; i++)
+    bool result = false;
+    
+    // Loop through the tiles in the casted box area in vertical direction
+    // and check for solid tiles to restrict movement accordingly
+    for (u16 i = 0; i < castedBoxTilesRectRange.sizeInTiles.x; i++)
     {
         u16 nextInRowTileIndexX = castedBoxTilesRectRange.leftTopTileIndex.x + i;
         
         if (object->velocity.y > 0)
-            result = RestrictMovingLimitVertically(object, nextInRowTileIndexX, castedBoxTilesRectRange.rightBottomTileIndex.y,
-                                                   DIR_DOWN, movingBoundLimitY);
+            result |= RestrictMovingLimitVertically(object, nextInRowTileIndexX, castedBoxTilesRectRange.rightBottomTileIndex.y,
+                                                    DIR_DOWN, movingBoundLimitY);
         else if (object->velocity.y < 0)
-            result = RestrictMovingLimitVertically(object, nextInRowTileIndexX, castedBoxTilesRectRange.leftTopTileIndex.y,
-                                                   DIR_UP, movingBoundLimitY);
+            result |= RestrictMovingLimitVertically(object, nextInRowTileIndexX, castedBoxTilesRectRange.leftTopTileIndex.y,
+                                                    DIR_UP, movingBoundLimitY);
     }
     return result;
 }
 
-// Update moving limit of the object by diagonal box casting, return true if at least one solid tile is detected
-// and restricts movement, false otherwise
+// Update moving limit of the object by diagonal box casting,
+// this is necessary to prevent corner clipping when both horizontal and vertical movement are present,
 static void GameObject_UpdateMovingLimitByDiagonalCast(GameObject *object, AABB_s16 *movingBoundLimitY, AABB_s16 castBox)
 {
+    // Get the tile indexes of the rectangle area defined by the cast box and its size in tiles
     TilesRectRange castedBoxTilesRectRange = GetTilesRectRangeAtPos(castBox.left, castBox.top,
                                                                     castBox.right, castBox.bottom);
+    // Check the diagonal movement direction and restrict movement
+    // by the tile at the corresponding corner of the cast box
     if (object->velocity.x > 0 && object->velocity.y > 0)
     {
         RestrictMovingLimitDiagonally(object, castedBoxTilesRectRange.rightBottomTileIndex.x,
@@ -197,13 +237,17 @@ FORCE_INLINE static void GameObject_RestrictVelocityX(GameObject *object, AABB_s
 {
     if (object->velocity.x > 0)
     {
-        s16 maxRightVelocity = movingBoundLimitX.right - entityAabbW.right;
+        // If the object is moving right, calculate the maximum allowed velocity
+        // to prevent moving beyond the right limit
+        s16 maxRightVelocity = (s16)(movingBoundLimitX.right - entityAabbW.right);
         if (object->velocity.x > maxRightVelocity)
             object->velocity.x = maxRightVelocity;
     }
     else if (object->velocity.x < 0)
     {
-        s16 maxLeftVelocity = movingBoundLimitX.left - entityAabbW.left - 1;
+        // If the object is moving left, calculate the maximum allowed velocity
+        // to prevent moving beyond the left limit
+        s16 maxLeftVelocity = (s16)(movingBoundLimitX.left - entityAabbW.left - 1);
         if (object->velocity.x < maxLeftVelocity)
             object->velocity.x = maxLeftVelocity;
     }
@@ -214,13 +258,17 @@ FORCE_INLINE static void GameObject_RestrictVelocityY(GameObject *object, AABB_s
 {
     if (object->velocity.y > 0)
     {
-        s16 maxDownVelocity = movingBoundLimitY.bottom - entityAabbW.bottom;
+        // If the object is moving down, calculate the maximum allowed velocity
+        // to prevent moving beyond the bottom limit
+        s16 maxDownVelocity = (s16)(movingBoundLimitY.bottom - entityAabbW.bottom);
         if (object->velocity.y > maxDownVelocity)
             object->velocity.y = maxDownVelocity;
     }
     else if (object->velocity.y < 0)
     {
-        s16 maxUpVelocity = movingBoundLimitY.top - entityAabbW.top - 1;
+        // If the object is moving up, calculate the maximum allowed velocity
+        // to prevent moving beyond the top limit
+        s16 maxUpVelocity = (s16)(movingBoundLimitY.top - entityAabbW.top - 1);
         if (object->velocity.y < maxUpVelocity)
             object->velocity.y = maxUpVelocity;
     }
@@ -230,10 +278,10 @@ FORCE_INLINE static void GameObject_RestrictVelocityY(GameObject *object, AABB_s
 void GameObject_RestrictVelocityByTileCollision(GameObject *object)
 {
     // Calculate the world coordinates of the object's AABB
-    s16 worldLeft   = object->pos.x + object->aabb.leftTop.x;
-    s16 worldTop    = object->pos.y + object->aabb.leftTop.y;
-    s16 worldRight  = object->pos.x + object->aabb.rightBottom.x;
-    s16 worldBottom = object->pos.y + object->aabb.rightBottom.y;
+    s16 worldLeft   = (s16)(object->pos.x + object->aabb.leftTop.x);
+    s16 worldTop    = (s16)(object->pos.y + object->aabb.leftTop.y);
+    s16 worldRight  = (s16)(object->pos.x + object->aabb.rightBottom.x);
+    s16 worldBottom = (s16)(object->pos.y + object->aabb.rightBottom.y);
     
     // Get the object's velocity
     s16 velX = object->velocity.x;
@@ -241,29 +289,34 @@ void GameObject_RestrictVelocityByTileCollision(GameObject *object)
     
     // Create AABBs for the current position and the boxes casted in the direction of movement
     AABB_s16 objectAabbWorld   = {worldLeft, worldTop, worldRight, worldBottom};
-    AABB_s16 castBoxHorizontal = {worldLeft + velX, worldTop, worldRight + velX, worldBottom};
-    AABB_s16 castBoxVertical   = {worldLeft, worldTop + velY, worldRight, worldBottom + velY};
-    AABB_s16 castedBoxDiagonal = {worldLeft + velX, worldTop + velY, worldRight + velX, worldBottom + velY};
+    AABB_s16 castBoxHorizontal = {(s16)(worldLeft + velX), worldTop, (s16)(worldRight + velX), worldBottom};
+    AABB_s16 castBoxVertical   = {worldLeft, (s16)(worldTop + velY), worldRight, (s16)(worldBottom + velY)};
+    AABB_s16 castBoxDiagonal   = {(s16)(worldLeft + velX), (s16)(worldTop + velY), (s16)(worldRight + velX), (s16)(worldBottom + velY)};
     
     // Initialize moving limits to the maximum possible range within the collision map
     AABB_s16 movingBoundLimit = (AABB_s16) {
         .left = 0,
-        .right = (s16) (collision_map.w << COORD_SHIFTER),
-        .top = 0,
-        .bottom= (s16) (collision_map.h << COORD_SHIFTER),
+        .right =  (s16) (collision_map.w << COORD_SHIFTER),
+        .top =  0,
+        .bottom = (s16) (collision_map.h << COORD_SHIFTER),
     };
     
     // First, check horizontal movement and restrict velocity if necessary
+    // by performing a horizontal box cast in the direction of movement
     bool limitedHorizontal = GameObject_UpdateMovingLimitByHorizontalCast(object, &movingBoundLimit, castBoxHorizontal);
+    
+    // Restrict velocity in horizontal direction according to the moving limit determined by the horizontal box cast
     GameObject_RestrictVelocityX(object, objectAabbWorld, movingBoundLimit);
     
     // Then, check vertical movement and restrict velocity if necessary
+    // by performing a vertical box cast in the direction of movement
     bool limitedVertical = GameObject_UpdateMovingLimitByVerticalCast(object, &movingBoundLimit, castBoxVertical);
     
-    // Finally, perform a diagonal cast to restrict velocity if necessary (only if both horizontal and vertical movement are not already limited)
+    // Finally, if both horizontal and vertical movement are present,
+    // perform a diagonal box cast to prevent corner clipping (only if both horizontal and vertical movement are not already limited)
     if (!limitedHorizontal && !limitedVertical)
-        GameObject_UpdateMovingLimitByDiagonalCast(object, &movingBoundLimit, castedBoxDiagonal);
+        GameObject_UpdateMovingLimitByDiagonalCast(object, &movingBoundLimit, castBoxDiagonal);
     
-    // After determining the final moving limits, restrict the object's velocity accordingly
+    // Restrict velocity in vertical direction according to the final moving limit determined by all box casts
     GameObject_RestrictVelocityY(object, objectAabbWorld, movingBoundLimit);
 }

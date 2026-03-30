@@ -2,16 +2,13 @@
 #define HEADER_CAMERA
 
 #include "typedefs.h"
+#include "globals.h"
 
 
-// Global camera instance
-extern Camera camera;
-// Background scroll scale for far/background layer (shift right)
-extern Map *fgMap;
-extern Map *bgMap;
-
-void Camera_SetMaxScrollArea(u16 width, u16 height);
+// Camera functions
+void Camera_Init();
 void Camera_Update();
+void Camera_SetMaxScrollArea(u16 width, u16 height);
 
 // Position getters
 FORCE_INLINE s16 Camera_GetPosX(void)
