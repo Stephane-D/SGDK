@@ -185,7 +185,7 @@ const u16 palette_blue[16] =
 const u16* const palette_black = palette_black_all;
 const u16* const palette_white = palette_grey;
 
-// used for palette fading (consumes 1024 bytes of memory)
+// used for palette fading (consumes 896 bytes of memory)
 u16 fadeCurrentPal[64];
 
 static s16 fadeR[64];
