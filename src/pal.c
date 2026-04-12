@@ -185,9 +185,8 @@ const u16 palette_blue[16] =
 const u16* const palette_black = palette_black_all;
 const u16* const palette_white = palette_grey;
 
-// used for palette fading (consumes 1024 bytes of memory)
+// used for palette fading (consumes 896 bytes of memory)
 u16 fadeCurrentPal[64];
-u16 fadeEndPal[64];
 
 static s16 fadeR[64];
 static s16 fadeG[64];
@@ -302,8 +301,6 @@ NO_INLINE bool PAL_initFade(u16 fromCol, u16 toCol, const u16* palSrc, const u16
 
     // set source palette as current fade palette
     memcpy(fadeCurrentPal, src, len * 2);
-    // save end palette
-    memcpy(fadeEndPal, dst, len * 2);
 
     s16 *palR = fadeR;
     s16 *palG = fadeG;
