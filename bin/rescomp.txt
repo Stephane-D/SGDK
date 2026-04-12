@@ -1,4 +1,4 @@
-ResComp 3.99 (March 2026)
+ResComp 4.00 (April 2026)
 Copyright Stephane Dallongeville
 https://github.com/Stephane-D/SGDK
 
@@ -47,8 +47,9 @@ Supported function
 Extensions
 ----------
 Rescomp support custom resource using extensions.
-Making an extension is easy: just write your own resource type and its processor in Java and export compiled classes as 'rescomp_ext.jar'.
-Put the file in the same folder as the .res files you want to compile and rescomp should find it automatically !
+Making an extension is easy: just write your own resource type and its processor in Java and export compiled classes as
+'[your_extension_name]_ext.jar' (i.e. the file name must end with '_ext.jar').
+Put the file/files in the same folder as the .res files you want to compile and rescomp should find it automatically !
 You can look at the sgdk.rescomp.resource.Palette and sgdk.rescomp.processor.PaletteProcessor source files to get an example
 about how to implement a Resource and a Processor :)
 
