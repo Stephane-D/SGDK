@@ -521,13 +521,13 @@ public class StringUtil
 	        	int[] result = new int[arrayStr.length];
 	        	
 	        	for(int i = 0; i < arrayStr.length; i++)
-	        		result[i] = Integer.parseInt(arrayStr[i]);
+	        		result[i] = Integer.parseInt(arrayStr[i].trim());
 	        	
 	        	return result;
 	        }
 	        
 	        // assume single value as single entry array
-	        return new int[] { Integer.parseInt(s) };
+	        return new int[] { Integer.parseInt(s.trim()) };
         }
         catch (NumberFormatException E)
         {
