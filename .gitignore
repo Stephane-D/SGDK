@@ -47,3 +47,4 @@ project/test
 tools/.gradle/
 tools/.project
 tools/build/
+.github/copilot-instructions.md
