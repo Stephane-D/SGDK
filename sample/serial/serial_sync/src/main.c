@@ -66,8 +66,8 @@ static void incrementCursor(Cursor* cur)
 static void readFromBuffer(Cursor* cur)
 {
     VDP_setTextPalette(PAL1);
-    if (buffer_canRead()) {
-        u8 data = buffer_read();
+    if (sync_buffer_canRead()) {
+        u8 data = sync_buffer_read();
         char buf[2] = { (char)data, 0 };
         VDP_drawText(buf, cur->x, cur->y + BUFFER_MIN_Y);
         incrementCursor(cur);
@@ -84,7 +84,7 @@ static void printBufferFree(void)
 {
     if (ui_dirty) {
         char text[32];
-        sprintf(text, "%4d Free", buffer_available());
+        sprintf(text, "%4d Free", sync_buffer_available());
         VDP_drawText(text, 28, 4);
         ui_dirty = FALSE;
     }
@@ -93,7 +93,7 @@ static void printBufferFree(void)
 static void receive(Cursor* cur)
 {
     while (serial_read_ready()) {
-        buffer_write(serial_read());
+        sync_buffer_write(serial_read());
         ui_dirty = TRUE;
     }
     readFromBuffer(cur);
