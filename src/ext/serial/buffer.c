@@ -22,7 +22,7 @@ u16 buffer_init(u16 size){
 
 void buffer_free(){
     if(buffer){
-        MEM_free(buffer);
+        MEM_free((void*)buffer);
         buffer = NULL;
         bufferSize = 0;
         readHead = 0;

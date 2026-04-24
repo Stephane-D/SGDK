@@ -31,11 +31,6 @@ typedef bool (*serial_read_ready_func)(void);
 
 #include "ext/serial/buffer.h"
 
-static void serial_async_callback(void)
-{
-    buffer_write(serial_read_sync());
-}
-
 void serial_set_sctrl(u8 value)
 {
     *((vu8*)(regs[io_port].sctrl)) = value;
@@ -61,11 +56,6 @@ bool serial_read_ready_async(void)
     return buffer_canRead();
 }
 
-bool serial_read_ready(void)
-{
-    return serial_read_ready_impl();
-}
-
 u8 serial_read_async(void)
 {
     return buffer_read();
@@ -76,13 +66,23 @@ u8 serial_read_sync(void)
     return *((vu8*)(regs[io_port].rx));
 }
 
+static void serial_async_callback(void)
+{
+    buffer_write(serial_read_sync());
+}
+
+static serial_read_ready_func serial_read_ready_impl = serial_read_ready_sync;
+static serial_read_func serial_read_impl = serial_read_sync;
+
 u8 serial_read(void)
 {
    return serial_read_impl();
 }
 
-static serial_read_ready_func serial_read_ready_impl = serial_read_ready_sync;
-static serial_read_func serial_read_impl = serial_read_sync;
+bool serial_read_ready(void)
+{
+    return serial_read_ready_impl();
+}
 
 u16 serial_baud_rate(void)
 {
