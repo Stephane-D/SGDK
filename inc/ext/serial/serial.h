@@ -128,6 +128,6 @@ void serial_set_port(IoPort port);
  * \brief Get the current I/O port used for serial communication.
  * \return The I/O port currently in use for serial communication.
  */
-IoPort serial_get_port()
+IoPort serial_get_port(void);
 
 #endif /*_SERIAL_H_*/
