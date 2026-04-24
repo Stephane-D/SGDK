@@ -113,6 +113,7 @@ static void init(void)
     PAL_setColor((PAL1 * 16) + 15, RGB24_TO_VDPCOLOR(0x444444));
     VDP_drawText("Mega Drive Serial Port Diagnostics", 3, 0);
     VDP_drawText("Recv Buffer:", 0, 4);
+    serial_set_mode(0); // Set sync mode first to initialize the serial in sync mode, then we will switch to async mode with buffer in comm_init.
     serial_init();
 
     printBaudRate();

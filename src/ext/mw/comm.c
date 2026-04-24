@@ -48,6 +48,10 @@ static const CommDriver commTypes[] = {
           serial_read, serial_write_ready, serial_write, 
           SERIAL_BUFLEN,
           SERIAL_TXFIFO_LEN, "Pt2" },
+    { serial_init, serial_is_present, serial_read_ready,
+          serial_read, serial_write_ready, serial_write, 
+          SERIAL_BUFLEN,
+          SERIAL_TXFIFO_LEN, "PtE" },
 #endif // MEGAWIFI_IMPLEMENTATION_CROSS
 };
 
@@ -59,6 +63,16 @@ void comm_init(void) {
     for (u8 i = 0; i < COMM_TYPES; i++) {
         const CommDriver* type = &commTypes[i];
         if (type->is_present()) {
+            if(strcmp(type->name, "Pt2") == 0){
+                // For cross implementation, we set the mode to async with buffer and Port.
+                serial_set_mode(MW_SERIAL_ASYNC_BUFFER_LEN);
+                serial_set_port(IoPort_Ctrl2);
+            }
+            if(strcmp(type->name, "PtE") == 0){
+                // For cross implementation, we set the mode to async with buffer .
+                serial_set_mode(MW_SERIAL_ASYNC_BUFFER_LEN);
+                serial_set_port(IoPort_Ext);
+            }
             type->init();
             activeCommType = type;
             break;

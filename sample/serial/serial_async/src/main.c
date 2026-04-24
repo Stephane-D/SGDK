@@ -3,8 +3,8 @@
 #include <genesis.h>
 #include <vdp.h>
 
-#if (MODULE_SERIAL == 0 || SERIAL_ASYNC == 0)
-#error "Set MODULE_SERIAL to 1 and SERIAL_ASYNC to 1 in config.h and rebuild the library"
+#if (MODULE_SERIAL == 0)
+#error "Set MODULE_SERIAL to 1 in config.h and rebuild the library"
 #endif
 
 const u16 BUFFER_MIN_Y = 6;
@@ -110,6 +110,8 @@ static void init(void)
     PAL_setColor((PAL1 * 16) + 15, RGB24_TO_VDPCOLOR(0x444444));
     VDP_drawText("Mega Drive Serial Port Diagnostics", 3, 0);
     VDP_drawText("Recv Buffer:", 0, 4);
+    //IMPORTANT: For async mode, we need to set the mode before init to initialize the buffer.
+    serial_set_mode(2048); // Set async mode with buffer size of 2048 bytes.
     serial_init();
     printBaudRate();
 }

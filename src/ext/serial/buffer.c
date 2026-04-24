@@ -1,17 +1,39 @@
 #include "config.h"
-#if (MODULE_SERIAL && SERIAL_ASYNC)
+#if (MODULE_SERIAL)
 #include "ext/serial/buffer.h"
-#define SERIAL_ASYNC_BUFFER_LEN 2048
 
 static volatile u16 readHead = 0;
 static volatile u16 writeHead = 0;
 
-static volatile char buffer[SERIAL_ASYNC_BUFFER_LEN];
+static volatile char* buffer = NULL;
+static u16 bufferSize = 0;
+
+u16 buffer_init(u16 size){
+    buffer_free();
+    buffer = (char*)MEM_alloc(size);
+    if (buffer) {
+        bufferSize = size;
+        readHead = 0;
+        writeHead = 0;
+        return size;
+    }
+    return 0;
+}
+
+void buffer_free(){
+    if(buffer){
+        MEM_free(buffer);
+        buffer = NULL;
+        bufferSize = 0;
+        readHead = 0;
+        writeHead = 0;
+    }
+}
 
 u8 buffer_read(void)
 {
     u8 data = buffer[readHead++];
-    if (readHead == SERIAL_ASYNC_BUFFER_LEN) {
+    if (readHead == bufferSize) {
         readHead = 0;
     }
     return data;
@@ -20,7 +42,7 @@ u8 buffer_read(void)
 void buffer_write(u8 data)
 {
     buffer[writeHead++] = data;
-    if (writeHead == SERIAL_ASYNC_BUFFER_LEN) {
+    if (writeHead == bufferSize) {
         writeHead = 0;
     }
 }
@@ -40,10 +62,10 @@ u16 buffer_available(void)
         xxxxxxxxx
     */
     if (writeHead >= readHead) {
-        return SERIAL_ASYNC_BUFFER_LEN - (writeHead - readHead);
+        return bufferSize - (writeHead - readHead);
     } else {
         return readHead - writeHead;
     }
 }
 
-#endif // (MODULE_SERIAL && SERIAL_ASYNC)
+#endif // (MODULE_SERIAL)
