@@ -24,14 +24,6 @@ SET "GDK_WIN=%cd%"
 @cd %GDK_WIN%\sample\basics\pools
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
-@ECHO Building basics\tmx-objects...
-@cd %GDK_WIN%\sample\basics\tmx-objects
-%GDK_WIN%\bin\make -f %GDK%/makefile.gen
-
-@ECHO Building basics\tmx-map...
-@cd %GDK_WIN%\sample\basics\tmx-map
-%GDK_WIN%\bin\make -f %GDK%/makefile.gen
-
 @ECHO Building benchmark...
 @cd %GDK_WIN%\sample\benchmark
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
@@ -110,6 +102,18 @@ SET "GDK_WIN=%cd%"
 
 @ECHO Building linkcable\pacman...
 @cd %GDK_WIN%\sample\linkcable\pacman
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
+@ECHO Building tiled\tmx-objects...
+@cd %GDK_WIN%\sample\tiled\tmx-objects
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
+@ECHO Building tiled\tmx-map...
+@cd %GDK_WIN%\sample\tiled\tmx-map
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
+@ECHO Building tiled\tmx-simple-collisions...
+@cd %GDK_WIN%\sample\tiled\tmx-simple-collisions
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
 @ECHO.

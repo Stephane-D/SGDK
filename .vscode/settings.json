@@ -1,5 +1,6 @@
 {
     "files.exclude": {
+        "**/*.class": true,
         "**/*.d": true,
         "**/*.dll": true,
         "**/*.exe": true,

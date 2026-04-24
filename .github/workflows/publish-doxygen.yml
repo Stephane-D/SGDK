@@ -10,8 +10,8 @@ on:
 env:
   # Used to find the download link:
   # https://www.doxygen.nl/files/doxygen-X.XX.X.linux.bin.tar.gz
-  # Version # updated on: 2025.12.20
-  DOXYGEN_VERSION: 1.15.0
+  # Version # updated on: 2025.01.28
+  DOXYGEN_VERSION: 1.16.1
 
 jobs:
   cleanup:

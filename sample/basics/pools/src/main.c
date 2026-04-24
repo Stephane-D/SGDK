@@ -30,7 +30,9 @@
 #define PROJECTILE_SPEED                FIX16(10)   // Projectile movement speed
 #define PROJECTILE_HEIGHT               10          // Projectile object height
 #define PROJECTILE_WIDTH                22          // Projectile object width
+#define PROJECTILE_OFFSET_Y             16          // Vertical offset for second projectile when shooting
 #define ENEMY_SPEED                     FIX16(2.5)  // Enemy movement speed
+#define EXPLOSION_DRIFT_SPEED           FIX16(1.75) // Explosion horizontal drift speed
 #define ENEMY_SIZE                      24          // Enemy object size
 #define ENEMIES_IN_WAVE                 16          // Enemies per wave
 #define ENEMY_DELAY                     10          // Delay between enemy spawns
@@ -49,6 +51,7 @@
     for (ObjectType **ptr = (ObjectType **)POOL_getFirst(pool), *object = *ptr;   /* Initialize pointer to first allocated object in pool */ \
          ptr < (ObjectType **)POOL_getFirst(pool) + POOL_getNumAllocated(pool);   /* Continue while pointer is within allocated objects range */ \
          object = *++ptr)                                                         /* Move to next pointer and dereference to get next allocated object */
+
 
 // Player state enumeration
 typedef enum
@@ -134,7 +137,7 @@ void Player_UpdateInput();
 void Player_TryRespawn();
 void Player_UpdatePosition();
 void Player_UpdateCollision();
-void Enemy_Spawn(s16 x, s16 y);
+bool Enemy_TrySpawn(s16 x, s16 y);
 void EnemyWave_Reset();
 void EnemyWave_Update();
 void Projectile_Spawn(s16 x, s16 y);
@@ -194,8 +197,16 @@ void Game_CreateObjectsPools()
     // ================================== Pool usage =======================================
     // Create object pool for each type of game objects
     game.enemyPool = POOL_create(ENEMIES_IN_POOL, sizeof(Enemy));
+    if (!game.enemyPool)
+        SYS_die("Failed to create enemy pool!");
+    
     game.projectilePool = POOL_create(PROJECTILES_IN_POOL, sizeof(Projectile));
+    if (!game.projectilePool)
+        SYS_die("Failed to create projectile pool!");
+    
     game.explosionPool = POOL_create(EXPLOSION_IN_POOL, sizeof(GameObject));
+    if (!game.explosionPool)
+        SYS_die("Failed to create explosion pool!");
 
     // ================================== Pool usage =======================================
     // Here we iterate through all object in each pool, and initialize objects with initial
@@ -257,7 +268,7 @@ void Game_UpdateExplosions()
 
         // Update position and check animation completion
         SPR_setPosition(explosion->sprite, F16_toInt(explosion->x), F16_toInt(explosion->y));
-        explosion->x += ENEMY_SPEED;
+        explosion->x += EXPLOSION_DRIFT_SPEED;
 
         // Return object back to pool if animation finished
         if (SPR_isAnimationDone(explosion->sprite))
@@ -296,14 +307,14 @@ void Game_UpdateProjectilesCollision()
             continue;
 
         // ================================== Pool usage =======================================
-        // Iterate through all activ(allocated) projectiles
+        // Iterate through all active(allocated) projectiles
         FOREACH_ALLOCATED_IN_POOL(Projectile, projectile, game.projectilePool)
         {
             if (!projectile)
                 continue;
 
             // Skip if no collision
-            if (!GameObject_IsCollided((GameObject *) projectile, (GameObject *) (GameObject *) enemy))
+            if (!GameObject_IsCollided((GameObject *) projectile, (GameObject *) enemy))
                 continue;
 
             // Handle projectile collision with enemy
@@ -331,9 +342,10 @@ void Game_DrawUI()
             POOL_getFree(game.explosionPool));
 
     VDP_drawTextBG(BG_B, "objects allocated / free", 15, 0);
-    VDP_drawTextBG(BG_B, str2, 17, 1);
-    VDP_drawTextBG(BG_B, str3, 17, 2);
-    VDP_drawTextBG(BG_B, str1, 17, 3);
+    VDP_drawTextBG(BG_B, str1, 17, 1);
+    VDP_drawTextBG(BG_B, str2, 17, 2);
+    VDP_drawTextBG(BG_B, str3, 17, 3);
+
 }
 
 // Create game object with specified parameters
@@ -446,13 +458,16 @@ void Player_Explode()
 void Player_TryShoot()
 {
     // Check if still on cooldown
-    if (game.player.coolDownTimer--)
+    if (game.player.coolDownTimer)
+    {
+        game.player.coolDownTimer--;
         return;
+    }
 
     // Reset cooldown and spawn two projectiles
     game.player.coolDownTimer = PROJECTILE_COOLDOWN_TIMER;
     Projectile_Spawn(F16_toInt(game.player.x), F16_toInt(game.player.y));
-    Projectile_Spawn(F16_toInt(game.player.x), F16_toInt(game.player.y) + PLAYER_WIDTH / 2);
+    Projectile_Spawn(F16_toInt(game.player.x), F16_toInt(game.player.y) + PROJECTILE_OFFSET_Y);
 
     // Play shooting sound
     XGM2_playPCM(xpcm_shoot, sizeof(xpcm_shoot), SOUND_PCM_CH2);
@@ -461,7 +476,7 @@ void Player_TryShoot()
 // Update respawn timer and spawn player when ready
 void Player_TryRespawn()
 {
-    if (--game.player.respawnTimer == 0)
+    if (game.player.respawnTimer == 0 || --game.player.respawnTimer == 0)
         Player_Spawn();
 }
 
@@ -493,6 +508,7 @@ void Player_UpdateCollision()
         // Handle player collision with enemy
         GameObject_ReleaseWithExplode((GameObject *) enemy, game.enemyPool);
         Player_Explode();
+        return;
     }
 }
 
@@ -519,18 +535,19 @@ void Player_UpdateInput()
 }
 
 // Spawn enemy at specified position
-void Enemy_Spawn(s16 x, s16 y)
+bool Enemy_TrySpawn(s16 x, s16 y)
 {
     // ================================== Pool usage =======================================
     // Allocate enemy from pool
     Enemy *enemy = (Enemy *) POOL_allocate(game.enemyPool);
 
-    // Exit function if no avaliable objects
+    // Exit function if no available objects
     if (!enemy)
-        return;
+        return false;
 
     // Initialize enemy properties
     GameObject_Init((GameObject *) enemy, x, y);
+    return true;
 }
 
 // Reset enemy wave state for new wave
@@ -556,11 +573,13 @@ void EnemyWave_Update()
 
     // Reset spawn delay and spawn two new enemies
     game.wave.enemyDelay = ENEMY_DELAY;
-    Enemy_Spawn(VDP_getScreenWidth(), ENEMY_WAVE_OFFSET_Y);
-    Enemy_Spawn(VDP_getScreenWidth(), VDP_getScreenHeight() - ENEMY_SIZE - ENEMY_WAVE_OFFSET_Y);
+    
+    u8 spawned = 0;
+    spawned += Enemy_TrySpawn(VDP_getScreenWidth(), ENEMY_WAVE_OFFSET_Y);
+    spawned += Enemy_TrySpawn(VDP_getScreenWidth(), VDP_getScreenHeight() - ENEMY_SIZE - ENEMY_WAVE_OFFSET_Y);
 
     // Decrease remaining enemies and reset wave if complete
-    game.wave.enemyCount -= 2;
+    game.wave.enemyCount -= spawned;
     if (!game.wave.enemyCount)
         EnemyWave_Reset();
 }
