@@ -1,4 +1,4 @@
-#include <types.h>
+#include "genesis.h"
 
 u8 buffer_read(void);
 void buffer_write(u8 data);

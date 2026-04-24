@@ -1,5 +1,6 @@
-#include <genesis.h>
+#include "config.h"
 #if (MODULE_SERIAL && SERIAL_ASYNC)
+#include "ext/serial/buffer.h"
 #define SERIAL_ASYNC_BUFFER_LEN 2048
 
 static volatile u16 readHead = 0;
