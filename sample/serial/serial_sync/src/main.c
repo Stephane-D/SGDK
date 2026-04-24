@@ -1,7 +1,6 @@
 #include "ext/serial/serial.h"
 #include "buffer.h"
 #include <genesis.h>
-#include <stdbool.h>
 #include <vdp.h>
 
 #if (MODULE_SERIAL == 0)

@@ -1,16 +1,16 @@
 #include <genesis.h>
-
-#define BUFFER_LEN 2048
+#if (MODULE_SERIAL && SERIAL_ASYNC)
+#define SERIAL_ASYNC_BUFFER_LEN 2048
 
 static volatile u16 readHead = 0;
 static volatile u16 writeHead = 0;
 
-static volatile char buffer[BUFFER_LEN];
+static volatile char buffer[SERIAL_ASYNC_BUFFER_LEN];
 
 u8 buffer_read(void)
 {
     u8 data = buffer[readHead++];
-    if (readHead == BUFFER_LEN) {
+    if (readHead == SERIAL_ASYNC_BUFFER_LEN) {
         readHead = 0;
     }
     return data;
@@ -19,7 +19,7 @@ u8 buffer_read(void)
 void buffer_write(u8 data)
 {
     buffer[writeHead++] = data;
-    if (writeHead == BUFFER_LEN) {
+    if (writeHead == SERIAL_ASYNC_BUFFER_LEN) {
         writeHead = 0;
     }
 }
@@ -39,8 +39,10 @@ u16 buffer_available(void)
         xxxxxxxxx
     */
     if (writeHead >= readHead) {
-        return BUFFER_LEN - (writeHead - readHead);
+        return SERIAL_ASYNC_BUFFER_LEN - (writeHead - readHead);
     } else {
         return readHead - writeHead;
     }
 }
+
+#endif // (MODULE_SERIAL && SERIAL_ASYNC)

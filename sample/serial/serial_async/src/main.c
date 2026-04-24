@@ -1,11 +1,10 @@
-#include "buffer.h"
+#include "ext/serial/buffer.h"
 #include "ext/serial/serial.h"
 #include <genesis.h>
-#include <stdbool.h>
 #include <vdp.h>
 
-#if (MODULE_SERIAL == 0)
-#error "Set MODULE_SERIAL to 1 in config.h and rebuild the library"
+#if (MODULE_SERIAL == 0 || SERIAL_ASYNC == 0)
+#error "Set MODULE_SERIAL to 1 and SERIAL_ASYNC to 1 in config.h and rebuild the library"
 #endif
 
 const u16 BUFFER_MIN_Y = 6;
@@ -51,11 +50,6 @@ static void printSCtrlFlags(void)
     VDP_setTextPalette(PAL0);
 }
 
-static void ui_callback(void)
-{
-    buffer_write(serial_read());
-    ui_dirty = TRUE;
-}
 
 static void incrementCursor(Cursor* cur)
 {
@@ -73,8 +67,8 @@ static void incrementCursor(Cursor* cur)
 static void readFromBuffer(Cursor* cur)
 {
     VDP_setTextPalette(PAL1);
-    if (buffer_canRead()) {
-        u8 data = buffer_read();
+    if (serial_read_ready()) {
+        u8 data = serial_read();
         char buf[2] = { (char)data, 0 };
         VDP_drawText(buf, cur->x, cur->y + BUFFER_MIN_Y);
         incrementCursor(cur);
@@ -117,8 +111,6 @@ static void init(void)
     VDP_drawText("Mega Drive Serial Port Diagnostics", 3, 0);
     VDP_drawText("Recv Buffer:", 0, 4);
     serial_init();
-    SYS_setExtIntCallback(&ui_callback);
-
     printBaudRate();
 }
 

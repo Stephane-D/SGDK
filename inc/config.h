@@ -148,6 +148,9 @@
  *      Set it to 1 if you want to use PORT_2 or PORT_EXT as Serial port COMM.
  */
 #define MODULE_SERIAL            0
+#if MODULE_SERIAL
+#define SERIAL_ASYNC             0   // Set to 1 to use asynchronous serial functions (using interrupt and buffer), set to 0 to use synchronous functions (blocking)
+#endif
 
 /**
  *  \brief

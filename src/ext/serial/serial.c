@@ -11,6 +11,7 @@
 
 #if (MODULE_SERIAL)
 #include "ext/serial/serial.h"
+
 static IoPort io_port;
 
 static const struct {
@@ -22,6 +23,21 @@ static const struct {
     { EXT_CTRL, EXT_SCTRL, EXT_TX, EXT_RX },
     { PORT2_CTRL, PORT2_SCTRL, PORT2_TX, PORT2_RX },
 };
+
+#if SERIAL_ASYNC
+#include "ext/serial/buffer.h"
+
+u8 _serial_read(void)
+{
+    return *((vu8*)(regs[io_port].rx));
+}
+
+static void serial_async_callback(void)
+{
+    buffer_write(_serial_read());
+}
+
+#endif
 
 
 void serial_set_sctrl(u8 value)
@@ -41,12 +57,20 @@ u8 serial_get_sctrl(void)
 
 bool serial_read_ready(void)
 {
+    #if SERIAL_ASYNC
+    return buffer_canRead();
+    #else
     return *((vu8*)(regs[io_port].sctrl)) & SCTRL_RRDY;
+    #endif
 }
 
 u8 serial_read(void)
 {
+    #if SERIAL_ASYNC
+    return buffer_read();
+    #else
     return *((vu8*)(regs[io_port].rx));
+    #endif
 }
 
 u16 serial_baud_rate(void)
@@ -73,6 +97,9 @@ void serial_init(void)
     if (sctrlFlags & SCTRL_RINT) {
         SYS_setInterruptMaskLevel(INT_MASK_LEVEL_ENABLE_ALL);
         VDP_setReg(VDP_MODE_REG_3, VDP_getReg(VDP_MODE_REG_3) | VDP_IE2);
+        #if SERIAL_ASYNC
+        SYS_setExtIntCallback(&serial_async_callback);
+        #endif
     }
     serial_reset_fifos();
 }
