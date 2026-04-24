@@ -7,7 +7,7 @@ static u16 writeHead = 0;
 
 static char buffer[BUFFER_LEN];
 
-u8 buffer_read(void)
+u8 sync_buffer_read(void)
 {
     u8 data = buffer[readHead++];
     if (readHead == BUFFER_LEN) {
@@ -16,7 +16,7 @@ u8 buffer_read(void)
     return data;
 }
 
-void buffer_write(u8 data)
+void sync_buffer_write(u8 data)
 {
     buffer[writeHead++] = data;
     if (writeHead == BUFFER_LEN) {
@@ -24,12 +24,12 @@ void buffer_write(u8 data)
     }
 }
 
-u8 buffer_canRead(void)
+u8 sync_buffer_canRead(void)
 {
     return writeHead != readHead;
 }
 
-u16 buffer_available(void)
+u16 sync_buffer_available(void)
 {
     /*
     ----R--------W-----
