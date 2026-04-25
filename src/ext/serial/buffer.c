@@ -10,11 +10,9 @@ static u16 bufferSize = 0;
 
 u16 buffer_init(u16 size){
     buffer_free();
-    buffer = (char*)MEM_alloc(size);
+    if(size) buffer = (char*)MEM_alloc(size);
     if (buffer) {
         bufferSize = size;
-        readHead = 0;
-        writeHead = 0;
         return size;
     }
     return 0;
