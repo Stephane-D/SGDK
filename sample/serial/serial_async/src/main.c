@@ -1,7 +1,6 @@
-#include "buffer.h"
+#include "ext/serial/buffer.h"
 #include "ext/serial/serial.h"
 #include <genesis.h>
-#include <stdbool.h>
 #include <vdp.h>
 
 #if (MODULE_SERIAL == 0)
@@ -51,11 +50,6 @@ static void printSCtrlFlags(void)
     VDP_setTextPalette(PAL0);
 }
 
-static void ui_callback(void)
-{
-    buffer_write(serial_read());
-    ui_dirty = TRUE;
-}
 
 static void incrementCursor(Cursor* cur)
 {
@@ -73,8 +67,8 @@ static void incrementCursor(Cursor* cur)
 static void readFromBuffer(Cursor* cur)
 {
     VDP_setTextPalette(PAL1);
-    if (buffer_canRead()) {
-        u8 data = buffer_read();
+    if (serial_read_ready()) {
+        u8 data = serial_read();
         char buf[2] = { (char)data, 0 };
         VDP_drawText(buf, cur->x, cur->y + BUFFER_MIN_Y);
         incrementCursor(cur);
@@ -116,9 +110,9 @@ static void init(void)
     PAL_setColor((PAL1 * 16) + 15, RGB24_TO_VDPCOLOR(0x444444));
     VDP_drawText("Mega Drive Serial Port Diagnostics", 3, 0);
     VDP_drawText("Recv Buffer:", 0, 4);
+    //IMPORTANT: For async mode, we need to set the mode before init to initialize the buffer.
+    serial_set_mode(2048); // Set async mode with buffer size of 2048 bytes.
     serial_init();
-    SYS_setExtIntCallback(&ui_callback);
-
     printBaudRate();
 }
 

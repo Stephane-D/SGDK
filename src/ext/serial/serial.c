@@ -11,7 +11,8 @@
 
 #if (MODULE_SERIAL)
 #include "ext/serial/serial.h"
-static IoPort io_port;
+
+static IoPort io_port = IoPort_Ctrl2;
 
 static const struct {
     size_t ctrl;
@@ -23,6 +24,12 @@ static const struct {
     { PORT2_CTRL, PORT2_SCTRL, PORT2_TX, PORT2_RX },
 };
 
+typedef u8 (*serial_read_func)(void);
+typedef bool (*serial_read_ready_func)(void);
+
+
+
+#include "ext/serial/buffer.h"
 
 void serial_set_sctrl(u8 value)
 {
@@ -39,14 +46,42 @@ u8 serial_get_sctrl(void)
     return *((vu8*)(regs[io_port].sctrl));
 }
 
-bool serial_read_ready(void)
+bool serial_read_ready_sync(void)
 {
     return *((vu8*)(regs[io_port].sctrl)) & SCTRL_RRDY;
 }
 
-u8 serial_read(void)
+bool serial_read_ready_async(void)
+{
+    return buffer_canRead();
+}
+
+u8 serial_read_async(void)
+{
+    return buffer_read();
+}
+
+u8 serial_read_sync(void)
 {
     return *((vu8*)(regs[io_port].rx));
+}
+
+static void serial_async_callback(void)
+{
+    buffer_write(serial_read_sync());
+}
+
+static serial_read_ready_func serial_read_ready_impl = serial_read_ready_sync;
+static serial_read_func serial_read_impl = serial_read_sync;
+
+u8 serial_read(void)
+{
+   return serial_read_impl();
+}
+
+bool serial_read_ready(void)
+{
+    return serial_read_ready_impl();
 }
 
 u16 serial_baud_rate(void)
@@ -65,9 +100,7 @@ u16 serial_baud_rate(void)
 
 void serial_init(void)
 {   
-    IoPort port = IoPort_Ctrl2;
     u8 sctrlFlags = SCTRL_4800_BPS | SCTRL_SIN | SCTRL_SOUT | SCTRL_RINT;
-    io_port = port;
     serial_set_sctrl(sctrlFlags);
     _serial_set_ctrl(CTRL_PCS_OUT);
     if (sctrlFlags & SCTRL_RINT) {
@@ -97,6 +130,29 @@ void serial_reset_fifos(void)
     while (serial_read_ready()) {
         serial_read();
     }
+}
+
+u16 serial_set_mode(u16 value){
+    if(value){
+        serial_read_ready_impl = serial_read_ready_async;
+        serial_read_impl = serial_read_async;
+        SYS_setExtIntCallback(&serial_async_callback);
+        return buffer_init(value);
+    }else{
+        serial_read_ready_impl = serial_read_ready_sync;
+        serial_read_impl = serial_read_sync;
+        SYS_setExtIntCallback(NULL);
+        buffer_free();
+        return 0;
+    }
+}
+
+void serial_set_port(IoPort port){
+    io_port = port;
+}
+
+IoPort serial_get_port(){
+    return io_port;
 }
 
 #endif // MODULE_SERIAL

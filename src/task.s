@@ -16,7 +16,7 @@
 // User task status register. Initial value of second nibble must be 5 or
 // lower in order for VINT interrupts to fire. First nibble must be 0 in
 // order for the user task to run.
-task_sr: .word 0x0400
+task_sr: .word 0x0000
 
 // User task program counter
 task_pc: .long 0x00000000
@@ -36,12 +36,11 @@ task_lock: .word 0
  * Initialize the task sub system (reset internal variables)
  */
 func TSK_init
-        move.w  #0x0400, task_sr
-        move.l  #0x00000000, task_pc
-        move.w  #0x0000, task_lock
-
-        move.w  #(UTSK_REGS_LEN - 1), %d0
         moveq   #0, %d1
+        move.w  %d1, task_sr
+        move.l  %d1, task_pc
+        move.w  %d1, task_lock
+        move.w  #(UTSK_REGS_LEN - 1), %d0
         lea     task_regs,%a0
 
 .loop:

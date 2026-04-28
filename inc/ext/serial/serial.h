@@ -110,4 +110,24 @@ u16 serial_baud_rate(void);
 u8 serial_get_sctrl(void);
 void serial_set_sctrl(u8 value);
 
+/**
+ * \brief Set the serial mode (asynchronous or synchronous).
+ * \param value The mode to set. Use size of buffer for asynchronous mode, or 0 for synchronous mode.
+ * \return Number of bytes available to read in the receive buffer.
+ */
+u16 serial_set_mode(u16 value);
+
+/**
+ * \brief Get the current receive buffer length.
+ * \param port The I/O port to query.
+ * \return Number of bytes available to read in the receive buffer.
+ */
+void serial_set_port(IoPort port);
+
+/**
+ * \brief Get the current I/O port used for serial communication.
+ * \return The I/O port currently in use for serial communication.
+ */
+IoPort serial_get_port(void);
+
 #endif /*_SERIAL_H_*/
