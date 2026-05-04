@@ -92,6 +92,16 @@
 #define LEGACY_ERROR_HANDLER    0
 
 /**
+ * \brief
+ *      Set it to 1 to keep the original SGDK's font tileset location in VRAM (end of the tileset space).
+ *      Set it to 0 to move the font tileset at the beginning of the VRAM (start of tileset space), which allows to use the full tileset space
+ *      for your game assets and avoid some VRAM fragmentation issues.
+ *
+ *      @see TILE_FONT_INDEX definition
+ */
+#define LEGACY_FONT_LOCATION    1
+
+/**
  *  \brief
  *      Set it to 1 to enable automatic bank switch using official SEGA mapper for ROM > 4MB.
  *

@@ -119,23 +119,16 @@ static u32 profil_time[20];
 
 NO_INLINE void SPR_initEx(u16 vramSize)
 {
-    u16 index;
-    u16 size;
-
     // end it first (if initialized)
     SPR_end();
 
     // create sprites object pool
     spritesPool = POOL_create(MAX_SPRITE, sizeof(Sprite));
 
-    size = vramSize ? vramSize : 420;
-    // get start tile index for sprite data (reserve VRAM area just before system font)
-    index = TILE_FONT_INDEX - size;
-
-    // and create a VRAM region for sprite tile allocation
-    VRAM_createRegion(&vram, index, size);
     // store allocated VRAM size to let SGDK know about it
-    spriteVramSize = size;
+    spriteVramSize = vramSize ? vramSize : 420;
+    // and create a VRAM region for sprite tile allocation
+    VRAM_createRegion(&vram, TILE_SPRITE_INDEX, spriteVramSize);
 
     // need to update user tile max index
     updateUserTileMaxIndex();
@@ -145,7 +138,7 @@ NO_INLINE void SPR_initEx(u16 vramSize)
 
 #if (LIB_LOG_LEVEL >= LOG_LEVEL_INFO)
     KLog("Sprite engine initialized !");
-    KLog_U2_("  VRAM region: [", index, " - ", index + (size - 1), "]");
+    KLog_U2_("  VRAM region: [", TILE_SPRITE_INDEX, " - ", TILE_SPRITE_INDEX + (spriteVramSize - 1), "]");
 #endif // LIB_DEBUG
 
     // reset
@@ -549,8 +542,8 @@ NO_INLINE void SPR_defragVRAM()
     VRAM_releaseRegion(&vram);
     // pack
     MEM_pack();
-    // and re-create it (useful if TILE_FONT_INDEX changed, when we modify plane size for instance)
-    VRAM_createRegion(&vram, TILE_FONT_INDEX - spriteVramSize, spriteVramSize);
+    // and re-create it
+    VRAM_createRegion(&vram, TILE_SPRITE_INDEX, spriteVramSize);
 
     // iterate over all sprites to re-allocate auto allocated VRAM
     sprite = firstSprite;

@@ -1024,8 +1024,8 @@ void VDP_showCPULoad(u16 x, u16 y)
 
 void updateUserTileMaxIndex()
 {
-    // sprite engine always allocate VRAM just below FONT
-    userTileMaxIndex = TILE_FONT_INDEX - spriteVramSize;
+    // user tile max index is where sprite engine tileset space starts
+    userTileMaxIndex = TILE_SPRITE_INDEX;
 }
 
 static void updateMapsAddress(bool initializing)

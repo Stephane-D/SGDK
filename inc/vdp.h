@@ -210,7 +210,8 @@
  *  \brief
  *      SGDK font length
  */
-#define FONT_LEN    96
+#define FONT_LENGTH             96
+#define FONT_LEN                _Pragma("GCC error \"This definition is deprecated, use FONT_LENGTH instead.\"")
 
 /**
  *  \brief
@@ -249,17 +250,29 @@
  *  \brief
  *      User base tile index.
  */
+#if (LEGACY_FONT_LOCATION != 0)
 #define TILE_USER_INDEX         (TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH)
+#else
+#define TILE_USER_INDEX         (TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH + FONT_LENGTH)
+#endif
 /**
  *  \brief
  *      Font base tile index.
  */
-#define TILE_FONT_INDEX         (TILE_MAX_NUM - FONT_LEN)
+#if (LEGACY_FONT_LOCATION != 0)
+#define TILE_FONT_INDEX         (TILE_MAX_NUM - FONT_LENGTH)
+#else
+#define TILE_FONT_INDEX         (TILE_SYSTEM_INDEX + TILE_SYSTEM_LENGTH)
+#endif
 /**
  *  \brief
- *      Sprite engine base tile index (equal TILE_FONT_INDEX if Sprite Engine is not initialized).
+ *      Sprite engine base tile index (should be located at the end of tileset space)
  */
+#if (LEGACY_FONT_LOCATION != 0)
 #define TILE_SPRITE_INDEX       (TILE_FONT_INDEX - spriteVramSize)
+#else
+#define TILE_SPRITE_INDEX       (TILE_MAX_NUM - spriteVramSize)
+#endif
 /**
  *  \brief
  *      Number of available user tile.
