@@ -37,12 +37,13 @@ int main(bool hard)
     // init sprite engine with default parameters
     SPR_init();
 
+    // ind keeps track of current first free user tile index in VRAM
     ind = TILE_USER_INDEX;
-    ind += LEVEL_init(ind);
+    ind = LEVEL_init(ind);
     CAMERA_init();
-    ind += PLAYER_init(ind);
-    ind += ENTITIES_init(ind);
-    ind += HUD_init(ind);
+    ind = PLAYER_init(ind);
+    ind = ENTITIES_init(ind);
+    ind = HUD_init(ind);
 
     // set camera position
     CAMERA_centerOn(160, 100);
