@@ -209,6 +209,37 @@ void VDP_loadTileData(const u32 *data, u16 index, u16 num, TransferMethod tm);
 bool VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
 /**
  *  \brief
+ *      Load a subset of tile data (pattern) in VRAM. Useful to only reload a part of a tileSet if it;s been overwritten
+ *      or in case of streaming maps, to get the required tiles out of the full tile atlas
+ *
+ *  \param tileset
+ *      Pointer to TileSet structure.<br>
+ *      The TileSet is unpacked "on-the-fly" if needed (require some memory).<br>
+ *      Using DMA_QUEUE for packed resource is unsafe as the resource will be released and eventually
+ *      can be overwritten before DMA operation so use DMA_QUEUE_COPY in that case or unpack the resource first.
+ *  \param index
+ *      Tile index where start tile data load (use TILE_USER_INDEX as base user index).
+ *  \param fromTile
+ *      Start tile index to be loaded from the set.
+ *  \param count
+ *      Number of tiles to Load.
+ *  \param tm
+ *      Transfer method.<br>
+ *      Accepted values are:<br>
+ *      - CPU<br>
+ *      - DMA<br>
+ *      - DMA_QUEUE<br>
+ *      - DMA_QUEUE_COPY
+ *  \return
+ *      FALSE if there is not enough memory to unpack the specified TileSet (only if compression was enabled).
+ *
+ *  Transfert rate:<br>
+ *  ~90 bytes per scanline in software (during blanking)<br>
+ *  ~190 bytes per scanline in hardware (during blanking)
+ */
+bool VDP_loadTileSetEx(const TileSet *tileSet, u16 index, u16 fromTile, u16 count, TransferMethod tm);
+/**
+ *  \brief
  *      Load font tile data in VRAM.<br>
  *      Note that you should prefer the VDP_loadFont(..) method to this one (easier to use).
  *
