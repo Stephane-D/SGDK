@@ -38,24 +38,7 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm)
 
 bool VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
 {
-    // compressed tileset ?
-    if (tileset->compression != COMPRESSION_NONE)
-    {
-        // unpack first
-        TileSet *t = unpackTileSet(tileset, NULL);
-
-        if (t == NULL) return FALSE;
-
-        // tiles
-        VDP_loadTileData(t->tiles, index, t->numTile, tm);
-        // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
-        MEM_free(t);
-    }
-    else
-        // tiles
-        VDP_loadTileData(FAR_SAFE(tileset->tiles, tileset->numTile * 32), index, tileset->numTile, tm);
-
-    return TRUE;
+    return VDP_loadTileSetEx(tileSet, index, 0, tileset->numTile, tm);
 }
 
 bool VDP_loadTileSetEx(const TileSet *tileSet, u16 index, u16 fromTile, u16 count, TransferMethod tm)
