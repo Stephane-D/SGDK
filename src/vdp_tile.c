@@ -52,13 +52,13 @@ bool VDP_loadTileSetEx(const TileSet *tileSet, u16 index, u16 fromTile, u16 coun
         if (t == NULL) return FALSE;
 
         // tiles
-        VDP_loadTileData(t->tiles+(fromTile << 3), index, count, tm);
+        VDP_loadTileData(t->tiles + (fromTile * 8), index, count, tm);
         // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
         MEM_free(t);
     }
     else
         // tiles
-        VDP_loadTileData(FAR_SAFE((tileSet->tiles)+(fromTile << 3), count << 5), index, count, tm);
+        VDP_loadTileData(FAR_SAFE(tileSet->tiles + (fromTile * 8), count * 32), index, count, tm);
 
     return TRUE;
 }
