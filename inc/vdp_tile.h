@@ -237,7 +237,7 @@ bool VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm);
  *  ~90 bytes per scanline in software (during blanking)<br>
  *  ~190 bytes per scanline in hardware (during blanking)
  */
-bool VDP_loadTileSetEx(const TileSet *tileSet, u16 index, u16 fromTile, u16 count, TransferMethod tm);
+bool VDP_loadTileSetEx(const TileSet *tileset, u16 index, u16 fromTile, u16 count, TransferMethod tm);
 /**
  *  \brief
  *      Load font tile data in VRAM.<br>

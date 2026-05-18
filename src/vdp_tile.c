@@ -38,10 +38,10 @@ void VDP_loadFontData(const u32 *font, u16 length, TransferMethod tm)
 
 bool VDP_loadTileSet(const TileSet *tileset, u16 index, TransferMethod tm)
 {
-    return VDP_loadTileSetEx(tileSet, index, 0, tileset->numTile, tm);
+    return VDP_loadTileSetEx(tileset, index, 0, tileset->numTile, tm);
 }
 
-bool VDP_loadTileSetEx(const TileSet *tileSet, u16 index, u16 fromTile, u16 count, TransferMethod tm)
+bool VDP_loadTileSetEx(const TileSet *tileset, u16 index, u16 fromTile, u16 count, TransferMethod tm)
 {
     // compressed tileset ?
     if (tileset->compression != COMPRESSION_NONE)
@@ -58,7 +58,7 @@ bool VDP_loadTileSetEx(const TileSet *tileSet, u16 index, u16 fromTile, u16 coun
     }
     else
         // tiles
-        VDP_loadTileData(FAR_SAFE(tileSet->tiles + (fromTile * 8), count * 32), index, count, tm);
+        VDP_loadTileData(FAR_SAFE(tileset->tiles + (fromTile * 8), count * 32), index, count, tm);
 
     return TRUE;
 }
