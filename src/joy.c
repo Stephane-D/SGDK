@@ -51,7 +51,6 @@ void JOY_init()
 {
     /* Reset controller state change event callback */
     joyEventCB = NULL;
-
     /* Then perform controller port reset and peripheral detection */
     JOY_reset();
 }
@@ -956,7 +955,7 @@ static void readTeamPlayer(u16 port)
             joyType[xlt] = typ;
             change = joyState[xlt] ^ val;
             joyState[xlt] = val;
-            if (change) joyEventCB(xlt, change, val);
+            if (joyEventCB && change) joyEventCB(xlt, change, val);
         }
     }
 
@@ -1106,7 +1105,7 @@ static void readLightgun(u16 port)
         change = joyState[port] ^ newstate;
         joyType[port] = JOY_TYPE_MENACER;
         joyState[port] = newstate;
-        if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
+        if (joyEventCB && change) joyEventCB(port, change, newstate);
     }
     else if (portType[port] == PORT_TYPE_JUSTIFIER)
     {
@@ -1124,7 +1123,7 @@ static void readLightgun(u16 port)
         change = joyState[port] ^ newstate;
         joyType[port] = JOY_TYPE_JUSTIFIER;
         joyState[port] = newstate;
-        if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
+        if (joyEventCB && change) joyEventCB(port, change, newstate);
 
         if (joyType[port ? JOY_6 : JOY_3] == JOY_TYPE_JUSTIFIER)
         {
@@ -1142,7 +1141,7 @@ static void readLightgun(u16 port)
             change = joyState[port ? JOY_6 : JOY_3] ^ newstate;
             joyType[port ? JOY_6 : JOY_3] = JOY_TYPE_JUSTIFIER;
             joyState[port ? JOY_6 : JOY_3] = newstate;
-            if ((joyEventCB) && (change)) joyEventCB(port ? JOY_6 : JOY_3, change, newstate);
+            if (joyEventCB && change) joyEventCB(port ? JOY_6 : JOY_3, change, newstate);
 
             /* only need to toggle gun selector if have two guns */
             gun ^= 0x20;
@@ -1166,7 +1165,7 @@ static void readLightgun(u16 port)
         change = joyState[port] ^ newstate;
         joyType[port] = JOY_TYPE_PHASER;
         joyState[port] = newstate;
-        if ((joyEventCB) && (change)) joyEventCB(port, change, newstate);
+        if (joyEventCB && change) joyEventCB(port, change, newstate);
     }
 
     extSet = 0;                             /* clear light sensed flag */
@@ -1299,7 +1298,7 @@ NO_INLINE void JOY_update()
         change = joyState[JOY_1] ^ newstate;
         joyType[JOY_1] = val >> JOY_TYPE_SHIFT;
         joyState[JOY_1] = newstate;
-        if ((joyEventCB) && (change)) joyEventCB(JOY_1, change, newstate);
+        if (joyEventCB && change) joyEventCB(JOY_1, change, newstate);
     }
 
     support = portSupport[PORT_2];
@@ -1343,7 +1342,7 @@ NO_INLINE void JOY_update()
         change = joyState[JOY_2] ^ newstate;
         joyType[JOY_2] = val >> JOY_TYPE_SHIFT;
         joyState[JOY_2] = newstate;
-        if ((joyEventCB) && (change)) joyEventCB(JOY_2, change, newstate);
+        if (joyEventCB && change) joyEventCB(JOY_2, change, newstate);
     }
 
     /* restore ints */
