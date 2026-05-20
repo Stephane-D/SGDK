@@ -560,10 +560,11 @@ public class StringUtil
 	        	
 	        	for(int i = 0; i < arrayStr.length; i++)
 	        	{
+	        		String array1d = arrayStr[i].trim();
 	        		// remove leading ',' if present
-	        		if (arrayStr[i].charAt(0) == ',') arrayStr[i] = arrayStr[i].substring(1);
+	        		if (array1d.charAt(0) == ',') array1d = array1d.substring(1);
 	        		// get sub array
-	        		result[i] = parseIntArray("[" + arrayStr[i] + "]", (def.length > i) ? def[i] : new int[] {0});
+	        		result[i] = parseIntArray("[" + array1d + "]", (def.length > i) ? def[i] : new int[] {0});
 	        	}
 	        	
 	        	return result;
