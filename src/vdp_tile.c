@@ -51,6 +51,11 @@ bool VDP_loadTileSetEx(const TileSet *tileset, u16 index, u16 fromTile, u16 coun
 
         if (t == NULL) return FALSE;
 
+#if (LIB_LOG_LEVEL >= LOG_LEVEL_WARNING)
+        if (tm == DMA_QUEUE)
+            kprintf("VDP_loadTileSetEx warning: unsafe use of DMA_QUEUE with compressed tileset, use unpacked tileset or DMA_QUEUE_COPY instead.");
+#endif
+
         // tiles
         VDP_loadTileData(t->tiles + (fromTile * 8), index, count, tm);
         // be careful, we are releasing buffer here so DMA_QUEUE transfer isn't safe here, use DMA_QUEUE_COPY instead for safe operation
