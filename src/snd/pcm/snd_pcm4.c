@@ -88,7 +88,7 @@ NO_INLINE bool SND_PCM4_isPlaying(const u16 channel_mask)
     return ret;
 }
 
-NO_INLINE void SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPCMChannel channel, const u8 loop)
+NO_INLINE void SND_PCM4_startPlay(const u8 *sample, const u32 len, const SoundPCMChannel channel, const bool loop)
 {
     vu8 *pb;
     u8 status;
