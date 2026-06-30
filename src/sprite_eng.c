@@ -341,6 +341,8 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
 
     // update used VDP sprite
     usedVDPSprite += spriteDef->maxNumSprite;
+    // allocated
+    sprite->status = ALLOCATED | (flag & SPR_FLAG_MASK);
 
     // VDP sprite check enable ?
     if (usedVDPSprite & CHECK_VDP_SPRITE)
@@ -371,8 +373,6 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
             kprintf("SPR_addSpriteEx warning: exceeding maximum number of hardware sprite (currently used = %d)", usedSpr);
     }
 #endif
-
-    sprite->status = ALLOCATED | (flag & SPR_FLAG_MASK);
 
 #ifdef SPR_DEBUG
     KLog_U2("SPR_addSpriteEx: added sprite #", getSpriteIndex(sprite), " - internal position = ", sprite - spritesBank);
@@ -770,22 +770,22 @@ NO_INLINE u16** SPR_loadAllIndexes(const SpriteDefinition* sprDef, u16 index, u1
 NO_INLINE u16 SPR_loadAllTiles(const SpriteDefinition* sprDef, u16 index, u16** indexes, const TransferMethod tm)
 {
     Animation** anim = sprDef->animations;
-    const u16 numAnimation = sprDef->numAnimation;    
+    const u16 numAnimation = sprDef->numAnimation;
     // frame indexes pointer for current animation
     u16** animFrameIndexes = indexes;
     // start index
     u16 tileInd = index;
 
     for(u16 indAnim = 0; indAnim < numAnimation; indAnim++)
-    {        
+    {
         // get the frame indexes for this animation
         u16* frameIndexes = *animFrameIndexes++;
 
         AnimationFrame** frame = (*anim)->frames;
         const u16 numFrame = (*anim)->numFrame;
-        
+
         for(u16 indFrame = 0; indFrame < numFrame; indFrame++)
-        {            
+        {
             const u16 ind = *frameIndexes++;
 
             // new tileset ? (otherwise we will find a previous index)
