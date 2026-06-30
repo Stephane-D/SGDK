@@ -109,7 +109,7 @@
  *      will be accessed using BANK_getFarData(..) method (mapper.c). That may impact performance quite a bit
  *      it's why it's disabled by default if you don't require bank switch.
  */
-#define ENABLE_BANK_SWITCH      0
+#define ENABLE_BANK_SWITCH      1
 
 /**
  *  \brief
@@ -157,19 +157,19 @@
  *  \brief
  *      Set it to 1 if you want to use PORT_2 or PORT_EXT as Serial port COMM.
  */
-#define MODULE_SERIAL            0
+#define MODULE_SERIAL            1
 
 /**
  *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
  */
-#define MODULE_MEGAWIFI         0
+#define MODULE_MEGAWIFI         1
 #if MODULE_MEGAWIFI
 
 #define MEGAWIFI_IMPLEMENTATION_CROSS    0x01    // Cross (Serial)
 #define MEGAWIFI_IMPLEMENTATION_MW_CART  0x02    // MegaWiFi Cart: Defined to use MegaWiFi Cart distributions
 #define MEGAWIFI_IMPLEMENTATION_ED       0x04    // EverDrive: Defined to use EverDrive distributions (testing purposes)
-#define MEGAWIFI_IMPLEMENTATION       (MEGAWIFI_IMPLEMENTATION_CROSS | MEGAWIFI_IMPLEMENTATION_ED) // Set the implementation to use
+#define MEGAWIFI_IMPLEMENTATION       (MEGAWIFI_IMPLEMENTATION_CROSS|MEGAWIFI_IMPLEMENTATION_ED) // Set the implementation to use
 // Caution USING BOTH MW_CART AND EVERDRIVE IMPLEMENTATIONS MAY CAUSE ISSUES AS THEY BOTH USE SAME COMM VTABLE STRUCTURE
 // MAKE SURE TO TEST PROPERLY IF YOU ENABLE BOTH IMPLEMENTATIONS
 

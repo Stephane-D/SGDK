@@ -66,3 +66,4 @@ JAVA := java
 ECHO := echo
 SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
 RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+GIT := git
