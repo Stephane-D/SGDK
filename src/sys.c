@@ -1032,7 +1032,7 @@ void SYS_die(char *err, ...)
     SYS_setInterruptMaskLevel(7);
     VDP_init();
     VDP_setBackgroundColor(63);
-    VDP_drawText("A fatal error occured!", 9, 2);
+    VDP_drawText("A fatal error occurred!", 9, 2);
     VDP_drawText("cannot continue...", 11, 3);
 
     u8 y = 5;
