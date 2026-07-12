@@ -719,5 +719,69 @@ bool VDP_drawImage(VDPPlane plane, const Image *image, u16 x, u16 y);
  */
 bool VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u16 y, bool loadpal, bool dma);
 
+/**
+ * \brief
+ * Draw a signed 32-bit integer value in specified plane (advanced method).
+ *
+ * \param plane
+ * Plane where we want to draw the number.<br>
+ * Accepted values are:<br>
+ * - BG_A<br>
+ * - BG_B<br>
+ * - WINDOW<br>
+ * \param value
+ * The signed 32-bit integer value to draw.
+ * \param basetile
+ * Base tile attributes data (see TILE_ATTR() macro).
+ * \param x
+ * X position (in tile).
+ * \param y
+ * y position (in tile).
+ * \param tm
+ * Transfer method, using DMA_QUEUE or DMA_QUEUE_COPY ensure that it will be executed during VBlank.<br>
+ * Accepted values are:<br>
+ * - CPU<br>
+ * - DMA<br>
+ * - DMA_QUEUE<br>
+ * - DMA_QUEUE_COPY
+ *
+ * \see VDP_drawNumBG(..)
+ */
+void VDP_drawNumEx(VDPPlane plane, s32 value, u16 basetile, u16 x, u16 y, TransferMethod tm);
+/**
+ * \brief
+ * Draw a signed 32-bit integer value in specified plane.
+ *
+ * \param plane
+ * Plane where we want to draw the number.<br>
+ * Accepted values are:<br>
+ * - BG_A<br>
+ * - BG_B<br>
+ * - WINDOW<br>
+ * \param value
+ * The signed 32-bit integer value to draw.
+ * \param x
+ * X position (in tile).
+ * \param y
+ * y position (in tile).
+ *
+ * \see VDP_drawNumEx(..)
+ * \see VDP_drawNum(..)
+ */
+void VDP_drawNumBG(VDPPlane plane, s32 value, u16 x, u16 y);
+/**
+ * \brief
+ * Draw a signed 32-bit integer value.
+ *
+ * \param value
+ * The signed 32-bit integer value to draw.
+ * \param x
+ * X position (in tile).
+ * \param y
+ * y position (in tile).
+ *
+ * \see VDP_drawNumBG(..)
+ */
+void VDP_drawNum(s32 value, u16 x, u16 y);
 
 #endif // _VDP_BG_H_
