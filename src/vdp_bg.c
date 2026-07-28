@@ -509,3 +509,26 @@ bool VDP_drawImageEx(VDPPlane plane, const Image *image, u16 basetile, u16 x, u1
 
     return TRUE;
 }
+
+void VDP_drawNumEx(VDPPlane plane, s32 value, u16 basetile, u16 x, u16 y, TransferMethod tm)
+{
+    char str[16];
+
+    intToStr(value, str, 1);
+    
+    VDP_drawTextEx(plane, str, basetile, x, y, tm);
+}
+
+void VDP_drawNumBG(VDPPlane plane, s32 value, u16 x, u16 y)
+{
+    char str[16];
+
+    intToStr(value, str, 1);
+
+    VDP_drawTextBG(plane, str, x, y);
+}
+
+void VDP_drawNum(s32 value, u16 x, u16 y)
+{
+    VDP_drawNumBG(text_plan, value, x, y);
+}
