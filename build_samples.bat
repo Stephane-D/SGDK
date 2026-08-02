@@ -80,6 +80,10 @@ SET "GDK_WIN=%cd%"
 @cd %GDK_WIN%\sample\game\sonic
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
 
+@ECHO Building game\gentris...
+@cd %GDK_WIN%\sample\game\gentris
+%GDK_WIN%\bin\make -f %GDK%/makefile.gen
+
 @ECHO Building joy-test...
 @cd %GDK_WIN%\sample\joy-test
 %GDK_WIN%\bin\make -f %GDK%/makefile.gen
