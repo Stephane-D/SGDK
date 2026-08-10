@@ -30,7 +30,7 @@ void Figure_DrawActive(void)
             {
                 posX = (FIELD_X + g_activeFig.x + col) * 8;
 
-                if (g_glassShakeEnabled)
+                if (g_game.g_glassShakeEnabled)
                     spriteShiftY = g_glassShakeTable[g_glassShakeType][g_glassShakeInd][0];
 
                 posY = (FIELD_Y + g_activeFig.y + row) * 8 - spriteShiftY;
@@ -77,8 +77,8 @@ void Figure_DropHard(void)
 void Figure_FixRemoveSpawn(void)
 {
     Figure_Fix();
-
-    g_canSpawnFigure = true;
+    
+    g_activeFig.canSpawn = true;
 
     g_rowsToRemoveCount = Figure_GetRowsBlockToRemove(&g_rowsBlockToRemove);
 
@@ -95,7 +95,7 @@ void Figure_FixRemoveSpawn(void)
     if (g_rowsBlockToRemove.lines[0])
     {
         g_rowsRemoveDownCounter = ROW_REMOVE_FX_DELAY;
-        g_canSpawnFigure = false;
+        g_activeFig.canSpawn = false;
         g_score.counter = 0;
         Sound_PlayRowRemoved();
     }
@@ -108,15 +108,17 @@ void Figure_Spawn(void)
 
     Input_Enable();
     
-    g_activeFig.type = g_nextFigType;
-    g_nextFigType = Figure_GetNextType();
+    g_activeFig.type = g_activeFig.nextFigType;
+    g_activeFig.nextFigType = Figure_GetNextType();
     g_activeFig.rot = 0;
     g_activeFig.x = 3;   // centered in 10-wide field
     g_activeFig.y = 0;
     g_activeFig.fixTimer = 0;
     g_activeFig.grounded = false;
     g_activeFig.fixed = false;
-
+    
+    g_palRowRemoving = PAL0;
+    
     HUD_DrawNextFigure();
 }
 
@@ -244,7 +246,7 @@ u8 Figure_GetNextType(void)
 {
     if (g_bagIndex >= 7)
         Figure_ShuffleBag();
-
+    
     return g_figuresBag[g_bagIndex++];
 }
 

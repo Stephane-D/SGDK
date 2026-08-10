@@ -14,11 +14,16 @@ void Menu_40Lines_Hide(void);
 void Menu_OnOptions_Show(void);
 void Menu_OnOptions_Hide(void);
 
-void TitleMenuState_OnUpdate(void);
-void OptionsState_OnUpdate(void);
-void PauseMenuState_OnUpdate(void);
-void GameOverMenuState_OnUpdate(void);
-void CompletionMenuState_OnUpdate(void);
+void StateClbk_TitleMenuOnUpdate(void);
+void StateClbk_OptionsOnUpdate(void);
+void StateClbk_PauseMenuOnUpdate(void);
+void StateClbk_GameOverMenuOnUpdate(void);
+void StateClbk_CompletionMenuOnUpdate(void);
+
+void StateClbk_TitleMenuOnEnter(void);
+void StateClbk_TitleMenuOnExit(void);
+void StateClbk_OptionsOnEnter(void);
+void StateClbk_OptionsOnExit(void);
 
 void Menu_InGame_Show(void);
 

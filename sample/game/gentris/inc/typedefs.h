@@ -1,17 +1,11 @@
 #ifndef HEADER_TYPEDEFS
 #define HEADER_TYPEDEFS
 
+#include "src/nfsm/nfsm.h"
+#include "input.h"
+#include "src/ui/menu.h"
+#include "defs.h"
 #include <genesis.h>
-
-
-typedef enum GameState GameState;
-
-// Game mode selection
-typedef enum
-{
-    MODE_CLASSIC = 0,   // Endless classic Tetris mode
-    MODE_40LINES,       // Time attack - clear 40 lines as fast as possible
-} GameMode;
 
 // Direction enumeration for collision detection
 typedef enum
@@ -22,6 +16,36 @@ typedef enum
     DIR_UP,             // Collision above
     DIR_DOWN,           // Collision below
 } Direction;
+
+// Game mode selection
+typedef enum
+{
+    MODE_CLASSIC = 0,   // Endless classic Tetris mode
+    MODE_40LINES,       // Time attack - clear 40 lines as fast as possible
+} GameMode;
+
+typedef enum GameState
+{
+    ST_GAME_TITLE_MENU,
+    ST_GAME_LOAD_RES,
+    ST_GAME_GAMEPLAY,
+    ST_GAME_PAUSED,
+    ST_GAME_FINISHED,
+    ST_GAME_OPTIONS_MENU,
+    ST_GAME_GAME_OVER,
+    ST_GAME_COUNT,
+} GameState;
+
+typedef struct
+{
+    NFSM fsm;
+    NFSM_State states[ST_GAME_COUNT];
+    GameMode gameMode;                  // Current game mode (classic or 40-lines)
+    s16 blockPatternType;               // Block pattern type
+    u16 soundRowRemovingTone;           // Base frequency for row removal sound
+    bool isSoundOn;                     // Enable/disable sound effects
+    bool g_glassShakeEnabled;           // Enable/disable screen shake effect
+} GameConfig;
 
 // Collision type enumeration
 typedef enum
@@ -48,6 +72,8 @@ typedef struct
     u8 fixTimer;        // Frames until figure locks in place
     bool grounded;      // True if figure is touching bottom/other pieces
     bool fixed;         // True if figure has been placed permanently
+    bool canSpawn;      // Flag to spawn next figure
+    u16 nextFigType;    // Next figure type to spawn
 } Figure;
 
 // Block of rows to be removed
@@ -78,12 +104,13 @@ typedef struct
 typedef struct
 {
     u16 figuresFixed;   // Total figures placed
-    u16 nextFixTimer;   // Timer for next fix event
     u16 tetris[5];      // Count of 0-4 line clears (tetris[4] = 4-line clear count)
     u16 combo;          // Current combo counter (consecutive line clears)
     u16 maxCombo;       // Maximum combo achieved
     u32 seconds;        // Elapsed time in seconds
     u32 secondsStart;   // Game start time
+    u16 level;        // Current level
 } Stats;
+
 
 #endif // HEADER_TYPEDEFS

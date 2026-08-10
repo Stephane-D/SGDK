@@ -5,6 +5,7 @@
 #include "menu_man.h"
 #include "input.h"
 
+
 // Display in-game menu if input is enabled
 void Menu_InGame_Show(void)
 {
@@ -80,36 +81,66 @@ void Menu_40Lines_Hide(void) {
 }
 
 // Render in-game menu
-void PauseMenuState_OnUpdate(void)
+void StateClbk_PauseMenuOnUpdate(void)
 {
     Menu_UpdateDisplay(&g_inGameMenu);
     SYS_doVBlankProcess();
 }
 
 // Render game over menu
-void GameOverMenuState_OnUpdate(void)
+void StateClbk_GameOverMenuOnUpdate(void)
 {
     Menu_UpdateDisplay(&g_gameOverMenu);
     SYS_doVBlankProcess();
 }
 
 // Render title menu
-void TitleMenuState_OnUpdate(void)
+void StateClbk_TitleMenuOnUpdate(void)
 {
     Menu_UpdateDisplay(&g_titleMenu);
     SYS_doVBlankProcess();
 }
 
 // Render options menu
-void OptionsState_OnUpdate(void)
+void StateClbk_OptionsOnUpdate(void)
 {
     Menu_UpdateDisplay(&g_optionsMenu);
     SYS_doVBlankProcess();
 }
 
 // Render 40-line completion menu
-void CompletionMenuState_OnUpdate(void)
+void StateClbk_CompletionMenuOnUpdate(void)
 {
     Menu_UpdateDisplay(&g_40LinesCompletionMenu);
     SYS_doVBlankProcess();
+}
+
+// Title menu on start callback - display title menu
+void StateClbk_TitleMenuOnEnter(void)
+{
+    Menu_Show(&g_titleMenu);
+    PAL_fadeInAll(g_palettes, MENU_FADE_DURATION, false);
+    Input_Enable();
+}
+
+// Transition from title menu - fade out, load tiles, initialize game field
+void StateClbk_TitleMenuOnExit(void)
+{
+    Input_Disable();
+    PAL_fadeOutAll(MENU_FADE_DURATION, false);
+}
+
+// Options menu on start callback - display options menu
+void StateClbk_OptionsOnEnter(void)
+{
+    Menu_Show(&g_optionsMenu);
+    PAL_fadeInAll(g_palettes, MENU_FADE_DURATION, false);
+    Input_Enable();
+}
+
+// Options menu on exit callback - fade out, display title menu
+void StateClbk_OptionsOnExit(void)
+{
+    Input_Disable();
+    PAL_fadeOutAll(MENU_FADE_DURATION, false);
 }

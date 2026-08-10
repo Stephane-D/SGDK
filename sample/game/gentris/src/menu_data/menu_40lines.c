@@ -28,12 +28,12 @@ MenuPage g_40LinesCompletionMenu =
         .menuItems = {
             {
                 10, 3, "Restart",
-                {{.value = 0,                            0, 0,  0, .Callback = Game_Restart}},                          MIT_S16
+                {{.value = 0, 0, 0, 0, .Callback = Game_Restart}}, MIT_S16
             },
             
             {
                 10, 4, "Exit to Title",
-                {{.value = 0,                            0, 0,  0, .Callback = Game_Reset}},                          MIT_S16
+                {{.value = 0, 0, 0, 0, .Callback = Game_Reset}},   MIT_S16
             },
         },
     };

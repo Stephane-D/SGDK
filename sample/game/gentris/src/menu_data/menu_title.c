@@ -28,18 +28,18 @@ MenuPage g_titleMenu =
         .menuItems = {
             {
                 11, 4, "Classic Mode",
-                {{.value = 0,                            0, 0,  0, .Callback = Game_RestartClassic}},                          MIT_S16
+                {{.value = 0, 0, 0, 0, .Callback = Game_ModeRestartClassic}},  MIT_S16
             },
             
             {
                 11, 6, "40Lines Mode",
-                {{.value = 0,                            0, 0,  0, .Callback = Game_Restart40}},                          MIT_S16
+                {{.value = 0, 0, 0, 0, .Callback = Game_ModeRestart40}},       MIT_S16
             },
             {
                 11, 8, "  Options",
-                {{.value = 0,                            0, 0,  0, .Callback = GameState_SetOptionsMenu}}, MIT_S16
+                {{.value = 0, 0, 0, 0, .Callback = Game_SetStateOptionsMenu}}, MIT_S16
             },
-
+            
         },
     };
 

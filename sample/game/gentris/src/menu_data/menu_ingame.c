@@ -20,23 +20,23 @@ MenuPage g_inGameMenu =
             .prio = true,
             .titleText = " PAUSED ",
         },
-
+        
         .isCycledCursor = true,
         .OnHideCallback = Menu_OnInGame_Hide,
         .OnShowCallback = Menu_OnInGame_Show,
         .menuItems = {
             {8, 3, "Shake             %s",
-                    {.boolValue = {(void*) &(g_glassShakeEnabled), true }},
-                    MIT_BOOL
-                },
-            {8, 5, "Sound             %s",
-                    {.boolValue = { (void*) &(g_game.isSoundOn), true }},
+                {.boolValue = {(void*) &(g_game.g_glassShakeEnabled), true}},
                 MIT_BOOL
-                },
+            },
+            {8, 5, "Sound             %s",
+                {.boolValue = {(void*) &(g_game.isSoundOn), true}},
+                MIT_BOOL
+            },
             {8, 8, "Exit to Title",
-                    {{.value = 0,0, 0,  0, .Callback = Game_Reset}},
-                    MIT_S16
-                },
+                {{.value = 0, 0, 0, 0, .Callback = Game_Reset}},
+                MIT_S16
+            },
         },
     };
 

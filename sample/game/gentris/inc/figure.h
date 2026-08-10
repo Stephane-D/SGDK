@@ -1,6 +1,8 @@
 #ifndef HEADER_FIGURE
 #define HEADER_FIGURE
 
+#include "typedefs.h"
+
 void Figure_DrawActive(void);
 void Figure_DropHard(void);
 void Figure_FixRemoveSpawn(void);

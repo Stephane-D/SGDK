@@ -9,33 +9,29 @@
 #include "glass.h"
 #include "figure.h"
 #include "hud.h"
+#include "sound.h"
 
 
 // Macro to simplify state transitions in the game FSM
 #define GAME_SET_STATE(STATE_ENUM_ID)  NFSM_TransitToState(&g_game.fsm, &g_game.states[STATE_ENUM_ID])
 
 // Function prototypes for internal static functions
-static void ResetGameSettings(void);
-static void GameConfig_Init(void);
-static void Stats_Update(void);
+static void Game_ConfigInit(void);
 static void UpdatePhysics(void);
 static void RowsRemovingUpdate(void);
 static void ResetField(void);
-static void GameOver(void);
+static void EnterGameOver(void);
+static void UpdateGameOver(void);
 static void InitSystem(void);
 static void InitData(void);
-static void ResetStates(void);
-static void TitleMenuState_OnEnter(void);
-static void TitleMenuState_OnExit(void);
-static void OptionsState_OnEnter(void);
-static void OptionsState_OnExit(void);
-static void LoadResState_OnEnter(void);
+static void SetupStates(void);
+static void LoadRes(void);
 
 
 // Initialize game system and data
 void Game_Init(void)
 {
-    GameConfig_Init();
+    Game_ConfigInit();
     InitSystem();
     InitData();
 }
@@ -47,105 +43,18 @@ void Game_MainLoop(void)
         NFSM_Update(&g_game.fsm);
 }
 
-// Set game paused state and switch between paused and main loop states
-void Game_SetPaused(bool state)
+// Initialize game configuration defaults and zero global game struct
+static void Game_ConfigInit(void)
 {
-    if (state)
-        GAME_SET_STATE(ST_GAME_PAUSED);
-    else
-        GAME_SET_STATE(ST_GAME_GAMEPLAY);
-}
-
-// Perform hard reset of the system
-void Game_Reset(s16 noUse)
-{
-    SYS_hardReset();
-}
-
-// Restart game with field reset and stats cleared
-void Game_ResetStats(s16 noUse)
-{
-    ResetField();
-    g_activeFig.x = 3;
-    g_activeFig.y = 0;
-    g_activeFig.rot = 0;
-    g_input.dropType = NO_DROP;
-
-    g_stats.maxCombo = 0;
-    g_stats.combo = 0;
-    g_score.lines = 0;
-    g_score.score = 0;
-    g_level = 0;
-    memset(g_stats.tetris, 0, sizeof(g_stats.tetris));
+    // Clear whole structure to ensure deterministic defaults
+    memset(&g_game, 0, sizeof(g_game));
     
-    g_stats.secondsStart = getTime(0);
-}
-
-// Restart game in classic mode
-void Game_RestartClassic(s16 noUse)
-{
-    GAME_SET_STATE(ST_GAME_LOAD_RES);
-    Game_ResetStats(NULL);
+    // sensible defaults
+    g_game.isSoundOn = true;
+    g_game.g_glassShakeEnabled = true;
     g_game.gameMode = MODE_CLASSIC;
-}
-
-// Restart game in 40-lines mode
-void Game_Restart40(s16 noUse)
-{
-    GAME_SET_STATE(ST_GAME_LOAD_RES);
-    Game_ResetStats(NULL);
-    g_game.gameMode = MODE_40LINES;
-    VDP_drawText("       ", BORDER_STAT_X + 3, BORDER_STAT_Y + 17);
-    HUD_TimeDraw();
-}
-
-// Restart game
-void Game_Restart(s16 noUse)
-{
-    GAME_SET_STATE(ST_GAME_GAMEPLAY);
-    Game_ResetStats(NULL);
-    Glass_RedrawDirty();
-    HUD_ScoreRedraw();
-}
-
-// Set game state to title menu
-void GameState_SetTitleMenu(s16 noUse)
-{
-    GAME_SET_STATE(ST_GAME_TITLE_MENU);
-}
-
-// Set game state to options menu
-void GameState_SetOptionsMenu(s16 noUse)
-{
-    GAME_SET_STATE(ST_GAME_OPTIONS_MENU);
-}
-
-// Gameplay loop update - handles input, physics, rendering
-static void GameplayState_OnUpdate(void)
-{
-    // Update game statistics and timers
-    Stats_Update();
-    
-    // Update input state and handle user actions
-    Input_HoldingUpdate();
-    
-    // Update figure position and check for collisions
-    UpdatePhysics();
-    
-    // Update screen shake effect if enabled
-    Glass_UpdateShake();
-    
-    // Update row removal animation and check for completed rows
-    RowsRemovingUpdate();
-    
-    // Redraw dirty rows in the game field
-    Glass_RedrawDirty();
-    
-    // Draw the currently active falling figure
-    Figure_DrawActive();
-    
-    // Update system state
-    SYS_doVBlankProcess();
+    g_game.blockPatternType = BLOCK_PTRN_FLAT1;
+    g_game.soundRowRemovingTone = DEFAULT_ROW_REMOVAL_TONE;
 }
 
 // Initialize Sega Genesis hardware - Z80, sound, video settings
@@ -179,112 +88,176 @@ static void InitSystem(void)
 // Initialize game data - create menus and reset game states
 static void InitData(void)
 {
+    // Create menus for title, in-game, and game over screens
     Menu_Create(&g_titleMenu);
     Menu_Create(&g_inGameMenu);
     Menu_Create(&g_gameOverMenu);
-    ResetStates();
+    
+    // Set up state machine callbacks
+    SetupStates();
+}
+
+// Perform hard reset of the system
+void Game_Reset(s16 noUse)
+{
+    PSG_reset();
+    SYS_hardReset();
+}
+
+// Restart game with field reset and stats cleared
+void ResetStats(s16 noUse)
+{
+    ResetField();
+    g_activeFig.x = 3;
+    g_activeFig.y = 0;
+    g_activeFig.rot = 0;
+    g_input.dropType = NO_DROP;
+    
+    memset(&g_score, 0, sizeof(g_score));
+    memset(&g_stats, 0, sizeof(g_stats));
+    
+    g_stats.secondsStart = getTime(0);
+}
+
+// Restart game in classic mode
+void Game_ModeRestartClassic(s16 noUse)
+{
+    GAME_SET_STATE(ST_GAME_LOAD_RES);
+    PSG_reset();
+    ResetStats(NULL);
+    g_game.gameMode = MODE_CLASSIC;
+}
+
+// Restart game in 40-lines mode
+void Game_ModeRestart40(s16 noUse)
+{
+    g_game.gameMode = MODE_40LINES;
+    PSG_reset();
+    GAME_SET_STATE(ST_GAME_LOAD_RES);
+    ResetStats(NULL);
+}
+
+// Restart game
+void Game_Restart(s16 noUse)
+{
+    PSG_reset();
+    GAME_SET_STATE(ST_GAME_GAMEPLAY);
+    ResetStats(NULL);
+    Glass_RedrawDirty();
+    HUD_ScoreRedraw();
+}
+
+// Set game paused state and switch between paused and main loop states
+void Game_SetPaused(bool state)
+{
+    if (state)
+        GAME_SET_STATE(ST_GAME_PAUSED);
+    else
+        GAME_SET_STATE(ST_GAME_GAMEPLAY);
+}
+
+// Set game state to title menu
+void Game_SetStateTitleMenu(s16 noUse)
+{
+    GAME_SET_STATE(ST_GAME_TITLE_MENU);
+}
+
+// Set game state to options menu
+void Game_SetStateOptionsMenu(s16 noUse)
+{
+    GAME_SET_STATE(ST_GAME_OPTIONS_MENU);
+}
+
+// Gameplay loop update - handles input, physics, rendering
+static void UpdateGameplay(void)
+{
+    // Update input state and handle user actions
+    Input_HoldingUpdate();
+    
+    // Update figure position and check for collisions
+    UpdatePhysics();
+    
+    // Update screen shake effect if enabled
+    Glass_UpdateShake();
+    
+    // Update row removal animation and check for completed rows
+    RowsRemovingUpdate();
+    
+    // Redraw dirty rows in the game field
+    Glass_RedrawDirty();
+    
+    // Draw the currently active falling figure
+    Figure_DrawActive();
+    
+    // Update system state
+    SYS_doVBlankProcess();
 }
 
 // Setup game state machine with callbacks for each game state
-static void ResetStates(void)
+static void SetupStates(void)
 {
     JOY_setEventHandler(OnInputCallback_InGame);
-//    ResetGameSettings();
-
+    
     // Init game states
     // Title menu state
-    g_game.states[ST_GAME_TITLE_MENU].OnEnter = TitleMenuState_OnEnter;
-    g_game.states[ST_GAME_TITLE_MENU].OnUpdate = TitleMenuState_OnUpdate;
-    g_game.states[ST_GAME_TITLE_MENU].OnExit = TitleMenuState_OnExit;
+    g_game.states[ST_GAME_TITLE_MENU].OnEnter = StateClbk_TitleMenuOnEnter;
+    g_game.states[ST_GAME_TITLE_MENU].OnUpdate = StateClbk_TitleMenuOnUpdate;
+    g_game.states[ST_GAME_TITLE_MENU].OnExit = StateClbk_TitleMenuOnExit;
     
     // Options menu state
-    g_game.states[ST_GAME_OPTIONS_MENU].OnEnter = OptionsState_OnEnter;
-    g_game.states[ST_GAME_OPTIONS_MENU].OnUpdate = OptionsState_OnUpdate;
-    g_game.states[ST_GAME_OPTIONS_MENU].OnExit = OptionsState_OnExit;
+    g_game.states[ST_GAME_OPTIONS_MENU].OnEnter = StateClbk_OptionsOnEnter;
+    g_game.states[ST_GAME_OPTIONS_MENU].OnUpdate = StateClbk_OptionsOnUpdate;
+    g_game.states[ST_GAME_OPTIONS_MENU].OnExit = StateClbk_OptionsOnExit;
     
     // Load resources state
-    g_game.states[ST_GAME_LOAD_RES].OnEnter = LoadResState_OnEnter;
+    g_game.states[ST_GAME_LOAD_RES].OnEnter = LoadRes;
     g_game.states[ST_GAME_LOAD_RES].OnUpdate = NULL;
     g_game.states[ST_GAME_LOAD_RES].OnExit = NULL;
     g_game.states[ST_GAME_LOAD_RES].nextState = &g_game.states[ST_GAME_GAMEPLAY];
     
     // Gameplay state
     g_game.states[ST_GAME_GAMEPLAY].OnEnter = NULL;
-    g_game.states[ST_GAME_GAMEPLAY].OnUpdate = GameplayState_OnUpdate;
+    g_game.states[ST_GAME_GAMEPLAY].OnUpdate = UpdateGameplay;
     g_game.states[ST_GAME_GAMEPLAY].OnExit = NULL;
     
     // Paused menu state
     g_game.states[ST_GAME_PAUSED].OnEnter = NULL;
-    g_game.states[ST_GAME_PAUSED].OnUpdate = PauseMenuState_OnUpdate;
+    g_game.states[ST_GAME_PAUSED].OnUpdate = StateClbk_PauseMenuOnUpdate;
     g_game.states[ST_GAME_PAUSED].OnExit = NULL;
     
     // 40Lines game finished menu state
     g_game.states[ST_GAME_FINISHED].OnEnter = NULL;
-    g_game.states[ST_GAME_FINISHED].OnUpdate = CompletionMenuState_OnUpdate;
+    g_game.states[ST_GAME_FINISHED].OnUpdate = StateClbk_CompletionMenuOnUpdate;
     g_game.states[ST_GAME_FINISHED].OnExit = NULL;
     
     // Game over menu state
-    g_game.states[ST_GAME_GAME_OVER].OnEnter = NULL;
-    g_game.states[ST_GAME_GAME_OVER].OnUpdate = GameOverMenuState_OnUpdate;
+    g_game.states[ST_GAME_GAME_OVER].OnEnter = EnterGameOver;
+    g_game.states[ST_GAME_GAME_OVER].OnUpdate = UpdateGameOver;
     g_game.states[ST_GAME_GAME_OVER].OnExit = NULL;
 
     // Set initial state to title menu
     GAME_SET_STATE(ST_GAME_TITLE_MENU);
 }
 
-// Title menu on start callback - display title menu
-static void TitleMenuState_OnEnter(void)
-{
-    Menu_Show(&g_titleMenu);
-    PAL_fadeInAll(g_palettes, MENU_FADE_DURATION, false);
-    Input_Enable();
-}
-
-// Transition from title menu - fade out, load tiles, initialize game field
-static void TitleMenuState_OnExit(void)
-{
-    Input_Disable();
-    PAL_fadeOutAll(MENU_FADE_DURATION, false);
-}
-
-// Options menu on start callback - display options menu
-static void OptionsState_OnEnter(void)
-{
-    Menu_Show(&g_optionsMenu);
-    PAL_fadeInAll(g_palettes, MENU_FADE_DURATION, false);
-    Input_Enable();
-}
-
-// Options menu on exit callback - fade out, display title menu
-static void OptionsState_OnExit(void)
-{
-    Input_Disable();
-    PAL_fadeOutAll(MENU_FADE_DURATION, false);
-}
-
 // Gameplay on start callback - display gameplay
-static void LoadResState_OnEnter(void)
+static void LoadRes(void)
 {
+    // Generate tile graphics for blocks and UI elements
     Graphics_GenerateTiles();
     
-    Glass_DrawBorder();
+    Hud_DrawGlassAndBorders();
     HUD_ScoreRedraw();
     VDP_setBackgroundColor(19);
     
+    // Clear game field and reset figure bag for new game
     ResetField();
     Figure_ShuffleBag();
     
-    g_nextFigType = Figure_GetNextType();
+    g_activeFig.nextFigType = Figure_GetNextType();
     Figure_Spawn();
     
     PAL_fadeInAll(g_palettes, MENU_FADE_DURATION, false);
     Input_Enable();
-}
-
-// GameplayState_OnUpdate game statistics (next fix timer)
-static void Stats_Update(void)
-{
-    g_stats.nextFixTimer++;
 }
 
 // Handle figure gravity and collision - move figure down each frame
@@ -304,7 +277,7 @@ static void UpdatePhysics(void)
     // Process figure falling when counter reaches zero
     if (!g_fallDownCounter)
     {
-        g_fallDownCounter = g_figFallFrameDelay[g_level];
+        g_fallDownCounter = g_figFallFrameDelay[g_stats.level];
         g_activeFig.y++;
 
         if (g_game.gameMode == MODE_40LINES)
@@ -351,16 +324,16 @@ static void RowsRemovingUpdate(void)
         switch (g_rowsToRemoveCount)
         {
             case 1:
-                g_score.target = SCORE_BASE_SINGLE * (g_level + 1);
+                g_score.target = SCORE_BASE_SINGLE * (g_stats.level + 1);
                 break;
             case 2:
-                g_score.target = SCORE_BASE_DOUBLE * (g_level + 1);
+                g_score.target = SCORE_BASE_DOUBLE * (g_stats.level + 1);
                 break;
             case 3:
-                g_score.target = SCORE_BASE_TRIPLE * (g_level + 1);
+                g_score.target = SCORE_BASE_TRIPLE * (g_stats.level + 1);
                 break;
             case 4:
-                g_score.target = SCORE_BASE_TETRIS * (g_level + 1);
+                g_score.target = SCORE_BASE_TETRIS * (g_stats.level + 1);
                 break;
             default:
                 break;
@@ -370,26 +343,9 @@ static void RowsRemovingUpdate(void)
         g_score.score += g_score.step;
         g_score.counter += g_score.step;
 
-        // Play row removal sound if enabled
-        if (g_game.isSoundOn)
-        {
-            if (g_rowsToRemoveCount < 4)
-            {
-                if (g_rowsRemoveDownCounter == ROW_REMOVE_FX_DELAY / 9 * 1)
-                    PSG_setEnvelope(1, PSG_ENVELOPE_MIN);
-                else
-                    PSG_setTone(1, g_game.soundRowRemovingTone + (g_rowsRemoveDownCounter + 10) * 30);
-            }
-            else
-            {
-                PSG_setTone(1, g_game.soundRowRemovingTone - (g_rowsRemoveDownCounter + 10) * 497);
-            }
-            
-            if (g_rowsRemoveDownCounter == ROW_REMOVE_FX_DELAY / 2)
-                PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
-        }
-
-
+        // Play row removal sound
+        Sound_UpdateRowRemoved();
+        
         if (!g_rowsRemoveDownCounter)
         {
             // Add final score increment to reach target
@@ -403,8 +359,8 @@ static void RowsRemovingUpdate(void)
             if (removedLines)
             {
                 g_score.lines += removedLines;
-                g_level = g_score.lines / NEXT_LEVEL_LINES;
-                g_canSpawnFigure = true;
+                g_stats.level = g_score.lines / NEXT_LEVEL_LINES;
+                g_activeFig.canSpawn = true;
             }
             memset(&g_rowsBlockToRemove, 0, sizeof(g_rowsBlockToRemove));
 
@@ -423,60 +379,43 @@ static void RowsRemovingUpdate(void)
     }
     
     // Spawn next figure if removal animation is complete
-    if (g_canSpawnFigure)
+    if (g_activeFig.canSpawn)
     {
-        g_canSpawnFigure = false;
+        g_activeFig.canSpawn = false;
         Figure_Spawn();
 
         FigCollision fiCol = Figure_GetCollision(&g_activeFig);
+        
         if (fiCol.type == COL_FIGURE)
-            GameOver();
+            GAME_SET_STATE(ST_GAME_GAME_OVER);
     }
 }
 
 // Clear playing field and reset level/score data
 static void ResetField(void)
 {
+    // Clear the game field and row masks
     memset(g_blockField, 0, sizeof(g_blockField));
+    // Clear row masks to indicate no filled rows
     memset(g_rowMask, 0, sizeof(g_rowMask));
+    // Mark all rows as dirty for redrawing
     memset(g_dirtyRows, 1, sizeof(g_dirtyRows));
-    
-    g_score.lines = 0;
-    g_level = 0;
 }
 
 // End game and show game over menu
-static void GameOver()
+static void EnterGameOver()
 {
     // force offscreen
     if (Figure_IsCollided(&g_activeFig))
         g_activeFig.y = -10;
-
-    PSG_reset();
-
-    GAME_SET_STATE(ST_GAME_GAME_OVER);
+    
+    Sound_PlayGameOver();
     Menu_Show(&g_gameOverMenu);
 }
 
-// Initialize game settings - enable input and sound
-static void ResetGameSettings(void)
+// End game and show game over menu
+static void UpdateGameOver()
 {
-    Input_Enable();
-    g_game.isSoundOn = true;
-    g_game.soundRowRemovingTone = DEFAULT_ROW_REMOVAL_TONE;
+    Sound_UpdateGameOver();
+    StateClbk_GameOverMenuOnUpdate();
 }
-
-// Initialize game configuration defaults and zero global game struct
-static void GameConfig_Init(void)
-{
-    // Clear whole structure to ensure deterministic defaults
-    memset(&g_game, 0, sizeof(g_game));
-
-    // sensible defaults
-    g_game.isSoundOn = true;
-    g_game.gameMode = MODE_CLASSIC;
-    g_game.blockPatternType = BLOCK_PTRN_FLAT1;
-    g_game.soundRowRemovingTone = DEFAULT_ROW_REMOVAL_TONE;
-    // states and fsm will be initialized in ResetStates()/NFSM init flow
-}
-
