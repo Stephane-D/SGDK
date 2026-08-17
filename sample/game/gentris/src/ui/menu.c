@@ -1,6 +1,10 @@
 #include "menu.h"
 #include "desk.h"
 
+static void updateActiveItem(MenuPage* menu);
+inline static MenuItem* getMenuItem(u8 itemIndex);
+inline static void drawMenuItemText(MenuPage* menu, u8 itemIndex, char* text);
+
 
 static u8 menuItemsCount = 0;
 static u8 menuActiveLine = 0;
@@ -65,7 +69,7 @@ void Menu_UpdateDisplay(MenuPage* menu)
     if (menu->state == UI_HIDDEN)
         return;
     
-    updateMenuVDP(menu);
+    updateActiveItem(menu);
 }
 
 // Reset menu selection state to first item
@@ -130,14 +134,14 @@ void Menu_InitEx(MenuPage* menu, MenuItem* items, u16 itemCount, char* pointer)
     resetMenu(menu);
 }
 
-inline static MenuItem* Menu_GetItem(u8 itemIndex)
+inline static MenuItem* getMenuItem(u8 itemIndex)
 {
     return menuItems + itemIndex;
 }
 
-inline static void Menu_ItemDrawText(MenuPage* menu, u8 itemIndex, char* text)
+inline static void drawMenuItemText(MenuPage* menu, u8 itemIndex, char* text)
 {
-    MenuItem* item = Menu_GetItem(itemIndex);
+    MenuItem* item = getMenuItem(itemIndex);
 
     s16 x = menu->desk.x + menu->desk.offsetX / 8;
     s16 y = menu->desk.y + menu->desk.offsetY / 8;
@@ -151,9 +155,9 @@ void Menu_SetPosition(MenuPage* menu, s16 x, s16 y)
     menu->desk.y = y;
 }
 
-void Menu_CalcItemBufferText(MenuPage* menu, u8 itemIndex)
+void fillMenuItemTextBuffer(MenuPage* menu, u8 itemIndex)
 {
-    MenuItem* item = Menu_GetItem(itemIndex);
+    MenuItem* item = getMenuItem(itemIndex);
     
     switch (item->type)
     {
@@ -204,24 +208,27 @@ void resetMenu(MenuPage* menu)
     for (u16 i = 0; i < menuItemsCount; i++)
     {
         // Generate inGameMenu textValue and draw
-        Menu_CalcItemBufferText(menu, i);
-        Menu_ItemDrawText(menu, i, menuLineBuffer);
+        fillMenuItemTextBuffer(menu, i);
+        drawMenuItemText(menu, i, menuLineBuffer);
     }
-    Menu_CalcItemBufferText(menu, menuActiveLine);
+    fillMenuItemTextBuffer(menu, menuActiveLine);
 }
 
-void updateMenuVDP(MenuPage* menu)
+static void updateActiveItem(MenuPage* menu)
 {
-    
     s16 x = menu->desk.x + menu->desk.offsetX / 8;
     s16 y = menu->desk.y + menu->desk.offsetY / 8;
+    
     // Clear pointer tile
     MenuItem* item = menuItems + menuLineOld;
     VDP_drawTextBG(menu->desk.bg, " ", (x + item->x) - 2, y + item->y);
-    // GameplayState_OnUpdate current line tiles
+    
+    // Calculate current line item ptr
     item = menuItems + menuActiveLine;
+    // Draw pointer tile
     VDP_drawTextBG(menu->desk.bg, menuPointer, (x + item->x) - 2, y + item->y);
-    Menu_ItemDrawText(menu, menuActiveLine, menuLineBuffer);
+    // Redraw current line text
+    drawMenuItemText(menu, menuActiveLine, menuLineBuffer);
 }
 
 void Menu_UpdateItems(MenuPage* menu, u16 joypad, u16 changed, u16 state)
@@ -381,6 +388,6 @@ void Menu_UpdateItems(MenuPage* menu, u16 joypad, u16 changed, u16 state)
             menuActiveLine = 0;
     }
 
-    Menu_CalcItemBufferText(menu, menuActiveLine);
+    fillMenuItemTextBuffer(menu, menuActiveLine);
 }
 

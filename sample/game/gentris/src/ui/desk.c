@@ -1,3 +1,4 @@
+#include <genesis.h>
 #include "desk.h"
 #include "window.h"
 #include "defs.h"

@@ -79,9 +79,11 @@ const u16 g_palettes[64] = {
         0x04F,
 };
 
+// Frame delay for falling pieces - controls the speed of piece descent
 const u16 g_figFallFrameDelay[] = {
         48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1};
 
+// Glass shake effect offsets for different drop types - used to create a visual shake when pieces land
 const s16 g_glassShakeTable[4][GLASS_SHAKE_FRAMES_Y][GLASS_WIDTH] = {
         [NO_DROP] = {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
@@ -180,23 +182,18 @@ u8 g_figuresBag[7];
 u8 g_bagIndex = 7;
 u16 g_fallDownCounter = g_figFallFrameDelay[0];
 
-bool g_glassShakeEnabled = true;
 u16 g_glassShakeInd;
 s16 g_glassShakeType = MID_SHAKE;
-
-u16 g_level = 0;
 
 Score g_score;
 Stats g_stats;
 
 char g_timeStrBuf[18];
 
-bool g_canSpawnFigure;
 u16 g_rowsRemoveDownCounter = ROW_REMOVE_FX_DELAY;
+u16 g_soundEffectDownCounter = 70;
 RowsBlock g_rowsBlockToRemove;
 u16 g_rowsToRemoveCount;
 Input g_input;
 u16 g_palRowRemoving = PAL1;
-u16 g_nextFigType;
-
 

@@ -1,7 +1,8 @@
 #ifndef HEADER_UI_DESK
 #define HEADER_UI_DESK
 
-#include <genesis.h>
+#include <types.h>
+#include <sprite_eng.h>
 
 typedef void (* Callback)(void);
 

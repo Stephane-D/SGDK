@@ -4,7 +4,7 @@
 #include "figure.h"
 
 
-#define INPUT_CHARGE_FRAMES                     9
+#define INPUT_CHARGE_FRAMES                     10
 #define BUTTON_DOUBLE_TAP_FRAMES_AWAIT          10
 
 // Button mappings to SGDK constants

@@ -33,9 +33,6 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="cmake-build-debug/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="inc/defs.h" />
 		<Unit filename="inc/figure.h" />
 		<Unit filename="inc/figures_data.h" />
@@ -49,26 +46,6 @@
 		<Unit filename="inc/sound.h" />
 		<Unit filename="inc/typedefs.h" />
 		<Unit filename="inc/window.h" />
-		<Unit filename="out/release/_deps/src/figure.d" />
-		<Unit filename="out/release/_deps/src/game.d" />
-		<Unit filename="out/release/_deps/src/glass.d" />
-		<Unit filename="out/release/_deps/src/global.d" />
-		<Unit filename="out/release/_deps/src/graphics.d" />
-		<Unit filename="out/release/_deps/src/hud.d" />
-		<Unit filename="out/release/_deps/src/input.d" />
-		<Unit filename="out/release/_deps/src/main.d" />
-		<Unit filename="out/release/_deps/src/menu_data/menu_40lines.d" />
-		<Unit filename="out/release/_deps/src/menu_data/menu_gameover.d" />
-		<Unit filename="out/release/_deps/src/menu_data/menu_ingame.d" />
-		<Unit filename="out/release/_deps/src/menu_data/menu_options.d" />
-		<Unit filename="out/release/_deps/src/menu_data/menu_title.d" />
-		<Unit filename="out/release/_deps/src/menu_man.d" />
-		<Unit filename="out/release/_deps/src/nfsm/nfsm.d" />
-		<Unit filename="out/release/_deps/src/sound.d" />
-		<Unit filename="out/release/_deps/src/ui/desk.d" />
-		<Unit filename="out/release/_deps/src/ui/menu.d" />
-		<Unit filename="out/release/_deps/src/window.d" />
-		<Unit filename="out/release/sega.s" />
 		<Unit filename="src/figure.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -129,7 +106,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/ui/menu.h" />
-		<Unit filename="src/window.c">
+		<Unit filename="src/ui/window.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
