@@ -47,5 +47,6 @@ project/test
 tools/.gradle/
 tools/.project
 tools/build/
+inc/config.h_original
 wip.txt
 .github/copilot-instructions.md
