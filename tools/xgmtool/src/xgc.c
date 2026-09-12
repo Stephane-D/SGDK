@@ -113,10 +113,8 @@ static void XGC_extractMusic(XGM* xgc, XGM* xgm)
     YM2612* ymOldState;
     YM2612* ymState;
     int j, size;
-    int time;
     bool hasKeyCom;
 
-    time = 0;
     ymLoopState = NULL;
     ymOldState = NULL;
     ymState = YM2612_create();

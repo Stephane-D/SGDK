@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="gentris" />
+		<Option makefile="D:/apps/SGDK/makefile.gen" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="0" />
+		<Option compiler="sega_genesis_compiler" />
+		<MakeCommands>
+			<Build command="$make -f $makefile" />
+			<CompileFile command="$make -f $makefile $file" />
+			<Clean command="$make -f $makefile clean" />
+			<DistClean command="$make -f $makefile clean" />
+			<AskRebuildNeeded command="$make -q -f $makefile $target" />
+			<SilentBuild command="$make -s -f $makefile $target" />
+		</MakeCommands>
+		<Build>
+			<Target title="default">
+				<Option output="/out/rom.bin" prefix_auto="0" extension_auto="0" />
+				<Option object_output="." />
+				<Option deps_output="." />
+				<Option type="1" />
+				<Option compiler="sega_genesis_compiler" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -s -f $makefile $target" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="inc/defs.h" />
+		<Unit filename="inc/figure.h" />
+		<Unit filename="inc/figures_data.h" />
+		<Unit filename="inc/game.h" />
+		<Unit filename="inc/glass.h" />
+		<Unit filename="inc/global.h" />
+		<Unit filename="inc/graphics.h" />
+		<Unit filename="inc/hud.h" />
+		<Unit filename="inc/input.h" />
+		<Unit filename="inc/menu_man.h" />
+		<Unit filename="inc/sound.h" />
+		<Unit filename="inc/typedefs.h" />
+		<Unit filename="inc/window.h" />
+		<Unit filename="src/figure.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/glass.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/global.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/graphics.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/hud.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/menu_data/menu_40lines.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/menu_data/menu_gameover.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/menu_data/menu_ingame.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/menu_data/menu_options.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/menu_data/menu_title.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/menu_man.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/nfsm/nfsm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/nfsm/nfsm.h" />
+		<Unit filename="src/rom_header.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ui/desk.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ui/desk.h" />
+		<Unit filename="src/ui/menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ui/menu.h" />
+		<Unit filename="src/ui/window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

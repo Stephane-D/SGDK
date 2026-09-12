@@ -15,15 +15,6 @@ static char *getFilename(char *pathname)
     return pathname;
 }
 
-static char *getFileExtension(char *pathname)
-{
-    char* fname = strrchr(pathname, '.');
-
-    if (fname) return fname + 1;
-
-    return "";
-}
-
 static void removeExtension(char *pathname)
 {
     char* fname = strrchr(pathname, '.');
@@ -44,7 +35,6 @@ int main(int argc, char **argv)
     char *format;
     char *formatasm;
     char *shortname;
-    char *ext;
     char *FileName;
     char *FileNameOut;
     FILE *FileInput;
@@ -125,8 +115,6 @@ int main(int argc, char **argv)
     }
 
     if (!FileNameOut[0]) FileNameOut = strdup(FileName);
-
-    ext = getFileExtension(FileName);
 
     FileInput = fopen(FileName, "rb");
 

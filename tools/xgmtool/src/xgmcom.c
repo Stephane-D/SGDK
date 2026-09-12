@@ -410,12 +410,9 @@ static XGMCommand* XGMCommand_createPCMCommand(XGM* xgm, VGM* vgm, VGMCommand* c
     if (VGMCommand_isStreamStartLong(command))
     {
         int address;
-        int size;
         Sample* vgmSample;
 
         address = VGMCommand_getStreamSampleAddress(command);
-        size = VGMCommand_getStreamSampleSize(command);
-//        vgmSample = VGM_getSample(vgm, address, size);
         vgmSample = VGM_getSample(vgm, address);
 
         // use stream id as priority
