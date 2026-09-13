@@ -10,7 +10,15 @@
 #ifndef _ASM_H_
 #define _ASM_H_
 
+#if defined(UNIT_TESTS) || !defined(__m68k__)
+#define VAR2REG_B(var, reg)
+#define VAR2REG_W(var, reg)
+#define VAR2REG_L(var, reg)
 
+#define REG2VAR_B(reg, var)
+#define REG2VAR_W(reg, var)
+#define REG2VAR_L(reg, var)
+#else
 #define VAR2REG_B(var, reg)       asm volatile ("move.b %0, %/"reg"" :: "r" (var) : ""reg"");
 #define VAR2REG_W(var, reg)       asm volatile ("move.w %0, %/"reg"" :: "r" (var) : ""reg"");
 #define VAR2REG_L(var, reg)       asm volatile ("move.l %0, %/"reg"" :: "r" (var) : ""reg"");
@@ -18,6 +26,7 @@
 #define REG2VAR_B(reg, var)       asm volatile ("move.b %/"reg", %0" : "=r" (var));
 #define REG2VAR_W(reg, var)       asm volatile ("move.w %/"reg", %0" : "=r" (var));
 #define REG2VAR_L(reg, var)       asm volatile ("move.l %/"reg", %0" : "=r" (var));
+#endif
 
 // enumeration helper for GAS
 #if defined(__ASSEMBLY__) || defined(__ASSEMBLER__)

@@ -37,6 +37,16 @@ if /i "%CMD%"=="compile" goto build
 if /i "%CMD%"=="release" goto release
 if /i "%CMD%"=="debug" goto debug
 if /i "%CMD%"=="asm" goto asm
+if /i "%CMD%"=="test" goto test
+if /i "%CMD%"=="tests" goto test
+if /i "%CMD%"=="test-unit" goto test_unit
+if /i "%CMD%"=="test_unit" goto test_unit
+if /i "%CMD%"=="unit-test" goto test_unit
+if /i "%CMD%"=="unit" goto test_unit
+if /i "%CMD%"=="test-e2e" goto test_e2e
+if /i "%CMD%"=="test_e2e" goto test_e2e
+if /i "%CMD%"=="e2e-test" goto test_e2e
+if /i "%CMD%"=="e2e" goto test_e2e
 if /i "%CMD%"=="clean" goto clean
 if /i "%CMD%"=="rebuild" goto rebuild
 if /i "%CMD%"=="lib" goto lib
@@ -547,6 +557,84 @@ exit /b 0
 exit /b %ERRORLEVEL%
 
 :: ----------------------------------------------------------------------------
+:: Command: test [unit|e2e]
+:: ----------------------------------------------------------------------------
+:test
+shift
+set "SUB_CMD=%~1"
+if /i "%SUB_CMD%"=="unit" goto test_unit_sub
+if /i "%SUB_CMD%"=="test-unit" goto test_unit_sub
+if /i "%SUB_CMD%"=="test_unit" goto test_unit_sub
+if /i "%SUB_CMD%"=="e2e" goto test_e2e_sub
+if /i "%SUB_CMD%"=="test-e2e" goto test_e2e_sub
+if /i "%SUB_CMD%"=="test_e2e" goto test_e2e_sub
+set "TEST_TARGET=test"
+goto exec_test_make
+
+:test_unit
+shift
+:test_unit_sub
+set "TEST_TARGET=test-unit"
+goto exec_test_make
+
+:test_e2e
+shift
+:test_e2e_sub
+set "TEST_TARGET=test-e2e"
+goto exec_test_make
+
+:exec_test_make
+call :get_yml_deps
+if not exist "%MAKEFILE_GEN%" (
+    echo [ERROR] Cannot find SGDK makefile.gen at: %MAKEFILE_GEN%
+    exit /b 1
+)
+call :parse_sgdk_yml_builds
+if %BUILD_COUNT% equ 0 goto run_single_test
+
+if not exist "%GDK%\inc\config.h_original" if exist "%GDK%\inc\config.h" copy /y "%GDK%\inc\config.h" "%GDK%\inc\config.h_original" >nul
+%GDK%\bin\make -f "%MAKEFILE_GEN%" clean-test
+set "TEST_BUILD_NUM=1"
+
+:test_build_loop
+if %TEST_BUILD_NUM% gtr %BUILD_COUNT% goto test_build_done
+call set "TEST_BUILD_NAME=%%BUILD_NAME_%TEST_BUILD_NUM%%%"
+echo.
+echo ============================================================================
+echo [SGDK] Testing configuration: %TEST_BUILD_NAME%
+echo ============================================================================
+call :restore_config_h
+call :apply_build_configs %TEST_BUILD_NUM%
+call set "TEST_CFG_CNT=%%BUILD_CFG_COUNT_%TEST_BUILD_NUM%%%"
+if defined TEST_CFG_CNT if !TEST_CFG_CNT! gtr 0 (
+    pushd "%GDK%"
+    %GDK%\bin\make -f makelib.gen clean-release
+    %GDK%\bin\make -f makelib.gen release
+    popd
+    if !errorlevel! neq 0 exit /b 1
+)
+%GDK%\bin\make -f "%MAKEFILE_GEN%" %TEST_TARGET% TEST_OUT_DIR="out/test/%TEST_BUILD_NAME%"
+if !errorlevel! neq 0 (
+    call :restore_config_h
+    exit /b 1
+)
+set /a TEST_BUILD_NUM+=1
+goto test_build_loop
+
+:test_build_done
+call :restore_config_h
+exit /b 0
+
+:run_single_test
+echo [SGDK] Executing test target '%TEST_TARGET%'...
+if not "%DEPENDENCIES%"=="" (
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TEST_TARGET% DEPENDENCIES="%DEPENDENCIES%"
+) else (
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TEST_TARGET%
+)
+exit /b %ERRORLEVEL%
+
+:: ----------------------------------------------------------------------------
 :: Command: clean [target] [options]
 :: ----------------------------------------------------------------------------
 :clean
@@ -560,6 +648,9 @@ if /i "%~1"=="release" (
     shift
 ) else if /i "%~1"=="asm" (
     set "CLEAN_TARGET=clean-asm"
+    shift
+) else if /i "%~1"=="test" (
+    set "CLEAN_TARGET=clean-test"
     shift
 ) else if /i "%~1"=="all" (
     set "CLEAN_TARGET=clean-all"
@@ -728,6 +819,27 @@ if exist "%GDK%\bin\gcc.exe" (
         echo GCC compiler: NOT found
     )
 )
+set "CC_PATH="
+
+where clang >nul 2>&1
+if !errorlevel! equ 0 (
+    for /f "delims=" %%I in ('where clang 2^>nul') do (
+        set "CC_PATH=%%I"
+    )
+) else (
+    where gcc >nul 2>&1
+    if !errorlevel! equ 0 (
+        for /f "delims=" %%I in ('where gcc 2^>nul ^| findstr /i /v "SGDK"') do (
+            set "CC_PATH=%%I"
+        )
+    )
+)
+
+if defined CC_PATH (
+    echo Test Compiler found: %CC_PATH%
+) else (
+    echo Test Compiler not found
+)
 exit /b 0
 
 :: ----------------------------------------------------------------------------
@@ -745,7 +857,10 @@ echo   build, compile [target]   Build project (default target: release)
 echo   release                   Build project in release mode
 echo   debug                     Build project in debug mode (with symbols)
 echo   asm                       Generate assembly output
-echo   clean [target]            Clean build output (targets: all, release, debug, asm)
+echo   test [unit^|e2e]           Run all tests or specific phase (unit/e2e)
+echo   test-unit                 Run unit tests (Unity / CMock)
+echo   test-e2e                  Run E2E tests (Unity / CMock)
+echo   clean [target]            Clean build output (targets: all, release, debug, asm, test)
 echo   rebuild [target]          Clean and rebuild project
 echo   deps, install             Fetch and clone dependencies defined in sgdk.yml
 echo   lib, build-lib [target]   Build SGDK library itself
@@ -757,9 +872,15 @@ echo Targets:
 echo   release                   Optimized release build (default)
 echo   debug                     Debug build with symbol injection
 echo   asm                       Assembly listing target
+echo   test                      Run all test phases
+echo   test-unit                 Run unit tests
+echo   test-e2e                  Run E2E tests
 echo.
 echo Examples:
 echo   sgdk build
+echo   sgdk test
+echo   sgdk test unit
+echo   sgdk test e2e
 echo   sgdk build debug -j4
 echo   sgdk clean
 echo   sgdk rebuild release

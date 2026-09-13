@@ -21,6 +21,14 @@ if [[ ":$PATH:" != *":$GDK/bin:"* ]]; then
     export PATH="$GDK/bin:$PATH"
 fi
 
+if [ -x "$GDK/bin/make" ]; then
+    MAKE_CMD="$GDK/bin/make"
+elif command -v make >/dev/null 2>&1; then
+    MAKE_CMD="make"
+else
+    MAKE_CMD="$GDK/bin/make"
+fi
+
 CMD="${1:-}"
 
 # Parse dependencies from sgdk.yml if present
@@ -258,16 +266,16 @@ run_build_target() {
                 done
 
                 echo "[SGDK] Rebuilding SGDK library ($LIB_TARGET) for build '$bname'..."
-                $GDK/bin/make -C "$GDK" -f makelib.gen "clean-$LIB_TARGET"
-                $GDK/bin/make -C "$GDK" -f makelib.gen "$LIB_TARGET"
+                $MAKE_CMD -C "$GDK" -f makelib.gen "clean-$LIB_TARGET"
+                $MAKE_CMD -C "$GDK" -f makelib.gen "$LIB_TARGET"
             fi
 
             echo "[SGDK] Executing project build target '$target'..."
-            $GDK/bin/make -f "$MAKEFILE_GEN" clean "${extra_args[@]}"
+            $MAKE_CMD -f "$MAKEFILE_GEN" clean "${extra_args[@]}"
             if [ -n "$DEPENDENCIES" ]; then
-                $GDK/bin/make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
+                $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
             else
-                $GDK/bin/make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+                $MAKE_CMD -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
             fi
 
             if [ -f "out/rom.bin" ]; then
@@ -284,9 +292,9 @@ run_build_target() {
         restore_sgdk_config_h
         echo "[SGDK] Executing build target '$target'..."
         if [ -n "$DEPENDENCIES" ]; then
-            $GDK/bin/make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
+            $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
         else
-            $GDK/bin/make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+            $MAKE_CMD -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
         fi
 
         if [ -f "out/rom.bin" ]; then
@@ -297,6 +305,59 @@ run_build_target() {
             echo "[SGDK] Created output artifact: out/$target/${OUT_PREFIX}.bin"
         fi
     fi
+}
+
+run_test_target() {
+    local target="$1"
+    shift
+    local extra_args=("$@")
+
+    if [ ! -f "$MAKEFILE_GEN" ]; then
+        echo "[ERROR] Cannot find SGDK makefile.gen at: $MAKEFILE_GEN" >&2
+        exit 1
+    fi
+
+    YML_BUILDS=$(parse_sgdk_yml_builds)
+    if [ -z "$YML_BUILDS" ]; then
+        echo "[SGDK] Executing test target '$target'..."
+        if [ -n "$DEPENDENCIES" ]; then
+            $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
+        else
+            $MAKE_CMD -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+        fi
+        return
+    fi
+
+    if [ ! -f "$GDK/inc/config.h_original" ] && [ -f "$GDK/inc/config.h" ]; then
+        cp "$GDK/inc/config.h" "$GDK/inc/config.h_original"
+    fi
+
+    $MAKE_CMD -f "$MAKEFILE_GEN" clean-test
+    while IFS='|' read -r bname configs; do
+        [ -n "$bname" ] || continue
+        echo ""
+        echo "============================================================================"
+        echo "[SGDK] Testing configuration: $bname"
+        echo "============================================================================"
+        restore_sgdk_config_h
+
+        if [ -n "$configs" ]; then
+            IFS=';' read -ra CFG_ARR <<< "$configs"
+            for pair in "${CFG_ARR[@]}"; do
+                apply_sgdk_config_key_val "${pair%%=*}" "${pair#*=}"
+            done
+            $MAKE_CMD -C "$GDK" -f makelib.gen clean-release
+            $MAKE_CMD -C "$GDK" -f makelib.gen release
+        fi
+
+        test_out="out/test/$bname"
+        if [ -n "$DEPENDENCIES" ]; then
+            $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" TEST_OUT_DIR="$test_out" "${extra_args[@]}"
+        else
+            $MAKE_CMD -f "$MAKEFILE_GEN" "$target" TEST_OUT_DIR="$test_out" "${extra_args[@]}"
+        fi
+    done <<< "$YML_BUILDS"
+    restore_sgdk_config_h
 }
 
 show_help() {
@@ -311,7 +372,10 @@ show_help() {
     echo "  release                   Build project in release mode"
     echo "  debug                     Build project in debug mode (with symbols)"
     echo "  asm                       Generate assembly output"
-    echo "  clean [target]            Clean build output (targets: all, release, debug, asm)"
+    echo "  test [unit|e2e]           Run all tests or specific phase (unit/e2e)"
+    echo "  test-unit, unit           Run unit tests (Unity / CMock)"
+    echo "  test-e2e, e2e             Run E2E tests (Unity / CMock)"
+    echo "  clean [target]            Clean build output (targets: all, release, debug, asm, test)"
     echo "  rebuild [target]          Clean and rebuild project"
     echo "  deps, install             Fetch and clone dependencies defined in sgdk.yml"
     echo "  lib, build-lib [target]   Build SGDK library itself"
@@ -323,10 +387,16 @@ show_help() {
     echo "  release                   Optimized release build (default)"
     echo "  debug                     Debug build with symbol injection"
     echo "  asm                       Assembly listing target"
+    echo "  test                      Run all test phases"
+    echo "  test-unit                 Run unit tests"
+    echo "  test-e2e                  Run E2E tests"
     echo ""
     echo "Examples:"
     echo "  sgdk build"
     echo "  sgdk deps"
+    echo "  sgdk test"
+    echo "  sgdk test unit"
+    echo "  sgdk test e2e"
     echo "  sgdk build debug -j4"
     echo "  sgdk clean"
     echo "  sgdk rebuild release"
@@ -351,6 +421,14 @@ show_version() {
     else
         echo "GCC compiler: NOT found"
     fi
+
+    if command -v gcc >/dev/null 2>&1; then
+        echo "Test GCC compiler: gcc found ($(command -v gcc))"
+    else
+        echo "Test GCC compiler: NOT found"
+    fi
+
+     
 }
 
 case "$CMD" in
@@ -373,7 +451,7 @@ case "$CMD" in
             echo "[SGDK] No dependencies specified in sgdk.yml or DEPENDENCIES variable."
             exit 0
         fi
-        $GDK/bin/make -f "$MAKEFILE_GEN" install DEPENDENCIES="$DEPENDENCIES" "$@"
+        $MAKE_CMD -f "$MAKEFILE_GEN" install DEPENDENCIES="$DEPENDENCIES" "$@"
         ;;
     init)
         shift
@@ -400,6 +478,27 @@ case "$CMD" in
         shift
         run_build_target "asm" "$@"
         ;;
+    test|tests)
+        shift
+        SUB="${1:-}"
+        if [ "$SUB" = "unit" ] || [ "$SUB" = "test-unit" ] || [ "$SUB" = "test_unit" ]; then
+            shift
+            run_test_target "test-unit" "$@"
+        elif [ "$SUB" = "e2e" ] || [ "$SUB" = "test-e2e" ] || [ "$SUB" = "test_e2e" ]; then
+            shift
+            run_test_target "test-e2e" "$@"
+        else
+            run_test_target "test" "$@"
+        fi
+        ;;
+    test-unit|test_unit|unit-test|unit)
+        shift
+        run_test_target "test-unit" "$@"
+        ;;
+    test-e2e|test_e2e|e2e-test|e2e)
+        shift
+        run_test_target "test-e2e" "$@"
+        ;;
     clean)
         shift
         CLEAN_TARGET="clean"
@@ -412,6 +511,9 @@ case "$CMD" in
         elif [ "${1:-}" = "asm" ]; then
             CLEAN_TARGET="clean-asm"
             shift
+        elif [ "${1:-}" = "test" ]; then
+            CLEAN_TARGET="clean-test"
+            shift
         elif [ "${1:-}" = "all" ]; then
             CLEAN_TARGET="clean-all"
             shift
@@ -422,7 +524,7 @@ case "$CMD" in
         fi
         restore_sgdk_config_h
         echo "[SGDK] Executing clean target '$CLEAN_TARGET'..."
-        $GDK/bin/make -f "$MAKEFILE_GEN" "$CLEAN_TARGET" "$@"
+        $MAKE_CMD -f "$MAKEFILE_GEN" "$CLEAN_TARGET" "$@"
         ;;
     rebuild)
         shift
@@ -445,7 +547,7 @@ case "$CMD" in
             exit 1
         fi
         echo "[SGDK] Building library target '$LIB_TARGET'..."
-        $GDK/bin/make -f "$MAKELIB_GEN" "$LIB_TARGET" "$@"
+        $MAKE_CMD -f "$MAKELIB_GEN" "$LIB_TARGET" "$@"
         ;;
     run)
         shift

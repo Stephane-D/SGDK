@@ -42,7 +42,15 @@ ifeq ($(OS),Windows_NT)
 	LTO_PLUGIN := --plugin=liblto_plugin.dll
 	LIBGCC := $(LIB)/libgcc.a
 	MAKE := $(BIN)/make
-	TAR := $(BIN)/tar
+    EXE_EXT := .exe
+	
+    TEST_CC ?= gcc
+    ifneq ($(shell where clang 2>nul),)
+		TEST_CC := clang
+	else ifneq ($(shell where gcc 2>nul | findstr /i /v "SGDK"),)
+		TEST_CC := $(firstword $(shell where gcc 2>nul | findstr /i /v "SGDK"))
+	endif
+	
 else
 	# Native Linux and Docker
 	PREFIX ?= m68k-elf-
@@ -63,7 +71,8 @@ else
 	LTO_PLUGIN :=
 	LIBGCC := -lgcc
 	MAKE := make
-	TAR := tar
+    EXE_EXT :=
+	TEST_CC := gcc
 endif
 
 JAVA := java

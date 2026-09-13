@@ -1,6 +1,6 @@
 # get makefile path in unix format
-MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
-MAKEFILE_DIR := $(subst \,/,$(MAKEFILE_DIR))
+MAKEFILE_PATH := $(subst \,/,$(lastword $(MAKEFILE_LIST)))
+MAKEFILE_DIR := $(dir $(MAKEFILE_PATH))
 
 # test if we have access to SGDK environment, if so we can override the GDK var
 ifneq ($(wildcard $(MAKEFILE_DIR)bin/rescomp.jar),)
@@ -146,6 +146,61 @@ else
 	LIBMD := $(LIB)/libmd.a
 endif
 
+# --- Test configuration (Unity / CMock) ---
+TEST_DIR ?= tests
+ifneq ($(wildcard test/.*),)
+    TEST_DIR := test
+endif
+TEST_OUT_DIR ?= out/test
+
+TEST_DEPS_DIR := deps
+
+# Unity and CMock sources (first match found or default location)
+UNITY_SRCS = $(or $(firstword \
+	$(wildcard $(TEST_DEPS_DIR)/unity/src/unity.c) \
+	$(wildcard $(TEST_DIR)/unity/src/unity.c) \
+	$(wildcard $(TEST_DIR)/unity/unity.c) \
+	$(wildcard $(EXT_DEPS_DIR)/unity/src/unity.c) \
+), $(TEST_DEPS_DIR)/unity/src/unity.c)
+
+CMOCK_SRCS = $(or $(firstword \
+	$(wildcard $(TEST_DEPS_DIR)/cmock/src/cmock.c) \
+	$(wildcard $(TEST_DIR)/cmock/src/cmock.c) \
+	$(wildcard $(TEST_DIR)/cmock/cmock.c) \
+	$(wildcard $(EXT_DEPS_DIR)/cmock/src/cmock.c) \
+), $(TEST_DEPS_DIR)/cmock/src/cmock.c)
+
+# Test sources
+TEST_UNIT_SRCS = $(strip $(wildcard $(TEST_DIR)/unit/*.c) $(wildcard $(TEST_DIR)/unit/*/*.c) $(wildcard $(TEST_DIR)/unit/*/*/*.c))
+TEST_E2E_SRCS  = $(strip $(wildcard $(TEST_DIR)/e2e/*.c) $(wildcard $(TEST_DIR)/e2e/*/*.c) $(wildcard $(TEST_DIR)/e2e/*/*/*.c))
+
+# App sources for tests (excluding main and boot files)
+APP_SRCS = $(strip $(filter-out $(SRC_DIR)/rom_header.c $(SRC_DIR)/main.c, $(SRC_C)))
+
+# Test include directories & compiler flags
+TEST_INCS = -I. -I$(INC_DIR) -I$(SRC_DIR) -I$(RES_DIR) \
+	-I$(TEST_DIR) -I$(TEST_DIR)/unit -I$(TEST_DIR)/e2e \
+	-I$(TEST_DIR)/inc -I$(TEST_DIR)/mocks \
+	-I$(TEST_DEPS_DIR)/unity/src \
+	-I$(TEST_DEPS_DIR)/cmock/src \
+	-I$(TEST_DIR)/unity -I$(TEST_DIR)/unity/src \
+	-I$(TEST_DIR)/cmock -I$(TEST_DIR)/cmock/src \
+	-I$(EXT_DEPS_DIR)/unity/src \
+	-I$(EXT_DEPS_DIR)/cmock/src \
+	-I$(GDK)/inc \
+	$(addprefix -I,$(DEP_INC_DIRS))
+
+TEST_CFLAGS := $(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -g -O0 -Wall -Wextra -fno-builtin
+
+vpath %.c $(TEST_DIR)/e2e $(TEST_DIR)/e2e/* $(TEST_DIR)/e2e/*/* $(TEST_DEPS_DIR)/unity/src $(TEST_DEPS_DIR)/cmock/src $(SRC_DIR) $(SRC_DIR)/* $(SRC_DIR)/*/* .
+
+E2E_SRCS_ALL := $(TEST_E2E_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS)
+E2E_OBJS_ALL := $(addprefix $(TEST_OUT_DIR)/e2e/, $(notdir $(E2E_SRCS_ALL:.c=.o)))
+
+$(TEST_OUT_DIR)/e2e/%.o: %.c
+	@$(MKDIR) -p $(dir $@)
+	$(CC) $(FLAGS) $(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -c $< -o $@
+
 
 .PHONY: default
 .PHONY: all
@@ -160,7 +215,10 @@ endif
 .PHONY: clean-debug
 .PHONY: clean-asm
 .PHONY: clean-all
+.PHONY: clean-test
 .PHONY: install
+.PHONY: install-test-deps
+.PHONY: test test-unit test_unit unit-test test-e2e test_e2e e2e-test
 
 default: release
 all: release
@@ -180,38 +238,45 @@ debug: install
 asm: install
 
 install:
-	@$(RM) -r -f $(EXT_DEPS_DIR)
-	@$(MKDIR) -p $(EXT_DEPS_DIR)
-	@for dep in $(DEPENDENCIES); do \
-		case "$$dep" in \
-			*.git@*|*://*@*) \
-				url=$${dep%@*}; \
-				ref=$${dep#*@}; \
-				name=$${url##*/}; \
-				name=$${name%.git}; \
-				$(ECHO) "Clonando $$name ($$ref)"; \
-				$(GIT) clone "$$url" "$(EXT_DEPS_DIR)/$$name"; \
-				$(GIT) -C "$(EXT_DEPS_DIR)/$$name" checkout "$$ref"; \
-				;; \
-			*.git|*://*) \
-				url=$$dep; \
-				name=$${url##*/}; \
-				name=$${name%.git}; \
-				$(ECHO) "Clonando $$name"; \
-				$(GIT) clone "$$url" "$(EXT_DEPS_DIR)/$$name"; \
-				;; \
-			*) \
-				if [ -d "$$dep" ]; then \
-					name=$${dep##*/}; \
-					$(ECHO) "Dependencia local $$dep"; \
-					$(CP) -r "$$dep" "$(EXT_DEPS_DIR)/$$name"; \
-				else \
-					$(ECHO) "ERROR: dependencia no encontrada: $$dep"; \
-					exit 1; \
-				fi; \
-				;; \
-		esac; \
-	done
+	@if [ -n "$(DEPENDENCIES)" ]; then \
+		$(MKDIR) -p $(EXT_DEPS_DIR); \
+		for dep in $(DEPENDENCIES); do \
+			case "$$dep" in \
+				*.git@*|*://*@*) \
+					url=$${dep%@*}; \
+					ref=$${dep#*@}; \
+					name=$${url##*/}; \
+					name=$${name%.git}; \
+					if [ ! -d "$(EXT_DEPS_DIR)/$$name" ]; then \
+						$(ECHO) "Clonando $$name ($$ref)"; \
+						$(GIT) clone "$$url" "$(EXT_DEPS_DIR)/$$name"; \
+						$(GIT) -C "$(EXT_DEPS_DIR)/$$name" checkout "$$ref"; \
+					fi; \
+					;; \
+				*.git|*://*) \
+					url=$$dep; \
+					name=$${url##*/}; \
+					name=$${name%.git}; \
+					if [ ! -d "$(EXT_DEPS_DIR)/$$name" ]; then \
+						$(ECHO) "Clonando $$name"; \
+						$(GIT) clone "$$url" "$(EXT_DEPS_DIR)/$$name"; \
+					fi; \
+					;; \
+				*) \
+					if [ -d "$$dep" ]; then \
+						name=$${dep##*/}; \
+						if [ ! -d "$(EXT_DEPS_DIR)/$$name" ]; then \
+							$(ECHO) "Dependencia local $$dep"; \
+							$(CP) -r "$$dep" "$(EXT_DEPS_DIR)/$$name"; \
+						fi; \
+					elif [ ! -d "$(EXT_DEPS_DIR)/$$dep" ]; then \
+						$(ECHO) "ERROR: dependencia no encontrada: $$dep"; \
+						exit 1; \
+					fi; \
+					;; \
+			esac; \
+		done; \
+	fi
 
 release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 release: padROM
@@ -230,10 +295,62 @@ clean-all:
 clean-release: clean-task
 clean-debug: clean-task
 clean-asm: clean-task
+clean-test:
+	$(RM) -r -f out/test
 
 clean-task:
 	$(RM) -r -f $(OUT_DIR)
 .PHONY: clean-task
+
+install-test-deps:
+	@$(MKDIR) -p $(TEST_DEPS_DIR)
+	@if [ ! -d "$(TEST_DEPS_DIR)/unity" ] && [ ! -d "$(TEST_DEPS_DIR)/Unity" ]; then \
+		$(ECHO) "Clonando Unity..."; \
+		$(GIT) clone https://github.com/ThrowTheSwitch/Unity.git "$(TEST_DEPS_DIR)/unity"; \
+	fi
+	@if [ ! -d "$(TEST_DEPS_DIR)/cmock" ] && [ ! -d "$(TEST_DEPS_DIR)/CMock" ]; then \
+		$(ECHO) "Clonando CMock..."; \
+		$(GIT) clone https://github.com/ThrowTheSwitch/CMock.git "$(TEST_DEPS_DIR)/cmock"; \
+	fi
+
+test: test-unit test-e2e
+
+test-unit: test_unit
+unit-test: test_unit
+test_unit: install install-test-deps
+	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
+		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
+		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
+		echo "[SGDK] Executing unit tests binary..."; \
+		./$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) || $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
+	else \
+		echo "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
+	fi
+
+test-e2e: test_e2e
+e2e-test: test_e2e
+test_e2e: install install-test-deps
+	@if [ -n "$(TEST_E2E_SRCS)" ]; then \
+		$(MKDIR) -p $(TEST_OUT_DIR)/e2e; \
+		if [ -f "$(SRC_DIR)/rom_header.c" ]; then \
+			$(CC) $(FLAGS) -c $(SRC_DIR)/rom_header.c -o $(TEST_OUT_DIR)/e2e/rom_header.o || exit 1; \
+		else \
+			$(CP) $(SRC_LIB)/boot/rom_header.c $(TEST_OUT_DIR)/e2e/rom_header.c; \
+			$(CC) $(FLAGS) -c $(TEST_OUT_DIR)/e2e/rom_header.c -o $(TEST_OUT_DIR)/e2e/rom_header.o || exit 1; \
+		fi; \
+		$(OBJCPY) -O binary $(TEST_OUT_DIR)/e2e/rom_header.o $(TEST_OUT_DIR)/e2e/rom_header.bin || exit 1; \
+		$(CP) $(SRC_LIB)/boot/sega.s $(TEST_OUT_DIR)/e2e/sega.s; \
+		$(CC) $(AFLAGS) -c $(TEST_OUT_DIR)/e2e/sega.s -o $(TEST_OUT_DIR)/e2e/sega.o || exit 1; \
+		$(MAKE) -f $(MAKEFILE_PATH) $(E2E_OBJS_ALL) || exit 1; \
+		$(ECHO) "$(E2E_OBJS_ALL) $(RES_O)" > $(TEST_OUT_DIR)/e2e/cmd_; \
+		$(CC) -m68000 -B$(BIN) -n -T $(GDK)/md.ld -nostdlib $(TEST_OUT_DIR)/e2e/sega.o @$(TEST_OUT_DIR)/e2e/cmd_ $(LIBMD) $(LIBGCC) -o $(TEST_OUT_DIR)/e2e/rom.out -Wl,--gc-sections || exit 1; \
+		$(NM) $(LTO_PLUGIN) -n -l $(TEST_OUT_DIR)/e2e/rom.out > $(TEST_OUT_DIR)/e2e/symbol.txt 2>/dev/null || true; \
+		$(OBJCPY) -O binary $(TEST_OUT_DIR)/e2e/rom.out $(TEST_OUT_DIR)/e2e/rom.bin || exit 1; \
+		$(SIZEBND) $(TEST_OUT_DIR)/e2e/rom.bin -sizealign 131072 -checksum; \
+		echo "[SGDK] Created Mega Drive E2E test ROM: $(TEST_OUT_DIR)/e2e/rom.bin"; \
+	else \
+		echo "[SGDK] No E2E test sources found in $(TEST_DIR)/e2e."; \
+	fi
 
 
 padROM:	$(OUT_DIR)/rom.bin

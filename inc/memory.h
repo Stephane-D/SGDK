@@ -17,6 +17,10 @@
  * The end of memory is defined with a 0 sized bloc.<br>
  */
 
+#if defined(UNIT_TESTS) && !defined(__m68k__) && !defined(SGDK_GCC)
+#include_next <memory.h>
+#else
+
 #ifndef _MEMORY_H_
 #define _MEMORY_H_
 
@@ -344,3 +348,4 @@ s8 memcmp(const void* pointer1, const void* pointer2, size_t len);
 
 
 #endif // _MEMORY_H_
+#endif // UNIT_TESTS

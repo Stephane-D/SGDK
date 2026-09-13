@@ -108,7 +108,9 @@ typedef unsigned long u32;
  *  \typedef size_t
  *      size type (equivalent to unsigned long).
  */
+#if !defined(_SIZE_T_DEFINED) && !defined(_SIZE_T) && !defined(_SIZE_T_DEFINED_) && !defined(__SIZE_TYPE__) && !defined(UNIT_TESTS)
  typedef unsigned long size_t;
+#endif
 
 
 #if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || (__STDC_VERSION__ < 202300L))
@@ -183,6 +185,10 @@ typedef vu8 vbool;
 typedef s16 p16;
 
 
+#if defined(UNIT_TESTS) && !defined(__m68k__) && !defined(SGDK_GCC)
+#include <stdint.h>
+#include <stddef.h>
+#else
 #if !defined(uint8_t) && !defined(__int8_t_defined)
 #define uint8_t     u8
 #define int8_t      s8
@@ -200,6 +206,7 @@ typedef s16 p16;
 #endif
 #if !defined(ptrdiff_t)
 #define ptrdiff_t   u32
+#endif
 #endif
 
 
