@@ -28,81 +28,38 @@ parse_sgdk_yml_deps() {
     local yml_file="sgdk.yml"
     [ -f "$yml_file" ] || return 0
 
-    if command -v python3 >/dev/null 2>&1; then
-        python3 - "$yml_file" << 'EOF'
-import sys, re
-filepath = sys.argv[1]
-try:
-    with open(filepath, 'r') as f:
-        lines = f.readlines()
-except Exception:
-    sys.exit(0)
+    local in_deps=0
+    local deps=()
 
-in_deps = False
-deps = []
+    while IFS= read -r line || [ -n "$line" ]; do
+        local clean_line="${line%%#*}"
+        local trimmed
+        trimmed="$(echo "$clean_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        [ -z "$trimmed" ] && continue
 
-for line in lines:
-    clean_line = re.sub(r'\s+#.*$', '', line)
-    trimmed = clean_line.strip()
-    if not trimmed or trimmed.startswith('#'):
-        continue
-    if re.match(r'^(dependencies|deps)\s*:', trimmed):
-        in_deps = True
-        continue
-    if in_deps and re.match(r'^[^\s#]', line):
-        in_deps = False
-    if not in_deps:
-        continue
+        if [[ "$trimmed" =~ ^(dependencies|deps): ]]; then
+            in_deps=1
+            continue
+        fi
 
-    m = re.match(r'^-\s*(.+)$', trimmed)
-    if m:
-        val = m.group(1).strip().strip('"').strip("'")
-        if val:
-            deps.append(val.replace('#', '@'))
+        if [ "$in_deps" -eq 1 ]; then
+            if [[ "$line" =~ ^[^\ [[:space:]]] ]]; then
+                in_deps=0
+                continue
+            fi
 
-print(" ".join(deps))
-EOF
-    elif command -v perl >/dev/null 2>&1; then
-        perl - "$yml_file" << 'EOF'
-use strict;
-use warnings;
+            if [[ "$trimmed" =~ ^-[[:space:]]*(.+)$ ]]; then
+                local val="${BASH_REMATCH[1]}"
+                val="$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+                if [ -n "$val" ]; then
+                    val="${val//#/@}"
+                    deps+=("$val")
+                fi
+            fi
+        fi
+    done < "$yml_file"
 
-my $file = $ARGV[0];
-open(my $fh, '<', $file) or exit 0;
-
-my $in_deps = 0;
-my @deps;
-
-while (my $line = <$fh>) {
-    my $clean_line = $line;
-    $clean_line =~ s/\s+#.*$//;
-    my $trimmed = $clean_line;
-    $trimmed =~ s/^\s+|\s+$//g;
-    next if $trimmed eq '' || $trimmed =~ /^#/;
-
-    if ($trimmed =~ /^(dependencies)\s*:/) {
-        $in_deps = 1;
-        next;
-    }
-    if ($in_deps && $line =~ /^[^\s#]/) {
-        $in_deps = 0;
-    }
-    next unless $in_deps;
-
-    if ($trimmed =~ /^-\s*(.+)$/) {
-        my $val = $1;
-        $val =~ s/^\s+|\s+$//g;
-        $val =~ s/^["']|["']$//g;
-        if ($val ne '') {
-            $val =~ s/#/@/;
-            push @deps, $val;
-        }
-    }
-}
-close($fh);
-print join(" ", @deps);
-EOF
-    fi
+    echo "${deps[*]}"
 }
 
 YML_DEPS=$(parse_sgdk_yml_deps)
@@ -120,125 +77,98 @@ parse_sgdk_yml_builds() {
     local yml_file="sgdk.yml"
     [ -f "$yml_file" ] || return 0
 
-    if command -v python3 >/dev/null 2>&1; then
-        python3 - "$yml_file" << 'EOF'
-import sys, re
+    local in_builds=0
+    local in_configs=0
+    local current_bname=""
+    local current_configs=()
 
-filepath = sys.argv[1]
-try:
-    with open(filepath, 'r') as f:
-        lines = f.readlines()
-except Exception:
-    sys.exit(0)
-
-in_builds = False
-in_configs = False
-builds = []
-current_build = None
-
-for line in lines:
-    clean_line = re.sub(r'\s+#.*$', '', line)
-    trimmed = clean_line.strip()
-    if not trimmed or trimmed.startswith('#'):
-        continue
-    if re.match(r'^[a-zA-Z0-9_]+\s*:', trimmed):
-        if re.match(r'^builds\s*:', trimmed):
-            in_builds = True
-        else:
-            in_builds = False
-            in_configs = False
-        continue
-    if not in_builds:
-        continue
-
-    m_name = re.match(r'^-\s*name\s*:\s*(.+)$', trimmed)
-    if m_name:
-        bname = m_name.group(1).strip().strip('"').strip("'")
-        current_build = (bname, [])
-        builds.append(current_build)
-        in_configs = False
-        continue
-
-    if re.match(r'^sgdkConfigs\s*:', trimmed):
-        in_configs = True
-        continue
-
-    if in_configs and current_build:
-        m_cfg = re.match(r'^-\s*([A-Za-z0-9_]+)\s*:\s*(.+)$', trimmed)
-        if m_cfg:
-            key = m_cfg.group(1).strip()
-            val = m_cfg.group(2).strip().strip('"').strip("'")
-            current_build[1].append((key, val))
-
-for bname, configs in builds:
-    cfg_str = ";".join([f"{k}={v}" for k, v in configs])
-    print(f"{bname}|{cfg_str}")
-EOF
-    elif command -v perl >/dev/null 2>&1; then
-        perl - "$yml_file" << 'EOF'
-use strict;
-use warnings;
-
-my $file = $ARGV[0];
-open(my $fh, '<', $file) or exit 0;
-
-my $in_builds = 0;
-my $in_configs = 0;
-my @builds;
-my $current_build;
-
-while (my $line = <$fh>) {
-    my $clean_line = $line;
-    $clean_line =~ s/\s+#.*$//;
-    my $trimmed = $clean_line;
-    $trimmed =~ s/^\s+|\s+$//g;
-    next if $trimmed eq '' || $trimmed =~ /^#/;
-
-    if ($trimmed =~ /^[a-zA-Z0-9_]+\s*:/) {
-        if ($trimmed =~ /^builds\s*:/) {
-            $in_builds = 1;
-        } else {
-            $in_builds = 0;
-            $in_configs = 0;
-        }
-        next;
-    }
-    next unless $in_builds;
-
-    if ($trimmed =~ /^-\s*name\s*:\s*(.+)$/) {
-        my $bname = $1;
-        $bname =~ s/^\s+|\s+$//g;
-        $bname =~ s/^["']|["']$//g;
-        $current_build = { name => $bname, configs => [] };
-        push @builds, $current_build;
-        $in_configs = 0;
-        next;
+    flush_build() {
+        if [ -n "$current_bname" ]; then
+            local cfg_str=""
+            local first=1
+            for cfg in "${current_configs[@]}"; do
+                if [ "$first" -eq 1 ]; then
+                    cfg_str="$cfg"
+                    first=0
+                else
+                    cfg_str="$cfg_str;$cfg"
+                fi
+            done
+            echo "$current_bname|$cfg_str"
+        fi
     }
 
-    if ($trimmed =~ /^sgdkConfigs\s*:/) {
-        $in_configs = 1;
-        next;
-    }
+    while IFS= read -r line || [ -n "$line" ]; do
+        local clean_line="${line%%#*}"
+        local trimmed
+        trimmed="$(echo "$clean_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        [ -z "$trimmed" ] && continue
 
-    if ($in_configs && $current_build) {
-        if ($trimmed =~ /^-\s*([A-Za-z0-9_]+)\s*:\s*(.+)$/) {
-            my $key = $1;
-            my $val = $2;
-            $key =~ s/^\s+|\s+$//g;
-            $val =~ s/^\s+|\s+$//g;
-            $val =~ s/^["']|["']$//g;
-            push @{$current_build->{configs}}, "$key=$val";
-        }
-    }
-}
-close($fh);
+        if [[ "$clean_line" =~ ^[a-zA-Z0-9_]+: ]]; then
+            if [[ "$trimmed" =~ ^builds: ]]; then
+                in_builds=1
+            else
+                if [ "$in_builds" -eq 1 ]; then
+                    flush_build
+                    current_bname=""
+                    current_configs=()
+                fi
+                in_builds=0
+                in_configs=0
+            fi
+            continue
+        fi
 
-for my $b (@builds) {
-    my $cfg_str = join(";", @{$b->{configs}});
-    print "$b->{name}|$cfg_str\n";
-}
-EOF
+        if [ "$in_builds" -eq 1 ]; then
+            if [[ "$trimmed" =~ ^-[[:space:]]*name:[[:space:]]*(.+)$ ]]; then
+                flush_build
+                current_bname="${BASH_REMATCH[1]}"
+                current_bname="$(echo "$current_bname" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+                current_configs=()
+                in_configs=0
+                continue
+            fi
+
+            if [[ "$trimmed" =~ ^sgdkConfigs: ]]; then
+                in_configs=1
+                continue
+            fi
+
+            if [ "$in_configs" -eq 1 ]; then
+                if [[ "$trimmed" =~ ^-[[:space:]]*([A-Za-z0-9_]+):[[:space:]]*(.+)$ ]]; then
+                    local key="${BASH_REMATCH[1]}"
+                    local val="${BASH_REMATCH[2]}"
+                    key="$(echo "$key" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+                    val="$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+                    current_configs+=("$key=$val")
+                fi
+            fi
+        fi
+    done < "$yml_file"
+
+    if [ "$in_builds" -eq 1 ]; then
+        flush_build
     fi
+}
+
+# Parse project name from sgdk.yml if present
+parse_sgdk_yml_name() {
+    local yml_file="sgdk.yml"
+    [ -f "$yml_file" ] || return 0
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        local clean_line="${line%%#*}"
+        local trimmed
+        trimmed="$(echo "$clean_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        [ -z "$trimmed" ] && continue
+
+        if [[ "$trimmed" =~ ^name:[[:space:]]*(.+)$ ]]; then
+            local val="${BASH_REMATCH[1]}"
+            val="$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+            echo "$val"
+            return 0
+        fi
+    done < "$yml_file"
 }
 
 apply_sgdk_config_key_val() {
@@ -272,6 +202,8 @@ run_build_target() {
     fi
 
     YML_BUILDS=$(parse_sgdk_yml_builds)
+    PROJECT_NAME=$(parse_sgdk_yml_name)
+    OUT_PREFIX="${PROJECT_NAME:-rom}"
 
     if [ -n "$YML_BUILDS" ]; then
         if [ ! -f "$GDK/inc/config.h_original" ] && [ -f "$GDK/inc/config.h" ]; then
@@ -315,13 +247,11 @@ run_build_target() {
 
             mkdir -p output
             if [ -f "out/rom.bin" ]; then
-                cp "out/rom.bin" "output/${bname}.bin"
-                cp "out/rom.bin" "out/rom-${bname}.bin"
-                echo "[SGDK] Created output artifact: output/${bname}.bin"
+                cp "out/rom.bin" "out/${OUT_PREFIX}-${bname}.bin"
+                echo "[SGDK] Created output artifact: out/${OUT_PREFIX}-${bname}.bin"
             elif [ -f "out/$target/rom.bin" ]; then
-                cp "out/$target/rom.bin" "output/${bname}.bin"
-                cp "out/$target/rom.bin" "out/$target/rom-${bname}.bin"
-                echo "[SGDK] Created output artifact: output/${bname}.bin"
+                cp "out/$target/rom.bin" "out/$target/${OUT_PREFIX}-${bname}.bin"
+                echo "[SGDK] Created output artifact: out/$target/${OUT_PREFIX}-${bname}.bin"
             fi
         done <<< "$YML_BUILDS"
 
@@ -333,6 +263,14 @@ run_build_target() {
             make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
         else
             make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+        fi
+
+        if [ -f "out/rom.bin" ]; then
+            cp "out/rom.bin" "out/${OUT_PREFIX}.bin"
+            echo "[SGDK] Created output artifact: out/${OUT_PREFIX}.bin"
+        elif [ -f "out/$target/rom.bin" ]; then
+            cp "out/$target/rom.bin" "out/$target/${OUT_PREFIX}.bin"
+            echo "[SGDK] Created output artifact: out/$target/${OUT_PREFIX}.bin"
         fi
     fi
 }
@@ -352,7 +290,7 @@ show_help() {
     echo "  rebuild [target]          Clean and rebuild project"
     echo "  deps, install             Fetch and clone dependencies defined in sgdk.yml"
     echo "  lib, build-lib [target]   Build SGDK library itself"
-    echo "  run, test [rom_path]      Launch ROM in emulator"
+    echo "  run                       Launch ROM in emulator"
     echo "  version, -v, --version    Display SGDK and toolchain version information"
     echo "  help, -h, --help          Display this help message"
     echo ""
@@ -480,11 +418,20 @@ case "$CMD" in
         echo "[SGDK] Building library target '$LIB_TARGET'..."
         make -f "$MAKELIB_GEN" "$LIB_TARGET" "$@"
         ;;
-    run|test)
+    run)
         shift
         ROM_PATH="${1:-}"
+        PROJECT_NAME=$(parse_sgdk_yml_name)
+        OUT_PREFIX="${PROJECT_NAME:-rom}"
+
         if [ -z "$ROM_PATH" ]; then
-            if [ -f "out/rom.bin" ]; then
+            if [ -f "out/${OUT_PREFIX}.bin" ]; then
+                ROM_PATH="out/${OUT_PREFIX}.bin"
+            elif [ -f "out/release/${OUT_PREFIX}.bin" ]; then
+                ROM_PATH="out/release/${OUT_PREFIX}.bin"
+            elif [ -f "out/debug/${OUT_PREFIX}.bin" ]; then
+                ROM_PATH="out/debug/${OUT_PREFIX}.bin"
+            elif [ -f "out/rom.bin" ]; then
                 ROM_PATH="out/rom.bin"
             elif [ -f "out/release/rom.bin" ]; then
                 ROM_PATH="out/release/rom.bin"

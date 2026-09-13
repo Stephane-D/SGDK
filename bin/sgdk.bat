@@ -44,7 +44,6 @@ if /i "%CMD%"=="deps" goto install_deps
 if /i "%CMD%"=="dependencies" goto install_deps
 if /i "%CMD%"=="install" goto install_deps
 if /i "%CMD%"=="run" goto run
-if /i "%CMD%"=="test" goto run
 
 echo [ERROR] Unknown command: '%CMD%'
 echo Run 'sgdk help' for available commands.
@@ -115,6 +114,7 @@ goto :eof
 set "IN_BUILDS=0"
 set "IN_CONFIGS=0"
 set "BUILD_COUNT=0"
+set "PROJECT_NAME="
 
 if not exist "sgdk.yml" goto :eof
 
@@ -139,6 +139,25 @@ if "!TRIM_LINE:~0,1!"=="	" (
 )
 
 if "!TRIM_LINE:~0,1!"=="#" goto :eof
+
+if "%IN_BUILDS%"=="0" (
+    if "!TRIM_LINE:~0,5!"=="name:" (
+        set "P_NAME=!TRIM_LINE:~5!"
+        :strip_pname
+        if "!P_NAME:~0,1!"==" " (
+            set "P_NAME=!P_NAME:~1!"
+            goto strip_pname
+        )
+        if "!P_NAME:~0,1!"=="	" (
+            set "P_NAME=!P_NAME:~1!"
+            goto strip_pname
+        )
+        set "P_NAME=!P_NAME:"=!"
+        set "P_NAME=!P_NAME:'=!"
+        set "PROJECT_NAME=!P_NAME!"
+        goto :eof
+    )
+)
 
 if "!TRIM_LINE!"=="builds:" (
     set "IN_BUILDS=1"
@@ -441,15 +460,15 @@ if !errorlevel! neq 0 (
     exit /b 1
 )
 
-if not exist "output" mkdir output
+set "OUT_PREFIX=rom"
+if defined PROJECT_NAME set "OUT_PREFIX=!PROJECT_NAME!"
+
 if exist "out\rom.bin" (
-    copy /y "out\rom.bin" "output\%CURR_BNAME%.bin" >nul
-    copy /y "out\rom.bin" "out\rom-%CURR_BNAME%.bin" >nul
-    echo [SGDK] Created output artifact: output\%CURR_BNAME%.bin
+    copy /y "out\rom.bin" "out\!OUT_PREFIX!-%CURR_BNAME%.bin" >nul
+    echo [SGDK] Created output artifact: out\!OUT_PREFIX!-%CURR_BNAME%.bin
 ) else if exist "out\%TARGET%\rom.bin" (
-    copy /y "out\%TARGET%\rom.bin" "output\%CURR_BNAME%.bin" >nul
-    copy /y "out\%TARGET%\rom.bin" "out\%TARGET%\rom-%CURR_BNAME%.bin" >nul
-    echo [SGDK] Created output artifact: output\%CURR_BNAME%.bin
+    copy /y "out\%TARGET%\rom.bin" "out\%TARGET%\!OUT_PREFIX!-%CURR_BNAME%.bin" >nul
+    echo [SGDK] Created output artifact: out\%TARGET%\!OUT_PREFIX!-%CURR_BNAME%.bin
 )
 exit /b 0
 
@@ -461,6 +480,20 @@ if not "%DEPENDENCIES%"=="" (
 ) else (
     make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
 )
+set "RES_ERR=!errorlevel!"
+if !RES_ERR! neq 0 exit /b !RES_ERR!
+
+set "OUT_PREFIX=rom"
+if defined PROJECT_NAME set "OUT_PREFIX=!PROJECT_NAME!"
+
+if exist "out\rom.bin" (
+    copy /y "out\rom.bin" "out\!OUT_PREFIX!.bin" >nul
+    echo [SGDK] Created output artifact: out\!OUT_PREFIX!.bin
+) else if exist "out\%TARGET%\rom.bin" (
+    copy /y "out\%TARGET%\rom.bin" "out\%TARGET%\!OUT_PREFIX!.bin" >nul
+    echo [SGDK] Created output artifact: out\%TARGET%\!OUT_PREFIX!.bin
+)
+exit /b 0
 exit /b %ERRORLEVEL%
 
 :: ----------------------------------------------------------------------------
@@ -562,14 +595,25 @@ make -f "%MAKELIB_GEN%" %LIB_TARGET% %EXTRA_ARGS%
 exit /b %ERRORLEVEL%
 
 :: ----------------------------------------------------------------------------
-:: Command: run / test [rom_path]
+:: Command: run [rom_path]
 :: ----------------------------------------------------------------------------
 :run
 shift
 set "ROM_PATH=%~1"
 
+call :parse_sgdk_yml_builds
+
+set "OUT_PREFIX=rom"
+if defined PROJECT_NAME set "OUT_PREFIX=!PROJECT_NAME!"
+
 if "%ROM_PATH%"=="" (
-    if exist "out\rom.bin" (
+    if exist "out\!OUT_PREFIX!.bin" (
+        set "ROM_PATH=out\!OUT_PREFIX!.bin"
+    ) else if exist "out\release\!OUT_PREFIX!.bin" (
+        set "ROM_PATH=out\release\!OUT_PREFIX!.bin"
+    ) else if exist "out\debug\!OUT_PREFIX!.bin" (
+        set "ROM_PATH=out\debug\!OUT_PREFIX!.bin"
+    ) else if exist "out\rom.bin" (
         set "ROM_PATH=out\rom.bin"
     ) else if exist "out\release\rom.bin" (
         set "ROM_PATH=out\release\rom.bin"
@@ -656,7 +700,7 @@ echo   clean [target]            Clean build output (targets: all, release, debu
 echo   rebuild [target]          Clean and rebuild project
 echo   deps, install             Fetch and clone dependencies defined in sgdk.yml
 echo   lib, build-lib [target]   Build SGDK library itself
-echo   run, test [rom_path]      Launch ROM in emulator
+echo   run [rom_path]            Launch ROM in emulator
 echo   version, -v, --version    Display SGDK and toolchain version information
 echo   help, -h, --help          Display this help message
 echo.

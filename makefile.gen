@@ -330,3 +330,11 @@ $(DEP_DIR)/%.d: %.s
 ifeq ($(CLEAN),FALSE)
 -include $(DEPS)
 endif
+
+unit-test:
+	$(MAKE) -C tests unit
+.PHONY: unit-test
+
+test:
+	$(MAKE) -C tests
+.PHONY: test
