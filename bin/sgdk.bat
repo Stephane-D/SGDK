@@ -331,7 +331,7 @@ if "%DEPENDENCIES%"=="" (
     echo [SGDK] No dependencies specified in sgdk.yml or DEPENDENCIES variable.
     exit /b 0
 )
-make -f "%MAKEFILE_GEN%" install DEPENDENCIES="%DEPENDENCIES%"
+%GDK%\bin\make -f "%MAKEFILE_GEN%" install DEPENDENCIES="%DEPENDENCIES%"
 exit /b %ERRORLEVEL%
 
 :: ----------------------------------------------------------------------------
@@ -489,8 +489,8 @@ call :apply_build_configs %B_NUM%
 
 echo [SGDK] Rebuilding SGDK library (%LIB_TARGET%) for build '%CURR_BNAME%'...
 pushd "%GDK%"
-make -f makelib.gen clean-%LIB_TARGET%
-make -f makelib.gen %LIB_TARGET%
+%GDK%\bin\make -f makelib.gen clean-%LIB_TARGET%
+%GDK%\bin\make -f makelib.gen %LIB_TARGET%
 popd
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to compile SGDK library for build '%CURR_BNAME%'.
@@ -499,11 +499,11 @@ if !errorlevel! neq 0 (
 
 :skip_lib_rebuild
 echo [SGDK] Executing project build target '%TARGET%'...
-make -f "%MAKEFILE_GEN%" clean %EXTRA_ARGS%
+%GDK%\bin\make -f "%MAKEFILE_GEN%" clean %EXTRA_ARGS%
 if not "%DEPENDENCIES%"=="" (
-    make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
 ) else (
-    make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
 )
 if !errorlevel! neq 0 (
     echo [ERROR] Build failed for configuration '%CURR_BNAME%'.
@@ -526,9 +526,9 @@ exit /b 0
 call :restore_config_h
 echo [SGDK] Executing build target '%TARGET%'...
 if not "%DEPENDENCIES%"=="" (
-    make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
 ) else (
-    make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
 )
 set "RES_ERR=!errorlevel!"
 if !RES_ERR! neq 0 exit /b !RES_ERR!
@@ -580,7 +580,7 @@ if not exist "%MAKEFILE_GEN%" (
 )
 call :restore_config_h
 echo [SGDK] Executing clean target '%CLEAN_TARGET%'...
-make -f "%MAKEFILE_GEN%" %CLEAN_TARGET% %EXTRA_ARGS%
+%GDK%\bin\make -f "%MAKEFILE_GEN%" %CLEAN_TARGET% %EXTRA_ARGS%
 exit /b %ERRORLEVEL%
 
 :: ----------------------------------------------------------------------------
@@ -641,7 +641,7 @@ if not exist "%MAKELIB_GEN%" (
     exit /b 1
 )
 echo [SGDK] Building library target '%LIB_TARGET%'...
-make -f "%MAKELIB_GEN%" %LIB_TARGET% %EXTRA_ARGS%
+%GDK%\bin\make -f "%MAKELIB_GEN%" %LIB_TARGET% %EXTRA_ARGS%
 exit /b %ERRORLEVEL%
 
 :: ----------------------------------------------------------------------------
@@ -713,15 +713,13 @@ exit /b %ERRORLEVEL%
 :version
 echo SGDK CLI Version 2.11
 echo GDK Directory: %GDK%
-where make >nul 2>&1
-if %errorlevel% equ 0 (
-    echo Make executable: found
+if exist "%GDK%\bin\make.exe" (
+    echo Make executable: found "%GDK%\bin\make.exe"
 ) else (
     echo Make executable: NOT found
 )
-where gcc >nul 2>&1
-if %errorlevel% equ 0 (
-    echo GCC compiler: found
+if exist "%GDK%\bin\gcc.exe" (
+    echo GCC compiler: found "%GDK%\bin\gcc.exe"
 ) else (
     where m68k-elf-gcc >nul 2>&1
     if !errorlevel! equ 0 (

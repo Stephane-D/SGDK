@@ -258,16 +258,16 @@ run_build_target() {
                 done
 
                 echo "[SGDK] Rebuilding SGDK library ($LIB_TARGET) for build '$bname'..."
-                make -C "$GDK" -f makelib.gen "clean-$LIB_TARGET"
-                make -C "$GDK" -f makelib.gen "$LIB_TARGET"
+                $GDK/bin/make -C "$GDK" -f makelib.gen "clean-$LIB_TARGET"
+                $GDK/bin/make -C "$GDK" -f makelib.gen "$LIB_TARGET"
             fi
 
             echo "[SGDK] Executing project build target '$target'..."
-            make -f "$MAKEFILE_GEN" clean "${extra_args[@]}"
+            $GDK/bin/make -f "$MAKEFILE_GEN" clean "${extra_args[@]}"
             if [ -n "$DEPENDENCIES" ]; then
-                make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
+                $GDK/bin/make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
             else
-                make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+                $GDK/bin/make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
             fi
 
             if [ -f "out/rom.bin" ]; then
@@ -284,9 +284,9 @@ run_build_target() {
         restore_sgdk_config_h
         echo "[SGDK] Executing build target '$target'..."
         if [ -n "$DEPENDENCIES" ]; then
-            make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
+            $GDK/bin/make -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
         else
-            make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+            $GDK/bin/make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
         fi
 
         if [ -f "out/rom.bin" ]; then
@@ -338,10 +338,16 @@ show_help() {
 show_version() {
     echo "SGDK CLI Version 2.11"
     echo "GDK Directory: $GDK"
-    if command -v make >/dev/null 2>&1; then
-        echo "Make executable: found ($(command -v make))"
+    if [ -x "$GDK/bin/make" ]; then
+        echo "Make executable: found ($GDK/bin/make)"
     else
         echo "Make executable: NOT found"
+    fi
+
+    if [ -f "$MAKEFILE_GEN" ]; then
+        echo "SGDK makefile.gen: found"
+    else
+        echo "SGDK makefile.gen: NOT found"
     fi
 
     if command -v m68k-elf-gcc >/dev/null 2>&1; then
@@ -373,7 +379,7 @@ case "$CMD" in
             echo "[SGDK] No dependencies specified in sgdk.yml or DEPENDENCIES variable."
             exit 0
         fi
-        make -f "$MAKEFILE_GEN" install DEPENDENCIES="$DEPENDENCIES" "$@"
+        $GDK/bin/make -f "$MAKEFILE_GEN" install DEPENDENCIES="$DEPENDENCIES" "$@"
         ;;
     init)
         shift
@@ -422,7 +428,7 @@ case "$CMD" in
         fi
         restore_sgdk_config_h
         echo "[SGDK] Executing clean target '$CLEAN_TARGET'..."
-        make -f "$MAKEFILE_GEN" "$CLEAN_TARGET" "$@"
+        $GDK/bin/make -f "$MAKEFILE_GEN" "$CLEAN_TARGET" "$@"
         ;;
     rebuild)
         shift
@@ -445,7 +451,7 @@ case "$CMD" in
             exit 1
         fi
         echo "[SGDK] Building library target '$LIB_TARGET'..."
-        make -f "$MAKELIB_GEN" "$LIB_TARGET" "$@"
+        $GDK/bin/make -f "$MAKELIB_GEN" "$LIB_TARGET" "$@"
         ;;
     run)
         shift
