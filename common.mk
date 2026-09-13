@@ -41,6 +41,8 @@ ifeq ($(OS),Windows_NT)
 	BINTOS := $(BIN)/bintos
 	LTO_PLUGIN := --plugin=liblto_plugin.dll
 	LIBGCC := $(LIB)/libgcc.a
+	MAKE := $(BIN)/make
+	TAR := $(BIN)/tar
 else
 	# Native Linux and Docker
 	PREFIX ?= m68k-elf-
@@ -60,9 +62,12 @@ else
 	BINTOS := bintos
 	LTO_PLUGIN :=
 	LIBGCC := -lgcc
+	MAKE := make
+	TAR := tar
 endif
 
 JAVA := java
 ECHO := echo
 SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
 RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+GIT := git

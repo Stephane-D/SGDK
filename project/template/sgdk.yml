@@ -1,0 +1,13 @@
+name: SAMPLE PROGRAM
+group: SGDK
+version: DEMONSTRATION PROGRAM
+description: A example project with SGDK.
+builds:
+- name: Official
+#  sgdkConfigs:
+#  - MODULE_MEGAWIFI: 1
+#  - MEGAWIFI_IMPLEMENTATION: (MEGAWIFI_IMPLEMENTATION_CROSS | MEGAWIFI_IMPLEMENTATION_ED)
+#  - ENABLE_BANK_SWITCH: 1
+#  - MODULE_SERIAL: 1
+dependencies:
+#  - https://example.com/dependency.git@master

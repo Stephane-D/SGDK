@@ -37,7 +37,7 @@ INC_DIR := inc
 OUT_DIR := out/$(BUILD_TYPE)
 DEP_DIR = $(OUT_DIR)/_deps
 OUT_DIR_LIB := $(GDK)/$(OUT_DIR)
-
+EXT_DEPS_DIR := deps
 
 SRC_C = $(wildcard *.c)
 SRC_C += $(wildcard $(SRC_DIR)/*.c)
@@ -45,6 +45,11 @@ SRC_C += $(wildcard $(SRC_DIR)/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*/*/*.c)
+SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*.c)
+SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*.c)
+SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*.c)
+SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*.c)
+SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*/*.c)
 SRC_C := $(filter-out $(SRC_DIR)/rom_header.c,$(SRC_C))
 SRC_S = $(wildcard *.s)
 SRC_S += $(wildcard $(SRC_DIR)/*.s)
@@ -52,12 +57,22 @@ SRC_S += $(wildcard $(SRC_DIR)/*/*.s)
 SRC_S += $(wildcard $(SRC_DIR)/*/*/*.s)
 SRC_S += $(wildcard $(SRC_DIR)/*/*/*/*.s)
 SRC_S += $(wildcard $(SRC_DIR)/*/*/*/*/*.s)
+SRC_S += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*.s)
+SRC_S += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*.s)
+SRC_S += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*.s)
+SRC_S += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*.s)
+SRC_S += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*/*.s)
 SRC_ASM = $(wildcard *.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*/*.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*/*/*.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*/*/*/*.asm)
 SRC_ASM += $(wildcard $(SRC_DIR)/*/*/*/*/*.asm)
+SRC_ASM += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*.asm)
+SRC_ASM += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*.asm)
+SRC_ASM += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*.asm)
+SRC_ASM += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*.asm)
+SRC_ASM += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*/*.asm)
 SRC_ASM := $(SRC_ASM)
 SRC_S80 = $(wildcard *.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*.s80)
@@ -65,6 +80,11 @@ SRC_S80 += $(wildcard $(SRC_DIR)/*/*.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*/*/*.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*/*/*/*.s80)
 SRC_S80 += $(wildcard $(SRC_DIR)/*/*/*/*/*.s80)
+SRC_S80 += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*.s80)
+SRC_S80 += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*.s80)
+SRC_S80 += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*.s80)
+SRC_S80 += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*.s80)
+SRC_S80 += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*/*/*.s80)
 SRC_S80 := $(SRC_S80)
 
 RES_RES = $(wildcard *.res)
@@ -73,6 +93,11 @@ RES_RES += $(wildcard $(RES_DIR)/*/*.res)
 RES_RES += $(wildcard $(RES_DIR)/*/*/*.res)
 RES_RES += $(wildcard $(RES_DIR)/*/*/*/*.res)
 RES_RES += $(wildcard $(RES_DIR)/*/*/*/*/*.res)
+RES_RES += $(wildcard $(EXT_DEPS_DIR)/*/$(RES_DIR)/*.res)
+RES_RES += $(wildcard $(EXT_DEPS_DIR)/*/$(RES_DIR)/*/*.res)
+RES_RES += $(wildcard $(EXT_DEPS_DIR)/*/$(RES_DIR)/*/*/*.res)
+RES_RES += $(wildcard $(EXT_DEPS_DIR)/*/$(RES_DIR)/*/*/*/*.res)
+RES_RES += $(wildcard $(EXT_DEPS_DIR)/*/$(RES_DIR)/*/*/*/*/*.res)
 RES_RES := $(RES_RES)
 
 RES_O = $(RES_RES:.res=.o)
@@ -93,7 +118,11 @@ DEPS += $(SRC_S:.s=.d)
 DEPS += $(SRC_C:.c=.d)
 DEPS := $(addprefix $(DEP_DIR)/, $(DEPS))
 
-INCS := -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB)
+DEP_INC_DIRS = $(wildcard $(EXT_DEPS_DIR)/*/$(INC_DIR))
+
+$(warning DEP_INC_DIRS=$(DEP_INC_DIRS))
+
+INCS = -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR)  $(addprefix -I,$(DEP_INC_DIRS)) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB)
 DEFAULT_FLAGS := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -fdiagnostics-color=always -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -ffunction-sections -fdata-sections -fms-extensions -B$(BIN)
 Z80_FLAGS := -i. -i$(SRC_DIR) -i$(INC_DIR) -i$(RES_DIR) -i$(OUT_DIR) -i$(SRC_LIB) -i$(INC_LIB) -i$(INC_LIB)/snd -i$(OUT_DIR_LIB)
 
@@ -131,6 +160,7 @@ endif
 .PHONY: clean-debug
 .PHONY: clean-asm
 .PHONY: clean-all
+.PHONY: install
 
 default: release
 all: release
@@ -144,6 +174,44 @@ Release: release
 Debug: debug
 Asm: asm
 clean: clean-all
+
+release: install
+debug: install
+asm: install
+
+install:
+	@$(RM) -r -f $(EXT_DEPS_DIR)
+	@$(MKDIR) -p $(EXT_DEPS_DIR)
+	@for dep in $(DEPENDENCIES); do \
+		case "$$dep" in \
+			*.git@*|*://*@*) \
+				url=$${dep%@*}; \
+				ref=$${dep#*@}; \
+				name=$${url##*/}; \
+				name=$${name%.git}; \
+				$(ECHO) "Clonando $$name ($$ref)"; \
+				$(GIT) clone "$$url" "$(EXT_DEPS_DIR)/$$name"; \
+				$(GIT) -C "$(EXT_DEPS_DIR)/$$name" checkout "$$ref"; \
+				;; \
+			*.git|*://*) \
+				url=$$dep; \
+				name=$${url##*/}; \
+				name=$${name%.git}; \
+				$(ECHO) "Clonando $$name"; \
+				$(GIT) clone "$$url" "$(EXT_DEPS_DIR)/$$name"; \
+				;; \
+			*) \
+				if [ -d "$$dep" ]; then \
+					name=$${dep##*/}; \
+					$(ECHO) "Dependencia local $$dep"; \
+					$(CP) -r "$$dep" "$(EXT_DEPS_DIR)/$$name"; \
+				else \
+					$(ECHO) "ERROR: dependencia no encontrada: $$dep"; \
+					exit 1; \
+				fi; \
+				;; \
+		esac; \
+	done
 
 release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 release: padROM
