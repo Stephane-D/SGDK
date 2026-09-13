@@ -63,7 +63,7 @@ parse_sgdk_yml_deps() {
 }
 
 init_project() {
-    local destination="${1:-.}"
+    local destination="${1:-$PWD}"
     local template="$GDK/project/template"
 
     if [ "$#" -gt 1 ]; then
@@ -79,7 +79,7 @@ init_project() {
     elif [ ! -d "$destination" ]; then
         echo "[ERROR] Init destination is not a directory: $destination" >&2
         return 1
-    elif [ "$(find "$destination" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+    elif [ "$(find "$destination" -mindepth 1 -maxdepth 1 ! -name '$RECYCLE.BIN' -print -quit)" ]; then
         echo "[ERROR] Init destination is not empty: $destination" >&2
         return 1
     fi
