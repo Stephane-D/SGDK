@@ -344,12 +344,6 @@ show_version() {
         echo "Make executable: NOT found"
     fi
 
-    if [ -f "$MAKEFILE_GEN" ]; then
-        echo "SGDK makefile.gen: found"
-    else
-        echo "SGDK makefile.gen: NOT found"
-    fi
-
     if command -v m68k-elf-gcc >/dev/null 2>&1; then
         echo "GCC compiler: m68k-elf-gcc found ($(command -v m68k-elf-gcc))"
     elif command -v gcc >/dev/null 2>&1; then
