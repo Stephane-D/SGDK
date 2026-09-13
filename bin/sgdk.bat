@@ -31,6 +31,7 @@ if /i "%CMD%"=="--help" goto help
 if /i "%CMD%"=="version" goto version
 if /i "%CMD%"=="-v" goto version
 if /i "%CMD%"=="--version" goto version
+if /i "%CMD%"=="init" goto init
 if /i "%CMD%"=="build" goto build
 if /i "%CMD%"=="compile" goto build
 if /i "%CMD%"=="release" goto release
@@ -332,6 +333,55 @@ if "%DEPENDENCIES%"=="" (
 )
 make -f "%MAKEFILE_GEN%" install DEPENDENCIES="%DEPENDENCIES%"
 exit /b %ERRORLEVEL%
+
+:: ----------------------------------------------------------------------------
+:: Command: init
+:: ----------------------------------------------------------------------------
+:init
+shift
+set "INIT_DEST=%~1"
+if not "%~2"=="" goto init_too_many_args
+if not defined INIT_DEST set "INIT_DEST=%CD%"
+set "INIT_TEMPLATE=%GDK:/=\%\project\template"
+if not exist "!INIT_DEST!" mkdir "!INIT_DEST!"
+if not exist "!INIT_DEST!\." goto init_not_directory
+pushd "!INIT_DEST!" >nul 2>&1
+if errorlevel 1 goto init_not_directory
+set "INIT_PUSHED=1"
+for /f "delims=" %%F in ('dir /a /b 2^>nul ^| findstr /i /v /x "$RECYCLE.BIN"') do goto init_not_empty
+if not exist "!INIT_TEMPLATE!\*" goto init_template_missing
+xcopy "!INIT_TEMPLATE!\*" "!INIT_DEST!\" /E /I /H /Y >nul
+if errorlevel 1 goto init_failed_pushed
+popd
+set "INIT_PUSHED=0"
+echo [SGDK] Initialized project in: !INIT_DEST!
+exit /b 0
+
+:init_too_many_args
+echo [ERROR] init accepts at most one destination directory.
+exit /b 1
+
+:init_not_directory
+echo [ERROR] Init destination is not a directory: !INIT_DEST!
+exit /b 1
+
+:init_not_empty
+if "!INIT_PUSHED!"=="1" popd
+echo [ERROR] Init destination is not empty: !INIT_DEST!
+exit /b 1
+
+:init_template_missing
+if "!INIT_PUSHED!"=="1" popd
+echo [ERROR] Cannot find SGDK project template at: !INIT_TEMPLATE!
+exit /b 1
+
+:init_failed_pushed
+popd
+set "INIT_PUSHED=0"
+
+:init_failed
+echo [ERROR] Failed to initialize project in: !INIT_DEST!
+exit /b 1
 
 :: ----------------------------------------------------------------------------
 :: Command: build / compile [target] [options]
@@ -692,6 +742,7 @@ echo.
 echo Usage: sgdk ^<command^> [target] [options]
 echo.
 echo Commands:
+echo   init                      Initialize folder with SGDK project structure
 echo   build, compile [target]   Build project (default target: release)
 echo   release                   Build project in release mode
 echo   debug                     Build project in debug mode (with symbols)

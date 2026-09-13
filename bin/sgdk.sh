@@ -62,6 +62,31 @@ parse_sgdk_yml_deps() {
     echo "${deps[*]}"
 }
 
+init_project() {
+    local destination="${1:-.}"
+    local template="$GDK/project/template"
+
+    if [ "$#" -gt 1 ]; then
+        echo "[ERROR] init accepts at most one destination directory." >&2
+        return 1
+    fi
+    if [ ! -d "$template" ]; then
+        echo "[ERROR] Cannot find SGDK project template at: $template" >&2
+        return 1
+    fi
+    if [ ! -e "$destination" ]; then
+        mkdir -p "$destination" || return 1
+    elif [ ! -d "$destination" ]; then
+        echo "[ERROR] Init destination is not a directory: $destination" >&2
+        return 1
+    elif [ "$(find "$destination" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+        echo "[ERROR] Init destination is not empty: $destination" >&2
+        return 1
+    fi
+
+    cp -R "$template"/. "$destination"/ || return 1
+    echo "[SGDK] Initialized project in: $destination"
+}
 YML_DEPS=$(parse_sgdk_yml_deps)
 if [ -n "$YML_DEPS" ]; then
     echo "[SGDK] Found dependencies in sgdk.yml: $YML_DEPS"
@@ -245,7 +270,6 @@ run_build_target() {
                 make -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
             fi
 
-            mkdir -p output
             if [ -f "out/rom.bin" ]; then
                 cp "out/rom.bin" "out/${OUT_PREFIX}-${bname}.bin"
                 echo "[SGDK] Created output artifact: out/${OUT_PREFIX}-${bname}.bin"
@@ -282,6 +306,7 @@ show_help() {
     echo "Usage: sgdk <command> [target] [options]"
     echo ""
     echo "Commands:"
+    echo "  init                      Initialize folder with SGDK project structure"
     echo "  build, compile [target]   Build project (default target: release)"
     echo "  release                   Build project in release mode"
     echo "  debug                     Build project in debug mode (with symbols)"
@@ -349,6 +374,10 @@ case "$CMD" in
             exit 0
         fi
         make -f "$MAKEFILE_GEN" install DEPENDENCIES="$DEPENDENCIES" "$@"
+        ;;
+    init)
+        shift
+        init_project "$@"
         ;;
     build|compile)
         shift
