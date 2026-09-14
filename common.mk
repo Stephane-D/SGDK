@@ -39,6 +39,9 @@ ifeq ($(OS),Windows_NT)
 	ASMZ80 := $(BIN)/w_bins/sjasm
 	MACCER := $(BIN)/w_bins/mac68k
 	BINTOS := $(BIN)/w_bins/bintos
+	XGMTOOL := $(BIN)/w_bins/xgmtool.exe
+
+	
 	LTO_PLUGIN := --plugin=liblto_plugin.dll
 	LIBGCC := $(LIB)/libgcc.a
 	MAKE := $(BIN)/make
@@ -68,6 +71,7 @@ else
 	ASMZ80 := $(BIN)/linux_bins/sjasm
 	MACCER := $(BIN)/linux_bins/maccer
 	BINTOS := $(BIN)/linux_bins/bintos
+	XGMTOOL := $(BIN)/linux_bins/xgmtool
 	LTO_PLUGIN :=
 	LIBGCC := -lgcc
 	MAKE := make
@@ -78,5 +82,5 @@ endif
 JAVA := java
 ECHO := echo
 SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
-RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+RESCOMP := $(RM) -f $(BIN)/xgmtool$(EXE_EXT) && $(CP) $(XGMTOOL) $(BIN)/xgmtool$(EXE_EXT) && $(JAVA) -jar $(BIN)/rescomp.jar
 GIT := git
