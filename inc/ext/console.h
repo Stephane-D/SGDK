@@ -32,7 +32,6 @@
 #include "string.h"
 #include "maths.h"
 #include "dma.h"
-#include <stdarg.h>
 
 #pragma once
 
