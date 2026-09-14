@@ -47,6 +47,10 @@ if /i "%CMD%"=="test-e2e" goto test_e2e
 if /i "%CMD%"=="test_e2e" goto test_e2e
 if /i "%CMD%"=="e2e-test" goto test_e2e
 if /i "%CMD%"=="e2e" goto test_e2e
+if /i "%CMD%"=="test-coverage" goto test_coverage
+if /i "%CMD%"=="test_coverage" goto test_coverage
+if /i "%CMD%"=="coverage-test" goto test_coverage
+if /i "%CMD%"=="coverage" goto test_coverage
 if /i "%CMD%"=="clean" goto clean
 if /i "%CMD%"=="rebuild" goto rebuild
 if /i "%CMD%"=="lib" goto lib
@@ -568,6 +572,9 @@ if /i "%SUB_CMD%"=="test_unit" goto test_unit_sub
 if /i "%SUB_CMD%"=="e2e" goto test_e2e_sub
 if /i "%SUB_CMD%"=="test-e2e" goto test_e2e_sub
 if /i "%SUB_CMD%"=="test_e2e" goto test_e2e_sub
+if /i "%SUB_CMD%"=="coverage" goto test_coverage_sub
+if /i "%SUB_CMD%"=="test-coverage" goto test_coverage_sub
+if /i "%SUB_CMD%"=="test_coverage" goto test_coverage_sub
 set "TEST_TARGET=test"
 goto exec_test_make
 
@@ -581,6 +588,12 @@ goto exec_test_make
 shift
 :test_e2e_sub
 set "TEST_TARGET=test-e2e"
+goto exec_test_make
+
+:test_coverage
+shift
+:test_coverage_sub
+set "TEST_TARGET=test-coverage"
 goto exec_test_make
 
 :exec_test_make
@@ -849,6 +862,20 @@ if defined CC_PATH (
 ) else (
     echo Test Compiler not found
 )
+
+where gcov >nul 2>&1
+if !errorlevel! equ 0 (
+    for /f "delims=" %%I in ('where gcov 2^>nul') do echo gcov tool: gcov found "%%I"
+) else (
+    echo gcov tool: NOT found
+)
+
+where lcov >nul 2>&1
+if !errorlevel! equ 0 (
+    for /f "delims=" %%I in ('where lcov 2^>nul') do echo lcov tool: lcov found "%%I"
+) else (
+    echo lcov tool: NOT found
+)
 exit /b 0
 
 :: ----------------------------------------------------------------------------
@@ -861,21 +888,22 @@ echo.
 echo Usage: sgdk ^<command^> [target] [options]
 echo.
 echo Commands:
-echo   init                      Initialize folder with SGDK project structure
-echo   build, compile [target]   Build project (default target: release)
-echo   release                   Build project in release mode
-echo   debug                     Build project in debug mode (with symbols)
-echo   asm                       Generate assembly output
-echo   test [unit^|e2e]           Run all tests or specific phase (unit/e2e)
-echo   test-unit                 Run unit tests (Unity / CMock)
-echo   test-e2e                  Run E2E tests (Unity / CMock)
-echo   clean [target]            Clean build output (targets: all, release, debug, asm, test)
-echo   rebuild [target]          Clean and rebuild project
-echo   deps, install             Fetch and clone dependencies defined in sgdk.yml
-echo   lib, build-lib [target]   Build SGDK library itself
-echo   run [rom_path]            Launch ROM in emulator
-echo   version, -v, --version    Display SGDK and toolchain version information
-echo   help, -h, --help          Display this help message
+echo   init                       Initialize folder with SGDK project structure
+echo   build, compile [target]    Build project (default target: release)
+echo   release                    Build project in release mode
+echo   debug                      Build project in debug mode (with symbols)
+echo   asm                        Generate assembly output
+echo   test [unit^|e2e^|coverage] Run all tests or specific phase (unit/e2e/coverage)
+echo   test-unit                  Run unit tests (Unity / CMock)
+echo   test-e2e                   Run E2E tests (Unity / CMock)
+echo   test-coverage, coverage    Run unit tests with gcov coverage
+echo   clean [target]             Clean build output (targets: all, release, debug, asm, test)
+echo   rebuild [target]           Clean and rebuild project
+echo   deps, install              Fetch and clone dependencies defined in sgdk.yml
+echo   lib, build-lib [target]    Build SGDK library itself
+echo   run [rom_path]             Launch ROM in emulator
+echo   version, -v, --version     Display SGDK and toolchain version information
+echo   help, -h, --help           Display this help message
 echo.
 echo Targets:
 echo   release                   Optimized release build (default)

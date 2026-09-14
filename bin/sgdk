@@ -373,9 +373,10 @@ show_help() {
     echo "  release                   Build project in release mode"
     echo "  debug                     Build project in debug mode (with symbols)"
     echo "  asm                       Generate assembly output"
-    echo "  test [unit|e2e]           Run all tests or specific phase (unit/e2e)"
+    echo "  test [unit|e2e|coverage]  Run all tests or specific phase (unit/e2e/coverage)"
     echo "  test-unit, unit           Run unit tests (Unity / CMock)"
     echo "  test-e2e, e2e             Run E2E tests (Unity / CMock)"
+    echo "  test-coverage, coverage   Run unit tests with gcov coverage"
     echo "  clean [target]            Clean build output (targets: all, release, debug, asm, test)"
     echo "  rebuild [target]          Clean and rebuild project"
     echo "  deps, install             Fetch and clone dependencies defined in sgdk.yml"
@@ -429,6 +430,18 @@ show_version() {
         echo "Test GCC compiler: gcc found ($(command -v gcc))"
     else
         echo "Test GCC compiler: NOT found"
+    fi
+
+    if command -v gcov >/dev/null 2>&1; then
+        echo "gcov tool: gcov found ($(command -v gcov))"
+    else
+        echo "gcov tool: NOT found"
+    fi
+
+    if command -v lcov >/dev/null 2>&1; then
+        echo "lcov tool: lcov found ($(command -v lcov))"
+    else
+        echo "lcov tool: NOT found"
     fi
 
      
@@ -490,6 +503,9 @@ case "$CMD" in
         elif [ "$SUB" = "e2e" ] || [ "$SUB" = "test-e2e" ] || [ "$SUB" = "test_e2e" ]; then
             shift
             run_test_target "test-e2e" "$@"
+        elif [ "$SUB" = "coverage" ] || [ "$SUB" = "test-coverage" ] || [ "$SUB" = "test_coverage" ]; then
+            shift
+            run_test_target "test-coverage" "$@"
         else
             run_test_target "test" "$@"
         fi
@@ -501,6 +517,10 @@ case "$CMD" in
     test-e2e|test_e2e|e2e-test|e2e)
         shift
         run_test_target "test-e2e" "$@"
+        ;;
+    test-coverage|test_coverage|coverage-test|coverage)
+        shift
+        run_test_target "test-coverage" "$@"
         ;;
     clean)
         shift

@@ -218,7 +218,7 @@ $(TEST_OUT_DIR)/e2e/%.o: %.c
 .PHONY: clean-test
 .PHONY: install
 .PHONY: install-test-deps
-.PHONY: test test-unit test_unit unit-test test-e2e test_e2e e2e-test
+.PHONY: test test-unit test_unit unit-test test-e2e test_e2e e2e-test test-coverage test_coverage coverage
 
 default: release
 all: release
@@ -321,10 +321,47 @@ test_unit: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
 		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
 		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
-		echo "[SGDK] Executing unit tests binary..."; \
-		./$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) || $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
+		$(ECHO) "[SGDK] Executing unit tests binary..."; \
+		./$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) > $(TEST_OUT_DIR)/unit/unity_output.txt 2>&1 || true; \
+		cat $(TEST_OUT_DIR)/unit/unity_output.txt; \
+		$(ECHO) "[SGDK] Generating JUnit XML report..."; \
+		awk 'BEGIN { tests = 0; failures = 0; skipped = 0; xml_cases = ""; } { sub(/\r$$/, ""); if ($$0 ~ /^[^:\n]+:[0-9]+:[^:\n]+:(PASS|FAIL|IGNORE)/) { split($$0, parts, ":"); filepath = parts[1]; line = parts[2]; testname = parts[3]; status = parts[4]; n = split(filepath, path_parts, "[\/\\\\]"); file_name = path_parts[n]; sub(/\.[^.]+$$/, "", file_name); tests++; xml_cases = xml_cases "    <testcase classname=\"" file_name "\" name=\"" testname "\" time=\"0.000\">\n"; if (status == "FAIL") { failures++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test failed"; xml_cases = xml_cases "      <failure message=\"" msg "\">" filepath ":" line ": " msg "</failure>\n"; } else if (status == "IGNORE") { skipped++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test ignored"; xml_cases = xml_cases "      <skipped message=\"" msg "\"/>\n"; } xml_cases = xml_cases "    </testcase>\n"; } } END { print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; print "<testsuites tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; print "  <testsuite name=\"unit_tests\" tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; printf "%s", xml_cases; print "  </testsuite>"; print "</testsuites>"; }' $(TEST_OUT_DIR)/unit/unity_output.txt > $(TEST_OUT_DIR)/unit/junit.xml; \
+		$(ECHO) "[SGDK] Created JUnit report: $(TEST_OUT_DIR)/unit/junit.xml"; \
+		if grep -q "FAIL" $(TEST_OUT_DIR)/unit/unity_output.txt 2>/dev/null; then exit 1; fi; \
 	else \
-		echo "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
+		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
+	fi
+
+test-coverage: test_coverage
+coverage: test_coverage
+test_coverage: install install-test-deps
+	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
+		$(MKDIR) -p $(TEST_OUT_DIR)/coverage; \
+		$(TEST_CC) $(TEST_CFLAGS) --coverage $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/coverage/unit_tests$(EXE_EXT); \
+		$(ECHO) "[SGDK] Executing unit tests binary with coverage..."; \
+		./$(TEST_OUT_DIR)/coverage/unit_tests$(EXE_EXT) > $(TEST_OUT_DIR)/coverage/unity_output.txt 2>&1 || true; \
+		cat $(TEST_OUT_DIR)/coverage/unity_output.txt; \
+		if command -v gcov >/dev/null 2>&1; then \
+			$(ECHO) "[SGDK] Running gcov coverage analysis..."; \
+			for f in $(APP_SRCS); do \
+				gcno=$$(ls $(TEST_OUT_DIR)/coverage/*-$$(basename $${f%.c}).gcno 2>/dev/null); \
+				if [ -f "$$gcno" ]; then \
+					gcov -o "$$gcno" "$$f"; \
+				fi; \
+			done; \
+			mv -f *.gcov $(TEST_OUT_DIR)/coverage/ 2>/dev/null || true; \
+		fi; \
+		if command -v lcov >/dev/null 2>&1; then \
+			$(ECHO) "[SGDK] Capturing lcov coverage report..."; \
+			lcov --capture --directory $(TEST_OUT_DIR)/coverage --output-file $(TEST_OUT_DIR)/coverage/coverage.info --ignore-errors unused 2>/dev/null || true; \
+			lcov --remove $(TEST_OUT_DIR)/coverage/coverage.info "*/tests/*" "*/deps/*" --ignore-errors unused --output-file $(TEST_OUT_DIR)/coverage/coverage_cleaned.info 2>/dev/null || true; \
+			if command -v genhtml >/dev/null 2>&1; then \
+				genhtml $(TEST_OUT_DIR)/coverage/coverage_cleaned.info --output-directory $(TEST_OUT_DIR)/coverage/html 2>/dev/null || true; \
+				$(ECHO) "[SGDK] Created LCOV HTML report: $(TEST_OUT_DIR)/coverage/html/index.html"; \
+			fi; \
+		fi; \
+	else \
+		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
 	fi
 
 test-e2e: test_e2e
@@ -349,9 +386,9 @@ test_e2e: install install-test-deps
 		$(NM) $(LTO_PLUGIN) -n -l $(TEST_OUT_DIR)/e2e/rom.out > $(TEST_OUT_DIR)/e2e/symbol.txt 2>/dev/null || true; \
 		$(OBJCPY) -O binary $(TEST_OUT_DIR)/e2e/rom.out $(TEST_OUT_DIR)/e2e/rom.bin || exit 1; \
 		$(SIZEBND) $(TEST_OUT_DIR)/e2e/rom.bin -sizealign 131072 -checksum; \
-		echo "[SGDK] Created Mega Drive E2E test ROM: $(TEST_OUT_DIR)/e2e/rom.bin"; \
+		$(ECHO) "[SGDK] Created Mega Drive E2E test ROM: $(TEST_OUT_DIR)/e2e/rom.bin"; \
 	else \
-		echo "[SGDK] No E2E test sources found in $(TEST_DIR)/e2e."; \
+		$(ECHO) "[SGDK] No E2E test sources found in $(TEST_DIR)/e2e."; \
 	fi
 
 
