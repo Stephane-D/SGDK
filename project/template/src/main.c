@@ -41,4 +41,5 @@ int main(bool hardReset)
 
 static void joyEvent(u16 joy, u16 changed, u16 state)
 {
+    kprintf("Joy %d changed: 0x%04X state: 0x%04X\n", joy, changed, state);
 }
