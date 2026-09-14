@@ -323,8 +323,7 @@ test_unit: install install-test-deps
 		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
 		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
 		$(ECHO) "[SGDK] Executing unit tests binary..."; \
-		powershell -NoProfile -ExecutionPolicy Bypass -File "$(BIN)/unity_to_junit.ps1" "$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT)" "$(TEST_OUT_DIR)/unit/unity_output.txt" "$(TEST_OUT_DIR)/unit/junit.xml"; \
-		$(ECHO) "[SGDK] Created JUnit report: $(TEST_OUT_DIR)/unit/junit.xml"; \
+		$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) || $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
 	else \
 		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
 	fi
@@ -347,6 +346,11 @@ endif
 
 test-coverage: test_coverage
 coverage: test_coverage
+ifeq ($(OS),Windows_NT)
+test_coverage:
+	@$(ECHO) "[ERROR] Coverage analysis target is only supported on Linux."
+	@exit 1
+else
 test_coverage: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
 		$(MKDIR) -p $(TEST_OUT_DIR)/coverage; \
@@ -376,6 +380,7 @@ test_coverage: install install-test-deps
 	else \
 		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
 	fi
+endif
 
 test-e2e: test_e2e
 e2e-test: test_e2e
