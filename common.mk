@@ -36,13 +36,24 @@ ifeq ($(OS),Windows_NT)
 	NM:= $(BIN)/nm
 	OBJCPY := $(BIN)/objcopy
 	CONVSYM := $(BIN)/convsym
-	ASMZ80 := $(BIN)/sjasm
-	MACCER := $(BIN)/mac68k
-	BINTOS := $(BIN)/bintos
+	ASMZ80 := $(BIN)/w_bins/sjasm
+	MACCER := $(BIN)/w_bins/mac68k
+	BINTOS := $(BIN)/w_bins/bintos
+	XGMTOOL := $(BIN)/w_bins/xgmtool.exe
+
+	
 	LTO_PLUGIN := --plugin=liblto_plugin.dll
 	LIBGCC := $(LIB)/libgcc.a
 	MAKE := $(BIN)/make
-	TAR := $(BIN)/tar
+    EXE_EXT := .exe
+	
+    TEST_CC ?= gcc
+    ifneq ($(shell where clang 2>nul),)
+		TEST_CC := clang
+	else ifneq ($(shell where gcc 2>nul | findstr /i /v "SGDK"),)
+		TEST_CC := $(firstword $(shell where gcc 2>nul | findstr /i /v "SGDK"))
+	endif
+	
 else
 	# Native Linux and Docker
 	PREFIX ?= m68k-elf-
@@ -57,17 +68,19 @@ else
 	NM := $(PREFIX)nm
 	OBJCPY := $(PREFIX)objcopy
 	CONVSYM := convsym
-	ASMZ80 := sjasm
-	MACCER := mac68k
-	BINTOS := bintos
+	ASMZ80 := $(BIN)/linux_bins/sjasm
+	MACCER := $(BIN)/linux_bins/maccer
+	BINTOS := $(BIN)/linux_bins/bintos
+	XGMTOOL := $(BIN)/linux_bins/xgmtool
 	LTO_PLUGIN :=
 	LIBGCC := -lgcc
 	MAKE := make
-	TAR := tar
+    EXE_EXT :=
+	TEST_CC := gcc
 endif
 
 JAVA := java
 ECHO := echo
 SIZEBND := $(JAVA) -jar $(BIN)/sizebnd.jar
-RESCOMP := $(JAVA) -jar $(BIN)/rescomp.jar
+RESCOMP := $(RM) -f $(BIN)/xgmtool$(EXE_EXT) && $(CP) $(XGMTOOL) $(BIN)/xgmtool$(EXE_EXT) && $(JAVA) -jar $(BIN)/rescomp.jar
 GIT := git

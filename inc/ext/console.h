@@ -32,6 +32,9 @@
 #include "string.h"
 #include "maths.h"
 #include "dma.h"
+#ifdef __linux__
+#include <stdarg.h>
+#endif
 
 #pragma once
 

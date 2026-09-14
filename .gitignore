@@ -50,3 +50,5 @@ tools/build/
 inc/config.h_original
 wip.txt
 .github/copilot-instructions.md
+bin/xgmtool*
+lib/libmd.a

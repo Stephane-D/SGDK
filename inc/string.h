@@ -10,6 +10,10 @@
  * This unit provides basic null terminated string operations and type conversions.
  */
 
+#if defined(UNIT_TESTS) && !defined(__m68k__) && !defined(SGDK_GCC)
+#include_next <string.h>
+#else
+
 #if (ENABLE_NEWLIB != 0) && !defined(_NEWLIB_STRING_H_)
 #define _NEWLIB_STRING_H_
 #include_next <string.h> // Include string.h from newlib
@@ -346,4 +350,5 @@ void FF16_toStr(fastfix16 value, char *str, u16 numdec);
 void FF32_toStr(fastfix32 value, char *str, u16 numdec);
 
 #endif // _STRING_H_
+#endif // UNIT_TESTS
 
