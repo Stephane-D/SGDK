@@ -339,6 +339,8 @@ test_e2e: install install-test-deps
 			$(CC) $(FLAGS) -c $(TEST_OUT_DIR)/e2e/rom_header.c -o $(TEST_OUT_DIR)/e2e/rom_header.o || exit 1; \
 		fi; \
 		$(OBJCPY) -O binary $(TEST_OUT_DIR)/e2e/rom_header.o $(TEST_OUT_DIR)/e2e/rom_header.bin || exit 1; \
+		$(MKDIR) -p out; \
+		$(CP) $(TEST_OUT_DIR)/e2e/rom_header.bin out/rom_header.bin; \
 		$(CP) $(SRC_LIB)/boot/sega.s $(TEST_OUT_DIR)/e2e/sega.s; \
 		$(CC) $(AFLAGS) -c $(TEST_OUT_DIR)/e2e/sega.s -o $(TEST_OUT_DIR)/e2e/sega.o || exit 1; \
 		$(MAKE) -f $(MAKEFILE_PATH) $(E2E_OBJS_ALL) || exit 1; \

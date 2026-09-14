@@ -613,7 +613,11 @@ if defined TEST_CFG_CNT if !TEST_CFG_CNT! gtr 0 (
     popd
     if !errorlevel! neq 0 exit /b 1
 )
-%GDK%\bin\make -f "%MAKEFILE_GEN%" %TEST_TARGET% TEST_OUT_DIR="out/test/%TEST_BUILD_NAME%"
+set "TEST_BUILD_NAME_LOWER=!TEST_BUILD_NAME!"
+for %%L in (a b c d e f g h i j k l m n o p q r s t u v w x y z) do (
+    set "TEST_BUILD_NAME_LOWER=!TEST_BUILD_NAME_LOWER:%%L=%%L!"
+)
+%GDK%\bin\make -f "%MAKEFILE_GEN%" %TEST_TARGET% TEST_OUT_DIR="out/test/!TEST_BUILD_NAME_LOWER!"
 if !errorlevel! neq 0 (
     call :restore_config_h
     exit /b 1
@@ -807,7 +811,12 @@ echo GDK Directory: %GDK%
 if exist "%GDK%\bin\make.exe" (
     echo Make executable: found "%GDK%\bin\make.exe"
 ) else (
-    echo Make executable: NOT found
+    where make >nul 2>&1
+    if !errorlevel! equ 0 (
+        for /f "delims=" %%I in ('where make 2^>nul') do echo Make executable: make found "%%I"
+    ) else (
+        echo Make executable: NOT found
+    )
 )
 if exist "%GDK%\bin\gcc.exe" (
     echo GCC compiler: found "%GDK%\bin\gcc.exe"
