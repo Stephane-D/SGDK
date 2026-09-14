@@ -350,7 +350,8 @@ run_test_target() {
             $MAKE_CMD -C "$GDK" -f makelib.gen release
         fi
 
-        test_out="out/test/$bname"
+        bname_lower=$(echo "$bname" | tr '[:upper:]' '[:lower:]')
+        test_out="out/test/$bname_lower"
         if [ -n "$DEPENDENCIES" ]; then
             $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" TEST_OUT_DIR="$test_out" "${extra_args[@]}"
         else
@@ -410,6 +411,8 @@ show_version() {
     echo "GDK Directory: $GDK"
     if [ -x "$GDK/bin/make" ]; then
         echo "Make executable: found ($GDK/bin/make)"
+    elif command -v make >/dev/null 2>&1; then
+        echo "Make executable: make found ($(command -v make))"
     else
         echo "Make executable: NOT found"
     fi
