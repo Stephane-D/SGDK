@@ -36,9 +36,9 @@ ifeq ($(OS),Windows_NT)
 	NM:= $(BIN)/nm
 	OBJCPY := $(BIN)/objcopy
 	CONVSYM := $(BIN)/convsym
-	ASMZ80 := $(BIN)/sjasm
-	MACCER := $(BIN)/mac68k
-	BINTOS := $(BIN)/bintos
+	ASMZ80 := $(BIN)/w_bins/sjasm
+	MACCER := $(BIN)/w_bins/mac68k
+	BINTOS := $(BIN)/w_bins/bintos
 	LTO_PLUGIN := --plugin=liblto_plugin.dll
 	LIBGCC := $(LIB)/libgcc.a
 	MAKE := $(BIN)/make
@@ -65,9 +65,9 @@ else
 	NM := $(PREFIX)nm
 	OBJCPY := $(PREFIX)objcopy
 	CONVSYM := convsym
-	ASMZ80 := sjasm
-	MACCER := mac68k
-	BINTOS := bintos
+	ASMZ80 := $(BIN)/linux_bins/sjasm
+	MACCER := $(BIN)/linux_bins/maccer
+	BINTOS := $(BIN)/linux_bins/bintos
 	LTO_PLUGIN :=
 	LIBGCC := -lgcc
 	MAKE := make
