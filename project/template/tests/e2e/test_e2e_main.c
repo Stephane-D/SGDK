@@ -37,7 +37,7 @@ void test_main_calls_sys_do_vblank_process(void)
 {
     applicationMain(FALSE);
 
-    TEST_ASSERT_GREATER_OR_EQUAL_UINT16(1, vblankProcessCalls);
+    TEST_ASSERT_GREATER_OR_EQUAL_UINT16(100, vblankProcessCalls);
 }
 
 int main(bool hardReset)
