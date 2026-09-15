@@ -368,6 +368,12 @@ test_coverage: install install-test-deps
 			done; \
 			mv -f *.gcov $(TEST_OUT_DIR)/coverage/ 2>/dev/null || true; \
 		fi; \
+		if command -v gcovr >/dev/null 2>&1; then \
+			$(ECHO) "[SGDK] Generating SonarQube coverage report..."; \
+			gcovr --filter "inc|src|test" --sonarqube $(TEST_OUT_DIR)/coverage/coverage.xml; \
+			$(ECHO) "[SGDK] Created SonarQube coverage report: $(TEST_OUT_DIR)/coverage/coverage.xml"; \
+		fi; \
+		
 		if command -v lcov >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Capturing lcov coverage report..."; \
 			lcov --capture --directory $(TEST_OUT_DIR)/coverage --output-file $(TEST_OUT_DIR)/coverage/coverage.info --ignore-errors unused 2>/dev/null || true; \
