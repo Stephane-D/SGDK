@@ -271,7 +271,7 @@ run_build_target() {
             fi
 
             echo "[SGDK] Executing project build target '$target'..."
-            $MAKE_CMD -f "$MAKEFILE_GEN" clean "${extra_args[@]}"
+            $MAKE_CMD -f "$MAKEFILE_GEN" "clean-$target" "${extra_args[@]}"
             if [ -n "$DEPENDENCIES" ]; then
                 $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
             else

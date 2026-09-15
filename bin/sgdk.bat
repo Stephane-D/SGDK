@@ -513,7 +513,7 @@ if !errorlevel! neq 0 (
 
 :skip_lib_rebuild
 echo [SGDK] Executing project build target '%TARGET%'...
-%GDK%\bin\make -f "%MAKEFILE_GEN%" clean %EXTRA_ARGS%
+%GDK%\bin\make -f "%MAKEFILE_GEN%" clean-%TARGET% %EXTRA_ARGS%
 if not "%DEPENDENCIES%"=="" (
     %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
 ) else (
