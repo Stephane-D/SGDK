@@ -45,6 +45,7 @@ SRC_C += $(wildcard $(SRC_DIR)/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*/*.c)
 SRC_C += $(wildcard $(SRC_DIR)/*/*/*/*/*.c)
+SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*.c)
 SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*.c)
 SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*.c)
 SRC_C += $(wildcard $(EXT_DEPS_DIR)/*/$(SRC_DIR)/*/*/*/*.c)
@@ -153,21 +154,19 @@ ifneq ($(wildcard test/.*),)
 endif
 TEST_OUT_DIR ?= out/test
 
-TEST_DEPS_DIR := deps
+TEST_DEPS_DIR := deps_test
 
 # Unity and CMock sources (first match found or default location)
 UNITY_SRCS = $(or $(firstword \
 	$(wildcard $(TEST_DEPS_DIR)/unity/src/unity.c) \
 	$(wildcard $(TEST_DIR)/unity/src/unity.c) \
 	$(wildcard $(TEST_DIR)/unity/unity.c) \
-	$(wildcard $(EXT_DEPS_DIR)/unity/src/unity.c) \
 ), $(TEST_DEPS_DIR)/unity/src/unity.c)
 
 CMOCK_SRCS = $(or $(firstword \
 	$(wildcard $(TEST_DEPS_DIR)/cmock/src/cmock.c) \
 	$(wildcard $(TEST_DIR)/cmock/src/cmock.c) \
 	$(wildcard $(TEST_DIR)/cmock/cmock.c) \
-	$(wildcard $(EXT_DEPS_DIR)/cmock/src/cmock.c) \
 ), $(TEST_DEPS_DIR)/cmock/src/cmock.c)
 
 # Test sources
@@ -185,8 +184,7 @@ TEST_INCS = -I. -I$(INC_DIR) -I$(SRC_DIR) -I$(RES_DIR) \
 	-I$(TEST_DEPS_DIR)/cmock/src \
 	-I$(TEST_DIR)/unity -I$(TEST_DIR)/unity/src \
 	-I$(TEST_DIR)/cmock -I$(TEST_DIR)/cmock/src \
-	-I$(EXT_DEPS_DIR)/unity/src \
-	-I$(EXT_DEPS_DIR)/cmock/src \
+	-I$(EXT_DEPS_DIR)/*/src \
 	-I$(GDK)/inc \
 	$(addprefix -I,$(DEP_INC_DIRS))
 
@@ -195,11 +193,16 @@ TEST_CFLAGS := $(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -g -O0
 vpath %.c $(TEST_DIR)/e2e $(TEST_DIR)/e2e/* $(TEST_DIR)/e2e/*/* $(TEST_DEPS_DIR)/unity/src $(TEST_DEPS_DIR)/cmock/src $(SRC_DIR) $(SRC_DIR)/* $(SRC_DIR)/*/* .
 
 E2E_SRCS_ALL := $(TEST_E2E_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS)
+
 E2E_OBJS_ALL := $(addprefix $(TEST_OUT_DIR)/e2e/, $(notdir $(E2E_SRCS_ALL:.c=.o)))
 
-$(TEST_OUT_DIR)/e2e/%.o: %.c
-	@$(MKDIR) -p $(dir $@)
-	$(CC) $(FLAGS) $(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -c $< -o $@
+define COMPILE_E2E
+$(TEST_OUT_DIR)/e2e/$(notdir $(1:.c=.o)): $(1)
+	@$(MKDIR) -p $$(dir $$@)
+	$$(CC) $$(FLAGS) $$(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -c $$< -o $$@
+endef
+
+$(foreach src,$(E2E_SRCS_ALL),$(eval $(call COMPILE_E2E,$(src))))
 
 
 .PHONY: default
