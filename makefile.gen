@@ -37,7 +37,12 @@ INC_DIR := inc
 OUT_DIR := out/$(BUILD_TYPE)
 DEP_DIR = $(OUT_DIR)/_deps
 OUT_DIR_LIB := $(GDK)/$(OUT_DIR)
-EXT_DEPS_DIR := deps
+EXT_DEPS_DIR := deps/ext
+
+
+ROM_HEADER := $(SRC_DIR)/rom_header.c
+ROM_HEADER_TMP := $(SRC_DIR)/rom_header.tmp
+ROM_HEADER_SOURCE := $(SRC_LIB)/boot/rom_header.c
 
 SRC_C = $(wildcard *.c)
 SRC_C += $(wildcard $(SRC_DIR)/*.c)
@@ -121,7 +126,7 @@ DEPS := $(addprefix $(DEP_DIR)/, $(DEPS))
 
 DEP_INC_DIRS = $(wildcard $(EXT_DEPS_DIR)/*/$(INC_DIR))
 
-$(warning DEP_INC_DIRS=$(DEP_INC_DIRS))
+# $(warning DEP_INC_DIRS=$(DEP_INC_DIRS))
 
 INCS = -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR)  $(addprefix -I,$(DEP_INC_DIRS)) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB)
 DEFAULT_FLAGS := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -fdiagnostics-color=always -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -ffunction-sections -fdata-sections -fms-extensions -B$(BIN)
@@ -154,7 +159,7 @@ ifneq ($(wildcard test/.*),)
 endif
 TEST_OUT_DIR ?= out/test
 
-TEST_DEPS_DIR := deps_test
+TEST_DEPS_DIR := deps/test
 
 # Unity and CMock sources (first match found or default location)
 UNITY_SRCS = $(or $(firstword \
@@ -281,15 +286,16 @@ install:
 		done; \
 	fi
 
+release: setRomHeader
 release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 release: padROM
-.PHONY: padROM
 
+debug: setRomHeader
 debug: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 debug: injectSymbolsInROM
 debug: padROM
-.PHONY: injectSymbolsInROM
 
+asm: setRomHeader
 asm: $(OBJS) $(LSTS)
 
 clean-all:
@@ -323,6 +329,7 @@ unit-test: test_unit
 ifeq ($(OS),Windows_NT)
 test_unit: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
+		$(RM) -r -f $(TEST_OUT_DIR)/unit; \
 		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
 		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
 		$(ECHO) "[SGDK] Executing unit tests binary..."; \
@@ -356,6 +363,7 @@ test_coverage:
 else
 test_coverage: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
+		$(RM) -r -f $(TEST_OUT_DIR)/coverage; \
 		$(MKDIR) -p $(TEST_OUT_DIR)/coverage; \
 		$(TEST_CC) $(TEST_CFLAGS) --coverage $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/coverage/unit_tests$(EXE_EXT); \
 		$(ECHO) "[SGDK] Executing unit tests binary with coverage..."; \
@@ -366,10 +374,9 @@ test_coverage: install install-test-deps
 			for f in $(APP_SRCS); do \
 				gcno=$$(ls $(TEST_OUT_DIR)/coverage/*-$$(basename $${f%.c}).gcno 2>/dev/null); \
 				if [ -f "$$gcno" ]; then \
-					gcov -o "$$gcno" "$$f"; \
+					gcov -o "$(TEST_OUT_DIR)/coverage/$$gcno" "$$f"; \
 				fi; \
 			done; \
-			mv -f *.gcov $(TEST_OUT_DIR)/coverage/ 2>/dev/null || true; \
 		fi; \
 		if command -v gcovr >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Generating SonarQube coverage report..."; \
@@ -394,6 +401,7 @@ test-e2e: test_e2e
 e2e-test: test_e2e
 test_e2e: install install-test-deps
 	@if [ -n "$(TEST_E2E_SRCS)" ]; then \
+		$(RM) -r -f $(TEST_OUT_DIR)/e2e; \
 		$(MKDIR) -p $(TEST_OUT_DIR)/e2e; \
 		if [ -f "$(SRC_DIR)/rom_header.c" ]; then \
 			$(CC) $(FLAGS) -c $(SRC_DIR)/rom_header.c -o $(TEST_OUT_DIR)/e2e/rom_header.o || exit 1; \
@@ -416,6 +424,58 @@ test_e2e: install install-test-deps
 	else \
 		$(ECHO) "[SGDK] No E2E test sources found in $(TEST_DIR)/e2e."; \
 	fi
+
+APP_NAME ?= SAMPLE PROGRAM
+APP_VERSION ?= DEMONSTRATION PROGRAM
+APP_COMPANY ?= SAMPLE PROGRAM
+
+.PHONY: setRomHeader
+
+setRomHeader:
+	@echo "[SGDK] Generating ROM header..."
+	$(CP) $(ROM_HEADER_SOURCE) $(ROM_HEADER_TMP)
+
+	@awk \
+		-v appName="$(APP_NAME)" \
+		-v appVersion="$(APP_VERSION)" \
+		-v appCompany="$(APP_COMPANY)" \
+		'BEGIN { \
+			domestic = appCompany; \
+			overseas = appName; \
+			description = appVersion; \
+			serial = "GM 00000000-00"; \
+			\
+			while (length(domestic) < 48) domestic = domestic " "; \
+			while (length(overseas) < 48) overseas = overseas " "; \
+			while (length(description) < 40) description = description " "; \
+			while (length(serial) < 14) serial = serial " "; \
+			\
+			if (length(domestic) > 48) domestic = substr(domestic, 1, 48); \
+			if (length(overseas) > 48) overseas = substr(overseas, 1, 48); \
+			if (length(description) > 40) description = substr(description, 1, 40); \
+		} \
+		{ \
+			if ($$0 ~ /"SAMPLE PROGRAM[ ]*"/ && count < 2) { \
+				count++; \
+				if (count == 1) { \
+					sub(/"SAMPLE PROGRAM[ ]*"/, "\"" domestic "\""); \
+				} else { \
+					sub(/"SAMPLE PROGRAM[ ]*"/, "\"" overseas "\""); \
+				} \
+			} \
+			if ($$0 ~ /"GM 00000000-00"/) { \
+				sub(/"GM 00000000-00"/, "\"" serial "\""); \
+			} \
+			if ($$0 ~ /"DEMONSTRATION PROGRAM[ ]*"/) { \
+				sub(/"DEMONSTRATION PROGRAM[ ]*"/, "\"" description "\""); \
+			} \
+			print; \
+		}' \
+		$(ROM_HEADER_TMP) > $(ROM_HEADER)
+
+	@rm $(ROM_HEADER_TMP)
+
+	@echo "[SGDK] ROM header generated."
 
 
 padROM:	$(OUT_DIR)/rom.bin
@@ -451,9 +511,9 @@ $(OUT_DIR)/sega.o: out/rom_header.bin
 out/rom_header.bin: $(OUT_DIR)/rom_header.o
 	$(OBJCPY) -O binary $< $@
 
-$(OUT_DIR)/rom_header.o: $(SRC_DIR)/rom_header.c
+$(OUT_DIR)/rom_header.o: setRomHeader
 	@$(MKDIR) -p $(dir $@)
-	$(CC) $(INCS) $(DEFAULT_FLAGS) -c $< -o $@
+	$(CC) $(INCS) $(DEFAULT_FLAGS) -c $(ROM_HEADER) -o $@
 
 # SRC_LIB files are "order-only" deps, right of the pipe.  This means we will never overwrite the file in SRC_DIR, even if SRC_LIB is newer.
 
