@@ -371,12 +371,17 @@ test_coverage: install install-test-deps
 		cat $(TEST_OUT_DIR)/coverage/unity_output.txt; \
 		if command -v gcov >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Running gcov coverage analysis..."; \
-			for f in $(APP_SRCS); do \
-				gcno=$$(ls $(TEST_OUT_DIR)/coverage/*-$$(basename $${f%.c}).gcno 2>/dev/null); \
-				if [ -f "$$gcno" ]; then \
-					gcov -o "$(TEST_OUT_DIR)/coverage/$$gcno" "$$f"; \
-				fi; \
+			find "$(TEST_OUT_DIR)/coverage" \
+				-type f \
+				-name '*.gcno' \
+				! -name '*cmock*.gcno' \
+				! -name '*unity*.gcno' \
+				-print | \
+			while IFS= read -r gcno; do \
+				$(ECHO) "[SGDK] Processing $$gcno"; \
+				gcov -o "$(TEST_OUT_DIR)/coverage" "$$gcno" || exit 1; \
 			done; \
+			mv ./*.gcov "$(TEST_OUT_DIR)/coverage/"; \
 		fi; \
 		if command -v gcovr >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Generating SonarQube coverage report..."; \
