@@ -245,7 +245,7 @@ release: install
 debug: install
 asm: install
 
-install:
+install: install-test-deps
 	@if [ -n "$(DEPENDENCIES)" ]; then \
 		$(MKDIR) -p $(EXT_DEPS_DIR); \
 		for dep in $(DEPENDENCIES); do \
