@@ -130,6 +130,9 @@ set "IN_BUILDS=0"
 set "IN_CONFIGS=0"
 set "BUILD_COUNT=0"
 set "PROJECT_NAME="
+set "PROJECT_COMPANY="
+set "PROJECT_GROUP="
+set "PROJECT_VERSION="
 
 if not exist "sgdk.yml" goto :eof
 
@@ -170,6 +173,54 @@ if "%IN_BUILDS%"=="0" (
         set "P_NAME=!P_NAME:"=!"
         set "P_NAME=!P_NAME:'=!"
         set "PROJECT_NAME=!P_NAME!"
+        goto :eof
+    )
+    if "!TRIM_LINE:~0,6!"=="group:" (
+        set "P_GROUP=!TRIM_LINE:~6!"
+        :strip_pgroup
+        if "!P_GROUP:~0,1!"==" " (
+            set "P_GROUP=!P_GROUP:~1!"
+            goto strip_pgroup
+        )
+        if "!P_GROUP:~0,1!"=="	" (
+            set "P_GROUP=!P_GROUP:~1!"
+            goto strip_pgroup
+        )
+        set "P_GROUP=!P_GROUP:"=!"
+        set "P_GROUP=!P_GROUP:'=!"
+        set "PROJECT_GROUP=!P_GROUP!"
+        goto :eof
+    )
+    if "!TRIM_LINE:~0,8!"=="company:" (
+        set "P_COMPANY=!TRIM_LINE:~8!"
+        :strip_pcompany
+        if "!P_COMPANY:~0,1!"==" " (
+            set "P_COMPANY=!P_COMPANY:~1!"
+            goto strip_pcompany
+        )
+        if "!P_COMPANY:~0,1!"=="	" (
+            set "P_COMPANY=!P_COMPANY:~1!"
+            goto strip_pcompany
+        )
+        set "P_COMPANY=!P_COMPANY:"=!"
+        set "P_COMPANY=!P_COMPANY:'=!"
+        set "PROJECT_COMPANY=!P_COMPANY!"
+        goto :eof
+    )
+    if "!TRIM_LINE:~0,8!"=="version:" (
+        set "P_VERSION=!TRIM_LINE:~8!"
+        :strip_pversion
+        if "!P_VERSION:~0,1!"==" " (
+            set "P_VERSION=!P_VERSION:~1!"
+            goto strip_pversion
+        )
+        if "!P_VERSION:~0,1!"=="	" (
+            set "P_VERSION=!P_VERSION:~1!"
+            goto strip_pversion
+        )
+        set "P_VERSION=!P_VERSION:"=!"
+        set "P_VERSION=!P_VERSION:'=!"
+        set "PROJECT_VERSION=!P_VERSION!"
         goto :eof
     )
 )
@@ -515,9 +566,9 @@ if !errorlevel! neq 0 (
 echo [SGDK] Executing project build target '%TARGET%'...
 %GDK%\bin\make -f "%MAKEFILE_GEN%" clean-%TARGET% %EXTRA_ARGS%
 if not "%DEPENDENCIES%"=="" (
-    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" APP_NAME="%PROJECT_NAME%" APP_COMPANY="%PROJECT_COMPANY%" APP_VERSION="%PROJECT_VERSION%" %EXTRA_ARGS%
 ) else (
-    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% APP_NAME="%PROJECT_NAME%" APP_COMPANY="%PROJECT_COMPANY%" APP_VERSION="%PROJECT_VERSION%" %EXTRA_ARGS%
 )
 if !errorlevel! neq 0 (
     echo [ERROR] Build failed for configuration '%CURR_BNAME%'.
@@ -540,9 +591,9 @@ exit /b 0
 call :restore_config_h
 echo [SGDK] Executing build target '%TARGET%'...
 if not "%DEPENDENCIES%"=="" (
-    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% DEPENDENCIES="%DEPENDENCIES%" APP_NAME="%PROJECT_NAME%" APP_COMPANY="%PROJECT_COMPANY%" APP_VERSION="%PROJECT_VERSION%" %EXTRA_ARGS%
 ) else (
-    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% %EXTRA_ARGS%
+    %GDK%\bin\make -f "%MAKEFILE_GEN%" %TARGET% APP_NAME="%PROJECT_NAME%" APP_COMPANY="%PROJECT_COMPANY%" APP_VERSION="%PROJECT_VERSION%" %EXTRA_ARGS%
 )
 set "RES_ERR=!errorlevel!"
 if !RES_ERR! neq 0 exit /b !RES_ERR!
@@ -606,7 +657,7 @@ call :parse_sgdk_yml_builds
 if %BUILD_COUNT% equ 0 goto run_single_test
 
 if not exist "%GDK%\inc\config.h_original" if exist "%GDK%\inc\config.h" copy /y "%GDK%\inc\config.h" "%GDK%\inc\config.h_original" >nul
-%GDK%\bin\make -f "%MAKEFILE_GEN%" clean-test
+::%GDK%\bin\make -f "%MAKEFILE_GEN%" clean-test
 set "TEST_BUILD_NUM=1"
 
 :test_build_loop
