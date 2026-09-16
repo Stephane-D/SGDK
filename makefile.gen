@@ -390,8 +390,8 @@ test_coverage: install install-test-deps
 		fi; \
 		if command -v lcov >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Capturing lcov coverage report..."; \
-			lcov --capture --directory $(TEST_OUT_DIR)/coverage --output-file $(TEST_OUT_DIR)/coverage/coverage.info unused; \
-			lcov --remove $(TEST_OUT_DIR)/coverage/coverage.info "*/tests/*" "*/deps/*" unused --output-file $(TEST_OUT_DIR)/coverage/coverage_cleaned.info; \
+			lcov --capture --directory $(TEST_OUT_DIR)/coverage --output-file $(TEST_OUT_DIR)/coverage/coverage.info; \
+			lcov --remove $(TEST_OUT_DIR)/coverage/coverage.info "*/tests/*" "*/deps/*" --output-file $(TEST_OUT_DIR)/coverage/coverage_cleaned.info; \
 			if command -v genhtml >/dev/null 2>&1; then \
 				genhtml $(TEST_OUT_DIR)/coverage/coverage_cleaned.info --output-directory $(TEST_OUT_DIR)/coverage/html; \
 				$(ECHO) "[SGDK] Created LCOV HTML report: $(TEST_OUT_DIR)/coverage/html/index.html"; \
