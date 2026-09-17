@@ -26,9 +26,6 @@
   #ifndef UNITY_EXCLUDE_LIMITS_H
     #define UNITY_EXCLUDE_LIMITS_H
   #endif
-  #ifndef CMOCK_MEM_INDEX_TYPE
-    #define CMOCK_MEM_INDEX_TYPE u32
-  #endif
   
   static char sgdk_unity_buffer[256];
   static u16 sgdk_unity_buf_idx = 0;
