@@ -325,18 +325,6 @@ test: test-unit test-e2e
 
 test-unit: test_unit
 unit-test: test_unit
-ifeq ($(OS),Windows_NT)
-test_unit: install install-test-deps
-	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
-		$(RM) -r -f $(TEST_OUT_DIR)/unit; \
-		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
-		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
-		$(ECHO) "[SGDK] Executing unit tests binary..."; \
-		$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) || $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
-	else \
-		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
-	fi
-else
 test_unit: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
 		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
@@ -345,13 +333,16 @@ test_unit: install install-test-deps
 		./$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) > $(TEST_OUT_DIR)/unit/unity_output.txt 2>&1 || true; \
 		cat $(TEST_OUT_DIR)/unit/unity_output.txt; \
 		$(ECHO) "[SGDK] Generating JUnit XML report..."; \
-		awk 'BEGIN { tests = 0; failures = 0; skipped = 0; xml_cases = ""; } { sub(/\r$$/, ""); if ($$0 ~ /^[^:\n]+:[0-9]+:[^:\n]+:(PASS|FAIL|IGNORE)/) { split($$0, parts, ":"); filepath = parts[1]; line = parts[2]; testname = parts[3]; status = parts[4]; n = split(filepath, path_parts, "[\/\\\\]"); file_name = path_parts[n]; sub(/\.[^.]+$$/, "", file_name); tests++; xml_cases = xml_cases "    <testcase classname=\"" file_name "\" name=\"" testname "\" time=\"0.000\">\n"; if (status == "FAIL") { failures++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test failed"; xml_cases = xml_cases "      <failure message=\"" msg "\">" filepath ":" line ": " msg "</failure>\n"; } else if (status == "IGNORE") { skipped++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test ignored"; xml_cases = xml_cases "      <skipped message=\"" msg "\"/>\n"; } xml_cases = xml_cases "    </testcase>\n"; } } END { print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; print "<testsuites tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; print "  <testsuite name=\"unit_tests\" tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; printf "%s", xml_cases; print "  </testsuite>"; print "</testsuites>"; }' $(TEST_OUT_DIR)/unit/unity_output.txt > $(TEST_OUT_DIR)/unit/junit.xml; \
+		if command -v awk >/dev/null 2>&1; then \
+			awk 'BEGIN { tests = 0; failures = 0; skipped = 0; xml_cases = ""; } { sub(/\r$$/, ""); if ($$0 ~ /^[^:\n]+:[0-9]+:[^:\n]+:(PASS|FAIL|IGNORE)/) { split($$0, parts, ":"); filepath = parts[1]; line = parts[2]; testname = parts[3]; status = parts[4]; n = split(filepath, path_parts, "[\/\\\\]"); file_name = path_parts[n]; sub(/\.[^.]+$$/, "", file_name); tests++; xml_cases = xml_cases "    <testcase classname=\"" file_name "\" name=\"" testname "\" time=\"0.000\">\n"; if (status == "FAIL") { failures++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test failed"; xml_cases = xml_cases "      <failure message=\"" msg "\">" filepath ":" line ": " msg "</failure>\n"; } else if (status == "IGNORE") { skipped++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test ignored"; xml_cases = xml_cases "      <skipped message=\"" msg "\"/>\n"; } xml_cases = xml_cases "    </testcase>\n"; } } END { print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; print "<testsuites tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; print "  <testsuite name=\"unit_tests\" tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; printf "%s", xml_cases; print "  </testsuite>"; print "</testsuites>"; }' $(TEST_OUT_DIR)/unit/unity_output.txt > $(TEST_OUT_DIR)/unit/junit.xml; \
+		else \		    
+		    $(ECHO) "[SGDK] Install awk. In windows choco install awk"; \
+		fi; \
 		$(ECHO) "[SGDK] Created JUnit report: $(TEST_OUT_DIR)/unit/junit.xml"; \
 		if grep -q "FAIL" $(TEST_OUT_DIR)/unit/unity_output.txt 2>/dev/null; then exit 1; fi; \
 	else \
 		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
 	fi
-endif
 
 test-coverage: test_coverage
 coverage: test_coverage
