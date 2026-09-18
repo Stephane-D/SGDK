@@ -945,8 +945,8 @@ echo   release                    Build project in release mode
 echo   debug                      Build project in debug mode (with symbols)
 echo   asm                        Generate assembly output
 echo   test [unit^|e2e^|coverage] Run all tests or specific phase (unit/e2e/coverage)
-echo   test-unit                  Run unit tests (Unity / CMock)
-echo   test-e2e                   Run E2E tests (Unity / CMock)
+echo   test-unit                  Run unit tests (Unity / FFF)
+echo   test-e2e                   Run E2E tests (Unity / FFF)
 echo   test-coverage, coverage    Run unit tests with gcov coverage
 echo   clean [target]             Clean build output (targets: all, release, debug, asm, test)
 echo   rebuild [target]           Clean and rebuild project
