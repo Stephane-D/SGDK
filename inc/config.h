@@ -163,7 +163,7 @@
  *  \brief
  *      Set it to 1 if you want to enable MegaWiFi functions and support code (written by Jesus Alonso - doragasu)
  */
-#define MODULE_MEGAWIFI         1
+#define MODULE_MEGAWIFI         0
 #if MODULE_MEGAWIFI
 
 #define MEGAWIFI_IMPLEMENTATION_CROSS    0x01    // Cross (Serial)
