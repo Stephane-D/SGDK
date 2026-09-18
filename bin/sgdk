@@ -204,6 +204,63 @@ parse_sgdk_yml_name() {
     done < "$yml_file"
 }
 
+parse_sgdk_yml_company() {
+    local yml_file="sgdk.yml"
+    [ -f "$yml_file" ] || return 0
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        local clean_line="${line%%#*}"
+        local trimmed
+        trimmed="$(echo "$clean_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        [ -z "$trimmed" ] && continue
+
+        if [[ "$trimmed" =~ ^company:[[:space:]]*(.+)$ ]]; then
+            local val="${BASH_REMATCH[1]}"
+            val="$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+            echo "$val"
+            return 0
+        fi
+    done < "$yml_file"
+}
+
+parse_sgdk_yml_group() {
+    local yml_file="sgdk.yml"
+    [ -f "$yml_file" ] || return 0
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        local clean_line="${line%%#*}"
+        local trimmed
+        trimmed="$(echo "$clean_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        [ -z "$trimmed" ] && continue
+
+        if [[ "$trimmed" =~ ^group:[[:space:]]*(.+)$ ]]; then
+            local val="${BASH_REMATCH[1]}"
+            val="$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+            echo "$val"
+            return 0
+        fi
+    done < "$yml_file"
+}
+
+parse_sgdk_yml_version() {
+    local yml_file="sgdk.yml"
+    [ -f "$yml_file" ] || return 0
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        local clean_line="${line%%#*}"
+        local trimmed
+        trimmed="$(echo "$clean_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        [ -z "$trimmed" ] && continue
+
+        if [[ "$trimmed" =~ ^version:[[:space:]]*(.+)$ ]]; then
+            local val="${BASH_REMATCH[1]}"
+            val="$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\''"]//' -e 's/["'\''"]$//')"
+            echo "$val"
+            return 0
+        fi
+    done < "$yml_file"
+}
+
 apply_sgdk_config_key_val() {
     local key="$1"
     local val="$2"
@@ -236,6 +293,8 @@ run_build_target() {
 
     YML_BUILDS=$(parse_sgdk_yml_builds)
     PROJECT_NAME=$(parse_sgdk_yml_name)
+    PROJECT_COMPANY=$(parse_sgdk_yml_company)
+    PROJECT_VERSION=$(parse_sgdk_yml_version)
     OUT_PREFIX="${PROJECT_NAME:-rom}"
 
     if [ -n "$YML_BUILDS" ]; then
@@ -273,9 +332,9 @@ run_build_target() {
             echo "[SGDK] Executing project build target '$target'..."
             $MAKE_CMD -f "$MAKEFILE_GEN" "clean-$target" "${extra_args[@]}"
             if [ -n "$DEPENDENCIES" ]; then
-                $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" "${extra_args[@]}"
+                $MAKE_CMD -f "$MAKEFILE_GEN" "$target" DEPENDENCIES="$DEPENDENCIES" APP_NAME="$PROJECT_NAME" APP_COMPANY="$PROJECT_COMPANY" APP_VERSION="$PROJECT_VERSION" "${extra_args[@]}"
             else
-                $MAKE_CMD -f "$MAKEFILE_GEN" "$target" "${extra_args[@]}"
+                $MAKE_CMD -f "$MAKEFILE_GEN" "$target" APP_NAME="$PROJECT_NAME" APP_COMPANY="$PROJECT_COMPANY" APP_VERSION="$PROJECT_VERSION""${extra_args[@]}"
             fi
 
             if [ -f "out/rom.bin" ]; then
@@ -332,7 +391,7 @@ run_test_target() {
         cp "$GDK/inc/config.h" "$GDK/inc/config.h_original"
     fi
 
-    $MAKE_CMD -f "$MAKEFILE_GEN" clean-test
+    #$MAKE_CMD -f "$MAKEFILE_GEN" clean-test
     while IFS='|' read -r bname configs; do
         [ -n "$bname" ] || continue
         echo ""
@@ -374,8 +433,8 @@ show_help() {
     echo "  debug                     Build project in debug mode (with symbols)"
     echo "  asm                       Generate assembly output"
     echo "  test [unit|e2e|coverage]  Run all tests or specific phase (unit/e2e/coverage)"
-    echo "  test-unit, unit           Run unit tests (Unity / CMock)"
-    echo "  test-e2e, e2e             Run E2E tests (Unity / CMock)"
+    echo "  test-unit, unit           Run unit tests (Unity / FFF)"
+    echo "  test-e2e, e2e             Run E2E tests (Unity / FFF)"
     echo "  test-coverage, coverage   Run unit tests with gcov coverage"
     echo "  clean [target]            Clean build output (targets: all, release, debug, asm, test)"
     echo "  rebuild [target]          Clean and rebuild project"

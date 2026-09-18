@@ -31,13 +31,19 @@ ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
 	CLEAN := TRUE
 endif
 
+DEPS_DIR := deps
 SRC_DIR := src
 RES_DIR := res
 INC_DIR := inc
 OUT_DIR := out/$(BUILD_TYPE)
 DEP_DIR = $(OUT_DIR)/_deps
 OUT_DIR_LIB := $(GDK)/$(OUT_DIR)
-EXT_DEPS_DIR := deps
+EXT_DEPS_DIR := $(DEPS_DIR)/ext
+
+
+ROM_HEADER := $(SRC_DIR)/rom_header.c
+ROM_HEADER_TMP := $(SRC_DIR)/rom_header.tmp
+ROM_HEADER_SOURCE := $(SRC_LIB)/boot/rom_header.c
 
 SRC_C = $(wildcard *.c)
 SRC_C += $(wildcard $(SRC_DIR)/*.c)
@@ -121,7 +127,7 @@ DEPS := $(addprefix $(DEP_DIR)/, $(DEPS))
 
 DEP_INC_DIRS = $(wildcard $(EXT_DEPS_DIR)/*/$(INC_DIR))
 
-$(warning DEP_INC_DIRS=$(DEP_INC_DIRS))
+# $(warning DEP_INC_DIRS=$(DEP_INC_DIRS))
 
 INCS = -I. -I$(INC_DIR) -I$(RES_DIR) -I$(OUT_DIR)  $(addprefix -I,$(DEP_INC_DIRS)) -isystem$(INC_LIB) -isystem$(OUT_DIR_LIB)
 DEFAULT_FLAGS := $(EXTRA_FLAGS) -DSGDK_GCC -m68000 -fdiagnostics-color=always -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin -ffunction-sections -fdata-sections -fms-extensions -B$(BIN)
@@ -147,27 +153,22 @@ else
 	LIBMD := $(LIB)/libmd.a
 endif
 
-# --- Test configuration (Unity / CMock) ---
+# --- Test configuration (Unity / FFF) ---
 TEST_DIR ?= tests
 ifneq ($(wildcard test/.*),)
     TEST_DIR := test
 endif
 TEST_OUT_DIR ?= out/test
 
-TEST_DEPS_DIR := deps_test
+TEST_DEPS_DIR := $(DEPS_DIR)/test
 
-# Unity and CMock sources (first match found or default location)
+# Unity and FFF sources (first match found or default location)
 UNITY_SRCS = $(or $(firstword \
 	$(wildcard $(TEST_DEPS_DIR)/unity/src/unity.c) \
 	$(wildcard $(TEST_DIR)/unity/src/unity.c) \
 	$(wildcard $(TEST_DIR)/unity/unity.c) \
 ), $(TEST_DEPS_DIR)/unity/src/unity.c)
 
-CMOCK_SRCS = $(or $(firstword \
-	$(wildcard $(TEST_DEPS_DIR)/cmock/src/cmock.c) \
-	$(wildcard $(TEST_DIR)/cmock/src/cmock.c) \
-	$(wildcard $(TEST_DIR)/cmock/cmock.c) \
-), $(TEST_DEPS_DIR)/cmock/src/cmock.c)
 
 # Test sources
 TEST_UNIT_SRCS = $(strip $(wildcard $(TEST_DIR)/unit/*.c) $(wildcard $(TEST_DIR)/unit/*/*.c) $(wildcard $(TEST_DIR)/unit/*/*/*.c))
@@ -181,25 +182,24 @@ TEST_INCS = -I. -I$(INC_DIR) -I$(SRC_DIR) -I$(RES_DIR) \
 	-I$(TEST_DIR) -I$(TEST_DIR)/unit -I$(TEST_DIR)/e2e \
 	-I$(TEST_DIR)/inc -I$(TEST_DIR)/mocks \
 	-I$(TEST_DEPS_DIR)/unity/src \
-	-I$(TEST_DEPS_DIR)/cmock/src \
+	-I$(TEST_DEPS_DIR)/fff \
 	-I$(TEST_DIR)/unity -I$(TEST_DIR)/unity/src \
-	-I$(TEST_DIR)/cmock -I$(TEST_DIR)/cmock/src \
 	-I$(EXT_DEPS_DIR)/*/src \
 	-I$(GDK)/inc \
 	$(addprefix -I,$(DEP_INC_DIRS))
 
-TEST_CFLAGS := $(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -g -O0 -Wall -Wextra -fno-builtin
+TEST_CFLAGS := $(TEST_INCS) -DUNIT_TESTS -DUNITY_INCLUDE_CONFIG_H -g -O0 -Wall -Wextra -fno-builtin
 
-vpath %.c $(TEST_DIR)/e2e $(TEST_DIR)/e2e/* $(TEST_DIR)/e2e/*/* $(TEST_DEPS_DIR)/unity/src $(TEST_DEPS_DIR)/cmock/src $(SRC_DIR) $(SRC_DIR)/* $(SRC_DIR)/*/* .
+vpath %.c $(TEST_DIR)/e2e $(TEST_DIR)/e2e/* $(TEST_DIR)/e2e/*/* $(TEST_DEPS_DIR)/unity/src $(SRC_DIR) $(SRC_DIR)/* $(SRC_DIR)/*/* .
 
-E2E_SRCS_ALL := $(TEST_E2E_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS)
+E2E_SRCS_ALL := $(TEST_E2E_SRCS) $(UNITY_SRCS) $(APP_SRCS)
 
 E2E_OBJS_ALL := $(addprefix $(TEST_OUT_DIR)/e2e/, $(notdir $(E2E_SRCS_ALL:.c=.o)))
 
 define COMPILE_E2E
 $(TEST_OUT_DIR)/e2e/$(notdir $(1:.c=.o)): $(1)
 	@$(MKDIR) -p $$(dir $$@)
-	$$(CC) $$(FLAGS) $$(TEST_INCS) -DUNIT_TESTS -DCMOCK -DUNITY_INCLUDE_CONFIG_H -c $$< -o $$@
+	$$(CC) $$(FLAGS) $$(TEST_INCS) -DUNIT_TESTS -DUNITY_INCLUDE_CONFIG_H -c $$< -o $$@
 endef
 
 $(foreach src,$(E2E_SRCS_ALL),$(eval $(call COMPILE_E2E,$(src))))
@@ -281,18 +281,19 @@ install:
 		done; \
 	fi
 
+release: setRomHeader
 release: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 release: padROM
-.PHONY: padROM
 
+debug: setRomHeader
 debug: $(OUT_DIR)/rom.bin $(OUT_DIR)/symbol.txt
 debug: injectSymbolsInROM
 debug: padROM
-.PHONY: injectSymbolsInROM
 
+asm: setRomHeader
 asm: $(OBJS) $(LSTS)
 
-clean-all:
+clean-all: clean-libs
 	$(RM) -r -f out
 
 clean-release: clean-task
@@ -301,7 +302,11 @@ clean-asm: clean-task
 clean-test:
 	$(RM) -r -f out/test
 
+clean-libs:
+	$(RM) -r -f $(DEPS_DIR)
+
 clean-task:
+	$(RM) -r -f $(OUT_DIR)
 	$(RM) -r -f $(OUT_DIR)
 .PHONY: clean-task
 
@@ -311,41 +316,33 @@ install-test-deps:
 		$(ECHO) "Clonando Unity..."; \
 		$(GIT) clone https://github.com/ThrowTheSwitch/Unity.git "$(TEST_DEPS_DIR)/unity"; \
 	fi
-	@if [ ! -d "$(TEST_DEPS_DIR)/cmock" ] && [ ! -d "$(TEST_DEPS_DIR)/CMock" ]; then \
-		$(ECHO) "Clonando CMock..."; \
-		$(GIT) clone https://github.com/ThrowTheSwitch/CMock.git "$(TEST_DEPS_DIR)/cmock"; \
+	@if [ ! -d "$(TEST_DEPS_DIR)/fff" ] && [ ! -d "$(TEST_DEPS_DIR)/fff" ]; then \
+		$(ECHO) "Clonando FFF..."; \
+		$(GIT) clone https://github.com/meekrosoft/fff.git "$(TEST_DEPS_DIR)/fff"; \
 	fi
 
 test: test-unit test-e2e
 
 test-unit: test_unit
 unit-test: test_unit
-ifeq ($(OS),Windows_NT)
 test_unit: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
 		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
-		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
-		$(ECHO) "[SGDK] Executing unit tests binary..."; \
-		$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) || $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
-	else \
-		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
-	fi
-else
-test_unit: install install-test-deps
-	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
-		$(MKDIR) -p $(TEST_OUT_DIR)/unit; \
-		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
+		$(TEST_CC) $(TEST_CFLAGS) $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT); \
 		$(ECHO) "[SGDK] Executing unit tests binary..."; \
 		./$(TEST_OUT_DIR)/unit/unit_tests$(EXE_EXT) > $(TEST_OUT_DIR)/unit/unity_output.txt 2>&1 || true; \
 		cat $(TEST_OUT_DIR)/unit/unity_output.txt; \
 		$(ECHO) "[SGDK] Generating JUnit XML report..."; \
-		awk 'BEGIN { tests = 0; failures = 0; skipped = 0; xml_cases = ""; } { sub(/\r$$/, ""); if ($$0 ~ /^[^:\n]+:[0-9]+:[^:\n]+:(PASS|FAIL|IGNORE)/) { split($$0, parts, ":"); filepath = parts[1]; line = parts[2]; testname = parts[3]; status = parts[4]; n = split(filepath, path_parts, "[\/\\\\]"); file_name = path_parts[n]; sub(/\.[^.]+$$/, "", file_name); tests++; xml_cases = xml_cases "    <testcase classname=\"" file_name "\" name=\"" testname "\" time=\"0.000\">\n"; if (status == "FAIL") { failures++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test failed"; xml_cases = xml_cases "      <failure message=\"" msg "\">" filepath ":" line ": " msg "</failure>\n"; } else if (status == "IGNORE") { skipped++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test ignored"; xml_cases = xml_cases "      <skipped message=\"" msg "\"/>\n"; } xml_cases = xml_cases "    </testcase>\n"; } } END { print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; print "<testsuites tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; print "  <testsuite name=\"unit_tests\" tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; printf "%s", xml_cases; print "  </testsuite>"; print "</testsuites>"; }' $(TEST_OUT_DIR)/unit/unity_output.txt > $(TEST_OUT_DIR)/unit/junit.xml; \
+		if command -v awk >/dev/null 2>&1; then \
+			awk 'BEGIN { tests = 0; failures = 0; skipped = 0; xml_cases = ""; } { sub(/\r$$/, ""); if ($$0 ~ /^[^:\n]+:[0-9]+:[^:\n]+:(PASS|FAIL|IGNORE)/) { split($$0, parts, ":"); filepath = parts[1]; line = parts[2]; testname = parts[3]; status = parts[4]; n = split(filepath, path_parts, "[\/\\\\]"); file_name = path_parts[n]; sub(/\.[^.]+$$/, "", file_name); tests++; xml_cases = xml_cases "    <testcase classname=\"" file_name "\" name=\"" testname "\" time=\"0.000\">\n"; if (status == "FAIL") { failures++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test failed"; xml_cases = xml_cases "      <failure message=\"" msg "\">" filepath ":" line ": " msg "</failure>\n"; } else if (status == "IGNORE") { skipped++; msg = ""; for (i = 5; i <= length(parts); i++) msg = (i == 5) ? parts[i] : msg ":" parts[i]; sub(/^[ \t]+/, "", msg); sub(/[ \t]+$$/, "", msg); if (msg == "") msg = "Test ignored"; xml_cases = xml_cases "      <skipped message=\"" msg "\"/>\n"; } xml_cases = xml_cases "    </testcase>\n"; } } END { print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; print "<testsuites tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; print "  <testsuite name=\"unit_tests\" tests=\"" tests "\" failures=\"" failures "\" skipped=\"" skipped "\">"; printf "%s", xml_cases; print "  </testsuite>"; print "</testsuites>"; }' $(TEST_OUT_DIR)/unit/unity_output.txt > $(TEST_OUT_DIR)/unit/junit.xml; \
+		else \
+		    $(ECHO) "[SGDK] Install awk. In windows choco install awk"; \
+		fi; \
 		$(ECHO) "[SGDK] Created JUnit report: $(TEST_OUT_DIR)/unit/junit.xml"; \
 		if grep -q "FAIL" $(TEST_OUT_DIR)/unit/unity_output.txt 2>/dev/null; then exit 1; fi; \
 	else \
 		$(ECHO) "[SGDK] No unit test sources found in $(TEST_DIR)/unit."; \
 	fi
-endif
 
 test-coverage: test_coverage
 coverage: test_coverage
@@ -356,20 +353,25 @@ test_coverage:
 else
 test_coverage: install install-test-deps
 	@if [ -n "$(TEST_UNIT_SRCS)" ]; then \
+		$(RM) -r -f $(TEST_OUT_DIR)/coverage; \
 		$(MKDIR) -p $(TEST_OUT_DIR)/coverage; \
-		$(TEST_CC) $(TEST_CFLAGS) --coverage $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(CMOCK_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/coverage/unit_tests$(EXE_EXT); \
+		$(TEST_CC) $(TEST_CFLAGS) --coverage $(TEST_UNIT_SRCS) $(UNITY_SRCS) $(APP_SRCS) -o $(TEST_OUT_DIR)/coverage/unit_tests$(EXE_EXT); \
 		$(ECHO) "[SGDK] Executing unit tests binary with coverage..."; \
 		./$(TEST_OUT_DIR)/coverage/unit_tests$(EXE_EXT) > $(TEST_OUT_DIR)/coverage/unity_output.txt 2>&1 || true; \
 		cat $(TEST_OUT_DIR)/coverage/unity_output.txt; \
 		if command -v gcov >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Running gcov coverage analysis..."; \
-			for f in $(APP_SRCS); do \
-				gcno=$$(ls $(TEST_OUT_DIR)/coverage/*-$$(basename $${f%.c}).gcno 2>/dev/null); \
-				if [ -f "$$gcno" ]; then \
-					gcov -o "$$gcno" "$$f"; \
-				fi; \
+			find "$(TEST_OUT_DIR)/coverage" \
+				-type f \
+				-name '*.gcno' \
+				! -name '*cmock*.gcno' \
+				! -name '*unity*.gcno' \
+				-print | \
+			while IFS= read -r gcno; do \
+				$(ECHO) "[SGDK] Processing $$gcno"; \
+				gcov -o "$(TEST_OUT_DIR)/coverage" "$$gcno" || exit 1; \
 			done; \
-			mv -f *.gcov $(TEST_OUT_DIR)/coverage/ 2>/dev/null || true; \
+			mv ./*.gcov "$(TEST_OUT_DIR)/coverage/"; \
 		fi; \
 		if command -v gcovr >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Generating SonarQube coverage report..."; \
@@ -378,10 +380,10 @@ test_coverage: install install-test-deps
 		fi; \
 		if command -v lcov >/dev/null 2>&1; then \
 			$(ECHO) "[SGDK] Capturing lcov coverage report..."; \
-			lcov --capture --directory $(TEST_OUT_DIR)/coverage --output-file $(TEST_OUT_DIR)/coverage/coverage.info --ignore-errors unused 2>/dev/null || true; \
-			lcov --remove $(TEST_OUT_DIR)/coverage/coverage.info "*/tests/*" "*/deps/*" --ignore-errors unused --output-file $(TEST_OUT_DIR)/coverage/coverage_cleaned.info 2>/dev/null || true; \
+			lcov --capture --directory $(TEST_OUT_DIR)/coverage --output-file $(TEST_OUT_DIR)/coverage/coverage.info; \
+			lcov --remove $(TEST_OUT_DIR)/coverage/coverage.info "*/tests/*" "*/deps/*" --output-file $(TEST_OUT_DIR)/coverage/coverage_cleaned.info; \
 			if command -v genhtml >/dev/null 2>&1; then \
-				genhtml $(TEST_OUT_DIR)/coverage/coverage_cleaned.info --output-directory $(TEST_OUT_DIR)/coverage/html 2>/dev/null || true; \
+				genhtml $(TEST_OUT_DIR)/coverage/coverage_cleaned.info --output-directory $(TEST_OUT_DIR)/coverage/html; \
 				$(ECHO) "[SGDK] Created LCOV HTML report: $(TEST_OUT_DIR)/coverage/html/index.html"; \
 			fi; \
 		fi; \
@@ -394,6 +396,7 @@ test-e2e: test_e2e
 e2e-test: test_e2e
 test_e2e: install install-test-deps
 	@if [ -n "$(TEST_E2E_SRCS)" ]; then \
+		$(RM) -r -f $(TEST_OUT_DIR)/e2e; \
 		$(MKDIR) -p $(TEST_OUT_DIR)/e2e; \
 		if [ -f "$(SRC_DIR)/rom_header.c" ]; then \
 			$(CC) $(FLAGS) -c $(SRC_DIR)/rom_header.c -o $(TEST_OUT_DIR)/e2e/rom_header.o || exit 1; \
@@ -416,6 +419,58 @@ test_e2e: install install-test-deps
 	else \
 		$(ECHO) "[SGDK] No E2E test sources found in $(TEST_DIR)/e2e."; \
 	fi
+
+APP_NAME ?= SAMPLE PROGRAM
+APP_VERSION ?= DEMONSTRATION PROGRAM
+APP_COMPANY ?= SAMPLE PROGRAM
+
+.PHONY: setRomHeader
+
+setRomHeader:
+	@echo "[SGDK] Generating ROM header..."
+	$(CP) $(ROM_HEADER_SOURCE) $(ROM_HEADER_TMP)
+
+	@awk \
+		-v appName="$(APP_NAME)" \
+		-v appVersion="$(APP_VERSION)" \
+		-v appCompany="$(APP_COMPANY)" \
+		'BEGIN { \
+			domestic = appCompany; \
+			overseas = appName; \
+			description = appVersion; \
+			serial = "GM 00000000-00"; \
+			\
+			while (length(domestic) < 48) domestic = domestic " "; \
+			while (length(overseas) < 48) overseas = overseas " "; \
+			while (length(description) < 40) description = description " "; \
+			while (length(serial) < 14) serial = serial " "; \
+			\
+			if (length(domestic) > 48) domestic = substr(domestic, 1, 48); \
+			if (length(overseas) > 48) overseas = substr(overseas, 1, 48); \
+			if (length(description) > 40) description = substr(description, 1, 40); \
+		} \
+		{ \
+			if ($$0 ~ /"SAMPLE PROGRAM[ ]*"/ && count < 2) { \
+				count++; \
+				if (count == 1) { \
+					sub(/"SAMPLE PROGRAM[ ]*"/, "\"" domestic "\""); \
+				} else { \
+					sub(/"SAMPLE PROGRAM[ ]*"/, "\"" overseas "\""); \
+				} \
+			} \
+			if ($$0 ~ /"GM 00000000-00"/) { \
+				sub(/"GM 00000000-00"/, "\"" serial "\""); \
+			} \
+			if ($$0 ~ /"DEMONSTRATION PROGRAM[ ]*"/) { \
+				sub(/"DEMONSTRATION PROGRAM[ ]*"/, "\"" description "\""); \
+			} \
+			print; \
+		}' \
+		$(ROM_HEADER_TMP) > $(ROM_HEADER)
+
+	@rm $(ROM_HEADER_TMP)
+
+	@echo "[SGDK] ROM header generated."
 
 
 padROM:	$(OUT_DIR)/rom.bin
@@ -451,9 +506,9 @@ $(OUT_DIR)/sega.o: out/rom_header.bin
 out/rom_header.bin: $(OUT_DIR)/rom_header.o
 	$(OBJCPY) -O binary $< $@
 
-$(OUT_DIR)/rom_header.o: $(SRC_DIR)/rom_header.c
+$(OUT_DIR)/rom_header.o: setRomHeader
 	@$(MKDIR) -p $(dir $@)
-	$(CC) $(INCS) $(DEFAULT_FLAGS) -c $< -o $@
+	$(CC) $(INCS) $(DEFAULT_FLAGS) -c $(ROM_HEADER) -o $@
 
 # SRC_LIB files are "order-only" deps, right of the pipe.  This means we will never overwrite the file in SRC_DIR, even if SRC_LIB is newer.
 

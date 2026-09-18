@@ -1,17 +1,19 @@
 // base SGDK include
 #include <genesis.h>
 
-// file header (not really useful here but just for the example)
-#include "main.h"
 
 // include our own resources
 #include "res_gfx.h"
 #include "res_snd.h"
 
+#ifndef MAIN_LOOP_CONDITION
+#define MAIN_LOOP_CONDITION TRUE
+#endif
+
 static void joyEvent(u16 joy, u16 changed, u16 state);
 
 
-int main(bool hardReset)
+int main(__attribute__((unused))bool hardReset)
 {
     // disable interrupt when accessing VDP
     SYS_disableInts();
@@ -29,7 +31,7 @@ int main(bool hardReset)
             96, // y
             TILE_ATTR(PAL1, FALSE, FALSE, FALSE));  
             
-    while(TRUE){        
+    while(MAIN_LOOP_CONDITION){        
         SYS_doVBlankProcess();
         SPR_update();
     }

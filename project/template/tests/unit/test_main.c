@@ -1,17 +1,26 @@
 #include "unity.h"
 #include "genesis.h"
+#include "fff.h"
+
+#define LOOP_COUNT 100
+
+DEFINE_FFF_GLOBALS;
+
+//FAKE_VALUE_FUNC0(bool, SYS_doVBlankProcess);
+FAKE_VOID_FUNC0(SYS_disableInts);
+FAKE_VOID_FUNC0(SYS_enableInts);
+FAKE_VOID_FUNC0(SPR_init);
+FAKE_VOID_FUNC0(SPR_update);
+FAKE_VOID_FUNC1(XGM_startPlay, const u8 *);
+FAKE_VALUE_FUNC4(Sprite*, SPR_addSprite, const SpriteDefinition *, s16,  s16,  u16);
+FAKE_VOID_FUNC1(JOY_setEventHandler, JoyEventCallback *);
 
 static u16 vblankProcessCalls;
 static JoyEventCallback *registeredJoyCallback;
 
 static bool testLoopShouldContinue(void)
 {
-    return vblankProcessCalls <= 100;
-}
-
-static void testJoySetEventHandler(JoyEventCallback *cb)
-{
-    registeredJoyCallback = cb;
+    return vblankProcessCalls <= LOOP_COUNT;
 }
 
 static bool testSysDoVBlankProcess(void)
@@ -24,33 +33,38 @@ static bool testSysDoVBlankProcess(void)
     return TRUE;
 }
 
+static void testJoySetEventHandler(JoyEventCallback *cb)
+{
+    registeredJoyCallback = cb;
+}
+const SpriteDefinition spr_donut = { 0 };
+const u8 mus_actraiser[70656] = { 0 };
+
+
 /* Replace hardware operations so the application main can run once on the host. */
 #define main applicationMain
-#define TRUE testLoopShouldContinue()
-#define SYS_disableInts() ((void)0)
-#define SYS_enableInts() ((void)0)
-#define SPR_init() ((void)0)
-#define JOY_setEventHandler(cb) testJoySetEventHandler(cb)
-#define XGM_startPlay(song) ((void)0)
-#define SPR_addSprite(...) ((void)0)
-#define SPR_update() ((void)0)
+#define MAIN_LOOP_CONDITION testLoopShouldContinue()
 #define SYS_doVBlankProcess() testSysDoVBlankProcess()
-#define kprintf(...) ((void)0)
+#define JOY_setEventHandler(cb) testJoySetEventHandler(cb)
+#define kprintf(...) printf(__VA_ARGS__)
 #include "../../src/main.c"
+#undef JOY_setEventHandler
 #undef SYS_doVBlankProcess
 #undef kprintf
-#undef SPR_update
-#undef SPR_addSprite
-#undef XGM_startPlay
-#undef JOY_setEventHandler
-#undef SPR_init
-#undef SYS_enableInts
-#undef SYS_disableInts
-#undef TRUE
+#undef MAIN_LOOP_CONDITION
 #undef main
 
 void setUp(void)
-{
+{    
+    
+    //RESET_FAKE(SYS_doVBlankProcess);
+    RESET_FAKE(SYS_disableInts);
+    RESET_FAKE(SYS_enableInts);
+    RESET_FAKE(SPR_init);
+    RESET_FAKE(SPR_update);
+    RESET_FAKE(XGM_startPlay);
+    RESET_FAKE(SPR_addSprite);
+    //RESET_FAKE(JOY_setEventHandler);
     vblankProcessCalls = 0;
     registeredJoyCallback = NULL;
 }
@@ -63,7 +77,7 @@ void test_main_calls_sys_do_vblank_process(void)
 {
     applicationMain(FALSE);
 
-    TEST_ASSERT_GREATER_OR_EQUAL_UINT16(100, vblankProcessCalls);
+    TEST_ASSERT_GREATER_OR_EQUAL_UINT16(LOOP_COUNT, vblankProcessCalls);
 }
 
 int main(void)
