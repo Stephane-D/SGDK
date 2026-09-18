@@ -27,13 +27,13 @@ static bool testSysDoVBlankProcess(void)
 
 /* Replace hardware operations so the application main can run once on the host. */
 #define main applicationMain
-#define TRUE testLoopShouldContinue()
+#define MAIN_LOOP_CONDITION testLoopShouldContinue()
 #define JOY_setEventHandler(cb) testJoySetEventHandler(cb)
 #define SYS_doVBlankProcess() testSysDoVBlankProcess()
 #include "../../src/main.c"
 #undef SYS_doVBlankProcess
 #undef JOY_setEventHandler
-#undef TRUE
+#undef MAIN_LOOP_CONDITION
 #undef main
 
 void setUp(void)
