@@ -370,7 +370,7 @@ void SYS_setVBlankCallback(VoidCallback *CB);
  * SGDK handle most of these process using #SYS_doVBlankProcess() so you can control it manually (do it from main loop or put it in Vint callback).<br>
  * The only things that SGDK always handle from the vint callback is the XGM sound driver music tempo and Bitmap engine phase reset.<br>
  * It's recommended to keep your code as fast as possible as it will eat precious VBlank time, nor you should touch the VDP from your Vint callback
- * otherwise you will need to protect any VDP accesses from your main loop (which is painful), use the SYS_setVIntCallback(..) instead for that.
+ * otherwise you will need to protect any VDP accesses from your main loop (which is painful), use the SYS_setVBlankCallback(..) instead for that.
  *
  * \see SYS_setVBlankCallback(VoidCallback *CB);
  * \see SYS_setHIntCallback(VoidCallback *CB);
