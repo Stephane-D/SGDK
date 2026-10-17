@@ -335,12 +335,18 @@ static enum mw_err mw_command_async(enum mw_command cmd, mw_cmd_async_cb callbac
 static enum mw_err string_based_cmd_async(enum mw_command cmd,
 		const char *payload, mw_async_cb callback, mw_async_dispatch async_cmd)
 {
-	int16_t len;
+	uint16_t len;
+	uint16_t capacity = min(MW_CMD_MAX_BUFLEN,
+			mw_get_data()->buf_len - MW_CMD_HEADLEN);
 
 	if (!mw_get_data()->mw_ready) {
 		return MW_ERR_NOT_READY;
 	}
-	if (!payload || !(len = strlen(payload)) || !callback) {
+	if (!payload || !callback) {
+		return MW_ERR_PARAM;
+	}
+	len = strnlen(payload, capacity);
+	if (!len || len == capacity) {
 		return MW_ERR_PARAM;
 	}
 	mw_get_data()->cmd->data_len = len + 1;
@@ -461,7 +467,8 @@ enum mw_err mw_sntp_cfg_set_async(const char *tz_str,
 		const char *server[3], mw_async_cb callback)
 {
 	uint16_t offset;
-	uint16_t len;
+	uint16_t capacity = min(MW_CMD_MAX_BUFLEN,
+			mw_get_data()->buf_len - MW_CMD_HEADLEN);
 
 	if (!mw_get_data()->mw_ready) {
 		return MW_ERR_NOT_READY;
@@ -470,17 +477,21 @@ enum mw_err mw_sntp_cfg_set_async(const char *tz_str,
 		return MW_ERR_PARAM;
 	}
 
-	offset = 1 + strlen(tz_str);
-	if (offset >= MW_CMD_MAX_BUFLEN) {
+	offset = strnlen(tz_str, capacity - 1);
+	if (offset == capacity - 1) {
 		return MW_ERR_PARAM;
 	}
+	offset++;
 	memcpy(mw_get_data()->cmd->data, tz_str, offset);
-	for (int16_t i = 0; i < 3 && server[i] && *server[i]; i++) {
-		len = 1 + strlen(server[i]);
-		if (offset + len >= MW_CMD_MAX_BUFLEN) {
+	for (uint16_t serverIndex = 0; serverIndex < 3 &&
+			server[serverIndex] && *server[serverIndex]; serverIndex++) {
+		uint16_t available = capacity - offset - 1;
+		uint16_t len = strnlen(server[serverIndex], available);
+		if (len == available) {
 			return MW_ERR_PARAM;
 		}
-		memcpy(&mw_get_data()->cmd->data[offset], server[i], len);
+		len++;
+		memcpy(&mw_get_data()->cmd->data[offset], server[serverIndex], len);
 		offset += len;
 	}
 	mw_get_data()->cmd->data[offset++] = '\0';
@@ -562,18 +573,27 @@ enum mw_err mw_http_method_set_async(enum mw_http_method method,
 enum mw_err mw_http_header_add_async(const char *key, const char *value,
 		mw_async_cb callback)
 {
-	int16_t key_len;
-	int16_t value_len;
+	uint16_t key_len;
+	uint16_t value_len;
+	uint16_t capacity = min(MW_CMD_MAX_BUFLEN,
+			mw_get_data()->buf_len - MW_CMD_HEADLEN);
 
 	if (!mw_get_data()->mw_ready) {
 		return MW_ERR_NOT_READY;
 	}
-	if (!callback || !key || !value || !(key_len = strlen(key)) ||
-			!(value_len = strlen(value))) {
+	if (!callback || !key || !value) {
+		return MW_ERR_PARAM;
+	}
+	key_len = strnlen(key, capacity - 1);
+	if (!key_len || key_len == capacity - 1) {
 		return MW_ERR_PARAM;
 	}
 
 	key_len++;
+	value_len = strnlen(value, capacity - key_len);
+	if (!value_len || value_len == capacity - key_len) {
+		return MW_ERR_PARAM;
+	}
 	value_len++;
 	mw_get_data()->cmd->data_len = key_len + value_len;
 	memcpy(mw_get_data()->cmd->data, key, key_len);
@@ -1048,5 +1068,4 @@ enum mw_err mw_http_cert_set_async(uint32_t cert_hash, const char *cert,
 	da.pending.payload.len = cert_len;
 	return mw_command_async(MW_CMD_HTTP_CERT_SET, (mw_cmd_async_cb)callback, MW_COMMAND_TOUT, http_cert_set_async_dispatch);
 }
-
 #endif // MODULE_MEGAWIFI
