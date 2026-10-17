@@ -118,11 +118,11 @@ enum mw_http_method {
 #define MW_CMD_MIN_BUFLEN	168
 
 struct mw_data {
-	mw_cmd *cmd;
+	mw_cmd *cmd __attribute__((unused));
 	// TODO This callback is never set!
 	lsd_recv_cb cmd_data_cb;
-	uint16_t buf_len;
-	uint8_t mw_ready:1;
+	uint16_t buf_len  __attribute__((unused));
+	uint8_t mw_ready:1 __attribute__((unused));
 };
 
 /// Access Point data.
