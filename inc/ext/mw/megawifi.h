@@ -122,12 +122,7 @@ struct mw_data {
 	// TODO This callback is never set!
 	lsd_recv_cb cmd_data_cb;
 	uint16_t buf_len;
-	union {
-		uint8_t flags;
-		struct {
-			uint8_t mw_ready:1;
-		};
-	};
+	uint8_t mw_ready:1;
 };
 
 /// Access Point data.
