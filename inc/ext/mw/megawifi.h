@@ -121,7 +121,7 @@ typedef void (*mw_cmd_data_cb)(void);
 
 struct mw_data {
 	mw_cmd *cmd __attribute__((unused));
-	mw_cmd_data_cb cmd_data_cb;
+	mw_cmd_data_cb cmd_data_cb __attribute__((unused));
 	uint16_t buf_len  __attribute__((unused));
 	uint8_t mw_ready __attribute__((unused));
 };
