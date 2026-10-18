@@ -117,12 +117,13 @@ enum mw_http_method {
 /// like mw_sntp_cfg_set() can be sent if payload length is big enough).
 #define MW_CMD_MIN_BUFLEN	168
 
+typedef void (*mw_cmd_data_cb)(void);
+
 struct mw_data {
 	mw_cmd *cmd __attribute__((unused));
-	// TODO This callback is never set!
-	lsd_recv_cb cmd_data_cb;
+	mw_cmd_data_cb cmd_data_cb;
 	uint16_t buf_len  __attribute__((unused));
-	uint8_t mw_ready __attribute__((unused)) :1;
+	uint8_t mw_ready __attribute__((unused));
 };
 
 /// Access Point data.
@@ -161,18 +162,6 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len);
  * invoked.
  ****************************************************************************/
 static inline void mw_process(void)	{lsd_process();}
-
-/************************************************************************//**
- * \brief Sets the callback function to be run when network data is received
- * while waiting for a command reply.
- *
- * \param[in] cmd_recv_cb Callback to be run when data is received while
- *                        waiting for a command reply.
- *
- * \warning If this callback is not set, data received while waiting for a
- * command reply will be silently discarded.
- ****************************************************************************/
-void mw_cmd_data_cb_set(lsd_recv_cb cmd_recv_cb);
 
 /************************************************************************//**
  * \brief Performs the startup sequence for the WiFi module, and tries

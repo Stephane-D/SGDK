@@ -160,7 +160,7 @@ static enum mw_err mw_command(int16_t timeout_frames)
 			}
 			done = TRUE;
 		} else if (d.cmd_data_cb) {
-			d.cmd_data_cb(LSD_STAT_COMPLETE, md.ch,
+			((lsd_recv_cb)d.cmd_data_cb)(LSD_STAT_COMPLETE, md.ch,
 					(char*)d.cmd, md.len, NULL);
 		}
 	}
