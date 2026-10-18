@@ -159,9 +159,6 @@ static enum mw_err mw_command(int16_t timeout_frames)
 				return MW_ERR_RECV;
 			}
 			done = TRUE;
-		} else if (d.cmd_data_cb) {
-			((lsd_recv_cb)d.cmd_data_cb)(LSD_STAT_COMPLETE, md.ch,
-					(char*)d.cmd, md.len, NULL);
 		}
 	}
 

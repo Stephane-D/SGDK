@@ -31,7 +31,7 @@ static enum mw_err command_async_start(int16_t timeout_frames, lsd_recv_cb recv_
 
 /// Data required by the module
 struct mw_async_data {
-
+	mw_cmd_async_cb cmd_data_cb;
 	union {
 		uint8_t channel;
 		struct {
@@ -46,15 +46,15 @@ void mw_process_async(void)
 {
 	lsd_process();
 	if (!mw_get_data()->mw_ready &&
-			mw_get_data()->cmd_data_cb && (int32_t)(vtimer - da.command_deadline) >= 0) {
-		 ((mw_cmd_async_cb)mw_get_data()->cmd_data_cb)(command_async_recv_cb(LSD_STAT_ERROR, 0, NULL, 0, NULL));
+			da.cmd_data_cb && (int32_t)(vtimer - da.command_deadline) >= 0) {
+		 da.cmd_data_cb(command_async_recv_cb(LSD_STAT_ERROR, 0, NULL, 0, NULL));
 	}
 }
 
 static void detect_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_detect_async_cb detect_callback = (mw_detect_async_cb)mw_get_data()->cmd_data_cb;
+	mw_detect_async_cb detect_callback = (mw_detect_async_cb)da.cmd_data_cb;
 	if (!detect_callback) return;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (result != MW_ERR_NONE) {
@@ -68,14 +68,14 @@ static void detect_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void result_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 	if (callback) callback(command_async_recv_cb(err, ch, data, len, ctx));
 }
 
 static void ip_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_ip_cfg_get_async_cb callback = (mw_ip_cfg_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_ip_cfg_get_async_cb callback = (mw_ip_cfg_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->ip_cfg.ip : NULL);
 }
@@ -83,7 +83,7 @@ static void ip_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void ip_current_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_ip_current_async_cb callback = (mw_ip_current_async_cb)mw_get_data()->cmd_data_cb;
+	mw_ip_current_async_cb callback = (mw_ip_current_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->ip_cfg.ip : NULL);
 }
@@ -91,7 +91,7 @@ static void ip_current_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void sys_stat_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_sys_stat_get_async_cb callback = (mw_sys_stat_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_sys_stat_get_async_cb callback = (mw_sys_stat_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->sys_stat : NULL);
 }
@@ -99,7 +99,7 @@ static void sys_stat_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void bssid_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_bssid_get_async_cb callback = (mw_bssid_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_bssid_get_async_cb callback = (mw_bssid_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data : NULL);
 }
@@ -107,7 +107,7 @@ static void bssid_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void flash_read_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_flash_read_async_cb callback = (mw_flash_read_async_cb)mw_get_data()->cmd_data_cb;
+	mw_flash_read_async_cb callback = (mw_flash_read_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data : NULL);
 }
@@ -115,7 +115,7 @@ static void flash_read_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void hrng_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_hrng_get_async_cb callback = (mw_hrng_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_hrng_get_async_cb callback = (mw_hrng_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data : NULL);
 }
@@ -123,7 +123,7 @@ static void hrng_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void gamertag_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_gamertag_get_async_cb callback = (mw_gamertag_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_gamertag_get_async_cb callback = (mw_gamertag_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->gamertag_get : NULL);
 }
@@ -131,7 +131,7 @@ static void gamertag_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void def_server_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_def_server_get_async_cb callback = (mw_def_server_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_def_server_get_async_cb callback = (mw_def_server_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? (char*)mw_get_data()->cmd->data : NULL);
 }
@@ -139,7 +139,7 @@ static void def_server_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t c
 static void wifi_adv_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_wifi_adv_cfg_get_async_cb callback = (mw_wifi_adv_cfg_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_wifi_adv_cfg_get_async_cb callback = (mw_wifi_adv_cfg_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->wifi_adv_cfg : NULL);
 }
@@ -147,7 +147,7 @@ static void wifi_adv_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t
 static void ap_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_ap_cfg_get_async_cb callback = (mw_ap_cfg_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_ap_cfg_get_async_cb callback = (mw_ap_cfg_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->ap_cfg : NULL);
 }
@@ -155,7 +155,7 @@ static void ap_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void sntp_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_sntp_cfg_get_async_cb callback = (mw_sntp_cfg_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_sntp_cfg_get_async_cb callback = (mw_sntp_cfg_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->sntp_cfg : NULL);
 }
@@ -163,7 +163,7 @@ static void sntp_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void date_time_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_date_time_get_async_cb callback = (mw_date_time_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_date_time_get_async_cb callback = (mw_date_time_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (!callback) return;
 	if (result == MW_ERR_NONE) {
@@ -175,7 +175,7 @@ static void date_time_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch
 static void flash_id_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_flash_id_get_async_cb callback = (mw_flash_id_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_flash_id_get_async_cb callback = (mw_flash_id_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->flash_id : NULL);
 }
@@ -183,7 +183,7 @@ static void flash_id_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void ap_scan_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_ap_scan_async_cb callback = (mw_ap_scan_async_cb)mw_get_data()->cmd_data_cb;
+	mw_ap_scan_async_cb callback = (mw_ap_scan_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data : NULL,
 			result == MW_ERR_NONE ? mw_get_data()->cmd->data_len : 0);
@@ -192,7 +192,7 @@ static void ap_scan_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void ping_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_ping_async_cb callback = (mw_ping_async_cb)mw_get_data()->cmd_data_cb;
+	mw_ping_async_cb callback = (mw_ping_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->ping_response : NULL);
 }
@@ -200,7 +200,7 @@ static void ping_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void fw_list_upgrades_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_fw_list_upgrades_async_cb callback = (mw_fw_list_upgrades_async_cb)mw_get_data()->cmd_data_cb;
+	mw_fw_list_upgrades_async_cb callback = (mw_fw_list_upgrades_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? &mw_get_data()->cmd->ug_list_response : NULL);
 }
@@ -208,7 +208,7 @@ static void fw_list_upgrades_async_dispatch_recv_cb(enum lsd_status err, uint8_t
 static void http_finish_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_http_finish_async_cb callback = (mw_http_finish_async_cb)mw_get_data()->cmd_data_cb;
+	mw_http_finish_async_cb callback = (mw_http_finish_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data : NULL);
 }
@@ -216,7 +216,7 @@ static void http_finish_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void def_ap_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_def_ap_cfg_get_async_cb callback = (mw_def_ap_cfg_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_def_ap_cfg_get_async_cb callback = (mw_def_ap_cfg_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data[0] : 0xFFu);
 }
@@ -224,7 +224,7 @@ static void def_ap_cfg_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t c
 static void sock_stat_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_sock_stat_get_async_cb callback = (mw_sock_stat_get_async_cb)mw_get_data()->cmd_data_cb;
+	mw_sock_stat_get_async_cb callback = (mw_sock_stat_get_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->data[0] : -1);
 }
@@ -232,17 +232,17 @@ static void sock_stat_get_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch
 static void http_cert_query_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_http_cert_query_async_cb callback = (mw_http_cert_query_async_cb)mw_get_data()->cmd_data_cb;
+	mw_http_cert_query_async_cb callback = (mw_http_cert_query_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (callback) callback(result, result == MW_ERR_NONE ? mw_get_data()->cmd->dw_data[0] : 0xFFFFFFFFUL);
 }
 
 static void cert_send_async_cb_recv_cb(enum lsd_status status, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 
 	UNUSED_PARAM(ctx);
-	mw_get_data()->cmd_data_cb = NULL;
+	da.cmd_data_cb = NULL;
 	lsd_ch_disable(MW_HTTP_CH);
 	if (callback) {
 		callback(status == LSD_STAT_COMPLETE ? MW_ERR_NONE : MW_ERR_RECV);
@@ -252,7 +252,7 @@ static void cert_send_async_cb_recv_cb(enum lsd_status status, void *ctx)
 static void socket_open_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (!callback) return;
 	if (result == MW_ERR_NONE) {
@@ -264,7 +264,7 @@ static void socket_open_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void socket_close_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (!callback) return;
 	if (result == MW_ERR_NONE) {
@@ -276,7 +276,7 @@ static void socket_close_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void http_open_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (!callback) return;
 	if (result == MW_ERR_NONE) {
@@ -288,7 +288,7 @@ static void http_open_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void http_cleanup_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (!callback) return;
 	lsd_ch_disable(MW_HTTP_CH);
@@ -298,7 +298,7 @@ static void http_cleanup_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 static void http_cert_set_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_async_cb callback = (mw_async_cb)mw_get_data()->cmd_data_cb;
+	mw_async_cb callback = (mw_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	enum lsd_status status;
 
@@ -307,7 +307,7 @@ static void http_cert_set_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch
 		callback(result);
 		return;
 	}
-	mw_get_data()->cmd_data_cb = (mw_cmd_data_cb)callback;
+	da.cmd_data_cb = (mw_cmd_async_cb)callback;
 	lsd_ch_enable(MW_HTTP_CH);
 	status = lsd_send(MW_HTTP_CH, da.pending.payload.data,
 			da.pending.payload.len, NULL, cert_send_async_cb_recv_cb);
@@ -319,7 +319,7 @@ static void http_cert_set_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch
 static void ga_request_async_dispatch_recv_cb(enum lsd_status err, uint8_t ch,
 		char *data, uint16_t len, void *ctx)
 {
-	mw_ga_request_async_cb callback = (mw_ga_request_async_cb)mw_get_data()->cmd_data_cb;
+	mw_ga_request_async_cb callback = (mw_ga_request_async_cb)da.cmd_data_cb;
 	enum mw_err result = command_async_recv_cb(err, ch, data, len, ctx);
 	if (!callback) return;
 	if (result == MW_ERR_NONE) {
@@ -336,7 +336,7 @@ static enum mw_err command_async_recv_cb(enum lsd_status err, uint8_t ch,
 	UNUSED_PARAM(len);
 	UNUSED_PARAM(ctx);
 	mw_get_data()->mw_ready = TRUE;
-	mw_get_data()->cmd_data_cb = NULL;
+	da.cmd_data_cb = NULL;
 	return  err == LSD_STAT_COMPLETE && ch == MW_CTRL_CH &&
 			mw_get_data()->cmd->cmd == MW_CMD_OK ?
 			MW_ERR_NONE : MW_ERR_RECV;
@@ -366,15 +366,15 @@ static enum mw_err mw_command_async(enum mw_command cmd, mw_cmd_async_cb callbac
 {
 	enum mw_err err;
 
-	if (mw_get_data()->cmd_data_cb) {
+	if (da.cmd_data_cb) {
 		return MW_ERR_PARAM;
 	}
 
 	mw_get_data()->cmd->cmd = cmd;
-	mw_get_data()->cmd_data_cb = (mw_cmd_data_cb)callback;
+	da.cmd_data_cb = (mw_cmd_async_cb)callback;
 	err = command_async_start(timeout_frames, recv_cb);
 	if (err != MW_ERR_NONE) {
-		mw_get_data()->cmd_data_cb = NULL;
+		da.cmd_data_cb = NULL;
 	}
 
 	return err;

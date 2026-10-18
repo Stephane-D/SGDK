@@ -117,11 +117,8 @@ enum mw_http_method {
 /// like mw_sntp_cfg_set() can be sent if payload length is big enough).
 #define MW_CMD_MIN_BUFLEN	168
 
-typedef void (*mw_cmd_data_cb)(void);
-
 struct mw_data {
 	mw_cmd *cmd __attribute__((unused));
-	mw_cmd_data_cb cmd_data_cb __attribute__((unused));
 	uint16_t buf_len  __attribute__((unused));
 	uint8_t mw_ready __attribute__((unused));
 };
