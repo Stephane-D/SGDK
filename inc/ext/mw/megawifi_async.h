@@ -18,6 +18,7 @@
 #ifndef _MEGAWIFI_ASYNC_H_
 #define _MEGAWIFI_ASYNC_H_
 
+#define MW_PROCESS_OVERRIDE
 #include "ext/mw/megawifi.h"
 
 typedef void (*mw_async_cb)(enum mw_err err);
@@ -144,8 +145,9 @@ enum mw_err mw_http_cleanup_async(mw_async_cb callback);
 enum mw_err mw_http_cert_set_async(uint32_t cert_hash, const char *cert,
 		uint16_t cert_len, mw_async_cb callback);
 
+void mw_process_async(void);
 
-void mw_process_async_timeout(void);
+#define mw_process mw_process_async
 
 #endif /*_MEGAWIFI_ASYNC_H_*/
 

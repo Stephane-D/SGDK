@@ -161,7 +161,7 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len);
  * \warning No data will be sent/received if this function is not frequently
  * invoked.
  ****************************************************************************/
-static inline void mw_process(void)	{lsd_process();}
+void mw_process(void);
 
 /************************************************************************//**
  * \brief Performs the startup sequence for the WiFi module, and tries

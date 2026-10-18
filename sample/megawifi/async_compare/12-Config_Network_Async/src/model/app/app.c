@@ -77,7 +77,6 @@ static void APP_idleTask(void)
 {
     while (TRUE) {
         mw_process();
-        mw_process_async_timeout();
     }
 }
 

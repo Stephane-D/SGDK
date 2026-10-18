@@ -42,8 +42,9 @@ struct mw_async_data {
 	uint32_t command_deadline;
 } da = {};
 
-void mw_process_async_timeout(void)
+void mw_process_async(void)
 {
+	lsd_process();
 	if (!mw_get_data()->mw_ready &&
 			mw_get_data()->cmd_data_cb && (int32_t)(vtimer - da.command_deadline) >= 0) {
 		 ((mw_cmd_async_cb)mw_get_data()->cmd_data_cb)(command_async_recv_cb(LSD_STAT_ERROR, 0, NULL, 0, NULL));

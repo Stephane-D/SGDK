@@ -1478,4 +1478,6 @@ struct mw_ping_response *mw_ping(const char* domain, u8 retries)
 	return &d.cmd->ping_response;
 }
 
+void mw_process(void)	{lsd_process();}
+
 #endif // MODULE_MEGAWIFI
