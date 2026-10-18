@@ -17,7 +17,8 @@
 
 #ifndef _MEGAWIFI_ASYNC_H_
 #define _MEGAWIFI_ASYNC_H_
-
+#include "config.h"
+#if (MODULE_MEGAWIFI == 1 && MODULE_MEGAWIFI_ASYNC == 1)
 #define MW_PROCESS_OVERRIDE
 #include "ext/mw/megawifi.h"
 
@@ -87,6 +88,7 @@ enum mw_err mw_flash_write_async(uint32_t addr, uint8_t *data,
 		uint16_t data_len, mw_async_cb callback);
 enum mw_err mw_gamertag_set_async(uint8_t slot,
 		const struct mw_gamertag *gamertag, mw_async_cb callback);
+
 enum mw_err mw_http_url_set_async(const char *url, mw_async_cb callback);
 enum mw_err mw_http_method_set_async(enum mw_http_method method,
 		mw_async_cb callback);
@@ -149,6 +151,7 @@ void mw_process_async(void);
 
 #define mw_process mw_process_async
 
+#endif
 #endif /*_MEGAWIFI_ASYNC_H_*/
 
 /** \} */

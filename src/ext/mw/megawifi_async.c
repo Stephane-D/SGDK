@@ -18,7 +18,7 @@
 #include "maths.h"
 #include "task.h"
 
-#if (MODULE_MEGAWIFI == 1)
+#if (MODULE_MEGAWIFI == 1 && MODULE_MEGAWIFI_ASYNC == 1)
 
 #include "ext/mw/megawifi_async.h"
 #include "timer.h"
