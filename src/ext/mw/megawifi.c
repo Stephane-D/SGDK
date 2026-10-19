@@ -23,19 +23,6 @@
 
 #include "ext/mw/megawifi.h"
 
-/// Remove compiler warnings when not using a function parameter
-#define UNUSED_PARAM(x)		(void)x
-
-// Should consider if console is PAL or NTSC
-
-#define MW_COMMAND_TOUT		MW_MS_TO_FRAMES(MW_COMMAND_TOUT_MS)
-#define MW_CONNECT_TOUT		MW_MS_TO_FRAMES(MW_CONNECT_TOUT_MS)
-#define MW_SCAN_TOUT		MW_MS_TO_FRAMES(MW_SCAN_TOUT_MS)
-#define MW_ASSOC_TOUT		MW_MS_TO_FRAMES(MW_ASSOC_TOUT_MS)
-#define MW_ASSOC_WAIT_SLEEP	MW_MS_TO_FRAMES(MW_ASSOC_WAIT_SLEEP_MS)
-#define MW_STAT_POLL_TOUT	MW_MS_TO_FRAMES(MW_STAT_POLL_MS)
-#define MW_HTTP_OPEN_TOUT	MW_MS_TO_FRAMES(MW_HTTP_OPEN_TOUT_MS)
-#define MW_UPGRADE_TOUT		MW_MS_TO_FRAMES(MW_UPGRADE_TOUT_MS)
 /*
  * The module assumes that once started, sending always succeeds, but uses
  * timers (when defined) for data reception.
@@ -53,20 +40,13 @@ struct recv_metadata {
 };
 
 /// Data required by the module
-struct mw_data {
-	mw_cmd *cmd;
-	// TODO This callback is never set!
-	lsd_recv_cb cmd_data_cb;
-	uint16_t buf_len;
-	union {
-		uint8_t flags;
-		struct {
-			uint8_t mw_ready:1;
-		};
-	};
-} d = {};
+struct mw_data d = {};
 
-static uint16_t concat_strings(const char **str, uint8_t num_strs,
+inline struct mw_data* mw_get_data(void){
+	return &d;
+}
+
+uint16_t concat_strings(const char **str, uint8_t num_strs,
 		char *output, uint16_t max_len)
 {
 	uint16_t pos = 0;
@@ -87,7 +67,7 @@ static uint16_t concat_strings(const char **str, uint8_t num_strs,
 	return pos;
 }
 
-static uint16_t concat_kv_pairs(const char **key, const char **value,
+uint16_t concat_kv_pairs(const char **key, const char **value,
 		uint8_t num_pairs, char *output, uint16_t max_len)
 {
 	uint16_t pos = 0;
@@ -179,9 +159,6 @@ static enum mw_err mw_command(int16_t timeout_frames)
 				return MW_ERR_RECV;
 			}
 			done = TRUE;
-		} else if (d.cmd_data_cb) {
-			d.cmd_data_cb(LSD_STAT_COMPLETE, md.ch,
-					(char*)d.cmd, md.len, NULL);
 		}
 	}
 
@@ -597,7 +574,7 @@ int16_t mw_def_ap_cfg_get(void)
 	return d.cmd->data[0];
 }
 
-static int16_t fill_addr(const char *dst_addr, const char *dst_port,
+int16_t fill_addr(const char *dst_addr, const char *dst_port,
 		const char *src_port, struct mw_msg_in_addr *in_addr)
 {
 	// Zero structure data
@@ -1497,5 +1474,7 @@ struct mw_ping_response *mw_ping(const char* domain, u8 retries)
 
 	return &d.cmd->ping_response;
 }
+
+void mw_process(void)	{lsd_process();}
 
 #endif // MODULE_MEGAWIFI

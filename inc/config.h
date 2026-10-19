@@ -183,7 +183,7 @@
 #if ((ENABLE_BANK_SWITCH == 0) && (MEGAWIFI_IMPLEMENTATION & MEGAWIFI_IMPLEMENTATION_ED))
 #error "Cannot enable MegaWiFi module without BANK SWITCH"
 #endif
-
+#define MODULE_MEGAWIFI_ASYNC   0
 #endif // MODULE_MEGAWIFI
 /**
  *  \brief

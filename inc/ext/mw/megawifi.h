@@ -56,6 +56,17 @@
 /// Milliseconds between status polls while in wm_ap_assoc_wait()
 #define MW_STAT_POLL_MS		250
 
+// Should consider if console is PAL or NTSC
+
+#define MW_COMMAND_TOUT		MW_MS_TO_FRAMES(MW_COMMAND_TOUT_MS)
+#define MW_CONNECT_TOUT		MW_MS_TO_FRAMES(MW_CONNECT_TOUT_MS)
+#define MW_SCAN_TOUT		MW_MS_TO_FRAMES(MW_SCAN_TOUT_MS)
+#define MW_ASSOC_TOUT		MW_MS_TO_FRAMES(MW_ASSOC_TOUT_MS)
+#define MW_ASSOC_WAIT_SLEEP	MW_MS_TO_FRAMES(MW_ASSOC_WAIT_SLEEP_MS)
+#define MW_STAT_POLL_TOUT	MW_MS_TO_FRAMES(MW_STAT_POLL_MS)
+#define MW_HTTP_OPEN_TOUT	MW_MS_TO_FRAMES(MW_HTTP_OPEN_TOUT_MS)
+#define MW_UPGRADE_TOUT		MW_MS_TO_FRAMES(MW_UPGRADE_TOUT_MS)
+
 /// Error codes for MegaWiFi API functions
 enum mw_err {
 	MW_ERR_NONE = 0,		///< No error (success)
@@ -106,6 +117,12 @@ enum mw_http_method {
 /// like mw_sntp_cfg_set() can be sent if payload length is big enough).
 #define MW_CMD_MIN_BUFLEN	168
 
+struct mw_data {
+	mw_cmd *cmd __attribute__((unused));
+	uint16_t buf_len  __attribute__((unused));
+	uint8_t mw_ready __attribute__((unused));
+};
+
 /// Access Point data.
 struct mw_ap_data {
 	enum mw_security auth;	///< Security type
@@ -141,19 +158,7 @@ int16_t mw_init(uint16_t *cmd_buf, uint16_t buf_len);
  * \warning No data will be sent/received if this function is not frequently
  * invoked.
  ****************************************************************************/
-static inline void mw_process(void)	{lsd_process();}
-
-/************************************************************************//**
- * \brief Sets the callback function to be run when network data is received
- * while waiting for a command reply.
- *
- * \param[in] cmd_recv_cb Callback to be run when data is received while
- *                        waiting for a command reply.
- *
- * \warning If this callback is not set, data received while waiting for a
- * command reply will be silently discarded.
- ****************************************************************************/
-void mw_cmd_data_cb_set(lsd_recv_cb cmd_recv_cb);
+void mw_process(void);
 
 /************************************************************************//**
  * \brief Performs the startup sequence for the WiFi module, and tries
@@ -977,6 +982,17 @@ static inline enum lsd_status mw_cmd_recv(mw_cmd *rep, void *ctx,
 		lsd_recv_cb recv_cb) {
 	return lsd_recv(rep->packet, sizeof(mw_cmd), ctx, recv_cb);
 }
+
+struct mw_data* mw_get_data(void);
+
+uint16_t concat_strings(const char **str, uint8_t num_strs,
+		char *output, uint16_t max_len);
+
+uint16_t concat_kv_pairs(const char **key, const char **value,
+		uint8_t num_pairs, char *output, uint16_t max_len);
+
+int16_t fill_addr(const char *dst_addr, const char *dst_port,
+		const char *src_port, struct mw_msg_in_addr *in_addr);
 
 #endif /*_MEGAWIFI_H_*/
 

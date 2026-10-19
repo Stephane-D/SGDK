@@ -51,6 +51,9 @@
 /// Telegram token maximum length
 #define MW_GT_TG_TOKEN_MAX		64
 
+/// Remove compiler warnings when not using a function parameter
+#define UNUSED_PARAM(x)		(void)x
+
 /// Supported commands.
 enum PACKED mw_command {
 	MW_CMD_OK		 =   0,	///< OK command reply
