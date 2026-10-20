@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import sgdk.xgm2tool.Launcher;
 import sgdk.xgm2tool.format.SampleBank.InternalSample;
@@ -2488,6 +2489,11 @@ public class XGM
 
     public void updateSampleCommands(int originId, int replaceId, long durationInSample)
     {
+        updateSampleCommands(originId, replaceId, durationInSample, null);
+    }
+
+    public void updateSampleCommands(int originId, int replaceId, long durationInSample, Set<XGMFMCommand> updatedCommands)
+    {
         // nothing to do..
         if ((originId == replaceId) && (durationInSample == -1))
             return;
@@ -2498,8 +2504,12 @@ public class XGM
             final XGMFMCommand command = FMcommands.get(i++);
 
             // found a command for the original sample ?
-            if (command.isPCM() && (command.getPCMId() == originId))
+            if (command.isPCM() && (command.getPCMId() == originId) && ((updatedCommands == null) || !updatedCommands.contains(command)))
             {
+                // Do not reinterpret a shared sample id as a local id during another merge.
+                if (updatedCommands != null)
+                    updatedCommands.add(command);
+
                 // --> set new sample id
                 command.setPCMId(replaceId);
 

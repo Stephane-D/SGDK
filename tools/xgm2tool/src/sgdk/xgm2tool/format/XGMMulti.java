@@ -3,7 +3,9 @@ package sgdk.xgm2tool.format;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sgdk.xgm2tool.Launcher;
 import sgdk.xgm2tool.tool.Util;
@@ -69,8 +71,9 @@ public class XGMMulti
         mergedSample = 0;
         for (XGM xgm : xgms)
         {
+            final Set<XGMFMCommand> updatedCommands = new HashSet<>();
             for (XGMSample sample : xgm.samples)
-                mergeSample(sample, xgm);
+                mergeSample(sample, xgm, updatedCommands);
 
             xgm.rebuildFMCommands();
         }
@@ -117,7 +120,7 @@ public class XGMMulti
         return null;
     }
 
-    private void mergeSample(XGMSample sample, XGM xgm)
+    private void mergeSample(XGMSample sample, XGM xgm, Set<XGMFMCommand> updatedCommands)
     {
         // find if already exist
         final XGMSample matchingSample = findMatchingSample(sample);
@@ -127,7 +130,8 @@ public class XGMMulti
         {
             final boolean sameDuration = Math.round(sample.getLength() / 60) == Math.round(matchingSample.getLength() / 60);
             // update VGM so it now uses the matching sample id
-            xgm.updateSampleCommands(sample.id, matchingSample.id, sameDuration ? -1L : (sample.getLength() * 44100L) / XGMSample.XGM_FULL_RATE);
+            xgm.updateSampleCommands(sample.id, matchingSample.id, sameDuration ? -1L : (sample.getLength() * 44100L) / XGMSample.XGM_FULL_RATE,
+                    updatedCommands);
 
             mergedSample++;
             if (Launcher.verbose)
@@ -147,7 +151,7 @@ public class XGMMulti
 
             final int newId = sharedSamples.size();
             // update VGM so it now uses the new sample id
-            xgm.updateSampleCommands(sample.id, newId, -1L);
+            xgm.updateSampleCommands(sample.id, newId, -1L, updatedCommands);
             // update sample id
             sample.id = newId;
         }
