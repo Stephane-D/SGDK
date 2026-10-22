@@ -523,7 +523,8 @@ void VDP_drawText(const char* str, u16 x, u16 y);
  *  \param y
  *      y position (in tile).
  *  \param len
- *      Fixed string length. For correct operation, it must not exceed 40 characters.
+ *      Fixed string length: a shorter string is padded with spaces, a longer one is truncated.<br>
+ *      For correct operation, it must not exceed 40 characters.
  *
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
@@ -547,7 +548,8 @@ void VDP_drawTextBGFill(VDPPlane plane, const char* str, u16 x, u16 y, u16 len);
  *  \param y
  *      y position (in tile).
  *  \param len
- *      Fixed string length. For correct operation, it must not exceed 40 characters.
+ *      Fixed string length: a shorter string is padded with spaces, a longer one is truncated.<br>
+ *      For correct operation, it must not exceed 40 characters.
  *
  *  \see VDP_drawText(..)
  *  \see VDP_clearText(..)
