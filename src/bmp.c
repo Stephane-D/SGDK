@@ -1079,10 +1079,10 @@ NO_INLINE void BMP_drawBitmapData(const u8 *image, u16 x, u16 y, u16 w, u16 h, u
     u8 *dst;
 
     // limit bitmap size if larger than bitmap screen
-    if ((w + x) > BMP_WIDTH) adj_w = (BMP_WIDTH - (w + x)) >> 1;
+    if ((w + x) > BMP_WIDTH) adj_w = (BMP_WIDTH - x) >> 1;
     else adj_w = w >> 1;
 
-    if ((h + y) > BMP_HEIGHT) adj_h = BMP_HEIGHT - (h + y);
+    if ((h + y) > BMP_HEIGHT) adj_h = BMP_HEIGHT - y;
     else adj_h = h;
 
     // prepare source and destination
