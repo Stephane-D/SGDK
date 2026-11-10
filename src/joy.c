@@ -46,6 +46,15 @@ static u16 gport;
 
 static JoyEventCallback *joyEventCB;
 
+static inline u8 readPortData(vu8 *pb)
+{
+    /* Allow the peripheral response to settle independently of compiler scheduling. */
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    return *pb;
+}
 
 void JOY_init()
 {
@@ -80,17 +89,13 @@ NO_INLINE void JOY_reset()
 
     pb = (vu8 *)0xa10005;
     *pb = 0x0C;
-    asm volatile ("nop");
-    asm volatile ("nop");
     pb = (vu8 *)0xa10003;
-    a = *pb & 3;
+    a = readPortData(pb) & 3;
 
     pb = (vu8 *)0xa10005;
     *pb = 0x7C;
-    asm volatile ("nop");
-    asm volatile ("nop");
     pb = (vu8 *)0xa10003;
-    b = *pb & 3;
+    b = readPortData(pb) & 3;
 
     Z80_STATE_RESTORE
 
@@ -145,11 +150,11 @@ NO_INLINE void JOY_reset()
 
         /* get ID port 1 */
         pb = (vu8 *)0xa10003;
-        a = *pb;
+        a = readPortData(pb);
         *pb = 0x00;
         id = (a & 8) | (a & 4) ? 8 : 0;
         id |= (a & 2) | (a & 1) ? 4 : 0;
-        a = *pb;
+        a = readPortData(pb);
         *pb = 0x40;
         id |= (a & 8) | (a & 4) ? 2 : 0;
         id |= (a & 2) | (a & 1) ? 1 : 0;
@@ -157,11 +162,11 @@ NO_INLINE void JOY_reset()
 
         /* get ID port 2 */
         pb = (vu8 *)0xa10005;
-        a = *pb;
+        a = readPortData(pb);
         *pb = 0x00;
         id = (a & 8) | (a & 4) ? 8 : 0;
         id |= (a & 2) | (a & 1) ? 4 : 0;
-        a = *pb;
+        a = readPortData(pb);
         *pb = 0x40;
         id |= (a & 8) | (a & 4) ? 2 : 0;
         id |= (a & 2) | (a & 1) ? 1 : 0;
@@ -640,13 +645,11 @@ static u16 TH_CONTROL_PHASE(vu8 *pb)
     u16 val;
 
     *pb = 0x00; /* TH (select) low */
-    asm volatile ("nop");
-    asm volatile ("nop");
-    val = *pb;
+    val = readPortData(pb);
 
     *pb = 0x40; /* TH (select) high */
     val <<= 8;
-    val |= *pb;
+    val |= readPortData(pb);
 
     return val;
 }
