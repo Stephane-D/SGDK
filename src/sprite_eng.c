@@ -356,9 +356,8 @@ Sprite* NO_INLINE SPR_addSpriteEx(const SpriteDefinition* spriteDef, s16 x, s16 
             kprintf("SPR_addSpriteEx failed: not enough hardware sprite (missing %d sprites) !", (usedSpr - (VDP_getScreenWidth() >> 2)) + 1);
 #endif
 
-            // revert
-            usedVDPSprite -= spriteDef->maxNumSprite;
-
+            // releaseSprite(..) reverts usedVDPSprite from sprite->definition, which isn't set yet
+            sprite->definition = spriteDef;
             releaseSprite(sprite);
             return NULL;
         }
