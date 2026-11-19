@@ -13,11 +13,11 @@
 #if (ENABLE_NEWLIB != 0) && !defined(_NEWLIB_STRING_H_)
 #define _NEWLIB_STRING_H_
 #include_next <string.h> // Include string.h from newlib
-#undef _STRING_H_        // Will be defined again just below
+//#undef _STRING_H_        // Will be defined again just below
 #endif
 
-#ifndef _STRING_H_
-#define _STRING_H_
+#ifndef _SGDK_STRING_H_
+#define _SGDK_STRING_H_
 
 #if (ENABLE_NEWLIB == 0)
 
@@ -345,4 +345,5 @@ void FF16_toStr(fastfix16 value, char *str, u16 numdec);
  */
 void FF32_toStr(fastfix32 value, char *str, u16 numdec);
 
-#endif // _STRING_H_
+#endif // _SGDK_STRING_H_
+

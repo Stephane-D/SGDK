@@ -757,3 +757,4 @@ s8 memcmp(const void* pointer1, const void* pointer2, size_t len)
 	return result;
 }
 #endif
+
