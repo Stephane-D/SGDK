@@ -15,7 +15,7 @@
 #include "maths.h"
 #include "bmp.h"
 #include "timer.h"
-#include "string.h"
+#include "sgdk_string.h"
 #include "snd/sound.h"
 #include "snd/xgm.h"
 #include "dma.h"

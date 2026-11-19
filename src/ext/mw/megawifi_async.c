@@ -13,7 +13,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "string.h"
+#include "sgdk_string.h"
 #include "memory.h"
 #include "maths.h"
 #include "task.h"
@@ -974,7 +974,7 @@ enum mw_err mw_ap_cfg_get_async(uint8_t slot, mw_ap_cfg_get_async_cb callback)
 	if (!callback || slot >= MW_NUM_CFG_SLOTS) {
 		return MW_ERR_PARAM;
 	}
-	
+
 	mw_get_data()->cmd->data_len = 1;
 	mw_get_data()->cmd->data[0] = slot;
 	return mw_command_async(MW_CMD_AP_CFG_GET, (mw_cmd_async_cb)callback, MW_COMMAND_TOUT, ap_cfg_get_async_dispatch_recv_cb);

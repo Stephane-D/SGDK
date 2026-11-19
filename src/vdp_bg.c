@@ -5,7 +5,7 @@
 #include "vdp_bg.h"
 
 #include "tools.h"
-#include "string.h"
+#include "sgdk_string.h"
 #include "dma.h"
 #include "vdp_tile.h"
 
@@ -515,7 +515,7 @@ void VDP_drawNumEx(VDPPlane plane, s32 value, u16 basetile, u16 x, u16 y, Transf
     char str[16];
 
     intToStr(value, str, 1);
-    
+
     VDP_drawTextEx(plane, str, basetile, x, y, tm);
 }
 

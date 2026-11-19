@@ -1,7 +1,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "string.h"
+#include "sgdk_string.h"
 
 #include "tab_cnv.h"
 #include "maths.h"
@@ -340,20 +340,20 @@ void fastFix16ToStr(fastfix16 value, char *str, u16 numdec)
 {
     char *dst = str;
     fastfix16 v = value;
-    
+
     if (v < 0)
     {
         v = -v;
         *dst++ = '-';
     }
-    
+
     dst += uint16ToStr((u16) FF16_toInt(v), dst, 1);
     *dst++ = '.';
-    
+
     // get fractional part
     const u16 frac = mulu((u16) FF16_frac(v), 1000) >> FASTFIX16_FRAC_BITS;
     u16 len = uint16ToStr(frac, dst, 3);
-    
+
     if (len < numdec)
     {
         // need to add ending '0'
@@ -369,20 +369,20 @@ void fastFix32ToStr(fastfix32 value, char *str, u16 numdec)
 {
     char *dst = str;
     fastfix32 v = value;
-    
+
     if (v < 0)
     {
         v = -v;
         *dst++ = '-';
     }
-    
+
     dst += uint16ToStr((u16) FF32_toInt(v), dst, 1);
     *dst++ = '.';
-    
+
     // get fractional part
     const u16 frac = mulu((u16) FF32_frac(v), 10000) >> FASTFIX32_FRAC_BITS;
     u16 len = uint16ToStr(frac, dst, 4);
-    
+
     if (len < numdec)
     {
         // need to add ending '0'

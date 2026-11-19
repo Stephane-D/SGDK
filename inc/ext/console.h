@@ -29,7 +29,7 @@
 #if (MODULE_CONSOLE != 0)
 
 #include "types.h"
-#include "string.h"
+#include "sgdk_string.h"
 #include "maths.h"
 #include "dma.h"
 

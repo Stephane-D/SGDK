@@ -4,7 +4,7 @@
 #include "tools.h"
 
 #include "sys.h"
-#include "string.h"
+#include "sgdk_string.h"
 #include "kdebug.h"
 #include "timer.h"
 #include "maths.h"
