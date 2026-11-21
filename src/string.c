@@ -1,7 +1,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "string.h"
+#include "sgdk_string.h"
 
 #include "tab_cnv.h"
 #include "maths.h"

@@ -13,7 +13,7 @@
 #include "config.h"
 #include "types.h"
 
-#include "string.h"
+#include "sgdk_string.h"
 #include "memory.h"
 #include "maths.h"
 #include "task.h"

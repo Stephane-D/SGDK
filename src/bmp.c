@@ -16,7 +16,7 @@
 #include "mapper.h"
 #include "memory.h"
 #include "tools.h"
-#include "string.h"
+#include "sgdk_string.h"
 
 
 #define BMP_FLAG_DOUBLEBUFFER   (1 << 0)

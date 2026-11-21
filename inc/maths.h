@@ -303,26 +303,34 @@ typedef Mat2D_ff32 M2ff32;
  *  \brief
  *      Returns the lowest value between X an Y.
  */
-#define min(X, Y)       (((X) < (Y))?(X):(Y))
+#if !defined(min)
+    #define min(X, Y)       (((X) < (Y))?(X):(Y))
+#endif
 
 /**
  *  \brief
  *      Returns the highest value between X an Y.
  */
-#define max(X, Y)       (((X) > (Y))?(X):(Y))
+#if !defined(max)
+    #define max(X, Y)       (((X) > (Y))?(X):(Y))
+#endif
 
 /**
  *  \brief
  *      Returns L if X is less than L, H if X is greater than H or X if in between L and H.
  */
-#define clamp(X, L, H)  (min(max((X), (L)), (H)))
+#if !defined(clamp)
+    #define clamp(X, L, H)  (min(max((X), (L)), (H)))
+#endif
 
 #if (ENABLE_NEWLIB == 0)
 /**
  *  \brief
  *      Returns the absolute value of X.
  */
-#define abs(X)          (((X) < 0)?-(X):(X))
+#if !defined(abs)
+    #define abs(X)          (((X) < 0)?-(X):(X))
+#endif
 #endif  // ENABLE_NEWLIB
 
 

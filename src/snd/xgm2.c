@@ -18,7 +18,7 @@
 
 // memory functions are provided in <string.h> when using newlib
 #if (ENABLE_NEWLIB != 0)
-#include "string.h"
+#include "sgdk_string.h"
 #endif
 
 

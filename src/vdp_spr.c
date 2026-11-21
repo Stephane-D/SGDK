@@ -6,7 +6,7 @@
 
 #include "dma.h"
 #include "tools.h"
-#include "string.h"
+#include "sgdk_string.h"
 #include "memory.h"
 
 

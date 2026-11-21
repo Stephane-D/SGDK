@@ -19,7 +19,7 @@
 #include "pool.h"
 #include "object.h"
 
-#include "string.h"
+#include "sgdk_string.h"
 
 #include "tab_cnv.h"
 

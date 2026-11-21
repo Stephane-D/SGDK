@@ -5,7 +5,7 @@
 
 #include "tab_cnv.h"
 #include "sys.h"
-#include "string.h"
+#include "sgdk_string.h"
 #include "kdebug.h"
 #include "tools.h"
 
