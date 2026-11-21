@@ -113,8 +113,9 @@ https://github.com/tlsa/sgdk-helper
 https://github.com/andwn/marsdev
 It supports all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out !
 
-* MacOSX users also have access to this specific solution from Sonic3D (probably a bit outdated though):<br>
-https://github.com/SONIC3D/gendev-macos
+* MacOSX users also have access to several solutions.
+JeraDesign documentation: https://jeradesign.github.io/jeradoc/Running_SGDK_on_macOS_27.html
+Sonic3D github (probably a bit outdated though): https://github.com/SONIC3D/gendev-macos
 
 ### DOCKER
 
