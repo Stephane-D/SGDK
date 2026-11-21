@@ -388,10 +388,8 @@ void VDP_drawTextBGFill(VDPPlane plane, const char* str, u16 x, u16 y, u16 len)
     const char* src;
 
     src = str;
-    // copy str
-    while ((*dst++ = *src++));
-    // revert '\0' terminator
-    --dst;
+    // copy str (truncated to len, fixedStr can't hold more)
+    while (((dst - fixedStr) < len) && *src) *dst++ = *src++;
 
     u16 strSize = dst - fixedStr;
     // remaining space to fill ?
