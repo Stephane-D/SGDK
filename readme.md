@@ -110,12 +110,12 @@ https://github.com/Franticware/SGDK_wine
 https://github.com/tlsa/sgdk-helper
 
 * Another great alternative is to use the complete _MarsDev_ environment developed by Andy Grind:<br>
-https://github.com/andwn/marsdev
+https://github.com/andwn/marsdev<br>
 It supports all OSes, provides SGDK compatibility as well as 32X support, so be sure to check it out !
 
 * MacOSX users also have access to several solutions.<br>
-JeraDesign documentation: https://jeradesign.github.io/jeradoc/Running_SGDK_on_macOS_27.html
-Sonic3D github (probably a bit outdated though): https://github.com/SONIC3D/gendev-macos
+[JeraDesign documentation](https://jeradesign.github.io/jeradoc/Running_SGDK_on_macOS_27.html)
+[Sonic3D github (probably a bit outdated though)](https://github.com/SONIC3D/gendev-macos)
 
 ### DOCKER
 
