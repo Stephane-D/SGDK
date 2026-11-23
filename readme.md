@@ -117,6 +117,32 @@ It supports all OSes, provides SGDK compatibility as well as 32X support, so be 
 https://jeradesign.github.io/jeradoc/Running_SGDK_on_macOS_27.html - JeraDesign documentation<br>
 https://github.com/SONIC3D/gendev-macos - Sonic3D github (probably a bit outdated though)<br>
 
+#### Native build with a distribution compiler
+
+SGDK also builds natively with the cross compiler packaged by a Linux distribution, without Wine, Docker or a custom toolchain.<br>
+The steps below were tested on Ubuntu 24.04 with the `gcc-m68k-linux-gnu` package (GCC 13.3), a Java runtime, `make`, `gcc` and `g++`.
+
+1. Build the native tools into the `bin` folder (from the SGDK folder):
+```
+gcc -O2 -o bin/bintos tools/bintos/src/bintos.c
+gcc -O2 -o bin/xgmtool tools/xgmtool/src/*.c -Itools/xgmtool/inc -lm
+make -C tools/sjasm/src && cp tools/sjasm/src/sjasm bin/
+make -C tools/convsym && cp tools/convsym/build/convsym bin/
+export PATH="$PWD/bin:$PATH"
+```
+2. Rebuild the library. The provided `libmd.a` contains LTO objects which can only be read by the exact GCC version of the Windows binaries:
+```
+rm lib/libmd.a lib/libmd_debug.a
+make -f makelib.gen PREFIX=m68k-linux-gnu- release
+make -f makelib.gen PREFIX=m68k-linux-gnu- debug
+```
+3. Build your project from its folder (`GDK` being the SGDK folder):
+```
+make -f $GDK/makefile.gen PREFIX=m68k-linux-gnu- LIBGCC=$GDK/lib/libgcc.a
+```
+
+**Always pass `LIBGCC=$GDK/lib/libgcc.a` with a distribution compiler.** Its own `libgcc` is built for the 68020 so the ROM links without any error then stops on an *ADDRESS ERROR* at the first signed 32 bit division, as its division and modulo helpers use a `bsr.l` instruction the 68000 does not have. The `libgcc.a` provided in the `lib` folder is built for the 68000.
+
 ### DOCKER
 
 SGDK doesn't provide anymore any integrated Docker solution as the Doragasu docker solution seems better, faster and simpler to use (native linux compiler):<br>
