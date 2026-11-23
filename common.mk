@@ -30,6 +30,8 @@ endif
 #    TOOLCHAIN_DIR can give the toolchain folder, and CC, AR, LD, NM, OBJCPY, CONVSYM, ASMZ80, MACCER, BINTOS,
 #    LTO_PLUGIN, LIBGCC can be overridden from the environment or the make command line.
 #    The external GCC must be >= 10 (LTO) and target 68000 (-m68000 multilib, including libgcc).
+#    A distribution compiler such as Debian / Ubuntu 'm68k-linux-gnu-' only ships a 68020 libgcc: use
+#    LIBGCC=$(LIB)/libgcc.a with it, otherwise the ROM crashes on the first signed 32 bit division.
 ifeq ($(OS),Windows_NT)
 	# Native Windows
 	SHELL := $(BIN)/sh
